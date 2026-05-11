@@ -7,13 +7,13 @@ export async function GET(req: NextRequest) {
     const user = await getUser();
     if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-    const soal = await db.soal.findMany({
-      where: { creatorId: user.id },
+    const bankSoal = await db.bankSoal.findMany({
+      where: { uploaderId: user.id },
       orderBy: { createdAt: "desc" },
       take: 100,
     });
 
-    return NextResponse.json({ soal });
+    return NextResponse.json({ bankSoal });
   } catch (error) {
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
@@ -25,23 +25,30 @@ export async function POST(req: NextRequest) {
     if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const body = await req.json();
-    const { text, type, difficulty, options, correctAnswer, explanation, isHOTS, KD } = body;
+    const { title, description, type, difficulty, fileUrl, fileKey, fileType, kelas, semester, tahunAjaran, KD, isHOTS, jumlahSoal, subject } = body;
 
-    const soal = await db.soal.create({
+    const bankSoal = await db.bankSoal.create({
       data: {
-        text,
+        title: title || "Bank Soal",
+        description,
         type: type || "PILIHAN_GANDA",
         difficulty: difficulty || "MEDIUM",
-        options: options || [],
-        correctAnswer,
-        explanation,
-        isHOTS: isHOTS || false,
+        fileUrl,
+        fileKey,
+        fileType: fileType || "PDF",
+        kelas: kelas || "X",
+        semester: semester || 1,
+        tahunAjaran,
         KD,
-        creatorId: user.id,
+        isHOTS: isHOTS || false,
+        jumlahSoal: jumlahSoal || 10,
+        subject: subject || "Bahasa Indonesia",
+        uploaderId: user.id,
+        isPublished: false,
       },
     });
 
-    return NextResponse.json({ soal }, { status: 201 });
+    return NextResponse.json({ bankSoal }, { status: 201 });
   } catch (error) {
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }

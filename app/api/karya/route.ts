@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
     if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const body = await req.json();
-    const { title, description, type, price, fileUrl, previewUrl, grade, subject } = body;
+    const { title, description, type, price, fileUrl, grade, subject } = body;
 
     const karya = await db.karya.create({
       data: {
@@ -34,7 +34,6 @@ export async function POST(req: NextRequest) {
         type,
         price: price || 0,
         fileUrl,
-        previewUrl,
         grade,
         subject,
         sellerId: user.id,

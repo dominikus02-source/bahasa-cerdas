@@ -8,22 +8,30 @@ export async function POST(req: NextRequest) {
     if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const body = await req.json();
-    const { soalList } = body;
+    const { bankSoalList } = body;
 
-    if (!Array.isArray(soalList) || soalList.length === 0) {
-      return NextResponse.json({ error: "Invalid soal list" }, { status: 400 });
+    if (!Array.isArray(bankSoalList) || bankSoalList.length === 0) {
+      return NextResponse.json({ error: "Invalid bank soal list" }, { status: 400 });
     }
 
-    const created = await db.soal.createMany({
-      data: soalList.map((soal: any) => ({
-        text: soal.text,
+    const created = await db.bankSoal.createMany({
+      data: bankSoalList.map((soal: any) => ({
+        title: soal.title || "Bank Soal",
+        description: soal.description,
         type: soal.type || "PILIHAN_GANDA",
         difficulty: soal.difficulty || "MEDIUM",
-        options: soal.options || [],
-        correctAnswer: soal.correctAnswer,
-        explanation: soal.explanation,
+        fileUrl: soal.fileUrl,
+        fileKey: soal.fileKey,
+        fileType: soal.fileType || "PDF",
+        kelas: soal.kelas || "X",
+        semester: soal.semester || 1,
+        tahunAjaran: soal.tahunAjaran,
+        KD: soal.KD,
         isHOTS: soal.isHOTS || false,
-        creatorId: user.id,
+        jumlahSoal: soal.jumlahSoal || 10,
+        subject: soal.subject || "Bahasa Indonesia",
+        uploaderId: user.id,
+        isPublished: false,
       })),
     });
 

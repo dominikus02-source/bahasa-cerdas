@@ -18,21 +18,11 @@ enum PremiumPlan {
   PRO
 }
 
-enum SoalType {
-  PILIHAN_GANDA
-  ESSAY
-  ISIAN
-  TEBAK_KATA
-  SUSUN_KALIMAT
-  SINONIM_ANTONIM
-  HOTS
-  KATEGORI_KATA
-}
-
 enum Difficulty {
   EASY
   MEDIUM
   HARD
+  VERY_HARD
 }
 
 enum KaryaType {
@@ -55,6 +45,8 @@ enum LeagueType {
 
 enum KompetensiType {
   UKBI
+  UKBI_SIMULASI
+  UKBI_LATIHAN
   TKA_GURU
   TKA_UTBK
   SERTIFIKAT
@@ -88,11 +80,11 @@ enum VideoSource {
 
 enum VideoCategory {
   PEMBELAJARAN
-  Grammatika
-  Sastra
-  writing
-  Speaking
- Reading
+  GRAMMATIKA
+  SASTRA
+  WRITING
+  SPEAKING
+  READING
   MEDIA
   UKBI_PREP
   LAINNYA
@@ -112,6 +104,50 @@ enum FileType {
   XLSX
   MP4
   ZIP
+}
+
+enum UKBISeksi {
+  MENDENGARKAN
+  MERESPONS_KAIDAH
+  MEMBACA
+  MENULIS
+  BERBICARA
+}
+
+enum CognitiveDimension {
+  MENGINGAT
+  PEMAHAMAN
+  PENERAPAN
+  ANALISIS
+  EVALUASI
+  KREASI
+}
+
+enum KommunikasDomain {
+  SINTAS
+  SOSIAL
+  VOKASIONAL
+  AKADEMIK
+}
+
+enum TKAKompetensi {
+  PEDAGOGIK
+  PROFESIONAL
+  SOSIAL
+  KEPRIBADIAN
+}
+
+enum TestMode {
+  SIMULASI
+  LATIHAN
+  UJIAN
+}
+
+enum TestStatus {
+  NOT_STARTED
+  IN_PROGRESS
+  COMPLETED
+  EXPIRED
 }
 
 model User {
@@ -143,26 +179,28 @@ model User {
   profile            Profile?
   karya              Karya[]
   purchases          Pembelian[]
-  soal               Soal[]
-  kuis               Kuis[]
-  jawabanMurid       JawabanMurid[]
-  sesiGame           SesiGame[]
-  koleksiKata        KoleksiKata[]
-  progresKompetensi  ProgresKompetensi[]
-  lombaPeserta       LombaPeserta[]
-  aiUsage            AIUsage[]
-  transaksi          Transaksi[]
-  notifications      Notifikasi[]
-  videos             Video[]
-  playlists          CoursePlaylist[]
-  QuizSession        QuizSession[]
-  Certificate        Certificate[]
   uploadedMateris    Materi[]
   uploadedRPPs       RPP[]
-  uploadedSoals      BankSoal[]
+  uploadedBankSoals  BankSoal[]
   withdrawals        Withdrawal[]
-  sellerEarnings      SellerEarning[]
+  sellerEarnings     SellerEarning[]
   purchasesHistory   PurchaseHistory[]
+  testSessions      TestSession[]
+  testAnswers       TestAnswer[]
+  ukbiQuestions     UKBIQuestion[]
+  tkaQuestions      TKAQuestion[]
+  competencyPackets  PaketKompetensi[]
+  competencyResults  ProgresKompetensi[]
+  competencyCerts   KompetensiCertificate[]
+  videos            Video[]
+  playlists          CoursePlaylist[]
+  notifications     Notifikasi[]
+  quizSessions      QuizSession[]
+  certificates      Certificate[]
+  koleksiKata       KoleksiKata[]
+  lombaPeserta      LombaPeserta[]
+  aiUsage           AIUsage[]
+  transaksi          Transaksi[]
 }
 
 model Profile {
@@ -181,6 +219,193 @@ model Profile {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model UKBIQuestion {
+  id          String   @id @default(cuid())
+  seksi       UKBISeksi
+  text        String
+  audioUrl    String?
+  imageUrl    String?
+  passage     String?
+  type        String   @default("PILIHAN_GANDA")
+  options     Json
+  correctAnswer String
+  explanation String?
+  difficulty  Difficulty @default(MEDIUM)
+  cognitive   CognitiveDimension @default(PENERAPAN)
+  domain      KommunikasDomain @default(SOSIAL)
+  passageType String?
+  wordCount   Int?
+  keywords    String[]
+  isActive    Boolean  @default(true)
+  isVerified  Boolean  @default(false)
+
+  uploaderId String?
+  uploader   User?   @relation(fields: [uploaderId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([seksi, isActive])
+  @@index([difficulty])
+  @@index([isVerified])
+}
+
+model TKAQuestion {
+  id          String         @id @default(cuid())
+  kompetensi  TKAKompetensi
+  subKompetensi String?
+  text        String
+  passage     String?
+  type        String         @default("PILIHAN_GANDA")
+  options     Json
+  correctAnswer String
+  explanation String?
+  difficulty  Difficulty     @default(MEDIUM)
+  weight      Float          @default(1.0)
+  year        Int?
+  source      String?
+  isActive    Boolean        @default(true)
+  isVerified  Boolean        @default(false)
+
+  uploaderId String?
+  uploader   User?   @relation(fields: [uploaderId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([kompetensi, isActive])
+  @@index([difficulty])
+  @@index([isVerified])
+}
+
+model PaketKompetensi {
+  id           String         @id @default(cuid())
+  title        String
+  description  String?
+  type         KompetensiType
+  mode         TestMode       @default(SIMULASI)
+  duration     Int
+  passingScore Int            @default(0)
+  passingGrade String         @default("D")
+  sections     Json
+  totalQuestions Int           @default(0)
+  isActive     Boolean        @default(true)
+  isPremium    Boolean        @default(false)
+  thumbnailUrl String?
+  attemptLimit Int            @default(-1)
+
+  sectionsData Json?
+  questionPool Json?
+
+  creatorId String?
+  creator   User?   @relation(fields: [creatorId], references: [id])
+
+  results  ProgresKompetensi[]
+  certificates KompetensiCertificate[]
+  testSessions TestSession[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([type, isActive])
+}
+
+model ProgresKompetensi {
+  id        String          @id @default(cuid())
+  userId    String
+  user      User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  paketId   String
+  paket     PaketKompetensi @relation(fields: [paketId], references: [id])
+
+  attemptNumber Int       @default(1)
+  status       TestStatus @default(NOT_STARTED)
+
+  totalScore     Int?
+  rawScore       Int?
+  maxScore       Int?
+  percentage     Float?
+  predikat       String?
+  predikatLama   String?
+
+  sectionScores Json?
+  seksiScores  Json?
+  answerDetails Json?
+
+  startedAt   DateTime  @default(now())
+  finishedAt DateTime?
+  timeSpent  Int?
+
+  @@unique([userId, paketId, attemptNumber])
+  @@index([userId])
+}
+
+model KompetensiCertificate {
+  id        String          @id @default(cuid())
+  userId    String
+  user      User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  paketId   String
+  paket     PaketKompetensi @relation(fields: [paketId], references: [id])
+  progresId String
+
+  score         Int
+  predikat      String
+  percentage    Float
+  qrCode        String?
+  certificateNo String     @unique
+  pdfUrl        String?
+  issuedAt      DateTime   @default(now())
+  expiresAt     DateTime?
+
+  @@index([userId])
+}
+
+model TestSession {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  paketId   String
+  paket     PaketKompetensi @relation(fields: [paketId], references: [id])
+
+  status    TestStatus @default(NOT_STARTED)
+
+  currentSection Int     @default(0)
+  currentQuestion Int    @default(0)
+  answers        Json    @default("{}")
+  flagged        Int[]   @default([])
+
+  startedAt  DateTime?
+  finishedAt DateTime?
+  expiresAt  DateTime?
+
+  createdAt DateTime @default(now())
+
+  @@unique([userId, paketId])
+  @@index([userId])
+}
+
+model TestAnswer {
+  id        String      @id @default(cuid())
+  userId    String
+  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  sessionId String?
+  paketId  String?
+
+  questionId   String?
+  questionType String?
+  answer       String?
+  isCorrect    Boolean?
+  score        Float     @default(0)
+  timeSpent    Int       @default(0)
+
+  seksi       String?
+  sectionIndex Int      @default(0)
+
+  createdAt DateTime @default(now())
+
+  @@index([userId, paketId])
 }
 
 model Materi {
@@ -212,42 +437,11 @@ model Materi {
   @@index([isPublished])
 }
 
-model RPP {
-  id          String   @id @default(cuid())
-  title       String
-  description String?
-  kelas       String
-  semester    Int
-  tahunAjaran String
-  fase        String?
-  semester_type String?
-  week        Int?
-  theme       String?
-  subTheme    String?
-  fileUrl     String
-  fileKey     String?
-  fileType    FileType @default(PDF)
-  isPublished Boolean  @default(false)
-  isPremium   Boolean  @default(false)
-  price       Int      @default(0)
-  downloads   Int      @default(0)
-  subject     String   @default(" Bahasa Indonesia")
-
-  uploaderId String
-  uploader   User   @relation(fields: [uploaderId], references: [id], onDelete: Cascade)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([uploaderId])
-  @@index([isPublished])
-}
-
 model BankSoal {
   id          String     @id @default(cuid())
   title       String
   description String?
-  type        SoalType   @default(PILIHAN_GANDA)
+  type        String     @default("PILIHAN_GANDA")
   difficulty  Difficulty @default(MEDIUM)
   kelas       String
   semester    Int?
@@ -274,6 +468,36 @@ model BankSoal {
   @@index([isPublished])
 }
 
+model RPP {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  kelas       String
+  semester    Int
+  tahunAjaran String
+  fase        String?
+  week        Int?
+  theme       String?
+  subTheme    String?
+  fileUrl     String
+  fileKey     String?
+  fileType    FileType @default(PDF)
+  isPublished Boolean  @default(false)
+  isPremium   Boolean  @default(false)
+  price       Int      @default(0)
+  downloads   Int      @default(0)
+  subject     String   @default("Bahasa Indonesia")
+
+  uploaderId String
+  uploader   User   @relation(fields: [uploaderId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([uploaderId])
+  @@index([isPublished])
+}
+
 model Video {
   id           String       @id @default(cuid())
   title        String
@@ -289,11 +513,11 @@ model Video {
   isPremium    Boolean       @default(false)
   price        Int           @default(0)
   views        Int           @default(0)
-  creatorId    String?
 
   playlistId String?
   playlist   CoursePlaylist? @relation(fields: [playlistId], references: [id])
-  creator    User?           @relation(fields: [creatorId], references: [id])
+  creatorId  String?
+  creator   User?           @relation(fields: [creatorId], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -329,7 +553,6 @@ model Karya {
   fileUrl     String
   fileKey     String?
   fileType    FileType?
-  previewUrl  String?
   price       Int       @default(0)
   isPublished Boolean   @default(false)
   isPremium   Boolean   @default(false)
@@ -421,142 +644,34 @@ model Withdrawal {
   @@index([status])
 }
 
-model Soal {
-  id            String     @id @default(cuid())
-  text          String
-  type          SoalType   @default(PILIHAN_GANDA)
-  difficulty    Difficulty @default(MEDIUM)
-  correctAnswer String?
-  explanation   String?
-  options       Json?
-  isHOTS        Boolean    @default(false)
-  kategori      String?
-  KD            String?
-
-  creatorId String
-  creator   User   @relation(fields: [creatorId], references: [id], onDelete: Cascade)
-
-  answers      Answer[]
-  jawabanMurid JawabanMurid[]
-  kuis         Kuis?          @relation(fields: [kuisId], references: [id])
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  kuisId    String?
-}
-
-model Kuis {
-  id              String  @id @default(cuid())
-  title           String
-  description     String?
-  mode            String  @default("classic")
-  category        String?
-  isPublic        Boolean @default(true)
-  timePerQuestion Int     @default(30)
-
-  creatorId String
-  creator   User   @relation(fields: [creatorId], references: [id], onDelete: Cascade)
-
-  soal         Soal[]
-  sesiGame     SesiGame[]
-  quizSessions QuizSession[]
-
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
-  Question  Question[]
-}
-
-model Answer {
-  id               String      @id @default(cuid())
-  sessionId        String
-  session          QuizSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
-  questionId        String
-  question         Soal        @relation(fields: [questionId], references: [id])
-  selectedOptionId String?
-  isCorrect        Boolean?
-  answeredAt       DateTime    @default(now())
-
-  @@unique([sessionId, questionId])
-}
-
 model QuizSession {
   id     String @id @default(cuid())
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  quizId String
-  quiz   Kuis   @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  quizId String?
+  title  String
+  mode   String @default("practice")
 
-  answers     Answer[]
-  certificate Certificate?
-  createdAt   DateTime     @default(now())
+  answers Json @default("[]")
+  score   Int?
+  status  String @default("IN_PROGRESS")
 
-  @@unique([userId, quizId])
-}
+  startedAt  DateTime @default(now())
+  finishedAt DateTime?
 
-model Question {
-  id          String   @id @default(cuid())
-  quizId      String
-  quiz        Kuis     @relation(fields: [quizId], references: [id], onDelete: Cascade)
-  text        String
-  type        SoalType @default(PILIHAN_GANDA)
-  explanation String?
-  score       Int      @default(1)
-
-  options Option[]
-}
-
-model Option {
-  id         String   @id @default(cuid())
-  questionId String
-  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
-  text       String
-  isCorrect  Boolean  @default(false)
+  @@index([userId])
 }
 
 model Certificate {
-  id            String      @id @default(cuid())
-  userId        String
-  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  quizSessionId String      @unique
-  quizSession   QuizSession @relation(fields: [quizSessionId], references: [id])
-  score         Int
-  pdfUrl        String
-  issuedAt      DateTime    @default(now())
-}
+  id        String      @id @default(cuid())
+  userId    String
+  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String
+  score     Int
+  pdfUrl    String?
+  issuedAt  DateTime    @default(now())
 
-model JawabanMurid {
-  id     String @id @default(cuid())
-  userId String
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  soalId       String
-  soal         Soal     @relation(fields: [soalId], references: [id])
-  jawaban      String
-  isCorrect    Boolean?
-  waktuJawaban Int?
-
-  createdAt DateTime @default(now())
-}
-
-model SesiGame {
-  id              String  @id @default(cuid())
-  roomId          String  @unique
-  hostId          String
-  mode            String
-  category        String?
-  status          String  @default("waiting")
-  maxPlayers      Int     @default(4)
-  currentQuestion Int     @default(0)
-  totalQuestions  Int     @default(10)
-
-  kuisId String?
-  kuis   Kuis?   @relation(fields: [kuisId], references: [id])
-
-  creatorId String
-  creator   User   @relation(fields: [creatorId], references: [id])
-
-  createdAt DateTime  @default(now())
-  endedAt   DateTime?
+  @@index([userId])
 }
 
 model KoleksiKata {
@@ -569,39 +684,6 @@ model KoleksiKata {
   rarity   KoleksiRarity @default(COMMON)
 
   createdAt DateTime @default(now())
-}
-
-model PaketKompetensi {
-  id           String         @id @default(cuid())
-  title        String
-  description  String?
-  type         KompetensiType
-  duration     Int
-  passingScore Int?
-  sections     Json
-  soalData     Json
-
-  progres ProgresKompetensi[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model ProgresKompetensi {
-  id      String          @id @default(cuid())
-  userId  String
-  user    User            @relation(fields: [userId], references: [id], onDelete: Cascade)
-  paketId String
-  paket   PaketKompetensi @relation(fields: [paketId], references: [id])
-
-  totalScore  Int?
-  predikat    String?
-  seksiScores Json?
-  completed   Boolean   @default(false)
-  startedAt   DateTime  @default(now())
-  completedAt DateTime?
-
-  @@unique([userId, paketId])
 }
 
 model Lomba {

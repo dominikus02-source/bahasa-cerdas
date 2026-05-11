@@ -83,3 +83,31 @@ export function getPredikatUKBI(skor: number): string {
   if (skor >= 326) return "Marginal (VI)";
   return "Terbatas (VII)";
 }
+
+export function getPredikatColor(predikat: string): string {
+  const colors: Record<string, string> = {
+    "Istimewa": "text-yellow-600 bg-yellow-50 border-yellow-200",
+    "Sangat Unggul": "text-green-600 bg-green-50 border-green-200",
+    "Unggul": "text-emerald-600 bg-emerald-50 border-emerald-200",
+    "Madya": "text-blue-600 bg-blue-50 border-blue-200",
+    "Semenjana": "text-orange-600 bg-orange-50 border-orange-200",
+    "Marginal": "text-red-600 bg-red-50 border-red-200",
+    "Terbatas": "text-red-700 bg-red-100 border-red-300",
+  };
+  return colors[predikat] || "text-slate-600 bg-slate-50 border-slate-200";
+}
+
+export function getUKBIPassingStatus(skor: number): { passed: boolean; label: string } {
+  if (skor >= 725) return { passed: true, label: "Istimewa - Lulus dengan predikat tertinggi" };
+  if (skor >= 641) return { passed: true, label: "Sangat Unggul - Lulus dengan sangat baik" };
+  if (skor >= 578) return { passed: true, label: "Unggul - Lulus dengan baik" };
+  if (skor >= 482) return { passed: true, label: "Madya - Lulus memenuhi standar" };
+  return { passed: false, label: "Belum memenuhi standar minimal" };
+}
+
+export function getTKAPredikat(percentage: number): string {
+  if (percentage >= 85) return "A (Sangat Baik)";
+  if (percentage >= 70) return "B (Baik)";
+  if (percentage >= 55) return "C (Cukup)";
+  return "D (Kurang)";
+}

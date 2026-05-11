@@ -10,7 +10,8 @@
     "db:generate": "prisma generate",
     "db:push": "prisma db push",
     "db:migrate": "prisma migrate deploy",
-    "db:studio": "prisma studio"
+    "db:studio": "prisma studio",
+    "db:seed-kompetensi": "npx ts-node --compiler-options '{\"module\":\"CommonJS\"}' prisma/seed-kompetensi.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.39.0",

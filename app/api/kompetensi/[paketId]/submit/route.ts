@@ -1,0 +1,320 @@
+import { NextRequest, NextResponse } from "next/server";
+import { createClient } from "@/lib/supabase/server";
+import { db } from "@/lib/db";
+
+const UKBI_PREDIKAT_MAP: Record<string, { predikat: string; predikatLama: string; min: number }> = {
+  ISTIMEWA:    { predikat: "Istimewa", predikatLama: "I", min: 725 },
+  SANGAT_UNGGUL: { predikat: "Sangat Unggul", predikatLama: "II", min: 641 },
+  UNGGUL:      { predikat: "Unggul", predikatLama: "III", min: 578 },
+  MADYA:       { predikat: "Madya", predikatLama: "IV", min: 482 },
+  SEMENJANA:   { predikat: "Semenjana", predikatLama: "V", min: 405 },
+  MARGINAL:    { predikat: "Marginal", predikatLama: "VI", min: 326 },
+  TERBATAS:    { predikat: "Terbatas", predikatLama: "VII", min: 0 },
+};
+
+const TKA_PREDIKAT_MAP: Record<string, { predikat: string; min: number }> = {
+  A: { predikat: "Sangat Baik", min: 85 },
+  B: { predikat: "Baik", min: 70 },
+  C: { predikat: "Cukup", min: 55 },
+  D: { predikat: "Kurang", min: 0 },
+};
+
+function getUKBIPredikat(score: number): { predikat: string; predikatLama: string } {
+  if (score >= 725) return { predikat: "Istimewa", predikatLama: "I" };
+  if (score >= 641) return { predikat: "Sangat Unggul", predikatLama: "II" };
+  if (score >= 578) return { predikat: "Unggul", predikatLama: "III" };
+  if (score >= 482) return { predikat: "Madya", predikatLama: "IV" };
+  if (score >= 405) return { predikat: "Semenjana", predikatLama: "V" };
+  if (score >= 326) return { predikat: "Marginal", predikatLama: "VI" };
+  return { predikat: "Terbatas", predikatLama: "VII" };
+}
+
+function getTKAPredikat(percentage: number): string {
+  if (percentage >= 85) return "A";
+  if (percentage >= 70) return "B";
+  if (percentage >= 55) return "C";
+  return "D";
+}
+
+export async function POST(
+  req: NextRequest,
+  { params }: { params: Promise<{ paketId: string }> }
+) {
+  try {
+    const { paketId } = await params;
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const dbUser = await db.user.findUnique({ where: { supabaseId: user.id } });
+    if (!dbUser) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
+
+    const { answers, timeSpent } = await req.json();
+
+    const paket = await db.paketKompetensi.findUnique({ where: { id: paketId } });
+    if (!paket) {
+      return NextResponse.json({ error: "Paket tidak ditemukan" }, { status: 404 });
+    }
+
+    let session = await db.testSession.findUnique({
+      where: { userId_paketId: { userId: dbUser.id, paketId } },
+    });
+
+    if (!session) {
+      session = await db.testSession.create({
+        data: {
+          userId: dbUser.id,
+          paketId,
+          status: "COMPLETED",
+          startedAt: new Date(),
+          finishedAt: new Date(),
+          answers: answers || {},
+        },
+      });
+    } else {
+      session = await db.testSession.update({
+        where: { id: session.id },
+        data: { status: "COMPLETED", finishedAt: new Date() },
+      });
+    }
+
+    const allAnswerIds = Object.keys(answers || {});
+    const sectionScores: Record<string, { correct: number; total: number; score: number }> = {};
+    let totalCorrect = 0;
+    let totalQuestions = 0;
+    let rawScore = 0;
+
+    if (paket.type === "UKBI" || paket.type === "UKBI_SIMULASI" || paket.type === "UKBI_LATIHAN") {
+      const questions = await db.uKBIQuestion.findMany({
+        where: { id: { in: allAnswerIds }, isActive: true },
+      });
+
+      for (const q of questions) {
+        const userAnswer = answers[q.id];
+        const isCorrect = userAnswer === q.correctAnswer;
+        const weight = q.difficulty === "EASY" ? 1 : q.difficulty === "MEDIUM" ? 1.5 : q.difficulty === "HARD" ? 2 : 2.5;
+        const score = isCorrect ? weight * 10 : 0;
+        rawScore += score;
+        totalQuestions++;
+
+        if (isCorrect) {
+          totalCorrect++;
+          if (!sectionScores[q.seksi]) sectionScores[q.seksi] = { correct: 0, total: 0, score: 0 };
+          sectionScores[q.seksi].correct++;
+          sectionScores[q.seksi].score += score;
+        }
+        if (!sectionScores[q.seksi]) sectionScores[q.seksi] = { correct: 0, total: 0, score: 0 };
+        sectionScores[q.seksi].total++;
+
+        await db.testAnswer.create({
+          data: {
+            userId: dbUser.id,
+            sessionId: session.id,
+            paketId,
+            questionId: q.id,
+            questionType: q.type,
+            answer: userAnswer,
+            isCorrect,
+            score,
+            seksi: q.seksi,
+          },
+        });
+      }
+
+      const maxPossible = totalQuestions * 2.5 * 10;
+      const percentage = maxPossible > 0 ? (rawScore / maxPossible) * 100 : 0;
+      const totalScore = Math.round(percentage * 8);
+      const { predikat, predikatLama } = getUKBIPredikat(totalScore);
+
+      const seksiScores: Record<string, any> = {};
+      for (const [seksi, data] of Object.entries(sectionScores)) {
+        const sd = data as { correct: number; total: number; score: number };
+        seksiScores[seksi] = {
+          benar: sd.correct,
+          salah: sd.total - sd.correct,
+          total: sd.total,
+          skor: sd.score,
+        };
+      }
+
+      const existingResult = await db.progresKompetensi.findFirst({
+        where: { userId: dbUser.id, paketId },
+        orderBy: { attemptNumber: "desc" },
+      });
+
+      const nextAttempt = (existingResult?.attemptNumber || 0) + 1;
+
+      const progres = await db.progresKompetensi.create({
+        data: {
+          userId: dbUser.id,
+          paketId,
+          attemptNumber: nextAttempt,
+          status: "COMPLETED",
+          totalScore,
+          rawScore,
+          maxScore: maxPossible,
+          percentage,
+          predikat,
+          predikatLama,
+          sectionScores: seksiScores,
+          seksiScores,
+          finishedAt: new Date(),
+          timeSpent: timeSpent || 0,
+        },
+      });
+
+      let certificate = null;
+      if (totalScore >= 482) {
+        const certNo = `BC-UKBI-${new Date().getFullYear()}-${String(progres.id).slice(-8).toUpperCase()}`;
+        certificate = await db.kompetensiCertificate.create({
+          data: {
+            userId: dbUser.id,
+            paketId,
+            progresId: progres.id,
+            score: totalScore,
+            predikat,
+            percentage,
+            certificateNo: certNo,
+          },
+        });
+      }
+
+      await db.user.update({
+        where: { id: dbUser.id },
+        data: { xp: { increment: Math.round(rawScore / 10) } },
+      });
+
+      return NextResponse.json({
+        success: true,
+        result: {
+          totalScore,
+          percentage: Math.round(percentage * 100) / 100,
+          predikat,
+          predikatLama,
+          benar: totalCorrect,
+          salah: totalQuestions - totalCorrect,
+          total: totalQuestions,
+          rawScore,
+          seksiScores,
+          passed: totalScore >= 482,
+        },
+        certificate,
+        attemptNumber: nextAttempt,
+      });
+    }
+
+    if (paket.type === "TKA_GURU" || paket.type === "TKA_UTBK") {
+      const questions = await db.tKAQuestion.findMany({
+        where: { id: { in: allAnswerIds }, isActive: true },
+      });
+
+      for (const q of questions) {
+        const userAnswer = answers[q.id];
+        const isCorrect = userAnswer === q.correctAnswer;
+        const score = isCorrect ? q.weight * 10 : 0;
+        rawScore += score;
+        totalQuestions++;
+
+        if (isCorrect) totalCorrect++;
+        const kompetensis = q.kompetensi;
+        if (!sectionScores[kompetensis]) sectionScores[kompetensis] = { correct: 0, total: 0, score: 0 };
+        sectionScores[kompetensis].total++;
+        if (isCorrect) {
+          sectionScores[kompetensis].correct++;
+          sectionScores[kompetensis].score += score;
+        }
+
+        await db.testAnswer.create({
+          data: {
+            userId: dbUser.id,
+            sessionId: session.id,
+            paketId,
+            questionId: q.id,
+            questionType: q.type,
+            answer: userAnswer,
+            isCorrect,
+            score,
+            seksi: q.kompetensi,
+          },
+        });
+      }
+
+      const maxPossible = totalQuestions * 2;
+      const percentage = maxPossible > 0 ? (rawScore / maxPossible) * 100 : 0;
+      const predikat = getTKAPredikat(percentage);
+
+      const existingResult = await db.progresKompetensi.findFirst({
+        where: { userId: dbUser.id, paketId },
+        orderBy: { attemptNumber: "desc" },
+      });
+
+      const nextAttempt = (existingResult?.attemptNumber || 0) + 1;
+
+      const progres = await db.progresKompetensi.create({
+        data: {
+          userId: dbUser.id,
+          paketId,
+          attemptNumber: nextAttempt,
+          status: "COMPLETED",
+          totalScore: Math.round(percentage),
+          rawScore,
+          maxScore: maxPossible,
+          percentage,
+          predikat,
+          seksiScores: sectionScores,
+          finishedAt: new Date(),
+          timeSpent: timeSpent || 0,
+        },
+      });
+
+      let certificate = null;
+      if (percentage >= paket.passingScore) {
+        const certNo = `BC-TKA-${new Date().getFullYear()}-${String(progres.id).slice(-8).toUpperCase()}`;
+        certificate = await db.kompetensiCertificate.create({
+          data: {
+            userId: dbUser.id,
+            paketId,
+            progresId: progres.id,
+            score: Math.round(percentage),
+            predikat,
+            percentage,
+            certificateNo: certNo,
+          },
+        });
+      }
+
+      await db.user.update({
+        where: { id: dbUser.id },
+        data: { xp: { increment: Math.round(rawScore) } },
+      });
+
+      return NextResponse.json({
+        success: true,
+        result: {
+          totalScore: Math.round(percentage),
+          percentage: Math.round(percentage * 100) / 100,
+          predikat,
+          benar: totalCorrect,
+          salah: totalQuestions - totalCorrect,
+          total: totalQuestions,
+          rawScore,
+          seksiScores: sectionScores,
+          passed: percentage >= paket.passingScore,
+          passingScore: paket.passingScore,
+        },
+        certificate,
+        attemptNumber: nextAttempt,
+      });
+    }
+
+    return NextResponse.json({ error: "Tipe paket tidak dikenali" }, { status: 400 });
+  } catch (error) {
+    console.error("POST /api/kompetensi/[paketId]/submit error:", error);
+    return NextResponse.json({ error: "Internal error" }, { status: 500 });
+  }
+}

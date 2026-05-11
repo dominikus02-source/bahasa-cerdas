@@ -12,13 +12,13 @@ export async function DELETE(
 
     const { id } = await params;
 
-    const soal = await db.soal.findUnique({ where: { id } });
+    const soal = await db.bankSoal.findUnique({ where: { id } });
     if (!soal) return NextResponse.json({ error: "Not found" }, { status: 404 });
-    if (soal.creatorId !== user.id && user.role !== "ADMIN") {
+    if (soal.uploaderId !== user.id && user.role !== "ADMIN") {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
-    await db.soal.delete({ where: { id } });
+    await db.bankSoal.delete({ where: { id } });
     return NextResponse.json({ message: "Deleted" });
   } catch (error) {
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
@@ -36,7 +36,7 @@ export async function PUT(
     const { id } = await params;
     const body = await req.json();
 
-    const soal = await db.soal.update({
+    const soal = await db.bankSoal.update({
       where: { id },
       data: body,
     });
