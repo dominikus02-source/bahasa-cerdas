@@ -150,6 +150,76 @@ enum TestStatus {
   EXPIRED
 }
 
+enum CommunityType {
+  MGMP
+  KKG
+  PUBLIKASI
+  STUDY_GROUP
+  LAINNYA
+}
+
+model Community {
+  id          String        @id @default(cuid())
+  name        String
+  description String?
+  type        CommunityType @default(MGMP)
+  region      String?
+  province    String?
+  city        String?
+  school      String?
+  avatarUrl   String?
+  bannerUrl   String?
+  isPublic    Boolean       @default(true)
+  isVerified  Boolean       @default(false)
+  memberCount Int           @default(0)
+  postCount   Int           @default(0)
+
+  creatorId String?
+  creator   User?   @relation(fields: [creatorId], references: [id])
+
+  members CommunityMember[]
+  posts   CommunityPost[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([type])
+  @@index([isPublic])
+}
+
+model CommunityMember {
+  id           String    @id @default(cuid())
+  communityId  String
+  community    Community @relation(fields: [communityId], references: [id], onDelete: Cascade)
+  userId       String
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role         String    @default("member")
+  joinedAt     DateTime  @default(now())
+
+  @@unique([communityId, userId])
+  @@index([userId])
+}
+
+model CommunityPost {
+  id           String    @id @default(cuid())
+  communityId  String
+  community    Community @relation(fields: [communityId], references: [id], onDelete: Cascade)
+  userId       String
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  title        String?
+  content      String
+  fileUrl      String?
+  likesCount   Int       @default(0)
+  commentsCount Int      @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([communityId])
+  @@index([userId])
+}
+
 model User {
   id         String  @id @default(cuid())
   supabaseId String  @unique
@@ -200,6 +270,9 @@ model User {
   koleksiKata       KoleksiKata[]
   lombaPeserta      LombaPeserta[]
   aiUsage           AIUsage[]
+  komunitas         CommunityMember[]
+  createdCommunities Community[]
+  communityPosts    CommunityPost[]
   transaksi          Transaksi[]
 }
 
@@ -696,6 +769,10 @@ model Lomba {
   registrationDeadline DateTime?
   prize                String?
   rules                String?
+  posterUrl            String?
+  location             String?
+  contact              String?
+  registrationUrl      String?
   status               LombaStatus @default(UPCOMING)
 
   peserta LombaPeserta[]

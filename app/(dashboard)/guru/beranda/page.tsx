@@ -5,7 +5,7 @@ import {
   BookOpen, ShoppingBag, Users, Gamepad2, Wand2,
   TrendingUp, AlertCircle, ChevronRight, Star,
   FileText, Video, Presentation, Database,
-  ArrowUpRight, Crown, Zap, Flame
+  ArrowUpRight, Crown, Zap, Flame, FileUp, Upload
 } from "lucide-react"
 import { useUserStore } from "@/store"
 
@@ -159,7 +159,7 @@ export default function GuruBerandaPage() {
             <h3 className="font-semibold text-gray-900">Aksi Cepat</h3>
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
             <Link href="/guru/rpp-modul" className="flex items-center gap-3 p-4 rounded-xl bg-emerald-50 hover:bg-emerald-100 transition-colors group">
               <div className="w-10 h-10 rounded-xl bg-emerald-500 flex items-center justify-center">
                 <Wand2 size={18} className="text-white" />
@@ -176,7 +176,7 @@ export default function GuruBerandaPage() {
               </div>
               <div>
                 <p className="text-sm font-semibold text-gray-900 group-hover:text-violet-700">Bank Soal</p>
-                <p className="text-xs text-gray-500">HOTS generator</p>
+                <p className="text-xs text-gray-500">Upload & HOTS</p>
               </div>
             </Link>
 
@@ -197,6 +197,26 @@ export default function GuruBerandaPage() {
               <div>
                 <p className="text-sm font-semibold text-gray-900 group-hover:text-amber-700">Data Siswa</p>
                 <p className="text-xs text-gray-500">Monitoring</p>
+              </div>
+            </Link>
+
+            <Link href="/guru/rpp-modul?upload=true" className="flex items-center gap-3 p-4 rounded-xl bg-teal-50 hover:bg-teal-100 transition-colors group">
+              <div className="w-10 h-10 rounded-xl bg-teal-500 flex items-center justify-center">
+                <FileUp size={18} className="text-white" />
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-gray-900 group-hover:text-teal-700">Upload RPP</p>
+                <p className="text-xs text-gray-500">DOCX/PDF</p>
+              </div>
+            </Link>
+
+            <Link href="/guru/toko-karya?upload=true" className="flex items-center gap-3 p-4 rounded-xl bg-pink-50 hover:bg-pink-100 transition-colors group">
+              <div className="w-10 h-10 rounded-xl bg-pink-500 flex items-center justify-center">
+                <Upload size={18} className="text-white" />
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-gray-900 group-hover:text-pink-700">Upload Karya</p>
+                <p className="text-xs text-gray-500">Jual di toko</p>
               </div>
             </Link>
           </div>

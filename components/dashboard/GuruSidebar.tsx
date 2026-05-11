@@ -45,6 +45,7 @@ const NAV: NavItem[] = [
       { label: "Kalender", href: "/guru/olimpiade/kalender", icon: <Calendar size={16} /> },
     ]
   },
+  { label: "Komunitas", href: "/guru/komunitas", icon: <Users size={18} /> },
   { label: "Pengaturan", href: "/guru/pengaturan", icon: <Settings size={18} /> },
 ]
 
@@ -68,6 +69,7 @@ export function GuruSidebar({ user }: Props) {
   const [expanded, setExpanded] = useState<Record<string, boolean>>({
     Kompetensi: pathname.includes("/ukbi") || pathname.includes("/tka-"),
     Olimpiade: pathname.includes("/olimpiade"),
+    Komunitas: pathname.includes("/komunitas"),
   })
 
   const handleLogout = async () => {
