@@ -107,16 +107,15 @@ export default function KompetisiPage({ params }: { params: Promise<{ paketId: s
   const currentSectionData = sections[currentSection];
   const questions = currentSectionData?.questions || [];
   const currentQ = questions[currentQuestion];
-  const globalQuestionIndex = questions.findIndex((q) => q.id === currentQ?.id);
-  const isFlagged = flagged.includes(globalQuestionIndex);
+  const isFlagged = flagged.includes(currentQuestion);
 
   const selectAnswer = (questionId: string, optionId: string) => {
     setAnswers((prev) => ({ ...prev, [questionId]: optionId }));
   };
 
-  const toggleFlag = (index: number) => {
+  const toggleFlag = () => {
     setFlagged((prev) =>
-      prev.includes(index) ? prev.filter((f) => f !== index) : [...prev, index]
+      prev.includes(currentQuestion) ? prev.filter((f) => f !== currentQuestion) : [...prev, currentQuestion]
     );
   };
 
@@ -253,7 +252,7 @@ export default function KompetisiPage({ params }: { params: Promise<{ paketId: s
               {currentSectionData?.sectionName || data?.packet?.type}
             </span>
             <button
-              onClick={() => toggleFlag(globalQuestionIndex)}
+              onClick={toggleFlag}
               className={`p-2 rounded-lg transition-colors ${isFlagged ? "bg-yellow-100 text-yellow-600" : "hover:bg-slate-100 text-slate-400"}`}
             >
               <Flag className="w-4 h-4" />
@@ -322,32 +321,34 @@ export default function KompetisiPage({ params }: { params: Promise<{ paketId: s
 
       <div className="bg-white border-t border-slate-200 px-4 py-3 sticky bottom-0">
         <div className="max-w-4xl mx-auto">
-          <div className="flex gap-1.5 overflow-x-auto pb-2" style={{ scrollbarWidth: "none" }}>
+          <div className="flex gap-3 overflow-x-auto pb-2" style={{ scrollbarWidth: "none" }}>
             {sections.map((section, sIdx) => (
-              <div key={sIdx} className="flex gap-1 shrink-0">
-                {section.questions.map((q, qIdx) => {
-                  const gIdx = questions.findIndex((qq) => qq.id === q.id);
-                  const isAnswered = !!answers[q.id];
-                  const isFlag = flagged.includes(gIdx);
-                  const isCurrent = sIdx === currentSection && qIdx === currentQuestion;
-                  return (
-                    <button
-                      key={q.id}
-                      onClick={() => goToQuestion(sIdx, qIdx)}
-                      className={`w-8 h-8 rounded-lg text-xs font-bold flex items-center justify-center transition-all ${
-                        isCurrent ? "ring-2 ring-indigo-500 ring-offset-1" : ""
-                      } ${
-                        isFlag
-                          ? "bg-yellow-100 text-yellow-700 border-2 border-yellow-300"
-                          : isAnswered
-                          ? "bg-green-100 text-green-700 border-2 border-green-300"
-                          : "bg-slate-100 text-slate-500 border-2 border-transparent hover:bg-slate-200"
-                      }`}
-                    >
-                      {qIdx + 1}
-                    </button>
-                  );
-                })}
+              <div key={sIdx} className="shrink-0">
+                <p className="text-xs font-bold text-slate-500 mb-1">{section.sectionName}</p>
+                <div className="flex gap-1 flex-wrap">
+                  {section.questions.map((q, qIdx) => {
+                    const isAnswered = !!answers[q.id];
+                    const isFlag = sIdx === currentSection && flagged.includes(qIdx);
+                    const isCurrent = sIdx === currentSection && qIdx === currentQuestion;
+                    return (
+                      <button
+                        key={q.id}
+                        onClick={() => goToQuestion(sIdx, qIdx)}
+                        className={`w-8 h-8 rounded-lg text-xs font-bold flex items-center justify-center transition-all ${
+                          isCurrent ? "ring-2 ring-indigo-500 ring-offset-1" : ""
+                        } ${
+                          isFlag
+                            ? "bg-yellow-100 text-yellow-700 border-2 border-yellow-300"
+                            : isAnswered
+                            ? "bg-green-100 text-green-700 border-2 border-green-300"
+                            : "bg-slate-100 text-slate-500 border-2 border-transparent hover:bg-slate-200"
+                        }`}
+                      >
+                        {qIdx + 1}
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
             ))}
           </div>

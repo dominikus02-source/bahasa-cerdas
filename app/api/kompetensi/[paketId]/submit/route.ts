@@ -162,7 +162,6 @@ export async function POST(
           predikat,
           predikatLama,
           sectionScores: seksiScores,
-          seksiScores,
           finishedAt: new Date(),
           timeSpent: timeSpent || 0,
         },
