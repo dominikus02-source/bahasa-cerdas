@@ -271,8 +271,11 @@ model User {
   lombaPeserta      LombaPeserta[]
   aiUsage           AIUsage[]
   komunitas         CommunityMember[]
-  createdCommunities Community[]
   communityPosts    CommunityPost[]
+  createdCommunities Community[]
+  groups            Group[]
+  groupMemberships  GroupMember[]
+  groupQuizResults  GroupQuizResult[]
   transaksi          Transaksi[]
 }
 
@@ -840,4 +843,67 @@ model Notifikasi {
   data   Json?
 
   createdAt DateTime @default(now())
+}
+
+model Group {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  grade       String
+  tahunAjaran String?
+  accessCode  String   @unique
+  isActive    Boolean  @default(true)
+
+  teacherId String
+  teacher   User   @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+
+  members  GroupMember[]
+  quizzes  GroupQuiz[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([teacherId])
+  @@index([accessCode])
+}
+
+model GroupMember {
+  id        String   @id @default(cuid())
+  groupId   String
+  group     Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  joinedAt  DateTime @default(now())
+
+  @@unique([groupId, userId])
+  @@index([userId])
+  @@index([groupId])
+}
+
+model GroupQuiz {
+  id        String   @id @default(cuid())
+  groupId   String
+  group     Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  quizId    String
+  title     String
+  assignedAt DateTime @default(now())
+  dueDate   DateTime?
+  results   GroupQuizResult[]
+
+  @@index([groupId])
+}
+
+model GroupQuizResult {
+  id           String    @id @default(cuid())
+  groupQuizId  String
+  groupQuiz    GroupQuiz @relation(fields: [groupQuizId], references: [id], onDelete: Cascade)
+  userId       String
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  score        Int?
+  status       String     @default("ASSIGNED")
+  startedAt    DateTime?
+  finishedAt   DateTime?
+
+  @@unique([groupQuizId, userId])
+  @@index([userId])
 }

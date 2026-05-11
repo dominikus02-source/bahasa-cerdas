@@ -46,6 +46,7 @@ const NAV: NavItem[] = [
     ]
   },
   { label: "Komunitas", href: "/guru/komunitas", icon: <Users size={18} /> },
+  { label: "KelasKu", href: "/guru/kelasku", icon: <GraduationCap size={18} /> },
   { label: "Pengaturan", href: "/guru/pengaturan", icon: <Settings size={18} /> },
 ]
 
