@@ -1,6 +1,6 @@
 "use server";
 
-import { createClient } from "@/lib/supabase/server";
+import { createClient as createSupabase } from "@supabase/supabase-js";
 import { db } from "@/lib/db";
 import { redirect } from "next/navigation";
 
@@ -13,11 +13,12 @@ export async function loginUser(formData: FormData) {
       return { error: "Missing credentials" };
     }
 
-    const supabase = await createClient();
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
+    const supabase = createSupabase(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    );
+
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 
     if (error) {
       return { error: error.message };
@@ -27,9 +28,7 @@ export async function loginUser(formData: FormData) {
       return { error: "Login failed" };
     }
 
-    const dbUser = await db.user.findUnique({
-      where: { supabaseId: data.user.id },
-    });
+    const dbUser = await db.user.findUnique({ where: { supabaseId: data.user.id } });
 
     if (!dbUser) {
       await supabase.auth.signOut();
