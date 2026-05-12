@@ -4,10 +4,10 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { GraduationCap, BookOpen, ArrowRight, Sparkles, Check } from "lucide-react";
 import BatikDecoration from "@/components/shared/BatikDecoration";
-import { registerUser } from "@/app/actions/register";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -24,20 +24,39 @@ export default function RegisterPage() {
     setLoading(true);
     setError("");
 
-    const formData = new FormData();
-    formData.set("email", email);
-    formData.set("fullName", fullName);
-    formData.set("password", password);
-    formData.set("role", role);
+    const supabase = createClient();
+    const { data, error: signUpError } = await supabase.auth.signUp({
+      email,
+      password,
+      options: { data: { role, full_name: fullName } },
+    });
 
-    const result = await registerUser(formData);
-
-    if (result?.error) {
-      setError(result.error);
+    if (signUpError) {
+      setError(signUpError.message);
       setLoading(false);
-    } else if (result?.redirect) {
-      router.push(result.redirect);
+      return;
     }
+
+    if (data.user) {
+      try {
+        const res = await fetch("/api/auth/register", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, fullName, role }),
+        });
+
+        if (res.ok) {
+          router.push(`/${role.toLowerCase()}/beranda`);
+        } else {
+          const err = await res.json();
+          setError(err.error || "Registration failed");
+          await supabase.auth.signOut();
+        }
+      } catch (e: any) {
+        setError(e.message || "Terjadi kesalahan");
+      }
+    }
+    setLoading(false);
   };
 
   const roleConfig = {
