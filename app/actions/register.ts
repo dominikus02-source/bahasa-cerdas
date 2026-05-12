@@ -40,7 +40,7 @@ export async function registerUser(formData: FormData) {
   });
 
   if (existingUser) {
-    redirect(`/${existingUser.role.toLowerCase()}/beranda`);
+    return { redirect: `/${existingUser.role.toLowerCase()}/beranda` };
   }
 
   const newUser = await db.user.create({
@@ -59,5 +59,5 @@ export async function registerUser(formData: FormData) {
     data: { userId: newUser.id },
   });
 
-  redirect(`/${role.toLowerCase()}/beranda`);
+  return { redirect: `/${role.toLowerCase()}/beranda` };
 }

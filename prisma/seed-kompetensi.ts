@@ -109,7 +109,7 @@ const UKBI_QUESTIONS = [
     correctAnswer: "A",
     explanation: "Bentuk baku yang benar adalah 'langkuas' (bukan 'lengkuas'). KBBI menyediakan bentuk 'langkuas'.",
     difficulty: "EASY",
-    cognitive: "MEMAHAMAN",
+    cognitive: "PEMAHAMAN",
     domain: "SOSIAL",
     keywords: ["ejaan", "baku", "KBBI"],
     isVerified: true,
@@ -310,7 +310,7 @@ const UKBI_QUESTIONS = [
     correctAnswer: "A",
     explanation: "Bentuk baku adalah 'sirup' (bukan 'sirop') dan 'nanas' (bukan 'nanas')",
     difficulty: "EASY",
-    cognitive: "MEMAHAMAN",
+    cognitive: "PEMAHAMAN",
     domain: "SOSIAL",
     keywords: ["ejaan", "baku"],
     isVerified: true,
@@ -445,7 +445,7 @@ const UKBI_QUESTIONS = [
     correctAnswer: "C",
     explanation: "Wacana secara eksplisit menyebutkan 'empat kompetensi: pedagogik, profesional, sosial, dan kepribadian.'",
     difficulty: "EASY",
-    cognitive: "MEMAHAMAN",
+    cognitive: "PEMAHAMAN",
     domain: "SOSIAL",
     passageType: "ilmiah",
     wordCount: 32,
@@ -981,20 +981,18 @@ async function main() {
   const existingTKA = await prisma.tKAQuestion.count();
 
   if (existingUKBI === 0) {
-    await prisma.uKBIQuestion.createMany({
-      data: UKBI_QUESTIONS as any[],
-      skipDuplicates: true,
-    });
+    for (const q of UKBI_QUESTIONS as any[]) {
+      await prisma.uKBIQuestion.create({ data: q });
+    }
     console.log(`✅ Added ${UKBI_QUESTIONS.length} UKBI questions`);
   } else {
     console.log(`⏩ Skipped UKBI (${existingUKBI} already exist)`);
   }
 
   if (existingTKA === 0) {
-    await prisma.tKAQuestion.createMany({
-      data: TKA_QUESTIONS as any[],
-      skipDuplicates: true,
-    });
+    for (const q of TKA_QUESTIONS as any[]) {
+      await prisma.tKAQuestion.create({ data: q });
+    }
     console.log(`✅ Added ${TKA_QUESTIONS.length} TKA questions`);
   } else {
     console.log(`⏩ Skipped TKA (${existingTKA} already exist)`);
@@ -1002,138 +1000,115 @@ async function main() {
 
   const existingPaket = await prisma.paketKompetensi.count();
   if (existingPaket === 0) {
-    await prisma.paketKompetensi.createMany({
-      data: [
-        {
-          title: "Simulasi UKBI - Paket Lengkap",
-          description: "Simulasi UKBI Adaptif Merdeka dengan 5 seksi lengkap. Cocok untuk latihan mandiri sebelum ujian UKBI resmi.",
-          type: "UKBI_SIMULASI",
-          mode: "SIMULASI",
-          duration: 120,
-          passingScore: 482,
-          passingGrade: "MADYA",
-          totalQuestions: 129,
-          isActive: true,
-          isPremium: false,
-          attemptLimit: -1,
-          sections: [],
-          sectionsData: JSON.stringify([
-            {
-              name: "Seksi I: Mendengarkan",
-              seksi: "MENDENGARKAN",
-              timeLimit: 30,
-              count: 10,
-            },
-            {
-              name: "Seksi II: Merespons Kaidah",
-              seksi: "MERESPONS_KAIDAH",
-              timeLimit: 20,
-              count: 10,
-            },
-            {
-              name: "Seksi III: Membaca",
-              seksi: "MEMBACA",
-              timeLimit: 45,
-              count: 10,
-            },
-            {
-              name: "Seksi IV: Menulis",
-              seksi: "MENULIS",
-              timeLimit: 35,
-              count: 2,
-            },
-          ]),
-        },
-        {
-          title: "Latihan UKBI - Seksi I Mendengarkan",
-          description: "Latihan soal UKBI Seksi I: Mendengarkan. Dialog dan monolog pemahaman audio.",
-          type: "UKBI_LATIHAN",
-          mode: "LATIHAN",
-          duration: 30,
-          passingScore: 0,
-          passingGrade: "-",
-          totalQuestions: 10,
-          isActive: true,
-          isPremium: false,
-          attemptLimit: -1,
-          sections: [],
-          sectionsData: JSON.stringify([
-            { name: "Seksi I: Mendengarkan", seksi: "MENDENGARKAN", timeLimit: 30, count: 10 },
-          ]),
-        },
-        {
-          title: "Latihan UKBI - Seksi II & III",
-          description: "Latihan Seksi II Merespons Kaidah dan Seksi III Membaca.",
-          type: "UKBI_LATIHAN",
-          mode: "LATIHAN",
-          duration: 65,
-          passingScore: 0,
-          passingGrade: "-",
-          totalQuestions: 20,
-          isActive: true,
-          isPremium: false,
-          attemptLimit: -1,
-          sections: [],
-          sectionsData: JSON.stringify([
-            { name: "Seksi II: Merespons Kaidah", seksi: "MERESPONS_KAIDAH", timeLimit: 20, count: 10 },
-            { name: "Seksi III: Membaca", seksi: "MEMBACA", timeLimit: 45, count: 10 },
-          ]),
-        },
-        {
-          title: "Simulasi TKA Guru - Pedagogik & Profesional",
-          description: "Simulasi TKA UKPPPG dengan soal Pedagogik dan Profesional. Passing grade: 70%.",
-          type: "TKA_GURU",
-          mode: "SIMULASI",
-          duration: 120,
-          passingScore: 70,
-          passingGrade: "B",
-          totalQuestions: 25,
-          isActive: true,
-          isPremium: false,
-          attemptLimit: -1,
-          sections: [],
-          sectionsData: JSON.stringify([
-            { name: "Kompetensi Pedagogik", kompetensi: "PEDAGOGIK", timeLimit: 60, count: 12 },
-            { name: "Kompetensi Profesional", kompetensi: "PROFESIONAL", timeLimit: 60, count: 8 },
-          ]),
-        },
-        {
-          title: "Latihan TKA Guru - Pedagogik",
-          description: "Latihan soal Pedagogik untuk persiapan UKPPPG.",
-          type: "TKA_GURU",
-          mode: "LATIHAN",
-          duration: 30,
-          passingScore: 0,
-          passingGrade: "-",
-          totalQuestions: 12,
-          isActive: true,
-          isPremium: false,
-          attemptLimit: -1,
-          sections: [],
-          sectionsData: JSON.stringify([
-            { name: "Kompetensi Pedagogik", kompetensi: "PEDAGOGIK", timeLimit: 30, count: 12 },
-          ]),
-        },
-        {
-          title: "Latihan TKA Guru - Profesional & Sosial",
-          description: "Latihan soal Kompetensi Profesional, Sosial, dan Kepribadian.",
-          type: "TKA_GURU",
-          mode: "LATIHAN",
-          duration: 30,
-          passingScore: 0,
-          passingGrade: "-",
-          totalQuestions: 13,
-          isActive: true,
-          isPremium: false,
-          attemptLimit: -1,
-          sections: [],
-          sectionsData: JSON.stringify([
-            { name: "Kompetensi Profesional", kompetensi: "PROFESIONAL", timeLimit: 20, count: 7 },
-            { name: "Kompetensi Sosial & Kepribadian", kompetensi: "SOSIAL", timeLimit: 10, count: 6 },
-          ]),
-        },
-      ],
-      skipDuplicates: true,
+    await prisma.paketKompetensi.create({
+      data: {
+        title: "Simulasi UKBI - Paket Lengkap",
+        description: "Simulasi UKBI Adaptif Merdeka dengan 5 seksi lengkap.",
+        type: "UKBI_SIMULASI",
+        mode: "SIMULASI",
+        duration: 120,
+        passingScore: 482,
+        passingGrade: "MADYA",
+        totalQuestions: 129,
+        isActive: true,
+        isPremium: false,
+        attemptLimit: -1,
+        sections: [
+          { name: "Seksi I: Mendengarkan", seksi: "MENDENGARKAN", timeLimit: 30, count: 10 },
+          { name: "Seksi II: Merespons Kaidah", seksi: "MERESPONS_KAIDAH", timeLimit: 20, count: 10 },
+          { name: "Seksi III: Membaca", seksi: "MEMBACA", timeLimit: 45, count: 10 },
+          { name: "Seksi IV: Menulis", seksi: "MENULIS", timeLimit: 35, count: 2 },
+        ],
+      },
+    });
+    await prisma.paketKompetensi.create({
+      data: {
+        title: "Latihan UKBI - Seksi I Mendengarkan",
+        description: "Latihan soal UKBI Seksi I: Mendengarkan.",
+        type: "UKBI_LATIHAN",
+        mode: "LATIHAN",
+        duration: 30,
+        passingScore: 0,
+        passingGrade: "-",
+        totalQuestions: 10,
+        isActive: true,
+        isPremium: false,
+        attemptLimit: -1,
+        sections: [{ name: "Seksi I: Mendengarkan", seksi: "MENDENGARKAN", timeLimit: 30, count: 10 }],
+      },
+    });
+    await prisma.paketKompetensi.create({
+      data: {
+        title: "Latihan UKBI - Seksi II & III",
+        description: "Latihan Seksi II Merespons Kaidah dan Seksi III Membaca.",
+        type: "UKBI_LATIHAN",
+        mode: "LATIHAN",
+        duration: 65,
+        passingScore: 0,
+        passingGrade: "-",
+        totalQuestions: 20,
+        isActive: true,
+        isPremium: false,
+        attemptLimit: -1,
+        sections: [
+          { name: "Seksi II: Merespons Kaidah", seksi: "MERESPONS_KAIDAH", timeLimit: 20, count: 10 },
+          { name: "Seksi III: Membaca", seksi: "MEMBACA", timeLimit: 45, count: 10 },
+        ],
+      },
+    });
+    await prisma.paketKompetensi.create({
+      data: {
+        title: "Simulasi TKA Guru - Pedagogik & Profesional",
+        description: "Simulasi TKA UKPPPG dengan soal Pedagogik dan Profesional.",
+        type: "TKA_GURU",
+        mode: "SIMULASI",
+        duration: 120,
+        passingScore: 70,
+        passingGrade: "B",
+        totalQuestions: 25,
+        isActive: true,
+        isPremium: false,
+        attemptLimit: -1,
+        sections: [
+          { name: "Kompetensi Pedagogik", kompetensi: "PEDAGOGIK", timeLimit: 60, count: 12 },
+          { name: "Kompetensi Profesional", kompetensi: "PROFESIONAL", timeLimit: 60, count: 8 },
+        ],
+      },
+    });
+    await prisma.paketKompetensi.create({
+      data: {
+        title: "Latihan TKA Guru - Pedagogik",
+        description: "Latihan soal Pedagogik untuk persiapan UKPPPG.",
+        type: "TKA_GURU",
+        mode: "LATIHAN",
+        duration: 30,
+        passingScore: 0,
+        passingGrade: "-",
+        totalQuestions: 12,
+        isActive: true,
+        isPremium: false,
+        attemptLimit: -1,
+        sections: [{ name: "Kompetensi Pedagogik", kompetensi: "PEDAGOGIK", timeLimit: 30, count: 12 }],
+      },
+    });
+    await prisma.paketKompetensi.create({
+      data: {
+        title: "Latihan TKA Guru - Profesional & Sosial",
+        description: "Latihan soal Kompetensi Profesional, Sosial, dan Kepribadian.",
+        type: "TKA_GURU",
+        mode: "LATIHAN",
+        duration: 30,
+        passingScore: 0,
+        passingGrade: "-",
+        totalQuestions: 13,
+        isActive: true,
+        isPremium: false,
+        attemptLimit: -1,
+        sections: [
+          { name: "Kompetensi Profesional", kompetensi: "PROFESIONAL", timeLimit: 20, count: 7 },
+          { name: "Kompetensi Sosial & Kepribadian", kompetensi: "SOSIAL", timeLimit: 10, count: 6 },
+        ],
+      },
     });
     console.log("✅ Added 6 test packages");
   } else {

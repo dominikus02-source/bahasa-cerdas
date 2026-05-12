@@ -35,6 +35,8 @@ export default function RegisterPage() {
     if (result?.error) {
       setError(result.error);
       setLoading(false);
+    } else if (result?.redirect) {
+      router.push(result.redirect);
     }
   };
 
