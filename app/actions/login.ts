@@ -28,7 +28,7 @@ export async function loginUser(formData: FormData) {
       return { error: "Login failed" };
     }
 
-    const dbUser = await db.user.findUnique({ where: { supabaseId: data.user.id } });
+    const dbUser = await db.user.findFirst({ where: { email: email.toLowerCase() } });
 
     if (!dbUser) {
       await supabase.auth.signOut();

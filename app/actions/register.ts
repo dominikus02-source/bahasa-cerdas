@@ -42,7 +42,10 @@ export async function registerUser(formData: FormData) {
 
     const existingUser = await db.user.findFirst({ where: { email: email.toLowerCase() } });
     if (existingUser) {
-      redirect(`/${existingUser.role.toLowerCase()}/beranda`);
+      if (existingUser.supabaseId === data.user.id) {
+        redirect(`/${existingUser.role.toLowerCase()}/beranda`);
+      }
+      return { error: "Email sudah terdaftar dengan akun lain" };
     }
 
     const newUser = await db.user.create({
