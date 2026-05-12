@@ -38,12 +38,11 @@ export default function RegisterPage() {
     }
 
     if (data.user) {
-      const isFounder = email === "dominus.02@gmail.com";
       try {
         const res = await fetch("/api/auth/register", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email, fullName, role }),
+          body: JSON.stringify({ email, fullName, role, supabaseId: data.user.id }),
           credentials: "include",
         });
 

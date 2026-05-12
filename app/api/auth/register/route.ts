@@ -1,22 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 
 export async function POST(req: NextRequest) {
   try {
-    const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getSession();
-
-    if (!user) {
-      const existing = await db.user.findFirst({ where: { email } });
-      if (existing) {
-        return NextResponse.json({ user: existing, redirect: `/${existing.role.toLowerCase()}/beranda` }, { status: 200 });
-      }
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
     const body = await req.json();
-    const { email, fullName, role } = body;
+    const { email, fullName, role, supabaseId } = body;
 
     if (!email || !fullName || !role) {
       return NextResponse.json({ error: "Missing fields" }, { status: 400 });
@@ -28,8 +16,8 @@ export async function POST(req: NextRequest) {
 
     const isFounder = email === "dominus.02@gmail.com";
 
-    const existingUser = await db.user.findUnique({
-      where: { supabaseId: user.id },
+    const existingUser = await db.user.findFirst({
+      where: { email: email.toLowerCase() },
     });
 
     if (existingUser) {
@@ -38,7 +26,7 @@ export async function POST(req: NextRequest) {
 
     const newUser = await db.user.create({
       data: {
-        supabaseId: user.id,
+        supabaseId: supabaseId || ("pending-" + Date.now()),
         email,
         fullName,
         role: role as "GURU" | "MURID",
@@ -53,12 +41,12 @@ export async function POST(req: NextRequest) {
         data: { userId: newUser.id },
       });
     } catch (e) {
-      console.log("Profile already exists or creation failed:", e);
+      console.log("Profile creation note:", e);
     }
 
     return NextResponse.json({ user: newUser, redirect: `/${role.toLowerCase()}/beranda` }, { status: 201 });
-  } catch (error) {
+  } catch (error: any) {
     console.error("Register error:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json({ error: error?.message || "Internal server error" }, { status: 500 });
   }
 }
