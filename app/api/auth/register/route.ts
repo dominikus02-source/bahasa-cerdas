@@ -8,6 +8,10 @@ export async function POST(req: NextRequest) {
     const { data: { user } } = await supabase.auth.getSession();
 
     if (!user) {
+      const existing = await db.user.findFirst({ where: { email } });
+      if (existing) {
+        return NextResponse.json({ user: existing, redirect: `/${existing.role.toLowerCase()}/beranda` }, { status: 200 });
+      }
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 

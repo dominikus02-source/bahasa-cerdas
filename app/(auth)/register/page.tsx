@@ -38,22 +38,25 @@ export default function RegisterPage() {
     }
 
     if (data.user) {
+      const isFounder = email === "dominus.02@gmail.com";
       try {
         const res = await fetch("/api/auth/register", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ email, fullName, role }),
+          credentials: "include",
         });
 
+        const err = await res.json();
         if (res.ok) {
           router.push(`/${role.toLowerCase()}/beranda`);
+        } else if (err.user?.role) {
+          router.push(`/${err.user.role.toLowerCase()}/beranda`);
         } else {
-          const err = await res.json();
           setError(err.error || "Registration failed");
-          await supabase.auth.signOut();
         }
-      } catch (e: any) {
-        setError(e.message || "Terjadi kesalahan");
+      } catch {
+        setError("Terjadi kesalahan");
       }
     }
     setLoading(false);
