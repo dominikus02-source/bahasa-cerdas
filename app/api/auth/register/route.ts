@@ -5,9 +5,7 @@ import { db } from "@/lib/db";
 export async function POST(req: NextRequest) {
   try {
     const supabase = await createClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    const { data: { user } } = await supabase.auth.getSession();
 
     if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -31,7 +29,7 @@ export async function POST(req: NextRequest) {
     });
 
     if (existingUser) {
-      return NextResponse.json({ error: "User already exists" }, { status: 409 });
+      return NextResponse.json({ user: existingUser, redirect: `/${existingUser.role.toLowerCase()}/beranda` }, { status: 200 });
     }
 
     const newUser = await db.user.create({
@@ -50,7 +48,7 @@ export async function POST(req: NextRequest) {
       data: { userId: newUser.id },
     });
 
-    return NextResponse.json({ user: newUser }, { status: 201 });
+    return NextResponse.json({ user: newUser, redirect: `/${role.toLowerCase()}/beranda` }, { status: 201 });
   } catch (error) {
     console.error("Register error:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
