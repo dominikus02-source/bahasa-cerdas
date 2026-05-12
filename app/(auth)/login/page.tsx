@@ -25,7 +25,6 @@ export default function LoginPage() {
     formData.set("password", password);
 
     const result = await loginUser(formData);
-
     if (result?.error) {
       setError(result.error);
       setLoading(false);

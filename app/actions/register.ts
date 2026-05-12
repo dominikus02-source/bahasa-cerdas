@@ -2,6 +2,7 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
+import { redirect } from "next/navigation";
 
 export async function registerUser(formData: FormData) {
   try {
@@ -35,17 +36,22 @@ export async function registerUser(formData: FormData) {
       return { error: "Registration failed" };
     }
 
-    const existingUser = await db.user.findUnique({
-      where: { supabaseId: data.user.id },
+    const supabaseId = data.user.id;
+
+    const existingUser = await db.user.findFirst({
+      where: { email: email.toLowerCase() },
     });
 
     if (existingUser) {
-      return { redirect: `/${existingUser.role.toLowerCase()}/beranda` };
+      if (existingUser.supabaseId === supabaseId) {
+        redirect(`/${existingUser.role.toLowerCase()}/beranda`);
+      }
+      return { error: "Email sudah terdaftar dengan akun lain" };
     }
 
     const newUser = await db.user.create({
       data: {
-        supabaseId: data.user.id,
+        supabaseId,
         email,
         fullName,
         role,
@@ -61,9 +67,9 @@ export async function registerUser(formData: FormData) {
       });
     } catch (e) {}
 
-    return { redirect: `/${role.toLowerCase()}/beranda` };
+    redirect(`/${role.toLowerCase()}/beranda`);
   } catch (err: any) {
-    console.error("Register error:", err);
+    if (err?.message?.includes("NEXT_REDIRECT")) throw err;
     return { error: err?.message || "Internal server error" };
   }
 }

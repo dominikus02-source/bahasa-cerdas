@@ -3,14 +3,12 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { GraduationCap, BookOpen, ArrowRight, Sparkles, Check } from "lucide-react";
 import BatikDecoration from "@/components/shared/BatikDecoration";
+import { registerUser } from "@/app/actions/register";
 
 export default function RegisterPage() {
-  const router = useRouter();
   const [step, setStep] = useState(1);
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
@@ -24,39 +22,15 @@ export default function RegisterPage() {
     setLoading(true);
     setError("");
 
-    const supabase = createClient();
-    const { data, error: signUpError } = await supabase.auth.signUp({
-      email,
-      password,
-      options: { data: { role, full_name: fullName } },
-    });
+    const formData = new FormData();
+    formData.set("email", email);
+    formData.set("fullName", fullName);
+    formData.set("password", password);
+    formData.set("role", role);
 
-    if (signUpError) {
-      setError(signUpError.message);
-      setLoading(false);
-      return;
-    }
-
-    if (data.user) {
-      try {
-        const res = await fetch("/api/auth/register", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email, fullName, role, supabaseId: data.user.id }),
-          credentials: "include",
-        });
-
-        const err = await res.json();
-        if (res.ok) {
-          router.push(`/${role.toLowerCase()}/beranda`);
-        } else if (err.user?.role) {
-          router.push(`/${err.user.role.toLowerCase()}/beranda`);
-        } else {
-          setError(err.error || "Registration failed");
-        }
-      } catch {
-        setError("Terjadi kesalahan");
-      }
+    const result = await registerUser(formData);
+    if (result?.error) {
+      setError(result.error);
     }
     setLoading(false);
   };
