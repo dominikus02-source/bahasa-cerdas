@@ -32,16 +32,16 @@ export default function LoginPage() {
     }
 
     if (data.user) {
-      const { data: dbUser } = await supabase
-        .from("users")
-        .select("role")
-        .eq("supabase_id", data.user.id)
-        .single();
-
-      if (!dbUser) {
+      try {
+        const res = await fetch("/api/auth/me");
+        const { user: dbUser } = await res.json();
+        if (!dbUser) {
+          router.push("/register");
+        } else {
+          router.push(`/${dbUser.role?.toLowerCase()}/beranda`);
+        }
+      } catch {
         router.push("/register");
-      } else {
-        router.push(`/${dbUser.role?.toLowerCase()}/beranda`);
       }
     }
     setLoading(false);
