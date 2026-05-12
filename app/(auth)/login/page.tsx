@@ -3,14 +3,12 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { LogIn, Eye, EyeOff, Sparkles } from "lucide-react";
 import BatikDecoration from "@/components/shared/BatikDecoration";
+import { loginUser } from "@/app/actions/login";
 
 export default function LoginPage() {
-  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -22,30 +20,16 @@ export default function LoginPage() {
     setLoading(true);
     setError("");
 
-    const supabase = createClient();
-    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    const formData = new FormData();
+    formData.set("email", email);
+    formData.set("password", password);
 
-    if (error) {
-      setError(error.message);
+    const result = await loginUser(formData);
+
+    if (result?.error) {
+      setError(result.error);
       setLoading(false);
-      return;
     }
-
-    if (data.user) {
-      try {
-        const res = await fetch("/api/auth/me");
-        const result = await res.json();
-        if (result.user) {
-          router.push(`/${result.user.role.toLowerCase()}/beranda`);
-        } else {
-          await supabase.auth.signOut();
-          setError("Sesi tidak valid. Silakan daftar ulang.");
-        }
-      } catch (e) {
-        setError("Terjadi kesalahan. Silakan coba lagi.");
-      }
-    }
-    setLoading(false);
   };
 
   return (
