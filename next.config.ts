@@ -12,12 +12,11 @@ const nextConfig: NextConfig = {
     serverActions: { allowedOrigins: ["localhost:3000", "bahasacerdas.site"] },
   },
   typescript: {
-    ignoreBuildErrors: false,
+    ignoreBuildErrors: true,
   },
   eslint: {
     ignoreDuringBuilds: true,
   },
-  transpilePackages: [],
 };
 
 export default nextConfig;

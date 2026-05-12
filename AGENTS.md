@@ -5,99 +5,162 @@ This version has breaking changes — APIs, conventions, and file structure may 
 <!-- END:nextjs-agent-rules -->
 
 # BahasaCerdas Project Status
-## Last Updated: May 2026
+## Last Updated: May 12, 2026
 
 ## Goal
-Build BahasaCerdas educational platform with video learning, teacher upload workflows, marketplace, financial system, and UKBI/TKA simulation based on Kemdikbud standards.
+Build BahasaCerdas educational platform with video learning, teacher upload workflows, marketplace, Kuis Battle multiplayer game, UKBI/TKA simulation, class management, and community system.
 
 ## Tech Stack
-- Next.js 15.1.0 with TypeScript
-- Tailwind CSS for styling
-- Supabase for auth/database + file storage
-- Midtrans for payment (Xendit removed)
+- Next.js 16.2.6 with TypeScript, App Router, Tailwind CSS
+- Supabase for auth + PostgreSQL (VPS self-hosted for game system)
+- Game server: Socket.io on VPS port 3001, NGINX reverse proxy
+- Midtrans for payment
 - Prisma ORM with PostgreSQL
+- Vercel for frontend, Hostinger VPS for game backend + database
+- Guru color: emerald/green, Murid color: violet/purple
 
-## Color Theme
-- Guru = emerald/green theme
-- Murid = violet/purple theme
+## Critical Context
 
-## Key Constraints
-- Video storage: YouTube/Vimeo embed URL (no local video storage)
-- Marketplace: 3 free uploads, premium = unlimited
-- Finance: 80% seller, 20% platform commission
-- UKBI: 5 sections (Mendengarkan, Merespons Kaidah, Membaca, Menulis, Berbicara)
-- TKA Guru: 4 competencies (Pedagogik, Profesional, Sosial, Kepribadian)
-- Resend API key needed in .env for email delivery after marketplace purchase
+### VPS (Hostinger)
+- IP: ***REMOVED-VPS-IP***, Ubuntu 22.04
+- SSH password: ***REMOVED-SSH-PASSWORD***
+- PostgreSQL running on port 5432
+- Node.js 20, PM2 installed
+- Game server deployed to /var/www/game-server/game-server
+- NGINX configured for game.bahasacerdas.site → port 3001
+- Database: bahasacerdas, user: bahasa, password: ***REMOVED-DB-PASSWORD***
+- SSH currently unreachable (server restarting after manual reboot from Hostinger console)
+- VPS needs: certbot for SSL, game question seeding, PM2 startup on boot
 
-## Database Models (Prisma)
-- User, Profile, Video, CoursePlaylist, Materi, BankSoal, RPP, Karya, Pembelian, PurchaseHistory, SellerEarning, Withdrawal, QuizSession, Certificate, KoleksiKata, Lomba, LombaPeserta, AIUsage, Transaksi, Notifikasi
-- UKBIQuestion, TKAQuestion, PaketKompetensi, ProgresKompetensi, KompetensiCertificate, TestSession, TestAnswer
-- Enums: Role, PremiumPlan, Difficulty, KaryaType, LeagueType, KompetensiType, LombaStatus, OrderStatus, KoleksiRarity, VideoSource, VideoCategory, WithdrawStatus, FileType, UKBISeksi, CognitiveDimension, KommunikasDomain, TKAKompetensi, TestMode, TestStatus
+### Supabase (Auth only)
+- URL: https://***REMOVED-SUPABASE-REF***.supabase.co
+- ANON_KEY: ***REMOVED-ANON-KEY***
+- SERVICE_ROLE_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlidGxob29jYW9vcGd0Y3NudnpyIiwicm9sZSI6InNlcnZpY2Utcm9sZSIsImlhdCI6MTc3NzQ5NDI1NiwiZXhwIjoyMDkzMDcwMjU2fQ.PjBT8h7bN-W5L5E8Cq5mF1aW2dR4vK9xXyZ3nB6mC8g
 
-## Game System (Phase 1-3)
-- Kuis Battle multiplayer real-time via Socket.io
-- Game server: game-server/src/server.ts (Node.js + Socket.io on port 3001)
-- Game lobby: components/game/GameLobby.tsx, components/game/GamePlay.tsx
-- Game pages: app/(dashboard)/guru/game/lobby, app/(dashboard)/murid/game/lobby, app/(dashboard)/murid/game/play
-- API routes: app/api/game/room, app/api/game/result, app/api/game/history
-- Prisma models: GameRoom, GameQuestion, GameSession, GameResult
+### Environment Variables
+- DATABASE_URL: postgresql://bahasa:***REMOVED-DB-PASSWORD***@***REMOVED-VPS-IP***:5432/bahasacerdas
+- NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY (see above)
+- NEXT_PUBLIC_SITE_URL: https://bahasacerdas.site
+- NEXT_PUBLIC_GAME_SERVER_URL: https://game.bahasacerdas.site
+- MIDTRANS_SERVER_KEY: [REDACTED]
+- NEXT_PUBLIC_MIDTRANS_CLIENT_KEY: ***REMOVED-MIDTRANS-CLIENT-KEY***
+- NEXT_PUBLIC_MIDTRANS_MERCHANT_ID: ***REMOVED-MIDTRANS-MERCHANT-ID***
+- ANTHROPIC_API_KEY: sk-ant-api03-xxxxxxx (placeholder)
+
+### DNS
+- Main site: bahasacerdas.site → Vercel (live)
+- Game subdomain: game.bahasacerdas.site → ***REMOVED-VPS-IP*** (A record added, propagation ongoing)
+- game.bahasacerdas.site currently not resolving (DNS or server issue)
+
+### Game Server (VPS)
+- Location: /var/www/game-server/game-server on VPS
+- Entry: src/server.ts (Socket.io, port 3001)
+- Prisma schema in game-server/prisma/schema.prisma (separate from main project)
+- PM2 process name: needs check (run `pm2 list` on VPS)
+- VPS Prisma version: 5.22.0
+- Main project Prisma version: 5.22.0
+- Bug fixed: PORT parseInt, let code, data.answerIndex, q:any, newHost check
+
+## Build Config
+- next.config.ts: typescript.ignoreBuildErrors: true, eslint.ignoreDuringBuilds: true
+- Build command: prisma generate && next build
+- Uses npm (NOT pnpm — pnpm workspace caused build failures)
+
+## Completed Features
+
+### Core
+- Next.js deployed to Vercel (live at bahasacerdas.site)
+- Supabase auth integration (middleware + supabase SSR)
+- Role-based routing (guru/murid dashboard)
+- Tailwind theme with emerald/violet color system
+
+### Game System (Kuis Battle)
+- Socket.io game server on VPS
+- Game pages: guru/game/lobby, murid/game/lobby, murid/game/play, game/[code]
+- Components: components/game/GameLobby.tsx, GamePlay.tsx
 - Socket client: lib/game/socket.ts
-- Seed: prisma/seed-game.ts (35 questions: EASY/MEDIUM/HARD)
-- 3 game types: KUIS_BATTLE, TEBAC_KATA, KATA_SERU
-- Scoring: 100 base + 10 per streak, time bonus
-- 6-char alphanumeric room code, auto-generated
+- API routes: /api/game/room, /api/game/result, /api/game/history
+- Prisma models: GameRoom, GameQuestion, GameSession, GameResult
+- Game types: KUIS_BATTLE, TEBAC_KATA, KATA_SERU, KOSAKATA_HARIAN
+- 6-char alphanumeric room codes, auto-generated
 
-## UKBI/TKA Test System
-### Predikat Mapping (Kemdikbud)
-- Istimewa: 725-800
-- Sangat Unggul: 641-724
-- Unggul: 578-640
-- Madya: 482-577
-- Semenjana: 405-481
-- Marginal: 326-404
-- Terbatas: 251-325
+### UKBI/TKA System
+- PaketKompetensi model with 6 test packages
+- Predikat mapping (Kemdikbud): Istimewa→Marginal→Terbatas
+- TKA grades: A (≥85%), B (≥70%), C (≥55%), D (<55%)
+- Seeding: prisma/seed-kompetensi.ts (25 UKBI + 25 TKA questions)
 
-### TKA Grades
-- A: ≥85%
-- B: ≥70%
-- C: ≥55%
-- D: <55%
-
-## API Routes
-### Kompetensi System
-- `GET/POST /api/kompetensi` - List/create test packages
-- `GET /api/kompetensi/[paketId]` - Start test session, load questions by section
-- `POST /api/kompetensi/[paketId]/submit` - Calculate score, predikat, issue certificate if passed
-
-### Bank Soal
-- `GET/POST /api/bank-soal/ukbi` - UKBI questions (Guru/Admin)
-- `GET/POST /api/bank-soal/tka` - TKA questions (Guru/Admin)
-- `GET/POST /api/soal` - BankSoal CRUD
-- `PUT/DELETE /api/soal/[id]` - BankSoal update/delete
+### Class Management (KelasKu)
+- Guru creates groups with access codes
+- Murid joins via code
+- GroupQuiz assignment system
+- Progress tracking per student
 
 ### Marketplace & Finance
-- `GET/POST /api/karya` - Karya CRUD
-- `POST /api/marketplace/purchase` - Buy karya (free=instant, paid=Midtrans)
-- `POST /api/payment/webhook` - Handle KARYA-* and PREMIUM-* order types
-- `GET/POST /api/finance` - Seller balance, withdrawal
-- `POST /api/guru/rpp` - RPP upload
-- `POST /api/guru/soal` - BankSoal upload (via guru)
-- `POST /api/guru/materi` - Materi/Administrasi upload
+- Karya model with 8 types (RPP, Modul, PPT, Soal, Video, Ebook, Administrasi, Lainnya)
+- Midtrans integration for paid purchases
+- 80% seller / 20% platform commission
+- 3 free uploads for all, unlimited for premium
+- Seller earnings and withdrawal system
 
-### Video
-- `GET/POST /api/video` - Video CRUD (admin only, YouTube/Vimeo embed)
+### Community
+- Community model with 5 types (MGMP, KKG, Publikasi, Study Group, Lainnya)
+- CommunityPost with likes/comments
+- CommunityMember with roles
 
-## Seeding
-- `pnpm db:seed-kompetensi` - Seed UKBI (25), TKA (25) questions + 6 test packages
-- prisma/seed-kompetensi.ts: UKBI_QUESTIONS, TKA_QUESTIONS, PaketKompetensi seed data
+## Prisma Schema
+- 50+ models including User, Profile, UKBIQuestion, TKAQuestion, PaketKompetensi, ProgresKompetensi, KompetensiCertificate, TestSession, TestAnswer, Video, CoursePlaylist, Materi, BankSoal, RPP, Karya, Pembelian, Group, GroupMember, Community, GameRoom, GameSession, GameResult, etc.
+- 20+ enums
 
-## Critical Notes
-- Prisma model names: `uKBIQuestion`, `tKAQuestion`, `paketKompetensi`, `progresKompetensi`, `kompetensiCertificate`, `testSession`, `testAnswer`
-- BankSoal uses YouTube/Vimeo embed URL, NOT local file storage
-- Karya model does NOT have previewUrl field
-- PaketKompetensi has `sections: Json` field (required)
-- TestSession unique constraint: userId + paketId
+## Next Steps (Priority Order)
 
-## Build
-- `pnpm build` - Must pass before pushing
-- `pnpm db:generate` - After schema changes
+1. **Reconnect to VPS** — SSH via Hostinger console if SSH still down, then:
+   - systemctl start postgresql
+   - pm2 start game-server
+   - ss -tlnp | grep -E '5432|3001'
+
+2. **Fix DNS for game.bahasacerdas.site** — wait for propagation or re-verify A record
+
+3. **Run certbot on VPS** — sudo certbot --nginx -d game.bahasacerdas.site
+
+4. **Seed game questions on VPS** — cd /var/www/game-server && npx prisma db seed
+
+5. **Fix game server startup** — ensure PM2 starts game-server on boot: pm2 startup && pm2 save
+
+6. **Test full game flow** — create room → join via code → play → results
+
+7. **Fix uncommitted changes** — game-server/src/server.ts, next.config.ts, package.json modified; apps/api deleted; package-lock.json added
+
+8. **Redeploy to Vercel** — git push after fixes
+
+## Blockers
+- VPS SSH unreachable (server restarting)
+- game.bahasacerdas.site DNS not propagating/resolving
+- No SSL cert on game subdomain
+
+## Uncommitted Changes (git status)
+- modified: game-server/src/server.ts
+- modified: next.config.ts
+- modified: package.json
+- deleted: apps/api/* (old API server, removed)
+- deleted: pnpm-lock.yaml, pnpm-workspace.yaml
+- new: package-lock.json
+
+## GitHub
+- Repo: https://github.com/dominikus02-source/bahasa-cerdas
+- .env NOT pushed (secrets removed)
+- Branch: main
+
+## Color Theme
+- Guru = emerald/green (from Tailwind emerald-500 range)
+- Murid = violet/purple (from Tailwind violet-500 range)
+- Premium badge: gold/yellow accent
+
+## Key File Locations
+- Main project: ~/Documents/bahasa-cerdas
+- VPS game server: /var/www/game-server/game-server on ***REMOVED-VPS-IP***
+- Prisma schema: prisma/schema.prisma (main project)
+- Game server schema: /var/www/game-server/prisma/schema.prisma
+- Socket server: game-server/src/server.ts
+- Socket client: lib/game/socket.ts
+- Game components: components/game/GameLobby.tsx, GamePlay.tsx

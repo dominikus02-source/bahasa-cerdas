@@ -3,7 +3,7 @@ import { createServer } from 'http';
 import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
-const PORT = process.env.GAME_PORT || 3001;
+const PORT = parseInt(process.env.GAME_PORT || '3001', 10);
 
 interface Player {
   id: string;
@@ -88,7 +88,7 @@ io.on('connection', (socket) => {
     timePerQuestion?: number;
   }) => {
     try {
-      const code = generateCode();
+      let code = generateCode();
       while (rooms.has(code)) {
         code = generateCode();
       }
@@ -316,7 +316,7 @@ io.on('connection', (socket) => {
     if (!player) return;
 
     const question = room.questions[data.questionIndex];
-    const isCorrect = answerIndex === parseInt(question.correctAnswer);
+    const isCorrect = data.answerIndex === parseInt(question.correctAnswer);
 
     player.answerTimes.push(data.timeSpent);
 
@@ -404,7 +404,7 @@ async function loadQuestions(gameType: string, count: number): Promise<Question[
     });
 
     if (dbQuestions.length >= count) {
-      return dbQuestions.map((q) => ({
+      return dbQuestions.map((q: any) => ({
         id: q.id,
         text: q.text,
         audioUrl: q.audioUrl || undefined,
@@ -586,6 +586,7 @@ function handleLeave(socket: any, code: string, odiceId: string) {
 
   if (wasHost && room.players.size > 0) {
     const newHost = room.players.values().next().value;
+    if (!newHost) return;
     room.hostId = newHost.id;
     io.to(code).emit('host-changed', { newHostId: newHost.id });
   }
