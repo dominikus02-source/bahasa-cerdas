@@ -48,9 +48,13 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    await db.profile.create({
-      data: { userId: newUser.id },
-    });
+    try {
+      await db.profile.create({
+        data: { userId: newUser.id },
+      });
+    } catch (e) {
+      console.log("Profile already exists or creation failed:", e);
+    }
 
     return NextResponse.json({ user: newUser, redirect: `/${role.toLowerCase()}/beranda` }, { status: 201 });
   } catch (error) {
