@@ -34,14 +34,15 @@ export default function LoginPage() {
     if (data.user) {
       try {
         const res = await fetch("/api/auth/me");
-        const { user: dbUser } = await res.json();
-        if (!dbUser) {
-          router.push("/register");
+        const result = await res.json();
+        if (result.user) {
+          router.push(`/${result.user.role.toLowerCase()}/beranda`);
         } else {
-          router.push(`/${dbUser.role?.toLowerCase()}/beranda`);
+          await supabase.auth.signOut();
+          setError("Sesi tidak valid. Silakan daftar ulang.");
         }
-      } catch {
-        router.push("/register");
+      } catch (e) {
+        setError("Terjadi kesalahan. Silakan coba lagi.");
       }
     }
     setLoading(false);
