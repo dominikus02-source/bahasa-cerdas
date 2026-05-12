@@ -34,6 +34,19 @@ Build BahasaCerdas educational platform with video learning, teacher upload work
 - UKBIQuestion, TKAQuestion, PaketKompetensi, ProgresKompetensi, KompetensiCertificate, TestSession, TestAnswer
 - Enums: Role, PremiumPlan, Difficulty, KaryaType, LeagueType, KompetensiType, LombaStatus, OrderStatus, KoleksiRarity, VideoSource, VideoCategory, WithdrawStatus, FileType, UKBISeksi, CognitiveDimension, KommunikasDomain, TKAKompetensi, TestMode, TestStatus
 
+## Game System (Phase 1-3)
+- Kuis Battle multiplayer real-time via Socket.io
+- Game server: game-server/src/server.ts (Node.js + Socket.io on port 3001)
+- Game lobby: components/game/GameLobby.tsx, components/game/GamePlay.tsx
+- Game pages: app/(dashboard)/guru/game/lobby, app/(dashboard)/murid/game/lobby, app/(dashboard)/murid/game/play
+- API routes: app/api/game/room, app/api/game/result, app/api/game/history
+- Prisma models: GameRoom, GameQuestion, GameSession, GameResult
+- Socket client: lib/game/socket.ts
+- Seed: prisma/seed-game.ts (35 questions: EASY/MEDIUM/HARD)
+- 3 game types: KUIS_BATTLE, TEBAC_KATA, KATA_SERU
+- Scoring: 100 base + 10 per streak, time bonus
+- 6-char alphanumeric room code, auto-generated
+
 ## UKBI/TKA Test System
 ### Predikat Mapping (Kemdikbud)
 - Istimewa: 725-800

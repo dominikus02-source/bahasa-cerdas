@@ -158,6 +158,128 @@ enum CommunityType {
   LAINNYA
 }
 
+enum GameType {
+  KUIS_BATTLE
+  TEBAC_KATA
+  KOSAKATA_HARIAN
+  KATA_SERU
+}
+
+enum GameRoomStatus {
+  WAITING
+  IN_PROGRESS
+  FINISHED
+  CANCELLED
+}
+
+enum GameQuestionType {
+  PILIHAN_GANDA
+  ISIAN_SINGKAT
+  BENAR_SALAH
+}
+
+model GameRoom {
+  id          String   @id @default(cuid())
+  code        String   @unique
+  name        String
+  gameType    GameType @default(KUIS_BATTLE)
+  hostId      String
+  host        User     @relation("GameHost", fields: [hostId], references: [id])
+
+  status      GameRoomStatus @default(WAITING)
+  category    String?
+  difficulty  Difficulty     @default(MEDIUM)
+
+  questionIds String[]
+  questionCount Int           @default(10)
+  timePerQuestion Int        @default(20)
+
+  currentQuestion Int         @default(0)
+
+  sessions     GameSession[]
+  results      GameResult[]
+
+  createdAt DateTime @default(now())
+  startedAt DateTime?
+  endedAt   DateTime?
+
+  @@index([code])
+  @@index([hostId])
+}
+
+model GameQuestion {
+  id          String   @id @default(cuid())
+  gameRoomId  String?
+
+  text        String
+  audioUrl    String?
+  imageUrl    String?
+  passage     String?
+  type        GameQuestionType @default(PILIHAN_GANDA)
+  options     Json
+  correctAnswer String
+
+  explanation String?
+  difficulty  Difficulty @default(MEDIUM)
+
+  orderIndex  Int       @default(0)
+
+  uploaderId String?
+  uploader   User?   @relation(fields: [uploaderId], references: [id])
+
+  createdAt DateTime @default(now())
+
+  @@index([gameRoomId])
+}
+
+model GameSession {
+  id        String   @id @default(cuid())
+  roomId    String
+  room      GameRoom  @relation(fields: [roomId], references: [id])
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  playerName String
+  avatarUrl  String?
+  score      Int      @default(0)
+  correct    Int      @default(0)
+  wrong      Int      @default(0)
+  streak     Int      @default(0)
+  maxStreak  Int      @default(0)
+  answerTimes Int[]   @default([])
+
+  joinedAt  DateTime @default(now())
+  finishedAt DateTime?
+
+  result    GameResult?
+
+  @@unique([roomId, userId])
+  @@index([userId])
+}
+
+model GameResult {
+  id        String   @id @default(cuid())
+  roomId    String
+  room      GameRoom @relation(fields: [roomId], references: [id])
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  sessionId String   @unique
+  session   GameSession @relation(fields: [sessionId], references: [id])
+
+  finalScore Int     @default(0)
+  rank       Int?
+  correct    Int
+  wrong      Int
+  maxStreak  Int
+  avgTime    Float
+  xpEarned   Int     @default(0)
+
+  createdAt DateTime @default(now())
+
+  @@index([roomId])
+  @@index([userId])
+}
+
 model Community {
   id          String        @id @default(cuid())
   name        String
@@ -277,6 +399,11 @@ model User {
   groupMemberships  GroupMember[]
   groupQuizResults  GroupQuizResult[]
   transaksi          Transaksi[]
+
+  hostedRooms       GameRoom[]        @relation("GameHost")
+  gameQuestions     GameQuestion[]
+  gameSessions      GameSession[]
+  gameResults       GameResult[]
 }
 
 model Profile {
@@ -907,3 +1034,4 @@ model GroupQuizResult {
   @@unique([groupQuizId, userId])
   @@index([userId])
 }
+
