@@ -19,7 +19,7 @@ export async function registerUser(formData: FormData) {
       return { error: "Invalid role" };
     }
 
-    const supabase = await createClient();
+    const supabase = createClient();
     const isFounder = email === "dominus.02@gmail.com";
 
     const { data, error: signUpError } = await supabase.auth.signUp({
@@ -29,6 +29,24 @@ export async function registerUser(formData: FormData) {
     });
 
     if (signUpError) {
+      if (signUpError.message.includes("already been registered") || signUpError.message.includes("already exists")) {
+        const signIn = await supabase.auth.signInWithPassword({ email, password });
+        if (signIn.error) {
+          return { error: "Email sudah terdaftar. Silakan login." };
+        }
+        const supabaseId = signIn.data?.user?.id;
+        if (supabaseId) {
+          const existingUser = await db.user.findFirst({ where: { email: email.toLowerCase() } });
+          if (existingUser) {
+            redirect(`/${existingUser.role.toLowerCase()}/beranda`);
+          }
+          const newUser = await db.user.create({
+            data: { supabaseId, email, fullName, role, isFounder, isPremium: isFounder, premiumPlan: isFounder ? "PRO" : "FREE" },
+          });
+          try { await db.profile.create({ data: { userId: newUser.id } }); } catch {}
+          redirect(`/${role.toLowerCase()}/beranda`);
+        }
+      }
       return { error: signUpError.message };
     }
 
@@ -36,22 +54,14 @@ export async function registerUser(formData: FormData) {
       return { error: "Registration failed" };
     }
 
-    const supabaseId = data.user.id;
-
-    const existingUser = await db.user.findFirst({
-      where: { email: email.toLowerCase() },
-    });
-
+    const existingUser = await db.user.findFirst({ where: { email: email.toLowerCase() } });
     if (existingUser) {
-      if (existingUser.supabaseId === supabaseId) {
-        redirect(`/${existingUser.role.toLowerCase()}/beranda`);
-      }
-      return { error: "Email sudah terdaftar dengan akun lain" };
+      redirect(`/${existingUser.role.toLowerCase()}/beranda`);
     }
 
     const newUser = await db.user.create({
       data: {
-        supabaseId,
+        supabaseId: data.user.id,
         email,
         fullName,
         role,
@@ -61,11 +71,7 @@ export async function registerUser(formData: FormData) {
       },
     });
 
-    try {
-      await db.profile.create({
-        data: { userId: newUser.id },
-      });
-    } catch (e) {}
+    try { await db.profile.create({ data: { userId: newUser.id } }); } catch {}
 
     redirect(`/${role.toLowerCase()}/beranda`);
   } catch (err: any) {
