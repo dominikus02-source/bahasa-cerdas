@@ -9,6 +9,7 @@ import MarketplaceSection from "@/components/landing/MarketplaceSection";
 import Testimonials from "@/components/landing/Testimonials";
 import FAQSection from "@/components/landing/FAQSection";
 import FinalCTA from "@/components/landing/FinalCTA";
+import PublicNavbar from "@/components/public/PublicNavbar";
 import { db } from "@/lib/db";
 
 async function getLatestArtikel() {
@@ -63,6 +64,7 @@ export default async function HomePage() {
 
   return (
     <main className="min-h-screen">
+      <PublicNavbar />
       <HeroSection />
       <SocialProof />
       <CoreFeatures />
