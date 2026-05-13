@@ -47,48 +47,29 @@ export default function GuruPengaturanPage() {
 
   useEffect(() => {
     const fetchUser = async () => {
-      const result = await supabase.auth.getUser();
-      const user = result.data?.user;
-      if (!user) return;
+      try {
+        const result = await supabase.auth.getUser();
+        const user = result.data?.user;
+        if (!user) return;
 
-      if (user.email === "dominikus.wahyu@lajoex.com") {
-        setIsFounder(true);
-        setIsPremium(true);
-        setPremiumUntil("Selamanya (Founder)");
-      }
-
-      const profileResult = await supabase
-        .from("profiles")
-        .select("is_premium, premium_until")
-        .eq("id", user.id)
-        .single();
-
-      if (profileResult.data?.is_premium) {
-        const isActive = profileResult.data.premium_until
-          ? new Date(profileResult.data.premium_until) > new Date()
-          : false;
-        if (isActive) {
-          setIsPremium(true);
-          setPremiumUntil(
-            new Date(profileResult.data.premium_until).toLocaleDateString("id-ID", {
-              day: "numeric",
-              month: "long",
-              year: "numeric",
-            })
-          );
+        const meRes = await fetch("/api/user/me");
+        if (meRes.ok) {
+          const { user: dbUser } = await meRes.json();
+          setIsPremium(dbUser.isPremium);
+          setIsFounder(dbUser.isFounder);
+          setPremiumUntil(dbUser.premiumUntil || "");
+          setProfile({
+            fullName: dbUser.fullName || "",
+            email: dbUser.email || "",
+            bio: "",
+            avatarUrl: dbUser.avatar || "",
+            nip: "",
+            nuptk: "",
+            school: "",
+            subject: "",
+          });
         }
-      }
-
-      setProfile({
-        fullName: user.user_metadata?.full_name || "",
-        email: user.email || "",
-        bio: user.user_metadata?.bio || "",
-        avatarUrl: user.user_metadata?.avatar_url || "",
-        nip: user.user_metadata?.nip || "",
-        nuptk: user.user_metadata?.nuptk || "",
-        school: user.user_metadata?.school || "",
-        subject: user.user_metadata?.subject || "",
-      });
+      } catch {}
     };
     fetchUser();
   }, []);
