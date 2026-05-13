@@ -3,8 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { gameSocket } from "@/lib/game/socket";
 import { motion } from "framer-motion";
-import { Zap, Trophy, Swords, Copy, Check, Users, Sparkles, ArrowRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Zap, Trophy, Swords, Heart, Timer, Copy, Check, Users, Sparkles, ArrowRight, Maximize, Minimize } from "lucide-react";
 
 const GAME_MODES = [
   {
@@ -31,6 +30,22 @@ const GAME_MODES = [
     color: "from-red-500 to-rose-600",
     lightColor: "bg-red-50 border-red-200",
   },
+  {
+    id: "SURVIVAL",
+    name: "Survival",
+    desc: "Punya 3 nyawa! Jawab salah = nyawa berkurang. Bertahan paling akhir jadi juara!",
+    icon: Heart,
+    color: "from-pink-500 to-rose-600",
+    lightColor: "bg-pink-50 border-pink-200",
+  },
+  {
+    id: "TIMED_TRIAL",
+    name: "Timed Trial",
+    desc: "Waktu terbatas! Jawab benar untuk tambah waktu. Kejar skor tertinggi!",
+    icon: Timer,
+    color: "from-cyan-500 to-blue-600",
+    lightColor: "bg-cyan-50 border-cyan-200",
+  },
 ];
 
 interface GameLobbyProps {
@@ -48,6 +63,36 @@ export default function GameLobby({ isHost = false, roomCode: initialCode, onSta
   const [copied, setCopied] = useState(false);
   const [userName, setUserName] = useState("");
   const [userId, setUserId] = useState("");
+  const [isFullscreen, setIsFullscreen] = useState(false);
+
+  const toggleFullscreen = () => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen();
+      setIsFullscreen(true);
+    } else {
+      document.exitFullscreen();
+      setIsFullscreen(false);
+    }
+  };
+
+  useEffect(() => {
+    const handler = () => setIsFullscreen(!!document.fullscreenElement);
+    document.addEventListener("fullscreenchange", handler);
+    return () => document.removeEventListener("fullscreenchange", handler);
+  }, []);
+
+  const handleSolo = useCallback(() => {
+    gameSocket.createRoom({
+      hostId: userId,
+      hostName: userName,
+      name: `Solo ${userName}`,
+      gameType: "TIMED_TRIAL",
+      category: "BAHASA",
+      difficulty: "MEDIUM",
+      questionCount: 15,
+      timePerQuestion: 10,
+    });
+  }, [userId, userName]);
 
   useEffect(() => {
     const stored = localStorage.getItem("bc-user");
@@ -128,8 +173,14 @@ export default function GameLobby({ isHost = false, roomCode: initialCode, onSta
         <div className="flex-1 flex flex-col items-center justify-center px-4 max-w-lg mx-auto w-full">
           <motion.div initial={{ y: 30, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="w-full text-center">
             <div className="mb-6">
-              <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${modeInfo?.color || "from-violet-500 to-purple-600"} flex items-center justify-center mx-auto mb-3 shadow-lg`}>
-                <ModeIcon size={32} className="text-white" />
+              <div className="flex items-center justify-between mb-3">
+                <div />
+                <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${modeInfo?.color || "from-violet-500 to-purple-600"} flex items-center justify-center shadow-lg`}>
+                  <ModeIcon size={32} className="text-white" />
+                </div>
+                <button onClick={toggleFullscreen} className="text-white/40 hover:text-white transition-colors p-2" title={isFullscreen ? "Keluar Layar Penuh" : "Layar Penuh"}>
+                  {isFullscreen ? <Minimize size={20} /> : <Maximize size={20} />}
+                </button>
               </div>
               <h2 className="text-2xl font-bold text-white">{modeInfo?.name || "Ruangan Game"}</h2>
               <p className="text-sm text-white/50 mt-1">Bagikan kode ini ke pemain lain</p>
@@ -237,10 +288,20 @@ export default function GameLobby({ isHost = false, roomCode: initialCode, onSta
 
         <div className="space-y-4">
           {isHost ? (
-            <button onClick={handleCreate} disabled={!userId}
-              className="w-full bg-gradient-to-r from-violet-500 to-purple-600 text-white font-bold py-4 rounded-2xl text-lg shadow-lg shadow-violet-500/30 hover:shadow-xl hover:scale-[1.02] transition-all disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2">
-              <Sparkles size={20} /> Buat Ruangan
-            </button>
+            <>
+              <button onClick={handleCreate} disabled={!userId}
+                className="w-full bg-gradient-to-r from-violet-500 to-purple-600 text-white font-bold py-4 rounded-2xl text-lg shadow-lg shadow-violet-500/30 hover:shadow-xl hover:scale-[1.02] transition-all disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2">
+                <Sparkles size={20} /> Buat Ruangan
+              </button>
+              <div className="relative">
+                <div className="absolute inset-0 flex items-center"><span className="w-full border-t border-slate-200" /></div>
+                <div className="relative flex justify-center text-xs"><span className="bg-white px-3 text-slate-400">atau</span></div>
+              </div>
+              <button onClick={handleSolo} disabled={!userId}
+                className="w-full bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-bold py-4 rounded-2xl shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all disabled:opacity-40 flex items-center justify-center gap-2">
+                <Timer size={20} /> Main Sendiri
+              </button>
+            </>
           ) : (
             <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm">
               <p className="text-sm font-semibold text-slate-700 mb-3">Masuk ke Ruangan</p>

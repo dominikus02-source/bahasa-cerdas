@@ -3,35 +3,14 @@
 import { useEffect, useState, useRef, useCallback } from "react";
 import { gameSocket } from "@/lib/game/socket";
 import { motion, AnimatePresence } from "framer-motion";
-import { Zap, Flame, Trophy, Clock, Star, Crown, Swords } from "lucide-react";
-
-interface PlayerScore {
-  playerId: string;
-  playerName: string;
-  avatarUrl?: string;
-  score: number;
-  correct: number;
-  wrong: number;
-  streak: number;
-}
-
-interface Question {
-  id: string;
-  text: string;
-  options: string[];
-  type: string;
-  difficulty?: string;
-}
-
-interface GamePlayProps {
-  roomCode: string;
-  onFinish: () => void;
-}
+import { Zap, Flame, Trophy, Clock, Star, Crown, Swords, Heart } from "lucide-react";
 
 const MODE_STYLES: Record<string, { name: string; icon: any; gradient: string; accent: string }> = {
   KUIS_BATTLE: { name: "Kuis Battle", icon: Zap, gradient: "from-violet-600 to-purple-700", accent: "violet" },
   GOLD_RUSH: { name: "Gold Rush", icon: Trophy, gradient: "from-amber-500 to-orange-600", accent: "amber" },
   SPEED_BATTLE: { name: "Speed Battle", icon: Swords, gradient: "from-red-500 to-rose-600", accent: "red" },
+  SURVIVAL: { name: "Survival", icon: Heart, gradient: "from-pink-500 to-rose-600", accent: "pink" },
+  TIMED_TRIAL: { name: "Timed Trial", icon: Clock, gradient: "from-cyan-500 to-blue-600", accent: "cyan" },
 };
 
 export default function GamePlay({ roomCode, onFinish }: GamePlayProps) {
@@ -52,6 +31,8 @@ export default function GamePlay({ roomCode, onFinish }: GamePlayProps) {
   const [showScorePop, setShowScorePop] = useState<{ value: number; x: number; y: number } | null>(null);
   const [results, setResults] = useState<any[]>([]);
   const [gameMode, setGameMode] = useState("KUIS_BATTLE");
+  const [hearts, setHearts] = useState(3);
+  const [eliminated, setEliminated] = useState(false);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
   const userId = useRef("");
@@ -78,7 +59,7 @@ export default function GamePlay({ roomCode, onFinish }: GamePlayProps) {
       startTimer(data.timePerQuestion || 20);
     });
 
-    const unsub2 = gameSocket.onScoreUpdate((data: { playerId: string; score: number; correct: number; wrong: number; streak: number }) => {
+    const unsub2 = gameSocket.onScoreUpdate((data: { playerId: string; playerName?: string; score: number; correct: number; wrong: number; streak: number; hearts?: number; eliminated?: boolean }) => {
       setLeaderboard((prev) => {
         const existing = prev.find((p) => p.playerId === data.playerId);
         if (existing) {
@@ -93,6 +74,7 @@ export default function GamePlay({ roomCode, onFinish }: GamePlayProps) {
         setStreak(data.streak);
         setCorrect(data.correct);
         setWrong(data.wrong);
+        if (data.hearts !== undefined) { setHearts(data.hearts); setEliminated(!!data.eliminated); }
       }
     });
 
@@ -146,7 +128,7 @@ export default function GamePlay({ roomCode, onFinish }: GamePlayProps) {
   };
 
   const handleTimeUp = useCallback(() => {
-    if (selected) return;
+    if (selected || eliminated) return;
     setIsCorrect(false);
     setWrong((w) => w + 1);
     setStreak(0);
@@ -159,7 +141,7 @@ export default function GamePlay({ roomCode, onFinish }: GamePlayProps) {
   }, [selected, qIndex, roomCode]);
 
   const handleAnswer = (index: number) => {
-    if (selected !== null) return;
+    if (selected !== null || eliminated) return;
     setSelected(String(index));
     if (timerRef.current) clearInterval(timerRef.current);
 
@@ -298,6 +280,13 @@ export default function GamePlay({ roomCode, onFinish }: GamePlayProps) {
           <span className="text-white/80 text-sm font-medium">{modeStyle.name}</span>
         </div>
         <div className="flex items-center gap-3">
+          {gameMode === "SURVIVAL" && (
+            <div className="flex items-center gap-0.5 mr-2">
+              {[1, 2, 3].map((h) => (
+                <Heart key={h} size={16} className={h <= hearts ? "text-red-400 fill-red-400" : "text-white/20"} />
+              ))}
+            </div>
+          )}
           <span className="flex items-center gap-1 text-white/80 text-xs">
             <Flame size={14} className="text-orange-300" />
             <span className={streak >= 3 ? "text-orange-300 font-bold" : ""}>{streak}</span>
@@ -375,6 +364,15 @@ export default function GamePlay({ roomCode, onFinish }: GamePlayProps) {
             </div>
 
             {/* Options */}
+            {eliminated ? (
+              <div className="flex-1 flex items-center justify-center">
+                <div className="text-center">
+                  <Heart size={48} className="text-white/20 mx-auto mb-3" />
+                  <p className="text-white/50 text-lg font-semibold">Kamu sudah tersingkir!</p>
+                  <p className="text-white/30 text-sm mt-1">Tetap saksikan sisa pertandingan</p>
+                </div>
+              </div>
+            ) : (
             <div className="grid grid-cols-1 gap-3 flex-1">
               {question?.options.map((opt, i) => {
                 const labels = ["A", "B", "C", "D"];
@@ -413,6 +411,7 @@ export default function GamePlay({ roomCode, onFinish }: GamePlayProps) {
                 );
               })}
             </div>
+            )}
           </motion.div>
         </AnimatePresence>
 

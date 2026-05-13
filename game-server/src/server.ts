@@ -17,6 +17,8 @@ interface Player {
   maxStreak: number;
   answerTimes: number[];
   ready: boolean;
+  hearts?: number;
+  eliminated?: boolean;
 }
 
 interface Room {
@@ -271,6 +273,8 @@ io.on('connection', (socket) => {
         p.maxStreak = 0;
         p.answerTimes = [];
         p.ready = false;
+        p.hearts = room.gameType === 'SURVIVAL' ? 3 : undefined;
+        p.eliminated = false;
       });
 
       await prisma.gameRoom.update({
@@ -326,6 +330,11 @@ io.on('connection', (socket) => {
       } else if (room.gameType === 'SPEED_BATTLE') {
         const speedBonus = Math.max(0, Math.floor((1 - data.timeSpent / room.timePerQuestion) * 150));
         player.score += 50 + speedBonus + bonusStreak;
+      } else if (room.gameType === 'SURVIVAL') {
+        player.score += 100 + bonusStreak;
+      } else if (room.gameType === 'TIMED_TRIAL') {
+        const timeBonus = Math.floor((1 - data.timeSpent / room.timePerQuestion) * 100);
+        player.score += 50 + timeBonus;
       } else {
         player.score += 100 + bonusStreak;
       }
@@ -352,6 +361,12 @@ io.on('connection', (socket) => {
         const penalty = Math.min(30, player.score);
         player.score = Math.max(0, player.score - penalty);
       }
+      if (room.gameType === 'SURVIVAL') {
+        player.hearts = (player.hearts || 3) - 1;
+        if (player.hearts <= 0) {
+          player.eliminated = true;
+        }
+      }
     }
 
     room.players.set(data.userId, player);
@@ -362,6 +377,8 @@ io.on('connection', (socket) => {
       correct: player.correct,
       wrong: player.wrong,
       streak: player.streak,
+      hearts: player.hearts,
+      eliminated: player.eliminated,
     });
 
     io.to(data.code).emit('answer-result', {

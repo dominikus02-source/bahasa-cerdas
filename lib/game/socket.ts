@@ -98,7 +98,7 @@ export const gameSocket = {
     socket?.on('answer-result', callback);
   },
 
-  onScoreUpdate(callback: (data: { playerId: string; playerName?: string; score: number; correct: number; wrong: number; streak: number }) => void) {
+  onScoreUpdate(callback: (data: { playerId: string; playerName?: string; score: number; correct: number; wrong: number; streak: number; hearts?: number; eliminated?: boolean }) => void) {
     socket?.on('score-update', callback);
   },
 
