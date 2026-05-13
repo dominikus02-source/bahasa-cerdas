@@ -157,9 +157,26 @@ export default function LoginPage() {
               />
             </div>
 
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1.5">Password</label>
-              <div className="relative">
+              <div>
+                <div className="flex items-center justify-between mb-1.5">
+                  <label className="block text-sm font-semibold text-gray-700">Password</label>
+                  <button type="button" onClick={() => {
+                    const emailVal = email.trim();
+                    if (!emailVal) { setError("Masukkan email dulu untuk reset password"); return; }
+                    setLoading(true);
+                    const supabase = createClient();
+                    supabase.auth.resetPasswordForEmail(emailVal.toLowerCase(), {
+                      redirectTo: `${window.location.origin}/api/auth/callback?next=/reset-password`,
+                    }).then(({ error }) => {
+                      setLoading(false);
+                      if (error) setError(error.message);
+                      else setError("Link reset password sudah dikirim ke email kamu. Cek inbox/spam.");
+                    });
+                  }} className="text-xs text-red-600 hover:text-red-700 hover:underline font-medium">
+                    Lupa password?
+                  </button>
+                </div>
+                <div className="relative">
                 <input
                   type={showPassword ? "text" : "password"}
                   value={password}
