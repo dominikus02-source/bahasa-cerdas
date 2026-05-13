@@ -1,157 +1,115 @@
 "use client";
 
-import { useState } from "react";
-import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Modal } from "@/components/ui/modal";
-import { GraduationCap, Clock, CheckCircle2, Star, AlertTriangle } from "lucide-react";
+import { useState, useEffect } from "react";
+import Link from "next/link";
+import { BookOpen, Clock, Award, ChevronRight, GraduationCap, Shield } from "lucide-react";
 
-const seksiList = [
-  { id: 1, nama: "Merespons Kaidah", menit: 30, soal: 40, icon: "📝", bg: "bg-blue-50" },
-  { id: 2, nama: "Membaca", menit: 45, soal: 50, icon: "📖", bg: "bg-purple-50" },
-  { id: 3, nama: "Menulis", menit: 30, soal: 30, icon: "✍️", bg: "bg-emerald-50" },
-  { id: 4, nama: "Merevisi Wacana", menit: 30, soal: 35, icon: "🔄", bg: "bg-amber-50" },
-  { id: 5, nama: "Berbicara", menit: 15, soal: 10, icon: "🎤", bg: "bg-rose-50" },
-];
+export default function MuridUKBIPage() {
+  const [pakets, setPakets] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-export default function UKBIPage() {
-  const [selectedPaket, setSelectedPaket] = useState<any>(null);
-  const [currentSeksi, setCurrentSeksi] = useState(0);
-  const [showResult, setShowResult] = useState(false);
-  const [answers, setAnswers] = useState<Record<string, string>>({});
-  const [timeLeft, setTimeLeft] = useState(seksiList[0].menit * 60);
+  useEffect(() => {
+    fetch("/api/kompetensi?type=UKBI&limit=20")
+      .then(r => r.json())
+      .then(d => setPakets(d.data || []))
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, []);
 
-  const startExam = (paket: any) => {
-    setSelectedPaket(paket);
-    setCurrentSeksi(0);
-    setAnswers({});
-    setTimeLeft(seksiList[0].menit * 60);
+  const getSections = (p: any) => {
+    try { return JSON.parse(p.sectionsData || p.sections || "[]"); } catch { return []; }
   };
 
   return (
     <div>
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-gray-900">Simulasi UKBI</h1>
-        <p className="mt-1 text-sm text-gray-600">Latihan UKBI resmi 5 seksi dengan timer</p>
+        <p className="text-sm text-gray-500 mt-1">Uji Kemahiran Berbahasa Indonesia — standar resmi Kemdikbud</p>
       </div>
 
-      {!selectedPaket ? (
-        <>
-          <Card className="p-6 mb-6 bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-blue-200">
-            <div className="flex items-center gap-4">
-              <div className="h-16 w-16 rounded-2xl bg-blue-100 flex items-center justify-center">
-                <GraduationCap className="h-8 w-8 text-blue-600" />
-              </div>
-              <div>
-                <h2 className="text-xl font-bold">Uji Kompetensi Bahasa Indonesia</h2>
-                <p className="text-sm text-gray-600">165 menit • 5 seksi • 165 soal</p>
-                <div className="flex gap-4 mt-2 text-xs text-gray-500">
-                  <span>📝 40 soal Merespons Kaidah</span>
-                  <span>📖 50 soal Membaca</span>
-                  <span>✍️ 30 soal Menulis</span>
+      <div className="bg-gradient-to-br from-violet-600 to-purple-700 rounded-2xl p-6 mb-8 text-white shadow-xl">
+        <div className="flex items-start justify-between">
+          <div>
+            <div className="flex items-center gap-2 mb-3">
+              <Shield size={20} />
+              <span className="text-sm font-semibold text-violet-200">UKBI • Kemahiran Berbahasa</span>
+            </div>
+            <h2 className="text-xl font-bold mb-2">Tingkatkan Kemahiran Bahasa Indonesiamu</h2>
+            <p className="text-violet-200 text-sm">Simulasi UKBI dengan sistem penilaian resmi</p>
+          </div>
+          <GraduationCap size={48} className="text-violet-300/50" />
+        </div>
+        <div className="grid grid-cols-3 gap-4 mt-6">
+          <div className="text-center bg-white/10 rounded-xl p-3">
+            <p className="text-2xl font-bold">5</p>
+            <p className="text-[10px] text-violet-200">Seksi</p>
+          </div>
+          <div className="text-center bg-white/10 rounded-xl p-3">
+            <p className="text-2xl font-bold">0-800</p>
+            <p className="text-[10px] text-violet-200">Skala Skor</p>
+          </div>
+          <div className="text-center bg-white/10 rounded-xl p-3">
+            <p className="text-2xl font-bold">7</p>
+            <p className="text-[10px] text-violet-200">Predikat</p>
+          </div>
+        </div>
+      </div>
+
+      {loading ? (
+        <div className="text-center py-12 text-gray-400">Memuat paket UKBI...</div>
+      ) : pakets.length === 0 ? (
+        <div className="text-center py-16">
+          <BookOpen size={48} className="mx-auto text-gray-200 mb-3" />
+          <p className="text-gray-500">Belum ada paket UKBI tersedia</p>
+          <p className="text-sm text-gray-400 mt-1">Hubungi admin untuk menambahkan paket</p>
+        </div>
+      ) : (
+        <div className="space-y-4">
+          {pakets.map((p) => {
+            const sections = getSections(p);
+            const isPractice = p.mode === "LATIHAN";
+            return (
+              <Link key={p.id} href={`/kompetisi/${p.id}`}
+                className="block bg-white rounded-2xl border border-slate-200 p-6 hover:shadow-lg hover:border-violet-200 transition-all">
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${isPractice ? "bg-emerald-50 text-emerald-600" : "bg-violet-50 text-violet-600"}`}>
+                        {isPractice ? "Latihan" : "Simulasi"}
+                      </span>
+                      <span className="text-xs text-gray-400">{p.duration} menit</span>
+                    </div>
+                    <h3 className="font-bold text-gray-900">{p.title}</h3>
+                    <p className="text-sm text-gray-500 mt-1">{p.description}</p>
+                    {sections.length > 0 && (
+                      <div className="flex flex-wrap gap-2 mt-3">
+                        {sections.map((s: any, i: number) => (
+                          <span key={i} className="text-[10px] px-2 py-0.5 bg-slate-100 text-slate-500 rounded-full">
+                            {s.name?.replace(/_/g, " ") || `Seksi ${i + 1}`}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                  <ChevronRight size={20} className="text-gray-300 mt-2 shrink-0" />
                 </div>
-              </div>
-            </div>
-          </Card>
-
-          <div className="grid gap-4 md:grid-cols-5">
-            {seksiList.map((seksi, i) => (
-              <Card key={seksi.id} className={`p-4 ${seksi.bg}`}>
-                <div className="text-3xl mb-2">{seksi.icon}</div>
-                <h3 className="font-semibold">{seksi.nama}</h3>
-                <div className="mt-2 text-xs text-gray-500 space-y-1">
-                  <p><Clock className="inline h-3 w-3 mr-1" />{seksi.menit} menit</p>
-                  <p>{seksi.soal} soal</p>
+                <div className="flex items-center gap-4 mt-4 pt-3 border-t border-slate-100 text-xs text-gray-400">
+                  <span className="flex items-center gap-1"><Clock size={12} /> {p.duration} menit</span>
+                  <span className="flex items-center gap-1"><BookOpen size={12} /> {sections.reduce((s: number, sec: any) => s + (sec.count || 0), 0)} soal</span>
+                  {p.passingScore && <span>Lulus: {p.passingScore}</span>}
                 </div>
-              </Card>
-            ))}
-          </div>
-
-          <div className="mt-8 text-center">
-            <Button size="lg" onClick={() => startExam({ id: 1, title: "UKBI Lengkap" })} className="px-12">
-              Mulai Simulasi
-            </Button>
-            <p className="mt-3 text-xs text-gray-500">Pastikan kamu punya waktu 2,5 jam tanpa gangguan</p>
-          </div>
-        </>
-      ) : selectedPaket && !showResult ? (
-        <Card className="p-6 max-w-2xl mx-auto">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="font-bold">{seksiList[currentSeksi].icon} {seksiList[currentSeksi].nama}</h2>
-            <div className="flex items-center gap-2">
-              <Badge variant={timeLeft < 60 ? "destructive" : "secondary"}>
-                <Clock className="h-3 w-3 mr-1" />
-                {Math.floor(timeLeft / 60)}:{String(timeLeft % 60).padStart(2, "0")}
-              </Badge>
-            </div>
-          </div>
-
-          <div className="mb-6">
-            <div className="h-2 bg-gray-200 rounded-full">
-              <div className="h-full bg-blue-500 rounded-full transition-all" style={{ width: `${((currentSeksi + 1) / 5) * 100}%` }} />
-            </div>
-            <p className="text-xs text-center text-gray-500 mt-1">Seksi {currentSeksi + 1} dari 5</p>
-          </div>
-
-          <div className="space-y-4">
-            <p className="text-sm text-gray-600">Soal 1 dari {seksiList[currentSeksi].soal}</p>
-            <p className="text-lg">Perhatikan kalimat berikut: "Bahasa Indonesia adalah bahasa pemersatu bangsa."</p>
-            <p className="font-medium">Kata 'pemersatu' memiliki makna...</p>
-            <div className="space-y-2">
-              {["Denotatif (makna sebenarnya)", "Konotatif (makna tambahan)", "Makna leksikal", "Makna gramatikal"].map((opt, i) => (
-                <button
-                  key={i}
-                  onClick={() => setAnswers({ ...answers, [`q${currentSeksi}_1`]: String(i) })}
-                  className={`w-full text-left p-4 rounded-xl border transition-all ${
-                    answers[`q${currentSeksi}_1`] === String(i) ? "border-blue-500 bg-blue-50" : "hover:border-gray-300"
-                  }`}
-                >
-                  {String.fromCharCode(65 + i)}. {opt}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div className="flex gap-3 mt-8">
-            {currentSeksi > 0 && (
-              <Button variant="outline" onClick={() => setCurrentSeksi(currentSeksi - 1)} className="flex-1">
-                Sebelumnya
-              </Button>
-            )}
-            {currentSeksi < 4 ? (
-              <Button onClick={() => { setCurrentSeksi(currentSeksi + 1); setTimeLeft(seksiList[currentSeksi + 1].menit * 60); }} className="flex-1">
-                Selanjutnya
-              </Button>
-            ) : (
-              <Button onClick={() => setShowResult(true)} className="flex-1 bg-emerald-600">
-                Submit Semua
-              </Button>
-            )}
-          </div>
-        </Card>
-      ) : showResult ? (
-        <Card className="p-8 max-w-lg mx-auto text-center">
-          <div className="h-20 w-20 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center mx-auto mb-4">
-            <CheckCircle2 className="h-10 w-10 text-white" />
-          </div>
-          <h2 className="text-2xl font-bold">Simulasi Selesai!</h2>
-          <p className="mt-2 text-gray-600">Hasil akan diproses dalam 24 jam</p>
-          <div className="mt-6 grid grid-cols-2 gap-4">
-            <div className="rounded-xl bg-blue-50 p-4">
-              <p className="text-2xl font-bold text-blue-600">165</p>
-              <p className="text-xs text-gray-500">Total Soal</p>
-            </div>
-            <div className="rounded-xl bg-emerald-50 p-4">
-              <p className="text-2xl font-bold text-emerald-600">+825</p>
-              <p className="text-xs text-gray-500">XP Earned</p>
-            </div>
-          </div>
-          <Button onClick={() => { setSelectedPaket(null); setShowResult(false); }} className="mt-6 w-full">
-            Kembali
-          </Button>
-        </Card>
-      ) : null}
+                <div className="mt-3">
+                  <div className="flex gap-1">
+                    <span className={`text-[10px] font-bold ${isPractice ? "text-emerald-600" : "text-violet-600"}`}>
+                      {isPractice ? "Mulai Latihan" : "Mulai Simulasi"} →
+                    </span>
+                  </div>
+                </div>
+              </Link>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }
