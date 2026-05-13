@@ -37,7 +37,7 @@ export default function SaldoPage() {
             </div>
             <div>
               <p className="font-medium">Upgrade ke PRO</p>
-              <p className="text-xs text-gray-500">Akun PRO bisa设定 harga untuk karya berbayar</p>
+              <p className="text-xs text-gray-500">Akun PRO bisa mengatur harga untuk karya berbayar</p>
             </div>
           </div>
         </div>

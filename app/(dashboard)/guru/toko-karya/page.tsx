@@ -58,7 +58,7 @@ export default function TokoKaryaPage() {
             <Crown className="h-6 w-6 text-black" />
             <div>
               <p className="font-bold text-black">Akun PRO — Fitur Jual Terbuka</p>
-              <p className="text-sm text-black/70">Kamu bisa设定 harga untuk karya berbayar</p>
+              <p className="text-sm text-black/70">Kamu bisa mengatur harga untuk karya berbayar</p>
             </div>
           </div>
           <Check className="h-6 w-6 text-black" />
