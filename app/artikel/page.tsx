@@ -3,6 +3,8 @@ import { Calendar, Clock, ArrowRight, User, BookOpen } from "lucide-react";
 import PageNavbar from "@/components/public/PageNavbar";
 import { db } from "@/lib/db";
 
+export const dynamic = 'force-dynamic';
+
 export default async function ArtikelPage() {
   const artikel = await db.artikel.findMany({
     where: { isPublished: true },

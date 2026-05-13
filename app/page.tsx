@@ -12,6 +12,8 @@ import FinalCTA from "@/components/landing/FinalCTA";
 import PublicNavbar from "@/components/public/PageNavbar";
 import { db } from "@/lib/db";
 
+export const dynamic = 'force-dynamic';
+
 async function getLatestArtikel() {
   try {
     return await db.artikel.findMany({
