@@ -184,7 +184,6 @@ model GameRoom {
   name        String
   gameType    GameType @default(KUIS_BATTLE)
   hostId      String
-  host        User     @relation("GameHost", fields: [hostId], references: [id])
 
   status      GameRoomStatus @default(WAITING)
   category    String?
@@ -400,7 +399,6 @@ model User {
   groupQuizResults  GroupQuizResult[]
   transaksi          Transaksi[]
 
-  hostedRooms       GameRoom[]        @relation("GameHost")
   gameQuestions     GameQuestion[]
   gameSessions      GameSession[]
   gameResults       GameResult[]
