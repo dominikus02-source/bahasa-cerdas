@@ -9,7 +9,7 @@ export default async function MuridLayout({ children }: { children: React.ReactN
     redirect("/login");
   }
 
-  if (user.role !== "MURID") {
+  if (user.role !== "MURID" && !user.isFounder) {
     redirect("/guru/beranda");
   }
 

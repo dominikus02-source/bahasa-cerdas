@@ -9,7 +9,7 @@ export default async function GuruLayout({ children }: { children: React.ReactNo
     redirect("/login");
   }
 
-  if (user.role !== "GURU") {
+  if (user.role !== "GURU" && !user.isFounder) {
     redirect("/murid/beranda");
   }
 

@@ -2,6 +2,8 @@
 
 import { db } from "@/lib/db";
 
+const FOUNDER_EMAILS = ["hdsastra47@gmail.com", "dominikus.02@gmail.com", "alexsurya1968@gmail.com"];
+
 export async function registerUser(formData: FormData) {
   try {
     const email = formData.get("email") as string;
@@ -17,7 +19,7 @@ export async function registerUser(formData: FormData) {
       return { error: "Invalid role" };
     }
 
-    const isFounder = email === "dominus.02@gmail.com";
+    const isFounder = FOUNDER_EMAILS.includes(email.toLowerCase());
 
     const existingUser = await db.user.findFirst({ where: { email: email.toLowerCase() } });
     if (existingUser) {

@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 
+const FOUNDER_EMAILS = ["hdsastra47@gmail.com", "dominikus.02@gmail.com", "alexsurya1968@gmail.com"];
+
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
@@ -14,7 +16,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Invalid role" }, { status: 400 });
     }
 
-    const isFounder = email === "dominus.02@gmail.com";
+    const isFounder = FOUNDER_EMAILS.includes(email.toLowerCase());
 
     const existingUser = await db.user.findFirst({
       where: { email: email.toLowerCase() },

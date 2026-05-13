@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { createClient } from "@/lib/supabase/server";
 
+const FOUNDER_EMAILS = ["hdsastra47@gmail.com", "dominikus.02@gmail.com", "alexsurya1968@gmail.com"];
+
 export async function GET() {
   try {
     const supabase = await createClient();
@@ -37,7 +39,7 @@ export async function POST() {
       return NextResponse.json({ user: existing });
     }
 
-    const isFounder = email === "dominus.02@gmail.com";
+    const isFounder = FOUNDER_EMAILS.includes(email);
     const dbUser = await db.user.create({
       data: {
         supabaseId: user.id,

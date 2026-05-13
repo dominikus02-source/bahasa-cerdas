@@ -54,14 +54,17 @@ export async function proxy(request: NextRequest) {
     const isMuridRoute = pathname.startsWith("/murid");
 
     if (isGuruRoute || isMuridRoute) {
-      const dbUserRole = await getUserRole(user.id);
-      if (!dbUserRole) {
+      const dbUserInfo = await getUserInfo(user.id);
+      if (!dbUserInfo) {
         return NextResponse.redirect(new URL("/login", request.url));
       }
-      if (isGuruRoute && dbUserRole !== "guru") {
+      if (dbUserInfo.isFounder) {
+        return supabaseResponse;
+      }
+      if (isGuruRoute && dbUserInfo.role !== "guru") {
         return NextResponse.redirect(new URL("/murid/beranda", request.url));
       }
-      if (isMuridRoute && dbUserRole !== "murid") {
+      if (isMuridRoute && dbUserInfo.role !== "murid") {
         return NextResponse.redirect(new URL("/guru/beranda", request.url));
       }
     }
@@ -72,14 +75,15 @@ export async function proxy(request: NextRequest) {
   }
 }
 
-async function getUserRole(supabaseId: string): Promise<string | null> {
+async function getUserInfo(supabaseId: string): Promise<{ role: string; isFounder: boolean } | null> {
   try {
     const { db } = await import("@/lib/db");
     const user = await db.user.findUnique({
       where: { supabaseId },
-      select: { role: true }
+      select: { role: true, isFounder: true }
     });
-    return user?.role?.toLowerCase() || null;
+    if (!user) return null;
+    return { role: user.role.toLowerCase(), isFounder: user.isFounder };
   } catch {
     return null;
   }
