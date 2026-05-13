@@ -59,6 +59,26 @@ export default function RegisterPage() {
         return;
       }
 
+      if (!data.session) {
+        try {
+          await fetch("/api/auth/confirm-email", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ userId: data.user.id }),
+          });
+        } catch {}
+        const supabase2 = createClient();
+        const { data: signInData } = await supabase2.auth.signInWithPassword({
+          email: normalizedEmail,
+          password,
+        });
+        if (!signInData.session) {
+          setError("Pendaftaran berhasil! Silakan cek email kamu untuk konfirmasi sebelum masuk.");
+          setLoading(false);
+          return;
+        }
+      }
+
       window.location.href = `/${result?.role || role.toLowerCase()}/beranda`;
     } catch (err: any) {
       setError(err?.message || "Terjadi kesalahan");
