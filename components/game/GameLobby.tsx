@@ -2,8 +2,8 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { gameSocket } from "@/lib/game/socket";
-import { motion, AnimatePresence } from "framer-motion";
-import { Zap, Trophy, Swords, Copy, Check, Users, Sparkles, Crown, ArrowRight } from "lucide-react";
+import { motion } from "framer-motion";
+import { Zap, Trophy, Swords, Copy, Check, Users, Sparkles, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const GAME_MODES = [
@@ -14,8 +14,6 @@ const GAME_MODES = [
     icon: Zap,
     color: "from-violet-500 to-purple-600",
     lightColor: "bg-violet-50 border-violet-200",
-    iconBg: "bg-violet-100",
-    iconColor: "text-violet-600",
   },
   {
     id: "GOLD_RUSH",
@@ -24,8 +22,6 @@ const GAME_MODES = [
     icon: Trophy,
     color: "from-amber-500 to-orange-600",
     lightColor: "bg-amber-50 border-amber-200",
-    iconBg: "bg-amber-100",
-    iconColor: "text-amber-600",
   },
   {
     id: "SPEED_BATTLE",
@@ -34,8 +30,6 @@ const GAME_MODES = [
     icon: Swords,
     color: "from-red-500 to-rose-600",
     lightColor: "bg-red-50 border-red-200",
-    iconBg: "bg-red-100",
-    iconColor: "text-red-600",
   },
 ];
 
@@ -54,14 +48,13 @@ export default function GameLobby({ isHost = false, roomCode: initialCode, onSta
   const [copied, setCopied] = useState(false);
   const [userName, setUserName] = useState("");
   const [userId, setUserId] = useState("");
-  const [showQR, setShowQR] = useState(false);
 
   useEffect(() => {
     const stored = localStorage.getItem("bc-user");
     if (stored) {
       try {
         const parsed = JSON.parse(stored);
-        setUserName(parsed.state?.fullName || "Player");
+        setUserName(parsed.state?.fullName || "Pemain");
         setUserId(parsed.state?.supabaseId || "");
       } catch {}
     }
@@ -84,18 +77,14 @@ export default function GameLobby({ isHost = false, roomCode: initialCode, onSta
       setPlayers(data);
     });
 
-    const unsub4 = gameSocket.onNotification((data: { message: string }) => {});
-
-    const unsub5 = gameSocket.onHostChanged((data: { newHostId: string }) => {});
-
-    return () => { unsub1(); unsub2(); unsub3(); unsub4(); unsub5(); };
+    return () => { unsub1(); unsub2(); unsub3(); };
   }, []);
 
   const handleCreate = useCallback(() => {
     gameSocket.createRoom({
       hostId: userId,
       hostName: userName,
-      name: `${userName}'s Game`,
+      name: `Ruangan ${userName}`,
       gameType: selectedMode,
       category: "BAHASA",
       difficulty: "MEDIUM",
@@ -135,47 +124,45 @@ export default function GameLobby({ isHost = false, roomCode: initialCode, onSta
     const ModeIcon = modeInfo?.icon || Zap;
 
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center p-4">
-        <div className="max-w-md w-full">
-          <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="bg-white rounded-3xl p-8 shadow-2xl">
-            <div className="text-center mb-6">
-              <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${modeInfo?.color || "from-violet-500 to-purple-600"} flex items-center justify-center mx-auto mb-4 shadow-lg`}>
+      <div className="h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex flex-col">
+        <div className="flex-1 flex flex-col items-center justify-center px-4 max-w-lg mx-auto w-full">
+          <motion.div initial={{ y: 30, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="w-full text-center">
+            <div className="mb-6">
+              <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${modeInfo?.color || "from-violet-500 to-purple-600"} flex items-center justify-center mx-auto mb-3 shadow-lg`}>
                 <ModeIcon size={32} className="text-white" />
               </div>
-              <h2 className="text-2xl font-bold text-slate-900">{modeInfo?.name || "Game Room"}</h2>
-              <p className="text-sm text-slate-500 mt-1">Bagikan kode ini ke pemain lain</p>
+              <h2 className="text-2xl font-bold text-white">{modeInfo?.name || "Ruangan Game"}</h2>
+              <p className="text-sm text-white/50 mt-1">Bagikan kode ini ke pemain lain</p>
             </div>
 
-            <div className="bg-slate-50 rounded-2xl p-6 text-center mb-6 border-2 border-dashed border-slate-200">
-              <p className="text-xs text-slate-400 mb-2">KODE RUANGAN</p>
-              <p className="text-5xl font-black tracking-[0.3em] text-slate-900 mb-4">{code}</p>
-              <button onClick={copyCode} className="inline-flex items-center gap-2 text-sm text-slate-600 hover:text-slate-900 transition-colors">
-                {copied ? <><Check size={16} className="text-green-500" /> Tersalin</> : <><Copy size={16} /> Salin Kode</>}
+            <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl py-8 px-6 mb-6">
+              <p className="text-xs text-white/40 mb-2 tracking-widest uppercase">Kode Ruangan</p>
+              <p className="text-5xl font-black tracking-[0.3em] text-white mb-4">{code}</p>
+              <button onClick={copyCode} className="inline-flex items-center gap-2 text-sm text-white/60 hover:text-white transition-colors bg-white/5 px-4 py-2 rounded-xl">
+                {copied ? <><Check size={16} className="text-green-400" /> Tersalin</> : <><Copy size={16} /> Salin Kode</>}
               </button>
             </div>
 
             <div className="mb-6">
-              <p className="text-sm font-semibold text-slate-700 mb-3 flex items-center gap-2">
+              <p className="text-sm font-semibold text-white/70 mb-3 flex items-center gap-2">
                 <Users size={16} /> Pemain ({players.length})
               </p>
-              <div className="grid grid-cols-3 gap-3">
+              <div className="flex flex-wrap justify-center gap-3">
                 {[...Array(6)].map((_, i) => {
                   const player = players[i];
-                  return (
-                    <div key={i} className={`rounded-xl p-3 text-center ${player ? "bg-emerald-50 border border-emerald-200" : "bg-slate-50 border border-dashed border-slate-200"}`}>
-                      {player ? (
-                        <>
-                          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center text-white font-bold text-sm mx-auto mb-1">
-                            {player.playerName.slice(0, 2).toUpperCase()}
-                          </div>
-                          <p className="text-[11px] font-medium text-slate-700 truncate">{player.playerName}</p>
-                          {player.isHost && <span className="text-[10px] text-emerald-600 font-semibold">Host</span>}
-                        </>
-                      ) : (
-                        <div className="w-10 h-10 rounded-full bg-slate-200 flex items-center justify-center mx-auto mb-1">
-                          <span className="text-slate-300 text-lg">+</span>
-                        </div>
-                      )}
+                  return player ? (
+                    <div key={i} className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl p-3 text-center w-20">
+                      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center text-white font-bold text-sm mx-auto mb-1 shadow">
+                        {player.playerName.slice(0, 2).toUpperCase()}
+                      </div>
+                      <p className="text-[11px] font-medium text-white truncate">{player.playerName}</p>
+                      {player.isHost && <span className="text-[10px] text-emerald-400 font-semibold">Tuan Rumah</span>}
+                    </div>
+                  ) : (
+                    <div key={i} className="bg-white/5 border border-dashed border-white/10 rounded-xl p-3 text-center w-20">
+                      <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center mx-auto mb-1">
+                        <span className="text-white/20 text-lg">+</span>
+                      </div>
                     </div>
                   );
                 })}
@@ -184,14 +171,14 @@ export default function GameLobby({ isHost = false, roomCode: initialCode, onSta
 
             <div className="flex gap-3">
               {isHost && (
-                <Button onClick={handleStart} disabled={players.length < 1}
-                  className={`flex-1 bg-gradient-to-r ${modeInfo?.color || "from-violet-500 to-purple-600"} text-white font-bold py-3 rounded-2xl shadow-lg transition-all hover:scale-[1.02]`}>
-                  <Sparkles size={18} /> Mulai Game
-                </Button>
+                <button onClick={handleStart} disabled={players.length < 1}
+                  className={`flex-1 bg-gradient-to-r ${modeInfo?.color || "from-violet-500 to-purple-600"} text-white font-bold py-3.5 rounded-2xl shadow-lg transition-all hover:scale-[1.02] disabled:opacity-40 disabled:cursor-not-allowed`}>
+                  <Sparkles size={18} className="inline mr-1.5" /> Mulai Game
+                </button>
               )}
-              <Button onClick={handleLeave} variant="outline" className="flex-1 border-2 border-slate-200 text-slate-600 hover:bg-slate-50 rounded-2xl py-3">
+              <button onClick={handleLeave} className="flex-1 bg-white/10 backdrop-blur-sm border border-white/20 text-white/80 hover:text-white font-semibold py-3.5 rounded-2xl transition-all">
                 Keluar
-              </Button>
+              </button>
             </div>
           </motion.div>
         </div>
@@ -250,10 +237,10 @@ export default function GameLobby({ isHost = false, roomCode: initialCode, onSta
 
         <div className="space-y-4">
           {isHost ? (
-            <Button onClick={handleCreate} disabled={!userId}
-              className="w-full bg-gradient-to-r from-violet-500 to-purple-600 text-white font-bold py-4 rounded-2xl text-lg shadow-lg shadow-violet-500/30 hover:shadow-xl hover:scale-[1.02] transition-all flex items-center justify-center gap-2">
+            <button onClick={handleCreate} disabled={!userId}
+              className="w-full bg-gradient-to-r from-violet-500 to-purple-600 text-white font-bold py-4 rounded-2xl text-lg shadow-lg shadow-violet-500/30 hover:shadow-xl hover:scale-[1.02] transition-all disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2">
               <Sparkles size={20} /> Buat Ruangan
-            </Button>
+            </button>
           ) : (
             <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm">
               <p className="text-sm font-semibold text-slate-700 mb-3">Masuk ke Ruangan</p>
@@ -265,10 +252,10 @@ export default function GameLobby({ isHost = false, roomCode: initialCode, onSta
                   className="flex-1 rounded-xl border-2 border-slate-200 px-4 py-3 text-center text-lg font-bold tracking-widest uppercase focus:border-violet-500 focus:outline-none"
                   maxLength={6}
                 />
-                <Button onClick={handleJoin} disabled={joinCode.length !== 6}
-                  className="bg-gradient-to-r from-violet-500 to-purple-600 text-white font-bold px-6 rounded-xl shadow-lg">
+                <button onClick={handleJoin} disabled={joinCode.length !== 6}
+                  className="bg-gradient-to-r from-violet-500 to-purple-600 text-white font-bold px-6 rounded-xl shadow-lg disabled:opacity-40">
                   <ArrowRight size={20} />
-                </Button>
+                </button>
               </div>
             </div>
           )}

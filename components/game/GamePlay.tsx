@@ -200,7 +200,7 @@ export default function GamePlay({ roomCode, onFinish }: GamePlayProps) {
           ) : (
             <>
               <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: "spring", stiffness: 200 }}>
-                <p className="text-white text-8xl font-black">GO!</p>
+                <p className="text-white text-9xl font-black">MULAI!</p>
               </motion.div>
             </>
           )}
@@ -231,7 +231,7 @@ export default function GamePlay({ roomCode, onFinish }: GamePlayProps) {
                     🥈
                   </div>
                   <p className="text-white text-sm font-bold">{top3[1].playerName}</p>
-                  <p className="text-white/60 text-xs">{top3[1].score} pts</p>
+                  <p className="text-white/60 text-xs">{top3[1].score} poin</p>
                 </motion.div>
               )}
               {top3[0] && (
@@ -240,7 +240,7 @@ export default function GamePlay({ roomCode, onFinish }: GamePlayProps) {
                     🥇
                   </motion.div>
                   <p className="text-white text-lg font-bold">{top3[0].playerName}</p>
-                  <p className="text-yellow-300 text-sm font-bold">{top3[0].score} pts</p>
+                  <p className="text-yellow-300 text-sm font-bold">{top3[0].score} poin</p>
                 </motion.div>
               )}
               {top3[2] && (
@@ -249,7 +249,7 @@ export default function GamePlay({ roomCode, onFinish }: GamePlayProps) {
                     🥉
                   </div>
                   <p className="text-white text-sm font-bold">{top3[2].playerName}</p>
-                  <p className="text-white/60 text-xs">{top3[2].score} pts</p>
+                  <p className="text-white/60 text-xs">{top3[2].score} poin</p>
                 </motion.div>
               )}
             </div>
@@ -281,7 +281,7 @@ export default function GamePlay({ roomCode, onFinish }: GamePlayProps) {
 
           <div className="flex gap-3">
             <button onClick={onFinish} className="flex-1 bg-white/10 backdrop-blur-md border border-white/30 text-white rounded-2xl py-3 font-semibold hover:bg-white/20 transition-all">
-              Kembali
+              Kembali ke Lobby
             </button>
           </div>
         </div>

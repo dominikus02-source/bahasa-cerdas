@@ -33,7 +33,7 @@ export default function GamePage() {
       <div className="min-h-screen bg-gradient-to-br from-violet-900 via-purple-900 to-indigo-900 flex items-center justify-center p-4">
         <div className="text-center text-white">
           <h1 className="text-4xl font-bold mb-4">🎉 Game Selesai!</h1>
-          <p className="text-white/60 mb-8">Hasil akan disimpan ke database</p>
+          <p className="text-white/60 mb-8">Skormu akan disimpan. Cek hasilnya di riwayat!</p>
           <button
             onClick={() => router.push('/murid/game')}
             className="px-8 py-3 bg-white/20 hover:bg-white/30 text-white rounded-xl font-bold transition"

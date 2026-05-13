@@ -15,7 +15,7 @@ const NAV = [
   { label: "Beranda", href: "/murid/beranda", icon: <Home size={18} /> },
   { label: "Tugasku", href: "/murid/tugasku", icon: <ClipboardList size={18} /> },
   { label: "Gabung Kelas", href: "/murid/gabung-kelas", icon: <Users size={18} /> },
-  {label: "Kuis Game", href: "/murid/kuis-game", icon: <Gamepad2 size={18} /> },
+  {label: "Kuis Game", href: "/murid/game/lobby", icon: <Gamepad2 size={18} /> },
   {
     label: "Kompetensi",
     icon: <GraduationCap size={18} />,
