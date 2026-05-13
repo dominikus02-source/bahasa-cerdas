@@ -6,14 +6,17 @@ import remarkGfm from "remark-gfm";
 import PageNavbar from "@/components/public/PageNavbar";
 
 export default async function ArtikelDetailPage({ params }: { params: { slug: string } }) {
-  const artikel = await db.artikel.findUnique({
-    where: { slug: params.slug, isPublished: true },
-    select: {
-      id: true, title: true, slug: true, content: true, excerpt: true,
-      coverImage: true, tags: true, readCount: true, createdAt: true, updatedAt: true,
-      author: { select: { id: true, fullName: true, avatar: true } },
-    },
-  });
+  let artikel: any = null;
+  try {
+    artikel = await db.artikel.findUnique({
+      where: { slug: params.slug, isPublished: true },
+      select: {
+        id: true, title: true, slug: true, content: true, excerpt: true,
+        coverImage: true, tags: true, readCount: true, createdAt: true, updatedAt: true,
+        author: { select: { id: true, fullName: true, avatar: true } },
+      },
+    });
+  } catch {}
 
   if (!artikel) {
     return (
