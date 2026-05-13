@@ -1,10 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { LogIn, Eye, EyeOff } from "lucide-react";
+import { LogIn, Eye, EyeOff, Chrome, Mail } from "lucide-react";
 import BatikDecoration from "@/components/shared/BatikDecoration";
 import { createClient } from "@/lib/supabase/client";
 
@@ -12,8 +12,17 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("error")) {
+      setError(params.get("error") || "");
+      window.history.replaceState({}, "", "/login");
+    }
+  }, []);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -29,7 +38,12 @@ export default function LoginPage() {
       });
 
       if (authError) {
-        setError(authError.message);
+        setError(authError.message === "Invalid login credentials"
+          ? "Email atau password salah"
+          : authError.message === "Email not confirmed"
+          ? "Email belum dikonfirmasi. Cek inbox/spam kamu."
+          : authError.message
+        );
         setLoading(false);
         return;
       }
@@ -60,62 +74,97 @@ export default function LoginPage() {
     }
   };
 
+  const handleGoogleLogin = async () => {
+    setGoogleLoading(true);
+    setError("");
+
+    try {
+      const supabase = createClient();
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: `${window.location.origin}/api/auth/callback`,
+        },
+      });
+      if (error) setError(error.message);
+    } catch {
+      setError("Gagal login dengan Google");
+    }
+    setGoogleLoading(false);
+  };
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-red-600 via-red-700 to-blue-900 relative overflow-hidden">
-      {/* Batik Pattern Decorations */}
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-red-600 via-red-700 to-blue-900 relative overflow-hidden px-4 py-8">
       <BatikDecoration />
-      
-      {/* Additional batik overlay gradients */}
       <div className="absolute top-0 left-0 w-1/2 h-1/2 bg-gradient-to-br from-black/10 to-transparent" />
       <div className="absolute bottom-0 right-0 w-1/2 h-1/2 bg-gradient-to-tl from-black/10 to-transparent" />
 
-      <div className="relative z-10 w-full max-w-md px-4">
-        {/* Logo */}
+      <div className="relative z-10 w-full max-w-md">
         <div className="mb-6 text-center">
           <div className="relative inline-block">
-            <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-yellow-400 via-orange-500 to-red-600 flex items-center justify-center shadow-2xl">
+            <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-yellow-400 via-orange-500 to-red-600 flex items-center justify-center shadow-2xl mx-auto">
               <Image src="/logo.png" alt="BC" width={60} height={60} className="rounded-xl" />
             </div>
-            {/* Decorative batik corner - top */}
-            <div className="absolute -top-2 -left-2 w-8 h-8 border-t-2 border-l-2 border-white/30 rounded-tl-lg" />
           </div>
         </div>
 
-        {/* Card */}
-        <div className="bg-white/95 backdrop-blur-md rounded-3xl p-8 shadow-2xl border border-white/20">
+        <div className="bg-white/95 backdrop-blur-md rounded-3xl p-6 md:p-8 shadow-2xl border border-white/20">
           <div className="text-center mb-6">
             <h1 className="text-2xl font-bold text-gray-900 mb-1">Masuk</h1>
-            <p className="text-sm text-gray-500">Selamat datang kembali, Guru!</p>
+            <p className="text-sm text-gray-500">Selamat datang di BahasaCerdas</p>
           </div>
 
           {error && (
-            <div className="mb-4 rounded-xl bg-red-50 border border-red-200 p-4 text-sm text-red-700 flex items-center gap-2">
-              <span className="w-2 h-2 bg-red-500 rounded-full"></span>
+            <div className="mb-4 rounded-xl bg-red-50 border border-red-200 p-3 md:p-4 text-sm text-red-700 flex items-center gap-2">
+              <span className="w-2 h-2 bg-red-500 rounded-full shrink-0"></span>
               {error}
             </div>
           )}
 
-          <form onSubmit={handleLogin} className="space-y-5">
+          <button
+            onClick={handleGoogleLogin}
+            disabled={googleLoading}
+            className="w-full flex items-center justify-center gap-3 rounded-xl border-2 border-gray-200 px-4 py-3 text-sm font-semibold text-gray-700 hover:bg-gray-50 hover:border-gray-300 transition-all mb-4"
+          >
+            {googleLoading ? (
+              <div className="w-5 h-5 border-2 border-gray-300 border-t-gray-600 rounded-full animate-spin" />
+            ) : (
+              <svg width="20" height="20" viewBox="0 0 24 24">
+                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/>
+                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+              </svg>
+            )}
+            {googleLoading ? "Memproses..." : "Masuk dengan Google"}
+          </button>
+
+          <div className="relative mb-4">
+            <div className="absolute inset-0 flex items-center"><span className="w-full border-t border-gray-200" /></div>
+            <div className="relative flex justify-center text-xs"><span className="bg-white px-3 text-gray-400">atau masuk dengan email</span></div>
+          </div>
+
+          <form onSubmit={handleLogin} className="space-y-4">
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">Email</label>
+              <label className="block text-sm font-semibold text-gray-700 mb-1.5">Email</label>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full rounded-xl border-2 border-gray-200 px-4 py-3.5 text-sm focus:border-red-500 focus:outline-none transition-colors bg-white"
+                className="w-full rounded-xl border-2 border-gray-200 px-4 py-3 text-sm focus:border-red-500 focus:outline-none transition-colors bg-white"
                 placeholder="guru@sekolah.sch.id"
                 required
               />
             </div>
-            
+
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">Password</label>
+              <label className="block text-sm font-semibold text-gray-700 mb-1.5">Password</label>
               <div className="relative">
                 <input
                   type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full rounded-xl border-2 border-gray-200 px-4 py-3.5 text-sm focus:border-red-500 focus:outline-none transition-colors bg-white"
+                  className="w-full rounded-xl border-2 border-gray-200 px-4 py-3 text-sm focus:border-red-500 focus:outline-none transition-colors bg-white"
                   placeholder="••••••••"
                   required
                 />
@@ -145,7 +194,7 @@ export default function LoginPage() {
             </Button>
           </form>
 
-          <div className="mt-6 pt-6 border-t border-gray-100 text-center">
+          <div className="mt-6 pt-5 border-t border-gray-100 text-center">
             <p className="text-sm text-gray-500">
               Belum punya akun?{" "}
               <Link href="/register" className="font-semibold text-red-600 hover:text-red-700 hover:underline">
@@ -155,19 +204,9 @@ export default function LoginPage() {
           </div>
         </div>
 
-        {/* Bottom tagline */}
-        <p className="text-center text-white/60 text-xs mt-6">
+        <p className="text-center text-white/60 text-xs mt-6 px-4">
           BahasaCerdas — Platform Edukasi Bahasa Indonesia
         </p>
-      </div>
-
-      {/* Decorative batik corner - bottom right of screen */}
-      <div className="absolute bottom-0 right-0 w-32 h-32 md:w-48 md:h-48 opacity-20">
-        <svg viewBox="0 0 100 100" className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
-          <path d="M0 50 Q25 0 50 50 Q75 100 100 50" stroke="white" fill="none" strokeWidth="0.5"/>
-          <path d="M0 30 Q25 0 50 30 Q75 60 100 30" stroke="white" fill="none" strokeWidth="0.5"/>
-          <path d="M0 70 Q25 40 50 70 Q75 100 100 70" stroke="white" fill="none" strokeWidth="0.5"/>
-        </svg>
       </div>
     </div>
   );

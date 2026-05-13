@@ -111,11 +111,9 @@ export default function RegisterPage() {
         {/* Logo */}
         <div className="mb-6 text-center">
           <div className="relative inline-block">
-            <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-yellow-400 via-orange-500 to-red-600 flex items-center justify-center shadow-2xl">
+            <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-yellow-400 via-orange-500 to-red-600 flex items-center justify-center shadow-2xl mx-auto">
               <Image src="/logo.png" alt="BC" width={60} height={60} className="rounded-xl" />
             </div>
-            {/* Decorative corner */}
-            <div className="absolute -top-2 -left-2 w-8 h-8 border-t-2 border-l-2 border-white/30 rounded-tl-lg" />
           </div>
           <h1 className="text-2xl font-bold text-white mt-4">Daftar BahasaCerdas</h1>
           <p className="text-red-100 text-sm mt-1">
@@ -127,11 +125,9 @@ export default function RegisterPage() {
         </div>
 
         {/* Card */}
-        <div className="bg-white/95 backdrop-blur-md rounded-3xl p-8 shadow-2xl border border-white/20">
+        <div className="bg-white/95 backdrop-blur-md rounded-3xl p-6 md:p-8 shadow-2xl border border-white/20">
           {error && (
-            <div className="mb-4 rounded-xl bg-red-50 border border-red-200 p-4 text-sm text-red-700">
-              {error}
-            </div>
+            <div className="mb-4 rounded-xl bg-red-50 border border-red-200 p-3 md:p-4 text-sm text-red-700">{error}</div>
           )}
 
           {step === 1 && (
@@ -143,11 +139,11 @@ export default function RegisterPage() {
                 </div>
               </div>
               
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-3 md:gap-4">
                 <button
                   type="button"
                   onClick={() => setRole("GURU")}
-                  className={`relative flex flex-col items-center gap-3 rounded-2xl border-2 p-6 transition-all hover:scale-[1.02] ${
+                  className={`relative flex flex-col items-center gap-3 rounded-2xl border-2 p-4 md:p-6 transition-all hover:scale-[1.02] ${
                     role === "GURU"
                       ? `${config.borderActive} ${config.bgLight} shadow-lg ${config.accent} ring-4`
                       : "border-gray-200 hover:border-gray-300 bg-gray-50"
@@ -160,17 +156,17 @@ export default function RegisterPage() {
                       </div>
                     </div>
                   )}
-                  <div className={`w-16 h-16 rounded-2xl flex items-center justify-center ${role === "GURU" ? config.bgIcon : "bg-gray-100"}`}>
-                    <GraduationCap className={`h-8 w-8 ${role === "GURU" ? config.iconColor : "text-gray-400"}`} />
+                  <div className={`w-14 h-14 md:w-16 md:h-16 rounded-2xl flex items-center justify-center ${role === "GURU" ? config.bgIcon : "bg-gray-100"}`}>
+                    <GraduationCap className={`h-7 w-7 md:h-8 md:w-8 ${role === "GURU" ? config.iconColor : "text-gray-400"}`} />
                   </div>
-                  <span className={`font-bold text-lg ${role === "GURU" ? config.textActive : "text-gray-700"}`}>Guru</span>
-                  <span className="text-xs text-center text-gray-500">AI RPP, Bank Soal, Kuis Game</span>
+                  <span className={`font-bold text-base md:text-lg ${role === "GURU" ? config.textActive : "text-gray-700"}`}>Guru</span>
+                  <span className="text-[11px] md:text-xs text-center text-gray-500">AI RPP, Bank Soal, Kuis Game</span>
                 </button>
                 
                 <button
                   type="button"
                   onClick={() => setRole("MURID")}
-                  className={`relative flex flex-col items-center gap-3 rounded-2xl border-2 p-6 transition-all hover:scale-[1.02] ${
+                  className={`relative flex flex-col items-center gap-3 rounded-2xl border-2 p-4 md:p-6 transition-all hover:scale-[1.02] ${
                     role === "MURID"
                       ? `${config.borderActive} ${config.bgLight} shadow-lg ${config.accent} ring-4`
                       : "border-gray-200 hover:border-gray-300 bg-gray-50"
@@ -183,11 +179,11 @@ export default function RegisterPage() {
                       </div>
                     </div>
                   )}
-                  <div className={`w-16 h-16 rounded-2xl flex items-center justify-center ${role === "MURID" ? config.bgIcon : "bg-gray-100"}`}>
-                    <BookOpen className={`h-8 w-8 ${role === "MURID" ? config.iconColor : "text-gray-400"}`} />
+                  <div className={`w-14 h-14 md:w-16 md:h-16 rounded-2xl flex items-center justify-center ${role === "MURID" ? config.bgIcon : "bg-gray-100"}`}>
+                    <BookOpen className={`h-7 w-7 md:h-8 md:w-8 ${role === "MURID" ? config.iconColor : "text-gray-400"}`} />
                   </div>
-                  <span className={`font-bold text-lg ${role === "MURID" ? config.textActive : "text-gray-700"}`}>Murid</span>
-                  <span className="text-xs text-center text-gray-500">Belajar, Kuis, UKBI</span>
+                  <span className={`font-bold text-base md:text-lg ${role === "MURID" ? config.textActive : "text-gray-700"}`}>Murid</span>
+                  <span className="text-[11px] md:text-xs text-center text-gray-500">Belajar, Kuis, UKBI</span>
                 </button>
               </div>
 
@@ -214,8 +210,8 @@ export default function RegisterPage() {
                   type="text"
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
-                  className="w-full rounded-xl border-2 border-gray-200 px-4 py-3.5 text-sm focus:border-red-500 focus:outline-none transition-colors"
-                  placeholder="Drs. Siti Rahayu, M.Pd."
+                  className="w-full rounded-xl border-2 border-gray-200 px-4 py-3 text-sm focus:border-red-500 focus:outline-none transition-colors"
+                  placeholder={role === "GURU" ? "Drs. Siti Rahayu, M.Pd." : "Ahmad Rizki"}
                   required
                 />
               </div>
@@ -226,7 +222,7 @@ export default function RegisterPage() {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full rounded-xl border-2 border-gray-200 px-4 py-3.5 text-sm focus:border-red-500 focus:outline-none transition-colors"
+                  className="w-full rounded-xl border-2 border-gray-200 px-4 py-3 text-sm focus:border-red-500 focus:outline-none transition-colors"
                   placeholder="siti@sekolah.sch.id"
                   required
                 />
@@ -238,7 +234,7 @@ export default function RegisterPage() {
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full rounded-xl border-2 border-gray-200 px-4 py-3.5 text-sm focus:border-red-500 focus:outline-none transition-colors"
+                  className="w-full rounded-xl border-2 border-gray-200 px-4 py-3 text-sm focus:border-red-500 focus:outline-none transition-colors"
                   placeholder="Minimal 8 karakter"
                   minLength={8}
                   required
@@ -270,11 +266,6 @@ export default function RegisterPage() {
                   )}
                 </Button>
               </div>
-
-              <p className="text-center text-xs text-gray-400">
-                Dengan mendaftar, kamu agree dengan{" "}
-                <a href="#" className="text-red-600 underline">Syarat & Ketentuan</a>
-              </p>
             </div>
           )}
         </div>
@@ -282,15 +273,6 @@ export default function RegisterPage() {
         <p className="text-center text-white/60 text-xs mt-6">
           BahasaCerdas — Platform Edukasi Bahasa Indonesia
         </p>
-      </div>
-
-      {/* Decorative batik corner - bottom right */}
-      <div className="absolute bottom-0 right-0 w-32 h-32 md:w-48 md:h-48 opacity-20">
-        <svg viewBox="0 0 100 100" className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
-          <path d="M0 50 Q25 0 50 50 Q75 100 100 50" stroke="white" fill="none" strokeWidth="0.5"/>
-          <path d="M0 30 Q25 0 50 30 Q75 60 100 30" stroke="white" fill="none" strokeWidth="0.5"/>
-          <path d="M0 70 Q25 40 50 70 Q75 100 100 70" stroke="white" fill="none" strokeWidth="0.5"/>
-        </svg>
       </div>
     </div>
   );
