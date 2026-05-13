@@ -1,19 +1,10 @@
 "use client";
 
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
+import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { Plus, Search, Users, Star, TrendingUp, ChevronRight } from "lucide-react";
-
-const mockSiswa = [
-  { name: "Ahmad Rizki", avatar: "AR", xp: 2450, level: 6, streak: 14, league: "SILVER", accuracy: 87, lastActive: "Baru saja" },
-  { name: "Siti Nurhaliza", avatar: "SN", xp: 8900, level: 18, streak: 30, league: "GOLD", accuracy: 94, lastActive: "Baru saja" },
-  { name: "Budi Santoso", avatar: "BS", xp: 450, level: 2, streak: 3, league: "BRONZE", accuracy: 65, lastActive: "2 jam lalu" },
-  { name: "Dewi Lestari", avatar: "DL", xp: 12000, level: 25, streak: 45, league: "DIAMOND", accuracy: 96, lastActive: "Kemarin" },
-  { name: "Fajar Nugroho", avatar: "FN", xp: 1500, level: 4, streak: 8, league: "BRONZE", accuracy: 78, lastActive: "3 hari lalu" },
-];
+import { Search, Users, ChevronRight } from "lucide-react";
 
 const leagueColors: Record<string, string> = {
   BRONZE: "from-amber-600 to-amber-800",
@@ -23,85 +14,77 @@ const leagueColors: Record<string, string> = {
 };
 
 export default function DataSiswaPage() {
+  const [siswa, setSiswa] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
-  const [sortBy, setSortBy] = useState<"xp" | "accuracy" | "streak">("xp");
 
-  const filtered = mockSiswa
-    .filter((s) => s.name.toLowerCase().includes(search.toLowerCase()))
-    .sort((a, b) => b[sortBy] - a[sortBy]);
+  useEffect(() => {
+    fetch("/api/guru/siswa")
+      .then((r) => r.json())
+      .then((data) => setSiswa(data.siswa || []))
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, []);
+
+  const filtered = siswa.filter((s) =>
+    s.fullName.toLowerCase().includes(search.toLowerCase())
+  );
 
   return (
     <div>
-      <div className="mb-8 flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Data Siswa</h1>
-          <p className="mt-1 text-sm text-gray-600">Pantau progres dan performa siswa</p>
-        </div>
-        <Button><Plus className="h-4 w-4" /> Tambah Siswa</Button>
+      <div className="mb-6">
+        <h1 className="text-2xl font-bold text-gray-900">Data Siswa</h1>
+        <p className="mt-1 text-sm text-gray-600">Pantau progres dan performa siswa dari kelasmu</p>
       </div>
 
       <Card className="p-4 mb-6">
-        <div className="flex items-center gap-4">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-            <input
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Cari nama siswa..."
-              className="w-full pl-10 pr-4 py-2 rounded-lg border text-sm"
-            />
-          </div>
-          <select
-            value={sortBy}
-            onChange={(e) => setSortBy(e.target.value as any)}
-            className="rounded-lg border px-3 py-2 text-sm"
-          >
-            <option value="xp">Urutkan: XP</option>
-            <option value="accuracy">Urutkan: Akurasi</option>
-            <option value="streak">Urutkan: Streak</option>
-          </select>
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+          <input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Cari nama siswa..."
+            className="w-full pl-10 pr-4 py-2 rounded-lg border text-sm"
+          />
         </div>
       </Card>
 
-      <div className="grid gap-4">
-        {filtered.map((siswa, i) => (
-          <Card key={i} className="p-4">
-            <div className="flex items-center gap-4">
-              <div className={`h-12 w-12 rounded-full bg-gradient-to-br ${leagueColors[siswa.league]} flex items-center justify-center text-white font-bold`}>
-                {siswa.avatar}
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2">
-                  <p className="font-semibold">{siswa.name}</p>
-                  <Badge variant={siswa.league === "DIAMOND" ? "gold" : siswa.league === "GOLD" ? "warning" : "secondary"} className="text-[10px]">
-                    {siswa.league}
-                  </Badge>
+      {loading ? (
+        <div className="text-center py-16 text-gray-400">Memuat data siswa...</div>
+      ) : filtered.length === 0 ? (
+        <div className="text-center py-16">
+          <Users className="mx-auto h-12 w-12 text-gray-300" />
+          <p className="mt-4 text-gray-500">Belum ada siswa terdaftar</p>
+          <p className="text-sm text-gray-400 mt-1">Buat kelas di menu KelasKu dan undang siswa</p>
+        </div>
+      ) : (
+        <div className="grid gap-4">
+          {filtered.map((s) => (
+            <Card key={s.id} className="p-4">
+              <div className="flex items-center gap-4">
+                <div className={`h-12 w-12 rounded-full bg-gradient-to-br ${leagueColors[s.league] || "from-gray-400 to-gray-600"} flex items-center justify-center text-white font-bold`}>
+                  {(s.fullName || "??").slice(0, 2).toUpperCase()}
                 </div>
-                <div className="flex items-center gap-4 mt-1 text-xs text-gray-500">
-                  <span>Level {siswa.level}</span>
-                  <span>🔥 {siswa.streak} streak</span>
-                  <span>Terakhir: {siswa.lastActive}</span>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2">
+                    <p className="font-semibold">{s.fullName}</p>
+                    <Badge variant="secondary" className="text-[10px]">{s.league || "BRONZE"}</Badge>
+                  </div>
+                  <div className="flex items-center gap-4 mt-1 text-xs text-gray-500">
+                    <span>Level {s.level || 1}</span>
+                    <span>🔥 {s.streak || 0} streak</span>
+                    <span>Terakhir: {s.lastActiveAt ? new Date(s.lastActiveAt).toLocaleDateString("id") : "-"}</span>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <p className="text-lg font-bold text-blue-600">{(s.xp || 0).toLocaleString()}</p>
+                  <p className="text-xs text-gray-500">XP Total</p>
                 </div>
               </div>
-              <div className="text-right">
-                <p className="text-lg font-bold text-blue-600">{siswa.xp.toLocaleString()}</p>
-                <p className="text-xs text-gray-500">XP Total</p>
-              </div>
-              <div className="text-right min-w-[80px]">
-                <p className="text-lg font-bold">{siswa.accuracy}%</p>
-                <p className="text-xs text-gray-500">Akurasi</p>
-              </div>
-              <ChevronRight className="h-5 w-5 text-gray-300" />
-            </div>
-            <div className="mt-3 pl-16">
-              <div className="flex items-center gap-2">
-                <Progress value={siswa.accuracy} className="flex-1 h-2" />
-                <span className="text-xs text-gray-500">{Math.round(siswa.xp / 500) % 10}/10 level</span>
-              </div>
-            </div>
-          </Card>
-        ))}
-      </div>
+            </Card>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

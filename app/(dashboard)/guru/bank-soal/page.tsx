@@ -7,7 +7,21 @@ import { Modal } from "@/components/ui/modal";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { BookOpen, Plus, Trash2, Edit2, Zap, Save, X } from "lucide-react";
+import { BookOpen, Plus, Trash2, Zap } from "lucide-react";
+
+const KELAS = ["1","2","3","4","5","6","7","8","9","10","11","12"];
+const KD_OPTIONS = [
+  { value: "3.1", label: "3.1 - Teks Deskripsi" },
+  { value: "3.2", label: "3.2 - Teks Cerita" },
+  { value: "3.3", label: "3.3 - Teks Negosiasi" },
+  { value: "3.4", label: "3.4 - Teks Eksposisi" },
+  { value: "3.5", label: "3.5 - Teks Anekdot" },
+  { value: "3.6", label: "3.6 - Teks Laporan" },
+  { value: "3.7", label: "3.7 - Surat Resmi" },
+  { value: "3.8", label: "3.8 - Karya Sastra" },
+  { value: "4.1", label: "4.1 - Menulis Teks" },
+  { value: "4.2", label: "4.2 - Menyunting Teks" },
+];
 
 export default function BankSoalPage() {
   const user = useUserStore();
@@ -23,6 +37,8 @@ export default function BankSoalPage() {
     correctAnswer: "",
     explanation: "",
     isHOTS: false,
+    kelas: "",
+    kd: "",
   });
 
   const handleGenerate = async () => {
@@ -56,10 +72,13 @@ export default function BankSoalPage() {
       correctAnswer: formData.correctAnswer,
       explanation: formData.explanation,
       isHOTS: formData.isHOTS,
+      kelas: formData.kelas,
+      kd: formData.kd,
+      subject: "Bahasa Indonesia",
     };
     setSoalList((prev) => [...prev, newSoal]);
     setShowTambah(false);
-    setFormData({ text: "", type: "PILIHAN_GANDA", difficulty: "MEDIUM", options: ["", "", "", ""], correctAnswer: "", explanation: "", isHOTS: false });
+    setFormData({ text: "", type: "PILIHAN_GANDA", difficulty: "MEDIUM", options: ["", "", "", ""], correctAnswer: "", explanation: "", isHOTS: false, kelas: "", kd: "" });
   };
 
   const handleDelete = (index: number) => {
@@ -131,7 +150,7 @@ export default function BankSoalPage() {
               rows={3}
             />
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-3 gap-4">
             <div>
               <label className="block text-sm font-medium mb-1">Tipe</label>
               <select
@@ -154,6 +173,34 @@ export default function BankSoalPage() {
                 <option value="EASY">Mudah</option>
                 <option value="MEDIUM">Sedang</option>
                 <option value="HARD">Sulit</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Kelas</label>
+              <select
+                value={formData.kelas}
+                onChange={(e) => setFormData({ ...formData, kelas: e.target.value })}
+                className="w-full rounded-lg border px-4 py-2 text-sm"
+              >
+                <option value="">Pilih Kelas</option>
+                {KELAS.map((k) => <option key={k}>Kelas {k}</option>)}
+              </select>
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium mb-1">Mata Pelajaran</label>
+              <input value="Bahasa Indonesia" disabled className="w-full rounded-lg border px-4 py-2 text-sm bg-gray-50 text-gray-600" />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">KD (Kompetensi Dasar)</label>
+              <select
+                value={formData.kd}
+                onChange={(e) => setFormData({ ...formData, kd: e.target.value })}
+                className="w-full rounded-lg border px-4 py-2 text-sm"
+              >
+                <option value="">Pilih KD</option>
+                {KD_OPTIONS.map((kd) => <option key={kd.value} value={kd.value}>{kd.label}</option>)}
               </select>
             </div>
           </div>

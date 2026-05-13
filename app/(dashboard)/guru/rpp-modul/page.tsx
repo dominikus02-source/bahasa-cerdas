@@ -15,11 +15,17 @@ export default function RPPModulPage() {
   const [showUpgrade, setShowUpgrade] = useState(false);
   const [loading, setLoading] = useState(false);
   const [generated, setGenerated] = useState<any>(null);
+  const KELAS = [
+    "1", "2", "3", "4", "5", "6",
+    "7", "8", "9",
+    "10", "11", "12",
+  ];
+
   const [formData, setFormData] = useState({
     kd: "",
-    kelas: "X",
+    kelas: "1",
     topik: "",
-    alokasi: "3x40",
+    alokasi: "2x40",
     metode: "Diskusi",
   });
 
@@ -63,17 +69,43 @@ export default function RPPModulPage() {
                 onChange={(e) => setFormData({ ...formData, kelas: e.target.value })}
                 className="w-full rounded-lg border px-4 py-2"
               >
-                <option>X</option><option>XI</option><option>XII</option>
+                {KELAS.map((k) => <option key={k}>Kelas {k}</option>)}
               </select>
             </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Mata Pelajaran</label>
+              <input
+                value="Bahasa Indonesia"
+                disabled
+                className="w-full rounded-lg border px-4 py-2 bg-gray-50 text-gray-600"
+              />
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium mb-1">Alokasi Waktu</label>
               <input
                 value={formData.alokasi}
                 onChange={(e) => setFormData({ ...formData, alokasi: e.target.value })}
                 className="w-full rounded-lg border px-4 py-2"
-                placeholder="3x40 menit"
+                placeholder="2x40 menit"
               />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Metode</label>
+              <select
+                value={formData.metode}
+                onChange={(e) => setFormData({ ...formData, metode: e.target.value })}
+                className="w-full rounded-lg border px-4 py-2"
+              >
+                <option>Diskusi</option>
+                <option>Ceramah</option>
+                <option>Project Based</option>
+                <option>Problem Based</option>
+                <option>Inquiry</option>
+                <option>Game Based</option>
+                <option>Blended Learning</option>
+              </select>
             </div>
           </div>
           <div>
