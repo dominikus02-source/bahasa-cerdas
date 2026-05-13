@@ -40,12 +40,16 @@ export default function LoginPage() {
         return;
       }
 
-      const res = await fetch("/api/user/me");
+      let res = await fetch("/api/user/me");
       if (!res.ok) {
-        await supabase.auth.signOut();
-        setError("Akun belum terdaftar. Silakan daftar terlebih dahulu.");
-        setLoading(false);
-        return;
+        const createRes = await fetch("/api/user/me", { method: "POST" });
+        if (!createRes.ok) {
+          await supabase.auth.signOut();
+          setError("Akun belum terdaftar. Silakan daftar terlebih dahulu.");
+          setLoading(false);
+          return;
+        }
+        res = await fetch("/api/user/me");
       }
 
       const { user: dbUser } = await res.json();
