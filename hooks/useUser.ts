@@ -8,61 +8,60 @@ export function useUser() {
   const store = useUserStore();
 
   useEffect(() => {
-    const supabase = createClient();
+    async function fetchUser() {
+      const supabase = createClient();
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
 
-    supabase.auth.getUser().then(({ data }) => {
-      if (data.user) {
-        supabase
-          .from("users")
-          .select("*")
-          .eq("supabase_id", data.user.id)
-          .single()
-          .then(({ data: dbUser }) => {
-            if (dbUser) {
-              store.setUser({
-                id: dbUser.id,
-                supabaseId: dbUser.supabase_id,
-                email: dbUser.email,
-                fullName: dbUser.full_name,
-                role: dbUser.role?.toLowerCase(),
-                avatar: dbUser.avatar,
-                isPremium: dbUser.is_premium,
-                isFounder: dbUser.is_founder,
-                xp: dbUser.xp || 0,
-                level: dbUser.level || 1,
-                streak: dbUser.streak || 0,
-                league: dbUser.league || "BRONZE",
-              });
-            }
+      try {
+        const res = await fetch("/api/user/me");
+        if (!res.ok) return;
+        const { user: dbUser } = await res.json();
+        if (dbUser) {
+          store.setUser({
+            id: dbUser.id,
+            supabaseId: dbUser.supabaseId,
+            email: dbUser.email,
+            fullName: dbUser.fullName,
+            role: dbUser.role?.toLowerCase(),
+            avatar: dbUser.avatar,
+            isPremium: dbUser.isPremium,
+            isFounder: dbUser.isFounder,
+            xp: dbUser.xp || 0,
+            level: dbUser.level || 1,
+            streak: dbUser.streak || 0,
+            league: dbUser.league || "BRONZE",
           });
-      }
-    });
+        }
+      } catch {}
+    }
 
+    fetchUser();
+
+    const supabase = createClient();
     const { data: listener } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (session?.user) {
-        supabase
-          .from("users")
-          .select("*")
-          .eq("supabase_id", session.user.id)
-          .single()
-          .then(({ data: dbUser }) => {
-            if (dbUser) {
-              store.setUser({
-                id: dbUser.id,
-                supabaseId: dbUser.supabase_id,
-                email: dbUser.email,
-                fullName: dbUser.full_name,
-                role: dbUser.role?.toLowerCase(),
-                avatar: dbUser.avatar,
-                isPremium: dbUser.is_premium,
-                isFounder: dbUser.is_founder,
-                xp: dbUser.xp || 0,
-                level: dbUser.level || 1,
-                streak: dbUser.streak || 0,
-                league: dbUser.league || "BRONZE",
-              });
-            }
-          });
+        try {
+          const res = await fetch("/api/user/me");
+          if (!res.ok) return;
+          const { user: dbUser } = await res.json();
+          if (dbUser) {
+            store.setUser({
+              id: dbUser.id,
+              supabaseId: dbUser.supabaseId,
+              email: dbUser.email,
+              fullName: dbUser.fullName,
+              role: dbUser.role?.toLowerCase(),
+              avatar: dbUser.avatar,
+              isPremium: dbUser.isPremium,
+              isFounder: dbUser.isFounder,
+              xp: dbUser.xp || 0,
+              level: dbUser.level || 1,
+              streak: dbUser.streak || 0,
+              league: dbUser.league || "BRONZE",
+            });
+          }
+        } catch {}
       } else {
         store.clearUser();
       }

@@ -1,22 +1,19 @@
 "use server";
 
-import { createClient as createSupabase } from "@supabase/supabase-js";
+import { createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 import { redirect } from "next/navigation";
 
 export async function loginUser(formData: FormData) {
   try {
-    const email = formData.get("email") as string;
+    const email = (formData.get("email") as string).toLowerCase();
     const password = formData.get("password") as string;
 
     if (!email || !password) {
       return { error: "Missing credentials" };
     }
 
-    const supabase = createSupabase(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-    );
+    const supabase = await createClient();
 
     const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 

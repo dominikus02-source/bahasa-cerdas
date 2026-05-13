@@ -1,6 +1,6 @@
 "use server";
 
-import { createClient as createSupabase } from "@supabase/supabase-js";
+import { createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 import { redirect } from "next/navigation";
 
@@ -19,10 +19,7 @@ export async function registerUser(formData: FormData) {
       return { error: "Invalid role" };
     }
 
-    const supabase = createSupabase(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-    );
+    const supabase = await createClient();
 
     const isFounder = email === "dominus.02@gmail.com";
 
@@ -40,7 +37,8 @@ export async function registerUser(formData: FormData) {
       return { error: "Registration failed" };
     }
 
-    const existingUser = await db.user.findFirst({ where: { email: email.toLowerCase() } });
+    const normalizedEmail = email.toLowerCase();
+    const existingUser = await db.user.findFirst({ where: { email: normalizedEmail } });
     if (existingUser) {
       if (existingUser.supabaseId === data.user.id) {
         redirect(`/${existingUser.role.toLowerCase()}/beranda`);
@@ -51,7 +49,7 @@ export async function registerUser(formData: FormData) {
     const newUser = await db.user.create({
       data: {
         supabaseId: data.user.id,
-        email,
+        email: normalizedEmail,
         fullName,
         role,
         isFounder,
