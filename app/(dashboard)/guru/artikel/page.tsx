@@ -38,16 +38,13 @@ export default function GuruArtikelPage() {
   async function uploadImage(file: File) {
     setUploading(true);
     try {
-      const supabase = createClient();
-      const ext = file.name.split(".").pop();
-      const fileName = `artikel/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
-      const { error } = await supabase.storage.from("images").upload(fileName, file);
-      if (error) throw error;
-      const { data: urlData } = supabase.storage.from("images").getPublicUrl(fileName);
-      setForm({ ...form, coverImage: urlData.publicUrl });
-    } catch (e) {
-      alert("Gagal upload gambar");
-    }
+      const formData = new FormData();
+      formData.set("file", file);
+      const res = await fetch("/api/upload/image", { method: "POST", body: formData });
+      const data = await res.json();
+      if (res.ok) setForm({ ...form, coverImage: data.url });
+      else alert(data.error || "Gagal upload");
+    } catch { alert("Gagal upload gambar"); }
     setUploading(false);
   }
 

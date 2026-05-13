@@ -1,32 +1,35 @@
+import { db } from "@/lib/db";
 import Link from "next/link";
 import { ArrowLeft, Calendar, Clock, User } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import PageNavbar from "@/components/public/PageNavbar";
 
-async function getArtikel(slug: string) {
-  try {
-    const base = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
-    const res = await fetch(`${base}/api/artikel/${slug}`, { cache: "no-store" });
-    if (!res.ok) return null;
-    return await res.json();
-  } catch { return null; }
-}
-
 export default async function ArtikelDetailPage({ params }: { params: { slug: string } }) {
-  const data = await getArtikel(params.slug);
-  const artikel = data?.artikel;
+  const artikel = await db.artikel.findUnique({
+    where: { slug: params.slug, isPublished: true },
+    select: {
+      id: true, title: true, slug: true, content: true, excerpt: true,
+      coverImage: true, tags: true, readCount: true, createdAt: true, updatedAt: true,
+      author: { select: { id: true, fullName: true, avatar: true } },
+    },
+  });
 
   if (!artikel) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-white">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-slate-900">Artikel tidak ditemukan</h1>
-          <Link href="/artikel" className="mt-4 inline-block text-red-600 font-semibold hover:underline">Lihat semua artikel →</Link>
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-white">
+        <PageNavbar />
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <div className="text-center">
+            <h1 className="text-2xl font-bold text-slate-900">Artikel tidak ditemukan</h1>
+            <Link href="/artikel" className="mt-4 inline-block text-red-600 font-semibold hover:underline">Lihat semua artikel →</Link>
+          </div>
         </div>
       </div>
     );
   }
+
+  await db.artikel.update({ where: { id: artikel.id }, data: { readCount: { increment: 1 } } });
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-white">
@@ -73,9 +76,7 @@ export default async function ArtikelDetailPage({ params }: { params: { slug: st
             <Link href="/artikel" className="text-sm text-red-600 font-semibold hover:underline flex items-center gap-1">
               <ArrowLeft size={14} /> Artikel Lainnya
             </Link>
-            {artikel.readCount && (
-              <span className="text-xs text-slate-400">{artikel.readCount} kali dibaca</span>
-            )}
+            <span className="text-xs text-slate-400">{artikel.readCount} kali dibaca</span>
           </div>
         </article>
       </div>

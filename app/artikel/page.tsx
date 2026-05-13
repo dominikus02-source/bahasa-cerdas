@@ -1,17 +1,19 @@
 import Link from "next/link";
 import { Calendar, Clock, ArrowRight, User, BookOpen } from "lucide-react";
 import PageNavbar from "@/components/public/PageNavbar";
-
-async function getArtikel() {
-  try {
-    const base = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
-    const res = await fetch(`${base}/api/artikel?limit=12`, { cache: "no-store" });
-    return await res.json();
-  } catch { return { data: [] }; }
-}
+import { db } from "@/lib/db";
 
 export default async function ArtikelPage() {
-  const { data: artikel } = await getArtikel();
+  const artikel = await db.artikel.findMany({
+    where: { isPublished: true },
+    orderBy: { createdAt: "desc" },
+    take: 12,
+    select: {
+      id: true, title: true, slug: true, excerpt: true,
+      coverImage: true, tags: true, readCount: true, createdAt: true,
+      author: { select: { fullName: true } },
+    },
+  });
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-white">
