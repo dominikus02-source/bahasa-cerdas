@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { GraduationCap, BookOpen, ArrowRight, Sparkles, Check } from "lucide-react";
 import BatikDecoration from "@/components/shared/BatikDecoration";
 import { registerUser } from "@/app/actions/register";
+import { createClient } from "@/lib/supabase/client";
 
 export default function RegisterPage() {
   const [step, setStep] = useState(1);
@@ -22,17 +23,47 @@ export default function RegisterPage() {
     setLoading(true);
     setError("");
 
-    const formData = new FormData();
-    formData.set("email", email);
-    formData.set("fullName", fullName);
-    formData.set("password", password);
-    formData.set("role", role);
+    try {
+      const supabase = createClient();
 
-    const result = await registerUser(formData);
-    if (result?.error) {
-      setError(result.error);
+      const normalizedEmail = email.toLowerCase();
+
+      const { data, error: signUpError } = await supabase.auth.signUp({
+        email: normalizedEmail,
+        password,
+        options: { data: { role, full_name: fullName } },
+      });
+
+      if (signUpError) {
+        setError(signUpError.message);
+        setLoading(false);
+        return;
+      }
+
+      if (!data.user) {
+        setError("Registration failed");
+        setLoading(false);
+        return;
+      }
+
+      const formData = new FormData();
+      formData.set("email", normalizedEmail);
+      formData.set("supabaseId", data.user.id);
+      formData.set("fullName", fullName);
+      formData.set("role", role);
+
+      const result = await registerUser(formData);
+      if (result?.error) {
+        setError(result.error);
+        setLoading(false);
+        return;
+      }
+
+      window.location.href = `/${role.toLowerCase()}/beranda`;
+    } catch (err: any) {
+      setError(err?.message || "Terjadi kesalahan");
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const roleConfig = {

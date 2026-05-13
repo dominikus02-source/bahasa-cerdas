@@ -4,9 +4,9 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { LogIn, Eye, EyeOff, Sparkles } from "lucide-react";
+import { LogIn, Eye, EyeOff } from "lucide-react";
 import BatikDecoration from "@/components/shared/BatikDecoration";
-import { loginUser } from "@/app/actions/login";
+import { createClient } from "@/lib/supabase/client";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -20,13 +20,38 @@ export default function LoginPage() {
     setLoading(true);
     setError("");
 
-    const formData = new FormData();
-    formData.set("email", email);
-    formData.set("password", password);
+    try {
+      const supabase = createClient();
 
-    const result = await loginUser(formData);
-    if (result?.error) {
-      setError(result.error);
+      const { data, error: authError } = await supabase.auth.signInWithPassword({
+        email: email.toLowerCase(),
+        password,
+      });
+
+      if (authError) {
+        setError(authError.message);
+        setLoading(false);
+        return;
+      }
+
+      if (!data.user) {
+        setError("Login failed");
+        setLoading(false);
+        return;
+      }
+
+      const res = await fetch("/api/user/me");
+      if (!res.ok) {
+        await supabase.auth.signOut();
+        setError("Akun belum terdaftar. Silakan daftar terlebih dahulu.");
+        setLoading(false);
+        return;
+      }
+
+      const { user: dbUser } = await res.json();
+      window.location.href = `/${dbUser.role.toLowerCase()}/beranda`;
+    } catch {
+      setError("Terjadi kesalahan. Silakan coba lagi.");
       setLoading(false);
     }
   };

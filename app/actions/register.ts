@@ -1,17 +1,15 @@
 "use server";
 
-import { createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
-import { redirect } from "next/navigation";
 
 export async function registerUser(formData: FormData) {
   try {
     const email = formData.get("email") as string;
+    const supabaseId = formData.get("supabaseId") as string;
     const fullName = formData.get("fullName") as string;
-    const password = formData.get("password") as string;
     const role = formData.get("role") as "GURU" | "MURID";
 
-    if (!email || !fullName || !password || !role) {
+    if (!email || !supabaseId || !fullName || !role) {
       return { error: "Missing fields" };
     }
 
@@ -19,37 +17,20 @@ export async function registerUser(formData: FormData) {
       return { error: "Invalid role" };
     }
 
-    const supabase = await createClient();
-
     const isFounder = email === "dominus.02@gmail.com";
 
-    const { data, error: signUpError } = await supabase.auth.signUp({
-      email,
-      password,
-      options: { data: { role, full_name: fullName } },
-    });
-
-    if (signUpError) {
-      return { error: signUpError.message };
-    }
-
-    if (!data.user) {
-      return { error: "Registration failed" };
-    }
-
-    const normalizedEmail = email.toLowerCase();
-    const existingUser = await db.user.findFirst({ where: { email: normalizedEmail } });
+    const existingUser = await db.user.findFirst({ where: { email: email.toLowerCase() } });
     if (existingUser) {
-      if (existingUser.supabaseId === data.user.id) {
-        redirect(`/${existingUser.role.toLowerCase()}/beranda`);
+      if (existingUser.supabaseId === supabaseId) {
+        return { ok: true, role: existingUser.role.toLowerCase() };
       }
       return { error: "Email sudah terdaftar dengan akun lain" };
     }
 
     const newUser = await db.user.create({
       data: {
-        supabaseId: data.user.id,
-        email: normalizedEmail,
+        supabaseId,
+        email: email.toLowerCase(),
         fullName,
         role,
         isFounder,
@@ -60,9 +41,8 @@ export async function registerUser(formData: FormData) {
 
     try { await db.profile.create({ data: { userId: newUser.id } }); } catch {}
 
-    redirect(`/${role.toLowerCase()}/beranda`);
+    return { ok: true, role: role.toLowerCase() };
   } catch (err: any) {
-    if (err?.message?.includes("NEXT_REDIRECT")) throw err;
     return { error: err?.message || "Internal server error" };
   }
 }
