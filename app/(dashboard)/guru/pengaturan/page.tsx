@@ -110,34 +110,6 @@ export default function GuruPengaturanPage() {
 
       setMessage({ type: "success", text: "✓ Profil berhasil disimpan!" });
       setTimeout(() => window.location.reload(), 1000);
-      setMessage({ type: "error", text: error.message });
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleRekeningSave = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setMessage(null);
-    await new Promise((r) => setTimeout(r, 1000));
-    setMessage({ type: "success", text: "Data rekening berhasil disimpan!" });
-    setLoading(false);
-  };
-
-  const handlePasswordSave = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (password.new !== password.confirm) {
-      setMessage({ type: "error", text: "Password baru tidak cocok!" });
-      return;
-    }
-    setLoading(true);
-    setMessage(null);
-    try {
-      const result = await supabase.auth.updateUser({ password: password.new });
-      if (result.error) throw result.error;
-      setMessage({ type: "success", text: "Password berhasil diubah!" });
-      setPassword({ current: "", new: "", confirm: "" });
     } catch (error: any) {
       setMessage({ type: "error", text: error.message });
     } finally {
