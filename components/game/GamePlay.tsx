@@ -6,11 +6,11 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Zap, Flame, Trophy, Clock, Star, Crown, Swords, Heart } from "lucide-react";
 
 const MODE_STYLES: Record<string, { name: string; icon: any; gradient: string; accent: string }> = {
-  KUIS_BATTLE: { name: "Kuis Battle", icon: Zap, gradient: "from-violet-600 to-purple-700", accent: "violet" },
-  GOLD_RUSH: { name: "Gold Rush", icon: Trophy, gradient: "from-amber-500 to-orange-600", accent: "amber" },
-  SPEED_BATTLE: { name: "Speed Battle", icon: Swords, gradient: "from-red-500 to-rose-600", accent: "red" },
-  SURVIVAL: { name: "Survival", icon: Heart, gradient: "from-pink-500 to-rose-600", accent: "pink" },
-  TIMED_TRIAL: { name: "Timed Trial", icon: Clock, gradient: "from-cyan-500 to-blue-600", accent: "cyan" },
+  KUIS_BATTLE: { name: "Adu Cerdas", icon: Zap, gradient: "from-violet-600 to-purple-700", accent: "violet" },
+  GOLD_RUSH: { name: "Rebut Emas", icon: Trophy, gradient: "from-amber-500 to-orange-600", accent: "amber" },
+  SPEED_BATTLE: { name: "Cepat Tepat", icon: Swords, gradient: "from-red-500 to-rose-600", accent: "red" },
+  SURVIVAL: { name: "Tak Terkalahkan", icon: Heart, gradient: "from-pink-500 to-rose-600", accent: "pink" },
+  TIMED_TRIAL: { name: "Lawan Waktu", icon: Clock, gradient: "from-cyan-500 to-blue-600", accent: "cyan" },
 };
 
 export default function GamePlay({ roomCode, onFinish }: GamePlayProps) {

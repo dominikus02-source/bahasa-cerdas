@@ -8,15 +8,15 @@ import { Zap, Trophy, Swords, Heart, Timer, Copy, Check, Users, Sparkles, ArrowR
 const GAME_MODES = [
   {
     id: "KUIS_BATTLE",
-    name: "Kuis Battle",
-    desc: "Jawab cepat, kumpulkan poin, rebut peringkat teratas!",
+    name: "Adu Cerdas",
+    desc: "Jawab benar, kumpulkan poin, rebut peringkat teratas!",
     icon: Zap,
     color: "from-violet-500 to-purple-600",
     lightColor: "bg-violet-50 border-violet-200",
   },
   {
     id: "GOLD_RUSH",
-    name: "Gold Rush",
+    name: "Rebut Emas",
     desc: "Kumpulkan emas sebanyak-banyaknya, jawab benar untuk menambang!",
     icon: Trophy,
     color: "from-amber-500 to-orange-600",
@@ -24,7 +24,7 @@ const GAME_MODES = [
   },
   {
     id: "SPEED_BATTLE",
-    name: "Speed Battle",
+    name: "Cepat Tepat",
     desc: "Kecepatan adalah segalanya! Jawab paling cepat dapat poin terbanyak!",
     icon: Swords,
     color: "from-red-500 to-rose-600",
@@ -32,7 +32,7 @@ const GAME_MODES = [
   },
   {
     id: "SURVIVAL",
-    name: "Survival",
+    name: "Tak Terkalahkan",
     desc: "Punya 3 nyawa! Jawab salah = nyawa berkurang. Bertahan paling akhir jadi juara!",
     icon: Heart,
     color: "from-pink-500 to-rose-600",
@@ -40,7 +40,7 @@ const GAME_MODES = [
   },
   {
     id: "TIMED_TRIAL",
-    name: "Timed Trial",
+    name: "Lawan Waktu",
     desc: "Waktu terbatas! Jawab benar untuk tambah waktu. Kejar skor tertinggi!",
     icon: Timer,
     color: "from-cyan-500 to-blue-600",
