@@ -29,7 +29,7 @@ export default async function ArtikelDetailPage({ params }: { params: { slug: st
     );
   }
 
-  await db.artikel.update({ where: { id: artikel.id }, data: { readCount: { increment: 1 } } });
+  try { await db.artikel.update({ where: { id: artikel.id }, data: { readCount: { increment: 1 } } }); } catch {}
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-white">
