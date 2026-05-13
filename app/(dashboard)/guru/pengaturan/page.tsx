@@ -109,20 +109,7 @@ export default function GuruPengaturanPage() {
       });
 
       setMessage({ type: "success", text: "✓ Profil berhasil disimpan!" });
-
-      // Refresh user data in store
-      const meRes = await fetch("/api/user/me");
-      if (meRes.ok) {
-        const { user: dbUser } = await meRes.json();
-        const store = (await import("@/store")).useUserStore.getState();
-        store.setUser({
-          id: dbUser.id, supabaseId: dbUser.supabaseId, email: dbUser.email,
-          fullName: dbUser.fullName, avatar: dbUser.avatar, role: dbUser.role?.toLowerCase(),
-          isPremium: dbUser.isPremium, isFounder: dbUser.isFounder,
-          xp: dbUser.xp || 0, level: dbUser.level || 1, streak: dbUser.streak || 0, league: dbUser.league || "BRONZE",
-        });
-      }
-    } catch (error: any) {
+      setTimeout(() => window.location.reload(), 1000);
       setMessage({ type: "error", text: error.message });
     } finally {
       setLoading(false);
