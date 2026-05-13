@@ -1,0 +1,2 @@
+import Link from "next/link";
+export default function Page() { return <div className="text-center py-20"><h1 className="text-xl font-bold">Sertifikat</h1><p className="text-sm text-gray-500 mt-2">Halaman sertifikat dalam pengembangan.</p><Link href="/guru/beranda" className="mt-4 inline-block text-sm text-emerald-600 font-semibold hover:underline">Kembali</Link></div>; }

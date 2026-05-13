@@ -38,10 +38,10 @@ export default function MuridBerandaPage() {
   const levelProgress = (currentLevelXP / levelXP) * 100
 
   const quickActions = [
-    { href: "/murid/kuis-game", label: "Main Kuis", icon: Gamepad2, color: "from-violet-500 to-purple-600", desc: "Multiplayer & ranking" },
+    { href: "/murid/kuis-game", label: "Main Kuis", icon: Gamepad2, color: "from-violet-500 to-purple-600", desc: "Multiplayer & peringkat" },
     { href: "/murid/tugasku", label: "Tugasku", icon: ClipboardList, color: "from-blue-500 to-blue-600", desc: "Latihan harian" },
     { href: "/murid/ukbi", label: "Simulasi UKBI", icon: GraduationCap, color: "from-emerald-500 to-emerald-600", desc: "5 seksi resmi" },
-    { href: "/murid/progresku", label: "Progresku", icon: TrendingUp, color: "from-amber-500 to-orange-600", desc: "Stats & achievement" },
+    { href: "/murid/progresku", label: "Progresku", icon: TrendingUp, color: "from-amber-500 to-orange-600", desc: "Statistik & pencapaian" },
   ]
 
   return (

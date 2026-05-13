@@ -39,7 +39,7 @@ export default function RegisterPage() {
 
       const createData = await createRes.json();
       if (!createRes.ok) {
-        setError(createData.error || "Registration failed");
+        setError(createData.error || "Gagal mendaftar. Silakan coba lagi.");
         setLoading(false);
         return;
       }

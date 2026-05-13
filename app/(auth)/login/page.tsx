@@ -35,7 +35,7 @@ export default function LoginPage() {
       }
 
       if (!data.user) {
-        setError("Login failed");
+        setError("Gagal masuk. Silakan coba lagi.");
         setLoading(false);
         return;
       }
