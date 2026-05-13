@@ -48,6 +48,7 @@ export default function SertifikatPage() {
               </div>
               <h3 className="font-bold text-gray-900">{c.paket?.title || "Sertifikat"}</h3>
               <div className="flex items-center gap-2 mt-2">
+                <span className="text-[10px] px-2 py-0.5 bg-amber-100 text-amber-700 rounded-full font-medium">Simulasi</span>
                 <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
                   c.predikat?.includes("Istimewa") || c.predikat?.includes("A") ? "bg-amber-50 text-amber-700" :
                   c.predikat?.includes("Unggul") || c.predikat?.includes("B") ? "bg-emerald-50 text-emerald-700" :

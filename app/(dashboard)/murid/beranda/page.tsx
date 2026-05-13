@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import { useState, useEffect } from "react"
 import {
   Flame, Zap, Trophy, BookOpen, Star, Target,
   ChevronRight, Gamepad2, ClipboardList, Clock,
@@ -10,6 +11,14 @@ import { useUserStore } from "@/store"
 
 export default function MuridBerandaPage() {
   const user = useUserStore()
+  const [tugas, setTugas] = useState<any[]>([])
+
+  useEffect(() => {
+    fetch("/api/murid/tugas")
+      .then(r => r.ok ? r.json() : [])
+      .then(d => setTugas(d.data || []))
+      .catch(() => {})
+  }, [])
 
   const leagueColors: Record<string, string> = {
     BRONZE: "from-amber-600 to-amber-800",
@@ -195,6 +204,29 @@ export default function MuridBerandaPage() {
           </div>
         </div>
       </div>
+
+      {tugas.length > 0 && (
+        <div className="bg-white rounded-2xl border border-violet-100 p-5 mb-6 shadow-sm">
+          <h3 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
+            <ClipboardList size={16} className="text-violet-600" /> Tugas Baru
+          </h3>
+          <div className="space-y-2">
+            {tugas.map((t: any) => (
+              <Link key={t.id} href={`/kompetisi/${t.groupQuiz.quizId}`}
+                className="flex items-center gap-3 p-3 rounded-xl bg-violet-50 hover:bg-violet-100 transition-colors">
+                <div className="w-9 h-9 rounded-lg bg-violet-100 flex items-center justify-center">
+                  <GraduationCap size={16} className="text-violet-600" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-semibold text-gray-900">{t.groupQuiz.title}</p>
+                  <p className="text-xs text-gray-500">{t.groupQuiz.group?.name} • {t.groupQuiz.dueDate ? `Tenggat ${new Date(t.groupQuiz.dueDate).toLocaleDateString("id")}` : "Belum ada tenggat"}</p>
+                </div>
+                <ChevronRight size={16} className="text-gray-300 shrink-0" />
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div className="mt-6 bg-white rounded-2xl border border-gray-100 p-6">
         <h3 className="font-semibold text-gray-900 mb-4">Aksi Cepat</h3>

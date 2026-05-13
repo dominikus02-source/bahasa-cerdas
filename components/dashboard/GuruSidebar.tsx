@@ -32,7 +32,9 @@ const NAV: NavItem[] = [
     icon: <GraduationCap size={18} />,
     children: [
       { label: "Simulasi UKBI", href: "/guru/ukbi", icon: <BookOpen size={16} /> },
+      { label: "Bank Soal UKBI", href: "/guru/bank-soal-ukbi", icon: <FileText size={16} /> },
       { label: "TKA Guru", href: "/guru/tka-guru", icon: <Brain size={16} /> },
+      { label: "Bank Soal TKA", href: "/guru/bank-soal-tka", icon: <Database size={16} /> },
       { label: "TKA UTBK", href: "/guru/tka-utbk", icon: <Award size={16} /> },
       { label: "Sertifikat", href: "/guru/sertifikat", icon: <Star size={16} /> },
     ]
