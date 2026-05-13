@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 
-export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   try {
     const video = await db.video.findUnique({
-      where: { id: params.id, isPublished: true },
+      where: { id, isPublished: true },
       select: {
         id: true, title: true, description: true, videoUrl: true,
         thumbnailUrl: true, duration: true, source: true, category: true,
