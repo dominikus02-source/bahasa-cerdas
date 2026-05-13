@@ -60,12 +60,6 @@ function generateCode(): string {
   return code;
 }
 
-function calculateScore(timeRemaining: number, baseScore: number, streak: number): number {
-  const timeBonus = Math.floor(timeRemaining / timeRemaining * 50);
-  const streakBonus = streak * 10;
-  return baseScore + timeBonus + streakBonus;
-}
-
 const io = new Server(PORT, {
   cors: {
     origin: '*',
@@ -324,20 +318,49 @@ io.on('connection', (socket) => {
       player.streak++;
       player.correct++;
       const bonusStreak = Math.min(player.streak - 1, 5) * 10;
-      player.score += 100 + bonusStreak;
+      const timeBonus = Math.floor((data.timeSpent / room.timePerQuestion) * 50);
+
+      if (room.gameType === 'GOLD_RUSH') {
+        const goldEarned = 50 + bonusStreak + Math.floor(Math.random() * 50);
+        player.score += goldEarned;
+      } else if (room.gameType === 'SPEED_BATTLE') {
+        const speedBonus = Math.max(0, Math.floor((1 - data.timeSpent / room.timePerQuestion) * 150));
+        player.score += 50 + speedBonus + bonusStreak;
+      } else {
+        player.score += 100 + bonusStreak;
+      }
+
       if (player.streak > player.maxStreak) {
         player.maxStreak = player.streak;
+      }
+
+      if (room.gameType === 'GOLD_RUSH') {
+        const otherPlayers = Array.from(room.players.values()).filter(p => p.id !== player.id && p.score > 0);
+        if (otherPlayers.length > 0 && Math.random() < 0.3) {
+          const target = otherPlayers[Math.floor(Math.random() * otherPlayers.length)];
+          const stolen = Math.min(30, target.score);
+          target.score = Math.max(0, target.score - stolen);
+          player.score += stolen;
+          room.players.set(target.id, target);
+          io.to(data.code).emit('notification', { message: `${player.playerName} mencuri ${stolen} emas dari ${target.playerName}!` });
+        }
       }
     } else {
       player.streak = 0;
       player.wrong++;
+      if (room.gameType === 'GOLD_RUSH') {
+        const penalty = Math.min(30, player.score);
+        player.score = Math.max(0, player.score - penalty);
+      }
     }
 
     room.players.set(data.userId, player);
     io.to(data.code).emit('score-update', {
       playerId: data.userId,
+      playerName: player.playerName,
       score: player.score,
       correct: player.correct,
+      wrong: player.wrong,
       streak: player.streak,
     });
 
@@ -397,7 +420,6 @@ async function loadQuestions(gameType: string, count: number): Promise<Question[
     const dbQuestions = await prisma.gameQuestion.findMany({
       where: {
         gameRoomId: null,
-        difficulty: 'MEDIUM',
       },
       take: count,
       orderBy: { orderIndex: 'asc' },
@@ -453,18 +475,19 @@ function emitQuestion(room: Room) {
 
   const question = room.questions[room.currentQuestion];
   io.to(room.code).emit('show-question', {
-    questionIndex: room.currentQuestion,
-    totalQuestions: room.questions.length,
-    question: {
-      id: question.id,
-      text: question.text,
-      audioUrl: question.audioUrl,
-      imageUrl: question.imageUrl,
-      passage: question.passage,
-      type: question.type,
-      options: question.options,
-    },
-    timeLimit: room.timePerQuestion,
+    index: room.currentQuestion,
+    total: room.questions.length,
+    gameMode: room.gameType,
+    id: question.id,
+    text: question.text,
+    audioUrl: question.audioUrl,
+    imageUrl: question.imageUrl,
+    passage: question.passage,
+    type: question.type,
+    options: question.options,
+    correctAnswer: question.correctAnswer,
+    difficulty: question.difficulty,
+    timePerQuestion: room.timePerQuestion,
   });
 
   const timer = setTimeout(async () => {
