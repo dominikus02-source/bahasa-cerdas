@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import GamePlay from '@/components/game/GamePlay';
+import { gameSocket } from '@/lib/game/socket';
 
 export default function MuridGamePlayPage() {
   const params = useParams();
@@ -11,8 +12,21 @@ export default function MuridGamePlayPage() {
 
   const roomCode = params.code as string;
 
+  useEffect(() => {
+    gameSocket.connect();
+
+    const unsubGameStarting = gameSocket.onGameStarting(() => {
+      setStarted(true);
+    });
+
+    return () => {
+      unsubGameStarting();
+    };
+  }, []);
+
   const handleFinish = () => {
     setStarted(false);
+    router.push('/murid/kuis-game');
   };
 
   return (

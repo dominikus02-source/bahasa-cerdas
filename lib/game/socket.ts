@@ -73,18 +73,19 @@ export const gameSocket = {
   },
 
   onShowQuestion(callback: (data: {
-    questionIndex: number;
-    totalQuestions: number;
-    question: {
-      id: string;
-      text: string;
-      audioUrl?: string;
-      imageUrl?: string;
-      passage?: string;
-      type: string;
-      options: string[];
-    };
-    timeLimit: number;
+    index: number;
+    total: number;
+    gameMode: string;
+    id: string;
+    text: string;
+    audioUrl?: string;
+    imageUrl?: string;
+    passage?: string;
+    type: string;
+    options: string[];
+    correctAnswer?: string;
+    difficulty?: string;
+    timePerQuestion: number;
   }) => void) {
     socket?.on('show-question', callback);
   },
@@ -97,7 +98,7 @@ export const gameSocket = {
     socket?.on('answer-result', callback);
   },
 
-  onScoreUpdate(callback: (data: { playerId: string; score: number; correct: number; streak: number }) => void) {
+  onScoreUpdate(callback: (data: { playerId: string; playerName?: string; score: number; correct: number; wrong: number; streak: number }) => void) {
     socket?.on('score-update', callback);
   },
 

@@ -1,203 +1,197 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { useUserStore } from '@/store';
-import { gameSocket } from '@/lib/game/socket';
-import { Users, Play, Copy, CheckCircle2, LogOut, QrCode, Crown } from 'lucide-react';
+import { useEffect, useState, useCallback } from "react";
+import { gameSocket } from "@/lib/game/socket";
+import { motion, AnimatePresence } from "framer-motion";
+import { Zap, Trophy, Swords, Copy, Check, Users, Sparkles, Crown, ArrowRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
-interface Player {
-  id: string;
-  playerName: string;
-  avatarUrl?: string;
-  score: number;
-  correct: number;
-  wrong: number;
-  streak: number;
-  maxStreak: number;
-  ready: boolean;
-  isHost: boolean;
-}
+const GAME_MODES = [
+  {
+    id: "KUIS_BATTLE",
+    name: "Kuis Battle",
+    desc: "Jawab cepat, kumpulkan poin, rebut peringkat teratas!",
+    icon: Zap,
+    color: "from-violet-500 to-purple-600",
+    lightColor: "bg-violet-50 border-violet-200",
+    iconBg: "bg-violet-100",
+    iconColor: "text-violet-600",
+  },
+  {
+    id: "GOLD_RUSH",
+    name: "Gold Rush",
+    desc: "Kumpulkan emas sebanyak-banyaknya, jawab benar untuk menambang!",
+    icon: Trophy,
+    color: "from-amber-500 to-orange-600",
+    lightColor: "bg-amber-50 border-amber-200",
+    iconBg: "bg-amber-100",
+    iconColor: "text-amber-600",
+  },
+  {
+    id: "SPEED_BATTLE",
+    name: "Speed Battle",
+    desc: "Kecepatan adalah segalanya! Jawab paling cepat dapat poin terbanyak!",
+    icon: Swords,
+    color: "from-red-500 to-rose-600",
+    lightColor: "bg-red-50 border-red-200",
+    iconBg: "bg-red-100",
+    iconColor: "text-red-600",
+  },
+];
 
-interface Props {
-  roomCode?: string;
+interface GameLobbyProps {
   isHost?: boolean;
+  roomCode?: string;
   onStart?: () => void;
 }
 
-export default function GameLobby({ roomCode: initialRoomCode, isHost: initialIsHost, onStart }: Props) {
-  const user = useUserStore();
-  const [roomCode, setRoomCode] = useState(initialRoomCode || '');
-  const [joinedCode, setJoinedCode] = useState('');
+export default function GameLobby({ isHost = false, roomCode: initialCode, onStart }: GameLobbyProps) {
+  const [room, setRoom] = useState<any>(null);
+  const [code, setCode] = useState(initialCode || "");
+  const [joinCode, setJoinCode] = useState("");
+  const [players, setPlayers] = useState<any[]>([]);
+  const [selectedMode, setSelectedMode] = useState("KUIS_BATTLE");
   const [copied, setCopied] = useState(false);
-  const [players, setPlayers] = useState<Player[]>([]);
-  const [currentRoom, setCurrentRoom] = useState<string | null>(null);
-  const [isHost, setIsHost] = useState(initialIsHost || false);
-  const [showModal, setShowModal] = useState<'create' | 'join' | null>(null);
-  const [gameMode, setGameMode] = useState('KUIS_BATTLE');
+  const [userName, setUserName] = useState("");
+  const [userId, setUserId] = useState("");
+  const [showQR, setShowQR] = useState(false);
 
   useEffect(() => {
-    if (!user.id) return;
-    gameSocket.connect(user.id, user.fullName || 'Guru', user.avatar || undefined);
+    const stored = localStorage.getItem("bc-user");
+    if (stored) {
+      try {
+        const parsed = JSON.parse(stored);
+        setUserName(parsed.state?.fullName || "Player");
+        setUserId(parsed.state?.supabaseId || "");
+      } catch {}
+    }
+  }, []);
 
-    gameSocket.onRoomCreated((data) => {
-      setCurrentRoom(data.code);
-      setIsHost(true);
-      setPlayers([data.player]);
+  useEffect(() => {
+    gameSocket.connect();
+
+    const unsub1 = gameSocket.onRoomCreated((data: any) => {
+      setRoom(data);
+      setCode(data.code);
     });
 
-    gameSocket.onRoomJoined((data) => {
-      setCurrentRoom(data.code);
-      setIsHost(false);
-      setPlayers([data.player]);
+    const unsub2 = gameSocket.onRoomJoined((data: any) => {
+      setRoom(data);
+      setCode(data.code);
     });
 
-    gameSocket.onPlayerList((list) => {
-      setPlayers(list);
+    const unsub3 = gameSocket.onPlayerList((data: any[]) => {
+      setPlayers(data);
     });
 
-    gameSocket.onHostChanged((data) => {
-      if (data.newHostId === user.id) setIsHost(true);
-    });
+    const unsub4 = gameSocket.onNotification((data: { message: string }) => {});
 
-    return () => {
-      if (currentRoom) {
-        gameSocket.leaveRoom({ code: currentRoom, userId: user.id || '' });
-      }
-    };
-  }, [user.id]);
+    const unsub5 = gameSocket.onHostChanged((data: { newHostId: string }) => {});
 
-  const handleCreate = (mode: string) => {
-    setGameMode(mode);
-    const code = generateCode();
-    setRoomCode(code);
+    return () => { unsub1(); unsub2(); unsub3(); unsub4(); unsub5(); };
+  }, []);
+
+  const handleCreate = useCallback(() => {
     gameSocket.createRoom({
-      hostId: user.id || '',
-      hostName: user.fullName || 'Guru',
-      hostAvatar: user.avatar || undefined,
-      name: `Kuis Bahasa Indonesia - ${code}`,
-      gameType: mode,
+      hostId: userId,
+      hostName: userName,
+      name: `${userName}'s Game`,
+      gameType: selectedMode,
+      category: "BAHASA",
+      difficulty: "MEDIUM",
       questionCount: 10,
       timePerQuestion: 20,
     });
-    setShowModal(null);
-  };
+  }, [userId, userName, selectedMode]);
 
-  const handleJoin = () => {
-    if (joinedCode.length === 6) {
-      gameSocket.joinRoom({
-        code: joinedCode.toUpperCase(),
-        userId: user.id || '',
-        playerName: user.fullName || 'Siswa',
-        avatarUrl: user.avatar || undefined,
-      });
-    }
-  };
+  const handleJoin = useCallback(() => {
+    if (joinCode.length !== 6) return;
+    gameSocket.joinRoom({
+      roomCode: joinCode.toUpperCase(),
+      playerId: userId,
+      playerName: userName,
+    });
+  }, [joinCode, userId, userName]);
 
-  const handleStart = () => {
-    if (currentRoom) {
-      gameSocket.startGame({ code: currentRoom });
-      onStart?.();
-    }
-  };
+  const handleStart = useCallback(() => {
+    gameSocket.startGame({ roomCode: code });
+  }, [code]);
 
-  const handleLeave = () => {
-    if (currentRoom) {
-      gameSocket.leaveRoom({ code: currentRoom, userId: user.id || '' });
-      setCurrentRoom(null);
-      setPlayers([]);
-      setIsHost(false);
-    }
-  };
+  const handleLeave = useCallback(() => {
+    gameSocket.leaveRoom({ roomCode: code, playerId: userId });
+    setRoom(null);
+    setCode("");
+    setPlayers([]);
+  }, [code, userId]);
 
-  const copyLink = () => {
-    navigator.clipboard.writeText(`${window.location.origin}/murid/game/lobby?code=${currentRoom}`);
+  const copyCode = () => {
+    navigator.clipboard.writeText(code);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
 
-  if (currentRoom) {
+  if (room) {
+    const modeInfo = GAME_MODES.find((m) => m.id === (room.gameType || selectedMode));
+    const ModeIcon = modeInfo?.icon || Zap;
+
     return (
-      <div className="min-h-screen bg-gradient-to-br from-emerald-900 via-green-900 to-teal-900 p-4">
-        <div className="max-w-3xl mx-auto">
-          <motion.div
-            initial={{ scale: 0.9, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            className="bg-white/10 backdrop-blur-lg rounded-3xl p-8 border border-white/20"
-          >
-            <div className="text-center mb-8">
-              <h2 className="text-white text-2xl font-bold mb-2">Room Aktif</h2>
-              <div className="bg-emerald-500/20 border border-emerald-400/30 rounded-2xl p-4 inline-block">
-                <p className="text-emerald-300 text-sm mb-1">Kode Room</p>
-                <p className="text-white text-5xl font-black tracking-widest">{currentRoom}</p>
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center p-4">
+        <div className="max-w-md w-full">
+          <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="bg-white rounded-3xl p-8 shadow-2xl">
+            <div className="text-center mb-6">
+              <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${modeInfo?.color || "from-violet-500 to-purple-600"} flex items-center justify-center mx-auto mb-4 shadow-lg`}>
+                <ModeIcon size={32} className="text-white" />
               </div>
+              <h2 className="text-2xl font-bold text-slate-900">{modeInfo?.name || "Game Room"}</h2>
+              <p className="text-sm text-slate-500 mt-1">Bagikan kode ini ke pemain lain</p>
             </div>
 
-            <div className="flex gap-3 justify-center mb-6">
-              <button
-                onClick={copyLink}
-                className="flex items-center gap-2 bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-xl font-medium transition"
-              >
-                {copied ? <CheckCircle2 size={18} /> : <Copy size={18} />}
-                {copied ? 'Tersalin!' : 'Salin Link'}
-              </button>
-              <button className="flex items-center gap-2 bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-xl font-medium transition">
-                <QrCode size={18} /> QR
+            <div className="bg-slate-50 rounded-2xl p-6 text-center mb-6 border-2 border-dashed border-slate-200">
+              <p className="text-xs text-slate-400 mb-2">KODE RUANGAN</p>
+              <p className="text-5xl font-black tracking-[0.3em] text-slate-900 mb-4">{code}</p>
+              <button onClick={copyCode} className="inline-flex items-center gap-2 text-sm text-slate-600 hover:text-slate-900 transition-colors">
+                {copied ? <><Check size={16} className="text-green-500" /> Tersalin</> : <><Copy size={16} /> Salin Kode</>}
               </button>
             </div>
 
-            <div className="bg-white/5 rounded-2xl p-4 mb-6">
-              <h3 className="text-white font-bold mb-4 flex items-center gap-2">
-                <Users size={18} /> Pemain ({players.length})
-              </h3>
+            <div className="mb-6">
+              <p className="text-sm font-semibold text-slate-700 mb-3 flex items-center gap-2">
+                <Users size={16} /> Pemain ({players.length})
+              </p>
               <div className="grid grid-cols-3 gap-3">
-                {players.map((p, i) => (
-                  <motion.div
-                    key={p.id}
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    transition={{ delay: i * 0.1 }}
-                    className={`bg-white/10 rounded-xl p-3 text-center ${p.isHost ? 'ring-2 ring-yellow-400' : ''}`}
-                  >
-                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-emerald-400 to-teal-600 mx-auto flex items-center justify-center text-white font-bold text-lg mb-2">
-                      {p.playerName.charAt(0)}
+                {[...Array(6)].map((_, i) => {
+                  const player = players[i];
+                  return (
+                    <div key={i} className={`rounded-xl p-3 text-center ${player ? "bg-emerald-50 border border-emerald-200" : "bg-slate-50 border border-dashed border-slate-200"}`}>
+                      {player ? (
+                        <>
+                          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center text-white font-bold text-sm mx-auto mb-1">
+                            {player.playerName.slice(0, 2).toUpperCase()}
+                          </div>
+                          <p className="text-[11px] font-medium text-slate-700 truncate">{player.playerName}</p>
+                          {player.isHost && <span className="text-[10px] text-emerald-600 font-semibold">Host</span>}
+                        </>
+                      ) : (
+                        <div className="w-10 h-10 rounded-full bg-slate-200 flex items-center justify-center mx-auto mb-1">
+                          <span className="text-slate-300 text-lg">+</span>
+                        </div>
+                      )}
                     </div>
-                    <p className="text-white text-sm font-medium truncate">{p.playerName}</p>
-                    {p.isHost && <span className="text-yellow-400 text-xs">Host</span>}
-                  </motion.div>
-                ))}
-                {Array.from({ length: Math.max(0, 6 - players.length) }).map((_, i) => (
-                  <div key={`empty-${i}`} className="bg-white/5 rounded-xl p-3 text-center border-2 border-dashed border-white/10">
-                    <div className="w-12 h-12 rounded-full bg-white/5 mx-auto flex items-center justify-center mb-2">
-                      <Users size={20} className="text-white/20" />
-                    </div>
-                    <p className="text-white/30 text-sm">Menunggu...</p>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
 
             <div className="flex gap-3">
-              <button
-                onClick={handleLeave}
-                className="flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white px-4 py-3 rounded-xl font-medium transition"
-              >
-                <LogOut size={18} /> Keluar
-              </button>
               {isHost && (
-                <button
-                  onClick={handleStart}
-                  disabled={players.length < 1}
-                  className="flex-1 flex items-center justify-center gap-2 bg-gradient-to-r from-yellow-500 to-amber-500 hover:from-yellow-400 hover:to-amber-400 text-gray-900 px-6 py-3 rounded-xl font-bold transition disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  <Play size={18} /> Mulai Game
-                </button>
+                <Button onClick={handleStart} disabled={players.length < 1}
+                  className={`flex-1 bg-gradient-to-r ${modeInfo?.color || "from-violet-500 to-purple-600"} text-white font-bold py-3 rounded-2xl shadow-lg transition-all hover:scale-[1.02]`}>
+                  <Sparkles size={18} /> Mulai Game
+                </Button>
               )}
-              {!isHost && (
-                <div className="flex-1 flex items-center justify-center gap-2 bg-white/10 text-white/60 px-6 py-3 rounded-xl">
-                  Menunggu host memulai...
-                </div>
-              )}
+              <Button onClick={handleLeave} variant="outline" className="flex-1 border-2 border-slate-200 text-slate-600 hover:bg-slate-50 rounded-2xl py-3">
+                Keluar
+              </Button>
             </div>
           </motion.div>
         </div>
@@ -206,80 +200,80 @@ export default function GameLobby({ roomCode: initialRoomCode, isHost: initialIs
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-900 via-green-900 to-teal-900 p-4">
-      <div className="max-w-lg mx-auto space-y-4">
-        <div className="text-center py-8">
-          <h1 className="text-white text-3xl font-black mb-2">🎮 Game Edukasi</h1>
-          <p className="text-white/60">Pilih mode untuk memulai</p>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-white p-4">
+      <div className="max-w-lg mx-auto pt-8">
+        <div className="text-center mb-8">
+          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center mx-auto mb-4 shadow-lg">
+            <Zap size={32} className="text-white" />
+          </div>
+          <h1 className="text-3xl font-bold text-slate-900">Kuis Battle</h1>
+          <p className="text-slate-500 mt-2">Pilih mode dan ajak temanmu bertanding!</p>
         </div>
 
-        <motion.div
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          className="bg-white/10 backdrop-blur-lg rounded-3xl p-6 border border-white/20"
-        >
-          <h3 className="text-white font-bold mb-4">Buat Room Kuis</h3>
-          <div className="space-y-3">
-            {[
-              { id: 'KUIS_BATTLE', name: 'Kuis Battle', desc: 'Jawab pilihan ganda secepat mungkin', icon: '🎯', color: 'from-blue-500 to-cyan-500' },
-              { id: 'TEBAC_KATA', name: 'Tebak Kata', desc: 'Tebak kata dari petunjuk', icon: '💬', color: 'from-purple-500 to-pink-500' },
-              { id: 'KATA_SERU', name: 'Kata Seru', desc: 'Kumpulkan kata sebanyak-banyaknya', icon: '🎲', color: 'from-orange-500 to-red-500' },
-            ].map((mode) => (
-              <button
-                key={mode.id}
-                onClick={() => handleCreate(mode.id)}
-                className={`w-full flex items-center gap-4 bg-gradient-to-r ${mode.color} p-4 rounded-2xl text-white hover:opacity-90 transition`}
-              >
-                <span className="text-4xl">{mode.icon}</span>
-                <div className="text-left">
-                  <p className="font-bold">{mode.name}</p>
-                  <p className="text-sm opacity-80">{mode.desc}</p>
-                </div>
-                <Play size={20} className="ml-auto" />
-              </button>
-            ))}
+        {isHost && (
+          <div className="mb-8">
+            <p className="text-sm font-semibold text-slate-700 mb-3">Pilih Mode Game</p>
+            <div className="space-y-3">
+              {GAME_MODES.map((mode) => {
+                const ModeIcon = mode.icon;
+                const isSelected = selectedMode === mode.id;
+                return (
+                  <button
+                    key={mode.id}
+                    onClick={() => setSelectedMode(mode.id)}
+                    className={`w-full text-left rounded-2xl p-4 border-2 transition-all ${
+                      isSelected ? mode.lightColor + " shadow-md scale-[1.02]" : "border-slate-100 bg-white hover:border-slate-200"
+                    }`}
+                  >
+                    <div className="flex items-center gap-4">
+                      <div className={`w-12 h-12 rounded-xl ${isSelected ? `bg-gradient-to-br ${mode.color}` : "bg-slate-100"} flex items-center justify-center`}>
+                        <ModeIcon size={24} className={isSelected ? "text-white" : "text-slate-400"} />
+                      </div>
+                      <div className="flex-1">
+                        <p className={`font-bold ${isSelected ? "text-slate-900" : "text-slate-700"}`}>{mode.name}</p>
+                        <p className="text-xs text-slate-500 mt-0.5">{mode.desc}</p>
+                      </div>
+                      {isSelected && (
+                        <div className="w-6 h-6 rounded-full bg-emerald-500 flex items-center justify-center">
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3">
+                            <path d="M5 13l4 4L19 7" />
+                          </svg>
+                        </div>
+                      )}
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
           </div>
-        </motion.div>
+        )}
 
-        <motion.div
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.1 }}
-          className="bg-white/10 backdrop-blur-lg rounded-3xl p-6 border border-white/20"
-        >
-          <h3 className="text-white font-bold mb-4">Masuk Room</h3>
-          <div className="flex gap-3">
-            <input
-              value={joinedCode}
-              onChange={(e) => setJoinedCode(e.target.value.toUpperCase().slice(0, 6))}
-              placeholder="KODE ROOM"
-              className="flex-1 text-center text-2xl font-bold tracking-widest bg-white/10 text-white border border-white/20 rounded-xl px-4 py-3 focus:outline-none focus:border-emerald-400 placeholder:text-white/30"
-            />
-            <button
-              onClick={handleJoin}
-              disabled={joinedCode.length !== 6}
-              className="px-8 py-3 bg-emerald-500 hover:bg-emerald-400 text-white rounded-xl font-bold transition disabled:opacity-50"
-            >
-              Gabung
-            </button>
-          </div>
-        </motion.div>
-
-        <div className="text-center pt-4">
-          <p className="text-white/40 text-sm">
-            Murid bisa masuk melalui link atau kode room
-          </p>
+        <div className="space-y-4">
+          {isHost ? (
+            <Button onClick={handleCreate} disabled={!userId}
+              className="w-full bg-gradient-to-r from-violet-500 to-purple-600 text-white font-bold py-4 rounded-2xl text-lg shadow-lg shadow-violet-500/30 hover:shadow-xl hover:scale-[1.02] transition-all flex items-center justify-center gap-2">
+              <Sparkles size={20} /> Buat Ruangan
+            </Button>
+          ) : (
+            <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm">
+              <p className="text-sm font-semibold text-slate-700 mb-3">Masuk ke Ruangan</p>
+              <div className="flex gap-3">
+                <input
+                  value={joinCode}
+                  onChange={(e) => setJoinCode(e.target.value.toUpperCase().slice(0, 6))}
+                  placeholder="XXXXXX"
+                  className="flex-1 rounded-xl border-2 border-slate-200 px-4 py-3 text-center text-lg font-bold tracking-widest uppercase focus:border-violet-500 focus:outline-none"
+                  maxLength={6}
+                />
+                <Button onClick={handleJoin} disabled={joinCode.length !== 6}
+                  className="bg-gradient-to-r from-violet-500 to-purple-600 text-white font-bold px-6 rounded-xl shadow-lg">
+                  <ArrowRight size={20} />
+                </Button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
   );
-}
-
-function generateCode(): string {
-  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-  let code = '';
-  for (let i = 0; i < 6; i++) {
-    code += chars[Math.floor(Math.random() * chars.length)];
-  }
-  return code;
 }

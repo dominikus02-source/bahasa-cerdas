@@ -1,369 +1,442 @@
-'use client';
+"use client";
 
-import { useState, useEffect, useRef } from 'react';
-import { useRouter } from 'next/navigation';
-import { motion, AnimatePresence } from 'framer-motion';
-import { gameSocket } from '@/lib/game/socket';
-import { useUserStore } from '@/store';
+import { useEffect, useState, useRef, useCallback } from "react";
+import { gameSocket } from "@/lib/game/socket";
+import { motion, AnimatePresence } from "framer-motion";
+import { Zap, Flame, Trophy, Clock, Star, Crown, Swords } from "lucide-react";
 
-interface Player {
-  id: string;
+interface PlayerScore {
+  playerId: string;
   playerName: string;
   avatarUrl?: string;
   score: number;
   correct: number;
   wrong: number;
   streak: number;
-  maxStreak: number;
-  ready: boolean;
-  isHost: boolean;
 }
 
 interface Question {
   id: string;
   text: string;
-  audioUrl?: string;
-  imageUrl?: string;
-  passage?: string;
-  type: string;
   options: string[];
-  correctAnswer?: string;
+  type: string;
+  difficulty?: string;
 }
 
-interface Props {
+interface GamePlayProps {
   roomCode: string;
   onFinish: () => void;
 }
 
-export default function GamePlay({ roomCode, onFinish }: Props) {
-  const router = useRouter();
-  const user = useUserStore();
-  const [phase, setPhase] = useState<'countdown' | 'question' | 'result'>('countdown');
-  const [players, setPlayers] = useState<Player[]>([]);
-  const [currentQuestion, setCurrentQuestion] = useState(0);
-  const [totalQuestions, setTotalQuestions] = useState(0);
-  const [timeLeft, setTimeLeft] = useState(20);
+const MODE_STYLES: Record<string, { name: string; icon: any; gradient: string; accent: string }> = {
+  KUIS_BATTLE: { name: "Kuis Battle", icon: Zap, gradient: "from-violet-600 to-purple-700", accent: "violet" },
+  GOLD_RUSH: { name: "Gold Rush", icon: Trophy, gradient: "from-amber-500 to-orange-600", accent: "amber" },
+  SPEED_BATTLE: { name: "Speed Battle", icon: Swords, gradient: "from-red-500 to-rose-600", accent: "red" },
+};
+
+export default function GamePlay({ roomCode, onFinish }: GamePlayProps) {
+  const [phase, setPhase] = useState<"countdown" | "question" | "result">("countdown");
+  const [count, setCount] = useState(3);
   const [question, setQuestion] = useState<Question | null>(null);
-  const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
-  const [showResult, setShowResult] = useState(false);
-  const [results, setResults] = useState<any[]>([]);
-  const [myScore, setMyScore] = useState(0);
-  const [countdown, setCountdown] = useState(3);
+  const [qIndex, setQIndex] = useState(0);
+  const [totalQ, setTotalQ] = useState(10);
+  const [selected, setSelected] = useState<string | null>(null);
+  const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
+  const [timeLeft, setTimeLeft] = useState(20);
+  const [score, setScore] = useState(0);
   const [streak, setStreak] = useState(0);
-  const [correctCount, setCorrectCount] = useState(0);
+  const [correct, setCorrect] = useState(0);
+  const [wrong, setWrong] = useState(0);
+  const [leaderboard, setLeaderboard] = useState<PlayerScore[]>([]);
+  const [myId, setMyId] = useState<string>("");
+  const [showScorePop, setShowScorePop] = useState<{ value: number; x: number; y: number } | null>(null);
+  const [results, setResults] = useState<any[]>([]);
+  const [gameMode, setGameMode] = useState("KUIS_BATTLE");
   const timerRef = useRef<NodeJS.Timeout | null>(null);
-  const questionStartRef = useRef<number>(0);
+
+  const userId = useRef("");
 
   useEffect(() => {
-    gameSocket.connect(user.id || 'temp', user.fullName || 'Player', user.avatar || undefined);
-    gameSocket.joinRoom({ code: roomCode, userId: user.id || 'temp', playerName: user.fullName || 'Player', avatarUrl: user.avatar || undefined });
+    const stored = localStorage.getItem("bc-user");
+    if (stored) {
+      try { userId.current = JSON.parse(stored).state?.supabaseId || ""; } catch {}
+    }
+  }, []);
 
-    gameSocket.onGameStarting((data) => {
-      setTotalQuestions(data.totalQuestions);
-      setPhase('countdown');
-      setCountdown(3);
+  useEffect(() => {
+    gameSocket.connect();
+
+    const unsub1 = gameSocket.onShowQuestion((data: any) => {
+      setQuestion(data);
+      setQIndex(data.index || 0);
+      setTotalQ(data.total || 10);
+      setSelected(null);
+      setIsCorrect(null);
+      setTimeLeft(data.timePerQuestion || 20);
+      setGameMode(data.gameMode || "KUIS_BATTLE");
+      setPhase("question");
+      startTimer(data.timePerQuestion || 20);
     });
 
-    gameSocket.onPlayerList((list) => {
-      setPlayers(list);
+    const unsub2 = gameSocket.onScoreUpdate((data: { playerId: string; score: number; correct: number; wrong: number; streak: number }) => {
+      setLeaderboard((prev) => {
+        const existing = prev.find((p) => p.playerId === data.playerId);
+        if (existing) {
+          return prev.map((p) =>
+            p.playerId === data.playerId ? { ...p, ...data } : p
+          );
+        }
+        return [...prev, { playerId: data.playerId, playerName: "", score: data.score, correct: data.correct, wrong: data.wrong, streak: data.streak }];
+      });
+      if (data.playerId === userId.current) {
+        setScore(data.score);
+        setStreak(data.streak);
+        setCorrect(data.correct);
+        setWrong(data.wrong);
+      }
     });
 
-    gameSocket.onShowQuestion((data) => {
-      setQuestion(data.question as Question);
-      setCurrentQuestion(data.questionIndex);
-      setTimeLeft(data.timeLimit);
-      setSelectedAnswer(null);
-      setShowResult(false);
-      setPhase('question');
-      questionStartRef.current = Date.now();
-
-      timerRef.current = setInterval(() => {
-        setTimeLeft((prev) => {
-          if (prev <= 1) {
-            if (timerRef.current) clearInterval(timerRef.current);
-            handleTimeUp();
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
-    });
-
-    gameSocket.onTimeUp((data) => {
-      if (timerRef.current) clearInterval(timerRef.current);
-      setShowResult(true);
-      setTimeout(() => {
-        setPhase('question');
-      }, 2000);
-    });
-
-    gameSocket.onAnswerResult((data) => {
-      if (data.playerId === (user.id || 'temp')) {
-        if (data.isCorrect) {
-          setStreak((s) => s + 1);
-          setCorrectCount((c) => c + 1);
-        } else {
-          setStreak(0);
+    const unsub3 = gameSocket.onAnswerResult((data: { playerId: string; correct: boolean }) => {
+      if (data.playerId === userId.current) {
+        setIsCorrect(data.correct);
+        if (data.correct) {
+          const popValue = 100 + streak * 10;
+          setShowScorePop({ value: popValue, x: Math.random() * 200 + 100, y: 150 });
+          setTimeout(() => setShowScorePop(null), 1000);
         }
       }
     });
 
-    gameSocket.onScoreUpdate((data) => {
-      if (data.playerId === (user.id || 'temp')) {
-        setMyScore(data.score);
-      }
-      setPlayers((prev) =>
-        prev.map((p) => (p.id === data.playerId ? { ...p, score: data.score } : p))
-      );
+    const unsub4 = gameSocket.onGameFinished((data: { results: any[] }) => {
+      setResults(data.results || []);
+      setPhase("result");
     });
 
-    gameSocket.onGameFinished((data) => {
-      if (timerRef.current) clearInterval(timerRef.current);
-      setResults(data.results);
-      setPhase('result');
-      onFinish();
+    const unsub5 = gameSocket.onPlayerList((data: any[]) => {
+      setLeaderboard(data.map((p) => ({
+        playerId: p.id,
+        playerName: p.playerName,
+        avatarUrl: p.avatarUrl,
+        score: p.score || 0,
+        correct: p.correct || 0,
+        wrong: p.wrong || 0,
+        streak: p.streak || 0,
+      })));
     });
 
     return () => {
+      unsub1(); unsub2(); unsub3(); unsub4(); unsub5();
       if (timerRef.current) clearInterval(timerRef.current);
-      gameSocket.leaveRoom({ code: roomCode, userId: user.id || 'temp' });
     };
-  }, [roomCode, user.id, user.fullName, user.avatar]);
+  }, []);
 
-  useEffect(() => {
-    if (phase === 'countdown' && countdown > 0) {
-      const timer = setTimeout(() => setCountdown((c) => c - 1), 1000);
-      return () => clearTimeout(timer);
-    }
-    if (phase === 'countdown' && countdown === 0) {
-      setPhase('question');
-    }
-  }, [phase, countdown]);
+  const startTimer = (duration: number) => {
+    if (timerRef.current) clearInterval(timerRef.current);
+    setTimeLeft(duration);
+    timerRef.current = setInterval(() => {
+      setTimeLeft((prev) => {
+        if (prev <= 1) {
+          if (timerRef.current) clearInterval(timerRef.current);
+          handleTimeUp();
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+  };
+
+  const handleTimeUp = useCallback(() => {
+    if (selected) return;
+    setIsCorrect(false);
+    setWrong((w) => w + 1);
+    setStreak(0);
+    gameSocket.emit("submit-answer", {
+      roomCode,
+      questionIndex: qIndex,
+      answer: -1,
+      timeRemaining: 0,
+    });
+  }, [selected, qIndex, roomCode]);
 
   const handleAnswer = (index: number) => {
-    if (selectedAnswer !== null || phase !== 'question') return;
+    if (selected !== null) return;
+    setSelected(String(index));
     if (timerRef.current) clearInterval(timerRef.current);
 
-    setSelectedAnswer(index);
-    setShowResult(true);
-
-const timeSpent = Math.floor((Date.now() - questionStartRef.current) / 1000);
-      gameSocket.submitAnswer({
-        code: roomCode,
-        userId: user.id || 'temp',
-        questionIndex: currentQuestion,
-        answerIndex: index,
-        timeSpent,
-      });
-
-    setTimeout(() => {
-      setShowResult(false);
-      setPhase('question');
-    }, 2000);
+    gameSocket.emit("submit-answer", {
+      roomCode,
+      questionIndex: qIndex,
+      answer: index,
+      timeRemaining: timeLeft,
+    });
   };
 
-  const handleTimeUp = () => {
-    setShowResult(true);
-    setTimeout(() => {
-      setShowResult(false);
-      setPhase('question');
-    }, 2000);
-  };
+  const modeStyle = MODE_STYLES[gameMode] || MODE_STYLES.KUIS_BATTLE;
+  const ModeIcon = modeStyle.icon;
 
-  const sortedPlayers = [...players].sort((a, b) => b.score - a.score);
+  if (phase === "countdown") {
+    return (
+      <div className={`min-h-screen bg-gradient-to-br ${modeStyle.gradient} flex items-center justify-center overflow-hidden`}>
+        <motion.div
+          key={count}
+          initial={{ scale: 2, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          exit={{ scale: 0.5, opacity: 0 }}
+          transition={{ duration: 0.5 }}
+          className="text-center"
+        >
+          {count > 0 ? (
+            <>
+              <motion.div
+                animate={{ rotate: 360 }}
+                transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                className="text-8xl mb-6"
+              >
+                <ModeIcon size={80} className="text-white mx-auto" />
+              </motion.div>
+              <p className="text-white/60 text-lg mb-4">{modeStyle.name}</p>
+              <p className="text-white text-9xl font-black">{count}</p>
+            </>
+          ) : (
+            <>
+              <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: "spring", stiffness: 200 }}>
+                <p className="text-white text-8xl font-black">GO!</p>
+              </motion.div>
+            </>
+          )}
+        </motion.div>
+      </div>
+    );
+  }
+
+  if (phase === "result") {
+    const sorted = [...results].sort((a, b) => a.rank - b.rank);
+    const top3 = sorted.slice(0, 3);
+    const myResult = sorted.find((r) => r.playerId === userId.current);
+
+    return (
+      <div className={`min-h-screen bg-gradient-to-br ${modeStyle.gradient} flex items-center justify-center p-4`}>
+        <div className="max-w-md w-full">
+          <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="text-center mb-8">
+            <Trophy size={64} className="text-yellow-400 mx-auto mb-2" />
+            <h2 className="text-3xl font-black text-white">Game Selesai!</h2>
+            <p className="text-white/60">{modeStyle.name} • {totalQ} soal</p>
+          </motion.div>
+
+          {top3.length > 0 && (
+            <div className="flex items-end justify-center gap-4 mb-8">
+              {top3[1] && (
+                <motion.div initial={{ y: 100 }} animate={{ y: 0 }} className="text-center">
+                  <div className="w-16 h-16 rounded-full bg-gradient-to-br from-gray-300 to-gray-400 flex items-center justify-center text-2xl mx-auto mb-1 shadow-lg border-2 border-gray-200">
+                    🥈
+                  </div>
+                  <p className="text-white text-sm font-bold">{top3[1].playerName}</p>
+                  <p className="text-white/60 text-xs">{top3[1].score} pts</p>
+                </motion.div>
+              )}
+              {top3[0] && (
+                <motion.div initial={{ y: 100 }} animate={{ y: 0 }} transition={{ delay: 0.1 }} className="text-center -mt-8">
+                  <motion.div animate={{ y: [0, -10, 0] }} transition={{ duration: 1.5, repeat: Infinity }} className="w-20 h-20 rounded-full bg-gradient-to-br from-yellow-400 to-amber-500 flex items-center justify-center text-3xl mx-auto mb-1 shadow-xl border-2 border-yellow-300">
+                    🥇
+                  </motion.div>
+                  <p className="text-white text-lg font-bold">{top3[0].playerName}</p>
+                  <p className="text-yellow-300 text-sm font-bold">{top3[0].score} pts</p>
+                </motion.div>
+              )}
+              {top3[2] && (
+                <motion.div initial={{ y: 100 }} animate={{ y: 0 }} transition={{ delay: 0.2 }} className="text-center">
+                  <div className="w-16 h-16 rounded-full bg-gradient-to-br from-amber-600 to-amber-700 flex items-center justify-center text-2xl mx-auto mb-1 shadow-lg border-2 border-amber-500">
+                    🥉
+                  </div>
+                  <p className="text-white text-sm font-bold">{top3[2].playerName}</p>
+                  <p className="text-white/60 text-xs">{top3[2].score} pts</p>
+                </motion.div>
+              )}
+            </div>
+          )}
+
+          {myResult && (
+            <motion.div initial={{ y: 50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.5 }}
+              className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 mb-6">
+              <div className="grid grid-cols-3 gap-4 text-center text-white">
+                <div>
+                  <p className="text-2xl font-bold">{myResult.score}</p>
+                  <p className="text-xs text-white/60">Skor</p>
+                </div>
+                <div>
+                  <p className="text-2xl font-bold text-green-400">{myResult.correct}</p>
+                  <p className="text-xs text-white/60">Benar</p>
+                </div>
+                <div>
+                  <p className="text-2xl font-bold text-red-400">{myResult.wrong}</p>
+                  <p className="text-xs text-white/60">Salah</p>
+                </div>
+              </div>
+              <div className="mt-4 pt-4 border-t border-white/10 text-center">
+                <p className="text-white/60 text-sm">XP Didapatkan</p>
+                <p className="text-3xl font-bold text-yellow-400">+{myResult.xpEarned || Math.floor(myResult.score / 10)}</p>
+              </div>
+            </motion.div>
+          )}
+
+          <div className="flex gap-3">
+            <button onClick={onFinish} className="flex-1 bg-white/10 backdrop-blur-md border border-white/30 text-white rounded-2xl py-3 font-semibold hover:bg-white/20 transition-all">
+              Kembali
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-violet-900 via-purple-900 to-indigo-900 p-4">
-      <div className="max-w-6xl mx-auto">
+    <div className={`min-h-screen bg-gradient-to-br ${modeStyle.gradient} flex flex-col`}>
+      {/* Top bar */}
+      <div className="px-4 py-3 flex items-center justify-between bg-black/10">
+        <div className="flex items-center gap-2">
+          <ModeIcon size={16} className="text-white/80" />
+          <span className="text-white/80 text-sm font-medium">{modeStyle.name}</span>
+        </div>
+        <div className="flex items-center gap-3">
+          <span className="flex items-center gap-1 text-white/80 text-xs">
+            <Flame size={14} className="text-orange-300" />
+            <span className={streak >= 3 ? "text-orange-300 font-bold" : ""}>{streak}</span>
+          </span>
+          <span className="text-white font-bold">{score}</span>
+        </div>
+      </div>
+
+      {/* Progress bar */}
+      <div className="h-1.5 bg-black/10">
+        <motion.div
+          className="h-full bg-white"
+          initial={{ width: "0%" }}
+          animate={{ width: `${((qIndex + 1) / totalQ) * 100}%` }}
+          transition={{ duration: 0.3 }}
+        />
+      </div>
+
+      {/* Timer */}
+      <div className="px-4 py-2 flex items-center justify-between">
+        <span className="text-white/60 text-xs">Soal {qIndex + 1}/{totalQ}</span>
+        <div className="flex items-center gap-1.5">
+          <Clock size={14} className={timeLeft <= 5 ? "text-red-400" : timeLeft <= 10 ? "text-yellow-400" : "text-white/60"} />
+          <span className={`text-sm font-mono font-bold ${
+            timeLeft <= 5 ? "text-red-400" : timeLeft <= 10 ? "text-yellow-400" : "text-white/80"
+          }`}>{timeLeft}s</span>
+        </div>
+      </div>
+      <div className="px-4 pb-2">
+        <div className="h-2 bg-white/10 rounded-full overflow-hidden">
+          <motion.div
+            className={`h-full rounded-full ${
+              timeLeft <= 5 ? "bg-red-500" : timeLeft <= 10 ? "bg-yellow-500" : "bg-green-400"
+            }`}
+            animate={{ width: `${(timeLeft / 20) * 100}%` }}
+            transition={{ duration: 0.3 }}
+          />
+        </div>
+      </div>
+
+      {/* Score popup */}
+      <AnimatePresence>
+        {showScorePop && (
+          <motion.div
+            initial={{ opacity: 1, y: 0, scale: 0.5 }}
+            animate={{ opacity: 0, y: -80, scale: 1.5 }}
+            exit={{ opacity: 0 }}
+            className="absolute top-1/2 left-1/2 text-3xl font-black text-yellow-400 pointer-events-none z-50"
+            style={{ left: showScorePop.x, top: showScorePop.y }}
+          >
+            +{showScorePop.value}
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Question */}
+      <div className="flex-1 flex flex-col px-4 pb-6">
         <AnimatePresence mode="wait">
-          {phase === 'countdown' && (
-            <motion.div
-              key="countdown"
-              initial={{ scale: 0.5, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              className="text-center py-20"
-            >
-              <motion.div
-                animate={{ scale: [1, 1.2, 1] }}
-                transition={{ duration: 1, repeat: countdown > 0 ? Infinity : 0 }}
-                className="text-9xl font-black text-white mb-8"
-              >
-                {countdown > 0 ? countdown : 'GO!'}
-              </motion.div>
-              <p className="text-2xl text-white/70">Persiapkan diri Anda!</p>
-            </motion.div>
-          )}
+          <motion.div
+            key={qIndex}
+            initial={{ x: 50, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            exit={{ x: -50, opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="flex-1 flex flex-col"
+          >
+            {/* Question card */}
+            <div className="bg-white/10 backdrop-blur-md rounded-2xl p-5 border border-white/20 mb-4 mt-2">
+              <p className="text-white text-lg font-semibold leading-relaxed">{question?.text}</p>
+              {question?.difficulty && (
+                <span className="inline-block mt-3 text-[10px] px-2 py-0.5 bg-white/10 text-white/60 rounded-full">
+                  {question.difficulty === "EASY" ? "Mudah" : question.difficulty === "HARD" ? "Sulit" : "Sedang"}
+                </span>
+              )}
+            </div>
 
-          {phase === 'question' && question && (
-            <motion.div
-              key={`q-${currentQuestion}`}
-              initial={{ x: 100, opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              exit={{ x: -100, opacity: 0 }}
-              className="grid grid-cols-1 lg:grid-cols-3 gap-6"
-            >
-              <div className="lg:col-span-2 space-y-6">
-                <div className="flex items-center justify-between">
-                  <span className="text-white/70">
-                    Soal {currentQuestion + 1} / {totalQuestions}
-                  </span>
-                  <div className="flex items-center gap-4">
-                    <div className={`text-4xl font-black ${streak > 0 ? 'text-yellow-400' : 'text-white'}`}>
-                      🔥 {streak}
-                    </div>
-                    <div className="text-2xl font-bold text-white">
-                      Skor: {myScore.toLocaleString()}
-                    </div>
-                  </div>
-                </div>
+            {/* Options */}
+            <div className="grid grid-cols-1 gap-3 flex-1">
+              {question?.options.map((opt, i) => {
+                const labels = ["A", "B", "C", "D"];
+                let btnClass = "bg-white/10 backdrop-blur-md border border-white/20 hover:bg-white/20 active:scale-[0.98] text-white";
+                
+                if (selected !== null) {
+                  if (String(i) === question.correctAnswer) {
+                    btnClass = "bg-green-500/80 border-green-400 text-white scale-[1.02] shadow-lg shadow-green-500/30";
+                  } else if (String(i) === selected && !isCorrect) {
+                    btnClass = "bg-red-500/80 border-red-400 text-white";
+                  } else {
+                    btnClass = "bg-white/5 border-white/10 text-white/40";
+                  }
+                }
 
-                {timeLeft <= 5 && (
-                  <motion.div
-                    animate={{ scale: [1, 1.05, 1] }}
-                    className="bg-red-500 text-white text-center py-2 rounded-xl font-bold text-xl"
+                return (
+                  <motion.button
+                    key={i}
+                    whileTap={selected === null ? { scale: 0.97 } : {}}
+                    onClick={() => handleAnswer(i)}
+                    disabled={selected !== null}
+                    className={`rounded-2xl p-4 flex items-center gap-4 border-2 transition-all duration-300 ${btnClass}`}
                   >
-                    ⚠️ {timeLeft} detik
-                  </motion.div>
-                )}
-
-                <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
-                  <p className="text-2xl font-bold text-white mb-6">{question.text}</p>
-
-                  <div className="grid grid-cols-2 gap-4">
-                    {question.options.map((option, index) => {
-                      const correctIdx = question.correctAnswer ? parseInt(question.correctAnswer) : -1;
-                      const letter = ['A', 'B', 'C', 'D'][index] || String.fromCharCode(65 + index);
-                      let bgClass = 'bg-white/10 hover:bg-white/20';
-                      if (selectedAnswer !== null) {
-                        if (index === selectedAnswer) {
-                          bgClass = index === correctIdx ? 'bg-green-500' : 'bg-red-500';
-                        } else if (index === correctIdx) {
-                          bgClass = 'bg-green-500/50';
-                        }
-                      }
-                      return (
-                        <button
-                          key={index}
-                          onClick={() => handleAnswer(index)}
-                          disabled={selectedAnswer !== null}
-                          className={`${bgClass} text-white p-4 rounded-xl font-semibold text-lg transition-all flex items-center gap-3`}
-                        >
-                          <span className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center font-bold">
-                            {letter}
-                          </span>
-                          {option}
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                <div className="h-3 bg-white/20 rounded-full overflow-hidden">
-                  <div
-                    className="h-full bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full transition-all"
-                    style={{ width: `${(timeLeft / 20) * 100}%` }}
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-4">
-                <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4">
-                  <h3 className="text-white font-bold mb-3">🏆 Papan Skor</h3>
-                  <div className="space-y-2">
-                    {sortedPlayers.slice(0, 5).map((player, index) => (
-                      <div
-                        key={player.id}
-                        className={`flex items-center gap-3 p-2 rounded-xl ${
-                          index === 0 ? 'bg-yellow-500/30' : index === 1 ? 'bg-gray-400/20' : index === 2 ? 'bg-amber-600/20' : 'bg-white/5'
-                        }`}
-                      >
-                        <span className="text-lg">{index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : `${index + 1}.`}</span>
-                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-violet-400 to-purple-600 flex items-center justify-center text-white font-bold text-sm">
-                          {player.playerName.charAt(0)}
-                        </div>
-                        <span className="flex-1 text-white text-sm font-medium truncate">
-                          {player.playerName}
-                        </span>
-                        <span className="text-white font-bold">{player.score}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4">
-                  <h3 className="text-white font-bold mb-2">📊 Statistik Saya</h3>
-                  <div className="grid grid-cols-2 gap-2 text-sm">
-                    <div className="bg-green-500/20 p-2 rounded-lg text-center">
-                      <p className="text-green-400">Benar</p>
-                      <p className="text-white font-bold">{correctCount}</p>
-                    </div>
-                    <div className="bg-red-500/20 p-2 rounded-lg text-center">
-                      <p className="text-red-400">Salah</p>
-                      <p className="text-white font-bold">{currentQuestion - correctCount}</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-          )}
-
-          {phase === 'result' && (
-            <motion.div
-              key="result"
-              initial={{ y: 50, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              className="text-center py-8"
-            >
-              <h1 className="text-4xl font-black text-white mb-2">🎉 Game Selesai!</h1>
-              <p className="text-white/70 mb-8">Hasil permainan {roomCode}</p>
-
-              <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 max-w-2xl mx-auto mb-8">
-                <h3 className="text-yellow-400 text-2xl font-bold mb-4">Podium</h3>
-                <div className="flex items-end justify-center gap-4 mb-8">
-                  {results.slice(0, 3).map((result, index) => (
-                    <motion.div
-                      key={result.playerId}
-                      initial={{ y: 50 }}
-                      animate={{ y: 0 }}
-                      transition={{ delay: index * 0.2 }}
-                      className={`text-center ${
-                        index === 0 ? 'order-2' : index === 1 ? 'order-1' : 'order-3'
-                      }`}
-                    >
-                      <div className="w-20 h-20 rounded-full bg-gradient-to-br from-violet-400 to-purple-600 mx-auto flex items-center justify-center text-white font-bold text-2xl shadow-lg mb-2">
-                        {result.playerName.charAt(0)}
-                      </div>
-                      <p className="text-white font-bold">{result.playerName}</p>
-                      <p className="text-yellow-400 text-2xl font-black">{result.score}</p>
-                      <p className="text-white/70 text-sm">{index === 0 ? '🥇' : index === 1 ? '🥈' : '🥉'}</p>
-                    </motion.div>
-                  ))}
-                </div>
-              </div>
-
-              <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 max-w-2xl mx-auto">
-                <h3 className="text-white font-bold mb-4">Skor Saya</h3>
-                <p className="text-6xl font-black text-yellow-400">{myScore.toLocaleString()}</p>
-                <p className="text-white/70 mt-2">+{Math.floor(myScore / 10)} XP</p>
-              </div>
-
-              <div className="flex gap-4 justify-center mt-8">
-                <button
-                  onClick={() => router.push('/murid/game')}
-                  className="px-8 py-3 bg-white/20 text-white rounded-xl font-bold hover:bg-white/30 transition"
-                >
-                  Kembali
-                </button>
-                <button
-                  onClick={() => router.push(`/game/battle/${roomCode}`)}
-                  className="px-8 py-3 bg-yellow-500 text-gray-900 rounded-xl font-bold hover:bg-yellow-400 transition"
-                >
-                  Main Lagi
-                </button>
-              </div>
-            </motion.div>
-          )}
+                    <span className={`w-9 h-9 rounded-xl flex items-center justify-center font-bold text-sm ${
+                      selected !== null && String(i) === question?.correctAnswer
+                        ? "bg-green-600 text-white"
+                        : selected !== null && String(i) === selected
+                        ? "bg-red-600 text-white"
+                        : "bg-white/10 text-white/80"
+                    }`}>
+                      {selected !== null && String(i) === question?.correctAnswer ? "✓" : 
+                       selected !== null && String(i) === selected && !isCorrect ? "✗" : labels[i]}
+                    </span>
+                    <span className="flex-1 text-left font-medium">{opt}</span>
+                  </motion.button>
+                );
+              })}
+            </div>
+          </motion.div>
         </AnimatePresence>
+
+        {/* Live leaderboard */}
+        {leaderboard.length > 0 && (
+          <div className="mt-4 bg-black/10 rounded-2xl p-3 border border-white/5">
+            <p className="text-white/50 text-[10px] font-semibold uppercase mb-2">Peringkat Langsung</p>
+            <div className="flex items-center justify-around">
+              {[...leaderboard].sort((a, b) => b.score - a.score).slice(0, 5).map((p, i) => (
+                <div key={p.playerId} className={`text-center ${p.playerId === userId.current ? "scale-110" : ""}`}>
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold mx-auto ${
+                    i === 0 ? "bg-yellow-400 text-yellow-900" :
+                    i === 1 ? "bg-gray-300 text-gray-700" :
+                    i === 2 ? "bg-amber-600 text-amber-100" :
+                    "bg-white/10 text-white"
+                  }`}>
+                    {p.playerName.slice(0, 2).toUpperCase()}
+                  </div>
+                  <p className="text-white/80 text-[10px] font-bold mt-0.5">{p.score}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
