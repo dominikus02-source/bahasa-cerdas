@@ -79,7 +79,24 @@ export default function GuruPengaturanPage() {
     setLoading(true);
     setMessage(null);
     try {
-      const result = await supabase.auth.updateUser({
+      const res = await fetch("/api/user/profile", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          fullName: profile.fullName,
+          avatar: profile.avatarUrl,
+          bio: profile.bio,
+          nip: profile.nip,
+          nuptk: profile.nuptk,
+          school: profile.school,
+          subject: profile.subject,
+        }),
+      });
+
+      if (!res.ok) throw new Error("Gagal menyimpan");
+
+      // Also update Supabase Auth metadata
+      await supabase.auth.updateUser({
         data: {
           full_name: profile.fullName,
           bio: profile.bio,
@@ -90,8 +107,21 @@ export default function GuruPengaturanPage() {
           subject: profile.subject,
         },
       });
-      if (result.error) throw result.error;
-      setMessage({ type: "success", text: "Profil berhasil diperbarui!" });
+
+      setMessage({ type: "success", text: "✓ Profil berhasil disimpan!" });
+
+      // Refresh user data in store
+      const meRes = await fetch("/api/user/me");
+      if (meRes.ok) {
+        const { user: dbUser } = await meRes.json();
+        const store = (await import("@/store")).useUserStore.getState();
+        store.setUser({
+          id: dbUser.id, supabaseId: dbUser.supabaseId, email: dbUser.email,
+          fullName: dbUser.fullName, avatar: dbUser.avatar, role: dbUser.role?.toLowerCase(),
+          isPremium: dbUser.isPremium, isFounder: dbUser.isFounder,
+          xp: dbUser.xp || 0, level: dbUser.level || 1, streak: dbUser.streak || 0, league: dbUser.league || "BRONZE",
+        });
+      }
     } catch (error: any) {
       setMessage({ type: "error", text: error.message });
     } finally {
