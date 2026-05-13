@@ -210,15 +210,13 @@ export default async function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-4 gap-8 mb-8">
             <div>
-              <div className="flex items-center gap-3 mb-4">
-                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-yellow-400 via-orange-500 to-red-600 shadow-lg overflow-hidden">
-                  <Image src="/logo.png" alt="BC" width={40} height={40} className="object-contain" />
+                <div className="flex items-center gap-3 mb-4">
+                  <Image src="/logo.png" alt="BC" width={36} height={36} className="object-contain" />
+                  <div>
+                    <span className="text-xl font-bold text-white">BahasaCerdas</span>
+                    <p className="text-xs text-slate-500">Platform Edukasi Bahasa Indonesia</p>
+                  </div>
                 </div>
-                <div>
-                  <span className="text-xl font-bold text-white">BahasaCerdas</span>
-                  <p className="text-xs text-slate-500">Platform Edukasi Bahasa Indonesia</p>
-                </div>
-              </div>
               <p className="text-sm">Platform All-in-One untuk Guru Bahasa Indonesia. MGMP + AI + Marketplace.</p>
               <div className="flex flex-wrap gap-2 mt-4">
                 <Link href="/artikel" className="text-xs text-slate-500 hover:text-white transition-colors">Artikel</Link>

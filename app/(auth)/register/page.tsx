@@ -111,9 +111,7 @@ export default function RegisterPage() {
         {/* Logo */}
         <div className="mb-6 text-center">
           <div className="relative inline-block">
-            <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-yellow-400 via-orange-500 to-red-600 flex items-center justify-center shadow-2xl mx-auto">
-              <Image src="/logo.png" alt="BC" width={60} height={60} className="rounded-xl" />
-            </div>
+            <Image src="/logo.png" alt="BahasaCerdas" width={64} height={64} className="mx-auto" />
           </div>
           <h1 className="text-2xl font-bold text-white mt-4">Daftar BahasaCerdas</h1>
           <p className="text-red-100 text-sm mt-1">
