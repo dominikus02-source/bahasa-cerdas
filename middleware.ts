@@ -50,12 +50,14 @@ export async function middleware(request: NextRequest) {
     const isMuridRoute = pathname.startsWith("/murid");
 
     if (isGuruRoute || isMuridRoute) {
-      const dbUser = await getUserRole(user.id);
-      
-      if (isGuruRoute && dbUser !== "guru") {
+      const dbUserRole = await getUserRole(user.id);
+      if (!dbUserRole) {
+        return NextResponse.redirect(new URL("/login", request.url));
+      }
+      if (isGuruRoute && dbUserRole !== "guru") {
         return NextResponse.redirect(new URL("/murid/beranda", request.url));
       }
-      if (isMuridRoute && dbUser !== "murid") {
+      if (isMuridRoute && dbUserRole !== "murid") {
         return NextResponse.redirect(new URL("/guru/beranda", request.url));
       }
     }
@@ -66,16 +68,16 @@ export async function middleware(request: NextRequest) {
   }
 }
 
-async function getUserRole(supabaseId: string): Promise<string> {
+async function getUserRole(supabaseId: string): Promise<string | null> {
   try {
     const { db } = await import("@/lib/db");
     const user = await db.user.findUnique({
       where: { supabaseId },
       select: { role: true }
     });
-    return user?.role?.toLowerCase() || "murid";
+    return user?.role?.toLowerCase() || null;
   } catch {
-    return "murid";
+    return null;
   }
 }
 

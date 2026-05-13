@@ -22,7 +22,10 @@ export async function registerUser(formData: FormData) {
     const existingUser = await db.user.findFirst({ where: { email: email.toLowerCase() } });
     if (existingUser) {
       if (existingUser.supabaseId === supabaseId) {
-        return { ok: true, role: existingUser.role.toLowerCase() };
+        if (existingUser.role !== role) {
+          await db.user.update({ where: { id: existingUser.id }, data: { role } });
+        }
+        return { ok: true, role: role.toLowerCase() };
       }
       return { error: "Email sudah terdaftar dengan akun lain" };
     }

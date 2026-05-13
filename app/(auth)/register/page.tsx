@@ -59,7 +59,7 @@ export default function RegisterPage() {
         return;
       }
 
-      window.location.href = `/${role.toLowerCase()}/beranda`;
+      window.location.href = `/${result?.role || role.toLowerCase()}/beranda`;
     } catch (err: any) {
       setError(err?.message || "Terjadi kesalahan");
       setLoading(false);
