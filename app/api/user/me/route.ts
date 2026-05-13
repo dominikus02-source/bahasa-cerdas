@@ -10,10 +10,25 @@ export async function GET() {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-    const dbUser = await db.user.findUnique({
+    const email = user.email?.toLowerCase() || "";
+    let dbUser = await db.user.findUnique({
       where: { supabaseId: user.id },
     });
-    if (!dbUser) return NextResponse.json({ error: "User not found" }, { status: 404 });
+
+    if (!dbUser) {
+      dbUser = await db.user.findFirst({ where: { email } });
+      if (!dbUser) return NextResponse.json({ error: "User not found" }, { status: 404 });
+      if (dbUser.supabaseId !== user.id) {
+        await db.user.update({ where: { id: dbUser.id }, data: { supabaseId: user.id } });
+      }
+    }
+
+    if (FOUNDER_EMAILS.includes(email) && !dbUser.isFounder) {
+      dbUser = await db.user.update({
+        where: { id: dbUser.id },
+        data: { isFounder: true, isPremium: true, premiumPlan: "PRO" },
+      });
+    }
 
     return NextResponse.json({ user: dbUser });
   } catch {
@@ -33,10 +48,20 @@ export async function POST() {
 
     const existing = await db.user.findFirst({ where: { email } });
     if (existing) {
-      if (existing.supabaseId !== user.id) {
-        await db.user.update({ where: { id: existing.id }, data: { supabaseId: user.id } });
+      const updates: any = {};
+      if (existing.supabaseId !== user.id) updates.supabaseId = user.id;
+      if (FOUNDER_EMAILS.includes(email) && !existing.isFounder) {
+        updates.isFounder = true;
+        updates.isPremium = true;
+        updates.premiumPlan = "PRO";
       }
-      return NextResponse.json({ user: existing });
+      if (Object.keys(updates).length > 0) {
+        await db.user.update({ where: { id: existing.id }, data: updates });
+      }
+      const updated = Object.keys(updates).length > 0
+        ? await db.user.findUnique({ where: { id: existing.id } })
+        : existing;
+      return NextResponse.json({ user: updated });
     }
 
     const isFounder = FOUNDER_EMAILS.includes(email);
