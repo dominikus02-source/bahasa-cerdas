@@ -1,2 +1,5 @@
-import Link from "next/link";
-export default function Page() { return <div className="text-center py-20"><h1 className="text-xl font-bold">TKA UTBK</h1><p className="text-sm text-gray-500 mt-2">Halaman dalam pengembangan.</p><Link href="/murid/beranda" className="mt-4 inline-block text-sm text-violet-600 font-semibold hover:underline">Kembali</Link></div>; }
+import { redirect } from "next/navigation";
+
+export default function TKAUTBKPage() {
+  redirect("/murid/tka-guru");
+}

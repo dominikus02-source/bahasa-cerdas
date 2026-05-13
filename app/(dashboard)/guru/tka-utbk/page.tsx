@@ -1,2 +1,59 @@
+"use client";
+
+import { useState, useEffect } from "react";
 import Link from "next/link";
-export default function Page() { return <div className="text-center py-20"><h1 className="text-xl font-bold">TKA UTBK</h1><p className="text-sm text-gray-500 mt-2">Halaman dalam pengembangan.</p><Link href="/guru/beranda" className="mt-4 inline-block text-sm text-emerald-600 font-semibold hover:underline">Kembali</Link></div>; }
+import { Brain, Clock, BookOpen, ChevronRight, Award } from "lucide-react";
+
+export default function TKAUTBKPage() {
+  const [pakets, setPakets] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch("/api/kompetensi?type=TKA&limit=20")
+      .then(r => r.json())
+      .then(d => setPakets(d.data || []))
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, []);
+
+  return (
+    <div>
+      <div className="mb-8">
+        <h1 className="text-2xl font-bold text-gray-900">TKA UTBK</h1>
+        <p className="text-sm text-gray-600 mt-1">Tes Kompetensi Akademik untuk persiapan UTBK</p>
+      </div>
+
+      <div className="bg-gradient-to-br from-blue-600 to-blue-800 rounded-2xl p-6 mb-8 text-white shadow-xl">
+        <div className="flex items-start gap-4">
+          <Award size={40} className="text-blue-200 shrink-0" />
+          <div>
+            <h2 className="text-xl font-bold mb-2">Latihan TKA UTBK</h2>
+            <p className="text-blue-200 text-sm">Persiapkan diri untuk Tes Kompetensi Akademik UTBK</p>
+          </div>
+        </div>
+      </div>
+
+      {loading ? (
+        <div className="text-center py-12 text-gray-400">Memuat...</div>
+      ) : pakets.length === 0 ? (
+        <div className="text-center py-16">
+          <Brain size={48} className="mx-auto text-gray-200 mb-3" />
+          <p className="text-gray-500">Belum ada paket TKA</p>
+        </div>
+      ) : (
+        <div className="grid gap-4 md:grid-cols-2">
+          {pakets.map((p) => (
+            <Link key={p.id} href={`/kompetisi/${p.id}`}
+              className="block bg-white rounded-2xl border border-slate-200 p-5 hover:shadow-lg hover:border-blue-200 transition-all">
+              <h3 className="font-bold text-gray-900">{p.title}</h3>
+              <p className="text-sm text-gray-500 mt-1 line-clamp-2">{p.description}</p>
+              <div className="flex items-center gap-3 mt-3 text-xs text-gray-400">
+                <Clock size={12} /> {p.duration} menit
+              </div>
+            </Link>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
