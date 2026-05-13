@@ -55,6 +55,35 @@
   }
   body {
     @apply bg-background text-foreground;
-    font-family: var(--font-inter), system-ui, sans-serif;
+    font-family: system-ui, sans-serif;
   }
+}
+
+.artikel-content h1, .artikel-content h2, .artikel-content h3 {
+  @apply font-bold text-slate-900 mt-8 mb-4;
+}
+.artikel-content h1 { @apply text-2xl; }
+.artikel-content h2 { @apply text-xl; }
+.artikel-content h3 { @apply text-lg; }
+.artikel-content p {
+  @apply text-slate-700 leading-relaxed mb-4 text-justify;
+  text-indent: 2em;
+}
+.artikel-content ul, .artikel-content ol {
+  @apply pl-6 mb-4 text-slate-700;
+}
+.artikel-content li {
+  @apply mb-2;
+}
+.artikel-content a {
+  @apply text-red-600 hover:underline;
+}
+.artikel-content blockquote {
+  @apply border-l-4 border-red-200 pl-4 italic text-slate-500 my-4;
+}
+.artikel-content img {
+  @apply rounded-xl my-6 max-w-full;
+}
+.artikel-content hr {
+  @apply my-8 border-slate-200;
 }

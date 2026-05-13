@@ -70,10 +70,8 @@ export default async function ArtikelDetailPage({ params }: { params: Promise<{ 
             </div>
           )}
 
-          <div className="bg-white rounded-2xl p-6 md:p-8 border border-slate-100 shadow-sm">
-            <div className="prose prose-slate max-w-none prose-headings:text-slate-900 prose-a:text-red-600 prose-p:text-justify prose-p:leading-relaxed prose-p:mb-4 prose-p:first-line:indent-8">
-              <ReactMarkdown remarkPlugins={[remarkGfm]}>{artikel.content}</ReactMarkdown>
-            </div>
+          <div className="bg-white rounded-2xl p-6 md:p-8 border border-slate-100 shadow-sm artikel-content">
+            <ReactMarkdown remarkPlugins={[remarkGfm]}>{artikel.content}</ReactMarkdown>
           </div>
 
           <div className="mt-8 pt-6 border-t border-slate-100 flex items-center justify-between">
