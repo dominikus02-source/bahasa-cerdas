@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { createClient } from "@/lib/supabase/client";
-import { Settings, User, Banknote, Shield, Camera, Save, CheckCircle2, AlertCircle, LogOut, Loader2, Crown, Eye, EyeOff, Lock, Sparkles, Video, GraduationCap, Zap } from "lucide-react";
+import { Settings, User, Banknote, Shield, Camera, Save, CheckCircle2, AlertCircle, Loader2, Crown, Eye, EyeOff, Lock, Sparkles, Video, GraduationCap, Zap } from "lucide-react";
 import Link from "next/link";
 
 type TabType = "profil" | "rekening" | "keamanan";
@@ -164,11 +164,6 @@ export default function GuruPengaturanPage() {
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-    window.location.href = "/login";
   };
 
   return (
@@ -565,21 +560,6 @@ export default function GuruPengaturanPage() {
         </div>
       </div>
 
-      <div className="max-w-5xl">
-        <Card
-          onClick={handleLogout}
-          className="p-4 flex items-center gap-4 cursor-pointer hover:bg-red-50 border-2 border-transparent hover:border-red-200 max-w-md ml-auto"
-        >
-          <div className="h-12 w-12 rounded-xl bg-red-50 flex items-center justify-center">
-            <LogOut className="h-6 w-6 text-red-600" />
-          </div>
-          <div className="flex-1">
-            <h3 className="font-semibold text-red-600">Keluar</h3>
-            <p className="text-sm text-gray-500">Log out dari akun</p>
-          </div>
-          <span className="text-gray-400">›</span>
-        </Card>
-      </div>
     </div>
   );
 }
