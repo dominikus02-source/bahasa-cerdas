@@ -6,7 +6,7 @@ import { UpgradeModal } from "@/components/shared/upgrade-modal";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Upload, Plus, Eye, Trash2, Crown, Check, FileText, Download, Loader2, X } from "lucide-react";
+import { Upload, Plus, Eye, Trash2, Crown, Check, FileText, Download, Loader2, X, Image as ImageIcon } from "lucide-react";
 
 const KARYA_TYPES = [
   { value: "RPP", label: "RPP" },
@@ -22,6 +22,10 @@ const KARYA_TYPES = [
 export default function TokoKaryaPage() {
   const user = useUserStore();
   const fileRef = useRef<HTMLInputElement>(null);
+  const imgRefA = useRef<HTMLInputElement>(null);
+  const imgRefB = useRef<HTMLInputElement>(null);
+  const imgRefC = useRef<HTMLInputElement>(null);
+  const imgRefs = [imgRefA, imgRefB, imgRefC];
   const [showUpgrade, setShowUpgrade] = useState(false);
   const [showTambah, setShowTambah] = useState(false);
   const [karyaList, setKaryaList] = useState<any[]>([]);
@@ -36,6 +40,24 @@ export default function TokoKaryaPage() {
     grade: "",
     images: ["", "", ""] as string[],
   });
+
+  const [uploadingImgs, setUploadingImgs] = useState([false, false, false]);
+
+  async function uploadImage(i: number, file: File) {
+    if (!file) return;
+    const upd = [...uploadingImgs]; upd[i] = true; setUploadingImgs(upd);
+    try {
+      const fd = new FormData();
+      fd.set("file", file);
+      const res = await fetch("/api/upload/image", { method: "POST", body: fd });
+      const data = await res.json();
+      if (res.ok) {
+        const imgs = [...formData.images]; imgs[i] = data.url;
+        setFormData({ ...formData, images: imgs });
+      }
+    } catch {}
+    const upd2 = [...uploadingImgs]; upd2[i] = false; setUploadingImgs(upd2);
+  }
 
   useEffect(() => { fetchKarya(); }, []);
 
@@ -186,6 +208,17 @@ export default function TokoKaryaPage() {
                       )}
                       <input value={formData.images[i]} onChange={(e) => { const imgs = [...formData.images]; imgs[i] = e.target.value; setFormData({ ...formData, images: imgs }); }}
                         className="mt-1 w-full text-[10px] px-2 py-1 rounded border border-gray-200 focus:border-emerald-500 focus:outline-none" placeholder="URL gambar..." />
+                      <input type="file" ref={imgRefs[i]} accept="image/*" className="hidden" onChange={(e) => e.target.files?.[0] && uploadImage(i, e.target.files[0])} />
+                      {!uploadingImgs[i] ? (
+                        <button type="button" onClick={() => imgRefs[i].current?.click()}
+                          className="mt-1 w-full text-[10px] px-2 py-1 bg-emerald-50 text-emerald-700 rounded border border-emerald-200 hover:bg-emerald-100 transition-colors">
+                          Upload
+                        </button>
+                      ) : (
+                        <div className="mt-1 text-[10px] text-emerald-600 text-center py-1">
+                          <Loader2 size={12} className="inline animate-spin" /> Uploading...
+                        </div>
+                      )}
                     </div>
                   </div>
                 ))}
