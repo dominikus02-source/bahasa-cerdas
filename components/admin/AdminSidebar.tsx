@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { LayoutDashboard, ShoppingBag, Film, FileText, BookOpen, Users, LogOut, Settings, ChevronRight, BarChart3 } from "lucide-react";
+import { LayoutDashboard, ShoppingBag, Film, FileText, BookOpen, Users, LogOut, Settings, ChevronRight, BarChart3, Briefcase } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 
 interface Props {
@@ -15,6 +15,7 @@ const NAV = [
   { label: "Video", href: "/admin/video", icon: Film },
   { label: "Artikel", href: "/admin/artikel", icon: FileText },
   { label: "Kamus", href: "/admin/kamus", icon: BookOpen },
+  { label: "Lowongan", href: "/admin/loker", icon: Briefcase },
   { label: "Pengguna", href: "/admin/users", icon: Users },
   { type: "divider" as const },
   { label: "Dashboard Guru", href: "/guru/beranda", icon: ChevronRight },

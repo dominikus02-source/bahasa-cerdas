@@ -404,6 +404,7 @@ model User {
   gameResults       GameResult[]
 
   artikel           Artikel[]
+  loker             Loker[]
 }
 
 model Profile {
@@ -924,6 +925,35 @@ model LombaPeserta {
   createdAt DateTime @default(now())
 
   @@unique([lombaId, userId])
+}
+
+enum LokerStatus {
+  OPEN
+  CLOSED
+}
+
+model Loker {
+  id              String      @id @default(cuid())
+  title           String
+  sekolah         String
+  lokasi          String
+  description     String
+  requirements    String?
+  salary          String?
+  type            String?     @default("FULL_TIME")
+  contact         String?
+  applicationUrl  String?
+  status          LokerStatus @default(OPEN)
+  isApproved      Boolean     @default(false)
+
+  authorId String?
+  author   User?   @relation(fields: [authorId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status, isApproved])
+  @@index([createdAt])
 }
 
 model AIUsage {

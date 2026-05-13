@@ -12,6 +12,7 @@ export async function proxy(request: NextRequest) {
     pathname.startsWith("/kamus") ||
     pathname.startsWith("/marketplace") ||
     pathname.startsWith("/video-belajar") ||
+    pathname.startsWith("/loker") ||
     pathname.startsWith("/api/") ||
     pathname.startsWith("/_next") ||
     pathname.startsWith("/favicon");
