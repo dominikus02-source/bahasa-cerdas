@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
+import { createClient as createSupabase } from "@supabase/supabase-js";
 import { getUser } from "@/lib/supabase/server";
 
 export async function POST(req: NextRequest) {
@@ -14,10 +14,9 @@ export async function POST(req: NextRequest) {
     const ext = file.name.split(".").pop()?.toLowerCase() || "jpg";
     const fileName = `artikel/${user.id}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
 
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
-    );
+    // Upload via browser-style client (works with anon key for public buckets)
+    const { createClient } = await import("@/lib/supabase/client");
+    const supabase = createClient();
 
     const { error } = await supabase.storage.from("images").upload(fileName, file, {
       cacheControl: "31536000",
