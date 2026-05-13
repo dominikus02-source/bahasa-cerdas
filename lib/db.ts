@@ -11,7 +11,3 @@ export const db =
   });
 
 if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = db;
-
-process.on("beforeExit", async () => {
-  await db.$disconnect();
-});

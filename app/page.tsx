@@ -9,7 +9,7 @@ import MarketplaceSection from "@/components/landing/MarketplaceSection";
 import Testimonials from "@/components/landing/Testimonials";
 import FAQSection from "@/components/landing/FAQSection";
 import FinalCTA from "@/components/landing/FinalCTA";
-import PublicNavbar from "@/components/public/PublicNavbar";
+import PublicNavbar from "@/components/public/PageNavbar";
 import { db } from "@/lib/db";
 
 async function getLatestArtikel() {
