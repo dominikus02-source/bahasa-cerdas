@@ -3,7 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 import { createKaryaTransaction } from "@/lib/midtrans";
 
-const PLATFORM_FEE_PERCENT = 20;
+const PLATFORM_FEE_PERCENT = 15;
 
 async function deliverKaryaToEmail(buyerEmail: string, karya: any, buyerName: string) {
   try {

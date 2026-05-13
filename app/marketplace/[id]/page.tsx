@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { ShoppingBag, Download, Star, User, ChevronLeft, ShoppingCart, Plus, Minus } from "lucide-react";
-import PublicNavbar from "@/components/public/PublicNavbar";
+import PageNavbar from "@/components/public/PageNavbar";
 
 export default function MarketplaceDetailPage() {
   const { id } = useParams();
@@ -50,7 +50,7 @@ export default function MarketplaceDetailPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-white">
-      <PublicNavbar />
+      <PageNavbar />
       <div className="max-w-5xl mx-auto px-4 py-8">
         <button onClick={() => router.back()} className="inline-flex items-center gap-1 text-sm text-slate-500 hover:text-red-600 mb-6">
           <ChevronLeft size={16} /> Kembali

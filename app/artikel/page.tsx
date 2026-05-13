@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Calendar, Clock, ArrowRight, User, BookOpen } from "lucide-react";
-import PublicNavbar from "@/components/public/PublicNavbar";
+import PageNavbar from "@/components/public/PageNavbar";
 
 async function getArtikel() {
   try {
@@ -15,7 +15,7 @@ export default async function ArtikelPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-white">
-      <PublicNavbar />
+      <PageNavbar />
       <div className="max-w-5xl mx-auto px-4 py-16">
         <div className="text-center mb-12">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-red-100 rounded-full text-red-700 text-sm font-medium mb-4">

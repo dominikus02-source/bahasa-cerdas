@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { Play, Clock, Eye, User, ArrowLeft, Lock, Film } from "lucide-react";
-import PublicNavbar from "@/components/public/PublicNavbar";
+import PageNavbar from "@/components/public/PageNavbar";
 
 const CATEGORIES: Record<string, string> = {
   PEMBELAJARAN: "Pembelajaran", GRAMMATIKA: "Grammatika", SASTRA: "Sastra",
@@ -30,7 +30,7 @@ export default function VideoDetailPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800">
-      <PublicNavbar />
+      <PageNavbar />
       <div className="max-w-5xl mx-auto px-4 py-6">
         <Link href="/video-belajar" className="inline-flex items-center gap-1 text-sm text-white/50 hover:text-white mb-4">
           <ArrowLeft size={16} /> Kembali ke Video

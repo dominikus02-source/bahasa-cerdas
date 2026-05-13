@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Play, Clock, Eye, Search, Film } from "lucide-react";
-import PublicNavbar from "@/components/public/PublicNavbar";
+import PageNavbar from "@/components/public/PageNavbar";
 
 export default function VideoBelajarPage() {
   const CATEGORIES = [
@@ -42,7 +42,7 @@ export default function VideoBelajarPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800">
-      <PublicNavbar />
+      <PageNavbar />
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Header */}
         <div className="text-center mb-10">

@@ -2,7 +2,7 @@ import Link from "next/link";
 import { ArrowLeft, Calendar, Clock, User } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import PublicNavbar from "@/components/public/PublicNavbar";
+import PageNavbar from "@/components/public/PageNavbar";
 
 async function getArtikel(slug: string) {
   try {
@@ -30,7 +30,7 @@ export default async function ArtikelDetailPage({ params }: { params: { slug: st
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-white">
-      <PublicNavbar />
+      <PageNavbar />
       <div className="max-w-3xl mx-auto px-4 py-12">
         <Link href="/artikel" className="inline-flex items-center gap-1 text-sm text-slate-400 hover:text-red-600 mb-8 transition-colors">
           <ArrowLeft size={16} /> Kembali ke Artikel

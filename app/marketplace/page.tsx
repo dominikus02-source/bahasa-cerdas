@@ -22,7 +22,7 @@ const SORT_OPTIONS = [
   { value: "price_desc", label: "Termahal" },
 ];
 
-import PublicNavbar from "@/components/public/PublicNavbar";
+import PageNavbar from "@/components/public/PageNavbar";
 
 export default function MarketplacePage() {
   const [items, setItems] = useState<any[]>([]);
@@ -54,7 +54,7 @@ export default function MarketplacePage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-white">
-      <PublicNavbar />
+      <PageNavbar />
       <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="flex items-center justify-between mb-8">
           <div>
