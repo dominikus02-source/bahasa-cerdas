@@ -70,6 +70,12 @@ export async function uploadFile(
 
   const bucket = BUCKET_MAP[detectedType as keyof typeof BUCKET_MAP] || "documents";
 
+  // Auto-create bucket if not exists
+  const { data: existingBucket } = await supabase.storage.getBucket(bucket);
+  if (!existingBucket) {
+    await supabase.storage.createBucket(bucket, { public: true }).catch(() => {});
+  }
+
   const { data, error } = await supabase.storage
     .from(bucket)
     .upload(fileName, file, {
