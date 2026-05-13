@@ -38,10 +38,10 @@ export default function HeroSection() {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start pt-2">
-              <Link href="/register?plan=premium" className="w-full sm:w-auto">
+              <Link href="/register" className="w-full sm:w-auto">
                 <Button className="w-full bg-white text-red-600 hover:bg-red-50 font-bold text-lg px-8 py-6 rounded-xl shadow-xl shadow-black/20 transition-all hover:scale-105 flex items-center justify-center gap-2">
                   <Sparkles className="w-5 h-5" />
-                  Coba Gratis 14 Hari
+                  Daftar Gratis
                   <ArrowRight className="w-5 h-5" />
                 </Button>
               </Link>

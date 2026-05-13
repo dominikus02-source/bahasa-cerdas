@@ -6,7 +6,6 @@ import CoreFeatures from "@/components/landing/CoreFeatures";
 import AIFeatures from "@/components/landing/AIFeatures";
 import CommunitySection from "@/components/landing/CommunitySection";
 import MarketplaceSection from "@/components/landing/MarketplaceSection";
-import PricingTable from "@/components/landing/PricingTable";
 import Testimonials from "@/components/landing/Testimonials";
 import FAQSection from "@/components/landing/FAQSection";
 import FinalCTA from "@/components/landing/FinalCTA";
@@ -201,7 +200,6 @@ export default async function HomePage() {
 
       <CommunitySection />
       <MarketplaceSection />
-      <PricingTable />
       <Testimonials />
       <FAQSection />
       <FinalCTA />
@@ -259,7 +257,7 @@ export default async function HomePage() {
             </div>
           </div>
           <div className="border-t border-slate-800 pt-8 text-center text-sm">
-            <p>&copy; 2025 BahasaCerdas. Platform edukasi Bahasa Indonesia untuk bangsa.</p>
+            <p>&copy; 2026 BahasaCerdas. Platform edukasi Bahasa Indonesia untuk bangsa.</p>
           </div>
         </div>
       </footer>

@@ -26,15 +26,15 @@ export default function FinalCTA() {
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
-          <Link href="/register?plan=premium">
+          <Link href="/register">
             <Button className="w-full sm:w-auto bg-white text-red-600 hover:bg-slate-100 font-extrabold text-lg px-8 py-7 rounded-2xl shadow-xl transition-all hover:scale-105 group">
-              Upgrade ke Premium Sekarang
+              Mulai Sekarang
               <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </Button>
           </Link>
-          <Link href="/register">
+          <Link href="/login">
             <Button className="w-full sm:w-auto bg-white/10 backdrop-blur-md border-2 border-white/40 text-white hover:bg-white/20 font-extrabold text-lg px-8 py-7 rounded-2xl shadow-xl transition-all hover:scale-105">
-              Mulai Versi Gratis
+              Masuk
             </Button>
           </Link>
         </div>
