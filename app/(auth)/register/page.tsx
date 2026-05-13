@@ -24,31 +24,41 @@ export default function RegisterPage() {
     setError("");
 
     try {
-      const supabase = createClient();
-
       const normalizedEmail = email.toLowerCase();
 
-      const { data, error: signUpError } = await supabase.auth.signUp({
-        email: normalizedEmail,
-        password,
-        options: { data: { role, full_name: fullName } },
+      const createRes = await fetch("/api/auth/create-user", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: normalizedEmail,
+          password,
+          fullName,
+          role,
+        }),
       });
 
-      if (signUpError) {
-        setError(signUpError.message);
+      const createData = await createRes.json();
+      if (!createRes.ok) {
+        setError(createData.error || "Registration failed");
         setLoading(false);
         return;
       }
 
-      if (!data.user) {
-        setError("Registration failed");
+      const supabase = createClient();
+      const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
+        email: normalizedEmail,
+        password,
+      });
+
+      if (signInError || !signInData.session) {
+        setError("Pendaftaran berhasil! Silakan langsung masuk.");
         setLoading(false);
         return;
       }
 
       const formData = new FormData();
       formData.set("email", normalizedEmail);
-      formData.set("supabaseId", data.user.id);
+      formData.set("supabaseId", createData.userId);
       formData.set("fullName", fullName);
       formData.set("role", role);
 
@@ -57,26 +67,6 @@ export default function RegisterPage() {
         setError(result.error);
         setLoading(false);
         return;
-      }
-
-      if (!data.session) {
-        try {
-          await fetch("/api/auth/confirm-email", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ userId: data.user.id }),
-          });
-        } catch {}
-        const supabase2 = createClient();
-        const { data: signInData } = await supabase2.auth.signInWithPassword({
-          email: normalizedEmail,
-          password,
-        });
-        if (!signInData.session) {
-          setError("Pendaftaran berhasil! Silakan cek email kamu untuk konfirmasi sebelum masuk.");
-          setLoading(false);
-          return;
-        }
       }
 
       window.location.href = `/${result?.role || role.toLowerCase()}/beranda`;
