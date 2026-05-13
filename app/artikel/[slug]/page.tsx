@@ -5,11 +5,12 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import PageNavbar from "@/components/public/PageNavbar";
 
-export default async function ArtikelDetailPage({ params }: { params: { slug: string } }) {
+export default async function ArtikelDetailPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
   let artikel: any = null;
   try {
     artikel = await db.artikel.findUnique({
-      where: { slug: params.slug, isPublished: true },
+      where: { slug, isPublished: true },
       select: {
         id: true, title: true, slug: true, content: true, excerpt: true,
         coverImage: true, tags: true, readCount: true, createdAt: true, updatedAt: true,
