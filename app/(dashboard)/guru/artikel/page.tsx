@@ -22,7 +22,7 @@ export default function GuruArtikelPage() {
     title: "",
     content: "",
     tags: "",
-    isPublished: false,
+    isPublished: true,
     coverImage: "",
   });
 
