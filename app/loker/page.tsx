@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Briefcase, MapPin, Building, Clock, Search, ExternalLink, ChevronRight } from "lucide-react";
-import PublicNavbar from "@/components/public/PublicNavbar";
+import PageNavbar from "@/components/public/PageNavbar";
 
 export default function LokerPage() {
   const [data, setData] = useState<any[]>([]);
@@ -25,7 +25,7 @@ export default function LokerPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-white">
-      <PublicNavbar />
+      <PageNavbar />
       <div className="max-w-4xl mx-auto px-4 py-12">
         <div className="text-center mb-10">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-blue-100 text-blue-700 rounded-full text-sm font-medium mb-4">
