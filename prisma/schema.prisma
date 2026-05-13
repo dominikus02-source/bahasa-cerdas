@@ -404,6 +404,8 @@ model User {
   gameQuestions     GameQuestion[]
   gameSessions      GameSession[]
   gameResults       GameResult[]
+
+  artikel           Artikel[]
 }
 
 model Profile {
@@ -1033,5 +1035,44 @@ model GroupQuizResult {
 
   @@unique([groupQuizId, userId])
   @@index([userId])
+}
+
+model Artikel {
+  id          String   @id @default(cuid())
+  title       String
+  slug        String   @unique
+  content     String
+  excerpt     String?
+  coverImage  String?
+  tags        String[]
+  isPublished Boolean  @default(false)
+  readCount   Int      @default(0)
+
+  authorId String
+  author   User   @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([isPublished, createdAt])
+  @@index([authorId])
+}
+
+model KamusEntry {
+  id          String @id @default(cuid())
+  kata        String
+  slug        String @unique
+  jenisKata   String?
+  definisi    String
+  contoh      String?
+  sinonim     String?
+  antonim     String?
+  serapanDari String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([kata])
+  @@index([slug])
 }
 

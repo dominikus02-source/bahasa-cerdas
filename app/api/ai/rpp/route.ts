@@ -1,10 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import Anthropic from "@anthropic-ai/sdk";
 import { getUser } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 import { checkAIQuota, recordAIUsage } from "@/lib/premium";
-
-const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY || "" });
 
 export async function POST(req: NextRequest) {
   try {
@@ -31,7 +28,7 @@ Format output JSON dengan struktur:
 {
   "title": "Judul RPP",
   "identity": { "sekolah", "mataPelajaran", "kelas", "alokasiWaktu", "tahunAjaran" },
-  "competency": { " dasar": [...], "tujuan": [...] },
+  "competency": { "dasar": [...], "tujuan": [...] },
   "indicators": [...],
   "learningSteps": [{ "phase": "name", "activities": [...] }],
   "assessment": { "technique": "...", "instruments": [...] },
@@ -40,34 +37,39 @@ Format output JSON dengan struktur:
   "references": [...]
 }
 
-Buatkan dalam Bahasa Indonesia yang baik dan benar. Jangan gunakan markdown atau kode formatting, hanya JSON biasa.`;
+Buatkan dalam Bahasa Indonesia yang baik dan benar. Hanya output JSON, tanpa markdown.`;
 
-    const msg = await anthropic.messages.create({
-      model: "claude-sonnet-4-20250514",
-      max_tokens: 2000,
-      messages: [{ role: "user", content: prompt }],
+    const res = await fetch("https://api.deepseek.com/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${process.env.DEEPSEEK_API_KEY}`,
+      },
+      body: JSON.stringify({
+        model: "deepseek-chat",
+        messages: [{ role: "user", content: prompt }],
+        max_tokens: 4000,
+        temperature: 0.7,
+      }),
     });
 
-    const content = msg.content[0];
-    if (content.type === "text") {
-      let rpp = content.text;
-      if (rpp.includes("```json")) {
-        rpp = rpp.replace(/```json\n?/g, "").replace(/\n?```/g, "");
-      }
+    const json = await res.json();
+    const content = json.choices?.[0]?.message?.content || "";
 
-      const tokens = msg.usage.input_tokens + (msg.usage.output_tokens || 0);
-      const costUSD = (tokens / 1_000_000) * 3;
-
-      await recordAIUsage(user.id, "rpp_generator", tokens, costUSD);
-
-      try {
-        return NextResponse.json({ rpp: JSON.parse(rpp) });
-      } catch {
-        return NextResponse.json({ rpp: { title: topik || "RPP Bahasa Indonesia", description: rpp } });
-      }
+    let rpp = content;
+    if (rpp.includes("```json")) {
+      rpp = rpp.replace(/```json\n?/g, "").replace(/\n?```/g, "");
     }
 
-    return NextResponse.json({ error: "AI error" }, { status: 500 });
+    const tokens = json.usage?.total_tokens || 0;
+    const costUSD = (tokens / 1_000_000) * 0.5;
+    await recordAIUsage(user.id, "rpp_generator", tokens, costUSD);
+
+    try {
+      return NextResponse.json({ rpp: JSON.parse(rpp) });
+    } catch {
+      return NextResponse.json({ rpp: { title: topik || "RPP Bahasa Indonesia", description: rpp } });
+    }
   } catch (error) {
     console.error("AI RPP error:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });

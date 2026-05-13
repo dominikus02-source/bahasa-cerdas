@@ -8,6 +8,10 @@ export async function proxy(request: NextRequest) {
   const isPublicPage = pathname === "/" || 
     pathname.startsWith("/login") || 
     pathname.startsWith("/register") ||
+    pathname.startsWith("/artikel") ||
+    pathname.startsWith("/kamus") ||
+    pathname.startsWith("/marketplace") ||
+    pathname.startsWith("/video-belajar") ||
     pathname.startsWith("/api/") ||
     pathname.startsWith("/_next") ||
     pathname.startsWith("/favicon");
