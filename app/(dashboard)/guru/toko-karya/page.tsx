@@ -34,6 +34,7 @@ export default function TokoKaryaPage() {
     type: "RPP",
     price: 0,
     grade: "",
+    images: ["", "", ""] as string[],
   });
 
   useEffect(() => { fetchKarya(); }, []);
@@ -57,7 +58,7 @@ export default function TokoKaryaPage() {
     setUploading(true);
 
     try {
-      const body: any = { ...formData, isPublished: true };
+      const body: any = { ...formData, isPublished: true, images: JSON.stringify(formData.images.filter(Boolean)) };
 
       if (selectedFile) {
         const formFile = new FormData();
@@ -81,7 +82,7 @@ export default function TokoKaryaPage() {
 
       if (res.ok) {
         setShowTambah(false);
-        setFormData({ title: "", description: "", type: "RPP", price: 0, grade: "" });
+        setFormData({ title: "", description: "", type: "RPP", price: 0, grade: "", images: ["", "", ""] });
         setSelectedFile(null);
         fetchKarya();
       }
@@ -161,6 +162,34 @@ export default function TokoKaryaPage() {
               <label className="block text-sm font-semibold mb-1">Kelas (opsional)</label>
               <input value={formData.grade} onChange={(e) => setFormData({ ...formData, grade: e.target.value })}
                 className="w-full rounded-xl border-2 border-gray-200 px-4 py-2.5 text-sm" placeholder="X / 1 / 7" />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold mb-2">Gambar Produk (min 3)</label>
+              <div className="grid grid-cols-3 gap-3">
+                {[0, 1, 2].map((i) => (
+                  <div key={i}>
+                    <div className={`border-2 border-dashed rounded-xl p-3 text-center ${formData.images[i] ? 'border-emerald-300 bg-emerald-50' : 'border-gray-300'}`}>
+                      {formData.images[i] ? (
+                        <div className="relative">
+                          <img src={formData.images[i]} alt="" className="w-full h-24 object-cover rounded-lg"
+                            onError={(e) => (e.target as HTMLImageElement).src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect fill="%23f3f4f6" width="100" height="100"/><text x="50" y="55" text-anchor="middle" fill="%239ca3af" font-size="10">Gambar ${i+1}</text></svg>'} />
+                          <button type="button" onClick={() => { const imgs = [...formData.images]; imgs[i] = ""; setFormData({ ...formData, images: imgs }); }}
+                            className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-0.5 shadow"><X size={12} /></button>
+                        </div>
+                      ) : (
+                        <>
+                          <div className="h-16 flex items-center justify-center">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%239ca3af" strokeWidth="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+                          </div>
+                          <p className="text-[10px] text-gray-400">Gambar {i+1}</p>
+                        </>
+                      )}
+                      <input value={formData.images[i]} onChange={(e) => { const imgs = [...formData.images]; imgs[i] = e.target.value; setFormData({ ...formData, images: imgs }); }}
+                        className="mt-1 w-full text-[10px] px-2 py-1 rounded border border-gray-200 focus:border-emerald-500 focus:outline-none" placeholder="URL gambar..." />
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
             <div>
               <label className="block text-sm font-semibold mb-1">File Karya</label>

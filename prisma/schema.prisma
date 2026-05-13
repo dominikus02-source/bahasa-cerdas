@@ -764,6 +764,7 @@ model Karya {
   grade       String?
   subject     String?
   week        Int?
+  images      String  @default("[]")
 
   sellerId String
   seller   User   @relation(fields: [sellerId], references: [id], onDelete: Cascade)

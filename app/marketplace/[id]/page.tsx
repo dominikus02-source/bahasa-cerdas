@@ -11,6 +11,8 @@ export default function MarketplaceDetailPage() {
   const [karya, setKarya] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [cartQty, setCartQty] = useState(0);
+  const [currentImg, setCurrentImg] = useState(0);
+  const karyaImages = karya ? (() => { try { return JSON.parse(karya.images || "[]"); } catch { return []; } })() : [];
 
   useEffect(() => {
     fetch(`/api/marketplace/${id}`)
@@ -57,15 +59,26 @@ export default function MarketplaceDetailPage() {
         </button>
 
         <div className="grid md:grid-cols-2 gap-8">
-          {/* Left - Preview */}
-          <div className="bg-white rounded-2xl border border-slate-200 p-8 flex items-center justify-center min-h-[300px] shadow-sm">
-            <div className="text-center">
-              <div className="w-24 h-24 rounded-2xl bg-gradient-to-br from-red-100 to-pink-100 flex items-center justify-center mx-auto mb-4">
-                <span className="text-4xl">
-                  {karya.type === "RPP" ? "📚" : karya.type === "PPT" ? "📊" : karya.type === "SOAL" ? "✍️" : karya.type === "VIDEO" ? "🎬" : karya.type === "EBOOK" ? "📖" : "📦"}
-                </span>
+          {/* Left - Images */}
+          <div>
+            <div className="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm">
+              <div className="aspect-square bg-slate-50 rounded-xl flex items-center justify-center mb-3 overflow-hidden">
+                {karyaImages[currentImg] ? (
+                  <img src={karyaImages[currentImg]} alt="" className="w-full h-full object-cover" />
+                ) : (
+                  <span className="text-6xl">{karya.type === "RPP" ? "📚" : karya.type === "PPT" ? "📊" : karya.type === "SOAL" ? "✍️" : "📦"}</span>
+                )}
               </div>
-              <p className="text-sm text-slate-400">Pratinjau karya</p>
+              {karyaImages.length > 1 && (
+                <div className="flex gap-2">
+                  {karyaImages.map((img: string, i: number) => (
+                    <button key={i} onClick={() => setCurrentImg(i)}
+                      className={`w-16 h-16 rounded-lg border-2 overflow-hidden ${i === currentImg ? 'border-red-500' : 'border-transparent'}`}>
+                      <img src={img} alt="" className="w-full h-full object-cover" />
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
 
