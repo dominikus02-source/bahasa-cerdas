@@ -39,7 +39,7 @@ const BUCKET_MAP = {
   XLSX: "documents",
   MP4: "videos",
   ZIP: "documents",
-  IMAGE: "images",
+  IMAGE: "documents",
 };
 
 function getFileTypeFromMime(mimeType: string): string | null {

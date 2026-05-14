@@ -28,6 +28,30 @@ export default function TokoKaryaPage() {
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [imgLoading, setImgLoading] = useState(-1);
+
+  const uploadImage = async (i: number) => {
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = "image/*";
+    input.onchange = async () => {
+      const file = input.files?.[0];
+      if (!file) return;
+      setImgLoading(i);
+      const fd = new FormData();
+      fd.set("file", file);
+      const res = await fetch("/api/upload/file", { method: "POST", body: fd });
+      const data = await res.json();
+      if (res.ok && data.url) {
+        const imgs = [...formData.images];
+        imgs[i] = data.url;
+        setFormData({ ...formData, images: imgs });
+      }
+      setImgLoading(-1);
+    };
+    input.click();
+  };
+
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -184,7 +208,15 @@ export default function TokoKaryaPage() {
                         </>
                       )}
                       <input value={formData.images[i]} onChange={(e) => { const imgs = [...formData.images]; imgs[i] = e.target.value; setFormData({ ...formData, images: imgs }); }}
-                        className="mt-1 w-full text-[10px] px-2 py-1 rounded border border-gray-200 focus:border-emerald-500 focus:outline-none" placeholder="URL gambar (imgur, postimages, dll)" />
+                        className="mt-1 w-full text-[10px] px-2 py-1 rounded border border-gray-200 focus:border-emerald-500 focus:outline-none" placeholder="URL gambar..." />
+                      {imgLoading === i ? (
+                        <div className="mt-1 text-[10px] text-emerald-600 text-center"><Loader2 size={12} className="inline animate-spin" /> Uploading...</div>
+                      ) : (
+                        <button type="button" onClick={() => uploadImage(i)}
+                          className="mt-1 w-full text-[10px] px-2 py-1 bg-emerald-50 text-emerald-700 rounded border border-emerald-200 hover:bg-emerald-100 transition-colors">
+                          Upload Gambar
+                        </button>
+                      )}
                     </div>
                   </div>
                 ))}
