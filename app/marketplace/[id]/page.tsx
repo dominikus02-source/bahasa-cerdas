@@ -2,9 +2,11 @@
 
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { ShoppingBag, Download, Star, User, ChevronLeft, ShoppingCart, Plus, Minus, Share2 } from "lucide-react";
+import { ShoppingBag, Download, Star, User, ChevronLeft, ShoppingCart, Plus, Minus } from "lucide-react";
 import PageNavbar from "@/components/public/PageNavbar";
 import ShareButton from "@/components/shared/ShareButton";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 export default function MarketplaceDetailPage() {
   const { id } = useParams();
@@ -95,7 +97,9 @@ export default function MarketplaceDetailPage() {
               </p>
             )}
 
-            <p className="text-slate-600 text-sm leading-relaxed mb-6">{karya.description}</p>
+            <div className="border-t border-slate-100 pt-6 mb-6 artikel-content">
+              <ReactMarkdown remarkPlugins={[remarkGfm]}>{karya.description}</ReactMarkdown>
+            </div>
 
             <div className="flex items-center gap-4 text-sm text-slate-500 mb-6">
               <span className="flex items-center gap-1"><Download size={14} /> {karya.downloads} unduhan</span>
