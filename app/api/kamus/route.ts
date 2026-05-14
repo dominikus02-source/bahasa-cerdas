@@ -1,38 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 
-const API_URLS = [
-  (q: string) => `https://new-kbbi-api.vercel.app/api/kbbi?kata=${encodeURIComponent(q)}`,
-  (q: string) => `https://kbbi-api-zhirrr.vercel.app/api/kbbi?kata=${encodeURIComponent(q)}`,
-];
-
-async function fetchExternal(q: string): Promise<any[] | null> {
-  for (const buildUrl of API_URLS) {
-    try {
-      const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), 4000);
-      const res = await fetch(buildUrl(q), { signal: controller.signal });
-      clearTimeout(timeout);
-      if (!res.ok) continue;
-
-      const json = await res.json();
-      const items = json?.data || json;
-      if (Array.isArray(items) && items.length > 0) {
-        return items.map((item: any, i: number) => ({
-          id: `kbbi-${i}`,
-          kata: q,
-          jenisKata: item.kata_sambung || item.kelas || item.type || "",
-          definisi: item.arti || item.definisi || item.description || item.definition || "",
-          contoh: item.contoh || item.example || "",
-          sinonim: (item.sinonim || item.synonyms || []).join(", "),
-          antonim: (item.antonim || item.antonyms || []).join(", "),
-        }));
-      }
-    } catch {}
-  }
-  return null;
-}
-
 export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
@@ -44,11 +12,29 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ data: [], total: 0, page: 1, totalPages: 0 });
     }
 
-    const external = await fetchExternal(q);
-    if (external) {
-      return NextResponse.json({ data: external, total: external.length, page: 1, totalPages: 1 });
-    }
+    // Try external API first
+    try {
+      const res = await fetch(`https://kbbi-api-zhirrr.vercel.app/api/kbbi?kata=${encodeURIComponent(q)}`, {
+        signal: AbortSignal.timeout(3000),
+      });
+      if (res.ok) {
+        const json = await res.json();
+        if (json.success && Array.isArray(json.data) && json.data.length > 0) {
+          const data = json.data.map((item: any, i: number) => ({
+            id: `kbbi-${i}`,
+            kata: q,
+            jenisKata: item.kata_sambung || item.kelas || item.type || "",
+            definisi: item.arti || item.definisi || "",
+            contoh: item.contoh || "",
+            sinonim: (item.sinonim || []).join(", "),
+            antonim: (item.antonim || []).join(", "),
+          }));
+          return NextResponse.json({ data, total: data.length, page: 1, totalPages: 1 });
+        }
+      }
+    } catch {}
 
+    // Fallback: local DB
     const where = { kata: { contains: q, mode: "insensitive" as const } };
     const [data, total] = await Promise.all([
       db.kamusEntry.findMany({ where, orderBy: { kata: "asc" }, skip: (page - 1) * limit, take: limit }),
