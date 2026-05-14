@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient as createSupabase } from "@supabase/supabase-js";
+import { createClient } from "@supabase/supabase-js";
 import { getUser } from "@/lib/supabase/server";
 
 export async function POST(req: NextRequest) {
@@ -12,16 +12,17 @@ export async function POST(req: NextRequest) {
     if (!file) return NextResponse.json({ error: "File tidak ditemukan" }, { status: 400 });
 
     const ext = file.name.split(".").pop()?.toLowerCase() || "jpg";
-    const fileName = `artikel/${user.id}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+    const fileName = `toko/${user.id}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
 
-    // Upload via browser-style client (works with anon key for public buckets)
-    const { createClient } = await import("@/lib/supabase/client");
-    const supabase = createClient();
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    );
 
     const { error } = await supabase.storage.from("images").upload(fileName, file, {
       cacheControl: "31536000",
-      upsert: false,
       contentType: file.type,
+      upsert: true,
     });
 
     if (error) return NextResponse.json({ error: `Upload gagal: ${error.message}` }, { status: 500 });
