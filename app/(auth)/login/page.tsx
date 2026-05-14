@@ -100,15 +100,14 @@ export default function LoginPage() {
       <div className="absolute bottom-0 right-0 w-1/2 h-1/2 bg-gradient-to-tl from-black/10 to-transparent" />
 
       <div className="relative z-10 w-full max-w-md">
-        <div className="mb-6 text-center">
-          <Link href="/" className="inline-flex items-center gap-1 text-white/50 hover:text-white text-xs mb-3 transition-colors">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-            Beranda
-          </Link>
-          <Image src="/logo.png" alt="BahasaCerdas" width={64} height={64} className="mx-auto" />
-        </div>
-
         <div className="bg-white/95 backdrop-blur-md rounded-3xl p-6 md:p-8 shadow-2xl border border-white/20">
+          <div className="flex items-center justify-between mb-6">
+            <Link href="/" className="inline-flex items-center gap-1.5 text-sm text-white/50 hover:text-white bg-white/10 px-3 py-1.5 rounded-full transition-colors">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+              Beranda
+            </Link>
+            <Image src="/logo.png" alt="BahasaCerdas" width={40} height={40} className="opacity-90" />
+          </div>
           <div className="text-center mb-6">
             <h1 className="text-2xl font-bold text-gray-900 mb-1">Masuk</h1>
             <p className="text-sm text-gray-500">Selamat datang di BahasaCerdas</p>

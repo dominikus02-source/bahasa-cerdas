@@ -11,40 +11,55 @@ const GAME_MODES = [
     name: "Adu Cerdas",
     desc: "Jawab benar, kumpulkan poin, rebut peringkat teratas!",
     icon: Zap,
+    emoji: "⚔️",
     color: "from-violet-500 to-purple-600",
-    lightColor: "bg-violet-50 border-violet-200",
+    bgColor: "bg-violet-50",
+    borderColor: "border-violet-200",
+    textColor: "text-violet-700",
   },
   {
     id: "GOLD_RUSH",
     name: "Rebut Emas",
     desc: "Kumpulkan emas sebanyak-banyaknya, jawab benar untuk menambang!",
     icon: Trophy,
+    emoji: "🥇",
     color: "from-amber-500 to-orange-600",
-    lightColor: "bg-amber-50 border-amber-200",
+    bgColor: "bg-amber-50",
+    borderColor: "border-amber-200",
+    textColor: "text-amber-700",
   },
   {
     id: "SPEED_BATTLE",
     name: "Cepat Tepat",
     desc: "Kecepatan adalah segalanya! Jawab paling cepat dapat poin terbanyak!",
     icon: Swords,
+    emoji: "⚡",
     color: "from-red-500 to-rose-600",
-    lightColor: "bg-red-50 border-red-200",
+    bgColor: "bg-red-50",
+    borderColor: "border-red-200",
+    textColor: "text-red-700",
   },
   {
     id: "SURVIVAL",
     name: "Tak Terkalahkan",
     desc: "Punya 3 nyawa! Jawab salah = nyawa berkurang. Bertahan paling akhir jadi juara!",
     icon: Heart,
+    emoji: "❤️",
     color: "from-pink-500 to-rose-600",
-    lightColor: "bg-pink-50 border-pink-200",
+    bgColor: "bg-pink-50",
+    borderColor: "border-pink-200",
+    textColor: "text-pink-700",
   },
   {
     id: "TIMED_TRIAL",
     name: "Lawan Waktu",
     desc: "Waktu terbatas! Jawab benar untuk tambah waktu. Kejar skor tertinggi!",
     icon: Timer,
+    emoji: "⏱️",
     color: "from-cyan-500 to-blue-600",
-    lightColor: "bg-cyan-50 border-cyan-200",
+    bgColor: "bg-cyan-50",
+    borderColor: "border-cyan-200",
+    textColor: "text-cyan-700",
   },
 ];
 
@@ -89,10 +104,22 @@ export default function GameLobby({ isHost = false, roomCode: initialCode, onSta
       gameType: "TIMED_TRIAL",
       category: "BAHASA",
       difficulty: "MEDIUM",
-      questionCount: 15,
-      timePerQuestion: 10,
+      questionCount: 10,
+      timePerQuestion: 20,
     });
   }, [userId, userName]);
+
+  // Auto-start game when room is created for solo mode
+  useEffect(() => {
+    const unsub = gameSocket.onRoomCreated((data: any) => {
+      if (data.gameType === "TIMED_TRIAL") {
+        setTimeout(() => {
+          gameSocket.startGame({ roomCode: data.code });
+        }, 500);
+      }
+    });
+    return unsub;
+  }, []);
 
   useEffect(() => {
     const stored = localStorage.getItem("bc-user");
@@ -257,8 +284,8 @@ export default function GameLobby({ isHost = false, roomCode: initialCode, onSta
 
         {isHost && (
           <div className="mb-8">
-            <p className="text-sm font-semibold text-slate-700 mb-3">Pilih Mode Game</p>
-            <div className="space-y-3">
+            <p className="text-sm font-semibold text-slate-700 mb-4">Pilih Mode Game</p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {GAME_MODES.map((mode) => {
                 const ModeIcon = mode.icon;
                 const isSelected = selectedMode === mode.id;
@@ -266,25 +293,23 @@ export default function GameLobby({ isHost = false, roomCode: initialCode, onSta
                   <button
                     key={mode.id}
                     onClick={() => setSelectedMode(mode.id)}
-                    className={`w-full text-left rounded-2xl p-4 border-2 transition-all ${
-                      isSelected ? mode.lightColor + " shadow-md scale-[1.02]" : "border-slate-100 bg-white hover:border-slate-200"
+                    className={`relative rounded-2xl border-2 p-4 transition-all ${
+                      isSelected
+                        ? `${mode.bgColor} ${mode.borderColor} shadow-lg scale-[1.02]`
+                        : "bg-white border-slate-100 hover:border-slate-300 hover:shadow-md"
                     }`}
                   >
-                    <div className="flex items-center gap-4">
-                      <div className={`w-12 h-12 rounded-xl ${isSelected ? `bg-gradient-to-br ${mode.color}` : "bg-slate-100"} flex items-center justify-center`}>
-                        <ModeIcon size={24} className={isSelected ? "text-white" : "text-slate-400"} />
+                    {isSelected && (
+                      <div className="absolute top-2 right-2 w-6 h-6 rounded-full bg-emerald-500 flex items-center justify-center shadow">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="4"><path d="M5 13l4 4L19 7" /></svg>
                       </div>
-                      <div className="flex-1">
-                        <p className={`font-bold ${isSelected ? "text-slate-900" : "text-slate-700"}`}>{mode.name}</p>
-                        <p className="text-xs text-slate-500 mt-0.5">{mode.desc}</p>
+                    )}
+                    <div className="text-center">
+                      <div className={`w-14 h-14 rounded-2xl ${isSelected ? `bg-gradient-to-br ${mode.color}` : "bg-slate-100"} flex items-center justify-center mx-auto mb-3 transition-all`}>
+                        <span className="text-2xl">{mode.emoji}</span>
                       </div>
-                      {isSelected && (
-                        <div className="w-6 h-6 rounded-full bg-emerald-500 flex items-center justify-center">
-                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3">
-                            <path d="M5 13l4 4L19 7" />
-                          </svg>
-                        </div>
-                      )}
+                      <h3 className={`font-bold ${isSelected ? "text-slate-900" : "text-slate-700"}`}>{mode.name}</h3>
+                      <p className="text-[11px] text-slate-500 mt-1 leading-relaxed">{mode.desc}</p>
                     </div>
                   </button>
                 );
