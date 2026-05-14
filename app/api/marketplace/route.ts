@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
+import { createClient as createAdmin } from "@supabase/supabase-js";
 import { getUser } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 import { deleteFile } from "@/lib/upload";
@@ -67,17 +67,9 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
-    const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-
-    if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    const dbUser = await db.user.findUnique({ where: { supabaseId: user.id } });
-    if (!dbUser || dbUser.role !== "GURU") {
-      return NextResponse.json({ error: "Guru only" }, { status: 403 });
-    }
+    const user = await getUser();
+    if (!user) return NextResponse.json({ error: "Silakan login" }, { status: 401 });
+    if (user.role !== "GURU") return NextResponse.json({ error: "Hanya untuk guru" }, { status: 403 });
 
     const formData = await req.formData();
 
@@ -103,8 +95,8 @@ export async function POST(req: NextRequest) {
       if (!info) return NextResponse.json({ error: "Tipe file tidak didukung. Gunakan PDF, EPUB, DOCX, PPTX, XLSX, ZIP, atau MP4" }, { status: 400 });
       if (file.size > 100 * 1024 * 1024) return NextResponse.json({ error: "File maksimal 100MB" }, { status: 400 });
 
-      const fileName = `karya/${dbUser.id}/${Date.now()}-${Math.random().toString(36).slice(2)}.${info.ext}`;
-      const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
+      const fileName = `karya/${user.id}/${Date.now()}-${Math.random().toString(36).slice(2)}.${info.ext}`;
+      const supabase = createAdmin(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
       const { error: uploadError } = await supabase.storage.from("documents").upload(fileName, file, { upsert: true, contentType: file.type });
 
       if (uploadError) return NextResponse.json({ error: `Upload gagal: ${uploadError.message}` }, { status: 500 });
@@ -132,7 +124,7 @@ export async function POST(req: NextRequest) {
         subject,
         week,
         images,
-        sellerId: dbUser.id,
+        sellerId: user.id,
       },
     });
 
