@@ -1,7 +1,22 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@supabase/supabase-js";
+import { getUser } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
-import { uploadFile, deleteFile } from "@/lib/upload";
+import { deleteFile } from "@/lib/upload";
+
+const ALLOWED_TYPES: Record<string, { ext: string; fileType: "PDF" | "DOCX" | "PPTX" | "XLSX" | "MP4" | "ZIP" }> = {
+  "application/pdf": { ext: "pdf", fileType: "PDF" },
+  "application/epub+zip": { ext: "epub", fileType: "PDF" },
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document": { ext: "docx", fileType: "DOCX" },
+  "application/msword": { ext: "doc", fileType: "DOCX" },
+  "application/vnd.openxmlformats-officedocument.presentationml.presentation": { ext: "pptx", fileType: "PPTX" },
+  "application/vnd.ms-powerpoint": { ext: "ppt", fileType: "PPTX" },
+  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": { ext: "xlsx", fileType: "XLSX" },
+  "application/vnd.ms-excel": { ext: "xls", fileType: "XLSX" },
+  "video/mp4": { ext: "mp4", fileType: "MP4" },
+  "application/zip": { ext: "zip", fileType: "ZIP" },
+  "application/x-zip-compressed": { ext: "zip", fileType: "ZIP" },
+};
 
 export async function GET(req: NextRequest) {
   try {
@@ -65,7 +80,6 @@ export async function POST(req: NextRequest) {
     }
 
     const formData = await req.formData();
-    const file = formData.get("file") as File | null;
 
     const title = formData.get("title") as string;
     const description = formData.get("description") as string;
@@ -77,56 +91,47 @@ export async function POST(req: NextRequest) {
     const isPremium = formData.get("isPremium") === "true";
     const price = parseInt(formData.get("price") as string) || 0;
 
-    if (!title || !description || !type || !file) {
-      return NextResponse.json({ error: "title, description, type, and file are required" }, { status: 400 });
+    if (title.length < 3) return NextResponse.json({ error: "Judul minimal 3 karakter" }, { status: 400 });
+
+    const file = formData.get("file") as File | null;
+    let fileUrl = "";
+    let fileKey = "";
+    let fileType: "PDF" | "DOCX" | "PPTX" | "XLSX" | "MP4" | "ZIP" | undefined;
+
+    if (file && file.size > 0) {
+      const info = ALLOWED_TYPES[file.type as keyof typeof ALLOWED_TYPES];
+      if (!info) return NextResponse.json({ error: "Tipe file tidak didukung. Gunakan PDF, EPUB, DOCX, PPTX, XLSX, ZIP, atau MP4" }, { status: 400 });
+      if (file.size > 100 * 1024 * 1024) return NextResponse.json({ error: "File maksimal 100MB" }, { status: 400 });
+
+      const fileName = `karya/${dbUser.id}/${Date.now()}-${Math.random().toString(36).slice(2)}.${info.ext}`;
+      const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
+      const { error: uploadError } = await supabase.storage.from("documents").upload(fileName, file, { upsert: true, contentType: file.type });
+
+      if (uploadError) return NextResponse.json({ error: `Upload gagal: ${uploadError.message}` }, { status: 500 });
+
+      const { data: urlData } = supabase.storage.from("documents").getPublicUrl(fileName);
+      fileUrl = urlData.publicUrl;
+      fileKey = fileName;
+      fileType = info.fileType;
     }
 
-    if (isPublished && !dbUser.isPremium) {
-      const publishedCount = await db.karya.count({
-        where: { sellerId: dbUser.id, isPublished: true },
-      });
-      if (publishedCount >= 3) {
-        return NextResponse.json({
-          error: "Batas 3 karya gratis sudah tercapai. Upgrade ke Premium untuk upload unlimited.",
-          upgradeUrl: "/guru/pengaturan/premium",
-        }, { status: 403 });
-      }
-    }
-
-    const allowedTypes = ["RPP", "MODUL", "PPT", "SOAL", "VIDEO", "EBOOK", "ADMINISTRASI", "LAINNYA"];
-    if (!allowedTypes.includes(type)) {
-      return NextResponse.json({ error: "Tipe karya tidak valid" }, { status: 400 });
-    }
-
-    const fileExt = file.name.split(".").pop()?.toLowerCase() || "pdf";
-    const allowedExts = ["pdf", "docx", "pptx", "xlsx", "zip", "mp4"];
-    if (!allowedExts.includes(fileExt)) {
-      return NextResponse.json({ error: "File harus PDF, DOCX, PPTX, XLSX, ZIP, atau MP4" }, { status: 400 });
-    }
-
-    const uploadResult = await uploadFile(file, "karya", dbUser.id);
-    if ("error" in uploadResult) {
-      return NextResponse.json({ error: uploadResult.error }, { status: 400 });
-    }
-
-    const fileTypeMap: Record<string, "PDF" | "DOCX" | "PPTX" | "XLSX" | "MP4" | "ZIP"> = {
-      pdf: "PDF", docx: "DOCX", pptx: "PPTX", xlsx: "XLSX", mp4: "MP4", zip: "ZIP",
-    };
+    const images = formData.get("images") as string || "[]";
 
     const karya = await db.karya.create({
       data: {
         title,
         description,
         type: type as any,
-        fileUrl: uploadResult.url,
-        fileKey: uploadResult.key,
-        fileType: fileTypeMap[fileExt] || "PDF",
+        fileUrl,
+        fileKey,
+        fileType,
         price,
         isPublished,
         isPremium,
         grade,
         subject,
         week,
+        images,
         sellerId: dbUser.id,
       },
     });
