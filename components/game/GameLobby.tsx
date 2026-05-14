@@ -15,7 +15,6 @@ const GAME_MODES = [
     bgColor: "bg-violet-50",
     borderColor: "border-violet-200",
     textColor: "text-violet-700",
-    svg: '<svg viewBox="0 0 80 80" fill="none"><circle cx="40" cy="40" r="38" stroke="white" stroke-width="1.5" opacity=".3"/><path d="M40 15L45 35H65L48 48L55 68L40 55L25 68L32 48L15 35H35L40 15Z" fill="white" opacity=".9"/></svg>',
   },
   {
     id: "GOLD_RUSH",
@@ -26,7 +25,6 @@ const GAME_MODES = [
     bgColor: "bg-amber-50",
     borderColor: "border-amber-200",
     textColor: "text-amber-700",
-    svg: '<svg viewBox="0 0 80 80" fill="none"><circle cx="40" cy="40" r="38" stroke="white" stroke-width="1.5" opacity=".3"/><circle cx="40" cy="32" r="10" fill="white"/><path d="M25 50C25 44 33 42 40 42C47 42 55 44 55 50V58H25V50Z" fill="white" opacity=".9"/><path d="M30 62H50" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>',
   },
   {
     id: "SPEED_BATTLE",
@@ -37,7 +35,6 @@ const GAME_MODES = [
     bgColor: "bg-red-50",
     borderColor: "border-red-200",
     textColor: "text-red-700",
-    svg: '<svg viewBox="0 0 80 80" fill="none"><circle cx="40" cy="40" r="38" stroke="white" stroke-width="1.5" opacity=".3"/><path d="M28 20L52 40L28 60" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M40 20L64 40L40 60" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" opacity=".5"/></svg>',
   },
   {
     id: "SURVIVAL",
@@ -48,7 +45,6 @@ const GAME_MODES = [
     bgColor: "bg-pink-50",
     borderColor: "border-pink-200",
     textColor: "text-pink-700",
-    svg: '<svg viewBox="0 0 80 80" fill="none"><circle cx="40" cy="40" r="38" stroke="white" stroke-width="1.5" opacity=".3"/><path d="M40 28C34 24 24 26 24 34C24 42 40 56 40 56C40 56 56 42 56 34C56 26 46 24 40 28Z" fill="white" opacity=".9"/></svg>',
   },
   {
     id: "TIMED_TRIAL",
@@ -59,7 +55,6 @@ const GAME_MODES = [
     bgColor: "bg-cyan-50",
     borderColor: "border-cyan-200",
     textColor: "text-cyan-700",
-    svg: '<svg viewBox="0 0 80 80" fill="none"><circle cx="40" cy="40" r="38" stroke="white" stroke-width="1.5" opacity=".3"/><circle cx="40" cy="40" r="16" stroke="white" stroke-width="3"/><path d="M40 30V40L47 47" stroke="white" stroke-width="3" stroke-linecap="round"/><path d="M38 20H42" stroke="white" stroke-width="2.5" stroke-linecap="round"/></svg>',
   },
 ];
 
@@ -305,8 +300,14 @@ export default function GameLobby({ isHost = false, roomCode: initialCode, onSta
                       </div>
                     )}
                     <div className="text-center">
-                      <div className={`w-16 h-16 rounded-2xl ${isSelected ? `bg-gradient-to-br ${mode.color}` : "bg-slate-100"} flex items-center justify-center mx-auto mb-3 transition-all overflow-hidden`}>
-                        <div className="w-12 h-12" dangerouslySetInnerHTML={{ __html: mode.svg }} />
+                      <div className={`w-16 h-16 rounded-2xl ${isSelected ? `bg-gradient-to-br ${mode.color}` : "bg-slate-100"} flex items-center justify-center mx-auto mb-3 transition-all`}>
+                        <div className="w-12 h-12 flex items-center justify-center">
+                          {selectedMode === mode.id ? (
+                            <ModeIcon size={28} className="text-white" />
+                          ) : (
+                            <ModeIcon size={28} className="text-slate-400" />
+                          )}
+                        </div>
                       </div>
                       <h3 className={`font-bold ${isSelected ? "text-slate-900" : "text-slate-700"}`}>{mode.name}</h3>
                       <p className="text-[11px] text-slate-500 mt-1 leading-relaxed">{mode.desc}</p>
