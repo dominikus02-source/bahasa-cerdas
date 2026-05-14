@@ -80,26 +80,20 @@ export default function TokoKaryaPage() {
     setUploading(true);
 
     try {
-      const body: any = { ...formData, isPublished: true, images: JSON.stringify(formData.images.filter(Boolean)) };
+      const fd = new FormData();
+      fd.set("title", formData.title);
+      fd.set("description", formData.description);
+      fd.set("type", formData.type);
+      fd.set("grade", formData.grade);
+      fd.set("price", String(formData.price));
+      fd.set("isPublished", "true");
+      fd.set("images", JSON.stringify(formData.images.filter(Boolean)));
 
-      if (selectedFile) {
-        const formFile = new FormData();
-        formFile.set("file", selectedFile);
-        const uploadRes = await fetch("/api/upload/file", {
-          method: "POST",
-          body: formFile,
-        });
-        const uploadData = await uploadRes.json();
-        if (uploadRes.ok) {
-          body.fileUrl = uploadData.url;
-          body.fileKey = uploadData.key;
-        }
-      }
+      if (selectedFile) fd.set("file", selectedFile);
 
       const res = await fetch("/api/marketplace", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
+        body: fd,
       });
 
       if (res.ok) {
@@ -107,8 +101,13 @@ export default function TokoKaryaPage() {
         setFormData({ title: "", description: "", type: "RPP", price: 0, grade: "", images: ["", "", ""] });
         setSelectedFile(null);
         fetchKarya();
+      } else {
+        const err = await res.json();
+        alert(err.error || "Gagal mempublikasikan");
       }
-    } catch {}
+    } catch (e: any) {
+      alert(e?.message || "Terjadi kesalahan");
+    }
 
     setUploading(false);
   };
