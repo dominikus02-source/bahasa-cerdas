@@ -2,8 +2,9 @@
 
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { ShoppingBag, Download, Star, User, ChevronLeft, ShoppingCart, Plus, Minus } from "lucide-react";
+import { ShoppingBag, Download, Star, User, ChevronLeft, ShoppingCart, Plus, Minus, Share2 } from "lucide-react";
 import PageNavbar from "@/components/public/PageNavbar";
+import ShareButton from "@/components/shared/ShareButton";
 
 export default function MarketplaceDetailPage() {
   const { id } = useParams();
@@ -100,6 +101,7 @@ export default function MarketplaceDetailPage() {
               <span className="flex items-center gap-1"><Download size={14} /> {karya.downloads} unduhan</span>
               <span className="flex items-center gap-1"><Star size={14} /> {karya._count?.purchases || 0} terjual</span>
               {karya.grade && <span>Kelas {karya.grade}</span>}
+              <ShareButton url={`/marketplace/${karya.id}`} title={karya.title} />
             </div>
 
             <div className="border-t border-slate-100 pt-6">

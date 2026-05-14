@@ -4,6 +4,7 @@ import { ArrowLeft, Calendar, Clock, User } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import PageNavbar from "@/components/public/PageNavbar";
+import ShareButton from "@/components/shared/ShareButton";
 
 export default async function ArtikelDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
@@ -78,7 +79,10 @@ export default async function ArtikelDetailPage({ params }: { params: Promise<{ 
             <Link href="/artikel" className="text-sm text-red-600 font-semibold hover:underline flex items-center gap-1">
               <ArrowLeft size={14} /> Artikel Lainnya
             </Link>
-            <span className="text-xs text-slate-400">{artikel.readCount} kali dibaca</span>
+            <div className="flex items-center gap-4">
+              <ShareButton url={`/artikel/${artikel.slug}`} title={artikel.title} />
+              <span className="text-xs text-slate-400">{artikel.readCount} kali dibaca</span>
+            </div>
           </div>
         </article>
       </div>

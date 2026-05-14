@@ -5,6 +5,7 @@ import { useParams } from "next/navigation";
 import Link from "next/link";
 import { Play, Clock, Eye, User, ArrowLeft, Lock, Film } from "lucide-react";
 import PageNavbar from "@/components/public/PageNavbar";
+import ShareButton from "@/components/shared/ShareButton";
 
 const CATEGORIES: Record<string, string> = {
   PEMBELAJARAN: "Pembelajaran", GRAMMATIKA: "Grammatika", SASTRA: "Sastra",
@@ -77,6 +78,7 @@ export default function VideoDetailPage() {
                 {video.duration && <span className="flex items-center gap-1"><Clock size={14} /> {video.duration} menit</span>}
                 <span className="px-2 py-0.5 bg-white/10 rounded-full text-xs">{CATEGORIES[video.category] || video.category}</span>
                 {video.grade && <span className="text-xs text-white/30">Kelas {video.grade}</span>}
+                <ShareButton url={`/video-belajar/${video.id}`} title={video.title} />
               </div>
             </div>
           </div>
