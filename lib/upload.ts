@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/client";
 
 const ALLOWED_FILE_TYPES = {
   PDF: ["application/pdf"],
+  EPUB: ["application/epub+zip"],
   DOCX: [
     "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
     "application/msword",
@@ -21,6 +22,7 @@ const ALLOWED_FILE_TYPES = {
 
 const MAX_FILE_SIZES = {
   PDF: 20 * 1024 * 1024,
+  EPUB: 20 * 1024 * 1024,
   DOCX: 15 * 1024 * 1024,
   PPTX: 50 * 1024 * 1024,
   XLSX: 10 * 1024 * 1024,
@@ -31,6 +33,7 @@ const MAX_FILE_SIZES = {
 
 const BUCKET_MAP = {
   PDF: "documents",
+  EPUB: "documents",
   DOCX: "documents",
   PPTX: "documents",
   XLSX: "documents",
@@ -135,6 +138,7 @@ export function getEmbedUrl(videoUrl: string, source: "YOUTUBE" | "VIMEO"): stri
 
 export const FILE_TYPE_LABELS: Record<string, string> = {
   PDF: "PDF",
+  EPUB: "EPUB",
   DOCX: "Word Document",
   PPTX: "PowerPoint",
   XLSX: "Excel",

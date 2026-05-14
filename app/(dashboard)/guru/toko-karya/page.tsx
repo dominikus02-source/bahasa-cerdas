@@ -226,7 +226,7 @@ export default function TokoKaryaPage() {
             </div>
             <div>
               <label className="block text-sm font-semibold mb-1">File Karya</label>
-              <input type="file" ref={fileRef} accept=".pdf,.docx,.pptx,.xlsx,.zip,.mp4"
+              <input type="file" ref={fileRef} accept=".pdf,.epub,.docx,.pptx,.xlsx,.zip,.mp4"
                 onChange={(e) => setSelectedFile(e.target.files?.[0] || null)}
                 className="hidden" />
               <div onClick={() => fileRef.current?.click()}
