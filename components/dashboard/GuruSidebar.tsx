@@ -7,7 +7,7 @@ import {
   Home, ShoppingBag, Video, Gamepad2, FileText, Database,
   Users, Settings, ChevronDown, ChevronRight,
   BookOpen, Trophy, Calendar, GraduationCap, Brain, Star, Award,
-  LogOut, Crown, Zap, Flame
+  LogOut, Crown, Zap, Flame, TrendingUp
 } from "lucide-react"
 import { createClient } from "@/lib/supabase/client"
 import { useRouter } from "next/navigation"
@@ -50,6 +50,8 @@ const NAV: NavItem[] = [
   { label: "Komunitas", href: "/guru/komunitas", icon: <Users size={18} /> },
   { label: "KelasKu", href: "/guru/kelasku", icon: <GraduationCap size={18} /> },
   { label: "Artikel", href: "/guru/artikel", icon: <FileText size={18} /> },
+  { label: "Buat TKA", href: "/guru/buat-tka", icon: <Zap size={18} /> },
+  { label: "Hasil TKA", href: "/guru/hasil-tka", icon: <TrendingUp size={18} /> },
   { label: "Pengaturan", href: "/guru/pengaturan", icon: <Settings size={18} /> },
 ]
 
