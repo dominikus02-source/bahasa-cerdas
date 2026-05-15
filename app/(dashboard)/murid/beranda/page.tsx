@@ -175,32 +175,18 @@ export default function MuridBerandaPage() {
         <div className="bg-white rounded-2xl border border-gray-100 p-6">
           <div className="flex items-center justify-between mb-4">
             <h3 className="font-semibold text-gray-900 flex items-center gap-1.5">
-              <Trophy size={16} className="text-amber-500" /> Leaderboard
+              <TrendingUp size={16} className="text-violet-500" /> Statistik
             </h3>
           </div>
-
-          <div className="space-y-3">
-            {[
-              { rank: 1, name: "Kamu", xp: user.xp, league: user.league, isMe: true },
-              { rank: 2, name: "Ahmad F.", xp: 2450, league: "GOLD", isMe: false },
-              { rank: 3, name: "Siti R.", xp: 1890, league: "SILVER", isMe: false },
-            ].map((u) => (
-              <div key={u.rank} className={`flex items-center gap-3 p-2.5 rounded-xl ${u.isMe ? "bg-violet-50 border border-violet-100" : ""}`}>
-                <span className={`w-6 text-center text-sm font-bold ${u.rank === 1 ? "text-amber-500" : "text-gray-300"}`}>
-                  {u.rank === 1 ? "🥇" : u.rank === 2 ? "🥈" : "🥉"}
-                </span>
-                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-violet-100 to-purple-100 flex items-center justify-center text-xs font-bold text-violet-700">
-                  {u.name.slice(0, 2).toUpperCase()}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className={`text-xs font-medium ${u.isMe ? "text-violet-700" : "text-gray-800"}`}>
-                    {u.isMe ? "Kamu" : u.name}
-                  </p>
-                  <p className="text-[10px] text-gray-400">{u.xp.toLocaleString("id")} XP</p>
-                </div>
-                <span className="text-sm">{leagueIcons[u.league] || "🥉"}</span>
-              </div>
-            ))}
+          <div className="grid grid-cols-2 gap-4 text-center">
+            <div className="bg-violet-50 rounded-xl p-3">
+              <p className="text-xl font-bold text-violet-700">{user.xp}</p>
+              <p className="text-xs text-violet-500">Total XP</p>
+            </div>
+            <div className="bg-emerald-50 rounded-xl p-3">
+              <p className="text-xl font-bold text-emerald-700">{user.level || 1}</p>
+              <p className="text-xs text-emerald-500">Level</p>
+            </div>
           </div>
         </div>
       </div>

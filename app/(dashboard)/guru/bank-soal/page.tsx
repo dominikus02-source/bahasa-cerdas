@@ -5,7 +5,7 @@ import { Modal } from "@/components/ui/modal";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { BookOpen, Plus, Trash2, Zap } from "lucide-react";
+import { BookOpen, Plus, Trash2, Zap, Upload, FileText, Loader2, CheckCircle } from "lucide-react";
 
 const KELAS = ["1","2","3","4","5","6","7","8","9","10","11","12"];
 const KD_OPTIONS = [
@@ -25,6 +25,9 @@ export default function BankSoalPage() {
   const [soalList, setSoalList] = useState<any[]>([]);
   const [showTambah, setShowTambah] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [uploadResult, setUploadResult] = useState<string>("");
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [formData, setFormData] = useState({
     text: "",
     type: "PILIHAN_GANDA",
@@ -73,6 +76,28 @@ export default function BankSoalPage() {
     setFormData({ text: "", type: "PILIHAN_GANDA", difficulty: "MEDIUM", options: ["", "", "", ""], correctAnswer: "", explanation: "", isHOTS: false, kelas: "", kd: "" });
   };
 
+  const handleFileUpload = async () => {
+    if (!selectedFile) return;
+    setUploading(true);
+    setUploadResult("");
+    const fd = new FormData();
+    fd.set("file", selectedFile);
+    fd.set("kelas", formData.kelas);
+    fd.set("kd", formData.kd);
+    try {
+      const res = await fetch("/api/guru/bank-soal", { method: "POST", body: fd });
+      const data = await res.json();
+      setUploadResult(data.pesan || (data.success ? "Berhasil diupload" : data.error || "Gagal"));
+      if (data.success) { setSelectedFile(null); fetchSoal?.(); }
+    } catch { setUploadResult("Gagal upload"); }
+    setUploading(false);
+  };
+
+  // Simple fetch for existing soal (placeholder)
+  const fetchSoal = async () => { try { const r = await fetch("/api/soal"); const d = await r.json(); setSoalList(d.data || d.soal || []); } catch {} };
+  fetchSoal();
+  };
+
   const handleDelete = (index: number) => {
     setSoalList((prev) => prev.filter((_, i) => i !== index));
   };
@@ -112,7 +137,27 @@ export default function BankSoalPage() {
                       {soal.difficulty}
                     </Badge>
                     {soal.isHOTS && <Badge variant="gold">HOTS</Badge>}
-                  </div>
+      </div>
+
+      {/* Upload File */}
+      <Card className="p-4 mb-6 border-2 border-dashed border-slate-200">
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="flex-1 min-w-[200px]">
+            <p className="text-sm font-semibold text-slate-700 mb-1">Upload File Soal</p>
+            <p className="text-xs text-slate-400">PDF, DOCX — sistem akan ekstrak soal otomatis</p>
+          </div>
+          <input type="file" accept=".pdf,.docx" onChange={(e) => setSelectedFile(e.target.files?.[0] || null)} className="text-sm text-slate-500 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100" />
+          <Button onClick={handleFileUpload} disabled={!selectedFile || uploading} variant="outline" className="shrink-0">
+            {uploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
+            {uploading ? "Memproses..." : "Upload & Ekstrak"}
+          </Button>
+        </div>
+        {uploadResult && (
+          <div className="mt-3 text-sm text-emerald-600 flex items-center gap-1.5 bg-emerald-50 rounded-lg px-3 py-2">
+            <CheckCircle size={14} /> {uploadResult}
+          </div>
+        )}
+      </Card>
                   <p className="font-medium">{soal.text}</p>
                   {soal.options?.length > 0 && (
                     <ul className="mt-2 space-y-1 text-sm text-gray-600">
