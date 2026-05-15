@@ -7,7 +7,6 @@ import { Badge } from "@/components/ui/badge";
 import { FileText, Zap, Download, Eye, Edit2 } from "lucide-react";
 
 export default function RPPModulPage() {
-  const user = useUserStore();
   const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const [generated, setGenerated] = useState<any>(null);
