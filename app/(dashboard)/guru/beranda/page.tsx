@@ -1,11 +1,12 @@
 "use client"
 
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import {
   BookOpen, ShoppingBag, Users, Gamepad2, Wand2,
-  TrendingUp, AlertCircle, ChevronRight, Star,
+  TrendingUp, ChevronRight, Star,
   FileText, Video, Presentation, Database,
-  ArrowUpRight, Crown, Zap, Flame, FileUp, Upload
+  Crown, Zap, Flame, FileUp, Upload
 } from "lucide-react"
 import { useUserStore } from "@/store"
 
@@ -15,6 +16,16 @@ function formatRp(n: number) {
 
 export default function GuruBerandaPage() {
   const user = useUserStore()
+  const [stats, setStats] = useState<any>({
+    totalKarya: 0, totalSiswa: 0, totalKuis: 0, totalTerjual: 0,
+    terjualBulanIni: 0, saldo: 0, aiUsage: { rpp: 0, soal: 0 },
+  })
+
+  useEffect(() => {
+    fetch("/api/guru/dashboard").then(r => r.json()).then(d => {
+      if (d.totalKarya !== undefined) setStats(d)
+    }).catch(() => {})
+  }, [])
 
   const greeting = () => {
     const h = new Date().getHours()
@@ -40,19 +51,68 @@ export default function GuruBerandaPage() {
           <p className="text-gray-400 text-sm mt-0.5">Dashboard Guru — BahasaCerdas</p>
         </div>
 
-        <div className="flex gap-2">
-          <Link
-            href="/guru/rpp-modul"
-            className="flex items-center gap-1.5 px-4 py-2.5 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white rounded-xl text-sm font-semibold hover:from-emerald-600 hover:to-emerald-700 transition-all shadow-lg shadow-emerald-500/20"
-          >
-            <Wand2 size={16} /> Buat RPP
-          </Link>
-          <Link
-            href="/guru/toko-karya"
-            className="flex items-center gap-1.5 px-4 py-2.5 bg-white border-2 border-gray-200 text-gray-700 rounded-xl text-sm font-semibold hover:bg-gray-50 transition-all"
-          >
-            <ShoppingBag size={16} /> Upload Karya
-          </Link>
+          <div className="flex gap-2">
+            <Link href="/guru/rpp-modul" className="flex items-center gap-1.5 px-4 py-2.5 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white rounded-xl text-sm font-semibold hover:from-emerald-600 hover:to-emerald-700 transition-all shadow-lg shadow-emerald-500/20">
+              <Wand2 size={16} /> Buat RPP
+            </Link>
+            <Link href="/guru/toko-karya" className="flex items-center gap-1.5 px-4 py-2.5 bg-white border-2 border-gray-200 text-gray-700 rounded-xl text-sm font-semibold hover:bg-gray-50 transition-all">
+              <ShoppingBag size={16} /> Upload Karya
+            </Link>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+          <div className="bg-gradient-to-br from-emerald-50 to-teal-50 rounded-2xl border border-emerald-100 p-5 hover:shadow-lg transition-all">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center shadow-md">
+                <ShoppingBag size={22} className="text-white" />
+              </div>
+              <div>
+                <p className="text-2xl font-bold text-gray-900">{stats.totalKarya}</p>
+                <p className="text-sm text-gray-500">Total Karya</p>
+              </div>
+            </div>
+            <div className="mt-3 text-xs text-emerald-600 font-medium">+{stats.terjualBulanIni} terjual bulan ini</div>
+          </div>
+
+          <div className="bg-gradient-to-br from-violet-50 to-purple-50 rounded-2xl border border-violet-100 p-5 hover:shadow-lg transition-all">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-violet-400 to-purple-600 flex items-center justify-center shadow-md">
+                <Gamepad2 size={22} className="text-white" />
+              </div>
+              <div>
+                <p className="text-2xl font-bold text-gray-900">{stats.totalKuis}</p>
+                <p className="text-sm text-gray-500">Kuis Aktif</p>
+              </div>
+            </div>
+            <div className="mt-3 text-xs text-violet-600 font-medium">Game multiplayer</div>
+          </div>
+
+          <div className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-2xl border border-blue-100 p-5 hover:shadow-lg transition-all">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-400 to-cyan-600 flex items-center justify-center shadow-md">
+                <Users size={22} className="text-white" />
+              </div>
+              <div>
+                <p className="text-2xl font-bold text-gray-900">{stats.totalSiswa}</p>
+                <p className="text-sm text-gray-500">Total Siswa</p>
+              </div>
+            </div>
+            <div className="mt-3 text-xs text-blue-600 font-medium">Terdaftar di kelas</div>
+          </div>
+
+          <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-2xl border border-amber-100 p-5 hover:shadow-lg transition-all">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-400 to-orange-600 flex items-center justify-center shadow-md">
+                <TrendingUp size={22} className="text-white" />
+              </div>
+              <div>
+                <p className="text-2xl font-bold text-gray-900">{formatRp(stats.saldo)}</p>
+                <p className="text-sm text-gray-500">Saldo</p>
+              </div>
+            </div>
+            <div className="mt-3 text-xs text-amber-600 font-medium">Dari penjualan karya</div>
+          </div>
         </div>
       </div>
 
@@ -125,21 +185,21 @@ export default function GuruBerandaPage() {
 
           <div className="space-y-4">
             <div>
-              <div className="flex items-center justify-between text-xs mb-1.5">
-                <span className="text-gray-600 font-medium">Generator RPP</span>
-                <span className="text-gray-400">0 / {user.isPremium || user.isFounder ? "∞" : "10"}</span>
-              </div>
-              <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-                <div className="h-full bg-gradient-to-r from-emerald-400 to-emerald-500 rounded-full w-full" />
-              </div>
-            </div>
-            <div>
-              <div className="flex items-center justify-between text-xs mb-1.5">
-                <span className="text-gray-600 font-medium">Generator Soal</span>
-                <span className="text-gray-400">0 / {user.isPremium || user.isFounder ? "∞" : "20"}</span>
-              </div>
-              <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-                <div className="h-full bg-gradient-to-r from-violet-400 to-violet-500 rounded-full w-full" />
+                  <div className="flex items-center justify-between text-xs mb-1.5">
+                    <span className="text-gray-600 font-medium">Generator RPP</span>
+                    <span className="text-gray-400">{stats.aiUsage.rpp} / {user.isPremium || user.isFounder ? "∞" : "10"}</span>
+                  </div>
+                  <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                    <div className={`h-full bg-gradient-to-r from-emerald-400 to-emerald-500 rounded-full ${stats.aiUsage.rpp > 0 ? "" : "w-0"}`} style={{ width: `${Math.min((stats.aiUsage.rpp / 10) * 100, 100)}%` }} />
+                  </div>
+                </div>
+                <div>
+                  <div className="flex items-center justify-between text-xs mb-1.5">
+                    <span className="text-gray-600 font-medium">Generator Soal</span>
+                    <span className="text-gray-400">{stats.aiUsage.soal} / {user.isPremium || user.isFounder ? "∞" : "20"}</span>
+                  </div>
+                  <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                    <div className={`h-full bg-gradient-to-r from-violet-400 to-violet-500 rounded-full ${stats.aiUsage.soal > 0 ? "" : "w-0"}`} style={{ width: `${Math.min((stats.aiUsage.soal / 20) * 100, 100)}%` }} />
               </div>
             </div>
           </div>
