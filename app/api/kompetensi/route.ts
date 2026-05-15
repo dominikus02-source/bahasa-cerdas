@@ -10,7 +10,6 @@ export async function GET(req: NextRequest) {
     const limit = parseInt(searchParams.get("limit") || "20");
 
     const where: any = { isActive: true };
-    if (type) where.type = type;
 
     const [pakets, total] = await Promise.all([
       db.paketKompetensi.findMany({
