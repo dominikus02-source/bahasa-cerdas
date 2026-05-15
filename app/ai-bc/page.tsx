@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { Send, Bot, User, Sparkles, MessageSquare, Trash2, BookOpen, GraduationCap, Home } from "lucide-react";
+import { Send, Bot, User, Sparkles, Trash2, BookOpen, GraduationCap, Home, ExternalLink } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import BatikDecoration from "@/components/shared/BatikDecoration";
@@ -138,13 +138,19 @@ export default function AIChatPage() {
         {messages.length === 1 && (
           <div className="pt-2">
             <p className="text-xs text-slate-400 mb-3 text-center">Coba tanya:</p>
-            <div className="flex flex-wrap justify-center gap-2">
+            <div className="flex flex-wrap justify-center gap-2 mb-4">
               {SUGGESTIONS.map((s) => (
                 <button key={s} onClick={() => setInput(s)}
                   className="text-xs px-3 py-2 bg-white border border-red-100 text-slate-600 rounded-xl hover:bg-red-50 hover:text-red-600 hover:border-red-200 transition-colors shadow-sm">
                   {s}
                 </button>
               ))}
+            </div>
+            <div className="text-center">
+              <a href="https://kbbi.kemdikbud.go.id/" target="_blank"
+                className="inline-flex items-center gap-1.5 text-xs text-slate-400 hover:text-red-600 transition-colors">
+                <ExternalLink size={12} /> Cari di KBBI Online
+              </a>
             </div>
           </div>
         )}
