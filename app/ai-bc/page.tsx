@@ -74,9 +74,9 @@ export default function AIChatPage() {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <button onClick={() => setMessages([{ role: "bot", text: messages[0].text }])}
-              className="p-2 rounded-xl hover:bg-white/10 text-white/70 hover:text-white transition-colors" title="Mulai ulang">
-              <Sparkles size={18} />
+            <button onClick={() => { if (confirm("Hapus semua chat?")) setMessages([{ role: "bot", text: messages[0].text }]); }}
+              className="p-2 rounded-xl hover:bg-white/10 text-white/70 hover:text-white transition-colors" title="Hapus chat">
+              <Trash2 size={18} />
             </button>
           </div>
         </div>
