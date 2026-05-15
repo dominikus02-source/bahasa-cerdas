@@ -223,7 +223,7 @@ export default async function HomePage() {
               <div className="flex flex-wrap gap-2 mt-4">
                 <Link href="/artikel" className="text-xs text-slate-500 hover:text-white transition-colors">Artikel</Link>
                 <span className="text-slate-700">•</span>
-                <Link href="/kamus" className="text-xs text-slate-500 hover:text-white transition-colors">Kamus</Link>
+                <Link href="/ai-bc" className="text-xs text-slate-500 hover:text-white transition-colors">AI BC</Link>
                 <span className="text-slate-700">•</span>
                 <Link href="/marketplace" className="text-xs text-slate-500 hover:text-white transition-colors">Toko Karya</Link>
                 <span className="text-slate-700">•</span>

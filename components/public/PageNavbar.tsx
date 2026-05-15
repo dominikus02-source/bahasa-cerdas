@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { ChevronLeft, LayoutDashboard } from "lucide-react";
+import { ChevronLeft, LayoutDashboard, Sparkles } from "lucide-react";
 
 export default function PageNavbar() {
   const [user, setUser] = useState<any>(null);
@@ -49,6 +49,10 @@ export default function PageNavbar() {
           <Link href="/artikel" className="px-3 py-2 text-sm text-slate-600 hover:text-red-600 hover:bg-red-50 rounded-xl transition-colors font-medium">Artikel</Link>
           <Link href="/kamus" className="px-3 py-2 text-sm text-slate-600 hover:text-red-600 hover:bg-red-50 rounded-xl transition-colors font-medium">Kamus</Link>
           <Link href="/loker" className="px-3 py-2 text-sm text-slate-600 hover:text-red-600 hover:bg-red-50 rounded-xl transition-colors font-medium">Lowongan</Link>
+          <div className="h-5 w-px bg-slate-200 mx-2" />
+          <Link href="/ai-bc" className="px-4 py-2 text-sm font-semibold bg-gradient-to-r from-emerald-500 to-emerald-600 text-white rounded-xl hover:shadow-lg transition-all flex items-center gap-1.5">
+            <Sparkles size={14} /> AI BC
+          </Link>
           <div className="h-5 w-px bg-slate-200 mx-2" />
           <Link href="/login" className="px-4 py-2 text-sm font-semibold text-slate-700 hover:text-red-600">Masuk</Link>
           <Link href="/register" className="px-4 py-2 text-sm font-semibold bg-gradient-to-r from-red-600 to-red-700 text-white rounded-xl hover:shadow-lg transition-all">Daftar</Link>
