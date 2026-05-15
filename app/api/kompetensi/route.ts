@@ -4,18 +4,6 @@ import { db } from "@/lib/db";
 
 export async function GET(req: NextRequest) {
   try {
-    const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-
-    if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    const dbUser = await db.user.findUnique({ where: { supabaseId: user.id } });
-    if (!dbUser) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
-    }
-
     const { searchParams } = new URL(req.url);
     const type = searchParams.get("type") as any;
     const page = parseInt(searchParams.get("page") || "1");
