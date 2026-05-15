@@ -21,8 +21,7 @@ const NAV = [
     icon: <GraduationCap size={18} />,
     children: [
       { label: "Simulasi UKBI", href: "/murid/ukbi", icon: <BookOpen size={16} /> },
-      { label: "TKA Guru", href: "/murid/tka-guru", icon: <Brain size={16} /> },
-      { label: "TKA UTBK", href: "/murid/tka-utbk", icon: <Award size={16} /> },
+      { label: "TKA UTBK", href: "/murid/tka-utbk", icon: <Brain size={16} /> },
       { label: "Sertifikat", href: "/murid/sertifikat", icon: <Star size={16} /> },
     ]
   },
