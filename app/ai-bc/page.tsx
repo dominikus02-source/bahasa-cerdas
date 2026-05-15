@@ -1,16 +1,17 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { Send, Bot, User, Sparkles, BookOpen, X, MessageSquare, Trash2 } from "lucide-react";
+import { Send, Bot, User, Sparkles, MessageSquare, Trash2, BookOpen, GraduationCap } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import BatikDecoration from "@/components/shared/BatikDecoration";
 
 const SUGGESTIONS = [
   "Apa sinonim kata 'cerdas'?",
   "Apa antonim 'baik'?",
-  "Buatkan contoh kalimat dengan kata 'apresiasi'",
+  "Buat contoh kalimat dengan kata 'apresiasi'",
   "Apa perbedaan 'di mana' dan 'dimana'?",
-  "Jelaskan kata 'budaya'",
+  "Jelaskan arti kata 'budaya'",
   "Kata baku dari 'kepinteran'?",
 ];
 
@@ -57,43 +58,50 @@ export default function AIChatPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex flex-col">
+    <div className="min-h-screen bg-gradient-to-br from-red-50 via-white to-red-50 flex flex-col">
+      <BatikDecoration />
+
       {/* Header */}
-      <header className="bg-white/5 backdrop-blur-md border-b border-white/10 px-4 py-3 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center shadow-lg">
-            <Sparkles size={18} className="text-white" />
+      <header className="relative z-10 bg-gradient-to-r from-red-600 to-red-700 text-white px-4 py-4 shadow-lg">
+        <div className="max-w-4xl mx-auto flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center shadow-lg border border-white/20">
+              <GraduationCap size={20} className="text-white" />
+            </div>
+            <div>
+              <h1 className="font-bold text-lg leading-tight">AI BC</h1>
+              <p className="text-red-100 text-xs">Asisten Bahasa Indonesia</p>
+            </div>
           </div>
-          <div>
-            <h1 className="text-white font-bold text-sm">AI BC</h1>
-            <p className="text-white/40 text-[10px]">Asisten Bahasa Indonesia</p>
+          <div className="flex items-center gap-2">
+            <button onClick={() => setMessages([{ role: "bot", text: messages[0].text }])}
+              className="p-2 rounded-xl hover:bg-white/10 text-white/70 hover:text-white transition-colors" title="Mulai ulang">
+              <Sparkles size={18} />
+            </button>
           </div>
         </div>
-        <div className="flex items-center gap-2">
-          <button onClick={() => setMessages([{ role: "bot", text: messages[0].text }])}
-            className="p-2 rounded-xl hover:bg-white/10 text-white/40 hover:text-white transition-colors"
-            title="Hapus chat">
-            <Trash2 size={16} />
-          </button>
+        <div className="max-w-4xl mx-auto mt-3 flex items-center gap-3 bg-white/10 backdrop-blur-md rounded-2xl p-3 border border-white/10">
+          <BookOpen size={16} className="text-red-200 shrink-0" />
+          <p className="text-sm text-red-100">Tanya apa aja tentang Bahasa Indonesia — arti kata, sinonim, antonim, contoh kalimat, dll!</p>
         </div>
       </header>
 
       {/* Chat */}
-      <div ref={chatRef} className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
+      <div ref={chatRef} className="relative z-10 flex-1 overflow-y-auto px-4 py-4 max-w-4xl mx-auto w-full space-y-4">
         {messages.map((msg, i) => (
           <div key={i} className={`flex gap-3 ${msg.role === "user" ? "justify-end" : ""}`}>
             {msg.role === "bot" && (
-              <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center shrink-0 mt-1">
-                <Bot size={16} className="text-white" />
+              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-red-500 to-red-600 flex items-center justify-center shrink-0 mt-0.5 shadow-md">
+                <Bot size={18} className="text-white" />
               </div>
             )}
             <div className={`max-w-[85%] md:max-w-[70%] rounded-2xl p-4 ${
               msg.role === "user"
-                ? "bg-emerald-500 text-white rounded-br-md"
-                : "bg-white/5 border border-white/10 text-white/90 rounded-bl-md"
+                ? "bg-gradient-to-r from-red-500 to-red-600 text-white rounded-br-md shadow-md"
+                : "bg-white border border-red-100 text-slate-700 rounded-bl-md shadow-sm"
             }`}>
               {msg.role === "bot" ? (
-                <div className="prose prose-sm prose-invert max-w-none">
+                <div className="prose prose-sm max-w-none prose-headings:text-slate-800 prose-a:text-red-600 prose-strong:text-slate-800">
                   <ReactMarkdown remarkPlugins={[remarkGfm]}>{msg.text}</ReactMarkdown>
                 </div>
               ) : (
@@ -101,8 +109,8 @@ export default function AIChatPage() {
               )}
             </div>
             {msg.role === "user" && (
-              <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-violet-400 to-purple-600 flex items-center justify-center shrink-0 mt-1">
-                <User size={16} className="text-white" />
+              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-slate-600 to-slate-700 flex items-center justify-center shrink-0 mt-0.5 shadow-md">
+                <User size={18} className="text-white" />
               </div>
             )}
           </div>
@@ -110,14 +118,14 @@ export default function AIChatPage() {
 
         {loading && (
           <div className="flex gap-3">
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center shrink-0">
-              <Bot size={16} className="text-white" />
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-red-500 to-red-600 flex items-center justify-center shrink-0 shadow-md">
+              <Bot size={18} className="text-white" />
             </div>
-            <div className="bg-white/5 border border-white/10 rounded-2xl rounded-bl-md p-4">
+            <div className="bg-white border border-red-100 rounded-2xl rounded-bl-md p-4 shadow-sm">
               <div className="flex gap-1.5">
-                <div className="w-2 h-2 bg-emerald-400 rounded-full animate-bounce" style={{ animationDelay: "0ms" }} />
-                <div className="w-2 h-2 bg-emerald-400 rounded-full animate-bounce" style={{ animationDelay: "150ms" }} />
-                <div className="w-2 h-2 bg-emerald-400 rounded-full animate-bounce" style={{ animationDelay: "300ms" }} />
+                <div className="w-2.5 h-2.5 bg-red-400 rounded-full animate-bounce" style={{ animationDelay: "0ms" }} />
+                <div className="w-2.5 h-2.5 bg-red-400 rounded-full animate-bounce" style={{ animationDelay: "150ms" }} />
+                <div className="w-2.5 h-2.5 bg-red-400 rounded-full animate-bounce" style={{ animationDelay: "300ms" }} />
               </div>
             </div>
           </div>
@@ -125,12 +133,12 @@ export default function AIChatPage() {
 
         {/* Suggestions */}
         {messages.length === 1 && (
-          <div className="pt-4">
-            <p className="text-white/30 text-xs mb-3 text-center">Coba tanya:</p>
+          <div className="pt-2">
+            <p className="text-xs text-slate-400 mb-3 text-center">Coba tanya:</p>
             <div className="flex flex-wrap justify-center gap-2">
               {SUGGESTIONS.map((s) => (
-                <button key={s} onClick={() => { setInput(s); }}
-                  className="text-xs px-3 py-2 bg-white/5 border border-white/10 text-white/60 rounded-xl hover:bg-white/10 hover:text-white transition-colors">
+                <button key={s} onClick={() => setInput(s)}
+                  className="text-xs px-3 py-2 bg-white border border-red-100 text-slate-600 rounded-xl hover:bg-red-50 hover:text-red-600 hover:border-red-200 transition-colors shadow-sm">
                   {s}
                 </button>
               ))}
@@ -140,21 +148,21 @@ export default function AIChatPage() {
       </div>
 
       {/* Input */}
-      <div className="px-4 py-3 border-t border-white/10 bg-white/5">
-        <div className="flex gap-2 max-w-4xl mx-auto">
+      <div className="relative z-10 border-t border-red-100 bg-white px-4 py-3 shadow-lg">
+        <div className="max-w-4xl mx-auto flex gap-2">
           <input
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="Ketik pertanyaan Bahasa Indonesia..."
-            className="flex-1 rounded-2xl bg-white/5 border border-white/10 px-4 py-3 text-sm text-white placeholder-white/30 focus:outline-none focus:border-emerald-500 focus:bg-white/10 transition-all"
+            className="flex-1 rounded-2xl border-2 border-red-100 px-4 py-3 text-sm text-slate-700 placeholder-slate-400 focus:outline-none focus:border-red-500 focus:ring-2 focus:ring-red-200 transition-all bg-white shadow-sm"
           />
           <button onClick={handleSend} disabled={!input.trim() || loading}
-            className="w-12 h-12 rounded-2xl bg-gradient-to-r from-emerald-500 to-emerald-600 text-white flex items-center justify-center shadow-lg hover:shadow-xl hover:scale-105 transition-all disabled:opacity-40 disabled:cursor-not-allowed">
+            className="w-12 h-12 rounded-2xl bg-gradient-to-r from-red-600 to-red-700 text-white flex items-center justify-center shadow-lg hover:shadow-xl hover:scale-105 transition-all disabled:opacity-40 disabled:cursor-not-allowed">
             <Send size={18} />
           </button>
         </div>
-        <p className="text-[10px] text-white/20 text-center mt-2">Ditenagai oleh DeepSeek AI • Asisten Bahasa Indonesia</p>
+        <p className="text-[10px] text-slate-300 text-center mt-2">Ditenagai oleh Google Gemini AI • Asisten Bahasa Indonesia</p>
       </div>
     </div>
   );
