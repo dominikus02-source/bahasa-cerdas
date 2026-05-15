@@ -11,7 +11,7 @@ export default function MuridTKAUTBKPage() {
   useEffect(() => {
     fetch("/api/kompetensi?limit=20")
       .then(r => r.json())
-      .then(d => setPakets(d.data?.filter((p: any) => p.type?.includes("TKA")) || []))
+      .then(d => setPakets(d.data?.filter((p: any) => p.type === "TKA_UTBK") || []))
       .catch(() => {})
       .finally(() => setLoading(false));
   }, []);

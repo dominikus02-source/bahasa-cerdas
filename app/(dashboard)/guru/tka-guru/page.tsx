@@ -9,9 +9,9 @@ export default function TKAGuruPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("/api/kompetensi?type=TKA&limit=20")
+    fetch("/api/kompetensi?limit=20")
       .then(r => r.json())
-      .then(d => setPakets(d.data || []))
+      .then(d => setPakets((d.data || []).filter((p: any) => p.type === "TKA_GURU")))
       .catch(() => {})
       .finally(() => setLoading(false));
   }, []);

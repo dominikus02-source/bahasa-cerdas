@@ -9,9 +9,9 @@ export default function GuruUKBIPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("/api/kompetensi?type=UKBI&limit=20")
+    fetch("/api/kompetensi?limit=20")
       .then(r => r.json())
-      .then(d => setPakets(d.data || []))
+      .then(d => setPakets((d.data || []).filter((p: any) => p.type?.startsWith("UKBI"))))
       .catch(() => {})
       .finally(() => setLoading(false));
   }, []);

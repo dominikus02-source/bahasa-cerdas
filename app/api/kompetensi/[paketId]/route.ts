@@ -130,11 +130,11 @@ export async function GET(
           });
           sectionQuestions.push(...fetched);
         } else {
+          const where: any = { isActive: true };
+          if (section.kompetensi) where.kompetensi = section.kompetensi as any;
+          if (section.subKompetensi) where.subKompetensi = section.subKompetensi;
           const fetched = await db.tKAQuestion.findMany({
-            where: {
-              kompetensi: section.kompetensi as any,
-              isActive: true,
-            },
+            where,
             take: section.count,
             orderBy: { difficulty: "asc" },
             select: {
