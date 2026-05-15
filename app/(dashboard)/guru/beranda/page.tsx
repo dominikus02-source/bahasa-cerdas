@@ -116,60 +116,6 @@ export default function GuruBerandaPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        <div className="bg-gradient-to-br from-emerald-50 to-teal-50 rounded-2xl border border-emerald-100 p-5 hover:shadow-lg transition-all">
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center shadow-md">
-              <ShoppingBag size={22} className="text-white" />
-            </div>
-            <div>
-              <p className="text-2xl font-bold text-gray-900">0</p>
-              <p className="text-sm text-gray-500">Total Karya</p>
-            </div>
-          </div>
-          <div className="mt-3 text-xs text-emerald-600 font-medium">+0 terjual bulan ini</div>
-        </div>
-
-        <div className="bg-gradient-to-br from-violet-50 to-purple-50 rounded-2xl border border-violet-100 p-5 hover:shadow-lg transition-all">
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-violet-400 to-purple-600 flex items-center justify-center shadow-md">
-              <Gamepad2 size={22} className="text-white" />
-            </div>
-            <div>
-              <p className="text-2xl font-bold text-gray-900">0</p>
-              <p className="text-sm text-gray-500">Kuis Aktif</p>
-            </div>
-          </div>
-          <div className="mt-3 text-xs text-violet-600 font-medium">Tugas dipublish</div>
-        </div>
-
-        <div className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-2xl border border-blue-100 p-5 hover:shadow-lg transition-all">
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-400 to-cyan-600 flex items-center justify-center shadow-md">
-              <Users size={22} className="text-white" />
-            </div>
-            <div>
-              <p className="text-2xl font-bold text-gray-900">0</p>
-              <p className="text-sm text-gray-500">Total Siswa</p>
-            </div>
-          </div>
-          <div className="mt-3 text-xs text-blue-600 font-medium">Pernah kerjakan tugas</div>
-        </div>
-
-        <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-2xl border border-amber-100 p-5 hover:shadow-lg transition-all">
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-400 to-orange-600 flex items-center justify-center shadow-md">
-              <TrendingUp size={22} className="text-white" />
-            </div>
-            <div>
-              <p className="text-2xl font-bold text-gray-900">Rp 0</p>
-              <p className="text-sm text-gray-500">Saldo</p>
-            </div>
-          </div>
-          <div className="mt-3 text-xs text-amber-600 font-medium">Dari penjualan karya</div>
-        </div>
-      </div>
-
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
           <div className="flex items-center justify-between mb-4">

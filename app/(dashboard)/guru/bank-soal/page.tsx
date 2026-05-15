@@ -88,14 +88,10 @@ export default function BankSoalPage() {
       const res = await fetch("/api/guru/bank-soal", { method: "POST", body: fd });
       const data = await res.json();
       setUploadResult(data.pesan || (data.success ? "Berhasil diupload" : data.error || "Gagal"));
-      if (data.success) { setSelectedFile(null); fetchSoal?.(); }
+      if (data.success) { setSelectedFile(null); }
     } catch { setUploadResult("Gagal upload"); }
     setUploading(false);
   };
-
-  // Simple fetch for existing soal (placeholder)
-  const fetchSoal = async () => { try { const r = await fetch("/api/soal"); const d = await r.json(); setSoalList(d.data || d.soal || []); } catch {} };
-  fetchSoal();
   };
 
   const handleDelete = (index: number) => {
