@@ -14,9 +14,6 @@ const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
-  turbopack: {
-    root: "/Users/user/Documents/bahasa-cerdas",
-  },
 };
 
 export default nextConfig;
