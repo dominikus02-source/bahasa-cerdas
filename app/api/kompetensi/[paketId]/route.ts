@@ -52,7 +52,7 @@ export async function GET(
       }, { status: 400 });
     }
 
-    const sections = paket.sectionsData as any[] || [];
+    const sections = paket.sectionsData as any[] || paket.sections as any[] || [];
     const questions: any[] = [];
 
     for (let i = 0; i < sections.length; i++) {

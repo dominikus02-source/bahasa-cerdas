@@ -275,8 +275,10 @@ export default function KompetisiPage({ params }: { params: Promise<{ paketId: s
         </div>
 
         <div className="space-y-2.5">
-          {currentQ.options?.map((option: any) => {
-            const isSelected = answers[currentQ.id] === option.id;
+          {currentQ.options?.map((option: any, optIdx: number) => {
+            const optId = option.id || String(optIdx);
+            const optText = option.text || option;
+            const isSelected = answers[currentQ.id] === optId;
             return (
               <button
                 key={option.id}
@@ -290,10 +292,10 @@ export default function KompetisiPage({ params }: { params: Promise<{ paketId: s
                 <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold shrink-0 ${
                   isSelected ? "bg-indigo-600 text-white" : "bg-slate-100 text-slate-500"
                 }`}>
-                  {option.id}
+                  {optId}
                 </div>
                 <span className={`text-sm font-medium pt-1 ${isSelected ? "text-indigo-900" : "text-slate-700"}`}>
-                  {option.text}
+                  {optText}
                 </span>
               </button>
             );
