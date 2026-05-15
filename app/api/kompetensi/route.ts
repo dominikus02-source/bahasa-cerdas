@@ -22,22 +22,8 @@ export async function GET(req: NextRequest) {
       db.paketKompetensi.count({ where }),
     ]);
 
-    const enrichedPakets = await Promise.all(pakets.map(async (paket) => {
-      const myResults = await db.progresKompetensi.findMany({
-        where: { userId: dbUser.id, paketId: paket.id },
-        orderBy: { attemptNumber: "desc" },
-        take: 5,
-      });
-      const myCerts = await db.kompetensiCertificate.findMany({
-        where: { userId: dbUser.id, paketId: paket.id },
-        orderBy: { score: "desc" },
-        take: 1,
-      });
-      return { ...paket, myResults, myBestCert: myCerts[0] || null };
-    }));
-
     return NextResponse.json({
-      data: enrichedPakets,
+      data: pakets,
       total,
       page,
       totalPages: Math.ceil(total / limit),
