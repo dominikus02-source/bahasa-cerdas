@@ -1,8 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useUserStore } from "@/store";
-import { UpgradeModal } from "@/components/shared/upgrade-modal";
 import { Modal } from "@/components/ui/modal";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -24,10 +22,8 @@ const KD_OPTIONS = [
 ];
 
 export default function BankSoalPage() {
-  const user = useUserStore();
   const [soalList, setSoalList] = useState<any[]>([]);
   const [showTambah, setShowTambah] = useState(false);
-  const [showUpgrade, setShowUpgrade] = useState(false);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     text: "",
@@ -42,10 +38,6 @@ export default function BankSoalPage() {
   });
 
   const handleGenerate = async () => {
-    if (!user.isPremium && !user.isFounder) {
-      setShowUpgrade(true);
-      return;
-    }
     setLoading(true);
     try {
       const res = await fetch("/api/ai/soal", {
@@ -237,7 +229,6 @@ export default function BankSoalPage() {
         </div>
       </Modal>
 
-      <UpgradeModal isOpen={showUpgrade} onClose={() => setShowUpgrade(false)} feature="generate soal" used={0} limit={10} />
     </div>
   );
 }

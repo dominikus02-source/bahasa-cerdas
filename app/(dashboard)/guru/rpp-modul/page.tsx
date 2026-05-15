@@ -1,9 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useUserStore } from "@/store";
-import { UpgradeModal } from "@/components/shared/upgrade-modal";
-import { Modal } from "@/components/ui/modal";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -12,7 +9,6 @@ import { FileText, Zap, Download, Eye, Edit2 } from "lucide-react";
 export default function RPPModulPage() {
   const user = useUserStore();
   const [showModal, setShowModal] = useState(false);
-  const [showUpgrade, setShowUpgrade] = useState(false);
   const [loading, setLoading] = useState(false);
   const [generated, setGenerated] = useState<any>(null);
   const KELAS = [
@@ -30,10 +26,6 @@ export default function RPPModulPage() {
   });
 
   const handleGenerate = async () => {
-    if (!user.isPremium && !user.isFounder) {
-      setShowUpgrade(true);
-      return;
-    }
     setLoading(true);
     try {
       const res = await fetch("/api/ai/rpp", {
@@ -147,7 +139,6 @@ export default function RPPModulPage() {
         )}
       </Card>
 
-      <UpgradeModal isOpen={showUpgrade} onClose={() => setShowUpgrade(false)} feature="generate RPP" used={0} limit={3} />
     </div>
   );
 }

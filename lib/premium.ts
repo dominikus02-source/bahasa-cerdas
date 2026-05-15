@@ -2,7 +2,7 @@ import { db } from "@/lib/db";
 import type { User, PremiumPlan } from "@prisma/client";
 
 const AI_QUOTA = {
-  FREE: { rpp: 3, soal: 10, koreksi: 0, chat: 5 },
+  FREE: { rpp: -1, soal: -1, koreksi: 0, chat: 5 },
   PRO: { rpp: -1, soal: -1, koreksi: -1, chat: -1 },
 };
 
