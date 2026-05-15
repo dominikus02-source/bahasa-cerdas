@@ -147,7 +147,7 @@ export default function AIChatPage() {
               ))}
             </div>
             <div className="text-center">
-              <a href="https://kbbi.kemdikbud.go.id/" target="_blank"
+              <a href="https://kbbi.web.id/" target="_blank"
                 className="inline-flex items-center gap-1.5 text-xs text-slate-400 hover:text-red-600 transition-colors">
                 <ExternalLink size={12} /> Cari di KBBI Online
               </a>
