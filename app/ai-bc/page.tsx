@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { Send, Bot, User, Sparkles, MessageSquare, Trash2, BookOpen, GraduationCap } from "lucide-react";
+import { Send, Bot, User, Sparkles, MessageSquare, Trash2, BookOpen, GraduationCap, Home } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import BatikDecoration from "@/components/shared/BatikDecoration";
@@ -73,7 +73,10 @@ export default function AIChatPage() {
               <p className="text-red-100 text-xs">Asisten Bahasa Indonesia</p>
             </div>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1">
+            <a href="/" className="p-2 rounded-xl hover:bg-white/10 text-white/70 hover:text-white transition-colors" title="Beranda">
+              <Home size={18} />
+            </a>
             <button onClick={() => { if (confirm("Hapus semua chat?")) setMessages([{ role: "bot", text: messages[0].text }]); }}
               className="p-2 rounded-xl hover:bg-white/10 text-white/70 hover:text-white transition-colors" title="Hapus chat">
               <Trash2 size={18} />
