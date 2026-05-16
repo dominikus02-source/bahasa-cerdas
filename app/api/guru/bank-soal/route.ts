@@ -2,8 +2,17 @@ import { NextRequest, NextResponse } from "next/server";
 import { getUser } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 import { createClient } from "@supabase/supabase-js";
-import pdfParse from "pdf-parse";
 import mammoth from "mammoth";
+
+async function extractPdfText(buffer: Buffer): Promise<string> {
+  try {
+    const pdfParse = (await import("pdf-parse")).default;
+    const data = await pdfParse(buffer);
+    return data.text;
+  } catch {
+    return "";
+  }
+}
 
 export async function POST(req: NextRequest) {
   try {
@@ -30,8 +39,7 @@ export async function POST(req: NextRequest) {
 
     try {
       if (ext === "pdf") {
-        const pdfData = await pdfParse(buffer);
-        fileText = pdfData.text;
+        fileText = await extractPdfText(buffer);
       } else if (ext === "docx") {
         const result = await mammoth.extractRawText({ buffer });
         fileText = result.value;
