@@ -463,11 +463,37 @@ Buatkan dalam Bahasa Indonesia yang baik dan benar. PASTIKAN SEMUA KONTEN SPESIF
     const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
     const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY;
     const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
+    const GROQ_API_KEY = process.env.GROQ_API_KEY;
 
     let content = "";
     let tokens = 0;
+    const errors: string[] = [];
 
-    if (GEMINI_API_KEY) {
+    if (GROQ_API_KEY) {
+      try {
+        const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "Authorization": `Bearer ${GROQ_API_KEY}` },
+          body: JSON.stringify({
+            model: "llama-3.1-8b-instant",
+            messages: [{ role: "user", content: prompt }],
+            max_tokens: 8000,
+            temperature: 0.7,
+          }),
+        });
+        const json = await res.json();
+        if (json.error) {
+          errors.push(`Groq: ${json.error.message || json.error}`);
+        } else {
+          content = json.choices?.[0]?.message?.content || "";
+          if (content) tokens = content.length;
+        }
+      } catch (e: any) { errors.push(`Groq: ${e.message}`); }
+    } else {
+      errors.push("Groq: No API key");
+    }
+
+    if (!content && GEMINI_API_KEY) {
       try {
         const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent`, {
           method: "POST",
@@ -478,9 +504,15 @@ Buatkan dalam Bahasa Indonesia yang baik dan benar. PASTIKAN SEMUA KONTEN SPESIF
           }),
         });
         const json = await res.json();
-        content = json?.candidates?.[0]?.content?.parts?.[0]?.text || "";
-        if (content) tokens = content.length;
-      } catch (e) { console.error("Gemini error:", e); }
+        if (json.error) {
+          errors.push(`Gemini: ${json.error.message || json.error}`);
+        } else {
+          content = json?.candidates?.[0]?.content?.parts?.[0]?.text || "";
+          if (content) tokens = content.length;
+        }
+      } catch (e: any) { errors.push(`Gemini: ${e.message}`); }
+    } else if (!content) {
+      errors.push("Gemini: No API key");
     }
 
     if (!content && OPENAI_API_KEY) {
@@ -496,9 +528,15 @@ Buatkan dalam Bahasa Indonesia yang baik dan benar. PASTIKAN SEMUA KONTEN SPESIF
           }),
         });
         const json = await res.json();
-        content = json.choices?.[0]?.message?.content || "";
-        if (content) tokens = json.usage?.total_tokens || 0;
-      } catch (e) { console.error("OpenAI error:", e); }
+        if (json.error) {
+          errors.push(`OpenAI: ${json.error.message || json.error}`);
+        } else {
+          content = json.choices?.[0]?.message?.content || "";
+          if (content) tokens = json.usage?.total_tokens || 0;
+        }
+      } catch (e: any) { errors.push(`OpenAI: ${e.message}`); }
+    } else if (!content) {
+      errors.push("OpenAI: No API key");
     }
 
     if (!content && DEEPSEEK_API_KEY) {
@@ -514,13 +552,20 @@ Buatkan dalam Bahasa Indonesia yang baik dan benar. PASTIKAN SEMUA KONTEN SPESIF
           }),
         });
         const json = await res.json();
-        content = json.choices?.[0]?.message?.content || "";
-        if (content) tokens = json.usage?.total_tokens || 0;
-      } catch (e) { console.error("DeepSeek error:", e); }
+        if (json.error) {
+          errors.push(`DeepSeek: ${json.error.message || json.error}`);
+        } else {
+          content = json.choices?.[0]?.message?.content || "";
+          if (content) tokens = json.usage?.total_tokens || 0;
+        }
+      } catch (e: any) { errors.push(`DeepSeek: ${e.message}`); }
+    } else if (!content) {
+      errors.push("DeepSeek: No API key");
     }
 
     if (!content) {
-      return NextResponse.json({ error: "All AI providers failed" }, { status: 500 });
+      console.error("All AI providers failed:", errors);
+      return NextResponse.json({ error: `Semua AI provider gagal: ${errors.join("; ")}. Tambahkan GROQ_API_KEY (gratis di console.groq.com).` }, { status: 500 });
     }
 
     let rpp = content;
