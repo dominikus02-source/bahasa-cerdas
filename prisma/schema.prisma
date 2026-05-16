@@ -372,6 +372,7 @@ model User {
   purchases          Pembelian[]
   uploadedMateris    Materi[]
   uploadedRPPs       RPP[]
+  generatedRPPs      GeneratedRPP[]
   uploadedBankSoals  BankSoal[]
   withdrawals        Withdrawal[]
   sellerEarnings     SellerEarning[]
@@ -700,6 +701,28 @@ model RPP {
 
   @@index([uploaderId])
   @@index([isPublished])
+}
+
+model GeneratedRPP {
+  id          String   @id @default(cuid())
+  type        String   @default("RPP")
+  title       String
+  description String?
+  kelas       String
+  semester    Int      @default(1)
+  tahunAjaran String   @default("2025/2026")
+  subject     String   @default("Bahasa Indonesia")
+  kds         String[]
+  methods     String[]
+  content     Json
+  isPublished Boolean  @default(false)
+  uploaderId  String
+  uploader    User     @relation(fields: [uploaderId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([uploaderId])
+  @@index([type])
 }
 
 model Video {
