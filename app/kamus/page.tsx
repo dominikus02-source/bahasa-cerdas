@@ -1,6 +1,6 @@
 "use client";
 
-import { BookOpen, ExternalLink, Search, Sparkles, ArrowRight } from "lucide-react";
+import { BookOpen, ExternalLink, Search, Sparkles, ArrowRight, Home } from "lucide-react";
 import Link from "next/link";
 
 export default function KamusPage() {
@@ -8,14 +8,19 @@ export default function KamusPage() {
     <div className="min-h-screen bg-gradient-to-br from-red-50 via-white to-red-50 flex flex-col">
       {/* Header */}
       <header className="bg-gradient-to-r from-red-600 to-red-700 text-white px-4 py-6 shadow-lg">
-        <div className="max-w-4xl mx-auto">
-          <div className="flex items-center gap-3 mb-2">
+        <div className="max-w-4xl mx-auto flex items-center justify-between">
+          <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center">
               <BookOpen size={20} className="text-white" />
             </div>
-            <h1 className="font-bold text-xl">Kamus Bahasa Indonesia</h1>
+            <div>
+              <h1 className="font-bold text-xl">Kamus Bahasa Indonesia</h1>
+              <p className="text-red-100 text-sm">Cari kata di KBBI Online</p>
+            </div>
           </div>
-          <p className="text-red-100 text-sm">Cari kata di KBBI Online</p>
+          <Link href="/" className="inline-flex items-center gap-2 px-4 py-2.5 bg-white/10 backdrop-blur-sm rounded-xl text-white font-medium hover:bg-white/20 transition-all">
+            <Home size={16} /> Beranda
+          </Link>
         </div>
       </header>
 
