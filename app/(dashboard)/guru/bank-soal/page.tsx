@@ -1,11 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Modal } from "@/components/ui/modal";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { BookOpen, Plus, Trash2, Zap, Upload, FileText, Loader2, CheckCircle } from "lucide-react";
+import { BookOpen, Plus, Trash2, Zap, Upload, Loader2, CheckCircle, Save, RefreshCw } from "lucide-react";
 
 const KELAS = ["1","2","3","4","5","6","7","8","9","10","11","12"];
 const KD_OPTIONS = [
@@ -28,6 +28,8 @@ export default function BankSoalPage() {
   const [uploading, setUploading] = useState(false);
   const [uploadResult, setUploadResult] = useState<string>("");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [saving, setSaving] = useState(false);
+  const [fetching, setFetching] = useState(true);
   const [formData, setFormData] = useState({
     text: "",
     type: "PILIHAN_GANDA",
@@ -40,13 +42,35 @@ export default function BankSoalPage() {
     kd: "",
   });
 
+  const fetchSoal = useCallback(async () => {
+    setFetching(true);
+    try {
+      const res = await fetch("/api/guru/soal");
+      const data = await res.json();
+      if (data.data) setSoalList(data.data);
+    } catch (e) {
+      console.error(e);
+    }
+    setFetching(false);
+  }, []);
+
+  useEffect(() => { fetchSoal(); }, [fetchSoal]);
+
   const handleGenerate = async () => {
+    if (!formData.text) return;
     setLoading(true);
     try {
       const res = await fetch("/api/ai/soal", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ topic: formData.text, count: 5 }),
+        body: JSON.stringify({
+          topic: formData.text,
+          count: 5,
+          type: formData.type,
+          difficulty: formData.difficulty,
+          kelas: formData.kelas,
+          kd: formData.kd,
+        }),
       });
       const data = await res.json();
       if (data.soal) {
@@ -59,21 +83,35 @@ export default function BankSoalPage() {
   };
 
   const handleSave = async () => {
-    const newSoal = {
-      text: formData.text,
-      type: formData.type,
-      difficulty: formData.difficulty,
-      options: formData.options,
-      correctAnswer: formData.correctAnswer,
-      explanation: formData.explanation,
-      isHOTS: formData.isHOTS,
-      kelas: formData.kelas,
-      kd: formData.kd,
-      subject: "Bahasa Indonesia",
-    };
-    setSoalList((prev) => [...prev, newSoal]);
-    setShowTambah(false);
-    setFormData({ text: "", type: "PILIHAN_GANDA", difficulty: "MEDIUM", options: ["", "", "", ""], correctAnswer: "", explanation: "", isHOTS: false, kelas: "", kd: "" });
+    if (!formData.text || !formData.kelas) return;
+    setSaving(true);
+    try {
+      const res = await fetch("/api/guru/soal", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          text: formData.text,
+          type: formData.type,
+          difficulty: formData.difficulty,
+          options: formData.options,
+          correctAnswer: formData.correctAnswer,
+          explanation: formData.explanation,
+          isHOTS: formData.isHOTS,
+          kelas: formData.kelas,
+          kd: formData.kd,
+          subject: "Bahasa Indonesia",
+        }),
+      });
+      const data = await res.json();
+      if (data.success && data.soal) {
+        setSoalList((prev) => [...prev, data.soal]);
+        setShowTambah(false);
+        setFormData({ text: "", type: "PILIHAN_GANDA", difficulty: "MEDIUM", options: ["", "", "", ""], correctAnswer: "", explanation: "", isHOTS: false, kelas: "", kd: "" });
+      }
+    } catch (e) {
+      console.error(e);
+    }
+    setSaving(false);
   };
 
   const handleFileUpload = async () => {
@@ -88,14 +126,24 @@ export default function BankSoalPage() {
       const res = await fetch("/api/guru/bank-soal", { method: "POST", body: fd });
       const data = await res.json();
       setUploadResult(data.pesan || (data.success ? "Berhasil diupload" : data.error || "Gagal"));
-      if (data.success) { setSelectedFile(null); }
+      if (data.success) {
+        setSelectedFile(null);
+        if (data.extractedQuestions?.length) {
+          setSoalList((prev) => [...prev, ...data.extractedQuestions]);
+        }
+        fetchSoal();
+      }
     } catch { setUploadResult("Gagal upload"); }
     setUploading(false);
   };
-  };
 
-  const handleDelete = (index: number) => {
-    setSoalList((prev) => prev.filter((_, i) => i !== index));
+  const handleDelete = async (id: string) => {
+    try {
+      await fetch(`/api/guru/soal?id=${id}`, { method: "DELETE" });
+      setSoalList((prev) => prev.filter((s) => s.id !== id));
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   return (
@@ -106,41 +154,24 @@ export default function BankSoalPage() {
           <p className="mt-1 text-sm text-gray-600">Kelola soal untuk kuis dan tugas</p>
         </div>
         <div className="flex gap-3">
+          <Button variant="outline" onClick={fetchSoal} disabled={fetching}>
+            <RefreshCw className={`h-4 w-4 ${fetching ? "animate-spin" : ""}`} /> Refresh
+          </Button>
           <Button variant="outline" onClick={() => setShowTambah(true)}>
             <Plus className="h-4 w-4" /> Tambah Manual
           </Button>
-          <Button onClick={handleGenerate} disabled={loading}>
+          <Button onClick={handleGenerate} disabled={loading || !formData.text}>
             <Zap className="h-4 w-4" /> {loading ? "Generating..." : "Generate AI"}
           </Button>
         </div>
       </div>
 
-      {soalList.length === 0 ? (
-        <Card className="py-16 text-center">
-          <BookOpen className="mx-auto h-16 w-16 text-gray-300" />
-          <h3 className="mt-4 font-semibold">Belum ada soal</h3>
-          <p className="mt-2 text-sm text-gray-500">Tambahkan soal manual atau generate dengan AI</p>
-        </Card>
-      ) : (
-        <div className="space-y-4">
-          {soalList.map((soal, i) => (
-            <Card key={i} className="p-4">
-              <div className="flex items-start justify-between">
-                <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Badge variant="secondary">{soal.type.replace("_", " ")}</Badge>
-                    <Badge variant={soal.difficulty === "HARD" ? "destructive" : soal.difficulty === "MEDIUM" ? "warning" : "success"}>
-                      {soal.difficulty}
-                    </Badge>
-                    {soal.isHOTS && <Badge variant="gold">HOTS</Badge>}
-      </div>
-
-      {/* Upload File */}
+      {/* Upload File Section */}
       <Card className="p-4 mb-6 border-2 border-dashed border-slate-200">
         <div className="flex flex-wrap items-center gap-3">
           <div className="flex-1 min-w-[200px]">
             <p className="text-sm font-semibold text-slate-700 mb-1">Upload File Soal</p>
-            <p className="text-xs text-slate-400">PDF, DOCX — sistem akan ekstrak soal otomatis</p>
+            <p className="text-xs text-slate-400">PDF, DOCX — sistem akan ekstrak soal otomatis dengan AI</p>
           </div>
           <input type="file" accept=".pdf,.docx" onChange={(e) => setSelectedFile(e.target.files?.[0] || null)} className="text-sm text-slate-500 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100" />
           <Button onClick={handleFileUpload} disabled={!selectedFile || uploading} variant="outline" className="shrink-0">
@@ -154,16 +185,43 @@ export default function BankSoalPage() {
           </div>
         )}
       </Card>
-                  <p className="font-medium">{soal.text}</p>
+
+      {fetching ? (
+        <div className="flex justify-center py-12">
+          <Loader2 className="h-8 w-8 animate-spin text-emerald-600" />
+        </div>
+      ) : soalList.length === 0 ? (
+        <Card className="py-16 text-center">
+          <BookOpen className="mx-auto h-16 w-16 text-gray-300" />
+          <h3 className="mt-4 font-semibold">Belum ada soal</h3>
+          <p className="mt-2 text-sm text-gray-500">Tambahkan soal manual, upload file, atau generate dengan AI</p>
+        </Card>
+      ) : (
+        <div className="space-y-4">
+          {soalList.map((soal) => (
+            <Card key={soal.id} className="p-4">
+              <div className="flex items-start justify-between">
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Badge variant="secondary">{soal.type?.replace("_", " ") || "PG"}</Badge>
+                    <Badge variant={soal.difficulty === "HARD" ? "destructive" : soal.difficulty === "MEDIUM" ? "warning" : "success"}>
+                      {soal.difficulty || "MEDIUM"}
+                    </Badge>
+                    {soal.isHOTS && <Badge variant="gold">HOTS</Badge>}
+                    {soal.kelas && <Badge>Kelas {soal.kelas}</Badge>}
+                  </div>
+                  <p className="font-medium">{soal.text || soal.title}</p>
                   {soal.options?.length > 0 && (
                     <ul className="mt-2 space-y-1 text-sm text-gray-600">
                       {soal.options.map((opt: string, j: number) => (
-                        <li key={j}>• {opt}</li>
+                        <li key={j} className={String(j) === String(soal.correctAnswer) ? "text-emerald-600 font-medium" : ""}>
+                          {String.fromCharCode(65 + j)}. {opt} {String(j) === String(soal.correctAnswer) && "✓"}
+                        </li>
                       ))}
                     </ul>
                   )}
                 </div>
-                <button onClick={() => handleDelete(i)} className="rounded-lg p-2 hover:bg-red-50 text-red-500">
+                <button onClick={() => soal.id && handleDelete(soal.id)} className="rounded-lg p-2 hover:bg-red-50 text-red-500">
                   <Trash2 className="h-4 w-4" />
                 </button>
               </div>
@@ -181,6 +239,7 @@ export default function BankSoalPage() {
               onChange={(e) => setFormData({ ...formData, text: e.target.value })}
               className="w-full rounded-lg border px-4 py-2 text-sm"
               rows={3}
+              placeholder="Tulis pertanyaan..."
             />
           </div>
           <div className="grid grid-cols-3 gap-4">
@@ -216,7 +275,7 @@ export default function BankSoalPage() {
                 className="w-full rounded-lg border px-4 py-2 text-sm"
               >
                 <option value="">Pilih Kelas</option>
-                {KELAS.map((k) => <option key={k}>Kelas {k}</option>)}
+                {KELAS.map((k) => <option key={k} value={k}>Kelas {k}</option>)}
               </select>
             </div>
           </div>
@@ -239,7 +298,7 @@ export default function BankSoalPage() {
           </div>
           {formData.type === "PILIHAN_GANDA" && (
             <div>
-              <label className="block text-sm font-medium mb-2">Opsi Jawaban</label>
+              <label className="block text-sm font-medium mb-2">Opsi Jawaban (klik radio untuk jawaban benar)</label>
               {formData.options.map((opt, i) => (
                 <div key={i} className="flex items-center gap-2 mb-2">
                   <span className="text-xs font-medium text-gray-500 w-6">{String.fromCharCode(65 + i)}.</span>
@@ -256,20 +315,42 @@ export default function BankSoalPage() {
                   <input
                     type="radio"
                     name="correct"
-                    checked={formData.correctAnswer === String.fromCharCode(65 + i)}
-                    onChange={() => setFormData({ ...formData, correctAnswer: String.fromCharCode(65 + i) })}
+                    checked={formData.correctAnswer === String(i)}
+                    onChange={() => setFormData({ ...formData, correctAnswer: String(i) })}
                   />
                 </div>
               ))}
             </div>
           )}
+          <div>
+            <label className="block text-sm font-medium mb-1">Penjelasan (opsional)</label>
+            <textarea
+              value={formData.explanation}
+              onChange={(e) => setFormData({ ...formData, explanation: e.target.value })}
+              className="w-full rounded-lg border px-4 py-2 text-sm"
+              rows={2}
+              placeholder="Penjelasan jawaban..."
+            />
+          </div>
+          <div className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              id="hots"
+              checked={formData.isHOTS}
+              onChange={(e) => setFormData({ ...formData, isHOTS: e.target.checked })}
+              className="rounded"
+            />
+            <label htmlFor="hots" className="text-sm font-medium">Soal HOTS (Higher Order Thinking Skills)</label>
+          </div>
           <div className="flex gap-2 pt-4">
             <Button variant="outline" onClick={() => setShowTambah(false)} className="flex-1">Batal</Button>
-            <Button onClick={handleSave} className="flex-1">Simpan</Button>
+            <Button onClick={handleSave} disabled={saving || !formData.text || !formData.kelas} className="flex-1">
+              {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+              {saving ? "Menyimpan..." : "Simpan"}
+            </Button>
           </div>
         </div>
       </Modal>
-
     </div>
   );
 }

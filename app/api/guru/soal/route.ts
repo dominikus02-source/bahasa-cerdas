@@ -52,6 +52,39 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Guru only" }, { status: 403 });
     }
 
+    const contentType = req.headers.get("content-type") || "";
+
+    // Handle JSON body (individual question save)
+    if (contentType.includes("application/json")) {
+      const body = await req.json();
+      const { text, type, difficulty, options, correctAnswer, explanation, isHOTS, kelas, kd, subject } = body;
+
+      if (!text || !kelas) {
+        return NextResponse.json({ error: "Pertanyaan dan kelas diperlukan" }, { status: 400 });
+      }
+
+      const soal = await db.bankSoal.create({
+        data: {
+          title: text.slice(0, 100),
+          text,
+          type: type || "PILIHAN_GANDA",
+          difficulty: difficulty || "MEDIUM",
+          options: options || [],
+          correctAnswer: String(correctAnswer || ""),
+          explanation: explanation || "",
+          isHOTS: isHOTS || false,
+          kelas,
+          KD: kd || null,
+          subject: subject || "Bahasa Indonesia",
+          isPublished: true,
+          uploaderId: dbUser.id,
+        },
+      });
+
+      return NextResponse.json({ success: true, soal }, { status: 201 });
+    }
+
+    // Handle FormData (file upload)
     const formData = await req.formData();
     const file = formData.get("file") as File | null;
 

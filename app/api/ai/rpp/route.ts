@@ -27,41 +27,66 @@ Metode: ${metode || "Diskusi, ceramah, penugasan"}
 Format output JSON dengan struktur:
 {
   "title": "Judul RPP",
-  "identity": { "sekolah", "mataPelajaran", "kelas", "alokasiWaktu", "tahunAjaran" },
-  "competency": { "dasar": [...], "tujuan": [...] },
-  "indicators": [...],
-  "learningSteps": [{ "phase": "name", "activities": [...] }],
-  "assessment": { "technique": "...", "instruments": [...] },
-  "differentiation": { "remedial": [...], "enrichment": [...] },
-  "materials": [...],
-  "references": [...]
+  "description": "Deskripsi singkat RPP",
+  "competency": "Kompetensi dasar yang dicapai",
+  "indicators": ["Indikator 1", "Indikator 2"],
+  "learningSteps": [
+    "Kegiatan Pendahuluan: ...",
+    "Kegiatan Inti: ...",
+    "Kegiatan Penutup: ..."
+  ],
+  "assessment": "Teknik dan instrumen penilaian",
+  "differentiation": "Diferensiasi pembelajaran",
+  "materials": "Materi dan sumber belajar",
+  "references": "Referensi"
 }
 
 Buatkan dalam Bahasa Indonesia yang baik dan benar. Hanya output JSON, tanpa markdown.`;
 
-    const res = await fetch("https://api.deepseek.com/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${process.env.DEEPSEEK_API_KEY}`,
-      },
-      body: JSON.stringify({
-        model: "deepseek-chat",
-        messages: [{ role: "user", content: prompt }],
-        max_tokens: 4000,
-        temperature: 0.7,
-      }),
-    });
+    const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+    const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY;
 
-    const json = await res.json();
-    const content = json.choices?.[0]?.message?.content || "";
+    let content = "";
+    let tokens = 0;
+
+    if (GEMINI_API_KEY) {
+      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "X-goog-api-key": GEMINI_API_KEY },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: prompt }] }],
+          generationConfig: { temperature: 0.7, maxOutputTokens: 4000 },
+        }),
+      });
+      const json = await res.json();
+      content = json?.candidates?.[0]?.content?.parts?.[0]?.text || "";
+      tokens = content.length;
+    } else if (DEEPSEEK_API_KEY) {
+      const res = await fetch("https://api.deepseek.com/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${DEEPSEEK_API_KEY}`,
+        },
+        body: JSON.stringify({
+          model: "deepseek-chat",
+          messages: [{ role: "user", content: prompt }],
+          max_tokens: 4000,
+          temperature: 0.7,
+        }),
+      });
+      const json = await res.json();
+      content = json.choices?.[0]?.message?.content || "";
+      tokens = json.usage?.total_tokens || 0;
+    } else {
+      return NextResponse.json({ error: "No AI API key configured" }, { status: 500 });
+    }
 
     let rpp = content;
     if (rpp.includes("```json")) {
       rpp = rpp.replace(/```json\n?/g, "").replace(/\n?```/g, "");
     }
 
-    const tokens = json.usage?.total_tokens || 0;
     const costUSD = (tokens / 1_000_000) * 0.5;
     await recordAIUsage(user.id, "rpp_generator", tokens, costUSD);
 
