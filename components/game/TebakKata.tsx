@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, Heart, Star, Trophy, Zap, Lightbulb, Volume2, Check, X, RefreshCw, Crown } from "lucide-react";
+import { ArrowLeft, Heart, Star, Trophy, Zap, Lightbulb, Check, X, RefreshCw, Crown, Sparkles } from "lucide-react";
 
 const WORDS_DB = [
   { word: "BUDAYA", clues: ["Kebiasaan turun-temurun", "Warisan leluhur", "Identitas bangsa"], category: "Sosial" },
@@ -30,7 +30,6 @@ const WORDS_DB = [
   { word: "HIPERBOLA", clues: ["Melebih-lebihkan", "Suaranya menggelegar membelah langit", "Tidak literal, sangat berlebihan"], category: "Sastra" },
   { word: "EUFEMISME", clues: ["Kata halus pengganti kasar", "Meninggal dunia bukan mati", "Agar lebih sopan"], category: "Bahasa" },
   { word: "PLEONASME", clues: ["Kata berlebihan yang sebenarnya tidak perlu", "Naik ke atas, turun ke bawah", "Redudansi dalam kalimat"], category: "Bahasa" },
-  { word: "KONJUNGSI", clues: ["Kata penghubung", "Dan, tetapi, karena, sehingga", "Menyambung dua klausa atau kalimat"], category: "Bahasa" },
   { word: "KATA KERJA", clues: ["Menunjukkan tindakan", "Makan, lari, membaca", "Predikat dalam kalimat"], category: "Bahasa" },
   { word: "KATA SIFAT", clues: ["Menjelaskan keadaan", "Indah, besar, cepat", "Bisa didahului sangat atau agak"], category: "Bahasa" },
   { word: "KATA BENDA", clues: ["Menyatakan nama orang, tempat, benda", "Meja, Jakarta, Budi", "Bisa diawali kata si atau sang"], category: "Bahasa" },
@@ -55,6 +54,9 @@ const WORDS_DB = [
   { word: "KATA PENYEBAB", clues: ["Menyatakan sebab", "Karena, sebab, gara-gara", "Kausal dalam tata bahasa"], category: "Bahasa" },
   { word: "KATA PENYATA", clues: ["Menyatakan akibat", "Sehingga, sampai-sampai, akibatnya", "Konsekutif dalam tata bahasa"], category: "Bahasa" },
   { word: "KATA PERBANDINGAN", clues: ["Membandingkan dua hal", "Seperti, bagaikan, laksana, bak", "Komparatif dalam tata bahasa"], category: "Bahasa" },
+  { word: "FABEL", clues: ["Cerita tentang hewan berkarakter manusia", "Kancil dan Buaya", "Pesan moral di dalamnya"], category: "Sastra" },
+  { word: "LEGENDA", clues: ["Cerita asal-usul tempat", "Danau Toba, Tangkuban Perahu", "Dianggap benar terjadi"], category: "Sastra" },
+  { word: "MITOS", clues: ["Cerita tentang dewa-dewi", "Nyai Roro Kidul", "Kepercayaan masyarakat"], category: "Sastra" },
 ];
 
 const LEVEL_THRESHOLDS = [0, 100, 250, 500, 800, 1200, 1700, 2300, 3000, 3800, 4700, 5700, 6800, 8000, 9300, 10700, 12200, 13800, 15500, 17300, 19200, 21200, 23300, 25500, 27800, 30200, 32700, 35300, 38000, 40800, 43700, 46700, 49800, 53000, 56300, 59700, 63200, 66800, 70500, 74300, 78200, 82200, 86300, 90500, 94800, 99200, 103700, 108300, 113000, 117800];
@@ -71,21 +73,6 @@ function getLevelProgress(xp: number) {
   const current = LEVEL_THRESHOLDS[level - 1] || 0;
   const next = LEVEL_THRESHOLDS[level] || LEVEL_THRESHOLDS[LEVEL_THRESHOLDS.length - 1] + 10000;
   return { level, progress: ((xp - current) / (next - current)) * 100, current, next };
-}
-
-function getWordsForLevel(level: number) {
-  const start = Math.min((level - 1) * 5, WORDS_DB.length - 5);
-  const end = Math.min(start + 5, WORDS_DB.length);
-  return WORDS_DB.slice(start, end);
-}
-
-function shuffleArray<T>(arr: T[]): T[] {
-  const shuffled = [...arr];
-  for (let i = shuffled.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-  }
-  return shuffled;
 }
 
 export default function TebakKataGame() {
@@ -132,13 +119,13 @@ export default function TebakKataGame() {
   };
 
   const nextWord = (used: Set<string>) => {
-    const level = getLevel(xp);
     const available = WORDS_DB.filter((w) => !used.has(w.word));
     if (available.length === 0) {
       setUsedWords(new Set());
-      const pool = shuffleArray(WORDS_DB);
-      setCurrentWord(pool[0]);
-      setUsedWords(new Set([pool[0].word]));
+      const pool = [...WORDS_DB];
+      const word = pool[Math.floor(Math.random() * pool.length)];
+      setCurrentWord(word);
+      setUsedWords(new Set([word.word]));
     } else {
       const word = available[Math.floor(Math.random() * available.length)];
       setCurrentWord(word);
@@ -167,7 +154,7 @@ export default function TebakKataGame() {
       setStreak(newStreak);
       setBestStreak(newBestStreak);
       setXp(newXp);
-      setFeedback({ correct: true, message: `Benar! +${totalPoints} poin` });
+      setFeedback({ correct: true, message: `+${totalPoints}` });
       saveProgress(newXp, newBestStreak);
 
       setTimeout(() => {
@@ -178,7 +165,7 @@ export default function TebakKataGame() {
         } else {
           nextWord(usedWords);
         }
-      }, 1500);
+      }, 1200);
     } else {
       const newLives = lives - 1;
       setLives(newLives);
@@ -187,10 +174,10 @@ export default function TebakKataGame() {
       setTimeout(() => setShakeInput(false), 500);
 
       if (newLives <= 0) {
-        setFeedback({ correct: false, message: `Jawaban: ${currentWord.word}` });
+        setFeedback({ correct: false, message: currentWord.word });
         setTimeout(() => setGameState("result"), 2000);
       } else {
-        setFeedback({ correct: false, message: `Salah! Sisa nyawa: ${newLives}` });
+        setFeedback({ correct: false, message: `${newLives} nyawa tersisa` });
         if (currentClue < currentWord.clues.length - 1) {
           setCurrentClue((c) => c + 1);
         }
@@ -202,7 +189,6 @@ export default function TebakKataGame() {
   const useHint = () => {
     if (!currentWord || hintUsed) return;
     setHintUsed(true);
-    const firstLetter = currentWord.word[0];
     const masked = currentWord.word.split("").map((l: string, i: number) => (i === 0 || i === currentWord.word.length - 1 ? l : "_")).join(" ");
     setGuess(masked.replace(/ /g, ""));
   };
@@ -210,63 +196,74 @@ export default function TebakKataGame() {
   const levelInfo = getLevelProgress(xp);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 flex flex-col">
-      {/* Header */}
-      <div className="bg-black/20 backdrop-blur-sm px-4 py-3">
+    <div className="min-h-screen bg-[#F2F2F7] flex flex-col">
+      {/* iOS-style Header */}
+      <div className="bg-white/80 backdrop-blur-xl border-b border-gray-200/50 px-4 py-3 sticky top-0 z-50">
         <div className="max-w-lg mx-auto flex items-center justify-between">
-          <button onClick={() => setGameState("menu")} className="text-white/70 hover:text-white p-2">
-            <ArrowLeft size={20} />
+          <button onClick={() => setGameState("menu")} className="text-blue-500 font-medium text-sm flex items-center gap-0.5">
+            <ArrowLeft size={20} /> Menu
           </button>
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-1.5">
-              <Star size={16} className="text-yellow-400" />
-              <span className="text-white font-bold text-sm">{score}</span>
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-1 bg-amber-50 px-2.5 py-1 rounded-full">
+              <Star size={14} className="text-amber-500 fill-amber-500" />
+              <span className="text-amber-700 font-bold text-sm">{score}</span>
             </div>
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-0.5">
               {[...Array(3)].map((_, i) => (
-                <Heart key={i} size={18} className={i < lives ? "text-red-400 fill-red-400" : "text-white/20"} />
+                <motion.div key={i} animate={i >= lives ? { scale: [1, 0.8, 1] } : {}}>
+                  <Heart size={18} className={i < lives ? "text-red-500 fill-red-500" : "text-gray-300"} />
+                </motion.div>
               ))}
             </div>
-          </div>
-        </div>
-        {/* XP Bar */}
-        <div className="max-w-lg mx-auto mt-2">
-          <div className="flex items-center justify-between text-xs text-white/60 mb-1">
-            <span className="flex items-center gap-1"><Crown size={12} className="text-yellow-400" /> Level {levelInfo.level}</span>
-            <span>{Math.floor(xp)} / {levelInfo.next} XP</span>
-          </div>
-          <div className="h-1.5 bg-white/10 rounded-full overflow-hidden">
-            <div className="h-full bg-gradient-to-r from-yellow-400 to-amber-500 rounded-full transition-all duration-500" style={{ width: `${levelInfo.progress}%` }} />
           </div>
         </div>
       </div>
 
       {/* Menu */}
       {gameState === "menu" && (
-        <div className="flex-1 flex items-center justify-center px-4">
-          <motion.div initial={{ y: 30, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="text-center max-w-sm">
-            <div className="w-24 h-24 rounded-3xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center mx-auto mb-6 shadow-2xl">
-              <Lightbulb size={48} className="text-white" />
-            </div>
-            <h1 className="text-4xl font-black text-white mb-2">Tebak Kata</h1>
-            <p className="text-white/60 mb-6">Tebak kata Bahasa Indonesia dari petunjuk yang diberikan</p>
+        <div className="flex-1 flex items-center justify-center px-6">
+          <motion.div initial={{ y: 30, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="text-center max-w-sm w-full">
+            <motion.div animate={{ rotate: [0, -5, 5, -5, 0] }} transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }} className="w-28 h-28 rounded-[2rem] bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center mx-auto mb-6 shadow-xl shadow-violet-500/30">
+              <Lightbulb size={52} className="text-white" />
+            </motion.div>
+            <h1 className="text-4xl font-extrabold text-gray-900 mb-2 tracking-tight">Tebak Kata</h1>
+            <p className="text-gray-500 mb-8 text-base">Tebak kata Bahasa Indonesia dari petunjuk</p>
 
-            <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 mb-6 border border-white/10">
-              <div className="flex items-center justify-between text-sm text-white/80">
-                <span>Level</span>
-                <span className="font-bold text-yellow-400">{levelInfo.level}</span>
+            {/* Stats Card */}
+            <div className="bg-white rounded-2xl p-5 mb-8 shadow-sm border border-gray-100">
+              <div className="grid grid-cols-3 gap-4">
+                <div className="text-center">
+                  <div className="flex items-center justify-center gap-1 mb-1">
+                    <Crown size={16} className="text-amber-500" />
+                  </div>
+                  <p className="text-2xl font-bold text-gray-900">{levelInfo.level}</p>
+                  <p className="text-xs text-gray-400">Level</p>
+                </div>
+                <div className="text-center border-x border-gray-100">
+                  <div className="flex items-center justify-center gap-1 mb-1">
+                    <Zap size={16} className="text-violet-500" />
+                  </div>
+                  <p className="text-2xl font-bold text-gray-900">{Math.floor(xp)}</p>
+                  <p className="text-xs text-gray-400">XP</p>
+                </div>
+                <div className="text-center">
+                  <div className="flex items-center justify-center gap-1 mb-1">
+                    <Sparkles size={16} className="text-orange-500" />
+                  </div>
+                  <p className="text-2xl font-bold text-gray-900">{bestStreak}</p>
+                  <p className="text-xs text-gray-400">Streak</p>
+                </div>
               </div>
-              <div className="flex items-center justify-between text-sm text-white/80 mt-2">
-                <span>Total XP</span>
-                <span className="font-bold">{Math.floor(xp)}</span>
-              </div>
-              <div className="flex items-center justify-between text-sm text-white/80 mt-2">
-                <span>Best Streak</span>
-                <span className="font-bold text-orange-400">{bestStreak}</span>
+              {/* XP Progress */}
+              <div className="mt-4">
+                <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                  <motion.div className="h-full bg-gradient-to-r from-violet-500 to-purple-500 rounded-full" initial={{ width: 0 }} animate={{ width: `${levelInfo.progress}%` }} transition={{ duration: 0.8 }} />
+                </div>
+                <p className="text-xs text-gray-400 mt-1.5 text-center">{Math.floor(xp)} / {levelInfo.next} XP</p>
               </div>
             </div>
 
-            <button onClick={startGame} className="w-full bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-bold py-4 rounded-2xl text-lg shadow-xl hover:shadow-2xl hover:scale-[1.02] transition-all flex items-center justify-center gap-2">
+            <button onClick={startGame} className="w-full bg-gradient-to-r from-violet-500 to-purple-600 text-white font-bold py-4 rounded-2xl text-lg shadow-lg shadow-violet-500/25 active:scale-[0.98] transition-transform flex items-center justify-center gap-2">
               <Zap size={20} /> Mulai Bermain
             </button>
           </motion.div>
@@ -275,112 +272,112 @@ export default function TebakKataGame() {
 
       {/* Playing */}
       {gameState === "playing" && currentWord && (
-        <div className="flex-1 flex flex-col items-center justify-center px-4">
-          <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} key={currentWord.word} className="max-w-lg w-full text-center">
-            {/* Round indicator */}
-            <div className="flex items-center justify-between text-sm text-white/50 mb-6">
-              <span>Ronde {round + 1} / {totalRounds}</span>
-              {streak > 0 && <span className="text-orange-400 font-bold flex items-center gap-1"><Zap size={14} /> Streak {streak}</span>}
-            </div>
+        <div className="flex-1 flex flex-col px-6 py-6 max-w-lg mx-auto w-full">
+          {/* Round & Streak */}
+          <div className="flex items-center justify-between mb-6">
+            <span className="text-sm font-medium text-gray-400">{round + 1} / {totalRounds}</span>
+            {streak > 0 && (
+              <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="flex items-center gap-1 bg-orange-50 px-3 py-1.5 rounded-full">
+                <Zap size={14} className="text-orange-500 fill-orange-500" />
+                <span className="text-orange-700 font-bold text-sm">{streak}</span>
+              </motion.div>
+            )}
+          </div>
 
-            {/* Category */}
-            <div className="inline-block bg-white/10 backdrop-blur-sm rounded-full px-4 py-1.5 text-sm text-white/70 mb-4">
-              {currentWord.category}
-            </div>
+          {/* Category Badge */}
+          <div className="flex justify-center mb-6">
+            <span className="bg-violet-100 text-violet-700 text-xs font-semibold px-4 py-1.5 rounded-full">{currentWord.category}</span>
+          </div>
 
-            {/* Word length hint */}
-            <div className="flex items-center justify-center gap-2 mb-6">
-              {currentWord.word.split("").map((_, i) => (
-                <div key={i} className="w-8 h-10 rounded-lg bg-white/10 border border-white/20 flex items-center justify-center">
-                  <span className="text-white/30 text-sm">{i + 1}</span>
-                </div>
-              ))}
-            </div>
+          {/* Word Length */}
+          <div className="flex items-center justify-center gap-1.5 mb-8">
+            {currentWord.word.split("").map((_: string, i: number) => (
+              <div key={i} className="w-9 h-11 rounded-xl bg-white border-2 border-gray-200 flex items-center justify-center shadow-sm">
+                <span className="text-gray-300 text-sm font-medium">{i + 1}</span>
+              </div>
+            ))}
+          </div>
 
-            {/* Clues */}
-            <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-6 border border-white/10">
-              <p className="text-sm text-white/50 mb-3">Petunjuk:</p>
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={currentClue}
-                  initial={{ x: 20, opacity: 0 }}
-                  animate={{ x: 0, opacity: 1 }}
-                  exit={{ x: -20, opacity: 0 }}
-                  className="space-y-2"
-                >
-                  {currentWord.clues.slice(0, currentClue + 1).map((clue: string, i: number) => (
-                    <p key={i} className={`text-sm ${i === currentClue ? "text-white font-medium" : "text-white/40"}`}>
-                      {i === currentClue ? "💡" : "✓"} {clue}
-                    </p>
-                  ))}
-                </motion.div>
-              </AnimatePresence>
-            </div>
-
-            {/* Input */}
-            <div className="flex gap-3 mb-4">
-              <input
-                value={guess}
-                onChange={(e) => setGuess(e.target.value.toUpperCase().replace(/[^A-Z]/g, ""))}
-                onKeyDown={(e) => e.key === "Enter" && checkAnswer()}
-                placeholder="Ketik jawaban..."
-                className={`flex-1 bg-white/10 backdrop-blur-sm border-2 border-white/20 rounded-xl px-4 py-3 text-white text-center text-lg font-bold tracking-wider placeholder-white/30 focus:outline-none focus:border-indigo-400 transition-all ${shakeInput ? "animate-pulse border-red-400" : ""}`}
-                maxLength={currentWord.word.length + 5}
-                autoFocus
-              />
-            </div>
-
-            {/* Buttons */}
-            <div className="flex gap-3">
-              <button onClick={useHint} disabled={hintUsed} className="flex-1 bg-white/10 backdrop-blur-sm border border-white/20 text-white/70 font-semibold py-3 rounded-xl hover:bg-white/20 transition-all disabled:opacity-30 flex items-center justify-center gap-2">
-                <Lightbulb size={16} /> Petunjuk
-              </button>
-              <button onClick={checkAnswer} disabled={!guess.trim()} className="flex-1 bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-bold py-3 rounded-xl shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2">
-                <Check size={16} /> Tebak
-              </button>
-            </div>
-
-            {/* Feedback */}
-            <AnimatePresence>
-              {feedback && (
-                <motion.div initial={{ y: 10, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: -10, opacity: 0 }} className={`mt-4 p-3 rounded-xl text-sm font-medium ${feedback.correct ? "bg-green-500/20 text-green-300 border border-green-500/30" : "bg-red-500/20 text-red-300 border border-red-500/30"}`}>
-                  {feedback.message}
-                </motion.div>
-              )}
+          {/* Clues Card */}
+          <div className="bg-white rounded-2xl p-5 mb-6 shadow-sm border border-gray-100">
+            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Petunjuk</p>
+            <AnimatePresence mode="wait">
+              <motion.div key={currentClue} initial={{ x: 20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: -20, opacity: 0 }} className="space-y-2.5">
+                {currentWord.clues.slice(0, currentClue + 1).map((clue: string, i: number) => (
+                  <motion.p key={i} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }} className={`text-sm leading-relaxed ${i === currentClue ? "text-gray-800 font-medium" : "text-gray-400"}`}>
+                    <span className="mr-2">{i === currentClue ? "💡" : "✓"}</span>{clue}
+                  </motion.p>
+                ))}
+              </motion.div>
             </AnimatePresence>
-          </motion.div>
+          </div>
+
+          {/* Input */}
+          <div className="mb-4">
+            <input
+              value={guess}
+              onChange={(e) => setGuess(e.target.value.toUpperCase().replace(/[^A-Z]/g, ""))}
+              onKeyDown={(e) => e.key === "Enter" && checkAnswer()}
+              placeholder="Ketik jawaban..."
+              className={`w-full bg-white border-2 ${shakeInput ? "border-red-400" : "border-gray-200 focus:border-violet-500"} rounded-2xl px-5 py-4 text-center text-xl font-bold tracking-widest placeholder-gray-300 focus:outline-none transition-all shadow-sm`}
+              maxLength={currentWord.word.length + 5}
+              autoFocus
+            />
+          </div>
+
+          {/* Buttons */}
+          <div className="flex gap-3 mb-6">
+            <button onClick={useHint} disabled={hintUsed} className="flex-1 bg-white border border-gray-200 text-gray-700 font-semibold py-3.5 rounded-2xl active:scale-[0.98] transition-transform disabled:opacity-30 flex items-center justify-center gap-2 shadow-sm">
+              <Lightbulb size={18} /> Petunjuk
+            </button>
+            <button onClick={checkAnswer} disabled={!guess.trim()} className="flex-1 bg-gradient-to-r from-violet-500 to-purple-600 text-white font-bold py-3.5 rounded-2xl shadow-lg shadow-violet-500/25 active:scale-[0.98] transition-transform disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2">
+              <Check size={18} /> Tebak
+            </button>
+          </div>
+
+          {/* Feedback */}
+          <AnimatePresence>
+            {feedback && (
+              <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: -20, opacity: 0 }} className={`p-4 rounded-2xl text-center ${feedback.correct ? "bg-green-50 border border-green-200" : "bg-red-50 border border-red-200"}`}>
+                <p className={`text-lg font-bold ${feedback.correct ? "text-green-700" : "text-red-700"}`}>{feedback.message}</p>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       )}
 
       {/* Result */}
       {gameState === "result" && (
-        <div className="flex-1 flex items-center justify-center px-4">
-          <motion.div initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="text-center max-w-sm">
-            <div className="w-24 h-24 rounded-3xl bg-gradient-to-br from-yellow-400 to-amber-500 flex items-center justify-center mx-auto mb-6 shadow-2xl">
-              <Trophy size={48} className="text-white" />
-            </div>
-            <h2 className="text-3xl font-black text-white mb-2">Selesai!</h2>
-            <p className="text-white/60 mb-6">Skor kamu: <span className="text-yellow-400 font-bold text-2xl">{score}</span></p>
+        <div className="flex-1 flex items-center justify-center px-6">
+          <motion.div initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="text-center max-w-sm w-full">
+            <motion.div animate={{ rotate: [0, -10, 10, -10, 0] }} transition={{ duration: 1 }} className="w-28 h-28 rounded-[2rem] bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center mx-auto mb-6 shadow-xl shadow-amber-500/30">
+              <Trophy size={52} className="text-white" />
+            </motion.div>
+            <h2 className="text-3xl font-extrabold text-gray-900 mb-1">Selesai!</h2>
+            <p className="text-gray-500 mb-6">Skor kamu</p>
+            <p className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-violet-500 to-purple-600 mb-8">{score}</p>
 
-            <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 mb-6 border border-white/10 space-y-3">
-              <div className="flex items-center justify-between text-sm text-white/80">
-                <span>XP Didapat</span>
-                <span className="font-bold text-green-400">+{score}</span>
+            <div className="bg-white rounded-2xl p-5 mb-8 shadow-sm border border-gray-100 space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-gray-500">XP Didapat</span>
+                <span className="font-bold text-green-600">+{score}</span>
               </div>
-              <div className="flex items-center justify-between text-sm text-white/80">
-                <span>Best Streak</span>
-                <span className="font-bold text-orange-400">{bestStreak}</span>
+              <div className="h-px bg-gray-100" />
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-gray-500">Best Streak</span>
+                <span className="font-bold text-orange-600">{bestStreak}</span>
               </div>
-              <div className="flex items-center justify-between text-sm text-white/80">
-                <span>Level Sekarang</span>
-                <span className="font-bold text-yellow-400">{levelInfo.level}</span>
+              <div className="h-px bg-gray-100" />
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-gray-500">Level</span>
+                <span className="font-bold text-violet-600">{levelInfo.level}</span>
               </div>
             </div>
 
-            <button onClick={startGame} className="w-full bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-bold py-4 rounded-2xl shadow-xl hover:shadow-2xl hover:scale-[1.02] transition-all flex items-center justify-center gap-2">
+            <button onClick={startGame} className="w-full bg-gradient-to-r from-violet-500 to-purple-600 text-white font-bold py-4 rounded-2xl shadow-lg shadow-violet-500/25 active:scale-[0.98] transition-transform flex items-center justify-center gap-2">
               <RefreshCw size={20} /> Main Lagi
             </button>
-            <button onClick={() => setGameState("menu")} className="w-full mt-3 bg-white/10 backdrop-blur-sm border border-white/20 text-white/70 font-semibold py-3 rounded-xl hover:bg-white/20 transition-all">
+            <button onClick={() => setGameState("menu")} className="w-full mt-3 bg-white border border-gray-200 text-gray-700 font-semibold py-4 rounded-2xl active:scale-[0.98] transition-transform shadow-sm">
               Kembali ke Menu
             </button>
           </motion.div>

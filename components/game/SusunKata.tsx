@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, Heart, Star, Trophy, Zap, RefreshCw, Crown, Shuffle, Check, X, Timer } from "lucide-react";
+import { ArrowLeft, Heart, Star, Trophy, Zap, RefreshCw, Crown, Shuffle, Check, X, Timer, Sparkles } from "lucide-react";
 
 const SCRAMBLE_WORDS = [
   { word: "BAHASA", meaning: "Sistem lambang bunyi yang arbitrer" },
@@ -23,10 +23,8 @@ const SCRAMBLE_WORDS = [
   { word: "FABEL", meaning: "Cerita yang menggambarkan watak dan perilaku manusia" },
   { word: "MITOS", meaning: "Cerita rakyat yang berhubungan dengan terjadinya tempat" },
   { word: "SASTRA", meaning: "Karya tulis yang memiliki nilai estetika" },
-  { word: "GRAMATIK", meaning: "Ilmu tentang kaidah bahasa" },
   { word: "FONEM", meaning: "Satuan bunyi bahasa yang terkecil yang membedakan kata" },
   { word: "MORFEM", meaning: "Satuan bahasa terkecil yang mempunyai makna" },
-  { word: "SILABUS", meaning: "Garis besar materi pelajaran" },
   { word: "KAMUS", meaning: "Buku yang memuat kata dan maknanya" },
   { word: "EJAAN", meaning: "Aturan penulisan kata dalam bahasa" },
   { word: "DIKSI", meaning: "Pilihan kata yang tepat dan selaras" },
@@ -39,21 +37,13 @@ const SCRAMBLE_WORDS = [
   { word: "TEMA", meaning: "Gagasan pokok yang mendasari suatu cerita" },
   { word: "PLOT", meaning: "Rangkaian peristiwa dalam karya fiksi" },
   { word: "KONFLIK", meaning: "Pertentangan dalam cerita" },
-  { word: "RESOLUSI", meaning: "Penyelesaian konflik dalam cerita" },
-  { word: "KLIMAKS", meaning: "Puncak ketegangan dalam cerita" },
   { word: "DIALOG", meaning: "Percakapan antara dua tokoh atau lebih" },
-  { word: "MONOLOG", meaning: "Percakapan seorang diri" },
   { word: "NARATOR", meaning: "Pencerita dalam karya sastra" },
-  { word: "SUDUT", meaning: "Pandangan pengarang dalam cerita" },
   { word: "GAYA", meaning: "Cara pengarang mengungkapkan gagasan" },
   { word: "SIMBOL", meaning: "Lambang yang mewakili sesuatu" },
   { word: "IRONI", meaning: "Makna yang berlawanan dengan yang diucapkan" },
   { word: "SATIRE", meaning: "Sindiran terhadap kebiasaan atau keadaan" },
   { word: "PARODI", meaning: "Tiruan lucu dari karya serius" },
-  { word: "ALITERASI", meaning: "Pengulangan konsonan pada awal kata" },
-  { word: "ASONANSI", meaning: "Pengulangan vokal dalam kata atau frase" },
-  { word: "ONOMA", meaning: "Kata yang menirukan bunyi" },
-  { word: "PERSONIFIKASI", meaning: "Benda mati diberi sifat seperti manusia" },
   { word: "HIPERBOLA", meaning: "Majas yang melebih-lebihkan" },
 ];
 
@@ -139,7 +129,7 @@ export default function SusunKataGame() {
     const newLives = lives - 1;
     setLives(newLives);
     setStreak(0);
-    setFeedback({ correct: false, message: `Waktu habis! Jawaban: ${currentWord?.word}` });
+    setFeedback({ correct: false, message: currentWord?.word });
     if (newLives <= 0) {
       setTimeout(() => setGameState("result"), 2000);
     } else {
@@ -215,7 +205,7 @@ export default function SusunKataGame() {
       setStreak(newStreak);
       setBestStreak(newBestStreak);
       setXp(newXp);
-      setFeedback({ correct: true, message: `Benar! +${totalPoints} poin` });
+      setFeedback({ correct: true, message: `+${totalPoints}` });
       saveProgress(newXp, newBestStreak);
 
       setTimeout(() => {
@@ -226,12 +216,12 @@ export default function SusunKataGame() {
         } else {
           nextWord(usedWords);
         }
-      }, 1500);
+      }, 1200);
     } else {
       const newLives = lives - 1;
       setLives(newLives);
       setStreak(0);
-      setFeedback({ correct: false, message: `Salah! Sisa nyawa: ${newLives}` });
+      setFeedback({ correct: false, message: `${newLives} nyawa tersisa` });
 
       if (newLives <= 0) {
         setTimeout(() => setGameState("result"), 2000);
@@ -266,38 +256,22 @@ export default function SusunKataGame() {
   const levelInfo = getLevelProgress(xp);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-900 via-teal-900 to-cyan-900 flex flex-col">
-      {/* Header */}
-      <div className="bg-black/20 backdrop-blur-sm px-4 py-3">
+    <div className="min-h-screen bg-[#F2F2F7] flex flex-col">
+      {/* iOS-style Header */}
+      <div className="bg-white/80 backdrop-blur-xl border-b border-gray-200/50 px-4 py-3 sticky top-0 z-50">
         <div className="max-w-lg mx-auto flex items-center justify-between">
-          <button onClick={() => setGameState("menu")} className="text-white/70 hover:text-white p-2">
-            <ArrowLeft size={20} />
+          <button onClick={() => setGameState("menu")} className="text-blue-500 font-medium text-sm flex items-center gap-0.5">
+            <ArrowLeft size={20} /> Menu
           </button>
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-1.5">
-              <Star size={16} className="text-yellow-400" />
-              <span className="text-white font-bold text-sm">{score}</span>
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-1 bg-amber-50 px-2.5 py-1 rounded-full">
+              <Star size={14} className="text-amber-500 fill-amber-500" />
+              <span className="text-amber-700 font-bold text-sm">{score}</span>
             </div>
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-0.5">
               {[...Array(3)].map((_, i) => (
-                <Heart key={i} size={18} className={i < lives ? "text-red-400 fill-red-400" : "text-white/20"} />
+                <Heart key={i} size={18} className={i < lives ? "text-red-500 fill-red-500" : "text-gray-300"} />
               ))}
-            </div>
-          </div>
-        </div>
-        {/* Timer & XP */}
-        <div className="max-w-lg mx-auto mt-2 flex items-center gap-4">
-          <div className="flex items-center gap-1.5">
-            <Timer size={14} className={timeLeft <= 10 ? "text-red-400 animate-pulse" : "text-white/60"} />
-            <span className={`text-sm font-bold ${timeLeft <= 10 ? "text-red-400" : "text-white/70"}`}>{timeLeft}s</span>
-          </div>
-          <div className="flex-1">
-            <div className="flex items-center justify-between text-xs text-white/60 mb-1">
-              <span className="flex items-center gap-1"><Crown size={12} className="text-yellow-400" /> Level {levelInfo.level}</span>
-              <span>{Math.floor(xp)} / {levelInfo.next} XP</span>
-            </div>
-            <div className="h-1.5 bg-white/10 rounded-full overflow-hidden">
-              <div className="h-full bg-gradient-to-r from-yellow-400 to-amber-500 rounded-full transition-all duration-500" style={{ width: `${levelInfo.progress}%` }} />
             </div>
           </div>
         </div>
@@ -305,30 +279,49 @@ export default function SusunKataGame() {
 
       {/* Menu */}
       {gameState === "menu" && (
-        <div className="flex-1 flex items-center justify-center px-4">
-          <motion.div initial={{ y: 30, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="text-center max-w-sm">
-            <div className="w-24 h-24 rounded-3xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center mx-auto mb-6 shadow-2xl">
-              <Shuffle size={48} className="text-white" />
-            </div>
-            <h1 className="text-4xl font-black text-white mb-2">Susun Kata</h1>
-            <p className="text-white/60 mb-6">Susun huruf acak menjadi kata Bahasa Indonesia yang benar</p>
+        <div className="flex-1 flex items-center justify-center px-6">
+          <motion.div initial={{ y: 30, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="text-center max-w-sm w-full">
+            <motion.div animate={{ rotate: [0, 10, -10, 10, 0] }} transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }} className="w-28 h-28 rounded-[2rem] bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center mx-auto mb-6 shadow-xl shadow-emerald-500/30">
+              <Shuffle size={52} className="text-white" />
+            </motion.div>
+            <h1 className="text-4xl font-extrabold text-gray-900 mb-2 tracking-tight">Susun Kata</h1>
+            <p className="text-gray-500 mb-8 text-base">Susun huruf acak menjadi kata yang benar</p>
 
-            <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 mb-6 border border-white/10">
-              <div className="flex items-center justify-between text-sm text-white/80">
-                <span>Level</span>
-                <span className="font-bold text-yellow-400">{levelInfo.level}</span>
+            {/* Stats Card */}
+            <div className="bg-white rounded-2xl p-5 mb-8 shadow-sm border border-gray-100">
+              <div className="grid grid-cols-3 gap-4">
+                <div className="text-center">
+                  <div className="flex items-center justify-center gap-1 mb-1">
+                    <Crown size={16} className="text-amber-500" />
+                  </div>
+                  <p className="text-2xl font-bold text-gray-900">{levelInfo.level}</p>
+                  <p className="text-xs text-gray-400">Level</p>
+                </div>
+                <div className="text-center border-x border-gray-100">
+                  <div className="flex items-center justify-center gap-1 mb-1">
+                    <Zap size={16} className="text-emerald-500" />
+                  </div>
+                  <p className="text-2xl font-bold text-gray-900">{Math.floor(xp)}</p>
+                  <p className="text-xs text-gray-400">XP</p>
+                </div>
+                <div className="text-center">
+                  <div className="flex items-center justify-center gap-1 mb-1">
+                    <Sparkles size={16} className="text-orange-500" />
+                  </div>
+                  <p className="text-2xl font-bold text-gray-900">{bestStreak}</p>
+                  <p className="text-xs text-gray-400">Streak</p>
+                </div>
               </div>
-              <div className="flex items-center justify-between text-sm text-white/80 mt-2">
-                <span>Total XP</span>
-                <span className="font-bold">{Math.floor(xp)}</span>
-              </div>
-              <div className="flex items-center justify-between text-sm text-white/80 mt-2">
-                <span>Best Streak</span>
-                <span className="font-bold text-orange-400">{bestStreak}</span>
+              {/* XP Progress */}
+              <div className="mt-4">
+                <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                  <motion.div className="h-full bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full" initial={{ width: 0 }} animate={{ width: `${levelInfo.progress}%` }} transition={{ duration: 0.8 }} />
+                </div>
+                <p className="text-xs text-gray-400 mt-1.5 text-center">{Math.floor(xp)} / {levelInfo.next} XP</p>
               </div>
             </div>
 
-            <button onClick={startGame} className="w-full bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-bold py-4 rounded-2xl text-lg shadow-xl hover:shadow-2xl hover:scale-[1.02] transition-all flex items-center justify-center gap-2">
+            <button onClick={startGame} className="w-full bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-bold py-4 rounded-2xl text-lg shadow-lg shadow-emerald-500/25 active:scale-[0.98] transition-transform flex items-center justify-center gap-2">
               <Zap size={20} /> Mulai Bermain
             </button>
           </motion.div>
@@ -337,110 +330,124 @@ export default function SusunKataGame() {
 
       {/* Playing */}
       {gameState === "playing" && currentWord && (
-        <div className="flex-1 flex flex-col items-center justify-center px-4">
-          <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} key={currentWord.word} className="max-w-lg w-full text-center">
-            {/* Round */}
-            <div className="flex items-center justify-between text-sm text-white/50 mb-6">
-              <span>Ronde {round + 1} / {totalRounds}</span>
-              {streak > 0 && <span className="text-orange-400 font-bold flex items-center gap-1"><Zap size={14} /> Streak {streak}</span>}
-            </div>
-
-            {/* Meaning hint */}
-            <div className="bg-white/10 backdrop-blur-sm rounded-xl px-4 py-2 mb-6 inline-block">
-              <p className="text-sm text-white/70">Arti: <span className="text-white font-medium">{currentWord.meaning}</span></p>
-            </div>
-
-            {/* Selected letters (answer area) */}
-            <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-4 border border-white/10 min-h-[80px]">
-              <p className="text-xs text-white/40 mb-3">Jawaban kamu:</p>
-              <div className="flex items-center justify-center gap-2 flex-wrap min-h-[50px]">
-                {selectedLetters.length === 0 ? (
-                  <span className="text-white/20 text-lg">Klik huruf di bawah</span>
-                ) : (
-                  selectedLetters.map((letter, i) => (
-                    <motion.button
-                      key={i}
-                      initial={{ scale: 0 }}
-                      animate={{ scale: 1 }}
-                      onClick={() => deselectLetter(i)}
-                      className="w-10 h-12 rounded-lg bg-emerald-500 text-white font-bold text-lg shadow-md hover:bg-emerald-600 transition-colors"
-                    >
-                      {letter}
-                    </motion.button>
-                  ))
-                )}
-              </div>
-            </div>
-
-            {/* Available letters */}
-            <div className="flex items-center justify-center gap-2 flex-wrap mb-6">
-              {availableLetters.map((letter, i) => (
-                <motion.button
-                  key={i}
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  onClick={() => selectLetter(i)}
-                  className="w-10 h-12 rounded-lg bg-white/10 border border-white/20 text-white font-bold text-lg hover:bg-white/20 transition-colors"
-                >
-                  {letter}
-                </motion.button>
-              ))}
-            </div>
-
-            {/* Action buttons */}
-            <div className="flex gap-3 mb-4">
-              <button onClick={clearSelection} className="flex-1 bg-white/10 backdrop-blur-sm border border-white/20 text-white/70 font-semibold py-3 rounded-xl hover:bg-white/20 transition-all flex items-center justify-center gap-2">
-                <X size={16} /> Hapus
-              </button>
-              <button onClick={reshuffle} className="flex-1 bg-white/10 backdrop-blur-sm border border-white/20 text-white/70 font-semibold py-3 rounded-xl hover:bg-white/20 transition-all flex items-center justify-center gap-2">
-                <Shuffle size={16} /> Acak
-              </button>
-              <button onClick={checkAnswer} disabled={selectedLetters.length === 0} className="flex-1 bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-bold py-3 rounded-xl shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2">
-                <Check size={16} /> Cek
-              </button>
-            </div>
-
-            {/* Feedback */}
-            <AnimatePresence>
-              {feedback && (
-                <motion.div initial={{ y: 10, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: -10, opacity: 0 }} className={`p-3 rounded-xl text-sm font-medium ${feedback.correct ? "bg-green-500/20 text-green-300 border border-green-500/30" : "bg-red-500/20 text-red-300 border border-red-500/30"}`}>
-                  {feedback.message}
+        <div className="flex-1 flex flex-col px-6 py-6 max-w-lg mx-auto w-full">
+          {/* Round, Timer & Streak */}
+          <div className="flex items-center justify-between mb-6">
+            <span className="text-sm font-medium text-gray-400">{round + 1} / {totalRounds}</span>
+            <div className="flex items-center gap-2">
+              {streak > 0 && (
+                <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="flex items-center gap-1 bg-orange-50 px-3 py-1.5 rounded-full">
+                  <Zap size={14} className="text-orange-500 fill-orange-500" />
+                  <span className="text-orange-700 font-bold text-sm">{streak}</span>
                 </motion.div>
               )}
-            </AnimatePresence>
-          </motion.div>
+              <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full ${timeLeft <= 10 ? "bg-red-50" : "bg-gray-100"}`}>
+                <Timer size={14} className={timeLeft <= 10 ? "text-red-500 animate-pulse" : "text-gray-500"} />
+                <span className={`font-bold text-sm ${timeLeft <= 10 ? "text-red-600" : "text-gray-700"}`}>{timeLeft}s</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Meaning Hint */}
+          <div className="bg-white rounded-2xl p-4 mb-6 shadow-sm border border-gray-100 text-center">
+            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Arti Kata</p>
+            <p className="text-sm text-gray-700 leading-relaxed">{currentWord.meaning}</p>
+          </div>
+
+          {/* Answer Area */}
+          <div className="bg-white rounded-2xl p-5 mb-6 shadow-sm border border-gray-100 min-h-[80px]">
+            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Jawaban</p>
+            <div className="flex items-center justify-center gap-2 flex-wrap min-h-[50px]">
+              {selectedLetters.length === 0 ? (
+                <span className="text-gray-300 text-sm">Klik huruf di bawah</span>
+              ) : (
+                selectedLetters.map((letter, i) => (
+                  <motion.button
+                    key={i}
+                    initial={{ scale: 0, y: 20 }}
+                    animate={{ scale: 1, y: 0 }}
+                    onClick={() => deselectLetter(i)}
+                    className="w-10 h-12 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white font-bold text-lg shadow-md active:scale-95 transition-transform"
+                  >
+                    {letter}
+                  </motion.button>
+                ))
+              )}
+            </div>
+          </div>
+
+          {/* Letter Tiles */}
+          <div className="flex items-center justify-center gap-2 flex-wrap mb-8">
+            {availableLetters.map((letter, i) => (
+              <motion.button
+                key={i}
+                initial={{ scale: 0, y: 20 }}
+                animate={{ scale: 1, y: 0 }}
+                transition={{ delay: i * 0.03 }}
+                onClick={() => selectLetter(i)}
+                className="w-11 h-13 rounded-xl bg-white border-2 border-gray-200 text-gray-800 font-bold text-lg shadow-sm active:scale-95 transition-transform hover:border-emerald-300"
+              >
+                {letter}
+              </motion.button>
+            ))}
+          </div>
+
+          {/* Action Buttons */}
+          <div className="flex gap-3 mb-6">
+            <button onClick={clearSelection} className="flex-1 bg-white border border-gray-200 text-gray-700 font-semibold py-3.5 rounded-2xl active:scale-[0.98] transition-transform flex items-center justify-center gap-2 shadow-sm">
+              <X size={18} /> Hapus
+            </button>
+            <button onClick={reshuffle} className="flex-1 bg-white border border-gray-200 text-gray-700 font-semibold py-3.5 rounded-2xl active:scale-[0.98] transition-transform flex items-center justify-center gap-2 shadow-sm">
+              <Shuffle size={18} /> Acak
+            </button>
+            <button onClick={checkAnswer} disabled={selectedLetters.length === 0} className="flex-1 bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-bold py-3.5 rounded-2xl shadow-lg shadow-emerald-500/25 active:scale-[0.98] transition-transform disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2">
+              <Check size={18} /> Cek
+            </button>
+          </div>
+
+          {/* Feedback */}
+          <AnimatePresence>
+            {feedback && (
+              <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: -20, opacity: 0 }} className={`p-4 rounded-2xl text-center ${feedback.correct ? "bg-green-50 border border-green-200" : "bg-red-50 border border-red-200"}`}>
+                <p className={`text-lg font-bold ${feedback.correct ? "text-green-700" : "text-red-700"}`}>{feedback.message}</p>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       )}
 
       {/* Result */}
       {gameState === "result" && (
-        <div className="flex-1 flex items-center justify-center px-4">
-          <motion.div initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="text-center max-w-sm">
-            <div className="w-24 h-24 rounded-3xl bg-gradient-to-br from-yellow-400 to-amber-500 flex items-center justify-center mx-auto mb-6 shadow-2xl">
-              <Trophy size={48} className="text-white" />
-            </div>
-            <h2 className="text-3xl font-black text-white mb-2">Selesai!</h2>
-            <p className="text-white/60 mb-6">Skor kamu: <span className="text-yellow-400 font-bold text-2xl">{score}</span></p>
+        <div className="flex-1 flex items-center justify-center px-6">
+          <motion.div initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="text-center max-w-sm w-full">
+            <motion.div animate={{ rotate: [0, 10, -10, 10, 0] }} transition={{ duration: 1 }} className="w-28 h-28 rounded-[2rem] bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center mx-auto mb-6 shadow-xl shadow-amber-500/30">
+              <Trophy size={52} className="text-white" />
+            </motion.div>
+            <h2 className="text-3xl font-extrabold text-gray-900 mb-1">Selesai!</h2>
+            <p className="text-gray-500 mb-6">Skor kamu</p>
+            <p className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-500 to-teal-600 mb-8">{score}</p>
 
-            <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 mb-6 border border-white/10 space-y-3">
-              <div className="flex items-center justify-between text-sm text-white/80">
-                <span>XP Didapat</span>
-                <span className="font-bold text-green-400">+{score}</span>
+            <div className="bg-white rounded-2xl p-5 mb-8 shadow-sm border border-gray-100 space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-gray-500">XP Didapat</span>
+                <span className="font-bold text-green-600">+{score}</span>
               </div>
-              <div className="flex items-center justify-between text-sm text-white/80">
-                <span>Best Streak</span>
-                <span className="font-bold text-orange-400">{bestStreak}</span>
+              <div className="h-px bg-gray-100" />
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-gray-500">Best Streak</span>
+                <span className="font-bold text-orange-600">{bestStreak}</span>
               </div>
-              <div className="flex items-center justify-between text-sm text-white/80">
-                <span>Level Sekarang</span>
-                <span className="font-bold text-yellow-400">{levelInfo.level}</span>
+              <div className="h-px bg-gray-100" />
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-gray-500">Level</span>
+                <span className="font-bold text-emerald-600">{levelInfo.level}</span>
               </div>
             </div>
 
-            <button onClick={startGame} className="w-full bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-bold py-4 rounded-2xl shadow-xl hover:shadow-2xl hover:scale-[1.02] transition-all flex items-center justify-center gap-2">
+            <button onClick={startGame} className="w-full bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-bold py-4 rounded-2xl shadow-lg shadow-emerald-500/25 active:scale-[0.98] transition-transform flex items-center justify-center gap-2">
               <RefreshCw size={20} /> Main Lagi
             </button>
-            <button onClick={() => setGameState("menu")} className="w-full mt-3 bg-white/10 backdrop-blur-sm border border-white/20 text-white/70 font-semibold py-3 rounded-xl hover:bg-white/20 transition-all">
+            <button onClick={() => setGameState("menu")} className="w-full mt-3 bg-white border border-gray-200 text-gray-700 font-semibold py-4 rounded-2xl active:scale-[0.98] transition-transform shadow-sm">
               Kembali ke Menu
             </button>
           </motion.div>
