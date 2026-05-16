@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Modal } from "@/components/ui/modal";
-import { Users, CheckCircle, XCircle, Clock, Trash2, Eye, Loader2, MessageSquare, RefreshCw } from "lucide-react";
+import { Users, CheckCircle, XCircle, Clock, Trash2, Eye, Loader2, MessageSquare, AlertCircle } from "lucide-react";
 
 type CommunityStatus = "PENDING" | "APPROVED" | "REJECTED";
 
@@ -14,6 +14,7 @@ export default function AdminKomunitasPage() {
   const [stats, setStats] = useState({ pending: 0, approved: 0, rejected: 0, total: 0 });
   const [filter, setFilter] = useState<CommunityStatus | "ALL">("PENDING");
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
   const [actionLoading, setActionLoading] = useState<string | null>(null);
   const [showRejectModal, setShowRejectModal] = useState(false);
   const [rejectId, setRejectId] = useState("");
@@ -22,12 +23,23 @@ export default function AdminKomunitasPage() {
 
   const fetchData = useCallback(async () => {
     setLoading(true);
+    setError("");
     try {
-      const res = await fetch(`/api/admin/komunitas${filter !== "ALL" ? `?status=${filter}` : ""}`);
+      const url = `/api/admin/komunitas${filter !== "ALL" ? `?status=${filter}` : ""}`;
+      console.log("Fetching:", url);
+      const res = await fetch(url);
       const data = await res.json();
+      console.log("Response:", data);
+
+      if (!res.ok) {
+        setError(data.error || `HTTP ${res.status}`);
+        return;
+      }
+
       if (data.communities) setCommunities(data.communities);
       if (data.stats) setStats(data.stats);
-    } catch (e) {
+    } catch (e: any) {
+      setError(e.message || "Gagal fetch data");
       console.error(e);
     }
     setLoading(false);
@@ -45,8 +57,9 @@ export default function AdminKomunitasPage() {
       });
       const data = await res.json();
       if (data.success) fetchData();
-    } catch (e) {
-      console.error(e);
+      else setError(data.error || "Gagal menyetujui");
+    } catch (e: any) {
+      setError(e.message);
     }
     setActionLoading(null);
   };
@@ -65,9 +78,11 @@ export default function AdminKomunitasPage() {
         setShowRejectModal(false);
         setRejectNote("");
         fetchData();
+      } else {
+        setError(data.error || "Gagal menolak");
       }
-    } catch (e) {
-      console.error(e);
+    } catch (e: any) {
+      setError(e.message);
     }
     setActionLoading(null);
   };
@@ -79,8 +94,9 @@ export default function AdminKomunitasPage() {
       const res = await fetch(`/api/admin/komunitas?id=${id}`, { method: "DELETE" });
       const data = await res.json();
       if (data.success) fetchData();
-    } catch (e) {
-      console.error(e);
+      else setError(data.error || "Gagal menghapus");
+    } catch (e: any) {
+      setError(e.message);
     }
     setActionLoading(null);
   };
@@ -99,7 +115,17 @@ export default function AdminKomunitasPage() {
         <p className="mt-1 text-sm text-gray-600">Review, setujui, atau tolak komunitas baru</p>
       </div>
 
-      {/* Stats & Filters */}
+      {error && (
+        <div className="mb-6 bg-red-50 border border-red-200 rounded-xl p-4 flex items-start gap-3">
+          <AlertCircle className="h-5 w-5 text-red-500 shrink-0 mt-0.5" />
+          <div>
+            <p className="text-sm font-medium text-red-800">Error</p>
+            <p className="text-sm text-red-600">{error}</p>
+            <button onClick={fetchData} className="text-xs text-red-500 underline mt-1">Coba lagi</button>
+          </div>
+        </div>
+      )}
+
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
         {filters.map((f) => (
           <button
@@ -113,7 +139,6 @@ export default function AdminKomunitasPage() {
         ))}
       </div>
 
-      {/* Community List */}
       {loading ? (
         <div className="flex justify-center py-12"><Loader2 className="h-8 w-8 animate-spin text-red-500" /></div>
       ) : communities.length === 0 ? (
@@ -135,51 +160,36 @@ export default function AdminKomunitasPage() {
                     <Badge variant={c.status === "APPROVED" ? "success" : c.status === "REJECTED" ? "destructive" : "warning"}>
                       {c.status === "APPROVED" ? "Disetujui" : c.status === "REJECTED" ? "Ditolak" : "Menunggu Review"}
                     </Badge>
-                    {c.isVerified && <Badge variant="gold">Verified</Badge>}
                   </div>
-
                   <h3 className="font-semibold text-gray-900 text-lg">{c.name}</h3>
                   {c.description && <p className="text-sm text-gray-500 mt-1">{c.description}</p>}
-
                   <div className="flex flex-wrap gap-4 mt-3 text-sm text-gray-400">
                     {c.region && <span>📍 {c.region}</span>}
                     {c.province && <span>🏛️ {c.province}</span>}
                     {c.city && <span>🏙️ {c.city}</span>}
-                    {c.school && <span>🏫 {c.school}</span>}
                     <span className="flex items-center gap-1"><Users size={14} /> {c.memberCount} anggota</span>
-                    <span>📝 {c.postCount} postingan</span>
                   </div>
-
-                  {c.creator && (
-                    <p className="text-xs text-gray-400 mt-2">Dibuat oleh: {c.creator.fullName} ({c.creator.email})</p>
-                  )}
-                  <p className="text-xs text-gray-400 mt-1">{new Date(c.createdAt).toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit" })}</p>
-
+                  {c.creator && <p className="text-xs text-gray-400 mt-2">Oleh: {c.creator.fullName}</p>}
                   {c.status === "REJECTED" && c.reviewNote && (
                     <div className="mt-3 bg-red-50 border border-red-200 rounded-lg p-3">
-                      <p className="text-sm font-medium text-red-700 flex items-center gap-1"><XCircle size={14} /> Alasan Penolakan:</p>
+                      <p className="text-sm font-medium text-red-700">Alasan Penolakan:</p>
                       <p className="text-sm text-red-600 mt-1">{c.reviewNote}</p>
                     </div>
                   )}
                 </div>
-
                 <div className="flex gap-2 ml-4 shrink-0">
-                  <Button size="sm" variant="outline" onClick={() => setShowDetail(c)}>
-                    <Eye size={14} /> Detail
-                  </Button>
-
+                  <Button size="sm" variant="outline" onClick={() => setShowDetail(c)}><Eye size={14} /></Button>
                   {c.status === "PENDING" && (
                     <>
                       <Button size="sm" onClick={() => handleApprove(c.id)} disabled={actionLoading === c.id} className="bg-emerald-600 hover:bg-emerald-700 text-white">
                         {actionLoading === c.id ? <Loader2 size={14} className="animate-spin" /> : <CheckCircle size={14} />}
-                        {actionLoading === c.id ? "..." : "Setujui"}
+                        Setujui
                       </Button>
                       <Button size="sm" onClick={() => { setRejectId(c.id); setRejectNote(""); setShowRejectModal(true); }} disabled={actionLoading === c.id} variant="outline" className="border-red-200 text-red-600 hover:bg-red-50">
                         <XCircle size={14} /> Tolak
                       </Button>
                     </>
                   )}
-
                   <Button size="sm" variant="ghost" onClick={() => handleDelete(c.id)} disabled={actionLoading === c.id} className="text-red-500 hover:text-red-700 hover:bg-red-50">
                     {actionLoading === c.id ? <Loader2 size={14} className="animate-spin" /> : <Trash2 size={14} />}
                   </Button>
@@ -190,49 +200,35 @@ export default function AdminKomunitasPage() {
         </div>
       )}
 
-      {/* Reject Modal */}
       <Modal isOpen={showRejectModal} onClose={() => setShowRejectModal(false)} title="Tolak Komunitas" className="max-w-md">
         <div className="space-y-4">
           <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
-            <p className="text-sm text-amber-700 flex items-center gap-1"><MessageSquare size={14} /> Berikan alasan penolakan agar pembuat komunitas tahu apa yang perlu diperbaiki.</p>
+            <p className="text-sm text-amber-700 flex items-center gap-1"><MessageSquare size={14} /> Berikan alasan penolakan.</p>
           </div>
           <div>
             <label className="block text-sm font-medium mb-1">Alasan Penolakan *</label>
-            <textarea
-              value={rejectNote}
-              onChange={(e) => setRejectNote(e.target.value)}
-              className="w-full rounded-lg border px-4 py-2 text-sm"
-              rows={4}
-              placeholder="Contoh: Nama komunitas terlalu umum, deskripsi tidak jelas, dll."
-            />
+            <textarea value={rejectNote} onChange={(e) => setRejectNote(e.target.value)} className="w-full rounded-lg border px-4 py-2 text-sm" rows={4} placeholder="Contoh: Nama terlalu umum..." />
           </div>
           <div className="flex gap-2">
             <Button variant="outline" onClick={() => setShowRejectModal(false)} className="flex-1">Batal</Button>
             <Button onClick={handleReject} disabled={!rejectNote.trim() || actionLoading === rejectId} variant="outline" className="flex-1 border-red-200 text-red-600 hover:bg-red-50">
               {actionLoading === rejectId ? <Loader2 size={14} className="animate-spin" /> : <XCircle size={14} />}
-              {actionLoading === rejectId ? "Memproses..." : "Tolak Komunitas"}
+              Tolak
             </Button>
           </div>
         </div>
       </Modal>
 
-      {/* Detail Modal */}
       {showDetail && (
         <Modal isOpen={!!showDetail} onClose={() => setShowDetail(null)} title="Detail Komunitas" className="max-w-lg">
           <div className="space-y-4">
-            <div>
-              <h3 className="text-lg font-bold">{showDetail.name}</h3>
-              <p className="text-sm text-gray-500 mt-1">{showDetail.description || "Tidak ada deskripsi"}</p>
-            </div>
+            <h3 className="text-lg font-bold">{showDetail.name}</h3>
+            <p className="text-sm text-gray-500">{showDetail.description || "-"}</p>
             <div className="grid grid-cols-2 gap-3 text-sm">
               <div><p className="font-medium text-gray-400">Tipe</p><p>{showDetail.type}</p></div>
               <div><p className="font-medium text-gray-400">Status</p><p>{showDetail.status}</p></div>
-              {showDetail.region && <div><p className="font-medium text-gray-400">Wilayah</p><p>{showDetail.region}</p></div>}
               {showDetail.province && <div><p className="font-medium text-gray-400">Provinsi</p><p>{showDetail.province}</p></div>}
               {showDetail.city && <div><p className="font-medium text-gray-400">Kota</p><p>{showDetail.city}</p></div>}
-              {showDetail.school && <div><p className="font-medium text-gray-400">Sekolah</p><p>{showDetail.school}</p></div>}
-              <div><p className="font-medium text-gray-400">Anggota</p><p>{showDetail.memberCount}</p></div>
-              <div><p className="font-medium text-gray-400">Postingan</p><p>{showDetail.postCount}</p></div>
             </div>
             {showDetail.creator && (
               <div className="bg-gray-50 rounded-lg p-3">
@@ -247,7 +243,6 @@ export default function AdminKomunitasPage() {
                 <p className="text-sm text-red-600 mt-1">{showDetail.reviewNote}</p>
               </div>
             )}
-            <p className="text-xs text-gray-400">Dibuat: {new Date(showDetail.createdAt).toLocaleString("id-ID")}</p>
           </div>
         </Modal>
       )}
