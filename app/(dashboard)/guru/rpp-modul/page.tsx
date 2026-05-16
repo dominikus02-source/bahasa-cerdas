@@ -16,27 +16,13 @@ const TAHUN_AJARAN = ["2025/2026", "2026/2027", "2027/2028"];
 const METODE_OPTIONS = [
   { value: "Diskusi", label: "Diskusi", icon: "💬" },
   { value: "Ceramah", label: "Ceramah", icon: "🎤" },
-  { value: "Project Based Learning", label: "Project Based", icon: "🔨" },
-  { value: "Problem Based Learning", label: "Problem Based", icon: "🧩" },
-  { value: "Inquiry", label: "Inquiry", icon: "🔍" },
-  { value: "Game Based Learning", label: "Game Based", icon: "🎮" },
-  { value: "Blended Learning", label: "Blended", icon: "💻" },
-  { value: "Cooperative Learning", label: "Cooperative", icon: "🤝" },
-  { value: "Discovery Learning", label: "Discovery", icon: "🔎" },
-];
-
-const KD_OPTIONS = [
-  { value: "3.1", label: "3.1 - Teks Deskripsi" },
-  { value: "3.2", label: "3.2 - Teks Cerita" },
-  { value: "3.3", label: "3.3 - Teks Negosiasi" },
-  { value: "3.4", label: "3.4 - Teks Eksposisi" },
-  { value: "3.5", label: "3.5 - Teks Anekdot" },
-  { value: "3.6", label: "3.6 - Teks Laporan" },
-  { value: "3.7", label: "3.7 - Surat Resmi" },
-  { value: "3.8", label: "3.8 - Karya Sastra" },
-  { value: "4.1", label: "4.1 - Menulis Teks" },
-  { value: "4.2", label: "4.2 - Menyunting Teks" },
-  { value: "4.3", label: "4.3 - Membaca Pemahaman" },
+  { value: "Pembelajaran Berbasis Proyek", label: "Berbasis Proyek", icon: "🔨" },
+  { value: "Pembelajaran Berbasis Masalah", label: "Berbasis Masalah", icon: "🧩" },
+  { value: "Penemuan Terbimbing", label: "Penemuan", icon: "🔍" },
+  { value: "Pembelajaran Berbasis Permainan", label: "Berbasis Permainan", icon: "🎮" },
+  { value: "Pembelajaran Campuran", label: "Campuran", icon: "💻" },
+  { value: "Pembelajaran Kooperatif", label: "Kooperatif", icon: "🤝" },
+  { value: "Pembelajaran Berbasis Penemuan", label: "Berbasis Penemuan", icon: "🔎" },
 ];
 
 export default function RPPModulPage() {
@@ -133,6 +119,8 @@ export default function RPPModulPage() {
       });
       const data = await res.json();
       if (data.success) {
+        setGenerated(null);
+        setActiveTab("list");
         fetchDocs();
       }
     } catch (e) {
@@ -179,11 +167,6 @@ export default function RPPModulPage() {
 
   const toggleMetode = (num: 1 | 2 | 3, value: string) => {
     const key = `metode${num}` as keyof typeof genForm;
-    setGenForm({ ...genForm, [key]: genForm[key] === value ? "" : value });
-  };
-
-  const toggleKd = (num: 1 | 2 | 3, value: string) => {
-    const key = `kd${num}` as keyof typeof genForm;
     setGenForm({ ...genForm, [key]: genForm[key] === value ? "" : value });
   };
 
@@ -267,21 +250,19 @@ export default function RPPModulPage() {
                 </div>
               </div>
 
-              {/* KD Selection (3) */}
+              {/* KD / Kompetensi Dasar (3) */}
               <div>
-                <label className="block text-sm font-medium mb-2">KD / Kompetensi Dasar (pilih sampai 3)</label>
+                <label className="block text-sm font-medium mb-2">KD / Kompetensi Dasar (isi sendiri)</label>
                 <div className="space-y-2">
                   {[1, 2, 3].map((num) => (
                     <div key={num} className="flex items-center gap-2">
                       <span className="text-xs font-medium text-gray-400 w-8">KD {num}</span>
-                      <select
+                      <input
                         value={genForm[`kd${num}` as keyof typeof genForm] as string}
-                        onChange={(e) => toggleKd(num as 1 | 2 | 3, e.target.value)}
+                        onChange={(e) => setGenForm({ ...genForm, [`kd${num}`]: e.target.value })}
                         className="flex-1 rounded-lg border px-4 py-2 text-sm"
-                      >
-                        <option value="">Pilih KD...</option>
-                        {KD_OPTIONS.map((kd) => <option key={kd.value} value={kd.value}>{kd.label}</option>)}
-                      </select>
+                        placeholder={`Contoh: 3.${num} Menganalisis teks...`}
+                      />
                     </div>
                   ))}
                 </div>
