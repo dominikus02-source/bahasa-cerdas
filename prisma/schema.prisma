@@ -374,6 +374,7 @@ model User {
   uploadedRPPs       RPP[]
   generatedRPPs      GeneratedRPP[]
   uploadedBankSoals  BankSoal[]
+  soals              Soal[]
   withdrawals        Withdrawal[]
   sellerEarnings     SellerEarning[]
   purchasesHistory   PurchaseHistory[]
@@ -665,12 +666,40 @@ model BankSoal {
 
   uploaderId String
   uploader   User   @relation(fields: [uploaderId], references: [id], onDelete: Cascade)
+  soals      Soal[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@index([uploaderId])
   @@index([isPublished])
+}
+
+model Soal {
+  id            String   @id @default(cuid())
+  text          String
+  type          String   @default("PILIHAN_GANDA")
+  difficulty    String   @default("MEDIUM")
+  options       String[]
+  correctAnswer String
+  explanation   String?
+  isHOTS        Boolean  @default(false)
+  kelas         String
+  topik         String?
+  KD            String?
+  subject       String   @default("Bahasa Indonesia")
+  source        String   @default("MANUAL")
+  bankSoalId    String?
+  bankSoal      BankSoal? @relation(fields: [bankSoalId], references: [id], onDelete: SetNull)
+  uploaderId    String
+  uploader      User     @relation(fields: [uploaderId], references: [id], onDelete: Cascade)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([uploaderId])
+  @@index([kelas])
+  @@index([topik])
+  @@index([source])
 }
 
 model RPP {
