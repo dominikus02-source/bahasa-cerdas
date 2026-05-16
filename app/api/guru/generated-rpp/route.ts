@@ -38,7 +38,7 @@ export async function POST(req: NextRequest) {
     if (!dbUser || dbUser.role !== "GURU") return NextResponse.json({ error: "Guru only" }, { status: 403 });
 
     const body = await req.json();
-    const { type, title, description, kelas, semester, tahunAjaran, kds, methods, content } = body;
+    const { type, title, description, kelas, semester, tahunAjaran, kds, methods, curriculum, schoolInfo, content } = body;
 
     if (!title || !kelas || !content) {
       return NextResponse.json({ error: "title, kelas, and content are required" }, { status: 400 });
@@ -50,8 +50,10 @@ export async function POST(req: NextRequest) {
         title,
         description,
         kelas,
-        semester: semester || 1,
+        semester: semester || "1 (Ganjil)",
         tahunAjaran: tahunAjaran || "2025/2026",
+        curriculum: curriculum || "MERDEKA",
+        schoolInfo: schoolInfo || null,
         kds: kds || [],
         methods: methods || [],
         content,

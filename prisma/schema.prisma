@@ -709,9 +709,11 @@ model GeneratedRPP {
   title       String
   description String?
   kelas       String
-  semester    Int      @default(1)
+  semester    String   @default("1 (Ganjil)")
   tahunAjaran String   @default("2025/2026")
   subject     String   @default("Bahasa Indonesia")
+  curriculum  String   @default("MERDEKA")
+  schoolInfo  Json?
   kds         String[]
   methods     String[]
   content     Json
