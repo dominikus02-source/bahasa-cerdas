@@ -87,3 +87,44 @@
 .artikel-content hr {
   @apply my-8 border-slate-200;
 }
+
+@media print {
+  @page {
+    margin: 2cm;
+    size: A4;
+  }
+
+  body * {
+    visibility: hidden;
+  }
+
+  #print-container, #print-container * {
+    visibility: visible;
+  }
+
+  #print-container {
+    display: block !important;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    padding: 0;
+    background: white;
+  }
+
+  .print-content h3 {
+    page-break-after: avoid;
+  }
+
+  .print-content table {
+    page-break-inside: avoid;
+  }
+
+  .print-content ol li {
+    page-break-inside: avoid;
+  }
+
+  .print-break-inside-avoid {
+    page-break-inside: avoid;
+  }
+}

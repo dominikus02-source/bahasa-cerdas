@@ -46,6 +46,7 @@ export default function RPPModulPage() {
     schoolName: "",
     teacherName: "",
     nip: "",
+    principalName: "",
     academicYear: "2025/2026",
   });
 
@@ -230,6 +231,10 @@ export default function RPPModulPage() {
                 <input value={schoolInfo.nip} onChange={(e) => setSchoolInfo({ ...schoolInfo, nip: e.target.value })} className="w-full rounded-lg border px-4 py-2" placeholder="19850101 201001 1 001" />
               </div>
               <div>
+                <label className="block text-sm font-medium mb-1">Nama Kepala Sekolah</label>
+                <input value={schoolInfo.principalName} onChange={(e) => setSchoolInfo({ ...schoolInfo, principalName: e.target.value })} className="w-full rounded-lg border px-4 py-2" placeholder="Dr. Ahmad Fauzi, M.Pd." />
+              </div>
+              <div>
                 <label className="block text-sm font-medium mb-1">Tahun Pelajaran</label>
                 <input value={schoolInfo.academicYear} onChange={(e) => setSchoolInfo({ ...schoolInfo, academicYear: e.target.value })} className="w-full rounded-lg border px-4 py-2" placeholder="2025/2026" />
               </div>
@@ -401,53 +406,68 @@ export default function RPPModulPage() {
               </div>
             </div>
 
-            <div className="p-8 print:p-6">
-              {/* Letterhead */}
-              <div className="text-center mb-6 pb-4 border-b-2 border-gray-800">
-                <p className="text-sm font-bold text-gray-900 uppercase">{schoolInfo.schoolName || previewDoc.schoolInfo?.schoolName || "NAMA SEKOLAH"}</p>
-                <p className="text-xs text-gray-500">{docType === "RPP" ? "RENCANA PELAKSANAAN PEMBELAJARAN" : "MODUL AJAR"}</p>
-                <p className="text-xs text-gray-500">Kurikulum {previewDoc.curriculum === "K13" ? "2013" : previewDoc.curriculum === "MERDEKA_DL" ? "Merdeka Deep Learning" : "Merdeka"}</p>
-              </div>
-
-              {/* Identity Table */}
-              <div className="mb-6">
-                <table className="w-full text-sm">
-                  <tbody>
-                    <tr><td className="py-1 pr-4 font-medium w-40">Mata Pelajaran</td><td>: Bahasa Indonesia</td></tr>
-                    <tr><td className="py-1 font-medium">Kelas / Semester</td><td>: {previewDoc.kelas || genForm.kelas} / {previewDoc.semester || genForm.semester}</td></tr>
-                    <tr><td className="py-1 font-medium">Tahun Pelajaran</td><td>: {previewDoc.tahunAjaran || schoolInfo.academicYear}</td></tr>
-                    <tr><td className="py-1 font-medium">Alokasi Waktu</td><td>: {genForm.alokasi || "2x40"} menit</td></tr>
-                    {(previewDoc.kds?.length > 0 || genForm.kd1) && <tr><td className="py-1 font-medium">Kompetensi Dasar</td><td>: {[genForm.kd1, genForm.kd2, genForm.kd3, ...(previewDoc.kds || [])].filter(Boolean).join("; ")}</td></tr>}
-                    {(previewDoc.methods?.length > 0 || genForm.metode1) && <tr><td className="py-1 font-medium">Metode</td><td>: {[genForm.metode1, genForm.metode2, genForm.metode3, ...(previewDoc.methods || [])].filter(Boolean).join(", ")}</td></tr>}
-                    <tr><td className="py-1 font-medium">Guru</td><td>: {schoolInfo.teacherName || previewDoc.schoolInfo?.teacherName || "..........................."}</td></tr>
-                    <tr><td className="py-1 font-medium">NIP</td><td>: {schoolInfo.nip || previewDoc.schoolInfo?.nip || "..........................."}</td></tr>
-                  </tbody>
-                </table>
-              </div>
-
-              {/* Content Sections */}
-              {previewDoc.competency && <div className="mb-5"><h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-2 border-b border-gray-200 pb-1">Kompetensi / Tujuan Pembelajaran</h3><p className="text-sm text-gray-700 leading-relaxed">{previewDoc.competency}</p></div>}
-              {previewDoc.indicators && <div className="mb-5"><h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-2 border-b border-gray-200 pb-1">Indikator Pencapaian</h3><p className="text-sm text-gray-700 leading-relaxed">{previewDoc.indicators}</p></div>}
-              {previewDoc.learningSteps && <div className="mb-5"><h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-2 border-b border-gray-200 pb-1">Langkah Pembelajaran</h3><ol className="space-y-2">{previewDoc.learningSteps.map((step: string, i: number) => (<li key={i} className="flex gap-3 text-sm text-gray-700"><span className="w-6 h-6 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center text-xs font-bold shrink-0">{i + 1}</span><span>{step}</span></li>))}</ol></div>}
-              {previewDoc.assessment && <div className="mb-5"><h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-2 border-b border-gray-200 pb-1">Penilaian</h3><p className="text-sm text-gray-700 leading-relaxed">{previewDoc.assessment}</p></div>}
-              {previewDoc.differentiation && <div className="mb-5"><h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-2 border-b border-gray-200 pb-1">Diferensiasi</h3><p className="text-sm text-gray-700 leading-relaxed">{previewDoc.differentiation}</p></div>}
-              {previewDoc.materials && <div className="mb-5"><h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-2 border-b border-gray-200 pb-1">Materi & Referensi</h3><p className="text-sm text-gray-700 leading-relaxed">{previewDoc.materials}</p></div>}
-              {previewDoc.description && !previewDoc.learningSteps && <div className="mb-5"><p className="text-sm text-gray-700 leading-relaxed">{previewDoc.description}</p></div>}
-
-              {/* Signature */}
-              <div className="mt-12 pt-6 border-t border-gray-200 flex justify-end">
-                <div className="text-center">
-                  <p className="text-sm text-gray-500">Mengetahui,</p>
-                  <p className="text-sm text-gray-500">Kepala Sekolah</p>
-                  <div className="h-16" />
-                  <p className="text-sm font-bold text-gray-900 underline">{schoolInfo.teacherName || previewDoc.schoolInfo?.teacherName || "..........................."}</p>
-                  <p className="text-xs text-gray-500">NIP. {schoolInfo.nip || previewDoc.schoolInfo?.nip || "..........................."}</p>
-                </div>
-              </div>
+            <div className="p-8">
+              <PrintContent previewDoc={previewDoc} schoolInfo={schoolInfo} docType={docType} genForm={genForm} />
             </div>
           </div>
         </div>
       )}
+
+      {/* Hidden print-only container */}
+      {previewDoc && (
+        <div id="print-container" className="hidden">
+          <PrintContent previewDoc={previewDoc} schoolInfo={schoolInfo} docType={docType} genForm={genForm} />
+        </div>
+      )}
+    </div>
+  );
+}
+
+function PrintContent({ previewDoc, schoolInfo, docType, genForm }: { previewDoc: any; schoolInfo: any; docType: string; genForm: any }) {
+  return (
+    <div className="print-content">
+      {/* Letterhead */}
+      <div className="text-center mb-6 pb-4 border-b-2 border-gray-800 print-break-inside-avoid">
+        <p className="text-sm font-bold text-gray-900 uppercase">{schoolInfo.schoolName || previewDoc.schoolInfo?.schoolName || "NAMA SEKOLAH"}</p>
+        <p className="text-xs text-gray-500">{docType === "RPP" ? "RENCANA PELAKSANAAN PEMBELAJARAN" : "MODUL AJAR"}</p>
+        <p className="text-xs text-gray-500">Kurikulum {previewDoc.curriculum === "K13" ? "2013" : previewDoc.curriculum === "MERDEKA_DL" ? "Merdeka Deep Learning" : "Merdeka"}</p>
+      </div>
+
+      {/* Identity Table */}
+      <div className="mb-6 print-break-inside-avoid">
+        <table className="w-full text-sm">
+          <tbody>
+            <tr><td className="py-1 pr-4 font-medium w-40">Mata Pelajaran</td><td>: Bahasa Indonesia</td></tr>
+            <tr><td className="py-1 font-medium">Kelas / Semester</td><td>: {previewDoc.kelas || genForm.kelas} / {previewDoc.semester || genForm.semester}</td></tr>
+            <tr><td className="py-1 font-medium">Tahun Pelajaran</td><td>: {previewDoc.tahunAjaran || schoolInfo.academicYear}</td></tr>
+            <tr><td className="py-1 font-medium">Alokasi Waktu</td><td>: {genForm.alokasi || "2x40"} menit</td></tr>
+            {(previewDoc.kds?.length > 0 || genForm.kd1) && <tr><td className="py-1 font-medium">Kompetensi Dasar</td><td>: {[genForm.kd1, genForm.kd2, genForm.kd3, ...(previewDoc.kds || [])].filter(Boolean).join("; ")}</td></tr>}
+            {(previewDoc.methods?.length > 0 || genForm.metode1) && <tr><td className="py-1 font-medium">Metode</td><td>: {[genForm.metode1, genForm.metode2, genForm.metode3, ...(previewDoc.methods || [])].filter(Boolean).join(", ")}</td></tr>}
+            <tr><td className="py-1 font-medium">Guru</td><td>: {schoolInfo.teacherName || previewDoc.schoolInfo?.teacherName || "..........................."}</td></tr>
+            <tr><td className="py-1 font-medium">NIP</td><td>: {schoolInfo.nip || previewDoc.schoolInfo?.nip || "..........................."}</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      {/* Content Sections */}
+      {previewDoc.competency && <div className="mb-5 print-break-inside-avoid"><h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-2 border-b border-gray-200 pb-1">Kompetensi / Tujuan Pembelajaran</h3><p className="text-sm text-gray-700 leading-relaxed">{previewDoc.competency}</p></div>}
+      {previewDoc.indicators && <div className="mb-5 print-break-inside-avoid"><h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-2 border-b border-gray-200 pb-1">Indikator Pencapaian</h3><p className="text-sm text-gray-700 leading-relaxed">{previewDoc.indicators}</p></div>}
+      {previewDoc.learningSteps && <div className="mb-5"><h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-2 border-b border-gray-200 pb-1">Langkah Pembelajaran</h3><ol className="space-y-2">{previewDoc.learningSteps.map((step: string, i: number) => (<li key={i} className="flex gap-3 text-sm text-gray-700"><span className="w-6 h-6 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center text-xs font-bold shrink-0">{i + 1}</span><span>{step}</span></li>))}</ol></div>}
+      {previewDoc.assessment && <div className="mb-5 print-break-inside-avoid"><h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-2 border-b border-gray-200 pb-1">Penilaian</h3><p className="text-sm text-gray-700 leading-relaxed">{previewDoc.assessment}</p></div>}
+      {previewDoc.differentiation && <div className="mb-5 print-break-inside-avoid"><h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-2 border-b border-gray-200 pb-1">Diferensiasi</h3><p className="text-sm text-gray-700 leading-relaxed">{previewDoc.differentiation}</p></div>}
+      {previewDoc.materials && <div className="mb-5 print-break-inside-avoid"><h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-2 border-b border-gray-200 pb-1">Materi & Referensi</h3><p className="text-sm text-gray-700 leading-relaxed">{previewDoc.materials}</p></div>}
+      {previewDoc.description && !previewDoc.learningSteps && <div className="mb-5 print-break-inside-avoid"><p className="text-sm text-gray-700 leading-relaxed">{previewDoc.description}</p></div>}
+
+      {/* Signature */}
+      <div className="mt-12 pt-6 border-t border-gray-200 flex justify-end print-break-inside-avoid">
+        <div className="text-center">
+          <p className="text-sm text-gray-500">Mengetahui,</p>
+          <p className="text-sm text-gray-500">Kepala Sekolah</p>
+          <div className="h-16" />
+          <p className="text-sm font-bold text-gray-900 underline">{schoolInfo.principalName || previewDoc.schoolInfo?.principalName || "..........................."}</p>
+          <p className="text-xs text-gray-500">NIP. {previewDoc.schoolInfo?.nip || "..........................."}</p>
+        </div>
+      </div>
     </div>
   );
 }
