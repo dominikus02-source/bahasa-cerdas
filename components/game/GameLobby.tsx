@@ -1,9 +1,10 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import { gameSocket } from "@/lib/game/socket";
 import { motion } from "framer-motion";
-import { Zap, Trophy, Swords, Heart, Timer, Copy, Check, Users, Sparkles, ArrowRight, Maximize, Minimize } from "lucide-react";
+import { Zap, Trophy, Swords, Heart, Timer, Copy, Check, Users, Sparkles, ArrowRight, Maximize, Minimize, Lightbulb, Shuffle } from "lucide-react";
 
 const GAME_MODES = [
   {
@@ -58,6 +59,29 @@ const GAME_MODES = [
   },
 ];
 
+const SOLO_GAMES = [
+  {
+    id: "tebak-kata",
+    name: "Tebak Kata",
+    desc: "Tebak kata dari petunjuk yang diberikan",
+    icon: Lightbulb,
+    color: "from-indigo-500 to-purple-600",
+    bgColor: "bg-indigo-50",
+    borderColor: "border-indigo-200",
+    textColor: "text-indigo-700",
+  },
+  {
+    id: "susun-kata",
+    name: "Susun Kata",
+    desc: "Susun huruf acak menjadi kata yang benar",
+    icon: Shuffle,
+    color: "from-emerald-500 to-teal-600",
+    bgColor: "bg-emerald-50",
+    borderColor: "border-emerald-200",
+    textColor: "text-emerald-700",
+  },
+];
+
 interface GameLobbyProps {
   isHost?: boolean;
   roomCode?: string;
@@ -65,6 +89,7 @@ interface GameLobbyProps {
 }
 
 export default function GameLobby({ isHost = false, roomCode: initialCode, onStart }: GameLobbyProps) {
+  const router = useRouter();
   const [room, setRoom] = useState<any>(null);
   const [code, setCode] = useState(initialCode || "");
   const [joinCode, setJoinCode] = useState("");
@@ -328,12 +353,28 @@ export default function GameLobby({ isHost = false, roomCode: initialCode, onSta
               </button>
               <div className="relative">
                 <div className="absolute inset-0 flex items-center"><span className="w-full border-t border-slate-200" /></div>
-                <div className="relative flex justify-center text-xs"><span className="bg-white px-3 text-slate-400">atau</span></div>
+                <div className="relative flex justify-center text-xs"><span className="bg-white px-3 text-slate-400">atau main sendiri</span></div>
               </div>
-              <button onClick={handleSolo} disabled={!userId}
-                className="w-full bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-bold py-4 rounded-2xl shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all disabled:opacity-40 flex items-center justify-center gap-2">
-                <Timer size={20} /> Main Sendiri
-              </button>
+              <div className="grid grid-cols-2 gap-3">
+                {SOLO_GAMES.map((game) => {
+                  const GameIcon = game.icon;
+                  return (
+                    <button
+                      key={game.id}
+                      onClick={() => router.push(`/murid/game/${game.id}`)}
+                      className={`rounded-2xl border-2 p-4 transition-all bg-white border-slate-100 hover:border-slate-300 hover:shadow-md`}
+                    >
+                      <div className="text-center">
+                        <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${game.color} flex items-center justify-center mx-auto mb-2`}>
+                          <GameIcon size={24} className="text-white" />
+                        </div>
+                        <h3 className="font-bold text-sm text-slate-900">{game.name}</h3>
+                        <p className="text-[10px] text-slate-500 mt-0.5 leading-relaxed">{game.desc}</p>
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
             </>
           ) : (
             <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm">
