@@ -74,22 +74,35 @@ Metode: ${metode || "Diskusi, ceramah, penugasan"}
 ${schoolName ? `Nama Sekolah: ${schoolName}` : ""}
 ${teacherName ? `Nama Guru: ${teacherName}` : ""}
 
+PENTING — WAJIB MENGGUNAKAN DATA INPUT USER:
+1. JUDUL harus mengandung topik "${topik || "Teks Negosiasi"}" dan kelas "${kelas || "X"}"
+2. KOMPETENSI/CAPAIAN PEMBELAJARAN harus merujuk ke KD yang diberikan: "${kd || "3.1 Menganalisis struktur dan kebahasaan teks negosiasi"}"
+3. LANGKAH PEMBELAJARAN harus spesifik untuk topik "${topik || "Teks Negosiasi"}" — sebutkan contoh teks, aktivitas, dan materi yang relevan dengan topik ini
+4. PENILAIAN harus mengukur kompetensi dari KD yang diberikan
+5. MATERI harus tentang "${topik || "Teks Negosiasi"}" — jangan gunakan topik lain
+6. Semua konten harus sesuai untuk siswa kelas ${kelas || "X"} — gunakan bahasa dan contoh yang sesuai tingkat kelas ini
+7. Jika semester "${semester || "1 (Ganjil)"}", sesuaikan materi dengan semester tersebut
+
 ${curriculumSpecific}
 
 Format output JSON dengan struktur sesuai kurikulum di atas. Gunakan kunci:
 {
-  "title": "Judul dokumen",
-  "description": "Deskripsi singkat",
-  "competency": "KI/KD/Capaian Pembelajaran sesuai kurikulum",
-  "indicators": ["Indikator 1", "Indikator 2", ...],
-  "learningSteps": ["Kegiatan Pendahuluan: ...", "Kegiatan Inti: ...", "Kegiatan Penutup: ..."],
-  "assessment": "Teknik dan instrumen penilaian",
+  "title": "RPP/Modul Ajar Bahasa Indonesia Kelas ${kelas || "X"} - ${topik || "Teks Negosiasi"}",
+  "description": "Deskripsi singkat yang menyebutkan topik dan kelas",
+  "competency": "KI/KD/Capaian Pembelajaran yang MERUJUK LANGSUNG ke KD input user: ${kd || "3.1 Menganalisis struktur dan kebahasaan teks negosiasi"}",
+  "indicators": ["Indikator 1 yang spesifik untuk topik ${topik || "Teks Negosiasi"}", "Indikator 2", ...],
+  "learningSteps": [
+    "Kegiatan Pendahuluan: ... (spesifik untuk topik ${topik || "Teks Negosiasi"}, kelas ${kelas || "X"})",
+    "Kegiatan Inti: ... (spesifik untuk topik ${topik || "Teks Negosiasi"}, kelas ${kelas || "X"})",
+    "Kegiatan Penutup: ... (spesifik untuk topik ${topik || "Teks Negosiasi"}, kelas ${kelas || "X"})"
+  ],
+  "assessment": "Teknik dan instrumen penilaian yang mengukur KD ${kd || "3.1"} tentang ${topik || "Teks Negosiasi"}",
   "differentiation": "Diferensiasi pembelajaran",
-  "materials": "Materi dan sumber belajar",
+  "materials": "Materi dan sumber belajar tentang ${topik || "Teks Negosiasi"}",
   "references": "Referensi"
 }
 
-Buatkan dalam Bahasa Indonesia yang baik dan benar. Konten harus relevan dengan topik dan kelas yang diminta. Hanya output JSON, tanpa markdown.`;
+Buatkan dalam Bahasa Indonesia yang baik dan benar. PASTIKAN SEMUA KONTEN SPESIFIK UNTUK TOPIK DAN KELAS YANG DIMINTA. Hanya output JSON, tanpa markdown.`;
 
     const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
     const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY;

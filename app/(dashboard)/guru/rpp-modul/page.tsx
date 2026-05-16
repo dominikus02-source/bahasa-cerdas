@@ -424,29 +424,39 @@ export default function RPPModulPage() {
 }
 
 function PrintContent({ previewDoc, schoolInfo, docType, genForm }: { previewDoc: any; schoolInfo: any; docType: string; genForm: any }) {
+  const resolvedKelas = previewDoc.kelas || genForm.kelas;
+  const resolvedSemester = previewDoc.semester || genForm.semester;
+  const resolvedKds = [genForm.kd1, genForm.kd2, genForm.kd3, ...(previewDoc.kds || [])].filter(Boolean);
+  const resolvedMethods = [genForm.metode1, genForm.metode2, genForm.metode3, ...(previewDoc.methods || [])].filter(Boolean);
+  const resolvedSchoolName = schoolInfo.schoolName || previewDoc.schoolInfo?.schoolName || "NAMA SEKOLAH";
+  const resolvedTeacherName = schoolInfo.teacherName || previewDoc.schoolInfo?.teacherName || "...........................";
+  const resolvedNip = schoolInfo.nip || previewDoc.schoolInfo?.nip || "...........................";
+  const resolvedPrincipalName = schoolInfo.principalName || previewDoc.schoolInfo?.principalName || "...........................";
+  const resolvedTahunAjaran = previewDoc.tahunAjaran || schoolInfo.academicYear;
+  const resolvedAlokasi = genForm.alokasi || previewDoc.alokasi || "2x40";
+
   return (
     <div className="print-content">
-      {/* Letterhead */}
-      <div className="text-center mb-6 pb-4 border-b-2 border-gray-800 print-break-inside-avoid">
-        <p className="text-sm font-bold text-gray-900 uppercase">{schoolInfo.schoolName || previewDoc.schoolInfo?.schoolName || "NAMA SEKOLAH"}</p>
-        <p className="text-xs text-gray-500">{docType === "RPP" ? "RENCANA PELAKSANAAN PEMBELAJARAN" : "MODUL AJAR"}</p>
-        <p className="text-xs text-gray-500">Kurikulum {previewDoc.curriculum === "K13" ? "2013" : previewDoc.curriculum === "MERDEKA_DL" ? "Merdeka Deep Learning" : "Merdeka"}</p>
-      </div>
+      {/* First Page: Letterhead + Identity */}
+      <div className="print-break-inside-avoid">
+        <div className="text-center mb-6 pb-4 border-b-2 border-gray-800">
+          <p className="text-sm font-bold text-gray-900 uppercase">{resolvedSchoolName}</p>
+          <p className="text-xs text-gray-500">{docType === "RPP" ? "RENCANA PELAKSANAAN PEMBELAJARAN" : "MODUL AJAR"}</p>
+          <p className="text-xs text-gray-500">Kurikulum {previewDoc.curriculum === "K13" ? "2013" : previewDoc.curriculum === "MERDEKA_DL" ? "Merdeka Deep Learning" : "Merdeka"}</p>
+        </div>
 
-      {/* Identity Table */}
-      <div className="mb-6 print-break-inside-avoid">
-        <table className="w-full text-sm">
-          <tbody>
-            <tr><td className="py-1 pr-4 font-medium w-40">Mata Pelajaran</td><td>: Bahasa Indonesia</td></tr>
-            <tr><td className="py-1 font-medium">Kelas / Semester</td><td>: {previewDoc.kelas || genForm.kelas} / {previewDoc.semester || genForm.semester}</td></tr>
-            <tr><td className="py-1 font-medium">Tahun Pelajaran</td><td>: {previewDoc.tahunAjaran || schoolInfo.academicYear}</td></tr>
-            <tr><td className="py-1 font-medium">Alokasi Waktu</td><td>: {genForm.alokasi || "2x40"} menit</td></tr>
-            {(previewDoc.kds?.length > 0 || genForm.kd1) && <tr><td className="py-1 font-medium">Kompetensi Dasar</td><td>: {[genForm.kd1, genForm.kd2, genForm.kd3, ...(previewDoc.kds || [])].filter(Boolean).join("; ")}</td></tr>}
-            {(previewDoc.methods?.length > 0 || genForm.metode1) && <tr><td className="py-1 font-medium">Metode</td><td>: {[genForm.metode1, genForm.metode2, genForm.metode3, ...(previewDoc.methods || [])].filter(Boolean).join(", ")}</td></tr>}
-            <tr><td className="py-1 font-medium">Guru</td><td>: {schoolInfo.teacherName || previewDoc.schoolInfo?.teacherName || "..........................."}</td></tr>
-            <tr><td className="py-1 font-medium">NIP</td><td>: {schoolInfo.nip || previewDoc.schoolInfo?.nip || "..........................."}</td></tr>
-          </tbody>
-        </table>
+        <div className="mb-6">
+          <table className="w-full text-sm">
+            <tbody>
+              <tr><td className="py-1 pr-4 font-medium w-40">Mata Pelajaran</td><td>: Bahasa Indonesia</td></tr>
+              <tr><td className="py-1 font-medium">Kelas / Semester</td><td>: {resolvedKelas} / {resolvedSemester}</td></tr>
+              <tr><td className="py-1 font-medium">Tahun Pelajaran</td><td>: {resolvedTahunAjaran}</td></tr>
+              <tr><td className="py-1 font-medium">Alokasi Waktu</td><td>: {resolvedAlokasi} menit</td></tr>
+              {resolvedKds.length > 0 && <tr><td className="py-1 font-medium align-top">Kompetensi Dasar</td><td>: {resolvedKds.join("; ")}</td></tr>}
+              {resolvedMethods.length > 0 && <tr><td className="py-1 font-medium align-top">Metode</td><td>: {resolvedMethods.join(", ")}</td></tr>}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       {/* Content Sections */}
@@ -458,14 +468,23 @@ function PrintContent({ previewDoc, schoolInfo, docType, genForm }: { previewDoc
       {previewDoc.materials && <div className="mb-5 print-break-inside-avoid"><h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-2 border-b border-gray-200 pb-1">Materi & Referensi</h3><p className="text-sm text-gray-700 leading-relaxed">{previewDoc.materials}</p></div>}
       {previewDoc.description && !previewDoc.learningSteps && <div className="mb-5 print-break-inside-avoid"><p className="text-sm text-gray-700 leading-relaxed">{previewDoc.description}</p></div>}
 
-      {/* Signature */}
-      <div className="mt-12 pt-6 border-t border-gray-200 flex justify-end print-break-inside-avoid">
-        <div className="text-center">
-          <p className="text-sm text-gray-500">Mengetahui,</p>
-          <p className="text-sm text-gray-500">Kepala Sekolah</p>
-          <div className="h-16" />
-          <p className="text-sm font-bold text-gray-900 underline">{schoolInfo.principalName || previewDoc.schoolInfo?.principalName || "..........................."}</p>
-          <p className="text-xs text-gray-500">NIP. {previewDoc.schoolInfo?.nip || "..........................."}</p>
+      {/* Last Page: Signatures */}
+      <div className="mt-16 pt-6 border-t border-gray-200 print-break-inside-avoid">
+        <div className="grid grid-cols-2 gap-8">
+          <div className="text-center">
+            <p className="text-sm text-gray-500">Mengetahui,</p>
+            <p className="text-sm text-gray-500">Kepala Sekolah</p>
+            <div className="h-20" />
+            <p className="text-sm font-bold text-gray-900 underline">{resolvedPrincipalName}</p>
+            <p className="text-xs text-gray-500">NIP. {resolvedNip}</p>
+          </div>
+          <div className="text-center">
+            <p className="text-sm text-gray-500">{resolvedTahunAjaran}</p>
+            <p className="text-sm text-gray-500">Guru Mata Pelajaran</p>
+            <div className="h-20" />
+            <p className="text-sm font-bold text-gray-900 underline">{resolvedTeacherName}</p>
+            <p className="text-xs text-gray-500">NIP. {resolvedNip}</p>
+          </div>
         </div>
       </div>
     </div>

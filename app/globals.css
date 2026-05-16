@@ -127,4 +127,8 @@
   .print-break-inside-avoid {
     page-break-inside: avoid;
   }
+
+  .page-break-before {
+    page-break-before: always;
+  }
 }
