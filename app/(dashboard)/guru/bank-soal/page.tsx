@@ -160,11 +160,37 @@ export default function BankSoalPage() {
           <Button variant="outline" onClick={() => setShowTambah(true)}>
             <Plus className="h-4 w-4" /> Tambah Manual
           </Button>
-          <Button onClick={handleGenerate} disabled={loading || !formData.text}>
-            <Zap className="h-4 w-4" /> {loading ? "Generating..." : "Generate AI"}
-          </Button>
         </div>
       </div>
+
+      {/* AI Generate Section */}
+      <Card className="p-4 mb-6 bg-gradient-to-r from-amber-50 to-orange-50 border-amber-200">
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="flex items-center gap-2 shrink-0">
+            <Zap className="h-5 w-5 text-amber-500" />
+            <p className="text-sm font-semibold text-amber-800">Generate AI</p>
+          </div>
+          <input
+            value={formData.text}
+            onChange={(e) => setFormData({ ...formData, text: e.target.value })}
+            className="flex-1 min-w-[200px] rounded-lg border border-amber-200 px-4 py-2 text-sm bg-white"
+            placeholder="Topik soal, contoh: Teks Negosiasi kelas 10"
+          />
+          <select value={formData.kelas} onChange={(e) => setFormData({ ...formData, kelas: e.target.value })} className="rounded-lg border border-amber-200 px-3 py-2 text-sm bg-white">
+            <option value="">Kelas</option>
+            {KELAS.map((k) => <option key={k} value={k}>{k}</option>)}
+          </select>
+          <select value={formData.type} onChange={(e) => setFormData({ ...formData, type: e.target.value })} className="rounded-lg border border-amber-200 px-3 py-2 text-sm bg-white">
+            <option value="PILIHAN_GANDA">PG</option>
+            <option value="ESSAY">Essay</option>
+            <option value="ISIAN">Isian</option>
+          </select>
+          <Button onClick={handleGenerate} disabled={loading || !formData.text} className="shrink-0 bg-amber-500 hover:bg-amber-600 text-white">
+            {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Zap className="h-4 w-4" />}
+            {loading ? "Generating..." : "Generate"}
+          </Button>
+        </div>
+      </Card>
 
       {/* Upload File Section */}
       <Card className="p-4 mb-6 border-2 border-dashed border-slate-200">

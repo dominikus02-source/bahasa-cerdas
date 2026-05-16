@@ -93,41 +93,65 @@ Buatkan dalam Bahasa Indonesia yang baik dan benar. Konten harus relevan dengan 
 
     const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
     const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY;
+    const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 
     let content = "";
     let tokens = 0;
 
     if (GEMINI_API_KEY) {
-      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "X-goog-api-key": GEMINI_API_KEY },
-        body: JSON.stringify({
-          contents: [{ parts: [{ text: prompt }] }],
-          generationConfig: { temperature: 0.7, maxOutputTokens: 4000 },
-        }),
-      });
-      const json = await res.json();
-      content = json?.candidates?.[0]?.content?.parts?.[0]?.text || "";
-      tokens = content.length;
-    } else if (DEEPSEEK_API_KEY) {
-      const res = await fetch("https://api.deepseek.com/v1/chat/completions", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${DEEPSEEK_API_KEY}`,
-        },
-        body: JSON.stringify({
-          model: "deepseek-chat",
-          messages: [{ role: "user", content: prompt }],
-          max_tokens: 4000,
-          temperature: 0.7,
-        }),
-      });
-      const json = await res.json();
-      content = json.choices?.[0]?.message?.content || "";
-      tokens = json.usage?.total_tokens || 0;
-    } else {
-      return NextResponse.json({ error: "No AI API key configured" }, { status: 500 });
+      try {
+        const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "X-goog-api-key": GEMINI_API_KEY },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: prompt }] }],
+            generationConfig: { temperature: 0.7, maxOutputTokens: 8000 },
+          }),
+        });
+        const json = await res.json();
+        content = json?.candidates?.[0]?.content?.parts?.[0]?.text || "";
+        if (content) tokens = content.length;
+      } catch (e) { console.error("Gemini error:", e); }
+    }
+
+    if (!content && OPENAI_API_KEY) {
+      try {
+        const res = await fetch("https://api.openai.com/v1/chat/completions", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "Authorization": `Bearer ${OPENAI_API_KEY}` },
+          body: JSON.stringify({
+            model: "gpt-4o-mini",
+            messages: [{ role: "user", content: prompt }],
+            max_tokens: 8000,
+            temperature: 0.7,
+          }),
+        });
+        const json = await res.json();
+        content = json.choices?.[0]?.message?.content || "";
+        if (content) tokens = json.usage?.total_tokens || 0;
+      } catch (e) { console.error("OpenAI error:", e); }
+    }
+
+    if (!content && DEEPSEEK_API_KEY) {
+      try {
+        const res = await fetch("https://api.deepseek.com/v1/chat/completions", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "Authorization": `Bearer ${DEEPSEEK_API_KEY}` },
+          body: JSON.stringify({
+            model: "deepseek-chat",
+            messages: [{ role: "user", content: prompt }],
+            max_tokens: 8000,
+            temperature: 0.7,
+          }),
+        });
+        const json = await res.json();
+        content = json.choices?.[0]?.message?.content || "";
+        if (content) tokens = json.usage?.total_tokens || 0;
+      } catch (e) { console.error("DeepSeek error:", e); }
+    }
+
+    if (!content) {
+      return NextResponse.json({ error: "All AI providers failed" }, { status: 500 });
     }
 
     let rpp = content;

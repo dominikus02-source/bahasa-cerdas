@@ -57,38 +57,65 @@ Hanya output JSON array.`;
 
     const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
     const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY;
+    const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 
     let content = "";
+    let provider = "";
 
     if (GEMINI_API_KEY) {
-      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "X-goog-api-key": GEMINI_API_KEY },
-        body: JSON.stringify({
-          contents: [{ parts: [{ text: prompt }] }],
-          generationConfig: { temperature: 0.7, maxOutputTokens: 4000 },
-        }),
-      });
-      const json = await res.json();
-      content = json?.candidates?.[0]?.content?.parts?.[0]?.text || "";
-    } else if (DEEPSEEK_API_KEY) {
-      const res = await fetch("https://api.deepseek.com/v1/chat/completions", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${DEEPSEEK_API_KEY}`,
-        },
-        body: JSON.stringify({
-          model: "deepseek-chat",
-          messages: [{ role: "user", content: prompt }],
-          max_tokens: 4000,
-          temperature: 0.7,
-        }),
-      });
-      const json = await res.json();
-      content = json.choices?.[0]?.message?.content || "";
-    } else {
-      return NextResponse.json({ error: "No AI API key configured" }, { status: 500 });
+      try {
+        const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "X-goog-api-key": GEMINI_API_KEY },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: prompt }] }],
+            generationConfig: { temperature: 0.7, maxOutputTokens: 4000 },
+          }),
+        });
+        const json = await res.json();
+        content = json?.candidates?.[0]?.content?.parts?.[0]?.text || "";
+        if (content) provider = "gemini";
+      } catch (e) { console.error("Gemini error:", e); }
+    }
+
+    if (!content && OPENAI_API_KEY) {
+      try {
+        const res = await fetch("https://api.openai.com/v1/chat/completions", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "Authorization": `Bearer ${OPENAI_API_KEY}` },
+          body: JSON.stringify({
+            model: "gpt-4o-mini",
+            messages: [{ role: "user", content: prompt }],
+            max_tokens: 4000,
+            temperature: 0.7,
+          }),
+        });
+        const json = await res.json();
+        content = json.choices?.[0]?.message?.content || "";
+        if (content) provider = "openai";
+      } catch (e) { console.error("OpenAI error:", e); }
+    }
+
+    if (!content && DEEPSEEK_API_KEY) {
+      try {
+        const res = await fetch("https://api.deepseek.com/v1/chat/completions", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "Authorization": `Bearer ${DEEPSEEK_API_KEY}` },
+          body: JSON.stringify({
+            model: "deepseek-chat",
+            messages: [{ role: "user", content: prompt }],
+            max_tokens: 4000,
+            temperature: 0.7,
+          }),
+        });
+        const json = await res.json();
+        content = json.choices?.[0]?.message?.content || "";
+        if (content) provider = "deepseek";
+      } catch (e) { console.error("DeepSeek error:", e); }
+    }
+
+    if (!content) {
+      return NextResponse.json({ error: "All AI providers failed" }, { status: 500 });
     }
 
     let soal = content;
