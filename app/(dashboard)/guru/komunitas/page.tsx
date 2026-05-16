@@ -25,10 +25,14 @@ interface Community {
   city: string | null;
   avatarUrl: string | null;
   isVerified: boolean;
+  status?: string;
+  reviewNote?: string | null;
   memberCount: number;
   postCount: number;
   creator: { fullName: string; avatar: string | null } | null;
 }
+
+type MyTab = "public" | "mine";
 
 export default function KomunitasPage() {
   const [communities, setCommunities] = useState<Community[]>([]);
@@ -46,6 +50,8 @@ export default function KomunitasPage() {
   });
   const [creating, setCreating] = useState(false);
   const [createMsg, setCreateMsg] = useState("");
+  const [myTab, setMyTab] = useState<MyTab>("public");
+  const [myCommunities, setMyCommunities] = useState<Community[]>([]);
 
   const fetchCommunities = async () => {
     setLoading(true);
@@ -63,8 +69,19 @@ export default function KomunitasPage() {
     }
   };
 
+  const fetchMyCommunities = async () => {
+    try {
+      const res = await fetch("/api/komunitas/mine");
+      const data = await res.json();
+      if (data.communities) setMyCommunities(data.communities);
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
   useEffect(() => {
     fetchCommunities();
+    fetchMyCommunities();
   }, [typeFilter]);
 
   const handleCreate = async (e: React.FormEvent) => {
@@ -153,64 +170,128 @@ export default function KomunitasPage() {
         </Button>
       </div>
 
-      {loading ? (
-        <div className="text-center py-20">
-          <div className="w-12 h-12 border-4 border-emerald-500/30 border-t-emerald-500 rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-slate-500">Memuat komunitas...</p>
-        </div>
-      ) : communities.length === 0 ? (
-        <div className="text-center py-20 bg-white rounded-2xl border border-slate-100">
-          <Users className="w-16 h-16 text-slate-300 mx-auto mb-4" />
-          <h3 className="font-bold text-slate-600 mb-2">Belum ada komunitas</h3>
-          <p className="text-sm text-slate-400 mb-4">Jadilah yang pertama membuat komunitas!</p>
-          <Button onClick={() => setShowCreate(true)} className="bg-emerald-600 hover:bg-emerald-700">
-            Buat Komunitas
-          </Button>
-        </div>
-      ) : (
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {communities.map((c) => (
-            <Link key={c.id} href={`/guru/komunitas/${c.id}`}>
-              <Card className="p-5 h-full hover:shadow-lg transition-all border border-slate-100 hover:border-emerald-200">
-                <div className="flex items-start gap-3 mb-3">
-                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center text-white font-bold text-lg shrink-0">
-                    {c.avatarUrl ? (
-                      <img src={c.avatarUrl} alt={c.name} className="w-full h-full rounded-xl object-cover" />
-                    ) : (
-                      c.name.charAt(0)
-                    )}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-1.5">
-                      <h3 className="font-bold text-slate-900 text-sm truncate">{c.name}</h3>
-                      {c.isVerified && <CheckCircle className="w-4 h-4 text-emerald-500 shrink-0" />}
+      {/* Tabs */}
+      <div className="flex gap-2 mb-6">
+        <button onClick={() => setMyTab("public")} className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${myTab === "public" ? "bg-emerald-100 text-emerald-700" : "bg-gray-100 text-gray-600 hover:bg-gray-200"}`}>
+          Semua Komunitas ({communities.length})
+        </button>
+        <button onClick={() => setMyTab("mine")} className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${myTab === "mine" ? "bg-emerald-100 text-emerald-700" : "bg-gray-100 text-gray-600 hover:bg-gray-200"}`}>
+          Komunitas Saya ({myCommunities.length})
+        </button>
+      </div>
+
+      {/* Public Communities */}
+      {myTab === "public" && (
+        loading ? (
+          <div className="text-center py-20">
+            <div className="w-12 h-12 border-4 border-emerald-500/30 border-t-emerald-500 rounded-full animate-spin mx-auto mb-4" />
+            <p className="text-slate-500">Memuat komunitas...</p>
+          </div>
+        ) : communities.length === 0 ? (
+          <div className="text-center py-20 bg-white rounded-2xl border border-slate-100">
+            <Users className="w-16 h-16 text-slate-300 mx-auto mb-4" />
+            <h3 className="font-bold text-slate-600 mb-2">Belum ada komunitas</h3>
+            <p className="text-sm text-slate-400 mb-4">Jadilah yang pertama membuat komunitas!</p>
+            <Button onClick={() => setShowCreate(true)} className="bg-emerald-600 hover:bg-emerald-700">
+              Buat Komunitas
+            </Button>
+          </div>
+        ) : (
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {communities.map((c) => (
+              <Link key={c.id} href={`/guru/komunitas/${c.id}`}>
+                <Card className="p-5 h-full hover:shadow-lg transition-all border border-slate-100 hover:border-emerald-200">
+                  <div className="flex items-start gap-3 mb-3">
+                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center text-white font-bold text-lg shrink-0">
+                      {c.avatarUrl ? (
+                        <img src={c.avatarUrl} alt={c.name} className="w-full h-full rounded-xl object-cover" />
+                      ) : (
+                        c.name.charAt(0)
+                      )}
                     </div>
-                    <span className={`inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full border ${getTypeColor(c.type)}`}>
-                      {getTypeIcon(c.type)}
-                      {c.type}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-1.5">
+                        <h3 className="font-bold text-slate-900 text-sm truncate">{c.name}</h3>
+                        {c.isVerified && <CheckCircle className="w-4 h-4 text-emerald-500 shrink-0" />}
+                      </div>
+                      <span className={`inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full border ${getTypeColor(c.type)}`}>
+                        {getTypeIcon(c.type)}
+                        {c.type}
+                      </span>
+                    </div>
+                  </div>
+                  {c.description && (
+                    <p className="text-xs text-slate-500 line-clamp-2 mb-3">{c.description}</p>
+                  )}
+                  {c.province && (
+                    <div className="flex items-center gap-1 text-xs text-slate-400 mb-3">
+                      <MapPin className="w-3 h-3" />
+                      {c.city ? `${c.city}, ${c.province}` : c.province}
+                    </div>
+                  )}
+                  <div className="flex items-center justify-between text-xs text-slate-500 pt-3 border-t border-slate-100">
+                    <span className="flex items-center gap-1">
+                      <UserPlus className="w-3.5 h-3.5" />
+                      {c.memberCount} anggota
                     </span>
+                    <span>{c.postCount} postingan</span>
                   </div>
-                </div>
-                {c.description && (
-                  <p className="text-xs text-slate-500 line-clamp-2 mb-3">{c.description}</p>
-                )}
-                {c.province && (
-                  <div className="flex items-center gap-1 text-xs text-slate-400 mb-3">
-                    <MapPin className="w-3 h-3" />
-                    {c.city ? `${c.city}, ${c.province}` : c.province}
+                </Card>
+              </Link>
+            ))}
+          </div>
+        )
+      )}
+
+      {/* My Communities */}
+      {myTab === "mine" && (
+        myCommunities.length === 0 ? (
+          <div className="text-center py-20 bg-white rounded-2xl border border-slate-100">
+            <Users className="w-16 h-16 text-slate-300 mx-auto mb-4" />
+            <h3 className="font-bold text-slate-600 mb-2">Belum membuat komunitas</h3>
+            <p className="text-sm text-slate-400">Klik tombol "Buat Komunitas" untuk memulai</p>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {myCommunities.map((c) => (
+              <Card key={c.id} className="p-5 border border-slate-100">
+                <div className="flex items-start justify-between">
+                  <div className="flex items-start gap-3 flex-1">
+                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center text-white font-bold text-lg shrink-0">
+                      {c.avatarUrl ? <img src={c.avatarUrl} alt={c.name} className="w-full h-full rounded-xl object-cover" /> : c.name.charAt(0)}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-1 flex-wrap">
+                        <h3 className="font-bold text-slate-900">{c.name}</h3>
+                        <span className={`inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full border ${getTypeColor(c.type)}`}>{c.type}</span>
+                        {c.status === "PENDING" && <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full border bg-amber-50 text-amber-700 border-amber-200">⏳ Menunggu Review</span>}
+                        {c.status === "APPROVED" && <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full border bg-emerald-50 text-emerald-700 border-emerald-200">✅ Disetujui</span>}
+                        {c.status === "REJECTED" && <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full border bg-red-50 text-red-700 border-red-200">❌ Ditolak</span>}
+                      </div>
+                      {c.description && <p className="text-sm text-slate-500 line-clamp-1">{c.description}</p>}
+                      {c.status === "REJECTED" && c.reviewNote && (
+                        <div className="mt-2 bg-red-50 border border-red-200 rounded-lg p-2">
+                          <p className="text-xs font-medium text-red-700">Alasan Penolakan:</p>
+                          <p className="text-xs text-red-600 mt-0.5">{c.reviewNote}</p>
+                        </div>
+                      )}
+                      <div className="flex items-center gap-4 mt-2 text-xs text-slate-400">
+                        <span>{c.memberCount} anggota</span>
+                        <span>{c.postCount} postingan</span>
+                        <span>{new Date(c.createdAt).toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" })}</span>
+                      </div>
+                    </div>
                   </div>
-                )}
-                <div className="flex items-center justify-between text-xs text-slate-500 pt-3 border-t border-slate-100">
-                  <span className="flex items-center gap-1">
-                    <UserPlus className="w-3.5 h-3.5" />
-                    {c.memberCount} anggota
-                  </span>
-                  <span>{c.postCount} postingan</span>
+                  {c.status === "APPROVED" && (
+                    <Link href={`/guru/komunitas/${c.id}`}>
+                      <Button size="sm" variant="outline" className="ml-4">Buka</Button>
+                    </Link>
+                  )}
                 </div>
               </Card>
-            </Link>
-          ))}
-        </div>
+            ))}
+          </div>
+        )
       )}
 
       {showCreate && (
