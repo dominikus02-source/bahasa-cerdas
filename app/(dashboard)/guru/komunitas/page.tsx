@@ -45,6 +45,7 @@ export default function KomunitasPage() {
     city: "",
   });
   const [creating, setCreating] = useState(false);
+  const [createMsg, setCreateMsg] = useState("");
 
   const fetchCommunities = async () => {
     setLoading(true);
@@ -69,6 +70,7 @@ export default function KomunitasPage() {
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
     setCreating(true);
+    setCreateMsg("");
     try {
       const res = await fetch("/api/komunitas", {
         method: "POST",
@@ -77,11 +79,14 @@ export default function KomunitasPage() {
       });
       const data = await res.json();
       if (data.community) {
+        setCreateMsg(data.message || "Komunitas berhasil dibuat, menunggu review admin");
         setShowCreate(false);
         setCreateForm({ name: "", description: "", type: "MGMP", region: "", province: "", city: "" });
-        fetchCommunities();
+      } else if (data.error) {
+        setCreateMsg(data.error);
       }
     } catch (e) {
+      setCreateMsg("Gagal membuat komunitas");
       console.error(e);
     } finally {
       setCreating(false);
@@ -216,6 +221,11 @@ export default function KomunitasPage() {
               Buat Komunitas Baru
             </h2>
             <form onSubmit={handleCreate} className="space-y-4">
+              {createMsg && (
+                <div className={`p-3 rounded-lg text-sm ${createMsg.includes("berhasil") ? "bg-emerald-50 text-emerald-700 border border-emerald-200" : "bg-red-50 text-red-700 border border-red-200"}`}>
+                  {createMsg}
+                </div>
+              )}
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">Nama Komunitas</label>
                 <input

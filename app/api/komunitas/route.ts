@@ -11,7 +11,7 @@ export async function GET(req: NextRequest) {
     const page = parseInt(searchParams.get("page") || "1");
     const limit = parseInt(searchParams.get("limit") || "20");
 
-    const where: any = { isPublic: true };
+    const where: any = { isPublic: true, status: "APPROVED" };
     if (type) where.type = type;
     if (region) where.region = region;
     if (search) {
@@ -64,16 +64,13 @@ export async function POST(req: NextRequest) {
         school,
         avatarUrl,
         bannerUrl,
+        status: "PENDING",
         creatorId: dbUser.id,
-        memberCount: 1,
+        memberCount: 0,
       },
     });
 
-    await db.communityMember.create({
-      data: { communityId: community.id, userId: dbUser.id, role: "admin" },
-    });
-
-    return NextResponse.json({ community }, { status: 201 });
+    return NextResponse.json({ community, message: "Komunitas berhasil dibuat, menunggu review admin" }, { status: 201 });
   } catch (error) {
     console.error("POST /api/komunitas error:", error);
     return NextResponse.json({ error: "Internal error" }, { status: 500 });

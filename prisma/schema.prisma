@@ -158,6 +158,12 @@ enum CommunityType {
   LAINNYA
 }
 
+enum CommunityStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
 enum GameType {
   KUIS_BATTLE
   TEBAC_KATA
@@ -292,6 +298,10 @@ model Community {
   bannerUrl   String?
   isPublic    Boolean       @default(true)
   isVerified  Boolean       @default(false)
+  status      CommunityStatus @default(PENDING)
+  reviewNote  String?
+  reviewedBy  String?
+  reviewedAt  DateTime?
   memberCount Int           @default(0)
   postCount   Int           @default(0)
 
@@ -306,6 +316,7 @@ model Community {
 
   @@index([type])
   @@index([isPublic])
+  @@index([status])
 }
 
 model CommunityMember {
