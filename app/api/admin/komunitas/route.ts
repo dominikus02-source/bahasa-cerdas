@@ -1,15 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
+import { getUser } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
+
+async function checkAdmin() {
+  const user = await getUser();
+  if (!user || !user.isFounder) return { error: NextResponse.json({ error: "Forbidden" }, { status: 403 }) };
+  const dbUser = await db.user.findUnique({ where: { supabaseId: user.id } });
+  if (!dbUser) return { error: NextResponse.json({ error: "User not found" }, { status: 404 }) };
+  return { user, dbUser };
+}
 
 export async function GET(req: NextRequest) {
   try {
-    const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-
-    const dbUser = await db.user.findUnique({ where: { supabaseId: user.id } });
-    if (!dbUser || dbUser.role !== "ADMIN") return NextResponse.json({ error: "Admin only" }, { status: 403 });
+    const check = await checkAdmin();
+    if (check.error) return check.error;
 
     const { searchParams } = new URL(req.url);
     const status = searchParams.get("status");
@@ -29,7 +33,7 @@ export async function GET(req: NextRequest) {
       pending: await db.community.count({ where: { status: "PENDING" } }),
       approved: await db.community.count({ where: { status: "APPROVED" } }),
       rejected: await db.community.count({ where: { status: "REJECTED" } }),
-      total: communities.length,
+      total: await db.community.count(),
     };
 
     return NextResponse.json({ communities, stats });
@@ -41,12 +45,9 @@ export async function GET(req: NextRequest) {
 
 export async function PUT(req: NextRequest) {
   try {
-    const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-
-    const dbUser = await db.user.findUnique({ where: { supabaseId: user.id } });
-    if (!dbUser || dbUser.role !== "ADMIN") return NextResponse.json({ error: "Admin only" }, { status: 403 });
+    const check = await checkAdmin();
+    if (check.error) return check.error;
+    const { dbUser } = check;
 
     const body = await req.json();
     const { id, action, reviewNote } = body;
@@ -67,14 +68,20 @@ export async function PUT(req: NextRequest) {
         },
       });
 
-      await db.communityMember.create({
-        data: { communityId: id, userId: community.creatorId!, role: "admin" },
-      });
-
-      await db.community.update({
-        where: { id },
-        data: { memberCount: { increment: 1 } },
-      });
+      if (community.creatorId) {
+        const existingMember = await db.communityMember.findUnique({
+          where: { communityId_userId: { communityId: id, userId: community.creatorId } },
+        });
+        if (!existingMember) {
+          await db.communityMember.create({
+            data: { communityId: id, userId: community.creatorId, role: "admin" },
+          });
+          await db.community.update({
+            where: { id },
+            data: { memberCount: { increment: 1 } },
+          });
+        }
+      }
 
       return NextResponse.json({ success: true, community: updated, message: "Komunitas disetujui" });
     }
@@ -104,12 +111,8 @@ export async function PUT(req: NextRequest) {
 
 export async function DELETE(req: NextRequest) {
   try {
-    const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-
-    const dbUser = await db.user.findUnique({ where: { supabaseId: user.id } });
-    if (!dbUser || dbUser.role !== "ADMIN") return NextResponse.json({ error: "Admin only" }, { status: 403 });
+    const check = await checkAdmin();
+    if (check.error) return check.error;
 
     const { searchParams } = new URL(req.url);
     const id = searchParams.get("id");
