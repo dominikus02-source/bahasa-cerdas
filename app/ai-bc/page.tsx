@@ -17,7 +17,7 @@ const SUGGESTIONS = [
 
 export default function AIChatPage() {
   const [messages, setMessages] = useState<{ role: "user" | "bot"; text: string }[]>([
-    { role: "bot", text: "Hai Cerdas! 👋\n\nAku **AI BC**, asisten belajarmu. Mau belajar Bahasa Indonesia apa hari ini?\n\nKamu bisa tanya tentang:\n- 📖 **Arti kata** & definisi\n- 🔄 **Sinonim & antonim**\n- ✍️ **Contoh kalimat**\n- 📝 **Kata baku & tidak baku**\n- 🤔 **Perbedaan kata**\n- Dan apa aja soal Bahasa Indonesia!" },
+    { role: "bot", text: "Hai! 👋\n\nAku **AI BC**, teman belajar Bahasa Indonesia kamu. Mau nanya apa nih?\n\nKamu bisa tanya tentang:\n- 📖 **Arti kata** & definisi\n- 🔄 **Sinonim & antonim**\n- ✍️ **Contoh kalimat**\n- 📝 **Kata baku & tidak baku**\n- 🤔 **Perbedaan kata**\n- Dan apa aja soal Bahasa Indonesia!" },
   ]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -40,13 +40,13 @@ export default function AIChatPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           messages: [
-            { role: "system", content: "Kamu adalah AI BC, asisten belajar Bahasa Indonesia yang ramah dan membantu. Jawab pertanyaan tentang Bahasa Indonesia dengan jelas, berikan contoh, dan gunakan bahasa yang mudah dipahami. Jika ditanya di luar Bahasa Indonesia, arahkan kembali ke topik Bahasa Indonesia." },
+            { role: "system", content: "Kamu adalah AI BC, asisten belajar Bahasa Indonesia yang ramah dan membantu." },
             { role: "user", content: text },
           ],
         }),
       });
       const data = await res.json();
-      setMessages((prev) => [...prev, { role: "bot", text: data.answer || "Maaf, aku gak bisa jawab sekarang. Coba tanya yang lain ya! 😊" }]);
+      setMessages((prev) => [...prev, { role: "bot", text: data.answer || "Maaf, aku belum bisa jawab. Coba tanya yang lain ya! 😊" }]);
     } catch {
       setMessages((prev) => [...prev, { role: "bot", text: "Maaf, ada gangguan. Coba lagi ya! 🙏" }]);
     }
@@ -98,17 +98,17 @@ export default function AIChatPage() {
                 <Bot size={18} className="text-white" />
               </div>
             )}
-            <div className={`max-w-[85%] md:max-w-[70%] rounded-2xl p-4 ${
+            <div className={`max-w-[90%] md:max-w-[80%] rounded-2xl p-4 ${
               msg.role === "user"
                 ? "bg-gradient-to-r from-red-500 to-red-600 text-white rounded-br-md shadow-md"
                 : "bg-white border border-red-100 text-slate-700 rounded-bl-md shadow-sm"
             }`}>
               {msg.role === "bot" ? (
-                <div className="prose prose-sm max-w-none prose-headings:text-slate-800 prose-a:text-red-600 prose-strong:text-slate-800">
+                <div className="prose prose-sm max-w-none prose-headings:text-slate-800 prose-a:text-red-600 prose-strong:text-slate-800 prose-p:my-1 prose-ul:my-1 prose-ol:my-1 prose-li:my-0.5">
                   <ReactMarkdown remarkPlugins={[remarkGfm]}>{msg.text}</ReactMarkdown>
                 </div>
               ) : (
-                <p className="text-sm">{msg.text}</p>
+                <p className="text-sm leading-relaxed">{msg.text}</p>
               )}
             </div>
             {msg.role === "user" && (
