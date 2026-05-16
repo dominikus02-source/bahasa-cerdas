@@ -325,7 +325,7 @@ export default function RPPModulPage() {
             <Card className="p-0 overflow-hidden border-2 border-emerald-200">
               <div className="bg-gradient-to-r from-emerald-500 to-teal-600 text-white p-6">
                 <div className="flex items-center justify-between mb-3">
-                  <Badge className="bg-white/20 text-white border-0">{docType} Generated</Badge>
+                  <Badge className="bg-white/20 text-white border-0">{curriculum === "K13" ? "RPP K13" : curriculum === "MERDEKA_DL" ? "Modul Deep Learning" : "Modul Ajar"} Generated</Badge>
                   <div className="flex gap-2">
                     <Button size="sm" variant="outline" className="bg-white/10 border-white/20 text-white hover:bg-white/20" onClick={() => setPreviewDoc(generated)}>
                       <Eye className="h-4 w-4" /> Preview
@@ -338,11 +338,29 @@ export default function RPPModulPage() {
                 <h3 className="text-xl font-bold">{generated.title || `${docType} ${genForm.topik}`}</h3>
                 <p className="text-white/70 text-sm mt-1">Kelas {genForm.kelas} • {genForm.semester} • Bahasa Indonesia</p>
               </div>
-              <div className="p-6 space-y-4 bg-white">
-                {generated.competency && <div className="bg-gray-50 rounded-xl p-4"><p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Kompetensi</p><p className="text-sm text-gray-800">{generated.competency}</p></div>}
-                {generated.indicators && <div className="bg-gray-50 rounded-xl p-4"><p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Indikator</p><p className="text-sm text-gray-800">{generated.indicators}</p></div>}
-                {generated.learningSteps && <div className="bg-gray-50 rounded-xl p-4"><p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Langkah Pembelajaran</p><ol className="text-sm text-gray-800 list-decimal list-inside space-y-1">{generated.learningSteps.map((step: string, i: number) => (<li key={i}>{step}</li>))}</ol></div>}
-                {generated.assessment && <div className="bg-gray-50 rounded-xl p-4"><p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Penilaian</p><p className="text-sm text-gray-800">{generated.assessment}</p></div>}
+              <div className="p-6 space-y-3 bg-white">
+                {curriculum === "K13" ? (
+                  <>
+                    {(generated.ki1 || generated.ki3) && <div className="bg-gray-50 rounded-xl p-4"><p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Kompetensi Inti</p><p className="text-sm text-gray-800">KI-3: {generated.ki3 || "-"}{generated.ki4 ? <><br />KI-4: {generated.ki4}</> : ""}</p></div>}
+                    {(generated.kdPengetahuan || generated.kdKeterampilan) && <div className="bg-gray-50 rounded-xl p-4"><p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Kompetensi Dasar</p><p className="text-sm text-gray-800">{generated.kdPengetahuan || generated.kdKeterampilan}</p></div>}
+                    {generated.tujuanPembelajaran && <div className="bg-gray-50 rounded-xl p-4"><p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Tujuan Pembelajaran</p><ol className="text-sm text-gray-800 list-decimal list-inside space-y-1">{generated.tujuanPembelajaran.map((s: string, i: number) => (<li key={i}>{s}</li>))}</ol></div>}
+                    {(generated.kegiatanPendahuluan || generated.kegiatanIntiMengamati) && <div className="bg-gray-50 rounded-xl p-4"><p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Kegiatan Pembelajaran</p><p className="text-sm text-gray-800">{generated.kegiatanPendahuluan?.length || 0} langkah pendahuluan, {generated.kegiatanIntiMengamati ? "5M lengkap" : (generated.kegiatanInti?.length || 0)} langkah inti</p></div>}
+                    {(generated.penilaianSikap || generated.penilaianPengetahuan) && <div className="bg-gray-50 rounded-xl p-4"><p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Penilaian</p><p className="text-sm text-gray-800">Sikap, Pengetahuan, Keterampilan</p></div>}
+                  </>
+                ) : (
+                  <>
+                    {generated.capaianPembelajaran && <div className="bg-gray-50 rounded-xl p-4"><p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Capaian Pembelajaran</p><p className="text-sm text-gray-800">{generated.capaianPembelajaran}</p></div>}
+                    {generated.tujuanPembelajaran && <div className="bg-gray-50 rounded-xl p-4"><p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Tujuan Pembelajaran</p><ol className="text-sm text-gray-800 list-decimal list-inside space-y-1">{generated.tujuanPembelajaran.map((s: string, i: number) => (<li key={i}>{s}</li>))}</ol></div>}
+                    {generated.tujuanPembelajaranBermakna && <div className="bg-gray-50 rounded-xl p-4"><p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Tujuan Pembelajaran Bermakna</p><ol className="text-sm text-gray-800 list-decimal list-inside space-y-1">{generated.tujuanPembelajaranBermakna.map((s: string, i: number) => (<li key={i}>{s}</li>))}</ol></div>}
+                    {generated.pertanyaanPemantik && <div className="bg-gray-50 rounded-xl p-4"><p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Pertanyaan Pemantik</p><ol className="text-sm text-gray-800 list-decimal list-inside space-y-1">{generated.pertanyaanPemantik.map((s: string, i: number) => (<li key={i}>{s}</li>))}</ol></div>}
+                    {(generated.kegiatanPendahuluan || generated.kegiatanInti || generated.aktivasiPengetahuan) && <div className="bg-gray-50 rounded-xl p-4"><p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Kegiatan Pembelajaran</p><p className="text-sm text-gray-800">{generated.aktivasiPengetahuan ? "Deep Learning (5 fase)" : `${(generated.kegiatanPendahuluan?.length || 0) + (generated.kegiatanInti?.length || 0) + (generated.kegiatanPenutup?.length || 0)} langkah`}</p></div>}
+                    {(generated.asesmenDiagnostik || generated.asesmenFormatif) && <div className="bg-gray-50 rounded-xl p-4"><p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Asesmen</p><p className="text-sm text-gray-800">Diagnostik, Formatif, Sumatif</p></div>}
+                  </>
+                )}
+                {generated.competency && !generated.capaianPembelajaran && !generated.ki1 && <div className="bg-gray-50 rounded-xl p-4"><p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Kompetensi</p><p className="text-sm text-gray-800">{generated.competency}</p></div>}
+                {generated.indicators && !generated.ipkPengetahuan && <div className="bg-gray-50 rounded-xl p-4"><p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Indikator</p><p className="text-sm text-gray-800">{generated.indicators}</p></div>}
+                {generated.learningSteps && !generated.kegiatanPendahuluan && !generated.kegiatanIntiMengamati && !generated.kegiatanInti && <div className="bg-gray-50 rounded-xl p-4"><p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Langkah Pembelajaran</p><ol className="text-sm text-gray-800 list-decimal list-inside space-y-1">{generated.learningSteps.map((step: string, i: number) => (<li key={i}>{step}</li>))}</ol></div>}
+                {generated.assessment && !generated.penilaianSikap && !generated.asesmenDiagnostik && <div className="bg-gray-50 rounded-xl p-4"><p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Penilaian</p><p className="text-sm text-gray-800">{generated.assessment}</p></div>}
               </div>
             </Card>
           )}
@@ -424,6 +442,7 @@ export default function RPPModulPage() {
 }
 
 function PrintContent({ previewDoc, schoolInfo, docType, genForm }: { previewDoc: any; schoolInfo: any; docType: string; genForm: any }) {
+  const curriculum = previewDoc.curriculum || "MERDEKA";
   const resolvedKelas = previewDoc.kelas || genForm.kelas;
   const resolvedSemester = previewDoc.semester || genForm.semester;
   const resolvedKds = [genForm.kd1, genForm.kd2, genForm.kd3, ...(previewDoc.kds || [])].filter(Boolean);
@@ -435,14 +454,28 @@ function PrintContent({ previewDoc, schoolInfo, docType, genForm }: { previewDoc
   const resolvedTahunAjaran = previewDoc.tahunAjaran || schoolInfo.academicYear;
   const resolvedAlokasi = genForm.alokasi || previewDoc.alokasi || "2x40";
 
+  const SectionTitle = ({ children }: { children: React.ReactNode }) => (
+    <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-2 border-b border-gray-200 pb-1">{children}</h3>
+  );
+
+  const SectionContent = ({ children, className = "" }: { children: React.ReactNode; className?: string }) => (
+    <div className={`mb-5 print-break-inside-avoid ${className}`}>{children}</div>
+  );
+
+  const ListItems = ({ items, ordered = false }: { items: string[] | string; ordered?: boolean }) => {
+    if (typeof items === "string") return <p className="text-sm text-gray-700 leading-relaxed">{items}</p>;
+    if (ordered) return <ol className="text-sm text-gray-700 list-decimal list-inside space-y-1">{items.map((item, i) => (<li key={i}>{item}</li>))}</ol>;
+    return <ul className="text-sm text-gray-700 list-disc list-inside space-y-1">{items.map((item, i) => (<li key={i}>{item}</li>))}</ul>;
+  };
+
   return (
     <div className="print-content">
-      {/* First Page: Letterhead + Identity */}
+      {/* Letterhead + Identity */}
       <div className="print-break-inside-avoid">
         <div className="text-center mb-6 pb-4 border-b-2 border-gray-800">
           <p className="text-sm font-bold text-gray-900 uppercase">{resolvedSchoolName}</p>
-          <p className="text-xs text-gray-500">{docType === "RPP" ? "RENCANA PELAKSANAAN PEMBELAJARAN" : "MODUL AJAR"}</p>
-          <p className="text-xs text-gray-500">Kurikulum {previewDoc.curriculum === "K13" ? "2013" : previewDoc.curriculum === "MERDEKA_DL" ? "Merdeka Deep Learning" : "Merdeka"}</p>
+          <p className="text-xs text-gray-500">{docType === "RPP" || curriculum === "K13" ? "RENCANA PELAKSANAAN PEMBELAJARAN" : "MODUL AJAR"}</p>
+          <p className="text-xs text-gray-500">Kurikulum {curriculum === "K13" ? "2013" : curriculum === "MERDEKA_DL" ? "Merdeka Deep Learning" : "Merdeka"}</p>
         </div>
 
         <div className="mb-6">
@@ -452,21 +485,367 @@ function PrintContent({ previewDoc, schoolInfo, docType, genForm }: { previewDoc
               <tr><td className="py-1 font-medium">Kelas / Semester</td><td>: {resolvedKelas} / {resolvedSemester}</td></tr>
               <tr><td className="py-1 font-medium">Tahun Pelajaran</td><td>: {resolvedTahunAjaran}</td></tr>
               <tr><td className="py-1 font-medium">Alokasi Waktu</td><td>: {resolvedAlokasi} menit</td></tr>
-              {resolvedKds.length > 0 && <tr><td className="py-1 font-medium align-top">Kompetensi Dasar</td><td>: {resolvedKds.join("; ")}</td></tr>}
-              {resolvedMethods.length > 0 && <tr><td className="py-1 font-medium align-top">Metode</td><td>: {resolvedMethods.join(", ")}</td></tr>}
+              {curriculum === "K13" && resolvedKds.length > 0 && <tr><td className="py-1 font-medium align-top">Kompetensi Dasar</td><td>: {resolvedKds.join("; ")}</td></tr>}
+              {resolvedMethods.length > 0 && <tr><td className="py-1 font-medium align-top">Model/Metode</td><td>: {resolvedMethods.join(", ")}</td></tr>}
             </tbody>
           </table>
         </div>
       </div>
 
-      {/* Content Sections */}
-      {previewDoc.competency && <div className="mb-5 print-break-inside-avoid"><h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-2 border-b border-gray-200 pb-1">Kompetensi / Tujuan Pembelajaran</h3><p className="text-sm text-gray-700 leading-relaxed">{previewDoc.competency}</p></div>}
-      {previewDoc.indicators && <div className="mb-5 print-break-inside-avoid"><h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-2 border-b border-gray-200 pb-1">Indikator Pencapaian</h3><p className="text-sm text-gray-700 leading-relaxed">{previewDoc.indicators}</p></div>}
-      {previewDoc.learningSteps && <div className="mb-5"><h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-2 border-b border-gray-200 pb-1">Langkah Pembelajaran</h3><ol className="space-y-2">{previewDoc.learningSteps.map((step: string, i: number) => (<li key={i} className="flex gap-3 text-sm text-gray-700"><span className="w-6 h-6 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center text-xs font-bold shrink-0">{i + 1}</span><span>{step}</span></li>))}</ol></div>}
-      {previewDoc.assessment && <div className="mb-5 print-break-inside-avoid"><h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-2 border-b border-gray-200 pb-1">Penilaian</h3><p className="text-sm text-gray-700 leading-relaxed">{previewDoc.assessment}</p></div>}
-      {previewDoc.differentiation && <div className="mb-5 print-break-inside-avoid"><h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-2 border-b border-gray-200 pb-1">Diferensiasi</h3><p className="text-sm text-gray-700 leading-relaxed">{previewDoc.differentiation}</p></div>}
-      {previewDoc.materials && <div className="mb-5 print-break-inside-avoid"><h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-2 border-b border-gray-200 pb-1">Materi & Referensi</h3><p className="text-sm text-gray-700 leading-relaxed">{previewDoc.materials}</p></div>}
-      {previewDoc.description && !previewDoc.learningSteps && <div className="mb-5 print-break-inside-avoid"><p className="text-sm text-gray-700 leading-relaxed">{previewDoc.description}</p></div>}
+      {/* K13 RPP Content */}
+      {curriculum === "K13" && (
+        <>
+          <SectionContent>
+            <SectionTitle>Kompetensi Inti (KI)</SectionTitle>
+            <div className="text-sm text-gray-700 space-y-1 mt-2">
+              {previewDoc.ki1 && <p><span className="font-medium">KI-1:</span> {previewDoc.ki1}</p>}
+              {previewDoc.ki2 && <p><span className="font-medium">KI-2:</span> {previewDoc.ki2}</p>}
+              {previewDoc.ki3 && <p><span className="font-medium">KI-3:</span> {previewDoc.ki3}</p>}
+              {previewDoc.ki4 && <p><span className="font-medium">KI-4:</span> {previewDoc.ki4}</p>}
+            </div>
+          </SectionContent>
+
+          {(previewDoc.kdPengetahuan || previewDoc.kdKeterampilan) && (
+            <SectionContent>
+              <SectionTitle>Kompetensi Dasar</SectionTitle>
+              <div className="text-sm text-gray-700 space-y-1 mt-2">
+                {previewDoc.kdPengetahuan && <p><span className="font-medium">KD Pengetahuan:</span> {previewDoc.kdPengetahuan}</p>}
+                {previewDoc.kdKeterampilan && <p><span className="font-medium">KD Keterampilan:</span> {previewDoc.kdKeterampilan}</p>}
+              </div>
+            </SectionContent>
+          )}
+
+          {(previewDoc.ipkPengetahuan || previewDoc.ipkKeterampilan) && (
+            <SectionContent>
+              <SectionTitle>Indikator Pencapaian Kompetensi (IPK)</SectionTitle>
+              <div className="text-sm text-gray-700 space-y-2 mt-2">
+                {previewDoc.ipkPengetahuan && <div><p className="font-medium">IPK Pengetahuan:</p><ListItems items={previewDoc.ipkPengetahuan} /></div>}
+                {previewDoc.ipkKeterampilan && <div><p className="font-medium">IPK Keterampilan:</p><ListItems items={previewDoc.ipkKeterampilan} /></div>}
+              </div>
+            </SectionContent>
+          )}
+
+          {previewDoc.tujuanPembelajaran && (
+            <SectionContent>
+              <SectionTitle>Tujuan Pembelajaran</SectionTitle>
+              <ListItems items={previewDoc.tujuanPembelajaran} ordered />
+            </SectionContent>
+          )}
+
+          {previewDoc.materiPokok && (
+            <SectionContent>
+              <SectionTitle>Materi Pembelajaran</SectionTitle>
+              <p className="text-sm font-medium text-gray-800">{previewDoc.materiPokok}</p>
+              {previewDoc.uraianMateri && <p className="text-sm text-gray-700 leading-relaxed mt-1">{previewDoc.uraianMateri}</p>}
+            </SectionContent>
+          )}
+
+          {(previewDoc.kegiatanPendahuluan || previewDoc.kegiatanIntiMengamati) && (
+            <SectionContent>
+              <SectionTitle>Kegiatan Pembelajaran</SectionTitle>
+              <div className="text-sm text-gray-700 space-y-3 mt-2">
+                {previewDoc.kegiatanPendahuluan && (
+                  <div>
+                    <p className="font-semibold text-gray-800">a. Pendahuluan (10-15 menit)</p>
+                    <ListItems items={previewDoc.kegiatanPendahuluan} ordered />
+                  </div>
+                )}
+                {(previewDoc.kegiatanIntiMengamati || previewDoc.kegiatanInti) && (
+                  <div>
+                    <p className="font-semibold text-gray-800">b. Kegiatan Inti — Pendekatan Saintifik (5M)</p>
+                    {previewDoc.kegiatanIntiMengamati && <p className="mt-1"><span className="font-medium">Mengamati:</span> {previewDoc.kegiatanIntiMengamati}</p>}
+                    {previewDoc.kegiatanIntiMenanya && <p><span className="font-medium">Menanya:</span> {previewDoc.kegiatanIntiMenanya}</p>}
+                    {previewDoc.kegiatanIntiMengumpulkan && <p><span className="font-medium">Mengumpulkan Informasi:</span> {previewDoc.kegiatanIntiMengumpulkan}</p>}
+                    {previewDoc.kegiatanIntiMengasosiasi && <p><span className="font-medium">Mengasosiasi:</span> {previewDoc.kegiatanIntiMengasosiasi}</p>}
+                    {previewDoc.kegiatanIntiMengomunikasikan && <p><span className="font-medium">Mengomunikasikan:</span> {previewDoc.kegiatanIntiMengomunikasikan}</p>}
+                    {previewDoc.kegiatanInti && !previewDoc.kegiatanIntiMengamati && <ListItems items={previewDoc.kegiatanInti} ordered />}
+                  </div>
+                )}
+                {previewDoc.kegiatanPenutup && (
+                  <div>
+                    <p className="font-semibold text-gray-800">c. Penutup (10-15 menit)</p>
+                    <ListItems items={previewDoc.kegiatanPenutup} ordered />
+                  </div>
+                )}
+              </div>
+            </SectionContent>
+          )}
+
+          {(previewDoc.penilaianSikap || previewDoc.penilaianPengetahuan || previewDoc.penilaianKeterampilan) && (
+            <SectionContent>
+              <SectionTitle>Penilaian</SectionTitle>
+              <div className="text-sm text-gray-700 space-y-2 mt-2">
+                {previewDoc.penilaianSikap && <p><span className="font-medium">a. Penilaian Sikap:</span> {previewDoc.penilaianSikap}</p>}
+                {previewDoc.penilaianPengetahuan && <p><span className="font-medium">b. Penilaian Pengetahuan:</span> {previewDoc.penilaianPengetahuan}</p>}
+                {previewDoc.penilaianKeterampilan && <p><span className="font-medium">c. Penilaian Keterampilan:</span> {previewDoc.penilaianKeterampilan}</p>}
+              </div>
+            </SectionContent>
+          )}
+
+          {(previewDoc.media || previewDoc.alat || previewDoc.sumberBelajar) && (
+            <SectionContent>
+              <SectionTitle>Media, Alat, dan Sumber Belajar</SectionTitle>
+              <div className="text-sm text-gray-700 space-y-1 mt-2">
+                {previewDoc.media && <p><span className="font-medium">Media:</span> {previewDoc.media}</p>}
+                {previewDoc.alat && <p><span className="font-medium">Alat:</span> {previewDoc.alat}</p>}
+                {previewDoc.sumberBelajar && <p><span className="font-medium">Sumber Belajar:</span> {previewDoc.sumberBelajar}</p>}
+              </div>
+            </SectionContent>
+          )}
+        </>
+      )}
+
+      {/* Kurikulum Merdeka Content */}
+      {curriculum === "MERDEKA" && (
+        <>
+          <SectionContent>
+            <SectionTitle>Informasi Umum</SectionTitle>
+            <div className="text-sm text-gray-700 space-y-1 mt-2">
+              {previewDoc.fase && <p><span className="font-medium">Fase:</span> {previewDoc.fase}</p>}
+              {previewDoc.kompetensiAwal && <p><span className="font-medium">Kompetensi Awal:</span> {previewDoc.kompetensiAwal}</p>}
+              {previewDoc.profilPelajarPancasila && (
+                <div><p className="font-medium">Profil Pelajar Pancasila:</p><ListItems items={previewDoc.profilPelajarPancasila} /></div>
+              )}
+              {previewDoc.saranaPrasarana && <p><span className="font-medium">Sarana & Prasarana:</span> {previewDoc.saranaPrasarana}</p>}
+              {previewDoc.targetPesertaDidik && <p><span className="font-medium">Target Peserta Didik:</span> {previewDoc.targetPesertaDidik}</p>}
+              {previewDoc.modelPembelajaran && <p><span className="font-medium">Model Pembelajaran:</span> {previewDoc.modelPembelajaran}</p>}
+            </div>
+          </SectionContent>
+
+          {previewDoc.capaianPembelajaran && (
+            <SectionContent>
+              <SectionTitle>Capaian Pembelajaran</SectionTitle>
+              <p className="text-sm text-gray-700 leading-relaxed">{previewDoc.capaianPembelajaran}</p>
+            </SectionContent>
+          )}
+
+          {previewDoc.tujuanPembelajaran && (
+            <SectionContent>
+              <SectionTitle>Tujuan Pembelajaran</SectionTitle>
+              <ListItems items={previewDoc.tujuanPembelajaran} ordered />
+            </SectionContent>
+          )}
+
+          {previewDoc.pemahamanBermakna && (
+            <SectionContent>
+              <SectionTitle>Pemahaman Bermakna</SectionTitle>
+              <p className="text-sm text-gray-700 leading-relaxed">{previewDoc.pemahamanBermakna}</p>
+            </SectionContent>
+          )}
+
+          {previewDoc.pertanyaanPemantik && (
+            <SectionContent>
+              <SectionTitle>Pertanyaan Pemantik</SectionTitle>
+              <ListItems items={previewDoc.pertanyaanPemantik} ordered />
+            </SectionContent>
+          )}
+
+          {(previewDoc.kegiatanPendahuluan || previewDoc.kegiatanInti) && (
+            <SectionContent>
+              <SectionTitle>Kegiatan Pembelajaran</SectionTitle>
+              <div className="text-sm text-gray-700 space-y-3 mt-2">
+                {previewDoc.kegiatanPendahuluan && (
+                  <div><p className="font-semibold text-gray-800">a. Pendahuluan (10-15 menit)</p><ListItems items={previewDoc.kegiatanPendahuluan} ordered /></div>
+                )}
+                {previewDoc.kegiatanInti && (
+                  <div><p className="font-semibold text-gray-800">b. Kegiatan Inti</p><ListItems items={previewDoc.kegiatanInti} ordered /></div>
+                )}
+                {previewDoc.kegiatanPenutup && (
+                  <div><p className="font-semibold text-gray-800">c. Penutup (10-15 menit)</p><ListItems items={previewDoc.kegiatanPenutup} ordered /></div>
+                )}
+              </div>
+            </SectionContent>
+          )}
+
+          {(previewDoc.asesmenDiagnostik || previewDoc.asesmenFormatif || previewDoc.asesmenSumatif) && (
+            <SectionContent>
+              <SectionTitle>Asesmen</SectionTitle>
+              <div className="text-sm text-gray-700 space-y-2 mt-2">
+                {previewDoc.asesmenDiagnostik && <p><span className="font-medium">a. Diagnostik:</span> {previewDoc.asesmenDiagnostik}</p>}
+                {previewDoc.asesmenFormatif && <p><span className="font-medium">b. Formatif:</span> {previewDoc.asesmenFormatif}</p>}
+                {previewDoc.asesmenSumatif && <p><span className="font-medium">c. Sumatif:</span> {previewDoc.asesmenSumatif}</p>}
+              </div>
+            </SectionContent>
+          )}
+
+          {previewDoc.lkpd && (
+            <SectionContent>
+              <SectionTitle>Lembar Kerja Peserta Didik (LKPD)</SectionTitle>
+              <p className="text-sm text-gray-700 leading-relaxed">{previewDoc.lkpd}</p>
+            </SectionContent>
+          )}
+
+          {previewDoc.pengayaanRemedial && (
+            <SectionContent>
+              <SectionTitle>Pengayaan dan Remedial</SectionTitle>
+              <p className="text-sm text-gray-700 leading-relaxed">{previewDoc.pengayaanRemedial}</p>
+            </SectionContent>
+          )}
+
+          {previewDoc.bahanBacaan && (
+            <SectionContent>
+              <SectionTitle>Bahan Bacaan</SectionTitle>
+              <p className="text-sm text-gray-700 leading-relaxed">{previewDoc.bahanBacaan}</p>
+            </SectionContent>
+          )}
+
+          {previewDoc.glosarium && typeof previewDoc.glosarium === "object" && (
+            <SectionContent>
+              <SectionTitle>Glosarium</SectionTitle>
+              <div className="text-sm text-gray-700 space-y-1 mt-2">
+                {Object.entries(previewDoc.glosarium).map(([term, def]) => (
+                  <p key={term}><span className="font-medium">{term}:</span> {def as string}</p>
+                ))}
+              </div>
+            </SectionContent>
+          )}
+
+          {previewDoc.daftarPustaka && (
+            <SectionContent>
+              <SectionTitle>Daftar Pustaka</SectionTitle>
+              <p className="text-sm text-gray-700 leading-relaxed">{previewDoc.daftarPustaka}</p>
+            </SectionContent>
+          )}
+        </>
+      )}
+
+      {/* Kurikulum Merdeka Deep Learning Content */}
+      {curriculum === "MERDEKA_DL" && (
+        <>
+          <SectionContent>
+            <SectionTitle>Informasi Umum</SectionTitle>
+            <div className="text-sm text-gray-700 space-y-1 mt-2">
+              {previewDoc.fase && <p><span className="font-medium">Fase:</span> {previewDoc.fase}</p>}
+              {previewDoc.kompetensiAwal && <p><span className="font-medium">Kompetensi Awal:</span> {previewDoc.kompetensiAwal}</p>}
+              {previewDoc.profilPelajarPancasila && (
+                <div><p className="font-medium">Profil Pelajar Pancasila:</p><ListItems items={previewDoc.profilPelajarPancasila} /></div>
+              )}
+              {previewDoc.saranaPrasarana && <p><span className="font-medium">Sarana & Prasarana:</span> {previewDoc.saranaPrasarana}</p>}
+              {previewDoc.targetPesertaDidik && <p><span className="font-medium">Target Peserta Didik:</span> {previewDoc.targetPesertaDidik}</p>}
+              {previewDoc.modelPembelajaran && <p><span className="font-medium">Model Pembelajaran:</span> {previewDoc.modelPembelajaran}</p>}
+            </div>
+          </SectionContent>
+
+          {previewDoc.capaianPembelajaran && (
+            <SectionContent>
+              <SectionTitle>Capaian Pembelajaran</SectionTitle>
+              <p className="text-sm text-gray-700 leading-relaxed">{previewDoc.capaianPembelajaran}</p>
+            </SectionContent>
+          )}
+
+          {previewDoc.tujuanPembelajaranBermakna && (
+            <SectionContent>
+              <SectionTitle>Tujuan Pembelajaran Bermakna</SectionTitle>
+              <ListItems items={previewDoc.tujuanPembelajaranBermakna} ordered />
+            </SectionContent>
+          )}
+
+          {previewDoc.pemahamanBermakna && (
+            <SectionContent>
+              <SectionTitle>Pemahaman Bermakna</SectionTitle>
+              <p className="text-sm text-gray-700 leading-relaxed">{previewDoc.pemahamanBermakna}</p>
+            </SectionContent>
+          )}
+
+          {previewDoc.pertanyaanPemantik && (
+            <SectionContent>
+              <SectionTitle>Pertanyaan Pemantik</SectionTitle>
+              <ListItems items={previewDoc.pertanyaanPemantik} ordered />
+            </SectionContent>
+          )}
+
+          <SectionContent>
+            <SectionTitle>Kegiatan Pembelajaran Deep Learning</SectionTitle>
+            <div className="text-sm text-gray-700 space-y-3 mt-2">
+              {previewDoc.aktivasiPengetahuan && (
+                <div><p className="font-semibold text-gray-800">a. Aktivasi Pengetahuan Awal</p><ListItems items={previewDoc.aktivasiPengetahuan} ordered /></div>
+              )}
+              {previewDoc.eksplorasiMendalam && (
+                <div><p className="font-semibold text-gray-800">b. Eksplorasi Mendalam</p><ListItems items={previewDoc.eksplorasiMendalam} ordered /></div>
+              )}
+              {previewDoc.elaborasiDiferensiasi && (
+                <div>
+                  <p className="font-semibold text-gray-800">c. Elaborasi & Diferensiasi</p>
+                  <div className="ml-4 mt-1 space-y-1">
+                    {previewDoc.elaborasiDiferensiasi.diferensiasiKonten && <p><span className="font-medium">Diferensiasi Konten:</span> {previewDoc.elaborasiDiferensiasi.diferensiasiKonten}</p>}
+                    {previewDoc.elaborasiDiferensiasi.diferensiasiProses && <p><span className="font-medium">Diferensiasi Proses:</span> {previewDoc.elaborasiDiferensiasi.diferensiasiProses}</p>}
+                    {previewDoc.elaborasiDiferensiasi.diferensiasiProduk && <p><span className="font-medium">Diferensiasi Produk:</span> {previewDoc.elaborasiDiferensiasi.diferensiasiProduk}</p>}
+                  </div>
+                </div>
+              )}
+              {previewDoc.kreasiKolaborasi && (
+                <div><p className="font-semibold text-gray-800">d. Kreasi & Kolaborasi</p><ListItems items={previewDoc.kreasiKolaborasi} ordered /></div>
+              )}
+              {previewDoc.refleksiMetakognitif && (
+                <div><p className="font-semibold text-gray-800">e. Refleksi Metakognitif</p><ListItems items={previewDoc.refleksiMetakognitif} ordered /></div>
+              )}
+            </div>
+          </SectionContent>
+
+          {(previewDoc.asesmenDiagnostik || previewDoc.asesmenFormatif || previewDoc.asesmenSumatif) && (
+            <SectionContent>
+              <SectionTitle>Asesmen Autentik</SectionTitle>
+              <div className="text-sm text-gray-700 space-y-2 mt-2">
+                {previewDoc.asesmenDiagnostik && <p><span className="font-medium">a. Diagnostik:</span> {previewDoc.asesmenDiagnostik}</p>}
+                {previewDoc.asesmenFormatif && <p><span className="font-medium">b. Formatif:</span> {previewDoc.asesmenFormatif}</p>}
+                {previewDoc.asesmenSumatif && <p><span className="font-medium">c. Sumatif:</span> {previewDoc.asesmenSumatif}</p>}
+                {previewDoc.rubrikPenilaian && <p><span className="font-medium">Rubrik:</span> {previewDoc.rubrikPenilaian}</p>}
+              </div>
+            </SectionContent>
+          )}
+
+          {previewDoc.lkpd && (
+            <SectionContent>
+              <SectionTitle>LKPD Deep Learning</SectionTitle>
+              <p className="text-sm text-gray-700 leading-relaxed">{previewDoc.lkpd}</p>
+            </SectionContent>
+          )}
+
+          {previewDoc.pengayaanRemedial && (
+            <SectionContent>
+              <SectionTitle>Pengayaan dan Remedial</SectionTitle>
+              <p className="text-sm text-gray-700 leading-relaxed">{previewDoc.pengayaanRemedial}</p>
+            </SectionContent>
+          )}
+
+          {previewDoc.bahanBacaan && (
+            <SectionContent>
+              <SectionTitle>Bahan Bacaan</SectionTitle>
+              <p className="text-sm text-gray-700 leading-relaxed">{previewDoc.bahanBacaan}</p>
+            </SectionContent>
+          )}
+
+          {previewDoc.glosarium && typeof previewDoc.glosarium === "object" && (
+            <SectionContent>
+              <SectionTitle>Glosarium</SectionTitle>
+              <div className="text-sm text-gray-700 space-y-1 mt-2">
+                {Object.entries(previewDoc.glosarium).map(([term, def]) => (
+                  <p key={term}><span className="font-medium">{term}:</span> {def as string}</p>
+                ))}
+              </div>
+            </SectionContent>
+          )}
+
+          {previewDoc.daftarPustaka && (
+            <SectionContent>
+              <SectionTitle>Daftar Pustaka</SectionTitle>
+              <p className="text-sm text-gray-700 leading-relaxed">{previewDoc.daftarPustaka}</p>
+            </SectionContent>
+          )}
+        </>
+      )}
+
+      {/* Fallback for old format */}
+      {!previewDoc.ki1 && !previewDoc.capaianPembelajaran && !previewDoc.fase && (
+        <>
+          {previewDoc.competency && <SectionContent><SectionTitle>Kompetensi / Tujuan Pembelajaran</SectionTitle><p className="text-sm text-gray-700 leading-relaxed">{previewDoc.competency}</p></SectionContent>}
+          {previewDoc.indicators && <SectionContent><SectionTitle>Indikator Pencapaian</SectionTitle><ListItems items={previewDoc.indicators} /></SectionContent>}
+          {previewDoc.learningSteps && <SectionContent><SectionTitle>Langkah Pembelajaran</SectionTitle><ListItems items={previewDoc.learningSteps} ordered /></SectionContent>}
+          {previewDoc.assessment && <SectionContent><SectionTitle>Penilaian</SectionTitle><p className="text-sm text-gray-700 leading-relaxed">{previewDoc.assessment}</p></SectionContent>}
+          {previewDoc.differentiation && <SectionContent><SectionTitle>Diferensiasi</SectionTitle><p className="text-sm text-gray-700 leading-relaxed">{previewDoc.differentiation}</p></SectionContent>}
+          {previewDoc.materials && <SectionContent><SectionTitle>Materi & Referensi</SectionTitle><p className="text-sm text-gray-700 leading-relaxed">{previewDoc.materials}</p></SectionContent>}
+        </>
+      )}
 
       {/* Last Page: Signatures */}
       <div className="mt-16 pt-6 border-t border-gray-200 print-break-inside-avoid">
