@@ -86,9 +86,10 @@ interface GameLobbyProps {
   isHost?: boolean;
   roomCode?: string;
   onStart?: () => void;
+  role?: "GURU" | "MURID";
 }
 
-export default function GameLobby({ isHost = false, roomCode: initialCode, onStart }: GameLobbyProps) {
+export default function GameLobby({ isHost = false, roomCode: initialCode, onStart, role = "MURID" }: GameLobbyProps) {
   const router = useRouter();
   const [room, setRoom] = useState<any>(null);
   const [code, setCode] = useState(initialCode || "");
@@ -361,7 +362,7 @@ export default function GameLobby({ isHost = false, roomCode: initialCode, onSta
                   return (
                     <button
                       key={game.id}
-                      onClick={() => router.push(`/murid/game/${game.id}`)}
+                       onClick={() => router.push(`/${role === "GURU" ? "guru" : "murid"}/game/${game.id}`)}
                       className={`rounded-2xl border-2 p-4 transition-all bg-white border-slate-100 hover:border-slate-300 hover:shadow-md`}
                     >
                       <div className="text-center">
