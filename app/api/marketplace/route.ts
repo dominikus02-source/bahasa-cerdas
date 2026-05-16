@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient as createAdmin } from "@supabase/supabase-js";
-import { getUser } from "@/lib/supabase/server";
+import { getUser, createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 import { deleteFile } from "@/lib/upload";
 

@@ -35,6 +35,13 @@ export async function GET() {
       if (u.feature === "soal_generator") aiLastMonth.soal++;
     }
 
+    const karyaList = await db.karya.findMany({
+      where: { sellerId: user.id, isPublished: true },
+      orderBy: { createdAt: "desc" },
+      take: 5,
+      select: { id: true, title: true, type: true, price: true, grade: true, createdAt: true, images: true },
+    });
+
     return NextResponse.json({
       totalKarya: karyaCount,
       totalSiswa: siswaCount,
@@ -46,6 +53,7 @@ export async function GET() {
       aiUsageBulanLalu: aiLastMonth,
       rppCount,
       soalCount,
+      karyaList,
     });
   } catch { return NextResponse.json({ error: "Internal error" }, { status: 500 }); }
 }

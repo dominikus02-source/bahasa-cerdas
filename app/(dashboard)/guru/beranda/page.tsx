@@ -9,6 +9,7 @@ import {
   Crown, Zap, Flame, FileUp, Upload
 } from "lucide-react"
 import { useUserStore } from "@/store"
+import { Badge } from "@/components/ui/badge"
 
 function formatRp(n: number) {
   return new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", maximumFractionDigits: 0 }).format(n)
@@ -225,6 +226,40 @@ export default function GuruBerandaPage() {
             </Link>
           </div>
         </div>
+      </div>
+
+      <div className="mt-6 bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="font-semibold text-gray-900">Karya Ditayangkan</h3>
+          <Link href="/guru/toko-karya" className="text-xs text-emerald-600 font-semibold hover:underline flex items-center gap-1">
+            Lihat Semua <ChevronRight size={12} />
+          </Link>
+        </div>
+        {stats.karyaList && stats.karyaList.length > 0 ? (
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {stats.karyaList.map((karya: any) => (
+              <div key={karya.id} className="rounded-xl border border-gray-100 p-4 hover:shadow-md transition-shadow">
+                <div className="flex items-center gap-2 mb-2">
+                  <Badge variant="secondary" className="text-[10px]">{karya.type}</Badge>
+                  <Badge variant={karya.price > 0 ? "warning" : "success"} className="text-[10px]">
+                    {karya.price > 0 ? `Rp ${Number(karya.price).toLocaleString("id")}` : "Gratis"}
+                  </Badge>
+                </div>
+                <h4 className="font-semibold text-sm text-gray-900 truncate">{karya.title}</h4>
+                {karya.grade && <p className="text-[10px] text-gray-400 mt-1">Kelas {karya.grade}</p>}
+                <p className="text-[10px] text-gray-400 mt-1">{new Date(karya.createdAt).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" })}</p>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-8">
+            <FileText size={32} className="mx-auto text-gray-200 mb-2" />
+            <p className="text-sm text-gray-500">Belum ada karya ditayangkan</p>
+            <Link href="/guru/toko-karya" className="text-xs text-emerald-600 font-semibold hover:underline mt-1 inline-block">
+              Upload karya pertamamu
+            </Link>
+          </div>
+        )}
       </div>
 
       <div className="mt-6 bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">

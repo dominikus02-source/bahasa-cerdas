@@ -6,7 +6,7 @@ import { UpgradeModal } from "@/components/shared/upgrade-modal";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Upload, Plus, Eye, Trash2, Crown, Check, FileText, Download, Loader2, X } from "lucide-react";
+import { Upload, Plus, Eye, Trash2, Crown, Check, FileText, Download, Loader2, X, Edit2 } from "lucide-react";
 
 const KARYA_TYPES = [
   { value: "RPP", label: "RPP" },
@@ -23,7 +23,8 @@ export default function TokoKaryaPage() {
   const user = useUserStore();
   const fileRef = useRef<HTMLInputElement>(null);
   const [showUpgrade, setShowUpgrade] = useState(false);
-  const [showTambah, setShowTambah] = useState(false);
+  const [showForm, setShowForm] = useState(false);
+  const [editId, setEditId] = useState<string | null>(null);
   const [karyaList, setKaryaList] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
@@ -72,7 +73,36 @@ export default function TokoKaryaPage() {
     setLoading(false);
   }
 
-  const handleUpload = async () => {
+  const openEdit = (karya: any) => {
+    let imgs = ["", "", ""];
+    try {
+      const parsed = JSON.parse(karya.images || "[]");
+      if (Array.isArray(parsed)) {
+        imgs[0] = parsed[0] || "";
+        imgs[1] = parsed[1] || "";
+        imgs[2] = parsed[2] || "";
+      }
+    } catch {}
+    setFormData({
+      title: karya.title || "",
+      description: karya.description || "",
+      type: karya.type || "RPP",
+      price: karya.price || 0,
+      grade: karya.grade || "",
+      images: imgs,
+    });
+    setEditId(karya.id);
+    setShowForm(true);
+  };
+
+  const openTambah = () => {
+    setFormData({ title: "", description: "", type: "RPP", price: 0, grade: "", images: ["", "", ""] });
+    setEditId(null);
+    setSelectedFile(null);
+    setShowForm(true);
+  };
+
+  const handleSubmit = async () => {
     if (formData.price > 0 && !user.isPremium && !user.isFounder) {
       setShowUpgrade(true);
       return;
@@ -93,19 +123,44 @@ export default function TokoKaryaPage() {
 
       if (selectedFile) fd.set("file", selectedFile);
 
-      const res = await fetch("/api/marketplace", {
-        method: "POST",
-        body: fd,
-      });
+      const url = editId ? "/api/marketplace" : "/api/marketplace";
+      const method = editId ? "PUT" : "POST";
 
-      if (res.ok) {
-        setShowTambah(false);
-        setFormData({ title: "", description: "", type: "RPP", price: 0, grade: "", images: ["", "", ""] });
-        setSelectedFile(null);
-        fetchKarya();
+      if (editId) {
+        const body: any = {
+          id: editId,
+          title: formData.title,
+          description: formData.description,
+          type: formData.type,
+          grade: formData.grade,
+          price: formData.price,
+          images: JSON.stringify(formData.images.filter(Boolean)),
+        };
+        const res = await fetch(url, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body),
+        });
+        if (res.ok) {
+          setShowForm(false);
+          setEditId(null);
+          fetchKarya();
+        } else {
+          const err = await res.json();
+          alert(err.error || "Gagal mengedit");
+        }
       } else {
-        const err = await res.json();
-        alert(err.error || "Gagal mempublikasikan");
+        const res = await fetch(url, { method, body: fd });
+        if (res.ok) {
+          setShowForm(false);
+          setEditId(null);
+          setFormData({ title: "", description: "", type: "RPP", price: 0, grade: "", images: ["", "", ""] });
+          setSelectedFile(null);
+          fetchKarya();
+        } else {
+          const err = await res.json();
+          alert(err.error || "Gagal mempublikasikan");
+        }
       }
     } catch (e: any) {
       alert(e?.message || "Terjadi kesalahan");
@@ -129,7 +184,7 @@ export default function TokoKaryaPage() {
           <h1 className="text-2xl font-bold text-gray-900">Toko Karya</h1>
           <p className="mt-1 text-sm text-gray-600">Upload & jual RPP, modul, soal, dan karya lainnya</p>
         </div>
-        <Button onClick={() => setShowTambah(true)}><Plus size={16} /> Upload Karya</Button>
+        <Button onClick={openTambah}><Plus size={16} /> Upload Karya</Button>
       </div>
 
       {user.isPremium || user.isFounder ? (
@@ -152,10 +207,10 @@ export default function TokoKaryaPage() {
         </div>
       )}
 
-      {/* Upload Form */}
-      {showTambah && (
+      {/* Form (Add/Edit) */}
+      {showForm && (
         <Card className="p-6 mb-6 border-2 border-emerald-100">
-          <h2 className="font-bold text-lg mb-4">Upload Karya Baru</h2>
+          <h2 className="font-bold text-lg mb-4">{editId ? "Edit Karya" : "Upload Karya Baru"}</h2>
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-semibold mb-1">Judul Karya</label>
@@ -222,33 +277,35 @@ export default function TokoKaryaPage() {
                 ))}
               </div>
             </div>
-            <div>
-              <label className="block text-sm font-semibold mb-1">File Karya</label>
-              <input type="file" ref={fileRef} accept=".pdf,.epub,.docx,.pptx,.xlsx,.zip,.mp4"
-                onChange={(e) => setSelectedFile(e.target.files?.[0] || null)}
-                className="hidden" />
-              <div onClick={() => fileRef.current?.click()}
-                className="border-2 border-dashed border-gray-300 rounded-xl p-6 text-center cursor-pointer hover:border-emerald-500 hover:bg-emerald-50 transition-colors">
-                {selectedFile ? (
-                  <div className="flex items-center justify-center gap-2">
-                    <FileText size={24} className="text-emerald-600" />
-                    <span className="text-sm font-medium text-emerald-700">{selectedFile.name}</span>
-                    <span className="text-xs text-gray-400">({(selectedFile.size / 1024 / 1024).toFixed(1)} MB)</span>
-                    <button onClick={(e) => { e.stopPropagation(); setSelectedFile(null); }} className="p-1 rounded hover:bg-red-100"><X size={16} className="text-red-500" /></button>
-                  </div>
-                ) : (
-                  <>
-                    <Upload size={32} className="mx-auto text-gray-300 mb-2" />
-                    <p className="text-sm text-gray-600 font-medium">Klik untuk pilih file</p>
-                    <p className="text-xs text-gray-400 mt-1">PDF, DOCX, PPT, XLSX, ZIP — Max 100MB</p>
-                  </>
-                )}
+            {!editId && (
+              <div>
+                <label className="block text-sm font-semibold mb-1">File Karya</label>
+                <input type="file" ref={fileRef} accept=".pdf,.epub,.docx,.pptx,.xlsx,.zip,.mp4"
+                  onChange={(e) => setSelectedFile(e.target.files?.[0] || null)}
+                  className="hidden" />
+                <div onClick={() => fileRef.current?.click()}
+                  className="border-2 border-dashed border-gray-300 rounded-xl p-6 text-center cursor-pointer hover:border-emerald-500 hover:bg-emerald-50 transition-colors">
+                  {selectedFile ? (
+                    <div className="flex items-center justify-center gap-2">
+                      <FileText size={24} className="text-emerald-600" />
+                      <span className="text-sm font-medium text-emerald-700">{selectedFile.name}</span>
+                      <span className="text-xs text-gray-400">({(selectedFile.size / 1024 / 1024).toFixed(1)} MB)</span>
+                      <button onClick={(e) => { e.stopPropagation(); setSelectedFile(null); }} className="p-1 rounded hover:bg-red-100"><X size={16} className="text-red-500" /></button>
+                    </div>
+                  ) : (
+                    <>
+                      <Upload size={32} className="mx-auto text-gray-300 mb-2" />
+                      <p className="text-sm text-gray-600 font-medium">Klik untuk pilih file</p>
+                      <p className="text-xs text-gray-400 mt-1">PDF, DOCX, PPT, XLSX, ZIP — Max 100MB</p>
+                    </>
+                  )}
+                </div>
               </div>
-            </div>
+            )}
             <div className="flex gap-3 pt-2">
-              <Button variant="outline" onClick={() => { setShowTambah(false); setSelectedFile(null); }} className="flex-1">Batal</Button>
-              <Button onClick={handleUpload} disabled={uploading || !formData.title} className="flex-1 bg-gradient-to-r from-emerald-500 to-emerald-600">
-                {uploading ? <><Loader2 size={16} className="animate-spin" /> Uploading...</> : <><Upload size={16} /> Publikasikan</>}
+              <Button variant="outline" onClick={() => { setShowForm(false); setEditId(null); setSelectedFile(null); }} className="flex-1">Batal</Button>
+              <Button onClick={handleSubmit} disabled={uploading || !formData.title} className="flex-1 bg-gradient-to-r from-emerald-500 to-emerald-600">
+                {uploading ? <><Loader2 size={16} className="animate-spin" /> {editId ? "Updating..." : "Uploading..."}</> : <><Edit2 size={16} /> {editId ? "Simpan Perubahan" : "Publikasikan"}</>}
               </Button>
             </div>
           </div>
@@ -283,6 +340,7 @@ export default function TokoKaryaPage() {
                 </div>
                 <div className="flex gap-1">
                   <a href={karya.fileUrl} target="_blank" className="p-2 rounded-lg hover:bg-gray-100 text-gray-500"><Eye size={16} /></a>
+                  <button onClick={() => openEdit(karya)} className="p-2 rounded-lg hover:bg-blue-50 text-blue-500"><Edit2 size={16} /></button>
                   <button onClick={() => handleDelete(karya.id)} className="p-2 rounded-lg hover:bg-red-50 text-red-500"><Trash2 size={16} /></button>
                 </div>
               </div>
