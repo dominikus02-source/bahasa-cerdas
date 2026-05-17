@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Users, Search, Plus, ChevronLeft, MapPin, Shield, Globe, BookOpen, UserPlus, CheckCircle } from "lucide-react";
+import { Users, Search, Plus, ChevronLeft, MapPin, Shield, Globe, BookOpen, UserPlus, CheckCircle, Edit2, X, Upload, FileText, Image as ImageIcon, Trash2 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
@@ -30,6 +30,7 @@ interface Community {
   memberCount: number;
   postCount: number;
   creator: { fullName: string; avatar: string | null } | null;
+  createdAt: string;
 }
 
 type MyTab = "public" | "mine";
@@ -52,6 +53,12 @@ export default function KomunitasPage() {
   const [createMsg, setCreateMsg] = useState("");
   const [myTab, setMyTab] = useState<MyTab>("public");
   const [myCommunities, setMyCommunities] = useState<Community[]>([]);
+  const [editCommunity, setEditCommunity] = useState<Community | null>(null);
+  const [editForm, setEditForm] = useState({ name: "", description: "", province: "", city: "", region: "", school: "" });
+  const [editAttachments, setEditAttachments] = useState<{ url: string; name: string; type: string }[]>([]);
+  const [uploading, setUploading] = useState(false);
+  const [editing, setEditing] = useState(false);
+  const [editMsg, setEditMsg] = useState("");
 
   const fetchCommunities = async () => {
     setLoading(true);
@@ -107,6 +114,74 @@ export default function KomunitasPage() {
       console.error(e);
     } finally {
       setCreating(false);
+    }
+  };
+
+  const openEdit = (c: Community) => {
+    setEditCommunity(c);
+    setEditForm({
+      name: c.name,
+      description: c.description || "",
+      province: c.province || "",
+      city: c.city || "",
+      region: c.region || "",
+      school: "",
+    });
+    const existingAttachments = (c as any).attachments;
+    setEditAttachments(Array.isArray(existingAttachments) ? existingAttachments : []);
+    setEditMsg("");
+  };
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0 || !editCommunity) return;
+    setUploading(true);
+    try {
+      for (const file of Array.from(files)) {
+        const fd = new FormData();
+        fd.append("file", file);
+        const res = await fetch("/api/upload/image", { method: "POST", body: fd });
+        const data = await res.json();
+        if (data.url) {
+          setEditAttachments((prev) => [...prev, { url: data.url, name: file.name, type: file.type.startsWith("image/") ? "image" : "pdf" }]);
+        }
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setUploading(false);
+      if (e.target) e.target.value = "";
+    }
+  };
+
+  const removeAttachment = (index: number) => {
+    setEditAttachments((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const handleEdit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editCommunity) return;
+    setEditing(true);
+    setEditMsg("");
+    try {
+      const res = await fetch(`/api/komunitas/${editCommunity.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...editForm, attachments: editAttachments }),
+      });
+      const data = await res.json();
+      if (data.community) {
+        setEditMsg("Komunitas berhasil diperbarui");
+        setMyCommunities((prev) => prev.map((c) => c.id === editCommunity.id ? { ...c, ...data.community } : c));
+        setTimeout(() => { setEditCommunity(null); fetchMyCommunities(); }, 1500);
+      } else if (data.error) {
+        setEditMsg(data.error);
+      }
+    } catch (e) {
+      setEditMsg("Gagal memperbarui komunitas");
+      console.error(e);
+    } finally {
+      setEditing(false);
     }
   };
 
@@ -282,11 +357,20 @@ export default function KomunitasPage() {
                       </div>
                     </div>
                   </div>
-                  {c.status === "APPROVED" && (
-                    <Link href={`/guru/komunitas/${c.id}`}>
-                      <Button size="sm" variant="outline" className="ml-4">Buka</Button>
-                    </Link>
-                  )}
+                  <div className="flex items-center gap-2">
+                    {c.status === "APPROVED" && (
+                      <Link href={`/guru/komunitas/${c.id}`}>
+                        <Button size="sm" variant="outline" className="ml-4">Buka</Button>
+                      </Link>
+                    )}
+                    <button
+                      onClick={() => openEdit(c)}
+                      className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
+                      title="Edit komunitas"
+                    >
+                      <Edit2 className="w-4 h-4 text-slate-500" />
+                    </button>
+                  </div>
                 </div>
               </Card>
             ))}
@@ -378,6 +462,112 @@ export default function KomunitasPage() {
                 </button>
                 <button type="submit" disabled={creating} className="flex-1 py-2.5 bg-emerald-600 text-white font-bold rounded-xl hover:bg-emerald-700 disabled:opacity-50">
                   {creating ? "Membuat..." : "Buat Komunitas"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {editCommunity && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={() => setEditCommunity(null)}>
+          <div className="bg-white rounded-2xl p-6 max-w-md w-full" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-bold flex items-center gap-2">
+                <Edit2 className="w-5 h-5 text-emerald-600" />
+                Edit Komunitas
+              </h2>
+              <button onClick={() => setEditCommunity(null)} className="p-1 hover:bg-slate-100 rounded-lg">
+                <X className="w-5 h-5 text-slate-500" />
+              </button>
+            </div>
+            <form onSubmit={handleEdit} className="space-y-4">
+              {editMsg && (
+                <div className={`p-3 rounded-lg text-sm ${editMsg.includes("berhasil") ? "bg-emerald-50 text-emerald-700 border border-emerald-200" : "bg-red-50 text-red-700 border border-red-200"}`}>
+                  {editMsg}
+                </div>
+              )}
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Nama Komunitas</label>
+                <input
+                  value={editForm.name}
+                  onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
+                  className="w-full h-11 px-4 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Deskripsi</label>
+                <textarea
+                  value={editForm.description}
+                  onChange={(e) => setEditForm({ ...editForm, description: e.target.value })}
+                  rows={3}
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 resize-none"
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Provinsi</label>
+                  <input
+                    value={editForm.province}
+                    onChange={(e) => setEditForm({ ...editForm, province: e.target.value })}
+                    className="w-full h-11 px-4 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Kota/Kab</label>
+                  <input
+                    value={editForm.city}
+                    onChange={(e) => setEditForm({ ...editForm, city: e.target.value })}
+                    className="w-full h-11 px-4 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Wilayah</label>
+                <input
+                  value={editForm.region}
+                  onChange={(e) => setEditForm({ ...editForm, region: e.target.value })}
+                  className="w-full h-11 px-4 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-2">Lampiran (Gambar & PDF)</label>
+                <div className="border-2 border-dashed border-slate-200 rounded-xl p-4 text-center">
+                  <input
+                    type="file"
+                    accept="image/*,.pdf"
+                    multiple
+                    onChange={handleFileUpload}
+                    className="hidden"
+                    id="attachment-upload"
+                    disabled={uploading}
+                  />
+                  <label htmlFor="attachment-upload" className="cursor-pointer flex flex-col items-center gap-2">
+                    <Upload className="w-6 h-6 text-slate-400" />
+                    <span className="text-sm text-slate-500">{uploading ? "Mengupload..." : "Klik untuk upload gambar atau PDF"}</span>
+                  </label>
+                </div>
+                {editAttachments.length > 0 && (
+                  <div className="mt-3 space-y-2">
+                    {editAttachments.map((att, i) => (
+                      <div key={i} className="flex items-center gap-2 p-2 bg-slate-50 rounded-lg">
+                        {att.type === "image" ? <ImageIcon className="w-4 h-4 text-emerald-500 shrink-0" /> : <FileText className="w-4 h-4 text-blue-500 shrink-0" />}
+                        <span className="text-xs text-slate-600 truncate flex-1">{att.name}</span>
+                        <button type="button" onClick={() => removeAttachment(i)} className="p-1 hover:bg-red-100 rounded">
+                          <Trash2 className="w-3.5 h-3.5 text-red-500" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+              <div className="flex gap-3 pt-2">
+                <button type="button" onClick={() => setEditCommunity(null)} className="flex-1 py-2.5 border-2 border-slate-200 text-slate-600 font-bold rounded-xl">
+                  Batal
+                </button>
+                <button type="submit" disabled={editing} className="flex-1 py-2.5 bg-emerald-600 text-white font-bold rounded-xl hover:bg-emerald-700 disabled:opacity-50">
+                  {editing ? "Menyimpan..." : "Simpan Perubahan"}
                 </button>
               </div>
             </form>

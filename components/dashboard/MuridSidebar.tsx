@@ -6,10 +6,11 @@ import { useState } from "react"
 import {
   Home, ClipboardList, Gamepad2, GraduationCap, Trophy,
   BarChart2, Settings, ChevronDown, ChevronRight, BookOpen,
-  Brain, Award, Star, Calendar, LogOut, Flame, Zap, Users
+  Brain, Award, Star, Calendar, LogOut, Flame, Zap, Users, Bell
 } from "lucide-react"
 import { createClient } from "@/lib/supabase/client"
 import { useRouter } from "next/navigation"
+import { NotificationBell } from "./NotificationBell"
 
 const NAV = [
   { label: "Beranda", href: "/murid/beranda", icon: <Home size={18} /> },
@@ -102,6 +103,7 @@ export function MuridSidebar({ user }: Props) {
               <span className="text-[10px] text-gray-400">Lv.{user.level}</span>
             </div>
           </div>
+          <NotificationBell />
         </div>
         <div className="flex items-center gap-3 text-xs">
           <span className="flex items-center gap-1 text-amber-600">

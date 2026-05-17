@@ -12,7 +12,8 @@
     "db:migrate": "prisma migrate deploy",
     "db:studio": "prisma studio",
     "db:seed-kompetensi": "npx ts-node --compiler-options '{\"module\":\"CommonJS\"}' prisma/seed-kompetensi.ts",
-    "db:seed-game": "npx ts-node --compiler-options '{\"module\":\"CommonJS\"}' prisma/seed-game.ts"
+    "db:seed-game": "npx ts-node --compiler-options '{\"module\":\"CommonJS\"}' prisma/seed-game.ts",
+    "db:seed-mgmp": "npx ts-node --compiler-options '{\"module\":\"CommonJS\"}' prisma/seed-mgmp.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.39.0",

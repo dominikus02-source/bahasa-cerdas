@@ -77,3 +77,47 @@ export async function POST(
     return NextResponse.json({ error: "Internal error" }, { status: 500 });
   }
 }
+
+export async function PUT(
+  req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const { id } = await params;
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+    const dbUser = await db.user.findUnique({ where: { supabaseId: user.id } });
+    if (!dbUser) return NextResponse.json({ error: "User not found" }, { status: 404 });
+
+    const community = await db.community.findUnique({ where: { id } });
+    if (!community) return NextResponse.json({ error: "Komunitas tidak ditemukan" }, { status: 404 });
+
+    if (community.creatorId !== dbUser.id) {
+      return NextResponse.json({ error: "Hanya pembuat komunitas yang dapat mengedit" }, { status: 403 });
+    }
+
+    const body = await req.json();
+    const { name, description, province, city, region, school, avatarUrl, bannerUrl, attachments } = body;
+
+    const updated = await db.community.update({
+      where: { id },
+      data: {
+        ...(name !== undefined && { name }),
+        ...(description !== undefined && { description }),
+        ...(province !== undefined && { province }),
+        ...(city !== undefined && { city }),
+        ...(region !== undefined && { region }),
+        ...(school !== undefined && { school }),
+        ...(avatarUrl !== undefined && { avatarUrl }),
+        ...(bannerUrl !== undefined && { bannerUrl }),
+        ...(attachments !== undefined && { attachments }),
+      },
+    });
+
+    return NextResponse.json({ community: updated, message: "Komunitas berhasil diperbarui" });
+  } catch (error) {
+    return NextResponse.json({ error: "Internal error" }, { status: 500 });
+  }
+}

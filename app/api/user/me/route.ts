@@ -30,7 +30,8 @@ export async function GET() {
       });
     }
 
-    return NextResponse.json({ user: dbUser });
+    const profile = await db.profile.findUnique({ where: { userId: dbUser.id } });
+    return NextResponse.json({ user: { ...dbUser, ...profile } });
   } catch {
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }

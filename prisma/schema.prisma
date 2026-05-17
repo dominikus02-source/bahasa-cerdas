@@ -302,6 +302,7 @@ model Community {
   reviewNote  String?
   reviewedBy  String?
   reviewedAt  DateTime?
+  attachments Json?
   memberCount Int           @default(0)
   postCount   Int           @default(0)
 
@@ -433,6 +434,9 @@ model Profile {
   subject   String?
   grade     String?
   className String?
+  bank      String?
+  bankHolder String?
+  bankNumber String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

@@ -28,7 +28,7 @@ export async function PATCH(req: NextRequest) {
     if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const body = await req.json();
-    const { fullName, avatar } = body;
+    const { fullName, avatar, bio, nip, nuptk, school, subject } = body;
 
     await db.user.update({
       where: { id: user.id },
@@ -36,14 +36,22 @@ export async function PATCH(req: NextRequest) {
     });
 
     if (user.role === "GURU") {
-      await db.profile.update({
-        where: { userId: user.id },
-        data: body,
-      });
+      const existing = await db.profile.findUnique({ where: { userId: user.id } });
+      if (existing) {
+        await db.profile.update({
+          where: { userId: user.id },
+          data: { bio, nip, nuptk, school, subject },
+        });
+      } else {
+        await db.profile.create({
+          data: { userId: user.id, bio, nip, nuptk, school, subject },
+        });
+      }
     }
 
     return NextResponse.json({ message: "Updated" });
   } catch (error) {
+    console.error("Profile update error:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

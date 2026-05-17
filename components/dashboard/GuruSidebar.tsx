@@ -7,10 +7,11 @@ import {
   Home, ShoppingBag, Video, Gamepad2, FileText, Database,
   Users, Settings, ChevronDown, ChevronRight,
   BookOpen, Trophy, Calendar, GraduationCap, Brain, Star, Award,
-  LogOut, Crown, Zap, Flame, TrendingUp
+  LogOut, Crown, Zap, Flame, TrendingUp, Bell
 } from "lucide-react"
 import { createClient } from "@/lib/supabase/client"
 import { useRouter } from "next/navigation"
+import { NotificationBell } from "./NotificationBell"
 
 interface NavItem {
   label: string
@@ -127,6 +128,7 @@ export function GuruSidebar({ user }: Props) {
               )}
             </div>
           </div>
+          <NotificationBell />
         </div>
         {user.xp !== undefined && (
           <div className="flex items-center gap-3 mt-2 text-xs">
