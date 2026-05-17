@@ -16,7 +16,15 @@ export async function proxy(request: NextRequest) {
     pathname.startsWith("/ai-bc") ||
     pathname.startsWith("/api/") ||
     pathname.startsWith("/_next") ||
-    pathname.startsWith("/favicon");
+    pathname.startsWith("/favicon") ||
+    pathname === "/robots.txt" ||
+    pathname === "/sitemap.xml" ||
+    pathname === "/sitemap-0.xml" ||
+    pathname.startsWith("/manifest") ||
+    pathname.startsWith("/opengraph-image") ||
+    pathname.startsWith("/twitter-image") ||
+    pathname.startsWith("/apple-icon") ||
+    pathname.startsWith("/og-image");
 
   if (isPublicPage) {
     return NextResponse.next();
@@ -93,6 +101,6 @@ async function getUserInfo(supabaseId: string): Promise<{ role: string; isFounde
 
 export const config = {
   matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|txt|xml|json|webmanifest|ico)$).*)",
   ],
 };

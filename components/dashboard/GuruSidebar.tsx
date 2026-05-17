@@ -7,7 +7,7 @@ import {
   Home, ShoppingBag, Video, Gamepad2, FileText, Database,
   Users, Settings, ChevronDown, ChevronRight,
   BookOpen, Trophy, Calendar, GraduationCap, Brain, Star, Award,
-  LogOut, Crown, Zap, Flame, TrendingUp, Bell
+  LogOut, Crown, Zap, Flame, TrendingUp, Bell, Presentation
 } from "lucide-react"
 import { createClient } from "@/lib/supabase/client"
 import { useRouter } from "next/navigation"
@@ -26,6 +26,7 @@ const NAV: NavItem[] = [
   { label: "Video Belajar", href: "/guru/video-belajar", icon: <Video size={18} /> },
   { label: "Kuis Game", href: "/guru/game/lobby", icon: <Gamepad2 size={18} /> },
   { label: "RPP & Modul", href: "/guru/rpp-modul", icon: <FileText size={18} /> },
+  { label: "Materi Ajar", href: "/guru/materi-ajar", icon: <Presentation size={18} /> },
   { label: "Bank Soal", href: "/guru/bank-soal", icon: <Database size={18} /> },
   { label: "Data Siswa", href: "/guru/data-siswa", icon: <Users size={18} /> },
   {
