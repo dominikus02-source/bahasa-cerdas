@@ -24,7 +24,7 @@ export default function HeroSection() {
             </div>
 
             <h1 className="text-4xl sm:text-5xl lg:text-5xl font-extrabold leading-tight tracking-tight">
-              Platform All-in-One
+              Platform Terlengkap
               <br />
               Guru Bahasa Indonesia:
               <br />
@@ -67,7 +67,7 @@ export default function HeroSection() {
                   </div>
                   <div>
                     <p className="font-bold text-white text-sm">Bahasa Cerdas</p>
-                    <p className="text-[10px] text-red-200 uppercase tracking-wider">AI Dashboard</p>
+                    <p className="text-[10px] text-red-200 uppercase tracking-wider">Dashboard AI</p>
                   </div>
                 </div>
                 <div className="px-2 py-1 bg-green-500/20 text-green-300 rounded-full text-[10px] font-bold border border-green-500/30">

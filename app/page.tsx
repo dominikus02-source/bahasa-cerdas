@@ -18,11 +18,11 @@ export const dynamic = 'force-dynamic';
 export const metadata: Metadata = {
   title: "BahasaCerdas — Platform Edukasi Bahasa Indonesia",
   description:
-    "Platform edukasi Bahasa Indonesia untuk guru dan murid. AI RPP generator, bank soal, kuis game, simulasi UKBI, dan toko karya. Gratis untuk guru Indonesia.",
+    "Platform edukasi Bahasa Indonesia untuk guru dan murid. AI generator RPP, bank soal, kuis game, simulasi UKBI, dan toko karya. Gratis untuk guru Indonesia.",
   openGraph: {
     title: "BahasaCerdas — Platform Edukasi Bahasa Indonesia",
     description:
-      "Platform all-in-one untuk guru Bahasa Indonesia. AI RPP, bank soal, kuis multiplayer, UKBI, dan toko karya.",
+      "Platform terlengkap untuk guru Bahasa Indonesia. AI RPP, bank soal, kuis multiplayer, UKBI, dan toko karya.",
   },
 };
 
@@ -94,7 +94,7 @@ export default async function HomePage() {
     "@type": "EducationalOrganization",
     name: "BahasaCerdas",
     url: "https://bahasacerdas.site",
-    description: "Platform All-in-One untuk Guru Bahasa Indonesia. MGMP + AI + Marketplace.",
+    description: "Platform Terlengkap untuk Guru Bahasa Indonesia. MGMP + AI + Marketplace.",
     offers: {
       "@type": "Offer",
       category: "Education",
@@ -258,7 +258,7 @@ export default async function HomePage() {
                     <p className="text-xs text-slate-500">Platform Edukasi Bahasa Indonesia</p>
                   </div>
                 </div>
-              <p className="text-sm">Platform All-in-One untuk Guru Bahasa Indonesia. MGMP + AI + Marketplace.</p>
+              <p className="text-sm">Platform Terlengkap untuk Guru Bahasa Indonesia. MGMP + AI + Marketplace.</p>
               <div className="flex flex-wrap gap-2 mt-4">
                 <Link href="/artikel" className="text-xs text-slate-500 hover:text-white transition-colors">Artikel</Link>
                 <span className="text-slate-700">•</span>
