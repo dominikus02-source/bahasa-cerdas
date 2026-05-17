@@ -7,7 +7,7 @@ import {
   Home, ShoppingBag, Video, Gamepad2, FileText, Database,
   Users, Settings, ChevronDown, ChevronRight,
   BookOpen, Trophy, Calendar, GraduationCap, Brain, Star, Award,
-  LogOut, Crown, Zap, Flame, TrendingUp, Bell, Presentation
+  LogOut, Crown, Zap, Flame, TrendingUp, Bell, Presentation, Sparkles
 } from "lucide-react"
 import { createClient } from "@/lib/supabase/client"
 import { useRouter } from "next/navigation"
@@ -26,6 +26,7 @@ const NAV: NavItem[] = [
   { label: "Video Belajar", href: "/guru/video-belajar", icon: <Video size={18} /> },
   { label: "Kuis Game", href: "/guru/game/lobby", icon: <Gamepad2 size={18} /> },
   { label: "RPP & Modul", href: "/guru/rpp-modul", icon: <FileText size={18} /> },
+  { label: "AI Tools", href: "/guru/ai-tools", icon: <Sparkles size={18} /> },
   { label: "Materi Ajar", href: "/guru/materi-ajar", icon: <Presentation size={18} /> },
   { label: "Bank Soal", href: "/guru/bank-soal", icon: <Database size={18} /> },
   { label: "Data Siswa", href: "/guru/data-siswa", icon: <Users size={18} /> },
@@ -81,6 +82,7 @@ export function GuruSidebar({ user }: Props) {
     Kompetensi: pathname.includes("/ukbi") || pathname.includes("/bank-soal") || pathname.includes("/sertifikat") || pathname.includes("/buat-tka"),
     Olimpiade: pathname.includes("/olimpiade"),
     Komunitas: pathname.includes("/komunitas"),
+    "AI Tools": pathname.includes("/ai-tools"),
   })
 
   const handleLogout = async () => {

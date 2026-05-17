@@ -2,8 +2,8 @@ import { db } from "@/lib/db";
 import type { User, PremiumPlan } from "@prisma/client";
 
 const AI_QUOTA = {
-  FREE: { rpp: -1, soal: -1, koreksi: 0, chat: 5 },
-  PRO: { rpp: -1, soal: -1, koreksi: -1, chat: -1 },
+  FREE: { rpp: -1, soal: -1, koreksi: 3, chat: 5, grading: 5, ringkasan: 5, feedback: 5 },
+  PRO: { rpp: -1, soal: -1, koreksi: -1, chat: -1, grading: -1, ringkasan: -1, feedback: -1 },
 };
 
 export function getUserPlan(user: User): PremiumPlan {
@@ -14,7 +14,7 @@ export function getUserPlan(user: User): PremiumPlan {
 
 export function canUseAI(
   user: User,
-  feature: "rpp" | "soal" | "koreksi" | "chat"
+  feature: "rpp" | "soal" | "koreksi" | "chat" | "grading" | "ringkasan" | "feedback"
 ): boolean {
   const plan = getUserPlan(user);
   if (plan === "PRO") return true;
@@ -33,7 +33,7 @@ export async function getAIUsageCount(
 
 export async function checkAIQuota(
   user: User,
-  feature: "rpp" | "soal" | "koreksi" | "chat"
+  feature: "rpp" | "soal" | "koreksi" | "chat" | "grading" | "ringkasan" | "feedback"
 ): Promise<{ allowed: boolean; used: number; limit: number }> {
   const plan = getUserPlan(user);
   const limit = AI_QUOTA[plan][feature];
