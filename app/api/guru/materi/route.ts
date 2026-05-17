@@ -50,9 +50,15 @@ export async function POST(req: NextRequest) {
       const bucket = "documents";
 
       // Use service role client for storage upload
+      const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SERVICE_ROLE_KEY;
+      if (!serviceKey) {
+        console.error("Missing SUPABASE_SERVICE_ROLE_KEY or SERVICE_ROLE_KEY env var");
+        return NextResponse.json({ error: "Server configuration error: Missing service key" }, { status: 500 });
+      }
+
       const adminClient = createSupabaseClient(
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.SUPABASE_SERVICE_ROLE_KEY!
+        serviceKey
       );
 
       // Ensure bucket exists
