@@ -177,38 +177,36 @@ Hanya output JSON array.`;
       const soalArray = Array.isArray(parsedSoal) ? parsedSoal : [parsedSoal];
 
       if (saveToDb && user) {
-        const dbUser = await db.user.findUnique({ where: { supabaseId: user.id } });
-        if (dbUser) {
-          const savedSoals = await db.soal.createMany({
-            data: soalArray.map((s: any) => ({
-              text: s.text || "",
-              type: s.type || type,
-              difficulty: s.difficulty || difficulty,
-              options: s.options || [],
-              correctAnswer: String(s.correctAnswer || "0"),
-              explanation: s.explanation || null,
-              isHOTS: s.isHOTS || difficulty === "HARD",
-              kelas: kelas || "10",
-              topik: topic || null,
-              KD: kd || null,
-              subject: "Bahasa Indonesia",
-              source: "AI",
-              uploaderId: dbUser.id,
-            })),
-          });
+        const savedSoals = await db.soal.createMany({
+          data: soalArray.map((s: any) => ({
+            text: s.text || "",
+            type: s.type || type,
+            difficulty: s.difficulty || difficulty,
+            options: s.options || [],
+            correctAnswer: String(s.correctAnswer || "0"),
+            explanation: s.explanation || null,
+            isHOTS: s.isHOTS || difficulty === "HARD",
+            kelas: kelas || "10",
+            topik: topic || null,
+            KD: kd || null,
+            subject: "Bahasa Indonesia",
+            source: "AI",
+            uploaderId: user.id,
+          })),
+        });
 
-          const savedList = await db.soal.findMany({
-            where: { uploaderId: dbUser.id },
-            orderBy: { createdAt: "desc" },
-            take: savedSoal.count,
-          });
+        const savedList = await db.soal.findMany({
+          where: { uploaderId: user.id },
+          orderBy: { createdAt: "desc" },
+          take: savedSoals.count,
+        });
 
-          return NextResponse.json({ soal: savedList, saved: savedSoal.count });
-        }
+        return NextResponse.json({ soal: savedList, saved: savedSoals.count });
       }
 
       return NextResponse.json({ soal: soalArray, saved: 0 });
-    } catch {
+    } catch (parseErr: any) {
+      console.error("Parse error:", parseErr.message);
       return NextResponse.json({ error: "Parse error", raw: content.slice(0, 200) }, { status: 500 });
     }
   } catch (error) {
