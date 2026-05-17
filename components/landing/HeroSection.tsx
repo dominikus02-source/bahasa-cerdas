@@ -33,8 +33,8 @@ export default function HeroSection() {
               </span>
             </h1>
 
-            <p className="text-base sm:text-lg text-red-100 max-w-lg mx-auto lg:mx-0 leading-relaxed font-medium">
-              Bergabung dengan <strong className="text-white">10.000+ guru</strong> & rasakan AI yang bikin membuat RPP & Soal <strong className="text-white">10x lebih cepat</strong>.
+<p className="text-base sm:text-lg text-red-100 max-w-lg mx-auto lg:mx-0 leading-relaxed font-medium">
+              Bergabung dengan <strong className="text-white">10.000+ guru</strong> dan rasakan kemudahan AI membuat RPP & Soal <strong className="text-white">10x lebih cepat</strong>.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start pt-2">
