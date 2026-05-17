@@ -23,22 +23,27 @@ export async function GET(
     const latestResult = await db.progresKompetensi.findFirst({
       where: { userId: dbUser.id, paketId },
       orderBy: { attemptNumber: "desc" },
-      include: {
-        certificate: true,
-        paket: { select: { title: true, type: true } },
-      },
     });
 
     if (!latestResult) {
       return NextResponse.json({ result: null, error: "Belum ada hasil tes" });
     }
 
+    const paket = await db.paketKompetensi.findUnique({
+      where: { id: paketId },
+      select: { title: true, type: true },
+    });
+
+    const certificate = await db.kompetensiCertificate.findFirst({
+      where: { progresId: latestResult.id },
+    });
+
     return NextResponse.json({
       result: {
         id: latestResult.id,
         paketId: latestResult.paketId,
-        paketTitle: latestResult.paket?.title,
-        paket: latestResult.paket,
+        paketTitle: paket?.title,
+        paket: paket,
         attemptNumber: latestResult.attemptNumber,
         totalScore: latestResult.totalScore,
         rawScore: latestResult.rawScore,
@@ -50,17 +55,17 @@ export async function GET(
         startedAt: latestResult.startedAt?.toISOString(),
         finishedAt: latestResult.finishedAt?.toISOString(),
         timeSpent: latestResult.timeSpent,
-        certificate: latestResult.certificate
+        certificate: certificate
           ? {
-              id: latestResult.certificate.id,
-              certificateNo: latestResult.certificate.certificateNo,
-              pdfUrl: latestResult.certificate.pdfUrl,
+              id: certificate.id,
+              certificateNo: certificate.certificateNo,
+              pdfUrl: certificate.pdfUrl,
             }
           : undefined,
       },
     });
   } catch (error) {
     console.error("GET /api/kompetensi/[paketId]/hasil error:", error);
-    return NextResponse.json({ error: "Internal error" }, { status: 500 });
+    return NextResponse.json({ error: "Internal error", details: error instanceof Error ? error.message : "Unknown" }, { status: 500 });
   }
 }
