@@ -247,7 +247,7 @@ export default function GameLobby({ isHost = false, roomCode: initialCode, onSta
                   {isFullscreen ? <Minimize size={20} /> : <Maximize size={20} />}
                 </button>
               </div>
-              <h2 className="text-2xl font-bold text-white">{modeInfo?.name || "Ruangan Game"}</h2>
+              <h2 className="text-2xl font-bold text-white">{modeInfo?.name || "Ruangan Pertandingan"}</h2>
               <p className="text-sm text-white/50 mt-1">Bagikan kode ini ke pemain lain</p>
             </div>
 
@@ -296,7 +296,7 @@ export default function GameLobby({ isHost = false, roomCode: initialCode, onSta
               {isHost && (
                 <button onClick={handleStart} disabled={players.length < 1}
                   className={`flex-1 bg-gradient-to-r ${modeInfo?.color || "from-violet-500 to-purple-600"} text-white font-bold py-3.5 rounded-2xl shadow-lg transition-all hover:scale-[1.02] disabled:opacity-40 disabled:cursor-not-allowed`}>
-                  <Sparkles size={18} className="inline mr-1.5" /> Mulai Game
+                  <Sparkles size={18} className="inline mr-1.5" /> Mulai Pertandingkan
                 </button>
               )}
               <button onClick={handleLeave} className="flex-1 bg-white/10 backdrop-blur-sm border border-white/20 text-white/80 hover:text-white font-semibold py-3.5 rounded-2xl transition-all">
@@ -322,7 +322,7 @@ export default function GameLobby({ isHost = false, roomCode: initialCode, onSta
 
         {isHost && (
           <div className="mb-8">
-            <p className="text-sm font-semibold text-slate-700 mb-4">Pilih Mode Game</p>
+            <p className="text-sm font-semibold text-slate-700 mb-4">Pilih Mode Pertandingkan</p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {GAME_MODES.map((mode) => {
                 const ModeIcon = mode.icon;

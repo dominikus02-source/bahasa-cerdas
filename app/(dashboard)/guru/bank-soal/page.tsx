@@ -365,7 +365,7 @@ export default function BankSoalPage() {
                         onClick={() => router.push(`/guru/game/lobby?pool=${pool.id}`)}
                         className="flex items-center justify-center gap-1 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white text-[11px] font-medium transition-colors"
                       >
-                        <Gamepad2 className="w-3.5 h-3.5" /> Game
+                        <Gamepad2 className="w-3.5 h-3.5" /> Pertandingkan
                       </button>
                     </div>
                   </div>
@@ -511,7 +511,7 @@ export default function BankSoalPage() {
                           disabled={!set._count?.questions}
                         >
                           <Gamepad2 className="w-4 h-4" />
-                          Game
+                          Pertandingkan
                         </button>
                       </div>
                     </div>
