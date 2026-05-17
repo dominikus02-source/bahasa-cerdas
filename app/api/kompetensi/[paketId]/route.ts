@@ -104,12 +104,14 @@ export async function GET(
           sectionQuestions.push(...fetched);
         }
       } else if (section.count && section.count > 0) {
-        if (paket.type === "UKBI" || paket.type === "UKBI_SIMULASI" || paket.type === "UKBI_LATIHAN" || paket.type === "UKBI_SMP" || paket.type === "UKBI_SMA" || paket.type === "UKBI_LATIHAN_SMP" || paket.type === "UKBI_LATIHAN_SMA") {
+        if (paket.type === "UKBI" || paket.type === "UKBI_SIMULASI" || paket.type === "UKBI_LATIHAN" || paket.type === "UKBI_SMP" || paket.type === "UKBI_SMA" || paket.type === "UKBI_LATIHAN_SMP" || paket.type === "UKBI_LATIHAN_SMA" || paket.type === "UKBI_GURU_SIMULASI" || paket.type === "UKBI_GURU_LATIHAN") {
           const where: any = { seksi: section.seksi as any, isActive: true };
           if (paket.type === "UKBI_SMP" || paket.type === "UKBI_LATIHAN_SMP") {
             where.tingkat = "SMP";
           } else if (paket.type === "UKBI_SMA" || paket.type === "UKBI_LATIHAN_SMA") {
             where.tingkat = "SMA";
+          } else if (paket.type === "UKBI_GURU_SIMULASI" || paket.type === "UKBI_GURU_LATIHAN") {
+            where.tingkat = "GURU";
           }
           const fetched = await db.uKBIQuestion.findMany({
             where,
@@ -138,6 +140,8 @@ export async function GET(
           if (section.subKompetensi) where.subKompetensi = section.subKompetensi;
           if (paket.type === "TKA_SMP") where.tingkat = "SMP";
           if (paket.type === "TKA_SMA") where.tingkat = "SMA";
+          if (paket.type === "TKA_GURU_SIMULASI" || paket.type === "TKA_GURU_LATIHAN") where.tingkat = "GURU";
+          if (paket.type === "TKA_GURU") where.tingkat = "GURU";
           const fetched = await db.tKAQuestion.findMany({
             where,
             take: section.count,
