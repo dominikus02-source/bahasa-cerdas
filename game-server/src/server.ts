@@ -463,25 +463,82 @@ async function loadQuestions(gameType: string, count: number): Promise<Question[
 }
 
 function getDefaultQuestions(gameType: string, count: number): Question[] {
-  const allQuestions: Question[] = [
-    { id: '1', text: 'Apa sinonim dari kata "cerdas"?', type: 'PILIHAN_GANDA', options: ['Bodoh', 'Pintar', 'Malas', 'Lambat'], correctAnswer: '1', difficulty: 'EASY' },
-    { id: '2', text: 'Kalimat berikut yang menggunakan kata baku adalah...', type: 'PILIHAN_GANDA', options: ['Dia pergi ke minimarket untuk membeli snack', 'Dia pergi ke swalayan untuk membeli gorengan', 'Dia pergi ke took untuk membeli buku', 'Dia pergi ke tempat untuk membeli barang'], correctAnswer: '1', difficulty: 'MEDIUM' },
-    { id: '3', text: '"Merdeka" adalah kata yang berasal dari bahasa...', type: 'PILIHAN_GANDA', options: ['Belanda', 'Sanskerta', 'Jawa', 'Arab'], correctAnswer: '1', difficulty: 'EASY' },
-    { id: '4', text: 'Padanan kata "menghargai" yang tepat adalah...', type: 'PILIHAN_GANDA', options: ['Merendahkan', 'Memuji', 'Menyayat', 'Menyakiti'], correctAnswer: '1', difficulty: 'MEDIUM' },
-    { id: '5', text: 'Kata baku untuk "nilai" adalah...', type: 'PILIHAN_GANDA', options: ['Nilai', 'Nillai', 'Niliai', 'Nilainya'], correctAnswer: '0', difficulty: 'EASY' },
-    { id: '6', text: 'Konjungsi yang menunjukkan hubungan sebab-akibat adalah...', type: 'PILIHAN_GANDA', options: ['tetapi', 'karena', 'atau', 'meski'], correctAnswer: '1', difficulty: 'MEDIUM' },
-    { id: '7', text: '"Membaca" adalah kata kerja...', type: 'PILIHAN_GANDA', options: ['Transitif', 'Intransitif', 'Keterangan', 'Subjek'], correctAnswer: '0', difficulty: 'EASY' },
-    { id: '8', text: 'Kalimat sempurna harus memiliki...', type: 'PILIHAN_GANDA', options: ['Subjek dan predikat', 'Predikat saja', 'Objek saja', 'Keterangan saja'], correctAnswer: '0', difficulty: 'MEDIUM' },
-    { id: '9', text: 'Penulisan kata "serta" yang tepat dalam kalimat adalah...', type: 'PILIHAN_GANDA', options: ['serta', 'Serta', 'SERA', 'serTa'], correctAnswer: '1', difficulty: 'EASY' },
-    { id: '10', text: 'Kata yang menunjukkan jumlah tunggal adalah...', type: 'PILIHAN_GANDA', options: ['beberapa', 'banyak', 'sebagian', 'seekor'], correctAnswer: '3', difficulty: 'MEDIUM' },
-    { id: '11', text: 'Imbuhan "me-" pada kata "membangun" berfungsi untuk...', type: 'PILIHAN_GANDA', options: ['Negasi', 'Kata kerja aktif', 'Kata benda', 'Keterangan'], correctAnswer: '1', difficulty: 'HARD' },
-    { id: '12', text: 'Berikut yang merupakan kalimat langsung adalah...', type: 'PILIHAN_GANDA', options: ['Diah mengatakan bahwa ia akan pergi.', 'Diah berkata, "Aku akan pergi."', 'Diah menginginkan agar aku pergi.', 'Diah memintaku untuk pergi.'], correctAnswer: '1', difficulty: 'HARD' },
-    { id: '13', text: 'Kata "kebangsaan" termasuk kata turunan jenis...', type: 'PILIHAN_GANDA', options: ['Awalan', 'Sisipan', 'Akhiran', 'Gabungan'], correctAnswer: '2', difficulty: 'MEDIUM' },
-    { id: '14', text: '"Tertawa" merupakan kata yang dibentuk dengan...', type: 'PILIHAN_GANDA', options: ['Prefiks', 'Sufiks', 'Konfiks', 'Infix'], correctAnswer: '3', difficulty: 'HARD' },
-    { id: '15', text: 'Kosakata yang menunjukkan waktu adalah...', type: 'PILIHAN_GANDA', options: ['di sini', 'kemarin', 'di sana', 'ke sini'], correctAnswer: '1', difficulty: 'EASY' },
+  const kuisBattle: Question[] = [
+    { id: 'kb1', text: 'Apa sinonim dari kata "cerdas"?', type: 'PILIHAN_GANDA', options: ['Bodoh', 'Pintar', 'Malas', 'Lambat'], correctAnswer: '1', difficulty: 'EASY' },
+    { id: 'kb2', text: 'Kalimat berikut yang menggunakan kata baku adalah...', type: 'PILIHAN_GANDA', options: ['Dia pergi ke minimarket untuk membeli snack', 'Dia pergi ke swalayan untuk membeli gorengan', 'Dia pergi ke took untuk membeli buku', 'Dia pergi ke tempat untuk membeli barang'], correctAnswer: '1', difficulty: 'MEDIUM' },
+    { id: 'kb3', text: '"Merdeka" adalah kata yang berasal dari bahasa...', type: 'PILIHAN_GANDA', options: ['Belanda', 'Sanskerta', 'Jawa', 'Arab'], correctAnswer: '1', difficulty: 'EASY' },
+    { id: 'kb4', text: 'Konjungsi yang menunjukkan hubungan sebab-akibat adalah...', type: 'PILIHAN_GANDA', options: ['tetapi', 'karena', 'atau', 'meski'], correctAnswer: '1', difficulty: 'MEDIUM' },
+    { id: 'kb5', text: 'Kalimat sempurna harus memiliki...', type: 'PILIHAN_GANDA', options: ['Subjek dan predikat', 'Predikat saja', 'Objek saja', 'Keterangan saja'], correctAnswer: '0', difficulty: 'MEDIUM' },
+    { id: 'kb6', text: 'Imbuhan "me-" pada kata "membangun" berfungsi untuk...', type: 'PILIHAN_GANDA', options: ['Negasi', 'Kata kerja aktif', 'Kata benda', 'Keterangan'], correctAnswer: '1', difficulty: 'HARD' },
+    { id: 'kb7', text: 'Berikut yang merupakan kalimat langsung adalah...', type: 'PILIHAN_GANDA', options: ['Diah mengatakan bahwa ia akan pergi.', 'Diah berkata, "Aku akan pergi."', 'Diah menginginkan agar aku pergi.', 'Diah memintaku untuk pergi.'], correctAnswer: '1', difficulty: 'HARD' },
+    { id: 'kb8', text: 'Kata "kebangsaan" termasuk kata turunan jenis...', type: 'PILIHAN_GANDA', options: ['Awalan', 'Sisipan', 'Akhiran', 'Gabungan'], correctAnswer: '2', difficulty: 'MEDIUM' },
+    { id: 'kb9', text: 'Kosakata yang menunjukkan waktu adalah...', type: 'PILIHAN_GANDA', options: ['di sini', 'kemarin', 'di sana', 'ke sini'], correctAnswer: '1', difficulty: 'EASY' },
+    { id: 'kb10', text: 'Antonim dari kata "sementara" adalah...', type: 'PILIHAN_GANDA', options: ['Selamanya', 'Sebentar', 'Sekarang', 'Nanti'], correctAnswer: '0', difficulty: 'MEDIUM' },
   ];
 
-  return allQuestions.slice(0, Math.min(count, allQuestions.length));
+  const goldRush: Question[] = [
+    { id: 'gr1', text: 'Apa arti kata "gugur" dalam kalimat "Rencana itu gugur"?', type: 'PILIHAN_GANDA', options: ['Jatuh', 'Batal', 'Tumbuh', 'Berhasil'], correctAnswer: '1', difficulty: 'EASY' },
+    { id: 'gr2', text: 'Kata "efektif" berarti...', type: 'PILIHAN_GANDA', options: ['Ada hasilnya', 'Cepat selesai', 'Mahal harganya', 'Sulit dilakukan'], correctAnswer: '0', difficulty: 'MEDIUM' },
+    { id: 'gr3', text: 'Majas yang membandingkan dua hal menggunakan kata "seperti" disebut...', type: 'PILIHAN_GANDA', options: ['Metafora', 'Personifikasi', 'Simile', 'Hiperbola'], correctAnswer: '2', difficulty: 'MEDIUM' },
+    { id: 'gr4', text: 'Kata baku dari "nasehat" adalah...', type: 'PILIHAN_GANDA', options: ['Nasehat', 'Nasihat', 'Nasehad', 'Nasihad'], correctAnswer: '1', difficulty: 'EASY' },
+    { id: 'gr5', text: 'Apa jenis kata dari "keindahan"?', type: 'PILIHAN_GANDA', options: ['Kata kerja', 'Kata sifat', 'Kata benda', 'Kata keterangan'], correctAnswer: '2', difficulty: 'MEDIUM' },
+    { id: 'gr6', text: '"Angin berbisik lembut" menggunakan majas...', type: 'PILIHAN_GANDA', options: ['Simile', 'Personifikasi', 'Metafora', 'Ironi'], correctAnswer: '1', difficulty: 'HARD' },
+    { id: 'gr7', text: 'Kata "praktek" yang baku adalah...', type: 'PILIHAN_GANDA', options: ['Praktek', 'Praktik', 'Practik', 'Prakteq'], correctAnswer: '1', difficulty: 'EASY' },
+    { id: 'gr8', text: 'Teks yang berisi langkah-langkah melakukan sesuatu disebut teks...', type: 'PILIHAN_GANDA', options: ['Deskripsi', 'Narasi', 'Prosedur', 'Eksposisi'], correctAnswer: '2', difficulty: 'MEDIUM' },
+    { id: 'gr9', text: 'Prefiks "ber-" pada kata "berlari" menunjukkan...', type: 'PILIHAN_GANDA', options: ['Kata benda', 'Kata kerja aktif', 'Kata sifat', 'Kata keterangan'], correctAnswer: '1', difficulty: 'MEDIUM' },
+    { id: 'gr10', text: 'Apa persamaan kata "gundah"?', type: 'PILIHAN_GANDA', options: ['Senang', 'Gelisah', 'Tenang', 'Marah'], correctAnswer: '1', difficulty: 'EASY' },
+  ];
+
+  const speedBattle: Question[] = [
+    { id: 'sb1', text: 'Kata "apoteek" yang benar adalah...', type: 'PILIHAN_GANDA', options: ['Apoteek', 'Apotek', 'Apotik', 'Apotiq'], correctAnswer: '1', difficulty: 'EASY' },
+    { id: 'sb2', text: 'Sinonim "gundah" adalah...', type: 'PILIHAN_GANDA', options: ['Senang', 'Gelisah', 'Tenang', 'Marah'], correctAnswer: '1', difficulty: 'EASY' },
+    { id: 'sb3', text: 'Kata "risiko" yang baku adalah...', type: 'PILIHAN_GANDA', options: ['Resiko', 'Risiko', 'Risico', 'Risikoh'], correctAnswer: '1', difficulty: 'EASY' },
+    { id: 'sb4', text: 'Apa arti "ambigu"?', type: 'PILIHAN_GANDA', options: ['Jelas', 'Bermakna ganda', 'Singkat', 'Panjang'], correctAnswer: '1', difficulty: 'MEDIUM' },
+    { id: 'sb5', text: 'Kata "di" sebagai kata depan ditulis...', type: 'PILIHAN_GANDA', options: ['Serangkai', 'Terpisah', 'Dengan tanda hubung', 'Di akhir kata'], correctAnswer: '1', difficulty: 'EASY' },
+    { id: 'sb6', text: '"Dia sangat pintar" termasuk kalimat...', type: 'PILIHAN_GANDA', options: ['Majemuk', 'Tunggal', 'Langsung', 'Tidak langsung'], correctAnswer: '1', difficulty: 'MEDIUM' },
+    { id: 'sb7', text: 'Kata "kwalitas" yang baku adalah...', type: 'PILIHAN_GANDA', options: ['Kwalitas', 'Kualitas', 'Kualitass', 'Qualitas'], correctAnswer: '1', difficulty: 'EASY' },
+    { id: 'sb8', text: 'Apa lawan kata "abstrak"?', type: 'PILIHAN_GANDA', options: ['Nyata', 'Samar', 'Jelas', 'Sulit'], correctAnswer: '0', difficulty: 'MEDIUM' },
+    { id: 'sb9', text: 'Kata "aktif" termasuk kata...', type: 'PILIHAN_GANDA', options: ['Benda', 'Sifat', 'Kerja', 'Keterangan'], correctAnswer: '1', difficulty: 'EASY' },
+    { id: 'sb10', text: 'Imbuhan "ter-" pada "terbuka" menunjukkan...', type: 'PILIHAN_GANDA', options: ['Sengaja', 'Tidak sengaja', 'Sangat', 'Paling'], correctAnswer: '1', difficulty: 'MEDIUM' },
+  ];
+
+  const survival: Question[] = [
+    { id: 'sv1', text: 'Kata "sutra" yang baku adalah...', type: 'PILIHAN_GANDA', options: ['Sutera', 'Sutra', 'Sutrah', 'Suteraa'], correctAnswer: '1', difficulty: 'EASY' },
+    { id: 'sv2', text: 'Apa arti kata "kontradiksi"?', type: 'PILIHAN_GANDA', options: ['Persamaan', 'Pertentangan', 'Kesamaan', 'Penjelasan'], correctAnswer: '1', difficulty: 'MEDIUM' },
+    { id: 'sv3', text: 'Kata "jadwal" yang benar adalah...', type: 'PILIHAN_GANDA', options: ['Jadwal', 'Jadual', 'Jadwall', 'Jadual'], correctAnswer: '0', difficulty: 'EASY' },
+    { id: 'sv4', text: 'Majas yang melebih-lebihkan disebut...', type: 'PILIHAN_GANDA', options: ['Personifikasi', 'Hiperbola', 'Simile', 'Metafora'], correctAnswer: '1', difficulty: 'MEDIUM' },
+    { id: 'sv5', text: 'Kata "karni" yang baku adalah...', type: 'PILIHAN_GANDA', options: ['Karni', 'Karena', 'Karna', 'Karne'], correctAnswer: '1', difficulty: 'EASY' },
+    { id: 'sv6', text: 'Apa jenis kata dari "berlari"?', type: 'PILIHAN_GANDA', options: ['Kata benda', 'Kata sifat', 'Kata kerja', 'Kata keterangan'], correctAnswer: '2', difficulty: 'EASY' },
+    { id: 'sv7', text: 'Kata "faham" yang baku adalah...', type: 'PILIHAN_GANDA', options: ['Faham', 'Faham', 'Paham', 'Faam'], correctAnswer: '2', difficulty: 'MEDIUM' },
+    { id: 'sv8', text: 'Teks yang menceritakan peristiwa nyata disebut...', type: 'PILIHAN_GANDA', options: ['Fiksi', 'Nonfiksi', 'Puisi', 'Drama'], correctAnswer: '1', difficulty: 'EASY' },
+    { id: 'sv9', text: 'Apa sinonim "pandai"?', type: 'PILIHAN_GANDA', options: ['Bodoh', 'Cerdas', 'Malas', 'Lambat'], correctAnswer: '1', difficulty: 'EASY' },
+    { id: 'sv10', text: 'Kata "sistim" yang baku adalah...', type: 'PILIHAN_GANDA', options: ['Sistim', 'Sistem', 'Sisttem', 'System'], correctAnswer: '1', difficulty: 'EASY' },
+  ];
+
+  const timedTrial: Question[] = [
+    { id: 'tt1', text: 'Kata "nasehat" yang baku adalah...', type: 'PILIHAN_GANDA', options: ['Nasehat', 'Nasihat', 'Nasehad', 'Nasihad'], correctAnswer: '1', difficulty: 'EASY' },
+    { id: 'tt2', text: 'Apa arti "sinonim"?', type: 'PILIHAN_GANDA', options: ['Lawan kata', 'Persamaan kata', 'Kata baru', 'Kata lama'], correctAnswer: '1', difficulty: 'EASY' },
+    { id: 'tt3', text: 'Kata "praktek" yang baku adalah...', type: 'PILIHAN_GANDA', options: ['Praktek', 'Praktik', 'Practik', 'Prakteq'], correctAnswer: '1', difficulty: 'EASY' },
+    { id: 'tt4', text: 'Kata "obyek" yang baku adalah...', type: 'PILIHAN_GANDA', options: ['Obyek', 'Objek', 'Obek', 'Objec'], correctAnswer: '1', difficulty: 'EASY' },
+    { id: 'tt5', text: 'Apa arti "antonim"?', type: 'PILIHAN_GANDA', options: ['Persamaan kata', 'Lawan kata', 'Kata dasar', 'Kata turunan'], correctAnswer: '1', difficulty: 'EASY' },
+    { id: 'tt6', text: 'Kata "kwantitas" yang baku adalah...', type: 'PILIHAN_GANDA', options: ['Kwantitas', 'Kuantitas', 'Kuantitass', 'Quantitas'], correctAnswer: '1', difficulty: 'MEDIUM' },
+    { id: 'tt7', text: 'Apa jenis kata "cantik"?', type: 'PILIHAN_GANDA', options: ['Kata benda', 'Kata sifat', 'Kata kerja', 'Kata keterangan'], correctAnswer: '1', difficulty: 'EASY' },
+    { id: 'tt8', text: 'Kata "aktifitas" yang baku adalah...', type: 'PILIHAN_GANDA', options: ['Aktifitas', 'Aktivitas', 'Aktipitas', 'Activity'], correctAnswer: '1', difficulty: 'MEDIUM' },
+    { id: 'tt9', text: 'Apa arti "denotasi"?', type: 'PILIHAN_GANDA', options: ['Makna kiasan', 'Makna sebenarnya', 'Makna ganda', 'Makna tersirat'], correctAnswer: '1', difficulty: 'MEDIUM' },
+    { id: 'tt10', text: 'Kata "metode" yang baku adalah...', type: 'PILIHAN_GANDA', options: ['Metoda', 'Metode', 'Method', 'Metod'], correctAnswer: '1', difficulty: 'EASY' },
+  ];
+
+  const questionsMap: Record<string, Question[]> = {
+    KUIS_BATTLE: kuisBattle,
+    GOLD_RUSH: goldRush,
+    SPEED_BATTLE: speedBattle,
+    SURVIVAL: survival,
+    TIMED_TRIAL: timedTrial,
+  };
+
+  const questions = questionsMap[gameType] || kuisBattle;
+  const shuffled = [...questions].sort(() => Math.random() - 0.5);
+  return shuffled.slice(0, Math.min(count, shuffled.length));
 }
 
 function emitQuestion(room: Room) {

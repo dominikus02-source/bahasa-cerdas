@@ -31,6 +31,12 @@ Ini adalah soal TKA (Tes Kompetensi Akademik) untuk Guru Bahasa Indonesia:
 - Gunakan konteks pembelajaran Bahasa Indonesia di sekolah`;
     }
 
+    const optionsFormat = type === "PILIHAN_GANDA"
+      ? `"options": ["jawaban A", "jawaban B", "jawaban C", "jawaban D"],\n    "correctAnswer": "0",`
+      : type === "ISIAN"
+      ? `"correctAnswer": "jawaban benar",`
+      : `"correctAnswer": "kunci jawaban essay / panduan penilaian",`;
+
     const prompt = `Buatkan ${count} soal ${type === "PILIHAN_GANDA" ? "pilihan ganda" : type.toLowerCase()} Bahasa Indonesia${kelas ? " kelas " + kelas : ""} topik: "${topic}" dengan tingkat kesulitan ${difficulty}.${kd ? ` KD: ${kd}.` : ""}
 
 ${contextPrompt}
@@ -41,15 +47,15 @@ Format output JSON array:
     "text": "pertanyaan",
     "type": "${type}",
     "difficulty": "${difficulty}",
-    "options": ["jawaban A", "jawaban B", "jawaban C", "jawaban D"],
-    "correctAnswer": "0",
+    ${optionsFormat}
     "explanation": "penjelasan jawaban benar",
     "isHOTS": ${difficulty === "HARD"}
   }
 ]
 
 Aturan:
-- correctAnswer adalah index string: "0" (A), "1" (B), "2" (C), "3" (D)
+${type === "PILIHAN_GANDA" ? `- correctAnswer adalah index string: "0" (A), "1" (B), "2" (C), "3" (D)
+- Sertakan 4 opsi jawaban` : type === "ISIAN" ? `- correctAnswer adalah jawaban singkat yang benar` : `- correctAnswer adalah kunci jawaban atau panduan penilaian essay`}
 - Hanya output JSON array, tanpa markdown atau teks lain
 - Pastikan soal berkualitas dan sesuai konteks
 
@@ -182,7 +188,7 @@ Hanya output JSON array.`;
             text: s.text || "",
             type: s.type || type,
             difficulty: s.difficulty || difficulty,
-            options: s.options || [],
+            options: (s.type || type) === "PILIHAN_GANDA" ? (s.options || []) : [],
             correctAnswer: String(s.correctAnswer || "0"),
             explanation: s.explanation || null,
             isHOTS: s.isHOTS || difficulty === "HARD",

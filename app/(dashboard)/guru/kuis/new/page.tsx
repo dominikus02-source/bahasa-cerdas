@@ -54,10 +54,20 @@ export default function QuizBuilderPage() {
   const [showSoalPicker, setShowSoalPicker] = useState(false);
 
   useEffect(() => {
+    const preSelected = searchParams.get("soalIds");
+    if (preSelected) {
+      setSelectedSoalIds(preSelected.split(","));
+    }
     if (editId) {
       fetchQuiz(editId);
     }
-  }, [editId]);
+  }, [editId, searchParams]);
+
+  useEffect(() => {
+    if (selectedSoalIds.length > 0) {
+      fetchBankSoal();
+    }
+  }, [selectedSoalIds]);
 
   const fetchQuiz = async (id: string) => {
     setLoading(true);
