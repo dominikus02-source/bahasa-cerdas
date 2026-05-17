@@ -8,7 +8,7 @@ import {
   School, Award, Sparkles
 } from "lucide-react";
 
-type FilterType = "semua" | "UKBI" | "UKBI_SIMULASI" | "UKBI_LATIHAN" | "UKBI_SMP" | "UKBI_SMA" | "TKA_GURU" | "TKA_UTBK" | "TKA_SMP" | "TKA_SMA";
+type FilterType = "semua" | "UKBI" | "UKBI_SIMULASI" | "UKBI_LATIHAN" | "UKBI_SMP" | "UKBI_SMA" | "TKA_UTBK" | "TKA_SMP" | "TKA_SMA";
 
 const PREDIKAT_UKBI = [
   { level: "Istimewa (I)", range: "725-800", color: "from-amber-400 to-yellow-500" },
@@ -27,7 +27,6 @@ const FILTERS: { key: FilterType; label: string }[] = [
   { key: "UKBI_LATIHAN", label: "Latihan UKBI" },
   { key: "UKBI_SMP", label: "UKBI SMP" },
   { key: "UKBI_SMA", label: "UKBI SMA" },
-  { key: "TKA_GURU", label: "TKA Guru" },
   { key: "TKA_SMP", label: "TKA SMP" },
   { key: "TKA_SMA", label: "TKA SMA" },
   { key: "TKA_UTBK", label: "TKA UTBK" },
@@ -107,6 +106,7 @@ export default function UKBISimulationPage() {
   }, []);
 
   const filtered = pakets.filter(p => {
+    if (p.type === "TKA_GURU") return false;
     if (filter === "semua") return true;
     if (filter === "UKBI") return p.type.includes("UKBI");
     return p.type === filter;
