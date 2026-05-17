@@ -29,7 +29,7 @@ export default function HeroSection() {
               Guru Bahasa Indonesia:
               <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-orange-300 to-yellow-400">
-                MGMP + AI + Marketplace
+                MGMP + AI + Toko Karya
               </span>
             </h1>
 

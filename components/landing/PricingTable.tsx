@@ -83,7 +83,7 @@ export default function PricingTable() {
                   "Unlimited AI Generator",
                   "Download RPP & Video (1080p)",
                   "Full Akses Komunitas + Webinar",
-                  "Upload & Jual Karya (Marketplace)",
+                  "Upload & Jual Karya (Toko Karya)",
                   "Sertifikat Digital UKBI",
                   "Priority Support",
                 ].map((item, i) => (

@@ -36,7 +36,7 @@ export default function CoreFeatures() {
     },
     {
       icon: ShoppingBag,
-      title: "Marketplace Karya",
+      title: "Toko Karya",
       description: "Jual RPP, modul, video. Dapatkan royalti hingga 90% untuk setiap penjualan.",
       color: "from-green-500 to-emerald-600",
       bgColor: "bg-green-50",

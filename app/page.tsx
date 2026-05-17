@@ -94,7 +94,7 @@ export default async function HomePage() {
     "@type": "EducationalOrganization",
     name: "BahasaCerdas",
     url: "https://bahasacerdas.site",
-    description: "Platform Terlengkap untuk Guru Bahasa Indonesia. MGMP + AI + Marketplace.",
+    description: "Platform Terlengkap untuk Guru Bahasa Indonesia. MGMP + AI + Toko Karya.",
     offers: {
       "@type": "Offer",
       category: "Education",
