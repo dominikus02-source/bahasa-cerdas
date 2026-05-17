@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /admin/
+Disallow: /guru/
+Disallow: /murid/
+Disallow: /auth/
+Disallow: /game/
+
+Sitemap: https://bahasacerdas.site/sitemap.xml
