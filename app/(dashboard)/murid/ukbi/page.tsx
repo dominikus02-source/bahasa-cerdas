@@ -8,7 +8,7 @@ import {
   School, Award, Sparkles
 } from "lucide-react";
 
-type FilterType = "semua" | "UKBI" | "UKBI_SIMULASI" | "UKBI_LATIHAN" | "UKBI_SMP" | "UKBI_SMA" | "TKA_UTBK" | "TKA_SMP" | "TKA_SMA";
+type FilterType = "semua" | "UKBI" | "TKA";
 
 const PREDIKAT_UKBI = [
   { level: "Istimewa (I)", range: "725-800", color: "from-amber-400 to-yellow-500" },
@@ -23,13 +23,7 @@ const PREDIKAT_UKBI = [
 const FILTERS: { key: FilterType; label: string }[] = [
   { key: "semua", label: "Semua" },
   { key: "UKBI", label: "UKBI" },
-  { key: "UKBI_SIMULASI", label: "Simulasi UKBI" },
-  { key: "UKBI_LATIHAN", label: "Latihan UKBI" },
-  { key: "UKBI_SMP", label: "UKBI SMP" },
-  { key: "UKBI_SMA", label: "UKBI SMA" },
-  { key: "TKA_SMP", label: "TKA SMP" },
-  { key: "TKA_SMA", label: "TKA SMA" },
-  { key: "TKA_UTBK", label: "TKA UTBK" },
+  { key: "TKA", label: "TKA" },
 ];
 
 function getTypeBadgeColor(type: string) {
@@ -44,14 +38,14 @@ function getTypeBadgeColor(type: string) {
 }
 
 function getTypeLabel(type: string) {
-  if (type === "UKBI_SIMULASI") return "Simulasi UKBI";
-  if (type === "UKBI_LATIHAN") return "Latihan UKBI";
-  if (type === "UKBI_SMP") return "UKBI SMP";
-  if (type === "UKBI_SMA") return "UKBI SMA";
-  if (type === "TKA_GURU") return "TKA Guru";
-  if (type === "TKA_SMP") return "TKA SMP";
-  if (type === "TKA_SMA") return "TKA SMA";
-  if (type === "TKA_UTBK") return "TKA UTBK";
+  if (type === "UKBI_SMP") return "UKBI";
+  if (type === "UKBI_SMA") return "UKBI";
+  if (type === "UKBI_SIMULASI") return "UKBI";
+  if (type === "UKBI_LATIHAN") return "UKBI";
+  if (type === "TKA_SMP") return "TKA";
+  if (type === "TKA_SMA") return "TKA";
+  if (type === "TKA_UTBK") return "TKA";
+  if (type === "UKBI") return "UKBI";
   return type;
 }
 
@@ -109,7 +103,8 @@ export default function UKBISimulationPage() {
     if (p.type === "TKA_GURU") return false;
     if (filter === "semua") return true;
     if (filter === "UKBI") return p.type.includes("UKBI");
-    return p.type === filter;
+    if (filter === "TKA") return p.type.includes("TKA");
+    return false;
   });
 
   return (
@@ -118,7 +113,7 @@ export default function UKBISimulationPage() {
       <div className="bg-gradient-to-r from-violet-600 via-purple-600 to-pink-600 rounded-2xl p-6 mb-6 text-white">
         <div className="flex items-center gap-3 mb-2">
           <BookOpen size={24} />
-          <h1 className="text-xl font-bold">Simulasi & Latihan UKBI / TKA</h1>
+          <h1 className="text-xl font-bold">Latihan UKBI - TKA</h1>
         </div>
         <p className="text-sm text-violet-200 max-w-2xl">
           Latih kemampuan Bahasa Indonesia dan kompetensi Guru dengan soal-soal sesuai standar Kemdikbud.
