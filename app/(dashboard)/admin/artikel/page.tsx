@@ -31,21 +31,30 @@ export default function AdminArtikelPage() {
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
   const [msg, setMsg] = useState<{ type: "success" | "error"; text: string } | null>(null);
+  const [apiError, setApiError] = useState<string | null>(null);
 
   const fetchArtikel = async () => {
     setLoading(true);
+    setApiError(null);
     try {
       const params = new URLSearchParams();
       params.set("page", String(page));
       if (search) params.set("search", search);
       const res = await fetch(`/api/admin/artikel?${params.toString()}`);
       const data = await res.json();
+      
+      if (!res.ok) {
+        setApiError(data.error || "Gagal memuat artikel");
+        return;
+      }
+      
       if (data.data) {
         setArtikel(data.data);
         setTotalPages(data.totalPages || 1);
         setTotal(data.total || 0);
       }
-    } catch (e) {
+    } catch (e: any) {
+      setApiError(e.message || "Gagal memuat artikel");
       console.error(e);
     } finally {
       setLoading(false);
@@ -98,6 +107,12 @@ export default function AdminArtikelPage() {
       {msg && (
         <div className={`mb-4 p-4 rounded-xl border text-sm font-medium ${msg.type === "success" ? "bg-green-50 text-green-700 border-green-200" : "bg-red-50 text-red-700 border-red-200"}`}>
           {msg.text}
+        </div>
+      )}
+
+      {apiError && (
+        <div className="mb-4 p-4 rounded-xl border bg-red-50 text-red-700 border-red-200 text-sm font-medium">
+          {apiError}
         </div>
       )}
 

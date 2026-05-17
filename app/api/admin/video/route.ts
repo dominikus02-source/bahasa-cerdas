@@ -5,18 +5,12 @@ import { db } from "@/lib/db";
 export async function GET(req: NextRequest) {
   try {
     const supabase = await createClient();
-    const { data: { user: authUser }, error: authError } = await supabase.auth.getUser();
+    const { data: { user: authUser } } = await supabase.auth.getUser();
     
-    if (authError || !authUser) {
-      console.error("Auth error:", authError);
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    if (!authUser) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const dbUser = await db.user.findUnique({ where: { supabaseId: authUser.id } });
-    if (!dbUser || !dbUser.isFounder) {
-      console.error("Not founder:", dbUser?.email);
-      return NextResponse.json({ error: "Forbidden - Founder access required" }, { status: 403 });
-    }
+    if (!dbUser || !dbUser.isFounder) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
     const { searchParams } = new URL(req.url);
     const page = parseInt(searchParams.get("page") || "1");
@@ -27,28 +21,28 @@ export async function GET(req: NextRequest) {
     if (search) {
       where.OR = [
         { title: { contains: search, mode: "insensitive" } },
-        { author: { fullName: { contains: search, mode: "insensitive" } } },
+        { creator: { fullName: { contains: search, mode: "insensitive" } } },
       ];
     }
 
     const [data, total] = await Promise.all([
-      db.artikel.findMany({
+      db.video.findMany({
         where,
         include: {
-          author: { select: { id: true, fullName: true, email: true, avatar: true } },
+          creator: { select: { id: true, fullName: true, email: true, avatar: true } },
+          playlist: { select: { id: true, title: true } },
         },
         orderBy: { createdAt: "desc" },
         skip: (page - 1) * limit,
         take: limit,
       }),
-      db.artikel.count({ where }),
+      db.video.count({ where }),
     ]);
 
-    console.log(`Found ${total} articles for admin ${dbUser.email}`);
     return NextResponse.json({ data, total, page, totalPages: Math.ceil(total / limit) });
   } catch (err: any) {
-    console.error("Admin artikel GET error:", err.message, err.stack);
-    return NextResponse.json({ error: `Internal error: ${err.message}` }, { status: 500 });
+    console.error("Admin video GET error:", err.message);
+    return NextResponse.json({ error: "Internal error" }, { status: 500 });
   }
 }
 
@@ -66,13 +60,13 @@ export async function DELETE(req: NextRequest) {
     const id = searchParams.get("id");
     if (!id) return NextResponse.json({ error: "ID required" }, { status: 400 });
 
-    const existing = await db.artikel.findUnique({ where: { id } });
-    if (!existing) return NextResponse.json({ error: "Artikel tidak ditemukan" }, { status: 404 });
+    const existing = await db.video.findUnique({ where: { id } });
+    if (!existing) return NextResponse.json({ error: "Video tidak ditemukan" }, { status: 404 });
 
-    await db.artikel.delete({ where: { id } });
-    return NextResponse.json({ success: true, message: "Artikel berhasil dihapus" });
+    await db.video.delete({ where: { id } });
+    return NextResponse.json({ success: true, message: "Video berhasil dihapus" });
   } catch (err: any) {
-    console.error("Admin artikel DELETE error:", err.message);
+    console.error("Admin video DELETE error:", err.message);
     return NextResponse.json({ error: "Internal error" }, { status: 500 });
   }
 }
