@@ -1,12 +1,45 @@
 import { db } from "@/lib/db";
 import Link from "next/link";
+import type { Metadata } from "next";
 import { ArrowLeft, Calendar, Clock, User } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import PageNavbar from "@/components/public/PageNavbar";
 import ShareButton from "@/components/shared/ShareButton";
 
-export default async function ArtikelDetailPage({ params }: { params: Promise<{ slug: string }> }) {
+type Props = { params: Promise<{ slug: string }> };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { slug } = await params;
+  try {
+    const artikel = await db.artikel.findUnique({
+      where: { slug, isPublished: true },
+      select: { title: true, excerpt: true, coverImage: true, tags: true },
+    });
+    if (!artikel) return { title: "Artikel Tidak Ditemukan" };
+    return {
+      title: artikel.title,
+      description: artikel.excerpt || `Baca artikel ${artikel.title} di BahasaCerdas.`,
+      keywords: [...(artikel.tags || []), "Bahasa Indonesia", "pendidikan", "artikel"],
+      openGraph: {
+        title: artikel.title,
+        description: artikel.excerpt || undefined,
+        type: "article",
+        images: artikel.coverImage ? [{ url: artikel.coverImage, width: 1200, height: 630 }] : undefined,
+      },
+      twitter: {
+        card: "summary_large_image",
+        title: artikel.title,
+        description: artikel.excerpt || undefined,
+        images: artikel.coverImage ? [artikel.coverImage] : undefined,
+      },
+    };
+  } catch {
+    return { title: "Artikel — BahasaCerdas" };
+  }
+}
+
+export default async function ArtikelDetailPage({ params }: Props) {
   const { slug } = await params;
   let artikel: any = null;
   try {

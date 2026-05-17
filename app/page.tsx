@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import type { Metadata } from "next";
 import HeroSection from "@/components/landing/HeroSection";
 import SocialProof from "@/components/landing/SocialProof";
 import CoreFeatures from "@/components/landing/CoreFeatures";
@@ -13,6 +14,17 @@ import PublicNavbar from "@/components/public/PageNavbar";
 import { db } from "@/lib/db";
 
 export const dynamic = 'force-dynamic';
+
+export const metadata: Metadata = {
+  title: "BahasaCerdas — Platform Edukasi Bahasa Indonesia",
+  description:
+    "Platform edukasi Bahasa Indonesia untuk guru dan murid. AI RPP generator, bank soal, kuis game, simulasi UKBI, dan toko karya. Gratis untuk guru Indonesia.",
+  openGraph: {
+    title: "BahasaCerdas — Platform Edukasi Bahasa Indonesia",
+    description:
+      "Platform all-in-one untuk guru Bahasa Indonesia. AI RPP, bank soal, kuis multiplayer, UKBI, dan toko karya.",
+  },
+};
 
 async function getLatestArtikel() {
   try {
@@ -64,8 +76,35 @@ export default async function HomePage() {
     getLatestVideos(),
   ]);
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "BahasaCerdas",
+    url: "https://bahasacerdas.site",
+    description: "Platform edukasi Bahasa Indonesia untuk guru dan murid.",
+    potentialAction: {
+      "@type": "SearchAction",
+      target: "https://bahasacerdas.site/kamus?q={search_term_string}",
+      "query-input": "required name=search_term_string",
+    },
+  };
+
+  const orgJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "EducationalOrganization",
+    name: "BahasaCerdas",
+    url: "https://bahasacerdas.site",
+    description: "Platform All-in-One untuk Guru Bahasa Indonesia. MGMP + AI + Marketplace.",
+    offers: {
+      "@type": "Offer",
+      category: "Education",
+    },
+  };
+
   return (
     <main className="min-h-screen">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }} />
       <PublicNavbar />
       <HeroSection />
       <SocialProof />

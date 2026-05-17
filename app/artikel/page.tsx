@@ -1,9 +1,19 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { Calendar, Clock, ArrowRight, User, BookOpen } from "lucide-react";
 import PageNavbar from "@/components/public/PageNavbar";
 import { db } from "@/lib/db";
 
 export const dynamic = 'force-dynamic';
+
+export const metadata: Metadata = {
+  title: "Artikel & Tips Pendidikan — BahasaCerdas",
+  description: "Kumpulan artikel dan tips pendidikan Bahasa Indonesia dari para guru. Sharing pengalaman, wawasan mengajar, dan informasi terbaru seputar kurikulum merdeka.",
+  openGraph: {
+    title: "Artikel & Tips Pendidikan | BahasaCerdas",
+    description: "Tips mengajar, sharing pengalaman, dan wawasan dari guru Bahasa Indonesia.",
+  },
+};
 
 export default async function ArtikelPage() {
   const artikel = await db.artikel.findMany({
