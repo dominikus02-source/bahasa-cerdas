@@ -57,6 +57,10 @@ export default function KompetisiPage({ params }: { params: Promise<{ paketId: s
           router.push(`/kompetisi/${resolvedParams.paketId}/hasil`);
           return;
         }
+        if (result.message === "Anda sudah menyelesaikan tes ini") {
+          router.push(`/kompetisi/${resolvedParams.paketId}/hasil`);
+          return;
+        }
         setError(result.error);
         return;
       }

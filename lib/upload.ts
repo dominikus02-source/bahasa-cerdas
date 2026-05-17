@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/client";
+import type { SupabaseClient } from "@supabase/supabase-js";
 
 const ALLOWED_FILE_TYPES = {
   PDF: ["application/pdf"],
@@ -52,9 +53,10 @@ function getFileTypeFromMime(mimeType: string): string | null {
 export async function uploadFile(
   file: File,
   folder: "materi" | "rpp" | "banksoal" | "karya" | "video-thumbnails",
-  userId: string
+  userId: string,
+  supabaseClient?: SupabaseClient
 ): Promise<{ url: string; key: string } | { error: string }> {
-  const supabase = createClient();
+  const supabase = supabaseClient || createClient();
 
   const detectedType = getFileTypeFromMime(file.type);
   if (!detectedType) {
@@ -95,8 +97,8 @@ export async function uploadFile(
   return { url: urlData.publicUrl, key: data.path };
 }
 
-export async function deleteFile(fileKey: string): Promise<boolean> {
-  const supabase = createClient();
+export async function deleteFile(fileKey: string, supabaseClient?: SupabaseClient): Promise<boolean> {
+  const supabase = supabaseClient || createClient();
 
   const bucket = fileKey.includes("/videos/") || fileKey.includes("/video-thumbnails/") ? "videos" : "documents";
 

@@ -311,7 +311,7 @@ export default function BankSoalPage() {
               const PoolIcon = isUKBI ? Headphones : isTKA ? Brain : BookOpen;
 
               return (
-                <Card key={pool.id} className={`overflow-hidden cursor-pointer transition-all hover:shadow-lg hover:-translate-y-0.5 bg-gradient-to-br ${gradient}`}>
+                <Card key={pool.id} className={`overflow-hidden transition-all hover:shadow-lg bg-gradient-to-br ${gradient}`}>
                   <div className="p-4">
                     <div className="flex items-start justify-between mb-2">
                       <div className="w-10 h-10 rounded-lg bg-white/20 flex items-center justify-center">
@@ -334,13 +334,39 @@ export default function BankSoalPage() {
                     </div>
                     <h3 className="font-bold text-white text-sm leading-tight mb-1 line-clamp-2">{pool.title}</h3>
                     <p className="text-white/70 text-xs line-clamp-1 mb-3">{pool.description}</p>
-                    <div className="flex items-center gap-3 text-white/80 text-xs">
+                    <div className="flex items-center gap-3 text-white/80 text-xs mb-3">
                       <span className="flex items-center gap-1">
                         <BookOpen className="w-3.5 h-3.5" /> {pool.totalQuestions} soal
                       </span>
                       <span className="flex items-center gap-1">
                         <Clock className="w-3.5 h-3.5" /> {pool.duration} mnt
                       </span>
+                    </div>
+                    <div className="grid grid-cols-2 gap-1.5 pt-2 border-t border-white/20">
+                      <button
+                        onClick={() => router.push(`/kompetisi/${pool.id}`)}
+                        className="flex items-center justify-center gap-1 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white text-[11px] font-medium transition-colors"
+                      >
+                        <Play className="w-3.5 h-3.5" /> Latihan
+                      </button>
+                      <button
+                        onClick={() => router.push(`/guru/kuis/new?pool=${pool.id}`)}
+                        className="flex items-center justify-center gap-1 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white text-[11px] font-medium transition-colors"
+                      >
+                        <BarChart3 className="w-3.5 h-3.5" /> Kuis
+                      </button>
+                      <button
+                        onClick={() => router.push(`/guru/kelasku?pool=${pool.id}`)}
+                        className="flex items-center justify-center gap-1 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white text-[11px] font-medium transition-colors"
+                      >
+                        <Users className="w-3.5 h-3.5" /> Tugas
+                      </button>
+                      <button
+                        onClick={() => router.push(`/guru/game/lobby?pool=${pool.id}`)}
+                        className="flex items-center justify-center gap-1 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white text-[11px] font-medium transition-colors"
+                      >
+                        <Gamepad2 className="w-3.5 h-3.5" /> Game
+                      </button>
                     </div>
                   </div>
                 </Card>

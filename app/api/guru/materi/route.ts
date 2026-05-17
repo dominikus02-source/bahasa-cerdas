@@ -81,7 +81,7 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: "File harus PDF, DOCX, PPTX, XLSX, atau ZIP" }, { status: 400 });
       }
 
-      const uploadResult = await uploadFile(file, "materi", dbUser.id);
+      const uploadResult = await uploadFile(file, "materi", dbUser.id, supabase);
       if ("error" in uploadResult) {
         return NextResponse.json({ error: uploadResult.error }, { status: 400 });
       }
@@ -178,7 +178,7 @@ export async function DELETE(req: NextRequest) {
       return NextResponse.json({ error: "Not found or not owner" }, { status: 404 });
     }
 
-    if (existing.fileKey) await deleteFile(existing.fileKey);
+    if (existing.fileKey) await deleteFile(existing.fileKey, supabase);
 
     await db.materi.delete({ where: { id } });
 

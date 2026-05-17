@@ -133,6 +133,8 @@ export async function GET(
           const where: any = { isActive: true };
           if (section.kompetensi) where.kompetensi = section.kompetensi as any;
           if (section.subKompetensi) where.subKompetensi = section.subKompetensi;
+          if (paket.type === "TKA_SMP") where.tingkat = "SMP";
+          if (paket.type === "TKA_SMA") where.tingkat = "SMA";
           const fetched = await db.tKAQuestion.findMany({
             where,
             take: section.count,
