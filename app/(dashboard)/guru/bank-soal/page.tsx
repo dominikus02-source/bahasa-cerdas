@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import {
   BookOpen, Plus, Trash2, Zap, Loader2, Save, RefreshCw, Check,
   Search, Filter, X, Gamepad2, Play, BarChart3, MoreVertical,
-  Edit3, Users, Clock, Star, TrendingUp
+  Edit3, Users, Clock, Star, TrendingUp, GraduationCap, Brain
 } from "lucide-react";
 
 const KELAS = ["1","2","3","4","5","6","7","8","9","10","11","12"];
@@ -58,6 +58,9 @@ export default function BankSoalPage() {
   const [showAddQuestions, setShowAddQuestions] = useState(false);
   const [selectedSet, setSelectedSet] = useState<any>(null);
   const [selectedQuestionIds, setSelectedQuestionIds] = useState<string[]>([]);
+
+  const [pools, setPools] = useState<any[]>([]);
+  const [poolFilter, setPoolFilter] = useState<"all" | "UKBI" | "TKA">("all");
 
   const [setForm, setSetForm] = useState({
     title: "",
@@ -117,7 +120,18 @@ export default function BankSoalPage() {
   useEffect(() => {
     if (view === "sets") fetchSets();
     else fetchQuestions();
+    fetchPools();
   }, [view, fetchSets, fetchQuestions]);
+
+  const fetchPools = useCallback(async () => {
+    try {
+      const res = await fetch("/api/guru/soal-pool");
+      const data = await res.json();
+      if (data.pools) setPools(data.pools);
+    } catch (e) {
+      console.error(e);
+    }
+  }, []);
 
   const handleGenerate = async () => {
     if (!aiForm.text || !aiForm.kelas) return;
@@ -250,6 +264,84 @@ export default function BankSoalPage() {
           <Button onClick={() => setShowCreateSet(true)}>
             <Plus className="h-4 w-4 mr-1" /> Buat Set Baru
           </Button>
+        </div>
+      </div>
+
+      {/* Bank Soal Kompetensi - UKBI & TKA */}
+      <div className="mb-6">
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+            <GraduationCap className="text-emerald-500" size={20} />
+            Bank Soal Kompetensi
+          </h2>
+          <div className="flex bg-gray-100 rounded-lg p-0.5">
+            {(["all", "UKBI", "TKA"] as const).map(f => (
+              <button
+                key={f}
+                onClick={() => setPoolFilter(f)}
+                className={`px-3 py-1 rounded-md text-xs font-medium transition-all ${
+                  poolFilter === f ? "bg-white text-emerald-700 shadow-sm" : "text-gray-500"
+                }`}
+              >
+                {f === "all" ? "Semua" : f}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+          {pools
+            .filter(p => {
+              if (poolFilter === "all") return true;
+              if (poolFilter === "UKBI") return p.type?.includes("UKBI");
+              if (poolFilter === "TKA") return p.type?.includes("TKA");
+              return true;
+            })
+            .map(pool => {
+              const isUKBI = pool.type?.includes("UKBI");
+              const isTKA = pool.type?.includes("TKA");
+              const isSimulasi = pool.mode === "SIMULASI";
+              const gradient = isUKBI
+                ? "from-blue-500 to-indigo-600"
+                : isTKA && pool.title?.includes("SMA")
+                ? "from-purple-500 to-fuchsia-600"
+                : "from-teal-500 to-emerald-600";
+              const icon = isUKBI ? "🎧" : "📝";
+
+              return (
+                <Card key={pool.id} className={`overflow-hidden cursor-pointer transition-all hover:shadow-lg hover:-translate-y-0.5 bg-gradient-to-br ${gradient}`}>
+                  <div className="p-4">
+                    <div className="flex items-start justify-between mb-2">
+                      <span className="text-2xl">{icon}</span>
+                      <div className="flex gap-1">
+                        {isUKBI && (
+                          <span className="text-[10px] px-1.5 py-0.5 bg-white/20 text-white rounded-full font-medium">UKBI</span>
+                        )}
+                        {isTKA && (
+                          <span className="text-[10px] px-1.5 py-0.5 bg-white/20 text-white rounded-full font-medium">TKA</span>
+                        )}
+                        {isSimulasi && (
+                          <span className="text-[10px] px-1.5 py-0.5 bg-yellow-400/30 text-yellow-100 rounded-full font-medium">Simulasi</span>
+                        )}
+                        {!isSimulasi && (
+                          <span className="text-[10px] px-1.5 py-0.5 bg-white/20 text-white rounded-full font-medium">Latihan</span>
+                        )}
+                      </div>
+                    </div>
+                    <h3 className="font-bold text-white text-sm leading-tight mb-1 line-clamp-2">{pool.title}</h3>
+                    <p className="text-white/70 text-xs line-clamp-1 mb-3">{pool.description}</p>
+                    <div className="flex items-center gap-3 text-white/80 text-xs">
+                      <span className="flex items-center gap-1">
+                        <BookOpen className="w-3.5 h-3.5" /> {pool.totalQuestions} soal
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <Clock className="w-3.5 h-3.5" /> {pool.duration} mnt
+                      </span>
+                    </div>
+                  </div>
+                </Card>
+              );
+            })}
         </div>
       </div>
 

@@ -49,6 +49,8 @@ enum KompetensiType {
   UKBI_LATIHAN
   TKA_GURU
   TKA_UTBK
+  TKA_SMP
+  TKA_SMA
   SERTIFIKAT
 }
 
@@ -135,6 +137,10 @@ enum TKAKompetensi {
   PROFESIONAL
   SOSIAL
   KEPRIBADIAN
+  LITERASI_MEMBACA
+  TATA_BAHASA
+  SASTRA
+  MENULIS
 }
 
 enum TestMode {
@@ -148,6 +154,12 @@ enum TestStatus {
   IN_PROGRESS
   COMPLETED
   EXPIRED
+}
+
+enum Tingkat {
+  SMP
+  SMA
+  UMUM
 }
 
 enum CommunityType {
@@ -466,6 +478,7 @@ model UKBIQuestion {
   passageType String?
   wordCount   Int?
   keywords    String[]
+  tingkat     Tingkat   @default(UMUM)
   isActive    Boolean  @default(true)
   isVerified  Boolean  @default(false)
 
@@ -478,6 +491,7 @@ model UKBIQuestion {
   @@index([seksi, isActive])
   @@index([difficulty])
   @@index([isVerified])
+  @@index([tingkat])
 }
 
 model TKAQuestion {
@@ -494,6 +508,7 @@ model TKAQuestion {
   weight      Float          @default(1.0)
   year        Int?
   source      String?
+  tingkat     Tingkat        @default(UMUM)
   isActive    Boolean        @default(true)
   isVerified  Boolean        @default(false)
 
@@ -506,6 +521,7 @@ model TKAQuestion {
   @@index([kompetensi, isActive])
   @@index([difficulty])
   @@index([isVerified])
+  @@index([tingkat])
 }
 
 model PaketKompetensi {
