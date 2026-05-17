@@ -419,6 +419,8 @@ model User {
 
   artikel           Artikel[]
   loker             Loker[]
+  quizzes           Quiz[]
+  quizSubmissions   QuizSubmission[]
 }
 
 model Profile {
@@ -1086,6 +1088,7 @@ model Group {
 
   members  GroupMember[]
   quizzes  GroupQuiz[]
+  quizAssignments QuizAssignment[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -1172,5 +1175,157 @@ model KamusEntry {
 
   @@index([kata])
   @@index([slug])
+}
+
+enum QuizType {
+  LATIHAN
+  TUGAS
+  UJIAN
+  GAME
+}
+
+enum QuizStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum SubmissionStatus {
+  NOT_STARTED
+  IN_PROGRESS
+  SUBMITTED
+  GRADED
+  LATE
+}
+
+model Quiz {
+  id              String     @id @default(cuid())
+  title           String
+  description     String?
+  type            QuizType   @default(LATIHAN)
+  status          QuizStatus @default(DRAFT)
+
+  timeLimit       Int?
+  shuffleQuestions Boolean   @default(false)
+  shuffleOptions  Boolean    @default(false)
+  showResults     Boolean    @default(true)
+  showCorrectAnswer Boolean  @default(true)
+  passingScore    Int?
+  maxAttempts     Int        @default(1)
+  randomizeFromPool Boolean  @default(false)
+  poolSize        Int?
+
+  kelas           String
+  subject         String     @default("Bahasa Indonesia")
+  topik           String?
+  KD              String?
+  difficulty      Difficulty @default(MEDIUM)
+  thumbnailUrl    String?
+
+  questions       QuizQuestion[]
+  assignments     QuizAssignment[]
+
+  creatorId       String
+  creator         User       @relation(fields: [creatorId], references: [id])
+
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+
+  @@index([creatorId])
+  @@index([kelas])
+  @@index([status])
+  @@index([type])
+}
+
+model QuizQuestion {
+  id              String   @id @default(cuid())
+  quizId          String
+  quiz            Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
+
+  sourceType      String
+  sourceId        String
+
+  customText      String?
+  customType      String?
+  customOptions   Json?
+  customAnswer    String?
+  customExplanation String?
+
+  orderIndex      Int      @default(0)
+  points          Int      @default(1)
+
+  answers         QuizAnswer[]
+
+  @@index([quizId])
+  @@index([sourceType, sourceId])
+}
+
+model QuizAssignment {
+  id            String   @id @default(cuid())
+  quizId        String
+  quiz          Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  groupId       String
+  group         Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  assignedAt    DateTime @default(now())
+  dueDate       DateTime?
+  isPublished   Boolean  @default(false)
+  notes         String?
+
+  submissions   QuizSubmission[]
+
+  @@unique([quizId, groupId])
+  @@index([groupId])
+}
+
+model QuizSubmission {
+  id            String   @id @default(cuid())
+  assignmentId  String
+  assignment    QuizAssignment @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
+  userId        String
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  status        SubmissionStatus @default(NOT_STARTED)
+  attemptNumber Int      @default(1)
+
+  startedAt     DateTime?
+  submittedAt   DateTime?
+  gradedAt      DateTime?
+
+  score         Float?
+  pointsEarned  Int?
+  pointsTotal   Int?
+  correctCount  Int      @default(0)
+  wrongCount    Int      @default(0)
+  skippedCount  Int      @default(0)
+  timeSpent     Int?
+
+  answers       QuizAnswer[]
+
+  @@unique([assignmentId, userId, attemptNumber])
+  @@index([userId])
+  @@index([assignmentId])
+  @@index([status])
+}
+
+model QuizAnswer {
+  id            String   @id @default(cuid())
+  submissionId  String
+  submission    QuizSubmission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+  quizQuestionId String
+  quizQuestion  QuizQuestion @relation(fields: [quizQuestionId], references: [id])
+
+  answerText    String?
+  answerIndex   Int?
+  isCorrect     Boolean?
+  pointsEarned  Int      @default(0)
+  timeSpent     Int?
+  flagged       Boolean  @default(false)
+
+  teacherComment String?
+  manuallyGraded Boolean  @default(false)
+
+  @@index([submissionId])
+  @@index([quizQuestionId])
 }
 
