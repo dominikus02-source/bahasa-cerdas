@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
-import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 
 export async function GET(req: NextRequest) {
   try {
@@ -40,6 +39,7 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
+    console.log("Materi POST request received");
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
@@ -68,7 +68,7 @@ export async function POST(req: NextRequest) {
     const price = parseInt(formData.get("price") as string) || 0;
 
     if (!title) {
-      return NextResponse.json({ error: "Title is required" }, { status: 400 });
+      return NextResponse.json({ error: "Judul wajib diisi" }, { status: 400 });
     }
 
     let fileUrl: string | null = null;
@@ -85,37 +85,36 @@ export async function POST(req: NextRequest) {
       const bucket = "documents";
 
       const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SERVICE_ROLE_KEY;
-      if (!serviceKey) {
-        console.error("Missing SUPABASE_SERVICE_ROLE_KEY or SERVICE_ROLE_KEY env var");
-        return NextResponse.json({ error: "Server configuration error: Missing service key" }, { status: 500 });
+      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+
+      if (!serviceKey || !supabaseUrl) {
+        console.error("Missing env vars for upload");
+        return NextResponse.json({ error: "Server configuration error" }, { status: 500 });
       }
 
-      const adminClient = createSupabaseClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        serviceKey
-      );
-
-      await adminClient.storage.createBucket(bucket, { public: true }).catch(() => {});
-
+      // Convert file to buffer
       const arrayBuffer = await file.arrayBuffer();
       const buffer = Buffer.from(arrayBuffer);
 
-      const { data, error: uploadError } = await adminClient.storage
-        .from(bucket)
-        .upload(fileName, buffer, {
-          contentType: file.type,
-          cacheControl: "31536000",
-          upsert: false,
-        });
+      // Upload directly to Supabase Storage via REST API
+      const uploadUrl = `${supabaseUrl}/storage/v1/object/${bucket}/${fileName}`;
+      const uploadRes = await fetch(uploadUrl, {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${serviceKey}`,
+          "Content-Type": file.type || "application/octet-stream",
+        },
+        body: buffer,
+      });
 
-      if (uploadError) {
-        console.error("Materi upload error:", uploadError);
-        return NextResponse.json({ error: `Upload gagal: ${uploadError.message}` }, { status: 400 });
+      if (!uploadRes.ok) {
+        const errText = await uploadRes.text();
+        console.error("Supabase upload failed:", uploadRes.status, errText);
+        return NextResponse.json({ error: `Upload gagal: ${uploadRes.status} ${errText}` }, { status: 400 });
       }
 
-      const { data: urlData } = adminClient.storage.from(bucket).getPublicUrl(data.path);
-      fileUrl = urlData.publicUrl;
-      fileKey = data.path;
+      fileUrl = `${supabaseUrl}/storage/v1/object/public/${bucket}/${fileName}`;
+      fileKey = fileName;
       fileType = fileExt.toUpperCase();
     }
 
