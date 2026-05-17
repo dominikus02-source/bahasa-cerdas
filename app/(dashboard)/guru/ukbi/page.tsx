@@ -7,31 +7,32 @@ import {
   Headphones, FileText, PenTool, Mic, Award
 } from "lucide-react";
 
-type FilterType = "semua" | "UKBI_SIMULASI" | "UKBI_LATIHAN";
+type FilterType = "semua" | "UKBI_GURU" | "TKA_GURU";
 
 const FILTERS: { key: FilterType; label: string }[] = [
   { key: "semua", label: "Semua" },
-  { key: "UKBI_SIMULASI", label: "Simulasi UKBI" },
-  { key: "UKBI_LATIHAN", label: "Latihan UKBI" },
+  { key: "UKBI_GURU", label: "UKBI Guru" },
+  { key: "TKA_GURU", label: "TKA Guru" },
 ];
 
 function getTypeBadgeColor(type: string) {
   if (type.includes("SIMULASI")) return "bg-violet-100 text-violet-700";
+  if (type.includes("UKBI_GURU")) return "bg-emerald-100 text-emerald-700";
+  if (type.includes("TKA_GURU")) return "bg-blue-100 text-blue-700";
   return "bg-emerald-100 text-emerald-700";
 }
 
 function getIconBoxColor(type: string) {
   if (type.includes("SIMULASI")) return "from-violet-500 to-purple-600";
-  return "from-sky-500 to-blue-600";
+  if (type.includes("UKBI_GURU")) return "from-emerald-500 to-teal-600";
+  if (type.includes("TKA_GURU")) return "from-blue-500 to-indigo-600";
+  return "from-emerald-500 to-teal-600";
 }
 
 function getPackageIcon(type: string) {
-  if (type.includes("MENDENGARKAN")) return <Headphones size={20} className="text-white" />;
-  if (type.includes("Kaidah")) return <FileText size={20} className="text-white" />;
-  if (type.includes("Membaca")) return <BookOpen size={20} className="text-white" />;
-  if (type.includes("Menulis")) return <PenTool size={20} className="text-white" />;
-  if (type.includes("Berbicara")) return <Mic size={20} className="text-white" />;
-  return <Headphones size={20} className="text-white" />;
+  if (type.includes("UKBI_GURU")) return <BookOpen size={20} className="text-white" />;
+  if (type.includes("TKA_GURU")) return <Brain size={20} className="text-white" />;
+  return <BookOpen size={20} className="text-white" />;
 }
 
 function getTotalQuestions(p: any) {
@@ -50,39 +51,55 @@ export default function GuruUKBIPage() {
   const [filter, setFilter] = useState<FilterType>("semua");
 
   useEffect(() => {
-    fetch("/api/kompetensi?limit=20")
+    fetch("/api/kompetensi?limit=50")
       .then(r => r.json())
-      .then(d => setPakets((d.data || []).filter((p: any) => p.type?.startsWith("UKBI"))))
+      .then(d => setPakets(d.data || []))
       .catch(() => {})
       .finally(() => setLoading(false));
   }, []);
 
+  // Filter: only show GURU packages, hide student packages
   const filtered = pakets.filter(p => {
+    // Hide student packages
+    if (["UKBI_SMP", "UKBI_SMA", "UKBI_LATIHAN_SMP", "UKBI_LATIHAN_SMA", "TKA_SMP", "TKA_SMA"].includes(p.type)) {
+      return false;
+    }
     if (filter === "semua") return true;
-    return p.type === filter;
+    if (filter === "UKBI_GURU") return p.type.includes("UKBI_GURU");
+    if (filter === "TKA_GURU") return p.type.includes("TKA_GURU");
+    return true;
   });
+
+  const getTypeLabel = (type: string) => {
+    if (type === "UKBI_GURU_SIMULASI") return "UKBI Guru";
+    if (type === "UKBI_GURU_LATIHAN") return "Latihan UKBI";
+    if (type === "TKA_GURU_SIMULASI") return "TKA Guru";
+    if (type === "TKA_GURU_LATIHAN") return "Latihan TKA";
+    return type;
+  };
 
   return (
     <div>
       {/* Header */}
-      <div className="bg-gradient-to-r from-emerald-600 to-teal-600 rounded-2xl p-6 mb-6 text-white">
+      <div className="bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 rounded-2xl p-6 mb-6 text-white">
         <div className="flex items-center gap-3 mb-2">
           <GraduationCap size={24} />
-          <h1 className="text-xl font-bold">UKBI untuk Guru</h1>
+          <h1 className="text-xl font-bold">Latihan UKBI & TKA Guru</h1>
         </div>
         <p className="text-sm text-emerald-200 max-w-2xl">
-          Latihan UKBI untuk persiapan sertifikasi guru. Standar Kemdikbud — 7 peringkat kemahiran.
+          Latih kemampuan berbahasa Indonesia dan kompetensi pedagogik-profesional untuk persiapan UKG dan sertifikasi guru.
+          UKBI menguji kemahiran berbahasa, TKA menguji kompetensi mengajar sesuai standar Kemdikbud.
         </p>
       </div>
 
       {/* Filter Tabs */}
-      <div className="bg-white rounded-xl border border-gray-100 p-3 mb-6">
-        <div className="flex gap-1.5">
+      <div className="bg-white rounded-xl border border-gray-100 p-3 mb-6 overflow-x-auto">
+        <div className="flex gap-1.5 min-w-max">
           {FILTERS.map(f => (
             <button
               key={f.key}
               onClick={() => setFilter(f.key)}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${
                 filter === f.key
                   ? "bg-emerald-600 text-white shadow-sm"
                   : "bg-gray-50 text-gray-600 hover:bg-gray-100"
@@ -97,7 +114,7 @@ export default function GuruUKBIPage() {
       {/* Package List */}
       {loading ? (
         <div className="space-y-4">
-          {Array.from({ length: 4 }).map((_, i) => (
+          {Array.from({ length: 5 }).map((_, i) => (
             <div key={i} className="bg-white rounded-xl border border-gray-100 p-5 animate-pulse">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 rounded-xl bg-gray-200" />
@@ -113,9 +130,9 @@ export default function GuruUKBIPage() {
       ) : filtered.length === 0 ? (
         <div className="text-center py-16">
           <BookOpen size={48} className="mx-auto text-gray-200 mb-3" />
-          <p className="text-gray-500">Belum ada paket UKBI</p>
-          <Link href="/guru/pengaturan" className="mt-3 inline-block text-sm text-emerald-600 font-semibold hover:underline">
-            Hubungi admin untuk menambahkan paket
+          <p className="text-gray-500">Belum ada paket tersedia</p>
+          <Link href="/guru/buat-tka" className="mt-3 inline-block text-sm text-emerald-600 font-semibold hover:underline">
+            Buat Paket Baru →
           </Link>
         </div>
       ) : (
@@ -129,7 +146,7 @@ export default function GuruUKBIPage() {
             return (
               <Link
                 key={p.id}
-                href={`/kompetisi/${p.id}`}
+                href={`/guru/ukbi/${p.id}`}
                 className="block bg-white rounded-xl border border-gray-100 p-5 hover:shadow-md hover:border-emerald-200 transition-all group"
               >
                 <div className="flex items-center gap-4">
@@ -140,9 +157,9 @@ export default function GuruUKBIPage() {
 
                   {/* Content */}
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-1">
+                    <div className="flex items-center gap-2 mb-1 flex-wrap">
                       <span className={`text-[11px] px-2 py-0.5 rounded-full font-semibold ${badgeColor}`}>
-                        {isSimulasi ? "Simulasi UKBI" : "Latihan UKBI"}
+                        {getTypeLabel(p.type)}
                       </span>
                       {isSimulasi && (
                         <span className="text-[11px] px-2 py-0.5 rounded-full font-semibold bg-amber-100 text-amber-700">
