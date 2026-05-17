@@ -116,8 +116,8 @@ export default function UKBISimulationPage() {
           <h1 className="text-xl font-bold">Latihan UKBI - TKA</h1>
         </div>
         <p className="text-sm text-violet-200 max-w-2xl">
-          Latih kemampuan Bahasa Indonesia dan kompetensi Guru dengan soal-soal sesuai standar Kemdikbud.
-          UKBI mengukur kemahiran berbahasa, TKA mengukur kompetensi pedagogik & profesional guru.
+          Latih kemampuan Bahasa Indonesia dan kompetensi sesuai standar Kemdikbud.
+          UKBI mengukur kemahiran berbahasa, TKA mengukur kompetensi bahasa Indonesia untuk persiapan ujian sekolah.
         </p>
       </div>
 
