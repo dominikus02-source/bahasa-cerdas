@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
-import { uploadFile, deleteFile } from "@/lib/upload";
 
 export async function GET(req: NextRequest) {
   try {
@@ -81,13 +80,27 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: "File harus PDF, DOCX, PPTX, XLSX, atau ZIP" }, { status: 400 });
       }
 
-      const uploadResult = await uploadFile(file, "materi", dbUser.id, supabase);
-      if ("error" in uploadResult) {
-        return NextResponse.json({ error: uploadResult.error }, { status: 400 });
+      const fileName = `${dbUser.id}/materi/${Date.now()}-${Math.random().toString(36).substring(2, 8)}.${fileExt}`;
+      const bucket = "documents";
+
+      // Ensure bucket exists
+      await supabase.storage.createBucket(bucket, { public: true }).catch(() => {});
+
+      const { data, error: uploadError } = await supabase.storage
+        .from(bucket)
+        .upload(fileName, file, {
+          cacheControl: "31536000",
+          upsert: false,
+        });
+
+      if (uploadError) {
+        console.error("Materi upload error:", uploadError);
+        return NextResponse.json({ error: `Upload gagal: ${uploadError.message}` }, { status: 400 });
       }
 
-      fileUrl = uploadResult.url;
-      fileKey = uploadResult.key;
+      const { data: urlData } = supabase.storage.from(bucket).getPublicUrl(data.path);
+      fileUrl = urlData.publicUrl;
+      fileKey = data.path;
       fileType = fileExt.toUpperCase();
     }
 
@@ -178,7 +191,10 @@ export async function DELETE(req: NextRequest) {
       return NextResponse.json({ error: "Not found or not owner" }, { status: 404 });
     }
 
-    if (existing.fileKey) await deleteFile(existing.fileKey, supabase);
+    if (existing.fileKey) {
+      const bucket = existing.fileKey.includes("/videos/") ? "videos" : "documents";
+      await supabase.storage.from(bucket).remove([existing.fileKey]).catch(() => {});
+    }
 
     await db.materi.delete({ where: { id } });
 
