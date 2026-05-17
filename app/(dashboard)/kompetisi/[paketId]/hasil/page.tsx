@@ -57,13 +57,15 @@ export default function HasilPage({ params }: { params: Promise<{ paketId: strin
     const fetchResult = async () => {
       setLoading(true);
       try {
-        const res = await fetch(`/api/kompetensi/${paketId}/submit`);
+        const res = await fetch(`/api/kompetensi/${paketId}/hasil`);
         const data = await res.json();
         if (data.result) {
           setResult(data.result);
+        } else if (data.error) {
+          console.error("Fetch result error:", data.error);
         }
       } catch (e) {
-        console.error(e);
+        console.error("Fetch result failed:", e);
       } finally {
         setLoading(false);
       }
@@ -98,9 +100,15 @@ export default function HasilPage({ params }: { params: Promise<{ paketId: strin
         <div className="text-center bg-white rounded-2xl p-8 shadow-sm max-w-md">
           <XCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
           <h2 className="font-bold text-xl mb-2">Hasil tidak ditemukan</h2>
-          <Link href="/kompetisi/latihan" className="mt-4 inline-block px-6 py-2 bg-indigo-600 text-white rounded-xl font-bold">
-            Kembali ke Latihan
-          </Link>
+          <p className="text-sm text-gray-500 mb-4">Anda belum menyelesaikan tes ini atau hasil belum tersimpan.</p>
+          <div className="flex flex-col gap-2">
+            <Link href={`/kompetisi/${paketId}`} className="mt-2 inline-block px-6 py-2 bg-indigo-600 text-white rounded-xl font-bold">
+              Mulai Ulang Tes
+            </Link>
+            <button onClick={() => router.back()} className="px-6 py-2 border-2 border-slate-200 text-slate-600 rounded-xl font-bold">
+              Kembali
+            </button>
+          </div>
         </div>
       </div>
     );

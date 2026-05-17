@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
+import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 
-export async function GET(req: NextRequest) {
+export async function POST(req: NextRequest) {
   try {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
@@ -10,6 +11,101 @@ export async function GET(req: NextRequest) {
     if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+
+    const dbUser = await db.user.findUnique({ where: { supabaseId: user.id } });
+    if (!dbUser || dbUser.role !== "GURU") {
+      return NextResponse.json({ error: "Guru only" }, { status: 403 });
+    }
+
+    const formData = await req.formData();
+    const file = formData.get("file") as File | null;
+
+    const title = formData.get("title") as string;
+    const description = formData.get("description") as string | null;
+    const content = formData.get("content") as string | null;
+    const grade = formData.get("grade") as string | null;
+    const semester = formData.get("semester") ? parseInt(formData.get("semester") as string) : null;
+    const tahunAjaran = formData.get("tahunAjaran") as string | null;
+    const tema = formData.get("tema") as string | null;
+    const subtema = formData.get("subtema") as string | null;
+    const isPublished = formData.get("isPublished") === "true";
+    const isPremium = formData.get("isPremium") === "true";
+    const price = parseInt(formData.get("price") as string) || 0;
+
+    if (!title) {
+      return NextResponse.json({ error: "Title is required" }, { status: 400 });
+    }
+
+    let fileUrl: string | null = null;
+    let fileKey: string | null = null;
+    let fileType: string | null = null;
+
+    if (file) {
+      const fileExt = file.name.split(".").pop()?.toLowerCase() || "pdf";
+      if (!["pdf", "docx", "pptx", "xlsx", "zip"].includes(fileExt)) {
+        return NextResponse.json({ error: "File harus PDF, DOCX, PPTX, XLSX, atau ZIP" }, { status: 400 });
+      }
+
+      const fileName = `${dbUser.id}/materi/${Date.now()}-${Math.random().toString(36).substring(2, 8)}.${fileExt}`;
+      const bucket = "documents";
+
+      // Use service role client for storage upload
+      const adminClient = createSupabaseClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.SUPABASE_SERVICE_ROLE_KEY!
+      );
+
+      // Ensure bucket exists
+      await adminClient.storage.createBucket(bucket, { public: true }).catch(() => {});
+
+      const arrayBuffer = await file.arrayBuffer();
+      const buffer = Buffer.from(arrayBuffer);
+
+      const { data, error: uploadError } = await adminClient.storage
+        .from(bucket)
+        .upload(fileName, buffer, {
+          contentType: file.type,
+          cacheControl: "31536000",
+          upsert: false,
+        });
+
+      if (uploadError) {
+        console.error("Materi upload error:", uploadError);
+        return NextResponse.json({ error: `Upload gagal: ${uploadError.message}` }, { status: 400 });
+      }
+
+      const { data: urlData } = adminClient.storage.from(bucket).getPublicUrl(data.path);
+      fileUrl = urlData.publicUrl;
+      fileKey = data.path;
+      fileType = fileExt.toUpperCase();
+    }
+
+    const materi = await db.materi.create({
+      data: {
+        title,
+        description,
+        content: content || "",
+        fileUrl,
+        fileKey,
+        fileType: fileType as any || null,
+        grade,
+        semester,
+        tahunAjaran,
+        tema,
+        subtema,
+        isPublished,
+        isPremium,
+        price,
+        uploaderId: dbUser.id,
+      },
+    });
+
+    return NextResponse.json({ materi }, { status: 201 });
+  } catch (error) {
+    console.error("POST /api/guru/materi error:", error);
+    return NextResponse.json({ error: "Internal error" }, { status: 500 });
+  }
+}
 
     const dbUser = await db.user.findUnique({ where: { supabaseId: user.id } });
     if (!dbUser || dbUser.role !== "GURU") {

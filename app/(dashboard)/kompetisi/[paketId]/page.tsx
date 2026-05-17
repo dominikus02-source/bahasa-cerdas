@@ -53,6 +53,7 @@ export default function KompetisiPage({ params }: { params: Promise<{ paketId: s
       const result = await res.json();
 
       if (result.error) {
+        console.error("Kompetisi API error:", result.error, result.message);
         if (result.session?.status === "COMPLETED") {
           router.push(`/kompetisi/${resolvedParams.paketId}/hasil`);
           return;
@@ -62,6 +63,17 @@ export default function KompetisiPage({ params }: { params: Promise<{ paketId: s
           return;
         }
         setError(result.error);
+        return;
+      }
+
+      if (!result.questions || result.questions.length === 0) {
+        setError("Tidak ada soal tersedia untuk paket ini. Hubungi admin untuk menambahkan soal.");
+        return;
+      }
+
+      const hasQuestions = result.questions.some((s: any) => s.questions && s.questions.length > 0);
+      if (!hasQuestions) {
+        setError("Tidak ada soal tersedia untuk paket ini. Hubungi admin untuk menambahkan soal.");
         return;
       }
 
