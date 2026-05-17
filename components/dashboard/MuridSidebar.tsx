@@ -21,8 +21,7 @@ const NAV = [
     label: "Kompetensi",
     icon: <GraduationCap size={18} />,
     children: [
-      { label: "Simulasi UKBI", href: "/murid/ukbi", icon: <BookOpen size={16} /> },
-      { label: "TKA UTBK", href: "/murid/tka-utbk", icon: <Brain size={16} /> },
+      { label: "UKBI - TKA", href: "/murid/ukbi", icon: <BookOpen size={16} /> },
       { label: "Sertifikat", href: "/murid/sertifikat", icon: <Star size={16} /> },
     ]
   },
@@ -56,7 +55,7 @@ export function MuridSidebar({ user }: Props) {
   const router = useRouter()
   const supabase = createClient()
   const [expanded, setExpanded] = useState<Record<string, boolean>>({
-    Kompetensi: pathname.includes("/ukbi") || pathname.includes("/tka-"),
+    Kompetensi: pathname.includes("/ukbi") || pathname.includes("/sertifikat"),
     Olimpiade: pathname.includes("/olimpiade"),
   })
 
