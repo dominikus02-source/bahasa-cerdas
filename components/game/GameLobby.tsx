@@ -223,7 +223,18 @@ export default function GameLobby({ isHost = false, roomCode: initialCode, onSta
     const ModeIcon = modeInfo?.icon || Zap;
 
     return (
-      <div className="h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex flex-col">
+      <div className={`bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex flex-col ${isFullscreen ? "fixed inset-0 z-[9999]" : "min-h-screen"}`}>
+        {/* Exit Fullscreen Button */}
+        {isFullscreen && (
+          <button
+            onClick={toggleFullscreen}
+            className="absolute top-4 right-4 z-50 flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-xl text-white/80 hover:text-white hover:bg-white/20 transition-all"
+          >
+            <Minimize size={18} />
+            <span className="text-sm font-medium">Keluar Layar Penuh</span>
+          </button>
+        )}
+
         <div className="flex-1 flex flex-col items-center justify-center px-4 max-w-lg mx-auto w-full">
           <motion.div initial={{ y: 30, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="w-full text-center">
             <div className="mb-6">

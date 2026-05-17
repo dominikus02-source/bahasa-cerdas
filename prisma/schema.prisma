@@ -169,6 +169,10 @@ enum GameType {
   TEBAC_KATA
   KOSAKATA_HARIAN
   KATA_SERU
+  GOLD_RUSH
+  SPEED_BATTLE
+  SURVIVAL
+  TIMED_TRIAL
 }
 
 enum GameRoomStatus {
