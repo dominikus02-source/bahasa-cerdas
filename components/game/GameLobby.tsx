@@ -147,14 +147,20 @@ export default function GameLobby({ isHost = false, roomCode: initialCode, onSta
     if (stored) {
       try {
         const parsed = JSON.parse(stored);
-        setUserName(parsed.state?.fullName || "Pemain");
-        setUserId(parsed.state?.supabaseId || "");
+        const name = parsed.state?.fullName || "Pemain";
+        const uid = parsed.state?.supabaseId || "";
+        setUserName(name);
+        setUserId(uid);
+        if (uid) {
+          gameSocket.connect(uid, name, parsed.state?.avatar || "");
+        }
       } catch {}
     }
   }, []);
 
   useEffect(() => {
-    gameSocket.connect();
+    if (!userId) return;
+    gameSocket.connect(userId, userName);
 
     const unsub1 = gameSocket.onRoomCreated((data: any) => {
       setRoom(data);
@@ -171,7 +177,7 @@ export default function GameLobby({ isHost = false, roomCode: initialCode, onSta
     });
 
     return () => { unsub1(); unsub2(); unsub3(); };
-  }, []);
+  }, [userId, userName]);
 
   const handleCreate = useCallback(() => {
     gameSocket.createRoom({
