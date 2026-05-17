@@ -105,11 +105,15 @@ export async function GET(
         }
       } else if (section.count && section.count > 0) {
         if (paket.type === "UKBI" || paket.type === "UKBI_SIMULASI" || paket.type === "UKBI_LATIHAN") {
+          const where: any = { seksi: section.seksi as any, isActive: true };
+          const titleLower = (paket.title || "").toLowerCase();
+          if (titleLower.includes("smp")) {
+            where.tingkat = "SMP";
+          } else if (titleLower.includes("sma")) {
+            where.tingkat = "SMA";
+          }
           const fetched = await db.uKBIQuestion.findMany({
-            where: {
-              seksi: section.seksi as any,
-              isActive: true,
-            },
+            where,
             take: section.count,
             orderBy: { difficulty: "asc" },
             select: {
