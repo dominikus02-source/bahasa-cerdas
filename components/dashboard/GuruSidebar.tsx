@@ -29,15 +29,14 @@ const NAV: NavItem[] = [
   { label: "Materi Ajar", href: "/guru/materi-ajar", icon: <Presentation size={18} /> },
   { label: "Bank Soal", href: "/guru/bank-soal", icon: <Database size={18} /> },
   { label: "Data Siswa", href: "/guru/data-siswa", icon: <Users size={18} /> },
-  {
+{
     label: "Kompetensi",
     icon: <GraduationCap size={18} />,
     children: [
-      { label: "Simulasi UKBI", href: "/guru/ukbi", icon: <BookOpen size={16} /> },
-      { label: "Bank Soal UKBI", href: "/guru/bank-soal-ukbi", icon: <FileText size={16} /> },
-      { label: "TKA Guru", href: "/guru/tka-guru", icon: <Brain size={16} /> },
-      { label: "Bank Soal TKA", href: "/guru/bank-soal-tka", icon: <Database size={16} /> },
-      { label: "TKA UTBK", href: "/guru/tka-utbk", icon: <Award size={16} /> },
+      { label: "UKBI - TKA", href: "/guru/ukbi", icon: <BookOpen size={16} /> },
+      { label: "Bank soal UKBI", href: "/guru/bank-soal-ukbi", icon: <FileText size={16} /> },
+      { label: "Bank soal TKA", href: "/guru/bank-soal-tka", icon: <Database size={16} /> },
+      { label: "Buat Paket", href: "/guru/buat-tka", icon: <Brain size={16} /> },
       { label: "Sertifikat", href: "/guru/sertifikat", icon: <Star size={16} /> },
     ]
   },
@@ -52,7 +51,6 @@ const NAV: NavItem[] = [
   { label: "Komunitas", href: "/guru/komunitas", icon: <Users size={18} /> },
   { label: "KelasKu", href: "/guru/kelasku", icon: <GraduationCap size={18} /> },
   { label: "Artikel", href: "/guru/artikel", icon: <FileText size={18} /> },
-  { label: "Buat TKA", href: "/guru/buat-tka", icon: <Zap size={18} /> },
   { label: "Hasil TKA", href: "/guru/hasil-tka", icon: <TrendingUp size={18} /> },
   { label: "Pengaturan", href: "/guru/pengaturan", icon: <Settings size={18} /> },
 ]
@@ -80,7 +78,7 @@ export function GuruSidebar({ user }: Props) {
   const router = useRouter()
   const supabase = createClient()
   const [expanded, setExpanded] = useState<Record<string, boolean>>({
-    Kompetensi: pathname.includes("/ukbi") || pathname.includes("/tka-"),
+    Kompetensi: pathname.includes("/ukbi") || pathname.includes("/bank-soal") || pathname.includes("/sertifikat") || pathname.includes("/buat-tka"),
     Olimpiade: pathname.includes("/olimpiade"),
     Komunitas: pathname.includes("/komunitas"),
   })
