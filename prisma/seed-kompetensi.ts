@@ -2134,7 +2134,7 @@ async function main() {
       data: {
         title: "Simulasi UKBI - SMP",
         description: "Simulasi UKBI Adaptif untuk tingkat SMP. Meliputi Seksi Mendengarkan, Merespons Kaidah, dan Membaca.",
-        type: "UKBI_SIMULASI",
+        type: "UKBI_SMP",
         mode: "SIMULASI",
         duration: 60,
         passingScore: 482,
@@ -2156,7 +2156,7 @@ async function main() {
       data: {
         title: "Simulasi UKBI - SMA",
         description: "Simulasi UKBI Adaptif untuk tingkat SMA. Meliputi Seksi Mendengarkan, Merespons Kaidah, dan Membaca dengan level kesulitan lebih tinggi.",
-        type: "UKBI_SIMULASI",
+        type: "UKBI_SMA",
         mode: "SIMULASI",
         duration: 75,
         passingScore: 540,
@@ -2223,7 +2223,7 @@ async function main() {
       data: {
         title: "Latihan UKBI - SMP (Mendengarkan)",
         description: "Latihan soal UKBI Seksi I Mendengarkan untuk SMP.",
-        type: "UKBI_LATIHAN",
+        type: "UKBI_LATIHAN_SMP",
         mode: "LATIHAN",
         duration: 20,
         passingScore: 0,
@@ -2241,7 +2241,7 @@ async function main() {
       data: {
         title: "Latihan UKBI - SMA (Mendengarkan)",
         description: "Latihan soal UKBI Seksi I Mendengarkan untuk SMA.",
-        type: "UKBI_LATIHAN",
+        type: "UKBI_LATIHAN_SMA",
         mode: "LATIHAN",
         duration: 25,
         passingScore: 0,

@@ -104,12 +104,11 @@ export async function GET(
           sectionQuestions.push(...fetched);
         }
       } else if (section.count && section.count > 0) {
-        if (paket.type === "UKBI" || paket.type === "UKBI_SIMULASI" || paket.type === "UKBI_LATIHAN") {
+        if (paket.type === "UKBI" || paket.type === "UKBI_SIMULASI" || paket.type === "UKBI_LATIHAN" || paket.type === "UKBI_SMP" || paket.type === "UKBI_SMA" || paket.type === "UKBI_LATIHAN_SMP" || paket.type === "UKBI_LATIHAN_SMA") {
           const where: any = { seksi: section.seksi as any, isActive: true };
-          const titleLower = (paket.title || "").toLowerCase();
-          if (titleLower.includes("smp")) {
+          if (paket.type === "UKBI_SMP" || paket.type === "UKBI_LATIHAN_SMP") {
             where.tingkat = "SMP";
-          } else if (titleLower.includes("sma")) {
+          } else if (paket.type === "UKBI_SMA" || paket.type === "UKBI_LATIHAN_SMA") {
             where.tingkat = "SMA";
           }
           const fetched = await db.uKBIQuestion.findMany({
