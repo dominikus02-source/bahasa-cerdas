@@ -9,7 +9,10 @@ export async function GET() {
 
     const data = await db.kompetensiCertificate.findMany({
       where: { userId: user.id },
-      include: { paket: { select: { title: true } } },
+      include: { 
+        paket: { select: { title: true, type: true } },
+        user: { select: { fullName: true } }
+      },
       orderBy: { issuedAt: "desc" },
       take: 50,
     });
