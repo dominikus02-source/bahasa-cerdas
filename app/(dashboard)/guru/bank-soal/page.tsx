@@ -9,7 +9,8 @@ import { Badge } from "@/components/ui/badge";
 import {
   BookOpen, Plus, Trash2, Zap, Loader2, Save, RefreshCw, Check,
   Search, Filter, X, Gamepad2, Play, BarChart3, MoreVertical,
-  Edit3, Users, Clock, Star, TrendingUp, GraduationCap, Brain
+  Edit3, Users, Clock, Star, TrendingUp, GraduationCap, Brain,
+  Headphones, Target, School
 } from "lucide-react";
 
 const KELAS = ["1","2","3","4","5","6","7","8","9","10","11","12"];
@@ -259,7 +260,7 @@ export default function BankSoalPage() {
         </div>
         <div className="flex gap-2">
           <Button variant="outline" onClick={() => setView(view === "sets" ? "questions" : "sets")}>
-            {view === "sets" ? "📋 Lihat Soal" : "📦 Lihat Set"}
+            {view === "sets" ? <><BookOpen className="h-4 w-4 mr-1" /> Lihat Soal</> : <><Filter className="h-4 w-4 mr-1" /> Lihat Set</>}
           </Button>
           <Button onClick={() => setShowCreateSet(true)}>
             <Plus className="h-4 w-4 mr-1" /> Buat Set Baru
@@ -306,13 +307,16 @@ export default function BankSoalPage() {
                 : isTKA && pool.title?.includes("SMA")
                 ? "from-purple-500 to-fuchsia-600"
                 : "from-teal-500 to-emerald-600";
-              const icon = isUKBI ? "🎧" : "📝";
+
+              const PoolIcon = isUKBI ? Headphones : isTKA ? Brain : BookOpen;
 
               return (
                 <Card key={pool.id} className={`overflow-hidden cursor-pointer transition-all hover:shadow-lg hover:-translate-y-0.5 bg-gradient-to-br ${gradient}`}>
                   <div className="p-4">
                     <div className="flex items-start justify-between mb-2">
-                      <span className="text-2xl">{icon}</span>
+                      <div className="w-10 h-10 rounded-lg bg-white/20 flex items-center justify-center">
+                        <PoolIcon size={20} className="text-white" />
+                      </div>
                       <div className="flex gap-1">
                         {isUKBI && (
                           <span className="text-[10px] px-1.5 py-0.5 bg-white/20 text-white rounded-full font-medium">UKBI</span>
