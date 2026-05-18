@@ -432,32 +432,7 @@ export default function BankSoalPage() {
                         <Clock className="w-3.5 h-3.5" /> {pool.duration} mnt
                       </span>
                     </div>
-                    <div className="grid grid-cols-2 gap-1.5 pt-2 border-t border-white/20">
-                      <button
-                        onClick={() => router.push(`/kompetisi/${pool.id}`)}
-                        className="flex items-center justify-center gap-1 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white text-[11px] font-medium transition-colors"
-                      >
-                        <Play className="w-3.5 h-3.5" /> Latihan
-                      </button>
-                      <button
-                        onClick={() => router.push(`/guru/kuis/new?pool=${pool.id}`)}
-                        className="flex items-center justify-center gap-1 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white text-[11px] font-medium transition-colors"
-                      >
-                        <BarChart3 className="w-3.5 h-3.5" /> Kuis
-                      </button>
-                      <button
-                        onClick={() => router.push(`/guru/kelasku?pool=${pool.id}`)}
-                        className="flex items-center justify-center gap-1 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white text-[11px] font-medium transition-colors"
-                      >
-                        <Users className="w-3.5 h-3.5" /> Tugas
-                      </button>
-                      <button
-                        onClick={() => router.push(`/guru/game/lobby?pool=${pool.id}`)}
-                        className="flex items-center justify-center gap-1 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white text-[11px] font-medium transition-colors"
-                      >
-                        <Gamepad2 className="w-3.5 h-3.5" /> Pertandingkan
-                      </button>
-                    </div>
+
                   </div>
                 </Card>
               );
