@@ -40,7 +40,7 @@ export default function PricingTable() {
         <div className="grid lg:grid-cols-3 gap-8 max-w-6xl mx-auto items-start">
           <Card className="border-2 border-slate-200 rounded-2xl hover:border-slate-300 transition-all">
             <CardContent className="p-8">
-              <h3 className="text-xl font-bold text-slate-900">Free Plan</h3>
+              <h3 className="text-xl font-bold text-slate-900">Gratis</h3>
               <p className="text-slate-500 text-sm mt-2 mb-6">Untuk pemula yang baru bergabung</p>
               <div className="flex items-baseline gap-1 mb-8">
                 <span className="text-4xl font-extrabold text-slate-900">Rp 0</span>
@@ -80,12 +80,12 @@ export default function PricingTable() {
 
               <ul className="space-y-4 mb-8">
                 {[
-                  "Unlimited AI Generator",
+                  "AI Generator Tanpa Batas",
                   "Download RPP & Video (1080p)",
-                  "Full Akses Komunitas + Webinar",
-                  "Upload & Jual Karya (Toko Karya)",
+                  "Akses Penuh Komunitas + Webinar",
+                  "Upload & Jual Karya di Toko Karya",
                   "Sertifikat Digital UKBI",
-                  "Priority Support",
+                  "Dukungan Prioritas",
                 ].map((item, i) => (
                   <li key={i} className="flex items-start gap-3 text-sm font-medium text-slate-800">
                     <Check className="w-5 h-5 text-red-600 shrink-0" />
@@ -95,7 +95,7 @@ export default function PricingTable() {
               </ul>
               <Link href="/register?plan=yearly" className="block">
                 <Button className="w-full py-6 rounded-xl font-bold bg-red-600 hover:bg-red-700 text-white shadow-lg shadow-red-500/30">
-                  Upgrade Sekarang
+                  Langganan Sekarang
                 </Button>
               </Link>
               <p className="text-center text-xs text-slate-500 mt-4 flex items-center justify-center gap-1">
@@ -107,7 +107,7 @@ export default function PricingTable() {
           <Card className="border-2 border-slate-200 rounded-2xl hover:border-slate-300 transition-all">
             <CardContent className="p-8">
               <h3 className="text-xl font-bold text-slate-900">Premium Bulanan</h3>
-              <p className="text-slate-500 text-sm mt-2 mb-6">Fleksibilitas tanpa komitmen</p>
+              <p className="text-slate-500 text-sm mt-2 mb-6">Fleksibel tanpa komitmen panjang</p>
               <div className="flex items-baseline gap-1 mb-8">
                 <span className="text-4xl font-extrabold text-slate-900">Rp 49rb</span>
                 <span className="text-slate-500">/bulan</span>
@@ -116,7 +116,7 @@ export default function PricingTable() {
                 {[
                   "Semua Fitur Premium",
                   "Batal Kapan Saja",
-                  "Cocok untuk Trial Singkat",
+                  "Cocok untuk Masa Percobaan",
                 ].map((item, i) => (
                   <li key={i} className="flex items-start gap-3 text-sm text-slate-600">
                     <Check className="w-5 h-5 text-slate-400 shrink-0" />

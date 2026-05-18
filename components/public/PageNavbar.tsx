@@ -39,7 +39,7 @@ export default function PageNavbar() {
     { href: "/komunitas", label: "Komunitas" },
     { href: "/kamus", label: "Kamus" },
     { href: "/loker", label: "Lowongan" },
-    { href: "/pricing", label: "Pricing" },
+    { href: "/pricing", label: "Harga" },
   ];
 
   if (loading) return <div className="h-16" />;
