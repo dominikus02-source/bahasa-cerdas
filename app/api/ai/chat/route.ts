@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY || "";
+const GROQ_API_KEY = process.env.GROQ_API_KEY || "";
 
 const SYSTEM_PROMPT = `Kamu adalah **AI BC**, Asisten Bahasa Indonesia yang ramah, sabar, cerdas, dan antusias. Kamu adalah kakak guru Bahasa Indonesia yang asyik, teliti, dan selalu mendukung siswa serta guru.
 
@@ -51,55 +51,44 @@ export async function POST(req: NextRequest) {
       ? "User ini adalah GURU. Berikan penjelasan mendalam, istilah teknis, contoh soal HOTS, dan tawarkan fitur generate RPP/modul/soal."
       : "User ini adalah MURID. Gunakan bahasa yang ringan, menyenangkan, dan mudah dipahami. Berikan analogi sederhana. Jangan gunakan istilah yang terlalu rumit.";
 
-    const contents: any[] = [
+    const chatMessages = [
       {
-        role: "user",
-        parts: [{ text: `${SYSTEM_PROMPT}\n\n${modeInstruction}` }],
+        role: "system",
+        content: `${SYSTEM_PROMPT}\n\n${modeInstruction}`,
       },
       {
-        role: "model",
-        parts: [{ text: "Hai! 👋 Aku **AI BC**, Asisten Bahasa Indonesia. Senang banget bisa bantu kamu belajar! Mau tanya apa hari ini? 😊" }],
+        role: "assistant",
+        content: "Hai! 👋 Aku **AI BC**, Asisten Bahasa Indonesia. Senang banget bisa bantu kamu belajar! Mau tanya apa hari ini? 😊",
       },
+      ...messages.map((msg: any) => ({
+        role: msg.role === "user" ? "user" : "assistant",
+        content: msg.content,
+      })),
     ];
 
-    for (const msg of messages) {
-      if (msg.role === "user" || msg.role === "assistant") {
-        contents.push({
-          role: msg.role === "assistant" ? "model" : "user",
-          parts: [{ text: msg.content }],
-        });
-      }
-    }
-
-    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent`, {
+    const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "X-goog-api-key": GEMINI_API_KEY,
+        Authorization: `Bearer ${GROQ_API_KEY}`,
       },
       body: JSON.stringify({
-        contents,
-        generationConfig: {
-          temperature: 0.7,
-          maxOutputTokens: 4096,
-          topP: 0.95,
-        },
-        safetySettings: [
-          { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
-          { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" },
-          { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_NONE" },
-        ],
+        model: "llama-3.3-70b-versatile",
+        messages: chatMessages,
+        temperature: 0.7,
+        max_tokens: 4096,
+        top_p: 0.95,
       }),
     });
 
     if (!res.ok) {
       const err = await res.text();
-      console.error("Gemini error:", err);
+      console.error("Groq error:", err);
       return NextResponse.json({ answer: "Maaf, aku lagi sibuk. Coba tanya lagi ya! 😊" });
     }
 
     const json = await res.json();
-    const answer = json?.candidates?.[0]?.content?.parts?.[0]?.text || "Maaf, aku belum bisa jawab. Coba tanya yang lain ya! 😊";
+    const answer = json?.choices?.[0]?.message?.content || "Maaf, aku belum bisa jawab. Coba tanya yang lain ya! 😊";
 
     return NextResponse.json({ answer });
   } catch {
