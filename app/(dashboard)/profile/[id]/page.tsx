@@ -138,15 +138,15 @@ export default function ProfilePage() {
 
       {/* Profile section - overlapping cover */}
       <div className="relative z-10 max-w-3xl mx-auto px-4 -mt-20">
-        <div className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
+        <div className="bg-white rounded-2xl shadow-xl border border-gray-100">
           {/* Profile header */}
           <div className="px-6 pt-0 pb-6">
             {/* Avatar */}
             <div className="flex justify-center -mt-12 mb-4">
               <div className="relative">
-                <div className="w-24 h-24 rounded-2xl bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center text-white font-bold text-2xl shadow-lg ring-4 ring-white">
+                <div className="w-24 h-24 rounded-2xl overflow-hidden bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center text-white font-bold text-2xl shadow-lg ring-4 ring-white">
                   {user.avatar ? (
-                    <img src={user.avatar} alt={user.fullName} className="w-full h-full rounded-2xl object-cover" />
+                    <img src={user.avatar} alt={user.fullName} className="w-full h-full object-cover" />
                   ) : (
                     initials
                   )}
@@ -231,7 +231,7 @@ export default function ProfilePage() {
                 </div>
                 <div>
                   <p className="text-xs text-gray-400">XP</p>
-                  <p className="text-sm font-bold text-amber-700">{user.xp.toLocaleString()}</p>
+                  <p className="text-sm font-bold text-amber-700">{user.isFounder ? "∞" : user.xp.toLocaleString()}</p>
                 </div>
               </div>
               <div className="w-px h-8 bg-amber-200" />
@@ -241,7 +241,7 @@ export default function ProfilePage() {
                 </div>
                 <div>
                   <p className="text-xs text-gray-400">Level</p>
-                  <p className="text-sm font-bold text-gray-800">{user.level}</p>
+                  <p className="text-sm font-bold text-gray-800">{user.isFounder ? "∞" : user.level}</p>
                 </div>
               </div>
               <div className="w-px h-8 bg-amber-200" />
@@ -251,7 +251,7 @@ export default function ProfilePage() {
                 </div>
                 <div>
                   <p className="text-xs text-gray-400">Streak</p>
-                  <p className="text-sm font-bold text-red-600">{user.streak}</p>
+                  <p className="text-sm font-bold text-red-600">{user.isFounder ? "∞" : user.streak}</p>
                 </div>
               </div>
             </div>
