@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { getUser } from "@/lib/supabase/server";
 import { GuruSidebar } from "@/components/dashboard/GuruSidebar";
+import AIFloatingButton from "@/components/shared/AIFloatingButton";
 
 export default async function GuruLayout({ children }: { children: React.ReactNode }) {
   const user = await getUser();
@@ -31,6 +32,7 @@ export default async function GuruLayout({ children }: { children: React.ReactNo
       <main className="flex-1 ml-64 p-8">
         {children}
       </main>
+      <AIFloatingButton />
     </div>
   );
 }

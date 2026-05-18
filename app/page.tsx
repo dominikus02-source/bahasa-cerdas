@@ -7,6 +7,7 @@ import AIFeatures from "@/components/landing/AIFeatures";
 import CommunitySection from "@/components/landing/CommunitySection";
 import MarketplaceSection from "@/components/landing/MarketplaceSection";
 import Testimonials from "@/components/landing/Testimonials";
+import PricingTable from "@/components/landing/PricingTable";
 import FAQSection from "@/components/landing/FAQSection";
 import FinalCTA from "@/components/landing/FinalCTA";
 import PublicNavbar from "@/components/public/PageNavbar";
@@ -244,6 +245,7 @@ export default async function HomePage() {
       <CommunitySection />
       <MarketplaceSection />
       <Testimonials />
+      <PricingTable />
       <FAQSection />
       <FinalCTA />
       

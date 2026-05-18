@@ -2,10 +2,10 @@ import { Users, Star, FileText, Sparkles } from "lucide-react"
 
 export default function SocialProof() {
   const stats = [
-    { icon: Users, value: "10K+", label: "Guru Aktif", color: "text-red-600", bg: "bg-red-50" },
-    { icon: Star, value: "4.9", label: "Rating Platform", color: "text-yellow-600", bg: "bg-yellow-50" },
-    { icon: FileText, value: "2,500+", label: "RPP Tersedia", color: "text-blue-600", bg: "bg-blue-50" },
-    { icon: Sparkles, value: "50+", label: "AI Tools", color: "text-purple-600", bg: "bg-purple-50" },
+    { icon: Users, value: "100+", label: "Guru Bergabung", color: "text-red-600", bg: "bg-red-50" },
+    { icon: Star, value: "4.8", label: "Rating Platform", color: "text-yellow-600", bg: "bg-yellow-50" },
+    { icon: FileText, value: "500+", label: "RPP & Modul", color: "text-blue-600", bg: "bg-blue-50" },
+    { icon: Sparkles, value: "10+", label: "AI Tools", color: "text-purple-600", bg: "bg-purple-50" },
   ]
 
   return (
