@@ -110,17 +110,19 @@ Output HANYA JSON.`;
       return NextResponse.json({ error: "Gagal generate konten AI: " + (e instanceof Error ? e.message : "Unknown error") }, { status: 500 });
     }
 
-    // Parse AI content
+    // Parse AI content with robust error handling
     let pptData;
     try {
-      let cleaned = aiContent;
+      let cleaned = aiContent.trim();
       
-      // Try to extract JSON from markdown code blocks
+      // Strategy 1: Try to extract JSON from markdown code blocks
       const jsonMatch = cleaned.match(/```(?:json)?\s*([\s\S]*?)```/);
       if (jsonMatch) {
-        cleaned = jsonMatch[1];
-      } else {
-        // If no code blocks, try to find the first { and last }
+        cleaned = jsonMatch[1].trim();
+      }
+      
+      // Strategy 2: If still not clean, find first { and last }
+      if (!cleaned.startsWith('{')) {
         const firstBrace = cleaned.indexOf('{');
         const lastBrace = cleaned.lastIndexOf('}');
         if (firstBrace !== -1 && lastBrace !== -1 && lastBrace > firstBrace) {
@@ -128,15 +130,41 @@ Output HANYA JSON.`;
         }
       }
       
-      // Remove any remaining markdown or comments
-      cleaned = cleaned.replace(/\/\/.*$/gm, ''); // Remove single line comments
-      cleaned = cleaned.replace(/\/\*[\s\S]*?\*\//g, ''); // Remove multi-line comments
+      // Strategy 3: Remove common AI prefixes/suffixes
+      cleaned = cleaned.replace(/^.*?(\{[\s\S]*\})$/, '$1');
       
-      pptData = JSON.parse(cleaned);
+      // Strategy 4: Remove comments and fix common JSON issues
+      cleaned = cleaned.replace(/\/\/.*$/gm, '');
+      cleaned = cleaned.replace(/\/\*[\s\S]*?\*\//g, '');
+      cleaned = cleaned.replace(/,\s*}/g, '}'); // Remove trailing commas
+      cleaned = cleaned.replace(/,\s*]/g, ']'); // Remove trailing commas in arrays
+      
+      // Try to parse
+      try {
+        pptData = JSON.parse(cleaned);
+      } catch (parseError) {
+        // Strategy 5: If still fails, try to fix common issues
+        console.error("First parse failed, trying to fix JSON...");
+        
+        // Remove any non-JSON text before/after
+        const jsonRegex = /\{[\s\S]*\}/;
+        const match = cleaned.match(jsonRegex);
+        if (match) {
+          cleaned = match[0];
+        }
+        
+        // Try again
+        pptData = JSON.parse(cleaned);
+      }
+      
+      console.log("Step 2 complete: JSON parsed successfully");
     } catch (e) {
-      console.error("Failed to parse AI content:", aiContent);
+      console.error("Failed to parse AI content:", aiContent.substring(0, 500));
       console.error("Parse error:", e);
-      return NextResponse.json({ error: "Gagal parse konten AI. Coba lagi atau periksa log server." }, { status: 500 });
+      return NextResponse.json({ 
+        error: "Gagal parse konten AI. AI mungkin memberikan format yang tidak valid. Coba lagi.",
+        debug: process.env.NODE_ENV === "development" ? aiContent.substring(0, 1000) : undefined
+      }, { status: 500 });
     }
 
     // Generate PPTX file
