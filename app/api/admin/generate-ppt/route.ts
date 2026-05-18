@@ -57,67 +57,23 @@ export async function POST(req: NextRequest) {
     }
 
     // Generate PPT content using AI with deep research
-    const prompt = `Kamu ahli pendidikan Bahasa Indonesia. Buat konten PPT profesional berbasis riset kurikulum.
+    const prompt = `Buat PPT Bahasa Indonesia kurikulum Merdeka.
 
-PARAMETER:
 JUDUL: ${title}
 TOPIK: ${topik}
 KELAS: ${grade}
 KURIKULUM: ${kurikulum}
-JUMLAH SLIDE: ${jumlahSlide}
+SLIDE: ${jumlahSlide}
 
-RISET: Analisis KD, CP Kurikulum Merdeka, materi esensial Kemendikbud, contoh relevan kelas ${grade}, pendekatan pedagogis, asesmen, Profil Pelajar Pancasila.
+RISET: KD, CP, materi Kemendikbud, contoh kelas ${grade}.
+GAMBAR: Saran Unsplash/Pexels/Pixabay (keyword).
+IMPLEMENTASI: Latihan, aktivitas, proyek, rubrik.
 
-GAMBAR: Saran gambar gratis dari Unsplash/Pexels/Pixabay (berikan keyword & deskripsi).
+STRUKTUR: 1.Judul 2.Tujuan 3.Apersepsi 4-${jumlahSlide-3}.Materi ${jumlahSlide-2}.Rangkuman ${jumlahSlide-1}.Implementasi ${jumlahSlide}.Penutup
 
-IMPLEMENTASI: Sertakan contoh latihan, aktivitas interaktif, proyek mini, rubrik penilaian.
+JSON: {"risetSummary":"S","kompetensiDasar":["K"],"capaianPembelajaran":"C","sumberGambar":{"unsplash":"U","pexels":"P","pixabay":"X"},"contohImplementasi":{"latihanKelas":["L"],"aktivitasInteraktif":["A"],"proyekMini":"M","rubrikPenilaian":"R"},"slides":[{"type":"t","title":"T","subtitle":"S","content":"C","bullets":["B"],"imageSuggestion":{"keyword":"K","unsplashUrl":"U","description":"D"},"contohImplementasi":"I","notes":"N"}]}
 
-STRUKTUR SLIDE:
-1. Judul (judul, subjudul, kelas, kurikulum)
-2. Tujuan Pembelajaran (3-4 tujuan dari CP/KD)
-3. Apersepsi (pertanyaan pemantik + saran gambar)
-4-${jumlahSlide - 3}. Materi Utama (konsep, contoh, gambar, implementasi, latihan)
-${jumlahSlide - 2}. Rangkuman
-${jumlahSlide - 1}. Contoh Implementasi
-${jumlahSlide}. Penutup (kesimpulan, tugas, referensi)
-
-FORMAT JSON:
-{
-  "risetSummary": "Ringkasan riset 2-3 kalimat",
-  "kompetensiDasar": ["KD 1", "KD 2"],
-  "capaianPembelajaran": "CP relevan",
-  "sumberGambar": {
-    "unsplash": "https://unsplash.com/s/photos/[keyword]",
-    "pexels": "https://www.pexels.com/search/[keyword]/",
-    "pixabay": "https://pixabay.com/images/search/[keyword]/"
-  },
-  "contohImplementasi": {
-    "latihanKelas": ["Latihan 1", "Latihan 2"],
-    "aktivitasInteraktif": ["Aktivitas 1", "Aktivitas 2"],
-    "proyekMini": "Deskripsi proyek",
-    "rubrikPenilaian": "Rubrik sederhana"
-  },
-  "slides": [
-    {
-      "type": "title|content|bullet|summary|closing|implementation",
-      "title": "Judul slide",
-      "subtitle": "Subjudul",
-      "content": "Konten utama",
-      "bullets": ["Poin 1", "Poin 2", "Poin 3"],
-      "imageSuggestion": {
-        "keyword": "keyword gambar",
-        "unsplashUrl": "https://unsplash.com/s/photos/[keyword]",
-        "description": "Deskripsi gambar"
-      },
-      "contohImplementasi": "Contoh penggunaan materi",
-      "notes": "Catatan presenter (tips mengajar)"
-    }
-  ]
-}
-
-PASTIKAN: Konten akurat sesuai Kurikulum Merdeka, contoh relevan kelas ${grade}, bahasa Indonesia baik, max 5-6 poin/slide, catatan presenter berisi tips mengajar.
-
-Output HANYA JSON valid. Tanpa teks lain.`;
+Output HANYA JSON.`;
 
     const GROQ_API_KEY = process.env.GROQ_API_KEY;
 
@@ -135,7 +91,7 @@ Output HANYA JSON valid. Tanpa teks lain.`;
         body: JSON.stringify({
           model: "llama-3.1-8b-instant",
           messages: [{ role: "user", content: prompt }],
-          max_tokens: 8000,
+          max_tokens: 4000,
           temperature: 0.7,
         }),
       });
