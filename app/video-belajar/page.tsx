@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Play, Clock, Eye, Search, Film, Video, AlertCircle, CheckCircle2, Camera, Mic, Sun } from "lucide-react";
 import PageNavbar from "@/components/public/PageNavbar";
+import PageFooter from "@/components/public/PageFooter";
 
 export default function VideoBelajarPage() {
   const CATEGORIES = [
@@ -127,6 +128,7 @@ export default function VideoBelajarPage() {
           </div>
         )}
       </div>
+      <PageFooter />
     </div>
   );
 }

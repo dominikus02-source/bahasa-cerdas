@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { Calendar, Clock, ArrowRight, User, BookOpen } from "lucide-react";
 import PageNavbar from "@/components/public/PageNavbar";
+import PageFooter from "@/components/public/PageFooter";
 import { db } from "@/lib/db";
 
 export const dynamic = 'force-dynamic';
@@ -81,6 +82,7 @@ export default async function ArtikelPage() {
           </div>
         )}
       </div>
+      <PageFooter />
     </div>
   );
 }

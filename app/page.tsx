@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
 import HeroSection from "@/components/landing/HeroSection";
@@ -11,6 +10,7 @@ import Testimonials from "@/components/landing/Testimonials";
 import FAQSection from "@/components/landing/FAQSection";
 import FinalCTA from "@/components/landing/FinalCTA";
 import PublicNavbar from "@/components/public/PageNavbar";
+import PageFooter from "@/components/public/PageFooter";
 import { db } from "@/lib/db";
 
 export const dynamic = 'force-dynamic';
@@ -247,61 +247,7 @@ export default async function HomePage() {
       <FAQSection />
       <FinalCTA />
       
-      <footer className="bg-slate-900 text-slate-400 py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-4 gap-8 mb-8">
-            <div>
-                <div className="flex items-center gap-3 mb-4">
-                  <Image src="/logo.png" alt="BC" width={36} height={36} className="object-contain" />
-                  <div>
-                    <span className="text-xl font-bold text-white">BahasaCerdas</span>
-                    <p className="text-xs text-slate-500">Platform Edukasi Bahasa Indonesia</p>
-                  </div>
-                </div>
-              <p className="text-sm">Platform Terlengkap untuk Guru Bahasa Indonesia. MGMP + AI + Marketplace.</p>
-              <div className="flex flex-wrap gap-2 mt-4">
-                <Link href="/artikel" className="text-xs text-slate-500 hover:text-white transition-colors">Artikel</Link>
-                <span className="text-slate-700">•</span>
-                <Link href="/ai-bc" className="text-xs text-slate-500 hover:text-white transition-colors">AI BC</Link>
-                <span className="text-slate-700">•</span>
-                <Link href="/marketplace" className="text-xs text-slate-500 hover:text-white transition-colors">Toko Karya</Link>
-                <span className="text-slate-700">•</span>
-                <Link href="/video-belajar" className="text-xs text-slate-500 hover:text-white transition-colors">Video</Link>
-              </div>
-            </div>
-            <div>
-              <h4 className="font-bold text-white mb-4">Fitur</h4>
-              <ul className="space-y-2 text-sm">
-                <li>AI Generator RPP</li>
-                <li>Bank Soal HOTS</li>
-                <li>Kuis Multiplayer</li>
-                <li>Toko Karya</li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-bold text-white mb-4">Komunitas</h4>
-              <ul className="space-y-2 text-sm">
-                <li>Forum Diskusi</li>
-                <li>Webinar</li>
-                <li>Mentoring</li>
-                <li>RPP Sharing</li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-bold text-white mb-4">Tentang</h4>
-              <ul className="space-y-2 text-sm">
-                <li>Tentang Kami</li>
-                <li>Kebijakan Privasi</li>
-                <li>Syarat & Ketentuan</li>
-                <li>Hubungi Kami</li>
-              </ul>
-            </div>
-          </div>
-          <div className="border-t border-slate-800 pt-8 text-center text-sm">
-            <p>&copy; 2026 BahasaCerdas. Platform edukasi Bahasa Indonesia untuk bangsa.</p>
-          </div>
-        </div>
-      </footer>
+      <PageFooter />
     </main>
   );
 }

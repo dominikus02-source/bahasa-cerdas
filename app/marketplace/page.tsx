@@ -23,6 +23,7 @@ const SORT_OPTIONS = [
 ];
 
 import PageNavbar from "@/components/public/PageNavbar";
+import PageFooter from "@/components/public/PageFooter";
 
 export default function MarketplacePage() {
   const [items, setItems] = useState<any[]>([]);
@@ -132,6 +133,7 @@ export default function MarketplacePage() {
           </>
         )}
       </div>
+      <PageFooter />
     </div>
   );
 }

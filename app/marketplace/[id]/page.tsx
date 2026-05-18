@@ -5,6 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import { ShoppingBag, Download, Star, User, ChevronLeft, ShoppingCart, Plus, Minus } from "lucide-react";
 import Link from "next/link";
 import PageNavbar from "@/components/public/PageNavbar";
+import PageFooter from "@/components/public/PageFooter";
 import ShareButton from "@/components/shared/ShareButton";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -129,6 +130,7 @@ export default function MarketplaceDetailPage() {
           </div>
         </div>
       </div>
+      <PageFooter />
     </div>
   );
 }

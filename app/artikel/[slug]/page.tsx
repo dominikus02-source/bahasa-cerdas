@@ -5,6 +5,7 @@ import { ArrowLeft, Calendar, Clock, User } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import PageNavbar from "@/components/public/PageNavbar";
+import PageFooter from "@/components/public/PageFooter";
 import ShareButton from "@/components/shared/ShareButton";
 
 type Props = { params: Promise<{ slug: string }> };
@@ -119,6 +120,7 @@ export default async function ArtikelDetailPage({ params }: Props) {
           </div>
         </article>
       </div>
+      <PageFooter />
     </div>
   );
 }

@@ -5,6 +5,7 @@ import { Send, Bot, User, Sparkles, Trash2, BookOpen, GraduationCap, Home, Exter
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import BatikDecoration from "@/components/shared/BatikDecoration";
+import PageFooter from "@/components/public/PageFooter";
 
 const SUGGESTIONS = [
   "Apa sinonim kata 'cerdas'?",
@@ -173,6 +174,7 @@ export default function AIChatPage() {
         </div>
         <p className="text-[10px] text-slate-300 text-center mt-2">Ditenagai oleh Google Gemini AI • Asisten Bahasa Indonesia</p>
       </div>
+      <PageFooter />
     </div>
   );
 }

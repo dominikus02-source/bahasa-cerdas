@@ -5,6 +5,7 @@ import { useParams } from "next/navigation";
 import Link from "next/link";
 import { Play, Clock, Eye, User, ArrowLeft, Lock, Film, Share2 } from "lucide-react";
 import PageNavbar from "@/components/public/PageNavbar";
+import PageFooter from "@/components/public/PageFooter";
 import ShareButton from "@/components/shared/ShareButton";
 
 const CATEGORIES: Record<string, string> = {
@@ -98,6 +99,7 @@ export default function VideoDetailPage() {
           )}
         </div>
       </div>
+      <PageFooter />
     </div>
   );
 }
