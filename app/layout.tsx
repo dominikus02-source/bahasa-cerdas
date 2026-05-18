@@ -49,7 +49,7 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: "/favicon.ico",
-    apple: "/apple-icon.png",
+    apple: { url: "/favicon.ico", sizes: "180x180" },
   },
   manifest: "/manifest.json",
   alternates: { canonical: SITE_URL },
