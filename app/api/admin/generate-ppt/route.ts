@@ -82,7 +82,7 @@ Output HANYA JSON.`;
       return NextResponse.json({ error: "GROQ_API_KEY not configured. Please add it to Vercel Environment Variables." }, { status: 500 });
     }
 
-    console.log("Step 1: Calling Groq API...");
+    console.log("Step 1: Calling Groq API with JSON mode...");
     let aiContent = "";
     try {
       const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
@@ -90,9 +90,13 @@ Output HANYA JSON.`;
         headers: { "Content-Type": "application/json", "Authorization": `Bearer ${GROQ_API_KEY}` },
         body: JSON.stringify({
           model: "llama-3.1-8b-instant",
-          messages: [{ role: "user", content: prompt }],
+          messages: [
+            { role: "system", content: "You are a JSON-only API. Always respond with valid JSON. Never include explanations, markdown, or text outside the JSON object." },
+            { role: "user", content: prompt }
+          ],
           max_tokens: 4000,
-          temperature: 0.7,
+          temperature: 0.3,
+          response_format: { type: "json_object" }
         }),
       });
       
