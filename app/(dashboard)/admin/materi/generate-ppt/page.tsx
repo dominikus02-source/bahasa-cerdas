@@ -313,6 +313,11 @@ export default function AdminPPTGeneratorPage() {
                         <p className="text-sm text-green-600">
                           {aiResult.slides} slide telah dibuat dan tersimpan
                         </p>
+                        {aiResult.warning && (
+                          <div className="mt-2 p-2 bg-yellow-50 border border-yellow-200 rounded text-yellow-700 text-xs">
+                            ⚠️ {aiResult.warning}
+                          </div>
+                        )}
                       </div>
 
                       <div className="grid grid-cols-2 gap-4">

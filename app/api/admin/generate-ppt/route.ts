@@ -95,7 +95,7 @@ Output HANYA JSON.`;
             { role: "user", content: prompt }
           ],
           max_tokens: 4000,
-          temperature: 0.3,
+          temperature: 0.2,
           response_format: { type: "json_object" }
         }),
       });
@@ -116,6 +116,7 @@ Output HANYA JSON.`;
 
     // Parse AI content with robust error handling
     let pptData;
+    let aiWarning = "";
     try {
       let cleaned = aiContent.trim();
       
@@ -135,7 +136,7 @@ Output HANYA JSON.`;
       }
       
       // Strategy 3: Remove common AI prefixes/suffixes
-      cleaned = cleaned.replace(/^.*?(\{[\s\S]*\})$/, '$1');
+      cleaned = cleaned.replace(/^[\s\S]*?(\{[\s\S]*\})$/, '$1');
       
       // Strategy 4: Remove comments and fix common JSON issues
       cleaned = cleaned.replace(/\/\/.*$/gm, '');
@@ -165,10 +166,14 @@ Output HANYA JSON.`;
     } catch (e) {
       console.error("Failed to parse AI content:", aiContent.substring(0, 500));
       console.error("Parse error:", e);
-      return NextResponse.json({ 
-        error: "Gagal parse konten AI. AI mungkin memberikan format yang tidak valid. Coba lagi.",
-        debug: process.env.NODE_ENV === "development" ? aiContent.substring(0, 1000) : undefined
-      }, { status: 500 });
+      aiWarning = "Gagal parse hasil AI. Menggunakan struktur default.";
+    }
+
+    // If AI failed, generate fallback PPT structure
+    if (!pptData || !pptData.slides || !Array.isArray(pptData.slides) || pptData.slides.length === 0) {
+      console.log("AI content invalid or missing slides, using fallback structure");
+      aiWarning = "Konten AI tidak valid. Menggunakan struktur default berdasarkan judul.";
+      pptData = generateFallbackPPT({ title, topik, grade, kurikulum, jumlahSlide });
     }
 
     // Generate PPTX file
@@ -489,6 +494,7 @@ Output HANYA JSON.`;
       materi: materi,
       slides: pptData.slides?.length || 0,
       downloadUrl: uploadResult.url,
+      warning: aiWarning || undefined,
     });
   } catch (error) {
     console.error("AI PPT Generation error:", error);
@@ -498,6 +504,143 @@ Output HANYA JSON.`;
       details: process.env.NODE_ENV === "development" ? errorMessage : undefined 
     }, { status: 500 });
   }
+}
+
+function generateFallbackPPT(params: { title: string; topik: string; grade: string; kurikulum: string; jumlahSlide: number }) {
+  const { title, topik, grade, kurikulum, jumlahSlide } = params;
+  const slides: any[] = [];
+
+  // Slide 1: Title
+  slides.push({
+    type: "title",
+    title: title,
+    subtitle: `Mata Pelajaran: Bahasa Indonesia - ${grade}`,
+    content: "",
+    bullets: [],
+    imageSuggestion: { keyword: "belajar", unsplashUrl: "", description: "Suasana belajar mengajar Bahasa Indonesia" },
+    contohImplementasi: "",
+    notes: "Slide pembuka presentasi.",
+  });
+
+  // Slide 2: Tujuan Pembelajaran
+  slides.push({
+    type: "content",
+    title: "Tujuan Pembelajaran",
+    content: "",
+    bullets: [
+      `Memahami konsep ${title.toLowerCase()} sesuai Kurikulum ${kurikulum}`,
+      `Menganalisis struktur dan kaidah kebahasaan ${topik.toLowerCase()}`,
+      "Menyajikan contoh penerapan dalam kehidupan sehari-hari",
+    ],
+    imageSuggestion: { keyword: "pembelajaran", unsplashUrl: "", description: "Ilustrasi tujuan pembelajaran" },
+    contohImplementasi: "",
+    notes: "Sampaikan tujuan pembelajaran di awal.",
+  });
+
+  // Slide 3: Apersepsi
+  slides.push({
+    type: "content",
+    title: "Apersepsi",
+    content: "",
+    bullets: [
+      "Apa yang kalian ketahui tentang " + topik.toLowerCase() + "?",
+      "Bagaimana penerapan " + topik.toLowerCase() + " di sekitar kita?",
+      "Mengapa materi ini penting untuk dipelajari?",
+    ],
+    imageSuggestion: { keyword: "pertanyaan", unsplashUrl: "", description: "Gambar ilustrasi apersepsi" },
+    contohImplementasi: "Berikan pertanyaan pemantik untuk memulai diskusi kelas",
+    notes: "Gunakan pertanyaan pemantik untuk memicu diskusi.",
+  });
+
+  // Content slides
+  const contentCount = Math.max(3, jumlahSlide - 5);
+
+  for (let i = 0; i < contentCount; i++) {
+    const sectionNames = [
+      "Pengertian dan Konsep Dasar",
+      "Struktur dan Karakteristik",
+      "Kaidah Kebahasaan",
+      "Contoh dan Penerapan",
+      "Analisis Lebih Lanjut",
+      "Studi Kasus",
+      "Latihan Pemahaman",
+      "Pengembangan Materi",
+    ];
+    const sectionName = sectionNames[Math.min(i, sectionNames.length - 1)];
+    slides.push({
+      type: "bullet",
+      title: `${sectionName}`,
+      content: "",
+      bullets: [
+        `Pembahasan ${sectionName.toLowerCase()} dari materi ${title.toLowerCase()}`,
+        `Penerapan konsep dalam konteks ${grade.toLowerCase()}`,
+        `Diskusi dan tanya jawab seputar ${topik.toLowerCase()}`,
+        `Catat poin-poin penting dalam pembahasan ini`,
+      ],
+      imageSuggestion: { keyword: "materi", unsplashUrl: "", description: "Ilustrasi materi pembelajaran" },
+      contohImplementasi: `Ajak siswa berdiskusi tentang ${topik.toLowerCase()} dalam ${i % 2 === 0 ? "kelompok kecil" : "kelas"}`,
+      notes: `Pastikan siswa memahami ${sectionName.toLowerCase()}.`,
+    });
+  }
+
+  // Rangkuman
+  slides.push({
+    type: "summary",
+    title: "Rangkuman",
+    content: "",
+    bullets: [
+      `Materi ${title.toLowerCase()} mencakup aspek penting dalam ${topik.toLowerCase()}`,
+      "Pahami struktur dan kaidah kebahasaan yang berlaku",
+      "Terapkan konsep dalam latihan dan tugas mandiri",
+    ],
+    imageSuggestion: { keyword: "rangkuman", unsplashUrl: "", description: "Ilustrasi rangkuman materi" },
+    contohImplementasi: "Minta siswa membuat peta konsep dari materi yang telah dipelajari",
+    notes: "Ringkas poin-poin utama pembelajaran.",
+  });
+
+  // Implementasi
+  slides.push({
+    type: "content",
+    title: "Kegiatan Implementasi",
+    content: "",
+    bullets: [
+      "Latihan individu: kerjakan soal-soal terkait materi",
+      "Aktivitas kelompok: diskusikan penerapan dalam konteks nyata",
+      "Proyek mini: buat produk sederhana berdasarkan materi",
+    ],
+    imageSuggestion: { keyword: "latihan", unsplashUrl: "", description: "Ilustrasi kegiatan implementasi" },
+    contohImplementasi: `Bagi siswa dalam kelompok untuk mengerjakan proyek ${topik.toLowerCase()}`,
+    notes: "Siapkan rubrik penilaian untuk kegiatan implementasi.",
+  });
+
+  // Penutup
+  slides.push({
+    type: "closing",
+    title: "Penutup",
+    content: "",
+    bullets: [
+      "Refleksi: Apa yang sudah kalian pelajari hari ini?",
+      "Tugas: Kerjakan soal latihan untuk memperdalam pemahaman",
+      "Materi selanjutnya akan membahas pengembangan lebih lanjut",
+    ],
+    imageSuggestion: { keyword: "selesai", unsplashUrl: "", description: "Ilustrasi penutup pembelajaran" },
+    contohImplementasi: "Adakan sesi refleksi singkat sebelum menutup pelajaran",
+    notes: "Sampaikan tugas dan materi pertemuan berikutnya.",
+  });
+
+  return {
+    risetSummary: `Materi ${title} untuk ${grade} Kurikulum ${kurikulum}`,
+    kompetensiDasar: ["3.1 Memahami konsep " + title.toLowerCase(), "4.1 Menyajikan " + topik.toLowerCase()],
+    capaianPembelajaran: `Siswa mampu memahami dan menerapkan ${title.toLowerCase()} dalam konteks ${grade.toLowerCase()}`,
+    sumberGambar: { unsplash: "", pexels: "", pixabay: "" },
+    contohImplementasi: {
+      latihanKelas: ["Soal pilihan ganda", "Soal uraian singkat"],
+      aktivitasInteraktif: ["Diskusi kelompok", "Presentasi kelas"],
+      proyekMini: "Membuat peta konsep materi " + title,
+      rubrikPenilaian: "Keaktifan (30%) + Tugas (40%) + Proyek (30%)",
+    },
+    slides: slides,
+  };
 }
 
 async function uploadToSupabase(buffer: Buffer, fileName: string, contentType: string): Promise<{ url: string; key: string } | { error: string }> {
