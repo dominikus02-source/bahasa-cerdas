@@ -57,112 +57,67 @@ export async function POST(req: NextRequest) {
     }
 
     // Generate PPT content using AI with deep research
-    const prompt = `Kamu adalah ahli pendidikan Bahasa Indonesia DAN peneliti akademik yang membuat materi pembelajaran profesional berbasis riset.
+    const prompt = `Kamu ahli pendidikan Bahasa Indonesia. Buat konten PPT profesional berbasis riset kurikulum.
 
-TUGAS: Lakukan RISET MENDALAM terlebih dahulu, kemudian buatkan konten presentasi PPT.
-
-PARAMETER MATERI:
+PARAMETER:
 JUDUL: ${title}
 TOPIK: ${topik}
 KELAS: ${grade}
 KURIKULUM: ${kurikulum}
 JUMLAH SLIDE: ${jumlahSlide}
 
-LANGKAH 1 - RISET MENDALAM:
-Sebelum membuat slide, lakukan riset internal tentang:
-1. Kompetensi Dasar (KD) yang relevan untuk topik ini sesuai Kurikulum Merdeka
-2. Capaian Pembelajaran (CP) untuk fase kelas ${grade}
-3. Materi esensial yang WAJIB diajarkan berdasarkan kurikulum resmi Kemendikbud
-4. Contoh-contoh aktual dan relevan untuk siswa kelas ${grade}
-5. Kesalahan umum siswa dalam memahami topik ini
-6. Pendekatan pedagogis yang tepat (model pembelajaran, metode, strategi)
-7. Asesmen yang sesuai untuk mengukur pemahaman
-8. Keterkaitan dengan Profil Pelajar Pancasila
+RISET: Analisis KD, CP Kurikulum Merdeka, materi esensial Kemendikbud, contoh relevan kelas ${grade}, pendekatan pedagogis, asesmen, Profil Pelajar Pancasila.
 
-LANGKAH 2 - CARI GAMBAR PENDUKUNG:
-Untuk setiap slide materi, cari/sarankan gambar gratis dari sumber bebas copyright:
-- Unsplash: https://unsplash.com/s/photos/[keyword]
-- Pexels: https://www.pexels.com/search/[keyword]/
-- Pixabay: https://pixabay.com/images/search/[keyword]/
-- Freepik: https://www.freepik.com/free-photos-vectors/[keyword]
+GAMBAR: Saran gambar gratis dari Unsplash/Pexels/Pixabay (berikan keyword & deskripsi).
 
-Saran gambar yang relevan untuk setiap slide (gunakan keyword yang tepat).
+IMPLEMENTASI: Sertakan contoh latihan, aktivitas interaktif, proyek mini, rubrik penilaian.
 
-LANGKAH 3 - BUAT CONTOH IMPLEMENTASI:
-Sertakan CONTOH PENGGUNAAN MATERI yang konkret:
-- Contoh soal/latihan yang bisa langsung digunakan
-- Aktivitas kelas yang interaktif
-- Studi kasus nyata
-- Proyek mini yang bisa dikerjakan siswa
-- Rubrik penilaian sederhana
+STRUKTUR SLIDE:
+1. Judul (judul, subjudul, kelas, kurikulum)
+2. Tujuan Pembelajaran (3-4 tujuan dari CP/KD)
+3. Apersepsi (pertanyaan pemantik + saran gambar)
+4-${jumlahSlide - 3}. Materi Utama (konsep, contoh, gambar, implementasi, latihan)
+${jumlahSlide - 2}. Rangkuman
+${jumlahSlide - 1}. Contoh Implementasi
+${jumlahSlide}. Penutup (kesimpulan, tugas, referensi)
 
-LANGKAH 4 - BUAT STRUKTUR PRESENTASI:
-Berdasarkan hasil riset, buat struktur slide yang logis:
-
-1. Slide Judul (Judul, Subjudul, Kelas, Kurikulum)
-2. Slide Tujuan Pembelajaran (3-4 tujuan berdasarkan CP/KD)
-3. Slide Apersepsi/Pengantar (Pertanyaan pemantik + gambar pendukung)
-4-${jumlahSlide - 4}. Slide Materi Utama:
-   - Penjelasan konsep dengan bahasa yang sesuai level kelas
-   - Contoh-contoh konkret dan kontekstual
-   - GAMBAR PENDUKUNG (saran URL dari Unsplash/Pexels/Pixabay)
-   - CONTOH IMPLEMENTASI (soal/aktivitas/proyek)
-   - Latihan/aktivitas interaktif
-${jumlahSlide - 2}. Slide Rangkuman (Poin-poin kunci dari riset)
-${jumlahSlide - 1}. Slide Contoh Implementasi (Ringkasan contoh penggunaan)
-${jumlahSlide}. Slide Penutup (Kesimpulan, Tugas, Referensi)
-
-PANDUAN KONTEN BERDASARKAN RISET:
-- Gunakan kosakata yang sesuai dengan level kognitif kelas ${grade}
-- Sertakan contoh dari kehidupan sehari-hari siswa
-- Berikan penjelasan yang mendalam tapi tidak berbelit
-- Sertakan tips mengajar untuk guru di catatan presenter
-- Referensikan sumber belajar resmi (buku paket, modul Kemendikbud)
-
-FORMAT OUTPUT JSON:
+FORMAT JSON:
 {
-  "risetSummary": "Ringkasan hasil riset (2-3 kalimat)",
+  "risetSummary": "Ringkasan riset 2-3 kalimat",
   "kompetensiDasar": ["KD 1", "KD 2"],
-  "capaianPembelajaran": "CP yang relevan",
+  "capaianPembelajaran": "CP relevan",
   "sumberGambar": {
-    "unsplash": "https://unsplash.com/s/photos/[keyword-topik]",
-    "pexels": "https://www.pexels.com/search/[keyword-topik]/",
-    "pixabay": "https://pixabay.com/images/search/[keyword-topik]/"
+    "unsplash": "https://unsplash.com/s/photos/[keyword]",
+    "pexels": "https://www.pexels.com/search/[keyword]/",
+    "pixabay": "https://pixabay.com/images/search/[keyword]/"
   },
   "contohImplementasi": {
-    "latihanKelas": ["Contoh latihan 1", "Contoh latihan 2"],
+    "latihanKelas": ["Latihan 1", "Latihan 2"],
     "aktivitasInteraktif": ["Aktivitas 1", "Aktivitas 2"],
-    "proyekMini": "Deskripsi proyek mini yang bisa dikerjakan siswa",
-    "rubrikPenilaian": "Rubrik sederhana untuk menilai hasil belajar"
+    "proyekMini": "Deskripsi proyek",
+    "rubrikPenilaian": "Rubrik sederhana"
   },
   "slides": [
     {
-      "type": "title|content|bullet|image|summary|closing|implementation",
+      "type": "title|content|bullet|summary|closing|implementation",
       "title": "Judul slide",
-      "subtitle": "Subjudul (opsional)",
-      "content": "Konten utama (untuk slide content)",
+      "subtitle": "Subjudul",
+      "content": "Konten utama",
       "bullets": ["Poin 1", "Poin 2", "Poin 3"],
       "imageSuggestion": {
-        "keyword": "keyword untuk cari gambar",
+        "keyword": "keyword gambar",
         "unsplashUrl": "https://unsplash.com/s/photos/[keyword]",
-        "description": "Deskripsi gambar yang cocok"
+        "description": "Deskripsi gambar"
       },
-      "contohImplementasi": "Contoh penggunaan materi (soal/aktivitas/proyek)",
-      "notes": "Catatan presenter (tips mengajar, penjelasan tambahan, referensi)"
+      "contohImplementasi": "Contoh penggunaan materi",
+      "notes": "Catatan presenter (tips mengajar)"
     }
   ]
 }
 
-PASTIKAN:
-✅ Konten AKURAT berdasarkan kurikulum resmi Kemendikbud
-✅ Contoh RELEVAN untuk kehidupan siswa kelas ${grade}
-✅ Bahasa Indonesia yang baik, benar, dan sesuai level kelas
-✅ Slide tidak terlalu padat (max 5-6 poin per slide)
-✅ Catatan presenter berisi TIPS MENGAJAR dan penjelasan mendalam
-✅ Ada aktivitas/latihan interaktif untuk siswa
-✅ Referensi sumber belajar resmi
+PASTIKAN: Konten akurat sesuai Kurikulum Merdeka, contoh relevan kelas ${grade}, bahasa Indonesia baik, max 5-6 poin/slide, catatan presenter berisi tips mengajar.
 
-PENTING: Output HANYA JSON valid. Jangan ada teks penjelasan sebelum atau sesudah JSON. Jangan gunakan markdown code block.`;
+Output HANYA JSON valid. Tanpa teks lain.`;
 
     const GROQ_API_KEY = process.env.GROQ_API_KEY;
 
