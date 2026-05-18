@@ -292,11 +292,13 @@ export default function ProfilePage() {
           </div>
         </div>
 
-        {/* Guru Cerdas title */}
+        {/* Cerdas title */}
         <div className="mt-6 text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-sm font-semibold shadow-md">
+          <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-white text-sm font-semibold shadow-md ${
+            isGuru ? "bg-gradient-to-r from-emerald-500 to-teal-500" : "bg-gradient-to-r from-violet-500 to-purple-500"
+          }`}>
             <Sparkles size={16} />
-            Guru Cerdas
+            {isGuru ? "Guru Cerdas" : "Murid Cerdas"}
           </div>
         </div>
       </div>
