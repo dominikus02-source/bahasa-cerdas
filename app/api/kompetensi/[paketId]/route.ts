@@ -60,7 +60,7 @@ export async function GET(
       const sectionQuestions: any[] = [];
 
       if (section.questionIds && section.questionIds.length > 0) {
-        if (paket.type === "UKBI" || paket.type === "UKBI_SIMULASI" || paket.type === "UKBI_LATIHAN") {
+        if (paket.type === "UKBI" || paket.type === "UKBI_SIMULASI" || paket.type === "UKBI_LATIHAN" || paket.type === "UKBI_SD" || paket.type === "UKBI_LATIHAN_SD" || paket.type === "UKBI_SMP" || paket.type === "UKBI_LATIHAN_SMP" || paket.type === "UKBI_SMA" || paket.type === "UKBI_LATIHAN_SMA" || paket.type === "UKBI_GURU_SIMULASI" || paket.type === "UKBI_GURU_LATIHAN") {
           const fetched = await db.uKBIQuestion.findMany({
             where: {
               id: { in: section.questionIds },
@@ -104,9 +104,11 @@ export async function GET(
           sectionQuestions.push(...fetched);
         }
       } else if (section.count && section.count > 0) {
-        if (paket.type === "UKBI" || paket.type === "UKBI_SIMULASI" || paket.type === "UKBI_LATIHAN" || paket.type === "UKBI_SMP" || paket.type === "UKBI_SMA" || paket.type === "UKBI_LATIHAN_SMP" || paket.type === "UKBI_LATIHAN_SMA" || paket.type === "UKBI_GURU_SIMULASI" || paket.type === "UKBI_GURU_LATIHAN") {
+        if (paket.type === "UKBI" || paket.type === "UKBI_SIMULASI" || paket.type === "UKBI_LATIHAN" || paket.type === "UKBI_SD" || paket.type === "UKBI_SMP" || paket.type === "UKBI_SMA" || paket.type === "UKBI_LATIHAN_SD" || paket.type === "UKBI_LATIHAN_SMP" || paket.type === "UKBI_LATIHAN_SMA" || paket.type === "UKBI_GURU_SIMULASI" || paket.type === "UKBI_GURU_LATIHAN") {
           const where: any = { seksi: section.seksi as any, isActive: true };
-          if (paket.type === "UKBI_SMP" || paket.type === "UKBI_LATIHAN_SMP") {
+          if (paket.type === "UKBI_SD" || paket.type === "UKBI_LATIHAN_SD") {
+            where.tingkat = "SD";
+          } else if (paket.type === "UKBI_SMP" || paket.type === "UKBI_LATIHAN_SMP") {
             where.tingkat = "SMP";
           } else if (paket.type === "UKBI_SMA" || paket.type === "UKBI_LATIHAN_SMA") {
             where.tingkat = "SMA";
@@ -149,6 +151,7 @@ export async function GET(
           const where: any = { isActive: true };
           if (section.kompetensi) where.kompetensi = section.kompetensi as any;
           if (section.subKompetensi) where.subKompetensi = section.subKompetensi;
+          if (paket.type === "TKA_SD") where.tingkat = "SD";
           if (paket.type === "TKA_SMP") where.tingkat = "SMP";
           if (paket.type === "TKA_SMA") where.tingkat = "SMA";
           if (paket.type === "TKA_GURU_SIMULASI" || paket.type === "TKA_GURU_LATIHAN" || paket.type === "TKA_GURU") {

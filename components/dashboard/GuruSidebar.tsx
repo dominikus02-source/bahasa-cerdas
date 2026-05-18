@@ -35,8 +35,6 @@ const NAV: NavItem[] = [
     icon: <GraduationCap size={18} />,
     children: [
       { label: "UKBI - TKA", href: "/guru/ukbi", icon: <BookOpen size={16} /> },
-      { label: "Bank soal UKBI", href: "/guru/bank-soal-ukbi", icon: <FileText size={16} /> },
-      { label: "Bank soal TKA", href: "/guru/bank-soal-tka", icon: <Database size={16} /> },
       { label: "Buat Paket", href: "/guru/buat-tka", icon: <Brain size={16} /> },
       { label: "Sertifikat", href: "/guru/sertifikat", icon: <Star size={16} /> },
     ]
@@ -79,7 +77,7 @@ export function GuruSidebar({ user }: Props) {
   const router = useRouter()
   const supabase = createClient()
   const [expanded, setExpanded] = useState<Record<string, boolean>>({
-    Kompetensi: pathname.includes("/ukbi") || pathname.includes("/bank-soal") || pathname.includes("/sertifikat") || pathname.includes("/buat-tka"),
+    Kompetensi: pathname.includes("/ukbi") || pathname.includes("/sertifikat") || pathname.includes("/buat-tka"),
     Olimpiade: pathname.includes("/olimpiade"),
     Komunitas: pathname.includes("/komunitas"),
     "AI Tools": pathname.includes("/ai-tools"),

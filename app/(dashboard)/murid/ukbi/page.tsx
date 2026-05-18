@@ -27,21 +27,28 @@ const FILTERS: { key: FilterType; label: string }[] = [
 ];
 
 function getTypeBadgeColor(type: string) {
+  if (type === "UKBI_SD") return "bg-cyan-100 text-cyan-700";
   if (type === "UKBI_SMP") return "bg-indigo-100 text-indigo-700";
   if (type === "UKBI_SMA") return "bg-violet-100 text-violet-700";
   if (type.includes("UKBI")) return "bg-sky-100 text-sky-700";
   if (type.includes("TKA_GURU")) return "bg-emerald-100 text-emerald-700";
   if (type.includes("TKA_SMA")) return "bg-purple-100 text-purple-700";
   if (type.includes("TKA_SMP")) return "bg-teal-100 text-teal-700";
+  if (type.includes("TKA_SD")) return "bg-rose-100 text-rose-700";
   if (type.includes("TKA_UTBK")) return "bg-orange-100 text-orange-700";
   return "bg-gray-100 text-gray-700";
 }
 
 function getTypeLabel(type: string) {
+  if (type === "UKBI_SD") return "UKBI";
   if (type === "UKBI_SMP") return "UKBI";
   if (type === "UKBI_SMA") return "UKBI";
   if (type === "UKBI_SIMULASI") return "UKBI";
   if (type === "UKBI_LATIHAN") return "UKBI";
+  if (type === "UKBI_LATIHAN_SD") return "UKBI";
+  if (type === "UKBI_LATIHAN_SMP") return "UKBI";
+  if (type === "UKBI_LATIHAN_SMA") return "UKBI";
+  if (type === "TKA_SD") return "TKA";
   if (type === "TKA_SMP") return "TKA";
   if (type === "TKA_SMA") return "TKA";
   if (type === "TKA_UTBK") return "TKA";
@@ -50,10 +57,12 @@ function getTypeLabel(type: string) {
 }
 
 function getIconBoxColor(type: string) {
+  if (type === "UKBI_SD") return "from-cyan-500 to-blue-500";
   if (type === "UKBI_SMP") return "from-indigo-500 to-blue-600";
   if (type === "UKBI_SMA") return "from-violet-500 to-purple-600";
   if (type.includes("UKBI")) return "from-sky-500 to-blue-600";
   if (type.includes("TKA_GURU")) return "from-emerald-500 to-teal-600";
+  if (type.includes("TKA_SD")) return "from-rose-500 to-pink-500";
   if (type.includes("TKA_SMA")) return "from-purple-500 to-fuchsia-600";
   if (type.includes("TKA_SMP")) return "from-teal-500 to-emerald-600";
   if (type.includes("TKA_UTBK")) return "from-orange-500 to-amber-600";

@@ -47,8 +47,10 @@ enum KompetensiType {
   UKBI
   UKBI_SIMULASI
   UKBI_LATIHAN
+  UKBI_SD
   UKBI_SMP
   UKBI_SMA
+  UKBI_LATIHAN_SD
   UKBI_LATIHAN_SMP
   UKBI_LATIHAN_SMA
   UKBI_GURU_SIMULASI
@@ -57,6 +59,7 @@ enum KompetensiType {
   TKA_GURU_SIMULASI
   TKA_GURU_LATIHAN
   TKA_UTBK
+  TKA_SD
   TKA_SMP
   TKA_SMA
   SERTIFIKAT
@@ -165,6 +168,7 @@ enum TestStatus {
 }
 
 enum Tingkat {
+  SD
   SMP
   SMA
   UMUM

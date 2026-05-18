@@ -10,7 +10,7 @@ import {
   BookOpen, Plus, Trash2, Zap, Loader2, Save, RefreshCw, Check,
   Search, Filter, X, Gamepad2, Play, BarChart3, MoreVertical,
   Edit3, Users, Clock, Star, TrendingUp, GraduationCap, Brain,
-  Headphones, Target, School
+  Headphones, Target, School, ClipboardList
 } from "lucide-react";
 
 const KELAS = ["1","2","3","4","5","6","7","8","9","10","11","12"];
@@ -59,6 +59,16 @@ export default function BankSoalPage() {
   const [showAddQuestions, setShowAddQuestions] = useState(false);
   const [selectedSet, setSelectedSet] = useState<any>(null);
   const [selectedQuestionIds, setSelectedQuestionIds] = useState<string[]>([]);
+
+  // Assessment state
+  const [showAssessment, setShowAssessment] = useState(false);
+  const [assessmentPool, setAssessmentPool] = useState<any>(null);
+  const [groups, setGroups] = useState<any[]>([]);
+  const [selectedGroupId, setSelectedGroupId] = useState("");
+  const [assessmentTitle, setAssessmentTitle] = useState("");
+  const [assessmentDue, setAssessmentDue] = useState("");
+  const [assessmentLoading, setAssessmentLoading] = useState(false);
+  const [openMenuPoolId, setOpenMenuPoolId] = useState<string | null>(null);
 
   const [pools, setPools] = useState<any[]>([]);
   const [poolFilter, setPoolFilter] = useState<"all" | "UKBI" | "TKA">("all");
@@ -244,6 +254,49 @@ export default function BankSoalPage() {
     setLoading(false);
   };
 
+  const openAssessment = async (pool: any) => {
+    setAssessmentPool(pool);
+    setAssessmentTitle(`Tugas: ${pool.title}`);
+    setSelectedGroupId("");
+    setAssessmentDue("");
+    setShowAssessment(true);
+    setOpenMenuPoolId(null);
+    try {
+      const res = await fetch("/api/guru/buat-assessment");
+      const data = await res.json();
+      if (data.groups) setGroups(data.groups);
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const handleCreateAssessment = async () => {
+    if (!selectedGroupId || !assessmentPool) return;
+    setAssessmentLoading(true);
+    try {
+      const res = await fetch("/api/guru/buat-assessment", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          paketId: assessmentPool.id,
+          groupId: selectedGroupId,
+          title: assessmentTitle,
+          dueDate: assessmentDue || null,
+        }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setShowAssessment(false);
+        alert(`✅ Tugas berhasil dikirim ke kelas!\n${data.totalQuestions} soal · "${data.quiz.title}"`);
+      } else {
+        alert(data.error || "Gagal membuat assessment");
+      }
+    } catch (e) {
+      alert("Terjadi kesalahan");
+    }
+    setAssessmentLoading(false);
+  };
+
   const toggleQuestionSelect = (id: string) => {
     setSelectedQuestionIds(prev =>
       prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
@@ -317,7 +370,7 @@ export default function BankSoalPage() {
                       <div className="w-10 h-10 rounded-lg bg-white/20 flex items-center justify-center">
                         <PoolIcon size={20} className="text-white" />
                       </div>
-                      <div className="flex gap-1">
+                      <div className="flex gap-1 items-start">
                         {isUKBI && (
                           <span className="text-[10px] px-1.5 py-0.5 bg-white/20 text-white rounded-full font-medium">UKBI</span>
                         )}
@@ -330,6 +383,43 @@ export default function BankSoalPage() {
                         {!isSimulasi && (
                           <span className="text-[10px] px-1.5 py-0.5 bg-white/20 text-white rounded-full font-medium">Latihan</span>
                         )}
+                        {/* Three-dot menu */}
+                        <div className="relative">
+                          <button
+                            onClick={(e) => { e.stopPropagation(); setOpenMenuPoolId(openMenuPoolId === pool.id ? null : pool.id); }}
+                            className="p-1 rounded-lg hover:bg-white/20 text-white/70 hover:text-white transition-colors"
+                          >
+                            <MoreVertical size={14} />
+                          </button>
+                          {openMenuPoolId === pool.id && (
+                            <div className="absolute right-0 top-8 z-50 bg-white rounded-xl shadow-xl border py-1 min-w-[160px]">
+                              <button
+                                onClick={(e) => { e.stopPropagation(); openAssessment(pool); }}
+                                className="w-full flex items-center gap-2 px-3 py-2 text-xs text-gray-700 hover:bg-emerald-50 hover:text-emerald-700"
+                              >
+                                <ClipboardList size={14} /> Buat Assessment
+                              </button>
+                              <button
+                                onClick={(e) => { e.stopPropagation(); router.push(`/kompetisi/${pool.id}`); }}
+                                className="w-full flex items-center gap-2 px-3 py-2 text-xs text-gray-700 hover:bg-gray-50"
+                              >
+                                <Play size={14} /> Latihan
+                              </button>
+                              <button
+                                onClick={(e) => { e.stopPropagation(); router.push(`/guru/kuis/new?pool=${pool.id}`); }}
+                                className="w-full flex items-center gap-2 px-3 py-2 text-xs text-gray-700 hover:bg-gray-50"
+                              >
+                                <BarChart3 size={14} /> Kuis
+                              </button>
+                              <button
+                                onClick={(e) => { e.stopPropagation(); router.push(`/guru/game/lobby?pool=${pool.id}`); }}
+                                className="w-full flex items-center gap-2 px-3 py-2 text-xs text-gray-700 hover:bg-gray-50"
+                              >
+                                <Gamepad2 size={14} /> Pertandingkan
+                              </button>
+                            </div>
+                          )}
+                        </div>
                       </div>
                     </div>
                     <h3 className="font-bold text-white text-sm leading-tight mb-1 line-clamp-2">{pool.title}</h3>
@@ -703,6 +793,70 @@ export default function BankSoalPage() {
             >
               {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
               Tambah {selectedQuestionIds.length} Soal
+            </Button>
+          </div>
+        </div>
+      </Modal>
+
+      {/* Assessment Modal */}
+      <Modal isOpen={showAssessment} onClose={() => setShowAssessment(false)} title="Buat Assessment" className="max-w-md">
+        <div className="space-y-4">
+          {assessmentPool && (
+            <div className="p-3 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl text-white">
+              <p className="text-xs opacity-80">Dari paket</p>
+              <p className="font-bold text-sm">{assessmentPool.title}</p>
+              <p className="text-xs opacity-80 mt-1">{assessmentPool.totalQuestions} soal · {assessmentPool.duration} menit</p>
+            </div>
+          )}
+
+          <div>
+            <label className="block text-sm font-medium mb-1">Judul Tugas</label>
+            <input
+              value={assessmentTitle}
+              onChange={(e) => setAssessmentTitle(e.target.value)}
+              className="w-full rounded-lg border px-4 py-2 text-sm"
+              placeholder="Tugas: ..."
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-1">Kelas Tujuan *</label>
+            <select
+              value={selectedGroupId}
+              onChange={(e) => setSelectedGroupId(e.target.value)}
+              className="w-full rounded-lg border px-3 py-2 text-sm bg-white"
+            >
+              <option value="">Pilih kelas...</option>
+              {groups.map((g: any) => (
+                <option key={g.id} value={g.id}>
+                  {g.name} (Kelas {g.grade}) · {g._count?.members || 0} murid
+                </option>
+              ))}
+            </select>
+            {groups.length === 0 && (
+              <p className="text-xs text-gray-400 mt-1">Belum ada kelas. Buat kelas dulu di menu KelasKu.</p>
+            )}
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-1">Batas Waktu (opsional)</label>
+            <input
+              type="datetime-local"
+              value={assessmentDue}
+              onChange={(e) => setAssessmentDue(e.target.value)}
+              className="w-full rounded-lg border px-4 py-2 text-sm"
+            />
+          </div>
+
+          <div className="flex gap-2 pt-2">
+            <Button variant="outline" onClick={() => setShowAssessment(false)} className="flex-1">Batal</Button>
+            <Button
+              onClick={handleCreateAssessment}
+              disabled={assessmentLoading || !selectedGroupId}
+              className="flex-1 bg-emerald-600"
+            >
+              {assessmentLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <ClipboardList className="h-4 w-4" />}
+              {assessmentLoading ? "..." : "Kirim Tugas"}
             </Button>
           </div>
         </div>
