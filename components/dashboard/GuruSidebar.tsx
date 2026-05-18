@@ -37,6 +37,7 @@ const NAV: NavItem[] = [
       { label: "UKBI - TKA", href: "/guru/ukbi", icon: <BookOpen size={16} /> },
       { label: "Buat Paket", href: "/guru/buat-tka", icon: <Brain size={16} /> },
       { label: "Sertifikat", href: "/guru/sertifikat", icon: <Star size={16} /> },
+      { label: "Hasil TKA", href: "/guru/hasil-tka", icon: <TrendingUp size={16} /> },
     ]
   },
   {
@@ -50,7 +51,6 @@ const NAV: NavItem[] = [
   { label: "Komunitas", href: "/guru/komunitas", icon: <Users size={18} /> },
   { label: "KelasKu", href: "/guru/kelasku", icon: <GraduationCap size={18} /> },
   { label: "Artikel", href: "/guru/artikel", icon: <FileText size={18} /> },
-  { label: "Hasil TKA", href: "/guru/hasil-tka", icon: <TrendingUp size={18} /> },
   { label: "Pengaturan", href: "/guru/pengaturan", icon: <Settings size={18} /> },
 ]
 
@@ -77,7 +77,7 @@ export function GuruSidebar({ user }: Props) {
   const router = useRouter()
   const supabase = createClient()
   const [expanded, setExpanded] = useState<Record<string, boolean>>({
-    Kompetensi: pathname.includes("/ukbi") || pathname.includes("/sertifikat") || pathname.includes("/buat-tka"),
+    Kompetensi: pathname.includes("/ukbi") || pathname.includes("/sertifikat") || pathname.includes("/buat-tka") || pathname.includes("/hasil-tka"),
     Olimpiade: pathname.includes("/olimpiade"),
     Komunitas: pathname.includes("/komunitas"),
     "AI Tools": pathname.includes("/ai-tools"),
