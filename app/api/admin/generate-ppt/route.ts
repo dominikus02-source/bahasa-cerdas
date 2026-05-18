@@ -3,6 +3,13 @@ import { createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 import pptxgen from "pptxgenjs";
 
+// Daftar email admin yang diizinkan (tambahkan email admin di sini)
+const ALLOWED_ADMIN_EMAILS = [
+  "alexsurya1968@gmail.com",
+  "hdsastra47@gmail.com",
+  "dominikus.02@gmail.com",
+];
+
 export async function POST(req: NextRequest) {
   try {
     const supabase = await createClient();
@@ -13,7 +20,13 @@ export async function POST(req: NextRequest) {
     }
 
     const dbUser = await db.user.findUnique({ where: { supabaseId: user.id } });
-    if (!dbUser || dbUser.role !== "ADMIN") {
+    
+    // Cek apakah user adalah admin (berdasarkan role, isFounder, atau email)
+    const isAdmin = dbUser?.role === "ADMIN" || 
+                    dbUser?.isFounder === true || 
+                    ALLOWED_ADMIN_EMAILS.includes(user.email || "");
+
+    if (!isAdmin) {
       return NextResponse.json({ error: "Admin only" }, { status: 403 });
     }
 
