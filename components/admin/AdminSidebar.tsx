@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { LayoutDashboard, ShoppingBag, Film, FileText, Users, LogOut, Settings, ChevronRight, BarChart3, Briefcase, MessageCircle } from "lucide-react";
+import { LayoutDashboard, ShoppingBag, Film, FileText, Users, LogOut, Settings, ChevronRight, BarChart3, Briefcase, MessageCircle, Presentation } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 
 interface Props {
@@ -11,6 +11,7 @@ interface Props {
 
 const NAV = [
   { label: "Overview", href: "/admin", icon: LayoutDashboard },
+  { label: "Materi Ajar", href: "/admin/materi/generate-ppt", icon: Presentation },
   { label: "Toko Karya", href: "/admin/karya", icon: ShoppingBag },
   { label: "Video", href: "/admin/video", icon: Film },
   { label: "Artikel", href: "/admin/artikel", icon: FileText },
