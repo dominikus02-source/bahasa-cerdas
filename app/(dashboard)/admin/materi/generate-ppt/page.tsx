@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -15,7 +15,11 @@ import {
   CheckCircle2,
   FileText,
   Upload,
-  X
+  X,
+  Trash2,
+  AlertTriangle,
+  Search,
+  FolderOpen,
 } from "lucide-react";
 
 export default function AdminPPTGeneratorPage() {
@@ -42,11 +46,52 @@ export default function AdminPPTGeneratorPage() {
   const [manualError, setManualError] = useState("");
   const [dragOver, setDragOver] = useState(false);
 
+  // All Materi list state
+  const [materis, setMateris] = useState<any[]>([]);
+  const [materisLoading, setMaterisLoading] = useState(false);
+  const [materisSearch, setMaterisSearch] = useState("");
+  const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+
   const grades = [
     "SD Kelas 1", "SD Kelas 2", "SD Kelas 3", "SD Kelas 4", "SD Kelas 5", "SD Kelas 6",
     "SMP Kelas 7", "SMP Kelas 8", "SMP Kelas 9",
     "SMA Kelas 10", "SMA Kelas 11", "SMA Kelas 12",
   ];
+
+  const fetchMateris = useCallback(async () => {
+    setMaterisLoading(true);
+    try {
+      const res = await fetch("/api/admin/materi?limit=100");
+      const data = await res.json();
+      if (data.data) setMateris(data.data);
+    } catch {} finally {
+      setMaterisLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (activeTab === "all") fetchMateris();
+  }, [activeTab, fetchMateris]);
+
+  const handleDelete = async (id: string) => {
+    setDeletingId(id);
+    try {
+      const res = await fetch(`/api/admin/materi?id=${id}`, { method: "DELETE" });
+      if (res.ok) {
+        setMateris(prev => prev.filter(m => m.id !== id));
+        setDeleteConfirm(null);
+      }
+    } catch {} finally {
+      setDeletingId(null);
+    }
+  };
+
+  const filteredMateris = materis.filter(m =>
+    m.title.toLowerCase().includes(materisSearch.toLowerCase()) ||
+    (m.grade || "").toLowerCase().includes(materisSearch.toLowerCase()) ||
+    (m.uploader?.fullName || "").toLowerCase().includes(materisSearch.toLowerCase())
+  );
 
   // AI Generate handler
   const handleAIGenerate = async () => {
@@ -54,31 +99,20 @@ export default function AdminPPTGeneratorPage() {
       setAiError("Judul dan topik wajib diisi");
       return;
     }
-
     setAiLoading(true);
     setAiError("");
     setAiResult(null);
-
     try {
       const res = await fetch("/api/admin/generate-ppt", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ title: aiTitle, topik: aiTopik, grade: aiGrade, kurikulum: aiKurikulum, jumlahSlide: aiJumlahSlide }),
       });
-
       const data = await res.json();
-
-      if (!res.ok) {
-        setAiError(data.error || "Gagal generate PPT");
-        return;
-      }
-
+      if (!res.ok) { setAiError(data.error || "Gagal generate PPT"); return; }
       setAiResult(data);
-    } catch (err) {
-      setAiError("Terjadi kesalahan. Silakan coba lagi.");
-    } finally {
-      setAiLoading(false);
-    }
+    } catch { setAiError("Terjadi kesalahan. Silakan coba lagi."); }
+    finally { setAiLoading(false); }
   };
 
   // Manual Upload handler
@@ -87,11 +121,9 @@ export default function AdminPPTGeneratorPage() {
       setManualError("Judul, kelas, dan file wajib diisi");
       return;
     }
-
     setManualLoading(true);
     setManualError("");
     setManualResult(null);
-
     try {
       const formData = new FormData();
       formData.append("file", manualFile);
@@ -99,28 +131,15 @@ export default function AdminPPTGeneratorPage() {
       formData.append("grade", manualGrade);
       formData.append("topik", manualTopik || "");
       formData.append("kurikulum", manualKurikulum);
-
-      const res = await fetch("/api/admin/upload-materi", {
-        method: "POST",
-        body: formData,
-      });
-
+      const res = await fetch("/api/admin/upload-materi", { method: "POST", body: formData });
       const data = await res.json();
-
-      if (!res.ok) {
-        setManualError(data.error || "Gagal upload file");
-        return;
-      }
-
+      if (!res.ok) { setManualError(data.error || "Gagal upload file"); return; }
       setManualResult(data);
       setManualFile(null);
       setManualTitle("");
       setManualTopik("");
-    } catch (err) {
-      setManualError("Terjadi kesalahan. Silakan coba lagi.");
-    } finally {
-      setManualLoading(false);
-    }
+    } catch { setManualError("Terjadi kesalahan. Silakan coba lagi."); }
+    finally { setManualLoading(false); }
   };
 
   const handleDrop = (e: React.DragEvent) => {
@@ -157,14 +176,18 @@ export default function AdminPPTGeneratorPage() {
 
         {/* Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid grid-cols-2 mb-6">
+          <TabsList className="grid grid-cols-3 mb-6">
             <TabsTrigger value="ai" className="flex items-center gap-2">
               <Sparkles className="w-4 h-4" />
-              Generate dengan AI
+              Generate AI
             </TabsTrigger>
             <TabsTrigger value="manual" className="flex items-center gap-2">
               <Upload className="w-4 h-4" />
               Upload Manual
+            </TabsTrigger>
+            <TabsTrigger value="all" className="flex items-center gap-2">
+              <FolderOpen className="w-4 h-4" />
+              Semua Materi
             </TabsTrigger>
           </TabsList>
 
@@ -175,106 +198,41 @@ export default function AdminPPTGeneratorPage() {
               <Card>
                 <CardHeader>
                   <CardTitle>Parameter Presentasi</CardTitle>
-                  <CardDescription>
-                    AI akan riset dan generate PPT profesional
-                  </CardDescription>
+                  <CardDescription>AI akan riset dan generate PPT profesional</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div>
-                    <label className="text-sm font-medium text-gray-700 mb-1 block">
-                      Judul Materi *
-                    </label>
-                    <Input
-                      placeholder="Contoh: Teks Prosedur"
-                      value={aiTitle}
-                      onChange={(e) => setAiTitle(e.target.value)}
-                    />
+                    <label className="text-sm font-medium text-gray-700 mb-1 block">Judul Materi *</label>
+                    <Input placeholder="Contoh: Teks Prosedur" value={aiTitle} onChange={(e) => setAiTitle(e.target.value)} />
                   </div>
-
                   <div>
-                    <label className="text-sm font-medium text-gray-700 mb-1 block">
-                      Topik/Pembahasan *
-                    </label>
-                    <Textarea
-                      placeholder="Deskripsikan topik yang akan dibahas..."
-                      value={aiTopik}
-                      onChange={(e) => setAiTopik(e.target.value)}
-                      className="min-h-[100px]"
-                    />
+                    <label className="text-sm font-medium text-gray-700 mb-1 block">Topik/Pembahasan *</label>
+                    <Textarea placeholder="Deskripsikan topik yang akan dibahas..." value={aiTopik} onChange={(e) => setAiTopik(e.target.value)} className="min-h-[100px]" />
                   </div>
-
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="text-sm font-medium text-gray-700 mb-1 block">
-                        Kelas
-                      </label>
-                      <select
-                        value={aiGrade}
-                        onChange={(e) => setAiGrade(e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm bg-white"
-                      >
-                        {grades.map(g => (
-                          <option key={g} value={g}>{g}</option>
-                        ))}
+                      <label className="text-sm font-medium text-gray-700 mb-1 block">Kelas</label>
+                      <select value={aiGrade} onChange={(e) => setAiGrade(e.target.value)} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm bg-white">
+                        {grades.map(g => <option key={g} value={g}>{g}</option>)}
                       </select>
                     </div>
-
                     <div>
-                      <label className="text-sm font-medium text-gray-700 mb-1 block">
-                        Kurikulum
-                      </label>
-                      <select
-                        value={aiKurikulum}
-                        onChange={(e) => setAiKurikulum(e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm bg-white"
-                      >
+                      <label className="text-sm font-medium text-gray-700 mb-1 block">Kurikulum</label>
+                      <select value={aiKurikulum} onChange={(e) => setAiKurikulum(e.target.value)} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm bg-white">
                         <option value="MERDEKA">Kurikulum Merdeka</option>
                         <option value="K13">Kurikulum 2013</option>
                       </select>
                     </div>
                   </div>
-
                   <div>
-                    <label className="text-sm font-medium text-gray-700 mb-1 block">
-                      Jumlah Slide: {aiJumlahSlide}
-                    </label>
-                    <input
-                      type="range"
-                      min="5"
-                      max="20"
-                      value={aiJumlahSlide}
-                      onChange={(e) => setAiJumlahSlide(parseInt(e.target.value))}
-                      className="w-full"
-                    />
-                    <div className="flex justify-between text-xs text-gray-500">
-                      <span>5 slide</span>
-                      <span>20 slide</span>
-                    </div>
+                    <label className="text-sm font-medium text-gray-700 mb-1 block">Jumlah Slide: {aiJumlahSlide}</label>
+                    <input type="range" min="5" max="20" value={aiJumlahSlide} onChange={(e) => setAiJumlahSlide(parseInt(e.target.value))} className="w-full" />
+                    <div className="flex justify-between text-xs text-gray-500"><span>5 slide</span><span>20 slide</span></div>
                   </div>
-
-                  <Button
-                    onClick={handleAIGenerate}
-                    disabled={aiLoading}
-                    className="w-full bg-gradient-to-r from-red-600 to-blue-600 hover:from-red-700 hover:to-blue-700"
-                  >
-                    {aiLoading ? (
-                      <>
-                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                        Generate PPT...
-                      </>
-                    ) : (
-                      <>
-                        <Sparkles className="w-4 h-4 mr-2" />
-                        Generate PPT dengan AI
-                      </>
-                    )}
+                  <Button onClick={handleAIGenerate} disabled={aiLoading} className="w-full bg-gradient-to-r from-red-600 to-blue-600 hover:from-red-700 hover:to-blue-700">
+                    {aiLoading ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Generate PPT...</> : <><Sparkles className="w-4 h-4 mr-2" /> Generate PPT dengan AI</>}
                   </Button>
-
-                  {aiError && (
-                    <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">
-                      {aiError}
-                    </div>
-                  )}
+                  {aiError && <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">{aiError}</div>}
                 </CardContent>
               </Card>
 
@@ -282,19 +240,16 @@ export default function AdminPPTGeneratorPage() {
               <Card>
                 <CardHeader>
                   <CardTitle>Hasil Generate AI</CardTitle>
-                  <CardDescription>
-                    Preview dan download PPT yang sudah di-generate
-                  </CardDescription>
+                  <CardDescription>Preview dan download PPT yang sudah di-generate</CardDescription>
                 </CardHeader>
                 <CardContent>
                   {!aiResult && !aiLoading && (
                     <div className="flex flex-col items-center justify-center h-[400px] text-gray-400">
                       <Presentation className="w-12 h-12 mb-4" />
                       <p className="text-lg font-medium">Belum ada hasil</p>
-                      <p className="text-sm">Isi parameter dan klik "Generate PPT dengan AI"</p>
+                      <p className="text-sm">Isi parameter dan klik &ldquo;Generate PPT dengan AI&rdquo;</p>
                     </div>
                   )}
-
                   {aiLoading && (
                     <div className="flex flex-col items-center justify-center h-[400px]">
                       <Loader2 className="w-12 h-12 animate-spin text-red-600 mb-4" />
@@ -302,7 +257,6 @@ export default function AdminPPTGeneratorPage() {
                       <p className="text-sm text-gray-400">Mohon tunggu sebentar</p>
                     </div>
                   )}
-
                   {aiResult && (
                     <div className="space-y-4">
                       <div className="p-4 bg-green-50 border border-green-100 rounded-lg">
@@ -310,46 +264,22 @@ export default function AdminPPTGeneratorPage() {
                           <CheckCircle2 className="w-5 h-5 text-green-600" />
                           <p className="font-medium text-green-700">PPT Berhasil Di-generate!</p>
                         </div>
-                        <p className="text-sm text-green-600">
-                          {aiResult.slides} slide telah dibuat dan tersimpan
-                        </p>
-                        {aiResult.warning && (
-                          <div className="mt-2 p-2 bg-yellow-50 border border-yellow-200 rounded text-yellow-700 text-xs">
-                            ⚠️ {aiResult.warning}
-                          </div>
-                        )}
+                        <p className="text-sm text-green-600">{aiResult.slides} slide telah dibuat dan tersimpan</p>
+                        {aiResult.warning && <div className="mt-2 p-2 bg-yellow-50 border border-yellow-200 rounded text-yellow-700 text-xs">⚠️ {aiResult.warning}</div>}
                       </div>
-
                       <div className="grid grid-cols-2 gap-4">
-                        <div className="p-3 bg-gray-50 rounded-lg">
-                          <p className="text-xs text-gray-500">Judul</p>
-                          <p className="text-sm font-medium text-gray-900">{aiResult.materi?.title}</p>
-                        </div>
-                        <div className="p-3 bg-gray-50 rounded-lg">
-                          <p className="text-xs text-gray-500">Kelas</p>
-                          <p className="text-sm font-medium text-gray-900">{aiResult.materi?.grade}</p>
-                        </div>
-                        <div className="p-3 bg-gray-50 rounded-lg">
-                          <p className="text-xs text-gray-500">Jumlah Slide</p>
-                          <p className="text-sm font-medium text-gray-900">{aiResult.slides}</p>
-                        </div>
-                        <div className="p-3 bg-gray-50 rounded-lg">
-                          <p className="text-xs text-gray-500">File Type</p>
-                          <p className="text-sm font-medium text-gray-900">{aiResult.materi?.fileType}</p>
-                        </div>
+                        <div className="p-3 bg-gray-50 rounded-lg"><p className="text-xs text-gray-500">Judul</p><p className="text-sm font-medium text-gray-900">{aiResult.materi?.title}</p></div>
+                        <div className="p-3 bg-gray-50 rounded-lg"><p className="text-xs text-gray-500">Kelas</p><p className="text-sm font-medium text-gray-900">{aiResult.materi?.grade}</p></div>
+                        <div className="p-3 bg-gray-50 rounded-lg"><p className="text-xs text-gray-500">Jumlah Slide</p><p className="text-sm font-medium text-gray-900">{aiResult.slides}</p></div>
+                        <div className="p-3 bg-gray-50 rounded-lg"><p className="text-xs text-gray-500">File Type</p><p className="text-sm font-medium text-gray-900">{aiResult.materi?.fileType}</p></div>
                       </div>
-
-                      <a
-                        href={aiResult.downloadUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="block"
-                      >
-                        <Button className="w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600">
-                          <Download className="w-4 h-4 mr-2" />
-                          Download PPTX
-                        </Button>
-                      </a>
+                      {aiResult.downloadUrl && (
+                        <a href={aiResult.downloadUrl} target="_blank" rel="noopener noreferrer" className="block">
+                          <Button className="w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600">
+                            <Download className="w-4 h-4 mr-2" /> Download PPTX
+                          </Button>
+                        </a>
+                      )}
                     </div>
                   )}
                 </CardContent>
@@ -360,155 +290,71 @@ export default function AdminPPTGeneratorPage() {
           {/* Manual Upload Tab */}
           <TabsContent value="manual">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {/* Upload Form */}
               <Card>
                 <CardHeader>
                   <CardTitle>Upload File Manual</CardTitle>
-                  <CardDescription>
-                    Upload file PPT/PDF yang sudah dibuat
-                  </CardDescription>
+                  <CardDescription>Upload file PPT/PDF yang sudah dibuat</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div>
-                    <label className="text-sm font-medium text-gray-700 mb-1 block">
-                      Judul Materi *
-                    </label>
-                    <Input
-                      placeholder="Contoh: Teks Prosedur"
-                      value={manualTitle}
-                      onChange={(e) => setManualTitle(e.target.value)}
-                    />
+                    <label className="text-sm font-medium text-gray-700 mb-1 block">Judul Materi *</label>
+                    <Input placeholder="Contoh: Teks Prosedur" value={manualTitle} onChange={(e) => setManualTitle(e.target.value)} />
                   </div>
-
                   <div>
-                    <label className="text-sm font-medium text-gray-700 mb-1 block">
-                      Deskripsi/Topik
-                    </label>
-                    <Textarea
-                      placeholder="Deskripsi singkat materi..."
-                      value={manualTopik}
-                      onChange={(e) => setManualTopik(e.target.value)}
-                      className="min-h-[80px]"
-                    />
+                    <label className="text-sm font-medium text-gray-700 mb-1 block">Deskripsi/Topik</label>
+                    <Textarea placeholder="Deskripsi singkat materi..." value={manualTopik} onChange={(e) => setManualTopik(e.target.value)} className="min-h-[80px]" />
                   </div>
-
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="text-sm font-medium text-gray-700 mb-1 block">
-                        Kelas *
-                      </label>
-                      <select
-                        value={manualGrade}
-                        onChange={(e) => setManualGrade(e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm bg-white"
-                      >
-                        {grades.map(g => (
-                          <option key={g} value={g}>{g}</option>
-                        ))}
+                      <label className="text-sm font-medium text-gray-700 mb-1 block">Kelas *</label>
+                      <select value={manualGrade} onChange={(e) => setManualGrade(e.target.value)} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm bg-white">
+                        {grades.map(g => <option key={g} value={g}>{g}</option>)}
                       </select>
                     </div>
-
                     <div>
-                      <label className="text-sm font-medium text-gray-700 mb-1 block">
-                        Kurikulum
-                      </label>
-                      <select
-                        value={manualKurikulum}
-                        onChange={(e) => setManualKurikulum(e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm bg-white"
-                      >
+                      <label className="text-sm font-medium text-gray-700 mb-1 block">Kurikulum</label>
+                      <select value={manualKurikulum} onChange={(e) => setManualKurikulum(e.target.value)} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm bg-white">
                         <option value="MERDEKA">Kurikulum Merdeka</option>
                         <option value="K13">Kurikulum 2013</option>
                       </select>
                     </div>
                   </div>
-
                   <div>
-                    <label className="text-sm font-medium text-gray-700 mb-1 block">
-                      File PPT/PDF *
-                    </label>
-                    <div
-                      onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
-                      onDragLeave={() => setDragOver(false)}
-                      onDrop={handleDrop}
-                      className={`border-2 border-dashed rounded-xl p-6 text-center transition-colors ${
-                        dragOver ? "border-red-500 bg-red-50" : "border-gray-200 hover:border-gray-300"
-                      }`}
-                    >
+                    <label className="text-sm font-medium text-gray-700 mb-1 block">File PPT/PDF *</label>
+                    <div onDragOver={(e) => { e.preventDefault(); setDragOver(true); }} onDragLeave={() => setDragOver(false)} onDrop={handleDrop}
+                      className={`border-2 border-dashed rounded-xl p-6 text-center transition-colors ${dragOver ? "border-red-500 bg-red-50" : "border-gray-200 hover:border-gray-300"}`}>
                       {manualFile ? (
                         <div className="flex items-center justify-center gap-2 text-red-600">
                           <FileText size={20} />
                           <span className="text-sm font-medium">{manualFile.name}</span>
                           <span className="text-xs text-gray-500">({(manualFile.size / 1024 / 1024).toFixed(2)} MB)</span>
-                          <button type="button" onClick={() => setManualFile(null)} className="ml-2 text-gray-400 hover:text-red-500">
-                            <X size={16} />
-                          </button>
+                          <button type="button" onClick={() => setManualFile(null)} className="ml-2 text-gray-400 hover:text-red-500"><X size={16} /></button>
                         </div>
                       ) : (
                         <div>
                           <Upload size={24} className="mx-auto text-gray-400 mb-2" />
-                          <p className="text-sm text-gray-600">
-                            Drag & drop atau{" "}
-                            <label className="text-red-600 font-medium cursor-pointer hover:underline">
-                              browse
-                              <input
-                                type="file"
-                                className="hidden"
-                                accept=".pptx,.pdf"
-                                onChange={(e) => {
-                                  const f = e.target.files?.[0];
-                                  if (f) {
-                                    const ext = f.name.split(".").pop()?.toLowerCase();
-                                    if (["pptx", "pdf"].includes(ext || "")) {
-                                      setManualFile(f);
-                                      setManualError("");
-                                    } else {
-                                      setManualError("File harus PPTX atau PDF");
-                                    }
-                                  }
-                                }}
-                              />
-                            </label>
-                          </p>
+                          <p className="text-sm text-gray-600">Drag & drop atau <label className="text-red-600 font-medium cursor-pointer hover:underline">browse
+                            <input type="file" className="hidden" accept=".pptx,.pdf" onChange={(e) => {
+                              const f = e.target.files?.[0];
+                              if (f) { const ext = f.name.split(".").pop()?.toLowerCase(); if (["pptx", "pdf"].includes(ext || "")) { setManualFile(f); setManualError(""); } else { setManualError("File harus PPTX atau PDF"); } }
+                            }} />
+                          </label></p>
                           <p className="text-xs text-gray-400 mt-1">PPTX atau PDF (max 50MB)</p>
                         </div>
                       )}
                     </div>
                   </div>
-
-                  <Button
-                    onClick={handleManualUpload}
-                    disabled={manualLoading}
-                    className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700"
-                  >
-                    {manualLoading ? (
-                      <>
-                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                        Uploading...
-                      </>
-                    ) : (
-                      <>
-                        <Upload className="w-4 h-4 mr-2" />
-                        Upload Materi
-                      </>
-                    )}
+                  <Button onClick={handleManualUpload} disabled={manualLoading} className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700">
+                    {manualLoading ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Uploading...</> : <><Upload className="w-4 h-4 mr-2" /> Upload Materi</>}
                   </Button>
-
-                  {manualError && (
-                    <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">
-                      {manualError}
-                    </div>
-                  )}
+                  {manualError && <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">{manualError}</div>}
                 </CardContent>
               </Card>
 
-              {/* Upload Result */}
               <Card>
                 <CardHeader>
                   <CardTitle>Hasil Upload</CardTitle>
-                  <CardDescription>
-                    Preview materi yang sudah di-upload
-                  </CardDescription>
+                  <CardDescription>Preview materi yang sudah di-upload</CardDescription>
                 </CardHeader>
                 <CardContent>
                   {!manualResult && !manualLoading && (
@@ -518,7 +364,6 @@ export default function AdminPPTGeneratorPage() {
                       <p className="text-sm">Upload file PPT/PDF untuk menambahkan materi</p>
                     </div>
                   )}
-
                   {manualLoading && (
                     <div className="flex flex-col items-center justify-center h-[400px]">
                       <Loader2 className="w-12 h-12 animate-spin text-emerald-600 mb-4" />
@@ -526,7 +371,6 @@ export default function AdminPPTGeneratorPage() {
                       <p className="text-sm text-gray-400">Mohon tunggu sebentar</p>
                     </div>
                   )}
-
                   {manualResult && (
                     <div className="space-y-4">
                       <div className="p-4 bg-green-50 border border-green-100 rounded-lg">
@@ -534,42 +378,21 @@ export default function AdminPPTGeneratorPage() {
                           <CheckCircle2 className="w-5 h-5 text-green-600" />
                           <p className="font-medium text-green-700">Upload Berhasil!</p>
                         </div>
-                        <p className="text-sm text-green-600">
-                          Materi telah tersimpan dan siap digunakan
-                        </p>
+                        <p className="text-sm text-green-600">Materi telah tersimpan dan siap digunakan</p>
                       </div>
-
                       <div className="grid grid-cols-2 gap-4">
-                        <div className="p-3 bg-gray-50 rounded-lg">
-                          <p className="text-xs text-gray-500">Judul</p>
-                          <p className="text-sm font-medium text-gray-900">{manualResult.materi?.title}</p>
-                        </div>
-                        <div className="p-3 bg-gray-50 rounded-lg">
-                          <p className="text-xs text-gray-500">Kelas</p>
-                          <p className="text-sm font-medium text-gray-900">{manualResult.materi?.grade}</p>
-                        </div>
-                        <div className="p-3 bg-gray-50 rounded-lg">
-                          <p className="text-xs text-gray-500">File Type</p>
-                          <p className="text-sm font-medium text-gray-900">{manualResult.materi?.fileType}</p>
-                        </div>
-                        <div className="p-3 bg-gray-50 rounded-lg">
-                          <p className="text-xs text-gray-500">Status</p>
-                          <p className="text-sm font-medium text-green-600">Published</p>
-                        </div>
+                        <div className="p-3 bg-gray-50 rounded-lg"><p className="text-xs text-gray-500">Judul</p><p className="text-sm font-medium text-gray-900">{manualResult.materi?.title}</p></div>
+                        <div className="p-3 bg-gray-50 rounded-lg"><p className="text-xs text-gray-500">Kelas</p><p className="text-sm font-medium text-gray-900">{manualResult.materi?.grade}</p></div>
+                        <div className="p-3 bg-gray-50 rounded-lg"><p className="text-xs text-gray-500">File Type</p><p className="text-sm font-medium text-gray-900">{manualResult.materi?.fileType}</p></div>
+                        <div className="p-3 bg-gray-50 rounded-lg"><p className="text-xs text-gray-500">Status</p><p className="text-sm font-medium text-green-600">Published</p></div>
                       </div>
-
-                      <a
-                        href={manualResult.downloadUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="block"
-                      >
-                        <Button className="w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600">
-                          <Download className="w-4 h-4 mr-2" />
-                          Download File
-                        </Button>
-                      </a>
-
+                      {manualResult.downloadUrl && (
+                        <a href={manualResult.downloadUrl} target="_blank" rel="noopener noreferrer" className="block">
+                          <Button className="w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600">
+                            <Download className="w-4 h-4 mr-2" /> Download File
+                          </Button>
+                        </a>
+                      )}
                       <div className="p-4 bg-blue-50 border border-blue-100 rounded-lg">
                         <p className="text-sm font-medium text-blue-700 mb-2">Info</p>
                         <ul className="space-y-1 text-sm text-blue-600">
@@ -583,6 +406,84 @@ export default function AdminPPTGeneratorPage() {
                 </CardContent>
               </Card>
             </div>
+          </TabsContent>
+
+          {/* All Materi Tab */}
+          <TabsContent value="all">
+            <Card>
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle>Semua Materi Ajar</CardTitle>
+                    <CardDescription>{materis.length} materi total — dikelola oleh admin</CardDescription>
+                  </div>
+                  <Button variant="outline" size="sm" onClick={fetchMateris} disabled={materisLoading}>
+                    <Loader2 className={`w-4 h-4 mr-2 ${materisLoading ? "animate-spin" : ""}`} />
+                    Refresh
+                  </Button>
+                </div>
+                <div className="relative mt-3">
+                  <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                  <input type="text" placeholder="Cari materi..." value={materisSearch} onChange={e => setMaterisSearch(e.target.value)}
+                    className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500" />
+                </div>
+              </CardHeader>
+              <CardContent>
+                {materisLoading ? (
+                  <div className="space-y-3">
+                    {Array.from({ length: 5 }).map((_, i) => (
+                      <div key={i} className="h-16 bg-gray-50 rounded-xl animate-pulse" />
+                    ))}
+                  </div>
+                ) : filteredMateris.length === 0 ? (
+                  <div className="text-center py-12 text-gray-400">
+                    <FolderOpen className="w-12 h-12 mx-auto mb-3" />
+                    <p className="font-medium">Belum ada materi</p>
+                    <p className="text-sm">Generate atau upload materi terlebih dahulu</p>
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    {filteredMateris.map((m) => (
+                      <div key={m.id} className="flex items-center gap-4 p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors group">
+                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold text-xs shrink-0 ${m.fileType === "PPTX" ? "bg-orange-500" : "bg-red-500"}`}>
+                          {m.fileType || "FILE"}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="font-semibold text-gray-900 truncate">{m.title}</p>
+                          <p className="text-xs text-gray-500">
+                            {m.grade || "—"} • {m.fileType || "—"} • oleh {m.uploader?.fullName || "Admin"}
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-2 shrink-0">
+                          {m.fileUrl && (
+                            <a href={m.fileUrl} target="_blank" rel="noopener noreferrer" className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" title="Download">
+                              <Download size={16} />
+                            </a>
+                          )}
+                          {deleteConfirm === m.id ? (
+                            <div className="flex items-center gap-1">
+                              <button onClick={() => handleDelete(m.id)} disabled={deletingId === m.id}
+                                className="px-3 py-1.5 text-xs font-semibold bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
+                                {deletingId === m.id ? "..." : "Hapus"}
+                              </button>
+                              <button onClick={() => setDeleteConfirm(null)}
+                                className="px-3 py-1.5 text-xs font-semibold bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors">
+                                Batal
+                              </button>
+                            </div>
+                          ) : (
+                            <button onClick={() => setDeleteConfirm(m.id)}
+                              className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors opacity-0 group-hover:opacity-100" title="Hapus">
+                              <Trash2 size={16} />
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
           </TabsContent>
         </Tabs>
       </div>
