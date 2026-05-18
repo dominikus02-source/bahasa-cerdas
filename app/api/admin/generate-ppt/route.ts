@@ -143,7 +143,7 @@ PASTIKAN:
 ✅ Ada aktivitas/latihan interaktif untuk siswa
 ✅ Referensi sumber belajar resmi
 
-Hanya output JSON, tanpa markdown.`;
+PENTING: Output HANYA JSON valid. Jangan ada teks penjelasan sebelum atau sesudah JSON. Jangan gunakan markdown code block.`;
 
     const GROQ_API_KEY = process.env.GROQ_API_KEY;
 
@@ -174,13 +174,29 @@ Hanya output JSON, tanpa markdown.`;
     let pptData;
     try {
       let cleaned = aiContent;
-      if (cleaned.includes("```json")) {
-        cleaned = cleaned.replace(/```json\n?/g, "").replace(/\n?```/g, "");
+      
+      // Try to extract JSON from markdown code blocks
+      const jsonMatch = cleaned.match(/```(?:json)?\s*([\s\S]*?)```/);
+      if (jsonMatch) {
+        cleaned = jsonMatch[1];
+      } else {
+        // If no code blocks, try to find the first { and last }
+        const firstBrace = cleaned.indexOf('{');
+        const lastBrace = cleaned.lastIndexOf('}');
+        if (firstBrace !== -1 && lastBrace !== -1 && lastBrace > firstBrace) {
+          cleaned = cleaned.substring(firstBrace, lastBrace + 1);
+        }
       }
+      
+      // Remove any remaining markdown or comments
+      cleaned = cleaned.replace(/\/\/.*$/gm, ''); // Remove single line comments
+      cleaned = cleaned.replace(/\/\*[\s\S]*?\*\//g, ''); // Remove multi-line comments
+      
       pptData = JSON.parse(cleaned);
     } catch (e) {
       console.error("Failed to parse AI content:", aiContent);
-      return NextResponse.json({ error: "Gagal parse konten AI" }, { status: 500 });
+      console.error("Parse error:", e);
+      return NextResponse.json({ error: "Gagal parse konten AI. Coba lagi atau periksa log server." }, { status: 500 });
     }
 
     // Generate PPTX file
