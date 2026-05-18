@@ -19,6 +19,8 @@ import {
 } from "lucide-react";
 
 export default function AdminPPTGeneratorPage() {
+  const [activeTab, setActiveTab] = useState("ai");
+
   // AI Generate state
   const [aiTitle, setAiTitle] = useState("");
   const [aiTopik, setAiTopik] = useState("");
@@ -154,7 +156,7 @@ export default function AdminPPTGeneratorPage() {
         </div>
 
         {/* Tabs */}
-        <Tabs defaultValue="ai" className="w-full">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="grid grid-cols-2 mb-6">
             <TabsTrigger value="ai" className="flex items-center gap-2">
               <Sparkles className="w-4 h-4" />
@@ -252,7 +254,7 @@ export default function AdminPPTGeneratorPage() {
 
                   <Button
                     onClick={handleAIGenerate}
-                    disabled={aiLoading || !aiTitle || !aiTopik}
+                    disabled={aiLoading}
                     className="w-full bg-gradient-to-r from-red-600 to-blue-600 hover:from-red-700 hover:to-blue-700"
                   >
                     {aiLoading ? (
@@ -471,7 +473,7 @@ export default function AdminPPTGeneratorPage() {
 
                   <Button
                     onClick={handleManualUpload}
-                    disabled={manualLoading || !manualTitle || !manualGrade || !manualFile}
+                    disabled={manualLoading}
                     className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700"
                   >
                     {manualLoading ? (
