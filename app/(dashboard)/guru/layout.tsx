@@ -17,6 +17,7 @@ export default async function GuruLayout({ children }: { children: React.ReactNo
     <div className="flex min-h-screen bg-gray-50">
       <GuruSidebar
         user={{
+          id: user.id,
           fullName: user.fullName,
           avatar: user.avatar,
           isPremium: user.isPremium,

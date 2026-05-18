@@ -9,7 +9,7 @@ export async function GET(req: NextRequest) {
 
     const karya = await db.karya.findMany({
       where: { isPublished: true },
-      include: { seller: { select: { fullName: true, avatar: true } } },
+      include: { seller: { select: { id: true, fullName: true, avatar: true } } },
       orderBy: { createdAt: "desc" },
     });
 

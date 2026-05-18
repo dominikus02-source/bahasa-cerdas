@@ -86,9 +86,9 @@ export default async function ArtikelDetailPage({ params }: Props) {
 
           <div className="flex flex-wrap items-center gap-3 text-xs text-slate-400 mb-4">
             {artikel.author?.fullName && (
-              <span className="flex items-center gap-1.5 bg-slate-100 px-3 py-1 rounded-full">
+              <Link href={`/profile/${artikel.author.id}`} className="flex items-center gap-1.5 bg-slate-100 px-3 py-1 rounded-full hover:bg-slate-200 transition-colors">
                 <User size={12} /> {artikel.author.fullName}
-              </span>
+              </Link>
             )}
             <span className="flex items-center gap-1"><Calendar size={12} /> {new Date(artikel.createdAt).toLocaleDateString("id", { day: "numeric", month: "long", year: "numeric" })}</span>
             <span className="flex items-center gap-1"><Clock size={12} /> {artikel.readCount} dibaca</span>

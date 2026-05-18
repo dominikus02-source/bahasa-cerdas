@@ -61,6 +61,7 @@ const NAV_ADMIN = [
 
 interface Props {
   user: {
+    id: string
     fullName: string
     avatar?: string | null
     isPremium: boolean
@@ -104,7 +105,7 @@ export function GuruSidebar({ user }: Props) {
         </Link>
       </div>
 
-      <div className="px-4 py-3 border-b border-gray-100 bg-gradient-to-r from-emerald-50 to-teal-50">
+      <Link href={`/profile/${user.id}`} className="block px-4 py-3 border-b border-gray-100 bg-gradient-to-r from-emerald-50 to-teal-50 hover:from-emerald-100 hover:to-teal-100 transition-colors">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center text-white font-bold text-sm shadow-md">
             {user.fullName.slice(0, 2).toUpperCase()}
@@ -139,7 +140,7 @@ export function GuruSidebar({ user }: Props) {
             </span>
           </div>
         )}
-      </div>
+      </Link>
 
       <nav className="flex-1 overflow-y-auto py-3 px-2">
         {NAV.map((item) => {

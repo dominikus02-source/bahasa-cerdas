@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { ShoppingBag, Download, Star, User, ChevronLeft, ShoppingCart, Plus, Minus } from "lucide-react";
+import Link from "next/link";
 import PageNavbar from "@/components/public/PageNavbar";
 import ShareButton from "@/components/shared/ShareButton";
 import ReactMarkdown from "react-markdown";
@@ -92,9 +93,9 @@ export default function MarketplaceDetailPage() {
             </span>
             <h1 className="text-2xl font-bold text-slate-900 mb-2">{karya.title}</h1>
             {karya.seller && (
-              <p className="text-sm text-slate-500 flex items-center gap-1.5 mb-4">
+              <Link href={`/profile/${karya.seller.id}`} className="text-sm text-slate-500 flex items-center gap-1.5 mb-4 hover:text-emerald-600 transition-colors">
                 <User size={14} /> oleh {karya.seller.fullName}
-              </p>
+              </Link>
             )}
 
             <div className="border-t border-slate-100 pt-6 mb-6 artikel-content">

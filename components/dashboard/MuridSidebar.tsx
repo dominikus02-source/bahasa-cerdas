@@ -39,6 +39,7 @@ const NAV = [
 
 interface Props {
   user: {
+    id: string
     fullName: string
     avatar?: string | null
     isPremium: boolean
@@ -88,7 +89,7 @@ export function MuridSidebar({ user }: Props) {
         </Link>
       </div>
 
-      <div className="px-4 py-3 border-b border-gray-100 bg-gradient-to-r from-violet-50 to-purple-50">
+      <Link href={`/profile/${user.id}`} className="block px-4 py-3 border-b border-gray-100 bg-gradient-to-r from-violet-50 to-purple-50 hover:from-violet-100 hover:to-purple-100 transition-colors">
         <div className="flex items-center gap-3 mb-2">
           <div className="w-10 h-10 rounded-full bg-gradient-to-br from-violet-400 to-purple-600 flex items-center justify-center text-white font-bold text-sm shadow-md">
             {user.fullName.slice(0, 2).toUpperCase()}
@@ -118,7 +119,7 @@ export function MuridSidebar({ user }: Props) {
             style={{ width: `${Math.min((user.xp % 500) / 5, 100)}%` }}
           />
         </div>
-      </div>
+      </Link>
 
       <nav className="flex-1 overflow-y-auto py-3 px-2">
         {NAV.map((item: any) => {

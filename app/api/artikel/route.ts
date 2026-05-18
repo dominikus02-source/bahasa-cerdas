@@ -17,7 +17,7 @@ export async function GET(req: NextRequest) {
           id: true, title: true, slug: true, excerpt: true,
           coverImage: true, tags: true, readCount: true,
           createdAt: true,
-          author: { select: { fullName: true, avatar: true } },
+          author: { select: { id: true, fullName: true, avatar: true } },
         },
       }),
       db.artikel.count({ where: { isPublished: true } }),

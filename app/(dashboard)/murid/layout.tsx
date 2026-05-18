@@ -17,6 +17,7 @@ export default async function MuridLayout({ children }: { children: React.ReactN
     <div className="flex min-h-screen bg-gray-50">
       <MuridSidebar
         user={{
+          id: user.id,
           fullName: user.fullName,
           avatar: user.avatar,
           isPremium: user.isPremium,

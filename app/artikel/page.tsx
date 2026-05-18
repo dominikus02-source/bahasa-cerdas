@@ -23,7 +23,7 @@ export default async function ArtikelPage() {
     select: {
       id: true, title: true, slug: true, excerpt: true,
       coverImage: true, tags: true, readCount: true, createdAt: true,
-      author: { select: { fullName: true } },
+      author: { select: { id: true, fullName: true } },
     },
   });
 
