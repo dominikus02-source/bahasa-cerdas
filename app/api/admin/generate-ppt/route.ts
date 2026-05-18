@@ -12,23 +12,42 @@ const ALLOWED_ADMIN_EMAILS = [
 
 export async function POST(req: NextRequest) {
   try {
+    console.log("PPT Generation: Starting...");
+    
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) {
+      console.error("PPT Generation: No user found");
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const dbUser = await db.user.findUnique({ where: { supabaseId: user.id } });
+    console.log("PPT Generation: User authenticated:", user.email);
+
+    let dbUser;
+    try {
+      dbUser = await db.user.findUnique({ where: { supabaseId: user.id } });
+    } catch (dbError) {
+      console.error("PPT Generation: Database error:", dbError);
+      return NextResponse.json({ error: "Database connection error. Please check DATABASE_URL." }, { status: 500 });
+    }
+    
+    if (!dbUser) {
+      console.error("PPT Generation: User not found in database");
+      return NextResponse.json({ error: "User not found in database" }, { status: 404 });
+    }
     
     // Cek apakah user adalah admin (berdasarkan role, isFounder, atau email)
-    const isAdmin = dbUser?.role === "ADMIN" || 
-                    dbUser?.isFounder === true || 
+    const isAdmin = dbUser.role === "ADMIN" || 
+                    dbUser.isFounder === true || 
                     ALLOWED_ADMIN_EMAILS.includes(user.email || "");
 
     if (!isAdmin) {
+      console.error("PPT Generation: User not admin:", user.email);
       return NextResponse.json({ error: "Admin only" }, { status: 403 });
     }
+
+    console.log("PPT Generation: Admin verified");
 
     const body = await req.json();
     const { title, grade, topik, jumlahSlide = 10, kurikulum = "MERDEKA" } = body;
@@ -148,9 +167,11 @@ PENTING: Output HANYA JSON valid. Jangan ada teks penjelasan sebelum atau sesuda
     const GROQ_API_KEY = process.env.GROQ_API_KEY;
 
     if (!GROQ_API_KEY) {
-      return NextResponse.json({ error: "GROQ_API_KEY not configured" }, { status: 500 });
+      console.error("GROQ_API_KEY is not set");
+      return NextResponse.json({ error: "GROQ_API_KEY not configured. Please add it to Vercel Environment Variables." }, { status: 500 });
     }
 
+    console.log("Step 1: Calling Groq API...");
     let aiContent = "";
     try {
       const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
@@ -163,11 +184,19 @@ PENTING: Output HANYA JSON valid. Jangan ada teks penjelasan sebelum atau sesuda
           temperature: 0.7,
         }),
       });
+      
+      if (!res.ok) {
+        const errorText = await res.text();
+        console.error("Groq API error:", res.status, errorText);
+        return NextResponse.json({ error: `Groq API error: ${res.status} ${errorText}` }, { status: 500 });
+      }
+      
       const json = await res.json();
       aiContent = json.choices?.[0]?.message?.content || "";
+      console.log("Step 1 complete: AI content received, length:", aiContent.length);
     } catch (e) {
       console.error("AI generation failed:", e);
-      return NextResponse.json({ error: "Gagal generate konten AI" }, { status: 500 });
+      return NextResponse.json({ error: "Gagal generate konten AI: " + (e instanceof Error ? e.message : "Unknown error") }, { status: 500 });
     }
 
     // Parse AI content
@@ -465,33 +494,53 @@ PENTING: Output HANYA JSON valid. Jangan ada teks penjelasan sebelum atau sesuda
     }
 
     // Generate file
-    const pptxBuffer = await pres.write({ outputType: "nodebuffer" });
+    console.log("Step 3: Generating PPTX file...");
+    let pptxBuffer;
+    try {
+      pptxBuffer = await pres.write({ outputType: "nodebuffer" });
+      console.log("Step 3 complete: PPTX generated, size:", pptxBuffer.length, "bytes");
+    } catch (pptError) {
+      console.error("PPT Generation error:", pptError);
+      return NextResponse.json({ error: "Gagal generate file PPT: " + (pptError instanceof Error ? pptError.message : "Unknown error") }, { status: 500 });
+    }
 
     // Upload to Supabase Storage
+    console.log("Step 4: Uploading to Supabase Storage...");
     const fileName = `admin/materi/${Date.now()}-${Math.random().toString(36).substring(2, 8)}.pptx`;
     const uploadResult = await uploadToSupabase(pptxBuffer, fileName, "application/vnd.openxmlformats-officedocument.presentationml.presentation");
 
     if ("error" in uploadResult) {
-      return NextResponse.json({ error: uploadResult.error }, { status: 500 });
+      console.error("Upload error:", uploadResult.error);
+      return NextResponse.json({ error: "Gagal upload file: " + uploadResult.error }, { status: 500 });
     }
+    console.log("Step 4 complete: File uploaded to", uploadResult.url);
 
     // Save to database
-    const materi = await db.materi.create({
-      data: {
-        title: title,
-        description: `Materi pembelajaran ${topik} untuk ${grade}`,
-        content: JSON.stringify(pptData),
-        fileUrl: uploadResult.url,
-        fileKey: uploadResult.key,
-        fileType: "PPTX",
-        grade: grade,
-        isPublished: true,
-        isPremium: false,
-        price: 0,
-        uploaderId: dbUser.id,
-      },
-    });
+    console.log("Step 5: Saving to database...");
+    let materi;
+    try {
+      materi = await db.materi.create({
+        data: {
+          title: title,
+          description: `Materi pembelajaran ${topik} untuk ${grade}`,
+          content: JSON.stringify(pptData),
+          fileUrl: uploadResult.url,
+          fileKey: uploadResult.key,
+          fileType: "PPTX",
+          grade: grade,
+          isPublished: true,
+          isPremium: false,
+          price: 0,
+          uploaderId: dbUser.id,
+        },
+      });
+      console.log("Step 5 complete: Materi saved with ID:", materi.id);
+    } catch (dbError) {
+      console.error("Database save error:", dbError);
+      return NextResponse.json({ error: "Gagal simpan ke database: " + (dbError instanceof Error ? dbError.message : "Unknown error") }, { status: 500 });
+    }
 
+    console.log("PPT Generation: Complete!");
     return NextResponse.json({
       success: true,
       materi: materi,
@@ -500,7 +549,11 @@ PENTING: Output HANYA JSON valid. Jangan ada teks penjelasan sebelum atau sesuda
     });
   } catch (error) {
     console.error("AI PPT Generation error:", error);
-    return NextResponse.json({ error: "Internal server error: " + (error as Error).message }, { status: 500 });
+    const errorMessage = error instanceof Error ? error.message : "Unknown error";
+    return NextResponse.json({ 
+      error: "Internal server error", 
+      details: process.env.NODE_ENV === "development" ? errorMessage : undefined 
+    }, { status: 500 });
   }
 }
 
