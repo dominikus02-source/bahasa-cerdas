@@ -6,7 +6,7 @@ import { useState } from "react"
 import {
   Home, ClipboardList, Gamepad2, GraduationCap, Trophy,
   BarChart2, Settings, ChevronDown, ChevronRight, BookOpen,
-  Brain, Award, Star, Calendar, LogOut, Flame, Zap, Users, Bell
+  Brain, Award, Star, Calendar, LogOut, Flame, Zap, Users, Bell, Swords
 } from "lucide-react"
 import { createClient } from "@/lib/supabase/client"
 import { useRouter } from "next/navigation"
@@ -16,6 +16,7 @@ const NAV = [
   { label: "Beranda", href: "/murid/beranda", icon: <Home size={18} /> },
   { label: "Tugasku", href: "/murid/tugasku", icon: <ClipboardList size={18} /> },
   { label: "Gabung Kelas", href: "/murid/gabung-kelas", icon: <Users size={18} /> },
+  { label: "KataStra", href: "/murid/katastra", icon: <Zap size={18} /> },
   {label: "Kuis Game", href: "/murid/game/lobby", icon: <Gamepad2 size={18} /> },
   {
     label: "Kompetensi",
