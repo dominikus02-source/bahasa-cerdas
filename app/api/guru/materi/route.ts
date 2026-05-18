@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
+import { uploadFileServer } from "@/lib/upload";
 
 export async function GET(req: NextRequest) {
   try {
@@ -76,46 +77,36 @@ export async function POST(req: NextRequest) {
     let fileType: string | null = null;
 
     if (file) {
+      console.log("Uploading file:", file.name, "Size:", file.size, "Type:", file.type);
+      
+      // Validate file type
       const fileExt = file.name.split(".").pop()?.toLowerCase() || "pdf";
       if (!["pdf", "docx", "pptx", "xlsx", "zip"].includes(fileExt)) {
         return NextResponse.json({ error: "File harus PDF, DOCX, PPTX, XLSX, atau ZIP" }, { status: 400 });
       }
 
+      // Check file size (50MB max for PPTX)
+      const maxSize = fileExt === "pptx" ? 50 * 1024 * 1024 : 20 * 1024 * 1024;
+      if (file.size > maxSize) {
+        return NextResponse.json({ error: `Ukuran file maksimal ${maxSize / (1024 * 1024)}MB` }, { status: 400 });
+      }
+      
+      // Generate filename
       const fileName = `${dbUser.id}/materi/${Date.now()}-${Math.random().toString(36).substring(2, 8)}.${fileExt}`;
-      const bucket = "documents";
-
-      const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SERVICE_ROLE_KEY;
-      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-
-      if (!serviceKey || !supabaseUrl) {
-        console.error("Missing env vars for upload");
-        return NextResponse.json({ error: "Server configuration error" }, { status: 500 });
+      
+      // Use server-side upload function
+      const uploadResult = await uploadFileServer(file, fileName, "documents", file.type);
+      
+      if ("error" in uploadResult) {
+        console.error("Upload failed:", uploadResult.error);
+        return NextResponse.json({ error: uploadResult.error }, { status: 400 });
       }
 
-      // Convert file to buffer
-      const arrayBuffer = await file.arrayBuffer();
-      const buffer = Buffer.from(arrayBuffer);
-
-      // Upload directly to Supabase Storage via REST API
-      const uploadUrl = `${supabaseUrl}/storage/v1/object/${bucket}/${fileName}`;
-      const uploadRes = await fetch(uploadUrl, {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${serviceKey}`,
-          "Content-Type": file.type || "application/octet-stream",
-        },
-        body: buffer,
-      });
-
-      if (!uploadRes.ok) {
-        const errText = await uploadRes.text();
-        console.error("Supabase upload failed:", uploadRes.status, errText);
-        return NextResponse.json({ error: `Upload gagal: ${uploadRes.status} ${errText}` }, { status: 400 });
-      }
-
-      fileUrl = `${supabaseUrl}/storage/v1/object/public/${bucket}/${fileName}`;
-      fileKey = fileName;
+      fileUrl = uploadResult.url;
+      fileKey = uploadResult.key;
       fileType = fileExt.toUpperCase();
+      
+      console.log("Upload successful:", fileUrl);
     }
 
     const materi = await db.materi.create({
@@ -138,10 +129,11 @@ export async function POST(req: NextRequest) {
       },
     });
 
+    console.log("Materi created successfully:", materi.id);
     return NextResponse.json({ materi }, { status: 201 });
   } catch (error) {
     console.error("POST /api/guru/materi error:", error);
-    return NextResponse.json({ error: "Internal error" }, { status: 500 });
+    return NextResponse.json({ error: "Internal error: " + (error as Error).message }, { status: 500 });
   }
 }
 

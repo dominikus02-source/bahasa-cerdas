@@ -76,9 +76,14 @@ export async function uploadFile(
   const bucket = BUCKET_MAP[detectedType as keyof typeof BUCKET_MAP] || "documents";
 
   // Auto-create bucket if not exists
-  const { data: existingBucket } = await supabase.storage.getBucket(bucket);
-  if (!existingBucket) {
-    await supabase.storage.createBucket(bucket, { public: true }).catch(() => {});
+  try {
+    const { data: existingBucket } = await supabase.storage.getBucket(bucket);
+    if (!existingBucket) {
+      await supabase.storage.createBucket(bucket, { public: true }).catch(() => {});
+    }
+  } catch (e) {
+    // Bucket might already exist or we don't have permission to check/create
+    console.log("Bucket check/create skipped:", e);
   }
 
   const { data, error } = await supabase.storage
@@ -95,6 +100,67 @@ export async function uploadFile(
   const { data: urlData } = supabase.storage.from(bucket).getPublicUrl(data.path);
 
   return { url: urlData.publicUrl, key: data.path };
+}
+
+// Server-side upload function for API routes
+export async function uploadFileServer(
+  file: File | Buffer,
+  fileName: string,
+  bucket: string = "documents",
+  contentType?: string
+): Promise<{ url: string; key: string } | { error: string }> {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SERVICE_ROLE_KEY;
+
+  if (!supabaseUrl || !serviceKey) {
+    return { error: "Server configuration error: Missing Supabase credentials" };
+  }
+
+  // Auto-create bucket if not exists
+  try {
+    const bucketCheckRes = await fetch(`${supabaseUrl}/storage/v1/bucket/${bucket}`, {
+      headers: { Authorization: `Bearer ${serviceKey}` },
+    });
+    
+    if (!bucketCheckRes.ok) {
+      // Bucket doesn't exist, create it
+      await fetch(`${supabaseUrl}/storage/v1/bucket`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${serviceKey}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          id: bucket,
+          name: bucket,
+          public: true,
+        }),
+      }).catch(() => {});
+    }
+  } catch (e) {
+    console.log("Bucket check/create skipped:", e);
+  }
+
+  // Upload file
+  const uploadUrl = `${supabaseUrl}/storage/v1/object/${bucket}/${fileName}`;
+  const fileBuffer = file instanceof Buffer ? file : Buffer.from(await file.arrayBuffer());
+  
+  const uploadRes = await fetch(uploadUrl, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${serviceKey}`,
+      "Content-Type": contentType || "application/octet-stream",
+    },
+    body: fileBuffer,
+  });
+
+  if (!uploadRes.ok) {
+    const errText = await uploadRes.text();
+    return { error: `Upload failed: ${uploadRes.status} ${errText}` };
+  }
+
+  const publicUrl = `${supabaseUrl}/storage/v1/object/public/${bucket}/${fileName}`;
+  return { url: publicUrl, key: fileName };
 }
 
 export async function deleteFile(fileKey: string, supabaseClient?: SupabaseClient): Promise<boolean> {
