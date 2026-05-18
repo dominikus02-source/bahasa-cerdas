@@ -71,9 +71,9 @@ export default function VideoDetailPage() {
               <h1 className="text-2xl font-bold mb-2 text-gray-900">{video.title}</h1>
               <div className="flex flex-wrap items-center gap-3 text-sm text-gray-500">
                 {video.creator?.fullName && (
-                  <span className="flex items-center gap-1.5">
+                  <Link href={`/profile/${video.creator.id}`} className="flex items-center gap-1.5 hover:text-emerald-600 transition-colors">
                     <User size={14} /> {video.creator.fullName}
-                  </span>
+                  </Link>
                 )}
                 <span className="flex items-center gap-1"><Eye size={14} /> {video.views} ditonton</span>
                 {video.duration && <span className="flex items-center gap-1"><Clock size={14} /> {video.duration} menit</span>}
