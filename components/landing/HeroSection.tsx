@@ -63,9 +63,6 @@ export default function HeroSection() {
                 <Star className="w-3.5 h-3.5 text-yellow-300" />
                 <span className="text-xs text-yellow-200 font-medium">Rating 4.8</span>
               </div>
-              <span className="text-xs text-red-200">
-                <Link href="/register" className="text-white underline hover:text-yellow-300 font-medium">Daftar Gratis</Link>
-              </span>
             </div>
           </div>
 
