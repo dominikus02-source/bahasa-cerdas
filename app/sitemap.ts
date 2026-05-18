@@ -39,7 +39,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.6,
     }));
 
-    return [...staticPages, ...artikelPages, ...karyaPages];
+    const videoList = await db.video.findMany({
+      where: { isPublished: true },
+      select: { id: true, updatedAt: true },
+    });
+    const videoPages: MetadataRoute.Sitemap = videoList.map((v) => ({
+      url: `${SITE_URL}/video-belajar/${v.id}`,
+      lastModified: v.updatedAt,
+      changeFrequency: "monthly" as const,
+      priority: 0.6,
+    }));
+
+    return [...staticPages, ...artikelPages, ...karyaPages, ...videoPages];
   } catch {
     return staticPages;
   }
