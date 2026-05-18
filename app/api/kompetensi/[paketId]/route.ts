@@ -111,7 +111,18 @@ export async function GET(
           } else if (paket.type === "UKBI_SMA" || paket.type === "UKBI_LATIHAN_SMA") {
             where.tingkat = "SMA";
           } else if (paket.type === "UKBI_GURU_SIMULASI" || paket.type === "UKBI_GURU_LATIHAN") {
-            where.tingkat = "GURU";
+            // Cari dengan tingkat GURU dulu, fallback ke semua tingkat jika kosong
+            const guruFetched = await db.uKBIQuestion.findMany({
+              where: { ...where, tingkat: "GURU" },
+              take: section.count,
+              orderBy: { difficulty: "asc" },
+              select: { id: true, seksi: true, text: true, audioUrl: true, imageUrl: true, passage: true, type: true, options: true, difficulty: true, cognitive: true, domain: true, passageType: true, wordCount: true },
+            });
+            if (guruFetched.length > 0) {
+              sectionQuestions.push(...guruFetched);
+              continue;
+            }
+            // Fallback: tanpa filter tingkat
           }
           const fetched = await db.uKBIQuestion.findMany({
             where,
@@ -140,8 +151,19 @@ export async function GET(
           if (section.subKompetensi) where.subKompetensi = section.subKompetensi;
           if (paket.type === "TKA_SMP") where.tingkat = "SMP";
           if (paket.type === "TKA_SMA") where.tingkat = "SMA";
-          if (paket.type === "TKA_GURU_SIMULASI" || paket.type === "TKA_GURU_LATIHAN") where.tingkat = "GURU";
-          if (paket.type === "TKA_GURU") where.tingkat = "GURU";
+          if (paket.type === "TKA_GURU_SIMULASI" || paket.type === "TKA_GURU_LATIHAN" || paket.type === "TKA_GURU") {
+            const guruFetched = await db.tKAQuestion.findMany({
+              where: { ...where, tingkat: "GURU" },
+              take: section.count,
+              orderBy: { difficulty: "asc" },
+              select: { id: true, kompetensi: true, subKompetensi: true, text: true, passage: true, type: true, options: true, difficulty: true, weight: true },
+            });
+            if (guruFetched.length > 0) {
+              sectionQuestions.push(...guruFetched);
+              continue;
+            }
+            // Fallback: tanpa filter tingkat
+          }
           const fetched = await db.tKAQuestion.findMany({
             where,
             take: section.count,

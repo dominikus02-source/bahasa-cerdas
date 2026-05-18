@@ -276,7 +276,8 @@ export default function KompetisiPage({ params }: { params: Promise<{ paketId: s
           </div>
 
           {currentQ.passage && (
-            <div className="bg-slate-50 rounded-xl p-4 text-sm text-slate-700 mb-4 italic border-l-4 border-indigo-300 leading-relaxed">
+            <div className="bg-indigo-50 rounded-xl p-4 text-sm text-slate-700 mb-4 border-l-4 border-indigo-400 leading-relaxed">
+              <div className="text-[10px] font-bold text-indigo-500 uppercase tracking-wider mb-1">Bacaan</div>
               {currentQ.passage}
             </div>
           )}
@@ -287,12 +288,14 @@ export default function KompetisiPage({ params }: { params: Promise<{ paketId: s
             </div>
           )}
 
+          <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Soal</div>
           <p className="text-slate-800 leading-relaxed font-medium">{currentQ.text}</p>
         </div>
 
         <div className="space-y-2.5">
           {currentQ.options?.map((option: any, optIdx: number) => {
-            const optId = option.id || String(optIdx);
+            const LETTERS = ["A", "B", "C", "D", "E"];
+            const optId = option.id || LETTERS[optIdx] || String(optIdx);
             const optText = option.text || option;
             const isSelected = answers[currentQ.id] === optId;
             return (

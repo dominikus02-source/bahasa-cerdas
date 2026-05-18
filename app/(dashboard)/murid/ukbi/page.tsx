@@ -100,7 +100,8 @@ export default function UKBISimulationPage() {
   }, []);
 
   const filtered = pakets.filter(p => {
-    if (p.type === "TKA_GURU") return false;
+    // Sembunyikan paket khusus Guru
+    if (p.type.includes("_GURU")) return false;
     if (filter === "semua") return true;
     if (filter === "UKBI") return p.type.includes("UKBI");
     if (filter === "TKA") return p.type.includes("TKA");
