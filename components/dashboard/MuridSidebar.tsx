@@ -16,8 +16,14 @@ const NAV = [
   { label: "Beranda", href: "/murid/beranda", icon: <Home size={18} /> },
   { label: "Tugasku", href: "/murid/tugasku", icon: <ClipboardList size={18} /> },
   { label: "Gabung Kelas", href: "/murid/gabung-kelas", icon: <Users size={18} /> },
-  { label: "KataStra", href: "/murid/katastra", icon: <Zap size={18} /> },
-  {label: "Kuis Game", href: "/murid/game/lobby", icon: <Gamepad2 size={18} /> },
+  {
+    label: "Kuis & Game",
+    icon: <Gamepad2 size={18} />,
+    children: [
+      { label: "Kuis Battle", href: "/murid/game/lobby", icon: <Swords size={16} /> },
+      { label: "KataStra", href: "/murid/katastra", icon: <Zap size={16} /> },
+    ]
+  },
   {
     label: "Kompetensi",
     icon: <GraduationCap size={18} />,
@@ -57,6 +63,7 @@ export function MuridSidebar({ user }: Props) {
   const router = useRouter()
   const supabase = createClient()
   const [expanded, setExpanded] = useState<Record<string, boolean>>({
+    "Kuis & Game": pathname.includes("/game") || pathname.includes("/katastra"),
     Kompetensi: pathname.includes("/ukbi") || pathname.includes("/sertifikat"),
     Olimpiade: pathname.includes("/olimpiade"),
   })
