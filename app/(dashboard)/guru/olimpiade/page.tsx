@@ -1,42 +1,54 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Shield, Calendar, Users, Trophy, ArrowRight } from "lucide-react";
+import { Calendar, Users, Trophy, ArrowRight, Video, GraduationCap } from "lucide-react";
 
 export default function GuruOlimpiadePage() {
   return (
     <div>
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900">Olimpiade Bahasa Indonesia</h1>
-        <p className="mt-1 text-sm text-gray-600">Info dan kalender lomba bahasa Indonesia</p>
+        <h1 className="text-2xl font-bold text-gray-900">Kalender Kegiatan</h1>
+        <p className="mt-1 text-sm text-gray-600">Info dan kalender event, lomba, serta webinar bahasa Indonesia</p>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2">
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         <a href="/guru/olimpiade/info">
-          <Card className="p-6 hover:shadow-lg transition-shadow cursor-pointer">
-            <div className="flex items-center gap-4">
-              <div className="h-14 w-14 rounded-xl bg-orange-100 flex items-center justify-center">
+          <Card className="p-6 hover:shadow-lg transition-shadow cursor-pointer h-full">
+            <div className="flex items-start gap-4">
+              <div className="h-14 w-14 rounded-xl bg-orange-100 flex items-center justify-center shrink-0">
                 <Trophy className="h-7 w-7 text-orange-600" />
               </div>
-              <div className="flex-1">
-                <h3 className="font-bold">Info Lomba</h3>
-                <p className="text-sm text-gray-500">Daftar lomba yang tersedia</p>
+              <div>
+                <h3 className="font-bold">Lomba & Olympiade</h3>
+                <p className="text-sm text-gray-500 mt-1">Info dan kalender lomba bahasa Indonesia</p>
               </div>
-              <ArrowRight className="h-5 w-5 text-gray-400" />
             </div>
           </Card>
         </a>
 
         <a href="/guru/olimpiade/kalender">
-          <Card className="p-6 hover:shadow-lg transition-shadow cursor-pointer">
-            <div className="flex items-center gap-4">
-              <div className="h-14 w-14 rounded-xl bg-blue-100 flex items-center justify-center">
+          <Card className="p-6 hover:shadow-lg transition-shadow cursor-pointer h-full">
+            <div className="flex items-start gap-4">
+              <div className="h-14 w-14 rounded-xl bg-blue-100 flex items-center justify-center shrink-0">
                 <Calendar className="h-7 w-7 text-blue-600" />
               </div>
-              <div className="flex-1">
+              <div>
                 <h3 className="font-bold">Kalender Event</h3>
-                <p className="text-sm text-gray-500">Jadwal lomba sepanjang tahun</p>
+                <p className="text-sm text-gray-500 mt-1">Jadwal event dan lomba sepanjang tahun</p>
               </div>
-              <ArrowRight className="h-5 w-5 text-gray-400" />
+            </div>
+          </Card>
+        </a>
+
+        <a href="/guru/olimpiade/webinar">
+          <Card className="p-6 hover:shadow-lg transition-shadow cursor-pointer h-full">
+            <div className="flex items-start gap-4">
+              <div className="h-14 w-14 rounded-xl bg-purple-100 flex items-center justify-center shrink-0">
+                <Video className="h-7 w-7 text-purple-600" />
+              </div>
+              <div>
+                <h3 className="font-bold">Webinar & Seminar</h3>
+                <p className="text-sm text-gray-500 mt-1">Jadwal webinar dan seminar pendidikan</p>
+              </div>
             </div>
           </Card>
         </a>
