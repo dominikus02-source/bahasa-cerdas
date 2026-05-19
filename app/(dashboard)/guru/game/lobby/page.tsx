@@ -81,13 +81,13 @@ export default function GuruGameLobbyPage() {
             </div>
           
             {!roomCode ? (
-<button
-                    onClick={() => { setRoomCode(""); setStep("select"); }}
-                    type="button"
-                    className="px-4 py-3 border border-gray-200 text-gray-600 rounded-xl font-medium hover:bg-gray-50 transition-colors"
-                  >
-                    Baru
-                  </button>
+              <button
+                onClick={handleCreateRoom}
+                type="button"
+                className="w-full py-3 bg-gradient-to-r from-emerald-600 to-green-600 text-white rounded-xl font-medium hover:opacity-90 transition-opacity"
+              >
+                Buat Ruangan
+              </button>
             ) : (
               <div className="space-y-4">
                 <div className="p-4 bg-emerald-50 rounded-xl text-center">

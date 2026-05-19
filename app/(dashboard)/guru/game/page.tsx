@@ -67,27 +67,13 @@ const GAMES = [
 
 const SOLO_GAMES = [
   {
-    id: "dash",
-    title: "Lari Kata",
-    subtitle: "Solo - Lari Cepat",
-    desc: "Jawab 20 soal dalam 60 detik! Makin cepat + rentetan tinggi = makin banyak XP.",
-    Icon: DashIcon,
-    gradient: "from-violet-500 via-purple-600 to-violet-800",
-    href: "/murid/katastra/dash",
-    status: "LIVE",
-    badge: "SOLO",
-    badgeColor: "bg-violet-500",
-    players: "Solo",
-    time: "~3 menit",
-  },
-  {
     id: "susun",
     title: "Susun Kata",
     subtitle: "Solo - Teka-teki",
     desc: "Huruf-huruf acak! Susun menjadi kata yang benar. Uji kosakatamu!",
     Icon: SusunIcon,
     gradient: "from-emerald-500 via-emerald-600 to-teal-700",
-    href: "/murid/game/susun-kata",
+    href: "/guru/game/susun-kata",
     status: "LIVE",
     badge: "SOLO",
     badgeColor: "bg-emerald-500",
@@ -101,7 +87,7 @@ const SOLO_GAMES = [
     desc: "Deskripsi muncul, tebak namanya! Semakin cepat, semakin tinggi skor.",
     Icon: TebakIcon,
     gradient: "from-blue-500 via-blue-600 to-indigo-700",
-    href: "/murid/game/tebak-kata",
+    href: "/guru/game/tebak-kata",
     status: "LIVE",
     badge: "SOLO",
     badgeColor: "bg-blue-500",
@@ -195,7 +181,7 @@ export default function GuruGameHubPage() {
             <div className="w-2 h-2 rounded-full bg-violet-500 animate-pulse" />
             <h2 className="text-lg font-bold text-slate-800">Gim Solo (Bermain Sendiri)</h2>
           </div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid sm:grid-cols-2 gap-4">
             {soloGames.map((game) => (
               <Link
                 key={game.id}
