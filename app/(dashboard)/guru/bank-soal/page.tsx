@@ -394,28 +394,16 @@ export default function BankSoalPage() {
                           {openMenuPoolId === pool.id && (
                             <div className="absolute right-0 top-8 z-50 bg-white rounded-xl shadow-xl border py-1 min-w-[160px]">
                               <button
-                                onClick={(e) => { e.stopPropagation(); openAssessment(pool); }}
+                                onClick={(e) => { e.stopPropagation(); router.push(`/kompetisi/latihan?pool=${pool.id}`); }}
                                 className="w-full flex items-center gap-2 px-3 py-2 text-xs text-gray-700 hover:bg-emerald-50 hover:text-emerald-700"
                               >
-                                <ClipboardList size={14} /> Buat Assessment
-                              </button>
-                              <button
-                                onClick={(e) => { e.stopPropagation(); router.push(`/kompetisi/${pool.id}`); }}
-                                className="w-full flex items-center gap-2 px-3 py-2 text-xs text-gray-700 hover:bg-gray-50"
-                              >
-                                <Play size={14} /> Latihan
-                              </button>
-                              <button
-                                onClick={(e) => { e.stopPropagation(); router.push(`/guru/kuis/new?pool=${pool.id}`); }}
-                                className="w-full flex items-center gap-2 px-3 py-2 text-xs text-gray-700 hover:bg-gray-50"
-                              >
-                                <BarChart3 size={14} /> Kuis
+                                <Play size={14} /> Latihan (Solo)
                               </button>
                               <button
                                 onClick={(e) => { e.stopPropagation(); router.push(`/guru/game/lobby?pool=${pool.id}`); }}
                                 className="w-full flex items-center gap-2 px-3 py-2 text-xs text-gray-700 hover:bg-gray-50"
                               >
-                                <Gamepad2 size={14} /> Pertandingkan
+                                <Gamepad2 size={14} /> Pertandingkan (Multi)
                               </button>
                             </div>
                           )}
