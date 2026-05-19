@@ -2,6 +2,12 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 
+const UKBI_TYPES = ["UKBI", "UKBI_SIMULASI", "UKBI_LATIHAN", "UKBI_SD", "UKBI_LATIHAN_SD", "UKBI_SMP", "UKBI_LATIHAN_SMP", "UKBI_SMA", "UKBI_LATIHAN_SMA", "UKBI_GURU_SIMULASI", "UKBI_GURU_LATIHAN"];
+
+function isUKBI(type: string) {
+  return UKBI_TYPES.includes(type);
+}
+
 export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ paketId: string }> }
@@ -52,68 +58,37 @@ export async function GET(
       }, { status: 400 });
     }
 
-    const sections = paket.sectionsData as any[] || paket.sections as any[] || [];
+    const sections = (paket.sectionsData as any[]) || (paket.sections as any[]) || [];
     const questions: any[] = [];
 
     for (let i = 0; i < sections.length; i++) {
       const section = sections[i];
-      const sectionQuestions: any[] = [];
+      let sectionQuestions: any[] = [];
 
       if (section.questionIds && section.questionIds.length > 0) {
-        if (paket.type === "UKBI" || paket.type === "UKBI_SIMULASI" || paket.type === "UKBI_LATIHAN" || paket.type === "UKBI_SD" || paket.type === "UKBI_LATIHAN_SD" || paket.type === "UKBI_SMP" || paket.type === "UKBI_LATIHAN_SMP" || paket.type === "UKBI_SMA" || paket.type === "UKBI_LATIHAN_SMA" || paket.type === "UKBI_GURU_SIMULASI" || paket.type === "UKBI_GURU_LATIHAN") {
+        if (isUKBI(paket.type)) {
           const fetched = await db.uKBIQuestion.findMany({
-            where: {
-              id: { in: section.questionIds },
-              isActive: true,
-            },
-            select: {
-              id: true,
-              seksi: true,
-              text: true,
-              audioUrl: true,
-              imageUrl: true,
-              passage: true,
-              type: true,
-              options: true,
-              difficulty: true,
-              cognitive: true,
-              domain: true,
-              passageType: true,
-              wordCount: true,
-            },
+            where: { id: { in: section.questionIds }, isActive: true },
+            select: { id: true, seksi: true, text: true, audioUrl: true, imageUrl: true, passage: true, type: true, options: true, difficulty: true, cognitive: true, domain: true, passageType: true, wordCount: true },
           });
           sectionQuestions.push(...fetched);
         } else {
           const fetched = await db.tKAQuestion.findMany({
-            where: {
-              id: { in: section.questionIds },
-              isActive: true,
-            },
-            select: {
-              id: true,
-              kompetensi: true,
-              subKompetensi: true,
-              text: true,
-              passage: true,
-              type: true,
-              options: true,
-              difficulty: true,
-              weight: true,
-            },
+            where: { id: { in: section.questionIds }, isActive: true },
+            select: { id: true, kompetensi: true, subKompetensi: true, text: true, passage: true, type: true, options: true, difficulty: true, weight: true },
           });
           sectionQuestions.push(...fetched);
         }
-      } else if (section.count && section.count > 0) {
-        if (paket.type === "UKBI" || paket.type === "UKBI_SIMULASI" || paket.type === "UKBI_LATIHAN" || paket.type === "UKBI_SD" || paket.type === "UKBI_SMP" || paket.type === "UKBI_SMA" || paket.type === "UKBI_LATIHAN_SD" || paket.type === "UKBI_LATIHAN_SMP" || paket.type === "UKBI_LATIHAN_SMA" || paket.type === "UKBI_GURU_SIMULASI" || paket.type === "UKBI_GURU_LATIHAN") {
-          const where: any = { seksi: section.seksi as any, isActive: true };
-          if (paket.type === "UKBI_SD" || paket.type === "UKBI_LATIHAN_SD") {
-            where.tingkat = "SD";
-          } else if (paket.type === "UKBI_SMP" || paket.type === "UKBI_LATIHAN_SMP") {
-            where.tingkat = "SMP";
-          } else if (paket.type === "UKBI_SMA" || paket.type === "UKBI_LATIHAN_SMA") {
-            where.tingkat = "SMA";
-          } else if (paket.type === "UKBI_GURU_SIMULASI" || paket.type === "UKBI_GURU_LATIHAN") {
-            // Cari dengan tingkat GURU dulu, fallback ke semua tingkat jika kosong
+      }
+
+      if (sectionQuestions.length === 0 && section.count && section.count > 0) {
+        if (isUKBI(paket.type)) {
+          const where: any = { isActive: true };
+          if (section.seksi) where.seksi = section.seksi;
+          if (paket.type.includes("SD")) where.tingkat = "SD";
+          else if (paket.type.includes("SMP")) where.tingkat = "SMP";
+          else if (paket.type.includes("SMA")) where.tingkat = "SMA";
+          else if (paket.type.includes("GURU")) {
             const guruFetched = await db.uKBIQuestion.findMany({
               where: { ...where, tingkat: "GURU" },
               take: section.count,
@@ -122,39 +97,32 @@ export async function GET(
             });
             if (guruFetched.length > 0) {
               sectionQuestions.push(...guruFetched);
-              continue;
+            } else {
+              const fallback = await db.uKBIQuestion.findMany({
+                where,
+                take: section.count,
+                orderBy: { difficulty: "asc" },
+                select: { id: true, seksi: true, text: true, audioUrl: true, imageUrl: true, passage: true, type: true, options: true, difficulty: true, cognitive: true, domain: true, passageType: true, wordCount: true },
+              });
+              sectionQuestions.push(...fallback);
             }
-            // Fallback: tanpa filter tingkat
+          } else {
+            const fetched = await db.uKBIQuestion.findMany({
+              where,
+              take: section.count,
+              orderBy: { difficulty: "asc" },
+              select: { id: true, seksi: true, text: true, audioUrl: true, imageUrl: true, passage: true, type: true, options: true, difficulty: true, cognitive: true, domain: true, passageType: true, wordCount: true },
+            });
+            sectionQuestions.push(...fetched);
           }
-          const fetched = await db.uKBIQuestion.findMany({
-            where,
-            take: section.count,
-            orderBy: { difficulty: "asc" },
-            select: {
-              id: true,
-              seksi: true,
-              text: true,
-              audioUrl: true,
-              imageUrl: true,
-              passage: true,
-              type: true,
-              options: true,
-              difficulty: true,
-              cognitive: true,
-              domain: true,
-              passageType: true,
-              wordCount: true,
-            },
-          });
-          sectionQuestions.push(...fetched);
         } else {
           const where: any = { isActive: true };
-          if (section.kompetensi) where.kompetensi = section.kompetensi as any;
+          if (section.kompetensi) where.kompetensi = section.kompetensi;
           if (section.subKompetensi) where.subKompetensi = section.subKompetensi;
-          if (paket.type === "TKA_SD") where.tingkat = "SD";
-          if (paket.type === "TKA_SMP") where.tingkat = "SMP";
-          if (paket.type === "TKA_SMA") where.tingkat = "SMA";
-          if (paket.type === "TKA_GURU_SIMULASI" || paket.type === "TKA_GURU_LATIHAN" || paket.type === "TKA_GURU") {
+          if (paket.type.includes("SD")) where.tingkat = "SD";
+          else if (paket.type.includes("SMP")) where.tingkat = "SMP";
+          else if (paket.type.includes("SMA")) where.tingkat = "SMA";
+          else if (paket.type.includes("GURU")) {
             const guruFetched = await db.tKAQuestion.findMany({
               where: { ...where, tingkat: "GURU" },
               take: section.count,
@@ -163,27 +131,44 @@ export async function GET(
             });
             if (guruFetched.length > 0) {
               sectionQuestions.push(...guruFetched);
-              continue;
+            } else {
+              const fallback = await db.tKAQuestion.findMany({
+                where,
+                take: section.count,
+                orderBy: { difficulty: "asc" },
+                select: { id: true, kompetensi: true, subKompetensi: true, text: true, passage: true, type: true, options: true, difficulty: true, weight: true },
+              });
+              sectionQuestions.push(...fallback);
             }
-            // Fallback: tanpa filter tingkat
+          } else {
+            const fetched = await db.tKAQuestion.findMany({
+              where,
+              take: section.count,
+              orderBy: { difficulty: "asc" },
+              select: { id: true, kompetensi: true, subKompetensi: true, text: true, passage: true, type: true, options: true, difficulty: true, weight: true },
+            });
+            sectionQuestions.push(...fetched);
           }
-          const fetched = await db.tKAQuestion.findMany({
-            where,
+        }
+      }
+
+      if (sectionQuestions.length === 0 && section.count && section.count > 0) {
+        if (isUKBI(paket.type)) {
+          const fallback = await db.uKBIQuestion.findMany({
+            where: { isActive: true },
             take: section.count,
             orderBy: { difficulty: "asc" },
-            select: {
-              id: true,
-              kompetensi: true,
-              subKompetensi: true,
-              text: true,
-              passage: true,
-              type: true,
-              options: true,
-              difficulty: true,
-              weight: true,
-            },
+            select: { id: true, seksi: true, text: true, audioUrl: true, imageUrl: true, passage: true, type: true, options: true, difficulty: true, cognitive: true, domain: true, passageType: true, wordCount: true },
           });
-          sectionQuestions.push(...fetched);
+          sectionQuestions.push(...fallback);
+        } else {
+          const fallback = await db.tKAQuestion.findMany({
+            where: { isActive: true },
+            take: section.count,
+            orderBy: { difficulty: "asc" },
+            select: { id: true, kompetensi: true, subKompetensi: true, text: true, passage: true, type: true, options: true, difficulty: true, weight: true },
+          });
+          sectionQuestions.push(...fallback);
         }
       }
 
@@ -194,6 +179,15 @@ export async function GET(
         timeLimit: section.timeLimit,
         questions: sectionQuestions,
       });
+    }
+
+    const totalQuestions = questions.reduce((sum, s) => sum + s.questions.length, 0);
+    if (totalQuestions === 0) {
+      return NextResponse.json({
+        error: "Tidak ada soal tersedia",
+        message: `Paket "${paket.title}" belum memiliki soal. Total sections: ${sections.length}`,
+        debug: { sections: sections.map(s => ({ name: s.name, count: s.count, seksi: s.seksi })) },
+      }, { status: 404 });
     }
 
     const answers = session.answers as Record<string, string>;
@@ -221,8 +215,8 @@ export async function GET(
       },
       questions,
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error("GET /api/kompetensi/[paketId] error:", error);
-    return NextResponse.json({ error: "Internal error" }, { status: 500 });
+    return NextResponse.json({ error: "Internal error", message: error?.message }, { status: 500 });
   }
 }
