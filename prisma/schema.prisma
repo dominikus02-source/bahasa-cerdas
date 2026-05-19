@@ -7,6 +7,1053 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model GameRoom {
+  id              String         @id @default(cuid())
+  code            String         @unique
+  name            String
+  gameType        GameType       @default(KUIS_BATTLE)
+  hostId          String
+  status          GameRoomStatus @default(WAITING)
+  category        String?
+  difficulty      Difficulty     @default(MEDIUM)
+  questionIds     String[]
+  questionCount   Int            @default(10)
+  timePerQuestion Int            @default(20)
+  currentQuestion Int            @default(0)
+  createdAt       DateTime       @default(now())
+  startedAt       DateTime?
+  endedAt         DateTime?
+  results         GameResult[]
+  sessions        GameSession[]
+
+  @@index([code])
+  @@index([hostId])
+}
+
+model GameQuestion {
+  id            String           @id @default(cuid())
+  gameRoomId    String?
+  text          String
+  audioUrl      String?
+  imageUrl      String?
+  passage       String?
+  type          GameQuestionType @default(PILIHAN_GANDA)
+  options       Json
+  correctAnswer String
+  explanation   String?
+  difficulty    Difficulty       @default(MEDIUM)
+  orderIndex    Int              @default(0)
+  uploaderId    String?
+  createdAt     DateTime         @default(now())
+  uploader      User?            @relation(fields: [uploaderId], references: [id])
+
+  @@index([gameRoomId])
+}
+
+model GameSession {
+  id          String      @id @default(cuid())
+  roomId      String
+  userId      String
+  playerName  String
+  avatarUrl   String?
+  score       Int         @default(0)
+  correct     Int         @default(0)
+  wrong       Int         @default(0)
+  streak      Int         @default(0)
+  maxStreak   Int         @default(0)
+  answerTimes Int[]       @default([])
+  joinedAt    DateTime    @default(now())
+  finishedAt  DateTime?
+  result      GameResult?
+  room        GameRoom    @relation(fields: [roomId], references: [id])
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([roomId, userId])
+  @@index([userId])
+}
+
+model GameResult {
+  id         String      @id @default(cuid())
+  roomId     String
+  userId     String
+  sessionId  String      @unique
+  finalScore Int         @default(0)
+  rank       Int?
+  correct    Int
+  wrong      Int
+  maxStreak  Int
+  avgTime    Float
+  xpEarned   Int         @default(0)
+  createdAt  DateTime    @default(now())
+  room       GameRoom    @relation(fields: [roomId], references: [id])
+  session    GameSession @relation(fields: [sessionId], references: [id])
+  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([roomId])
+  @@index([userId])
+}
+
+model Community {
+  id          String            @id @default(cuid())
+  name        String
+  description String?
+  type        CommunityType     @default(MGMP)
+  region      String?
+  province    String?
+  city        String?
+  school      String?
+  avatarUrl   String?
+  bannerUrl   String?
+  isPublic    Boolean           @default(true)
+  isVerified  Boolean           @default(false)
+  memberCount Int               @default(0)
+  postCount   Int               @default(0)
+  creatorId   String?
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+  attachments Json?
+  reviewNote  String?
+  reviewedAt  DateTime?
+  reviewedBy  String?
+  status      CommunityStatus   @default(PENDING)
+  creator     User?             @relation(fields: [creatorId], references: [id])
+  members     CommunityMember[]
+  posts       CommunityPost[]
+
+  @@index([type])
+  @@index([isPublic])
+  @@index([status])
+}
+
+model CommunityMember {
+  id          String    @id @default(cuid())
+  communityId String
+  userId      String
+  role        String    @default("member")
+  joinedAt    DateTime  @default(now())
+  community   Community @relation(fields: [communityId], references: [id], onDelete: Cascade)
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([communityId, userId])
+  @@index([userId])
+}
+
+model CommunityPost {
+  id            String    @id @default(cuid())
+  communityId   String
+  userId        String
+  title         String?
+  content       String
+  fileUrl       String?
+  likesCount    Int       @default(0)
+  commentsCount Int       @default(0)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  community     Community @relation(fields: [communityId], references: [id], onDelete: Cascade)
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([communityId])
+  @@index([userId])
+}
+
+model User {
+  id                 String                  @id @default(cuid())
+  supabaseId         String                  @unique
+  email              String                  @unique
+  fullName           String
+  avatar             String?
+  role               Role                    @default(MURID)
+  isFounder          Boolean                 @default(false)
+  premiumPlan        PremiumPlan             @default(FREE)
+  premiumUntil       DateTime?
+  isPremium          Boolean                 @default(false)
+  midtransCustomerId String?
+  xp                 Int                     @default(0)
+  level              Int                     @default(1)
+  streak             Int                     @default(0)
+  lastActiveAt       DateTime?
+  league             LeagueType              @default(BRONZE)
+  saldo              Int                     @default(0)
+  totalEarned        Int                     @default(0)
+  createdAt          DateTime                @default(now())
+  updatedAt          DateTime                @updatedAt
+  aiUsage            AIUsage[]
+  artikel            Artikel[]
+  uploadedBankSoals  BankSoal[]
+  certificates       Certificate[]
+  createdCommunities Community[]
+  komunitas          CommunityMember[]
+  communityPosts     CommunityPost[]
+  playlists          CoursePlaylist[]
+  gameQuestions      GameQuestion[]
+  gameResults        GameResult[]
+  gameSessions       GameSession[]
+  generatedRPPs      GeneratedRPP[]
+  groups             Group[]
+  groupMemberships   GroupMember[]
+  groupQuizResults   GroupQuizResult[]
+  karya              Karya[]
+  koleksiKata        KoleksiKata[]
+  competencyCerts    KompetensiCertificate[]
+  loker              Loker[]
+  lombaPeserta       LombaPeserta[]
+  uploadedMateris    Materi[]
+  notifications      Notifikasi[]
+  competencyPackets  PaketKompetensi[]
+  purchases          Pembelian[]
+  profile            Profile?
+  competencyResults  ProgresKompetensi[]
+  purchasesHistory   PurchaseHistory[]
+  quizzes            Quiz[]
+  quizSessions       QuizSession[]
+  quizSubmissions    QuizSubmission[]
+  uploadedRPPs       RPP[]
+  sellerEarnings     SellerEarning[]
+  soals              Soal[]
+  soalSets           SoalSet[]
+  tkaQuestions       TKAQuestion[]
+  testAnswers        TestAnswer[]
+  testSessions       TestSession[]
+  transaksi          Transaksi[]
+  ukbiQuestions      UKBIQuestion[]
+  videos             Video[]
+  withdrawals        Withdrawal[]
+}
+
+model Profile {
+  id         String   @id @default(cuid())
+  userId     String   @unique
+  bio        String?
+  nip        String?
+  nuptk      String?
+  nisn       String?
+  school     String?
+  subject    String?
+  grade      String?
+  className  String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  bank       String?
+  bankHolder String?
+  bankNumber String?
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model UKBIQuestion {
+  id            String             @id @default(cuid())
+  seksi         UKBISeksi
+  text          String
+  audioUrl      String?
+  imageUrl      String?
+  passage       String?
+  type          String             @default("PILIHAN_GANDA")
+  options       Json
+  correctAnswer String
+  explanation   String?
+  difficulty    Difficulty         @default(MEDIUM)
+  cognitive     CognitiveDimension @default(PENERAPAN)
+  domain        KommunikasDomain   @default(SOSIAL)
+  passageType   String?
+  wordCount     Int?
+  keywords      String[]
+  isActive      Boolean            @default(true)
+  isVerified    Boolean            @default(false)
+  uploaderId    String?
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime           @updatedAt
+  tingkat       Tingkat            @default(UMUM)
+  uploader      User?              @relation(fields: [uploaderId], references: [id])
+
+  @@index([seksi, isActive])
+  @@index([difficulty])
+  @@index([isVerified])
+  @@index([tingkat])
+}
+
+model TKAQuestion {
+  id            String        @id @default(cuid())
+  kompetensi    TKAKompetensi
+  subKompetensi String?
+  text          String
+  passage       String?
+  type          String        @default("PILIHAN_GANDA")
+  options       Json
+  correctAnswer String
+  explanation   String?
+  difficulty    Difficulty    @default(MEDIUM)
+  weight        Float         @default(1.0)
+  year          Int?
+  source        String?
+  isActive      Boolean       @default(true)
+  isVerified    Boolean       @default(false)
+  uploaderId    String?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  tingkat       Tingkat       @default(UMUM)
+  uploader      User?         @relation(fields: [uploaderId], references: [id])
+
+  @@index([kompetensi, isActive])
+  @@index([difficulty])
+  @@index([isVerified])
+  @@index([tingkat])
+}
+
+model PaketKompetensi {
+  id             String                  @id @default(cuid())
+  title          String
+  description    String?
+  type           KompetensiType
+  mode           TestMode                @default(SIMULASI)
+  duration       Int
+  passingScore   Int                     @default(0)
+  passingGrade   String                  @default("D")
+  sections       Json
+  totalQuestions Int                     @default(0)
+  isActive       Boolean                 @default(true)
+  isPremium      Boolean                 @default(false)
+  thumbnailUrl   String?
+  attemptLimit   Int                     @default(-1)
+  sectionsData   Json?
+  questionPool   Json?
+  creatorId      String?
+  createdAt      DateTime                @default(now())
+  updatedAt      DateTime                @updatedAt
+  certificates   KompetensiCertificate[]
+  creator        User?                   @relation(fields: [creatorId], references: [id])
+  results        ProgresKompetensi[]
+  testSessions   TestSession[]
+
+  @@index([type, isActive])
+}
+
+model ProgresKompetensi {
+  id            String          @id @default(cuid())
+  userId        String
+  paketId       String
+  attemptNumber Int             @default(1)
+  status        TestStatus      @default(NOT_STARTED)
+  totalScore    Int?
+  rawScore      Int?
+  maxScore      Int?
+  percentage    Float?
+  predikat      String?
+  predikatLama  String?
+  sectionScores Json?
+  seksiScores   Json?
+  answerDetails Json?
+  startedAt     DateTime        @default(now())
+  finishedAt    DateTime?
+  timeSpent     Int?
+  paket         PaketKompetensi @relation(fields: [paketId], references: [id])
+  user          User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, paketId, attemptNumber])
+  @@index([userId])
+}
+
+model KompetensiCertificate {
+  id            String          @id @default(cuid())
+  userId        String
+  paketId       String
+  progresId     String
+  score         Int
+  predikat      String
+  percentage    Float
+  qrCode        String?
+  certificateNo String          @unique
+  pdfUrl        String?
+  issuedAt      DateTime        @default(now())
+  expiresAt     DateTime?
+  paket         PaketKompetensi @relation(fields: [paketId], references: [id])
+  user          User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model TestSession {
+  id              String          @id @default(cuid())
+  userId          String
+  paketId         String
+  status          TestStatus      @default(NOT_STARTED)
+  currentSection  Int             @default(0)
+  currentQuestion Int             @default(0)
+  answers         Json            @default("{}")
+  flagged         Int[]           @default([])
+  startedAt       DateTime?
+  finishedAt      DateTime?
+  expiresAt       DateTime?
+  createdAt       DateTime        @default(now())
+  paket           PaketKompetensi @relation(fields: [paketId], references: [id])
+  user            User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, paketId])
+  @@index([userId])
+}
+
+model TestAnswer {
+  id           String   @id @default(cuid())
+  userId       String
+  sessionId    String?
+  paketId      String?
+  questionId   String?
+  questionType String?
+  answer       String?
+  isCorrect    Boolean?
+  score        Float    @default(0)
+  timeSpent    Int      @default(0)
+  seksi        String?
+  sectionIndex Int      @default(0)
+  createdAt    DateTime @default(now())
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, paketId])
+}
+
+model Materi {
+  id          String    @id @default(cuid())
+  title       String
+  description String?
+  content     String
+  fileUrl     String?
+  fileKey     String?
+  fileType    FileType?
+  grade       String?
+  semester    Int?
+  tahunAjaran String?
+  tema        String?
+  subtema     String?
+  isPublished Boolean   @default(false)
+  isPremium   Boolean   @default(false)
+  price       Int       @default(0)
+  downloads   Int       @default(0)
+  subject     String?
+  uploaderId  String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  uploader    User      @relation(fields: [uploaderId], references: [id], onDelete: Cascade)
+
+  @@index([uploaderId])
+  @@index([isPublished])
+}
+
+model BankSoal {
+  id          String     @id @default(cuid())
+  title       String
+  description String?
+  type        String     @default("PILIHAN_GANDA")
+  difficulty  Difficulty @default(MEDIUM)
+  kelas       String
+  semester    Int?
+  tahunAjaran String?
+  KD          String?
+  isHOTS      Boolean    @default(false)
+  jumlahSoal  Int        @default(10)
+  fileUrl     String
+  fileKey     String?
+  fileType    FileType   @default(PDF)
+  isPublished Boolean    @default(false)
+  isPremium   Boolean    @default(false)
+  price       Int        @default(0)
+  downloads   Int        @default(0)
+  subject     String     @default("Bahasa Indonesia")
+  uploaderId  String
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  uploader    User       @relation(fields: [uploaderId], references: [id], onDelete: Cascade)
+  soals       Soal[]
+
+  @@index([uploaderId])
+  @@index([isPublished])
+}
+
+model Soal {
+  id            String    @id @default(cuid())
+  text          String
+  type          String    @default("PILIHAN_GANDA")
+  difficulty    String    @default("MEDIUM")
+  options       String[]
+  correctAnswer String
+  explanation   String?
+  isHOTS        Boolean   @default(false)
+  kelas         String
+  topik         String?
+  KD            String?
+  subject       String    @default("Bahasa Indonesia")
+  source        String    @default("MANUAL")
+  bankSoalId    String?
+  soalSetId     String?
+  uploaderId    String
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  bankSoal      BankSoal? @relation(fields: [bankSoalId], references: [id])
+  soalSet       SoalSet?  @relation(fields: [soalSetId], references: [id])
+  uploader      User      @relation(fields: [uploaderId], references: [id], onDelete: Cascade)
+
+  @@index([uploaderId])
+  @@index([kelas])
+  @@index([topik])
+  @@index([source])
+  @@index([soalSetId])
+}
+
+model SoalSet {
+  id           String   @id @default(cuid())
+  title        String
+  description  String?
+  coverColor   String   @default("from-violet-500 to-purple-600")
+  coverEmoji   String?
+  kelas        String
+  topik        String?
+  subject      String   @default("Bahasa Indonesia")
+  maxQuestions Int      @default(50)
+  isPublic     Boolean  @default(false)
+  creatorId    String
+  useCount     Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  questions    Soal[]
+  creator      User     @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+
+  @@index([creatorId])
+  @@index([kelas])
+  @@index([topik])
+  @@index([isPublic])
+}
+
+model RPP {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  kelas       String
+  semester    Int
+  tahunAjaran String
+  fase        String?
+  week        Int?
+  theme       String?
+  subTheme    String?
+  fileUrl     String
+  fileKey     String?
+  fileType    FileType @default(PDF)
+  isPublished Boolean  @default(false)
+  isPremium   Boolean  @default(false)
+  price       Int      @default(0)
+  downloads   Int      @default(0)
+  subject     String   @default("Bahasa Indonesia")
+  uploaderId  String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  uploader    User     @relation(fields: [uploaderId], references: [id], onDelete: Cascade)
+
+  @@index([uploaderId])
+  @@index([isPublished])
+}
+
+model GeneratedRPP {
+  id          String   @id @default(cuid())
+  type        String   @default("RPP")
+  title       String
+  description String?
+  kelas       String
+  semester    String   @default("1 (Ganjil)")
+  tahunAjaran String   @default("2025/2026")
+  subject     String   @default("Bahasa Indonesia")
+  curriculum  String   @default("MERDEKA")
+  schoolInfo  Json?
+  kds         String[]
+  methods     String[]
+  content     Json
+  isPublished Boolean  @default(false)
+  uploaderId  String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  uploader    User     @relation(fields: [uploaderId], references: [id], onDelete: Cascade)
+
+  @@index([uploaderId])
+  @@index([type])
+}
+
+model Video {
+  id           String          @id @default(cuid())
+  title        String
+  description  String?
+  videoUrl     String
+  thumbnailUrl String?
+  duration     Int?
+  source       VideoSource     @default(YOUTUBE)
+  category     VideoCategory   @default(PEMBELAJARAN)
+  grade        String?
+  tags         String[]
+  isPublished  Boolean         @default(false)
+  isPremium    Boolean         @default(false)
+  price        Int             @default(0)
+  views        Int             @default(0)
+  playlistId   String?
+  creatorId    String?
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+  creator      User?           @relation(fields: [creatorId], references: [id])
+  playlist     CoursePlaylist? @relation(fields: [playlistId], references: [id])
+
+  @@index([isPublished])
+  @@index([category])
+}
+
+model CoursePlaylist {
+  id           String        @id @default(cuid())
+  title        String
+  description  String?
+  thumbnailUrl String?
+  category     VideoCategory @default(PEMBELAJARAN)
+  grade        String?
+  isPublished  Boolean       @default(false)
+  creatorId    String?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  creator      User?         @relation(fields: [creatorId], references: [id])
+  videos       Video[]
+
+  @@index([isPublished])
+}
+
+model Karya {
+  id          String      @id @default(cuid())
+  title       String
+  description String
+  type        KaryaType
+  fileUrl     String
+  fileKey     String?
+  fileType    FileType?
+  price       Int         @default(0)
+  isPublished Boolean     @default(false)
+  isPremium   Boolean     @default(false)
+  downloads   Int         @default(0)
+  grade       String?
+  subject     String?
+  week        Int?
+  sellerId    String
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  images      String      @default("[]")
+  seller      User        @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+  purchases   Pembelian[]
+
+  @@index([sellerId])
+  @@index([isPublished])
+}
+
+model Pembelian {
+  id                    String      @id @default(cuid())
+  karyaId               String
+  buyerId               String
+  amount                Int
+  platformFee           Int
+  sellerEarning         Int
+  status                OrderStatus @default(PENDING)
+  midtransOrderId       String?     @unique
+  midtransPaymentType   String?
+  midtransStatus        String?
+  midtransPaymentAmount Int?
+  midtransPaidAt        DateTime?
+  createdAt             DateTime    @default(now())
+  updatedAt             DateTime    @updatedAt
+  buyer                 User        @relation(fields: [buyerId], references: [id], onDelete: Cascade)
+  karya                 Karya       @relation(fields: [karyaId], references: [id])
+}
+
+model PurchaseHistory {
+  id        String   @id @default(cuid())
+  buyerId   String
+  itemType  String
+  itemId    String
+  itemTitle String
+  fileUrl   String
+  fileKey   String?
+  price     Int
+  soldAt    DateTime @default(now())
+  buyer     User     @relation(fields: [buyerId], references: [id], onDelete: Cascade)
+}
+
+model SellerEarning {
+  id          String   @id @default(cuid())
+  sellerId    String
+  itemType    String
+  itemId      String
+  itemTitle   String
+  grossAmount Int
+  platformFee Int
+  netAmount   Int
+  status      String   @default("PENDING")
+  soldAt      DateTime @default(now())
+  seller      User     @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+
+  @@index([sellerId])
+}
+
+model Withdrawal {
+  id            String         @id @default(cuid())
+  userId        String
+  amount        Int
+  bankName      String
+  accountNumber String
+  accountHolder String
+  status        WithdrawStatus @default(PENDING)
+  notes         String?
+  processedAt   DateTime?
+  transferProof String?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([status])
+}
+
+model QuizSession {
+  id         String    @id @default(cuid())
+  userId     String
+  quizId     String?
+  title      String
+  mode       String    @default("practice")
+  answers    Json      @default("[]")
+  score      Int?
+  status     String    @default("IN_PROGRESS")
+  startedAt  DateTime  @default(now())
+  finishedAt DateTime?
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model Certificate {
+  id       String   @id @default(cuid())
+  userId   String
+  title    String
+  score    Int
+  pdfUrl   String?
+  issuedAt DateTime @default(now())
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model KoleksiKata {
+  id        String        @id @default(cuid())
+  userId    String
+  kata      String
+  definisi  String?
+  contoh    String?
+  rarity    KoleksiRarity @default(COMMON)
+  createdAt DateTime      @default(now())
+  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Lomba {
+  id                   String         @id @default(cuid())
+  title                String
+  description          String
+  type                 String
+  level                String
+  date                 DateTime
+  registrationDeadline DateTime?
+  prize                String?
+  rules                String?
+  posterUrl            String?
+  location             String?
+  contact              String?
+  registrationUrl      String?
+  status               LombaStatus    @default(UPCOMING)
+  createdAt            DateTime       @default(now())
+  updatedAt            DateTime       @updatedAt
+  peserta              LombaPeserta[]
+}
+
+model LombaPeserta {
+  id        String   @id @default(cuid())
+  lombaId   String
+  userId    String
+  score     Int?
+  rank      Int?
+  status    String   @default("registered")
+  createdAt DateTime @default(now())
+  lomba     Lomba    @relation(fields: [lombaId], references: [id])
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([lombaId, userId])
+}
+
+model Loker {
+  id             String      @id @default(cuid())
+  title          String
+  sekolah        String
+  lokasi         String
+  description    String
+  requirements   String?
+  salary         String?
+  type           String?     @default("FULL_TIME")
+  contact        String?
+  applicationUrl String?
+  status         LokerStatus @default(OPEN)
+  isApproved     Boolean     @default(false)
+  authorId       String?
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+  author         User?       @relation(fields: [authorId], references: [id])
+
+  @@index([status, isApproved])
+  @@index([createdAt])
+}
+
+model AIUsage {
+  id        String   @id @default(cuid())
+  userId    String
+  feature   String
+  tokens    Int      @default(0)
+  costUSD   Float    @default(0)
+  bulan     String
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, feature, bulan])
+}
+
+model Transaksi {
+  id         String   @id @default(cuid())
+  userId     String
+  type       String
+  amount     Int
+  status     String   @default("PENDING")
+  reference  String?
+  orderId    String?
+  midtransId String?
+  metadata   Json?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Notifikasi {
+  id        String   @id @default(cuid())
+  userId    String
+  title     String
+  body      String
+  type      String
+  isRead    Boolean  @default(false)
+  data      Json?
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Group {
+  id              String           @id @default(cuid())
+  name            String
+  description     String?
+  grade           String
+  tahunAjaran     String?
+  accessCode      String           @unique
+  isActive        Boolean          @default(true)
+  teacherId       String
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  teacher         User             @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+  members         GroupMember[]
+  quizzes         GroupQuiz[]
+  quizAssignments QuizAssignment[]
+
+  @@index([teacherId])
+  @@index([accessCode])
+}
+
+model GroupMember {
+  id       String   @id @default(cuid())
+  groupId  String
+  userId   String
+  joinedAt DateTime @default(now())
+  group    Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([groupId, userId])
+  @@index([userId])
+  @@index([groupId])
+}
+
+model GroupQuiz {
+  id         String            @id @default(cuid())
+  groupId    String
+  quizId     String
+  title      String
+  assignedAt DateTime          @default(now())
+  dueDate    DateTime?
+  group      Group             @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  results    GroupQuizResult[]
+
+  @@index([groupId])
+}
+
+model GroupQuizResult {
+  id          String    @id @default(cuid())
+  groupQuizId String
+  userId      String
+  score       Int?
+  status      String    @default("ASSIGNED")
+  startedAt   DateTime?
+  finishedAt  DateTime?
+  groupQuiz   GroupQuiz @relation(fields: [groupQuizId], references: [id], onDelete: Cascade)
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([groupQuizId, userId])
+  @@index([userId])
+}
+
+model Artikel {
+  id          String   @id @default(cuid())
+  title       String
+  slug        String   @unique
+  content     String
+  excerpt     String?
+  coverImage  String?
+  tags        String[]
+  isPublished Boolean  @default(false)
+  readCount   Int      @default(0)
+  authorId    String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  author      User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  @@index([isPublished, createdAt])
+  @@index([authorId])
+}
+
+model KamusEntry {
+  id          String   @id @default(cuid())
+  kata        String
+  slug        String   @unique
+  jenisKata   String?
+  definisi    String
+  contoh      String?
+  sinonim     String?
+  antonim     String?
+  serapanDari String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([kata])
+  @@index([slug])
+}
+
+model Quiz {
+  id                String           @id @default(cuid())
+  title             String
+  description       String?
+  type              QuizType         @default(LATIHAN)
+  status            QuizStatus       @default(DRAFT)
+  timeLimit         Int?
+  shuffleQuestions  Boolean          @default(false)
+  shuffleOptions    Boolean          @default(false)
+  showResults       Boolean          @default(true)
+  showCorrectAnswer Boolean          @default(true)
+  passingScore      Int?
+  maxAttempts       Int              @default(1)
+  randomizeFromPool Boolean          @default(false)
+  poolSize          Int?
+  kelas             String
+  subject           String           @default("Bahasa Indonesia")
+  topik             String?
+  KD                String?
+  difficulty        Difficulty       @default(MEDIUM)
+  thumbnailUrl      String?
+  creatorId         String
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+  creator           User             @relation(fields: [creatorId], references: [id])
+  assignments       QuizAssignment[]
+  questions         QuizQuestion[]
+
+  @@index([creatorId])
+  @@index([kelas])
+  @@index([status])
+  @@index([type])
+}
+
+model QuizQuestion {
+  id                String       @id @default(cuid())
+  quizId            String
+  sourceType        String
+  sourceId          String
+  customText        String?
+  customType        String?
+  customOptions     Json?
+  customAnswer      String?
+  customExplanation String?
+  orderIndex        Int          @default(0)
+  points            Int          @default(1)
+  answers           QuizAnswer[]
+  quiz              Quiz         @relation(fields: [quizId], references: [id], onDelete: Cascade)
+
+  @@index([quizId])
+  @@index([sourceType, sourceId])
+}
+
+model QuizAssignment {
+  id          String           @id @default(cuid())
+  quizId      String
+  groupId     String
+  assignedAt  DateTime         @default(now())
+  dueDate     DateTime?
+  isPublished Boolean          @default(false)
+  notes       String?
+  group       Group            @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  quiz        Quiz             @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  submissions QuizSubmission[]
+
+  @@unique([quizId, groupId])
+  @@index([groupId])
+}
+
+model QuizSubmission {
+  id            String           @id @default(cuid())
+  assignmentId  String
+  userId        String
+  status        SubmissionStatus @default(NOT_STARTED)
+  attemptNumber Int              @default(1)
+  startedAt     DateTime?
+  submittedAt   DateTime?
+  gradedAt      DateTime?
+  score         Float?
+  pointsEarned  Int?
+  pointsTotal   Int?
+  correctCount  Int              @default(0)
+  wrongCount    Int              @default(0)
+  skippedCount  Int              @default(0)
+  timeSpent     Int?
+  answers       QuizAnswer[]
+  assignment    QuizAssignment   @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
+  user          User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([assignmentId, userId, attemptNumber])
+  @@index([userId])
+  @@index([assignmentId])
+  @@index([status])
+}
+
+model QuizAnswer {
+  id             String         @id @default(cuid())
+  submissionId   String
+  quizQuestionId String
+  answerText     String?
+  answerIndex    Int?
+  isCorrect      Boolean?
+  pointsEarned   Int            @default(0)
+  timeSpent      Int?
+  flagged        Boolean        @default(false)
+  teacherComment String?
+  manuallyGraded Boolean        @default(false)
+  quizQuestion   QuizQuestion   @relation(fields: [quizQuestionId], references: [id])
+  submission     QuizSubmission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+
+  @@index([submissionId])
+  @@index([quizQuestionId])
+}
+
 enum Role {
   GURU
   MURID
@@ -47,22 +1094,22 @@ enum KompetensiType {
   UKBI
   UKBI_SIMULASI
   UKBI_LATIHAN
-  UKBI_SD
+  TKA_GURU
+  TKA_UTBK
+  SERTIFIKAT
   UKBI_SMP
   UKBI_SMA
-  UKBI_LATIHAN_SD
   UKBI_LATIHAN_SMP
   UKBI_LATIHAN_SMA
-  UKBI_GURU_SIMULASI
-  UKBI_GURU_LATIHAN
-  TKA_GURU
-  TKA_GURU_SIMULASI
-  TKA_GURU_LATIHAN
-  TKA_UTBK
-  TKA_SD
   TKA_SMP
   TKA_SMA
-  SERTIFIKAT
+  UKBI_GURU_SIMULASI
+  UKBI_GURU_LATIHAN
+  TKA_GURU_SIMULASI
+  TKA_GURU_LATIHAN
+  UKBI_SD
+  UKBI_LATIHAN_SD
+  TKA_SD
 }
 
 enum LombaStatus {
@@ -168,11 +1215,11 @@ enum TestStatus {
 }
 
 enum Tingkat {
-  SD
   SMP
   SMA
   UMUM
   GURU
+  SD
 }
 
 enum CommunityType {
@@ -213,1029 +1260,9 @@ enum GameQuestionType {
   BENAR_SALAH
 }
 
-model GameRoom {
-  id          String   @id @default(cuid())
-  code        String   @unique
-  name        String
-  gameType    GameType @default(KUIS_BATTLE)
-  hostId      String
-
-  status      GameRoomStatus @default(WAITING)
-  category    String?
-  difficulty  Difficulty     @default(MEDIUM)
-
-  questionIds String[]
-  questionCount Int           @default(10)
-  timePerQuestion Int        @default(20)
-
-  currentQuestion Int         @default(0)
-
-  sessions     GameSession[]
-  results      GameResult[]
-
-  createdAt DateTime @default(now())
-  startedAt DateTime?
-  endedAt   DateTime?
-
-  @@index([code])
-  @@index([hostId])
-}
-
-model GameQuestion {
-  id          String   @id @default(cuid())
-  gameRoomId  String?
-
-  text        String
-  audioUrl    String?
-  imageUrl    String?
-  passage     String?
-  type        GameQuestionType @default(PILIHAN_GANDA)
-  options     Json
-  correctAnswer String
-
-  explanation String?
-  difficulty  Difficulty @default(MEDIUM)
-
-  orderIndex  Int       @default(0)
-
-  uploaderId String?
-  uploader   User?   @relation(fields: [uploaderId], references: [id])
-
-  createdAt DateTime @default(now())
-
-  @@index([gameRoomId])
-}
-
-model GameSession {
-  id        String   @id @default(cuid())
-  roomId    String
-  room      GameRoom  @relation(fields: [roomId], references: [id])
-  userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  playerName String
-  avatarUrl  String?
-  score      Int      @default(0)
-  correct    Int      @default(0)
-  wrong      Int      @default(0)
-  streak     Int      @default(0)
-  maxStreak  Int      @default(0)
-  answerTimes Int[]   @default([])
-
-  joinedAt  DateTime @default(now())
-  finishedAt DateTime?
-
-  result    GameResult?
-
-  @@unique([roomId, userId])
-  @@index([userId])
-}
-
-model GameResult {
-  id        String   @id @default(cuid())
-  roomId    String
-  room      GameRoom @relation(fields: [roomId], references: [id])
-  userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  sessionId String   @unique
-  session   GameSession @relation(fields: [sessionId], references: [id])
-
-  finalScore Int     @default(0)
-  rank       Int?
-  correct    Int
-  wrong      Int
-  maxStreak  Int
-  avgTime    Float
-  xpEarned   Int     @default(0)
-
-  createdAt DateTime @default(now())
-
-  @@index([roomId])
-  @@index([userId])
-}
-
-model Community {
-  id          String        @id @default(cuid())
-  name        String
-  description String?
-  type        CommunityType @default(MGMP)
-  region      String?
-  province    String?
-  city        String?
-  school      String?
-  avatarUrl   String?
-  bannerUrl   String?
-  isPublic    Boolean       @default(true)
-  isVerified  Boolean       @default(false)
-  status      CommunityStatus @default(PENDING)
-  reviewNote  String?
-  reviewedBy  String?
-  reviewedAt  DateTime?
-  attachments Json?
-  memberCount Int           @default(0)
-  postCount   Int           @default(0)
-
-  creatorId String?
-  creator   User?   @relation(fields: [creatorId], references: [id])
-
-  members CommunityMember[]
-  posts   CommunityPost[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([type])
-  @@index([isPublic])
-  @@index([status])
-}
-
-model CommunityMember {
-  id           String    @id @default(cuid())
-  communityId  String
-  community    Community @relation(fields: [communityId], references: [id], onDelete: Cascade)
-  userId       String
-  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  role         String    @default("member")
-  joinedAt     DateTime  @default(now())
-
-  @@unique([communityId, userId])
-  @@index([userId])
-}
-
-model CommunityPost {
-  id           String    @id @default(cuid())
-  communityId  String
-  community    Community @relation(fields: [communityId], references: [id], onDelete: Cascade)
-  userId       String
-  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  title        String?
-  content      String
-  fileUrl      String?
-  likesCount   Int       @default(0)
-  commentsCount Int      @default(0)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([communityId])
-  @@index([userId])
-}
-
-model User {
-  id         String  @id @default(cuid())
-  supabaseId String  @unique
-  email      String  @unique
-  fullName   String
-  avatar     String?
-  role       Role    @default(MURID)
-  isFounder  Boolean @default(false)
-
-  premiumPlan        PremiumPlan @default(FREE)
-  premiumUntil       DateTime?
-  isPremium          Boolean      @default(false)
-  midtransCustomerId String?
-
-  xp           Int        @default(0)
-  level        Int        @default(1)
-  streak       Int        @default(0)
-  lastActiveAt DateTime?
-  league       LeagueType @default(BRONZE)
-
-  saldo       Int @default(0)
-  totalEarned Int @default(0)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  profile            Profile?
-  karya              Karya[]
-  purchases          Pembelian[]
-  uploadedMateris    Materi[]
-  uploadedRPPs       RPP[]
-  generatedRPPs      GeneratedRPP[]
-  uploadedBankSoals  BankSoal[]
-  soals              Soal[]
-  soalSets           SoalSet[]
-  withdrawals        Withdrawal[]
-  sellerEarnings     SellerEarning[]
-  purchasesHistory   PurchaseHistory[]
-  testSessions      TestSession[]
-  testAnswers       TestAnswer[]
-  ukbiQuestions     UKBIQuestion[]
-  tkaQuestions      TKAQuestion[]
-  competencyPackets  PaketKompetensi[]
-  competencyResults  ProgresKompetensi[]
-  competencyCerts   KompetensiCertificate[]
-  videos            Video[]
-  playlists          CoursePlaylist[]
-  notifications     Notifikasi[]
-  quizSessions      QuizSession[]
-  certificates      Certificate[]
-  koleksiKata       KoleksiKata[]
-  lombaPeserta      LombaPeserta[]
-  aiUsage           AIUsage[]
-  komunitas         CommunityMember[]
-  communityPosts    CommunityPost[]
-  createdCommunities Community[]
-  groups            Group[]
-  groupMemberships  GroupMember[]
-  groupQuizResults  GroupQuizResult[]
-  transaksi          Transaksi[]
-
-  gameQuestions     GameQuestion[]
-  gameSessions      GameSession[]
-  gameResults       GameResult[]
-
-  artikel           Artikel[]
-  loker             Loker[]
-  quizzes           Quiz[]
-  quizSubmissions   QuizSubmission[]
-}
-
-model Profile {
-  id     String @id @default(cuid())
-  userId String @unique
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  bio       String?
-  nip       String?
-  nuptk     String?
-  nisn      String?
-  school    String?
-  subject   String?
-  grade     String?
-  className String?
-  bank      String?
-  bankHolder String?
-  bankNumber String?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model UKBIQuestion {
-  id          String   @id @default(cuid())
-  seksi       UKBISeksi
-  text        String
-  audioUrl    String?
-  imageUrl    String?
-  passage     String?
-  type        String   @default("PILIHAN_GANDA")
-  options     Json
-  correctAnswer String
-  explanation String?
-  difficulty  Difficulty @default(MEDIUM)
-  cognitive   CognitiveDimension @default(PENERAPAN)
-  domain      KommunikasDomain @default(SOSIAL)
-  passageType String?
-  wordCount   Int?
-  keywords    String[]
-  tingkat     Tingkat   @default(UMUM)
-  isActive    Boolean  @default(true)
-  isVerified  Boolean  @default(false)
-
-  uploaderId String?
-  uploader   User?   @relation(fields: [uploaderId], references: [id])
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([seksi, isActive])
-  @@index([difficulty])
-  @@index([isVerified])
-  @@index([tingkat])
-}
-
-model TKAQuestion {
-  id          String         @id @default(cuid())
-  kompetensi  TKAKompetensi
-  subKompetensi String?
-  text        String
-  passage     String?
-  type        String         @default("PILIHAN_GANDA")
-  options     Json
-  correctAnswer String
-  explanation String?
-  difficulty  Difficulty     @default(MEDIUM)
-  weight      Float          @default(1.0)
-  year        Int?
-  source      String?
-  tingkat     Tingkat        @default(UMUM)
-  isActive    Boolean        @default(true)
-  isVerified  Boolean        @default(false)
-
-  uploaderId String?
-  uploader   User?   @relation(fields: [uploaderId], references: [id])
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([kompetensi, isActive])
-  @@index([difficulty])
-  @@index([isVerified])
-  @@index([tingkat])
-}
-
-model PaketKompetensi {
-  id           String         @id @default(cuid())
-  title        String
-  description  String?
-  type         KompetensiType
-  mode         TestMode       @default(SIMULASI)
-  duration     Int
-  passingScore Int            @default(0)
-  passingGrade String         @default("D")
-  sections     Json
-  totalQuestions Int           @default(0)
-  isActive     Boolean        @default(true)
-  isPremium    Boolean        @default(false)
-  thumbnailUrl String?
-  attemptLimit Int            @default(-1)
-
-  sectionsData Json?
-  questionPool Json?
-
-  creatorId String?
-  creator   User?   @relation(fields: [creatorId], references: [id])
-
-  results  ProgresKompetensi[]
-  certificates KompetensiCertificate[]
-  testSessions TestSession[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([type, isActive])
-}
-
-model ProgresKompetensi {
-  id        String          @id @default(cuid())
-  userId    String
-  user      User            @relation(fields: [userId], references: [id], onDelete: Cascade)
-  paketId   String
-  paket     PaketKompetensi @relation(fields: [paketId], references: [id])
-
-  attemptNumber Int       @default(1)
-  status       TestStatus @default(NOT_STARTED)
-
-  totalScore     Int?
-  rawScore       Int?
-  maxScore       Int?
-  percentage     Float?
-  predikat       String?
-  predikatLama   String?
-
-  sectionScores Json?
-  seksiScores  Json?
-  answerDetails Json?
-
-  startedAt   DateTime  @default(now())
-  finishedAt DateTime?
-  timeSpent  Int?
-
-  @@unique([userId, paketId, attemptNumber])
-  @@index([userId])
-}
-
-model KompetensiCertificate {
-  id        String          @id @default(cuid())
-  userId    String
-  user      User            @relation(fields: [userId], references: [id], onDelete: Cascade)
-  paketId   String
-  paket     PaketKompetensi @relation(fields: [paketId], references: [id])
-  progresId String
-
-  score         Int
-  predikat      String
-  percentage    Float
-  qrCode        String?
-  certificateNo String     @unique
-  pdfUrl        String?
-  issuedAt      DateTime   @default(now())
-  expiresAt     DateTime?
-
-  @@index([userId])
-}
-
-model TestSession {
-  id        String   @id @default(cuid())
-  userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  paketId   String
-  paket     PaketKompetensi @relation(fields: [paketId], references: [id])
-
-  status    TestStatus @default(NOT_STARTED)
-
-  currentSection Int     @default(0)
-  currentQuestion Int    @default(0)
-  answers        Json    @default("{}")
-  flagged        Int[]   @default([])
-
-  startedAt  DateTime?
-  finishedAt DateTime?
-  expiresAt  DateTime?
-
-  createdAt DateTime @default(now())
-
-  @@unique([userId, paketId])
-  @@index([userId])
-}
-
-model TestAnswer {
-  id        String      @id @default(cuid())
-  userId    String
-  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  sessionId String?
-  paketId  String?
-
-  questionId   String?
-  questionType String?
-  answer       String?
-  isCorrect    Boolean?
-  score        Float     @default(0)
-  timeSpent    Int       @default(0)
-
-  seksi       String?
-  sectionIndex Int      @default(0)
-
-  createdAt DateTime @default(now())
-
-  @@index([userId, paketId])
-}
-
-model Materi {
-  id          String   @id @default(cuid())
-  title       String
-  description String?
-  content     String
-  fileUrl     String?
-  fileKey     String?
-  fileType    FileType?
-  grade       String?
-  semester    Int?
-  tahunAjaran String?
-  tema        String?
-  subtema     String?
-  isPublished Boolean  @default(false)
-  isPremium   Boolean  @default(false)
-  price       Int      @default(0)
-  downloads   Int      @default(0)
-  subject     String?
-
-  uploaderId String
-  uploader   User   @relation(fields: [uploaderId], references: [id], onDelete: Cascade)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([uploaderId])
-  @@index([isPublished])
-}
-
-model BankSoal {
-  id          String     @id @default(cuid())
-  title       String
-  description String?
-  type        String     @default("PILIHAN_GANDA")
-  difficulty  Difficulty @default(MEDIUM)
-  kelas       String
-  semester    Int?
-  tahunAjaran String?
-  KD          String?
-  isHOTS      Boolean    @default(false)
-  jumlahSoal  Int        @default(10)
-  fileUrl     String
-  fileKey     String?
-  fileType    FileType   @default(PDF)
-  isPublished Boolean    @default(false)
-  isPremium   Boolean    @default(false)
-  price       Int        @default(0)
-  downloads   Int        @default(0)
-  subject     String     @default("Bahasa Indonesia")
-
-  uploaderId String
-  uploader   User   @relation(fields: [uploaderId], references: [id], onDelete: Cascade)
-  soals      Soal[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([uploaderId])
-  @@index([isPublished])
-}
-
-model Soal {
-  id            String   @id @default(cuid())
-  text          String
-  type          String   @default("PILIHAN_GANDA")
-  difficulty    String   @default("MEDIUM")
-  options       String[]
-  correctAnswer String
-  explanation   String?
-  isHOTS        Boolean  @default(false)
-  kelas         String
-  topik         String?
-  KD            String?
-  subject       String   @default("Bahasa Indonesia")
-  source        String   @default("MANUAL")
-  bankSoalId    String?
-  bankSoal      BankSoal? @relation(fields: [bankSoalId], references: [id], onDelete: SetNull)
-  soalSetId     String?
-  soalSet       SoalSet? @relation(fields: [soalSetId], references: [id], onDelete: SetNull)
-  uploaderId    String
-  uploader      User     @relation(fields: [uploaderId], references: [id], onDelete: Cascade)
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-
-  @@index([uploaderId])
-  @@index([kelas])
-  @@index([topik])
-  @@index([source])
-  @@index([soalSetId])
-}
-
-model SoalSet {
-  id            String   @id @default(cuid())
-  title         String
-  description   String?
-  coverColor    String   @default("from-violet-500 to-purple-600")
-  coverEmoji    String?
-  kelas         String
-  topik         String?
-  subject       String   @default("Bahasa Indonesia")
-  maxQuestions  Int      @default(50)
-  isPublic      Boolean  @default(false)
-  creatorId     String
-  creator       User     @relation(fields: [creatorId], references: [id], onDelete: Cascade)
-  questions     Soal[]
-  useCount      Int      @default(0)
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-
-  @@index([creatorId])
-  @@index([kelas])
-  @@index([topik])
-  @@index([isPublic])
-}
-
-model RPP {
-  id          String   @id @default(cuid())
-  title       String
-  description String?
-  kelas       String
-  semester    Int
-  tahunAjaran String
-  fase        String?
-  week        Int?
-  theme       String?
-  subTheme    String?
-  fileUrl     String
-  fileKey     String?
-  fileType    FileType @default(PDF)
-  isPublished Boolean  @default(false)
-  isPremium   Boolean  @default(false)
-  price       Int      @default(0)
-  downloads   Int      @default(0)
-  subject     String   @default("Bahasa Indonesia")
-
-  uploaderId String
-  uploader   User   @relation(fields: [uploaderId], references: [id], onDelete: Cascade)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([uploaderId])
-  @@index([isPublished])
-}
-
-model GeneratedRPP {
-  id          String   @id @default(cuid())
-  type        String   @default("RPP")
-  title       String
-  description String?
-  kelas       String
-  semester    String   @default("1 (Ganjil)")
-  tahunAjaran String   @default("2025/2026")
-  subject     String   @default("Bahasa Indonesia")
-  curriculum  String   @default("MERDEKA")
-  schoolInfo  Json?
-  kds         String[]
-  methods     String[]
-  content     Json
-  isPublished Boolean  @default(false)
-  uploaderId  String
-  uploader    User     @relation(fields: [uploaderId], references: [id], onDelete: Cascade)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  @@index([uploaderId])
-  @@index([type])
-}
-
-model Video {
-  id           String       @id @default(cuid())
-  title        String
-  description  String?
-  videoUrl     String
-  thumbnailUrl String?
-  duration     Int?
-  source       VideoSource  @default(YOUTUBE)
-  category     VideoCategory @default(PEMBELAJARAN)
-  grade        String?
-  tags         String[]
-  isPublished  Boolean      @default(false)
-  isPremium    Boolean       @default(false)
-  price        Int           @default(0)
-  views        Int           @default(0)
-
-  playlistId String?
-  playlist   CoursePlaylist? @relation(fields: [playlistId], references: [id])
-  creatorId  String?
-  creator   User?           @relation(fields: [creatorId], references: [id])
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([isPublished])
-  @@index([category])
-}
-
-model CoursePlaylist {
-  id           String  @id @default(cuid())
-  title        String
-  description  String?
-  thumbnailUrl String?
-  category     VideoCategory @default(PEMBELAJARAN)
-  grade        String?
-  isPublished  Boolean @default(false)
-  creatorId    String?
-
-  videos    Video[]
-  creator   User?   @relation(fields: [creatorId], references: [id])
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([isPublished])
-}
-
-model Karya {
-  id          String    @id @default(cuid())
-  title       String
-  description String
-  type        KaryaType
-  fileUrl     String
-  fileKey     String?
-  fileType    FileType?
-  price       Int       @default(0)
-  isPublished Boolean   @default(false)
-  isPremium   Boolean   @default(false)
-  downloads   Int       @default(0)
-  grade       String?
-  subject     String?
-  week        Int?
-  images      String  @default("[]")
-
-  sellerId String
-  seller   User   @relation(fields: [sellerId], references: [id], onDelete: Cascade)
-
-  purchases Pembelian[]
-  createdAt DateTime    @default(now())
-  updatedAt DateTime    @updatedAt
-
-  @@index([sellerId])
-  @@index([isPublished])
-}
-
-model Pembelian {
-  id      String @id @default(cuid())
-  karyaId String
-  karya   Karya  @relation(fields: [karyaId], references: [id])
-  buyerId String
-  buyer   User   @relation(fields: [buyerId], references: [id], onDelete: Cascade)
-
-  amount        Int
-  platformFee   Int
-  sellerEarning Int
-
-  status OrderStatus @default(PENDING)
-
-  midtransOrderId      String?   @unique
-  midtransPaymentType   String?
-  midtransStatus        String?
-  midtransPaymentAmount Int?
-  midtransPaidAt        DateTime?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model PurchaseHistory {
-  id         String   @id @default(cuid())
-  buyerId    String
-  buyer      User     @relation(fields: [buyerId], references: [id], onDelete: Cascade)
-  itemType   String
-  itemId     String
-  itemTitle  String
-  fileUrl    String
-  fileKey    String?
-  price      Int
-  soldAt     DateTime @default(now())
-}
-
-model SellerEarning {
-  id         String   @id @default(cuid())
-  sellerId   String
-  seller     User     @relation(fields: [sellerId], references: [id], onDelete: Cascade)
-  itemType   String
-  itemId     String
-  itemTitle  String
-  grossAmount Int
-  platformFee Int
-  netAmount  Int
-  status     String   @default("PENDING")
-  soldAt     DateTime @default(now())
-
-  @@index([sellerId])
-}
-
-model Withdrawal {
-  id        String          @id @default(cuid())
-  userId    String
-  user      User            @relation(fields: [userId], references: [id], onDelete: Cascade)
-  amount    Int
-  bankName  String
-  accountNumber String
-  accountHolder String
-  status    WithdrawStatus  @default(PENDING)
-  notes     String?
-  processedAt DateTime?
-  transferProof String?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([userId])
-  @@index([status])
-}
-
-model QuizSession {
-  id     String @id @default(cuid())
-  userId String
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  quizId String?
-  title  String
-  mode   String @default("practice")
-
-  answers Json @default("[]")
-  score   Int?
-  status  String @default("IN_PROGRESS")
-
-  startedAt  DateTime @default(now())
-  finishedAt DateTime?
-
-  @@index([userId])
-}
-
-model Certificate {
-  id        String      @id @default(cuid())
-  userId    String
-  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  title     String
-  score     Int
-  pdfUrl    String?
-  issuedAt  DateTime    @default(now())
-
-  @@index([userId])
-}
-
-model KoleksiKata {
-  id       String        @id @default(cuid())
-  userId   String
-  user     User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  kata     String
-  definisi String?
-  contoh   String?
-  rarity   KoleksiRarity @default(COMMON)
-
-  createdAt DateTime @default(now())
-}
-
-model Lomba {
-  id                   String      @id @default(cuid())
-  title                String
-  description          String
-  type                 String
-  level                String
-  date                 DateTime
-  registrationDeadline DateTime?
-  prize                String?
-  rules                String?
-  posterUrl            String?
-  location             String?
-  contact              String?
-  registrationUrl      String?
-  status               LombaStatus @default(UPCOMING)
-
-  peserta LombaPeserta[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model LombaPeserta {
-  id      String @id @default(cuid())
-  lombaId String
-  lomba   Lomba  @relation(fields: [lombaId], references: [id])
-  userId  String
-  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  score   Int?
-  rank    Int?
-  status  String @default("registered")
-
-  createdAt DateTime @default(now())
-
-  @@unique([lombaId, userId])
-}
-
 enum LokerStatus {
   OPEN
   CLOSED
-}
-
-model Loker {
-  id              String      @id @default(cuid())
-  title           String
-  sekolah         String
-  lokasi          String
-  description     String
-  requirements    String?
-  salary          String?
-  type            String?     @default("FULL_TIME")
-  contact         String?
-  applicationUrl  String?
-  status          LokerStatus @default(OPEN)
-  isApproved      Boolean     @default(false)
-
-  authorId String?
-  author   User?   @relation(fields: [authorId], references: [id])
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([status, isApproved])
-  @@index([createdAt])
-}
-
-model AIUsage {
-  id     String @id @default(cuid())
-  userId String
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  feature String
-  tokens  Int    @default(0)
-  costUSD Float  @default(0)
-  bulan   String
-
-  createdAt DateTime @default(now())
-
-  @@index([userId, feature, bulan])
-}
-
-model Transaksi {
-  id     String @id @default(cuid())
-  userId String
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  type      String
-  amount    Int
-  status    String  @default("PENDING")
-  reference String?
-  orderId   String?
-  midtransId String?
-  metadata  Json?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model Notifikasi {
-  id     String @id @default(cuid())
-  userId String
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  title  String
-  body   String
-  type   String
-  isRead Boolean @default(false)
-  data   Json?
-
-  createdAt DateTime @default(now())
-}
-
-model Group {
-  id          String   @id @default(cuid())
-  name        String
-  description String?
-  grade       String
-  tahunAjaran String?
-  accessCode  String   @unique
-  isActive    Boolean  @default(true)
-
-  teacherId String
-  teacher   User   @relation(fields: [teacherId], references: [id], onDelete: Cascade)
-
-  members  GroupMember[]
-  quizzes  GroupQuiz[]
-  quizAssignments QuizAssignment[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([teacherId])
-  @@index([accessCode])
-}
-
-model GroupMember {
-  id        String   @id @default(cuid())
-  groupId   String
-  group     Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
-  userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  joinedAt  DateTime @default(now())
-
-  @@unique([groupId, userId])
-  @@index([userId])
-  @@index([groupId])
-}
-
-model GroupQuiz {
-  id        String   @id @default(cuid())
-  groupId   String
-  group     Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
-  quizId    String
-  title     String
-  assignedAt DateTime @default(now())
-  dueDate   DateTime?
-  results   GroupQuizResult[]
-
-  @@index([groupId])
-}
-
-model GroupQuizResult {
-  id           String    @id @default(cuid())
-  groupQuizId  String
-  groupQuiz    GroupQuiz @relation(fields: [groupQuizId], references: [id], onDelete: Cascade)
-  userId       String
-  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  score        Int?
-  status       String     @default("ASSIGNED")
-  startedAt    DateTime?
-  finishedAt   DateTime?
-
-  @@unique([groupQuizId, userId])
-  @@index([userId])
-}
-
-model Artikel {
-  id          String   @id @default(cuid())
-  title       String
-  slug        String   @unique
-  content     String
-  excerpt     String?
-  coverImage  String?
-  tags        String[]
-  isPublished Boolean  @default(false)
-  readCount   Int      @default(0)
-
-  authorId String
-  author   User   @relation(fields: [authorId], references: [id], onDelete: Cascade)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([isPublished, createdAt])
-  @@index([authorId])
-}
-
-model KamusEntry {
-  id          String @id @default(cuid())
-  kata        String
-  slug        String @unique
-  jenisKata   String?
-  definisi    String
-  contoh      String?
-  sinonim     String?
-  antonim     String?
-  serapanDari String?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([kata])
-  @@index([slug])
 }
 
 enum QuizType {
@@ -1258,135 +1285,3 @@ enum SubmissionStatus {
   GRADED
   LATE
 }
-
-model Quiz {
-  id              String     @id @default(cuid())
-  title           String
-  description     String?
-  type            QuizType   @default(LATIHAN)
-  status          QuizStatus @default(DRAFT)
-
-  timeLimit       Int?
-  shuffleQuestions Boolean   @default(false)
-  shuffleOptions  Boolean    @default(false)
-  showResults     Boolean    @default(true)
-  showCorrectAnswer Boolean  @default(true)
-  passingScore    Int?
-  maxAttempts     Int        @default(1)
-  randomizeFromPool Boolean  @default(false)
-  poolSize        Int?
-
-  kelas           String
-  subject         String     @default("Bahasa Indonesia")
-  topik           String?
-  KD              String?
-  difficulty      Difficulty @default(MEDIUM)
-  thumbnailUrl    String?
-
-  questions       QuizQuestion[]
-  assignments     QuizAssignment[]
-
-  creatorId       String
-  creator         User       @relation(fields: [creatorId], references: [id])
-
-  createdAt       DateTime   @default(now())
-  updatedAt       DateTime   @updatedAt
-
-  @@index([creatorId])
-  @@index([kelas])
-  @@index([status])
-  @@index([type])
-}
-
-model QuizQuestion {
-  id              String   @id @default(cuid())
-  quizId          String
-  quiz            Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
-
-  sourceType      String
-  sourceId        String
-
-  customText      String?
-  customType      String?
-  customOptions   Json?
-  customAnswer    String?
-  customExplanation String?
-
-  orderIndex      Int      @default(0)
-  points          Int      @default(1)
-
-  answers         QuizAnswer[]
-
-  @@index([quizId])
-  @@index([sourceType, sourceId])
-}
-
-model QuizAssignment {
-  id            String   @id @default(cuid())
-  quizId        String
-  quiz          Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
-  groupId       String
-  group         Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
-
-  assignedAt    DateTime @default(now())
-  dueDate       DateTime?
-  isPublished   Boolean  @default(false)
-  notes         String?
-
-  submissions   QuizSubmission[]
-
-  @@unique([quizId, groupId])
-  @@index([groupId])
-}
-
-model QuizSubmission {
-  id            String   @id @default(cuid())
-  assignmentId  String
-  assignment    QuizAssignment @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
-  userId        String
-  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  status        SubmissionStatus @default(NOT_STARTED)
-  attemptNumber Int      @default(1)
-
-  startedAt     DateTime?
-  submittedAt   DateTime?
-  gradedAt      DateTime?
-
-  score         Float?
-  pointsEarned  Int?
-  pointsTotal   Int?
-  correctCount  Int      @default(0)
-  wrongCount    Int      @default(0)
-  skippedCount  Int      @default(0)
-  timeSpent     Int?
-
-  answers       QuizAnswer[]
-
-  @@unique([assignmentId, userId, attemptNumber])
-  @@index([userId])
-  @@index([assignmentId])
-  @@index([status])
-}
-
-model QuizAnswer {
-  id            String   @id @default(cuid())
-  submissionId  String
-  submission    QuizSubmission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
-  quizQuestionId String
-  quizQuestion  QuizQuestion @relation(fields: [quizQuestionId], references: [id])
-
-  answerText    String?
-  answerIndex   Int?
-  isCorrect     Boolean?
-  pointsEarned  Int      @default(0)
-  timeSpent     Int?
-  flagged       Boolean  @default(false)
-
-  teacherComment String?
-  manuallyGraded Boolean  @default(false)
-
-  @@index([submissionId])
-  @@index([quizQuestionId])
-}
-
