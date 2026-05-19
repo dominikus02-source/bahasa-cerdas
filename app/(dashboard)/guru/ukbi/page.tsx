@@ -155,7 +155,7 @@ export default function GuruUKBIPage() {
             return (
               <Link
                 key={p.id}
-                href={`/guru/ukbi/${p.id}`}
+                href={`/kompetisi/${p.id}`}
                 className="block bg-white rounded-xl border border-gray-100 p-5 hover:shadow-md hover:border-emerald-200 transition-all group"
               >
                 <div className="flex items-center gap-4">
