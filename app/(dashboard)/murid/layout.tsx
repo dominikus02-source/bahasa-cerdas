@@ -1,6 +1,5 @@
 import { redirect } from "next/navigation";
 import { getUser } from "@/lib/supabase/server";
-import { MuridSidebar } from "@/components/dashboard/MuridSidebar";
 
 export default async function MuridLayout({ children }: { children: React.ReactNode }) {
   const user = await getUser();
@@ -14,23 +13,8 @@ export default async function MuridLayout({ children }: { children: React.ReactN
   }
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
-      <MuridSidebar
-        user={{
-          id: user.id,
-          fullName: user.fullName,
-          avatar: user.avatar,
-          isPremium: user.isPremium,
-          isFounder: user.isFounder,
-          xp: user.xp,
-          level: user.level,
-          streak: user.streak,
-          league: user.league,
-        }}
-      />
-      <main className="flex-1 ml-64 p-8">
-        {children}
-      </main>
+    <div className="min-h-screen bg-gray-50 p-8">
+      {children}
     </div>
   );
 }
