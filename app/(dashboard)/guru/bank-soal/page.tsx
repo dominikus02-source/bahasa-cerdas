@@ -309,7 +309,7 @@ export default function BankSoalPage() {
       <div className="mb-6 flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Bank Soal</h1>
-          <p className="mt-1 text-sm text-gray-600">Kelola koleksi soal seperti Kahoot!</p>
+          <p className="mt-1 text-sm text-gray-600">Buat, kelola, dan bagikan soal untuk pembelajaran interaktif</p>
         </div>
         <div className="flex gap-2">
           <Button variant="outline" onClick={() => setView(view === "sets" ? "questions" : "sets")}>
