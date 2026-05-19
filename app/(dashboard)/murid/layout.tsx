@@ -1,8 +1,7 @@
-import { redirect } from "next/navigation";
 import { getUser } from "@/lib/supabase/server";
-import { createClient } from "@/lib/supabase/client";
 import Link from "next/link";
 import AIFloatingButton from "@/components/shared/AIFloatingButton";
+import { LogoutButton } from "@/components/dashboard/LogoutButton";
 
 const MenuIcon = ({ path, label, href }: { path: string; label: string; href: string }) => (
   <Link href={href} className="group flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm mb-1 transition-all duration-200 text-gray-600 hover:bg-gradient-to-r hover:from-violet-50 hover:to-purple-50 hover:text-violet-700">
@@ -22,14 +21,6 @@ export default async function MuridLayout({ children }: { children: React.ReactN
 
   if (user.role !== "MURID" && !user.isFounder) {
     redirect("/guru/beranda");
-  }
-
-  const supabase = createClient();
-
-  async function logout() {
-    "use server"
-    await supabase.auth.signOut()
-    redirect("/login")
   }
 
   const leagueLabel = { BRONZE: "Perunggu", SILVER: "Perak", GOLD: "Emas", DIAMOND: "Berlian" }[user.league || "BRONZE"] || "Perunggu"
