@@ -51,7 +51,7 @@ export default function MuridSertifikatPage() {
     <div>
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-gray-900">Sertifikat Saya</h1>
-        <p className="text-sm text-gray-500 mt-1">Sertifikat顺利完成 UKBI & TKA</p>
+        <p className="text-sm text-gray-500 mt-1">Sertifikat hasil ujian UKBI & TKA</p>
       </div>
 
       {loading ? (
