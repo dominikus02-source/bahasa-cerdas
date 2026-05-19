@@ -48,10 +48,10 @@ export default function MuridProfilePage() {
       <div className="relative">
         <div className="h-48 bg-gradient-to-br from-violet-500 via-purple-500 to-indigo-600" />
         {/* Batik Pattern */}
-        <div className="absolute inset-0" style={{ backgroundImage: 'url("/batik bg bc.png")', backgroundSize: 'cover', backgroundPosition: 'center', opacity: 0.3 }} />
+        <div className="absolute inset-0 bg-cover bg-center opacity-30" style={{ backgroundImage: 'url("/batik-header-profile-bc.png")' }} />
         {/* BC Logo */}
-        <Link href="/murid/beranda" className="absolute top-4 left-4 w-12 h-12 rounded-xl bg-white/20 backdrop-blur flex items-center justify-center border border-white/30 hover:bg-white/30 transition-colors">
-          <Image src="/logo.png" alt="BC" width={32} height={32} className="object-contain" />
+        <Link href="/murid/beranda" className="absolute top-4 left-4 hover:opacity-80 transition-opacity">
+          <Image src="/logo.png" alt="BC" width={40} height={40} className="object-contain" />
         </Link>
         
         {/* Avatar */}
