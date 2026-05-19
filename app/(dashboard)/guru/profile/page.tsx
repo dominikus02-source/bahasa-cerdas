@@ -59,13 +59,11 @@ export default function GuruProfilePage() {
       {/* Cover & Avatar */}
       <div className="relative">
         <div className="h-48 bg-gradient-to-br from-emerald-500 via-green-500 to-teal-600" />
-        {/* Batik Pattern Overlay */}
-        <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'none\' fill-rule=\'evenodd\'%3E%3Cg fill=\'%23ffffff\' fill-opacity=\'0.4\'%3E%3Cpath d=\'M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")' }} />
+        {/* Batik Pattern */}
+        <div className="absolute inset-0" style={{ backgroundImage: 'url("/batik bg bc.png")', backgroundSize: 'cover', backgroundPosition: 'center', opacity: 0.3 }} />
         {/* BC Logo */}
         <Link href="/guru/beranda" className="absolute top-4 left-4 w-12 h-12 rounded-xl bg-white/20 backdrop-blur flex items-center justify-center border border-white/30 hover:bg-white/30 transition-colors">
-          <div className="relative w-8 h-8">
-            <Image src="/logo.png" alt="BC" fill className="object-contain" />
-          </div>
+          <Image src="/logo.png" alt="BC" width={32} height={32} className="object-contain" />
         </Link>
         
         {/* Avatar */}
