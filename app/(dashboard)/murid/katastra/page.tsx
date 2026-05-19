@@ -8,17 +8,17 @@ import {
 } from "lucide-react";
 
 const LEAGUE_META: Record<string, { label: string; color: string; bg: string; icon: string }> = {
-  BRONZE: { label: "Bronze", color: "text-amber-700", bg: "bg-amber-100", icon: "🥉" },
-  SILVER: { label: "Silver", color: "text-slate-600", bg: "bg-slate-100", icon: "🥈" },
-  GOLD: { label: "Gold", color: "text-yellow-600", bg: "bg-yellow-100", icon: "🥇" },
-  DIAMOND: { label: "Diamond", color: "text-cyan-600", bg: "bg-cyan-100", icon: "💎" },
+  BRONZE: { label: "Perunggu", color: "text-amber-700", bg: "bg-amber-100", icon: "🥉" },
+  SILVER: { label: "Perak", color: "text-slate-600", bg: "bg-slate-100", icon: "🥈" },
+  GOLD: { label: "Emas", color: "text-yellow-600", bg: "bg-yellow-100", icon: "🥇" },
+  DIAMOND: { label: "Berlian", color: "text-cyan-600", bg: "bg-cyan-100", icon: "💎" },
 };
 
 const MODES = [
   {
     id: "dash",
-    title: "Word Dash",
-    desc: "Jawab secepat mungkin! 60 detik, 15 soal, kumpulkan XP sebanyak-banyaknya.",
+    title: "Lari Kata",
+    desc: "Jawab secepat mungkin! 60 detik, 20 soal, kumpulkan Poin Pengalaman sebanyak-banyaknya.",
     icon: Zap,
     color: "from-violet-500 to-purple-600",
     href: "/murid/katastra/dash",
@@ -38,8 +38,8 @@ const MODES = [
   },
   {
     id: "puzzle",
-    title: "Puzzle Makna",
-    desc: "Tebak hubungan 16 kata dalam 4 grup. Puzzle harian yang bikin penasaran!",
+    title: "Teka-teki Makna",
+    desc: "Tebak hubungan 16 kata dalam 4 grup. Teka-teki harian yang bikin penasaran!",
     icon: Puzzle,
     color: "from-emerald-500 to-teal-600",
     href: "#",
@@ -50,13 +50,13 @@ const MODES = [
 ];
 
 const DAILY_REWARDS = [
-  { day: 1, reward: "50 XP" },
-  { day: 2, reward: "75 XP" },
-  { day: 3, reward: "100 XP", bonus: "Mystery Box" },
-  { day: 4, reward: "150 XP" },
-  { day: 5, reward: "200 XP", bonus: "Rare Frame" },
-  { day: 6, reward: "250 XP" },
-  { day: 7, reward: "500 XP", bonus: "Legend Title" },
+  { day: 1, reward: "50 PP" },
+  { day: 2, reward: "75 PP" },
+  { day: 3, reward: "100 PP", bonus: "Kotak Misteri" },
+  { day: 4, reward: "150 PP" },
+  { day: 5, reward: "200 PP", bonus: "Bingkai Langka" },
+  { day: 6, reward: "250 PP" },
+  { day: 7, reward: "500 PP", bonus: "Gelar Legendaris" },
 ];
 
 export default function KataStraPage() {
@@ -97,8 +97,8 @@ export default function KataStraPage() {
               <p className="text-violet-200 text-xs mt-0.5">Taklukkan Kata, Kuasai Bahasa!</p>
             </div>
             <div className="flex items-center gap-2">
-              <Link href="/murid/game/lobby" className="text-xs text-violet-200 underline hover:text-white">
-                Kuis Battle
+              <Link href="/murid/game" className="text-xs text-violet-200 underline hover:text-white">
+                Semua Gim
               </Link>
             </div>
           </div>
@@ -111,7 +111,7 @@ export default function KataStraPage() {
                   {level}
                 </div>
                 <div>
-                  <p className="font-bold text-sm">Level {level}</p>
+                  <p className="font-bold text-sm">Tingkat {level}</p>
                   <div className="flex items-center gap-1.5 mt-0.5">
                     <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded-full ${meta.bg} ${meta.color}`}>
                       {meta.icon} {meta.label}
@@ -131,8 +131,8 @@ export default function KataStraPage() {
               />
             </div>
             <div className="flex justify-between text-[10px] text-violet-200 mt-1">
-              <span>{xp.toLocaleString()} XP</span>
-              <span>{xpNext.toLocaleString()} XP</span>
+              <span>{xp.toLocaleString()} PP</span>
+              <span>{xpNext.toLocaleString()} PP</span>
             </div>
           </div>
 
@@ -140,7 +140,7 @@ export default function KataStraPage() {
           <div className="bg-white/10 backdrop-blur-md border border-white/10 rounded-2xl p-4">
             <div className="flex items-center justify-between mb-3">
               <p className="text-xs font-semibold text-violet-200 flex items-center gap-1">
-                <Flame size={14} className="text-orange-400" /> Daily Streak
+                <Flame size={14} className="text-orange-400" /> Rentetan Harian
               </p>
               {playedToday ? (
                 <span className="text-[10px] px-2 py-0.5 bg-green-500/20 text-green-300 rounded-full font-medium">Selesai ✅</span>
@@ -221,7 +221,7 @@ export default function KataStraPage() {
         <div className="grid grid-cols-2 gap-3 pt-2">
           <div className="bg-white/5 border border-white/10 rounded-xl p-3">
             <TrendingUp size={16} className="text-violet-400 mb-1" />
-            <p className="text-xs text-violet-200/60">XP Hari Ini</p>
+            <p className="text-xs text-violet-200/60">Poin Pengalaman Hari Ini</p>
             <p className="text-lg font-bold">{loading ? "..." : xp}</p>
           </div>
           <div className="bg-white/5 border border-white/10 rounded-xl p-3">

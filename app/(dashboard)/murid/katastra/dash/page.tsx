@@ -26,7 +26,6 @@ export default function WordDashPage() {
   const [feedback, setFeedback] = useState<"correct" | "wrong" | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState<any>(null);
-  const [ready, setReady] = useState(false);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const feedbackTimer = useRef<NodeJS.Timeout | null>(null);
 
@@ -124,20 +123,20 @@ export default function WordDashPage() {
           <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center mx-auto mb-6 shadow-2xl">
             <Zap size={40} className="text-white" />
           </div>
-          <h1 className="text-2xl font-extrabold mb-2">Word Dash</h1>
+          <h1 className="text-2xl font-extrabold mb-2">Lari Kata</h1>
           <p className="text-sm text-violet-200/70 mb-6">
             Jawab 20 soal secepat mungkin dalam 60 detik!<br />
-            Makin cepat + streak makin tinggi = makin banyak XP!
+            Makin cepat + rentetan makin tinggi = makin banyak PP!
           </p>
           <div className="bg-white/5 border border-white/10 rounded-xl p-4 mb-6 text-left text-sm space-y-2">
             <div className="flex items-center gap-2 text-violet-200">
               <Clock size={14} className="text-violet-400" /> 60 detik — kejar waktu!
             </div>
             <div className="flex items-center gap-2 text-violet-200">
-              <Star size={14} className="text-yellow-400" /> Bonus waktu + streak
+              <Star size={14} className="text-yellow-400" /> Bonus waktu + rentetan
             </div>
             <div className="flex items-center gap-2 text-violet-200">
-              <Flame size={14} className="text-orange-400" /> Jawab benar berturut-turut = streak!
+              <Flame size={14} className="text-orange-400" /> Jawab benar berturut-turut = rentetan!
             </div>
           </div>
           <button onClick={startGame}
@@ -171,7 +170,7 @@ export default function WordDashPage() {
               </div>
               <div className="text-center">
                 <p className="text-2xl font-bold text-orange-400">{maxStreak}</p>
-                <p className="text-[10px] text-violet-200/50">Streak</p>
+                <p className="text-[10px] text-violet-200/50">Rentetan</p>
               </div>
             </div>
             <div className="text-center mb-3">
@@ -184,15 +183,15 @@ export default function WordDashPage() {
             <div className="bg-green-500/10 border border-green-500/20 rounded-2xl p-4 mb-4">
               <div className="flex items-center gap-2 justify-center mb-2">
                 <Sparkles size={18} className="text-green-400" />
-                <span className="font-bold text-green-400">+{result.xpEarned} XP</span>
+                <span className="font-bold text-green-400">+{result.xpEarned} PP</span>
               </div>
               {result.levelUp && (
                 <div className="bg-yellow-500/20 text-yellow-300 px-3 py-1 rounded-full text-sm font-bold animate-pulse inline-block">
-                  🎉 Level Up! Level {result.newLevel}!
+                  🎉 Naik Tingkat! Tingkat {result.newLevel}!
                 </div>
               )}
               <div className="flex justify-center gap-4 mt-2 text-xs text-violet-200/60">
-                <span>Streak: {result.streak}🔥</span>
+                <span>Rentetan: {result.streak}🔥</span>
                 <span>{result.league}</span>
               </div>
             </div>
@@ -249,7 +248,7 @@ export default function WordDashPage() {
         <div className="flex justify-between text-[10px] text-violet-200/50 mt-1">
           <span>{currentQ + 1}/{questions.length}</span>
           <div className="flex items-center gap-1">
-            <Clock size={10} /> {timeLeft}s
+            <Clock size={10} /> {timeLeft}dtk
           </div>
         </div>
       </div>

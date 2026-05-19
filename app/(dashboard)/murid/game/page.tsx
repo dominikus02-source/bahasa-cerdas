@@ -6,9 +6,9 @@ import { Swords, Zap, Puzzle, Brain, MessageCircle, Gauge, Gamepad2, Sparkles, U
 const GAMES = [
   {
     id: "battle",
-    title: "Kuis Battle",
-    subtitle: "Live Multiplayer",
-    desc: "Adu cepat menjawab soal Bahasa Indonesia real-time melawan teman sekelas! 10 soal, siapa tercepat & terbanyak menang.",
+    title: "Kuis Tempur",
+    subtitle: "Multipemain Langsung",
+    desc: "Adu cepat menjawab soal Bahasa Indonesia secara langsung melawan teman sekelas! 10 soal, siapa tercepat & terbanyak menang.",
     emoji: "⚔️",
     gradient: "from-red-500 via-red-600 to-rose-700",
     href: "/murid/game/lobby",
@@ -20,22 +20,22 @@ const GAMES = [
   },
   {
     id: "dash",
-    title: "Word Dash",
-    subtitle: "Solo Speed Run",
-    desc: "Jawab 20 soal dalam 60 detik! Makin cepat + streak tinggi = makin banyak XP. Buktikan kecepatanmu!",
+    title: "Lari Kata",
+    subtitle: "Lari Cepat Solo",
+    desc: "Jawab 20 soal dalam 60 detik! Makin cepat + rentetan tinggi = makin banyak Poin Pengalaman. Buktikan kecepatanmu!",
     emoji: "⚡",
     gradient: "from-violet-500 via-purple-600 to-violet-800",
     href: "/murid/katastra/dash",
     status: "LIVE" as const,
     players: "Solo",
     time: "~3 menit",
-    badge: "NEW",
+    badge: "BARU",
     badgeColor: "bg-emerald-500",
   },
   {
     id: "susun",
     title: "Susun Kata",
-    subtitle: "Word Puzzle",
+    subtitle: "Teka-teki Kata",
     desc: "Huruf-huruf acak! Susun menjadi kata yang benar. Uji kemampuan kosakatamu dalam waktu terbatas.",
     emoji: "🔤",
     gradient: "from-emerald-500 via-emerald-600 to-teal-700",
@@ -47,7 +47,7 @@ const GAMES = [
   {
     id: "tebak",
     title: "Tebak Kata",
-    subtitle: "Word Guessing",
+    subtitle: "Tebak Kata",
     desc: "Deskripsi muncul, tebak katanya! Semakin cepat menebak, semakin tinggi skormu.",
     emoji: "🤔",
     gradient: "from-blue-500 via-blue-600 to-indigo-700",
@@ -59,7 +59,7 @@ const GAMES = [
   {
     id: "duel",
     title: "Duel Kata",
-    subtitle: "1v1 Battle",
+    subtitle: "Pertarungan 1 Lawan 1",
     desc: "Tantang temanmu duel 1v1! Giliran menjawab, siapa paling benar dia juara. Seru dan menegangkan!",
     emoji: "🤺",
     gradient: "from-orange-500 via-orange-600 to-red-700",
@@ -70,9 +70,9 @@ const GAMES = [
   },
   {
     id: "puzzle",
-    title: "Puzzle Makna",
-    subtitle: "Daily Connection",
-    desc: "16 kata, 4 grup, 1 tema. Tebak hubungan antar kata. Puzzle baru setiap hari!",
+    title: "Teka-teki Makna",
+    subtitle: "Koneksi Harian",
+    desc: "16 kata, 4 grup, 1 tema. Tebak hubungan antar kata. Teka-teki baru setiap hari!",
     emoji: "🧩",
     gradient: "from-cyan-500 via-cyan-600 to-blue-700",
     href: "#",
@@ -83,7 +83,7 @@ const GAMES = [
   {
     id: "pantun",
     title: "Raja Pantun",
-    subtitle: "Creative Writing",
+    subtitle: "Menulis Kreatif",
     desc: "Lengkapi pantun dengan pilihan kata terbaik. Makin kreatif dan benar, makin tinggi skor!",
     emoji: "🎭",
     gradient: "from-pink-500 via-pink-600 to-rose-700",
@@ -95,8 +95,8 @@ const GAMES = [
   {
     id: "koreksi",
     title: "Koreksi Cepat",
-    subtitle: "Error Hunt",
-    desc: "Cari dan perbaiki kesalahan dalam kalimat. Speed run mode! Cocok untuk yang jago EYD/PUEBI.",
+    subtitle: "Berburu Kesalahan",
+    desc: "Cari dan perbaiki kesalahan dalam kalimat. Mode lari cepat! Cocok untuk yang jago EYD/PUEBI.",
     emoji: "🔍",
     gradient: "from-amber-500 via-amber-600 to-yellow-700",
     href: "#",
@@ -122,19 +122,19 @@ export default function GameHubPage() {
               <Gamepad2 size={24} className="text-white" />
             </div>
             <div>
-              <h1 className="text-2xl lg:text-3xl font-extrabold">Game Bahasa Indonesia</h1>
+              <h1 className="text-2xl lg:text-3xl font-extrabold">Gim Bahasa Indonesia</h1>
               <p className="text-violet-200 text-sm">Belajar sambil bermain — asyik dan nagih!</p>
             </div>
           </div>
           <div className="flex flex-wrap gap-3 mt-4">
             <div className="flex items-center gap-1.5 px-3 py-1.5 bg-white/10 rounded-full border border-white/10 text-xs">
-              <Zap size={12} className="text-yellow-300" /> {liveGames.length} Game Aktif
+              <Zap size={12} className="text-yellow-300" /> {liveGames.length} Gim Aktif
             </div>
             <div className="flex items-center gap-1.5 px-3 py-1.5 bg-white/10 rounded-full border border-white/10 text-xs">
               <Clock size={12} className="text-green-300" /> {comingSoon.length} Segera Hadir
             </div>
             <div className="flex items-center gap-1.5 px-3 py-1.5 bg-white/10 rounded-full border border-white/10 text-xs">
-              <Users size={12} className="text-blue-300" /> Multiplayer & Solo
+              <Users size={12} className="text-blue-300" /> Multipemain & Solo
             </div>
           </div>
         </div>
@@ -179,7 +179,7 @@ export default function GameHubPage() {
                       <h3 className="font-bold text-slate-900 text-sm">{game.title}</h3>
                       <p className="text-[10px] text-slate-400 font-medium uppercase tracking-wider">{game.subtitle}</p>
                     </div>
-                    <span className="text-[9px] px-1.5 py-0.5 bg-emerald-100 text-emerald-700 rounded-full font-semibold">LIVE</span>
+                    <span className="text-[9px] px-1.5 py-0.5 bg-emerald-100 text-emerald-700 rounded-full font-semibold">LANGSUNG</span>
                   </div>
                   <p className="text-xs text-slate-500 mt-2 line-clamp-2 leading-relaxed">{game.desc}</p>
                   <div className="flex items-center gap-3 mt-3 pt-3 border-t border-slate-50">
@@ -243,16 +243,16 @@ export default function GameHubPage() {
         <div className="mt-10 bg-gradient-to-br from-violet-50 to-purple-50 rounded-2xl border border-violet-100 p-5">
           <div className="flex items-center gap-3 mb-3">
             <Trophy size={18} className="text-violet-500" />
-            <span className="font-bold text-slate-700 text-sm">Main dan kumpulkan XP!</span>
+            <span className="font-bold text-slate-700 text-sm">Mainkan dan kumpulkan Poin Pengalaman!</span>
           </div>
           <div className="grid grid-cols-3 gap-4 text-center">
             <div>
               <p className="text-lg font-extrabold text-violet-600">{GAMES.length}</p>
-              <p className="text-[10px] text-slate-500">Total Game</p>
+              <p className="text-[10px] text-slate-500">Total Gim</p>
             </div>
             <div>
               <p className="text-lg font-extrabold text-violet-600">{liveGames.length}</p>
-              <p className="text-[10px] text-slate-500">Game Aktif</p>
+              <p className="text-[10px] text-slate-500">Gim Aktif</p>
             </div>
             <div>
               <p className="text-lg font-extrabold text-violet-600">SD-SMA</p>

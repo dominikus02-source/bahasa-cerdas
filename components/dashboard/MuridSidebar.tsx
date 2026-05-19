@@ -16,7 +16,7 @@ const NAV = [
   { label: "Beranda", href: "/murid/beranda", icon: <Home size={18} /> },
   { label: "Tugasku", href: "/murid/tugasku", icon: <ClipboardList size={18} /> },
   { label: "Gabung Kelas", href: "/murid/gabung-kelas", icon: <Users size={18} /> },
-  { label: "Game", href: "/murid/game", icon: <Gamepad2 size={18} /> },
+  { label: "Gim", href: "/murid/game", icon: <Gamepad2 size={18} /> },
   {
     label: "Kompetensi",
     icon: <GraduationCap size={18} />,
@@ -33,7 +33,7 @@ const NAV = [
       { label: "Kalender", href: "/murid/olimpiade/kalender", icon: <Calendar size={16} /> },
     ]
   },
-  { label: "Progresku", href: "/murid/progresku", icon: <BarChart2 size={18} /> },
+  { label: "Kemajuanku", href: "/murid/progresku", icon: <BarChart2 size={18} /> },
   { label: "Pengaturan", href: "/murid/pengaturan", icon: <Settings size={18} /> },
 ]
 
@@ -51,29 +51,38 @@ interface Props {
   }
 }
 
-export function MuridSidebar({ user }: Props) {
+const LEAGUE_LABELS: Record<string, string> = {
+  BRONZE: "PERUNGGU",
+  SILVER: "PERAK",
+  GOLD: "EMAS",
+  DIAMOND: "BERLIAN",
+}
+
+const LEAGUE_COLORS: Record<string, string> = {
+  BRONZE: "text-amber-700 bg-amber-100",
+  SILVER: "text-gray-600 bg-gray-100",
+  GOLD: "text-yellow-700 bg-yellow-100",
+  DIAMOND: "text-blue-700 bg-blue-100",
+}
+
+const LEAGUE_ICONS: Record<string, string> = {
+  BRONZE: "🥉",
+  SILVER: "🥈",
+  GOLD: "🥇",
+  DIAMOND: "💎",
+}
+
+export default function MuridSidebar({ user }: Props) {
   const pathname = usePathname()
-  const router = useRouter()
   const supabase = createClient()
+  const router = useRouter()
+
   const [expanded, setExpanded] = useState<Record<string, boolean>>({
     Kompetensi: pathname.includes("/ukbi") || pathname.includes("/sertifikat"),
     Olimpiade: pathname.includes("/olimpiade"),
   })
 
   const isActive = (href: string) => pathname === href || pathname.startsWith(href + "/")
-
-  const leagueColors: Record<string, string> = {
-    BRONZE: "text-amber-700 bg-amber-100",
-    SILVER: "text-gray-600 bg-gray-100",
-    GOLD: "text-yellow-700 bg-yellow-100",
-    DIAMOND: "text-blue-700 bg-blue-100",
-  }
-  const leagueIcons: Record<string, string> = {
-    BRONZE: "🥉",
-    SILVER: "🥈",
-    GOLD: "🥇",
-    DIAMOND: "💎",
-  }
 
   return (
     <aside className="w-64 h-screen bg-white border-r border-gray-100 flex flex-col fixed left-0 top-0">
@@ -84,7 +93,7 @@ export function MuridSidebar({ user }: Props) {
           </div>
           <div>
             <span className="font-bold text-gray-900 text-sm">BahasaCerdas</span>
-            <p className="text-[10px] text-gray-400">Dashboard Murid</p>
+            <p className="text-[10px] text-gray-400">Dasbor Murid</p>
           </div>
         </Link>
       </div>
@@ -97,10 +106,10 @@ export function MuridSidebar({ user }: Props) {
           <div className="min-w-0 flex-1">
             <p className="text-sm font-semibold text-gray-900 truncate">{user.fullName}</p>
             <div className="flex items-center gap-2 mt-0.5">
-              <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-medium ${leagueColors[user.league] || leagueColors.BRONZE}`}>
-                {leagueIcons[user.league] || "🥉"} {user.league}
+              <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-medium ${LEAGUE_COLORS[user.league] || LEAGUE_COLORS.BRONZE}`}>
+                {LEAGUE_ICONS[user.league] || "🥉"} {LEAGUE_LABELS[user.league] || "PERUNGGU"}
               </span>
-              <span className="text-[10px] text-gray-400">Lv.{user.level}</span>
+              <span className="text-[10px] text-gray-400">Tkt. {user.level}</span>
             </div>
           </div>
           <NotificationBell />
