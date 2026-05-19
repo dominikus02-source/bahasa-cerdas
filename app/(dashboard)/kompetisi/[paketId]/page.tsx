@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, use } from "react";
+import { useState, useEffect, useCallback, useRef, use } from "react";
 import { useRouter } from "next/navigation";
 import { Clock, ChevronLeft, ChevronRight, Flag, AlertTriangle, CheckCircle, XCircle } from "lucide-react";
 
@@ -100,24 +100,36 @@ export default function KompetisiPage({ params }: { params: Promise<{ paketId: s
     }
   }, [resolvedParams.paketId, router]);
 
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const handleSubmitRef = useRef<(auto?: boolean) => Promise<void>>(() => Promise.resolve());
+
   useEffect(() => {
     fetchTest();
   }, [fetchTest]);
 
   useEffect(() => {
+    handleSubmitRef.current = handleSubmit;
+  });
+
+  useEffect(() => {
     if (timeLeft <= 0) return;
-    const timer = setInterval(() => {
+    if (timerRef.current) clearInterval(timerRef.current);
+    
+    timerRef.current = setInterval(() => {
       setTimeLeft((t) => {
         if (t <= 1) {
-          clearInterval(timer);
-          handleSubmit(true);
+          if (timerRef.current) clearInterval(timerRef.current);
+          handleSubmitRef.current(true);
           return 0;
         }
         return t - 1;
       });
     }, 1000);
-    return () => clearInterval(timer);
-  }, [timeLeft]);
+    
+    return () => {
+      if (timerRef.current) clearInterval(timerRef.current);
+    };
+  }, [timeLeft > 0]);
 
   const sections = data?.questions || [];
   const currentSectionData = sections[currentSection];
