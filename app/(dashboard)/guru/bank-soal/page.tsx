@@ -394,7 +394,10 @@ export default function BankSoalPage() {
                           {openMenuPoolId === pool.id && (
                             <div className="absolute right-0 top-8 z-50 bg-white rounded-xl shadow-xl border py-1 min-w-[160px]">
                               <button
-                                onClick={(e) => { e.stopPropagation(); router.push(`/kompetisi/latihan?pool=${pool.id}`); }}
+                                onClick={(e) => { 
+                                  e.stopPropagation(); 
+                                  window.location.href = `/kompetisi/${pool.id}?mode=latihan`;
+                                }}
                                 className="w-full flex items-center gap-2 px-3 py-2 text-xs text-gray-700 hover:bg-emerald-50 hover:text-emerald-700"
                               >
                                 <Play size={14} /> Latihan (Solo)
