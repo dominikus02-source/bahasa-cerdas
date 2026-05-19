@@ -58,7 +58,11 @@ export default function GuruProfilePage() {
       {/* Cover & Avatar */}
       <div className="relative">
         <div className="h-48 bg-gradient-to-br from-emerald-500 via-green-500 to-teal-600" />
-        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmZmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PHBhdGggZD0iTTM2IDM0djItSDI0di0ySDIwdjJoMTZWMTBoMnYyaDEydjJoMTJ2MTBoMTZ2LTJ6Ii8+PC9nPjwvZz48L3N2Zz4=')] opacity-50" />
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmZmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PHBhdGggZD0iTTM2IDM0djItSDI0di0ySDIwdjJoMTZWMTBoMnYyaDEydjJoMTJ2MTBoMTZ2LTJ6Ii8+PC9nPjwvZz48L3N2Zz4=')] opacity-30" />
+        {/* BC Logo */}
+        <div className="absolute top-4 right-4 w-12 h-12 rounded-xl bg-white/20 backdrop-blur flex items-center justify-center border border-white/30">
+          <span className="text-white font-bold text-lg">BC</span>
+        </div>
         
         {/* Avatar */}
         <div className="absolute -bottom-16 left-1/2 -translate-x-1/2">
