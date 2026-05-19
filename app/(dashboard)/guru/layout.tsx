@@ -1,6 +1,6 @@
 import { LogoutButton } from "@/components/dashboard/LogoutButton";
 import { getUser } from "@/lib/supabase/server";
-import { createClient } from "@/lib/supabase/client";
+import { redirect } from "next/navigation";
 import Link from "next/link";
 import AIFloatingButton from "@/components/shared/AIFloatingButton";
 
@@ -22,13 +22,6 @@ export default async function GuruLayout({ children }: { children: React.ReactNo
 
   if (user.role !== "GURU" && !user.isFounder) {
     redirect("/murid/beranda");
-  }
-
-  async function logout() {
-    "use server"
-    const supabase = createClient();
-    await supabase.auth.signOut();
-    redirect("/login");
   }
 
   const leagueLabel = { BRONZE: "Perunggu", SILVER: "Perak", GOLD: "Emas", DIAMOND: "Berlian" }[user.league || "BRONZE"] || "Perunggu"
@@ -118,14 +111,7 @@ export default async function GuruLayout({ children }: { children: React.ReactNo
         </nav>
 
         <div className="p-3 border-t border-gray-100/50 bg-gray-50/50">
-          <form action={logout}>
-            <button type="submit" className="w-full flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm text-gray-500 hover:bg-red-50 hover:text-red-600 transition-colors group">
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
-                <path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-              <span className="font-medium group-hover:text-red-600">Keluar</span>
-            </button>
-          </form>
+          <LogoutButton />
         </div>
       </aside>
 
