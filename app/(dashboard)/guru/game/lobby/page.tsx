@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
+import QRCode from "qrcode";
 
 const ZapIcon = () => <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5"><path d="M13 10V3L4 14h7v7l9-11h-7z" strokeLinecap="round" strokeLinejoin="round"/></svg>;
 const TrophyIcon = () => <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5"><path d="M12 15l-2 5-3-3-2 1-1-4 5-4-4-2 3-5 2 8z M12 15l2 5" strokeLinecap="round" strokeLinejoin="round"/></svg>;
@@ -22,6 +23,7 @@ export default function GuruGameLobbyPage() {
   const [copied, setCopied] = useState(false);
   const [selectedMode, setSelectedMode] = useState("KUIS_BATTLE");
   const [step, setStep] = useState<"select" | "create">("select");
+  const [qrCodeUrl, setQrCodeUrl] = useState("");
 
   const handleCreateRoom = () => {
     const code = Math.random().toString(36).substring(2, 8).toUpperCase();
@@ -33,6 +35,15 @@ export default function GuruGameLobbyPage() {
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
+
+  useEffect(() => {
+    if (roomCode) {
+      const joinUrl = `${window.location.origin}/game/${roomCode}`;
+      QRCode.toDataURL(joinUrl, { width: 200, margin: 1, color: { dark: "#064e3b", light: "#ffffff" } }, (err, url) => {
+        if (!err) setQrCodeUrl(url);
+      });
+    }
+  }, [roomCode]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-emerald-50 p-8">
@@ -46,7 +57,6 @@ export default function GuruGameLobbyPage() {
         </div>
 
         {step === "select" ? (
-          /* Game Mode Selection */
           <div className="mb-8">
             <h2 className="font-bold text-gray-900 mb-4">Pilih Mode Gim</h2>
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -66,7 +76,6 @@ export default function GuruGameLobbyPage() {
             </div>
           </div>
         ) : (
-          /* Create Room */
           <div className="bg-white rounded-2xl border border-gray-100 p-6 mb-6">
             <div className="flex items-center justify-between mb-4">
               <h2 className="font-bold text-gray-900">Buat Ruangan</h2>
@@ -95,6 +104,16 @@ export default function GuruGameLobbyPage() {
                   <p className="text-3xl font-bold text-emerald-700 tracking-wider">{roomCode}</p>
                 </div>
                 
+                {qrCodeUrl && (
+                  <div className="bg-gray-50 rounded-xl p-4 text-center">
+                    <p className="text-sm text-gray-600 mb-3 font-medium">Scan QR untuk Gabung</p>
+                    <div className="inline-block bg-white p-3 rounded-xl shadow-sm border">
+                      <img src={qrCodeUrl} alt="QR Code" className="w-48 h-48" />
+                    </div>
+                    <p className="text-xs text-gray-400 mt-2">Arahkan kamera HP ke QR code ini</p>
+                  </div>
+                )}
+                
                 <button
                   onClick={handleCopy}
                   className="w-full py-3 bg-gray-100 text-gray-700 rounded-xl font-medium hover:bg-gray-200 transition-colors"
@@ -110,7 +129,7 @@ export default function GuruGameLobbyPage() {
                     Buka Ruangan
                   </Link>
                   <button
-                    onClick={() => { setRoomCode(""); setStep("select"); }}
+                    onClick={() => { setRoomCode(""); setQrCodeUrl(""); setStep("select"); }}
                     className="px-4 py-3 border border-gray-200 text-gray-600 rounded-xl font-medium hover:bg-gray-50 transition-colors"
                   >
                     Baru
@@ -121,7 +140,6 @@ export default function GuruGameLobbyPage() {
           </div>
         )}
 
-        {/* Join Room */}
         <div className="bg-white rounded-2xl border border-gray-100 p-6">
           <h2 className="font-bold text-gray-900 mb-4">Gabung ke Ruangan</h2>
           <div className="flex gap-3">
@@ -137,7 +155,6 @@ export default function GuruGameLobbyPage() {
           </div>
         </div>
 
-        {/* Active Rooms */}
         <div className="mt-6 bg-white rounded-2xl border border-gray-100 p-6">
           <h2 className="font-bold text-gray-900 mb-4">Ruangan Aktif</h2>
           <p className="text-gray-400 text-sm text-center py-4">Belum ada ruangan aktif</p>

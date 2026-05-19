@@ -11,6 +11,9 @@ const StudentIcon = () => <svg className="w-10 h-10" viewBox="0 0 24 24" fill="n
 const DashIcon = () => <svg className="w-10 h-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" strokeLinecap="round" strokeLinejoin="round"/></svg>;
 const SusunIcon = () => <svg className="w-10 h-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M4 7V4h16v3M4 7h16M4 12h16M4 17h16M9 12h6M9 17h6" strokeLinecap="round"/></svg>;
 const TebakIcon = () => <svg className="w-10 h-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="12" cy="12" r="10"/><path d="M9 9a3 3 0 115.36 1.36 3 3 0 01-2.36 3.64M12 17v-2"/></svg>;
+const PuzzleIcon = () => <svg className="w-10 h-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6zM9 9h6v6H9z" strokeLinecap="round"/></svg>;
+const PantunIcon = () => <svg className="w-10 h-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M4 4l16 16M4 20L20 4" strokeLinecap="round"/><path d="M9 9h.01M14 10h.01M10 14h.01M15 15h.01" strokeLinecap="round"/></svg>;
+const KoreksiIcon = () => <svg className="w-10 h-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" strokeLinecap="round"/></svg>;
 
 const GAMES = [
   {
@@ -67,6 +70,20 @@ const GAMES = [
 
 const SOLO_GAMES = [
   {
+    id: "dash",
+    title: "Lari Kata",
+    subtitle: "Solo - Lari Cepat",
+    desc: "Jawab 20 soal dalam 60 detik! Makin cepat + rentetan tinggi = makin banyak XP.",
+    Icon: DashIcon,
+    gradient: "from-violet-500 via-purple-600 to-violet-800",
+    href: "/guru/game/lari-kata",
+    status: "LIVE",
+    badge: "SOLO",
+    badgeColor: "bg-violet-500",
+    players: "Solo",
+    time: "~3 menit",
+  },
+  {
     id: "susun",
     title: "Susun Kata",
     subtitle: "Solo - Teka-teki",
@@ -94,12 +111,49 @@ const SOLO_GAMES = [
     players: "Solo",
     time: "~3 menit",
   },
+  {
+    id: "puzzle",
+    title: "Teka-teki Makna",
+    subtitle: "Koneksi Harian",
+    desc: "16 kata, 4 grup, 1 tema. Tebak hubungan antar kata. Teka-teki baru setiap hari!",
+    Icon: PuzzleIcon,
+    gradient: "from-cyan-500 via-cyan-600 to-blue-700",
+    href: "#",
+    status: "COMING_SOON",
+    players: "Solo",
+    time: "~5 menit",
+  },
+  {
+    id: "pantun",
+    title: "Raja Pantun",
+    subtitle: "Menulis Kreatif",
+    desc: "Lengkapi pantun dengan pilihan kata terbaik. Makin kreatif dan benar, makin tinggi skor!",
+    Icon: PantunIcon,
+    gradient: "from-pink-500 via-pink-600 to-rose-700",
+    href: "#",
+    status: "COMING_SOON",
+    players: "Solo",
+    time: "~3 menit",
+  },
+  {
+    id: "koreksi",
+    title: "Koreksi Cepat",
+    subtitle: "Berburu Kesalahan",
+    desc: "Cari dan perbaiki kesalahan dalam kalimat. Mode lari cepat! Cocok untuk yang jago EYD/PUEBI.",
+    Icon: KoreksiIcon,
+    gradient: "from-amber-500 via-amber-600 to-yellow-700",
+    href: "#",
+    status: "COMING_SOON",
+    players: "Solo",
+    time: "~3 menit",
+  },
 ];
 
 export default function GuruGameHubPage() {
   const liveGames = GAMES.filter(g => g.status === "LIVE");
   const comingSoon = GAMES.filter(g => g.status === "COMING_SOON");
   const soloGames = SOLO_GAMES.filter(g => g.status === "LIVE");
+  const soloComingSoon = SOLO_GAMES.filter(g => g.status === "COMING_SOON");
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-emerald-50">
@@ -181,7 +235,7 @@ export default function GuruGameHubPage() {
             <div className="w-2 h-2 rounded-full bg-violet-500 animate-pulse" />
             <h2 className="text-lg font-bold text-slate-800">Gim Solo (Bermain Sendiri)</h2>
           </div>
-          <div className="grid sm:grid-cols-2 gap-4">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {soloGames.map((game) => (
               <Link
                 key={game.id}
@@ -216,6 +270,32 @@ export default function GuruGameHubPage() {
             ))}
           </div>
         </div>
+
+        {/* Solo Coming Soon */}
+        {soloComingSoon.length > 0 && (
+          <div className="mb-10">
+            <div className="flex items-center gap-2 mb-6">
+              <svg className="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+              <h2 className="text-lg font-bold text-slate-800">Gim Solo Segera Hadir</h2>
+            </div>
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {soloComingSoon.map((game) => (
+                <div key={game.id} className="relative bg-white/50 rounded-2xl border border-slate-100 overflow-hidden opacity-70">
+                  <div className={`h-20 bg-gradient-to-br ${game.gradient} relative overflow-hidden flex items-center justify-center`}>
+                    <game.Icon />
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/40">
+                      <span className="bg-black/50 text-white text-[10px] font-bold px-3 py-1 rounded-full backdrop-blur-sm border border-white/20">SEGERA HADIR</span>
+                    </div>
+                  </div>
+                  <div className="p-4">
+                    <h3 className="font-bold text-slate-700 text-sm">{game.title}</h3>
+                    <p className="text-[10px] text-slate-400">{game.subtitle}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Coming Soon */}
         <div>
