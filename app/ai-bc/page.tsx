@@ -54,9 +54,7 @@ export default function AIChatPage() {
   useEffect(() => {
     if (!initialized.current) {
       initialized.current = true;
-      const greeting = mode === "guru"
-        ? "Hai, Bapak/Ibu Guru! 👋\n\nAku **AI BC**, asisten khusus guru Bahasa Indonesia. Aku siap bantu:\n\n- 📝 **Generate RPP & Modul Ajar**\n- 📋 **Buat Soal HOTS & Kisi-kisi**\n- 📖 **Koreksi Teks & Tata Bahasa**\n- 💡 **Ide Mengajar Kreatif**\n- 📊 **Analisis Kurikulum Merdeka**\n\nAda yang bisa aku bantu hari ini, Bu/Pak? 😊"
-        : "Hai! 👋\n\nAku **AI BC**, teman belajar Bahasa Indonesia kamu. Aku siap bantu:\n\n- 📖 **Mencari arti kata**\n- 🔄 **Sinonim & antonim**\n- ✍️ **Contoh kalimat**\n- 📝 **Belajar tata bahasa**\n- 🤔 **Menjawab PR Bahasa Indonesia**\n\nAda yang mau ditanyakan? 😊";
+      const greeting = "Halo! 👋\n\nAku AI Tutor BahasaCerdas.\n\n**Kamu mau tanya apa?**\n\nAku bisa bantu:\n- 📖 Arti kata & KBBI\n- ✍️ Tata bahasa & PUEBI\n- 📝 Sinonim & antonim\n- 📚 Sastra Indonesia\n- 🎯 Persiapan UKBI";
       setMessages([{ role: "bot", text: greeting }]);
     }
   }, [mode]);

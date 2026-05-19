@@ -121,15 +121,11 @@ export default function MuridProfilePage() {
       )}
 
       {/* Quick Actions */}
-      <div className="mt-6 mx-4 grid grid-cols-2 gap-3">
+      <div className="mt-6 mx-4">
         <Link href="/murid/pengaturan" className="flex items-center justify-center gap-2 py-3 bg-white rounded-xl border border-gray-100 shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50">
           <Settings size={16} />
           Pengaturan
         </Link>
-        <button className="flex items-center justify-center gap-2 py-3 bg-gradient-to-r from-violet-600 to-purple-600 text-white rounded-xl shadow-lg shadow-violet-500/20 text-sm font-medium">
-          <MessageCircle size={16} />
-          Chat AI
-        </button>
       </div>
 
       {/* Menu Grid */}
