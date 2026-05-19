@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { getUser } from "@/lib/supabase/server";
 import { createClient } from "@/lib/supabase/client";
 import Link from "next/link";
+import AIFloatingButton from "@/components/shared/AIFloatingButton";
 
 const MenuIcon = ({ path, label, href }: { path: string; label: string; href: string }) => (
   <Link href={href} className="group flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm mb-1 transition-all duration-200 text-gray-600 hover:bg-gradient-to-r hover:from-violet-50 hover:to-purple-50 hover:text-violet-700">
@@ -109,6 +110,7 @@ export default async function MuridLayout({ children }: { children: React.ReactN
       <main className="flex-1 ml-64 p-8 bg-transparent">
         {children}
       </main>
+      <AIFloatingButton />
     </div>
   );
 }
