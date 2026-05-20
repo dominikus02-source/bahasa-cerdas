@@ -152,7 +152,7 @@ export async function POST(
     let totalQuestions = 0;
     let rawScore = 0;
 
-    if (paket.type === "UKBI" || paket.type === "UKBI_SIMULASI" || paket.type === "UKBI_LATIHAN") {
+    if (paket.type.includes("UKBI")) {
       const questions = await db.uKBIQuestion.findMany({
         where: { id: { in: allAnswerIds }, isActive: true },
       });
@@ -202,6 +202,8 @@ export async function POST(
           salah: sd.total - sd.correct,
           total: sd.total,
           skor: sd.score,
+          score: sd.score,
+          percentage: sd.total > 0 ? Math.round((sd.correct / sd.total) * 100) : 0,
         };
       }
 
@@ -270,7 +272,7 @@ export async function POST(
       });
     }
 
-    if (paket.type === "TKA_GURU" || paket.type === "TKA_UTBK" || paket.type === "TKA_SMP" || paket.type === "TKA_SMA") {
+    if (paket.type.includes("TKA")) {
       const questions = await db.tKAQuestion.findMany({
         where: { id: { in: allAnswerIds }, isActive: true },
       });
@@ -328,7 +330,12 @@ export async function POST(
           maxScore: maxPossible,
           percentage,
           predikat,
-          seksiScores: sectionScores,
+          seksiScores: Object.fromEntries(
+          Object.entries(sectionScores).map(([key, val]) => [
+            key,
+            { ...val, percentage: val.total > 0 ? Math.round((val.correct / val.total) * 100) : 0 },
+          ])
+        ),
           finishedAt: new Date(),
           timeSpent: timeSpent || 0,
         },
@@ -365,7 +372,12 @@ export async function POST(
           salah: totalQuestions - totalCorrect,
           total: totalQuestions,
           rawScore,
-          seksiScores: sectionScores,
+          seksiScores: Object.fromEntries(
+            Object.entries(sectionScores).map(([key, val]) => [
+              key,
+              { ...val, percentage: val.total > 0 ? Math.round((val.correct / val.total) * 100) : 0 },
+            ])
+          ),
           passed: percentage >= paket.passingScore,
           passingScore: paket.passingScore,
         },

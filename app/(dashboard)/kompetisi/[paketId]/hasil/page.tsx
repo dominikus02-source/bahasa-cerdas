@@ -122,9 +122,9 @@ export default function HasilPage({ params }: { params: Promise<{ paketId: strin
             <ChevronLeft className="w-4 h-4" /> Kembali ke Latihan
           </Link>
           <div className="flex items-center gap-3">
-            {passed ? <Award className="w-10 h-10" /> : <BookOpen className="w-10 h-10" />}
-            <div>
-              <h1 className="text-2xl font-bold">Hasil: {title}</h1>
+            {passed ? <Award className="w-10 h-10 shrink-0" /> : <BookOpen className="w-10 h-10 shrink-0" />}
+            <div className="min-w-0">
+              <h1 className="text-2xl font-bold break-words">Hasil: {title}</h1>
               <p className="text-indigo-100 text-sm">Percobaan #{result.attemptNumber}</p>
             </div>
           </div>
@@ -172,24 +172,28 @@ export default function HasilPage({ params }: { params: Promise<{ paketId: strin
           <div className="bg-white rounded-2xl border border-slate-100 p-5">
             <h3 className="font-bold text-slate-800 mb-3">Skor per Seksi</h3>
             <div className="space-y-2">
-              {Object.entries(result.sectionScores).map(([section, data]: [string, any]) => (
-                <div key={section} className="flex items-center justify-between p-3 bg-slate-50 rounded-xl">
-                  <span className="text-sm font-medium text-slate-700">{section}</span>
-                  <div className="flex items-center gap-2">
-                    <div className="w-24 bg-white rounded-full h-2">
-                      <div className="h-2 rounded-full bg-indigo-500" style={{ width: `${data.percentage}%` }} />
+              {Object.entries(result.sectionScores).map(([section, data]: [string, any]) => {
+                const sectionScore = data.score ?? data.skor ?? 0;
+                const sectionPercentage = data.percentage ?? (data.total > 0 ? Math.round((data.benar ?? 0) / data.total * 100) : 0);
+                return (
+                  <div key={section} className="flex items-center justify-between p-3 bg-slate-50 rounded-xl gap-2">
+                    <span className="text-sm font-medium text-slate-700 truncate">{section}</span>
+                    <div className="flex items-center gap-2 shrink-0">
+                      <div className="w-16 sm:w-24 bg-white rounded-full h-2">
+                        <div className="h-2 rounded-full bg-indigo-500" style={{ width: `${sectionPercentage}%` }} />
+                      </div>
+                      <span className="text-xs sm:text-sm font-bold text-slate-700 w-14 sm:w-16 text-right">{sectionScore}/{data.total}</span>
                     </div>
-                    <span className="text-sm font-bold text-slate-700 w-16 text-right">{data.score}/{data.total}</span>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         )}
 
         <div className="flex flex-col gap-3">
           <Link
-            href={`/kompetisi/${paketId}`}
+            href={`/kompetisi/${paketId}?retry=1`}
             className="flex items-center justify-center gap-2 py-3 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-700 transition-colors"
           >
             <RefreshCw className="w-4 h-4" />

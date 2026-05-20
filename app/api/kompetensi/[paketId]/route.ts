@@ -14,6 +14,9 @@ export async function GET(
 ) {
   try {
     const { paketId } = await params;
+    const { searchParams } = new URL(req.url);
+    const retry = searchParams.get("retry") === "1";
+
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
@@ -51,11 +54,20 @@ export async function GET(
         },
       });
     } else if (session.status === "COMPLETED") {
-      return NextResponse.json({
-        error: "Tes sudah selesai",
-        session,
-        message: "Anda sudah menyelesaikan tes ini",
-      }, { status: 400 });
+      if (retry) {
+        const expiresAt = new Date();
+        expiresAt.setMinutes(expiresAt.getMinutes() + paket.duration);
+        session = await db.testSession.update({
+          where: { id: session.id },
+          data: { status: "IN_PROGRESS", expiresAt, startedAt: new Date(), answers: {}, flagged: [] },
+        });
+      } else {
+        return NextResponse.json({
+          error: "Tes sudah selesai",
+          session,
+          message: "Anda sudah menyelesaikan tes ini",
+        }, { status: 400 });
+      }
     }
 
     const sections = (paket.sectionsData as any[]) || (paket.sections as any[]) || [];

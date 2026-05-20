@@ -49,7 +49,8 @@ export default function KompetisiPage({ params }: { params: Promise<{ paketId: s
   const fetchTest = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await fetch(`/api/kompetensi/${resolvedParams.paketId}`);
+      const retry = typeof window !== "undefined" ? window.location.search.includes("retry=1") : false;
+      const res = await fetch(`/api/kompetensi/${resolvedParams.paketId}${retry ? "?retry=1" : ""}`);
       const result = await res.json();
 
       if (result.error) {

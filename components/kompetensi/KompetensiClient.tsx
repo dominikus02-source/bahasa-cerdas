@@ -133,13 +133,14 @@ export default function KompetensiClient() {
               return (
                 <div key={paket.id} className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden hover:shadow-md transition-all">
                   <div className="p-5">
-                    <div className="flex items-start gap-4">
-                      <div className={`w-14 h-14 ${typeConfig.color} rounded-xl flex items-center justify-center text-2xl shrink-0`}>
-                        {typeConfig.icon}
-                      </div>
+                    <div className="flex flex-col md:flex-row items-start gap-4">
+                      <div className="flex items-start gap-4 w-full md:w-auto md:flex-1">
+                        <div className={`w-14 h-14 ${typeConfig.color} rounded-xl flex items-center justify-center text-2xl shrink-0`}>
+                          {typeConfig.icon}
+                        </div>
                       
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-1">
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-1">
                           <span className={`px-2 py-0.5 ${typeConfig.color} text-white text-xs font-bold rounded-full`}>
                             {typeConfig.label}
                           </span>
@@ -189,32 +190,43 @@ export default function KompetensiClient() {
                           </div>
                         )}
                       </div>
+                    </div>
 
-                      <div className="flex flex-col gap-2 shrink-0">
-                        {hasCert ? (
-                          <Link
-                            href={`/kompetisi/${paket.id}/hasil`}
-                            className="flex items-center gap-2 px-5 py-2.5 bg-green-600 text-white text-sm font-bold rounded-xl hover:bg-green-700 transition-colors"
-                          >
-                            <Award className="w-4 h-4" />
-                            Lihat Sertifikat
-                          </Link>
+                    <div className="flex flex-col gap-2 shrink-0">
+                        {bestResult?.status === "COMPLETED" ? (
+                          <>
+                            <Link
+                              href={`/kompetisi/${paket.id}/hasil`}
+                              className="flex items-center justify-center gap-2 px-5 py-2.5 bg-green-600 text-white text-sm font-bold rounded-xl hover:bg-green-700 transition-colors"
+                            >
+                              <Award className="w-4 h-4" />
+                              {hasCert ? "Lihat Sertifikat" : "Lihat Hasil"}
+                            </Link>
+                            <Link
+                              href={`/kompetisi/${paket.id}?retry=1`}
+                              className="text-center text-xs text-indigo-600 hover:underline font-medium"
+                            >
+                              Coba Lagi
+                            </Link>
+                          </>
                         ) : (
-                          <Link
-                            href={`/kompetisi/${paket.id}`}
-                            className="flex items-center gap-2 px-5 py-2.5 bg-indigo-600 text-white text-sm font-bold rounded-xl hover:bg-indigo-700 transition-colors"
-                          >
-                            {paket.mode === "SIMULASI" ? <GraduationCap className="w-4 h-4" /> : <BookOpen className="w-4 h-4" />}
-                            {bestResult?.status === "COMPLETED" ? "Coba Lagi" : "Mulai"}
-                          </Link>
-                        )}
-                        {bestResult && (
-                          <Link
-                            href={`/kompetisi/${paket.id}/hasil`}
-                            className="text-center text-xs text-indigo-600 hover:underline font-medium"
-                          >
-                            Lihat Riwayat
-                          </Link>
+                          <>
+                            <Link
+                              href={`/kompetisi/${paket.id}`}
+                              className="flex items-center justify-center gap-2 px-5 py-2.5 bg-indigo-600 text-white text-sm font-bold rounded-xl hover:bg-indigo-700 transition-colors"
+                            >
+                              {paket.mode === "SIMULASI" ? <GraduationCap className="w-4 h-4" /> : <BookOpen className="w-4 h-4" />}
+                              Mulai
+                            </Link>
+                            {bestResult && (
+                              <Link
+                                href={`/kompetisi/${paket.id}/hasil`}
+                                className="text-center text-xs text-indigo-600 hover:underline font-medium"
+                              >
+                                Lihat Riwayat
+                              </Link>
+                            )}
+                          </>
                         )}
                       </div>
                     </div>
