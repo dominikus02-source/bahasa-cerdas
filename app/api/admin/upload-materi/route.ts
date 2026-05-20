@@ -11,6 +11,7 @@ export async function POST(req: NextRequest) {
     const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) {
+      console.log("Manual PPT Upload: Unauthorized");
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -23,6 +24,7 @@ export async function POST(req: NextRequest) {
     }
     
     if (!dbUser) {
+      console.log("Manual PPT Upload: User not found in DB");
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
     
@@ -38,6 +40,7 @@ export async function POST(req: NextRequest) {
                     ALLOWED_ADMIN_EMAILS.includes(user.email || "");
 
     if (!isAdmin) {
+      console.log("Manual PPT Upload: Not admin -", user.email);
       return NextResponse.json({ error: "Admin only" }, { status: 403 });
     }
 
@@ -50,12 +53,16 @@ export async function POST(req: NextRequest) {
     const topik = formData.get("topik") as string;
     const kurikulum = formData.get("kurikulum") as string || "MERDEKA";
 
+    console.log("Manual PPT Upload: Form data - title:", title, "grade:", grade, "file:", file?.name, file?.size);
+
     if (!file || !title || !grade) {
       return NextResponse.json({ error: "File, judul, dan kelas wajib diisi" }, { status: 400 });
     }
 
     // Validate file type
     const fileExt = file.name.split(".").pop()?.toLowerCase();
+    console.log("Manual PPT Upload: File extension:", fileExt, "MIME type:", file.type);
+    
     if (!["pptx", "pdf"].includes(fileExt || "")) {
       return NextResponse.json({ error: "File harus PPTX atau PDF" }, { status: 400 });
     }
@@ -69,6 +76,8 @@ export async function POST(req: NextRequest) {
 
     // Upload file
     const fileName = `admin/materi/${Date.now()}-${Math.random().toString(36).substring(2, 8)}.${fileExt}`;
+    console.log("Manual PPT Upload: Upload path:", fileName);
+    
     const uploadResult = await uploadFileServer(file, fileName, "documents", file.type);
 
     if ("error" in uploadResult) {
@@ -87,7 +96,7 @@ export async function POST(req: NextRequest) {
         content: topik || "",
         fileUrl: uploadResult.url,
         fileKey: uploadResult.key,
-        fileType: fileExt?.toUpperCase() === "PDF" ? "PDF" : "PPTX",
+        fileType: fileExt === "pdf" ? "PDF" : "PPTX",
         grade: grade,
         isPublished: true,
         isPremium: false,
@@ -103,11 +112,12 @@ export async function POST(req: NextRequest) {
       materi: materi,
       downloadUrl: uploadResult.url,
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error("Manual PPT Upload error:", error);
+    console.error("Manual PPT Upload error stack:", error?.stack);
     return NextResponse.json({ 
       error: "Internal server error", 
-      details: process.env.NODE_ENV === "development" ? (error as Error).message : undefined 
+      details: error?.message || "Unknown error"
     }, { status: 500 });
   }
 }

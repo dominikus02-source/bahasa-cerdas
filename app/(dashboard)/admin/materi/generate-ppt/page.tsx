@@ -133,12 +133,19 @@ export default function AdminPPTGeneratorPage() {
       formData.append("kurikulum", manualKurikulum);
       const res = await fetch("/api/admin/upload-materi", { method: "POST", body: formData });
       const data = await res.json();
-      if (!res.ok) { setManualError(data.error || "Gagal upload file"); return; }
+      if (!res.ok) { 
+        console.error("Upload error response:", data);
+        setManualError(data.error || data.details || "Gagal upload file"); 
+        return; 
+      }
       setManualResult(data);
       setManualFile(null);
       setManualTitle("");
       setManualTopik("");
-    } catch { setManualError("Terjadi kesalahan. Silakan coba lagi."); }
+    } catch (e: any) { 
+      console.error("Upload exception:", e);
+      setManualError(e?.message || "Terjadi kesalahan. Silakan coba lagi."); 
+    }
     finally { setManualLoading(false); }
   };
 
