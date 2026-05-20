@@ -78,6 +78,7 @@ export async function POST(req: NextRequest) {
       videoUrl = (form.get("videoUrl") as string) || "";
       category = (form.get("category") as string) || "PEMBELAJARAN";
       grade = (form.get("grade") as string) || "";
+      isPublished = true;
 
       const file = form.get("file") as File | null;
       if (file && file.size > 0) {
