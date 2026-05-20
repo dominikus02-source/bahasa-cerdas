@@ -58,22 +58,11 @@ export default function GuruUKBIPage() {
       .finally(() => setLoading(false));
   }, []);
 
-  // Filter: only show NEW GURU packages, hide student packages and old Guru packages
+  // Filter: only show Guru packages (type contains _GURU), hide all student packages
   const filtered = pakets.filter(p => {
-    // Hide student packages (SMP/SMA)
-    if (["UKBI_SMP", "UKBI_SMA", "UKBI_LATIHAN_SMP", "UKBI_LATIHAN_SMA", "TKA_SMP", "TKA_SMA"].includes(p.type)) {
-      return false;
-    }
-    // Hide old TKA_GURU (without _SIMULASI/_LATIHAN suffix)
-    if (p.type === "TKA_GURU" && !p.type.includes("_SIMULASI") && !p.type.includes("_LATIHAN")) {
-      return false;
-    }
-    // Hide old UKBI_SIMULASI and UKBI_LATIHAN (general)
-    if (p.type === "UKBI_SIMULASI" || p.type === "UKBI_LATIHAN") {
-      return false;
-    }
-    // Show only new Guru packages
-    if (filter === "semua") return p.type.includes("UKBI_GURU") || p.type.includes("TKA_GURU");
+    const isGuru = p.type.includes("_GURU");
+    if (!isGuru) return false;
+    if (filter === "semua") return true;
     if (filter === "UKBI_GURU") return p.type.includes("UKBI_GURU");
     if (filter === "TKA_GURU") return p.type.includes("TKA_GURU");
     return false;
