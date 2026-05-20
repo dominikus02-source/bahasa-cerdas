@@ -151,6 +151,13 @@ Build BahasaCerdas educational platform with video learning, teacher upload work
 - **16 TKA Guru questions** added to `prisma/seed-kompetensi-guru.ts`: 8 PEDAGOGIK (learning theories, teaching models, assessment, classroom management, curriculum) and 8 PROFESIONAL (SNP, PKB, TPACK, education law, Merdeka Belajar)
 - **Package updates**: `totalQuestions` corrected for all 4 Guru packages (UKBI_GURU_SIMULASI: 17, TKA_GURU_SIMULASI: 16, UKBI_GURU_LATIHAN: 8, TKA_GURU_LATIHAN: 8). Section counts aligned with actual available questions.
 
+### Paket Lengkap Fix
+- **3 broken packages deleted** — "Simulasi UKBI - Paket Lengkap", "Latihan UKBI - Seksi I Mendengarkan", "Latihan UKBI - Seksi II & III" had wrong types, deleted from DB with cascade
+- **12 new properly-typed packages created**: "Simulasi UKBI - Paket Lengkap (UKBI_SMP)", "Latihan UKBI - Seksi I Mendengarkan (UKBI_LATIHAN_SMP)", "Latihan UKBI - Seksi II & III (UKBI_LATIHAN_SMP)", plus SMA & SD latihan packages
+- **20 additional questions seeded**: 6 UKBI SMP, 6 UKBI SMA, 4 TKA SMP, 4 TKA SMA
+- **Existing packages updated**: Simulasi UKBI - SMP and SMA duration set to 90 min with consistent section names
+- **Script**: `scripts/seeder-paket-lengkap.ts` created for future use; added `npm run db:seed-guru` and `npm run db:seed-paket-lengkap` to package.json
+
 ## Blockers
 - VPS SSH unreachable (server restarting)
 - game.bahasacerdas.com DNS not propagating/resolving
@@ -164,6 +171,7 @@ Build BahasaCerdas educational platform with video learning, teacher upload work
 - modified: app/api/kompetensi/[paketId]/route.ts (Guru fallback fix)
 - modified: prisma/seed-kompetensi-sd.ts (SD question fix)
 - modified: prisma/seed-kompetensi-guru.ts (36 new Guru questions + package updates)
+- new: scripts/seeder-paket-lengkap.ts (fix broken packages + 20 additional questions)
 - modified: game-server/src/server.ts
 - modified: next.config.ts
 - modified: package.json

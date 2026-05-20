@@ -14,7 +14,9 @@
     "db:seed-kompetensi": "npx ts-node --compiler-options '{\"module\":\"CommonJS\"}' prisma/seed-kompetensi.ts",
     "db:seed-game": "npx ts-node --compiler-options '{\"module\":\"CommonJS\"}' prisma/seed-game.ts",
     "db:seed-mgmp": "npx ts-node --compiler-options '{\"module\":\"CommonJS\"}' prisma/seed-mgmp.ts",
-    "db:seed-sd": "npx ts-node --compiler-options '{\"module\":\"CommonJS\"}' prisma/seed-kompetensi-sd.ts"
+    "db:seed-sd": "npx ts-node --compiler-options '{\"module\":\"CommonJS\"}' prisma/seed-kompetensi-sd.ts",
+    "db:seed-guru": "npx ts-node --compiler-options '{\"module\":\"CommonJS\"}' prisma/seed-kompetensi-guru.ts",
+    "db:seed-paket-lengkap": "npx tsx scripts/seeder-paket-lengkap.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.39.0",
