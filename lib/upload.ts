@@ -75,15 +75,11 @@ export async function uploadFile(
 
   const bucket = BUCKET_MAP[detectedType as keyof typeof BUCKET_MAP] || "documents";
 
-  // Auto-create bucket if not exists
-  try {
-    const { data: existingBucket } = await supabase.storage.getBucket(bucket);
-    if (!existingBucket) {
-      await supabase.storage.createBucket(bucket, { public: true }).catch(() => {});
-    }
-  } catch (e) {
-    // Bucket might already exist or we don't have permission to check/create
-    console.log("Bucket check/create skipped:", e);
+  // Configure bucket for large files (server-side only)
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SERVICE_ROLE_KEY;
+  if (supabaseUrl && serviceKey) {
+    await configureBucket(supabaseUrl, serviceKey, bucket).catch(() => {});
   }
 
   const { data, error } = await supabase.storage
@@ -102,6 +98,56 @@ export async function uploadFile(
   return { url: urlData.publicUrl, key: data.path };
 }
 
+// Update bucket configuration to allow large files
+export async function configureBucket(
+  supabaseUrl: string,
+  serviceKey: string,
+  bucketName: string,
+  maxSizeBytes: number = 50 * 1024 * 1024
+) {
+  try {
+    const bucketCheckRes = await fetch(`${supabaseUrl}/storage/v1/bucket/${bucketName}`, {
+      headers: { Authorization: `Bearer ${serviceKey}` },
+    });
+
+    if (bucketCheckRes.ok) {
+      const existingBucket = await bucketCheckRes.json();
+      const currentLimit = existingBucket.file_size_limit;
+      // Only update if limit is unset or smaller than what we need
+      if (!currentLimit || currentLimit < maxSizeBytes) {
+        await fetch(`${supabaseUrl}/storage/v1/bucket/${bucketName}`, {
+          method: "PATCH",
+          headers: {
+            Authorization: `Bearer ${serviceKey}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            public: true,
+            file_size_limit: maxSizeBytes,
+          }),
+        }).catch(() => {});
+      }
+    } else {
+      // Bucket doesn't exist, create it with file_size_limit
+      await fetch(`${supabaseUrl}/storage/v1/bucket`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${serviceKey}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          id: bucketName,
+          name: bucketName,
+          public: true,
+          file_size_limit: maxSizeBytes,
+        }),
+      }).catch(() => {});
+    }
+  } catch (e) {
+    console.log("Bucket configure skipped:", e);
+  }
+}
+
 // Server-side upload function for API routes
 export async function uploadFileServer(
   file: File | Buffer,
@@ -116,30 +162,8 @@ export async function uploadFileServer(
     return { error: "Server configuration error: Missing Supabase credentials" };
   }
 
-  // Auto-create bucket if not exists
-  try {
-    const bucketCheckRes = await fetch(`${supabaseUrl}/storage/v1/bucket/${bucket}`, {
-      headers: { Authorization: `Bearer ${serviceKey}` },
-    });
-    
-    if (!bucketCheckRes.ok) {
-      // Bucket doesn't exist, create it
-      await fetch(`${supabaseUrl}/storage/v1/bucket`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${serviceKey}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          id: bucket,
-          name: bucket,
-          public: true,
-        }),
-      }).catch(() => {});
-    }
-  } catch (e) {
-    console.log("Bucket check/create skipped:", e);
-  }
+  // Auto-create/configure bucket
+  await configureBucket(supabaseUrl, serviceKey, bucket);
 
   // Upload file
   const uploadUrl = `${supabaseUrl}/storage/v1/object/${bucket}/${fileName}`;

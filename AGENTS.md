@@ -5,7 +5,7 @@ This version has breaking changes — APIs, conventions, and file structure may 
 <!-- END:nextjs-agent-rules -->
 
 # BahasaCerdas Project Status
-## Last Updated: May 12, 2026
+## Last Updated: May 20, 2026
 
 ## Goal
 Build BahasaCerdas educational platform with video learning, teacher upload workflows, marketplace, Kuis Battle multiplayer game, UKBI/TKA simulation, class management, and community system.
@@ -40,17 +40,19 @@ Build BahasaCerdas educational platform with video learning, teacher upload work
 ### Environment Variables
 - DATABASE_URL: postgresql://bahasa:***REMOVED-DB-PASSWORD***@***REMOVED-VPS-IP***:5432/bahasacerdas
 - NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY (see above)
-- NEXT_PUBLIC_SITE_URL: https://bahasacerdas.site
-- NEXT_PUBLIC_GAME_SERVER_URL: https://game.bahasacerdas.site
+- NEXT_PUBLIC_SITE_URL: https://bahasacerdas.com
+- NEXT_PUBLIC_GAME_SERVER_URL: https://game.bahasacerdas.com
 - MIDTRANS_SERVER_KEY: [REDACTED]
 - NEXT_PUBLIC_MIDTRANS_CLIENT_KEY: ***REMOVED-MIDTRANS-CLIENT-KEY***
 - NEXT_PUBLIC_MIDTRANS_MERCHANT_ID: ***REMOVED-MIDTRANS-MERCHANT-ID***
 - ANTHROPIC_API_KEY: sk-ant-api03-xxxxxxx (placeholder)
+- DEEPSEEK_API_KEY, GROQ_API_KEY (AI generation)
+- SUPABASE_SERVICE_ROLE_KEY for storage management API
 
 ### DNS
-- Main site: bahasacerdas.site → Vercel (live)
-- Game subdomain: game.bahasacerdas.site → ***REMOVED-VPS-IP*** (A record added, propagation ongoing)
-- game.bahasacerdas.site currently not resolving (DNS or server issue)
+- Main site: bahasacerdas.com → Vercel (live, nameservers ns1/ns2.vercel-dns.com)
+- Game subdomain: game.bahasacerdas.com → ***REMOVED-VPS-IP*** (A record)
+- game.bahasacerdas.com currently not resolving (DNS or server issue)
 
 ### Game Server (VPS)
 - Location: /var/www/game-server/game-server on VPS
@@ -69,10 +71,11 @@ Build BahasaCerdas educational platform with video learning, teacher upload work
 ## Completed Features
 
 ### Core
-- Next.js deployed to Vercel (live at bahasacerdas.site)
+- Next.js deployed to Vercel (live at bahasacerdas.com)
 - Supabase auth integration (middleware + supabase SSR)
 - Role-based routing (guru/murid dashboard)
 - Tailwind theme with emerald/violet color system
+- 413 Payload Too Large fix: Supabase Storage bucket `file_size_limit` set to 50MB via Management API; `configureBucket()` in `lib/upload.ts` auto-configures buckets on every upload; admin page uses server action with service role key (bypasses RLS, respects 50MB body limit)
 
 ### Game System (Kuis Battle)
 - Socket.io game server on VPS
@@ -119,9 +122,9 @@ Build BahasaCerdas educational platform with video learning, teacher upload work
    - pm2 start game-server
    - ss -tlnp | grep -E '5432|3001'
 
-2. **Fix DNS for game.bahasacerdas.site** — wait for propagation or re-verify A record
+2. **Fix DNS for game.bahasacerdas.com** — wait for propagation or re-verify A record
 
-3. **Run certbot on VPS** — sudo certbot --nginx -d game.bahasacerdas.site
+3. **Run certbot on VPS** — sudo certbot --nginx -d game.bahasacerdas.com
 
 4. **Seed game questions on VPS** — cd /var/www/game-server && npx prisma db seed
 
@@ -133,18 +136,24 @@ Build BahasaCerdas educational platform with video learning, teacher upload work
 
 8. **Redeploy to Vercel** — git push after fixes
 
+9. **Verify 413 fix in production** — deploy changes, then test uploading a large PPTX/PDF (>5MB) to admin materi page
+
 ## Blockers
 - VPS SSH unreachable (server restarting)
-- game.bahasacerdas.site DNS not propagating/resolving
+- game.bahasacerdas.com DNS not propagating/resolving
 - No SSL cert on game subdomain
 
 ## Uncommitted Changes (git status)
+- modified: lib/upload.ts
+- new: app/api/admin/configure-storage/route.ts
+- modified: app/(dashboard)/admin/materi/generate-ppt/page.tsx
 - modified: game-server/src/server.ts
 - modified: next.config.ts
 - modified: package.json
 - deleted: apps/api/* (old API server, removed)
 - deleted: pnpm-lock.yaml, pnpm-workspace.yaml
 - new: package-lock.json
+- modified: AGENTS.md
 
 ## GitHub
 - Repo: https://github.com/dominikus02-source/bahasa-cerdas
