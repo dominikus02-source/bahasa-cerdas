@@ -13,8 +13,8 @@ export async function GET(req: NextRequest) {
     }
 
     const dbUser = await db.user.findUnique({ where: { supabaseId: user.id } });
-    if (!dbUser || dbUser.role !== "ADMIN") {
-      return NextResponse.json({ error: "Admin only" }, { status: 403 });
+    if (!dbUser || (dbUser.role !== "ADMIN" && dbUser.role !== "GURU")) {
+      return NextResponse.json({ error: "Hanya guru dan admin yang dapat mengakses" }, { status: 403 });
     }
 
     const { searchParams } = new URL(req.url);
@@ -51,8 +51,8 @@ export async function POST(req: NextRequest) {
     }
 
     const dbUser = await db.user.findUnique({ where: { supabaseId: user.id } });
-    if (!dbUser || dbUser.role !== "ADMIN") {
-      return NextResponse.json({ error: "Admin only" }, { status: 403 });
+    if (!dbUser || (dbUser.role !== "ADMIN" && dbUser.role !== "GURU")) {
+      return NextResponse.json({ error: "Hanya guru dan admin yang dapat mengupload" }, { status: 403 });
     }
 
     const contentType = req.headers.get("content-type") || "";
