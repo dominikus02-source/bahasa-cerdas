@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { GraduationCap, BookOpen, ArrowRight, Sparkles, Check } from "lucide-react";
+import { GraduationCap, BookOpen, ArrowRight, Sparkles, Check, Eye, EyeOff } from "lucide-react";
 import BatikDecoration from "@/components/shared/BatikDecoration";
 import { registerUser } from "@/app/actions/register";
 import { createClient } from "@/lib/supabase/client";
@@ -14,9 +14,11 @@ export default function RegisterPage() {
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [role, setRole] = useState<"GURU" | "MURID">("GURU");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [registered, setRegistered] = useState(false);
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -44,18 +46,6 @@ export default function RegisterPage() {
         return;
       }
 
-      const supabase = createClient();
-      const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
-        email: normalizedEmail,
-        password,
-      });
-
-      if (signInError || !signInData.session) {
-        setError("Pendaftaran berhasil! Silakan langsung masuk.");
-        setLoading(false);
-        return;
-      }
-
       const formData = new FormData();
       formData.set("email", normalizedEmail);
       formData.set("supabaseId", createData.userId);
@@ -69,7 +59,7 @@ export default function RegisterPage() {
         return;
       }
 
-      window.location.href = `/${result?.role || role.toLowerCase()}/beranda`;
+      setRegistered(true);
     } catch (err: any) {
       setError(err?.message || "Terjadi kesalahan");
       setLoading(false);
@@ -222,15 +212,25 @@ export default function RegisterPage() {
 
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">Password</label>
-                <input
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="w-full rounded-xl border-2 border-gray-200 px-4 py-3 text-sm focus:border-red-500 focus:outline-none transition-colors"
-                  placeholder="Minimal 8 karakter"
-                  minLength={8}
-                  required
-                />
+                <div className="relative">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="w-full rounded-xl border-2 border-gray-200 px-4 py-3 pr-12 text-sm focus:border-red-500 focus:outline-none transition-colors"
+                    placeholder="Minimal 8 karakter"
+                    minLength={8}
+                    required
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                    tabIndex={-1}
+                  >
+                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
+                </div>
               </div>
 
               <div className="flex gap-3 pt-2">
@@ -260,6 +260,31 @@ export default function RegisterPage() {
               </div>
             </div>
           )}
+
+          {registered && (
+            <div className="text-center space-y-4">
+              <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mx-auto">
+                <Check className="w-8 h-8 text-green-600" />
+              </div>
+              <h2 className="text-xl font-bold text-gray-900">Pendaftaran Berhasil!</h2>
+              <p className="text-sm text-gray-600">
+                Kami telah mengirim email verifikasi ke <strong>{email}</strong>
+              </p>
+              <p className="text-xs text-gray-500">
+                Silakan cek inbox email kamu dan klik link verifikasi untuk mengaktifkan akun.
+              </p>
+              <div className="pt-4">
+                <Link
+                  href="/login"
+                  className={`inline-flex items-center gap-2 px-6 py-3 rounded-xl font-bold shadow-lg bg-gradient-to-r ${config.gradient} text-white hover:opacity-90 transition-opacity`}
+                >
+                  Masuk Sekarang
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
+              </div>
+            </div>
+          )}
+
           <div className="mt-6 pt-5 border-t border-gray-100 text-center">
             <p className="text-sm text-gray-500">
               Sudah punya akun?{" "}
