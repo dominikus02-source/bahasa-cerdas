@@ -87,7 +87,7 @@ export async function POST(req: NextRequest) {
         content: topik || "",
         fileUrl: uploadResult.url,
         fileKey: uploadResult.key,
-        fileType: fileExt?.toUpperCase() || "PPTX",
+        fileType: fileExt?.toUpperCase() === "PDF" ? "PDF" : "PPTX",
         grade: grade,
         isPublished: true,
         isPremium: false,
