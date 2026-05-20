@@ -139,6 +139,18 @@ Build BahasaCerdas educational platform with video learning, teacher upload work
 
 9. **Verify 413 fix in production** — deploy changes, then test uploading a large PPTX/PDF (>5MB) to admin materi page
 
+## Recent Progress (May 20, 2026)
+
+### Bugs Fixed
+- **Timer auto-submit side effect** — Removed `handleSubmitRef.current(true)` from inside `setTimeLeft` updater function in `app/(dashboard)/kompetisi/[paketId]/page.tsx`. Now uses a separate `useEffect` watching `timeLeft` to trigger auto-submit, with `timerStartedRef` guard to prevent initial-mount false trigger.
+- **Guru package fallback** — Added `!paket.type.includes("GURU")` guard to the third fallback in `app/api/kompetensi/[paketId]/route.ts` (line 155). Prevents serving completely wrong questions (e.g., LITERASI_MEMBACA questions in "Pedagogik" section) when no Guru-level questions match.
+- **SD question ambiguity** — Clarified question text in `prisma/seed-kompetensi-sd.ts` from "Penulisan kata ulang yang benar adalah?" to "Penulisan kata ulang yang benar di awal kalimat adalah?" to disambiguate between capitalized and lowercase options.
+
+### New Content
+- **20 UKBI Guru questions** added to `prisma/seed-kompetensi-guru.ts`: 5 MENDENGARKAN (pedagogical context), 8 MERESPONS_KAIDAH (academic writing), 7 MEMBACA (professional reading)
+- **16 TKA Guru questions** added to `prisma/seed-kompetensi-guru.ts`: 8 PEDAGOGIK (learning theories, teaching models, assessment, classroom management, curriculum) and 8 PROFESIONAL (SNP, PKB, TPACK, education law, Merdeka Belajar)
+- **Package updates**: `totalQuestions` corrected for all 4 Guru packages (UKBI_GURU_SIMULASI: 17, TKA_GURU_SIMULASI: 16, UKBI_GURU_LATIHAN: 8, TKA_GURU_LATIHAN: 8). Section counts aligned with actual available questions.
+
 ## Blockers
 - VPS SSH unreachable (server restarting)
 - game.bahasacerdas.com DNS not propagating/resolving
@@ -148,6 +160,10 @@ Build BahasaCerdas educational platform with video learning, teacher upload work
 - modified: lib/upload.ts
 - new: app/api/admin/configure-storage/route.ts
 - modified: app/(dashboard)/admin/materi/generate-ppt/page.tsx
+- modified: app/(dashboard)/kompetisi/[paketId]/page.tsx (timer fix)
+- modified: app/api/kompetensi/[paketId]/route.ts (Guru fallback fix)
+- modified: prisma/seed-kompetensi-sd.ts (SD question fix)
+- modified: prisma/seed-kompetensi-guru.ts (36 new Guru questions + package updates)
 - modified: game-server/src/server.ts
 - modified: next.config.ts
 - modified: package.json

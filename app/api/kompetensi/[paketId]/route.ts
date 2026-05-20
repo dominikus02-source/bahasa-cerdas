@@ -152,7 +152,7 @@ export async function GET(
         }
       }
 
-      if (sectionQuestions.length === 0 && section.count && section.count > 0) {
+      if (sectionQuestions.length === 0 && section.count && section.count > 0 && !paket.type.includes("GURU")) {
         if (isUKBI(paket.type)) {
           const fallback = await db.uKBIQuestion.findMany({
             where: { isActive: true },

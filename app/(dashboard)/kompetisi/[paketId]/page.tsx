@@ -102,6 +102,7 @@ export default function KompetisiPage({ params }: { params: Promise<{ paketId: s
 
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const handleSubmitRef = useRef<(auto?: boolean) => Promise<void>>(() => Promise.resolve());
+  const timerStartedRef = useRef(false);
 
   useEffect(() => {
     fetchTest();
@@ -113,23 +114,23 @@ export default function KompetisiPage({ params }: { params: Promise<{ paketId: s
 
   useEffect(() => {
     if (timeLeft <= 0) return;
+    timerStartedRef.current = true;
     if (timerRef.current) clearInterval(timerRef.current);
     
     timerRef.current = setInterval(() => {
-      setTimeLeft((t) => {
-        if (t <= 1) {
-          if (timerRef.current) clearInterval(timerRef.current);
-          handleSubmitRef.current(true);
-          return 0;
-        }
-        return t - 1;
-      });
+      setTimeLeft((t) => (t <= 1 ? 0 : t - 1));
     }, 1000);
     
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
   }, [timeLeft > 0]);
+
+  useEffect(() => {
+    if (timeLeft === 0 && timerStartedRef.current) {
+      handleSubmitRef.current(true);
+    }
+  }, [timeLeft]);
 
   const sections = data?.questions || [];
   const currentSectionData = sections[currentSection];
