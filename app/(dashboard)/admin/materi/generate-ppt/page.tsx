@@ -21,6 +21,7 @@ import {
   Search,
   FolderOpen,
 } from "lucide-react";
+import { uploadMateriAction } from "@/app/actions/upload-materi";
 
 export default function AdminPPTGeneratorPage() {
   const [activeTab, setActiveTab] = useState("ai");
@@ -115,7 +116,7 @@ export default function AdminPPTGeneratorPage() {
     finally { setAiLoading(false); }
   };
 
-  // Manual Upload handler
+  // Manual Upload handler using server action
   const handleManualUpload = async () => {
     if (!manualTitle || !manualGrade || !manualFile) {
       setManualError("Judul, kelas, dan file wajib diisi");
@@ -131,14 +132,15 @@ export default function AdminPPTGeneratorPage() {
       formData.append("grade", manualGrade);
       formData.append("topik", manualTopik || "");
       formData.append("kurikulum", manualKurikulum);
-      const res = await fetch("/api/admin/upload-materi", { method: "POST", body: formData });
-      const data = await res.json();
-      if (!res.ok) { 
-        console.error("Upload error response:", data);
-        setManualError(data.error || data.details || "Gagal upload file"); 
+      
+      const result = await uploadMateriAction(formData);
+      
+      if (result.error) { 
+        setManualError(result.error); 
         return; 
       }
-      setManualResult(data);
+      
+      setManualResult(result);
       setManualFile(null);
       setManualTitle("");
       setManualTopik("");
