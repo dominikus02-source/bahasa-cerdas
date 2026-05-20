@@ -29,10 +29,10 @@ const GRADE_RANGES = [
 ];
 
 const VIDEO_RULES = [
-  { icon: Clock, title: "Durasi Maksimal 2 Menit", desc: "Video tidak boleh lebih dari 120 detik", color: "text-blue-500", bg: "bg-blue-50" },
-  { icon: Camera, title: "Format Portrait (9:16)", desc: "Rekam secara vertikal seperti TikTok/Reels", color: "text-purple-500", bg: "bg-purple-50" },
+  { icon: Clock, title: "Durasi Maksimal 10 Menit", desc: "Video tidak boleh lebih dari 600 detik", color: "text-blue-500", bg: "bg-blue-50" },
+  { icon: Camera, title: "Bebas Format", desc: "Boleh portrait (9:16) atau landscape (16:9)", color: "text-purple-500", bg: "bg-purple-50" },
   { icon: Mic, title: "Suara Jelas", desc: "Pastikan audio terdengar jelas tanpa noise", color: "text-green-500", bg: "bg-green-50" },
-  { icon: Sun, title: "Penerangan Bagus", desc: "Rekam di tempat terang, hindari backlight", color: "text-amber-500", bg: "bg-amber-50" },
+  { icon: Sun, title: "Pencahayaan Baik", desc: "Rekam di tempat terang, hindari backlight", color: "text-amber-500", bg: "bg-amber-50" },
 ];
 
 function formatDuration(seconds: number) {
