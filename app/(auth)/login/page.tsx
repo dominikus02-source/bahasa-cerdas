@@ -223,6 +223,9 @@ export default function LoginPage() {
         <p className="text-center text-white/60 text-xs mt-6 px-4">
           BahasaCerdas — Platform Edukasi Bahasa Indonesia
         </p>
+        <p className="text-center text-white/40 text-xs mt-2 px-4">
+          Butuh bantuan? <a href="mailto:halo@bahasacerdas.com" className="hover:text-white/60">halo@bahasacerdas.com</a>
+        </p>
       </div>
     </div>
   );

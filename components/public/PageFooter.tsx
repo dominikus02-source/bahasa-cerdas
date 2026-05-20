@@ -51,7 +51,10 @@ export default function PageFooter() {
               <li><Link href="/" className="hover:text-white transition-colors">Tentang Kami</Link></li>
               <li><Link href="/" className="hover:text-white transition-colors">Kebijakan Privasi</Link></li>
               <li><Link href="/" className="hover:text-white transition-colors">Syarat & Ketentuan</Link></li>
-              <li><Link href="/" className="hover:text-white transition-colors">Hubungi Kami</Link></li>
+              <li className="flex items-center gap-2 text-slate-400">
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5"><path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                <a href="mailto:halo@bahasacerdas.com" className="hover:text-white transition-colors">halo@bahasacerdas.com</a>
+              </li>
             </ul>
           </div>
         </div>

@@ -53,6 +53,10 @@ export default function FinalCTA() {
             <span>Garansi 7 Hari</span>
           </div>
         </div>
+
+        <p className="mt-8 text-sm text-slate-400">
+          Ada pertanyaan? Hubungi kami di <a href="mailto:halo@bahasacerdas.com" className="text-white hover:underline">halo@bahasacerdas.com</a>
+        </p>
       </div>
     </section>
   )
