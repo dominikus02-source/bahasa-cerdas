@@ -21,7 +21,8 @@ import {
   Search,
   FolderOpen,
 } from "lucide-react";
-import { uploadMateriFileAction, saveMateriAction } from "@/app/actions/upload-materi";
+import { saveMateriAction } from "@/app/actions/upload-materi";
+import { createClient } from "@/lib/supabase/client";
 
 export default function AdminPPTGeneratorPage() {
   const [activeTab, setActiveTab] = useState("ai");
@@ -132,24 +133,42 @@ export default function AdminPPTGeneratorPage() {
         return;
       }
 
-      // Convert file to base64 for server action upload (bypasses RLS, uses 50MB limit)
-      const base64 = await new Promise<string>((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => {
-          const result = reader.result as string;
-          resolve(result.split(",")[1]);
-        };
-        reader.onerror = () => reject(new Error("Gagal membaca file"));
-        reader.readAsDataURL(manualFile);
-      });
+      // Configure storage bucket to accept large files
+      await fetch("/api/admin/configure-storage", { method: "POST" }).catch(() => {});
 
-      const result = await uploadMateriFileAction({
-        fileBase64: base64,
-        fileName: manualFile.name,
-        fileType: fileExt === "pdf" ? "PDF" : "PPTX",
+      // Upload directly to Supabase Storage from client (bypasses Vercel 4.5MB limit)
+      const supabase = createClient();
+      const fileName = `admin/materi/${Date.now()}-${Math.random().toString(36).substring(2, 8)}.${fileExt}`;
+      
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from("documents")
+        .upload(fileName, manualFile, {
+          cacheControl: "31536000",
+          upsert: false,
+        });
+
+      if (uploadError) {
+        const isRLS = uploadError.message?.toLowerCase().includes("row-level security") || 
+                      uploadError.message?.includes("policy");
+        setManualError(
+          isRLS
+            ? "Izin upload ditolak Supabase. Buka Supabase Dashboard → SQL Editor → jalankan perintah:\nCREATE POLICY documents_insert ON storage.objects FOR INSERT TO authenticated WITH CHECK (bucket_id = 'documents');"
+            : "Gagal upload file: " + uploadError.message
+        );
+        return;
+      }
+
+      const { data: urlData } = supabase.storage.from("documents").getPublicUrl(uploadData.path);
+      const fileUrl = urlData.publicUrl;
+
+      // Save metadata to database via server action
+      const result = await saveMateriAction({
         title: manualTitle,
         grade: manualGrade,
         topik: manualTopik || "",
+        fileUrl,
+        fileKey: uploadData.path,
+        fileType: fileExt === "pdf" ? "PDF" : "PPTX",
       });
 
       if (result.error) {

@@ -75,7 +75,8 @@ Build BahasaCerdas educational platform with video learning, teacher upload work
 - Supabase auth integration (middleware + supabase SSR)
 - Role-based routing (guru/murid dashboard)
 - Tailwind theme with emerald/violet color system
-- 413 Payload Too Large fix: Supabase Storage bucket `file_size_limit` set to 50MB via Management API; `configureBucket()` in `lib/upload.ts` auto-configures buckets on every upload; admin page uses server action with service role key (bypasses RLS, respects 50MB body limit)
+- 413 Payload Too Large fix: Supabase Storage bucket `file_size_limit` set to 50MB via Management API; `configureBucket()` in `lib/upload.ts` auto-configures buckets on every upload; admin page uses client-side upload (bypasses Vercel 4.5MB limit) + server action for metadata only
+- RLS fix needed: admin page shows error message instructing user to run SQL in Supabase dashboard to create INSERT policy on storage.objects for documents bucket
 
 ### Game System (Kuis Battle)
 - Socket.io game server on VPS
