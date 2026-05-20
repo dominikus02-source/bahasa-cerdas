@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import { Play, Clock, Search, Filter, Upload, Video, AlertCircle, CheckCircle2, Camera, Mic, Sun, X, Loader2 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -238,36 +239,44 @@ export default function VideoBelajarPage() {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {filtered.map((video) => (
-            <Card key={video.id} className="overflow-hidden hover:shadow-lg transition-shadow border border-gray-100">
-              <div className="aspect-video bg-gray-100 relative">
-                {video.thumbnailUrl ? (
-                  <img src={video.thumbnailUrl} alt={video.title} className="w-full h-full object-cover" />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200">
-                    <Play className="h-12 w-12 text-gray-300" />
+            <Link key={video.id} href={`/video-belajar/${video.id}`} className="block group">
+              <Card className="overflow-hidden hover:shadow-lg transition-all duration-200 border border-gray-100 group-hover:border-red-200">
+                <div className="aspect-video bg-gray-100 relative overflow-hidden">
+                  {video.thumbnailUrl ? (
+                    <img src={video.thumbnailUrl} alt={video.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200">
+                      <Play className="h-12 w-12 text-gray-300" />
+                    </div>
+                  )}
+                  {/* Hover play overlay */}
+                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors duration-200 flex items-center justify-center">
+                    <div className="w-12 h-12 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-200 group-hover:scale-110 shadow-lg">
+                      <Play size={20} className="text-red-500 ml-0.5" />
+                    </div>
                   </div>
-                )}
-                {video.duration && (
-                  <span className="absolute bottom-2 right-2 bg-black/70 text-white text-xs px-2 py-0.5 rounded-md">
-                    {formatDuration(video.duration)}
-                  </span>
-                )}
-              </div>
-              <div className="p-4">
-                <h3 className="font-semibold text-sm line-clamp-2 text-gray-900">{video.title}</h3>
-                <p className="text-xs text-gray-500 mt-1 line-clamp-2">{video.description}</p>
-                <div className="flex items-center gap-2 mt-3">
-                  <Badge variant="secondary" className="text-[10px]">
-                    {CATEGORIES.find(c => c.value === video.category)?.label || video.category}
-                  </Badge>
-                  {video.grade && (
-                    <Badge variant="outline" className="text-[10px]">
-                      Kelas {video.grade}
-                    </Badge>
+                  {video.duration && (
+                    <span className="absolute bottom-2 right-2 bg-black/70 text-white text-xs px-2 py-0.5 rounded-md">
+                      {formatDuration(video.duration)}
+                    </span>
                   )}
                 </div>
-              </div>
-            </Card>
+                <div className="p-4">
+                  <h3 className="font-semibold text-sm line-clamp-2 text-gray-900 group-hover:text-red-500 transition-colors">{video.title}</h3>
+                  <p className="text-xs text-gray-500 mt-1 line-clamp-2">{video.description}</p>
+                  <div className="flex items-center gap-2 mt-3">
+                    <Badge variant="secondary" className="text-[10px]">
+                      {CATEGORIES.find(c => c.value === video.category)?.label || video.category}
+                    </Badge>
+                    {video.grade && (
+                      <Badge variant="outline" className="text-[10px]">
+                        Kelas {video.grade}
+                      </Badge>
+                    )}
+                  </div>
+                </div>
+              </Card>
+            </Link>
           ))}
         </div>
       )}
