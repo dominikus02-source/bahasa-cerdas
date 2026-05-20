@@ -9,7 +9,7 @@ const nextConfig: NextConfig = {
     ],
   },
   experimental: {
-    serverActions: { allowedOrigins: ["localhost:3000", "bahasacerdas.com"] },
+    serverActions: { allowedOrigins: ["localhost:3000", "bahasacerdas.com"], bodySizeLimit: "50mb" },
   },
   typescript: {
     ignoreBuildErrors: true,
