@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Play, Clock, Search, Filter, Upload, Video, AlertCircle, CheckCircle2, Camera, Mic, Sun, X, Loader2 } from "lucide-react";
+import { Play, Clock, Search, Upload, Video, AlertCircle, CheckCircle2, Camera, Mic, Sun, X, Loader2, Trash2, Eye, EyeOff } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -239,8 +239,8 @@ export default function VideoBelajarPage() {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {filtered.map((video) => (
-            <Link key={video.id} href={`/video-belajar/${video.id}`} className="block group">
-              <Card className="overflow-hidden hover:shadow-lg transition-all duration-200 border border-gray-100 group-hover:border-red-200">
+            <Card key={video.id} className="overflow-hidden hover:shadow-lg transition-all duration-200 border border-gray-100 group">
+              <Link href={`/video-belajar/${video.id}`} className="block group">
                 <div className="aspect-video bg-gray-100 relative overflow-hidden">
                   {video.thumbnailUrl ? (
                     <img src={video.thumbnailUrl} alt={video.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
@@ -249,7 +249,6 @@ export default function VideoBelajarPage() {
                       <Play className="h-12 w-12 text-gray-300" />
                     </div>
                   )}
-                  {/* Hover play overlay */}
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors duration-200 flex items-center justify-center">
                     <div className="w-12 h-12 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-200 group-hover:scale-110 shadow-lg">
                       <Play size={20} className="text-red-500 ml-0.5" />
@@ -264,19 +263,59 @@ export default function VideoBelajarPage() {
                 <div className="p-4">
                   <h3 className="font-semibold text-sm line-clamp-2 text-gray-900 group-hover:text-red-500 transition-colors">{video.title}</h3>
                   <p className="text-xs text-gray-500 mt-1 line-clamp-2">{video.description}</p>
-                  <div className="flex items-center gap-2 mt-3">
-                    <Badge variant="secondary" className="text-[10px]">
-                      {CATEGORIES.find(c => c.value === video.category)?.label || video.category}
+                </div>
+              </Link>
+              <div className="px-4 pb-4">
+                <div className="flex items-center gap-2 mt-2">
+                  <Badge variant="secondary" className="text-[10px]">
+                    {CATEGORIES.find(c => c.value === video.category)?.label || video.category}
+                  </Badge>
+                  {video.grade && (
+                    <Badge variant="outline" className="text-[10px]">
+                      Kelas {video.grade}
                     </Badge>
-                    {video.grade && (
-                      <Badge variant="outline" className="text-[10px]">
-                        Kelas {video.grade}
-                      </Badge>
-                    )}
+                  )}
+                  <div className="flex-1" />
+                  <div className="flex items-center gap-1">
+                    <button
+                      onClick={async (e) => {
+                        e.preventDefault();
+                        try {
+                          const res = await fetch("/api/video", {
+                            method: "PUT",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ id: video.id, isPublished: !video.isPublished }),
+                          });
+                          if (res.ok) fetchVideos();
+                        } catch {}
+                      }}
+                      className={`p-1.5 rounded-lg transition-colors ${video.isPublished ? "hover:bg-amber-50" : "hover:bg-green-50"}`}
+                      title={video.isPublished ? "Unpublish" : "Publish"}
+                    >
+                      {video.isPublished ? (
+                        <EyeOff size={14} className="text-amber-500" />
+                      ) : (
+                        <Eye size={14} className="text-green-500" />
+                      )}
+                    </button>
+                    <button
+                      onClick={async (e) => {
+                        e.preventDefault();
+                        if (!confirm("Hapus video ini?")) return;
+                        try {
+                          const res = await fetch(`/api/video?id=${video.id}`, { method: "DELETE" });
+                          if (res.ok) fetchVideos();
+                        } catch {}
+                      }}
+                      className="p-1.5 rounded-lg hover:bg-red-50 transition-colors"
+                      title="Hapus video"
+                    >
+                      <Trash2 size={14} className="text-red-400" />
+                    </button>
                   </div>
                 </div>
-              </Card>
-            </Link>
+              </div>
+            </Card>
           ))}
         </div>
       )}

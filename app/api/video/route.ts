@@ -78,8 +78,6 @@ export async function POST(req: NextRequest) {
       videoUrl = (form.get("videoUrl") as string) || "";
       category = (form.get("category") as string) || "PEMBELAJARAN";
       grade = (form.get("grade") as string) || "";
-      isPublished = true;
-
       const file = form.get("file") as File | null;
       if (file && file.size > 0) {
         const ext = file.name.split(".").pop()?.toLowerCase() || "mp4";
@@ -172,8 +170,8 @@ export async function PUT(req: NextRequest) {
     }
 
     const dbUser = await db.user.findUnique({ where: { supabaseId: user.id } });
-    if (!dbUser || dbUser.role !== "ADMIN") {
-      return NextResponse.json({ error: "Admin only" }, { status: 403 });
+    if (!dbUser || (dbUser.role !== "ADMIN" && dbUser.role !== "GURU")) {
+      return NextResponse.json({ error: "Akses ditolak" }, { status: 403 });
     }
 
     const body = await req.json();
@@ -181,6 +179,13 @@ export async function PUT(req: NextRequest) {
 
     if (!id) {
       return NextResponse.json({ error: "Video ID required" }, { status: 400 });
+    }
+
+    if (dbUser.role === "GURU") {
+      const existing = await db.video.findUnique({ where: { id } });
+      if (!existing || existing.creatorId !== dbUser.id) {
+        return NextResponse.json({ error: "Anda hanya bisa mengedit video sendiri" }, { status: 403 });
+      }
     }
 
     const video = await db.video.update({
@@ -205,8 +210,8 @@ export async function DELETE(req: NextRequest) {
     }
 
     const dbUser = await db.user.findUnique({ where: { supabaseId: user.id } });
-    if (!dbUser || dbUser.role !== "ADMIN") {
-      return NextResponse.json({ error: "Admin only" }, { status: 403 });
+    if (!dbUser || (dbUser.role !== "ADMIN" && dbUser.role !== "GURU")) {
+      return NextResponse.json({ error: "Akses ditolak" }, { status: 403 });
     }
 
     const { searchParams } = new URL(req.url);
@@ -214,6 +219,13 @@ export async function DELETE(req: NextRequest) {
 
     if (!id) {
       return NextResponse.json({ error: "Video ID required" }, { status: 400 });
+    }
+
+    if (dbUser.role === "GURU") {
+      const existing = await db.video.findUnique({ where: { id } });
+      if (!existing || existing.creatorId !== dbUser.id) {
+        return NextResponse.json({ error: "Anda hanya bisa menghapus video sendiri" }, { status: 403 });
+      }
     }
 
     await db.video.delete({ where: { id } });

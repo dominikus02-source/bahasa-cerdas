@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { ChevronLeft, Trash2, Search, Eye, EyeOff, User, Calendar, Play, AlertTriangle, Globe } from "lucide-react";
+import { ChevronLeft, Trash2, Search, Eye, User, Calendar, Play, AlertTriangle } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
@@ -37,7 +37,6 @@ export default function AdminVideoPage() {
   const [total, setTotal] = useState(0);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
-  const [togglingId, setTogglingId] = useState<string | null>(null);
   const [msg, setMsg] = useState<{ type: "success" | "error"; text: string } | null>(null);
   const [apiError, setApiError] = useState<string | null>(null);
 
@@ -96,29 +95,6 @@ export default function AdminVideoPage() {
     } finally {
       setDeleting(false);
       setDeleteId(null);
-      setTimeout(() => setMsg(null), 3000);
-    }
-  };
-
-  const handleTogglePublish = async (id: string, current: boolean) => {
-    setTogglingId(id);
-    try {
-      const res = await fetch(`/api/video`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id, isPublished: !current }),
-      });
-      const data = await res.json();
-      if (data.video) {
-        setVideos((prev) => prev.map((v) => (v.id === id ? { ...v, isPublished: !current } : v)));
-        setMsg({ type: "success", text: current ? "Video di-unpublish" : "Video dipublish" });
-      } else {
-        setMsg({ type: "error", text: data.error || "Gagal mengubah status" });
-      }
-    } catch {
-      setMsg({ type: "error", text: "Gagal mengubah status" });
-    } finally {
-      setTogglingId(null);
       setTimeout(() => setMsg(null), 3000);
     }
   };
@@ -241,29 +217,13 @@ export default function AdminVideoPage() {
                     </div>
                   </div>
                 </div>
-                <div className="flex items-center gap-1 shrink-0">
-                  <button
-                    onClick={() => handleTogglePublish(v.id, v.isPublished)}
-                    disabled={togglingId === v.id}
-                    className={`p-2.5 rounded-xl transition-colors ${v.isPublished ? "hover:bg-amber-50" : "hover:bg-green-50"}`}
-                    title={v.isPublished ? "Unpublish" : "Publish"}
-                  >
-                    {togglingId === v.id ? (
-                      <div className="w-5 h-5 border-2 border-slate-300 border-t-slate-600 rounded-full animate-spin" />
-                    ) : v.isPublished ? (
-                      <EyeOff className="w-5 h-5 text-amber-500" />
-                    ) : (
-                      <Globe className="w-5 h-5 text-green-500" />
-                    )}
-                  </button>
-                  <button
-                    onClick={() => setDeleteId(v.id)}
-                    className="p-2.5 hover:bg-red-50 rounded-xl transition-colors"
-                    title="Hapus video"
-                  >
-                    <Trash2 className="w-5 h-5 text-red-500" />
-                  </button>
-                </div>
+                <button
+                  onClick={() => setDeleteId(v.id)}
+                  className="p-2.5 hover:bg-red-50 rounded-xl transition-colors shrink-0"
+                  title="Hapus video"
+                >
+                  <Trash2 className="w-5 h-5 text-red-500" />
+                </button>
               </div>
             </Card>
           ))}
