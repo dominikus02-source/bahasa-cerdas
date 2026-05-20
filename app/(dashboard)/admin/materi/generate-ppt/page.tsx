@@ -21,7 +21,8 @@ import {
   Search,
   FolderOpen,
 } from "lucide-react";
-import { uploadMateriAction } from "@/app/actions/upload-materi";
+import { uploadMateriAction, saveMateriAction } from "@/app/actions/upload-materi";
+import { createClient } from "@/lib/supabase/client";
 
 export default function AdminPPTGeneratorPage() {
   const [activeTab, setActiveTab] = useState("ai");
@@ -116,7 +117,7 @@ export default function AdminPPTGeneratorPage() {
     finally { setAiLoading(false); }
   };
 
-  // Manual Upload handler using server action
+  // Manual Upload handler - upload directly to Supabase Storage
   const handleManualUpload = async () => {
     if (!manualTitle || !manualGrade || !manualFile) {
       setManualError("Judul, kelas, dan file wajib diisi");
@@ -126,27 +127,53 @@ export default function AdminPPTGeneratorPage() {
     setManualError("");
     setManualResult(null);
     try {
-      const formData = new FormData();
-      formData.append("file", manualFile);
-      formData.append("title", manualTitle);
-      formData.append("grade", manualGrade);
-      formData.append("topik", manualTopik || "");
-      formData.append("kurikulum", manualKurikulum);
-      
-      const result = await uploadMateriAction(formData);
-      
-      if (result.error) { 
-        setManualError(result.error); 
-        return; 
+      const fileExt = manualFile.name.split(".").pop()?.toLowerCase();
+      if (!["pptx", "pdf"].includes(fileExt || "")) {
+        setManualError("File harus PPTX atau PDF");
+        return;
       }
+
+      // Upload directly to Supabase Storage from client
+      const supabase = createClient();
+      const fileName = `admin/materi/${Date.now()}-${Math.random().toString(36).substring(2, 8)}.${fileExt}`;
       
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from("documents")
+        .upload(fileName, manualFile, {
+          cacheControl: "31536000",
+          upsert: false,
+        });
+
+      if (uploadError) {
+        setManualError("Gagal upload file: " + uploadError.message);
+        return;
+      }
+
+      const { data: urlData } = supabase.storage.from("documents").getPublicUrl(uploadData.path);
+      const fileUrl = urlData.publicUrl;
+
+      // Save metadata to database via server action
+      const result = await saveMateriAction({
+        title: manualTitle,
+        grade: manualGrade,
+        topik: manualTopik || "",
+        fileUrl,
+        fileKey: uploadData.path,
+        fileType: fileExt === "pdf" ? "PDF" : "PPTX",
+      });
+
+      if (result.error) {
+        setManualError(result.error);
+        return;
+      }
+
       setManualResult(result);
       setManualFile(null);
       setManualTitle("");
       setManualTopik("");
-    } catch (e: any) { 
+    } catch (e: any) {
       console.error("Upload exception:", e);
-      setManualError(e?.message || "Terjadi kesalahan. Silakan coba lagi."); 
+      setManualError(e?.message || "Terjadi kesalahan. Silakan coba lagi.");
     }
     finally { setManualLoading(false); }
   };
