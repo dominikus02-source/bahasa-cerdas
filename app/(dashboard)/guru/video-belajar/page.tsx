@@ -34,6 +34,13 @@ const VIDEO_RULES = [
   { icon: Sun, title: "Penerangan Bagus", desc: "Rekam di tempat terang, hindari backlight", color: "text-amber-500", bg: "bg-amber-50" },
 ];
 
+function formatDuration(seconds: number) {
+  const m = Math.floor(seconds / 60);
+  const s = seconds % 60;
+  if (m === 0) return `${s} detik`;
+  return s > 0 ? `${m}m ${s}d` : `${m} menit`;
+}
+
 export default function VideoBelajarPage() {
   const [videos, setVideos] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -238,7 +245,7 @@ export default function VideoBelajarPage() {
                 )}
                 {video.duration && (
                   <span className="absolute bottom-2 right-2 bg-black/70 text-white text-xs px-2 py-0.5 rounded-md">
-                    {video.duration}
+                    {formatDuration(video.duration)}
                   </span>
                 )}
               </div>

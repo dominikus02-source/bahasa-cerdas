@@ -6,6 +6,13 @@ import { Play, Clock, Eye, Search, Film, Video, AlertCircle, CheckCircle2, Camer
 import PageNavbar from "@/components/public/PageNavbar";
 import PageFooter from "@/components/public/PageFooter";
 
+function formatDuration(seconds: number) {
+  const m = Math.floor(seconds / 60);
+  const s = seconds % 60;
+  if (m === 0) return `${s} detik`;
+  return s > 0 ? `${m}m ${s}d` : `${m} menit`;
+}
+
 export default function VideoBelajarPage() {
   const CATEGORIES = [
     { value: "", label: "Semua", icon: "🎬" },
@@ -107,7 +114,7 @@ export default function VideoBelajarPage() {
                     </div>
                     {video.duration && (
                       <span className="absolute bottom-2 right-2 bg-black/70 text-white text-[10px] px-2 py-0.5 rounded-md flex items-center gap-1">
-                        <Clock size={10} /> {video.duration}
+                        <Clock size={10} /> {formatDuration(video.duration)}
                       </span>
                     )}
                     {video.isPremium && (

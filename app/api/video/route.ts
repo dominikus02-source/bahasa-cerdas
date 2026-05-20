@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
+import { uploadFileServer, extractYoutubeId, extractVimeoId } from "@/lib/upload";
 
 export async function GET(req: NextRequest) {
   try {
@@ -18,24 +19,22 @@ export async function GET(req: NextRequest) {
 
     const { searchParams } = new URL(req.url);
     const category = searchParams.get("category");
-    const page = parseInt(searchParams.get("page") || "1");
-    const limit = parseInt(searchParams.get("limit") || "20");
 
-    const where: any = { isPublished: true };
+    const where: any = {
+      OR: [
+        { isPublished: true },
+        { creatorId: dbUser.id },
+      ],
+    };
     if (category) where.category = category;
 
-    const [videos, total] = await Promise.all([
-      db.video.findMany({
-        where,
-        orderBy: { views: "desc" },
-        skip: (page - 1) * limit,
-        take: limit,
-        include: { creator: { select: { id: true, fullName: true, avatar: true } } },
-      }),
-      db.video.count({ where }),
-    ]);
+    const videos = await db.video.findMany({
+      where,
+      orderBy: { createdAt: "desc" },
+      include: { creator: { select: { id: true, fullName: true, avatar: true } } },
+    });
 
-    return NextResponse.json({ videos, total, page, totalPages: Math.ceil(total / limit) });
+    return NextResponse.json({ videos, total: videos.length });
   } catch (error) {
     console.error("GET /api/video error:", error);
     return NextResponse.json({ error: "Internal error" }, { status: 500 });
@@ -56,38 +55,101 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Admin only" }, { status: 403 });
     }
 
-    const body = await req.json();
-    const { title, description, videoUrl, thumbnailUrl, duration, source, category, grade, tags, isPublished, isPremium, price } = body;
+    const contentType = req.headers.get("content-type") || "";
+    const isFormData = contentType.includes("multipart/form-data");
 
-    if (!title || !videoUrl) {
-      return NextResponse.json({ error: "Title and videoUrl required" }, { status: 400 });
+    let title = "";
+    let description = "";
+    let videoUrl = "";
+    let thumbnailUrl = "";
+    let duration: number | null = null;
+    let source = "YOUTUBE";
+    let category = "PEMBELAJARAN";
+    let grade = "";
+    let tags: string[] = [];
+    let isPublished = false;
+    let isPremium = false;
+    let price = 0;
+
+    if (isFormData) {
+      const form = await req.formData();
+      title = (form.get("title") as string) || "";
+      description = (form.get("description") as string) || "";
+      videoUrl = (form.get("videoUrl") as string) || "";
+      category = (form.get("category") as string) || "PEMBELAJARAN";
+      grade = (form.get("grade") as string) || "";
+
+      const file = form.get("file") as File | null;
+      if (file && file.size > 0) {
+        const ext = file.name.split(".").pop()?.toLowerCase() || "mp4";
+        const timestamp = Date.now();
+        const randomStr = Math.random().toString(36).substring(2, 8);
+        const fileName = `${dbUser.id}/videos/${timestamp}-${randomStr}.${ext}`;
+
+        const result = await uploadFileServer(file, fileName, "videos", file.type);
+        if ("error" in result) {
+          return NextResponse.json({ error: result.error }, { status: 500 });
+        }
+        videoUrl = result.url;
+        source = "UPLOAD";
+      } else if (videoUrl) {
+        const ytId = extractYoutubeId(videoUrl);
+        if (ytId) {
+          source = "YOUTUBE";
+          videoUrl = `https://www.youtube.com/embed/${ytId}?rel=0&modestbranding=1`;
+          thumbnailUrl = `https://img.youtube.com/vi/${ytId}/mqdefault.jpg`;
+        } else if (extractVimeoId(videoUrl)) {
+          source = "VIMEO";
+          videoUrl = `https://player.vimeo.com/video/${extractVimeoId(videoUrl)}`;
+        }
+      }
+    } else {
+      const body = await req.json();
+      title = body.title || "";
+      description = body.description || "";
+      videoUrl = body.videoUrl || "";
+      thumbnailUrl = body.thumbnailUrl || "";
+      duration = body.duration || null;
+      source = body.source || "YOUTUBE";
+      category = body.category || "PEMBELAJARAN";
+      grade = body.grade || "";
+      tags = body.tags || [];
+      isPublished = body.isPublished ?? false;
+      isPremium = body.isPremium ?? false;
+      price = body.price || 0;
+
+      let embedUrl = videoUrl;
+      if (source === "YOUTUBE") {
+        const ytId = extractYoutubeId(videoUrl);
+        if (!ytId) return NextResponse.json({ error: "Invalid YouTube URL" }, { status: 400 });
+        embedUrl = `https://www.youtube.com/embed/${ytId}?rel=0&modestbranding=1`;
+        if (!thumbnailUrl) thumbnailUrl = `https://img.youtube.com/vi/${ytId}/mqdefault.jpg`;
+      } else if (source === "VIMEO") {
+        const vimeoId = extractVimeoId(videoUrl);
+        if (!vimeoId) return NextResponse.json({ error: "Invalid Vimeo URL" }, { status: 400 });
+        embedUrl = `https://player.vimeo.com/video/${vimeoId}`;
+      }
+      videoUrl = embedUrl;
     }
 
-    let embedUrl = videoUrl;
-    if (source === "YOUTUBE") {
-      const ytId = extractYoutubeId(videoUrl);
-      if (!ytId) return NextResponse.json({ error: "Invalid YouTube URL" }, { status: 400 });
-      embedUrl = `https://www.youtube.com/embed/${ytId}`;
-    } else if (source === "VIMEO") {
-      const vimeoId = extractVimeoId(videoUrl);
-      if (!vimeoId) return NextResponse.json({ error: "Invalid Vimeo URL" }, { status: 400 });
-      embedUrl = `https://player.vimeo.com/video/${vimeoId}`;
+    if (!title || !videoUrl) {
+      return NextResponse.json({ error: "Title dan video URL/file diperlukan" }, { status: 400 });
     }
 
     const video = await db.video.create({
       data: {
         title,
-        description,
-        videoUrl: embedUrl,
+        description: description || null,
+        videoUrl,
         thumbnailUrl: thumbnailUrl || null,
         duration: duration || null,
-        source: source || "YOUTUBE",
-        category: category || "PEMBELAJARAN",
+        source: source as any,
+        category: category as any,
         grade: grade || null,
-        tags: tags || [],
-        isPublished: isPublished ?? false,
-        isPremium: isPremium ?? false,
-        price: price || 0,
+        tags,
+        isPublished,
+        isPremium,
+        price,
         creatorId: dbUser.id,
       },
     });
@@ -162,19 +224,3 @@ export async function DELETE(req: NextRequest) {
   }
 }
 
-function extractYoutubeId(url: string): string | null {
-  const patterns = [
-    /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/,
-    /youtube\.com\/shorts\/([a-zA-Z0-9_-]{11})/,
-  ];
-  for (const pattern of patterns) {
-    const match = url.match(pattern);
-    if (match) return match[1];
-  }
-  return null;
-}
-
-function extractVimeoId(url: string): string | null {
-  const match = url.match(/vimeo\.com\/(\d+)/);
-  return match ? match[1] : null;
-}

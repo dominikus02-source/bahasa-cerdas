@@ -14,6 +14,13 @@ const CATEGORIES: Record<string, string> = {
   MEDIA: "Media", UKBI_PREP: "UKBI Prep",
 };
 
+function formatDuration(seconds: number) {
+  const m = Math.floor(seconds / 60);
+  const s = seconds % 60;
+  if (m === 0) return `${s} detik`;
+  return s > 0 ? `${m}m ${s}d` : `${m} menit`;
+}
+
 export default function VideoDetailPage() {
   const { id } = useParams();
   const [video, setVideo] = useState<any>(null);
@@ -76,7 +83,7 @@ export default function VideoDetailPage() {
                   </Link>
                 )}
                 <span className="flex items-center gap-1"><Eye size={14} /> {video.views} ditonton</span>
-                {video.duration && <span className="flex items-center gap-1"><Clock size={14} /> {video.duration} menit</span>}
+                {video.duration && <span className="flex items-center gap-1"><Clock size={14} /> {formatDuration(video.duration)}</span>}
                 <span className="px-2.5 py-0.5 bg-gray-100 rounded-full text-xs font-medium text-gray-600">{CATEGORIES[video.category] || video.category}</span>
                 {video.grade && <span className="text-xs text-gray-400">Kelas {video.grade}</span>}
                 <ShareButton url={`/video-belajar/${video.id}`} title={video.title} />
