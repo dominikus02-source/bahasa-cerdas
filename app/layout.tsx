@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { Providers } from "./providers";
 
-const SITE_URL = "https://bahasacerdas.site";
+const SITE_URL = "https://bahasacerdas.com";
 const SITE_NAME = "BahasaCerdas";
 const DEFAULT_DESC = "Platform edukasi Bahasa Indonesia untuk guru dan murid. AI-powered RPP generator, bank soal, kuis game, simulasi UKBI, dan toko karya.";
 
