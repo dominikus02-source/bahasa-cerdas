@@ -74,7 +74,11 @@ export default function VideoBelajarPage() {
   });
 
   const handleUpload = async () => {
-    if (!uploadForm.title || !selectedFile) return;
+    if (!uploadForm.title) return;
+    if (!uploadForm.videoUrl && !selectedFile) {
+      setUploadResult("Masukkan URL video atau pilih file video");
+      return;
+    }
     setUploading(true);
     setUploadResult("");
 
@@ -85,7 +89,7 @@ export default function VideoBelajarPage() {
       fd.set("category", uploadForm.category);
       fd.set("grade", uploadForm.grade);
       fd.set("videoUrl", uploadForm.videoUrl);
-      fd.set("file", selectedFile);
+      if (selectedFile) fd.set("file", selectedFile);
 
       const res = await fetch("/api/video", { method: "POST", body: fd });
       const data = await res.json();
@@ -189,7 +193,7 @@ export default function VideoBelajarPage() {
               </div>
               <div className="flex gap-3 pt-2">
                 <Button variant="outline" onClick={() => { setShowUpload(false); setUploadResult(""); }} className="flex-1">Batal</Button>
-                <Button onClick={handleUpload} disabled={uploading || !uploadForm.title} className="flex-1 bg-gradient-to-r from-red-500 to-red-600">
+                <Button onClick={handleUpload} disabled={uploading || !uploadForm.title || (!uploadForm.videoUrl && !selectedFile)} className="flex-1 bg-gradient-to-r from-red-500 to-red-600">
                   {uploading ? <><Loader2 size={16} className="animate-spin" /> Uploading...</> : <><Upload size={16} /> Upload Video</>}
                 </Button>
               </div>
