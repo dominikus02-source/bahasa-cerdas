@@ -1,15 +1,16 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  serverActions: {
+    allowedOrigins: ["localhost:3000", "bahasacerdas.com"],
+    bodySizeLimit: "50mb",
+  },
   images: {
     remotePatterns: [
       { protocol: "https", hostname: "*.supabase.co" },
       { protocol: "https", hostname: "images.unsplash.com" },
       { protocol: "https", hostname: "api.dicebear.com" },
     ],
-  },
-  experimental: {
-    serverActions: { allowedOrigins: ["localhost:3000", "bahasacerdas.com"], bodySizeLimit: "50mb" },
   },
   typescript: {
     ignoreBuildErrors: true,
