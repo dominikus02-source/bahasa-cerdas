@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { use } from "react";
-import { ChevronLeft, Users, MapPin, Send, CheckCircle, Calendar, UserPlus } from "lucide-react";
+import { ChevronLeft, Users, MapPin, Send, CheckCircle, Calendar, UserPlus, Crown } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
@@ -39,9 +39,12 @@ export default function CommunityDetailPage({ params }: { params: Promise<{ id: 
   const [community, setCommunity] = useState<Community | null>(null);
   const [posts, setPosts] = useState<Post[]>([]);
   const [members, setMembers] = useState<any[]>([]);
+  const [ketua, setKetua] = useState<any>(null);
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [joined, setJoined] = useState(false);
   const [joining, setJoining] = useState(false);
+  const [claiming, setClaiming] = useState(false);
   const [newPost, setNewPost] = useState("");
   const [posting, setPosting] = useState(false);
   const [isMember, setIsMember] = useState(false);
@@ -50,12 +53,20 @@ export default function CommunityDetailPage({ params }: { params: Promise<{ id: 
     const fetchData = async () => {
       setLoading(true);
       try {
-        const res = await fetch(`/api/komunitas/${resolvedParams.id}`);
+        const [res, meRes] = await Promise.all([
+          fetch(`/api/komunitas/${resolvedParams.id}`),
+          fetch("/api/user/me"),
+        ]);
         const data = await res.json();
+        const me = await meRes.json();
         if (data.community) {
           setCommunity(data.community);
           setPosts(data.posts || []);
           setMembers(data.members || []);
+          setKetua(data.ketua || null);
+        }
+        if (me.user) {
+          setCurrentUserId(me.user.id);
         }
       } catch (e) {
         console.error(e);
@@ -79,6 +90,26 @@ export default function CommunityDetailPage({ params }: { params: Promise<{ id: 
       console.error(e);
     } finally {
       setJoining(false);
+    }
+  };
+
+  const handleClaim = async () => {
+    setClaiming(true);
+    try {
+      const res = await fetch(`/api/komunitas/${resolvedParams.id}/claim`, { method: "POST" });
+      const data = await res.json();
+      if (data.claimed) {
+        const refetch = await fetch(`/api/komunitas/${resolvedParams.id}`);
+        const refetched = await refetch.json();
+        if (refetched.community) {
+          setMembers(refetched.members || []);
+          setKetua(refetched.ketua || null);
+        }
+      }
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setClaiming(false);
     }
   };
 
@@ -166,13 +197,37 @@ export default function CommunityDetailPage({ params }: { params: Promise<{ id: 
               {joined ? "Anggota" : "Gabung"}
             </Button>
           </div>
-          <div className="flex gap-6 mt-4 text-sm text-white/80">
+          <div className="flex items-center gap-4 mt-4 text-sm text-white/80">
             <span className="flex items-center gap-1">
               <Users className="w-4 h-4" />
               {community.memberCount} anggota
             </span>
             <span>{community.postCount} postingan</span>
           </div>
+          {ketua ? (
+            <div className="flex items-center gap-3 mt-4 bg-white/10 rounded-xl px-4 py-2.5">
+              <Crown className="w-5 h-5 text-amber-300" />
+              <span className="text-sm text-white/90">
+                <strong className="text-white">{ketua.user.fullName}</strong> — Ketua
+              </span>
+              {currentUserId === ketua.userId && (
+                <span className="text-xs bg-amber-400/20 text-amber-200 px-2 py-0.5 rounded-full ml-auto">Anda</span>
+              )}
+            </div>
+          ) : (
+            <div className="flex items-center gap-3 mt-4">
+              {currentUserId && (
+                <button
+                  onClick={handleClaim}
+                  disabled={claiming}
+                  className="flex items-center gap-2 text-xs bg-white/15 hover:bg-white/25 text-white px-4 py-2 rounded-xl transition-colors disabled:opacity-50"
+                >
+                  <Crown className="w-4 h-4" />
+                  {claiming ? "Mengklaim..." : "Klaim sebagai Ketua"}
+                </button>
+              )}
+            </div>
+          )}
         </div>
       </div>
 
@@ -244,6 +299,11 @@ export default function CommunityDetailPage({ params }: { params: Promise<{ id: 
                     )}
                   </div>
                   <span className="text-sm text-slate-700">{m.user.fullName}</span>
+                  {m.role === "ketua" && (
+                    <span className="ml-auto text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full flex items-center gap-1 font-medium">
+                      <Crown className="w-3 h-3" /> Ketua
+                    </span>
+                  )}
                   {m.role === "admin" && (
                     <span className="ml-auto text-xs bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full">Admin</span>
                   )}

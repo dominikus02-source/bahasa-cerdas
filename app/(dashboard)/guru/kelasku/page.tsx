@@ -5,7 +5,7 @@ import Link from "next/link";
 import {
   Users, Plus, Copy, ChevronLeft, Trash2, Edit3,
   CheckCircle, Clock, BookOpen, Gamepad2, GraduationCap,
-  MoreVertical, X, Eye, EyeOff, RefreshCw, Search
+  MoreVertical, X, Eye, EyeOff, RefreshCw, Search, Crown
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -327,6 +327,18 @@ export default function KelasKuPage() {
             <p className="text-sm text-slate-500 mb-4">
               Bagikan kode di atas ke murid untuk bergabung. Kode tidak berubah kecuali di-reset.
             </p>
+
+            {(() => {
+              const ketuaMember = selectedGroup.members?.find((m: any) => m.role === "ketua");
+              return ketuaMember ? (
+                <div className="flex items-center gap-3 mb-4 p-3 bg-amber-50 rounded-xl border border-amber-100">
+                  <Crown className="w-5 h-5 text-amber-600 shrink-0" />
+                  <span className="text-sm text-amber-900">
+                    <strong>{ketuaMember.user.fullName}</strong> — Ketua Kelas
+                  </span>
+                </div>
+              ) : null;
+            })()}
 
             {(!selectedGroup.members || selectedGroup.members.length === 0) ? (
               <div className="text-center py-12 text-slate-400">

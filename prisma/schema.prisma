@@ -162,6 +162,8 @@ model User {
   email              String                  @unique
   fullName           String
   avatar             String?
+  emailConfirmed     Boolean                 @default(false)
+  onboarded          Boolean                 @default(false)
   role               Role                    @default(MURID)
   isFounder          Boolean                 @default(false)
   premiumPlan        PremiumPlan             @default(FREE)
@@ -228,6 +230,8 @@ model Profile {
   nuptk      String?
   nisn       String?
   school     String?
+  city       String?
+  province   String?
   subject    String?
   grade      String?
   className  String?
@@ -867,6 +871,7 @@ model GroupMember {
   id       String   @id @default(cuid())
   groupId  String
   userId   String
+  role     String   @default("member")
   joinedAt DateTime @default(now())
   group    Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
   user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)

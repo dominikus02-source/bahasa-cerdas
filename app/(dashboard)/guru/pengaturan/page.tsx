@@ -27,6 +27,8 @@ export default function GuruPengaturanPage() {
     nip: "",
     nuptk: "",
     school: "",
+    city: "",
+    province: "",
     subject: "",
   });
 
@@ -66,6 +68,8 @@ export default function GuruPengaturanPage() {
             nip: dbUser.nip || "",
             nuptk: dbUser.nuptk || "",
             school: dbUser.school || "",
+            city: dbUser.city || "",
+            province: dbUser.province || "",
             subject: dbUser.subject || "",
           });
         }
@@ -101,6 +105,8 @@ export default function GuruPengaturanPage() {
           nip: profile.nip,
           nuptk: profile.nuptk,
           school: profile.school,
+          city: profile.city,
+          province: profile.province,
           subject: profile.subject,
         }),
       });
@@ -115,6 +121,8 @@ export default function GuruPengaturanPage() {
           nip: profile.nip,
           nuptk: profile.nuptk,
           school: profile.school,
+          city: profile.city,
+          province: profile.province,
           subject: profile.subject,
         },
       });
@@ -263,6 +271,16 @@ export default function GuruPengaturanPage() {
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-1.5">Mata Pelajaran</label>
             <Input value={profile.subject} onChange={(e) => setProfile((p) => ({ ...p, subject: e.target.value }))} placeholder="Contoh: Bahasa Indonesia" className="h-11 rounded-lg" />
+          </div>
+        </div>
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1.5">Kota/Kabupaten</label>
+            <Input value={profile.city} onChange={(e) => setProfile((p) => ({ ...p, city: e.target.value }))} placeholder="Jakarta" className="h-11 rounded-lg" />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1.5">Provinsi</label>
+            <Input value={profile.province} onChange={(e) => setProfile((p) => ({ ...p, province: e.target.value }))} placeholder="DKI Jakarta" className="h-11 rounded-lg" />
           </div>
         </div>
         <div>

@@ -36,7 +36,9 @@ export async function GET(
       db.communityPost.count({ where: { communityId: id } }),
     ]);
 
-    return NextResponse.json({ community, posts, members, totalPosts });
+    const ketua = members.find((m) => m.role === "ketua") || null;
+
+    return NextResponse.json({ community, posts, members, totalPosts, ketua });
   } catch (error) {
     return NextResponse.json({ error: "Internal error" }, { status: 500 });
   }

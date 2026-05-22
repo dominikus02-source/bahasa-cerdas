@@ -10,6 +10,9 @@ export async function registerUser(formData: FormData) {
     const supabaseId = formData.get("supabaseId") as string;
     const fullName = formData.get("fullName") as string;
     const role = formData.get("role") as "GURU" | "MURID";
+    const school = formData.get("school") as string | null;
+    const city = formData.get("city") as string | null;
+    const province = formData.get("province") as string | null;
 
     if (!email || !supabaseId || !fullName || !role) {
       return { error: "Missing fields" };
@@ -44,7 +47,16 @@ export async function registerUser(formData: FormData) {
       },
     });
 
-    try { await db.profile.create({ data: { userId: newUser.id } }); } catch {}
+    try {
+      await db.profile.create({
+        data: {
+          userId: newUser.id,
+          ...(school ? { school } : {}),
+          ...(city ? { city } : {}),
+          ...(province ? { province } : {}),
+        },
+      });
+    } catch {}
 
     return { ok: true, role: role.toLowerCase() };
   } catch (err: any) {

@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Users, Copy, CheckCircle, BookOpen, GraduationCap, ChevronRight, Clock, RefreshCw } from "lucide-react";
+import { Users, Copy, CheckCircle, BookOpen, GraduationCap, ChevronRight, Clock, RefreshCw, Crown } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
@@ -144,18 +144,29 @@ export default function GabungKelasPage() {
             <h3 className="font-bold text-slate-900 mb-3 text-sm">Kelas Saya</h3>
             <div className="space-y-2">
               {myGroups.map((m) => (
-                <Card key={m.id} className="p-4 border border-slate-100">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-violet-100 flex items-center justify-center text-violet-600 font-bold">
-                      {m.group.name.charAt(0)}
+                <Link key={m.id} href={`/murid/kelasku/${m.group.id}`}>
+                  <Card className="p-4 border border-slate-100 hover:border-violet-200 hover:shadow-md transition-all cursor-pointer">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-xl bg-violet-100 flex items-center justify-center text-violet-600 font-bold shrink-0">
+                        {m.group.name.charAt(0)}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-semibold text-slate-900 text-sm">{m.group.name}</p>
+                        <p className="text-xs text-slate-500">Kelas {m.group.grade} · Bergabung {new Date(m.joinedAt).toLocaleDateString("id-ID")}</p>
+                        {m.role === "ketua" && (
+                          <span className="inline-flex items-center gap-1 text-xs text-amber-600 font-medium mt-0.5">
+                            <Crown className="w-3 h-3" /> Ketua Kelas
+                          </span>
+                        )}
+                      </div>
+                      {m.role === "ketua" ? (
+                        <Crown className="w-4 h-4 text-amber-500 shrink-0" />
+                      ) : (
+                        <CheckCircle className="w-4 h-4 text-green-500 shrink-0" />
+                      )}
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="font-semibold text-slate-900 text-sm">{m.group.name}</p>
-                      <p className="text-xs text-slate-500">Kelas {m.group.grade} · Bergabung {new Date(m.joinedAt).toLocaleDateString("id-ID")}</p>
-                    </div>
-                    <CheckCircle className="w-4 h-4 text-green-500" />
-                  </div>
-                </Card>
+                  </Card>
+                </Link>
               ))}
             </div>
           </div>

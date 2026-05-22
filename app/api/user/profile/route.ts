@@ -28,7 +28,7 @@ export async function PATCH(req: NextRequest) {
     if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const body = await req.json();
-    const { fullName, avatar, bio, nip, nuptk, school, subject } = body;
+    const { fullName, avatar, bio, nip, nuptk, school, city, province, subject } = body;
 
     await db.user.update({
       where: { id: user.id },
@@ -40,11 +40,11 @@ export async function PATCH(req: NextRequest) {
       if (existing) {
         await db.profile.update({
           where: { userId: user.id },
-          data: { bio, nip, nuptk, school, subject },
+          data: { bio, nip, nuptk, school, city, province, subject },
         });
       } else {
         await db.profile.create({
-          data: { userId: user.id, bio, nip, nuptk, school, subject },
+          data: { userId: user.id, bio, nip, nuptk, school, city, province, subject },
         });
       }
     }

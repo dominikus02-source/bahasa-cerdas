@@ -88,7 +88,9 @@ export async function GET(
         tkaCount: tkaResults.filter((r) => r.userId === m.userId).length,
       }));
 
-      return NextResponse.json({ group: { ...group, members: enrichedMembers } });
+      const ketua = enrichedMembers.find((m) => m.role === "ketua") || null;
+
+      return NextResponse.json({ group: { ...group, members: enrichedMembers }, ketua });
     }
 
     return NextResponse.json({ group });

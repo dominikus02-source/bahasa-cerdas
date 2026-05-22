@@ -14,6 +14,9 @@ export default function RegisterPage() {
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [school, setSchool] = useState("");
+  const [city, setCity] = useState("");
+  const [province, setProvince] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [role, setRole] = useState<"GURU" | "MURID">("GURU");
   const [loading, setLoading] = useState(false);
@@ -51,6 +54,9 @@ export default function RegisterPage() {
       formData.set("supabaseId", createData.userId);
       formData.set("fullName", fullName);
       formData.set("role", role);
+      if (school) formData.set("school", school);
+      if (city) formData.set("city", city);
+      if (province) formData.set("province", province);
 
       const result = await registerUser(formData);
       if (result?.error) {
@@ -230,6 +236,42 @@ export default function RegisterPage() {
                   >
                     {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                   </button>
+                </div>
+              </div>
+
+              <div className="h-px bg-gray-100" />
+
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">Asal Sekolah</label>
+                <input
+                  type="text"
+                  value={school}
+                  onChange={(e) => setSchool(e.target.value)}
+                  className="w-full rounded-xl border-2 border-gray-200 px-4 py-3 text-sm focus:border-red-500 focus:outline-none transition-colors"
+                  placeholder={role === "GURU" ? "SMA Negeri 1 Jakarta" : "SMP Negeri 2 Bandung"}
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">Kota/Kabupaten</label>
+                  <input
+                    type="text"
+                    value={city}
+                    onChange={(e) => setCity(e.target.value)}
+                    className="w-full rounded-xl border-2 border-gray-200 px-4 py-3 text-sm focus:border-red-500 focus:outline-none transition-colors"
+                    placeholder="Jakarta"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">Provinsi</label>
+                  <input
+                    type="text"
+                    value={province}
+                    onChange={(e) => setProvince(e.target.value)}
+                    className="w-full rounded-xl border-2 border-gray-200 px-4 py-3 text-sm focus:border-red-500 focus:outline-none transition-colors"
+                    placeholder="DKI Jakarta"
+                  />
                 </div>
               </div>
 

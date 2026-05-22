@@ -19,6 +19,8 @@ export default function MuridPengaturanPage() {
     bio: "",
     avatarUrl: "",
     school: "",
+    city: "",
+    province: "",
     grade: "",
   });
 
@@ -40,6 +42,8 @@ export default function MuridPengaturanPage() {
         bio: user.user_metadata?.bio || "",
         avatarUrl: user.user_metadata?.avatar_url || "",
         school: user.user_metadata?.school || "",
+        city: user.user_metadata?.city || "",
+        province: user.user_metadata?.province || "",
         grade: user.user_metadata?.grade || "",
       });
     };
@@ -57,6 +61,8 @@ export default function MuridPengaturanPage() {
           bio: profile.bio,
           avatar_url: profile.avatarUrl,
           school: profile.school,
+          city: profile.city,
+          province: profile.province,
           grade: profile.grade,
         },
       });
@@ -186,6 +192,26 @@ export default function MuridPengaturanPage() {
                   value={profile.grade}
                   onChange={(e) => setProfile((p) => ({ ...p, grade: e.target.value }))}
                   placeholder="Contoh: X IPA 1"
+                  className="h-11 rounded-xl"
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">Kota/Kabupaten</label>
+                <Input
+                  value={profile.city}
+                  onChange={(e) => setProfile((p) => ({ ...p, city: e.target.value }))}
+                  placeholder="Jakarta"
+                  className="h-11 rounded-xl"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">Provinsi</label>
+                <Input
+                  value={profile.province}
+                  onChange={(e) => setProfile((p) => ({ ...p, province: e.target.value }))}
+                  placeholder="DKI Jakarta"
                   className="h-11 rounded-xl"
                 />
               </div>
