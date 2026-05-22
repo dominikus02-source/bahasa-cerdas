@@ -37,6 +37,7 @@ export default function RPPModulPage() {
   const [curriculum, setCurriculum] = useState<Curriculum>("MERDEKA");
   const [loading, setLoading] = useState(false);
   const [generated, setGenerated] = useState<any>(null);
+  const [genError, setGenError] = useState("");
   const [docList, setDocList] = useState<any[]>([]);
   const [fetching, setFetching] = useState(true);
   const [previewDoc, setPreviewDoc] = useState<any>(null);
@@ -79,6 +80,8 @@ export default function RPPModulPage() {
 
   const handleGenerate = async () => {
     setLoading(true);
+    setGenError("");
+    setGenerated(null);
     try {
       const kds = [genForm.kd1, genForm.kd2, genForm.kd3].filter(Boolean);
       const methods = [genForm.metode1, genForm.metode2, genForm.metode3].filter(Boolean);
@@ -99,8 +102,13 @@ export default function RPPModulPage() {
         }),
       });
       const data = await res.json();
-      if (data.rpp) setGenerated(data.rpp);
+      if (data.rpp) {
+        setGenerated(data.rpp);
+      } else {
+        setGenError(data.error || "Gagal generate. Periksa GROQ_API_KEY di .env");
+      }
     } catch (e) {
+      setGenError("Gagal terhubung ke server");
       console.error(e);
     }
     setLoading(false);
@@ -317,6 +325,11 @@ export default function RPPModulPage() {
               <Button onClick={handleGenerate} disabled={loading} className="w-full">
                 <Zap className="h-4 w-4" /> {loading ? "Generating..." : `Generate ${docType} dengan AI`}
               </Button>
+              {genError && (
+                <div className="p-3 rounded-lg bg-red-50 border border-red-200 text-sm text-red-700">
+                  {genError}
+                </div>
+              )}
             </div>
           </Card>
 
