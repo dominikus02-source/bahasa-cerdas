@@ -45,7 +45,7 @@ export default function OnboardingPage() {
         const res = await fetch("/api/user/me");
         const data = await res.json();
         if (data.user?.onboarded) {
-          router.replace(data.user.role === "GURU" ? "/guru/dashboard" : "/murid/dashboard");
+          router.replace(data.user.role === "GURU" ? "/guru/beranda" : "/murid/beranda");
           return;
         }
       } catch {}
@@ -63,11 +63,11 @@ export default function OnboardingPage() {
       });
       if (data?.user) {
         const role = data.user.user_metadata?.role || "murid";
-        router.replace(role === "GURU" ? "/guru/dashboard" : "/murid/dashboard");
+        router.replace(role === "GURU" ? "/guru/beranda" : "/murid/beranda");
         return;
       }
     } catch {}
-    router.replace("/guru/dashboard");
+    router.replace("/guru/beranda");
   };
 
   if (loading) {
