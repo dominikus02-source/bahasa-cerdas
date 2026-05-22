@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Heart, MessageCircle, Share2, Clock, Eye, Send } from "lucide-react";
+import { ArrowLeft, Heart, MessageCircle, Share2, Clock, Eye, Send, PenLine, BookOpen, Newspaper, Lightbulb, Music } from "lucide-react";
 
 interface KaryaDetail {
   id: string; title: string; content: string; excerpt?: string;
@@ -13,8 +13,14 @@ interface KaryaDetail {
   comments: { id: string; content: string; createdAt: string; user: { id: string; fullName: string; avatar?: string } }[];
 }
 
-const TYPE_EMOJIS: Record<string, string> = { PUISI: "🖋️", CERPEN: "📖", ARTIKEL: "📰", ANEKDOT: "😄", PANTUN: "🎵", OPINI: "💭" };
+const TYPE_ICON: Record<string, any> = { PUISI: PenLine, CERPEN: BookOpen, ARTIKEL: Newspaper, ANEKDOT: MessageCircle, PANTUN: Music, OPINI: Lightbulb };
 const TYPE_LABELS: Record<string, string> = { PUISI: "Puisi", CERPEN: "Cerpen", ARTIKEL: "Artikel", ANEKDOT: "Anekdot", PANTUN: "Pantun", OPINI: "Opini" };
+
+function TypeIcon({ type, size = 14 }: { type: string; size?: number }) {
+  const Icon = TYPE_ICON[type];
+  if (!Icon) return null;
+  return <Icon size={size} className="inline" />;
+}
 
 export default function DetailKaryaPage() {
   const { id } = useParams();
@@ -93,8 +99,8 @@ export default function DetailKaryaPage() {
         karya.type === "ANEKDOT" ? "bg-orange-100 text-orange-600" :
         karya.type === "PANTUN" ? "bg-teal-100 text-teal-600" : "bg-violet-100 text-violet-600"
       }`}>
-        <span>{TYPE_EMOJIS[karya.type]}</span>
-        <span>{TYPE_LABELS[karya.type]}</span>
+          <TypeIcon type={karya.type} />
+          <span>{TYPE_LABELS[karya.type]}</span>
       </div>
 
       {/* Cover Image */}

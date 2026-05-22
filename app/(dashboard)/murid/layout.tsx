@@ -2,6 +2,7 @@ import { getUser } from "@/lib/supabase/server";
 import Link from "next/link";
 import AIFloatingButton from "@/components/shared/AIFloatingButton";
 import { LogoutButton } from "@/components/dashboard/LogoutButton";
+import { IconFlame, IconBolt, IconTarget } from "@/lib/icons";
 
 const MenuIcon = ({ path, label, href }: { path: string; label: string; href: string }) => (
   <Link href={href} className="group flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm mb-1 transition-all duration-200 text-gray-600 hover:bg-gradient-to-r hover:from-violet-50 hover:to-purple-50 hover:text-violet-700">
@@ -41,30 +42,30 @@ export default async function MuridLayout({ children }: { children: React.ReactN
           </Link>
         </div>
 
-        <div className="px-4 py-4 border-b border-gray-100/50 bg-gradient-to-br from-violet-50/50 to-purple-50/50">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center text-white font-semibold text-sm shadow-lg">
+        <div className="px-4 py-5 border-b border-gray-100/50 bg-gradient-to-br from-violet-50/50 to-purple-50/50">
+          <div className="flex items-center gap-4">
+            <div className="w-14 h-14 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center text-white font-bold text-lg shadow-lg shrink-0">
               {user.fullName?.charAt(0).toUpperCase() || "M"}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold text-gray-900 truncate">{user.fullName}</p>
-              <div className="flex items-center gap-1.5 mt-0.5">
-                <span className="text-xs">{leagueEmoji}</span>
-                <span className="text-[10px] text-gray-500 font-medium">{leagueLabel}</span>
-                <span className="text-[10px] text-gray-400">•</span>
-                <span className="text-[10px] text-violet-600 font-semibold">Tkt {user.level}</span>
+              <p className="text-base font-bold text-gray-900 truncate">{user.fullName}</p>
+              <div className="flex items-center gap-1.5 mt-1">
+                <IconTarget size={16} className="text-violet-500" />
+                <span className="text-xs text-gray-500 font-medium">{leagueLabel}</span>
+                <span className="text-xs text-gray-400">•</span>
+                <span className="text-xs text-violet-600 font-semibold">Tkt {user.level}</span>
               </div>
             </div>
           </div>
-          <div className="flex items-center gap-3 mt-3 pt-3 border-t border-violet-100/50">
-            <div className="flex items-center gap-1 text-xs text-orange-500">
-              <span className="text-sm">🔥</span>
-              <span className="font-semibold">{user.streak || 0}</span>
-            </div>
-            <div className="flex items-center gap-1 text-xs text-amber-500">
-              <span className="text-sm">⚡</span>
-              <span className="font-semibold">{user.xp?.toLocaleString() || 0}</span>
-            </div>
+          <div className="flex items-center gap-4 mt-4 pt-3 border-t border-violet-100/50">
+              <div className="flex items-center gap-1.5 text-sm text-orange-500">
+                <IconFlame size={18} />
+                <span className="font-semibold">{user.streak || 0}</span>
+              </div>
+              <div className="flex items-center gap-1.5 text-sm text-amber-500">
+                <IconBolt size={18} />
+                <span className="font-semibold">{user.xp?.toLocaleString() || 0}</span>
+              </div>
           </div>
         </div>
 

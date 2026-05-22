@@ -3,15 +3,15 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Send } from "lucide-react";
+import { ArrowLeft, Send, PenLine, BookOpen, Newspaper, MessageCircle, Music, Lightbulb } from "lucide-react";
 
 const TYPES = [
-  { value: "PUISI", label: "Puisi", emoji: "🖋️", desc: "Ekspresikan perasaanmu dalam bait-bait indah" },
-  { value: "CERPEN", label: "Cerpen", emoji: "📖", desc: "Tulis cerita pendek imajinasimu" },
-  { value: "ARTIKEL", label: "Artikel", emoji: "📰", desc: "Bagikan opini dan pengetahuanmu" },
-  { value: "ANEKDOT", label: "Anekdot", emoji: "😄", desc: "Cerita lucu dengan pesan tersirat" },
-  { value: "PANTUN", label: "Pantun", emoji: "🎵", desc: "Sastra klasik dengan rima a-b-a-b" },
-  { value: "OPINI", label: "Opini", emoji: "💭", desc: "Pendapatmu tentang isu terkini" },
+  { value: "PUISI", label: "Puisi", icon: PenLine, desc: "Ekspresikan perasaanmu dalam bait-bait indah" },
+  { value: "CERPEN", label: "Cerpen", icon: BookOpen, desc: "Tulis cerita pendek imajinasimu" },
+  { value: "ARTIKEL", label: "Artikel", icon: Newspaper, desc: "Bagikan opini dan pengetahuanmu" },
+  { value: "ANEKDOT", label: "Anekdot", icon: MessageCircle, desc: "Cerita lucu dengan pesan tersirat" },
+  { value: "PANTUN", label: "Pantun", icon: Music, desc: "Sastra klasik dengan rima a-b-a-b" },
+  { value: "OPINI", label: "Opini", icon: Lightbulb, desc: "Pendapatmu tentang isu terkini" },
 ];
 
 const TYPE_STYLES: Record<string, { border: string; bg: string; text: string; gradient: string }> = {
@@ -77,7 +77,7 @@ export default function TulisKaryaPage() {
                 type === t.value ? `${s.border} ${s.bg} shadow-sm` : "border-gray-100 hover:border-gray-200 bg-white"
               }`}
             >
-              <span className="text-xl block mb-1">{t.emoji}</span>
+              <t.icon size={24} className="mx-auto mb-1" />
               <span className={`text-xs font-semibold ${type === t.value ? s.text : "text-gray-600"}`}>
                 {t.label}
               </span>

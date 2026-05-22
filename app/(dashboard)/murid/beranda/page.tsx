@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState, useEffect, useRef, useCallback } from "react";
+import { IconBolt, IconFlame, IconCoin, IconTarget, IconSchool, IconLocation, IconCheck, IconPen, IconChat, IconHeart, IconEye, IconClock } from "@/lib/icons";
 
 type KaryaType = "PUISI" | "CERPEN" | "ARTIKEL" | "ANEKDOT" | "PANTUN" | "OPINI";
 
@@ -20,44 +21,6 @@ const TYPE_META: Record<string, { label: string; badge: string }> = {
   PANTUN:   { label: "Pantun",   badge: "bg-teal-100 text-teal-700" },
   OPINI:    { label: "Opini",    badge: "bg-violet-100 text-violet-700" },
 };
-
-function VioletHeart({ size, fill: f }: { size: number; fill?: boolean }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill={f ? "currentColor" : "none"} stroke="currentColor" strokeWidth="1.5" className="text-violet-500">
-      <path d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
-function VioletComment({ size }: { size: number }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-violet-400">
-      <path d="M12 20.25c4.97 0 9-3.694 9-8.25s-4.03-8.25-9-8.25S3 7.444 3 12c0 2.104.859 4.023 2.273 5.48.432.447.74 1.04.586 1.641a4.483 4.483 0 01-.923 1.785A5.969 5.969 0 006 21c1.282 0 2.47-.402 3.445-1.087.81.22 1.668.337 2.555.337z" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
-function VioletEye({ size }: { size: number }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-violet-400">
-      <path d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
-function VioletClock({ size }: { size: number }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-violet-400">
-      <path d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
-
-function VioletTulis() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-violet-700">
-      <path d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
 
 export default function HomeFeedPage() {
   const [user, setUser] = useState<any>(null);
@@ -124,14 +87,17 @@ export default function HomeFeedPage() {
               </div>
             </div>
             <Link href="/murid/karya/tulis" className="flex items-center gap-1.5 bg-white text-violet-700 px-3.5 py-2 rounded-xl text-xs font-bold hover:bg-violet-50 transition-all shadow-lg">
-              <VioletTulis /> Tulis
+              <IconPen size={18} /> Tulis
             </Link>
           </div>
           <div className="flex gap-3 mt-3 text-[11px]">
-            <span className="flex items-center gap-1 bg-white/15 px-2.5 py-1 rounded-full"><span>⚡</span>{user.xp?.toLocaleString() || 0} XP</span>
-            <span className="flex items-center gap-1 bg-white/15 px-2.5 py-1 rounded-full"><span>🔥</span>{user.streak || 0} hr</span>
-            <span className="flex items-center gap-1 bg-white/15 px-2.5 py-1 rounded-full"><span>🪙</span>{user.coins || 0}</span>
-            <span className="flex items-center gap-1 bg-white/15 px-2.5 py-1 rounded-full"><span>🎯</span>Lv.{user.level || 1}</span>
+            <span className="flex items-center gap-1 bg-white/15 px-2.5 py-1 rounded-full"><IconBolt size={14} />{user.xp?.toLocaleString() || 0} XP</span>
+
+              <span className="flex items-center gap-1 bg-white/15 px-2.5 py-1 rounded-full"><IconFlame size={14} />{user.streak || 0} hr</span>
+
+              <span className="flex items-center gap-1 bg-white/15 px-2.5 py-1 rounded-full"><IconCoin size={14} />{user.coins || 0}</span>
+
+              <span className="flex items-center gap-1 bg-white/15 px-2.5 py-1 rounded-full"><IconTarget size={14} />Lv.{user.level || 1}</span>
           </div>
         </div>
       )}
@@ -207,7 +173,7 @@ export default function HomeFeedPage() {
               <div className="p-5">
                 <div className="flex items-center gap-2 mb-3">
                   <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${m.badge}`}>{m.label}</span>
-                  {karya.isFeatured && <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-yellow-100 text-yellow-700">⭐ Pilihan</span>}
+                  {karya.isFeatured && <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-yellow-100 text-yellow-700">Pilihan</span>}
                 </div>
 
                 <h2 className="font-bold text-gray-900 text-lg leading-snug group-hover:text-violet-700 transition-colors mb-2">{karya.title}</h2>
@@ -230,10 +196,10 @@ export default function HomeFeedPage() {
                 </div>
 
                 <div className="flex items-center gap-4 mt-3 pt-3 border-t border-gray-50 text-xs text-gray-400">
-                  <span className="flex items-center gap-1"><VioletHeart size={13} />{karya.likesCount}</span>
-                  <span className="flex items-center gap-1"><VioletComment size={13} />0</span>
-                  <span className="flex items-center gap-1"><VioletEye size={13} />{karya.viewsCount}</span>
-                  <span className="flex items-center gap-1 ml-auto"><VioletClock size={13} />{new Date(karya.createdAt).toLocaleDateString("id-ID", { day: "numeric", month: "short" })}</span>
+                  <span className="flex items-center gap-1"><IconHeart size={13} />{karya.likesCount}</span>
+                  <span className="flex items-center gap-1"><IconChat size={13} />0</span>
+                  <span className="flex items-center gap-1"><IconEye size={13} />{karya.viewsCount}</span>
+                  <span className="flex items-center gap-1 ml-auto"><IconClock size={13} />{new Date(karya.createdAt).toLocaleDateString("id-ID", { day: "numeric", month: "short" })}</span>
                 </div>
               </div>
             </Link>

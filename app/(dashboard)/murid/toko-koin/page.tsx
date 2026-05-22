@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { ShoppingBag, Zap, Shield, Sparkles, Moon, Sticker } from "lucide-react";
+import { IconCoin, IconCheck } from "@/lib/icons";
 
 interface StoreItem {
   id: string; name: string; description: string; type: string;
@@ -71,7 +72,7 @@ export default function TokoKoinPage() {
           <p className="text-sm text-gray-500">Tukarkan koinmu dengan item spesial</p>
         </div>
         <div className="flex items-center gap-2 bg-amber-50 border border-amber-200 px-4 py-2 rounded-xl">
-          <span className="text-lg">🪙</span>
+          <IconCoin size={20} className="text-amber-500" />
           <span className="font-bold text-amber-600">{user?.coins || 0}</span>
         </div>
       </div>
@@ -80,7 +81,7 @@ export default function TokoKoinPage() {
         <div className={`mb-4 px-4 py-3 rounded-xl text-sm font-medium ${
           message.type === "success" ? "bg-emerald-50 text-emerald-600 border border-emerald-200" : "bg-red-50 text-red-600 border border-red-200"
         }`}>
-          {message.type === "success" ? "✅ " : "❌ "}{message.text}
+          {message.type === "success" ? <IconCheck size={16} className="inline mr-1" /> : null}{message.text}
         </div>
       )}
 
@@ -94,14 +95,14 @@ export default function TokoKoinPage() {
             <div key={item.id} className="bg-white rounded-2xl border border-gray-100 p-5 hover:shadow-lg transition-all">
               <div className="flex items-start gap-4">
                 <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${color} flex items-center justify-center text-white shadow-lg shrink-0`}>
-                  <span className="text-2xl">{item.icon}</span>
+                  <Icon size={28} />
                 </div>
                 <div className="flex-1">
                   <h3 className="font-bold text-gray-900">{item.name}</h3>
                   <p className="text-sm text-gray-500 mt-1">{item.description}</p>
                   <div className="flex items-center justify-between mt-4">
                     <span className="flex items-center gap-1 text-sm font-semibold text-amber-600">
-                      <span>🪙</span> {item.price}
+                      <IconCoin size={14} className="text-amber-500" /> {item.price}
                     </span>
                     <button
                       onClick={() => handleBuy(item)}
