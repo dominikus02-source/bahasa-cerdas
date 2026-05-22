@@ -90,7 +90,7 @@ Isi semua field untuk topik "${t}" dan kelas ${k}. Gunakan Bahasa Indonesia.`;
           body: JSON.stringify({
             model: "llama-3.1-8b-instant",
             messages: [{ role: "user", content: prompt }],
-            max_tokens: 8000,
+            max_tokens: 4000,
             temperature: 0.7,
           }),
         });
@@ -178,8 +178,7 @@ Isi semua field untuk topik "${t}" dan kelas ${k}. Gunakan Bahasa Indonesia.`;
 
     if (!content) {
       console.error("All AI providers failed:", errors);
-      const promptSize = prompt.length;
-      return NextResponse.json({ error: `[RPPv2] Semua AI provider gagal: ${errors.join("; ")}. Tambahkan GROQ_API_KEY (gratis di console.groq.com).`, debug: { promptChars: promptSize, promptStart: prompt.substring(0, 200) } }, { status: 500 });
+      return NextResponse.json({ error: `Semua AI provider gagal: ${errors.join("; ")}. Tambahkan GROQ_API_KEY (gratis di console.groq.com).` }, { status: 500 });
     }
 
     let rpp = content;
