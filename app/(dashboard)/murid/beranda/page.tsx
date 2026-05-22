@@ -12,13 +12,13 @@ interface Karya {
   user: { id: string; fullName: string; avatar?: string; profile?: { school?: string; city?: string } };
 }
 
-const TYPE_META: Record<string, { label: string; emoji: string; badge: string; icon: string }> = {
-  PUISI:    { label: "Puisi",    emoji: "🖋️", badge: "bg-rose-100 text-rose-700",    icon: "M12 19l9 2-9-18-9 18 9-2zm0 0v-8" },
-  CERPEN:   { label: "Cerpen",   emoji: "📖", badge: "bg-blue-100 text-blue-700",    icon: "M4 6h16M4 12h16M4 18h16" },
-  ARTIKEL:  { label: "Artikel",  emoji: "📰", badge: "bg-amber-100 text-amber-700",  icon: "M4 6h16M4 12h16M4 18h16M9 2v20" },
-  ANEKDOT:  { label: "Anekdot",  emoji: "😄", badge: "bg-orange-100 text-orange-700", icon: "M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" },
-  PANTUN:   { label: "Pantun",   emoji: "🎵", badge: "bg-teal-100 text-teal-700",    icon: "M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" },
-  OPINI:    { label: "Opini",    emoji: "💭", badge: "bg-violet-100 text-violet-700", icon: "M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" },
+const TYPE_META: Record<string, { label: string; badge: string }> = {
+  PUISI:    { label: "Puisi",    badge: "bg-rose-100 text-rose-700" },
+  CERPEN:   { label: "Cerpen",   badge: "bg-blue-100 text-blue-700" },
+  ARTIKEL:  { label: "Artikel",  badge: "bg-amber-100 text-amber-700" },
+  ANEKDOT:  { label: "Anekdot",  badge: "bg-orange-100 text-orange-700" },
+  PANTUN:   { label: "Pantun",   badge: "bg-teal-100 text-teal-700" },
+  OPINI:    { label: "Opini",    badge: "bg-violet-100 text-violet-700" },
 };
 
 function VioletHeart({ size, fill: f }: { size: number; fill?: boolean }) {
@@ -160,7 +160,7 @@ export default function HomeFeedPage() {
               const m = TYPE_META[k.type] || TYPE_META.OPINI;
               return (
                 <Link key={k.id} href={`/murid/karya/${k.id}`} className="shrink-0 w-56 bg-gradient-to-br from-violet-500 to-purple-700 rounded-xl p-4 text-white hover:shadow-xl hover:-translate-y-0.5 transition-all">
-                  <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${m.badge}`}>{m.emoji} {m.label}</span>
+                  <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${m.badge}`}>{m.label}</span>
                   <h3 className="font-bold text-sm mt-2 line-clamp-2 leading-snug">{k.title}</h3>
                   <p className="text-xs text-violet-200 mt-2 line-clamp-2">{k.excerpt?.slice(0, 80)}</p>
                   <p className="text-[10px] text-violet-300 mt-2">{k.user.fullName}</p>
@@ -181,7 +181,7 @@ export default function HomeFeedPage() {
                 : "bg-gray-100 text-gray-500 hover:bg-gray-200"
             }`}
           >
-            {type ? `${TYPE_META[type]?.emoji || "📄"} ${TYPE_META[type]?.label || type}` : "📋 Semua"}
+              {TYPE_META[type]?.label || type || "Semua"}
           </button>
         ))}
       </div>
@@ -206,7 +206,7 @@ export default function HomeFeedPage() {
             <Link key={karya.id} href={`/murid/karya/${karya.id}`} className="block bg-white rounded-xl border border-gray-100 hover:shadow-lg hover:border-violet-200 transition-all overflow-hidden group">
               <div className="p-5">
                 <div className="flex items-center gap-2 mb-3">
-                  <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${m.badge}`}>{m.emoji} {m.label}</span>
+                  <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${m.badge}`}>{m.label}</span>
                   {karya.isFeatured && <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-yellow-100 text-yellow-700">⭐ Pilihan</span>}
                 </div>
 
