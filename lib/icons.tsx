@@ -13,7 +13,7 @@ export function IconFlame({ size, className }: IconProps) {
   return <svg {...a(size)} className={className ?? "text-orange-500"}><path d="M15.362 5.214A8.252 8.252 0 0112 21 8.25 8.25 0 016.038 7.048 8.287 8.287 0 009 9.6a8.983 8.983 0 013.361-6.867 8.21 8.21 0 003 2.48z" /><path d="M12 18a3.75 3.75 0 00.495-7.467 5.99 5.99 0 00-1.925 3.546 5.974 5.974 0 01-2.133-1A3.75 3.75 0 0012 18z" /></svg>;
 }
 export function IconCoin({ size, className }: IconProps) {
-  return <svg {...a(size)} className={className ?? "text-yellow-500"}><path d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>;
+  return <svg {...a(size)} className={className ?? "text-yellow-500"}><circle cx="12" cy="12" r="9" /><circle cx="12" cy="12" r="5" strokeWidth="1" /><path d="M10 8.5c1.5-1 4-1 4 .5s-2 2-4 3c-2 1-2 2.5 0 3.5" strokeLinecap="round" /></svg>;
 }
 export function IconTarget({ size, className }: IconProps) {
   return <svg {...a(size)} className={className ?? "text-violet-500"}><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>;

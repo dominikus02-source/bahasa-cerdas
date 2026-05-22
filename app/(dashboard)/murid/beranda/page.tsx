@@ -11,6 +11,7 @@ interface Karya {
   type: KaryaType; coverImage?: string; isFeatured: boolean;
   likesCount: number; viewsCount: number; createdAt: string;
   user: { id: string; fullName: string; avatar?: string; profile?: { school?: string; city?: string } };
+  _count?: { likes: number; comments: number };
 }
 
 const TYPE_META: Record<string, { label: string; badge: string }> = {
@@ -197,7 +198,7 @@ export default function HomeFeedPage() {
 
                 <div className="flex items-center gap-4 mt-3 pt-3 border-t border-gray-50 text-xs text-gray-400">
                   <span className="flex items-center gap-1"><IconHeart size={13} />{karya.likesCount}</span>
-                  <span className="flex items-center gap-1"><IconChat size={13} />0</span>
+                  <span className="flex items-center gap-1"><IconChat size={13} />{karya._count?.comments || 0}</span>
                   <span className="flex items-center gap-1"><IconEye size={13} />{karya.viewsCount}</span>
                   <span className="flex items-center gap-1 ml-auto"><IconClock size={13} />{new Date(karya.createdAt).toLocaleDateString("id-ID", { day: "numeric", month: "short" })}</span>
                 </div>

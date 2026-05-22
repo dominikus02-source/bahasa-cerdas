@@ -21,6 +21,7 @@ export async function GET(req: NextRequest) {
         where,
         include: {
           user: { select: { id: true, fullName: true, avatar: true, profile: { select: { school: true, city: true } } } },
+          _count: { select: { likes: true, comments: true } },
         },
         orderBy: { createdAt: "desc" },
         skip,
