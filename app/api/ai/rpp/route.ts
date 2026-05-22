@@ -179,7 +179,7 @@ Isi semua field untuk topik "${t}" dan kelas ${k}. Gunakan Bahasa Indonesia.`;
     if (!content) {
       console.error("All AI providers failed:", errors);
       const promptSize = prompt.length;
-      return NextResponse.json({ error: `Semua AI provider gagal: ${errors.join("; ")}. Tambahkan GROQ_API_KEY (gratis di console.groq.com).`, debug: { promptChars: promptSize, promptStart: prompt.substring(0, 200) } }, { status: 500 });
+      return NextResponse.json({ error: `[RPPv2] Semua AI provider gagal: ${errors.join("; ")}. Tambahkan GROQ_API_KEY (gratis di console.groq.com).`, debug: { promptChars: promptSize, promptStart: prompt.substring(0, 200) } }, { status: 500 });
     }
 
     let rpp = content;
