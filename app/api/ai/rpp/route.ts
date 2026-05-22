@@ -90,7 +90,7 @@ Isi semua field untuk topik "${t}" dan kelas ${k}. Gunakan Bahasa Indonesia.`;
           body: JSON.stringify({
             model: "llama-3.1-8b-instant",
             messages: [{ role: "user", content: prompt }],
-            max_tokens: 4000,
+            max_tokens: 5000,
             temperature: 0.7,
           }),
         });
