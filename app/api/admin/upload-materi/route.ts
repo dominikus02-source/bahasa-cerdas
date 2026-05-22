@@ -3,13 +3,6 @@ import { createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 import { uploadFileServer } from "@/lib/upload";
 
-export const config = {
-  api: {
-    bodyParser: false,
-    responseLimit: false,
-  },
-};
-
 export async function POST(req: NextRequest) {
   try {
     console.log("Manual PPT Upload: Starting...");
