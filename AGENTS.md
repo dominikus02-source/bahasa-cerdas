@@ -5,10 +5,10 @@ This version has breaking changes — APIs, conventions, and file structure may 
 <!-- END:nextjs-agent-rules -->
 
 # BahasaCerdas Project Status
-## Last Updated: May 20, 2026
+## Last Updated: May 22, 2026
 
 ## Goal
-Build BahasaCerdas educational platform with video learning, teacher upload workflows, marketplace, Kuis Battle multiplayer game, UKBI/TKA simulation, class management, and community system.
+Transform BahasaCerdas into a social-creative platform for Bahasa Indonesia where students write daily (puisi, cerpen, artikel, anekdot, pantun), showcase works in social-style portfolios, earn Coin Cerdas, and compete in weekly leagues — UKBI/TKA as supporting features, not core.
 
 ## Tech Stack
 - Next.js 16.2.6 with TypeScript, App Router, Tailwind CSS
@@ -113,50 +113,55 @@ Build BahasaCerdas educational platform with video learning, teacher upload work
 - CommunityMember with roles
 
 ## Prisma Schema
-- 50+ models including User, Profile, UKBIQuestion, TKAQuestion, PaketKompetensi, ProgresKompetensi, KompetensiCertificate, TestSession, TestAnswer, Video, CoursePlaylist, Materi, BankSoal, RPP, Karya, Pembelian, Group, GroupMember, Community, GameRoom, GameSession, GameResult, etc.
+- 55+ models including User, Profile, UKBIQuestion, TKAQuestion, PaketKompetensi, StudentKarya, StudentKaryaLike, StudentKaryaComment, CoinTransaction, DailyQuest, StoreItem, UserItem, etc.
 - 20+ enums
+
+## Langkah 1 Complete (Schema + API) — May 22, 2026
+### Database
+- New: `StudentKarya` model (PUISI, CERPEN, ARTIKEL, ANEKDOT, PANTUN, OPINI) — separate from marketplace Karya
+- New: `StudentKaryaLike` + `StudentKaryaComment` models
+- New: `CoinTransaction` model (track all coin earnings/spending)
+- New: `DailyQuest` model (MENULIS, MENGOMENTARI, MEMBERI_LIKE quests)
+- New: `StoreItem` model (7 items: Streak Freeze, XP Boost, Avatar Frames, Theme, Stickers)
+- New: `UserItem` model (purchased items inventory)
+- User model: added `coins`, `totalLikes`, `totalViews` fields
+
+### API Routes (Student Karya)
+- `POST /api/siswa/karya` — create + award +10 coins + track MENULIS quest
+- `GET /api/siswa/karya` — paginated feed, filter by type, infinite scroll
+- `GET /api/siswa/karya/[id]` — detail with comments, auto-increment views
+- `POST /api/siswa/karya/[id]/like` — toggle like + award +2 coins to author + track MEMBERI_LIKE quest
+- `POST /api/siswa/karya/[id]/comment` — add comment + award +1 coin + track MENGOMENTARI quest
+- `GET /api/siswa/user/[id]/karya` — user's karya list (paginated)
+
+### API Routes (Coin Cerdas)
+- `GET /api/siswa/quest` — daily quests + auto streak tracking
+- `POST /api/siswa/quest/claim` — claim quest reward
+- `GET /api/siswa/store` — list store items
+- `POST /api/siswa/store/buy` — purchase item (spends coins)
+- `GET /api/siswa/transactions` — coin transaction history
+- `GET /api/siswa/league` — weekly league ranking (30 peers, promote/demote)
+
+### Pages (Langkah 2)
+- `/murid/beranda` — **Home Feed**: compact stats header (XP, streak, coins, level), league widget, quest/store quick links, category tabs (Semua/Puisi/Cerpen/Artikel/Anekdot/Pantun), infinite scroll feed with author + excerpt + stats
+- `/murid/profile` — **Portofolio**: cover + avatar, stats (karya count, likes, views, XP, coins), karya grid (Behance-style cards), prestasi tab
+- `/murid/karya/[id]` — **Detail**: author info, full content, like/comment bar, comments section
+- `/murid/karya/tulis` — **Editor**: type selector (6 types with emoji), title input, content textarea, cover image URL, submit button
+- `/murid/kuest-harian` — **Daily Quests**: streak card, progress bar, quest list with progress bars, coin earning guide
+- `/murid/toko-koin` — **Coin Store**: coin balance, item cards with buy buttons, canAfford check
+
+### Utility
+- `lib/coins.ts` — awardCoins(), spendCoins(), getBalance(), getTransactions(), getOrCreateDailyQuests(), trackQuestProgress(), claimQuestReward(), trackDailyStreak()
 
 ## Next Steps (Priority Order)
 
-1. **Reconnect to VPS** — SSH via Hostinger console if SSH still down, then:
-   - systemctl start postgresql
-   - pm2 start game-server
-   - ss -tlnp | grep -E '5432|3001'
-
-2. **Fix DNS for game.bahasacerdas.com** — wait for propagation or re-verify A record
-
-3. **Run certbot on VPS** — sudo certbot --nginx -d game.bahasacerdas.com
-
-4. **Seed game questions on VPS** — cd /var/www/game-server && npx prisma db seed
-
-5. **Fix game server startup** — ensure PM2 starts game-server on boot: pm2 startup && pm2 save
-
-6. **Test full game flow** — create room → join via code → play → results
-
-7. **Fix uncommitted changes** — game-server/src/server.ts, next.config.ts, package.json modified; apps/api deleted; package-lock.json added
-
-8. **Redeploy to Vercel** — git push after fixes
-
-9. **Verify 413 fix in production** — deploy changes, then test uploading a large PPTX/PDF (>5MB) to admin materi page
-
-## Recent Progress (May 20, 2026)
-
-### Bugs Fixed
-- **Timer auto-submit side effect** — Removed `handleSubmitRef.current(true)` from inside `setTimeLeft` updater function in `app/(dashboard)/kompetisi/[paketId]/page.tsx`. Now uses a separate `useEffect` watching `timeLeft` to trigger auto-submit, with `timerStartedRef` guard to prevent initial-mount false trigger.
-- **Guru package fallback** — Added `!paket.type.includes("GURU")` guard to the third fallback in `app/api/kompetensi/[paketId]/route.ts` (line 155). Prevents serving completely wrong questions (e.g., LITERASI_MEMBACA questions in "Pedagogik" section) when no Guru-level questions match.
-- **SD question ambiguity** — Clarified question text in `prisma/seed-kompetensi-sd.ts` from "Penulisan kata ulang yang benar adalah?" to "Penulisan kata ulang yang benar di awal kalimat adalah?" to disambiguate between capitalized and lowercase options.
-
-### New Content
-- **20 UKBI Guru questions** added to `prisma/seed-kompetensi-guru.ts`: 5 MENDENGARKAN (pedagogical context), 8 MERESPONS_KAIDAH (academic writing), 7 MEMBACA (professional reading)
-- **16 TKA Guru questions** added to `prisma/seed-kompetensi-guru.ts`: 8 PEDAGOGIK (learning theories, teaching models, assessment, classroom management, curriculum) and 8 PROFESIONAL (SNP, PKB, TPACK, education law, Merdeka Belajar)
-- **Package updates**: `totalQuestions` corrected for all 4 Guru packages (UKBI_GURU_SIMULASI: 17, TKA_GURU_SIMULASI: 16, UKBI_GURU_LATIHAN: 8, TKA_GURU_LATIHAN: 8). Section counts aligned with actual available questions.
-
-### Paket Lengkap Fix
-- **3 broken packages deleted** — "Simulasi UKBI - Paket Lengkap", "Latihan UKBI - Seksi I Mendengarkan", "Latihan UKBI - Seksi II & III" had wrong types, deleted from DB with cascade
-- **12 new properly-typed packages created**: "Simulasi UKBI - Paket Lengkap (UKBI_SMP)", "Latihan UKBI - Seksi I Mendengarkan (UKBI_LATIHAN_SMP)", "Latihan UKBI - Seksi II & III (UKBI_LATIHAN_SMP)", plus SMA & SD latihan packages
-- **20 additional questions seeded**: 6 UKBI SMP, 6 UKBI SMA, 4 TKA SMP, 4 TKA SMA
-- **Existing packages updated**: Simulasi UKBI - SMP and SMA duration set to 90 min with consistent section names
-- **Script**: `scripts/seeder-paket-lengkap.ts` created for future use; added `npm run db:seed-guru` and `npm run db:seed-paket-lengkap` to package.json
+1. **Deploy to Vercel** — git push uncommitted changes, redeploy to verify all new pages
+2. **Test full flow** — register murid → tulis karya → feed → like → comment → quest progress → koin → beli item → league
+3. **Guru-side social features** — guru dashboard juga perlu lihat feed karya murid, bisa like/comment
+4. **Featured system** — implement `isFeatured` flag + admin picks for "Karya Pilihan Hari Ini"
+5. **Notification system** — notif when someone likes/comments on your karya
+6. **Coin earning for guru** — what actions earn coins for teachers?
+7. **Game server fixes** — VPS reconnection, DNS, SSL
 
 ## Blockers
 - VPS SSH unreachable (server restarting)
@@ -164,21 +169,27 @@ Build BahasaCerdas educational platform with video learning, teacher upload work
 - No SSL cert on game subdomain
 
 ## Uncommitted Changes (git status)
-- modified: lib/upload.ts
-- new: app/api/admin/configure-storage/route.ts
-- modified: app/(dashboard)/admin/materi/generate-ppt/page.tsx
-- modified: app/(dashboard)/kompetisi/[paketId]/page.tsx (timer fix)
-- modified: app/api/kompetensi/[paketId]/route.ts (Guru fallback fix)
-- modified: prisma/seed-kompetensi-sd.ts (SD question fix)
-- modified: prisma/seed-kompetensi-guru.ts (36 new Guru questions + package updates)
-- new: scripts/seeder-paket-lengkap.ts (fix broken packages + 20 additional questions)
-- modified: game-server/src/server.ts
-- modified: next.config.ts
-- modified: package.json
-- deleted: apps/api/* (old API server, removed)
-- deleted: pnpm-lock.yaml, pnpm-workspace.yaml
-- new: package-lock.json
-- modified: AGENTS.md
+- modified: prisma/schema.prisma (new models: StudentKarya, StudentKaryaLike, StudentKaryaComment, CoinTransaction, DailyQuest, StoreItem, UserItem + User fields)
+- new: app/api/siswa/karya/route.ts
+- new: app/api/siswa/karya/[id]/route.ts
+- new: app/api/siswa/karya/[id]/like/route.ts
+- new: app/api/siswa/karya/[id]/comment/route.ts
+- new: app/api/siswa/user/[id]/karya/route.ts
+- new: app/api/siswa/quest/route.ts
+- new: app/api/siswa/quest/claim/route.ts
+- new: app/api/siswa/store/route.ts
+- new: app/api/siswa/store/buy/route.ts
+- new: app/api/siswa/transactions/route.ts
+- new: app/api/siswa/league/route.ts
+- new: lib/coins.ts
+- new: scripts/seed-store.ts
+- new: app/(dashboard)/murid/karya/[id]/page.tsx
+- new: app/(dashboard)/murid/karya/tulis/page.tsx
+- new: app/(dashboard)/murid/kuest-harian/page.tsx
+- new: app/(dashboard)/murid/toko-koin/page.tsx
+- modified: app/(dashboard)/murid/beranda/page.tsx (social feed + league widget)
+- modified: app/(dashboard)/murid/profile/page.tsx (karya grid + coins)
+- modified: app/(dashboard)/murid/layout.tsx (sidebar nav additions)
 
 ## GitHub
 - Repo: https://github.com/dominikus02-source/bahasa-cerdas
@@ -195,6 +206,5 @@ Build BahasaCerdas educational platform with video learning, teacher upload work
 - VPS game server: /var/www/game-server/game-server on ***REMOVED-VPS-IP***
 - Prisma schema: prisma/schema.prisma (main project)
 - Game server schema: /var/www/game-server/prisma/schema.prisma
-- Socket server: game-server/src/server.ts
-- Socket client: lib/game/socket.ts
-- Game components: components/game/GameLobby.tsx, GamePlay.tsx
+- Social/coins utility: lib/coins.ts
+- Student karya pages: app/(dashboard)/murid/karya/

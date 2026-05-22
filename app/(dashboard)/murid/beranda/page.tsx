@@ -1,144 +1,261 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
+import { Heart, MessageCircle, Eye, Clock, Plus, Target, ShoppingBag } from "lucide-react";
 
-interface UserData {
+type KaryaType = "PUISI" | "CERPEN" | "ARTIKEL" | "ANEKDOT" | "PANTUN" | "OPINI";
+
+interface Karya {
   id: string;
-  fullName: string;
-  xp: number;
-  level: number;
-  streak: number;
-  league: string;
-  avatar?: string;
+  title: string;
+  content: string;
+  excerpt: string;
+  type: KaryaType;
+  coverImage?: string;
+  likesCount: number;
+  viewsCount: number;
+  createdAt: string;
+  user: {
+    id: string;
+    fullName: string;
+    avatar?: string;
+    profile?: { school?: string; city?: string };
+  };
 }
 
-const GameIcon = () => <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5"><path d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" strokeLinecap="round" strokeLinejoin="round"/></svg>;
-const TaskIcon = () => <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" strokeLinecap="round" strokeLinejoin="round"/></svg>;
-const UJIIcon = () => <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5"><path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" strokeLinecap="round" strokeLinejoin="round"/></svg>;
-const ProgressIcon = () => <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" strokeLinecap="round" strokeLinejoin="round"/></svg>;
-const ProfileIcon = () => <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5"><path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" strokeLinecap="round" strokeLinejoin="round"/></svg>;
+const TYPE_LABELS: Record<string, string> = {
+  PUISI: "Puisi", CERPEN: "Cerpen", ARTIKEL: "Artikel",
+  ANEKDOT: "Anekdot", PANTUN: "Pantun", OPINI: "Opini",
+};
+const TYPE_COLORS: Record<string, string> = {
+  PUISI: "bg-rose-100 text-rose-600",
+  CERPEN: "bg-blue-100 text-blue-600",
+  ARTIKEL: "bg-amber-100 text-amber-700",
+  ANEKDOT: "bg-orange-100 text-orange-600",
+  PANTUN: "bg-teal-100 text-teal-600",
+  OPINI: "bg-violet-100 text-violet-600",
+};
+const TYPE_EMOJIS: Record<string, string> = {
+  PUISI: "🖋️", CERPEN: "📖", ARTIKEL: "📰",
+  ANEKDOT: "😄", PANTUN: "🎵", OPINI: "💭",
+};
 
-export default function MuridBerandaPage() {
-  const [user, setUser] = useState<UserData | null>(null);
+export default function HomeFeedPage() {
+  const [user, setUser] = useState<any>(null);
+  const [karyaList, setKaryaList] = useState<Karya[]>([]);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [activeType, setActiveType] = useState<string>("");
+  const loaderRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    fetch("/api/user/me")
-      .then(r => r.ok ? r.json() : null)
-      .then(d => setUser(d?.user || null))
-      .catch(() => {});
+    fetch("/api/user/me").then(r => r.ok ? r.json() : null).then(d => setUser(d?.user || null));
   }, []);
 
-  const leagueEmoji = { BRONZE: "🥉", SILVER: "🥈", GOLD: "🥇", DIAMOND: "💎" }[user?.league || "BRONZE"] || "🥉"
-  const leagueLabel = { BRONZE: "Perunggu", SILVER: "Perak", GOLD: "Emas", DIAMOND: "Berlian" }[user?.league || "BRONZE"] || "Perunggu"
-  
-  const nextLevelXP = (user?.level || 1) * (user?.level || 1) * 100;
-  const currentLevelXP = ((user?.level || 1) - 1) * ((user?.level || 1) - 1) * 100;
-  const progress = ((user?.xp || 0) - currentLevelXP) / (nextLevelXP - currentLevelXP) * 100;
+  const fetchKarya = useCallback(async (pageNum: number, type: string, append: boolean) => {
+    const params = new URLSearchParams({ page: String(pageNum), limit: "10" });
+    if (type) params.set("type", type);
+    const res = await fetch(`/api/siswa/karya?${params}`);
+    const data = await res.json();
+    if (append) {
+      setKaryaList(prev => [...prev, ...data.karya]);
+    } else {
+      setKaryaList(data.karya);
+    }
+    setTotalPages(data.totalPages);
+    setLoading(false);
+    setLoadingMore(false);
+  }, []);
+
+  useEffect(() => {
+    setLoading(true);
+    setKaryaList([]);
+    setPage(1);
+    fetchKarya(1, activeType, false);
+  }, [activeType, fetchKarya]);
+
+  useEffect(() => {
+    if (!loaderRef.current) return;
+    const observer = new IntersectionObserver(entries => {
+      if (entries[0].isIntersecting && !loadingMore && page < totalPages) {
+        setLoadingMore(true);
+        const nextPage = page + 1;
+        setPage(nextPage);
+        fetchKarya(nextPage, activeType, true);
+      }
+    }, { threshold: 0.5 });
+    observer.observe(loaderRef.current);
+    return () => observer.disconnect();
+  }, [page, totalPages, loadingMore, activeType, fetchKarya]);
+
+  const TYPES = ["", "PUISI", "CERPEN", "ARTIKEL", "ANEKDOT", "PANTUN"];
 
   return (
-    <div>
-      {/* Profile Card */}
-      <div className="bg-gradient-to-br from-violet-600 via-purple-600 to-indigo-700 rounded-2xl p-6 text-white mb-6">
-        <div className="flex items-center gap-4">
-          <div className="w-16 h-16 rounded-2xl bg-white/20 backdrop-blur flex items-center justify-center text-white font-bold text-2xl border border-white/30 shadow-lg">
-            {user?.avatar ? (
-              <img src={user.avatar} alt="" className="w-full h-full rounded-2xl object-cover" />
-            ) : (
-              user?.fullName?.charAt(0).toUpperCase() || "M"
-            )}
+    <div className="max-w-2xl mx-auto">
+      {/* Compact Stats Header */}
+      {user && (
+        <div className="bg-gradient-to-br from-violet-600 via-purple-600 to-indigo-700 rounded-2xl p-5 text-white mb-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 rounded-xl bg-white/20 backdrop-blur flex items-center justify-center text-white font-bold text-lg border border-white/30">
+                {user.avatar ? <img src={user.avatar} alt="" className="w-full h-full rounded-xl object-cover" /> : user.fullName?.charAt(0).toUpperCase() || "M"}
+              </div>
+              <div>
+                <h1 className="font-bold">Halo, {user.fullName?.split(" ")[0]}!</h1>
+                <p className="text-xs text-violet-200">Selamat datang di BahasaCerdas</p>
+              </div>
+            </div>
+            <Link href="/murid/karya/tulis" className="flex items-center gap-1.5 bg-white text-violet-700 px-4 py-2 rounded-xl text-sm font-semibold hover:bg-violet-50 transition-all shadow-lg">
+              <Plus size={16} />
+              Tulis
+            </Link>
           </div>
-          <div className="flex-1">
-            <h1 className="text-xl font-bold">Halo, {user?.fullName || "Murid"}!</h1>
-            <p className="text-violet-200 text-sm">Selamat datang di BahasaCerdas</p>
-            <div className="flex items-center gap-2 mt-2">
-              <span className="text-sm">{leagueEmoji}</span>
-              <span className="text-xs bg-white/20 px-2 py-0.5 rounded-full">{leagueLabel}</span>
-              <span className="text-xs bg-white/20 px-2 py-0.5 rounded-full">Level {user?.level || 1}</span>
+          <div className="flex items-center gap-4 mt-4 text-xs">
+            <div className="flex items-center gap-1 bg-white/15 px-3 py-1.5 rounded-full">
+              <span>⚡</span>
+              <span className="font-semibold">{user.xp?.toLocaleString() || 0} XP</span>
+            </div>
+            <div className="flex items-center gap-1 bg-white/15 px-3 py-1.5 rounded-full">
+              <span>🔥</span>
+              <span className="font-semibold">{user.streak || 0} hari</span>
+            </div>
+            <div className="flex items-center gap-1 bg-white/15 px-3 py-1.5 rounded-full">
+              <span>🪙</span>
+              <span className="font-semibold">{user.coins || 0}</span>
+            </div>
+            <div className="flex items-center gap-1 bg-white/15 px-3 py-1.5 rounded-full">
+              <span>🌟</span>
+              <span className="font-semibold">Lv.{user.level || 1}</span>
             </div>
           </div>
-          <Link href="/murid/profile" className="p-2 hover:bg-white/10 rounded-xl transition-colors">
-            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
-              <path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" strokeLinecap="round" strokeLinejoin="round"/>
-              <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
+        </div>
+      )}
+
+      {/* League Widget */}
+      <LeagueWidget />
+
+      {/* Quick Links */}
+      <div className="flex gap-2 mb-4">
+        <Link href="/murid/kuest-harian" className="flex items-center gap-1.5 px-3 py-2 bg-orange-50 border border-orange-200 rounded-xl text-xs font-semibold text-orange-600 hover:bg-orange-100 transition-all">
+          <Target size={14} /> Quest
+        </Link>
+        <Link href="/murid/toko-koin" className="flex items-center gap-1.5 px-3 py-2 bg-amber-50 border border-amber-200 rounded-xl text-xs font-semibold text-amber-600 hover:bg-amber-100 transition-all">
+          <ShoppingBag size={14} /> Toko Koin
+        </Link>
+      </div>
+
+      {/* Category Tabs */}
+      <div className="flex gap-2 mb-6 overflow-x-auto pb-2 scrollbar-hide">
+        {TYPES.map(type => (
+          <button key={type} onClick={() => setActiveType(type)}
+            className={`whitespace-nowrap px-4 py-2 rounded-full text-sm font-medium transition-all ${
+              activeType === type
+                ? "bg-violet-600 text-white shadow-lg shadow-violet-200"
+                : "bg-white text-gray-600 border border-gray-200 hover:border-violet-300 hover:text-violet-600"
+            }`}
+          >
+            {type ? `${TYPE_EMOJIS[type]} ${TYPE_LABELS[type]}` : "📋 Semua"}
+          </button>
+        ))}
+      </div>
+
+      {/* Karya Feed */}
+      {loading ? (
+        <div className="flex justify-center py-20">
+          <div className="animate-spin w-8 h-8 border-4 border-violet-500 border-t-transparent rounded-full" />
+        </div>
+      ) : karyaList.length === 0 ? (
+        <div className="text-center py-20">
+          <div className="w-20 h-20 rounded-full bg-violet-100 flex items-center justify-center mx-auto mb-4">
+            <span className="text-3xl">📝</span>
+          </div>
+          <p className="text-gray-500 font-medium">Belum ada karya</p>
+          <p className="text-gray-400 text-sm mt-1">Jadilah yang pertama menulis!</p>
+          <Link href="/murid/karya/tulis" className="inline-block mt-4 px-6 py-2.5 bg-violet-600 text-white rounded-xl text-sm font-semibold hover:bg-violet-700 transition-colors">
+            Tulis Karya
           </Link>
         </div>
-        
-        <div className="mt-6 grid grid-cols-3 gap-4">
-          <div className="bg-white/10 rounded-xl p-3 text-center">
-            <p className="text-2xl font-bold">{user?.level || 1}</p>
-            <p className="text-xs text-violet-200">Tingkat</p>
-          </div>
-          <div className="bg-white/10 rounded-xl p-3 text-center">
-            <p className="text-2xl font-bold">{user?.streak || 0}</p>
-            <p className="text-xs text-violet-200">Streak Hari</p>
-          </div>
-          <div className="bg-white/10 rounded-xl p-3 text-center">
-            <p className="text-2xl font-bold">{user?.xp?.toLocaleString() || 0}</p>
-            <p className="text-xs text-violet-200">XP</p>
+      ) : (
+        <div className="space-y-4">
+          {karyaList.map(karya => (
+            <Link key={karya.id} href={`/murid/karya/${karya.id}`} className="block bg-white rounded-2xl border border-gray-100 hover:shadow-lg hover:-translate-y-0.5 transition-all overflow-hidden">
+              <div className="p-5">
+                {/* Author Header */}
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-9 h-9 rounded-full bg-gradient-to-br from-violet-400 to-purple-500 flex items-center justify-center text-white text-sm font-bold shrink-0">
+                    {karya.user.avatar ? <img src={karya.user.avatar} alt="" className="w-full h-full rounded-full object-cover" /> : karya.user.fullName.charAt(0)}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-semibold text-gray-900 truncate">{karya.user.fullName}</p>
+                    <p className="text-xs text-gray-400 truncate">
+                      {karya.user.profile?.school || "Siswa"} {karya.user.profile?.city ? `· ${karya.user.profile.city}` : ""}
+                    </p>
+                  </div>
+                  <span className={`text-[10px] font-semibold px-2.5 py-1 rounded-full shrink-0 ${TYPE_COLORS[karya.type]}`}>
+                    {TYPE_LABELS[karya.type]}
+                  </span>
+                </div>
+
+                {/* Title & Excerpt */}
+                <h2 className="font-bold text-gray-900 text-lg leading-snug mb-2">{karya.title}</h2>
+                <p className="text-sm text-gray-600 line-clamp-3 leading-relaxed">
+                  {karya.excerpt || karya.content.replace(/<[^>]*>/g, "").slice(0, 200)}
+                </p>
+
+                {/* Stats */}
+                <div className="flex items-center gap-4 mt-4 text-xs text-gray-400">
+                  <span className="flex items-center gap-1"><Heart size={14} /> {karya.likesCount}</span>
+                  <span className="flex items-center gap-1"><MessageCircle size={14} /> 0</span>
+                  <span className="flex items-center gap-1"><Eye size={14} /> {karya.viewsCount}</span>
+                  <span className="flex items-center gap-1 ml-auto">
+                    <Clock size={14} />
+                    {new Date(karya.createdAt).toLocaleDateString("id-ID", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}
+                  </span>
+                </div>
+              </div>
+            </Link>
+          ))}
+          <div ref={loaderRef} className="flex justify-center py-4">
+            {loadingMore && <div className="animate-spin w-6 h-6 border-3 border-violet-500 border-t-transparent rounded-full" />}
           </div>
         </div>
-
-        <div className="mt-4">
-          <div className="flex justify-between text-xs text-violet-200 mb-1">
-            <span>Level {user?.level || 1}</span>
-            <span>Level {(user?.level || 1) + 1}</span>
-          </div>
-          <div className="h-2 bg-white/20 rounded-full overflow-hidden">
-            <div className="h-full bg-yellow-400 rounded-full" style={{ width: `${Math.min(progress, 100)}%` }} />
-          </div>
-        </div>
-      </div>
-
-      {/* Quick Access Grid */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-        <Link href="/murid/game" className="bg-white p-5 rounded-xl border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all group">
-          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center mb-3 shadow-lg shadow-blue-500/20 group-hover:scale-110 transition-transform">
-            <GameIcon />
-          </div>
-          <p className="font-bold text-gray-900">Gim</p>
-          <p className="text-xs text-gray-500 mt-1">Mainkan & belajar</p>
-        </Link>
-        <Link href="/murid/tugasku" className="bg-white p-5 rounded-xl border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all group">
-          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center mb-3 shadow-lg shadow-emerald-500/20 group-hover:scale-110 transition-transform">
-            <TaskIcon />
-          </div>
-          <p className="font-bold text-gray-900">Tugasku</p>
-          <p className="text-xs text-gray-500 mt-1">Latihan soal</p>
-        </Link>
-        <Link href="/murid/ukbi" className="bg-white p-5 rounded-xl border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all group">
-          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center mb-3 shadow-lg shadow-amber-500/20 group-hover:scale-110 transition-transform">
-            <UJIIcon />
-          </div>
-          <p className="font-bold text-gray-900">UKBI</p>
-          <p className="text-xs text-gray-500 mt-1">Persiapan ujian</p>
-        </Link>
-      </div>
-
-      {/* Second Row */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-        <Link href="/murid/progresku" className="bg-white p-5 rounded-xl border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all group">
-          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-pink-500 to-rose-600 flex items-center justify-center mb-3 shadow-lg shadow-pink-500/20 group-hover:scale-110 transition-transform">
-            <ProgressIcon />
-          </div>
-          <p className="font-bold text-gray-900">Kemajuan</p>
-          <p className="text-xs text-gray-500 mt-1">Lihat progres</p>
-        </Link>
-        <Link href="/murid/profile" className="bg-white p-5 rounded-xl border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all group">
-          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center mb-3 shadow-lg shadow-cyan-500/20 group-hover:scale-110 transition-transform">
-            <ProfileIcon />
-          </div>
-          <p className="font-bold text-gray-900">Profil</p>
-          <p className="text-xs text-gray-500 mt-1">Lihat profil</p>
-        </Link>
-      </div>
-
-      {/* Recent Activity */}
-      <div className="bg-white rounded-xl border border-gray-100 p-5">
-        <h2 className="font-bold text-gray-900 mb-3">Aktivitas Terbaru</h2>
-        <p className="text-gray-500 text-sm">Belum ada aktivitas. Mulai belajar sekarang!</p>
-      </div>
+      )}
     </div>
+  );
+}
+
+function LeagueWidget() {
+  const [league, setLeague] = useState<any>(null);
+
+  useEffect(() => {
+    fetch("/api/siswa/league").then(r => r.ok ? r.json() : null).then(d => setLeague(d));
+  }, []);
+
+  if (!league) return null;
+
+  return (
+    <Link href="/murid/progresku" className="block bg-gradient-to-br from-violet-50 to-purple-50 rounded-2xl border border-violet-100 p-4 mb-4 hover:shadow-md transition-all">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <span className="text-3xl">{league.emoji}</span>
+          <div>
+            <p className="text-xs text-gray-500">Liga {league.label}</p>
+            <p className="font-bold text-gray-900">
+              Peringkat #{league.rank} dari {league.total}
+            </p>
+          </div>
+        </div>
+        <div className="text-right">
+          <p className="text-xs text-gray-500">
+            {league.xpToNext > 0 ? `${league.xpToNext} XP menuju ${league.nextTier || "puncak"}` : "Puncak!"}
+          </p>
+          {league.promoted && <p className="text-xs font-semibold text-emerald-600 mt-0.5">↑ Naik liga!</p>}
+          {league.demoted && <p className="text-xs font-semibold text-red-500 mt-0.5">↓ Turun liga</p>}
+        </div>
+      </div>
+    </Link>
   );
 }

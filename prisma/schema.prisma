@@ -177,6 +177,9 @@ model User {
   league             LeagueType              @default(BRONZE)
   saldo              Int                     @default(0)
   totalEarned        Int                     @default(0)
+  coins              Int                     @default(0)
+  totalLikes         Int                     @default(0)
+  totalViews         Int                     @default(0)
   createdAt          DateTime                @default(now())
   updatedAt          DateTime                @updatedAt
   aiUsage            AIUsage[]
@@ -195,6 +198,9 @@ model User {
   groupMemberships   GroupMember[]
   groupQuizResults   GroupQuizResult[]
   karya              Karya[]
+  studentKarya       StudentKarya[]
+  studentKaryaLikes  StudentKaryaLike[]
+  studentKaryaComments StudentKaryaComment[]
   koleksiKata        KoleksiKata[]
   competencyCerts    KompetensiCertificate[]
   loker              Loker[]
@@ -220,6 +226,9 @@ model User {
   ukbiQuestions      UKBIQuestion[]
   videos             Video[]
   withdrawals        Withdrawal[]
+  coinTransactions   CoinTransaction[]
+  dailyQuests        DailyQuest[]
+  userItems          UserItem[]
 }
 
 model Profile {
@@ -643,6 +652,123 @@ model Karya {
 
   @@index([sellerId])
   @@index([isPublished])
+}
+
+model StudentKarya {
+  id         String                @id @default(cuid())
+  userId     String
+  title      String
+  content    String
+  excerpt    String?
+  type       StudentKaryaType
+  coverImage String?
+  likesCount Int                   @default(0)
+  viewsCount Int                   @default(0)
+  isFeatured Boolean               @default(false)
+  createdAt  DateTime              @default(now())
+  updatedAt  DateTime              @updatedAt
+
+  user     User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  likes    StudentKaryaLike[]
+  comments StudentKaryaComment[]
+
+  @@index([type])
+  @@index([createdAt])
+  @@index([likesCount])
+  @@index([userId])
+}
+
+model StudentKaryaLike {
+  id        String   @id @default(cuid())
+  karyaId   String
+  userId    String
+  createdAt DateTime @default(now())
+
+  karya StudentKarya @relation(fields: [karyaId], references: [id], onDelete: Cascade)
+  user  User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([karyaId, userId])
+}
+
+model StudentKaryaComment {
+  id        String   @id @default(cuid())
+  karyaId   String
+  userId    String
+  content   String
+  createdAt DateTime @default(now())
+
+  karya StudentKarya @relation(fields: [karyaId], references: [id], onDelete: Cascade)
+  user  User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([karyaId])
+}
+
+enum StudentKaryaType {
+  PUISI
+  CERPEN
+  ARTIKEL
+  ANEKDOT
+  PANTUN
+  OPINI
+}
+
+model CoinTransaction {
+  id        String   @id @default(cuid())
+  userId    String
+  amount    Int
+  reason    String
+  reference String?
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([createdAt])
+}
+
+model DailyQuest {
+  id          String   @id @default(cuid())
+  userId      String
+  date        DateTime
+  questType   String
+  target      Int      @default(1)
+  progress    Int      @default(0)
+  completed   Boolean  @default(false)
+  rewardCoins Int      @default(5)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, date, questType])
+  @@index([userId, date])
+}
+
+model StoreItem {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  description String?
+  type        String
+  price       Int
+  icon        String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+
+  purchases UserItem[]
+}
+
+model UserItem {
+  id        String    @id @default(cuid())
+  userId    String
+  itemId    String
+  quantity  Int       @default(1)
+  expiresAt DateTime?
+  createdAt DateTime  @default(now())
+
+  user User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  item StoreItem @relation(fields: [itemId], references: [id])
+
+  @@unique([userId, itemId])
 }
 
 model Pembelian {
