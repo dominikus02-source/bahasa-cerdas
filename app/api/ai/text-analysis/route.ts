@@ -218,7 +218,31 @@ Hanya output JSON, tanpa markdown.`;
     let tokens = 0;
     const errors: string[] = [];
 
-    if (GROQ_API_KEY) {
+    if (DEEPSEEK_API_KEY) {
+      try {
+        const res = await fetch("https://api.deepseek.com/v1/chat/completions", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "Authorization": `Bearer ${DEEPSEEK_API_KEY}` },
+          body: JSON.stringify({
+            model: "deepseek-chat",
+            messages: [{ role: "user", content: prompt }],
+            max_tokens: 4000,
+            temperature: 0.3,
+          }),
+        });
+        const json = await res.json();
+        if (json.error) {
+          errors.push(`DeepSeek: ${json.error.message || json.error}`);
+        } else {
+          content = json.choices?.[0]?.message?.content || "";
+          if (content) tokens = json.usage?.total_tokens || 0;
+        }
+      } catch (e: any) { errors.push(`DeepSeek: ${e.message}`); }
+    } else {
+      errors.push("DeepSeek: No API key");
+    }
+
+    if (!content && GROQ_API_KEY) {
       try {
         const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
           method: "POST",
@@ -238,7 +262,7 @@ Hanya output JSON, tanpa markdown.`;
           if (content) tokens = content.length;
         }
       } catch (e: any) { errors.push(`Groq: ${e.message}`); }
-    } else {
+    } else if (!content) {
       errors.push("Groq: No API key");
     }
 
@@ -286,30 +310,6 @@ Hanya output JSON, tanpa markdown.`;
       } catch (e: any) { errors.push(`OpenAI: ${e.message}`); }
     } else if (!content) {
       errors.push("OpenAI: No API key");
-    }
-
-    if (!content && DEEPSEEK_API_KEY) {
-      try {
-        const res = await fetch("https://api.deepseek.com/v1/chat/completions", {
-          method: "POST",
-          headers: { "Content-Type": "application/json", "Authorization": `Bearer ${DEEPSEEK_API_KEY}` },
-          body: JSON.stringify({
-            model: "deepseek-chat",
-            messages: [{ role: "user", content: prompt }],
-            max_tokens: 4000,
-            temperature: 0.3,
-          }),
-        });
-        const json = await res.json();
-        if (json.error) {
-          errors.push(`DeepSeek: ${json.error.message || json.error}`);
-        } else {
-          content = json.choices?.[0]?.message?.content || "";
-          if (content) tokens = json.usage?.total_tokens || 0;
-        }
-      } catch (e: any) { errors.push(`DeepSeek: ${e.message}`); }
-    } else if (!content) {
-      errors.push("DeepSeek: No API key");
     }
 
     if (!content) {

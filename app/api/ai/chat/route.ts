@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 const GROQ_API_KEY = process.env.GROQ_API_KEY || "";
+const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY || "";
 
 const SYSTEM_PROMPT = `Kamu adalah **AI BC**, Asisten Bahasa Indonesia yang ramah, sabar, cerdas, dan antusias. Kamu adalah kakak guru Bahasa Indonesia yang asyik, teliti, dan selalu mendukung siswa serta guru.
 
@@ -66,29 +67,58 @@ export async function POST(req: NextRequest) {
       })),
     ];
 
-    const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${GROQ_API_KEY}`,
-      },
-      body: JSON.stringify({
-        model: "llama-3.3-70b-versatile",
-        messages: chatMessages,
-        temperature: 0.7,
-        max_tokens: 4096,
-        top_p: 0.95,
-      }),
-    });
+    let answer = "";
+    let usedProvider = "none";
 
-    if (!res.ok) {
-      const err = await res.text();
-      console.error("Groq error:", err);
-      return NextResponse.json({ answer: "Maaf, aku lagi sibuk. Coba tanya lagi ya! 😊" });
+    if (DEEPSEEK_API_KEY) {
+      try {
+        const res = await fetch("https://api.deepseek.com/v1/chat/completions", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", Authorization: `Bearer ${DEEPSEEK_API_KEY}` },
+          body: JSON.stringify({
+            model: "deepseek-chat",
+            messages: chatMessages,
+            temperature: 0.7,
+            max_tokens: 4096,
+          }),
+        });
+        if (res.ok) {
+          const json = await res.json();
+          answer = json?.choices?.[0]?.message?.content || "";
+          if (answer) usedProvider = "deepseek";
+        }
+      } catch (e) { console.error("DeepSeek error:", e); }
     }
 
-    const json = await res.json();
-    const answer = json?.choices?.[0]?.message?.content || "Maaf, aku belum bisa jawab. Coba tanya yang lain ya! 😊";
+    if (!answer && GROQ_API_KEY) {
+      const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${GROQ_API_KEY}`,
+        },
+        body: JSON.stringify({
+          model: "llama-3.3-70b-versatile",
+          messages: chatMessages,
+          temperature: 0.7,
+          max_tokens: 4096,
+          top_p: 0.95,
+        }),
+      });
+
+      if (res.ok) {
+        const json = await res.json();
+        answer = json?.choices?.[0]?.message?.content || "";
+        if (answer) usedProvider = "groq";
+      } else {
+        const err = await res.text();
+        console.error("Groq error:", err);
+      }
+    }
+
+    if (!answer) {
+      return NextResponse.json({ answer: "Maaf, aku lagi sibuk. Coba tanya lagi ya! 😊" });
+    }
 
     return NextResponse.json({ answer });
   } catch {

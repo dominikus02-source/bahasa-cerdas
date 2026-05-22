@@ -76,43 +76,78 @@ JSON: {"risetSummary":"S","kompetensiDasar":["K"],"capaianPembelajaran":"C","sum
 Output HANYA JSON.`;
 
     const GROQ_API_KEY = process.env.GROQ_API_KEY;
+    const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY;
 
-    if (!GROQ_API_KEY) {
-      console.error("GROQ_API_KEY is not set");
-      return NextResponse.json({ error: "GROQ_API_KEY not configured. Please add it to Vercel Environment Variables." }, { status: 500 });
-    }
-
-    console.log("Step 1: Calling Groq API with JSON mode...");
+    console.log("Step 1: Generating AI content...");
     let aiContent = "";
-    try {
-      const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${GROQ_API_KEY}` },
-        body: JSON.stringify({
-          model: "llama-3.1-8b-instant",
-          messages: [
-            { role: "system", content: "You are a JSON-only API. Always respond with valid JSON. Never include explanations, markdown, or text outside the JSON object." },
-            { role: "user", content: prompt }
-          ],
-          max_tokens: 4000,
-          temperature: 0.2,
-          response_format: { type: "json_object" }
-        }),
-      });
-      
-      if (!res.ok) {
-        const errorText = await res.text();
-        console.error("Groq API error:", res.status, errorText);
-        return NextResponse.json({ error: `Groq API error: ${res.status} ${errorText}` }, { status: 500 });
+
+    // Try DeepSeek first (unlimited TPM)
+    if (DEEPSEEK_API_KEY) {
+      try {
+        const res = await fetch("https://api.deepseek.com/v1/chat/completions", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "Authorization": `Bearer ${DEEPSEEK_API_KEY}` },
+          body: JSON.stringify({
+            model: "deepseek-chat",
+            messages: [
+              { role: "system", content: "You are a JSON-only API. Always respond with valid JSON. Never include explanations, markdown, or text outside the JSON object." },
+              { role: "user", content: prompt }
+            ],
+            max_tokens: 4000,
+            temperature: 0.2,
+          }),
+        });
+        if (res.ok) {
+          const json = await res.json();
+          aiContent = json.choices?.[0]?.message?.content || "";
+        } else {
+          const errText = await res.text();
+          console.error("DeepSeek API error:", res.status, errText);
+        }
+      } catch (e) {
+        console.error("DeepSeek failed:", e);
       }
-      
-      const json = await res.json();
-      aiContent = json.choices?.[0]?.message?.content || "";
-      console.log("Step 1 complete: AI content received, length:", aiContent.length);
-    } catch (e) {
-      console.error("AI generation failed:", e);
-      return NextResponse.json({ error: "Gagal generate konten AI: " + (e instanceof Error ? e.message : "Unknown error") }, { status: 500 });
     }
+
+    // Fallback to Groq
+    if (!aiContent) {
+      if (!GROQ_API_KEY) {
+        return NextResponse.json({ error: "GROQ_API_KEY not configured." }, { status: 500 });
+      }
+      try {
+        const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "Authorization": `Bearer ${GROQ_API_KEY}` },
+          body: JSON.stringify({
+            model: "llama-3.1-8b-instant",
+            messages: [
+              { role: "system", content: "You are a JSON-only API. Always respond with valid JSON. Never include explanations, markdown, or text outside the JSON object." },
+              { role: "user", content: prompt }
+            ],
+            max_tokens: 4000,
+            temperature: 0.2,
+            response_format: { type: "json_object" }
+          }),
+        });
+        if (res.ok) {
+          const json = await res.json();
+          aiContent = json.choices?.[0]?.message?.content || "";
+        } else {
+          const errorText = await res.text();
+          console.error("Groq API error:", res.status, errorText);
+          return NextResponse.json({ error: `Groq API error: ${res.status} ${errorText}` }, { status: 500 });
+        }
+      } catch (e) {
+        console.error("AI generation failed:", e);
+        return NextResponse.json({ error: "Gagal generate konten AI: " + (e instanceof Error ? e.message : "Unknown error") }, { status: 500 });
+      }
+    }
+
+    if (!aiContent) {
+      return NextResponse.json({ error: "Semua AI provider gagal menghasilkan konten." }, { status: 500 });
+    }
+
+    console.log("Step 1 complete: AI content received, length:", aiContent.length);
 
     // Parse AI content with robust error handling
     let pptData;
