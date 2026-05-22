@@ -27,11 +27,14 @@ export default function MuridProfilePage() {
   const fetchProfile = async () => {
     const res = await fetch("/api/user/me");
     const d = await res.json();
-    setUser(d?.user || null);
-    if (d?.user?.id) {
-      const kRes = await fetch(`/api/siswa/user/${d.user.id}/karya?limit=20`);
-      const kData = await kRes.json();
-      setKaryaList(kData.karya || []);
+    if (d?.user) {
+      setUser(d.user);
+      const userId = d.user.userId || d.user.id;
+      if (userId) {
+        const kRes = await fetch(`/api/siswa/user/${userId}/karya?limit=20`);
+        const kData = await kRes.json();
+        setKaryaList(kData.karya || []);
+      }
     }
     setLoading(false);
   };
