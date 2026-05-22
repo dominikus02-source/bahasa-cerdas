@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Camera, Settings, Heart, Eye, BookOpen, Plus, GraduationCap, MapPin } from "lucide-react";
+import { Camera, Settings, Heart, Eye, BookOpen, Plus } from "lucide-react";
 
 interface UserData {
   id: string; fullName: string; xp: number; level: number; streak: number;
@@ -15,7 +15,6 @@ interface KaryaItem {
   excerpt?: string; createdAt: string;
 }
 
-const TYPE_EMOJIS: Record<string, string> = { PUISI: "🖋️", CERPEN: "📖", ARTIKEL: "📰", ANEKDOT: "😄", PANTUN: "🎵", OPINI: "💭" };
 const TYPE_COLORS: Record<string, string> = { PUISI: "border-rose-200 bg-rose-50", CERPEN: "border-blue-200 bg-blue-50", ARTIKEL: "border-amber-200 bg-amber-50", ANEKDOT: "border-orange-200 bg-orange-50", PANTUN: "border-teal-200 bg-teal-50", OPINI: "border-violet-200 bg-violet-50" };
 
 export default function MuridProfilePage() {
@@ -41,7 +40,6 @@ export default function MuridProfilePage() {
 
   useEffect(() => { fetchProfile(); }, []);
 
-  const leagueEmoji = { BRONZE: "🥉", SILVER: "🥈", GOLD: "🥇", DIAMOND: "💎" }[user?.league || "BRONZE"] || "🥉";
   const leagueLabel = { BRONZE: "Perunggu", SILVER: "Perak", GOLD: "Emas", DIAMOND: "Berlian" }[user?.league || "BRONZE"] || "Perunggu";
   const leagueColors = { BRONZE: "from-amber-500 to-orange-600", SILVER: "from-gray-300 to-gray-500", GOLD: "from-yellow-400 to-amber-500", DIAMOND: "from-cyan-400 to-blue-500" };
 
@@ -66,20 +64,21 @@ export default function MuridProfilePage() {
         </button>
 
         <h1 className="text-xl font-bold text-gray-900 mt-3">{user?.fullName}</h1>
-        <div className="flex items-center gap-2 mt-1">
-          <span>{leagueEmoji}</span>
+
+        {/* School & City — langsung di bawah nama */}
+        {(user?.school || user?.city) && (
+          <p className="text-sm text-gray-500 mt-1">
+            {user?.school}{user?.school && user?.city ? " · " : ""}{user?.city}
+          </p>
+        )}
+
+        <div className="flex items-center gap-2 mt-1.5">
           <span className="text-sm text-gray-500">{leagueLabel}</span>
-          <span className="text-xs text-gray-400">·</span>
+          <span className="text-xs text-gray-300">·</span>
           <span className="text-sm font-semibold text-violet-600">Level {user?.level || 1}</span>
         </div>
 
         {user?.bio && <p className="text-sm text-gray-500 mt-2 text-center max-w-sm">{user.bio}</p>}
-
-        {/* School & Location */}
-        <div className="flex items-center gap-3 mt-3">
-          {user?.school && <div className="flex items-center gap-1 text-xs text-gray-500 bg-white px-3 py-1.5 rounded-full border border-gray-100"><GraduationCap size={12} />{user.school}</div>}
-          {user?.city && <div className="flex items-center gap-1 text-xs text-gray-500 bg-white px-3 py-1.5 rounded-full border border-gray-100"><MapPin size={12} />{user.city}</div>}
-        </div>
       </div>
 
       {/* Stats */}
@@ -95,7 +94,7 @@ export default function MuridProfilePage() {
 
       {/* Streak */}
       <div className="flex items-center justify-center gap-6 mb-6 text-sm">
-        <span className="flex items-center gap-1.5 text-orange-500 font-medium"><span>🔥</span> Streak {user?.streak || 0} hari</span>
+        <span className="flex items-center gap-1.5 text-orange-500 font-medium">Streak {user?.streak || 0} hari</span>
       </div>
 
       {/* Actions */}
@@ -132,7 +131,6 @@ export default function MuridProfilePage() {
             {karyaList.map(k => (
               <Link key={k.id} href={`/murid/karya/${k.id}`} className={`bg-white rounded-xl border p-4 hover:shadow-md transition-all ${TYPE_COLORS[k.type] || "border-gray-100"}`}>
                 <div className="flex items-center gap-1.5 mb-2">
-                  <span>{TYPE_EMOJIS[k.type]}</span>
                   <span className="text-[10px] font-semibold text-gray-500">{k.type}</span>
                 </div>
                 <h3 className="font-semibold text-sm text-gray-900 line-clamp-2 leading-snug mb-2">{k.title}</h3>
@@ -151,7 +149,7 @@ export default function MuridProfilePage() {
       {activeTab === "prestasi" && (
         <div className="text-center py-16 bg-white rounded-2xl border border-gray-100">
           <div className="w-16 h-16 rounded-full bg-amber-100 flex items-center justify-center mx-auto mb-4">
-            <span className="text-2xl">🏆</span>
+            <span className="text-2xl font-bold text-amber-500">!</span>
           </div>
           <p className="text-gray-500 font-medium">Belum ada prestasi</p>
           <p className="text-gray-400 text-sm mt-1">Terus berkarya dan raih prestasi!</p>
