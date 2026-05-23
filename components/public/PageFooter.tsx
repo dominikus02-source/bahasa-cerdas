@@ -16,7 +16,7 @@ export default function PageFooter() {
                 <p className="text-xs text-slate-500">Platform Edukasi Bahasa Indonesia</p>
               </div>
             </div>
-            <p className="text-sm">Platform Terlengkap untuk Guru Bahasa Indonesia. MGMP + AI + Marketplace.</p>
+            <p className="text-sm">Platform Terlengkap untuk Guru Bahasa Indonesia. MGMP + AI + Toko Karya.</p>
             <div className="flex flex-wrap gap-2 mt-4">
               <Link href="/artikel" className="text-xs text-slate-500 hover:text-white transition-colors">Artikel</Link>
               <span className="text-slate-700">•</span>

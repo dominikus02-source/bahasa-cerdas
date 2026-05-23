@@ -23,7 +23,7 @@ const testimonials = [
     name: "Ahmad Fauzi, S.Pd",
     school: "SMP Negeri 2 Bandung",
     role: "Guru & Kontributor",
-    text: "Marketplace-nya nyata! Bulan lalu saya upload modul bahasa, hasilnya dapat Rp 1.5 juta pasif income. Sangat membantu penghasilan tambahan.",
+    text: "Toko Karya-nya nyata! Bulan lalu saya upload modul bahasa, hasilnya dapat Rp 1.5 juta pasif income. Sangat membantu penghasilan tambahan.",
     rating: 5,
     stats: { label: "Penghasilan", value: "Rp 1,5 Juta/Bulan" },
     initial: "AF",

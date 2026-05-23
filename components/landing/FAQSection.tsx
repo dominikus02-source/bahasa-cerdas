@@ -24,7 +24,7 @@ export default function FAQSection() {
       answer: "Kami menerima berbagai metode pembayaran: QRIS (GoPay, OVO, DANA, ShopeePay), Virtual Account (BCA, BNI, Mandiri, BRI), transfer bank, dan e-wallet lainnya. Pembayaran diproses otomatis dan akses Premium langsung aktif.",
     },
     {
-      question: "Apakah saya bisa menjual karya saya di Marketplace?",
+      question: "Apakah saya bisa menjual karya saya di Toko Karya?",
       answer: "Tentu! Semua member Premium bisa menjual karya (RPP, modul, video, ebook) di Toko Karya. Anda mendapat komisi 85-90% dari setiap penjualan. Proses upload mudah dan pencairan royalti cepat ke rekening Anda.",
     },
   ]
