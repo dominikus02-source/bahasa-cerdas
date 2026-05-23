@@ -187,6 +187,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({
       redirectUrl: transaction.redirectUrl,
+      token: transaction.transactionToken,
       orderId: transaction.orderId,
     });
 

@@ -2,14 +2,32 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { ShoppingBag, CheckCircle, AlertCircle, ArrowLeft } from "lucide-react";
+import { ShoppingBag, CheckCircle, AlertCircle, ArrowLeft, Loader2 } from "lucide-react";
+
+declare global {
+  interface Window {
+    snap?: { pay: (token: string, options?: { onSuccess: Function; onPending: Function; onError: Function; onClose: Function }) => void };
+  }
+}
 
 export default function CheckoutPage() {
   const router = useRouter();
   const [items, setItems] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [paymentUrl, setPaymentUrl] = useState("");
+  const [success, setSuccess] = useState(false);
+
+  useEffect(() => {
+    const clientKey = process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY;
+    if (!clientKey) return;
+    const isProd = window.location.hostname === "bahasacerdas.com";
+    const script = document.createElement("script");
+    script.src = isProd ? "https://app.midtrans.com/snap/snap.js" : "https://app.sandbox.midtrans.com/snap/snap.js";
+    script.setAttribute("data-client-key", clientKey);
+    script.async = true;
+    document.body.appendChild(script);
+    return () => { document.body.removeChild(script); };
+  }, []);
 
   useEffect(() => {
     const cart = JSON.parse(localStorage.getItem("bc-cart") || "[]");
@@ -19,63 +37,71 @@ export default function CheckoutPage() {
 
   const total = items.reduce((s, i) => s + i.price * (i.qty || 1), 0);
   const totalItems = items.reduce((s, i) => s + (i.qty || 1), 0);
+  const hasPaid = items.some(i => i.price > 0);
 
   const handlePay = async () => {
     setLoading(true);
     setError("");
+
     try {
-      // Create orders for each item
+      // Process all items — collect tokens for paid items
       for (const item of items) {
         const res = await fetch("/api/marketplace/purchase", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ karyaId: item.id }),
         });
-        if (!res.ok) {
-          const data = await res.json();
-          throw new Error(data.error || "Gagal checkout");
+
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "Gagal checkout");
+
+        // If paid item -> open Snap popup
+        if (data.token && window.snap) {
+          localStorage.removeItem("bc-cart");
+          window.snap.pay(data.token, {
+            onSuccess: () => { setSuccess(true); },
+            onPending: () => { setSuccess(true); },
+            onError: () => { setError("Pembayaran gagal, silakan coba lagi."); setLoading(false); },
+            onClose: () => { if (!success) setLoading(false); },
+          });
+          return; // Snap handles the flow from here
+        }
+
+        // If redirect URL (fallback)
+        if (data.redirectUrl) {
+          localStorage.removeItem("bc-cart");
+          window.location.href = data.redirectUrl;
+          return;
         }
       }
 
-      // Create Midtrans invoice
-      const invoiceRes = await fetch("/api/payment/create-invoice", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          items: items.map(i => ({
-            id: i.id,
-            name: i.title,
-            price: i.price,
-            quantity: i.qty || 1,
-          })),
-          total,
-        }),
-      });
-
-      const invoiceData = await invoiceRes.json();
-      if (invoiceData.invoice?.invoice_url) {
-        localStorage.removeItem("bc-cart");
-        window.location.href = invoiceData.invoice.invoice_url;
-      } else {
-        setPaymentUrl("/orders");
-        localStorage.removeItem("bc-cart");
-      }
+      // All free items — done
+      localStorage.removeItem("bc-cart");
+      setSuccess(true);
     } catch (e: any) {
       setError(e.message || "Gagal memproses pembayaran");
     }
     setLoading(false);
   };
 
-  if (paymentUrl) {
+  if (success) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-white">
         <div className="text-center max-w-md mx-auto px-4">
-          <CheckCircle size={64} className="text-emerald-500 mx-auto mb-4" />
-          <h1 className="text-2xl font-bold text-slate-900 mb-2">Pesanan Dibuat!</h1>
-          <p className="text-slate-500 mb-6">Kami akan memproses pesanan kamu. Cek status di halaman pesanan.</p>
-          <button onClick={() => router.push("/orders")} className="bg-gradient-to-r from-red-600 to-red-700 text-white font-bold px-8 py-3 rounded-2xl shadow-lg">
-            Lihat Pesanan Saya
-          </button>
+          <div className="w-20 h-20 rounded-full bg-emerald-100 flex items-center justify-center mx-auto mb-6">
+            <CheckCircle size={40} className="text-emerald-500" />
+          </div>
+          <h1 className="text-2xl font-bold text-slate-900 mb-2">Pembayaran Berhasil!</h1>
+          <p className="text-slate-500 mb-2">Karya akan dikirim ke email kamu.</p>
+          <p className="text-slate-400 text-sm mb-8">Cek email atau lihat di halaman pesanan.</p>
+          <div className="flex gap-3 justify-center">
+            <button onClick={() => router.push("/orders")} className="bg-gradient-to-r from-red-600 to-red-700 text-white font-bold px-6 py-3 rounded-2xl shadow-lg hover:shadow-xl transition-all">
+              Lihat Pesanan
+            </button>
+            <button onClick={() => router.push("/marketplace")} className="bg-white border-2 border-slate-200 text-slate-700 font-semibold px-6 py-3 rounded-2xl hover:bg-slate-50 transition-all">
+              Belanja Lagi
+            </button>
+          </div>
         </div>
       </div>
     );
@@ -84,7 +110,7 @@ export default function CheckoutPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-white">
       <div className="max-w-2xl mx-auto px-4 py-8">
-        <button onClick={() => router.back()} className="inline-flex items-center gap-1 text-sm text-slate-500 hover:text-red-600 mb-6">
+        <button onClick={() => router.back()} className="inline-flex items-center gap-1 text-sm text-slate-500 hover:text-red-600 mb-6 transition-colors">
           <ArrowLeft size={16} /> Kembali ke Keranjang
         </button>
 
@@ -118,13 +144,15 @@ export default function CheckoutPage() {
         <button onClick={handlePay} disabled={loading || items.length === 0}
           className="w-full bg-gradient-to-r from-red-600 to-red-700 text-white font-bold py-4 rounded-2xl text-lg shadow-lg hover:shadow-xl transition-all disabled:opacity-40 flex items-center justify-center gap-2">
           {loading ? (
-            <><div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> Memproses...</>
+            <><Loader2 size={20} className="animate-spin" /> Memproses...</>
           ) : (
-            <><ShoppingBag size={20} /> Bayar Rp {total.toLocaleString("id")}</>
+            <><ShoppingBag size={20} /> {hasPaid ? `Bayar Rp ${total.toLocaleString("id")}` : "Unduh Gratis"}</>
           )}
         </button>
 
-        <p className="text-xs text-slate-400 text-center mt-4">Pembayaran diproses oleh Midtrans. Data kamu aman.</p>
+        <p className="text-xs text-slate-400 text-center mt-4">
+          Pembayaran diproses oleh Midtrans. Data kamu aman.
+        </p>
       </div>
     </div>
   );
