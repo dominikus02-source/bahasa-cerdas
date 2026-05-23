@@ -241,7 +241,7 @@ export default async function BerandaPage() {
                   MENGOMENTARI: { icon: MessageCircle, color: "text-blue-400" },
                   MENULIS: { icon: PenLine, color: "text-purple-400" },
                 }
-                const meta = iconMap[q.type] || { icon: Star, color: "text-amber-400" }
+                const meta = iconMap[q.questType] || { icon: Star, color: "text-amber-400" }
                 const Icon = meta.icon
                 const pct = q.target > 0 ? Math.min(Math.round((q.progress / q.target) * 100), 100) : 0
                 return (
@@ -249,14 +249,14 @@ export default async function BerandaPage() {
                     <Icon size={16} className={meta.color} />
                     <div className="flex-1 min-w-0">
                       <p className={`text-xs font-semibold ${q.completed ? "text-emerald-600 line-through" : "text-[#1A1033]"}`}>
-                        {q.type === "MEMBERI_LIKE" ? `Beri Suka ${q.target} Karya` : q.type === "MENGOMENTARI" ? `Komentari ${q.target} Karya` : `Tulis ${q.target} Karya`}
+                        {q.questType === "MEMBERI_LIKE" ? `Beri Suka ${q.target} Karya` : q.questType === "MENGOMENTARI" ? `Komentari ${q.target} Karya` : `Tulis ${q.target} Karya`}
                       </p>
                       <p className="text-[10px] text-[#9B93B8]">{q.progress}/{q.target} selesai</p>
                       <div className="h-1 bg-black/5 rounded-full overflow-hidden mt-1">
                         <div className="h-full rounded-full bg-gradient-to-r from-amber-400 to-yellow-300" style={{ width: `${pct}%` }} />
                       </div>
                     </div>
-                    <span className="text-[11px] font-bold text-amber-500 shrink-0">+{q.reward || 5} {q.rewardType === "COIN" ? <Coins size={10} className="inline" /> : "XP"}</span>
+                    <span className="text-[11px] font-bold text-amber-500 shrink-0">+{q.rewardCoins} <Coins size={10} className="inline" /></span>
                   </div>
                 )
               })}
