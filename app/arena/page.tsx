@@ -96,7 +96,7 @@ export default async function BerandaPage() {
     where: { xp: { gt: 0 } },
     orderBy: { xp: "desc" },
     take: 3,
-    select: { id: true, name: true, xp: true },
+    select: { id: true, fullName: true, xp: true },
   })
 
   return (
@@ -377,11 +377,11 @@ export default async function BerandaPage() {
                   <div key={u.id} className={`flex items-center gap-2.5 px-4 py-2 ${isMe ? "bg-purple-50" : ""}`}>
                     <span className={`font-extrabold text-sm w-5 text-center shrink-0 ${rankClass}`}>{i + 1}</span>
                     <div className={`w-8 h-8 rounded-xl bg-gradient-to-br ${INITIALS_COLORS[i]} flex items-center justify-center text-white text-sm font-bold shrink-0`}>
-                      {initials(u.name || "")}
+                      {initials(u.fullName || "")}
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-xs font-semibold text-[#1A1033]">
-                        {isMe ? "Kamu" : u.name}
+                        {isMe ? "Kamu" : u.fullName}
                       </p>
                     </div>
                     <span className="font-extrabold text-sm text-purple-600 shrink-0">{u.xp.toLocaleString()}</span>

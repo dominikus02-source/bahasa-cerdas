@@ -46,7 +46,7 @@ export default async function ArenaGimPage() {
       where: { xp: { gt: 0 } },
       orderBy: { xp: "desc" },
       take: 5,
-      select: { id: true, name: true, xp: true },
+      select: { id: true, fullName: true, xp: true },
     }),
   ])
 
@@ -187,11 +187,11 @@ export default async function ArenaGimPage() {
                   {rankEmoji || <span className={`text-sm font-extrabold ${rankColors[i] || ""}`} style={{ color: !rankColors[i] ? "#7C7A9E" : undefined }}>{i + 1}</span>}
                 </div>
                 <div className={`w-9 h-9 rounded-xl bg-gradient-to-br ${INITIALS_COLORS[i % INITIALS_COLORS.length]} flex items-center justify-center text-white text-sm font-bold shrink-0`}>
-                  {initials(u.name || "")}
+                  {initials(u.fullName || "")}
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-semibold text-white truncate">
-                    {u.name}
+                    {u.fullName}
                     {isMe && <span className="text-[11px] font-medium ml-1" style={{ color: "#A855F7" }}>(Kamu)</span>}
                   </p>
                 </div>
