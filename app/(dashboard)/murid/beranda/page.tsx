@@ -24,16 +24,6 @@ const TYPE_META: Record<string, { label: string; badge: string }> = {
   OPINI:    { label: "Opini",    badge: "bg-violet-100 text-violet-700" },
 };
 
-function LeagueBadge({ tier }: { tier: string }) {
-  const colors: Record<string, string> = {
-    BRONZE: "text-orange-600 bg-orange-50 border-orange-200",
-    SILVER: "text-gray-600 bg-gray-50 border-gray-200",
-    GOLD: "text-yellow-600 bg-yellow-50 border-yellow-200",
-    DIAMOND: "text-sky-600 bg-sky-50 border-sky-200",
-  };
-  return <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full border ${colors[tier] || colors.BRONZE}`}>{tier}</span>;
-}
-
 export default function HomeFeedPage() {
   const [user, setUser] = useState<any>(null);
   const [karyaList, setKaryaList] = useState<Karya[]>([]);
@@ -43,13 +33,11 @@ export default function HomeFeedPage() {
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [activeType, setActiveType] = useState<string>("");
-  const [league, setLeague] = useState<any>(null);
   const loaderRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     fetch("/api/user/me").then(r => r.ok ? r.json() : null).then(d => setUser(d?.user || null));
     fetch("/api/siswa/karya?featured=true&limit=5").then(r => r.ok ? r.json() : null).then(d => setFeatured(d?.karya || []));
-    fetch("/api/siswa/league").then(r => r.ok ? r.json() : null).then(d => setLeague(d));
     const hb = setInterval(() => fetch("/api/user/heartbeat", { method: "POST" }), 60000);
     fetch("/api/user/heartbeat", { method: "POST" });
     return () => clearInterval(hb);
@@ -86,101 +74,59 @@ export default function HomeFeedPage() {
   const TYPES = ["", "PUISI", "CERPEN", "ARTIKEL", "ANEKDOT", "PANTUN", "OPINI"];
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr_340px] gap-5 items-start max-w-7xl mx-auto">
-      {/* ═══ LEFT SIDEBAR ═══ */}
-      <div className="space-y-4">
-        {/* User Card */}
+    <div className="grid grid-cols-1 xl:grid-cols-[1fr_360px] gap-5 items-start">
+      {/* ═══ CENTER FEED ═══ */}
+      <div className="min-w-0 max-w-2xl w-full">
+        {/* ── Header ── */}
         {user && (
-          <div className="bg-gradient-to-br from-violet-600 via-purple-600 to-indigo-700 rounded-2xl p-5 text-white">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur flex items-center justify-center text-white font-bold border-2 border-white/30 overflow-hidden shrink-0">
-                {user.avatar ? <img src={user.avatar} alt="" className="w-full h-full object-cover" /> : user.fullName?.charAt(0).toUpperCase() || "M"}
+          <div className="bg-gradient-to-br from-violet-600 via-purple-600 to-indigo-700 rounded-2xl p-5 text-white mb-5">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-11 h-11 rounded-full bg-white/20 backdrop-blur flex items-center justify-center text-white font-bold border border-white/30 overflow-hidden">
+                  {user.avatar ? <img src={user.avatar} alt="" className="w-full h-full object-cover" /> : user.fullName?.charAt(0).toUpperCase() || "M"}
+                </div>
+                <div className="leading-tight">
+                  <p className="font-bold text-sm">Halo, {user.fullName?.split(" ")[0]}!</p>
+                  <p className="text-[11px] text-violet-200">Indonesia Menulis</p>
+                </div>
               </div>
-              <div className="min-w-0">
-                <p className="font-bold text-sm truncate">{user.fullName?.split(" ")[0]}</p>
-                <p className="text-[11px] text-violet-200">Indonesia Menulis</p>
-              </div>
+              <Link href="/murid/karya/tulis" className="flex items-center gap-1.5 bg-white text-violet-700 px-3.5 py-2 rounded-xl text-xs font-bold hover:bg-violet-50 transition-all shadow-lg">
+                <IconPen size={18} /> Tulis
+              </Link>
             </div>
-            <div className="grid grid-cols-2 gap-2 mt-4">
-              <div className="bg-white/10 rounded-xl p-2.5 text-center">
-                <IconBolt size={16} className="mx-auto text-yellow-300 mb-0.5" />
-                <p className="text-xs font-bold">{user.xp?.toLocaleString() || 0}</p>
-                <p className="text-[9px] text-violet-200">XP</p>
-              </div>
-              <div className="bg-white/10 rounded-xl p-2.5 text-center">
-                <IconCoin size={16} className="mx-auto text-yellow-300 mb-0.5" />
-                <p className="text-xs font-bold">{user.coins || 0}</p>
-                <p className="text-[9px] text-violet-200">Koin</p>
-              </div>
-              <div className="bg-white/10 rounded-xl p-2.5 text-center">
-                <IconFlame size={16} className="mx-auto text-orange-300 mb-0.5" />
-                <p className="text-xs font-bold">{user.streak || 0}</p>
-                <p className="text-[9px] text-violet-200">Streak</p>
-              </div>
-              <div className="bg-white/10 rounded-xl p-2.5 text-center">
-                <IconTarget size={16} className="mx-auto text-violet-300 mb-0.5" />
-                <p className="text-xs font-bold">Lv.{user.level || 1}</p>
-                <p className="text-[9px] text-violet-200">Level</p>
-              </div>
+            <div className="flex gap-3 mt-3 text-[11px]">
+              <span className="flex items-center gap-1 bg-white/15 px-2.5 py-1 rounded-full"><IconBolt size={14} />{user.xp?.toLocaleString() || 0} XP</span>
+              <span className="flex items-center gap-1 bg-white/15 px-2.5 py-1 rounded-full"><IconFlame size={14} />{user.streak || 0} hr</span>
+              <span className="flex items-center gap-1 bg-white/15 px-2.5 py-1 rounded-full"><IconCoin size={14} />{user.coins || 0}</span>
+              <span className="flex items-center gap-1 bg-white/15 px-2.5 py-1 rounded-full"><IconTarget size={14} />Lv.{user.level || 1}</span>
             </div>
           </div>
         )}
 
-        {/* Quick Actions */}
-        <div className="bg-white rounded-2xl border border-gray-100 p-4 space-y-1.5">
-          <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-2">Aksi Cepat</p>
-          <Link href="/murid/karya/tulis" className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-semibold text-violet-700 bg-violet-50 hover:bg-violet-100 transition-colors">
-            <IconPen size={16} /> Tulis Karya
+        {/* ── League ── */}
+        <LeagueWidget />
+
+        {/* ── Quick links ── */}
+        <div className="flex gap-2 mb-5">
+          <Link href="/murid/kuest-harian" className="flex items-center gap-1.5 px-3 py-2 bg-gradient-to-r from-orange-50 to-amber-50 border border-orange-200 rounded-xl text-xs font-semibold text-orange-600 hover:shadow-md transition-all">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+            Quest
           </Link>
-          <Link href="/murid/kuest-harian" className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-semibold text-orange-600 bg-orange-50 hover:bg-orange-100 transition-colors">
-            <IconTarget size={16} /> Quest Harian
-          </Link>
-          <Link href="/murid/toko-koin" className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-semibold text-amber-600 bg-amber-50 hover:bg-amber-100 transition-colors">
-            <IconCoin size={16} /> Toko Koin
-          </Link>
-          <Link href="/murid/profile" className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-semibold text-gray-600 bg-gray-50 hover:bg-gray-100 transition-colors">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" /></svg>
-            Profilku
+          <Link href="/murid/toko-koin" className="flex items-center gap-1.5 px-3 py-2 bg-gradient-to-r from-amber-50 to-yellow-50 border border-amber-200 rounded-xl text-xs font-semibold text-amber-600 hover:shadow-md transition-all">
+            <IconCoin size={14} />
+            Toko
           </Link>
         </div>
 
-        {/* League Widget */}
-        {league && (
-          <div className="bg-white rounded-2xl border border-gray-100 p-4">
-            <div className="flex items-center justify-between mb-3">
-              <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Liga {league.label}</p>
-              <LeagueBadge tier={league.tier} />
-            </div>
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-2xl font-bold text-gray-900">#{league.rank}</p>
-                <p className="text-[11px] text-gray-500">dari {league.total} siswa</p>
-              </div>
-              <div className="text-right text-[11px]">
-                {league.xpToNext > 0 ? (
-                  <p className="text-gray-500"><span className="font-semibold text-violet-600">{league.xpToNext}</span> XP ke {league.nextTier}</p>
-                ) : (
-                  <p className="text-emerald-600 font-semibold">Puncak!</p>
-                )}
-                {league.promoted && <p className="text-emerald-600 font-bold text-xs mt-0.5">Naik liga!</p>}
-                {league.demoted && <p className="text-red-500 font-bold text-xs mt-0.5">Turun</p>}
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* ═══ CENTER FEED ═══ */}
-      <div className="min-w-0">
-        {/* Featured Karya */}
+        {/* ── Karya Pilihan ── */}
         {featured.length > 0 && (
-          <div className="mb-5">
+          <div className="mb-6">
             <h2 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Karya Pilihan</h2>
             <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide -mx-1 px-1">
               {featured.map(k => {
                 const m = TYPE_META[k.type] || TYPE_META.OPINI;
                 return (
-                  <Link key={k.id} href={`/murid/karya/${k.id}`} className="shrink-0 w-52 bg-gradient-to-br from-violet-500 to-purple-700 rounded-xl p-4 text-white hover:shadow-xl hover:-translate-y-0.5 transition-all">
+                  <Link key={k.id} href={`/murid/karya/${k.id}`} className="shrink-0 w-56 bg-gradient-to-br from-violet-500 to-purple-700 rounded-xl p-4 text-white hover:shadow-xl hover:-translate-y-0.5 transition-all">
                     <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${m.badge}`}>{m.label}</span>
                     <h3 className="font-bold text-sm mt-2 line-clamp-2 leading-snug">{k.title}</h3>
                     <p className="text-xs text-violet-200 mt-2 line-clamp-2">{k.excerpt?.slice(0, 80)}</p>
@@ -192,8 +138,8 @@ export default function HomeFeedPage() {
           </div>
         )}
 
-        {/* Category Tabs */}
-        <div className="flex gap-1.5 mb-4 overflow-x-auto pb-1 scrollbar-hide">
+        {/* ── Kategori ── */}
+        <div className="flex gap-1.5 mb-5 overflow-x-auto pb-1 scrollbar-hide">
           {TYPES.map(type => (
             <button key={type} onClick={() => setActiveType(type)}
               className={`whitespace-nowrap px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all ${
@@ -207,7 +153,7 @@ export default function HomeFeedPage() {
           ))}
         </div>
 
-        {/* Feed */}
+        {/* ── Feed ── */}
         {loading ? (
           <div className="flex justify-center py-20">
             <div className="animate-spin w-7 h-7 border-[3px] border-violet-500 border-t-transparent rounded-full" />
@@ -265,9 +211,42 @@ export default function HomeFeedPage() {
       </div>
 
       {/* ═══ RIGHT PANEL ═══ */}
-      <div className="lg:sticky lg:top-5">
+      <div className="xl:sticky xl:top-5 min-w-0">
         {user && <ChatPanel userId={user.id || user.userId} />}
       </div>
     </div>
+  );
+}
+
+function LeagueWidget() {
+  const [league, setLeague] = useState<any>(null);
+  useEffect(() => { fetch("/api/siswa/league").then(r => r.ok ? r.json() : null).then(d => setLeague(d)); }, []);
+  if (!league) return null;
+
+  const tierColors: Record<string, string> = {
+    BRONZE: "border-orange-200 bg-orange-50",
+    SILVER: "border-gray-200 bg-gray-50",
+    GOLD: "border-yellow-200 bg-yellow-50",
+    DIAMOND: "border-sky-200 bg-sky-50",
+  };
+  const tierText: Record<string, string> = {
+    BRONZE: "text-orange-600", SILVER: "text-gray-600", GOLD: "text-yellow-600", DIAMOND: "text-sky-600",
+  };
+
+  return (
+    <Link href="/murid/progresku" className={`flex items-center justify-between rounded-xl border px-4 py-3 mb-4 hover:shadow-md transition-all ${tierColors[league.tier] || "border-violet-100 bg-violet-50"}`}>
+      <div className="flex items-center gap-3">
+        <IconTarget size={24} className={tierText[league.tier] || "text-violet-500"} />
+        <div>
+          <p className="text-[11px] text-gray-500 font-medium">Liga {league.label}</p>
+          <p className="text-sm font-bold text-gray-900">#{league.rank} dari {league.total}</p>
+        </div>
+      </div>
+      <div className="text-right text-[11px]">
+        {league.xpToNext > 0 ? <p className="text-gray-500"><span className="font-semibold text-violet-600">{league.xpToNext}</span> XP ke {league.nextTier}</p> : <p className="text-emerald-600 font-semibold">Puncak!</p>}
+        {league.promoted && <p className="text-emerald-600 font-bold mt-0.5">Naik liga!</p>}
+        {league.demoted && <p className="text-red-500 font-bold mt-0.5">Turun</p>}
+      </div>
+    </Link>
   );
 }
