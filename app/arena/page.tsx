@@ -34,7 +34,7 @@ export default async function BerandaPage() {
   const progress = xpProgress(user.xp || 0, user.level || 1)
   const streak = streakMsg(user.streak || 0)
 
-  const [aktivitas, juaraBaru] = await Promise.all([
+  const [aktivitas, juaraBaru, tugasCount] = await Promise.all([
     db.gameResult.findMany({
       where: { rank: 1 },
       include: {
@@ -52,6 +52,34 @@ export default async function BerandaPage() {
       orderBy: { createdAt: "desc" },
       take: 3,
     }),
+    (async () => {
+      try {
+        const memberships = await db.groupMember.findMany({
+          where: { userId: user.id },
+          select: { groupId: true },
+        })
+        const groupIds = memberships.map(m => m.groupId)
+        if (groupIds.length === 0) return 0
+
+        const assignments = await db.quizAssignment.findMany({
+          where: { groupId: { in: groupIds }, isPublished: true },
+          select: { id: true },
+        })
+        const assignIds = assignments.map(a => a.id)
+        if (assignIds.length === 0) return 0
+
+        const submissions = await db.quizSubmission.findMany({
+          where: { userId: user.id, assignmentId: { in: assignIds } },
+          select: { assignmentId: true, status: true },
+        })
+        const submittedIds = new Set(
+          submissions.filter(s => s.status === "SUBMITTED" || s.status === "GRADED").map(s => s.assignmentId)
+        )
+        return assignIds.filter(id => !submittedIds.has(id)).length
+      } catch {
+        return 0
+      }
+    })(),
   ])
 
   let trendingKarya = await db.studentKarya.findMany({
@@ -164,7 +192,7 @@ export default async function BerandaPage() {
       )}
 
       {/* Ruang Tugas */}
-      <TugasCard />
+      <TugasCard pendingCount={tugasCount} />
 
       {/* Aktivitas — FOMO */}
       {(aktivitas.length > 0 || juaraBaru.length > 0) && (

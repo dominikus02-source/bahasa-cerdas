@@ -57,13 +57,13 @@ export default function KatastraArenaPage() {
   const playedToday = data?.playedToday || false
 
   return (
-    <div className="game-fullscreen min-h-screen bg-gradient-to-b from-slate-900 via-violet-950 to-slate-900 text-white">
-      <Link
-        href="/arena/game"
+    <div className="fixed inset-0 z-[60] bg-gradient-to-b from-slate-900 via-violet-950 to-slate-900 text-white overflow-auto">
+      <button
+        onClick={() => { window.location.href = "/arena/game" }}
         className="fixed top-3 left-3 z-[70] w-9 h-9 rounded-xl bg-white/90 backdrop-blur-md border border-gray-200 shadow-md flex items-center justify-center text-gray-700 hover:bg-white active:scale-95 transition-all arena-btn"
       >
         <ArrowLeft className="w-5 h-5" />
-      </Link>
+      </button>
 
       <div className="relative overflow-hidden px-4 pt-14 pb-6 bg-gradient-to-br from-violet-600 via-violet-700 to-purple-900">
         <div className="absolute top-0 right-0 w-64 h-64 bg-violet-400/20 rounded-full blur-[80px]" />
@@ -137,7 +137,7 @@ export default function KatastraArenaPage() {
         </div>
       </div>
 
-      <div className="px-4 py-5 space-y-3">
+      <div className="px-4 py-5 space-y-3 pb-20">
         <div className="flex items-center justify-between">
           <h2 className="text-base font-bold flex items-center gap-1.5">
             <Play size={16} className="text-violet-400" /> Pilih Mode
