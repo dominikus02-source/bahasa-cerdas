@@ -77,7 +77,7 @@ function scrambleWord(word: string): string {
   return scrambled.join("");
 }
 
-export default function SusunKataGame() {
+export default function SusunKataGame({ hideBackButton }: { hideBackButton?: boolean }) {
   const [gameState, setGameState] = useState<"menu" | "playing" | "result">("menu");
   const [xp, setXp] = useState(0);
   const [lives, setLives] = useState(3);
@@ -260,9 +260,12 @@ export default function SusunKataGame() {
       {/* iOS-style Header */}
       <div className="bg-white/80 backdrop-blur-xl border-b border-gray-200/50 px-4 py-3 sticky top-0 z-50">
         <div className="max-w-lg mx-auto flex items-center justify-between">
-          <button onClick={() => setGameState("menu")} className="text-blue-500 font-medium text-sm flex items-center gap-0.5">
-            <ArrowLeft size={20} /> Menu
-          </button>
+          {!hideBackButton && (
+            <button onClick={() => setGameState("menu")} className="text-blue-500 font-medium text-sm flex items-center gap-0.5">
+              <ArrowLeft size={20} /> Menu
+            </button>
+          )}
+          {hideBackButton && <div />}
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-1 bg-amber-50 px-2.5 py-1 rounded-full">
               <Star size={14} className="text-amber-500 fill-amber-500" />

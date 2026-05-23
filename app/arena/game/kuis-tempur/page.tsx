@@ -2,10 +2,12 @@
 
 import { useCallback } from "react"
 import GameLobby from "@/components/game/GameLobby"
+import { gameSocket } from "@/lib/game/socket"
 import { ArrowLeft } from "lucide-react"
 
 export default function KuisTempurPage() {
   const handleBack = useCallback(() => {
+    gameSocket.disconnect()
     window.location.href = "/arena/game"
   }, [])
 
