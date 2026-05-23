@@ -155,8 +155,9 @@ export async function POST(req: NextRequest) {
     const platformFee = Math.round(karya.price * PLATFORM_FEE_PERCENT / 100);
     const sellerEarning = karya.price - platformFee;
 
+    const shortId = Date.now().toString(36).slice(-6).toUpperCase();
     const transaction = await createKaryaTransaction({
-      orderId: `KARYA-${karya.id}-${dbUser.id}-${Date.now()}`,
+      orderId: `K-${shortId}-${karya.id.slice(0,8)}`,
       amount: karya.price,
       email: dbUser.email,
       fullName: dbUser.fullName,

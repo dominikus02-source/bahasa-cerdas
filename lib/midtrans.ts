@@ -46,7 +46,7 @@ export async function createTransaction(params: {
       ? "BahasaCerdas PRO — 1 Bulan"
       : "BahasaCerdas PRO — 1 Tahun";
 
-  const orderId = `PREMIUM-${params.userId}-${Date.now()}`;
+  const orderId = `PM-${Date.now().toString(36).slice(-6).toUpperCase()}-${params.userId.slice(0,8)}`;
 
   const parameter = {
     transaction_details: {
