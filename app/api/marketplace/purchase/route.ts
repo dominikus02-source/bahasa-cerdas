@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 import { createKaryaTransaction } from "@/lib/midtrans";
+import { withTimeout } from "@/lib/db-timeout";
 
 const PLATFORM_FEE_PERCENT = 15;
 
@@ -71,7 +72,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const dbUser = await db.user.findUnique({ where: { supabaseId: user.id } });
+    const dbUser = await withTimeout(db.user.findUnique({ where: { supabaseId: user.id } }));
     if (!dbUser) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
@@ -83,10 +84,10 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "karyaId required" }, { status: 400 });
     }
 
-    const karya = await db.karya.findUnique({
+    const karya = await withTimeout(db.karya.findUnique({
       where: { id: karyaId },
       include: { seller: true },
-    });
+    }));
 
     if (!karya) {
       return NextResponse.json({ error: "Karya not found" }, { status: 404 });
@@ -100,9 +101,9 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Tidak bisa membeli karya sendiri" }, { status: 400 });
     }
 
-    const existingPurchase = await db.pembelian.findFirst({
+    const existingPurchase = await withTimeout(db.pembelian.findFirst({
       where: { karyaId, buyerId: dbUser.id, status: "PAID" },
-    });
+    }));
 
     if (existingPurchase) {
       return NextResponse.json({ error: "Anda sudah membeli karya ini", purchasedAt: existingPurchase.createdAt }, { status: 400 });
@@ -112,7 +113,7 @@ export async function POST(req: NextRequest) {
       const platformFee = 0;
       const sellerEarning = 0;
 
-      await db.pembelian.create({
+      await withTimeout(db.pembelian.create({
         data: {
           karyaId: karya.id,
           buyerId: dbUser.id,
@@ -122,14 +123,14 @@ export async function POST(req: NextRequest) {
           status: "PAID",
           midtransPaidAt: new Date(),
         },
-      });
+      }));
 
-      await db.karya.update({
+      await withTimeout(db.karya.update({
         where: { id: karya.id },
         data: { downloads: { increment: 1 } },
-      });
+      }));
 
-      await db.purchaseHistory.create({
+      await withTimeout(db.purchaseHistory.create({
         data: {
           buyerId: dbUser.id,
           itemType: "KARYA",
@@ -139,7 +140,7 @@ export async function POST(req: NextRequest) {
           fileKey: karya.fileKey,
           price: 0,
         },
-      });
+      }));
 
       const emailResult = await deliverKaryaToEmail(dbUser.email, karya, dbUser.fullName);
 
@@ -167,23 +168,27 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Failed to create transaction" }, { status: 500 });
     }
 
-    await db.transaksi.create({
-      data: {
-        userId: dbUser.id,
-        type: "KARYA_PURCHASE",
-        amount: karya.price,
-        status: "PENDING",
-        reference: "MARKETPLACE",
-        orderId: transaction.orderId,
-        metadata: {
-          karyaId: karya.id,
-          karyaTitle: karya.title,
-          sellerId: karya.sellerId,
-          platformFee,
-          sellerEarning,
+    try {
+      await withTimeout(db.transaksi.create({
+        data: {
+          userId: dbUser.id,
+          type: "KARYA_PURCHASE",
+          amount: karya.price,
+          status: "PENDING",
+          reference: "MARKETPLACE",
+          orderId: transaction.orderId,
+          metadata: {
+            karyaId: karya.id,
+            karyaTitle: karya.title,
+            sellerId: karya.sellerId,
+            platformFee,
+            sellerEarning,
+          },
         },
-      },
-    });
+      }));
+    } catch {
+      console.warn("DB write timeout for transaksi, continuing anyway");
+    }
 
     return NextResponse.json({
       redirectUrl: transaction.redirectUrl,

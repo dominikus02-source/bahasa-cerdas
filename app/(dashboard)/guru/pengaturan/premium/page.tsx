@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Crown, Check, Zap } from "lucide-react";
+import { Crown, Check, Zap, AlertCircle, Loader2 } from "lucide-react";
 import { useUserStore } from "@/store";
 import { useSearchParams } from "next/navigation";
 
@@ -19,8 +19,8 @@ declare global {
 export default function PremiumPage() {
   const user = useUserStore();
   const [loading, setLoading] = useState(false);
-  const [showMidtrans, setShowMidtrans] = useState(false);
   const [status, setStatus] = useState<"default" | "success" | "failed">("default");
+  const [errorMsg, setErrorMsg] = useState("");
   const searchParams = useSearchParams();
 
   useEffect(() => {
@@ -31,28 +31,20 @@ export default function PremiumPage() {
   }, [searchParams]);
 
   useEffect(() => {
-    const merchantId = process.env.NEXT_PUBLIC_MIDTRANS_MERCHANT_ID;
     const clientKey = process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY;
-    
-    if (!merchantId || !clientKey) {
-      console.error("Midtrans config missing");
-      return;
-    }
-
-    const isProd = window.location.hostname === "bahasacerdas.com";
+    if (!clientKey) return;
+    const isProd = process.env.NEXT_PUBLIC_MIDTRANS_IS_PRODUCTION === "true";
     const script = document.createElement("script");
     script.src = isProd ? "https://app.midtrans.com/snap/snap.js" : "https://app.sandbox.midtrans.com/snap/snap.js";
     script.setAttribute("data-client-key", clientKey);
     script.async = true;
     document.body.appendChild(script);
-
-    return () => {
-      document.body.removeChild(script);
-    };
+    return () => { document.body.removeChild(script); };
   }, []);
 
   const handleUpgrade = async (plan: "monthly" | "yearly") => {
     setLoading(true);
+    setErrorMsg("");
     try {
       const res = await fetch("/api/payment/create-invoice", {
         method: "POST",
@@ -61,37 +53,44 @@ export default function PremiumPage() {
       });
       const data = await res.json();
 
+      if (!res.ok) {
+        setErrorMsg(data.error || "Gagal membuat invoice. Coba lagi.");
+        setLoading(false);
+        return;
+      }
+
       if (data.token) {
         if (window.snap) {
           window.snap.pay(data.token, {
             onSuccess: () => setStatus("success"),
             onPending: () => setLoading(false),
-            onError: () => setStatus("failed"),
-            onClose: () => setLoading(false),
+            onError: () => { setErrorMsg("Pembayaran gagal. Silakan coba lagi."); setLoading(false); },
+            onClose: () => { if (status !== "success") setLoading(false); },
           });
         } else {
-          alert("Midtrans tidak加载. Pastikan koneksi internet.");
-          setStatus("failed");
+          setErrorMsg("Gagal memuat Midtrans. Refresh halaman dan coba lagi.");
+          setLoading(false);
         }
       } else {
         console.error("No token:", data);
-        setStatus("failed");
+        setErrorMsg("Gagal memproses pembayaran.");
+        setLoading(false);
       }
     } catch (err) {
       console.error("Error:", err);
-      setStatus("failed");
+      setErrorMsg("Terjadi kesalahan. Silakan coba lagi.");
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   if (status === "success" || user.isPremium || user.isFounder) {
     return (
       <div className="max-w-lg mx-auto text-center py-16">
-        <div className="h-20 w-20 rounded-full bg-gradient-to-br from-gold-400 to-gold-600 flex items-center justify-center mx-auto mb-4">
-          <Crown className="h-10 w-10 text-black" />
+        <div className="h-20 w-20 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center mx-auto mb-4 shadow-lg">
+          <Crown className="h-10 w-10 text-white" />
         </div>
-        <h1 className="text-2xl font-bold">Kamu sudah PRO!</h1>
-        <p className="mt-2 text-gray-600">Selamat menikmati semua fitur premium.</p>
+        <h1 className="text-2xl font-bold text-gray-900">Kamu sudah PRO!</h1>
+        <p className="mt-2 text-gray-500">Selamat menikmati semua fitur premium.</p>
       </div>
     );
   }
@@ -99,12 +98,18 @@ export default function PremiumPage() {
   return (
     <div>
       <div className="mb-8 text-center">
-        <div className="h-16 w-16 rounded-full bg-gradient-to-br from-gold-400 to-gold-600 flex items-center justify-center mx-auto mb-4">
-          <Crown className="h-8 w-8 text-black" />
+        <div className="h-16 w-16 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center mx-auto mb-4 shadow-lg">
+          <Crown className="h-8 w-8 text-white" />
         </div>
-        <h1 className="text-2xl font-bold">Upgrade ke BahasaCerdas PRO</h1>
-        <p className="mt-2 text-gray-600">Unlock semua fitur dan akses unlimited AI</p>
+        <h1 className="text-2xl font-bold text-gray-900">Upgrade ke BahasaCerdas PRO</h1>
+        <p className="mt-2 text-gray-500">Unlock semua fitur dan akses unlimited AI</p>
       </div>
+
+      {errorMsg && (
+        <div className="max-w-lg mx-auto mb-4 rounded-xl bg-red-50 border border-red-200 p-4 text-sm text-red-700 flex items-center gap-2">
+          <AlertCircle size={16} className="shrink-0" /> {errorMsg}
+        </div>
+      )}
 
       <div className="max-w-lg mx-auto space-y-4">
         <Card className="p-6 border-2 border-blue-200 bg-blue-50">
@@ -124,7 +129,7 @@ export default function PremiumPage() {
             ))}
           </ul>
           <Button onClick={() => handleUpgrade("yearly")} disabled={loading} className="w-full bg-blue-600">
-            <Zap className="h-4 w-4" /> {loading ? "Memproses..." : "Pilih Tahunan — Rp 399.000"}
+            {loading ? <><Loader2 className="h-4 w-4 animate-spin" /> Memproses...</> : <><Zap className="h-4 w-4" /> Pilih Tahunan — Rp 399.000</>}
           </Button>
         </Card>
 
@@ -137,7 +142,7 @@ export default function PremiumPage() {
             </div>
           </div>
           <Button onClick={() => handleUpgrade("monthly")} disabled={loading} variant="outline" className="w-full">
-            Pilih Bulanan — Rp 49.000
+            {loading ? <><Loader2 className="h-4 w-4 animate-spin" /> Memproses...</> : "Pilih Bulanan — Rp 49.000"}
           </Button>
         </Card>
 

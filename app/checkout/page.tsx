@@ -20,7 +20,7 @@ export default function CheckoutPage() {
   useEffect(() => {
     const clientKey = process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY;
     if (!clientKey) return;
-    const isProd = window.location.hostname === "bahasacerdas.com";
+    const isProd = process.env.NEXT_PUBLIC_MIDTRANS_IS_PRODUCTION === "true";
     const script = document.createElement("script");
     script.src = isProd ? "https://app.midtrans.com/snap/snap.js" : "https://app.sandbox.midtrans.com/snap/snap.js";
     script.setAttribute("data-client-key", clientKey);
