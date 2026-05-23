@@ -53,6 +53,172 @@ interface Question {
 const rooms = new Map<string, Room>();
 const playerSockets = new Map<string, string>();
 
+// Matchmaking queue
+interface QueuePlayer {
+  userId: string;
+  userName: string;
+  avatarUrl?: string;
+  socketId: string;
+  gameType: string;
+  joinedAt: Date;
+}
+
+const matchmakingQueue: QueuePlayer[] = [];
+const MATCH_TIMEOUT_MS = 30000;
+
+function tryMatchPlayers() {
+  if (matchmakingQueue.length < 2) return;
+
+  const groups = new Map<string, QueuePlayer[]>();
+  for (const p of matchmakingQueue) {
+    const list = groups.get(p.gameType) || [];
+    list.push(p);
+    groups.set(p.gameType, list);
+  }
+
+  for (const [, players] of groups) {
+    while (players.length >= 2) {
+      const p1 = players.shift()!;
+      const p2 = players.shift()!;
+
+      const idx1 = matchmakingQueue.findIndex(p => p.userId === p1.userId);
+      if (idx1 >= 0) matchmakingQueue.splice(idx1, 1);
+      const idx2 = matchmakingQueue.findIndex(p => p.userId === p2.userId);
+      if (idx2 >= 0) matchmakingQueue.splice(idx2, 1);
+
+      createMatchRoom(p1, p2, p1.gameType);
+    }
+  }
+}
+
+function removeFromQueue(userId: string) {
+  const idx = matchmakingQueue.findIndex(p => p.userId === userId);
+  if (idx >= 0) matchmakingQueue.splice(idx, 1);
+}
+
+function removeFromQueueBySocket(socketId: string) {
+  const idx = matchmakingQueue.findIndex(p => p.socketId === socketId);
+  if (idx >= 0) matchmakingQueue.splice(idx, 1);
+}
+
+async function createMatchRoom(p1: QueuePlayer, p2: QueuePlayer, gameType: string) {
+  try {
+    let code = generateCode();
+    while (rooms.has(code)) code = generateCode();
+
+    const dbRoom = await prisma.gameRoom.create({
+      data: {
+        code,
+        name: `Pertandingan ${p1.userName} vs ${p2.userName}`,
+        gameType: gameType as any,
+        hostId: p1.userId,
+        difficulty: 'MEDIUM',
+        questionCount: 10,
+        timePerQuestion: 20,
+        status: 'WAITING' as any,
+      },
+    });
+
+    const makePlayer = (p: QueuePlayer, isHost: boolean): Player => ({
+      id: p.userId,
+      odiceId: p.socketId,
+      playerName: p.userName,
+      avatarUrl: p.avatarUrl,
+      score: 0,
+      correct: 0,
+      wrong: 0,
+      streak: 0,
+      maxStreak: 0,
+      answerTimes: [],
+      ready: true,
+    });
+
+    const room: Room = {
+      id: dbRoom.id,
+      code: dbRoom.code,
+      name: dbRoom.name,
+      hostId: dbRoom.hostId,
+      gameType: dbRoom.gameType,
+      difficulty: dbRoom.difficulty,
+      status: 'WAITING',
+      questionCount: dbRoom.questionCount,
+      timePerQuestion: dbRoom.timePerQuestion,
+      currentQuestion: 0,
+      questions: [],
+      players: new Map(),
+    };
+
+    const pl1 = makePlayer(p1, true);
+    const pl2 = makePlayer(p2, false);
+    room.players.set(p1.userId, pl1);
+    room.players.set(p2.userId, pl2);
+    rooms.set(code, room);
+
+    const s1 = io.sockets.sockets.get(p1.socketId);
+    const s2 = io.sockets.sockets.get(p2.socketId);
+    if (s1) { s1.join(code); playerSockets.set(p1.socketId, code); }
+    if (s2) { s2.join(code); playerSockets.set(p2.socketId, code); }
+
+    // Notify both of match found
+    io.to(p1.socketId).emit('match-found', {
+      roomCode: code,
+      opponent: { id: p2.userId, name: p2.userName, avatar: p2.avatarUrl },
+      gameType,
+      isHost: true,
+    });
+    io.to(p2.socketId).emit('match-found', {
+      roomCode: code,
+      opponent: { id: p1.userId, name: p1.userName, avatar: p1.avatarUrl },
+      gameType,
+      isHost: false,
+    });
+
+    console.log(`[Matchmaking] Matched ${p1.userName} vs ${p2.userName} in room ${code}`);
+
+    // Start countdown then game
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
+    for (let i = 3; i > 0; i--) {
+      io.to(code).emit('match-countdown', { seconds: i });
+      await new Promise(resolve => setTimeout(resolve, 1000));
+    }
+    io.to(code).emit('match-countdown', { seconds: 0 });
+
+    // Auto-start the game (reuse existing start-game logic)
+    const questions = await loadQuestions(gameType, room.questionCount);
+    if (questions.length === 0) {
+      io.to(code).emit('error', { message: 'Tidak ada soal tersedia' });
+      return;
+    }
+
+    room.questions = questions;
+    room.status = 'IN_PROGRESS';
+    room.currentQuestion = 0;
+    room.startedAt = new Date();
+
+    room.players.forEach((p) => {
+      p.score = 0; p.correct = 0; p.wrong = 0; p.streak = 0;
+      p.maxStreak = 0; p.answerTimes = []; p.ready = false;
+    });
+
+    await prisma.gameRoom.update({
+      where: { code },
+      data: { status: 'IN_PROGRESS', startedAt: new Date() },
+    });
+
+    io.to(code).emit('game-starting', {
+      totalQuestions: questions.length,
+      timePerQuestion: room.timePerQuestion,
+      category: room.category,
+    });
+
+    setTimeout(() => emitQuestion(room), 3000);
+    console.log(`[Matchmaking] Game started: ${code}`);
+  } catch (err) {
+    console.error('[Matchmaking] Error creating match:', err);
+  }
+}
+
 function generateCode(): string {
   const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
   let code = '';
@@ -400,8 +566,62 @@ io.on('connection', (socket) => {
     handleLeave(socket, data.code, data.userId);
   });
 
+  // Matchmaking
+  socket.on('join-queue', (data: { userId: string; userName: string; avatarUrl?: string; gameType?: string }) => {
+    if (matchmakingQueue.some(p => p.userId === data.userId)) {
+      socket.emit('queue-status', { inQueue: true, message: 'Sudah dalam antrean' });
+      return;
+    }
+
+    const qp: QueuePlayer = {
+      userId: data.userId,
+      userName: data.userName,
+      avatarUrl: data.avatarUrl,
+      socketId: socket.id,
+      gameType: data.gameType || 'KUIS_BATTLE',
+      joinedAt: new Date(),
+    };
+
+    matchmakingQueue.push(qp);
+    socket.emit('queue-status', { inQueue: true, position: matchmakingQueue.length, message: 'Mencari lawan sepadan...' });
+    console.log(`[Matchmaking] ${data.userName} joined queue (${matchmakingQueue.length} waiting)`);
+
+    tryMatchPlayers();
+
+    // Auto-remove after timeout
+    setTimeout(() => {
+      const stillIn = matchmakingQueue.find(p => p.userId === data.userId);
+      if (stillIn) {
+        removeFromQueue(data.userId);
+        socket.emit('queue-timeout', { message: 'Tidak ada lawan ditemukan. Coba lagi!' });
+        console.log(`[Matchmaking] ${data.userName} queue timeout`);
+      }
+    }, MATCH_TIMEOUT_MS);
+  });
+
+  socket.on('leave-queue', (data: { userId: string }) => {
+    removeFromQueue(data.userId);
+    socket.emit('queue-status', { inQueue: false, message: 'Keluar dari antrean' });
+    console.log(`[Matchmaking] ${data.userId} left queue`);
+  });
+
+  socket.on('rematch', (data: { userId: string; userName: string; avatarUrl?: string; gameType?: string }) => {
+    const qp: QueuePlayer = {
+      userId: data.userId,
+      userName: data.userName,
+      avatarUrl: data.avatarUrl,
+      socketId: socket.id,
+      gameType: data.gameType || 'KUIS_BATTLE',
+      joinedAt: new Date(),
+    };
+    matchmakingQueue.push(qp);
+    socket.emit('queue-status', { inQueue: true, message: 'Mencari lawan sepadan...' });
+    tryMatchPlayers();
+  });
+
   socket.on('disconnect', () => {
     console.log(`[Socket] Disconnected: ${socket.id}`);
+    removeFromQueueBySocket(socket.id);
     const code = playerSockets.get(socket.id);
     if (code) {
       const room = rooms.get(code);

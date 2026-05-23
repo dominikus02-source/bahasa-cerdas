@@ -2,9 +2,10 @@ import { getUser } from "@/lib/supabase/server"
 import { db } from "@/lib/db"
 import { redirect } from "next/navigation"
 import Link from "next/link"
-import { ChevronRight, Clock, Swords, Puzzle, BookOpen, Trophy, Type } from "lucide-react"
+import { ChevronRight, Clock, Swords, Puzzle, BookOpen, Trophy, Type, Zap } from "lucide-react"
 
 const gimList = [
+  { title: "Adu Cepat", desc: "Cari lawan langsung! Auto-matchmaking 1v1 real-time rebut XP.", icon: Zap, warna: "from-violet-500 to-purple-600", href: "/arena/game/adu-cepat", hot: true },
   { title: "Kuis Tempur", desc: "Lawan murid lain real-time! Siapa cepat dan benar dia menang.", icon: Swords, warna: "from-rose-500 to-pink-600", href: "/arena/game/kuis-tempur" },
   { title: "Tebak Kata", desc: "Tebak kata berdasarkan petunjuk. Seru bareng teman!", icon: Type, warna: "from-blue-500 to-cyan-600", href: "/arena/game/tebak-kata" },
   { title: "Susun Kata", desc: "Acak huruf jadi kata yang benar dalam waktu terbatas!", icon: Puzzle, warna: "from-emerald-500 to-teal-600", href: "/arena/game/susun-kata" },
@@ -66,8 +67,9 @@ export default async function ArenaGimPage() {
             href={gim.href}
             className="flex items-center gap-4 bg-white rounded-2xl border border-gray-100 p-5 hover:shadow-md transition-all active:scale-[0.98] arena-card"
           >
-            <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${gim.warna} flex items-center justify-center text-white shadow-md shrink-0`}>
+            <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${gim.warna} flex items-center justify-center text-white shadow-md shrink-0 ${gim.hot ? "ring-2 ring-violet-300 ring-offset-2" : ""}`}>
               <gim.icon className="w-8 h-8" />
+              {gim.hot && <span className="absolute -top-1 -right-1 w-4 h-4 bg-amber-400 rounded-full flex items-center justify-center"><Zap className="w-2.5 h-2.5 text-white" /></span>}
             </div>
             <div className="flex-1 min-w-0">
               <h3 className="text-base font-bold text-gray-900">{gim.title}</h3>

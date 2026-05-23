@@ -129,6 +129,35 @@ export const gameSocket = {
     socket?.on('host-changed', callback);
   },
 
+  // Matchmaking events
+  onMatchFound(callback: (data: { roomCode: string; opponent: { id: string; name: string; avatar?: string }; gameType: string; isHost: boolean }) => void) {
+    socket?.on('match-found', callback);
+  },
+
+  onMatchCountdown(callback: (data: { seconds: number }) => void) {
+    socket?.on('match-countdown', callback);
+  },
+
+  onQueueStatus(callback: (data: { inQueue: boolean; position?: number; message: string }) => void) {
+    socket?.on('queue-status', callback);
+  },
+
+  onQueueTimeout(callback: (data: { message: string }) => void) {
+    socket?.on('queue-timeout', callback);
+  },
+
+  joinQueue(data: { userId: string; userName: string; avatarUrl?: string; gameType?: string }) {
+    socket?.emit('join-queue', data);
+  },
+
+  leaveQueue(data: { userId: string }) {
+    socket?.emit('leave-queue', data);
+  },
+
+  rematch(data: { userId: string; userName: string; avatarUrl?: string; gameType?: string }) {
+    socket?.emit('rematch', data);
+  },
+
   createRoom(data: {
     hostId: string;
     hostName: string;
