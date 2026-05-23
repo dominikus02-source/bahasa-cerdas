@@ -229,6 +229,7 @@ model User {
   coinTransactions   CoinTransaction[]
   dailyQuests        DailyQuest[]
   userItems          UserItem[]
+  chatMessages       ChatMessage[]
 }
 
 model Profile {
@@ -988,6 +989,7 @@ model Group {
   members         GroupMember[]
   quizzes         GroupQuiz[]
   quizAssignments QuizAssignment[]
+  messages        ChatMessage[]
 
   @@index([teacherId])
   @@index([accessCode])
@@ -1018,6 +1020,19 @@ model GroupQuiz {
   results    GroupQuizResult[]
 
   @@index([groupId])
+}
+
+model ChatMessage {
+  id        String   @id @default(cuid())
+  groupId   String
+  userId    String
+  content   String
+  createdAt DateTime @default(now())
+
+  group Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([groupId, createdAt])
 }
 
 model GroupQuizResult {

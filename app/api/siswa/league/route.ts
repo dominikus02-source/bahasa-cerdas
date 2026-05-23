@@ -12,9 +12,6 @@ const LEAGUE_THRESHOLDS = [
 const LEAGUE_LABELS: Record<string, string> = {
   BRONZE: "Perunggu", SILVER: "Perak", GOLD: "Emas", DIAMOND: "Berlian",
 };
-const LEAGUE_EMOJIS: Record<string, string> = {
-  BRONZE: "🥉", SILVER: "🥈", GOLD: "🥇", DIAMOND: "💎",
-};
 
 export async function GET() {
   try {
@@ -43,7 +40,6 @@ export async function GET() {
     return NextResponse.json({
       tier,
       label: LEAGUE_LABELS[tier],
-      emoji: LEAGUE_EMOJIS[tier],
       rank: userRank || peers.length,
       total: peers.length,
       peers,
