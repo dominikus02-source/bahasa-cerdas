@@ -41,7 +41,7 @@ export default function MarketplaceDetailPage() {
     }
     localStorage.setItem("bc-cart", JSON.stringify(cart));
     setCartQty((cart.find((i: any) => i.id === id)?.qty) || 1);
-    alert("✓ Ditambahkan ke keranjang");
+    window.dispatchEvent(new Event("cart-update"));
   };
 
   const buyNow = () => {

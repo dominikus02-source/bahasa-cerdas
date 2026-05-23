@@ -27,6 +27,7 @@ export default function CartPage() {
   const syncCart = (updated: CartItem[]) => {
     setItems(updated);
     localStorage.setItem("bc-cart", JSON.stringify(updated));
+    window.dispatchEvent(new Event("cart-update"));
   };
 
   const updateQty = (id: string, delta: number) => {

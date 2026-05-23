@@ -2,6 +2,10 @@ import type { Snap } from "midtrans-client";
 
 let midtransClient: Snap;
 
+function getSiteUrl(): string {
+  return process.env.NEXT_PUBLIC_SITE_URL || "https://bahasacerdas.com";
+}
+
 function getIsProduction(): boolean {
   const clientKey = process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY || "";
   return clientKey.startsWith("Mid-client-");
@@ -10,10 +14,10 @@ function getIsProduction(): boolean {
 function validateConfig() {
   const serverKey = process.env.MIDTRANS_SERVER_KEY;
   const clientKey = process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY;
-  if (!serverKey) throw new Error("MIDTRANS_SERVER_KEY tidak dikonfigurasi di environment Vercel");
+  if (!serverKey) throw new Error("MIDTRANS_SERVER_KEY tidak dikonfigurasi di environment Vercel. Tambahkan server key dari dashboard Midtrans.");
   if (!clientKey) throw new Error("NEXT_PUBLIC_MIDTRANS_CLIENT_KEY tidak dikonfigurasi");
   if (!serverKey.startsWith("Mid-server-") && !serverKey.startsWith("SB-Mid-server-")) {
-    throw new Error("MIDTRANS_SERVER_KEY format tidak valid");
+    throw new Error("MIDTRANS_SERVER_KEY format tidak valid. Server key harus dimulai dengan 'Mid-server-' atau 'SB-Mid-server-'.");
   }
 }
 
@@ -68,7 +72,7 @@ export async function createTransaction(params: {
       collect_card_token: false,
     },
     callbacks: {
-      finish: `${process.env.NEXT_PUBLIC_SITE_URL}/guru/pengaturan/premium?status=success&order_id=${orderId}`,
+      finish: `${getSiteUrl()}/guru/pengaturan/premium?status=success&order_id=${orderId}`,
     },
   };
 
@@ -111,7 +115,7 @@ export async function createKaryaTransaction(params: {
       },
     ],
     callbacks: {
-      finish: `${process.env.NEXT_PUBLIC_SITE_URL}/marketplace?status=success&order_id=${params.orderId}`,
+      finish: `${getSiteUrl()}/marketplace?status=success&order_id=${params.orderId}`,
     },
   };
 

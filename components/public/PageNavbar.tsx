@@ -3,7 +3,33 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { ChevronLeft, LayoutDashboard, Sparkles, Search, Menu, X } from "lucide-react";
+import { ChevronLeft, LayoutDashboard, Sparkles, Search, Menu, X, ShoppingBag } from "lucide-react";
+
+function CartBadge() {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    const update = () => {
+      const cart = JSON.parse(localStorage.getItem("bc-cart") || "[]");
+      setCount(cart.reduce((s: number, i: any) => s + (i.qty || 1), 0));
+    };
+    update();
+    window.addEventListener("storage", update);
+    window.addEventListener("cart-update", update);
+    return () => {
+      window.removeEventListener("storage", update);
+      window.removeEventListener("cart-update", update);
+    };
+  }, []);
+
+  if (count === 0) return null;
+
+  return (
+    <span className="absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] flex items-center justify-center rounded-full bg-red-600 text-white text-[10px] font-bold px-1 leading-none shadow-sm">
+      {count > 99 ? "99+" : count}
+    </span>
+  );
+}
 
 export default function PageNavbar() {
   const [user, setUser] = useState<any>(null);
@@ -32,6 +58,10 @@ export default function PageNavbar() {
     }
   };
 
+  const triggerCartUpdate = () => {
+    window.dispatchEvent(new Event("cart-update"));
+  };
+
   const navLinks = [
     { href: "/marketplace", label: "Toko Karya" },
     { href: "/video-belajar", label: "Video" },
@@ -39,8 +69,19 @@ export default function PageNavbar() {
     { href: "/komunitas", label: "Komunitas" },
     { href: "/kamus", label: "Kamus" },
     { href: "/loker", label: "Lowongan" },
-
   ];
+
+  const cartLink = (
+    <Link
+      href="/cart"
+      onClick={triggerCartUpdate}
+      className="relative p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-colors"
+      title="Keranjang"
+    >
+      <ShoppingBag size={18} />
+      <CartBadge />
+    </Link>
+  );
 
   if (loading) return <div className="h-16" />;
 
@@ -52,10 +93,13 @@ export default function PageNavbar() {
           <Link href={dashboardUrl} className="flex items-center gap-2 text-sm text-slate-600 hover:text-red-600 font-medium transition-colors">
             <ChevronLeft size={18} /> Kembali ke Dashboard
           </Link>
-          <Link href="/" className="flex items-center gap-2">
-            <Image src="/logo.png" alt="BC" width={24} height={24} />
-            <span className="font-bold text-slate-900 text-sm hidden sm:block">BahasaCerdas</span>
-          </Link>
+          <div className="flex items-center gap-1">
+            {cartLink}
+            <Link href="/" className="flex items-center gap-2 ml-2">
+              <Image src="/logo.png" alt="BC" width={24} height={24} />
+              <span className="font-bold text-slate-900 text-sm hidden sm:block">BahasaCerdas</span>
+            </Link>
+          </div>
         </div>
       </header>
     );
@@ -84,6 +128,10 @@ export default function PageNavbar() {
 
         {/* Desktop right side */}
         <div className="hidden lg:flex items-center gap-2">
+          {cartLink}
+
+          <div className="h-5 w-px bg-slate-200 mx-1" />
+
           {/* Search toggle */}
           <button
             onClick={() => setSearchOpen(!searchOpen)}
@@ -119,6 +167,7 @@ export default function PageNavbar() {
 
         {/* Mobile hamburger */}
         <div className="flex lg:hidden items-center gap-2">
+          {cartLink}
           <button
             onClick={() => setSearchOpen(!searchOpen)}
             className="p-2 text-slate-400 hover:text-red-600 rounded-xl transition-colors"

@@ -58,6 +58,7 @@ export default function CheckoutPage() {
         // If paid item -> open Snap popup
         if (data.token && window.snap) {
           localStorage.removeItem("bc-cart");
+          window.dispatchEvent(new Event("cart-update"));
           const paid = false;
           window.snap.pay(data.token, {
             onSuccess: () => { setSuccess(true); },
@@ -71,6 +72,7 @@ export default function CheckoutPage() {
         // If redirect URL (fallback)
         if (data.redirectUrl) {
           localStorage.removeItem("bc-cart");
+          window.dispatchEvent(new Event("cart-update"));
           window.location.href = data.redirectUrl;
           return;
         }
@@ -78,6 +80,7 @@ export default function CheckoutPage() {
 
       // All free items — done
       localStorage.removeItem("bc-cart");
+      window.dispatchEvent(new Event("cart-update"));
       setSuccess(true);
     } catch (e: any) {
       setError(e.message || "Gagal memproses pembayaran");
