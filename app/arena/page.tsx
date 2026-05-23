@@ -99,6 +99,21 @@ export default async function BerandaPage() {
     select: { id: true, fullName: true, xp: true },
   })
 
+  const limaMenitLalu = new Date(Date.now() - 5 * 60 * 1000)
+  const sepuluhMenitLalu = new Date(Date.now() - 10 * 60 * 1000)
+
+  const [onlineCount, recentBattles, recentPlayers] = await Promise.all([
+    db.user.count({ where: { lastActiveAt: { gte: limaMenitLalu }, role: "MURID" } }),
+    db.gameResult.count({ where: { createdAt: { gte: sepuluhMenitLalu } } }),
+    db.gameResult.findMany({
+      where: { createdAt: { gte: sepuluhMenitLalu } },
+      include: { user: { select: { id: true, fullName: true } } },
+      orderBy: { createdAt: "desc" },
+      take: 5,
+      distinct: ["userId"],
+    }),
+  ])
+
   return (
     <div className="beranda arena-page">
       {/* HERO */}
@@ -118,13 +133,13 @@ export default async function BerandaPage() {
               </div>
               <div>
                 <h2 className="font-bold text-base text-white">Halo, {user.fullName?.split(" ")[0]}!</h2>
-                <p className="text-xs text-white/65">{user.league || "Perunggu"} &middot; Level {user.level || 1}</p>
+                <p className="text-xs text-white/65">{user.league || "Perunggu"} &middot; Tingkat {user.level || 1}</p>
               </div>
             </div>
-            <div className="w-10 h-10 bg-white/15 rounded-[13px] flex items-center justify-center relative backdrop-blur">
+            <Link href="/arena/notifikasi" className="w-10 h-10 bg-white/15 rounded-[13px] flex items-center justify-center relative backdrop-blur hover:bg-white/25 transition-colors">
               <Bell size={18} className="text-white" />
               <div className="absolute top-[6px] right-[7px] w-2 h-2 bg-red-500 border-[1.5px] border-purple-700 rounded-full notif-pulse" />
-            </div>
+            </Link>
           </div>
 
           <div className="grid grid-cols-3 gap-2.5 mb-5">
@@ -147,7 +162,7 @@ export default async function BerandaPage() {
 
           <div>
             <div className="flex justify-between mb-1.5">
-              <span className="text-[11px] text-white/70 font-semibold">Level {user.level || 1} &rarr; Level {(user.level || 1) + 1}</span>
+              <span className="text-[11px] text-white/70 font-semibold">Tingkat {user.level || 1} &rarr; Tingkat {(user.level || 1) + 1}</span>
               <span className="text-[11px] text-amber-300 font-bold">{progress.current} / {progress.needed} XP</span>
             </div>
             <div className="h-2 bg-white/15 rounded-full overflow-hidden">
@@ -189,19 +204,19 @@ export default async function BerandaPage() {
             <Swords size={18} className="text-pink-400" />
             <h3 className="font-extrabold text-xl text-white">Adu Cepat Sedang Berlangsung</h3>
           </div>
-          <p className="text-xs text-white/55 mb-3.5">47 murid sedang bertarung sekarang — jangan ketinggalan!</p>
+          <p className="text-xs text-white/55 mb-3.5">{Math.max(recentBattles, onlineCount)} murid sedang bertanding sekarang — jangan ketinggalan!</p>
           <div className="flex items-center mb-3.5">
-            {["R", "S", "B", "A", "M"].map((letter, i) => (
+            {recentPlayers.slice(0, 5).map((r: any, i: number) => (
               <div
-                key={i}
+                key={r.userId}
                 className="w-7 h-7 rounded-[9px] border-2 border-[#2D1566] -ml-1.5 first:ml-0 flex items-center justify-center text-[11px] font-bold text-white"
-                style={{ background: [ "#7C3AED", "#EC4899", "#10B981", "#F59E0B", "#06B6D4" ][i] }}
+                style={{ background: ["#7C3AED", "#EC4899", "#10B981", "#F59E0B", "#06B6D4"][i] }}
               >
-                {letter}
+                {r.user?.fullName?.charAt(0).toUpperCase() || "?"}
               </div>
             ))}
             <span className="ml-2 text-xs text-white/60">
-              +<strong className="text-white font-bold">42</strong> lainnya online
+              +<strong className="text-white font-bold">{Math.max(0, onlineCount - recentPlayers.length)}</strong> lainnya online
             </span>
           </div>
           <div className="w-full py-3 bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl text-center font-bold text-white text-sm flex items-center justify-center gap-2 shadow-lg shadow-purple-500/40">

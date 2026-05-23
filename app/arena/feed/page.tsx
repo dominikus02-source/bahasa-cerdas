@@ -65,7 +65,7 @@ export default async function FeedPage() {
                     {typeIcon[karya.type]?.icon || <FileText className="w-4 h-4" />}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold text-gray-900 truncate">{karya.user?.fullName || "Anonymous"}</p>
+                    <p className="text-sm font-semibold text-gray-900 truncate">{karya.user?.fullName || "Pengguna"}</p>
                     <p className="text-[10px] text-gray-400 flex items-center gap-1">
                       <span className="font-semibold text-gray-500">{typeLabel[karya.type] || karya.type}</span>
                       {karya.user?.profile?.school && <><span>-</span> {karya.user.profile.school}</>}
