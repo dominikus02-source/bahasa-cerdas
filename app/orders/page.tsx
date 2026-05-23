@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { ShoppingBag, Download, Clock, CheckCircle, XCircle, ArrowLeft } from "lucide-react";
+import { ShoppingBag, Download, Clock, CheckCircle, XCircle, ArrowLeft, Store } from "lucide-react";
 
 export default function OrdersPage() {
   const [orders, setOrders] = useState<any[]>([]);
@@ -35,9 +35,24 @@ export default function OrdersPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-white">
       <div className="max-w-3xl mx-auto px-4 py-8">
-        <div className="flex items-center gap-3 mb-8">
+        <div className="flex items-center gap-3 mb-6">
           <ShoppingBag size={28} className="text-red-600" />
           <h1 className="text-2xl font-bold text-slate-900">Pesanan Saya</h1>
+        </div>
+
+        <div className="flex items-center gap-3 mb-6">
+          <Link
+            href="/marketplace"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-red-600 text-white text-sm font-semibold rounded-xl hover:bg-red-700 transition-colors"
+          >
+            <Store size={16} /> Toko Karya
+          </Link>
+          <Link
+            href="/"
+            className="inline-flex items-center gap-2 px-4 py-2 border border-slate-300 text-slate-700 text-sm font-semibold rounded-xl hover:bg-slate-50 transition-colors"
+          >
+            <ArrowLeft size={16} /> Beranda
+          </Link>
         </div>
 
         {loading ? (
