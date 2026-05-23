@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { ChevronLeft, LayoutDashboard, Sparkles, Search, Menu, X, ShoppingBag } from "lucide-react";
+import { ChevronLeft, LayoutDashboard, Sparkles, Search, Menu, X, ShoppingBag, Clock } from "lucide-react";
 
 function CartBadge() {
   const [count, setCount] = useState(0);
@@ -83,6 +83,16 @@ export default function PageNavbar() {
     </Link>
   );
 
+  const historyLink = (
+    <Link
+      href="/orders"
+      className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-colors"
+      title="Riwayat Pembelian"
+    >
+      <Clock size={18} />
+    </Link>
+  );
+
   if (loading) return <div className="h-16" />;
 
   if (user) {
@@ -94,6 +104,7 @@ export default function PageNavbar() {
             <ChevronLeft size={18} /> Kembali ke Dashboard
           </Link>
           <div className="flex items-center gap-1">
+            {historyLink}
             {cartLink}
             <Link href="/" className="flex items-center gap-2 ml-2">
               <Image src="/logo.png" alt="BC" width={24} height={24} />
@@ -128,6 +139,7 @@ export default function PageNavbar() {
 
         {/* Desktop right side */}
         <div className="hidden lg:flex items-center gap-2">
+          {historyLink}
           {cartLink}
 
           <div className="h-5 w-px bg-slate-200 mx-1" />
@@ -167,6 +179,7 @@ export default function PageNavbar() {
 
         {/* Mobile hamburger */}
         <div className="flex lg:hidden items-center gap-2">
+          {historyLink}
           {cartLink}
           <button
             onClick={() => setSearchOpen(!searchOpen)}
