@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Crown, Check, Zap, AlertCircle, Loader2 } from "lucide-react";
 import { useUserStore } from "@/store";
-import { useSearchParams } from "next/navigation";
 import { getSnapScriptUrl } from "@/lib/midtrans";
 
 declare global {
@@ -22,14 +21,13 @@ export default function PremiumPage() {
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState<"default" | "success" | "failed">("default");
   const [errorMsg, setErrorMsg] = useState("");
-  const searchParams = useSearchParams();
 
   useEffect(() => {
-    const statusParam = searchParams.get("status");
-    if (statusParam === "success") {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("status") === "success") {
       setStatus("success");
     }
-  }, [searchParams]);
+  }, []);
 
   useEffect(() => {
     const clientKey = process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY;
@@ -68,16 +66,18 @@ export default function PremiumPage() {
             onClose: () => { if (status !== "success") setLoading(false); },
           });
         } else {
-          setErrorMsg("Gagal memuat Midtrans. Refresh halaman dan coba lagi.");
-          setLoading(false);
+          setTimeout(() => {
+            if (!window.snap) {
+              setErrorMsg("Gagal memuat Midtrans. Refresh halaman dan coba lagi.");
+              setLoading(false);
+            }
+          }, 3000);
         }
       } else {
-        console.error("No token:", data);
         setErrorMsg("Gagal memproses pembayaran.");
         setLoading(false);
       }
     } catch (err) {
-      console.error("Error:", err);
       setErrorMsg("Terjadi kesalahan. Silakan coba lagi.");
       setLoading(false);
     }

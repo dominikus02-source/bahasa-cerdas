@@ -58,11 +58,12 @@ export default function CheckoutPage() {
         // If paid item -> open Snap popup
         if (data.token && window.snap) {
           localStorage.removeItem("bc-cart");
+          const paid = false;
           window.snap.pay(data.token, {
             onSuccess: () => { setSuccess(true); },
             onPending: () => { setSuccess(true); },
             onError: () => { setError("Pembayaran gagal, silakan coba lagi."); setLoading(false); },
-            onClose: () => { if (!success) setLoading(false); },
+            onClose: () => { if (!paid) setLoading(false); },
           });
           return; // Snap handles the flow from here
         }

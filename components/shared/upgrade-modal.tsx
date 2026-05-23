@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Modal } from "@/components/ui/modal";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Crown, Zap, Check } from "lucide-react";
+import { Crown, Zap, Check, AlertCircle, Loader2 } from "lucide-react";
 import { getSnapScriptUrl } from "@/lib/midtrans";
 
 interface UpgradeModalProps {
@@ -24,6 +24,14 @@ declare global {
 }
 
 export function UpgradeModal({ isOpen, onClose, feature, used, limit }: UpgradeModalProps) {
+  const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
+
+  useEffect(() => {
+    setErrorMsg("");
+    setLoading(false);
+  }, [isOpen]);
+
   useEffect(() => {
     const clientKey = process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY;
     if (!clientKey) return;
@@ -36,6 +44,8 @@ export function UpgradeModal({ isOpen, onClose, feature, used, limit }: UpgradeM
   }, []);
 
   const handleUpgrade = async (plan: "monthly" | "yearly") => {
+    setLoading(true);
+    setErrorMsg("");
     try {
       const res = await fetch("/api/payment/create-invoice", {
         method: "POST",
@@ -43,23 +53,34 @@ export function UpgradeModal({ isOpen, onClose, feature, used, limit }: UpgradeM
         body: JSON.stringify({ plan }),
       });
       const data = await res.json();
+
+      if (!res.ok) {
+        setErrorMsg(data.error || "Gagal membuat invoice.");
+        setLoading(false);
+        return;
+      }
+
       if (data.token && window.snap) {
         window.snap.pay(data.token, {
           onSuccess: () => { onClose(); window.location.reload(); },
-          onPending: () => {},
-          onError: () => alert("Pembayaran gagal. Silakan coba lagi."),
-          onClose: () => {},
+          onPending: () => setLoading(false),
+          onError: () => { setErrorMsg("Pembayaran gagal. Silakan coba lagi."); setLoading(false); },
+          onClose: () => { if (!errorMsg) setLoading(false); },
         });
+      } else {
+        setErrorMsg("Gagal memuat Midtrans. Refresh halaman.");
+        setLoading(false);
       }
-    } catch (error) {
-      console.error("Upgrade error:", error);
+    } catch {
+      setErrorMsg("Terjadi kesalahan. Silakan coba lagi.");
+      setLoading(false);
     }
   };
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} className="max-w-md">
       <div className="text-center">
-        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-r from-gold-400 to-gold-600 shadow-lg">
+        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-r from-amber-400 to-orange-500 shadow-lg">
           <Crown className="h-8 w-8 text-black" />
         </div>
         <h2 className="text-2xl font-bold">Upgrade ke PRO</h2>
@@ -71,6 +92,12 @@ export function UpgradeModal({ isOpen, onClose, feature, used, limit }: UpgradeM
         )}
       </div>
 
+      {errorMsg && (
+        <div className="mt-4 rounded-xl bg-red-50 border border-red-200 p-3 text-sm text-red-700 flex items-center gap-2">
+          <AlertCircle size={16} className="shrink-0" /> {errorMsg}
+        </div>
+      )}
+
       <div className="mt-6 space-y-3">
         <div className="rounded-xl border-2 border-blue-200 bg-blue-50 p-4">
           <div className="flex items-center justify-between">
@@ -80,12 +107,12 @@ export function UpgradeModal({ isOpen, onClose, feature, used, limit }: UpgradeM
               <p className="text-xs text-muted-foreground">Hemat Rp 189.000</p>
             </div>
             <div className="text-right">
-              <p className="text-2xl font-bold text-blue-700">Rp 399rb</p>
+              <p className="text-2xl font-bold text-blue-700">Rp 399.000</p>
               <p className="text-xs text-muted-foreground">/tahun</p>
             </div>
           </div>
-          <Button onClick={() => handleUpgrade("yearly")} className="mt-3 w-full bg-blue-600 hover:bg-blue-700">
-            Pilih Tahunan
+          <Button onClick={() => handleUpgrade("yearly")} disabled={loading} className="mt-3 w-full bg-blue-600 hover:bg-blue-700">
+            {loading ? <><Loader2 className="h-4 w-4 animate-spin" /> Memproses...</> : "Pilih Tahunan"}
           </Button>
         </div>
 
@@ -96,12 +123,12 @@ export function UpgradeModal({ isOpen, onClose, feature, used, limit }: UpgradeM
               <p className="text-xs text-muted-foreground">Per bulan</p>
             </div>
             <div className="text-right">
-              <p className="text-xl font-bold">Rp 49rb</p>
+              <p className="text-xl font-bold">Rp 49.000</p>
               <p className="text-xs text-muted-foreground">/bulan</p>
             </div>
           </div>
-          <Button onClick={() => handleUpgrade("monthly")} variant="outline" className="mt-3 w-full">
-            Pilih Bulanan
+          <Button onClick={() => handleUpgrade("monthly")} disabled={loading} variant="outline" className="mt-3 w-full">
+            {loading ? <><Loader2 className="h-4 w-4 animate-spin" /> Memproses...</> : "Pilih Bulanan"}
           </Button>
         </div>
       </div>

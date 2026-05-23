@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { ShoppingBag, Download, Star, User, ChevronLeft, ShoppingCart, Plus, Minus } from "lucide-react";
+import { ShoppingBag, Download, Star, User, ChevronLeft, ShoppingCart, Plus, Minus, BookOpen, FileText, Video, File, Presentation, ClipboardList } from "lucide-react";
 import Link from "next/link";
 import PageNavbar from "@/components/public/PageNavbar";
 import PageFooter from "@/components/public/PageFooter";
@@ -54,6 +54,7 @@ export default function MarketplaceDetailPage() {
   if (!karya) return <div className="min-h-screen flex items-center justify-center text-slate-500">Karya tidak ditemukan</div>;
 
   const TYPES: Record<string, string> = { RPP: "RPP", MODUL: "Modul Ajar", PPT: "PPT", SOAL: "Bank Soal", VIDEO: "Video", EBOOK: "Ebook", ADMINISTRASI: "Administrasi", LAINNYA: "Lainnya" };
+  const TYPE_ICONS: Record<string, any> = { RPP: BookOpen, MODUL: FileText, PPT: Presentation, SOAL: ClipboardList, VIDEO: Video, EBOOK: BookOpen, ADMINISTRASI: File, LAINNYA: File };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-white">
@@ -71,7 +72,7 @@ export default function MarketplaceDetailPage() {
                 {karyaImages[currentImg] ? (
                   <img src={karyaImages[currentImg]} alt="" className="w-full h-full object-cover" />
                 ) : (
-                  <span className="text-6xl">{karya.type === "RPP" ? "📚" : karya.type === "PPT" ? "📊" : karya.type === "SOAL" ? "✍️" : "📦"}</span>
+                  (() => { const Icon = TYPE_ICONS[karya.type] || ShoppingBag; return <Icon size={48} className="text-slate-300" />; })()
                 )}
               </div>
               {karyaImages.length > 1 && (
