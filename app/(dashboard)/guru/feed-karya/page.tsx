@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState, useEffect, useRef, useCallback } from "react";
 import { X, Send } from "lucide-react";
 import { IconBolt, IconFlame, IconTarget, IconPen, IconChat, IconHeart, IconEye, IconClock, IconSchool, IconLocation } from "@/lib/icons";
+import GuruChatPanel from "@/components/chat/GuruChatPanel";
 
 type KaryaType = "PUISI" | "CERPEN" | "ARTIKEL" | "ANEKDOT" | "PANTUN" | "OPINI";
 
@@ -155,13 +156,14 @@ export default function GuruFeedKaryaPage() {
   }, [commentText]);
 
   return (
-    <div className="max-w-2xl mx-auto">
+    <div className="grid grid-cols-1 xl:grid-cols-[1fr_360px] gap-5 items-start">
+      <div className="min-w-0 max-w-2xl w-full">
       {/* ── Header ── */}
       {user && (
         <div className="bg-gradient-to-br from-emerald-600 via-green-600 to-teal-700 rounded-2xl p-5 text-white mb-5">
           <div className="flex items-center justify-between">
             <div>
-              <p className="font-bold text-lg">Feed Karya Siswa</p>
+              <p className="font-bold text-lg">Karya Siswa</p>
               <p className="text-sm text-emerald-200 mt-0.5">Pantau dan apresiasi karya murid-muridmu</p>
             </div>
             <div className="flex items-center gap-2">
@@ -367,6 +369,12 @@ export default function GuruFeedKaryaPage() {
           </div>
         </div>
       )}
+    </div>
+
+      {/* Right Panel — Chat Kelas */}
+      <div className="xl:sticky xl:top-5 min-w-0">
+        {user && <GuruChatPanel userId={user.id || user.userId} />}
+      </div>
     </div>
   );
 }
