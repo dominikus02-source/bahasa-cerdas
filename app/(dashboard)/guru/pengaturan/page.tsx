@@ -403,7 +403,7 @@ export default function GuruPengaturanPage() {
               </p>
             </div>
           </div>
-          <Link href="/checkout" className={`min-w-[160px] text-sm font-semibold text-center py-2.5 px-4 rounded-lg transition-colors ${isPremium ? "bg-slate-900 hover:bg-slate-800 text-white" : "bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white shadow-md"}`}>
+          <Link href="/guru/pengaturan/premium" className={`min-w-[160px] text-sm font-semibold text-center py-2.5 px-4 rounded-lg transition-colors ${isPremium ? "bg-slate-900 hover:bg-slate-800 text-white" : "bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white shadow-md"}`}>
             {isPremium ? "Perpanjang" : "Upgrade Sekarang"}
           </Link>
         </div>

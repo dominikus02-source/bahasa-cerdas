@@ -26,46 +26,57 @@ export const metadata: Metadata = {
   },
 };
 
+async function queryWithTimeout<T>(promise: Promise<T>, ms = 5000): Promise<T> {
+  const timeout = new Promise<T>((_, reject) => setTimeout(() => reject(new Error("DB timeout")), ms));
+  return Promise.race([promise, timeout]);
+}
+
 async function getLatestArtikel() {
   try {
-    return await db.artikel.findMany({
-      where: { isPublished: true },
-      orderBy: { createdAt: "desc" },
-      take: 3,
-      select: {
-        id: true, title: true, slug: true, excerpt: true,
-        coverImage: true, tags: true, readCount: true, createdAt: true,
-        author: { select: { fullName: true } },
-      },
-    });
+    return await queryWithTimeout(
+      db.artikel.findMany({
+        where: { isPublished: true },
+        orderBy: { createdAt: "desc" },
+        take: 3,
+        select: {
+          id: true, title: true, slug: true, excerpt: true,
+          coverImage: true, tags: true, readCount: true, createdAt: true,
+          author: { select: { fullName: true } },
+        },
+      })
+    );
   } catch { return []; }
 }
 
 async function getMarketplaceItems() {
   try {
-    return await db.karya.findMany({
-      where: { isPublished: true },
-      orderBy: { downloads: "desc" },
-      take: 3,
-      include: {
-        seller: { select: { fullName: true } },
-        _count: { select: { purchases: true } },
-      },
-    });
+    return await queryWithTimeout(
+      db.karya.findMany({
+        where: { isPublished: true },
+        orderBy: { downloads: "desc" },
+        take: 3,
+        include: {
+          seller: { select: { fullName: true } },
+          _count: { select: { purchases: true } },
+        },
+      })
+    );
   } catch { return []; }
 }
 
 async function getLatestVideos() {
   try {
-    return await db.video.findMany({
-      where: { isPublished: true },
-      orderBy: { views: "desc" },
-      take: 3,
-      select: {
-        id: true, title: true, description: true, thumbnailUrl: true,
-        duration: true, category: true, views: true, isPremium: true, grade: true,
-      },
-    });
+    return await queryWithTimeout(
+      db.video.findMany({
+        where: { isPublished: true },
+        orderBy: { views: "desc" },
+        take: 3,
+        select: {
+          id: true, title: true, description: true, thumbnailUrl: true,
+          duration: true, category: true, views: true, isPremium: true, grade: true,
+        },
+      })
+    );
   } catch { return []; }
 }
 

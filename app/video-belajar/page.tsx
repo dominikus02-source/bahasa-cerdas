@@ -97,7 +97,7 @@ export default function VideoBelajarPage() {
         ) : (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
             {filtered.map((video: any) => (
-              <Link key={video.id} href={video.isPremium ? "/login" : `/video-belajar/${video.id}`} className="group">
+              <Link key={video.id} href={`/video-belajar/${video.id}`} className="group">
                 <div className="bg-white rounded-2xl overflow-hidden border border-gray-100 hover:border-gray-200 hover:shadow-lg transition-all h-full">
                   <div className="aspect-video bg-gray-100 relative overflow-hidden">
                     {video.thumbnailUrl ? (

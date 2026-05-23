@@ -30,9 +30,11 @@ export default function VideoDetailPage() {
   const [video, setVideo] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [showVideo, setShowVideo] = useState(false);
+  const [currentUser, setCurrentUser] = useState<any>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
+    fetch("/api/user/me").then(r => r.ok ? r.json() : null).then(d => setCurrentUser(d?.user || null));
     fetch(`/api/video/public/${id}`)
       .then(r => r.json())
       .then(d => { setVideo(d.video); setLoading(false); })
@@ -40,6 +42,7 @@ export default function VideoDetailPage() {
   }, [id]);
 
   const isUpload = video?.source === "UPLOAD";
+  const canAccess = !video?.isPremium || currentUser?.isPremium || currentUser?.isFounder;
 
   if (loading) return (
     <div className="min-h-screen bg-white">
@@ -81,7 +84,7 @@ export default function VideoDetailPage() {
           {/* Left: Player + Title + Description */}
           <div className="lg:flex-1 lg:min-w-0">
             {/* Video Player */}
-            {!video.isPremium ? (
+            {canAccess ? (
               <div className="relative bg-black rounded-2xl overflow-hidden shadow-lg shadow-black/10 mb-4">
                 <div className="aspect-video relative">
                   {showVideo ? (
@@ -135,9 +138,9 @@ export default function VideoDetailPage() {
                 <div className="text-center">
                   <Lock size={48} className="text-gray-300 mx-auto mb-3" />
                   <p className="text-gray-600 text-lg font-semibold">Video Premium</p>
-                  <p className="text-gray-400 text-sm mt-1">Login untuk mengakses video ini</p>
-                  <Link href="/login" className="mt-4 inline-block px-6 py-2.5 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-xl font-semibold shadow-md">
-                    Masuk
+                  <p className="text-gray-400 text-sm mt-1">{currentUser ? "Upgrade ke PRO untuk mengakses video ini" : "Login untuk mengakses video ini"}</p>
+                  <Link href={currentUser ? "/guru/pengaturan/premium" : "/login"} className="mt-4 inline-block px-6 py-2.5 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-xl font-semibold shadow-md">
+                    {currentUser ? "Upgrade PRO" : "Masuk"}
                   </Link>
                 </div>
               </div>
