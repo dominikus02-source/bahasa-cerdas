@@ -13,7 +13,7 @@ export async function createTransaction(params: {
   midtransClient = new Midtrans.Snap({
     serverKey: process.env.MIDTRANS_SERVER_KEY,
     clientKey: process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY,
-    isProduction: process.env.NODE_ENV === "production",
+    isProduction: process.env.MIDTRANS_IS_PRODUCTION === "true",
   });
 
   const amount = params.plan === "monthly" ? 49000 : 399000;
@@ -67,7 +67,7 @@ export async function createKaryaTransaction(params: {
   const client = new Midtrans.Snap({
     serverKey: process.env.MIDTRANS_SERVER_KEY,
     clientKey: process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY,
-    isProduction: process.env.NODE_ENV === "production",
+    isProduction: process.env.MIDTRANS_IS_PRODUCTION === "true",
   });
 
   const parameter = {

@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { Modal } from "@/components/ui/modal";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -13,7 +14,27 @@ interface UpgradeModalProps {
   limit?: number;
 }
 
+declare global {
+  interface Window {
+    snap?: {
+      pay: (token: string, options?: { onSuccess: Function; onPending: Function; onError: Function; onClose: Function }) => void;
+    };
+  }
+}
+
 export function UpgradeModal({ isOpen, onClose, feature, used, limit }: UpgradeModalProps) {
+  useEffect(() => {
+    const clientKey = process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY;
+    if (!clientKey) return;
+    const isProd = window.location.hostname === "bahasacerdas.com";
+    const script = document.createElement("script");
+    script.src = isProd ? "https://app.midtrans.com/snap/snap.js" : "https://app.sandbox.midtrans.com/snap/snap.js";
+    script.setAttribute("data-client-key", clientKey);
+    script.async = true;
+    document.body.appendChild(script);
+    return () => { document.body.removeChild(script); };
+  }, []);
+
   const handleUpgrade = async (plan: "monthly" | "yearly") => {
     try {
       const res = await fetch("/api/payment/create-invoice", {
@@ -22,8 +43,13 @@ export function UpgradeModal({ isOpen, onClose, feature, used, limit }: UpgradeM
         body: JSON.stringify({ plan }),
       });
       const data = await res.json();
-      if (data.invoice?.invoice_url) {
-        window.location.href = data.invoice.invoice_url;
+      if (data.token && window.snap) {
+        window.snap.pay(data.token, {
+          onSuccess: () => { onClose(); window.location.reload(); },
+          onPending: () => {},
+          onError: () => alert("Pembayaran gagal. Silakan coba lagi."),
+          onClose: () => {},
+        });
       }
     } catch (error) {
       console.error("Upgrade error:", error);
