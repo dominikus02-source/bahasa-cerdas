@@ -6,7 +6,7 @@ function getSiteUrl(): string {
   return process.env.NEXT_PUBLIC_SITE_URL || "https://bahasacerdas.com";
 }
 
-function getIsProduction(): boolean {
+export function getIsProduction(): boolean {
   const env = process.env.NEXT_PUBLIC_MIDTRANS_IS_PRODUCTION;
   if (env === "true") return true;
   return false;
