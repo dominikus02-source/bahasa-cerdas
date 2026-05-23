@@ -196,8 +196,9 @@ export async function POST(req: NextRequest) {
       orderId: transaction.orderId,
     });
 
-  } catch (error) {
+  } catch (error: any) {
+    const msg = error?.message || error?.http_error_details || error?.ApiResponse || "Internal error";
     console.error("POST /api/marketplace/purchase error:", error);
-    return NextResponse.json({ error: "Internal error" }, { status: 500 });
+    return NextResponse.json({ error: msg, detail: String(error) }, { status: 500 });
   }
 }

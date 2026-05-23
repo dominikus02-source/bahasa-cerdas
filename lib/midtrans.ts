@@ -117,8 +117,14 @@ export async function createKaryaTransaction(params: {
     },
   };
 
-  const transaction = await client.createTransaction(parameter);
-  return { transactionToken: transaction.token, redirectUrl: transaction.redirect_url, orderId: params.orderId };
+  try {
+    const transaction = await client.createTransaction(parameter);
+    return { transactionToken: transaction.token, redirectUrl: transaction.redirect_url, orderId: params.orderId };
+  } catch (err: any) {
+    console.error("Midtrans createKaryaTransaction error:", err);
+    console.error("Midtrans HTTP error details:", err?.http_error_details || err?.ApiResponse || err?.message);
+    throw err;
+  }
 }
 
 export { midtransClient };
