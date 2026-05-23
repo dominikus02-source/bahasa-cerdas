@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Crown, Check, Zap, AlertCircle, Loader2 } from "lucide-react";
 import { useUserStore } from "@/store";
 import { useSearchParams } from "next/navigation";
+import { getSnapScriptUrl } from "@/lib/midtrans";
 
 declare global {
   interface Window {
@@ -33,9 +34,8 @@ export default function PremiumPage() {
   useEffect(() => {
     const clientKey = process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY;
     if (!clientKey) return;
-    const isProd = process.env.NEXT_PUBLIC_MIDTRANS_IS_PRODUCTION === "true";
     const script = document.createElement("script");
-    script.src = isProd ? "https://app.midtrans.com/snap/snap.js" : "https://app.sandbox.midtrans.com/snap/snap.js";
+    script.src = getSnapScriptUrl();
     script.setAttribute("data-client-key", clientKey);
     script.async = true;
     document.body.appendChild(script);

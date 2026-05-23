@@ -2,6 +2,20 @@ import type { Snap } from "midtrans-client";
 
 let midtransClient: Snap;
 
+function getIsProduction(): boolean {
+  const env = process.env.MIDTRANS_IS_PRODUCTION ?? process.env.NEXT_PUBLIC_MIDTRANS_IS_PRODUCTION;
+  if (env === "true") return true;
+  if (env === "false") return false;
+  const clientKey = process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY || "";
+  return clientKey.startsWith("Mid-client-");
+}
+
+export function getSnapScriptUrl(): string {
+  return getIsProduction()
+    ? "https://app.midtrans.com/snap/snap.js"
+    : "https://app.sandbox.midtrans.com/snap/snap.js";
+}
+
 export async function createTransaction(params: {
   userId: string;
   email: string;
@@ -13,7 +27,7 @@ export async function createTransaction(params: {
   midtransClient = new Midtrans.Snap({
     serverKey: process.env.MIDTRANS_SERVER_KEY,
     clientKey: process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY,
-    isProduction: process.env.MIDTRANS_IS_PRODUCTION === "true",
+    isProduction: getIsProduction(),
   });
 
   const amount = params.plan === "monthly" ? 49000 : 399000;
@@ -67,7 +81,7 @@ export async function createKaryaTransaction(params: {
   const client = new Midtrans.Snap({
     serverKey: process.env.MIDTRANS_SERVER_KEY,
     clientKey: process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY,
-    isProduction: process.env.MIDTRANS_IS_PRODUCTION === "true",
+    isProduction: getIsProduction(),
   });
 
   const parameter = {
