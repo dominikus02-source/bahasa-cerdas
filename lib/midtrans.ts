@@ -3,11 +3,18 @@ import type { Snap } from "midtrans-client";
 let midtransClient: Snap;
 
 function getIsProduction(): boolean {
-  const env = process.env.MIDTRANS_IS_PRODUCTION ?? process.env.NEXT_PUBLIC_MIDTRANS_IS_PRODUCTION;
-  if (env === "true") return true;
-  if (env === "false") return false;
   const clientKey = process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY || "";
   return clientKey.startsWith("Mid-client-");
+}
+
+function validateConfig() {
+  const serverKey = process.env.MIDTRANS_SERVER_KEY;
+  const clientKey = process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY;
+  if (!serverKey) throw new Error("MIDTRANS_SERVER_KEY tidak dikonfigurasi di environment Vercel");
+  if (!clientKey) throw new Error("NEXT_PUBLIC_MIDTRANS_CLIENT_KEY tidak dikonfigurasi");
+  if (!serverKey.startsWith("Mid-server-") && !serverKey.startsWith("SB-Mid-server-")) {
+    throw new Error("MIDTRANS_SERVER_KEY format tidak valid");
+  }
 }
 
 export function getSnapScriptUrl(): string {
@@ -22,6 +29,7 @@ export async function createTransaction(params: {
   fullName: string;
   plan: "monthly" | "yearly";
 }) {
+  validateConfig();
   const Midtrans = require("midtrans-client");
   
   midtransClient = new Midtrans.Snap({
@@ -76,6 +84,7 @@ export async function createKaryaTransaction(params: {
   itemId: string;
   itemTitle: string;
 }) {
+  validateConfig();
   const Midtrans = require("midtrans-client");
   
   const client = new Midtrans.Snap({
