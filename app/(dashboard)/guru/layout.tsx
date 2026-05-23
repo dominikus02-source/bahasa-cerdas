@@ -25,7 +25,6 @@ export default async function GuruLayout({ children }: { children: React.ReactNo
   }
 
   const leagueLabel = { BRONZE: "Perunggu", SILVER: "Perak", GOLD: "Emas", DIAMOND: "Berlian" }[user.league || "BRONZE"] || "Perunggu"
-  const leagueEmoji = { BRONZE: "🥉", SILVER: "🥈", GOLD: "🥇", DIAMOND: "💎" }[user.league || "BRONZE"] || "🥉"
 
   return (
     <div className="flex min-h-screen bg-gradient-to-br from-slate-50 via-white to-emerald-50">
@@ -50,7 +49,7 @@ export default async function GuruLayout({ children }: { children: React.ReactNo
             <div className="flex-1 min-w-0">
               <p className="text-sm font-semibold text-gray-900 truncate">{user.fullName}</p>
               <div className="flex items-center gap-1.5 mt-0.5">
-                <span className="text-xs">{leagueEmoji}</span>
+                <svg className="w-3 h-3 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
                 <span className="text-[10px] text-gray-500 font-medium">{leagueLabel}</span>
                 <span className="text-[10px] text-gray-400">•</span>
                 <span className="text-[10px] text-emerald-600 font-semibold">Tkt {user.level}</span>
@@ -59,11 +58,11 @@ export default async function GuruLayout({ children }: { children: React.ReactNo
           </div>
           <div className="flex items-center gap-3 mt-3 pt-3 border-t border-emerald-100/50">
             <div className="flex items-center gap-1 text-xs text-orange-500">
-              <span className="text-sm">🔥</span>
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5"><path d="M15.362 5.214A8.252 8.252 0 0112 21 8.25 8.25 0 016.038 7.048 8.287 8.287 0 009 9.6a8.983 8.983 0 013.361-6.867 8.21 8.21 0 003 2.48z" /><path d="M12 18a3.75 3.75 0 00.495-7.467 5.99 5.99 0 00-1.925 3.546 5.974 5.974 0 01-2.133-1A3.75 3.75 0 0012 18z" /></svg>
               <span className="font-semibold">{user.streak || 0}</span>
             </div>
             <div className="flex items-center gap-1 text-xs text-amber-500">
-              <span className="text-sm">⚡</span>
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5"><path d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" /></svg>
               <span className="font-semibold">{user.xp?.toLocaleString() || 0}</span>
             </div>
           </div>
@@ -72,6 +71,7 @@ export default async function GuruLayout({ children }: { children: React.ReactNo
         <nav className="py-4 px-3 flex-1 overflow-y-auto">
           <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider px-3 mb-2">Menu Utama</div>
           <MenuIcon path="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" label="Beranda" href="/guru/beranda" />
+          <MenuIcon path="M12 7.5h1.5m-1.5 3h1.5m-7.5 3h7.5m-7.5 3h7.5m3-9h3.375c.621 0 1.125.504 1.125 1.125V18a2.25 2.25 0 01-2.25 2.25M16.5 7.5V18a2.25 2.25 0 002.25 2.25M16.5 7.5V4.875c0-.621-.504-1.125-1.125-1.125H4.125C3.504 3.75 3 4.254 3 4.875V18a2.25 2.25 0 002.25 2.25h9.75M6 7.5h3v3H6v-3z" label="Feed Karya" href="/guru/feed-karya" />
           <MenuIcon path="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" label="KelasKu" href="/guru/kelasku" />
           <MenuIcon path="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" label="Bank Soal" href="/guru/bank-soal" />
           <MenuIcon path="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" label="Gim" href="/guru/game" />
