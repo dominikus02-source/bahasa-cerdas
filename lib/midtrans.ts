@@ -7,18 +7,16 @@ function getSiteUrl(): string {
 }
 
 function getIsProduction(): boolean {
-  const clientKey = process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY || "";
-  return clientKey.startsWith("Mid-client-");
+  const env = process.env.NEXT_PUBLIC_MIDTRANS_IS_PRODUCTION;
+  if (env === "true") return true;
+  return false;
 }
 
 function validateConfig() {
   const serverKey = process.env.MIDTRANS_SERVER_KEY;
   const clientKey = process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY;
-  if (!serverKey) throw new Error("MIDTRANS_SERVER_KEY tidak dikonfigurasi di environment Vercel. Tambahkan server key dari dashboard Midtrans.");
+  if (!serverKey) throw new Error("MIDTRANS_SERVER_KEY tidak dikonfigurasi di environment Vercel");
   if (!clientKey) throw new Error("NEXT_PUBLIC_MIDTRANS_CLIENT_KEY tidak dikonfigurasi");
-  if (!serverKey.startsWith("Mid-server-") && !serverKey.startsWith("SB-Mid-server-")) {
-    throw new Error("MIDTRANS_SERVER_KEY format tidak valid. Server key harus dimulai dengan 'Mid-server-' atau 'SB-Mid-server-'.");
-  }
 }
 
 export function getSnapScriptUrl(): string {
