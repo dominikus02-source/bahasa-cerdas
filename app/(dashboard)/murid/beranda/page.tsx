@@ -103,6 +103,22 @@ export default function HomeFeedPage() {
           </div>
         )}
 
+        {/* ── Arena Promo ── */}
+        <Link href="/arena/jalur-cerdas" className="block mb-4">
+          <div className="bg-gradient-to-r from-violet-600 via-purple-600 to-indigo-700 rounded-xl p-4 shadow-lg">
+            <div className="flex items-center gap-3">
+              <div className="shrink-0 w-10 h-10 rounded-xl bg-white/20 backdrop-blur flex items-center justify-center text-white font-bold border border-white/30">
+                A
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-bold text-white">Coba Arena Mode!</p>
+                <p className="text-[11px] text-violet-200">Belajar seru kayak game — install di HP-mu</p>
+              </div>
+              <svg className="w-5 h-5 text-white/70 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7"/></svg>
+            </div>
+          </div>
+        </Link>
+
         {/* ── League ── */}
         <LeagueWidget />
 

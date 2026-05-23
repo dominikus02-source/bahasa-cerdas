@@ -229,7 +229,8 @@ model User {
   coinTransactions   CoinTransaction[]
   dailyQuests        DailyQuest[]
   userItems          UserItem[]
-  chatMessages       ChatMessage[]
+   chatMessages       ChatMessage[]
+   unitProgress       UserUnitProgress[]
 }
 
 model Profile {
@@ -1430,4 +1431,67 @@ enum SubmissionStatus {
   SUBMITTED
   GRADED
   LATE
+}
+
+model LearningLevel {
+  id          String   @id @default(cuid())
+  level       Int      @unique
+  title       String
+  subtitle    String?
+  description String?
+  color       String   @default("from-violet-500 to-purple-600")
+  emoji       String?
+  icon        String?
+  order       Int
+  xpReward    Int      @default(0)
+  coinReward  Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  units LearningUnit[]
+}
+
+model LearningUnit {
+  id          String   @id @default(cuid())
+  levelId     String
+  title       String
+  subtitle    String?
+  description String?
+  topik       String?
+  order       Int
+  color       String   @default("from-violet-500 to-purple-600")
+  emoji       String?
+  icon        String?
+  content     String?
+  videoUrl    String?
+  examples    Json?
+  xpReward    Int      @default(50)
+  coinReward  Int      @default(10)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  level    LearningLevel       @relation(fields: [levelId], references: [id], onDelete: Cascade)
+  progress UserUnitProgress[]
+
+  @@index([levelId])
+}
+
+model UserUnitProgress {
+  id        String   @id @default(cuid())
+  userId    String
+  unitId    String
+  completed Boolean  @default(false)
+  score     Int      @default(0)
+  xpEarned  Int      @default(0)
+  coinEarned Int     @default(0)
+  createdAt DateTime @default(now())
+  completedAt DateTime?
+
+  user User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  unit LearningUnit @relation(fields: [unitId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, unitId])
+  @@index([userId])
+  @@index([unitId])
 }
