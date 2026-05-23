@@ -4,8 +4,6 @@ import Link from "next/link"
 import { BookOpen, ChevronRight } from "lucide-react"
 
 export function TugasCard({ pendingCount = 0 }: { pendingCount?: number }) {
-  if (pendingCount === 0) return null
-
   return (
     <Link
       href="/arena/tugas"
@@ -16,11 +14,17 @@ export function TugasCard({ pendingCount = 0 }: { pendingCount?: number }) {
       </div>
       <div className="flex-1">
         <p className="text-sm font-bold text-gray-900">Ruang Tugas</p>
-        <p className="text-[10px] text-gray-500">Ada {pendingCount} tugas menunggumu</p>
+        <p className="text-[10px] text-gray-500">
+          {pendingCount > 0
+            ? `Ada ${pendingCount} tugas menunggumu`
+            : "Tidak ada tugas baru"}
+        </p>
       </div>
-      <span className="px-2.5 py-1 rounded-lg bg-emerald-100 text-emerald-700 text-xs font-bold">
-        {pendingCount}
-      </span>
+      {pendingCount > 0 && (
+        <span className="px-2.5 py-1 rounded-lg bg-emerald-100 text-emerald-700 text-xs font-bold">
+          {pendingCount}
+        </span>
+      )}
       <ChevronRight className="w-4 h-4 text-gray-300" />
     </Link>
   )

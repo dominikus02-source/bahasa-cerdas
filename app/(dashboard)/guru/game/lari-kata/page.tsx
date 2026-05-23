@@ -189,8 +189,8 @@ export default function GuruLariKataPage() {
             {result && (
               <div className="bg-green-500/10 border border-green-500/20 rounded-2xl p-4 mb-4">
                 <div className="flex items-center gap-2 justify-center mb-2"><Sparkles size={18} className="text-green-400" /><span className="font-bold text-green-400">+{result.xpEarned} PP</span></div>
-                {result.levelUp && <div className="bg-yellow-500/20 text-yellow-300 px-3 py-1 rounded-full text-sm font-bold animate-pulse inline-block">🎉 Naik Tingkat! Tingkat {result.newLevel}!</div>}
-                <div className="flex justify-center gap-4 mt-2 text-xs text-violet-200/60"><span>Rentetan: {result.streak}🔥</span><span>{result.league}</span></div>
+                {result.levelUp && <div className="bg-yellow-500/20 text-yellow-300 px-3 py-1 rounded-full text-sm font-bold animate-pulse inline-flex items-center gap-1.5"><Sparkles size={14} /> Naik Tingkat! Tingkat {result.newLevel}!</div>}
+                <div className="flex justify-center gap-4 mt-2 text-xs text-violet-200/60"><span className="flex items-center gap-1"><Flame size={12} className="text-orange-400" /> {result.streak}</span><span>{result.league}</span></div>
               </div>
             )}
             <div className="flex gap-3">

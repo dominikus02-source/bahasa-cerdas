@@ -2,109 +2,234 @@ import { getUser } from "@/lib/supabase/server"
 import { db } from "@/lib/db"
 import { redirect } from "next/navigation"
 import Link from "next/link"
-import { ChevronRight, Clock, Swords, Puzzle, BookOpen, Trophy, Type, Zap } from "lucide-react"
+import { Zap, Swords, Puzzle, Trophy, Type, Flame, Users, Clock, Crown } from "lucide-react"
 
-const gimList = [
-  { title: "Adu Cepat", desc: "Cari lawan langsung! Auto-matchmaking 1v1 real-time rebut XP.", icon: Zap, warna: "from-violet-500 to-purple-600", href: "/arena/game/adu-cepat", hot: true },
-  { title: "Kuis Tempur", desc: "Lawan murid lain real-time! Siapa cepat dan benar dia menang.", icon: Swords, warna: "from-rose-500 to-pink-600", href: "/arena/game/kuis-tempur" },
-  { title: "Tebak Kata", desc: "Tebak kata berdasarkan petunjuk. Seru bareng teman!", icon: Type, warna: "from-blue-500 to-cyan-600", href: "/arena/game/tebak-kata" },
-  { title: "Susun Kata", desc: "Acak huruf jadi kata yang benar dalam waktu terbatas!", icon: Puzzle, warna: "from-emerald-500 to-teal-600", href: "/arena/game/susun-kata" },
-  { title: "Katastra", desc: "Tebak kata setiap hari. Asah kosakatamu!", icon: BookOpen, warna: "from-violet-500 to-purple-600", href: "/arena/game/katastra" },
+interface Game {
+  title: string; desc: string; icon: any; href: string
+  accentColor: string; iconGradient: string
+  featured?: boolean; badge?: { text: string; type: "hot" | "new" }
+  xp: string; players: string; time: string
+}
+
+const GAMES: Game[] = [
+  { title: "Kuis Tempur", desc: "Lawan murid lain real-time! Siapa cepat dan benar dia menang.", icon: Swords, href: "/arena/game/kuis-tempur", accentColor: "#EF4444", iconGradient: "from-red-500 to-red-600", featured: true, badge: { text: "Terpopuler", type: "hot" }, xp: "+80 XP", players: "2-8 pemain", time: "~5 menit" },
+  { title: "Tebak Kata", desc: "Tebak dari petunjuk. Seru bareng teman!", icon: Type, href: "/arena/game/tebak-kata", accentColor: "#06B6D4", iconGradient: "from-cyan-500 to-cyan-600", xp: "+60 XP", players: "Solo", time: "~3 mnt" },
+  { title: "Susun Kata", desc: "Acak huruf jadi kata benar dalam waktu limit!", icon: Puzzle, href: "/arena/game/susun-kata", accentColor: "#10B981", iconGradient: "from-emerald-500 to-emerald-600", xp: "+50 XP", players: "Solo", time: "~3 mnt" },
+  { title: "Lari Kata", desc: "60 detik, 20 soal. Jawab secepat kilat!", icon: Zap, href: "/arena/game/lari-kata", accentColor: "#F59E0B", iconGradient: "from-amber-500 to-amber-600", badge: { text: "Baru", type: "new" }, xp: "+70 XP", players: "~1 mnt", time: "~1 mnt" },
 ]
+
+const INITIALS_COLORS = [
+  "from-violet-500 to-purple-600",
+  "from-emerald-500 to-teal-600",
+  "from-pink-500 to-rose-600",
+  "from-cyan-500 to-blue-600",
+  "from-orange-500 to-amber-600",
+]
+
+function initials(name: string) {
+  return name?.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2) || "?"
+}
 
 export default async function ArenaGimPage() {
   const user = await getUser()
   if (!user) redirect("/auth/arena-login")
 
-  const totalMain = await db.gameResult.count({ where: { userId: user.id } })
-  const hasilAkhir = await db.gameResult.findMany({
-    where: { userId: user.id },
-    orderBy: { createdAt: "desc" },
-    take: 5,
-    include: {
-      room: { select: { code: true } },
-    },
-  })
+  const [totalMain, hasilAkhir, topUsers] = await Promise.all([
+    db.gameResult.count({ where: { userId: user.id } }),
+    db.gameResult.findMany({
+      where: { userId: user.id },
+      orderBy: { createdAt: "desc" },
+      take: 5,
+      include: { room: { select: { code: true } } },
+    }),
+    db.user.findMany({
+      where: { xp: { gt: 0 } },
+      orderBy: { xp: "desc" },
+      take: 5,
+      select: { id: true, name: true, xp: true },
+    }),
+  ])
+
+  const winCount = hasilAkhir.filter((h: any) => h.rank === 1).length
+  const totalXp = hasilAkhir.reduce((sum: number, h: any) => sum + (h.xpEarned || 0), 0)
+  const userRank = topUsers.findIndex((u) => u.id === user.id) + 1
 
   return (
-    <div className="px-4 py-5 arena-page">
-      {/* Header */}
-      <div className="mb-6">
-        <h1 className="text-2xl font-extrabold text-gray-900">Gim</h1>
-        <p className="text-base text-gray-500 mt-1">Pilih gim dan buktikan kemampuanmu!</p>
-      </div>
+    <div className="game-hub arena-page">
+      <div className="game-ambient" />
 
-      {/* Stat ringkas */}
-      {totalMain > 0 && (
-        <div className="flex items-center gap-4 bg-white rounded-2xl border border-gray-100 p-5 mb-5">
-          <div className="flex-1 text-center">
-            <p className="text-2xl font-extrabold text-gray-900">{totalMain}</p>
-            <p className="text-xs text-gray-500 font-medium uppercase">Main</p>
+      <div className="relative z-10 px-5 pb-6">
+        <div className="pt-5 pb-5 flex items-center justify-between">
+          <div>
+            <h1 className="text-[28px] font-extrabold text-white">Arena Gim</h1>
+            <p className="text-sm text-[#7C7A9E] mt-0.5">Buktikan kemampuan Bahasa Indonesia-mu!</p>
           </div>
-          <div className="w-px h-10 bg-gray-100" />
-          <div className="flex-1 text-center">
-            <p className="text-2xl font-extrabold text-violet-600">
-              {hasilAkhir.filter((h: any) => h.rank === 1).length}
-            </p>
-            <p className="text-xs text-gray-500 font-medium uppercase">Juara 1</p>
-          </div>
-          <div className="w-px h-10 bg-gray-100" />
-          <div className="flex-1 text-center">
-            <p className="text-2xl font-extrabold text-emerald-600">
-              {hasilAkhir.reduce((sum: number, h: any) => sum + (h.xpEarned || 0), 0)}
-            </p>
-            <p className="text-xs text-gray-500 font-medium uppercase">Total XP</p>
+          <div className="glow-pulse flex items-center gap-1.5 px-3.5 py-2 rounded-full" style={{ background: "rgba(245,158,11,0.1)", border: "1px solid rgba(245,158,11,0.3)" }}>
+            <Zap size={15} className="text-amber-400" />
+            <span className="text-sm font-bold text-amber-400">{totalXp.toLocaleString()} XP</span>
           </div>
         </div>
-      )}
 
-      {/* Daftar gim */}
-      <h2 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-3">Pilih Gim</h2>
-      <div className="space-y-3 mb-6">
-        {gimList.map((gim) => (
-          <Link
-            key={gim.href}
-            href={gim.href}
-            className="flex items-center gap-4 bg-white rounded-2xl border border-gray-100 p-5 hover:shadow-md transition-all active:scale-[0.98] arena-card"
-          >
-            <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${gim.warna} flex items-center justify-center text-white shadow-md shrink-0 ${gim.hot ? "ring-2 ring-violet-300 ring-offset-2" : ""}`}>
-              <gim.icon className="w-8 h-8" />
-              {gim.hot && <span className="absolute -top-1 -right-1 w-4 h-4 bg-amber-400 rounded-full flex items-center justify-center"><Zap className="w-2.5 h-2.5 text-white" /></span>}
+        {/* Live battle banner */}
+        <Link href="/arena/game/adu-cepat" className="block relative overflow-hidden mb-6 rounded-[20px] active:scale-[0.98] transition-transform" style={{ background: "linear-gradient(135deg, #1a0533, #0d1f3c)", border: "1px solid rgba(124,58,237,0.4)" }}>
+          <div className="absolute -top-1/2 -right-1/4 w-[200px] h-[200px] rounded-full pointer-events-none" style={{ background: "radial-gradient(circle, rgba(124,58,237,0.3), transparent 70%)" }} />
+          <div className="absolute -bottom-1/3 left-1/4 w-[150px] h-[150px] rounded-full pointer-events-none" style={{ background: "radial-gradient(circle, rgba(236,72,153,0.2), transparent 70%)" }} />
+          <div className="relative z-10 p-5">
+            <div className="inline-flex items-center gap-1.5 bg-red-500 px-2.5 py-1 rounded-full text-[11px] font-bold tracking-wider mb-2.5 text-white">
+              <span className="w-1.5 h-1.5 bg-white rounded-full live-dot" />
+              LIVE
             </div>
-            <div className="flex-1 min-w-0">
-              <h3 className="text-base font-bold text-gray-900">{gim.title}</h3>
-              <p className="text-sm text-gray-500 mt-0.5 leading-relaxed">{gim.desc}</p>
+            <div className="flex items-center gap-2 mb-1">
+              <Swords size={20} className="text-pink-400" />
+              <h2 className="text-[22px] font-extrabold text-white">Adu Cepat</h2>
             </div>
-            <ChevronRight className="w-6 h-6 text-gray-300 shrink-0" />
-          </Link>
-        ))}
-      </div>
+            <p className="text-sm mb-3.5" style={{ color: "rgba(255,255,255,0.6)" }}>Cari lawan langsung! Auto-matchmaking 1v1 real-time. Rebut XP & naik liga!</p>
+            <div className="flex gap-4 mb-3.5">
+              <span className="flex items-center gap-1.5 text-xs" style={{ color: "rgba(255,255,255,0.7)" }}>
+                <Users size={13} className="text-purple-400" /> 47 online
+              </span>
+              <span className="flex items-center gap-1.5 text-xs" style={{ color: "rgba(255,255,255,0.7)" }}>
+                <Zap size={13} className="text-amber-400" /> +150 XP
+              </span>
+              <span className="flex items-center gap-1.5 text-xs" style={{ color: "rgba(255,255,255,0.7)" }}>
+                <Clock size={13} /> ~5 menit
+              </span>
+            </div>
+            <div className="w-full py-3 rounded-xl text-center font-bold text-white text-[15px] flex items-center justify-center gap-2 shadow-lg" style={{ background: "linear-gradient(135deg, #7C3AED, #EC4899)", boxShadow: "0 4px 20px rgba(124,58,237,0.4)" }}>
+              <Swords size={16} /> Cari Lawan Sekarang
+            </div>
+          </div>
+        </Link>
 
-      {/* Riwayat */}
-      {hasilAkhir.length > 0 && (
-        <div>
-          <h2 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-3">Riwayat Gim</h2>
-          <div className="space-y-2">
-            {hasilAkhir.map((h: any) => (
-              <div key={h.id} className="flex items-center gap-3 bg-white rounded-xl border border-gray-100 p-4">
-                <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${h.rank === 1 ? "from-emerald-500 to-teal-600" : "from-gray-400 to-gray-500"} flex items-center justify-center text-white text-base font-bold`}>
-                  {h.rank === 1 ? <Trophy className="w-4 h-4 text-amber-500" /> : "#" + (h.rank || "-")}
+        {/* Pilih Gim */}
+        <div className="flex items-center justify-between mb-3.5">
+          <h3 className="text-[13px] font-bold tracking-[1.5px] uppercase" style={{ color: "#7C7A9E" }}>Pilih Gim</h3>
+          <Link href="/arena" className="text-xs font-semibold" style={{ color: "#A855F7" }}>Lihat semua &rarr;</Link>
+        </div>
+
+        {/* Game grid */}
+        <div className="grid grid-cols-2 gap-3 mb-8">
+          {GAMES.map((g) => (
+            <Link key={g.href} href={g.href}
+              className={`game-card-anim relative overflow-hidden p-4 rounded-[20px] border active:scale-[0.96] transition-all hover:-translate-y-0.5 hover:shadow-xl game-card-hover`}
+              style={{ background: "#16122A", borderColor: "rgba(124,58,237,0.2)" }}
+            >
+              <div className="absolute top-0 left-0 right-0 h-[2px] rounded-t-[20px]" style={{ background: g.accentColor }} />
+              <div className={`w-[52px] h-[52px] rounded-2xl bg-gradient-to-br ${g.iconGradient} flex items-center justify-center mb-3 shrink-0`}>
+                <g.icon size={24} className="text-white" />
+              </div>
+              <div className="flex items-center gap-1.5 mb-2 flex-wrap">
+                {g.badge && (
+                  <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full text-white ${g.badge.type === "hot" ? "bg-gradient-to-r from-red-500 to-red-600" : "bg-gradient-to-r from-emerald-500 to-green-600"}`}>
+                    {g.badge.type === "hot" ? <Flame size={10} className="inline mr-0.5" /> : <Zap size={10} className="inline mr-0.5" />}
+                    {g.badge.text}
+                  </span>
+                )}
+                <span className="text-[10px] font-medium px-1.5 py-0.5 rounded-md" style={{ background: "rgba(255,255,255,0.08)", color: "rgba(255,255,255,0.6)" }}>{g.players}</span>
+              </div>
+              <h4 className="text-[15px] font-bold text-white mb-1">{g.title}</h4>
+              <p className="text-[11px] leading-relaxed mb-2" style={{ color: "#7C7A9E" }}>{g.desc}</p>
+              <div className="flex items-center gap-1.5">
+                <span className="text-[10px] font-semibold px-2 py-0.5 rounded-md" style={{ background: "rgba(245,158,11,0.15)", color: "#F59E0B" }}>
+                  <Zap size={9} className="inline mr-0.5" />{g.xp}
+                </span>
+                <span className="text-[10px]" style={{ color: "rgba(255,255,255,0.4)" }}>{g.time}</span>
+              </div>
+            </Link>
+          ))}
+        </div>
+
+        {/* Stats ringkas */}
+        <div className="mb-6 p-4 rounded-[20px] border" style={{ background: "#16122A", borderColor: "rgba(124,58,237,0.2)" }}>
+          <h3 className="text-xs font-bold uppercase tracking-wider mb-3" style={{ color: "#7C7A9E" }}>Statistik</h3>
+          <div className="flex items-center gap-4">
+            <div className="flex-1 text-center">
+              <p className="text-2xl font-extrabold text-white">{totalMain}</p>
+              <p className="text-[10px] font-semibold uppercase" style={{ color: "#7C7A9E" }}>Main</p>
+            </div>
+            <div className="w-px h-10" style={{ background: "rgba(255,255,255,0.07)" }} />
+            <div className="flex-1 text-center">
+              <p className="text-2xl font-extrabold" style={{ color: "#A855F7" }}>{winCount}</p>
+              <p className="text-[10px] font-semibold uppercase" style={{ color: "#7C7A9E" }}>Juara 1</p>
+            </div>
+            <div className="w-px h-10" style={{ background: "rgba(255,255,255,0.07)" }} />
+            <div className="flex-1 text-center">
+              <p className="text-2xl font-extrabold" style={{ color: "#10B981" }}>{totalXp.toLocaleString()}</p>
+              <p className="text-[10px] font-semibold uppercase" style={{ color: "#7C7A9E" }}>Total XP</p>
+            </div>
+          </div>
+        </div>
+
+        {/* League / Leaderboard */}
+        <div className="flex items-center justify-between mb-3.5">
+          <h3 className="text-[13px] font-bold tracking-[1.5px] uppercase" style={{ color: "#7C7A9E" }}>Liga Minggu Ini</h3>
+          <Link href="/arena/league" className="text-xs font-semibold" style={{ color: "#A855F7" }}>Lihat semua &rarr;</Link>
+        </div>
+
+        <div className="rounded-[20px] border overflow-hidden mb-6" style={{ background: "#16122A", borderColor: "rgba(124,58,237,0.2)" }}>
+          <div className="px-5 py-4 flex items-center justify-between border-b" style={{ borderColor: "rgba(255,255,255,0.05)" }}>
+            <h3 className="font-bold text-white flex items-center gap-2">
+              <Trophy size={16} className="text-amber-400" /> Liga Perunggu
+            </h3>
+            <div className="flex gap-1 p-0.5 rounded-[10px]" style={{ background: "rgba(255,255,255,0.05)" }}>
+              <span className="px-2.5 py-1 rounded-lg text-[11px] font-semibold text-white" style={{ background: "#7C3AED" }}>Harian</span>
+              <span className="px-2.5 py-1 rounded-lg text-[11px] font-semibold" style={{ color: "#7C7A9E" }}>Mingguan</span>
+            </div>
+          </div>
+
+          {topUsers.map((u, i) => {
+            const isMe = u.id === user.id
+            const rankColors = ["text-amber-400", "text-gray-400", "text-orange-700"]
+            const rankEmoji = i === 0 ? <Crown size={13} className="text-amber-400" /> : null
+            return (
+              <div key={u.id} className="px-5 py-3 flex items-center gap-3 transition-colors border-b last:border-b-0" style={{ borderColor: "rgba(255,255,255,0.04)", background: isMe ? "rgba(124,58,237,0.08)" : "transparent" }}>
+                <div className="w-6 text-center shrink-0">
+                  {rankEmoji || <span className={`text-sm font-extrabold ${rankColors[i] || ""}`} style={{ color: !rankColors[i] ? "#7C7A9E" : undefined }}>{i + 1}</span>}
+                </div>
+                <div className={`w-9 h-9 rounded-xl bg-gradient-to-br ${INITIALS_COLORS[i % INITIALS_COLORS.length]} flex items-center justify-center text-white text-sm font-bold shrink-0`}>
+                  {initials(u.name || "")}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold text-gray-900">{h.room?.code || "Gim"}</p>
-                  <p className="text-xs text-gray-400">{h.finalScore} poin • {waktuLalu(h.createdAt)}</p>
+                  <p className="text-sm font-semibold text-white truncate">
+                    {u.name}
+                    {isMe && <span className="text-[11px] font-medium ml-1" style={{ color: "#A855F7" }}>(Kamu)</span>}
+                  </p>
                 </div>
-                <span className="text-sm font-bold text-emerald-600">+{h.xpEarned || 0} XP</span>
+                <div className="text-right shrink-0">
+                  <p className="text-[15px] font-extrabold" style={{ color: "#A855F7" }}>{u.xp.toLocaleString()}</p>
+                  <p className="text-[10px]" style={{ color: "#7C7A9E" }}>XP</p>
+                </div>
               </div>
-            ))}
-          </div>
+            )
+          })}
         </div>
-      )}
+
+        {/* Riwayat */}
+        {hasilAkhir.length > 0 && (
+          <div>
+            <h3 className="text-[13px] font-bold tracking-[1.5px] uppercase mb-3.5" style={{ color: "#7C7A9E" }}>Riwayat</h3>
+            <div className="space-y-2">
+              {hasilAkhir.map((h: any) => (
+                <div key={h.id} className="flex items-center gap-3 p-3.5 rounded-2xl border" style={{ background: "#16122A", borderColor: "rgba(124,58,237,0.2)" }}>
+                  <div className={`w-10 h-10 rounded-xl bg-gradient-to-br flex items-center justify-center text-white text-sm font-bold shrink-0 ${h.rank === 1 ? "from-emerald-500 to-teal-600" : "from-gray-600 to-gray-700"}`}>
+                    {h.rank === 1 ? <Crown size={16} className="text-amber-400" /> : "#" + (h.rank || "-")}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-semibold text-white">{h.room?.code || "Gim"}</p>
+                    <p className="text-xs" style={{ color: "#7C7A9E" }}>{h.finalScore} poin &bull; {waktuLalu(h.createdAt)}</p>
+                  </div>
+                  <span className="text-sm font-bold" style={{ color: "#10B981" }}>+{h.xpEarned || 0} XP</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   )
 }
 
-function waktuLalu( tanggal: Date) {
+function waktuLalu(tanggal: Date) {
   const diff = Date.now() - new Date(tanggal).getTime()
   const menit = Math.floor(diff / 60000)
   if (menit < 1) return "baru saja"
