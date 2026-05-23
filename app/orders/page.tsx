@@ -65,7 +65,7 @@ export default function OrdersPage() {
                     "bg-red-50 text-red-700"
                   }`}>
                     {order.status === "PAID" || order.status === "COMPLETED" ? "Lunas" :
-                     order.status === "PENDING" ? "Menunggu" : "Gagal"}
+                     order.status === "PENDING" ? "Menunggu Pembayaran" : "Gagal"}
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
