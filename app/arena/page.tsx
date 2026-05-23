@@ -4,6 +4,7 @@ import { redirect } from "next/navigation"
 import Link from "next/link"
 import { Flame, Zap, Target, Bot, PenLine, Rocket, Star, Gift, Trophy, BookOpen, ChevronRight, Sparkles, Award, TrendingUp, Gamepad2 } from "lucide-react"
 import { trackDailyStreak, getOrCreateDailyQuests } from "@/lib/coins"
+import { TugasCard } from "./tugas-card"
 
 function xpProgress(xp: number, level: number) {
   const needed = level * 150
@@ -161,6 +162,9 @@ export default async function BerandaPage() {
           <ChevronRight className="w-4 h-4 text-gray-300" />
         </Link>
       )}
+
+      {/* Ruang Tugas */}
+      <TugasCard />
 
       {/* Aktivitas — FOMO */}
       {(aktivitas.length > 0 || juaraBaru.length > 0) && (

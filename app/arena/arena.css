@@ -71,3 +71,18 @@
 .animate-fade-in {
   animation: fade-in 0.5s ease-out;
 }
+
+/* Game fullscreen: expands main container and hides bottom nav */
+.arena-theme:has(.game-fullscreen) main {
+  max-width: 100% !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.arena-theme:has(.game-fullscreen) .safe-area-bottom {
+  display: none;
+}
+
+.arena-theme:has(.game-fullscreen) {
+  padding-bottom: 0 !important;
+}
