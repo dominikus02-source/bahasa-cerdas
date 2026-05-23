@@ -116,7 +116,30 @@ Transform BahasaCerdas into a social-creative platform for Bahasa Indonesia wher
 - 55+ models including User, Profile, UKBIQuestion, TKAQuestion, PaketKompetensi, StudentKarya, StudentKaryaLike, StudentKaryaComment, CoinTransaction, DailyQuest, StoreItem, UserItem, etc.
 - 20+ enums
 
-## Langkah 1 Complete (Schema + API) — May 22, 2026
+## Langkah 3 — Arena Matchmaking & Ruang Tugas — May 23, 2026
+
+### Auto-Matchmaking (Adu Cepat)
+- Full flow: Cari Lawan → Searching → Match Found → Countdown 3-2-1 → Battle → Result + XP → Main Lagi
+- Page: `/arena/game/adu-cepat` (client component)
+- Game server: added `join-queue`, `leave-queue`, `rematch` events + matchmaking queue + auto room creation
+- Socket client: added `onMatchFound`, `onMatchCountdown`, `onQueueStatus`, `onQueueTimeout`, `joinQueue`, `leaveQueue`, `rematch`
+- Game hub: added "Adu Cepat" card as first option with hot badge
+- Reuses existing GamePlay component during battle
+- Server deployment: `bash scripts/deploy-game-server.sh` (requires SSH access to VPS)
+
+### Perbaikan Game Pages
+- Added `.game-fullscreen` CSS class: expands main container, hides bottom nav for game pages
+- All 4 game wrappers (kuis-tempur, tebak-kata, susun-kata, katastra) use consistent back button style
+- Katastra: now renders in Arena (no redirect), fixed mobile layout (grid rewards, compact sizing)
+
+### Ruang Tugas
+- Page: `/arena/tugas` with 3 tabs (Tersedia/Dikerjakan/Selesai)
+- Card on Beranda: `TugasCard` component showing pending assignment count
+- Links to existing `/murid/tugasku/[id]/take` and `/murid/tugasku/[id]/result`
+- API: reuses existing `/api/murid/tugas`
+
+### Duplicate Misi
+- Removed Misi from quick actions (kept in quest progress card which shows progress bars)
 ### Database
 - New: `StudentKarya` model (PUISI, CERPEN, ARTIKEL, ANEKDOT, PANTUN, OPINI) — separate from marketplace Karya
 - New: `StudentKaryaLike` + `StudentKaryaComment` models
