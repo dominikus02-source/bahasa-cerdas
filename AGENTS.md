@@ -127,7 +127,21 @@ Transform BahasaCerdas into a social-creative platform for Bahasa Indonesia wher
 - Reuses existing GamePlay component during battle
 - Server deployment: `bash scripts/deploy-game-server.sh` (requires SSH access to VPS)
 
-### Perbaikan Game Pages
+#### Content Writing Convention (Belajar Page)
+The Belajar page auto-detects content types in `isi[]` strings:
+- `✓ teks` → green checkmark (benar/correct)
+- `✗ teks` → red X (salah/incorrect)
+- `1. teks` → numbered step with circle badge
+- `• teks` → bullet point
+- `PENTING: teks` → amber warning box
+- Lines starting with `BENAR:` / `SALAH:` → color-coded
+- `Tips ...` → blue tip box with Brain icon
+- Empty lines → spacer
+- `catatan` field → blue info box with Sparkles icon
+- `contoh[]` → amber-tinted section with examples
+- `rangkuman[]` → green summary box at end
+
+## Perbaikan Game Pages
 - Added `.game-fullscreen` CSS class: expands main container, hides bottom nav for game pages
 - All 4 game wrappers (kuis-tempur, tebak-kata, susun-kata, katastra) use consistent back button style
 - Katastra: now renders in Arena (no redirect), fixed mobile layout (grid rewards, compact sizing)
@@ -211,3 +225,12 @@ Transform BahasaCerdas into a social-creative platform for Bahasa Indonesia wher
 - Game server schema: /var/www/game-server/prisma/schema.prisma
 - Social/coins utility: lib/coins.ts
 - Student karya pages: app/(dashboard)/murid/karya/
+
+## Jalur Cerdas Content System (New)
+- **Per-unit files**: `scripts/seed/materi/01-ejaan-huruf-kapital.ts` etc — each unit in own file, independently editable
+- **Shared types**: `scripts/seed/types.ts` (Konten, Soal, makeSoal)
+- **Master seed**: `scripts/seed/seed-materi.ts` — looks up each unit by title in DB, updates its content JSON
+- **Flow**: edit unit file → `npx tsx scripts/seed/seed-materi.ts` → refresh browser
+- Seed does NOT drop/recreate units — only updates `content` field of matching titles
+- To add new units, add name+titles to the master seed's `units` array
+- Belajar page uses `app/arena/jalur-cerdas/[unitId]/belajar/page.tsx` with Duolingo-style UI: sticky progress bar, content-type detection (✓/✗/numbered/bullet/⚠️), card-by-card flow, animated transitions
