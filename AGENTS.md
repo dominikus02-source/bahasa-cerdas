@@ -5,7 +5,7 @@ This version has breaking changes — APIs, conventions, and file structure may 
 <!-- END:nextjs-agent-rules -->
 
 # BahasaCerdas Project Status
-## Last Updated: May 22, 2026
+## Last Updated: May 24, 2026
 
 ## Goal
 Transform BahasaCerdas into a social-creative platform for Bahasa Indonesia where students write daily (puisi, cerpen, artikel, anekdot, pantun), showcase works in social-style portfolios, earn Coin Cerdas, and compete in weekly leagues — UKBI/TKA as supporting features, not core.
@@ -178,13 +178,12 @@ Transform BahasaCerdas into a social-creative platform for Bahasa Indonesia wher
 
 ## Next Steps (Priority Order)
 
-1. **Deploy to Vercel** — git push uncommitted changes, redeploy to verify all new pages
-2. **Test full flow** — register murid → tulis karya → feed → like → comment → quest progress → koin → beli item → league
+1. **Seed DB & deploy** — `npx tsx scripts/seed-jalur-revamp.ts` to populate 25 units, then git push + Vercel deploy
+2. **Test full flow** — register murid → jalur cerdas → belajar → latihan → praktik → kuis → progress tracking
 3. **Guru-side social features** — guru dashboard juga perlu lihat feed karya murid, bisa like/comment
 4. **Featured system** — implement `isFeatured` flag + admin picks for "Karya Pilihan Hari Ini"
 5. **Notification system** — notif when someone likes/comments on your karya
-6. **Coin earning for guru** — what actions earn coins for teachers?
-7. **Game server fixes** — VPS reconnection, DNS, SSL
+6. **Game server fixes** — VPS reconnection, DNS, SSL
 
 ## Blockers
 - VPS SSH unreachable (server restarting)
@@ -192,27 +191,8 @@ Transform BahasaCerdas into a social-creative platform for Bahasa Indonesia wher
 - No SSL cert on game subdomain
 
 ## Uncommitted Changes (git status)
-- modified: prisma/schema.prisma (new models: StudentKarya, StudentKaryaLike, StudentKaryaComment, CoinTransaction, DailyQuest, StoreItem, UserItem + User fields)
-- new: app/api/siswa/karya/route.ts
-- new: app/api/siswa/karya/[id]/route.ts
-- new: app/api/siswa/karya/[id]/like/route.ts
-- new: app/api/siswa/karya/[id]/comment/route.ts
-- new: app/api/siswa/user/[id]/karya/route.ts
-- new: app/api/siswa/quest/route.ts
-- new: app/api/siswa/quest/claim/route.ts
-- new: app/api/siswa/store/route.ts
-- new: app/api/siswa/store/buy/route.ts
-- new: app/api/siswa/transactions/route.ts
-- new: app/api/siswa/league/route.ts
-- new: lib/coins.ts
-- new: scripts/seed-store.ts
-- new: app/(dashboard)/murid/karya/[id]/page.tsx
-- new: app/(dashboard)/murid/karya/tulis/page.tsx
-- new: app/(dashboard)/murid/kuest-harian/page.tsx
-- new: app/(dashboard)/murid/toko-koin/page.tsx
-- modified: app/(dashboard)/murid/beranda/page.tsx (social feed + league widget)
-- modified: app/(dashboard)/murid/profile/page.tsx (karya grid + coins)
-- modified: app/(dashboard)/murid/layout.tsx (sidebar nav additions)
+- modified: scripts/seed-jalur-revamp.ts (25 units with complete content — Levels 1-5: Dasar, Pembangun, Struktur, Teks, Kreatif)
+- modified: AGENTS.md (updated progress)
 
 ## GitHub
 - Repo: https://github.com/dominikus02-source/bahasa-cerdas
