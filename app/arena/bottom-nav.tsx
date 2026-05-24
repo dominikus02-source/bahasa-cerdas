@@ -23,6 +23,7 @@ export function BottomNav() {
             <Link
               key={item.href}
               href={item.href}
+              prefetch={true}
               className={`flex flex-col items-center gap-0.5 py-1 px-4 rounded-xl transition-all relative ${
                 aktif ? "text-violet-600" : "text-gray-400 hover:text-gray-600"
               }`}
