@@ -2,7 +2,7 @@
   "name": "BahasaCerdas Arena",
   "short_name": "Arena",
   "description": "Arena Bahasa Indonesia — belajar sambil main game bareng teman",
-  "start_url": "/arena/jalur-cerdas",
+  "start_url": "/",
   "display": "standalone",
   "background_color": "#f8fafc",
   "theme_color": "#7c3aed",
