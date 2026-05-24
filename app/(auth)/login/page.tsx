@@ -67,7 +67,7 @@ export default function LoginPage() {
       }
 
       const { user: dbUser } = await res.json();
-      window.location.href = dbUser.isFounder ? "/admin" : `/${dbUser.role.toLowerCase()}/beranda`;
+      window.location.href = dbUser.isFounder ? "/admin" : dbUser.role === "MURID" ? "/arena" : `/${dbUser.role.toLowerCase()}/beranda`;
     } catch {
       setError("Terjadi kesalahan. Silakan coba lagi.");
       setLoading(false);

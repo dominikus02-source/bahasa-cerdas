@@ -45,7 +45,7 @@ export default function OnboardingPage() {
         const res = await fetch("/api/user/me");
         const data = await res.json();
         if (data.user?.onboarded) {
-          router.replace(data.user.role === "GURU" ? "/guru/beranda" : "/murid/beranda");
+          router.replace(data.user.role === "GURU" ? "/guru/beranda" : "/arena");
           return;
         }
       } catch {}
@@ -63,7 +63,7 @@ export default function OnboardingPage() {
       });
       if (data?.user) {
         const role = data.user.user_metadata?.role || "murid";
-        router.replace(role === "GURU" ? "/guru/beranda" : "/murid/beranda");
+        router.replace(role === "GURU" ? "/guru/beranda" : "/arena");
         return;
       }
     } catch {}

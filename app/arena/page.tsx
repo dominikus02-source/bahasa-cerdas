@@ -9,6 +9,8 @@ import {
 } from "lucide-react"
 import { trackDailyStreak, getOrCreateDailyQuests } from "@/lib/coins"
 import { TugasCard } from "./tugas-card"
+import BattleCard from "@/components/arena/BattleCard"
+import LogoutButton from "@/components/arena/LogoutButton"
 
 function xpProgress(xp: number, level: number) {
   const needed = level * 150
@@ -140,6 +142,7 @@ export default async function BerandaPage() {
               <Bell size={18} className="text-white" />
               <div className="absolute top-[6px] right-[7px] w-2 h-2 bg-red-500 border-[1.5px] border-purple-700 rounded-full notif-pulse" />
             </Link>
+            <LogoutButton variant="icon" />
           </div>
 
           <div className="grid grid-cols-3 gap-2.5 mb-5">
@@ -195,34 +198,7 @@ export default async function BerandaPage() {
 
       {/* FOMO BATTLE CARD */}
       <div className="px-4 mt-4">
-        <Link href="/arena/game/adu-cepat" className="battle-card block active:scale-[0.98] transition-transform">
-          <div className="inline-flex items-center gap-1 bg-red-500 px-2 py-0.5 rounded-full text-[10px] font-extrabold text-white tracking-wider mb-2.5">
-            <span className="w-1.5 h-1.5 bg-white rounded-full live-dot2" />
-            LIVE NOW
-          </div>
-          <div className="flex items-center gap-2 mb-1">
-            <Swords size={18} className="text-pink-400" />
-            <h3 className="font-extrabold text-xl text-white">Adu Cepat Sedang Berlangsung</h3>
-          </div>
-          <p className="text-xs text-white/55 mb-3.5">{Math.max(recentBattles, onlineCount)} murid sedang bertanding sekarang — jangan ketinggalan!</p>
-          <div className="flex items-center mb-3.5">
-            {recentPlayers.slice(0, 5).map((r: any, i: number) => (
-              <div
-                key={r.userId}
-                className="w-7 h-7 rounded-[9px] border-2 border-[#2D1566] -ml-1.5 first:ml-0 flex items-center justify-center text-[11px] font-bold text-white"
-                style={{ background: ["#7C3AED", "#EC4899", "#10B981", "#F59E0B", "#06B6D4"][i] }}
-              >
-                {r.user?.fullName?.charAt(0).toUpperCase() || "?"}
-              </div>
-            ))}
-            <span className="ml-2 text-xs text-white/60">
-              +<strong className="text-white font-bold">{Math.max(0, onlineCount - recentPlayers.length)}</strong> lainnya online
-            </span>
-          </div>
-          <div className="w-full py-3 bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl text-center font-bold text-white text-sm flex items-center justify-center gap-2 shadow-lg shadow-purple-500/40">
-            <Zap size={16} /> Cari Lawan Sekarang
-          </div>
-        </Link>
+        <BattleCard onlineCount={onlineCount} recentBattles={recentBattles} recentPlayers={recentPlayers} />
       </div>
 
       {/* MISI HARIAN */}
@@ -342,29 +318,34 @@ export default async function BerandaPage() {
         <TugasCard pendingCount={tugasCount} />
       </div>
 
-      {/* JALUR CERDAS */}
-      <div className="beranda-section">
-        <Link href="/arena/jalur-cerdas" className="flex items-center gap-3 bg-gradient-to-r from-purple-600 to-violet-500 rounded-[20px] p-4.5 shadow-lg shadow-purple-500/30 active:scale-[0.98] transition-transform relative overflow-hidden">
-          <div className="absolute top-[-30px] right-[-30px] w-[120px] h-[120px] bg-white/10 rounded-full pointer-events-none" />
-          <div className="w-[52px] h-[52px] bg-white/20 rounded-[17px] flex items-center justify-center backdrop-blur shrink-0">
-            <Rocket size={26} className="text-white" />
+      {/* JALUR CERDAS — full width, no side padding */}
+      <div className="-mx-4 mt-5">
+        <Link href="/arena/jalur-cerdas" className="flex flex-col gap-3 bg-gradient-to-r from-purple-600 to-violet-500 px-5 py-4 shadow-lg shadow-purple-500/30 active:scale-[0.98] transition-transform relative overflow-hidden">
+          <div className="absolute top-[-30px] right-[-30px] w-[160px] h-[160px] bg-white/10 rounded-full pointer-events-none" />
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 bg-white/20 rounded-[16px] flex items-center justify-center backdrop-blur shrink-0">
+              <Rocket size={26} className="text-white" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <h4 className="font-extrabold text-lg text-white truncate">Jalur Cerdas</h4>
+              <p className="text-sm text-white/70 truncate">Belajar dari dasar sampai mahir</p>
+            </div>
+            <ChevronRight size={22} className="text-white/60 shrink-0" />
           </div>
-          <div className="flex-1">
-            <h4 className="font-extrabold text-base text-white">Jalur Cerdas</h4>
-            <p className="text-xs text-white/70 mb-2">Belajar dari dasar sampai mahir</p>
-            <div className="flex gap-3">
-              <span className="text-[11px] text-white/80 flex items-center gap-1 font-semibold">
-                <Trophy size={12} /> 4 Level
-              </span>
-              <span className="text-[11px] text-white/80 flex items-center gap-1 font-semibold">
-                <BookOpen size={12} /> 13 Materi
-              </span>
-              <span className="text-[11px] text-white/80 flex items-center gap-1 font-semibold">
-                <Zap size={12} /> 1.400 XP
-              </span>
+          <div className="flex gap-2">
+            <div className="flex-1 bg-white/10 rounded-xl py-2.5 px-2 text-center min-w-0">
+              <p className="font-extrabold text-lg text-white whitespace-nowrap">4 Level</p>
+              <p className="text-[10px] text-white/70 mt-0.5"><Trophy size={11} className="inline mr-0.5" />Tingkat</p>
+            </div>
+            <div className="flex-1 bg-white/10 rounded-xl py-2.5 px-2 text-center min-w-0">
+              <p className="font-extrabold text-lg text-white whitespace-nowrap">13 Materi</p>
+              <p className="text-[10px] text-white/70 mt-0.5"><BookOpen size={11} className="inline mr-0.5" />Pelajaran</p>
+            </div>
+            <div className="flex-1 bg-white/10 rounded-xl py-2.5 px-2 text-center min-w-0">
+              <p className="font-extrabold text-lg text-white whitespace-nowrap">1.400 XP</p>
+              <p className="text-[10px] text-white/70 mt-0.5"><Zap size={11} className="inline mr-0.5" />Total</p>
             </div>
           </div>
-          <ChevronRight size={20} className="text-white/60 shrink-0" />
         </Link>
       </div>
 
@@ -373,13 +354,21 @@ export default async function BerandaPage() {
         <div className="beranda-section">
           <div className="beranda-section-head">
             <h3 className="flex items-center gap-1.5">
-              <Trophy size={16} className="text-amber-500" /> Liga Perunggu
+              <Trophy size={16} className="text-amber-500" /> Liga
             </h3>
             <Link href="/arena/league" className="text-xs font-semibold text-purple-600">Lihat semua</Link>
           </div>
           <div className="liga-card">
+            <div className="flex border-b border-gray-200">
+              <Link href="/arena/league?tab=harian" className="flex-1 text-center py-2.5 text-xs font-semibold text-gray-500 border-b-2 border-transparent hover:text-purple-600 transition-colors">
+                Harian
+              </Link>
+              <Link href="/arena/league" className="flex-1 text-center py-2.5 text-xs font-bold text-purple-700 border-b-2 border-purple-600 transition-colors">
+                Mingguan
+              </Link>
+            </div>
             <div className="bg-gradient-to-r from-amber-500 to-orange-500 p-3 px-4 flex items-center justify-between">
-              <h4 className="font-extrabold text-sm text-white">Liga Minggu Ini</h4>
+              <h4 className="font-extrabold text-sm text-white">Peringkat Minggu Ini</h4>
               <div className="flex items-center gap-1 bg-black/20 px-2.5 py-1 rounded-[10px] text-[11px] font-bold text-white">
                 <Clock size={12} /> 5h 22m lagi
               </div>

@@ -1,7 +1,6 @@
 "use client"
 
 import { useState, useRef, useEffect } from "react"
-import { createClient } from "@/lib/supabase/client"
 import { Bot, Send, Sparkles, BookOpen, MessageSquare, PenTool, Globe, GraduationCap } from "lucide-react"
 
 const quickActions = [

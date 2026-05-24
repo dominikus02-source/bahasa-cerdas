@@ -316,13 +316,13 @@ export default function GameLobby({ isHost = false, roomCode: initialCode, onSta
           <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center mx-auto mb-4 shadow-lg">
             <Zap size={32} className="text-white" />
           </div>
-          <h1 className="text-3xl font-bold text-slate-900">Kuis Battle</h1>
+          <h1 className="text-3xl font-bold text-slate-900">Kuis Tempur</h1>
           <p className="text-slate-500 mt-2">Pilih mode dan ajak temanmu bertanding!</p>
         </div>
 
         {isHost && (
           <div className="mb-8">
-            <p className="text-sm font-semibold text-slate-700 mb-4">Pilih Mode Pertandingkan</p>
+            <p className="text-sm font-semibold text-slate-700 mb-4">Pilih Mode Permainan</p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {GAME_MODES.map((mode) => {
                 const ModeIcon = mode.icon;

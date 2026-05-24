@@ -4,6 +4,7 @@ import { redirect } from "next/navigation"
 import Link from "next/link"
 import { ArrowLeft, Heart, MessageCircle, Eye, Clock, Sparkles, BookOpen, FileText, Smile, Music, MessageSquare } from "lucide-react"
 import { ToggleLike } from "./toggle-like"
+import CommentSection from "@/components/arena/CommentSection"
 
 const typeIcon: Record<string, { icon: React.ReactNode }> = {
   PUISI: { icon: <Sparkles className="w-5 h-5" /> },
@@ -103,26 +104,12 @@ export default async function FeedDetailPage({ params }: { params: Promise<{ id:
 
       {/* Komentar */}
       <div className="px-4 pb-6">
-        <h2 className="font-bold text-gray-900 text-base mb-4">Komentar ({karya._count.comments})</h2>
-        {comments.length === 0 && (
-          <p className="text-sm text-gray-400 text-center py-6">Belum ada komentar. Jadilah yang pertama!</p>
-        )}
-        <div className="space-y-4">
-          {comments.map((c: any) => (
-            <div key={c.id} className="flex gap-3">
-              <div className="w-9 h-9 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center text-white font-bold text-sm shrink-0">
-                {c.user?.fullName?.charAt(0).toUpperCase() || "?"}
-              </div>
-              <div className="flex-1">
-                <div className="flex items-center gap-2">
-                  <p className="text-sm font-semibold text-gray-900">{c.user?.fullName}</p>
-                  <span className="text-xs text-gray-400">{waktuLalu(c.createdAt)}</span>
-                </div>
-                <p className="text-sm text-gray-700 mt-0.5">{c.content}</p>
-              </div>
-            </div>
-          ))}
-        </div>
+        <CommentSection
+          karyaId={karya.id}
+          initialComments={comments}
+          initialCount={karya._count.comments}
+          currentUserId={user.id}
+        />
       </div>
     </div>
   )

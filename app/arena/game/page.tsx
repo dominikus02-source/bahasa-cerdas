@@ -3,6 +3,7 @@ import { db } from "@/lib/db"
 import { redirect } from "next/navigation"
 import Link from "next/link"
 import { Zap, Swords, Puzzle, Trophy, Type, Flame, Users, Clock, Crown } from "lucide-react"
+import BattleCard from "@/components/arena/BattleCard"
 
 interface Game {
   title: string; desc: string; icon: any; href: string
@@ -34,7 +35,10 @@ export default async function ArenaGimPage() {
   const user = await getUser()
   if (!user) redirect("/auth/arena-login")
 
-  const [totalMain, hasilAkhir, topUsers] = await Promise.all([
+  const limaMenitLalu = new Date(Date.now() - 5 * 60 * 1000)
+  const sepuluhMenitLalu = new Date(Date.now() - 10 * 60 * 1000)
+
+  const [totalMain, hasilAkhir, topUsers, onlineCount, recentBattles, recentPlayers] = await Promise.all([
     db.gameResult.count({ where: { userId: user.id } }),
     db.gameResult.findMany({
       where: { userId: user.id },
@@ -47,6 +51,15 @@ export default async function ArenaGimPage() {
       orderBy: { xp: "desc" },
       take: 5,
       select: { id: true, fullName: true, xp: true },
+    }),
+    db.user.count({ where: { lastActiveAt: { gte: limaMenitLalu }, role: "MURID" } }),
+    db.gameResult.count({ where: { createdAt: { gte: sepuluhMenitLalu } } }),
+    db.gameResult.findMany({
+      where: { createdAt: { gte: sepuluhMenitLalu } },
+      include: { user: { select: { id: true, fullName: true } } },
+      orderBy: { createdAt: "desc" },
+      take: 5,
+      distinct: ["userId"],
     }),
   ])
 
@@ -71,35 +84,9 @@ export default async function ArenaGimPage() {
         </div>
 
         {/* Live battle banner */}
-        <Link href="/arena/game/adu-cepat" className="block relative overflow-hidden mb-6 rounded-[20px] active:scale-[0.98] transition-transform" style={{ background: "linear-gradient(135deg, #1a0533, #0d1f3c)", border: "1px solid rgba(124,58,237,0.4)" }}>
-          <div className="absolute -top-1/2 -right-1/4 w-[200px] h-[200px] rounded-full pointer-events-none" style={{ background: "radial-gradient(circle, rgba(124,58,237,0.3), transparent 70%)" }} />
-          <div className="absolute -bottom-1/3 left-1/4 w-[150px] h-[150px] rounded-full pointer-events-none" style={{ background: "radial-gradient(circle, rgba(236,72,153,0.2), transparent 70%)" }} />
-          <div className="relative z-10 p-5">
-            <div className="inline-flex items-center gap-1.5 bg-red-500 px-2.5 py-1 rounded-full text-[11px] font-bold tracking-wider mb-2.5 text-white">
-              <span className="w-1.5 h-1.5 bg-white rounded-full live-dot" />
-              LIVE
-            </div>
-            <div className="flex items-center gap-2 mb-1">
-              <Swords size={20} className="text-pink-400" />
-              <h2 className="text-[22px] font-extrabold text-white">Adu Cepat</h2>
-            </div>
-            <p className="text-sm mb-3.5" style={{ color: "rgba(255,255,255,0.6)" }}>Cari lawan langsung! Auto-matchmaking 1v1 real-time. Rebut XP & naik liga!</p>
-            <div className="flex gap-4 mb-3.5">
-              <span className="flex items-center gap-1.5 text-xs" style={{ color: "rgba(255,255,255,0.7)" }}>
-                <Users size={13} className="text-purple-400" /> 47 online
-              </span>
-              <span className="flex items-center gap-1.5 text-xs" style={{ color: "rgba(255,255,255,0.7)" }}>
-                <Zap size={13} className="text-amber-400" /> +150 XP
-              </span>
-              <span className="flex items-center gap-1.5 text-xs" style={{ color: "rgba(255,255,255,0.7)" }}>
-                <Clock size={13} /> ~5 menit
-              </span>
-            </div>
-            <div className="w-full py-3 rounded-xl text-center font-bold text-white text-[15px] flex items-center justify-center gap-2 shadow-lg" style={{ background: "linear-gradient(135deg, #7C3AED, #EC4899)", boxShadow: "0 4px 20px rgba(124,58,237,0.4)" }}>
-              <Swords size={16} /> Cari Lawan Sekarang
-            </div>
-          </div>
-        </Link>
+        <div className="mb-6">
+          <BattleCard onlineCount={onlineCount} recentBattles={recentBattles} recentPlayers={recentPlayers} />
+        </div>
 
         {/* Pilih Gim */}
         <div className="flex items-center justify-between mb-3.5">

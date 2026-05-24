@@ -1,8 +1,9 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Gift, Sparkles, Zap, Star, Heart, CheckCircle2, Trophy, Diamond, Gem, Flame } from "lucide-react"
 
+const STORAGE_KEY = "bc-kotak-harian"
 const boxList = [
   { hari: 1, label: "Hr 1", hadiah: "+50 XP", icon: Zap, warna: "from-amber-400 to-orange-500" },
   { hari: 2, label: "Hr 2", hadiah: "+5 Koin", icon: Star, warna: "from-blue-400 to-cyan-500" },
@@ -13,17 +14,49 @@ const boxList = [
   { hari: 7, label: "Hr 7", hadiah: "Mystery Box", icon: Gem, warna: "from-yellow-400 to-amber-500" },
 ]
 
+function getTodayKey(): string {
+  return new Date().toISOString().slice(0, 10)
+}
+
 export default function MysteryBoxPage() {
   const [phase, setPhase] = useState<"idle" | "shaking" | "opening" | "revealed">("idle")
+  const [claimedDays, setClaimedDays] = useState<number[]>([])
+  const rewardIdx = claimedDays.length % 7
+  const currentReward = boxList[rewardIdx]
+
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(`${STORAGE_KEY}-${getTodayKey()}`)
+      if (raw) {
+        const days: number[] = JSON.parse(raw)
+        setClaimedDays(days)
+      }
+    } catch { /* ignore */ }
+  }, [])
+
+  useEffect(() => {
+    try {
+      if (claimedDays.length > 0) {
+        localStorage.setItem(`${STORAGE_KEY}-${getTodayKey()}`, JSON.stringify(claimedDays))
+      }
+    } catch { /* ignore */ }
+  }, [claimedDays])
+
+  const isClaimed = (hari: number) => claimedDays.includes(hari)
+  const today = getTodayKey()
 
   const handleBuka = () => {
     if (phase !== "idle") return
     setPhase("shaking")
     setTimeout(() => setPhase("opening"), 600)
-    setTimeout(() => setPhase("revealed"), 1800)
+    setTimeout(() => {
+      setPhase("revealed")
+      const nextDay = (claimedDays.length % 7) + 1
+      if (!isClaimed(nextDay)) {
+        setClaimedDays(prev => [...prev, nextDay])
+      }
+    }, 1800)
   }
-
-  const rewardEmojis = ["✨", "🔥", "💎", "⭐", "🎉"]
 
   return (
     <div className="px-4 py-5 arena-page">
@@ -35,27 +68,6 @@ export default function MysteryBoxPage() {
       {/* Kotak utama */}
       <div className="flex flex-col items-center mb-6">
         <div className="relative" onClick={handleBuka}>
-          {/* Particle effects saat revealed */}
-          {phase === "revealed" && (
-            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-              {rewardEmojis.map((e, i) => (
-                <span
-                  key={i}
-                  className="absolute text-2xl animate-bounce"
-                  style={{
-                    animationDelay: `${i * 150}ms`,
-                    animationDuration: "1s",
-                    top: `${-20 + Math.random() * 60}%`,
-                    left: `${-20 + Math.random() * 60}%`,
-                  }}
-                >
-                  {e}
-                </span>
-              ))}
-            </div>
-          )}
-
-          {/* Lingkaran cahaya */}
           {phase === "revealed" && (
             <div className="absolute -inset-4 rounded-full bg-gradient-to-r from-yellow-300 via-amber-400 to-orange-400 opacity-30 animate-ping" />
           )}
@@ -75,8 +87,8 @@ export default function MysteryBoxPage() {
             {(phase === "shaking" || phase === "opening") && <Sparkles className="w-16 h-16 text-white" />}
             {phase === "revealed" && (
               <div className="text-center">
-                <Gem className="w-10 h-10 text-yellow-300 mx-auto mb-1" />
-                <p className="text-white font-bold text-xs">+50 XP</p>
+                <currentReward.icon className="w-10 h-10 text-yellow-300 mx-auto mb-1" />
+                <p className="text-white font-bold text-xs">{currentReward.hadiah}</p>
               </div>
             )}
           </div>
@@ -85,19 +97,16 @@ export default function MysteryBoxPage() {
           {phase === "idle" && "Ketuk untuk membuka"}
           {phase === "shaking" && "Bersiaplah..."}
           {phase === "opening" && "Membuka..."}
-          {phase === "revealed" && "Selamat! 🎉"}
+          {phase === "revealed" && "Hadiah diklaim!"}
         </p>
         <p className="text-sm text-gray-400">Buka setiap hari untuk hadiah spesial</p>
       </div>
 
-      {/* Animasi reward terakhir */}
       {phase === "revealed" && (
         <div className="text-center mb-6 animate-fade-in">
           <div className="inline-flex items-center gap-2 bg-gradient-to-r from-amber-500 to-orange-600 text-white px-6 py-3 rounded-2xl shadow-lg shadow-amber-200">
-            <Zap className="w-5 h-5" />
-            <span className="font-bold">+50 XP</span>
-            <Star className="w-5 h-5" />
-            <span className="font-bold">+5 Koin</span>
+            <currentReward.icon className="w-5 h-5" />
+            <span className="font-bold">{currentReward.hadiah}</span>
           </div>
         </div>
       )}
@@ -107,13 +116,13 @@ export default function MysteryBoxPage() {
       <div className="flex gap-2 mb-6">
         {boxList.map((box) => {
           const Icon = box.icon
-          const aktif = (box.hari === 1 && phase !== "idle") || (box.hari === 1 && phase === "revealed")
+          const claimed = isClaimed(box.hari)
           return (
-            <div key={box.hari} className={`flex-1 flex flex-col items-center gap-1 p-2.5 rounded-xl border transition-all ${aktif ? "bg-violet-50 border-violet-200" : "bg-gray-50 border-gray-100"}`}>
-              <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${box.warna} flex items-center justify-center text-white`}>
-                <Icon className="w-4 h-4" />
+            <div key={box.hari} className={`flex-1 flex flex-col items-center gap-1 p-2.5 rounded-xl border transition-all ${claimed ? "bg-gray-100 border-gray-200 opacity-50" : claimedDays.length > 0 && claimedDays[claimedDays.length - 1] === box.hari - 1 ? "bg-violet-50 border-violet-200" : "bg-gray-50 border-gray-100"}`}>
+              <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${claimed ? "from-gray-300 to-gray-400" : box.warna} flex items-center justify-center text-white`}>
+                {claimed ? <CheckCircle2 className="w-4 h-4" /> : <Icon className="w-4 h-4" />}
               </div>
-              <span className="text-[10px] font-medium text-gray-600">{box.label}</span>
+              <span className={`text-[10px] font-medium ${claimed ? "text-gray-400 line-through" : "text-gray-600"}`}>{box.label}</span>
             </div>
           )
         })}

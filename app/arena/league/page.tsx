@@ -2,7 +2,7 @@ import { getUser } from "@/lib/supabase/server"
 import { db } from "@/lib/db"
 import { redirect } from "next/navigation"
 import Link from "next/link"
-import { Trophy, Medal, Crown, Diamond, TrendingUp, ChevronRight } from "lucide-react"
+import { Medal, Crown, Diamond } from "lucide-react"
 
 const TIER_ICON: Record<string, React.ReactNode> = {
   BRONZE: <Medal className="w-8 h-8 text-amber-700" />,
@@ -16,38 +16,96 @@ const TIER_COLOR: Record<string, string> = {
 }
 const TIER_LABEL: Record<string, string> = { BRONZE: "Perunggu", SILVER: "Perak", GOLD: "Emas", DIAMOND: "Berlian" }
 
-export default async function LeaguePage() {
+export default async function LeaguePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ tab?: string }>
+}) {
   const user = await getUser()
   if (!user) redirect("/auth/arena-login")
 
-  const topUsers = await db.user.findMany({
-    where: { role: "MURID", xp: { gt: 0 } },
-    orderBy: { xp: "desc" },
-    take: 50,
-    select: { id: true, fullName: true, avatar: true, xp: true, level: true, coins: true, streak: true },
-  })
+  const { tab } = await searchParams
+  const isHarian = tab === "harian"
 
-  const myRank = topUsers.findIndex(u => u.id === user.id) + 1
-  const userTier = user.xp >= 10000 ? "DIAMOND" : user.xp >= 5000 ? "GOLD" : user.xp >= 2000 ? "SILVER" : "BRONZE"
+  let topUsers: any[]
+  let myXP = 0
+
+  if (isHarian) {
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+    const dailyResults = await db.gameResult.groupBy({
+      by: ["userId"],
+      where: { createdAt: { gte: today }, user: { role: "MURID" } },
+      _sum: { xpEarned: true },
+      orderBy: { _sum: { xpEarned: "desc" } },
+      take: 50,
+    })
+    const userIds = dailyResults.map(r => r.userId).filter(Boolean)
+    const users = await db.user.findMany({
+      where: { id: { in: userIds } },
+      select: { id: true, fullName: true, avatar: true, xp: true, level: true, coins: true, streak: true },
+    })
+    const userMap = Object.fromEntries(users.map(u => [u.id, u]))
+    topUsers = dailyResults.map(r => ({
+      ...userMap[r.userId],
+      id: r.userId,
+      todayXP: r._sum.xpEarned || 0,
+    })).filter(u => u.fullName)
+
+    const myToday = dailyResults.find(r => r.userId === user.id)
+    myXP = myToday?._sum.xpEarned || 0
+  } else {
+    const allUsers = await db.user.findMany({
+      where: { role: "MURID", xp: { gt: 0 } },
+      orderBy: { xp: "desc" },
+      take: 50,
+      select: { id: true, fullName: true, avatar: true, xp: true, level: true, coins: true, streak: true },
+    })
+    topUsers = allUsers
+    myXP = user.xp || 0
+  }
+
+  const myRank = topUsers.findIndex((u: any) => u.id === user.id) + 1
+  const userTier = (user.xp || 0) >= 10000 ? "DIAMOND" : user.xp >= 5000 ? "GOLD" : user.xp >= 2000 ? "SILVER" : "BRONZE"
   const nextTierXP = userTier === "BRONZE" ? 2000 : userTier === "SILVER" ? 5000 : userTier === "GOLD" ? 10000 : null
   const nextTierName = userTier === "BRONZE" ? "Perak" : userTier === "SILVER" ? "Emas" : userTier === "GOLD" ? "Berlian" : null
 
   return (
-    <div className="px-4 py-5">
+    <div className="px-4 py-5 arena-page">
       <h1 className="text-xl font-extrabold text-gray-900 mb-1">Liga</h1>
-      <p className="text-sm text-gray-500 mb-5">Peringkat mingguan — 50 murid teratas</p>
+      <p className="text-sm text-gray-500 mb-5">Peringkat — 50 murid teratas</p>
+
+      {/* Tab */}
+      <div className="flex gap-2 mb-5">
+        <Link
+          href="/arena/league"
+          className={`px-4 py-1.5 text-sm font-semibold rounded-full transition-all ${
+            !isHarian ? "bg-violet-600 text-white shadow" : "bg-gray-100 text-gray-500"
+          }`}
+        >
+          Mingguan
+        </Link>
+        <Link
+          href="/arena/league?tab=harian"
+          className={`px-4 py-1.5 text-sm font-semibold rounded-full transition-all ${
+            isHarian ? "bg-violet-600 text-white shadow" : "bg-gray-100 text-gray-500"
+          }`}
+        >
+          Harian
+        </Link>
+      </div>
 
       {/* Kartu peringkatku */}
       <div className={`bg-gradient-to-br ${TIER_COLOR[userTier]} rounded-2xl p-4 mb-6 shadow-lg`}>
         <div className="flex items-center gap-3">
           <div>{TIER_ICON[userTier]}</div>
           <div className="flex-1">
-            <p className="text-lg font-bold text-white">Peringkat #{myRank || "-"}</p>
-            <p className="text-sm text-white/80">{user.xp?.toLocaleString() || 0} XP</p>
+            <p className="text-lg font-bold text-white">Peringkat #{myRank > 0 ? myRank : "-"}</p>
+            <p className="text-sm text-white/80">{myXP.toLocaleString()} XP {isHarian ? "hari ini" : ""}</p>
           </div>
           <div className="text-right">
             <p className="text-xs text-white/70 uppercase tracking-wider">{TIER_LABEL[userTier]}</p>
-            {nextTierXP && nextTierName && (
+            {!isHarian && nextTierXP && nextTierName && (
               <p className="text-[10px] text-white/60">{nextTierXP - (user.xp || 0)} XP lagi ke {nextTierName}</p>
             )}
           </div>
@@ -55,9 +113,11 @@ export default async function LeaguePage() {
       </div>
 
       {/* Daftar peringkat */}
-      <h2 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Papan Peringkat</h2>
+      <h2 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">
+        {isHarian ? "XP Hari Ini" : "Papan Peringkat"}
+      </h2>
       <div className="space-y-2">
-        {topUsers.map((u, idx) => {
+        {topUsers.map((u: any, idx: number) => {
           const isMe = u.id === user.id
           const rank = idx + 1
           return (
@@ -84,12 +144,14 @@ export default async function LeaguePage() {
                   {u.fullName}
                   {isMe && <span className="text-[10px] text-violet-600 ml-1">(kamu)</span>}
                 </p>
-                <p className="text-[10px] text-gray-400">Level {u.level} • Streak {u.streak || 0}</p>
+                <p className="text-[10px] text-gray-400">Level {u.level || 0} • Streak {u.streak || 0}</p>
               </div>
 
               <div className="text-right">
-                <p className="text-sm font-bold text-gray-900">{u.xp?.toLocaleString()}</p>
-                <p className="text-[10px] text-gray-400">XP</p>
+                <p className="text-sm font-bold text-gray-900">
+                  {isHarian ? (u.todayXP?.toLocaleString() || "0") : u.xp?.toLocaleString()}
+                </p>
+                <p className="text-[10px] text-gray-400">XP{isHarian ? " hari ini" : ""}</p>
               </div>
             </Link>
           )

@@ -23,6 +23,20 @@ export default function ArenaLoginPage() {
     }
   }, [])
 
+  const checkArenaAccess = async (supabase: any) => {
+    const { data: userData } = await supabase.auth.getUser()
+    if (!userData?.user) return false
+    const res = await fetch("/api/me")
+    if (!res.ok) return false
+    const me = await res.json()
+    if (me.role !== "MURID" && !me.isFounder) {
+      await supabase.auth.signOut()
+      setError("Akun ini bukan akun murid. Silakan login di dasbor guru.")
+      return false
+    }
+    return true
+  }
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
@@ -46,7 +60,10 @@ export default function ArenaLoginPage() {
       return
     }
 
-    router.push("/arena/jalur-cerdas")
+    const ok = await checkArenaAccess(supabase)
+    if (!ok) { setLoading(false); return }
+
+    router.push("/arena")
   }
 
   const handleGoogle = async () => {
@@ -55,7 +72,7 @@ export default function ArenaLoginPage() {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: `${location.origin}/auth/callback?next=/arena/jalur-cerdas`,
+        redirectTo: `${location.origin}/auth/callback?next=/arena`,
       },
     })
     if (error) setError(error.message)
@@ -66,7 +83,19 @@ export default function ArenaLoginPage() {
   return (
     <>
       <SwRegister />
-      <div className="min-h-dvh bg-gradient-to-b from-violet-600 via-violet-500 to-purple-600 flex flex-col">
+      <div className="min-h-dvh bg-gradient-to-b from-violet-600 via-violet-500 to-purple-600 flex flex-col relative overflow-hidden">
+        {/* Batik motif background */}
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            backgroundImage: "url('/batik%20bg%20bc.png')",
+            backgroundSize: "400px",
+            backgroundRepeat: "repeat",
+            backgroundPosition: "center",
+            opacity: 0.08,
+            mixBlendMode: "overlay",
+          }}
+        />
         <div className="flex-1 flex flex-col items-center justify-center px-6 pt-12">
         <div className="w-20 h-20 rounded-3xl bg-white/20 backdrop-blur flex items-center justify-center mb-4 shadow-2xl">
           <svg className="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 24 24">

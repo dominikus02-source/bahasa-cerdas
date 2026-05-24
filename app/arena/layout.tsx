@@ -6,10 +6,11 @@ import { Compass, Flame, Gamepad2, MessageCircle, Trophy } from "lucide-react"
 import { SwRegister } from "@/components/SwRegister"
 import { ArenaClientWrapper } from "./arena-client"
 import { BottomNav } from "./bottom-nav"
+import LogoutButton from "@/components/arena/LogoutButton"
 
 const navItems = [
   { href: "/arena", label: "Beranda", icon: Compass },
-  { href: "/arena/feed", label: "Feed", icon: Flame },
+  { href: "/arena/feed", label: "Karya", icon: Flame },
   { href: "/arena/game", label: "Gim", icon: Gamepad2 },
   { href: "/arena/league", label: "Liga", icon: Trophy },
   { href: "/arena/chat", label: "Chat", icon: MessageCircle },
@@ -51,6 +52,7 @@ export default async function ArenaLayout({ children }: { children: React.ReactN
         >
           Dasbor Lama
         </Link>
+        <LogoutButton />
       </header>
 
       <main className="mx-auto max-w-lg md:max-w-4xl px-0 md:px-6 py-0 md:py-6">

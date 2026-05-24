@@ -6,7 +6,7 @@ import { Compass, Flame, Gamepad2, MessageCircle } from "lucide-react"
 
 const items = [
   { href: "/arena", label: "Beranda", icon: Compass },
-  { href: "/arena/feed", label: "Feed", icon: Flame },
+  { href: "/arena/feed", label: "Karya", icon: Flame },
   { href: "/arena/game", label: "Gim", icon: Gamepad2 },
   { href: "/arena/chat", label: "Chat", icon: MessageCircle },
 ]

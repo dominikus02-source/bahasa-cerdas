@@ -24,6 +24,13 @@ const iconMap: Record<string, ReactNode> = {
   "🎯": <Target className="w-6 h-6 text-white" />,
 }
 
+interface KontenUnit {
+  belajar: { tujuan: string[]; materi: { judul: string; isi: string[]; contoh: string[]; catatan?: string }[]; rangkuman: string[] }
+  latihan: any[]
+  praktik: { petunjuk: string; tips: string[]; contoh?: string }
+  kuis: any[]
+}
+
 function getUnitIcon(emoji: string | null, fallback: ReactNode = <BookOpen className="w-6 h-6 text-white" />): ReactNode {
   return emoji && iconMap[emoji] ? iconMap[emoji] : fallback
 }
@@ -41,6 +48,13 @@ export default async function UnitDetailPage({ params }: { params: Promise<{ uni
 
   if (!unit) redirect("/arena/jalur-cerdas")
 
+  let konten: KontenUnit | null = null
+  try { konten = unit.content ? JSON.parse(unit.content) : null } catch {}
+  const hasBelajar = konten?.belajar?.materi?.length > 0
+  const hasLatihan = konten?.latihan?.length > 0
+  const hasPraktik = konten?.praktik?.petunjuk
+  const hasKuis = konten?.kuis?.length > 0
+
   const progress = await db.userUnitProgress.findUnique({
     where: { userId_unitId: { userId: user.id, unitId } },
   })
@@ -48,7 +62,7 @@ export default async function UnitDetailPage({ params }: { params: Promise<{ uni
   const isCompleted = progress?.completed ?? false
 
   return (
-    <div className="px-4 py-6">
+    <div className="px-4 py-6 arena-page">
       <Link href="/arena/jalur-cerdas" className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-violet-600 mb-4">
         <ArrowLeft className="w-4 h-4" />
         Kembali
@@ -77,33 +91,33 @@ export default async function UnitDetailPage({ params }: { params: Promise<{ uni
           icon={<BookOpen className="w-5 h-5 text-violet-500" />}
           title="Belajar"
           description="Baca teori, lihat contoh nyata"
-          href={`#`}
+          href={hasBelajar ? `/arena/jalur-cerdas/${unitId}/belajar` : `#`}
           color="violet"
-          isComingSoon={!unit.content}
+          isComingSoon={!hasBelajar}
         />
         <SectionCard
           icon={<PenLine className="w-5 h-5 text-emerald-500" />}
           title="Latihan"
-          description="Kerjakan soal HOTS"
-          href={`#`}
+          description="Kerjakan soal pilihan ganda"
+          href={hasLatihan ? `/arena/jalur-cerdas/${unitId}/latihan` : `#`}
           color="emerald"
-          isComingSoon={true}
+          isComingSoon={!hasLatihan}
         />
         <SectionCard
           icon={<Swords className="w-5 h-5 text-orange-500" />}
-          title="Praktek"
+          title="Praktik"
           description="Tulis karya sesuai materi"
-          href={`#`}
+          href={hasPraktik ? `/arena/jalur-cerdas/${unitId}/praktik` : `#`}
           color="orange"
-          isComingSoon={true}
+          isComingSoon={!hasPraktik}
         />
         <SectionCard
           icon={<Swords className="w-5 h-5 text-rose-500" />}
           title="Kuis"
-          description="Uji pemahaman dengan game"
-          href={`#`}
+          description="Uji pemahaman dengan soal"
+          href={hasKuis ? `/arena/jalur-cerdas/${unitId}/kuis` : `#`}
           color="rose"
-          isComingSoon={true}
+          isComingSoon={!hasKuis}
         />
       </div>
 

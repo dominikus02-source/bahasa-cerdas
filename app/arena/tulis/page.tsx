@@ -1,7 +1,7 @@
 "use client"
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
+import { useState, useEffect } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
 import { PenLine, Send, Image, Sparkles, BookOpen, FileText, Smile, Music, MessageSquare } from "lucide-react"
 
 const karyaTypes = [
@@ -15,7 +15,15 @@ const karyaTypes = [
 
 export default function ArenaTulisPage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [type, setType] = useState("PUISI")
+
+  useEffect(() => {
+    const t = searchParams.get("type")
+    if (t && karyaTypes.some(kt => kt.value === t)) {
+      setType(t)
+    }
+  }, [searchParams])
   const [title, setTitle] = useState("")
   const [content, setContent] = useState("")
   const [coverUrl, setCoverUrl] = useState("")
@@ -41,7 +49,7 @@ export default function ArenaTulisPage() {
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || "Gagal menyimpan")
-      router.push(`/murid/karya/${data.id}`)
+      router.push(`/arena/feed/${data.id}`)
       router.refresh()
     } catch (err: any) {
       setError(err.message)
@@ -50,7 +58,7 @@ export default function ArenaTulisPage() {
   }
 
   return (
-    <div className="px-4 py-5">
+    <div className="px-4 py-5 arena-page">
       <div className="mb-6">
         <h1 className="text-xl font-extrabold text-gray-900">Tulis Karya</h1>
         <p className="text-sm text-gray-500 mt-1">Bagikan karyamu ke seluruh Indonesia!</p>

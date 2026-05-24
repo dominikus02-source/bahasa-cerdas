@@ -1,7 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
-const publicPaths = ["/", "/login", "/register", "/confirm", "/verify-email", "/onboarding", "/api"];
+const publicPaths = ["/", "/login", "/auth/arena-login", "/register", "/confirm", "/verify-email", "/onboarding", "/api"];
 
 export async function updateSession(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -40,8 +40,8 @@ export async function updateSession(request: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) {
-    const loginUrl = new URL("/login", request.url);
-    loginUrl.searchParams.set("redirect", pathname);
+    const next = pathname.startsWith("/arena") ? "/auth/arena-login" : "/login";
+    const loginUrl = new URL(next, request.url);
     return NextResponse.redirect(loginUrl);
   }
 

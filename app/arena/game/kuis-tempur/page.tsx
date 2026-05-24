@@ -12,7 +12,7 @@ export default function KuisTempurPage() {
   }, [])
 
   return (
-    <div className="min-h-screen relative">
+    <div className="game-fullscreen relative">
       <button
         onClick={handleBack}
         className="fixed top-3 left-3 z-[70] w-9 h-9 rounded-xl bg-white/90 backdrop-blur-md border border-gray-200 shadow-md flex items-center justify-center text-gray-700 hover:bg-white active:scale-95 transition-all arena-btn"

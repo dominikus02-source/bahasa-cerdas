@@ -18,7 +18,7 @@ export default function RegisterPage() {
   const [city, setCity] = useState("");
   const [province, setProvince] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [role, setRole] = useState<"GURU" | "MURID">("GURU");
+  const [role, setRole] = useState<"GURU" | "MURID">("MURID");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [registered, setRegistered] = useState(false);
@@ -317,7 +317,7 @@ export default function RegisterPage() {
               </p>
               <div className="pt-4">
                 <Link
-                  href="/login"
+                  href="/auth/arena-login"
                   className={`inline-flex items-center gap-2 px-6 py-3 rounded-xl font-bold shadow-lg bg-gradient-to-r ${config.gradient} text-white hover:opacity-90 transition-opacity`}
                 >
                   Masuk Sekarang
@@ -330,8 +330,8 @@ export default function RegisterPage() {
           <div className="mt-6 pt-5 border-t border-gray-100 text-center">
             <p className="text-sm text-gray-500">
               Sudah punya akun?{" "}
-              <Link href="/login" className="font-semibold text-red-600 hover:text-red-700 hover:underline">
-                Masuk di sini
+              <Link href="/auth/arena-login" className="font-semibold text-violet-600 hover:text-violet-700 hover:underline">
+                Masuk ke Arena
               </Link>
             </p>
           </div>
