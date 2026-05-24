@@ -1,11 +1,104 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, useCallback } from "react"
 import { useParams, useRouter } from "next/navigation"
-import { ArrowLeft, BookOpen, Lightbulb, CheckCircle2, Sparkles, ChevronRight } from "lucide-react"
+import { ArrowLeft, BookOpen, Lightbulb, CheckCircle2, XCircle, Sparkles, ChevronRight, Star, Brain, AlertTriangle, Target } from "lucide-react"
 
 interface KontenUnit {
   belajar: { tujuan: string[]; materi: { judul: string; isi: string[]; contoh: string[]; catatan?: string }[]; rangkuman: string[] }
+}
+
+function parseLine(line: string) {
+  const trimmed = line.trim()
+  if (!trimmed) return { type: "spacer" as const }
+  if (trimmed.startsWith("✓ ")) return { type: "benar" as const, text: trimmed.slice(2) }
+  if (trimmed.startsWith("✗ ")) return { type: "salah" as const, text: trimmed.slice(2) }
+  if (/^\d+\./.test(trimmed)) return { type: "numbered" as const, text: trimmed }
+  if (trimmed.startsWith("•")) return { type: "bullet" as const, text: trimmed }
+  if (trimmed.startsWith("BENAR:")) return { type: "benar-label" as const, text: trimmed.slice(6).trim() }
+  if (trimmed.startsWith("SALAH:")) return { type: "salah-label" as const, text: trimmed.slice(6).trim() }
+  if (trimmed.startsWith("PENTING:")) return { type: "penting" as const, text: trimmed.slice(8).trim() }
+  if (trimmed.startsWith("──")) return { type: "table-header" as const, text: trimmed }
+  if (trimmed.startsWith("│")) return { type: "table-row" as const, text: trimmed }
+  if (trimmed.startsWith("Tips")) return { type: "tip" as const, text: trimmed }
+  return { type: "text" as const, text: trimmed }
+}
+
+function ContentLine({ line, index }: { line: string; index: number }) {
+  const p = parseLine(line)
+
+  if (p.type === "spacer") return <div className="h-2" />
+
+  if (p.type === "benar")
+    return (
+      <div className="flex items-start gap-2 py-0.5">
+        <CheckCircle2 className="w-4 h-4 text-emerald-500 mt-0.5 shrink-0" />
+        <span className="text-sm text-emerald-800 font-medium">{p.text}</span>
+      </div>
+    )
+
+  if (p.type === "salah")
+    return (
+      <div className="flex items-start gap-2 py-0.5">
+        <XCircle className="w-4 h-4 text-red-400 mt-0.5 shrink-0" />
+        <span className="text-sm text-red-600">{p.text}</span>
+      </div>
+    )
+
+  if (p.type === "benar-label")
+    return (
+      <div className="flex items-start gap-2 py-0.5">
+        <CheckCircle2 className="w-4 h-4 text-emerald-500 mt-0.5 shrink-0" />
+        <span className="text-sm text-emerald-800 font-medium">{p.text}</span>
+      </div>
+    )
+
+  if (p.type === "salah-label")
+    return (
+      <div className="flex items-start gap-2 py-0.5">
+        <XCircle className="w-4 h-4 text-red-400 mt-0.5 shrink-0" />
+        <span className="text-sm text-red-600">{p.text}</span>
+      </div>
+    )
+
+  if (p.type === "numbered")
+    return (
+      <div className="flex items-start gap-2 py-1">
+        <span className="w-5 h-5 rounded-full bg-violet-100 text-violet-700 text-[10px] font-bold flex items-center justify-center shrink-0 mt-0.5">
+          {p.text.match(/^(\d+)/)?.[1]}
+        </span>
+        <span className="text-sm text-gray-700">{p.text.replace(/^\d+\.\s*/, "")}</span>
+      </div>
+    )
+
+  if (p.type === "bullet")
+    return (
+      <div className="flex items-start gap-2 py-0.5">
+        <span className="w-1.5 h-1.5 bg-violet-300 rounded-full mt-2 shrink-0" />
+        <span className="text-sm text-gray-700">{p.text.slice(1).trim()}</span>
+      </div>
+    )
+
+  if (p.type === "penting")
+    return (
+      <div className="flex items-start gap-2 p-3 bg-amber-50 border border-amber-100 rounded-xl my-2">
+        <AlertTriangle className="w-4 h-4 text-amber-500 mt-0.5 shrink-0" />
+        <span className="text-sm text-amber-800 font-medium">{p.text}</span>
+      </div>
+    )
+
+  if (p.type === "table-header" || p.type === "table-row")
+    return <span className="text-sm text-gray-600 font-mono text-xs whitespace-pre">{p.text}</span>
+
+  if (p.type === "tip")
+    return (
+      <div className="flex items-start gap-2 p-3 bg-blue-50 border border-blue-100 rounded-xl my-2">
+        <Brain className="w-4 h-4 text-blue-500 mt-0.5 shrink-0" />
+        <span className="text-sm text-blue-700">{p.text.replace(/^Tips\s*/i, "")}</span>
+      </div>
+    )
+
+  return <p className="text-sm text-gray-700 leading-relaxed">{line}</p>
 }
 
 export default function BelajarPage() {
@@ -14,7 +107,7 @@ export default function BelajarPage() {
   const [unit, setUnit] = useState<any>(null)
   const [konten, setKonten] = useState<KontenUnit["belajar"] | null>(null)
   const [loading, setLoading] = useState(true)
-  const [progress, setProgress] = useState(0)
+  const [activeIdx, setActiveIdx] = useState(0)
 
   useEffect(() => {
     fetch(`/api/jalur-cerdas/${unitId}`)
@@ -27,21 +120,22 @@ export default function BelajarPage() {
       .finally(() => setLoading(false))
   }, [unitId])
 
-  const total = konten?.materi.length || 1
-  const selesai = () => {
-    const next = progress + 1
-    setProgress(next >= total ? total : next)
-    if (next >= total) {
+  const total = konten?.materi.length || 0
+  const isLast = activeIdx >= total - 1
+  const selesai = useCallback(() => {
+    if (isLast) {
       router.push(`/arena/jalur-cerdas/${unitId}`)
+    } else {
+      setActiveIdx(i => i + 1)
+      window.scrollTo({ top: 0, behavior: "smooth" })
     }
-  }
+  }, [isLast, router, unitId])
 
   if (loading) return (
     <div className="px-4 py-6 arena-page space-y-4 animate-pulse">
-      <div className="h-8 bg-gray-200 rounded w-1/3" />
-      <div className="h-4 bg-gray-100 rounded w-2/3" />
-      <div className="h-40 bg-gray-100 rounded-2xl" />
-      <div className="h-20 bg-gray-100 rounded-2xl" />
+      <div className="h-6 bg-gray-200 rounded w-1/3" />
+      <div className="h-24 bg-gray-100 rounded-2xl" />
+      {[1, 2, 3].map(i => <div key={i} className="h-40 bg-gray-100 rounded-2xl" />)}
     </div>
   )
 
@@ -53,115 +147,164 @@ export default function BelajarPage() {
     </div>
   )
 
+  const m = konten.materi[activeIdx]
+
   return (
-    <div className="px-4 py-6 arena-page">
-      {/* Header */}
-      <div className="flex items-center gap-3 mb-6">
-        <button onClick={() => router.back()} className="w-9 h-9 rounded-xl bg-gray-100 flex items-center justify-center shrink-0 hover:bg-gray-200 transition-colors">
-          <ArrowLeft className="w-5 h-5 text-gray-600" />
-        </button>
-        <div>
-          <p className="text-xs text-violet-600 font-semibold">{unit?.level?.title || unit?.title}</p>
-          <h1 className="text-lg font-bold text-gray-900">Belajar</h1>
-        </div>
-        <div className="ml-auto text-right">
-          <p className="text-xs font-bold text-violet-600">{progress}/{total} selesai</p>
-          <div className="w-16 h-1.5 bg-gray-200 rounded-full mt-1 overflow-hidden">
-            <div className="h-full bg-violet-500 rounded-full transition-all" style={{ width: `${(progress / total) * 100}%` }} />
-          </div>
-        </div>
-      </div>
-
-      {/* Tujuan */}
-      {konten.tujuan.length > 0 && (
-        <div className="bg-violet-50 border border-violet-200 rounded-2xl p-4 mb-5">
-          <div className="flex items-center gap-2 mb-2">
-            <Lightbulb className="w-4 h-4 text-violet-600" />
-            <p className="text-xs font-bold text-violet-700 uppercase tracking-wider">Tujuan Pembelajaran</p>
-          </div>
-          <ul className="space-y-1.5">
-            {konten.tujuan.map((t, i) => (
-              <li key={i} className="flex items-start gap-2 text-sm text-violet-800">
-                <CheckCircle2 className="w-3.5 h-3.5 text-violet-500 mt-0.5 shrink-0" />
-                {t}
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
-
-      {/* Materi cards */}
-      <div className="space-y-4 mb-6">
-        {konten.materi.map((m, idx) => {
-          const isActive = idx <= progress
-          return (
-            <div key={idx} className={`rounded-2xl border transition-all overflow-hidden ${
-              isActive ? "border-violet-200 bg-white shadow-sm" : "border-gray-100 bg-gray-50 opacity-60"
-            }`}>
-              <div className="p-4">
-                <div className="flex items-center gap-2 mb-3">
-                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-sm font-bold ${
-                    idx < progress ? "bg-emerald-100 text-emerald-600" : isActive ? "bg-violet-100 text-violet-600" : "bg-gray-100 text-gray-400"
-                  }`}>
-                    {idx < progress ? "✓" : idx + 1}
-                  </div>
-                  <h3 className={`font-bold text-sm ${isActive ? "text-gray-900" : "text-gray-400"}`}>{m.judul}</h3>
-                </div>
-
-                {isActive && (
-                  <div className="space-y-3 animate-fade-in">
-                    {m.isi.map((p, pi) => (
-                      <p key={pi} className="text-sm text-gray-700 leading-relaxed">{p}</p>
-                    ))}
-                    {m.contoh.length > 0 && (
-                      <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 mt-2">
-                        <p className="text-[11px] font-bold text-amber-700 uppercase tracking-wider mb-1.5">Contoh</p>
-                        {m.contoh.map((c, ci) => (
-                          <p key={ci} className="text-sm text-amber-800 whitespace-pre-line leading-relaxed">{c}</p>
-                        ))}
-                      </div>
-                    )}
-                    {m.catatan && (
-                      <div className="flex items-start gap-2 p-3 bg-blue-50 border border-blue-100 rounded-xl">
-                        <Sparkles className="w-4 h-4 text-blue-500 mt-0.5 shrink-0" />
-                        <p className="text-sm text-blue-700">{m.catatan}</p>
-                      </div>
-                    )}
-                  </div>
-                )}
+    <div className="min-h-screen bg-gradient-to-b from-white via-violet-50/30 to-white">
+      {/* Top Progress Bar */}
+      <div className="sticky top-0 z-10 bg-white/80 backdrop-blur-lg border-b border-gray-100">
+        <div className="px-4 py-3">
+          <div className="flex items-center gap-3 mb-2">
+            <button onClick={() => router.back()} className="w-9 h-9 rounded-xl bg-gray-100 flex items-center justify-center shrink-0 hover:bg-gray-200 transition-colors">
+              <ArrowLeft className="w-5 h-5 text-gray-600" />
+            </button>
+            <div className="flex-1 min-w-0">
+              <p className="text-[11px] font-semibold text-violet-600">{unit?.level?.title || "Belajar"}</p>
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-gray-400 font-medium">{activeIdx + 1} dari {total}</span>
+                <span className="text-[11px] text-gray-400">•</span>
+                <span className="text-xs font-bold text-violet-600">{Math.round(((activeIdx + 1) / total) * 100)}%</span>
               </div>
-              {isActive && idx < konten.materi.length - 1 && (
-                <button onClick={selesai} className="w-full py-2.5 bg-violet-50 text-violet-700 text-sm font-bold flex items-center justify-center gap-1 hover:bg-violet-100 transition-colors">
-                  Lanjut <ChevronRight className="w-4 h-4" />
-                </button>
-              )}
-              {isActive && idx === konten.materi.length - 1 && (
-                <button onClick={selesai} className="w-full py-2.5 bg-emerald-50 text-emerald-700 text-sm font-bold flex items-center justify-center gap-1 hover:bg-emerald-100 transition-colors">
-                  Selesai Belajar <CheckCircle2 className="w-4 h-4" />
-                </button>
-              )}
             </div>
-          )
-        })}
+          </div>
+          <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
+            <div
+              className="h-full bg-gradient-to-r from-violet-500 to-purple-500 rounded-full transition-all duration-500 ease-out"
+              style={{ width: `${((activeIdx + 1) / total) * 100}%` }}
+            />
+          </div>
+          {/* Step dots */}
+          <div className="flex gap-1.5 mt-2 justify-center">
+            {konten.materi.map((_, i) => (
+              <button
+                key={i}
+                onClick={() => i <= activeIdx + 1 && setActiveIdx(i)}
+                className={`h-1.5 rounded-full transition-all duration-300 ${
+                  i === activeIdx ? "w-6 bg-violet-500" : i < activeIdx ? "w-1.5 bg-emerald-400" : "w-1.5 bg-gray-200"
+                }`}
+              />
+            ))}
+          </div>
+        </div>
       </div>
 
-      {/* Rangkuman */}
-      {progress === total && konten.rangkuman.length > 0 && (
-        <div className="bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-200 rounded-2xl p-4 mb-6 animate-fade-in">
-          <div className="flex items-center gap-2 mb-2">
-            <Sparkles className="w-4 h-4 text-emerald-600" />
-            <p className="text-xs font-bold text-emerald-700 uppercase tracking-wider">Rangkuman</p>
+      <div className="px-4 py-5 max-w-lg mx-auto">
+        {/* Tujuan — show only on first card */}
+        {activeIdx === 0 && konten.tujuan.length > 0 && (
+          <div className="bg-gradient-to-br from-violet-500 to-purple-600 rounded-2xl p-5 mb-6 shadow-lg shadow-violet-200/50 animate-fade-in">
+            <div className="flex items-center gap-2 mb-3">
+              <Target className="w-4 h-4 text-violet-200" />
+              <p className="text-[11px] font-bold text-violet-200 uppercase tracking-wider">Tujuan Pembelajaran</p>
+            </div>
+            <ul className="space-y-2">
+              {konten.tujuan.map((t, i) => (
+                <li key={i} className="flex items-start gap-2 text-sm text-white">
+                  <Star className="w-3.5 h-3.5 text-amber-300 mt-0.5 shrink-0" />
+                  {t}
+                </li>
+              ))}
+            </ul>
           </div>
-          <ul className="space-y-1.5">
-            {konten.rangkuman.map((r, i) => (
-              <li key={i} className="flex items-start gap-2 text-sm text-emerald-800">
-                <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full mt-2 shrink-0" />
-                {r}
-              </li>
+        )}
+
+        {/* Main Content Card */}
+        <div key={activeIdx} className="bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden animate-fade-in">
+          {/* Card Header */}
+          <div className="bg-gradient-to-r from-violet-50 to-purple-50 border-b border-violet-100 px-5 py-4">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center text-white text-sm font-bold shadow-sm">
+                {activeIdx + 1}
+              </div>
+              <h2 className="text-base font-bold text-gray-900">{m.judul}</h2>
+            </div>
+          </div>
+
+          {/* Card Body */}
+          <div className="px-5 py-4 space-y-2">
+            {m.isi.map((line, li) => (
+              <ContentLine key={li} line={line} index={li} />
             ))}
-          </ul>
+
+            {/* Examples Section */}
+            {m.contoh && m.contoh.length > 0 && (
+              <div className="mt-4 pt-4 border-t border-gray-100">
+                <div className="flex items-center gap-1.5 mb-2">
+                  <Lightbulb className="w-3.5 h-3.5 text-amber-500" />
+                  <span className="text-[11px] font-bold text-amber-700 uppercase tracking-wider">Contoh Penggunaan</span>
+                </div>
+                <div className="space-y-2">
+                  {m.contoh.map((c, ci) => {
+                    const p = parseLine(c)
+                    const isBenarLabel = p.type === "benar" || p.type === "benar-label"
+                    const isSalahLabel = p.type === "salah" || p.type === "salah-label"
+
+                    if (isBenarLabel || isSalahLabel) {
+                      return <ContentLine key={ci} line={c} index={ci} />
+                    }
+
+                    return (
+                      <div key={ci} className="bg-gray-50 border border-gray-100 rounded-xl px-4 py-2.5">
+                        <p className="text-sm text-gray-700 leading-relaxed">{c}</p>
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* Catatan */}
+            {m.catatan && (
+              <div className="mt-4 flex items-start gap-3 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-100 rounded-xl">
+                <Sparkles className="w-5 h-5 text-blue-500 mt-0.5 shrink-0" />
+                <div>
+                  <span className="text-[11px] font-bold text-blue-700 uppercase tracking-wider block mb-0.5">Catatan Penting</span>
+                  <p className="text-sm text-blue-800">{m.catatan}</p>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Action Button */}
+          <div className="px-5 py-4 bg-gradient-to-b from-white to-gray-50 border-t border-gray-100">
+            <button
+              onClick={selesai}
+              className={`w-full py-3.5 rounded-xl font-bold text-base flex items-center justify-center gap-2 transition-all duration-200 shadow-sm ${
+                isLast
+                  ? "bg-gradient-to-r from-emerald-500 to-green-600 text-white hover:from-emerald-600 hover:to-green-700 shadow-emerald-200/50"
+                  : "bg-gradient-to-r from-violet-500 to-purple-600 text-white hover:from-violet-600 hover:to-purple-700 shadow-violet-200/50"
+              }`}
+            >
+              {isLast ? (
+                <><CheckCircle2 className="w-5 h-5" /> Selesai Belajar</>
+              ) : (
+                <><ChevronRight className="w-5 h-5" /> Lanjut</>
+              )}
+            </button>
+          </div>
         </div>
-      )}
+
+        {/* Rangkuman — shown at end */}
+        {isLast && konten.rangkuman.length > 0 && (
+          <div className="bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-200 rounded-2xl p-5 mt-6 animate-fade-in shadow-sm">
+            <div className="flex items-center gap-2 mb-3">
+              <Sparkles className="w-5 h-5 text-emerald-500" />
+              <span className="text-xs font-bold text-emerald-700 uppercase tracking-wider">Rangkuman</span>
+            </div>
+            <ul className="space-y-2">
+              {konten.rangkuman.map((r, i) => {
+                const isBold = r.startsWith("**")
+                const text = isBold ? r.replace(/\*\*/g, "") : r
+                return (
+                  <li key={i} className="flex items-start gap-2 text-sm text-emerald-800">
+                    <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full mt-2 shrink-0" />
+                    <span className={isBold ? "font-bold" : ""}>{text}</span>
+                  </li>
+                )
+              })}
+            </ul>
+          </div>
+        )}
+      </div>
     </div>
   )
 }
