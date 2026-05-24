@@ -13,7 +13,7 @@ const items = [
 async function seed() {
   for (const item of items) {
     await db.storeItem.upsert({
-      where: { id: item.name },
+      where: { name: item.name },
       create: item,
       update: item,
     });
