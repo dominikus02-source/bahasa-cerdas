@@ -148,7 +148,7 @@ function SectionCard({ icon, title, description, href, color, isComingSoon }: {
     rose: "hover:border-rose-200 hover:bg-rose-50/50",
   }
 
-  return (
+  const card = (
     <div className={`flex items-center gap-4 p-4 rounded-xl bg-white border border-gray-100 transition-all ${isComingSoon ? "opacity-60" : colorMap[color] || ""}`}>
       <div className="w-12 h-12 rounded-xl bg-gray-50 flex items-center justify-center shrink-0">
         {icon}
@@ -169,4 +169,7 @@ function SectionCard({ icon, title, description, href, color, isComingSoon }: {
       )}
     </div>
   )
+
+  if (isComingSoon) return card
+  return <Link href={href}>{card}</Link>
 }

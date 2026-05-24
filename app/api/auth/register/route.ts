@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { getGravatarUrl } from "@/lib/avatar";
 
 const FOUNDER_EMAILS = ["hdsastra47@gmail.com", "dominikus.02@gmail.com", "alexsurya1968@gmail.com"];
 
@@ -31,6 +32,7 @@ export async function POST(req: NextRequest) {
         supabaseId: supabaseId || ("pending-" + Date.now()),
         email,
         fullName,
+        avatar: getGravatarUrl(email),
         role: role as "GURU" | "MURID",
         isFounder,
         isPremium: isFounder,
