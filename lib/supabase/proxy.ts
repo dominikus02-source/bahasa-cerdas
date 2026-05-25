@@ -52,9 +52,7 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(new URL("/verify-email", request.url));
   }
 
-  if (!user.user_metadata?.onboarded && pathname !== "/onboarding") {
-    return NextResponse.redirect(new URL("/onboarding", request.url));
-  }
+  // onboarded check is handled by client-side DB check in onboarding page
 
   return supabaseResponse;
 }

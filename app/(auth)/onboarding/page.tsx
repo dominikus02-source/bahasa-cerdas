@@ -58,16 +58,20 @@ export default function OnboardingPage() {
     setSaving(true);
     try {
       await fetch("/api/user/onboarded", { method: "POST" });
-      const { data } = await supabase.auth.updateUser({
-        data: { onboarded: true },
-      });
-      if (data?.user) {
-        const role = data.user.user_metadata?.role || "murid";
-        router.replace(role === "GURU" ? "/guru/beranda" : "/arena");
-        return;
-      }
-    } catch {}
-    router.replace("/guru/beranda");
+
+      // get fresh user data from DB for correct role
+      const me = await fetch("/api/user/me").then(r => r.json());
+      const role = me.user?.role || "murid";
+      const dest = role === "GURU" ? "/guru/beranda" : role === "ADMIN" ? "/admin" : "/arena";
+
+      // also try to update supabase metadata (non-blocking)
+      supabase.auth.updateUser({ data: { onboarded: true } }).catch(() => {});
+
+      // hard redirect to prevent middleware race condition
+      window.location.href = dest;
+    } catch {
+      window.location.href = "/guru/beranda";
+    }
   };
 
   if (loading) {
