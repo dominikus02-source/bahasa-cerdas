@@ -5,7 +5,7 @@ import { useParams, useRouter } from "next/navigation"
 import {
   BookOpen, ArrowLeft, Send, CheckCircle, XCircle, Lightbulb,
   Target, Sparkles, Brain, Maximize2, Minimize2, Eye, EyeOff,
-  ChevronLeft, ChevronRight,
+  ChevronLeft, ChevronRight, ImageIcon, Loader2,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -40,6 +40,7 @@ export default function UnitPreviewPage() {
   const [showAssign, setShowAssign] = useState(false)
   const [presentMode, setPresentMode] = useState(false)
   const [presentTab, setPresentTab] = useState<TabKey>("belajar")
+  const [ilustrasiUrls, setIlustrasiUrls] = useState<Record<string, string>>({})
 
   useEffect(() => {
     fetch(`/api/guru/panduan/${unitId}`)
@@ -52,6 +53,31 @@ export default function UnitPreviewPage() {
   useEffect(() => {
     fetch("/api/group").then(r => r.json()).then(d => { if (d.data) setGroups(d.data) }).catch(() => {})
   }, [])
+
+  useEffect(() => {
+    if (!content) return
+    const prompts = new Set<string>()
+    content.belajar.materi.forEach(m => {
+      m.isi.forEach(l => { const t = l.trim(); if (t.startsWith("[Ilustrasi:")) prompts.add(t.slice(11).trim().replace(/\]$/, "")) })
+      m.contoh.forEach(c => { const t = c.trim(); if (t.startsWith("[Ilustrasi:")) prompts.add(t.slice(11).trim().replace(/\]$/, "")) })
+    })
+    if (prompts.size === 0) return
+    ;(async () => {
+      const results = await Promise.allSettled(
+        [...prompts].map(async prompt => {
+          const res = await fetch(`/api/ai/ilustrasi?prompt=${encodeURIComponent(prompt)}`)
+          const data = await res.json()
+          if (data.url) return [prompt, data.url] as const
+          return null
+        })
+      )
+      const newUrls: Record<string, string> = {}
+      results.forEach(r => {
+        if (r.status === "fulfilled" && r.value) newUrls[r.value[0]] = r.value[1]
+      })
+      setIlustrasiUrls(prev => ({ ...prev, ...newUrls }))
+    })()
+  }, [content])
 
   const goTab = useCallback((dir: 1 | -1) => {
     setPresentTab(prev => {
@@ -118,6 +144,7 @@ export default function UnitPreviewPage() {
       setShowAnswers={setShowAnswers}
       onClose={() => { setPresentMode(false); setShowAnswers(false) }}
       goTab={goTab}
+      ilustrasiUrls={ilustrasiUrls}
     />
   )
 
@@ -155,22 +182,72 @@ export default function UnitPreviewPage() {
         ))}
       </div>
 
-      <ContentPanel content={content} tab={activeTab} showAnswers={showAnswers} setShowAnswers={setShowAnswers} />
+      <ContentPanel content={content} tab={activeTab} showAnswers={showAnswers} setShowAnswers={setShowAnswers} ilustrasiUrls={ilustrasiUrls} />
     </div>
   )
 }
 
-function ContentPanel({ content, tab, showAnswers, setShowAnswers }: {
-  content: Konten; tab: TabKey; showAnswers: boolean; setShowAnswers: (v: boolean) => void
+function ContentPanel({ content, tab, showAnswers, setShowAnswers, ilustrasiUrls }: {
+  content: Konten; tab: TabKey; showAnswers: boolean; setShowAnswers: (v: boolean) => void; ilustrasiUrls: Record<string, string>
 }) {
-  if (tab === "belajar") return <BelajarContent content={content.belajar} />
+  if (tab === "belajar") return <BelajarContent content={content.belajar} ilustrasiUrls={ilustrasiUrls} />
   if (tab === "latihan") return <SoalContent label="Latihan" soal={content.latihan} showAnswers={showAnswers} setShowAnswers={setShowAnswers} />
   if (tab === "praktik") return <PraktikContent content={content.praktik} />
   if (tab === "kuis") return <SoalContent label="Kuis" soal={content.kuis} showAnswers={showAnswers} setShowAnswers={setShowAnswers} />
   return null
 }
 
-function BelajarContent({ content }: { content: Konten["belajar"] }) {
+function BelajarContent({ content, ilustrasiUrls }: { content: Konten["belajar"]; ilustrasiUrls: Record<string, string> }) {
+  const renderLine = (line: string, key: number) => {
+    if (!line.trim()) return <div key={key} className="h-2" />
+    if (line.startsWith("R:")) return null
+    const t = line.trim()
+    if (t.startsWith("[Ilustrasi:")) {
+      const prompt = t.slice(11).trim().replace(/\]$/, "")
+      const url = ilustrasiUrls[prompt]
+      return (
+        <div key={key} className="my-3 rounded-xl overflow-hidden border border-violet-200 bg-violet-50">
+          {url ? (
+            <img src={url} alt={prompt} className="w-full object-cover" loading="lazy" />
+          ) : (
+            <div className="flex items-center justify-center h-48 bg-violet-100 animate-pulse">
+              <Loader2 className="w-6 h-6 text-violet-400 animate-spin" />
+            </div>
+          )}
+          <div className="flex items-center gap-2 px-4 py-2.5 bg-white/80 backdrop-blur-sm">
+            <ImageIcon className="w-4 h-4 text-violet-500 shrink-0" />
+            <p className="text-xs text-violet-700 italic">{prompt}</p>
+          </div>
+        </div>
+      )
+    }
+    return renderContentLine(line, key)
+  }
+
+  const renderContohLine = (line: string, key: number) => {
+    const t = line.trim()
+    if (t.startsWith("[Ilustrasi:")) {
+      const prompt = t.slice(11).trim().replace(/\]$/, "")
+      const url = ilustrasiUrls[prompt]
+      return (
+        <div key={key} className="my-2 rounded-xl overflow-hidden border border-amber-200 bg-amber-50">
+          {url ? (
+            <img src={url} alt={prompt} className="w-full object-cover" loading="lazy" />
+          ) : (
+            <div className="flex items-center justify-center h-48 bg-amber-100 animate-pulse">
+              <Loader2 className="w-6 h-6 text-amber-400 animate-spin" />
+            </div>
+          )}
+          <div className="flex items-center gap-2 px-4 py-2 bg-white/60 backdrop-blur-sm">
+            <ImageIcon className="w-4 h-4 text-amber-500 shrink-0" />
+            <p className="text-xs text-amber-700 italic">{prompt}</p>
+          </div>
+        </div>
+      )
+    }
+    return <p key={key} className="text-sm text-amber-900 whitespace-pre-line">{line}</p>
+  }
+
   return (
     <div className="space-y-6">
       <div className="bg-white rounded-xl border border-slate-200 p-5">
@@ -188,12 +265,12 @@ function BelajarContent({ content }: { content: Konten["belajar"] }) {
         <div key={i} className="bg-white rounded-xl border border-slate-200 p-5">
           <h2 className="font-bold text-slate-900 mb-3">{m.judul}</h2>
           <div className="space-y-2">
-            {m.isi.map((line, j) => renderContentLine(line, j))}
+            {m.isi.map((line, j) => renderLine(line, j))}
           </div>
           {m.contoh.length > 0 && (
             <div className="mt-3 bg-amber-50 border border-amber-100 rounded-lg p-3">
               <p className="text-xs font-semibold text-amber-800 mb-1">Contoh:</p>
-              {m.contoh.map((c, j) => <p key={j} className="text-sm text-amber-900 whitespace-pre-line">{c}</p>)}
+              {m.contoh.map((c, j) => renderContohLine(c, j))}
             </div>
           )}
           {m.catatan && (
@@ -274,9 +351,9 @@ function PraktikContent({ content }: { content: Konten["praktik"] }) {
   )
 }
 
-function PresentationView({ data, content, tab, setTab, showAnswers, setShowAnswers, onClose, goTab }: {
+function PresentationView({ data, content, tab, setTab, showAnswers, setShowAnswers, onClose, goTab, ilustrasiUrls }: {
   data: any; content: Konten; tab: TabKey; setTab: (t: TabKey) => void
-  showAnswers: boolean; setShowAnswers: (v: boolean) => void; onClose: () => void; goTab: (d: 1 | -1) => void
+  showAnswers: boolean; setShowAnswers: (v: boolean) => void; onClose: () => void; goTab: (d: 1 | -1) => void; ilustrasiUrls: Record<string, string>
 }) {
   const tabs = [
     { key: "belajar" as TabKey, label: "Belajar", icon: BookOpen },
@@ -345,7 +422,9 @@ function PresentationView({ data, content, tab, setTab, showAnswers, setShowAnsw
                 <div key={i}>
                   <h2 className="text-xl font-bold text-slate-900 mb-4">{m.judul}</h2>
                   <div className="space-y-3">{[...m.isi.filter(l => !l.startsWith("R:")), ...(m.contoh.length > 0 ? ["---CONTOH---"] : []), ...m.contoh].map((line, j) => {
+                    const t = line.trim()
                     if (line === "---CONTOH---") return <div key={j} className="bg-amber-50 border border-amber-200 rounded-lg p-4"><p className="text-sm font-semibold text-amber-800 mb-2">Contoh:</p></div>
+                    if (t.startsWith("[Ilustrasi:")) { const p = t.slice(11).trim().replace(/\]$/, ""); const u = ilustrasiUrls[p]; return <div key={j} className="my-3 rounded-xl overflow-hidden border border-violet-200 bg-violet-50">{u ? <img src={u} alt={p} className="w-full object-cover" loading="lazy" /> : <div className="flex items-center justify-center h-48 bg-violet-100 animate-pulse"><Loader2 className="w-6 h-6 text-violet-400 animate-spin" /></div>}<div className="flex items-center gap-2 px-4 py-2.5 bg-white/80 backdrop-blur-sm"><ImageIcon className="w-4 h-4 text-violet-500 shrink-0" /><p className="text-xs text-violet-700 italic">{p}</p></div></div> }
                     if (m.contoh.includes(line)) return <p key={j} className="text-amber-900 bg-amber-50/50 -mt-2 px-4 py-1 rounded-lg">{line}</p>
                     if (!line.trim()) return <div key={j} className="h-3" />
                     const isBullet = line.startsWith("•")

@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react"
 import { useParams, useRouter } from "next/navigation"
-import { ArrowLeft, BookOpen, Lightbulb, CheckCircle2, XCircle, Sparkles, ChevronRight, Star, Brain, AlertTriangle, Target, ImageIcon } from "lucide-react"
+import { ArrowLeft, BookOpen, Lightbulb, CheckCircle2, XCircle, Sparkles, ChevronRight, Star, Brain, AlertTriangle, Target, ImageIcon, Loader2 } from "lucide-react"
 
 interface KontenUnit {
   belajar: { tujuan: string[]; materi: { judul: string; isi: string[]; contoh: string[]; catatan?: string }[]; rangkuman: string[] }
@@ -25,7 +25,7 @@ function parseLine(line: string) {
   return { type: "text" as const, text: trimmed }
 }
 
-function ContentLine({ line, index }: { line: string; index: number }) {
+function ContentLine({ line, index, ilustrasiUrl }: { line: string; index: number; ilustrasiUrl?: string }) {
   const p = parseLine(line)
 
   if (p.type === "spacer") return <div className="h-2" />
@@ -62,50 +62,59 @@ function ContentLine({ line, index }: { line: string; index: number }) {
       </div>
     )
 
-  if (p.type === "numbered")
-    return (
-      <div className="flex items-start gap-2 py-1">
-        <span className="w-5 h-5 rounded-full bg-violet-100 text-violet-700 text-[10px] font-bold flex items-center justify-center shrink-0 mt-0.5">
-          {p.text.match(/^(\d+)/)?.[1]}
-        </span>
-        <span className="text-sm text-gray-700">{p.text.replace(/^\d+\.\s*/, "")}</span>
-      </div>
-    )
-
   if (p.type === "bullet")
     return (
       <div className="flex items-start gap-2 py-0.5">
-        <span className="w-1.5 h-1.5 bg-violet-300 rounded-full mt-2 shrink-0" />
-        <span className="text-sm text-gray-700">{p.text.slice(1).trim()}</span>
+        <span className="text-gray-400 mt-0.5 shrink-0">•</span>
+        <span className="text-sm text-gray-700 leading-relaxed">{p.text}</span>
+      </div>
+    )
+
+  if (p.type === "numbered")
+    return (
+      <div className="flex items-start gap-3 py-0.5">
+        <span className="text-xs font-bold text-violet-600 bg-violet-50 w-5 h-5 rounded-full flex items-center justify-center mt-0.5 shrink-0">
+          {p.text.match(/^(\d+)/)?.[1] || "•"}
+        </span>
+        <span className="text-sm text-gray-700 leading-relaxed">{p.text.replace(/^\d+\.\s*/, "")}</span>
       </div>
     )
 
   if (p.type === "penting")
     return (
-      <div className="flex items-start gap-2 p-3 bg-amber-50 border border-amber-100 rounded-xl my-2">
-        <AlertTriangle className="w-4 h-4 text-amber-500 mt-0.5 shrink-0" />
+      <div className="flex items-start gap-3 p-3 bg-amber-50 border border-amber-200 rounded-xl my-2">
+        <AlertTriangle className="w-5 h-5 text-amber-500 mt-0.5 shrink-0" />
         <span className="text-sm text-amber-800 font-medium">{p.text}</span>
       </div>
     )
 
-  if (p.type === "table-header" || p.type === "table-row")
-    return <span className="text-sm text-gray-600 font-mono text-xs whitespace-pre">{p.text}</span>
-
   if (p.type === "tip")
     return (
-      <div className="flex items-start gap-2 p-3 bg-blue-50 border border-blue-100 rounded-xl my-2">
-        <Brain className="w-4 h-4 text-blue-500 mt-0.5 shrink-0" />
-        <span className="text-sm text-blue-700">{p.text.replace(/^Tips\s*/i, "")}</span>
+      <div className="flex items-start gap-3 p-3 bg-blue-50 border border-blue-100 rounded-xl my-2">
+        <Brain className="w-5 h-5 text-blue-500 mt-0.5 shrink-0" />
+        <span className="text-sm text-blue-800">{p.text}</span>
       </div>
     )
 
   if (p.type === "ilustrasi")
     return (
-      <div className="flex items-start gap-3 p-4 bg-gradient-to-br from-violet-50 to-indigo-50 border border-violet-100 rounded-xl my-3">
-        <div className="w-10 h-10 rounded-xl bg-violet-100 flex items-center justify-center shrink-0">
-          <ImageIcon className="w-5 h-5 text-violet-600" />
+      <div className="my-4 rounded-xl overflow-hidden border border-violet-200 bg-violet-50">
+        {ilustrasiUrl ? (
+          <img
+            src={ilustrasiUrl}
+            alt={p.text}
+            className="w-full object-cover"
+            loading="lazy"
+          />
+        ) : (
+          <div className="flex items-center justify-center h-48 bg-violet-100 animate-pulse">
+            <Loader2 className="w-6 h-6 text-violet-400 animate-spin" />
+          </div>
+        )}
+        <div className="flex items-center gap-2 px-4 py-2.5 bg-white/80 backdrop-blur-sm">
+          <ImageIcon className="w-4 h-4 text-violet-500 shrink-0" />
+          <p className="text-xs text-violet-700 italic">{p.text}</p>
         </div>
-        <div className="text-sm text-violet-800 italic leading-relaxed">{p.text}</div>
       </div>
     )
 
@@ -119,6 +128,7 @@ export default function BelajarPage() {
   const [konten, setKonten] = useState<KontenUnit["belajar"] | null>(null)
   const [loading, setLoading] = useState(true)
   const [activeIdx, setActiveIdx] = useState(0)
+  const [ilustrasiUrls, setIlustrasiUrls] = useState<Record<string, string>>({})
 
   useEffect(() => {
     fetch(`/api/jalur-cerdas/${unitId}`)
@@ -130,6 +140,37 @@ export default function BelajarPage() {
       .catch(() => {})
       .finally(() => setLoading(false))
   }, [unitId])
+
+  useEffect(() => {
+    if (!konten) return
+    const prompts = new Set<string>()
+    const extract = (lines: string[]) => lines.forEach(l => {
+      const t = l.trim()
+      if (t.startsWith("[Ilustrasi:")) prompts.add(t.slice(11).trim().replace(/\]$/, ""))
+    })
+    konten.materi.forEach(m => {
+      extract(m.isi)
+      if (m.contoh) extract(m.contoh)
+    })
+    if (prompts.size === 0) return
+    ;(async () => {
+      const results = await Promise.allSettled(
+        [...prompts].map(async prompt => {
+          const res = await fetch(`/api/ai/ilustrasi?prompt=${encodeURIComponent(prompt)}`)
+          const data = await res.json()
+          if (data.url) return [prompt, data.url] as const
+          return null
+        })
+      )
+      const newUrls: Record<string, string> = {}
+      results.forEach(r => {
+        if (r.status === "fulfilled" && r.value) {
+          newUrls[r.value[0]] = r.value[1]
+        }
+      })
+      setIlustrasiUrls(prev => ({ ...prev, ...newUrls }))
+    })()
+  }, [konten])
 
   const total = konten?.materi.length || 0
   const isLast = activeIdx >= total - 1
@@ -159,6 +200,15 @@ export default function BelajarPage() {
   )
 
   const m = konten.materi[activeIdx]
+
+  const getIlustrasiUrl = (line: string) => {
+    const t = line.trim()
+    if (t.startsWith("[Ilustrasi:")) {
+      const prompt = t.slice(11).trim().replace(/\]$/, "")
+      return ilustrasiUrls[prompt]
+    }
+    return undefined
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white via-violet-50/30 to-white">
@@ -233,7 +283,7 @@ export default function BelajarPage() {
           {/* Card Body */}
           <div className="px-5 py-4 space-y-2">
             {m.isi.map((line, li) => (
-              <ContentLine key={li} line={line} index={li} />
+              <ContentLine key={li} line={line} index={li} ilustrasiUrl={getIlustrasiUrl(line)} />
             ))}
 
             {/* Examples Section */}
@@ -250,7 +300,7 @@ export default function BelajarPage() {
                     const isSalahLabel = p.type === "salah" || p.type === "salah-label"
 
                     if (isBenarLabel || isSalahLabel) {
-                      return <ContentLine key={ci} line={c} index={ci} />
+                      return <ContentLine key={ci} line={c} index={ci} ilustrasiUrl={getIlustrasiUrl(c)} />
                     }
 
                     return (

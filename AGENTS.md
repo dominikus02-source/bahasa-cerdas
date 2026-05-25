@@ -5,7 +5,7 @@ This version has breaking changes — APIs, conventions, and file structure may 
 <!-- END:nextjs-agent-rules -->
 
 # BahasaCerdas Project Status
-## Last Updated: May 25, 2026
+## Last Updated: May 25, 2026 (Grade IX enriched — all 12 units seeded)
 
 ## Goal
 Transform BahasaCerdas into a social-creative platform for Bahasa Indonesia where students write daily (puisi, cerpen, artikel, anekdot, pantun), showcase works in social-style portfolios, earn Coin Cerdas, and compete in weekly leagues — UKBI/TKA as supporting features, not core.
@@ -254,11 +254,19 @@ The Belajar page auto-detects content types in `isi[]` strings:
 - Assign API: app/api/guru/penugasan/route.ts
 - Student penugasan API: app/api/murid/penugasan/route.ts
 
-## Jalur Cerdas Content System (New)
-- **Per-unit files**: `scripts/seed/materi/01-ejaan-huruf-kapital.ts` etc — each unit in own file, independently editable
-- **Shared types**: `scripts/seed/types.ts` (Konten, Soal, makeSoal)
-- **Master seed**: `scripts/seed/seed-materi.ts` — looks up each unit by title in DB, updates its content JSON
+## Materi Content System
+- **Per-unit files**: `scripts/seed/materi/26-laporan-percobaan.ts` etc — each unit in own file, independently editable
+- **Shared types**: `scripts/seed/materi/types.ts` (Konten, Soal, makeSoal)
+- **Master seed**: `scripts/seed/seed-materi.ts` — looks up each unit by title + grade + semester in DB, updates its content JSON
 - **Flow**: edit unit file → `npx tsx scripts/seed/seed-materi.ts` → refresh browser
+- **Lookup**: Now uses `{ title, grade, semester, isActive }` to avoid title conflicts (e.g., "Bab 3: Drama" in both VIII S2 and IX S2)
 - Seed does NOT drop/recreate units — only updates `content` field of matching titles
-- To add new units, add name+titles to the master seed's `units` array
-- Belajar page uses `app/arena/jalur-cerdas/[unitId]/belajar/page.tsx` with Duolingo-style UI: sticky progress bar, content-type detection (✓/✗/numbered/bullet/⚠️), card-by-card flow, animated transitions
+- To add new units, create a new file in `scripts/seed/materi/`, import it, and add to the `units` array with grade/semester
+- Belajar page uses `app/arena/jalur-cerdas/[unitId]/belajar/page.tsx` with Duolingo-style UI: sticky progress bar, content-type detection (✓/✗/numbered/bullet/⚠️/[Ilustrasi: ...]), card-by-card flow, animated transitions
+
+### Grade IX Content (Enriched — May 25, 2026)
+- **Semester 1**: 6 units — Laporan Percobaan, Pidato Persuasif, Cerpen, Teks Tanggapan, Teks Diskusi, Puisi
+- **Semester 2**: 6 units — Teks Eksplanasi, Laporan, Drama, Resensi, Artikel, Karya Tulis Ilmiah
+- Each unit: 4+ materi sections with [Ilustrasi: ...], 10 latihan, 10 kuis, praktik with tips
+- Files: `scripts/seed/materi/26-*.ts` through `37-*.ts`
+- Grade VII/VIII content remains enriched from previous session
