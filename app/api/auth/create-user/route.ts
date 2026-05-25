@@ -14,11 +14,10 @@ export async function POST(req: Request) {
       process.env.SUPABASE_SERVICE_ROLE_KEY!
     );
 
-    const autoConfirm = role !== "GURU"
     const { data, error } = await supabase.auth.admin.createUser({
       email,
       password,
-      email_confirm: autoConfirm,
+      email_confirm: true,
       user_metadata: { role, full_name: fullName },
     });
 

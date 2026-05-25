@@ -309,25 +309,12 @@ export default function RegisterPage() {
                 <Check className="w-8 h-8 text-green-600" />
               </div>
               <h2 className="text-xl font-bold text-gray-900">Pendaftaran Berhasil!</h2>
-              {role === "GURU" ? (
-                <>
-                  <p className="text-sm text-gray-600">
-                    Kami telah mengirim email verifikasi ke <strong>{email}</strong>
-                  </p>
-                  <p className="text-xs text-gray-500">
-                    Silakan cek inbox email kamu dan klik link verifikasi untuk mengaktifkan akun.
-                  </p>
-                </>
-              ) : (
-                <>
-                  <p className="text-sm text-gray-600">
-                    Akun <strong>{email}</strong> berhasil dibuat.
-                  </p>
-                  <p className="text-xs text-gray-500">
-                    Kamu bisa langsung masuk ke Arena sekarang.
-                  </p>
-                </>
-              )}
+              <p className="text-sm text-gray-600">
+                Akun <strong>{email}</strong> berhasil dibuat.
+              </p>
+              <p className="text-xs text-gray-500">
+                Kamu bisa langsung masuk ke Arena sekarang.
+              </p>
               <div className="pt-4">
                 <Link
                   href="/auth/arena-login"
