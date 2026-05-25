@@ -38,23 +38,27 @@ export default function TugasPage() {
   const [available, setAvailable] = useState<Assignment[]>([])
   const [inProgress, setInProgress] = useState<Assignment[]>([])
   const [completed, setCompleted] = useState<Assignment[]>([])
+  const [penugasans, setPenugasans] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [tab, setTab] = useState<Tab>("available")
 
   useEffect(() => {
-    fetch("/api/murid/tugas")
-      .then(r => r.json())
-      .then(d => {
-        setAvailable(d.available || [])
-        setInProgress(d.inProgress || [])
-        setCompleted(d.completed || [])
+    Promise.all([
+      fetch("/api/murid/tugas").then(r => r.json()),
+      fetch("/api/murid/penugasan").then(r => r.json()),
+    ])
+      .then(([t, p]) => {
+        setAvailable(t.available || [])
+        setInProgress(t.inProgress || [])
+        setCompleted(t.completed || [])
+        setPenugasans(p.data || [])
       })
       .catch(() => {})
       .finally(() => setLoading(false))
   }, [])
 
   const tabs: { key: Tab; label: string; count: number }[] = [
-    { key: "available", label: "Tersedia", count: available.length },
+    { key: "available", label: "Tersedia", count: available.length + penugasans.filter(p => !p.submission || p.submission.status === "ASSIGNED").length },
     { key: "inProgress", label: "Dikerjakan", count: inProgress.length },
     { key: "completed", label: "Selesai", count: completed.length },
   ]
@@ -131,6 +135,36 @@ export default function TugasPage() {
         </div>
       ) : (
         <div className="space-y-3">
+          {tab === "available" && penugasans.filter(p => !p.submission || p.submission.status === "ASSIGNED").map(p => (
+            <Link
+              key={p.id}
+              href={`/arena/jalur-cerdas/${p.unitId}/belajar`}
+              className="block bg-white rounded-2xl border border-emerald-100 p-4 active:scale-[0.98] transition-all"
+            >
+              <div className="flex items-start justify-between mb-2">
+                <div className="flex-1 min-w-0 mr-2">
+                  <h3 className="font-bold text-sm text-gray-900 truncate">{p.judul}</h3>
+                  <p className="text-xs text-gray-500 mt-0.5">{p.groupName} · Tugas Materi</p>
+                </div>
+                <span className="text-[9px] font-semibold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 shrink-0">
+                  BUKU PANDUAN
+                </span>
+              </div>
+              <div className="flex items-center gap-3 text-[11px] text-gray-400">
+                <span className="flex items-center gap-1">
+                  <BookOpen size={12} /> Belajar + Latihan + Praktik + Kuis
+                </span>
+                {p.tenggat && (
+                  <span className="flex items-center gap-1">
+                    <AlertCircle size={12} /> {formatDate(p.tenggat)}
+                  </span>
+                )}
+              </div>
+              <div className="mt-2 flex items-center gap-1.5 text-[11px] text-emerald-600 font-medium">
+                +{p.xpReward || 50} XP · +{p.coinReward || 10} Koin
+              </div>
+            </Link>
+          ))}
           {data[tab].map(a => (
             <Link
               key={a.id}

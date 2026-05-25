@@ -229,8 +229,10 @@ model User {
   coinTransactions   CoinTransaction[]
   dailyQuests        DailyQuest[]
   userItems          UserItem[]
-   chatMessages       ChatMessage[]
-   unitProgress       UserUnitProgress[]
+  chatMessages       ChatMessage[]
+  unitProgress       UserUnitProgress[]
+  penugasans         Penugasan[]
+  penugasanSubmissions PenugasanSubmission[]
 }
 
 model Profile {
@@ -991,6 +993,7 @@ model Group {
   quizzes         GroupQuiz[]
   quizAssignments QuizAssignment[]
   messages        ChatMessage[]
+  penugasans      Penugasan[]
 
   @@index([teacherId])
   @@index([accessCode])
@@ -1435,7 +1438,8 @@ enum SubmissionStatus {
 
 model LearningLevel {
   id          String   @id @default(cuid())
-  level       Int      @unique
+  type        String   @default("JALUR")
+  level       Int
   title       String
   subtitle    String?
   description String?
@@ -1449,6 +1453,8 @@ model LearningLevel {
   updatedAt   DateTime @updatedAt
 
   units LearningUnit[]
+
+  @@unique([type, level])
 }
 
 model LearningUnit {
@@ -1458,6 +1464,9 @@ model LearningUnit {
   subtitle    String?
   description String?
   topik       String?
+  grade       String?
+  semester    Int?
+  kd          String?
   order       Int
   color       String   @default("from-violet-500 to-purple-600")
   emoji       String?
@@ -1471,8 +1480,9 @@ model LearningUnit {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  level    LearningLevel       @relation(fields: [levelId], references: [id], onDelete: Cascade)
-  progress UserUnitProgress[]
+  level      LearningLevel        @relation(fields: [levelId], references: [id], onDelete: Cascade)
+  progress   UserUnitProgress[]
+  penugasans Penugasan[]
 
   @@index([levelId])
 }
@@ -1494,4 +1504,42 @@ model UserUnitProgress {
   @@unique([userId, unitId])
   @@index([userId])
   @@index([unitId])
+}
+
+model Penugasan {
+  id          String   @id @default(cuid())
+  unitId      String
+  groupId     String
+  teacherId   String
+  judul       String
+  deskripsi   String?
+  tenggat     DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  unit     LearningUnit @relation(fields: [unitId], references: [id], onDelete: Cascade)
+  group    Group        @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  teacher  User         @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+
+  submissions PenugasanSubmission[]
+
+  @@index([groupId])
+  @@index([unitId])
+  @@index([teacherId])
+}
+
+model PenugasanSubmission {
+  id          String    @id @default(cuid())
+  penugasanId String
+  userId      String
+  status      String    @default("ASSIGNED")
+  startedAt   DateTime?
+  completedAt DateTime?
+  score       Int?
+
+  penugasan Penugasan @relation(fields: [penugasanId], references: [id], onDelete: Cascade)
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([penugasanId, userId])
+  @@index([userId])
 }

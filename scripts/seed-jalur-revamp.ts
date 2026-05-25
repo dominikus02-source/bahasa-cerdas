@@ -916,7 +916,7 @@ add("Pidato & Retorika", {
 
 const levels = [
   {
-    level: 1, title: "Dasar", subtitle: "Mulai dari sini -- kuasai EYD, huruf kapital, dan diksi",
+    type: "JALUR", level: 1, title: "Dasar", subtitle: "Mulai dari sini -- kuasai EYD, huruf kapital, dan diksi",
     description: "Fondasi bahasa Indonesia: ejaan yang benar, huruf kapital, tanda baca, kata baku, pilihan kata, sinonim, antonim, polisemi.",
     color: "from-emerald-500 to-teal-600", emoji: "🌱", order: 1, xpReward: 1500, coinReward: 350,
     units: [
@@ -928,7 +928,7 @@ const levels = [
     ],
   },
   {
-    level: 2, title: "Pembangun", subtitle: "Bangun kalimat dari dasar hingga luas",
+    type: "JALUR", level: 2, title: "Pembangun", subtitle: "Bangun kalimat dari dasar hingga luas",
     description: "Kalimat sederhana, imbuhan prefiks dan sufiks, kalimat aktif-pasif, dan perluasan kalimat.",
     color: "from-blue-500 to-indigo-600", emoji: "📐", order: 2, xpReward: 1800, coinReward: 400,
     units: [
@@ -940,7 +940,7 @@ const levels = [
     ],
   },
   {
-    level: 3, title: "Struktur", subtitle: "Susun kalimat majemuk dan paragraf",
+    type: "JALUR", level: 3, title: "Struktur", subtitle: "Susun kalimat majemuk dan paragraf",
     description: "Kalimat majemuk setara dan bertingkat, paragraf, kohesi-koherensi, serta fakta dan opini.",
     color: "from-purple-500 to-pink-600", emoji: "🔗", order: 3, xpReward: 2000, coinReward: 450,
     units: [
@@ -952,7 +952,7 @@ const levels = [
     ],
   },
   {
-    level: 4, title: "Teks", subtitle: "Kuasai berbagai jenis teks",
+    type: "JALUR", level: 4, title: "Teks", subtitle: "Kuasai berbagai jenis teks",
     description: "Teks deskripsi, narasi, prosedur, eksplanasi, dan argumentasi -- lengkap dengan ciri dan strukturnya.",
     color: "from-violet-500 to-purple-600", emoji: "📚", order: 4, xpReward: 2200, coinReward: 480,
     units: [
@@ -964,7 +964,7 @@ const levels = [
     ],
   },
   {
-    level: 5, title: "Kreatif", subtitle: "Hasilkan karya tulis kreatif",
+    type: "JALUR", level: 5, title: "Kreatif", subtitle: "Hasilkan karya tulis kreatif",
     description: "Kreasikan kemampuanmu: puisi, pantun, cerpen, artikel, dan pidato.",
     color: "from-amber-500 to-orange-600", emoji: "🏆", order: 5, xpReward: 2500, coinReward: 500,
     units: [
