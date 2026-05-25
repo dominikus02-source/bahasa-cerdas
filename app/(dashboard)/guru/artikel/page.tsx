@@ -81,6 +81,9 @@ export default function GuruArtikelPage() {
       setEditId(null);
       setForm({ title: "", content: "", tags: "", isPublished: false, coverImage: "" });
       fetchArtikel();
+    } else {
+      const data = await res.json();
+      alert(data.error || "Gagal menyimpan artikel");
     }
   }
 

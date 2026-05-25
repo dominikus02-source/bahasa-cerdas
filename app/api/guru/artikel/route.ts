@@ -6,10 +6,14 @@ function slugify(text: string): string {
   return text.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "artikel";
 }
 
+function allowGuruOrFounder(user: { role: string; isFounder?: boolean } | null) {
+  return user && (user.role === "GURU" || user.role === "ADMIN" || user.isFounder)
+}
+
 export async function GET() {
   try {
     const user = await getUser();
-    if (!user || user.role !== "GURU") return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    if (!allowGuruOrFounder(user)) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
     const data = await db.artikel.findMany({
       where: { authorId: user.id },
@@ -29,7 +33,7 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   try {
     const user = await getUser();
-    if (!user || user.role !== "GURU") return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    if (!allowGuruOrFounder(user)) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
     const body = await req.json();
     const { title, content, excerpt, coverImage, tags, isPublished } = body;
@@ -57,7 +61,7 @@ export async function POST(req: NextRequest) {
 export async function PUT(req: NextRequest) {
   try {
     const user = await getUser();
-    if (!user || user.role !== "GURU") return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    if (!allowGuruOrFounder(user)) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
     const body = await req.json();
     const { id, title, content, excerpt, coverImage, tags, isPublished } = body;
@@ -85,7 +89,7 @@ export async function PUT(req: NextRequest) {
 export async function DELETE(req: NextRequest) {
   try {
     const user = await getUser();
-    if (!user || user.role !== "GURU") return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    if (!allowGuruOrFounder(user)) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
     const { searchParams } = new URL(req.url);
     const id = searchParams.get("id");
