@@ -68,9 +68,9 @@ export default function MarketplaceDetailPage() {
           {/* Left - Images */}
           <div>
             <div className="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm">
-              <div className="bg-slate-50 rounded-xl flex items-center justify-center mb-3 overflow-hidden min-h-[300px] max-h-[500px]">
+              <div className="bg-slate-50 rounded-xl flex items-center justify-center mb-3">
                 {karyaImages[currentImg] ? (
-                  <img src={karyaImages[currentImg]} alt="" className="w-full h-full object-contain" />
+                  <img src={karyaImages[currentImg]} alt="" className="w-full object-contain max-h-[75vh] rounded-lg" />
                 ) : (
                   (() => { const Icon = TYPE_ICONS[karya.type] || ShoppingBag; return <Icon size={48} className="text-slate-300" />; })()
                 )}
