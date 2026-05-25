@@ -24,8 +24,6 @@ type Level = {
   level: number
   title: string
   description: string | null
-  grade: string
-  semester: number
   units: Unit[]
 }
 
@@ -67,7 +65,11 @@ export default function PanduanGuruPage() {
   }, [])
 
   const getLevel = useCallback((grade: string, semester: number) => {
-    return levels.find(l => l.grade === grade && l.semester === semester)
+    if (levels.length === 0) return undefined
+    const gradeIndex = GRADES.indexOf(grade)
+    if (gradeIndex === -1) return undefined
+    const levelNum = gradeIndex * 2 + semester
+    return levels.find(l => l.level === levelNum)
   }, [levels])
 
   const filteredUnits = useCallback((grade: string, semester: number) => {
