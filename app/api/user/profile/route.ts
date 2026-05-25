@@ -28,25 +28,24 @@ export async function PATCH(req: NextRequest) {
     if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const body = await req.json();
-    const { fullName, avatar, bio, nip, nuptk, school, city, province, subject } = body;
+    const { fullName, avatar, bio, nip, nuptk, school, city, province, subject, grade } = body;
 
     await db.user.update({
       where: { id: user.id },
       data: { fullName, avatar },
     });
 
-    if (user.role === "GURU") {
-      const existing = await db.profile.findUnique({ where: { userId: user.id } });
-      if (existing) {
-        await db.profile.update({
-          where: { userId: user.id },
-          data: { bio, nip, nuptk, school, city, province, subject },
-        });
-      } else {
-        await db.profile.create({
-          data: { userId: user.id, bio, nip, nuptk, school, city, province, subject },
-        });
-      }
+    const profileData: Record<string, any> = { bio, school, city, province };
+    if (grade) profileData.grade = grade;
+    if (nip) profileData.nip = nip;
+    if (nuptk) profileData.nuptk = nuptk;
+    if (subject) profileData.subject = subject;
+
+    const existing = await db.profile.findUnique({ where: { userId: user.id } });
+    if (existing) {
+      await db.profile.update({ where: { userId: user.id }, data: profileData });
+    } else {
+      await db.profile.create({ data: { userId: user.id, ...profileData } });
     }
 
     return NextResponse.json({ message: "Updated" });

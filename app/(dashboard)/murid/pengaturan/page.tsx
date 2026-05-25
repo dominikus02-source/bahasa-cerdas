@@ -67,6 +67,22 @@ export default function MuridPengaturanPage() {
         },
       });
       if (result.error) throw result.error;
+
+      // Also save to User table via Prisma API
+      await fetch("/api/user/profile", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          fullName: profile.fullName,
+          avatar: profile.avatarUrl || null,
+          bio: profile.bio,
+          school: profile.school,
+          city: profile.city,
+          province: profile.province,
+          grade: profile.grade,
+        }),
+      });
+
       setMessage({ type: "success", text: "Profil berhasil diperbarui!" });
     } catch (error: any) {
       setMessage({ type: "error", text: error.message });

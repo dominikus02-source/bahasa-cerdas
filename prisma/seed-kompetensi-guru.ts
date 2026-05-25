@@ -225,10 +225,10 @@ const UKBI_GURU_QUESTIONS = [
   },
   {
     seksi: "MERESPONS_KAIDAH",
-    text: "Perhatikan kalimat berikut! "Sehubungan dengan akan dimulainya tahun ajaran baru, maka dari itu kami mengundang Bapak/Ibu guru untuk mengikuti rapat persiapan."",
+    text: 'Perhatikan kalimat berikut! "Sehubungan dengan akan dimulainya tahun ajaran baru, maka dari itu kami mengundang Bapak/Ibu guru untuk mengikuti rapat persiapan."',
     type: "PILIHAN_GANDA",
     options: [
-      { id: "A", text: ""maka dari itu" → dihapus (pemborosan konjungsi)" },
+      { id: "A", text: '"maka dari itu" → dihapus (pemborosan konjungsi)' },
       { id: "B", text: "dengan akan dimulainya → akan dimulainya" },
       { id: "C", text: "Kedua A dan B benar" },
       { id: "D", text: "Tidak ada kesalahan" },
