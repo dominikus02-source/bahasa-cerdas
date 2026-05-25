@@ -41,6 +41,14 @@ import cerpenXiS1 from "./materi/53-cerpen-xi-s1"
 import puisiAngkatanXiS1 from "./materi/54-puisi-angkatan-xi-s1"
 import dramaXiS1 from "./materi/55-drama-xi-s1"
 
+// Buku Panduan - Kelas XI Semester 2
+import artikelXiS2 from "./materi/56-artikel-xi-s2"
+import resensiXiS2 from "./materi/57-resensi-xi-s2"
+import proposalXiS2 from "./materi/58-proposal-xi-s2"
+import ktiXiS2 from "./materi/59-kti-xi-s2"
+import novelXiS2 from "./materi/60-novel-xi-s2"
+import debatXiS2 from "./materi/61-debat-xi-s2"
+
 const units: { title: string; konten: any; grade?: string; semester?: number }[] = [
   // Buku Panduan - Kelas IX Semester 1
   { title: "Bab 1: Laporan Percobaan", konten: laporanPercobaan, grade: "IX", semester: 1 },
@@ -77,6 +85,13 @@ const units: { title: string; konten: any; grade?: string; semester?: number }[]
   { title: "Bab 4: Cerpen", konten: cerpenXiS1, grade: "XI", semester: 1 },
   { title: "Bab 5: Puisi Angkatan", konten: puisiAngkatanXiS1, grade: "XI", semester: 1 },
   { title: "Bab 6: Drama", konten: dramaXiS1, grade: "XI", semester: 1 },
+  // Buku Panduan - Kelas XI Semester 2
+  { title: "Bab 1: Artikel", konten: artikelXiS2, grade: "XI", semester: 2 },
+  { title: "Bab 2: Resensi", konten: resensiXiS2, grade: "XI", semester: 2 },
+  { title: "Bab 3: Proposal", konten: proposalXiS2, grade: "XI", semester: 2 },
+  { title: "Bab 4: KTI", konten: ktiXiS2, grade: "XI", semester: 2 },
+  { title: "Bab 5: Novel", konten: novelXiS2, grade: "XI", semester: 2 },
+  { title: "Bab 6: Debat", konten: debatXiS2, grade: "XI", semester: 2 },
 ]
 
 async function seedMateri() {
