@@ -46,16 +46,16 @@ export default async function ArtikelPage() {
             <p>Belum ada artikel</p>
           </div>
         ) : (
-          <div className="space-y-6">
+          <div className="space-y-8">
             {artikel.map((a: any, idx: number) => (
               <Link key={a.id} href={`/artikel/${a.slug}`}>
                 <article className={`bg-white rounded-2xl border border-slate-200 overflow-hidden hover:shadow-xl hover:border-red-200 transition-all ${idx === 0 ? "md:grid md:grid-cols-2" : ""}`}>
                   {a.coverImage && (
-                    <div className={`${idx === 0 ? "h-full min-h-[250px]" : "aspect-video"} bg-slate-100 overflow-hidden`}>
+                    <div className={`${idx === 0 ? "h-full min-h-[280px]" : "aspect-video"} bg-slate-100 overflow-hidden`}>
                       <img src={a.coverImage} alt={a.title} className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
                     </div>
                   )}
-                  <div className="p-6 flex flex-col justify-center">
+                  <div className="p-7 flex flex-col justify-center">
                     <div className="flex flex-wrap items-center gap-2 text-xs text-slate-400 mb-3">
                       {a.tags?.slice(0, 2).map((t: string) => (
                         <span key={t} className="px-2 py-0.5 bg-red-50 text-red-600 rounded-full font-medium">{t}</span>
