@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react"
 import { useParams, useRouter } from "next/navigation"
-import { ArrowLeft, BookOpen, Lightbulb, CheckCircle2, XCircle, Sparkles, ChevronRight, Star, Brain, AlertTriangle, Target } from "lucide-react"
+import { ArrowLeft, BookOpen, Lightbulb, CheckCircle2, XCircle, Sparkles, ChevronRight, Star, Brain, AlertTriangle, Target, ImageIcon } from "lucide-react"
 
 interface KontenUnit {
   belajar: { tujuan: string[]; materi: { judul: string; isi: string[]; contoh: string[]; catatan?: string }[]; rangkuman: string[] }
@@ -21,6 +21,7 @@ function parseLine(line: string) {
   if (trimmed.startsWith("──")) return { type: "table-header" as const, text: trimmed }
   if (trimmed.startsWith("│")) return { type: "table-row" as const, text: trimmed }
   if (trimmed.startsWith("Tips")) return { type: "tip" as const, text: trimmed }
+  if (trimmed.startsWith("[Ilustrasi:")) return { type: "ilustrasi" as const, text: trimmed.slice(11).trim().replace(/\]$/, "") }
   return { type: "text" as const, text: trimmed }
 }
 
@@ -95,6 +96,16 @@ function ContentLine({ line, index }: { line: string; index: number }) {
       <div className="flex items-start gap-2 p-3 bg-blue-50 border border-blue-100 rounded-xl my-2">
         <Brain className="w-4 h-4 text-blue-500 mt-0.5 shrink-0" />
         <span className="text-sm text-blue-700">{p.text.replace(/^Tips\s*/i, "")}</span>
+      </div>
+    )
+
+  if (p.type === "ilustrasi")
+    return (
+      <div className="flex items-start gap-3 p-4 bg-gradient-to-br from-violet-50 to-indigo-50 border border-violet-100 rounded-xl my-3">
+        <div className="w-10 h-10 rounded-xl bg-violet-100 flex items-center justify-center shrink-0">
+          <ImageIcon className="w-5 h-5 text-violet-600" />
+        </div>
+        <div className="text-sm text-violet-800 italic leading-relaxed">{p.text}</div>
       </div>
     )
 
