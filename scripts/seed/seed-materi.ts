@@ -17,6 +17,22 @@ import resensi from "./materi/35-resensi"
 import artikel from "./materi/36-artikel"
 import kti from "./materi/37-kti"
 
+// Buku Panduan - Kelas X Semester 1
+import teksLhoX from "./materi/38-teks-lho-x"
+import eksposisiX from "./materi/39-eksposisi-x"
+import anekdotX from "./materi/40-anekdot-x"
+import hikayatX from "./materi/41-hikayat-x"
+import negosiasiX from "./materi/42-negosiasi-x"
+import debatX from "./materi/43-debat-x"
+
+// Buku Panduan - Kelas X Semester 2
+import biografiXS2 from "./materi/44-biografi-x-s2"
+import puisiKontemporerXS2 from "./materi/45-puisi-kontemporer-x-s2"
+import cerpenXS2 from "./materi/46-cerpen-x-s2"
+import fiksiNonfiksiXS2 from "./materi/47-fiksi-nonfiksi-x-s2"
+import pantunSyairXS2 from "./materi/48-pantun-syair-x-s2"
+import prosedurKompleksXS2 from "./materi/49-prosedur-kompleks-x-s2"
+
 const units: { title: string; konten: any; grade?: string; semester?: number }[] = [
   // Buku Panduan - Kelas IX Semester 1
   { title: "Bab 1: Laporan Percobaan", konten: laporanPercobaan, grade: "IX", semester: 1 },
@@ -32,6 +48,20 @@ const units: { title: string; konten: any; grade?: string; semester?: number }[]
   { title: "Bab 4: Resensi", konten: resensi, grade: "IX", semester: 2 },
   { title: "Bab 5: Artikel", konten: artikel, grade: "IX", semester: 2 },
   { title: "Bab 6: Karya Tulis Ilmiah", konten: kti, grade: "IX", semester: 2 },
+  // Buku Panduan - Kelas X Semester 1
+  { title: "Bab 1: Teks LHO", konten: teksLhoX, grade: "X", semester: 1 },
+  { title: "Bab 2: Eksposisi", konten: eksposisiX, grade: "X", semester: 1 },
+  { title: "Bab 3: Anekdot", konten: anekdotX, grade: "X", semester: 1 },
+  { title: "Bab 4: Hikayat", konten: hikayatX, grade: "X", semester: 1 },
+  { title: "Bab 5: Negosiasi", konten: negosiasiX, grade: "X", semester: 1 },
+  { title: "Bab 6: Debat", konten: debatX, grade: "X", semester: 1 },
+  // Buku Panduan - Kelas X Semester 2
+  { title: "Bab 1: Biografi", konten: biografiXS2, grade: "X", semester: 2 },
+  { title: "Bab 2: Puisi Kontemporer", konten: puisiKontemporerXS2, grade: "X", semester: 2 },
+  { title: "Bab 3: Cerpen", konten: cerpenXS2, grade: "X", semester: 2 },
+  { title: "Bab 4: Fiksi/Nonfiksi", konten: fiksiNonfiksiXS2, grade: "X", semester: 2 },
+  { title: "Bab 5: Pantun/Syair", konten: pantunSyairXS2, grade: "X", semester: 2 },
+  { title: "Bab 6: Prosedur Kompleks", konten: prosedurKompleksXS2, grade: "X", semester: 2 },
 ]
 
 async function seedMateri() {
