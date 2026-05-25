@@ -66,7 +66,6 @@ export default function PageNavbar() {
     { href: "/marketplace", label: "Toko Karya" },
     { href: "/video-belajar", label: "Video" },
     { href: "/artikel", label: "Artikel" },
-    { href: "/komunitas", label: "Komunitas" },
     { href: "/kamus", label: "Kamus" },
     { href: "/loker", label: "Lowongan" },
   ];
