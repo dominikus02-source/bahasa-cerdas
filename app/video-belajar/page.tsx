@@ -15,14 +15,14 @@ function formatDuration(seconds: number) {
 
 export default function VideoBelajarPage() {
   const CATEGORIES = [
-    { value: "", label: "Semua", icon: "🎬" },
-    { value: "PEMBELAJARAN", label: "Pembelajaran", icon: "📚" },
-    { value: "GRAMMATIKA", label: "Grammatika", icon: "📝" },
-    { value: "SASTRA", label: "Sastra", icon: "📖" },
-    { value: "WRITING", label: "Menulis", icon: "✏️" },
-    { value: "SPEAKING", label: "Berbicara", icon: "🎤" },
-    { value: "READING", label: "Membaca", icon: "👁️" },
-    { value: "UKBI_PREP", label: "UKBI Prep", icon: "🎯" },
+    { value: "", label: "Semua" },
+    { value: "PEMBELAJARAN", label: "Pembelajaran" },
+    { value: "GRAMMATIKA", label: "Grammatika" },
+    { value: "SASTRA", label: "Sastra" },
+    { value: "WRITING", label: "Menulis" },
+    { value: "SPEAKING", label: "Berbicara" },
+    { value: "READING", label: "Membaca" },
+    { value: "UKBI_PREP", label: "UKBI Prep" },
   ];
 
   const [videos, setVideos] = useState<any[]>([]);
@@ -81,7 +81,7 @@ export default function VideoBelajarPage() {
                   ? "bg-red-500 text-white shadow-md shadow-red-500/20"
                   : "bg-white text-gray-600 hover:bg-gray-100 border border-gray-200"
               }`}>
-              <span>{c.icon}</span> {c.label}
+              {c.label}
             </button>
           ))}
         </div>
