@@ -310,10 +310,10 @@ export default function RegisterPage() {
               </div>
               <h2 className="text-xl font-bold text-gray-900">Pendaftaran Berhasil!</h2>
               <p className="text-sm text-gray-600">
-                Kami telah mengirim email verifikasi ke <strong>{email}</strong>
+                Akun <strong>{email}</strong> berhasil dibuat.
               </p>
               <p className="text-xs text-gray-500">
-                Silakan cek inbox email kamu dan klik link verifikasi untuk mengaktifkan akun.
+                Kamu bisa langsung masuk ke Arena sekarang.
               </p>
               <div className="pt-4">
                 <Link
