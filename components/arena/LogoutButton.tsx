@@ -21,10 +21,10 @@ export default function LogoutButton({ variant = "link" }: { variant?: "link" | 
       <button
         onClick={handleLogout}
         disabled={loading}
-        className="w-8 h-8 rounded-full bg-white/15 flex items-center justify-center backdrop-blur cursor-pointer hover:bg-white/25 transition-colors"
+        className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center cursor-pointer hover:bg-gray-200 transition-colors"
         title="Keluar"
       >
-        <LogOut size={15} className="text-white/90" />
+        <LogOut size={15} className="text-gray-500" />
       </button>
     )
   }

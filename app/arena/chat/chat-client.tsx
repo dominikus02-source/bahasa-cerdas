@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react"
 import {
   MessageCircle, Send, ChevronRight, Users, ArrowLeft,
-  Plus, Sparkles, Eye,
+  Search, Plus, Sparkles, Eye,
 } from "lucide-react"
 
 interface Group {
