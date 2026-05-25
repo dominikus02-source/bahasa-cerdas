@@ -46,10 +46,10 @@ export default async function ArtikelPage() {
             <p>Belum ada artikel</p>
           </div>
         ) : (
-          <div className="space-y-8">
+          <div className="space-y-10">
             {artikel.map((a: any, idx: number) => (
               <Link key={a.id} href={`/artikel/${a.slug}`}>
-                <article className={`bg-white rounded-2xl border border-slate-200 overflow-hidden hover:shadow-xl hover:border-red-200 transition-all ${idx === 0 ? "md:grid md:grid-cols-2" : ""}`}>
+                <article className={`bg-white rounded-2xl border border-slate-200 hover:shadow-xl hover:border-red-200 transition-all ${idx === 0 ? "md:grid md:grid-cols-2" : ""}`}>
                   {a.coverImage && (
                     <div className={`${idx === 0 ? "h-full min-h-[280px]" : "aspect-video"} bg-slate-100 overflow-hidden`}>
                       <img src={a.coverImage} alt={a.title} className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
