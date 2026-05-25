@@ -249,7 +249,7 @@ export default function TokoKaryaPage() {
                     <div className={`border-2 border-dashed rounded-xl p-3 text-center ${formData.images[i] ? 'border-emerald-300 bg-emerald-50' : 'border-gray-300'}`}>
                       {formData.images[i] ? (
                         <div className="relative">
-                          <img src={formData.images[i]} alt="" className="w-full h-24 object-cover rounded-lg"
+                          <img src={formData.images[i]} alt="" className="w-full h-32 object-contain rounded-lg bg-white"
                             onError={(e) => (e.target as HTMLImageElement).src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect fill="%23f3f4f6" width="100" height="100"/><text x="50" y="55" text-anchor="middle" fill="%239ca3af" font-size="10">Gambar ${i+1}</text></svg>'} />
                           <button type="button" onClick={() => { const imgs = [...formData.images]; imgs[i] = ""; setFormData({ ...formData, images: imgs }); }}
                             className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-0.5 shadow"><X size={12} /></button>

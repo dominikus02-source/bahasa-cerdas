@@ -98,7 +98,7 @@ export default function MarketplacePage() {
                 <Link key={item.id} href={`/marketplace/${item.id}`} className="group">
                   <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden hover:shadow-xl hover:border-red-200 transition-all h-full flex flex-col">
                     <div className="h-32 bg-gradient-to-br from-red-50 via-pink-50 to-orange-50 flex items-center justify-center overflow-hidden">
-                      {(() => { try { const imgs = JSON.parse(item.images || "[]"); if (imgs[0]) return <img src={imgs[0]} alt="" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />; } catch {} return <span className="text-5xl group-hover:scale-110 transition-transform">{item.type === "RPP" ? "📚" : item.type === "PPT" ? "📊" : item.type === "SOAL" ? "✍️" : item.type === "VIDEO" ? "🎬" : item.type === "EBOOK" ? "📖" : "📦"}</span>; })()}
+                      {(() => { try { const imgs = JSON.parse(item.images || "[]"); if (imgs[0]) return <img src={imgs[0]} alt="" className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-500 p-2" />; } catch {} return <span className="text-5xl group-hover:scale-110 transition-transform">{item.type === "RPP" ? "📚" : item.type === "PPT" ? "📊" : item.type === "SOAL" ? "✍️" : item.type === "VIDEO" ? "🎬" : item.type === "EBOOK" ? "📖" : "📦"}</span>; })()}
                     </div>
                     <div className="p-4 flex-1 flex flex-col">
                       <span className="text-[10px] px-2 py-0.5 bg-red-50 text-red-600 rounded-full font-medium w-fit mb-2">
