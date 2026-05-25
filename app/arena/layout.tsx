@@ -2,11 +2,12 @@ import "./arena.css"
 import { getUser } from "@/lib/supabase/server"
 import { redirect } from "next/navigation"
 import Link from "next/link"
-import { Compass, Flame, Gamepad2, MessageCircle, Trophy } from "lucide-react"
+import { Compass, Flame, Gamepad2, MessageCircle, Trophy, LogOut } from "lucide-react"
 import { SwRegister } from "@/components/SwRegister"
 import { ArenaClientWrapper } from "./arena-client"
 import { BottomNav } from "./bottom-nav"
 import { HeaderActions } from "@/components/arena/HeaderActions"
+import LogoutButton from "@/components/arena/LogoutButton"
 
 const navItems = [
   { href: "/arena", label: "Beranda", icon: Compass },
@@ -47,8 +48,9 @@ export default async function ArenaLayout({ children }: { children: React.ReactN
           ))}
         </nav>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           <HeaderActions />
+          <LogoutButton variant="icon" />
         </div>
       </header>
 
@@ -60,7 +62,10 @@ export default async function ArenaLayout({ children }: { children: React.ReactN
           </div>
           <span className="font-bold text-sm text-gray-900">Arena</span>
         </Link>
-        <HeaderActions />
+        <div className="flex items-center gap-1">
+          <HeaderActions />
+          <LogoutButton variant="icon" />
+        </div>
       </div>
 
       <main className="mx-auto max-w-lg md:max-w-4xl px-0 md:px-6 py-0 md:py-6">

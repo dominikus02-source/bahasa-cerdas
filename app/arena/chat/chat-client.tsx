@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react"
 import {
   MessageCircle, Send, ChevronRight, Users, ArrowLeft,
-  Search, Bell, PenLine, Plus, Sparkles, Eye,
+  Plus, Sparkles, Eye,
 } from "lucide-react"
 
 interface Group {
@@ -162,24 +162,10 @@ export function ChatClient({ userId, groups }: { userId: string; groups: Group[]
     <div className="min-h-screen bg-[#F7F6FF]">
       {/* HEADER */}
       <div className="chat-header">
-        <div className="flex items-center justify-between mb-3">
-          <div>
+          <div className="mb-3">
             <h1 className="text-xl font-extrabold text-white">Chat</h1>
             <p className="text-sm text-white/65 mt-0.5">Ngobrol bareng teman sekelas</p>
           </div>
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-full bg-white/15 flex items-center justify-center backdrop-blur cursor-pointer">
-              <Search size={15} className="text-white/90" />
-            </div>
-            <div className="w-8 h-8 rounded-full bg-white/15 flex items-center justify-center backdrop-blur cursor-pointer relative">
-              <Bell size={15} className="text-white/90" />
-              <div className="absolute top-1 right-1 w-[7px] h-[7px] bg-red-500 rounded-full border-[1.5px] border-[#7C3AED]" />
-            </div>
-            <div className="w-8 h-8 rounded-full bg-white/15 flex items-center justify-center backdrop-blur cursor-pointer">
-              <PenLine size={15} className="text-white/90" />
-            </div>
-          </div>
-        </div>
         {/* Search bar */}
         <div className="flex items-center gap-2 bg-white/15 rounded-xl px-4 py-2.5">
           <Search size={15} className="text-white/50 shrink-0" />
