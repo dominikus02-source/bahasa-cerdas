@@ -104,8 +104,6 @@ export default function PageNavbar() {
             <ChevronLeft size={18} /> Kembali ke Dashboard
           </Link>
           <div className="flex items-center gap-1">
-            {historyLink}
-            {cartLink}
             <Link href="/" className="flex items-center gap-2 ml-2">
               <Image src="/logo.png" alt="BC" width={24} height={24} />
               <span className="font-bold text-slate-900 text-sm hidden sm:block">BahasaCerdas</span>
@@ -139,8 +137,6 @@ export default function PageNavbar() {
 
         {/* Desktop right side */}
         <div className="hidden lg:flex items-center gap-2">
-          {historyLink}
-          {cartLink}
 
           <div className="h-5 w-px bg-slate-200 mx-1" />
 
@@ -179,8 +175,6 @@ export default function PageNavbar() {
 
         {/* Mobile hamburger */}
         <div className="flex lg:hidden items-center gap-2">
-          {historyLink}
-          {cartLink}
           <button
             onClick={() => setSearchOpen(!searchOpen)}
             className="p-2 text-slate-400 hover:text-red-600 rounded-xl transition-colors"

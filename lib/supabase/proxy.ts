@@ -1,7 +1,10 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
-const publicPaths = ["/", "/login", "/auth/arena-login", "/register", "/confirm", "/verify-email", "/onboarding", "/api"];
+const publicPaths = [
+  "/", "/login", "/auth/arena-login", "/register", "/confirm", "/verify-email", "/onboarding", "/api",
+  "/marketplace", "/artikel", "/video-belajar", "/kamus", "/loker", "/komunitas", "/ai-bc",
+];
 
 export async function updateSession(request: NextRequest) {
   const { pathname } = request.nextUrl;
