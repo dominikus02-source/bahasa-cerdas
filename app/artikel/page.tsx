@@ -29,10 +29,10 @@ export default async function ArtikelPage() {
   });
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-white">
+    <div className="min-h-screen bg-slate-50">
       <PageNavbar />
       <div className="max-w-5xl mx-auto px-4 py-16">
-        <div className="text-center mb-12">
+        <div className="text-center mb-14">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-red-100 rounded-full text-red-700 text-sm font-medium mb-4">
             <BookOpen size={14} /> Artikel & Tips Pendidikan
           </div>
@@ -46,10 +46,10 @@ export default async function ArtikelPage() {
             <p>Belum ada artikel</p>
           </div>
         ) : (
-          <div className="space-y-10">
+          <div className="flex flex-col gap-10">
             {artikel.map((a: any, idx: number) => (
-              <Link key={a.id} href={`/artikel/${a.slug}`}>
-                <article className={`bg-white rounded-2xl border border-slate-200 hover:shadow-xl hover:border-red-200 transition-all ${idx === 0 ? "md:grid md:grid-cols-2" : ""}`}>
+              <Link key={a.id} href={`/artikel/${a.slug}`} className="block">
+                <article className={`bg-white rounded-2xl shadow-sm border border-slate-100 hover:shadow-xl hover:border-red-200 transition-all ${idx === 0 ? "md:grid md:grid-cols-2" : ""}`}>
                   {a.coverImage && (
                     <div className={`${idx === 0 ? "h-full min-h-[280px]" : "aspect-video"} bg-slate-100 overflow-hidden`}>
                       <img src={a.coverImage} alt={a.title} className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
