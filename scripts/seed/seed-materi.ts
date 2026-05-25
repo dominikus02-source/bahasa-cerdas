@@ -49,6 +49,14 @@ import ktiXiS2 from "./materi/59-kti-xi-s2"
 import novelXiS2 from "./materi/60-novel-xi-s2"
 import debatXiS2 from "./materi/61-debat-xi-s2"
 
+// Buku Panduan - Kelas XII Semester 1
+import suratLamaranXiiS1 from "./materi/62-surat-lamaran-xii-s1"
+import ceritaSejarahXiiS1 from "./materi/63-cerita-sejarah-xii-s1"
+import teksEditorialXiiS1 from "./materi/64-teks-editorial-xii-s1"
+import novelXiiS1 from "./materi/65-novel-xii-s1"
+import artikelXiiS1 from "./materi/66-artikel-xii-s1"
+import puisiXiiS1 from "./materi/67-puisi-xii-s1"
+
 const units: { title: string; konten: any; grade?: string; semester?: number }[] = [
   // Buku Panduan - Kelas IX Semester 1
   { title: "Bab 1: Laporan Percobaan", konten: laporanPercobaan, grade: "IX", semester: 1 },
@@ -78,6 +86,13 @@ const units: { title: string; konten: any; grade?: string; semester?: number }[]
   { title: "Bab 4: Fiksi/Nonfiksi", konten: fiksiNonfiksiXS2, grade: "X", semester: 2 },
   { title: "Bab 5: Pantun/Syair", konten: pantunSyairXS2, grade: "X", semester: 2 },
   { title: "Bab 6: Prosedur Kompleks", konten: prosedurKompleksXS2, grade: "X", semester: 2 },
+  // Buku Panduan - Kelas XII Semester 1
+  { title: "Bab 1: Surat Lamaran", konten: suratLamaranXiiS1, grade: "XII", semester: 1 },
+  { title: "Bab 2: Cerita Sejarah", konten: ceritaSejarahXiiS1, grade: "XII", semester: 1 },
+  { title: "Bab 3: Teks Editorial", konten: teksEditorialXiiS1, grade: "XII", semester: 1 },
+  { title: "Bab 4: Novel", konten: novelXiiS1, grade: "XII", semester: 1 },
+  { title: "Bab 5: Artikel", konten: artikelXiiS1, grade: "XII", semester: 1 },
+  { title: "Bab 6: Puisi", konten: puisiXiiS1, grade: "XII", semester: 1 },
   // Buku Panduan - Kelas XI Semester 1
   { title: "Bab 1: Prosedur", konten: prosedurXiS1, grade: "XI", semester: 1 },
   { title: "Bab 2: Eksplanasi", konten: eksplanasiXiS1, grade: "XI", semester: 1 },
