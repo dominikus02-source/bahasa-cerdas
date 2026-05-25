@@ -33,6 +33,14 @@ import fiksiNonfiksiXS2 from "./materi/47-fiksi-nonfiksi-x-s2"
 import pantunSyairXS2 from "./materi/48-pantun-syair-x-s2"
 import prosedurKompleksXS2 from "./materi/49-prosedur-kompleks-x-s2"
 
+// Buku Panduan - Kelas XI Semester 1
+import prosedurXiS1 from "./materi/50-prosedur-xi-s1"
+import eksplanasiXiS1 from "./materi/51-eksplanasi-xi-s1"
+import ceramahXiS1 from "./materi/52-ceramah-xi-s1"
+import cerpenXiS1 from "./materi/53-cerpen-xi-s1"
+import puisiAngkatanXiS1 from "./materi/54-puisi-angkatan-xi-s1"
+import dramaXiS1 from "./materi/55-drama-xi-s1"
+
 const units: { title: string; konten: any; grade?: string; semester?: number }[] = [
   // Buku Panduan - Kelas IX Semester 1
   { title: "Bab 1: Laporan Percobaan", konten: laporanPercobaan, grade: "IX", semester: 1 },
@@ -62,6 +70,13 @@ const units: { title: string; konten: any; grade?: string; semester?: number }[]
   { title: "Bab 4: Fiksi/Nonfiksi", konten: fiksiNonfiksiXS2, grade: "X", semester: 2 },
   { title: "Bab 5: Pantun/Syair", konten: pantunSyairXS2, grade: "X", semester: 2 },
   { title: "Bab 6: Prosedur Kompleks", konten: prosedurKompleksXS2, grade: "X", semester: 2 },
+  // Buku Panduan - Kelas XI Semester 1
+  { title: "Bab 1: Prosedur", konten: prosedurXiS1, grade: "XI", semester: 1 },
+  { title: "Bab 2: Eksplanasi", konten: eksplanasiXiS1, grade: "XI", semester: 1 },
+  { title: "Bab 3: Ceramah", konten: ceramahXiS1, grade: "XI", semester: 1 },
+  { title: "Bab 4: Cerpen", konten: cerpenXiS1, grade: "XI", semester: 1 },
+  { title: "Bab 5: Puisi Angkatan", konten: puisiAngkatanXiS1, grade: "XI", semester: 1 },
+  { title: "Bab 6: Drama", konten: dramaXiS1, grade: "XI", semester: 1 },
 ]
 
 async function seedMateri() {
