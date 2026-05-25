@@ -6,7 +6,7 @@ import { Compass, Flame, Gamepad2, MessageCircle, Trophy } from "lucide-react"
 import { SwRegister } from "@/components/SwRegister"
 import { ArenaClientWrapper } from "./arena-client"
 import { BottomNav } from "./bottom-nav"
-import LogoutButton from "@/components/arena/LogoutButton"
+import { HeaderActions } from "@/components/arena/HeaderActions"
 
 const navItems = [
   { href: "/arena", label: "Beranda", icon: Compass },
@@ -25,6 +25,7 @@ export default async function ArenaLayout({ children }: { children: React.ReactN
     <div className="arena-theme min-h-screen bg-gray-50 pb-20 md:pb-0">
       <SwRegister />
 
+      {/* Desktop Header */}
       <header className="hidden md:flex items-center justify-between px-6 h-16 bg-white border-b border-gray-200 sticky top-0 z-40">
         <Link href="/arena/jalur-cerdas" className="flex items-center gap-2">
           <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center text-white font-bold text-xs">
@@ -46,14 +47,21 @@ export default async function ArenaLayout({ children }: { children: React.ReactN
           ))}
         </nav>
 
-        <Link
-          href="/murid/beranda"
-          className="text-sm text-gray-500 hover:text-gray-700 transition-colors"
-        >
-          Dasbor Lama
-        </Link>
-        <LogoutButton />
+        <div className="flex items-center gap-3">
+          <HeaderActions />
+        </div>
       </header>
+
+      {/* Mobile Top Bar */}
+      <div className="md:hidden sticky top-0 z-40 flex items-center justify-between px-4 h-12 bg-white/95 backdrop-blur-xl border-b border-gray-100">
+        <Link href="/arena/jalur-cerdas" className="flex items-center gap-1.5">
+          <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center text-white font-bold text-[10px]">
+            A
+          </div>
+          <span className="font-bold text-sm text-gray-900">Arena</span>
+        </Link>
+        <HeaderActions />
+      </div>
 
       <main className="mx-auto max-w-lg md:max-w-4xl px-0 md:px-6 py-0 md:py-6">
         <ArenaClientWrapper>

@@ -3,14 +3,13 @@ import { db } from "@/lib/db"
 import { redirect } from "next/navigation"
 import Link from "next/link"
 import {
-  Flame, Zap, Coins, Bell, Target, Bot, PenLine, Rocket, Star, Gift,
+  Flame, Zap, Coins, Target, Bot, PenLine, Rocket, Star, Gift,
   Trophy, BookOpen, ChevronRight, Sparkles, Award, Gamepad2, Heart,
   MessageCircle, Users, Clock, Swords, Crown,
 } from "lucide-react"
 import { trackDailyStreak, getOrCreateDailyQuests } from "@/lib/coins"
 import { TugasCard } from "./tugas-card"
 import BattleCard from "@/components/arena/BattleCard"
-import LogoutButton from "@/components/arena/LogoutButton"
 
 function xpProgress(xp: number, level: number) {
   const needed = level * 150
@@ -121,28 +120,21 @@ export default async function BerandaPage() {
       {/* HERO */}
       <div className="hero-section">
         <div className="relative z-10">
-          <div className="flex items-center justify-between mb-5">
-            <div className="flex items-center gap-3">
-              <div className="relative">
-                <div className="w-[46px] h-[46px] rounded-2xl border-2 border-white/40 bg-gradient-to-br from-purple-300 to-purple-600 flex items-center justify-center text-white font-extrabold text-xl overflow-hidden">
-                  {user.avatar ? (
-                    <img src={user.avatar} alt="" className="w-full h-full object-cover" />
-                  ) : (
-                    <span>{user.fullName?.charAt(0).toUpperCase() || "M"}</span>
-                  )}
-                </div>
-                <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-emerald-500 border-2 border-white rounded-full" />
+          <div className="flex items-center gap-3 mb-5">
+            <div className="relative">
+              <div className="w-[46px] h-[46px] rounded-2xl border-2 border-white/40 bg-gradient-to-br from-purple-300 to-purple-600 flex items-center justify-center text-white font-extrabold text-xl overflow-hidden">
+                {user.avatar ? (
+                  <img src={user.avatar} alt="" className="w-full h-full object-cover" />
+                ) : (
+                  <span>{user.fullName?.charAt(0).toUpperCase() || "M"}</span>
+                )}
               </div>
-              <div>
-                <h2 className="font-bold text-base text-white">Halo, {user.fullName?.split(" ")[0]}!</h2>
-                <p className="text-xs text-white/65">{user.league || "Perunggu"} &middot; Tingkat {user.level || 1}</p>
-              </div>
+              <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-emerald-500 border-2 border-white rounded-full" />
             </div>
-            <Link href="/arena/notifikasi" className="w-10 h-10 bg-white/15 rounded-[13px] flex items-center justify-center relative backdrop-blur hover:bg-white/25 transition-colors">
-              <Bell size={18} className="text-white" />
-              <div className="absolute top-[6px] right-[7px] w-2 h-2 bg-red-500 border-[1.5px] border-purple-700 rounded-full notif-pulse" />
-            </Link>
-            <LogoutButton variant="icon" />
+            <div>
+              <h2 className="font-bold text-base text-white">Halo, {user.fullName?.split(" ")[0]}!</h2>
+              <p className="text-xs text-white/65">{user.league || "Perunggu"} &middot; Tingkat {user.level || 1}</p>
+            </div>
           </div>
 
           <div className="grid grid-cols-3 gap-2.5 mb-5">
@@ -264,7 +256,7 @@ export default async function BerandaPage() {
           </h3>
         </div>
         <div className="grid grid-cols-4 gap-2.5">
-          <QuickAction icon={<Bot size={24} />} label="AI Tutor" href="/arena/ai" warna="from-cyan-500 to-blue-600" />
+          <QuickAction icon={<Bot size={24} />} label="AI Cerdik" href="/arena/ai" warna="from-cyan-500 to-blue-600" />
           <QuickAction icon={<PenLine size={24} />} label="Tulis" href="/arena/tulis" warna="from-orange-500 to-red-600" />
           <QuickAction icon={<Gift size={24} />} label="Kotak" href="/arena/mystery-box" warna="from-amber-500 to-orange-600" />
           <QuickAction icon={<Gamepad2 size={24} />} label="Gim" href="/arena/game" warna="from-purple-600 to-violet-700" />

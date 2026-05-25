@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation"
 import Link from "next/link"
 import {
   Heart, MessageCircle, Eye, Clock, Sparkles, BookOpen, FileText,
-  Smile, Music, MessageSquare, PenLine, Search, Bell, Send, Flame,
+  Smile, Music, MessageSquare, PenLine, Send, Flame,
   Zap, Trophy, Target, TrendingUp, Share2,
 } from "lucide-react"
 
@@ -156,18 +156,9 @@ export default function FeedPage() {
     <div className="min-h-screen bg-[#F7F6FF]">
       {/* HEADER */}
       <div className="feed-header">
-        <div className="flex items-center justify-between mb-1">
-          <h1 className="text-xl font-extrabold text-white">KARYA</h1>
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-full bg-white/15 flex items-center justify-center backdrop-blur cursor-pointer">
-              <Search size={15} className="text-white/90" />
-            </div>
-            <Link href="/arena/notifikasi" className="w-8 h-8 rounded-full bg-white/15 flex items-center justify-center backdrop-blur cursor-pointer relative">
-              <Bell size={15} className="text-white/90" />
-              <div className="absolute top-[5px] right-[5px] w-[7px] h-[7px] bg-red-500 rounded-full border-[1.5px] border-[#7C3AED]" />
-            </Link>
+          <div className="mb-1">
+            <h1 className="text-xl font-extrabold text-white">KARYA</h1>
           </div>
-        </div>
         <p className="text-sm text-white/70">Karya terbaru dari murid di seluruh Indonesia</p>
       </div>
 

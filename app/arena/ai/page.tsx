@@ -17,7 +17,7 @@ interface Message {
 
 export default function ArenaAIPage() {
   const [messages, setMessages] = useState<Message[]>([
-    { role: "assistant", content: "Halo! Aku **Cerdi**, asisten AI Bahasa Indonesia kamu. Aku bisa bantu jelasin materi, perbaiki tulisan, atau latihan UKBI. Ada yang mau ditanyakan?" }
+    { role: "assistant", content: "Halo! Aku **AI Cerdik**, asisten AI Bahasa Indonesia kamu. Aku bisa bantu jelasin materi, perbaiki tulisan, atau latihan UKBI. Ada yang mau ditanyakan?" }
   ])
   const [input, setInput] = useState("")
   const [loading, setLoading] = useState(false)
@@ -56,7 +56,7 @@ export default function ArenaAIPage() {
             <span className="absolute -bottom-1 -right-1 w-4 h-4 bg-emerald-400 border-2 border-white rounded-full" />
           </div>
           <div>
-            <p className="font-bold text-gray-900 text-base">Cerdi</p>
+            <p className="font-bold text-gray-900 text-base">AI Cerdik</p>
             <p className="text-xs text-gray-400">Asisten AI • Online</p>
           </div>
         </div>
@@ -81,7 +81,7 @@ export default function ArenaAIPage() {
 
         {messages.length === 1 && (
           <div className="mt-4">
-            <p className="text-xs text-gray-500 font-medium mb-2">Coba tanya Cerdi:</p>
+            <p className="text-xs text-gray-500 font-medium mb-2">Coba tanya AI Cerdik:</p>
             <div className="grid grid-cols-2 gap-2">
               {quickActions.map((q, i) => (
                 <button
@@ -121,7 +121,7 @@ export default function ArenaAIPage() {
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="Tanya Cerdi..."
+            placeholder="Tanya AI Cerdik..."
             className="flex-1 px-4 py-3 rounded-xl bg-gray-100 border-0 text-sm focus:outline-none focus:ring-2 focus:ring-violet-300"
           />
           <button

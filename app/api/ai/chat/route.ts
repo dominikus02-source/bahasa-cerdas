@@ -43,9 +43,15 @@ Kamu adalah asisten ringan di BahasaCerdas.site — kamu ahli menjelaskan konsep
 
 export async function POST(req: NextRequest) {
   try {
-    const { messages, mode = "murid" } = await req.json();
-    if (!messages || !Array.isArray(messages)) {
-      return NextResponse.json({ error: "Messages required" }, { status: 400 });
+    const { message, messages, mode = "murid" } = await req.json();
+
+    let chatHistory = messages
+    if (message) {
+      chatHistory = [{ role: "user", content: message }]
+    }
+
+    if (!chatHistory || !Array.isArray(chatHistory) || chatHistory.length === 0) {
+      return NextResponse.json({ reply: "Halo! Ada yang bisa aku bantu?" });
     }
 
     const modeInstruction = mode === "guru"
@@ -59,9 +65,9 @@ export async function POST(req: NextRequest) {
       },
       {
         role: "assistant",
-        content: "Hai! 👋 Aku **AI BC**, Asisten Bahasa Indonesia. Senang banget bisa bantu kamu belajar! Mau tanya apa hari ini? 😊",
+        content: "Hai! 👋 Aku **AI Cerdik**, Asisten Bahasa Indonesia. Senang banget bisa bantu kamu belajar! Mau tanya apa hari ini? 😊",
       },
-      ...messages.map((msg: any) => ({
+      ...chatHistory.map((msg: any) => ({
         role: msg.role === "user" ? "user" : "assistant",
         content: msg.content,
       })),
@@ -117,11 +123,11 @@ export async function POST(req: NextRequest) {
     }
 
     if (!answer) {
-      return NextResponse.json({ answer: "Maaf, aku lagi sibuk. Coba tanya lagi ya! 😊" });
+      return NextResponse.json({ reply: "Maaf, aku lagi sibuk. Coba tanya lagi ya! 😊" });
     }
 
-    return NextResponse.json({ answer });
+    return NextResponse.json({ reply: answer });
   } catch {
-    return NextResponse.json({ answer: "Maaf, ada gangguan. Coba lagi ya! 😊" }, { status: 500 });
+    return NextResponse.json({ reply: "Maaf, ada gangguan. Coba lagi ya! 😊" }, { status: 500 });
   }
 }
