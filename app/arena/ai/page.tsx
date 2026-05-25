@@ -17,7 +17,7 @@ interface Message {
 
 export default function ArenaAIPage() {
   const [messages, setMessages] = useState<Message[]>([
-    { role: "assistant", content: "Halo! Aku **AI Cerdik**, asisten AI Bahasa Indonesia kamu. Aku bisa bantu jelasin materi, perbaiki tulisan, atau latihan UKBI. Ada yang mau ditanyakan?" }
+    { role: "assistant", content: "Halo! Aku AI Cerdik, asisten AI Bahasa Indonesia kamu. Aku bisa bantu jelasin materi, perbaiki tulisan, atau latihan UKBI. Ada yang mau ditanyakan?" }
   ])
   const [input, setInput] = useState("")
   const [loading, setLoading] = useState(false)

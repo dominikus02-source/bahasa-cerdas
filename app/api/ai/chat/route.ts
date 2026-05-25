@@ -65,7 +65,7 @@ export async function POST(req: NextRequest) {
       },
       {
         role: "assistant",
-        content: "Hai! 👋 Aku **AI Cerdik**, Asisten Bahasa Indonesia. Senang banget bisa bantu kamu belajar! Mau tanya apa hari ini? 😊",
+        content: "Hai! 👋 Aku AI Cerdik, asisten Bahasa Indonesia. Senang banget bisa bantu kamu belajar! Mau tanya apa hari ini? 😊",
       },
       ...chatHistory.map((msg: any) => ({
         role: msg.role === "user" ? "user" : "assistant",
