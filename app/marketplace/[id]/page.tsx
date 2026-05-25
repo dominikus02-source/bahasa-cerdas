@@ -80,7 +80,7 @@ export default function MarketplaceDetailPage() {
                   {karyaImages.map((img: string, i: number) => (
                     <button key={i} onClick={() => setCurrentImg(i)}
                       className={`w-16 h-16 rounded-lg border-2 overflow-hidden ${i === currentImg ? 'border-red-500' : 'border-transparent'}`}>
-                      <img src={img} alt="" className="w-full h-full object-contain" />
+                      <img src={img} alt="" className="w-full h-full object-cover" />
                     </button>
                   ))}
                 </div>
