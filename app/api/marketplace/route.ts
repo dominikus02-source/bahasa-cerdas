@@ -28,7 +28,7 @@ export async function GET(req: NextRequest) {
     }
 
     const dbUser = await db.user.findUnique({ where: { supabaseId: user.id } });
-    if (!dbUser || dbUser.role !== "GURU") {
+    if (!dbUser || (dbUser.role !== "GURU" && !dbUser.isFounder)) {
       return NextResponse.json({ error: "Guru only" }, { status: 403 });
     }
 
@@ -69,7 +69,7 @@ export async function POST(req: NextRequest) {
   try {
     const user = await getUser();
     if (!user) return NextResponse.json({ error: "Silakan login" }, { status: 401 });
-    if (user.role !== "GURU") return NextResponse.json({ error: "Hanya untuk guru" }, { status: 403 });
+    if (user.role !== "GURU" && !user.isFounder) return NextResponse.json({ error: "Hanya untuk guru" }, { status: 403 });
 
     const formData = await req.formData();
 
@@ -145,7 +145,7 @@ export async function PUT(req: NextRequest) {
     }
 
     const dbUser = await db.user.findUnique({ where: { supabaseId: user.id } });
-    if (!dbUser || dbUser.role !== "GURU") {
+    if (!dbUser || (dbUser.role !== "GURU" && !dbUser.isFounder)) {
       return NextResponse.json({ error: "Guru only" }, { status: 403 });
     }
 
@@ -191,7 +191,7 @@ export async function DELETE(req: NextRequest) {
     }
 
     const dbUser = await db.user.findUnique({ where: { supabaseId: user.id } });
-    if (!dbUser || dbUser.role !== "GURU") {
+    if (!dbUser || (dbUser.role !== "GURU" && !dbUser.isFounder)) {
       return NextResponse.json({ error: "Guru only" }, { status: 403 });
     }
 
