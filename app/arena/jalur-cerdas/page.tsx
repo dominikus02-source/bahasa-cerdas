@@ -34,6 +34,7 @@ export default async function JalurCerdasPage() {
 
   const [levels, progress] = await Promise.all([
     db.learningLevel.findMany({
+      where: { type: "JALUR" },
       orderBy: { level: "asc" },
       include: {
         units: {
