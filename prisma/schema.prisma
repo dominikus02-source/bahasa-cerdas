@@ -233,6 +233,7 @@ model User {
   unitProgress       UserUnitProgress[]
   penugasans         Penugasan[]
   penugasanSubmissions PenugasanSubmission[]
+  nilais             Nilai[]
 }
 
 model Profile {
@@ -994,6 +995,8 @@ model Group {
   quizAssignments QuizAssignment[]
   messages        ChatMessage[]
   penugasans      Penugasan[]
+  nilaiKategoris  NilaiKategori[]
+  nilais          Nilai[]
 
   @@index([teacherId])
   @@index([accessCode])
@@ -1011,6 +1014,42 @@ model GroupMember {
   @@unique([groupId, userId])
   @@index([userId])
   @@index([groupId])
+}
+
+model NilaiKategori {
+  id        String   @id @default(cuid())
+  groupId   String
+  nama      String
+  bobot     Int      @default(100)
+  createdAt DateTime @default(now())
+
+  group  Group   @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  nilais Nilai[]
+
+  @@unique([groupId, nama])
+  @@index([groupId])
+}
+
+model Nilai {
+  id         String   @id @default(cuid())
+  userId     String
+  groupId    String
+  kategoriId String
+  skor       Int
+  sumberType String   // "PENUGASAN", "KARYA", "QUIZ", "MANUAL"
+  sumberId   String?
+  keterangan String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  user     User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  group    Group         @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  kategori NilaiKategori @relation(fields: [kategoriId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([groupId])
+  @@index([kategoriId])
+  @@index([sumberType, sumberId])
 }
 
 model GroupQuiz {
