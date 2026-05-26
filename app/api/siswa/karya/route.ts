@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getUser } from "@/lib/supabase/server";
+import { getUser, createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 import { awardCoins, trackQuestProgress, trackDailyStreak } from "@/lib/coins";
 
@@ -11,10 +11,32 @@ export async function GET(req: NextRequest) {
     const limit = parseInt(searchParams.get("limit") || "10");
     const skip = (page - 1) * limit;
     const featured = searchParams.get("featured") === "true";
+    const groupId = searchParams.get("groupId");
 
     const where: any = {};
     if (type) where.type = type;
     if (featured) where.isFeatured = true;
+
+    if (groupId) {
+      const supabase = await createClient();
+      const { data: { user: authUser } } = await supabase.auth.getUser();
+      if (authUser) {
+        const dbUser = await db.user.findUnique({ where: { supabaseId: authUser.id } });
+        if (dbUser) {
+          const group = await db.group.findUnique({
+            where: { id: groupId },
+            select: { teacherId: true },
+          });
+          if (group && group.teacherId === dbUser.id) {
+            const members = await db.groupMember.findMany({
+              where: { groupId, role: "member" },
+              select: { userId: true },
+            });
+            where.userId = { in: members.map(m => m.userId) };
+          }
+        }
+      }
+    }
 
     const [karya, total] = await Promise.all([
       db.studentKarya.findMany({

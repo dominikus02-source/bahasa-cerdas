@@ -38,6 +38,8 @@ export default function GuruFeedKaryaPage() {
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [activeType, setActiveType] = useState<string>("");
+  const [groups, setGroups] = useState<any[]>([]);
+  const [selectedGroupId, setSelectedGroupId] = useState<string>("");
   const loaderRef = useRef<HTMLDivElement>(null);
 
   // Modal state
@@ -50,18 +52,22 @@ export default function GuruFeedKaryaPage() {
 
   useEffect(() => {
     fetch("/api/user/me").then(r => r.ok ? r.json() : null).then(d => setUser(d?.user || null));
+    fetch("/api/group").then(r => r.ok ? r.json() : null).then(d => {
+      if (d?.groups) setGroups(d.groups);
+    });
   }, []);
 
   const fetchKarya = useCallback(async (pageNum: number, type: string, append: boolean) => {
     const params = new URLSearchParams({ page: String(pageNum), limit: "10" });
     if (type) params.set("type", type);
+    if (selectedGroupId) params.set("groupId", selectedGroupId);
     const res = await fetch(`/api/siswa/karya?${params}`);
     const data = await res.json();
     setKaryaList(prev => append ? [...prev, ...data.karya] : data.karya);
     setTotalPages(data.totalPages);
     setLoading(false);
     setLoadingMore(false);
-  }, []);
+  }, [selectedGroupId]);
 
   useEffect(() => {
     setLoading(true); setKaryaList([]); setPage(1);
@@ -175,6 +181,28 @@ export default function GuruFeedKaryaPage() {
             <span className="flex items-center gap-1 bg-white/15 px-2.5 py-1.5 rounded-full"><IconFlame size={14} />{user.streak || 0} hr</span>
             <span className="flex items-center gap-1 bg-white/15 px-2.5 py-1.5 rounded-full"><IconTarget size={14} />Lv.{user.level || 1}</span>
           </div>
+        </div>
+      )}
+
+      {/* ── Filter Kelas ── */}
+      {groups.length > 0 && (
+        <div className="mb-4">
+          <select
+            value={selectedGroupId}
+            onChange={e => setSelectedGroupId(e.target.value)}
+            className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-emerald-200 focus:border-emerald-400 appearance-none cursor-pointer"
+            style={{
+              backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E")`,
+              backgroundRepeat: 'no-repeat',
+              backgroundPosition: 'right 12px center',
+              paddingRight: '36px',
+            }}
+          >
+            <option value="">Semua Kelas</option>
+            {groups.map(g => (
+              <option key={g.id} value={g.id}>{g.name} ({g.grade}) — {g._count?.members || g.members?.length || 0} murid</option>
+            ))}
+          </select>
         </div>
       )}
 
