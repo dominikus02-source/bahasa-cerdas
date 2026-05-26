@@ -81,6 +81,11 @@ export default async function GuruLayout({ children }: { children: React.ReactNo
           <MenuIcon path="M10 21l7-8-7-8v16z" label="Buku Panduan" href="/guru/panduan-guru" />
           <MenuIcon path="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" label="Buku Nilai" href="/guru/gradebook" />
           <MenuIcon path="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" label="Penilaian" href="/guru/penilaian" />
+          <div className="ml-7 mb-1 flex flex-col gap-0.5">
+            <Link href="/guru/penilaian/input-massal" className="text-xs text-gray-400 hover:text-emerald-600 py-1 px-3 rounded-lg hover:bg-emerald-50 transition-all">Input Massal</Link>
+            <Link href="/guru/penilaian/kuis" className="text-xs text-gray-400 hover:text-emerald-600 py-1 px-3 rounded-lg hover:bg-emerald-50 transition-all">Nilai Kuis</Link>
+            <Link href="/guru/penilaian/rapor" className="text-xs text-gray-400 hover:text-emerald-600 py-1 px-3 rounded-lg hover:bg-emerald-50 transition-all">Rapor</Link>
+          </div>
           <MenuIcon path="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" label="Video Pembelajaran" href="/guru/video-belajar" />
           <MenuIcon path="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" label="Artikel" href="/guru/artikel" />
 

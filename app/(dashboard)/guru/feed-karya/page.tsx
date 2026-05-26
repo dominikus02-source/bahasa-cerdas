@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState, useEffect, useRef, useCallback } from "react";
-import { X, Send } from "lucide-react";
+import { X, Send, Star, Check } from "lucide-react";
 import { IconBolt, IconFlame, IconTarget, IconPen, IconChat, IconHeart, IconEye, IconClock, IconSchool, IconLocation } from "@/lib/icons";
 import GuruChatPanel from "@/components/chat/GuruChatPanel";
 
@@ -161,6 +161,55 @@ export default function GuruFeedKaryaPage() {
     }
   }, [commentText]);
 
+  // ── Grading state ──
+  const [kategoris, setKategoris] = useState<any[]>([]);
+  const [nilaiModal, setNilaiModal] = useState<{ karya: Karya; open: boolean } | null>(null);
+  const [nilaiSkor, setNilaiSkor] = useState("");
+  const [nilaiKategoriId, setNilaiKategoriId] = useState("");
+  const [nilaiKeterangan, setNilaiKeterangan] = useState("");
+  const [savingNilai, setSavingNilai] = useState(false);
+
+  useEffect(() => {
+    if (selectedGroupId) {
+      fetch(`/api/guru/nilai-kategori?groupId=${selectedGroupId}`)
+        .then(r => r.ok ? r.json() : null)
+        .then(d => setKategoris(d?.kategori || []));
+    } else {
+      setKategoris([]);
+    }
+  }, [selectedGroupId]);
+
+  const openNilaiModal = (k: Karya, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setNilaiModal({ karya: k, open: true });
+    setNilaiSkor("");
+    setNilaiKategoriId(kategoris[0]?.id || "");
+    setNilaiKeterangan(`Dari karya: ${k.title}`);
+  };
+
+  const handleSaveNilai = async () => {
+    if (!nilaiModal || !nilaiSkor || !nilaiKategoriId) return;
+    const skor = parseInt(nilaiSkor);
+    if (isNaN(skor) || skor < 0 || skor > 100) return;
+
+    setSavingNilai(true);
+    await fetch("/api/guru/nilai", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        userId: nilaiModal.karya.user.id,
+        groupId: selectedGroupId,
+        kategoriId: nilaiKategoriId,
+        skor,
+        sumberType: "KARYA",
+        sumberId: nilaiModal.karya.id,
+        keterangan: nilaiKeterangan || null,
+      }),
+    });
+    setSavingNilai(false);
+    setNilaiModal(null);
+  };
+
   return (
     <div className="grid grid-cols-1 xl:grid-cols-[1fr_360px] gap-5 items-start">
       <div className="min-w-0 max-w-2xl w-full">
@@ -273,6 +322,12 @@ export default function GuruFeedKaryaPage() {
                     <IconChat size={14} />{karya._count?.comments || 0}
                   </span>
                   <span className="flex items-center gap-1"><IconEye size={14} />{karya.viewsCount}</span>
+                  {selectedGroupId && kategoris.length > 0 && (
+                    <button onClick={(e) => openNilaiModal(karya, e)}
+                      className="flex items-center gap-1 text-amber-500 hover:text-amber-600 transition-colors">
+                      <Star size={14} /> Nilai
+                    </button>
+                  )}
                   <span className="flex items-center gap-1 ml-auto"><IconClock size={14} />{new Date(karya.createdAt).toLocaleDateString("id-ID", { day: "numeric", month: "short" })}</span>
                 </div>
               </div>
@@ -398,6 +453,44 @@ export default function GuruFeedKaryaPage() {
         </div>
       )}
     </div>
+
+      {/* ═══ NILAI MODAL ═══ */}
+      {nilaiModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center" onClick={() => setNilaiModal(null)}>
+          <div className="fixed inset-0 bg-black/40 backdrop-blur-sm" />
+          <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-sm mx-4 p-6" onClick={e => e.stopPropagation()}>
+            <button onClick={() => setNilaiModal(null)} className="absolute top-3 right-3 w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center">
+              <X size={16} className="text-gray-500" />
+            </button>
+            <h3 className="font-bold text-gray-900 text-lg mb-1">Nilai Karya</h3>
+            <p className="text-sm text-gray-500 mb-5 line-clamp-1">{nilaiModal.karya.title}</p>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-xs font-semibold text-gray-500 mb-1">Siswa</label>
+                <p className="text-sm font-medium text-gray-800">{nilaiModal.karya.user.fullName}</p>
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-gray-500 mb-1">Kategori</label>
+                <select value={nilaiKategoriId} onChange={e => setNilaiKategoriId(e.target.value)}
+                  className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-200">
+                  {kategoris.map(k => <option key={k.id} value={k.id}>{k.nama}</option>)}
+                </select>
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-gray-500 mb-1">Skor (0-100)</label>
+                <input type="number" value={nilaiSkor} onChange={e => setNilaiSkor(e.target.value)}
+                  min={0} max={100} placeholder="85"
+                  className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-200" />
+              </div>
+              <button onClick={handleSaveNilai} disabled={savingNilai || !nilaiSkor}
+                className="w-full py-2.5 bg-emerald-600 text-white rounded-xl font-semibold text-sm hover:bg-emerald-700 disabled:opacity-50 transition-all flex items-center justify-center gap-2">
+                {savingNilai ? <div className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full" /> : <Check size={16} />}
+                Simpan Nilai
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Right Panel — Chat Kelas */}
       <div className="xl:sticky xl:top-5 min-w-0">

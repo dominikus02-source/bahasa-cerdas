@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import {
-  BookOpen, ShoppingBag, Users, Gamepad2, Wand2,
+  BookOpen, ShoppingBag, Users, Gamepad2, Wand2, ClipboardCheck,
   TrendingUp, ChevronRight, Star,
   FileText, Video, Presentation, Database,
   Crown, Zap, Flame, FileUp, Upload
@@ -21,10 +21,14 @@ export default function GuruBerandaPage() {
     totalKarya: 0, totalSiswa: 0, totalKuis: 0, totalTerjual: 0,
     terjualBulanIni: 0, saldo: 0, aiUsage: { rpp: 0, soal: 0 },
   })
+  const [nilaiStats, setNilaiStats] = useState<any[]>([])
 
   useEffect(() => {
     fetch("/api/guru/dashboard").then(r => r.json()).then(d => {
       if (d.totalKarya !== undefined) setStats(d)
+    }).catch(() => {})
+    fetch("/api/guru/nilai/stats").then(r => r.ok ? r.json() : null).then(d => {
+      if (d?.stats) setNilaiStats(d.stats)
     }).catch(() => {})
   }, [])
 
@@ -158,6 +162,40 @@ export default function GuruBerandaPage() {
             </Link>
           )}
         </div>
+
+        {nilaiStats.length > 0 && (
+          <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm">
+            <Link href="/guru/penilaian" className="flex items-center justify-between mb-4 group">
+              <h3 className="font-semibold text-gray-900 group-hover:text-emerald-700 transition-colors flex items-center gap-2">
+                <ClipboardCheck size={16} className="text-emerald-500" /> Penilaian
+              </h3>
+              <ChevronRight size={16} className="text-gray-300 group-hover:text-emerald-500" />
+            </Link>
+            <div className="space-y-3">
+              {nilaiStats.map((ns: any) => {
+                const belum = ns.belumDinilai || 0;
+                return (
+                  <div key={ns.id} className="flex items-center justify-between text-xs">
+                    <div>
+                      <span className="font-medium text-gray-700">{ns.name}</span>
+                      <span className="text-gray-400 ml-1">({ns.grade})</span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      {Object.entries(ns.rataKategoris || {}).map(([nama, skor]: [string, any]) => (
+                        <span key={nama} className={`font-semibold ${skor >= 80 ? "text-emerald-600" : skor >= 60 ? "text-amber-600" : "text-red-500"}`}>
+                          {nama}: {skor}
+                        </span>
+                      ))}
+                      {belum > 0 && (
+                        <span className="text-red-500 font-semibold">{belum} blm dinilai</span>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
 
         <div className="lg:col-span-2 bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
           <div className="flex items-center justify-between mb-4">
