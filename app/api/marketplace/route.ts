@@ -68,7 +68,7 @@ export async function POST(req: NextRequest) {
   try {
     const user = await getUser();
     if (!user) return NextResponse.json({ error: "Silakan login" }, { status: 401 });
-    if (user.role !== "GURU" && !user.isFounder) return NextResponse.json({ error: "Hanya untuk guru" }, { status: 403 });
+    if (user.role !== "GURU" && user.role !== "ADMIN" && !user.isFounder) return NextResponse.json({ error: "Hanya untuk guru" }, { status: 403 });
 
     const formData = await req.formData();
 
