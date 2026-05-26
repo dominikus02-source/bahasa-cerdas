@@ -26,11 +26,25 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
       },
     });
 
+    const karya = await db.studentKarya.findUnique({ where: { id }, select: { userId: true, title: true } });
+
     await Promise.all([
       awardCoins(user.id, "MEMBERI_KOMENTAR", id),
       trackDailyStreak(user.id),
       trackQuestProgress(user.id, "MENGOMENTARI"),
     ]);
+
+    if (karya && karya.userId !== user.id) {
+      await db.notifikasi.create({
+        data: {
+          userId: karya.userId,
+          title: "Komentar Baru 💬",
+          body: `${user.fullName} berkomentar di "${karya.title}": "${body.content.trim().slice(0, 80)}"`,
+          type: "COMMENT",
+          data: { karyaId: id, userId: user.id, userName: user.fullName, commentId: comment.id },
+        },
+      });
+    }
 
     return NextResponse.json({ comment, coinsEarned: 1 }, { status: 201 });
   } catch (error) {

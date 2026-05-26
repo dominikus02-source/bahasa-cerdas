@@ -162,7 +162,8 @@ export function NotificationBell() {
             <div className="p-2 border-t border-slate-100">
               <Link
                 href="/guru/notifikasi"
-                className="flex items-center justify-center gap-1.5 text-xs text-emerald-600 hover:text-emerald-700 font-medium py-1"
+                className="flex items-center justify-center gap-1.5 text-xs font-medium py-1"
+                style={{ color: '#059669' }}
                 onClick={() => setOpen(false)}
               >
                 Lihat Semua <ExternalLink className="w-3 h-3" />

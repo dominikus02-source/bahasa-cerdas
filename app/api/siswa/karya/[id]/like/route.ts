@@ -20,7 +20,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
       return NextResponse.json({ liked: false });
     }
 
-    const karya = await db.studentKarya.findUnique({ where: { id }, select: { userId: true } });
+    const karya = await db.studentKarya.findUnique({ where: { id }, select: { userId: true, title: true } });
 
     await db.studentKaryaLike.create({ data: { karyaId: id, userId: user.id } });
     await db.studentKarya.update({ where: { id }, data: { likesCount: { increment: 1 } } });
@@ -32,6 +32,15 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
 
     if (karya && karya.userId !== user.id) {
       await awardCoins(karya.userId, "MENDAPAT_LIKE", id);
+      await db.notifikasi.create({
+        data: {
+          userId: karya.userId,
+          title: "Karya Disukai ❤️",
+          body: `${user.fullName} menyukai karyamu "${karya.title}"`,
+          type: "LIKE",
+          data: { karyaId: id, userId: user.id, userName: user.fullName },
+        },
+      });
     }
 
     return NextResponse.json({ liked: true });

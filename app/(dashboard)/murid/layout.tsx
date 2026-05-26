@@ -2,6 +2,7 @@ import { getUser } from "@/lib/supabase/server";
 import Link from "next/link";
 import AIFloatingButton from "@/components/shared/AIFloatingButton";
 import { LogoutButton } from "@/components/dashboard/LogoutButton";
+import { NotificationBell } from "@/components/dashboard/NotificationBell";
 import { IconFlame, IconBolt, IconTarget } from "@/lib/icons";
 
 const MenuIcon = ({ path, label, href }: { path: string; label: string; href: string }) => (
@@ -65,6 +66,9 @@ export default async function MuridLayout({ children }: { children: React.ReactN
               <div className="flex items-center gap-1.5 text-sm text-amber-500">
                 <IconBolt size={18} />
                 <span className="font-semibold">{user.xp?.toLocaleString() || 0}</span>
+              </div>
+              <div className="ml-auto">
+                <NotificationBell />
               </div>
           </div>
         </div>
