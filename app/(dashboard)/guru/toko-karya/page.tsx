@@ -158,8 +158,12 @@ export default function TokoKaryaPage() {
           setSelectedFile(null);
           fetchKarya();
         } else {
-          const err = await res.json();
-          alert(err.error || "Gagal mempublikasikan");
+          try {
+            const err = await res.json();
+            alert(err.error || "Gagal mempublikasikan");
+          } catch {
+            alert(`Gagal upload (${res.status}). Cek ukuran file atau coba lagi.`);
+          }
         }
       }
     } catch (e: any) {

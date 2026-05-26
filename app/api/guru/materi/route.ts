@@ -23,12 +23,12 @@ export async function GET(req: NextRequest) {
 
     const [materis, total] = await Promise.all([
       db.materi.findMany({
-        where: { isPublished: true },
+        where: { OR: [{ isPublished: true }, { uploaderId: dbUser.id }] },
         orderBy: { createdAt: "desc" },
         skip: (page - 1) * limit,
         take: limit,
       }),
-      db.materi.count({ where: { isPublished: true } }),
+      db.materi.count({ where: { OR: [{ isPublished: true }, { uploaderId: dbUser.id }] } }),
     ]);
 
     return NextResponse.json({ data: materis, total, page, totalPages: Math.ceil(total / limit) });

@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient as createAdmin } from "@supabase/supabase-js";
 import { getUser, createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
-import { deleteFile } from "@/lib/upload";
+import { uploadFileServer, deleteFile } from "@/lib/upload";
 
 const ALLOWED_TYPES: Record<string, { ext: string; fileType: "PDF" | "DOCX" | "PPTX" | "XLSX" | "MP4" | "ZIP" }> = {
   "application/pdf": { ext: "pdf", fileType: "PDF" },
@@ -96,14 +95,14 @@ export async function POST(req: NextRequest) {
       if (file.size > 100 * 1024 * 1024) return NextResponse.json({ error: "File maksimal 100MB" }, { status: 400 });
 
       const fileName = `karya/${user.id}/${Date.now()}-${Math.random().toString(36).slice(2)}.${info.ext}`;
-      const supabase = createAdmin(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
-      const { error: uploadError } = await supabase.storage.from("documents").upload(fileName, file, { upsert: true, contentType: file.type });
+      const uploadResult = await uploadFileServer(file, fileName, "documents", file.type);
 
-      if (uploadError) return NextResponse.json({ error: `Upload gagal: ${uploadError.message}` }, { status: 500 });
+      if ("error" in uploadResult) {
+        return NextResponse.json({ error: uploadResult.error }, { status: 500 });
+      }
 
-      const { data: urlData } = supabase.storage.from("documents").getPublicUrl(fileName);
-      fileUrl = urlData.publicUrl;
-      fileKey = fileName;
+      fileUrl = uploadResult.url;
+      fileKey = uploadResult.key;
       fileType = info.fileType;
     }
 

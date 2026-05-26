@@ -3,7 +3,8 @@
 import { useState, useEffect, useCallback } from "react"
 import {
   Presentation, Search, Grid3x3, List,
-  Maximize2, BookOpen, ChevronLeft, ChevronRight
+  Maximize2, BookOpen, ChevronLeft, ChevronRight,
+  Upload, X, Loader2, FileText, Check
 } from "lucide-react"
 import { MateriViewer } from "@/components/materi/MateriViewer"
 import { FILE_TYPE_LABELS } from "@/lib/upload"
@@ -48,6 +49,10 @@ export default function MateriAjarPage() {
   const [totalPages, setTotalPages] = useState(1)
   const [showViewer, setShowViewer] = useState(false)
   const [viewingMateri, setViewingMateri] = useState<Materi | null>(null)
+  const [showUpload, setShowUpload] = useState(false)
+  const [uploadForm, setUploadForm] = useState({ title: "", description: "", grade: "SMP Kelas 7" })
+  const [uploadFile, setUploadFile] = useState<File | null>(null)
+  const [uploading, setUploading] = useState(false)
 
   const fetchMateris = useCallback(async () => {
     setLoading(true)
@@ -83,19 +88,25 @@ export default function MateriAjarPage() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-            <Presentation className="text-emerald-500" size={28} />
-            Materi Ajar
-          </h1>
-          <p className="text-gray-500 mt-1">Materi pembelajaran resmi BahasaCerdas untuk SD–SMA</p>
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
+              <Presentation className="text-emerald-500" size={28} />
+              Materi Ajar
+            </h1>
+            <p className="text-gray-500 mt-1">Materi pembelajaran BahasaCerdas untuk SD–SMA</p>
+          </div>
+          <div className="flex items-center gap-3">
+            <button onClick={() => setShowUpload(true)}
+              className="flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-xl text-sm font-semibold hover:bg-emerald-700 transition-colors">
+              <Upload size={16} /> Upload Materi
+            </button>
+            <div className="flex items-center gap-2 px-4 py-2 bg-emerald-50 text-emerald-700 rounded-xl text-sm font-medium">
+              <BookOpen size={16} />
+              Materi Resmi BC
+            </div>
+          </div>
         </div>
-        <div className="flex items-center gap-2 px-4 py-2 bg-emerald-50 text-emerald-700 rounded-xl text-sm font-medium">
-          <BookOpen size={16} />
-          Materi Resmi BC
-        </div>
-      </div>
 
       <div className="bg-white rounded-2xl border border-gray-100 p-4 mb-6">
         <div className="flex flex-wrap items-center gap-3">
@@ -211,6 +222,98 @@ export default function MateriAjarPage() {
           materi={viewingMateri}
           onClose={() => { setShowViewer(false); setViewingMateri(null) }}
         />
+      )}
+
+      {/* ═══ Upload Modal ═══ */}
+      {showUpload && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center" onClick={() => { if (!uploading) setShowUpload(false) }}>
+          <div className="fixed inset-0 bg-black/40 backdrop-blur-sm" />
+          <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg mx-4 p-6" onClick={e => e.stopPropagation()}>
+            <button onClick={() => { if (!uploading) setShowUpload(false) }} className="absolute top-3 right-3 w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center">
+              <X size={16} className="text-gray-500" />
+            </button>
+            <h2 className="font-bold text-lg text-gray-900 mb-4">Upload Materi Ajar</h2>
+
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-semibold text-gray-600 mb-1">Judul *</label>
+                <input value={uploadForm.title} onChange={e => setUploadForm({ ...uploadForm, title: e.target.value })}
+                  className="w-full rounded-xl border-2 border-gray-200 px-4 py-2.5 text-sm focus:border-emerald-500 focus:outline-none"
+                  placeholder="RPP Teks Deskripsi Kelas 7" />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-gray-600 mb-1">Deskripsi</label>
+                <textarea value={uploadForm.description} onChange={e => setUploadForm({ ...uploadForm, description: e.target.value })}
+                  className="w-full rounded-xl border-2 border-gray-200 px-4 py-2.5 text-sm focus:border-emerald-500 focus:outline-none" rows={2} />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-gray-600 mb-1">Jenjang *</label>
+                <select value={uploadForm.grade} onChange={e => setUploadForm({ ...uploadForm, grade: e.target.value })}
+                  className="w-full rounded-xl border-2 border-gray-200 px-4 py-2.5 text-sm focus:border-emerald-500 focus:outline-none">
+                  {Object.entries(GRADES_BY_LEVEL).flatMap(([level, grades]) => grades.map(g => ({ level, grade: g }))).map(({ level, grade }) => (
+                    <option key={grade} value={grade}>{grade}</option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-gray-600 mb-1">File *</label>
+                <input type="file" accept=".pdf,.pptx,.docx,.xlsx,.zip,.mp4"
+                  onChange={e => setUploadFile(e.target.files?.[0] || null)}
+                  className="hidden" id="materi-file-input" />
+                <label htmlFor="materi-file-input"
+                  className="flex items-center gap-3 border-2 border-dashed border-gray-300 rounded-xl p-4 cursor-pointer hover:border-emerald-500 hover:bg-emerald-50 transition-colors">
+                  {uploadFile ? (
+                    <div className="flex items-center gap-2 flex-1 min-w-0">
+                      <FileText size={20} className="text-emerald-600 shrink-0" />
+                      <span className="text-sm font-medium text-gray-700 truncate">{uploadFile.name}</span>
+                      <span className="text-xs text-gray-400 shrink-0">({(uploadFile.size / 1024 / 1024).toFixed(1)} MB)</span>
+                      <button onClick={e => { e.stopPropagation(); setUploadFile(null) }} className="p-1 rounded hover:bg-red-100 ml-auto">
+                        <X size={14} className="text-red-500" />
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-2 flex-1 justify-center">
+                      <Upload size={20} className="text-gray-400" />
+                      <span className="text-sm text-gray-500 font-medium">Klik untuk pilih file</span>
+                    </div>
+                  )}
+                </label>
+                <p className="text-[10px] text-gray-400 mt-1">PDF, PPTX, DOCX, XLSX, ZIP, MP4 — Maks 50MB</p>
+              </div>
+              <div className="flex gap-3 pt-2">
+                <button onClick={() => { setShowUpload(false); setUploadFile(null); setUploadForm({ title: "", description: "", grade: "SMP Kelas 7" }) }}
+                  className="flex-1 py-2.5 border-2 border-gray-200 rounded-xl text-sm font-semibold text-gray-600 hover:bg-gray-50 transition-colors">
+                  Batal
+                </button>
+                <button onClick={async () => {
+                  if (!uploadForm.title || !uploadFile) return
+                  setUploading(true)
+                  try {
+                    const fd = new FormData()
+                    fd.set("title", uploadForm.title)
+                    fd.set("description", uploadForm.description)
+                    fd.set("grade", uploadForm.grade)
+                    fd.set("isPublished", "true")
+                    fd.set("file", uploadFile)
+                    const res = await fetch("/api/guru/materi", { method: "POST", body: fd })
+                    const data = await res.json()
+                    if (res.ok) {
+                      setShowUpload(false); setUploadFile(null)
+                      setUploadForm({ title: "", description: "", grade: "SMP Kelas 7" })
+                      fetchMateris()
+                    } else {
+                      alert(data.error || "Gagal upload")
+                    }
+                  } catch (e: any) { alert(e?.message || "Error") }
+                  setUploading(false)
+                }} disabled={uploading || !uploadForm.title || !uploadFile}
+                  className="flex-1 py-2.5 bg-emerald-600 text-white rounded-xl text-sm font-semibold hover:bg-emerald-700 disabled:opacity-50 transition-colors flex items-center justify-center gap-2">
+                  {uploading ? <><Loader2 size={16} className="animate-spin" /> Uploading...</> : <><Upload size={16} /> Upload</>}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   )
