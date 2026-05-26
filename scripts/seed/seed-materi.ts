@@ -57,6 +57,14 @@ import novelXiiS1 from "./materi/65-novel-xii-s1"
 import artikelXiiS1 from "./materi/66-artikel-xii-s1"
 import puisiXiiS1 from "./materi/67-puisi-xii-s1"
 
+// Buku Panduan - Kelas XII Semester 2
+import kritikSastraXiiS2 from "./materi/68-kritik-sastra-xii-s2"
+import esaiXiiS2 from "./materi/69-esai-xii-s2"
+import ktiXiiS2 from "./materi/70-kti-xii-s2"
+import resensiXiiS2 from "./materi/71-resensi-xii-s2"
+import dramaXiiS2 from "./materi/72-drama-xii-s2"
+import prosedurXiiS2 from "./materi/73-prosedur-xii-s2"
+
 const units: { title: string; konten: any; grade?: string; semester?: number }[] = [
   // Buku Panduan - Kelas IX Semester 1
   { title: "Bab 1: Laporan Percobaan", konten: laporanPercobaan, grade: "IX", semester: 1 },
@@ -107,6 +115,13 @@ const units: { title: string; konten: any; grade?: string; semester?: number }[]
   { title: "Bab 4: KTI", konten: ktiXiS2, grade: "XI", semester: 2 },
   { title: "Bab 5: Novel", konten: novelXiS2, grade: "XI", semester: 2 },
   { title: "Bab 6: Debat", konten: debatXiS2, grade: "XI", semester: 2 },
+  // Buku Panduan - Kelas XII Semester 2
+  { title: "Bab 1: Kritik Sastra", konten: kritikSastraXiiS2, grade: "XII", semester: 2 },
+  { title: "Bab 2: Esai", konten: esaiXiiS2, grade: "XII", semester: 2 },
+  { title: "Bab 3: KTI", konten: ktiXiiS2, grade: "XII", semester: 2 },
+  { title: "Bab 4: Resensi", konten: resensiXiiS2, grade: "XII", semester: 2 },
+  { title: "Bab 5: Drama", konten: dramaXiiS2, grade: "XII", semester: 2 },
+  { title: "Bab 6: Prosedur", konten: prosedurXiiS2, grade: "XII", semester: 2 },
 ]
 
 async function seedMateri() {
