@@ -110,7 +110,8 @@ export default function RaporPage() {
           {/* Kop */}
           <div className="text-center mb-6 pb-4 border-b-2 border-gray-200 print:border-gray-800">
             <h2 className="text-lg font-bold text-gray-900">LAPORAN NILAI SISWA</h2>
-            <p className="text-sm text-gray-500">BahasaCerdas — {groups.find(g => g.id === groupId)?.name}</p>
+            <p className="text-sm text-gray-500">Mata Pelajaran: Bahasa Indonesia</p>
+            <p className="text-sm text-gray-500">{groups.find(g => g.id === groupId)?.name}</p>
           </div>
 
           {/* Identitas */}
@@ -178,6 +179,9 @@ export default function RaporPage() {
             <p className="text-gray-500">{new Date().toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" })}</p>
             <p className="mt-8 font-semibold text-gray-800">Guru Mata Pelajaran</p>
             <p className="mt-12 text-gray-600 underline decoration-dotted">( ______________________________ )</p>
+          </div>
+          <div className="mt-6 pt-3 border-t border-gray-100 text-center text-[10px] text-gray-400 print:mt-8 print:border-gray-300">
+            &copy; {new Date().getFullYear()} Bahasa Cerdas. All rights reserved.
           </div>
         </div>
       )}
