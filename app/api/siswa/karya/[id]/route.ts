@@ -33,3 +33,22 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
+
+export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  try {
+    const { id } = await params;
+    const user = await getUser();
+    if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    if (user.role !== "GURU") return NextResponse.json({ error: "Hanya guru" }, { status: 403 });
+
+    const body = await req.json();
+    const updated = await db.studentKarya.update({
+      where: { id },
+      data: { isFeatured: body.isFeatured },
+    });
+
+    return NextResponse.json({ karya: updated });
+  } catch (error) {
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  }
+}

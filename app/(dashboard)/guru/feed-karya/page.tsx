@@ -168,6 +168,25 @@ export default function GuruFeedKaryaPage() {
   const [nilaiKategoriId, setNilaiKategoriId] = useState("");
   const [nilaiKeterangan, setNilaiKeterangan] = useState("");
   const [savingNilai, setSavingNilai] = useState(false);
+  const [featureLoading, setFeatureLoading] = useState<string | null>(null);
+
+  const toggleFeatured = async (karya: Karya, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setFeatureLoading(karya.id);
+    const res = await fetch(`/api/siswa/karya/${karya.id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ isFeatured: !karya.isFeatured }),
+    });
+    if (res.ok) {
+      const data = await res.json();
+      setKaryaList(prev => prev.map(k =>
+        k.id === karya.id ? { ...k, isFeatured: data.karya.isFeatured } : k
+      ));
+      setModalKarya(prev => prev?.id === karya.id ? { ...prev, isFeatured: data.karya.isFeatured } : prev);
+    }
+    setFeatureLoading(null);
+  };
 
   useEffect(() => {
     if (selectedGroupId) {
@@ -328,6 +347,13 @@ export default function GuruFeedKaryaPage() {
                       <Star size={14} /> Nilai
                     </button>
                   )}
+                  <button onClick={(e) => toggleFeatured(karya, e)} disabled={featureLoading === karya.id}
+                    className={`flex items-center gap-1 transition-colors ${
+                      karya.isFeatured ? "text-yellow-500" : "text-gray-400 hover:text-yellow-500"
+                    }`}>
+                    <Star size={14} fill={karya.isFeatured ? "currentColor" : "none"} />
+                    {karya.isFeatured ? "Pilihan" : "Pilih"}
+                  </button>
                   <span className="flex items-center gap-1 ml-auto"><IconClock size={14} />{new Date(karya.createdAt).toLocaleDateString("id-ID", { day: "numeric", month: "short" })}</span>
                 </div>
               </div>
@@ -399,6 +425,14 @@ export default function GuruFeedKaryaPage() {
                 <span className="flex items-center gap-1.5 text-sm text-gray-400">
                   <IconEye size={18} />{modalKarya.viewsCount}
                 </span>
+                <button onClick={(e) => { e.stopPropagation(); toggleFeatured(modalKarya, e); }}
+                  disabled={featureLoading === modalKarya.id}
+                  className={`ml-auto flex items-center gap-1.5 text-sm font-medium transition-all ${
+                    modalKarya.isFeatured ? "text-yellow-500" : "text-gray-400 hover:text-yellow-500"
+                  }`}>
+                  <Star size={18} fill={modalKarya.isFeatured ? "currentColor" : "none"} />
+                  {modalKarya.isFeatured ? "Pilihan" : "Tandai Pilihan"}
+                </button>
               </div>
 
               {/* Comment Input */}
