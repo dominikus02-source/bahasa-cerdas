@@ -5,7 +5,7 @@ This version has breaking changes — APIs, conventions, and file structure may 
 <!-- END:nextjs-agent-rules -->
 
 # BahasaCerdas Project Status
-## Last Updated: May 25, 2026 (Grade IX enriched — all 12 units seeded)
+## Last Updated: May 26, 2026 (Social features + notification system complete)
 
 ## Goal
 Transform BahasaCerdas into a social-creative platform for Bahasa Indonesia where students write daily (puisi, cerpen, artikel, anekdot, pantun), showcase works in social-style portfolios, earn Coin Cerdas, and compete in weekly leagues — UKBI/TKA as supporting features, not core.
@@ -199,18 +199,42 @@ The Belajar page auto-detects content types in `isi[]` strings:
 - `/murid/kuest-harian` — **Daily Quests**: streak card, progress bar, quest list with progress bars, coin earning guide
 - `/murid/toko-koin` — **Coin Store**: coin balance, item cards with buy buttons, canAfford check
 
+### Scoring System (May 25, 2026)
+- **NilaiKategori model** (groupId, nama, bobot) + **Nilai model** (userId, kategoriId, skor, sumberType, sumberId)
+- **Feed karya grading**: ⭐ Nilai button on each karya card → modal grading → saves to Nilai
+- **Bulk input**: `/guru/penilaian/input-massal` — table of students → fill scores → Simpan Semua
+- **Kuis manual grading**: `/guru/penilaian/kuis` — review submitted answers → mark correct → update QuizAnswer
+- **Rapor siswa**: `/guru/penilaian/rapor` — per-kategori scores + predikat A-E + printable layout
+- **Dashboard widget**: Beranda Guru — rata-rata per kategori + "blm dinilai" count
+- **Sidebar**: sub-links Input Massal, Nilai Kuis, Rapor under Penilaian
+
+### Bank Soal Improvements (May 26, 2026)
+- AI generate form: added Kesulitan (Mudah/Sedang/Sulit) + KD dropdown
+- Manual create soal form (PG): collapsible inline form with options + correct answer radio
+- Topik field merged into Deskripsi on SoalSet (removed redundancy)
+- "Lihat Soal" link after AI generation
+
+### Featured System (May 26, 2026)
+- `PATCH /api/siswa/karya/[id]` — toggle `isFeatured` flag (GURU only)
+- Guru feed-karya card + modal: tombol bintang "Pilih" / "Pilihan"
+- Murid beranda: "Karya Pilihan" section (already existed)
+
+### Notification System (May 26, 2026)
+- Like route → creates Notifikasi `"LIKE"` to karya author
+- Comment route → creates Notifikasi `"COMMENT"` to karya author
+- NotificationBell component added to Murid sidebar
+- Existing: Notifikasi model, CRUD API, guru notification page, arena notification page
+
 ### Utility
 - `lib/coins.ts` — awardCoins(), spendCoins(), getBalance(), getTransactions(), getOrCreateDailyQuests(), trackQuestProgress(), claimQuestReward(), trackDailyStreak()
 
 ## Next Steps (Priority Order)
 
-1. **Deploy** — git push + Vercel deploy (Buku Panduan sudah bisa dipakai)
-2. **Test full flow** — register guru → buat kelas → browse panduan → kirim ke kelas → login murid → lihat di Ruang Tugas → belajar + kuis → cek gradebook
-3. **Enrich content** — isi lebih banyak latihan/kuis soal ke setiap bab (saat ini minimal 2-3 per bab)
-4. **Guru-side social features** — guru dashboard juga perlu lihat feed karya murid, bisa like/comment
-5. **Featured system** — implement `isFeatured` flag + admin picks for "Karya Pilihan Hari Ini"
-6. **Notification system** — notif when someone likes/comments on your karya
-7. **Game server fixes** — VPS reconnection, DNS, SSL
+1. **Enrich content** — isi lebih banyak latihan/kuis soal ke setiap bab (saat ini minimal 2-3 per bab)
+2. **Guru video content** — upload video pembelajaran, embed YouTube
+3. **Game server fixes** — VPS reconnection, DNS, SSL (blocked by VPS SSH)
+4. **Push notifications** — browser push API for notif when tab not open
+5. **Admin dashboard** — featured picks curation, user management
 
 ## Blockers
 - VPS SSH unreachable (server restarting)
@@ -218,18 +242,7 @@ The Belajar page auto-detects content types in `isi[]` strings:
 - No SSL cert on game subdomain
 
 ## Uncommitted Changes (git status)
-- modified: scripts/seed-jalur-revamp.ts (added type: "JALUR" to levels)
 - modified: AGENTS.md (updated progress)
-- new: scripts/seed-panduan.ts (72 bab Buku Panduan Guru)
-- new: app/api/guru/panduan/route.ts (list panduan levels)
-- new: app/api/guru/penugasan/route.ts (assign unit to group)
-- new: app/api/guru/gradebook/route.ts (gradebook data)
-- new: app/api/murid/penugasan/route.ts (student penugasan + submission)
-- new: app/(dashboard)/guru/panduan-guru/page.tsx (browse + assign UI)
-- new: app/(dashboard)/guru/gradebook/page.tsx (gradebook table)
-- modified: app/arena/tugas/page.tsx (added penugasan to Ruang Tugas)
-- modified: app/(dashboard)/guru/layout.tsx (sidebar links)
-- modified: prisma/schema.prisma (added type/grade/semester/kd, Penugasan models)
 
 ## GitHub
 - Repo: https://github.com/dominikus02-source/bahasa-cerdas
