@@ -55,7 +55,7 @@ export default function PanduanGuruPage() {
   useEffect(() => {
     fetch("/api/group")
       .then(r => r.json())
-      .then(d => { if (d.data) setGroups(d.data) })
+      .then(d => { if (d.groups) setGroups(d.groups) })
       .catch(() => {})
   }, [])
 
@@ -197,7 +197,7 @@ export default function PanduanGuruPage() {
                                         <p className="text-sm font-medium text-slate-800 truncate">{unit.title}</p>
                                         <p className="text-xs text-slate-400">KD {unit.kd || "-"}</p>
                                       </div>
-                                      <div className="flex items-center gap-1 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
+                                      <div className="flex items-center gap-1 shrink-0">
                                         <Button size="sm" variant="ghost" className="text-xs text-slate-400" asChild>
                                           <span><Eye className="w-3.5 h-3.5" /></span>
                                         </Button>
