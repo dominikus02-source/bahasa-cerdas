@@ -77,7 +77,6 @@ export default function BankSoalPage() {
     title: "",
     description: "",
     kelas: "",
-    topik: "",
     maxQuestions: 50,
     coverColor: COVER_COLORS[0],
     coverEmoji: "📚",
@@ -91,13 +90,25 @@ export default function BankSoalPage() {
     kd: "",
   });
 
+  // Manual create
+  const [showManualForm, setShowManualForm] = useState(false);
+  const [manualForm, setManualForm] = useState({
+    text: "",
+    type: "PILIHAN_GANDA",
+    options: ["", "", "", ""],
+    correctAnswer: 0,
+    explanation: "",
+    kelas: "",
+    kd: "",
+    isHOTS: false,
+  });
+
   const fetchSets = useCallback(async () => {
     setFetching(true);
     try {
       let url = "/api/guru/soal-set";
       const params = new URLSearchParams();
       if (filterKelas) params.set("kelas", filterKelas);
-      if (filterTopik) params.set("topik", filterTopik);
       if (searchQuery) params.set("search", searchQuery);
       if (params.toString()) url += `?${params.toString()}`;
 
@@ -174,6 +185,34 @@ export default function BankSoalPage() {
     setLoading(false);
   };
 
+  const handleManualCreate = async () => {
+    if (!manualForm.text || !manualForm.kelas) return;
+    setLoading(true);
+    try {
+      const res = await fetch("/api/guru/soal", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          text: manualForm.text,
+          type: manualForm.type,
+          kelas: manualForm.kelas,
+          kd: manualForm.kd || null,
+          options: manualForm.type === "PILIHAN_GANDA" ? manualForm.options.filter(o => o) : [],
+          correctAnswer: manualForm.type === "PILIHAN_GANDA" ? manualForm.options[manualForm.correctAnswer] : "",
+          explanation: manualForm.explanation || null,
+          isHOTS: manualForm.isHOTS,
+          source: "MANUAL",
+        }),
+      });
+      if (res.ok) {
+        setManualForm({ text: "", type: "PILIHAN_GANDA", options: ["", "", "", ""], correctAnswer: 0, explanation: "", kelas: "", kd: "", isHOTS: false });
+        fetchQuestions();
+        setGenerateMsg("✅ Soal berhasil dibuat! Lihat di tab Soal.");
+      }
+    } catch {}
+    setLoading(false);
+  };
+
   const handleCreateSet = async () => {
     if (!setForm.title || !setForm.kelas) return;
     setLoading(true);
@@ -190,7 +229,7 @@ export default function BankSoalPage() {
       if (data.set) {
         setShowCreateSet(false);
         setSelectedQuestionIds([]);
-        setSetForm({ title: "", description: "", kelas: "", topik: "", maxQuestions: 50, coverColor: COVER_COLORS[0], coverEmoji: "" });
+        setSetForm({ title: "", description: "", kelas: "", maxQuestions: 50, coverColor: COVER_COLORS[0], coverEmoji: "" });
         fetchSets();
       }
     } catch (e) {
@@ -433,16 +472,22 @@ export default function BankSoalPage() {
 
       {/* AI Generate */}
       <Card className="p-4 mb-6 bg-gradient-to-r from-amber-50 to-orange-50 border-amber-200">
-        <div className="flex items-center gap-2 mb-3">
-          <Zap className="h-5 w-5 text-amber-500" />
-          <p className="text-sm font-semibold text-amber-800">Generate Soal dengan AI</p>
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-2">
+            <Zap className="h-5 w-5 text-amber-500" />
+            <p className="text-sm font-semibold text-amber-800">Generate Soal dengan AI</p>
+          </div>
+          <button onClick={() => setShowManualForm(!showManualForm)}
+            className="text-xs text-amber-700 hover:text-amber-800 font-medium flex items-center gap-1">
+            {showManualForm ? "Sembunyikan" : "+ Buat Manual"}
+          </button>
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <input
             value={aiForm.text}
             onChange={(e) => setAiForm({ ...aiForm, text: e.target.value })}
-            className="flex-1 min-w-[180px] rounded-lg border border-amber-200 px-3 py-2 text-sm bg-white"
-            placeholder="Topik, contoh: Puisi Kelas 7"
+            className="flex-1 min-w-[160px] rounded-lg border border-amber-200 px-3 py-2 text-sm bg-white"
+            placeholder="Topik/Materi, contoh: Puisi"
           />
           <select value={aiForm.kelas} onChange={(e) => setAiForm({ ...aiForm, kelas: e.target.value })} className="rounded-lg border border-amber-200 px-3 py-2 text-sm bg-white">
             <option value="">Kelas</option>
@@ -453,17 +498,95 @@ export default function BankSoalPage() {
             <option value="ESSAY">Essay</option>
             <option value="ISIAN">Isian</option>
           </select>
+          <select value={aiForm.difficulty} onChange={(e) => setAiForm({ ...aiForm, difficulty: e.target.value })} className="rounded-lg border border-amber-200 px-3 py-2 text-sm bg-white">
+            <option value="EASY">Mudah</option>
+            <option value="MEDIUM">Sedang</option>
+            <option value="HARD">Sulit</option>
+          </select>
+          <select value={aiForm.kd} onChange={(e) => setAiForm({ ...aiForm, kd: e.target.value })} className="rounded-lg border border-amber-200 px-3 py-2 text-sm bg-white">
+            <option value="">KD</option>
+            {KD_OPTIONS.map((k) => <option key={k.value} value={k.value}>{k.label}</option>)}
+          </select>
           <Button onClick={handleGenerate} disabled={loading || !aiForm.text || !aiForm.kelas} className="shrink-0 bg-amber-500 hover:bg-amber-600 text-white">
             {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Zap className="h-4 w-4" />}
-            {loading ? "..." : "Generate"}
+            {loading ? "..." : "Generate 5 Soal"}
           </Button>
         </div>
         {generateMsg && (
-          <div className={`mt-2 text-sm rounded-lg px-3 py-1.5 ${generateMsg.includes("✅") ? "text-emerald-700 bg-emerald-50" : "text-red-700 bg-red-50"}`}>
-            {generateMsg}
+          <div className={`mt-2 text-sm rounded-lg px-3 py-1.5 flex items-center gap-2 ${generateMsg.includes("✅") ? "text-emerald-700 bg-emerald-50" : "text-red-700 bg-red-50"}`}>
+            <span>{generateMsg}</span>
+            {generateMsg.includes("✅") && (
+              <button onClick={() => setView("questions")} className="ml-auto text-xs font-semibold underline hover:no-underline">
+                Lihat Soal
+              </button>
+            )}
           </div>
         )}
       </Card>
+
+      {/* Manual Create Form */}
+      {showManualForm && (
+        <Card className="p-4 mb-6 border-emerald-200 bg-emerald-50/30">
+          <div className="flex items-center gap-2 mb-3">
+            <Plus className="h-4 w-4 text-emerald-600" />
+            <p className="text-sm font-semibold text-emerald-800">Buat Soal Manual</p>
+          </div>
+          <div className="space-y-3">
+            <input value={manualForm.text} onChange={(e) => setManualForm({ ...manualForm, text: e.target.value })}
+              className="w-full rounded-lg border border-emerald-200 px-4 py-2 text-sm bg-white"
+              placeholder="Teks pertanyaan..." />
+            <div className="flex gap-2">
+              <select value={manualForm.type} onChange={(e) => setManualForm({ ...manualForm, type: e.target.value })}
+                className="rounded-lg border border-emerald-200 px-3 py-2 text-sm bg-white">
+                <option value="PILIHAN_GANDA">PG</option>
+                <option value="ESSAY">Essay</option>
+                <option value="ISIAN">Isian</option>
+              </select>
+              <select value={manualForm.kelas} onChange={(e) => setManualForm({ ...manualForm, kelas: e.target.value })}
+                className="rounded-lg border border-emerald-200 px-3 py-2 text-sm bg-white">
+                <option value="">Kelas</option>
+                {KELAS.map((k) => <option key={k} value={k}>{k}</option>)}
+              </select>
+              <select value={manualForm.kd} onChange={(e) => setManualForm({ ...manualForm, kd: e.target.value })}
+                className="rounded-lg border border-emerald-200 px-3 py-2 text-sm bg-white">
+                <option value="">KD</option>
+                {KD_OPTIONS.map((k) => <option key={k.value} value={k.value}>{k.label}</option>)}
+              </select>
+            </div>
+            {manualForm.type === "PILIHAN_GANDA" && (
+              <div className="grid grid-cols-2 gap-2">
+                {manualForm.options.map((opt, i) => (
+                  <div key={i} className="flex items-center gap-2">
+                    <input type="radio" name="correct" checked={manualForm.correctAnswer === i}
+                      onChange={() => setManualForm({ ...manualForm, correctAnswer: i })}
+                      className="text-emerald-600 focus:ring-emerald-500" />
+                    <input value={opt} onChange={(e) => {
+                      const opts = [...manualForm.options];
+                      opts[i] = e.target.value;
+                      setManualForm({ ...manualForm, options: opts });
+                    }} className="flex-1 rounded-lg border border-emerald-200 px-3 py-1.5 text-sm bg-white"
+                      placeholder={`Opsi ${String.fromCharCode(65 + i)}`} />
+                  </div>
+                ))}
+              </div>
+            )}
+            <textarea value={manualForm.explanation} onChange={(e) => setManualForm({ ...manualForm, explanation: e.target.value })}
+              className="w-full rounded-lg border border-emerald-200 px-4 py-2 text-sm bg-white" rows={1}
+              placeholder="Penjelasan jawaban (opsional)" />
+            <div className="flex items-center gap-3">
+              <label className="flex items-center gap-1.5 text-xs text-gray-600 cursor-pointer">
+                <input type="checkbox" checked={manualForm.isHOTS}
+                  onChange={(e) => setManualForm({ ...manualForm, isHOTS: e.target.checked })}
+                  className="rounded text-emerald-600 focus:ring-emerald-500" /> Soal HOTS
+              </label>
+              <button onClick={handleManualCreate} disabled={!manualForm.text || !manualForm.kelas}
+                className="ml-auto px-4 py-2 bg-emerald-600 text-white rounded-lg text-xs font-semibold hover:bg-emerald-700 disabled:opacity-50">
+                Simpan Soal
+              </button>
+            </div>
+          </div>
+        </Card>
+      )}
 
       {/* Filters */}
       <div className="flex items-center gap-3 mb-6">
@@ -537,8 +660,8 @@ export default function BankSoalPage() {
                         </span>
                       </div>
 
-                      {set.topik && (
-                        <Badge className="bg-white/20 text-white border-0 text-xs mb-3">{set.topik}</Badge>
+                      {set.description && !set.topik && (
+                        <p className="text-white/60 text-[10px] line-clamp-1 mb-1">{set.description}</p>
                       )}
                     </div>
 
@@ -634,13 +757,13 @@ export default function BankSoalPage() {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium mb-1">Deskripsi</label>
+            <label className="block text-sm font-medium mb-1">Deskripsi / Topik</label>
             <textarea
               value={setForm.description}
               onChange={(e) => setSetForm({ ...setForm, description: e.target.value })}
               className="w-full rounded-lg border px-4 py-2 text-sm"
               rows={2}
-              placeholder="Deskripsi set (opsional)"
+              placeholder="Contoh: Kumpulan soal puisi untuk latihan kelas 7 semester 1"
             />
           </div>
           <div className="grid grid-cols-2 gap-3">
@@ -664,15 +787,6 @@ export default function BankSoalPage() {
                 className="w-full rounded-lg border px-3 py-2 text-sm"
               />
             </div>
-          </div>
-          <div>
-            <label className="block text-sm font-medium mb-1">Topik</label>
-            <input
-              value={setForm.topik}
-              onChange={(e) => setSetForm({ ...setForm, topik: e.target.value })}
-              className="w-full rounded-lg border px-4 py-2 text-sm"
-              placeholder="Contoh: Puisi, Teks Negosiasi"
-            />
           </div>
           <div>
             <label className="block text-sm font-medium mb-2">Pilih Cover</label>
