@@ -1,39 +1,56 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { getGravatarUrl } from "@/lib/avatar";
+import { z } from "zod";
+import { sanitize } from "@/lib/validations";
 
-const FOUNDER_EMAILS = ["hdsastra47@gmail.com", "dominikus.02@gmail.com", "alexsurya1968@gmail.com"];
+const registerApiSchema = z.object({
+  email: z.string().email("Email tidak valid").max(255),
+  fullName: z.string().min(1, "Nama harus diisi").max(100).trim(),
+  role: z.enum(["GURU", "MURID"]),
+  supabaseId: z.string().uuid().optional(),
+});
+
+function isFounderEmail(email: string): boolean {
+  const founders = process.env.FOUNDER_EMAILS?.split(",")
+    .map((e) => e.trim().toLowerCase()) ?? [];
+  return founders.includes(email.toLowerCase());
+}
 
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { email, fullName, role, supabaseId } = body;
+    const parsed = registerApiSchema.safeParse(body);
 
-    if (!email || !fullName || !role) {
-      return NextResponse.json({ error: "Missing fields" }, { status: 400 });
+    if (!parsed.success) {
+      return NextResponse.json(
+        { error: parsed.error.errors[0]?.message || "Data tidak valid" },
+        { status: 400 }
+      );
     }
 
-    if (!["GURU", "MURID"].includes(role)) {
-      return NextResponse.json({ error: "Invalid role" }, { status: 400 });
-    }
-
-    const isFounder = FOUNDER_EMAILS.includes(email.toLowerCase());
+    const { email, fullName, role, supabaseId } = parsed.data;
+    const sanitizedName = sanitize(fullName);
+    const isFounder = isFounderEmail(email);
 
     const existingUser = await db.user.findFirst({
       where: { email: email.toLowerCase() },
     });
 
     if (existingUser) {
-      return NextResponse.json({ user: existingUser, redirect: `/${existingUser.role.toLowerCase()}/beranda` }, { status: 200 });
+      return NextResponse.json(
+        { user: existingUser, redirect: `/${existingUser.role.toLowerCase()}/beranda` },
+        { status: 200 }
+      );
     }
 
     const newUser = await db.user.create({
       data: {
         supabaseId: supabaseId || ("pending-" + Date.now()),
-        email,
-        fullName,
+        email: email.toLowerCase(),
+        fullName: sanitizedName,
         avatar: getGravatarUrl(email),
-        role: role as "GURU" | "MURID",
+        role,
         isFounder,
         isPremium: isFounder,
         premiumPlan: isFounder ? "PRO" : "FREE",
@@ -48,9 +65,15 @@ export async function POST(req: NextRequest) {
       console.log("Profile creation note:", e);
     }
 
-    return NextResponse.json({ user: newUser, redirect: `/${role.toLowerCase()}/beranda` }, { status: 201 });
+    return NextResponse.json(
+      { user: newUser, redirect: `/${role.toLowerCase()}/beranda` },
+      { status: 201 }
+    );
   } catch (error: any) {
     console.error("Register error:", error);
-    return NextResponse.json({ error: error?.message || "Internal server error" }, { status: 500 });
+    return NextResponse.json(
+      { error: error?.message || "Internal server error" },
+      { status: 500 }
+    );
   }
 }

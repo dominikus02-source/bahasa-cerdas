@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getUser } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 import { awardCoins, trackQuestProgress, trackDailyStreak } from "@/lib/coins";
+import { commentSchema, sanitize } from "@/lib/validations";
 
 export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -11,15 +12,21 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     const { id } = await params;
     const body = await req.json();
 
-    if (!body.content || !body.content.trim()) {
-      return NextResponse.json({ error: "Komentar tidak boleh kosong" }, { status: 400 });
+    const parsed = commentSchema.safeParse({ konten: body.content });
+    if (!parsed.success) {
+      return NextResponse.json(
+        { error: parsed.error.errors[0]?.message || "Komentar tidak valid" },
+        { status: 400 }
+      );
     }
+
+    const sanitizedContent = sanitize(parsed.data.konten);
 
     const comment = await db.studentKaryaComment.create({
       data: {
         karyaId: id,
         userId: user.id,
-        content: body.content.trim(),
+        content: sanitizedContent,
       },
       include: {
         user: { select: { id: true, fullName: true, avatar: true } },
@@ -39,9 +46,9 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
         data: {
           userId: karya.userId,
           title: "Komentar Baru 💬",
-          body: `${user.fullName} berkomentar di "${karya.title}": "${body.content.trim().slice(0, 80)}"`,
+          body: `${user.fullName} berkomentar di "${sanitize(karya.title)}"`,
           type: "COMMENT",
-          data: { karyaId: id, userId: user.id, userName: user.fullName, commentId: comment.id },
+          data: { karyaId: id, userId: user.id, userName: sanitize(user.fullName), commentId: comment.id },
         },
       });
     }

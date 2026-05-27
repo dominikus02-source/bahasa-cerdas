@@ -1,13 +1,27 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
+import { z } from "zod";
+
+const createUserSchema = z.object({
+  email: z.string().email("Email tidak valid").max(255),
+  password: z.string().min(8, "Password minimal 8 karakter").max(128),
+  fullName: z.string().min(1, "Nama harus diisi").max(100).trim(),
+  role: z.enum(["GURU", "MURID"]),
+});
 
 export async function POST(req: Request) {
   try {
-    const { email, password, fullName, role } = await req.json();
+    const body = await req.json();
+    const parsed = createUserSchema.safeParse(body);
 
-    if (!email || !password || !fullName || !role) {
-      return NextResponse.json({ error: "Missing fields" }, { status: 400 });
+    if (!parsed.success) {
+      return NextResponse.json(
+        { error: parsed.error.errors[0]?.message || "Data tidak valid" },
+        { status: 400 }
+      );
     }
+
+    const { email, password, fullName, role } = parsed.data;
 
     const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,

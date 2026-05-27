@@ -1,16 +1,31 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import { checkRateLimit, rateLimitResponse } from "@/lib/security";
 
 const publicPaths = [
-  "/", "/login", "/auth/arena-login", "/register", "/confirm", "/verify-email", "/onboarding", "/api",
+  "/", "/login", "/auth/arena-login", "/register", "/confirm",
+  "/verify-email", "/onboarding",
   "/marketplace", "/artikel", "/video-belajar", "/kamus", "/loker", "/komunitas", "/ai-bc",
+];
+
+const authPaths = [
+  "/api/auth/login", "/api/auth/register", "/api/auth/forgot-password",
+  "/api/auth/callback", "/api/auth/create-user",
 ];
 
 export async function updateSession(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
+  // Rate limiting
+  const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+  const scope = authPaths.some((p) => pathname.startsWith(p)) ? "auth" : "api";
+  const limit = checkRateLimit(ip, scope);
+  if (!limit.allowed) return rateLimitResponse(scope);
+
   if (publicPaths.some((p) => pathname === p || pathname.startsWith(p + "/"))) {
-    return NextResponse.next({ request });
+    const response = NextResponse.next({ request });
+    response.headers.set("X-RateLimit-Remaining", String(limit.remaining));
+    return response;
   }
 
   if (pathname.includes(".")) {
@@ -52,7 +67,6 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(new URL("/verify-email", request.url));
   }
 
-  // onboarded check is handled by client-side DB check in onboarding page
-
+  supabaseResponse.headers.set("X-RateLimit-Remaining", String(limit.remaining));
   return supabaseResponse;
 }

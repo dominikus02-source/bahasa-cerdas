@@ -158,6 +158,7 @@ export default function TebakKataGame({ hideBackButton }: { hideBackButton?: boo
   const [hintUsed, setHintUsed] = useState(false);
   const [shakeInput, setShakeInput] = useState(false);
   const [usedWords, setUsedWords] = useState<Set<string>>(new Set());
+  const [xpSaved, setXpSaved] = useState(false);
 
   useEffect(() => {
     const saved = localStorage.getItem("tebak-kata-progress");
@@ -169,6 +170,16 @@ export default function TebakKataGame({ hideBackButton }: { hideBackButton?: boo
       } catch {}
     }
   }, []);
+
+  useEffect(() => {
+    if (gameState !== "result" || xpSaved || score <= 0) return
+    setXpSaved(true)
+    fetch("/api/game/xp", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ score, correct: 0, wrong: 0, maxStreak: bestStreak, xpEarned: score, gameType: "TEBAK_KATA" }),
+    }).catch(() => {})
+  }, [gameState, xpSaved, score, bestStreak])
 
   const saveProgress = useCallback((newXp: number, newBestStreak: number) => {
     localStorage.setItem("tebak-kata-progress", JSON.stringify({ xp: newXp, bestStreak: newBestStreak }));

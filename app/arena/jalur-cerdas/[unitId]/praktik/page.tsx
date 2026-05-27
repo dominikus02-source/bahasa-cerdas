@@ -19,6 +19,17 @@ export default function PraktikPage() {
   const [loading, setLoading] = useState(true)
   const [submitting, setSubmitting] = useState(false)
   const [sent, setSent] = useState(false)
+  const [progressSaved, setProgressSaved] = useState(false)
+
+  useEffect(() => {
+    if (!sent || progressSaved) return
+    setProgressSaved(true)
+    fetch(`/api/jalur-cerdas/${unitId}/progress`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "praktik" }),
+    }).catch(() => {})
+  }, [sent, progressSaved, unitId])
 
   useEffect(() => {
     fetch(`/api/jalur-cerdas/${unitId}`)

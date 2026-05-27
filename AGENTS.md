@@ -4,8 +4,50 @@
 This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` before writing any code. Heed deprecation notices.
 <!-- END:nextjs-agent-rules -->
 
+# Agent Behavior (Autonomous Mode)
+
+Kamu adalah **Senior Full-Stack Engineer** yang sangat autonomous, teliti, dan bertanggung jawab penuh atas project bahasacerdas.com.
+
+- **Autonomous Mode**: Langsung eksekusi, edit file, dan jalankan command tanpa menunggu approval kecuali ada resiko tinggi (hapus file penting, ubah schema database, security-related).
+- Jika menemukan error, **fix sendiri** otomatis sampai berhasil.
+- Setelah selesai task: jalankan `npm run build`, lalu test jika ada. Beri summary singkat.
+- Think step-by-step sebelum coding, tapi eksekusi cepat.
+- Jangan verbose saat menjelaskan, fokus ke solusi.
+
+## Coding Standards
+- Gunakan **TypeScript strict** (no `any`)
+- **Functional components** + React Server Components semaksimal mungkin
+- Naming: `camelCase` untuk variable/function, `PascalCase` untuk component
+- `export default` untuk halaman dan component utama
+- **Early return** untuk clean code
+- Error handling user-friendly, jangan crash
+- Semua fitur baru harus responsive (mobile-first)
+- Ikuti shadcn/ui conventions
+
+## Architecture Rules
+- Logic bisnis di `/lib` atau `/server`
+- API routes → Route Handlers (`app/api`)
+- Server Actions untuk mutasi data jika memungkinkan
+- Pisahkan: UI, Business Logic, Data Access
+- Setiap halaman besar harus punya loading state + error boundary
+
+## Git Commit Convention
+- `feat:` fitur baru
+- `fix:` perbaikan bug
+- `refactor:` perubahan kode tanpa ubah fungsi
+- `chore:` maintenance
+- `docs:` dokumentasi
+
+## Priority
+1. Kebenaran fungsi (working code)
+2. Clean & maintainable code
+3. Performance
+4. User Experience
+
+---
+
 # BahasaCerdas Project Status
-## Last Updated: May 26, 2026 (Social features + notification system complete)
+## Last Updated: May 27, 2026 (Merged AGENTS.md + fixed pitch deck financials)
 
 ## Goal
 Transform BahasaCerdas into a social-creative platform for Bahasa Indonesia where students write daily (puisi, cerpen, artikel, anekdot, pantun), showcase works in social-style portfolios, earn Coin Cerdas, and compete in weekly leagues — UKBI/TKA as supporting features, not core.
@@ -112,7 +154,7 @@ Transform BahasaCerdas into a social-creative platform for Bahasa Indonesia wher
 - CommunityPost with likes/comments
 - CommunityMember with roles
 
-### Buku Panduan Guru (Grade-Based Content) — New
+### Buku Panduan Guru (Grade-Based Content)
 - **Schema**: added `type` field ("JALUR"/"PANDUAN") to `LearningLevel`, `grade`/`semester`/`kd` to `LearningUnit`, removed `@unique` from `level` (replaced with `@@unique([type, level])`)
 - **New models**: `Penugasan` (assign unit → group) + `PenugasanSubmission` (student status/score per assignment)
 - **Seed**: `scripts/seed-panduan.ts` — 12 grade-levels (VII-1 s.d. XII-2), 72 bab units with content (belajar + latihan + praktik + kuis)
@@ -128,8 +170,6 @@ Transform BahasaCerdas into a social-creative platform for Bahasa Indonesia wher
 - 57+ models including User, Profile, UKBIQuestion, TKAQuestion, PaketKompetensi, StudentKarya, StudentKaryaLike, StudentKaryaComment, CoinTransaction, DailyQuest, StoreItem, UserItem, Penugasan, PenugasanSubmission, etc.
 - 20+ enums
 
-## Langkah 3 — Arena Matchmaking & Ruang Tugas — May 23, 2026
-
 ### Auto-Matchmaking (Adu Cepat)
 - Full flow: Cari Lawan → Searching → Match Found → Countdown 3-2-1 → Battle → Result + XP → Main Lagi
 - Page: `/arena/game/adu-cepat` (client component)
@@ -139,7 +179,7 @@ Transform BahasaCerdas into a social-creative platform for Bahasa Indonesia wher
 - Reuses existing GamePlay component during battle
 - Server deployment: `bash scripts/deploy-game-server.sh` (requires SSH access to VPS)
 
-#### Content Writing Convention (Belajar Page)
+### Content Writing Convention (Belajar Page)
 The Belajar page auto-detects content types in `isi[]` strings:
 - `✓ teks` → green checkmark (benar/correct)
 - `✗ teks` → red X (salah/incorrect)
@@ -153,7 +193,7 @@ The Belajar page auto-detects content types in `isi[]` strings:
 - `contoh[]` → amber-tinted section with examples
 - `rangkuman[]` → green summary box at end
 
-## Perbaikan Game Pages
+### Perbaikan Game Pages
 - Added `.game-fullscreen` CSS class: expands main container, hides bottom nav for game pages
 - All 4 game wrappers (kuis-tempur, tebak-kata, susun-kata, katastra) use consistent back button style
 - Katastra: now renders in Arena (no redirect), fixed mobile layout (grid rewards, compact sizing)
@@ -164,72 +204,47 @@ The Belajar page auto-detects content types in `isi[]` strings:
 - Links to existing `/murid/tugasku/[id]/take` and `/murid/tugasku/[id]/result`
 - API: reuses existing `/api/murid/tugas`
 
-### Duplicate Misi
-- Removed Misi from quick actions (kept in quest progress card which shows progress bars)
-### Database
-- New: `StudentKarya` model (PUISI, CERPEN, ARTIKEL, ANEKDOT, PANTUN, OPINI) — separate from marketplace Karya
-- New: `StudentKaryaLike` + `StudentKaryaComment` models
-- New: `CoinTransaction` model (track all coin earnings/spending)
-- New: `DailyQuest` model (MENULIS, MENGOMENTARI, MEMBERI_LIKE quests)
-- New: `StoreItem` model (7 items: Streak Freeze, XP Boost, Avatar Frames, Theme, Stickers)
-- New: `UserItem` model (purchased items inventory)
-- User model: added `coins`, `totalLikes`, `totalViews` fields
+### Social Features (Student Karya)
+- **Database**: `StudentKarya` model (PUISI, CERPEN, ARTIKEL, ANEKDOT, PANTUN, OPINI), `StudentKaryaLike`, `StudentKaryaComment`, `CoinTransaction`, `DailyQuest`, `StoreItem`, `UserItem`
+- User model: added `coins`, `totalLikes`, `totalViews`
+- **API Routes**: CRUD karya, like toggle, comment, quests, store, transactions, league
+- **Pages**: Beranda (feed), Profile (portofolio), Karya detail, Tulis karya, Quest harian, Toko koin
 
-### API Routes (Student Karya)
-- `POST /api/siswa/karya` — create + award +10 coins + track MENULIS quest
-- `GET /api/siswa/karya` — paginated feed, filter by type, infinite scroll
-- `GET /api/siswa/karya/[id]` — detail with comments, auto-increment views
-- `POST /api/siswa/karya/[id]/like` — toggle like + award +2 coins to author + track MEMBERI_LIKE quest
-- `POST /api/siswa/karya/[id]/comment` — add comment + award +1 coin + track MENGOMENTARI quest
-- `GET /api/siswa/user/[id]/karya` — user's karya list (paginated)
-
-### API Routes (Coin Cerdas)
-- `GET /api/siswa/quest` — daily quests + auto streak tracking
-- `POST /api/siswa/quest/claim` — claim quest reward
-- `GET /api/siswa/store` — list store items
-- `POST /api/siswa/store/buy` — purchase item (spends coins)
-- `GET /api/siswa/transactions` — coin transaction history
-- `GET /api/siswa/league` — weekly league ranking (30 peers, promote/demote)
-
-### Pages (Langkah 2)
-- `/murid/beranda` — **Home Feed**: compact stats header (XP, streak, coins, level), league widget, quest/store quick links, category tabs (Semua/Puisi/Cerpen/Artikel/Anekdot/Pantun), infinite scroll feed with author + excerpt + stats
-- `/murid/profile` — **Portofolio**: cover + avatar, stats (karya count, likes, views, XP, coins), karya grid (Behance-style cards), prestasi tab
-- `/murid/karya/[id]` — **Detail**: author info, full content, like/comment bar, comments section
-- `/murid/karya/tulis` — **Editor**: type selector (6 types with emoji), title input, content textarea, cover image URL, submit button
-- `/murid/kuest-harian` — **Daily Quests**: streak card, progress bar, quest list with progress bars, coin earning guide
-- `/murid/toko-koin` — **Coin Store**: coin balance, item cards with buy buttons, canAfford check
-
-### Scoring System (May 25, 2026)
+### Scoring System
 - **NilaiKategori model** (groupId, nama, bobot) + **Nilai model** (userId, kategoriId, skor, sumberType, sumberId)
-- **Feed karya grading**: ⭐ Nilai button on each karya card → modal grading → saves to Nilai
-- **Bulk input**: `/guru/penilaian/input-massal` — table of students → fill scores → Simpan Semua
-- **Kuis manual grading**: `/guru/penilaian/kuis` — review submitted answers → mark correct → update QuizAnswer
-- **Rapor siswa**: `/guru/penilaian/rapor` — per-kategori scores + predikat A-E + printable layout
-- **Dashboard widget**: Beranda Guru — rata-rata per kategori + "blm dinilai" count
-- **Sidebar**: sub-links Input Massal, Nilai Kuis, Rapor under Penilaian
+- Feed karya grading, bulk input, kuis manual grading, rapor A-E
+- Dashboard widget: rata-rata per kategori + "blm dinilai" count
 
-### Bank Soal Improvements (May 26, 2026)
-- AI generate form: added Kesulitan (Mudah/Sedang/Sulit) + KD dropdown
-- Manual create soal form (PG): collapsible inline form with options + correct answer radio
-- Topik field merged into Deskripsi on SoalSet (removed redundancy)
+### Bank Soal Improvements
+- AI generate form: Kesulitan (Mudah/Sedang/Sulit) + KD dropdown
+- Manual create soal form (PG) with options + correct answer
+- Topik merged into Deskripsi on SoalSet
 - "Lihat Soal" link after AI generation
 
-### Featured System (May 26, 2026)
-- `PATCH /api/siswa/karya/[id]` — toggle `isFeatured` flag (GURU only)
-- Guru feed-karya card + modal: tombol bintang "Pilih" / "Pilihan"
-- Murid beranda: "Karya Pilihan" section (already existed)
+### Featured System
+- `PATCH /api/siswa/karya/[id]` — toggle `isFeatured` (GURU only)
+- Guru feed: "Pilih/Pilihan" buttons
+- Murid beranda: "Karya Pilihan" section
 
-### Notification System (May 26, 2026)
-- Like route → creates Notifikasi `"LIKE"` to karya author
-- Comment route → creates Notifikasi `"COMMENT"` to karya author
-- NotificationBell component added to Murid sidebar
-- Existing: Notifikasi model, CRUD API, guru notification page, arena notification page
+### Notification System
+- Like/comment routes → creates `Notifikasi` records
+- NotificationBell component in Murid sidebar
+- Existing: Notifikasi model, CRUD API, guru & arena notification pages
 
-### Utility
+### Supply
 - `lib/coins.ts` — awardCoins(), spendCoins(), getBalance(), getTransactions(), getOrCreateDailyQuests(), trackQuestProgress(), claimQuestReward(), trackDailyStreak()
 
-## Next Steps (Priority Order)
+## Pitch Deck & Financials (May 27, 2026)
+- `pitch-deck.html` — 14-slide English HTML pitch deck
+- `Bahasacerdas_Pitch_Deck.pptx` — 12-slide PPTX (dark theme, premium)
+- `bikin_deck.py` — Python PPTX generator
+- `BahasaCerdas Final Pitch Deck-fixed.py` — user's alternate PPTX generator
+- `2-bahasacerdas_financial_plan_fixed.html` — detailed revenue model & financial plan
+- `Bahasacerdas_Financial_Plan.pdf` — PDF export of financial plan
+- **Key numbers**: Seed Rp 4B, Pre-money Rp 18B, Equity 18.2%, M18 run-rate Rp 3.14B/mo, ARR Y1 Rp 5.76B → Y2 Rp 24B → Y3 Rp 80B, Gross margin 90.1%
+- **File locations**: `/Users/user/Documents/bahasa-cerdas/` for main files, `/Users/user/Documents/BC-Bahasa Cerdas Master/Financial BC/` for financial model
 
+## Next Steps (Priority Order)
 1. **Enrich content** — isi lebih banyak latihan/kuis soal ke setiap bab (saat ini minimal 2-3 per bab)
 2. **Guru video content** — upload video pembelajaran, embed YouTube
 3. **Game server fixes** — VPS reconnection, DNS, SSL (blocked by VPS SSH)
@@ -240,9 +255,6 @@ The Belajar page auto-detects content types in `isi[]` strings:
 - VPS SSH unreachable (server restarting)
 - game.bahasacerdas.com DNS not propagating/resolving
 - No SSL cert on game subdomain
-
-## Uncommitted Changes (git status)
-- modified: AGENTS.md (updated progress)
 
 ## GitHub
 - Repo: https://github.com/dominikus02-source/bahasa-cerdas
@@ -262,10 +274,8 @@ The Belajar page auto-detects content types in `isi[]` strings:
 - Social/coins utility: lib/coins.ts
 - Student karya pages: app/(dashboard)/murid/karya/
 - Buku Panduan seed: scripts/seed-panduan.ts
-- Buku Panduan browse: app/(dashboard)/guru/panduan-guru/page.tsx
-- Gradebook: app/(dashboard)/guru/gradebook/page.tsx
-- Assign API: app/api/guru/penugasan/route.ts
-- Student penugasan API: app/api/murid/penugasan/route.ts
+- Pitch deck generator: bikin_deck.py
+- Financial model: /Users/user/Documents/BC-Bahasa Cerdas Master/Financial BC/
 
 ## Materi Content System
 - **Per-unit files**: `scripts/seed/materi/26-laporan-percobaan.ts` etc — each unit in own file, independently editable
@@ -277,7 +287,7 @@ The Belajar page auto-detects content types in `isi[]` strings:
 - To add new units, create a new file in `scripts/seed/materi/`, import it, and add to the `units` array with grade/semester
 - Belajar page uses `app/arena/jalur-cerdas/[unitId]/belajar/page.tsx` with Duolingo-style UI: sticky progress bar, content-type detection (✓/✗/numbered/bullet/⚠️/[Ilustrasi: ...]), card-by-card flow, animated transitions
 
-### Grade IX Content (Enriched — May 25, 2026)
+### Grade IX Content (Enriched)
 - **Semester 1**: 6 units — Laporan Percobaan, Pidato Persuasif, Cerpen, Teks Tanggapan, Teks Diskusi, Puisi
 - **Semester 2**: 6 units — Teks Eksplanasi, Laporan, Drama, Resensi, Artikel, Karya Tulis Ilmiah
 - Each unit: 4+ materi sections with [Ilustrasi: ...], 10 latihan, 10 kuis, praktik with tips

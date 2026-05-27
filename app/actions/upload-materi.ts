@@ -5,12 +5,22 @@ import { createClient } from "@/lib/supabase/server";
 import { createClient as createAdminClient } from "@supabase/supabase-js";
 import { configureBucket } from "@/lib/upload";
 import { revalidatePath } from "next/cache";
+import { z } from "zod";
+import { sanitize } from "@/lib/validations";
 
-const ALLOWED_ADMIN_EMAILS = [
-  "alexsurya1968@gmail.com",
-  "hdsastra47@gmail.com",
-  "dominikus.02@gmail.com",
-];
+const materiSchema = z.object({
+  title: z.string().min(1, "Title harus diisi").max(255).trim(),
+  grade: z.string().min(1).max(50).trim(),
+  topik: z.string().max(500).trim(),
+  fileType: z.enum(["PDF", "PPTX"]),
+});
+
+function isFounderEmail(email: string): boolean {
+  if (!email) return false;
+  const founders = process.env.FOUNDER_EMAILS?.split(",")
+    .map((e) => e.trim().toLowerCase()) ?? [];
+  return founders.includes(email.toLowerCase());
+}
 
 async function getAdminUser() {
   const supabase = await createClient();
@@ -18,9 +28,9 @@ async function getAdminUser() {
   if (!user) return null;
   const dbUser = await db.user.findUnique({ where: { supabaseId: user.id } });
   if (!dbUser) return null;
-  const isAdmin = dbUser.role === "ADMIN" || 
-                  dbUser.isFounder === true || 
-                  ALLOWED_ADMIN_EMAILS.includes(user.email || "");
+  const isAdmin = dbUser.role === "ADMIN" ||
+                  dbUser.isFounder === true ||
+                  isFounderEmail(user.email || "");
   if (!isAdmin) return null;
   return dbUser;
 }
@@ -37,12 +47,15 @@ export async function uploadMateriFileAction(data: {
     const dbUser = await getAdminUser();
     if (!dbUser) return { error: "Unauthorized" };
 
-    // Configure bucket for large files
+    const parsed = materiSchema.safeParse(data);
+    if (!parsed.success) {
+      return { error: parsed.error.errors[0]?.message || "Data tidak valid" };
+    }
+
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-    const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SERVICE_ROLE_KEY!;
+    const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
     await configureBucket(supabaseUrl, serviceKey, "documents", 50 * 1024 * 1024).catch(() => {});
 
-    // Upload file using service role key (bypasses RLS)
     const adminSupabase = createAdminClient(supabaseUrl, serviceKey);
     const fileBuffer = Buffer.from(data.fileBase64, "base64");
     const fileKey = `admin/materi/${Date.now()}-${Math.random().toString(36).substring(2, 8)}.${data.fileType.toLowerCase()}`;
@@ -61,16 +74,15 @@ export async function uploadMateriFileAction(data: {
 
     const { data: urlData } = adminSupabase.storage.from("documents").getPublicUrl(fileKey);
 
-    // Save metadata to database
     const materi = await db.materi.create({
       data: {
-        title: data.title,
-        description: data.topik || `Materi pembelajaran untuk ${data.grade}`,
-        content: data.topik || "",
+        title: sanitize(parsed.data.title),
+        description: parsed.data.topik ? sanitize(parsed.data.topik) : `Materi pembelajaran untuk ${parsed.data.grade}`,
+        content: parsed.data.topik || "",
         fileUrl: urlData.publicUrl,
         fileKey,
-        fileType: data.fileType,
-        grade: data.grade,
+        fileType: parsed.data.fileType,
+        grade: parsed.data.grade,
         isPublished: true,
         isPremium: false,
         price: 0,
@@ -98,15 +110,20 @@ export async function saveMateriAction(data: {
     const dbUser = await getAdminUser();
     if (!dbUser) return { error: "Unauthorized" };
 
+    const parsed = materiSchema.safeParse(data);
+    if (!parsed.success) {
+      return { error: parsed.error.errors[0]?.message || "Data tidak valid" };
+    }
+
     const materi = await db.materi.create({
       data: {
-        title: data.title,
-        description: data.topik || `Materi pembelajaran untuk ${data.grade}`,
-        content: data.topik || "",
+        title: sanitize(parsed.data.title),
+        description: parsed.data.topik ? sanitize(parsed.data.topik) : `Materi pembelajaran untuk ${parsed.data.grade}`,
+        content: parsed.data.topik || "",
         fileUrl: data.fileUrl,
         fileKey: data.fileKey,
-        fileType: data.fileType,
-        grade: data.grade,
+        fileType: parsed.data.fileType,
+        grade: parsed.data.grade,
         isPublished: true,
         isPremium: false,
         price: 0,

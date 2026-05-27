@@ -43,6 +43,11 @@ export function ChatClient({ userId, groups }: { userId: string; groups: Group[]
   const [input, setInput] = useState("")
   const [loading, setLoading] = useState(false)
   const [tab, setTab] = useState<"semua" | "kelas">("semua")
+  const [searchQuery, setSearchQuery] = useState("")
+  const [showJoinModal, setShowJoinModal] = useState(false)
+  const [joinCode, setJoinCode] = useState("")
+  const [joinError, setJoinError] = useState("")
+  const [joinLoading, setJoinLoading] = useState(false)
   const endRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => { endRef.current?.scrollIntoView({ behavior: "smooth" }) }, [messages])
@@ -150,7 +155,10 @@ export function ChatClient({ userId, groups }: { userId: string; groups: Group[]
   }
 
   // === LIST VIEW ===
-  const displayGroups = tab === "kelas" ? groups : groups
+  const filteredGroups = searchQuery
+    ? groups.filter(g => g.name.toLowerCase().includes(searchQuery.toLowerCase()))
+    : groups
+  const displayGroups = tab === "kelas" ? filteredGroups : filteredGroups
 
   // Collect unique online member initials for the strip
   const onlineInitials = groups
@@ -169,7 +177,15 @@ export function ChatClient({ userId, groups }: { userId: string; groups: Group[]
         {/* Search bar */}
         <div className="flex items-center gap-2 bg-white/15 rounded-xl px-4 py-2.5">
           <Search size={15} className="text-white/50 shrink-0" />
-          <span className="text-sm text-white/60">Cari teman atau kelas...</span>
+          <input
+            value={searchQuery}
+            onChange={e => setSearchQuery(e.target.value)}
+            placeholder="Cari teman atau kelas..."
+            className="flex-1 bg-transparent text-sm text-white placeholder:text-white/60 focus:outline-none border-none"
+          />
+          {searchQuery && (
+            <button onClick={() => setSearchQuery("")} className="text-white/50 hover:text-white text-xs font-bold">✕</button>
+          )}
         </div>
       </div>
 
@@ -272,7 +288,7 @@ export function ChatClient({ userId, groups }: { userId: string; groups: Group[]
 
               {/* Action buttons */}
               <div className="flex gap-2">
-                <button className="flex-1 bg-[#F9F7FF] rounded-xl py-2.5 text-[11px] font-bold text-violet-700 hover:bg-violet-50 active:scale-95 transition-all">
+                <button onClick={() => window.location.href = "/arena/feed"} className="flex-1 bg-[#F9F7FF] rounded-xl py-2.5 text-[11px] font-bold text-violet-700 hover:bg-violet-50 active:scale-95 transition-all">
                   <Eye size={13} className="inline mr-1" /> Lihat Karya Kelas
                 </button>
                 <button onClick={() => pilihGrup(g)}
@@ -286,9 +302,62 @@ export function ChatClient({ userId, groups }: { userId: string; groups: Group[]
 
         {/* New group button */}
         {displayGroups.length > 0 && (
-          <button className="w-full bg-gradient-to-br from-violet-500 to-purple-600 text-white rounded-[14px] py-3.5 mt-1 text-sm font-bold flex items-center justify-center gap-2 hover:shadow-lg active:scale-[0.98] transition-all">
+          <button onClick={() => setShowJoinModal(true)}
+            className="w-full bg-gradient-to-br from-violet-500 to-purple-600 text-white rounded-[14px] py-3.5 mt-1 text-sm font-bold flex items-center justify-center gap-2 hover:shadow-lg active:scale-[0.98] transition-all">
             <Plus size={18} /> Buat Grup Baru atau Gabung Kelas
           </button>
+        )}
+
+        {/* Join Modal */}
+        {showJoinModal && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 px-4">
+            <div className="bg-white rounded-2xl p-6 w-full max-w-sm shadow-2xl">
+              <h3 className="text-lg font-bold text-gray-900 mb-1">Gabung Kelas</h3>
+              <p className="text-sm text-gray-500 mb-4">Masukkan kode akses dari gurumu</p>
+              <input
+                value={joinCode}
+                onChange={e => setJoinCode(e.target.value.toUpperCase())}
+                placeholder="Contoh: ABC123"
+                className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm text-center font-bold tracking-widest uppercase focus:outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-100 mb-4"
+                maxLength={8}
+                autoFocus
+              />
+              {joinError && <p className="text-xs text-red-500 mb-3 text-center">{joinError}</p>}
+              <div className="flex gap-3">
+                <button onClick={() => { setShowJoinModal(false); setJoinCode(""); setJoinError("") }}
+                  className="flex-1 py-3 rounded-xl bg-gray-100 text-gray-700 font-bold text-sm hover:bg-gray-200 transition-all">
+                  Batal
+                </button>
+                <button onClick={async () => {
+                  if (!joinCode.trim()) return
+                  setJoinLoading(true)
+                  setJoinError("")
+                  try {
+                    const res = await fetch("/api/group/join", {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({ accessCode: joinCode.trim() }),
+                    })
+                    const data = await res.json()
+                    if (!res.ok) {
+                      setJoinError(data.error || "Gagal bergabung")
+                    } else {
+                      setShowJoinModal(false)
+                      setJoinCode("")
+                      window.location.reload()
+                    }
+                  } catch {
+                    setJoinError("Gagal terhubung ke server")
+                  } finally {
+                    setJoinLoading(false)
+                  }
+                }} disabled={!joinCode.trim() || joinLoading}
+                  className="flex-1 py-3 rounded-xl bg-gradient-to-r from-violet-500 to-purple-600 text-white font-bold text-sm hover:shadow-lg disabled:opacity-50 transition-all">
+                  {joinLoading ? "Memproses..." : "Gabung"}
+                </button>
+              </div>
+            </div>
+          </div>
         )}
       </div>
     </div>

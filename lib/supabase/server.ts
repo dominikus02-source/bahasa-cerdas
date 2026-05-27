@@ -1,6 +1,8 @@
 import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import { cookies } from "next/headers";
 import { db } from "@/lib/db";
+import { NextResponse } from "next/server";
+import { Role } from "@prisma/client";
 
 export async function createClient() {
   const cookieStore = await cookies();
@@ -27,10 +29,7 @@ export async function createClient() {
 
 export async function getUser() {
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
+  const { data: { user } } = await supabase.auth.getUser();
   if (!user) return null;
 
   try {
@@ -47,4 +46,28 @@ export async function requireAuth() {
   const user = await getUser();
   if (!user) throw new Error("Unauthorized");
   return user;
+}
+
+export async function requireRole(...roles: Role[]) {
+  const user = await requireAuth();
+  if (!roles.includes(user.role)) {
+    throw new Error("Forbidden");
+  }
+  return user;
+}
+
+export async function requireFounder() {
+  const user = await requireAuth();
+  if (!user.isFounder && user.role !== "ADMIN") {
+    throw new Error("Forbidden");
+  }
+  return user;
+}
+
+export function unauthorizedResponse(message = "Unauthorized") {
+  return NextResponse.json({ error: message }, { status: 401 });
+}
+
+export function forbiddenResponse(message = "Forbidden") {
+  return NextResponse.json({ error: message }, { status: 403 });
 }

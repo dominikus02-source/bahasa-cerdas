@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getUser, createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 import { awardCoins, trackQuestProgress, trackDailyStreak } from "@/lib/coins";
+import { karyaSchema, sanitize } from "@/lib/validations";
 
 export async function GET(req: NextRequest) {
   try {
@@ -64,21 +65,31 @@ export async function POST(req: NextRequest) {
     if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const body = await req.json();
-    const { title, content, type, coverImage } = body;
+    const parsed = karyaSchema.safeParse({
+      judul: body.title,
+      jenis: body.type,
+      konten: body.content,
+      coverImage: body.coverImage || null,
+    });
 
-    if (!title || !content || !type) {
-      return NextResponse.json({ error: "title, content, dan type wajib diisi" }, { status: 400 });
+    if (!parsed.success) {
+      return NextResponse.json(
+        { error: parsed.error.errors[0]?.message || "Data tidak valid" },
+        { status: 400 }
+      );
     }
 
-    const excerpt = content.replace(/<[^>]*>/g, "").slice(0, 150);
+    const { judul, konten, jenis, coverImage } = parsed.data;
+    const sanitizedContent = sanitize(konten);
+    const excerpt = sanitizedContent.replace(/<[^>]*>/g, "").slice(0, 150);
 
     const karya = await db.studentKarya.create({
       data: {
-        title,
-        content,
+        title: sanitize(judul),
+        content: sanitizedContent,
         excerpt,
-        type,
-        coverImage,
+        type: jenis,
+        coverImage: coverImage || null,
         userId: user.id,
       },
       include: {

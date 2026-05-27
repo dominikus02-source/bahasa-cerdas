@@ -143,6 +143,7 @@ export default function SusunKataGame({ hideBackButton }: { hideBackButton?: boo
   const [timeLeft, setTimeLeft] = useState(30);
   const [timerActive, setTimerActive] = useState(false);
   const [usedWords, setUsedWords] = useState<Set<string>>(new Set());
+  const [xpSaved, setXpSaved] = useState(false);
 
   useEffect(() => {
     const saved = localStorage.getItem("susun-kata-progress");
@@ -154,6 +155,16 @@ export default function SusunKataGame({ hideBackButton }: { hideBackButton?: boo
       } catch {}
     }
   }, []);
+
+  useEffect(() => {
+    if (gameState !== "result" || xpSaved || score <= 0) return
+    setXpSaved(true)
+    fetch("/api/game/xp", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ score, correct: 0, wrong: 0, maxStreak: bestStreak, xpEarned: score, gameType: "SUSUN_KATA" }),
+    }).catch(() => {})
+  }, [gameState, xpSaved, score, bestStreak])
 
   useEffect(() => {
     if (!timerActive || timeLeft <= 0) return;

@@ -3,22 +3,30 @@
 import { createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 import { redirect } from "next/navigation";
+import { loginSchema } from "@/lib/validations";
 
 export async function loginUser(formData: FormData) {
   try {
-    const email = (formData.get("email") as string).toLowerCase();
-    const password = formData.get("password") as string;
+    const parsed = loginSchema.safeParse({
+      email: formData.get("email"),
+      password: formData.get("password"),
+    });
 
-    if (!email || !password) {
-      return { error: "Missing credentials" };
+    if (!parsed.success) {
+      const firstError = parsed.error.errors[0]?.message || "Data tidak valid";
+      return { error: firstError };
     }
 
+    const { email, password } = parsed.data;
     const supabase = await createClient();
 
-    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: email.toLowerCase(),
+      password,
+    });
 
     if (error) {
-      return { error: error.message };
+      return { error: "Email atau password salah" };
     }
 
     if (!data.user) {

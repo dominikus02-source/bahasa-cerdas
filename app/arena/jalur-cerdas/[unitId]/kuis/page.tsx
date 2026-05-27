@@ -22,7 +22,24 @@ export default function KuisPage() {
   const [timeLeft, setTimeLeft] = useState(120)
   const [started, setStarted] = useState(false)
   const [showingResult, setShowingResult] = useState(false)
+  const [progressSaved, setProgressSaved] = useState(false)
   const timerRef = useRef<NodeJS.Timeout | null>(null)
+
+  const benar = soalList.filter(s => jawaban[s.id] === s.jawaban).length
+  const total = soalList.length
+  const skor = total > 0 ? Math.round((benar / total) * 100) : 0
+  const grade = skor >= 85 ? "A" : skor >= 70 ? "B" : skor >= 55 ? "C" : "D"
+
+  useEffect(() => {
+    if (!selesai || progressSaved || soalList.length === 0) return
+    setProgressSaved(true)
+    const pct = Math.round((benar / soalList.length) * 100)
+    fetch(`/api/jalur-cerdas/${unitId}/progress`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ score: pct }),
+    }).catch(() => {})
+  }, [selesai, progressSaved, benar, soalList.length, unitId])
 
   useEffect(() => {
     fetch(`/api/jalur-cerdas/${unitId}`)
@@ -72,11 +89,6 @@ export default function KuisPage() {
       }
     }, 1500)
   }
-
-  const benar = soalList.filter(s => jawaban[s.id] === s.jawaban).length
-  const total = soalList.length
-  const skor = total > 0 ? Math.round((benar / total) * 100) : 0
-  const grade = skor >= 85 ? "A" : skor >= 70 ? "B" : skor >= 55 ? "C" : "D"
 
   const minutes = Math.floor(timeLeft / 60)
   const seconds = timeLeft % 60

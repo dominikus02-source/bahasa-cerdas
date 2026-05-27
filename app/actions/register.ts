@@ -1,28 +1,31 @@
 "use server";
 
 import { db } from "@/lib/db";
-
-const FOUNDER_EMAILS = ["hdsastra47@gmail.com", "dominikus.02@gmail.com", "alexsurya1968@gmail.com"];
+import { registerSchema, sanitize } from "@/lib/validations";
 
 export async function registerUser(formData: FormData) {
   try {
-    const email = formData.get("email") as string;
-    const supabaseId = formData.get("supabaseId") as string;
-    const fullName = formData.get("fullName") as string;
-    const role = formData.get("role") as "GURU" | "MURID";
-    const school = formData.get("school") as string | null;
-    const city = formData.get("city") as string | null;
-    const province = formData.get("province") as string | null;
+    const parsed = registerSchema.safeParse({
+      email: formData.get("email"),
+      supabaseId: formData.get("supabaseId"),
+      fullName: formData.get("fullName"),
+      role: formData.get("role"),
+      school: formData.get("school") || null,
+      city: formData.get("city") || null,
+      province: formData.get("province") || null,
+    });
 
-    if (!email || !supabaseId || !fullName || !role) {
-      return { error: "Missing fields" };
+    if (!parsed.success) {
+      const firstError = parsed.error.errors[0]?.message || "Data tidak valid";
+      return { error: firstError };
     }
 
-    if (!["GURU", "MURID"].includes(role)) {
-      return { error: "Invalid role" };
-    }
+    const { email, supabaseId, fullName, role, school, city, province } = parsed.data;
+    const sanitizedName = sanitize(fullName);
 
-    const isFounder = FOUNDER_EMAILS.includes(email.toLowerCase());
+    const isFounder = process.env.FOUNDER_EMAILS?.split(",")
+      .map((e) => e.trim().toLowerCase())
+      .includes(email.toLowerCase()) ?? false;
 
     const existingUser = await db.user.findFirst({ where: { email: email.toLowerCase() } });
     if (existingUser) {
@@ -39,7 +42,7 @@ export async function registerUser(formData: FormData) {
       data: {
         supabaseId,
         email: email.toLowerCase(),
-        fullName,
+        fullName: sanitizedName,
         role,
         isFounder,
         isPremium: isFounder,
@@ -51,9 +54,9 @@ export async function registerUser(formData: FormData) {
       await db.profile.create({
         data: {
           userId: newUser.id,
-          ...(school ? { school } : {}),
-          ...(city ? { city } : {}),
-          ...(province ? { province } : {}),
+          ...(school ? { school: sanitize(school) } : {}),
+          ...(city ? { city: sanitize(city) } : {}),
+          ...(province ? { province: sanitize(province) } : {}),
         },
       });
     } catch {}

@@ -16,6 +16,7 @@ export default function AduCepatPage() {
   const [isHost, setIsHost] = useState(false)
   const [results, setResults] = useState<any[]>([])
   const [xpEarned, setXpEarned] = useState(0)
+  const [xpSaved, setXpSaved] = useState(false)
   const [userData, setUserData] = useState<any>(null)
   const [queueMsg, setQueueMsg] = useState("Mencari lawan sepadan...")
   const resultRef = useRef<any[]>([])
@@ -106,6 +107,23 @@ export default function AduCepatPage() {
       gameType: "KUIS_BATTLE",
     })
   }, [userData])
+
+  useEffect(() => {
+    if (phase !== "result" || xpSaved || xpEarned <= 0) return
+    setXpSaved(true)
+    fetch("/api/game/xp", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        score: myResult?.score || 0,
+        correct: myResult?.correct || 0,
+        wrong: myResult?.wrong || 0,
+        xpEarned,
+        gameType: "KUIS_BATTLE",
+        roomCode,
+      }),
+    }).catch(() => {})
+  }, [phase, xpSaved, xpEarned, myResult, roomCode])
 
   const handleGameFinish = useCallback((data: any) => {
     // handled by socket event above

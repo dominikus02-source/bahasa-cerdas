@@ -56,6 +56,19 @@ export default function LatihanPage() {
     </div>
   )
 
+  const [progressSaved, setProgressSaved] = useState(false)
+
+  useEffect(() => {
+    if (!selesai || progressSaved || total === 0) return
+    setProgressSaved(true)
+    const pct = Math.round((benar / total) * 100)
+    fetch(`/api/jalur-cerdas/${unitId}/progress`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ score: pct }),
+    }).catch(() => {})
+  }, [selesai, progressSaved, benar, total, unitId])
+
   if (selesai) return (
     <div className="px-4 py-6 arena-page text-center pt-16">
       <div className="w-20 h-20 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center mx-auto mb-4 shadow-lg">

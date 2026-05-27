@@ -176,6 +176,11 @@ export default function BelajarPage() {
   const isLast = activeIdx >= total - 1
   const selesai = useCallback(() => {
     if (isLast) {
+      fetch(`/api/jalur-cerdas/${unitId}/progress`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "belajar" }),
+      }).catch(() => {})
       router.push(`/arena/jalur-cerdas/${unitId}`)
     } else {
       setActiveIdx(i => i + 1)
