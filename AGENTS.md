@@ -77,7 +77,7 @@ Transform BahasaCerdas into a social-creative platform for Bahasa Indonesia wher
 ### Supabase (Auth only)
 - URL: https://***REMOVED-SUPABASE-REF***.supabase.co
 - ANON_KEY: ***REMOVED-ANON-KEY***
-- SERVICE_ROLE_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlidGxob29jYW9vcGd0Y3NudnpyIiwicm9sZSI6InNlcnZpY2Utcm9sZSIsImlhdCI6MTc3NzQ5NDI1NiwiZXhwIjoyMDkzMDcwMjU2fQ.PjBT8h7bN-W5L5E8Cq5mF1aW2dR4vK9xXyZ3nB6mC8g
+- SERVICE_ROLE_KEY: ***REMOVED-SERVICE-ROLE-KEY***
 
 ### Environment Variables
 - DATABASE_URL: postgresql://bahasa:***REMOVED-DB-PASSWORD***@***REMOVED-VPS-IP***:5432/bahasacerdas
