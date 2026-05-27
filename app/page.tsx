@@ -91,11 +91,11 @@ export default async function HomePage() {
     "@context": "https://schema.org",
     "@type": "WebSite",
     name: "BahasaCerdas",
-    url: "https://bahasacerdas.site",
+    url: "https://bahasacerdas.com",
     description: "Platform edukasi Bahasa Indonesia untuk guru dan murid.",
     potentialAction: {
       "@type": "SearchAction",
-      target: "https://bahasacerdas.site/kamus?q={search_term_string}",
+      target: "https://bahasacerdas.com/kamus?q={search_term_string}",
       "query-input": "required name=search_term_string",
     },
   };
@@ -104,7 +104,7 @@ export default async function HomePage() {
     "@context": "https://schema.org",
     "@type": "EducationalOrganization",
     name: "BahasaCerdas",
-    url: "https://bahasacerdas.site",
+    url: "https://bahasacerdas.com",
     description: "Platform Terlengkap untuk Guru Bahasa Indonesia. MGMP + AI + Toko Karya.",
     offers: {
       "@type": "Offer",
@@ -112,10 +112,22 @@ export default async function HomePage() {
     },
   };
 
+  const breadcrumbLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Beranda", item: "https://bahasacerdas.com" },
+      { "@type": "ListItem", position: 2, name: "Artikel", item: "https://bahasacerdas.com/artikel" },
+      { "@type": "ListItem", position: 3, name: "Marketplace", item: "https://bahasacerdas.com/marketplace" },
+      { "@type": "ListItem", position: 4, name: "Video Belajar", item: "https://bahasacerdas.com/video-belajar" },
+    ],
+  };
+
   return (
     <main className="min-h-screen">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
       <PublicNavbar />
       <HeroSection />
       <SocialProof />
