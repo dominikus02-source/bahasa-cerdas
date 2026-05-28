@@ -162,16 +162,14 @@ export default function HeroSection() {
               </div>
 
               <div className="absolute -bottom-4 -left-4 w-80 rounded-xl overflow-hidden shadow-lg shadow-zinc-900/10 border border-zinc-200 bg-white">
-                <div className="aspect-[4/3] relative bg-zinc-100">
                   <Image
                     src="/dasborguruBC.png"
                     alt=""
-                    fill
-                    sizes="320px"
-                    className="object-contain object-left-top"
+                    width={320}
+                    height={173}
+                    className="w-full h-auto object-contain"
                     priority
                   />
-                </div>
                 <div className="px-3 py-2 bg-white">
                   <p className="text-xs font-semibold text-zinc-700">Dasbor Guru</p>
                 </div>
