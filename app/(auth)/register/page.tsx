@@ -338,7 +338,7 @@ export default function RegisterPage() {
         </div>
 
         <p className="text-center text-white/60 text-xs mt-6">
-          BahasaCerdas — Platform Edukasi Bahasa Indonesia
+          BahasaCerdas — Platform edukasi Bahasa Indonesia
         </p>
         <p className="text-center text-white/40 text-xs mt-2">
           Butuh bantuan? <a href="mailto:halo@bahasacerdas.com" className="hover:text-white/60">halo@bahasacerdas.com</a>

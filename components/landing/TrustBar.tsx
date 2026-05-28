@@ -1,4 +1,8 @@
+"use client";
+
 import { BookOpen, Users, FileText, Award } from "lucide-react";
+import { motion } from "framer-motion";
+import { fadeInUp, staggerContainer } from "@/lib/motion";
 
 const stats = [
   { icon: Users, value: "10.000+", label: "Guru Terdaftar" },
@@ -9,29 +13,39 @@ const stats = [
 
 export default function TrustBar() {
   return (
-    <section className="relative py-12 lg:py-16 bg-white">
+    <section className="relative py-12 lg:py-16 bg-white" aria-label="Statistik platform">
       <div className="section-container">
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
-          {stats.map((stat, i) => {
+        <motion.div
+          className="grid grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8"
+          variants={staggerContainer}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          role="list"
+        >
+          {stats.map((stat) => {
             const Icon = stat.icon;
             return (
-              <div
+              <motion.div
                 key={stat.label}
+                variants={fadeInUp}
+                transition={{ duration: 0.5, ease: "easeOut" }}
                 className="relative group text-center p-6 rounded-2xl bg-zinc-50/50 hover:bg-zinc-50 transition-colors duration-300"
+                role="listitem"
               >
                 <div className="w-12 h-12 rounded-xl bg-primary-light flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
-                  <Icon size={22} className="text-primary" />
+                  <Icon size={22} className="text-primary" aria-hidden="true" />
                 </div>
-                <p className="text-2xl lg:text-3xl font-bold text-zinc-900 mb-1">
+                <p className="text-2xl lg:text-3xl font-bold text-zinc-900 mb-1" aria-label={`${stat.value} ${stat.label}`}>
                   {stat.value}
                 </p>
                 <p className="text-sm text-zinc-500 font-medium">
                   {stat.label}
                 </p>
-              </div>
+              </motion.div>
             );
           })}
-        </div>
+        </motion.div>
       </div>
     </section>
   );

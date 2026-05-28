@@ -1,6 +1,10 @@
+"use client";
+
 import Link from "next/link";
-import Image from "next/image";
-import { Users, MessageCircle, Calendar, ArrowRight, ChevronRight } from "lucide-react";
+import { Users, MessageCircle, Calendar, ArrowRight } from "lucide-react";
+import { motion } from "framer-motion";
+import BatikDecor from "@/components/landing/batik-decor";
+import { fadeInUp, staggerContainer } from "@/lib/motion";
 
 const features = [
   {
@@ -26,20 +30,27 @@ const features = [
 export default function KomunitasSection() {
   return (
     <section className="relative py-20 lg:py-28 bg-zinc-50 overflow-hidden">
-      {/* Batik Decor */}
+      {/* Non-blocking batik decor */}
       <div
-        className="absolute left-0 top-0 w-[500px] h-full opacity-[0.015] pointer-events-none"
+        className="absolute left-0 top-0 w-[500px] h-full opacity-[0.015] pointer-events-none select-none"
         style={{
           backgroundImage: "url('/batik bg bc.png')",
           backgroundSize: "cover",
           backgroundPosition: "left center",
         }}
+        aria-hidden="true"
       />
 
       <div className="section-container relative z-10">
         <div className="grid lg:grid-cols-5 gap-12 lg:gap-16 items-center">
           {/* Left Content */}
-          <div className="lg:col-span-3">
+          <motion.div
+            className="lg:col-span-3"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, ease: "easeOut" }}
+          >
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary-light border border-primary/10 mb-5">
               <Users size={12} className="text-primary" />
               <span className="text-xs font-semibold text-primary">
@@ -57,11 +68,22 @@ export default function KomunitasSection() {
             </p>
 
             {/* Feature List */}
-            <div className="space-y-5 mb-8">
+            <motion.div
+              className="space-y-5 mb-8"
+              variants={staggerContainer}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+            >
               {features.map((f) => {
                 const Icon = f.icon;
                 return (
-                  <div key={f.title} className="flex items-start gap-4">
+                  <motion.div
+                    key={f.title}
+                    variants={fadeInUp}
+                    transition={{ duration: 0.5, ease: "easeOut" }}
+                    className="flex items-start gap-4"
+                  >
                     <div className={`w-10 h-10 rounded-xl ${f.color} flex items-center justify-center shrink-0 mt-0.5`}>
                       <Icon size={20} />
                     </div>
@@ -69,10 +91,10 @@ export default function KomunitasSection() {
                       <h4 className="font-semibold text-zinc-900 mb-1">{f.title}</h4>
                       <p className="text-sm text-zinc-500">{f.description}</p>
                     </div>
-                  </div>
+                  </motion.div>
                 );
               })}
-            </div>
+            </motion.div>
 
             <Link
               href="/guru/komunitas"
@@ -81,14 +103,18 @@ export default function KomunitasSection() {
               Gabung Komunitas Sekarang
               <ArrowRight size={16} className="transition-transform group-hover:translate-x-0.5" />
             </Link>
-          </div>
+          </motion.div>
 
           {/* Right - Stats Card */}
-          <div className="lg:col-span-2">
+          <motion.div
+            className="lg:col-span-2"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, ease: "easeOut", delay: 0.2 }}
+          >
             <div className="relative p-8 lg:p-10 rounded-2xl bg-white border border-zinc-100 shadow-xl shadow-zinc-900/5">
-              {/* Dark overlay card */}
               <div className="absolute -top-3 -right-3 w-full h-full rounded-2xl bg-zinc-900 -z-10" />
-
               <div className="space-y-6">
                 <div className="text-center">
                   <p className="text-4xl lg:text-5xl font-bold text-zinc-900">10.000+</p>
@@ -116,7 +142,7 @@ export default function KomunitasSection() {
                 </div>
               </div>
             </div>
-          </div>
+          </motion.div>
         </div>
       </div>
     </section>

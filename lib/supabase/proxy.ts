@@ -4,7 +4,7 @@ import { checkRateLimit, rateLimitResponse } from "@/lib/security";
 
 const publicPaths = [
   "/", "/login", "/auth/arena-login", "/register", "/confirm",
-  "/verify-email", "/onboarding",
+  "/verify-email", "/onboarding", "/tentang", "/fitur",
   "/marketplace", "/artikel", "/video-belajar", "/kamus", "/loker", "/komunitas", "/ai-bc",
 ];
 
@@ -14,7 +14,14 @@ const authPaths = [
 ];
 
 export async function updateSession(request: NextRequest) {
-  const { pathname } = request.nextUrl;
+  const { pathname, search } = request.nextUrl;
+  const host = request.headers.get("host") || "";
+
+  // Redirect non-primary domains to bahasacerdas.com for SEO consistency
+  if (host && !host.includes("bahasacerdas.com") && !host.includes("localhost") && !host.includes("vercel.app")) {
+    const url = new URL(`https://bahasacerdas.com${pathname}${search}`);
+    return NextResponse.redirect(url, { status: 301 });
+  }
 
   // Rate limiting
   const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";

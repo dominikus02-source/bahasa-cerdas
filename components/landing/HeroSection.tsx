@@ -3,13 +3,16 @@
 import { useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { motion } from "framer-motion";
 import { Sparkles, Play, ChevronRight, Star } from "lucide-react";
+import BatikDecor from "@/components/landing/batik-decor";
+import { fadeInUp, staggerContainer, sectionProps, itemProps } from "@/lib/motion";
 
 const avatarUsers = [
-  "https://api.dicebear.com/9.x/avataaars/svg?seed=teacher1&backgroundColor=c0aede",
-  "https://api.dicebear.com/9.x/avataaars/svg?seed=teacher2&backgroundColor=d1d4f9",
-  "https://api.dicebear.com/9.x/avataaars/svg?seed=teacher3&backgroundColor=ffd5dc",
-  "https://api.dicebear.com/9.x/avataaars/svg?seed=teacher4&backgroundColor=ffdfbf",
+  { url: "https://api.dicebear.com/9.x/avataaars/svg?seed=teacher1&backgroundColor=c0aede", alt: "Guru 1" },
+  { url: "https://api.dicebear.com/9.x/avataaars/svg?seed=teacher2&backgroundColor=d1d4f9", alt: "Guru 2" },
+  { url: "https://api.dicebear.com/9.x/avataaars/svg?seed=teacher3&backgroundColor=ffd5dc", alt: "Guru 3" },
+  { url: "https://api.dicebear.com/9.x/avataaars/svg?seed=teacher4&backgroundColor=ffdfbf", alt: "Guru 4" },
 ];
 
 export default function HeroSection() {
@@ -29,161 +32,163 @@ export default function HeroSection() {
   }, []);
 
   return (
-    <section className="relative min-h-[90vh] lg:min-h-screen flex items-center overflow-hidden bg-gradient-to-b from-white via-white to-zinc-50">
-      {/* Batik Background Decor */}
-      <div className="absolute inset-0 pointer-events-none select-none">
-        <div
-          className="absolute top-0 right-0 w-[600px] lg:w-[800px] h-[600px] lg:h-[800px] opacity-[0.04]"
-          style={{
-            backgroundImage: "url('/batik bg bc.png')",
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-            transform: "scaleX(-1)",
-          }}
-        />
-        <div
-          className="absolute bottom-0 left-0 w-[400px] lg:w-[600px] h-[400px] lg:h-[600px] opacity-[0.03]"
-          style={{
-            backgroundImage: "url('/batik-header-profile-bc.png')",
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-          }}
-        />
-      </div>
+    <section
+      className="relative min-h-[90vh] lg:min-h-screen flex items-center overflow-hidden bg-gradient-to-b from-white via-white to-zinc-50"
+      aria-labelledby="hero-heading"
+    >
+      <BatikDecor position="top-right" variant="batik-bg" />
+      <BatikDecor position="bottom-left" variant="batik-header" className="opacity-[0.02]" />
 
-      {/* Subtle Grid */}
-      <div className="absolute inset-0 bg-grid opacity-40" />
+      <div className="absolute inset-0 bg-grid opacity-40" aria-hidden="true" />
 
-      {/* Hero Content */}
       <div
         ref={containerRef}
         className="section-container relative z-10 pt-24 lg:pt-32 pb-16 lg:pb-24"
-        style={
-          {
-            "--mouse-x": "0",
-            "--mouse-y": "0",
-          } as React.CSSProperties
-        }
+        style={{ "--mouse-x": "0", "--mouse-y": "0" } as React.CSSProperties}
       >
-        <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-          {/* Left - Text Content */}
+        <motion.div
+          className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center"
+          variants={staggerContainer}
+          {...sectionProps}
+        >
           <div className="max-w-2xl">
-            {/* Badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary-light border border-primary/10 mb-6 animate-fade-in-up">
-              <Sparkles size={14} className="text-primary" />
-              <span className="text-xs font-semibold text-primary">
-                Platform Terlengkap untuk Guru Bahasa Indonesia
-              </span>
-            </div>
+            <motion.div variants={fadeInUp} {...itemProps}>
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary-light border border-primary/10 mb-6">
+                <Sparkles size={14} className="text-primary" aria-hidden="true" />
+                <span className="text-xs font-semibold text-primary">
+                  Platform edukasi Bahasa Indonesia
+                </span>
+              </div>
+            </motion.div>
 
-            {/* Headline */}
-            <h1 className="heading-xl text-zinc-900 mb-6 leading-[1.08] animate-fade-in-up" style={{ animationDelay: "0.1s" }}>
-              Platform Terlengkap{" "}
-              <span className="text-primary">Guru Bahasa Indonesia</span>
+            <motion.h1
+              id="hero-heading"
+              variants={fadeInUp}
+              transition={{ duration: 0.5, ease: "easeOut", delay: 0.1 }}
+              className="heading-xl text-zinc-900 mb-6 leading-[1.08]"
+            >
+              Platform edukasi{" "}
+              <span className="text-primary">Bahasa Indonesia</span>
               <br />
               <span className="text-zinc-500 text-3xl sm:text-4xl lg:text-5xl block mt-2">
                 MGMP + AI + Toko Karya
               </span>
-            </h1>
+            </motion.h1>
 
-            {/* Subheadline */}
-            <p className="text-base lg:text-lg text-zinc-500 leading-relaxed mb-8 max-w-xl animate-fade-in-up" style={{ animationDelay: "0.2s" }}>
+            <motion.p
+              variants={fadeInUp}
+              transition={{ duration: 0.5, ease: "easeOut", delay: 0.2 }}
+              className="text-base lg:text-lg text-zinc-500 leading-relaxed mb-8 max-w-xl"
+            >
               Hemat waktu persiapan mengajar hingga 10x lipat dengan AI canggih,
               akses ribuan materi MGMP berkualitas, jual karya mengajar Anda,
               dan bergabung dengan komunitas guru terbesar di Indonesia.
-            </p>
+            </motion.p>
 
-            {/* Social Proof */}
-            <div className="flex items-center gap-3 mb-8 animate-fade-in-up" style={{ animationDelay: "0.25s" }}>
-              <div className="flex -space-x-2">
-                {avatarUsers.map((url, i) => (
-                  <img
+            <motion.div
+              variants={fadeInUp}
+              transition={{ duration: 0.5, ease: "easeOut", delay: 0.25 }}
+              className="flex items-center gap-3 mb-8"
+            >
+              <div className="flex -space-x-2" role="group" aria-label="Foto avatar guru">
+                {avatarUsers.map((user, i) => (
+                  <Image
                     key={i}
-                    src={url}
-                    alt="Guru"
-                    className="w-8 h-8 rounded-full border-2 border-white bg-zinc-100"
-                    loading="lazy"
+                    src={user.url}
+                    alt={user.alt}
+                    width={32}
+                    height={32}
+                    className="rounded-full border-2 border-white bg-zinc-100"
+                    unoptimized
                   />
                 ))}
               </div>
               <div>
-                <div className="flex items-center gap-1">
+                <div className="flex items-center gap-1" aria-label="Rating 5 dari 5">
                   {[1, 2, 3, 4, 5].map((i) => (
-                    <Star key={i} size={14} className="fill-amber-400 text-amber-400" />
+                    <Star key={i} size={14} className="fill-amber-400 text-amber-400" aria-hidden="true" />
                   ))}
                 </div>
-                <p className="text-xs text-zinc-400 font-medium">
+                <p className="text-xs text-zinc-500 font-medium">
                   Dipercaya oleh{" "}
                   <span className="text-zinc-700 font-semibold">10.000+</span> guru
                   di seluruh Indonesia
                 </p>
               </div>
-            </div>
+            </motion.div>
 
-            {/* CTAs */}
-            <div className="flex flex-wrap gap-4 animate-fade-in-up" style={{ animationDelay: "0.3s" }}>
+            <motion.div
+              variants={fadeInUp}
+              transition={{ duration: 0.5, ease: "easeOut", delay: 0.3 }}
+              className="flex flex-wrap gap-4"
+            >
               <Link
                 href="/register"
-                className="group relative inline-flex items-center gap-2 px-8 py-3.5 text-base font-semibold text-white bg-primary hover:bg-primary-dark rounded-xl transition-all duration-200 shadow-xl shadow-primary/25 hover:shadow-2xl hover:shadow-primary/30 hover:-translate-y-0.5"
+                className="group relative inline-flex items-center gap-2 px-8 py-3.5 text-base font-semibold text-white bg-primary hover:bg-primary-dark rounded-xl transition-all duration-200 shadow-xl shadow-primary/25 hover:shadow-2xl hover:shadow-primary/30 hover:-translate-y-0.5 focus-ring"
+                aria-label="Daftar gratis, coba BahasaCerdas 14 hari"
               >
                 Coba Gratis 14 Hari
-                <ChevronRight size={18} className="transition-transform group-hover:translate-x-0.5" />
+                <ChevronRight size={18} className="transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
               </Link>
               <Link
-                href="/demo"
-                className="group inline-flex items-center gap-2.5 px-8 py-3.5 text-base font-semibold text-zinc-700 bg-zinc-100 hover:bg-zinc-200 rounded-xl transition-all duration-200"
+                href="/fitur"
+                className="group inline-flex items-center gap-2.5 px-8 py-3.5 text-base font-semibold text-zinc-700 bg-zinc-100 hover:bg-zinc-200 rounded-xl transition-all duration-200 focus-ring"
+                aria-label="Lihat semua fitur BahasaCerdas"
               >
-                <Play size={18} className="text-primary" />
-                Tonton Demo 2 Menit
+                <Play size={18} className="text-primary" aria-hidden="true" />
+                Lihat Semua Fitur
               </Link>
-            </div>
+            </motion.div>
           </div>
 
-          {/* Right - Dashboard Preview */}
-          <div className="relative animate-fade-in-up hidden lg:block" style={{ animationDelay: "0.35s" }}>
+          <motion.div
+            variants={fadeInUp}
+            transition={{ duration: 0.5, ease: "easeOut", delay: 0.35 }}
+            className="relative hidden lg:block"
+            aria-hidden="true"
+          >
             <div className="relative">
-              {/* Main Dashboard - Guru */}
               <div className="relative rounded-2xl overflow-hidden shadow-2xl shadow-zinc-900/10 border border-zinc-200 bg-white">
-                <div className="aspect-[5/4] lg:aspect-[4/3] relative overflow-hidden bg-zinc-100">
+                <div className="aspect-[4/3] relative overflow-hidden bg-zinc-100">
                   <Image
-                    src="/dasborguruBC.png"
-                    alt="Dashboard Guru BahasaCerdas — sidebar, menu, dan konten lengkap"
+                    src="/arena-fitur.png"
+                    alt=""
                     fill
+                    sizes="(min-width: 1024px) 50vw, 100vw"
                     className="object-contain object-left-top"
                     priority
                   />
                 </div>
               </div>
 
-              {/* Floating Card - Murid Preview */}
-              <div className="absolute -bottom-4 -left-4 w-56 rounded-xl overflow-hidden shadow-lg shadow-zinc-900/10 border border-zinc-200 bg-white animate-float">
+              <div className="absolute -bottom-4 -left-4 w-80 rounded-xl overflow-hidden shadow-lg shadow-zinc-900/10 border border-zinc-200 bg-white">
                 <div className="aspect-[4/3] relative bg-zinc-100">
                   <Image
-                    src="/dasbormuridBC.png"
-                    alt="Dashboard Murid BahasaCerdas"
+                    src="/dasborguruBC.png"
+                    alt=""
                     fill
+                    sizes="320px"
                     className="object-contain object-left-top"
+                    priority
                   />
                 </div>
                 <div className="px-3 py-2 bg-white">
-                  <p className="text-xs font-semibold text-zinc-700">Dashboard Murid</p>
+                  <p className="text-xs font-semibold text-zinc-700">Dasbor Guru</p>
                 </div>
               </div>
 
-              {/* Floating Badge */}
-              <div className="absolute -top-3 -right-3 px-4 py-2 rounded-xl bg-white border border-zinc-100 shadow-lg shadow-zinc-900/5 animate-float" style={{ animationDelay: "1.5s" }}>
+              <div className="absolute -top-3 -right-3 px-4 py-2 rounded-xl bg-white border border-zinc-100 shadow-lg shadow-zinc-900/5">
                 <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full bg-emerald-500" />
-                  <span className="text-xs font-semibold text-zinc-700">Live • 234 online</span>
+                  <div className="w-3 h-3 rounded-full bg-emerald-500" aria-hidden="true" />
+                  <span className="text-xs font-semibold text-zinc-700">Live &bull; 234 daring</span>
                 </div>
               </div>
             </div>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       </div>
 
-      {/* Bottom Gradient Transition */}
-      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-white to-transparent" />
+      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-white to-transparent" aria-hidden="true" />
     </section>
   );
 }

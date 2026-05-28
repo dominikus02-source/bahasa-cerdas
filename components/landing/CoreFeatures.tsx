@@ -4,7 +4,7 @@ export default function CoreFeatures() {
   const features = [
     {
       icon: Brain,
-      title: "AI Super Tools",
+      title: "Alat AI Super",
       description: "Generator RPP, Korektor EYD, Soal HOTS otomatis. Hemat 10+ jam per minggu.",
       color: "from-red-500 to-pink-600",
       bgColor: "bg-red-50",
@@ -29,7 +29,7 @@ export default function CoreFeatures() {
     {
       icon: Award,
       title: "Sertifikasi & Karir",
-      description: "Sertifikat UKBI, badge guru pro, portofolio digital untuk kenaikan pangkat.",
+      description: "Sertifikat UKBI, lencana guru pro, portofolio digital untuk kenaikan pangkat.",
       color: "from-yellow-500 to-orange-600",
       bgColor: "bg-yellow-50",
       iconColor: "text-yellow-500",

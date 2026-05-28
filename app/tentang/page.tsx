@@ -6,7 +6,7 @@ import { Sparkles, Users, ShoppingBag, Gamepad2, Shield, Award, Heart } from "lu
 
 export const metadata: Metadata = {
   title: "Tentang Kami",
-  description: "BahasaCerdas adalah platform all-in-one untuk guru Bahasa Indonesia. AI generator RPP, bank soal, kuis multiplayer, toko karya, dan komunitas MGMP.",
+  description: "BahasaCerdas adalah platform lengkap untuk guru Bahasa Indonesia. AI generator RPP, bank soal, kuis multiplayer, toko karya, dan komunitas MGMP.",
 };
 
 const values = [
@@ -37,7 +37,7 @@ const milestones = [
   { year: "Q1 2025", event: "Peluncuran AI Generator RPP dan Bank Soal" },
   { year: "Q2 2025", event: "Toko Karya & Komunitas MGMP diluncurkan" },
   { year: "Q3 2025", event: "10.000+ guru bergabung dari 34 provinsi" },
-  { year: "2026", event: "Platform all-in-one terlengkap untuk guru Bahasa Indonesia" },
+  { year: "2026", event: "Platform terlengkap untuk guru Bahasa Indonesia" },
 ];
 
 export default function TentangPage() {
@@ -58,7 +58,7 @@ export default function TentangPage() {
             dengan Teknologi
           </h1>
           <p className="text-base lg:text-lg text-zinc-500 leading-relaxed max-w-2xl mx-auto">
-            BahasaCerdas adalah platform all-in-one yang menggabungkan kecerdasan buatan,
+            BahasaCerdas adalah platform lengkap yang menggabungkan kecerdasan buatan,
             komunitas MGMP, dan toko karya untuk membantu guru Bahasa Indonesia mengajar
             lebih efisien dan berdampak.
           </p>
@@ -80,7 +80,7 @@ export default function TentangPage() {
             <div className="p-8 lg:p-10 rounded-2xl bg-primary-light border border-primary/10">
               <h2 className="heading-md text-primary mb-4">Misi</h2>
               <p className="text-zinc-600 leading-relaxed text-base lg:text-lg">
-                Menyediakan platform all-in-one dengan AI canggih, konten
+                Menyediakan platform lengkap dengan AI canggih, konten
                 berkualitas, dan komunitas yang mendukung guru Bahasa Indonesia
                 di seluruh Indonesia.
               </p>

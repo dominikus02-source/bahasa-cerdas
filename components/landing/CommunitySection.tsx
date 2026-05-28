@@ -52,7 +52,7 @@ export default function CommunitySection() {
                   <Award className="w-6 h-6 text-yellow-300" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-lg mb-1">Mentoring 1-on-1</h3>
+                  <h3 className="font-bold text-lg mb-1">Bimbingan Personal</h3>
                   <p className="text-red-100 text-sm">Untuk guru pemula</p>
                 </div>
               </div>

@@ -132,7 +132,7 @@ export default function MarketplaceSection() {
               <ShoppingBag className="w-8 h-8" />
             </div>
             <h3 className="font-bold text-xl text-slate-900 mb-3">Upload Mudah</h3>
-            <p className="text-slate-600">Upload karya dalam 3 langkah. Support PDF, PPT, Video, dan format lainnya.</p>
+            <p className="text-slate-600">Upload karya dalam 3 langkah. Mendukung PDF, PPT, Video, dan format lainnya.</p>
           </div>
 
           <div className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-2xl p-8 text-center border border-blue-100">

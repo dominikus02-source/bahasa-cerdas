@@ -17,13 +17,13 @@ import FinalCTA from "@/components/landing/FinalCTA";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "BahasaCerdas — Platform Terlengkap Guru Bahasa Indonesia",
+  title: "BahasaCerdas — Platform edukasi Bahasa Indonesia",
   description:
-    "Platform all-in-one untuk guru Bahasa Indonesia: AI generator RPP, bank soal HOTS, kuis multiplayer, toko karya, dan komunitas MGMP terbesar. Gratis 14 hari.",
+    "Platform edukasi Bahasa Indonesia terlengkap: AI generator RPP, bank soal HOTS, kuis multiplayer, toko karya, dan komunitas MGMP terbesar. Gratis 14 hari.",
   openGraph: {
-    title: "BahasaCerdas — Platform Terlengkap Guru Bahasa Indonesia",
+    title: "BahasaCerdas — Platform edukasi Bahasa Indonesia",
     description:
-      "MGMP + AI + Toko Karya. Platform all-in-one untuk guru Bahasa Indonesia.",
+      "MGMP + AI + Toko Karya. Platform terlengkap untuk guru Bahasa Indonesia.",
   },
 };
 
@@ -90,265 +90,203 @@ export default async function HomePage() {
     getLatestVideos(),
   ]);
 
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "WebSite",
-    name: "BahasaCerdas",
-    url: "https://bahasacerdas.com",
-    description:
-      "Platform all-in-one untuk guru Bahasa Indonesia: AI generator RPP, bank soal, kuis multiplayer, toko karya, dan komunitas MGMP.",
-    potentialAction: {
-      "@type": "SearchAction",
-      target: "https://bahasacerdas.com/kamus?q={search_term_string}",
-      "query-input": "required name=search_term_string",
-    },
-  };
-
-  const orgJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "EducationalOrganization",
-    name: "BahasaCerdas",
-    url: "https://bahasacerdas.com",
-    description:
-      "Platform Terlengkap untuk Guru Bahasa Indonesia. MGMP + AI + Toko Karya.",
-    offers: {
-      "@type": "Offer",
-      category: "Education",
-    },
-  };
-
   const breadcrumbLd = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      {
-        "@type": "ListItem",
-        position: 1,
-        name: "Beranda",
-        item: "https://bahasacerdas.com",
-      },
-      {
-        "@type": "ListItem",
-        position: 2,
-        name: "Artikel",
-        item: "https://bahasacerdas.com/artikel",
-      },
-      {
-        "@type": "ListItem",
-        position: 3,
-        name: "Marketplace",
-        item: "https://bahasacerdas.com/marketplace",
-      },
-      {
-        "@type": "ListItem",
-        position: 4,
-        name: "Video Belajar",
-        item: "https://bahasacerdas.com/video-belajar",
-      },
+      { "@type": "ListItem", position: 1, name: "Beranda", item: "https://bahasacerdas.com" },
+      { "@type": "ListItem", position: 2, name: "Artikel", item: "https://bahasacerdas.com/artikel" },
+      { "@type": "ListItem", position: 3, name: "Marketplace", item: "https://bahasacerdas.com/marketplace" },
+      { "@type": "ListItem", position: 4, name: "Video Belajar", item: "https://bahasacerdas.com/video-belajar" },
     ],
   };
 
   return (
-    <main className="min-h-screen">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }}
-      />
+    <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
       />
 
+      <nav aria-label="Lompat ke konten" className="sr-only focus:not-sr-only">
+        <a href="#main-content" className="skip-link">Langsung ke konten utama</a>
+      </nav>
+
       <PageNavbar />
-      <HeroSection />
-      <TrustBar />
 
-      {/* Mengapa Bahasa Cerdas */}
-      <MengapaSection />
+      <main id="main-content" className="min-h-screen">
+        <HeroSection />
+        <TrustBar />
+        <MengapaSection />
+        <AIToolsSection />
+        <KaryaPopulerSection />
+        <TestimoniSection />
 
-      {/* AI Tools Unggulan */}
-      <AIToolsSection />
-
-      {/* Karya Guru Populer */}
-      <KaryaPopulerSection />
-
-      {/* Testimoni */}
-      <TestimoniSection />
-
-      {/* Video & Artikel */}
-      <section className="relative py-20 lg:py-28 bg-white" id="artikel">
-        <div className="section-container">
-          <div className="text-center max-w-2xl mx-auto mb-16 lg:mb-20">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary-light border border-primary/10 mb-5">
-              <span className="text-xs font-semibold text-primary">
-                Video & Artikel
-              </span>
-            </div>
-            <h2 className="heading-lg text-zinc-900 mb-5">
-              Belajar dari{" "}
-              <span className="text-primary">Video & Artikel</span>
-            </h2>
-            <p className="text-base lg:text-lg text-zinc-500 leading-relaxed">
-              Tips mengajar, video pembelajaran, dan wawasan pendidikan dari
-              para ahli.
-            </p>
-          </div>
-
-          {/* Video Section */}
-          <div className="mb-14">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-lg font-bold text-zinc-900">
-                Video Pembelajaran
-              </h3>
-              <Link
-                href="/video-belajar"
-                className="text-sm font-semibold text-primary hover:text-primary-dark transition-colors"
-              >
-                Lihat Semua →
-              </Link>
-            </div>
-            {videos.length > 0 ? (
-              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-                {videos.map((v: any) => (
-                  <Link
-                    key={v.id}
-                    href="/video-belajar"
-                    className="group rounded-2xl overflow-hidden border border-zinc-100 bg-zinc-50/50 card-hover"
-                  >
-                    <div className="aspect-video bg-zinc-100 relative overflow-hidden">
-                      {v.thumbnailUrl ? (
-                        <Image
-                          src={v.thumbnailUrl}
-                          alt={v.title}
-                          fill
-                          className="object-cover group-hover:scale-105 transition-transform duration-500"
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center bg-zinc-200">
-                          <div className="w-12 h-12 rounded-full bg-white/80 flex items-center justify-center">
-                            <div className="w-0 h-0 border-y-8 border-l-[14px] border-y-transparent border-l-zinc-600 ml-1" />
-                          </div>
-                        </div>
-                      )}
-                      {v.isPremium && (
-                        <span className="absolute top-3 left-3 px-2.5 py-1 rounded-lg bg-gold-400 text-white text-[10px] font-bold">
-                          PREMIUM
-                        </span>
-                      )}
-                      {v.duration && (
-                        <span className="absolute bottom-3 right-3 px-2 py-0.5 rounded-md bg-black/60 text-white text-[10px] font-medium">
-                          {v.duration}
-                        </span>
-                      )}
-                    </div>
-                    <div className="p-5">
-                      <p className="text-xs text-zinc-400 mb-1.5 uppercase tracking-wider font-medium">
-                        {v.category || v.grade || "Video"}
-                      </p>
-                      <h4 className="font-semibold text-zinc-900 text-sm leading-snug line-clamp-1 group-hover:text-primary transition-colors">
-                        {v.title}
-                      </h4>
-                      <p className="text-xs text-zinc-400 mt-1.5">
-                        {v.views?.toLocaleString() || 0} ditonton
-                      </p>
-                    </div>
-                  </Link>
-                ))}
+        <section className="relative py-20 lg:py-28 bg-white" id="artikel" aria-labelledby="media-heading">
+          <div className="section-container">
+            <div className="text-center max-w-2xl mx-auto mb-16 lg:mb-20">
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary-light border border-primary/10 mb-5">
+                <span className="text-xs font-semibold text-primary">
+                  Video & Artikel
+                </span>
               </div>
-            ) : (
-              <div className="text-center py-12 bg-zinc-50 rounded-2xl border border-dashed border-zinc-200">
-                <p className="text-zinc-400">
-                  Belum ada video pembelajaran.
-                </p>
-              </div>
-            )}
-          </div>
-
-          {/* Artikel Section */}
-          <div>
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-lg font-bold text-zinc-900">
-                Artikel & Tips
-              </h3>
-              <Link
-                href="/artikel"
-                className="text-sm font-semibold text-primary hover:text-primary-dark transition-colors"
-              >
-                Lihat Semua →
-              </Link>
+              <h2 id="media-heading" className="heading-lg text-zinc-900 mb-5">
+                Belajar dari{" "}
+                <span className="text-primary">Video & Artikel</span>
+              </h2>
+              <p className="text-base lg:text-lg text-zinc-500 leading-relaxed">
+                Tips mengajar, video pembelajaran, dan wawasan pendidikan dari
+                para ahli.
+              </p>
             </div>
-            {artikel.length > 0 ? (
-              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-                {artikel.map((a: any) => (
-                  <Link
-                    key={a.id}
-                    href={`/artikel/${a.slug}`}
-                    className="group rounded-2xl overflow-hidden border border-zinc-100 bg-zinc-50/50 card-hover"
-                  >
-                    <div className="p-6">
-                      {a.tags?.length > 0 && (
-                        <div className="flex flex-wrap gap-1.5 mb-3">
-                          {a.tags.slice(0, 2).map((t: string) => (
-                            <span
-                              key={t}
-                              className="text-[10px] px-2.5 py-1 rounded-full bg-primary-light text-primary font-medium"
-                            >
-                              {t}
-                            </span>
-                          ))}
-                        </div>
-                      )}
-                      <h4 className="font-bold text-zinc-900 group-hover:text-primary transition-colors line-clamp-2 mb-2">
-                        {a.title}
-                      </h4>
-                      {a.excerpt && (
-                        <p className="text-sm text-zinc-500 line-clamp-2 leading-relaxed">
-                          {a.excerpt}
-                        </p>
-                      )}
-                      <p className="text-xs text-zinc-400 mt-4">
-                        {a.author?.fullName} ·{" "}
-                        {new Date(a.createdAt).toLocaleDateString("id-ID", {
-                          day: "numeric",
-                          month: "long",
-                          year: "numeric",
-                        })}
-                      </p>
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            ) : (
-              <div className="text-center py-12 bg-zinc-50 rounded-2xl border border-dashed border-zinc-200">
-                <p className="text-zinc-400">
-                  Belum ada artikel. Guru dapat menulis artikel setelah login.
-                </p>
+
+            <div className="mb-14">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-lg font-bold text-zinc-900">
+                  Video Pembelajaran
+                </h3>
                 <Link
-                  href="/login"
-                  className="mt-2 inline-block text-sm text-primary font-semibold hover:underline"
+                  href="/video-belajar"
+                  className="text-sm font-semibold text-primary hover:text-primary-dark transition-colors focus-ring rounded"
                 >
-                  Login & Tulis Artikel →
+                  Lihat Semua &rarr;
                 </Link>
               </div>
-            )}
+              {videos.length > 0 ? (
+                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                  {videos.map((v: any) => (
+                    <Link
+                      key={v.id}
+                      href="/video-belajar"
+                      className="group rounded-2xl overflow-hidden border border-zinc-100 bg-zinc-50/50 card-hover focus-ring"
+                      aria-label={`Video: ${v.title}`}
+                    >
+                      <div className="aspect-video bg-zinc-100 relative overflow-hidden">
+                        {v.thumbnailUrl ? (
+                          <Image
+                            src={v.thumbnailUrl}
+                            alt=""
+                            fill
+                            className="object-cover group-hover:scale-105 transition-transform duration-500"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center bg-zinc-200">
+                            <div className="w-12 h-12 rounded-full bg-white/80 flex items-center justify-center">
+                              <div className="w-0 h-0 border-y-8 border-l-[14px] border-y-transparent border-l-zinc-600 ml-1" />
+                            </div>
+                          </div>
+                        )}
+                        {v.isPremium && (
+                          <span className="absolute top-3 left-3 px-2.5 py-1 rounded-lg bg-amber-400 text-white text-[10px] font-bold">
+                            PREMIUM
+                          </span>
+                        )}
+                        {v.duration && (
+                          <span className="absolute bottom-3 right-3 px-2 py-0.5 rounded-md bg-black/60 text-white text-[10px] font-medium">
+                            {v.duration}
+                          </span>
+                        )}
+                      </div>
+                      <div className="p-5">
+                        <p className="text-xs text-zinc-500 mb-1.5 uppercase tracking-wider font-medium">
+                          {v.category || v.grade || "Video"}
+                        </p>
+                        <h4 className="font-semibold text-zinc-900 text-sm leading-snug line-clamp-1 group-hover:text-primary transition-colors">
+                          {v.title}
+                        </h4>
+                        <p className="text-xs text-zinc-400 mt-1.5">
+                          {v.views?.toLocaleString() || 0} ditonton
+                        </p>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-12 bg-zinc-50 rounded-2xl border border-dashed border-zinc-200">
+                  <p className="text-zinc-400">
+                    Belum ada video pembelajaran.
+                  </p>
+                </div>
+              )}
+            </div>
+
+            <div>
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-lg font-bold text-zinc-900">
+                  Artikel & Tips
+                </h3>
+                <Link
+                  href="/artikel"
+                  className="text-sm font-semibold text-primary hover:text-primary-dark transition-colors focus-ring rounded"
+                >
+                  Lihat Semua &rarr;
+                </Link>
+              </div>
+              {artikel.length > 0 ? (
+                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                  {artikel.map((a: any) => (
+                    <Link
+                      key={a.id}
+                      href={`/artikel/${a.slug}`}
+                      className="group rounded-2xl overflow-hidden border border-zinc-100 bg-zinc-50/50 card-hover focus-ring"
+                      aria-label={`Artikel: ${a.title}`}
+                    >
+                      <div className="p-6">
+                        {a.tags?.length > 0 && (
+                          <div className="flex flex-wrap gap-1.5 mb-3">
+                            {a.tags.slice(0, 2).map((t: string) => (
+                              <span
+                                key={t}
+                                className="text-[10px] px-2.5 py-1 rounded-full bg-primary-light text-primary font-medium"
+                              >
+                                {t}
+                              </span>
+                            ))}
+                          </div>
+                        )}
+                        <h4 className="font-bold text-zinc-900 group-hover:text-primary transition-colors line-clamp-2 mb-2">
+                          {a.title}
+                        </h4>
+                        {a.excerpt && (
+                          <p className="text-sm text-zinc-500 line-clamp-2 leading-relaxed">
+                            {a.excerpt}
+                          </p>
+                        )}
+                        <p className="text-xs text-zinc-400 mt-4">
+                          {a.author?.fullName} &middot;{" "}
+                          {new Date(a.createdAt).toLocaleDateString("id-ID", {
+                            day: "numeric",
+                            month: "long",
+                            year: "numeric",
+                          })}
+                        </p>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-12 bg-zinc-50 rounded-2xl border border-dashed border-zinc-200">
+                  <p className="text-zinc-400">
+                    Belum ada artikel. Guru dapat menulis artikel setelah login.
+                  </p>
+                  <Link
+                    href="/login"
+                    className="mt-2 inline-block text-sm text-primary font-semibold hover:underline focus-ring rounded"
+                  >
+                    Login & Tulis Artikel &rarr;
+                  </Link>
+                </div>
+              )}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Komunitas MGMP */}
-      <KomunitasSection />
-
-      {/* FAQ */}
-      <FAQSection />
-
-      {/* Final CTA */}
-      <FinalCTA />
+        <KomunitasSection />
+        <FAQSection />
+        <FinalCTA />
+      </main>
 
       <PageFooter />
-    </main>
+    </>
   );
 }

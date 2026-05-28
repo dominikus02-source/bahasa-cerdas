@@ -1,6 +1,6 @@
 import { ImageResponse } from "next/og";
 
-export const alt = "BahasaCerdas — Platform Edukasi Bahasa Indonesia";
+export const alt = "BahasaCerdas — Platform edukasi Bahasa Indonesia";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -40,7 +40,7 @@ export default function Image() {
             lineHeight: 1.4,
           }}
         >
-          Platform Edukasi Bahasa Indonesia
+          Platform edukasi Bahasa Indonesia
         </div>
         <div
           style={{

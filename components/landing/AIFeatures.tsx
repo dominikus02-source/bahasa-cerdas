@@ -56,7 +56,7 @@ export default function AIFeatures() {
           </div>
 
           <h2 className="text-3xl lg:text-5xl font-extrabold text-slate-900 mb-6">
-            AI Tools untuk Mengajar Lebih{" "}
+            Alat AI untuk Mengajar Lebih{" "}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-pink-600">
               Efisien & Efektif
             </span>
@@ -96,7 +96,7 @@ export default function AIFeatures() {
         <div className="text-center mt-16">
           <div className="inline-flex items-center gap-3 px-6 py-4 bg-gradient-to-r from-red-600 to-pink-600 rounded-2xl text-white shadow-xl">
             <Brain className="w-6 h-6" />
-            <span className="font-bold text-lg">50+ AI Tools Tersedia</span>
+            <span className="font-bold text-lg">50+ Alat AI Tersedia</span>
           </div>
           <p className="text-slate-500 mt-4">Dan masih banyak lagi yang terus dikembangkan!</p>
         </div>
