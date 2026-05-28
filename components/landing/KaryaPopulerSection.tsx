@@ -1,39 +1,29 @@
 import Link from "next/link";
-import Image from "next/image";
-import { Download, Eye, ChevronRight, ShoppingBag } from "lucide-react";
+import { Download, ChevronRight, ShoppingBag } from "lucide-react";
+import { db } from "@/lib/db";
 
-const popularWorks = [
-  {
-    title: "RPP Teks Laporan Percobaan Kelas IX",
-    author: "Ibu Siti Rahmawati, S.Pd.",
-    type: "RPP",
-    price: "Rp 25.000",
-    sales: 342,
-    rating: 4.9,
-  },
-  {
-    title: "Modul Ajar Cerpen Kurikulum Merdeka",
-    author: "Bapak Ahmad Fauzi, M.Pd.",
-    type: "Modul",
-    price: "Rp 35.000",
-    sales: 287,
-    rating: 4.8,
-  },
-  {
-    title: "Bank Soal Teks Diskusi 50 Soal HOTS",
-    author: "Ibu Dewi Lestari, S.Pd.",
-    type: "Soal",
-    price: "Rp 20.000",
-    sales: 256,
-    rating: 4.7,
-  },
-];
+async function getPopularWorks() {
+  try {
+    return await db.karya.findMany({
+      where: { isPublished: true },
+      orderBy: { downloads: "desc" },
+      take: 3,
+      include: {
+        seller: { select: { fullName: true } },
+        _count: { select: { purchases: true } },
+      },
+    });
+  } catch {
+    return [];
+  }
+}
 
-export default function KaryaPopulerSection() {
+export default async function KaryaPopulerSection() {
+  const karya = await getPopularWorks();
+
   return (
     <section className="relative py-20 lg:py-28 bg-zinc-50">
       <div className="section-container">
-        {/* Section Header */}
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-12 lg:mb-16">
           <div className="max-w-xl">
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary-light border border-primary/10 mb-5">
@@ -59,51 +49,55 @@ export default function KaryaPopulerSection() {
           </Link>
         </div>
 
-        {/* Cards */}
         <div className="grid md:grid-cols-3 gap-6">
-          {popularWorks.map((work) => (
-            <div
-              key={work.title}
-              className="group relative bg-white rounded-2xl border border-zinc-100 overflow-hidden card-hover cursor-pointer"
-            >
-              {/* Top Accent */}
-              <div className="h-1.5 bg-gradient-to-r from-primary via-primary-dark to-primary" />
-
-              <div className="p-6 lg:p-8">
-                {/* Type Badge */}
-                <div className="inline-flex items-center px-3 py-1 rounded-lg bg-primary-light text-primary text-xs font-semibold mb-4">
-                  {work.type}
+          {karya.length > 0 ? (
+            karya.map((k: any) => (
+              <Link
+                key={k.id}
+                href={`/marketplace/${k.id}`}
+                className="group relative bg-white rounded-2xl border border-zinc-100 overflow-hidden card-hover"
+              >
+                <div className="h-1.5 bg-gradient-to-r from-primary via-primary-dark to-primary" />
+                <div className="p-6 lg:p-8">
+                  <div className="inline-flex items-center px-3 py-1 rounded-lg bg-primary-light text-primary text-xs font-semibold mb-4">
+                    {k.type}
+                  </div>
+                  <h3 className="text-base lg:text-lg font-bold text-zinc-900 mb-2 leading-snug line-clamp-2 group-hover:text-primary transition-colors">
+                    {k.title}
+                  </h3>
+                  <p className="text-xs text-zinc-400 mb-4">
+                    {k.seller?.fullName || "Guru Bahasa Indonesia"}
+                  </p>
+                  <div className="flex items-center gap-4 mb-5 text-xs text-zinc-400">
+                    <span className="flex items-center gap-1">
+                      <Download size={13} />
+                      {k._count?.purchases || k.downloads || 0} terjual
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between pt-4 border-t border-zinc-100">
+                    <span className="text-lg font-bold text-zinc-900">
+                      {k.price > 0
+                        ? `Rp ${k.price.toLocaleString("id")}`
+                        : "Gratis"}
+                    </span>
+                    <span className="text-xs font-semibold text-primary opacity-0 group-hover:opacity-100 transition-opacity">
+                      Lihat Detail →
+                    </span>
+                  </div>
                 </div>
-
-                <h3 className="text-base lg:text-lg font-bold text-zinc-900 mb-2 leading-snug line-clamp-2 group-hover:text-primary transition-colors">
-                  {work.title}
-                </h3>
-
-                <p className="text-xs text-zinc-400 mb-4">{work.author}</p>
-
-                {/* Stats */}
-                <div className="flex items-center gap-4 mb-5 text-xs text-zinc-400">
-                  <span className="flex items-center gap-1">
-                    <Download size={13} />
-                    {work.sales} terjual
-                  </span>
-                  <span className="flex items-center gap-1">
-                    ★ {work.rating}
-                  </span>
-                </div>
-
-                {/* Price & CTA */}
-                <div className="flex items-center justify-between pt-4 border-t border-zinc-100">
-                  <span className="text-lg font-bold text-zinc-900">
-                    {work.price}
-                  </span>
-                  <span className="text-xs font-semibold text-primary opacity-0 group-hover:opacity-100 transition-opacity">
-                    Lihat Detail →
-                  </span>
-                </div>
-              </div>
+              </Link>
+            ))
+          ) : (
+            <div className="col-span-full text-center py-12 bg-white rounded-2xl border border-dashed border-zinc-200">
+              <p className="text-zinc-400">Belum ada karya yang dipublikasikan.</p>
+              <Link
+                href="/login"
+                className="mt-2 inline-block text-sm text-primary font-semibold hover:underline"
+              >
+                Login & Upload Karya →
+              </Link>
             </div>
-          ))}
+          )}
         </div>
       </div>
     </section>

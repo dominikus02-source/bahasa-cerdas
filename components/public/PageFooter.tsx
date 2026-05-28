@@ -1,5 +1,4 @@
 import Link from "next/link";
-import Image from "next/image";
 
 const footerLinks = {
   Produk: [
@@ -31,8 +30,8 @@ export default function PageFooter() {
           {/* Brand */}
           <div className="sm:col-span-2 lg:col-span-2">
             <Link href="/" className="flex items-center gap-3 mb-4">
-              <div className="relative w-9 h-9">
-                <Image src="/logo.png" alt="BahasaCerdas" fill className="object-contain brightness-0 invert" />
+              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary to-primary-dark flex items-center justify-center text-white font-bold text-sm shadow-lg shadow-primary/30">
+                BC
               </div>
               <div>
                 <span className="text-xl font-bold text-white">BahasaCerdas</span>

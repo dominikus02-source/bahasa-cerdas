@@ -5,6 +5,13 @@ import Link from "next/link";
 import Image from "next/image";
 import { Sparkles, Play, ChevronRight, Star } from "lucide-react";
 
+const avatarUsers = [
+  "https://api.dicebear.com/9.x/avataaars/svg?seed=teacher1&backgroundColor=c0aede",
+  "https://api.dicebear.com/9.x/avataaars/svg?seed=teacher2&backgroundColor=d1d4f9",
+  "https://api.dicebear.com/9.x/avataaars/svg?seed=teacher3&backgroundColor=ffd5dc",
+  "https://api.dicebear.com/9.x/avataaars/svg?seed=teacher4&backgroundColor=ffdfbf",
+];
+
 export default function HeroSection() {
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -89,10 +96,13 @@ export default function HeroSection() {
             {/* Social Proof */}
             <div className="flex items-center gap-3 mb-8 animate-fade-in-up" style={{ animationDelay: "0.25s" }}>
               <div className="flex -space-x-2">
-                {[1, 2, 3, 4].map((i) => (
-                  <div
+                {avatarUsers.map((url, i) => (
+                  <img
                     key={i}
-                    className="w-8 h-8 rounded-full border-2 border-white bg-zinc-200"
+                    src={url}
+                    alt="Guru"
+                    className="w-8 h-8 rounded-full border-2 border-white bg-zinc-100"
+                    loading="lazy"
                   />
                 ))}
               </div>

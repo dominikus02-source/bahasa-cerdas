@@ -56,7 +56,7 @@ export default function MarketplacePage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-white">
       <PageNavbar />
-      <div className="max-w-7xl mx-auto px-4 py-8">
+      <div className="max-w-7xl mx-auto px-4 py-8 pt-24">
         <div className="flex items-center justify-between mb-8">
           <div>
             <h1 className="text-3xl font-bold text-slate-900">Toko Karya</h1>
