@@ -144,24 +144,25 @@ export default function HeroSection() {
             <div className="relative">
               {/* Main Dashboard - Guru */}
               <div className="relative rounded-2xl overflow-hidden shadow-2xl shadow-zinc-900/10 border border-zinc-200 bg-white">
-                <div className="aspect-[4/3] relative overflow-hidden bg-zinc-50">
+                <div className="aspect-[5/4] lg:aspect-[4/3] relative overflow-hidden bg-zinc-100">
                   <Image
                     src="/dasborguruBC.png"
-                    alt="Dashboard Guru BahasaCerdas"
+                    alt="Dashboard Guru BahasaCerdas — sidebar, menu, dan konten lengkap"
                     fill
-                    className="object-cover object-top"
+                    className="object-contain object-left-top"
+                    priority
                   />
                 </div>
               </div>
 
               {/* Floating Card - Murid Preview */}
               <div className="absolute -bottom-4 -left-4 w-56 rounded-xl overflow-hidden shadow-lg shadow-zinc-900/10 border border-zinc-200 bg-white animate-float">
-                <div className="aspect-[16/9] relative bg-zinc-50">
+                <div className="aspect-[4/3] relative bg-zinc-100">
                   <Image
                     src="/dasbormuridBC.png"
                     alt="Dashboard Murid BahasaCerdas"
                     fill
-                    className="object-cover object-top"
+                    className="object-contain object-left-top"
                   />
                 </div>
                 <div className="px-3 py-2 bg-white">
