@@ -230,7 +230,7 @@ export default async function HomePage() {
                       ) : (
                         <div className="w-full h-full flex items-center justify-center bg-zinc-200">
                           <div className="w-12 h-12 rounded-full bg-white/80 flex items-center justify-center">
-                            <div className="w-0 h-0 border-t-8 border-b-8 border-l-12 border-t-transparent border-b-transparent border-l-zinc-600 ml-1" />
+                            <div className="w-0 h-0 border-y-8 border-l-[14px] border-y-transparent border-l-zinc-600 ml-1" />
                           </div>
                         </div>
                       )}
