@@ -4,7 +4,7 @@ const cspDirectives: Record<string, string[]> = {
   "default-src": ["'self'"],
   "script-src": ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://*.supabase.co", "https://app.midtrans.com", "https://api.unsplash.com"],
   "style-src": ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
-  "img-src": ["'self'", "blob:", "data:", "https://*.supabase.co", "https://images.unsplash.com", "https://api.dicebear.com"],
+  "img-src": ["'self'", "blob:", "data:", "https://*.supabase.co", "https://images.unsplash.com", "https://api.dicebear.com", "https://img.youtube.com", "https://i.ytimg.com"],
   "font-src": ["'self'", "https://fonts.gstatic.com"],
   "connect-src": ["'self'", "https://*.supabase.co", "https://api.midtrans.com", "https://app.midtrans.com", "https://game.bahasacerdas.com", "https://api.unsplash.com"],
   "frame-src": ["'self'", "https://app.midtrans.com", "https://www.youtube.com"],
