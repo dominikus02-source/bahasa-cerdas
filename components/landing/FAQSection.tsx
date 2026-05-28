@@ -1,77 +1,98 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { ChevronDown, ChevronUp, HelpCircle } from "lucide-react"
+import { useState } from "react";
+import { ChevronDown, Plus } from "lucide-react";
+
+const faqs = [
+  {
+    q: "Apa itu BahasaCerdas?",
+    a: "BahasaCerdas adalah platform all-in-one untuk guru Bahasa Indonesia. Kami menyediakan AI generator RPP, bank soal, kuis multiplayer, toko karya, dan komunitas MGMP terbesar di Indonesia. Semua dalam satu platform.",
+  },
+  {
+    q: "Apakah BahasaCerdas gratis?",
+    a: "Ya! Anda bisa mencoba gratis selama 14 hari tanpa komitmen. Setelah itu, tersedia paket Premium dengan fitur lengkap mulai dari Rp 50.000/bulan. Guru juga bisa mendapat akses gratis dengan bergabung di komunitas aktif.",
+  },
+  {
+    q: "Bagaimana cara AI RPP bekerja?",
+    a: "Cukup masukkan topik, kelas, dan durasi pembelajaran. AI kami akan menghasilkan RPP lengkap dengan tujuan pembelajaran, kegiatan inti, asesmen, dan lampiran — semuanya sesuai Kurikulum Merdeka terbaru.",
+  },
+  {
+    q: "Apakah saya bisa menjual karya di Toko Karya?",
+    a: "Tentu! Setiap guru bisa upload dan jual RPP, modul, PPT, soal, atau video pembelajaran. Anda mendapatkan 80% dari setiap penjualan. Pembayaran bisa dicairkan setiap bulan.",
+  },
+  {
+    q: "Bagaimana cara bergabung dengan komunitas?",
+    a: "Setelah mendaftar, Anda langsung bisa mengakses forum diskusi, grup MGMP, webinar, dan mentoring. Komunitas kami aktif setiap hari dengan ribuan guru dari seluruh Indonesia.",
+  },
+  {
+    q: "Apakah tersedia untuk siswa?",
+    a: "Ya! Siswa bisa bergabung melalui kode kelas yang diberikan guru. Mereka bisa mengerjakan tugas, mengikuti kuis multiplayer, dan melihat progres belajar mereka.",
+  },
+  {
+    q: "Bagaimana keamanan data saya?",
+    a: "Kami menggunakan enkripsi SSL 256-bit dan server yang aman. Data pribadi dan karya Anda dilindungi dan tidak akan dibagikan ke pihak ketiga tanpa izin.",
+  },
+];
 
 export default function FAQSection() {
-  const [openIndex, setOpenIndex] = useState<number | null>(0)
-
-  const faqs = [
-    {
-      question: "Apakah benar-benar bisa mencoba Premium gratis 14 hari?",
-      answer: "Ya, 100% gratis! Anda bisa mencoba semua fitur Premium selama 14 hari penuh tanpa perlu kartu kredit. Setelah masa trial berakhir, Anda bisa memilih untuk upgrade atau tetap di paket Free.",
-    },
-    {
-      question: "Bagaimana cara export RPP yang sudah dibuat dengan AI?",
-      answer: "Sangat mudah! Setelah AI generate RPP, Anda bisa edit sesuai kebutuhan, lalu klik tombol Export dan pilih format yang diinginkan (Word/PDF). RPP sudah dalam format siap cetak dan sesuai standar Kurikulum Merdeka.",
-    },
-    {
-      question: "Apakah ada garansi uang kembali jika saya upgrade Premium?",
-      answer: "Tentu! Kami memberikan garansi uang kembali 100% dalam 7 hari jika Anda tidak puas dengan layanan Premium. Tanpa pertanyaan rumit, proses refund cepat dan mudah.",
-    },
-    {
-      question: "Bagaimana cara pembayaran untuk upgrade Premium?",
-      answer: "Kami menerima berbagai metode pembayaran: QRIS (GoPay, OVO, DANA, ShopeePay), Virtual Account (BCA, BNI, Mandiri, BRI), transfer bank, dan e-wallet lainnya. Pembayaran diproses otomatis dan akses Premium langsung aktif.",
-    },
-    {
-      question: "Apakah saya bisa menjual karya saya di Toko Karya?",
-      answer: "Tentu! Semua member Premium bisa menjual karya (RPP, modul, video, ebook) di Toko Karya. Anda mendapat komisi 85-90% dari setiap penjualan. Proses upload mudah dan pencairan royalti cepat ke rekening Anda.",
-    },
-  ]
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   return (
-    <section className="py-20 lg:py-32 bg-white">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-red-100 text-red-700 rounded-full text-sm font-semibold mb-6">
-            <HelpCircle className="w-4 h-4" />
-            FAQ
+    <section className="relative py-20 lg:py-28 bg-white">
+      <div className="section-container">
+        {/* Section Header */}
+        <div className="text-center max-w-2xl mx-auto mb-16 lg:mb-20">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary-light border border-primary/10 mb-5">
+            <span className="text-xs font-semibold text-primary">FAQ</span>
           </div>
-
-          <h2 className="text-3xl lg:text-5xl font-extrabold text-slate-900 mb-6">
+          <h2 className="heading-lg text-zinc-900 mb-5">
             Pertanyaan yang{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-pink-600">Sering Diajukan</span>
+            <span className="text-primary">Sering Diajukan</span>
           </h2>
-
-          <p className="text-lg text-slate-600">Temukan jawaban untuk pertanyaan umum tentang Bahasa Cerdas di sini.</p>
+          <p className="text-base lg:text-lg text-zinc-500 leading-relaxed">
+            Masih ragu? Temukan jawaban untuk pertanyaan yang paling sering ditanyakan.
+          </p>
         </div>
 
-        <div className="space-y-4">
-          {faqs.map((faq, index) => (
-            <div key={index} className="border-2 border-slate-200 rounded-2xl overflow-hidden hover:border-red-300 transition-colors">
-              <button
-                onClick={() => setOpenIndex(openIndex === index ? null : index)}
-                className="w-full flex items-center justify-between p-6 text-left bg-white hover:bg-slate-50 transition-colors"
+        {/* FAQ List */}
+        <div className="max-w-3xl mx-auto space-y-3">
+          {faqs.map((faq, i) => {
+            const isOpen = openIndex === i;
+            return (
+              <div
+                key={i}
+                className={`rounded-2xl border transition-all duration-300 cursor-pointer ${
+                  isOpen
+                    ? "border-primary/20 bg-primary-light/30 shadow-sm"
+                    : "border-zinc-100 bg-zinc-50/50 hover:bg-zinc-50 hover:border-zinc-200"
+                }`}
+                onClick={() => setOpenIndex(isOpen ? null : i)}
               >
-                <span className="font-bold text-slate-900 pr-8">{faq.question}</span>
-                <div className="shrink-0">
-                  {openIndex === index ? (
-                    <ChevronUp className="w-6 h-6 text-red-600" />
-                  ) : (
-                    <ChevronDown className="w-6 h-6 text-slate-400" />
-                  )}
+                <div className="flex items-center justify-between p-5 lg:p-6">
+                  <h3 className="text-sm lg:text-base font-semibold text-zinc-900 pr-4">
+                    {faq.q}
+                  </h3>
+                  <div
+                    className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 transition-all duration-300 ${
+                      isOpen ? "bg-primary text-white rotate-45" : "bg-zinc-100 text-zinc-400"
+                    }`}
+                  >
+                    <Plus size={16} />
+                  </div>
                 </div>
-              </button>
-
-              {openIndex === index && (
-                <div className="p-6 pt-0 bg-slate-50">
-                  <p className="text-slate-600 leading-relaxed">{faq.answer}</p>
-                </div>
-              )}
-            </div>
-          ))}
+                {isOpen && (
+                  <div className="px-5 lg:px-6 pb-5 lg:pb-6 animate-fade-in">
+                    <div className="w-8 h-0.5 bg-primary/30 rounded-full mb-4" />
+                    <p className="text-sm text-zinc-500 leading-relaxed">
+                      {faq.a}
+                    </p>
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
       </div>
     </section>
-  )
+  );
 }

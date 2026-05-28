@@ -1,65 +1,98 @@
 import Link from "next/link";
 import Image from "next/image";
 
+const footerLinks = {
+  Produk: [
+    { href: "/ai-bc", label: "AI BC" },
+    { href: "/marketplace", label: "Toko Karya" },
+    { href: "/video-belajar", label: "Video Belajar" },
+    { href: "/guru/game/lobby", label: "Kuis Multiplayer" },
+    { href: "/guru/bank-soal", label: "Bank Soal" },
+  ],
+  Komunitas: [
+    { href: "/guru/komunitas", label: "Forum Diskusi" },
+    { href: "/artikel", label: "Artikel & Tips" },
+    { href: "/guru/komunitas", label: "Webinar" },
+    { href: "/loker", label: "Lowongan Kerja" },
+  ],
+  Perusahaan: [
+    { href: "/tentang", label: "Tentang Kami" },
+    { href: "/kebijakan-privasi", label: "Kebijakan Privasi" },
+    { href: "/syarat-ketentuan", label: "Syarat & Ketentuan" },
+  ],
+};
+
 export default function PageFooter() {
   return (
-    <footer className="bg-slate-900 text-slate-400 py-12">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid md:grid-cols-4 gap-8 mb-8">
-          <div>
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-red-500 to-red-600 flex items-center justify-center text-white font-bold text-sm">
-                BC
+    <footer className="bg-zinc-900 text-zinc-400">
+      {/* Main Footer */}
+      <div className="section-container py-16 lg:py-20">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-10 lg:gap-12">
+          {/* Brand */}
+          <div className="sm:col-span-2 lg:col-span-2">
+            <Link href="/" className="flex items-center gap-3 mb-4">
+              <div className="relative w-9 h-9">
+                <Image src="/logo.png" alt="BahasaCerdas" fill className="object-contain brightness-0 invert" />
               </div>
               <div>
                 <span className="text-xl font-bold text-white">BahasaCerdas</span>
-                <p className="text-xs text-slate-500">Platform Edukasi Bahasa Indonesia</p>
+                <p className="text-xs text-zinc-500">Platform Edukasi Bahasa Indonesia</p>
               </div>
+            </Link>
+            <p className="text-sm text-zinc-400 leading-relaxed mb-6 max-w-sm">
+              Platform Terlengkap untuk Guru Bahasa Indonesia. MGMP + AI + Toko Karya dalam satu ekosistem.
+            </p>
+            <div className="flex gap-3">
+              {["halo@bahasacerdas.com"].map((email) => (
+                <a
+                  key={email}
+                  href={`mailto:${email}`}
+                  className="text-xs text-zinc-500 hover:text-gold-400 transition-colors"
+                >
+                  {email}
+                </a>
+              ))}
             </div>
-            <p className="text-sm">Platform Terlengkap untuk Guru Bahasa Indonesia. MGMP + AI + Toko Karya.</p>
-            <div className="flex flex-wrap gap-2 mt-4">
-              <Link href="/artikel" className="text-xs text-slate-500 hover:text-white transition-colors">Artikel</Link>
-              <span className="text-slate-700">•</span>
-              <Link href="/ai-bc" className="text-xs text-slate-500 hover:text-white transition-colors">AI BC</Link>
-              <span className="text-slate-700">•</span>
-              <Link href="/marketplace" className="text-xs text-slate-500 hover:text-white transition-colors">Toko Karya</Link>
-              <span className="text-slate-700">•</span>
-              <Link href="/video-belajar" className="text-xs text-slate-500 hover:text-white transition-colors">Video</Link>
+          </div>
+
+          {/* Links */}
+          {Object.entries(footerLinks).map(([title, links]) => (
+            <div key={title}>
+              <h4 className="font-semibold text-white text-sm mb-4">{title}</h4>
+              <ul className="space-y-2.5">
+                {links.map((link) => (
+                  <li key={link.label}>
+                    <Link
+                      href={link.href}
+                      className="text-sm text-zinc-400 hover:text-white transition-colors duration-200"
+                    >
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
             </div>
-          </div>
-          <div>
-            <h4 className="font-bold text-white mb-4">Fitur</h4>
-            <ul className="space-y-2 text-sm">
-              <li><Link href="/ai-bc" className="hover:text-white transition-colors">AI Generator RPP</Link></li>
-              <li><Link href="/guru/bank-soal" className="hover:text-white transition-colors">Bank Soal HOTS</Link></li>
-              <li><Link href="/guru/game/lobby" className="hover:text-white transition-colors">Kuis Multiplayer</Link></li>
-              <li><Link href="/marketplace" className="hover:text-white transition-colors">Toko Karya</Link></li>
-            </ul>
-          </div>
-          <div>
-            <h4 className="font-bold text-white mb-4">Komunitas</h4>
-            <ul className="space-y-2 text-sm">
-              <li><Link href="/guru/komunitas" className="hover:text-white transition-colors">Forum Diskusi</Link></li>
-              <li><Link href="/guru/komunitas" className="hover:text-white transition-colors">Webinar</Link></li>
-              <li><Link href="/guru/komunitas" className="hover:text-white transition-colors">Mentoring</Link></li>
-              <li><Link href="/artikel" className="hover:text-white transition-colors">Artikel Tips</Link></li>
-            </ul>
-          </div>
-          <div>
-            <h4 className="font-bold text-white mb-4">Tentang</h4>
-            <ul className="space-y-2 text-sm">
-              <li><Link href="/" className="hover:text-white transition-colors">Tentang Kami</Link></li>
-              <li><Link href="/" className="hover:text-white transition-colors">Kebijakan Privasi</Link></li>
-              <li><Link href="/" className="hover:text-white transition-colors">Syarat & Ketentuan</Link></li>
-              <li className="flex items-center gap-2 text-slate-400">
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5"><path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                <a href="mailto:halo@bahasacerdas.com" className="hover:text-white transition-colors">halo@bahasacerdas.com</a>
-              </li>
-            </ul>
-          </div>
+          ))}
         </div>
-        <div className="border-t border-slate-800 pt-8 text-center text-sm">
-          <p>&copy; 2026 BahasaCerdas. Platform edukasi Bahasa Indonesia untuk bangsa.</p>
+      </div>
+
+      {/* Bottom Bar */}
+      <div className="border-t border-zinc-800">
+        <div className="section-container py-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <p className="text-xs text-zinc-500">
+            &copy; {new Date().getFullYear()} BahasaCerdas. Platform edukasi Bahasa Indonesia untuk bangsa.
+          </p>
+          <div className="flex items-center gap-4 text-xs text-zinc-600">
+            <Link href="/kebijakan-privasi" className="hover:text-zinc-400 transition-colors">
+              Privasi
+            </Link>
+            <span>•</span>
+            <Link href="/syarat-ketentuan" className="hover:text-zinc-400 transition-colors">
+              Ketentuan
+            </Link>
+            <span>•</span>
+            <span>Made with ❤️ in Indonesia</span>
+          </div>
         </div>
       </div>
     </footer>

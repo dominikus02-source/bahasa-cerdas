@@ -9,6 +9,10 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ["var(--font-inter)", "system-ui", "sans-serif"],
+        display: ["var(--font-playfair)", "Georgia", "serif"],
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -16,24 +20,26 @@ const config: Config = {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         primary: {
-          DEFAULT: "hsl(var(--primary))",
-          foreground: "hsl(var(--primary-foreground))",
+          DEFAULT: "#B91C1C",
+          foreground: "#FFFFFF",
+          light: "#FEF2F2",
+          dark: "#991B1B",
         },
         secondary: {
-          DEFAULT: "hsl(var(--secondary))",
-          foreground: "hsl(var(--secondary-foreground))",
+          DEFAULT: "#18181B",
+          foreground: "#FAFAFA",
         },
         destructive: {
           DEFAULT: "hsl(var(--destructive))",
           foreground: "hsl(var(--destructive-foreground))",
         },
         muted: {
-          DEFAULT: "hsl(var(--muted))",
-          foreground: "hsl(var(--muted-foreground))",
+          DEFAULT: "#F5F5F4",
+          foreground: "#71717A",
         },
         accent: {
-          DEFAULT: "hsl(var(--accent))",
-          foreground: "hsl(var(--accent-foreground))",
+          DEFAULT: "#F5F5F4",
+          foreground: "#18181B",
         },
         card: {
           DEFAULT: "hsl(var(--card))",
@@ -44,9 +50,16 @@ const config: Config = {
           foreground: "hsl(var(--popover-foreground))",
         },
         gold: {
-          400: "#fcd34d",
-          500: "#fbbf24",
-          600: "#f59e0b",
+          50: "#FFFBEB",
+          100: "#FEF3C7",
+          400: "#D4AF37",
+          500: "#C5A028",
+          600: "#A8841F",
+        },
+        zinc: {
+          900: "#18181B",
+          800: "#27272A",
+          700: "#3F3F46",
         },
       },
       borderRadius: {
@@ -54,19 +67,49 @@ const config: Config = {
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
       },
+      backgroundImage: {
+        "batik-subtle": "url('/batik bg bc.png')",
+        "batik-header": "url('/batik-header-profile-bc.png')",
+        "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
+      },
       keyframes: {
         "fade-in": {
           from: { opacity: "0", transform: "translateY(10px)" },
           to: { opacity: "1", transform: "translateY(0)" },
         },
+        "fade-in-up": {
+          "0%": { opacity: "0", transform: "translateY(30px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
+        },
+        "fade-in-left": {
+          "0%": { opacity: "0", transform: "translateX(-30px)" },
+          "100%": { opacity: "1", transform: "translateX(0)" },
+        },
+        "fade-in-right": {
+          "0%": { opacity: "0", transform: "translateX(30px)" },
+          "100%": { opacity: "1", transform: "translateX(0)" },
+        },
         "pulse-glow": {
-          "0%, 100%": { boxShadow: "0 0 5px rgba(251, 191, 36, 0.5)" },
-          "50%": { boxShadow: "0 0 25px rgba(251, 191, 36, 0.9)" },
+          "0%, 100%": { boxShadow: "0 0 5px rgba(185, 28, 28, 0.3)" },
+          "50%": { boxShadow: "0 0 25px rgba(185, 28, 28, 0.5)" },
+        },
+        shimmer: {
+          "0%": { backgroundPosition: "-200% 0" },
+          "100%": { backgroundPosition: "200% 0" },
+        },
+        float: {
+          "0%, 100%": { transform: "translateY(0)" },
+          "50%": { transform: "translateY(-10px)" },
         },
       },
       animation: {
         "fade-in": "fade-in 0.4s ease-out",
+        "fade-in-up": "fade-in-up 0.6s ease-out forwards",
+        "fade-in-left": "fade-in-left 0.6s ease-out forwards",
+        "fade-in-right": "fade-in-right 0.6s ease-out forwards",
         "pulse-glow": "pulse-glow 2s ease-in-out infinite",
+        shimmer: "shimmer 2s linear infinite",
+        float: "float 3s ease-in-out infinite",
       },
     },
   },

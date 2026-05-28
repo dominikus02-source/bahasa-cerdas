@@ -1,6 +1,19 @@
 import type { Metadata, Viewport } from "next";
+import { Inter, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
+
+const inter = Inter({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-inter",
+});
+
+const playfair = Playfair_Display({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-playfair",
+});
 
 const SITE_URL = "https://bahasacerdas.com";
 const SITE_NAME = "BahasaCerdas";
@@ -8,8 +21,8 @@ const DEFAULT_DESC = "Platform edukasi Bahasa Indonesia untuk guru dan murid. AI
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#7c3aed" },
-    { media: "(prefers-color-scheme: dark)", color: "#6d28d9" },
+    { media: "(prefers-color-scheme: light)", color: "#B91C1C" },
+    { media: "(prefers-color-scheme: dark)", color: "#B91C1C" },
   ],
   width: "device-width",
   initialScale: 1,
@@ -19,7 +32,7 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: `${SITE_NAME} — Platform Edukasi Bahasa Indonesia`,
+    default: `${SITE_NAME} — Platform Terlengkap Guru Bahasa Indonesia`,
     template: `%s | ${SITE_NAME}`,
   },
   description: DEFAULT_DESC,
@@ -35,14 +48,14 @@ export const metadata: Metadata = {
     type: "website",
     locale: "id_ID",
     siteName: SITE_NAME,
-    title: `${SITE_NAME} — Platform Edukasi Bahasa Indonesia`,
+    title: `${SITE_NAME} — Platform Terlengkap Guru Bahasa Indonesia`,
     description: DEFAULT_DESC,
     url: SITE_URL,
     images: [{ url: "/og-image.png", width: 1200, height: 630, alt: SITE_NAME }],
   },
   twitter: {
     card: "summary_large_image",
-    title: `${SITE_NAME} — Platform Edukasi Bahasa Indonesia`,
+    title: `${SITE_NAME} — Platform Terlengkap Guru Bahasa Indonesia`,
     description: DEFAULT_DESC,
     images: ["/og-image.png"],
   },
@@ -65,7 +78,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="id">
+    <html lang="id" className={`${inter.variable} ${playfair.variable}`}>
       <head>
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
@@ -73,7 +86,7 @@ export default function RootLayout({
         <meta name="format-detection" content="telephone=no" />
         <meta name="mobile-web-app-capable" content="yes" />
       </head>
-      <body className="antialiased">
+      <body className="font-sans">
         <Providers>{children}</Providers>
       </body>
     </html>

@@ -3,252 +3,131 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { ChevronLeft, LayoutDashboard, Sparkles, Search, Menu, X, ShoppingBag, Clock } from "lucide-react";
+import { Menu, X, ChevronDown } from "lucide-react";
 
-function CartBadge() {
-  const [count, setCount] = useState(0);
-
-  useEffect(() => {
-    const update = () => {
-      const cart = JSON.parse(localStorage.getItem("bc-cart") || "[]");
-      setCount(cart.reduce((s: number, i: any) => s + (i.qty || 1), 0));
-    };
-    update();
-    window.addEventListener("storage", update);
-    window.addEventListener("cart-update", update);
-    return () => {
-      window.removeEventListener("storage", update);
-      window.removeEventListener("cart-update", update);
-    };
-  }, []);
-
-  if (count === 0) return null;
-
-  return (
-    <span className="absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] flex items-center justify-center rounded-full bg-red-600 text-white text-[10px] font-bold px-1 leading-none shadow-sm">
-      {count > 99 ? "99+" : count}
-    </span>
-  );
-}
+const navLinks = [
+  { href: "/fitur", label: "Fitur" },
+  { href: "/marketplace", label: "Toko Karya" },
+  { href: "/video-belajar", label: "Video" },
+  { href: "/artikel", label: "Artikel" },
+  { href: "/tentang", label: "Tentang" },
+];
 
 export default function PageNavbar() {
-  const [user, setUser] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [searchOpen, setSearchOpen] = useState(false);
-  const searchRef = useRef<HTMLInputElement>(null);
+  const [hoveredDropdown, setHoveredDropdown] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch("/api/user/me")
-      .then(r => r.ok ? r.json() : null)
-      .then(d => setUser(d?.user || null))
-      .catch(() => {})
-      .finally(() => setLoading(false));
+    const onScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  useEffect(() => {
-    if (searchOpen) searchRef.current?.focus();
-  }, [searchOpen]);
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      window.location.href = `/kamus?q=${encodeURIComponent(searchQuery.trim())}`;
-    }
-  };
-
-  const triggerCartUpdate = () => {
-    window.dispatchEvent(new Event("cart-update"));
-  };
-
-  const navLinks = [
-    { href: "/marketplace", label: "Toko Karya" },
-    { href: "/video-belajar", label: "Video" },
-    { href: "/artikel", label: "Artikel" },
-    { href: "/kamus", label: "Kamus" },
-    { href: "/loker", label: "Lowongan" },
-  ];
-
-  const cartLink = (
-    <Link
-      href="/cart"
-      onClick={triggerCartUpdate}
-      className="relative p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-colors"
-      title="Keranjang"
+  return (
+    <header
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+        scrolled
+          ? "bg-white/80 backdrop-blur-xl border-b border-zinc-100 shadow-sm"
+          : "bg-transparent"
+      }`}
     >
-      <ShoppingBag size={18} />
-      <CartBadge />
-    </Link>
-  );
-
-  const historyLink = (
-    <Link
-      href="/orders"
-      className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-colors"
-      title="Riwayat Pembelian"
-    >
-      <Clock size={18} />
-    </Link>
-  );
-
-  if (loading) return <div className="h-16" />;
-
-  if (user) {
-    const dashboardUrl = user.isFounder ? "/admin" : `/${user.role.toLowerCase()}/beranda`;
-    return (
-      <header className="bg-white border-b border-slate-200 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 flex items-center justify-between h-16">
-          <Link href={dashboardUrl} className="flex items-center gap-2 text-sm text-slate-600 hover:text-red-600 font-medium transition-colors">
-            <ChevronLeft size={18} /> Kembali ke Dashboard
+      <div className="section-container">
+        <div className="flex items-center justify-between h-16 lg:h-20">
+          {/* Logo */}
+          <Link href="/" className="flex items-center gap-2.5 group shrink-0">
+            <div className="relative w-8 h-8 lg:w-9 lg:h-9">
+              <Image
+                src="/logo.png"
+                alt="BahasaCerdas"
+                fill
+                className="object-contain"
+              />
+            </div>
+            <div className="flex flex-col">
+              <span className="font-bold text-base lg:text-lg text-zinc-900 leading-tight">
+                Bahasa<span className="text-primary">Cerdas</span>
+              </span>
+              <span className="text-[10px] lg:text-[11px] text-zinc-400 font-medium leading-tight -mt-0.5 hidden sm:block">
+                Platform Guru Bahasa Indonesia
+              </span>
+            </div>
           </Link>
-          <div className="flex items-center gap-1">
-            <Link href="/" className="flex items-center gap-2 ml-2">
-              <Image src="/logo.png" alt="BC" width={24} height={24} />
-              <span className="font-bold text-slate-900 text-sm hidden sm:block">BahasaCerdas</span>
+
+          {/* Desktop Nav */}
+          <nav className="hidden lg:flex items-center gap-1">
+            {navLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className="relative px-4 py-2 text-sm text-zinc-600 hover:text-primary font-medium rounded-xl hover:bg-primary-light/50 transition-all duration-200"
+              >
+                {link.label}
+              </Link>
+            ))}
+          </nav>
+
+          {/* Desktop Actions */}
+          <div className="hidden lg:flex items-center gap-3">
+            <Link
+              href="/login"
+              className="px-5 py-2.5 text-sm font-semibold text-zinc-700 hover:text-primary transition-colors"
+            >
+              Masuk
+            </Link>
+            <Link
+              href="/register"
+              className="relative px-6 py-2.5 text-sm font-semibold text-white bg-primary hover:bg-primary-dark rounded-xl transition-all duration-200 shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 hover:-translate-y-0.5"
+            >
+              Daftar Gratis
             </Link>
           </div>
-        </div>
-      </header>
-    );
-  }
 
-  return (
-    <header className="bg-white border-b border-slate-200 sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-4 flex items-center justify-between h-16">
-        <Link href="/" className="flex items-center gap-2.5 shrink-0">
-          <Image src="/logo.png" alt="BC" width={28} height={28} />
-          <span className="font-bold text-slate-900 text-sm hidden sm:block">BahasaCerdas</span>
-        </Link>
-
-        {/* Desktop nav */}
-        <nav className="hidden lg:flex items-center gap-0.5">
-          {navLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="px-3 py-2 text-sm text-slate-600 hover:text-red-600 hover:bg-red-50 rounded-xl transition-colors font-medium"
-            >
-              {link.label}
-            </Link>
-          ))}
-        </nav>
-
-        {/* Desktop right side */}
-        <div className="hidden lg:flex items-center gap-2">
-
-          <div className="h-5 w-px bg-slate-200 mx-1" />
-
-          {/* Search toggle */}
-          <button
-            onClick={() => setSearchOpen(!searchOpen)}
-            className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-colors"
-          >
-            <Search size={18} />
-          </button>
-
-          <div className="h-5 w-px bg-slate-200 mx-1" />
-
-          <Link
-            href="/ai-bc"
-            className="px-4 py-2 text-sm font-semibold bg-gradient-to-r from-emerald-500 to-emerald-600 text-white rounded-xl hover:shadow-lg transition-all flex items-center gap-1.5"
-          >
-            <Sparkles size={14} /> AI BC
-          </Link>
-
-          <div className="h-5 w-px bg-slate-200 mx-1" />
-
-          <Link
-            href="/login"
-            className="px-4 py-2 text-sm font-semibold text-slate-700 hover:text-red-600"
-          >
-            Masuk
-          </Link>
-          <Link
-            href="/register"
-            className="px-4 py-2 text-sm font-semibold bg-gradient-to-r from-red-600 to-red-700 text-white rounded-xl hover:shadow-lg transition-all"
-          >
-            Daftar
-          </Link>
-        </div>
-
-        {/* Mobile hamburger */}
-        <div className="flex lg:hidden items-center gap-2">
-          <button
-            onClick={() => setSearchOpen(!searchOpen)}
-            className="p-2 text-slate-400 hover:text-red-600 rounded-xl transition-colors"
-          >
-            <Search size={18} />
-          </button>
+          {/* Mobile Toggle */}
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
-            className="p-2 text-slate-600 hover:text-red-600 rounded-xl transition-colors"
+            className="lg:hidden relative z-50 p-2.5 rounded-xl hover:bg-zinc-100 transition-colors"
+            aria-label="Toggle menu"
           >
-            {mobileOpen ? <X size={20} /> : <Menu size={20} />}
+            {mobileOpen ? (
+              <X size={20} className="text-zinc-700" />
+            ) : (
+              <Menu size={20} className="text-zinc-700" />
+            )}
           </button>
         </div>
       </div>
 
-      {/* Search bar */}
-      {searchOpen && (
-        <div className="border-t border-slate-100 bg-white px-4 py-3">
-          <form onSubmit={handleSearch} className="max-w-2xl mx-auto flex gap-2">
-            <div className="relative flex-1">
-              <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-              <input
-                ref={searchRef}
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Cari RPP, soal, artikel, materi ajar..."
-                className="w-full pl-10 pr-4 py-2.5 border border-slate-200 rounded-xl text-sm text-slate-700 placeholder-slate-400 focus:outline-none focus:border-red-500 focus:ring-2 focus:ring-red-200 transition-all bg-slate-50"
-              />
-            </div>
-            <button
-              type="submit"
-              className="px-4 py-2.5 bg-red-600 text-white text-sm font-semibold rounded-xl hover:bg-red-700 transition-colors shrink-0"
-            >
-              Cari
-            </button>
-          </form>
-        </div>
-      )}
-
-      {/* Mobile menu */}
+      {/* Mobile Menu */}
       {mobileOpen && (
-        <div className="lg:hidden border-t border-slate-100 bg-white px-4 py-4 space-y-1">
-          {navLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              onClick={() => setMobileOpen(false)}
-              className="block px-3 py-2.5 text-sm text-slate-600 hover:text-red-600 hover:bg-red-50 rounded-xl transition-colors font-medium"
-            >
-              {link.label}
-            </Link>
-          ))}
-          <div className="border-t border-slate-100 pt-3 mt-3 space-y-2">
-            <Link
-              href="/ai-bc"
-              onClick={() => setMobileOpen(false)}
-              className="flex items-center gap-2 px-3 py-2.5 text-sm font-semibold bg-gradient-to-r from-emerald-50 to-emerald-100 text-emerald-700 rounded-xl"
-            >
-              <Sparkles size={14} /> AI BC
-            </Link>
-            <div className="flex gap-2">
+        <div className="lg:hidden fixed inset-0 top-0 z-40 bg-white animate-fade-in">
+          <div className="flex flex-col h-full pt-24 px-6 pb-8">
+            <nav className="flex-1 space-y-1">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  onClick={() => setMobileOpen(false)}
+                  className="block px-4 py-3.5 text-base font-medium text-zinc-700 hover:text-primary hover:bg-primary-light/50 rounded-xl transition-all"
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </nav>
+            <div className="space-y-3 pt-6 border-t border-zinc-100">
               <Link
                 href="/login"
                 onClick={() => setMobileOpen(false)}
-                className="flex-1 text-center px-4 py-2.5 text-sm font-semibold text-slate-700 border border-slate-200 rounded-xl hover:bg-slate-50"
+                className="block w-full text-center px-4 py-3 text-sm font-semibold text-zinc-700 border border-zinc-200 rounded-xl hover:bg-zinc-50 transition-colors"
               >
                 Masuk
               </Link>
               <Link
                 href="/register"
                 onClick={() => setMobileOpen(false)}
-                className="flex-1 text-center px-4 py-2.5 text-sm font-semibold bg-gradient-to-r from-red-600 to-red-700 text-white rounded-xl hover:shadow-lg"
+                className="block w-full text-center px-4 py-3 text-sm font-semibold text-white bg-primary rounded-xl hover:bg-primary-dark transition-colors shadow-lg shadow-primary/25"
               >
-                Daftar
+                Daftar Gratis
               </Link>
             </div>
           </div>
