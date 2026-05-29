@@ -3,6 +3,7 @@ import { db } from "../../lib/db"
 
 // Buku Panduan - Kelas VII Semester 1 (PDF-aligned)
 import teksDeskripsiKonten from "./materi/pdf-7-s1"
+import ceritaRakyatKonten from "./materi/pdf-7-s1-unit2"
 
 // Buku Panduan - Kelas IX Semester 1
 import laporanPercobaan from "./materi/26-laporan-percobaan"
@@ -66,6 +67,7 @@ import prosedurXiiS2 from "./materi/73-prosedur-xii-s2"
 const units: { title: string; konten: any; grade?: string; semester?: number }[] = [
   // Buku Panduan - Kelas VII Semester 1 (PDF-aligned)
   { title: "Bab 1: Teks Deskripsi", konten: teksDeskripsiKonten, grade: "VII", semester: 1 },
+  { title: "Bab 2: Teks Cerita Rakyat (Fabel dan Legenda)", konten: ceritaRakyatKonten, grade: "VII", semester: 1 },
   // Buku Panduan - Kelas IX Semester 1
   { title: "Bab 1: Teks Tanggapan Kritis", konten: teksTanggapanIx, grade: "IX", semester: 1 },
   { title: "Bab 2: Teks Cerpen", konten: cerpenIx, grade: "IX", semester: 1 },
