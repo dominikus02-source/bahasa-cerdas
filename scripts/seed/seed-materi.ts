@@ -6,6 +6,10 @@ import teksDeskripsiKonten from "./materi/pdf-7-s1"
 import ceritaRakyatKonten from "./materi/pdf-7-s1-unit2"
 import laporanObservasiKonten from "./materi/pdf-7-s1-unit3"
 import puisiRakyatKonten from "./materi/pdf-7-s1-unit4"
+import teksProsedurKonten from "./materi/pdf-7-s2-unit5"
+import teksSuratKonten from "./materi/pdf-7-s2-unit6"
+import ceritaFantasiKonten from "./materi/pdf-7-s2-unit7"
+import giatLiterasiKonten from "./materi/pdf-7-s2-unit8"
 
 // Buku Panduan - Kelas IX Semester 1
 import laporanPercobaan from "./materi/26-laporan-percobaan"
@@ -72,6 +76,11 @@ const units: { title: string; konten: any; grade?: string; semester?: number }[]
   { title: "Bab 2: Teks Cerita Rakyat (Fabel dan Legenda)", konten: ceritaRakyatKonten, grade: "VII", semester: 1 },
   { title: "Bab 3: Teks Laporan Hasil Observasi", konten: laporanObservasiKonten, grade: "VII", semester: 1 },
   { title: "Bab 4: Teks Puisi Rakyat", konten: puisiRakyatKonten, grade: "VII", semester: 1 },
+  // Buku Panduan - Kelas VII Semester 2
+  { title: "Bab 5: Teks Prosedur", konten: teksProsedurKonten, grade: "VII", semester: 2 },
+  { title: "Bab 6: Teks Surat", konten: teksSuratKonten, grade: "VII", semester: 2 },
+  { title: "Bab 7: Teks Cerita Fantasi", konten: ceritaFantasiKonten, grade: "VII", semester: 2 },
+  { title: "Bab 8: Giat Literasi — Teks Fiksi dan Nonfiksi", konten: giatLiterasiKonten, grade: "VII", semester: 2 },
   // Buku Panduan - Kelas IX Semester 1
   { title: "Bab 1: Teks Tanggapan Kritis", konten: teksTanggapanIx, grade: "IX", semester: 1 },
   { title: "Bab 2: Teks Cerpen", konten: cerpenIx, grade: "IX", semester: 1 },
