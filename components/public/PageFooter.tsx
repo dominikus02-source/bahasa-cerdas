@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 
 const footerLinks = {
   Produk: [
@@ -28,8 +29,14 @@ export default function PageFooter() {
         <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-10 lg:gap-12">
           <div className="sm:col-span-2 lg:col-span-2">
             <Link href="/" className="flex items-center gap-3 mb-4" aria-label="BahasaCerdas - Beranda">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary to-primary-dark flex items-center justify-center text-white font-bold text-sm shadow-lg shadow-primary/30">
-                BC
+              <div className="relative w-9 h-9 shrink-0">
+                <Image
+                  src="/logo.png"
+                  alt="BahasaCerdas"
+                  fill
+                  sizes="36px"
+                  className="object-contain"
+                />
               </div>
               <div>
                 <span className="text-xl font-bold text-white">BahasaCerdas</span>
