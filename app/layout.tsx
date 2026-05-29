@@ -65,8 +65,8 @@ export const metadata: Metadata = {
     googleBot: { index: true, follow: true, "max-video-preview": -1, "max-image-preview": "large", "max-snippet": -1 },
   },
   icons: {
-    icon: "/favicon.ico",
-    apple: { url: "/favicon.ico", sizes: "180x180" },
+    icon: [{ url: "/logo.png", type: "image/png" }, { url: "/favicon.ico", sizes: "any" }],
+    apple: { url: "/logo.png", sizes: "180x180" },
   },
   manifest: "/manifest.json",
   alternates: { canonical: SITE_URL },
