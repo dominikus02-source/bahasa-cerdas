@@ -7,7 +7,7 @@ const cspDirectives: Record<string, string[]> = {
   "img-src": ["'self'", "blob:", "data:", "https://*.supabase.co", "https://images.unsplash.com", "https://api.dicebear.com", "https://img.youtube.com", "https://i.ytimg.com"],
   "font-src": ["'self'", "https://fonts.gstatic.com"],
   "connect-src": ["'self'", "https://*.supabase.co", "https://api.midtrans.com", "https://app.midtrans.com", "https://game.bahasacerdas.com", "https://api.unsplash.com"],
-  "frame-src": ["'self'", "https://app.midtrans.com", "https://www.youtube.com"],
+  "frame-src": ["'self'", "https://app.midtrans.com", "https://www.youtube.com", "https://*.supabase.co", "https://view.officeapps.live.com"],
   "object-src": ["'none'"],
   "base-uri": ["'self'"],
   "form-action": ["'self'"],
