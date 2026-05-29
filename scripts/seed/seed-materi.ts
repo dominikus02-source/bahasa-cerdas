@@ -1,6 +1,9 @@
 // @ts-nocheck
 import { db } from "../../lib/db"
 
+// Buku Panduan - Kelas VII Semester 1 (PDF-aligned)
+import teksDeskripsiKonten from "./materi/pdf-7-s1"
+
 // Buku Panduan - Kelas IX Semester 1
 import laporanPercobaan from "./materi/26-laporan-percobaan"
 import pidatoPersuasif from "./materi/27-pidato-persuasif"
@@ -11,11 +14,6 @@ import puisiIx from "./materi/31-puisi"
 
 // Buku Panduan - Kelas IX Semester 2
 import teksEksplanasi from "./materi/32-teks-eksplanasi"
-import laporanIx from "./materi/33-laporan"
-import dramaIx from "./materi/34-drama"
-import resensi from "./materi/35-resensi"
-import artikel from "./materi/36-artikel"
-import kti from "./materi/37-kti"
 
 // Buku Panduan - Kelas X Semester 1
 import teksLhoX from "./materi/38-teks-lho-x"
@@ -66,20 +64,16 @@ import dramaXiiS2 from "./materi/72-drama-xii-s2"
 import prosedurXiiS2 from "./materi/73-prosedur-xii-s2"
 
 const units: { title: string; konten: any; grade?: string; semester?: number }[] = [
+  // Buku Panduan - Kelas VII Semester 1 (PDF-aligned)
+  { title: "Bab 1: Teks Deskripsi", konten: teksDeskripsiKonten, grade: "VII", semester: 1 },
   // Buku Panduan - Kelas IX Semester 1
-  { title: "Bab 1: Laporan Percobaan", konten: laporanPercobaan, grade: "IX", semester: 1 },
-  { title: "Bab 2: Pidato Persuasif", konten: pidatoPersuasif, grade: "IX", semester: 1 },
-  { title: "Bab 3: Cerpen", konten: cerpenIx, grade: "IX", semester: 1 },
-  { title: "Bab 4: Teks Tanggapan", konten: teksTanggapanIx, grade: "IX", semester: 1 },
-  { title: "Bab 5: Teks Diskusi", konten: teksDiskusi, grade: "IX", semester: 1 },
-  { title: "Bab 6: Puisi", konten: puisiIx, grade: "IX", semester: 1 },
+  { title: "Bab 1: Teks Tanggapan Kritis", konten: teksTanggapanIx, grade: "IX", semester: 1 },
+  { title: "Bab 2: Teks Cerpen", konten: cerpenIx, grade: "IX", semester: 1 },
+  { title: "Bab 3: Teks Pidato Persuasif", konten: pidatoPersuasif, grade: "IX", semester: 1 },
   // Buku Panduan - Kelas IX Semester 2
-  { title: "Bab 1: Teks Eksplanasi", konten: teksEksplanasi, grade: "IX", semester: 2 },
-  { title: "Bab 2: Laporan", konten: laporanIx, grade: "IX", semester: 2 },
-  { title: "Bab 3: Drama", konten: dramaIx, grade: "IX", semester: 2 },
-  { title: "Bab 4: Resensi", konten: resensi, grade: "IX", semester: 2 },
-  { title: "Bab 5: Artikel", konten: artikel, grade: "IX", semester: 2 },
-  { title: "Bab 6: Karya Tulis Ilmiah", konten: kti, grade: "IX", semester: 2 },
+  { title: "Bab 4: Teks Laporan (Penelitian) Percobaan", konten: laporanPercobaan, grade: "IX", semester: 2 },
+  { title: "Bab 5: Teks Cerita Inspiratif", konten: teksEksplanasi, grade: "IX", semester: 2 },
+  { title: "Bab 6: Teks Diskusi", konten: teksDiskusi, grade: "IX", semester: 2 },
   // Buku Panduan - Kelas X Semester 1
   { title: "Bab 1: Teks LHO", konten: teksLhoX, grade: "X", semester: 1 },
   { title: "Bab 2: Eksposisi", konten: eksposisiX, grade: "X", semester: 1 },
