@@ -4,10 +4,11 @@ import { useState, useEffect, useCallback } from "react"
 import {
   Presentation, Search, Grid3x3, List,
   Maximize2, BookOpen, ChevronLeft, ChevronRight,
-  Upload, X, Loader2, FileText, Check
+  Upload, X, Loader2, FileText, Check, AlertTriangle
 } from "lucide-react"
 import { MateriViewer } from "@/components/materi/MateriViewer"
 import { FILE_TYPE_LABELS } from "@/lib/upload"
+import { createClient } from "@/lib/supabase/client"
 
 interface Materi {
   id: string
@@ -289,12 +290,41 @@ export default function MateriAjarPage() {
                   if (!uploadForm.title || !uploadFile) return
                   setUploading(true)
                   try {
+                    // 1. Upload file directly to Supabase Storage (bypass Vercel 4.5MB limit)
+                    const supabase = createClient()
+                    const fileExt = uploadFile.name.split(".").pop()?.toLowerCase() || "pdf"
+                    const fileName = `materi/${Date.now()}-${Math.random().toString(36).substring(2, 8)}.${fileExt}`
+
+                    const { data: uploadData, error: uploadError } = await supabase.storage
+                      .from("documents")
+                      .upload(fileName, uploadFile, {
+                        cacheControl: "31536000",
+                        upsert: false,
+                      })
+
+                    if (uploadError) {
+                      const isRLS = uploadError.message?.toLowerCase().includes("row-level security") ||
+                                    uploadError.message?.includes("policy")
+                      if (isRLS) {
+                        alert("Izin upload ditolak. Hubungi admin untuk mengaktifkan izin storage.")
+                      } else {
+                        alert("Gagal upload file: " + uploadError.message)
+                      }
+                      return
+                    }
+
+                    const { data: urlData } = supabase.storage.from("documents").getPublicUrl(uploadData.path)
+
+                    // 2. Send metadata only to API (no file)
                     const fd = new FormData()
                     fd.set("title", uploadForm.title)
                     fd.set("description", uploadForm.description)
                     fd.set("grade", uploadForm.grade)
                     fd.set("isPublished", "true")
-                    fd.set("file", uploadFile)
+                    fd.set("fileUrl", urlData.publicUrl)
+                    fd.set("fileKey", uploadData.path)
+                    fd.set("fileType", fileExt.toUpperCase())
+
                     const res = await fetch("/api/guru/materi", { method: "POST", body: fd })
                     const data = await res.json()
                     if (res.ok) {

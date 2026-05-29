@@ -76,25 +76,21 @@ export async function POST(req: NextRequest) {
     let fileKey: string | null = null;
     let fileType: string | null = null;
 
-    if (file) {
+    // Support both: direct file upload (server-side) and pre-uploaded client-side
+    if (file && file.size > 0) {
       console.log("Uploading file:", file.name, "Size:", file.size, "Type:", file.type);
       
-      // Validate file type
       const fileExt = file.name.split(".").pop()?.toLowerCase() || "pdf";
       if (!["pdf", "docx", "pptx", "xlsx", "zip"].includes(fileExt)) {
         return NextResponse.json({ error: "File harus PDF, DOCX, PPTX, XLSX, atau ZIP" }, { status: 400 });
       }
 
-      // Check file size (50MB max for PPTX)
       const maxSize = fileExt === "pptx" ? 50 * 1024 * 1024 : 20 * 1024 * 1024;
       if (file.size > maxSize) {
         return NextResponse.json({ error: `Ukuran file maksimal ${maxSize / (1024 * 1024)}MB` }, { status: 400 });
       }
       
-      // Generate filename
       const fileName = `${dbUser.id}/materi/${Date.now()}-${Math.random().toString(36).substring(2, 8)}.${fileExt}`;
-      
-      // Use server-side upload function
       const uploadResult = await uploadFileServer(file, fileName, "documents", file.type);
       
       if ("error" in uploadResult) {
@@ -105,8 +101,11 @@ export async function POST(req: NextRequest) {
       fileUrl = uploadResult.url;
       fileKey = uploadResult.key;
       fileType = fileExt.toUpperCase();
-      
-      console.log("Upload successful:", fileUrl);
+    } else {
+      // Client-side pre-uploaded — use provided metadata
+      fileUrl = formData.get("fileUrl") as string | null;
+      fileKey = formData.get("fileKey") as string | null;
+      fileType = formData.get("fileType") as string | null;
     }
 
     const materi = await db.materi.create({
@@ -130,6 +129,28 @@ export async function POST(req: NextRequest) {
     });
 
     console.log("Materi created successfully:", materi.id);
+
+    // Notify admin users about new materi upload
+    try {
+      const admins = await db.user.findMany({
+        where: { OR: [{ role: "ADMIN" }, { isFounder: true }] },
+        select: { id: true },
+      });
+      if (admins.length > 0) {
+        await db.notifikasi.createMany({
+          data: admins.map((admin) => ({
+            userId: admin.id,
+            judul: "Materi Ajar Baru",
+            pesan: `Guru ${dbUser.fullName || dbUser.email} mengupload materi: "${title}"`,
+            tipe: "INFO",
+            link: "/admin/materi",
+          })),
+        });
+      }
+    } catch (notifErr) {
+      console.error("Failed to send admin notification:", notifErr);
+    }
+
     return NextResponse.json({ materi }, { status: 201 });
   } catch (error) {
     console.error("POST /api/guru/materi error:", error);
