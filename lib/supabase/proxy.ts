@@ -3,7 +3,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { checkRateLimit, rateLimitResponse } from "@/lib/security";
 
 const publicPaths = [
-  "/", "/login", "/auth/arena-login", "/register", "/confirm",
+  "/", "/login", "/auth/arena-login", "/auth/callback", "/register", "/confirm",
   "/verify-email", "/onboarding", "/tentang", "/fitur",
   "/marketplace", "/artikel", "/video-belajar", "/kamus", "/loker", "/komunitas", "/ai-bc",
 ];
@@ -29,7 +29,10 @@ export async function updateSession(request: NextRequest) {
   const limit = checkRateLimit(ip, scope);
   if (!limit.allowed) return rateLimitResponse(scope);
 
-  if (publicPaths.some((p) => pathname === p || pathname.startsWith(p + "/"))) {
+  const isPublic = publicPaths.some((p) => pathname === p || pathname.startsWith(p + "/"));
+  const isAuthPath = authPaths.some((p) => pathname.startsWith(p));
+
+  if (isPublic || isAuthPath) {
     const response = NextResponse.next({ request });
     response.headers.set("X-RateLimit-Remaining", String(limit.remaining));
     return response;

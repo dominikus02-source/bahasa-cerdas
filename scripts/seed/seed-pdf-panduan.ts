@@ -17,14 +17,15 @@ const pdfTopics: Record<string, Record<number, { title: string; topik: string; k
     1: [
       { title: "Bab 1: Teks Deskripsi", topik: "DESKRIPSI", kd: "3.1/4.1", pic: "Pak Alex" },
       { title: "Bab 2: Teks Cerita Rakyat (Fabel dan Legenda)", topik: "CERITA_RAKYAT", kd: "3.2/4.2", pic: "Pak Alex" },
-      { title: "Bab 3: Teks Laporan Hasil Observasi", topik: "LAPORAN", kd: "3.3/4.3", pic: "Pak Alex" },
+      { title: "Bab 3: Teks Prosedur", topik: "PROSEDUR", kd: "3.3/4.3", pic: "Pak Alex" },
       { title: "Bab 4: Teks Puisi Rakyat", topik: "PUISI_RAKYAT", kd: "3.4/4.4", pic: "Pak Alex" },
+      { title: "Bab 5: Giat Literasi I: Teks Fiksi", topik: "FIKSI", kd: "3.5/4.5", pic: "Pak Alex" },
     ],
     2: [
-      { title: "Bab 5: Teks Prosedur", topik: "PROSEDUR", kd: "3.5/4.5", pic: "Pak Alex" },
-      { title: "Bab 6: Teks Surat", topik: "SURAT", kd: "3.6/4.6", pic: "Pak Alex" },
-      { title: "Bab 7: Teks Cerita Fantasi", topik: "FANTASI", kd: "3.7/4.7", pic: "Pak Alex" },
-      { title: "Bab 8: Giat Literasi — Teks Fiksi dan Nonfiksi", topik: "FIKSI_NONFIKSI", kd: "3.8/4.8", pic: "Pak Alex" },
+      { title: "Bab 6: Teks Laporan Hasil Observasi", topik: "LAPORAN", kd: "3.6/4.6", pic: "Pak Alex" },
+      { title: "Bab 7: Teks Surat (Resmi dan Pribadi)", topik: "SURAT", kd: "3.7/4.7", pic: "Pak Alex" },
+      { title: "Bab 8: Teks Cerita Fantasi", topik: "FANTASI", kd: "3.8/4.8", pic: "Pak Alex" },
+      { title: "Bab 9: Giat Literasi II: Teks Nonfiksi (Pengaya)", topik: "NONFIKSI", kd: "3.9/4.9", pic: "Pak Alex" },
     ],
   },
   VIII: {
@@ -32,13 +33,14 @@ const pdfTopics: Record<string, Record<number, { title: string; topik: string; k
       { title: "Bab 1: Teks Berita", topik: "BERITA", kd: "3.1/4.1", pic: "Pak Hadi" },
       { title: "Bab 2: Teks Drama", topik: "DRAMA", kd: "3.2/4.2", pic: "Pak Hadi" },
       { title: "Bab 3: Teks Eksplanasi", topik: "EKSPLANASI", kd: "3.3/4.3", pic: "Pak Hadi" },
-      { title: "Bab 4: Teks Puisi Baru", topik: "PUISI", kd: "3.4/4.4", pic: "Pak Hadi" },
+      { title: "Bab 4: Teks Eksposisi (Artikel Ilmiah Populer)", topik: "EKSPOSISI", kd: "3.4/4.4", pic: "Pak Hadi" },
+      { title: "Bab 5: Giat Literasi I: Teks Fiksi", topik: "FIKSI", kd: "3.5/4.5", pic: "Pak Hadi" },
     ],
     2: [
-      { title: "Bab 5: Teks Eksposisi (Artikel Ilmiah Populer)", topik: "EKSPOSISI", kd: "3.5/4.5", pic: "Pak Hadi" },
-      { title: "Bab 6: Teks Ulasan — Resensi", topik: "ULASAN", kd: "3.6/4.6", pic: "Pak Hadi" },
-      { title: "Bab 7: Teks Pariwara / Iklan / Poster", topik: "IKLAN", kd: "3.7/4.7", pic: "Pak Hadi" },
-      { title: "Bab 8: Giat Literasi — Teks Fiksi dan Nonfiksi", topik: "FIKSI_NONFIKSI", kd: "3.8/4.8", pic: "Pak Hadi" },
+      { title: "Bab 6: Teks Puisi (Baru)", topik: "PUISI", kd: "3.6/4.6", pic: "Pak Hadi" },
+      { title: "Bab 7: Teks Ulasan — Resensi", topik: "ULASAN", kd: "3.7/4.7", pic: "Pak Hadi" },
+      { title: "Bab 8: Teks Persuasif (Iklan / Poster)", topik: "IKLAN", kd: "3.8/4.8", pic: "Pak Hadi" },
+      { title: "Bab 9: Giat Literasi II: Teks Nonfiksi (Pengaya)", topik: "NONFIKSI", kd: "3.9/4.9", pic: "Pak Hadi" },
     ],
   },
   IX: {
@@ -46,11 +48,13 @@ const pdfTopics: Record<string, Record<number, { title: string; topik: string; k
       { title: "Bab 1: Teks Tanggapan Kritis", topik: "TANGGAPAN", kd: "3.1/4.1", pic: "Pak Alex" },
       { title: "Bab 2: Teks Cerpen", topik: "CERPEN", kd: "3.2/4.2", pic: "Pak Alex" },
       { title: "Bab 3: Teks Pidato Persuasif", topik: "PIDATO", kd: "3.3/4.3", pic: "Pak Alex" },
+      { title: "Bab 4: Giat Literasi I: Teks Fiksi", topik: "FIKSI", kd: "3.4/4.4", pic: "Pak Alex" },
+      { title: "Bab 5: Teks Laporan Percobaan", topik: "LAPORAN_PERC0BAAN", kd: "3.5/4.5", pic: "Pak Alex" },
     ],
     2: [
-      { title: "Bab 4: Teks Laporan (Penelitian) Percobaan", topik: "LAPORAN", kd: "3.4/4.4", pic: "Pak Hadi" },
-      { title: "Bab 5: Teks Cerita Inspiratif", topik: "CERITA_INSPIRATIF", kd: "3.5/4.5", pic: "Pak Hadi" },
-      { title: "Bab 6: Teks Diskusi", topik: "DISKUSI", kd: "3.6/4.6", pic: "Pak Hadi" },
+      { title: "Bab 6: Teks Cerita Inspiratif", topik: "CERITA_INSPIRATIF", kd: "3.6/4.6", pic: "Pak Hadi" },
+      { title: "Bab 7: Teks Diskusi", topik: "DISKUSI", kd: "3.7/4.7", pic: "Pak Hadi" },
+      { title: "Bab 8: Giat Literasi II: Teks Nonfiksi (Pengaya)", topik: "NONFIKSI", kd: "3.8/4.8", pic: "Pak Hadi" },
     ],
   },
 };
@@ -238,7 +242,7 @@ async function migrate() {
             OR: [
               { title: topic.title },
               { topik: topic.topik },
-              { title: { contains: topic.title.replace("Bab 1: ", "").replace("Bab 2: ", "").replace("Bab 3: ", "").replace("Bab 4: ", "").replace("Bab 5: ", "").replace("Bab 6: ", "").replace("Bab 7: ", "").replace("Bab 8: ", "") } },
+              { title: { contains: topic.title.replace(/Bab \d+: /, "") } },
             ],
           },
         });
@@ -246,7 +250,6 @@ async function migrate() {
         const konten = buatKontenDasar(topic.title.replace(/^Bab \d+: /, ""));
 
         if (unit) {
-          // Update existing
           await db.learningUnit.update({
             where: { id: unit.id },
             data: {
@@ -262,7 +265,6 @@ async function migrate() {
           });
           console.log(`  UPDATED: ${topic.title}`);
         } else {
-          // Create new
           await db.learningUnit.create({
             data: {
               levelId: level.id,
@@ -277,46 +279,6 @@ async function migrate() {
             },
           });
           console.log(`  CREATED: ${topic.title}`);
-        }
-      }
-
-      // For levels with fewer topics than existing slots, create enrichment units
-      const existingCount = await db.learningUnit.count({
-        where: { levelId: level.id, isActive: true },
-      });
-
-      if (existingCount < 6) {
-        for (let i = existingCount; i < 6; i++) {
-          const order = i + 1;
-          const title = `Pengayaan ${order - topics.length}: Praktik ${grade} S${semester}`;
-          const konten = buatKontenDasar(`Pengayaan ${grade} Semester ${semester}`);
-
-          // Try to find existing enrichment unit
-          let enrichUnit = await db.learningUnit.findFirst({
-            where: { levelId: level.id, order, isActive: false, title: { contains: "Pengayaan" } },
-          });
-
-          if (enrichUnit) {
-            await db.learningUnit.update({
-              where: { id: enrichUnit.id },
-              data: { title, order, isActive: true, content: JSON.stringify(konten) },
-            });
-          } else {
-            await db.learningUnit.create({
-              data: {
-                levelId: level.id,
-                title,
-                topik: "PENGAYAAN",
-                kd: "-",
-                grade,
-                semester,
-                order,
-                isActive: true,
-                content: JSON.stringify(konten),
-              },
-            });
-          }
-          console.log(`  CREATED: ${title}`);
         }
       }
     }

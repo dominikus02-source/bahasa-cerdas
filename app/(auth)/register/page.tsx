@@ -65,7 +65,22 @@ export default function RegisterPage() {
         return;
       }
 
-      setRegistered(true);
+      // Auto-login after registration
+      const supabase = createClient();
+      const { error: loginError } = await supabase.auth.signInWithPassword({
+        email: normalizedEmail,
+        password,
+      });
+      if (loginError) {
+        // Session failed — fall back to manual login
+        setRegistered(true);
+        setLoading(false);
+        return;
+      }
+
+      // Redirect based on role
+      const redirectUrl = role === "MURID" ? "/arena" : "/guru/beranda";
+      window.location.href = redirectUrl;
     } catch (err: any) {
       setError(err?.message || "Terjadi kesalahan");
       setLoading(false);
@@ -309,19 +324,14 @@ export default function RegisterPage() {
                 <Check className="w-8 h-8 text-green-600" />
               </div>
               <h2 className="text-xl font-bold text-gray-900">Pendaftaran Berhasil!</h2>
-              <p className="text-sm text-gray-600">
-                Akun <strong>{email}</strong> berhasil dibuat.
-              </p>
+              <p className="text-sm text-gray-600">Akun <strong>{email}</strong> berhasil dibuat.</p>
               <p className="text-xs text-gray-500">
-                Kamu bisa langsung masuk ke Arena sekarang.
+                {role === "MURID" ? "Kamu bisa langsung masuk ke Arena sekarang." : "Kamu bisa langsung masuk ke dasbor guru."}
               </p>
               <div className="pt-4">
-                <Link
-                  href="/auth/arena-login"
-                  className={`inline-flex items-center gap-2 px-6 py-3 rounded-xl font-bold shadow-lg bg-gradient-to-r ${config.gradient} text-white hover:opacity-90 transition-opacity`}
-                >
-                  Masuk Sekarang
-                  <ArrowRight className="w-4 h-4" />
+                <Link href={role === "MURID" ? "/auth/arena-login" : "/login"}
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-bold shadow-lg bg-gradient-to-r from-red-600 to-red-700 text-white hover:opacity-90 transition-opacity">
+                  Masuk Sekarang <ArrowRight className="w-4 h-4" />
                 </Link>
               </div>
             </div>
