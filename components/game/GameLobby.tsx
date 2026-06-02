@@ -258,7 +258,7 @@ export default function GameLobby({ isHost = false, roomCode: initialCode, onSta
                 <button onClick={copyCode} className="inline-flex items-center gap-2 text-sm text-white/60 hover:text-white transition-colors bg-white/5 px-4 py-2 rounded-xl">
                   {copied ? <><Check size={16} className="text-green-400" /> Tersalin</> : <><Copy size={16} /> Salin Kode</>}
                 </button>
-                <button onClick={() => window.open(`https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent('https://bahasacerdas.site/game?code=' + code)}`, '_blank')}
+                <button onClick={() => window.open(`https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(window.location.origin + '/game?code=' + code)}`, '_blank')}
                   className="inline-flex items-center gap-2 text-sm text-white/60 hover:text-white transition-colors bg-white/5 px-4 py-2 rounded-xl">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3z"/><path d="M14 14h3v3h-3zM20 14h1v1h-1zM17 17h3v3h-3zM14 20h1v1h-1zM20 17h1v1h-1z"/></svg>
                   QR

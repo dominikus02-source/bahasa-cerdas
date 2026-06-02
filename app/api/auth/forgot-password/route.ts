@@ -17,8 +17,10 @@ export async function POST(req: NextRequest) {
       process.env.SUPABASE_SERVICE_ROLE_KEY!
     );
 
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://bahasacerdas.com";
+
     const { error } = await supabase.auth.resetPasswordForEmail(email.toLowerCase(), {
-      redirectTo: `https://bahasacerdas.site/reset-password`,
+      redirectTo: `${siteUrl}/reset-password`,
     });
 
     if (error?.message?.includes("rate limit")) {
@@ -31,7 +33,7 @@ export async function POST(req: NextRequest) {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            from: "BahasaCerdas <noreply@bahasacerdas.site>",
+            from: "BahasaCerdas <noreply@bahasacerdas.com>",
             to: email.toLowerCase(),
             subject: "Reset Password - BahasaCerdas",
             html: `
@@ -43,7 +45,7 @@ export async function POST(req: NextRequest) {
                   <h2>Reset Password</h2>
                   <p>Kami menerima permintaan reset password untuk akun <strong>${email.toLowerCase()}</strong>.</p>
                   <p>Silakan klik tombol di bawah untuk membuat password baru:</p>
-                  <a href="https://bahasacerdas.site/reset-password" style="display: inline-block; margin: 16px 0; padding: 12px 32px; background: #dc2626; color: white; text-decoration: none; border-radius: 8px; font-weight: bold;">
+                  <a href="${siteUrl}/reset-password" style="display: inline-block; margin: 16px 0; padding: 12px 32px; background: #dc2626; color: white; text-decoration: none; border-radius: 8px; font-weight: bold;">
                     Reset Password
                   </a>
                   <p style="color: #6b7280; font-size: 12px; margin-top: 24px;">
