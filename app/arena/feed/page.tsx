@@ -18,13 +18,6 @@ const typeColors: Record<string, { label: string; bg: string; text: string; bord
   OPINI: { label: "Opini", bg: "bg-rose-100", text: "text-rose-700", border: "border-rose-200" },
 }
 
-const tickerMessages = [
-  "Baru: Rafi S. posting Pantun Cinta, Siti R. dapat 12 suka dalam 3 menit",
-  "Tantangan Pantun berakhir 2 jam lagi, 12 karya baru masuk",
-  "Alexander membalas pantunmu, 89 anak sudah baca karya hari ini",
-  "Nadia K. mengomentari puisimu, 5 suka baru untuk karyamu",
-]
-
 const INITIALS_COLORS = [
   "from-violet-500 to-purple-600",
   "from-pink-500 to-rose-600",
@@ -57,42 +50,38 @@ interface KaryaItem {
 export default function FeedPage() {
   const [karyaList, setKaryaList] = useState<KaryaItem[]>([])
   const [filter, setFilter] = useState("SEMUA")
-  const [tickerIdx, setTickerIdx] = useState(0)
   const [likedSet, setLikedSet] = useState<Set<string>>(new Set())
   const [likeCounts, setLikeCounts] = useState<Record<string, number>>({})
   const [commentTexts, setCommentTexts] = useState<Record<string, string>>({})
   const [submittingComment, setSubmittingComment] = useState<Record<string, boolean>>({})
   const [onlineCount, setOnlineCount] = useState(0)
+  const [totalKarya, setTotalKarya] = useState(0)
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
+  const [deletingId, setDeletingId] = useState<string | null>(null)
   const router = useRouter()
 
   useEffect(() => {
-    fetch(`/api/siswa/karya?limit=30`)
-      .then(r => r.json())
-      .then(data => {
-        setKaryaList(data.karya || [])
-        setLoading(false)
-      })
-      .catch(() => setLoading(false))
-  }, [])
-
-  useEffect(() => {
-    fetch("/api/arena/stats")
-      .then(r => r.json())
-      .then(data => setOnlineCount(data.onlineCount || 0))
-      .catch(() => {})
-  }, [])
-
-  useEffect(() => {
-    const ti = setInterval(() => setTickerIdx(i => (i + 1) % tickerMessages.length), 4000)
-    return () => clearInterval(ti)
+    Promise.all([
+      fetch("/api/siswa/karya?limit=50").then(r => r.json()),
+      fetch("/api/user/me").then(r => r.ok ? r.json() : null),
+      fetch("/api/arena/stats").then(r => r.json()).catch(() => ({})),
+    ]).then(([kData, uData, stats]) => {
+      setKaryaList(kData.karya || [])
+      setTotalKarya(kData.total || kData.karya?.length || 0)
+      setCurrentUserId(uData?.user?.id || uData?.user?.userId || null)
+      setOnlineCount(stats.onlineCount || 0)
+      setLoading(false)
+    }).catch(() => setLoading(false))
   }, [])
 
   const filtered = filter === "POPULER"
     ? [...karyaList].sort((a, b) => b.likesCount - a.likesCount)
-    : filter === "SEMUA"
-      ? karyaList
-      : karyaList.filter(k => k.type === filter)
+    : filter === "KU"
+      ? karyaList.filter(k => k.user.id === currentUserId)
+      : filter === "SEMUA"
+        ? karyaList
+        : karyaList.filter(k => k.type === filter)
   const trending = [...karyaList].sort((a, b) => b.likesCount - a.likesCount).slice(0, 4)
 
   const toggleLike = async (id: string) => {
@@ -141,10 +130,23 @@ export default function FeedPage() {
     return `${Math.floor(hours / 24)}h`
   }
 
-  const firstComment = (karya: KaryaItem) => null // would need separate fetch for comments
+  const handleDeleteKarya = async (karyaId: string, e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    if (!confirm("Yakin ingin menghapus karya ini?")) return
+    setDeletingId(karyaId)
+    const res = await fetch(`/api/siswa/karya/${karyaId}`, { method: "DELETE" })
+    if (res.ok) {
+      setKaryaList(prev => prev.filter(k => k.id !== karyaId))
+    } else {
+      alert("Gagal menghapus karya")
+    }
+    setDeletingId(null)
+  }
 
   const filters = [
     { value: "SEMUA", label: "Semua" },
+    { value: "KU", label: "Karya Saya" },
     { value: "PANTUN", label: "Pantun" },
     { value: "PUISI", label: "Puisi" },
     { value: "CERPEN", label: "Cerpen" },
@@ -162,11 +164,11 @@ export default function FeedPage() {
         <p className="text-sm text-white/70">Karya terbaru dari murid di seluruh Indonesia</p>
       </div>
 
-      {/* LIVE TICKER */}
+      {/* LIVE STATS */}
       <div className="feed-ticker">
         <div className="w-[7px] h-[7px] bg-red-500 rounded-full ticker-dot shrink-0" />
-        <p className="text-xs text-white font-semibold truncate" key={tickerIdx}>
-          {tickerMessages[tickerIdx]}
+        <p className="text-xs text-white font-semibold truncate">
+          {totalKarya > 0 ? `${totalKarya} karya telah dipublikasikan` : `${onlineCount} anak online sekarang`}
         </p>
       </div>
 
@@ -305,26 +307,15 @@ export default function FeedPage() {
                     {excerpt(karya)}
                   </div>
 
-                  {/* Social proof - reading avatars */}
+                  {/* View count */}
                   <div className="flex items-center mb-2.5">
-                    <div className="reading-stack">
-                      {idx < 4 && (
-                        <div className="reading-av bg-gradient-to-br from-violet-500 to-purple-600">R</div>
-                      )}
-                      {idx < 3 && (
-                        <div className="reading-av bg-gradient-to-br from-emerald-500 to-teal-600">S</div>
-                      )}
-                      {idx < 2 && (
-                        <div className="reading-av bg-gradient-to-br from-amber-500 to-orange-600">B</div>
-                      )}
-                      <div className="reading-av bg-gradient-to-br from-pink-500 to-rose-600">N</div>
-                    </div>
-                    <span className="text-[11px] text-gray-400 ml-1.5">
-                      <strong className="text-violet-700">Rafi, Siti +{8 + idx * 3}</strong> lagi baca
-                    </span>
-                    <div className="ml-auto flex items-center gap-1">
+                    <div className="flex items-center gap-1">
                       <Eye size={12} className="text-[#C4B5FD]" />
-                      <span className="text-[11px] text-[#C4B5FD] font-semibold">{karya.viewsCount || 0}</span>
+                      <span className="text-[11px] text-[#C4B5FD] font-semibold">{karya.viewsCount || 0} dilihat</span>
+                    </div>
+                    <div className="ml-auto flex items-center gap-1">
+                      <MessageCircle size={12} className="text-[#C4B5FD]" />
+                      <span className="text-[11px] text-[#C4B5FD] font-semibold">{karya._count.comments}</span>
                     </div>
                   </div>
 
@@ -352,6 +343,21 @@ export default function FeedPage() {
                     <button className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold text-gray-400 hover:bg-[#F9F7FF] transition-all">
                       <Share2 size={15} />
                     </button>
+                    {karya.user.id === currentUserId && (
+                      <button
+                        onClick={(e) => handleDeleteKarya(karya.id, e)}
+                        disabled={deletingId === karya.id}
+                        className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold text-red-400 hover:bg-red-50 hover:text-red-500 transition-all disabled:opacity-50"
+                      >
+                        {deletingId === karya.id ? (
+                          <div className="animate-spin w-3.5 h-3.5 border-2 border-red-400 border-t-transparent rounded-full" />
+                        ) : (
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M3 6h18" /><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" /><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
+                          </svg>
+                        )}
+                      </button>
+                    )}
                     <div className="flex-1" />
                     <button
                       onClick={() => router.push(`/arena/feed/${karya.id}`)}
