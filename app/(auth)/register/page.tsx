@@ -72,6 +72,11 @@ export default function RegisterPage() {
         password,
       });
       if (loginError) {
+        if (loginError.message?.includes("rate limit") || loginError.status === 429) {
+          setError("Server sedang sibuk. Silakan coba login manual.");
+          setLoading(false);
+          return;
+        }
         // Session failed — fall back to manual login
         setRegistered(true);
         setLoading(false);

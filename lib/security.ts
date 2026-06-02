@@ -3,8 +3,8 @@ import { NextResponse } from "next/server";
 const rateMap = new Map<string, { count: number; resetAt: number }>();
 
 const LIMITS = {
-  auth: { window: 60_000, max: 5 },
-  api: { window: 60_000, max: 60 },
+  auth: { window: 60_000, max: 20 },
+  api: { window: 60_000, max: 120 },
   ai: { window: 60_000, max: 10 },
 } as const;
 

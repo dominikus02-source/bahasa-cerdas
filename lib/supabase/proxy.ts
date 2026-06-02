@@ -1,16 +1,11 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
-import { checkRateLimit, rateLimitResponse } from "@/lib/security";
+import { checkRateLimit, rateLimitResponse, type RateLimitScope } from "@/lib/security";
 
 const publicPaths = [
   "/", "/login", "/auth/arena-login", "/auth/callback", "/register", "/confirm",
   "/verify-email", "/onboarding", "/tentang", "/fitur",
   "/marketplace", "/artikel", "/video-belajar", "/kamus", "/loker", "/komunitas", "/ai-bc",
-];
-
-const authPaths = [
-  "/api/auth/login", "/api/auth/register", "/api/auth/forgot-password",
-  "/api/auth/callback", "/api/auth/create-user",
 ];
 
 export async function updateSession(request: NextRequest) {
@@ -25,14 +20,16 @@ export async function updateSession(request: NextRequest) {
 
   // Rate limiting
   const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
-  const scope = authPaths.some((p) => pathname.startsWith(p)) ? "auth" : "api";
+  const isAuthPath = pathname.startsWith("/api/auth/");
+  const scope: RateLimitScope = isAuthPath ? "auth" : "api";
   const limit = checkRateLimit(ip, scope);
   if (!limit.allowed) return rateLimitResponse(scope);
 
   const isPublic = publicPaths.some((p) => pathname === p || pathname.startsWith(p + "/"));
-  const isAuthPath = authPaths.some((p) => pathname.startsWith(p));
 
-  if (isPublic || isAuthPath) {
+  // Skip auth check for public pages, auth API routes, and ALL API routes
+  // API routes handle their own auth, avoiding redundant getUser() calls
+  if (isPublic || isAuthPath || pathname.startsWith("/api/")) {
     const response = NextResponse.next({ request });
     response.headers.set("X-RateLimit-Remaining", String(limit.remaining));
     return response;

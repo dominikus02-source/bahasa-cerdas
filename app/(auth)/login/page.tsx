@@ -38,11 +38,14 @@ export default function LoginPage() {
       });
 
       if (authError) {
-        setError(authError.message === "Invalid login credentials"
-          ? "Email atau password salah"
-          : authError.message === "Email not confirmed"
-          ? "Email belum dikonfirmasi. Cek inbox/spam kamu."
-          : authError.message
+        setError(
+          authError.message === "Invalid login credentials"
+            ? "Email atau password salah"
+            : authError.message === "Email not confirmed"
+            ? "Email belum dikonfirmasi. Cek inbox/spam kamu."
+            : authError.message?.includes("rate limit") || authError.status === 429
+            ? "Server sedang sibuk. Silakan coba lagi dalam beberapa saat."
+            : authError.message
         );
         setLoading(false);
         return;
@@ -68,8 +71,12 @@ export default function LoginPage() {
 
       const { user: dbUser } = await res.json();
       window.location.href = dbUser.isFounder ? "/admin" : dbUser.role === "MURID" ? "/arena" : `/${dbUser.role.toLowerCase()}/beranda`;
-    } catch {
-      setError("Terjadi kesalahan. Silakan coba lagi.");
+    } catch (err: any) {
+      setError(
+        err?.message?.includes("rate limit") || err?.status === 429
+          ? "Server sedang sibuk. Silakan coba lagi dalam beberapa saat."
+          : "Terjadi kesalahan. Silakan coba lagi."
+      );
       setLoading(false);
     }
   };
