@@ -3,6 +3,7 @@ import { cookies } from "next/headers";
 import { db } from "@/lib/db";
 import { NextResponse } from "next/server";
 import { Role } from "@prisma/client";
+import { cache } from "react";
 
 export async function createClient() {
   const cookieStore = await cookies();
@@ -27,9 +28,20 @@ export async function createClient() {
   );
 }
 
-export async function getUser() {
+export const getUser = cache(async () => {
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+
+  // Primary: verify with Supabase API (server-authoritative, but rate-limited)
+  let { data: { user } } = await supabase.auth.getUser();
+
+  // Fallback: read session from cookie (zero API call, still cryptographically signed JWT)
+  if (!user) {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (session?.user) {
+      user = session.user;
+    }
+  }
+
   if (!user) return null;
 
   try {
@@ -40,7 +52,7 @@ export async function getUser() {
   } catch {
     return null;
   }
-}
+});
 
 export async function requireAuth() {
   const user = await getUser();

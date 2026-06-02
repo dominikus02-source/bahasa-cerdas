@@ -37,6 +37,7 @@ export default function MuridProfilePage() {
   const [karyaList, setKaryaList] = useState<KaryaItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("karya");
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const fetchProfile = async () => {
     const res = await fetch("/api/user/me");
@@ -182,9 +183,24 @@ export default function MuridProfilePage() {
           <div className="grid grid-cols-2 gap-3">
             {karyaList.map(k => {
               const m = TYPE_META[k.type] || TYPE_META.OPINI;
+
+              const handleDelete = async (e: React.MouseEvent) => {
+                e.preventDefault();
+                e.stopPropagation();
+                if (!confirm(`Hapus "${k.title}"? Tindakan ini tidak bisa dibatalkan.`)) return;
+                setDeletingId(k.id);
+                const res = await fetch(`/api/siswa/karya/${k.id}`, { method: "DELETE" });
+                if (res.ok) {
+                  setKaryaList(prev => prev.filter(item => item.id !== k.id));
+                } else {
+                  alert("Gagal menghapus karya.");
+                }
+                setDeletingId(null);
+              };
+
               return (
-                <Link key={k.id} href={`/murid/karya/${k.id}`} className="group bg-white rounded-xl border border-gray-100 hover:shadow-lg hover:border-violet-200 transition-all overflow-hidden">
-                  <div className="p-4">
+                <div key={k.id} className="relative group bg-white rounded-xl border border-gray-100 hover:shadow-lg hover:border-violet-200 transition-all overflow-hidden">
+                  <Link href={`/murid/karya/${k.id}`} className="block p-4">
                     {/* Type Badge */}
                     <span className={`inline-block text-[10px] font-semibold px-2 py-0.5 rounded-full mb-2 ${m.badge}`}>
                       {m.label}
@@ -203,13 +219,24 @@ export default function MuridProfilePage() {
                       <span className="flex items-center gap-1"><IconEye size={10} />{k.viewsCount}</span>
                       <span className="flex items-center gap-1 ml-auto"><IconClock size={10} />{new Date(k.createdAt).toLocaleDateString("id-ID", { day: "numeric", month: "short" })}</span>
                     </div>
-                  </div>
-                </Link>
+                  </Link>
+                  {/* Delete Button */}
+                  <button onClick={handleDelete} disabled={deletingId === k.id}
+                    className="absolute top-2 right-2 w-7 h-7 flex items-center justify-center rounded-full bg-white/80 backdrop-blur-sm border border-gray-200 text-gray-400 hover:text-red-500 hover:border-red-200 hover:bg-red-50 opacity-0 group-hover:opacity-100 transition-all disabled:opacity-100"
+                  >
+                    {deletingId === k.id ? (
+                      <div className="animate-spin w-3 h-3 border-2 border-red-500 border-t-transparent rounded-full" />
+                    ) : (
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M3 6h18" /><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" /><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
+                      </svg>
+                    )}
+                  </button>
+                </div>
               );
             })}
           </div>
-        )
-      )}
+        ))}
 
       {/* ═══ PRESTASI ═══ */}
       {activeTab === "prestasi" && (

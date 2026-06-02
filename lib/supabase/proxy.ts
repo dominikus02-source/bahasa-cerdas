@@ -8,6 +8,9 @@ const publicPaths = [
   "/marketplace", "/artikel", "/video-belajar", "/kamus", "/loker", "/komunitas", "/ai-bc",
 ];
 
+// Routes that handle their own auth — skip middleware getUser() to avoid rate limit
+const selfAuthPaths = ["/api/", "/arena/", "/guru/"];
+
 export async function updateSession(request: NextRequest) {
   const { pathname, search } = request.nextUrl;
   const host = request.headers.get("host") || "";
@@ -27,9 +30,13 @@ export async function updateSession(request: NextRequest) {
 
   const isPublic = publicPaths.some((p) => pathname === p || pathname.startsWith(p + "/"));
 
-  // Skip auth check for public pages, auth API routes, and ALL API routes
-  // API routes handle their own auth, avoiding redundant getUser() calls
-  if (isPublic || isAuthPath || pathname.startsWith("/api/")) {
+  // Skip middleware getUser() for:
+  //  - Public pages
+  //  - Auth API routes
+  //  - Routes that handle their own auth (API, Arena, Guru dashboard)
+  // This avoids redundant Supabase auth calls and reduces rate limit pressure
+  const isSelfAuth = selfAuthPaths.some((p) => pathname.startsWith(p));
+  if (isPublic || isAuthPath || isSelfAuth) {
     const response = NextResponse.next({ request });
     response.headers.set("X-RateLimit-Remaining", String(limit.remaining));
     return response;
