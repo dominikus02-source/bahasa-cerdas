@@ -5,6 +5,7 @@ import Link from "next/link"
 import { ArrowLeft, Heart, MessageCircle, Eye, Clock, Sparkles, BookOpen, FileText, Smile, Music, MessageSquare } from "lucide-react"
 import { ToggleLike } from "./toggle-like"
 import CommentSection from "@/components/arena/CommentSection"
+import DeleteKaryaButton from "@/components/arena/DeleteKaryaButton"
 
 const typeIcon: Record<string, { icon: React.ReactNode }> = {
   PUISI: { icon: <Sparkles className="w-5 h-5" /> },
@@ -99,6 +100,7 @@ export default async function FeedDetailPage({ params }: { params: Promise<{ id:
             <Eye className="w-5 h-5 text-gray-400" />
             {karya.viewsCount || 0}
           </span>
+          <DeleteKaryaButton karyaId={karya.id} isOwner={karya.user.id === user.id} />
         </div>
       </div>
 

@@ -14,6 +14,8 @@ export default function ArenaLoginPage() {
   const [password, setPassword] = useState("")
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
+  const [resetMode, setResetMode] = useState(false)
+  const [resetSent, setResetSent] = useState(false)
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
@@ -66,6 +68,23 @@ export default function ArenaLoginPage() {
     router.push("/arena")
   }
 
+  const handleResetPassword = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setLoading(true)
+    setError("")
+    const supabase = createClient()
+    const { error: resetError } = await supabase.auth.resetPasswordForEmail(email.toLowerCase(), {
+      redirectTo: `${location.origin}/auth/callback?next=/arena`,
+    })
+    if (resetError) {
+      setError(resetError.message)
+      setLoading(false)
+    } else {
+      setResetSent(true)
+      setLoading(false)
+    }
+  }
+
   const handleGoogle = async () => {
     setError("")
     const supabase = createClient()
@@ -114,33 +133,73 @@ export default function ArenaLoginPage() {
           </div>
         )}
 
-        <form onSubmit={handleLogin} className="w-full max-w-sm space-y-3">
-          <input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full px-4 py-3.5 rounded-xl bg-white/15 border border-white/20 text-white placeholder-violet-300/70 text-sm focus:outline-none focus:ring-2 focus:ring-white/40 focus:bg-white/20 transition-all"
-            required
-          />
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full px-4 py-3.5 rounded-xl bg-white/15 border border-white/20 text-white placeholder-violet-300/70 text-sm focus:outline-none focus:ring-2 focus:ring-white/40 focus:bg-white/20 transition-all"
-            required
-          />
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full py-3.5 rounded-xl bg-white text-violet-700 font-bold text-sm hover:bg-violet-50 disabled:opacity-60 transition-all active:scale-[0.98] flex items-center justify-center gap-2"
-          >
-            {loading ? "Masuk..." : "Masuk"}
-            <ArrowRight className="w-4 h-4" />
-          </button>
-        </form>
+        {resetSent ? (
+          <div className="w-full max-w-sm p-4 rounded-xl bg-emerald-500/20 border border-emerald-400/30 text-emerald-100 text-sm text-center">
+            Link reset password sudah dikirim ke <strong>{email}</strong>. Cek inbox/spam email kamu.
+          </div>
+        ) : resetMode ? (
+          <form onSubmit={handleResetPassword} className="w-full max-w-sm space-y-3">
+            <p className="text-sm text-violet-200 text-center mb-1">Masukkan email untuk menerima link reset password</p>
+            <input
+              type="email"
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full px-4 py-3.5 rounded-xl bg-white/15 border border-white/20 text-white placeholder-violet-300/70 text-sm focus:outline-none focus:ring-2 focus:ring-white/40 focus:bg-white/20 transition-all"
+              required
+            />
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full py-3.5 rounded-xl bg-white text-violet-700 font-bold text-sm hover:bg-violet-50 disabled:opacity-60 transition-all active:scale-[0.98] flex items-center justify-center gap-2"
+            >
+              {loading ? "Mengirim..." : "Kirim Link Reset"}
+            </button>
+            <button
+              type="button"
+              onClick={() => setResetMode(false)}
+              className="w-full text-sm text-violet-300 hover:text-white transition-colors text-center"
+            >
+              Kembali ke login
+            </button>
+          </form>
+        ) : (
+          <form onSubmit={handleLogin} className="w-full max-w-sm space-y-3">
+            <input
+              type="email"
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full px-4 py-3.5 rounded-xl bg-white/15 border border-white/20 text-white placeholder-violet-300/70 text-sm focus:outline-none focus:ring-2 focus:ring-white/40 focus:bg-white/20 transition-all"
+              required
+            />
+            <input
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full px-4 py-3.5 rounded-xl bg-white/15 border border-white/20 text-white placeholder-violet-300/70 text-sm focus:outline-none focus:ring-2 focus:ring-white/40 focus:bg-white/20 transition-all"
+              required
+            />
+            <div className="flex justify-end -mt-1">
+              <button
+                type="button"
+                onClick={() => setResetMode(true)}
+                className="text-xs text-violet-300 hover:text-white transition-colors"
+              >
+                Lupa password?
+              </button>
+            </div>
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full py-3.5 rounded-xl bg-white text-violet-700 font-bold text-sm hover:bg-violet-50 disabled:opacity-60 transition-all active:scale-[0.98] flex items-center justify-center gap-2"
+            >
+              {loading ? "Masuk..." : "Masuk"}
+              <ArrowRight className="w-4 h-4" />
+            </button>
+          </form>
+        )}
 
         <div className="w-full max-w-sm flex items-center gap-3 my-6">
           <div className="flex-1 h-px bg-white/20" />
