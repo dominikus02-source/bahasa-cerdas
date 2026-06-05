@@ -1,16 +1,6 @@
-import type { Konten, Soal } from "../types";
+import type { Konten } from "../types";
 
 const kd = "3.3/4.3";
-
-function buatSoal(count: number, opsi: number, tema: string): Soal[] {
-  return Array.from({ length: count }, (_, i) => ({
-    id: i + 1,
-    soal: `Contoh soal ${tema} nomor ${i + 1}?`,
-    opsi: ["Pilihan A", "Pilihan B", "Pilihan C", "Pilihan D"],
-    jawaban: 0,
-    penjelasan: `Penjelasan untuk soal ${tema} nomor ${i + 1}`,
-  }));
-}
 
 /* =============================================
    Unit 3: Teks Laporan Hasil Observasi — VII S1
@@ -308,6 +298,7 @@ const konten: Konten = {
     latihan: [
       {
         id: 1,
+        tipe: "PG",
         soal: "Teks laporan hasil observasi bersifat...",
         opsi: ["Subjektif dan personal", "Objektif dan faktual", "Imajinatif dan kreatif", "Opini dan dugaan"],
         jawaban: 1,
@@ -315,6 +306,7 @@ const konten: Konten = {
       },
       {
         id: 2,
+        tipe: "PG",
         soal: "Berikut ini yang merupakan kalimat definisi adalah...",
         opsi: ["Daunnya berwarna hijau", "Fotosintesis adalah proses pembuatan makanan pada tumbuhan", "Pohon itu sangat tinggi", "Kucing itu lucu sekali"],
         jawaban: 1,
@@ -322,6 +314,7 @@ const konten: Konten = {
       },
       {
         id: 3,
+        tipe: "PG",
         soal: "Bagian struktur LHO yang berisi pengelompokan atau pengertian umum tentang objek disebut...",
         opsi: ["Deskripsi bagian", "Deskripsi manfaat", "Pernyataan umum", "Kesimpulan"],
         jawaban: 2,
@@ -329,6 +322,7 @@ const konten: Konten = {
       },
       {
         id: 4,
+        tipe: "PG",
         soal: "Tujuan utama teks LHO adalah...",
         opsi: ["Menghibur pembaca", "Mempengaruhi pembaca", "Memberikan informasi faktual hasil pengamatan", "Menceritakan pengalaman pribadi"],
         jawaban: 2,
@@ -336,6 +330,7 @@ const konten: Konten = {
       },
       {
         id: 5,
+        tipe: "PG",
         soal: "Contoh istilah ilmiah yang tepat dalam teks LHO adalah...",
         opsi: ["Hewan besar", "Karnivora", "Binatang buas", "Makhluk hidup"],
         jawaban: 1,
@@ -343,6 +338,7 @@ const konten: Konten = {
       },
       {
         id: 6,
+        tipe: "PG",
         soal: "Perbedaan utama teks LHO dengan teks deskripsi terletak pada...",
         opsi: ["Panjang teks", "Jumlah paragraf", "Sifat objektivitas", "Pilihan kata"],
         jawaban: 2,
@@ -350,6 +346,7 @@ const konten: Konten = {
       },
       {
         id: 7,
+        tipe: "PG",
         soal: "Bagian yang menjelaskan kegunaan dari objek yang diamati dalam struktur LHO adalah...",
         opsi: ["Pernyataan umum", "Deskripsi bagian", "Deskripsi manfaat", "Orientasi"],
         jawaban: 2,
@@ -357,6 +354,7 @@ const konten: Konten = {
       },
       {
         id: 8,
+        tipe: "PG",
         soal: "Kalimat yang menggunakan satu verba disebut kalimat...",
         opsi: ["Kompleks", "Simpleks", "Majemuk", "Bertingkat"],
         jawaban: 1,
@@ -364,6 +362,7 @@ const konten: Konten = {
       },
       {
         id: 9,
+        tipe: "PG",
         soal: "Berikut adalah ciri teks LHO, kecuali...",
         opsi: ["Mengandung data faktual", "Disusun sistematis", "Bersifat subjektif", "Menggunakan istilah ilmiah"],
         jawaban: 2,
@@ -371,6 +370,7 @@ const konten: Konten = {
       },
       {
         id: 10,
+        tipe: "PG",
         soal: "Jika kalian mengamati tanaman lidah mertua, urutan pelaporan yang tepat adalah...",
         opsi: ["Manfaat → ciri → definisi", "Definisi → ciri → manfaat", "Ciri → definisi → manfaat", "Manfaat → definisi → ciri"],
         jawaban: 1,
@@ -402,6 +402,7 @@ const konten: Konten = {
     kuis: [
       {
         id: 1,
+        tipe: "PG",
         soal: "Apa nama lain dari teks laporan hasil observasi?",
         opsi: ["LHO", "LHP", "LHK", "LHB"],
         jawaban: 0,
@@ -409,6 +410,7 @@ const konten: Konten = {
       },
       {
         id: 2,
+        tipe: "PG",
         soal: "Berikut ini yang bukan merupakan ciri teks LHO adalah...",
         opsi: ["Berdasarkan fakta", "Mengandung opini penulis", "Disusun sistematis", "Menggunakan istilah ilmiah"],
         jawaban: 1,
@@ -416,6 +418,7 @@ const konten: Konten = {
       },
       {
         id: 3,
+        tipe: "PG",
         soal: "Struktur teks LHO yang benar adalah...",
         opsi: ["Deskripsi bagian → pernyataan umum → manfaat", "Pernyataan umum → deskripsi bagian → manfaat", "Manfaat → pernyataan umum → deskripsi bagian", "Pernyataan umum → manfaat → deskripsi bagian"],
         jawaban: 1,
@@ -423,6 +426,7 @@ const konten: Konten = {
       },
       {
         id: 4,
+        tipe: "PG",
         soal: "Kata 'karnivora' dalam teks LHO termasuk...",
         opsi: ["Kata sifat", "Istilah ilmiah", "Kata kerja", "Kata ganti"],
         jawaban: 1,
@@ -430,6 +434,7 @@ const konten: Konten = {
       },
       {
         id: 5,
+        tipe: "PG",
         soal: "Kalimat 'Hutan hujan tropis memiliki kelembapan yang tinggi' termasuk jenis kalimat...",
         opsi: ["Definisi", "Deskripsi", "Perintah", "Tanya"],
         jawaban: 1,
@@ -437,6 +442,7 @@ const konten: Konten = {
       },
       {
         id: 6,
+        tipe: "PG",
         soal: "Salah satu perbedaan LHO dan teks prosedur adalah LHO...",
         opsi: ["Memberi langkah-langkah", "Melaporkan keadaan objek", "Berisi perintah", "Menjelaskan cara membuat"],
         jawaban: 1,
@@ -444,6 +450,7 @@ const konten: Konten = {
       },
       {
         id: 7,
+        tipe: "PG",
         soal: "Data yang diperoleh dari hasil observasi sebaiknya dicatat...",
         opsi: ["Besok hari", "Dari ingatan", "Saat itu juga", "Minggu depan"],
         jawaban: 2,
@@ -451,6 +458,7 @@ const konten: Konten = {
       },
       {
         id: 8,
+        tipe: "PG",
         soal: "Bagian yang menjawab pertanyaan 'Apa yang diamati?' dalam LHO adalah...",
         opsi: ["Deskripsi manfaat", "Deskripsi bagian", "Pernyataan umum", "Kesimpulan"],
         jawaban: 2,
@@ -458,6 +466,7 @@ const konten: Konten = {
       },
       {
         id: 9,
+        tipe: "PG",
         soal: "Konjungsi yang menunjukkan urutan dalam LHO adalah...",
         opsi: ["dan, atau, tetapi", "pertama, kedua, selanjutnya", "karena, sehingga, meskipun", "yang, di, ke"],
         jawaban: 1,
@@ -465,6 +474,7 @@ const konten: Konten = {
       },
       {
         id: 10,
+        tipe: "PG",
         soal: "Jika kamu menulis 'Kucing itu sangat imut dan menggemaskan', kalimat tersebut bersifat...",
         opsi: ["Objektif", "Subjektif", "Ilmiah", "Faktual"],
         jawaban: 1,

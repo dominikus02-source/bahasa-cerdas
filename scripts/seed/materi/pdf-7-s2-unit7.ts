@@ -1,14 +1,4 @@
-import type { Konten, Soal } from "../types";
-
-function buatSoal(count: number, opsi: number, tema: string): Soal[] {
-  return Array.from({ length: count }, (_, i) => ({
-    id: i + 1,
-    soal: `Contoh soal ${tema} nomor ${i + 1}?`,
-    opsi: ["Pilihan A", "Pilihan B", "Pilihan C", "Pilihan D"],
-    jawaban: 0,
-    penjelasan: `Penjelasan untuk soal ${tema} nomor ${i + 1}`,
-  }));
-}
+import type { Konten } from "../types";
 
 /* =============================================
    Unit 7: Teks Cerita Fantasi — VII S2
@@ -294,6 +284,7 @@ const konten: Konten = {
     latihan: [
       {
         id: 1,
+        tipe: "PG",
         soal: "Teks cerita fantasi adalah teks yang mengembangkan kisah berdasarkan...",
         opsi: ["Fakta ilmiah", "Imajinasi dan daya khayal", "Pengalaman pribadi", "Berita aktual"],
         jawaban: 1,
@@ -301,6 +292,7 @@ const konten: Konten = {
       },
       {
         id: 2,
+        tipe: "PG",
         soal: "Berikut yang merupakan ciri cerita fantasi adalah...",
         opsi: ["Berdasarkan kisah nyata", "Tokoh manusia biasa tanpa kekuatan", "Mengandung keajaiban atau kemustahilan", "Latar hanya di sekolah"],
         jawaban: 2,
@@ -308,6 +300,7 @@ const konten: Konten = {
       },
       {
         id: 3,
+        tipe: "PG",
         soal: "Cerita fantasi yang seluruhnya berada di dunia imajinasi disebut fantasi...",
         opsi: ["Irisan", "Total", "Ilmiah", "Mini"],
         jawaban: 1,
@@ -315,6 +308,7 @@ const konten: Konten = {
       },
       {
         id: 4,
+        tipe: "PG",
         soal: "Contoh cerita fantasi irisan adalah...",
         opsi: ["Kisah naga di negeri awan", "Harry Potter (penyihir di antara manusia)", "Petualangan di planet Mars", "Dongeng putri tidur"],
         jawaban: 1,
@@ -322,6 +316,7 @@ const konten: Konten = {
       },
       {
         id: 5,
+        tipe: "PG",
         soal: "Bagian struktur cerita fantasi yang berisi puncak ketegangan disebut...",
         opsi: ["Orientasi", "Komplikasi", "Klimaks", "Resolusi"],
         jawaban: 2,
@@ -329,6 +324,7 @@ const konten: Konten = {
       },
       {
         id: 6,
+        tipe: "PG",
         soal: "Tokoh yang menjadi lawan atau penghalang dalam cerita disebut...",
         opsi: ["Protagonis", "Antagonis", "Tritagonis", "Figuran"],
         jawaban: 1,
@@ -336,6 +332,7 @@ const konten: Konten = {
       },
       {
         id: 7,
+        tipe: "PG",
         soal: "'Pohon-pohon berbisik rahasia saat malam tiba' adalah contoh majas...",
         opsi: ["Metafora", "Personifikasi", "Hiperbola", "Litotes"],
         jawaban: 1,
@@ -343,6 +340,7 @@ const konten: Konten = {
       },
       {
         id: 8,
+        tipe: "PG",
         soal: "Perbedaan utama cerita fantasi dengan cerita rakyat adalah...",
         opsi: ["Cerita fantasi lebih pendek", "Cerita fantasi diketahui pengarangnya", "Cerita fantasi bersifat anonim", "Cerita rakyat punya pesan moral"],
         jawaban: 1,
@@ -350,6 +348,7 @@ const konten: Konten = {
       },
       {
         id: 9,
+        tipe: "PG",
         soal: "Hal terpenting dalam membangun dunia fantasi adalah...",
         opsi: ["Dunia harus mirip dengan dunia nyata", "Aturan dunia harus konsisten", "Tidak boleh ada sihir", "Harus ada raja dan ratu"],
         jawaban: 1,
@@ -357,6 +356,7 @@ const konten: Konten = {
       },
       {
         id: 10,
+        tipe: "PG",
         soal: "Penggunaan majas dalam cerita fantasi bertujuan untuk...",
         opsi: ["Membingungkan pembaca", "Memperindah dan menghidupkan cerita", "Membuat cerita lebih panjang", "Mengganti dialog"],
         jawaban: 1,
@@ -388,6 +388,7 @@ const konten: Konten = {
     kuis: [
       {
         id: 1,
+        tipe: "PG",
         soal: "Cerita fantasi berbeda dengan realitas karena mengandung unsur...",
         opsi: ["Fakta", "Keajaiban", "Sejarah", "Opini"],
         jawaban: 1,
@@ -395,6 +396,7 @@ const konten: Konten = {
       },
       {
         id: 2,
+        tipe: "PG",
         soal: "Struktur yang tepat dalam cerita fantasi adalah...",
         opsi: ["Abstrak → orientasi → krisis → koda", "Orientasi → komplikasi → resolusi", "Pernyataan umum → deskripsi bagian → manfaat", "Tujuan → bahan → langkah"],
         jawaban: 1,
@@ -402,6 +404,7 @@ const konten: Konten = {
       },
       {
         id: 3,
+        tipe: "PG",
         soal: "'Matanya bagaikan bintang di malam hari' adalah contoh majas...",
         opsi: ["Personifikasi", "Metafora", "Hiperbola", "Ironi"],
         jawaban: 1,
@@ -409,6 +412,7 @@ const konten: Konten = {
       },
       {
         id: 4,
+        tipe: "PG",
         soal: "Cerita fantasi irisan ditandai dengan...",
         opsi: ["Dunia yang benar-benar terpisah", "Perpaduan dunia nyata dan fantasi", "Tidak ada tokoh manusia", "Latar hanya di masa depan"],
         jawaban: 1,
@@ -416,6 +420,7 @@ const konten: Konten = {
       },
       {
         id: 5,
+        tipe: "PG",
         soal: "Kata 'tiba-tiba' dalam cerita fantasi termasuk dalam kaidah kebahasaan...",
         opsi: ["Kata sifat", "Konjungsi temporal", "Kata ganti", "Kata kerja"],
         jawaban: 1,
@@ -423,6 +428,7 @@ const konten: Konten = {
       },
       {
         id: 6,
+        tipe: "PG",
         soal: "Salah satu nilai yang sering ditemukan dalam cerita fantasi adalah...",
         opsi: ["Cara memasak", "Keberanian melawan kejahatan", "Rumus matematika", "Sejarah kerajaan"],
         jawaban: 1,
@@ -430,6 +436,7 @@ const konten: Konten = {
       },
       {
         id: 7,
+        tipe: "PG",
         soal: "Hal pertama yang harus ditentukan saat menulis cerita fantasi adalah...",
         opsi: ["Judul cerita", "Dunia fantasi dan aturannya", "Harga buku", "Jumlah halaman"],
         jawaban: 1,
@@ -437,6 +444,7 @@ const konten: Konten = {
       },
       {
         id: 8,
+        tipe: "PG",
         soal: "Perbedaan cerita fantasi dan cerita rakyat dari segi pengarang adalah...",
         opsi: ["Sama-sama anonim", "Fantasi diketahui pengarang, cerita rakyat anonim", "Cerita rakyat diketahui pengarang, fantasi anonim", "Keduanya diketahui pengarang"],
         jawaban: 1,
@@ -444,6 +452,7 @@ const konten: Konten = {
       },
       {
         id: 9,
+        tipe: "PG",
         soal: "Fungsi klimaks dalam cerita fantasi adalah...",
         opsi: ["Pengenalan tokoh", "Puncak ketegangan cerita", "Penutup cerita", "Deskripsi latar"],
         jawaban: 1,
@@ -451,6 +460,7 @@ const konten: Konten = {
       },
       {
         id: 10,
+        tipe: "PG",
         soal: "Cerita fantasi yang baik harus memiliki...",
         opsi: ["Aturan dunia yang konsisten", "Tokoh yang sempurna", "Akhir yang bahagia", "Latar di luar negeri"],
         jawaban: 0,

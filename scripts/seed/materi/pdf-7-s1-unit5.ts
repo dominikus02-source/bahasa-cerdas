@@ -1,16 +1,4 @@
-import type { Konten, Soal } from "../types";
-
-const kd = "3.5/4.5";
-
-function buatSoal(count: number, opsi: number, tema: string): Soal[] {
-  return Array.from({ length: count }, (_, i) => ({
-    id: i + 1,
-    soal: `Contoh soal ${tema} nomor ${i + 1}?`,
-    opsi: ["Pilihan A", "Pilihan B", "Pilihan C", "Pilihan D"],
-    jawaban: 0,
-    penjelasan: `Penjelasan untuk soal ${tema} nomor ${i + 1}`,
-  }));
-}
+import type { Konten } from "../types";
 
 /* =============================================
    Unit 5: Giat Literasi I — Teks Fiksi — VII S1
@@ -403,6 +391,7 @@ const konten: Konten = {
   latihan: [
     {
       id: 1,
+      tipe: "PG",
       soal: "Teks yang dibuat berdasarkan imajinasi dan rekaan pengarang disebut...",
       opsi: ["Teks nonfiksi", "Teks fiksi", "Teks eksposisi", "Teks laporan"],
       jawaban: 1,
@@ -410,6 +399,7 @@ const konten: Konten = {
     },
     {
       id: 2,
+      tipe: "PG",
       soal: "Berikut ini yang merupakan ciri khas teks fiksi adalah...",
       opsi: ["Berdasarkan fakta dan data", "Menggunakan bahasa denotatif", "Bersifat imajinatif dan emotif", "Bersifat objektif dan ilmiah"],
       jawaban: 2,
@@ -417,6 +407,7 @@ const konten: Konten = {
     },
     {
       id: 3,
+      tipe: "PG",
       soal: "Cerita fiksi yang tokoh utamanya hewan yang berperilaku seperti manusia disebut...",
       opsi: ["Cerpen", "Novel", "Fabel", "Dongeng"],
       jawaban: 2,
@@ -424,6 +415,7 @@ const konten: Konten = {
     },
     {
       id: 4,
+      tipe: "PG",
       soal: "Yang bukan merupakan unsur intrinsik teks fiksi adalah...",
       opsi: ["Tema", "Tokoh", "Alur", "Sampul buku"],
       jawaban: 3,
@@ -431,6 +423,7 @@ const konten: Konten = {
     },
     {
       id: 5,
+      tipe: "PG",
       soal: "Bagian struktur teks fiksi yang berisi munculnya masalah atau konflik disebut...",
       opsi: ["Orientasi", "Komplikasi", "Resolusi", "Koda"],
       jawaban: 1,
@@ -438,6 +431,7 @@ const konten: Konten = {
     },
     {
       id: 6,
+      tipe: "PG",
       soal: "Kata 'sedih', 'gembira', 'marah' termasuk dalam kaidah kebahasaan teks fiksi sebagai...",
       opsi: ["Kata kerja tindakan", "Konjungsi temporal", "Kata sifat (adjektiva)", "Kata ganti"],
       jawaban: 2,
@@ -445,6 +439,7 @@ const konten: Konten = {
     },
     {
       id: 7,
+      tipe: "PG",
       soal: "Kemampuan memahami, menikmati, dan mengapresiasi karya sastra disebut...",
       opsi: ["Literasi numerasi", "Literasi sastra", "Literasi digital", "Literasi finansial"],
       jawaban: 1,
@@ -452,6 +447,7 @@ const konten: Konten = {
     },
     {
       id: 8,
+      tipe: "PG",
       soal: "Berikut ini yang termasuk jenis teks fiksi adalah...",
       opsi: ["Laporan penelitian", "Artikel berita", "Novel", "Buku pelajaran"],
       jawaban: 2,
@@ -459,6 +455,7 @@ const konten: Konten = {
     },
     {
       id: 9,
+      tipe: "PG",
       soal: "Posisi pengarang sebagai 'aku' dalam cerita termasuk sudut pandang...",
       opsi: ["Orang ketiga", "Orang pertama", "Serba tahu", "Campuran"],
       jawaban: 1,
@@ -466,6 +463,7 @@ const konten: Konten = {
     },
     {
       id: 10,
+      tipe: "PG",
       soal: "Contoh kalimat langsung dalam teks fiksi yang tepat adalah...",
       opsi: [
         "Rina berkata bahwa ia akan pergi.",
@@ -502,6 +500,7 @@ const konten: Konten = {
   kuis: [
     {
       id: 1,
+      tipe: "PG",
       soal: "Perbedaan utama teks fiksi dan teks nonfiksi terletak pada...",
       opsi: ["Panjang teksnya", "Sumber ceritanya — imajinasi vs fakta", "Jumlah tokohnya", "Bahasa yang digunakan"],
       jawaban: 1,
@@ -509,6 +508,7 @@ const konten: Konten = {
     },
     {
       id: 2,
+      tipe: "PG",
       soal: "Kata 'hatinya bagaikan bintang di malam hari' dalam teks fiksi menunjukkan ciri...",
       opsi: ["Bahasa denotatif", "Bahasa konotatif", "Kalimat langsung", "Konjungsi temporal"],
       jawaban: 1,
@@ -516,6 +516,7 @@ const konten: Konten = {
     },
     {
       id: 3,
+      tipe: "PG",
       soal: "Urutan struktur teks fiksi yang benar adalah...",
       opsi: ["Resolusi → Orientasi → Komplikasi", "Orientasi → Resolusi → Komplikasi", "Komplikasi → Orientasi → Resolusi", "Orientasi → Komplikasi → Resolusi"],
       jawaban: 3,
@@ -523,6 +524,7 @@ const konten: Konten = {
     },
     {
       id: 4,
+      tipe: "PG",
       soal: "Novel 'Laskar Pelangi' di atas 40.000 kata dan dibagi menjadi beberapa bab. Novel berbeda dari cerpen terutama dalam hal...",
       opsi: ["Tidak memiliki pesan moral", "Lebih pendek dari cerpen", "Panjang cerita dan kompleksitas alur", "Tokoh utamanya selalu hewan"],
       jawaban: 2,
@@ -530,6 +532,7 @@ const konten: Konten = {
     },
     {
       id: 5,
+      tipe: "PG",
       soal: "Seorang pengarang menulis cerita dengan kata ganti 'ia' dan 'mereka' serta mengetahui isi hati semua tokoh. Sudut pandang yang digunakan adalah...",
       opsi: ["Orang pertama", "Orang ketiga terbatas", "Orang ketiga serba tahu", "Orang kedua"],
       jawaban: 2,
@@ -537,6 +540,7 @@ const konten: Konten = {
     },
     {
       id: 6,
+      tipe: "PG",
       soal: "Manakah dari berikut ini yang merupakan contoh konjungsi temporal dalam teks fiksi?",
       opsi: ["dan, atau, tetapi", "karena, meskipun, sehingga", "tiba-tiba, kemudian, akhirnya", "yang, di, ke, dari"],
       jawaban: 2,
@@ -544,6 +548,7 @@ const konten: Konten = {
     },
     {
       id: 7,
+      tipe: "PG",
       soal: "Apresiasi terhadap teks fiksi yang berisi ulasan lengkap tentang identitas, sinopsis, kelebihan, dan kekurangan buku disebut...",
       opsi: ["Laporan membaca", "Resensi", "Sinopsis", "Kutipan"],
       jawaban: 1,
@@ -551,6 +556,7 @@ const konten: Konten = {
     },
     {
       id: 8,
+      tipe: "PG",
       soal: "Teks drama termasuk jenis teks fiksi karena...",
       opsi: ["Berisi data dan fakta", "Ditulis untuk dipentaskan dan berasal dari imajinasi", "Tidak memiliki tokoh", "Hanya berisi monolog"],
       jawaban: 1,
@@ -558,6 +564,7 @@ const konten: Konten = {
     },
     {
       id: 9,
+      tipe: "PG",
       soal: "Manfaat utama membaca teks fiksi bagi pengembangan diri adalah...",
       opsi: ["Mendapatkan data dan informasi faktual", "Mengembangkan imajinasi, empati, dan kosakata", "Mengetahui berita terkini", "Belajar rumus dan teori ilmiah"],
       jawaban: 1,
@@ -565,6 +572,7 @@ const konten: Konten = {
     },
     {
       id: 10,
+      tipe: "PG",
       soal: "Langkah pertama yang tepat dalam menulis cerita fiksi adalah...",
       opsi: ["Langsung menulis tanpa kerangka", "Menentukan tema dan mengembangkan ide cerita", "Mencari penerbit", "Membuat sampul buku"],
       jawaban: 1,

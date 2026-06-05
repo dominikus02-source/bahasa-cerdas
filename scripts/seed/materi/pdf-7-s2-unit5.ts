@@ -1,14 +1,4 @@
-import type { Konten, Soal } from "../types";
-
-function buatSoal(count: number, opsi: number, tema: string): Soal[] {
-  return Array.from({ length: count }, (_, i) => ({
-    id: i + 1,
-    soal: `Contoh soal ${tema} nomor ${i + 1}?`,
-    opsi: ["Pilihan A", "Pilihan B", "Pilihan C", "Pilihan D"],
-    jawaban: 0,
-    penjelasan: `Penjelasan untuk soal ${tema} nomor ${i + 1}`,
-  }));
-}
+import type { Konten } from "../types";
 
 /* =============================================
    Unit 5: Teks Prosedur — VII S2
@@ -320,6 +310,7 @@ const konten: Konten = {
     latihan: [
       {
         id: 1,
+        tipe: "PG",
         soal: "Teks prosedur adalah teks yang berisi...",
         opsi: ["Cerita fiksi", "Langkah-langkah melakukan sesuatu", "Hasil pengamatan", "Pendapat penulis"],
         jawaban: 1,
@@ -327,6 +318,7 @@ const konten: Konten = {
       },
       {
         id: 2,
+        tipe: "PG",
         soal: "Ciri khas teks prosedur yang membedakannya dari teks lain adalah penggunaan kalimat...",
         opsi: ["Berita", "Tanya", "Perintah (imperatif)", "Seru"],
         jawaban: 2,
@@ -334,6 +326,7 @@ const konten: Konten = {
       },
       {
         id: 3,
+        tipe: "PG",
         soal: "Bagian teks prosedur yang berisi daftar bahan dan alat disebut...",
         opsi: ["Tujuan", "Material", "Langkah-langkah", "Kesimpulan"],
         jawaban: 1,
@@ -341,6 +334,7 @@ const konten: Konten = {
       },
       {
         id: 4,
+        tipe: "PG",
         soal: "Teks prosedur yang langkah-langkahnya dapat diubah urutannya disebut teks prosedur...",
         opsi: ["Sederhana", "Protokol", "Kompleks", "Campuran"],
         jawaban: 1,
@@ -348,6 +342,7 @@ const konten: Konten = {
       },
       {
         id: 5,
+        tipe: "PG",
         soal: "Contoh konjungsi temporal yang tepat dalam teks prosedur adalah...",
         opsi: ["dan, atau, tetapi", "setelah itu, lalu, kemudian", "karena, sehingga, meskipun", "yang, di, ke"],
         jawaban: 1,
@@ -355,6 +350,7 @@ const konten: Konten = {
       },
       {
         id: 6,
+        tipe: "PG",
         soal: "Teks prosedur kompleks memiliki ciri...",
         opsi: ["Langkah sedikit dan mudah", "Urutan langkah fleksibel", "Banyak langkah dan urutan tetap", "Tidak membutuhkan alat"],
         jawaban: 2,
@@ -362,6 +358,7 @@ const konten: Konten = {
       },
       {
         id: 7,
+        tipe: "PG",
         soal: "Kalimat 'Jangan membuka tutup panci saat merebus' termasuk imperatif...",
         opsi: ["Halus", "Biasa", "Larangan", "Ajakan"],
         jawaban: 2,
@@ -369,6 +366,7 @@ const konten: Konten = {
       },
       {
         id: 8,
+        tipe: "PG",
         soal: "Kata 'harap', 'silakan', 'mohon' digunakan dalam imperatif...",
         opsi: ["Biasa", "Halus", "Kasar", "Larangan"],
         jawaban: 1,
@@ -376,6 +374,7 @@ const konten: Konten = {
       },
       {
         id: 9,
+        tipe: "PG",
         soal: "Berikut yang bukan istilah teknis dalam teks prosedur memasak adalah...",
         opsi: ["Sangrai", "Tumis", "Unduh", "Rebus"],
         jawaban: 2,
@@ -383,6 +382,7 @@ const konten: Konten = {
       },
       {
         id: 10,
+        tipe: "PG",
         soal: "Langkah pertama dalam menyunting teks prosedur adalah...",
         opsi: ["Memperbaiki ejaan", "Memeriksa urutan langkah", "Menambah gambar", "Menulis ulang"],
         jawaban: 1,
@@ -414,6 +414,7 @@ const konten: Konten = {
     kuis: [
       {
         id: 1,
+        tipe: "PG",
         soal: "Sebutkan struktur teks prosedur yang benar!",
         opsi: ["Langkah → Bahan → Tujuan", "Tujuan → Bahan/alat → Langkah", "Bahan → Tujuan → Langkah", "Langkah → Tujuan → Bahan"],
         jawaban: 1,
@@ -421,6 +422,7 @@ const konten: Konten = {
       },
       {
         id: 2,
+        tipe: "PG",
         soal: "Kalimat 'Siapkan semua bahan terlebih dahulu' menggunakan pola kalimat...",
         opsi: ["Deklaratif", "Imperatif", "Interogatif", "Eksklamatif"],
         jawaban: 1,
@@ -428,6 +430,7 @@ const konten: Konten = {
       },
       {
         id: 3,
+        tipe: "PG",
         soal: "Berapa jumlah langkah minimal dalam teks prosedur sederhana?",
         opsi: ["1 langkah", "2-3 langkah", "5-7 langkah", "8+ langkah"],
         jawaban: 1,
@@ -435,6 +438,7 @@ const konten: Konten = {
       },
       {
         id: 4,
+        tipe: "PG",
         soal: "Resep masakan termasuk jenis teks prosedur...",
         opsi: ["Sederhana", "Protokol", "Kompleks", "Deklaratif"],
         jawaban: 2,
@@ -442,6 +446,7 @@ const konten: Konten = {
       },
       {
         id: 5,
+        tipe: "PG",
         soal: "Konjungsi 'lalu' dalam teks prosedur berfungsi untuk...",
         opsi: ["Menambahkan informasi", "Menunjukkan urutan", "Menyatakan sebab", "Menyatakan pertentangan"],
         jawaban: 1,
@@ -449,6 +454,7 @@ const konten: Konten = {
       },
       {
         id: 6,
+        tipe: "PG",
         soal: "Istilah 'sangrai', 'tumis', 'kukus' termasuk dalam bidang...",
         opsi: ["Teknologi", "Memasak", "Pertanian", "Kesehatan"],
         jawaban: 1,
@@ -456,6 +462,7 @@ const konten: Konten = {
       },
       {
         id: 7,
+        tipe: "PG",
         soal: "Teks prosedur yang baik harus memenuhi tiga kriteria, yaitu...",
         opsi: ["Panjang, detail, rumit", "Jelas, urut, lengkap", "Indah, puitis, bermajas", "Singkat, padat, ambigu"],
         jawaban: 1,
@@ -463,6 +470,7 @@ const konten: Konten = {
       },
       {
         id: 8,
+        tipe: "PG",
         soal: "Manakah kalimat imperatif yang paling efektif?",
         opsi: ["Potong bawang.", "Potong bawang merah berbentuk cincin halus.", "Bawang dipotong.", "Pemotongan bawang dilakukan."],
         jawaban: 1,
@@ -470,6 +478,7 @@ const konten: Konten = {
       },
       {
         id: 9,
+        tipe: "PG",
         soal: "Prosedur protokol berbeda dengan prosedur kompleks dalam hal...",
         opsi: ["Jumlah bahan", "Waktu pengerjaan", "Fleksibilitas urutan langkah", "Bahasa yang digunakan"],
         jawaban: 2,
@@ -477,6 +486,7 @@ const konten: Konten = {
       },
       {
         id: 10,
+        tipe: "PG",
         soal: "Langkah terakhir sebelum mengumpulkan teks prosedur adalah...",
         opsi: ["Menulis judul", "Uji coba dan revisi", "Mencari bahan", "Membaca teori"],
         jawaban: 1,

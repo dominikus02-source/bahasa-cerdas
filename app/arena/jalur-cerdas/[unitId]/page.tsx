@@ -55,11 +55,13 @@ export default async function UnitDetailPage({ params }: { params: Promise<{ uni
   const hasPraktik = konten?.praktik?.petunjuk
   const hasKuis = konten?.kuis?.length > 0
 
-  const progress = await db.userUnitProgress.findUnique({
-    where: { userId_unitId: { userId: user.id, unitId } },
-  })
-
-  const isCompleted = progress?.completed ?? false
+  let isCompleted = false
+  try {
+    const progress = await db.userUnitProgress.findUnique({
+      where: { userId_unitId: { userId: user.id, unitId } },
+    })
+    isCompleted = progress?.completed ?? false
+  } catch {} // progress is a nice-to-have, not critical
 
   return (
     <div className="px-4 py-6 arena-page">
@@ -69,11 +71,11 @@ export default async function UnitDetailPage({ params }: { params: Promise<{ uni
       </Link>
 
       <div className="flex items-center gap-3 mb-6">
-        <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${unit.level.color} flex items-center justify-center shadow-lg`}>
+        <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${unit.level?.color ?? "from-violet-500 to-purple-600"} flex items-center justify-center shadow-lg`}>
           {getUnitIcon(unit.emoji)}
         </div>
         <div>
-          <p className="text-xs text-violet-600 font-semibold">{unit.level.title}</p>
+          {unit.level && <p className="text-xs text-violet-600 font-semibold">{unit.level.title}</p>}
           <h1 className="text-xl font-bold text-gray-900">{unit.title}</h1>
           {unit.subtitle && <p className="text-sm text-gray-500">{unit.subtitle}</p>}
         </div>

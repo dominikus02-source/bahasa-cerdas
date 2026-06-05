@@ -1,16 +1,6 @@
-import type { Konten, Soal } from "../types";
+import type { Konten } from "../types";
 
 const kd = "3.4/4.4";
-
-function buatSoal(count: number, opsi: number, tema: string): Soal[] {
-  return Array.from({ length: count }, (_, i) => ({
-    id: i + 1,
-    soal: `Contoh soal ${tema} nomor ${i + 1}?`,
-    opsi: ["Pilihan A", "Pilihan B", "Pilihan C", "Pilihan D"],
-    jawaban: 0,
-    penjelasan: `Penjelasan untuk soal ${tema} nomor ${i + 1}`,
-  }));
-}
 
 /* =============================================
    Unit 4: Teks Puisi Rakyat — VII S1
@@ -350,6 +340,7 @@ const konten: Konten = {
     latihan: [
       {
         id: 1,
+        tipe: "PG",
         soal: "Puisi rakyat yang setiap baitnya terdiri dari 4 baris dengan rima a-b-a-b disebut...",
         opsi: ["Syair", "Pantun", "Gurindam", "Seloka"],
         jawaban: 1,
@@ -357,6 +348,7 @@ const konten: Konten = {
       },
       {
         id: 2,
+        tipe: "PG",
         soal: "Baris 1 dan 2 dalam pantun disebut...",
         opsi: ["Isi", "Sampiran", "Amanat", "Tema"],
         jawaban: 1,
@@ -364,6 +356,7 @@ const konten: Konten = {
       },
       {
         id: 3,
+        tipe: "PG",
         soal: "Ciri khas syair yang membedakannya dari pantun adalah...",
         opsi: ["Memiliki sampiran", "Bersajak a-a-a-a", "Hanya 2 baris", "Tidak memiliki isi"],
         jawaban: 1,
@@ -371,6 +364,7 @@ const konten: Konten = {
       },
       {
         id: 4,
+        tipe: "PG",
         soal: "Gurindam terdiri dari... baris dalam satu bait.",
         opsi: ["2", "3", "4", "5"],
         jawaban: 0,
@@ -378,6 +372,7 @@ const konten: Konten = {
       },
       {
         id: 5,
+        tipe: "PG",
         soal: "Dalam gurindam, baris pertama berisi...",
         opsi: ["Akibat", "Kesimpulan", "Syarat atau sebab", "Sampiran"],
         jawaban: 2,
@@ -385,6 +380,7 @@ const konten: Konten = {
       },
       {
         id: 6,
+        tipe: "PG",
         soal: "Berikut yang bukan merupakan ciri puisi rakyat adalah...",
         opsi: ["Anonim", "Terikat aturan", "Diketahui pengarangnya", "Bersifat lisan"],
         jawaban: 2,
@@ -392,6 +388,7 @@ const konten: Konten = {
       },
       {
         id: 7,
+        tipe: "PG",
         soal: "Pantun yang berisi tebakan yang harus dijawab disebut pantun...",
         opsi: ["Nasihat", "Jenaka", "Teka-teki", "Agama"],
         jawaban: 2,
@@ -399,6 +396,7 @@ const konten: Konten = {
       },
       {
         id: 8,
+        tipe: "PG",
         soal: "Jumlah suku kata dalam setiap baris pantun adalah...",
         opsi: ["5-7 suku kata", "8-12 suku kata", "10-15 suku kata", "12-18 suku kata"],
         jawaban: 1,
@@ -406,6 +404,7 @@ const konten: Konten = {
       },
       {
         id: 9,
+        tipe: "PG",
         soal: "Sastrawan terkenal yang menulis Gurindam Dua Belas adalah...",
         opsi: ["Chairil Anwar", "Raja Ali Haji", "Sutan Takdir Alisjahbana", "W.S. Rendra"],
         jawaban: 1,
@@ -413,6 +412,7 @@ const konten: Konten = {
       },
       {
         id: 10,
+        tipe: "PG",
         soal: "Nilai yang terkandung dalam puisi rakyat yang mengajarkan tentang baik-buruk perbuatan disebut nilai...",
         opsi: ["Religius", "Moral", "Budaya", "Sosial"],
         jawaban: 1,
@@ -444,6 +444,7 @@ const konten: Konten = {
     kuis: [
       {
         id: 1,
+        tipe: "PG",
         soal: "Apa rima yang benar untuk satu bait pantun?",
         opsi: ["a-a-a-a", "a-b-a-b", "a-b-b-a", "a-a-b-b"],
         jawaban: 1,
@@ -451,6 +452,7 @@ const konten: Konten = {
       },
       {
         id: 2,
+        tipe: "PG",
         soal: "Bagian pantun yang berisi pesan atau nasihat adalah...",
         opsi: ["Baris 1-2 (sampiran)", "Baris 3-4 (isi)", "Baris 1 saja", "Baris 4 saja"],
         jawaban: 1,
@@ -458,6 +460,7 @@ const konten: Konten = {
       },
       {
         id: 3,
+        tipe: "PG",
         soal: "Berapa jumlah bait minimal syair yang dapat berdiri sendiri?",
         opsi: ["1 bait", "2 bait", "3 bait", "4 bait"],
         jawaban: 0,
@@ -465,6 +468,7 @@ const konten: Konten = {
       },
       {
         id: 4,
+        tipe: "PG",
         soal: "Puisi rakyat yang berfungsi untuk menyampaikan nasihat secara singkat dan padat adalah...",
         opsi: ["Pantun", "Syair", "Gurindam", "Karmina"],
         jawaban: 2,
@@ -472,6 +476,7 @@ const konten: Konten = {
       },
       {
         id: 5,
+        tipe: "PG",
         soal: "Jika sebuah puisi memiliki rima a-a-a-a dan 4 baris per bait, puisi tersebut adalah...",
         opsi: ["Pantun", "Syair", "Gurindam", "Seloka"],
         jawaban: 1,
@@ -479,6 +484,7 @@ const konten: Konten = {
       },
       {
         id: 6,
+        tipe: "PG",
         soal: "Dalam gurindam, hubungan baris 1 dan 2 bersifat...",
         opsi: ["Sampiran dan isi", "Syarat dan akibat", "Setara", "Pertentangan"],
         jawaban: 1,
@@ -486,6 +492,7 @@ const konten: Konten = {
       },
       {
         id: 7,
+        tipe: "PG",
         soal: "Nilai yang berkaitan dengan ajaran keagamaan dalam puisi rakyat disebut nilai...",
         opsi: ["Moral", "Sosial", "Religius", "Pendidikan"],
         jawaban: 2,
@@ -493,6 +500,7 @@ const konten: Konten = {
       },
       {
         id: 8,
+        tipe: "PG",
         soal: "Pilihan kata yang tepat untuk melengkapi pantun rima a-b-a-b: 'Belanja ke pasar membeli ketan' (a) — 'Jangan lupa membeli roti' (b) — '...' — 'Supaya hidupmu selalu berarti' (b). Baris 3 yang tepat adalah...",
         opsi: ["Rajin-rajinlah membaca buku (a)", "Pergi ke hutan mencari jamur (a)", "Bersikaplah jujur dan santun (a)", "Belajar dengan tekun dan giat (a)"],
         jawaban: 2,
@@ -500,6 +508,7 @@ const konten: Konten = {
       },
       {
         id: 9,
+        tipe: "PG",
         soal: "Puisi rakyat bersifat anonim, artinya...",
         opsi: ["Memiliki banyak penulis", "Tidak diketahui pengarangnya", "Ditulis oleh rakyat", "Diterbitkan secara anonim"],
         jawaban: 1,
@@ -507,6 +516,7 @@ const konten: Konten = {
       },
       {
         id: 10,
+        tipe: "PG",
         soal: "Contoh kata yang tepat untuk mengakhiri baris pantun dengan rima '-at' di baris ke-4 adalah...",
         opsi: ["Pergi", "Cepat", "Ketupat", "Tidur"],
         jawaban: 2,

@@ -1,16 +1,6 @@
-import type { Konten, Soal } from "../types";
+import type { Konten } from "../types";
 
 const kd = "3.2/4.2";
-
-function buatSoal(count: number, opsi: number, tema: string): Soal[] {
-  return Array.from({ length: count }, (_, i) => ({
-    id: i + 1,
-    soal: `Contoh soal ${tema} nomor ${i + 1}?`,
-    opsi: ["Pilihan A", "Pilihan B", "Pilihan C", "Pilihan D"],
-    jawaban: 0,
-    penjelasan: `Penjelasan untuk soal ${tema} nomor ${i + 1}`,
-  }));
-}
 
 /* =============================================
    Unit 2: Teks Cerita Rakyat (Fabel dan Legenda) — VII S1
@@ -304,6 +294,7 @@ const konten: Konten = {
     latihan: [
       {
         id: 1,
+        tipe: "PG",
         soal: "Cerita rakyat yang tokoh utamanya hewan yang berperilaku seperti manusia disebut...",
         opsi: ["Legenda", "Fabel", "Mite", "Sage"],
         jawaban: 1,
@@ -311,6 +302,7 @@ const konten: Konten = {
       },
       {
         id: 2,
+        tipe: "PG",
         soal: "Malin Kundang termasuk jenis cerita rakyat...",
         opsi: ["Fabel", "Mite", "Legenda", "Dongeng biasa"],
         jawaban: 2,
@@ -318,6 +310,7 @@ const konten: Konten = {
       },
       {
         id: 3,
+        tipe: "PG",
         soal: "Berikut yang bukan merupakan ciri-ciri teks cerita rakyat adalah...",
         opsi: ["Disampaikan secara lisan", "Bersifat anonim", "Memiliki pengarang yang jelas", "Mengandung pesan moral"],
         jawaban: 2,
@@ -325,6 +318,7 @@ const konten: Konten = {
       },
       {
         id: 4,
+        tipe: "PG",
         soal: "Bagian struktur cerita rakyat yang berisi pesan moral adalah...",
         opsi: ["Orientasi", "Komplikasi", "Resolusi", "Koda"],
         jawaban: 3,
@@ -332,6 +326,7 @@ const konten: Konten = {
       },
       {
         id: 5,
+        tipe: "PG",
         soal: "Kata 'konon', 'syahdan', dan 'baginda' termasuk dalam kaidah kebahasaan...",
         opsi: ["Konjungsi temporal", "Kata arkais", "Kata kerja tindakan", "Kalimat langsung"],
         jawaban: 1,
@@ -339,6 +334,7 @@ const konten: Konten = {
       },
       {
         id: 6,
+        tipe: "PG",
         soal: "Berikut ini yang membedakan fabel dan legenda adalah...",
         opsi: ["Fabel bersifat anonim, legenda tidak", "Fabel tokohnya hewan, legenda tokohnya manusia", "Fabel tidak memiliki pesan moral, legenda memiliki", "Fabel lebih panjang dari legenda"],
         jawaban: 1,
@@ -346,6 +342,7 @@ const konten: Konten = {
       },
       {
         id: 7,
+        tipe: "PG",
         soal: "Contoh konjungsi temporal yang tepat dalam cerita rakyat adalah...",
         opsi: ["dan, atau, tetapi", "karena, sehingga, meskipun", "kemudian, setelah itu, akhirnya", "yang, di, ke"],
         jawaban: 2,
@@ -353,6 +350,7 @@ const konten: Konten = {
       },
       {
         id: 8,
+        tipe: "PG",
         soal: "Nilai yang berkaitan dengan ajaran baik dan buruk dalam cerita rakyat disebut nilai...",
         opsi: ["Sosial", "Budaya", "Moral", "Pendidikan"],
         jawaban: 2,
@@ -360,6 +358,7 @@ const konten: Konten = {
       },
       {
         id: 9,
+        tipe: "PG",
         soal: "Bagian cerita yang memperkenalkan tokoh, tempat, dan waktu disebut...",
         opsi: ["Orientasi", "Komplikasi", "Klimaks", "Koda"],
         jawaban: 0,
@@ -367,6 +366,7 @@ const konten: Konten = {
       },
       {
         id: 10,
+        tipe: "PG",
         soal: "Salah satu nilai budaya dalam legenda Tangkuban Perahu adalah...",
         opsi: ["Cara membuat perahu", "Hormat pada orang tua", "Asal-usul gunung dan hubungannya dengan adat Sunda", "Teknik bercocok tanam"],
         jawaban: 2,
@@ -397,6 +397,7 @@ const konten: Konten = {
     kuis: [
       {
         id: 1,
+        tipe: "PG",
         soal: "Siapa tokoh utama dalam legenda Malin Kundang?",
         opsi: ["Seorang raja", "Seorang nelayan miskin", "Seorang anak yang durhaka", "Seekor kancil"],
         jawaban: 2,
@@ -404,6 +405,7 @@ const konten: Konten = {
       },
       {
         id: 2,
+        tipe: "PG",
         soal: "Cerita rakyat yang menjelaskan asal-usul suatu tempat disebut...",
         opsi: ["Fabel", "Mite", "Legenda", "Cerpen"],
         jawaban: 2,
@@ -411,6 +413,7 @@ const konten: Konten = {
       },
       {
         id: 3,
+        tipe: "PG",
         soal: "Urutan struktur teks cerita rakyat yang benar adalah...",
         opsi: ["Komplikasi → Orientasi → Resolusi → Koda", "Orientasi → Resolusi → Komplikasi → Koda", "Orientasi → Komplikasi → Resolusi → Koda", "Koda → Orientasi → Komplikasi → Resolusi"],
         jawaban: 2,
@@ -418,6 +421,7 @@ const konten: Konten = {
       },
       {
         id: 4,
+        tipe: "PG",
         soal: "Berikut ini yang termasuk kata arkais adalah...",
         opsi: ["Rumah", "Syahdan", "Buku", "Meja"],
         jawaban: 1,
@@ -425,6 +429,7 @@ const konten: Konten = {
       },
       {
         id: 5,
+        tipe: "PG",
         soal: "Amanat yang dapat dipetik dari legenda Malin Kundang adalah...",
         opsi: ["Rajinlah bekerja agar menjadi kaya", "Anak harus berbakti kepada orang tua", "Jangan pergi merantau", "Hindari bersahabat dengan orang kaya"],
         jawaban: 1,
@@ -432,6 +437,7 @@ const konten: Konten = {
       },
       {
         id: 6,
+        tipe: "PG",
         soal: "Kata 'kemudian', 'setelah itu', 'akhirnya' dalam cerita rakyat berfungsi sebagai...",
         opsi: ["Kata kerja", "Kata sifat", "Konjungsi temporal", "Kata ganti"],
         jawaban: 2,
@@ -439,6 +445,7 @@ const konten: Konten = {
       },
       {
         id: 7,
+        tipe: "PG",
         soal: "Dalam fabel 'Kura-kura dan Monyet', tokoh kura-kura menggambarkan watak...",
         opsi: ["Licik dan serakah", "Cerdik dan pintar", "Sabar dan baik hati", "Pemarah dan kejam"],
         jawaban: 2,
@@ -446,6 +453,7 @@ const konten: Konten = {
       },
       {
         id: 8,
+        tipe: "PG",
         soal: "Perbedaan utama fabel dan legenda terletak pada...",
         opsi: ["Panjang cerita", "Jenis tokohnya", "Bahasa yang digunakan", "Jumlah tokoh"],
         jawaban: 1,
@@ -453,6 +461,7 @@ const konten: Konten = {
       },
       {
         id: 9,
+        tipe: "PG",
         soal: "Bagian cerita di mana konflik mulai muncul dan berkembang disebut...",
         opsi: ["Orientasi", "Komplikasi", "Resolusi", "Koda"],
         jawaban: 1,
@@ -460,6 +469,7 @@ const konten: Konten = {
       },
       {
         id: 10,
+        tipe: "PG",
         soal: "Tujuan utama fabel adalah...",
         opsi: ["Menjelaskan asal-usul tempat", "Menyampaikan pesan moral melalui perilaku hewan", "Menghibur tanpa pesan tertentu", "Menceritakan kisah nyata"],
         jawaban: 1,

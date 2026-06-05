@@ -1,14 +1,4 @@
-import type { Konten, Soal } from "../types";
-
-function buatSoal(count: number, opsi: number, tema: string): Soal[] {
-  return Array.from({ length: count }, (_, i) => ({
-    id: i + 1,
-    soal: `Contoh soal ${tema} nomor ${i + 1}?`,
-    opsi: ["Pilihan A", "Pilihan B", "Pilihan C", "Pilihan D"],
-    jawaban: 0,
-    penjelasan: `Penjelasan untuk soal ${tema} nomor ${i + 1}`,
-  }));
-}
+import type { Konten } from "../types";
 
 /* =============================================
    Unit 6: Teks Surat — VII S2
@@ -346,6 +336,7 @@ const konten: Konten = {
     latihan: [
       {
         id: 1,
+        tipe: "PG",
         soal: "Surat yang ditulis untuk keperluan formal dan kedinasan disebut...",
         opsi: ["Surat pribadi", "Surat resmi", "Surat cinta", "Surat kabar"],
         jawaban: 1,
@@ -353,6 +344,7 @@ const konten: Konten = {
       },
       {
         id: 2,
+        tipe: "PG",
         soal: "Berikut adalah ciri surat pribadi, kecuali...",
         opsi: ["Bahasa santai dan akrab", "Format tidak kaku", "Menggunakan kop surat", "Sapaan seperti 'Kak' atau 'Sobat'"],
         jawaban: 2,
@@ -360,6 +352,7 @@ const konten: Konten = {
       },
       {
         id: 3,
+        tipe: "PG",
         soal: "Bagian surat resmi yang berisi inti atau pokok surat disebut...",
         opsi: ["Nomor surat", "Hal/Perihal", "Lampiran", "Kop surat"],
         jawaban: 1,
@@ -367,6 +360,7 @@ const konten: Konten = {
       },
       {
         id: 4,
+        tipe: "PG",
         soal: "Salam pembuka yang tepat untuk surat resmi adalah...",
         opsi: ["Halo, Sobat!", "Dengan hormat,", "Assalamu'alaikum,", "Hai, apa kabar?"],
         jawaban: 1,
@@ -374,6 +368,7 @@ const konten: Konten = {
       },
       {
         id: 5,
+        tipe: "PG",
         soal: "Singkatan 'Yth.' pada surat resmi memiliki kepanjangan...",
         opsi: ["Yang terkenal", "Yang Terhormat", "Yang Tersayang", "Yang Terakhir"],
         jawaban: 1,
@@ -381,6 +376,7 @@ const konten: Konten = {
       },
       {
         id: 6,
+        tipe: "PG",
         soal: "Fungsi nomor surat pada surat resmi adalah...",
         opsi: ["Hiasan surat", "Referensi administrasi", "Pengganti tanggal", "Penanda pengirim"],
         jawaban: 1,
@@ -388,6 +384,7 @@ const konten: Konten = {
       },
       {
         id: 7,
+        tipe: "PG",
         soal: "Berikut yang termasuk surat pribadi adalah...",
         opsi: ["Surat undangan rapat", "Surat izin sekolah", "Surat untuk sahabat pena", "Surat lamaran kerja"],
         jawaban: 2,
@@ -395,6 +392,7 @@ const konten: Konten = {
       },
       {
         id: 8,
+        tipe: "PG",
         soal: "Langkah pertama dalam menyunting surat adalah...",
         opsi: ["Memperbaiki ejaan", "Memeriksa struktur", "Menambah lampiran", "Mengganti bahasa"],
         jawaban: 1,
@@ -402,6 +400,7 @@ const konten: Konten = {
       },
       {
         id: 9,
+        tipe: "PG",
         soal: "Bahasa yang digunakan dalam surat resmi harus...",
         opsi: ["Santai dan gaul", "Baku dan formal", "Campuran bahasa daerah", "Singkat dan tidak jelas"],
         jawaban: 1,
@@ -409,6 +408,7 @@ const konten: Konten = {
       },
       {
         id: 10,
+        tipe: "PG",
         soal: "Perbedaan utama surat pribadi dan surat resmi terletak pada...",
         opsi: ["Warna kertas", "Panjang surat", "Bahasa dan format", "Jumlah paragraf"],
         jawaban: 2,
@@ -440,6 +440,7 @@ const konten: Konten = {
     kuis: [
       {
         id: 1,
+        tipe: "PG",
         soal: "Media komunikasi tertulis yang digunakan untuk menyampaikan pesan dari satu pihak ke pihak lain disebut...",
         opsi: ["Buku", "Surat", "Majalah", "Koran"],
         jawaban: 1,
@@ -447,6 +448,7 @@ const konten: Konten = {
       },
       {
         id: 2,
+        tipe: "PG",
         soal: "Bagian surat resmi yang berisi jumlah dokumen yang disertakan adalah...",
         opsi: ["Nomor surat", "Lampiran", "Hal", "Alamat tujuan"],
         jawaban: 1,
@@ -454,6 +456,7 @@ const konten: Konten = {
       },
       {
         id: 3,
+        tipe: "PG",
         soal: "Salam penutup yang tepat untuk surat pribadi adalah...",
         opsi: ["Hormat kami,", "Salam kangen,", "Demikian surat ini,", "Atas perhatiannya,"],
         jawaban: 1,
@@ -461,6 +464,7 @@ const konten: Konten = {
       },
       {
         id: 4,
+        tipe: "PG",
         soal: "Fungsi kop surat pada surat resmi adalah...",
         opsi: ["Hiasan surat", "Identitas resmi pengirim", "Pengganti nomor surat", "Penanda waktu"],
         jawaban: 1,
@@ -468,6 +472,7 @@ const konten: Konten = {
       },
       {
         id: 5,
+        tipe: "PG",
         soal: "Kata 'mohon' dalam surat resmi lebih tepat digunakan daripada kata...",
         opsi: ["Minta", "Harap", "Ingin", "Mau"],
         jawaban: 0,
@@ -475,6 +480,7 @@ const konten: Konten = {
       },
       {
         id: 6,
+        tipe: "PG",
         soal: "Penulisan alamat tujuan surat resmi yang benar diawali dengan...",
         opsi: ["Kepada Yth.", "Yth.", "Untuk", "Kpd."],
         jawaban: 1,
@@ -482,6 +488,7 @@ const konten: Konten = {
       },
       {
         id: 7,
+        tipe: "PG",
         soal: "Surat pribadi yang baik sebaiknya menggunakan bahasa yang...",
         opsi: ["Kaku dan formal", "Santai dan hangat", "Ilmiah dan rumit", "Singkat dan kasar"],
         jawaban: 1,
@@ -489,6 +496,7 @@ const konten: Konten = {
       },
       {
         id: 8,
+        tipe: "PG",
         soal: "Langkah pertama menulis surat adalah...",
         opsi: ["Menulis isi", "Menentukan tujuan dan penerima", "Membeli amplop", "Menyiapkan kertas"],
         jawaban: 1,
@@ -496,6 +504,7 @@ const konten: Konten = {
       },
       {
         id: 9,
+        tipe: "PG",
         soal: "Perbedaan surat resmi dan pribadi yang paling mencolok adalah...",
         opsi: ["Warna amplop", "Penggunaan kop surat dan nomor surat", "Jumlah halaman", "Ada tidaknya perangko"],
         jawaban: 1,
@@ -503,6 +512,7 @@ const konten: Konten = {
       },
       {
         id: 10,
+        tipe: "PG",
         soal: "Sikap yang perlu diperhatikan saat menulis surat resmi adalah...",
         opsi: ["Santai dan tidak serius", "Sopan dan profesional", "Cepat dan asal jadi", "Marah dan tegas"],
         jawaban: 1,

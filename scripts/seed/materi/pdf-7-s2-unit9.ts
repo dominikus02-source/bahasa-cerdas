@@ -1,16 +1,6 @@
-import type { Konten, Soal } from "../types";
+import type { Konten } from "../types";
 
 const kd = "3.9/4.9";
-
-function buatSoal(count: number, opsi: number, tema: string): Soal[] {
-  return Array.from({ length: count }, (_, i) => ({
-    id: i + 1,
-    soal: `Contoh soal ${tema} nomor ${i + 1}?`,
-    opsi: ["Pilihan A", "Pilihan B", "Pilihan C", "Pilihan D"],
-    jawaban: 0,
-    penjelasan: `Penjelasan untuk soal ${tema} nomor ${i + 1}`,
-  }));
-}
 
 /* ============================================
    Unit 9: Giat Literasi II: Teks Nonfiksi (Pengaya) — VII S2
@@ -369,6 +359,7 @@ const konten: Konten = {
     latihan: [
       {
         id: 1,
+        tipe: "PG",
         soal: "Teks nonfiksi adalah karangan yang ditulis berdasarkan...",
         opsi: ["Imajinasi pengarang", "Fakta dan data yang dapat dibuktikan", "Opini penulis semata", "Cerita rakyat turun-temurun"],
         jawaban: 1,
@@ -376,6 +367,7 @@ const konten: Konten = {
       },
       {
         id: 2,
+        tipe: "PG",
         soal: "Berikut ini yang merupakan contoh teks nonfiksi adalah...",
         opsi: ["Cerpen 'Liburan ke Pantai'", "Biografi 'Ki Hajar Dewantara: Bapak Pendidikan Nasional'", "Fabel 'Kura-kura dan Monyet'", "Legenda 'Tangkuban Perahu'"],
         jawaban: 1,
@@ -383,6 +375,7 @@ const konten: Konten = {
       },
       {
         id: 3,
+        tipe: "PG",
         soal: "Ciri bahasa yang digunakan dalam teks nonfiksi adalah...",
         opsi: ["Konotatif dan penuh majas", "Denotatif dan lugas", "Figuratif dan puitis", "Ambigu dan multitafsir"],
         jawaban: 1,
@@ -390,6 +383,7 @@ const konten: Konten = {
       },
       {
         id: 4,
+        tipe: "PG",
         soal: "Berikut yang bukan merupakan ciri teks nonfiksi adalah...",
         opsi: ["Bersifat faktual", "Mengandung data dan bukti", "Bersifat objektif", "Menggunakan alur cerita"],
         jawaban: 3,
@@ -397,6 +391,7 @@ const konten: Konten = {
       },
       {
         id: 5,
+        tipe: "PG",
         soal: "Kepanjangan SQ3R dalam metode membaca aktif adalah...",
         opsi: ["Survey, Question, Read, Recite, Review", "Study, Query, Research, Recite, Revise", "Scan, Query, Read, Repeat, Review", "Survey, Question, Read, Repeat, Recall"],
         jawaban: 0,
@@ -404,6 +399,7 @@ const konten: Konten = {
       },
       {
         id: 6,
+        tipe: "PG",
         soal: "Jenis teks nonfiksi yang berisi riwayat hidup seseorang yang ditulis oleh orang lain disebut...",
         opsi: ["Otobiografi", "Biografi", "Esai", "Artikel"],
         jawaban: 1,
@@ -411,6 +407,7 @@ const konten: Konten = {
       },
       {
         id: 7,
+        tipe: "PG",
         soal: "Struktur teks nonfiksi yang benar adalah...",
         opsi: ["Orientasi — Komplikasi — Resolusi — Koda", "Abstrak — Orientasi — Klimaks — Antiklimaks", "Pendahuluan — Isi — Penutup", "Pembukaan — Isi — Klimaks — Penutup"],
         jawaban: 2,
@@ -418,6 +415,7 @@ const konten: Konten = {
       },
       {
         id: 8,
+        tipe: "PG",
         soal: "Perbedaan utama teks fiksi dan nonfiksi terletak pada...",
         opsi: ["Panjang tulisan", "Berdasarkan fakta atau imajinasi", "Bahasa yang digunakan", "Jumlah halaman"],
         jawaban: 1,
@@ -425,6 +423,7 @@ const konten: Konten = {
       },
       {
         id: 9,
+        tipe: "PG",
         soal: "Kata 'fotosintesis', 'ekosistem', dan 'demokrasi' dalam teks nonfiksi termasuk...",
         opsi: ["Kata konotatif", "Istilah teknis", "Kata ganti", "Konjungsi"],
         jawaban: 1,
@@ -432,6 +431,7 @@ const konten: Konten = {
       },
       {
         id: 10,
+        tipe: "PG",
         soal: "Tujuan utama menulis resensi buku nonfiksi adalah...",
         opsi: ["Menghibur pembaca dengan cerita", "Memberikan tanggapan kritis tentang isi buku", "Membuat cerita ulang buku tersebut", "Menjual buku kepada pembaca"],
         jawaban: 1,
@@ -463,6 +463,7 @@ const konten: Konten = {
     kuis: [
       {
         id: 1,
+        tipe: "PG",
         soal: "Manakah pernyataan yang paling tepat tentang teks nonfiksi?",
         opsi: [
           "Teks nonfiksi selalu ditulis oleh akademisi dan diterbitkan oleh penerbit besar",
@@ -475,6 +476,7 @@ const konten: Konten = {
       },
       {
         id: 2,
+        tipe: "PG",
         soal: "Seorang siswa membaca artikel tentang 'Manfaat Membaca 15 Menit Sehari'. Artikel tersebut menyertakan data dari Kementerian Pendidikan dan hasil penelitian universitas. Teks ini termasuk...",
         opsi: ["Fiksi ilmiah", "Nonfiksi karena mengandung data dan fakta", "Cerita pendek", "Opini tanpa fakta"],
         jawaban: 1,
@@ -482,6 +484,7 @@ const konten: Konten = {
       },
       {
         id: 3,
+        tipe: "PG",
         soal: "Dalam metode SQ3R, langkah 'Question' dilakukan setelah 'Survey'. Tujuan langkah Question adalah...",
         opsi: [
           "Menjawab pertanyaan dari guru",
@@ -494,6 +497,7 @@ const konten: Konten = {
       },
       {
         id: 4,
+        tipe: "PG",
         soal: "Berikut ini kalimat yang menggunakan bahasa denotatif (makna sebenarnya) adalah...",
         opsi: [
           "Matahari tersenyum ramah menyambut pagi",
@@ -506,6 +510,7 @@ const konten: Konten = {
       },
       {
         id: 5,
+        tipe: "PG",
         soal: "Perbedaan esai dan artikel terletak pada...",
         opsi: [
           "Esai selalu lebih panjang dari artikel",
@@ -518,6 +523,7 @@ const konten: Konten = {
       },
       {
         id: 6,
+        tipe: "PG",
         soal: "Jika sebuah buku biografi menyebut tokoh 'dilahirkan di keluarga miskin namun berkat kerja keras menjadi ilmuwan terkenal', pernyataan berikut yang paling tepat adalah...",
         opsi: [
           "Informasi tersebut belum tentu benar karena biografi bisa berbohong",
@@ -530,6 +536,7 @@ const konten: Konten = {
       },
       {
         id: 7,
+        tipe: "PG",
         soal: "Manakah kelompok kata yang seluruhnya termasuk istilah teknis dalam teks nonfiksi bidang biologi?",
         opsi: ["indah, elok, permai, rupawan", "fotosintesis, klorofil, stomata, epidermis", "cepat, lambat, gesit, pelan", "meja, kursi, papan, buku"],
         jawaban: 1,
@@ -537,6 +544,7 @@ const konten: Konten = {
       },
       {
         id: 8,
+        tipe: "PG",
         soal: "Seorang siswa membuat laporan membaca buku nonfiksi. Ia menulis: 'Buku ini bagus karena menurut saya bagus.' Contoh tersebut menunjukkan kelemahan dalam aspek...",
         opsi: ["Penggunaan bahasa baku", "Argumentasi tidak didukung alasan logis", "Identitas buku tidak lengkap", "Struktur laporan tidak runtut"],
         jawaban: 1,
@@ -544,6 +552,7 @@ const konten: Konten = {
       },
       {
         id: 9,
+        tipe: "PG",
         soal: "Dalam struktur teks nonfiksi, bagian pendahuluan sebaiknya berisi...",
         opsi: [
           "Data dan fakta pendukung secara lengkap",
@@ -556,6 +565,7 @@ const konten: Konten = {
       },
       {
         id: 10,
+        tipe: "PG",
         soal: "Setelah membaca buku 'Sejarah Peradaban Islam', seorang siswa menghubungkan isinya dengan pelajaran IPS di sekolah dan peristiwa yang ia lihat di berita. Langkah ini dalam prosedur menulis tanggapan termasuk...",
         opsi: ["Membuat ringkasan", "Memberi tanggapan pribadi", "Menghubungkan dengan pengetahuan lain", "Menyunting tulisan"],
         jawaban: 2,
