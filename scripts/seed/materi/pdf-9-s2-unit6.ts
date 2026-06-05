@@ -2,16 +2,6 @@ import type { Konten, Soal } from "../types";
 
 const kd = "3.6/4.6";
 
-function buatSoal(count: number, opsi: number, tema: string): Soal[] {
-  return Array.from({ length: count }, (_, i) => ({
-    id: i + 1,
-    soal: `Contoh soal ${tema} nomor ${i + 1}?`,
-    opsi: ["Pilihan A", "Pilihan B", "Pilihan C", "Pilihan D"],
-    jawaban: 0,
-    penjelasan: `Penjelasan untuk soal ${tema} nomor ${i + 1}`,
-  }));
-}
-
 /* =============================================
    Unit 6: Teks Diskusi — IX S2
    KD 3.6/4.6 — Mengidentifikasi Informasi & Menyajikan Teks Diskusi
@@ -359,9 +349,10 @@ const konten: Konten = {
       },
       {
         id: 2,
-        soal: "Urutan struktur teks diskusi yang benar adalah...",
-        opsi: ["Argumen pro → Argumen kontra → Isu → Simpulan", "Isu → Argumen kontra → Argumen pro → Simpulan", "Isu → Argumen pro → Argumen kontra → Simpulan", "Simpulan → Isu → Argumen pro → Argumen kontra"],
-        jawaban: 2,
+        tipe: "BENAR_SALAH",
+        soal: "Urutan struktur teks diskusi yang benar adalah Isu, Argumen Pro, Argumen Kontra, lalu Simpulan.",
+        opsi: ["Benar", "Salah"],
+        jawaban: 0,
         penjelasan: "Urutan struktur teks diskusi yang benar: Isu (pendahuluan) → Argumen Pro → Argumen Kontra → Simpulan.",
       },
       {
@@ -380,23 +371,25 @@ const konten: Konten = {
       },
       {
         id: 5,
-        soal: "Perbedaan utama teks diskusi dengan debat adalah...",
-        opsi: ["Teks diskusi lebih panjang dari debat", "Teks diskusi menyajikan argumen seimbang, debat bertujuan memenangkan argumen", "Debat menggunakan bahasa yang lebih santun", "Teks diskusi hanya ditulis oleh guru"],
-        jawaban: 1,
+        tipe: "BENAR_SALAH",
+        soal: "Perbedaan utama teks diskusi dengan debat adalah teks diskusi menyajikan argumen seimbang, sedangkan debat bertujuan memenangkan argumen.",
+        opsi: ["Benar", "Salah"],
+        jawaban: 0,
         penjelasan: "Teks diskusi menyajikan argumen dari dua sisi secara seimbang tanpa memihak, sedangkan debat bertujuan memenangkan argumen pihak sendiri.",
       },
       {
         id: 6,
+        tipe: "ISIAN",
         soal: "Kata 'seharusnya', 'mungkin', 'pasti' dalam teks diskusi termasuk jenis kata...",
-        opsi: ["Konjungsi", "Modalitas", "Verba material", "Nomina"],
-        jawaban: 1,
+        opsi: ["modalitas"],
+        jawaban: "0",
         penjelasan: "Kata modalitas menyatakan sikap atau keyakinan penulis terhadap isi argumen, seperti keharusan (seharusnya), kemungkinan (mungkin), atau kepastian (pasti).",
       },
       {
         id: 7,
         soal: "Contoh kata rujukan yang tepat dalam teks diskusi adalah...",
         opsi: ["Kemudian, setelah itu", "Berdasarkan penelitian, menurut data", "Karena, sehingga", "Akan tetapi, namun"],
-        jawaban: 1,
+        jawaban: "1",
         penjelasan: "Kata rujukan seperti 'berdasarkan penelitian' dan 'menurut data' merujuk pada sumber informasi untuk memperkuat argumen.",
       },
       {
@@ -446,14 +439,10 @@ const konten: Konten = {
     kuis: [
       {
         id: 1,
-        soal: "Manakah pernyataan yang paling tepat mengenai teks diskusi?",
-        opsi: [
-          "Teks yang berisi cerita fiksi tentang perdebatan dua tokoh",
-          "Teks yang menyajikan argumen pro dan kontra secara objektif dan seimbang",
-          "Teks yang berisi kumpulan pendapat tanpa struktur yang jelas",
-          "Teks yang hanya menyajikan argumen dari satu sisi untuk meyakinkan pembaca",
-        ],
-        jawaban: 1,
+        tipe: "BENAR_SALAH",
+        soal: "Teks diskusi adalah teks yang menyajikan argumen pro dan kontra terhadap suatu isu secara objektif dan seimbang.",
+        opsi: ["Benar", "Salah"],
+        jawaban: 0,
         penjelasan: "Teks diskusi adalah teks yang menyajikan dua sudut pandang (pro dan kontra) terhadap suatu isu secara objektif, seimbang, dan terstruktur.",
       },
       {
@@ -482,15 +471,11 @@ const konten: Konten = {
       },
       {
         id: 4,
-        soal: "Manakah kalimat berikut yang paling tepat untuk bagian isu dalam teks diskusi?",
-        opsi: [
-          "Saya yakin bahwa HP harus dilarang di sekolah karena mengganggu konsentrasi.",
-          "Larangan membawa HP di sekolah telah menjadi perdebatan hangat. Ada yang setuju demi fokus belajar, ada yang menolak karena alasan keamanan dan komunikasi.",
-          "Semua orang setuju bahwa HP tidak boleh dibawa ke sekolah.",
-          "Kesimpulannya, penggunaan HP di sekolah harus diatur dengan ketat.",
-        ],
-        jawaban: 1,
-        penjelasan: "Bagian isu harus netral dan memperkenalkan topik serta kedua sisi argumen tanpa memihak. Pilihan B melakukan hal tersebut.",
+        tipe: "BENAR_SALAH",
+        soal: "Bagian isu dalam teks diskusi harus bersifat netral dan memperkenalkan topik tanpa memihak salah satu argumen.",
+        opsi: ["Benar", "Salah"],
+        jawaban: 0,
+        penjelasan: "Bagian isu harus netral dan memperkenalkan topik serta kedua sisi argumen tanpa memihak.",
       },
       {
         id: 5,
@@ -530,14 +515,10 @@ const konten: Konten = {
       },
       {
         id: 8,
-        soal: "Salah satu etika penting dalam diskusi adalah 'tidak melakukan serangan pribadi'. Maksudnya adalah...",
-        opsi: [
-          "Tidak boleh menyentuh lawan diskusi secara fisik",
-          "Fokus pada argumen, bukan menyerang karakter atau latar belakang pribadi lawan",
-          "Tidak boleh berbicara keras saat menyampaikan argumen",
-          "Tidak boleh menggunakan ponsel saat diskusi",
-        ],
-        jawaban: 1,
+        tipe: "ISIAN",
+        soal: "Serangan terhadap pribadi lawan diskusi alih-alih argumennya dalam etika diskusi disebut...",
+        opsi: ["ad hominem"],
+        jawaban: "0",
         penjelasan: "Serangan pribadi (ad hominem) adalah tindakan menyerang pribadi lawan diskusi, bukan argumennya. Etika diskusi mengharuskan fokus pada isi argumen, bukan pada orangnya.",
       },
       {
@@ -549,7 +530,7 @@ const konten: Konten = {
           "Sikap terhadap isu: pro mendukung, kontra menentang",
           "Argumen pro ditulis lebih dahulu karena lebih penting",
         ],
-        jawaban: 2,
+        jawaban: "2",
         penjelasan: "Perbedaan mendasar: argumen pro menyatakan dukungan terhadap isu, sedangkan argumen kontra menyatakan penolakan atau ketidaksetujuan terhadap isu.",
       },
       {

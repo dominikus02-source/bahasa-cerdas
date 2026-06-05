@@ -2,16 +2,6 @@ import type { Konten, Soal } from "../types";
 
 const kd = "3.9/4.9";
 
-function buatSoal(count: number, opsi: number, tema: string): Soal[] {
-  return Array.from({ length: count }, (_, i) => ({
-    id: i + 1,
-    soal: `Contoh soal ${tema} nomor ${i + 1}?`,
-    opsi: ["Pilihan A", "Pilihan B", "Pilihan C", "Pilihan D"],
-    jawaban: 0,
-    penjelasan: `Penjelasan untuk soal ${tema} nomor ${i + 1}`,
-  }));
-}
-
 /* =============================================
    Unit 9: Giat Literasi II: Teks Nonfiksi (Pengaya) — VIII S2
    KD 3.9/4.9 — Menganalisis, mengidentifikasi, dan menyajikan teks nonfiksi sebagai bacaan pengaya
@@ -435,24 +425,27 @@ const konten: Konten = {
       },
       {
         id: 4,
-        soal: "Yang membedakan antara fakta dan opini adalah...",
-        opsi: ["Fakta menggunakan kata 'menurut saya', opini menggunakan data", "Fakta dapat dibuktikan kebenarannya, opini bersifat subjektif", "Opini lebih panjang dari fakta", "Fakta hanya ditemukan di buku nonfiksi, opini di buku fiksi"],
-        jawaban: 1,
+        tipe: "BENAR_SALAH",
+        soal: "Fakta adalah pernyataan yang dapat dibuktikan kebenarannya, sedangkan opini bersifat subjektif.",
+        opsi: ["Benar", "Salah"],
+        jawaban: 0,
         penjelasan: "Fakta adalah pernyataan yang dapat dibuktikan kebenarannya secara objektif, sedangkan opini adalah pendapat subjektif yang tidak dapat diuji kebenarannya secara mutlak.",
       },
       {
         id: 5,
+        tipe: "ISIAN",
         soal: "Buku yang berisi kumpulan peta geografis dan data wilayah disebut...",
-        opsi: ["Ensiklopedia", "Atlas", "Kamus", "Biografi"],
-        jawaban: 1,
+        opsi: ["atlas"],
+        jawaban: "atlas",
         penjelasan: "Atlas adalah kumpulan peta geografis yang dilengkapi data seperti batas wilayah, topografi, dan kepadatan penduduk.",
       },
       {
         id: 6,
-        soal: "Istilah 'fotosintesis', 'ekosistem', dan 'klorofil' termasuk dalam kategori...",
-        opsi: ["Kata sifat", "Istilah teknis/ilmiah", "Kata kerja", "Kata ganti"],
-        jawaban: 1,
-        penjelasan: "Istilah-istilah tersebut adalah terminologi ilmiah dalam bidang biologi yang memiliki makna spesifik dan pasti.",
+        tipe: "BENAR_SALAH",
+        soal: "Istilah 'fotosintesis', 'ekosistem', dan 'klorofil' termasuk dalam kategori kata sifat.",
+        opsi: ["Benar", "Salah"],
+        jawaban: "1",
+        penjelasan: "Istilah-istilah tersebut adalah terminologi ilmiah dalam bidang biologi yang memiliki makna spesifik dan pasti, bukan kata sifat.",
       },
       {
         id: 7,
@@ -508,8 +501,9 @@ const konten: Konten = {
     kuis: [
       {
         id: 1,
-        soal: "Perbedaan utama antara buku fiksi dan nonfiksi terletak pada...",
-        opsi: ["Jumlah halaman dan ketebalan buku", "Sifat isinya: imajinatif vs faktual", "Warna sampul dan desain grafis", "Harga jual di pasaran"],
+        tipe: "BENAR_SALAH",
+        soal: "Perbedaan utama buku fiksi dan nonfiksi terletak pada jumlah halaman dan ketebalan buku.",
+        opsi: ["Benar", "Salah"],
         jawaban: 1,
         penjelasan: "Perbedaan utama: buku fiksi bersifat imajinatif (hasil rekaan), sedangkan buku nonfiksi bersifat faktual (berdasarkan data dan informasi yang dapat diverifikasi).",
       },
@@ -522,16 +516,17 @@ const konten: Konten = {
       },
       {
         id: 3,
+        tipe: "ISIAN",
         soal: "Bagian dari buku nonfiksi yang memuat daftar kata penting beserta nomor halamannya secara alfabetis adalah...",
-        opsi: ["Glosarium", "Indeks", "Daftar isi", "Daftar pustaka"],
-        jawaban: 1,
+        opsi: ["indeks"],
+        jawaban: "indeks",
         penjelasan: "Indeks adalah daftar kata penting yang disusun alfabetis lengkap dengan nomor halaman. Glosarium berisi definisi istilah, bukan nomor halaman.",
       },
       {
         id: 4,
         soal: "Seorang siswa membaca buku 'Sejarah Dunia yang Disembunyikan'. Untuk mengecek kredibilitas buku tersebut, langkah paling tepat adalah...",
         opsi: ["Membaca sampul belakang buku saja", "Mencek daftar pustaka dan latar belakang penulis", "Melihat jumlah halaman buku", "Membaca testimoni di sampul depan"],
-        jawaban: 1,
+        jawaban: "1",
         penjelasan: "Kredibilitas buku nonfiksi dapat dievaluasi dengan memeriksa daftar pustaka (apakah sumbernya terpercaya?) dan latar belakang penulis (apakah ia ahli di bidangnya?).",
       },
       {
@@ -543,9 +538,10 @@ const konten: Konten = {
       },
       {
         id: 6,
-        soal: "Autobiografi berbeda dengan biografi dalam hal...",
-        opsi: ["Jumlah halaman selalu lebih tebal", "Ditulis oleh orang lain, bukan tokohnya sendiri", "Ditulis oleh tokohnya sendiri, bukan orang lain", "Hanya menceritakan masa kecil tokoh"],
-        jawaban: 2,
+        tipe: "BENAR_SALAH",
+        soal: "Autobiografi adalah riwayat hidup seseorang yang ditulis oleh orang lain.",
+        opsi: ["Benar", "Salah"],
+        jawaban: 1,
         penjelasan: "Autobiografi ditulis oleh tokohnya sendiri (first-person), sedangkan biografi ditulis oleh orang lain (third-person) tentang riwayat hidup seorang tokoh.",
       },
       {

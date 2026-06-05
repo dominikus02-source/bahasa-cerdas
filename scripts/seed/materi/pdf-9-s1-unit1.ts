@@ -1,16 +1,4 @@
-import type { Konten, Soal } from "../types";
-
-const kd = "3.1/4.1";
-
-function buatSoal(count: number, opsi: number, tema: string): Soal[] {
-  return Array.from({ length: count }, (_, i) => ({
-    id: i + 1,
-    soal: `Contoh soal ${tema} nomor ${i + 1}?`,
-    opsi: ["Pilihan A", "Pilihan B", "Pilihan C", "Pilihan D"],
-    jawaban: 0,
-    penjelasan: `Penjelasan untuk soal ${tema} nomor ${i + 1}`,
-  }));
-}
+import type { Konten } from "../types";
 
 /* =============================================
    Unit 1: Teks Tanggapan Kritis — IX S1
@@ -335,17 +323,19 @@ const konten: Konten = {
       },
       {
         id: 3,
+        tipe: "ISIAN",
         soal: "Bagian struktur yang berisi gambaran rinci tentang objek tanggapan secara netral disebut...",
-        opsi: ["Konteks", "Deskripsi", "Evaluasi", "Kesimpulan"],
-        jawaban: 1,
+        opsi: ["deskripsi"],
+        jawaban: "deskripsi",
         penjelasan: "Deskripsi adalah bagian yang memaparkan data dan fakta tentang objek secara netral, sebelum masuk ke penilaian.",
       },
       {
         id: 4,
-        soal: "Berikut ini adalah ciri teks tanggapan kritis, kecuali...",
-        opsi: ["Bersifat objektif", "Mengandung alasan logis", "Bertujuan menjatuhkan", "Menggunakan bahasa santun"],
-        jawaban: 2,
-        penjelasan: "Teks tanggapan kritis bertujuan membangun, bukan menjatuhkan. Semua ciri lain (objektif, alasan logis, bahasa santun) adalah ciri teks tanggapan kritis.",
+        tipe: "BENAR_SALAH",
+        soal: "Salah satu ciri teks tanggapan kritis adalah bertujuan menjatuhkan pihak yang dikritik.",
+        opsi: ["Benar", "Salah"],
+        jawaban: 1,
+        penjelasan: "Teks tanggapan kritis bertujuan membangun, bukan menjatuhkan. Disertai alasan dan saran perbaikan.",
       },
       {
         id: 5,
@@ -363,10 +353,11 @@ const konten: Konten = {
       },
       {
         id: 7,
-        soal: "Etika yang harus diperhatikan saat memberi tanggapan kritis adalah...",
-        opsi: ["Menggunakan kata-kata keras agar tegas", "Fokus pada karya, bukan pribadi pembuatnya", "Hanya menyebut kekurangan", "Mengikuti perasaan pribadi"],
-        jawaban: 1,
-        penjelasan: "Etika penting: fokus pada karya yang dinilai, jangan menyerang pribadi pembuatnya. Tanggapan harus santun dan objektif.",
+        tipe: "BENAR_SALAH",
+        soal: "Etika dalam tanggapan kritis mengharuskan kita fokus pada karya, bukan pribadi pembuatnya.",
+        opsi: ["Benar", "Salah"],
+        jawaban: 0,
+        penjelasan: "Etika penting: fokus pada karya yang dinilai, jangan menyerang pribadi pembuatnya.",
       },
       {
         id: 8,
@@ -436,9 +427,10 @@ const konten: Konten = {
       },
       {
         id: 4,
-        soal: "Kata 'sebaiknya', 'akan lebih baik jika', 'disarankan' termasuk jenis kalimat...",
-        opsi: ["Deklaratif", "Interogatif", "Persuasif", "Imperatif"],
-        jawaban: 2,
+        tipe: "ISIAN",
+        soal: "Kalimat yang bersifat mengajak atau merekomendasikan, ditandai dengan kata 'sebaiknya' disebut kalimat...",
+        opsi: ["persuasif"],
+        jawaban: "persuasif",
         penjelasan: "Kalimat persuasif bersifat mengajak atau merekomendasikan, ditandai dengan kata seperti 'sebaiknya', 'akan lebih baik jika'.",
       },
       {
@@ -446,14 +438,15 @@ const konten: Konten = {
         soal: "Seorang siswa menulis: 'Film ini bagus. Saya suka. Aktingnya keren.' Tanggapan ini termasuk...",
         opsi: ["Tanggapan kritis yang baik", "Opini biasa tanpa alasan", "Deskripsi objektif", "Evaluasi terstruktur"],
         jawaban: 1,
-        penjelasan: "Pernyataan tersebut adalah opini biasa karena hanya berisi kesan pribadi ('bagus', 'suka', 'keren') tanpa disertai alasan atau bukti.",
+        penjelasan: "Pernyataan tersebut adalah opini biasa karena hanya berisi kesan pribadi tanpa alasan.",
       },
       {
         id: 6,
-        soal: "Yang bukan merupakan etika dalam memberi tanggapan kritis adalah...",
-        opsi: ["Menggunakan bahasa santun", "Memberi saran untuk perbaikan", "Menyerang pribadi pembuat karya", "Fokus pada karya, bukan pembuatnya"],
-        jawaban: 2,
-        penjelasan: "Menyerang pribadi pembuat karya adalah pelanggaran etika. Tanggapan harus fokus pada karya, bukan orangnya.",
+        tipe: "BENAR_SALAH",
+        soal: "Menyerang pribadi pembuat karya adalah etika yang diperbolehkan dalam tanggapan kritis.",
+        opsi: ["Benar", "Salah"],
+        jawaban: 1,
+        penjelasan: "Menyerang pribadi pembuat karya adalah pelanggaran etika. Tanggapan harus fokus pada karya.",
       },
       {
         id: 7,
@@ -464,10 +457,11 @@ const konten: Konten = {
       },
       {
         id: 8,
-        soal: "Bagian struktur teks tanggapan kritis yang berisi paparan fakta dan data secara netral sebelum penilaian adalah...",
-        opsi: ["Konteks", "Deskripsi", "Evaluasi", "Koda"],
+        tipe: "BENAR_SALAH",
+        soal: "Bagian struktur yang berisi paparan fakta dan data secara netral sebelum penilaian disebut evaluasi.",
+        opsi: ["Benar", "Salah"],
         jawaban: 1,
-        penjelasan: "Deskripsi adalah bagian yang memaparkan fakta dan data tentang objek tanggapan secara netral dan objektif.",
+        penjelasan: "Bagian yang memaparkan fakta dan data secara netral adalah deskripsi, bukan evaluasi.",
       },
       {
         id: 9,

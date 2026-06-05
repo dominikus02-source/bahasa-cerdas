@@ -2,16 +2,6 @@ import type { Konten, Soal } from "../types";
 
 const kd = "3.8/4.8";
 
-function buatSoal(count: number, opsi: number, tema: string): Soal[] {
-  return Array.from({ length: count }, (_, i) => ({
-    id: i + 1,
-    soal: `Contoh soal ${tema} nomor ${i + 1}?`,
-    opsi: ["Pilihan A", "Pilihan B", "Pilihan C", "Pilihan D"],
-    jawaban: 0,
-    penjelasan: `Penjelasan untuk soal ${tema} nomor ${i + 1}`,
-  }));
-}
-
 /* =============================================
    Unit 8: Giat Literasi II: Teks Nonfiksi (Pengaya) — IX S2
    KD 3.8/4.8 — Menganalisis, Mengapresiasi, dan Menyajikan Teks Nonfiksi secara Kritis
@@ -404,9 +394,10 @@ const konten: Konten = {
       },
       {
         id: 3,
-        soal: "Bagian kerangka karangan yang berisi analisis dan interpretasi data disebut...",
-        opsi: ["Pendahuluan", "Landasan teori", "Pembahasan", "Penutup"],
-        jawaban: 2,
+        tipe: "BENAR_SALAH",
+        soal: "Bagian kerangka karangan yang berisi analisis dan interpretasi data disebut pembahasan.",
+        opsi: ["Benar", "Salah"],
+        jawaban: 0,
         penjelasan: "Bagian pembahasan berisi analisis, interpretasi, dan diskusi atas temuan atau data yang telah dikumpulkan.",
       },
       {
@@ -418,14 +409,10 @@ const konten: Konten = {
       },
       {
         id: 5,
-        soal: "Langkah pertama dalam analisis kritis buku nonfiksi adalah...",
-        opsi: [
-          "Membandingkan dengan sumber lain",
-          "Mengevaluasi argumen penulis",
-          "Mengidentifikasi tujuan dan tesis penulis",
-          "Merefleksikan penilaian pribadi",
-        ],
-        jawaban: 2,
+        tipe: "BENAR_SALAH",
+        soal: "Langkah pertama dalam analisis kritis buku nonfiksi adalah mengidentifikasi tujuan dan tesis penulis.",
+        opsi: ["Benar", "Salah"],
+        jawaban: 0,
         penjelasan: "Langkah pertama analisis kritis adalah mengidentifikasi tujuan dan tesis penulis — apa yang ingin disampaikan dan dicapai penulis melalui bukunya.",
       },
       {
@@ -444,9 +431,10 @@ const konten: Konten = {
       },
       {
         id: 8,
+        tipe: "ISIAN",
         soal: "Paragraf yang diawali dengan rincian khusus dan diakhiri dengan simpulan umum disebut paragraf...",
-        opsi: ["Deduktif", "Induktif", "Deskriptif", "Naratif"],
-        jawaban: 1,
+        opsi: ["induktif"],
+        jawaban: "0",
         penjelasan: "Paragraf induktif diawali dengan penjelasan, contoh, atau rincian khusus, lalu diakhiri dengan simpulan atau gagasan utama.",
       },
       {
@@ -458,7 +446,7 @@ const konten: Konten = {
           "Buku sains populer",
           "Biografi tokoh",
         ],
-        jawaban: 2,
+        jawaban: "2",
         penjelasan: "Buku sains populer menyajikan konsep ilmiah dengan bahasa yang mudah dipahami, menggunakan analogi, metafora, ilustrasi, dan infografik.",
       },
       {
@@ -499,14 +487,10 @@ const konten: Konten = {
     kuis: [
       {
         id: 1,
-        soal: "Cermati pernyataan berikut: 'Literasi nonfiksi adalah kemampuan bernavigasi di tengah lautan informasi — membedakan fakta dan opini, mengevaluasi argumen, dan mengambil kesimpulan berbasis bukti.' Pernyataan ini menekankan bahwa literasi nonfiksi merupakan kecakapan...",
-        opsi: [
-          "Pasif yang hanya membutuhkan kemampuan membaca",
-          "Aktif yang melibatkan analisis, evaluasi, dan sintesis informasi",
-          "Hiburan yang bertujuan mengisi waktu luang",
-          "Teknis yang hanya diperlukan oleh akademisi dan peneliti",
-        ],
-        jawaban: 1,
+        tipe: "BENAR_SALAH",
+        soal: "Literasi nonfiksi merupakan kecakapan aktif yang melibatkan analisis, evaluasi, dan sintesis informasi, bukan sekadar membaca pasif.",
+        opsi: ["Benar", "Salah"],
+        jawaban: 0,
         penjelasan: "Literasi nonfiksi adalah proses aktif yang melibatkan analisis, evaluasi, dan sintesis informasi — bukan sekadar membaca pasif. Inilah yang membedakannya dengan literasi dasar.",
       },
       {
@@ -530,14 +514,10 @@ const konten: Konten = {
       },
       {
         id: 4,
-        soal: "Manakah penulisan yang sesuai dengan kaidah EYD untuk penulisan kata depan?",
-        opsi: [
-          "Dibalik fenomena tersebut terdapat fakta menarik",
-          "Di balik fenomena tersebut terdapat fakta menarik",
-          "DiBalik fenomena tersebut terdapat fakta menarik",
-          "Dibalik fenomena tersebut, terdapat fakta menarik",
-        ],
-        jawaban: 1,
+        tipe: "BENAR_SALAH",
+        soal: "Penulisan kata depan yang sesuai EYD adalah 'di balik' (kata depan 'di' ditulis terpisah dari kata yang mengikutinya).",
+        opsi: ["Benar", "Salah"],
+        jawaban: 0,
         penjelasan: "Kata depan 'di' ditulis terpisah dari kata yang mengikutinya. Penulisan yang benar adalah 'di balik'.",
       },
       {
@@ -573,10 +553,11 @@ const konten: Konten = {
       },
       {
         id: 8,
-        soal: "Seorang siswa menulis di jurnal membacanya: 'Buku ini mengubah cara pandang saya terhadap arti kegagalan. Ternyata kegagalan bukan akhir, melainkan bagian dari proses.' Bagian jurnal ini termasuk...",
-        opsi: ["Ringkasan isi buku", "Kutipan favorit", "Respons pribadi dan refleksi", "Identitas buku"],
-        jawaban: 2,
-        penjelasan: "Buku tersebut mencatat respons pribadi — bagaimana buku mengubah cara pandangnya terhadap kegagalan. Ini termasuk catatan refleksi dalam jurnal membaca.",
+        tipe: "ISIAN",
+        soal: "Bagian jurnal membaca yang mencatat bagaimana buku mengubah cara pandang pembaca disebut...",
+        opsi: ["refleksi"],
+        jawaban: "0",
+        penjelasan: "Bagian tersebut mencatat respons pribadi — bagaimana buku mengubah cara pandang pembaca. Ini termasuk catatan refleksi dalam jurnal membaca.",
       },
       {
         id: 9,
@@ -587,7 +568,7 @@ const konten: Konten = {
           "Penyebab daripada menurunnya minat baca adalah gawai.",
           "Menurunnya minat baca penyebabnya adalah dominasi dari gawai yang canggih.",
         ],
-        jawaban: 1,
+        jawaban: "1",
         penjelasan: "Pilihan B adalah yang paling efektif: ringkas (6 kata), subjek-predikat jelas, dan tanpa kata berlebih ('adapun', 'daripada', 'itu adalah karena', 'yang semakin').",
       },
       {

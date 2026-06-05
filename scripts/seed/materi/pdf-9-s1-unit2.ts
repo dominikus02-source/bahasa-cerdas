@@ -1,16 +1,6 @@
-import type { Konten, Soal } from "../types";
+import type { Konten } from "../types";
 
 const kd = "3.2/4.2";
-
-function buatSoal(count: number, opsi: number, tema: string): Soal[] {
-  return Array.from({ length: count }, (_, i) => ({
-    id: i + 1,
-    soal: `Contoh soal ${tema} nomor ${i + 1}?`,
-    opsi: ["Pilihan A", "Pilihan B", "Pilihan C", "Pilihan D"],
-    jawaban: 0,
-    penjelasan: `Penjelasan untuk soal ${tema} nomor ${i + 1}`,
-  }));
-}
 
 /* =============================================
    Unit 2: Teks Cerpen — IX S1
@@ -424,8 +414,9 @@ const konten: Konten = {
       {
         id: 4,
         soal: "Unsur intrinsik cerpen yang berupa gagasan pokok yang mendasari cerita disebut...",
-        opsi: ["Tema", "Amanat", "Alur", "Latar"],
-        jawaban: 0,
+        tipe: "ISIAN",
+        opsi: ["tema"],
+        jawaban: "tema",
         penjelasan: "Tema adalah gagasan pokok atau ide sentral yang mendasari seluruh cerita. Tema bersifat abstrak dan menjadi fondasi cerita.",
       },
       {
@@ -437,9 +428,10 @@ const konten: Konten = {
       },
       {
         id: 6,
-        soal: "Bagian struktur cerpen yang merupakan puncak ketegangan atau konflik disebut...",
-        opsi: ["Orientasi", "Rangkaian peristiwa", "Klimaks", "Resolusi"],
-        jawaban: 2,
+        soal: "Klimaks adalah puncak konflik dalam cerpen yang menentukan perubahan nasib tokoh.",
+        tipe: "BENAR_SALAH",
+        opsi: ["Benar", "Salah"],
+        jawaban: 0,
         penjelasan: "Klimaks adalah titik puncak ketegangan dalam cerita, bagian paling menegangkan dari konflik yang dialami tokoh.",
       },
       {
@@ -463,14 +455,10 @@ const konten: Konten = {
       },
       {
         id: 9,
-        soal: "Unsur ekstrinsik yang berkaitan dengan riwayat hidup, pendidikan, dan pengalaman pengarang disebut...",
-        opsi: [
-          "Nilai sosial-budaya",
-          "Kondisi zaman",
-          "Latar belakang pengarang",
-          "Nilai religius",
-        ],
-        jawaban: 2,
+        soal: "Latar belakang pengarang memengaruhi tema dan gaya penulisan cerpen.",
+        tipe: "BENAR_SALAH",
+        opsi: ["Benar", "Salah"],
+        jawaban: 0,
         penjelasan: "Latar belakang pengarang mencakup biografi, riwayat hidup, pendidikan, pengalaman, dan pandangan dunia pengarang yang memengaruhi karyanya.",
       },
       {
@@ -543,8 +531,9 @@ const konten: Konten = {
       {
         id: 4,
         soal: "Penggunaan kata 'bagai', 'laksana', 'seperti' dalam cerpen menunjukkan majas...",
-        opsi: ["Personifikasi", "Metafora", "Simile", "Hiperbola"],
-        jawaban: 2,
+        tipe: "ISIAN",
+        opsi: ["simile"],
+        jawaban: "simile",
         penjelasan: "Simile adalah majas perbandingan yang menggunakan kata penghubung seperti 'bagai', 'laksana', 'seperti', 'bagaikan', atau 'bak' untuk membandingkan dua hal yang berbeda.",
       },
       {
@@ -561,13 +550,9 @@ const konten: Konten = {
       },
       {
         id: 6,
-        soal: "Yang dimaksud dengan alur mundur (flashback) dalam cerpen adalah...",
-        opsi: [
-          "Cerita dimulai dari akhir kemudian menuju ke awal",
-          "Cerita berjalan maju secara kronologis",
-          "Cerita menggunakan sudut pandang orang kedua",
-          "Cerita tanpa urutan waktu yang jelas",
-        ],
+        soal: "Alur mundur (flashback) menceritakan peristiwa yang terjadi sebelum masa kini.",
+        tipe: "BENAR_SALAH",
+        opsi: ["Benar", "Salah"],
         jawaban: 0,
         penjelasan: "Alur mundur atau flashback adalah teknik penceritaan yang menceritakan peristiwa yang telah terjadi di masa lalu, biasanya dimulai dari bagian akhir atau tengah cerita.",
       },
@@ -592,10 +577,11 @@ const konten: Konten = {
       },
       {
         id: 9,
-        soal: "Cermatilah kalimat berikut: 'Matahari pagi itu tersenyum ramah menyapa bumi.' Kalimat tersebut mengandung majas...",
-        opsi: ["Metafora", "Simile", "Personifikasi", "Litotes"],
-        jawaban: 2,
-        penjelasan: "Matahari digambarkan bisa 'tersenyum' dan 'menyapa' — ini adalah sifat manusia yang dilekatkan pada benda mati. Maka termasuk majas personifikasi.",
+        soal: "'Wajahnya bagaikan bulan purnama' adalah contoh majas metafora.",
+        tipe: "BENAR_SALAH",
+        opsi: ["Benar", "Salah"],
+        jawaban: 1,
+        penjelasan: "Kalimat tersebut adalah contoh majas simile, bukan metafora. Simile menggunakan kata pembanding seperti 'bagai', 'laksana', atau 'seperti', sedangkan metafora menggunakan kata 'adalah' atau 'merupakan' tanpa kata pembanding.",
       },
       {
         id: 10,

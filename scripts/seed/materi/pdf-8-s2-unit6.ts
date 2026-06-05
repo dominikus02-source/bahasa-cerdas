@@ -2,16 +2,6 @@ import type { Konten, Soal } from "../types";
 
 const kd = "3.2/4.2";
 
-function buatSoal(count: number, opsi: number, tema: string): Soal[] {
-  return Array.from({ length: count }, (_, i) => ({
-    id: i + 1,
-    soal: `Contoh soal ${tema} nomor ${i + 1}?`,
-    opsi: ["Pilihan A", "Pilihan B", "Pilihan C", "Pilihan D"],
-    jawaban: 0,
-    penjelasan: `Penjelasan untuk soal ${tema} nomor ${i + 1}`,
-  }));
-}
-
 /* =============================================
    Unit 6: Teks Ulasan — VIII S2
    KD 3.2/4.2 — Mengidentifikasi unsur, struktur, dan kebahasaan teks ulasan
@@ -337,23 +327,25 @@ const konten: Konten = {
       },
       {
         id: 2,
-        soal: "Berikut ini yang merupakan ciri teks ulasan adalah...",
-        opsi: ["Bersifat subjektif tanpa data", "Penilaian didasarkan pada analisis dan data", "Hanya memuat ringkasan karya", "Tidak mengandung opini"],
-        jawaban: 1,
+        tipe: "BENAR_SALAH",
+        soal: "Teks ulasan bersifat objektif dan kritis — penilaian didasarkan pada analisis dan data.",
+        opsi: ["Benar", "Salah"],
+        jawaban: 0,
         penjelasan: "Teks ulasan bersifat objektif dan kritis — penilaian didasarkan pada analisis, data, dan bukti dari karya yang diulas.",
       },
       {
         id: 3,
+        tipe: "ISIAN",
         soal: "Bagian struktur teks ulasan yang berisi analisis terhadap unsur-unsur karya disebut...",
-        opsi: ["Identitas", "Orientasi", "Tafsiran", "Rangkuman"],
-        jawaban: 2,
+        opsi: ["tafsiran"],
+        jawaban: "tafsiran",
         penjelasan: "Tafsiran adalah bagian inti yang berisi analisis terhadap unsur-unsur karya, seperti alur, penokohan, latar, tema, dan gaya bahasa.",
       },
       {
         id: 4,
         soal: "Contoh konjungsi penerang yang tepat dalam teks ulasan adalah...",
         opsi: ["dan, atau, tetapi", "bahwa, yaitu, yakni", "kemudian, setelah itu", "karena, sebab, akibatnya"],
-        jawaban: 1,
+        jawaban: "1",
         penjelasan: "Konjungsi penerang (bahwa, yaitu, yakni) berfungsi menghubungkan pernyataan umum dengan penjelasan lebih rinci.",
       },
       {
@@ -365,10 +357,11 @@ const konten: Konten = {
       },
       {
         id: 6,
-        soal: "Kata 'memukau', 'datar', dan 'inspiratif' dalam teks ulasan termasuk dalam unsur kebahasaan...",
-        opsi: ["Konjungsi penerang", "Istilah teknis", "Kata sifat opini", "Kalimat saran"],
-        jawaban: 2,
-        penjelasan: "Kata sifat opini (adjektiva evaluatif) adalah kata sifat yang menyatakan penilaian subjektif terhadap karya.",
+        tipe: "BENAR_SALAH",
+        soal: "Kata 'memukau', 'datar', dan 'inspiratif' dalam teks ulasan termasuk dalam unsur kebahasaan konjungsi penerang.",
+        opsi: ["Benar", "Salah"],
+        jawaban: 1,
+        penjelasan: "Kata sifat opini (adjektiva evaluatif) adalah kata sifat yang menyatakan penilaian subjektif terhadap karya, bukan konjungsi penerang.",
       },
       {
         id: 7,
@@ -438,10 +431,11 @@ const konten: Konten = {
       },
       {
         id: 3,
-        soal: "Kata 'sinematografi', 'penokohan', dan 'alur' dalam teks ulasan termasuk...",
-        opsi: ["Kata sifat opini", "Konjungsi penerang", "Istilah teknis", "Kalimat saran"],
-        jawaban: 2,
-        penjelasan: "Istilah teknis adalah kata-kata khusus yang berkaitan dengan bidang karya yang diulas.",
+        tipe: "BENAR_SALAH",
+        soal: "Kata 'sinematografi', 'penokohan', dan 'alur' dalam teks ulasan termasuk kata sifat opini.",
+        opsi: ["Benar", "Salah"],
+        jawaban: 1,
+        penjelasan: "Istilah teknis adalah kata-kata khusus yang berkaitan dengan bidang karya yang diulas, bukan kata sifat opini.",
       },
       {
         id: 4,
@@ -459,23 +453,25 @@ const konten: Konten = {
       },
       {
         id: 6,
-        soal: "Cermati kalimat: 'Film ini memiliki sinematografi yang memukau, sayangnya akting beberapa pemain pendukung terasa kaku.' Unsur kebahasaan yang menonjol pada kalimat tersebut adalah...",
-        opsi: ["Konjungsi penerang dan kata sifat opini", "Konjungsi perlawanan dan istilah teknis", "Kalimat saran dan konjungsi temporal", "Kata sifat opini dan kalimat saran"],
-        jawaban: 1,
-        penjelasan: "Kalimat tersebut mengandung konjungsi perlawanan ('sayangnya') dan istilah teknis ('sinematografi', 'akting'), serta kata sifat opini ('memukau', 'kaku').",
+        tipe: "ISIAN",
+        soal: "Konjungsi 'namun', 'akan tetapi', dan 'sayangnya' dalam teks ulasan berfungsi untuk menyatakan...",
+        opsi: ["pertentangan"],
+        jawaban: "pertentangan",
+        penjelasan: "Konjungsi perlawanan (konsesif) berfungsi menyatakan pertentangan antara kelebihan dan kekurangan dalam teks ulasan.",
       },
       {
         id: 7,
         soal: "Perbedaan mendasar antara teks ulasan dan teks ringkasan adalah...",
         opsi: ["Ulasan lebih panjang dari ringkasan", "Ulasan mengandung penilaian, ringkasan hanya inti cerita", "Ringkasan menggunakan bahasa baku, ulasan tidak", "Ulasan hanya untuk film, ringkasan untuk buku"],
-        jawaban: 1,
+        jawaban: "1",
         penjelasan: "Ringkasan hanya inti cerita tanpa penilaian. Ulasan menyajikan analisis, interpretasi, dan penilaian.",
       },
       {
         id: 8,
-        soal: "Bagian struktur yang berisi informasi faktual seperti judul, pengarang, penerbit, dan tahun terbit adalah...",
-        opsi: ["Orientasi", "Tafsiran", "Identitas", "Evaluasi"],
-        jawaban: 2,
+        tipe: "BENAR_SALAH",
+        soal: "Bagian struktur yang berisi informasi faktual seperti judul, pengarang, penerbit, dan tahun terbit adalah identitas.",
+        opsi: ["Benar", "Salah"],
+        jawaban: 0,
         penjelasan: "Identitas karya berisi informasi faktual dan objektif tentang karya yang diulas.",
       },
       {

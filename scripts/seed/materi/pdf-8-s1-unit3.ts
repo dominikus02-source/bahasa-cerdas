@@ -2,16 +2,6 @@ import type { Konten, Soal } from "../types";
 
 const kd = "3.4/4.4";
 
-function buatSoal(count: number, opsi: number, tema: string): Soal[] {
-  return Array.from({ length: count }, (_, i) => ({
-    id: i + 1,
-    soal: `Contoh soal ${tema} nomor ${i + 1}?`,
-    opsi: ["Pilihan A", "Pilihan B", "Pilihan C", "Pilihan D"],
-    jawaban: 0,
-    penjelasan: `Penjelasan untuk soal ${tema} nomor ${i + 1}`,
-  }));
-}
-
 /* =============================================
    Unit 3: Teks Eksplanasi — VIII S1
    KD 3.4/4.4 — Mengidentifikasi informasi, struktur, dan kebahasaan teks eksplanasi
@@ -341,22 +331,19 @@ const konten: Konten = {
       },
       {
         id: 3,
-        soal: "Struktur teks eksplanasi yang benar adalah...",
-        opsi: [
-          "Orientasi → Komplikasi → Resolusi → Koda",
-          "Pernyataan umum → Deretan penjelas → Interpretasi",
-          "Tesis → Argumen → Kesimpulan",
-          "Definisi umum → Deskripsi bagian → Deskripsi manfaat",
-        ],
-        jawaban: 1,
+        soal: "Struktur teks eksplanasi terdiri dari pernyataan umum, deretan penjelas, dan ...",
+        tipe: "ISIAN",
+        opsi: ["interpretasi"],
+        jawaban: "interpretasi",
         penjelasan:
           "Struktur teks eksplanasi terdiri dari: pernyataan umum (pengenalan fenomena), deretan penjelas (proses dan sebab-akibat), dan interpretasi (kesimpulan/pandangan penulis).",
       },
       {
         id: 4,
-        soal: "Contoh konjungsi kausal yang tepat dalam teks eksplanasi adalah...",
-        opsi: ["kemudian, selanjutnya, lalu", "dan, atau, tetapi", "karena, sehingga, akibatnya", "yang, di, ke, dari"],
-        jawaban: 2,
+        soal: "'Karena', 'sehingga', dan 'akibatnya' adalah contoh konjungsi kausal dalam teks eksplanasi.",
+        tipe: "BENAR_SALAH",
+        opsi: ["Benar", "Salah"],
+        jawaban: "0",
         penjelasan:
           "Konjungsi kausal menyatakan hubungan sebab-akibat, contohnya: karena, sehingga, akibatnya, oleh karena itu, sebab.",
       },
@@ -412,8 +399,9 @@ const konten: Konten = {
       },
       {
         id: 10,
-        soal: "Berikut yang bukan merupakan fenomena sosial yang dapat dijelaskan dalam teks eksplanasi adalah...",
-        opsi: ["Kemacetan lalu lintas", "Fotosintesis pada tumbuhan", "Urbanisasi penduduk", "Kesenjangan sosial ekonomi"],
+        soal: "Fotosintesis pada tumbuhan adalah fenomena sosial yang dapat dijelaskan dalam teks eksplanasi.",
+        tipe: "BENAR_SALAH",
+        opsi: ["Benar", "Salah"],
         jawaban: 1,
         penjelasan:
           "Fotosintesis adalah fenomena alam (biologi), bukan fenomena sosial. Kemacetan, urbanisasi, dan kesenjangan sosial termasuk fenomena sosial.",
@@ -462,9 +450,10 @@ const konten: Konten = {
       },
       {
         id: 3,
-        soal: "Jika sebuah teks berisi ajakan kepada pembaca untuk ikut menjaga lingkungan, teks tersebut termasuk jenis...",
-        opsi: ["Eksplanasi", "Deskripsi", "Eksposisi", "Narasi"],
-        jawaban: 2,
+        soal: "Teks yang berisi ajakan atau persuasi kepada pembaca untuk melakukan sesuatu termasuk teks eksposisi.",
+        tipe: "BENAR_SALAH",
+        opsi: ["Benar", "Salah"],
+        jawaban: 0,
         penjelasan:
           "Teks yang berisi ajakan atau persuasi termasuk teks eksposisi. Teks eksplanasi bersifat informatif dan objektif, tidak boleh mengandung ajakan atau opini untuk memengaruhi pembaca.",
       },
@@ -478,9 +467,10 @@ const konten: Konten = {
       },
       {
         id: 5,
-        soal: "Kata kerja relasional yang tepat untuk teks eksplanasi adalah...",
-        opsi: ["berlari, melompat, memukul", "adalah, merupakan, disebut", "kemudian, selanjutnya, lalu", "karena, sehingga, akibatnya"],
-        jawaban: 1,
+        soal: "Kata kerja yang menunjukkan hubungan atau identitas dalam teks eksplanasi disebut kata kerja ...",
+        tipe: "ISIAN",
+        opsi: ["relasional"],
+        jawaban: "relasional",
         penjelasan:
           "Kata kerja relasional menunjukkan hubungan atau identitas, contohnya: adalah, merupakan, disebut, terdiri atas.",
       },
@@ -488,20 +478,16 @@ const konten: Konten = {
         id: 6,
         soal: "Berikut adalah langkah-langkah menulis teks eksplanasi:\n(1) Mengembangkan kerangka menjadi paragraf\n(2) Membuat kerangka berdasarkan struktur\n(3) Menentukan fenomena yang akan dijelaskan\n(4) Menyunting dan merevisi teks\n(5) Mengumpulkan informasi dan data\n\nUrutan langkah yang tepat adalah...",
         opsi: ["(3)-(5)-(2)-(1)-(4)", "(5)-(3)-(2)-(1)-(4)", "(3)-(2)-(5)-(1)-(4)", "(5)-(2)-(3)-(1)-(4)"],
-        jawaban: 0,
+        jawaban: "0",
         penjelasan:
           "Urutan yang benar: (3) Tentukan fenomena → (5) Kumpulkan informasi → (2) Buat kerangka struktur → (1) Kembangkan menjadi paragraf → (4) Sunting dan revisi.",
       },
       {
         id: 7,
-        soal: "Perbedaan teks eksplanasi dengan laporan hasil observasi adalah...",
-        opsi: [
-          "Eksplanasi lebih panjang dari LHO",
-          "Eksplanasi menjelaskan proses, LHO mendeskripsikan objek hasil pengamatan",
-          "Eksplanasi menggunakan kata teknis, LHO tidak",
-          "LHO bersifat faktual, eksplanasi fiktif",
-        ],
-        jawaban: 1,
+        soal: "Teks eksplanasi berfokus pada penjelasan proses dan sebab-akibat, sedangkan LHO berfokus pada penyajian informasi hasil pengamatan.",
+        tipe: "BENAR_SALAH",
+        opsi: ["Benar", "Salah"],
+        jawaban: 0,
         penjelasan:
           "Teks eksplanasi berfokus pada penjelasan proses dan sebab-akibat, sedangkan LHO berfokus pada penyajian informasi hasil pengamatan (ciri, klasifikasi, deskripsi bagian).",
       },

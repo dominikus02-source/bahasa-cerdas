@@ -2,16 +2,6 @@ import type { Konten, Soal } from "../types";
 
 const kd = "3.4/4.4";
 
-function buatSoal(count: number, opsi: number, tema: string): Soal[] {
-  return Array.from({ length: count }, (_, i) => ({
-    id: i + 1,
-    soal: `Contoh soal ${tema} nomor ${i + 1}?`,
-    opsi: ["Pilihan A", "Pilihan B", "Pilihan C", "Pilihan D"],
-    jawaban: 0,
-    penjelasan: `Penjelasan untuk soal ${tema} nomor ${i + 1}`,
-  }));
-}
-
 /* =============================================
    Unit 8: Giat Literasi — Teks Fiksi dan Nonfiksi — VIII S2
    KD 3.4/4.4 — Membedakan teks fiksi dan nonfiksi serta menyajikan
@@ -429,19 +419,15 @@ const konten: Konten = {
       penjelasan:
         "Litteratus berarti 'melek huruf' atau 'berpendidikan', yang kemudian berkembang menjadi konsep literasi modern.",
     },
-    {
-      id: 2,
-      soal: "Berikut ini yang merupakan ciri utama teks fiksi adalah...",
-      opsi: [
-        "Berdasarkan data dan riset ilmiah",
-        "Menggunakan bahasa denotatif dan lugas",
-        "Berisi cerita rekaan atau imajinasi pengarang",
-        "Dapat diverifikasi kebenarannya",
-      ],
-      jawaban: 2,
-      penjelasan:
-        "Ciri utama teks fiksi adalah berisi cerita rekaan atau imajinasi pengarang, berbeda dengan nonfiksi yang berdasarkan fakta.",
-    },
+      {
+        id: 2,
+        tipe: "BENAR_SALAH",
+        soal: "Ciri utama teks fiksi adalah berdasarkan data dan riset ilmiah.",
+        opsi: ["Benar", "Salah"],
+        jawaban: 1,
+        penjelasan:
+          "Ciri utama teks fiksi adalah berisi cerita rekaan atau imajinasi pengarang, bukan berdasarkan data dan riset ilmiah.",
+      },
     {
       id: 3,
       soal: "Novel, cerpen, kumpulan puisi, dan naskah drama termasuk dalam kategori...",
@@ -450,14 +436,15 @@ const konten: Konten = {
       penjelasan:
         "Novel, cerpen, kumpulan puisi, dan naskah drama semuanya termasuk jenis buku fiksi.",
     },
-    {
-      id: 4,
-      soal: "Bagian buku yang berisi daftar kata kunci beserta nomor halamannya disebut...",
-      opsi: ["Daftar isi", "Kata pengantar", "Indeks", "Glosarium"],
-      jawaban: 2,
-      penjelasan:
-        "Indeks adalah daftar kata kunci atau istilah penting beserta nomor halaman tempat istilah tersebut muncul, disusun secara alfabetis.",
-    },
+      {
+        id: 4,
+        tipe: "ISIAN",
+        soal: "Bagian buku yang berisi daftar kata kunci beserta nomor halamannya disebut...",
+        opsi: ["indeks"],
+        jawaban: "indeks",
+        penjelasan:
+          "Indeks adalah daftar kata kunci atau istilah penting beserta nomor halaman tempat istilah tersebut muncul, disusun secara alfabetis.",
+      },
     {
       id: 5,
       soal: "Biografi termasuk jenis buku nonfiksi karena...",
@@ -467,23 +454,19 @@ const konten: Konten = {
         "Berisi kisah hidup tokoh berdasarkan fakta",
         "Tidak dapat diverifikasi kebenarannya",
       ],
-      jawaban: 2,
+      jawaban: "2",
       penjelasan:
         "Biografi adalah buku nonfiksi karena berisi kisah hidup tokoh nyata berdasarkan fakta, data, dan informasi yang akurat.",
     },
-    {
-      id: 6,
-      soal: "Perbedaan utama teks fiksi dan nonfiksi terletak pada...",
-      opsi: [
-        "Jumlah halaman",
-        "Ada atau tidaknya unsur imajinasi",
-        "Tahun penerbitan",
-        "Harga buku",
-      ],
-      jawaban: 1,
-      penjelasan:
-        "Perbedaan utama: teks fiksi mengandung unsur imajinasi/rekaan, sedangkan teks nonfiksi didasarkan pada fakta dan data nyata.",
-    },
+      {
+        id: 6,
+        tipe: "BENAR_SALAH",
+        soal: "Perbedaan utama teks fiksi dan nonfiksi terletak pada ada atau tidaknya unsur imajinasi.",
+        opsi: ["Benar", "Salah"],
+        jawaban: 0,
+        penjelasan:
+          "Perbedaan utama: teks fiksi mengandung unsur imajinasi/rekaan, sedangkan teks nonfiksi didasarkan pada fakta dan data nyata.",
+      },
     {
       id: 7,
       soal: "Berikut ini yang termasuk contoh buku nonfiksi adalah...",
@@ -574,27 +557,24 @@ const konten: Konten = {
       penjelasan:
         "Buku tersebut adalah nonfiksi yang menyajikan pandangan hidup berdasarkan pengalaman dan riset penulis.",
     },
-    {
-      id: 3,
-      soal: "Berikut yang bukan merupakan unsur fisik buku adalah...",
-      opsi: ["Sampul", "Daftar isi", "Tema cerita", "Indeks"],
-      jawaban: 2,
-      penjelasan:
-        "Tema cerita termasuk unsur intrinsik (dari dalam), bukan unsur fisik buku. Sampul, daftar isi, dan indeks adalah unsur fisik buku.",
-    },
-    {
-      id: 4,
-      soal: "Naskah drama berbeda dengan novel karena naskah drama...",
-      opsi: [
-        "Lebih panjang dari novel",
-        "Berisi dialog dan petunjuk panggung, bukan narasi panjang",
-        "Tidak memiliki tokoh",
-        "Hanya bisa dibaca, tidak bisa dipentaskan",
-      ],
-      jawaban: 1,
-      penjelasan:
-        "Naskah drama disusun dalam bentuk dialog dan dilengkapi petunjuk teknis panggung, bukan berupa narasi panjang seperti novel.",
-    },
+      {
+        id: 3,
+        tipe: "BENAR_SALAH",
+        soal: "Tema cerita termasuk unsur fisik buku.",
+        opsi: ["Benar", "Salah"],
+        jawaban: 1,
+        penjelasan:
+          "Tema cerita termasuk unsur intrinsik (dari dalam), bukan unsur fisik buku. Sampul, daftar isi, dan indeks adalah unsur fisik buku.",
+      },
+      {
+        id: 4,
+        tipe: "BENAR_SALAH",
+        soal: "Naskah drama berbeda dengan novel karena naskah drama berisi dialog dan petunjuk panggung, bukan narasi panjang.",
+        opsi: ["Benar", "Salah"],
+        jawaban: 0,
+        penjelasan:
+          "Naskah drama disusun dalam bentuk dialog dan dilengkapi petunjuk teknis panggung, bukan berupa narasi panjang seperti novel.",
+      },
     {
       id: 5,
       soal: "Fungsi daftar pustaka dalam sebuah buku adalah...",
@@ -642,14 +622,15 @@ const konten: Konten = {
       penjelasan:
         "'Senyum Karyamin' adalah kumpulan cerpen karya Ahmad Tohari yang termasuk kategori buku fiksi.",
     },
-    {
-      id: 9,
-      soal: "Bagian resensi yang berisi identitas buku seperti judul, penulis, dan penerbit disebut...",
-      opsi: ["Sinopsis", "Kelebihan", "Identitas buku", "Penilaian"],
-      jawaban: 2,
-      penjelasan:
-        "Identitas buku mencantumkan informasi bibliografis seperti judul, penulis, penerbit, tahun terbit, jumlah halaman, dan ISBN.",
-    },
+      {
+        id: 9,
+        tipe: "ISIAN",
+        soal: "Bagian resensi yang berisi identitas buku seperti judul, penulis, dan penerbit disebut...",
+        opsi: ["identitas buku"],
+        jawaban: "identitas buku",
+        penjelasan:
+          "Identitas buku mencantumkan informasi bibliografis seperti judul, penulis, penerbit, tahun terbit, jumlah halaman, dan ISBN.",
+      },
     {
       id: 10,
       soal: "Tujuan utama Gerakan Literasi Sekolah (GLS) adalah...",
@@ -659,7 +640,7 @@ const konten: Konten = {
         "Menggantikan kurikulum sekolah",
         "Melatih siswa menulis buku",
       ],
-      jawaban: 1,
+      jawaban: "1",
       penjelasan:
         "Tujuan utama GLS adalah menumbuhkan minat baca dan budaya literasi di lingkungan sekolah melalui pembiasaan, pengembangan, dan pembelajaran berbasis literasi.",
     },

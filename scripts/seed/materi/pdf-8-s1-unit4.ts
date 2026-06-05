@@ -2,16 +2,6 @@ import type { Konten, Soal } from "../types";
 
 const kd = "3.5/4.5";
 
-function buatSoal(count: number, opsi: number, tema: string): Soal[] {
-  return Array.from({ length: count }, (_, i) => ({
-    id: i + 1,
-    soal: `Contoh soal ${tema} nomor ${i + 1}?`,
-    opsi: ["Pilihan A", "Pilihan B", "Pilihan C", "Pilihan D"],
-    jawaban: 0,
-    penjelasan: `Penjelasan untuk soal ${tema} nomor ${i + 1}`,
-  }));
-}
-
 /* ============================================
    Unit 4: Teks Puisi Baru — VIII S1
    KD 3.5/4.5 — Mengidentifikasi Unsur Pembangun Puisi Baru
@@ -445,28 +435,25 @@ const konten: Konten = {
     latihan: [
       {
         id: 1,
-        soal: "Berikut ini yang membedakan puisi baru dengan puisi rakyat adalah...",
-        opsi: [
-          "Puisi baru menggunakan bahasa daerah",
-          "Puisi baru tidak terikat aturan jumlah baris dan rima baku",
-          "Puisi baru tidak memiliki pengarang",
-          "Puisi baru hanya berisi nasihat dan ajaran",
-        ],
-        jawaban: 1,
+        soal: "Puisi baru tidak terikat aturan jumlah baris dan rima baku, berbeda dengan puisi rakyat.",
+        tipe: "BENAR_SALAH",
+        opsi: ["Benar", "Salah"],
+        jawaban: 0,
         penjelasan: "Puisi baru bersifat bebas, tidak terikat aturan jumlah baris, rima, atau suku kata per baris, berbeda dengan puisi rakyat yang terikat aturan ketat.",
       },
       {
         id: 2,
-        soal: "Pemilihan kata yang tepat untuk menciptakan efek puitis dalam puisi disebut...",
-        opsi: ["Tipografi", "Diksi", "Rima", "Imaji"],
-        jawaban: 1,
+        soal: "Pemilihan kata yang tepat untuk menciptakan efek puitis dalam puisi disebut ...",
+        tipe: "ISIAN",
+        opsi: ["diksi"],
+        jawaban: "diksi",
         penjelasan: "Diksi adalah pemilihan kata yang tepat dan cermat untuk menciptakan efek puitis dan menyampaikan makna secara indah.",
       },
       {
         id: 3,
         soal: "Kutipan puisi 'Angin berbisik cerita tentangmu' menggunakan majas...",
         opsi: ["Metafora", "Hiperbola", "Personifikasi", "Simile"],
-        jawaban: 2,
+        jawaban: "2",
         penjelasan: "Personifikasi karena angin (benda mati) diberi sifat manusia, yaitu berbisik. Ini memberikan sifat hidup pada benda mati.",
       },
       {
@@ -478,9 +465,10 @@ const konten: Konten = {
       },
       {
         id: 5,
-        soal: "Jenis puisi yang berisi kisah atau cerita tentang suatu peristiwa disebut...",
-        opsi: ["Romansa", "Elegi", "Balada", "Ode"],
-        jawaban: 2,
+        soal: "Balada adalah jenis puisi yang berisi kisah atau cerita tentang suatu peristiwa.",
+        tipe: "BENAR_SALAH",
+        opsi: ["Benar", "Salah"],
+        jawaban: 0,
         penjelasan: "Balada adalah puisi naratif yang berisi kisah atau cerita tentang suatu peristiwa, tokoh, atau legenda.",
       },
       {
@@ -575,23 +563,25 @@ const konten: Konten = {
       },
       {
         id: 4,
-        soal: "Puisi yang berisi sindiran atau kritik sosial dengan menggunakan bahasa yang tajam dan ironis disebut...",
-        opsi: ["Ode", "Epigram", "Satire", "Balada"],
-        jawaban: 2,
+        soal: "Satire adalah puisi yang berisi sindiran atau kritik sosial dengan bahasa yang tajam dan ironis.",
+        tipe: "BENAR_SALAH",
+        opsi: ["Benar", "Salah"],
+        jawaban: 0,
         penjelasan: "Satire adalah puisi yang berisi kritik atau sindiran sosial dengan bahasa yang tajam, ironis, atau sinis. Contohnya puisi 'Potret' karya W.S. Rendra.",
       },
       {
         id: 5,
-        soal: "Jenis imaji yang ditimbulkan oleh larik 'Wangii melati merayap dalam kamar' adalah...",
-        opsi: ["Visual", "Auditif", "Olfaktori", "Taktil"],
-        jawaban: 2,
+        soal: "Jenis imaji yang berhubungan dengan indra penciuman disebut imaji ...",
+        tipe: "ISIAN",
+        opsi: ["olfaktori"],
+        jawaban: "olfaktori",
         penjelasan: "Imaji olfaktori adalah citraan yang berhubungan dengan indra penciuman. Kata 'wangi' dan 'melati' merangsang indra penciuman pembaca.",
       },
       {
         id: 6,
         soal: "Perhatikan larik puisi berikut: 'Malam merangkulku dalam sunyi / Bintang berpendar menyapa sendiri'. Unsur fisik yang dominan dalam larik tersebut adalah...",
         opsi: ["Diksi dan rima", "Imaji dan majas", "Tipografi dan diksi", "Kata konkret dan rima"],
-        jawaban: 1,
+        jawaban: "1",
         penjelasan: "Larik tersebut mengandung imaji (visual: 'bintang berpendar', taktil: 'merangkul') dan majas (personifikasi: 'malam merangkulku', 'bintang... menyapa').",
       },
       {
@@ -615,9 +605,10 @@ const konten: Konten = {
       },
       {
         id: 9,
-        soal: "Seorang penyair ingin menulis puisi yang mengkritik pemimpin yang korup. Jenis puisi yang paling tepat adalah...",
-        opsi: ["Romansa", "Elegi", "Himne", "Satire"],
-        jawaban: 3,
+        soal: "Puisi satire adalah jenis puisi yang paling tepat untuk mengkritik pemimpin yang korup.",
+        tipe: "BENAR_SALAH",
+        opsi: ["Benar", "Salah"],
+        jawaban: 0,
         penjelasan: "Satire adalah jenis puisi yang tepat untuk kritik sosial atau politik. Satire menggunakan sindiran tajam dan ironi untuk menyampaikan kritik, berbeda dengan romansa (cinta), elegi (kesedihan), atau himne (pujian).",
       },
       {

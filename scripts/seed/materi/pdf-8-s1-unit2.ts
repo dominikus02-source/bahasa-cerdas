@@ -2,16 +2,6 @@ import type { Konten, Soal } from "../types";
 
 const kd = "3.3/4.3";
 
-function buatSoal(count: number, opsi: number, tema: string): Soal[] {
-  return Array.from({ length: count }, (_, i) => ({
-    id: i + 1,
-    soal: `Contoh soal ${tema} nomor ${i + 1}?`,
-    opsi: ["Pilihan A", "Pilihan B", "Pilihan C", "Pilihan D"],
-    jawaban: 0,
-    penjelasan: `Penjelasan untuk soal ${tema} nomor ${i + 1}`,
-  }));
-}
-
 /* =============================================
    Unit 2: Teks Drama — VIII S1
    KD 3.3/4.3 — Mengidentifikasi unsur, struktur, dan kebahasaan teks drama
@@ -384,16 +374,18 @@ const konten: Konten = {
       },
       {
         id: 2,
-        soal: "Petunjuk panggung dalam teks drama disebut juga...",
-        opsi: ["Prolog", "Dialog", "Kramagong", "Epilog"],
-        jawaban: 2,
+        soal: "Petunjuk panggung dalam teks drama disebut juga ...",
+        tipe: "ISIAN",
+        opsi: ["kramagong"],
+        jawaban: "kramagong",
         penjelasan: "Kramagong adalah petunjuk panggung yang ditulis dalam tanda kurung, menjelaskan gerak, ekspresi, dan suasana.",
       },
       {
         id: 3,
-        soal: "Bagian awal drama yang berisi pengantar cerita disebut...",
-        opsi: ["Prolog", "Epilog", "Dialog", "Adegan"],
-        jawaban: 0,
+        soal: "Prolog adalah bagian awal drama yang berisi pengantar cerita.",
+        tipe: "BENAR_SALAH",
+        opsi: ["Benar", "Salah"],
+        jawaban: "0",
         penjelasan: "Prolog adalah bagian pembuka drama yang berisi pengantar cerita, biasanya disampaikan oleh narator.",
       },
       {
@@ -419,9 +411,10 @@ const konten: Konten = {
       },
       {
         id: 7,
-        soal: "Kalimat '(Rina berlari ke arah pintu sambil berteriak.)' dalam naskah drama termasuk...",
-        opsi: ["Dialog", "Prolog", "Petunjuk panggung", "Epilog"],
-        jawaban: 2,
+        soal: "Kalimat dalam tanda kurung seperti '(Rina berlari ke arah pintu sambil berteriak.)' dalam naskah drama disebut petunjuk panggung atau kramagong.",
+        tipe: "BENAR_SALAH",
+        opsi: ["Benar", "Salah"],
+        jawaban: 0,
         penjelasan: "Kalimat dalam tanda kurung adalah petunjuk panggung (kramagong) yang memberi instruksi kepada aktor.",
       },
       {
@@ -485,9 +478,10 @@ const konten: Konten = {
       },
       {
         id: 3,
-        soal: "Berikut ini yang bukan merupakan fungsi petunjuk panggung (kramagong) adalah...",
-        opsi: ["Menjelaskan gerakan tokoh", "Menjelaskan ekspresi wajah tokoh", "Menyampaikan dialog tokoh", "Menjelaskan tata panggung dan properti"],
-        jawaban: 2,
+        soal: "Salah satu fungsi petunjuk panggung (kramagong) adalah menyampaikan dialog tokoh.",
+        tipe: "BENAR_SALAH",
+        opsi: ["Benar", "Salah"],
+        jawaban: 1,
         penjelasan: "Petunjuk panggung tidak menyampaikan dialog. Dialog adalah bagian yang diucapkan oleh tokoh, sedangkan petunjuk panggung adalah instruksi untuk aktor.",
       },
       {
@@ -499,23 +493,25 @@ const konten: Konten = {
       },
       {
         id: 5,
-        soal: "Bagian dalam dialog drama di mana konflik mencapai puncaknya disebut...",
-        opsi: ["Orientasi", "Komplikasi", "Klimaks", "Resolusi"],
-        jawaban: 2,
+        soal: "Bagian dalam drama di mana konflik mencapai puncaknya disebut ...",
+        tipe: "ISIAN",
+        opsi: ["klimaks"],
+        jawaban: "klimaks",
         penjelasan: "Klimaks adalah puncak konflik dalam drama, yaitu saat ketegangan mencapai titik tertinggi sebelum akhirnya menemukan penyelesaian.",
       },
       {
         id: 6,
         soal: "Kalimat 'Angin malam berbisik lembut di telingaku' mengandung majas...",
         opsi: ["Metafora", "Personifikasi", "Hiperbola", "Ironi"],
-        jawaban: 1,
+        jawaban: "1",
         penjelasan: "Personifikasi adalah majas yang memberikan sifat-sifat manusia pada benda mati. Angin digambarkan 'berbisik' seperti manusia.",
       },
       {
         id: 7,
-        soal: "Tokoh tritagonis dalam drama berfungsi sebagai...",
-        opsi: ["Tokoh utama", "Tokoh jahat", "Tokoh penengah", "Tokoh pembantu tanpa peran penting"],
-        jawaban: 2,
+        soal: "Tritagonis adalah tokoh penengah antara protagonis dan antagonis dalam drama.",
+        tipe: "BENAR_SALAH",
+        opsi: ["Benar", "Salah"],
+        jawaban: 0,
         penjelasan: "Tritagonis adalah tokoh penengah yang berusaha mendamaikan protagonis dan antagonis atau memberikan solusi atas konflik.",
       },
       {

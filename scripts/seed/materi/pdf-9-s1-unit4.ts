@@ -1,16 +1,6 @@
-import type { Konten, Soal } from "../types";
+import type { Konten } from "../types";
 
 const kd = "3.4/4.4";
-
-function buatSoal(count: number, opsi: number, tema: string): Soal[] {
-  return Array.from({ length: count }, (_, i) => ({
-    id: i + 1,
-    soal: `Contoh soal ${tema} nomor ${i + 1}?`,
-    opsi: ["Pilihan A", "Pilihan B", "Pilihan C", "Pilihan D"],
-    jawaban: 0,
-    penjelasan: `Penjelasan untuk soal ${tema} nomor ${i + 1}`,
-  }));
-}
 
 /* =============================================
    Unit 4: Giat Literasi I — Teks Fiksi (IX S1)
@@ -437,10 +427,11 @@ const konten: Konten = {
       },
       {
         id: 2,
-        soal: "Salah satu komponen utama Gerakan Literasi Sekolah (GLS) adalah...",
-        opsi: ["Ujian nasional setiap minggu", "15 menit membaca sebelum pelajaran", "Lomba olahraga antarkelas", "Pelajaran tambahan di akhir pekan"],
-        jawaban: 1,
-        penjelasan: "Salah satu komponen utama GLS adalah kegiatan 15 menit membaca buku non-pelajaran sebelum jam pelajaran dimulai.",
+        tipe: "BENAR_SALAH",
+        soal: "Gerakan literasi sekolah mewajibkan siswa membaca buku non-pelajaran selama 15 menit sebelum pelajaran dimulai.",
+        opsi: ["Benar", "Salah"],
+        jawaban: 0,
+        penjelasan: "Benar — GLS mewajibkan kegiatan 15 menit membaca buku non-pelajaran sebelum jam pelajaran dimulai sebagai bagian dari program literasi sekolah.",
       },
       {
         id: 3,
@@ -451,9 +442,10 @@ const konten: Konten = {
       },
       {
         id: 4,
+        tipe: "ISIAN",
         soal: "Unsur pembangun fiksi yang menjawab pertanyaan 'Tentang apa cerita ini?' disebut...",
-        opsi: ["Alur", "Tokoh", "Tema", "Latar"],
-        jawaban: 2,
+        opsi: ["tema"],
+        jawaban: "tema",
         penjelasan: "Tema adalah gagasan sentral atau ide pokok yang mendasari cerita dan menjawab pertanyaan tentang apa cerita tersebut.",
       },
       {
@@ -472,10 +464,11 @@ const konten: Konten = {
       },
       {
         id: 7,
-        soal: "Perbedaan utama antara resensi dan esai sastra adalah...",
-        opsi: ["Resensi lebih panjang dari esai", "Resensi membahas buku secara umum, esai fokus pada satu aspek", "Esai hanya untuk novel, resensi untuk semua buku", "Tidak ada perbedaan, keduanya sama"],
+        tipe: "BENAR_SALAH",
+        soal: "Resensi dan esai sastra adalah dua hal yang sama.",
+        opsi: ["Benar", "Salah"],
         jawaban: 1,
-        penjelasan: "Resensi membahas buku secara umum (identitas, sinopsis, kelebihan, kekurangan), sedangkan esai sastra fokus menganalisis satu aspek spesifik.",
+        penjelasan: "Salah — Resensi membahas buku secara umum (identitas, sinopsis, kelebihan, kekurangan), sedangkan esai sastra fokus menganalisis satu aspek spesifik secara lebih mendalam.",
       },
       {
         id: 8,
@@ -537,17 +530,19 @@ const konten: Konten = {
       },
       {
         id: 3,
-        soal: "Dalam analisis unsur fiksi, kalimat 'Ia menatap masa depan dengan mata air kebahagiaan' menggunakan majas...",
-        opsi: ["Personifikasi", "Metafora", "Hiperbola", "Ironi"],
-        jawaban: 1,
-        penjelasan: "'Mata air kebahagiaan' adalah metafora — perbandingan langsung tanpa kata pembanding.",
+        tipe: "ISIAN",
+        soal: "Majas perbandingan langsung tanpa kata pembanding seperti atau bagaikan disebut...",
+        opsi: ["metafora"],
+        jawaban: "metafora",
+        penjelasan: "Metafora adalah majas perbandingan langsung tanpa kata pembanding, seperti 'mata air kebahagiaan'.",
       },
       {
         id: 4,
-        soal: "Seorang pengarang menceritakan kisah dari posisi 'tahu segalanya' — ia mengetahui pikiran dan perasaan semua tokoh. Ini adalah sudut pandang...",
-        opsi: ["Orang pertama pelaku utama", "Orang ketiga serba tahu", "Orang ketiga terbatas", "Orang kedua"],
-        jawaban: 1,
-        penjelasan: "Sudut pandang orang ketiga serba tahu (omniscient) membuat pengarang mengetahui segala hal, termasuk pikiran dan perasaan semua tokoh.",
+        tipe: "BENAR_SALAH",
+        soal: "Sudut pandang orang ketiga serba tahu memungkinkan pengarang mengetahui pikiran dan perasaan semua tokoh.",
+        opsi: ["Benar", "Salah"],
+        jawaban: 0,
+        penjelasan: "Benar — sudut pandang orang ketiga serba tahu (omniscient) membuat pengarang mengetahui segala hal, termasuk pikiran dan perasaan semua tokoh.",
       },
       {
         id: 5,
@@ -558,10 +553,11 @@ const konten: Konten = {
       },
       {
         id: 6,
-        soal: "Tingkatan apresiasi sastra yang paling tinggi adalah...",
-        opsi: ["Tingkat menikmati", "Tingkat memahami", "Tingkat menganalisis", "Tingkat mengevaluasi"],
-        jawaban: 3,
-        penjelasan: "Tingkat mengevaluasi adalah tingkat apresiasi tertinggi di mana pembaca mampu menilai kelebihan dan kekurangan karya secara objektif.",
+        tipe: "BENAR_SALAH",
+        soal: "Level 'mengevaluasi' dalam literasi fiksi termasuk tingkat berpikir tinggi (HOTS).",
+        opsi: ["Benar", "Salah"],
+        jawaban: 0,
+        penjelasan: "Benar — mengevaluasi adalah tingkat berpikir tinggi (HOTS) karena melibatkan penilaian kritis terhadap kelebihan dan kekurangan karya secara objektif.",
       },
       {
         id: 7,

@@ -2,16 +2,6 @@ import type { Konten, Soal } from "../types";
 
 const kd = "3.4/4.4";
 
-function buatSoal(count: number, opsi: number, tema: string): Soal[] {
-  return Array.from({ length: count }, (_, i) => ({
-    id: i + 1,
-    soal: `Contoh soal ${tema} nomor ${i + 1}?`,
-    opsi: ["Pilihan A", "Pilihan B", "Pilihan C", "Pilihan D"],
-    jawaban: 0,
-    penjelasan: `Penjelasan untuk soal ${tema} nomor ${i + 1}`,
-  }));
-}
-
 /* =============================================
    Unit 4: Teks Laporan (Penelitian) Percobaan — IX S2
    KD 3.4/4.4 — Mengidentifikasi Informasi & Menyusun Teks Laporan Percobaan
@@ -410,9 +400,10 @@ const konten: Konten = {
       },
       {
         id: 3,
-        soal: "Bagian struktur laporan percobaan yang berisi jawaban dari tujuan percobaan adalah...",
-        opsi: ["Langkah-langkah", "Hasil", "Simpulan", "Alat dan bahan"],
-        jawaban: 2,
+        tipe: "BENAR_SALAH",
+        soal: "Bagian struktur teks laporan percobaan yang berisi jawaban dari tujuan percobaan adalah simpulan.",
+        opsi: ["Benar", "Salah"],
+        jawaban: 0,
         penjelasan: "Simpulan berisi interpretasi data yang menjawab tujuan percobaan. Simpulan ditarik berdasarkan hasil yang telah diperoleh.",
       },
       {
@@ -438,23 +429,25 @@ const konten: Konten = {
       },
       {
         id: 7,
-        soal: "Kata 'konsentrasi', 'variabel', 'indikator' termasuk ke dalam kategori...",
-        opsi: ["Konjungsi temporal", "Kata kerja pasif", "Istilah teknis", "Kata sifat"],
-        jawaban: 2,
+        tipe: "ISIAN",
+        soal: "Kata 'konsentrasi', 'variabel', 'indikator' termasuk ke dalam kategori istilah apa?",
+        opsi: ["istilah teknis"],
+        jawaban: "0",
         penjelasan: "Kata-kata tersebut adalah istilah teknis (terminologi) yang lazim digunakan dalam laporan percobaan ilmiah.",
       },
       {
         id: 8,
         soal: "Bagian laporan percobaan yang menyajikan data dalam bentuk tabel atau grafik adalah...",
         opsi: ["Tujuan", "Alat dan bahan", "Hasil", "Simpulan"],
-        jawaban: 2,
+        jawaban: "2",
         penjelasan: "Hasil percobaan menyajikan data yang diperoleh selama percobaan. Data dapat disajikan dalam bentuk tabel, grafik, atau deskripsi naratif.",
       },
       {
         id: 9,
-        soal: "Salah satu ciri teks laporan percobaan yang baik adalah...",
-        opsi: ["Menggunakan bahasa yang indah dan metaforis", "Bersifat subjektif sesuai perasaan penulis", "Objektif berdasarkan data dan fakta", "Berisi opini pribadi penulis"],
-        jawaban: 2,
+        tipe: "BENAR_SALAH",
+        soal: "Teks laporan percobaan yang baik bersifat objektif berdasarkan data dan fakta.",
+        opsi: ["Benar", "Salah"],
+        jawaban: 0,
         penjelasan: "Teks laporan percobaan harus bersifat objektif, yaitu berdasarkan data dan fakta hasil percobaan, bukan opini atau perasaan pribadi.",
       },
       {
@@ -550,14 +543,10 @@ const konten: Konten = {
       },
       {
         id: 6,
-        soal: "Teks prosedur dan laporan percobaan memiliki persamaan dalam hal...",
-        opsi: [
-          "Keberadaan data hasil dan simpulan",
-          "Analisis data yang mendalam",
-          "Penyajian langkah-langkah secara sistematis",
-          "Penggunaan istilah teknis yang kompleks",
-        ],
-        jawaban: 2,
+        tipe: "BENAR_SALAH",
+        soal: "Persamaan utama teks prosedur dan laporan percobaan adalah sama-sama menyajikan langkah-langkah secara sistematis.",
+        opsi: ["Benar", "Salah"],
+        jawaban: 0,
         penjelasan: "Persamaan utama antara teks prosedur dan laporan percobaan adalah sama-sama menyajikan langkah-langkah secara sistematis dan urut.",
       },
       {
@@ -574,14 +563,10 @@ const konten: Konten = {
       },
       {
         id: 8,
-        soal: "Mengapa teks laporan percobaan cenderung menggunakan kalimat pasif?",
-        opsi: [
-          "Karena kalimat pasif lebih panjang dan formal",
-          "Karena kalimat pasif menekankan proses dan hasil, bukan pelaku",
-          "Karena kalimat pasif lebih mudah ditulis",
-          "Karena kalimat pasif menggunakan lebih sedikit kata",
-        ],
-        jawaban: 1,
+        tipe: "BENAR_SALAH",
+        soal: "Teks laporan percobaan cenderung menggunakan kalimat pasif karena kalimat pasif menekankan proses dan hasil, bukan pelaku.",
+        opsi: ["Benar", "Salah"],
+        jawaban: 0,
         penjelasan: "Kalimat pasif digunakan untuk menekankan pada proses dan hasil percobaan, bukan pada siapa yang melakukan. Ini menjaga objektivitas laporan.",
       },
       {
@@ -598,14 +583,10 @@ const konten: Konten = {
       },
       {
         id: 10,
-        soal: "Dalam laporan percobaan, bagian 'alat dan bahan' disajikan secara rinci karena...",
-        opsi: [
-          "Agar pembaca tahu alat dan bahan apa saja yang digunakan sehingga percobaan dapat diulang",
-          "Untuk memperpanjang laporan agar terlihat lebih profesional",
-          "Karena alat dan bahan merupakan bagian terpenting dalam laporan",
-          "Untuk memenuhi aturan penulisan yang kaku",
-        ],
-        jawaban: 0,
+        tipe: "ISIAN",
+        soal: "Prinsip dalam metode ilmiah yang menuntut pencatatan alat dan bahan secara rinci agar percobaan dapat diulang disebut...",
+        opsi: ["reproduksibilitas"],
+        jawaban: "0",
         penjelasan: "Pencatatan alat dan bahan yang rinci memungkinkan percobaan direproduksi (diulang) oleh orang lain dengan hasil yang sama. Ini merupakan prinsip reproduksibilitas dalam metode ilmiah.",
       },
     ],

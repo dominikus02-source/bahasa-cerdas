@@ -1,16 +1,6 @@
-import type { Konten, Soal } from "../types";
+import type { Konten } from "../types";
 
 const kd = "3.3/4.3";
-
-function buatSoal(count: number, opsi: number, tema: string): Soal[] {
-  return Array.from({ length: count }, (_, i) => ({
-    id: i + 1,
-    soal: `Contoh soal ${tema} nomor ${i + 1}?`,
-    opsi: ["Pilihan A", "Pilihan B", "Pilihan C", "Pilihan D"],
-    jawaban: 0,
-    penjelasan: `Penjelasan untuk soal ${tema} nomor ${i + 1}`,
-  }));
-}
 
 /* =============================================
    Unit 3: Teks Pidato Persuasif — IX S1
@@ -381,10 +371,11 @@ const konten: Konten = {
       },
       {
         id: 3,
-        soal: "Kalimat \"Marilah kita jaga kebersihan lingkungan sekolah kita tercinta!\" termasuk jenis kalimat...",
-        opsi: ["Deklaratif", "Interogatif", "Persuasif", "Eksklamatif"],
-        jawaban: 2,
-        penjelasan: "Kalimat tersebut menggunakan kata 'marilah' yang merupakan ciri kalimat persuasif (ajakan). Kalimat ini mengajak audiens untuk bersama-sama menjaga kebersihan.",
+        tipe: "BENAR_SALAH",
+        soal: "Kalimat persuasif bertujuan memengaruhi pembaca atau pendengar.",
+        opsi: ["Benar", "Salah"],
+        jawaban: 0,
+        penjelasan: "Pernyataan tersebut benar. Kalimat persuasif adalah kalimat ajakan yang bertujuan memengaruhi sikap, opini, atau tindakan pembaca/pendengar.",
       },
       {
         id: 4,
@@ -395,9 +386,10 @@ const konten: Konten = {
       },
       {
         id: 5,
-        soal: "Pidato yang bertujuan memberikan penjelasan tentang suatu topik tanpa mengajak audiens melakukan sesuatu disebut...",
-        opsi: ["Pidato persuasif", "Pidato informatif", "Pidato rekreatif", "Pidato argumentatif"],
-        jawaban: 1,
+        tipe: "ISIAN",
+        soal: "Pidato yang bertujuan memberikan penjelasan tentang suatu topik tanpa mengajak audiens melakukan sesuatu disebut pidato...",
+        opsi: ["informatif"],
+        jawaban: "informatif",
         penjelasan: "Pidato informatif bertujuan menyampaikan informasi, pengetahuan, atau penjelasan secara objektif tanpa bermaksud mengubah sikap atau mengajak audiens.",
       },
       {
@@ -416,10 +408,11 @@ const konten: Konten = {
       },
       {
         id: 8,
-        soal: "Pertanyaan \"Bukankah kita semua menginginkan masa depan yang cerah?\" termasuk jenis kalimat...",
-        opsi: ["Interogatif biasa", "Persuasif", "Retoris", "Imperatif"],
-        jawaban: 2,
-        penjelasan: "Kalimat retoris adalah pertanyaan yang tidak memerlukan jawaban. Fungsinya untuk efek dramatis dan menguatkan argumen. Jawabannya sudah tersirat dalam pertanyaan itu sendiri.",
+        tipe: "BENAR_SALAH",
+        soal: "Kalimat retoris sama dengan kalimat tanya biasa karena sama-sama membutuhkan jawaban.",
+        opsi: ["Benar", "Salah"],
+        jawaban: 1,
+        penjelasan: "Pernyataan tersebut salah. Kalimat retoris adalah pertanyaan yang tidak memerlukan jawaban, berbeda dengan kalimat tanya biasa yang membutuhkan jawaban. Fungsinya untuk efek dramatis dan menguatkan argumen.",
       },
       {
         id: 9,
@@ -487,17 +480,19 @@ const konten: Konten = {
       },
       {
         id: 4,
-        soal: "Perbedaan utama pidato informatif dan pidato persuasif terletak pada...",
-        opsi: ["Panjang pidato", "Ada tidaknya ajakan kepada audiens", "Jumlah argumen yang disampaikan", "Media penyampaiannya"],
-        jawaban: 1,
-        penjelasan: "Pidato informatif bertujuan memberi pengetahuan tanpa mengajak, sedangkan pidato persuasif secara eksplisit mengandung ajakan untuk memengaruhi sikap atau tindakan audiens.",
+        tipe: "BENAR_SALAH",
+        soal: "Perbedaan teks pidato persuasif dengan teks informatif terletak pada adanya ajakan atau imbauan.",
+        opsi: ["Benar", "Salah"],
+        jawaban: 0,
+        penjelasan: "Pernyataan tersebut benar. Pidato informatif bertujuan memberi pengetahuan tanpa mengajak, sedangkan pidato persuasif secara eksplisit mengandung ajakan untuk memengaruhi sikap atau tindakan audiens.",
       },
       {
         id: 5,
-        soal: "Seorang siswa berpidato dengan suara datar, tanpa variasi nada, dan terus membaca naskah. Teknik berpidato yang perlu diperbaiki adalah...",
-        opsi: ["Artikulasi gestur dan kontak mata saja", "Intonasi gestur dan kontak mata", "Intonasi artikulasi dan kecepatan bicara", "Intonasi kontak mata dan gestur"],
-        jawaban: 3,
-        penjelasan: "Tiga masalah utama: (1) suara datar = intonasi perlu diperbaiki, (2) terus membaca naskah = kontak mata dengan audiens kurang, (3) tidak disebutkan gestur = gerakan tubuh perlu ditambahkan. Jadi perbaikan pada intonasi, kontak mata, dan gestur.",
+        tipe: "BENAR_SALAH",
+        soal: "Intonasi yang datar dan monoton justru membuat pidato persuasif lebih meyakinkan.",
+        opsi: ["Benar", "Salah"],
+        jawaban: 1,
+        penjelasan: "Pernyataan tersebut salah. Intonasi yang datar dan monoton membuat pidato membosankan dan tidak meyakinkan. Intonasi yang baik bervariasi — naik-turun, cepat-lambat — sesuai dengan pesan yang disampaikan.",
       },
       {
         id: 6,
@@ -508,10 +503,11 @@ const konten: Konten = {
       },
       {
         id: 7,
-        soal: "Kata 'hendaknya' dalam kalimat \"Hendaknya kita selalu membuang sampah pada tempatnya\" termasuk jenis kalimat...",
-        opsi: ["Imperatif keras", "Imperatif halus", "Interogatif", "Eksklamatif"],
-        jawaban: 1,
-        penjelasan: "Kata 'hendaknya' adalah bentuk imperatif halus — perintah yang disampaikan dengan sopan dan tidak memaksa. Berbeda dengan 'buanglah!' yang merupakan imperatif keras.",
+        tipe: "ISIAN",
+        soal: "Kalimat perintah yang menggunakan kata 'mohon' atau 'silakan' disebut kalimat...",
+        opsi: ["imperatif halus"],
+        jawaban: "imperatif halus",
+        penjelasan: "Kalimat imperatif halus adalah kalimat perintah yang disampaikan dengan sopan menggunakan kata seperti 'mohon', 'silakan', 'hendaknya', atau 'cobalah'. Berbeda dengan imperatif keras yang bersifat tegas dan langsung.",
       },
       {
         id: 8,

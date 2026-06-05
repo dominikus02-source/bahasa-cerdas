@@ -2,16 +2,6 @@ import type { Konten, Soal } from "../types";
 
 const kd = "3.1/4.1";
 
-function buatSoal(count: number, opsi: number, tema: string): Soal[] {
-  return Array.from({ length: count }, (_, i) => ({
-    id: i + 1,
-    soal: `Contoh soal ${tema} nomor ${i + 1}?`,
-    opsi: ["Pilihan A", "Pilihan B", "Pilihan C", "Pilihan D"],
-    jawaban: 0,
-    penjelasan: `Penjelasan untuk soal ${tema} nomor ${i + 1}`,
-  }));
-}
-
 /* =============================================
    Unit 5: Teks Eksposisi — VIII S2
    KD 3.1/4.1 — Mengidentifikasi informasi, struktur, dan kebahasaan teks
@@ -372,9 +362,10 @@ const konten: Konten = {
       },
       {
         id: 5,
-        soal: "Pola pengembangan yang meletakkan gagasan utama di akhir paragraf sebagai simpulan disebut...",
-        opsi: ["Deduktif", "Induktif", "Campuran", "Kronologis"],
-        jawaban: 1,
+        tipe: "BENAR_SALAH",
+        soal: "Pola pengembangan induktif meletakkan gagasan utama di akhir paragraf sebagai simpulan.",
+        opsi: ["Benar", "Salah"],
+        jawaban: 0,
         penjelasan: "Pola induktif meletakkan gagasan utama di akhir paragraf, dimulai dengan fakta-fakta khusus lalu ditarik simpulan umum.",
       },
       {
@@ -386,16 +377,18 @@ const konten: Konten = {
       },
       {
         id: 7,
+        tipe: "ISIAN",
         soal: "Eksposisi yang menjelaskan tahapan atau langkah-langkah suatu proses disebut eksposisi...",
-        opsi: ["Definisi", "Ilustrasi", "Proses", "Pertentangan"],
-        jawaban: 2,
+        opsi: ["proses"],
+        jawaban: "proses",
         penjelasan: "Eksposisi proses menjelaskan tahapan atau langkah-langkah suatu proses secara berurutan, biasanya menggunakan konjungsi temporal.",
       },
       {
         id: 8,
-        soal: "Kata 'sebaiknya', 'hendaknya', 'perlu' dalam teks eksposisi termasuk dalam kaidah...",
-        opsi: ["Kata teknis", "Konjungsi kausal", "Kalimat persuasif", "Kata kerja mental"],
-        jawaban: 2,
+        tipe: "BENAR_SALAH",
+        soal: "Kata 'sebaiknya', 'hendaknya', dan 'perlu' dalam teks eksposisi termasuk dalam kaidah kebahasaan kalimat persuasif.",
+        opsi: ["Benar", "Salah"],
+        jawaban: "0",
         penjelasan: "Kata-kata seperti sebaiknya, hendaknya, perlu termasuk kalimat persuasif yang bersifat mengajak atau menganjurkan pembaca.",
       },
       {
@@ -452,10 +445,11 @@ const konten: Konten = {
       },
       {
         id: 3,
-        soal: "Dalam struktur teks eksposisi, bagian tesis berfungsi sebagai...",
-        opsi: ["Simpulan dari seluruh argumen", "Pengantar yang menyatakan gagasan utama penulis", "Data pendukung untuk memperkuat argumen", "Ajakan kepada pembaca"],
+        tipe: "BENAR_SALAH",
+        soal: "Dalam struktur teks eksposisi, bagian tesis berfungsi sebagai simpulan dari seluruh argumen.",
+        opsi: ["Benar", "Salah"],
         jawaban: 1,
-        penjelasan: "Tesis adalah pernyataan pendapat atau gagasan utama penulis yang diletakkan di bagian pembuka teks eksposisi.",
+        penjelasan: "Tesis adalah pernyataan pendapat atau gagasan utama penulis yang diletakkan di bagian pembuka teks eksposisi, bukan simpulan.",
       },
       {
         id: 4,
@@ -466,23 +460,25 @@ const konten: Konten = {
       },
       {
         id: 5,
-        soal: "Pola pengembangan eksposisi deduktif memiliki ciri...",
-        opsi: ["Gagasan utama di akhir paragraf", "Gagasan utama di awal paragraf", "Gagasan utama di tengah paragraf", "Tidak memiliki gagasan utama"],
-        jawaban: 1,
+        tipe: "BENAR_SALAH",
+        soal: "Pola pengembangan eksposisi deduktif memiliki ciri gagasan utama di awal paragraf.",
+        opsi: ["Benar", "Salah"],
+        jawaban: 0,
         penjelasan: "Pola deduktif meletakkan gagasan utama (kalimat topik) di awal paragraf, lalu diikuti kalimat-kalimat penjelas.",
       },
       {
         id: 6,
+        tipe: "ISIAN",
         soal: "Eksposisi yang menyajikan dua sisi yang saling bertentangan dari suatu isu disebut eksposisi...",
-        opsi: ["Definisi", "Ilustrasi", "Pertentangan", "Proses"],
-        jawaban: 2,
+        opsi: ["pertentangan"],
+        jawaban: "pertentangan",
         penjelasan: "Eksposisi pertentangan menyajikan dua sudut pandang atau sisi yang berlawanan dari suatu isu untuk memberikan gambaran yang seimbang.",
       },
       {
         id: 7,
         soal: "Manakah kalimat berikut yang merupakan opini?",
         opsi: ["Indonesia memiliki 34 provinsi", "Gunung Bromo terletak di Jawa Timur", "Menurut para ahli, perubahan iklim adalah ancaman serius bagi masa depan bumi", "Bahasa Inggris adalah bahasa internasional"],
-        jawaban: 2,
+        jawaban: "2",
         penjelasan: "'Menurut para ahli, perubahan iklim adalah ancaman serius' mengandung penilaian subjektif ('ancaman serius') dan mengacu pada pendapat, bukan fakta mutlak.",
       },
       {

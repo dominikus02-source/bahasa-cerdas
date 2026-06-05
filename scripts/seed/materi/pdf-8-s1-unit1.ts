@@ -268,16 +268,17 @@ const konten: Konten = {
     latihan: [
       {
         id: 1,
-        soal: "Berita harus bersifat faktual, artinya...",
-        opsi: ["Berdasarkan opini penulis", "Berdasarkan fakta dan kenyataan", "Berdasarkan ramalan", "Berdasarkan cerita orang"],
-        jawaban: 1,
+        soal: "Berita harus bersifat faktual, artinya berdasarkan ... dan kenyataan.",
+        tipe: "ISIAN",
+        opsi: ["fakta"],
+        jawaban: "fakta",
         penjelasan: "Faktual berarti berdasarkan fakta dan kenyataan yang dapat diverifikasi kebenarannya.",
       },
       {
         id: 2,
         soal: "Unsur 'What' dalam 5W+1H menanyakan...",
         opsi: ["Siapa yang terlibat", "Apa yang terjadi", "Kapan kejadiannya", "Di mana kejadiannya"],
-        jawaban: 1,
+        jawaban: "1",
         penjelasan: "What menanyakan 'Apa yang terjadi?' — yaitu inti peristiwa dalam berita.",
       },
       {
@@ -303,9 +304,10 @@ const konten: Konten = {
       },
       {
         id: 6,
-        soal: "Struktur penulisan berita yang menempatkan informasi terpenting di awal disebut...",
-        opsi: ["Piramida tegak", "Piramida terbalik", "Kronologis", "Tematis"],
-        jawaban: 1,
+        soal: "Piramida terbalik adalah struktur penulisan berita yang menempatkan informasi terpenting di awal.",
+        tipe: "BENAR_SALAH",
+        opsi: ["Benar", "Salah"],
+        jawaban: 0,
         penjelasan: "Piramida terbalik: informasi paling penting di awal (lead), lalu informasi pendukung di bagian tubuh dan ekor.",
       },
       {
@@ -317,9 +319,10 @@ const konten: Konten = {
       },
       {
         id: 8,
-        soal: "Kata 'menduga', 'memperkirakan', 'berharap' dalam teks berita termasuk...",
-        opsi: ["Kata kerja fisik", "Kata kerja mental", "Kata sifat", "Kata benda"],
-        jawaban: 1,
+        soal: "Kata 'menduga', 'memperkirakan', dan 'berharap' termasuk kata kerja mental dalam teks berita.",
+        tipe: "BENAR_SALAH",
+        opsi: ["Benar", "Salah"],
+        jawaban: 0,
         penjelasan: "Kata kerja mental berkaitan dengan aktivitas pikiran atau perasaan, sering digunakan dalam kutipan narasumber.",
       },
       {
@@ -362,16 +365,18 @@ const konten: Konten = {
     kuis: [
       {
         id: 1,
-        soal: "Teks berita yang baik harus memenuhi dua syarat utama, yaitu...",
-        opsi: ["Panjang dan detail", "Faktual dan aktual", "Mahal dan mewah", "Indah dan puitis"],
-        jawaban: 1,
+        soal: "Teks berita yang baik harus memenuhi dua syarat utama, yaitu faktual dan ...",
+        tipe: "ISIAN",
+        opsi: ["aktual"],
+        jawaban: "aktual",
         penjelasan: "Berita harus faktual (berdasarkan fakta) dan aktual (baru terjadi).",
       },
       {
         id: 2,
-        soal: "Pertanyaan 'Why' dalam 5W+1H menanyakan...",
-        opsi: ["Apa yang terjadi", "Siapa yang terlibat", "Mengapa peristiwa terjadi", "Bagaimana prosesnya"],
-        jawaban: 2,
+        soal: "Pertanyaan 'Why' dalam 5W+1H menanyakan penyebab atau latar belakang terjadinya peristiwa.",
+        tipe: "BENAR_SALAH",
+        opsi: ["Benar", "Salah"],
+        jawaban: "0",
         penjelasan: "Why menanyakan penyebab atau latar belakang terjadinya peristiwa.",
       },
       {
@@ -404,9 +409,10 @@ const konten: Konten = {
       },
       {
         id: 7,
-        soal: "Kata 'sebab', 'akibatnya', 'karena' termasuk konjungsi...",
-        opsi: ["Temporal", "Kausal", "Koordinatif", "Subordinatif"],
-        jawaban: 1,
+        soal: "Kata 'sebab', 'akibatnya', dan 'karena' termasuk konjungsi kausal.",
+        tipe: "BENAR_SALAH",
+        opsi: ["Benar", "Salah"],
+        jawaban: 0,
         penjelasan: "Konjungsi kausal menunjukkan hubungan sebab-akibat: karena, sebab, akibatnya, sehingga.",
       },
       {

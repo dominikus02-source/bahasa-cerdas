@@ -2,16 +2,6 @@ import type { Konten, Soal } from "../types";
 
 const kd = "3.5/4.5";
 
-function buatSoal(count: number, opsi: number, tema: string): Soal[] {
-  return Array.from({ length: count }, (_, i) => ({
-    id: i + 1,
-    soal: `Contoh soal ${tema} nomor ${i + 1}?`,
-    opsi: ["Pilihan A", "Pilihan B", "Pilihan C", "Pilihan D"],
-    jawaban: 0,
-    penjelasan: `Penjelasan untuk soal ${tema} nomor ${i + 1}`,
-  }));
-}
-
 /* =============================================
    Unit 5: Teks Cerita Inspiratif — IX S2
    KD 3.5/4.5 — Mengidentifikasi Unsur & Menyusun Teks Cerita Inspiratif
@@ -363,9 +353,10 @@ const konten: Konten = {
       },
       {
         id: 2,
-        soal: "Bagian struktur yang menceritakan tantangan atau kesulitan yang dihadapi tokoh disebut...",
-        opsi: ["Orientasi", "Peristiwa", "Reaksi", "Koda"],
-        jawaban: 1,
+        tipe: "BENAR_SALAH",
+        soal: "Bagian struktur teks cerita inspiratif yang menceritakan tantangan atau kesulitan yang dihadapi tokoh disebut peristiwa.",
+        opsi: ["Benar", "Salah"],
+        jawaban: 0,
         penjelasan: "Peristiwa adalah bagian yang menceritakan rangkaian kejadian, tantangan, atau konflik yang dihadapi tokoh.",
       },
       {
@@ -377,23 +368,25 @@ const konten: Konten = {
       },
       {
         id: 4,
-        soal: "Berikut ini yang merupakan contoh kata seruan (interjeksi) dalam teks cerita inspiratif adalah...",
-        opsi: ["kemudian, setelah itu, akhirnya", "Aduh!, Ya Tuhan!, Alhamdulillah!", "merenung, membayangkan, berharap", "karena, sehingga, meskipun"],
-        jawaban: 1,
-        penjelasan: "Kata seruan seperti 'Aduh!', 'Ya Tuhan!', 'Alhamdulillah!' berfungsi mengungkapkan perasaan tokoh secara langsung.",
+        tipe: "ISIAN",
+        soal: "Kata seruan seperti 'Aduh!', 'Ya Tuhan!', 'Alhamdulillah!' dalam teks cerita inspiratif secara istilah disebut...",
+        opsi: ["interjeksi"],
+        jawaban: "0",
+        penjelasan: "Kata seruan seperti 'Aduh!', 'Ya Tuhan!', 'Alhamdulillah!' berfungsi mengungkapkan perasaan tokoh secara langsung dan disebut interjeksi.",
       },
       {
         id: 5,
         soal: "Perbedaan utama teks cerita inspiratif dengan cerpen terletak pada...",
         opsi: ["Panjang cerita", "Tujuan dan sumber cerita", "Jumlah tokoh", "Penggunaan majas"],
-        jawaban: 1,
+        jawaban: "1",
         penjelasan: "Cerpen bertujuan menghibur dan bersumber dari fiksi, sedangkan cerita inspiratif bertujuan memotivasi dan bersumber dari kisah nyata atau peristiwa faktual.",
       },
       {
         id: 6,
-        soal: "Bagian struktur teks cerita inspiratif yang berisi hasil akhir perjuangan dan pesan moral disebut...",
-        opsi: ["Orientasi", "Peristiwa", "Reaksi", "Koda"],
-        jawaban: 3,
+        tipe: "BENAR_SALAH",
+        soal: "Bagian struktur teks cerita inspiratif yang berisi hasil akhir perjuangan dan pesan moral disebut koda.",
+        opsi: ["Benar", "Salah"],
+        jawaban: 0,
         penjelasan: "Koda adalah bagian penutup yang berisi hasil akhir perjuangan tokoh dan amanat atau pesan moral yang dapat dipetik.",
       },
       {
@@ -479,9 +472,10 @@ const konten: Konten = {
       },
       {
         id: 3,
-        soal: "Kata 'Lautan masalah menghadangnya' mengandung majas...",
-        opsi: ["Simile", "Personifikasi", "Metafora", "Hiperbola"],
-        jawaban: 2,
+        tipe: "BENAR_SALAH",
+        soal: "'Lautan masalah menghadangnya' mengandung majas metafora.",
+        opsi: ["Benar", "Salah"],
+        jawaban: 0,
         penjelasan: "'Lautan masalah' adalah majas metafora — perbandingan langsung tanpa kata pembanding, yang menyamakan masalah dengan lautan yang luas dan dalam.",
       },
       {
@@ -512,28 +506,25 @@ const konten: Konten = {
       },
       {
         id: 7,
-        soal: "Berikut ini yang BUKAN termasuk ciri teks cerita inspiratif adalah...",
-        opsi: [
-          "Mengandung pesan moral dan motivasi",
-          "Berfokus pada perjuangan tokoh melawan keterbatasan",
-          "Menggunakan data statistik dan tabel pendukung",
-          "Menggunakan kata kerja mental dan kalimat persuasif",
-        ],
-        jawaban: 2,
+        tipe: "BENAR_SALAH",
+        soal: "Menggunakan data statistik dan tabel pendukung merupakan ciri dari teks cerita inspiratif.",
+        opsi: ["Benar", "Salah"],
+        jawaban: 1,
         penjelasan: "Data statistik dan tabel pendukung bukan ciri teks cerita inspiratif. Ciri tersebut justru melekat pada teks nonfiksi atau teks laporan.",
       },
       {
         id: 8,
+        tipe: "ISIAN",
         soal: "Kata 'bersyukur', 'terpukul', 'merenung', 'berharap' dalam teks cerita inspiratif termasuk dalam kategori...",
-        opsi: ["Kata kerja material", "Konjungsi temporal", "Kata kerja mental", "Kata seruan"],
-        jawaban: 2,
+        opsi: ["kata kerja mental"],
+        jawaban: "0",
         penjelasan: "Keempat kata tersebut adalah kata kerja mental (verba mentalis) yang berkaitan dengan aktivitas batin, perasaan, dan pikiran tokoh.",
       },
       {
         id: 9,
         soal: "Nilai yang berkaitan dengan sikap pantang menyerah dan kerja keras dalam cerita inspiratif disebut...",
         opsi: ["Nilai moral", "Nilai sosial", "Nilai perjuangan", "Nilai pendidikan"],
-        jawaban: 2,
+        jawaban: "2",
         penjelasan: "Nilai perjuangan mencakup semangat pantang menyerah, kerja keras, ketekunan, dan kegigihan — nilai yang paling menonjol dalam teks cerita inspiratif.",
       },
       {

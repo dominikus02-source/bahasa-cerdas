@@ -2,16 +2,6 @@ import type { Konten, Soal } from "../types";
 
 const kd = "3.3/4.3";
 
-function buatSoal(count: number, opsi: number, tema: string): Soal[] {
-  return Array.from({ length: count }, (_, i) => ({
-    id: i + 1,
-    soal: `Contoh soal ${tema} nomor ${i + 1}?`,
-    opsi: ["Pilihan A", "Pilihan B", "Pilihan C", "Pilihan D"],
-    jawaban: 0,
-    penjelasan: `Penjelasan untuk soal ${tema} nomor ${i + 1}`,
-  }));
-}
-
 /* =============================================
    Unit 7: Teks Pariwara (Iklan) — VIII S2
    KD 3.3/4.3 — Mengidentifikasi Unsur, Struktur, dan Kebahasaan Teks Iklan
@@ -364,10 +354,11 @@ const konten: Konten = {
       },
       {
         id: 2,
-        soal: "Prinsip AIDA dalam iklan terdiri dari Attention, Interest, Desire, dan...",
-        opsi: ["Activity", "Action", "Agreement", "Awareness"],
+        tipe: "BENAR_SALAH",
+        soal: "Prinsip AIDA dalam iklan terdiri dari Attention, Interest, Desire, dan Activity.",
+        opsi: ["Benar", "Salah"],
         jawaban: 1,
-        penjelasan: "AIDA adalah singkatan dari Attention (perhatian), Interest (ketertarikan), Desire (keinginan), dan Action (tindakan).",
+        penjelasan: "AIDA adalah singkatan dari Attention (perhatian), Interest (ketertarikan), Desire (keinginan), dan Action (tindakan), bukan Activity.",
       },
       {
         id: 3,
@@ -385,9 +376,10 @@ const konten: Konten = {
       },
       {
         id: 5,
-        soal: "Iklan tentang bahaya narkoba yang dibuat oleh BNN termasuk jenis iklan...",
-        opsi: ["Iklan niaga", "Iklan baris", "Iklan layanan masyarakat", "Iklan kolom"],
-        jawaban: 2,
+        tipe: "BENAR_SALAH",
+        soal: "Iklan tentang bahaya narkoba yang dibuat oleh BNN termasuk jenis iklan niaga.",
+        opsi: ["Benar", "Salah"],
+        jawaban: 1,
         penjelasan: "Iklan layanan masyarakat (non-niaga) bertujuan menyampaikan pesan sosial atau edukasi, seperti imbauan tentang bahaya narkoba.",
       },
       {
@@ -420,9 +412,10 @@ const konten: Konten = {
       },
       {
         id: 10,
-        soal: "Perbedaan utama iklan dengan pengumuman adalah...",
-        opsi: ["Iklan lebih panjang dari pengumuman", "Iklan bersifat persuasif, pengumuman bersifat informatif", "Iklan tidak menggunakan media, pengumuman menggunakan media", "Iklan selalu berbayar, pengumuman selalu gratis"],
-        jawaban: 1,
+        tipe: "ISIAN",
+        soal: "Iklan bersifat persuasif, sedangkan pengumuman bersifat...",
+        opsi: ["informatif"],
+        jawaban: "informatif",
         penjelasan: "Iklan bersifat persuasif (membujuk dan memengaruhi), sedangkan pengumuman bersifat informatif (memberi tahu) tanpa ajakan melakukan sesuatu.",
       },
     ],
@@ -453,15 +446,16 @@ const konten: Konten = {
         id: 1,
         soal: "Apa kepanjangan dari AIDA dalam prinsip pembuatan iklan?",
         opsi: ["Attention, Interest, Desire, Action", "Awareness, Information, Decision, Action", "Attention, Idea, Desire, Activity", "Awareness, Interest, Decision, Activity"],
-        jawaban: 0,
+        jawaban: "0",
         penjelasan: "AIDA = Attention (perhatian), Interest (ketertarikan), Desire (keinginan), Action (tindakan).",
       },
       {
         id: 2,
-        soal: "Berikut ini yang merupakan contoh iklan layanan masyarakat adalah...",
-        opsi: ["Iklan sabun cuci piring di televisi", "Iklan minuman energi di radio", "Iklan kampanye cuci tangan pakai sabun", "Iklan sepatu olahraga di majalah"],
-        jawaban: 2,
-        penjelasan: "Iklan kampanye cuci tangan adalah iklan layanan masyarakat yang bertujuan mengedukasi masyarakat tentang perilaku hidup bersih.",
+        tipe: "BENAR_SALAH",
+        soal: "Iklan layanan masyarakat bertujuan mempromosikan produk komersial.",
+        opsi: ["Benar", "Salah"],
+        jawaban: 1,
+        penjelasan: "Iklan layanan masyarakat bertujuan mengedukasi atau menyampaikan pesan sosial, bukan mempromosikan produk komersial.",
       },
       {
         id: 3,
@@ -479,16 +473,17 @@ const konten: Konten = {
       },
       {
         id: 5,
+        tipe: "ISIAN",
         soal: "Media iklan yang memungkinkan interaksi langsung dengan konsumen adalah...",
-        opsi: ["Koran", "Televisi", "Radio", "Media sosial"],
-        jawaban: 3,
+        opsi: ["media sosial"],
+        jawaban: "media sosial",
         penjelasan: "Media sosial memungkinkan interaksi dua arah — konsumen dapat berkomentar, bertanya, dan membagikan iklan. Koran, TV, dan radio bersifat satu arah.",
       },
       {
         id: 6,
         soal: "Cermati iklan berikut: 'Cintai bumi, kurangi plastik. Bawa tumbler mu setiap hari! Mulai dari sekarang.' Tujuan iklan tersebut adalah...",
         opsi: ["Mengingatkan tentang produk", "Membujuk melakukan aksi sosial", "Menawarkan produk komersial", "Menjelaskan cara kerja produk"],
-        jawaban: 1,
+        jawaban: "1",
         penjelasan: "Iklan tersebut bersifat persuasif untuk aksi sosial (mengurangi plastik) — termasuk iklan layanan masyarakat, bukan komersial.",
       },
       {
@@ -500,9 +495,10 @@ const konten: Konten = {
       },
       {
         id: 8,
-        soal: "Kelebihan iklan radio dibanding iklan cetak adalah...",
-        opsi: ["Dapat melihat produk", "Ada unsur suara dan musik", "Lebih murah biayanya", "Bisa disimpan lama"],
-        jawaban: 1,
+        tipe: "BENAR_SALAH",
+        soal: "Kelebihan iklan radio dibanding iklan cetak adalah adanya unsur suara dan musik.",
+        opsi: ["Benar", "Salah"],
+        jawaban: 0,
         penjelasan: "Iklan radio memiliki keunggulan unsur suara dan musik yang dapat membangun suasana dan emosi pendengar.",
       },
       {
