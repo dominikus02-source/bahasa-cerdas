@@ -54,7 +54,7 @@ export default function PageNavbar() {
           <Link href="/" className="flex items-center gap-2.5 group shrink-0">
             <div className="relative w-8 h-8 lg:w-9 lg:h-9">
               <Image
-                src="/logo.png"
+                src="/BC-logo.png"
                 alt="Logo BahasaCerdas"
                 fill
                 sizes="36px"

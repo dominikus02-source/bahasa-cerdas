@@ -63,7 +63,7 @@ export default function GuruProfilePage() {
         <div className="absolute inset-0 bg-cover bg-center opacity-30" style={{ backgroundImage: 'url("/batik-header-profile-bc.png")' }} />
         {/* BC Logo */}
         <Link href="/guru/beranda" className="absolute top-4 left-4 hover:opacity-80 transition-opacity">
-          <Image src="/logo.png" alt="BC" width={40} height={40} className="object-contain" />
+          <Image src="/BC-logo.png" alt="BC" width={40} height={40} className="object-contain" />
         </Link>
         
         {/* Avatar */}

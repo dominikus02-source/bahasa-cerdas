@@ -31,7 +31,7 @@ export default function PageFooter() {
             <Link href="/" className="flex items-center gap-3 mb-4" aria-label="BahasaCerdas - Beranda">
               <div className="relative w-9 h-9 shrink-0">
                 <Image
-                  src="/logo.png"
+                  src="/BC-logo.png"
                   alt="BahasaCerdas"
                   fill
                   sizes="36px"

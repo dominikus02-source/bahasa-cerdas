@@ -6,7 +6,7 @@ export default function PublicNavbar() {
     <header className="bg-white border-b border-slate-200 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 flex items-center justify-between h-16">
         <Link href="/" className="flex items-center gap-2.5">
-          <Image src="/logo.png" alt="BC" width={28} height={28} className="object-contain" />
+          <Image src="/BC-logo.png" alt="BC" width={28} height={28} className="object-contain" />
           <span className="font-bold text-slate-900 text-sm hidden sm:block">BahasaCerdas</span>
         </Link>
 

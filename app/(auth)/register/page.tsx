@@ -130,7 +130,7 @@ export default function RegisterPage() {
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
               Beranda
             </Link>
-            <Image src="/logo.png" alt="BahasaCerdas" width={56} height={56} className="mx-auto mb-3" />
+            <Image src="/BC-logo.png" alt="BahasaCerdas" width={56} height={56} className="mx-auto mb-3" />
             <h1 className="text-2xl font-bold text-gray-900 mb-1">Daftar</h1>
             <p className="text-sm text-gray-500">Bergabung dengan BahasaCerdas</p>
           </div>

@@ -4,7 +4,7 @@ const STATIC_CACHE = "bc-static-v1"
 const STATIC_ASSETS = [
   "/",
   "/manifest.json",
-  "/logo.png",
+  "/BC-logo.png",
 ]
 
 self.addEventListener("install", (event) => {
