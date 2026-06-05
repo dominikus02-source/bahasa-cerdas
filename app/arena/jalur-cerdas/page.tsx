@@ -2,7 +2,7 @@ import { db } from "@/lib/db"
 import { getUser } from "@/lib/supabase/server"
 import Link from "next/link"
 import { redirect } from "next/navigation"
-import { CheckCircle2, Lock, ChevronRight, Sprout, PenLine, BookOpen, Image, Clipboard, BarChart3, Sparkles, Music, Trophy, Dumbbell, Mic, Target, MessageCircle, Circle, Crown, Award, Unlock } from "lucide-react"
+import { CheckCircle2, ChevronRight, Sprout, PenLine, BookOpen, Image, Clipboard, BarChart3, Sparkles, Music, Trophy, Dumbbell, Mic, Target, MessageCircle, Crown } from "lucide-react"
 import type { ReactNode } from "react"
 
 const iconMap: Record<string, ReactNode> = {
@@ -51,29 +51,7 @@ export default async function JalurCerdasPage() {
   const completedMap = new Map(progress.filter(p => p.completed).map(p => [p.unitId, p]))
   const hasProgress = (unitId: string) => progress.some(p => p.unitId === unitId)
 
-  const completedAll = (levelIdx: number) => {
-    const lvl = levels[levelIdx]
-    if (!lvl) return true
-    return lvl.units.every(u => completedMap.has(u.id))
-  }
-
-  const isLevelUnlocked = (levelIdx: number) => {
-    if (levelIdx === 0) return true
-    for (let i = 0; i < levelIdx; i++) {
-      if (!completedAll(i)) return false
-    }
-    return true
-  }
-
-  const isUnitUnlocked = (levelIdx: number, unitIdx: number) => {
-    if (!isLevelUnlocked(levelIdx)) return false
-    if (levelIdx === 0 && unitIdx === 0) return true
-    const lvl = levels[levelIdx]
-    if (unitIdx === 0) return completedAll(levelIdx - 1)
-    return completedMap.has(lvl.units[unitIdx - 1].id)
-  }
-
-  const totalUnits = levels.reduce((s, l) => s + l.units.length, 0)
+    const totalUnits = levels.reduce((s, l) => s + l.units.length, 0)
   const totalDone = levels.reduce((s, l) => s + l.units.filter(u => completedMap.has(u.id)).length, 0)
   const allDone = totalUnits > 0 && totalDone === totalUnits
 
@@ -122,7 +100,7 @@ export default async function JalurCerdasPage() {
         const unitsInLevel = level.units.length
         const completedInLevel = level.units.filter(u => completedMap.has(u.id)).length
         const progressPercent = unitsInLevel > 0 ? Math.round((completedInLevel / unitsInLevel) * 100) : 0
-        const unlocked = isLevelUnlocked(levelIdx)
+        const unlocked = true // all levels unlocked
         const levelDone = unitsInLevel > 0 && completedInLevel === unitsInLevel
 
         return (
@@ -135,14 +113,13 @@ export default async function JalurCerdasPage() {
                 <div className="flex items-center gap-2">
                   <h2 className="font-bold text-lg text-gray-900">{level.title}</h2>
                   {levelDone && <span className="text-[10px] font-bold text-emerald-600 bg-emerald-100 px-2 py-0.5 rounded-full">Selesai</span>}
-                  {!unlocked && <span className="text-[10px] font-bold text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">Terkunci</span>}
                 </div>
                 <p className="text-xs text-gray-500">{level.subtitle}</p>
               </div>
               <div className="text-right">
-                <span className={`text-sm font-bold ${unlocked ? "text-gray-900" : "text-gray-400"}`}>{completedInLevel}/{unitsInLevel}</span>
+                <span className="text-sm font-bold text-gray-900">{completedInLevel}/{unitsInLevel}</span>
                 <div className="w-20 h-1.5 bg-gray-100 rounded-full mt-1 overflow-hidden">
-                  <div className={`h-full rounded-full transition-all ${unlocked ? "bg-violet-500" : "bg-gray-300"}`} style={{ width: `${progressPercent}%` }} />
+                  <div className="h-full rounded-full transition-all bg-violet-500" style={{ width: `${progressPercent}%` }} />
                 </div>
               </div>
             </div>
@@ -153,45 +130,39 @@ export default async function JalurCerdasPage() {
               )}
               {level.units.map((unit, idx) => {
                 const unitCompleted = completedMap.has(unit.id)
-                const unitUnlocked = isUnitUnlocked(levelIdx, idx)
+                const unitUnlocked = true // all units unlocked
                 return (
                   <Link
                     key={unit.id}
-                    href={unitUnlocked ? `/arena/jalur-cerdas/${unit.id}` : "#"}
+                    href={`/arena/jalur-cerdas/${unit.id}`}
                     className={`flex items-center gap-3 p-3.5 rounded-xl bg-white border transition-all ${
                       unitCompleted
                         ? "border-emerald-200 bg-emerald-50/50"
-                        : unitUnlocked
-                          ? "border-gray-100 hover:border-violet-200 hover:shadow-md"
-                          : "border-gray-50 bg-gray-50 cursor-default"
+                        : "border-gray-100 hover:border-violet-200 hover:shadow-md"
                     }`}
                   >
                     <div className="relative shrink-0">
                       <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
-                        unitCompleted ? "bg-emerald-100" : unitUnlocked ? "bg-violet-50" : "bg-gray-100"
+                        unitCompleted ? "bg-emerald-100" : "bg-violet-50"
                       }`}>
                         {unitCompleted ? (
                           <CheckCircle2 className="w-6 h-6 text-emerald-500" />
-                        ) : unitUnlocked ? (
-                          <div className="text-violet-600">{getIcon(unit.emoji, <BookOpen className="w-5 h-5" />)}</div>
                         ) : (
-                          <Lock className="w-4 h-4 text-gray-300" />
+                          <div className="text-violet-600">{getIcon(unit.emoji, <BookOpen className="w-5 h-5" />)}</div>
                         )}
                       </div>
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className={`font-semibold text-sm truncate ${unitCompleted ? "text-emerald-700" : unitUnlocked ? "text-gray-900" : "text-gray-400"}`}>
+                      <p className={`font-semibold text-sm truncate ${unitCompleted ? "text-emerald-700" : "text-gray-900"}`}>
                         {unit.title}
                         {unitCompleted && <span className="ml-1.5 text-emerald-500">✓</span>}
                       </p>
-                      {unit.subtitle && (
-                        <p className={`text-xs truncate ${unitUnlocked ? "text-gray-400" : "text-gray-300"}`}>{unit.subtitle}</p>
-                      )}
+                      {unit.subtitle && <p className="text-xs truncate text-gray-400">{unit.subtitle}</p>}
                       {hasProgress(unit.id) && !unitCompleted && (
                         <p className="text-[10px] text-violet-500 font-medium mt-0.5">Sedang dipelajari</p>
                       )}
                     </div>
-                    {unitUnlocked && !unitCompleted && <ChevronRight className="w-4 h-4 text-gray-300 shrink-0" />}
+                    {!unitCompleted && <ChevronRight className="w-4 h-4 text-gray-300 shrink-0" />}
                     {unitCompleted && <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />}
                   </Link>
                 )

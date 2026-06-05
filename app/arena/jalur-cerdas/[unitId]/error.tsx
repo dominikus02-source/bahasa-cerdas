@@ -12,7 +12,7 @@ export default function UnitError({
   reset: () => void
 }) {
   useEffect(() => {
-    console.error("Unit page error:", error)
+    console.error("Unit page error:", error.message, error.digest, error.stack)
   }, [error])
 
   return (
