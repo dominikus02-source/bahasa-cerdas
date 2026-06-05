@@ -1,18 +1,5 @@
 import type { Konten, Soal } from "../types";
 
-const kd7S1 = "3.1/4.1";
-const kd7S2 = "3.2/4.2";
-
-function buatSoal(count: number, tema: string): Soal[] {
-  return Array.from({ length: count }, (_, i) => ({
-    id: i + 1,
-    soal: `Contoh soal ${tema} nomor ${i + 1}?`,
-    opsi: ["Pilihan A", "Pilihan B", "Pilihan C", "Pilihan D"],
-    jawaban: 0,
-    penjelasan: `Penjelasan untuk soal ${tema} nomor ${i + 1}`,
-  }));
-}
-
 /* =============================================
    Unit 1: Teks Deskripsi (VII S1)
    ============================================= */
@@ -246,7 +233,18 @@ const konten: Konten = {
         "Gunakan pancaindra dan majas untuk membuat deskripsi lebih hidup.",
       ],
     },
-    latihan: buatSoal(10, "Teks Deskripsi"),
+    latihan: [
+      { id: 1, tipe: "PG", soal: "Berikut ini yang bukan merupakan ciri-ciri teks deskripsi adalah...", opsi: ["Menggambarkan objek secara terperinci", "Melibatkan pancaindra pembaca", "Bersifat objektif tanpa kesan penulis", "Menggunakan majas dan kalimat rincian"], jawaban: 2, penjelasan: "Teks deskripsi bersifat subjektif karena melibatkan kesan penulis. Sifat objektif tanpa kesan penulis adalah ciri teks laporan." },
+      { id: 2, tipe: "BENAR_SALAH", soal: "Teks deskripsi hanya menggunakan satu jenis majas, yaitu personifikasi.", opsi: ["Benar", "Salah"], jawaban: 1, penjelasan: "Teks deskripsi dapat menggunakan berbagai jenis majas: personifikasi, metafora, perumpamaan, dan hiperbola." },
+      { id: 3, tipe: "PG", soal: "Bagian struktur teks deskripsi yang berisi penggambaran ciri-ciri objek secara terperinci disebut...", opsi: ["Identifikasi", "Deskripsi bagian", "Simpulan", "Orientasi"], jawaban: 1, penjelasan: "Deskripsi bagian adalah inti dari teks deskripsi." },
+      { id: 4, tipe: "PG", soal: "Kalimat 'Angin berbisik di telingaku' menggunakan majas...", opsi: ["Metafora", "Personifikasi", "Hiperbola", "Perumpamaan"], jawaban: 1, penjelasan: "Personifikasi memberikan sifat manusia pada benda mati." },
+      { id: 5, tipe: "BENAR_SALAH", soal: "Deskripsi bagian dalam teks deskripsi bersifat opsional — boleh ada boleh tidak.", opsi: ["Benar", "Salah"], jawaban: 1, penjelasan: "Deskripsi bagian adalah inti teks deskripsi dan WAJIB ada. Bagian opsional adalah simpulan." },
+      { id: 6, tipe: "ISIAN", soal: "Sebutkan salah satu jenis teks deskripsi berdasarkan pendekatannya!", opsi: ["objektif"], jawaban: "objektif", penjelasan: "Jenis: objektif, subjektif, dan spasial." },
+      { id: 7, tipe: "PG", soal: "Fungsi majas dalam teks deskripsi adalah...", opsi: ["Membuat tulisan lebih panjang", "Memperindah dan menghidupkan tulisan", "Mengganti kata-kata sulit", "Membingungkan pembaca"], jawaban: 1, penjelasan: "Majas membuat tulisan lebih ekspresif dan menarik." },
+      { id: 8, tipe: "PG", soal: "Contoh kalimat rincian yang tepat adalah...", opsi: ["Rumah itu besar.", "Rumah itu memiliki tiga jendela besar, dua pintu kayu jati, dan halaman yang ditumbuhi bunga mawar merah.", "Rumah itu bagus.", "Rumah itu tidak jelek."], jawaban: 1, penjelasan: "Kalimat rincian memberikan detail spesifik secara konkret." },
+      { id: 9, tipe: "BENAR_SALAH", soal: "'Ia adalah lilin dalam kegelapan' adalah contoh majas perumpamaan.", opsi: ["Benar", "Salah"], jawaban: 1, penjelasan: "Kalimat tersebut adalah majas metafora (tanpa kata pembanding seperti/bagaikan)." },
+      { id: 10, tipe: "PG", soal: "Langkah pertama dalam menulis teks deskripsi adalah...", opsi: ["Langsung menulis paragraf penuh", "Memilih objek yang akan dideskripsikan", "Mencari referensi di internet", "Meminta teman membaca"], jawaban: 1, penjelasan: "Pilih objek, lalu amati dengan pancaindra." },
+    ],
     praktik: {
       petunjuk: "Pilihlah satu objek di sekitarmu (ruang kelas, halaman sekolah, pasar, atau anggota keluarga). Tulislah teks deskripsi sepanjang 3-5 paragraf dengan struktur: identifikasi, deskripsi bagian (minimal 2 paragraf), dan simpulan. Gunakan minimal 5 kata sifat, 3 majas berbeda, dan kalimat rincian di setiap paragraf.",
       tips: [
@@ -258,7 +256,18 @@ const konten: Konten = {
       ],
       contoh: "Lihat contoh teks deskripsi tentang ruang kelas pada materi Prosedur Memproduksi Teks di atas.",
     },
-    kuis: buatSoal(10, "Teks Deskripsi"),
+    kuis: [
+      { id: 1, tipe: "PG", soal: "Teks deskripsi adalah teks yang...", opsi: ["Menjelaskan prosedur melakukan sesuatu", "Menggambarkan objek dengan kata-kata terperinci", "Menceritakan kisah fiktif", "Meyakinkan pembaca"], jawaban: 1, penjelasan: "Teks deskripsi menggambarkan objek sehingga pembaca seolah mengalami langsung." },
+      { id: 2, tipe: "BENAR_SALAH", soal: "Teks deskripsi subjektif menggambarkan objek tanpa melibatkan perasaan penulis.", opsi: ["Benar", "Salah"], jawaban: 1, penjelasan: "Teks subjektif justru melibatkan perasaan dan kesan pribadi penulis." },
+      { id: 3, tipe: "PG", soal: "Urutan struktur teks deskripsi yang tepat adalah...", opsi: ["Identifikasi → Simpulan → Deskripsi bagian", "Deskripsi bagian → Identifikasi → Simpulan", "Identifikasi → Deskripsi bagian → Simpulan", "Simpulan → Identifikasi → Deskripsi bagian"], jawaban: 2, penjelasan: "Urutan: identifikasi → deskripsi bagian → simpulan." },
+      { id: 4, tipe: "PG", soal: "'Ombak berkejaran menuju pantai' menggunakan majas...", opsi: ["Metafora", "Hiperbola", "Perumpamaan", "Personifikasi"], jawaban: 3, penjelasan: "Ombak digambarkan berkejaran seperti manusia (personifikasi)." },
+      { id: 5, tipe: "BENAR_SALAH", soal: "Kalimat rincian harus menggunakan kata hubung seperti 'dan', 'serta', 'maupun'.", opsi: ["Benar", "Salah"], jawaban: 0, penjelasan: "Kalimat rincian menggunakan kata hubung untuk menggabungkan detail." },
+      { id: 6, tipe: "ISIAN", soal: "Sebutkan dua dari tiga jenis teks deskripsi!", opsi: ["objektif subjektif"], jawaban: "objektif subjektif", penjelasan: "Jenis: objektif, subjektif, dan spasial." },
+      { id: 7, tipe: "PG", soal: "Teks deskripsi spasial menggambarkan...", opsi: ["Perasaan penulis", "Ruang, tempat, atau lokasi", "Urutan waktu kejadian", "Pendapat tentang suatu isu"], jawaban: 1, penjelasan: "Deskripsi spasial fokus pada penggambaran ruang/tempat." },
+      { id: 8, tipe: "PG", soal: "Yang termasuk kata sifat dalam teks deskripsi adalah...", opsi: ["berlari, melompat", "indah, megah, lembut", "dan, atau, tetapi", "ke, di, dari"], jawaban: 1, penjelasan: "Kata sifat menggambarkan sifat objek: indah, megah, lembut." },
+      { id: 9, tipe: "BENAR_SALAH", soal: "Simpulan dalam teks deskripsi adalah bagian yang wajib ada.", opsi: ["Benar", "Salah"], jawaban: 1, penjelasan: "Simpulan opsional. Yang wajib: identifikasi dan deskripsi bagian." },
+      { id: 10, tipe: "PG", soal: "Tujuan penggunaan pancaindra dalam menulis teks deskripsi adalah...", opsi: ["Membuat tulisan lebih panjang", "Agar pembaca seolah mengalami langsung", "Memenuhi syarat paragraf", "Menunjukkan kosakata"], jawaban: 1, penjelasan: "Pancaindra membuat deskripsi lebih konkret dan hidup." },
+    ],
   };
 
 export default konten;

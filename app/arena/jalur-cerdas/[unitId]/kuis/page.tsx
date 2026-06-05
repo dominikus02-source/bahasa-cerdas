@@ -2,13 +2,14 @@
 
 import { useEffect, useState, useCallback, useRef } from "react"
 import { useParams, useRouter } from "next/navigation"
-import { ArrowLeft, Timer, CheckCircle2, XCircle, ChevronRight, HelpCircle, Award, Zap } from "lucide-react"
+import { ArrowLeft, Timer, CheckCircle2, XCircle, HelpCircle, Award, Zap } from "lucide-react"
 
 interface SoalKuis {
   id: number
+  tipe?: "PG" | "BENAR_SALAH" | "ISIAN"
   soal: string
   opsi: string[]
-  jawaban: number
+  jawaban: number | string
 }
 
 export default function KuisPage() {
@@ -16,16 +17,22 @@ export default function KuisPage() {
   const router = useRouter()
   const [soalList, setSoalList] = useState<SoalKuis[]>([])
   const [current, setCurrent] = useState(0)
-  const [jawaban, setJawaban] = useState<Record<number, number>>({})
+  const [jawaban, setJawaban] = useState<Record<number, number | string>>({})
   const [selesai, setSelesai] = useState(false)
   const [loading, setLoading] = useState(true)
   const [timeLeft, setTimeLeft] = useState(120)
   const [started, setStarted] = useState(false)
   const [showingResult, setShowingResult] = useState(false)
   const [progressSaved, setProgressSaved] = useState(false)
+  const [inputIsian, setInputIsian] = useState("")
   const timerRef = useRef<NodeJS.Timeout | null>(null)
 
-  const benar = soalList.filter(s => jawaban[s.id] === s.jawaban).length
+  const benar = soalList.filter(s => {
+    const j = jawaban[s.id]
+    if (j === undefined) return false
+    if (s.tipe === "ISIAN") return j === s.jawaban
+    return j === s.jawaban
+  }).length
   const total = soalList.length
   const skor = total > 0 ? Math.round((benar / total) * 100) : 0
   const grade = skor >= 85 ? "A" : skor >= 70 ? "B" : skor >= 55 ? "C" : "D"
@@ -72,22 +79,58 @@ export default function KuisPage() {
   }, [])
 
   const soal = soalList[current]
+  const tipe = soal?.tipe || "PG"
   const picked = jawaban[soal?.id]
   const showResult = picked !== undefined
+  const isCorrect = tipe === "ISIAN"
+    ? picked === soal?.jawaban
+    : picked === soal?.jawaban
 
-  const pilih = (idx: number) => {
+  const pilihPG = (idx: number) => {
     if (showResult) return
     setJawaban(prev => ({ ...prev, [soal.id]: idx }))
     setShowingResult(true)
     setTimeout(() => {
       setShowingResult(false)
-      if (current < soalList.length - 1) {
-        setCurrent(c => c + 1)
-      } else {
-        if (timerRef.current) clearInterval(timerRef.current)
-        setSelesai(true)
-      }
+      nextSoal()
+    }, 1200)
+  }
+
+  const pilihBS = (idx: number) => {
+    if (showResult) return
+    setJawaban(prev => ({ ...prev, [soal.id]: idx }))
+    setShowingResult(true)
+    setTimeout(() => {
+      setShowingResult(false)
+      nextSoal()
+    }, 1200)
+  }
+
+  const submitIsian = () => {
+    if (showResult || !inputIsian.trim()) return
+    const jawab = inputIsian.trim().toLowerCase()
+    const kunci = (soal.jawaban as string).toLowerCase()
+    setJawaban(prev => ({ ...prev, [soal.id]: jawab === kunci ? soal.jawaban : jawab }))
+    setShowingResult(true)
+    setTimeout(() => {
+      setShowingResult(false)
+      setInputIsian("")
+      nextSoal()
     }, 1500)
+  }
+
+  const nextSoal = () => {
+    if (current < soalList.length - 1) {
+      setCurrent(c => c + 1)
+    } else {
+      if (timerRef.current) clearInterval(timerRef.current)
+      setSelesai(true)
+    }
+  }
+
+  const getJawabanBenar = (s: SoalKuis) => {
+    if (s.tipe === "ISIAN") return s.jawaban as string
+    return s.opsi[s.jawaban as number]
   }
 
   const minutes = Math.floor(timeLeft / 60)
@@ -157,7 +200,7 @@ export default function KuisPage() {
             </div>
           </div>
           <div className="w-full h-1.5 bg-gray-200 rounded-full mt-2 overflow-hidden">
-            <div className="h-full bg-rose-500 rounded-full transition-all" style={{ width: `${(benar / total) * 100}%` }} />
+            <div className="h-full bg-rose-500 rounded-full transition-all" style={{ width: `${(current + 1 / total) * 100}%` }} />
           </div>
         </div>
       </div>
@@ -166,57 +209,107 @@ export default function KuisPage() {
       <div className="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm mb-4 min-h-[200px]">
         <p className="text-base font-bold text-gray-900 leading-relaxed mb-5">{soal.soal}</p>
 
-        <div className="space-y-2.5">
-          {soal.opsi.map((o, idx) => {
-            const letters = ["A", "B", "C", "D"]
-            const isSelected = picked === idx
-            const isRight = idx === soal.jawaban
-            let btnClass = "border-gray-200 bg-white hover:border-violet-300 hover:bg-violet-50"
+        {tipe === "PG" && (
+          <div className="space-y-2.5">
+            {soal.opsi.map((o, idx) => {
+              const letters = ["A", "B", "C", "D"]
+              const isSelected = picked === idx
+              const isRight = idx === soal.jawaban
+              let btnClass = "border-gray-200 bg-white hover:border-violet-300 hover:bg-violet-50"
 
-            if (showResult) {
-              if (isRight) btnClass = "border-emerald-400 bg-emerald-50"
-              else if (isSelected && !isRight) btnClass = "border-red-400 bg-red-50"
-              else btnClass = "border-gray-100 bg-gray-50 opacity-60"
-            }
+              if (showResult) {
+                if (isRight) btnClass = "border-emerald-400 bg-emerald-50"
+                else if (isSelected && !isRight) btnClass = "border-red-400 bg-red-50"
+                else btnClass = "border-gray-100 bg-gray-50 opacity-60"
+              }
 
-            return (
-              <button
-                key={idx}
-                onClick={() => pilih(idx)}
-                disabled={showResult}
-                className={`w-full flex items-center gap-3 p-3.5 rounded-xl border-2 text-left transition-all ${btnClass}`}
+              return (
+                <button key={idx} onClick={() => pilihPG(idx)} disabled={showResult}
+                  className={`w-full flex items-center gap-3 p-3.5 rounded-xl border-2 text-left transition-all ${btnClass}`}
+                >
+                  <span className={`w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold shrink-0 ${
+                    showResult && isRight ? "bg-emerald-500 text-white" :
+                    showResult && isSelected && !isRight ? "bg-red-500 text-white" :
+                    isSelected ? "bg-violet-500 text-white" : "bg-gray-100 text-gray-500"
+                  }`}>
+                    {showResult && isRight ? <CheckCircle2 className="w-4 h-4" /> :
+                     showResult && isSelected && !isRight ? <XCircle className="w-4 h-4" /> :
+                     letters[idx]}
+                  </span>
+                  <span className={`text-sm font-medium ${
+                    showResult && isRight ? "text-emerald-700" :
+                    showResult && isSelected && !isRight ? "text-red-700" :
+                    "text-gray-700"
+                  }`}>{o}</span>
+                </button>
+              )
+            })}
+          </div>
+        )}
+
+        {tipe === "BENAR_SALAH" && (
+          <div className="flex gap-3">
+            {["Benar", "Salah"].map((label, idx) => {
+              const isSelected = picked === idx
+              const isRight = idx === soal.jawaban
+              let btnClass = "flex-1 border-2 border-gray-200 bg-white hover:border-violet-300 hover:bg-violet-50"
+
+              if (showResult) {
+                if (isRight) btnClass = "flex-1 border-2 border-emerald-400 bg-emerald-50"
+                else if (isSelected && !isRight) btnClass = "flex-1 border-2 border-red-400 bg-red-50"
+                else btnClass = "flex-1 border-2 border-gray-100 bg-gray-50 opacity-60"
+              }
+
+              return (
+                <button key={idx} onClick={() => pilihBS(idx)} disabled={showResult}
+                  className={`${btnClass} py-4 rounded-xl text-center font-bold text-sm transition-all`}
+                >
+                  <span className={`block text-lg mb-0.5 ${idx === 0 ? "text-emerald-600" : "text-red-600"}`}>
+                    {idx === 0 ? "✓" : "✗"}
+                  </span>
+                  {label}
+                </button>
+              )
+            })}
+          </div>
+        )}
+
+        {tipe === "ISIAN" && (
+          <div className="space-y-3">
+            <input
+              value={inputIsian}
+              onChange={e => setInputIsian(e.target.value)}
+              onKeyDown={e => e.key === "Enter" && submitIsian()}
+              placeholder="Ketik jawabanmu..."
+              disabled={showResult}
+              className="w-full px-4 py-3.5 rounded-xl border-2 border-gray-200 text-sm focus:outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-100 disabled:bg-gray-50"
+              autoFocus
+            />
+            {!showResult && (
+              <button onClick={submitIsian} disabled={!inputIsian.trim()}
+                className="px-6 py-2.5 bg-violet-600 text-white font-semibold rounded-xl hover:bg-violet-700 disabled:opacity-50 transition-all text-sm"
               >
-                <span className={`w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold shrink-0 ${
-                  showResult && isRight ? "bg-emerald-500 text-white" :
-                  showResult && isSelected && !isRight ? "bg-red-500 text-white" :
-                  isSelected ? "bg-violet-500 text-white" : "bg-gray-100 text-gray-500"
-                }`}>
-                  {showResult && isRight ? <CheckCircle2 className="w-4 h-4" /> :
-                   showResult && isSelected && !isRight ? <XCircle className="w-4 h-4" /> :
-                   letters[idx]}
-                </span>
-                <span className={`text-sm font-medium ${
-                  showResult && isRight ? "text-emerald-700" :
-                  showResult && isSelected && !isRight ? "text-red-700" :
-                  "text-gray-700"
-                }`}>{o}</span>
+                Jawab
               </button>
-            )
-          })}
-        </div>
+            )}
+          </div>
+        )}
       </div>
 
       {showingResult && (
         <div className={`p-4 rounded-xl border mb-4 animate-fade-in ${
-          picked === soal.jawaban ? "bg-emerald-50 border-emerald-200" : "bg-red-50 border-red-200"
+          isCorrect ? "bg-emerald-50 border-emerald-200" : "bg-red-50 border-red-200"
         }`}>
           <div className="flex items-center gap-1.5">
-            {picked === soal.jawaban ? (
+            {isCorrect ? (
               <><CheckCircle2 className="w-4 h-4 text-emerald-600" /><span className="text-sm font-bold text-emerald-700">Benar!</span></>
             ) : (
               <><XCircle className="w-4 h-4 text-red-600" /><span className="text-sm font-bold text-red-700">Kurang tepat</span></>
             )}
           </div>
+          {!isCorrect && (
+            <p className="text-xs text-gray-500 mt-1">Jawaban benar: <strong className="text-gray-800">{getJawabanBenar(soal)}</strong></p>
+          )}
         </div>
       )}
     </div>
