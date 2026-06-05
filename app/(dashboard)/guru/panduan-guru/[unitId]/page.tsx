@@ -10,7 +10,7 @@ import {
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 
-type Soal = { id: number; soal: string; opsi: string[]; jawaban: number; penjelasan: string }
+type Soal = { id: number; tipe?: "PG" | "BENAR_SALAH" | "ISIAN"; soal: string; opsi: string[]; jawaban: number | string; penjelasan: string }
 type Konten = {
   belajar: { tujuan: string[]; materi: { judul: string; isi: string[]; contoh: string[]; catatan?: string }[]; rangkuman: string[] }
   latihan: Soal[]
@@ -281,11 +281,11 @@ function BelajarContent({ content, ilustrasiUrls }: { content: Konten["belajar"]
           )}
         </div>
       ))}
-      {content.rangkuman.length > 0 && (
+      {(content.rangkuman?.length ?? 0) > 0 && (
         <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4">
           <h3 className="font-bold text-emerald-800 mb-2 text-sm">Rangkuman</h3>
           <ul className="space-y-1">
-            {content.rangkuman.map((r, i) => (
+            {content.rangkuman!.map((r, i) => (
               <li key={i} className="text-sm text-emerald-700 flex items-start gap-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 mt-1.5 shrink-0" />{r}
               </li>
@@ -307,25 +307,40 @@ function SoalContent({ label, soal, showAnswers, setShowAnswers }: { label: stri
           {showAnswers ? <><EyeOff className="w-3.5 h-3.5 mr-1" />Sembunyikan Jawaban</> : <><Eye className="w-3.5 h-3.5 mr-1" />Tampilkan Jawaban</>}
         </Button>
       </div>
-      {soal.map((q, i) => (
+      {soal.map((q, i) => {
+        const tipe = q.tipe || "PG"
+        const jawabStr = tipe === "ISIAN" ? q.jawaban as string : (q.opsi[q.jawaban as number] ?? "")
+        const jawabNum = q.jawaban as number
+        return (
         <div key={q.id} className="bg-white rounded-xl border border-slate-200 p-4">
-          <p className="text-sm font-medium text-slate-900 mb-3"><span className={`font-bold mr-2 ${label === "Kuis" ? "text-violet-600" : "text-emerald-600"}`}>{i + 1}.</span>{q.soal}</p>
+          <p className="text-sm font-medium text-slate-900 mb-3">
+            <span className={`font-bold mr-2 ${label === "Kuis" ? "text-violet-600" : "text-emerald-600"}`}>{i + 1}.</span>
+            {q.soal}
+            {tipe !== "PG" && <span className="ml-2 text-[10px] text-slate-400 font-normal">({tipe === "BENAR_SALAH" ? "Benar/Salah" : "Isian"})</span>}
+          </p>
+          {tipe === "ISIAN" ? (
+            <div className="text-sm text-slate-600">
+              {showAnswers && <p className="text-emerald-700 font-medium">Jawaban: <strong>{jawabStr}</strong></p>}
+            </div>
+          ) : (
           <div className="space-y-1.5 mb-2">
             {q.opsi.map((o, j) => {
-              const isCorrect = j === q.jawaban
+              const isCorrect = tipe === "BENAR_SALAH" ? j === jawabNum : j === jawabNum
               return (
                 <div key={j} className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm ${showAnswers && isCorrect ? "bg-emerald-50 text-emerald-700 border border-emerald-200" : "text-slate-700"}`}>
                   <span className="w-5 h-5 rounded-full border border-slate-300 flex items-center justify-center text-[10px] text-slate-500 font-medium shrink-0">
-                    {String.fromCharCode(65 + j)}
+                    {tipe === "BENAR_SALAH" ? (j === 0 ? "✓" : "✗") : String.fromCharCode(65 + j)}
                   </span>
                   {o}{showAnswers && isCorrect && <CheckCircle className="w-3.5 h-3.5 text-emerald-500 ml-auto" />}
                 </div>
               )
             })}
           </div>
+          )}
           {showAnswers && q.penjelasan && <p className="text-xs text-slate-500 italic mt-2 border-t border-slate-100 pt-2">{q.penjelasan}</p>}
         </div>
-      ))}
+        )
+      })}
     </div>
   )
 }
@@ -334,11 +349,11 @@ function PraktikContent({ content }: { content: Konten["praktik"] }) {
   return (
     <div className="bg-white rounded-xl border border-slate-200 p-5">
       <h2 className="font-bold text-slate-900 mb-3 flex items-center gap-2"><Lightbulb className="w-4 h-4 text-amber-500" />Petunjuk Praktik</h2>
-      <div className="text-sm text-slate-700 whitespace-pre-line leading-relaxed mb-4">{content.petunjuk}</div>
-      {content.tips.length > 0 && (
+      <div className="text-sm text-slate-700 whitespace-pre-line leading-relaxed mb-4">{content.petunjuk ?? ""}</div>
+      {(content.tips?.length ?? 0) > 0 && (
         <div className="bg-blue-50 border border-blue-100 rounded-lg p-3 mb-3">
           <p className="text-xs font-semibold text-blue-800 mb-1 flex items-center gap-1"><Brain className="w-3.5 h-3.5" />Tips</p>
-          <ul className="space-y-1">{content.tips.map((t, i) => <li key={i} className="text-sm text-blue-700 flex items-start gap-2"><span className="w-1.5 h-1.5 rounded-full bg-blue-400 mt-1.5 shrink-0" />{t}</li>)}</ul>
+          <ul className="space-y-1">{(content.tips ?? []).map((t, i) => <li key={i} className="text-sm text-blue-700 flex items-start gap-2"><span className="w-1.5 h-1.5 rounded-full bg-blue-400 mt-1.5 shrink-0" />{t}</li>)}</ul>
         </div>
       )}
       {content.contoh && (
@@ -421,25 +436,28 @@ function PresentationView({ data, content, tab, setTab, showAnswers, setShowAnsw
               {content.belajar.materi.map((m, i) => (
                 <div key={i}>
                   <h2 className="text-xl font-bold text-slate-900 mb-4">{m.judul}</h2>
-                  <div className="space-y-3">{[...m.isi.filter(l => !l.startsWith("R:")), ...(m.contoh.length > 0 ? ["---CONTOH---"] : []), ...m.contoh].map((line, j) => {
+                  <div className="space-y-3">{(() => {
+                    const c = m.contoh ?? []
+                    const items = [...m.isi.filter(l => !l.startsWith("R:")), ...(c.length > 0 ? ["---CONTOH---"] : []), ...c]
+                    return items.map((line, j) => {
                     const t = line.trim()
                     if (line === "---CONTOH---") return <div key={j} className="bg-amber-50 border border-amber-200 rounded-lg p-4"><p className="text-sm font-semibold text-amber-800 mb-2">Contoh:</p></div>
                     if (t.startsWith("[Ilustrasi:")) { const p = t.slice(11).trim().replace(/\]$/, ""); const u = ilustrasiUrls[p]; return <div key={j} className="my-3 rounded-xl overflow-hidden border border-violet-200 bg-violet-50">{u ? <img src={u} alt={p} className="w-full object-cover" loading="lazy" /> : <div className="flex items-center justify-center h-48 bg-violet-100 animate-pulse"><Loader2 className="w-6 h-6 text-violet-400 animate-spin" /></div>}<div className="flex items-center gap-2 px-4 py-2.5 bg-white/80 backdrop-blur-sm"><ImageIcon className="w-4 h-4 text-violet-500 shrink-0" /><p className="text-xs text-violet-700 italic">{p}</p></div></div> }
-                    if (m.contoh.includes(line)) return <p key={j} className="text-amber-900 bg-amber-50/50 -mt-2 px-4 py-1 rounded-lg">{line}</p>
+                    if (c.includes(line)) return <p key={j} className="text-amber-900 bg-amber-50/50 -mt-2 px-4 py-1 rounded-lg">{line}</p>
                     if (!line.trim()) return <div key={j} className="h-3" />
                     const isBullet = line.startsWith("•")
                     const isNumbered = /^\d+\./.test(line)
                     if (isBullet) return <p key={j} className="flex items-start gap-3 text-slate-800"><span className="w-2 h-2 rounded-full bg-emerald-400 mt-2.5 shrink-0" />{line.slice(1).trim()}</p>
                     if (isNumbered) { const m2 = line.match(/^(\d+)\.\s*(.*)/); if (m2) return <p key={j} className="flex items-start gap-3"><span className="w-7 h-7 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center text-sm font-bold shrink-0">{m2[1]}</span><span className="text-slate-800">{m2[2]}</span></p> }
                     return <p key={j} className="text-slate-800 leading-relaxed">{line}</p>
-                  })}</div>
+                  })})()}</div>
                   {m.catatan && <div className="mt-4 bg-blue-50 border border-blue-200 rounded-xl p-4 flex items-start gap-3"><Sparkles className="w-5 h-5 text-blue-500 mt-0.5 shrink-0" /><p className="text-blue-800">{m.catatan}</p></div>}
                 </div>
               ))}
-              {content.belajar.rangkuman.length > 0 && (
+              {(content.belajar.rangkuman?.length ?? 0) > 0 && (
                 <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-5">
                   <h3 className="font-bold text-emerald-800 mb-3">Rangkuman</h3>
-                  <ul className="space-y-2">{content.belajar.rangkuman.map((r, i) => (
+                  <ul className="space-y-2">{content.belajar.rangkuman!.map((r, i) => (
                     <li key={i} className="flex items-start gap-3 text-emerald-700"><span className="w-2 h-2 rounded-full bg-emerald-400 mt-2 shrink-0" /><span>{r}</span></li>
                   ))}</ul>
                 </div>
@@ -451,11 +469,11 @@ function PresentationView({ data, content, tab, setTab, showAnswers, setShowAnsw
           {tab === "praktik" && (
             <div>
               <h2 className="text-xl font-bold text-slate-900 mb-4 flex items-center gap-2"><Lightbulb className="w-6 h-6 text-amber-500" />Praktik</h2>
-              <div className="text-slate-800 leading-relaxed whitespace-pre-line text-lg mb-6">{content.praktik.petunjuk}</div>
-              {content.praktik.tips.length > 0 && (
+              <div className="text-slate-800 leading-relaxed whitespace-pre-line text-lg mb-6">{content.praktik.petunjuk ?? ""}</div>
+              {(content.praktik.tips?.length ?? 0) > 0 && (
                 <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-4">
                   <p className="font-semibold text-blue-800 mb-2 flex items-center gap-2"><Brain className="w-5 h-5" />Tips</p>
-                  <ul className="space-y-2">{content.praktik.tips.map((t, i) => <li key={i} className="flex items-start gap-3 text-blue-700"><span className="w-2 h-2 rounded-full bg-blue-400 mt-2 shrink-0" />{t}</li>)}</ul>
+                  <ul className="space-y-2">{(content.praktik.tips ?? []).map((t, i) => <li key={i} className="flex items-start gap-3 text-blue-700"><span className="w-2 h-2 rounded-full bg-blue-400 mt-2 shrink-0" />{t}</li>)}</ul>
                 </div>
               )}
               {content.praktik.contoh && (
@@ -494,16 +512,29 @@ function SoalPresentation({ soal, label, showAnswers, color }: { soal: Soal[]; l
     <div>
       <h2 className="text-xl font-bold text-slate-900 mb-6 flex items-center gap-2"><Target className={`w-6 h-6 ${colorClasses}`} />{label} ({soal.length} soal)</h2>
       <div className="space-y-6">
-        {soal.map((q, i) => (
+        {soal.map((q, i) => {
+          const tipe = q.tipe || "PG"
+          const jawabStr = tipe === "ISIAN" ? q.jawaban as string : (q.opsi[q.jawaban as number] ?? "")
+          const jawabNum = q.jawaban as number
+          return (
           <div key={q.id} className="bg-white border border-slate-200 rounded-xl p-5">
-            <p className="text-lg font-semibold text-slate-900 mb-4"><span className={`font-bold mr-3 ${colorClasses}`}>{i + 1}.</span>{q.soal}</p>
+            <p className="text-lg font-semibold text-slate-900 mb-4">
+              <span className={`font-bold mr-3 ${colorClasses}`}>{i + 1}.</span>
+              {q.soal}
+              {tipe !== "PG" && <span className="ml-2 text-sm text-slate-400 font-normal">({tipe === "BENAR_SALAH" ? "Benar/Salah" : "Isian"})</span>}
+            </p>
+            {tipe === "ISIAN" ? (
+              <div className="text-lg text-slate-600">
+                {showAnswers && <p className="text-emerald-700 font-medium">Jawaban: <strong>{jawabStr}</strong></p>}
+              </div>
+            ) : (
             <div className="space-y-2">
               {q.opsi.map((o, j) => {
-                const isCorrect = j === q.jawaban
+                const isCorrect = j === jawabNum
                 return (
                   <div key={j} className={`flex items-center gap-3 px-4 py-3 rounded-xl text-base ${showAnswers && isCorrect ? `${bgColor} border-2 border-emerald-300` : "border border-slate-200"}`}>
                     <span className={`w-7 h-7 rounded-full border-2 flex items-center justify-center text-sm font-bold shrink-0 ${isCorrect && showAnswers ? "border-emerald-500 bg-emerald-500 text-white" : "border-slate-300 text-slate-500"}`}>
-                      {String.fromCharCode(65 + j)}
+                      {tipe === "BENAR_SALAH" ? (j === 0 ? "✓" : "✗") : String.fromCharCode(65 + j)}
                     </span>
                     <span className={isCorrect && showAnswers ? "font-semibold text-emerald-800" : "text-slate-800"}>{o}</span>
                     {showAnswers && isCorrect && <CheckCircle className="w-5 h-5 text-emerald-500 ml-auto shrink-0" />}
@@ -511,6 +542,7 @@ function SoalPresentation({ soal, label, showAnswers, color }: { soal: Soal[]; l
                 )
               })}
             </div>
+            )}
             {showAnswers && q.penjelasan && (
               <div className="mt-3 bg-blue-50 border border-blue-200 rounded-lg p-3 flex items-start gap-2">
                 <Sparkles className="w-4 h-4 text-blue-500 mt-0.5 shrink-0" />
@@ -518,7 +550,8 @@ function SoalPresentation({ soal, label, showAnswers, color }: { soal: Soal[]; l
               </div>
             )}
           </div>
-        ))}
+          )
+        })}
       </div>
     </div>
   )
