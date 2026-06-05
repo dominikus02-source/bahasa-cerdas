@@ -58,8 +58,8 @@ export default function UnitPreviewPage() {
     if (!content) return
     const prompts = new Set<string>()
     content.belajar.materi.forEach(m => {
-      m.isi.forEach(l => { const t = l.trim(); if (t.startsWith("[Ilustrasi:")) prompts.add(t.slice(11).trim().replace(/\]$/, "")) })
-      m.contoh.forEach(c => { const t = c.trim(); if (t.startsWith("[Ilustrasi:")) prompts.add(t.slice(11).trim().replace(/\]$/, "")) })
+      ;(m.isi ?? []).forEach(l => { const t = l.trim(); if (t.startsWith("[Ilustrasi:")) prompts.add(t.slice(11).trim().replace(/\]$/, "")) })
+      ;(m.contoh ?? []).forEach(c => { const t = c.trim(); if (t.startsWith("[Ilustrasi:")) prompts.add(t.slice(11).trim().replace(/\]$/, "")) })
     })
     if (prompts.size === 0) return
     ;(async () => {
@@ -265,12 +265,12 @@ function BelajarContent({ content, ilustrasiUrls }: { content: Konten["belajar"]
         <div key={i} className="bg-white rounded-xl border border-slate-200 p-5">
           <h2 className="font-bold text-slate-900 mb-3">{m.judul}</h2>
           <div className="space-y-2">
-            {m.isi.map((line, j) => renderLine(line, j))}
+            {(m.isi ?? []).map((line, j) => renderLine(line, j))}
           </div>
-          {m.contoh.length > 0 && (
+          {(m.contoh?.length ?? 0) > 0 && (
             <div className="mt-3 bg-amber-50 border border-amber-100 rounded-lg p-3">
               <p className="text-xs font-semibold text-amber-800 mb-1">Contoh:</p>
-              {m.contoh.map((c, j) => renderContohLine(c, j))}
+              {(m.contoh ?? []).map((c, j) => renderContohLine(c, j))}
             </div>
           )}
           {m.catatan && (
@@ -438,7 +438,7 @@ function PresentationView({ data, content, tab, setTab, showAnswers, setShowAnsw
                   <h2 className="text-xl font-bold text-slate-900 mb-4">{m.judul}</h2>
                   <div className="space-y-3">{(() => {
                     const c = m.contoh ?? []
-                    const items = [...m.isi.filter(l => !l.startsWith("R:")), ...(c.length > 0 ? ["---CONTOH---"] : []), ...c]
+                    const items = [...(m.isi ?? []).filter(l => !l.startsWith("R:")), ...(c.length > 0 ? ["---CONTOH---"] : []), ...c]
                     return items.map((line, j) => {
                     const t = line.trim()
                     if (line === "---CONTOH---") return <div key={j} className="bg-amber-50 border border-amber-200 rounded-lg p-4"><p className="text-sm font-semibold text-amber-800 mb-2">Contoh:</p></div>
