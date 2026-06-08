@@ -91,6 +91,9 @@ model GameResult {
 
   @@index([roomId])
   @@index([userId])
+  @@index([rank, createdAt])
+  @@index([userId, createdAt])
+  @@index([createdAt])
 }
 
 model Community {
@@ -234,6 +237,11 @@ model User {
   penugasans         Penugasan[]
   penugasanSubmissions PenugasanSubmission[]
   nilais             Nilai[]
+
+  @@index([role, lastActiveAt])
+  @@index([xp])
+  @@index([supabaseId])
+  @@index([email])
 }
 
 model Profile {
@@ -614,6 +622,10 @@ model Video {
 
   @@index([isPublished])
   @@index([category])
+  @@index([creatorId])
+  @@index([playlistId])
+  @@index([isPublished, views])
+  @@index([isPublished, category, createdAt])
 }
 
 model CoursePlaylist {
@@ -693,6 +705,8 @@ model StudentKaryaLike {
   user  User         @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([karyaId, userId])
+  @@index([karyaId])
+  @@index([userId])
 }
 
 model StudentKaryaComment {
@@ -793,6 +807,11 @@ model Pembelian {
   updatedAt             DateTime    @updatedAt
   buyer                 User        @relation(fields: [buyerId], references: [id], onDelete: Cascade)
   karya                 Karya       @relation(fields: [karyaId], references: [id])
+
+  @@index([karyaId])
+  @@index([buyerId])
+  @@index([status])
+  @@index([karyaId, buyerId, status])
 }
 
 model PurchaseHistory {
@@ -806,6 +825,8 @@ model PurchaseHistory {
   price     Int
   soldAt    DateTime @default(now())
   buyer     User     @relation(fields: [buyerId], references: [id], onDelete: Cascade)
+
+  @@index([buyerId, soldAt])
 }
 
 model SellerEarning {
@@ -880,6 +901,8 @@ model KoleksiKata {
   rarity    KoleksiRarity @default(COMMON)
   createdAt DateTime      @default(now())
   user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }
 
 model Lomba {
@@ -964,6 +987,10 @@ model Transaksi {
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
   user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([orderId])
+  @@index([status])
 }
 
 model Notifikasi {
@@ -975,7 +1002,10 @@ model Notifikasi {
   isRead    Boolean  @default(false)
   data      Json?
   createdAt DateTime @default(now())
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@index([userId, isRead])
 }
 
 model Group {

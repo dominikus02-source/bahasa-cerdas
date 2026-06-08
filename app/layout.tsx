@@ -65,7 +65,7 @@ export const metadata: Metadata = {
     googleBot: { index: true, follow: true, "max-video-preview": -1, "max-image-preview": "large", "max-snippet": -1 },
   },
   icons: {
-    icon: [{ url: "/BC-logo.png", type: "image/png" }, { url: "/favicon.ico", sizes: "any" }],
+    icon: [{ url: "/favicon.ico", sizes: "any" }, { url: "/icon-512.png", type: "image/png", sizes: "512x512" }, { url: "/icon-192.png", type: "image/png", sizes: "192x192" }],
     apple: { url: "/BC-logo.png", sizes: "180x180" },
   },
   manifest: "/manifest.json",

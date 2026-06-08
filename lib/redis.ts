@@ -1,0 +1,59 @@
+import { Redis } from "@upstash/redis"
+
+const url = process.env.UPSTASH_REDIS_REST_URL
+const token = process.env.UPSTASH_REDIS_REST_TOKEN
+
+const redis = url && token ? new Redis({ url, token }) : null
+
+const cache = {
+  async get<T>(key: string): Promise<T | null> {
+    if (!redis) return null
+    try {
+      return await redis.get<T>(key)
+    } catch {
+      return null
+    }
+  },
+
+  async set(key: string, value: unknown, ttlSeconds = 300): Promise<void> {
+    if (!redis) return
+    try {
+      await redis.set(key, value, { ex: ttlSeconds })
+    } catch {
+      // silently fail
+    }
+  },
+
+  async del(key: string): Promise<void> {
+    if (!redis) return
+    try {
+      await redis.del(key)
+    } catch {
+      // silently fail
+    }
+  },
+
+  async delPattern(pattern: string): Promise<void> {
+    if (!redis) return
+    try {
+      const keys = await redis.keys(pattern)
+      if (keys.length > 0) await redis.del(...keys)
+    } catch {
+      // silently fail
+    }
+  },
+
+  async getOrSet<T>(
+    key: string,
+    fetch: () => Promise<T>,
+    ttlSeconds = 300
+  ): Promise<T> {
+    const cached = await this.get<T>(key)
+    if (cached !== null) return cached
+    const fresh = await fetch()
+    await this.set(key, fresh, ttlSeconds)
+    return fresh
+  },
+}
+
+export default cache

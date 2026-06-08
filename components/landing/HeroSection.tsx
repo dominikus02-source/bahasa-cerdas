@@ -163,7 +163,7 @@ export default function HeroSection() {
 
               <div className="absolute -bottom-4 -left-4 w-80 rounded-xl overflow-hidden shadow-lg shadow-zinc-900/10 border border-zinc-200 bg-white">
                   <Image
-                    src="/dasborguruBC.png"
+                    src="/BC-logo.png"
                     alt=""
                     width={320}
                     height={173}

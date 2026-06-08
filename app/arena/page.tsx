@@ -1,5 +1,6 @@
 import { getUser } from "@/lib/supabase/server"
 import { db } from "@/lib/db"
+import cache from "@/lib/redis"
 import { redirect } from "next/navigation"
 import Link from "next/link"
 import {
@@ -50,21 +51,27 @@ export default async function BerandaPage() {
   const xpToday = todayXpAgg._sum.xpEarned || 0
 
   const [aktivitas, juaraBaru, tugasCount] = await Promise.all([
-    db.gameResult.findMany({
-      where: { rank: 1 },
-      include: {
-        user: { select: { id: true, fullName: true, avatar: true } },
-        room: { select: { code: true, gameType: true } },
-      },
-      orderBy: { createdAt: "desc" },
-      take: 5,
-    }),
-    db.studentKarya.findMany({
-      include: { user: { select: { id: true, fullName: true, avatar: true } } },
-      where: { userId: { not: user.id } },
-      orderBy: { createdAt: "desc" },
-      take: 3,
-    }),
+    cache.getOrSet("arena:aktivitas", () =>
+      db.gameResult.findMany({
+        where: { rank: 1 },
+        include: {
+          user: { select: { id: true, fullName: true, avatar: true } },
+          room: { select: { code: true, gameType: true } },
+        },
+        orderBy: { createdAt: "desc" },
+        take: 5,
+      }),
+      60
+    ),
+    cache.getOrSet("arena:juara-baru", () =>
+      db.studentKarya.findMany({
+        include: { user: { select: { id: true, fullName: true, avatar: true } } },
+        where: { userId: { not: user.id } },
+        orderBy: { createdAt: "desc" },
+        take: 3,
+      }),
+      60
+    ),
     (async () => {
       try {
         const memberships = await db.groupMember.findMany({ where: { userId: user.id }, select: { groupId: true } })
