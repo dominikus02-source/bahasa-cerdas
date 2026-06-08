@@ -131,7 +131,7 @@ export async function POST(req: NextRequest) {
         db.karya.findUnique({ where: { id: karyaId }, select: { title: true, description: true, fileUrl: true, price: true } }),
       ]);
 
-      await Promise.all([
+      await db.$transaction([
         db.pembelian.updateMany({
           where: { midtransOrderId: order_id },
           data: {

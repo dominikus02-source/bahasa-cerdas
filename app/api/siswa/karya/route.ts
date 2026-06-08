@@ -3,16 +3,28 @@ import { getUser, createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 import { awardCoins, trackQuestProgress, trackDailyStreak } from "@/lib/coins";
 import { karyaSchema, sanitize } from "@/lib/validations";
+import cache from "@/lib/redis";
+import { invalidateKaryaCache } from "@/lib/ai-queue";
 
 export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
     const type = searchParams.get("type");
-    const page = parseInt(searchParams.get("page") || "1");
-    const limit = parseInt(searchParams.get("limit") || "10");
-    const skip = (page - 1) * limit;
+    const limit = Math.min(parseInt(searchParams.get("limit") || "10"), 50);
+    const cursor = searchParams.get("cursor");
     const featured = searchParams.get("featured") === "true";
     const groupId = searchParams.get("groupId");
+
+    const cacheKey = `karya:feed:cursor:${type || "all"}:${cursor || "start"}:${limit}`;
+
+    const cached = await cache.get<{ karya: unknown[]; nextCursor: string | null; total: number }>(cacheKey);
+    if (cached && !/page=\d+/.test(req.url)) {
+      return NextResponse.json({
+        karya: cached.karya,
+        nextCursor: cached.nextCursor,
+        total: cached.total,
+      });
+    }
 
     const where: any = {};
     if (type) where.type = type;
@@ -39,6 +51,10 @@ export async function GET(req: NextRequest) {
       }
     }
 
+    if (cursor) {
+      where.createdAt = { lt: new Date(cursor) };
+    }
+
     const [karya, total] = await Promise.all([
       db.studentKarya.findMany({
         where,
@@ -47,13 +63,21 @@ export async function GET(req: NextRequest) {
           _count: { select: { likes: true, comments: true } },
         },
         orderBy: { createdAt: "desc" },
-        skip,
-        take: limit,
+        take: limit + 1,
       }),
-      db.studentKarya.count({ where }),
+      db.studentKarya.count({ where: { ...where, createdAt: undefined } }),
     ]);
 
-    return NextResponse.json({ karya, total, page, totalPages: Math.ceil(total / limit) });
+    const hasMore = karya.length > limit;
+    const items = hasMore ? karya.slice(0, limit) : karya;
+    const nextCursor = hasMore && items.length > 0
+      ? items[items.length - 1].createdAt.toISOString()
+      : null;
+
+    const result = { karya: items, nextCursor, total };
+    await cache.set(cacheKey, result, 120);
+
+    return NextResponse.json(result);
   } catch (error) {
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
@@ -101,6 +125,7 @@ export async function POST(req: NextRequest) {
       awardCoins(user.id, "MENULIS_KARYA", karya.id),
       trackDailyStreak(user.id),
       trackQuestProgress(user.id, "MENULIS"),
+      invalidateKaryaCache(),
     ]);
 
     return NextResponse.json({ karya, coinsEarned: 10 }, { status: 201 });

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { getUser } from "@/lib/supabase/server"
 import { db } from "@/lib/db"
+import { invalidateLeagueCache } from "@/lib/ai-queue"
 
 function calcLevel(xp: number) {
   return Math.floor(Math.sqrt(xp / 100)) + 1
@@ -55,6 +56,8 @@ export async function POST(req: NextRequest) {
         },
       })
     })
+
+    await invalidateLeagueCache(user.id)
 
     return NextResponse.json({
       xpEarned: earnedXp,

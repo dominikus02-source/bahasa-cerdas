@@ -3,6 +3,7 @@ import { db } from "@/lib/db"
 import { redirect } from "next/navigation"
 import Link from "next/link"
 import { Medal, Crown, Diamond } from "lucide-react"
+import cache from "@/lib/redis"
 
 const TIER_ICON: Record<string, React.ReactNode> = {
   BRONZE: <Medal className="w-8 h-8 text-amber-700" />,
@@ -31,37 +32,42 @@ export default async function LeaguePage({
   let myXP = 0
 
   if (isHarian) {
-    const today = new Date()
-    today.setHours(0, 0, 0, 0)
-    const dailyResults = await db.gameResult.groupBy({
-      by: ["userId"],
-      where: { createdAt: { gte: today }, user: { role: "MURID" } },
-      _sum: { xpEarned: true },
-      orderBy: { _sum: { xpEarned: "desc" } },
-      take: 50,
-    })
-    const userIds = dailyResults.map(r => r.userId).filter(Boolean)
-    const users = await db.user.findMany({
-      where: { id: { in: userIds } },
-      select: { id: true, fullName: true, avatar: true, xp: true, level: true, coins: true, streak: true },
-    })
-    const userMap = Object.fromEntries(users.map(u => [u.id, u]))
-    topUsers = dailyResults.map(r => ({
-      ...userMap[r.userId],
-      id: r.userId,
-      todayXP: r._sum.xpEarned || 0,
-    })).filter(u => u.fullName)
+    const cacheKey = `league:harian:top50`
+    topUsers = await cache.getOrSet<any[]>(cacheKey, async () => {
+      const today = new Date()
+      today.setHours(0, 0, 0, 0)
+      const dailyResults = await db.gameResult.groupBy({
+        by: ["userId"],
+        where: { createdAt: { gte: today }, user: { role: "MURID" } },
+        _sum: { xpEarned: true },
+        orderBy: { _sum: { xpEarned: "desc" } },
+        take: 50,
+      })
+      const userIds = dailyResults.map(r => r.userId).filter(Boolean)
+      const users = await db.user.findMany({
+        where: { id: { in: userIds } },
+        select: { id: true, fullName: true, avatar: true, xp: true, level: true, coins: true, streak: true },
+      })
+      const userMap = Object.fromEntries(users.map(u => [u.id, u]))
+      return dailyResults.map(r => ({
+        ...userMap[r.userId],
+        id: r.userId,
+        todayXP: r._sum.xpEarned || 0,
+      })).filter(u => u.fullName)
+    }, 300)
 
-    const myToday = dailyResults.find(r => r.userId === user.id)
-    myXP = myToday?._sum.xpEarned || 0
+    const myToday = topUsers.find(r => r.id === user.id)
+    myXP = myToday?.todayXP || 0
   } else {
-    const allUsers = await db.user.findMany({
-      where: { role: "MURID", xp: { gt: 0 } },
-      orderBy: { xp: "desc" },
-      take: 50,
-      select: { id: true, fullName: true, avatar: true, xp: true, level: true, coins: true, streak: true },
-    })
-    topUsers = allUsers
+    const cacheKey = `league:mingguan:top50`
+    topUsers = await cache.getOrSet<any[]>(cacheKey, async () => {
+      return db.user.findMany({
+        where: { role: "MURID", xp: { gt: 0 } },
+        orderBy: { xp: "desc" },
+        take: 50,
+        select: { id: true, fullName: true, avatar: true, xp: true, level: true, coins: true, streak: true },
+      })
+    }, 300)
     myXP = user.xp || 0
   }
 

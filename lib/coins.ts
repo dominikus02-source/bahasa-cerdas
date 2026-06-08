@@ -25,7 +25,7 @@ export async function awardCoins(
   const amount = COIN_REWARDS[reason];
   if (!amount) return { coins: 0 };
 
-  const [tx] = await Promise.all([
+  const [tx] = await db.$transaction([
     db.coinTransaction.create({
       data: { userId, amount, reason, reference },
     }),
@@ -44,25 +44,24 @@ export async function spendCoins(
   reason: string,
   reference?: string
 ) {
-  const user = await db.user.findUnique({
-    where: { id: userId },
-    select: { coins: true },
-  });
-  if (!user || user.coins < amount) {
-    throw new Error("Koin tidak mencukupi");
-  }
+  const [result] = await db.$transaction(async (tx) => {
+    const user = await tx.user.findUnique({
+      where: { id: userId },
+      select: { coins: true },
+    });
+    if (!user || user.coins < amount) throw new Error("Koin tidak mencukupi");
 
-  const [tx] = await Promise.all([
-    db.coinTransaction.create({
+    const coinTx = await tx.coinTransaction.create({
       data: { userId, amount: -amount, reason, reference },
-    }),
-    db.user.update({
+    });
+    await tx.user.update({
       where: { id: userId },
       data: { coins: { decrement: amount } },
-    }),
-  ]);
+    });
+    return [coinTx];
+  });
 
-  return { transaction: tx };
+  return { transaction: result };
 }
 
 export async function getBalance(userId: string) {
@@ -134,63 +133,52 @@ export async function trackQuestProgress(
 }
 
 export async function claimQuestReward(userId: string, questId: string) {
-  const quest = await db.dailyQuest.findUnique({ where: { id: questId } });
-  if (!quest || !quest.completed || quest.userId !== userId) {
-    throw new Error("Quest belum selesai atau tidak valid");
-  }
+  await db.$transaction(async (tx) => {
+    const quest = await tx.dailyQuest.findUnique({ where: { id: questId } });
+    if (!quest || !quest.completed || quest.userId !== userId) {
+      throw new Error("Quest belum selesai atau tidak valid");
+    }
 
-  await awardCoins(userId, "QUEST_COMPLETE", questId);
-  await db.dailyQuest.update({
-    where: { id: questId },
-    data: { completed: true },
+    const amount = COIN_REWARDS.QUEST_COMPLETE;
+    await tx.coinTransaction.create({
+      data: { userId, amount, reason: "QUEST_COMPLETE", reference: questId },
+    });
+    await tx.dailyQuest.update({
+      where: { id: questId },
+      data: { completed: true },
+    });
   });
 }
 
 export async function trackDailyStreak(userId: string) {
-  const user = await db.user.findUnique({
-    where: { id: userId },
-    select: { streak: true, lastActiveAt: true },
+  await db.$transaction(async (tx) => {
+    const user = await tx.user.findUnique({
+      where: { id: userId },
+      select: { streak: true, lastActiveAt: true, coins: true },
+    });
+    if (!user) return;
+
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const last = user.lastActiveAt
+      ? new Date(user.lastActiveAt.getFullYear(), user.lastActiveAt.getMonth(), user.lastActiveAt.getDate())
+      : null;
+
+    if (last && last.getTime() === today.getTime()) return;
+
+    const isConsecutive = last
+      ? (today.getTime() - last.getTime()) === 86400000
+      : false;
+
+    const newStreak = isConsecutive ? (user.streak || 0) + 1 : 1;
+
+    await tx.user.update({
+      where: { id: userId },
+      data: { streak: newStreak, lastActiveAt: now, coins: { increment: COIN_REWARDS.DAILY_LOGIN } },
+    });
+
+    await tx.coinTransaction.create({
+      data: { userId, amount: COIN_REWARDS.DAILY_LOGIN, reason: "DAILY_LOGIN" },
+    });
   });
-  if (!user) return;
-
-  const now = new Date();
-  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  const last = user.lastActiveAt
-    ? new Date(user.lastActiveAt.getFullYear(), user.lastActiveAt.getMonth(), user.lastActiveAt.getDate())
-    : null;
-
-  if (last && last.getTime() === today.getTime()) {
-    return;
-  }
-
-  const isConsecutive = last
-    ? (today.getTime() - last.getTime()) === 86400000
-    : false;
-
-  const newStreak = isConsecutive ? (user.streak || 0) + 1 : 1;
-
-  await db.user.update({
-    where: { id: userId },
-    data: {
-      streak: newStreak,
-      lastActiveAt: now,
-      coins: { increment: COIN_REWARDS.DAILY_LOGIN },
-    },
-  });
-
-  await db.coinTransaction.create({
-    data: {
-      userId,
-      amount: COIN_REWARDS.DAILY_LOGIN,
-      reason: "DAILY_LOGIN",
-    },
-  });
-
-  if (newStreak === 7) {
-    await awardCoins(userId, "STREAK_7");
-  } else if (newStreak === 30) {
-    await awardCoins(userId, "STREAK_30");
-  } else if (newStreak === 100) {
-    await awardCoins(userId, "STREAK_100");
-  }
 }

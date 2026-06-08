@@ -28,8 +28,8 @@ export default function HomeFeedPage() {
   const [user, setUser] = useState<any>(null);
   const [karyaList, setKaryaList] = useState<Karya[]>([]);
   const [featured, setFeatured] = useState<Karya[]>([]);
-  const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
+  const [cursor, setCursor] = useState<string | null>(null);
+  const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [activeType, setActiveType] = useState<string>("");
@@ -43,33 +43,33 @@ export default function HomeFeedPage() {
     return () => clearInterval(hb);
   }, []);
 
-  const fetchKarya = useCallback(async (pageNum: number, type: string, append: boolean) => {
-    const params = new URLSearchParams({ page: String(pageNum), limit: "10" });
+  const fetchKarya = useCallback(async (cursor: string | null, type: string, append: boolean) => {
+    const params = new URLSearchParams({ limit: "10" });
     if (type) params.set("type", type);
+    if (cursor) params.set("cursor", cursor);
     const res = await fetch(`/api/siswa/karya?${params}`);
     const data = await res.json();
     setKaryaList(prev => append ? [...prev, ...data.karya] : data.karya);
-    setTotalPages(data.totalPages);
-    setLoading(false);
-    setLoadingMore(false);
+    setHasMore(!!data.nextCursor);
+    setCursor(data.nextCursor);
   }, []);
 
   useEffect(() => {
-    setLoading(true); setKaryaList([]); setPage(1);
-    fetchKarya(1, activeType, false);
+    setLoading(true); setKaryaList([]); setCursor(null); setHasMore(true);
+    fetchKarya(null, activeType, false);
   }, [activeType, fetchKarya]);
 
   useEffect(() => {
     if (!loaderRef.current) return;
     const observer = new IntersectionObserver(entries => {
-      if (entries[0].isIntersecting && !loadingMore && page < totalPages) {
-        setLoadingMore(true); setPage(p => p + 1);
-        fetchKarya(page + 1, activeType, true);
+      if (entries[0].isIntersecting && !loadingMore && hasMore) {
+        setLoadingMore(true);
+        fetchKarya(cursor, activeType, true).finally(() => setLoadingMore(false));
       }
     }, { threshold: 0.3 });
     observer.observe(loaderRef.current);
     return () => observer.disconnect();
-  }, [page, totalPages, loadingMore, activeType, fetchKarya]);
+  }, [cursor, hasMore, loadingMore, activeType, fetchKarya]);
 
   const TYPES = ["", "PUISI", "CERPEN", "ARTIKEL", "ANEKDOT", "PANTUN", "OPINI"];
 

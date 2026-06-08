@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { Bell, Trash2, CheckCheck, ExternalLink, X } from "lucide-react";
 import Link from "next/link";
+import { subscribeNotifications } from "@/lib/supabase/realtime";
 
 interface Notification {
   id: string;
@@ -21,7 +22,9 @@ export function NotificationBell() {
   const [loading, setLoading] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
-  const fetchNotifications = async () => {
+  const userIdRef = useRef<string | null>(null);
+
+  const fetchNotifications = useCallback(async () => {
     try {
       const res = await fetch("/api/notifikasi?unread=true");
       const data = await res.json();
@@ -29,13 +32,34 @@ export function NotificationBell() {
         setNotifications(data.notifications);
         setUnreadCount(data.unreadCount || 0);
       }
+      // Store userId from session for realtime sub
+      if (data.userId) userIdRef.current = data.userId;
     } catch (e) {
       console.error(e);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchNotifications();
+    // Polling fallback every 30s
+    const interval = setInterval(fetchNotifications, 30000);
+    return () => clearInterval(interval);
+  }, [fetchNotifications]);
+
+  useEffect(() => {
+    let unsub: (() => void) | undefined;
+    // Get userId from /api/user/me first
+    fetch("/api/user/me").then(r => r.json()).then(d => {
+      const uid = d?.user?.id || d?.id;
+      if (uid) {
+        userIdRef.current = uid;
+        unsub = subscribeNotifications(uid, (notif) => {
+          setNotifications(prev => [notif as Notification, ...prev]);
+          setUnreadCount(c => c + 1);
+        });
+      }
+    });
+    return () => unsub?.();
   }, []);
 
   useEffect(() => {

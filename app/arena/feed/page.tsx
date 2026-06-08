@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, useCallback } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import {
@@ -58,22 +58,43 @@ export default function FeedPage() {
   const [totalKarya, setTotalKarya] = useState(0)
   const [currentUserId, setCurrentUserId] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
+  const [loadingMore, setLoadingMore] = useState(false)
+  const [cursor, setCursor] = useState<string | null>(null)
+  const [hasMore, setHasMore] = useState(true)
   const [deletingId, setDeletingId] = useState<string | null>(null)
   const router = useRouter()
 
+  const loadKarya = useCallback(async (cursorVal: string | null, append: boolean) => {
+    const params = new URLSearchParams({ limit: "20" });
+    if (cursorVal) params.set("cursor", cursorVal);
+    const res = await fetch(`/api/siswa/karya?${params}`);
+    const data = await res.json();
+    setKaryaList(prev => append ? [...prev, ...data.karya] : data.karya);
+    setTotalKarya(data.total || 0);
+    setHasMore(!!data.nextCursor);
+    setCursor(data.nextCursor);
+  }, []);
+
   useEffect(() => {
-    Promise.all([
-      fetch("/api/siswa/karya?limit=50").then(r => r.json()),
-      fetch("/api/user/me").then(r => r.ok ? r.json() : null),
-      fetch("/api/arena/stats").then(r => r.json()).catch(() => ({})),
-    ]).then(([kData, uData, stats]) => {
-      setKaryaList(kData.karya || [])
-      setTotalKarya(kData.total || kData.karya?.length || 0)
+    async function init() {
+      await loadKarya(null, false);
+      const [uData, stats] = await Promise.all([
+        fetch("/api/user/me").then(r => r.ok ? r.json() : null),
+        fetch("/api/arena/stats").then(r => r.json()).catch(() => ({})),
+      ]);
       setCurrentUserId(uData?.user?.id || uData?.user?.userId || null)
       setOnlineCount(stats.onlineCount || 0)
       setLoading(false)
-    }).catch(() => setLoading(false))
-  }, [])
+    }
+    init();
+  }, [loadKarya])
+
+  const loadMore = async () => {
+    if (!hasMore || loadingMore) return;
+    setLoadingMore(true);
+    await loadKarya(cursor, true);
+    setLoadingMore(false);
+  };
 
   const filtered = filter === "POPULER"
     ? [...karyaList].sort((a, b) => b.likesCount - a.likesCount)
@@ -396,6 +417,17 @@ export default function FeedPage() {
                 </div>
               )
             })}
+            {hasMore && (
+              <div className="text-center py-4">
+                <button
+                  onClick={loadMore}
+                  disabled={loadingMore}
+                  className="px-6 py-2.5 bg-violet-600 text-white rounded-xl text-sm font-semibold hover:bg-violet-700 transition disabled:opacity-50"
+                >
+                  {loadingMore ? "Memuat..." : "Muat Lainnya"}
+                </button>
+              </div>
+            )}
           </>
         )}
       </div>

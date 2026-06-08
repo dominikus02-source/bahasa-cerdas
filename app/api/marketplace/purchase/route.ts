@@ -169,63 +169,59 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Failed to create transaction" }, { status: 500 });
     }
 
-    try {
-      await withTimeout(db.$transaction([
-        db.pembelian.create({
-          data: {
+    await db.$transaction([
+      db.pembelian.create({
+        data: {
+          karyaId: karya.id,
+          buyerId: dbUser.id,
+          amount: karya.price,
+          platformFee,
+          sellerEarning,
+          status: "PENDING",
+          midtransOrderId: orderId,
+        },
+      }),
+      db.purchaseHistory.create({
+        data: {
+          buyerId: dbUser.id,
+          itemType: "KARYA",
+          itemId: karya.id,
+          itemTitle: karya.title,
+          fileUrl: karya.fileUrl,
+          fileKey: karya.fileKey,
+          price: karya.price,
+        },
+      }),
+      db.sellerEarning.create({
+        data: {
+          sellerId: karya.sellerId,
+          itemType: "KARYA",
+          itemId: karya.id,
+          itemTitle: karya.title,
+          grossAmount: karya.price,
+          platformFee,
+          netAmount: sellerEarning,
+          status: "PENDING",
+        },
+      }),
+      db.transaksi.create({
+        data: {
+          userId: dbUser.id,
+          type: "KARYA_PURCHASE",
+          amount: karya.price,
+          status: "PENDING",
+          reference: "MARKETPLACE",
+          orderId,
+          metadata: {
             karyaId: karya.id,
-            buyerId: dbUser.id,
-            amount: karya.price,
+            karyaTitle: karya.title,
+            sellerId: karya.sellerId,
             platformFee,
             sellerEarning,
-            status: "PENDING",
-            midtransOrderId: orderId,
           },
-        }),
-        db.purchaseHistory.create({
-          data: {
-            buyerId: dbUser.id,
-            itemType: "KARYA",
-            itemId: karya.id,
-            itemTitle: karya.title,
-            fileUrl: karya.fileUrl,
-            fileKey: karya.fileKey,
-            price: karya.price,
-          },
-        }),
-        db.sellerEarning.create({
-          data: {
-            sellerId: karya.sellerId,
-            itemType: "KARYA",
-            itemId: karya.id,
-            itemTitle: karya.title,
-            grossAmount: karya.price,
-            platformFee,
-            netAmount: sellerEarning,
-            status: "PENDING",
-          },
-        }),
-        db.transaksi.create({
-          data: {
-            userId: dbUser.id,
-            type: "KARYA_PURCHASE",
-            amount: karya.price,
-            status: "PENDING",
-            reference: "MARKETPLACE",
-            orderId,
-            metadata: {
-              karyaId: karya.id,
-              karyaTitle: karya.title,
-              sellerId: karya.sellerId,
-              platformFee,
-              sellerEarning,
-            },
-          },
-        }),
-      ]));
-    } catch {
-      console.warn("DB write timeout for purchase records, continuing anyway");
-    }
+        },
+      }),
+    ]);
 
     return NextResponse.json({
       redirectUrl: transaction.redirectUrl,
