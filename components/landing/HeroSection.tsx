@@ -161,20 +161,6 @@ export default function HeroSection() {
                 </div>
               </div>
 
-              <div className="absolute -bottom-4 -left-4 w-80 rounded-xl overflow-hidden shadow-lg shadow-zinc-900/10 border border-zinc-200 bg-white">
-                  <Image
-                    src="/BC-logo.png"
-                    alt=""
-                    width={320}
-                    height={173}
-                    className="w-full h-auto object-contain"
-                    priority
-                  />
-                <div className="px-3 py-2 bg-white">
-                  <p className="text-xs font-semibold text-zinc-700">Dasbor Guru</p>
-                </div>
-              </div>
-
               <div className="absolute -top-3 -right-3 px-4 py-2 rounded-xl bg-white border border-zinc-100 shadow-lg shadow-zinc-900/5">
                 <div className="flex items-center gap-2">
                   <div className="w-3 h-3 rounded-full bg-emerald-500" aria-hidden="true" />
