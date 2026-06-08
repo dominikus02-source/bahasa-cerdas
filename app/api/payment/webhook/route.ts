@@ -72,6 +72,15 @@ async function deliverKaryaToEmail(buyerEmail: string, buyerName: string, karya:
 
 export async function POST(req: NextRequest) {
   try {
+    // Validate x-callback-token header (set in Midtrans dashboard Payment Notification URL)
+    const callbackToken = process.env.MIDTRANS_CALLBACK_TOKEN;
+    if (callbackToken) {
+      const headerToken = req.headers.get("x-callback-token");
+      if (headerToken !== callbackToken) {
+        return NextResponse.json({ error: "Invalid callback token" }, { status: 401 });
+      }
+    }
+
     const body = await req.json();
 
     const { order_id, status_code, gross_amount, signature_key, transaction_status } = body;
