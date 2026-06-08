@@ -17,7 +17,9 @@ const playfair = Playfair_Display({
 
 const SITE_URL = "https://bahasacerdas.com";
 const SITE_NAME = "BahasaCerdas";
-const DEFAULT_DESC = "Platform edukasi Bahasa Indonesia untuk guru dan murid. AI-powered RPP generator, bank soal, kuis game, simulasi UKBI, dan toko karya.";
+const DEFAULT_DESC = "Platform edukasi Bahasa Indonesia untuk guru dan murid. AI RPP generator, bank soal interaktif, kuis battle, simulasi UKBI/TKA, toko karya, dan marketplace bahan ajar — all-in-one!";
+const OG_TITLE = `${SITE_NAME} — Platform Edukasi Bahasa Indonesia #BahasaCerdas`;
+const OG_DESC = "Belajar Bahasa Indonesia makin seru! AI bikin RPP, bank soal, kuis game, UKBI, komunitas MGMP, dan toko karya guru. Cobain gratis sekarang!";
 
 export const viewport: Viewport = {
   themeColor: [
@@ -48,16 +50,19 @@ export const metadata: Metadata = {
     type: "website",
     locale: "id_ID",
     siteName: SITE_NAME,
-    title: `${SITE_NAME} — Platform edukasi Bahasa Indonesia`,
-    description: DEFAULT_DESC,
+    title: OG_TITLE,
+    description: OG_DESC,
     url: SITE_URL,
-    images: [{ url: "/BC-logo.png", width: 1200, height: 630, alt: "BahasaCerdas — Platform edukasi Bahasa Indonesia" }],
+    countryName: "Indonesia",
+    images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: "BahasaCerdas — Platform Edukasi Bahasa Indonesia" }],
   },
   twitter: {
     card: "summary_large_image",
-    title: `${SITE_NAME} — Platform edukasi Bahasa Indonesia`,
-    description: DEFAULT_DESC,
-    images: ["/BC-logo.png"],
+    title: OG_TITLE,
+    description: OG_DESC,
+    images: ["/opengraph-image"],
+    site: "@bahasacerdas",
+    creator: "@bahasacerdas",
   },
   robots: {
     index: true,
