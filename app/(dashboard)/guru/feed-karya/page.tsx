@@ -146,8 +146,8 @@ export default function GuruFeedKaryaPage() {
       const data = await res.json();
       setComments(prev => [data.comment, ...prev]);
       setKaryaList(prev => prev.map(k =>
-        k.id === modalKarya.id ? { ...k, _count: { ...k._count, comments: (k._count?.comments || 0) + 1 } } : k
-      ));
+        k.id === modalKarya.id ? { ...k, _count: { likes: k._count?.likes ?? 0, comments: (k._count?.comments ?? 0) + 1 } } : k
+      ) as Karya[]);
       setCommentText("");
     }
     setSubmittingComment(false);

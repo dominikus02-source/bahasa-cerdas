@@ -5,7 +5,7 @@ import { io, Socket } from 'socket.io-client';
 let socket: Socket | null = null;
 
 export const gameSocket = {
-  connect(userId: string, userName: string, avatarUrl?: string) {
+  connect(userId?: string, userName?: string, avatarUrl?: string) {
     if (socket?.connected) return socket;
 
     const serverUrl = process.env.NEXT_PUBLIC_GAME_SERVER_URL || 'http://localhost:3001';
@@ -58,18 +58,22 @@ export const gameSocket = {
 
   onRoomCreated(callback: (data: { roomId: string; code: string; name: string; isHost: boolean; player: any }) => void) {
     socket?.on('room-created', callback);
+    return () => socket?.off('room-created', callback);
   },
 
   onRoomJoined(callback: (data: { roomId: string; code: string; name: string; isHost: boolean; player: any }) => void) {
     socket?.on('room-joined', callback);
+    return () => socket?.off('room-joined', callback);
   },
 
   onPlayerList(callback: (players: any[]) => void) {
     socket?.on('player-list', callback);
+    return () => socket?.off('player-list', callback);
   },
 
   onGameStarting(callback: (data: { totalQuestions: number; timePerQuestion: number; category?: string }) => void) {
     socket?.on('game-starting', callback);
+    return () => socket?.off('game-starting', callback);
   },
 
   onShowQuestion(callback: (data: {
@@ -88,18 +92,22 @@ export const gameSocket = {
     timePerQuestion: number;
   }) => void) {
     socket?.on('show-question', callback);
+    return () => socket?.off('show-question', callback);
   },
 
   onTimeUp(callback: (data: { questionIndex: number; correctAnswer: string }) => void) {
     socket?.on('time-up', callback);
+    return () => socket?.off('time-up', callback);
   },
 
   onAnswerResult(callback: (data: { playerId: string; playerName: string; isCorrect: boolean; correctAnswer: string; score: number }) => void) {
     socket?.on('answer-result', callback);
+    return () => socket?.off('answer-result', callback);
   },
 
   onScoreUpdate(callback: (data: { playerId: string; playerName?: string; score: number; correct: number; wrong: number; streak: number; hearts?: number; eliminated?: boolean }) => void) {
     socket?.on('score-update', callback);
+    return () => socket?.off('score-update', callback);
   },
 
   onGameFinished(callback: (data: {
@@ -119,31 +127,38 @@ export const gameSocket = {
     roomName: string;
   }) => void) {
     socket?.on('game-finished', callback);
+    return () => socket?.off('game-finished', callback);
   },
 
   onNotification(callback: (data: { type: string; message: string; playerName: string }) => void) {
     socket?.on('notification', callback);
+    return () => socket?.off('notification', callback);
   },
 
   onHostChanged(callback: (data: { newHostId: string }) => void) {
     socket?.on('host-changed', callback);
+    return () => socket?.off('host-changed', callback);
   },
 
   // Matchmaking events
   onMatchFound(callback: (data: { roomCode: string; opponent: { id: string; name: string; avatar?: string }; gameType: string; isHost: boolean }) => void) {
     socket?.on('match-found', callback);
+    return () => socket?.off('match-found', callback);
   },
 
   onMatchCountdown(callback: (data: { seconds: number }) => void) {
     socket?.on('match-countdown', callback);
+    return () => socket?.off('match-countdown', callback);
   },
 
   onQueueStatus(callback: (data: { inQueue: boolean; position?: number; message: string }) => void) {
     socket?.on('queue-status', callback);
+    return () => socket?.off('queue-status', callback);
   },
 
   onQueueTimeout(callback: (data: { message: string }) => void) {
     socket?.on('queue-timeout', callback);
+    return () => socket?.off('queue-timeout', callback);
   },
 
   joinQueue(data: { userId: string; userName: string; avatarUrl?: string; gameType?: string }) {

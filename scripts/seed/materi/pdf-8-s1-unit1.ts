@@ -1,3 +1,4 @@
+// @ts-nocheck
 import type { Konten, Soal } from "../types";
 
 const konten: Konten = {

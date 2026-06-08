@@ -60,7 +60,7 @@ async function getStats() {
   }
 }
 
-function PieChart({ data }: { data: { label: string; value: number; color: string }[] }) {
+function PieChart({ data }: { data: { label: string; value: number; color: string; percent?: number }[] }) {
   const total = data.reduce((sum, d) => sum + d.value, 0);
   if (total === 0) return <p className="text-sm text-slate-400 text-center py-8">Belum ada data</p>;
 
@@ -121,7 +121,7 @@ function PieChart({ data }: { data: { label: string; value: number; color: strin
             <div className="w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: d.color }} />
             <span className="text-slate-600 flex-1">{d.label}</span>
             <span className="font-semibold text-slate-900">{d.value}</span>
-            <span className="text-slate-400">({Math.round(d.percent)}%)</span>
+            <span className="text-slate-400">({Math.round(d.percent ?? 0)}%)</span>
           </div>
         ))}
       </div>

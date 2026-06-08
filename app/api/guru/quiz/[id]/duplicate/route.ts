@@ -56,12 +56,12 @@ export async function POST(
           sourceId: q.sourceId,
           customText: q.customText,
           customType: q.customType,
-          customOptions: q.customOptions,
+          customOptions: q.customOptions as any,
           customAnswer: q.customAnswer,
           customExplanation: q.customExplanation,
           points: q.points,
           orderIndex: i,
-        })),
+        })) as any,
       });
     }
 

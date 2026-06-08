@@ -2,7 +2,7 @@ import { db } from "@/lib/db"
 import { getUser } from "@/lib/supabase/server"
 import Link from "next/link"
 import { redirect } from "next/navigation"
-import { CheckCircle2, ChevronRight, Sprout, PenLine, BookOpen, Image, Clipboard, BarChart3, Sparkles, Music, Trophy, Dumbbell, Mic, Target, MessageCircle, Crown } from "lucide-react"
+import { CheckCircle2, ChevronRight, Sprout, PenLine, BookOpen, Image, Clipboard, BarChart3, Sparkles, Music, Trophy, Dumbbell, Mic, Target, MessageCircle, Crown, Lock } from "lucide-react"
 import type { ReactNode } from "react"
 
 const iconMap: Record<string, ReactNode> = {

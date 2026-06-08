@@ -140,10 +140,10 @@ export async function POST(req: NextRequest) {
         await db.notifikasi.createMany({
           data: admins.map((admin) => ({
             userId: admin.id,
-            judul: "Materi Ajar Baru",
-            pesan: `Guru ${dbUser.fullName || dbUser.email} mengupload materi: "${title}"`,
-            tipe: "INFO",
-            link: "/admin/materi",
+            title: "Materi Ajar Baru",
+            body: `Guru ${dbUser.fullName || dbUser.email} mengupload materi: "${title}"`,
+            type: "INFO",
+            data: { link: "/admin/materi" },
           })),
         });
       }

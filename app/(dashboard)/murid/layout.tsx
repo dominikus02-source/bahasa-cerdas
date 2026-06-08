@@ -1,4 +1,5 @@
 import { getUser } from "@/lib/supabase/server";
+import { redirect } from "next/navigation";
 import Link from "next/link";
 import AIFloatingButton from "@/components/shared/AIFloatingButton";
 import { LogoutButton } from "@/components/dashboard/LogoutButton";

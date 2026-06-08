@@ -108,6 +108,8 @@ export default function AduCepatPage() {
     })
   }, [userData])
 
+  const myResult = results.find((r: any) => r.playerId === userData?.supabaseId)
+
   useEffect(() => {
     if (phase !== "result" || xpSaved || xpEarned <= 0) return
     setXpSaved(true)
@@ -125,11 +127,9 @@ export default function AduCepatPage() {
     }).catch(() => {})
   }, [phase, xpSaved, xpEarned, myResult, roomCode])
 
-  const handleGameFinish = useCallback((data: any) => {
+  const handleGameFinish = useCallback(() => {
     // handled by socket event above
   }, [])
-
-  const myResult = results.find((r: any) => r.playerId === userData?.supabaseId)
   const opponentResult = results.find((r: any) => r.playerId !== userData?.supabaseId)
   const winner = results.length > 0 ? results.sort((a: any, b: any) => a.rank - b.rank)[0] : null
   const didWin = winner?.playerId === userData?.supabaseId
@@ -150,7 +150,7 @@ export default function AduCepatPage() {
 
       {phase === "playing" && roomCode ? (
         <div className="fixed inset-0 z-[60]">
-          <GamePlay roomCode={roomCode} onFinish={handleGameFinish} />
+          <GamePlay roomCode={roomCode} onFinish={() => handleGameFinish()} />
         </div>
       ) : (
         <div className="flex flex-col items-center justify-center min-h-screen px-6 pb-16">

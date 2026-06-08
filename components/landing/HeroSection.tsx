@@ -52,7 +52,7 @@ export default function HeroSection() {
           {...sectionProps}
         >
           <div className="max-w-2xl">
-            <motion.div variants={fadeInUp} {...itemProps}>
+            <motion.div {...itemProps}>
               <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary-light border border-primary/10 mb-6">
                 <Sparkles size={14} className="text-primary" aria-hidden="true" />
                 <span className="text-xs font-semibold text-primary">

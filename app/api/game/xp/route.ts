@@ -35,15 +35,15 @@ export async function POST(req: NextRequest) {
         data: {
           roomId: roomId || "solo",
           userId: user.id,
-          sessionId: "solo",
-          finalScore: score || 0,
-          correct: correct || 0,
-          wrong: wrong || 0,
-          maxStreak: maxStreak || 0,
+          sessionId: `solo-${Date.now()}`,
+          finalScore: (score as number) || 0,
+          correct: (correct as number) || 0,
+          wrong: (wrong as number) || 0,
+          maxStreak: (maxStreak as number) || 0,
           xpEarned: earnedXp,
           rank: 1,
         },
-      })
+      } as any)
 
       await tx.user.update({
         where: { id: user.id },

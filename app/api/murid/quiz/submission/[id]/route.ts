@@ -57,12 +57,12 @@ export async function GET(
           sourceId: quizQ?.sourceId || "",
           customText: quizQ?.customText,
           customOptions: quizQ?.customOptions,
-          customCorrectAnswer: quizQ?.customCorrectAnswer,
+          customCorrectAnswer: quizQ?.customAnswer,
           orderIndex: quizQ?.orderIndex || 0,
           soal: soal ? {
             text: soal.text,
             options: soal.options,
-            correctOptionIndex: soal.correctOptionIndex,
+            correctOptionIndex: soal.options.indexOf(soal.correctAnswer),
           } : null,
         },
       };

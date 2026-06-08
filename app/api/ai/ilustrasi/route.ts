@@ -52,7 +52,7 @@ export async function GET(req: NextRequest) {
 
     const imageUrl = photo.urls.regular
 
-    const imgRes = await fetch(imageUrl, { timeout: 15000 })
+    const imgRes = await fetch(imageUrl, { signal: AbortSignal.timeout(15000) })
     if (!imgRes.ok) {
       throw new Error(`Gagal download gambar: ${imgRes.status}`)
     }

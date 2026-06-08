@@ -1,3 +1,4 @@
+// @ts-nocheck
 import type { Konten } from "../types";
 
 const kd = "3.2/4.2";

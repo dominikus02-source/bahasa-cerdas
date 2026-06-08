@@ -5,6 +5,38 @@ import { gameSocket } from "@/lib/game/socket";
 import { motion, AnimatePresence } from "framer-motion";
 import { Zap, Flame, Trophy, Clock, Star, Crown, Swords, Heart } from "lucide-react";
 
+interface GamePlayProps {
+  roomCode: string;
+  onFinish: () => void;
+}
+
+interface PlayerScore {
+  playerId: string;
+  playerName?: string;
+  score: number;
+  correct: number;
+  wrong: number;
+  streak: number;
+  hearts?: number;
+  eliminated?: boolean;
+}
+
+interface Question {
+  index: number;
+  total: number;
+  gameMode: string;
+  id: string;
+  text: string;
+  audioUrl?: string;
+  imageUrl?: string;
+  passage?: string;
+  type: string;
+  options: string[];
+  correctAnswer?: string;
+  difficulty?: string;
+  timePerQuestion: number;
+}
+
 const MODE_STYLES: Record<string, { name: string; icon: any; gradient: string; accent: string }> = {
   KUIS_BATTLE: { name: "Adu Cerdas", icon: Zap, gradient: "from-violet-600 to-purple-700", accent: "violet" },
   GOLD_RUSH: { name: "Rebut Emas", icon: Trophy, gradient: "from-amber-500 to-orange-600", accent: "amber" },
@@ -78,10 +110,10 @@ export default function GamePlay({ roomCode, onFinish }: GamePlayProps) {
       }
     });
 
-    const unsub3 = gameSocket.onAnswerResult((data: { playerId: string; correct: boolean }) => {
+    const unsub3 = gameSocket.onAnswerResult((data: { playerId: string; isCorrect: boolean }) => {
       if (data.playerId === userId.current) {
-        setIsCorrect(data.correct);
-        if (data.correct) {
+        setIsCorrect(data.isCorrect);
+        if (data.isCorrect) {
           const popValue = 100 + streak * 10;
           setShowScorePop({ value: popValue, x: Math.random() * 200 + 100, y: 150 });
           setTimeout(() => setShowScorePop(null), 1000);
@@ -428,7 +460,7 @@ export default function GamePlay({ roomCode, onFinish }: GamePlayProps) {
                     i === 2 ? "bg-amber-600 text-amber-100" :
                     "bg-white/10 text-white"
                   }`}>
-                    {p.playerName.slice(0, 2).toUpperCase()}
+                    {p.playerName?.slice(0, 2).toUpperCase() ?? "?"}
                   </div>
                   <p className="text-white/80 text-[10px] font-bold mt-0.5">{p.score}</p>
                 </div>

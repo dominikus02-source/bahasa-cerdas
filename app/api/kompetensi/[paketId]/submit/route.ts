@@ -24,7 +24,6 @@ export async function GET(
       where: { userId: dbUser.id, paketId },
       orderBy: { attemptNumber: "desc" },
       include: {
-        certificate: true,
         paket: { select: { title: true, type: true } },
       },
     });
@@ -50,13 +49,7 @@ export async function GET(
         startedAt: latestResult.startedAt?.toISOString(),
         finishedAt: latestResult.finishedAt?.toISOString(),
         timeSpent: latestResult.timeSpent,
-        certificate: latestResult.certificate
-          ? {
-              id: latestResult.certificate.id,
-              certificateNo: latestResult.certificate.certificateNo,
-              pdfUrl: latestResult.certificate.pdfUrl,
-            }
-          : undefined,
+        certificate: undefined,
       },
     });
   } catch (error) {

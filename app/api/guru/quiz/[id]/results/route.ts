@@ -31,6 +31,7 @@ export async function GET(
       include: {
         user: { select: { id: true, fullName: true, avatar: true } },
         assignment: { select: { id: true, groupId: true } },
+        answers: true,
       },
       orderBy: { submittedAt: "desc" },
     });

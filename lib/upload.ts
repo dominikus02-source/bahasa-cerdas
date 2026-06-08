@@ -167,7 +167,7 @@ export async function uploadFileServer(
 
   // Upload file
   const uploadUrl = `${supabaseUrl}/storage/v1/object/${bucket}/${fileName}`;
-  const fileBuffer = file instanceof Buffer ? file : Buffer.from(await file.arrayBuffer());
+  const fileBuffer = file instanceof File ? Buffer.from(await file.arrayBuffer()) : Buffer.from(file);
   
   const uploadRes = await fetch(uploadUrl, {
     method: "POST",

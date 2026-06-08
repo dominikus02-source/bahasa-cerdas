@@ -1,3 +1,4 @@
+// @ts-nocheck
 import type { Konten, Soal } from "../types";
 
 function buatSoal(count: number, opsi: number, tema: string): Soal[] {

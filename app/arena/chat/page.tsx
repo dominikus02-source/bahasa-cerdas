@@ -46,5 +46,5 @@ export default async function ChatPage() {
     lastMessage: lastMessages[i],
   }))
 
-  return <ChatClient userId={user.id} groups={enriched} />
+  return <ChatClient userId={user.id} groups={enriched as any} />
 }

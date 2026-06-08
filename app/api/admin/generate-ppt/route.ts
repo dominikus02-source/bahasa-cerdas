@@ -480,8 +480,8 @@ Output HANYA JSON.`;
     console.log("Step 3: Generating PPTX file...");
     let pptxBuffer;
     try {
-      pptxBuffer = await pres.write({ outputType: "nodebuffer" });
-      console.log("Step 3 complete: PPTX generated, size:", pptxBuffer.length, "bytes");
+      pptxBuffer = await pres.write({ outputType: "nodebuffer" }) as any;
+      console.log("Step 3 complete: PPTX generated, size:", (pptxBuffer as { length: number }).length, "bytes");
     } catch (pptError) {
       console.error("PPT Generation error:", pptError);
       return NextResponse.json({ error: "Gagal generate file PPT: " + (pptError instanceof Error ? pptError.message : "Unknown error") }, { status: 500 });
@@ -678,7 +678,7 @@ function generateFallbackPPT(params: { title: string; topik: string; grade: stri
   };
 }
 
-async function uploadToSupabase(buffer: Buffer, fileName: string, contentType: string): Promise<{ url: string; key: string } | { error: string }> {
+async function uploadToSupabase(buffer: Buffer | ArrayBuffer, fileName: string, contentType: string): Promise<{ url: string; key: string } | { error: string }> {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SERVICE_ROLE_KEY;
 
@@ -718,7 +718,7 @@ async function uploadToSupabase(buffer: Buffer, fileName: string, contentType: s
       Authorization: `Bearer ${serviceKey}`,
       "Content-Type": contentType,
     },
-    body: buffer,
+    body: buffer as BodyInit,
   });
 
   if (!uploadRes.ok) {

@@ -2,6 +2,10 @@ import { NextResponse } from "next/server";
 import { getIsProduction } from "@/lib/midtrans";
 
 export async function GET() {
+  if (process.env.NODE_ENV === "production") {
+    return NextResponse.json({ error: "Disabled in production" }, { status: 403 });
+  }
+
   const serverKey = process.env.MIDTRANS_SERVER_KEY;
   const clientKey = process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY;
   const envIsProduction = process.env.NEXT_PUBLIC_MIDTRANS_IS_PRODUCTION;

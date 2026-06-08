@@ -50,10 +50,10 @@ export default async function UnitDetailPage({ params }: { params: Promise<{ uni
 
   let konten: KontenUnit | null = null
   try { konten = unit.content ? JSON.parse(unit.content) : null } catch {}
-  const hasBelajar = konten?.belajar?.materi?.length > 0
-  const hasLatihan = konten?.latihan?.length > 0
-  const hasPraktik = konten?.praktik?.petunjuk
-  const hasKuis = konten?.kuis?.length > 0
+  const hasBelajar = (konten?.belajar?.materi?.length ?? 0) > 0
+  const hasLatihan = (konten?.latihan?.length ?? 0) > 0
+  const hasPraktik = !!konten?.praktik?.petunjuk
+  const hasKuis = (konten?.kuis?.length ?? 0) > 0
 
   let isCompleted = false
   try {

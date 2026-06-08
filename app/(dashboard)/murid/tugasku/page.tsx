@@ -158,7 +158,7 @@ export default function MuridTugaskuPage() {
                     <span className="flex items-center gap-1">
                       <Calendar className="w-3 h-3" /> Deadline: {formatDate(item.dueDate)}
                     </span>
-                    {item.submission?.score !== null && (
+                    {item.submission && item.submission.score != null && (
                       <span className="font-semibold text-emerald-600">Nilai: {Math.round(item.submission.score)}%</span>
                     )}
                   </div>

@@ -135,11 +135,11 @@ export default function GameLobby({ isHost = false, roomCode: initialCode, onSta
     const unsub = gameSocket.onRoomCreated((data: any) => {
       if (data.gameType === "TIMED_TRIAL") {
         setTimeout(() => {
-          gameSocket.startGame({ roomCode: data.code });
+          gameSocket.startGame({ code: data.code });
         }, 500);
       }
     });
-    return unsub;
+    return () => { unsub(); };
   }, []);
 
   useEffect(() => {
@@ -195,18 +195,18 @@ export default function GameLobby({ isHost = false, roomCode: initialCode, onSta
   const handleJoin = useCallback(() => {
     if (joinCode.length !== 6) return;
     gameSocket.joinRoom({
-      roomCode: joinCode.toUpperCase(),
-      playerId: userId,
+      code: joinCode.toUpperCase(),
+      userId,
       playerName: userName,
     });
   }, [joinCode, userId, userName]);
 
   const handleStart = useCallback(() => {
-    gameSocket.startGame({ roomCode: code });
+    gameSocket.startGame({ code });
   }, [code]);
 
   const handleLeave = useCallback(() => {
-    gameSocket.leaveRoom({ roomCode: code, playerId: userId });
+    gameSocket.leaveRoom({ code, userId });
     setRoom(null);
     setCode("");
     setPlayers([]);

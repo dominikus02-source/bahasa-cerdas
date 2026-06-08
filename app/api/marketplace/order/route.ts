@@ -21,7 +21,7 @@ export async function GET() {
       }),
     ]);
 
-    const orders = [...purchases, ...history].sort((a, b) => {
+    const orders = [...purchases, ...history].sort((a: any, b: any) => {
       const da = new Date(a.createdAt || a.soldAt).getTime();
       const db = new Date(b.createdAt || b.soldAt).getTime();
       return db - da;

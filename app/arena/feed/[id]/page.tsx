@@ -36,12 +36,13 @@ export default async function FeedDetailPage({ params }: { params: Promise<{ id:
 
   if (!karya) redirect("/arena/feed")
 
-  const comments = await db.studentKaryaComment.findMany({
+  const rawComments = await db.studentKaryaComment.findMany({
     where: { karyaId: id },
     include: { user: { select: { id: true, fullName: true, avatar: true } } },
     orderBy: { createdAt: "desc" },
     take: 20,
   })
+  const comments = rawComments.map(c => ({ ...c, createdAt: c.createdAt.toISOString() }))
 
   await db.studentKarya.update({ where: { id }, data: { viewsCount: { increment: 1 } } })
 

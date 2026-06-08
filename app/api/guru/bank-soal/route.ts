@@ -117,29 +117,27 @@ ${fileText.slice(0, 8000)}`;
       }
     }
 
-    // Save extracted questions to DB
+    // Save extracted questions to DB - link to existing BankSoal record
     let savedCount = 0;
     for (const q of extractedQuestions) {
       try {
-        await db.bankSoal.create({
+        await db.soal.create({
           data: {
-            title: (q.text || "Soal").slice(0, 100),
+            bankSoalId: bankSoal.id,
             text: q.text || "",
             type: q.options?.length ? "PILIHAN_GANDA" : "ESSAY",
-            difficulty: q.difficulty || "MEDIUM",
             options: q.options || [],
             correctAnswer: String(q.correctAnswer || ""),
             explanation: q.explanation || "",
-            isHOTS: q.isHOTS || false,
-            kelas,
-            subject,
-            isPublished: true,
+            difficulty: q.difficulty || "MEDIUM",
             uploaderId: user.id,
+            kelas,
+            isHOTS: q.isHOTS || false,
           },
         });
         savedCount++;
-      } catch (saveError) {
-        console.error("Failed to save extracted question:", saveError);
+      } catch (err) {
+        console.error("Failed to save question:", err);
       }
     }
 

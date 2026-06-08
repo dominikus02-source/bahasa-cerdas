@@ -198,9 +198,7 @@ export default function PanduanGuruPage() {
                                         <p className="text-xs text-slate-400">KD {unit.kd || "-"}</p>
                                       </div>
                                       <div className="flex items-center gap-1 shrink-0">
-                                        <Button size="sm" variant="ghost" className="text-xs text-slate-400" asChild>
-                                          <span><Eye className="w-3.5 h-3.5" /></span>
-                                        </Button>
+                                        <span className="text-xs text-slate-400"><Eye className="w-3.5 h-3.5" /></span>
                                         <Button
                                           size="sm"
                                           variant="outline"
