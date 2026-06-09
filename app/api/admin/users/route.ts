@@ -1,22 +1,76 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { getUser } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   try {
     const user = await getUser();
     if (!user || !user.isFounder) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
-    const users = await db.user.findMany({
-      orderBy: { createdAt: "desc" },
-      take: 100,
-      select: {
-        id: true, fullName: true, email: true, role: true, isPremium: true,
-        isFounder: true, xp: true, level: true, createdAt: true,
-      },
-    });
+    const { searchParams } = new URL(req.url);
+    const search = searchParams.get("search") || "";
+    const role = searchParams.get("role") || "";
+    const status = searchParams.get("status") || "";
+    const page = Math.max(1, parseInt(searchParams.get("page") || "1"));
+    const limit = Math.min(100, Math.max(1, parseInt(searchParams.get("limit") || "50")));
+    const skip = (page - 1) * limit;
 
-    return NextResponse.json({ users });
+    const where: any = {};
+    if (search) {
+      where.OR = [
+        { fullName: { contains: search, mode: "insensitive" } },
+        { email: { contains: search, mode: "insensitive" } },
+      ];
+    }
+    if (role && ["MURID", "GURU"].includes(role)) where.role = role;
+    if (status === "premium") where.isPremium = true;
+    if (status === "founder") where.isFounder = true;
+    if (status === "free") { where.isPremium = false; where.isFounder = false; }
+
+    const [users, total] = await Promise.all([
+      db.user.findMany({
+        where,
+        orderBy: { createdAt: "desc" },
+        skip,
+        take: limit,
+        select: {
+          id: true, fullName: true, email: true, role: true, isPremium: true,
+          isFounder: true, xp: true, level: true, createdAt: true, lastActiveAt: true,
+        },
+      }),
+      db.user.count({ where }),
+    ]);
+
+    return NextResponse.json({ users, total, page, limit, pages: Math.ceil(total / limit) });
+  } catch {
+    return NextResponse.json({ error: "Internal error" }, { status: 500 });
+  }
+}
+
+export async function PATCH(req: NextRequest) {
+  try {
+    const user = await getUser();
+    if (!user || !user.isFounder) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+
+    const { userIds, action } = await req.json();
+    if (!Array.isArray(userIds) || userIds.length === 0) {
+      return NextResponse.json({ error: "userIds required" }, { status: 400 });
+    }
+
+    if (action === "togglePremium") {
+      const targets = await db.user.findMany({ where: { id: { in: userIds } }, select: { id: true, isPremium: true } });
+      for (const t of targets) {
+        await db.user.update({ where: { id: t.id }, data: { isPremium: !t.isPremium } });
+      }
+      return NextResponse.json({ success: true });
+    }
+
+    if (action === "deactivate") {
+      await db.user.updateMany({ where: { id: { in: userIds } }, data: { isPremium: false } });
+      return NextResponse.json({ success: true });
+    }
+
+    return NextResponse.json({ error: "Unknown action" }, { status: 400 });
   } catch {
     return NextResponse.json({ error: "Internal error" }, { status: 500 });
   }

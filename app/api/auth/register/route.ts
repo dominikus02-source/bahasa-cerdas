@@ -65,6 +65,23 @@ export async function POST(req: NextRequest) {
       console.log("Profile creation note:", e);
     }
 
+    try {
+      const founders = await db.user.findMany({ where: { isFounder: true }, select: { id: true } });
+      if (founders.length > 0) {
+        await db.notifikasi.createMany({
+          data: founders.map(f => ({
+            userId: f.id,
+            title: "Pengguna Baru",
+            body: `${sanitizedName} (${role}) baru saja mendaftar`,
+            type: "admin_user",
+            data: { userId: newUser.id, role, email: email.toLowerCase() },
+          })),
+        });
+      }
+    } catch (e) {
+      console.log("Notif creation note:", e);
+    }
+
     return NextResponse.json(
       { user: newUser, redirect: `/${role.toLowerCase()}/beranda` },
       { status: 201 }
