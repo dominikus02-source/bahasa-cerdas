@@ -21,7 +21,7 @@ async function getWeeklyGrowth(table: string, dateField: string, weeks: number) 
     } else if (table === "artikel") {
       count = await db.artikel.count({ where: { createdAt: { gte: start, lt: end } } });
     } else if (table === "pembelian") {
-      count = await db.pembelian.count({ where: { createdAt: { gte: start, lt: end }, status: "SUCCESS" } });
+      count = await db.pembelian.count({ where: { createdAt: { gte: start, lt: end }, status: "PAID" } });
     }
 
     const label = start.toLocaleDateString("id-ID", { day: "numeric", month: "short" });
@@ -71,7 +71,7 @@ export async function GET() {
       db.studentKarya.count(),
       db.video.count({ where: { isPublished: true } }),
       db.artikel.count({ where: { isPublished: true } }),
-      db.pembelian.count({ where: { status: "SUCCESS" } }),
+      db.pembelian.count({ where: { status: "PAID" } }),
 
       db.user.count({ where: { createdAt: { gte: weekAgo } } }),
       db.user.count({ where: { createdAt: { gte: lastWeek, lt: weekAgo } } }),
@@ -85,15 +85,15 @@ export async function GET() {
       db.artikel.count({ where: { createdAt: { gte: weekAgo } } }),
       db.artikel.count({ where: { createdAt: { gte: lastWeek, lt: weekAgo } } }),
 
-      db.pembelian.count({ where: { createdAt: { gte: weekAgo }, status: "SUCCESS" } }),
-      db.pembelian.count({ where: { createdAt: { gte: lastWeek, lt: weekAgo }, status: "SUCCESS" } }),
+      db.pembelian.count({ where: { createdAt: { gte: weekAgo }, status: "PAID" } }),
+      db.pembelian.count({ where: { createdAt: { gte: lastWeek, lt: weekAgo }, status: "PAID" } }),
 
       db.community.count({ where: { status: "PENDING" } }),
       db.loker.count({ where: { isApproved: false } }),
 
       db.user.count({ where: { createdAt: { gte: now.getTime() - 24 * 60 * 60 * 1000 } } }),
 
-      db.pembelian.aggregate({ _sum: { amount: true }, where: { status: "SUCCESS" } }),
+      db.pembelian.aggregate({ _sum: { amount: true }, where: { status: "PAID" } }),
 
       db.withdrawal.findMany({ where: { status: "PENDING" }, select: { amount: true } }),
 

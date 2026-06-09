@@ -37,7 +37,7 @@ async function getStats() {
       db.studentKarya.count(),
       db.video.count({ where: { isPublished: true } }),
       db.artikel.count({ where: { isPublished: true } }),
-      db.pembelian.count({ where: { status: "SUCCESS" } }),
+      db.pembelian.count({ where: { status: "PAID" } }),
 
       db.user.count({ where: { createdAt: { gte: weekAgo } } }),
       db.user.count({ where: { createdAt: { gte: lastWeek, lt: weekAgo } } }),
@@ -51,8 +51,8 @@ async function getStats() {
       db.artikel.count({ where: { createdAt: { gte: weekAgo } } }),
       db.artikel.count({ where: { createdAt: { gte: lastWeek, lt: weekAgo } } }),
 
-      db.pembelian.count({ where: { createdAt: { gte: weekAgo }, status: "SUCCESS" } }),
-      db.pembelian.count({ where: { createdAt: { gte: lastWeek, lt: weekAgo }, status: "SUCCESS" } }),
+      db.pembelian.count({ where: { createdAt: { gte: weekAgo }, status: "PAID" } }),
+      db.pembelian.count({ where: { createdAt: { gte: lastWeek, lt: weekAgo }, status: "PAID" } }),
 
       db.user.count({ where: { createdAt: { gte: monthAgo } } }),
 
@@ -64,7 +64,7 @@ async function getStats() {
 
       db.user.count({ where: { createdAt: { gte: new Date(now.getTime() - 24 * 60 * 60 * 1000) } } }),
 
-      db.pembelian.aggregate({ _sum: { amount: true }, where: { status: "SUCCESS" } }),
+      db.pembelian.aggregate({ _sum: { amount: true }, where: { status: "PAID" } }),
 
       db.withdrawal.findMany({ where: { status: "PENDING" }, select: { amount: true } }),
 
