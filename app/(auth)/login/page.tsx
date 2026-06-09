@@ -71,12 +71,33 @@ export default function LoginPage() {
       });
       const createData = await createRes.json().catch(() => ({}));
       if (!createRes.ok) {
-        const errMsg = createData?.error || "Akun belum terdaftar. Silakan daftar terlebih dahulu.";
-        await supabase.auth.signOut();
-        setError(errMsg);
-        setLoading(false);
-        return;
-      }
+          const errMsg = createData?.error || "Akun belum terdaftar. Silakan daftar terlebih dahulu.";
+          // If server error, try simpler upsert endpoint as fallback
+          if (createRes.status >= 500) {
+            const retryRes = await fetch("/api/user/simple-upsert", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                supabaseId: data.user.id,
+                email: data.user.email,
+                fullName: data.user.user_metadata?.full_name || data.user.email?.split("@")[0] || "User",
+                role: data.user.user_metadata?.role || "MURID",
+              }),
+            });
+            if (retryRes.ok) {
+              const retryData = await retryRes.json();
+              const dbUser = retryData?.user;
+              if (dbUser) {
+                window.location.href = dbUser.isFounder ? "/admin" : dbUser.role === "MURID" ? "/arena" : `/${dbUser.role.toLowerCase()}/beranda`;
+                return;
+              }
+            }
+          }
+          await supabase.auth.signOut();
+          setError(errMsg);
+          setLoading(false);
+          return;
+        }
       const dbUser = createData?.user;
 
       if (!dbUser) { setError("Gagal memuat data user"); setLoading(false); return; }

@@ -73,7 +73,7 @@ export async function GET() {
     return NextResponse.json({ user: { ...found, ...profile, ...updates } });
   } catch (e: any) {
     console.error("GET /api/user/me error:", e?.message || e);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json({ error: "Gagal memuat data" }, { status: 500 });
   }
 }
 
@@ -81,6 +81,15 @@ export async function POST(request: NextRequest) {
   try {
     let body: { supabaseId?: string; email?: string; fullName?: string; role?: string } = {};
     try { body = await request.json(); } catch {}
+
+    if (!body.supabaseId || !body.email) {
+      // Try reading query params as last resort
+      const { searchParams } = new URL(request.url);
+      body.supabaseId = body.supabaseId || searchParams.get("supabaseId") || undefined;
+      body.email = body.email || searchParams.get("email") || undefined;
+      body.fullName = body.fullName || searchParams.get("fullName") || undefined;
+      body.role = body.role || searchParams.get("role") || undefined;
+    }
 
     if (!body.supabaseId || !body.email) {
       return NextResponse.json({ error: "Data tidak lengkap" }, { status: 400 });
@@ -95,7 +104,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ user });
   } catch (e: any) {
-    console.error("POST /api/user/me error:", e?.message || e);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    console.error("POST /api/user/me error:", e?.message || e, e?.stack || "");
+    return NextResponse.json({ error: `Gagal: ${e?.message || "Internal server error"}` }, { status: 500 });
   }
 }
