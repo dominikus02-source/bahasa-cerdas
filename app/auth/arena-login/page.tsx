@@ -25,27 +25,13 @@ export default function ArenaLoginPage() {
     }
   }, [])
 
-  const checkArenaAccess = async (supabase: any) => {
-    const { data: userData } = await supabase.auth.getUser()
-    if (!userData?.user) return false
-    const res = await fetch("/api/me")
-    if (!res.ok) return false
-    const me = await res.json()
-    if (me.role !== "MURID" && !me.isFounder) {
-      await supabase.auth.signOut()
-      setError("Akun ini bukan akun murid. Silakan login di dasbor guru.")
-      return false
-    }
-    return true
-  }
-
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
     setError("")
 
     const supabase = createClient()
-    const { error: authError } = await supabase.auth.signInWithPassword({
+    const { data, error: authError } = await supabase.auth.signInWithPassword({
       email: email.toLowerCase(),
       password,
     })
@@ -62,8 +48,34 @@ export default function ArenaLoginPage() {
       return
     }
 
-    const ok = await checkArenaAccess(supabase)
-    if (!ok) { setLoading(false); return }
+    if (!data.user) { setError("Gagal masuk"); setLoading(false); return }
+
+    const createRes = await fetch("/api/user/me", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        supabaseId: data.user.id,
+        email: data.user.email,
+        fullName: data.user.user_metadata?.full_name,
+        role: data.user.user_metadata?.role || "MURID",
+      }),
+    })
+    if (!createRes.ok) {
+      const errData = await createRes.json().catch(() => ({}))
+      await supabase.auth.signOut()
+      setError(errData?.error || "Gagal login")
+      setLoading(false)
+      return
+    }
+
+    const me = (await createRes.json())?.user
+    if (!me) { setError("Gagal memuat data"); setLoading(false); return }
+    if (me.role !== "MURID" && !me.isFounder) {
+      await supabase.auth.signOut()
+      setError("Akun ini bukan akun murid. Silakan login di dasbor guru.")
+      setLoading(false)
+      return
+    }
 
     router.push("/arena")
   }
