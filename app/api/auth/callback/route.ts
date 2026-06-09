@@ -12,9 +12,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.redirect(`${origin}/login?error=Gagal login dengan Google`);
   }
 
-  let redirectPath = next || "/guru/beranda";
-
-  const response = NextResponse.redirect(`${origin}${redirectPath}`);
+  const cookiesToSet: { name: string; value: string; options: any }[] = [];
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -24,10 +22,10 @@ export async function GET(request: NextRequest) {
         getAll() {
           return request.cookies.getAll().map(c => ({ name: c.name, value: c.value }));
         },
-        setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value, options }) => {
+        setAll(cookiesToSetArr) {
+          cookiesToSetArr.forEach(({ name, value, options }) => {
             request.cookies.set(name, value);
-            response.cookies.set(name, value, options);
+            cookiesToSet.push({ name, value, options });
           });
         },
       },
@@ -68,17 +66,25 @@ export async function GET(request: NextRequest) {
     } catch {}
   }
 
-  // Update redirect based on role
-  if (!next) {
-    const target = dbUser.role === "MURID" ? "/arena" : `/${dbUser.role.toLowerCase()}/beranda`;
-    const redirectUrl = `${origin}${target}`;
-    const finalResponse = NextResponse.redirect(redirectUrl);
-    // Copy cookies from the exchange response to the final response
-    response.cookies.getAll().forEach(c => {
-      finalResponse.cookies.set(c.name, c.value, { httpOnly: true, secure: true, sameSite: "lax", path: "/" });
-    });
-    return finalResponse;
+  let redirectPath: string;
+  if (next) {
+    redirectPath = next;
+  } else if (dbUser.role === "MURID") {
+    redirectPath = "/arena";
+  } else {
+    redirectPath = `/${dbUser.role.toLowerCase()}/beranda`;
   }
+
+  const response = NextResponse.redirect(`${origin}${redirectPath}`);
+  cookiesToSet.forEach(({ name, value, options }) => {
+    response.cookies.set(name, value, {
+      ...options,
+      httpOnly: true,
+      secure: true,
+      sameSite: "lax",
+      path: "/",
+    });
+  });
 
   return response;
 }
