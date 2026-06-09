@@ -2,16 +2,10 @@ import { type NextRequest, NextResponse } from "next/server";
 import { updateSession } from "@/lib/supabase/proxy";
 import { rateLimit } from "@/lib/rate-limit";
 
-function generateNonce(): string {
-  const bytes = new Uint8Array(16);
-  crypto.getRandomValues(bytes);
-  return btoa(String.fromCharCode(...bytes));
-}
-
-function buildCsp(nonce: string): string {
+function buildCsp(): string {
   const csp: Record<string, string[]> = {
     "default-src": ["'self'"],
-    "script-src": ["'self'", "'unsafe-inline'", `'nonce-${nonce}'`, "https://*.supabase.co", "https://app.midtrans.com", "https://api.unsplash.com"],
+    "script-src": ["'self'", "'unsafe-inline'", "https://*.supabase.co", "https://app.midtrans.com", "https://api.unsplash.com"],
     "style-src": ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
     "img-src": ["'self'", "blob:", "data:", "https://*.supabase.co", "https://images.unsplash.com", "https://api.dicebear.com", "https://img.youtube.com", "https://i.ytimg.com"],
     "font-src": ["'self'", "https://fonts.gstatic.com"],
@@ -48,14 +42,9 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  const nonce = generateNonce();
-  const requestHeaders = new Headers(request.headers);
-  requestHeaders.set("x-csp-nonce", nonce);
-
   const response = await updateSession(request);
 
-  // Override CSP from next.config.ts with nonce-enabled version
-  response.headers.set("Content-Security-Policy", buildCsp(nonce));
+  response.headers.set("Content-Security-Policy", buildCsp());
 
   return response;
 }
