@@ -1,34 +1,33 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { createClient } from "@/lib/supabase/server";
+import { getUser, createClient } from "@/lib/supabase/server";
 import { getGravatarUrl } from "@/lib/avatar";
 
 const FOUNDER_EMAILS = ["hdsastra47@gmail.com", "dominikus.02@gmail.com", "alexsurya1968@gmail.com"];
 
 export async function GET() {
   try {
-    const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return NextResponse.json({ user: null });
-
-    const email = user.email?.toLowerCase() || "";
-    let dbUser = await db.user.findUnique({
-      where: { supabaseId: user.id },
-    });
-
+    const dbUser = await getUser();
     if (!dbUser) {
-      dbUser = await db.user.findFirst({ where: { email } });
-      if (!dbUser) return NextResponse.json({ error: "User not found" }, { status: 404 });
-      if (dbUser.supabaseId !== user.id) {
-        await db.user.update({ where: { id: dbUser.id }, data: { supabaseId: user.id } });
+      // Try to find/create via supabase session as fallback
+      const supabase = await createClient();
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return NextResponse.json({ user: null });
+      const email = user.email?.toLowerCase() || "";
+      const found = await db.user.findFirst({ where: { email } });
+      if (!found) return NextResponse.json({ error: "User not found" }, { status: 404 });
+      const updates: Record<string, unknown> = {};
+      if (found.supabaseId !== user.id) updates.supabaseId = user.id;
+      if (FOUNDER_EMAILS.includes(email) && !found.isFounder) {
+        updates.isFounder = true;
+        updates.isPremium = true;
+        updates.premiumPlan = "PRO";
       }
-    }
-
-    if (FOUNDER_EMAILS.includes(email) && !dbUser.isFounder) {
-      dbUser = await db.user.update({
-        where: { id: dbUser.id },
-        data: { isFounder: true, isPremium: true, premiumPlan: "PRO" },
-      });
+      if (Object.keys(updates).length > 0) {
+        await db.user.update({ where: { id: found.id }, data: updates });
+      }
+      const profile = await db.profile.findUnique({ where: { userId: found.id } });
+      return NextResponse.json({ user: { ...found, ...profile, ...updates } });
     }
 
     const profile = await db.profile.findUnique({ where: { userId: dbUser.id } });
@@ -40,18 +39,31 @@ export async function GET() {
 
 export async function POST() {
   try {
-    const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const existingDbUser = await getUser();
+    if (existingDbUser) return NextResponse.json({ user: existingDbUser });
 
-    const email = user.email?.toLowerCase() || "";
-    const fullName = user.user_metadata?.full_name || email.split("@")[0] || "User";
-    const role = (user.user_metadata?.role as string)?.toUpperCase() === "GURU" ? "GURU" : "MURID";
+    const supabase = await createClient();
+
+    // Try getUser first, then fallback to getSession
+    const { data: { user: authUser } } = await supabase.auth.getUser();
+    let resolvedUser = authUser;
+    if (!resolvedUser) {
+      const { data: { session } } = await supabase.auth.getSession();
+      resolvedUser = session?.user ?? null;
+    }
+
+    if (!resolvedUser) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+    const email = resolvedUser.email?.toLowerCase() || "";
+    if (!email) return NextResponse.json({ error: "Email tidak ditemukan" }, { status: 400 });
+
+    const fullName = resolvedUser.user_metadata?.full_name || email.split("@")[0] || "User";
+    const role = (resolvedUser.user_metadata?.role as string)?.toUpperCase() === "GURU" ? "GURU" : "MURID";
 
     const existing = await db.user.findFirst({ where: { email } });
     if (existing) {
-      const updates: any = {};
-      if (existing.supabaseId !== user.id) updates.supabaseId = user.id;
+      const updates: Record<string, unknown> = {};
+      if (existing.supabaseId !== resolvedUser.id) updates.supabaseId = resolvedUser.id;
       if (FOUNDER_EMAILS.includes(email) && !existing.isFounder) {
         updates.isFounder = true;
         updates.isPremium = true;
@@ -67,9 +79,9 @@ export async function POST() {
     }
 
     const isFounder = FOUNDER_EMAILS.includes(email);
-    const dbUser = await db.user.create({
+    const newUser = await db.user.create({
       data: {
-        supabaseId: user.id,
+        supabaseId: resolvedUser.id,
         email,
         fullName,
         avatar: getGravatarUrl(email),
@@ -80,9 +92,9 @@ export async function POST() {
       },
     });
 
-    try { await db.profile.create({ data: { userId: dbUser.id } }); } catch {}
+    try { await db.profile.create({ data: { userId: newUser.id } }); } catch {}
 
-    return NextResponse.json({ user: dbUser });
+    return NextResponse.json({ user: newUser });
   } catch {
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }

@@ -58,18 +58,24 @@ export default function LoginPage() {
       }
 
       let res = await fetch("/api/user/me");
+      let dbUser: any = null;
       if (!res.ok) {
         const createRes = await fetch("/api/user/me", { method: "POST" });
+        const createData = await createRes.json().catch(() => ({}));
         if (!createRes.ok) {
+          const errMsg = createData?.error || "Akun belum terdaftar. Silakan daftar terlebih dahulu.";
           await supabase.auth.signOut();
-          setError("Akun belum terdaftar. Silakan daftar terlebih dahulu.");
+          setError(errMsg);
           setLoading(false);
           return;
         }
-        res = await fetch("/api/user/me");
+        dbUser = createData?.user;
+      } else {
+        const data = await res.json();
+        dbUser = data?.user;
       }
 
-      const { user: dbUser } = await res.json();
+      if (!dbUser) { setError("Gagal memuat data user"); setLoading(false); return; }
       window.location.href = dbUser.isFounder ? "/admin" : dbUser.role === "MURID" ? "/arena" : `/${dbUser.role.toLowerCase()}/beranda`;
     } catch (err: any) {
       setError(

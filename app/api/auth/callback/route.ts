@@ -59,7 +59,7 @@ export async function GET(request: NextRequest) {
         email: email.toLowerCase(),
         fullName,
         avatar: authUser.user_metadata?.avatar_url || getGravatarUrl(email),
-        role: "GURU",
+        role: (authUser.user_metadata?.role as string)?.toUpperCase() === "MURID" ? "MURID" : "GURU",
         isPremium: false,
         premiumPlan: "FREE",
       },
