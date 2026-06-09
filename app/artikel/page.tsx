@@ -17,16 +17,21 @@ export const metadata: Metadata = {
 };
 
 export default async function ArtikelPage() {
-  const artikel = await db.artikel.findMany({
-    where: { isPublished: true },
-    orderBy: { createdAt: "desc" },
-    take: 12,
-    select: {
-      id: true, title: true, slug: true, excerpt: true,
-      coverImage: true, tags: true, readCount: true, createdAt: true,
-      author: { select: { id: true, fullName: true } },
-    },
-  });
+  let artikel: any[] = [];
+  try {
+    artikel = await db.artikel.findMany({
+      where: { isPublished: true },
+      orderBy: { createdAt: "desc" },
+      take: 12,
+      select: {
+        id: true, title: true, slug: true, excerpt: true,
+        coverImage: true, tags: true, readCount: true, createdAt: true,
+        author: { select: { id: true, fullName: true } },
+      },
+    });
+  } catch {
+    // DB not reachable — render empty
+  }
 
   return (
     <div className="min-h-screen bg-slate-50">

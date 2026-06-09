@@ -9,7 +9,7 @@ const publicPaths = [
 ];
 
 // Routes that handle their own auth — skip middleware getUser() to avoid rate limit
-const selfAuthPaths = ["/api/", "/arena/", "/guru/"];
+const selfAuthPaths = ["/api/", "/arena/", "/guru/", "/admin/"];
 
 export async function updateSession(request: NextRequest) {
   const { pathname, search } = request.nextUrl;
