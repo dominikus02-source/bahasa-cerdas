@@ -51,7 +51,7 @@ export async function GET(request: NextRequest) {
   if (!dbUser) {
     const fullName = authUser.user_metadata?.full_name
       || authUser.user_metadata?.name
-      || authUser.email.split("@")[0];
+      || email.split("@")[0];
 
     dbUser = await db.user.create({
       data: {
