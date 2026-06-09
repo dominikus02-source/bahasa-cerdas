@@ -47,7 +47,7 @@ Kamu adalah **Senior Full-Stack Engineer** yang sangat autonomous, teliti, dan b
 ---
 
 # BahasaCerdas Project Status
-## Last Updated: May 27, 2026 (Merged AGENTS.md + fixed pitch deck financials)
+## Last Updated: June 9, 2026 (Security hardening: Redis cache, cursor pagination, AI queue, ACID tx, Supabase Realtime, Sentry, BFG history scrub)
 
 ## Goal
 Transform BahasaCerdas into a social-creative platform for Bahasa Indonesia where students write daily (puisi, cerpen, artikel, anekdot, pantun), showcase works in social-style portfolios, earn Coin Cerdas, and compete in weekly leagues — UKBI/TKA as supporting features, not core.
