@@ -39,9 +39,13 @@ export async function GET(request: NextRequest) {
   }
 
   const authUser = data.session.user;
+  const email = authUser.email;
+  if (!email) {
+    return NextResponse.redirect(`${origin}/login?error=Email tidak ditemukan`);
+  }
 
   let dbUser = await db.user.findFirst({
-    where: { email: authUser.email.toLowerCase() },
+    where: { email: email.toLowerCase() },
   });
 
   if (!dbUser) {
@@ -52,9 +56,9 @@ export async function GET(request: NextRequest) {
     dbUser = await db.user.create({
       data: {
         supabaseId: authUser.id,
-        email: authUser.email.toLowerCase(),
+        email: email.toLowerCase(),
         fullName,
-        avatar: authUser.user_metadata?.avatar_url || getGravatarUrl(authUser.email),
+        avatar: authUser.user_metadata?.avatar_url || getGravatarUrl(email),
         role: "GURU",
         isPremium: false,
         premiumPlan: "FREE",
