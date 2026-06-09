@@ -86,11 +86,12 @@ export default function LoginPage() {
     setError("");
 
     try {
+      const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || window.location.origin || "https://bahasacerdas.com";
       const supabase = createClient();
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
-          redirectTo: `${window.location.origin}/api/auth/callback`,
+          redirectTo: `${baseUrl}/api/auth/callback`,
         },
       });
       if (error) setError(error.message);

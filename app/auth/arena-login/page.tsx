@@ -87,11 +87,12 @@ export default function ArenaLoginPage() {
 
   const handleGoogle = async () => {
     setError("")
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || location.origin || "https://bahasacerdas.com"
     const supabase = createClient()
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: `${location.origin}/auth/callback?next=/arena`,
+        redirectTo: `${baseUrl}/auth/callback?next=/arena`,
       },
     })
     if (error) setError(error.message)
