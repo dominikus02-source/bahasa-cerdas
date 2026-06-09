@@ -1,9 +1,12 @@
 import { NextRequest, NextResponse } from "next/server"
 import { createClient } from "@supabase/supabase-js"
 import crypto from "crypto"
+import { getUser } from "@/lib/supabase/server"
 
 export async function GET(req: NextRequest) {
   try {
+    const user = await getUser();
+    if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     const prompt = req.nextUrl.searchParams.get("prompt")
     if (!prompt || prompt.length < 3) {
       return NextResponse.json({ error: "Prompt minimal 3 karakter" }, { status: 400 })

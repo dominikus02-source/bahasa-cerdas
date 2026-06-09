@@ -1,8 +1,10 @@
 import { NextResponse } from "next/server";
+import { requireFounder } from "@/lib/supabase/server";
 import { configureBucket } from "@/lib/upload";
 
 export async function POST() {
   try {
+    await requireFounder();
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
     const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SERVICE_ROLE_KEY;
 

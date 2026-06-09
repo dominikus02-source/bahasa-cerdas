@@ -1,6 +1,8 @@
 import { MetadataRoute } from "next";
 import { db } from "@/lib/db";
 
+export const revalidate = 3600;
+
 const SITE_URL = "https://bahasacerdas.com";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {

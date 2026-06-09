@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getUser } from "@/lib/supabase/server";
 
 const GROQ_API_KEY = process.env.GROQ_API_KEY || "";
 const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY || "";
@@ -43,6 +44,9 @@ Kamu adalah asisten ringan di BahasaCerdas.site — kamu ahli menjelaskan konsep
 
 export async function POST(req: NextRequest) {
   try {
+    const user = await getUser();
+    if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
     const { message, messages, mode = "murid" } = await req.json();
 
     let chatHistory = messages

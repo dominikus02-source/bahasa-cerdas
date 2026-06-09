@@ -1,5 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { updateSession } from "@/lib/supabase/proxy";
+import { rateLimit } from "@/lib/rate-limit";
 
 function generateNonce(): string {
   const bytes = new Uint8Array(16);
@@ -26,7 +27,27 @@ function buildCsp(nonce: string): string {
     .join("; ");
 }
 
+function getClientIp(request: NextRequest): string {
+  return request.headers.get("x-forwarded-for")?.split(",")[0]?.trim()
+    || request.headers.get("x-real-ip")
+    || "127.0.0.1";
+}
+
 export async function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl;
+
+  // Rate limit /api/ai/* routes in middleware (enforced automatically, no per-route setup needed)
+  if (pathname.startsWith("/api/ai/")) {
+    const ip = getClientIp(request);
+    const result = await rateLimit(ip, "ai");
+    if (!result.success) {
+      return new NextResponse(JSON.stringify({ error: "Too many requests" }), {
+        status: 429,
+        headers: { "Content-Type": "application/json", "Retry-After": `${result.reset}` },
+      });
+    }
+  }
+
   const nonce = generateNonce();
   const requestHeaders = new Headers(request.headers);
   requestHeaders.set("x-csp-nonce", nonce);
