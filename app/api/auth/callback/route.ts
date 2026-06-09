@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
+import { createServerClient } from "@supabase/ssr";
 import { db } from "@/lib/db";
 import { getGravatarUrl } from "@/lib/avatar";
 
-export async function GET(req: NextRequest) {
-  const { searchParams, origin } = new URL(req.url);
+export async function GET(request: NextRequest) {
+  const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get("code");
   const next = searchParams.get("next");
 
@@ -12,24 +12,40 @@ export async function GET(req: NextRequest) {
     return NextResponse.redirect(`${origin}/login?error=Gagal login dengan Google`);
   }
 
-  const supabase = await createClient();
+  let redirectPath = next || "/guru/beranda";
+
+  const response = NextResponse.redirect(`${origin}${redirectPath}`);
+
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll() {
+          return request.cookies.getAll().map(c => ({ name: c.name, value: c.value }));
+        },
+        setAll(cookiesToSet) {
+          cookiesToSet.forEach(({ name, value, options }) => {
+            request.cookies.set(name, value);
+            response.cookies.set(name, value, options);
+          });
+        },
+      },
+    }
+  );
+
   const { data, error } = await supabase.auth.exchangeCodeForSession(code);
 
-  if (error || !data.session) {
+  if (error || !data.session?.user?.email) {
     return NextResponse.redirect(`${origin}/login?error=Gagal verifikasi login`);
   }
 
   const authUser = data.session.user;
-  if (!authUser?.email) {
-    return NextResponse.redirect(`${origin}/login?error=Email tidak ditemukan`);
-  }
 
-  // Check if user exists in app DB
   let dbUser = await db.user.findFirst({
     where: { email: authUser.email.toLowerCase() },
   });
 
-  // Auto-create user if first time Google login
   if (!dbUser) {
     const fullName = authUser.user_metadata?.full_name
       || authUser.user_metadata?.name
@@ -52,13 +68,17 @@ export async function GET(req: NextRequest) {
     } catch {}
   }
 
-  if (next) {
-    return NextResponse.redirect(`${origin}${next}`);
+  // Update redirect based on role
+  if (!next) {
+    const target = dbUser.role === "MURID" ? "/arena" : `/${dbUser.role.toLowerCase()}/beranda`;
+    const redirectUrl = `${origin}${target}`;
+    const finalResponse = NextResponse.redirect(redirectUrl);
+    // Copy cookies from the exchange response to the final response
+    response.cookies.getAll().forEach(c => {
+      finalResponse.cookies.set(c.name, c.value, { httpOnly: true, secure: true, sameSite: "lax", path: "/" });
+    });
+    return finalResponse;
   }
 
-  if (dbUser.role === "MURID") {
-    return NextResponse.redirect(`${origin}/arena`);
-  }
-
-  return NextResponse.redirect(`${origin}/${dbUser.role.toLowerCase()}/beranda`);
+  return response;
 }
