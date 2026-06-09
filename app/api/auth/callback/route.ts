@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createServerClient } from "@supabase/ssr";
+import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import { db } from "@/lib/db";
 import { getGravatarUrl } from "@/lib/avatar";
 
@@ -12,7 +12,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.redirect(`${origin}/login?error=Gagal login dengan Google`);
   }
 
-  const cookiesToSet: { name: string; value: string; options: any }[] = [];
+  const cookiesToSet: { name: string; value: string; options: CookieOptions }[] = [];
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -22,7 +22,7 @@ export async function GET(request: NextRequest) {
         getAll() {
           return request.cookies.getAll().map(c => ({ name: c.name, value: c.value }));
         },
-        setAll(cookiesToSetArr) {
+        setAll(cookiesToSetArr: { name: string; value: string; options: CookieOptions }[]) {
           cookiesToSetArr.forEach(({ name, value, options }) => {
             request.cookies.set(name, value);
             cookiesToSet.push({ name, value, options });
@@ -76,9 +76,8 @@ export async function GET(request: NextRequest) {
   }
 
   const response = NextResponse.redirect(`${origin}${redirectPath}`);
-  cookiesToSet.forEach(({ name, value, options }) => {
+  cookiesToSet.forEach(({ name, value }) => {
     response.cookies.set(name, value, {
-      ...options,
       httpOnly: true,
       secure: true,
       sameSite: "lax",
