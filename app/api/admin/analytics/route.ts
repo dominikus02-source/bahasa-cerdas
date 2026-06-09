@@ -91,7 +91,7 @@ export async function GET() {
       db.community.count({ where: { status: "PENDING" } }),
       db.loker.count({ where: { isApproved: false } }),
 
-      db.user.count({ where: { createdAt: { gte: now.getTime() - 24 * 60 * 60 * 1000 } } }),
+      db.user.count({ where: { createdAt: { gte: new Date(now.getTime() - 24 * 60 * 60 * 1000) } } }),
 
       db.pembelian.aggregate({ _sum: { amount: true }, where: { status: "PAID" } }),
 

@@ -11,7 +11,7 @@ function generateNonce(): string {
 function buildCsp(nonce: string): string {
   const csp: Record<string, string[]> = {
     "default-src": ["'self'"],
-    "script-src": ["'self'", `'nonce-${nonce}'`, "https://*.supabase.co", "https://app.midtrans.com", "https://api.unsplash.com"],
+    "script-src": ["'self'", "'unsafe-inline'", `'nonce-${nonce}'`, "https://*.supabase.co", "https://app.midtrans.com", "https://api.unsplash.com"],
     "style-src": ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
     "img-src": ["'self'", "blob:", "data:", "https://*.supabase.co", "https://images.unsplash.com", "https://api.dicebear.com", "https://img.youtube.com", "https://i.ytimg.com"],
     "font-src": ["'self'", "https://fonts.gstatic.com"],
