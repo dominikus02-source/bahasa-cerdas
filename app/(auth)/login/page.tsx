@@ -57,23 +57,27 @@ export default function LoginPage() {
         return;
       }
 
-      let res = await fetch("/api/user/me");
-      let dbUser: any = null;
-      if (!res.ok) {
-        const createRes = await fetch("/api/user/me", { method: "POST" });
-        const createData = await createRes.json().catch(() => ({}));
-        if (!createRes.ok) {
-          const errMsg = createData?.error || "Akun belum terdaftar. Silakan daftar terlebih dahulu.";
-          await supabase.auth.signOut();
-          setError(errMsg);
-          setLoading(false);
-          return;
-        }
-        dbUser = createData?.user;
-      } else {
-        const data = await res.json();
-        dbUser = data?.user;
+      // Create/get user in DB by passing client-side auth data directly
+      // (avoids cookie-based server auth issues with Supabase SSR)
+      const createRes = await fetch("/api/user/me", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          supabaseId: data.user.id,
+          email: data.user.email,
+          fullName: data.user.user_metadata?.full_name,
+          role: data.user.user_metadata?.role || "MURID",
+        }),
+      });
+      const createData = await createRes.json().catch(() => ({}));
+      if (!createRes.ok) {
+        const errMsg = createData?.error || "Akun belum terdaftar. Silakan daftar terlebih dahulu.";
+        await supabase.auth.signOut();
+        setError(errMsg);
+        setLoading(false);
+        return;
       }
+      const dbUser = createData?.user;
 
       if (!dbUser) { setError("Gagal memuat data user"); setLoading(false); return; }
       window.location.href = dbUser.isFounder ? "/admin" : dbUser.role === "MURID" ? "/arena" : `/${dbUser.role.toLowerCase()}/beranda`;
