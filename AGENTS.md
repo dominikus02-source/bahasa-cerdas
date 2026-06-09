@@ -64,20 +64,14 @@ Transform BahasaCerdas into a social-creative platform for Bahasa Indonesia wher
 ## Critical Context
 
 ### VPS (Hostinger)
-- IP: [lihat Hostinger VPS dashboard]
-- SSH password: [lihat vault/password manager]
-- PostgreSQL running on port 5432
-- Node.js 20, PM2 installed
-- Game server deployed to /var/www/game-server/game-server
-- NGINX configured for game.bahasacerdas.site → port 3001
-- Database: bahasacerdas, user: bahasa, password: [lihat vault]
-- SSH currently unreachable (server restarting after manual reboot from Hostinger console)
-- VPS needs: certbot for SSL, game question seeding, PM2 startup on boot
+- IP: [lihat password manager]
+- SSH password: [lihat password manager]
+- Database: bahasacerdas, user: bahasa, password: [lihat .env]
 
-### Supabase (Auth only)
-- URL: [lihat Supabase dashboard → Settings → API]
-- ANON_KEY: [lihat Supabase dashboard → Settings → API]
-- SERVICE_ROLE_KEY: [lihat Supabase dashboard → Settings → API — simpan aman, jangan commit]
+### Supabase
+- URL: [lihat .env / Supabase dashboard]
+- ANON_KEY: [lihat .env]
+- SERVICE_ROLE_KEY: [lihat .env - JANGAN pernah di-commit]
 
 ### Environment Variables
 - DATABASE_URL: [set via .env, lihat vault]
