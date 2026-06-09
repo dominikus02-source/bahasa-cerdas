@@ -64,36 +64,38 @@ Transform BahasaCerdas into a social-creative platform for Bahasa Indonesia wher
 ## Critical Context
 
 ### VPS (Hostinger)
-- IP: ***REMOVED-VPS-IP***, Ubuntu 22.04
-- SSH password: ***REMOVED-SSH-PASSWORD***
+- IP: [lihat Hostinger VPS dashboard]
+- SSH password: [lihat vault/password manager]
 - PostgreSQL running on port 5432
 - Node.js 20, PM2 installed
 - Game server deployed to /var/www/game-server/game-server
 - NGINX configured for game.bahasacerdas.site → port 3001
-- Database: bahasacerdas, user: bahasa, password: ***REMOVED-DB-PASSWORD***
+- Database: bahasacerdas, user: bahasa, password: [lihat vault]
 - SSH currently unreachable (server restarting after manual reboot from Hostinger console)
 - VPS needs: certbot for SSL, game question seeding, PM2 startup on boot
 
 ### Supabase (Auth only)
-- URL: https://***REMOVED-SUPABASE-REF***.supabase.co
-- ANON_KEY: ***REMOVED-ANON-KEY***
-- SERVICE_ROLE_KEY: ***REMOVED-SERVICE-ROLE-KEY***
+- URL: [lihat Supabase dashboard → Settings → API]
+- ANON_KEY: [lihat Supabase dashboard → Settings → API]
+- SERVICE_ROLE_KEY: [lihat Supabase dashboard → Settings → API — simpan aman, jangan commit]
 
 ### Environment Variables
-- DATABASE_URL: postgresql://bahasa:***REMOVED-DB-PASSWORD***@***REMOVED-VPS-IP***:5432/bahasacerdas
-- NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY (see above)
+- DATABASE_URL: [set via .env, lihat vault]
+- NEXT_PUBLIC_SUPABASE_URL: [lihat Supabase dashboard]
+- NEXT_PUBLIC_SUPABASE_ANON_KEY: [lihat Supabase dashboard]
 - NEXT_PUBLIC_SITE_URL: https://bahasacerdas.com
 - NEXT_PUBLIC_GAME_SERVER_URL: https://game.bahasacerdas.com
-- MIDTRANS_SERVER_KEY: [REDACTED]
-- NEXT_PUBLIC_MIDTRANS_CLIENT_KEY: ***REMOVED-MIDTRANS-CLIENT-KEY***
-- NEXT_PUBLIC_MIDTRANS_MERCHANT_ID: ***REMOVED-MIDTRANS-MERCHANT-ID***
-- ANTHROPIC_API_KEY: sk-ant-api03-xxxxxxx (placeholder)
-- DEEPSEEK_API_KEY, GROQ_API_KEY (AI generation)
-- SUPABASE_SERVICE_ROLE_KEY for storage management API
+- MIDTRANS_SERVER_KEY: [lihat Midtrans dashboard → Settings → Access Keys]
+- NEXT_PUBLIC_MIDTRANS_CLIENT_KEY: [lihat Midtrans dashboard → Settings → Access Keys]
+- NEXT_PUBLIC_MIDTRANS_MERCHANT_ID: [lihat Midtrans dashboard]
+- ANTHROPIC_API_KEY: [set jika diperlukan]
+- DEEPSEEK_API_KEY: [set jika diperlukan]
+- GROQ_API_KEY: [set jika diperlukan]
+- SUPABASE_SERVICE_ROLE_KEY: [lihat Supabase dashboard — simpan aman]
 
 ### DNS
 - Main site: bahasacerdas.com → Vercel (live, nameservers ns1/ns2.vercel-dns.com)
-- Game subdomain: game.bahasacerdas.com → ***REMOVED-VPS-IP*** (A record)
+- Game subdomain: game.bahasacerdas.com → [lihat Hostinger VPS dashboard] (A record)
 - game.bahasacerdas.com currently not resolving (DNS or server issue)
 
 ### Game Server (VPS)
@@ -268,7 +270,7 @@ The Belajar page auto-detects content types in `isi[]` strings:
 
 ## Key File Locations
 - Main project: ~/Documents/bahasa-cerdas
-- VPS game server: /var/www/game-server/game-server on ***REMOVED-VPS-IP***
+- VPS game server: /var/www/game-server/game-server on [lihat Hostinger VPS dashboard]
 - Prisma schema: prisma/schema.prisma (main project)
 - Game server schema: /var/www/game-server/prisma/schema.prisma
 - Social/coins utility: lib/coins.ts
