@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { getUser, createClient } from "@/lib/supabase/server";
 import { getGravatarUrl } from "@/lib/avatar";
-import { createClient as createAdminClient } from "@supabase/supabase-js";
 
 const FOUNDER_EMAILS = ["hdsastra47@gmail.com", "dominikus.02@gmail.com", "alexsurya1968@gmail.com"];
 
@@ -54,12 +52,7 @@ async function findOrCreateUser(opts: {
 
 export async function GET() {
   try {
-    const dbUser = await getUser();
-    if (dbUser) {
-      const profile = await db.profile.findUnique({ where: { userId: dbUser.id } });
-      return NextResponse.json({ user: { ...dbUser, ...profile } });
-    }
-
+    const { createClient } = await import("@/lib/supabase/server");
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return NextResponse.json({ user: null });
@@ -78,50 +71,29 @@ export async function GET() {
     }
     const profile = await db.profile.findUnique({ where: { userId: found.id } });
     return NextResponse.json({ user: { ...found, ...profile, ...updates } });
-  } catch {
+  } catch (e: any) {
+    console.error("GET /api/user/me error:", e?.message || e);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
 
 export async function POST(request: NextRequest) {
   try {
-    // Priority 1: Server-side session verification
-    const existingDbUser = await getUser();
-    if (existingDbUser) return NextResponse.json({ user: existingDbUser });
-
-    const supabase = await createClient();
-    const { data: { user: authUser } } = await supabase.auth.getUser();
-    let resolvedUser = authUser;
-    if (!resolvedUser) {
-      const { data: { session } } = await supabase.auth.getSession();
-      resolvedUser = session?.user ?? null;
-    }
-
-    if (resolvedUser?.email) {
-      const user = await findOrCreateUser({
-        supabaseId: resolvedUser.id,
-        email: resolvedUser.email,
-        fullName: resolvedUser.user_metadata?.full_name || resolvedUser.email.split("@")[0],
-        role: (resolvedUser.user_metadata?.role as string)?.toUpperCase() === "GURU" ? "GURU" : "MURID",
-      });
-      return NextResponse.json({ user });
-    }
-
-    // Priority 2: Fallback to client-provided data from signInWithPassword
     let body: { supabaseId?: string; email?: string; fullName?: string; role?: string } = {};
     try { body = await request.json(); } catch {}
 
-    if (body.supabaseId && body.email) {
-      const user = await findOrCreateUser({
-        supabaseId: body.supabaseId,
-        email: body.email,
-        fullName: body.fullName || body.email.split("@")[0],
-        role: body.role || "MURID",
-      });
-      return NextResponse.json({ user });
+    if (!body.supabaseId || !body.email) {
+      return NextResponse.json({ error: "Data tidak lengkap" }, { status: 400 });
     }
 
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const user = await findOrCreateUser({
+      supabaseId: body.supabaseId,
+      email: body.email,
+      fullName: body.fullName || body.email.split("@")[0],
+      role: body.role || "MURID",
+    });
+
+    return NextResponse.json({ user });
   } catch (e: any) {
     console.error("POST /api/user/me error:", e?.message || e);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
