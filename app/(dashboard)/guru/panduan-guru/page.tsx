@@ -27,7 +27,7 @@ type Level = {
   units: Unit[]
 }
 
-const GRADES = ["VII", "VIII", "IX", "X", "XI", "XII"]
+const GRADES = ["VII", "VIII", "IX", "X", "XI", "XII", "I", "II", "III", "IV", "V", "VI"]
 const SEMESTERS = [1, 2]
 
 export default function PanduanGuruPage() {

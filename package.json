@@ -16,6 +16,7 @@
     "db:seed-mgmp": "npx ts-node --compiler-options '{\"module\":\"CommonJS\"}' prisma/seed-mgmp.ts",
     "db:seed-sd": "npx ts-node --compiler-options '{\"module\":\"CommonJS\"}' prisma/seed-kompetensi-sd.ts",
     "db:seed-guru": "npx ts-node --compiler-options '{\"module\":\"CommonJS\"}' prisma/seed-kompetensi-guru.ts",
+    "db:seed-panduan-sd": "npx tsx scripts/seed-panduan-sd.ts",
     "db:seed-paket-lengkap": "npx tsx scripts/seeder-paket-lengkap.ts"
   },
   "dependencies": {
