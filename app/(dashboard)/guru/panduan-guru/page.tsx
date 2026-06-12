@@ -27,14 +27,18 @@ type Level = {
   units: Unit[]
 }
 
-const GRADES = ["VII", "VIII", "IX", "X", "XI", "XII", "I", "II", "III", "IV", "V", "VI"]
+const GRADES = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII"]
+const GRADE_OFFSET: Record<string, number> = {
+  I: 13, II: 15, III: 17, IV: 19, V: 21, VI: 23,
+  VII: 1, VIII: 3, IX: 5, X: 7, XI: 9, XII: 11,
+}
 const SEMESTERS = [1, 2]
 
 export default function PanduanGuruPage() {
   const router = useRouter()
   const [levels, setLevels] = useState<Level[]>([])
   const [loading, setLoading] = useState(true)
-  const [expandedGrade, setExpandedGrade] = useState<string | null>("VII")
+  const [expandedGrade, setExpandedGrade] = useState<string | null>("I")
   const [expandedSem, setExpandedSem] = useState<number | null>(1)
   const [search, setSearch] = useState("")
   const [assignUnit, setAssignUnit] = useState<Unit & { levelTitle: string } | null>(null)
@@ -66,9 +70,9 @@ export default function PanduanGuruPage() {
 
   const getLevel = useCallback((grade: string, semester: number) => {
     if (levels.length === 0) return undefined
-    const gradeIndex = GRADES.indexOf(grade)
-    if (gradeIndex === -1) return undefined
-    const levelNum = gradeIndex * 2 + semester
+    const base = GRADE_OFFSET[grade as keyof typeof GRADE_OFFSET]
+    if (!base) return undefined
+    const levelNum = base + (semester - 1)
     return levels.find(l => l.level === levelNum)
   }, [levels])
 
