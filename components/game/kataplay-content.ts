@@ -191,4 +191,43 @@ export const kataPlayLevels: KataPlayLevel[] = [
       },
     ],
   },
+  {
+    id: 'kp_5', title: 'Kata Sifat & Kalimat', description: 'Kata sifat dan kalimat sederhana',
+    icon: 'Sparkles', levelNumber: 5,
+    lessons: [
+      {
+        id: 'kp_5_1', title: 'Kata Sifat', description: 'Besar kecil panjang pendek',
+        character: 'zelby', xpReward: 30,
+        questions: [
+          q('imageChoice', 'Gajah itu…', 'BESAR', ['BESAR', 'KECIL', 'PANJANG', 'PENDEK']),
+          q('imageChoice', 'Semut itu…', 'KECIL', ['KECIL', 'BESAR', 'TINGGI', 'BERAT']),
+          q('wordChoice', 'Pilih kata sifat!', 'TINGGI', ['TINGGI', 'MENDIDIH', 'MENARI', 'BUKU']),
+          q('trueFalse', 'Es krim rasanya manis?', 'Benar', ['Benar', 'Salah']),
+          q('fillBlank', 'Lengkapi: CEP_T', 'A', ['A', 'I', 'E', 'O'], { hint: 'cepaT (lawan lambat)' }),
+        ],
+      },
+      {
+        id: 'kp_5_2', title: 'Warna', description: 'Merah biru hijau kuning',
+        character: 'hazel', xpReward: 30,
+        questions: [
+          q('imageChoice', 'Pisang warnanya?', 'KUNING', ['KUNING', 'MERAH', 'HIJAU', 'BIRU']),
+          q('imageChoice', 'Rumput warnanya?', 'HIJAU', ['HIJAU', 'KUNING', 'BIRU', 'MERAH']),
+          q('wordChoice', 'Pilih warna!', 'MERAH', ['MERAH', 'MERA', 'MERU', 'MERI']),
+          q('matching', 'Cocokkan!', 'LANGIT', ['LANGIT', 'PISANG', 'RUMPUT', 'API'], { matchLeft: 'Warna biru', matchRight: 'LANGIT' }),
+          q('fillBlank', 'Lengkapi: B_RU', 'I', ['I', 'A', 'E', 'O'], { hint: 'bIru' }),
+        ],
+      },
+      {
+        id: 'kp_5_3', title: 'Kalimat Sederhana', description: 'Susun kalimat SPO',
+        character: 'alby', xpReward: 30,
+        questions: [
+          q('wordChoice', 'Pilih kalimat yang benar!', 'AYAM MAKAN', ['AYAM MAKAN', 'MAKAN AYAM', 'AYAM MAKAN NASI', 'NASI AYAM MAKAN']),
+          q('trueFalse', '"Ibu memasak" adalah kalimat?', 'Benar', ['Benar', 'Salah']),
+          q('arrangeWord', 'Susun: ADIK – MINUM – SUSU', 'ADIK MINUM SUSU', ['ADIK MINUM SUSU', 'SUSU MINUM ADIK', 'MINUM ADIK SUSU', 'ADIK SUSU MINUM'], { wordParts: ['ADIK', 'MINUM', 'SUSU'] }),
+          q('arrangeWord', 'Susun: KAKAK – BELAJAR – DI SEKOLAH', 'KAKAK BELAJAR DI SEKOLAH', ['KAKAK BELAJAR DI SEKOLAH', 'DI SEKOLAH BELAJAR KAKAK', 'BELAJAR KAKAK DI SEKOLAH', 'KAKAK DI SEKOLAH BELAJAR'], { wordParts: ['KAKAK', 'BELAJAR', 'DI SEKOLAH'] }),
+          q('fillBlank', 'Lengkapi kalimat: Ayah ___ koran', 'MEMBACA', ['MEMBACA', 'MEMASAK', 'MENULIS', 'MENGGAMBAR'], { hint: 'membaCa' }),
+        ],
+      },
+    ],
+  },
 ]

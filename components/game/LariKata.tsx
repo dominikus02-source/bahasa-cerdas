@@ -32,6 +32,14 @@ export default function LariKataGame({ hideBackButton }: LariKataGameProps) {
   const [result, setResult] = useState<any>(null)
   const timerRef = useRef<NodeJS.Timeout | null>(null)
   const feedbackTimer = useRef<NodeJS.Timeout | null>(null)
+  const supabaseIdRef = useRef("")
+
+  useEffect(() => {
+    const stored = localStorage.getItem("bc-user")
+    if (stored) {
+      try { supabaseIdRef.current = JSON.parse(stored).state?.supabaseId || "" } catch {}
+    }
+  }, [])
 
   const startGame = useCallback(async () => {
     const res = await fetch("/api/katastra/questions?count=20")
@@ -74,7 +82,7 @@ export default function LariKataGame({ hideBackButton }: LariKataGameProps) {
       const res = await fetch("/api/katastra/submit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ score, correct, wrong, maxStreak, mode: "dash" }),
+        body: JSON.stringify({ score, correct, wrong, maxStreak, mode: "dash", supabaseId: supabaseIdRef.current }),
       })
       const data = await res.json()
       setResult(data)
