@@ -93,6 +93,7 @@ export default function KataPlayGame({ hideBackButton }: { hideBackButton?: bool
   const correctRef = useRef(0)
   const wrongRef = useRef(0)
   const streakRef = useRef(0)
+  const currentLessonIdRef = useRef<string | null>(null)
 
   async function saveXpToServer(earnedXp: number) {
     try {
@@ -159,6 +160,7 @@ export default function KataPlayGame({ hideBackButton }: { hideBackButton?: bool
     correctRef.current = 0
     wrongRef.current = 0
     streakRef.current = 0
+    currentLessonIdRef.current = lesson.id
     setPhase("playing")
   }
 
@@ -177,6 +179,7 @@ export default function KataPlayGame({ hideBackButton }: { hideBackButton?: bool
     correctRef.current = 0
     wrongRef.current = 0
     streakRef.current = 0
+    currentLessonIdRef.current = null
     setPhase("playing")
   }
 
@@ -211,7 +214,7 @@ export default function KataPlayGame({ hideBackButton }: { hideBackButton?: bool
         setFeedback({ correct: false, message: `Jawaban: ${q.correctAnswer}` })
         setTimeout(() => {
           const earned = Math.floor(scoreRef.current / 2)
-          updateProgress(earned)
+          updateProgress(earned, currentLessonIdRef.current ?? undefined)
           saveXpToServer(earned)
           setPhase("result")
         }, 2000)
@@ -227,7 +230,7 @@ export default function KataPlayGame({ hideBackButton }: { hideBackButton?: bool
         setCurrentQ((c) => c + 1)
       } else {
         const earned = scoreRef.current + correctRef.current * XpRewardBonus
-        updateProgress(earned)
+        updateProgress(earned, currentLessonIdRef.current ?? undefined)
         saveXpToServer(earned)
         setPhase("result")
       }
