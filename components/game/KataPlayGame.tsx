@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect, useCallback, useRef } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import {
   Heart, Star, Trophy, Zap, RefreshCw, Crown, BookOpen,
@@ -109,6 +109,29 @@ export default function KataPlayGame({ hideBackButton }: { hideBackButton?: bool
   const [selected, setSelected] = useState<number | null>(null)
   const [feedback, setFeedback] = useState<{ correct: boolean; message: string } | null>(null)
   const [shakeInput, setShakeInput] = useState(false)
+  const scoreRef = useRef(0)
+  const correctRef = useRef(0)
+  const wrongRef = useRef(0)
+  const streakRef = useRef(0)
+
+  async function saveXpToServer(earnedXp: number) {
+    try {
+      await fetch("/api/game/xp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          score: scoreRef.current,
+          correct: correctRef.current,
+          wrong: wrongRef.current,
+          maxStreak: bestStreak,
+          xpEarned: earnedXp,
+          gameType: "KATAPLAY",
+        }),
+      })
+    } catch (e) {
+      console.error("Failed to save KataPlay XP:", e)
+    }
+  }
 
   useEffect(() => {
     setProgress(loadProgress())
@@ -152,6 +175,10 @@ export default function KataPlayGame({ hideBackButton }: { hideBackButton?: bool
     setWrong(0)
     setSelected(null)
     setFeedback(null)
+    scoreRef.current = 0
+    correctRef.current = 0
+    wrongRef.current = 0
+    streakRef.current = 0
     setPhase("playing")
   }
 
@@ -166,6 +193,10 @@ export default function KataPlayGame({ hideBackButton }: { hideBackButton?: bool
     setWrong(0)
     setSelected(null)
     setFeedback(null)
+    scoreRef.current = 0
+    correctRef.current = 0
+    wrongRef.current = 0
+    streakRef.current = 0
     setPhase("playing")
   }
 
@@ -179,6 +210,9 @@ export default function KataPlayGame({ hideBackButton }: { hideBackButton?: bool
       const bonus = streak * StreakBonus
       const points = XpRewardCorrect + bonus
       const newStreak = streak + 1
+      scoreRef.current = score + points
+      correctRef.current = correct + 1
+      streakRef.current = newStreak
       setScore((s) => s + points)
       setStreak(newStreak)
       setBestStreak((b) => Math.max(b, newStreak))
@@ -188,14 +222,17 @@ export default function KataPlayGame({ hideBackButton }: { hideBackButton?: bool
       const newLives = lives - 1
       setLives(newLives)
       setStreak(0)
+      streakRef.current = 0
+      wrongRef.current = wrong + 1
       setWrong((w) => w + 1)
       setShakeInput(true)
       setTimeout(() => setShakeInput(false), 500)
       if (newLives <= 0) {
         setFeedback({ correct: false, message: `Jawaban: ${q.correctAnswer}` })
         setTimeout(() => {
-          const earned = Math.floor(score / 2)
+          const earned = Math.floor(scoreRef.current / 2)
           updateProgress(earned)
+          saveXpToServer(earned)
           setPhase("result")
         }, 2000)
         return
@@ -209,8 +246,9 @@ export default function KataPlayGame({ hideBackButton }: { hideBackButton?: bool
       if (currentQ < questions.length - 1) {
         setCurrentQ((c) => c + 1)
       } else {
-        const earned = score + correct * XpRewardBonus
+        const earned = scoreRef.current + correctRef.current * XpRewardBonus
         updateProgress(earned)
+        saveXpToServer(earned)
         setPhase("result")
       }
     }, 1200)
