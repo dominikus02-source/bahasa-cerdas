@@ -65,7 +65,7 @@ export default async function ArenaGimPage() {
   ])
 
   const winCount = hasilAkhir.filter((h: any) => h.rank === 1).length
-  const totalXp = hasilAkhir.reduce((sum: number, h: any) => sum + (h.xpEarned || 0), 0)
+  const totalXp = user.xp || 0
   const userRank = topUsers.findIndex((u) => u.id === user.id) + 1
 
   return (
