@@ -94,6 +94,14 @@ export default function KataPlayGame({ hideBackButton }: { hideBackButton?: bool
   const wrongRef = useRef(0)
   const streakRef = useRef(0)
   const currentLessonIdRef = useRef<string | null>(null)
+  const supabaseIdRef = useRef("")
+
+  useEffect(() => {
+    const stored = localStorage.getItem("bc-user")
+    if (stored) {
+      try { supabaseIdRef.current = JSON.parse(stored).state?.supabaseId || "" } catch {}
+    }
+  }, [])
 
   async function saveXpToServer(earnedXp: number) {
     try {
@@ -107,6 +115,7 @@ export default function KataPlayGame({ hideBackButton }: { hideBackButton?: bool
           maxStreak: bestStreak,
           xpEarned: earnedXp,
           gameType: "KATAPLAY",
+          supabaseId: supabaseIdRef.current,
         }),
       })
     } catch (e) {

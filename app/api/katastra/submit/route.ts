@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 
 function calcLevel(xp: number) {
@@ -12,14 +11,11 @@ function calcXpForNextLevel(level: number) {
 
 export async function POST(req: NextRequest) {
   try {
-    const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const { score, correct, wrong, maxStreak, mode, supabaseId } = await req.json();
+    if (!supabaseId) return NextResponse.json({ error: "supabaseId required" }, { status: 400 });
 
-    const dbUser = await db.user.findUnique({ where: { supabaseId: user.id } });
+    const dbUser = await db.user.findUnique({ where: { supabaseId } });
     if (!dbUser) return NextResponse.json({ error: "User not found" }, { status: 404 });
-
-    const { score, correct, wrong, maxStreak, mode } = await req.json();
     if (score == null) return NextResponse.json({ error: "Score required" }, { status: 400 });
 
     const baseXp = Math.max(0, correct * 15 - wrong * 5);

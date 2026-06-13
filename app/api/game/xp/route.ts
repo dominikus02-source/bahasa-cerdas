@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server"
-import { getUser } from "@/lib/supabase/server"
 import { db } from "@/lib/db"
 import { invalidateLeagueCache } from "@/lib/ai-queue"
 
@@ -9,18 +8,20 @@ function calcLevel(xp: number) {
 
 export async function POST(req: NextRequest) {
   try {
-    const user = await getUser()
-    if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    const { score, correct, wrong, maxStreak, xpEarned, gameType, roomCode, supabaseId } = await req.json()
+    if (!supabaseId) return NextResponse.json({ error: "supabaseId required" }, { status: 400 })
 
-    const { score, correct, wrong, maxStreak, xpEarned, gameType, roomCode } = await req.json()
+    const dbUser = await db.user.findUnique({ where: { supabaseId } })
+    if (!dbUser) return NextResponse.json({ error: "User not found" }, { status: 404 })
+
     const earnedXp = xpEarned ?? Math.floor((score || 0) / 10)
 
-    const oldLevel = user.level
-    const newXp = user.xp + earnedXp
+    const oldLevel = dbUser.level
+    const newXp = dbUser.xp + earnedXp
     const newLevel = calcLevel(newXp)
 
     const leagues = ["BRONZE", "SILVER", "GOLD", "DIAMOND"] as const
-    let newLeague = user.league as string
+    let newLeague = dbUser.league as string
     if (newLevel >= 80) newLeague = "DIAMOND"
     else if (newLevel >= 50) newLeague = "GOLD"
     else if (newLevel >= 25) newLeague = "SILVER"
@@ -35,7 +36,7 @@ export async function POST(req: NextRequest) {
       await tx.gameResult.create({
         data: {
           roomId: roomId || "solo",
-          userId: user.id,
+          userId: dbUser.id,
           sessionId: `solo-${Date.now()}`,
           finalScore: (score as number) || 0,
           correct: (correct as number) || 0,
@@ -47,7 +48,7 @@ export async function POST(req: NextRequest) {
       } as any)
 
       await tx.user.update({
-        where: { id: user.id },
+        where: { id: dbUser.id },
         data: {
           xp: newXp,
           level: newLevel,
@@ -57,7 +58,7 @@ export async function POST(req: NextRequest) {
       })
     })
 
-    await invalidateLeagueCache(user.id)
+    await invalidateLeagueCache(dbUser.id)
 
     return NextResponse.json({
       xpEarned: earnedXp,

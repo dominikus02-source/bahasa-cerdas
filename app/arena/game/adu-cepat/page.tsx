@@ -123,6 +123,7 @@ export default function AduCepatPage() {
         xpEarned,
         gameType: "KUIS_BATTLE",
         roomCode,
+        supabaseId: userData?.supabaseId,
       }),
     }).catch(() => {})
   }, [phase, xpSaved, xpEarned, myResult, roomCode])

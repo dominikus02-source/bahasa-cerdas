@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, Heart, Star, Trophy, Zap, RefreshCw, Crown, Shuffle, Check, X, Timer, Sparkles } from "lucide-react";
 
@@ -156,13 +156,21 @@ export default function SusunKataGame({ hideBackButton }: { hideBackButton?: boo
     }
   }, []);
 
+  const supabaseIdRef = useRef("")
+  useEffect(() => {
+    const stored = localStorage.getItem("bc-user")
+    if (stored) {
+      try { supabaseIdRef.current = JSON.parse(stored).state?.supabaseId || "" } catch {}
+    }
+  }, [])
+
   useEffect(() => {
     if (gameState !== "result" || xpSaved || score <= 0) return
     setXpSaved(true)
     fetch("/api/game/xp", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ score, correct: 0, wrong: 0, maxStreak: bestStreak, xpEarned: score, gameType: "SUSUN_KATA" }),
+      body: JSON.stringify({ score, correct: 0, wrong: 0, maxStreak: bestStreak, xpEarned: score, gameType: "SUSUN_KATA", supabaseId: supabaseIdRef.current }),
     }).catch(() => {})
   }, [gameState, xpSaved, score, bestStreak])
 
