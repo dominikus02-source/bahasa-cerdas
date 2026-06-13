@@ -3,9 +3,9 @@
 import { useState, useEffect, useCallback, useRef } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import {
-  Heart, Star, Trophy, Zap, RefreshCw, Crown, BookOpen,
-  ChevronRight, Lock, Sparkles, Volume2, Bot, Cat,
-  ArrowLeft, Package, Split, Flame, Lightbulb,
+  Heart, Star, Trophy, RefreshCw, Crown, BookOpen,
+  ChevronRight, Lock, Sparkles, Bot, Cat,
+  ArrowLeft, Package, Flame, Lightbulb, Zap, Split,
   Check, X,
 } from "lucide-react"
 import { kataPlayLevels, KataPlayLevel, KataPlayQuestion, KataPlayLesson } from "./kataplay-content"
@@ -45,26 +45,6 @@ function LevelIcon({ name, size = 22, className = "" }: { name: string; size?: n
     case 'Zap': return <Zap {...props} />
     default: return <BookOpen {...props} />
   }
-}
-
-function ProgressDots({ total, current }: { total: number; current: number }) {
-  return (
-    <div className="flex gap-1">
-      {Array.from({ length: total }, (_, i) => (
-        <div
-          key={i}
-          className="h-1.5 rounded-full transition-all duration-300"
-          style={{
-            width: i === current ? 24 : 8,
-            background: i <= current
-              ? "linear-gradient(90deg, #7C3AED, #A855F7)"
-              : "rgba(255,255,255,0.08)",
-            boxShadow: i <= current ? "0 0 6px rgba(124,58,237,0.4)" : "none",
-          }}
-        />
-      ))}
-    </div>
-  )
 }
 
 type Phase = "splash" | "levels" | "lessons" | "playing" | "result"
@@ -446,7 +426,6 @@ export default function KataPlayGame({ hideBackButton }: { hideBackButton?: bool
     const q = questions[currentQ]
     if (!q) return null
     const color = selectedLevel ? levelColors[(selectedLevel.levelNumber - 1) % levelColors.length] : levelColors[0]
-    const letters = ['A', 'B', 'C', 'D', 'E', 'F']
 
     return (
       <div className="min-h-screen bg-[#0D0A1F] flex flex-col">
@@ -457,92 +436,103 @@ export default function KataPlayGame({ hideBackButton }: { hideBackButton?: bool
         </div>
 
         {/* Header */}
-        <div className="relative z-10 px-5 pt-5 pb-4">
+        <div className="relative z-10 px-5 pt-5 pb-3">
           <div className="flex items-center justify-between mb-3">
-            <span className="text-xs font-medium text-[#7C7A9E]">
-              {currentQ + 1}/{questions.length}
+            <span className="text-xs font-semibold text-[#7C7A9E]">
+              {currentQ + 1} / {questions.length}
             </span>
             <div className="flex items-center gap-3">
               {streak > 1 && (
                 <motion.div
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  className="flex items-center gap-1.5 bg-orange-500/10 px-3 py-1 rounded-full border border-orange-500/20"
+                  key={streak}
+                  initial={{ scale: 0.5, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  className="flex items-center gap-1.5 bg-orange-500/15 px-3 py-1 rounded-full border border-orange-500/25"
                 >
-                  <Flame size={12} className="text-orange-400" />
-                  <span className="text-xs font-bold text-orange-400">{streak}x</span>
+                  <Flame size={13} className="text-orange-400" />
+                  <span className="text-xs font-bold text-orange-400">{streak}</span>
                 </motion.div>
               )}
               <div className="flex items-center gap-1">
                 {[...Array(3)].map((_, i) => (
-                  <Heart
+                  <motion.div
                     key={i}
-                    size={16}
-                    className={i < lives ? "text-red-400 fill-red-400 drop-shadow-[0_0_4px_rgba(248,113,113,0.5)]" : "text-gray-600"}
-                  />
+                    initial={i === lives ? { scale: 1.4 } : { scale: 1 }}
+                    animate={i === lives ? { scale: 1 } : {}}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <Heart
+                      size={18}
+                      className={i < lives ? "text-red-400 fill-red-400 drop-shadow-[0_0_6px_rgba(248,113,113,0.4)]" : "text-gray-700"}
+                    />
+                  </motion.div>
                 ))}
               </div>
             </div>
           </div>
-          <ProgressDots total={questions.length} current={currentQ} />
+          {/* Progress bar */}
+          <div className="h-2 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.06)" }}>
+            <motion.div
+              className="h-full rounded-full"
+              style={{ background: "linear-gradient(90deg, #7C3AED, #A855F7)" }}
+              initial={{ width: `${(currentQ / questions.length) * 100}%` }}
+              animate={{ width: `${((currentQ + 1) / questions.length) * 100}%` }}
+              transition={{ duration: 0.4, ease: "easeOut" }}
+            />
+          </div>
         </div>
 
         {/* Question area */}
         <div className="relative z-10 flex-1 px-5 pb-6 flex flex-col">
           <motion.div
             key={currentQ}
-            initial={{ opacity: 0, y: 24, scale: 0.96 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-            className="rounded-3xl p-6 mb-6 border flex flex-col items-center backdrop-blur-xl"
-            style={{
-              background: "rgba(22,18,42,0.7)",
-              borderColor: "rgba(124,58,237,0.12)",
-              boxShadow: "0 8px 40px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.04)",
-            }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, ease: "easeOut" }}
+            className="flex-1 flex flex-col items-center justify-center"
           >
             {/* Image/Text display */}
             {q.imageText && (
-              <div className="mb-5">
-                <div className="w-28 h-28 rounded-2xl flex items-center justify-center"
-                  style={{ background: "rgba(124,58,237,0.06)", border: "1px solid rgba(124,58,237,0.08)" }}
+              <div className="mb-6">
+                <div className="w-32 h-32 rounded-3xl flex items-center justify-center"
+                  style={{ background: "rgba(124,58,237,0.08)", border: "2px solid rgba(124,58,237,0.12)" }}
                 >
-                  <span className="text-5xl font-black text-white tracking-wider">{q.imageText}</span>
+                  <span className="text-6xl font-black text-white tracking-wider">{q.imageText}</span>
                 </div>
               </div>
             )}
 
             {/* Sentence */}
             {q.sentence && (
-              <div className="w-full mb-4 p-4 rounded-2xl border text-center"
-                style={{ background: "rgba(124,58,237,0.06)", borderColor: "rgba(124,58,237,0.1)" }}
+              <div className="w-full mb-5 p-4 rounded-2xl text-center"
+                style={{ background: "rgba(124,58,237,0.05)" }}
               >
-                <p className="text-lg font-bold text-white leading-relaxed">{q.sentence}</p>
+                <p className="text-xl font-bold text-white leading-relaxed">{q.sentence}</p>
               </div>
             )}
 
             {/* Match left */}
             {q.matchLeft && (
-              <div className="text-center mb-4">
-                <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl"
-                  style={{ background: "rgba(124,58,237,0.08)", border: "1px solid rgba(124,58,237,0.15)" }}
+              <div className="text-center mb-5">
+                <div className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl"
+                  style={{ background: "rgba(124,58,237,0.1)", border: "2px solid rgba(124,58,237,0.2)" }}
                 >
-                  <span className="text-lg font-bold text-white">{q.matchLeft}</span>
+                  <span className="text-xl font-bold text-white">{q.matchLeft}</span>
                 </div>
                 <p className="text-xs mt-2 text-[#7C7A9E]">Cocokkan dengan jawaban</p>
               </div>
             )}
 
             {/* Instruction */}
-            <p className="text-base font-bold text-white text-center leading-relaxed">{q.instruction}</p>
+            <p className="text-lg font-bold text-white text-center leading-relaxed">{q.instruction}</p>
 
             {/* Hint */}
             {q.hint && (
-              <div className="flex items-center gap-1.5 mt-3 px-3 py-1.5 rounded-full"
-                style={{ background: "rgba(245,158,11,0.06)", border: "1px solid rgba(245,158,11,0.1)" }}
+              <div className="flex items-center gap-1.5 mt-4 px-4 py-2 rounded-xl"
+                style={{ background: "rgba(245,158,11,0.08)", border: "1px solid rgba(245,158,11,0.12)" }}
               >
-                <Lightbulb size={11} className="text-amber-400/60" />
-                <span className="text-[11px] text-amber-400/60">{q.hint}</span>
+                <Lightbulb size={12} className="text-amber-400/60" />
+                <span className="text-xs text-amber-400/60">{q.hint}</span>
               </div>
             )}
           </motion.div>
@@ -554,10 +544,10 @@ export default function KataPlayGame({ hideBackButton }: { hideBackButton?: bool
                 initial={{ opacity: 0, y: 10, scale: 0.95 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: -10, scale: 0.95 }}
-                className={`-mt-3 mb-4 p-3 rounded-2xl text-center border ${
+                className={`mb-3 py-3 px-4 rounded-2xl text-center border-2 ${
                   feedback.correct
-                    ? "bg-emerald-500/8 border-emerald-500/15"
-                    : "bg-red-500/8 border-red-500/15"
+                    ? "bg-emerald-500/10 border-emerald-500/25"
+                    : "bg-red-500/10 border-red-500/25"
                 }`}
               >
                 <p className={`text-sm font-bold ${feedback.correct ? "text-emerald-400" : "text-red-400"}`}>
@@ -568,55 +558,41 @@ export default function KataPlayGame({ hideBackButton }: { hideBackButton?: bool
           </AnimatePresence>
 
           {/* Options */}
-          <div className="space-y-2.5 mt-auto">
+          <div className="space-y-3 mt-auto">
             {q.options.map((opt, i) => {
               const isSelected = selected === i
               const isCorrectOpt = opt === q.correctAnswer || i === parseInt(q.correctAnswer)
 
-              let btnBg = "rgba(255,255,255,0.03)"
-              let btnBorder = "rgba(255,255,255,0.06)"
-              let letterBg = "rgba(255,255,255,0.05)"
-              let letterColor = "#7C7A9E"
+              let btnBg = "rgba(255,255,255,0.04)"
+              let btnBorder = "rgba(255,255,255,0.08)"
               let textColor = "#E2E8F0"
 
               if (feedback) {
                 if (isCorrectOpt) {
-                  btnBg = "rgba(16,185,129,0.1)"; btnBorder = "rgba(16,185,129,0.25)"
-                  letterBg = "rgba(16,185,129,0.2)"; letterColor = "#34D399"; textColor = "#34D399"
+                  btnBg = "rgba(16,185,129,0.15)"; btnBorder = "rgba(16,185,129,0.4)"; textColor = "#34D399"
                 } else if (isSelected) {
-                  btnBg = "rgba(239,68,68,0.1)"; btnBorder = "rgba(239,68,68,0.25)"
-                  letterBg = "rgba(239,68,68,0.2)"; letterColor = "#F87171"; textColor = "#F87171"
+                  btnBg = "rgba(239,68,68,0.15)"; btnBorder = "rgba(239,68,68,0.4)"; textColor = "#F87171"
                 } else {
                   btnBg = "transparent"; btnBorder = "transparent"; textColor = "rgba(255,255,255,0.12)"
                 }
               } else if (isSelected) {
-                btnBg = "rgba(124,58,237,0.1)"; btnBorder = "rgba(124,58,237,0.25)"
-                letterBg = "rgba(124,58,237,0.25)"; letterColor = "#C084FC"; textColor = "#C084FC"
+                btnBg = "rgba(124,58,237,0.12)"; btnBorder = "rgba(124,58,237,0.3)"; textColor = "#C084FC"
               }
 
               return (
                 <motion.button
                   key={i}
-                  initial={{ opacity: 0, x: -12 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: i * 0.05 + 0.1 }}
+                  initial={{ opacity: 0, y: 16 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.06 + 0.15, type: "spring", stiffness: 200, damping: 20 }}
                   onClick={() => handleAnswer(i)}
                   disabled={feedback !== null}
-                  className={`w-full flex items-center gap-3 p-3.5 rounded-2xl border transition-all active:scale-[0.98] ${shakeInput && isSelected ? "animate-shake" : ""}`}
-                  style={{ background: btnBg, borderColor: btnBorder }}
+                  className={`w-full py-4 px-5 rounded-2xl border-2 text-center font-bold text-base transition-all active:scale-[0.97] ${shakeInput && isSelected ? "animate-shake" : ""} ${!feedback && !isSelected ? "hover:border-violet-500/30 hover:bg-violet-500/5" : ""}`}
+                  style={{ background: btnBg, borderColor: btnBorder, color: textColor }}
                 >
-                  <div
-                    className="w-8 h-8 rounded-xl flex items-center justify-center text-xs font-bold shrink-0 transition-colors"
-                    style={{ background: letterBg, color: letterColor }}
-                  >
-                    {letters[i]}
-                  </div>
-                  <span className="text-sm font-semibold flex-1 text-left transition-colors" style={{ color: textColor }}>
-                    {opt}
-                  </span>
-                  {feedback && isCorrectOpt && <Check size={16} className="text-emerald-400 shrink-0" />}
-                  {feedback && isSelected && !isCorrectOpt && <X size={16} className="text-red-400 shrink-0" />}
-                  {!feedback && <ChevronRight size={14} className="text-[#3F3D5C] shrink-0" />}
+                  <span>{opt}</span>
+                  {feedback && isCorrectOpt && <Check size={18} className="inline ml-2 -mt-0.5 text-emerald-400" />}
+                  {feedback && isSelected && !isCorrectOpt && <X size={18} className="inline ml-2 -mt-0.5 text-red-400" />}
                 </motion.button>
               )
             })}
