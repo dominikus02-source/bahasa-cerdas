@@ -2,7 +2,7 @@ import { getUser } from "@/lib/supabase/server"
 import { db } from "@/lib/db"
 import { redirect } from "next/navigation"
 import Link from "next/link"
-import { Zap, Swords, Puzzle, Trophy, Type, Flame, Users, Clock, Crown } from "lucide-react"
+import { Zap, Swords, Puzzle, Trophy, Type, Flame, BookOpen, Users, Clock, Crown } from "lucide-react"
 import BattleCard from "@/components/arena/BattleCard"
 
 interface Game {
@@ -14,6 +14,7 @@ interface Game {
 
 const GAMES: Game[] = [
   { title: "Kuis Tempur", desc: "Lawan murid lain real-time! Siapa cepat dan benar dia menang.", icon: Swords, href: "/arena/game/kuis-tempur", accentColor: "#EF4444", iconGradient: "from-red-500 to-red-600", featured: true, badge: { text: "Terpopuler", type: "hot" }, xp: "+80 XP", players: "2-8 pemain", time: "~5 menit" },
+  { title: "KataPlay", desc: "Belajar membaca dari nol! 4 tingkat, puluhan soal seru!", icon: BookOpen, href: "/arena/game/kata-play", accentColor: "#7C3AED", iconGradient: "from-violet-500 to-purple-600", badge: { text: "Baru", type: "new" }, xp: "+50 XP", players: "Solo", time: "~3 mnt" },
   { title: "Tebak Kata", desc: "Tebak dari petunjuk. Seru bareng teman!", icon: Type, href: "/arena/game/tebak-kata", accentColor: "#06B6D4", iconGradient: "from-cyan-500 to-cyan-600", xp: "+60 XP", players: "Solo", time: "~3 mnt" },
   { title: "Susun Kata", desc: "Acak huruf jadi kata benar dalam waktu limit!", icon: Puzzle, href: "/arena/game/susun-kata", accentColor: "#10B981", iconGradient: "from-emerald-500 to-emerald-600", xp: "+50 XP", players: "Solo", time: "~3 mnt" },
   { title: "Lari Kata", desc: "60 detik, 20 soal. Jawab secepat kilat!", icon: Zap, href: "/arena/game/lari-kata", accentColor: "#F59E0B", iconGradient: "from-amber-500 to-amber-600", badge: { text: "Baru", type: "new" }, xp: "+70 XP", players: "~1 mnt", time: "~1 mnt" },

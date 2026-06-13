@@ -133,6 +133,14 @@
 /* Game card accent top borders */
 .game-card-top { border-radius: 20px 20px 0 0; }
 
+/* Shake animation */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-4px); }
+  20%, 40%, 60%, 80% { transform: translateX(4px); }
+}
+.animate-shake { animation: shake 0.5s ease-in-out; }
+
 /* Staggered animation for game cards */
 .game-card-anim {
   animation: card-enter 0.4s ease-out backwards;
