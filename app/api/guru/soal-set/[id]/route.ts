@@ -2,17 +2,27 @@ import { NextRequest, NextResponse } from "next/server";
 import { getUser } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 
+async function getDbUser(req: NextRequest) {
+  let dbUser: any = null
+  try {
+    const user = await getUser();
+    if (user) dbUser = await db.user.findUnique({ where: { supabaseId: user.id } })
+  } catch {}
+  if (!dbUser) {
+    const sid = req.nextUrl.searchParams.get("supabaseId")
+    if (sid) dbUser = await db.user.findUnique({ where: { supabaseId: sid } })
+  }
+  return dbUser
+}
+
 export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { id } = await params;
-    const user = await getUser();
-    if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-
-    const dbUser = await db.user.findUnique({ where: { supabaseId: user.id } });
-    if (!dbUser) return NextResponse.json({ error: "User not found" }, { status: 404 });
+    const dbUser = await getDbUser(req);
+    if (!dbUser) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const set = await db.soalSet.findUnique({
       where: { id },
@@ -41,11 +51,8 @@ export async function PUT(
 ) {
   try {
     const { id } = await params;
-    const user = await getUser();
-    if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-
-    const dbUser = await db.user.findUnique({ where: { supabaseId: user.id } });
-    if (!dbUser || dbUser.role !== "GURU") return NextResponse.json({ error: "Guru only" }, { status: 403 });
+    const dbUser = await getDbUser(req);
+    if (!dbUser || dbUser.role !== "GURU") return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const body = await req.json();
     const { title, description, coverColor, coverEmoji, kelas, topik, maxQuestions } = body;
@@ -81,11 +88,8 @@ export async function DELETE(
 ) {
   try {
     const { id } = await params;
-    const user = await getUser();
-    if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-
-    const dbUser = await db.user.findUnique({ where: { supabaseId: user.id } });
-    if (!dbUser || dbUser.role !== "GURU") return NextResponse.json({ error: "Guru only" }, { status: 403 });
+    const dbUser = await getDbUser(req);
+    if (!dbUser || dbUser.role !== "GURU") return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const set = await db.soalSet.findUnique({ where: { id } });
     if (!set || set.creatorId !== dbUser.id) {

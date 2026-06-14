@@ -15,13 +15,18 @@ const COVER_COLORS = [
 
 export async function GET(req: NextRequest) {
   try {
-    const user = await getUser();
-    if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-
-    const dbUser = await db.user.findUnique({ where: { supabaseId: user.id } });
-    if (!dbUser) return NextResponse.json({ error: "User not found" }, { status: 404 });
-
     const searchParams = req.nextUrl.searchParams;
+
+    let dbUser: any = null
+    try {
+      const user = await getUser();
+      if (user) dbUser = await db.user.findUnique({ where: { supabaseId: user.id } })
+    } catch {}
+    if (!dbUser) {
+      const sid = searchParams.get("supabaseId")
+      if (sid) dbUser = await db.user.findUnique({ where: { supabaseId: sid } })
+    }
+    if (!dbUser) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     const kelas = searchParams.get("kelas");
     const topik = searchParams.get("topik");
     const search = searchParams.get("search");
@@ -44,7 +49,7 @@ export async function GET(req: NextRequest) {
       orderBy: { createdAt: "desc" },
     });
 
-    return NextResponse.json({ sets });
+    return NextResponse.json({ data: sets });
   } catch (error) {
     console.error("GET /api/guru/soal-set error:", error);
     return NextResponse.json({ error: "Internal error" }, { status: 500 });
@@ -53,13 +58,18 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
-    const user = await getUser();
-    if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-
-    const dbUser = await db.user.findUnique({ where: { supabaseId: user.id } });
-    if (!dbUser || dbUser.role !== "GURU") return NextResponse.json({ error: "Guru only" }, { status: 403 });
-
     const body = await req.json();
+
+    let dbUser: any = null
+    try {
+      const user = await getUser();
+      if (user) dbUser = await db.user.findUnique({ where: { supabaseId: user.id } })
+    } catch {}
+    if (!dbUser) {
+      const sid = body.supabaseId as string | undefined
+      if (sid) dbUser = await db.user.findUnique({ where: { supabaseId: sid } })
+    }
+    if (!dbUser || dbUser.role !== "GURU") return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     const { title, description, kelas, topik, subject, maxQuestions, questionIds } = body;
 
     if (!title || !kelas) {

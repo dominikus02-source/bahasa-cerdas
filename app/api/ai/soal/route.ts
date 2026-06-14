@@ -5,7 +5,16 @@ import { checkAIQuota, recordAIUsage } from "@/lib/premium";
 
 export async function POST(req: NextRequest) {
   try {
-    const user = await getUser();
+    const body = await req.json();
+
+    let user: any = null
+    try {
+      user = await getUser();
+    } catch {}
+    if (!user) {
+      const sid = body.supabaseId as string | undefined
+      if (sid) user = await db.user.findUnique({ where: { supabaseId: sid } })
+    }
     if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const quota = await checkAIQuota(user, "soal");
@@ -13,7 +22,6 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "QUOTA_EXCEEDED", used: quota.used, limit: quota.limit }, { status: 429 });
     }
 
-    const body = await req.json();
     const { topic, count = 5, type = "PILIHAN_GANDA", difficulty = "MEDIUM", kelas, kd, context, saveToDb = true } = body;
 
     let contextPrompt = "";

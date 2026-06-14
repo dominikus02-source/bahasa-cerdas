@@ -13,6 +13,11 @@ import {
   Headphones, Target, School, ClipboardList
 } from "lucide-react";
 
+function getSid() {
+  try { const s = localStorage.getItem("bc-user"); if (s) return JSON.parse(s).state?.supabaseId || "" } catch {}
+  return ""
+}
+
 const KELAS = ["1","2","3","4","5","6","7","8","9","10","11","12"];
 const KD_OPTIONS = [
   { value: "3.1", label: "3.1 - Teks Deskripsi" },
@@ -108,13 +113,14 @@ export default function BankSoalPage() {
     try {
       let url = "/api/guru/soal-set";
       const params = new URLSearchParams();
+      params.set("supabaseId", getSid())
       if (filterKelas) params.set("kelas", filterKelas);
       if (searchQuery) params.set("search", searchQuery);
-      if (params.toString()) url += `?${params.toString()}`;
+      url += `?${params.toString()}`;
 
       const res = await fetch(url);
       const data = await res.json();
-      if (data.sets) setSets(data.sets);
+      if (data.sets || data.data) setSets(data.sets || data.data);
     } catch (e) {
       console.error(e);
     }
@@ -125,9 +131,10 @@ export default function BankSoalPage() {
     try {
       let url = "/api/guru/soal";
       const params = new URLSearchParams();
+      params.set("supabaseId", getSid())
       if (filterKelas) params.set("kelas", filterKelas);
       if (filterTopik) params.set("topik", filterTopik);
-      if (params.toString()) url += `?${params.toString()}`;
+      url += `?${params.toString()}`;
 
       const res = await fetch(url);
       const data = await res.json();
@@ -170,6 +177,7 @@ export default function BankSoalPage() {
           difficulty: aiForm.difficulty,
           kelas: aiForm.kelas,
           kd: aiForm.kd,
+          supabaseId: getSid(),
         }),
       });
       const data = await res.json();
@@ -197,6 +205,7 @@ export default function BankSoalPage() {
           type: manualForm.type,
           kelas: manualForm.kelas,
           kd: manualForm.kd || null,
+          supabaseId: getSid(),
           options: manualForm.type === "PILIHAN_GANDA" ? manualForm.options.filter(o => o) : [],
           correctAnswer: manualForm.type === "PILIHAN_GANDA" ? manualForm.options[manualForm.correctAnswer] : "",
           explanation: manualForm.explanation || null,
@@ -223,6 +232,7 @@ export default function BankSoalPage() {
         body: JSON.stringify({
           ...setForm,
           questionIds: selectedQuestionIds,
+          supabaseId: getSid(),
         }),
       });
       const data = await res.json();
@@ -278,7 +288,7 @@ export default function BankSoalPage() {
       const res = await fetch(`/api/guru/soal-set/${selectedSet.id}/questions`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ questionIds: selectedQuestionIds }),
+        body: JSON.stringify({ questionIds: selectedQuestionIds, supabaseId: getSid() }),
       });
       const data = await res.json();
       if (data.success) {
@@ -516,8 +526,8 @@ export default function BankSoalPage() {
           <div className={`mt-2 text-sm rounded-lg px-3 py-1.5 flex items-center gap-2 ${generateMsg.includes("✅") ? "text-emerald-700 bg-emerald-50" : "text-red-700 bg-red-50"}`}>
             <span>{generateMsg}</span>
             {generateMsg.includes("✅") && (
-              <button onClick={() => setView("questions")} className="ml-auto text-xs font-semibold underline hover:no-underline">
-                Lihat Soal
+              <button onClick={() => router.push("/guru/soal")} className="ml-auto text-xs font-semibold underline hover:no-underline">
+                Lihat Semua Soal
               </button>
             )}
           </div>
