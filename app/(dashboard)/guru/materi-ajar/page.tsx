@@ -7,7 +7,6 @@ import {
   Upload, X, Loader2, FileText, Check, AlertTriangle,
   ExternalLink
 } from "lucide-react"
-import { MateriViewer } from "@/components/materi/MateriViewer"
 import { FILE_TYPE_LABELS } from "@/lib/upload"
 import { createClient } from "@/lib/supabase/client"
 
@@ -49,8 +48,6 @@ export default function MateriAjarPage() {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid")
   const [page, setPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
-  const [showViewer, setShowViewer] = useState(false)
-  const [viewingMateri, setViewingMateri] = useState<Materi | null>(null)
   const [showUpload, setShowUpload] = useState(false)
   const [uploadForm, setUploadForm] = useState({ title: "", description: "", grade: "SMP Kelas 7" })
   const [uploadFile, setUploadFile] = useState<File | null>(null)
@@ -85,11 +82,6 @@ export default function MateriAjarPage() {
       (m.description || "").toLowerCase().includes(search.toLowerCase())
     return matchLevel && matchSearch
   })
-
-  const handlePresent = (materi: Materi) => {
-    setViewingMateri(materi)
-    setShowViewer(true)
-  }
 
   return (
     <div>
@@ -178,7 +170,7 @@ export default function MateriAjarPage() {
       ) : viewMode === "grid" ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {filtered.map(m => (
-            <MateriCard key={m.id} materi={m} onPresent={() => handlePresent(m)} />
+            <MateriCard key={m.id} materi={m} />
           ))}
         </div>
       ) : (
@@ -193,9 +185,11 @@ export default function MateriAjarPage() {
                 <p className="text-xs text-gray-500">{m.grade || "—"} • {m.fileType ? FILE_TYPE_LABELS[m.fileType] || m.fileType : "No file"}</p>
               </div>
               <div className="flex items-center gap-1">
-                <button onClick={() => handlePresent(m)} className="p-2 text-gray-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors" title="Presentasi">
-                  <Maximize2 size={16} />
-                </button>
+                {m.fileUrl && (
+                  <a href={m.fileUrl} target="_blank" rel="noopener noreferrer" className="p-2 text-gray-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors" title="Buka Materi">
+                    <ExternalLink size={16} />
+                  </a>
+                )}
               </div>
             </div>
           ))}
@@ -220,13 +214,6 @@ export default function MateriAjarPage() {
             <ChevronRight size={16} />
           </button>
         </div>
-      )}
-
-      {showViewer && viewingMateri && (
-        <MateriViewer
-          materi={viewingMateri}
-          onClose={() => { setShowViewer(false); setViewingMateri(null) }}
-        />
       )}
 
       {/* ═══ Upload Modal ═══ */}
@@ -356,7 +343,7 @@ export default function MateriAjarPage() {
   )
 }
 
-function MateriCard({ materi, onPresent }: { materi: Materi; onPresent: () => void }) {
+function MateriCard({ materi }: { materi: Materi }) {
   const isPPT = materi.fileType === "PPTX"
   const isPDF = materi.fileType === "PDF"
 
@@ -377,26 +364,19 @@ function MateriCard({ materi, onPresent }: { materi: Materi; onPresent: () => vo
         {materi.grade && (
           <p className="text-xs text-gray-500 mb-3">{materi.grade}</p>
         )}
-        <div className="flex items-center gap-2">
-          <button
-            onClick={onPresent}
-            disabled={!materi.fileUrl}
-            className="flex-1 flex items-center justify-center gap-1.5 py-2 text-xs font-semibold text-emerald-600 bg-emerald-50 rounded-lg hover:bg-emerald-100 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+        {materi.fileUrl && (
+          <a
+            href={materi.fileUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center justify-center gap-2 py-2.5 text-xs font-semibold text-white bg-emerald-600 rounded-lg hover:bg-emerald-700 transition-colors"
           >
-            <Maximize2 size={14} /> Presentasi
-          </button>
-          {materi.fileUrl && (
-            <a
-              href={materi.fileUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center justify-center gap-1.5 py-2 px-3 text-xs font-semibold text-gray-600 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
-              title="Buka di Tab Baru"
-            >
-              <ExternalLink size={14} />
-            </a>
-          )}
-        </div>
+            <ExternalLink size={14} /> Buka Materi
+          </a>
+        )}
+        {!materi.fileUrl && (
+          <div className="py-2.5 text-xs text-gray-400 text-center">Tidak ada file</div>
+        )}
       </div>
     </div>
   )
