@@ -334,7 +334,7 @@ const konten: Konten = {
         id: 3,
         soal: "Struktur teks eksplanasi terdiri dari pernyataan umum, deretan penjelas, dan ...",
         tipe: "ISIAN",
-        opsi: ["interpretasi"],
+        opsi: "interpretasi",
         jawaban: "interpretasi",
         penjelasan:
           "Struktur teks eksplanasi terdiri dari: pernyataan umum (pengenalan fenomena), deretan penjelas (proses dan sebab-akibat), dan interpretasi (kesimpulan/pandangan penulis).",
@@ -470,7 +470,7 @@ const konten: Konten = {
         id: 5,
         soal: "Kata kerja yang menunjukkan hubungan atau identitas dalam teks eksplanasi disebut kata kerja ...",
         tipe: "ISIAN",
-        opsi: ["relasional"],
+        opsi: "relasional",
         jawaban: "relasional",
         penjelasan:
           "Kata kerja relasional menunjukkan hubungan atau identitas, contohnya: adalah, merupakan, disebut, terdiri atas.",

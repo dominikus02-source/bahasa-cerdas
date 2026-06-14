@@ -108,7 +108,7 @@ const konten: Konten = {
     ["Kata benda yang ada di dapur adalah...", ["Buku", "Kompor", "Bola", "Pensil"], 1, "Kompor adalah alat masak yang ada di dapur."],
     ["'Bermain' adalah kata kerja berawalan...", ["me-", "ber-", "ter-", "di-"], 1, "Bermain = ber- + main."],
     ["'Pensil' termasuk jenis kata...", ["Kerja", "Sifat", "Benda", "Ganti"], 2, "Pensil adalah nama benda, jadi kata benda."],
-    ["Yang bukan kata kerja adalah...", ["Makan", "Tidur", ["Indah"], "Lari"], 2, "Indah adalah kata sifat, bukan kata kerja."],
+    ["Yang bukan kata kerja adalah...", ["Makan", "Tidur", "Indah", "Lari"], 2, "Indah adalah kata sifat, bukan kata kerja."],
   ]),
   praktik: {
     petunjuk: "Carilah 5 benda di sekitarmu. Tuliskan nama benda, kata kerja yang berhubungan dengan benda itu, dan kata sifat untuk menggambarkannya!",
@@ -122,11 +122,11 @@ const konten: Konten = {
   },
   kuis: makeSoal([
     ["'Membaca' termasuk kata...", ["Benda", "Kerja", "Sifat", "Bilangan"], 1, "Membaca adalah kegiatan, termasuk kata kerja."],
-    ["'Bunga mawar sangat cantik.' Kata sifat pada kalimat itu adalah...", ["Bunga", "Mawar", ["Cantik"], "Sangat"], 2, "Cantik adalah kata sifat yang menerangkan bunga mawar."],
+    ["'Bunga mawar sangat cantik.' Kata sifat pada kalimat itu adalah...", ["Bunga", "Mawar", "Cantik", "Sangat"], 2, "Cantik adalah kata sifat yang menerangkan bunga mawar."],
     ["Kata benda yang terdapat di kamar tidur adalah...", ["Kompor", "Bantal", "Sendok", "Piring"], 1, "Bantal ada di kamar tidur."],
     ["Kata kerja 'memasak' memiliki awalan...", ["ber-", "me-", "ter-", "di-"], 1, "Memasak = me- + masak."],
     ["'Sapi, kucing, ayam' termasuk kelompok kata...", ["Benda (hewan)", "Benda (tumbuhan)", "Benda (tempat)", "Kerja"], 0, "Sapi, kucing, ayam adalah nama hewan, jadi kata benda."],
-    ["Kata sifat yang tepat untuk kapas adalah...", ["Keras", "Kasar", ["Lembut"], "Panjang"], 2, "Kapas sangat lembut jika disentuh."],
+    ["Kata sifat yang tepat untuk kapas adalah...", ["Keras", "Kasar", "Lembut", "Panjang"], 2, "Kapas sangat lembut jika disentuh."],
     ["'Siti sedang menulis di buku.' Kata benda dalam kalimat itu adalah...", ["Sedang", "Menulis", "Siti dan buku", "Di"], 2, "Siti dan buku adalah kata benda."],
     ["Kata 'indah' jika dijadikan perbandingan menjadi...", ["Indah lebih", "Lebih indah", "Terindah lebih", "Mengindah"], 1, "Perbandingan: lebih indah."],
     ["Mana yang bukan kata benda?", ["Rumah", "Sekolah", "Pintar", "Buku"], 2, "Pintar adalah kata sifat, bukan kata benda."],

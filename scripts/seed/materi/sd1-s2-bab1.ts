@@ -126,7 +126,7 @@ const konten: Konten = {
     ["Apa itu kalimat?", ["Kata acak", "Kumpulan kata utuh", "Satu kata", "Huruf"], 1, "Kalimat adalah kumpulan kata yang utuh dan punya arti."],
     ["'Bermain adik bola.' — Apakah kalimat ini benar?", ["Ya", "Tidak", "Sudah urut", "Lengkap"], 1, "Urutan benar: Adik bermain bola."],
     ["Manakah yang merupakan kalimat lengkap?", ["Ibu", "Ibu memasak.", "Memasak", "Di dapur"], 1, "'Ibu memasak.' punya S dan P, lengkap."],
-    ["Tanda seru (!) digunakan untuk kalimat...", ["Berita", "Tanya", "Seruan", ["Biasa"]], 2, "Tanda seru menunjukkan seruan, perintah, atau perasaan kuat."],
+    ["Tanda seru (!) digunakan untuk kalimat...", ["Berita", "Tanya", "Seruan", "Biasa"], 2, "Tanda seru menunjukkan seruan, perintah, atau perasaan kuat."],
     ["Bagaimana cara mencari subjek?", ["Tanya 'Apa?''", "Tanya 'Siapa?'", "Tanya 'Di mana'", "Tanya 'Kapan'"], 1, "Tanya 'Siapa?' untuk menemukan subjek (pelaku)."],
     ["Kalimat 'Hari ini hujan.' diakhiri tanda...", ["Tanya", "Titik", "Seru", "Koma"], 1, "Kalimat berita tentang cuaca diakhiri titik."],
     ["SP kepanjangan dari...", ["Subjek dan Pelaku", "Subjek dan Predikat", "Siapa dan Pekerjaan", "Sebut dan Panggil"], 1, "SP = Subjek dan Predikat."],

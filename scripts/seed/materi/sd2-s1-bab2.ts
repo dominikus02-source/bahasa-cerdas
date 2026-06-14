@@ -109,13 +109,13 @@ const konten: Konten = {
   latihan: makeSoal([
     ["'Ayah membaca koran.' — Objeknya adalah...", ["Ayah", "Membaca", "Koran", "Koran."], 2, "Koran adalah objek (yang dibaca oleh Ayah)."],
     ["'Siti menulis surat.' — Subjeknya adalah...", ["Menulis", "Surat", "Siti", "Siti."], 2, "Siti adalah pelaku (subjek) yang menulis surat."],
-    ["Kalimat 'Membaca buku.' termasuk...", ["Lengkap", "Tidak lengkap", ["Tidak jelas"], "Salah ejaan"], 1, "'Membaca buku' tidak punya subjek — tidak jelas siapa yang membaca."],
+    ["Kalimat 'Membaca buku.' termasuk...", ["Lengkap", "Tidak lengkap", "Tidak jelas", "Salah ejaan"], 1, "'Membaca buku' tidak punya subjek — tidak jelas siapa yang membaca."],
     ["Kalimat berikut yang LENGKAP adalah...", ["Bola", "Menendang", "Budi menendang bola.", "di halaman"], 2, "'Budi menendang bola' punya S-P-O, lengkap."],
     ["Kata depan yang menunjukkan tempat adalah...", ["Di", "Dan", "Atau", "Karena"], 0, "'Di' adalah kata depan yang menunjukkan tempat."],
     ["'Ibu memasak sayur di dapur.' — kata 'di dapur' menunjukkan...", ["Waktu", "Tempat", "Cara", "Alat"], 1, "'Di dapur' adalah keterangan tempat."],
     ["Manakah yang merupakan kalimat SPO?", ["Adik tidur", "Ibu memasak sayur", "Budi bermain", "Kucing lucu"], 1, "'Ibu memasak sayur' punya S (Ibu), P (memasak), O (sayur)."],
     ["Predikat dalam kalimat 'Buku itu milik Budi' adalah...", ["Buku", "Itu", "Milik", "Budi"], 2, "'Milik' adalah predikat (kata kerja/kata keadaan)."],
-    ["'Budi bermain bola di halaman' — jika ditambah waktu...", ["Budi bermain bola", "Budi bermain bola di halaman sore hari", ["Budi bermain"], "Budi dan bola"], 1, "Menambahkan 'sore hari' menunjukkan waktu."],
+    ["'Budi bermain bola di halaman' — jika ditambah waktu...", ["Budi bermain bola", "Budi bermain bola di halaman sore hari", "Budi bermain", "Budi dan bola"], 1, "Menambahkan 'sore hari' menunjukkan waktu."],
     ["Kalimat 'Kucing tidur' tidak punya...", ["Subjek", "Predikat", "Objek", "Kata"], 2, "'Kucing tidur' hanya SP, tidak punya Objek."],
   ]),
   praktik: {
@@ -139,7 +139,7 @@ const konten: Konten = {
     ["Kata 'di' termasuk...", ["Kata sifat", "Kata depan", "Kata benda", "Kata kerja"], 1, "'Di' adalah kata depan yang menunjukkan tempat."],
     ["'Ibu memasak di dapur' — kalimat ini bisa ditambah...", ["Waktu", "Warna", "Ukuran", "Bentuk"], 0, "Kalimat bisa dikembangkan dengan menambah waktu: Ibu memasak di dapur pagi ini."],
     ["Objek dalam kalimat 'Siti menyiram bunga' adalah...", ["Siti", "Menyiram", "Bunga", "Siram"], 2, "Bunga adalah objek yang disiram oleh Siti."],
-    ["Kalimat yang baik harus...", ["Panjang", "Lengkap dan jelas", ["Indah"], "Susun acak"], 1, "Kalimat yang baik minimal lengkap (ada S-P) dan jelas maknanya."],
+    ["Kalimat yang baik harus...", ["Panjang", "Lengkap dan jelas", "Indah", "Susun acak"], 1, "Kalimat yang baik minimal lengkap (ada S-P) dan jelas maknanya."],
   ]),
 }
 

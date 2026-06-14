@@ -91,6 +91,34 @@ import sd4S2Bab3 from "./materi/sd4-s2-bab3"
 import sd4S2Bab4 from "./materi/sd4-s2-bab4"
 import sd4S2Bab5 from "./materi/sd4-s2-bab5"
 
+// Buku Panduan - Kelas V Semester 1 (SD)
+import sd5S1Bab1 from "./materi/sd5-s1-bab1"
+import sd5S1Bab2 from "./materi/sd5-s1-bab2"
+import sd5S1Bab3 from "./materi/sd5-s1-bab3"
+import sd5S1Bab4 from "./materi/sd5-s1-bab4"
+import sd5S1Bab5 from "./materi/sd5-s1-bab5"
+
+// Buku Panduan - Kelas V Semester 2 (SD)
+import sd5S2Bab1 from "./materi/sd5-s2-bab1"
+import sd5S2Bab2 from "./materi/sd5-s2-bab2"
+import sd5S2Bab3 from "./materi/sd5-s2-bab3"
+import sd5S2Bab4 from "./materi/sd5-s2-bab4"
+import sd5S2Bab5 from "./materi/sd5-s2-bab5"
+
+// Buku Panduan - Kelas VI Semester 1 (SD)
+import sd6S1Bab1 from "./materi/sd6-s1-bab1"
+import sd6S1Bab2 from "./materi/sd6-s1-bab2"
+import sd6S1Bab3 from "./materi/sd6-s1-bab3"
+import sd6S1Bab4 from "./materi/sd6-s1-bab4"
+import sd6S1Bab5 from "./materi/sd6-s1-bab5"
+
+// Buku Panduan - Kelas VI Semester 2 (SD)
+import sd6S2Bab1 from "./materi/sd6-s2-bab1"
+import sd6S2Bab2 from "./materi/sd6-s2-bab2"
+import sd6S2Bab3 from "./materi/sd6-s2-bab3"
+import sd6S2Bab4 from "./materi/sd6-s2-bab4"
+import sd6S2Bab5 from "./materi/sd6-s2-bab5"
+
 const units: { title: string; konten: any; grade?: string; semester?: number }[] = [
   // Kelas VII Semester 1
   { title: "Bab 1: Teks Deskripsi", konten: teksDeskripsiKonten, grade: "VII", semester: 1 },
@@ -168,6 +196,30 @@ const units: { title: string; konten: any; grade?: string; semester?: number }[]
   { title: "Bab 3: Cerita Fiksi", konten: sd4S2Bab3, grade: "IV", semester: 2 },
   { title: "Bab 4: Surat Resmi", konten: sd4S2Bab4, grade: "IV", semester: 2 },
   { title: "Bab 5: Pengumuman", konten: sd4S2Bab5, grade: "IV", semester: 2 },
+  // Kelas V Semester 1 (SD)
+  { title: "Bab 1: Teks Eksplanasi", konten: sd5S1Bab1, grade: "V", semester: 1 },
+  { title: "Bab 2: Iklan", konten: sd5S1Bab2, grade: "V", semester: 1 },
+  { title: "Bab 3: Cerpen", konten: sd5S1Bab3, grade: "V", semester: 1 },
+  { title: "Bab 4: Laporan", konten: sd5S1Bab4, grade: "V", semester: 1 },
+  { title: "Bab 5: Puisi", konten: sd5S1Bab5, grade: "V", semester: 1 },
+  // Kelas V Semester 2 (SD)
+  { title: "Bab 1: Pidato", konten: sd5S2Bab1, grade: "V", semester: 2 },
+  { title: "Bab 2: Teks Tanggapan", konten: sd5S2Bab2, grade: "V", semester: 2 },
+  { title: "Bab 3: Wawancara", konten: sd5S2Bab3, grade: "V", semester: 2 },
+  { title: "Bab 4: Resensi", konten: sd5S2Bab4, grade: "V", semester: 2 },
+  { title: "Bab 5: Pantun", konten: sd5S2Bab5, grade: "V", semester: 2 },
+  // Kelas VI Semester 1 (SD)
+  { title: "Bab 1: Surat Resmi", konten: sd6S1Bab1, grade: "VI", semester: 1 },
+  { title: "Bab 2: Teks Tanggapan", konten: sd6S1Bab2, grade: "VI", semester: 1 },
+  { title: "Bab 3: Teks Diskusi", konten: sd6S1Bab3, grade: "VI", semester: 1 },
+  { title: "Bab 4: Pidato", konten: sd6S1Bab4, grade: "VI", semester: 1 },
+  { title: "Bab 5: Cerpen", konten: sd6S1Bab5, grade: "VI", semester: 1 },
+  // Kelas VI Semester 2 (SD)
+  { title: "Bab 1: Resensi", konten: sd6S2Bab1, grade: "VI", semester: 2 },
+  { title: "Bab 2: Laporan Bacaan", konten: sd6S2Bab2, grade: "VI", semester: 2 },
+  { title: "Bab 3: Teks Eksplanasi", konten: sd6S2Bab3, grade: "VI", semester: 2 },
+  { title: "Bab 4: Puisi", konten: sd6S2Bab4, grade: "VI", semester: 2 },
+  { title: "Bab 5: Surat Dinas", konten: sd6S2Bab5, grade: "VI", semester: 2 },
 ]
 
 async function seedMateri() {

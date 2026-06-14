@@ -208,7 +208,7 @@ const konten: Konten = {
             "• Contoh: sahaya (saya), baginda (raja), hamba (saya), konon (kata orang), syahdan (maka)",
             "• Memberi nuansa 'zaman dahulu' pada cerita",
           ],
-          contoh: ["Contoh kaidah kebahasaan dalam cerita rakyat 'Si Kancil dan Buaya': kata kerja tindakan (melompat, berkata), kata ganti (ia, mereka), konjungsi temporal (kemudian, setelah itu), kata arkais (syahdan, konon), dialog langsung dengan tanda petik, dan keterangan waktu/tempat (pada suatu hari, di tepi sungai)."],
+          contoh: "Contoh kaidah kebahasaan dalam cerita rakyat 'Si Kancil dan Buaya': kata kerja tindakan (melompat, berkata), kata ganti (ia, mereka), konjungsi temporal (kemudian, setelah itu), kata arkais (syahdan, konon), dialog langsung dengan tanda petik, dan keterangan waktu/tempat (pada suatu hari, di tepi sungai).",
           catatan: "Kaidah kebahasaan membuat cerita rakyat terasa 'hidup' dan autentik.",
         },
         {
@@ -242,7 +242,7 @@ const konten: Konten = {
             "",
             "PENTING: Satu cerita rakyat biasanya mengandung lebih dari satu nilai. Identifikasilah nilai-nilai tersebut saat membaca cerita rakyat, lalu diskusikan dengan teman bagaimana menerapkannya dalam kehidupan sekarang.",
           ],
-          contoh: ["Contoh analisis nilai: Dalam cerita 'Malin Kundang', nilai moral (durhaka mendapat ganjaran), nilai sosial (hubungan ibu-anak), nilai budaya (tradisi merantau), nilai religius (kutukan sebagai akibat dosa), dan nilai pendidikan (hormati orang tua)."],
+          contoh: "Contoh analisis nilai: Dalam cerita 'Malin Kundang', nilai moral (durhaka mendapat ganjaran), nilai sosial (hubungan ibu-anak), nilai budaya (tradisi merantau), nilai religius (kutukan sebagai akibat dosa), dan nilai pendidikan (hormati orang tua).",
           catatan: "Nilai-nilai dalam cerita rakyat bersifat universal dan relevan sepanjang masa.",
         },
         {

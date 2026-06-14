@@ -441,7 +441,7 @@ const konten: Konten = {
         id: 4,
         tipe: "ISIAN",
         soal: "Bagian buku yang berisi daftar kata kunci beserta nomor halamannya disebut...",
-        opsi: ["indeks"],
+        opsi: "indeks",
         jawaban: "indeks",
         penjelasan:
           "Indeks adalah daftar kata kunci atau istilah penting beserta nomor halaman tempat istilah tersebut muncul, disusun secara alfabetis.",
@@ -627,7 +627,7 @@ const konten: Konten = {
         id: 9,
         tipe: "ISIAN",
         soal: "Bagian resensi yang berisi identitas buku seperti judul, penulis, dan penerbit disebut...",
-        opsi: ["identitas buku"],
+        opsi: "identitas buku",
         jawaban: "identitas buku",
         penjelasan:
           "Identitas buku mencantumkan informasi bibliografis seperti judul, penulis, penerbit, tahun terbit, jumlah halaman, dan ISBN.",
