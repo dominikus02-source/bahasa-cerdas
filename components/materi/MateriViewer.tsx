@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect, useRef } from "react"
-import { X, ExternalLink, Download, AlertTriangle, Loader2, FileText } from "lucide-react"
+import { X, ExternalLink, Download, AlertTriangle, Loader2, Maximize2 } from "lucide-react"
 import { createClient } from "@/lib/supabase/client"
 
 interface Materi {
@@ -23,12 +23,17 @@ export function MateriViewer({ materi, onClose }: Props) {
   const [blobUrl, setBlobUrl] = useState<string | null>(null)
   const [loadError, setLoadError] = useState(false)
   const [loading, setLoading] = useState(true)
-
+  const [fullscreen, setFullscreen] = useState(false)
+  const containerRef = useRef<HTMLDivElement>(null)
   const blobUrlRef = useRef<string | null>(null)
+
+  const isPDF = materi.fileType === "PDF"
+  const isPPTX = materi.fileType === "PPTX"
 
   useEffect(() => {
     document.body.style.overflow = "hidden"
-    loadFile()
+    if (isPDF) loadPdf()
+    else setLoading(false)
     return () => {
       document.body.style.overflow = ""
       if (blobUrlRef.current) URL.revokeObjectURL(blobUrlRef.current)
@@ -37,18 +42,17 @@ export function MateriViewer({ materi, onClose }: Props) {
 
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose()
+      if (e.key === "Escape") {
+        if (fullscreen) { document.exitFullscreen?.(); setFullscreen(false) }
+        else onClose()
+      }
     }
     window.addEventListener("keydown", handleEsc)
     return () => window.removeEventListener("keydown", handleEsc)
-  }, [onClose])
+  }, [fullscreen, onClose])
 
-  const loadFile = async () => {
-    if (!materi.fileUrl) {
-      setLoadError(true)
-      setLoading(false)
-      return
-    }
+  const loadPdf = async () => {
+    if (!materi.fileUrl) { setLoadError(true); setLoading(false); return }
 
     if (materi.fileKey) {
       try {
@@ -79,6 +83,21 @@ export function MateriViewer({ materi, onClose }: Props) {
     setLoading(false)
   }
 
+  const getPptxViewerUrl = () => {
+    if (!materi.fileUrl) return ""
+    return `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(materi.fileUrl)}`
+  }
+
+  const toggleFullscreen = () => {
+    if (!document.fullscreenElement) {
+      containerRef.current?.requestFullscreen?.()
+      setFullscreen(true)
+    } else {
+      document.exitFullscreen?.()
+      setFullscreen(false)
+    }
+  }
+
   const openInNewTab = () => {
     if (materi.fileUrl) window.open(materi.fileUrl, "_blank")
   }
@@ -92,7 +111,6 @@ export function MateriViewer({ materi, onClose }: Props) {
         a.href = URL.createObjectURL(data)
         a.download = `${materi.title}.${materi.fileType?.toLowerCase() || "file"}`
         a.click()
-        URL.revokeObjectURL(a.href)
         return
       }
     }
@@ -105,9 +123,19 @@ export function MateriViewer({ materi, onClose }: Props) {
     }
   }
 
+  if (!materi.fileUrl) {
+    return (
+      <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div className="bg-white rounded-2xl p-8 text-center max-w-md">
+          <p className="text-gray-600 mb-4">File tidak tersedia</p>
+          <button onClick={onClose} className="px-4 py-2 bg-emerald-500 text-white rounded-xl font-semibold hover:bg-emerald-600">Tutup</button>
+        </div>
+      </div>
+    )
+  }
+
   return (
-    <div className="fixed inset-0 z-50 bg-black/90 flex flex-col">
-      {/* Top bar */}
+    <div ref={containerRef} className="fixed inset-0 z-50 bg-black/90 flex flex-col">
       <div className="flex items-center justify-between bg-gray-900/80 px-4 py-3 shrink-0">
         <div className="flex items-center gap-3 min-w-0">
           <button onClick={onClose} className="p-1.5 hover:bg-white/10 rounded-lg transition-colors shrink-0">
@@ -118,69 +146,70 @@ export function MateriViewer({ materi, onClose }: Props) {
             {materi.grade && <p className="text-xs text-gray-400">{materi.grade}</p>}
           </div>
         </div>
-
         <div className="flex items-center gap-2 shrink-0">
           <button onClick={openInNewTab}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-white/10 hover:bg-white/20 text-white text-xs font-medium rounded-lg transition-colors"
-            title="Buka di Tab Baru">
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-white/10 hover:bg-white/20 text-white text-xs font-medium rounded-lg transition-colors">
             <ExternalLink size={14} /> Buka
           </button>
           <button onClick={handleDownload}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-white/10 hover:bg-white/20 text-white text-xs font-medium rounded-lg transition-colors"
-            title="Download">
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-white/10 hover:bg-white/20 text-white text-xs font-medium rounded-lg transition-colors">
             <Download size={14} /> Download
+          </button>
+          <button onClick={toggleFullscreen}
+            className="p-1.5 hover:bg-white/10 rounded-lg text-gray-300 transition-colors" title="Fullscreen">
+            <Maximize2 size={16} />
           </button>
         </div>
       </div>
 
-      {/* Content */}
       <div className="flex-1 relative flex items-center justify-center bg-gray-800/30">
-        {loading && (
+        {loading && isPDF && (
           <div className="text-center">
             <Loader2 size={32} className="animate-spin text-white/50 mx-auto mb-3" />
             <p className="text-sm text-white/40">Memuat file...</p>
           </div>
         )}
 
-        {!loading && blobUrl && !loadError && (
+        {isPDF && !loading && blobUrl && !loadError && (
+          <iframe src={blobUrl} className="w-full h-full border-0" title={materi.title} />
+        )}
+
+        {isPPTX && (
           <iframe
-            src={blobUrl}
+            src={getPptxViewerUrl()}
             className="w-full h-full border-0"
             title={materi.title}
-            sandbox="allow-scripts allow-same-origin"
+            allow="fullscreen"
           />
         )}
 
-        {!loading && loadError && (
+        {!isPDF && !isPPTX && (
+          <div className="text-center p-8">
+            <p className="text-gray-400 mb-4">Pratinjau tidak tersedia untuk {materi.fileType}</p>
+            <button onClick={handleDownload}
+              className="px-5 py-2.5 bg-emerald-600 text-white rounded-xl font-semibold hover:bg-emerald-700">
+              <Download size={16} className="inline mr-1" /> Download
+            </button>
+          </div>
+        )}
+
+        {isPDF && !loading && loadError && (
           <div className="text-center p-8 max-w-md">
             <div className="w-16 h-16 rounded-2xl bg-red-500/10 flex items-center justify-center mx-auto mb-4">
               <AlertTriangle size={32} className="text-red-400" />
             </div>
             <h3 className="text-lg font-bold text-white mb-2">File tidak dapat ditampilkan</h3>
-            <p className="text-sm text-gray-400 mb-6">Gagal memuat file. Coba buka di tab baru atau download.</p>
+            <p className="text-sm text-gray-400 mb-6">Gagal memuat file. Buka di tab baru untuk melihat.</p>
             <div className="flex gap-3 justify-center">
               <button onClick={openInNewTab}
-                className="flex items-center gap-2 px-5 py-2.5 bg-white text-gray-900 rounded-xl font-semibold hover:bg-gray-100 transition-colors">
+                className="flex items-center gap-2 px-5 py-2.5 bg-white text-gray-900 rounded-xl font-semibold hover:bg-gray-100">
                 <ExternalLink size={16} /> Buka di Tab Baru
               </button>
               <button onClick={handleDownload}
-                className="flex items-center gap-2 px-5 py-2.5 bg-emerald-600 text-white rounded-xl font-semibold hover:bg-emerald-700 transition-colors">
+                className="flex items-center gap-2 px-5 py-2.5 bg-emerald-600 text-white rounded-xl font-semibold hover:bg-emerald-700">
                 <Download size={16} /> Download
               </button>
             </div>
-          </div>
-        )}
-
-        {!loading && !blobUrl && !loadError && (
-          <div className="text-center p-8 max-w-md">
-            <div className="w-16 h-16 rounded-2xl bg-gray-800 flex items-center justify-center mx-auto mb-4">
-              <FileText size={32} className="text-gray-500" />
-            </div>
-            <p className="text-sm text-gray-400 mb-6">Tipe file tidak mendukung pratinjau.</p>
-            <button onClick={handleDownload}
-              className="px-5 py-2.5 bg-emerald-600 text-white rounded-xl font-semibold hover:bg-emerald-700 transition-colors">
-              <Download size={16} className="inline mr-1" /> Download
-            </button>
           </div>
         )}
       </div>
