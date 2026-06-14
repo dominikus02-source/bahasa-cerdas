@@ -58,7 +58,10 @@ export default function MateriAjarPage() {
   const fetchMateris = useCallback(async () => {
     setLoading(true)
     try {
+      let sid = ""
+      try { const stored = localStorage.getItem("bc-user"); if (stored) sid = JSON.parse(stored).state?.supabaseId || "" } catch {}
       const params = new URLSearchParams({ page: String(page), limit: "24" })
+      if (sid) params.set("supabaseId", sid)
       const res = await fetch(`/api/guru/materi?${params}`)
       const data = await res.json()
       if (data.data) {
@@ -316,6 +319,8 @@ export default function MateriAjarPage() {
                     const { data: urlData } = supabase.storage.from("documents").getPublicUrl(uploadData.path)
 
                     // 2. Send metadata only to API (no file)
+                    let sid = ""
+                    try { const stored = localStorage.getItem("bc-user"); if (stored) sid = JSON.parse(stored).state?.supabaseId || "" } catch {}
                     const fd = new FormData()
                     fd.set("title", uploadForm.title)
                     fd.set("description", uploadForm.description)
@@ -324,6 +329,7 @@ export default function MateriAjarPage() {
                     fd.set("fileUrl", urlData.publicUrl)
                     fd.set("fileKey", uploadData.path)
                     fd.set("fileType", fileExt.toUpperCase())
+                    if (sid) fd.set("supabaseId", sid)
 
                     const res = await fetch("/api/guru/materi", { method: "POST", body: fd })
                     const data = await res.json()

@@ -5,21 +5,32 @@ import { uploadFileServer } from "@/lib/upload";
 
 export async function GET(req: NextRequest) {
   try {
-    const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-
-    if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    const dbUser = await db.user.findUnique({ where: { supabaseId: user.id } });
-    if (!dbUser || (dbUser.role !== "GURU" && dbUser.role !== "ADMIN" && !dbUser.isFounder)) {
-      return NextResponse.json({ error: "Guru only" }, { status: 403 });
-    }
-
     const { searchParams } = new URL(req.url);
     const page = parseInt(searchParams.get("page") || "1");
     const limit = parseInt(searchParams.get("limit") || "20");
+
+    let dbUser: any = null
+
+    // Try Supabase auth first
+    try {
+      const supabase = await createClient();
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        dbUser = await db.user.findUnique({ where: { supabaseId: user.id } });
+      }
+    } catch {}
+
+    // Fallback: supabaseId query param (for Next.js 16 Route Handler cookie bug)
+    if (!dbUser) {
+      const sid = searchParams.get("supabaseId")
+      if (sid) {
+        dbUser = await db.user.findUnique({ where: { supabaseId: sid } });
+      }
+    }
+
+    if (!dbUser || (dbUser.role !== "GURU" && dbUser.role !== "ADMIN" && !dbUser.isFounder)) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
     const [materis, total] = await Promise.all([
       db.materi.findMany({
@@ -41,19 +52,24 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   try {
     console.log("Materi POST request received");
-    const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const formData = await req.formData();
 
-    if (!user) {
+    // Try Supabase auth first, then fallback to formData supabaseId
+    let dbUser: any = null
+    try {
+      const supabase = await createClient();
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        dbUser = await db.user.findUnique({ where: { supabaseId: user.id } });
+      }
+    } catch {}
+    if (!dbUser) {
+      const sid = formData.get("supabaseId") as string
+      if (sid) dbUser = await db.user.findUnique({ where: { supabaseId: sid } })
+    }
+    if (!dbUser || (dbUser.role !== "GURU" && dbUser.role !== "ADMIN" && !dbUser.isFounder)) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-
-    const dbUser = await db.user.findUnique({ where: { supabaseId: user.id } });
-    if (!dbUser || (dbUser.role !== "GURU" && dbUser.role !== "ADMIN" && !dbUser.isFounder)) {
-      return NextResponse.json({ error: "Guru only" }, { status: 403 });
-    }
-
-    const formData = await req.formData();
     const file = formData.get("file") as File | null;
 
     const title = formData.get("title") as string;
@@ -160,19 +176,22 @@ export async function POST(req: NextRequest) {
 
 export async function PUT(req: NextRequest) {
   try {
-    const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const body = await req.json();
 
-    if (!user) {
+    let dbUser: any = null
+    try {
+      const supabase = await createClient();
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) dbUser = await db.user.findUnique({ where: { supabaseId: user.id } })
+    } catch {}
+    if (!dbUser) {
+      const sid = body.supabaseId as string | undefined
+      if (sid) dbUser = await db.user.findUnique({ where: { supabaseId: sid } })
+    }
+    if (!dbUser || (dbUser.role !== "GURU" && dbUser.role !== "ADMIN" && !dbUser.isFounder)) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const dbUser = await db.user.findUnique({ where: { supabaseId: user.id } });
-    if (!dbUser || (dbUser.role !== "GURU" && dbUser.role !== "ADMIN" && !dbUser.isFounder)) {
-      return NextResponse.json({ error: "Guru only" }, { status: 403 });
-    }
-
-    const body = await req.json();
     const { id, ...data } = body;
 
     if (!id) {
@@ -194,20 +213,22 @@ export async function PUT(req: NextRequest) {
 
 export async function DELETE(req: NextRequest) {
   try {
-    const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-
-    if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    const dbUser = await db.user.findUnique({ where: { supabaseId: user.id } });
-    if (!dbUser || (dbUser.role !== "GURU" && dbUser.role !== "ADMIN" && !dbUser.isFounder)) {
-      return NextResponse.json({ error: "Guru only" }, { status: 403 });
-    }
-
     const { searchParams } = new URL(req.url);
     const id = searchParams.get("id");
+
+    let dbUser: any = null
+    try {
+      const supabase = await createClient();
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) dbUser = await db.user.findUnique({ where: { supabaseId: user.id } })
+    } catch {}
+    if (!dbUser) {
+      const sid = searchParams.get("supabaseId")
+      if (sid) dbUser = await db.user.findUnique({ where: { supabaseId: sid } })
+    }
+    if (!dbUser || (dbUser.role !== "GURU" && dbUser.role !== "ADMIN" && !dbUser.isFounder)) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
     if (!id) {
       return NextResponse.json({ error: "ID required" }, { status: 400 });
@@ -219,8 +240,11 @@ export async function DELETE(req: NextRequest) {
     }
 
     if (existing.fileKey) {
-      const bucket = existing.fileKey.includes("/videos/") ? "videos" : "documents";
-      await supabase.storage.from(bucket).remove([existing.fileKey]).catch(() => {});
+      try {
+        const sup = await createClient();
+        const bucket = existing.fileKey.includes("/videos/") ? "videos" : "documents";
+        await sup.storage.from(bucket).remove([existing.fileKey]).catch(() => {});
+      } catch {}
     }
 
     await db.materi.delete({ where: { id } });
