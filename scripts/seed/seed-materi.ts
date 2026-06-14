@@ -39,6 +39,30 @@ import ceritaInspiratif from "./materi/pdf-9-s2-unit5"
 import teksDiskusi from "./materi/pdf-9-s2-unit6"
 import giatNonfiksi9Konten from "./materi/pdf-9-s2-unit8"
 
+// Buku Panduan - Kelas I Semester 1 (SD)
+import sd1S1Bab1 from "./materi/sd1-s1-bab1"
+import sd1S1Bab2 from "./materi/sd1-s1-bab2"
+import sd1S1Bab3 from "./materi/sd1-s1-bab3"
+import sd1S1Bab4 from "./materi/sd1-s1-bab4"
+
+// Buku Panduan - Kelas I Semester 2 (SD)
+import sd1S2Bab1 from "./materi/sd1-s2-bab1"
+import sd1S2Bab2 from "./materi/sd1-s2-bab2"
+import sd1S2Bab3 from "./materi/sd1-s2-bab3"
+import sd1S2Bab4 from "./materi/sd1-s2-bab4"
+
+// Buku Panduan - Kelas II Semester 1 (SD)
+import sd2S1Bab1 from "./materi/sd2-s1-bab1"
+import sd2S1Bab2 from "./materi/sd2-s1-bab2"
+import sd2S1Bab3 from "./materi/sd2-s1-bab3"
+import sd2S1Bab4 from "./materi/sd2-s1-bab4"
+
+// Buku Panduan - Kelas II Semester 2 (SD)
+import sd2S2Bab1 from "./materi/sd2-s2-bab1"
+import sd2S2Bab2 from "./materi/sd2-s2-bab2"
+import sd2S2Bab3 from "./materi/sd2-s2-bab3"
+import sd2S2Bab4 from "./materi/sd2-s2-bab4"
+
 const units: { title: string; konten: any; grade?: string; semester?: number }[] = [
   // Kelas VII Semester 1
   { title: "Bab 1: Teks Deskripsi", konten: teksDeskripsiKonten, grade: "VII", semester: 1 },
@@ -72,6 +96,26 @@ const units: { title: string; konten: any; grade?: string; semester?: number }[]
   { title: "Bab 6: Teks Cerita Inspiratif", konten: ceritaInspiratif, grade: "IX", semester: 2 },
   { title: "Bab 7: Teks Diskusi", konten: teksDiskusi, grade: "IX", semester: 2 },
   { title: "Bab 8: Giat Literasi II: Teks Nonfiksi (Pengaya)", konten: giatNonfiksi9Konten, grade: "IX", semester: 2 },
+  // Kelas I Semester 1 (SD)
+  { title: "Bab 1: Bunyi dan Huruf", konten: sd1S1Bab1, grade: "I", semester: 1 },
+  { title: "Bab 2: Membaca Permulaan", konten: sd1S1Bab2, grade: "I", semester: 1 },
+  { title: "Bab 3: Menulis Permulaan", konten: sd1S1Bab3, grade: "I", semester: 1 },
+  { title: "Bab 4: Kosa Kata", konten: sd1S1Bab4, grade: "I", semester: 1 },
+  // Kelas I Semester 2 (SD)
+  { title: "Bab 1: Kalimat Sederhana", konten: sd1S2Bab1, grade: "I", semester: 2 },
+  { title: "Bab 2: Membaca Cerita", konten: sd1S2Bab2, grade: "I", semester: 2 },
+  { title: "Bab 3: Menulis Cerita", konten: sd1S2Bab3, grade: "I", semester: 2 },
+  { title: "Bab 4: Puisi Anak", konten: sd1S2Bab4, grade: "I", semester: 2 },
+  // Kelas II Semester 1 (SD)
+  { title: "Bab 1: Membaca Pemahaman", konten: sd2S1Bab1, grade: "II", semester: 1 },
+  { title: "Bab 2: Menulis Kalimat", konten: sd2S1Bab2, grade: "II", semester: 1 },
+  { title: "Bab 3: Dongeng", konten: sd2S1Bab3, grade: "II", semester: 1 },
+  { title: "Bab 4: Pengumuman", konten: sd2S1Bab4, grade: "II", semester: 1 },
+  // Kelas II Semester 2 (SD)
+  { title: "Bab 1: Puisi Anak", konten: sd2S2Bab1, grade: "II", semester: 2 },
+  { title: "Bab 2: Pantun Anak", konten: sd2S2Bab2, grade: "II", semester: 2 },
+  { title: "Bab 3: Cerita Rakyat", konten: sd2S2Bab3, grade: "II", semester: 2 },
+  { title: "Bab 4: Laporan Sederhana", konten: sd2S2Bab4, grade: "II", semester: 2 },
 ]
 
 async function seedMateri() {
