@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { X, ExternalLink, Download, AlertTriangle, Loader2, FileText } from "lucide-react"
 import { createClient } from "@/lib/supabase/client"
 
@@ -24,12 +24,14 @@ export function MateriViewer({ materi, onClose }: Props) {
   const [loadError, setLoadError] = useState(false)
   const [loading, setLoading] = useState(true)
 
+  const blobUrlRef = useRef<string | null>(null)
+
   useEffect(() => {
     document.body.style.overflow = "hidden"
     loadFile()
     return () => {
       document.body.style.overflow = ""
-      if (blobUrl) URL.revokeObjectURL(blobUrl)
+      if (blobUrlRef.current) URL.revokeObjectURL(blobUrlRef.current)
     }
   }, [])
 
@@ -48,13 +50,13 @@ export function MateriViewer({ materi, onClose }: Props) {
       return
     }
 
-    // Try Supabase client download first (handles auth)
     if (materi.fileKey) {
       try {
         const supabase = createClient()
         const { data, error } = await supabase.storage.from("documents").download(materi.fileKey)
         if (data && !error) {
           const url = URL.createObjectURL(data)
+          blobUrlRef.current = url
           setBlobUrl(url)
           setLoading(false)
           return
@@ -62,20 +64,18 @@ export function MateriViewer({ materi, onClose }: Props) {
       } catch {}
     }
 
-    // Fallback: fetch with credentials
     try {
-      const res = await fetch(materi.fileUrl, { credentials: "include" })
+      const res = await fetch(materi.fileUrl)
       if (res.ok) {
-        const blob = await res.blob()
-        const url = URL.createObjectURL(blob)
+        const url = URL.createObjectURL(await res.blob())
+        blobUrlRef.current = url
         setBlobUrl(url)
         setLoading(false)
         return
       }
     } catch {}
 
-    // Direct URL as last resort
-    setBlobUrl(materi.fileUrl)
+    setLoadError(true)
     setLoading(false)
   }
 

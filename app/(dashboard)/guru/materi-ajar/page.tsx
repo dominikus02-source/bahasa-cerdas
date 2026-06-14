@@ -4,7 +4,8 @@ import { useState, useEffect, useCallback } from "react"
 import {
   Presentation, Search, Grid3x3, List,
   Maximize2, BookOpen, ChevronLeft, ChevronRight,
-  Upload, X, Loader2, FileText, Check, AlertTriangle
+  Upload, X, Loader2, FileText, Check, AlertTriangle,
+  ExternalLink
 } from "lucide-react"
 import { MateriViewer } from "@/components/materi/MateriViewer"
 import { FILE_TYPE_LABELS } from "@/lib/upload"
@@ -376,7 +377,7 @@ function MateriCard({ materi, onPresent }: { materi: Materi; onPresent: () => vo
         {materi.grade && (
           <p className="text-xs text-gray-500 mb-3">{materi.grade}</p>
         )}
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-2">
           <button
             onClick={onPresent}
             disabled={!materi.fileUrl}
@@ -384,6 +385,17 @@ function MateriCard({ materi, onPresent }: { materi: Materi; onPresent: () => vo
           >
             <Maximize2 size={14} /> Presentasi
           </button>
+          {materi.fileUrl && (
+            <a
+              href={materi.fileUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center gap-1.5 py-2 px-3 text-xs font-semibold text-gray-600 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+              title="Buka di Tab Baru"
+            >
+              <ExternalLink size={14} />
+            </a>
+          )}
         </div>
       </div>
     </div>
