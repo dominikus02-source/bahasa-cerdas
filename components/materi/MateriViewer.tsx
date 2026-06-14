@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useRef, useEffect } from "react"
-import { X, ChevronLeft, ChevronRight, Maximize2, Minimize2, Download } from "lucide-react"
+import { X, ExternalLink, Download, AlertTriangle, Loader2 } from "lucide-react"
 
 interface Materi {
   id: string
@@ -18,27 +18,32 @@ interface Props {
 }
 
 export function MateriViewer({ materi, onClose }: Props) {
-  const [fullscreen, setFullscreen] = useState(false)
-  const [slideMode, setSlideMode] = useState(false)
+  const [loadError, setLoadError] = useState(false)
+  const [loading, setLoading] = useState(true)
   const iframeRef = useRef<HTMLIFrameElement>(null)
-  const containerRef = useRef<HTMLDivElement>(null)
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null)
+
+  useEffect(() => {
+    document.body.style.overflow = "hidden"
+    timeoutRef.current = setTimeout(() => {
+      if (loading) {
+        setLoadError(true)
+        setLoading(false)
+      }
+    }, 10000)
+    return () => {
+      document.body.style.overflow = ""
+      if (timeoutRef.current) clearTimeout(timeoutRef.current)
+    }
+  }, [loading])
 
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        if (fullscreen) setFullscreen(false)
-        else onClose()
-      }
-      if (slideMode && e.key === "ArrowRight") nextSlide()
-      if (slideMode && e.key === "ArrowLeft") prevSlide()
+      if (e.key === "Escape") onClose()
     }
     window.addEventListener("keydown", handleEsc)
-    document.body.style.overflow = "hidden"
-    return () => {
-      window.removeEventListener("keydown", handleEsc)
-      document.body.style.overflow = ""
-    }
-  }, [fullscreen, slideMode, onClose])
+    return () => window.removeEventListener("keydown", handleEsc)
+  }, [onClose])
 
   const isPDF = materi.fileType === "PDF"
   const isPPTX = materi.fileType === "PPTX"
@@ -46,33 +51,17 @@ export function MateriViewer({ materi, onClose }: Props) {
 
   const getViewerUrl = () => {
     if (!fileUrl) return ""
-    if (isPDF) return fileUrl
+    if (isPDF) {
+      return `https://docs.google.com/viewer?url=${encodeURIComponent(fileUrl)}&embedded=true`
+    }
     if (isPPTX) {
-      return `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(fileUrl)}&wdStartOn=1&wdEmbedCode=0`
+      return `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(fileUrl)}`
     }
     return fileUrl
   }
 
-  const nextSlide = () => {
-    if (isPPTX && iframeRef.current?.contentWindow) {
-      iframeRef.current.contentWindow.postMessage(JSON.stringify({ method: "Next" }), "*")
-    }
-  }
-
-  const prevSlide = () => {
-    if (isPPTX && iframeRef.current?.contentWindow) {
-      iframeRef.current.contentWindow.postMessage(JSON.stringify({ method: "Prev" }), "*")
-    }
-  }
-
-  const toggleFullscreen = () => {
-    if (!document.fullscreenElement) {
-      containerRef.current?.requestFullscreen?.()
-      setFullscreen(true)
-    } else {
-      document.exitFullscreen?.()
-      setFullscreen(false)
-    }
+  const openInNewTab = () => {
+    if (fileUrl) window.open(fileUrl, "_blank")
   }
 
   const handleDownload = () => {
@@ -85,6 +74,15 @@ export function MateriViewer({ materi, onClose }: Props) {
       a.click()
       document.body.removeChild(a)
     }
+  }
+
+  const handleLoad = () => {
+    setLoading(false)
+  }
+
+  const handleError = () => {
+    setLoadError(true)
+    setLoading(false)
   }
 
   if (!fileUrl) {
@@ -101,14 +99,12 @@ export function MateriViewer({ materi, onClose }: Props) {
   }
 
   return (
-    <div
-      ref={containerRef}
-      className={`fixed z-50 bg-gray-900 transition-all ${fullscreen ? "inset-0" : "inset-4 rounded-2xl overflow-hidden shadow-2xl"}`}
-    >
-      <div className="flex items-center justify-between bg-gray-800 px-4 py-2.5">
+    <div className="fixed inset-0 z-50 bg-black/90 flex flex-col">
+      {/* Top bar */}
+      <div className="flex items-center justify-between bg-gray-900/80 px-4 py-3 shrink-0">
         <div className="flex items-center gap-3 min-w-0">
-          <button onClick={onClose} className="p-1.5 hover:bg-gray-700 rounded-lg transition-colors shrink-0">
-            <X size={18} className="text-gray-300" />
+          <button onClick={onClose} className="p-1.5 hover:bg-white/10 rounded-lg transition-colors shrink-0">
+            <X size={20} className="text-white" />
           </button>
           <div className="min-w-0">
             <p className="text-sm font-medium text-white truncate">{materi.title}</p>
@@ -116,62 +112,59 @@ export function MateriViewer({ materi, onClose }: Props) {
           </div>
         </div>
 
-        <div className="flex items-center gap-1 shrink-0">
-          {isPPTX && (
-            <>
-              <button
-                onClick={() => setSlideMode(!slideMode)}
-                className={`p-1.5 rounded-lg transition-colors ${slideMode ? "bg-emerald-600 text-white" : "hover:bg-gray-700 text-gray-300"}`}
-                title="Mode Slide"
-              >
-                {slideMode ? <Minimize2 size={16} /> : <Maximize2 size={16} />}
-              </button>
-              {slideMode && (
-                <div className="flex items-center gap-1 ml-2">
-                  <button onClick={prevSlide} className="p-1.5 hover:bg-gray-700 rounded-lg text-gray-300 transition-colors">
-                    <ChevronLeft size={16} />
-                  </button>
-                  <button onClick={nextSlide} className="p-1.5 hover:bg-gray-700 rounded-lg text-gray-300 transition-colors">
-                    <ChevronRight size={16} />
-                  </button>
-                </div>
-              )}
-            </>
-          )}
-          <button onClick={handleDownload} className="p-1.5 hover:bg-gray-700 rounded-lg text-gray-300 transition-colors" title="Download">
-            <Download size={16} />
+        <div className="flex items-center gap-2 shrink-0">
+          <button onClick={openInNewTab}
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-white/10 hover:bg-white/20 text-white text-xs font-medium rounded-lg transition-colors"
+            title="Buka di Tab Baru">
+            <ExternalLink size={14} /> Buka
           </button>
-          <button onClick={toggleFullscreen} className="p-1.5 hover:bg-gray-700 rounded-lg text-gray-300 transition-colors" title="Fullscreen">
-            {fullscreen ? <Minimize2 size={16} /> : <Maximize2 size={16} />}
+          <button onClick={handleDownload}
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-white/10 hover:bg-white/20 text-white text-xs font-medium rounded-lg transition-colors"
+            title="Download">
+            <Download size={14} /> Download
           </button>
         </div>
       </div>
 
-      <div className={`${fullscreen ? "h-[calc(100vh-44px)]" : "h-[calc(100vh-100px)]"}`}>
-        {isPDF ? (
-          <iframe
-            ref={iframeRef}
-            src={`${fileUrl}#toolbar=0&navpanes=0`}
-            className="w-full h-full border-0"
-            title={materi.title}
-          />
-        ) : isPPTX ? (
+      {/* Content */}
+      <div className="flex-1 relative flex items-center justify-center">
+        {loading && !loadError && (
+          <div className="absolute inset-0 flex items-center justify-center z-10">
+            <div className="text-center">
+              <Loader2 size={32} className="animate-spin text-white/50 mx-auto mb-3" />
+              <p className="text-sm text-white/40">Memuat file...</p>
+            </div>
+          </div>
+        )}
+
+        {loadError ? (
+          <div className="text-center p-8 max-w-md">
+            <div className="w-16 h-16 rounded-2xl bg-red-500/10 flex items-center justify-center mx-auto mb-4">
+              <AlertTriangle size={32} className="text-red-400" />
+            </div>
+            <h3 className="text-lg font-bold text-white mb-2">File tidak dapat ditampilkan</h3>
+            <p className="text-sm text-gray-400 mb-6">Browser memblokir tampilan file. Buka di tab baru untuk melihat.</p>
+            <div className="flex gap-3 justify-center">
+              <button onClick={openInNewTab}
+                className="flex items-center gap-2 px-5 py-2.5 bg-white text-gray-900 rounded-xl font-semibold hover:bg-gray-100 transition-colors">
+                <ExternalLink size={16} /> Buka di Tab Baru
+              </button>
+              <button onClick={handleDownload}
+                className="flex items-center gap-2 px-5 py-2.5 bg-emerald-600 text-white rounded-xl font-semibold hover:bg-emerald-700 transition-colors">
+                <Download size={16} /> Download
+              </button>
+            </div>
+          </div>
+        ) : (
           <iframe
             ref={iframeRef}
             src={getViewerUrl()}
             className="w-full h-full border-0"
             title={materi.title}
+            onLoad={handleLoad}
+            onError={handleError}
             allow="fullscreen"
           />
-        ) : (
-          <div className="flex items-center justify-center h-full text-gray-400">
-            <div className="text-center">
-              <p className="text-lg mb-2">Preview tidak tersedia</p>
-              <button onClick={handleDownload} className="px-4 py-2 bg-emerald-500 text-white rounded-xl font-semibold hover:bg-emerald-600">
-                Download File
-              </button>
-            </div>
-          </div>
         )}
       </div>
     </div>
