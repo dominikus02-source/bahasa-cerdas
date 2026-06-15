@@ -31,7 +31,7 @@ export default async function MuridLayout({ children }: { children: React.ReactN
 
   return (
     <div className="flex min-h-screen bg-gradient-to-br from-slate-50 via-white to-violet-50">
-      <aside className="w-64 h-screen bg-white/80 backdrop-blur-xl border-r border-gray-100/50 flex flex-col fixed left-0 top-0 overflow-hidden shadow-xl shadow-gray-100/50">
+      <aside className="w-64 h-screen bg-white/80 backdrop-blur-xl border-r border-gray-100/50 flex flex-col fixed left-0 top-0 shadow-xl shadow-gray-100/50">
         <div className="p-5 border-b border-gray-100/50 bg-gradient-to-r from-violet-600 to-purple-600">
           <Link href="/murid/beranda" className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-white/20 backdrop-blur flex items-center justify-center text-white font-bold text-sm border border-white/20 shadow-lg">
