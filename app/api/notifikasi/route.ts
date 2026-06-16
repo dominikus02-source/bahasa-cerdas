@@ -2,9 +2,13 @@ import { NextRequest, NextResponse } from "next/server";
 import { getUser } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 import cache from "@/lib/redis";
+import { rateLimitRoute } from "@/lib/rate-limit";
 
 export async function GET(req: NextRequest) {
   try {
+    const rl = await rateLimitRoute(req, { maxRequests: 30, windowSeconds: 60, identifier: "notif" });
+    if (rl) return rl;
+
     const user = await getUser();
     if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
@@ -13,7 +17,11 @@ export async function GET(req: NextRequest) {
     const cacheKey = `notif:${user.id}:${unreadOnly}`;
 
     const cached = await cache.get<{ notifications: unknown[]; unreadCount: number }>(cacheKey);
-    if (cached) return NextResponse.json(cached);
+    if (cached) {
+      return NextResponse.json(cached, {
+        headers: { "X-Cache": "HIT", "Cache-Control": "private, max-age=15" },
+      });
+    }
 
     const notifications = await db.notifikasi.findMany({
       where: {
@@ -31,7 +39,9 @@ export async function GET(req: NextRequest) {
     const result = { notifications, unreadCount };
     await cache.set(cacheKey, result, 30);
 
-    return NextResponse.json(result);
+    return NextResponse.json(result, {
+      headers: { "X-Cache": "MISS", "Cache-Control": "private, max-age=15" },
+    });
   } catch (err) {
     console.error(err);
     return NextResponse.json({ error: "Internal error" }, { status: 500 });
@@ -71,6 +81,8 @@ export async function POST(req: NextRequest) {
 
 export async function PATCH(req: NextRequest) {
   try {
+    const rl = await rateLimitRoute(req, { maxRequests: 20, windowSeconds: 60, identifier: "notif-patch" });
+    if (rl) return rl;
     const user = await getUser();
     if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 

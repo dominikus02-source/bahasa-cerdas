@@ -1,43 +1,52 @@
-import { Redis } from "@upstash/redis"
+import { NextResponse } from "next/server"
+import cache from "@/lib/redis"
 
-const url = process.env.UPSTASH_REDIS_REST_URL
-const token = process.env.UPSTASH_REDIS_REST_TOKEN
-const redis = url && token ? new Redis({ url, token }) : null
-
-const WINDOW = 60
-const LIMITS: Record<string, number> = {
-  auth: 20,
-  api: 120,
-  ai: 10,
-  public: 300,
+interface RateLimitResult {
+  success: boolean
+  reset: number
 }
 
-export async function rateLimit(
-  identifier: string,
-  scope: keyof typeof LIMITS = "api"
-): Promise<{ success: boolean; remaining: number; reset: number }> {
-  const max = LIMITS[scope] || 120
-  const key = `ratelimit:${scope}:${identifier}`
+// For middleware use — takes IP + identifier, returns { success, reset }
+export async function rateLimit(ip: string, identifier: string, maxRequests = 10, windowSeconds = 60): Promise<RateLimitResult> {
+  if (!cache) return { success: true, reset: 0 }
 
-  if (!redis) {
-    // fallback: allow all if Redis not configured
-    return { success: true, remaining: max, reset: Date.now() + WINDOW * 1000 }
+  const key = `ratelimit:${identifier}:${ip}`
+  const current = await cache.get<number>(key)
+
+  if (current === null) {
+    await cache.set(key, 1, windowSeconds)
+    return { success: true, reset: 0 }
   }
 
-  const now = Math.floor(Date.now() / 1000)
-  const windowStart = now - (now % WINDOW)
-  const windowKey = `${key}:${windowStart}`
-
-  const current = await redis.incr(windowKey)
-  if (current === 1) {
-    await redis.expire(windowKey, WINDOW + 10)
+  if (current >= maxRequests) {
+    return { success: false, reset: Math.floor(Date.now() / 1000) + windowSeconds }
   }
 
-  const remaining = Math.max(0, max - current)
+  await cache.set(key, current + 1, windowSeconds)
+  return { success: true, reset: 0 }
+}
 
-  return {
-    success: current <= max,
-    remaining,
-    reset: (windowStart + WINDOW) * 1000,
+// For API route handler use — returns NextResponse if rate limited, null otherwise
+export async function rateLimitRoute(
+  req: Request,
+  config: { maxRequests: number; windowSeconds: number; identifier: string }
+): Promise<NextResponse | null> {
+  const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim()
+    || req.headers.get("x-real-ip")
+    || "unknown"
+
+  const result = await rateLimit(ip, config.identifier, config.maxRequests, config.windowSeconds)
+  if (!result.success) {
+    return NextResponse.json(
+      { error: "Terlalu banyak permintaan. Silakan coba lagi nanti." },
+      {
+        status: 429,
+        headers: {
+          "Retry-After": String(config.windowSeconds),
+          "X-RateLimit-Limit": String(config.maxRequests),
+        },
+      }
+    )
   }
+  return null
 }

@@ -3,6 +3,7 @@ import { db } from "@/lib/db";
 import { getGravatarUrl } from "@/lib/avatar";
 import { z } from "zod";
 import { sanitize } from "@/lib/validations";
+import { rateLimitRoute } from "@/lib/rate-limit";
 
 const registerApiSchema = z.object({
   email: z.string().email("Email tidak valid").max(255),
@@ -19,6 +20,9 @@ function isFounderEmail(email: string): boolean {
 
 export async function POST(req: NextRequest) {
   try {
+    const rl = await rateLimitRoute(req, { maxRequests: 5, windowSeconds: 60, identifier: "register" });
+    if (rl) return rl;
+
     const body = await req.json();
     const parsed = registerApiSchema.safeParse(body);
 
@@ -57,30 +61,24 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    try {
-      await db.profile.create({
-        data: { userId: newUser.id },
-      });
-    } catch (e) {
-      console.log("Profile creation note:", e);
-    }
-
-    try {
-      const founders = await db.user.findMany({ where: { isFounder: true }, select: { id: true } });
-      if (founders.length > 0) {
-        await db.notifikasi.createMany({
-          data: founders.map(f => ({
-            userId: f.id,
-            title: "Pengguna Baru",
-            body: `${sanitizedName} (${role}) baru saja mendaftar`,
-            type: "admin_user",
-            data: { userId: newUser.id, role, email: email.toLowerCase() },
-          })),
-        });
-      }
-    } catch (e) {
-      console.log("Notif creation note:", e);
-    }
+    // Fire-and-forget non-critical ops — don't block response
+    Promise.allSettled([
+      db.profile.create({ data: { userId: newUser.id } }).catch(() => {}),
+      (async () => {
+        const founders = await db.user.findMany({ where: { isFounder: true }, select: { id: true } });
+        if (founders.length > 0) {
+          await db.notifikasi.createMany({
+            data: founders.map(f => ({
+              userId: f.id,
+              title: "Pengguna Baru",
+              body: `${sanitizedName} (${role}) baru saja mendaftar`,
+              type: "admin_user",
+              data: { userId: newUser.id, role, email: email.toLowerCase() },
+            })),
+          });
+        }
+      })().catch(() => {}),
+    ]);
 
     return NextResponse.json(
       { user: newUser, redirect: `/${role.toLowerCase()}/beranda` },

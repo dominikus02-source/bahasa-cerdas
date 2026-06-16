@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { getGravatarUrl } from "@/lib/avatar";
+import cache from "@/lib/redis";
 
 const FOUNDER_EMAILS = ["hdsastra47@gmail.com", "dominikus.02@gmail.com", "alexsurya1968@gmail.com"];
 
@@ -56,9 +57,20 @@ export async function GET() {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return NextResponse.json({ user: null });
+
     const email = user.email?.toLowerCase() || "";
+    const cacheKey = `user:me:${email}`;
+    const cached = await cache.get<Record<string, unknown>>(cacheKey);
+    if (cached) {
+      return NextResponse.json(
+        { user: cached },
+        { headers: { "X-Cache": "HIT", "Cache-Control": "private, max-age=30" } }
+      );
+    }
+
     const found = await db.user.findFirst({ where: { email } });
     if (!found) return NextResponse.json({ error: "User not found" }, { status: 404 });
+
     const updates: Record<string, unknown> = {};
     if (found.supabaseId !== user.id) updates.supabaseId = user.id;
     if (FOUNDER_EMAILS.includes(email) && !found.isFounder) {
@@ -69,8 +81,17 @@ export async function GET() {
     if (Object.keys(updates).length > 0) {
       await db.user.update({ where: { id: found.id }, data: updates });
     }
+
     const profile = await db.profile.findUnique({ where: { userId: found.id } });
-    return NextResponse.json({ user: { ...found, ...profile, ...updates } });
+    const result = { ...found, ...profile, ...updates };
+
+    // Cache for 30s — short enough to stay fresh, long enough to absorb bursts
+    cache.set(cacheKey, result, 30);
+
+    return NextResponse.json(
+      { user: result },
+      { headers: { "X-Cache": "MISS", "Cache-Control": "private, max-age=30" } }
+    );
   } catch (e: any) {
     console.error("GET /api/user/me error:", e?.message || e);
     return NextResponse.json({ error: "Gagal memuat data" }, { status: 500 });
