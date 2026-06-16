@@ -1,9 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getUser } from "@/lib/supabase/server";
 import { checkAIQuota, recordAIUsage } from "@/lib/premium";
+import { rateLimitRoute } from "@/lib/rate-limit";
+
+const AI_TIMEOUT = 15000;
 
 export async function POST(req: NextRequest) {
   try {
+    const rl = await rateLimitRoute(req, { maxRequests: 10, windowSeconds: 60, identifier: "ai-feedback" });
+    if (rl) return rl;
+
     const user = await getUser();
     if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
@@ -103,6 +109,7 @@ Hanya output JSON, tanpa markdown.`;
             max_tokens: 4000,
             temperature: 0.7,
           }),
+          signal: AbortSignal.timeout(AI_TIMEOUT),
         });
         const json = await res.json();
         if (json.error) {
@@ -127,6 +134,7 @@ Hanya output JSON, tanpa markdown.`;
             max_tokens: 4000,
             temperature: 0.7,
           }),
+          signal: AbortSignal.timeout(AI_TIMEOUT),
         });
         const json = await res.json();
         if (json.error) {
@@ -149,6 +157,7 @@ Hanya output JSON, tanpa markdown.`;
             contents: [{ parts: [{ text: prompt }] }],
             generationConfig: { temperature: 0.7, maxOutputTokens: 4000 },
           }),
+          signal: AbortSignal.timeout(AI_TIMEOUT),
         });
         const json = await res.json();
         if (json.error) {
@@ -173,6 +182,7 @@ Hanya output JSON, tanpa markdown.`;
             max_tokens: 4000,
             temperature: 0.7,
           }),
+          signal: AbortSignal.timeout(AI_TIMEOUT),
         });
         const json = await res.json();
         if (json.error) {

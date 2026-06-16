@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getUser } from "@/lib/supabase/server";
+import { rateLimitRoute } from "@/lib/rate-limit";
 
+const AI_TIMEOUT = 15000;
 const GROQ_API_KEY = process.env.GROQ_API_KEY || "";
 const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY || "";
 
@@ -44,6 +46,9 @@ Kamu adalah asisten ringan di BahasaCerdas.site — kamu ahli menjelaskan konsep
 
 export async function POST(req: NextRequest) {
   try {
+    const rl = await rateLimitRoute(req, { maxRequests: 20, windowSeconds: 60, identifier: "ai-chat" });
+    if (rl) return rl;
+
     const user = await getUser();
     if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
@@ -91,6 +96,7 @@ export async function POST(req: NextRequest) {
             temperature: 0.7,
             max_tokens: 4096,
           }),
+          signal: AbortSignal.timeout(AI_TIMEOUT),
         });
         if (res.ok) {
           const json = await res.json();
@@ -114,6 +120,7 @@ export async function POST(req: NextRequest) {
           max_tokens: 4096,
           top_p: 0.95,
         }),
+        signal: AbortSignal.timeout(AI_TIMEOUT),
       });
 
       if (res.ok) {

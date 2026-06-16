@@ -3,6 +3,9 @@ import { getUser } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 import { checkAIQuota, recordAIUsage } from "@/lib/premium";
 import { createJob, completeJob, failJob, getJob } from "@/lib/ai-queue";
+import { rateLimitRoute } from "@/lib/rate-limit";
+
+const AI_TIMEOUT = 15000;
 
 async function processRPP(jobId: string, body: Record<string, unknown>) {
   const { kd, kelas, topik, alokasi, metode, curriculum, schoolName, teacherName, semester } = body;
@@ -75,32 +78,34 @@ Isi semua field untuk topik "${t}" dan kelas ${k}. Gunakan Bahasa Indonesia.`;
 
   if (DEEPSEEK_API_KEY) {
     try {
-      const res = await fetch("https://api.deepseek.com/v1/chat/completions", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${DEEPSEEK_API_KEY}` },
-        body: JSON.stringify({
-          model: "deepseek-chat",
-          messages: [{ role: "user", content: prompt }],
-          max_tokens: 8000, temperature: 0.7,
-        }),
-      });
-      const json = await res.json();
-      if (json.error) { errors.push(`DeepSeek: ${json.error.message || json.error}`); }
-      else { content = json.choices?.[0]?.message?.content || ""; if (content) tokens = json.usage?.total_tokens || 0; }
-    } catch (e: any) { errors.push(`DeepSeek: ${e.message}`); }
-  } else { errors.push("DeepSeek: No API key"); }
+        const res = await fetch("https://api.deepseek.com/v1/chat/completions", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "Authorization": `Bearer ${DEEPSEEK_API_KEY}` },
+          body: JSON.stringify({
+            model: "deepseek-chat",
+            messages: [{ role: "user", content: prompt }],
+            max_tokens: 8000, temperature: 0.7,
+          }),
+          signal: AbortSignal.timeout(AI_TIMEOUT),
+        });
+        const json = await res.json();
+        if (json.error) { errors.push(`DeepSeek: ${json.error.message || json.error}`); }
+        else { content = json.choices?.[0]?.message?.content || ""; if (content) tokens = json.usage?.total_tokens || 0; }
+      } catch (e: any) { errors.push(`DeepSeek: ${e.message}`); }
+    } else { errors.push("DeepSeek: No API key"); }
 
-  if (!content && GROQ_API_KEY) {
-    try {
-      const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${GROQ_API_KEY}` },
-        body: JSON.stringify({
-          model: "llama-3.1-8b-instant",
-          messages: [{ role: "user", content: prompt }],
-          max_tokens: 5000, temperature: 0.7,
-        }),
-      });
+    if (!content && GROQ_API_KEY) {
+      try {
+        const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "Authorization": `Bearer ${GROQ_API_KEY}` },
+          body: JSON.stringify({
+            model: "llama-3.1-8b-instant",
+            messages: [{ role: "user", content: prompt }],
+            max_tokens: 5000, temperature: 0.7,
+          }),
+          signal: AbortSignal.timeout(AI_TIMEOUT),
+        });
       const json = await res.json();
       if (json.error) { errors.push(`Groq: ${json.error.message || json.error}`); }
       else { content = json.choices?.[0]?.message?.content || ""; if (content) tokens = content.length; }
@@ -109,14 +114,15 @@ Isi semua field untuk topik "${t}" dan kelas ${k}. Gunakan Bahasa Indonesia.`;
 
   if (!content && GEMINI_API_KEY) {
     try {
-      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "X-goog-api-key": GEMINI_API_KEY },
-        body: JSON.stringify({
-          contents: [{ parts: [{ text: prompt }] }],
-          generationConfig: { temperature: 0.7, maxOutputTokens: 8000 },
-        }),
-      });
+        const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "X-goog-api-key": GEMINI_API_KEY },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: prompt }] }],
+            generationConfig: { temperature: 0.7, maxOutputTokens: 8000 },
+          }),
+          signal: AbortSignal.timeout(AI_TIMEOUT),
+        });
       const json = await res.json();
       if (json.error) { errors.push(`Gemini: ${json.error.message || json.error}`); }
       else { content = json?.candidates?.[0]?.content?.parts?.[0]?.text || ""; if (content) tokens = content.length; }
@@ -125,15 +131,16 @@ Isi semua field untuk topik "${t}" dan kelas ${k}. Gunakan Bahasa Indonesia.`;
 
   if (!content && OPENAI_API_KEY) {
     try {
-      const res = await fetch("https://api.openai.com/v1/chat/completions", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${OPENAI_API_KEY}` },
-        body: JSON.stringify({
-          model: "gpt-4o-mini",
-          messages: [{ role: "user", content: prompt }],
-          max_tokens: 8000, temperature: 0.7,
-        }),
-      });
+        const res = await fetch("https://api.openai.com/v1/chat/completions", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "Authorization": `Bearer ${OPENAI_API_KEY}` },
+          body: JSON.stringify({
+            model: "gpt-4o-mini",
+            messages: [{ role: "user", content: prompt }],
+            max_tokens: 8000, temperature: 0.7,
+          }),
+          signal: AbortSignal.timeout(AI_TIMEOUT),
+        });
       const json = await res.json();
       if (json.error) { errors.push(`OpenAI: ${json.error.message || json.error}`); }
       else { content = json.choices?.[0]?.message?.content || ""; if (content) tokens = json.usage?.total_tokens || 0; }
@@ -157,6 +164,9 @@ Isi semua field untuk topik "${t}" dan kelas ${k}. Gunakan Bahasa Indonesia.`;
 
 export async function POST(req: NextRequest) {
   try {
+    const rl = await rateLimitRoute(req, { maxRequests: 5, windowSeconds: 60, identifier: "ai-rpp" });
+    if (rl) return rl;
+
     const user = await getUser();
     if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
