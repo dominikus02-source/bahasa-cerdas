@@ -30,10 +30,10 @@ function getClientIp(request: NextRequest): string {
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Rate limit /api/ai/* routes in middleware (enforced automatically, no per-route setup needed)
+  // Rate limit /api/ai/* routes in middleware (30 req/min blanket — per-route handlers enforce tighter limits)
   if (pathname.startsWith("/api/ai/")) {
     const ip = getClientIp(request);
-    const result = await rateLimit(ip, "ai");
+    const result = await rateLimit(ip, "ai", 30); // 30 req/min blanket — per-route handlers enforce tighter limits
     if (!result.success) {
       return new NextResponse(JSON.stringify({ error: "Too many requests" }), {
         status: 429,
