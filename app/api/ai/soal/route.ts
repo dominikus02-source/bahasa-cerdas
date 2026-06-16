@@ -2,9 +2,13 @@ import { NextRequest, NextResponse } from "next/server";
 import { getUser } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 import { checkAIQuota, recordAIUsage } from "@/lib/premium";
+import { rateLimitRoute } from "@/lib/rate-limit";
 
 export async function POST(req: NextRequest) {
   try {
+    const rl = await rateLimitRoute(req, { maxRequests: 10, windowSeconds: 60, identifier: "ai-soal" });
+    if (rl) return rl;
+
     const body = await req.json();
 
     let user: any = null
@@ -78,6 +82,8 @@ Hanya output JSON array.`;
     let provider = "";
     const errors: string[] = [];
 
+    const AI_TIMEOUT = 15000; // 15s per provider
+
     if (DEEPSEEK_API_KEY) {
       try {
         const res = await fetch("https://api.deepseek.com/v1/chat/completions", {
@@ -89,6 +95,7 @@ Hanya output JSON array.`;
             max_tokens: 4000,
             temperature: 0.7,
           }),
+          signal: AbortSignal.timeout(AI_TIMEOUT),
         });
         const json = await res.json();
         if (json.error) {
@@ -113,6 +120,7 @@ Hanya output JSON array.`;
             max_tokens: 4000,
             temperature: 0.7,
           }),
+          signal: AbortSignal.timeout(AI_TIMEOUT),
         });
         const json = await res.json();
         if (json.error) {
@@ -135,6 +143,7 @@ Hanya output JSON array.`;
             contents: [{ parts: [{ text: prompt }] }],
             generationConfig: { temperature: 0.7, maxOutputTokens: 4000 },
           }),
+          signal: AbortSignal.timeout(AI_TIMEOUT),
         });
         const json = await res.json();
         if (json.error) {
@@ -159,6 +168,7 @@ Hanya output JSON array.`;
             max_tokens: 4000,
             temperature: 0.7,
           }),
+          signal: AbortSignal.timeout(AI_TIMEOUT),
         });
         const json = await res.json();
         if (json.error) {
@@ -207,15 +217,10 @@ Hanya output JSON array.`;
             source: "AI",
             uploaderId: user.id,
           })),
+          skipDuplicates: true,
         });
 
-        const savedList = await db.soal.findMany({
-          where: { uploaderId: user.id },
-          orderBy: { createdAt: "desc" },
-          take: savedSoals.count,
-        });
-
-        return NextResponse.json({ soal: savedList, saved: savedSoals.count });
+        return NextResponse.json({ soal: soalArray, saved: savedSoals.count });
       }
 
       return NextResponse.json({ soal: soalArray, saved: 0 });

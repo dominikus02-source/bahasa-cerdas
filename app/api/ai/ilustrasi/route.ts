@@ -2,9 +2,13 @@ import { NextRequest, NextResponse } from "next/server"
 import { createClient } from "@supabase/supabase-js"
 import crypto from "crypto"
 import { getUser } from "@/lib/supabase/server"
+import { rateLimitRoute } from "@/lib/rate-limit"
 
 export async function GET(req: NextRequest) {
   try {
+    const rl = await rateLimitRoute(req, { maxRequests: 20, windowSeconds: 60, identifier: "ai-ilustrasi" });
+    if (rl) return rl;
+
     const user = await getUser();
     if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     const prompt = req.nextUrl.searchParams.get("prompt")

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import cache from "@/lib/redis";
 
 export async function GET(
   req: NextRequest,
@@ -7,6 +8,10 @@ export async function GET(
 ) {
   try {
     const { id } = await params;
+
+    const cacheKey = `profile:public:${id}`;
+    const cached = await cache.get<Record<string, unknown>>(cacheKey);
+    if (cached) return NextResponse.json(cached, { headers: { "X-Cache": "HIT" } });
 
     const user = await db.user.findUnique({
       where: { id },
@@ -64,7 +69,7 @@ export async function GET(
       _sum: { downloads: true },
     });
 
-    return NextResponse.json({
+    const result = {
       user: {
         id: user.id,
         fullName: user.fullName,
@@ -88,7 +93,11 @@ export async function GET(
           totalDownloads: totalDownloads._sum.downloads || 0,
         },
       },
-    });
+    };
+
+    await cache.set(cacheKey, result, 60); // 1 min — profile data changes moderately
+
+    return NextResponse.json(result, { headers: { "X-Cache": "MISS" } });
   } catch (error) {
     console.error("GET /api/user/profile/[id] error:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });

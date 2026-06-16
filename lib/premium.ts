@@ -1,4 +1,5 @@
 import { db } from "@/lib/db";
+import cache from "@/lib/redis";
 import type { User, PremiumPlan } from "@prisma/client";
 
 const AI_QUOTA = {
@@ -26,9 +27,14 @@ export async function getAIUsageCount(
   feature: string
 ): Promise<number> {
   const bulan = new Date().toISOString().slice(0, 7);
-  return db.aIUsage.count({
+  const cacheKey = `aige:${userId}:${feature}:${bulan}`;
+  const cached = await cache.get<number>(cacheKey);
+  if (cached !== null) return cached;
+  const count = await db.aIUsage.count({
     where: { userId, feature, bulan },
   });
+  cache.set(cacheKey, count, 120); // cache for 2 min
+  return count;
 }
 
 export async function checkAIQuota(
@@ -50,9 +56,12 @@ export async function recordAIUsage(
   costUSD: number
 ) {
   const bulan = new Date().toISOString().slice(0, 7);
-  return db.aIUsage.create({
+  // Fire-and-forget — non-critical write, don't block the response
+  db.aIUsage.create({
     data: { userId, feature, tokens, costUSD, bulan },
-  });
+  }).catch(() => {});
+  // Invalidate cached usage count
+  cache.del(`aige:${userId}:${feature}:${bulan}`).catch(() => {});
 }
 
 export function formatCurrency(amount: number): string {

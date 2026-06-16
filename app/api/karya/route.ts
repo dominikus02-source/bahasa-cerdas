@@ -1,11 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getUser } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
+import cache from "@/lib/redis";
 
 export async function GET(req: NextRequest) {
   try {
     const user = await getUser();
     if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+    const cacheKey = "karya:published";
+    const cached = await cache.get<{ karya: unknown[] }>(cacheKey);
+    if (cached) return NextResponse.json(cached, { headers: { "X-Cache": "HIT" } });
 
     const karya = await db.karya.findMany({
       where: { isPublished: true },
@@ -13,7 +18,10 @@ export async function GET(req: NextRequest) {
       orderBy: { createdAt: "desc" },
     });
 
-    return NextResponse.json({ karya });
+    const result = { karya };
+    await cache.set(cacheKey, result, 30);
+
+    return NextResponse.json(result, { headers: { "X-Cache": "MISS" } });
   } catch (error) {
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
