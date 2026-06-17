@@ -70,8 +70,6 @@ Isi semua field untuk topik "${t}" dan kelas ${k}. Gunakan Bahasa Indonesia.`;
   const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
   const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY_RPP || process.env.DEEPSEEK_API_KEY;
   const GROQ_API_KEY = process.env.GROQ_API_KEY;
-  const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
-
   let content = "";
   let tokens = 0;
   const errors: string[] = [];
@@ -135,31 +133,10 @@ Isi semua field untuk topik "${t}" dan kelas ${k}. Gunakan Bahasa Indonesia.`;
     } catch (e: any) { errors.push(`Groq: ${e.message}`); }
   }
 
-  async function callOpenAI() {
-    if (!OPENAI_API_KEY) { errors.push("OpenAI: No API key"); return; }
-    try {
-      const res = await fetch("https://api.openai.com/v1/chat/completions", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${OPENAI_API_KEY}` },
-        body: JSON.stringify({
-          model: "gpt-4o-mini",
-          messages: [{ role: "user", content: prompt }],
-          max_tokens: 8000, temperature: 0.7,
-        }),
-        signal: AbortSignal.timeout(AI_TIMEOUT),
-      });
-      const json = await res.json();
-      if (json.error) { errors.push(`OpenAI: ${json.error.message || json.error}`); return; }
-      content = json.choices?.[0]?.message?.content || "";
-      if (content) tokens = json.usage?.total_tokens || 0;
-    } catch (e: any) { errors.push(`OpenAI: ${e.message}`); }
-  }
-
   // RPP: Gemini first (1M context ideal for long docs), DeepSeek RPP key as fallback
   await callGemini();
   if (!content) await callDeepSeek();
   if (!content) await callGroq();
-  if (!content) await callOpenAI();
 
   if (!content) {
     await failJob(jobId, `Semua AI provider gagal: ${errors.join("; ")}`);

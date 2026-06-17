@@ -94,7 +94,6 @@ Hanya output JSON, tanpa markdown.`;
 
     const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
     const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY;
-    const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
     const GROQ_API_KEY = process.env.GROQ_API_KEY;
 
     let content = "";
@@ -172,31 +171,6 @@ Hanya output JSON, tanpa markdown.`;
       } catch (e: any) { errors.push(`Gemini: ${e.message}`); }
     } else if (!content) {
       errors.push("Gemini: No API key");
-    }
-
-    if (!content && OPENAI_API_KEY) {
-      try {
-        const res = await fetch("https://api.openai.com/v1/chat/completions", {
-          method: "POST",
-          headers: { "Content-Type": "application/json", "Authorization": `Bearer ${OPENAI_API_KEY}` },
-          body: JSON.stringify({
-            model: "gpt-4o-mini",
-            messages: [{ role: "user", content: prompt }],
-            max_tokens: 4000,
-            temperature: 0.3,
-          }),
-          signal: AbortSignal.timeout(AI_TIMEOUT),
-        });
-        const json = await res.json();
-        if (json.error) {
-          errors.push(`OpenAI: ${json.error.message || json.error}`);
-        } else {
-          content = json.choices?.[0]?.message?.content || "";
-          if (content) tokens = json.usage?.total_tokens || 0;
-        }
-      } catch (e: any) { errors.push(`OpenAI: ${e.message}`); }
-    } else if (!content) {
-      errors.push("OpenAI: No API key");
     }
 
     if (!content) {

@@ -75,7 +75,6 @@ Hanya output JSON array.`;
 
     const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
     const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY;
-    const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
     const GROQ_API_KEY = process.env.GROQ_API_KEY;
 
     let content = "";
@@ -157,34 +156,9 @@ Hanya output JSON array.`;
       errors.push("Gemini: No API key");
     }
 
-    if (!content && OPENAI_API_KEY) {
-      try {
-        const res = await fetch("https://api.openai.com/v1/chat/completions", {
-          method: "POST",
-          headers: { "Content-Type": "application/json", "Authorization": `Bearer ${OPENAI_API_KEY}` },
-          body: JSON.stringify({
-            model: "gpt-4o-mini",
-            messages: [{ role: "user", content: prompt }],
-            max_tokens: 4000,
-            temperature: 0.7,
-          }),
-          signal: AbortSignal.timeout(AI_TIMEOUT),
-        });
-        const json = await res.json();
-        if (json.error) {
-          errors.push(`OpenAI: ${json.error.message || json.error}`);
-        } else {
-          content = json.choices?.[0]?.message?.content || "";
-          if (content) provider = "openai";
-        }
-      } catch (e: any) { errors.push(`OpenAI: ${e.message}`); }
-    } else if (!content) {
-      errors.push("OpenAI: No API key");
-    }
-
     if (!content) {
       console.error("All AI providers failed:", errors);
-      return NextResponse.json({ error: `Semua AI provider gagal: ${errors.join("; ")}. Tambahkan GROQ_API_KEY (gratis di console.groq.com) atau enable billing di Google Cloud/OpenAI.` }, { status: 500 });
+      return NextResponse.json({ error: `Semua AI provider gagal: ${errors.join("; ")}.` }, { status: 500 });
     }
 
     let soal = content;
