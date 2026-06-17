@@ -67,7 +67,7 @@ ${curriculum === "K13" ? JSON.stringify({
 
 Isi semua field untuk topik "${t}" dan kelas ${k}. Gunakan Bahasa Indonesia.`;
 
-  const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY;
+  const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY_RPP || process.env.DEEPSEEK_API_KEY;
   const GROQ_API_KEY = process.env.GROQ_API_KEY;
   const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
   const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
