@@ -216,7 +216,7 @@ Hanya output JSON, tanpa markdown.`;
     }
 
     const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-    const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY;
+    const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY_TEXT_ANALYSIS || process.env.DEEPSEEK_API_KEY;
     const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
     const GROQ_API_KEY = process.env.GROQ_API_KEY;
 
