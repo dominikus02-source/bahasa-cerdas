@@ -67,85 +67,99 @@ ${curriculum === "K13" ? JSON.stringify({
 
 Isi semua field untuk topik "${t}" dan kelas ${k}. Gunakan Bahasa Indonesia.`;
 
+  const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
   const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY_RPP || process.env.DEEPSEEK_API_KEY;
   const GROQ_API_KEY = process.env.GROQ_API_KEY;
-  const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
   const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 
   let content = "";
   let tokens = 0;
   const errors: string[] = [];
 
-  if (DEEPSEEK_API_KEY) {
+  async function callGemini() {
+    if (!GEMINI_API_KEY) { errors.push("Gemini: No API key"); return; }
     try {
-        const res = await fetch("https://api.deepseek.com/v1/chat/completions", {
-          method: "POST",
-          headers: { "Content-Type": "application/json", "Authorization": `Bearer ${DEEPSEEK_API_KEY}` },
-          body: JSON.stringify({
-            model: "deepseek-chat",
-            messages: [{ role: "user", content: prompt }],
-            max_tokens: 8000, temperature: 0.7,
-          }),
-          signal: AbortSignal.timeout(AI_TIMEOUT),
-        });
-        const json = await res.json();
-        if (json.error) { errors.push(`DeepSeek: ${json.error.message || json.error}`); }
-        else { content = json.choices?.[0]?.message?.content || ""; if (content) tokens = json.usage?.total_tokens || 0; }
-      } catch (e: any) { errors.push(`DeepSeek: ${e.message}`); }
-    } else { errors.push("DeepSeek: No API key"); }
-
-    if (!content && GROQ_API_KEY) {
-      try {
-        const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-          method: "POST",
-          headers: { "Content-Type": "application/json", "Authorization": `Bearer ${GROQ_API_KEY}` },
-          body: JSON.stringify({
-            model: "llama-3.1-8b-instant",
-            messages: [{ role: "user", content: prompt }],
-            max_tokens: 5000, temperature: 0.7,
-          }),
-          signal: AbortSignal.timeout(AI_TIMEOUT),
-        });
+      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "X-goog-api-key": GEMINI_API_KEY },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: prompt }] }],
+          generationConfig: { temperature: 0.7, maxOutputTokens: 8192 },
+        }),
+        signal: AbortSignal.timeout(AI_TIMEOUT),
+      });
       const json = await res.json();
-      if (json.error) { errors.push(`Groq: ${json.error.message || json.error}`); }
-      else { content = json.choices?.[0]?.message?.content || ""; if (content) tokens = content.length; }
-    } catch (e: any) { errors.push(`Groq: ${e.message}`); }
-  } else if (!content) { errors.push("Groq: No API key"); }
-
-  if (!content && GEMINI_API_KEY) {
-    try {
-        const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json", "X-goog-api-key": GEMINI_API_KEY },
-          body: JSON.stringify({
-            contents: [{ parts: [{ text: prompt }] }],
-            generationConfig: { temperature: 0.7, maxOutputTokens: 8000 },
-          }),
-          signal: AbortSignal.timeout(AI_TIMEOUT),
-        });
-      const json = await res.json();
-      if (json.error) { errors.push(`Gemini: ${json.error.message || json.error}`); }
-      else { content = json?.candidates?.[0]?.content?.parts?.[0]?.text || ""; if (content) tokens = content.length; }
+      if (json.error) { errors.push(`Gemini: ${json.error.message || json.error}`); return; }
+      content = json?.candidates?.[0]?.content?.parts?.[0]?.text || "";
+      if (content) tokens = content.length;
     } catch (e: any) { errors.push(`Gemini: ${e.message}`); }
-  } else if (!content) { errors.push("Gemini: No API key"); }
+  }
 
-  if (!content && OPENAI_API_KEY) {
+  async function callDeepSeek() {
+    if (!DEEPSEEK_API_KEY) { errors.push("DeepSeek: No API key"); return; }
     try {
-        const res = await fetch("https://api.openai.com/v1/chat/completions", {
-          method: "POST",
-          headers: { "Content-Type": "application/json", "Authorization": `Bearer ${OPENAI_API_KEY}` },
-          body: JSON.stringify({
-            model: "gpt-4o-mini",
-            messages: [{ role: "user", content: prompt }],
-            max_tokens: 8000, temperature: 0.7,
-          }),
-          signal: AbortSignal.timeout(AI_TIMEOUT),
-        });
+      const res = await fetch("https://api.deepseek.com/v1/chat/completions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${DEEPSEEK_API_KEY}` },
+        body: JSON.stringify({
+          model: "deepseek-chat",
+          messages: [{ role: "user", content: prompt }],
+          max_tokens: 8000, temperature: 0.7,
+        }),
+        signal: AbortSignal.timeout(AI_TIMEOUT),
+      });
       const json = await res.json();
-      if (json.error) { errors.push(`OpenAI: ${json.error.message || json.error}`); }
-      else { content = json.choices?.[0]?.message?.content || ""; if (content) tokens = json.usage?.total_tokens || 0; }
+      if (json.error) { errors.push(`DeepSeek: ${json.error.message || json.error}`); return; }
+      content = json.choices?.[0]?.message?.content || "";
+      if (content) tokens = json.usage?.total_tokens || 0;
+    } catch (e: any) { errors.push(`DeepSeek: ${e.message}`); }
+  }
+
+  async function callGroq() {
+    if (!GROQ_API_KEY) { errors.push("Groq: No API key"); return; }
+    try {
+      const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${GROQ_API_KEY}` },
+        body: JSON.stringify({
+          model: "llama-3.1-8b-instant",
+          messages: [{ role: "user", content: prompt }],
+          max_tokens: 5000, temperature: 0.7,
+        }),
+        signal: AbortSignal.timeout(AI_TIMEOUT),
+      });
+      const json = await res.json();
+      if (json.error) { errors.push(`Groq: ${json.error.message || json.error}`); return; }
+      content = json.choices?.[0]?.message?.content || "";
+      if (content) tokens = content.length;
+    } catch (e: any) { errors.push(`Groq: ${e.message}`); }
+  }
+
+  async function callOpenAI() {
+    if (!OPENAI_API_KEY) { errors.push("OpenAI: No API key"); return; }
+    try {
+      const res = await fetch("https://api.openai.com/v1/chat/completions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${OPENAI_API_KEY}` },
+        body: JSON.stringify({
+          model: "gpt-4o-mini",
+          messages: [{ role: "user", content: prompt }],
+          max_tokens: 8000, temperature: 0.7,
+        }),
+        signal: AbortSignal.timeout(AI_TIMEOUT),
+      });
+      const json = await res.json();
+      if (json.error) { errors.push(`OpenAI: ${json.error.message || json.error}`); return; }
+      content = json.choices?.[0]?.message?.content || "";
+      if (content) tokens = json.usage?.total_tokens || 0;
     } catch (e: any) { errors.push(`OpenAI: ${e.message}`); }
-  } else if (!content) { errors.push("OpenAI: No API key"); }
+  }
+
+  // RPP: Gemini first (1M context ideal for long docs), DeepSeek RPP key as fallback
+  await callGemini();
+  if (!content) await callDeepSeek();
+  if (!content) await callGroq();
+  if (!content) await callOpenAI();
 
   if (!content) {
     await failJob(jobId, `Semua AI provider gagal: ${errors.join("; ")}`);
