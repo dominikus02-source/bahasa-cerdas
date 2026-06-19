@@ -4,7 +4,7 @@ import { withSentryConfig } from "@sentry/nextjs";
 const nextConfig: NextConfig = {
   experimental: {
     serverActions: {
-      allowedOrigins: ["localhost:3000", "bahasacerdas.com"],
+      allowedOrigins: ["localhost:3000", "bahasacerdas.com", "www.bahasacerdas.com"],
       bodySizeLimit: "50mb",
     },
   },
@@ -20,6 +20,22 @@ const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: false,
   },
+  async redirects() {
+    return [
+      {
+        source: "/:path*",
+        has: [{ type: "host", value: "www.bahasacerdas.com" }],
+        destination: "https://bahasacerdas.com/:path*",
+        permanent: true,
+      },
+      {
+        source: "/:path*",
+        has: [{ type: "host", value: "bahasacerdas.site" }],
+        destination: "https://bahasacerdas.com/:path*",
+        permanent: true,
+      },
+    ];
+  },
   async headers() {
     return [
       {
@@ -28,7 +44,9 @@ const nextConfig: NextConfig = {
           { key: "X-Content-Type-Options", value: "nosniff" },
           { key: "X-Frame-Options", value: "DENY" },
           { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
-          { key: "Strict-Transport-Security", value: "max-age=31536000; includeSubDomains; preload" },
+          // HSTS: preload omitted — game.bahasacerdas.com has no TLS
+          // WARNING: If game.bahasacerdas.com gets HTTPS, re-enable: "max-age=31536000; includeSubDomains; preload"
+          { key: "Strict-Transport-Security", value: "max-age=31536000; includeSubDomains" },
           { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
           { key: "X-DNS-Prefetch-Control", value: "on" },
           // CSP is set dynamically in middleware.ts with nonce support
