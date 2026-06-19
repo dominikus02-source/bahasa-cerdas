@@ -10,17 +10,6 @@
       ],
       "destination": "https://bahasacerdas.com/$1",
       "permanent": true
-    },
-    {
-      "source": "/(.*)",
-      "has": [
-        {
-          "type": "host",
-          "value": "bahasacerdas.site"
-        }
-      ],
-      "destination": "https://bahasacerdas.com/$1",
-      "permanent": true
     }
   ]
 }

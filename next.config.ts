@@ -28,12 +28,6 @@ const nextConfig: NextConfig = {
         destination: "https://bahasacerdas.com/:path*",
         permanent: true,
       },
-      {
-        source: "/:path*",
-        has: [{ type: "host", value: "bahasacerdas.site" }],
-        destination: "https://bahasacerdas.com/:path*",
-        permanent: true,
-      },
     ];
   },
   async headers() {
