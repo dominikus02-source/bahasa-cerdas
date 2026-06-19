@@ -30,7 +30,7 @@ export default async function OGImage() {
           Platform Edukasi Bahasa Indonesia
         </div>
         <div style={{ fontSize: 20, opacity: 0.7, marginTop: 32 }}>
-          bahasacerdas.com
+          www.bahasacerdas.com
         </div>
       </div>,
       size
@@ -85,7 +85,7 @@ export default async function OGImage() {
         }}
       >
         <img
-          src="https://bahasacerdas.com/BC-logo.png"
+          src="https://www.bahasacerdas.com/BC-logo.png"
           alt=""
           width={100}
           height={100}
@@ -125,7 +125,7 @@ export default async function OGImage() {
           opacity: 0.8,
         }}
       >
-        bahasacerdas.com
+        www.bahasacerdas.com
       </div>
     </div>,
     {

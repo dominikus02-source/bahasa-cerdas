@@ -13,7 +13,7 @@ export default function ShareButton({ url, title, text }: ShareButtonProps) {
   const [copied, setCopied] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
 
-  const siteUrl = typeof window !== "undefined" ? window.location.origin : "https://bahasacerdas.com";
+  const siteUrl = typeof window !== "undefined" ? window.location.origin : "https://www.bahasacerdas.com";
   const fullUrl = url.startsWith("http") ? url : `${siteUrl}${url}`;
   const shareText = text || `Lihat ini di BahasaCerdas: ${title}`;
 

@@ -7,4 +7,4 @@ Disallow: /murid/
 Disallow: /auth/
 Disallow: /game/
 
-Sitemap: https://bahasacerdas.com/sitemap.xml
+Sitemap: https://www.bahasacerdas.com/sitemap.xml

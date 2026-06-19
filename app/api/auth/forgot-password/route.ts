@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
       process.env.SUPABASE_SERVICE_ROLE_KEY!
     );
 
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://bahasacerdas.com";
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.bahasacerdas.com";
 
     const { error } = await supabase.auth.resetPasswordForEmail(email.toLowerCase(), {
       redirectTo: `${siteUrl}/reset-password`,

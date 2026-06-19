@@ -14,7 +14,7 @@ import KomunitasSection from "@/components/landing/KomunitasSection";
 import FAQSection from "@/components/landing/FAQSection";
 import FinalCTA from "@/components/landing/FinalCTA";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 export const metadata: Metadata = {
   title: "BahasaCerdas — Platform edukasi Bahasa Indonesia",
@@ -94,10 +94,10 @@ export default async function HomePage() {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Beranda", item: "https://bahasacerdas.com" },
-      { "@type": "ListItem", position: 2, name: "Artikel", item: "https://bahasacerdas.com/artikel" },
-      { "@type": "ListItem", position: 3, name: "Marketplace", item: "https://bahasacerdas.com/marketplace" },
-      { "@type": "ListItem", position: 4, name: "Video Belajar", item: "https://bahasacerdas.com/video-belajar" },
+      { "@type": "ListItem", position: 1, name: "Beranda", item: "https://www.bahasacerdas.com" },
+      { "@type": "ListItem", position: 2, name: "Artikel", item: "https://www.bahasacerdas.com/artikel" },
+      { "@type": "ListItem", position: 3, name: "Marketplace", item: "https://www.bahasacerdas.com/marketplace" },
+      { "@type": "ListItem", position: 4, name: "Video Belajar", item: "https://www.bahasacerdas.com/video-belajar" },
     ],
   };
 

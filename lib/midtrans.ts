@@ -3,7 +3,7 @@ import type { Snap } from "midtrans-client";
 let midtransClient: Snap;
 
 function getSiteUrl(): string {
-  return process.env.NEXT_PUBLIC_SITE_URL || "https://bahasacerdas.com";
+  return process.env.NEXT_PUBLIC_SITE_URL || "https://www.bahasacerdas.com";
 }
 
 export function getIsProduction(): boolean {

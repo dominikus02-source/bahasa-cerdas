@@ -117,7 +117,7 @@ export default function LoginPage() {
     setError("");
 
     try {
-      const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || window.location.origin || "https://bahasacerdas.com";
+      const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || window.location.origin || "https://www.bahasacerdas.com";
       const supabase = createClient();
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",

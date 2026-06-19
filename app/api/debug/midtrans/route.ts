@@ -16,7 +16,7 @@ export async function GET() {
       serverKeySet: !!serverKey,
       clientKeySet: !!clientKey,
       snapUrl: "https://app.midtrans.com/snap/snap.js",
-      siteUrl: process.env.NEXT_PUBLIC_SITE_URL || "https://bahasacerdas.com",
+      siteUrl: process.env.NEXT_PUBLIC_SITE_URL || "https://www.bahasacerdas.com",
     },
   });
 }

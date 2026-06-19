@@ -48,7 +48,7 @@ export default async function OGImage({ params }: { params: Promise<{ id: string
       }}>
         <div style={{ fontSize: 64, fontWeight: 800 }}>{judul}</div>
         <div style={{ fontSize: 24, opacity: 0.9, marginTop: 16 }}>{penulis}</div>
-        <div style={{ fontSize: 18, opacity: 0.7, marginTop: 24 }}>bahasacerdas.com</div>
+        <div style={{ fontSize: 18, opacity: 0.7, marginTop: 24 }}>www.bahasacerdas.com</div>
       </div>,
       size
     )
@@ -89,7 +89,7 @@ export default async function OGImage({ params }: { params: Promise<{ id: string
         )}
 
         <div style={{ marginTop: 32, fontSize: 18, opacity: 0.6, display: "flex", alignItems: "center", gap: 6 }}>
-          <span>bahasacerdas.com</span>
+          <span>www.bahasacerdas.com</span>
         </div>
       </div>
     </div>,
