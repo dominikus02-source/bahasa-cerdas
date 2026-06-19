@@ -57,23 +57,103 @@ export async function POST(req: NextRequest) {
     }
 
     // Generate PPT content using AI with deep research
-    const prompt = `Buat PPT Bahasa Indonesia kurikulum Merdeka.
+    const prompt = `Kamu adalah ahli desain instruksional dan pengembang kurikulum Bahasa Indonesia. Tugasmu adalah membuat konten presentasi PPT yang **siap pakai untuk mengajar** dengan riset mendalam.
 
-JUDUL: ${title}
-TOPIK: ${topik}
-KELAS: ${grade}
-KURIKULUM: ${kurikulum}
-SLIDE: ${jumlahSlide}
+KONTEKS:
+- Judul: ${title}
+- Topik: ${topik}
+- Kelas: ${grade}
+- Kurikulum: ${kurikulum} (Kurikulum Merdeka)
+- Jumlah Slide: ${jumlahSlide}
+- Mapel: Bahasa Indonesia
 
-RISET: KD, CP, materi Kemendikbud, contoh kelas ${grade}.
-GAMBAR: Saran Unsplash/Pexels/Pixabay (keyword).
-IMPLEMENTASI: Latihan, aktivitas, proyek, rubrik.
+## FASE RISET (WAJIB — lakukan sebelum menulis slide)
 
-STRUKTUR: 1.Judul 2.Tujuan 3.Apersepsi 4-${jumlahSlide-3}.Materi ${jumlahSlide-2}.Rangkuman ${jumlahSlide-1}.Implementasi ${jumlahSlide}.Penutup
+1. **Analisis Kurikulum**: Apa CP (Capaian Pembelajaran) dan TP (Tujuan Pembelajaran) yang relevan untuk kelas ${grade} pada topik ${title}? Apa KD (Kompetensi Dasar) yang tercakup? Level taksonomi Bloom apa yang dicapai? (C1-C6)
 
-JSON: {"risetSummary":"S","kompetensiDasar":["K"],"capaianPembelajaran":"C","sumberGambar":{"unsplash":"U","pexels":"P","pixabay":"X"},"contohImplementasi":{"latihanKelas":["L"],"aktivitasInteraktif":["A"],"proyekMini":"M","rubrikPenilaian":"R"},"slides":[{"type":"t","title":"T","subtitle":"S","content":"C","bullets":["B"],"imageSuggestion":{"keyword":"K","unsplashUrl":"U","description":"D"},"contohImplementasi":"I","notes":"N"}]}
+2. **Karakteristik Siswa**: Siswa kelas ${grade} (usia ${grade.includes("SMA") ? "15-18" : grade.includes("SMP") ? "12-15" : grade.includes("SD Kelas 4-6") ? "9-12" : "6-9"} tahun) memiliki karakteristik apa? Prior knowledge mereka tentang topik ini? Miskonsepsi apa yang sering muncul?
 
-Output HANYA JSON.`;
+3. **Konteks Indonesia**: Berikan contoh konkret yang relevan dengan budaya dan kehidupan sehari-hari siswa Indonesia (bukan contoh Western). Gunakan nama tokoh, tempat, dan situasi yang familiar bagi siswa Indonesia.
+
+4. **Strategi Penyajian**: Gunakan pendekatan saintifik (5M: Mengamati, Menanya, Mengumpulkan Informasi, Mengasosiasi, Mengkomunikasikan) sesuai Kurikulum Merdeka.
+
+## STRUKTUR SLIDE WAJIB
+
+| Urutan | Tipe | Konten |
+|--------|------|--------|
+| 1 | title | Judul, subtitle, kelas, info |
+| 2 | objectives | Tujuan Pembelajaran (TP) — apa yang akan dicapai siswa |
+| 3 | apersepsi | Pertanyaan pemantik, gambar/video, koneksi ke kehidupan nyata |
+| 4-${jumlahSlide-3} | learn | Materi inti (bertahap: pengertian → struktur → contoh → analisis) |
+| ${jumlahSlide-2} | activity | Aktivitas/Latihan interaktif — siswa melakukan sesuatu |
+| ${jumlahSlide-1} | summary | Rangkuman visual — peta konsep / mind map |
+| ${jumlahSlide} | closing | Refleksi (3-2-1), tugas mandiri, tindak lanjut |
+
+## ATURAN PER SLIDE
+
+Setiap slide dalam array "slides" WAJIB memiliki:
+
+1. **type**: "title" | "objectives" | "apersepsi" | "learn" | "activity" | "summary" | "closing"
+2. **title**: Judul slide (maks 8 kata)
+3. **subtitle**: Subjudul (opsional)
+4. **content**: Paragraf singkat (maks 30 kata) menjelaskan inti slide
+5. **bullets**: Array 3-5 bullet point, masing-masing:
+   - Bahasa Indonesia yang baik
+   - Aktif voice (bukan pasif)
+   - Bisa dipahami siswa dalam 3 detik
+   - Contoh konkret dari keseharian siswa Indonesia
+6. **imageSuggestion**: {"keyword": "kata kunci untuk cari gambar", "description": "deskripsi gambar yang dibutuhkan"}
+   - Keyword harus relevan dengan budaya Indonesia
+7. **aktivitas**: Aktivitas YANG DILAKUKAN SISWA (bukan guru):
+   - "Individu: tulis 3 contoh ${topik} di sekitar sekolah"
+   - "Berpasangan: diskusikan perbedaan A dan B"
+   - "Kelompok: buat peta konsep"
+8. **guruNotes**: Catatan untuk guru:
+   - Narasi yang bisa diucapkan guru (dalam kalimat langsung)
+   - Perkiraan waktu (menit)
+   - Miskonsepsi yang harus diantisipasi
+   - Pertanyaan pemantik tambahan
+9. **contohImplementasi**: Contoh implementasi di kelas (spesifik, bukan umum)
+
+## CONTOH APERSEPSI YANG BAIK (bukan "Apa yang kalian ketahui tentang X")
+
+ALIHKAN:
+"Pernahkah kalian melihat video viral di TikTok tentang ...? Nah, hari ini kita akan belajar ..."
+"Perhatikan gambar ini. Menurut kalian, apa yang terjadi? ... Ya, itu adalah contoh dari ..."
+"Coba tebak: topik kita hari ini berkaitan dengan ..."
+
+## FORMAT OUTPUT (HARUS JSON, tanpa markdown, tanpa komentar)
+
+{
+  "risetSummary": "Ringkasan hasil riset kurikulum dalam 2-3 kalimat",
+  "kompetensiDasar": ["KD_1", "KD_2"],
+  "capaianPembelajaran": "CP yang relevan",
+  "tujuanPembelajaran": ["TP_1", "TP_2", "TP_3"],
+  "bloomLevel": "C3 (Menerapkan)",
+  "karakterSiswa": "Deskripsi karakteristik dan prior knowledge siswa",
+  "miskonsepsiUmum": ["Miskonsepsi 1", "Miskonsepsi 2"],
+  "contohImplementasi": {
+    "latihanKelas": ["Latihan 1", "Latihan 2"],
+    "aktivitasInteraktif": ["Aktivitas 1", "Aktivitas 2"],
+    "proyekMini": "Deskripsi proyek",
+    "rubrikPenilaian": "Kriteria penilaian"
+  },
+  "slides": [
+    {
+      "type": "title",
+      "title": "${title}",
+      "subtitle": "Bahasa Indonesia | ${grade} | Kurikulum ${kurikulum}",
+      "content": "",
+      "bullets": [],
+      "imageSuggestion": {"keyword": "belajar bahasa Indonesia", "description": "Siswa Indonesia belajar di kelas"},
+      "aktivitas": "",
+      "guruNotes": "Slide pembuka. Sapa siswa, tanyakan kabar, sampaikan bahwa hari ini akan belajar ${title}.",
+      "contohImplementasi": ""
+    }
+  ]
+}
+
+HARUS JSON VALID. Tidak ada teks lain di luar JSON. Semua teks dalam BAHASA INDONESIA. Pastikan contoh dan konteks sesuai dengan kehidupan siswa Indonesia.`;
 
     const GROQ_API_KEY = process.env.GROQ_API_KEY;
     const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY;
@@ -81,7 +161,7 @@ Output HANYA JSON.`;
     console.log("Step 1: Generating AI content...");
     let aiContent = "";
 
-    // Try DeepSeek first (unlimited TPM)
+    // Try DeepSeek first (unlimited TPM, better for long content)
     if (DEEPSEEK_API_KEY) {
       try {
         const res = await fetch("https://api.deepseek.com/v1/chat/completions", {
@@ -93,8 +173,8 @@ Output HANYA JSON.`;
               { role: "system", content: "You are a JSON-only API. Always respond with valid JSON. Never include explanations, markdown, or text outside the JSON object." },
               { role: "user", content: prompt }
             ],
-            max_tokens: 4000,
-            temperature: 0.2,
+            max_tokens: 8000,
+            temperature: 0.7,
           }),
         });
         if (res.ok) {
@@ -119,13 +199,13 @@ Output HANYA JSON.`;
           method: "POST",
           headers: { "Content-Type": "application/json", "Authorization": `Bearer ${GROQ_API_KEY}` },
           body: JSON.stringify({
-            model: "llama-3.1-8b-instant",
+            model: "llama-3.3-70b-versatile",
             messages: [
               { role: "system", content: "You are a JSON-only API. Always respond with valid JSON. Never include explanations, markdown, or text outside the JSON object." },
               { role: "user", content: prompt }
             ],
-            max_tokens: 4000,
-            temperature: 0.2,
+            max_tokens: 8000,
+            temperature: 0.7,
             response_format: { type: "json_object" }
           }),
         });
@@ -275,8 +355,13 @@ Output HANYA JSON.`;
           });
         }
 
+        // Map new types to existing types for rendering
+        const slideType = slide.type === "objectives" || slide.type === "apersepsi" || slide.type === "learn" 
+          ? "bullet" 
+          : slide.type === "activity" ? "content" : slide.type;
+
         // Slide content based on type
-        switch (slide.type) {
+        switch (slideType) {
           case "title":
             // Title slide
             presSlide.addShape(pres.ShapeType.rect, {
@@ -469,9 +554,10 @@ Output HANYA JSON.`;
             }
         }
 
-        // Add presenter notes
-        if (slide.notes) {
-          presSlide.addNotes(slide.notes);
+        // Add presenter notes (support both notes and guruNotes)
+        const notes = slide.guruNotes || slide.notes;
+        if (notes) {
+          presSlide.addNotes(notes);
         }
       });
     }
@@ -554,6 +640,7 @@ function generateFallbackPPT(params: { title: string; topik: string; grade: stri
     bullets: [],
     imageSuggestion: { keyword: "belajar", unsplashUrl: "", description: "Suasana belajar mengajar Bahasa Indonesia" },
     contohImplementasi: "",
+    guruNotes: "Slide pembuka. Sapa siswa, tanya kabar, sampaikan tujuan pembelajaran hari ini.",
     notes: "Slide pembuka presentasi.",
   });
 

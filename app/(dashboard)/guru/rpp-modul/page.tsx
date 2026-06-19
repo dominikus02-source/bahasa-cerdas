@@ -104,8 +104,35 @@ export default function RPPModulPage() {
       const data = await res.json();
       if (data.rpp) {
         setGenerated(data.rpp);
+      } else if (data.jobId) {
+        // Async job — poll for completion
+        const poll = async (jobId: string) => {
+          for (let i = 0; i < 60; i++) {
+            await new Promise(r => setTimeout(r, 2000));
+            try {
+              const pollRes = await fetch(`/api/ai/rpp/${jobId}`);
+              const pollData = await pollRes.json();
+              if (pollData.status === "COMPLETED" && pollData.output) {
+                setGenerated(pollData.output);
+                setLoading(false);
+                return;
+              }
+              if (pollData.status === "FAILED") {
+                setGenError(pollData.error || "Generate gagal");
+                setLoading(false);
+                return;
+              }
+            } catch {
+              // Network error — continue polling
+            }
+          }
+          setGenError("Generate timeout. Silakan coba lagi.");
+          setLoading(false);
+        };
+        poll(data.jobId);
+        return; // Don't setLoading(false) — polling handles it
       } else {
-        setGenError(data.error || "Gagal generate. Periksa GROQ_API_KEY di .env");
+        setGenError(data.error || "Gagal generate. Periksa API key di .env");
       }
     } catch (e) {
       setGenError("Gagal terhubung ke server");

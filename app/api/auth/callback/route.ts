@@ -14,6 +14,9 @@ export async function GET(request: NextRequest) {
 
   const cookiesToSet: { name: string; value: string; options: CookieOptions }[] = [];
 
+  const host = request.headers.get("host") || "";
+  const domain = host.includes("bahasacerdas.com") ? ".bahasacerdas.com" : undefined;
+
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -86,6 +89,7 @@ export async function GET(request: NextRequest) {
       secure: true,
       sameSite: "lax",
       path: "/",
+      domain,
     });
   });
 

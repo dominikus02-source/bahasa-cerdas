@@ -80,7 +80,7 @@ export default function AIChatPage() {
         }),
       });
       const data = await res.json();
-      setMessages((prev) => [...prev, { role: "bot", text: data.answer || "Maaf, aku belum bisa jawab. Coba tanya yang lain ya! 😊" }]);
+      setMessages((prev) => [...prev, { role: "bot", text: data.reply || data.answer || "Maaf, aku belum bisa jawab. Coba tanya yang lain ya! 😊" }]);
     } catch {
       setMessages((prev) => [...prev, { role: "bot", text: "Maaf, ada gangguan. Coba lagi ya! 🙏" }]);
     }
@@ -109,7 +109,7 @@ export default function AIChatPage() {
       });
       const data = await res.json();
       const newMessages = [...messages];
-      newMessages[index] = { role: "bot", text: data.answer || "Maaf, coba lagi ya 😊" };
+      newMessages[index] = { role: "bot", text: data.reply || data.answer || "Maaf, coba lagi ya 😊" };
       setMessages(newMessages);
     } catch {}
     setLoading(false);
