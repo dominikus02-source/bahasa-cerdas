@@ -24,8 +24,8 @@ const nextConfig: NextConfig = {
     return [
       {
         source: "/:path*",
-        has: [{ type: "host", value: "www.bahasacerdas.com" }],
-        destination: "https://bahasacerdas.com/:path*",
+        has: [{ type: "host", value: "bahasacerdas.com" }],
+        destination: "https://www.bahasacerdas.com/:path*",
         permanent: true,
       },
     ];
@@ -38,9 +38,11 @@ const nextConfig: NextConfig = {
           { key: "X-Content-Type-Options", value: "nosniff" },
           { key: "X-Frame-Options", value: "DENY" },
           { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
-          // HSTS: includeSubDomains omitted — game.bahasacerdas.com has no TLS yet
-          // When game VPS gets SSL, change to: "max-age=31536000; includeSubDomains; preload"
-          { key: "Strict-Transport-Security", value: "max-age=31536000" },
+          // HSTS: includeSubDomains enabled (per user request for SSL Labs)
+          // NOTE: game.bahasacerdas.com has no TLS — HSTS will force HTTPS there for
+          // users who visited the main site. Game is accessed via socket.io (not browser URL),
+          // so risk is low. Do NOT add preload until game subdomain has TLS.
+          { key: "Strict-Transport-Security", value: "max-age=31536000; includeSubDomains" },
           { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
           { key: "X-DNS-Prefetch-Control", value: "on" },
           // CSP is set dynamically in middleware.ts with nonce support

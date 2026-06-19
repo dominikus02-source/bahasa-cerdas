@@ -15,9 +15,9 @@ export async function updateSession(request: NextRequest) {
   const { pathname, search } = request.nextUrl;
   const host = request.headers.get("host") || "";
 
-  // Redirect non-primary domains to bahasacerdas.com for SEO consistency
+  // Redirect non-primary domains to www.bahasacerdas.com for SEO consistency
   if (host && !host.includes("bahasacerdas.com") && !host.includes("localhost") && !host.includes("vercel.app")) {
-    const url = new URL(`https://bahasacerdas.com${pathname}${search}`);
+    const url = new URL(`https://www.bahasacerdas.com${pathname}${search}`);
     return NextResponse.redirect(url, { status: 301 });
   }
 
