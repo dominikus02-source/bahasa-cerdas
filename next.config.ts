@@ -38,9 +38,9 @@ const nextConfig: NextConfig = {
           { key: "X-Content-Type-Options", value: "nosniff" },
           { key: "X-Frame-Options", value: "DENY" },
           { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
-          // HSTS: preload omitted — game.bahasacerdas.com has no TLS
-          // WARNING: If game.bahasacerdas.com gets HTTPS, re-enable: "max-age=31536000; includeSubDomains; preload"
-          { key: "Strict-Transport-Security", value: "max-age=31536000; includeSubDomains" },
+          // HSTS: includeSubDomains omitted — game.bahasacerdas.com has no TLS yet
+          // When game VPS gets SSL, change to: "max-age=31536000; includeSubDomains; preload"
+          { key: "Strict-Transport-Security", value: "max-age=31536000" },
           { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
           { key: "X-DNS-Prefetch-Control", value: "on" },
           // CSP is set dynamically in middleware.ts with nonce support
