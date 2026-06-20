@@ -113,7 +113,7 @@ export async function createKaryaTransaction(params: {
       },
     ],
     callbacks: {
-      finish: `${getSiteUrl()}/marketplace?status=success&order_id=${params.orderId}`,
+      finish: `${getSiteUrl()}/marketplace`,
     },
   };
 

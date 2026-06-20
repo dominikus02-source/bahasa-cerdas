@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Check, Crown, Zap, AlertCircle, Loader2, X, Shield, CreditCard, Calendar, Clock, Info } from "lucide-react";
+import { Check, Crown, Zap, AlertCircle, Loader2, X, Shield, CreditCard, Calendar, Clock, Info, Landmark, Smartphone } from "lucide-react";
 import { getSnapScriptUrl } from "@/lib/midtrans";
 
 declare global {
@@ -349,7 +349,8 @@ export default function BerlanggananPage() {
         <div className="flex items-center justify-center gap-4 text-xs text-gray-400">
           <span className="flex items-center gap-1"><CreditCard className="w-3.5 h-3.5" /> Kartu</span>
           <span className="flex items-center gap-1"><Calendar className="w-3.5 h-3.5" /> QRIS</span>
-          <span>🏧 VA</span><span>📱 e-Wallet</span>
+          <span className="flex items-center gap-1"><Landmark className="w-3.5 h-3.5" /> VA</span>
+          <span className="flex items-center gap-1"><Smartphone className="w-3.5 h-3.5" /> e-Wallet</span>
         </div>
       </div>
 
