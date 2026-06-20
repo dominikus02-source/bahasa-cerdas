@@ -69,9 +69,6 @@ export async function createTransaction(params: {
       save_card: false,
       collect_card_token: false,
     },
-    callbacks: {
-      finish: `${getSiteUrl()}/guru/berlangganan`,
-    },
   };
 
   const transaction = await midtransClient.createTransaction(parameter);
@@ -112,9 +109,6 @@ export async function createKaryaTransaction(params: {
         quantity: 1,
       },
     ],
-    callbacks: {
-      finish: `${getSiteUrl()}/marketplace`,
-    },
   };
 
   try {

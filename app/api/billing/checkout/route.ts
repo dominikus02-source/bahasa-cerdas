@@ -103,9 +103,6 @@ export async function POST(req: NextRequest) {
           quantity: 1,
         },
       ],
-      callbacks: {
-        finish: `${getSiteUrl()}/guru/berlangganan`,
-      },
     };
 
     const transaction = await midtransClient.createTransaction(parameter);
