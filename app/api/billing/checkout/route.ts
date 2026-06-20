@@ -10,10 +10,6 @@ function getIsProduction(): boolean {
   return process.env.NEXT_PUBLIC_MIDTRANS_IS_PRODUCTION === "true";
 }
 
-function getSiteUrl(): string {
-  return process.env.NEXT_PUBLIC_SITE_URL || "https://www.bahasacerdas.com";
-}
-
 function generateOrderId(userId: string): string {
   const ts = Date.now().toString(36).slice(-6).toUpperCase();
   const shortId = userId.slice(0, 8);
