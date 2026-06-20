@@ -42,6 +42,7 @@ export default function BerlanggananPage() {
   const [status, setStatus] = useState<"default" | "success" | "failed">("default");
   const [errorMsg, setErrorMsg] = useState("");
   const [selectedPlan, setSelectedPlan] = useState<"GURU_PRO_MONTHLY" | "GURU_PRO_YEARLY">("GURU_PRO_YEARLY");
+  const [snapReady, setSnapReady] = useState(false);
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
   const [userLoading, setUserLoading] = useState(true);
 
@@ -75,9 +76,13 @@ export default function BerlanggananPage() {
     const script = document.createElement("script");
     script.src = getSnapScriptUrl();
     script.setAttribute("data-client-key", clientKey);
-    script.async = true;
+    script.onload = () => setSnapReady(true);
+    script.onerror = () => console.warn("[Snap] Failed to load Midtrans Snap.js");
     document.body.appendChild(script);
-    return () => { document.body.removeChild(script); };
+    return () => {
+      const el = document.querySelector(`script[src="${getSnapScriptUrl()}"]`);
+      if (el) el.remove();
+    };
   }, []);
 
   const handleUpgrade = async () => {
@@ -107,13 +112,38 @@ export default function BerlanggananPage() {
         return;
       }
 
-      if (result.token && window.snap) {
-        window.snap.pay(result.token, {
-          onSuccess: () => { setStatus("success"); setLoading(false); },
-          onPending: () => setLoading(false),
-          onError: () => { setErrorMsg("Pembayaran gagal. Silakan coba lagi."); setLoading(false); },
-          onClose: () => { if (status !== "success") setLoading(false); },
-        });
+      if (result.token) {
+        const openSnap = () => {
+          if (window.snap) {
+            window.snap.pay(result.token, {
+              onSuccess: () => { setStatus("success"); setLoading(false); },
+              onPending: () => setLoading(false),
+              onError: () => { setErrorMsg("Pembayaran gagal. Silakan coba lagi."); setLoading(false); },
+              onClose: () => { if (status !== "success") setLoading(false); },
+            });
+          } else {
+            setErrorMsg("Gagal memuat Midtrans. Refresh halaman dan coba lagi.");
+            setLoading(false);
+          }
+        };
+
+        if (window.snap) {
+          openSnap();
+        } else {
+          // Poll for Snap.js readiness, up to 10 detik
+          let attempts = 0;
+          const poll = setInterval(() => {
+            attempts++;
+            if (window.snap) {
+              clearInterval(poll);
+              openSnap();
+            } else if (attempts >= 20) {
+              clearInterval(poll);
+              setErrorMsg("Gagal memuat Midtrans. Refresh halaman dan coba lagi.");
+              setLoading(false);
+            }
+          }, 500);
+        }
       } else {
         setTimeout(() => {
           if (!window.snap) {

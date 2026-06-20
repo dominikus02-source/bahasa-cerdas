@@ -91,14 +91,6 @@ export async function POST(req: NextRequest) {
         first_name: user.fullName,
         email: user.email,
       },
-      item_details: [
-        {
-          id: plan.planId,
-          name: plan.label,
-          price: plan.price,
-          quantity: 1,
-        },
-      ],
     };
 
     const transaction = await midtransClient.createTransaction(parameter);
