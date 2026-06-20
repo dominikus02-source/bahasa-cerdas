@@ -103,6 +103,13 @@ export default function EYDCheckerPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
       <div className="max-w-6xl mx-auto px-4 py-8">
+        {/* Banner */}
+        <div className="mb-6 p-2.5 bg-emerald-50 border border-emerald-200 rounded-lg flex items-center justify-between">
+          <p className="text-xs text-emerald-700">
+            Versi baru alat ini tersedia di{" "}
+            <a href="/guru/ai-tools?agent=eyd" className="font-medium underline hover:text-emerald-800">Alat AI utama</a>.
+          </p>
+        </div>
         {/* Header */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center gap-2 bg-blue-100 text-blue-700 px-4 py-2 rounded-full text-sm font-medium mb-4">

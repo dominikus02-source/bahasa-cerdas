@@ -10,6 +10,7 @@ import {
 } from "lucide-react"
 import { useUserStore } from "@/store"
 import { Badge } from "@/components/ui/badge"
+import { TrialStatusCard } from "@/components/guru/TrialStatusCard"
 
 function formatRp(n: number) {
   return new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", maximumFractionDigits: 0 }).format(n)
@@ -63,6 +64,11 @@ export default function GuruBerandaPage() {
             <ShoppingBag size={16} /> Upload Karya
           </Link>
         </div>
+      </div>
+
+      {/* Phase 9C — Trial/Plan status card */}
+      <div className="mb-6">
+        <TrialStatusCard />
       </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
@@ -158,7 +164,7 @@ export default function GuruBerandaPage() {
               href="/guru/pengaturan/premium"
               className="mt-4 flex items-center justify-center gap-1.5 w-full py-2.5 bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-xs font-semibold rounded-xl hover:opacity-90 transition-opacity"
             >
-              <Crown size={14} /> Upgrade untuk unlimited AI
+              <Crown size={14} /> Upgrade ke PRO — 500 kredit/bulan
             </Link>
           )}
         </div>

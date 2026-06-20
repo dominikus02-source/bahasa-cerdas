@@ -210,7 +210,7 @@ export function GuruSidebar({ user }: Props) {
       {!user.isPremium && !user.isFounder && (
         <div className="mx-3 mb-3 p-3 bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl border border-amber-100">
           <p className="text-xs font-semibold text-amber-800 mb-1">Upgrade ke PRO</p>
-          <p className="text-[11px] text-amber-600 mb-2">AI unlimited & jual karya berbayar</p>
+          <p className="text-[11px] text-amber-600 mb-2">500 kredit AI/bulan & jual karya berbayar</p>
           <Link
             href="/guru/pengaturan/premium"
             className="block text-center text-xs bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-lg py-2 font-semibold hover:opacity-90 transition-opacity"

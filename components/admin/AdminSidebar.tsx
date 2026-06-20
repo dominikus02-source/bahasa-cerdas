@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState, useEffect, useCallback } from "react";
-import { LayoutDashboard, ShoppingBag, Film, FileText, Users, LogOut, Settings, ChevronRight, BarChart3, Briefcase, MessageCircle, Presentation, Bell, BellRing, X } from "lucide-react";
+import { LayoutDashboard, ShoppingBag, Film, FileText, Users, LogOut, Settings, ChevronRight, BarChart3, Briefcase, MessageCircle, Presentation, Bell, BellRing, X, Coins, DollarSign } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 
 interface Props {
@@ -19,6 +19,9 @@ const NAV = [
   { label: "Lowongan", href: "/admin/loker", icon: Briefcase },
   { label: "Komunitas", href: "/admin/komunitas", icon: MessageCircle },
   { label: "Pengguna", href: "/admin/users", icon: Users },
+  { label: "AI Analytics", href: "/admin/ai-analytics", icon: BarChart3 },
+  { label: "AI Quota", href: "/admin/ai-quota", icon: Coins },
+  { label: "Pembayaran", href: "/admin/payments", icon: DollarSign },
   { type: "divider" as const },
   { label: "Dashboard Guru", href: "/guru/beranda", icon: ChevronRight },
   { label: "Dashboard Murid", href: "/murid/beranda", icon: ChevronRight },

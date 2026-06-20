@@ -49,7 +49,7 @@ export default function FinalCTA() {
             <Link
               href="/register"
               className="group inline-flex items-center gap-2 px-8 py-3.5 text-base font-semibold text-zinc-900 bg-white hover:bg-zinc-100 rounded-xl transition-all duration-200 shadow-xl hover:shadow-2xl hover:-translate-y-0.5 focus-ring"
-              aria-label="Mulai gratis 14 hari, daftar sekarang"
+              aria-label="Mulai gratis 30 hari, daftar sekarang"
             >
               Mulai Gratis 14 Hari
               <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" aria-hidden="true" />

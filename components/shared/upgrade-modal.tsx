@@ -137,7 +137,7 @@ export function UpgradeModal({ isOpen, onClose, feature, used, limit }: UpgradeM
         <p className="mb-2 text-sm font-semibold">Benefit PRO:</p>
         <ul className="space-y-2 text-xs text-muted-foreground">
           {[
-            "Generate RPP & Soal AI unlimited",
+            "500 kredit AI setiap bulan",
             "Koreksi esai dengan AI",
             "Jual karya di toko (bisa dapat income)",
             "Export laporan PDF",

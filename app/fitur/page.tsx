@@ -149,7 +149,7 @@ export default function FiturPage() {
             Siap Mencoba Semua Fitur?
           </h2>
           <p className="text-zinc-400 mb-8 max-w-lg mx-auto">
-            Gratis 14 hari, akses semua fitur premium, batalkan kapan saja.
+            Gratis 30 hari, akses semua fitur premium, batalkan kapan saja.
           </p>
           <Link
             href="/register"

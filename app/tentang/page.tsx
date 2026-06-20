@@ -154,7 +154,7 @@ export default function TentangPage() {
             <span className="text-gold-400">10.000+ Guru</span>?
           </h2>
           <p className="text-zinc-400 mb-8 max-w-lg mx-auto">
-            Mulai perjalanan Anda bersama BahasaCerdas. Gratis 14 hari, tanpa
+            Mulai perjalanan Anda bersama BahasaCerdas. Gratis 30 hari, tanpa
             kartu kredit.
           </p>
           <Link

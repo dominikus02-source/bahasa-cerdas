@@ -15,6 +15,61 @@ function verifyMidtransNotification(
   return signature === signatureKey;
 }
 
+function getPlanFromAmount(grossAmount: number): { durationDays: number; aiCreditsMonthly: number; planId: string } | null {
+  if (grossAmount >= 399000) {
+    return { durationDays: 365, aiCreditsMonthly: 500, planId: "GURU_PRO_YEARLY" };
+  }
+  if (grossAmount >= 49000) {
+    return { durationDays: 30, aiCreditsMonthly: 500, planId: "GURU_PRO_MONTHLY" };
+  }
+  return null;
+}
+
+function getCurrentPeriod(): string {
+  return new Date().toISOString().slice(0, 7);
+}
+
+async function syncPremiumCreditLedger(userId: string, planId: string, aiCreditsMonthly: number) {
+  const period = getCurrentPeriod();
+  const plan = "GURU_PRO";
+  const targetTotal = aiCreditsMonthly; // 500
+
+  const now = new Date();
+  const endsAt = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+
+  try {
+    const existing = await db.aiCreditLedger.findUnique({
+      where: { userId_period_plan: { userId, period, plan } },
+    });
+
+    if (existing) {
+      // Only raise creditsTotal if current is less than target
+      if (existing.creditsTotal < targetTotal) {
+        await db.aiCreditLedger.update({
+          where: { id: existing.id },
+          data: { creditsTotal: targetTotal, source: "premium_payment" },
+        });
+      }
+    } else {
+      await db.aiCreditLedger.create({
+        data: {
+          userId,
+          period,
+          plan,
+          creditsTotal: targetTotal,
+          creditsUsed: 0,
+          creditsReserved: 0,
+          source: "premium_payment",
+          startsAt: now,
+          endsAt,
+        },
+      });
+    }
+  } catch (err) {
+    console.error("[Webhook] Credit ledger sync error:", err);
+  }
+}
+
 async function deliverKaryaToEmail(buyerEmail: string, buyerName: string, karya: any) {
   try {
     const response = await fetch("https://api.resend.com/emails", {
@@ -70,105 +125,188 @@ async function deliverKaryaToEmail(buyerEmail: string, buyerName: string, karya:
   }
 }
 
+type TransaksiStatus = "PENDING" | "SUCCESS" | "FAILED" | "CANCELLED" | "EXPIRED";
+
+const STATUS_MAP: Record<string, { status: TransaksiStatus; activatePremium: boolean }> = {
+  settlement: { status: "SUCCESS", activatePremium: true },
+  capture: { status: "SUCCESS", activatePremium: true },
+  pending: { status: "PENDING", activatePremium: false },
+  cancel: { status: "CANCELLED", activatePremium: false },
+  expire: { status: "EXPIRED", activatePremium: false },
+  deny: { status: "FAILED", activatePremium: false },
+  failure: { status: "FAILED", activatePremium: false },
+};
+
+function getHandler(transactionStatus: string) {
+  return STATUS_MAP[transactionStatus] || { status: "FAILED" as TransaksiStatus, activatePremium: false };
+}
+
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
 
     const { order_id, status_code, gross_amount, signature_key, transaction_status } = body;
+    const grossAmount = parseInt(gross_amount || "0");
 
+    // Verify signature
     const isValid = verifyMidtransNotification(order_id, status_code, gross_amount, signature_key);
     if (!isValid) {
       return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
     }
 
-    if (transaction_status !== "settlement" && transaction_status !== "capture") {
-      return NextResponse.json({ ok: true });
-    }
+    const handler = getHandler(transaction_status);
+    const newStatus = handler.status;
+    const activatePremium = handler.activatePremium;
 
-    const grossAmount = parseInt(gross_amount);
     const transaksi = await db.transaksi.findFirst({ where: { orderId: order_id } });
 
+    // Unknown orderId — log and return ok (Midtrans requires 200)
     if (!transaksi) {
-      return NextResponse.json({ error: "Transaksi not found" }, { status: 404 });
+      console.warn("[Webhook] Unknown orderId:", order_id);
+      return NextResponse.json({ ok: true, warning: "unknown_order" });
+    }
+
+    // Prevent downgrade: if already SUCCESS and new status is not SUCCESS, do nothing
+    if (transaksi.status === "SUCCESS" && newStatus !== "SUCCESS") {
+      return NextResponse.json({ ok: true, idempotent: true, note: "already_success_ignored" });
+    }
+
+    // Idempotent: if already SUCCESS and new is also SUCCESS, skip
+    if (transaksi.status === "SUCCESS" && newStatus === "SUCCESS") {
+      return NextResponse.json({ ok: true, idempotent: true });
     }
 
     if (transaksi.type === "PREMIUM_UPGRADE") {
-      const isYearly = grossAmount >= 399000;
-      const daysToAdd = isYearly ? 365 : 30;
-      const premiumUntil = new Date();
-      premiumUntil.setDate(premiumUntil.getDate() + daysToAdd);
+      if (activatePremium) {
+        // Determine plan details
+        const meta = (transaksi.metadata || {}) as Record<string, any>;
+        let durationDays = 30;
+        let aiCreditsMonthly = 500;
+        let planId = "GURU_PRO_MONTHLY";
 
-      await db.user.update({
-        where: { id: transaksi.userId },
-        data: { isPremium: true, premiumPlan: "PRO", premiumUntil },
-      });
+        if (meta.planId === "GURU_PRO_YEARLY" || meta.durationDays === 365) {
+          durationDays = 365;
+          planId = "GURU_PRO_YEARLY";
+        } else if (meta.durationDays && meta.durationDays > 30) {
+          durationDays = meta.durationDays;
+          planId = meta.planId || "GURU_PRO_YEARLY";
+        }
 
-      await db.transaksi.update({
-        where: { id: transaksi.id },
-        data: { status: "SUCCESS", midtransId: body.transaction_id },
-      });
+        // Fallback: detect from amount
+        if (!meta.planId) {
+          const fallback = getPlanFromAmount(grossAmount);
+          if (fallback) {
+            durationDays = fallback.durationDays;
+            aiCreditsMonthly = fallback.aiCreditsMonthly;
+            planId = fallback.planId;
+          }
+        }
 
-      await db.notifikasi.create({
-        data: {
-          userId: transaksi.userId,
-          title: "Pembayaran Berhasil!",
-          body: "Akunmu telah diupgrade ke PRO. Selamat menikmati fitur premium!",
-          type: "PREMIUM",
-        },
-      });
+        // Calculate premiumUntil: stack on existing if active
+        const user = await db.user.findUnique({
+          where: { id: transaksi.userId },
+          select: { premiumUntil: true },
+        });
+
+        const now = new Date();
+        let premiumUntil: Date;
+
+        if (user?.premiumUntil && user.premiumUntil > now) {
+          // Extend from end of current period
+          premiumUntil = new Date(user.premiumUntil.getTime() + durationDays * 24 * 60 * 60 * 1000);
+        } else {
+          // Fresh start
+          premiumUntil = new Date(now.getTime() + durationDays * 24 * 60 * 60 * 1000);
+        }
+
+        await db.$transaction([
+          db.user.update({
+            where: { id: transaksi.userId },
+            data: { isPremium: true, premiumPlan: "PRO", premiumUntil },
+          }),
+          db.transaksi.update({
+            where: { id: transaksi.id },
+            data: { status: newStatus, midtransId: body.transaction_id },
+          }),
+          db.notifikasi.create({
+            data: {
+              userId: transaksi.userId,
+              title: "Pembayaran Berhasil!",
+              body: "Akunmu telah diupgrade ke PRO. Selamat menikmati fitur premium!",
+              type: "PREMIUM",
+            },
+          }),
+        ]);
+
+        // Sync credit ledger (non-blocking — errors are logged, not thrown)
+        await syncPremiumCreditLedger(transaksi.userId, planId, aiCreditsMonthly);
+      } else {
+        // Non-success status, just update the transaction
+        await db.transaksi.update({
+          where: { id: transaksi.id },
+          data: { status: newStatus, midtransId: body.transaction_id },
+        });
+      }
     }
 
     else if (transaksi.type === "KARYA_PURCHASE") {
-      const meta = (transaksi.metadata || {}) as any;
-      const karyaId = meta.karyaId;
-      const karyaTitle = meta.karyaTitle || "Karya";
-      const sellerId = meta.sellerId;
-      const platformFee = meta.platformFee || 0;
-      const sellerEarning = meta.sellerEarning || 0;
+      if (activatePremium) {
+        const meta = (transaksi.metadata || {}) as any;
+        const karyaId = meta.karyaId;
+        const karyaTitle = meta.karyaTitle || "Karya";
+        const sellerId = meta.sellerId;
+        const platformFee = meta.platformFee || 0;
+        const sellerEarning = meta.sellerEarning || 0;
 
-      const [buyer, karya] = await Promise.all([
-        db.user.findUnique({ where: { id: transaksi.userId }, select: { email: true, fullName: true } }),
-        db.karya.findUnique({ where: { id: karyaId }, select: { title: true, description: true, fileUrl: true, price: true } }),
-      ]);
+        const [buyer, karya] = await Promise.all([
+          db.user.findUnique({ where: { id: transaksi.userId }, select: { email: true, fullName: true } }),
+          db.karya.findUnique({ where: { id: karyaId }, select: { title: true, description: true, fileUrl: true, price: true } }),
+        ]);
 
-      await db.$transaction([
-        db.pembelian.updateMany({
-          where: { midtransOrderId: order_id },
-          data: {
-            status: "PAID",
-            midtransPaymentType: body.payment_type,
-            midtransStatus: "settlement",
-            midtransPaymentAmount: grossAmount,
-            midtransPaidAt: new Date(),
-          },
-        }),
-        db.karya.update({ where: { id: karyaId }, data: { downloads: { increment: 1 } } }),
-        db.user.update({ where: { id: sellerId }, data: { saldo: { increment: sellerEarning }, totalEarned: { increment: sellerEarning } } }),
-        db.sellerEarning.updateMany({
-          where: { sellerId, itemId: karyaId, status: "PENDING" },
-          data: { status: "COMPLETED" },
-        }),
-        db.purchaseHistory.updateMany({
-          where: { buyerId: transaksi.userId, itemId: karyaId },
-          data: { fileUrl: karya?.fileUrl || "" },
-        }),
-        db.transaksi.update({
+        await db.$transaction([
+          db.pembelian.updateMany({
+            where: { midtransOrderId: order_id },
+            data: {
+              status: "PAID",
+              midtransPaymentType: body.payment_type,
+              midtransStatus: "settlement",
+              midtransPaymentAmount: grossAmount,
+              midtransPaidAt: new Date(),
+            },
+          }),
+          db.karya.update({ where: { id: karyaId }, data: { downloads: { increment: 1 } } }),
+          db.user.update({ where: { id: sellerId }, data: { saldo: { increment: sellerEarning }, totalEarned: { increment: sellerEarning } } }),
+          db.sellerEarning.updateMany({
+            where: { sellerId, itemId: karyaId, status: "PENDING" },
+            data: { status: "COMPLETED" },
+          }),
+          db.purchaseHistory.updateMany({
+            where: { buyerId: transaksi.userId, itemId: karyaId },
+            data: { fileUrl: karya?.fileUrl || "" },
+          }),
+          db.transaksi.update({
+            where: { id: transaksi.id },
+            data: { status: "SUCCESS", midtransId: body.transaction_id },
+          }),
+        ]);
+
+        if (buyer && karya) {
+          const emailOk = await deliverKaryaToEmail(buyer.email, buyer.fullName, karya);
+          console.log("Email delivery:", emailOk ? "SUCCESS" : "FAILED");
+
+          await db.notifikasi.create({
+            data: {
+              userId: transaksi.userId,
+              title: "Pembelian Berhasil! 🎉",
+              body: `Karya "${karyaTitle}" telah masuk ke akunmu. Link download sudah dikirim ke email.`,
+              type: "PURCHASE",
+            },
+          });
+        }
+      } else {
+        await db.transaksi.update({
           where: { id: transaksi.id },
-          data: { status: "SUCCESS", midtransId: body.transaction_id },
-        }),
-      ]);
-
-      if (buyer && karya) {
-        const emailOk = await deliverKaryaToEmail(buyer.email, buyer.fullName, karya);
-        console.log("Email delivery:", emailOk ? "SUCCESS" : "FAILED");
-
-        await db.notifikasi.create({
-          data: {
-            userId: transaksi.userId,
-            title: "Pembelian Berhasil! 🎉",
-            body: `Karya "${karyaTitle}" telah masuk ke akunmu. Link download sudah dikirim ke email.`,
-            type: "PURCHASE",
-          },
+          data: { status: newStatus, midtransId: body.transaction_id },
         });
       }
     }

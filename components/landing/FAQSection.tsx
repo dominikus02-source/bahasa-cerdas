@@ -12,7 +12,7 @@ const faqs = [
   },
   {
     q: "Apakah BahasaCerdas gratis?",
-    a: "Ya! Anda bisa mencoba gratis selama 14 hari tanpa komitmen. Setelah itu, tersedia paket Premium dengan fitur lengkap mulai dari Rp 50.000/bulan. Guru juga bisa mendapat akses gratis dengan bergabung di komunitas aktif.",
+    a: "Ya! Anda bisa mencoba gratis selama 30 hari tanpa komitmen. Setelah itu, tersedia paket PRO dengan fitur lengkap mulai dari Rp 49.000/bulan. Guru juga bisa mendapat akses gratis dengan bergabung di komunitas aktif.",
   },
   {
     q: "Bagaimana cara AI RPP bekerja?",

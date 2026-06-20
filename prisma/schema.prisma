@@ -173,6 +173,10 @@ model User {
   premiumUntil       DateTime?
   isPremium          Boolean                 @default(false)
   midtransCustomerId String?
+  trialStartedAt     DateTime?
+  trialEndsAt        DateTime?
+  trialPlan          String?                 // "GURU_PRO_TRIAL" if trial is active
+  trialCreditsTotal  Int?                    // total credits allocated for trial
   xp                 Int                     @default(0)
   level              Int                     @default(1)
   streak             Int                     @default(0)
@@ -186,6 +190,7 @@ model User {
   createdAt          DateTime                @default(now())
   updatedAt          DateTime                @updatedAt
   aiUsage            AIUsage[]
+  aiCreditLedger     AiCreditLedger[]
   artikel            Artikel[]
   uploadedBankSoals  BankSoal[]
   certificates       Certificate[]
@@ -198,6 +203,7 @@ model User {
   gameSessions       GameSession[]
   generatedRPPs      GeneratedRPP[]
   aiJobs             AIJob[]
+  aiSavedResults     AiSavedResult[]
   groups             Group[]
   groupMemberships   GroupMember[]
   groupQuizResults   GroupQuizResult[]
@@ -238,6 +244,16 @@ model User {
   penugasans         Penugasan[]
   penugasanSubmissions PenugasanSubmission[]
   nilais             Nilai[]
+  subscriptions      Subscription[]
+
+  // Admin quota audit logs where this user was the acting admin
+  adminQuotaActions  AdminQuotaAuditLog[] @relation("AdminActions")
+  // Admin quota audit logs where this user was the target
+  targetOfQuotaActions AdminQuotaAuditLog[] @relation("TargetActions")
+  // Admin payment audit logs where this user was the acting admin
+  paymentAdminActions  AdminPaymentAuditLog[] @relation("PaymentAdminActions")
+  // Admin payment audit logs where this user was the target
+  paymentTargetActions AdminPaymentAuditLog[] @relation("PaymentTargetActions")
 
   @@index([role, lastActiveAt])
   @@index([xp])
@@ -615,6 +631,26 @@ model AIJob {
   @@index([status, createdAt])
 }
 
+model AiSavedResult {
+  id            String    @id @default(cuid())
+  userId        String
+  agentId       String
+  title         String
+  inputJson     Json
+  outputJson    Json
+  editableText  String?
+  qualityScore  Int?
+  provider      String?
+  model         String?
+  metadata      Json?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, agentId, createdAt])
+  @@index([userId, createdAt])
+}
+
 model Video {
   id           String          @id @default(cuid())
   title        String
@@ -978,17 +1014,45 @@ model Loker {
   @@index([createdAt])
 }
 
+model AiCreditLedger {
+  id             String   @id @default(cuid())
+  userId         String
+  period         String                 // e.g. "2026-06" or "trial"
+  plan           String                 // FREE, GURU_PRO_TRIAL, GURU_PRO, SCHOOL, FOUNDER
+  creditsTotal   Int
+  creditsUsed    Int      @default(0)
+  creditsReserved Int    @default(0)
+  source         String                 // monthly, trial, manual, admin_adjustment
+  startsAt       DateTime
+  endsAt         DateTime
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, period, plan])
+  @@index([userId, period])
+  @@index([userId, endsAt])
+}
+
 model AIUsage {
   id        String   @id @default(cuid())
   userId    String
   feature   String
+  provider  String?
+  model     String?
+  status    String?
+  errorCode String?
   tokens    Int      @default(0)
   costUSD   Float    @default(0)
+  latencyMs Int?
   bulan     String
   createdAt DateTime @default(now())
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId, feature, bulan])
+  @@index([feature, createdAt])
+  @@index([provider, createdAt])
+  @@index([status, createdAt])
 }
 
 model Transaksi {
@@ -1004,6 +1068,7 @@ model Transaksi {
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
   user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  paymentAudits AdminPaymentAuditLog[]
 
   @@index([userId])
   @@index([orderId])
@@ -1628,4 +1693,83 @@ model PenugasanSubmission {
 
   @@unique([penugasanId, userId])
   @@index([userId])
+}
+
+enum SubscriptionPlan {
+  PRO_MONTHLY
+  PRO_YEARLY
+}
+
+enum SubscriptionStatus {
+  PENDING
+  ACTIVE
+  CANCELLED
+  EXPIRED
+}
+
+model Subscription {
+  id                       String             @id @default(cuid())
+  userId                   String
+  plan                     SubscriptionPlan   @default(PRO_MONTHLY)
+  status                   SubscriptionStatus @default(PENDING)
+  midtransSubscriptionId   String?            @unique
+  currentPeriodStart       DateTime           @default(now())
+  currentPeriodEnd         DateTime
+  paymentMethodId          String?
+  paymentMethodType        String?
+  willRenew                Boolean            @default(true)
+  cancelledAt              DateTime?
+  lastTransactionId        String?
+  metadata                 Json?
+  createdAt                DateTime           @default(now())
+  updatedAt                DateTime           @updatedAt
+  user                     User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([status])
+  @@index([midtransSubscriptionId])
+}
+
+model AdminPaymentAuditLog {
+  id            String   @id @default(cuid())
+  adminUserId   String
+  targetUserId  String?
+  transactionId String?
+  action        String   // MANUAL_ACTIVATE
+  previousValue String?
+  newValue      String?
+  reason        String?
+  metadata      Json?
+  createdAt     DateTime @default(now())
+
+  admin       User       @relation("PaymentAdminActions", fields: [adminUserId], references: [id], onDelete: Cascade)
+  target      User?      @relation("PaymentTargetActions", fields: [targetUserId], references: [id], onDelete: SetNull)
+  transaksi   Transaksi? @relation(fields: [transactionId], references: [id], onDelete: SetNull)
+
+  @@index([adminUserId])
+  @@index([targetUserId])
+  @@index([transactionId])
+  @@index([action])
+  @@index([createdAt])
+}
+
+model AdminQuotaAuditLog {
+  id            String   @id @default(cuid())
+  adminUserId   String
+  targetUserId  String
+  action        String   // EXTEND_TRIAL, RESET_CREDITS, ALLOCATE_CREDITS
+  amount        Int?
+  previousValue String?
+  newValue      String?
+  reason        String?
+  metadata      Json?
+  createdAt     DateTime @default(now())
+
+  admin  User @relation("AdminActions", fields: [adminUserId], references: [id], onDelete: Cascade)
+  target User @relation("TargetActions", fields: [targetUserId], references: [id], onDelete: Cascade)
+
+  @@index([adminUserId])
+  @@index([targetUserId])
+  @@index([action])
+  @@index([createdAt])
 }

@@ -3,6 +3,10 @@ import { getUser } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import AIFloatingButton from "@/components/shared/AIFloatingButton";
+import { startGuruTrialIfEligible, getTrialStatus } from "@/lib/ai-gateway/trial-service";
+import { resolveUserAiPlan } from "@/lib/ai-gateway/plan-resolver";
+import { getRemainingCredits } from "@/lib/ai-gateway/quota-checker";
+import { SidebarPremiumBadge } from "@/components/guru/SidebarPremiumBadge";
 
 const MenuIcon = ({ path, label, href }: { path: string; label: string; href: string }) => (
   <Link href={href} className="group flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm mb-1 transition-all duration-200 text-gray-600 hover:bg-gradient-to-r hover:from-emerald-50 hover:to-green-50 hover:text-emerald-700">
@@ -24,7 +28,41 @@ export default async function GuruLayout({ children }: { children: React.ReactNo
     redirect("/murid/beranda");
   }
 
-  const leagueLabel = { BRONZE: "Perunggu", SILVER: "Perak", GOLD: "Emas", DIAMOND: "Berlian" }[user.league || "BRONZE"] || "Perunggu"
+  // Phase 9C — auto-start trial for eligible Guru users on dashboard access
+  const trialStart = await startGuruTrialIfEligible(user.id);
+  if (trialStart.started) {
+    console.log(`[GuruLayout] Trial auto-started for ${user.id}`);
+  }
+
+  // Fetch plan + remaining credits for sidebar display
+  const planInfo = resolveUserAiPlan({
+    role: user.role,
+    isFounder: user.isFounder,
+    isPremium: user.isPremium,
+    premiumUntil: user.premiumUntil,
+    trialEndsAt: user.trialEndsAt,
+    trialStartedAt: user.trialStartedAt,
+    premiumPlan: user.premiumPlan,
+  });
+  const remainingCredits = planInfo.unlimited ? null : await getRemainingCredits({
+    id: user.id,
+    role: user.role,
+    isFounder: user.isFounder,
+    isPremium: user.isPremium,
+    premiumUntil: user.premiumUntil,
+    trialEndsAt: user.trialEndsAt,
+    trialStartedAt: user.trialStartedAt,
+    premiumPlan: user.premiumPlan,
+  });
+  const trialStatus = getTrialStatus({
+    trialEndsAt: user.trialEndsAt,
+    trialStartedAt: user.trialStartedAt,
+    trialPlan: user.trialPlan,
+    isPremium: user.isPremium,
+    isFounder: user.isFounder,
+  });
+
+  const leagueLabel = { BRONZE: "Perunggu", SILVER: "Perak", GOLD: "Emas", DIAMOND: "Berlian" }[user.league || "BRONZE"] || "Perunggu";
 
   return (
     <div className="flex min-h-screen bg-gradient-to-br from-slate-50 via-white to-emerald-50">
@@ -66,6 +104,15 @@ export default async function GuruLayout({ children }: { children: React.ReactNo
               <span className="font-semibold">{user.xp?.toLocaleString() || 0}</span>
             </div>
           </div>
+          {/* Phase 9C — Premium/Trial badge in sidebar */}
+          <SidebarPremiumBadge
+            plan={planInfo.plan}
+            isTrialActive={trialStatus.isTrialActive}
+            daysRemaining={trialStatus.daysRemaining}
+            remainingCredits={remainingCredits}
+            creditsTotal={planInfo.unlimited ? undefined : planInfo.creditsTotal}
+            premiumUntil={user.premiumUntil}
+          />
         </div>
 
         <nav className="py-4 px-3 flex-1 overflow-y-auto">
@@ -116,6 +163,7 @@ export default async function GuruLayout({ children }: { children: React.ReactNo
 
           <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider px-3 mt-5 mb-2">Lainnya</div>
           <MenuIcon path="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" label="Profil" href="/guru/profile" />
+          <MenuIcon path="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z" label="Berlangganan" href="/guru/berlangganan" />
           <MenuIcon path="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z M15 12a3 3 0 11-6 0 3 3 0 016 0z" label="Pengaturan" href="/guru/pengaturan" />
         </nav>
 

@@ -47,7 +47,7 @@ Kamu adalah **Senior Full-Stack Engineer** yang sangat autonomous, teliti, dan b
 ---
 
 # BahasaCerdas Project Status
-## Last Updated: June 9, 2026 (Security hardening: Redis cache, cursor pagination, AI queue, ACID tx, Supabase Realtime, Sentry, BFG history scrub)
+## Last Updated: June 20, 2026 (Phase 8B: Analytics QA & Data Integrity)
 
 ## Goal
 Transform BahasaCerdas into a social-creative platform for Bahasa Indonesia where students write daily (puisi, cerpen, artikel, anekdot, pantun), showcase works in social-style portfolios, earn Coin Cerdas, and compete in weekly leagues — UKBI/TKA as supporting features, not core.
@@ -230,6 +230,26 @@ The Belajar page auto-detects content types in `isi[]` strings:
 ### Supply
 - `lib/coins.ts` — awardCoins(), spendCoins(), getBalance(), getTransactions(), getOrCreateDailyQuests(), trackQuestProgress(), claimQuestReward(), trackDailyStreak()
 
+### AI Tools Suite for Guru (Phase 6A)
+- **AI Agents** in `src/ai/`: eyd-agent (perbaiki EYD), feedback-agent (feedback karangan), grading-agent (nilai otomatis), text-analysis-agent (analisis kebahasaan), bc-assistant-agent (asisten BC), plus shared core (agent-types, rate-limit)
+- **6 specialized forms** in `app/(dashboard)/guru/ai-tools/_components/forms/`: eyd-form, feedback-form, grading-form, text-analysis-form, bc-assistant-form, reuse ai-chat-form
+- **UI**: `alat-ai-client.tsx` (orchestrator with tab switching), `history-panel.tsx` (search, filter by agent, title editing, inline delete confirm, export buttons), `agent-result-panel.tsx` (rich result display)
+- **Page**: `/guru/ai-tools` with tabs for each AI tool
+- **API**: `/api/ai/agents/run` for universal execution, `/api/ai/agents/saved` for history
+- **DB**: `AiSavedResult` model (single canonical model — no duplicate `SavedAiResult`)
+- **Export**: DOCX for RPP/Soal, PPTX for PPT, PDF for RPP/Soal
+
+### Phase 6B — Architecture Drift Audit & Consolidation
+- **Audit**: Verified Prisma schema — only `AiSavedResult` exists (no duplicate `SavedAiResult`)
+- **Audit**: Verified API routes — no `/api/ai/saved-results` duplicate exists
+- **Audit**: Verified UI helpers use canonical routes (`/api/ai/agents/run`, `/api/ai/agents/saved`, `/api/ai/agents/export/*`)
+- **Fix**: Added `eyd`, `feedback`, `grading`, `text-analysis` to `AGENT_IDS` in `/api/ai/agents/saved/route.ts` (was blocking new agents from saving)
+- **Verified**: All 9 agents registered in central registry, visible in `GET /api/ai/agents`
+- **Verified**: New agents (eyd, feedback, grading, text-analysis) use central runner
+- **Test script**: `scripts/test-phase6-consolidation.ts` — all 9 tests pass
+- **Old legacy routes left unchanged**: `/api/ai/eyd`, `/api/ai/feedback`, `/api/ai/grading`, `/api/ai/text-analysis`
+- **Old legacy pages left unchanged**: `/guru/ai-tools/eyd`, `/guru/ai-tools/feedback`, `/guru/ai-tools/grading`, `/guru/ai-tools/text-analysis`
+
 ## Pitch Deck & Financials (May 27, 2026)
 - `pitch-deck.html` — 14-slide English HTML pitch deck
 - `Bahasacerdas_Pitch_Deck.pptx` — 12-slide PPTX (dark theme, premium)
@@ -240,17 +260,60 @@ The Belajar page auto-detects content types in `isi[]` strings:
 - **Key numbers**: Seed Rp 4B, Pre-money Rp 18B, Equity 18.2%, M18 run-rate Rp 3.14B/mo, ARR Y1 Rp 5.76B → Y2 Rp 24B → Y3 Rp 80B, Gross margin 90.1%
 - **File locations**: `/Users/user/Documents/bahasa-cerdas/` for main files, `/Users/user/Documents/BC-Bahasa Cerdas Master/Financial BC/` for financial model
 
+## Completed Phase 8B — Analytics QA & Data Integrity
+
+### Fixed critical bugs:
+1. **Feature name mismatch**: `usage-logger.ts` stores feature as `agent:rpp` but analytics API queried raw `rpp` → agent usage always returned 0. Fixed by prefixing with `agent:` in queries.
+2. **Status case mismatch**: `usage-logger.ts` stores status as lowercase `"success"` but analytics API used uppercase `"SUCCESS"` → success/failed counts always 0. Fixed to lowercase.
+3. **Top users query**: Used bare agent IDs without `agent:` prefix → most-used-agent always empty. Fixed.
+4. **Unknown/null provider**: Records with null provider were invisible in provider breakdown. Added `"unknown"` group.
+
+### Optimizations:
+- Daily usage query rewritten to raw SQL `DATE(created_at)` group by instead of loading all rows in-memory
+- Added `latencyMs` tracking to export events (DOCX/PDF/PPTX)
+- Export routes now measure and log latency
+
+### Verified:
+- `npx tsc --noEmit` — 0 new errors
+- `npx eslint` on modified files — 0 violations
+- `npx prisma validate` — valid
+- 12 automated tests in `scripts/test-phase8-analytics.ts`
+
+### New files created:
+- `app/(dashboard)/admin/ai-analytics/page.tsx` — admin AI analytics dashboard
+- `app/api/admin/ai-analytics/route.ts` — analytics API with Prisma aggregation
+- `scripts/test-phase8-analytics.ts` — 12 QA tests
+- `docs/AI_AGENT_LAYER_PLAN.md` — updated with Phase 8B
+
+### Files modified:
+- `components/admin/AdminSidebar.tsx` — added AI Analytics nav item
+- `app/(dashboard)/admin/page.tsx` — added "Ringkasan AI Hari Ini" widget
+- `src/ai/core/usage-logger.ts` — added `latencyMs` to export events
+- `app/api/ai/agents/export/docx/route.ts` — added latency tracking
+- `app/api/ai/agents/export/pdf/route.ts` — added latency tracking
+- `app/api/ai/agents/export/pptx/route.ts` — added latency tracking
+- `prisma/schema.prisma` — verified AIUsage extended fields (unchanged)
+
+### Known limitations:
+1. N+1 agent/provider queries (9+3 parallel) — acceptable for admin panel
+2. Streaming runs report 0 tokens (no count from SSE)
+3. Old standalone routes still bypass AIUsage logging
+4. No daily usage zero-fill — only dates with data appear
+5. Export events lack provider info
+
 ## Next Steps (Priority Order)
 1. **Enrich content** — isi lebih banyak latihan/kuis soal ke setiap bab (saat ini minimal 2-3 per bab)
 2. **Guru video content** — upload video pembelajaran, embed YouTube
 3. **Game server fixes** — VPS reconnection, DNS, SSL (blocked by VPS SSH)
 4. **Push notifications** — browser push API for notif when tab not open
-5. **Admin dashboard** — featured picks curation, user management
+5. **Old standalone routes** — migrate `/api/ai/eyd`, `/api/ai/feedback`, `/api/ai/grading`, `/api/ai/text-analysis` to central runner (currently bypass AIUsage logging)
+6. **Phase 9 monetization** — NOT yet started. See docs/AI_AGENT_LAYER_PLAN.md for readiness details.
 
 ## Blockers
 - VPS SSH unreachable (server restarting)
 - game.bahasacerdas.com DNS not propagating/resolving
 - No SSL cert on game subdomain
+- Pre-existing `docx/route.ts(111,1)` syntax error on main branch (unrelated to Phase 8B)
 
 ## GitHub
 - Repo: https://github.com/dominikus02-source/bahasa-cerdas

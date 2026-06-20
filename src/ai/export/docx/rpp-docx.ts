@@ -1,0 +1,277 @@
+import {
+  Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType, Table,
+} from "docx";
+import {
+  sectionHeading, bodyText, emptyLine, footerNote, createInfoTable,
+  buildBulletList, buildNumberedList, indentedText, sanitizeFilename,
+} from "./docx-utils";
+
+interface RPPInput {
+  title: string;
+  output: Record<string, unknown>;
+  editableText?: string | null;
+}
+
+function getStr(obj: Record<string, unknown>, key: string, fallback = ""): string {
+  const val = obj[key];
+  if (typeof val === "string") return val;
+  if (Array.isArray(val)) return val.join(", ");
+  return fallback;
+}
+
+function getArr(obj: Record<string, unknown>, key: string): string[] {
+  const val = obj[key];
+  if (Array.isArray(val)) return val.filter((v): v is string => typeof v === "string");
+  return [];
+}
+
+function getSubMap(obj: Record<string, unknown>, key: string): Record<string, string[]> {
+  const val = obj[key];
+  if (val && typeof val === "object" && !Array.isArray(val)) {
+    const result: Record<string, string[]> = {};
+    for (const [k, v] of Object.entries(val)) {
+      if (Array.isArray(v)) result[k] = v.filter((i): i is string => typeof i === "string");
+    }
+    return result;
+  }
+  return {};
+}
+
+export async function generateRPPDocx(input: RPPInput): Promise<Buffer> {
+  const out = input.output;
+  const identity = (out.identity as Record<string, unknown>) ?? {};
+  const learningObjectives = getArr(out, "learningObjectives");
+  const steps = getSubMap(out, "learningSteps");
+  const assessment = getSubMap(out, "assessmentPlan");
+  const differentiation = getSubMap(out, "differentiationStrategy");
+
+  const sections: (Paragraph | Table)[] = [];
+
+  // Title
+  sections.push(
+    new Paragraph({
+      children: [new TextRun({ text: "RENCANA PELAKSANAAN PEMBELAJARAN", bold: true, size: 28 })],
+      heading: HeadingLevel.HEADING_1,
+      alignment: AlignmentType.CENTER,
+      spacing: { after: 80 },
+    }),
+    new Paragraph({
+      children: [new TextRun({ text: input.title, size: 24, bold: true })],
+      alignment: AlignmentType.CENTER,
+      spacing: { after: 200 },
+    })
+  );
+
+  // 1. Identitas
+  sections.push(sectionHeading("1. Identitas"));
+  const identityRows = [
+    { label: "Mata Pelajaran", value: getStr(identity, "subject", "Bahasa Indonesia") },
+    { label: "Kelas / Fase", value: getStr(identity, "grade") },
+    { label: "Semester", value: getStr(identity, "semester", "1 (Ganjil)") },
+    { label: "Kurikulum", value: getStr(identity, "curriculum", "Kurikulum Merdeka") },
+    { label: "Topik", value: getStr(identity, "topic") },
+    { label: "Durasi", value: getStr(identity, "duration") },
+    { label: "Jumlah Pertemuan", value: getStr(identity, "meetingCount", "1") },
+  ];
+  sections.push(createInfoTable(identityRows));
+  sections.push(emptyLine());
+
+  // 2. Profil Murid
+  sections.push(sectionHeading("2. Profil Murid"));
+  const profil = getArr(out, "studentProfile");
+  if (profil.length > 0) {
+    sections.push(...buildBulletList(profil));
+  } else {
+    sections.push(bodyText("—"));
+  }
+
+  // 3. Pengetahuan Awal
+  sections.push(sectionHeading("3. Pengetahuan Awal"));
+  const prior = getArr(out, "priorKnowledge");
+  if (prior.length > 0) {
+    sections.push(...buildBulletList(prior));
+  } else {
+    sections.push(bodyText("—"));
+  }
+
+  // 4. Tujuan Pembelajaran
+  sections.push(sectionHeading("4. Tujuan Pembelajaran"));
+  if (learningObjectives.length > 0) {
+    sections.push(...buildNumberedList(learningObjectives));
+  } else {
+    sections.push(bodyText("—"));
+  }
+
+  // 5. Kriteria Keberhasilan
+  sections.push(sectionHeading("5. Kriteria Keberhasilan"));
+  const criteria = getArr(out, "successCriteria");
+  if (criteria.length > 0) {
+    sections.push(...buildBulletList(criteria));
+  } else {
+    sections.push(bodyText("—"));
+  }
+
+  // 6. Materi Pembelajaran
+  sections.push(sectionHeading("6. Materi Pembelajaran"));
+  const materi = getArr(out, "learningMaterials");
+  if (materi.length > 0) {
+    sections.push(...buildBulletList(materi));
+  } else {
+    sections.push(bodyText("—"));
+  }
+
+  // 7. Sumber Belajar
+  sections.push(sectionHeading("7. Sumber Belajar"));
+  const sumber = getArr(out, "learningResources");
+  if (sumber.length > 0) {
+    sections.push(...buildBulletList(sumber));
+  } else {
+    sections.push(bodyText("—"));
+  }
+
+  // 8. Model Pembelajaran
+  sections.push(sectionHeading("8. Model Pembelajaran"));
+  sections.push(bodyText(getStr(out, "learningModel", "—")));
+
+  // 9. Langkah Pembelajaran
+  sections.push(sectionHeading("9. Langkah Pembelajaran"));
+
+  if (steps.opening && steps.opening.length > 0) {
+    sections.push(bodyText("Pendahuluan", { bold: true, italic: true }));
+    sections.push(...buildNumberedList(steps.opening));
+  }
+  if (steps.core && steps.core.length > 0) {
+    sections.push(bodyText("Kegiatan Inti", { bold: true, italic: true }));
+    sections.push(...buildNumberedList(steps.core));
+  }
+  if (steps.closing && steps.closing.length > 0) {
+    sections.push(bodyText("Penutup", { bold: true, italic: true }));
+    sections.push(...buildNumberedList(steps.closing));
+  }
+
+  // 10. Asesmen
+  sections.push(sectionHeading("10. Asesmen"));
+  if (assessment.diagnostik && assessment.diagnostik.length > 0) {
+    sections.push(bodyText("Diagnostik", { bold: true, italic: true }));
+    sections.push(...buildBulletList(assessment.diagnostik));
+  }
+  if (assessment.formatif && assessment.formatif.length > 0) {
+    sections.push(bodyText("Formatif", { bold: true, italic: true }));
+    sections.push(...buildBulletList(assessment.formatif));
+  }
+  if (assessment.sumatif && assessment.sumatif.length > 0) {
+    sections.push(bodyText("Sumatif", { bold: true, italic: true }));
+    sections.push(...buildBulletList(assessment.sumatif));
+  }
+  if (Object.keys(assessment).length === 0) {
+    sections.push(bodyText("—"));
+  }
+
+  // 11. Diferensiasi
+  sections.push(sectionHeading("11. Diferensiasi"));
+  if (differentiation.konten && differentiation.konten.length > 0) {
+    sections.push(bodyText("Konten", { bold: true, italic: true }));
+    sections.push(...buildBulletList(differentiation.konten));
+  }
+  if (differentiation.proses && differentiation.proses.length > 0) {
+    sections.push(bodyText("Proses", { bold: true, italic: true }));
+    sections.push(...buildBulletList(differentiation.proses));
+  }
+  if (differentiation.produk && differentiation.produk.length > 0) {
+    sections.push(bodyText("Produk", { bold: true, italic: true }));
+    sections.push(...buildBulletList(differentiation.produk));
+  }
+  if (Object.keys(differentiation).length === 0) {
+    sections.push(bodyText("—"));
+  }
+
+  // 12. LKPD
+  sections.push(sectionHeading("12. LKPD"));
+  const lkpd = getStr(out, "worksheetDescription") || getStr(out, "lkpd");
+  if (lkpd) {
+    sections.push(bodyText(lkpd));
+  } else {
+    sections.push(bodyText("—"));
+  }
+
+  // 13. Rubrik
+  sections.push(sectionHeading("13. Rubrik Penilaian"));
+  const rubric = out.rubric as Record<string, unknown> | undefined;
+  if (rubric?.criteria && Array.isArray(rubric.criteria)) {
+    for (const c of rubric.criteria) {
+      const cr = c as Record<string, string>;
+      sections.push(bodyText(`${cr.name || "—"}`, { bold: true }));
+      if (cr.excellent) sections.push(indentedText(`Unggul: ${cr.excellent}`));
+      if (cr.good) sections.push(indentedText(`Baik: ${cr.good}`));
+      if (cr.needsImprovement) sections.push(indentedText(`Perlu Perbaikan: ${cr.needsImprovement}`));
+      sections.push(emptyLine());
+    }
+  } else {
+    sections.push(bodyText("—"));
+  }
+
+  // 14. Remedial dan Pengayaan
+  sections.push(sectionHeading("14. Remedial dan Pengayaan"));
+  const remedial = getArr(out, "remedialPlan");
+  if (remedial.length > 0) {
+    sections.push(bodyText("Remedial", { bold: true, italic: true }));
+    sections.push(...buildBulletList(remedial));
+  }
+  const enrich = getArr(out, "enrichmentPlan");
+  if (enrich.length > 0) {
+    sections.push(bodyText("Pengayaan", { bold: true, italic: true }));
+    sections.push(...buildBulletList(enrich));
+  }
+  if (remedial.length === 0 && enrich.length === 0) {
+    sections.push(bodyText("—"));
+  }
+
+  // 15. Refleksi
+  sections.push(sectionHeading("15. Refleksi"));
+  const refleksiGuru = getArr(out, "guruReflection");
+  if (refleksiGuru.length > 0) {
+    sections.push(bodyText("Refleksi Guru", { bold: true, italic: true }));
+    sections.push(...buildBulletList(refleksiGuru));
+  }
+  const refleksiMurid = getArr(out, "studentReflection");
+  if (refleksiMurid.length > 0) {
+    sections.push(bodyText("Refleksi Murid", { bold: true, italic: true }));
+    sections.push(...buildBulletList(refleksiMurid));
+  }
+  if (refleksiGuru.length === 0 && refleksiMurid.length === 0) {
+    sections.push(bodyText("—"));
+  }
+
+  // 16. Catatan Guru
+  sections.push(sectionHeading("16. Catatan Guru"));
+  sections.push(bodyText(getStr(out, "teacherNotes", "—")));
+
+  // Footer
+  sections.push(emptyLine());
+  sections.push(footerNote());
+
+  const doc = new Document({
+    title: input.title,
+    description: "RPP generated by BahasaCerdas AI",
+    styles: {
+      default: {
+        document: {
+          run: { font: "Calibri", size: 22 },
+          paragraph: { spacing: { after: 80 } },
+        },
+      },
+    },
+    sections: [{ children: sections }],
+  });
+
+  const buffer = await Packer.toBuffer(doc);
+  return Buffer.from(buffer);
+}
+
+export function getRPPMetadata(output: Record<string, unknown>): { title: string; filename: string } {
+  const identity = (output.identity as Record<string, unknown>) ?? {};
+  const subject = getStr(identity, "subject", "Bahasa Indonesia");
+  const topic = getStr(identity, "topic", "RPP");
+  const title = `RPP ${subject} — ${topic}`;
+  return { title, filename: `${sanitizeFilename(title)}.docx` };
+}

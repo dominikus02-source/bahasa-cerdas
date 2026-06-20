@@ -2,10 +2,14 @@ import { NextRequest, NextResponse } from "next/server";
 import { getUser } from "@/lib/supabase/server";
 import { checkAIQuota, recordAIUsage } from "@/lib/premium";
 import { rateLimitRoute } from "@/lib/rate-limit";
+import { logLegacyUsage } from "@/src/ai/core/usage-logger";
+import { checkAndPrepareDeduction, deductCreditsAtomic, ensureMonthlyLedger } from "@/lib/ai-gateway/quota-checker";
 
 const AI_TIMEOUT = 15000;
+const SAFE_ERROR = "AI sedang sibuk. Silakan coba lagi beberapa saat.";
 
 export async function POST(req: NextRequest) {
+  const startTime = Date.now();
   try {
     const rl = await rateLimitRoute(req, { maxRequests: 15, windowSeconds: 60, identifier: "ai-eyd" });
     if (rl) return rl;
@@ -13,9 +17,30 @@ export async function POST(req: NextRequest) {
     const user = await getUser();
     if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-    const quota = await checkAIQuota(user, "koreksi");
-    if (!quota.allowed) {
-      return NextResponse.json({ error: "QUOTA_EXCEEDED", used: quota.used, limit: quota.limit }, { status: 429 });
+    // Legacy quota check for backward compatibility
+    const oldQuota = await checkAIQuota(user, "koreksi");
+    if (!oldQuota.allowed) {
+      return NextResponse.json({ error: "QUOTA_EXCEEDED", used: oldQuota.used, limit: oldQuota.limit }, { status: 429 });
+    }
+
+    // Phase 9D — gateway quota check
+    await ensureMonthlyLedger(user);
+    const { blocked, quota, planInfo, credits } = await checkAndPrepareDeduction(
+      user, "eyd", {}
+    );
+    if (blocked) {
+      return NextResponse.json({
+        error: "QUOTA_EXCEEDED",
+        message: "Credit AI Anda sudah habis. Upgrade atau tunggu periode berikutnya.",
+        quota: {
+          plan: quota.plan,
+          creditsRequired: quota.creditsRequired,
+          creditsUsed: quota.creditsUsed,
+          creditsTotal: quota.creditsTotal,
+          remainingCredits: quota.creditsRemaining,
+          upgradeRecommended: true,
+        },
+      }, { status: 402 });
     }
 
     const body = await req.json();
@@ -96,6 +121,8 @@ Hanya output JSON, tanpa markdown.`;
     let content = "";
     let tokens = 0;
     const errors: string[] = [];
+    let usedProvider: string | null = null;
+    let usedModel: string | null = null;
 
     if (DEEPSEEK_API_KEY) {
       try {
@@ -112,12 +139,16 @@ Hanya output JSON, tanpa markdown.`;
         });
         const json = await res.json();
         if (json.error) {
-          errors.push(`DeepSeek: ${json.error.message || json.error}`);
+          errors.push("DeepSeek gagal");
         } else {
           content = json.choices?.[0]?.message?.content || "";
-          if (content) tokens = json.usage?.total_tokens || 0;
+          if (content) {
+            tokens = json.usage?.total_tokens || 0;
+            usedProvider = "deepseek";
+            usedModel = "deepseek-chat";
+          }
         }
-      } catch (e: any) { errors.push(`DeepSeek: ${e.message}`); }
+      } catch { errors.push("DeepSeek gagal"); }
     } else {
       errors.push("DeepSeek: No API key");
     }
@@ -137,12 +168,16 @@ Hanya output JSON, tanpa markdown.`;
         });
         const json = await res.json();
         if (json.error) {
-          errors.push(`Groq: ${json.error.message || json.error}`);
+          errors.push("Groq gagal");
         } else {
           content = json.choices?.[0]?.message?.content || "";
-          if (content) tokens = content.length;
+          if (content) {
+            tokens = content.length;
+            usedProvider = "groq";
+            usedModel = "llama-3.1-8b-instant";
+          }
         }
-      } catch (e: any) { errors.push(`Groq: ${e.message}`); }
+      } catch { errors.push("Groq gagal"); }
     } else if (!content) {
       errors.push("Groq: No API key");
     }
@@ -160,20 +195,38 @@ Hanya output JSON, tanpa markdown.`;
         });
         const json = await res.json();
         if (json.error) {
-          errors.push(`Gemini: ${json.error.message || json.error}`);
+          errors.push("Gemini gagal");
         } else {
           content = json?.candidates?.[0]?.content?.parts?.[0]?.text || "";
-          if (content) tokens = content.length;
+          if (content) {
+            tokens = content.length;
+            usedProvider = "gemini";
+            usedModel = "gemini-2.0-flash";
+          }
         }
-      } catch (e: any) { errors.push(`Gemini: ${e.message}`); }
+      } catch { errors.push("Gemini gagal"); }
     } else if (!content) {
       errors.push("Gemini: No API key");
     }
 
     if (!content) {
-      console.error("All AI providers failed:", errors);
-      return NextResponse.json({ error: `Semua AI provider gagal: ${errors.join("; ")}.` }, { status: 500 });
+      const latencyMs = Date.now() - startTime;
+      logLegacyUsage({
+        userId: user.id,
+        feature: "legacy:eyd",
+        provider: usedProvider,
+        model: usedModel,
+        tokens: 0,
+        costUSD: 0,
+        latencyMs,
+        success: false,
+        error: SAFE_ERROR,
+      }).catch(() => {});
+      return NextResponse.json({ error: SAFE_ERROR }, { status: 500 });
     }
+
+    // Provider succeeded — deduct credits
+    await deductCreditsAtomic(user.id, planInfo, credits);
 
     let result = content;
     if (result.includes("```json")) {
@@ -183,6 +236,19 @@ Hanya output JSON, tanpa markdown.`;
     const costUSD = (tokens / 1_000_000) * 0.5;
     await recordAIUsage(user.id, "eyd_checker", tokens, costUSD);
 
+    const latencyMs = Date.now() - startTime;
+    logLegacyUsage({
+      userId: user.id,
+      feature: "legacy:eyd",
+      provider: usedProvider,
+      model: usedModel,
+      tokens,
+      costUSD,
+      latencyMs,
+      success: true,
+      error: null,
+    }).catch(() => {});
+
     try {
       return NextResponse.json({ result: JSON.parse(result) });
     } catch {
@@ -190,6 +256,6 @@ Hanya output JSON, tanpa markdown.`;
     }
   } catch (error) {
     console.error("AI EYD error:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json({ error: SAFE_ERROR }, { status: 500 });
   }
 }

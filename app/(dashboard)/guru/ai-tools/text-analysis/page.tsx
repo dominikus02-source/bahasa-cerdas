@@ -117,6 +117,13 @@ export default function TextAnalysisPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-emerald-50">
       <div className="max-w-6xl mx-auto px-4 py-8">
+        {/* Banner */}
+        <div className="mb-6 p-2.5 bg-emerald-50 border border-emerald-200 rounded-lg flex items-center justify-between">
+          <p className="text-xs text-emerald-700">
+            Versi baru alat ini tersedia di{" "}
+            <a href="/guru/ai-tools?agent=text-analysis" className="font-medium underline hover:text-emerald-800">Alat AI utama</a>.
+          </p>
+        </div>
         {/* Header */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center gap-2 bg-green-100 text-green-700 px-4 py-2 rounded-full text-sm font-medium mb-4">

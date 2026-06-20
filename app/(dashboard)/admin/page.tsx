@@ -2,7 +2,7 @@ import { db } from "@/lib/db";
 import { getUser } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { Users, ShoppingBag, Film, FileText, TrendingUp, Activity, AlertTriangle, DollarSign, BarChart3, BookOpen, Clock, Sparkles } from "lucide-react";
+import { Users, ShoppingBag, Film, FileText, TrendingUp, Activity, AlertTriangle, DollarSign, BarChart3, BookOpen, Clock, Sparkles, BrainCircuit, Zap } from "lucide-react";
 import { TrendBadge, UserGrowthChart, MiniBarChart } from "@/components/admin/AdminCharts";
 
 async function getStats() {
@@ -28,6 +28,10 @@ async function getStats() {
       pendingWithdrawals,
       draftVideo,
       recentUsers,
+
+      aiRequestsToday,
+      aiRequestsWeek,
+      aiSavedToday,
     ] = await Promise.all([
       db.user.count(),
       db.user.count({ where: { isPremium: true } }),
@@ -71,10 +75,20 @@ async function getStats() {
       db.video.count({ where: { isPublished: false } }),
 
       db.user.findMany({ take: 5, orderBy: { createdAt: "desc" }, select: { id: true, fullName: true, email: true, role: true, isPremium: true, createdAt: true } }),
+
+      db.aIUsage.count({ where: { createdAt: { gte: new Date(now.getTime() - 24 * 60 * 60 * 1000) } } }),
+      db.aIUsage.count({ where: { createdAt: { gte: weekAgo } } }),
+      db.aiSavedResult.count({ where: { createdAt: { gte: new Date(now.getTime() - 24 * 60 * 60 * 1000) } } }),
     ]);
 
     const pct = (cur: number, prev: number) =>
       prev === 0 ? (cur > 0 ? 100 : 0) : Math.round(((cur - prev) / prev) * 100);
+
+    // Payment stats
+    const totalPaymentsToday = await db.transaksi.count({ where: { type: "PREMIUM_UPGRADE", createdAt: { gte: new Date(now.getFullYear(), now.getMonth(), now.getDate()) } } });
+    const totalPaymentsPending = await db.transaksi.count({ where: { type: "PREMIUM_UPGRADE", status: "PENDING" } });
+    const totalPaymentsSuccess = await db.transaksi.count({ where: { type: "PREMIUM_UPGRADE", status: "SUCCESS" } });
+    const totalPaymentsRevenue = (await db.transaksi.aggregate({ _sum: { amount: true }, where: { type: "PREMIUM_UPGRADE", status: "SUCCESS" } }))._sum.amount || 0;
 
     const totalWithdrawalPending = pendingWithdrawals.reduce((s, w) => s + w.amount, 0);
 
@@ -107,6 +121,8 @@ async function getStats() {
       content: { draftKarya, publishedKarya, draftVideo },
       growth: { today: todayUsers, active: activeUsers },
       recentUsers,
+      ai: { today: aiRequestsToday, week: aiRequestsWeek, savedToday: aiSavedToday },
+      payments: { today: totalPaymentsToday, pending: totalPaymentsPending, success: totalPaymentsSuccess, revenue: totalPaymentsRevenue },
     };
   } catch (e) {
     console.error("Stats error:", e);
@@ -117,6 +133,8 @@ async function getStats() {
       content: { draftKarya: 0, publishedKarya: 0, draftVideo: 0 },
       growth: { today: 0, active: 0 },
       recentUsers: [],
+      payments: { today: 0, pending: 0, success: 0, revenue: 0 },
+      ai: { today: 0, week: 0, savedToday: 0 },
     };
   }
 }
@@ -314,6 +332,63 @@ export default async function AdminPage() {
           </div>
         </div>
       </div>
+
+      {/* AI Usage Widget */}
+      <Link href="/admin/ai-analytics"
+        className="block bg-gradient-to-r from-red-50 via-white to-white rounded-2xl border border-slate-200 p-5 hover:shadow-md transition-shadow">
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="font-semibold text-slate-900 flex items-center gap-2">
+            <BrainCircuit size={16} className="text-red-500" /> Ringkasan AI Hari Ini
+          </h2>
+          <span className="text-[10px] text-red-600 font-medium flex items-center gap-1">
+            <BarChart3 size={12} /> Lihat Detail
+          </span>
+        </div>
+        <div className="grid grid-cols-3 gap-4">
+          <div>
+            <p className="text-xl font-bold text-slate-900">{s.ai.today}</p>
+            <p className="text-[10px] text-slate-500">Request (hari ini)</p>
+          </div>
+          <div>
+            <p className="text-xl font-bold text-slate-900">{s.ai.week}</p>
+            <p className="text-[10px] text-slate-500">Request (7 hari)</p>
+          </div>
+          <div>
+            <p className="text-xl font-bold text-slate-900">{s.ai.savedToday}</p>
+            <p className="text-[10px] text-slate-500">Tersimpan (hari ini)</p>
+          </div>
+        </div>
+      </Link>
+
+      <Link href="/admin/payments"
+        className="block bg-gradient-to-r from-amber-50 via-white to-white rounded-2xl border border-amber-200 p-5 hover:shadow-md transition-shadow">
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="font-semibold text-slate-900 flex items-center gap-2">
+            <DollarSign size={16} className="text-amber-500" /> Ringkasan Pembayaran Pro
+          </h2>
+          <span className="text-[10px] text-amber-600 font-medium flex items-center gap-1">
+            <BarChart3 size={12} /> Lihat Detail
+          </span>
+        </div>
+        <div className="grid grid-cols-4 gap-4">
+          <div>
+            <p className="text-xl font-bold text-slate-900">{s.payments.today}</p>
+            <p className="text-[10px] text-slate-500">Hari Ini</p>
+          </div>
+          <div>
+            <p className="text-xl font-bold text-slate-900">{s.payments.pending}</p>
+            <p className="text-[10px] text-slate-500">Pending</p>
+          </div>
+          <div>
+            <p className="text-xl font-bold text-slate-900">{s.payments.success}</p>
+            <p className="text-[10px] text-slate-500">Sukses Total</p>
+          </div>
+          <div>
+            <p className="text-xl font-bold text-amber-700">Rp {(s.payments.revenue / 1000).toFixed(0)}RB</p>
+            <p className="text-[10px] text-slate-500">Pendapatan</p>
+          </div>
+        </div>
+      </Link>
 
       <div className="grid md:grid-cols-2 gap-6">
         <div className="bg-white rounded-2xl border border-slate-200 p-5">

@@ -1,0 +1,128 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { Crown, Sparkles, Clock, Zap, AlertCircle } from "lucide-react";
+import Link from "next/link";
+
+interface QuotaStatus {
+  plan: string;
+  unlimited: boolean;
+  creditsTotal: number;
+  remainingCredits: number;
+  isTrial: boolean;
+  trialEndsAt: string | null;
+  daysRemaining: number;
+}
+
+export function TrialStatusCard() {
+  const [status, setStatus] = useState<QuotaStatus | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch("/api/ai/quota/status")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => {
+        if (d) setStatus(d);
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, []);
+
+  if (loading || !status) return null;
+
+  // Founder — no card needed
+  if (status.plan === "FOUNDER") return null;
+
+  // Murid — no card
+  if (status.plan === "MURID_FREE") return null;
+
+  // Active trial
+  if (status.isTrial && status.plan === "GURU_PRO_TRIAL") {
+    return (
+      <div className="bg-gradient-to-br from-violet-50 to-indigo-50 rounded-2xl border border-violet-200 p-5 hover:shadow-lg transition-all">
+        <div className="flex items-start gap-4">
+          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-violet-400 to-indigo-600 flex items-center justify-center shadow-md shrink-0">
+            <Sparkles size={22} className="text-white" />
+          </div>
+          <div className="flex-1">
+            <h3 className="font-semibold text-gray-900 flex items-center gap-2">
+              Guru Pro Trial Aktif
+              <span className="inline-flex items-center gap-1 text-[10px] px-2 py-0.5 bg-violet-100 text-violet-700 rounded-full font-medium">
+                <Clock size={10} /> {status.daysRemaining} hari
+              </span>
+            </h3>
+            <p className="text-sm text-gray-500 mt-0.5">Semua fitur AI premium terbuka selama masa trial.</p>
+            <div className="flex items-center gap-4 mt-3">
+              <div className="flex items-center gap-1 text-xs text-violet-600 font-medium">
+                <Zap size={12} />
+                {status.remainingCredits}/{status.creditsTotal} credit
+              </div>
+            </div>
+            <div className="flex items-center gap-2 mt-3">
+              <Link
+                href="/guru/ai-tools"
+                className="inline-flex items-center gap-1.5 text-xs px-4 py-2 bg-violet-600 text-white rounded-lg hover:bg-violet-700 transition-all font-medium"
+              >
+                <Sparkles size={12} /> Lihat Alat AI
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Active premium
+  if (status.plan === "GURU_PRO") {
+    return (
+      <div className="bg-gradient-to-br from-emerald-50 to-teal-50 rounded-2xl border border-emerald-200 p-5 hover:shadow-lg transition-all">
+        <div className="flex items-start gap-4">
+          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-600 flex items-center justify-center shadow-md shrink-0">
+            <Crown size={22} className="text-white" />
+          </div>
+          <div className="flex-1">
+            <h3 className="font-semibold text-gray-900 flex items-center gap-2">
+              Guru Pro Aktif
+            </h3>
+            <p className="text-sm text-gray-500 mt-0.5">
+              {status.trialEndsAt
+                ? `Akses premium aktif sampai ${new Date(status.trialEndsAt).toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" })}`
+                : "Akses premium aktif"}
+            </p>
+            <div className="flex items-center gap-4 mt-3">
+              <div className="flex items-center gap-1 text-xs text-emerald-600 font-medium">
+                <Zap size={12} />
+                {status.remainingCredits}/{status.creditsTotal} credit
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Free guru (no trial, not premium) — subtle expired/ended message
+  if (status.plan === "GURU_FREE") {
+    return (
+      <div className="bg-gradient-to-br from-gray-50 to-slate-50 rounded-2xl border border-gray-200 p-5">
+        <div className="flex items-start gap-4">
+          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-gray-300 to-gray-400 flex items-center justify-center shadow-md shrink-0">
+            <AlertCircle size={22} className="text-white" />
+          </div>
+          <div className="flex-1">
+            <h3 className="font-semibold text-gray-700">Guru Free</h3>
+            <p className="text-sm text-gray-500 mt-0.5">Fitur dasar tetap bisa digunakan. Upgrade akan tersedia segera.</p>
+            <div className="flex items-center gap-4 mt-3">
+              <div className="flex items-center gap-1 text-xs text-gray-500 font-medium">
+                <Zap size={12} />
+                {status.remainingCredits}/{status.creditsTotal} credit/bulan
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return null;
+}

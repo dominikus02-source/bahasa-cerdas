@@ -19,7 +19,7 @@ export const revalidate = 60;
 export const metadata: Metadata = {
   title: "BahasaCerdas — Platform edukasi Bahasa Indonesia",
   description:
-    "Platform edukasi Bahasa Indonesia terlengkap: AI generator RPP, bank soal HOTS, kuis multiplayer, toko karya, dan komunitas MGMP terbesar. Gratis 14 hari.",
+    "Platform edukasi Bahasa Indonesia terlengkap: AI generator RPP, bank soal HOTS, kuis multiplayer, toko karya, dan komunitas MGMP terbesar. Coba gratis 30 hari.",
   openGraph: {
     title: "BahasaCerdas — Platform edukasi Bahasa Indonesia",
     description:

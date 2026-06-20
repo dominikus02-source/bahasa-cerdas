@@ -2,10 +2,14 @@ import { NextRequest, NextResponse } from "next/server";
 import { getUser } from "@/lib/supabase/server";
 import { checkAIQuota, recordAIUsage } from "@/lib/premium";
 import { rateLimitRoute } from "@/lib/rate-limit";
+import { logLegacyUsage } from "@/src/ai/core/usage-logger";
+import { checkAndPrepareDeduction, deductCreditsAtomic, ensureMonthlyLedger } from "@/lib/ai-gateway/quota-checker";
 
 const AI_TIMEOUT = 15000;
+const SAFE_ERROR = "AI sedang sibuk. Silakan coba lagi beberapa saat.";
 
 export async function POST(req: NextRequest) {
+  const startTime = Date.now();
   try {
     const rl = await rateLimitRoute(req, { maxRequests: 10, windowSeconds: 60, identifier: "ai-text-analysis" });
     if (rl) return rl;
@@ -13,13 +17,30 @@ export async function POST(req: NextRequest) {
     const user = await getUser();
     if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-    const quota = await checkAIQuota(user, "ringkasan");
-    if (!quota.allowed) {
-      return NextResponse.json({ error: "QUOTA_EXCEEDED", used: quota.used, limit: quota.limit }, { status: 429 });
+    const oldQuota = await checkAIQuota(user, "ringkasan");
+    if (!oldQuota.allowed) {
+      return NextResponse.json({ error: "QUOTA_EXCEEDED", used: oldQuota.used, limit: oldQuota.limit }, { status: 429 });
     }
 
+    // Phase 9D — gateway quota check
+    await ensureMonthlyLedger(user);
     const body = await req.json();
-    const { teks, mode = "ringkasan" } = body;
+    const { teks } = body;
+    const textLen = teks?.length ?? 0;
+    const { blocked, quota, planInfo, credits } = await checkAndPrepareDeduction(user, "text-analysis", { textLength: textLen });
+    if (blocked) {
+      return NextResponse.json({
+        error: "QUOTA_EXCEEDED",
+        message: "Credit AI Anda sudah habis. Upgrade atau tunggu periode berikutnya.",
+        quota: {
+          plan: quota.plan, creditsRequired: quota.creditsRequired,
+          creditsUsed: quota.creditsUsed, creditsTotal: quota.creditsTotal,
+          remainingCredits: quota.creditsRemaining, upgradeRecommended: true,
+        },
+      }, { status: 402 });
+    }
+
+    const { mode = "ringkasan" } = body;
 
     if (!teks || teks.length < 50) {
       return NextResponse.json({ error: "Teks terlalu pendek (minimal 50 karakter)" }, { status: 400 });
@@ -89,16 +110,8 @@ OUTPUT HARUS DALAM FORMAT JSON:
   "majas": [
     { "jenis": "Metafora|Personifikasi|Hiperbola|Simile|dll", "contoh": "Kutipan dari puisi", "makna": "Penjelasan makna" }
   ],
-  "diksi": {
-    "kataKunci": ["kata1", "kata2"],
-    "gayaBahasa": "Deskripsi gaya bahasa"
-  },
-  "struktur": {
-    "jumlahBait": 4,
-    "jumlahBaris": 16,
-    "polaRima": "AABB|ABAB|dll",
-    "irama": "Deskripsi irama"
-  },
+  "diksi": { "kataKunci": ["kata1", "kata2"], "gayaBahasa": "Deskripsi gaya bahasa" },
+  "struktur": { "jumlahBait": 4, "jumlahBaris": 16, "polaRima": "AABB|ABAB|dll", "irama": "Deskripsi irama" },
   "interpretasi": "Interpretasi makna puisi secara keseluruhan"
 }
 
@@ -125,22 +138,11 @@ OUTPUT HARUS DALAM FORMAT JSON:
   "tokoh": [
     { "nama": "Nama tokoh", "peran": "Protagonis|Antagonis|Tritagonis", "watak": "Deskripsi watak", "penokohan": "Analitik|Dramatik" }
   ],
-  "latar": {
-    "tempat": "Deskripsi tempat",
-    "waktu": "Deskripsi waktu",
-    "suasana": "Deskripsi suasana"
-  },
+  "latar": { "tempat": "Deskripsi tempat", "waktu": "Deskripsi waktu", "suasana": "Deskripsi suasana" },
   "amanat": "Amanat/pesan moral",
   "sudutPandang": "Orang pertama|Orang ketiga",
-  "konflik": {
-    "utama": "Deskripsi konflik utama",
-    "jenis": "Internal|Eksternal"
-  },
-  "penilaian": {
-    "skor": 85,
-    "kelebihan": ["Kelebihan 1", "Kelebihan 2"],
-    "kekurangan": ["Kekurangan 1", "Kekurangan 2"]
-  }
+  "konflik": { "utama": "Deskripsi konflik utama", "jenis": "Internal|Eksternal" },
+  "penilaian": { "skor": 85, "kelebihan": ["Kelebihan 1", "Kelebihan 2"], "kekurangan": ["Kekurangan 1", "Kekurangan 2"] }
 }
 
 Hanya output JSON, tanpa markdown.`;
@@ -168,13 +170,7 @@ OUTPUT HARUS DALAM FORMAT JSON:
 {
   "totalMajas": 5,
   "majas": [
-    {
-      "jenis": "Metafora|Personifikasi|Hiperbola|dll",
-      "kelompok": "Perbandingan|Sindiran|Penegasan|Pertentangan",
-      "kutipan": "Kutipan dari teks",
-      "makna": "Penjelasan makna majas",
-      "fungsi": "Fungsi majas dalam konteks"
-    }
+    { "jenis": "Metafora|Personifikasi|Hiperbola|dll", "kelompok": "Perbandingan|Sindiran|Penegasan|Pertentangan", "kutipan": "Kutipan dari teks", "makna": "Penjelasan makna majas", "fungsi": "Fungsi majas dalam konteks" }
   ],
   "ringkasan": "Ringkasan penggunaan majas dalam teks"
 }
@@ -200,16 +196,9 @@ OUTPUT HARUS DALAM FORMAT JSON:
   "struktur": [
     { "bagian": "Nama bagian (Orientasi/Komplikasi/Resolusi dll)", "paragraf": "1-2", "fungsi": "Deskripsi fungsi", "isi": "Ringkasan isi" }
   ],
-  "koherensi": {
-    "skor": 85,
-    "keterangan": "Penilaian koherensi antar paragraf"
-  },
+  "koherensi": { "skor": 85, "keterangan": "Penilaian koherensi antar paragraf" },
   "kataPenghubung": ["kata1", "kata2", "kata3"],
-  "penilaian": {
-    "skor": 80,
-    "kelebihan": ["Kelebihan 1", "Kelebihan 2"],
-    "saran": ["Saran 1", "Saran 2"]
-  }
+  "penilaian": { "skor": 80, "kelebihan": ["Kelebihan 1", "Kelebihan 2"], "saran": ["Saran 1", "Saran 2"] }
 }
 
 Hanya output JSON, tanpa markdown.`;
@@ -222,84 +211,59 @@ Hanya output JSON, tanpa markdown.`;
     let content = "";
     let tokens = 0;
     const errors: string[] = [];
+    let usedProvider: string | null = null;
+    let usedModel: string | null = null;
 
     if (DEEPSEEK_API_KEY) {
       try {
         const res = await fetch("https://api.deepseek.com/v1/chat/completions", {
           method: "POST",
           headers: { "Content-Type": "application/json", "Authorization": `Bearer ${DEEPSEEK_API_KEY}` },
-          body: JSON.stringify({
-            model: "deepseek-chat",
-            messages: [{ role: "user", content: prompt }],
-            max_tokens: 4000,
-            temperature: 0.3,
-          }),
+          body: JSON.stringify({ model: "deepseek-chat", messages: [{ role: "user", content: prompt }], max_tokens: 4000, temperature: 0.3 }),
           signal: AbortSignal.timeout(AI_TIMEOUT),
         });
         const json = await res.json();
-        if (json.error) {
-          errors.push(`DeepSeek: ${json.error.message || json.error}`);
-        } else {
-          content = json.choices?.[0]?.message?.content || "";
-          if (content) tokens = json.usage?.total_tokens || 0;
-        }
-      } catch (e: any) { errors.push(`DeepSeek: ${e.message}`); }
-    } else {
-      errors.push("DeepSeek: No API key");
-    }
+        if (json.error) { errors.push("DeepSeek gagal"); }
+        else { content = json.choices?.[0]?.message?.content || ""; if (content) { tokens = json.usage?.total_tokens || 0; usedProvider = "deepseek"; usedModel = "deepseek-chat"; } }
+      } catch { errors.push("DeepSeek gagal"); }
+    } else { errors.push("DeepSeek: No API key"); }
 
     if (!content && GROQ_API_KEY) {
       try {
         const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
           method: "POST",
           headers: { "Content-Type": "application/json", "Authorization": `Bearer ${GROQ_API_KEY}` },
-          body: JSON.stringify({
-            model: "llama-3.1-8b-instant",
-            messages: [{ role: "user", content: prompt }],
-            max_tokens: 4000,
-            temperature: 0.3,
-          }),
+          body: JSON.stringify({ model: "llama-3.1-8b-instant", messages: [{ role: "user", content: prompt }], max_tokens: 4000, temperature: 0.3 }),
           signal: AbortSignal.timeout(AI_TIMEOUT),
         });
         const json = await res.json();
-        if (json.error) {
-          errors.push(`Groq: ${json.error.message || json.error}`);
-        } else {
-          content = json.choices?.[0]?.message?.content || "";
-          if (content) tokens = content.length;
-        }
-      } catch (e: any) { errors.push(`Groq: ${e.message}`); }
-    } else if (!content) {
-      errors.push("Groq: No API key");
-    }
+        if (json.error) { errors.push("Groq gagal"); }
+        else { content = json.choices?.[0]?.message?.content || ""; if (content) { tokens = content.length; usedProvider = "groq"; usedModel = "llama-3.1-8b-instant"; } }
+      } catch { errors.push("Groq gagal"); }
+    } else if (!content) { errors.push("Groq: No API key"); }
 
     if (!content && GEMINI_API_KEY) {
       try {
         const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent`, {
           method: "POST",
           headers: { "Content-Type": "application/json", "X-goog-api-key": GEMINI_API_KEY },
-          body: JSON.stringify({
-            contents: [{ parts: [{ text: prompt }] }],
-            generationConfig: { temperature: 0.3, maxOutputTokens: 4000 },
-          }),
+          body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }], generationConfig: { temperature: 0.3, maxOutputTokens: 4000 } }),
           signal: AbortSignal.timeout(AI_TIMEOUT),
         });
         const json = await res.json();
-        if (json.error) {
-          errors.push(`Gemini: ${json.error.message || json.error}`);
-        } else {
-          content = json?.candidates?.[0]?.content?.parts?.[0]?.text || "";
-          if (content) tokens = content.length;
-        }
-      } catch (e: any) { errors.push(`Gemini: ${e.message}`); }
-    } else if (!content) {
-      errors.push("Gemini: No API key");
-    }
+        if (json.error) { errors.push("Gemini gagal"); }
+        else { content = json?.candidates?.[0]?.content?.parts?.[0]?.text || ""; if (content) { tokens = content.length; usedProvider = "gemini"; usedModel = "gemini-2.0-flash"; } }
+      } catch { errors.push("Gemini gagal"); }
+    } else if (!content) { errors.push("Gemini: No API key"); }
 
     if (!content) {
-      console.error("All AI providers failed:", errors);
-      return NextResponse.json({ error: `Semua AI provider gagal: ${errors.join("; ")}.` }, { status: 500 });
+      const latencyMs = Date.now() - startTime;
+      logLegacyUsage({ userId: user.id, feature: "legacy:text-analysis", provider: usedProvider, model: usedModel, tokens: 0, costUSD: 0, latencyMs, success: false, error: SAFE_ERROR }).catch(() => {});
+      return NextResponse.json({ error: SAFE_ERROR }, { status: 500 });
     }
+
+    // Provider succeeded — deduct credits
+    await deductCreditsAtomic(user.id, planInfo, credits);
 
     let result = content;
     if (result.includes("```json")) {
@@ -309,6 +273,9 @@ Hanya output JSON, tanpa markdown.`;
     const costUSD = (tokens / 1_000_000) * 0.5;
     await recordAIUsage(user.id, "text_analysis", tokens, costUSD);
 
+    const latencyMs = Date.now() - startTime;
+    logLegacyUsage({ userId: user.id, feature: "legacy:text-analysis", provider: usedProvider, model: usedModel, tokens, costUSD, latencyMs, success: true, error: null }).catch(() => {});
+
     try {
       return NextResponse.json({ result: JSON.parse(result) });
     } catch {
@@ -316,6 +283,6 @@ Hanya output JSON, tanpa markdown.`;
     }
   } catch (error) {
     console.error("AI Text Analysis error:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json({ error: SAFE_ERROR }, { status: 500 });
   }
 }
