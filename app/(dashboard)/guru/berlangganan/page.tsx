@@ -78,11 +78,12 @@ export default function BerlanggananPage() {
         return;
       }
 
-      // Redirect to Midtrans payment page (no Snap.js popup needed)
+      // Redirect to Midtrans payment page
       if (result.redirectUrl) {
+        setErrorMsg("Mengarahkan ke halaman pembayaran Midtrans...");
         window.location.href = result.redirectUrl;
       } else {
-        setErrorMsg("Gagal membuat halaman pembayaran. Coba lagi.");
+        setErrorMsg("Pembayaran belum bisa dibuka. Silakan coba lagi beberapa saat atau hubungi admin.");
         setLoading(false);
       }
     } catch (err) {

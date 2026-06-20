@@ -3,12 +3,9 @@ import { getUser } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 import { getPlan } from "@/lib/billing/plans";
 import { withTimeout } from "@/lib/db-timeout";
+import { getIsProduction } from "@/lib/midtrans";
 
 const Midtrans = require("midtrans-client");
-
-function getIsProduction(): boolean {
-  return process.env.NEXT_PUBLIC_MIDTRANS_IS_PRODUCTION === "true";
-}
 
 function generateOrderId(userId: string): string {
   const ts = Date.now().toString(36).slice(-6).toUpperCase();
@@ -39,6 +36,17 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Paket tidak valid" }, { status: 400 });
     }
 
+    // Env validation — fail early with clear message
+    const serverKey = process.env.MIDTRANS_SERVER_KEY;
+    const clientKey = process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY;
+    if (!serverKey || !clientKey) {
+      console.error("[Billing/Checkout] Missing env vars:", { hasServerKey: !!serverKey, hasClientKey: !!clientKey });
+      return NextResponse.json(
+        { error: "Konfigurasi pembayaran belum lengkap. Hubungi admin." },
+        { status: 500 }
+      );
+    }
+
     // Founder/Admin bypass — no payment needed
     if (user.isFounder || user.role === "ADMIN") {
       const premiumUntil = new Date();
@@ -56,7 +64,7 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    // Auto-cancel stale pending transactions from the same user
+    // Auto-cancel stale pending transactions
     const stalePending = await db.transaksi.findFirst({
       where: {
         userId: user.id,
@@ -75,11 +83,20 @@ export async function POST(req: NextRequest) {
     }
 
     const orderId = generateOrderId(user.id);
+    const isProduction = getIsProduction();
+
+    console.log("[Billing/Checkout] Creating transaction:", {
+      orderId,
+      planId,
+      isProduction,
+      hasServerKey: true,
+      hasClientKey: true,
+    });
 
     const midtransClient = new Midtrans.Snap({
-      serverKey: process.env.MIDTRANS_SERVER_KEY,
-      clientKey: process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY,
-      isProduction: getIsProduction(),
+      serverKey,
+      clientKey,
+      isProduction,
     });
 
     const parameter = {
@@ -93,8 +110,25 @@ export async function POST(req: NextRequest) {
       },
     };
 
-    const transaction = await midtransClient.createTransaction(parameter);
     let transaksiId: string | null = null;
+    let transactionToken: string;
+    let redirectUrl: string;
+
+    try {
+      const transaction = await midtransClient.createTransaction(parameter);
+      transactionToken = transaction.token;
+      redirectUrl = transaction.redirect_url;
+    } catch (midtransError: any) {
+      console.error("[Billing/Checkout] Midtrans API error:", {
+        status: midtransError?.httpStatusCode,
+        message: midtransError?.message,
+        apiResponse: midtransError?.ApiResponse,
+      });
+      return NextResponse.json(
+        { error: "Pembayaran belum bisa dibuka. Silakan coba lagi beberapa saat atau hubungi admin." },
+        { status: 502 }
+      );
+    }
 
     try {
       const created = await withTimeout(
@@ -119,8 +153,8 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({
       transactionId: transaksiId,
       orderId,
-      token: transaction.token,
-      redirectUrl: transaction.redirect_url,
+      token: transactionToken,
+      redirectUrl,
       plan: {
         planId: plan.planId,
         label: plan.label,
@@ -129,9 +163,9 @@ export async function POST(req: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("[Billing/Checkout] Error:", error);
+    console.error("[Billing/Checkout] Unexpected error:", error);
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : "Gagal memproses checkout" },
+      { error: "Terjadi kesalahan. Silakan coba lagi." },
       { status: 500 }
     );
   }
