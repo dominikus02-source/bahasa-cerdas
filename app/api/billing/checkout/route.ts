@@ -60,22 +60,22 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    // Prevent duplicate pending checkout within 5 minutes
-    const recentPending = await db.transaksi.findFirst({
+    // Auto-cancel stale pending transactions from the same user
+    const stalePending = await db.transaksi.findFirst({
       where: {
         userId: user.id,
         type: "PREMIUM_UPGRADE",
         status: "PENDING",
-        createdAt: { gte: new Date(Date.now() - 5 * 60 * 1000) },
+        createdAt: { lt: new Date(Date.now() - 2 * 60 * 1000) },
       },
       orderBy: { createdAt: "desc" },
     });
 
-    if (recentPending) {
-      return NextResponse.json({
-        error: "Masih ada transaksi pending. Selesaikan atau tunggu 5 menit.",
-        existingOrderId: recentPending.orderId,
-      }, { status: 409 });
+    if (stalePending) {
+      await db.transaksi.update({
+        where: { id: stalePending.id },
+        data: { status: "EXPIRED" },
+      });
     }
 
     const orderId = generateOrderId(user.id);
