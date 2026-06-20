@@ -104,7 +104,7 @@ export async function POST(req: NextRequest) {
         },
       ],
       callbacks: {
-        finish: `${getSiteUrl()}/guru/berlangganan?status=success&order_id=${orderId}`,
+        finish: `${getSiteUrl()}/guru/berlangganan`,
       },
     };
 

@@ -70,7 +70,7 @@ export async function createTransaction(params: {
       collect_card_token: false,
     },
     callbacks: {
-      finish: `${getSiteUrl()}/guru/pengaturan/premium?status=success&order_id=${orderId}`,
+      finish: `${getSiteUrl()}/guru/berlangganan`,
     },
   };
 
