@@ -126,7 +126,7 @@ export default function PricingTable() {
               </ul>
               <Link href="/register?plan=monthly" className="block">
                 <Button variant="outline" className="w-full py-6 rounded-xl font-bold border-slate-300 text-slate-700 hover:bg-slate-50">
-                  Coba 14 Hari Gratis
+                  Coba 30 Hari Gratis
                 </Button>
               </Link>
             </CardContent>

@@ -4,16 +4,11 @@ import { useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { Sparkles, Play, ChevronRight, Star } from "lucide-react";
+import { Sparkles, Play, ChevronRight, Star, User } from "lucide-react";
 import BatikDecor from "@/components/landing/batik-decor";
 import { fadeInUp, staggerContainer, sectionProps, itemProps } from "@/lib/motion";
 
-const avatarUsers = [
-  { url: "https://api.dicebear.com/9.x/avataaars/svg?seed=teacher1&backgroundColor=c0aede", alt: "Guru 1" },
-  { url: "https://api.dicebear.com/9.x/avataaars/svg?seed=teacher2&backgroundColor=d1d4f9", alt: "Guru 2" },
-  { url: "https://api.dicebear.com/9.x/avataaars/svg?seed=teacher3&backgroundColor=ffd5dc", alt: "Guru 3" },
-  { url: "https://api.dicebear.com/9.x/avataaars/svg?seed=teacher4&backgroundColor=ffdfbf", alt: "Guru 4" },
-];
+const avatarColors = ["#c0aede", "#d1d4f9", "#ffd5dc", "#ffdfbf"];
 
 export default function HeroSection() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -91,16 +86,15 @@ export default function HeroSection() {
               className="flex items-center gap-3 mb-8"
             >
               <div className="flex -space-x-2" role="group" aria-label="Foto avatar guru">
-                {avatarUsers.map((user, i) => (
-                  <Image
+                {avatarColors.map((color, i) => (
+                  <div
                     key={i}
-                    src={user.url}
-                    alt={user.alt}
-                    width={32}
-                    height={32}
-                    className="rounded-full border-2 border-white bg-zinc-100"
-                    unoptimized
-                  />
+                    className="w-8 h-8 rounded-full border-2 border-white flex items-center justify-center shrink-0"
+                    style={{ backgroundColor: color }}
+                    title={`Guru ${i + 1}`}
+                  >
+                    <User size={14} className="text-white/70" />
+                  </div>
                 ))}
               </div>
               <div>
@@ -127,7 +121,7 @@ export default function HeroSection() {
                 className="group relative inline-flex items-center gap-2 px-8 py-3.5 text-base font-semibold text-white bg-primary hover:bg-primary-dark rounded-xl transition-all duration-200 shadow-xl shadow-primary/25 hover:shadow-2xl hover:shadow-primary/30 hover:-translate-y-0.5 focus-ring"
                 aria-label="Daftar gratis, coba BahasaCerdas 30 hari"
               >
-                Coba Gratis 14 Hari
+                Coba Gratis 30 Hari
                 <ChevronRight size={18} className="transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
               </Link>
               <Link

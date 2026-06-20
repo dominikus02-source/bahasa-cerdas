@@ -30,7 +30,7 @@ export default function FinalCTA() {
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 border border-white/10 mb-6">
             <Sparkles size={14} className="text-amber-400" aria-hidden="true" />
             <span className="text-xs font-semibold text-amber-400">
-              Gratis 14 Hari — Tanpa Kartu Kredit
+              Gratis 30 Hari — Tanpa Kartu Kredit
             </span>
           </div>
 
@@ -51,7 +51,7 @@ export default function FinalCTA() {
               className="group inline-flex items-center gap-2 px-8 py-3.5 text-base font-semibold text-zinc-900 bg-white hover:bg-zinc-100 rounded-xl transition-all duration-200 shadow-xl hover:shadow-2xl hover:-translate-y-0.5 focus-ring"
               aria-label="Mulai gratis 30 hari, daftar sekarang"
             >
-              Mulai Gratis 14 Hari
+              Mulai Gratis 30 Hari
               <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" aria-hidden="true" />
             </Link>
             <Link
