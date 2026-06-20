@@ -5,20 +5,6 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Check, Crown, Zap, AlertCircle, Loader2, X, Shield, CreditCard, Calendar, Clock, Info, Landmark, Smartphone } from "lucide-react";
-import { getSnapScriptUrl } from "@/lib/midtrans";
-
-declare global {
-  interface Window {
-    snap?: {
-      pay: (token: string, options?: {
-        onSuccess: Function;
-        onPending: Function;
-        onError: Function;
-        onClose: Function;
-      }) => void;
-    };
-  }
-}
 
 const FEATURES = [
   { free: true, pro: true, label: "AI Tools (Buat RPP, Soal, PPT, dll)" },
@@ -42,7 +28,6 @@ export default function BerlanggananPage() {
   const [status, setStatus] = useState<"default" | "success" | "failed">("default");
   const [errorMsg, setErrorMsg] = useState("");
   const [selectedPlan, setSelectedPlan] = useState<"GURU_PRO_MONTHLY" | "GURU_PRO_YEARLY">("GURU_PRO_YEARLY");
-  const [snapReady, setSnapReady] = useState(false);
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
   const [userLoading, setUserLoading] = useState(true);
 
@@ -70,21 +55,6 @@ export default function BerlanggananPage() {
       .finally(() => setUserLoading(false));
   }, []);
 
-  useEffect(() => {
-    const clientKey = process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY;
-    if (!clientKey) return;
-    const script = document.createElement("script");
-    script.src = getSnapScriptUrl();
-    script.setAttribute("data-client-key", clientKey);
-    script.onload = () => setSnapReady(true);
-    script.onerror = () => console.warn("[Snap] Failed to load Midtrans Snap.js");
-    document.body.appendChild(script);
-    return () => {
-      const el = document.querySelector(`script[src="${getSnapScriptUrl()}"]`);
-      if (el) el.remove();
-    };
-  }, []);
-
   const handleUpgrade = async () => {
     setLoading(true);
     setErrorMsg("");
@@ -97,11 +67,7 @@ export default function BerlanggananPage() {
       const result = await res.json();
 
       if (!res.ok) {
-        if (res.status === 409 && result.existingOrderId) {
-          setErrorMsg("Masih ada pembayaran yang tertunda. Selesaikan atau tunggu 5 menit.");
-        } else {
-          setErrorMsg(result.error || "Gagal memproses. Coba lagi.");
-        }
+        setErrorMsg(result.error || "Gagal memproses. Coba lagi.");
         setLoading(false);
         return;
       }
@@ -112,45 +78,12 @@ export default function BerlanggananPage() {
         return;
       }
 
-      if (result.token) {
-        const openSnap = () => {
-          if (window.snap) {
-            window.snap.pay(result.token, {
-              onSuccess: () => { setStatus("success"); setLoading(false); },
-              onPending: () => setLoading(false),
-              onError: () => { setErrorMsg("Pembayaran gagal. Silakan coba lagi."); setLoading(false); },
-              onClose: () => { if (status !== "success") setLoading(false); },
-            });
-          } else {
-            setErrorMsg("Gagal memuat Midtrans. Refresh halaman dan coba lagi.");
-            setLoading(false);
-          }
-        };
-
-        if (window.snap) {
-          openSnap();
-        } else {
-          // Poll for Snap.js readiness, up to 10 detik
-          let attempts = 0;
-          const poll = setInterval(() => {
-            attempts++;
-            if (window.snap) {
-              clearInterval(poll);
-              openSnap();
-            } else if (attempts >= 20) {
-              clearInterval(poll);
-              setErrorMsg("Gagal memuat Midtrans. Refresh halaman dan coba lagi.");
-              setLoading(false);
-            }
-          }, 500);
-        }
+      // Redirect to Midtrans payment page (no Snap.js popup needed)
+      if (result.redirectUrl) {
+        window.location.href = result.redirectUrl;
       } else {
-        setTimeout(() => {
-          if (!window.snap) {
-            setErrorMsg("Gagal memuat Midtrans. Refresh halaman dan coba lagi.");
-            setLoading(false);
-          }
-        }, 3000);
+        setErrorMsg("Gagal membuat halaman pembayaran. Coba lagi.");
+        setLoading(false);
       }
     } catch (err) {
       setErrorMsg("Terjadi kesalahan. Silakan coba lagi.");
