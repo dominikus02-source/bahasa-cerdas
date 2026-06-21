@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Image from "next/image";
 import PageNavbar from "@/components/public/PageNavbar";
 import PageFooter from "@/components/public/PageFooter";
 import { Sparkles, Users, ShoppingBag, Heart, Shield, BrainCircuit, BookOpen, Lightbulb, ArrowRight, GraduationCap, Globe, PenTool } from "lucide-react";
@@ -14,6 +15,7 @@ const founders = [
     initial: "D",
     name: "Dominikus Wahyu",
     role: "Founder & CEO",
+    image: "/founders/dominikus.png",
     desc: "Memimpin visi produk, arsitektur platform, pengembangan teknologi, AI, dan arah pertumbuhan BahasaCerdas. BahasaCerdas lahir dari keyakinan bahwa teknologi harus membantu guru bekerja lebih efisien tanpa kehilangan kedalaman manusiawi dalam mengajar.",
     color: "from-emerald-500 to-teal-600",
   },
@@ -21,6 +23,7 @@ const founders = [
     initial: "A",
     name: "Alexander Suryanta",
     role: "Co-Founder & Head of Content",
+    image: "/founders/alexander.jpg",
     desc: "Menguatkan fondasi konten dan pedagogi BahasaCerdas melalui pengalaman panjang dalam pengajaran Bahasa Indonesia, penulisan buku teks, dan pengembangan materi pembelajaran.",
     color: "from-violet-500 to-purple-600",
   },
@@ -28,6 +31,7 @@ const founders = [
     initial: "W",
     name: "Washadi",
     role: "Co-Founder & Head of Community",
+    image: "/founders/washadi.png",
     desc: "Menghubungkan BahasaCerdas dengan kebutuhan nyata guru dan komunitas Bahasa Indonesia melalui pengalaman sebagai pendidik, penggerak MGMP, dan pengembang jejaring komunitas.",
     color: "from-amber-500 to-orange-600",
   },
@@ -273,8 +277,14 @@ export default function TentangPage() {
           <div className="grid md:grid-cols-3 gap-6 lg:gap-8 max-w-5xl mx-auto">
             {founders.map((f) => (
               <div key={f.initial} className="text-center p-6 lg:p-8 rounded-2xl bg-zinc-50 border border-zinc-100">
-                <div className={`w-20 h-20 rounded-full bg-gradient-to-br ${f.color} flex items-center justify-center text-white text-2xl font-bold mx-auto mb-4 shadow-lg`}>
-                  {f.initial}
+                <div className="relative w-28 h-28 mx-auto mb-4 rounded-full overflow-hidden border-4 border-white shadow-lg">
+                  <Image
+                    src={f.image}
+                    alt={f.name}
+                    fill
+                    className="object-cover"
+                    sizes="112px"
+                  />
                 </div>
                 <h3 className="text-lg font-bold text-zinc-900">{f.name}</h3>
                 <p className="text-sm font-semibold text-primary mb-3">{f.role}</p>
