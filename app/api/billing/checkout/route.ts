@@ -3,6 +3,7 @@ import { getUser } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 import { getPlan } from "@/lib/billing/plans";
 import { withTimeout } from "@/lib/db-timeout";
+import { getIsProduction, getMidtransApiUrl } from "@/lib/midtrans";
 
 type ErrorCode =
   | "AUTH_REQUIRED"
@@ -29,18 +30,6 @@ function generateOrderId(userId: string): string {
   return `PM-${ts}-${shortId}`;
 }
 
-function getIsProduction(): boolean {
-  const s = process.env.MIDTRANS_IS_PRODUCTION;
-  const c = process.env.NEXT_PUBLIC_MIDTRANS_IS_PRODUCTION;
-  return s === "true" || c === "true";
-}
-
-function getMidtransApiBase(): string {
-  return getIsProduction()
-    ? "https://app.midtrans.com"
-    : "https://app.sandbox.midtrans.com";
-}
-
 interface MidtransSnapResponse {
   token: string;
   redirect_url: string;
@@ -53,7 +42,7 @@ async function createSnapTransaction(params: {
   email: string;
 }): Promise<MidtransSnapResponse> {
   const serverKey = (process.env.MIDTRANS_SERVER_KEY || "").trim();
-  const baseUrl = getMidtransApiBase();
+  const baseUrl = getMidtransApiUrl();
   const auth = Buffer.from(`${serverKey}:`).toString("base64");
 
   const body = {
