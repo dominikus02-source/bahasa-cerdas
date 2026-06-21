@@ -66,8 +66,9 @@ export default function BerlanggananPage() {
       });
       const result = await res.json();
 
-      if (!res.ok) {
-        setErrorMsg(result.message || result.error || "Gagal memproses. Coba lagi.");
+      if (!res.ok || result.ok === false) {
+        const msg = result.message || result.error || "Gagal memproses. Coba lagi.";
+        setErrorMsg(msg);
         setLoading(false);
         return;
       }
@@ -86,7 +87,7 @@ export default function BerlanggananPage() {
         setLoading(false);
       }
     } catch (err) {
-      setErrorMsg("Jaringan bermasalah. Periksa koneksi internet Anda dan coba lagi.");
+      setErrorMsg("Tidak bisa menghubungi server pembayaran. Periksa koneksi internet Anda.");
       setLoading(false);
     }
   };
