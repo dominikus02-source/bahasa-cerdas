@@ -4,8 +4,11 @@ let midtransClient: Snap;
 
 export function getIsProduction(): boolean {
   const env = process.env.NEXT_PUBLIC_MIDTRANS_IS_PRODUCTION;
+  // Explicit override
   if (env === "true") return true;
-  return false;
+  if (env === "false") return false;
+  // Default: production on Vercel (NODE_ENV=production), sandbox in dev
+  return process.env.NODE_ENV === "production";
 }
 
 function validateConfig() {
