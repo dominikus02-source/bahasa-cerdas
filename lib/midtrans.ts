@@ -1,8 +1,13 @@
 export function getIsProduction(): boolean {
-  // Explicit override
-  if (typeof process !== "undefined" && process.env.MIDTRANS_IS_PRODUCTION === "false") return false;
-  if (typeof process !== "undefined" && process.env.NEXT_PUBLIC_MIDTRANS_IS_PRODUCTION === "false") return false;
-  // Production by default (matches production server key)
+  // Server-side env has highest priority
+  if (typeof process !== "undefined" && process.env.MIDTRANS_IS_PRODUCTION != null) {
+    return process.env.MIDTRANS_IS_PRODUCTION === "true";
+  }
+  // Client-side env as fallback
+  if (typeof process !== "undefined" && process.env.NEXT_PUBLIC_MIDTRANS_IS_PRODUCTION != null) {
+    return process.env.NEXT_PUBLIC_MIDTRANS_IS_PRODUCTION === "true";
+  }
+  // Production by default
   return true;
 }
 
