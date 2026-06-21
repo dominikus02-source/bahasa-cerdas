@@ -59,7 +59,7 @@ export default function MarketplaceDetailPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-white">
       <PageNavbar />
-      <div className="max-w-5xl mx-auto px-4 py-8">
+      <div className="max-w-5xl mx-auto px-4 py-8 pt-24">
         <button onClick={() => router.back()} className="inline-flex items-center gap-1 text-sm text-slate-500 hover:text-red-600 mb-6">
           <ChevronLeft size={16} /> Kembali
         </button>
