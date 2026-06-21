@@ -1,32 +1,23 @@
-import type { Snap } from "midtrans-client";
-
-let midtransClient: Snap;
-
-/**
- * Single source of truth for Midtrans production/sandbox mode.
- * 
- * Server-side checks MIDTRANS_IS_PRODUCTION first, then NEXT_PUBLIC_MIDTRANS_IS_PRODUCTION.
- * Client-side uses NEXT_PUBLIC_MIDTRANS_IS_PRODUCTION (only public vars inlined at build).
- * 
- * Returns true for production, false for sandbox.
- */
 export function getIsProduction(): boolean {
-  // Server-side env (not exposed to client)
   if (typeof process !== "undefined" && process.env.MIDTRANS_IS_PRODUCTION != null) {
     return process.env.MIDTRANS_IS_PRODUCTION === "true";
   }
-  // Client-side env (safe for frontend, inlined at build)
   if (typeof process !== "undefined" && process.env.NEXT_PUBLIC_MIDTRANS_IS_PRODUCTION != null) {
     return process.env.NEXT_PUBLIC_MIDTRANS_IS_PRODUCTION === "true";
   }
-  // Default: safe fallback to sandbox
   return false;
 }
 
+function getApiBase(): string {
+  return getIsProduction()
+    ? "https://app.midtrans.com"
+    : "https://app.sandbox.midtrans.com";
+}
+
 function validateConfig() {
-  const serverKey = process.env.MIDTRANS_SERVER_KEY;
-  const clientKey = process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY;
-  if (!serverKey) throw new Error("MIDTRANS_SERVER_KEY tidak dikonfigurasi di environment Vercel");
+  const serverKey = (process.env.MIDTRANS_SERVER_KEY || "").trim();
+  const clientKey = (process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY || "").trim();
+  if (!serverKey) throw new Error("MIDTRANS_SERVER_KEY tidak dikonfigurasi");
   if (!clientKey) throw new Error("NEXT_PUBLIC_MIDTRANS_CLIENT_KEY tidak dikonfigurasi");
 }
 
@@ -37,67 +28,26 @@ export function getSnapScriptUrl(): string {
 }
 
 export function getMidtransApiUrl(): string {
-  return getIsProduction()
-    ? "https://app.midtrans.com"
-    : "https://app.sandbox.midtrans.com";
+  return getApiBase();
 }
 
-export async function createTransaction(params: {
-  userId: string;
-  email: string;
-  fullName: string;
-  plan: "monthly" | "yearly";
-}) {
-  validateConfig();
-  const Midtrans = require("midtrans-client");
-
-  midtransClient = new Midtrans.Snap({
-    serverKey: process.env.MIDTRANS_SERVER_KEY,
-    clientKey: process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY,
-    isProduction: getIsProduction(),
-  });
-
-  const amount = params.plan === "monthly" ? 49000 : 399000;
-
-  const orderId = `PM-${Date.now().toString(36).slice(-6).toUpperCase()}-${params.userId.slice(0, 8)}`;
-
-  const parameter = {
-    transaction_details: {
-      order_id: orderId,
-      gross_amount: amount,
-    },
-    customer_details: {
-      first_name: params.fullName,
-      email: params.email,
-    },
-    credit_card: {
-      save_card: false,
-      collect_card_token: false,
-    },
-  };
-
-  const transaction = await midtransClient.createTransaction(parameter);
-  return { transactionToken: transaction.token, redirectUrl: transaction.redirect_url, orderId };
+interface SnapResult {
+  transactionToken: string;
+  redirectUrl: string;
+  orderId: string;
 }
 
-export async function createKaryaTransaction(params: {
+async function createSnap(params: {
   orderId: string;
   amount: number;
-  email: string;
   fullName: string;
-  itemId: string;
-  itemTitle: string;
-}) {
-  validateConfig();
-  const Midtrans = require("midtrans-client");
+  email: string;
+}): Promise<{ token: string; redirectUrl: string }> {
+  const baseUrl = getApiBase();
+  const serverKey = (process.env.MIDTRANS_SERVER_KEY || "").trim();
+  const auth = Buffer.from(`${serverKey}:`).toString("base64");
 
-  const client = new Midtrans.Snap({
-    serverKey: process.env.MIDTRANS_SERVER_KEY,
-    clientKey: process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY,
-    isProduction: getIsProduction(),
-  });
-
-  const parameter = {
+  const body = {
     transaction_details: {
       order_id: params.orderId,
       gross_amount: params.amount,
@@ -108,14 +58,75 @@ export async function createKaryaTransaction(params: {
     },
   };
 
+  const res = await fetch(`${baseUrl}/snap/v1/transactions`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Basic ${auth}`,
+      Accept: "application/json",
+    },
+    body: JSON.stringify(body),
+  });
+
+  const json = await res.json();
+
+  if (!res.ok) {
+    const errMsg = Array.isArray(json?.error_messages)
+      ? json.error_messages.join(", ")
+      : json?.error_messages || `HTTP ${res.status}`;
+    const error: any = new Error(errMsg);
+    error.httpStatusCode = res.status;
+    error.apiResponse = json;
+    throw error;
+  }
+
+  return { token: json.token, redirectUrl: json.redirect_url };
+}
+
+export async function createTransaction(params: {
+  userId: string;
+  email: string;
+  fullName: string;
+  plan: "monthly" | "yearly";
+}): Promise<SnapResult> {
+  validateConfig();
+  const amount = params.plan === "monthly" ? 49000 : 399000;
+  const orderId = `PM-${Date.now().toString(36).slice(-6).toUpperCase()}-${params.userId.slice(0, 8)}`;
+
+  const result = await createSnap({
+    orderId,
+    amount,
+    fullName: params.fullName,
+    email: params.email,
+  });
+
+  return { transactionToken: result.token, redirectUrl: result.redirectUrl, orderId };
+}
+
+export async function createKaryaTransaction(params: {
+  orderId: string;
+  amount: number;
+  email: string;
+  fullName: string;
+  itemId: string;
+  itemTitle: string;
+}): Promise<SnapResult> {
+  validateConfig();
+
   try {
-    const transaction = await client.createTransaction(parameter);
-    return { transactionToken: transaction.token, redirectUrl: transaction.redirect_url, orderId: params.orderId };
+    const result = await createSnap({
+      orderId: params.orderId,
+      amount: params.amount,
+      fullName: params.fullName,
+      email: params.email,
+    });
+    return { transactionToken: result.token, redirectUrl: result.redirectUrl, orderId: params.orderId };
   } catch (err: any) {
-    console.error("Midtrans createKaryaTransaction error:", err);
-    console.error("Midtrans HTTP error details:", err?.http_error_details || err?.ApiResponse || err?.message);
+    console.error("Midtrans createKaryaTransaction error:", {
+      status: err?.httpStatusCode,
+      message: err?.message,
+      apiResponse: err?.apiResponse,
+    });
     throw err;
   }
 }
-
-export { midtransClient };

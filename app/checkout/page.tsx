@@ -44,7 +44,6 @@ export default function CheckoutPage() {
     setError("");
 
     try {
-      // Process all items — collect tokens for paid items
       for (const item of items) {
         const res = await fetch("/api/marketplace/purchase", {
           method: "POST",
@@ -53,32 +52,39 @@ export default function CheckoutPage() {
         });
 
         const data = await res.json();
-        if (!res.ok) throw new Error(data.error || "Gagal checkout");
-
-        // If paid item -> open Snap popup
-        if (data.token && window.snap) {
-          localStorage.removeItem("bc-cart");
-          window.dispatchEvent(new Event("cart-update"));
-          const paid = false;
-          window.snap.pay(data.token, {
-            onSuccess: () => { setSuccess(true); },
-            onPending: () => { setSuccess(true); },
-            onError: () => { setError("Pembayaran gagal, silakan coba lagi."); setLoading(false); },
-            onClose: () => { if (!paid) setLoading(false); },
-          });
-          return; // Snap handles the flow from here
+        if (!res.ok) {
+          const msg = data.message || data.error || "Gagal checkout";
+          throw new Error(msg);
         }
 
-        // If redirect URL (fallback)
+        // Free item — mark success
+        if (data.success && item.price === 0) {
+          continue;
+        }
+
+        // Paid item — use redirectUrl (more reliable than Snap popup)
         if (data.redirectUrl) {
           localStorage.removeItem("bc-cart");
           window.dispatchEvent(new Event("cart-update"));
           window.location.href = data.redirectUrl;
           return;
         }
+
+        // Snap token fallback
+        if (data.token && window.snap) {
+          localStorage.removeItem("bc-cart");
+          window.dispatchEvent(new Event("cart-update"));
+          window.snap.pay(data.token, {
+            onSuccess: () => { setSuccess(true); setLoading(false); },
+            onPending: () => { setSuccess(true); setLoading(false); },
+            onError: () => { setError("Pembayaran gagal, silakan coba lagi."); setLoading(false); },
+            onClose: () => { setLoading(false); },
+          });
+          return;
+        }
       }
 
-      // All free items — done
+      // All free items done
       localStorage.removeItem("bc-cart");
       window.dispatchEvent(new Event("cart-update"));
       setSuccess(true);
