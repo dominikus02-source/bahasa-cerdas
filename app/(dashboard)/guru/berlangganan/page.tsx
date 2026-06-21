@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Check, Crown, Zap, AlertCircle, Loader2, X, Shield, CreditCard, Calendar, Clock, Info, Landmark, Smartphone } from "lucide-react";
+import { loadMidtransSnap } from "@/lib/midtrans-client";
 
 const FEATURES = [
   { free: true, pro: true, label: "AI Tools (Buat RPP, Soal, PPT, dll)" },
@@ -23,13 +24,26 @@ interface UserInfo {
   premiumUntil: string | null;
 }
 
+const ERROR_MESSAGES: Record<string, string> = {
+  MIDTRANS_UNAUTHORIZED: "Kredensial pembayaran belum sesuai. Silakan hubungi admin.",
+  MIDTRANS_CONFIG_MISSING: "Konfigurasi pembayaran belum lengkap. Silakan hubungi admin.",
+  MIDTRANS_MODE_MISMATCH: "Mode pembayaran tidak konsisten. Silakan hubungi admin.",
+  MIDTRANS_CREATE_FAILED: "Pembayaran belum bisa dibuat. Silakan coba beberapa saat lagi.",
+  CHECKOUT_AUTH_REQUIRED: "Silakan login terlebih dahulu.",
+  CHECKOUT_FORBIDDEN_ROLE: "Hanya guru yang dapat membeli paket Guru Pro.",
+  CHECKOUT_INVALID_PLAN: "Paket tidak tersedia.",
+  CHECKOUT_DB_FAILED: "Gagal menyimpan pesanan. Silakan coba lagi.",
+};
+
 export default function BerlanggananPage() {
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState<"default" | "success" | "failed">("default");
   const [errorMsg, setErrorMsg] = useState("");
+  const [diagnosticCode, setDiagnosticCode] = useState("");
   const [selectedPlan, setSelectedPlan] = useState<"GURU_PRO_MONTHLY" | "GURU_PRO_YEARLY">("GURU_PRO_YEARLY");
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
   const [userLoading, setUserLoading] = useState(true);
+  const snapLoaded = useRef(false);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -55,19 +69,30 @@ export default function BerlanggananPage() {
       .finally(() => setUserLoading(false));
   }, []);
 
-  const handleUpgrade = async () => {
+  useEffect(() => {
+    loadMidtransSnap(process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY || "")
+      .then((loaded) => { snapLoaded.current = loaded; })
+      .catch(() => {});
+  }, []);
+
+  const handleUpgrade = useCallback(async () => {
     setLoading(true);
     setErrorMsg("");
+    setDiagnosticCode("");
+
     try {
       const res = await fetch("/api/billing/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ planId: selectedPlan }),
       });
+
       const result = await res.json();
 
       if (!res.ok || result.ok === false) {
-        const msg = result.message || result.error || "Gagal memproses. Coba lagi.";
+        const code = result.error || "";
+        const msg = result.message || ERROR_MESSAGES[code] || "Gagal memproses pembayaran.";
+        setDiagnosticCode(code);
         setErrorMsg(msg);
         setLoading(false);
         return;
@@ -79,18 +104,51 @@ export default function BerlanggananPage() {
         return;
       }
 
-      if (result.redirectUrl) {
-        setErrorMsg("Mengarahkan ke halaman pembayaran Midtrans...");
-        window.location.href = result.redirectUrl;
-      } else {
-        setErrorMsg("Pembayaran belum bisa dibuka. Silakan coba lagi beberapa saat atau hubungi admin.");
-        setLoading(false);
+      const clientKey = process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY;
+
+      if (result.token && clientKey) {
+        try {
+          await loadMidtransSnap(clientKey);
+        } catch {}
+
+        if (typeof window !== "undefined" && window.snap) {
+          window.snap.pay(result.token, {
+            onSuccess: () => {
+              setStatus("success");
+              setLoading(false);
+            },
+            onPending: () => {
+              setStatus("success");
+              setLoading(false);
+            },
+            onError: () => {
+              if (result.redirectUrl) {
+                window.location.href = result.redirectUrl;
+              } else {
+                setErrorMsg("Pembayaran gagal. Silakan coba lagi.");
+                setLoading(false);
+              }
+            },
+            onClose: () => {
+              setLoading(false);
+            },
+          });
+          return;
+        }
       }
-    } catch (err) {
+
+      if (result.redirectUrl) {
+        window.location.href = result.redirectUrl;
+        return;
+      }
+
+      setErrorMsg("Pembayaran belum bisa dibuka. Silakan coba lagi beberapa saat.");
+      setLoading(false);
+    } catch (err: any) {
       setErrorMsg("Tidak bisa menghubungi server pembayaran. Periksa koneksi internet Anda.");
       setLoading(false);
     }
-  };
+  }, [selectedPlan]);
 
   if (userLoading) {
     return (
@@ -109,11 +167,9 @@ export default function BerlanggananPage() {
   const isExpired = isPremium && daysLeft === 0;
   const premiumSince = premiumUntil && daysLeft > 0 ? new Date(premiumUntil).toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" }) : null;
 
-  // Success / Premium Active state
   if (status === "success" && isPremium) {
     return (
       <div className="max-w-2xl mx-auto space-y-6">
-        {/* Premium Active Banner */}
         <div className="rounded-2xl bg-gradient-to-br from-emerald-500 to-green-600 p-8 text-white text-center shadow-xl">
           <div className="h-16 w-16 rounded-full bg-white/20 backdrop-blur flex items-center justify-center mx-auto mb-4">
             <Crown className="h-8 w-8 text-white" />
@@ -122,7 +178,6 @@ export default function BerlanggananPage() {
           <p className="mt-2 text-emerald-100">Berlaku hingga {premiumSince}</p>
         </div>
 
-        {/* Renewal Reminder */}
         {isExpiring && (
           <Card className="p-4 border-amber-200 bg-amber-50">
             <div className="flex items-start gap-3">
@@ -140,7 +195,6 @@ export default function BerlanggananPage() {
           </Card>
         )}
 
-        {/* Expired */}
         {isExpired && (
           <Card className="p-4 border-red-200 bg-red-50">
             <div className="flex items-start gap-3">
@@ -153,10 +207,8 @@ export default function BerlanggananPage() {
           </Card>
         )}
 
-        {/* Perpanjang CTA */}
         <Card className="p-6">
           <h3 className="font-bold text-gray-900 mb-4">Perpanjang PRO</h3>
-
           <div className="flex items-center justify-center gap-2 bg-gray-100 rounded-xl p-1 w-fit mx-auto mb-6">
             <button onClick={() => setSelectedPlan("GURU_PRO_MONTHLY")}
               className={`px-5 py-2 rounded-lg text-sm font-medium ${selectedPlan === "GURU_PRO_MONTHLY" ? "bg-white text-gray-900 shadow-sm" : "text-gray-500"}`}>
@@ -168,7 +220,6 @@ export default function BerlanggananPage() {
               <Badge variant="warning" className="ml-1.5 text-[10px] py-0">HEMAT</Badge>
             </button>
           </div>
-
           <Button onClick={handleUpgrade} disabled={loading}
             className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 text-white">
             {loading ? <Loader2 className="w-4 h-4 animate-spin mr-1.5" /> : <Zap className="w-4 h-4 mr-1.5" />}
@@ -176,7 +227,6 @@ export default function BerlanggananPage() {
           </Button>
         </Card>
 
-        {/* Support Note */}
         <Card className="p-4 bg-blue-50 border-blue-200">
           <div className="flex items-start gap-3">
             <Info className="w-5 h-5 text-blue-500 mt-0.5 shrink-0" />
@@ -199,7 +249,6 @@ export default function BerlanggananPage() {
     );
   }
 
-  // Success but premium not yet confirmed by webhook
   if (status === "success" && !isPremium) {
     return (
       <div className="max-w-lg mx-auto text-center py-16">
@@ -231,7 +280,6 @@ export default function BerlanggananPage() {
     );
   }
 
-  // Pricing page
   return (
     <div className="max-w-4xl mx-auto space-y-10">
       <div className="text-center py-6">
@@ -246,10 +294,13 @@ export default function BerlanggananPage() {
 
       {errorMsg && (
         <div className="max-w-lg mx-auto rounded-xl bg-red-50 border border-red-200 p-4 text-sm text-red-700">
-          <div className="flex items-center gap-2 mb-2">
+          <div className="flex items-center gap-2 mb-1">
             <AlertCircle size={16} className="shrink-0" /> {errorMsg}
           </div>
-          <a href="/guru/bantuan/pembayaran" className="text-xs text-red-600 hover:text-red-800 underline">
+          {diagnosticCode && (
+            <p className="text-xs text-red-400 mt-1 font-mono">Kode: {diagnosticCode}</p>
+          )}
+          <a href="/guru/bantuan/pembayaran" className="text-xs text-red-600 hover:text-red-800 underline mt-2 inline-block">
             Lihat bantuan pembayaran →
           </a>
         </div>

@@ -1,237 +1,259 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
-import { createKaryaTransaction } from "@/lib/midtrans";
 import { withTimeout } from "@/lib/db-timeout";
+import {
+  createMidtransSnapTransaction,
+  validateMidtransConfig,
+  MidtransError,
+  mapMidtransError,
+} from "@/lib/payments/midtrans-server";
 
 const PLATFORM_FEE_PERCENT = 15;
 
-async function deliverKaryaToEmail(buyerEmail: string, karya: any, buyerName: string) {
-  try {
-    const response = await fetch("https://api.resend.com/emails", {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${process.env.RESEND_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        from: "BahasaCerdas <noreply@bahasacerdas.site>",
-        to: buyerEmail,
-        subject: `🎉 Karya "${karya.title}" berhasil diunduh - BahasaCerdas`,
-        html: `
-          <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
-            <div style="background: linear-gradient(135deg, #dc2626, #1e3a8a); padding: 24px; text-align: center;">
-              <h1 style="color: white; margin: 0;">BahasaCerdas</h1>
-            </div>
-            <div style="padding: 24px;">
-              <h2>Selamat, ${buyerName}! 🎉</h2>
-              <p>Anda berhasil membeli karya berikut:</p>
-              <div style="background: #f3f4f6; padding: 16px; border-radius: 8px; margin: 16px 0;">
-                <h3 style="margin: 0 0 8px;">${karya.title}</h3>
-                <p style="margin: 0; color: #6b7280;">${karya.description}</p>
-                <p style="margin: 8px 0 0; font-size: 24px; font-weight: bold; color: #dc2626;">
-                  ${karya.price === 0 ? "GRATIS" : `Rp ${karya.price.toLocaleString("id-ID")}`}
-                </p>
-              </div>
-              <p>Link download karya:</p>
-              <a href="${karya.fileUrl}" style="display: inline-block; background: #dc2626; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold;">
-                Download Karya
-              </a>
-              <p style="margin-top: 24px; color: #6b7280; font-size: 12px;">
-                Jika link tidak berfungsi, copy paste URL berikut ke browser:<br/>
-                <code style="background: #f3f4f6; padding: 4px 8px; border-radius: 4px;">${karya.fileUrl}</code>
-              </p>
-              <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 24px 0;"/>
-              <p style="color: #6b7280; font-size: 12px;">
-                Terima kasih telah berbelanja di BahasaCerdas.<br/>
-                Platform edukasi Bahasa Indonesia.
-              </p>
-            </div>
-          </div>
-        `,
-      }),
-    });
+type ErrorCode =
+  | "AUTH_REQUIRED"
+  | "CART_EMPTY"
+  | "INVALID_ITEM"
+  | "ITEM_NOT_FOUND"
+  | "ITEM_NOT_PURCHASABLE"
+  | "MIDTRANS_CONFIG_MISSING"
+  | "MIDTRANS_MODE_MISMATCH"
+  | "MIDTRANS_UNAUTHORIZED"
+  | "MIDTRANS_CREATE_FAILED"
+  | "CHECKOUT_DB_FAILED"
+  | "CHECKOUT_UNKNOWN_ERROR";
 
-    if (!response.ok) {
-      console.error("Failed to send email via Resend:", await response.text());
-    }
+function err(code: ErrorCode, message: string, status: number) {
+  return NextResponse.json({ ok: false, error: code, message }, { status });
+}
 
-    return { success: true, deliveredAt: new Date() };
-  } catch (error) {
-    console.error("Email delivery error:", error);
-    return { success: false, error: String(error) };
-  }
+function generateOrderId(userId: string): string {
+  const ts = Date.now().toString(36).slice(-6).toUpperCase();
+  const shortId = userId.slice(0, 8);
+  return `MK-${ts}-${shortId}`;
 }
 
 export async function POST(req: NextRequest) {
+  const requestId = Math.random().toString(36).slice(2, 10);
+
   try {
+    // Step 1 — Auth
     const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const { data: { user: authUser } } = await supabase.auth.getUser();
 
-    if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    if (!authUser) {
+      return err("AUTH_REQUIRED", "Silakan login terlebih dahulu.", 401);
     }
 
-    const dbUser = await withTimeout(db.user.findUnique({ where: { supabaseId: user.id } }));
+    const dbUser = await withTimeout(db.user.findUnique({ where: { supabaseId: authUser.id } }));
     if (!dbUser) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
+      return err("AUTH_REQUIRED", "Pengguna tidak ditemukan.", 404);
     }
 
-    const body = await req.json();
-    const { karyaId } = body;
-
-    if (!karyaId) {
-      return NextResponse.json({ error: "karyaId required" }, { status: 400 });
+    // Step 2 — Parse items
+    let body: any;
+    try {
+      body = await req.json();
+    } catch {
+      return err("INVALID_ITEM", "Format request tidak valid.", 400);
     }
 
-    const karya = await withTimeout(db.karya.findUnique({
-      where: { id: karyaId },
-      include: { seller: true },
-    }));
+    const { items } = body;
 
-    if (!karya) {
-      return NextResponse.json({ error: "Karya not found" }, { status: 404 });
+    if (!items || !Array.isArray(items) || items.length === 0) {
+      return err("CART_EMPTY", "Keranjang Anda masih kosong.", 400);
     }
 
-    if (!karya.isPublished) {
-      return NextResponse.json({ error: "Karya tidak tersedia" }, { status: 400 });
+    // Step 3 — Validate items
+    for (const item of items) {
+      if (!item.karyaId || typeof item.karyaId !== "string") {
+        return err("INVALID_ITEM", "Item tidak valid.", 400);
+      }
+      const qty = item.quantity || 1;
+      if (!Number.isInteger(qty) || qty < 1) {
+        return err("INVALID_ITEM", "Quantity harus minimal 1.", 400);
+      }
     }
 
-    if (karya.sellerId === dbUser.id) {
-      return NextResponse.json({ error: "Tidak bisa membeli karya sendiri" }, { status: 400 });
+    // Step 4 — Fetch all products from DB, recalculate prices server-side
+    const karyaIds = items.map((i: any) => i.karyaId);
+    const karyas = await withTimeout(
+      db.karya.findMany({
+        where: { id: { in: karyaIds } },
+        include: { seller: { select: { id: true, fullName: true } } },
+      })
+    );
+
+    if (karyas.length !== karyaIds.length) {
+      return err(
+        "ITEM_NOT_FOUND",
+        "Beberapa item tidak ditemukan di database.",
+        400
+      );
     }
 
-    const existingPurchase = await withTimeout(db.pembelian.findFirst({
-      where: { karyaId, buyerId: dbUser.id, status: "PAID" },
-    }));
+    // Build order items with server-side price
+    const orderItems: Array<{
+      karyaId: string;
+      karya: any;
+      quantity: number;
+      unitPrice: number;
+      subtotal: number;
+    }> = [];
 
-    if (existingPurchase) {
-      return NextResponse.json({ error: "Anda sudah membeli karya ini", purchasedAt: existingPurchase.createdAt }, { status: 400 });
+    let serverTotal = 0;
+
+    for (const item of items) {
+      const karya = karyas.find((k: any) => k.id === item.karyaId);
+      if (!karya) {
+        return err("ITEM_NOT_FOUND", `Item ${item.karyaId} tidak ditemukan.`, 400);
+      }
+      if (!karya.isPublished) {
+        return err("ITEM_NOT_PURCHASABLE", `"${karya.title}" tidak tersedia.`, 400);
+      }
+      if (karya.sellerId === dbUser.id) {
+        return err("INVALID_ITEM", `Tidak bisa membeli "${karya.title}" — itu karya Anda sendiri.`, 400);
+      }
+      if (karya.price === 0) {
+        return err("INVALID_ITEM", `"${karya.title}" gratis — gunakan tombol unduh gratis.`, 400);
+      }
+
+      const qty = item.quantity || 1;
+      const subtotal = karya.price * qty;
+      serverTotal += subtotal;
+
+      orderItems.push({ karyaId: karya.id, karya, quantity: qty, unitPrice: karya.price, subtotal });
     }
 
-    if (karya.price === 0) {
-      const platformFee = 0;
-      const sellerEarning = 0;
+    if (serverTotal <= 0) {
+      return err("INVALID_ITEM", "Total pembayaran harus lebih dari 0.", 400);
+    }
 
-      await withTimeout(db.pembelian.create({
-        data: {
-          karyaId: karya.id,
-          buyerId: dbUser.id,
-          amount: 0,
-          platformFee,
-          sellerEarning,
-          status: "PAID",
-          midtransPaidAt: new Date(),
-        },
-      }));
+    // Step 5 — Validate Midtrans config
+    try {
+      validateMidtransConfig();
+    } catch (e) {
+      if (e instanceof MidtransError) {
+        const code = e.code === "MIDTRANS_CONFIG_MISSING" ? "MIDTRANS_CONFIG_MISSING" as ErrorCode : "MIDTRANS_MODE_MISMATCH" as ErrorCode;
+        return err(code, e.code === "MIDTRANS_CONFIG_MISSING" ? "Konfigurasi pembayaran belum lengkap." : "Mode pembayaran tidak konsisten.", 500);
+      }
+      return err("MIDTRANS_CONFIG_MISSING", "Konfigurasi pembayaran belum lengkap.", 500);
+    }
 
-      await withTimeout(db.karya.update({
-        where: { id: karya.id },
-        data: { downloads: { increment: 1 } },
-      }));
+    const orderId = generateOrderId(dbUser.id);
 
-      await withTimeout(db.purchaseHistory.create({
-        data: {
-          buyerId: dbUser.id,
-          itemType: "KARYA",
-          itemId: karya.id,
-          itemTitle: karya.title,
-          fileUrl: karya.fileUrl,
-          fileKey: karya.fileKey,
-          price: 0,
-        },
-      }));
-
-      const emailResult = await deliverKaryaToEmail(dbUser.email, karya, dbUser.fullName);
-
-      return NextResponse.json({
-        success: true,
-        message: "Karya gratis berhasil diunduh",
-        fileUrl: karya.fileUrl,
-        emailDelivered: emailResult.success,
+    // Step 6 — Create Midtrans Snap transaction with item_details
+    let snapResult: { token: string; redirectUrl: string };
+    try {
+      snapResult = await createMidtransSnapTransaction({
+        orderId,
+        amount: serverTotal,
+        fullName: dbUser.fullName || dbUser.email,
+        email: dbUser.email,
+        items: orderItems.map((oi) => ({
+          id: oi.karyaId,
+          name: oi.karya.title.slice(0, 50),
+          price: oi.unitPrice,
+          quantity: oi.quantity,
+          category: oi.karya.type || "KARYA",
+        })),
       });
+    } catch (midtransError: any) {
+      if (midtransError instanceof MidtransError) {
+        if (midtransError.code === "MIDTRANS_UNAUTHORIZED") {
+          return err("MIDTRANS_UNAUTHORIZED", "Kredensial pembayaran belum sesuai. Silakan hubungi admin.", 400);
+        }
+        if (midtransError.code === "MIDTRANS_CREATE_FAILED") {
+          return err("MIDTRANS_CREATE_FAILED", "Pembayaran belum bisa dibuat. Silakan coba lagi beberapa saat.", 400);
+        }
+      }
+      const mapped = mapMidtransError(midtransError);
+      return err(mapped.error as ErrorCode, mapped.message, mapped.httpStatus);
     }
 
-    const platformFee = Math.round(karya.price * PLATFORM_FEE_PERCENT / 100);
-    const sellerEarning = karya.price - platformFee;
-    const orderId = `K-${Date.now().toString(36).slice(-6).toUpperCase()}-${karya.id.slice(0,8)}`;
+    // Step 7 — Create local records in transaction
+    try {
+      await db.$transaction(
+        orderItems.flatMap((oi) => {
+          const platformFee = Math.round(oi.unitPrice * oi.quantity * PLATFORM_FEE_PERCENT / 100);
+          const sellerEarning = oi.subtotal - platformFee;
 
-    const transaction = await createKaryaTransaction({
-      orderId,
-      amount: karya.price,
-      email: dbUser.email,
-      fullName: dbUser.fullName,
-      itemId: karya.id,
-      itemTitle: karya.title,
-    });
+          return [
+            db.pembelian.create({
+              data: {
+                karyaId: oi.karyaId,
+                buyerId: dbUser.id,
+                amount: oi.subtotal,
+                platformFee,
+                sellerEarning,
+                status: "PENDING",
+                midtransOrderId: orderId,
+              },
+            }),
+            db.purchaseHistory.create({
+              data: {
+                buyerId: dbUser.id,
+                itemType: "KARYA",
+                itemId: oi.karyaId,
+                itemTitle: oi.karya.title,
+                fileUrl: oi.karya.fileUrl,
+                fileKey: oi.karya.fileKey,
+                price: oi.subtotal,
+              },
+            }),
+            db.sellerEarning.create({
+              data: {
+                sellerId: oi.karya.sellerId,
+                itemType: "KARYA",
+                itemId: oi.karyaId,
+                itemTitle: oi.karya.title,
+                grossAmount: oi.subtotal,
+                platformFee,
+                netAmount: sellerEarning,
+                status: "PENDING",
+              },
+            }),
+          ];
+        })
+      );
 
-    if (!transaction) {
-      return NextResponse.json({ error: "Failed to create transaction" }, { status: 500 });
-    }
-
-    await db.$transaction([
-      db.pembelian.create({
-        data: {
-          karyaId: karya.id,
-          buyerId: dbUser.id,
-          amount: karya.price,
-          platformFee,
-          sellerEarning,
-          status: "PENDING",
-          midtransOrderId: orderId,
-        },
-      }),
-      db.purchaseHistory.create({
-        data: {
-          buyerId: dbUser.id,
-          itemType: "KARYA",
-          itemId: karya.id,
-          itemTitle: karya.title,
-          fileUrl: karya.fileUrl,
-          fileKey: karya.fileKey,
-          price: karya.price,
-        },
-      }),
-      db.sellerEarning.create({
-        data: {
-          sellerId: karya.sellerId,
-          itemType: "KARYA",
-          itemId: karya.id,
-          itemTitle: karya.title,
-          grossAmount: karya.price,
-          platformFee,
-          netAmount: sellerEarning,
-          status: "PENDING",
-        },
-      }),
-      db.transaksi.create({
+      // Single Transaksi for the whole order
+      await db.transaksi.create({
         data: {
           userId: dbUser.id,
           type: "KARYA_PURCHASE",
-          amount: karya.price,
+          amount: serverTotal,
           status: "PENDING",
           reference: "MARKETPLACE",
           orderId,
           metadata: {
-            karyaId: karya.id,
-            karyaTitle: karya.title,
-            sellerId: karya.sellerId,
-            platformFee,
-            sellerEarning,
+            items: orderItems.map((oi) => ({
+              karyaId: oi.karyaId,
+              karyaTitle: oi.karya.title,
+              quantity: oi.quantity,
+              unitPrice: oi.unitPrice,
+              subtotal: oi.subtotal,
+              sellerId: oi.karya.sellerId,
+            })),
+            requestId,
           },
         },
-      }),
-    ]);
+      });
+    } catch (dbError) {
+      console.error(`[MarketplacePurchase:${requestId}] DB transaction failed`, dbError);
+      return err("CHECKOUT_DB_FAILED", "Gagal menyimpan pesanan. Silakan coba lagi.", 500);
+    }
 
     return NextResponse.json({
-      redirectUrl: transaction.redirectUrl,
-      token: transaction.transactionToken,
+      ok: true,
       orderId,
+      token: snapResult.token,
+      redirectUrl: snapResult.redirectUrl,
+      total: serverTotal,
     });
-
   } catch (error: any) {
-    const msg = error?.message || error?.http_error_details || error?.ApiResponse || "Internal error";
-    console.error("POST /api/marketplace/purchase error:", error);
-    return NextResponse.json({ error: msg, detail: String(error) }, { status: 500 });
+    console.error(`[MarketplacePurchase:${requestId}] Error`, error?.message);
+    return err("CHECKOUT_UNKNOWN_ERROR", "Terjadi kesalahan sistem. Silakan coba lagi.", 500);
   }
 }

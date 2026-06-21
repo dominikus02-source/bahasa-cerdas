@@ -107,7 +107,85 @@
 | DB corruption | Restore from Vercel Postgres backup |
 | Full rollback | `git revert` last commit + redeploy |
 
-## 9. Post-Launch Monitoring
+## 9. Midtrans Payment Workflow Troubleshooting
+
+### Midtrans Returns 401 "Access Denied"
+**Symptoms:**
+- `/api/billing/checkout` returns `MIDTRANS_UNAUTHORIZED`
+- `/api/marketplace/purchase` returns `MIDTRANS_UNAUTHORIZED`
+- Midtrans API responds with 401
+
+**Root Causes:**
+1. **Key/Environment mismatch** (most common): Production Server Key used with sandbox API endpoint, or vice versa
+2. **Missing Server Key**: `MIDTRANS_SERVER_KEY` not set in Vercel env
+3. **Missing Client Key**: `NEXT_PUBLIC_MIDTRANS_CLIENT_KEY` not set in Vercel env
+4. **Mode flag mismatch**: `MIDTRANS_IS_PRODUCTION` and `NEXT_PUBLIC_MIDTRANS_IS_PRODUCTION` disagree
+
+**Diagnostic steps:**
+1. Login as Founder → visit `/api/billing/midtrans-status`
+2. Check:
+   - `server.hasServerKey` → must be `true`
+   - `client.hasClientKey` → must be `true`
+   - `consistency.modeFlagsMatch` → must be `true`
+   - `diagnosis.likelyMidtrans401` → if `true`, keys don't match mode
+3. Verify Vercel env values — both `MIDTRANS_IS_PRODUCTION` and `NEXT_PUBLIC_MIDTRANS_IS_PRODUCTION` must be `"true"` for production
+4. After changing env vars, **redeploy** is required
+
+### Invoice Shows "TEST" Badge
+**Cause:** Midtrans is in sandbox mode — the API endpoint is sandbox or the keys are sandbox keys.
+
+**Fixes:**
+1. Ensure both `MIDTRANS_IS_PRODUCTION=true` and `NEXT_PUBLIC_MIDTRANS_IS_PRODUCTION=true` in Vercel
+2. Ensure `MIDTRANS_SERVER_KEY` and `NEXT_PUBLIC_MIDTRANS_CLIENT_KEY` are from Midtrans Dashboard → Settings → **Production** tab (not Sandbox tab)
+3. Redeploy after changing env vars
+4. Visit `/api/billing/midtrans-status` as Founder to verify `mode: "production"`
+
+### How Snap.js URL Is Determined
+The `getIsProduction()` function in `lib/payments/midtrans-server.ts` uses this priority:
+1. `MIDTRANS_IS_PRODUCTION` (server-side env, highest priority)
+2. `NEXT_PUBLIC_MIDTRANS_IS_PRODUCTION` (client-side env, inlined at build)
+3. Defaults to `true` (production) if neither is set
+
+Production: `https://app.midtrans.com/snap/snap.js`
+Sandbox: `https://app.sandbox.midtrans.com/snap/snap.js`
+
+### Webhook Debugging
+- Midtrans sends webhook to: `https://www.bahasacerdas.com/api/payment/webhook`
+- Verify signature: `SHA512(SERVER_KEY + order_id + status_code + gross_amount)`
+- Check Vercel logs for `[Webhook]` prefix
+- Webhook returns `200` with `{ ok: true }` after safe processing
+- Common webhook failures: wrong URL, signature mismatch, network timeout
+
+### Frontend Payment Error Codes
+| Error Code | Cause | User Message |
+|------------|-------|-------------|
+| `MIDTRANS_UNAUTHORIZED` | Key/env mismatch | "Kredensial pembayaran belum sesuai. Silakan hubungi admin." |
+| `MIDTRANS_CONFIG_MISSING` | Missing env vars | "Konfigurasi pembayaran belum lengkap. Silakan hubungi admin." |
+| `MIDTRANS_CREATE_FAILED` | Midtrans API error | "Pembayaran belum bisa dibuat. Silakan coba beberapa saat lagi." |
+| `CART_EMPTY` | No items in cart | "Keranjang Anda masih kosong." |
+| `CHECKOUT_AUTH_REQUIRED` | Not logged in | "Silakan login terlebih dahulu." |
+
+### Environment Variable Summary
+
+**Production:**
+```
+MIDTRANS_SERVER_KEY = <Production Server Key from Midtrans Dashboard>
+NEXT_PUBLIC_MIDTRANS_CLIENT_KEY = <Production Client Key from Midtrans Dashboard>
+MIDTRANS_IS_PRODUCTION = true
+NEXT_PUBLIC_MIDTRANS_IS_PRODUCTION = true
+```
+
+**Sandbox (for testing):**
+```
+MIDTRANS_SERVER_KEY = <Sandbox Server Key from Midtrans Dashboard>
+NEXT_PUBLIC_MIDTRANS_CLIENT_KEY = <Sandbox Client Key from Midtrans Dashboard>
+MIDTRANS_IS_PRODUCTION = false
+NEXT_PUBLIC_MIDTRANS_IS_PRODUCTION = false
+```
+
+> ⚠️ Both `MIDTRANS_IS_PRODUCTION` and `NEXT_PUBLIC_MIDTRANS_IS_PRODUCTION` **must be the same value**. If they differ, `GET /api/billing/midtrans-status` will show `consistency.modeFlagsMatch: false` and the checkout will fail with `MIDTRANS_MODE_MISMATCH`.
+
+## 10. Post-Launch Monitoring
 
 - [ ] Vercel logs: watch for webhook errors
 - [ ] Midtrans dashboard: check settlement rate

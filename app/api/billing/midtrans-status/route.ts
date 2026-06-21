@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getUser } from "@/lib/supabase/server";
-import { getIsProduction, getSnapScriptUrl, getMidtransApiUrl } from "@/lib/midtrans";
+import { getMidtransConfig, validateMidtransConfig } from "@/lib/payments/midtrans-server";
 
 export async function GET(req: NextRequest) {
   try {
@@ -9,52 +9,57 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
-    const hasServerKey = !!process.env.MIDTRANS_SERVER_KEY;
-    const hasClientKey = !!process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY;
+    const config = getMidtransConfig();
 
-    const serverIsProduction = process.env.MIDTRANS_IS_PRODUCTION === "true";
-    const clientIsProduction = process.env.NEXT_PUBLIC_MIDTRANS_IS_PRODUCTION === "true";
+    const serverIsProduction = (process.env.MIDTRANS_IS_PRODUCTION || "").trim() === "true";
+    const clientIsProduction = (process.env.NEXT_PUBLIC_MIDTRANS_IS_PRODUCTION || "").trim() === "true";
+    const modeFlagsMatch = serverIsProduction === clientIsProduction;
 
-    const effectiveProduction = getIsProduction();
-    const modeMatches = serverIsProduction === clientIsProduction;
-
-    const snapUrl = getSnapScriptUrl();
-    const apiBaseUrl = getMidtransApiUrl();
-
-    // Key prefix heuristic — production keys often have different prefixes
-    const serverKey = process.env.MIDTRANS_SERVER_KEY || "";
-    const clientKey = process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY || "";
-    const serverKeyPrefix = serverKey.substring(0, 20) + "...";
-    const clientKeyPrefix = clientKey.substring(0, 20) + "...";
+    let configValid = true;
+    let configError: string | null = null;
+    try {
+      validateMidtransConfig();
+    } catch (e: any) {
+      configValid = false;
+      configError = e.message || "Validation failed";
+    }
 
     const warnings: string[] = [];
-    if (!hasServerKey) warnings.push("MIDTRANS_SERVER_KEY tidak disetel");
-    if (!hasClientKey) warnings.push("NEXT_PUBLIC_MIDTRANS_CLIENT_KEY tidak disetel");
-    if (!modeMatches) warnings.push("Server dan client punya mode produksi berbeda");
-    if (effectiveProduction && serverKey.includes("SB-Mid")) warnings.push("Server key terlihat seperti sandbox key tetapi mode production");
-    if (!effectiveProduction && !serverKey.includes("SB-Mid")) warnings.push("Server key mungkin production key tetapi mode sandbox");
+    if (!config.serverKey) warnings.push("MIDTRANS_SERVER_KEY tidak disetel");
+    if (!config.clientKey) warnings.push("NEXT_PUBLIC_MIDTRANS_CLIENT_KEY tidak disetel");
+    if (!modeFlagsMatch) warnings.push("MIDTRANS_IS_PRODUCTION dan NEXT_PUBLIC_MIDTRANS_IS_PRODUCTION berbeda");
+    if (config.isProduction && config.serverKey.startsWith("SB-")) {
+      warnings.push("Server Key adalah sandbox key tetapi mode production — invoice akan gagal (401)");
+    }
+    if (!config.isProduction && config.serverKey && !config.serverKey.startsWith("SB-")) {
+      warnings.push("Server Key bukan sandbox key tetapi mode sandbox — mungkin 401");
+    }
 
     return NextResponse.json({
+      ok: configValid,
+      mode: config.isProduction ? "production" : "sandbox",
       server: {
-        hasServerKey,
+        hasServerKey: !!config.serverKey,
+        keyLength: config.serverKey.length,
         isProduction: serverIsProduction,
-        keyPrefix: serverKeyPrefix,
+        apiBaseUrl: config.apiBaseUrl,
       },
       client: {
-        hasPublicClientKey: hasClientKey,
+        hasClientKey: !!config.clientKey,
+        keyLength: config.clientKey.length,
         isProduction: clientIsProduction,
-        keyPrefix: clientKeyPrefix,
-      },
-      effective: {
-        isProduction: effectiveProduction,
-        snapUrl,
-        apiBaseUrl,
-        mode: effectiveProduction ? "production" : "sandbox",
+        snapScriptUrl: config.snapScriptUrl,
       },
       consistency: {
-        modeMatches,
-        allKeysPresent: hasServerKey && hasClientKey,
+        modeFlagsMatch,
+        allKeysPresent: !!config.serverKey && !!config.clientKey,
+        configValid,
+        configError,
         warnings,
+      },
+      diagnosis: {
+        invoiceShowsTest: !config.isProduction || !!config.serverKey.startsWith("SB-"),
+        likelyMidtrans401: !config.isProduction !== !config.serverKey.startsWith("SB-"),
       },
     });
   } catch (error) {

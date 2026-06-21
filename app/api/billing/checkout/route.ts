@@ -3,12 +3,17 @@ import { getUser } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 import { getPlan } from "@/lib/billing/plans";
 import { withTimeout } from "@/lib/db-timeout";
-import { getIsProduction, getMidtransApiUrl } from "@/lib/midtrans";
+import {
+  createMidtransSnapTransaction,
+  validateMidtransConfig,
+  MidtransError,
+  mapMidtransError,
+} from "@/lib/payments/midtrans-server";
 
 type ErrorCode =
-  | "AUTH_REQUIRED"
-  | "ROLE_NOT_ALLOWED"
-  | "INVALID_PLAN"
+  | "CHECKOUT_AUTH_REQUIRED"
+  | "CHECKOUT_FORBIDDEN_ROLE"
+  | "CHECKOUT_INVALID_PLAN"
   | "MIDTRANS_CONFIG_MISSING"
   | "MIDTRANS_MODE_MISMATCH"
   | "MIDTRANS_UNAUTHORIZED"
@@ -30,107 +35,56 @@ function generateOrderId(userId: string): string {
   return `PM-${ts}-${shortId}`;
 }
 
-interface MidtransSnapResponse {
-  token: string;
-  redirect_url: string;
-}
-
-async function createSnapTransaction(params: {
-  orderId: string;
-  amount: number;
-  fullName: string;
-  email: string;
-}): Promise<MidtransSnapResponse> {
-  const serverKey = (process.env.MIDTRANS_SERVER_KEY || "").trim();
-  const baseUrl = getMidtransApiUrl();
-  const auth = Buffer.from(`${serverKey}:`).toString("base64");
-
-  const body = {
-    transaction_details: {
-      order_id: params.orderId,
-      gross_amount: params.amount,
-    },
-    customer_details: {
-      first_name: params.fullName,
-      email: params.email,
-    },
-  };
-
-  const res = await fetch(`${baseUrl}/snap/v1/transactions`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Basic ${auth}`,
-      Accept: "application/json",
-    },
-    body: JSON.stringify(body),
-  });
-
-  const json = await res.json();
-
-  if (!res.ok) {
-    const errMsg = Array.isArray(json?.error_messages)
-      ? json.error_messages.join(", ")
-      : json?.error_messages || `HTTP ${res.status}`;
-
-    const error: any = new Error(errMsg);
-    error.httpStatusCode = res.status;
-    error.apiResponse = json;
-    throw error;
-  }
-
-  return { token: json.token, redirect_url: json.redirect_url };
-}
-
 export async function POST(req: NextRequest) {
   const requestId = Math.random().toString(36).slice(2, 10);
 
   try {
-    // Step 1 — auth
+    // Step 1 — Auth
     let user: any;
     try {
       user = await getUser();
     } catch {
-      return err("AUTH_REQUIRED", "Silakan login terlebih dahulu.", 401);
+      return err("CHECKOUT_AUTH_REQUIRED", "Silakan login terlebih dahulu.", 401);
     }
 
     if (!user) {
-      return err("AUTH_REQUIRED", "Silakan login terlebih dahulu.", 401);
+      return err("CHECKOUT_AUTH_REQUIRED", "Silakan login terlebih dahulu.", 401);
     }
 
     if (!["GURU", "ADMIN"].includes(user.role) && !user.isFounder) {
-      return err("ROLE_NOT_ALLOWED", "Hanya guru yang dapat membeli paket Guru Pro.", 403);
+      return err("CHECKOUT_FORBIDDEN_ROLE", "Hanya guru yang dapat membeli paket Guru Pro.", 403);
     }
 
-    // Step 2 — plan
+    // Step 2 — Parse plan
     let body: any;
     try {
       body = await req.json();
     } catch {
-      return err("INVALID_PLAN", "Pilih paket terlebih dahulu.", 400);
+      return err("CHECKOUT_INVALID_PLAN", "Pilih paket terlebih dahulu.", 400);
     }
 
     const { planId } = body;
     const plan = getPlan(planId);
     if (!plan) {
-      return err("INVALID_PLAN", "Paket tidak tersedia.", 400);
+      return err("CHECKOUT_INVALID_PLAN", "Paket tidak tersedia.", 400);
     }
 
-    // Step 3 — env validation
-    const serverKey = (process.env.MIDTRANS_SERVER_KEY || "").trim();
-    const clientKey = (process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY || "").trim();
-    const isProduction = getIsProduction();
-
-    if (!serverKey || !clientKey) {
-      console.error(`[Checkout:${requestId}] Missing env vars`);
-      return err(
-        "MIDTRANS_CONFIG_MISSING",
-        "Konfigurasi pembayaran belum lengkap. Hubungi admin.",
-        500
-      );
+    // Step 3 — Validate Midtrans config before doing anything
+    try {
+      validateMidtransConfig();
+    } catch (e) {
+      if (e instanceof MidtransError) {
+        if (e.code === "MIDTRANS_CONFIG_MISSING") {
+          return err("MIDTRANS_CONFIG_MISSING", "Konfigurasi pembayaran belum lengkap. Hubungi admin.", 500);
+        }
+        if (e.code === "MIDTRANS_MODE_MISMATCH") {
+          return err("MIDTRANS_MODE_MISMATCH", "Mode pembayaran tidak konsisten. Hubungi admin.", 500);
+        }
+      }
+      return err("MIDTRANS_CONFIG_MISSING", "Konfigurasi pembayaran belum lengkap. Hubungi admin.", 500);
     }
 
-    // Step 4 — Founder bypass
+    // Step 4 — Founder/Admin bypass
     if (user.isFounder || user.role === "ADMIN") {
       const premiumUntil = new Date();
       premiumUntil.setDate(premiumUntil.getDate() + plan.durationDays);
@@ -147,7 +101,7 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    // Step 5 — stale pending cleanup
+    // Step 5 — Stale pending cleanup
     try {
       const stalePending = await db.transaksi.findFirst({
         where: {
@@ -168,47 +122,38 @@ export async function POST(req: NextRequest) {
 
     const orderId = generateOrderId(user.id);
 
-    console.log(`[Checkout:${requestId}] Creating transaction`, {
-      orderId,
-      planId,
-      mode: isProduction ? "production" : "sandbox",
-    });
-
-    // Step 6 — create Midtrans Snap transaction
-    let snapResult: MidtransSnapResponse;
+    // Step 6 — Create Midtrans Snap transaction
+    let snapResult: { token: string; redirectUrl: string };
     try {
-      snapResult = await createSnapTransaction({
+      snapResult = await createMidtransSnapTransaction({
         orderId,
         amount: plan.price,
-        fullName: user.fullName,
+        fullName: user.fullName || user.email,
         email: user.email,
+        items: [
+          {
+            id: plan.planId,
+            name: plan.label,
+            price: plan.price,
+            quantity: 1,
+            category: "PREMIUM",
+          },
+        ],
       });
     } catch (midtransError: any) {
-      const status = midtransError?.httpStatusCode;
-      const apiMsg = midtransError?.message || "unknown";
-
-      console.error(`[Checkout:${requestId}] Midtrans failed`, {
-        httpStatus: status,
-        apiMessage: apiMsg,
-        mode: isProduction ? "production" : "sandbox",
-      });
-
-      if (status === 401) {
-        return err(
-          "MIDTRANS_UNAUTHORIZED",
-          "Kredensial pembayaran belum sesuai. Periksa Server Key dan mode Production/Sandbox di dashboard Midtrans.",
-          502
-        );
+      if (midtransError instanceof MidtransError) {
+        if (midtransError.code === "MIDTRANS_UNAUTHORIZED") {
+          return err("MIDTRANS_UNAUTHORIZED", "Kredensial pembayaran belum sesuai. Silakan hubungi admin.", 400);
+        }
+        if (midtransError.code === "MIDTRANS_CREATE_FAILED") {
+          return err("MIDTRANS_CREATE_FAILED", "Pembayaran belum bisa dibuat. Silakan coba lagi beberapa saat.", 400);
+        }
       }
-
-      return err(
-        "MIDTRANS_CREATE_FAILED",
-        "Pembayaran belum bisa dibuat. Silakan coba lagi beberapa saat.",
-        502
-      );
+      const mapped = mapMidtransError(midtransError);
+      return err(mapped.error as ErrorCode, mapped.message, mapped.httpStatus);
     }
 
-    // Step 7 — create local Transaksi record
+    // Step 7 — Create local Transaksi record
     let transaksiId: string | null = null;
     try {
       const created = await withTimeout(
@@ -225,7 +170,6 @@ export async function POST(req: NextRequest) {
               durationDays: plan.durationDays,
               aiCreditsMonthly: plan.aiCreditsMonthly,
               requestId,
-              mode: isProduction ? "production" : "sandbox",
             },
           },
           select: { id: true },
@@ -236,13 +180,11 @@ export async function POST(req: NextRequest) {
       console.warn(`[Checkout:${requestId}] DB write failed, continuing`);
     }
 
-    console.log(`[Checkout:${requestId}] Success`, { orderId, transaksiId });
-
     return ok({
       transactionId: transaksiId,
       orderId,
       token: snapResult.token,
-      redirectUrl: snapResult.redirect_url,
+      redirectUrl: snapResult.redirectUrl,
       plan: {
         planId: plan.planId,
         label: plan.label,
@@ -253,7 +195,6 @@ export async function POST(req: NextRequest) {
   } catch (error: any) {
     console.error(`[Checkout:${requestId}] Unhandled crash`, {
       message: error?.message,
-      stack: error?.stack?.slice(0, 300),
     });
     return err(
       "CHECKOUT_UNKNOWN_ERROR",
