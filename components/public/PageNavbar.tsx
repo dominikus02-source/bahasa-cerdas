@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Menu, X } from "lucide-react";
+import { Menu, X, ShoppingCart } from "lucide-react";
 
 const navLinks = [
   { href: "/fitur", label: "Fitur" },
@@ -16,6 +16,17 @@ const navLinks = [
 export default function PageNavbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [cartCount, setCartCount] = useState(0);
+
+  useEffect(() => {
+    const updateCart = () => {
+      const cart = JSON.parse(localStorage.getItem("bc-cart") || "[]");
+      setCartCount(cart.reduce((sum: number, i: any) => sum + (i.qty || 1), 0));
+    };
+    updateCart();
+    window.addEventListener("cart-update", updateCart);
+    return () => window.removeEventListener("cart-update", updateCart);
+  }, []);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -83,6 +94,18 @@ export default function PageNavbar() {
                 {link.label}
               </Link>
             ))}
+            <Link
+              href="/cart"
+              className="relative ml-2 px-3 py-2 text-zinc-600 hover:text-primary transition-colors rounded-xl hover:bg-primary-light/50"
+              aria-label={`Keranjang, ${cartCount} item`}
+            >
+              <ShoppingCart size={20} />
+              {cartCount > 0 && (
+                <span className="absolute -top-0.5 -right-0.5 w-5 h-5 bg-red-600 text-white text-[10px] font-bold rounded-full flex items-center justify-center shadow-sm">
+                  {cartCount > 9 ? "9+" : cartCount}
+                </span>
+              )}
+            </Link>
           </nav>
 
           {/* Desktop Actions */}
@@ -141,6 +164,20 @@ export default function PageNavbar() {
                   {link.label}
                 </Link>
               ))}
+              <Link
+                href="/cart"
+                onClick={() => setMobileOpen(false)}
+                className="flex items-center justify-between px-4 py-3.5 text-base font-medium text-zinc-700 hover:text-primary hover:bg-primary-light/50 rounded-xl transition-all focus-ring"
+              >
+                <span className="flex items-center gap-2">
+                  <ShoppingCart size={18} /> Keranjang
+                </span>
+                {cartCount > 0 && (
+                  <span className="bg-red-600 text-white text-xs font-bold px-2 py-0.5 rounded-full">
+                    {cartCount}
+                  </span>
+                )}
+              </Link>
             </nav>
             <div className="space-y-3 pt-6 border-t border-zinc-100">
               <Link
