@@ -1,11 +1,9 @@
 export function getIsProduction(): boolean {
-  if (typeof process !== "undefined" && process.env.MIDTRANS_IS_PRODUCTION != null) {
-    return process.env.MIDTRANS_IS_PRODUCTION === "true";
-  }
-  if (typeof process !== "undefined" && process.env.NEXT_PUBLIC_MIDTRANS_IS_PRODUCTION != null) {
-    return process.env.NEXT_PUBLIC_MIDTRANS_IS_PRODUCTION === "true";
-  }
-  return false;
+  // Explicit override
+  if (typeof process !== "undefined" && process.env.MIDTRANS_IS_PRODUCTION === "false") return false;
+  if (typeof process !== "undefined" && process.env.NEXT_PUBLIC_MIDTRANS_IS_PRODUCTION === "false") return false;
+  // Production by default (matches production server key)
+  return true;
 }
 
 function getApiBase(): string {
