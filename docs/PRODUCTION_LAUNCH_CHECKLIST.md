@@ -7,10 +7,15 @@
 
 ## 1. Vercel Environment Variables
 
-- [ ] `MIDTRANS_SERVER_KEY` — Server key from Midtrans Dashboard → Settings → Access Keys
-- [ ] `NEXT_PUBLIC_MIDTRANS_CLIENT_KEY` — Client key (safe for frontend Snap.js)
+- [ ] `MIDTRANS_SERVER_KEY` — Server key from Midtrans Dashboard → Settings → Access Keys (PRODUCTION tab)
+- [ ] `NEXT_PUBLIC_MIDTRANS_CLIENT_KEY` — Client key from Midtrans Dashboard (PRODUCTION tab, safe for frontend)
 - [ ] `NEXT_PUBLIC_MIDTRANS_MERCHANT_ID` — Merchant ID
-- [ ] `NEXT_PUBLIC_MIDTRANS_IS_PRODUCTION` — Set to `"true"` for production, `"false"` for sandbox
+- [ ] `MIDTRANS_IS_PRODUCTION` — Set to `"true"` (server-side env)
+- [ ] `NEXT_PUBLIC_MIDTRANS_IS_PRODUCTION` — Set to `"true"` (client-side env, inlined at build)
+
+> ⚠️ **PENTING:** `MIDTRANS_IS_PRODUCTION` dan `NEXT_PUBLIC_MIDTRANS_IS_PRODUCTION` harus sama-sama `"true"`.
+> Jika invoice Midtrans menampilkan **"TEST"** di pojok kanan atas, artinya salah satu env masih sandbox.
+> Cek dengan `GET /api/billing/midtrans-status` (Founder login) untuk diagnosis.
 - [ ] `DATABASE_URL` — PostgreSQL connection string
 - [ ] `SUPABASE_SERVICE_ROLE_KEY` — Supabase admin key
 - [ ] `NEXT_PUBLIC_SUPABASE_URL` — Supabase project URL

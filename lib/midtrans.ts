@@ -2,8 +2,25 @@ import type { Snap } from "midtrans-client";
 
 let midtransClient: Snap;
 
+/**
+ * Single source of truth for Midtrans production/sandbox mode.
+ * 
+ * Server-side checks MIDTRANS_IS_PRODUCTION first, then NEXT_PUBLIC_MIDTRANS_IS_PRODUCTION.
+ * Client-side uses NEXT_PUBLIC_MIDTRANS_IS_PRODUCTION (only public vars inlined at build).
+ * 
+ * Returns true for production, false for sandbox.
+ */
 export function getIsProduction(): boolean {
-  return true;
+  // Server-side env (not exposed to client)
+  if (typeof process !== "undefined" && process.env.MIDTRANS_IS_PRODUCTION != null) {
+    return process.env.MIDTRANS_IS_PRODUCTION === "true";
+  }
+  // Client-side env (safe for frontend, inlined at build)
+  if (typeof process !== "undefined" && process.env.NEXT_PUBLIC_MIDTRANS_IS_PRODUCTION != null) {
+    return process.env.NEXT_PUBLIC_MIDTRANS_IS_PRODUCTION === "true";
+  }
+  // Default: safe fallback to sandbox
+  return false;
 }
 
 function validateConfig() {
@@ -19,6 +36,12 @@ export function getSnapScriptUrl(): string {
     : "https://app.sandbox.midtrans.com/snap/snap.js";
 }
 
+export function getMidtransApiUrl(): string {
+  return getIsProduction()
+    ? "https://app.midtrans.com"
+    : "https://app.sandbox.midtrans.com";
+}
+
 export async function createTransaction(params: {
   userId: string;
   email: string;
@@ -27,7 +50,7 @@ export async function createTransaction(params: {
 }) {
   validateConfig();
   const Midtrans = require("midtrans-client");
-  
+
   midtransClient = new Midtrans.Snap({
     serverKey: process.env.MIDTRANS_SERVER_KEY,
     clientKey: process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY,
@@ -36,7 +59,7 @@ export async function createTransaction(params: {
 
   const amount = params.plan === "monthly" ? 49000 : 399000;
 
-  const orderId = `PM-${Date.now().toString(36).slice(-6).toUpperCase()}-${params.userId.slice(0,8)}`;
+  const orderId = `PM-${Date.now().toString(36).slice(-6).toUpperCase()}-${params.userId.slice(0, 8)}`;
 
   const parameter = {
     transaction_details: {
@@ -67,7 +90,7 @@ export async function createKaryaTransaction(params: {
 }) {
   validateConfig();
   const Midtrans = require("midtrans-client");
-  
+
   const client = new Midtrans.Snap({
     serverKey: process.env.MIDTRANS_SERVER_KEY,
     clientKey: process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY,

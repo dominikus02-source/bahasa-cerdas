@@ -67,7 +67,7 @@ export default function BerlanggananPage() {
       const result = await res.json();
 
       if (!res.ok) {
-        setErrorMsg(result.error || "Gagal memproses. Coba lagi.");
+        setErrorMsg(result.message || result.error || "Gagal memproses. Coba lagi.");
         setLoading(false);
         return;
       }
@@ -78,7 +78,6 @@ export default function BerlanggananPage() {
         return;
       }
 
-      // Redirect to Midtrans payment page
       if (result.redirectUrl) {
         setErrorMsg("Mengarahkan ke halaman pembayaran Midtrans...");
         window.location.href = result.redirectUrl;
@@ -87,7 +86,7 @@ export default function BerlanggananPage() {
         setLoading(false);
       }
     } catch (err) {
-      setErrorMsg("Terjadi kesalahan. Silakan coba lagi.");
+      setErrorMsg("Jaringan bermasalah. Periksa koneksi internet Anda dan coba lagi.");
       setLoading(false);
     }
   };
@@ -245,8 +244,13 @@ export default function BerlanggananPage() {
       </div>
 
       {errorMsg && (
-        <div className="max-w-lg mx-auto rounded-xl bg-red-50 border border-red-200 p-4 text-sm text-red-700 flex items-center gap-2">
-          <AlertCircle size={16} className="shrink-0" /> {errorMsg}
+        <div className="max-w-lg mx-auto rounded-xl bg-red-50 border border-red-200 p-4 text-sm text-red-700">
+          <div className="flex items-center gap-2 mb-2">
+            <AlertCircle size={16} className="shrink-0" /> {errorMsg}
+          </div>
+          <a href="/guru/bantuan/pembayaran" className="text-xs text-red-600 hover:text-red-800 underline">
+            Lihat bantuan pembayaran →
+          </a>
         </div>
       )}
 

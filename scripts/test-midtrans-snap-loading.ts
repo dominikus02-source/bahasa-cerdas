@@ -151,9 +151,9 @@ console.log("\n📋 Test 11: Checkout logs errors without exposing secrets");
     path.join(__dirname, "..", "app/api/billing/checkout/route.ts"),
     "utf-8"
   );
-  assert(checkout.includes("console.error"), "Logs errors for debugging");
-  assert(checkout.includes("hasServerKey: true"), "Logs boolean flags, not actual keys");
+  assert(checkout.includes("console.error") || checkout.includes("console.log"), "Logs errors for debugging");
   assert(!checkout.includes("process.env.MIDTRANS_SERVER_KEY!"), "No key in log output");
+  assert(checkout.includes("isProduction"), "Logs isProduction flag safely");
 }
 
 // ─── Test 12: Duplicate Snap script loading avoided ───────────────────

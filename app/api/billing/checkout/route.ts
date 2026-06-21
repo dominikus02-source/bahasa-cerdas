@@ -7,6 +7,12 @@ import { getIsProduction } from "@/lib/midtrans";
 
 const Midtrans = require("midtrans-client");
 
+type ErrorCode = "AUTH_REQUIRED" | "ROLE_NOT_ALLOWED" | "INVALID_PLAN" | "MIDTRANS_CONFIG_MISSING" | "MIDTRANS_MODE_MISMATCH" | "MIDTRANS_API_ERROR" | "DB_ERROR" | "UNEXPECTED_ERROR";
+
+function err(code: ErrorCode, message: string, status: number) {
+  return NextResponse.json({ error: code, message }, { status });
+}
+
 function generateOrderId(userId: string): string {
   const ts = Date.now().toString(36).slice(-6).toUpperCase();
   const shortId = userId.slice(0, 8);
@@ -17,46 +23,58 @@ export async function POST(req: NextRequest) {
   try {
     const user = await getUser();
     if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return err("AUTH_REQUIRED", "Silakan login terlebih dahulu.", 401);
     }
 
     if (!["GURU", "ADMIN"].includes(user.role) && !user.isFounder) {
-      return NextResponse.json({ error: "Hanya guru yang dapat mengakses" }, { status: 403 });
+      return err("ROLE_NOT_ALLOWED", "Hanya guru yang dapat membeli paket Guru Pro.", 403);
     }
 
     const body = await req.json();
     const { planId } = body;
 
     if (!planId || typeof planId !== "string") {
-      return NextResponse.json({ error: "planId wajib diisi" }, { status: 400 });
+      return err("INVALID_PLAN", "Pilih paket terlebih dahulu.", 400);
     }
 
     const plan = getPlan(planId);
     if (!plan) {
-      return NextResponse.json({ error: "Paket tidak valid" }, { status: 400 });
+      return err("INVALID_PLAN", "Paket tidak tersedia.", 400);
     }
 
-    // Env validation — fail early with clear message
     const serverKey = process.env.MIDTRANS_SERVER_KEY;
     const clientKey = process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY;
+
     if (!serverKey || !clientKey) {
-      console.error("[Billing/Checkout] Missing env vars:", { hasServerKey: !!serverKey, hasClientKey: !!clientKey });
-      return NextResponse.json(
-        { error: "Konfigurasi pembayaran belum lengkap. Hubungi admin." },
-        { status: 500 }
+      console.error("[Billing/Checkout] Missing env vars");
+      return err(
+        "MIDTRANS_CONFIG_MISSING",
+        "Konfigurasi pembayaran belum lengkap. Hubungi admin.",
+        500
       );
     }
 
-    // Founder/Admin bypass — no payment needed
+    const isProduction = getIsProduction();
+    const serverEnvProd = process.env.MIDTRANS_IS_PRODUCTION;
+    const clientEnvProd = process.env.NEXT_PUBLIC_MIDTRANS_IS_PRODUCTION;
+
+    // Mode mismatch warning (non-blocking, but logged)
+    if (serverEnvProd != null && clientEnvProd != null && serverEnvProd !== clientEnvProd) {
+      console.warn("[Billing/Checkout] Mode mismatch:", {
+        serverProd: serverEnvProd,
+        clientProd: clientEnvProd,
+        effective: isProduction,
+      });
+    }
+
+    // Founder/Admin bypass
     if (user.isFounder || user.role === "ADMIN") {
       const premiumUntil = new Date();
       premiumUntil.setDate(premiumUntil.getDate() + plan.durationDays);
-
       await db.user.update({
         where: { id: user.id },
         data: { isPremium: true, premiumPlan: "PRO", premiumUntil },
       });
-
       return NextResponse.json({
         bypass: true,
         message: "Akun Founder/Admin — premium diaktifkan tanpa pembayaran",
@@ -64,7 +82,7 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    // Auto-cancel stale pending transactions
+    // Auto-cancel stale pending
     const stalePending = await db.transaksi.findFirst({
       where: {
         userId: user.id,
@@ -74,7 +92,6 @@ export async function POST(req: NextRequest) {
       },
       orderBy: { createdAt: "desc" },
     });
-
     if (stalePending) {
       await db.transaksi.update({
         where: { id: stalePending.id },
@@ -83,14 +100,11 @@ export async function POST(req: NextRequest) {
     }
 
     const orderId = generateOrderId(user.id);
-    const isProduction = getIsProduction();
 
     console.log("[Billing/Checkout] Creating transaction:", {
       orderId,
       planId,
       isProduction,
-      hasServerKey: true,
-      hasClientKey: true,
     });
 
     const midtransClient = new Midtrans.Snap({
@@ -110,7 +124,6 @@ export async function POST(req: NextRequest) {
       },
     };
 
-    let transaksiId: string | null = null;
     let transactionToken: string;
     let redirectUrl: string;
 
@@ -119,17 +132,20 @@ export async function POST(req: NextRequest) {
       transactionToken = transaction.token;
       redirectUrl = transaction.redirect_url;
     } catch (midtransError: any) {
+      const apiMsg = midtransError?.ApiResponse?.error_messages?.join?.(", ") || midtransError?.message || "unknown";
       console.error("[Billing/Checkout] Midtrans API error:", {
         status: midtransError?.httpStatusCode,
-        message: midtransError?.message,
-        apiResponse: midtransError?.ApiResponse,
+        apiMessage: apiMsg,
+        isProduction,
       });
-      return NextResponse.json(
-        { error: "Pembayaran belum bisa dibuka. Silakan coba lagi beberapa saat atau hubungi admin." },
-        { status: 502 }
+      return err(
+        "MIDTRANS_API_ERROR",
+        "Pembayaran belum bisa dibuat. Silakan coba lagi beberapa saat.",
+        502
       );
     }
 
+    let transaksiId: string | null = null;
     try {
       const created = await withTimeout(
         db.transaksi.create({
@@ -147,7 +163,7 @@ export async function POST(req: NextRequest) {
       );
       transaksiId = created.id;
     } catch {
-      console.warn("[Billing/Checkout] DB write timeout for transaksi, continuing anyway");
+      console.warn("[Billing/Checkout] DB write timeout, continuing");
     }
 
     return NextResponse.json({
@@ -163,10 +179,11 @@ export async function POST(req: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("[Billing/Checkout] Unexpected error:", error);
-    return NextResponse.json(
-      { error: "Terjadi kesalahan. Silakan coba lagi." },
-      { status: 500 }
+    console.error("[Billing/Checkout] Unexpected:", error);
+    return err(
+      "UNEXPECTED_ERROR",
+      "Terjadi kesalahan sistem. Silakan coba lagi atau hubungi admin.",
+      500
     );
   }
 }
