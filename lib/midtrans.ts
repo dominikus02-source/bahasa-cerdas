@@ -3,10 +3,6 @@ import type { Snap } from "midtrans-client";
 let midtransClient: Snap;
 
 export function getIsProduction(): boolean {
-  const env = process.env.NEXT_PUBLIC_MIDTRANS_IS_PRODUCTION;
-  // Only sandbox when explicitly requested
-  if (env === "false") return false;
-  // Production everywhere else (Vercel, local dev with live keys)
   return true;
 }
 
