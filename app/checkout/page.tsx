@@ -77,17 +77,16 @@ export default function CheckoutPage() {
         return;
       }
 
-      localStorage.removeItem("bc-cart");
-      window.dispatchEvent(new Event("cart-update"));
-
       if (data.redirectUrl) {
+        localStorage.removeItem("bc-cart");
+        window.dispatchEvent(new Event("cart-update"));
         window.location.href = data.redirectUrl;
         return;
       }
 
       if (data.token && window.snap) {
         window.snap.pay(data.token, {
-          onSuccess: () => { setSuccess(true); setLoading(false); },
+          onSuccess: () => { localStorage.removeItem("bc-cart"); window.dispatchEvent(new Event("cart-update")); setSuccess(true); setLoading(false); },
           onPending: () => { setSuccess(true); setLoading(false); },
           onError: () => {
             if (data.redirectUrl) {

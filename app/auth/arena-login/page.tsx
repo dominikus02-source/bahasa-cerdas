@@ -21,7 +21,7 @@ export default function ArenaLoginPage() {
     const params = new URLSearchParams(window.location.search)
     if (params.get("error")) {
       setError(params.get("error") || "")
-      window.history.replaceState({}, "", "/arena/login")
+      window.history.replaceState({}, "", "/auth/arena-login")
     }
   }, [])
 

@@ -111,7 +111,7 @@ export function TrialStatusCard() {
           </div>
           <div className="flex-1">
             <h3 className="font-semibold text-gray-700">Guru Free</h3>
-            <p className="text-sm text-gray-500 mt-0.5">Fitur dasar tetap bisa digunakan. Upgrade akan tersedia segera.</p>
+            <p className="text-sm text-gray-500 mt-0.5">Upgrade ke Guru Pro untuk 500 kredit AI/bulan dan akses fitur premium.</p>
             <div className="flex items-center gap-4 mt-3">
               <div className="flex items-center gap-1 text-xs text-gray-500 font-medium">
                 <Zap size={12} />

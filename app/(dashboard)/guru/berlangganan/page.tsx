@@ -37,7 +37,7 @@ const ERROR_MESSAGES: Record<string, string> = {
 
 export default function BerlanggananPage() {
   const [loading, setLoading] = useState(false);
-  const [status, setStatus] = useState<"default" | "success" | "failed">("default");
+  const [status, setStatus] = useState<"default" | "success" | "failed" | "pending">("default");
   const [errorMsg, setErrorMsg] = useState("");
   const [diagnosticCode, setDiagnosticCode] = useState("");
   const [selectedPlan, setSelectedPlan] = useState<"GURU_PRO_MONTHLY" | "GURU_PRO_YEARLY">("GURU_PRO_YEARLY");
@@ -118,7 +118,7 @@ export default function BerlanggananPage() {
               setLoading(false);
             },
             onPending: () => {
-              setStatus("success");
+              setStatus("pending");
               setLoading(false);
             },
             onError: () => {
@@ -249,15 +249,23 @@ export default function BerlanggananPage() {
     );
   }
 
-  if (status === "success" && !isPremium) {
+  if ((status === "success" || status === "pending") && !isPremium) {
     return (
       <div className="max-w-lg mx-auto text-center py-16">
         <div className="h-20 w-20 rounded-full bg-gradient-to-br from-emerald-400 to-green-500 flex items-center justify-center mx-auto mb-4 shadow-lg">
-          <Crown className="h-10 w-10 text-white" />
+          {status === "pending" ? (
+            <div className="h-10 w-10 animate-spin border-[3px] border-white border-t-transparent rounded-full" />
+          ) : (
+            <Crown className="h-10 w-10 text-white" />
+          )}
         </div>
-        <h1 className="text-2xl font-bold text-gray-900">Pembayaran Berhasil Diproses!</h1>
+        <h1 className="text-2xl font-bold text-gray-900">
+          {status === "pending" ? "Menunggu Pembayaran" : "Pembayaran Berhasil Diproses!"}
+        </h1>
         <p className="mt-2 text-gray-500">
-          Pembayaran sedang dikonfirmasi. Akun PRO akan aktif dalam beberapa saat.
+          {status === "pending"
+            ? "Selesaikan pembayaran melalui metode yang kamu pilih. Status akan diperbarui otomatis setelah pembayaran dikonfirmasi."
+            : "Pembayaran sedang dikonfirmasi. Akun PRO akan aktif dalam beberapa saat."}
         </p>
         <Card className="mt-6 p-4 bg-amber-50 border-amber-200 text-left">
           <div className="flex items-start gap-3">

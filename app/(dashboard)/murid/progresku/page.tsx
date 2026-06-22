@@ -34,7 +34,7 @@ export default function ProgresPage() {
     { label: "Total XP", value: "8,450", icon: Star, color: "text-yellow-600 bg-yellow-50" },
     { label: "Soal Dijawab", value: "342", icon: Target, color: "text-blue-600 bg-blue-50" },
     { label: "Akurasi", value: "87%", icon: TrendingUp, color: "text-emerald-600 bg-emerald-50" },
-    { label: "Streak", value: "14 hari", icon: Flame, color: "text-orange-600 bg-orange-50" },
+    { label: "Streak", value: "—", icon: Flame, color: "text-orange-600 bg-orange-50" },
   ];
 
   return (

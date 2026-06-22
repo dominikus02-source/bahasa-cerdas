@@ -11,6 +11,7 @@ import {
 import { useUserStore } from "@/store"
 import { Badge } from "@/components/ui/badge"
 import { TrialStatusCard } from "@/components/guru/TrialStatusCard"
+import { AiCreditBalance } from "@/components/guru/AiCreditBalance"
 
 function formatRp(n: number) {
   return new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", maximumFractionDigits: 0 }).format(n)
@@ -138,25 +139,11 @@ export default function GuruBerandaPage() {
             )}
           </div>
 
-          <div className="space-y-4">
-            <div>
-              <div className="flex items-center justify-between text-xs mb-1.5">
-                <span className="text-gray-600 font-medium">Generator RPP</span>
-                <span className="text-gray-400">{stats.aiUsage.rpp} / {(user.isPremium || user.isFounder) ? "Unlimited" : "10"}</span>
-              </div>
-              <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-                <div className="h-full bg-gradient-to-r from-emerald-400 to-emerald-500 rounded-full" style={{ width: `${Math.min((stats.aiUsage.rpp / 10) * 100, 100)}%` }} />
-              </div>
-            </div>
-            <div>
-              <div className="flex items-center justify-between text-xs mb-1.5">
-                <span className="text-gray-600 font-medium">Generator Soal</span>
-                <span className="text-gray-400">{stats.aiUsage.soal} / {(user.isPremium || user.isFounder) ? "Unlimited" : "20"}</span>
-              </div>
-              <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-                <div className="h-full bg-gradient-to-r from-violet-400 to-violet-500 rounded-full" style={{ width: `${Math.min((stats.aiUsage.soal / 20) * 100, 100)}%` }} />
-              </div>
-            </div>
+          <AiCreditBalance />
+
+          <div className="mt-3 text-xs text-gray-400 space-y-1">
+            <p>Setiap generasi AI menggunakan kredit berdasarkan agent.</p>
+            <p>RPP = 5 kredit, Soal = 3 kredit, PPT = 5 kredit, dll.</p>
           </div>
 
           {!user.isPremium && !user.isFounder && (

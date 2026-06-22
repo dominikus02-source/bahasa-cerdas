@@ -5,7 +5,7 @@ import { checkRateLimit, rateLimitResponse, type RateLimitScope } from "@/lib/se
 const publicPaths = [
   "/", "/login", "/auth/arena-login", "/auth/callback", "/register", "/confirm",
   "/verify-email", "/onboarding", "/tentang", "/fitur",
-  "/marketplace", "/artikel", "/video-belajar", "/kamus", "/loker", "/komunitas", "/ai-bc",
+  "/marketplace", "/artikel", "/video-belajar", "/kamus", "/loker", "/komunitas", "/ai-bc", "/profile/",
 ];
 
 // Routes that handle their own auth — skip middleware getUser() to avoid rate limit

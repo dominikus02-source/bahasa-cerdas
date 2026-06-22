@@ -252,57 +252,66 @@ export async function POST(req: NextRequest) {
     else if (transaksi.type === "KARYA_PURCHASE") {
       if (activatePremium) {
         const meta = (transaksi.metadata || {}) as any;
-        const karyaId = meta.karyaId;
-        const karyaTitle = meta.karyaTitle || "Karya";
-        const sellerId = meta.sellerId;
-        const platformFee = meta.platformFee || 0;
-        const sellerEarning = meta.sellerEarning || 0;
+        const items: any[] = meta.items || [];
+        const firstItem = items[0] || {};
 
-        const [buyer, karya] = await Promise.all([
-          db.user.findUnique({ where: { id: transaksi.userId }, select: { email: true, fullName: true } }),
-          db.karya.findUnique({ where: { id: karyaId }, select: { title: true, description: true, fileUrl: true, price: true } }),
-        ]);
+        // Update all Pembelian for this order to PAID
+        await db.pembelian.updateMany({
+          where: { midtransOrderId: order_id },
+          data: {
+            status: "PAID",
+            midtransPaymentType: body.payment_type,
+            midtransStatus: "settlement",
+            midtransPaymentAmount: grossAmount,
+            midtransPaidAt: new Date(),
+          },
+        });
 
-        await db.$transaction([
-          db.pembelian.updateMany({
-            where: { midtransOrderId: order_id },
-            data: {
-              status: "PAID",
-              midtransPaymentType: body.payment_type,
-              midtransStatus: "settlement",
-              midtransPaymentAmount: grossAmount,
-              midtransPaidAt: new Date(),
-            },
-          }),
-          db.karya.update({ where: { id: karyaId }, data: { downloads: { increment: 1 } } }),
-          db.user.update({ where: { id: sellerId }, data: { saldo: { increment: sellerEarning }, totalEarned: { increment: sellerEarning } } }),
-          db.sellerEarning.updateMany({
-            where: { sellerId, itemId: karyaId, status: "PENDING" },
-            data: { status: "COMPLETED" },
-          }),
-          db.purchaseHistory.updateMany({
-            where: { buyerId: transaksi.userId, itemId: karyaId },
-            data: { fileUrl: karya?.fileUrl || "" },
-          }),
-          db.transaksi.update({
-            where: { id: transaksi.id },
-            data: { status: "SUCCESS", midtransId: body.transaction_id },
-          }),
-        ]);
+        // Process each item in the order
+        for (const item of items) {
+          const { karyaId, sellerId, subtotal: itemSubtotal } = item;
+          if (!karyaId) continue;
 
-        if (buyer && karya) {
-          const emailOk = await deliverKaryaToEmail(buyer.email, buyer.fullName, karya);
-          console.log("Email delivery:", emailOk ? "SUCCESS" : "FAILED");
+          const platformFee = Math.round(itemSubtotal * 0.2);
+          const sellerEarning = itemSubtotal - platformFee;
 
-          await db.notifikasi.create({
-            data: {
-              userId: transaksi.userId,
-              title: "Pembelian Berhasil! 🎉",
-              body: `Karya "${karyaTitle}" telah masuk ke akunmu. Link download sudah dikirim ke email.`,
-              type: "PURCHASE",
-            },
+          const karya = await db.karya.findUnique({
+            where: { id: karyaId },
+            select: { title: true, fileUrl: true },
           });
+
+          await Promise.all([
+            db.karya.update({ where: { id: karyaId }, data: { downloads: { increment: 1 } } }),
+            db.user.update({ where: { id: sellerId }, data: { saldo: { increment: sellerEarning }, totalEarned: { increment: sellerEarning } } }),
+            db.sellerEarning.updateMany({
+              where: { sellerId, itemId: karyaId, status: "PENDING" },
+              data: { status: "COMPLETED" },
+            }),
+            db.purchaseHistory.updateMany({
+              where: { buyerId: transaksi.userId, itemId: karyaId },
+              data: { fileUrl: karya?.fileUrl || "" },
+            }),
+          ]);
         }
+
+        await db.transaksi.update({
+          where: { id: transaksi.id },
+          data: { status: "SUCCESS", midtransId: body.transaction_id },
+        });
+
+        // Send notification
+        const firstKarya = items[0] ? await db.karya.findUnique({ where: { id: items[0].karyaId }, select: { title: true } }).catch(() => null) : null;
+        const itemCount = items.length;
+        await db.notifikasi.create({
+          data: {
+            userId: transaksi.userId,
+            title: "Pembelian Berhasil! 🎉",
+            body: itemCount > 1
+              ? `${itemCount} karya berhasil dibeli. Cek di halaman pesanan untuk unduh.`
+              : `Karya "${firstKarya?.title || 'Karya'}" telah masuk ke akunmu.`,
+            type: "PURCHASE",
+          },
+        });
       } else {
         await db.transaksi.update({
           where: { id: transaksi.id },
