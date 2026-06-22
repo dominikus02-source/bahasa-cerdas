@@ -142,44 +142,53 @@ export async function GET(req: NextRequest) {
       dailyUsage = Array.from(map.entries()).map(([date, count]) => ({ date, count }));
     }
 
-    // Top users
-    const userUsageAgg = await prisma.aIUsage.groupBy({
-      by: ["userId"],
-      where: { ...usageWhere, userId: { not: null } },
-      _count: { userId: true },
-      orderBy: { _count: { userId: "desc" } },
-      take: 10,
-    });
-    const userIds = userUsageAgg.map(u => u.userId).filter(Boolean) as string[];
-    const userProfiles: { id: string; fullName: string; email: string }[] = userIds.length > 0
-      ? await prisma.user.findMany({
-        where: { id: { in: userIds } },
-        select: { id: true, fullName: true, email: true },
-      })
-      : [];
-    const userMap = new Map(userProfiles.map(u => [u.id, u]));
+    // System notes (declared early so defensive catch blocks can push to it)
+    const notes: string[] = [];
 
-    const topUsers = await Promise.all(
-      userUsageAgg.map(async (u) => {
-        const profile = userMap.get(u.userId);
-        const agentFeatures = AGENT_IDS.map(a => `${AGENT_FEATURE_PREFIX}${a}`);
-        const agentAgg = await prisma.aIUsage.groupBy({
-          by: ["feature"],
-          where: { userId: u.userId, createdAt: { gte: since }, feature: { in: agentFeatures } },
-          _count: { feature: true },
-          orderBy: { _count: { feature: "desc" } },
-          take: 1,
-        });
-        const mostUsedAgent = agentAgg[0]?.feature?.replace(AGENT_FEATURE_PREFIX, "") || "";
-        return {
-          userId: u.userId,
-          fullName: profile?.fullName || "—",
-          email: profile?.email || "—",
-          totalUsage: u._count.userId,
-          mostUsedAgent,
-        };
-      })
-    );
+    // Top users (defensive — inner groupBy can fail if feature filter mismatches)
+    let topUsers: { userId: string; fullName: string; email: string; totalUsage: number; mostUsedAgent: string }[] = [];
+    try {
+      const userUsageAgg = await prisma.aIUsage.groupBy({
+        by: ["userId"],
+        where: usageWhere,
+        _count: { userId: true },
+        orderBy: { _count: { userId: "desc" } },
+        take: 10,
+      });
+      const userIds = userUsageAgg.map(u => u.userId).filter(Boolean) as string[];
+      const userProfiles: { id: string; fullName: string; email: string }[] = userIds.length > 0
+        ? await prisma.user.findMany({
+          where: { id: { in: userIds } },
+          select: { id: true, fullName: true, email: true },
+        })
+        : [];
+      const userMap = new Map(userProfiles.map(u => [u.id, u]));
+
+      topUsers = await Promise.all(
+        userUsageAgg.map(async (u) => {
+          const profile = userMap.get(u.userId);
+          const agentFeatures = AGENT_IDS.map(a => `${AGENT_FEATURE_PREFIX}${a}`);
+          const agentAgg = await prisma.aIUsage.groupBy({
+            by: ["feature"],
+            where: { userId: u.userId, createdAt: { gte: since }, feature: { in: agentFeatures } },
+            _count: { feature: true },
+            orderBy: { _count: { feature: "desc" } },
+            take: 1,
+          });
+          const mostUsedAgent = agentAgg[0]?.feature?.replace(AGENT_FEATURE_PREFIX, "") || "";
+          return {
+            userId: u.userId,
+            fullName: profile?.fullName || "—",
+            email: profile?.email || "—",
+            totalUsage: u._count.userId,
+            mostUsedAgent,
+          };
+        })
+      );
+    } catch {
+      console.error("Top users query failed (non-fatal):");
+      notes.push("Data pengguna paling aktif tidak tersedia.");
+    }
 
     // Saved results by agent
     const savedByAgent = await Promise.all(
@@ -204,19 +213,23 @@ export async function GET(req: NextRequest) {
       take: 10,
     });
 
-    // Error insights
-    const errorAgg = await prisma.aIUsage.groupBy({
-      by: ["errorCode"],
-      where: { ...usageWhere, errorCode: { not: null }, status: { not: "success" } },
-      _count: { errorCode: true },
-      orderBy: { _count: { errorCode: "desc" } },
-    });
-    const errors = errorAgg
-      .filter((e): e is typeof e & { errorCode: string } => e.errorCode !== null)
-      .map(e => ({ code: e.errorCode, count: e._count.errorCode }));
+    // Error insights (defensive)
+    let errors: { code: string; count: number }[] = [];
+    try {
+      const errorAgg = await prisma.aIUsage.groupBy({
+        by: ["errorCode"],
+        where: { ...usageWhere, errorCode: { not: null }, status: { not: "success" } },
+        _count: { errorCode: true },
+        orderBy: { _count: { errorCode: "desc" } },
+      });
+      errors = errorAgg
+        .filter((e): e is typeof e & { errorCode: string } => e.errorCode !== null)
+        .map(e => ({ code: e.errorCode, count: e._count.errorCode }));
+    } catch {
+      console.error("Error insights query failed (non-fatal):");
+      notes.push("Data insight error tidak tersedia.");
+    }
 
-    // System notes
-    const notes: string[] = [];
     const recentErrors = await prisma.aIUsage.count({
       where: { createdAt: { gte: since }, status: { not: "success" } },
     });
@@ -357,6 +370,10 @@ export async function GET(req: NextRequest) {
     });
   } catch (err: any) {
     console.error("AI Analytics API error:", err);
-    return NextResponse.json({ success: false, error: err.message || "Internal error" }, { status: 500 });
+    return NextResponse.json({
+      success: false,
+      error: "Data AI Analytics belum bisa dimuat. Silakan coba lagi.",
+      code: "AI_ANALYTICS_QUERY_FAILED",
+    }, { status: 500 });
   }
 }

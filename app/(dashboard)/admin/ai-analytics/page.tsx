@@ -240,8 +240,9 @@ export default function AdminAIAnalyticsPage() {
       )}
 
       {error && (
-        <div className="p-4 bg-red-50 border border-red-200 rounded-xl text-sm text-red-700 mb-6">
-          {error}
+        <div className="p-4 bg-red-50 border border-red-200 rounded-xl mb-6">
+          <p className="text-sm text-red-700 mb-1">{error}</p>
+          <p className="text-[10px] text-red-400">Kode: AI_ANALYTICS_QUERY_FAILED</p>
         </div>
       )}
 
