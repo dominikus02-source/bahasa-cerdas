@@ -345,8 +345,8 @@ export default function RegisterPage() {
           <div className="mt-6 pt-5 border-t border-gray-100 text-center">
             <p className="text-sm text-gray-500">
               Sudah punya akun?{" "}
-              <Link href="/auth/arena-login" className="font-semibold text-violet-600 hover:text-violet-700 hover:underline">
-                Masuk ke Arena
+              <Link href={role === "MURID" ? "/auth/arena-login" : "/login"} className="font-semibold text-violet-600 hover:text-violet-700 hover:underline">
+                {role === "MURID" ? "Masuk ke Arena" : "Masuk ke Dasbor Guru"}
               </Link>
             </p>
           </div>

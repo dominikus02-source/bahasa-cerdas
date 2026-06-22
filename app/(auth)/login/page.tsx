@@ -15,12 +15,17 @@ export default function LoginPage() {
   const [googleLoading, setGoogleLoading] = useState(false);
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [next, setNext] = useState("");
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
+    const nextParam = params.get("next") || "";
+    if (nextParam) {
+      setNext(nextParam);
+    }
     if (params.get("error")) {
       setError(params.get("error") || "");
-      window.history.replaceState({}, "", "/login");
+      window.history.replaceState({}, "", "/login" + (nextParam ? `?next=${nextParam}` : ""));
     }
   }, []);
 
@@ -84,11 +89,14 @@ export default function LoginPage() {
                 role: data.user.user_metadata?.role || "MURID",
               }),
             });
-            if (retryRes.ok) {
+              if (retryRes.ok) {
               const retryData = await retryRes.json();
               const dbUser = retryData?.user;
               if (dbUser) {
-                window.location.href = dbUser.isFounder ? "/admin" : dbUser.role === "MURID" ? "/arena" : `/${dbUser.role.toLowerCase()}/beranda`;
+                const target = next && !next.startsWith("/login") && !next.startsWith("/register")
+                  ? next
+                  : dbUser.isFounder ? "/admin" : dbUser.role === "MURID" ? "/arena" : `/${dbUser.role.toLowerCase()}/beranda`;
+                window.location.href = target;
                 return;
               }
             }
@@ -101,7 +109,12 @@ export default function LoginPage() {
       const dbUser = createData?.user;
 
       if (!dbUser) { setError("Gagal memuat data user"); setLoading(false); return; }
-      window.location.href = dbUser.isFounder ? "/admin" : dbUser.role === "MURID" ? "/arena" : `/${dbUser.role.toLowerCase()}/beranda`;
+
+      // Redirect back to previous page if coming from marketplace or other public page
+      const target = next && !next.startsWith("/login") && !next.startsWith("/register")
+        ? next
+        : dbUser.isFounder ? "/admin" : dbUser.role === "MURID" ? "/arena" : `/${dbUser.role.toLowerCase()}/beranda`;
+      window.location.href = target;
     } catch (err: any) {
       setError(
         err?.message?.includes("rate limit") || err?.status === 429
@@ -119,11 +132,12 @@ export default function LoginPage() {
     try {
       const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || window.location.origin || "https://www.bahasacerdas.com";
       const supabase = createClient();
+      const redirectTo = next
+        ? `${baseUrl}/api/auth/callback?next=${encodeURIComponent(next)}`
+        : `${baseUrl}/api/auth/callback`;
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
-        options: {
-          redirectTo: `${baseUrl}/api/auth/callback`,
-        },
+        options: { redirectTo },
       });
       if (error) setError(error.message);
     } catch {

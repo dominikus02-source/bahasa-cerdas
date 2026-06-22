@@ -75,6 +75,7 @@ export async function updateSession(request: NextRequest) {
   if (!user) {
     const next = pathname.startsWith("/arena") ? "/auth/arena-login" : "/login";
     const loginUrl = new URL(next, request.url);
+    loginUrl.searchParams.set("next", pathname);
     return NextResponse.redirect(loginUrl);
   }
 
