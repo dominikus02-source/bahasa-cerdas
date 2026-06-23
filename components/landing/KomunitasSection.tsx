@@ -113,34 +113,52 @@ export default function KomunitasSection() {
             viewport={{ once: true }}
             transition={{ duration: 0.5, ease: "easeOut", delay: 0.2 }}
           >
-            <div className="relative p-8 lg:p-10 rounded-2xl bg-white border border-zinc-100 shadow-xl shadow-zinc-900/5">
-              <div className="absolute -top-3 -right-3 w-full h-full rounded-2xl bg-zinc-900 -z-10" />
-              <div className="space-y-6">
-                <div className="text-center">
-                  <p className="text-4xl lg:text-5xl font-bold text-zinc-900">10.000+</p>
-                  <p className="text-sm text-zinc-500">Guru Terdaftar</p>
+            <div className="bg-white rounded-2xl border border-zinc-200 p-6 shadow-sm">
+              {/* Stat utama */}
+              <div className="text-center border-b border-zinc-100 pb-5 mb-5">
+                <div className="text-5xl font-bold text-zinc-900 leading-none">
+                  Aktif
                 </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="text-center p-4 rounded-xl bg-zinc-50">
-                    <p className="text-2xl font-bold text-zinc-900">500+</p>
-                    <p className="text-xs text-zinc-400">Sekolah Aktif</p>
-                  </div>
-                  <div className="text-center p-4 rounded-xl bg-zinc-50">
-                    <p className="text-2xl font-bold text-zinc-900">34</p>
-                    <p className="text-xs text-zinc-400">Provinsi</p>
+                <div className="text-sm text-zinc-500 mt-2">
+                  Forum diskusi sudah live di platform
+                </div>
+                <div className="inline-flex items-center gap-1.5 mt-3 bg-green-50 text-green-700 text-xs font-semibold px-3 py-1 rounded-full border border-green-100">
+                  <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+                  Live sekarang
+                </div>
+              </div>
+
+              {/* Grid 4 stats kecil */}
+              <div className="grid grid-cols-2 gap-px bg-zinc-100 rounded-xl overflow-hidden">
+                <div className="bg-white px-4 py-4 text-center">
+                  <div className="text-2xl font-bold text-zinc-900">Tangsel</div>
+                  <div className="text-xs text-zinc-500 mt-1 leading-snug">
+                    Pusat jaringan MGMP aktif
                   </div>
                 </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="text-center p-4 rounded-xl bg-zinc-50">
-                    <p className="text-2xl font-bold text-zinc-900">200+</p>
-                    <p className="text-xs text-zinc-400">Webinar/Tahun</p>
+                <div className="bg-white px-4 py-4 text-center">
+                  <div className="text-2xl font-bold text-zinc-900">5+ Kota</div>
+                  <div className="text-xs text-zinc-500 mt-1 leading-snug">
+                    Jaringan guru tersambung
                   </div>
-                  <div className="text-center p-4 rounded-xl bg-zinc-50">
-                    <p className="text-2xl font-bold text-zinc-900">4.8</p>
-                    <p className="text-xs text-zinc-400">Skor Kepuasan</p>
+                </div>
+                <div className="bg-white px-4 py-4 text-center">
+                  <div className="text-2xl font-bold text-zinc-900">Q3 2026</div>
+                  <div className="text-xs text-zinc-500 mt-1 leading-snug">
+                    Webinar perdana direncanakan
+                  </div>
+                </div>
+                <div className="bg-white px-4 py-4 text-center">
+                  <div className="text-2xl font-bold text-zinc-900">350K+</div>
+                  <div className="text-xs text-zinc-500 mt-1 leading-snug">
+                    Guru BI se-Indonesia (target)
                   </div>
                 </div>
               </div>
+
+              <p className="text-center text-xs text-zinc-400 mt-4">
+                Angka mencerminkan jaringan aktual, bukan proyeksi
+              </p>
             </div>
           </motion.div>
         </div>
