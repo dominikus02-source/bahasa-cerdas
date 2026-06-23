@@ -62,7 +62,7 @@ export default async function KaryaPopulerSection() {
                   <div className="inline-flex items-center px-3 py-1 rounded-lg bg-primary-light text-primary text-xs font-semibold mb-4">
                     {k.type}
                   </div>
-                  <h3 className="text-base lg:text-lg font-bold text-zinc-900 mb-2 leading-snug line-clamp-2 group-hover:text-primary transition-colors">
+                  <h3 className="text-base lg:text-lg font-display font-bold text-zinc-900 mb-2 leading-snug line-clamp-2 group-hover:text-primary transition-colors">
                     {k.title}
                   </h3>
                   <p className="text-xs text-zinc-400 mb-4">

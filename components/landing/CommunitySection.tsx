@@ -23,7 +23,7 @@ export default function CommunitySection() {
             </h2>
 
             <p className="text-lg text-red-100 leading-relaxed">
-              Bergabung dengan 10.000+ guru dari seluruh Indonesia. Diskusi kurikulum, sharing RPP, webinar rutin, dan mentoring langsung dari ahli bahasa.
+              Bergabung dengan guru dari seluruh Indonesia. Diskusi kurikulum, sharing RPP, webinar rutin, dan mentoring langsung dari ahli bahasa.
             </p>
 
             <div className="grid sm:grid-cols-2 gap-6">

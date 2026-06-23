@@ -115,7 +115,7 @@ export default function AIToolsSection() {
                   >
                     <Icon size={24} aria-hidden="true" />
                   </div>
-                  <h3 className="text-lg font-bold text-zinc-900 mb-2.5 group-hover:text-primary transition-colors">
+                  <h3 className="text-lg font-display font-bold text-zinc-900 mb-2.5 group-hover:text-primary transition-colors">
                     {tool.title}
                   </h3>
                   <p className="text-sm text-zinc-500 leading-relaxed mb-4">

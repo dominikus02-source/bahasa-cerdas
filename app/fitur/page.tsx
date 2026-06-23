@@ -60,14 +60,14 @@ const features = [
   {
     icon: Users,
     title: "Komunitas MGMP",
-    desc: "Forum diskusi, webinar, dan sharing session dengan 10.000+ guru Bahasa Indonesia dari seluruh Indonesia.",
+    desc: "Forum diskusi, webinar, dan sharing session dengan sesama guru Bahasa Indonesia dari seluruh Indonesia.",
     color: "bg-blue-50 text-blue-600",
     href: "/guru/komunitas",
   },
   {
     icon: BookOpen,
     title: "Bank Soal & UKBI",
-    desc: "Akses 1.200+ soal siap pakai, simulasi UKBI, dan TKA untuk persiapan asesmen siswa.",
+    desc: "Akses ribuan soal siap pakai, simulasi UKBI, dan TKA untuk persiapan asesmen siswa.",
     color: "bg-rose-50 text-rose-600",
     href: "/guru/bank-soal",
   },

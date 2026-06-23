@@ -30,7 +30,7 @@ export default function FinalCTA() {
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 border border-white/10 mb-6">
             <Sparkles size={14} className="text-amber-400" aria-hidden="true" />
             <span className="text-xs font-semibold text-amber-400">
-              Gratis 30 Hari — Tanpa Kartu Kredit
+              Gratis untuk Memulai — Tanpa Kartu Kredit
             </span>
           </div>
 
@@ -40,8 +40,8 @@ export default function FinalCTA() {
           </h2>
 
           <p className="text-base lg:text-lg text-zinc-400 leading-relaxed mb-10 max-w-xl mx-auto">
-            Bergabung dengan 10.000+ guru Bahasa Indonesia yang sudah
-            menggunakan BahasaCerdas. Hemat waktu, tingkatkan kualitas
+            Jadilah bagian dari gerakan literasi digital untuk 350.000+ guru
+            Bahasa Indonesia. Hemat waktu persiapan, tingkatkan kualitas
             pembelajaran.
           </p>
 
