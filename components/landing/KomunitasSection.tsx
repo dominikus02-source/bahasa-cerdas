@@ -59,7 +59,7 @@ export default function KomunitasSection() {
             </div>
             <h2 className="heading-lg text-zinc-900 mb-5">
               Bergabung dengan{" "}
-              <span className="text-primary">10.000+ Guru</span>{" "}
+              <span className="text-primary">Sesama Guru</span>{" "}
               Bahasa Indonesia
             </h2>
             <p className="text-base lg:text-lg text-zinc-500 leading-relaxed mb-8 max-w-xl">

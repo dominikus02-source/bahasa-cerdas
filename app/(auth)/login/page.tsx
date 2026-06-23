@@ -48,8 +48,8 @@ export default function LoginPage() {
             ? "Email atau password salah"
             : authError.message === "Email not confirmed"
             ? "Email belum dikonfirmasi. Cek inbox/spam kamu."
-            : authError.message?.includes("rate limit") || authError.status === 429
-            ? "Server sedang sibuk. Silakan coba lagi dalam beberapa saat."
+            : authError.status === 429
+            ? "Terlalu banyak percobaan. Silakan coba lagi nanti."
             : authError.message
         );
         setLoading(false);
@@ -116,9 +116,12 @@ export default function LoginPage() {
         : dbUser.isFounder ? "/admin" : dbUser.role === "MURID" ? "/arena" : `/${dbUser.role.toLowerCase()}/beranda`;
       window.location.href = target;
     } catch (err: any) {
+      console.error("Login error:", err);
       setError(
-        err?.message?.includes("rate limit") || err?.status === 429
-          ? "Server sedang sibuk. Silakan coba lagi dalam beberapa saat."
+        err?.status === 429
+          ? "Terlalu banyak percobaan. Silakan coba lagi nanti."
+          : err?.message?.includes("Failed to fetch")
+          ? "Koneksi terputus. Periksa koneksi internet kamu."
           : "Terjadi kesalahan. Silakan coba lagi."
       );
       setLoading(false);

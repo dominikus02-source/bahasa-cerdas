@@ -23,6 +23,7 @@ interface NavItem {
 const NAV: NavItem[] = [
   { label: "Beranda", href: "/guru/beranda", icon: <Home size={18} /> },
   { label: "Toko Karya", href: "/guru/toko-karya", icon: <ShoppingBag size={18} /> },
+  { label: "Jelajahi Toko Karya", href: "/marketplace", icon: <ShoppingBag size={18} /> },
   { label: "Video Belajar", href: "/guru/video-belajar", icon: <Video size={18} /> },
   { label: "Kuis Game", href: "/guru/game/lobby", icon: <Gamepad2 size={18} /> },
   { label: "RPP & Modul", href: "/guru/rpp-modul", icon: <FileText size={18} /> },

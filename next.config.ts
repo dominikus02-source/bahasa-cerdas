@@ -39,9 +39,8 @@ const nextConfig: NextConfig = {
           { key: "X-Frame-Options", value: "DENY" },
           { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
           // HSTS: includeSubDomains enabled (per user request for SSL Labs)
-          // NOTE: game.bahasacerdas.com has no TLS — HSTS will force HTTPS there for
-          // users who visited the main site. Game is accessed via socket.io (not browser URL),
-          // so risk is low. Do NOT add preload until game subdomain has TLS.
+          // NOTE: game.bahasacerdas.com TLS active since Jun 22, 2026 (Let's Encrypt via Certbot)
+          // Do NOT add preload flag unless game subdomain is confirmed stable.
           { key: "Strict-Transport-Security", value: "max-age=31536000; includeSubDomains" },
           { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
           { key: "X-DNS-Prefetch-Control", value: "on" },

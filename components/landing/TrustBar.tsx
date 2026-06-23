@@ -1,51 +1,69 @@
 "use client";
 
-import { BookOpen, Users, FileText, Award } from "lucide-react";
 import { motion } from "framer-motion";
 import { fadeInUp, staggerContainer } from "@/lib/motion";
 
 const stats = [
-  { icon: Users, value: "10.000+", label: "Guru Terdaftar" },
-  { icon: FileText, value: "5.000+", label: "Materi Ajar & RPP" },
-  { icon: BookOpen, value: "1.200+", label: "Soal & Kuis Interaktif" },
-  { icon: Award, value: "4.8/5", label: "Rating dari Pengguna" },
+  {
+    value: "Live",
+    color: "text-primary",
+    label: "Platform aktif dalam beta terbatas",
+    sub: "Sejak 2026 · Versi Beta",
+  },
+  {
+    value: "57K+",
+    color: "text-primary",
+    label: "Baris kode produksi yang sudah berjalan",
+    sub: "52+ Database Models",
+  },
+  {
+    value: "21.600+",
+    color: "text-primary",
+    label: "Item konten berkualitas siap diakses",
+    sub: "Materi Kelas VII–XII",
+  },
+  {
+    value: "350K+",
+    color: "text-amber-500",
+    label: "Guru Bahasa Indonesia yang bisa kami jangkau",
+    sub: "Target Pasar Nasional",
+  },
 ];
 
 export default function TrustBar() {
   return (
-    <section className="relative py-12 lg:py-16 bg-white" aria-label="Statistik platform">
+    <section className="relative py-12 lg:py-16 bg-white border-y border-zinc-100" aria-label="Statistik platform">
       <div className="section-container">
         <motion.div
-          className="grid grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8"
+          className="grid grid-cols-2 lg:grid-cols-4 gap-px bg-zinc-200 rounded-2xl overflow-hidden border border-zinc-200"
           variants={staggerContainer}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
-          role="list"
         >
-          {stats.map((stat) => {
-            const Icon = stat.icon;
-            return (
-              <motion.div
-                key={stat.label}
-                variants={fadeInUp}
-                transition={{ duration: 0.5, ease: "easeOut" }}
-                className="relative group text-center p-6 rounded-2xl bg-zinc-50/50 hover:bg-zinc-50 transition-colors duration-300"
-                role="listitem"
-              >
-                <div className="w-12 h-12 rounded-xl bg-primary-light flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
-                  <Icon size={22} className="text-primary" aria-hidden="true" />
-                </div>
-                <p className="text-2xl lg:text-3xl font-bold text-zinc-900 mb-1" aria-label={`${stat.value} ${stat.label}`}>
-                  {stat.value}
-                </p>
-                <p className="text-sm text-zinc-500 font-medium">
-                  {stat.label}
-                </p>
-              </motion.div>
-            );
-          })}
+          {stats.map((stat) => (
+            <motion.div
+              key={stat.value}
+              variants={fadeInUp}
+              transition={{ duration: 0.5, ease: "easeOut" }}
+              className="bg-white px-6 py-7 text-center"
+            >
+              <div className={`font-display text-4xl font-normal leading-none mb-2 ${stat.color}`}>
+                {stat.value}
+              </div>
+              <div className="text-zinc-500 text-sm leading-snug mb-2">
+                {stat.label}
+              </div>
+              <div className={`text-xs font-bold tracking-wider uppercase ${stat.color} opacity-70`}>
+                {stat.sub}
+              </div>
+            </motion.div>
+          ))}
         </motion.div>
+
+        <p className="text-center text-zinc-400 text-xs mt-4">
+          * Platform dalam fase beta terbatas. Angka mencerminkan infrastruktur teknis aktual, bukan jumlah pengguna.
+        </p>
       </div>
     </section>
   );

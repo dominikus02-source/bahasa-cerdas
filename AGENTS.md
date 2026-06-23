@@ -89,16 +89,20 @@ Transform BahasaCerdas into a social-creative platform for Bahasa Indonesia wher
 
 ### DNS
 - Main site: bahasacerdas.com → Vercel (live, nameservers ns1/ns2.vercel-dns.com)
-- Game subdomain: game.bahasacerdas.com → [lihat Hostinger VPS dashboard] (A record)
-- game.bahasacerdas.com currently not resolving (DNS or server issue)
+- Game subdomain: game.bahasacerdas.com → 72.60.78.65 (A record, resolving, SSL active since Jun 22)
+- Old: game.bahasacerdas.site → deprecated, NGINX config disabled
 
-### Game Server (VPS)
+### Game Server (VPS — Hostinger, IP: 72.60.78.65)
 - Location: /var/www/game-server/game-server on VPS
 - Entry: src/server.ts (Socket.io, port 3001)
+- Runtime: compiled `dist/server.js` via PM2 ecosystem.config.cjs (NOT tsx dev mode)
+- PM2: single process `game-server`, runs `dist/server.js`, managed by `ecosystem.config.cjs`
+- Deployment: `bash scripts/deploy-game-server.sh` (requires `scripts/.env.vps` with VPS_IP/VPS_PASS)
+- NGINX: /etc/nginx/sites-enabled/game.bahasacerdas.com → proxies 443 → localhost:3001 with WebSocket upgrade
+- SSL: Let's Encrypt via Certbot, valid until Sep 20, 2026, auto-renewal active
 - Prisma schema in game-server/prisma/schema.prisma (separate from main project)
-- PM2 process name: needs check (run `pm2 list` on VPS)
-- VPS Prisma version: 5.22.0
-- Main project Prisma version: 5.22.0
+- VPS Prisma version: 5.22.0, Main project Prisma version: 5.22.0
+- SSH: root@72.60.78.65, password in scripts/.env.vps (gitignored)
 - Bug fixed: PORT parseInt, let code, data.answerIndex, q:any, newHost check
 
 ## Build Config
@@ -304,15 +308,11 @@ The Belajar page auto-detects content types in `isi[]` strings:
 ## Next Steps (Priority Order)
 1. **Enrich content** — isi lebih banyak latihan/kuis soal ke setiap bab (saat ini minimal 2-3 per bab)
 2. **Guru video content** — upload video pembelajaran, embed YouTube
-3. **Game server fixes** — VPS reconnection, DNS, SSL (blocked by VPS SSH)
-4. **Push notifications** — browser push API for notif when tab not open
-5. **Old standalone routes** — migrate `/api/ai/eyd`, `/api/ai/feedback`, `/api/ai/grading`, `/api/ai/text-analysis` to central runner (currently bypass AIUsage logging)
-6. **Phase 9 monetization** — NOT yet started. See docs/AI_AGENT_LAYER_PLAN.md for readiness details.
+3. **Push notifications** — browser push API for notif when tab not open
+4. **Old standalone routes** — migrate `/api/ai/eyd`, `/api/ai/feedback`, `/api/ai/grading`, `/api/ai/text-analysis` to central runner (currently bypass AIUsage logging)
+5. **Phase 9 monetization** — NOT yet started. See docs/AI_AGENT_LAYER_PLAN.md for readiness details.
 
 ## Blockers
-- VPS SSH unreachable (server restarting)
-- game.bahasacerdas.com DNS not propagating/resolving
-- No SSL cert on game subdomain
 - Pre-existing `docx/route.ts(111,1)` syntax error on main branch (unrelated to Phase 8B)
 
 ## GitHub

@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { Sparkles, Play, ChevronRight, Star, User } from "lucide-react";
+import { Sparkles, ChevronRight, User, Star } from "lucide-react";
 import BatikDecor from "@/components/landing/batik-decor";
 import { fadeInUp, staggerContainer, sectionProps, itemProps } from "@/lib/motion";
 
@@ -51,7 +51,7 @@ export default function HeroSection() {
               <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary-light border border-primary/10 mb-6">
                 <Sparkles size={14} className="text-primary" aria-hidden="true" />
                 <span className="text-xs font-semibold text-primary">
-                  Platform edukasi Bahasa Indonesia
+                  Platform AI Bahasa Indonesia — Live
                 </span>
               </div>
             </motion.div>
@@ -62,11 +62,11 @@ export default function HeroSection() {
               transition={{ duration: 0.5, ease: "easeOut", delay: 0.1 }}
               className="heading-xl text-zinc-900 mb-6 leading-[1.08]"
             >
-              Platform edukasi{" "}
-              <span className="text-primary">Bahasa Indonesia</span>
+              Bahasa Indonesia yang{" "}
+              <span className="text-primary">akhirnya</span>
               <br />
               <span className="text-zinc-500 text-3xl sm:text-4xl lg:text-5xl block mt-2">
-                MGMP + AI + Toko Karya
+                menyenangkan — untuk guru & siswa.
               </span>
             </motion.h1>
 
@@ -75,9 +75,8 @@ export default function HeroSection() {
               transition={{ duration: 0.5, ease: "easeOut", delay: 0.2 }}
               className="text-base lg:text-lg text-zinc-500 leading-relaxed mb-8 max-w-xl"
             >
-              Hemat waktu persiapan mengajar hingga 10x lipat dengan AI canggih,
-              akses ribuan materi MGMP berkualitas, jual karya mengajar Anda,
-              dan bergabung dengan komunitas guru terbesar di Indonesia.
+              Satu ekosistem: guru buat RPP dalam 30 detik, siswa nulis, bersaing,
+              dan berkembang lewat AI + gamifikasi. Dirancang untuk Kurikulum Merdeka.
             </motion.p>
 
             <motion.div
@@ -104,9 +103,7 @@ export default function HeroSection() {
                   ))}
                 </div>
                 <p className="text-xs text-zinc-500 font-medium">
-                  Dipercaya oleh{" "}
-                  <span className="text-zinc-700 font-semibold">10.000+</span> guru
-                  di seluruh Indonesia
+                  Dibuat oleh <span className="text-zinc-700 font-semibold">guru</span>, untuk guru
                 </p>
               </div>
             </motion.div>
@@ -117,20 +114,19 @@ export default function HeroSection() {
               className="flex flex-wrap gap-4"
             >
               <Link
-                href="/register"
+                href="/register?role=guru"
                 className="group relative inline-flex items-center gap-2 px-8 py-3.5 text-base font-semibold text-white bg-primary hover:bg-primary-dark rounded-xl transition-all duration-200 shadow-xl shadow-primary/25 hover:shadow-2xl hover:shadow-primary/30 hover:-translate-y-0.5 focus-ring"
-                aria-label="Daftar gratis, coba BahasaCerdas 30 hari"
+                aria-label="Daftar sebagai guru"
               >
-                Coba Gratis 30 Hari
+                Daftar sebagai Guru
                 <ChevronRight size={18} className="transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
               </Link>
               <Link
-                href="/fitur"
+                href="/register?role=siswa"
                 className="group inline-flex items-center gap-2.5 px-8 py-3.5 text-base font-semibold text-zinc-700 bg-zinc-100 hover:bg-zinc-200 rounded-xl transition-all duration-200 focus-ring"
-                aria-label="Lihat semua fitur BahasaCerdas"
+                aria-label="Daftar sebagai siswa"
               >
-                <Play size={18} className="text-primary" aria-hidden="true" />
-                Lihat Semua Fitur
+                Daftar sebagai Siswa
               </Link>
             </motion.div>
           </div>
@@ -172,7 +168,7 @@ export default function HeroSection() {
               <div className="absolute -top-3 -right-3 px-4 py-2 rounded-xl bg-white border border-zinc-100 shadow-lg shadow-zinc-900/5">
                 <div className="flex items-center gap-2">
                   <div className="w-3 h-3 rounded-full bg-emerald-500" aria-hidden="true" />
-                  <span className="text-xs font-semibold text-zinc-700">Live &bull; 234 daring</span>
+                  <span className="text-xs font-semibold text-zinc-700">Live &bull; Platform aktif</span>
                 </div>
               </div>
             </div>
