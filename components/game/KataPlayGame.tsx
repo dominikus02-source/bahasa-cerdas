@@ -9,11 +9,15 @@ import {
   Check, X,
 } from "lucide-react"
 import { kataPlayLevels, KataPlayLevel, KataPlayQuestion, KataPlayLesson } from "./kataplay-content"
+import { createGameEngine, KataPlayAgentRuntime } from "./agents"
 
-const XpRewardCorrect = 50
-const XpRewardBonus = 25
-const StreakBonus = 10
 const TotalRounds = 10
+let agentEngine: KataPlayAgentRuntime | null = null
+
+function getEngine(): KataPlayAgentRuntime {
+  if (!agentEngine) agentEngine = createGameEngine()
+  return agentEngine
+}
 
 const levelColors = [
   { bg: "from-violet-500 to-purple-600", card: "bg-violet-500/10", border: "border-violet-500/20", text: "text-violet-400" },
@@ -89,6 +93,7 @@ export default function KataPlayGame({ hideBackButton }: { hideBackButton?: bool
   const [selected, setSelected] = useState<number | null>(null)
   const [feedback, setFeedback] = useState<{ correct: boolean; message: string } | null>(null)
   const [shakeInput, setShakeInput] = useState(false)
+  const [agentSummary, setAgentSummary] = useState<Record<string, string | number> | null>(null)
   const scoreRef = useRef(0)
   const correctRef = useRef(0)
   const wrongRef = useRef(0)
@@ -154,11 +159,14 @@ export default function KataPlayGame({ hideBackButton }: { hideBackButton?: bool
   }
 
   function handleLessonSelect(lesson: KataPlayLesson) {
+    const engine = getEngine()
+    engine.startSession(selectedLevel!, lesson, false)
     const pool = lesson.questions
     const shuffled = [...pool].sort(() => Math.random() - 0.5)
-    setQuestions(shuffled.slice(0, Math.min(TotalRounds, shuffled.length)))
+    const selected = shuffled.slice(0, Math.min(TotalRounds, shuffled.length))
+    setQuestions(selected)
     setCurrentQ(0)
-    setLives(3)
+    setLives(engine.getContext().difficulty.livesGranted)
     setScore(0)
     setStreak(0)
     setCorrect(0)
@@ -174,10 +182,12 @@ export default function KataPlayGame({ hideBackButton }: { hideBackButton?: bool
   }
 
   function handleLevelPlayAll(level: KataPlayLevel) {
+    const engine = getEngine()
+    engine.startSession(level, null, true)
     const picked = pickQuestions(level, TotalRounds)
     setQuestions(picked)
     setCurrentQ(0)
-    setLives(3)
+    setLives(engine.getContext().difficulty.livesGranted)
     setScore(0)
     setStreak(0)
     setCorrect(0)
@@ -196,11 +206,28 @@ export default function KataPlayGame({ hideBackButton }: { hideBackButton?: bool
     if (selected !== null || feedback !== null) return
     const q = questions[currentQ]
     const isCorrect = q.options[idx] === q.correctAnswer || idx.toString() === q.correctAnswer || idx === parseInt(q.correctAnswer)
+    const engine = getEngine()
+    const context = engine.getContext()
+    const diff = context.difficulty
     setSelected(idx)
 
+    const eventType = isCorrect ? "answer_correct" : "answer_wrong"
+    const gameEvent = {
+      type: eventType as any,
+      question: q,
+      answeredOption: q.options[idx]!,
+      timeToAnswerMs: 0,
+      currentStreak: isCorrect ? streak + 1 : 0,
+      livesRemaining: isCorrect ? lives : lives - 1,
+      sessionQuestionIndex: currentQ,
+      sessionTotalQuestions: questions.length,
+    }
+
+    const decisions = engine.fireEvent(gameEvent)
+    const newDiff = decisions.difficultyChange
+
     if (isCorrect) {
-      const bonus = streak * StreakBonus
-      const points = XpRewardCorrect + bonus
+      const points = 50 + streak * 10
       const newStreak = streak + 1
       scoreRef.current = score + points
       correctRef.current = correct + 1
@@ -209,7 +236,13 @@ export default function KataPlayGame({ hideBackButton }: { hideBackButton?: bool
       setStreak(newStreak)
       setBestStreak((b) => Math.max(b, newStreak))
       setCorrect((c) => c + 1)
-      setFeedback({ correct: true, message: `+${points}✨` })
+      const agentMsg = decisions.feedbackMessage
+      setFeedback({ correct: true, message: agentMsg || `+${points}✨` })
+
+      if (gameEvent.currentStreak >= 5) {
+        engine.fireEvent({ ...gameEvent, type: "streak_milestone" } as any)
+        setLives((l) => Math.min(5, l + 1))
+      }
     } else {
       const newLives = lives - 1
       setLives(newLives)
@@ -219,18 +252,24 @@ export default function KataPlayGame({ hideBackButton }: { hideBackButton?: bool
       setWrong((w) => w + 1)
       setShakeInput(true)
       setTimeout(() => setShakeInput(false), 500)
+      const agentMsg = decisions.feedbackMessage
       if (newLives <= 0) {
-        setFeedback({ correct: false, message: `Jawaban: ${q.correctAnswer}` })
+        engine.fireEvent({ ...gameEvent, type: "game_over" } as any)
+        setFeedback({ correct: false, message: agentMsg || `Jawaban: ${q.correctAnswer}` })
         setTimeout(() => {
           const earned = Math.floor(scoreRef.current / 2)
+          const endResult = engine.endSession(earned)
+          if (endResult.sessionSummary) setAgentSummary(endResult.sessionSummary)
           updateProgress(earned, currentLessonIdRef.current ?? undefined)
           saveXpToServer(earned)
           setPhase("result")
         }, 2000)
         return
       }
-      setFeedback({ correct: false, message: `Jawaban: ${q.correctAnswer}` })
+      setFeedback({ correct: false, message: agentMsg || `Jawaban: ${q.correctAnswer}` })
     }
+
+    setLives((prev) => Math.max(prev, newDiff.livesGranted))
 
     setTimeout(() => {
       setSelected(null)
@@ -238,7 +277,9 @@ export default function KataPlayGame({ hideBackButton }: { hideBackButton?: bool
       if (currentQ < questions.length - 1) {
         setCurrentQ((c) => c + 1)
       } else {
-        const earned = scoreRef.current + correctRef.current * XpRewardBonus
+        const earned = scoreRef.current + correctRef.current * 25
+        const endResult = engine.endSession(earned)
+        if (endResult.sessionSummary) setAgentSummary(endResult.sessionSummary)
         updateProgress(earned, currentLessonIdRef.current ?? undefined)
         saveXpToServer(earned)
         setPhase("result")
@@ -260,6 +301,7 @@ export default function KataPlayGame({ hideBackButton }: { hideBackButton?: bool
     setWrong(0)
     setSelected(null)
     setFeedback(null)
+    setAgentSummary(null)
   }
 
   // ── Splash ──
@@ -616,7 +658,8 @@ export default function KataPlayGame({ hideBackButton }: { hideBackButton?: bool
 
   // ── Result ──
   const totalXp = score + correct * XpRewardBonus
-  const grade = correct >= 9 ? "Luar Biasa!" : correct >= 7 ? "Bagus!" : correct >= 5 ? "Cukup!" : "Ayo coba lagi!"
+  const staticGrade = correct >= 9 ? "Luar Biasa!" : correct >= 7 ? "Bagus!" : correct >= 5 ? "Cukup!" : "Ayo coba lagi!"
+  const grade = (agentSummary?.grade as string) || (agentSummary?.recommendation as string) || staticGrade
   const gradeColors = ["from-amber-400 to-orange-500", "from-violet-400 to-purple-500", "from-blue-400 to-cyan-500", "from-gray-400 to-gray-500"]
 
   return (
@@ -669,6 +712,53 @@ export default function KataPlayGame({ hideBackButton }: { hideBackButton?: bool
             </div>
             <span className="font-bold text-amber-400">+{totalXp}</span>
           </div>
+          {agentSummary && (
+            <>
+              <div className="h-px" style={{ background: "rgba(255,255,255,0.04)" }} />
+              <div className="pt-1">
+                <div className="flex items-center gap-1.5 mb-2">
+                  <BookOpen size={12} className="text-violet-400" />
+                  <span className="text-xs font-semibold text-violet-400">Analisis Agent</span>
+                </div>
+                {agentSummary.accuracy && (
+                  <div className="flex items-center justify-between text-xs mb-1">
+                    <span className="text-[#7C7A9E]">Akurasi</span>
+                    <span className="font-semibold text-white">{agentSummary.accuracy}</span>
+                  </div>
+                )}
+                {agentSummary.avgSpeed && (
+                  <div className="flex items-center justify-between text-xs mb-1">
+                    <span className="text-[#7C7A9E]">Kecepatan Rata-rata</span>
+                    <span className="font-semibold text-white">{agentSummary.avgSpeed}</span>
+                  </div>
+                )}
+                {agentSummary.grade && (
+                  <div className="flex items-center justify-between text-xs mb-1">
+                    <span className="text-[#7C7A9E]">Agent Says</span>
+                    <span className="font-semibold text-violet-300 text-right max-w-[160px]">{agentSummary.grade}</span>
+                  </div>
+                )}
+                {agentSummary.weakArea && (
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="text-[#7C7A9E]">Area Perlu Latihan</span>
+                    <span className="font-semibold text-amber-400">{agentSummary.weakArea}</span>
+                  </div>
+                )}
+                {agentSummary.recommendation && (
+                  <div className="flex items-center justify-between text-xs mt-1">
+                    <span className="text-[#7C7A9E]">Rekomendasi</span>
+                    <span className="font-semibold text-emerald-400">{agentSummary.recommendation}</span>
+                  </div>
+                )}
+                {agentSummary.nextLesson && (
+                  <div className="flex items-center justify-between text-xs mt-1">
+                    <span className="text-[#7C7A9E]">Pelajaran Selanjutnya</span>
+                    <span className="font-semibold text-blue-400">{agentSummary.nextLesson}</span>
+                  </div>
+                )}
+              </div>
+            </>
+          )}
         </div>
 
         <div className="space-y-2.5">
