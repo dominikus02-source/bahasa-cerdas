@@ -12,6 +12,7 @@ import { kataPlayLevels, KataPlayLevel, KataPlayQuestion, KataPlayLesson } from 
 import { createGameEngine, KataPlayAgentRuntime } from "./agents"
 
 const TotalRounds = 10
+const XP_REWARD_BONUS = 10
 let agentEngine: KataPlayAgentRuntime | null = null
 
 function getEngine(): KataPlayAgentRuntime {
@@ -657,7 +658,7 @@ export default function KataPlayGame({ hideBackButton }: { hideBackButton?: bool
   }
 
   // ── Result ──
-  const totalXp = score + correct * XpRewardBonus
+  const totalXp = score + correct * XP_REWARD_BONUS
   const staticGrade = correct >= 9 ? "Luar Biasa!" : correct >= 7 ? "Bagus!" : correct >= 5 ? "Cukup!" : "Ayo coba lagi!"
   const grade = (agentSummary?.grade as string) || (agentSummary?.recommendation as string) || staticGrade
   const gradeColors = ["from-amber-400 to-orange-500", "from-violet-400 to-purple-500", "from-blue-400 to-cyan-500", "from-gray-400 to-gray-500"]
