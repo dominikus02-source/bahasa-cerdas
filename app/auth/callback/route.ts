@@ -1,5 +1,31 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { db } from "@/lib/db";
+
+async function syncUser(supabaseUserId: string, email: string, metadata: Record<string, unknown>) {
+  let user = await db.user.findUnique({ where: { supabaseId: supabaseUserId } });
+  if (!user) user = await db.user.findFirst({ where: { email: email.toLowerCase() } });
+
+  if (!user) {
+    const fullName = (metadata?.full_name as string) || email.split("@")[0];
+    const role = metadata?.role === "GURU" ? "GURU" : "MURID";
+    const isFounder = ["hdsastra47@gmail.com", "dominikus.02@gmail.com", "alexsurya1968@gmail.com"].includes(email.toLowerCase());
+    user = await db.user.create({
+      data: {
+        supabaseId: supabaseUserId,
+        email: email.toLowerCase(),
+        fullName,
+        role,
+        isFounder,
+        isPremium: isFounder,
+        premiumPlan: isFounder ? "PRO" : "FREE",
+      },
+    });
+    try { await db.profile.create({ data: { userId: user.id } }); } catch {}
+  } else if (user.supabaseId !== supabaseUserId) {
+    await db.user.update({ where: { id: user.id }, data: { supabaseId: supabaseUserId } });
+  }
+}
 
 export async function GET(request: Request) {
   const requestUrl = new URL(request.url);
@@ -10,7 +36,12 @@ export async function GET(request: Request) {
 
   if (code) {
     const supabase = await createClient();
-    await supabase.auth.exchangeCodeForSession(code);
+    const { data } = await supabase.auth.exchangeCodeForSession(code);
+
+    // Sync Prisma User record for OAuth logins (Google, etc.)
+    if (data?.user) {
+      await syncUser(data.user.id, data.user.email || "", data.user.user_metadata || {});
+    }
   }
 
   if (token_hash && type) {

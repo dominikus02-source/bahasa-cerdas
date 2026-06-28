@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { getUser } from "@/lib/supabase/server";
+import cache from "@/lib/redis";
 
 export async function POST() {
   try {
@@ -13,6 +14,10 @@ export async function POST() {
       where: { id: user.id },
       data: { onboarded: true },
     });
+
+    // Bust GET /api/user/me Redis cache so fresh onboarded state is returned
+    const cacheKey = `user:me:${user.email}`;
+    try { await cache.del(cacheKey); } catch {}
 
     return NextResponse.json({ ok: true });
   } catch (error) {

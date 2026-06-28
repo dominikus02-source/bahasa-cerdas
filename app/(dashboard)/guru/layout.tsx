@@ -28,6 +28,10 @@ export default async function GuruLayout({ children }: { children: React.ReactNo
     redirect("/murid/beranda");
   }
 
+  if (!user.onboarded) {
+    redirect("/onboarding");
+  }
+
   // Phase 9C — auto-start trial for eligible Guru users on dashboard access
   const trialStart = await startGuruTrialIfEligible(user.id);
   if (trialStart.started) {

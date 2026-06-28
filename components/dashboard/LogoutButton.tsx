@@ -9,6 +9,14 @@ export function LogoutButton() {
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
+    // Clear all Supabase cookies to prevent stale session on next visit
+    document.cookie.split(";").forEach((c) => {
+      const name = c.trim().split("=")[0];
+      if (name.startsWith("sb-") || name.startsWith("supabase-")) {
+        document.cookie = `${name}=; max-age=0; path=/; domain=.bahasacerdas.com`;
+        document.cookie = `${name}=; max-age=0; path=/`;
+      }
+    });
     router.push("/login");
     router.refresh();
   };

@@ -26,6 +26,10 @@ export default async function MuridLayout({ children }: { children: React.ReactN
     redirect("/guru/beranda");
   }
 
+  if (!user.onboarded) {
+    redirect("/onboarding");
+  }
+
   const leagueLabel = { BRONZE: "Perunggu", SILVER: "Perak", GOLD: "Emas", DIAMOND: "Berlian" }[user.league || "BRONZE"] || "Perunggu"
   const leagueEmoji = { BRONZE: "🥉", SILVER: "🥈", GOLD: "🥇", DIAMOND: "💎" }[user.league || "BRONZE"] || "🥉"
 
