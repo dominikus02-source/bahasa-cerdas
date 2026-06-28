@@ -12,6 +12,7 @@ const navLinks = [
   { href: "/video-belajar", label: "Video" },
   { href: "/artikel", label: "Artikel" },
   { href: "/tentang", label: "Tentang" },
+  { href: "/faq", label: "FAQ" },
 ];
 
 const marketplacePaths = ["/marketplace", "/cart", "/checkout", "/orders"];

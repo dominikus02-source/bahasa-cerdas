@@ -1,0 +1,38 @@
+# BahasaCerdas — Platform Edukasi Bahasa Indonesia
+
+## About
+BahasaCerdas is an Indonesian language education platform combining AI tools, interactive quizzes, teacher marketplace, and MGMP community. Built by teachers, for teachers.
+
+Website: https://www.bahasacerdas.com
+Contact: halo@bahasacerdas.com
+
+## Key Pages
+- Homepage: https://www.bahasacerdas.com
+- Features: https://www.bahasacerdas.com/fitur
+- About: https://www.bahasacerdas.com/tentang
+- FAQ: https://www.bahasacerdas.com/faq
+- Privacy Policy: https://www.bahasacerdas.com/kebijakan-privasi
+- Terms: https://www.bahasacerdas.com/syarat-ketentuan
+
+## Core Features
+- AI Generator RPP — Create Kurikulum Merdeka lesson plans in 30 seconds
+- HOTS Question Generator — Generate higher-order thinking skills questions
+- EYD Corrector — Automatic spelling and grammar checking
+- Multiplayer Quiz — Interactive educational games for students
+- Teacher Marketplace — Buy and sell teaching materials (80% seller commission)
+- MGMP Community — Discussion forums, webinars, and teacher collaboration
+- Question Bank — Thousands of ready-to-use assessment questions
+
+## Pricing
+- Free tier: Basic features, community access
+- Guru Pro: Full AI access, starting from Rp 49.000/month, 30-day trial
+
+## Target Audience
+- Indonesian language teachers (SMP, SMA, SMK, MA)
+- Students learning Indonesian language
+
+## Technical
+- Platform: Web-based (Next.js)
+- Auth: Supabase
+- Payment: Midtrans
+- SSL: 256-bit encryption

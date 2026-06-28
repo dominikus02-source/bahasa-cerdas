@@ -78,8 +78,8 @@ export class ProgressAnalystAgent implements KataPlayAgent {
     }
 
     // Vowel swap
-    const correctVowels = correct.match(/[AEIOU]/g) || []
-    const chosenVowels = chosen.match(/[AEIOU]/g) || []
+    const correctVowels: string[] = correct.match(/[AEIOU]/g) || []
+    const chosenVowels: string[] = chosen.match(/[AEIOU]/g) || []
     const sharedVowels = correctVowels.filter((v) => chosenVowels.includes(v))
     if (correctVowels.length > 1 && sharedVowels.length <= correctVowels.length - 2) {
       patterns.push({

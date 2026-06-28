@@ -2,14 +2,18 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import { checkRateLimit, rateLimitResponse, type RateLimitScope } from "@/lib/security";
 
+// Routes that NEVER need getUser() in middleware — public pages or SSG
 const publicPaths = [
   "/", "/login", "/auth/arena-login", "/auth/callback", "/register", "/confirm",
   "/verify-email", "/onboarding", "/tentang", "/fitur",
   "/marketplace", "/artikel", "/video-belajar", "/kamus", "/loker", "/komunitas", "/ai-bc", "/profile/",
+  "/kebijakan-privasi", "/syarat-ketentuan",
+  "/faq", "/cart", "/checkout", "/orders", "/payment/", "/reset-password",
+  "/robots.txt", "/sitemap.xml", "/manifest.webmanifest", "/opengraph-image",
 ];
 
 // Routes that handle their own auth — skip middleware getUser() to avoid rate limit
-const selfAuthPaths = ["/api/", "/arena/", "/guru/", "/admin/"];
+const selfAuthPaths = ["/api/", "/arena/", "/guru/", "/admin/", "/murid/", "/game/", "/auth/"];
 
 export async function updateSession(request: NextRequest) {
   const { pathname, search } = request.nextUrl;
@@ -29,6 +33,17 @@ export async function updateSession(request: NextRequest) {
   if (!limit.allowed) return rateLimitResponse(scope);
 
   const isPublic = publicPaths.some((p) => pathname === p || pathname.startsWith(p + "/"));
+
+  // On login page, clear any stale Supabase cookies unconditionally
+  // This ensures users with expired sessions from old VPS can log in fresh
+  if (pathname === "/login" || pathname === "/auth/arena-login") {
+    const response = NextResponse.next({ request });
+    request.cookies.getAll()
+      .filter((c) => c.name.startsWith("sb-") || c.name.startsWith("supabase-"))
+      .forEach((c) => response.cookies.set(c.name, "", { maxAge: 0, path: "/" }));
+    response.headers.set("X-RateLimit-Remaining", String(limit.remaining));
+    return response;
+  }
 
   // Skip middleware getUser() for:
   //  - Public pages
@@ -70,13 +85,26 @@ export async function updateSession(request: NextRequest) {
     }
   );
 
-  const { data: { user } } = await supabase.auth.getUser();
+  let user: any = null;
+  try {
+    const result = await supabase.auth.getUser();
+    user = result.data?.user ?? null;
+  } catch (e) {
+    console.warn("Auth getUser failed, redirecting to login:", e);
+    const response = NextResponse.redirect(new URL("/login", request.url));
+    request.cookies.getAll()
+      .filter((c) => c.name.startsWith("sb-") || c.name.startsWith("supabase-"))
+      .forEach((c) => response.cookies.set(c.name, "", { maxAge: 0, path: "/" }));
+    return response;
+  }
 
   if (!user) {
-    const next = pathname.startsWith("/arena") ? "/auth/arena-login" : "/login";
-    const loginUrl = new URL(next, request.url);
-    loginUrl.searchParams.set("next", pathname);
-    return NextResponse.redirect(loginUrl);
+    // Clear stale auth cookies to prevent refresh loop
+    const response = NextResponse.redirect(new URL("/login", request.url));
+    request.cookies.getAll().filter((c) =>
+      c.name.startsWith("sb-") || c.name.startsWith("supabase-")
+    ).forEach((c) => response.cookies.set(c.name, "", { maxAge: 0, path: "/" }));
+    return response;
   }
 
   if (!user.email_confirmed_at && pathname !== "/verify-email") {

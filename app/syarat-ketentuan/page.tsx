@@ -4,8 +4,11 @@ import PageFooter from "@/components/public/PageFooter";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Syarat & Ketentuan",
-  description: "Syarat dan ketentuan penggunaan platform BahasaCerdas.",
+  title: "Syarat & Ketentuan — BahasaCerdas",
+  description: "Syarat dan ketentuan penggunaan platform BahasaCerdas. Baca ketentuan layanan, hak dan kewajiban pengguna platform edukasi Bahasa Indonesia.",
+  alternates: {
+    canonical: "https://www.bahasacerdas.com/syarat-ketentuan",
+  },
 };
 
 export default function SyaratKetentuanPage() {

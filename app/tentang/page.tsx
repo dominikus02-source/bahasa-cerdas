@@ -6,8 +6,16 @@ import PageFooter from "@/components/public/PageFooter";
 import { Sparkles, Users, ShoppingBag, Heart, Shield, BrainCircuit, BookOpen, Lightbulb, ArrowRight, GraduationCap, Globe, PenTool } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Tentang Kami",
-  description: "BahasaCerdas — platform literasi digital Bahasa Indonesia. AI untuk guru, pengalaman belajar menarik untuk siswa, dan toko karya guru.",
+  title: "Tentang BahasaCerdas — Misi, Visi & Tim",
+  description: "Pelajari tentang BahasaCerdas: platform edukasi Bahasa Indonesia yang dibangun oleh guru, untuk guru. Misi kami membantu guru mengajar lebih efektif dengan teknologi AI dan komunitas MGMP.",
+  alternates: {
+    canonical: "https://www.bahasacerdas.com/tentang",
+  },
+  openGraph: {
+    title: "Tentang BahasaCerdas | Platform Edukasi Bahasa Indonesia",
+    description: "Dibangun oleh guru, untuk guru. Misi, visi, dan tim di balik BahasaCerdas.",
+    url: "https://www.bahasacerdas.com/tentang",
+  },
 };
 
 const founders = [

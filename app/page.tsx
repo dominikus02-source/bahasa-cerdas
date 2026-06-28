@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import Image from "next/image";
 import { db } from "@/lib/db";
+import { organizationLd, webSiteLd, faqPageLd, breadcrumbLd } from "@/lib/json-ld";
 import PageNavbar from "@/components/public/PageNavbar";
 import PageFooter from "@/components/public/PageFooter";
 import HeroSection from "@/components/landing/HeroSection";
@@ -13,17 +14,22 @@ import TestimoniSection from "@/components/landing/TestimoniSection";
 import KomunitasSection from "@/components/landing/KomunitasSection";
 import FAQSection from "@/components/landing/FAQSection";
 import FinalCTA from "@/components/landing/FinalCTA";
+import AnswerBlock from "@/components/aeo/AnswerBlock";
+import JsonLd from "@/components/aeo/JsonLd";
 
 export const revalidate = 60;
 
 export const metadata: Metadata = {
-  title: "BahasaCerdas — Platform edukasi Bahasa Indonesia",
+  title: "BahasaCerdas — Platform Edukasi Bahasa Indonesia untuk Guru & Siswa",
   description:
-    "Platform edukasi Bahasa Indonesia terlengkap: AI generator RPP, bank soal HOTS, kuis multiplayer, toko karya, dan komunitas MGMP terbesar. Coba gratis 30 hari.",
+    "Platform edukasi Bahasa Indonesia lengkap: AI generator RPP Kurikulum Merdeka, bank soal HOTS, kuis multiplayer, toko karya, dan komunitas MGMP aktif. Gratis untuk memulai.",
   openGraph: {
-    title: "BahasaCerdas — Platform edukasi Bahasa Indonesia",
+    title: "BahasaCerdas — Platform Edukasi Bahasa Indonesia",
     description:
-      "MGMP + AI + Toko Karya. Platform terlengkap untuk guru Bahasa Indonesia.",
+      "MGMP + AI + Toko Karya dalam satu platform. Daftar gratis.",
+  },
+  alternates: {
+    canonical: "https://www.bahasacerdas.com",
   },
 };
 
@@ -90,23 +96,22 @@ export default async function HomePage() {
     getLatestVideos(),
   ]);
 
-  const breadcrumbLd = {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Beranda", item: "https://www.bahasacerdas.com" },
-      { "@type": "ListItem", position: 2, name: "Artikel", item: "https://www.bahasacerdas.com/artikel" },
-      { "@type": "ListItem", position: 3, name: "Marketplace", item: "https://www.bahasacerdas.com/marketplace" },
-      { "@type": "ListItem", position: 4, name: "Video Belajar", item: "https://www.bahasacerdas.com/video-belajar" },
-    ],
-  };
+  const faqs = [
+    { q: "Apa itu BahasaCerdas?", a: "BahasaCerdas adalah platform edukasi Bahasa Indonesia yang menyediakan AI generator RPP, bank soal HOTS, kuis multiplayer, toko karya guru, dan komunitas MGMP dalam satu platform. Dibangun oleh guru, untuk guru." },
+    { q: "Apakah BahasaCerdas gratis?", a: "Ya, BahasaCerdas gratis untuk memulai. Guru bisa mencoba Guru Pro selama 30 hari tanpa komitmen. Setelah itu tersedia paket berbayar mulai Rp 49.000/bulan." },
+    { q: "Fitur AI apa saja yang tersedia?", a: "BahasaCerdas memiliki AI generator RPP, generator soal HOTS, koreksi EYD otomatis, analisis teks, feedback karangan, dan asisten pembelajaran — semuanya untuk membantu guru Bahasa Indonesia." },
+    { q: "Siapa yang bisa menggunakan BahasaCerdas?", a: "BahasaCerdas untuk guru Bahasa Indonesia di semua jenjang (SMP, SMA, SMK, MA) dan siswa yang ingin belajar Bahasa Indonesia secara interaktif." },
+  ];
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
-      />
+      <JsonLd data={breadcrumbLd([
+        { position: 1, name: "Beranda", item: "https://www.bahasacerdas.com" },
+        { position: 2, name: "Artikel", item: "https://www.bahasacerdas.com/artikel" },
+        { position: 3, name: "Marketplace", item: "https://www.bahasacerdas.com/marketplace" },
+        { position: 4, name: "Video Belajar", item: "https://www.bahasacerdas.com/video-belajar" },
+      ])} />
+      <JsonLd data={faqPageLd(faqs)} />
 
       <nav aria-label="Lompat ke konten" className="sr-only focus:not-sr-only">
         <a href="#main-content" className="skip-link">Langsung ke konten utama</a>
@@ -118,6 +123,65 @@ export default async function HomePage() {
         <HeroSection />
         <TrustBar />
         <MengapaSection />
+
+        {/* Jawaban Singkat — AEO-optimized Q&A block */}
+        <section className="relative py-20 lg:py-28 bg-white" aria-labelledby="jawaban-singkat-heading">
+          <div className="section-container">
+            <div className="text-center max-w-2xl mx-auto mb-12">
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary-light border border-primary/10 mb-5">
+                <span className="text-xs font-semibold text-primary">Jawaban Singkat</span>
+              </div>
+              <h2 id="jawaban-singkat-heading" className="heading-lg text-zinc-900 mb-5">
+                Apa Itu{" "}
+                <span className="text-primary">BahasaCerdas</span>?
+              </h2>
+              <p className="text-base lg:text-lg text-zinc-500 leading-relaxed">
+                Temukan jawaban singkat tentang platform kami.
+              </p>
+            </div>
+
+            <div className="max-w-3xl mx-auto">
+              <AnswerBlock question="Apa itu BahasaCerdas?">
+                <p>
+                  BahasaCerdas adalah platform edukasi Bahasa Indonesia yang menggabungkan kecerdasan buatan (AI), 
+                  bank soal interaktif, kuis multiplayer, toko karya guru, dan komunitas MGMP dalam satu ekosistem.
+                </p>
+                <p className="mt-2">
+                  Platform ini dirancang khusus untuk membantu guru Bahasa Indonesia di SMP, SMA, SMK, dan MA 
+                  dalam menyusun perangkat ajar, mengevaluasi pembelajaran, dan mengembangkan karir.
+                </p>
+              </AnswerBlock>
+
+              <AnswerBlock question="Fitur apa saja yang tersedia di BahasaCerdas?">
+                <ul className="list-disc pl-5 space-y-1.5">
+                  <li><strong>AI Generator RPP</strong> — Buat RPP Kurikulum Merdeka dalam 30 detik</li>
+                  <li><strong>Generator Soal HOTS</strong> — Soal berbasis level kognitif C4-C6</li>
+                  <li><strong>Koreksi EYD Otomatis</strong> — Periksa ejaan dan tata bahasa otomatis</li>
+                  <li><strong>Kuis Multiplayer</strong> — Game edukasi interaktif untuk siswa</li>
+                  <li><strong>Toko Karya Guru</strong> — Jual dan beli perangkat ajar</li>
+                  <li><strong>Komunitas MGMP</strong> — Forum diskusi, webinar, dan kolaborasi guru</li>
+                  <li><strong>Bank Soal</strong> — Ribuan soal siap pakai untuk asesmen</li>
+                </ul>
+              </AnswerBlock>
+
+              <AnswerBlock question="Apakah BahasaCerdas gratis?">
+                <p>
+                  Ya, BahasaCerdas gratis untuk memulai. Guru dapat mendaftar dan langsung menggunakan fitur dasar 
+                  tanpa biaya. Untuk akses penuh ke semua fitur AI dan premium, tersedia paket Guru Pro 
+                  dengan uji coba 30 hari.
+                </p>
+              </AnswerBlock>
+
+              <AnswerBlock question="Untuk siapa BahasaCerdas dibuat?">
+                <p>
+                  BahasaCerdas dibuat untuk <strong>guru Bahasa Indonesia</strong> di semua jenjang pendidikan 
+                  dan <strong>siswa</strong> yang ingin belajar Bahasa Indonesia dengan cara yang lebih 
+                  interaktif dan menyenangkan.
+                </p>
+              </AnswerBlock>
+            </div>
+          </div>
+        </section>
         <AIToolsSection />
         <KaryaPopulerSection />
         <TestimoniSection />

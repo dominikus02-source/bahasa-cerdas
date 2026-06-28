@@ -1,14 +1,15 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { Plus } from "lucide-react";
+import Link from "next/link";
+import { Plus, ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
 import { fadeInUp } from "@/lib/motion";
 
 const faqs = [
   {
     q: "Apa itu BahasaCerdas?",
-    a: "BahasaCerdas adalah platform lengkap untuk guru Bahasa Indonesia. Kami menyediakan AI generator RPP, bank soal, kuis multiplayer, toko karya, dan komunitas MGMP terbesar di Indonesia. Semua dalam satu platform.",
+    a: "BahasaCerdas adalah platform lengkap untuk guru Bahasa Indonesia. Kami menyediakan AI generator RPP, bank soal, kuis multiplayer, toko karya, dan komunitas MGMP aktif di Indonesia. Semua dalam satu platform.",
   },
   {
     q: "Apakah BahasaCerdas gratis?",
@@ -142,6 +143,16 @@ export default function FAQSection() {
             );
           })}
         </motion.div>
+
+        <div className="text-center mt-10">
+          <Link
+            href="/faq"
+            className="inline-flex items-center gap-2 text-sm font-semibold text-primary hover:text-primary-dark transition-colors focus-ring rounded"
+          >
+            Lihat semua pertanyaan
+            <ArrowRight size={16} />
+          </Link>
+        </div>
       </div>
     </section>
   );

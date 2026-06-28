@@ -68,7 +68,15 @@ export async function GET() {
       );
     }
 
-    const found = await db.user.findFirst({ where: { email } });
+    let found = await db.user.findFirst({ where: { email } });
+    if (!found) {
+      found = await findOrCreateUser({
+        supabaseId: user.id,
+        email,
+        fullName: user.user_metadata?.full_name || email.split("@")[0],
+        role: user.user_metadata?.role || "MURID",
+      });
+    }
     if (!found) return NextResponse.json({ error: "User not found" }, { status: 404 });
 
     const updates: Record<string, unknown> = {};

@@ -10,6 +10,7 @@
   "dependencies": {
     "@prisma/client": "^5.22.0",
     "cors": "^2.8.5",
+    "prisma": "^5.22.0",
     "socket.io": "^4.8.0"
   },
   "devDependencies": {

@@ -46,3 +46,4 @@ pitch-deck.html
 coverage/
 
 secrets.txt
+.env.backup-vps

@@ -47,63 +47,73 @@ Kamu adalah **Senior Full-Stack Engineer** yang sangat autonomous, teliti, dan b
 ---
 
 # BahasaCerdas Project Status
-## Last Updated: June 20, 2026 (Phase 8B: Analytics QA & Data Integrity)
+## Last Updated: June 28, 2026 (Phase 8C: DB Migration & Content Recovery)
 
 ## Goal
 Transform BahasaCerdas into a social-creative platform for Bahasa Indonesia where students write daily (puisi, cerpen, artikel, anekdot, pantun), showcase works in social-style portfolios, earn Coin Cerdas, and compete in weekly leagues — UKBI/TKA as supporting features, not core.
 
 ## Tech Stack
 - Next.js 16.2.6 with TypeScript, App Router, Tailwind CSS
-- Supabase for auth + PostgreSQL (VPS self-hosted for game system)
-- Game server: Socket.io on VPS port 3001, NGINX reverse proxy
+- Supabase for auth + PostgreSQL (cloud, NOT self-hosted — VPS dead)
+- Game server: Socket.io — currently DEAD (was on VPS, Hostinger expired)
 - Midtrans for payment
-- Prisma ORM with PostgreSQL
-- Vercel for frontend, Hostinger VPS for game backend + database
+- Prisma ORM with PostgreSQL (via Supabase pooler)
+- Vercel for frontend (live at bahasacerdas.com)
 - Guru color: emerald/green, Murid color: violet/purple
 
 ## Critical Context
 
-### VPS (Hostinger)
-- IP: [lihat password manager]
-- SSH password: [lihat password manager]
-- Database: bahasacerdas, user: bahasa, password: [lihat .env]
+### VPS (Hostinger) — DEAD since June 26, 2026
+- IP: 72.60.78.65 — completely unreachable (port 22, 5432, 3001 all timeout)
+- Hostinger subscription not renewed
+- All services on VPS are down: PostgreSQL, game server, NGINX
+- No database backup was taken before it went down
 
-### Supabase
-- URL: [lihat .env / Supabase dashboard]
-- ANON_KEY: [lihat .env]
-- SERVICE_ROLE_KEY: [lihat .env - JANGAN pernah di-commit]
+### Supabase (Cloud — Live)
+- URL: https://ibtlhoocaoopgtcsnvzr.supabase.co
+- Database: PostgreSQL via Supabase pooler (aws-1-ap-southeast-1.pooler.supabase.com:6543)
+- DATABASE_URL uses pooler port 6543 (PgBouncer)
+- DIRECT_URL uses port 5432 (direct connection for migrations)
+- SERVICE_ROLE_KEY: [lihat .env vault - JANGAN pernah di-commit]
+- Password: BCbahasacerdas-123
+- Prisma schema pushed via psql (83 tables — prisma db push timed out on pooler)
+- Auth: 50 existing users preserved + 2 demo accounts
 
 ### Environment Variables
-- DATABASE_URL: [set via .env, lihat vault]
+- DATABASE_URL: postgresql://postgres.ibtlhoocaoopgtcsnvzr:BCbahasacerdas-123@aws-1-ap-southeast-1.pooler.supabase.com:6543/postgres?sslmode=require&pgbouncer=true
+- DIRECT_URL: postgresql://postgres.ibtlhoocaoopgtcsnvzr:BCbahasacerdas-123@aws-1-ap-southeast-1.pooler.supabase.com:5432/postgres?sslmode=require
 - NEXT_PUBLIC_SUPABASE_URL: [lihat Supabase dashboard]
 - NEXT_PUBLIC_SUPABASE_ANON_KEY: [lihat Supabase dashboard]
 - NEXT_PUBLIC_SITE_URL: https://bahasacerdas.com
-- NEXT_PUBLIC_GAME_SERVER_URL: https://game.bahasacerdas.com
-- MIDTRANS_SERVER_KEY: [lihat Midtrans dashboard → Settings → Access Keys]
-- NEXT_PUBLIC_MIDTRANS_CLIENT_KEY: [lihat Midtrans dashboard → Settings → Access Keys]
+- NEXT_PUBLIC_GAME_SERVER_URL: https://game.bahasacerdas.com (DEAD)
+- MIDTRANS_SERVER_KEY: [lihat Midtrans dashboard]
+- NEXT_PUBLIC_MIDTRANS_CLIENT_KEY: [lihat Midtrans dashboard]
 - NEXT_PUBLIC_MIDTRANS_MERCHANT_ID: [lihat Midtrans dashboard]
-- ANTHROPIC_API_KEY: [set jika diperlukan]
-- DEEPSEEK_API_KEY: [set jika diperlukan]
-- GROQ_API_KEY: [set jika diperlukan]
+- ANTHROPIC_API_KEY: [belum diset]
+- DEEPSEEK_API_KEY: [belum diset]
+- GROQ_API_KEY: [belum diset]
+- GEMINI_API_KEY: [diset untuk Vercel, lihat vault]
 - SUPABASE_SERVICE_ROLE_KEY: [lihat Supabase dashboard — simpan aman]
 
 ### DNS
-- Main site: bahasacerdas.com → Vercel (live, nameservers ns1/ns2.vercel-dns.com)
-- Game subdomain: game.bahasacerdas.com → 72.60.78.65 (A record, resolving, SSL active since Jun 22)
+- Main site: bahasacerdas.com → Vercel (live, nameservers ns1/ns2.vercel-dns.com), www.bahasacerdas.com also aliased
+- Game subdomain: game.bahasacerdas.com → 72.60.78.65 (A record, points to dead VPS)
 - Old: game.bahasacerdas.site → deprecated, NGINX config disabled
 
-### Game Server (VPS — Hostinger, IP: 72.60.78.65)
-- Location: /var/www/game-server/game-server on VPS
-- Entry: src/server.ts (Socket.io, port 3001)
-- Runtime: compiled `dist/server.js` via PM2 ecosystem.config.cjs (NOT tsx dev mode)
-- PM2: single process `game-server`, runs `dist/server.js`, managed by `ecosystem.config.cjs`
-- Deployment: `bash scripts/deploy-game-server.sh` (requires `scripts/.env.vps` with VPS_IP/VPS_PASS)
-- NGINX: /etc/nginx/sites-enabled/game.bahasacerdas.com → proxies 443 → localhost:3001 with WebSocket upgrade
-- SSL: Let's Encrypt via Certbot, valid until Sep 20, 2026, auto-renewal active
-- Prisma schema in game-server/prisma/schema.prisma (separate from main project)
-- VPS Prisma version: 5.22.0, Main project Prisma version: 5.22.0
-- SSH: root@72.60.78.65, password in scripts/.env.vps (gitignored)
-- Bug fixed: PORT parseInt, let code, data.answerIndex, q:any, newHost check
+### Game Server — DEAD (VPS Hostinger expired)
+- Previously: Socket.io on port 3001, PM2, NGINX reverse proxy
+- All multiplayer game features broken: Kuis Battle, Tebak Kata, Adu Cepat, dll.
+- game.bahasacerdas.com unreachable
+- Code still exists at game-server/ directory in project root
+- No backup of compiled dist/server.js
+- Need new hosting to bring back (VPS or alternative)
+
+### Auth Users (Supabase)
+- 50 existing users from previous registrations
+- All have Prisma User records now (script created them)
+- Demo accounts: guru@demo.com/guru123 (role: GURU), murid@demo.com/murid123 (role: MURID)
+- Prisma User supabaseId matches Auth user id
+- GET /api/user/me now auto-creates User record if missing (fix deployed)
 
 ## Build Config
 - next.config.ts: typescript.ignoreBuildErrors: true, eslint.ignoreDuringBuilds: true
@@ -305,15 +315,35 @@ The Belajar page auto-detects content types in `isi[]` strings:
 4. No daily usage zero-fill — only dates with data appear
 5. Export events lack provider info
 
+## Phase 8C — DB Migration & Content Recovery (June 28, 2026)
+
+### Done
+- **Database migrated from dead VPS to Supabase**: DATABASE_URL changed from VPS PostgreSQL to Supabase pooler (aws-1-ap-southeast-1.pooler.supabase.com:6543). DIRECT_URL added for migrations (port 5432). Password: BCbahasacerdas-123.
+- **Prisma schema pushed**: `prisma db push` timed out on pooler → used `psql` with migration SQL from `prisma migrate diff --from-empty --to-schema-datamodel`. 83 tables created.
+- **Auth users preserved**: 50 existing users confirmed in Supabase Auth. 2 demo accounts (guru@demo.com, murid@demo.com) created.
+- **Prisma User records created**: Script created records for all 50 Auth users with matching supabaseId.
+- **Demo user roles fixed**: guru@demo.com set to GURU role via direct SQL.
+- **Middleware 429 fix**: proxy.ts catch block clears stale sb-*/supabase-* cookies when session invalid, breaking the refresh-token loop.
+- **GET /api/user/me auto-create**: Now calls findOrCreateUser if no Prisma record exists (like POST handler).
+- **Content seeded**: `scripts/seed-homepage-content.ts` created — 6 Artikel, 6 Video, 6 Karya (marketplace) items using guru user as author/seller.
+- **Homepage now shows content**: KaryaPopulerSection, Artikel, and Video sections populated with realistic Indonesian educational content.
+- **Vercel deployed & aliased**: bahasacerdas.com + www.bahasacerdas.com both live.
+
+### Remaining
+1. User must clear browser cookies for bahasacerdas.com to break 429 loop (or wait for rate limit reset).
+2. Game server completely dead — all multiplayer features broken. Need new VPS or alternative hosting.
+3. Homepage content is sample data — may need to be curated or enriched further.
+
 ## Next Steps (Priority Order)
-1. **Enrich content** — isi lebih banyak latihan/kuis soal ke setiap bab (saat ini minimal 2-3 per bab)
-2. **Guru video content** — upload video pembelajaran, embed YouTube
-3. **Push notifications** — browser push API for notif when tab not open
-4. **Old standalone routes** — migrate `/api/ai/eyd`, `/api/ai/feedback`, `/api/ai/grading`, `/api/ai/text-analysis` to central runner (currently bypass AIUsage logging)
-5. **Phase 9 monetization** — NOT yet started. See docs/AI_AGENT_LAYER_PLAN.md for readiness details.
+1. **Game server revival** — find new hosting for game.bahasacerdas.com (VPS or alternative)
+2. **Push notifications** — browser push API for notif when tab not open
+3. **Old standalone routes** — migrate `/api/ai/eyd`, `/api/ai/feedback`, `/api/ai/grading`, `/api/ai/text-analysis` to central runner
+4. **Phase 9 monetization** — NOT yet started. See docs/AI_AGENT_LAYER_PLAN.md for readiness details.
+5. **Content enrichment** — add more latihan/kuis to each bab (ongoing)
 
 ## Blockers
-- Pre-existing `docx/route.ts(111,1)` syntax error on main branch (unrelated to Phase 8B)
+- Game server dead (VPS Hostinger expired) — all multiplayer games broken
+- Pre-existing `docx/route.ts(111,1)` syntax error on main branch (unrelated to Phase 8C)
 
 ## GitHub
 - Repo: https://github.com/dominikus02-source/bahasa-cerdas
@@ -327,7 +357,7 @@ The Belajar page auto-detects content types in `isi[]` strings:
 
 ## Key File Locations
 - Main project: ~/Documents/bahasa-cerdas
-- VPS game server: /var/www/game-server/game-server on [lihat Hostinger VPS dashboard]
+- VPS game server: /var/www/game-server/game-server on [lihat Hostinger VPS dashboard] (DEAD)
 - Prisma schema: prisma/schema.prisma (main project)
 - Game server schema: /var/www/game-server/prisma/schema.prisma
 - Social/coins utility: lib/coins.ts
@@ -335,6 +365,7 @@ The Belajar page auto-detects content types in `isi[]` strings:
 - Buku Panduan seed: scripts/seed-panduan.ts
 - Pitch deck generator: bikin_deck.py
 - Financial model: /Users/user/Documents/BC-Bahasa Cerdas Master/Financial BC/
+- Homepage content seed: scripts/seed-homepage-content.ts
 
 ## Materi Content System
 - **Per-unit files**: `scripts/seed/materi/26-laporan-percobaan.ts` etc — each unit in own file, independently editable

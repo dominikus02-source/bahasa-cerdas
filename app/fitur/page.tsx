@@ -17,8 +17,16 @@ import {
 } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Fitur Lengkap",
-  description: "Jelajahi semua fitur BahasaCerdas: AI generator RPP, bank soal, kuis multiplayer, toko karya, komunitas MGMP, dan masih banyak lagi.",
+  title: "Fitur Lengkap BahasaCerdas — AI RPP, Soal HOTS, Kuis & Toko Karya",
+  description: "Jelajahi semua fitur BahasaCerdas: AI generator RPP Kurikulum Merdeka, bank soal HOTS, kuis multiplayer interaktif, toko karya guru, dan komunitas MGMP.",
+  alternates: {
+    canonical: "https://www.bahasacerdas.com/fitur",
+  },
+  openGraph: {
+    title: "Fitur Lengkap | BahasaCerdas",
+    description: "AI RPP, soal HOTS, kuis multiplayer, toko karya, dan komunitas MGMP dalam satu platform.",
+    url: "https://www.bahasacerdas.com/fitur",
+  },
 };
 
 const features = [

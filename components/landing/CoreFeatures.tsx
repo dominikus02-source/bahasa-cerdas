@@ -64,7 +64,7 @@ export default function CoreFeatures() {
             ?
           </h2>
           <p className="text-lg text-slate-600 leading-relaxed">
-            Platform terlengkap yang menggabungkan teknologi AI dengan kekayaan budaya Indonesia untuk mengajar Bahasa Indonesia lebih modern dan efektif.
+            Platform lengkap yang menggabungkan teknologi AI dengan kekayaan budaya Indonesia untuk mengajar Bahasa Indonesia lebih modern dan efektif.
           </p>
         </div>
 

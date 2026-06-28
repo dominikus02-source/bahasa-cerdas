@@ -17,6 +17,7 @@ const footerLinks = {
   ],
   Perusahaan: [
     { href: "/tentang", label: "Tentang Kami" },
+    { href: "/faq", label: "FAQ" },
     { href: "/kebijakan-privasi", label: "Kebijakan Privasi" },
     { href: "/syarat-ketentuan", label: "Syarat & Ketentuan" },
   ],
@@ -44,7 +45,7 @@ export default function PageFooter() {
               </div>
             </Link>
             <p className="text-sm text-zinc-400 leading-relaxed mb-6 max-w-sm">
-              Platform edukasi Bahasa Indonesia terlengkap. MGMP + AI + Toko Karya dalam satu ekosistem.
+              Platform edukasi Bahasa Indonesia lengkap. MGMP + AI + Toko Karya dalam satu ekosistem.
             </p>
             <div className="flex gap-3">
               <a

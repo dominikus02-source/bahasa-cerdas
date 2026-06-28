@@ -153,19 +153,9 @@ export default function TestimoniSection() {
           viewport={{ once: true }}
           transition={{ duration: 0.5, ease: "easeOut", delay: 0.6 }}
         >
-          <div className="inline-flex items-center gap-3 px-6 py-3 rounded-2xl bg-zinc-50 border border-zinc-100">
-            <div className="flex items-center gap-1" aria-label="Rating rata-rata 4.8 dari 5">
-              {[...Array(5)].map((_, i) => (
-                <Star
-                  key={i}
-                  size={16}
-                  className="fill-amber-400 text-amber-400"
-                  aria-hidden="true"
-                />
-              ))}
-            </div>
-            <span className="text-sm font-semibold text-zinc-700">
-              4.8 dari 5 &mdash; 1.247 ulasan
+          <div className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-zinc-50 border border-zinc-100">
+            <span className="text-sm text-zinc-500">
+              Bergabunglah dengan guru-guru yang sudah menggunakan BahasaCerdas
             </span>
           </div>
         </motion.div>

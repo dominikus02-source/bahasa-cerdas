@@ -18,6 +18,17 @@ export default function LoginPage() {
   const [next, setNext] = useState("");
 
   useEffect(() => {
+    // Clear any stale Supabase cookies + sign out to ensure fresh auth state
+    const supabase = createClient();
+    supabase.auth.signOut().catch(() => {});
+    document.cookie.split(";").forEach((c) => {
+      const name = c.trim().split("=")[0];
+      if (name.startsWith("sb-") || name.startsWith("supabase-")) {
+        document.cookie = `${name}=; max-age=0; path=/; domain=.bahasacerdas.com`;
+        document.cookie = `${name}=; max-age=0; path=/`;
+      }
+    });
+
     const params = new URLSearchParams(window.location.search);
     const nextParam = params.get("next") || "";
     if (nextParam) {

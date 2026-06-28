@@ -63,8 +63,8 @@ export default function KomunitasSection() {
               Bahasa Indonesia
             </h2>
             <p className="text-base lg:text-lg text-zinc-500 leading-relaxed mb-8 max-w-xl">
-              Komunitas guru Bahasa Indonesia terbesar di Indonesia. Tempat
-              berbagi, belajar, dan tumbuh bersama.
+Komunitas guru Bahasa Indonesia terdepan di Indonesia. Tempat
+berbagi, belajar, dan tumbuh bersama.
             </p>
 
             {/* Feature List */}

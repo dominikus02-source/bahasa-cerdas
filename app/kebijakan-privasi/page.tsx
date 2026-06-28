@@ -4,8 +4,11 @@ import PageFooter from "@/components/public/PageFooter";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Kebijakan Privasi",
-  description: "Kebijakan privasi dan perlindungan data pengguna BahasaCerdas.",
+  title: "Kebijakan Privasi — BahasaCerdas",
+  description: "Kebijakan privasi BahasaCerdas. Pelajari bagaimana kami melindungi data pribadi Anda saat menggunakan platform edukasi Bahasa Indonesia.",
+  alternates: {
+    canonical: "https://www.bahasacerdas.com/kebijakan-privasi",
+  },
 };
 
 export default function KebijakanPrivasiPage() {

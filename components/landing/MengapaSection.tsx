@@ -15,7 +15,7 @@ const reasons = [
   },
   {
     icon: Users,
-    title: "Komunitas MGMP Terbesar",
+    title: "Komunitas MGMP Terdepan",
     description:
       "Bergabung dengan ribuan guru Bahasa Indonesia, diskusi, kolaborasi, dan dapatkan inspirasi dari sesama guru di seluruh Indonesia.",
     color: "bg-amber-50 text-amber-600",

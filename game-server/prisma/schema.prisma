@@ -1,0 +1,122 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum GameType {
+  KUIS_BATTLE
+  TEBAC_KATA
+  KATA_SERU
+  KOSAKATA_HARIAN
+  SPEED_BATTLE
+  GOLD_RUSH
+  SURVIVAL
+  TIMED_TRIAL
+}
+
+enum GameRoomStatus {
+  WAITING
+  IN_PROGRESS
+  FINISHED
+  CANCELLED
+}
+
+enum Difficulty {
+  EASY
+  MEDIUM
+  HARD
+}
+
+enum GameQuestionType {
+  PILIHAN_GANDA
+  ESSAY
+  BENAR_SALAH
+  MENJODOHKAN
+}
+
+model User {
+  id           String        @id @default(cuid())
+  xp           Int           @default(0)
+  gameResults  GameResult[]
+  gameSessions GameSession[]
+}
+
+model GameRoom {
+  id              String         @id @default(cuid())
+  code            String         @unique
+  name            String
+  gameType        GameType       @default(KUIS_BATTLE)
+  hostId          String
+  status          GameRoomStatus @default(WAITING)
+  category        String?
+  difficulty      Difficulty     @default(MEDIUM)
+  questionCount   Int            @default(10)
+  timePerQuestion Int            @default(20)
+  startedAt       DateTime?
+  endedAt         DateTime?
+  results         GameResult[]
+  sessions        GameSession[]
+
+  @@index([code])
+  @@index([hostId])
+}
+
+model GameQuestion {
+  id            String           @id @default(cuid())
+  gameRoomId    String?
+  text          String
+  audioUrl      String?
+  imageUrl      String?
+  passage       String?
+  type          GameQuestionType @default(PILIHAN_GANDA)
+  options       Json
+  correctAnswer String
+  difficulty    Difficulty       @default(MEDIUM)
+  orderIndex    Int              @default(0)
+
+  @@index([gameRoomId])
+}
+
+model GameSession {
+  id         String      @id @default(cuid())
+  roomId     String
+  userId     String
+  playerName String
+  avatarUrl  String?
+  score      Int         @default(0)
+  correct    Int         @default(0)
+  wrong      Int         @default(0)
+  streak     Int         @default(0)
+  maxStreak  Int         @default(0)
+  answerTimes Int[]      @default([])
+  result     GameResult?
+  room       GameRoom    @relation(fields: [roomId], references: [id])
+  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([roomId, userId])
+  @@index([userId])
+}
+
+model GameResult {
+  id         String      @id @default(cuid())
+  roomId     String
+  userId     String
+  sessionId  String      @unique
+  finalScore Int         @default(0)
+  rank       Int?
+  correct    Int
+  wrong      Int
+  maxStreak  Int
+  avgTime    Float
+  xpEarned   Int         @default(0)
+  room       GameRoom    @relation(fields: [roomId], references: [id])
+  session    GameSession @relation(fields: [sessionId], references: [id])
+  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([roomId])
+  @@index([userId])
+}
