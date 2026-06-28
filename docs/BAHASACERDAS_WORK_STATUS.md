@@ -34,6 +34,7 @@
 | **Phase 8B** | Analytics QA: fix feature name mismatch, status case, top users, unknown provider. 12 tests pass. | `scripts/test-phase8-analytics.ts`, `app/(dashboard)/admin/ai-analytics/` |
 | **Phase 8C** | DB migration VPS→Supabase, proxy 429 fix, auto-create user, seed homepage v2 | `lib/supabase/proxy.ts`, `scripts/seed-homepage-v2.ts`, `prisma/seed-data/` |
 | **Phase Data Recovery 1** | Supabase current state backup + content/question audit + work ledger update | `scripts/backup-current-supabase.ts`, `scripts/audit-content-data.ts`, `scripts/audit-question-data.ts`, `docs/BAHASACERDAS_CONTENT_DATA_RECOVERY_AUDIT.md`, `docs/BAHASACERDAS_QUESTION_DATA_RECOVERY_AUDIT.md` |
+| **Phase Data Protection 1B** | Admin Data Center module — DB health, backup status, warning system, read-only audit actions | `app/(dashboard)/admin/data-center/page.tsx`, `app/api/admin/data-center/route.ts`, `components/admin/AdminSidebar.tsx` |
 | **AEO 6–10** | FAQ page + JSON-LD, llms.txt, sitemap, robots.txt, AnswerBlock, canonical URLs, 20 tests pass | `app/faq/`, `components/aeo/`, `lib/json-ld.ts`, `public/llms.txt` |
 
 ## 4. Seed Data Inventory
@@ -86,9 +87,14 @@
 
 ### Backup & Recovery
 - `scripts/backup-current-supabase.ts` — Full DB backup to JSON files + manifest
-- `scripts/audit-content-data.ts` — Content inventory audit
-- `scripts/audit-question-data.ts` — Question/exam data audit
+- `scripts/backup-supabase-daily.ts` — Automated daily backup + Supabase Storage upload
+- `scripts/restore-supabase-backup.ts` — Restore with dry-run, SHA256 verification, protected tables
+- `scripts/validate-backup.ts` — Backup integrity validation
+- `docs/BAHASACERDAS_BACKUP_AND_RESTORE_POLICY.md` — Full backup/restore policy document
 - `backups/current/` — Backup output (gitignored)
+- `backups/daily/` — Daily automated backups (gitignored)
+- `app/(dashboard)/admin/data-center/page.tsx` — Admin Data Center UI (DB health, backup status, warnings)
+- `app/api/admin/data-center/route.ts` — Data Center API (table counts + backup manifest reader)
 
 ### Seed Data
 - `prisma/seed-data/homepage-content.json` — 27 items (9+9+9) deterministic
@@ -222,7 +228,7 @@ Deleted 48 items owned by demo user `guru@demo.com`:
 6. **Upload real files to Supabase Storage** — replace fake seed file URLs
 7. **Replace fake YouTube IDs** — use real educational video IDs
 8. **Migrate old standalone AI routes** — `/api/ai/eyd`, `/api/ai/feedback`, etc. to central runner
-9. **Phase 9 monetization** — see `docs/AI_AGENT_LAYER_PLAN.md`
+9. **Set up daily backup cron** — Vercel Cron Job or external cron for automated daily backup
 10. **Push notifications** — browser push API
 
 ---
