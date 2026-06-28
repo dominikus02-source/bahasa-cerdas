@@ -70,18 +70,18 @@ Transform BahasaCerdas into a social-creative platform for Bahasa Indonesia wher
 - No database backup was taken before it went down
 
 ### Supabase (Cloud — Live)
-- URL: https://ibtlhoocaoopgtcsnvzr.supabase.co
-- Database: PostgreSQL via Supabase pooler (aws-1-ap-southeast-1.pooler.supabase.com:6543)
-- DATABASE_URL uses pooler port 6543 (PgBouncer)
-- DIRECT_URL uses port 5432 (direct connection for migrations)
-- SERVICE_ROLE_KEY: [lihat .env vault - JANGAN pernah di-commit]
-- Password: BCbahasacerdas-123
+- URL: [set in .env / Vercel env vars]
+- Database: PostgreSQL via Supabase pooler (pooler URL: [set in .env / Vercel env vars])
+- DATABASE_URL uses pooler port 6543 (PgBouncer) — actual value: [set in .env / Vercel env vars]
+- DIRECT_URL uses port 5432 (direct connection for migrations) — actual value: [set in .env / Vercel env vars]
+- SERVICE_ROLE_KEY: [set in Supabase dashboard — never commit]
+- Password: [rotated — see Supabase dashboard]
 - Prisma schema pushed via psql (83 tables — prisma db push timed out on pooler)
 - Auth: 50 existing users preserved + 2 demo accounts
 
 ### Environment Variables
-- DATABASE_URL: postgresql://postgres.ibtlhoocaoopgtcsnvzr:BCbahasacerdas-123@aws-1-ap-southeast-1.pooler.supabase.com:6543/postgres?sslmode=require&pgbouncer=true
-- DIRECT_URL: postgresql://postgres.ibtlhoocaoopgtcsnvzr:BCbahasacerdas-123@aws-1-ap-southeast-1.pooler.supabase.com:5432/postgres?sslmode=require
+- DATABASE_URL: [set in .env / Vercel env vars — uses pooler port 6543 with pgBouncer]
+- DIRECT_URL: [set in .env / Vercel env vars — uses direct port 5432 for migrations]
 - NEXT_PUBLIC_SUPABASE_URL: [lihat Supabase dashboard]
 - NEXT_PUBLIC_SUPABASE_ANON_KEY: [lihat Supabase dashboard]
 - NEXT_PUBLIC_SITE_URL: https://bahasacerdas.com
@@ -318,7 +318,7 @@ The Belajar page auto-detects content types in `isi[]` strings:
 ## Phase 8C — DB Migration & Content Recovery (June 28, 2026)
 
 ### Done
-- **Database migrated from dead VPS to Supabase**: DATABASE_URL changed from VPS PostgreSQL to Supabase pooler (aws-1-ap-southeast-1.pooler.supabase.com:6543). DIRECT_URL added for migrations (port 5432). Password: BCbahasacerdas-123.
+- **Database migrated from dead VPS to Supabase**: DATABASE_URL changed from VPS PostgreSQL to Supabase pooler. DIRECT_URL added for migrations (port 5432). Password rotated — see Supabase dashboard.
 - **Prisma schema pushed**: `prisma db push` timed out on pooler → used `psql` with migration SQL from `prisma migrate diff --from-empty --to-schema-datamodel`. 83 tables created.
 - **Auth users preserved**: 50 existing users confirmed in Supabase Auth. 2 demo accounts (guru@demo.com, murid@demo.com) created.
 - **Prisma User records created**: Script created records for all 50 Auth users with matching supabaseId.

@@ -21,7 +21,7 @@
 | Service | Status | URL / Detail |
 |---------|--------|-------------|
 | **Vercel (Frontend)** | ✅ Live | `https://bahasacerdas.com` + `www.bahasacerdas.com` |
-| **Supabase (DB + Auth)** | ✅ Live | `ibtlhoocaoopgtcsnvzr.supabase.co` — PostgreSQL pooler `aws-1-ap-southeast-1.pooler.supabase.com:6543` |
+| **Supabase (DB + Auth)** | ✅ Live | [set in .env / Vercel env vars] |
 | **Game Server** | ❌ Dead | VPS `72.60.78.65` unreachable — Hostinger expired Jun 26. Fly.io blocked (payment info). Railway token invalid. |
 | **DNS** | ✅ Live | `bahasacerdas.com` → Vercel (ns1/ns2.vercel-dns.com); `game.bahasacerdas.com` → dead VPS A record |
 
@@ -129,7 +129,7 @@
 | Game server permanent loss | High | High | Need new hosting (Railway, Koyeb, or cheap VPS) |
 | HSTS preload makes rollback hard | Low | Medium | Remove HSTS header before any domain migration |
 | .env.backup-vps has real secrets | Low | High | Added to `.gitignore`; file remains locally only |
-| game-server/.env.example has real password | Low | Medium | Not staged yet; should replace with placeholder |
+| game-server/.env.example previously had real credentials | Low | Medium | Now uses placeholders; never commit real values |
 
 ## 10. Next Actions (Priority Order)
 

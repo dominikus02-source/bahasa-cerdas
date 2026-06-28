@@ -1,10 +1,13 @@
 # Environment
 .env
+.env.*
+!.env.example
 .env.local
 .env.development
 .env.production
 .env.test
 .env.vps
+.env.backup-*
 
 # Dependencies
 node_modules/
@@ -46,4 +49,6 @@ pitch-deck.html
 coverage/
 
 secrets.txt
-.env.backup-vps
+
+# SSL / keys
+*.pem
