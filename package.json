@@ -19,7 +19,12 @@
     "db:seed-panduan-sd": "npx tsx scripts/seed-panduan-sd.ts",
     "db:seed-paket-lengkap": "npx tsx scripts/seeder-paket-lengkap.ts",
     "seed:homepage": "npx tsx scripts/seed-homepage-v2.ts",
-    "seed:homepage:dry-run": "npx tsx scripts/seed-homepage-v2.ts --dry-run"
+    "seed:homepage:dry-run": "npx tsx scripts/seed-homepage-v2.ts --dry-run",
+    "backup:current": "npx tsx scripts/backup-current-supabase.ts",
+    "delete:dummy-content:dry-run": "npx tsx scripts/delete-dummy-content.ts --dry-run",
+    "delete:dummy-content": "npx tsx scripts/delete-dummy-content.ts --execute",
+    "audit:content": "npx tsx scripts/audit-content-data.ts",
+    "audit:question-data": "npx tsx scripts/audit-question-data.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.39.0",

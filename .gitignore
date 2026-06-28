@@ -36,6 +36,9 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+# Backups
+backups/
+
 # Generated / Pitch
 *.pdf
 *.pptx

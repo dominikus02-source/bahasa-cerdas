@@ -1,7 +1,7 @@
 # BahasaCerdas Work Status
 
 > **Project Ledger** — track completed, in-progress, pending, and blocked work.
-> **Last updated:** 2026-06-28
+> **Last updated:** 2026-06-29
 > **Branch:** `main` (GitHub: `dominikus02-source/bahasa-cerdas`)
 
 ---
@@ -12,9 +12,9 @@
 |------|--------|
 | Active branch | `main` |
 | Remote | `origin` → `https://github.com/dominikus02-source/bahasa-cerdas.git` |
-| Local vs origin | **Up to date** (commit `5dfb6a6`) |
+| Local vs origin | **Up to date** |
 | Last commit | `feat: seed homepage v2 + AEO Phase 6-10 + DB migration fixes` |
-| Uncommitted changes | `.env.backup-vps` (in `.gitignore`), `game-server/.env.example` (has real credentials) |
+| Uncommitted changes | `.env.backup-vps` (in `.gitignore`), `backups/` (gitignored), new scripts |
 
 ## 2. Infrastructure
 
@@ -33,20 +33,43 @@
 | **Phase 8A** | Buku Panduan (12 grade-levels, 72 bab), Penugasan, gradebook, sidebar links | `scripts/seed-panduan.ts`, penugasan routes, gradebook |
 | **Phase 8B** | Analytics QA: fix feature name mismatch, status case, top users, unknown provider. 12 tests pass. | `scripts/test-phase8-analytics.ts`, `app/(dashboard)/admin/ai-analytics/` |
 | **Phase 8C** | DB migration VPS→Supabase, proxy 429 fix, auto-create user, seed homepage v2 | `lib/supabase/proxy.ts`, `scripts/seed-homepage-v2.ts`, `prisma/seed-data/` |
+| **Phase Data Recovery 1** | Supabase current state backup + content/question audit + work ledger update | `scripts/backup-current-supabase.ts`, `scripts/audit-content-data.ts`, `scripts/audit-question-data.ts`, `docs/BAHASACERDAS_CONTENT_DATA_RECOVERY_AUDIT.md`, `docs/BAHASACERDAS_QUESTION_DATA_RECOVERY_AUDIT.md` |
 | **AEO 6–10** | FAQ page + JSON-LD, llms.txt, sitemap, robots.txt, AnswerBlock, canonical URLs, 20 tests pass | `app/faq/`, `components/aeo/`, `lib/json-ld.ts`, `public/llms.txt` |
 
 ## 4. Seed Data Inventory
 
 | Dataset | File | Items | Status |
 |---------|------|-------|--------|
-| Homepage Artikel | `prisma/seed-data/homepage-content.json` | 9 | ✅ Seeded live (Jun 28) |
-| Homepage Video | `prisma/seed-data/homepage-content.json` | 9 | ✅ Seeded live (Jun 28) |
-| Homepage Karya | `prisma/seed-data/homepage-content.json` | 9 | ✅ Seeded live (Jun 28) |
-| Buku Panduan | `scripts/seed-panduan.ts` | 72 bab | ⚠️ Exists, run separately |
-| UKBI/TKA questions | `prisma/seed-kompetensi.ts` | 25+25 | ⚠️ Exists, run separately |
+| Homepage Artikel | `prisma/seed-data/homepage-content.json` | 15 | ✅ Seeded live |
+| Homepage Video | `prisma/seed-data/homepage-content.json` | 15 | ✅ Seeded live |
+| Homepage Karya | `prisma/seed-data/homepage-content.json` | 15 | ✅ Seeded live |
+| Buku Panduan | `scripts/seed-panduan.ts` | 12 level, 71 bab | ✅ Seeded (VII–XII) |
+| UKBI Questions | `prisma/seed-kompetensi.ts` | 50 (25 SMP + 25 SMA) | ✅ Seeded |
+| TKA Questions | `prisma/seed-kompetensi.ts` | 50 (25 SMP + 25 SMA) | ✅ Seeded |
+| PaketKompetensi | `prisma/seed-kompetensi.ts` | 8 | ✅ Seeded |
+| Materi content enrichment | `scripts/seed/seed-materi.ts` | 3 units updated | ⚠️ Partial — many titles don't match panduan names |
 | Old v1 seed (Art+Video+Karya) | `scripts/seed-homepage-content.ts` | 6+6+6 | ✅ Already seeded, superseded by v2 |
 
-**Seed script**: `scripts/seed-homepage-v2.ts` — deterministic, upsert by slug/title, `--dry-run` mode.
+**Seed scripts safety verified (Jun 29):** No `deleteMany`, `truncate`, `DROP`, or `deleteBrokenPackages` in any restore script.
+
+**Destructive scripts (DO NOT RUN):**
+- `scripts/seed-jalur-revamp.ts` — contains deleteMany
+- `scripts/seed-jalur-full.ts` — contains deleteMany
+- `scripts/seeder-paket-lengkap.ts` — contains deleteBrokenPackages
+- `scripts/clean-db.ts` — destructive cleanup
+
+## 4a. Production Login & Data Source Status
+
+| Item | Status |
+|------|--------|
+| Production login (bahasacerdas.com) | ✅ Bekerja — DATABASE_URL/DIRECT_URL di Vercel sudah mengarah ke Supabase |
+| Data source | Supabase (PostgreSQL via pooler) — **source of truth** |
+| Old VPS data | ❌ Dianggap hilang — Hostinger expired Jun 26, 2026. Tidak ada backup. |
+| Data recovery phase | ✅ Phase Data Recovery 1 sedang berjalan — backup + audit sebelum seed/migrate ulang |
+| Current backup | `backups/current/<timestamp>/` — backup JSON per tabel (read-only) |
+| Supabase project | `https://ibtlhoocaoopgtcsnvzr.supabase.co` |
+| Game server | ❌ Masih mati — VPS unreachable |
+| Exam engine dev | ⏸️ Ditunda sampai backup/audit selesai |
 
 ## 5. Files by Category
 
@@ -55,6 +78,17 @@
 - `docs/BAHASACERDAS_SEED_DATA_POLICY.md` — Seed data rules: authorship, validation, dry-run, safety
 - `docs/BAHASACERDAS_WORK_STATUS.md` — THIS FILE: project ledger
 - `docs/AI_AGENT_LAYER_PLAN.md` — AI monetization roadmap (Phase 9)
+- `docs/BAHASACERDAS_CONTENT_DATA_RECOVERY_AUDIT.md` — Phase Recovery 1: content audit results
+- `docs/BAHASACERDAS_QUESTION_DATA_RECOVERY_AUDIT.md` — Phase Recovery 1: question/exam audit results
+- `docs/BAHASACERDAS_EXAM_ENGINE_ARCHITECTURE.md` — Exam engine architecture (Phase Exam 1)
+- `docs/BAHASACERDAS_UKBI_TKA_DESIGN.md` — UKBI/TKA product design
+- `docs/BAHASACERDAS_RANDOMIZED_EXAM_ENGINE.md` — Randomized exam engine spec
+
+### Backup & Recovery
+- `scripts/backup-current-supabase.ts` — Full DB backup to JSON files + manifest
+- `scripts/audit-content-data.ts` — Content inventory audit
+- `scripts/audit-question-data.ts` — Question/exam data audit
+- `backups/current/` — Backup output (gitignored)
 
 ### Seed Data
 - `prisma/seed-data/homepage-content.json` — 27 items (9+9+9) deterministic
@@ -93,6 +127,8 @@
 | Editorial team personas as authors | "Tim Redaksi BahasaCerdas" etc. — safe, not claiming real people |
 | `ignoreBuildErrors: true` in `next.config.ts` | Pre-existing TS errors in unrelated game agents files |
 | `typescript.ignoreBuildErrors: true` | Same reason — pre-existing issues in game agent code |
+| **Backup first, audit before seed** | Current Supabase DB is source of truth — backup before any destructive operation |
+| **Jangan sentuh payment/user data** | Production data is read-only during recovery phase |
 
 ## 7. Blockers
 
@@ -131,15 +167,63 @@
 | .env.backup-vps has real secrets | Low | High | Added to `.gitignore`; file remains locally only |
 | game-server/.env.example previously had real credentials | Low | Medium | Now uses placeholders; never commit real values |
 
-## 10. Next Actions (Priority Order)
+## 10. Restored Row Counts (Post-Recovery)
 
-1. **Game server revival** — find new hosting (Railway with valid token, new VPS, or Koyeb)
-2. **Fix author display name** — update guru@demo.com's `fullName` to "Tim Redaksi BahasaCerdas"
-3. **Upload real files to Supabase Storage** — replace fake seed file URLs
-4. **Replace fake YouTube IDs** — use real educational video IDs
-5. **Migrate old standalone AI routes** — `/api/ai/eyd`, `/api/ai/feedback`, etc. to central runner
-6. **Phase 9 monetization** — see `docs/AI_AGENT_LAYER_PLAN.md`
-7. **Push notifications** — browser push API
+| Model | Before Recovery | After Recovery | Restored? |
+|-------|----------------|----------------|-----------|
+| User | 43 | 43 | ✅ Preserved |
+| Artikel | 15 | 15 | Preserved |
+| Video | 15 | 15 | Preserved |
+| Karya | 15 | 15 | Preserved |
+| UKBIQuestion | 0 | 50 | ✅ Restored |
+| TKAQuestion | 0 | 50 | ✅ Restored |
+| PaketKompetensi | 0 | 8 | ✅ Restored |
+| LearningLevel | 0 | 12 | ✅ Restored |
+| LearningUnit | 0 | 71 | ✅ Restored |
+| Profile | 42 | 42 | Preserved |
+| Soal/SoalSet | 0 | 0 | ⏳ Need seed |
+| StudentKarya | 0 | 0 | ❌ Lost from VPS |
+| Game data | 0 | 0 | ❌ Lost from VPS |
+| Payment/Subscription | 0 | 0 | ❌ Lost from VPS |
+
+## 10a. Dummy Content Deletion (Jun 29)
+
+**Before deletion backup:** `backups/current/2026-06-29-00-31/`  
+**After deletion backup:** `backups/current/2026-06-29-00-33/`
+
+Deleted 48 items owned by demo user `guru@demo.com`:
+
+| Table | Deleted | Detection Rule |
+|-------|---------|----------------|
+| Artikel | 15 | author = guru@demo.com + slug matches homepage-content.json |
+| Video | 15 | creator = guru@demo.com |
+| Karya | 15 | seller = guru@demo.com |
+| DailyQuest | 3 | seed daily quests for demo user |
+
+**Preserved (not touched):**
+- User: 43 ✅
+- Profile: 42 ✅
+- UKBIQuestion: 50 ✅
+- TKAQuestion: 50 ✅
+- PaketKompetensi: 8 ✅
+- LearningLevel: 12 ✅
+- LearningUnit: 71 ✅
+- All payment/auth/admin data ✅
+
+**Script:** `scripts/delete-dummy-content.ts` — dry-run by default, requires `--execute` flag.
+
+## 11. Next Actions (Priority Order)
+
+1. **Phase Data Recovery 2** — analyze audit results, fix title mismatches in seed-materi.ts, run seed-panduan-sd.ts
+2. **Phase Data Recovery 3** — restore additional content (SD class, more materi units)
+3. **Phase Data Recovery 4** — verify restored data in production (www.bahasacerdas.com)
+4. **Game server revival** — find new hosting (Railway with valid token, new VPS, or Koyeb)
+5. **Fix author display name** — update guru@demo.com's `fullName` to "Tim Redaksi BahasaCerdas"
+6. **Upload real files to Supabase Storage** — replace fake seed file URLs
+7. **Replace fake YouTube IDs** — use real educational video IDs
+8. **Migrate old standalone AI routes** — `/api/ai/eyd`, `/api/ai/feedback`, etc. to central runner
+9. **Phase 9 monetization** — see `docs/AI_AGENT_LAYER_PLAN.md`
+10. **Push notifications** — browser push API
 
 ---
 
