@@ -18,14 +18,28 @@
       "audioRef": null,
       "stem": "Kapan perpustakaan tutup pada hari Sabtu?",
       "options": [
-        { "id": "A", "text": "Pukul 07.30" },
-        { "id": "B", "text": "Pukul 12.00" },
-        { "id": "C", "text": "Pukul 14.00" },
-        { "id": "D", "text": "Pukul 16.00" }
+        {
+          "id": "A",
+          "text": "Pukul 07.30"
+        },
+        {
+          "id": "B",
+          "text": "Pukul 12.00"
+        },
+        {
+          "id": "C",
+          "text": "Pukul 14.00"
+        },
+        {
+          "id": "D",
+          "text": "Pukul 16.00"
+        }
       ],
       "correctAnswer": "B",
       "explanation": "Pengumuman menyebutkan bahwa pada hari Sabtu perpustakaan hanya buka sampai pukul 12.00.",
-      "tags": ["informasi-tersurat"],
+      "tags": [
+        "informasi-tersurat"
+      ],
       "source": "BC_UKBI_SMP_ORIGINAL",
       "status": "approved",
       "cognitive": "PEMAHAMAN",
@@ -43,14 +57,28 @@
       "audioRef": null,
       "stem": "Apa hobi Dimas?",
       "options": [
-        { "id": "A", "text": "Bermain musik" },
-        { "id": "B", "text": "Melukis" },
-        { "id": "C", "text": "Menulis cerita" },
-        { "id": "D", "text": "Olahraga" }
+        {
+          "id": "A",
+          "text": "Bermain musik"
+        },
+        {
+          "id": "B",
+          "text": "Melukis"
+        },
+        {
+          "id": "C",
+          "text": "Menulis cerita"
+        },
+        {
+          "id": "D",
+          "text": "Olahraga"
+        }
       ],
       "correctAnswer": "B",
       "explanation": "Dimas mengatakan ia ikut klub melukis dan menyalurkan hobi melukisnya.",
-      "tags": ["informasi-tersurat"],
+      "tags": [
+        "informasi-tersurat"
+      ],
       "source": "BC_UKBI_SMP_ORIGINAL",
       "status": "approved",
       "cognitive": "PEMAHAMAN",
@@ -68,14 +96,28 @@
       "audioRef": null,
       "stem": "Apa yang harus dilakukan setelah menyiram tanaman?",
       "options": [
-        { "id": "A", "text": "Pergi ke pasar" },
-        { "id": "B", "text": "Makan siang" },
-        { "id": "C", "text": "Memasak sayur sop" },
-        { "id": "D", "text": "Membersihkan halaman" }
+        {
+          "id": "A",
+          "text": "Pergi ke pasar"
+        },
+        {
+          "id": "B",
+          "text": "Makan siang"
+        },
+        {
+          "id": "C",
+          "text": "Memasak sayur sop"
+        },
+        {
+          "id": "D",
+          "text": "Membersihkan halaman"
+        }
       ],
       "correctAnswer": "B",
       "explanation": "Ibu berpesan 'kalau sudah, jangan lupa makan siang', yang berarti setelah menyiram tanaman, ia harus makan siang.",
-      "tags": ["informasi-tersurat"],
+      "tags": [
+        "informasi-tersurat"
+      ],
       "source": "BC_UKBI_SMP_ORIGINAL",
       "status": "approved",
       "cognitive": "PEMAHAMAN",
@@ -93,14 +135,28 @@
       "audioRef": null,
       "stem": "Apa yang menarik dari Kebun Raya Bogor menurut Sani?",
       "options": [
-        { "id": "A", "text": "Tempat bermain yang luas" },
-        { "id": "B", "text": "Koleksi pohon kuno dan bunga langka" },
-        { "id": "C", "text": "Kolam renang yang besar" },
-        { "id": "D", "text": "Makanan khas yang enak" }
+        {
+          "id": "A",
+          "text": "Tempat bermain yang luas"
+        },
+        {
+          "id": "B",
+          "text": "Koleksi pohon kuno dan bunga langka"
+        },
+        {
+          "id": "C",
+          "text": "Kolam renang yang besar"
+        },
+        {
+          "id": "D",
+          "text": "Makanan khas yang enak"
+        }
       ],
       "correctAnswer": "B",
       "explanation": "Sani mengatakan di Kebun Raya Bogor ada banyak koleksi pohon kuno dan bunga-bunga yang jarang dilihat.",
-      "tags": ["informasi-tersurat"],
+      "tags": [
+        "informasi-tersurat"
+      ],
       "source": "BC_UKBI_SMP_ORIGINAL",
       "status": "approved",
       "cognitive": "PEMAHAMAN",
@@ -118,14 +174,28 @@
       "audioRef": null,
       "stem": "Apa yang harus dilakukan siswa setelah kunjungan museum?",
       "options": [
-        { "id": "A", "text": "Mengikuti kuis tentang museum" },
-        { "id": "B", "text": "Membuat laporan tentang benda bersejarah" },
-        { "id": "C", "text": "Menggambar benda-benda di museum" },
-        { "id": "D", "text": "Membawa oleh-oleh dari museum" }
+        {
+          "id": "A",
+          "text": "Mengikuti kuis tentang museum"
+        },
+        {
+          "id": "B",
+          "text": "Membuat laporan tentang benda bersejarah"
+        },
+        {
+          "id": "C",
+          "text": "Menggambar benda-benda di museum"
+        },
+        {
+          "id": "D",
+          "text": "Membawa oleh-oleh dari museum"
+        }
       ],
       "correctAnswer": "B",
       "explanation": "Bu Guru meminta setiap siswa membuat laporan tentang satu benda bersejarah yang menarik, dikumpulkan seminggu setelah kunjungan.",
-      "tags": ["informasi-tersurat"],
+      "tags": [
+        "informasi-tersurat"
+      ],
       "source": "BC_UKBI_SMP_ORIGINAL",
       "status": "approved",
       "cognitive": "PEMAHAMAN",
@@ -143,14 +213,28 @@
       "audioRef": null,
       "stem": "Apa yang dilakukan Maya setiap hari Jumat?",
       "options": [
-        { "id": "A", "text": "Membeli kue di sekolah" },
-        { "id": "B", "text": "Menjual makanan buatan sendiri" },
-        { "id": "C", "text": "Belajar membuat kue" },
-        { "id": "D", "text": "Mengikuti lomba masak" }
+        {
+          "id": "A",
+          "text": "Membeli kue di sekolah"
+        },
+        {
+          "id": "B",
+          "text": "Menjual makanan buatan sendiri"
+        },
+        {
+          "id": "C",
+          "text": "Belajar membuat kue"
+        },
+        {
+          "id": "D",
+          "text": "Mengikuti lomba masak"
+        }
       ],
       "correctAnswer": "B",
       "explanation": "Maya mengatakan setiap Jumat mereka jual makanan buatan sendiri sebagai bagian dari program kewirausahaan.",
-      "tags": ["informasi-tersurat"],
+      "tags": [
+        "informasi-tersurat"
+      ],
       "source": "BC_UKBI_SMP_ORIGINAL",
       "status": "approved",
       "cognitive": "PEMAHAMAN",
@@ -168,14 +252,28 @@
       "audioRef": null,
       "stem": "Berapa jumlah anggota dalam satu tim cerdas cermat?",
       "options": [
-        { "id": "A", "text": "Dua orang" },
-        { "id": "B", "text": "Tiga orang" },
-        { "id": "C", "text": "Empat orang" },
-        { "id": "D", "text": "Lima orang" }
+        {
+          "id": "A",
+          "text": "Dua orang"
+        },
+        {
+          "id": "B",
+          "text": "Tiga orang"
+        },
+        {
+          "id": "C",
+          "text": "Empat orang"
+        },
+        {
+          "id": "D",
+          "text": "Lima orang"
+        }
       ],
       "correctAnswer": "B",
       "explanation": "Pengumuman menyebutkan bahwa satu tim terdiri dari tiga orang.",
-      "tags": ["informasi-tersurat"],
+      "tags": [
+        "informasi-tersurat"
+      ],
       "source": "BC_UKBI_SMP_ORIGINAL",
       "status": "approved",
       "cognitive": "PEMAHAMAN",
@@ -193,14 +291,29 @@
       "audioRef": null,
       "stem": "Bagaimana perasaan Siska terhadap hasil pidatonya?",
       "options": [
-        { "id": "A", "text": "Kecewa karena nilai kurang" },
-        { "id": "B", "text": "Biasa saja karena sudah sering pidato" },
-        { "id": "C", "text": "Senang karena mendapat nilai bagus" },
-        { "id": "D", "text": "Terkejut karena tidak menyangka" }
+        {
+          "id": "A",
+          "text": "Kecewa karena nilai kurang"
+        },
+        {
+          "id": "B",
+          "text": "Biasa saja karena sudah sering pidato"
+        },
+        {
+          "id": "C",
+          "text": "Senang karena mendapat nilai bagus"
+        },
+        {
+          "id": "D",
+          "text": "Terkejut karena tidak menyangka"
+        }
       ],
       "correctAnswer": "C",
       "explanation": "Siska berkata 'hari ini aku dapat nilai bagus' dan Raka menanggapi dengan melihat semangatnya, menunjukkan Siska senang dengan hasilnya.",
-      "tags": ["informasi-tersirat", "sikap-pembicara"],
+      "tags": [
+        "informasi-tersirat",
+        "sikap-pembicara"
+      ],
       "source": "BC_UKBI_SMP_ORIGINAL",
       "status": "approved",
       "cognitive": "PEMAHAMAN",
@@ -218,14 +331,28 @@
       "audioRef": null,
       "stem": "Apa yang akan dilakukan Bima selama liburan?",
       "options": [
-        { "id": "A", "text": "Berwisata ke desa" },
-        { "id": "B", "text": "Mengajar anak-anak di desa" },
-        { "id": "C", "text": "Mengikuti pelatihan" },
-        { "id": "D", "text": "Berkunjung ke rumah saudara" }
+        {
+          "id": "A",
+          "text": "Berwisata ke desa"
+        },
+        {
+          "id": "B",
+          "text": "Mengajar anak-anak di desa"
+        },
+        {
+          "id": "C",
+          "text": "Mengikuti pelatihan"
+        },
+        {
+          "id": "D",
+          "text": "Berkunjung ke rumah saudara"
+        }
       ],
       "correctAnswer": "B",
       "explanation": "Bima mengatakan ia akan ikut program bakti sosial di desa dengan kegiatan mengajar anak-anak di sana.",
-      "tags": ["informasi-tersurat"],
+      "tags": [
+        "informasi-tersurat"
+      ],
       "source": "BC_UKBI_SMP_ORIGINAL",
       "status": "approved",
       "cognitive": "PEMAHAMAN",
@@ -243,14 +370,28 @@
       "audioRef": null,
       "stem": "Apa tujuan dari pengumuman tersebut?",
       "options": [
-        { "id": "A", "text": "Menginformasikan jadwal upacara bendera" },
-        { "id": "B", "text": "Mengajak siswa mengikuti lomba poster digital" },
-        { "id": "C", "text": "Memberitahu cara membuat poster" },
-        { "id": "D", "text": "Menjelaskan tema Hari Sumpah Pemuda" }
+        {
+          "id": "A",
+          "text": "Menginformasikan jadwal upacara bendera"
+        },
+        {
+          "id": "B",
+          "text": "Mengajak siswa mengikuti lomba poster digital"
+        },
+        {
+          "id": "C",
+          "text": "Memberitahu cara membuat poster"
+        },
+        {
+          "id": "D",
+          "text": "Menjelaskan tema Hari Sumpah Pemuda"
+        }
       ],
       "correctAnswer": "B",
       "explanation": "Pengumuman menyampaikan bahwa OSEL menyelenggarakan lomba poster digital, mengajak siswa berpartisipasi dengan menyebutkan ketentuan dan tenggat waktu.",
-      "tags": ["tujuan-pembicara"],
+      "tags": [
+        "tujuan-pembicara"
+      ],
       "source": "BC_UKBI_SMP_ORIGINAL",
       "status": "approved",
       "cognitive": "PEMAHAMAN",
@@ -268,14 +409,29 @@
       "audioRef": null,
       "stem": "Suasana apa yang tergambar dalam deskripsi tersebut?",
       "options": [
-        { "id": "A", "text": "Sunyi dan sepi" },
-        { "id": "B", "text": "Ramai dan meriah" },
-        { "id": "C", "text": "Kumuh dan kotor" },
-        { "id": "D", "text": "Teratur dan rapi" }
+        {
+          "id": "A",
+          "text": "Sunyi dan sepi"
+        },
+        {
+          "id": "B",
+          "text": "Ramai dan meriah"
+        },
+        {
+          "id": "C",
+          "text": "Kumuh dan kotor"
+        },
+        {
+          "id": "D",
+          "text": "Teratur dan rapi"
+        }
       ],
       "correctAnswer": "B",
       "explanation": "Deskripsi menggambarkan pasar ramai dengan suara tawar-menawar dan aroma makanan, menunjukkan suasana ramai dan meriah.",
-      "tags": ["informasi-tersirat", "suasana"],
+      "tags": [
+        "informasi-tersirat",
+        "suasana"
+      ],
       "source": "BC_UKBI_SMP_ORIGINAL",
       "status": "approved",
       "cognitive": "PEMAHAMAN",
@@ -293,18 +449,32 @@
       "audioRef": null,
       "stem": "Apa yang sedang dipersiapkan Fajar?",
       "options": [
-        { "id": "A", "text": "Ujian akhir semester" },
-        { "id": "B", "text": "Tugas presentasi tentang tata surya" },
-        { "id": "C", "text": "Lomba membaca puisi" },
-        { "id": "D", "text": "Praktikum laboratorium" }
+        {
+          "id": "A",
+          "text": "Ujian akhir semester"
+        },
+        {
+          "id": "B",
+          "text": "Tugas presentasi tentang tata surya"
+        },
+        {
+          "id": "C",
+          "text": "Lomba membaca puisi"
+        },
+        {
+          "id": "D",
+          "text": "Praktikum laboratorium"
+        }
       ],
       "correctAnswer": "B",
       "explanation": "Fajar mengatakan ada tugas presentasi minggu depan tentang tata surya dan ia mencari buku untuk topik planet luar.",
-      "tags": ["informasi-tersurat"],
+      "tags": [
+        "informasi-tersurat"
+      ],
       "source": "BC_UKBI_SMP_ORIGINAL",
       "status": "approved",
       "cognitive": "PEMAHAMAN",
-      "domain": "SAINTIFIK"
+      "domain": "AKADEMIK"
     },
     {
       "id": "BC-UKBI-SMP-MENDENGARKAN-SEMENJANA-SET001-Q013",
@@ -318,14 +488,28 @@
       "audioRef": null,
       "stem": "Siapa yang meminta tolong membelikan obat?",
       "options": [
-        { "id": "A", "text": "Kakak Dita" },
-        { "id": "B", "text": "Ibu Dita" },
-        { "id": "C", "text": "Ayah Dita" },
-        { "id": "D", "text": "Dita sendiri" }
+        {
+          "id": "A",
+          "text": "Kakak Dita"
+        },
+        {
+          "id": "B",
+          "text": "Ibu Dita"
+        },
+        {
+          "id": "C",
+          "text": "Ayah Dita"
+        },
+        {
+          "id": "D",
+          "text": "Dita sendiri"
+        }
       ],
       "correctAnswer": "A",
       "explanation": "Pesan dari Kakak menyampaikan 'Ibu minta tolong kamu belikan obat', jadi Kakak yang menyampaikan pesan, tetapi ibu yang meminta tolong.",
-      "tags": ["informasi-tersurat"],
+      "tags": [
+        "informasi-tersurat"
+      ],
       "source": "BC_UKBI_SMP_ORIGINAL",
       "status": "approved",
       "cognitive": "PEMAHAMAN",
@@ -343,14 +527,28 @@
       "audioRef": null,
       "stem": "Apa yang harus dilakukan siswa pertama kali sebelum praktik?",
       "options": [
-        { "id": "A", "text": "Membaca lembar kerja" },
-        { "id": "B", "text": "Menyiapkan alat dan bahan" },
-        { "id": "C", "text": "Mencuci tangan" },
-        { "id": "D", "text": "Membagi tugas kelompok" }
+        {
+          "id": "A",
+          "text": "Membaca lembar kerja"
+        },
+        {
+          "id": "B",
+          "text": "Menyiapkan alat dan bahan"
+        },
+        {
+          "id": "C",
+          "text": "Mencuci tangan"
+        },
+        {
+          "id": "D",
+          "text": "Membagi tugas kelompok"
+        }
       ],
       "correctAnswer": "C",
       "explanation": "Pak Ridwan menekankan 'Yang paling penting, cuci tangan dulu sebelum mulai bekerja', yang harus dilakukan pertama kali.",
-      "tags": ["informasi-tersurat"],
+      "tags": [
+        "informasi-tersurat"
+      ],
       "source": "BC_UKBI_SMP_ORIGINAL",
       "status": "approved",
       "cognitive": "PEMAHAMAN",
@@ -368,14 +566,28 @@
       "audioRef": null,
       "stem": "Apa yang dilakukan siswa pada hari Sabtu?",
       "options": [
-        { "id": "A", "text": "Belajar di taman sekolah" },
-        { "id": "B", "text": "Membersihkan lingkungan sekolah" },
-        { "id": "C", "text": "Menanam pohon di halaman" },
-        { "id": "D", "text": "Berolahraga di lapangan" }
+        {
+          "id": "A",
+          "text": "Belajar di taman sekolah"
+        },
+        {
+          "id": "B",
+          "text": "Membersihkan lingkungan sekolah"
+        },
+        {
+          "id": "C",
+          "text": "Menanam pohon di halaman"
+        },
+        {
+          "id": "D",
+          "text": "Berolahraga di lapangan"
+        }
       ],
       "correctAnswer": "B",
       "explanation": "Laporan menyebutkan bahwa seluruh siswa membersihkan lingkungan sekolah pada hari Sabtu.",
-      "tags": ["informasi-tersurat"],
+      "tags": [
+        "informasi-tersurat"
+      ],
       "source": "BC_UKBI_SMP_ORIGINAL",
       "status": "approved",
       "cognitive": "PEMAHAMAN",
@@ -393,14 +605,28 @@
       "audioRef": null,
       "stem": "Teknik belajar apa yang disarankan Tari untuk Rina?",
       "options": [
-        { "id": "A", "text": "Belajar sambil mendengarkan musik" },
-        { "id": "B", "text": "Belajar kelompok bersama teman" },
-        { "id": "C", "text": "Belajar 25 menit, istirahat 5 menit" },
-        { "id": "D", "text": "Belajar semalaman tanpa istirahat" }
+        {
+          "id": "A",
+          "text": "Belajar sambil mendengarkan musik"
+        },
+        {
+          "id": "B",
+          "text": "Belajar kelompok bersama teman"
+        },
+        {
+          "id": "C",
+          "text": "Belajar 25 menit, istirahat 5 menit"
+        },
+        {
+          "id": "D",
+          "text": "Belajar semalaman tanpa istirahat"
+        }
       ],
       "correctAnswer": "C",
       "explanation": "Tari menyarankan teknik Pomodoro yaitu belajar 25 menit lalu istirahat 5 menit agar lebih fokus.",
-      "tags": ["informasi-tersurat"],
+      "tags": [
+        "informasi-tersurat"
+      ],
       "source": "BC_UKBI_SMP_ORIGINAL",
       "status": "approved",
       "cognitive": "PEMAHAMAN",
@@ -418,14 +644,28 @@
       "audioRef": null,
       "stem": "Apa harapan ketua komunitas setelah kegiatan tersebut?",
       "options": [
-        { "id": "A", "text": "Kegiatan bersih sungai dilakukan setiap minggu" },
-        { "id": "B", "text": "Kegiatan serupa menjadi kebiasaan rutin bulanan" },
-        { "id": "C", "text": "Semua pelajar ikut serta" },
-        { "id": "D", "text": "Pemerintah memberikan bantuan dana" }
+        {
+          "id": "A",
+          "text": "Kegiatan bersih sungai dilakukan setiap minggu"
+        },
+        {
+          "id": "B",
+          "text": "Kegiatan serupa menjadi kebiasaan rutin bulanan"
+        },
+        {
+          "id": "C",
+          "text": "Semua pelajar ikut serta"
+        },
+        {
+          "id": "D",
+          "text": "Pemerintah memberikan bantuan dana"
+        }
       ],
       "correctAnswer": "B",
       "explanation": "Berita menyebutkan bahwa ketua komunitas berharap kegiatan ini bisa menjadi kebiasaan rutin bulanan.",
-      "tags": ["informasi-tersurat"],
+      "tags": [
+        "informasi-tersurat"
+      ],
       "source": "BC_UKBI_SMP_ORIGINAL",
       "status": "approved",
       "cognitive": "PEMAHAMAN",
@@ -443,14 +683,28 @@
       "audioRef": null,
       "stem": "Apa yang akan dibuat Rio dari kardus bekas?",
       "options": [
-        { "id": "A", "text": "Tempat buku" },
-        { "id": "B", "text": "Tempat pensil" },
-        { "id": "C", "text": "Kotak kado" },
-        { "id": "D", "text": "Mainan" }
+        {
+          "id": "A",
+          "text": "Tempat buku"
+        },
+        {
+          "id": "B",
+          "text": "Tempat pensil"
+        },
+        {
+          "id": "C",
+          "text": "Kotak kado"
+        },
+        {
+          "id": "D",
+          "text": "Mainan"
+        }
       ],
       "correctAnswer": "B",
       "explanation": "Rio mengatakan ia disuruh membuat tempat pensil dari kardus bekas untuk tugas kelompok.",
-      "tags": ["informasi-tersurat"],
+      "tags": [
+        "informasi-tersurat"
+      ],
       "source": "BC_UKBI_SMP_ORIGINAL",
       "status": "approved",
       "cognitive": "PEMAHAMAN",
@@ -468,14 +722,28 @@
       "audioRef": null,
       "stem": "Mengapa infused water harus didiamkan di kulkas minimal dua jam?",
       "options": [
-        { "id": "A", "text": "Agar airnya menjadi dingin" },
-        { "id": "B", "text": "Agar rasa dan aromanya keluar" },
-        { "id": "C", "text": "Agar lemon tidak pahit" },
-        { "id": "D", "text": "Agar warna airnya berubah" }
+        {
+          "id": "A",
+          "text": "Agar airnya menjadi dingin"
+        },
+        {
+          "id": "B",
+          "text": "Agar rasa dan aromanya keluar"
+        },
+        {
+          "id": "C",
+          "text": "Agar lemon tidak pahit"
+        },
+        {
+          "id": "D",
+          "text": "Agar warna airnya berubah"
+        }
       ],
       "correctAnswer": "B",
       "explanation": "Instruksi menyebutkan 'diamkan di dalam kulkas selama minimal dua jam agar rasa dan aromanya keluar'.",
-      "tags": ["informasi-tersurat"],
+      "tags": [
+        "informasi-tersurat"
+      ],
       "source": "BC_UKBI_SMP_ORIGINAL",
       "status": "approved",
       "cognitive": "PEMAHAMAN",
@@ -493,14 +761,29 @@
       "audioRef": null,
       "stem": "Bagaimana perasaan pencerita pada hari pertama di sekolah baru?",
       "options": [
-        { "id": "A", "text": "Senang dan bersemangat" },
-        { "id": "B", "text": "Biasa saja seperti biasanya" },
-        { "id": "C", "text": "Menegangkan dan cemas" },
-        { "id": "D", "text": "Marah karena dipindahkan" }
+        {
+          "id": "A",
+          "text": "Senang dan bersemangat"
+        },
+        {
+          "id": "B",
+          "text": "Biasa saja seperti biasanya"
+        },
+        {
+          "id": "C",
+          "text": "Menegangkan dan cemas"
+        },
+        {
+          "id": "D",
+          "text": "Marah karena dipindahkan"
+        }
       ],
       "correctAnswer": "C",
       "explanation": "Pencerita menyebut hari pertama sebagai 'pengalaman yang menegangkan' dan 'rasa cemas', menunjukkan perasaan tegang dan cemas.",
-      "tags": ["informasi-tersirat", "sikap-pembicara"],
+      "tags": [
+        "informasi-tersirat",
+        "sikap-pembicara"
+      ],
       "source": "BC_UKBI_SMP_ORIGINAL",
       "status": "approved",
       "cognitive": "PEMAHAMAN",
@@ -518,14 +801,28 @@
       "audioRef": null,
       "stem": "Apa yang harus dilakukan setiap kelas untuk Hari Guru Nasional?",
       "options": [
-        { "id": "A", "text": "Membuat kartu ucapan untuk guru" },
-        { "id": "B", "text": "Menampilkan satu pertunjukan pentas seni" },
-        { "id": "C", "text": "Mengikuti lomba kebersihan kelas" },
-        { "id": "D", "text": "Mengumpulkan hadiah untuk guru" }
+        {
+          "id": "A",
+          "text": "Membuat kartu ucapan untuk guru"
+        },
+        {
+          "id": "B",
+          "text": "Menampilkan satu pertunjukan pentas seni"
+        },
+        {
+          "id": "C",
+          "text": "Mengikuti lomba kebersihan kelas"
+        },
+        {
+          "id": "D",
+          "text": "Mengumpulkan hadiah untuk guru"
+        }
       ],
       "correctAnswer": "B",
       "explanation": "Ibu Guru menyampaikan bahwa setiap kelas harus menampilkan satu pertunjukan pentas seni, bisa tari, musik, atau drama.",
-      "tags": ["informasi-tersurat"],
+      "tags": [
+        "informasi-tersurat"
+      ],
       "source": "BC_UKBI_SMP_ORIGINAL",
       "status": "approved",
       "cognitive": "PEMAHAMAN",
@@ -543,14 +840,28 @@
       "audioRef": null,
       "stem": "Mengapa sekolah tidak lagi menyediakan sedotan plastik?",
       "options": [
-        { "id": "A", "text": "Karena sedotan plastik mahal" },
-        { "id": "B", "text": "Untuk mengurangi sampah plastik" },
-        { "id": "C", "text": "Karena siswa lebih suka sedotan kertas" },
-        { "id": "D", "text": "Karena pemasok kehabisan stok" }
+        {
+          "id": "A",
+          "text": "Karena sedotan plastik mahal"
+        },
+        {
+          "id": "B",
+          "text": "Untuk mengurangi sampah plastik"
+        },
+        {
+          "id": "C",
+          "text": "Karena siswa lebih suka sedotan kertas"
+        },
+        {
+          "id": "D",
+          "text": "Karena pemasok kehabisan stok"
+        }
       ],
       "correctAnswer": "B",
       "explanation": "Bayu menyampaikan bahwa kebijakan ini sebagai bentuk dukungan sekolah untuk mengurangi sampah plastik.",
-      "tags": ["informasi-tersurat"],
+      "tags": [
+        "informasi-tersurat"
+      ],
       "source": "BC_UKBI_SMP_ORIGINAL",
       "status": "approved",
       "cognitive": "PEMAHAMAN",
@@ -568,18 +879,33 @@
       "audioRef": null,
       "stem": "Apa yang dimaksud dengan komponen abiotik menurut penjelasan tersebut?",
       "options": [
-        { "id": "A", "text": "Makhluk hidup seperti tumbuhan dan hewan" },
-        { "id": "B", "text": "Benda tak hidup seperti air, tanah, dan sinar matahari" },
-        { "id": "C", "text": "Hubungan timbal balik antar makhluk hidup" },
-        { "id": "D", "text": "Proses fotosintesis pada tumbuhan" }
+        {
+          "id": "A",
+          "text": "Makhluk hidup seperti tumbuhan dan hewan"
+        },
+        {
+          "id": "B",
+          "text": "Benda tak hidup seperti air, tanah, dan sinar matahari"
+        },
+        {
+          "id": "C",
+          "text": "Hubungan timbal balik antar makhluk hidup"
+        },
+        {
+          "id": "D",
+          "text": "Proses fotosintesis pada tumbuhan"
+        }
       ],
       "correctAnswer": "B",
       "explanation": "Penjelasan menyebutkan komponen abiotik terdiri dari benda tak hidup seperti air, tanah, dan sinar matahari.",
-      "tags": ["informasi-tersurat", "makna-kata"],
+      "tags": [
+        "informasi-tersurat",
+        "makna-kata"
+      ],
       "source": "BC_UKBI_SMP_ORIGINAL",
       "status": "approved",
       "cognitive": "PEMAHAMAN",
-      "domain": "SAINTIFIK"
+      "domain": "AKADEMIK"
     },
     {
       "id": "BC-UKBI-SMP-MENDENGARKAN-MADYA-SET001-Q024",
@@ -589,18 +915,34 @@
       "band": "MADYA",
       "type": "pilihan_ganda",
       "difficulty": 4,
-      "audioScript": "Alya: \"Kenapa akhir-akhir ini kamu kelihatan sibuk terus?\" Rizky: \"Aku lagi siapin perlombaan karya tulis ilmiah tingkat kota. Tema tahun ini tentang inovasi teknologi ramah lingkungan.\" Alya: \"Wah, serius banget kamu. Sudah sampai mana?\" Rizky: "Baru tahap pengumpulan data. Aku lagi observasi ke tempat pengolahan sampah organik.\" Alya: \"Keren, semoga menang ya!\" Rizky: \"Aamiin, makasih. Yang penting aku mau belajar dulu dari prosesnya.\"",
+      "audioScript": "Alya: \"Kenapa akhir-akhir ini kamu kelihatan sibuk terus?\" Rizky: \"Aku lagi siapin perlombaan karya tulis ilmiah tingkat kota. Tema tahun ini tentang inovasi teknologi ramah lingkungan.\" Alya: \"Wah, serius banget kamu. Sudah sampai mana?\" Rizky: \"Baru tahap pengumpulan data. Aku lagi observasi ke tempat pengolahan sampah organik.\" Alya: \"Keren, semoga menang ya!\" Rizky: \"Aamiin, makasih. Yang penting aku mau belajar dulu dari prosesnya.\"",
       "audioRef": null,
       "stem": "Apa yang bisa disimpulkan tentang sikap Rizky?",
       "options": [
-        { "id": "A", "text": "Ia hanya ingin menang lomba tanpa usaha" },
-        { "id": "B", "text": "Ia lebih mementingkan proses belajar daripada hasil" },
-        { "id": "C", "text": "Ia pesimis karena lombanya sulit" },
-        { "id": "D", "text": "Ia mengerjakan lomba sendirian tanpa bantuan" }
+        {
+          "id": "A",
+          "text": "Ia hanya ingin menang lomba tanpa usaha"
+        },
+        {
+          "id": "B",
+          "text": "Ia lebih mementingkan proses belajar daripada hasil"
+        },
+        {
+          "id": "C",
+          "text": "Ia pesimis karena lombanya sulit"
+        },
+        {
+          "id": "D",
+          "text": "Ia mengerjakan lomba sendirian tanpa bantuan"
+        }
       ],
       "correctAnswer": "B",
       "explanation": "Rizky berkata 'Yang penting aku mau belajar dulu dari prosesnya', menunjukkan ia lebih menghargai proses pembelajaran daripada sekadar hasil menang.",
-      "tags": ["informasi-tersirat", "kesimpulan", "sikap-pembicara"],
+      "tags": [
+        "informasi-tersirat",
+        "kesimpulan",
+        "sikap-pembicara"
+      ],
       "source": "BC_UKBI_SMP_ORIGINAL",
       "status": "approved",
       "cognitive": "PENERAPAN",
@@ -618,14 +960,29 @@
       "audioRef": null,
       "stem": "Berapa denda yang harus dibayar jika terlambat mengembalikan dua buku selama tiga hari?",
       "options": [
-        { "id": "A", "text": "Rp1.500" },
-        { "id": "B", "text": "Rp3.000" },
-        { "id": "C", "text": "Rp4.500" },
-        { "id": "D", "text": "Rp5.000" }
+        {
+          "id": "A",
+          "text": "Rp1.500"
+        },
+        {
+          "id": "B",
+          "text": "Rp3.000"
+        },
+        {
+          "id": "C",
+          "text": "Rp4.500"
+        },
+        {
+          "id": "D",
+          "text": "Rp5.000"
+        }
       ],
       "correctAnswer": "B",
       "explanation": "Denda Rp500 per buku per hari. Dua buku selama tiga hari = 2 x 3 x Rp500 = Rp3.000.",
-      "tags": ["informasi-tersurat", "analisis"],
+      "tags": [
+        "informasi-tersurat",
+        "analisis"
+      ],
       "source": "BC_UKBI_SMP_ORIGINAL",
       "status": "approved",
       "cognitive": "PENERAPAN",
@@ -643,14 +1000,29 @@
       "audioRef": null,
       "stem": "Apa saran Hesti kepada Wawan?",
       "options": [
-        { "id": "A", "text": "Menjadi ketua kelas untuk melatih keberanian" },
-        { "id": "B", "text": "Menjadi sekretaris sambil latihan bicara di depan umum" },
-        { "id": "C", "text": "Tidak perlu ikut pengurus kelas" },
-        { "id": "D", "text": "Memilih kedua jabatan sekaligus" }
+        {
+          "id": "A",
+          "text": "Menjadi ketua kelas untuk melatih keberanian"
+        },
+        {
+          "id": "B",
+          "text": "Menjadi sekretaris sambil latihan bicara di depan umum"
+        },
+        {
+          "id": "C",
+          "text": "Tidak perlu ikut pengurus kelas"
+        },
+        {
+          "id": "D",
+          "text": "Memilih kedua jabatan sekaligus"
+        }
       ],
       "correctAnswer": "B",
       "explanation": "Hesti menyarankan Wawan menjadi sekretaris dulu sambil latihan public speaking karena Wawan mengaku gugup bicara di depan banyak orang.",
-      "tags": ["informasi-tersirat", "kesimpulan"],
+      "tags": [
+        "informasi-tersirat",
+        "kesimpulan"
+      ],
       "source": "BC_UKBI_SMP_ORIGINAL",
       "status": "approved",
       "cognitive": "PENERAPAN",
@@ -668,14 +1040,28 @@
       "audioRef": null,
       "stem": "Apa tujuan dari program 'Buku Keliling' tersebut?",
       "options": [
-        { "id": "A", "text": "Menjual buku murah ke desa terpencil" },
-        { "id": "B", "text": "Meningkatkan minat baca masyarakat" },
-        { "id": "C", "text": "Menarik wisatawan ke desa" },
-        { "id": "D", "text": "Mengumpulkan donasi buku bekas" }
+        {
+          "id": "A",
+          "text": "Menjual buku murah ke desa terpencil"
+        },
+        {
+          "id": "B",
+          "text": "Meningkatkan minat baca masyarakat"
+        },
+        {
+          "id": "C",
+          "text": "Menarik wisatawan ke desa"
+        },
+        {
+          "id": "D",
+          "text": "Mengumpulkan donasi buku bekas"
+        }
       ],
       "correctAnswer": "B",
       "explanation": "Berita menyebutkan program ini bertujuan meningkatkan minat baca masyarakat di daerah yang jauh dari akses perpustakaan tetap.",
-      "tags": ["tujuan-pembicara"],
+      "tags": [
+        "tujuan-pembicara"
+      ],
       "source": "BC_UKBI_SMP_ORIGINAL",
       "status": "approved",
       "cognitive": "PEMAHAMAN",
@@ -693,14 +1079,29 @@
       "audioRef": null,
       "stem": "Pesan apa yang ingin disampaikan oleh ibu Doni?",
       "options": [
-        { "id": "A", "text": "Anak harus rajin membantu orang tua" },
-        { "id": "B", "text": "Kebaikan sekecil apa pun akan berbuah baik" },
-        { "id": "C", "text": "Orang tua perlu ditemani agar tidak kesepian" },
-        { "id": "D", "text": "Sekolah harus dekat dengan rumah" }
+        {
+          "id": "A",
+          "text": "Anak harus rajin membantu orang tua"
+        },
+        {
+          "id": "B",
+          "text": "Kebaikan sekecil apa pun akan berbuah baik"
+        },
+        {
+          "id": "C",
+          "text": "Orang tua perlu ditemani agar tidak kesepian"
+        },
+        {
+          "id": "D",
+          "text": "Sekolah harus dekat dengan rumah"
+        }
       ],
       "correctAnswer": "B",
       "explanation": "Pesan ibu Doni 'kebaikan sekecil apa pun yang kau lakukan untuk orang lain, akan kembali padamu' mengajarkan bahwa setiap kebaikan akan mendapat balasan.",
-      "tags": ["informasi-tersirat", "pesan-moral"],
+      "tags": [
+        "informasi-tersirat",
+        "pesan-moral"
+      ],
       "source": "BC_UKBI_SMP_ORIGINAL",
       "status": "approved",
       "cognitive": "PENERAPAN",
@@ -718,14 +1119,28 @@
       "audioRef": null,
       "stem": "Apa yang TIDAK diperbolehkan saat tampil dalam lomba baca puisi?",
       "options": [
-        { "id": "A", "text": "Menggunakan ekspresi wajah" },
-        { "id": "B", "text": "Membaca teks di panggung" },
-        { "id": "C", "text": "Membawakan puisi sendiri" },
-        { "id": "D", "text": "Tampil maksimal lima menit" }
+        {
+          "id": "A",
+          "text": "Menggunakan ekspresi wajah"
+        },
+        {
+          "id": "B",
+          "text": "Membaca teks di panggung"
+        },
+        {
+          "id": "C",
+          "text": "Membawakan puisi sendiri"
+        },
+        {
+          "id": "D",
+          "text": "Tampil maksimal lima menit"
+        }
       ],
       "correctAnswer": "B",
       "explanation": "Instruksi terakhir menyebutkan 'hafalkan puisi, tidak boleh membaca teks di panggung', sehingga membaca teks tidak diperbolehkan.",
-      "tags": ["informasi-tersurat"],
+      "tags": [
+        "informasi-tersurat"
+      ],
       "source": "BC_UKBI_SMP_ORIGINAL",
       "status": "approved",
       "cognitive": "PEMAHAMAN",
@@ -743,14 +1158,28 @@
       "audioRef": null,
       "stem": "Topik apa yang menjadi fokus presentasi Melani?",
       "options": [
-        { "id": "A", "text": "Sejarah berdirinya ASEAN" },
-        { "id": "B", "text": "Profil lengkap negara anggota ASEAN" },
-        { "id": "C", "text": "Program pertukaran pelajar di ASEAN" },
-        { "id": "D", "text": "Perekonomian negara-negara ASEAN" }
+        {
+          "id": "A",
+          "text": "Sejarah berdirinya ASEAN"
+        },
+        {
+          "id": "B",
+          "text": "Profil lengkap negara anggota ASEAN"
+        },
+        {
+          "id": "C",
+          "text": "Program pertukaran pelajar di ASEAN"
+        },
+        {
+          "id": "D",
+          "text": "Perekonomian negara-negara ASEAN"
+        }
       ],
       "correctAnswer": "C",
       "explanation": "Melani mengatakan fokus presentasinya adalah program pertukaran pelajar, bukan profil negara atau sejarah ASEAN.",
-      "tags": ["informasi-tersurat"],
+      "tags": [
+        "informasi-tersurat"
+      ],
       "source": "BC_UKBI_SMP_ORIGINAL",
       "status": "approved",
       "cognitive": "PEMAHAMAN",
@@ -766,16 +1195,31 @@
       "difficulty": 4,
       "audioScript": "Pidato: \"Selamat pagi, teman-teman dan Bapak Ibu guru. Pada kesempatan ini, saya ingin mengajak kita semua untuk lebih peduli terhadap kesehatan mental. Banyak dari kita yang merasa harus selalu terlihat baik-baik saja, padahal tidak apa-apa untuk merasa sedih atau cemas. Yang terpenting, kita berani mencari bantuan ketika membutuhkannya. Ingatlah, meminta bantuan bukanlah tanda kelemahan, melainkan keberanian.\"",
       "audioRef": null,
-      "stem": "Apesan utama yang ingin disampaikan dalam pidato tersebut?",
+      "stem": "Apa pesan utama yang ingin disampaikan dalam pidato tersebut?",
       "options": [
-        { "id": "A", "text": "Setiap orang harus selalu terlihat bahagia" },
-        { "id": "B", "text": "Kesehatan mental lebih penting daripada fisik" },
-        { "id": "C", "text": "Berani meminta bantuan adalah hal yang baik" },
-        { "id": "D", "text": "Orang yang sedih harus dihindari" }
+        {
+          "id": "A",
+          "text": "Setiap orang harus selalu terlihat bahagia"
+        },
+        {
+          "id": "B",
+          "text": "Kesehatan mental lebih penting daripada fisik"
+        },
+        {
+          "id": "C",
+          "text": "Berani meminta bantuan adalah hal yang baik"
+        },
+        {
+          "id": "D",
+          "text": "Orang yang sedih harus dihindari"
+        }
       ],
       "correctAnswer": "C",
       "explanation": "Pidato menekankan bahwa 'meminta bantuan bukanlah tanda kelemahan, melainkan keberanian', mendorong pendengar untuk berani mencari bantuan saat butuh.",
-      "tags": ["tujuan-pembicara", "kesimpulan"],
+      "tags": [
+        "tujuan-pembicara",
+        "kesimpulan"
+      ],
       "source": "BC_UKBI_SMP_ORIGINAL",
       "status": "approved",
       "cognitive": "PENERAPAN",
@@ -793,14 +1237,29 @@
       "audioRef": null,
       "stem": "Apa yang dimaksud dengan 'ditelan mentah-mentah' dalam konteks diskusi tersebut?",
       "options": [
-        { "id": "A", "text": "Menonton tanpa izin orang tua" },
-        { "id": "B", "text": "Menerima semua informasi tanpa menyaring" },
-        { "id": "C", "text": "Meniru semua adegan sinetron" },
-        { "id": "D", "text": "Makan sambil menonton televisi" }
+        {
+          "id": "A",
+          "text": "Menonton tanpa izin orang tua"
+        },
+        {
+          "id": "B",
+          "text": "Menerima semua informasi tanpa menyaring"
+        },
+        {
+          "id": "C",
+          "text": "Meniru semua adegan sinetron"
+        },
+        {
+          "id": "D",
+          "text": "Makan sambil menonton televisi"
+        }
       ],
       "correctAnswer": "B",
       "explanation": "Dalam konteks diskusi, 'ditelan mentah-mentah' bermakna menerima semua informasi tanpa berpikir kritis atau menyaringnya terlebih dahulu.",
-      "tags": ["makna-kata", "informasi-tersirat"],
+      "tags": [
+        "makna-kata",
+        "informasi-tersirat"
+      ],
       "source": "BC_UKBI_SMP_ORIGINAL",
       "status": "approved",
       "cognitive": "PENERAPAN",
@@ -814,22 +1273,37 @@
       "band": "UNGGUL",
       "type": "pilihan_ganda",
       "difficulty": 4,
-      "audioScript": "Cerita: "Di sebuah desa, hiduplah seorang pemuda bernama Jaka. Ia dikenal malas dan selalu mengeluh. Suatu hari, ia menemukan bibit tanaman ajaib yang bisa tumbuh dalam semalam. Jaka menanamnya dan keesokan paginya pohon itu sudah berbuah emas. Namun, buah emas itu justru mendatangkan masalah. Banyak orang datang ingin mencuri, dan Jaka menjadi gelisah. Ia baru menyadari bahwa kekayaan tanpa usaha justru membawa petaka."",
+      "audioScript": "Cerita: \"Di sebuah desa, hiduplah seorang pemuda bernama Jaka. Ia dikenal malas dan selalu mengeluh. Suatu hari, ia menemukan bibit tanaman ajaib yang bisa tumbuh dalam semalam. Jaka menanamnya dan keesokan paginya pohon itu sudah berbuah emas. Namun, buah emas itu justru mendatangkan masalah. Banyak orang datang ingin mencuri, dan Jaka menjadi gelisah. Ia baru menyadari bahwa kekayaan tanpa usaha justru membawa petaka.\"",
       "audioRef": null,
       "stem": "Apa yang bisa disimpulkan dari cerita tersebut?",
       "options": [
-        { "id": "A", "text": "Pohon ajaib adalah sumber kekayaan yang baik" },
-        { "id": "B", "text": "Kemalasan akan selalu berakhir bahagia" },
-        { "id": "C", "text": "Kekayaan tanpa usaha dapat mendatangkan masalah" },
-        { "id": "D", "text": "Tanaman ajaib harus dijaga dengan baik" }
+        {
+          "id": "A",
+          "text": "Pohon ajaib adalah sumber kekayaan yang baik"
+        },
+        {
+          "id": "B",
+          "text": "Kemalasan akan selalu berakhir bahagia"
+        },
+        {
+          "id": "C",
+          "text": "Kekayaan tanpa usaha dapat mendatangkan masalah"
+        },
+        {
+          "id": "D",
+          "text": "Tanaman ajaib harus dijaga dengan baik"
+        }
       ],
       "correctAnswer": "C",
       "explanation": "Cerita menyimpulkan bahwa Jaka baru menyadari 'kekayaan tanpa usaha justru membawa petaka', menunjukkan bahwa hasil tanpa proses bisa berdampak buruk.",
-      "tags": ["kesimpulan", "pesan-moral"],
+      "tags": [
+        "kesimpulan",
+        "pesan-moral"
+      ],
       "source": "BC_UKBI_SMP_ORIGINAL",
       "status": "approved",
       "cognitive": "PENERAPAN",
-      "domain": "SASTRA"
+      "domain": "SOSIAL"
     },
     {
       "id": "BC-UKBI-SMP-MENDENGARKAN-UNGGUL-SET001-Q034",
@@ -839,18 +1313,32 @@
       "band": "UNGGUL",
       "type": "pilihan_ganda",
       "difficulty": 4,
-      "audioScript": "Wawancara: "Pewawancara: 'Apa yang membuatmu tertarik membuat komik?' Raka: 'Aku suka bercerita lewat gambar sejak kecil. Awalnya cuma iseng di buku tulis, lalu aku unggah ke media sosial. Respon teman-teman positif, jadi aku semangat terus.' Pewawancara: 'Apa tantangan terbesarmu?' Raka: 'Konsistensi. Kadang ide datang deras, kadang macet total. Tapi aku punya cara: baca buku atau nonton film buat cari inspirasi.'\"",
+      "audioScript": "Wawancara: \"Pewawancara: 'Apa yang membuatmu tertarik membuat komik?' Raka: 'Aku suka bercerita lewat gambar sejak kecil. Awalnya cuma iseng di buku tulis, lalu aku unggah ke media sosial. Respon teman-teman positif, jadi aku semangat terus.' Pewawancara: 'Apa tantangan terbesarmu?' Raka: 'Konsistensi. Kadang ide datang deras, kadang macet total. Tapi aku punya cara: baca buku atau nonton film buat cari inspirasi.'\"",
       "audioRef": null,
       "stem": "Bagaimana cara Raka mengatasi tantangan dalam membuat komik?",
       "options": [
-        { "id": "A", "text": "Berhenti membuat komik sementara" },
-        { "id": "B", "text": "Meminta bantuan teman" },
-        { "id": "C", "text": "Membaca buku atau menonton film" },
-        { "id": "D", "text": "Menggambar ulang karya lama" }
+        {
+          "id": "A",
+          "text": "Berhenti membuat komik sementara"
+        },
+        {
+          "id": "B",
+          "text": "Meminta bantuan teman"
+        },
+        {
+          "id": "C",
+          "text": "Membaca buku atau menonton film"
+        },
+        {
+          "id": "D",
+          "text": "Menggambar ulang karya lama"
+        }
       ],
       "correctAnswer": "C",
       "explanation": "Raka mengatakan saat ide macet, ia membaca buku atau menonton film untuk mencari inspirasi.",
-      "tags": ["informasi-tersurat"],
+      "tags": [
+        "informasi-tersurat"
+      ],
       "source": "BC_UKBI_SMP_ORIGINAL",
       "status": "approved",
       "cognitive": "PEMAHAMAN",
@@ -868,14 +1356,28 @@
       "audioRef": null,
       "stem": "Selain paket sembako, apa lagi yang diberikan dalam kegiatan bakti sosial tersebut?",
       "options": [
-        { "id": "A", "text": "Buku pelajaran gratis" },
-        { "id": "B", "text": "Layanan kesehatan gratis" },
-        { "id": "C", "text": "Beasiswa untuk siswa" },
-        { "id": "D", "text": "Pakaian layak pakai" }
+        {
+          "id": "A",
+          "text": "Buku pelajaran gratis"
+        },
+        {
+          "id": "B",
+          "text": "Layanan kesehatan gratis"
+        },
+        {
+          "id": "C",
+          "text": "Beasiswa untuk siswa"
+        },
+        {
+          "id": "D",
+          "text": "Pakaian layak pakai"
+        }
       ],
       "correctAnswer": "B",
       "explanation": "Laporan menyebutkan bahwa tim medis dari puskesmas memberikan layanan kesehatan gratis selain pembagian paket sembako.",
-      "tags": ["informasi-tersurat"],
+      "tags": [
+        "informasi-tersurat"
+      ],
       "source": "BC_UKBI_SMP_ORIGINAL",
       "status": "approved",
       "cognitive": "PEMAHAMAN",
@@ -893,14 +1395,29 @@
       "audioRef": null,
       "stem": "Apa sikap Fani terhadap media sosial?",
       "options": [
-        { "id": "A", "text": "Sangat menentang penggunaan media sosial" },
-        { "id": "B", "text": "Bersikap netral dan tidak peduli" },
-        { "id": "C", "text": "Menyadari ada sisi positif dan negatif" },
-        { "id": "D", "text": "Mendukung penuh semua konten media sosial" }
+        {
+          "id": "A",
+          "text": "Sangat menentang penggunaan media sosial"
+        },
+        {
+          "id": "B",
+          "text": "Bersikap netral dan tidak peduli"
+        },
+        {
+          "id": "C",
+          "text": "Menyadari ada sisi positif dan negatif"
+        },
+        {
+          "id": "D",
+          "text": "Mendukung penuh semua konten media sosial"
+        }
       ],
       "correctAnswer": "C",
       "explanation": "Fani menyebut media sosial sebagai 'pedang bermata dua' dan menjelaskan sisi positif serta negatifnya, menunjukkan sikap seimbang dan kritis.",
-      "tags": ["informasi-tersirat", "sikap-pembicara"],
+      "tags": [
+        "informasi-tersirat",
+        "sikap-pembicara"
+      ],
       "source": "BC_UKBI_SMP_ORIGINAL",
       "status": "approved",
       "cognitive": "PENERAPAN",
@@ -914,18 +1431,33 @@
       "band": "UNGGUL",
       "type": "pilihan_ganda",
       "difficulty": 4,
-      "audioScript": "Pengumuman: "Dalam rangka memperingati Bulan Bahasa, sekolah akan mengadakan beberapa lomba, yaitu lomba debat bahasa Indonesia, lomba cipta puisi, dan lomba pidato. Pendaftaran dilakukan secara online melalui tautan yang sudah dibagikan di grup kelas. Setiap siswa hanya boleh mengikuti satu lomba. Juara pertama akan mendapat hadiah sebesar lima ratus ribu rupiah dan mewakili sekolah ke tingkat kecamatan.\"",
+      "audioScript": "Pengumuman: \"Dalam rangka memperingati Bulan Bahasa, sekolah akan mengadakan beberapa lomba, yaitu lomba debat bahasa Indonesia, lomba cipta puisi, dan lomba pidato. Pendaftaran dilakukan secara online melalui tautan yang sudah dibagikan di grup kelas. Setiap siswa hanya boleh mengikuti satu lomba. Juara pertama akan mendapat hadiah sebesar lima ratus ribu rupiah dan mewakili sekolah ke tingkat kecamatan.\"",
       "audioRef": null,
       "stem": "Apa konsekuensi jika seorang siswa mendaftar di lebih dari satu lomba?",
       "options": [
-        { "id": "A", "text": "Dikenakan biaya tambahan" },
-        { "id": "B", "text": "Didiskualifikasi dari semua lomba" },
-        { "id": "C", "text": "Pendaftarannya tidak akan diproses karena tidak diperbolehkan" },
-        { "id": "D", "text": "Diberi kesempatan memilih satu lomba saat verifikasi" }
+        {
+          "id": "A",
+          "text": "Dikenakan biaya tambahan"
+        },
+        {
+          "id": "B",
+          "text": "Didiskualifikasi dari semua lomba"
+        },
+        {
+          "id": "C",
+          "text": "Pendaftarannya tidak akan diproses karena tidak diperbolehkan"
+        },
+        {
+          "id": "D",
+          "text": "Diberi kesempatan memilih satu lomba saat verifikasi"
+        }
       ],
       "correctAnswer": "C",
       "explanation": "Pengumuman menyebutkan 'setiap siswa hanya boleh mengikuti satu lomba', sehingga mendaftar lebih dari satu melanggar ketentuan dan tidak diproses.",
-      "tags": ["informasi-tersirat", "analisis"],
+      "tags": [
+        "informasi-tersirat",
+        "analisis"
+      ],
       "source": "BC_UKBI_SMP_ORIGINAL",
       "status": "approved",
       "cognitive": "PENERAPAN",
@@ -939,22 +1471,37 @@
       "band": "UNGGUL",
       "type": "pilihan_ganda",
       "difficulty": 4,
-      "audioScript": "Cerita: "Seorang guru bertanya kepada murid-muridnya, 'Apa yang paling berharga di dunia ini?' Seorang murid menjawab, 'Emas.' Murid lain berkata, 'Berlian.' Seorang murid yang pendiam bernama Dewi menjawab lirih, 'Waktu, Bu.' Sang guru tersenyum. 'Tepat, Dewi. Waktu adalah satu-satunya hal yang tidak bisa dibeli dengan uang. Begitu ia berlalu, tak akan pernah kembali.' Semua murid terdiam merenung."",
+      "audioScript": "Cerita: \"Seorang guru bertanya kepada murid-muridnya, 'Apa yang paling berharga di dunia ini?' Seorang murid menjawab, 'Emas.' Murid lain berkata, 'Berlian.' Seorang murid yang pendiam bernama Dewi menjawab lirih, 'Waktu, Bu.' Sang guru tersenyum. 'Tepat, Dewi. Waktu adalah satu-satunya hal yang tidak bisa dibeli dengan uang. Begitu ia berlalu, tak akan pernah kembali.' Semua murid terdiam merenung.\"",
       "audioRef": null,
       "stem": "Mengapa guru setuju dengan jawaban Dewi?",
       "options": [
-        { "id": "A", "text": "Karena Dewi adalah murid kesayangannya" },
-        { "id": "B", "text": "Karena waktu adalah sesuatu yang bisa dibeli" },
-        { "id": "C", "text": "Karena waktu tidak bisa dibeli dan tidak bisa kembali" },
-        { "id": "D", "text": "Karena jawaban Dewi paling panjang" }
+        {
+          "id": "A",
+          "text": "Karena Dewi adalah murid kesayangannya"
+        },
+        {
+          "id": "B",
+          "text": "Karena waktu adalah sesuatu yang bisa dibeli"
+        },
+        {
+          "id": "C",
+          "text": "Karena waktu tidak bisa dibeli dan tidak bisa kembali"
+        },
+        {
+          "id": "D",
+          "text": "Karena jawaban Dewi paling panjang"
+        }
       ],
       "correctAnswer": "C",
       "explanation": "Guru menjelaskan bahwa waktu adalah satu-satunya hal yang tidak bisa dibeli dengan uang dan tidak akan pernah kembali jika sudah berlalu.",
-      "tags": ["informasi-tersirat", "kesimpulan"],
+      "tags": [
+        "informasi-tersirat",
+        "kesimpulan"
+      ],
       "source": "BC_UKBI_SMP_ORIGINAL",
       "status": "approved",
       "cognitive": "PENERAPAN",
-      "domain": "SASTRA"
+      "domain": "SOSIAL"
     },
     {
       "id": "BC-UKBI-SMP-MENDENGARKAN-UNGGUL-SET001-Q039",
@@ -964,18 +1511,32 @@
       "band": "UNGGUL",
       "type": "pilihan_ganda",
       "difficulty": 4,
-      "audioScript": "Laporan cuaca: "Prakiraan cuaca untuk wilayah Jakarta dan sekitarnya pada hari ini: pagi hari cerah berawan dengan suhu 26 derajat Celcius. Siang hari diperkirakan hujan ringan hingga sedang. Malam hari berawan. Masyarakat diimbau untuk tetap waspada terhadap potensi hujan lebat di sore hari, terutama di daerah Jakarta Selatan dan Timur yang rawan banjir. Suhu maksimum hari ini mencapai 33 derajat Celcius.\"",
+      "audioScript": "Laporan cuaca: \"Prakiraan cuaca untuk wilayah Jakarta dan sekitarnya pada hari ini: pagi hari cerah berawan dengan suhu 26 derajat Celcius. Siang hari diperkirakan hujan ringan hingga sedang. Malam hari berawan. Masyarakat diimbau untuk tetap waspada terhadap potensi hujan lebat di sore hari, terutama di daerah Jakarta Selatan dan Timur yang rawan banjir. Suhu maksimum hari ini mencapai 33 derajat Celcius.\"",
       "audioRef": null,
       "stem": "Wilayah mana yang disebut paling rawan banjir jika hujan lebat?",
       "options": [
-        { "id": "A", "text": "Jakarta Pusat dan Barat" },
-        { "id": "B", "text": "Jakarta Utara" },
-        { "id": "C", "text": "Jakarta Selatan dan Timur" },
-        { "id": "D", "text": "Seluruh wilayah Jakarta" }
+        {
+          "id": "A",
+          "text": "Jakarta Pusat dan Barat"
+        },
+        {
+          "id": "B",
+          "text": "Jakarta Utara"
+        },
+        {
+          "id": "C",
+          "text": "Jakarta Selatan dan Timur"
+        },
+        {
+          "id": "D",
+          "text": "Seluruh wilayah Jakarta"
+        }
       ],
       "correctAnswer": "C",
       "explanation": "Laporan cuaca menyebutkan 'terutama di daerah Jakarta Selatan dan Timur yang rawan banjir' sebagai peringatan khusus.",
-      "tags": ["informasi-tersurat"],
+      "tags": [
+        "informasi-tersurat"
+      ],
       "source": "BC_UKBI_SMP_ORIGINAL",
       "status": "approved",
       "cognitive": "PEMAHAMAN",
@@ -989,18 +1550,33 @@
       "band": "UNGGUL",
       "type": "pilihan_ganda",
       "difficulty": 4,
-      "audioScript": "Pidato penutup: "Akhir kata, saya mengucapkan terima kasih kepada semua pihak yang telah mendukung kegiatan ini. Semoga semangat gotong royong yang kita bangun hari ini tidak berhenti di sini. Mari kita terus jaga kebersamaan dan kepedulian terhadap sesama. Karena sehebat apa pun kita sebagai individu, kita akan lebih kuat ketika bersatu. Wassalamualaikum warahmatullahi wabarakatuh.\"",
+      "audioScript": "Pidato penutup: \"Akhir kata, saya mengucapkan terima kasih kepada semua pihak yang telah mendukung kegiatan ini. Semoga semangat gotong royong yang kita bangun hari ini tidak berhenti di sini. Mari kita terus jaga kebersamaan dan kepedulian terhadap sesama. Karena sehebat apa pun kita sebagai individu, kita akan lebih kuat ketika bersatu. Wassalamualaikum warahmatullahi wabarakatuh.\"",
       "audioRef": null,
       "stem": "Apa inti dari pesan penutup pidato tersebut?",
       "options": [
-        { "id": "A", "text": "Kegiatan hari ini adalah yang terakhir" },
-        { "id": "B", "text": "Kekuatan individu lebih penting dari kebersamaan" },
-        { "id": "C", "text": "Semangat gotong royong harus terus dijaga karena kebersamaan membuat kita kuat" },
-        { "id": "D", "text": "Terima kasih harus disampaikan setiap saat" }
+        {
+          "id": "A",
+          "text": "Kegiatan hari ini adalah yang terakhir"
+        },
+        {
+          "id": "B",
+          "text": "Kekuatan individu lebih penting dari kebersamaan"
+        },
+        {
+          "id": "C",
+          "text": "Semangat gotong royong harus terus dijaga karena kebersamaan membuat kita kuat"
+        },
+        {
+          "id": "D",
+          "text": "Terima kasih harus disampaikan setiap saat"
+        }
       ],
       "correctAnswer": "C",
       "explanation": "Pidato menekankan agar semangat gotong royong terus dijaga dan bahwa kita akan lebih kuat ketika bersatu, menunjukkan inti pesan tentang kebersamaan.",
-      "tags": ["kesimpulan", "tujuan-pembicara"],
+      "tags": [
+        "kesimpulan",
+        "tujuan-pembicara"
+      ],
       "source": "BC_UKBI_SMP_ORIGINAL",
       "status": "approved",
       "cognitive": "PENERAPAN",

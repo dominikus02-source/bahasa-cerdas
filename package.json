@@ -59,6 +59,9 @@
     "seed:ukbi-sd:dry-run": "npx tsx scripts/seed-ukbi-sd-bank.ts",
     "seed:ukbi-sd": "npx tsx scripts/seed-ukbi-sd-bank.ts --execute",
     "validate:ukbi-sd-bank": "npx tsx scripts/validate-ukbi-sd-bank.ts",
+    "seed:ukbi-smp:dry-run": "npx tsx scripts/seed-ukbi-smp-bank.ts",
+    "seed:ukbi-smp": "npx tsx scripts/seed-ukbi-smp-bank.ts --execute",
+    "validate:ukbi-smp-bank": "npx tsx scripts/validate-ukbi-smp-bank.ts",
     "audit:ukbi-tka-runtime": "npx tsx scripts/audit-ukbi-tka-runtime-wiring.ts",
     "test:ukbi-tka-runtime": "npx tsx scripts/test-ukbi-tka-runtime-wiring.ts"
   },

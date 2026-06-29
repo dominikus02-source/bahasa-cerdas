@@ -4,12 +4,12 @@ import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { BookOpen, Award, Clock, ChevronRight, Trophy, Star, TrendingUp, GraduationCap, FileText, CheckCircle } from "lucide-react";
 
-const TYPE_LABELS: Record<string, { label: string; icon: string; color: string }> = {
-  UKBI: { label: "UKBI", icon: "📝", color: "bg-blue-500" },
-  UKBI_SIMULASI: { label: "Simulasi UKBI", icon: "🎓", color: "bg-indigo-500" },
-  UKBI_LATIHAN: { label: "Latihan UKBI", icon: "📖", color: "bg-cyan-500" },
-  TKA_GURU: { label: "TKA Guru", icon: "👨‍🏫", color: "bg-emerald-500" },
-  TKA_UTBK: { label: "TKA UTBK", icon: "🎯", color: "bg-amber-500" },
+const TYPE_CONFIG: Record<string, { label: string; Icon: React.ComponentType<{ className?: string }>; color: string }> = {
+  UKBI: { label: "UKBI", Icon: BookOpen, color: "bg-blue-500" },
+  UKBI_SIMULASI: { label: "Simulasi UKBI", Icon: GraduationCap, color: "bg-indigo-500" },
+  UKBI_LATIHAN: { label: "Latihan UKBI", Icon: FileText, color: "bg-cyan-500" },
+  TKA_GURU: { label: "TKA Guru", Icon: Award, color: "bg-emerald-500" },
+  TKA_UTBK: { label: "TKA UTBK", Icon: Trophy, color: "bg-amber-500" },
 };
 
 const PREDICAT_COLORS: Record<string, string> = {
@@ -80,7 +80,7 @@ export default function KompetensiClient() {
     { key: "TKA_GURU", label: "TKA Guru" },
   ];
 
-  const getTypeConfig = (type: string) => TYPE_LABELS[type] || TYPE_LABELS["UKBI"];
+  const getTypeConfig = (type: string) => TYPE_CONFIG[type] || TYPE_CONFIG["UKBI"];
   const formatDuration = (mins: number) => `${mins} menit`;
 
   return (
@@ -135,8 +135,8 @@ export default function KompetensiClient() {
                   <div className="p-5">
                     <div className="flex flex-col md:flex-row items-start gap-4">
                       <div className="flex items-start gap-4 w-full md:w-auto md:flex-1">
-                        <div className={`w-14 h-14 ${typeConfig.color} rounded-xl flex items-center justify-center text-2xl shrink-0`}>
-                          {typeConfig.icon}
+                        <div className={`w-14 h-14 ${typeConfig.color} rounded-xl flex items-center justify-center shrink-0`}>
+                          <typeConfig.Icon className="w-6 h-6 text-white" />
                         </div>
                       
                         <div className="flex-1 min-w-0">

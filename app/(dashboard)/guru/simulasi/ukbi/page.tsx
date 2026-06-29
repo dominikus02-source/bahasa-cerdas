@@ -4,6 +4,7 @@ import { redirect } from "next/navigation"
 import { getUKBIPackages } from "@/lib/kompetensi/get-simulation-packages"
 import { BookOpen, Database, TrendingUp } from "lucide-react"
 import Link from "next/link"
+import { TrackIcon } from "@/components/shared/TrackIcon"
 
 export const dynamic = "force-dynamic"
 
@@ -49,8 +50,8 @@ export default async function GuruUKBISimulasiPage() {
         {tracks.map(track => (
           <div key={track.id} className={`bg-white rounded-xl border border-gray-100 p-5 ${track.available ? "" : "opacity-60"}`}>
             <div className="flex items-center gap-3 mb-3">
-              <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${track.bgGradient} flex items-center justify-center text-sm`}>
-                {track.icon}
+              <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${track.bgGradient} flex items-center justify-center`}>
+                <TrackIcon name={track.icon} className="w-5 h-5 text-white" />
               </div>
               <div>
                 <h3 className="font-bold text-gray-900 text-sm">{track.label}</h3>

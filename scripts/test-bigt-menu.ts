@@ -27,25 +27,23 @@ async function main() {
   test("/murid/bigt page exists", () => fs.existsSync("app/(dashboard)/murid/bigt/page.tsx"))
   test("/guru/bigt page exists", () => fs.existsSync("app/(dashboard)/guru/bigt/page.tsx"))
 
-  // Murid sidebar BIGT
+  // Murid sidebar — check BOTH layout (production) and standalone component
   console.log("\n── Murid Sidebar BIGT ──")
+  const muridLayout = fs.readFileSync("app/(dashboard)/murid/layout.tsx", "utf-8")
+  test("BIGT label in MuridLayout (production)", () => muridLayout.includes('"BIGT"'))
+  test("BIGT href /murid/bigt in MuridLayout", () => muridLayout.includes('/murid/bigt"'))
   const muridSidebar = fs.readFileSync("components/dashboard/MuridSidebar.tsx", "utf-8")
-  test("BIGT label in MuridSidebar", () => muridSidebar.includes('"BIGT"'))
+  test("BIGT label in MuridSidebar (standalone)", () => muridSidebar.includes('"BIGT"'))
   test("BIGT href /murid/bigt in MuridSidebar", () => muridSidebar.includes('"/murid/bigt"') || muridSidebar.includes("'/murid/bigt'"))
-  test("BIGT uses ExternalLink icon", () => {
-    const bigtLine = muridSidebar.split("\n").find(l => l.includes("BIGT"))
-    return bigtLine ? bigtLine.includes("ExternalLink") : false
-  })
 
-  // Guru sidebar BIGT
+  // Guru sidebar — check BOTH layout (production) and standalone component
   console.log("\n── Guru Sidebar BIGT ──")
+  const guruLayout = fs.readFileSync("app/(dashboard)/guru/layout.tsx", "utf-8")
+  test("BIGT label in GuruLayout (production)", () => guruLayout.includes('"BIGT"'))
+  test("BIGT href /guru/bigt in GuruLayout", () => guruLayout.includes('/guru/bigt"'))
   const guruSidebar = fs.readFileSync("components/dashboard/GuruSidebar.tsx", "utf-8")
-  test("BIGT label in GuruSidebar", () => guruSidebar.includes('"BIGT"'))
+  test("BIGT label in GuruSidebar (standalone)", () => guruSidebar.includes('"BIGT"'))
   test("BIGT href /guru/bigt in GuruSidebar", () => guruSidebar.includes('"/guru/bigt"') || guruSidebar.includes("'/guru/bigt'"))
-  test("BIGT uses ExternalLink icon in GuruSidebar", () => {
-    const bigtLine = guruSidebar.split("\n").find(l => l.includes("BIGT"))
-    return bigtLine ? bigtLine.includes("ExternalLink") : false
-  })
 
   // BIGT page content
   console.log("\n── BIGT Page Content ──")

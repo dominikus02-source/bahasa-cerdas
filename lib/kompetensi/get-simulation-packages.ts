@@ -64,18 +64,18 @@ export interface SimulationTrack {
 }
 
 const UKBI_TRACK_DEFS: Record<string, Omit<SimulationTrack, "questionCount" | "duration" | "paketId" | "available" | "isLegacy">> = {
-  SD:   { id: "ukbi-sd", label: "UKBI SD Practice", description: "Latihan Bahasa Indonesia untuk peserta SD", target: "Peserta SD kelas 4–6", icon: "🎒", bgGradient: "from-cyan-500 to-blue-500", track: "SD", type: "UKBI_SD" },
-  SMP:  { id: "ukbi-smp", label: "UKBI SMP", description: "Latihan Bahasa Indonesia untuk peserta SMP", target: "Peserta SMP kelas 7–9", icon: "📚", bgGradient: "from-indigo-500 to-blue-600", track: "SMP", type: "UKBI_SMP" },
-  SMA:  { id: "ukbi-sma", label: "UKBI SMA", description: "Latihan Bahasa Indonesia untuk peserta SMA", target: "Peserta SMA kelas 10–12", icon: "🎓", bgGradient: "from-violet-500 to-purple-600", track: "SMA", type: "UKBI_SMA" },
-  GURU: { id: "ukbi-guru", label: "UKBI Guru/Umum", description: "Latihan Bahasa Indonesia untuk guru dan umum", target: "Guru & masyarakat umum", icon: "👨‍🏫", bgGradient: "from-emerald-500 to-teal-600", track: "GURU", type: "UKBI_GURU_SIMULASI" },
+  SD:   { id: "ukbi-sd", label: "UKBI SD Practice", description: "Latihan Bahasa Indonesia untuk peserta SD", target: "Peserta SD kelas 4–6", icon: "School", bgGradient: "from-cyan-500 to-blue-500", track: "SD", type: "UKBI_SD" },
+  SMP:  { id: "ukbi-smp", label: "UKBI SMP", description: "Latihan Bahasa Indonesia untuk peserta SMP", target: "Peserta SMP kelas 7–9", icon: "BookOpen", bgGradient: "from-indigo-500 to-blue-600", track: "SMP", type: "UKBI_SMP" },
+  SMA:  { id: "ukbi-sma", label: "UKBI SMA", description: "Latihan Bahasa Indonesia untuk peserta SMA", target: "Peserta SMA kelas 10–12", icon: "GraduationCap", bgGradient: "from-violet-500 to-purple-600", track: "SMA", type: "UKBI_SMA" },
+  GURU: { id: "ukbi-guru", label: "UKBI Guru/Umum", description: "Latihan Bahasa Indonesia untuk guru dan umum", target: "Guru & masyarakat umum", icon: "Award", bgGradient: "from-emerald-500 to-teal-600", track: "GURU", type: "UKBI_GURU_SIMULASI" },
 };
 
 const TKA_TRACK_DEFS: Record<string, Omit<SimulationTrack, "questionCount" | "duration" | "paketId" | "available" | "isLegacy">> = {
-  SD:   { id: "tka-sd", label: "TKA Kelas 6", description: "Latihan soal Bahasa Indonesia untuk persiapan ujian SD", target: "Siswa kelas 6 SD", icon: "🎒", bgGradient: "from-rose-500 to-pink-500", track: "SD", type: "TKA_SD" },
-  SMP:  { id: "tka-smp", label: "TKA Kelas 9", description: "Latihan soal Bahasa Indonesia untuk persiapan ujian SMP", target: "Siswa kelas 9 SMP", icon: "📚", bgGradient: "from-teal-500 to-emerald-600", track: "SMP", type: "TKA_SMP" },
-  SMA:  { id: "tka-sma", label: "TKA Kelas 12", description: "Latihan soal Bahasa Indonesia untuk persiapan ujian SMA/SMK/MA", target: "Siswa kelas 12 SMA", icon: "🎓", bgGradient: "from-purple-500 to-fuchsia-600", track: "SMA", type: "TKA_SMA" },
-  UTBK: { id: "tka-utbk", label: "TKA UTBK", description: "Latihan soal Bahasa Indonesia untuk persiapan UTBK", target: "Peserta UTBK", icon: "🎯", bgGradient: "from-orange-500 to-amber-600", track: "UTBK", type: "TKA_UTBK" },
-  GURU: { id: "tka-guru", label: "TKA Bahasa Indonesia Lanjutan", description: "Latihan Bahasa Indonesia tingkat lanjut", target: "Guru & profesional", icon: "👨‍🏫", bgGradient: "from-emerald-500 to-teal-600", track: "GURU", type: "TKA_GURU" },
+  SD:   { id: "tka-sd", label: "TKA Kelas 6", description: "Latihan soal Bahasa Indonesia untuk persiapan ujian SD", target: "Siswa kelas 6 SD", icon: "PencilRuler", bgGradient: "from-rose-500 to-pink-500", track: "SD", type: "TKA_SD" },
+  SMP:  { id: "tka-smp", label: "TKA Kelas 9", description: "Latihan soal Bahasa Indonesia untuk persiapan ujian SMP", target: "Siswa kelas 9 SMP", icon: "Layers", bgGradient: "from-teal-500 to-emerald-600", track: "SMP", type: "TKA_SMP" },
+  SMA:  { id: "tka-sma", label: "TKA Kelas 12", description: "Latihan soal Bahasa Indonesia untuk persiapan ujian SMA/SMK/MA", target: "Siswa kelas 12 SMA", icon: "GraduationCap", bgGradient: "from-purple-500 to-fuchsia-600", track: "SMA", type: "TKA_SMA" },
+  UTBK: { id: "tka-utbk", label: "TKA UTBK", description: "Latihan soal Bahasa Indonesia untuk persiapan UTBK", target: "Peserta UTBK", icon: "Target", bgGradient: "from-orange-500 to-amber-600", track: "UTBK", type: "TKA_UTBK" },
+  GURU: { id: "tka-guru", label: "TKA Bahasa Indonesia Lanjutan", description: "Latihan Bahasa Indonesia tingkat lanjut", target: "Guru & profesional", icon: "UserCheck", bgGradient: "from-emerald-500 to-teal-600", track: "GURU", type: "TKA_GURU" },
 };
 
 export async function getUKBIPackages(): Promise<SimulationTrack[]> {

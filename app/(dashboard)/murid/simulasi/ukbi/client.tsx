@@ -3,6 +3,7 @@
 import Link from "next/link"
 import { BookOpen, Clock, AlertTriangle } from "lucide-react"
 import type { SimulationTrack } from "@/lib/kompetensi/get-simulation-packages"
+import { TrackIcon } from "@/components/shared/TrackIcon"
 
 interface Props {
   tracks: SimulationTrack[]
@@ -61,8 +62,8 @@ export function UKBISimulationClient({ tracks }: Props) {
                 }`}
               >
                 <div className="flex items-start gap-4">
-                  <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${track.bgGradient} flex items-center justify-center text-lg shrink-0`}>
-                    {track.icon}
+                  <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${track.bgGradient} flex items-center justify-center shrink-0`}>
+                    <TrackIcon name={track.icon} className="w-6 h-6 text-white" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <h3 className="font-bold text-gray-900 text-sm">{track.label}</h3>

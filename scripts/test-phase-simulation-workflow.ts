@@ -52,8 +52,20 @@ function assertNotContains(filePath: string, pattern: string, label: string) {
 async function main() {
   console.log(`\n${YELLOW}=== Phase Simulation Workflow 1 — QA Tests ===${RESET}\n`)
 
-  // 1. Read MuridSidebar
-  console.log(`\n${YELLOW}--- MuridSidebar ---${RESET}`)
+  // 1. Read MuridLayout (production sidebar)
+  console.log(`\n${YELLOW}--- Murid Layout (Production Sidebar) ---${RESET}`)
+  assertContains("app/(dashboard)/murid/layout.tsx", "Simulasi UKBI", "MuridLayout contains 'Simulasi UKBI'")
+  assertContains("app/(dashboard)/murid/layout.tsx", "Simulasi TKA", "MuridLayout contains 'Simulasi TKA'")
+  assertContains("app/(dashboard)/murid/layout.tsx", "Dokumen Hasil Latihan", "MuridLayout contains 'Dokumen Hasil Latihan'")
+  assertContains("app/(dashboard)/murid/layout.tsx", "BIGT", "MuridLayout contains 'BIGT'")
+  assertContains("app/(dashboard)/murid/layout.tsx", "/murid/simulasi/ukbi", "MuridLayout links to /murid/simulasi/ukbi")
+  assertContains("app/(dashboard)/murid/layout.tsx", "/murid/simulasi/tka", "MuridLayout links to /murid/simulasi/tka")
+  assertContains("app/(dashboard)/murid/layout.tsx", "/murid/dokumen-latihan", "MuridLayout links to /murid/dokumen-latihan")
+  assertContains("app/(dashboard)/murid/layout.tsx", "/murid/bigt", "MuridLayout links to /murid/bigt")
+  assertNotContains("app/(dashboard)/murid/layout.tsx", 'label="Sertifikat"', "MuridLayout no 'Sertifikat' label")
+
+  // Also check standalone MuridSidebar component
+  console.log(`\n${YELLOW}--- MuridSidebar (Standalone) ---${RESET}`)
   assertContains("components/dashboard/MuridSidebar.tsx", "Simulasi UKBI", "MuridSidebar contains 'Simulasi UKBI'")
   assertContains("components/dashboard/MuridSidebar.tsx", "Simulasi TKA", "MuridSidebar contains 'Simulasi TKA'")
   assertContains("components/dashboard/MuridSidebar.tsx", "Dokumen Hasil Latihan", "MuridSidebar contains 'Dokumen Hasil Latihan'")
@@ -63,8 +75,22 @@ async function main() {
   assertContains("components/dashboard/MuridSidebar.tsx", "/murid/dokumen-latihan", "MuridSidebar links to /murid/dokumen-latihan")
   assertContains("components/dashboard/MuridSidebar.tsx", "/murid/bigt", "MuridSidebar links to /murid/bigt")
 
-  // 2. Read GuruSidebar
-  console.log(`\n${YELLOW}--- GuruSidebar ---${RESET}`)
+  // 2. Read GuruLayout (production sidebar)
+  console.log(`\n${YELLOW}--- Guru Layout (Production Sidebar) ---${RESET}`)
+  assertContains("app/(dashboard)/guru/layout.tsx", "Simulasi UKBI", "GuruLayout contains 'Simulasi UKBI'")
+  assertContains("app/(dashboard)/guru/layout.tsx", "Simulasi TKA", "GuruLayout contains 'Simulasi TKA'")
+  assertContains("app/(dashboard)/guru/layout.tsx", "Hasil Murid", "GuruLayout contains 'Hasil Murid'")
+  assertContains("app/(dashboard)/guru/layout.tsx", "Dokumen Latihan Murid", "GuruLayout contains 'Dokumen Latihan Murid'")
+  assertContains("app/(dashboard)/guru/layout.tsx", "BIGT", "GuruLayout contains 'BIGT'")
+  assertContains("app/(dashboard)/guru/layout.tsx", "/guru/simulasi/ukbi", "GuruLayout links to /guru/simulasi/ukbi")
+  assertContains("app/(dashboard)/guru/layout.tsx", "/guru/simulasi/tka", "GuruLayout links to /guru/simulasi/tka")
+  assertContains("app/(dashboard)/guru/layout.tsx", "/guru/hasil-simulasi", "GuruLayout links to /guru/hasil-simulasi")
+  assertContains("app/(dashboard)/guru/layout.tsx", "/guru/dokumen-latihan", "GuruLayout links to /guru/dokumen-latihan")
+  assertContains("app/(dashboard)/guru/layout.tsx", "/guru/bigt", "GuruLayout links to /guru/bigt")
+  assertNotContains("app/(dashboard)/guru/layout.tsx", 'label="Sertifikat"', "GuruLayout no 'Sertifikat' label")
+
+  // Also check standalone GuruSidebar component
+  console.log(`\n${YELLOW}--- GuruSidebar (Standalone) ---${RESET}`)
   assertContains("components/dashboard/GuruSidebar.tsx", "Simulasi UKBI", "GuruSidebar contains 'Simulasi UKBI'")
   assertContains("components/dashboard/GuruSidebar.tsx", "Simulasi TKA", "GuruSidebar contains 'Simulasi TKA'")
   assertContains("components/dashboard/GuruSidebar.tsx", "Hasil Murid", "GuruSidebar contains 'Hasil Murid'")
