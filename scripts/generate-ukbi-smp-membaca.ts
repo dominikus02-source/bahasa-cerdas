@@ -1,0 +1,2367 @@
+import * as fs from "fs";
+import * as path from "path";
+
+interface Question {
+  id: string;
+  product: string;
+  track: string;
+  section: string;
+  band: string;
+  type: string;
+  difficulty: number;
+  passage: string;
+  stem: string;
+  options: { id: string; text: string }[];
+  correctAnswer: string;
+  explanation: string;
+  tags: string[];
+  source: string;
+  status: string;
+}
+
+interface PassageGroup {
+  bandAssignments: ("SEMENJANA" | "MADYA" | "UNGGUL")[];
+  difficultyAssignments: number[];
+  tagsAssignments: string[][];
+  passage: string;
+  stems: string[];
+  options: { id: string; text: string }[][];
+  correctAnswers: string[];
+  explanations: string[];
+}
+
+const passageGroups: PassageGroup[] = [
+  // PASSAGE 1: Perpustakaan Sekolah
+  {
+    bandAssignments: ["SEMENJANA", "SEMENJANA", "SEMENJANA", "MADYA"],
+    difficultyAssignments: [2, 2, 3, 3],
+    tagsAssignments: [
+      ["informasi-tersurat", "membaca"],
+      ["informasi-tersurat", "membaca"],
+      ["makna-kata", "membaca"],
+      ["gagasan-utama", "membaca"],
+    ],
+    passage:
+      "Perpustakaan sekolah SMP Nusantara memiliki koleksi lebih dari tiga ribu buku. Setiap hari, siswa datang untuk membaca atau meminjam buku. Petugas perpustakaan, Bu Rina, selalu menyapa dengan ramah setiap pengunjung. Ia membantu siswa mencari referensi untuk tugas sekolah. Perpustakaan ini buka setiap hari Senin hingga Jumat, pukul 07.00 sampai 16.00. Selain buku cetak, perpustakaan juga menyediakan akses ke buku digital melalui tablet yang tersedia di sudut baca. Ada pula area khusus untuk diskusi kelompok yang dilengkapi sofa nyaman. Setiap bulan, perpustakaan mengadakan lomba meresensi buku. Pemenang lomba mendapat hadiah buku baru. Kegiatan ini membuat siswa semakin tertarik untuk membaca. Menurut Bu Rina, minat baca siswa meningkat sejak program lomba diadakan. Banyak siswa yang kini rutin mengunjungi perpustakaan, bukan hanya saat mendapat tugas dari guru.",
+    stems: [
+      "Berapa jumlah koleksi buku yang dimiliki perpustakaan SMP Nusantara?",
+      "Kapan perpustakaan SMP Nusantara buka setiap harinya?",
+      "Istilah 'meresensi buku' dalam bacaan di atas memiliki arti...",
+      "Apa gagasan utama paragraf pertama bacaan tersebut?",
+    ],
+    options: [
+      [
+        { id: "A", text: "Seribu buku" },
+        { id: "B", text: "Dua ribu buku" },
+        { id: "C", text: "Tiga ribu buku" },
+        { id: "D", text: "Lima ribu buku" },
+      ],
+      [
+        { id: "A", text: "Senin hingga Sabtu, pukul 07.00—15.00" },
+        { id: "B", text: "Senin hingga Jumat, pukul 07.00—16.00" },
+        { id: "C", text: "Senin hingga Kamis, pukul 08.00—16.00" },
+        { id: "D", text: "Senin hingga Jumat, pukul 08.00—15.00" },
+      ],
+      [
+        { id: "A", text: "Menulis ulang isi buku" },
+        { id: "B", text: "Memberikan ulasan atau penilaian terhadap buku" },
+        { id: "C", text: "Membaca buku dengan cepat" },
+        { id: "D", text: "Membeli buku di toko" },
+      ],
+      [
+        {
+          id: "A",
+          text: "Perpustakaan menyediakan akses buku digital",
+        },
+        {
+          id: "B",
+          text: "Perpustakaan SMP Nusantara memiliki koleksi buku yang banyak dan berbagai fasilitas",
+        },
+        {
+          id: "C",
+          text: "Bu Rina adalah petugas perpustakaan yang ramah",
+        },
+        {
+          id: "D",
+          text: "Lomba meresensi buku diadakan setiap bulan",
+        },
+      ],
+    ],
+    correctAnswers: ["C", "B", "B", "B"],
+    explanations: [
+      'Teks menyebutkan "Perpustakaan sekolah SMP Nusantara memiliki koleksi lebih dari tiga ribu buku."',
+      'Teks menyebutkan perpustakaan "buka setiap hari Senin hingga Jumat, pukul 07.00 sampai 16.00."',
+      'Kata "meresensi" berasal dari kata dasar "resensi" yang berarti ulasan atau penilaian terhadap suatu buku. Meresensi berarti memberikan ulasan atau penilaian terhadap buku.',
+      "Gagasan utama paragraf pertama adalah gambaran umum tentang perpustakaan SMP Nusantara yang memiliki koleksi buku banyak dan beragam fasilitas. Kalimat-kalimat lain mendukung ide pokok ini.",
+    ],
+  },
+
+  // PASSAGE 2: Ekstrakurikuler Pramuka
+  {
+    bandAssignments: ["SEMENJANA", "SEMENJANA", "SEMENJANA", "MADYA"],
+    difficultyAssignments: [2, 2, 3, 3],
+    tagsAssignments: [
+      ["informasi-tersurat", "membaca"],
+      ["informasi-tersurat", "membaca"],
+      ["inferensi", "membaca"],
+      ["tujuan-teks", "membaca"],
+    ],
+    passage:
+      "Ekstrakurikuler pramuka di SMP Harapan Bangsa berjalan setiap hari Sabtu pukul 14.00. Kegiatannya meliputi tali-temali, sandi, berkemah, dan bakti sosial. Pembina pramuka, Kak Agus, selalu menekankan pentingnya kedisiplinan dan kerja sama tim. \"Dalam pramuka, tidak ada aku sendiri. Semua adalah tim,\" ujarnya setiap latihan. Anggota pramuka dibagi menjadi beberapa regu. Setiap regu memiliki nama dan yel-yel kebanggaan. Mereka juga belajar membuat pioneer, yaitu bangunan darurat dari tongkat dan tali yang kuat. Kegiatan berkemah diadakan dua kali setahun, biasanya saat liburan semester. Saat berkemah, siswa belajar mandiri, memasak makanan sederhana, dan menjaga kebersihan alam sekitar. Banyak siswa yang merasa pramuka mengajarkan mereka keterampilan hidup berharga yang tidak didapat di dalam kelas. Tidak heran jika setiap tahun jumlah anggota pramuka di sekolah ini terus bertambah signifikan.",
+    stems: [
+      "Kapan ekstrakurikuler pramuka di SMP Harapan Bangsa dilaksanakan?",
+      "Apa yang ditekankan oleh Kak Agus dalam setiap latihan pramuka?",
+      "Apa yang dapat disimpulkan tentang kegiatan pramuka di SMP Harapan Bangsa?",
+      "Apa tujuan penulisan teks tersebut?",
+    ],
+    options: [
+      [
+        { id: "A", text: "Setiap hari Minggu pukul 07.00" },
+        { id: "B", text: "Setiap hari Sabtu pukul 14.00" },
+        { id: "C", text: "Setiap hari Jumat pukul 15.00" },
+        { id: "D", text: "Setiap hari Rabu pukul 13.00" },
+      ],
+      [
+        { id: "A", text: "Kemampuan berpidato dan berdebat" },
+        { id: "B", text: "Kedisiplinan dan kerja sama tim" },
+        { id: "C", text: "Keterampilan bermusik dan seni" },
+        { id: "D", text: "Kecepatan berlari dan berenang" },
+      ],
+      [
+        {
+          id: "A",
+          text: "Pramuka hanya mengajarkan kegiatan tali-temali dan sandi",
+        },
+        {
+          id: "B",
+          text: "Pramuka membosankan sehingga jumlah anggota menurun",
+        },
+        {
+          id: "C",
+          text: "Pramuka bermanfaat dan mengajarkan keterampilan hidup yang berharga",
+        },
+        {
+          id: "D",
+          text: "Pramuka hanya diikuti oleh siswa laki-laki",
+        },
+      ],
+      [
+        { id: "A", text: "Mengajak siswa mengikuti lomba pramuka" },
+        {
+          id: "B",
+          text: "Menceritakan pengalaman pribadi penulis di pramuka",
+        },
+        {
+          id: "C",
+          text: "Menginformasikan kegiatan ekstrakurikuler pramuka dan manfaatnya",
+        },
+        {
+          id: "D",
+          text: "Membandingkan pramuka dengan ekstrakurikuler lain",
+        },
+      ],
+    ],
+    correctAnswers: ["B", "B", "C", "C"],
+    explanations: [
+      'Teks menyebutkan pramuka "berjalan setiap hari Sabtu pukul 14.00."',
+      'Teks menyebutkan Kak Agus "selalu menekankan pentingnya kedisiplinan dan kerja sama tim."',
+      'Teks menyebutkan berbagai kegiatan positif dan keterampilan hidup yang dipelajari di pramuka serta fakta bahwa jumlah anggota terus bertambah. Ini menunjukkan pramuka bermanfaat dan berharga bagi siswa.',
+      'Teks secara informatif memaparkan kegiatan ekstrakurikuler pramuka, jadwal, kegiatan yang dilakukan, nilai-nilai yang diajarkan, dan manfaatnya bagi siswa. Tujuannya adalah menginformasikan, bukan mengajak, membandingkan, atau menceritakan pengalaman pribadi.',
+    ],
+  },
+
+  // PASSAGE 3: Kebersihan Lingkungan Sekolah
+  {
+    bandAssignments: ["SEMENJANA", "SEMENJANA", "SEMENJANA", "MADYA"],
+    difficultyAssignments: [2, 2, 3, 3],
+    tagsAssignments: [
+      ["informasi-tersurat", "membaca"],
+      ["fakta-opini", "membaca"],
+      ["inferensi", "membaca"],
+      ["hubungan-sebab-akibat", "membaca"],
+    ],
+    passage:
+      "Kebersihan lingkungan sekolah menjadi perhatian utama di SMP Cendekia. Setiap pagi, petugas piket menyapu kelas dan halaman sekolah. Tong sampah tersedia di setiap sudut dengan tiga kategori: organik, anorganik, dan residu. Program Jumat Bersih mewajibkan seluruh siswa membersihkan lingkungan sekolah bersama-sama selama satu jam pertama pembelajaran. Tanaman di taman sekolah dirawat oleh kelompok siswa yang disebut Tim Hijau. Mereka menyiram tanaman setiap hari dan memupuknya sepekan sekali. Hasilnya, sekolah tampak asri dan nyaman dipandang. Udara di lingkungan sekolah terasa segar karena banyak pohon pelindung yang rindang. Sekolah ini juga berhasil meraih penghargaan Sekolah Adiwiyata tingkat kota. Menurut Kepala Sekolah, kebiasaan menjaga kebersihan harus ditanamkan sejak dini agar siswa terbiasa hidup bersih dan sehat, tidak hanya di sekolah tetapi juga di rumah dan masyarakat sekitar.",
+    stems: [
+      "Apa nama program kebersihan yang mewajibkan seluruh siswa membersihkan sekolah bersama-sama?",
+      "Kalimat 'Sekolah ini juga meraih penghargaan Sekolah Adiwiyata tingkat kota' termasuk jenis kalimat...",
+      "Mengapa udara di lingkungan sekolah terasa segar?",
+      "Apa yang menyebabkan sekolah tampak asri dan nyaman?",
+    ],
+    options: [
+      [
+        { id: "A", text: "Program Hijau" },
+        { id: "B", text: "Jumat Bersih" },
+        { id: "C", text: "Sabtu Sehat" },
+        { id: "D", text: "Senin Berseri" },
+      ],
+      [
+        { id: "A", text: "Opini karena berisi pendapat pribadi" },
+        {
+          id: "B",
+          text: "Fakta karena dapat dibuktikan kebenarannya",
+        },
+        {
+          id: "C",
+          text: "Opini karena belum tentu benar adanya",
+        },
+        {
+          id: "D",
+          text: "Fakta karena mengandung kata 'menurut'",
+        },
+      ],
+      [
+        {
+          id: "A",
+          text: "Karena sekolah menanam bunga di taman",
+        },
+        {
+          id: "B",
+          text: "Karena banyak pohon pelindung di lingkungan sekolah",
+        },
+        {
+          id: "C",
+          text: "Karena petugas piket menyapu setiap hari",
+        },
+        {
+          id: "D",
+          text: "Karena tong sampah tersedia di setiap sudut",
+        },
+      ],
+      [
+        {
+          id: "A",
+          text: "Adanya penghargaan Adiwiyata tingkat kota",
+        },
+        {
+          id: "B",
+          text: "Banyaknya siswa yang rajin belajar",
+        },
+        {
+          id: "C",
+          text: "Perawatan tanaman rutin oleh Tim Hijau dan program kebersihan yang berjalan baik",
+        },
+        {
+          id: "D",
+          text: "Petugas piket yang menyapu kelas setiap pagi",
+        },
+      ],
+    ],
+    correctAnswers: ["B", "B", "B", "C"],
+    explanations: [
+      'Teks menyebutkan "Program Jumat Bersih mewajibkan seluruh siswa membersihkan lingkungan sekolah bersama-sama."',
+      "Penghargaan Adiwiyata tingkat kota adalah prestasi nyata yang dapat diverifikasi kebenarannya melalui dokumen penghargaan, sehingga termasuk fakta, bukan opini.",
+      'Teks menyebutkan "Udara di lingkungan sekolah terasa segar karena banyak pohon pelindung." Kata "karena" menunjukkan hubungan sebab-akibat.',
+      'Teks menyebutkan Tim Hijau merawat tanaman setiap hari dan memupuk seminggu sekali, serta program Jumat Bersih berjalan baik. Hasilnya "sekolah tampak asri dan nyaman."',
+    ],
+  },
+
+  // PASSAGE 4: Teknologi dalam Pembelajaran
+  {
+    bandAssignments: ["SEMENJANA", "SEMENJANA", "MADYA", "MADYA"],
+    difficultyAssignments: [2, 3, 3, 4],
+    tagsAssignments: [
+      ["informasi-tersurat", "membaca"],
+      ["makna-kata", "membaca"],
+      ["simpulan", "membaca"],
+      ["sikap-penulis", "membaca"],
+    ],
+    passage:
+      "Di era digital saat ini, teknologi telah menjadi bagian penting dalam proses belajar mengajar. Banyak sekolah yang menggunakan laptop, proyektor, dan aplikasi pendidikan untuk menunjang pembelajaran. Platform seperti Google Classroom, Quizizz, dan Canva membantu guru menyampaikan materi dengan cara yang lebih menarik. Siswa pun dapat mengakses materi pelajaran kapan saja melalui internet. Namun, penggunaan teknologi juga memiliki tantangan. Tidak semua siswa memiliki gawai yang memadai. Koneksi internet yang lambat juga menjadi kendala di beberapa daerah. Karena itu, sekolah perlu mencari solusi agar semua siswa dapat merasakan manfaat teknologi secara merata. Beberapa sekolah menyediakan fasilitas komputer di laboratorium untuk digunakan siswa secara bergiliran. Guru juga perlu terus meningkatkan kemampuan digitalnya agar dapat memanfaatkan teknologi secara maksimal. Teknologi memang membantu, tetapi peran guru tetap tidak bisa digantikan sepenuhnya.",
+    stems: [
+      "Apa saja contoh platform atau aplikasi pendidikan yang disebutkan dalam bacaan?",
+      "Kata 'memadai' dalam bacaan tersebut memiliki arti yang paling dekat dengan...",
+      "Simpulan yang tepat dari teks tersebut adalah...",
+      "Bagaimana sikap penulis terhadap penggunaan teknologi dalam pembelajaran?",
+    ],
+    options: [
+      [
+        {
+          id: "A",
+          text: "Zoom, WhatsApp, dan Instagram",
+        },
+        {
+          id: "B",
+          text: "Google Classroom, Quizizz, dan Canva",
+        },
+        {
+          id: "C",
+          text: "YouTube, TikTok, dan Facebook",
+        },
+        {
+          id: "D",
+          text: "Microsoft Word, Excel, dan PowerPoint",
+        },
+      ],
+      [
+        { id: "A", text: "Canggih dan modern" },
+        { id: "B", text: "Cukup atau sesuai kebutuhan" },
+        { id: "C", text: "Mahal dan sulit didapat" },
+        { id: "D", text: "Baru dan terkini" },
+      ],
+      [
+        {
+          id: "A",
+          text: "Teknologi dapat menggantikan peran guru sepenuhnya di masa depan",
+        },
+        {
+          id: "B",
+          text: "Penggunaan teknologi dalam pembelajaran bermanfaat tetapi masih memiliki tantangan yang perlu diatasi",
+        },
+        {
+          id: "C",
+          text: "Sekolah harus melarang penggunaan gawai di lingkungan sekolah",
+        },
+        {
+          id: "D",
+          text: "Koneksi internet yang lambat membuat teknologi tidak berguna untuk pendidikan",
+        },
+      ],
+      [
+        {
+          id: "A",
+          text: "Sepenuhnya menolak teknologi dalam pembelajaran",
+        },
+        {
+          id: "B",
+          text: "Bersikap netral tanpa memberikan pendapat",
+        },
+        {
+          id: "C",
+          text: "Mendukung tetapi tetap mengingatkan tantangan dan peran guru yang tak tergantikan",
+        },
+        {
+          id: "D",
+          text: "Hanya mendukung penggunaan teknologi di perkotaan",
+        },
+      ],
+    ],
+    correctAnswers: ["B", "B", "B", "C"],
+    explanations: [
+      'Teks menyebutkan "Platform seperti Google Classroom, Quizizz, dan Canva membantu guru menyampaikan materi."',
+      'Kata "memadai" berarti cukup, sesuai dengan kebutuhan, atau mencukupi. Dalam konteks kalimat "tidak semua siswa memiliki gawai yang memadai", artinya tidak semua siswa punya gawai yang cukup baik atau sesuai kebutuhan.',
+      'Teks menyampaikan dua sisi: manfaat teknologi (paragraf 1) dan tantangannya (paragraf 2), lalu diakhiri dengan solusi dan kesimpulan bahwa teknologi membantu tapi guru tetap penting. Ini menunjukkan simpulan yang seimbang.',
+      'Penulis menyampaikan manfaat teknologi, tantangan, dan di akhir menyatakan "Teknologi memang membantu, tetapi peran guru tetap tidak bisa digantikan sepenuhnya." Ini menunjukkan sikap mendukung namun realistis.',
+    ],
+  },
+
+  // PASSAGE 5: Pentingnya Membaca
+  {
+    bandAssignments: ["SEMENJANA", "SEMENJANA", "MADYA", "UNGGUL"],
+    difficultyAssignments: [2, 3, 3, 4],
+    tagsAssignments: [
+      ["informasi-tersurat", "membaca"],
+      ["inferensi", "membaca"],
+      ["hubungan-sebab-akibat", "membaca"],
+      ["struktur-paragraf", "membaca"],
+    ],
+    passage:
+      "Membaca buku membuka jendela dunia. Pepatah ini sudah sering kita dengar, tetapi maknanya sangat dalam. Dengan membaca, kita bisa mengetahui berbagai hal tanpa harus mengalaminya langsung. Misalnya, membaca buku tentang budaya Jepang membuat kita paham tradisi masyarakat di sana meski belum pernah ke Jepang. Membaca juga melatih otak untuk berpikir kritis dan menganalisis informasi. Semakin sering membaca, semakin tajam kemampuan berpikir seseorang. Sayangnya, minat baca di Indonesia masih tergolong rendah. Data UNESCO menunjukkan bahwa minat baca masyarakat Indonesia berada di peringkat bawah dibanding negara-negara lain. Banyak faktor yang menyebabkan hal ini, seperti terbatasnya akses buku berkualitas, mahalnya harga buku, dan gempuran hiburan digital yang lebih instan. Padahal, kebiasaan membaca yang kuat bisa menjadi modal besar untuk memajukan bangsa. Oleh karena itu, penting bagi kita untuk membudayakan membaca sejak dini, baik di lingkungan keluarga, sekolah, maupun masyarakat.",
+    stems: [
+      'Apa makna dari pepatah "Membaca buku membuka jendela dunia" yang dijelaskan dalam bacaan?',
+      "Berdasarkan bacaan, apa yang dapat disimpulkan tentang hubungan antara membaca dan kemampuan berpikir?",
+      "Mengapa minat baca di Indonesia tergolong rendah menurut bacaan?",
+      "Paragraf pertama dalam teks tersebut menggunakan pola pengembangan...",
+    ],
+    options: [
+      [
+        {
+          id: "A",
+          text: "Buku adalah benda yang berbentuk jendela",
+        },
+        {
+          id: "B",
+          text: "Dengan membaca kita bisa memahami berbagai hal tanpa mengalaminya langsung",
+        },
+        {
+          id: "C",
+          text: "Semua buku menceritakan tentang dunia",
+        },
+        {
+          id: "D",
+          text: "Membaca hanya berguna untuk menambah wawasan",
+        },
+      ],
+      [
+        {
+          id: "A",
+          text: "Membaca dan berpikir tidak memiliki hubungan sama sekali",
+        },
+        {
+          id: "B",
+          text: "Semakin sering membaca, kemampuan berpikir seseorang semakin tajam",
+        },
+        {
+          id: "C",
+          text: "Berpikir kritis membuat seseorang malas membaca",
+        },
+        {
+          id: "D",
+          text: "Membaca hanya melatih kemampuan menghafal, bukan berpikir",
+        },
+      ],
+      [
+        {
+          id: "A",
+          text: "Karena masyarakat Indonesia tidak suka belajar",
+        },
+        {
+          id: "B",
+          text: "Karena buku di Indonesia terlalu murah sehingga dianggap tidak berkualitas",
+        },
+        {
+          id: "C",
+          text: "Karena akses buku terbatas, harga buku mahal, dan hiburan digital lebih instan",
+        },
+        {
+          id: "D",
+          text: "Karena pemerintah melarang membaca buku tertentu",
+        },
+      ],
+      [
+        { id: "A", text: "Perbandingan" },
+        { id: "B", text: "Kronologis" },
+        { id: "C", text: "Sebab-akibat" },
+        { id: "D", text: "Umum-khusus (deduktif)" },
+      ],
+    ],
+    correctAnswers: ["B", "B", "C", "D"],
+    explanations: [
+      'Teks menjelaskan makna pepatah tersebut: "Dengan membaca, kita bisa mengetahui berbagai hal tanpa harus mengalaminya langsung." Ini diilustrasikan dengan contoh membaca buku tentang budaya Jepang.',
+      'Teks menyebutkan "Membaca juga melatih otak untuk berpikir kritis dan menganalisis informasi. Semakin sering membaca, semakin tajam kemampuan berpikir seseorang."',
+      'Teks menyebutkan tiga faktor: "terbatasnya akses buku berkualitas, mahalnya harga buku, dan gempuran hiburan digital yang lebih instan."',
+      "Paragraf dimulai dengan pernyataan umum (membaca buku membuka jendela dunia), lalu diikuti penjelasan khusus. Ini adalah pola deduktif (umum-khusus).",
+    ],
+  },
+
+  // PASSAGE 6: Olahraga dan Kesehatan
+  {
+    bandAssignments: ["SEMENJANA", "SEMENJANA", "UNGGUL", "MADYA"],
+    difficultyAssignments: [2, 3, 4, 4],
+    tagsAssignments: [
+      ["informasi-tersurat", "membaca"],
+      ["inferensi", "membaca"],
+      ["makna-kata", "membaca"],
+      ["simpulan", "membaca"],
+    ],
+    passage:
+      "Olahraga teratur memberikan banyak manfaat bagi kesehatan tubuh. Berolahraga selama tiga puluh menit setiap hari dapat menjaga kebugaran jantung, memperkuat otot, dan meningkatkan sistem kekebalan tubuh. Selain itu, olahraga juga baik untuk kesehatan mental karena dapat mengurangi stres dan kecemasan. Saat berolahraga, tubuh melepaskan hormon endorfin yang membuat perasaan lebih bahagia. Jenis olahraga yang bisa dilakukan remaja sangat beragam, mulai dari berjalan kaki, bersepeda, berenang, hingga bermain bulu tangkis. Tidak perlu menjadi atlet profesional untuk merasakan manfaat olahraga. Yang penting adalah konsistensi. Sayangnya, banyak remaja sekarang lebih memilih menghabiskan waktu dengan ponsel dibanding bergerak aktif. Padahal, gaya hidup sedentari atau malas bergerak bisa memicu berbagai penyakit di kemudian hari. Oleh karena itu, penting untuk menjadikan olahraga sebagai rutinitas harian, meskipun hanya sebentar.",
+    stems: [
+      "Berapa lama durasi olahraga yang disarankan setiap hari menurut bacaan?",
+      "Apa yang terjadi pada tubuh saat seseorang berolahraga?",
+      "Kata 'sedentari' dalam bacaan tersebut memiliki arti...",
+      "Simpulan yang tepat dari teks tersebut adalah...",
+    ],
+    options: [
+      [
+        { id: "A", text: "Sepuluh menit" },
+        { id: "B", text: "Dua puluh menit" },
+        { id: "C", text: "Tiga puluh menit" },
+        { id: "D", text: "Enam puluh menit" },
+      ],
+      [
+        {
+          id: "A",
+          text: "Tubuh melepaskan hormon endorfin yang membuat perasaan lebih bahagia",
+        },
+        {
+          id: "B",
+          text: "Tubuh menjadi lelah dan mudah sakit",
+        },
+        {
+          id: "C",
+          text: "Tubuh memproduksi lebih banyak lemak",
+        },
+        {
+          id: "D",
+          text: "Tubuh kehilangan semua cairan dan elektrolit",
+        },
+      ],
+      [
+        { id: "A", text: "Aktif bergerak sepanjang waktu" },
+        { id: "B", text: "Malas bergerak atau tidak banyak beraktivitas fisik" },
+        { id: "C", text: "Berolahraga secara teratur setiap hari" },
+        { id: "D", text: "Melakukan olahraga berat secara berlebihan" },
+      ],
+      [
+        {
+          id: "A",
+          text: "Olahraga hanya bermanfaat untuk kesehatan fisik, bukan mental",
+        },
+        {
+          id: "B",
+          text: "Remaja sebaiknya menjadi atlet profesional agar sehat",
+        },
+        {
+          id: "C",
+          text: "Olahraga teratur penting karena bermanfaat bagi kesehatan fisik dan mental",
+        },
+        {
+          id: "D",
+          text: "Bermain ponsel lebih baik daripada berolahraga",
+        },
+      ],
+    ],
+    correctAnswers: ["C", "A", "B", "C"],
+    explanations: [
+      'Teks menyebutkan "Berolahraga selama tiga puluh menit setiap hari dapat menjaga kebugaran jantung."',
+      'Teks menyebutkan "Saat berolahraga, tubuh melepaskan hormon endorfin yang membuat perasaan lebih bahagia."',
+      'Kata "sedentari" dijelaskan dalam teks sebagai "gaya hidup ... malas bergerak". Istilah ini merujuk pada kebiasaan duduk atau berbaring terlalu lama dengan sedikit aktivitas fisik.',
+      'Teks membahas manfaat olahraga untuk fisik dan mental, lalu menekankan pentingnya konsistensi. Simpulan yang tepat mencakup kedua aspek manfaat tersebut.',
+    ],
+  },
+
+  // PASSAGE 7: Gotong Royong
+  {
+    bandAssignments: ["SEMENJANA", "SEMENJANA", "MADYA", "MADYA"],
+    difficultyAssignments: [2, 2, 3, 4],
+    tagsAssignments: [
+      ["informasi-tersurat", "membaca"],
+      ["inferensi", "membaca"],
+      ["gagasan-utama", "membaca"],
+      ["struktur-paragraf", "membaca"],
+    ],
+    passage:
+      "Gotong royong merupakan budaya luhur bangsa Indonesia yang sudah ada sejak zaman dahulu. Kegiatan ini mencerminkan semangat kebersamaan dan saling membantu antaranggota masyarakat. Di lingkungan sekolah, gotong royong bisa diwujudkan dalam berbagai bentuk, seperti kerja bakti membersihkan kelas, membantu teman yang kesulitan memahami pelajaran, atau menggalang dana untuk teman yang terkena musibah. Semangat gotong royong mengajarkan bahwa setiap masalah akan lebih ringan jika diselesaikan bersama-sama. Nilai-nilai dalam gotong royong juga sejalan dengan sila ketiga Pancasila, yaitu Persatuan Indonesia. Sayangnya, seiring perkembangan zaman, semangat gotong royong mulai terkikis. Banyak orang lebih memilih menyelesaikan masalah sendiri atau bahkan tidak peduli dengan lingkungan sekitar. Padahal, jika semangat gotong royong tetap dijaga, kehidupan bermasyarakat akan lebih harmonis dan sejahtera. Oleh karena itu, penting bagi generasi muda untuk melestarikan budaya gotong royong.",
+    stems: [
+      "Apa yang dimaksud dengan gotong royong menurut bacaan?",
+      "Mengapa semangat gotong royong dianggap mulai terkikis?",
+      "Ide pokok paragraf pertama bacaan tersebut adalah...",
+      "Paragraf kedua bacaan tersebut menyajikan...",
+    ],
+    options: [
+      [
+        { id: "A", text: "Kegiatan yang dilakukan secara individu" },
+        {
+          id: "B",
+          text: "Semangat kebersamaan dan saling membantu antaranggota masyarakat",
+        },
+        { id: "C", text: "Perlombaan antarwarga masyarakat" },
+        { id: "D", text: "Kegiatan yang hanya dilakukan di sekolah" },
+      ],
+      [
+        {
+          id: "A",
+          text: "Karena pemerintah melarang gotong royong",
+        },
+        {
+          id: "B",
+          text: "Karena gotong royong sudah tidak relevan dengan perkembangan zaman",
+        },
+        {
+          id: "C",
+          text: "Banyak orang lebih memilih menyelesaikan masalah sendiri atau tidak peduli lingkungan",
+        },
+        {
+          id: "D",
+          text: "Karena gotong royong hanya dilakukan oleh orang tua",
+        },
+      ],
+      [
+        {
+          id: "A",
+          text: "Gotong royong adalah budaya luhur yang mencerminkan kebersamaan dan saling membantu",
+        },
+        {
+          id: "B",
+          text: "Gotong royong sejalan dengan sila ketiga Pancasila",
+        },
+        {
+          id: "C",
+          text: "Di sekolah, gotong royong diwujudkan dalam kerja bakti",
+        },
+        {
+          id: "D",
+          text: "Gotong royong sudah ada sejak zaman dahulu",
+        },
+      ],
+      [
+        { id: "A", text: "Sebab-akibat tentang menurunnya gotong royong" },
+        {
+          id: "B",
+          text: "Perbandingan gotong royong dulu dan sekarang",
+        },
+        { id: "C", text: "Kronologi sejarah gotong royong" },
+        {
+          id: "D",
+          text: "Definisi gotong royong secara lengkap",
+        },
+      ],
+    ],
+    correctAnswers: ["B", "C", "A", "A"],
+    explanations: [
+      'Teks menyebutkan gotong royong "mencerminkan semangat kebersamaan dan saling membantu antaranggota masyarakat."',
+      'Teks menyebutkan "Banyak orang lebih memilih menyelesaikan masalah sendiri atau bahkan tidak peduli dengan lingkungan sekitar." Inilah yang menyebabkan semangat gotong royong mulai terkikis.',
+      'Paragraf pertama membahas gotong royong sebagai budaya luhur yang mencerminkan kebersamaan dan saling membantu. Kalimat-kalimat berikutnya mendukung gagasan ini.',
+      'Paragraf kedua menyajikan masalah (memudarnya gotong royong), penyebabnya (orang lebih individualis), lalu akibatnya (kehidupan kurang harmonis). Ini pola sebab-akibat.',
+    ],
+  },
+
+  // PASSAGE 8: Mengelola Waktu Belajar
+  {
+    bandAssignments: ["SEMENJANA", "SEMENJANA", "SEMENJANA", "UNGGUL"],
+    difficultyAssignments: [2, 3, 3, 4],
+    tagsAssignments: [
+      ["informasi-tersurat", "membaca"],
+      ["inferensi", "membaca"],
+      ["makna-kata", "membaca"],
+      ["sikap-penulis", "membaca"],
+    ],
+    passage:
+      "Mengelola waktu belajar dengan baik adalah keterampilan penting yang harus dimiliki setiap siswa. Tidak jarang siswa merasa kewalahan karena banyaknya tugas yang harus diselesaikan. Kunci utamanya adalah membuat prioritas. Tentukan mana tugas yang paling penting dan harus segera diselesaikan. Gunakan teknik Pomodoro, yaitu belajar fokus selama dua puluh lima menit, lalu istirahat lima menit. Ulangi siklus ini beberapa kali. Cara ini membantu otak tetap segar dan tidak mudah lelah. Buatlah jadwal belajar harian dan tempel di meja belajar atau di dinding kamar. Jangan lupa untuk menyisihkan waktu untuk istirahat, bermain, dan bersosialisasi dengan teman. Belajar yang berlebihan tanpa istirahat justru membuat otak tidak bisa menyerap informasi dengan optimal. Keseimbangan antara belajar, istirahat, dan bermain adalah kunci sukses mengelola waktu. Dengan manajemen waktu yang baik, siswa bisa meraih prestasi tanpa merasa tertekan.",
+    stems: [
+      "Teknik apa yang disarankan dalam bacaan untuk membantu fokus belajar?",
+      "Apa yang terjadi jika seseorang belajar berlebihan tanpa istirahat?",
+      "Kata 'kewalahan' dalam bacaan tersebut memiliki arti...",
+      "Sikap penulis terhadap pentingnya keseimbangan belajar dan istirahat adalah...",
+    ],
+    options: [
+      [
+        { id: "A", text: "Teknik Belajar Cepat" },
+        { id: "B", text: "Teknik Membaca Cepat" },
+        { id: "C", text: "Teknik Pomodoro" },
+        { id: "D", text: "Teknik Mind Mapping" },
+      ],
+      [
+        {
+          id: "A",
+          text: "Otak menjadi lebih tajam dan kreatif",
+        },
+        {
+          id: "B",
+          text: "Otak tidak bisa menyerap informasi dengan optimal",
+        },
+        {
+          id: "C",
+          text: "Tubuh menjadi lebih bugar dan segar",
+        },
+        {
+          id: "D",
+          text: "Nilai ujian meningkat drastis",
+        },
+      ],
+      [
+        { id: "A", text: "Merasa senang dan gembira" },
+        { id: "B", text: "Merasa kewalahan atau tidak mampu menangani banyak hal" },
+        { id: "C", text: "Merasa santai dan tenang" },
+        { id: "D", text: "Merasa bosan dan jenuh" },
+      ],
+      [
+        {
+          id: "A",
+          text: "Penulis menganggap istirahat tidak penting selama belajar",
+        },
+        {
+          id: "B",
+          text: "Penulis mendukung keseimbangan belajar, istirahat, dan bermain",
+        },
+        {
+          id: "C",
+          text: "Penulis menentang penggunaan jadwal belajar harian",
+        },
+        {
+          id: "D",
+          text: "Penulis lebih mementingkan bermain daripada belajar",
+        },
+      ],
+    ],
+    correctAnswers: ["C", "B", "B", "B"],
+    explanations: [
+      'Teks menyebutkan "Gunakan teknik Pomodoro, yaitu belajar fokus selama dua puluh lima menit, lalu istirahat lima menit."',
+      'Teks menyebutkan "Belajar yang berlebihan tanpa istirahat justru membuat otak tidak bisa menyerap informasi dengan optimal."',
+      'Kata "kewalahan" dalam konteks "siswa merasa kewalahan karena banyaknya tugas" berarti merasa tidak mampu menangani banyak hal karena terlalu banyak beban.',
+      'Penulis secara jelas menyatakan "Keseimbangan antara belajar, istirahat, dan bermain adalah kunci sukses mengelola waktu." Ini menunjukkan dukungan penuh pada keseimbangan.',
+    ],
+  },
+
+  // PASSAGE 9: Media Sosial bagi Remaja
+  {
+    bandAssignments: ["SEMENJANA", "MADYA", "MADYA", "UNGGUL"],
+    difficultyAssignments: [2, 3, 4, 4],
+    tagsAssignments: [
+      ["informasi-tersurat", "membaca"],
+      ["inferensi", "membaca"],
+      ["fakta-opini", "membaca"],
+      ["hubungan-sebab-akibat", "membaca"],
+    ],
+    passage:
+      "Media sosial sudah menjadi bagian tak terpisahkan dari keseharian remaja. Platform seperti Instagram, TikTok, dan Twitter digunakan untuk berkomunikasi, mencari hiburan, dan mengekspresikan diri. Namun, penggunaan media sosial yang berlebihan dapat berdampak negatif pada kesehatan mental remaja. Penelitian menunjukkan bahwa terlalu sering membandingkan diri dengan kehidupan orang lain di media sosial dapat menimbulkan rasa tidak percaya diri dan kecemasan. Banyak remaja merasa tekanan untuk tampil sempurna di dunia maya. Mereka khawatir jika tidak mendapat cukup like atau komentar positif. Selain itu, waktu yang dihabiskan di media sosial sering kali mengurangi waktu tidur dan belajar. Di sisi lain, media sosial juga bisa menjadi sarana positif jika digunakan dengan bijak. Remaja bisa bergabung dalam komunitas yang mendukung minat mereka, seperti komunitas menulis, seni, atau gerakan sosial. Kuncinya adalah penggunaan yang sehat dan seimbang. Orang tua dan guru perlu mendampingi remaja dalam menggunakan media sosial.",
+    stems: [
+      "Apa saja sisi negatif dari penggunaan media sosial yang disebutkan dalam bacaan?",
+      "Berdasarkan bacaan, apa yang sebaiknya dilakukan remaja terkait penggunaan media sosial?",
+      "Kalimat 'Penelitian menunjukkan bahwa terlalu sering membandingkan diri dengan kehidupan orang lain di media sosial dapat menimbulkan rasa tidak percaya diri' termasuk jenis kalimat...",
+      "Apa penyebab utama remaja merasa tertekan di media sosial menurut bacaan?",
+    ],
+    options: [
+      [
+        {
+          id: "A",
+          text: "Meningkatkan kreativitas dan memperluas pertemanan",
+        },
+        {
+          id: "B",
+          text: "Kecanduan game online dan judi online",
+        },
+        {
+          id: "C",
+          text: "Gangguan kesehatan mental, tekanan tampil sempurna, dan berkurangnya waktu tidur atau belajar",
+        },
+        {
+          id: "D",
+          text: "Menambah pengetahuan dan wawasan baru",
+        },
+      ],
+      [
+        { id: "A", text: "Berhenti menggunakan media sosial selamanya" },
+        {
+          id: "B",
+          text: "Menggunakan media sosial secara sehat dan seimbang",
+        },
+        {
+          id: "C",
+          text: "Menggunakan media sosial hanya untuk mencari hiburan",
+        },
+        {
+          id: "D",
+          text: "Membuat akun palsu agar tidak diketahui orang tua",
+        },
+      ],
+      [
+        { id: "A", text: "Opini karena belum terbukti kebenarannya" },
+        { id: "B", text: "Fakta karena didasarkan pada hasil penelitian" },
+        { id: "C", text: "Opini karena menggunakan kata 'menunjukkan'" },
+        { id: "D", text: "Fakta karena semua orang mengalaminya" },
+      ],
+      [
+        {
+          id: "A",
+          text: "Karena mereka tidak punya cukup teman di dunia nyata",
+        },
+        {
+          id: "B",
+          text: "Karena mereka merasa harus tampil sempurna dan khawatir jika tidak mendapat cukup like atau komentar positif",
+        },
+        {
+          id: "C",
+          text: "Karena orang tua melarang mereka menggunakan media sosial",
+        },
+        {
+          id: "D",
+          text: "Karena media sosial selalu menampilkan konten negatif",
+        },
+      ],
+    ],
+    correctAnswers: ["C", "B", "B", "B"],
+    explanations: [
+      'Teks menyebutkan dampak negatif media sosial: "rasa tidak percaya diri dan kecemasan", "tekanan untuk tampil sempurna", "waktu yang dihabiskan di media sosial sering kali mengurangi waktu tidur dan belajar."',
+      'Teks menyimpulkan "Kuncinya adalah penggunaan yang sehat dan seimbang." Ini adalah saran yang paling sesuai dengan isi bacaan.',
+      'Kalimat tersebut menyebut "Penelitian menunjukkan" yang berarti ada riset ilmiah sebagai dasar pernyataan. Ini menjadikannya fakta, bukan opini, karena dapat diverifikasi melalui data penelitian.',
+      'Teks menyebutkan "Mereka khawatir jika tidak mendapat cukup like atau komentar positif" dan "tekanan untuk tampil sempurna di dunia maya" sebagai penyebab tekanan.',
+    ],
+  },
+
+  // PASSAGE 10: Budaya Tradisional Batik
+  {
+    bandAssignments: ["SEMENJANA", "SEMENJANA", "MADYA", "MADYA"],
+    difficultyAssignments: [2, 3, 3, 4],
+    tagsAssignments: [
+      ["informasi-tersurat", "membaca"],
+      ["inferensi", "membaca"],
+      ["gagasan-utama", "membaca"],
+      ["simpulan", "membaca"],
+    ],
+    passage:
+      "Batik adalah warisan budaya Indonesia yang telah diakui UNESCO sebagai Warisan Kemanusiaan untuk Budaya Lisan dan Nonbendawi sejak tahun 2009. Kain batik dibuat dengan teknik menggambar atau mencanting menggunakan lilin panas pada kain, lalu dicelupkan ke dalam pewarna. Proses ini menghasilkan motif-motif yang indah dan penuh makna. Setiap daerah di Indonesia memiliki motif batik khasnya masing-masing. Misalnya, batik Solo dan Yogyakarta dengan motif parang dan kawung, batik Pekalongan dengan motif pesisir yang penuh warna, serta batik Papua dengan motif asmat yang khas. Kini batik tidak hanya digunakan dalam acara formal, tetapi juga menjadi busana sehari-hari yang trendi di kalangan anak muda. Banyak desainer muda Indonesia yang mengembangkan batik menjadi bentuk pakaian modern seperti kemeja, gaun, dan jaket. Hal ini menunjukkan bahwa warisan budaya dapat beradaptasi dengan perkembangan zaman tanpa kehilangan nilai-nilai tradisionalnya.",
+    stems: [
+      "Kapan UNESCO mengakui batik sebagai Warisan Kemanusiaan?",
+      "Apa yang membuat motif batik berbeda antar daerah di Indonesia?",
+      "Ide pokok paragraf kedua bacaan tersebut adalah...",
+      "Apa yang dapat disimpulkan tentang perkembangan batik saat ini berdasarkan bacaan?",
+    ],
+    options: [
+      [
+        { id: "A", text: "Tahun 2005" },
+        { id: "B", text: "Tahun 2009" },
+        { id: "C", text: "Tahun 2010" },
+        { id: "D", text: "Tahun 2015" },
+      ],
+      [
+        {
+          id: "A",
+          text: "Karena setiap daerah memiliki bahan kain yang berbeda",
+        },
+        {
+          id: "B",
+          text: "Karena setiap daerah memiliki motif khasnya masing-masing yang mencerminkan budaya setempat",
+        },
+        {
+          id: "C",
+          text: "Karena alat yang digunakan berbeda di setiap daerah",
+        },
+        {
+          id: "D",
+          text: "Karena pewarna yang digunakan berasal dari bahan yang berbeda",
+        },
+      ],
+      [
+        {
+          id: "A",
+          text: "Batik digunakan dalam acara formal di Indonesia",
+        },
+        {
+          id: "B",
+          text: "Batik telah berkembang menjadi busana modern yang trendi dan digunakan oleh berbagai kalangan",
+        },
+        {
+          id: "C",
+          text: "Motif batik Papua berbeda dengan batik Solo",
+        },
+        {
+          id: "D",
+          text: "Desainer muda Indonesia sangat kreatif",
+        },
+      ],
+      [
+        {
+          id: "A",
+          text: "Batik semakin ditinggalkan karena dianggap kuno",
+        },
+        {
+          id: "B",
+          text: "Batik hanya digunakan oleh orang tua dalam acara formal",
+        },
+        {
+          id: "C",
+          text: "Batik beradaptasi dengan zaman dan tetap diminati, termasuk oleh anak muda",
+        },
+        {
+          id: "D",
+          text: "Batik hanya diproduksi di Solo dan Yogyakarta",
+        },
+      ],
+    ],
+    correctAnswers: ["B", "B", "B", "C"],
+    explanations: [
+      'Teks menyebutkan "tahun 2009" sebagai tahun pengakuan UNESCO.',
+      'Teks menyebutkan "Setiap daerah di Indonesia memiliki motif batik khasnya masing-masing." Motif-motif ini mencerminkan budaya setempat.',
+      'Paragraf kedua membahas penggunaan batik masa kini yang tidak hanya formal tetapi juga trendi di kalangan anak muda, dan dikembangkan oleh desainer menjadi pakaian modern.',
+      'Teks menyebutkan batik kini menjadi "busana sehari-hari yang trendi di kalangan anak muda" dan dikembangkan desainer menjadi bentuk modern. Ini menunjukkan batik beradaptasi dengan zaman.',
+    ],
+  },
+
+  // PASSAGE 11: Bahaya Sampah Plastik
+  {
+    bandAssignments: ["MADYA", "MADYA", "MADYA", "UNGGUL"],
+    difficultyAssignments: [3, 3, 4, 4],
+    tagsAssignments: [
+      ["informasi-tersurat", "membaca"],
+      ["hubungan-sebab-akibat", "membaca"],
+      ["makna-kata", "membaca"],
+      ["sikap-penulis", "membaca"],
+    ],
+    passage:
+      "Sampah plastik menjadi masalah serius di Indonesia. Setiap tahunnya, jutaan ton sampah plastik berakhir di lautan. Data dari Kementerian Lingkungan Hidup menunjukkan bahwa Indonesia merupakan salah satu penyumbang sampah plastik terbesar di dunia. Plastik membutuhkan waktu ratusan tahun untuk terurai secara alami. Selama proses penguraian, plastik terpecah menjadi partikel kecil bernama mikroplastik yang mencemari tanah dan air. Mikroplastik ini bisa tertelan oleh ikan dan hewan laut lainnya. Ketika manusia mengonsumsi ikan yang terkontaminasi mikroplastik, zat berbahaya tersebut masuk ke dalam tubuh manusia. Hal ini dapat memicu berbagai masalah kesehatan. Selain itu, sampah plastik juga menyebabkan penyumbatan saluran air dan memicu banjir saat musim hujan. Oleh karena itu, mengurangi penggunaan plastik sekali pakai menjadi langkah penting yang harus dilakukan oleh semua pihak. Mulailah dengan membawa tas belanja sendiri, menggunakan botol minum isi ulang, dan menolak sedotan plastik.",
+    stems: [
+      "Apa yang dimaksud dengan mikroplastik dalam bacaan?",
+      "Mengapa sampah plastik berbahaya bagi manusia?",
+      "Kata 'terurai' dalam bacaan tersebut memiliki arti...",
+      "Bagaimana sikap penulis terhadap penggunaan plastik sekali pakai?",
+    ],
+    options: [
+      [
+        {
+          id: "A",
+          text: "Plastik yang sudah didaur ulang menjadi baru",
+        },
+        {
+          id: "B",
+          text: "Partikel kecil hasil penguraian plastik yang mencemari lingkungan",
+        },
+        {
+          id: "C",
+          text: "Jenis plastik yang mudah terurai dalam waktu singkat",
+        },
+        {
+          id: "D",
+          text: "Bahan kimia yang digunakan untuk membuat plastik",
+        },
+      ],
+      [
+        {
+          id: "A",
+          text: "Karena plastik bisa dimakan langsung oleh manusia",
+        },
+        {
+          id: "B",
+          text: "Karena mikroplastik masuk ke tubuh manusia melalui ikan yang terkontaminasi dan dapat memicu masalah kesehatan",
+        },
+        {
+          id: "C",
+          text: "Karena plastik menyebabkan tanah menjadi subur",
+        },
+        {
+          id: "D",
+          text: "Karena plastik membuat air laut menjadi asin",
+        },
+      ],
+      [
+        { id: "A", text: "Menghilang dengan cepat" },
+        { id: "B", text: "Berubah menjadi zat berbahaya" },
+        { id: "C", text: "Hancur atau kembali ke bentuk alami" },
+        { id: "D", text: "Mengapung di permukaan air" },
+      ],
+      [
+        {
+          id: "A",
+          text: "Penulis mendukung penggunaan plastik sekali pakai karena praktis",
+        },
+        {
+          id: "B",
+          text: "Penulis bersikap netral dan tidak memberikan pendapat",
+        },
+        {
+          id: "C",
+          text: "Penulis menentang penggunaan plastik sekali pakai dan mendorong pengurangannya",
+        },
+        {
+          id: "D",
+          text: "Penulis menyerukan boikot total semua produk plastik",
+        },
+      ],
+    ],
+    correctAnswers: ["B", "B", "C", "C"],
+    explanations: [
+      'Teks menjelaskan "plastik terpecah menjadi partikel kecil bernama mikroplastik yang mencemari tanah dan air."',
+      'Teks menyebutkan rantai bahaya: mikroplastik ditelan ikan → ikan dikonsumsi manusia → zat berbahaya masuk tubuh → memicu masalah kesehatan.',
+      'Kata "terurai" berasal dari kata dasar "urai" yang berarti hancur, lepas, atau kembali ke bentuk asal. Dalam konteks ini, plastik "terurai" artinya hancur atau kembali ke bentuk alami secara alami.',
+      'Penulis menyebut perlunya "mengurangi penggunaan plastik sekali pakai" dan memberi contoh langkah-langkah konkret. Ini menunjukkan sikap menentang/mendorong pengurangan plastik sekali pakai.',
+    ],
+  },
+
+  // PASSAGE 12: Kegiatan Bakti Sosial
+  {
+    bandAssignments: ["SEMENJANA", "SEMENJANA", "MADYA", "MADYA"],
+    difficultyAssignments: [2, 3, 3, 4],
+    tagsAssignments: [
+      ["informasi-tersurat", "membaca"],
+      ["inferensi", "membaca"],
+      ["gagasan-utama", "membaca"],
+      ["hubungan-sebab-akibat", "membaca"],
+    ],
+    passage:
+      "Bulan lalu, OSIS SMP Tunas Bangsa mengadakan bakti sosial di Panti Asuhan Harapan. Kegiatan ini merupakan program tahunan yang selalu dinanti-nanti siswa. Mereka mengumpulkan donasi berupa uang, pakaian layak pakai, buku bacaan, dan makanan ringan selama dua minggu sebelum kunjungan. Saat hari pelaksanaan, tiga puluh siswa perwakilan OSIS berkunjung ke panti asuhan. Mereka bermain, bernyanyi, dan belajar bersama anak-anak panti. Suasana kehangatan terasa saat mereka berbagi cerita dan pengalaman. \"Kami belajar banyak dari kegiatan ini. Kami jadi lebih bersyukur atas apa yang kami miliki,\" ujar Ketua OSIS. Kegiatan bakti sosial tidak hanya bermanfaat bagi penerima, tetapi juga mengajarkan empati dan kepedulian kepada para siswa. Pengalaman ini membentuk karakter siswa agar lebih peka terhadap lingkungan sosial dan tidak egois. Setelah kegiatan, banyak siswa yang berencana mengunjungi panti asuhan secara rutin di waktu luang.",
+    stems: [
+      "Apa saja donasi yang dikumpulkan oleh siswa untuk bakti sosial?",
+      "Apa manfaat kegiatan bakti sosial bagi siswa menurut bacaan?",
+      "Ide pokok paragraf pertama teks tersebut adalah...",
+      "Apa yang menyebabkan siswa berencana mengunjungi panti asuhan secara rutin setelah kegiatan bakti sosial?",
+    ],
+    options: [
+      [
+        {
+          id: "A",
+          text: "Uang, pakaian layak pakai, buku bacaan, dan makanan ringan",
+        },
+        {
+          id: "B",
+          text: "Uang, mainan, dan elektronik",
+        },
+        {
+          id: "C",
+          text: "Pakaian baru, sepatu, dan tas",
+        },
+        {
+          id: "D",
+          text: "Makanan berat, minuman, dan obat-obatan",
+        },
+      ],
+      [
+        {
+          id: "A",
+          text: "Mendapat nilai tambahan dari sekolah",
+        },
+        {
+          id: "B",
+          text: "Mengajarkan empati, kepedulian, dan membuat siswa lebih bersyukur",
+        },
+        {
+          id: "C",
+          text: "Menambah daftar kegiatan ekstrakurikuler",
+        },
+        {
+          id: "D",
+          text: "Mendapatkan pengalaman liburan yang menyenangkan",
+        },
+      ],
+      [
+        {
+          id: "A",
+          text: "Ketua OSIS menyampaikan kesannya setelah bakti sosial",
+        },
+        {
+          id: "B",
+          text: "OSIS mengadakan bakti sosial sebagai program tahunan yang dinanti siswa",
+        },
+        {
+          id: "C",
+          text: "Siswa bermain dan bernyanyi bersama anak-anak panti",
+        },
+        {
+          id: "D",
+          text: "Donasi dikumpulkan selama dua minggu",
+        },
+      ],
+      [
+        {
+          id: "A",
+          text: "Karena guru mewajibkan mereka untuk kembali",
+        },
+        {
+          id: "B",
+          text: "Karena mereka mendapat pengalaman bermakna yang menumbuhkan empati dan kepedulian",
+        },
+        {
+          id: "C",
+          text: "Karena panti asuhan meminta mereka datang lagi",
+        },
+        {
+          id: "D",
+          text: "Karena mereka ingin mendapat pujian dari teman-teman",
+        },
+      ],
+    ],
+    correctAnswers: ["A", "B", "B", "B"],
+    explanations: [
+      'Teks menyebutkan donasi berupa "uang, pakaian layak pakai, buku bacaan, dan makanan ringan."',
+      'Teks menyebutkan "mengajarkan empati dan kepedulian kepada para siswa" dan "Kami jadi lebih bersyukur" dari pernyataan Ketua OSIS.',
+      'Paragraf pertama berfokus pada kegiatan bakti sosial yang diadakan OSIS sebagai program tahunan. Kalimat-kalimat berikutnya mendukung gagasan ini dengan detail pelaksanaan.',
+      'Teks menyebutkan siswa belajar banyak, lebih bersyukur, dan merasakan kehangatan berbagai cerita. Pengalaman bermakna inilah yang memotivasi mereka untuk berkunjung rutin.',
+    ],
+  },
+
+  // PASSAGE 13: Manfaat Menabung
+  {
+    bandAssignments: ["SEMENJANA", "SEMENJANA", "MADYA", "MADYA"],
+    difficultyAssignments: [2, 2, 3, 4],
+    tagsAssignments: [
+      ["informasi-tersurat", "membaca"],
+      ["inferensi", "membaca"],
+      ["makna-kata", "membaca"],
+      ["tujuan-teks", "membaca"],
+    ],
+    passage:
+      "Menabung adalah kebiasaan positif yang sebaiknya diajarkan sejak dini. Dengan menabung, kita belajar mengelola keuangan dan menunda keinginan sesaat. Uang yang terkumpul bisa digunakan untuk hal-hal yang lebih penting di masa depan, seperti membeli buku, membayar biaya sekolah, atau bahkan modal usaha. Ada berbagai cara menabung yang bisa dilakukan remaja. Cara paling sederhana adalah menyisihkan sebagian uang jajan setiap hari. Tidak perlu jumlah besar, yang penting konsisten. Selain di celengan, remaja juga bisa menabung di bank melalui program tabungan pelajar yang biasanya memiliki setoran awal ringan. Beberapa sekolah bahkan bekerja sama dengan bank untuk memudahkan siswa menabung. Menabung juga mengajarkan disiplin dan tanggung jawab. Ketika kita memiliki tujuan menabung, kita akan lebih termotivasi untuk mengendalikan pengeluaran. Kebiasaan ini sangat berguna saat kita dewasa nanti. Orang yang terbiasa menabung sejak muda cenderung lebih siap menghadapi situasi darurat keuangan.",
+    stems: [
+      "Apa manfaat menabung yang disebutkan dalam bacaan?",
+      "Mengapa penting untuk konsisten dalam menabung meskipun jumlahnya sedikit?",
+      "Kata 'konsisten' dalam bacaan memiliki arti...",
+      "Apa tujuan penulisan teks tersebut?",
+    ],
+    options: [
+      [
+        {
+          id: "A",
+          text: "Membuat kita menjadi terkenal dan kaya raya",
+        },
+        {
+          id: "B",
+          text: "Melatih mengelola keuangan, menunda keinginan, dan mempersiapkan masa depan",
+        },
+        {
+          id: "C",
+          text: "Menghabiskan uang untuk hal-hal yang tidak penting",
+        },
+        {
+          id: "D",
+          text: "Membeli barang-barang mewah saat diskon",
+        },
+      ],
+      [
+        {
+          id: "A",
+          text: "Karena jika tidak konsisten, uang di bank akan hangus",
+        },
+        {
+          id: "B",
+          text: "Karena konsistensi membentuk kebiasaan dan jumlah kecil yang rutin akan terkumpul menjadi besar",
+        },
+        {
+          id: "C",
+          text: "Karena bank mewajibkan nasabah menabung setiap hari",
+        },
+        {
+          id: "D",
+          text: "Karena orang tua akan marah jika anaknya tidak menabung",
+        },
+      ],
+      [
+        { id: "A", text: "Berubah-ubah dan tidak menentu" },
+        { id: "B", text: "Terus-menerus atau tetap tanpa berhenti" },
+        { id: "C", text: "Sesekali kadang dilakukan" },
+        { id: "D", text: "Bergantung pada situasi dan kondisi" },
+      ],
+      [
+        {
+          id: "A",
+          text: "Membandingkan celengan dengan tabungan bank",
+        },
+        {
+          id: "B",
+          text: "Menceritakan pengalaman pribadi penulis menabung",
+        },
+        {
+          id: "C",
+          text: "Mengajak dan menginformasikan pentingnya kebiasaan menabung sejak dini",
+        },
+        {
+          id: "D",
+          text: "Mengkritik remaja yang tidak suka menabung",
+        },
+      ],
+    ],
+    correctAnswers: ["B", "B", "B", "C"],
+    explanations: [
+      'Teks menyebutkan "belajar mengelola keuangan dan menunda keinginan sesaat" serta uang tabungan "bisa digunakan untuk hal-hal yang lebih penting di masa depan."',
+      'Teks menyebutkan "Tidak perlu jumlah besar, yang penting konsisten." Konsistensi membentuk kebiasaan dan secara akumulasi jumlah kecil menjadi besar seiring waktu.',
+      'Kata "konsisten" berarti tetap, terus-menerus, atau ajek. Dalam konteks menabung, konsisten berarti rutin menabung tanpa putus.',
+      'Teks bersifat informatif dan persuasif, menjelaskan manfaat menabung, cara melakukannya, dan mengajak pembaca untuk menabung sejak dini.',
+    ],
+  },
+
+  // PASSAGE 14: Transportasi Umum
+  {
+    bandAssignments: ["MADYA", "MADYA", "UNGGUL", "UNGGUL"],
+    difficultyAssignments: [3, 4, 4, 4],
+    tagsAssignments: [
+      ["informasi-tersurat", "membaca"],
+      ["inferensi", "membaca"],
+      ["fakta-opini", "membaca"],
+      ["simpulan", "membaca"],
+    ],
+    passage:
+      "Transportasi umum di kota-kota besar Indonesia terus mengalami perkembangan. Pemerintah membangun berbagai moda transportasi modern seperti MRT, LRT, dan Transjakarta untuk mengatasi kemacetan yang semakin parah. Penggunaan transportasi umum memiliki banyak keuntungan. Selain lebih hemat biaya dibanding kendaraan pribadi, naik transportasi umum juga mengurangi polusi udara karena jumlah kendaraan di jalan berkurang. Pengguna transportasi umum juga bisa memanfaatkan waktu perjalanan untuk membaca, belajar, atau sekadar bersantai. Namun, masih banyak masyarakat yang enggan beralih ke transportasi umum. Beberapa alasan yang sering dikemukakan adalah kurangnya integrasi antarmoda, jadwal yang tidak tepat waktu, dan masalah keamanan, terutama bagi perempuan. Di Stasiun MRT Jakarta, tersedia gerbang khusus perempuan di beberapa gerbong untuk meningkatkan kenyamanan. Pemerintah terus berupaya meningkatkan pelayanan transportasi umum agar masyarakat lebih tertarik meninggalkan kendaraan pribadi. Jika semua pihak mendukung, kemacetan dan polusi udara bisa berkurang secara signifikan.",
+    stems: [
+      "Apa saja transportasi umum modern yang disebutkan dalam bacaan?",
+      "Mengapa masih banyak orang yang enggan menggunakan transportasi umum?",
+      'Kalimat "Pengguna transportasi umum juga bisa memanfaatkan waktu perjalanan untuk membaca, belajar, atau sekadar bersantai" termasuk jenis kalimat...',
+      "Apa simpulan yang tepat dari teks tersebut?",
+    ],
+    options: [
+      [
+        { id: "A", text: "Bus kota, angkot, dan ojek" },
+        { id: "B", text: "MRT, LRT, dan Transjakarta" },
+        { id: "C", text: "Kereta api, pesawat, dan kapal" },
+        { id: "D", text: "Taksi, bus sekolah, dan delman" },
+      ],
+      [
+        {
+          id: "A",
+          text: "Karena harga tiket transportasi umum sangat mahal",
+        },
+        {
+          id: "B",
+          text: "Karena kurang integrasi antarmoda, jadwal tidak tepat waktu, dan masalah keamanan",
+        },
+        {
+          id: "C",
+          text: "Karena transportasi umum tidak nyaman sama sekali",
+        },
+        {
+          id: "D",
+          text: "Karena tidak ada transportasi umum di Indonesia",
+        },
+      ],
+      [
+        {
+          id: "A",
+          text: "Fakta karena dapat dibuktikan kebenarannya oleh semua pengguna",
+        },
+        {
+          id: "B",
+          text: "Opini karena merupakan pendapat penulis tentang manfaat transportasi umum",
+        },
+        {
+          id: "C",
+          text: "Fakta karena didukung data dari pemerintah",
+        },
+        {
+          id: "D",
+          text: "Opini karena bersifat subjektif dan tidak bisa diukur",
+        },
+      ],
+      [
+        {
+          id: "A",
+          text: "Transportasi umum di Indonesia sudah sempurna dan tidak perlu diperbaiki",
+        },
+        {
+          id: "B",
+          text: "Pemerintah harus melarang kendaraan pribadi sepenuhnya",
+        },
+        {
+          id: "C",
+          text: "Transportasi umum terus dikembangkan, memiliki banyak manfaat, tetapi masih menghadapi tantangan yang perlu diatasi bersama",
+        },
+        {
+          id: "D",
+          text: "Masyarakat tidak perlu menggunakan transportasi umum karena nyaman dengan kendaraan pribadi",
+        },
+      ],
+    ],
+    correctAnswers: ["B", "B", "B", "C"],
+    explanations: [
+      'Teks menyebutkan "MRT, LRT, dan Transjakarta" sebagai moda transportasi modern.',
+      'Teks menyebutkan alasan: "kurangnya integrasi antarmoda, jadwal yang tidak tepat waktu, dan masalah keamanan."',
+      'Kalimat tersebut adalah opini karena merupakan pandangan penulis tentang keuntungan transportasi umum. Tidak semua pengguna pasti memanfaatkan waktu perjalanan untuk membaca atau belajar — ini bersifat subjektif.',
+      'Teks menyajikan dua sisi: perkembangan dan keuntungan transportasi umum (paragraf 1) serta tantangan dan alasan masyarakat enggan (paragraf 2). Simpulannya harus mencakup keduanya.',
+    ],
+  },
+
+  // PASSAGE 15: Keanekaragaman Hayati Indonesia
+  {
+    bandAssignments: ["MADYA", "MADYA", "MADYA", "UNGGUL"],
+    difficultyAssignments: [3, 3, 4, 4],
+    tagsAssignments: [
+      ["informasi-tersurat", "membaca"],
+      ["inferensi", "membaca"],
+      ["makna-kata", "membaca"],
+      ["hubungan-sebab-akibat", "membaca"],
+    ],
+    passage:
+      "Indonesia dikenal sebagai salah satu negara dengan keanekaragaman hayati tertinggi di dunia. Hutan hujan tropis Indonesia menjadi rumah bagi ribuan spesies tumbuhan dan hewan yang tidak ditemukan di tempat lain. Misalnya, komodo di Pulau Komodo, orangutan di Kalimantan, dan burung cenderawasih di Papua. Namun, kekayaan alam ini menghadapi ancaman serius. Deforestasi atau penebangan hutan secara liar, perburuan satwa ilegal, dan perubahan iklim menyebabkan banyak spesies terancam punah. Data dari International Union for Conservation of Nature menunjukkan bahwa puluhan spesies endemik Indonesia berada dalam status kritis. Upaya konservasi terus dilakukan oleh pemerintah dan berbagai organisasi lingkungan. Taman nasional dan suaka margasatwa didirikan untuk melindungi habitat alami. Selain itu, edukasi kepada masyarakat tentang pentingnya menjaga keanekaragaman hayati juga terus digencarkan. Menjaga keanekaragaman hayati bukan hanya tanggung jawab pemerintah, tetapi seluruh masyarakat Indonesia.",
+    stems: [
+      "Apa saja contoh hewan endemik Indonesia yang disebutkan dalam bacaan?",
+      "Apa yang menyebabkan spesies-spesies di Indonesia terancam punah?",
+      "Kata 'konservasi' dalam bacaan tersebut memiliki arti...",
+      "Mengapa keanekaragaman hayati Indonesia perlu dijaga?",
+    ],
+    options: [
+      [
+        {
+          id: "A",
+          text: "Harimau, gajah, dan badak",
+        },
+        {
+          id: "B",
+          text: "Komodo, orangutan, dan cenderawasih",
+        },
+        {
+          id: "C",
+          text: "Singa, jerapah, dan zebra",
+        },
+        {
+          id: "D",
+          text: "Kangguru, koala, dan platipus",
+        },
+      ],
+      [
+        {
+          id: "A",
+          text: "Karena terlalu banyak turis yang berkunjung",
+        },
+        {
+          id: "B",
+          text: "Karena deforestasi, perburuan ilegal, dan perubahan iklim",
+        },
+        {
+          id: "C",
+          text: "Karena hewan-hewan tersebut bermigrasi ke negara lain",
+        },
+        {
+          id: "D",
+          text: "Karena masyarakat terlalu sering memberi makan satwa",
+        },
+      ],
+      [
+        { id: "A", text: "Perusakan habitat alami secara besar-besaran" },
+        { id: "B", text: "Upaya perlindungan dan pelestarian alam" },
+        { id: "C", text: "Pemanfaatan sumber daya alam secara berlebihan" },
+        { id: "D", text: "Perburuan satwa untuk kepentingan komersial" },
+      ],
+      [
+        {
+          id: "A",
+          text: "Karena Indonesia ingin menjadi negara dengan keanekaragaman hayati tertinggi di dunia",
+        },
+        {
+          id: "B",
+          text: "Karena keanekaragaman hayati adalah kekayaan yang harus dilindungi untuk keseimbangan ekosistem dan masa depan generasi mendatang",
+        },
+        {
+          id: "C",
+          text: "Karena pemerintah mendapat dana dari organisasi internasional untuk konservasi",
+        },
+        {
+          id: "D",
+          text: "Karena hewan endemik Indonesia bisa dijual dengan harga tinggi",
+        },
+      ],
+    ],
+    correctAnswers: ["B", "B", "B", "B"],
+    explanations: [
+      'Teks menyebutkan "komodo di Pulau Komodo, orangutan di Kalimantan, dan burung cenderawasih di Papua" sebagai contoh spesies endemik.',
+      'Teks menyebutkan "Deforestasi ... perburuan satwa ilegal, dan perubahan iklim menyebabkan banyak spesies terancam punah."',
+      'Kata "konservasi" berarti perlindungan, pengawetan, atau pelestarian alam dan sumber daya alam. Dalam konteks ini, konservasi adalah upaya melindungi keanekaragaman hayati.',
+      'Teks menyebutkan pentingnya menjaga keanekaragaman hayati melalui upaya konservasi dan edukasi. Implisit, ini untuk keseimbangan ekosistem dan warisan bagi generasi mendatang.',
+    ],
+  },
+
+  // PASSAGE 16: Pendidikan Karakter
+  {
+    bandAssignments: ["MADYA", "MADYA", "UNGGUL", "UNGGUL"],
+    difficultyAssignments: [3, 4, 4, 4],
+    tagsAssignments: [
+      ["informasi-tersurat", "membaca"],
+      ["gagasan-utama", "membaca"],
+      ["sikap-penulis", "membaca"],
+      ["struktur-paragraf", "membaca"],
+    ],
+    passage:
+      "Pendidikan karakter menjadi salah satu fokus utama dalam sistem pendidikan nasional. Kementerian Pendidikan telah mencanangkan program Penguatan Pendidikan Karakter yang mencakup nilai-nilai religius, nasionalis, mandiri, gotong royong, dan integritas. Nilai-nilai ini tidak diajarkan sebagai mata pelajaran terpisah, melainkan diintegrasikan ke dalam setiap mata pelajaran dan kegiatan sekolah. Misalnya, saat pelajaran olahraga, siswa belajar tentang sportivitas dan kerja sama tim. Dalam pelajaran sejarah, siswa belajar tentang nasionalisme dan cinta tanah air. Kegiatan ekstrakurikuler seperti pramuka dan palang merah remaja juga menjadi sarana penanaman karakter. Pendidikan karakter bertujuan membentuk siswa tidak hanya cerdas secara akademik, tetapi juga memiliki kepribadian yang baik. Sekolah berperan sebagai mitra orang tua dalam membentuk karakter anak. Oleh karena itu, kerja sama antara sekolah dan keluarga sangat penting. Lingkungan yang mendukung akan membantu siswa tumbuh menjadi pribadi yang berintegritas dan bertanggung jawab.",
+    stems: [
+      "Apa saja nilai-nilai dalam program Penguatan Pendidikan Karakter yang disebutkan?",
+      "Bagaimana cara nilai-nilai karakter diajarkan di sekolah menurut bacaan?",
+      "Pandangan penulis tentang pentingnya kerja sama sekolah dan orang tua adalah...",
+      "Paragraf pertama teks tersebut menggunakan pola pengembangan...",
+    ],
+    options: [
+      [
+        {
+          id: "A",
+          text: "Jujur, disiplin, rajin, sopan, dan percaya diri",
+        },
+        {
+          id: "B",
+          text: "Religius, nasionalis, mandiri, gotong royong, dan integritas",
+        },
+        {
+          id: "C",
+          text: "Toleransi, demokratis, cinta damai, dan gemar membaca",
+        },
+        {
+          id: "D",
+          text: "Kerja keras, kreatif, inovatif, dan produktif",
+        },
+      ],
+      [
+        {
+          id: "A",
+          text: "Diajarkan sebagai mata pelajaran khusus setiap hari Jumat",
+        },
+        {
+          id: "B",
+          text: "Diintegrasikan ke dalam setiap mata pelajaran dan kegiatan sekolah",
+        },
+        {
+          id: "C",
+          text: "Hanya diajarkan saat upacara bendera hari Senin",
+        },
+        {
+          id: "D",
+          text: "Diajarkan melalui ujian tertulis setiap semester",
+        },
+      ],
+      [
+        {
+          id: "A",
+          text: "Penulis menganggap sekolah saja yang bertanggung jawab atas karakter siswa",
+        },
+        {
+          id: "B",
+          text: "Penulis menganggap kerja sama sekolah dan orang tua sangat penting untuk pembentukan karakter anak",
+        },
+        {
+          id: "C",
+          text: "Penulis menganggap orang tua tidak perlu terlibat dalam pendidikan karakter",
+        },
+        {
+          id: "D",
+          text: "Penulis menganggap pendidikan karakter hanya tanggung jawab pemerintah",
+        },
+      ],
+      [
+        { id: "A", text: "Khusus ke umum (induktif)" },
+        { id: "B", text: "Kronologis berdasarkan urutan waktu" },
+        { id: "C", text: "Umum ke khusus (deduktif)" },
+        { id: "D", text: "Perbandingan antara dua hal" },
+      ],
+    ],
+    correctAnswers: ["B", "B", "B", "C"],
+    explanations: [
+      'Teks menyebutkan "nilai-nilai religius, nasionalis, mandiri, gotong royong, dan integritas."',
+      'Teks menyebutkan nilai karakter "diintegrasikan ke dalam setiap mata pelajaran dan kegiatan sekolah" dan memberi contoh integrasi dalam pelajaran olahraga dan sejarah.',
+      'Teks menyatakan "Sekolah berperan sebagai mitra orang tua" dan "kerja sama antara sekolah dan keluarga sangat penting." Ini menunjukkan penulis mendukung kerja sama tersebut.',
+      'Paragraf dimulai dengan pernyataan umum (pendidikan karakter menjadi fokus utama), lalu diikuti penjelasan khusus (contoh program dan implementasi). Ini pola deduktif.',
+    ],
+  },
+
+  // PASSAGE 17: Cerita Rakyat Malin Kundang
+  {
+    bandAssignments: ["SEMENJANA", "MADYA", "MADYA", "UNGGUL"],
+    difficultyAssignments: [2, 3, 4, 4],
+    tagsAssignments: [
+      ["informasi-tersurat", "membaca"],
+      ["inferensi", "membaca"],
+      ["makna-kata", "membaca"],
+      ["sikap-penulis", "membaca"],
+    ],
+    passage:
+      "Cerita rakyat Malin Kundang berasal dari Sumatera Barat. Berkisah tentang seorang anak laki-laki yang merantau dan sukses menjadi saudagar kaya raya. Setelah sukses, ia kembali ke kampung halaman bersama istrinya. Namun, ia malu mengakui ibunya yang miskin dan sudah tua. Ibu Malin Kundang yang sangat rindu sejak ditinggal merantau berusaha mendekati kapal mewah anaknya. Malin Kundang justru menghardik dan mengusir ibunya. Ibu yang patah hati mengutuk Malin Kundang menjadi batu. Seketika, seluruh tubuh Malin Kundang berubah menjadi batu karang. Kisah ini mengandung pesan moral tentang pentingnya berbakti kepada orang tua. Kita tidak boleh melupakan jasa orang tua yang telah membesarkan dan merawat kita dengan penuh kasih sayang, apa pun kondisi kita nantinya. Cerita Malin Kundang tetap relevan hingga kini sebagai pengingat bahwa kesuksesan tidak boleh membuat seseorang lupa diri dan lupa asal usul.",
+    stems: [
+      "Dari mana asal cerita rakyat Malin Kundang?",
+      "Berdasarkan bacaan, apa yang menyebabkan Malin Kundang dikutuk menjadi batu?",
+      "Kata 'menghardik' dalam bacaan tersebut memiliki arti...",
+      "Nilai moral apa yang ingin disampaikan penulis melalui teks tersebut?",
+    ],
+    options: [
+      [
+        {
+          id: "A",
+          text: "Jawa Timur",
+        },
+        {
+          id: "B",
+          text: "Sumatera Barat",
+        },
+        {
+          id: "C",
+          text: "Kalimantan Selatan",
+        },
+        {
+          id: "D",
+          text: "Sulawesi Selatan",
+        },
+      ],
+      [
+        {
+          id: "A",
+          text: "Karena ia tidak berhasil menjadi saudagar kaya",
+        },
+        {
+          id: "B",
+          text: "Karena ia menghardik dan mengusir ibunya yang sudah tua dan miskin",
+        },
+        {
+          id: "C",
+          text: "Karena ia tidak mau menikah dengan pilihan ibunya",
+        },
+        {
+          id: "D",
+          text: "Karena ia terlalu lama merantau dan tidak pulang-pulang",
+        },
+      ],
+      [
+        { id: "A", text: "Memeluk dengan penuh kasih sayang" },
+        { id: "B", text: "Membentak atau mengusir dengan kata-kata kasar" },
+        { id: "C", text: "Memanggil dengan lembut" },
+        { id: "D", text: "Memberi hadiah dan uang" },
+      ],
+      [
+        {
+          id: "A",
+          text: "Kita harus merantau ke negeri orang agar sukses",
+        },
+        {
+          id: "B",
+          text: "Kita harus berbakti kepada orang tua dan tidak melupakan jasa mereka apa pun kondisi kita",
+        },
+        {
+          id: "C",
+          text: "Anak yang sukses tidak perlu kembali ke kampung halaman",
+        },
+        {
+          id: "D",
+          text: "Kekayaan membuat seseorang bisa berbuat seenaknya",
+        },
+      ],
+    ],
+    correctAnswers: ["B", "B", "B", "B"],
+    explanations: [
+      'Teks menyebutkan "Cerita rakyat Malin Kundang berasal dari Sumatera Barat."',
+      'Teks menceritakan Malin Kundang menghardik dan mengusir ibunya, yang menyebabkan ibunya patah hati dan mengutuknya menjadi batu.',
+      'Kata "menghardik" berarti membentak atau mengusir dengan kata-kata kasar. Ini tergambar dari konteks Malin Kundang yang mengusir ibunya di depan kapal.',
+      'Teks secara eksplisit menyatakan "pesan moral tentang pentingnya berbakti kepada orang tua" dan "tidak boleh melupakan jasa orang tua."',
+    ],
+  },
+
+  // PASSAGE 18: Pencemaran Udara
+  {
+    bandAssignments: ["MADYA", "MADYA", "UNGGUL", "UNGGUL"],
+    difficultyAssignments: [3, 4, 4, 4],
+    tagsAssignments: [
+      ["informasi-tersurat", "membaca"],
+      ["hubungan-sebab-akibat", "membaca"],
+      ["fakta-opini", "membaca"],
+      ["tujuan-teks", "membaca"],
+    ],
+    passage:
+      "Pencemaran udara di kota-kota besar Indonesia semakin mengkhawatirkan. Kualitas udara yang buruk dipengaruhi oleh beberapa faktor, seperti emisi kendaraan bermotor, asap pabrik, dan pembakaran sampah. Tingginya kadar polutan seperti PM2.5, karbon monoksida, dan nitrogen dioksida berbahaya bagi kesehatan manusia. Paparan polusi udara dalam jangka panjang dapat menyebabkan gangguan pernapasan seperti asma dan bronkitis, bahkan meningkatkan risiko kanker paru-paru. Anak-anak dan lansia adalah kelompok yang paling rentan terdampak polusi udara. Pemerintah telah mengambil langkah-langkah untuk mengatasi masalah ini, seperti mewajibkan uji emisi kendaraan, mendorong penggunaan transportasi umum, dan mengembangkan ruang terbuka hijau di perkotaan. Namun, upaya ini belum maksimal karena masih kurangnya kesadaran masyarakat. Kesadaran untuk mengurangi penggunaan kendaraan pribadi, tidak membakar sampah sembarangan, dan menanam pohon di lingkungan sekitar adalah langkah kecil yang berarti jika dilakukan bersama-sama.",
+    stems: [
+      "Faktor-faktor apa yang mempengaruhi buruknya kualitas udara di kota besar?",
+      "Mengapa anak-anak dan lansia disebut sebagai kelompok yang paling rentan terhadap polusi?",
+      'Kalimat "Pencemaran udara di kota-kota besar Indonesia semakin mengkhawatirkan" termasuk jenis kalimat...',
+      "Apa tujuan utama penulisan teks tersebut?",
+    ],
+    options: [
+      [
+        {
+          id: "A",
+          text: "Hujan asam dan angin kencang",
+        },
+        {
+          id: "B",
+          text: "Emisi kendaraan, asap pabrik, dan pembakaran sampah",
+        },
+        {
+          id: "C",
+          text: "Aktivitas gunung berapi dan gempa bumi",
+        },
+        {
+          id: "D",
+          text: "Penggunaan AC dan kulkas secara berlebihan",
+        },
+      ],
+      [
+        {
+          id: "A",
+          text: "Karena mereka lebih sering berada di luar rumah",
+        },
+        {
+          id: "B",
+          text: "Karena sistem kekebalan tubuh mereka lebih lemah, sehingga lebih mudah terkena dampak polusi",
+        },
+        {
+          id: "C",
+          text: "Karena mereka tidak mampu membeli masker",
+        },
+        {
+          id: "D",
+          text: "Karena mereka tinggal di daerah yang paling tercemar",
+        },
+      ],
+      [
+        {
+          id: "A",
+          text: "Fakta karena didukung oleh data pengukuran kualitas udara",
+        },
+        {
+          id: "B",
+          text: "Opini karena merupakan pendapat subjektif penulis tentang situasi pencemaran",
+        },
+        {
+          id: "C",
+          text: "Fakta karena sudah diketahui banyak orang",
+        },
+        {
+          id: "D",
+          text: "Opini karena kata 'mengkhawatirkan' bersifat subjektif",
+        },
+      ],
+      [
+        {
+          id: "A",
+          text: "Menakut-nakuti pembaca dengan bahaya polusi udara",
+        },
+        {
+          id: "B",
+          text: "Menginformasikan penyebab dan dampak pencemaran udara serta mengajak pembaca ikut menguranginya",
+        },
+        {
+          id: "C",
+          text: "Membandingkan tingkat polusi di berbagai kota di Indonesia",
+        },
+        {
+          id: "D",
+          text: "Mengkritik pemerintah yang tidak bisa mengatasi polusi",
+        },
+      ],
+    ],
+    correctAnswers: ["B", "B", "D", "B"],
+    explanations: [
+      'Teks menyebutkan "emisi kendaraan bermotor, asap pabrik, dan pembakaran sampah" sebagai faktor pencemaran udara.',
+      "Anak-anak dan lansia secara biologis memiliki sistem kekebalan yang lebih lemah sehingga lebih rentan terhadap dampak polusi. Meskipun teks tidak menjelaskan secara rinci, ini adalah pengetahuan umum yang mendasari pernyataan tersebut.",
+      'Kata "mengkhawatirkan" adalah kata yang bersifat subjektif, mengandung penilaian pribadi penulis. Meskipun didasarkan pada fakta, pernyataan bahwa suatu situasi "mengkhawatirkan" adalah opini.',
+      'Teks memaparkan penyebab dan dampak pencemaran, lalu diakhiri dengan ajakan untuk berkontribusi menguranginya. Ini menunjukkan tujuan informatif sekaligus persuasif.',
+    ],
+  },
+
+  // PASSAGE 19: Pertanian Perkotaan (Hidroponik)
+  {
+    bandAssignments: ["MADYA", "MADYA", "UNGGUL", "UNGGUL"],
+    difficultyAssignments: [3, 3, 4, 4],
+    tagsAssignments: [
+      ["informasi-tersurat", "membaca"],
+      ["inferensi", "membaca"],
+      ["simpulan", "membaca"],
+      ["gagasan-utama", "membaca"],
+    ],
+    passage:
+      "Hidroponik adalah metode bercocok tanam tanpa menggunakan tanah. Tanaman ditanam di media air yang mengandung nutrisi lengkap. Metode ini cocok diterapkan di perkotaan yang lahannya terbatas. Dengan hidroponik, kita bisa menanam sayuran seperti selada, kangkung, bayam, dan sawi di halaman rumah atau bahkan di balkon apartemen. Perawatannya relatif mudah dan tidak memerlukan lahan luas. Air yang digunakan pun lebih hemat dibanding pertanian konvensional karena sistem resirkulasi. Banyak komunitas urban farming yang mulai mengembangkan hidroponik di kota-kota besar. Selain untuk konsumsi sendiri, hasil panen hidroponik juga bisa dijual dan menjadi sumber penghasilan tambahan. Sekolah-sekolah juga mulai mengadopsi hidroponik sebagai sarana pembelajaran dan program penghijauan. Tanaman hidroponik tumbuh lebih cepat dan lebih bersih karena tidak ada tanah yang kotor. Karena itulah, sayuran hidroponik semakin populer di kalangan masyarakat perkotaan yang sadar akan pentingnya konsumsi sayuran segar dan bebas pestisida.",
+    stems: [
+      "Apa yang dimaksud dengan hidroponik?",
+      "Mengapa hidroponik dianggap cocok untuk perkotaan?",
+      "Apa kesimpulan yang dapat diambil dari teks tersebut?",
+      "Ide pokok paragraf kedua bacaan tersebut adalah...",
+    ],
+    options: [
+      [
+        {
+          id: "A",
+          text: "Bercocok tanam di sawah dengan irigasi modern",
+        },
+        {
+          id: "B",
+          text: "Metode bercocok tanam tanpa tanah, menggunakan media air bernutrisi",
+        },
+        {
+          id: "C",
+          text: "Menanam tanaman di dalam pot dengan campuran tanah dan pupuk",
+        },
+        {
+          id: "D",
+          text: "Berkebun di halaman rumah menggunakan tanah subur",
+        },
+      ],
+      [
+        {
+          id: "A",
+          text: "Karena tidak memerlukan lahan luas dan air lebih hemat",
+        },
+        {
+          id: "B",
+          text: "Karena lebih murah daripada pertanian konvensional",
+        },
+        {
+          id: "C",
+          text: "Karena tidak perlu perawatan sama sekali",
+        },
+        {
+          id: "D",
+          text: "Karena hasil panennya selalu lebih banyak",
+        },
+      ],
+      [
+        {
+          id: "A",
+          text: "Hidroponik hanya bisa dilakukan oleh petani profesional",
+        },
+        {
+          id: "B",
+          text: "Hidroponik adalah solusi pertanian modern yang praktis dan bermanfaat bagi masyarakat perkotaan",
+        },
+        {
+          id: "C",
+          text: "Pertanian konvensional sudah tidak diperlukan lagi",
+        },
+        {
+          id: "D",
+          text: "Hidroponik membutuhkan modal yang sangat besar",
+        },
+      ],
+      [
+        {
+          id: "A",
+          text: "Cara menanam hidroponik di balkon apartemen",
+        },
+        {
+          id: "B",
+          text: "Perkembangan hidroponik di masyarakat, mulai dari komunitas hingga sekolah",
+        },
+        {
+          id: "C",
+          text: "Keuntungan menjual hasil panen hidroponik",
+        },
+        {
+          id: "D",
+          text: "Perbedaan hidroponik dan pertanian biasa",
+        },
+      ],
+    ],
+    correctAnswers: ["B", "A", "B", "B"],
+    explanations: [
+      'Teks menyebutkan "Hidroponik adalah metode bercocok tanam tanpa menggunakan tanah. Tanaman ditanam di media air yang mengandung nutrisi lengkap."',
+      'Teks menyebutkan hidroponik "cocok diterapkan di perkotaan yang lahannya terbatas" dan "air yang digunakan pun lebih hemat."',
+      'Teks memaparkan hidroponik sebagai metode yang mudah, cocok untuk lahan terbatas, dan memberikan berbagai manfaat. Kesimpulannya adalah hidroponik merupakan solusi pertanian modern yang praktis.',
+      'Paragraf kedua membahas adopsi hidroponik oleh "komunitas urban farming", "sekolah-sekolah", dan popularitasnya di kalangan masyarakat perkotaan.',
+    ],
+  },
+
+  // PASSAGE 20: Komunikasi Efektif
+  {
+    bandAssignments: ["SEMENJANA", "SEMENJANA", "MADYA", "UNGGUL"],
+    difficultyAssignments: [2, 3, 4, 4],
+    tagsAssignments: [
+      ["informasi-tersurat", "membaca"],
+      ["inferensi", "membaca"],
+      ["makna-kata", "membaca"],
+      ["hubungan-sebab-akibat", "membaca"],
+    ],
+    passage:
+      "Komunikasi efektif adalah kunci keberhasilan dalam berbagai aspek kehidupan. Baik di lingkungan keluarga, sekolah, maupun pertemanan, cara kita menyampaikan pesan sangat menentukan kualitas hubungan kita dengan orang lain. Komunikasi yang baik bukan hanya tentang berbicara, tetapi juga mendengarkan. Mendengarkan aktif berarti memberi perhatian penuh pada lawan bicara, tidak memotong pembicaraan, dan berusaha memahami sudut pandangnya. Sayangnya, banyak remaja yang belum terbiasa mendengarkan aktif. Mereka lebih sibuk memikirkan respons sendiri saat orang lain berbicara. Padahal, dengan mendengarkan aktif, kita bisa menghindari kesalahpahaman dan konflik. Selain itu, penting juga untuk memilih kata-kata yang tepat dan tidak menyinggung perasaan orang lain. Komunikasi yang santun dan penuh empati akan membuat orang lain merasa dihargai. Keterampilan berkomunikasi efektif bisa dilatih dengan kesadaran dan latihan terus-menerus. Semakin sering kita berlatih, semakin baik kemampuan komunikasi kita.",
+    stems: [
+      "Apa yang dimaksud dengan mendengarkan aktif menurut bacaan?",
+      "Berdasarkan bacaan, apa yang sering dilakukan remaja saat berkomunikasi?",
+      "Kata 'empati' dalam bacaan tersebut memiliki arti...",
+      "Mengapa komunikasi efektif dianggap penting dalam kehidupan?",
+    ],
+    options: [
+      [
+        {
+          id: "A",
+          text: "Mendengarkan sambil melakukan aktivitas lain",
+        },
+        {
+          id: "B",
+          text: "Memberi perhatian penuh, tidak memotong, dan memahami sudut pandang lawan bicara",
+        },
+        {
+          id: "C",
+          text: "Berbicara sekeras mungkin agar didengar orang",
+        },
+        {
+          id: "D",
+          text: "Mendengarkan sambil menyiapkan jawaban sendiri",
+        },
+      ],
+      [
+        {
+          id: "A",
+          text: "Mereka lebih suka menulis pesan daripada berbicara langsung",
+        },
+        {
+          id: "B",
+          text: "Mereka lebih sibuk memikirkan respons sendiri saat orang lain berbicara",
+        },
+        {
+          id: "C",
+          text: "Mereka selalu mendengarkan dengan penuh perhatian",
+        },
+        {
+          id: "D",
+          text: "Mereka menghindari komunikasi tatap muka",
+        },
+      ],
+      [
+        { id: "A", text: "Kemampuan berbicara dengan suara lantang" },
+        { id: "B", text: "Kemampuan memahami dan merasakan apa yang dirasakan orang lain" },
+        { id: "C", text: "Kemampuan meyakinkan orang lain" },
+        { id: "D", text: "Kemampuan berdebat dan mempertahankan pendapat" },
+      ],
+      [
+        {
+          id: "A",
+          text: "Karena komunikasi efektif membuat seseorang terlihat pintar",
+        },
+        {
+          id: "B",
+          text: "Karena kualitas hubungan dengan orang lain sangat ditentukan oleh cara kita berkomunikasi",
+        },
+        {
+          id: "C",
+          text: "Karena komunikasi efektif menjamin kesuksesan karier",
+        },
+        {
+          id: "D",
+          text: "Karena tanpa komunikasi efektif kita tidak bisa belajar",
+        },
+      ],
+    ],
+    correctAnswers: ["B", "B", "B", "B"],
+    explanations: [
+      'Teks menyebutkan mendengarkan aktif berarti "memberi perhatian penuh pada lawan bicara, tidak memotong pembicaraan, dan berusaha memahami sudut pandangnya."',
+      'Teks menyebutkan "banyak remaja yang belum terbiasa mendengarkan aktif. Mereka lebih sibuk memikirkan respons sendiri saat orang lain berbicara."',
+      'Kata "empati" berarti kemampuan untuk memahami dan ikut merasakan apa yang dirasakan orang lain. Berkomunikasi dengan empati berarti memahami perasaan lawan bicara.',
+      'Teks menyebutkan "cara kita menyampaikan pesan sangat menentukan kualitas hubungan kita dengan orang lain." Ini menjadi alasan utama pentingnya komunikasi efektif.',
+    ],
+  },
+
+  // PASSAGE 21: Kesehatan Mental Remaja
+  {
+    bandAssignments: ["MADYA", "UNGGUL", "UNGGUL", "UNGGUL"],
+    difficultyAssignments: [4, 4, 4, 4],
+    tagsAssignments: [
+      ["informasi-tersurat", "membaca"],
+      ["inferensi", "membaca"],
+      ["fakta-opini", "membaca"],
+      ["sikap-penulis", "membaca"],
+    ],
+    passage:
+      "Kesehatan mental remaja menjadi isu yang semakin mendapat perhatian dalam beberapa tahun terakhir. Masa remaja adalah periode transisi yang penuh dengan tekanan, baik dari lingkungan sekolah, pertemanan, maupun ekspektasi orang tua. Banyak remaja mengalami stres, kecemasan, bahkan depresi tanpa mereka sadari. Gejalanya bisa berupa perubahan pola tidur, penurunan nafsu makan, kehilangan minat pada hobi, atau menarik diri dari pergaulan. Sayangnya, stigma negatif terhadap gangguan kesehatan mental masih kuat di masyarakat. Banyak yang menganggap remaja yang mengalami masalah mental hanya \"kurang bersyukur\" atau \"lemah\". Padahal, gangguan kesehatan mental adalah kondisi medis yang membutuhkan penanganan serius. Sekolah dan keluarga memiliki peran penting dalam menjaga kesehatan mental remaja. Lingkungan yang suportif, komunikasi terbuka, dan kesediaan untuk mendengarkan tanpa menghakimi sangat diperlukan. Remaja juga perlu diajarkan cara mengelola stres, seperti berolahraga, bermeditasi, atau melakukan hobi yang menyenangkan. Jika gejala sudah mengganggu aktivitas sehari-hari, jangan ragu untuk mencari bantuan profesional seperti guru BK atau psikolog.",
+    stems: [
+      "Apa saja gejala gangguan kesehatan mental pada remaja yang disebutkan dalam bacaan?",
+      "Berdasarkan bacaan, apa yang menyebabkan remaja rentan mengalami tekanan mental?",
+      'Kalimat "Banyak yang menganggap remaja yang mengalami masalah mental hanya kurang bersyukur atau lemah" termasuk jenis kalimat...',
+      "Bagaimana sikap penulis terhadap pentingnya penanganan kesehatan mental remaja?",
+    ],
+    options: [
+      [
+        {
+          id: "A",
+          text: "Sering sakit kepala, demam, dan batuk",
+        },
+        {
+          id: "B",
+          text: "Perubahan pola tidur, penurunan nafsu makan, kehilangan minat pada hobi, dan menarik diri dari pergaulan",
+        },
+        {
+          id: "C",
+          text: "Malas belajar dan suka bolos sekolah",
+        },
+        {
+          id: "D",
+          text: "Sering berolahraga dan banyak bergaul",
+        },
+      ],
+      [
+        {
+          id: "A",
+          text: "Karena remaja suka mencari perhatian",
+        },
+        {
+          id: "B",
+          text: "Karena masa remaja adalah periode transisi penuh tekanan dari sekolah, pertemanan, dan ekspektasi orang tua",
+        },
+        {
+          id: "C",
+          text: "Karena remaja tidak punya teman yang cukup",
+        },
+        {
+          id: "D",
+          text: "Karena remaja terlalu banyak bermain media sosial",
+        },
+      ],
+      [
+        {
+          id: "A",
+          text: "Fakta karena didasarkan pada penelitian medis",
+        },
+        {
+          id: "B",
+          text: "Opini karena merupakan pandangan subjektif masyarakat yang belum tentu benar",
+        },
+        {
+          id: "C",
+          text: "Fakta karena sudah menjadi pendapat umum",
+        },
+        {
+          id: "D",
+          text: "Opini karena disampaikan oleh penulis teks",
+        },
+      ],
+      [
+        {
+          id: "A",
+          text: "Penulis menganggap kesehatan mental remaja tidak terlalu penting",
+        },
+        {
+          id: "B",
+          text: "Penulis menganggap masalah mental adalah aib yang harus disembunyikan",
+        },
+        {
+          id: "C",
+          text: "Penulis menganggap kesehatan mental remaja perlu diperhatikan serius dan sudah saatnya stigma negatif dihilangkan",
+        },
+        {
+          id: "D",
+          text: "Penulis menganggap hanya psikolog yang bisa membantu remaja",
+        },
+      ],
+    ],
+    correctAnswers: ["B", "B", "B", "C"],
+    explanations: [
+      'Teks menyebutkan gejala: "perubahan pola tidur, penurunan nafsu makan, kehilangan minat pada hobi, atau menarik diri dari pergaulan."',
+      'Teks menyebutkan "Masa remaja adalah periode transisi yang penuh dengan tekanan, baik dari lingkungan sekolah, pertemanan, maupun ekspektasi orang tua."',
+      'Kalimat tersebut adalah opini masyarakat yang penulis sajikan sebagai contoh stigma. Penulis kemudian membantahnya dengan "Padahal, gangguan kesehatan mental adalah kondisi medis." Penulis tidak setuju dengan pandangan tersebut.',
+      'Penulis membahas pentingnya dukungan lingkungan, komunikasi terbuka, dan mencari bantuan profesional. Penulis juga mengkritik stigma negatif. Ini menunjukkan keseriusan penulis pada isu ini.',
+    ],
+  },
+
+  // PASSAGE 22: Kewirausahaan Muda
+  {
+    bandAssignments: ["MADYA", "MADYA", "UNGGUL", "UNGGUL"],
+    difficultyAssignments: [3, 4, 4, 4],
+    tagsAssignments: [
+      ["informasi-tersurat", "membaca"],
+      ["inferensi", "membaca"],
+      ["makna-kata", "membaca"],
+      ["gagasan-utama", "membaca"],
+    ],
+    passage:
+      "Kewirausahaan di kalangan anak muda semakin berkembang pesat. Banyak remaja yang sudah memulai usaha sejak duduk di bangku sekolah. Produk yang dijual pun beragam, mulai dari makanan ringan, minuman kekinian, hingga aksesori dan pakaian. Media sosial menjadi alat pemasaran yang sangat efektif bagi para wirausaha muda. Mereka bisa mempromosikan produk melalui Instagram, TikTok, dan Shopee tanpa modal besar. Beberapa sekolah bahkan memiliki program kewirausahaan yang mengajarkan siswa cara membuat produk, menghitung modal, hingga strategi pemasaran. Program ini biasanya diakhiri dengan bazar yang memungkinkan siswa menjual produknya secara langsung. Berwirausaha sejak muda mengajarkan banyak keterampilan berharga, seperti kreativitas, kemampuan memecahkan masalah, manajemen keuangan, dan kegigihan. Kegagalan dalam berbisnis bukanlah akhir, melainkan pelajaran berharga. Jiwa wirausaha yang diasah sejak dini akan sangat berguna di masa depan, baik sebagai pebisnis maupun sebagai pekerja yang memiliki pola pikir inovatif.",
+    stems: [
+      "Apa saja contoh produk yang dijual oleh wirausaha muda menurut bacaan?",
+      "Bagaimana media sosial membantu para wirausaha muda?",
+      "Kata 'kegigihan' dalam bacaan tersebut memiliki arti...",
+      "Ide pokok paragraf kedua teks tersebut adalah...",
+    ],
+    options: [
+      [
+        {
+          id: "A",
+          text: "Mobil, rumah, dan tanah",
+        },
+        {
+          id: "B",
+          text: "Makanan ringan, minuman kekinian, aksesori, dan pakaian",
+        },
+        {
+          id: "C",
+          text: "Jasa konsultan, travel, dan fotografi",
+        },
+        {
+          id: "D",
+          text: "Buku, alat tulis, dan seragam sekolah",
+        },
+      ],
+      [
+        {
+          id: "A",
+          text: "Media sosial memberikan modal gratis untuk memulai usaha",
+        },
+        {
+          id: "B",
+          text: "Media sosial menjadi alat pemasaran efektif yang bisa digunakan tanpa modal besar",
+        },
+        {
+          id: "C",
+          text: "Media sosial otomatis menjualkan produk tanpa usaha",
+        },
+        {
+          id: "D",
+          text: "Media sosial hanya berguna untuk usaha besar",
+        },
+      ],
+      [
+        { id: "A", text: "Kemampuan berbicara di depan umum" },
+        { id: "B", text: "Ketekunan dan tidak mudah menyerah dalam menghadapi tantangan" },
+        { id: "C", text: "Kemampuan menghitung keuangan dengan cepat" },
+        { id: "D", text: "Keterampilan menggambar dan mendesain" },
+      ],
+      [
+        {
+          id: "A",
+          text: "Cara memulai usaha dari nol tanpa modal",
+        },
+        {
+          id: "B",
+          text: "Manfaat berwirausaha sejak muda dan keterampilan yang bisa dipelajari",
+        },
+        {
+          id: "C",
+          text: "Perbedaan antara pebisnis dan pekerja biasa",
+        },
+        {
+          id: "D",
+          text: "Program bazar yang diadakan sekolah setiap tahun",
+        },
+      ],
+    ],
+    correctAnswers: ["B", "B", "B", "B"],
+    explanations: [
+      'Teks menyebutkan "produk yang dijual pun beragam, mulai dari makanan ringan, minuman kekinian, hingga aksesori dan pakaian."',
+      'Teks menyebutkan "Media sosial menjadi alat pemasaran yang sangat efektif ... bisa mempromosikan produk ... tanpa modal besar."',
+      'Kata "kegigihan" berarti ketekunan, keuletan, atau tidak mudah menyerah. Dalam konteks wirausaha, ini berarti terus berusaha meskipun menghadapi kegagalan atau kesulitan.',
+      'Paragraf kedua membahas manfaat berwirausaha sejak muda: keterampilan yang dipelajari seperti kreativitas, pemecahan masalah, manajemen keuangan, dan kegigihan.',
+    ],
+  },
+
+  // PASSAGE 23: Seni dan Kreativitas
+  {
+    bandAssignments: ["SEMENJANA", "MADYA", "UNGGUL", "UNGGUL"],
+    difficultyAssignments: [2, 3, 4, 4],
+    tagsAssignments: [
+      ["informasi-tersurat", "membaca"],
+      ["inferensi", "membaca"],
+      ["simpulan", "membaca"],
+      ["struktur-paragraf", "membaca"],
+    ],
+    passage:
+      "Seni dan kreativitas memiliki peran penting dalam perkembangan remaja. Kegiatan seni seperti melukis, bermain musik, menari, atau teater membantu mengekspresikan perasaan dan pikiran yang mungkin sulit diungkapkan dengan kata-kata. Sebuah penelitian menunjukkan bahwa remaja yang aktif dalam kegiatan seni cenderung memiliki tingkat kepercayaan diri yang lebih tinggi dan kemampuan sosial yang lebih baik. Sayangnya, kegiatan seni sering dianggap sebagai kegiatan sampingan yang kurang penting dibanding pelajaran akademik. Banyak sekolah yang mengurangi jam pelajaran seni demi menambah jam pelajaran matematika atau sains. Padahal, kreativitas adalah keterampilan yang sangat dibutuhkan di abad ke-21. Banyak perusahaan besar mencari karyawan yang kreatif dan inovatif. Seni juga mengajarkan kita untuk menghargai keindahan dan perbedaan. Setiap karya seni adalah unik, sama seperti setiap individu memiliki cara pandang yang berbeda. Karena itu, dukungan terhadap kegiatan seni di sekolah dan di rumah perlu ditingkatkan. Biarkan remaja mengeksplorasi bakat dan minat mereka di bidang seni.",
+    stems: [
+      "Apa saja contoh kegiatan seni yang disebutkan dalam bacaan?",
+      "Apa dampak positif kegiatan seni bagi remaja berdasarkan penelitian yang disebutkan?",
+      "Apa simpulan yang tepat dari teks tersebut?",
+      "Paragraf pertama teks tersebut menyajikan...",
+    ],
+    options: [
+      [
+        { id: "A", text: "Melukis, bermain musik, menari, dan teater" },
+        { id: "B", text: "Membaca, menulis, dan berhitung" },
+        { id: "C", text: "Olahraga, pramuka, dan paskibra" },
+        { id: "D", text: "Memasak, menjahit, dan berkebun" },
+      ],
+      [
+        {
+          id: "A",
+          text: "Nilai akademik menjadi lebih tinggi dan lebih pandai matematika",
+        },
+        {
+          id: "B",
+          text: "Kepercayaan diri lebih tinggi dan kemampuan sosial lebih baik",
+        },
+        {
+          id: "C",
+          text: "Mendapat beasiswa ke luar negeri",
+        },
+        {
+          id: "D",
+          text: "Lebih populer di kalangan teman-teman",
+        },
+      ],
+      [
+        {
+          id: "A",
+          text: "Kegiatan seni sebaiknya ditiadakan karena mengganggu pelajaran akademik",
+        },
+        {
+          id: "B",
+          text: "Seni dan kreativitas penting bagi perkembangan remaja dan perlu didukung oleh sekolah dan keluarga",
+        },
+        {
+          id: "C",
+          text: "Seni hanya bermanfaat bagi remaja yang berbakat melukis",
+        },
+        {
+          id: "D",
+          text: "Kegiatan seni hanya cocok untuk hiburan semata",
+        },
+      ],
+      [
+        {
+          id: "A",
+          text: "Argumentasi tentang pentingnya seni dengan bukti penelitian",
+        },
+        {
+          id: "B",
+          text: "Deskripsi tentang jenis-jenis seni yang ada di Indonesia",
+        },
+        {
+          id: "C",
+          text: "Kronologi sejarah perkembangan seni di sekolah",
+        },
+        {
+          id: "D",
+          text: "Perbandingan antara seni modern dan seni tradisional",
+        },
+      ],
+    ],
+    correctAnswers: ["A", "B", "B", "A"],
+    explanations: [
+      'Teks menyebutkan "Kegiatan seni seperti melukis, bermain musik, menari, atau teater."',
+      'Teks menyebutkan "remaja yang aktif dalam kegiatan seni cenderung memiliki tingkat kepercayaan diri yang lebih tinggi dan kemampuan sosial yang lebih baik."',
+      'Teks memaparkan manfaat seni, kritik terhadap pengurangan jam seni, dan seruan untuk meningkatkan dukungan. Simpulannya adalah seni penting dan perlu didukung.',
+      'Paragraf pertama menyajikan pernyataan tentang peran penting seni, didukung bukti penelitian tentang manfaatnya. Ini adalah pola argumentasi.',
+    ],
+  },
+
+  // PASSAGE 24: Gizi Seimbang
+  {
+    bandAssignments: ["SEMENJANA", "SEMENJANA", "MADYA", "UNGGUL"],
+    difficultyAssignments: [2, 3, 3, 4],
+    tagsAssignments: [
+      ["informasi-tersurat", "membaca"],
+      ["inferensi", "membaca"],
+      ["hubungan-sebab-akibat", "membaca"],
+      ["tujuan-teks", "membaca"],
+    ],
+    passage:
+      "Gizi seimbang adalah susunan pangan sehari-hari yang mengandung zat gizi dalam jenis dan jumlah yang sesuai dengan kebutuhan tubuh. Prinsip gizi seimbang tidak hanya tentang karbohidrat, protein, dan lemak, tetapi juga vitamin, mineral, dan air yang cukup. Sayuran dan buah-buahan merupakan sumber vitamin dan mineral yang penting untuk menjaga daya tahan tubuh. Remaja yang sedang dalam masa pertumbuhan membutuhkan asupan gizi yang lebih banyak dibanding orang dewasa. Sayangnya, banyak remaja yang lebih suka mengonsumsi makanan cepat saji yang tinggi lemak, gula, dan garam, tetapi rendah nutrisi. Kebiasaan ini bisa menyebabkan berbagai masalah kesehatan, seperti obesitas, diabetes, dan tekanan darah tinggi di kemudian hari. Oleh karena itu, penting bagi remaja untuk membiasakan diri mengonsumsi makanan bergizi seimbang. Mulailah dengan sarapan pagi sebelum berangkat sekolah, bawa bekal dari rumah, dan kurangi jajan sembarangan. Tubuh yang sehat akan mendukung aktivitas belajar dan berprestasi.",
+    stems: [
+      "Apa saja zat gizi yang diperlukan tubuh menurut prinsip gizi seimbang?",
+      "Mengapa remaja membutuhkan asupan gizi yang lebih banyak dibanding orang dewasa?",
+      "Apa dampak dari kebiasaan mengonsumsi makanan cepat saji secara berlebihan?",
+      "Apa tujuan penulisan teks tersebut?",
+    ],
+    options: [
+      [
+        {
+          id: "A",
+          text: "Karbohidrat dan protein saja",
+        },
+        {
+          id: "B",
+          text: "Karbohidrat, protein, lemak, vitamin, mineral, dan air",
+        },
+        {
+          id: "C",
+          text: "Hanya sayuran dan buah-buahan",
+        },
+        {
+          id: "D",
+          text: "Susu, daging, dan nasi",
+        },
+      ],
+      [
+        {
+          id: "A",
+          text: "Karena remaja lebih aktif bergerak dibanding orang dewasa",
+        },
+        {
+          id: "B",
+          text: "Karena remaja sedang dalam masa pertumbuhan",
+        },
+        {
+          id: "C",
+          text: "Karena remaja lebih sering sakit",
+        },
+        {
+          id: "D",
+          text: "Karena remaja memiliki berat badan lebih besar",
+        },
+      ],
+      [
+        {
+          id: "A",
+          text: "Membuat tubuh menjadi lebih tinggi dan kuat",
+        },
+        {
+          id: "B",
+          text: "Kekurangan vitamin dan mineral yang penting bagi tubuh",
+        },
+        {
+          id: "C",
+          text: "Obesitas, diabetes, dan tekanan darah tinggi",
+        },
+        {
+          id: "D",
+          text: "Membuat kulit menjadi lebih bersih dan cerah",
+        },
+      ],
+      [
+        {
+          id: "A",
+          text: "Menginformasikan tentang gizi seimbang dan mendorong remaja menerapkan pola makan sehat",
+        },
+        {
+          id: "B",
+          text: "Membandingkan makanan sehat dan makanan cepat saji",
+        },
+        {
+          id: "C",
+          text: "Menceritakan pengalaman penulis menjalani diet",
+        },
+        {
+          id: "D",
+          text: "Mengkritik restoran cepat saji yang menjual makanan tidak sehat",
+        },
+      ],
+    ],
+    correctAnswers: ["B", "B", "C", "A"],
+    explanations: [
+      'Teks menyebutkan "karbohidrat, protein, dan lemak, tetapi juga vitamin, mineral, dan air yang cukup."',
+      'Teks menyebutkan "Remaja yang sedang dalam masa pertumbuhan membutuhkan asupan gizi yang lebih banyak."',
+      'Teks menyebutkan "Kebiasaan ini bisa menyebabkan berbagai masalah kesehatan, seperti obesitas, diabetes, dan tekanan darah tinggi."',
+      'Teks bersifat informatif (menjelaskan gizi seimbang) sekaligus persuasif (mendorong remaja menerapkan pola makan sehat). Tujuan utamanya adalah menginformasikan dan mengajak.',
+    ],
+  },
+
+  // PASSAGE 25: Persahabatan yang Sehat
+  {
+    bandAssignments: ["SEMENJANA", "SEMENJANA", "MADYA", "UNGGUL"],
+    difficultyAssignments: [2, 3, 3, 4],
+    tagsAssignments: [
+      ["informasi-tersurat", "membaca"],
+      ["inferensi", "membaca"],
+      ["makna-kata", "membaca"],
+      ["sikap-penulis", "membaca"],
+    ],
+    passage:
+      "Persahabatan yang sehat adalah salah satu faktor penting dalam kebahagiaan remaja. Teman yang baik akan mendukung kita dalam situasi sulit, memberi nasihat yang membangun, dan tidak ragu mengingatkan jika kita melakukan kesalahan. Persahabatan sejati bukan tentang seberapa sering kita bertemu, melainkan tentang kualitas hubungan yang saling menghargai dan mempercayai. Sayangnya, tidak semua pertemanan berdampak positif. Ada teman yang justru memberi tekanan negatif, seperti mengajak membolos, merokok, atau melakukan hal-hal berbahaya lainnya. Toxic friendship atau persahabatan beracun bisa membuat seseorang merasa tidak nyaman, tidak dihargai, bahkan tertekan. Penting bagi remaja untuk bisa membedakan pertemanan yang sehat dan yang tidak. Jika merasa tidak nyaman dengan suatu pertemanan, tidak ada salahnya untuk menjauh. Bertemanlah dengan orang yang membuatmu menjadi versi terbaik dari dirimu sendiri. Kualitas pertemanan jauh lebih penting daripada kuantitasnya. Lebih baik memiliki sedikit teman baik yang tulus daripada banyak teman tetapi tidak ada yang sungguh-sungguh peduli.",
+    stems: [
+      "Apa ciri-ciri persahabatan yang sehat menurut bacaan?",
+      "Apa yang dimaksud dengan toxic friendship dalam bacaan?",
+      "Kata 'membangun' dalam frasa 'nasihat yang membangun' memiliki arti...",
+      "Apa pesan utama penulis tentang pertemanan bagi remaja?",
+    ],
+    options: [
+      [
+        {
+          id: "A",
+          text: "Sering bertemu setiap hari dan saling meminjam uang",
+        },
+        {
+          id: "B",
+          text: "Mendukung, memberi nasihat membangun, mengingatkan kesalahan, saling menghargai, dan mempercayai",
+        },
+        {
+          id: "C",
+          text: "Selalu setuju dengan apa pun yang kita lakukan",
+        },
+        {
+          id: "D",
+          text: "Memiliki banyak teman di media sosial",
+        },
+      ],
+      [
+        {
+          id: "A",
+          text: "Persahabatan yang bertahan lama meskipun jarak jauh",
+        },
+        {
+          id: "B",
+          text: "Persahabatan yang toxic atau beracun, membuat seseorang merasa tidak nyaman dan tertekan",
+        },
+        {
+          id: "C",
+          text: "Teman yang suka memberi hadiah dan traktiran",
+        },
+        {
+          id: "D",
+          text: "Persahabatan yang didasarkan pada kesamaan hobi",
+        },
+      ],
+      [
+        {
+          id: "A",
+          text: "Membangun secara fisik berupa gedung atau bangunan",
+        },
+        {
+          id: "B",
+          text: "Bersifat memperbaiki, menguatkan, atau meningkatkan kualitas diri",
+        },
+        {
+          id: "C",
+          text: "Kritik yang keras dan menyakitkan",
+        },
+        {
+          id: "D",
+          text: "Pujian yang berlebihan dan tidak realistis",
+        },
+      ],
+      [
+        {
+          id: "A",
+          text: "Memiliki teman sebanyak mungkin agar populer di sekolah",
+        },
+        {
+          id: "B",
+          text: "Kualitas pertemanan lebih penting daripada kuantitas, pilihlah teman yang membawa pengaruh positif",
+        },
+        {
+          id: "C",
+          text: "Hindari berteman dengan siapa pun agar tidak sakit hati",
+        },
+        {
+          id: "D",
+          text: "Berteman hanya dengan orang yang sekelas saja",
+        },
+      ],
+    ],
+    correctAnswers: ["B", "B", "B", "B"],
+    explanations: [
+      'Teks menyebutkan teman baik "mendukung kita", "memberi nasihat yang membangun", "mengingatkan jika kita melakukan kesalahan", dan persahabatan sejati "saling menghargai dan mempercayai."',
+      'Teks menjelaskan "Toxic friendship atau persahabatan beracun bisa membuat seseorang merasa tidak nyaman, tidak dihargai, bahkan tertekan."',
+      'Kata "membangun" dalam konteks "nasihat yang membangun" berarti bersifat memperbaiki, menguatkan, atau meningkatkan kualitas diri. Nasihat yang membangun bertujuan untuk kebaikan, bukan menjatuhkan.',
+      'Penulis menyatakan "Kualitas pertemanan jauh lebih penting daripada kuantitasnya" dan "Bertemanlah dengan orang yang membuatmu menjadi versi terbaik dari dirimu sendiri."',
+    ],
+  },
+];
+
+function generatePassageBasedQuestions(passageGroups: PassageGroup[]): Question[] {
+  let globalQNum = 1;
+  const questions: Question[] = [];
+
+  for (let pIdx = 0; pIdx < passageGroups.length; pIdx++) {
+    const group = passageGroups[pIdx];
+
+    for (let qIdx = 0; qIdx < group.stems.length; qIdx++) {
+      const qNum = globalQNum++;
+      const band = group.bandAssignments[qIdx];
+      const qId = `BC-UKBI-SMP-MEMBACA-${band}-SET001-Q${String(qNum).padStart(3, "0")}`;
+
+      const question: Question = {
+        id: qId,
+        product: "UKBI_PRACTICE",
+        track: "UKBI_SMP",
+        section: "membaca",
+        band: band,
+        type: "pilihan_ganda",
+        difficulty: group.difficultyAssignments[qIdx],
+        passage: qIdx === 0 ? group.passage : "",
+        stem: group.stems[qIdx],
+        options: group.options[qIdx],
+        correctAnswer: group.correctAnswers[qIdx],
+        explanation: group.explanations[qIdx],
+        tags: group.tagsAssignments[qIdx],
+        source: "BC_UKBI_SMP_ORIGINAL",
+        status: "approved",
+      };
+
+      questions.push(question);
+    }
+  }
+
+  return questions;
+}
+
+const questions = generatePassageBasedQuestions(passageGroups);
+
+const output = {
+  meta: {
+    section: "membaca",
+    track: "UKBI_SMP",
+    product: "UKBI_PRACTICE",
+    set: "set-001",
+    totalItems: questions.length,
+    totalPassages: passageGroups.length,
+    source: "BC_UKBI_SMP_ORIGINAL",
+  },
+  questions: questions,
+};
+
+const outputPath = path.join(
+  __dirname,
+  "..",
+  "data",
+  "question-bank",
+  "ukbi",
+  "smp",
+  "membaca",
+  "set-001.json"
+);
+
+fs.writeFileSync(outputPath, JSON.stringify(output, null, 2), "utf-8");
+console.log(`✅ Generated ${questions.length} questions across ${passageGroups.length} passages`);
+console.log(`📁 File: ${outputPath}`);
+
+// Count bands
+const bandCounts: Record<string, number> = {};
+questions.forEach((q) => {
+  bandCounts[q.band] = (bandCounts[q.band] || 0) + 1;
+});
+console.log("📊 Band distribution:", bandCounts);
+
+// Verify correctAnswer format
+const invalidAnswers = questions.filter(
+  (q) => !["A", "B", "C", "D"].includes(q.correctAnswer)
+);
+if (invalidAnswers.length > 0) {
+  console.error("❌ Invalid correctAnswer found:", invalidAnswers.map((q) => q.id));
+}
+
+// Verify difficulty ranges
+const outOfRange = questions.filter(
+  (q) => q.difficulty < 2 || q.difficulty > 4
+);
+if (outOfRange.length > 0) {
+  console.error("❌ Difficulty out of range:", outOfRange.map((q) => q.id));
+}
+
+// Verify passage length
+passageGroups.forEach((g, i) => {
+  const wordCount = g.passage.split(/\s+/).length;
+  if (wordCount < 120 || wordCount > 220) {
+    console.warn(`⚠️ Passage ${i + 1} has ${wordCount} words (target: 120-220)`);
+  }
+});
+
+const jsonSize = Buffer.byteLength(JSON.stringify(output, null, 2), "utf-8");
+console.log(`📦 File size: ${(jsonSize / 1024).toFixed(1)} KB`);
+
+// Validate JSON
+try {
+  JSON.parse(JSON.stringify(output));
+  console.log("✅ JSON validation passed");
+} catch (e) {
+  console.error("❌ JSON validation failed:", e);
+}

@@ -50,6 +50,7 @@
     "test:ukbi-tka-per-attempt-snapshot": "npx tsx scripts/test-ukbi-tka-per-attempt-snapshot.ts",
     "audit:ukbi-tka-attempt-history": "npx tsx scripts/audit-ukbi-tka-attempt-history.ts",
     "test:bigt-menu": "npx tsx scripts/test-bigt-menu.ts",
+    "test:bigt-page-runtime": "npx tsx scripts/test-bigt-page-runtime.ts",
     "test:dokumen-latihan-sanitization": "npx tsx scripts/test-dokumen-latihan-sanitization.ts",
     "test:simulation-workflow": "npx tsx scripts/test-phase-simulation-workflow.ts",
     "validate:ukbi-tka-structure": "npx tsx scripts/validate-ukbi-tka-question-structure.ts",
