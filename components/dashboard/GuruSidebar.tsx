@@ -7,7 +7,7 @@ import {
   Home, ShoppingBag, Video, Gamepad2, FileText, Database,
   Users, Settings, ChevronDown, ChevronRight,
   BookOpen, Trophy, Calendar, GraduationCap, Brain, Star, Award,
-  LogOut, Crown, Zap, Flame, TrendingUp, Bell, Presentation, Sparkles
+  LogOut, Crown, Zap, Flame, TrendingUp, Bell, Presentation, Sparkles, ExternalLink, BarChart3
 } from "lucide-react"
 import { createClient } from "@/lib/supabase/client"
 import { useRouter } from "next/navigation"
@@ -31,6 +31,17 @@ const NAV: NavItem[] = [
   { label: "Materi Ajar", href: "/guru/materi-ajar", icon: <Presentation size={18} /> },
   { label: "Bank Soal", href: "/guru/bank-soal", icon: <Database size={18} /> },
   { label: "Semua Soal", href: "/guru/soal", icon: <BookOpen size={18} /> },
+  {
+    label: "Simulasi",
+    icon: <BarChart3 size={18} />,
+    children: [
+      { label: "Simulasi UKBI", href: "/guru/simulasi/ukbi", icon: <BookOpen size={16} /> },
+      { label: "Simulasi TKA", href: "/guru/simulasi/tka", icon: <GraduationCap size={16} /> },
+    ],
+  },
+  { label: "Hasil Murid", href: "/guru/hasil-simulasi", icon: <TrendingUp size={18} /> },
+  { label: "Dokumen Latihan Murid", href: "/guru/dokumen-latihan", icon: <Star size={18} /> },
+  { label: "BIGT", href: "/guru/bigt", icon: <ExternalLink size={18} /> },
   { label: "Data Siswa", href: "/guru/data-siswa", icon: <Users size={18} /> },
 {
     label: "Kompetensi",
@@ -38,7 +49,6 @@ const NAV: NavItem[] = [
     children: [
       { label: "UKBI - TKA", href: "/guru/ukbi", icon: <BookOpen size={16} /> },
       { label: "Buat Paket", href: "/guru/buat-tka", icon: <Brain size={16} /> },
-      { label: "Sertifikat", href: "/guru/sertifikat", icon: <Star size={16} /> },
       { label: "Hasil TKA", href: "/guru/hasil-tka", icon: <TrendingUp size={16} /> },
     ]
   },
@@ -80,10 +90,11 @@ export function GuruSidebar({ user }: Props) {
   const router = useRouter()
   const supabase = createClient()
   const [expanded, setExpanded] = useState<Record<string, boolean>>({
-    Kompetensi: pathname.includes("/ukbi") || pathname.includes("/sertifikat") || pathname.includes("/buat-tka") || pathname.includes("/hasil-tka"),
+    Kompetensi: pathname.includes("/ukbi") || pathname.includes("/buat-tka") || pathname.includes("/hasil-tka"),
     Olimpiade: pathname.includes("/olimpiade"),
     Komunitas: pathname.includes("/komunitas"),
     "AI Tools": pathname.includes("/ai-tools"),
+    Simulasi: pathname.includes("/simulasi/") || pathname.includes("/hasil-simulasi") || pathname.includes("/dokumen-latihan") || pathname.includes("/bigt"),
   })
 
   const handleLogout = async () => {

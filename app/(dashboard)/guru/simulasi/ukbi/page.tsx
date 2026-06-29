@@ -1,0 +1,92 @@
+import { createClient } from "@/lib/supabase/server"
+import { db } from "@/lib/db"
+import { redirect } from "next/navigation"
+import { getUKBIPackages } from "@/lib/kompetensi/get-simulation-packages"
+import { BookOpen, Database, TrendingUp } from "lucide-react"
+import Link from "next/link"
+
+export const dynamic = "force-dynamic"
+
+export default async function GuruUKBISimulasiPage() {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) redirect("/login")
+
+  const dbUser = await db.user.findUnique({ where: { supabaseId: user.id } })
+  if (!dbUser || (dbUser.role !== "GURU" && dbUser.role !== "ADMIN")) redirect("/login")
+
+  const tracks = await getUKBIPackages()
+  const totalPakets = tracks.filter(t => t.available).length
+  const totalSoal = tracks.reduce((s, t) => s + t.questionCount, 0)
+
+  return (
+    <div>
+      {/* Hero */}
+      <div className="bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 rounded-2xl p-6 mb-6 text-white">
+        <div className="flex items-center gap-3 mb-2">
+          <BookOpen size={24} />
+          <h1 className="text-xl font-bold">Simulasi UKBI — Guru</h1>
+        </div>
+        <p className="text-sm text-emerald-200 max-w-2xl">
+          Pantau paket simulasi UKBI yang tersedia untuk murid. Lihat hasil dan kelola bank soal.
+        </p>
+      </div>
+
+      {/* Stats */}
+      <div className="grid grid-cols-2 gap-4 mb-6">
+        <div className="bg-white rounded-xl border border-gray-100 p-4">
+          <p className="text-xs text-gray-500">Paket Tersedia</p>
+          <p className="text-2xl font-bold text-gray-900">{totalPakets}</p>
+        </div>
+        <div className="bg-white rounded-xl border border-gray-100 p-4">
+          <p className="text-xs text-gray-500">Total Soal</p>
+          <p className="text-2xl font-bold text-gray-900">{totalSoal}</p>
+        </div>
+      </div>
+
+      {/* Track Cards */}
+      <div className="grid gap-4 md:grid-cols-2 mb-6">
+        {tracks.map(track => (
+          <div key={track.id} className={`bg-white rounded-xl border border-gray-100 p-5 ${track.available ? "" : "opacity-60"}`}>
+            <div className="flex items-center gap-3 mb-3">
+              <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${track.bgGradient} flex items-center justify-center text-sm`}>
+                {track.icon}
+              </div>
+              <div>
+                <h3 className="font-bold text-gray-900 text-sm">{track.label}</h3>
+                <p className="text-[11px] text-gray-500">{track.target}</p>
+              </div>
+            </div>
+            <div className="text-xs text-gray-400 mb-3">
+              {track.available ? `${track.questionCount} soal · ${track.duration} menit` : "Segera tersedia"}
+            </div>
+            {track.available && (
+              <Link
+                href="/guru/hasil-simulasi"
+                className="text-xs text-emerald-600 font-semibold hover:underline flex items-center gap-1"
+              >
+                <TrendingUp size={12} /> Lihat Hasil Murid
+              </Link>
+            )}
+          </div>
+        ))}
+      </div>
+
+      {/* Actions */}
+      <div className="flex gap-3">
+        <Link
+          href="/guru/hasil-simulasi"
+          className="flex items-center gap-2 px-5 py-2.5 bg-emerald-600 text-white rounded-xl font-medium hover:bg-emerald-700 transition-colors"
+        >
+          <TrendingUp size={16} /> Lihat Hasil Murid
+        </Link>
+        <Link
+          href="/guru/bank-soal"
+          className="flex items-center gap-2 px-5 py-2.5 bg-white border border-gray-200 text-gray-700 rounded-xl font-medium hover:bg-gray-50 transition-colors"
+        >
+          <Database size={16} /> Kelola Bank Soal
+        </Link>
+      </div>
+    </div>
+  )
+}

@@ -47,3 +47,124 @@ setInterval(() => {
     if (now > entry.resetAt) rateMap.delete(key);
   }
 }, CLEANUP_INTERVAL);
+
+const SENSITIVE_ANSWER_FIELDS = [
+  "correctAnswer",
+  "answerKey",
+  "jawaban",
+  "correct_option",
+  "correctOption",
+  "scoringRule",
+  "rubricInternal",
+  "reviewerNotes",
+  "adminOnly",
+];
+
+export function stripSensitiveAnswerFields<T extends Record<string, unknown>>(item: T): Omit<T, (typeof SENSITIVE_ANSWER_FIELDS)[number]> {
+  const result = { ...item };
+  for (const field of SENSITIVE_ANSWER_FIELDS) {
+    if (field in result) {
+      delete result[field];
+    }
+  }
+  return result;
+}
+
+export function sanitizeQuestionForStudent<T extends Record<string, unknown>>(item: T): Omit<T, (typeof SENSITIVE_ANSWER_FIELDS)[number]> {
+  const result = { ...item };
+  for (const field of SENSITIVE_ANSWER_FIELDS) {
+    if (field in result) {
+      delete result[field];
+    }
+  }
+  if ("explanation" in result) {
+    delete result.explanation;
+  }
+  return result;
+}
+
+export function sanitizeQuestionForAuthoring<T extends Record<string, unknown>>(item: T): T {
+  return item;
+}
+
+const SOAL_SAFE_FIELDS = ["id", "text", "type", "difficulty", "options"] as const;
+
+export function sanitizeSoalForStudent(soal: Record<string, unknown> | null | undefined): Record<string, unknown> | null {
+  if (!soal) return null;
+  const result: Record<string, unknown> = {};
+  for (const field of SOAL_SAFE_FIELDS) {
+    if (field in soal) {
+      result[field] = soal[field];
+    }
+  }
+  return result;
+}
+
+export function deepScanSensitiveFields(obj: unknown, path = ""): string[] {
+  const found: string[] = [];
+  if (!obj || typeof obj !== "object") return found;
+  if (Array.isArray(obj)) {
+    for (let i = 0; i < obj.length; i++) {
+      found.push(...deepScanSensitiveFields(obj[i], `${path}[${i}]`));
+    }
+    return found;
+  }
+  for (const [key, value] of Object.entries(obj as Record<string, unknown>)) {
+    const currentPath = path ? `${path}.${key}` : key;
+    if (SENSITIVE_ANSWER_FIELDS.includes(key)) {
+      found.push(currentPath);
+    }
+    found.push(...deepScanSensitiveFields(value, currentPath));
+  }
+  return found;
+}
+
+export function sanitizeSnapshotQuestionForClient(q: Record<string, unknown>): Record<string, unknown> {
+  const safe: Record<string, unknown> = {};
+  const allowed = new Set(["id", "type", "text", "options", "difficulty", "section", "seksi"]);
+  for (const key of Object.keys(q)) {
+    if (allowed.has(key)) {
+      safe[key] = q[key];
+    }
+  }
+  return safe;
+}
+
+export function buildClientQuestionPayload(snapshotQuestions: Record<string, unknown>[]): Record<string, unknown>[] {
+  return snapshotQuestions.map(sanitizeSnapshotQuestionForClient);
+}
+
+export function sanitizeAttemptAnswerDetailsForClient(details: Record<string, unknown> | null): Record<string, unknown> | null {
+  if (!details) return null;
+  const safe: Record<string, unknown> = {};
+  const allowedTop = new Set(["version", "attemptId", "paketId", "product", "startedAt", "submittedAt", "userAnswers", "scoring"]);
+  for (const key of Object.keys(details)) {
+    if (allowedTop.has(key)) {
+      if (key === "userAnswers" && Array.isArray(details[key])) {
+        safe[key] = (details[key] as Record<string, unknown>[]).map((ua: Record<string, unknown>) => {
+          const safeUa: Record<string, unknown> = {};
+          const allowedUa = new Set(["questionId", "selectedOptionId", "selectedAnswer", "isCorrect", "score", "section"]);
+          for (const k of Object.keys(ua)) {
+            if (allowedUa.has(k)) safeUa[k] = ua[k];
+          }
+          return safeUa;
+        });
+      } else {
+        safe[key] = details[key];
+      }
+    }
+  }
+  return safe;
+}
+
+export function sanitizeAttemptHistoryForClient(details: Record<string, unknown> | null): Record<string, unknown> | null {
+  if (!details) return null;
+  const safe: Record<string, unknown> = {};
+  const allowed = new Set(["attemptId", "paketId", "product", "submittedAt", "scoring"]);
+  for (const key of Object.keys(details)) {
+    if (allowed.has(key)) {
+      safe[key] = details[key];
+    }
+  }
+  return safe;
+}

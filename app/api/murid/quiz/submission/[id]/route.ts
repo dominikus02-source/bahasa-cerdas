@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
+import { sanitizeSoalForStudent } from "@/lib/security";
 
 export async function GET(
   req: NextRequest,
@@ -47,9 +48,12 @@ export async function GET(
     const soals = soalIds.length > 0 ? await db.soal.findMany({ where: { id: { in: soalIds } } }) : [];
     const soalMap = new Map(soals.map(s => [s.id, s]));
 
+    const isPostSubmit = submission.status === "SUBMITTED" || submission.status === "GRADED";
+
     const enrichedAnswers = submission.answers.map(a => {
       const quizQ = submission.assignment.quiz.questions.find(q => q.id === a.quizQuestionId);
       const soal = quizQ?.sourceType === "SOAL" ? soalMap.get(quizQ.sourceId) : null;
+      const safeSoal = soal ? sanitizeSoalForStudent(soal) : null;
       return {
         ...a,
         question: {
@@ -59,11 +63,8 @@ export async function GET(
           customOptions: quizQ?.customOptions,
           customCorrectAnswer: quizQ?.customAnswer,
           orderIndex: quizQ?.orderIndex || 0,
-          soal: soal ? {
-            text: soal.text,
-            options: soal.options,
-            correctOptionIndex: soal.options.indexOf(soal.correctAnswer),
-          } : null,
+          soal: safeSoal,
+          ...(isPostSubmit && soal ? { correctOptionIndex: soal.options.indexOf(soal.correctAnswer) } : {}),
         },
       };
     });

@@ -40,7 +40,22 @@
     "validate:jalur-questions": "npx tsx scripts/validate-jalur-questions.ts",
     "seed:jalur-lessons:dry-run": "npx tsx scripts/seed-jalur-micro-lessons.ts",
     "seed:jalur-lessons": "npx tsx scripts/seed-jalur-micro-lessons.ts --execute",
-    "validate:jalur-lessons": "npx tsx scripts/validate-jalur-lessons.ts"
+    "validate:jalur-lessons": "npx tsx scripts/validate-jalur-lessons.ts",
+    "test:bank-soal-leakage": "npx tsx scripts/test-ukbi-tka-bank-soal-leakage.ts",
+    "test:murid-quiz-leakage": "npx tsx scripts/test-murid-quiz-leakage.ts",
+    "test:ukbi-tka-randomization": "npx tsx scripts/test-ukbi-tka-randomization.ts",
+    "audit:ukbi-tka-randomization": "npx tsx scripts/audit-ukbi-tka-randomization.ts",
+    "test:ukbi-tka-session-snapshot": "npx tsx scripts/test-ukbi-tka-session-snapshot.ts",
+    "audit:ukbi-tka-snapshot": "npx tsx scripts/audit-ukbi-tka-snapshot-integrity.ts",
+    "test:ukbi-tka-per-attempt-snapshot": "npx tsx scripts/test-ukbi-tka-per-attempt-snapshot.ts",
+    "audit:ukbi-tka-attempt-history": "npx tsx scripts/audit-ukbi-tka-attempt-history.ts",
+    "test:bigt-menu": "npx tsx scripts/test-bigt-menu.ts",
+    "test:dokumen-latihan-sanitization": "npx tsx scripts/test-dokumen-latihan-sanitization.ts",
+    "test:simulation-workflow": "npx tsx scripts/test-phase-simulation-workflow.ts",
+    "validate:ukbi-tka-structure": "npx tsx scripts/validate-ukbi-tka-question-structure.ts",
+    "audit:ukbi-tka-quality": "npx tsx scripts/audit-ukbi-tka-question-quality.ts",
+    "fix:ukbi-tka-structure": "npx tsx scripts/fix-ukbi-tka-structure-safe.ts",
+    "fix:ukbi-tka-structure:execute": "npx tsx scripts/fix-ukbi-tka-structure-safe.ts --execute"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.39.0",

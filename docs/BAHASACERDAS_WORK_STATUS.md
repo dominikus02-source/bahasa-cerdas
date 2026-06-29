@@ -1,7 +1,7 @@
 # BahasaCerdas Work Status
 
 > **Project Ledger** — track completed, in-progress, pending, and blocked work.
-> **Last updated:** 2026-06-29 (Phase Build Hardening 1)
+> **Last updated:** 2026-06-29 (Phase 2C — UKBI/TKA Per-Attempt Snapshot)
 > **Branch:** `main` (GitHub: `dominikus02-source/bahasa-cerdas`)
 
 ---
@@ -43,6 +43,11 @@
 | **Phase Arena QA 2B** | Security, XP, and hardening audit. Fixed: XP farming (removed 10 XP per incomplete attempt), isi_blank missing submit button, `xpAwarded`→`xpEarned` TS error. Leakage test: 366 questions, 0 leaked fields. Question validator: 366 questions, 0 issues. Progress security: userId from session only, XP one-time only. | `scripts/test-jalur-leakage.ts`, `scripts/validate-jalur-questions.ts`, `app/api/jalur-cerdas/[unitId]/progress/route.ts` (XP fix), `app/arena/jalur-cerdas/[unitId]/lesson/page.tsx` (submit button), `app/arena/page.tsx` (field name fix) |
 | **Phase Arena 2C** | Micro lessons before practice for all 72 JALUR units. Level bands: dasar (L1-4, 24 units, larger font), menengah (L5-8, 24 units), tinggi (L9-12, 24 units). Lesson flow: Intro → Material → Questions → Result → Complete. 366 questions preserved. 72 micro lessons validated. | `scripts/seed-jalur-micro-lessons.ts`, `scripts/validate-jalur-lessons.ts`, `app/api/jalur-cerdas/[unitId]/route.ts` (lesson field), `app/arena/jalur-cerdas/[unitId]/lesson/page.tsx` (lesson phase + levelBand styling) |
 | **Phase Build Hardening 1** | Google Fonts build dependency removed. `next/font/google` replaced with robust CSS font stacks (system fonts). Build no longer depends on remote font fetch. No `<link>` tags to Google Fonts at runtime. | `app/layout.tsx` (removed next/font + Google <link>), `tailwind.config.ts` (system font stacks for sans/display) |
+| **Phase Security Hotfix 1** | Critical answer leakage fix. `GET /api/bank-soal/ukbi` and `GET /api/bank-soal/tka` now require GURU/ADMIN role (were leaking `correctAnswer` to any authenticated user). Created sanitizer helpers in `lib/security.ts`. Created regression test `scripts/test-ukbi-tka-bank-soal-leakage.ts`. Added `test:bank-soal-leakage` npm script. Fixed broken response key (`questions` → `soal`) in both routes. | `app/api/bank-soal/ukbi/route.ts`, `app/api/bank-soal/tka/route.ts`, `lib/security.ts`, `scripts/test-ukbi-tka-bank-soal-leakage.ts`, `package.json` |
+| **Phase Security Hotfix 2** | Murid quiz answer leakage fix. `GET /api/murid/quiz/[id]` no longer sends entire `Soal` object (now uses `sanitizeSoalForStudent` — only safe fields). `GET /api/murid/quiz/submission/[id]` only includes `correctOptionIndex` after SUBMITTED/GRADED status. Created `sanitizeSoalForStudent()` helper. Created regression test `scripts/test-murid-quiz-leakage.ts`. Added `test:murid-quiz-leakage` npm script. | `app/api/murid/quiz/[id]/route.ts`, `app/api/murid/quiz/submission/[id]/route.ts`, `lib/security.ts`, `scripts/test-murid-quiz-leakage.ts`, `package.json` |
+| **Phase UKBI/TKA FOUNDATION 2A** | Server-side randomization for UKBI/TKA test-taking. Fisher-Yates seedable shuffle (Mulberry32 PRNG). Questions shuffled within sections, options shuffled per question. No DB migration needed (options use stable `id`, scoring transparent). 12 tests + 100-session Monte Carlo audit. | `lib/question-bank/randomization.ts`, `app/api/kompetensi/[paketId]/route.ts` (shuffle integration), `scripts/test-ukbi-tka-randomization.ts`, `scripts/audit-ukbi-tka-randomization.ts`, `package.json` |
+| **Phase UKBI/TKA FOUNDATION 2B** | Session snapshot for UKBI/TKA test attempts. `TestSession.questionSnapshot` stores exact questions+options+correctAnswer at test start. Submit scores against snapshot (not live DB). Legacy fallback for sessions without snapshot. Add-only schema change (nullable Json). 11 tests (32 assertions) + 21 integrity checks. Existing leakage tests unaffected. | `prisma/schema.prisma` (+questionSnapshot), `lib/types/snapshot.ts`, `lib/security.ts` (sanitizer helpers), `app/api/kompetensi/[paketId]/route.ts` (snapshot save), `app/api/kompetensi/[paketId]/submit/route.ts` (snapshot scoring), `scripts/test-ukbi-tka-session-snapshot.ts`, `scripts/audit-ukbi-tka-snapshot-integrity.ts`, `package.json` |
+| **Phase UKBI/TKA FOUNDATION 2C** | Per-attempt immutable snapshot archive. Uses existing `ProgresKompetensi.answerDetails Json?` field (no migration). Each submit saves `AttemptAnswerDetails` with snapshot copy + user answers + scoring summary. Multi-attempt supported via `@@unique([userId, paketId, attemptNumber])`. Sanitized client helpers for result/history display. TestSession.questionSnapshot remains active/current. 15 tests (42 assertions) + 19 audit checks. | `lib/types/snapshot.ts` (AttemptAnswerDetails, UserAnswerRecord, ResultSummary), `lib/security.ts` (sanitizeAttemptAnswerDetailsForClient, sanitizeAttemptHistoryForClient), `app/api/kompetensi/[paketId]/submit/route.ts` (userAnswerRecords + answerDetails save for UKBI + TKA), `scripts/test-ukbi-tka-per-attempt-snapshot.ts`, `scripts/audit-ukbi-tka-attempt-history.ts`, `package.json` |
 
 ## 4. Seed Data Inventory
 
@@ -90,6 +95,17 @@
 | Exam engine dev | ⏸️ Ditunda sampai backup/audit selesai |
 
 ## 5. Files by Category
+
+### UKBI/TKA
+- `lib/question-bank/randomization.ts` — Phase 2A: Fisher-Yates shuffle, seeded PRNG, option shuffling, session seed
+- `lib/types/snapshot.ts` — Phase 2B/2C: AttemptSnapshot, AttemptAnswerDetails, UserAnswerRecord, ResultSummary
+- `lib/security.ts` — sanitizeSnapshotQuestionForClient(), buildClientQuestionPayload(), sanitizeAttemptAnswerDetailsForClient(), sanitizeAttemptHistoryForClient()
+- `scripts/test-ukbi-tka-randomization.ts` — 12 randomization tests
+- `scripts/audit-ukbi-tka-randomization.ts` — 100-session Monte Carlo audit
+- `scripts/test-ukbi-tka-session-snapshot.ts` — 11 snapshot tests (32 assertions)
+- `scripts/audit-ukbi-tka-snapshot-integrity.ts` — 21 code-level integrity checks
+- `scripts/test-ukbi-tka-per-attempt-snapshot.ts` — 15 per-attempt tests (42 assertions)
+- `scripts/audit-ukbi-tka-attempt-history.ts` — 19 code-level integrity checks
 
 ### Docs
 - `docs/BAHASACERDAS_DATA_AUDIT.md` — Data audit: what was lost vs preserved
@@ -248,14 +264,16 @@ Deleted 48 items owned by demo user `guru@demo.com`:
 
 ## 11. Next Actions (Priority Order)
 
-1. **Set up daily backup cron** — Add Vercel Cron Job (`POST /api/cron/backup`) or external cron for automated daily backup
-2. **Game server revival** — find new hosting for game.bahasacerdas.com (VPS or alternative)
-3. **More JALUR questions** — expand question count per unit (target 10+ per unit, currently 3-6)
-4. **Push notifications** — browser push API for notif when tab not open
-5. **Fix author display name** — update guru@demo.com's `fullName` to "Tim Redaksi BahasaCerdas"
-6. **Upload real files to Supabase Storage** — replace fake seed file URLs
-7. **Replace fake YouTube IDs** — use real educational video IDs
-8. **Migrate old standalone AI routes** — `/api/ai/eyd`, `/api/ai/feedback`, etc. to central runner
+1. **Structural Validator for UKBI/TKA question bank** — validate answer-in-options, ID format, correctAnswer matches one of option IDs, no orphan PaketKompetensi references
+2. **Build attempt review UI** — read sanitized answerDetails to show per-attempt question review with student answers
+3. **Set up daily backup cron** — Add Vercel Cron Job (`POST /api/cron/backup`) or external cron for automated daily backup
+4. **Game server revival** — find new hosting for game.bahasacerdas.com (VPS or alternative)
+5. **More JALUR questions** — expand question count per unit (target 10+ per unit, currently 3-6)
+6. **Push notifications** — browser push API for notif when tab not open
+7. **Fix author display name** — update guru@demo.com's `fullName` to "Tim Redaksi BahasaCerdas"
+8. **Upload real files to Supabase Storage** — replace fake seed file URLs
+9. **Replace fake YouTube IDs** — use real educational video IDs
+10. **Migrate old standalone AI routes** — `/api/ai/eyd`, `/api/ai/feedback`, etc. to central runner
 
 ### Backup & Automation Status
 | Item | Status |

@@ -43,6 +43,8 @@ export function CertificatePreview({ certificate }: CertificateProps) {
   const isUKBI = certificate.paket?.type?.includes("UKBI");
   const isTKA = certificate.paket?.type?.includes("TKA");
 
+  const productLabel = isUKBI ? "UKBI Practice" : isTKA ? "TKA Bahasa Indonesia" : "UKBI/TKA Practice";
+
   const formatDate = (dateStr: string) => {
     const date = new Date(dateStr);
     return date.toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" });
@@ -59,46 +61,40 @@ export function CertificatePreview({ certificate }: CertificateProps) {
       });
       
       const link = document.createElement("a");
-      link.download = `Sertifikat-${certificate.certificateNo}.png`;
+      link.download = `Dokumen-Hasil-${certificate.certificateNo}.png`;
       link.href = canvas.toDataURL("image/png");
       link.click();
     } catch (error) {
-      console.error("Failed to download certificate:", error);
+      console.error("Failed to download document:", error);
     }
   };
 
   return (
     <div className="space-y-4">
-      {/* Download Button */}
       <div className="flex justify-end">
         <button
           onClick={handleDownload}
           className="flex items-center gap-2 px-4 py-2 bg-violet-600 text-white rounded-xl font-medium hover:bg-violet-700 transition-colors shadow-lg shadow-violet-600/20"
         >
           <Download size={18} />
-          Simpan Sertifikat
+          Simpan Dokumen
         </button>
       </div>
 
-      {/* Certificate Container */}
       <div 
         ref={certificateRef}
         className="bg-white rounded-3xl overflow-hidden shadow-2xl"
-        style={{ width: "800px", height: "600px", position: "relative" }}
+        style={{ width: "800px", height: "620px", position: "relative" }}
       >
-        {/* Background Gradient */}
         <div className="absolute inset-0 bg-gradient-to-br from-violet-50 via-white to-purple-50" />
         
-        {/* Decorative Elements */}
         <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-violet-200/30 to-purple-200/30 rounded-full blur-3xl" />
         <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-emerald-100 to-teal-100 rounded-full blur-3xl" />
 
-        {/* Border Pattern */}
         <div className="absolute inset-4 border-2 border-violet-100 rounded-2xl" />
         <div className="absolute inset-6 border border-violet-50 rounded-xl" />
 
-        {/* Content */}
-        <div className="relative z-10 h-full flex flex-col items-center justify-between py-12 px-8">
+        <div className="relative z-10 h-full flex flex-col items-center justify-between py-10 px-8">
           {/* Header */}
           <div className="text-center">
             <div className="flex items-center justify-center gap-3 mb-2">
@@ -106,26 +102,33 @@ export function CertificatePreview({ certificate }: CertificateProps) {
                 <BookOpen size={24} className="text-white" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-gray-900 tracking-wide">BC Bahasa Cerdas</h1>
-                <p className="text-xs text-gray-400 tracking-widest">CERTIFICATE OF COMPLETION</p>
+                <h1 className="text-2xl font-bold text-gray-900 tracking-wide">Dokumen Hasil Latihan</h1>
+                <p className="text-xs text-gray-400 tracking-wider">BAHASACERDAS</p>
               </div>
             </div>
-            <div className="w-24 h-1 bg-gradient-to-r from-violet-400 via-purple-400 to-violet-400 mx-auto mt-4 rounded-full" />
+            <div className="w-24 h-1 bg-gradient-to-r from-violet-400 via-purple-400 to-violet-400 mx-auto mt-3 rounded-full" />
           </div>
 
           {/* Main Content */}
           <div className="text-center">
-            <p className="text-sm text-gray-500 mb-2">This certifies that</p>
-            <h2 className="text-4xl font-bold bg-gradient-to-r from-violet-600 to-purple-600 bg-clip-text text-transparent mb-4">
-              {certificate.user?.fullName || "Student"}
+            <p className="text-sm text-gray-500 mb-1">Dokumen ini diberikan kepada</p>
+            <h2 className="text-4xl font-bold bg-gradient-to-r from-violet-600 to-purple-600 bg-clip-text text-transparent mb-3">
+              {certificate.user?.fullName || "Peserta"}
             </h2>
-            <p className="text-gray-500 mb-6">has successfully completed</p>
+            <p className="text-gray-500 mb-2">yang telah menyelesaikan</p>
             
-            <h3 className="text-2xl font-bold text-gray-800 mb-4">
-              {certificate.paket?.title || "UKBI - TKA Assessment"}
-            </h3>
+            {isUKBI && (
+              <h3 className="text-xl font-bold text-gray-800 mb-2">Dokumen Hasil Latihan UKBI Practice</h3>
+            )}
+            {isTKA && (
+              <h3 className="text-xl font-bold text-gray-800 mb-2">Dokumen Hasil Latihan TKA Bahasa Indonesia</h3>
+            )}
+            {!isUKBI && !isTKA && (
+              <h3 className="text-xl font-bold text-gray-800 mb-2">{certificate.paket?.title || "Simulasi Bahasa Indonesia"}</h3>
+            )}
 
-            {/* Score Badge */}
+            <p className="text-xs text-gray-400 mb-4">Hasil Simulasi Kemampuan Bahasa Indonesia</p>
+
             <div className={`inline-flex items-center gap-3 px-8 py-4 rounded-2xl bg-gradient-to-r ${predikatStyle.bg} shadow-lg ${predikatStyle.glow}`}>
               <Award size={28} className="text-white" />
               <div className="text-white">
@@ -133,11 +136,11 @@ export function CertificatePreview({ certificate }: CertificateProps) {
                 <p className="text-2xl font-black">{certificate.predikat}</p>
               </div>
               <div className="border-l border-white/30 pl-3">
-                <p className="text-xs font-medium opacity-90">SCORE</p>
+                <p className="text-xs font-medium opacity-90">SKOR</p>
                 <p className="text-xl font-bold">{certificate.score}</p>
               </div>
               <div className="border-l border-white/30 pl-3">
-                <p className="text-xs font-medium opacity-90">PERCENTAGE</p>
+                <p className="text-xs font-medium opacity-90">PERSENTASE</p>
                 <p className="text-xl font-bold">{certificate.percentage?.toFixed(1)}%</p>
               </div>
             </div>
@@ -145,31 +148,33 @@ export function CertificatePreview({ certificate }: CertificateProps) {
 
           {/* Footer */}
           <div className="w-full flex justify-between items-end">
-            <div className="flex items-center gap-2 text-gray-400">
-              <Calendar size={16} />
-              <span className="text-sm">{formatDate(certificate.issuedAt)}</span>
+            <div className="text-left">
+              <p className="text-xs text-gray-400">Jenis Latihan</p>
+              <p className="text-sm font-semibold text-gray-600">{productLabel}</p>
             </div>
             
             <div className="text-center">
-              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center mx-auto mb-2 shadow-lg shadow-violet-500/30">
-                <Award size={24} className="text-white" />
+              <div className="w-14 h-14 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center mx-auto mb-1 shadow-lg shadow-violet-500/30">
+                <Award size={20} className="text-white" />
               </div>
-              <p className="text-xs text-gray-400">Certificate No.</p>
-              <p className="text-xs font-mono font-semibold text-gray-600">{certificate.certificateNo}</p>
+              <p className="text-[10px] text-gray-400">No. Dokumen</p>
+              <p className="text-[10px] font-mono font-semibold text-gray-600">{certificate.certificateNo}</p>
             </div>
 
-            <div className="text-right">
-              <p className="text-xs text-gray-400">Valid for</p>
-              <p className="text-sm font-semibold text-gray-600">Lifetime</p>
+            <div className="flex items-center gap-2 text-gray-400">
+              <Calendar size={14} />
+              <span className="text-xs">{formatDate(certificate.issuedAt)}</span>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Info */}
-      <p className="text-xs text-gray-400 text-center">
-        Klik "Simpan Sertifikat" untuk mengunduh gambar sertifikat. Anda dapat menyimpannya ke galeri atau berbagi.
-      </p>
+      {/* Disclaimer */}
+      <div className="bg-amber-50 border border-amber-200 rounded-xl p-3">
+        <p className="text-xs text-amber-700 text-center font-medium">
+          Dokumen ini adalah hasil latihan/simulasi di BahasaCerdas dan bukan sertifikat resmi UKBI/TKA dari lembaga pemerintah.
+        </p>
+      </div>
     </div>
   );
 }

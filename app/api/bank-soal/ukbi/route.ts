@@ -16,6 +16,10 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
+    if (!dbUser || (dbUser.role !== "GURU" && dbUser.role !== "ADMIN")) {
+      return NextResponse.json({ error: "Hanya guru yang dapat mengakses bank soal" }, { status: 403 });
+    }
+
     const { searchParams } = new URL(req.url);
     const seksi = searchParams.get("seksi");
     const difficulty = searchParams.get("difficulty");
@@ -46,7 +50,7 @@ export async function GET(req: NextRequest) {
       where: { isActive: true },
     });
 
-    return NextResponse.json({ questions, total, page, totalPages: Math.ceil(total / limit), stats });
+    return NextResponse.json({ soal: questions, total, page, totalPages: Math.ceil(total / limit), stats });
   } catch (error) {
     console.error("GET /api/bank-soal/ukbi error:", error);
     return NextResponse.json({ error: "Internal error" }, { status: 500 });

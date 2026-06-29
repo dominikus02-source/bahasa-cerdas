@@ -255,6 +255,8 @@ model User {
   paymentAdminActions  AdminPaymentAuditLog[] @relation("PaymentAdminActions")
   // Admin payment audit logs where this user was the target
   paymentTargetActions AdminPaymentAuditLog[] @relation("PaymentTargetActions")
+  // Backup manifests created by this user
+  backupManifests    BackupManifest[] @relation("UserBackupManifests")
 
   @@index([role, lastActiveAt])
   @@index([xp])
@@ -422,6 +424,7 @@ model TestSession {
   currentSection  Int             @default(0)
   currentQuestion Int             @default(0)
   answers         Json            @default("{}")
+  questionSnapshot Json?
   flagged         Int[]           @default([])
   startedAt       DateTime?
   finishedAt      DateTime?
@@ -1773,4 +1776,44 @@ model AdminQuotaAuditLog {
   @@index([targetUserId])
   @@index([action])
   @@index([createdAt])
+}
+
+enum BackupTrigger {
+  MANUAL
+  SCHEDULED
+  PRE_DEPLOY
+  POST_RECOVERY
+}
+
+enum BackupStatus {
+  SUCCESS
+  FAILED
+  PARTIAL
+}
+
+model BackupManifest {
+  id              String        @id @default(cuid())
+  backupId        String        @unique
+  storagePath     String
+  localPath       String?
+  environment     String        @default("production")
+  status          BackupStatus
+  trigger         BackupTrigger @default(MANUAL)
+  tableCountsJson String
+  checksumsJson   String
+  totalRows       Int
+  totalTables     Int
+  totalBytes      Int?
+  startedAt       DateTime
+  completedAt     DateTime
+  errorMessage    String?
+  createdByUserId String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  createdBy User? @relation("UserBackupManifests", fields: [createdByUserId], references: [id], onDelete: SetNull)
+
+  @@index([createdAt])
+  @@index([status])
+  @@index([trigger])
 }

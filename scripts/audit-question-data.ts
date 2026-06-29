@@ -202,6 +202,64 @@ async function main() {
   const totalCert = await db.kompetensiCertificate.count();
   console.log(`   Total:                   ${totalCert}`);
 
+  // ── UKBI correctAnswer validity ─────────────────────
+  console.log("\n🎯 UKBI correctAnswer VALIDATION");
+  const ukbiAll = await db.uKBIQuestion.findMany({
+    select: { id: true, correctAnswer: true, options: true, text: true },
+  });
+  let ukbiCorrectInOptions = 0;
+  let ukbiCorrectNotInOptions = 0;
+  for (const q of ukbiAll) {
+    if (!Array.isArray(q.options) || q.options.length === 0) continue;
+    const ids = (q.options as { id: string }[]).map((o) => o.id);
+    if (ids.includes(q.correctAnswer)) {
+      ukbiCorrectInOptions++;
+    } else {
+      ukbiCorrectNotInOptions++;
+      const preview = q.text.length > 80 ? q.text.slice(0, 80) + "..." : q.text;
+      console.log(`   ❌ correctAnswer "${q.correctAnswer}" NOT in options for: "${preview}"`);
+    }
+  }
+  console.log(`   ✅ correctAnswer in options: ${ukbiCorrectInOptions}`);
+  console.log(`   ❌ correctAnswer NOT in options: ${ukbiCorrectNotInOptions}`);
+
+  // ── TKA correctAnswer validity ──────────────────────
+  console.log("\n🎯 TKA correctAnswer VALIDATION");
+  const tkaAll = await db.tKAQuestion.findMany({
+    select: { id: true, correctAnswer: true, options: true, text: true },
+  });
+  let tkaCorrectInOptions = 0;
+  let tkaCorrectNotInOptions = 0;
+  for (const q of tkaAll) {
+    if (!Array.isArray(q.options) || q.options.length === 0) continue;
+    const ids = (q.options as { id: string }[]).map((o) => o.id);
+    if (ids.includes(q.correctAnswer)) {
+      tkaCorrectInOptions++;
+    } else {
+      tkaCorrectNotInOptions++;
+      const preview = q.text.length > 80 ? q.text.slice(0, 80) + "..." : q.text;
+      console.log(`   ❌ correctAnswer "${q.correctAnswer}" NOT in options for: "${preview}"`);
+    }
+  }
+  console.log(`   ✅ correctAnswer in options: ${tkaCorrectInOptions}`);
+  console.log(`   ❌ correctAnswer NOT in options: ${tkaCorrectNotInOptions}`);
+
+  // ── Option ID uniqueness per question ───────────────
+  console.log("\n🎯 OPTION ID UNIQUENESS");
+  let ukbiDupes = 0, tkaDupes = 0;
+  for (const q of ukbiAll) {
+    if (!Array.isArray(q.options)) continue;
+    const ids = (q.options as { id: string }[]).map((o) => o.id);
+    if (new Set(ids).size !== ids.length) ukbiDupes++;
+  }
+  for (const q of tkaAll) {
+    if (!Array.isArray(q.options)) continue;
+    const ids = (q.options as { id: string }[]).map((o) => o.id);
+    if (new Set(ids).size !== ids.length) tkaDupes++;
+  }
+  console.log(`   UKBI questions with duplicate option IDs: ${ukbiDupes}`);
+  console.log(`   TKA questions with duplicate option IDs:  ${tkaDupes}`);
+
   // ── Risk Assessment: API endpoints with correctAnswer exposure ──
   console.log("\n⚠️  RISK ASSESSMENT");
   console.log(`   Soal with correctAnswer exposed: ${totalSoal > 0 ? "POTENTIAL RISK" : "N/A"}`);

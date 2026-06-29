@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
+import { sanitizeSoalForStudent } from "@/lib/security";
 
 export async function GET(
   req: NextRequest,
@@ -71,7 +72,7 @@ export async function GET(
       points: q.points,
       sourceType: q.sourceType,
       sourceId: q.sourceId,
-      soal: q.sourceType === "SOAL" ? soalMap.get(q.sourceId) || null : null,
+      soal: q.sourceType === "SOAL" ? sanitizeSoalForStudent(soalMap.get(q.sourceId)) : null,
       customText: q.customText,
       customType: q.customType,
       customOptions: q.customOptions,

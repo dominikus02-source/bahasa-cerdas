@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
+import { fisherYatesShuffle, shuffleOptionsForQuestion, createSessionSeed } from "@/lib/question-bank/randomization";
+import type { AttemptSnapshot, QuestionSnapshot } from "@/lib/types/snapshot";
 
 const UKBI_TYPES = ["UKBI", "UKBI_SIMULASI", "UKBI_LATIHAN", "UKBI_SD", "UKBI_LATIHAN_SD", "UKBI_SMP", "UKBI_LATIHAN_SMP", "UKBI_SMA", "UKBI_LATIHAN_SMA", "UKBI_GURU_SIMULASI", "UKBI_GURU_LATIHAN"];
 
@@ -72,6 +74,7 @@ export async function GET(
 
     const sections = (paket.sectionsData as any[]) || (paket.sections as any[]) || [];
     const questions: any[] = [];
+    const sessionSeed = createSessionSeed(dbUser.id, paket.id, session.createdAt?.getTime());
 
     for (let i = 0; i < sections.length; i++) {
       const section = sections[i];
@@ -184,6 +187,13 @@ export async function GET(
         }
       }
 
+      sectionQuestions = fisherYatesShuffle(sectionQuestions, sessionSeed + "-sec" + i);
+      for (const q of sectionQuestions) {
+        if (q.options && Array.isArray(q.options) && q.options.length > 1) {
+          q.options = shuffleOptionsForQuestion(q.options, sessionSeed + "-q" + q.id);
+        }
+      }
+
       questions.push({
         sectionIndex: i,
         sectionName: section.name,
@@ -192,6 +202,76 @@ export async function GET(
         questions: sectionQuestions,
       });
     }
+
+    const allSnapshots: QuestionSnapshot[] = [];
+    const allIds: string[] = [];
+    for (const section of questions) {
+      for (const q of section.questions) {
+        allIds.push(q.id);
+      }
+    }
+
+    interface SnapshotAnswerData {
+      id: string
+      correctAnswer: string
+      difficulty: string
+      seksi?: string
+      weight?: number
+      kompetensi?: string
+    }
+
+    let answerMap = new Map<string, SnapshotAnswerData>();
+    if (allIds.length > 0) {
+      if (isUKBI(paket.type)) {
+        const answers = await db.uKBIQuestion.findMany({
+          where: { id: { in: allIds } },
+          select: { id: true, correctAnswer: true, difficulty: true, seksi: true },
+        });
+        answerMap = new Map(answers.map(a => [a.id, a as SnapshotAnswerData]));
+      } else {
+        const answers = await db.tKAQuestion.findMany({
+          where: { id: { in: allIds } },
+          select: { id: true, correctAnswer: true, weight: true, kompetensi: true },
+        });
+        answerMap = new Map(answers.map(a => [a.id, { ...a, difficulty: "" } as SnapshotAnswerData]));
+      }
+    }
+
+    const questionOrder: string[] = [];
+    for (const section of questions) {
+      for (const q of section.questions) {
+        const answerData = answerMap.get(q.id);
+        questionOrder.push(q.id);
+        allSnapshots.push({
+          id: q.id,
+          product: isUKBI(paket.type) ? "UKBI" : "TKA",
+          section: answerData?.seksi || answerData?.kompetensi || section.seksi || section.sectionName,
+          type: q.type,
+          text: q.text,
+          options: q.options,
+          correctAnswer: answerData?.correctAnswer || "",
+          difficulty: answerData?.difficulty || q.difficulty,
+          weight: answerData?.weight,
+          seksi: answerData?.seksi,
+          kompetensi: answerData?.kompetensi,
+        });
+      }
+    }
+
+    await db.testSession.update({
+      where: { id: session.id },
+      data: {
+        questionSnapshot: JSON.parse(JSON.stringify({
+          version: "1.0",
+          createdAt: new Date().toISOString(),
+          seed: sessionSeed,
+          paketId: paket.id,
+          userId: dbUser.id,
+          questionOrder,
+          questions: allSnapshots,
+        })),
+      },
+    });
 
     const totalQuestions = questions.reduce((sum, s) => sum + s.questions.length, 0);
     if (totalQuestions === 0) {

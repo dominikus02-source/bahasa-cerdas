@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
+import type { AttemptSnapshot, AttemptAnswerDetails, UserAnswerRecord } from "@/lib/types/snapshot";
 
 export async function GET(
   req: NextRequest,
@@ -139,6 +140,9 @@ export async function POST(
       });
     }
 
+    const rawSnapshot = session.questionSnapshot as AttemptSnapshot | null;
+    const snapshotQuestions = rawSnapshot?.questions || null;
+
     const allAnswerIds = Object.keys(answers || {});
     const sectionScores: Record<string, { correct: number; total: number; score: number }> = {};
     let totalCorrect = 0;
@@ -146,26 +150,44 @@ export async function POST(
     let rawScore = 0;
 
     if (paket.type.includes("UKBI")) {
-      const questions = await db.uKBIQuestion.findMany({
-        where: { id: { in: allAnswerIds }, isActive: true },
-      });
+      let questions: any[];
+      const userAnswerRecords: UserAnswerRecord[] = [];
+      if (snapshotQuestions && snapshotQuestions.length > 0) {
+        questions = snapshotQuestions.filter(q => allAnswerIds.includes(q.id));
+      } else {
+        console.warn(`[snapshot] No snapshot for session ${session.id}, falling back to live DB`);
+        questions = await db.uKBIQuestion.findMany({
+          where: { id: { in: allAnswerIds }, isActive: true },
+        });
+      }
 
       for (const q of questions) {
         const userAnswer = answers[q.id];
         const isCorrect = userAnswer === q.correctAnswer;
-        const weight = q.difficulty === "EASY" ? 1 : q.difficulty === "MEDIUM" ? 1.5 : q.difficulty === "HARD" ? 2 : 2.5;
+        const diff = String(q.difficulty || "MEDIUM");
+        const weight = diff === "EASY" ? 1 : diff === "MEDIUM" ? 1.5 : diff === "HARD" ? 2 : 2.5;
         const score = isCorrect ? weight * 10 : 0;
         rawScore += score;
         totalQuestions++;
 
         if (isCorrect) {
           totalCorrect++;
-          if (!sectionScores[q.seksi]) sectionScores[q.seksi] = { correct: 0, total: 0, score: 0 };
-          sectionScores[q.seksi].correct++;
-          sectionScores[q.seksi].score += score;
+          const seksiKey = q.seksi || q.section || "UMUM";
+          if (!sectionScores[seksiKey]) sectionScores[seksiKey] = { correct: 0, total: 0, score: 0 };
+          sectionScores[seksiKey].correct++;
+          sectionScores[seksiKey].score += score;
         }
-        if (!sectionScores[q.seksi]) sectionScores[q.seksi] = { correct: 0, total: 0, score: 0 };
-        sectionScores[q.seksi].total++;
+        const seksiKey = q.seksi || q.section || "UMUM";
+        if (!sectionScores[seksiKey]) sectionScores[seksiKey] = { correct: 0, total: 0, score: 0 };
+        sectionScores[seksiKey].total++;
+
+        userAnswerRecords.push({
+          questionId: q.id,
+          selectedOptionId: userAnswer,
+          isCorrect,
+          score,
+          section: seksiKey,
+        });
 
         await db.testAnswer.create({
           data: {
@@ -177,7 +199,7 @@ export async function POST(
             answer: userAnswer,
             isCorrect,
             score,
-            seksi: q.seksi,
+            seksi: seksiKey,
           },
         });
       }
@@ -207,6 +229,34 @@ export async function POST(
 
       const nextAttempt = (existingResult?.attemptNumber || 0) + 1;
 
+      const attemptAnswerDetails: AttemptAnswerDetails = {
+        version: "1.0",
+        attemptId: `${paketId}-${nextAttempt}-${Date.now()}`,
+        sessionId: session.id,
+        paketId,
+        userId: dbUser.id,
+        product: "UKBI",
+        startedAt: session.startedAt?.toISOString() || new Date().toISOString(),
+        submittedAt: new Date().toISOString(),
+        seed: rawSnapshot?.seed || "",
+        snapshot: rawSnapshot ? rawSnapshot : undefined,
+        userAnswers: userAnswerRecords,
+        scoring: {
+          totalQuestions,
+          correctCount: totalCorrect,
+          rawScore,
+          percentage,
+          scaledScore: totalScore,
+          predicate: predikat,
+          sectionBreakdown: seksiScores as Record<string, unknown>,
+        },
+        audit: {
+          scoredFromSnapshot: true,
+          liveDbFallbackUsed: !rawSnapshot,
+          snapshotVersion: "1.0",
+        },
+      };
+
       const progres = await db.progresKompetensi.create({
         data: {
           userId: dbUser.id,
@@ -220,6 +270,7 @@ export async function POST(
           predikat,
           predikatLama,
           sectionScores: seksiScores,
+          answerDetails: JSON.parse(JSON.stringify(attemptAnswerDetails)),
           finishedAt: new Date(),
           timeSpent: timeSpent || 0,
         },
@@ -266,25 +317,40 @@ export async function POST(
     }
 
     if (paket.type.includes("TKA")) {
-      const questions = await db.tKAQuestion.findMany({
-        where: { id: { in: allAnswerIds }, isActive: true },
-      });
+      let questions: any[];
+      const userAnswerRecords: UserAnswerRecord[] = [];
+      if (snapshotQuestions && snapshotQuestions.length > 0) {
+        questions = snapshotQuestions.filter(q => allAnswerIds.includes(q.id));
+      } else {
+        console.warn(`[snapshot] No snapshot for session ${session.id}, falling back to live DB`);
+        questions = await db.tKAQuestion.findMany({
+          where: { id: { in: allAnswerIds }, isActive: true },
+        });
+      }
 
       for (const q of questions) {
         const userAnswer = answers[q.id];
         const isCorrect = userAnswer === q.correctAnswer;
-        const score = isCorrect ? q.weight * 10 : 0;
+        const score = isCorrect ? (q.weight || 1) * 10 : 0;
         rawScore += score;
         totalQuestions++;
 
         if (isCorrect) totalCorrect++;
-        const kompetensis = q.kompetensi;
+        const kompetensis = q.kompetensi || q.section || "UMUM";
         if (!sectionScores[kompetensis]) sectionScores[kompetensis] = { correct: 0, total: 0, score: 0 };
         sectionScores[kompetensis].total++;
         if (isCorrect) {
           sectionScores[kompetensis].correct++;
           sectionScores[kompetensis].score += score;
         }
+
+        userAnswerRecords.push({
+          questionId: q.id,
+          selectedOptionId: userAnswer,
+          isCorrect,
+          score,
+          kompetensi: kompetensis,
+        });
 
         await db.testAnswer.create({
           data: {
@@ -296,7 +362,7 @@ export async function POST(
             answer: userAnswer,
             isCorrect,
             score,
-            seksi: q.kompetensi,
+            seksi: kompetensis,
           },
         });
       }
@@ -311,6 +377,33 @@ export async function POST(
       });
 
       const nextAttempt = (existingResult?.attemptNumber || 0) + 1;
+
+      const attemptAnswerDetails: AttemptAnswerDetails = {
+        version: "1.0",
+        attemptId: `${paketId}-${nextAttempt}-${Date.now()}`,
+        sessionId: session.id,
+        paketId,
+        userId: dbUser.id,
+        product: "TKA",
+        startedAt: session.startedAt?.toISOString() || new Date().toISOString(),
+        submittedAt: new Date().toISOString(),
+        seed: rawSnapshot?.seed || "",
+        snapshot: rawSnapshot ? rawSnapshot : undefined,
+        userAnswers: userAnswerRecords,
+        scoring: {
+          totalQuestions,
+          correctCount: totalCorrect,
+          rawScore,
+          percentage,
+          predicate: predikat,
+          competencyBreakdown: sectionScores as Record<string, unknown>,
+        },
+        audit: {
+          scoredFromSnapshot: true,
+          liveDbFallbackUsed: !rawSnapshot,
+          snapshotVersion: "1.0",
+        },
+      };
 
       const progres = await db.progresKompetensi.create({
         data: {
@@ -329,6 +422,7 @@ export async function POST(
             { ...val, percentage: val.total > 0 ? Math.round((val.correct / val.total) * 100) : 0 },
           ])
         ),
+          answerDetails: JSON.parse(JSON.stringify(attemptAnswerDetails)),
           finishedAt: new Date(),
           timeSpent: timeSpent || 0,
         },

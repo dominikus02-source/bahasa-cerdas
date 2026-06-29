@@ -41,6 +41,8 @@ export function GuruCertificatePreview({ certificate }: GuruCertificateProps) {
   const isUKBI = certificate.paket?.type?.includes("UKBI");
   const isTKA = certificate.paket?.type?.includes("TKA");
 
+  const productLabel = isUKBI ? "UKBI Practice" : isTKA ? "TKA Bahasa Indonesia" : "UKBI/TKA Practice";
+
   const formatDate = (dateStr: string) => {
     const date = new Date(dateStr);
     return date.toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" });
@@ -57,60 +59,52 @@ export function GuruCertificatePreview({ certificate }: GuruCertificateProps) {
       });
       
       const link = document.createElement("a");
-      link.download = `Sertifikat-Guru-${certificate.certificateNo}.png`;
+      link.download = `Dokumen-Hasil-Guru-${certificate.certificateNo}.png`;
       link.href = canvas.toDataURL("image/png");
       link.click();
     } catch (error) {
-      console.error("Failed to download certificate:", error);
+      console.error("Failed to download document:", error);
     }
   };
 
   return (
     <div className="space-y-4">
-      {/* Download Button */}
       <div className="flex justify-end">
         <button
           onClick={handleDownload}
           className="flex items-center gap-2 px-5 py-2.5 bg-emerald-600 text-white rounded-xl font-semibold hover:bg-emerald-700 transition-colors shadow-lg shadow-emerald-600/20"
         >
           <Download size={18} />
-          Simpan Sertifikat
+          Simpan Dokumen
         </button>
       </div>
 
-      {/* Certificate Container - Elegant Adult Design */}
       <div 
         ref={certificateRef}
         className="bg-white rounded-3xl overflow-hidden"
-        style={{ width: "850px", height: "600px", position: "relative" }}
+        style={{ width: "850px", height: "620px", position: "relative" }}
       >
-        {/* Background - More Elegant */}
         <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-white to-slate-100" />
         
-        {/* Decorative Corner Elements */}
         <div className="absolute top-0 left-0 w-32 h-32 border-l-4 border-t-4 border-emerald-300/50 rounded-tl-3xl" />
         <div className="absolute top-0 right-0 w-32 h-32 border-r-4 border-t-4 border-emerald-300/50 rounded-tr-3xl" />
         <div className="absolute bottom-0 left-0 w-32 h-32 border-l-4 border-b-4 border-emerald-300/50 rounded-bl-3xl" />
         <div className="absolute bottom-0 right-0 w-32 h-32 border-r-4 border-b-4 border-emerald-300/50 rounded-br-3xl" />
 
-        {/* Inner Border */}
         <div className="absolute inset-8 border border-slate-200 rounded-2xl" />
         
-        {/* Decorative Line */}
         <div className="absolute top-16 left-1/2 -translate-x-1/2 w-96 h-px bg-gradient-to-r from-transparent via-emerald-300 to-transparent" />
 
-        {/* Content */}
         <div className="relative z-10 h-full flex flex-col items-center justify-between py-10 px-12">
           {/* Header */}
           <div className="text-center">
-            {/* Logo & Title */}
             <div className="flex items-center justify-center gap-4 mb-1">
               <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center shadow-lg shadow-emerald-500/30">
                 <BookOpen size={28} className="text-white" />
               </div>
               <div className="text-left">
-                <h1 className="text-2xl font-bold text-gray-900 tracking-wider">BC BAHASA CERDAS</h1>
-                <p className="text-[10px] text-gray-400 tracking-[0.3em] uppercase">Professional Development Certificate</p>
+                <h1 className="text-2xl font-bold text-gray-900 tracking-wider">Dokumen Hasil Latihan</h1>
+                <p className="text-[10px] text-gray-400 tracking-[0.3em] uppercase">BAHASACERDAS</p>
               </div>
             </div>
           </div>
@@ -120,24 +114,29 @@ export function GuruCertificatePreview({ certificate }: GuruCertificateProps) {
             <div className="inline-block mb-4">
               <div className="flex items-center gap-2 text-emerald-600">
                 <Star size={16} className="fill-emerald-600" />
-                <span className="text-xs font-medium tracking-widest uppercase">Certificate of Competency</span>
+                <span className="text-xs font-medium tracking-widest uppercase">Hasil Simulasi Kemampuan Bahasa Indonesia</span>
                 <Star size={16} className="fill-emerald-600" />
               </div>
             </div>
             
-            <p className="text-sm text-gray-500 mb-3 font-medium">This is to certify that</p>
+            <p className="text-sm text-gray-500 mb-3 font-medium">Dokumen ini diberikan kepada</p>
             
             <h2 className="text-4xl font-bold text-gray-800 mb-6 tracking-wide">
-              {certificate.user?.fullName || "Educator"}
+              {certificate.user?.fullName || "Pendidik"}
             </h2>
             
-            <p className="text-gray-500 mb-2">has successfully completed the</p>
+            <p className="text-gray-500 mb-2">yang telah menyelesaikan</p>
             
-            <h3 className="text-2xl font-semibold text-gray-700 mb-6">
-              {certificate.paket?.title || "UKBI - TKA Assessment for Teachers"}
-            </h3>
+            {isUKBI && (
+              <h3 className="text-2xl font-semibold text-gray-700 mb-6">Dokumen Hasil Latihan UKBI Practice</h3>
+            )}
+            {isTKA && (
+              <h3 className="text-2xl font-semibold text-gray-700 mb-6">Dokumen Hasil Latihan TKA Bahasa Indonesia</h3>
+            )}
+            {!isUKBI && !isTKA && (
+              <h3 className="text-2xl font-semibold text-gray-700 mb-6">{certificate.paket?.title || "Simulasi Bahasa Indonesia"}</h3>
+            )}
 
-            {/* Score Badge - More Subtle */}
             <div className={`inline-flex items-center gap-6 px-10 py-5 rounded-2xl bg-gradient-to-r ${predikatStyle.bg} shadow-lg ${predikatStyle.glow}`}>
               <div className="text-center">
                 <p className="text-xs font-medium text-white/80 uppercase tracking-wider">Predikat</p>
@@ -145,12 +144,12 @@ export function GuruCertificatePreview({ certificate }: GuruCertificateProps) {
               </div>
               <div className="w-px h-12 bg-white/30" />
               <div className="text-center">
-                <p className="text-xs font-medium text-white/80 uppercase tracking-wider">Score</p>
+                <p className="text-xs font-medium text-white/80 uppercase tracking-wider">Skor</p>
                 <p className="text-2xl font-bold text-white">{certificate.score}</p>
               </div>
               <div className="w-px h-12 bg-white/30" />
               <div className="text-center">
-                <p className="text-xs font-medium text-white/80 uppercase tracking-wider">Percentage</p>
+                <p className="text-xs font-medium text-white/80 uppercase tracking-wider">Persentase</p>
                 <p className="text-2xl font-bold text-white">{certificate.percentage?.toFixed(1)}%</p>
               </div>
             </div>
@@ -158,31 +157,33 @@ export function GuruCertificatePreview({ certificate }: GuruCertificateProps) {
 
           {/* Footer */}
           <div className="w-full flex justify-between items-end pt-4">
-            <div className="flex items-center gap-2 text-gray-400">
-              <Calendar size={16} />
-              <span className="text-sm font-medium">{formatDate(certificate.issuedAt)}</span>
+            <div className="text-left">
+              <p className="text-xs text-gray-400">Jenis Latihan</p>
+              <p className="text-sm font-semibold text-gray-600">{productLabel}</p>
             </div>
             
             <div className="text-center">
               <div className="w-20 h-20 rounded-full bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center mx-auto mb-3 shadow-lg shadow-emerald-500/30">
                 <Award size={32} className="text-white" />
               </div>
-              <p className="text-[10px] text-gray-400 uppercase tracking-wider">Certificate ID</p>
+              <p className="text-[10px] text-gray-400 uppercase tracking-wider">No. Dokumen</p>
               <p className="text-xs font-mono font-bold text-gray-600">{certificate.certificateNo}</p>
             </div>
 
-            <div className="text-right">
-              <p className="text-xs text-gray-400">Valid Until</p>
-              <p className="text-sm font-semibold text-gray-600">Lifetime</p>
+            <div className="flex items-center gap-2 text-gray-400">
+              <Calendar size={16} />
+              <span className="text-sm font-medium">{formatDate(certificate.issuedAt)}</span>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Info */}
-      <p className="text-xs text-gray-400 text-center">
-        Klik "Simpan Sertifikat" untuk mengunduh. Sertifikat ini dapat digunakan sebagai bukti kompetensi profesional.
-      </p>
+      {/* Disclaimer */}
+      <div className="bg-amber-50 border border-amber-200 rounded-xl p-3">
+        <p className="text-xs text-amber-700 text-center font-medium">
+          Dokumen ini adalah hasil latihan/simulasi di BahasaCerdas dan bukan sertifikat resmi UKBI/TKA dari lembaga pemerintah.
+        </p>
+      </div>
     </div>
   );
 }
