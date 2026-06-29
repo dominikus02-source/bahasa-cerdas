@@ -155,7 +155,7 @@ export default function ArenaLoginPage() {
             <p className="text-sm text-violet-200 text-center mb-1">Masukkan email untuk menerima link reset password</p>
             <input
               type="email"
-              placeholder="Email"
+              placeholder="Surel"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="w-full px-4 py-3.5 rounded-xl bg-white/15 border border-white/20 text-white placeholder-violet-300/70 text-sm focus:outline-none focus:ring-2 focus:ring-white/40 focus:bg-white/20 transition-all"
@@ -180,7 +180,7 @@ export default function ArenaLoginPage() {
           <form onSubmit={handleLogin} className="w-full max-w-sm space-y-3">
             <input
               type="email"
-              placeholder="Email"
+              placeholder="Surel"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="w-full px-4 py-3.5 rounded-xl bg-white/15 border border-white/20 text-white placeholder-violet-300/70 text-sm focus:outline-none focus:ring-2 focus:ring-white/40 focus:bg-white/20 transition-all"
@@ -188,7 +188,7 @@ export default function ArenaLoginPage() {
             />
             <input
               type="password"
-              placeholder="Password"
+              placeholder="Kata Sandi"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="w-full px-4 py-3.5 rounded-xl bg-white/15 border border-white/20 text-white placeholder-violet-300/70 text-sm focus:outline-none focus:ring-2 focus:ring-white/40 focus:bg-white/20 transition-all"

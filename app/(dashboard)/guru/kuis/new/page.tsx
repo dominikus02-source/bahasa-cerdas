@@ -217,7 +217,7 @@ export default function QuizBuilderPage() {
           <ChevronLeft className="w-5 h-5 text-slate-600" />
         </Link>
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">{editId ? "Edit Kuis" : "Buat Kuis Baru"}</h1>
+          <h1 className="text-2xl font-bold text-slate-900">{editId ? "Ubah Kuis" : "Buat Kuis Baru"}</h1>
           <p className="text-sm text-slate-500">Step {step} dari 3</p>
         </div>
       </div>

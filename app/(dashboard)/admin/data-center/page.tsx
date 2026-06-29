@@ -65,8 +65,8 @@ function CountCard({ label, value, icon: Icon, color, warning }: { label: string
 }
 
 const TABLE_META: { key: keyof Counts; label: string; icon: any; color: string; critical: boolean }[] = [
-  { key: "User", label: "Users", icon: Users, color: "from-blue-500 to-blue-600", critical: true },
-  { key: "Profile", label: "Profiles", icon: Users, color: "from-indigo-500 to-indigo-600", critical: true },
+  { key: "User", label: "Pengguna", icon: Users, color: "from-blue-500 to-blue-600", critical: true },
+  { key: "Profile", label: "Profil", icon: Users, color: "from-indigo-500 to-indigo-600", critical: true },
   { key: "UKBIQuestion", label: "UKBI Questions", icon: BookOpen, color: "from-violet-500 to-purple-600", critical: true },
   { key: "TKAQuestion", label: "TKA Questions", icon: BookOpen, color: "from-violet-500 to-purple-600", critical: true },
   { key: "PaketKompetensi", label: "Paket Kompetensi", icon: BookOpen, color: "from-violet-500 to-purple-600", critical: true },
@@ -274,7 +274,7 @@ export default function DataCenterPage() {
             </div>
             {backupManifest.errorMessage && (
               <div className="bg-red-50 border border-red-200 rounded-lg p-3">
-                <p className="text-[10px] text-red-500 font-medium">Error</p>
+                <p className="text-[10px] text-red-500 font-medium">Gagal</p>
                 <p className="text-xs text-red-700">{backupManifest.errorMessage}</p>
               </div>
             )}

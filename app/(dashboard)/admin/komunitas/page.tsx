@@ -119,7 +119,7 @@ export default function AdminKomunitasPage() {
         <div className="mb-6 bg-red-50 border border-red-200 rounded-xl p-4 flex items-start gap-3">
           <AlertCircle className="h-5 w-5 text-red-500 shrink-0 mt-0.5" />
           <div>
-            <p className="text-sm font-medium text-red-800">Error</p>
+            <p className="text-sm font-medium text-red-800">Gagal</p>
             <p className="text-sm text-red-600">{error}</p>
             <button onClick={fetchData} className="text-xs text-red-500 underline mt-1">Coba lagi</button>
           </div>

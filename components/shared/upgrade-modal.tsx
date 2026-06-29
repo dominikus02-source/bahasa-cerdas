@@ -140,7 +140,7 @@ export function UpgradeModal({ isOpen, onClose, feature, used, limit }: UpgradeM
             "500 kredit AI setiap bulan",
             "Koreksi esai dengan AI",
             "Jual karya di toko (bisa dapat income)",
-            "Export laporan PDF",
+            "Ekspor laporan PDF",
             "Data siswa lengkap",
             "Akses semua fitur premium",
           ].map((benefit, i) => (

@@ -30,7 +30,7 @@ const MURID_SUGGESTIONS = [
 
 const GURU_SUGGESTIONS = [
   "Buatkan RPP 1 lembar materi puisi kelas 10 Kurikulum Merdeka",
-  "Generate 5 soal HOTS tentang teks argumentasi",
+  "Buat 5 soal HOTS tentang teks argumentasi",
   "Jelaskan perbedaan pendekatan saintifik dan discovery learning",
   "Buat modul ajar materi pantun untuk kelas 7",
   "Koreksi tata bahasa paragraf ini: [tempel teks]",

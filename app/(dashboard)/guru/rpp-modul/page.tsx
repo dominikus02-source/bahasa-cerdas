@@ -118,7 +118,7 @@ export default function RPPModulPage() {
                 return;
               }
               if (pollData.status === "FAILED") {
-                setGenError(pollData.error || "Generate gagal");
+                setGenError(pollData.error || "Gagal membuat");
                 setLoading(false);
                 return;
               }
@@ -126,7 +126,7 @@ export default function RPPModulPage() {
               // Network error — continue polling
             }
           }
-          setGenError("Generate timeout. Silakan coba lagi.");
+          setGenError("Waktu habis. Silakan coba lagi.");
           setLoading(false);
         };
         poll(data.jobId);
@@ -191,7 +191,7 @@ export default function RPPModulPage() {
   };
 
   const tabs: { id: Tab; label: string; icon: React.ReactNode }[] = [
-    { id: "generate", label: `Generate AI`, icon: <Zap className="h-4 w-4" /> },
+    { id: "generate", label: `Buat AI`, icon: <Zap className="h-4 w-4" /> },
     { id: "list", label: `Daftar ${docType} (${docList.length})`, icon: <FileText className="h-4 w-4" /> },
   ];
 
@@ -350,7 +350,7 @@ export default function RPPModulPage() {
               </div>
 
               <Button onClick={handleGenerate} disabled={loading} className="w-full">
-                <Zap className="h-4 w-4" /> {loading ? "Generating..." : `Generate ${docType} dengan AI`}
+                <Zap className="h-4 w-4" /> {loading ? "Memproses..." : `Buat ${docType} dengan AI`}
               </Button>
               {genError && (
                 <div className="p-3 rounded-lg bg-red-50 border border-red-200 text-sm text-red-700">
@@ -371,7 +371,7 @@ export default function RPPModulPage() {
                       <Eye className="h-4 w-4" /> Preview
                     </Button>
                     <Button size="sm" variant="outline" className="bg-white/10 border-white/20 text-white hover:bg-white/20" onClick={handleSave} disabled={saving}>
-                      {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />} {saving ? "Saving..." : "Simpan"}
+                      {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />} {saving ? "Menyimpan..." : "Simpan"}
                     </Button>
                   </div>
                 </div>
@@ -428,7 +428,7 @@ export default function RPPModulPage() {
                         <Badge variant={doc.type === "MODUL" ? "default" : "secondary"}>{doc.type || docType}</Badge>
                         <Badge>Kelas {doc.kelas}</Badge>
                         {doc.curriculum && <Badge variant="outline">{doc.curriculum}</Badge>}
-                        {doc.isPublished && <Badge variant="success">Published</Badge>}
+                        {doc.isPublished && <Badge variant="success">Diterbitkan</Badge>}
                       </div>
                       <h3 className="font-semibold text-gray-900">{doc.title}</h3>
                       {doc.description && <p className="text-sm text-gray-500 mt-1">{doc.description}</p>}
@@ -459,7 +459,7 @@ export default function RPPModulPage() {
             <div className="sticky top-0 bg-white border-b border-gray-100 p-4 flex items-center justify-between z-10">
               <h2 className="text-lg font-bold text-gray-900">{previewDoc.title || "Preview"}</h2>
               <div className="flex gap-2">
-                <Button size="sm" variant="outline" onClick={() => window.print()}><Printer size={14} className="mr-1" /> Print</Button>
+                <Button size="sm" variant="outline" onClick={() => window.print()}><Printer size={14} className="mr-1" /> Cetak</Button>
                 <Button size="sm" variant="outline" onClick={() => setPreviewDoc(null)}>Tutup</Button>
               </div>
             </div>

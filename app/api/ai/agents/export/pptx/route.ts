@@ -57,7 +57,7 @@ export async function POST(req: NextRequest) {
     const { agentId } = bodyParsed.data;
     if (agentId !== "ppt") {
       return NextResponse.json({
-        error: "Export PPTX untuk fitur ini akan tersedia pada tahap berikutnya.",
+        error: "Ekspor PPTX untuk fitur ini akan tersedia pada tahap berikutnya.",
       }, { status: 400 });
     }
 

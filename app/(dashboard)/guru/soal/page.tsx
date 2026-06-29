@@ -427,7 +427,7 @@ export default function GuruSoalPage() {
                     </div>
 
                     <div className="flex items-center gap-1 shrink-0">
-                      <button onClick={() => handleEdit(soal)} className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-blue-600 transition-colors" title="Edit">
+                      <button onClick={() => handleEdit(soal)} className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-blue-600 transition-colors" title="Ubah">
                         <Edit3 size={14} />
                       </button>
                       <button onClick={() => handleDelete(soal.id)} className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-red-600 transition-colors" title="Hapus">
@@ -489,7 +489,7 @@ export default function GuruSoalPage() {
       </Modal>
 
       {/* Edit Modal */}
-      <Modal isOpen={showEditModal} onClose={() => setShowEditModal(false)} title="Edit Soal" className="max-w-lg">
+      <Modal isOpen={showEditModal} onClose={() => setShowEditModal(false)} title="Ubah Soal" className="max-w-lg">
         <div className="space-y-4">
           <textarea value={editForm.text} onChange={e => setEditForm({ ...editForm, text: e.target.value })}
             className="w-full rounded-lg border px-4 py-2 text-sm" rows={3} placeholder="Teks pertanyaan" />

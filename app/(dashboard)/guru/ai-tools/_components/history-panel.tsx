@@ -207,7 +207,7 @@ export function HistoryPanel({ items, loading, activeFilter, onFilterChange, onO
                     <button
                       onClick={() => handleStartEdit(item)}
                       className="p-1.5 rounded-lg text-gray-400 hover:text-blue-600 hover:bg-blue-50"
-                      title="Edit judul"
+                      title="Ubah judul"
                     >
                       <Edit3 className="w-3.5 h-3.5" />
                     </button>
@@ -224,7 +224,7 @@ export function HistoryPanel({ items, loading, activeFilter, onFilterChange, onO
                       onClick={() => onExportDocx(item)}
                       disabled={exportDocxId === item.id}
                       className="p-1.5 rounded-lg text-gray-400 hover:text-orange-600 hover:bg-orange-50"
-                      title="Download DOCX"
+                      title="Unduh DOCX"
                     >
                       {exportDocxId === item.id ? (
                         <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -238,7 +238,7 @@ export function HistoryPanel({ items, loading, activeFilter, onFilterChange, onO
                       onClick={() => onExportPdf(item)}
                       disabled={exportPdfId === item.id}
                       className="p-1.5 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50"
-                      title="Download PDF"
+                      title="Unduh PDF"
                     >
                       {exportPdfId === item.id ? (
                         <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -252,7 +252,7 @@ export function HistoryPanel({ items, loading, activeFilter, onFilterChange, onO
                       onClick={() => onExportPptx(item)}
                       disabled={exportPptxId === item.id}
                       className="p-1.5 rounded-lg text-gray-400 hover:text-orange-600 hover:bg-orange-50"
-                      title="Download PPTX"
+                      title="Unduh PPTX"
                     >
                       {exportPptxId === item.id ? (
                         <Loader2 className="w-3.5 h-3.5 animate-spin" />

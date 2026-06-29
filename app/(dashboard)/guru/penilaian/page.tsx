@@ -330,7 +330,7 @@ export default function PenilaianPage() {
             <button onClick={() => setShowKategoriModal(false)} className="absolute top-3 right-3 w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center">
               <X size={16} className="text-gray-500" />
             </button>
-            <h3 className="font-bold text-gray-900 text-lg mb-4">{editKategori ? "Edit Kategori" : "Tambah Kategori"}</h3>
+            <h3 className="font-bold text-gray-900 text-lg mb-4">{editKategori ? "Ubah Kategori" : "Tambah Kategori"}</h3>
             <div className="space-y-4">
               <div>
                 <label className="block text-xs font-semibold text-gray-500 mb-1">Nama Kategori</label>

@@ -57,7 +57,7 @@ export async function POST(req: NextRequest) {
     const { agentId } = bodyParsed.data;
     if (agentId !== "rpp" && agentId !== "soal") {
       return NextResponse.json({
-        error: "Export PDF untuk fitur ini akan tersedia pada tahap berikutnya.",
+        error: "Ekspor PDF untuk fitur ini akan tersedia pada tahap berikutnya.",
       }, { status: 400 });
     }
 

@@ -13,7 +13,7 @@ const FEATURES = [
   { free: true, pro: true, label: "KelasKu & Buku Panduan" },
   { free: true, pro: true, label: "Buku Nilai & Rapor" },
   { free: false, pro: true, label: "500 Kredit AI per bulan (Free: 30)" },
-  { free: false, pro: true, label: "Export PDF, DOCX, PPTX" },
+  { free: false, pro: true, label: "Ekspor PDF, DOCX, PPTX" },
   { free: false, pro: true, label: "Jual Karya di Marketplace" },
   { free: false, pro: true, label: "Prioritas support" },
 ];

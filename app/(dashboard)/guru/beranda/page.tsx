@@ -55,7 +55,7 @@ export default function GuruBerandaPage() {
               </span>
             )}
           </h1>
-          <p className="text-gray-400 text-sm mt-0.5">Dashboard Guru - BahasaCerdas</p>
+          <p className="text-gray-400 text-sm mt-0.5">Dasbor Guru - BahasaCerdas</p>
         </div>
         <div className="flex gap-2">
           <Link href="/guru/rpp-modul" className="flex items-center gap-1.5 px-4 py-2.5 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white rounded-xl text-sm font-semibold hover:from-emerald-600 hover:to-emerald-700 transition-all shadow-lg shadow-emerald-500/20">

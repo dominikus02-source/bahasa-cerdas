@@ -104,7 +104,7 @@ export async function POST(req: NextRequest) {
       filename = meta.filename;
     } else {
       return NextResponse.json({
-        error: "Export DOCX untuk fitur ini akan tersedia pada tahap berikutnya.",
+        error: "Ekspor DOCX untuk fitur ini akan tersedia pada tahap berikutnya.",
       }, { status: 400 });
     }
 

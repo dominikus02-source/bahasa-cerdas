@@ -13,7 +13,7 @@ export default function CoreFeatures() {
     {
       icon: BookOpen,
       title: "Kurikulum Merdeka",
-      description: "RPP, ATP, Modul siap pakai. Update sesuai kebijakan terbaru Kemendikbud.",
+      description: "RPP, ATP, Modul siap pakai. Diperbarui sesuai kebijakan terbaru Kemendikbud.",
       color: "from-blue-500 to-cyan-600",
       bgColor: "bg-blue-50",
       iconColor: "text-blue-500",

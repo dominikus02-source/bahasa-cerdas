@@ -11,7 +11,7 @@ interface Props {
 }
 
 const NAV = [
-  { label: "Overview", href: "/admin", icon: LayoutDashboard },
+  { label: "Ringkasan", href: "/admin", icon: LayoutDashboard },
   { label: "Materi Ajar", href: "/admin/materi/generate-ppt", icon: Presentation },
   { label: "Toko Karya", href: "/admin/karya", icon: ShoppingBag },
   { label: "Video", href: "/admin/video", icon: Film },
@@ -19,13 +19,13 @@ const NAV = [
   { label: "Lowongan", href: "/admin/loker", icon: Briefcase },
   { label: "Komunitas", href: "/admin/komunitas", icon: MessageCircle },
   { label: "Pengguna", href: "/admin/users", icon: Users },
-  { label: "AI Analytics", href: "/admin/ai-analytics", icon: BarChart3 },
-  { label: "AI Quota", href: "/admin/ai-quota", icon: Coins },
-  { label: "Data Center", href: "/admin/data-center", icon: Database },
+  { label: "Analitik AI", href: "/admin/ai-analytics", icon: BarChart3 },
+  { label: "Kuota AI", href: "/admin/ai-quota", icon: Coins },
+  { label: "Pusat Data", href: "/admin/data-center", icon: Database },
   { label: "Pembayaran", href: "/admin/payments", icon: DollarSign },
   { type: "divider" as const },
-  { label: "Dashboard Guru", href: "/guru/beranda", icon: ChevronRight },
-  { label: "Dashboard Murid", href: "/murid/beranda", icon: ChevronRight },
+  { label: "Dasbor Guru", href: "/guru/beranda", icon: ChevronRight },
+  { label: "Dasbor Murid", href: "/murid/beranda", icon: ChevronRight },
 ];
 
 export function AdminSidebar({ user }: Props) {
@@ -67,7 +67,7 @@ export function AdminSidebar({ user }: Props) {
         <Link href="/admin" className="flex items-center gap-2">
           <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-red-500 to-red-700 flex items-center justify-center text-white font-bold text-sm">BC</div>
           <div>
-            <p className="font-bold text-slate-900 text-sm">Admin Panel</p>
+            <p className="font-bold text-slate-900 text-sm">Panel Admin</p>
             <p className="text-[10px] text-slate-400">Founder</p>
           </div>
         </Link>

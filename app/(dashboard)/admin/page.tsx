@@ -377,7 +377,7 @@ export default async function AdminPage() {
           </div>
           <div>
             <p className="text-xl font-bold text-slate-900">{s.payments.pending}</p>
-            <p className="text-[10px] text-slate-500">Pending</p>
+            <p className="text-[10px] text-slate-500">Menunggu</p>
           </div>
           <div>
             <p className="text-xl font-bold text-slate-900">{s.payments.success}</p>

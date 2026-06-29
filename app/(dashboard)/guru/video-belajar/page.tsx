@@ -118,7 +118,7 @@ export default function VideoBelajarPage() {
           <p className="mt-1 text-sm text-gray-600">Koleksi video pembelajaran Bahasa Indonesia</p>
         </div>
         <Button onClick={() => setShowUpload(!showUpload)} variant="outline">
-          <Upload size={16} /> {showUpload ? "Batal" : "Upload Video"}
+          <Upload size={16} /> {showUpload ? "Batal" : "Unggah Video"}
         </Button>
       </div>
 
@@ -195,7 +195,7 @@ export default function VideoBelajarPage() {
               <div className="flex gap-3 pt-2">
                 <Button variant="outline" onClick={() => { setShowUpload(false); setUploadResult(""); }} className="flex-1">Batal</Button>
                 <Button onClick={handleUpload} disabled={uploading || !uploadForm.title || (!uploadForm.videoUrl && !selectedFile)} className="flex-1 bg-gradient-to-r from-red-500 to-red-600">
-                  {uploading ? <><Loader2 size={16} className="animate-spin" /> Uploading...</> : <><Upload size={16} /> Upload Video</>}
+                  {uploading ? <><Loader2 size={16} className="animate-spin" /> Mengunggah...</> : <><Upload size={16} /> Unggah Video</>}
                 </Button>
               </div>
               {uploadResult && (

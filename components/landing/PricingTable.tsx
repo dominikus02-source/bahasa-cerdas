@@ -47,7 +47,7 @@ export default function PricingTable() {
                 <span className="text-slate-500">/selamanya</span>
               </div>
               <ul className="space-y-4 mb-8">
-                {["Akses Komunitas (Baca)", "3 RPP/bulan", "Soal HOTS Terbatas", "Tanpa Download"].map((item, i) => (
+                {["Akses Komunitas (Baca)", "3 RPP/bulan", "Soal HOTS Terbatas", "Tanpa Unduh"].map((item, i) => (
                   <li key={i} className="flex items-start gap-3 text-sm text-slate-600">
                     <Check className="w-5 h-5 text-slate-400 shrink-0" />
                     {item}
@@ -81,10 +81,10 @@ export default function PricingTable() {
               <ul className="space-y-4 mb-8">
                 {[
                   "AI Generator Tanpa Batas",
-                  "Download RPP & Video (1080p)",
+                  "Unduh RPP & Video (1080p)",
                   "Akses Penuh Komunitas + Webinar",
-                  "Upload & Jual Karya di Toko Karya",
-                  "Sertifikat Digital UKBI",
+                  "Unggah & Jual Karya di Toko Karya",
+                  "Dokumen Hasil Latihan UKBI",
                   "Dukungan Prioritas",
                 ].map((item, i) => (
                   <li key={i} className="flex items-start gap-3 text-sm font-medium text-slate-800">

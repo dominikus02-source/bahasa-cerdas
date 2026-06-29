@@ -193,7 +193,7 @@ export default function GuruKuisPage() {
                     </button>
                   )}
                   <Link href={`/guru/kuis/${quiz.id}/edit`}>
-                    <button className="p-2 hover:bg-slate-100 rounded-lg text-slate-500" title="Edit">
+                    <button className="p-2 hover:bg-slate-100 rounded-lg text-slate-500" title="Ubah">
                       <Edit3 className="w-4 h-4" />
                     </button>
                   </Link>

@@ -519,7 +519,7 @@ export default function BankSoalPage() {
           </select>
           <Button onClick={handleGenerate} disabled={loading || !aiForm.text || !aiForm.kelas} className="shrink-0 bg-amber-500 hover:bg-amber-600 text-white">
             {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Zap className="h-4 w-4" />}
-            {loading ? "..." : "Generate 5 Soal"}
+            {loading ? "..." : "Buat 5 Soal"}
           </Button>
         </div>
         {generateMsg && (

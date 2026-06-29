@@ -96,7 +96,7 @@ export default function BankSoalTKAPage() {
         <div className="flex gap-2">
           <Button variant="outline" onClick={() => setShowForm(!showForm)}><Plus size={16} /> {showForm ? "Batal" : "Tambah Manual"}</Button>
           <Button onClick={() => setAiTopic(aiTopic || "Pedagogik")} variant="outline" className="border-amber-300 text-amber-700 hover:bg-amber-50">
-            <Zap size={16} /> Generate AI
+            <Zap size={16} /> Buat dengan AI
           </Button>
         </div>
       </div>
@@ -111,7 +111,7 @@ export default function BankSoalTKAPage() {
       {/* AI Generation */}
       {aiTopic && (
         <Card className="p-4 mb-6 border-2 border-amber-200 bg-amber-50/50">
-          <h3 className="font-semibold text-sm mb-3 flex items-center gap-2"><Zap size={16} className="text-amber-600" /> Generate Soal TKA dengan AI</h3>
+          <h3 className="font-semibold text-sm mb-3 flex items-center gap-2"><Zap size={16} className="text-amber-600" /> Buat Soal TKA dengan AI</h3>
           <div className="flex flex-wrap gap-3 items-end">
             <div>
               <label className="block text-xs font-medium mb-1">Topik</label>
@@ -141,7 +141,7 @@ export default function BankSoalTKAPage() {
             </div>
             <Button onClick={handleAIGenerate} disabled={aiLoading}>
               {aiLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Zap size={16} />}
-              {aiLoading ? "Generating..." : "Generate"}
+              {aiLoading ? "Memproses..." : "Buat"}
             </Button>
           </div>
         </Card>

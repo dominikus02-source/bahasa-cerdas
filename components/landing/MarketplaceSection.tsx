@@ -131,8 +131,8 @@ export default function MarketplaceSection() {
             <div className="w-16 h-16 bg-gradient-to-br from-red-500 to-pink-600 rounded-2xl flex items-center justify-center text-white mx-auto mb-4 shadow-lg">
               <ShoppingBag className="w-8 h-8" />
             </div>
-            <h3 className="font-bold text-xl text-slate-900 mb-3">Upload Mudah</h3>
-            <p className="text-slate-600">Upload karya dalam 3 langkah. Mendukung PDF, PPT, Video, dan format lainnya.</p>
+            <h3 className="font-bold text-xl text-slate-900 mb-3">Unggah Mudah</h3>
+            <p className="text-slate-600">Unggah karya dalam 3 langkah. Mendukung PDF, PPT, Video, dan format lainnya.</p>
           </div>
 
           <div className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-2xl p-8 text-center border border-blue-100">
@@ -147,7 +147,7 @@ export default function MarketplaceSection() {
             <div className="w-16 h-16 bg-gradient-to-br from-yellow-500 to-orange-600 rounded-2xl flex items-center justify-center text-white mx-auto mb-4 shadow-lg">
               <Award className="w-8 h-8" />
             </div>
-            <h3 className="font-bold text-xl text-slate-900 mb-3">Dashboard Real-time</h3>
+            <h3 className="font-bold text-xl text-slate-900 mb-3">Dasbor Real-time</h3>
             <p className="text-slate-600">Pantau penjualan, pendapatan, dan review pembeli secara real-time.</p>
           </div>
         </div>

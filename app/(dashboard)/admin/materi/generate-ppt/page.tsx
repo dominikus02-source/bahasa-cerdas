@@ -275,7 +275,7 @@ export default function AdminPPTGeneratorPage() {
                     <div className="flex justify-between text-xs text-gray-500"><span>5 slide</span><span>20 slide</span></div>
                   </div>
                   <Button onClick={handleAIGenerate} disabled={aiLoading} className="w-full bg-gradient-to-r from-red-600 to-blue-600 hover:from-red-700 hover:to-blue-700">
-                    {aiLoading ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Generate PPT...</> : <><Sparkles className="w-4 h-4 mr-2" /> Generate PPT dengan AI</>}
+                    {aiLoading ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Buat PPT...</> : <><Sparkles className="w-4 h-4 mr-2" /> Buat PPT dengan AI</>}
                   </Button>
                   {aiError && <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">{aiError}</div>}
                 </CardContent>
@@ -390,7 +390,7 @@ export default function AdminPPTGeneratorPage() {
                     </div>
                   </div>
                   <Button onClick={handleManualUpload} disabled={manualLoading} className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700">
-                    {manualLoading ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Uploading...</> : <><Upload className="w-4 h-4 mr-2" /> Upload Materi</>}
+                    {manualLoading ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Mengunggah...</> : <><Upload className="w-4 h-4 mr-2" /> Unggah Materi</>}
                   </Button>
                   {manualError && <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">{manualError}</div>}
                 </CardContent>
@@ -429,7 +429,7 @@ export default function AdminPPTGeneratorPage() {
                         <div className="p-3 bg-gray-50 rounded-lg"><p className="text-xs text-gray-500">Judul</p><p className="text-sm font-medium text-gray-900">{manualResult.materi?.title}</p></div>
                         <div className="p-3 bg-gray-50 rounded-lg"><p className="text-xs text-gray-500">Kelas</p><p className="text-sm font-medium text-gray-900">{manualResult.materi?.grade}</p></div>
                         <div className="p-3 bg-gray-50 rounded-lg"><p className="text-xs text-gray-500">File Type</p><p className="text-sm font-medium text-gray-900">{manualResult.materi?.fileType}</p></div>
-                        <div className="p-3 bg-gray-50 rounded-lg"><p className="text-xs text-gray-500">Status</p><p className="text-sm font-medium text-green-600">Published</p></div>
+                        <div className="p-3 bg-gray-50 rounded-lg"><p className="text-xs text-gray-500">Status</p>                        <p className="text-sm font-medium text-green-600">Diterbitkan</p></div>
                       </div>
                       {manualResult.downloadUrl && (
                         <a href={manualResult.downloadUrl} target="_blank" rel="noopener noreferrer" className="block">
@@ -464,7 +464,7 @@ export default function AdminPPTGeneratorPage() {
                   </div>
                   <Button variant="outline" size="sm" onClick={fetchMateris} disabled={materisLoading}>
                     <Loader2 className={`w-4 h-4 mr-2 ${materisLoading ? "animate-spin" : ""}`} />
-                    Refresh
+                    Muat Ulang
                   </Button>
                 </div>
                 <div className="relative mt-3">

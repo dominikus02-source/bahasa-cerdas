@@ -214,7 +214,7 @@ export default function TokoKaryaPage() {
       {/* Form (Add/Edit) */}
       {showForm && (
         <Card className="p-6 mb-6 border-2 border-emerald-100">
-          <h2 className="font-bold text-lg mb-4">{editId ? "Edit Karya" : "Upload Karya Baru"}</h2>
+          <h2 className="font-bold text-lg mb-4">{editId ? "Ubah Karya" : "Unggah Karya Baru"}</h2>
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-semibold mb-1">Judul Karya</label>
@@ -269,11 +269,11 @@ export default function TokoKaryaPage() {
                       <input value={formData.images[i]} onChange={(e) => { const imgs = [...formData.images]; imgs[i] = e.target.value; setFormData({ ...formData, images: imgs }); }}
                         className="mt-1 w-full text-[10px] px-2 py-1 rounded border border-gray-200 focus:border-emerald-500 focus:outline-none" placeholder="URL gambar..." />
                       {imgLoading === i ? (
-                        <div className="mt-1 text-[10px] text-emerald-600 text-center"><Loader2 size={12} className="inline animate-spin" /> Uploading...</div>
+                        <div className="mt-1 text-[10px] text-emerald-600 text-center"><Loader2 size={12} className="inline animate-spin" /> Mengunggah...</div>
                       ) : (
                         <button type="button" onClick={() => uploadImage(i)}
                           className="mt-1 w-full text-[10px] px-2 py-1 bg-emerald-50 text-emerald-700 rounded border border-emerald-200 hover:bg-emerald-100 transition-colors">
-                          Upload Gambar
+                          Unggah Gambar
                         </button>
                       )}
                     </div>
@@ -309,7 +309,7 @@ export default function TokoKaryaPage() {
             <div className="flex gap-3 pt-2">
               <Button variant="outline" onClick={() => { setShowForm(false); setEditId(null); setSelectedFile(null); }} className="flex-1">Batal</Button>
               <Button onClick={handleSubmit} disabled={uploading || !formData.title} className="flex-1 bg-gradient-to-r from-emerald-500 to-emerald-600">
-                {uploading ? <><Loader2 size={16} className="animate-spin" /> {editId ? "Updating..." : "Uploading..."}</> : <><Edit2 size={16} /> {editId ? "Simpan Perubahan" : "Publikasikan"}</>}
+                {uploading ? <><Loader2 size={16} className="animate-spin" /> {editId ? "Memperbarui..." : "Mengunggah..."}</> : <><Edit2 size={16} /> {editId ? "Simpan Perubahan" : "Publikasikan"}</>}
               </Button>
             </div>
           </div>

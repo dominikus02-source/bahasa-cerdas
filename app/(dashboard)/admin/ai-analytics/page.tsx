@@ -117,7 +117,7 @@ const ERROR_LABELS: Record<string, string> = {
   AGENT_NOT_FOUND: "Agent Tidak Ditemukan",
   INVALID_INPUT: "Input Tidak Valid",
   EMPTY_RESPONSE: "Respons Kosong",
-  UNKNOWN_ERROR: "Error Lain",
+  UNKNOWN_ERROR: "Gagal Lain",
 };
 
 const PROVIDER_LABELS: Record<string, string> = {
@@ -255,7 +255,7 @@ export default function AdminAIAnalyticsPage() {
             <StatCard icon={AlertTriangle} label="Gagal" value={overview?.failedCount ?? 0} color="red" />
             <StatCard icon={Clock} label="Rata Latency" value={overview?.avgLatency != null ? `${overview.avgLatency}ms` : "—"} color="slate" />
             <StatCard icon={Save} label="Tersimpan" value={overview?.savedResults ?? 0} color="violet" />
-            <StatCard icon={Download} label="Export" value={overview?.exportEvents ?? 0} color="amber" />
+            <StatCard icon={Download} label="Ekspor" value={overview?.exportEvents ?? 0} color="amber" />
             <StatCard icon={Zap} label="Token" value={formatNumber(overview?.totalTokens ?? 0)} color="cyan" sub={`$${overview?.estimatedCost?.toFixed(4) ?? "0"}`} />
           </div>
 

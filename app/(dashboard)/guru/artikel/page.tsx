@@ -162,7 +162,7 @@ export default function GuruArtikelPage() {
                   <div className="flex items-center gap-3">
                     <button type="button" onClick={() => fileRef.current?.click()} disabled={uploading}
                       className="flex items-center gap-2 px-4 py-2.5 rounded-xl border-2 border-dashed border-gray-300 text-sm text-gray-500 hover:border-emerald-500 hover:text-emerald-600 transition-colors">
-                      <ImageIcon size={18} /> {uploading ? "Uploading..." : "Upload Cover"}
+                      <ImageIcon size={18} /> {uploading ? "Mengunggah..." : "Unggah Cover"}
                     </button>
                     <input
                       value={form.coverImage}
@@ -197,7 +197,7 @@ export default function GuruArtikelPage() {
                 <div className="flex items-center gap-1">
                   <button type="button" onClick={() => setShowPreview(!showPreview)}
                     className={`px-3 py-1.5 text-xs rounded-lg transition-colors ${showPreview ? "bg-emerald-100 text-emerald-700" : "bg-gray-100 text-gray-500"}`}>
-                    {showPreview ? "Edit" : "Preview"}
+                    {showPreview ? "Ubah" : "Pratinjau"}
                   </button>
                 </div>
               </div>

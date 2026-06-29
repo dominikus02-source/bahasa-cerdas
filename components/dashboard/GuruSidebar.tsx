@@ -59,7 +59,7 @@ const NAV: NavItem[] = [
 
 const NAV_ADMIN = [
   { type: "divider" },
-  { label: "Admin Panel", href: "/admin", icon: <Settings size={18} /> },
+  { label: "Panel Admin", href: "/admin", icon: <Settings size={18} /> },
 ];
 
 interface Props {
@@ -204,7 +204,7 @@ export function GuruSidebar({ user }: Props) {
         <div className="px-2 mb-1">
           <div className="h-px bg-slate-100 mx-3 mb-2" />
           <Link href="/admin" className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm text-red-600 hover:bg-red-50 font-semibold transition-colors">
-            <Settings size={18} /> Admin Panel
+            <Settings size={18} /> Panel Admin
           </Link>
         </div>
       )}

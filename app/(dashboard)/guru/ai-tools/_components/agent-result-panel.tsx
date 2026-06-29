@@ -653,7 +653,7 @@ export function AgentResultPanel({ agentId, result, loading, error, isStreaming 
             )}
           </Button>
         ) : (agentId === "rpp" || agentId === "soal") ? (
-          <Button variant="outline" size="sm" disabled className="opacity-50" title="Export untuk fitur ini segera hadir.">
+          <Button variant="outline" size="sm" disabled className="opacity-50" title="Ekspor untuk fitur ini segera hadir.">
             <FileText className="w-3.5 h-3.5 mr-1" /> DOCX
           </Button>
         ) : null}
@@ -672,7 +672,7 @@ export function AgentResultPanel({ agentId, result, loading, error, isStreaming 
             )}
           </Button>
         ) : (agentId === "rpp" || agentId === "soal") ? (
-          <Button variant="outline" size="sm" disabled className="opacity-50" title="Export untuk fitur ini segera hadir.">
+          <Button variant="outline" size="sm" disabled className="opacity-50" title="Ekspor untuk fitur ini segera hadir.">
             <FileText className="w-3.5 h-3.5 mr-1" /> PDF
           </Button>
         ) : null}
@@ -691,17 +691,17 @@ export function AgentResultPanel({ agentId, result, loading, error, isStreaming 
             )}
           </Button>
         ) : agentId === "ppt" ? (
-          <Button variant="outline" size="sm" disabled className="opacity-50" title="Export untuk fitur ini segera hadir.">
+          <Button variant="outline" size="sm" disabled className="opacity-50" title="Ekspor untuk fitur ini segera hadir.">
             <Monitor className="w-3.5 h-3.5 mr-1" /> PPTX
           </Button>
         ) : null}
         {/* Export untuk agent baru — disabled, coming soon */}
         {(agentId === "eyd" || agentId === "feedback" || agentId === "grading" || agentId === "text-analysis") && (
           <>
-            <Button variant="outline" size="sm" disabled className="opacity-50 text-[10px]" title="Export untuk fitur ini segera hadir.">
+            <Button variant="outline" size="sm" disabled className="opacity-50 text-[10px]" title="Ekspor untuk fitur ini segera hadir.">
               <FileText className="w-3.5 h-3.5 mr-1" /> DOCX
             </Button>
-            <Button variant="outline" size="sm" disabled className="opacity-50 text-[10px]" title="Export untuk fitur ini segera hadir.">
+            <Button variant="outline" size="sm" disabled className="opacity-50 text-[10px]" title="Ekspor untuk fitur ini segera hadir.">
               <Monitor className="w-3.5 h-3.5 mr-1" /> PDF
             </Button>
           </>

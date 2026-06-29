@@ -75,7 +75,7 @@ export default function LessonPage({ params }: { params: Promise<{ unitId: strin
     async function load() {
       try {
         const res = await fetch(`/api/jalur-cerdas/${unitId}`)
-        if (!res.ok) throw new Error("Failed to load lesson")
+        if (!res.ok) throw new Error("Gagal memuat pelajaran")
         const data = await res.json()
         setUnit(data.unit)
         setLesson(data.lesson)
@@ -86,7 +86,7 @@ export default function LessonPage({ params }: { params: Promise<{ unitId: strin
           setCorrectCount(data.questions?.length || 0)
         }
       } catch (e: any) {
-        setError(e.message || "Failed to load")
+        setError(e.message || "Gagal memuat")
       } finally {
         setLoading(false)
       }
@@ -105,13 +105,13 @@ export default function LessonPage({ params }: { params: Promise<{ unitId: strin
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ questionId: q.id, answer }),
       })
-      if (!res.ok) throw new Error("Submit failed")
+      if (!res.ok) throw new Error("Gagal mengirim jawaban")
       const data: QuestionResult = await res.json()
       setResult(data)
       if (data.correct) setCorrectCount((c) => c + 1)
       setPhase("result")
     } catch (e: any) {
-      setError(e.message || "Submit failed")
+      setError(e.message || "Gagal mengirim")
     } finally {
       setSubmitting(false)
     }
@@ -155,7 +155,7 @@ export default function LessonPage({ params }: { params: Promise<{ unitId: strin
   if (error || !unit) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center p-4">
-        <p className="text-red-500 mb-4">{error || "Unit not found"}</p>
+        <p className="text-red-500 mb-4">{error || "Unit tidak ditemukan"}</p>
         <button onClick={() => router.push("/arena/jalur-cerdas")} className="text-violet-600 underline">
           Kembali
         </button>

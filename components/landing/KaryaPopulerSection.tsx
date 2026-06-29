@@ -94,7 +94,7 @@ export default async function KaryaPopulerSection() {
                 href="/login"
                 className="mt-2 inline-block text-sm text-primary font-semibold hover:underline"
               >
-                Login & Upload Karya →
+                Login & Unggah Karya →
               </Link>
             </div>
           )}

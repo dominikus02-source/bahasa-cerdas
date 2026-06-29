@@ -7,7 +7,7 @@ export default function AIFeatures() {
       title: "Generator RPP Otomatis",
       description: "Buat RPP Kurikulum Merdeka dalam 30 detik. AI menganalisis kompetensi, tujuan pembelajaran, dan menghasilkan RPP lengkap dengan ATP & Modul Ajar.",
       gradient: "from-red-500 to-pink-600",
-      features: ["Template Kurikulum Merdeka", "Auto-generate ATP", "Integrasi Profil Pelajar Pancasila", "Export ke Word/PDF"],
+      features: ["Template Kurikulum Merdeka", "Buat ATP Otomatis", "Integrasi Profil Pelajar Pancasila", "Ekspor ke Word/PDF"],
     },
     {
       icon: Brain,
@@ -19,7 +19,7 @@ export default function AIFeatures() {
     {
       icon: Zap,
       title: "Pembuat Soal HOTS",
-      description: "Generate soal Higher Order Thinking Skills (HOTS) otomatis untuk berbagai level kognitif. Lengkap dengan kunci jawaban & pembahasan.",
+      description: "Buat soal HOTS (Higher Order Thinking Skills) otomatis untuk berbagai level kognitif. Lengkap dengan kunci jawaban & pembahasan.",
       gradient: "from-yellow-500 to-orange-600",
       features: ["Soal Pilihan Ganda & Essay", "Level Kognitif C1-C6", "Pembahasan Otomatis", "Bank Soal 1000+"],
     },

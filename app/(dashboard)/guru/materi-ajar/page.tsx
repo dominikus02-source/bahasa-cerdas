@@ -104,7 +104,7 @@ export default function MateriAjarPage() {
           <div className="flex items-center gap-3">
             <button onClick={() => setShowUpload(true)}
               className="flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-xl text-sm font-semibold hover:bg-emerald-700 transition-colors">
-              <Upload size={16} /> Upload Materi
+              <Upload size={16} /> Unggah Materi
             </button>
             <div className="flex items-center gap-2 px-4 py-2 bg-emerald-50 text-emerald-700 rounded-xl text-sm font-medium">
               <BookOpen size={16} />
@@ -190,7 +190,7 @@ export default function MateriAjarPage() {
               </div>
               <div className="flex-1 min-w-0">
                 <p className="font-semibold text-gray-900 truncate">{m.title}</p>
-                <p className="text-xs text-gray-500">{m.grade || "—"} • {m.fileType ? FILE_TYPE_LABELS[m.fileType] || m.fileType : "No file"}</p>
+                <p className="text-xs text-gray-500">{m.grade || "—"} • {m.fileType ? FILE_TYPE_LABELS[m.fileType] || m.fileType : "Tidak ada file"}</p>
               </div>
               <div className="flex items-center gap-1">
                 {m.fileUrl && (
@@ -354,7 +354,7 @@ export default function MateriAjarPage() {
                   setUploading(false)
                 }} disabled={uploading || !uploadForm.title || !uploadFile}
                   className="flex-1 py-2.5 bg-emerald-600 text-white rounded-xl text-sm font-semibold hover:bg-emerald-700 disabled:opacity-50 transition-colors flex items-center justify-center gap-2">
-                  {uploading ? <><Loader2 size={16} className="animate-spin" /> Uploading...</> : <><Upload size={16} /> Upload</>}
+                  {uploading ? <><Loader2 size={16} className="animate-spin" /> Mengunggah...</> : <><Upload size={16} /> Unggah</>}
                 </button>
               </div>
             </div>

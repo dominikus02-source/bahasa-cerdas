@@ -141,7 +141,7 @@ export default function AdminPaymentsPage() {
             <p className="text-xl font-bold text-emerald-700">{data.stats.success}</p>
           </div>
           <div className="bg-white rounded-xl border border-amber-200 p-4">
-            <p className="text-xs text-amber-500 mb-1">Pending</p>
+            <p className="text-xs text-amber-500 mb-1">Menunggu</p>
             <p className="text-xl font-bold text-amber-700">{data.stats.pending}</p>
           </div>
           <div className="bg-white rounded-xl border border-red-200 p-4">
@@ -167,7 +167,7 @@ export default function AdminPaymentsPage() {
           </p>
           <div className="flex flex-wrap gap-3 text-xs">
             {health.pendingOlder30Min > 0 && (
-              <span className="bg-amber-100 text-amber-700 px-2 py-1 rounded-lg">{health.pendingOlder30Min} PENDING &gt;30 menit</span>
+              <span className="bg-amber-100 text-amber-700 px-2 py-1 rounded-lg">{health.pendingOlder30Min} MENUNGGU &gt;30 menit</span>
             )}
             {health.paymentWithoutPremium > 0 && (
               <span className="bg-red-100 text-red-700 px-2 py-1 rounded-lg">{health.paymentWithoutPremium} bayar sukses tanpa PRO</span>
@@ -193,7 +193,7 @@ export default function AdminPaymentsPage() {
         <select value={statusFilter} onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }} className="px-3 py-2 rounded-xl border border-slate-200 text-sm bg-white">
           <option value="">Semua Status</option>
           <option value="SUCCESS">Sukses</option>
-          <option value="PENDING">Pending</option>
+          <option value="PENDING">Menunggu</option>
           <option value="FAILED">Gagal</option>
           <option value="CANCELLED">Batal</option>
           <option value="EXPIRED">Kadaluarsa</option>
