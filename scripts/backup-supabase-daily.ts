@@ -20,79 +20,44 @@ interface BackupManifest {
 }
 
 const BACKUP_TABLES: string[] = [
-  "User",
-  "Profile",
-  "Artikel",
-  "Video",
-  "Karya",
-  "StudentKarya",
-  "StudentKaryaLike",
-  "StudentKaryaComment",
-  "Soal",
-  "SoalSet",
-  "BankSoal",
-  "UKBIQuestion",
-  "TKAQuestion",
-  "PaketKompetensi",
-  "TestSession",
-  "TestAnswer",
-  "ProgresKompetensi",
-  "KompetensiCertificate",
-  "Pembelian",
-  "PurchaseHistory",
-  "SellerEarning",
-  "Withdrawal",
-  "Subscription",
-  "AdminPaymentAuditLog",
+  "User", "Profile", "Artikel", "Video", "Karya",
+  "StudentKarya", "StudentKaryaLike", "StudentKaryaComment",
+  "Soal", "SoalSet", "BankSoal",
+  "UKBIQuestion", "TKAQuestion", "PaketKompetensi",
+  "TestSession", "TestAnswer", "ProgresKompetensi", "KompetensiCertificate",
+  "Pembelian", "PurchaseHistory", "SellerEarning", "Withdrawal",
+  "Subscription", "AdminPaymentAuditLog",
   "Transaksi",
-  "AiSavedResult",
-  "AIUsage",
-  "AiCreditLedger",
-  "CoinTransaction",
-  "DailyQuest",
-  "StoreItem",
-  "UserItem",
-  "Notifikasi",
-  "Group",
-  "GroupMember",
-  "Quiz",
-  "QuizQuestion",
-  "QuizAssignment",
-  "QuizSubmission",
-  "QuizAnswer",
-  "QuizSession",
-  "LearningLevel",
-  "LearningUnit",
-  "UserUnitProgress",
-  "Penugasan",
-  "PenugasanSubmission",
-  "Materi",
-  "KoleksiKata",
-  "KamusEntry",
-  "NilaiKategori",
-  "Nilai",
-  "Lomba",
-  "LombaPeserta",
-  "Loker",
-  "RPP",
-  "GeneratedRPP",
-  "AIJob",
-  "Certificate",
-  "Community",
-  "CommunityMember",
-  "CommunityPost",
-  "CoursePlaylist",
-  "ChatMessage",
-  "GameRoom",
-  "GameQuestion",
-  "GameSession",
-  "GameResult",
-  "GroupQuiz",
-  "GroupQuizResult",
+  "AiSavedResult", "AIUsage", "AiCreditLedger",
+  "CoinTransaction", "DailyQuest", "StoreItem", "UserItem",
+  "Notifikasi", "Group", "GroupMember",
+  "Quiz", "QuizQuestion", "QuizAssignment", "QuizSubmission", "QuizAnswer", "QuizSession",
+  "LearningLevel", "LearningUnit", "UserUnitProgress",
+  "Penugasan", "PenugasanSubmission",
+  "Materi", "KoleksiKata", "KamusEntry",
+  "NilaiKategori", "Nilai",
+  "Lomba", "LombaPeserta", "Loker",
+  "RPP", "GeneratedRPP", "AIJob",
+  "Certificate", "Community", "CommunityMember", "CommunityPost",
+  "CoursePlaylist", "ChatMessage",
+  "GameRoom", "GameQuestion", "GameSession", "GameResult",
+  "GroupQuiz", "GroupQuizResult",
 ];
 
 const BACKUP_ROOT = path.join(process.cwd(), "backups", "daily");
 const MAX_BACKUPS = 30;
+
+function parseArgs(): { trigger: string } {
+  const args = process.argv.slice(2);
+  const triggerIdx = args.findIndex((a) => a === "--trigger");
+  const trigger = triggerIdx >= 0 && args[triggerIdx + 1] ? args[triggerIdx + 1] : "MANUAL";
+  const validTriggers = ["MANUAL", "SCHEDULED", "PRE_DEPLOY", "POST_RECOVERY"];
+  if (!validTriggers.includes(trigger.toUpperCase())) {
+    console.error(`Invalid trigger: ${trigger}. Must be one of: ${validTriggers.join(", ")}`);
+    process.exit(1);
+  }
+  return { trigger: trigger.toUpperCase() };
+}
 
 async function getCommitHash(): Promise<string> {
   try {
@@ -166,7 +131,6 @@ async function uploadToStorage(
       auth: { autoRefreshToken: false, persistSession: false },
     });
 
-    // Ensure bucket exists
     const { data: buckets } = await supabase.storage.listBuckets();
     const bucketExists = buckets?.some((b) => b.name === "bahasacerdas-backups");
     if (!bucketExists) {
@@ -180,7 +144,6 @@ async function uploadToStorage(
       }
     }
 
-    // Upload each JSON file
     const files = fs.readdirSync(backupDir).filter((f) => f.endsWith(".json"));
     let uploaded = 0;
     for (const file of files) {
@@ -199,7 +162,7 @@ async function uploadToStorage(
     }
 
     console.log(`   📤 Uploaded ${uploaded}/${files.length} files to storage`);
-    return uploaded > 0;
+    return uploaded === files.length;
   } catch (err: any) {
     console.log(`   ⏩ Storage upload unavailable: ${err.message}`);
     return false;
@@ -223,9 +186,61 @@ function pruneOldBackups(): void {
   }
 }
 
+async function createBackupManifestRecord(
+  backupName: string,
+  storagePath: string,
+  localPath: string,
+  trigger: string,
+  manifest: BackupManifest,
+  totalRows: number,
+  storageUploaded: boolean,
+  errorMessage?: string
+): Promise<void> {
+  try {
+    const tableCounts: Record<string, number> = {};
+    const checksums: Record<string, string> = {};
+    for (const t of manifest.tables) {
+      tableCounts[t.table] = t.rowCount;
+      checksums[t.table] = t.checksumSha256;
+    }
+
+    const status = errorMessage ? "FAILED" : storageUploaded ? "SUCCESS" : "PARTIAL";
+    const totalBytes = fs.existsSync(localPath)
+      ? fs.readdirSync(localPath)
+          .filter((f) => f.endsWith(".json"))
+          .reduce((s, f) => s + fs.statSync(path.join(localPath, f)).size, 0)
+      : 0;
+
+    await db.backupManifest.create({
+      data: {
+        backupId: backupName,
+        storagePath,
+        localPath,
+        environment: process.env.NODE_ENV || "production",
+        status: status as any,
+        trigger: trigger as any,
+        tableCountsJson: JSON.stringify(tableCounts),
+        checksumsJson: JSON.stringify(checksums),
+        totalRows,
+        totalTables: manifest.tables.length,
+        totalBytes,
+        startedAt: new Date(manifest.exportedAt),
+        completedAt: new Date(),
+        errorMessage: errorMessage || null,
+      },
+    });
+    console.log(`   📝 BackupManifest DB record created (status: ${status})`);
+  } catch (err: any) {
+    console.error(`   ⚠️  Failed to create BackupManifest record: ${err.message}`);
+  }
+}
+
 async function main() {
+  const { trigger } = parseArgs();
+
   console.log("\n📦 DAILY BACKUP: Supabase to Local + Storage");
   console.log("=".repeat(55));
+  console.log(`   Trigger:     ${trigger}`);
 
   const now = new Date();
   const ts = [
@@ -251,6 +266,7 @@ async function main() {
 
   let totalRows = 0;
   let backedUpCount = 0;
+  let errorMessage: string | undefined;
 
   for (const tableName of BACKUP_TABLES) {
     const count = await backupTable(tableName, backupDir, manifest.tables);
@@ -264,11 +280,9 @@ async function main() {
     );
   }
 
-  // Manifest
   const manifestPath = path.join(backupDir, "manifest.json");
   fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2), "utf-8");
 
-  // Summary
   console.log(`\n${"=".repeat(55)}`);
   console.log(`📊 BACKUP SUMMARY`);
   console.log(`   Name:          ${backupName}`);
@@ -276,11 +290,29 @@ async function main() {
   console.log(`   Total rows:    ${totalRows}`);
   console.log(`   Manifest:      manifest.json`);
 
-  // Upload to Supabase Storage
   console.log(`\n☁️  STORAGE UPLOAD`);
-  await uploadToStorage(backupDir, backupName);
+  let storageUploaded = false;
+  try {
+    storageUploaded = await uploadToStorage(backupDir, backupName);
+  } catch (err: any) {
+    errorMessage = err.message;
+    console.log(`   ⏩ Storage upload failed: ${err.message}`);
+  }
 
-  // Prune old backups
+  const storagePath = `bahasacerdas-backups/${backupName}/`;
+
+  console.log(`\n📝 CREATING BACKUP MANIFEST DB RECORD`);
+  await createBackupManifestRecord(
+    backupName,
+    storagePath,
+    backupDir,
+    trigger,
+    manifest,
+    totalRows,
+    storageUploaded,
+    errorMessage
+  );
+
   console.log(`\n🧹 PRUNE OLD BACKUPS (keep ${MAX_BACKUPS})`);
   pruneOldBackups();
 

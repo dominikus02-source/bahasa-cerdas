@@ -26,19 +26,24 @@ interface Counts {
   Transaksi: number;
 }
 
-interface BackupInfo {
-  found: boolean;
-  exportedAt?: string;
-  environment?: string;
-  tables?: number;
-  totalRows?: number;
-  path?: string;
-  note?: string;
+interface BackupManifestInfo {
+  id: string;
+  backupId: string;
+  storagePath: string;
+  status: "SUCCESS" | "FAILED" | "PARTIAL";
+  trigger: "MANUAL" | "SCHEDULED" | "PRE_DEPLOY" | "POST_RECOVERY";
+  totalRows: number;
+  totalTables: number;
+  totalBytes: number | null;
+  completedAt: string;
+  startedAt: string;
+  errorMessage: string | null;
+  hoursAgo: number;
 }
 
 interface DataCenterData {
   counts: Counts;
-  backup: BackupInfo;
+  backupManifest: BackupManifestInfo | null;
 }
 
 function CountCard({ label, value, icon: Icon, color, warning }: { label: string; value: number; icon: any; color: string; warning?: "critical" | "info" | "ok" }) {
@@ -81,6 +86,23 @@ function getWarning(counts: Counts, key: keyof Counts, critical: boolean): "crit
   const val = counts[key];
   if (critical) return val === 0 ? "critical" : "ok";
   return val === 0 ? "info" : "ok";
+}
+
+function triggerLabel(t: string): string {
+  const map: Record<string, string> = { MANUAL: "Manual", SCHEDULED: "Terjadwal", PRE_DEPLOY: "Pre-Deploy", POST_RECOVERY: "Post-Recovery" };
+  return map[t] || t;
+}
+
+function statusColor(s: string): string {
+  if (s === "SUCCESS") return "text-emerald-700 bg-emerald-50 border-emerald-200";
+  if (s === "PARTIAL") return "text-amber-700 bg-amber-50 border-amber-200";
+  return "text-red-700 bg-red-50 border-red-200";
+}
+
+function statusIcon(s: string) {
+  if (s === "SUCCESS") return <CheckCircle2 size={16} className="text-emerald-500" />;
+  if (s === "PARTIAL") return <AlertTriangle size={16} className="text-amber-500" />;
+  return <AlertTriangle size={16} className="text-red-500" />;
 }
 
 export default function DataCenterPage() {
@@ -129,11 +151,14 @@ export default function DataCenterPage() {
 
   if (!data) return null;
 
-  const { counts, backup } = data;
+  const { counts, backupManifest } = data;
 
   const criticalWarnings = TABLE_META.filter((m) => m.critical && counts[m.key] === 0);
   const infoWarnings = TABLE_META.filter((m) => !m.critical && counts[m.key] === 0);
   const hasAnyWarning = criticalWarnings.length > 0 || infoWarnings.length > 0;
+  const backupStale = backupManifest && backupManifest.hoursAgo > 24;
+
+  const totalWarning = hasAnyWarning || !backupManifest || !!backupStale || backupManifest?.status !== "SUCCESS";
 
   return (
     <div className="space-y-6">
@@ -150,17 +175,26 @@ export default function DataCenterPage() {
         </button>
       </div>
 
-      {hasAnyWarning && (
-        <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 flex items-start gap-3">
-          <AlertTriangle size={20} className="text-amber-500 shrink-0 mt-0.5" />
+      {totalWarning && (
+        <div className={`rounded-xl p-4 flex items-start gap-3 border ${
+          !backupManifest || backupManifest.status !== "SUCCESS"
+            ? "bg-red-50 border-red-200"
+            : "bg-amber-50 border-amber-200"
+        }`}>
+          <AlertTriangle size={20} className={`shrink-0 mt-0.5 ${!backupManifest || backupManifest.status !== "SUCCESS" ? "text-red-500" : "text-amber-500"}`} />
           <div>
-            <p className="font-semibold text-amber-900 text-sm">Perhatian Data</p>
-            <ul className="text-xs text-amber-800 mt-1 space-y-0.5">
+            <p className="font-semibold text-sm mb-1">Perhatian Data</p>
+            <ul className="text-xs space-y-0.5">
+              {!backupManifest && <li className="text-red-700">• Tidak ada BackupManifest — backup belum pernah dicatat di database</li>}
+              {backupManifest?.status !== "SUCCESS" && backupManifest && (
+                <li className="text-red-700">• Backup terakhir berstatus <strong>{backupManifest.status}</strong> — periksa error: {backupManifest.errorMessage || "tidak ada detail"}</li>
+              )}
+              {backupStale && <li className="text-amber-700">• Backup terakhir &gt;24 jam yang lalu ({backupManifest!.hoursAgo} jam) — segera backup</li>}
               {criticalWarnings.map((w) => (
-                <li key={w.key}>• <strong>{w.label}</strong>: 0 — kritis, data tidak boleh kosong!</li>
+                <li key={w.key} className="text-red-700">• <strong>{w.label}</strong>: 0 — kritis, data tidak boleh kosong!</li>
               ))}
               {infoWarnings.map((w) => (
-                <li key={w.key}>• <strong>{w.label}</strong>: 0 — data sengaja dihapus (dummy content)</li>
+                <li key={w.key} className="text-amber-700">• <strong>{w.label}</strong>: 0 — data sengaja dihapus (dummy content)</li>
               ))}
             </ul>
           </div>
@@ -189,41 +223,78 @@ export default function DataCenterPage() {
         <h2 className="font-semibold text-slate-900 mb-3 flex items-center gap-2 text-sm">
           <ShieldCheck size={16} className="text-emerald-500" /> Backup Status
         </h2>
-        {backup.found ? (
-          <div className="space-y-2 text-sm">
-            <div className="flex items-center gap-2 text-emerald-700">
-              <CheckCircle2 size={16} />
-              <span className="font-medium">Backup tersedia</span>
+        {backupManifest ? (
+          <div className="space-y-3">
+            <div className="flex items-center gap-2">
+              {statusIcon(backupManifest.status)}
+              <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 text-xs font-semibold rounded-full border ${statusColor(backupManifest.status)}`}>
+                {backupManifest.status}
+              </span>
+              <span className="text-xs text-slate-400">via {triggerLabel(backupManifest.trigger)}</span>
             </div>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-3">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               <div className="bg-slate-50 rounded-lg p-3">
-                <p className="text-[10px] text-slate-500">Terakhir</p>
-                <p className="text-sm font-semibold text-slate-900">{new Date(backup.exportedAt!).toLocaleString("id-ID")}</p>
+                <p className="text-[10px] text-slate-500">ID Backup</p>
+                <p className="text-sm font-semibold text-slate-900">{backupManifest.backupId}</p>
               </div>
               <div className="bg-slate-50 rounded-lg p-3">
-                <p className="text-[10px] text-slate-500">Lingkungan</p>
-                <p className="text-sm font-semibold text-slate-900">{backup.environment}</p>
+                <p className="text-[10px] text-slate-500">Selesai</p>
+                <p className="text-sm font-semibold text-slate-900">{new Date(backupManifest.completedAt).toLocaleString("id-ID")}</p>
               </div>
               <div className="bg-slate-50 rounded-lg p-3">
                 <p className="text-[10px] text-slate-500">Tabel</p>
-                <p className="text-sm font-semibold text-slate-900">{backup.tables}</p>
+                <p className="text-sm font-semibold text-slate-900">{backupManifest.totalTables}</p>
               </div>
               <div className="bg-slate-50 rounded-lg p-3">
                 <p className="text-[10px] text-slate-500">Total Baris</p>
-                <p className="text-sm font-semibold text-slate-900">{backup.totalRows!.toLocaleString()}</p>
+                <p className="text-sm font-semibold text-slate-900">{backupManifest.totalRows.toLocaleString()}</p>
+              </div>
+              <div className="bg-slate-50 rounded-lg p-3">
+                <p className="text-[10px] text-slate-500">Ukuran</p>
+                <p className="text-sm font-semibold text-slate-900">
+                  {backupManifest.totalBytes ? (backupManifest.totalBytes / 1024).toFixed(0) + " KB" : "N/A"}
+                </p>
+              </div>
+              <div className="bg-slate-50 rounded-lg p-3">
+                <p className="text-[10px] text-slate-500">Sejak backup</p>
+                <p className="text-sm font-semibold text-slate-900">
+                  {backupManifest.hoursAgo < 1 ? "Baru saja" : `${backupManifest.hoursAgo} jam`}
+                </p>
+              </div>
+              <div className="bg-slate-50 rounded-lg p-3">
+                <p className="text-[10px] text-slate-500">Storage</p>
+                <p className="text-sm font-semibold text-slate-900 truncate max-w-[200px]" title={backupManifest.storagePath}>
+                  {backupManifest.storagePath.includes("current") ? "current" : "daily"}
+                </p>
+              </div>
+              <div className="bg-slate-50 rounded-lg p-3">
+                <p className="text-[10px] text-slate-500">Trigger</p>
+                <p className="text-sm font-semibold text-slate-900">{triggerLabel(backupManifest.trigger)}</p>
               </div>
             </div>
-            <p className="text-[10px] text-slate-400 mt-2">Path: backups/{backup.environment === "production" ? "current" : "daily"}/{backup.path}</p>
+            {backupManifest.errorMessage && (
+              <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+                <p className="text-[10px] text-red-500 font-medium">Error</p>
+                <p className="text-xs text-red-700">{backupManifest.errorMessage}</p>
+              </div>
+            )}
+            {backupStale && (
+              <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
+                <p className="text-xs text-amber-700">⚠️ Backup terakhir {backupManifest.hoursAgo} jam yang lalu. Disarankan backup setiap 24 jam.</p>
+              </div>
+            )}
           </div>
         ) : (
           <div className="space-y-2 text-sm">
             <div className="flex items-center gap-2 text-amber-700">
               <Info size={16} />
-              <span className="font-medium">Backup tidak tersedia</span>
+              <span className="font-medium">Belum ada backup tercatat</span>
             </div>
-            <p className="text-xs text-slate-500 mt-1">{backup.note}</p>
-            <p className="text-xs text-slate-400 mt-2">
-              Pastikan untuk menjalankan backup secara berkala. Local backup dapat dibuat via terminal dengan <code className="bg-slate-100 px-1.5 py-0.5 rounded text-[10px]">npm run backup:daily</code>.
+            <p className="text-xs text-slate-500 mt-1">
+              Belum ada BackupManifest di database. Jalankan <code className="bg-slate-100 px-1.5 py-0.5 rounded text-[10px]">npm run backup:daily</code> untuk membuat backup pertama.
+            </p>
+            <p className="text-xs text-slate-400 mt-1">
+              Backup yang sudah ada di filesystem (sebelum fitur ini) tidak akan muncul sampai backup baru dijalankan.
             </p>
           </div>
         )}
@@ -234,10 +305,11 @@ export default function DataCenterPage() {
           <AlertTriangle size={16} className="text-amber-500" /> Recovery Notes
         </h2>
         <div className="space-y-2 text-sm text-slate-600">
-          <p>• <strong>Artikel/Video/Karya</strong> = 0 — expected. Dummy content telah dihapus. Data akan terisi kembali saat konten baru dibuat oleh guru/pengguna.</p>
-          <p>• <strong>UKBI/TKA/Paket Kompetensi</strong> harus tersedia — data ini critical untuk sistem ujian. Jika 0, segera lakukan seeding ulang.</p>
+          <p>• <strong>Artikel/Video/Karya</strong> = 0 — expected. Dummy content telah dihapus. Data akan terisi kembali saat konten baru dibuat.</p>
+          <p>• <strong>UKBI/TKA/Paket Kompetensi</strong> harus tersedia — data critical untuk sistem ujian. Jika 0, segera lakukan seeding ulang.</p>
           <p>• <strong>User/Profile</strong> harus tersedia — data pengguna adalah inti platform. Jika 0, periksa koneksi database dan integrasi Supabase Auth.</p>
-          <p>• <strong>LearningLevel/LearningUnit</strong> harus tersedia — data ini diperlukan untuk Buku Panduan Guru dan Jalur Cerdas.</p>
+          <p>• <strong>LearningLevel/LearningUnit</strong> harus tersedia — data untuk Buku Panduan Guru dan Jalur Cerdas.</p>
+          <p>• <strong>BackupManifest</strong> failure/partial — periksa error dan koneksi Supabase Storage. Backup lokal tetap tersimpan di server.</p>
         </div>
       </div>
 
@@ -259,7 +331,7 @@ export default function DataCenterPage() {
           <div className="bg-white rounded-xl border border-slate-200 p-4">
             <h3 className="font-medium text-slate-900 text-sm">Manual Backup</h3>
             <p className="text-[10px] text-slate-500 mt-1">Buat backup on-demand sekarang</p>
-            <code className="block bg-slate-100 text-slate-700 rounded-lg px-3 py-1.5 text-[11px] font-mono mt-2">npm run backup:current</code>
+            <code className="block bg-slate-100 text-slate-700 rounded-lg px-3 py-1.5 text-[11px] font-mono mt-2">npm run backup:daily</code>
           </div>
         </div>
       </div>

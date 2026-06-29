@@ -1,7 +1,7 @@
 # BahasaCerdas Work Status
 
 > **Project Ledger** — track completed, in-progress, pending, and blocked work.
-> **Last updated:** 2026-06-29
+> **Last updated:** 2026-06-29 (Phase Build Hardening 1)
 > **Branch:** `main` (GitHub: `dominikus02-source/bahasa-cerdas`)
 
 ---
@@ -14,7 +14,7 @@
 | Remote | `origin` → `https://github.com/dominikus02-source/bahasa-cerdas.git` |
 | Local vs origin | **Up to date** |
 | Last commit | `feat: seed homepage v2 + AEO Phase 6-10 + DB migration fixes` |
-| Uncommitted changes | `.env.backup-vps` (in `.gitignore`), `backups/` (gitignored), new scripts |
+| Uncommitted changes | `.env.backup-vps` (in `.gitignore`), `backups/` (gitignored), new scripts + audit doc |
 
 ## 2. Infrastructure
 
@@ -35,7 +35,14 @@
 | **Phase 8C** | DB migration VPS→Supabase, proxy 429 fix, auto-create user, seed homepage v2 | `lib/supabase/proxy.ts`, `scripts/seed-homepage-v2.ts`, `prisma/seed-data/` |
 | **Phase Data Recovery 1** | Supabase current state backup + content/question audit + work ledger update | `scripts/backup-current-supabase.ts`, `scripts/audit-content-data.ts`, `scripts/audit-question-data.ts`, `docs/BAHASACERDAS_CONTENT_DATA_RECOVERY_AUDIT.md`, `docs/BAHASACERDAS_QUESTION_DATA_RECOVERY_AUDIT.md` |
 | **Phase Data Protection 1B** | Admin Data Center module — DB health, backup status, warning system, read-only audit actions | `app/(dashboard)/admin/data-center/page.tsx`, `app/api/admin/data-center/route.ts`, `components/admin/AdminSidebar.tsx` |
+| **Phase Data Protection 1C** | Persistent Backup Automation — BackupManifest model, DB-recorded backups, Supabase Storage, safety rules | `prisma/schema.prisma` (+model+enum), `scripts/backup-supabase-daily.ts`, `scripts/validate-backup.ts`, `scripts/restore-supabase-backup.ts`, `scripts/migrate-backup-manifest.ts`, `app/api/admin/data-center/route.ts`, `app/(dashboard)/admin/data-center/page.tsx` |
 | **AEO 6–10** | FAQ page + JSON-LD, llms.txt, sitemap, robots.txt, AnswerBlock, canonical URLs, 20 tests pass | `app/faq/`, `components/aeo/`, `lib/json-ld.ts`, `public/llms.txt` |
+| **Phase Arena Recovery 1** | Audit Jalur Cerdas VPS dependency → NO VPS dependency found. Seed 12 JALUR levels from PANDUAN data. Fix hardcoded arena stats. Validator created. | `docs/BAHASACERDAS_ARENA_RECOVERY_AUDIT.md`, `scripts/validate-learning-content.ts`, `scripts/seed-jalur-levels.ts`, `app/arena/page.tsx` (dynamic stats) |
+| **Phase Arena Recovery 1B** | Rebuild JALUR track with proper Duolingo-style Bahasa Indonesia core curriculum. Replaced PANDUAN-copied JALUR data (grade-based) with general ability path (12 levels, 72 units, from basic huruf to mahir menulis). PANDUAN untouched. | `scripts/seed-jalur-cerdas-core.ts`, `app/arena/jalur-cerdas/page.tsx` (updated copy), `app/arena/page.tsx` (updated promo copy) |
+| **Phase Arena Recovery 2** | Jalur Cerdas Lesson Engine — Duolingo-style lesson flow (question-by-question, instant feedback, progress bar, XP, completion). 366 questions seeded across 72 units. Sanitized API (jawaban stripped from GET). Server-side submit validation. Lock/unlock progression. | `scripts/seed-jalur-questions-core.ts`, `app/api/jalur-cerdas/[unitId]/route.ts` (sanitized GET), `app/api/jalur-cerdas/[unitId]/submit/route.ts`, `app/arena/jalur-cerdas/[unitId]/lesson/page.tsx`, `app/arena/jalur-cerdas/[unitId]/page.tsx` (lock/unlock, Mulai button) |
+| **Phase Arena QA 2B** | Security, XP, and hardening audit. Fixed: XP farming (removed 10 XP per incomplete attempt), isi_blank missing submit button, `xpAwarded`→`xpEarned` TS error. Leakage test: 366 questions, 0 leaked fields. Question validator: 366 questions, 0 issues. Progress security: userId from session only, XP one-time only. | `scripts/test-jalur-leakage.ts`, `scripts/validate-jalur-questions.ts`, `app/api/jalur-cerdas/[unitId]/progress/route.ts` (XP fix), `app/arena/jalur-cerdas/[unitId]/lesson/page.tsx` (submit button), `app/arena/page.tsx` (field name fix) |
+| **Phase Arena 2C** | Micro lessons before practice for all 72 JALUR units. Level bands: dasar (L1-4, 24 units, larger font), menengah (L5-8, 24 units), tinggi (L9-12, 24 units). Lesson flow: Intro → Material → Questions → Result → Complete. 366 questions preserved. 72 micro lessons validated. | `scripts/seed-jalur-micro-lessons.ts`, `scripts/validate-jalur-lessons.ts`, `app/api/jalur-cerdas/[unitId]/route.ts` (lesson field), `app/arena/jalur-cerdas/[unitId]/lesson/page.tsx` (lesson phase + levelBand styling) |
+| **Phase Build Hardening 1** | Google Fonts build dependency removed. `next/font/google` replaced with robust CSS font stacks (system fonts). Build no longer depends on remote font fetch. No `<link>` tags to Google Fonts at runtime. | `app/layout.tsx` (removed next/font + Google <link>), `tailwind.config.ts` (system font stacks for sans/display) |
 
 ## 4. Seed Data Inventory
 
@@ -44,20 +51,30 @@
 | Homepage Artikel | `prisma/seed-data/homepage-content.json` | 15 | ✅ Seeded live |
 | Homepage Video | `prisma/seed-data/homepage-content.json` | 15 | ✅ Seeded live |
 | Homepage Karya | `prisma/seed-data/homepage-content.json` | 15 | ✅ Seeded live |
-| Buku Panduan | `scripts/seed-panduan.ts` | 12 level, 71 bab | ✅ Seeded (VII–XII) |
+| Buku Panduan (PANDUAN) | `scripts/seed-panduan.ts` | 12 level, 71 bab | ✅ Seeded (VII–XII) |
+| Jalur Cerdas (JALUR) | `scripts/seed-jalur-levels.ts` | 12 levels, 71 units | ⚠️ Replaced by Phase 1B — was wrong copy of PANDUAN |
+| Jalur Cerdas Core (JALUR) | `scripts/seed-jalur-cerdas-core.ts` | 12 levels, 72 units | ✅ Phase 1B — general Bahasa Indonesia ability path, Duolingo-style, not grade-based |
+| Jalur Cerdas Questions (JALUR) | `scripts/seed-jalur-questions-core.ts` | 366 questions across 72 units | ✅ Phase Arena Recovery 2 — 5+ questions per unit, stored in LearningUnit.content |
 | UKBI Questions | `prisma/seed-kompetensi.ts` | 50 (25 SMP + 25 SMA) | ✅ Seeded |
 | TKA Questions | `prisma/seed-kompetensi.ts` | 50 (25 SMP + 25 SMA) | ✅ Seeded |
 | PaketKompetensi | `prisma/seed-kompetensi.ts` | 8 | ✅ Seeded |
 | Materi content enrichment | `scripts/seed/seed-materi.ts` | 3 units updated | ⚠️ Partial — many titles don't match panduan names |
 | Old v1 seed (Art+Video+Karya) | `scripts/seed-homepage-content.ts` | 6+6+6 | ✅ Already seeded, superseded by v2 |
 
-**Seed scripts safety verified (Jun 29):** No `deleteMany`, `truncate`, `DROP`, or `deleteBrokenPackages` in any restore script.
+**Seed scripts safety verified (Jun 29):** No `deleteMany`, `truncate`, `DROP`, or `deleteBrokenPackages` in any restore script. `seed-jalur-cerdas-core.ts` uses scoped `deleteMany` on JALUR type only (safe because 0 user progress). `seed-jalur-questions-core.ts` uses `update()` only (no delete).
 
 **Destructive scripts (DO NOT RUN):**
 - `scripts/seed-jalur-revamp.ts` — contains deleteMany
 - `scripts/seed-jalur-full.ts` — contains deleteMany
 - `scripts/seeder-paket-lengkap.ts` — contains deleteBrokenPackages
 - `scripts/clean-db.ts` — destructive cleanup
+
+**Safe seed scripts (upsert-only, dry-run default):**
+- `scripts/seed-homepage-v2.ts` — `--dry-run` flag
+- `scripts/seed-jalur-levels.ts` — dry-run by default, `--execute` to apply (LEGACY — superseded by core seed)
+- `scripts/seed-jalur-cerdas-core.ts` — dry-run by default, `--execute` to apply (current)
+- `scripts/seed-jalur-questions-core.ts` — dry-run by default, `--execute` to apply (Phase Arena Recovery 2)
+- `scripts/seed-panduan.ts` — safe upsert
 
 ## 4a. Production Login & Data Source Status
 
@@ -84,15 +101,19 @@
 - `docs/BAHASACERDAS_EXAM_ENGINE_ARCHITECTURE.md` — Exam engine architecture (Phase Exam 1)
 - `docs/BAHASACERDAS_UKBI_TKA_DESIGN.md` — UKBI/TKA product design
 - `docs/BAHASACERDAS_RANDOMIZED_EXAM_ENGINE.md` — Randomized exam engine spec
+- `docs/BAHASACERDAS_ARENA_RECOVERY_AUDIT.md` — Phase Arena Recovery 1: VPS dependency audit results
+- `docs/BAHASACERDAS_BACKUP_AND_RESTORE_POLICY.md` — Full backup/restore policy document
 
 ### Backup & Recovery
 - `scripts/backup-current-supabase.ts` — Full DB backup to JSON files + manifest
 - `scripts/backup-supabase-daily.ts` — Automated daily backup + Supabase Storage upload
 - `scripts/restore-supabase-backup.ts` — Restore with dry-run, SHA256 verification, protected tables
 - `scripts/validate-backup.ts` — Backup integrity validation
-- `docs/BAHASACERDAS_BACKUP_AND_RESTORE_POLICY.md` — Full backup/restore policy document
+- `scripts/validate-learning-content.ts` — Learning content integrity validator (dry-run only)
+- `docs/BAHASACERDAS_BACKUP_AND_RESTORE_POLICY.md` — Full backup/restore policy document  
+- `scripts/migrate-backup-manifest.ts` — Safe migration to create BackupManifest table
 - `backups/current/` — Backup output (gitignored)
-- `backups/daily/` — Daily automated backups (gitignored)
+- `backups/daily/` — Automated daily backups (gitignored)
 - `app/(dashboard)/admin/data-center/page.tsx` — Admin Data Center UI (DB health, backup status, warnings)
 - `app/api/admin/data-center/route.ts` — Data Center API (table counts + backup manifest reader)
 
@@ -101,6 +122,9 @@
 - `scripts/seed-homepage-v2.ts` — Seed script with upsert, dry-run, validation
 - `scripts/seed-homepage-content.ts` — Old v1 script (keep for reference)
 - `scripts/seed-panduan.ts` — 72 bab Buku Panduan
+- `scripts/seed-jalur-levels.ts` — LEGACY: 12 JALUR levels + 71 units (superseded by core seed)
+- `scripts/seed-jalur-cerdas-core.ts` — 12 JALUR levels + 72 units (Duolingo-style core curriculum)
+- `scripts/seed-jalur-questions-core.ts` — 366 questions across 72 JALUR units (Phase Arena Recovery 2)
 - `scripts/test-phase8-analytics.ts` — 12 analytics tests
 
 ### AEO
@@ -184,8 +208,10 @@
 | UKBIQuestion | 0 | 50 | ✅ Restored |
 | TKAQuestion | 0 | 50 | ✅ Restored |
 | PaketKompetensi | 0 | 8 | ✅ Restored |
-| LearningLevel | 0 | 12 | ✅ Restored |
-| LearningUnit | 0 | 71 | ✅ Restored |
+| LearningLevel (PANDUAN) | 0 | 12 | ✅ Restored |
+| LearningLevel (JALUR) | 0 | 12 | ✅ Phase Arena Recovery 1B — rebuilt as core curriculum (general ability) |
+| LearningUnit (PANDUAN) | 0 | 71 | ✅ Restored |
+| LearningUnit (JALUR) | 0 | 72 | ✅ Phase Arena Recovery 1B — 72 units, general Bahasa path |
 | Profile | 42 | 42 | Preserved |
 | Soal/SoalSet | 0 | 0 | ⏳ Need seed |
 | StudentKarya | 0 | 0 | ❌ Lost from VPS |
@@ -212,24 +238,35 @@ Deleted 48 items owned by demo user `guru@demo.com`:
 - UKBIQuestion: 50 ✅
 - TKAQuestion: 50 ✅
 - PaketKompetensi: 8 ✅
-- LearningLevel: 12 ✅
-- LearningUnit: 71 ✅
+- LearningLevel (PANDUAN): 12 ✅
+- LearningLevel (JALUR): 12 ✅ (Phase Arena Recovery 1B — rebuilt as core curriculum)
+- LearningUnit (PANDUAN): 71 ✅
+- LearningUnit (JALUR): 72 ✅ (Phase Arena Recovery 1B — core curriculum)
 - All payment/auth/admin data ✅
 
 **Script:** `scripts/delete-dummy-content.ts` — dry-run by default, requires `--execute` flag.
 
 ## 11. Next Actions (Priority Order)
 
-1. **Phase Data Recovery 2** — analyze audit results, fix title mismatches in seed-materi.ts, run seed-panduan-sd.ts
-2. **Phase Data Recovery 3** — restore additional content (SD class, more materi units)
-3. **Phase Data Recovery 4** — verify restored data in production (www.bahasacerdas.com)
-4. **Game server revival** — find new hosting (Railway with valid token, new VPS, or Koyeb)
+1. **Set up daily backup cron** — Add Vercel Cron Job (`POST /api/cron/backup`) or external cron for automated daily backup
+2. **Game server revival** — find new hosting for game.bahasacerdas.com (VPS or alternative)
+3. **More JALUR questions** — expand question count per unit (target 10+ per unit, currently 3-6)
+4. **Push notifications** — browser push API for notif when tab not open
 5. **Fix author display name** — update guru@demo.com's `fullName` to "Tim Redaksi BahasaCerdas"
 6. **Upload real files to Supabase Storage** — replace fake seed file URLs
 7. **Replace fake YouTube IDs** — use real educational video IDs
 8. **Migrate old standalone AI routes** — `/api/ai/eyd`, `/api/ai/feedback`, etc. to central runner
-9. **Set up daily backup cron** — Vercel Cron Job or external cron for automated daily backup
-10. **Push notifications** — browser push API
+
+### Backup & Automation Status
+| Item | Status |
+|------|--------|
+| Daily backup script | ✅ Creates BackupManifest DB record |
+| Storage upload | ✅ bahasacerdas-backups bucket (private) |
+| Backup validation | ✅ SHA256 + row count verification |
+| Learning content validation | ✅ `scripts/validate-learning-content.ts` |
+| Restore safety | ✅ Dry-run default, protected tables, requires --execute |
+| Cron | ⏳ Not set — needs Vercel Cron or external cron |
+| Stale backup warning | ✅ Data Center shows warning if >24h |
 
 ---
 

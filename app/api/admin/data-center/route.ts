@@ -1,58 +1,6 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { getUser } from "@/lib/supabase/server";
-import * as fs from "fs";
-import * as path from "path";
-
-async function getLatestBackup(): Promise<{
-  found: boolean;
-  exportedAt?: string;
-  environment?: string;
-  tables?: number;
-  totalRows?: number;
-  path?: string;
-  note?: string;
-}> {
-  const roots = [
-    path.join(process.cwd(), "backups", "current"),
-    path.join(process.cwd(), "backups", "daily"),
-  ];
-
-  for (const root of roots) {
-    try {
-      if (!fs.existsSync(root)) continue;
-      const dirs = fs
-        .readdirSync(root)
-        .filter((d) => fs.statSync(path.join(root, d)).isDirectory())
-        .sort()
-        .reverse();
-      if (dirs.length === 0) continue;
-      const latestDir = path.join(root, dirs[0]);
-      const manifestPath = path.join(latestDir, "manifest.json");
-      if (!fs.existsSync(manifestPath)) continue;
-      const raw = JSON.parse(fs.readFileSync(manifestPath, "utf-8"));
-      const totalRows = (raw.tables || []).reduce((s: number, t: any) => s + (t.rowCount || 0), 0);
-      return {
-        found: true,
-        exportedAt: raw.exportedAt,
-        environment: raw.environment,
-        tables: (raw.tables || []).length,
-        totalRows,
-        path: dirs[0],
-      };
-    } catch {
-      continue;
-    }
-  }
-
-  const isVercel = !!process.env.VERCEL;
-  return {
-    found: false,
-    note: isVercel
-      ? "Local backup manifests are not available in Vercel runtime. Use Supabase Storage backup integration for production backups."
-      : "No backup manifests found in backups/current/ or backups/daily/.",
-  };
-}
 
 export async function GET() {
   try {
@@ -77,6 +25,7 @@ export async function GET() {
       aiUsageCount,
       aiSavedResultCount,
       transaksiCount,
+      latestBackupManifest,
     ] = await Promise.all([
       db.user.count(),
       db.profile.count(),
@@ -93,9 +42,48 @@ export async function GET() {
       db.aIUsage.count(),
       db.aiSavedResult.count(),
       db.transaksi.count(),
+      db.backupManifest.findFirst({
+        orderBy: { createdAt: "desc" },
+        select: {
+          id: true,
+          backupId: true,
+          storagePath: true,
+          localPath: true,
+          environment: true,
+          status: true,
+          trigger: true,
+          totalRows: true,
+          totalTables: true,
+          totalBytes: true,
+          startedAt: true,
+          completedAt: true,
+          errorMessage: true,
+          createdAt: true,
+        },
+      }),
     ]);
 
-    const backup = await getLatestBackup();
+    const now = new Date();
+    const lastBackupAge = latestBackupManifest
+      ? Math.floor((now.getTime() - new Date(latestBackupManifest.completedAt).getTime()) / (1000 * 60 * 60))
+      : null;
+
+    const backupManifest = latestBackupManifest
+      ? {
+          id: latestBackupManifest.id,
+          backupId: latestBackupManifest.backupId,
+          storagePath: latestBackupManifest.storagePath,
+          status: latestBackupManifest.status,
+          trigger: latestBackupManifest.trigger,
+          totalRows: latestBackupManifest.totalRows,
+          totalTables: latestBackupManifest.totalTables,
+          totalBytes: latestBackupManifest.totalBytes,
+          completedAt: latestBackupManifest.completedAt.toISOString(),
+          startedAt: latestBackupManifest.startedAt.toISOString(),
+          errorMessage: latestBackupManifest.errorMessage,
+          hoursAgo: lastBackupAge,
+        }
+      : null;
 
     return NextResponse.json({
       counts: {
@@ -115,7 +103,7 @@ export async function GET() {
         AiSavedResult: aiSavedResultCount,
         Transaksi: transaksiCount,
       },
-      backup,
+      backupManifest,
     });
   } catch (e: any) {
     console.error("Data center error:", e);

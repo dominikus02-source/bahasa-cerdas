@@ -47,7 +47,7 @@ Kamu adalah **Senior Full-Stack Engineer** yang sangat autonomous, teliti, dan b
 ---
 
 # BahasaCerdas Project Status
-## Last Updated: June 28, 2026 (Phase 8C: DB Migration & Content Recovery)
+## Last Updated: June 29, 2026 (Phase Build Hardening 1)
 
 ## Goal
 Transform BahasaCerdas into a social-creative platform for Bahasa Indonesia where students write daily (puisi, cerpen, artikel, anekdot, pantun), showcase works in social-style portfolios, earn Coin Cerdas, and compete in weekly leagues — UKBI/TKA as supporting features, not core.
@@ -334,16 +334,45 @@ The Belajar page auto-detects content types in `isi[]` strings:
 2. Game server completely dead — all multiplayer features broken. Need new VPS or alternative hosting.
 3. Homepage content is sample data — may need to be curated or enriched further.
 
+## Phase 9 — Backup & Restore Policy (June 29, 2026)
+
+### Done
+- **Backup Automation**: `scripts/backup-supabase-daily.ts` — exports all 67 Prisma models to JSON with SHA256 checksum manifest. Writes to `backups/daily/YYYY-MM-DD-HH-mm/`. Optionally uploads to Supabase Storage (`bahasacerdas-backups` bucket). Properly handles binary/JSON fields (JSON.stringify). Rate-limited to 5 tables/sec. Retention: 30 backups.
+- **On-demand Backup**: `scripts/backup-current-supabase.ts` — same logic as daily, saves to `backups/current/` instead. Per-bucket backup: `--bucket game` saves only game-related tables.
+- **Restore Script**: `scripts/restore-supabase-backup.ts` — dry-run by default, requires `--execute`. SHA256 verification before restore. Protected tables (`User`, `Profile`) excluded unless `--tables User,Profile` explicitly set. Table allowlist via `--tables A,B,C`. Overwrite mode via `--overwrite`. Email masked in dry-run output.
+- **Validation Script**: `scripts/validate-backup.ts` — validates latest backup in `backups/daily/` or `backups/current/`. Checks: manifest valid JSON, all files exist, SHA256 checksums match, row counts match. Prints summary with non-zero tables.
+- **Policy Document**: `docs/BAHASACERDAS_BACKUP_AND_RESTORE_POLICY.md` — covers frequency, format, locations (local + Supabase Storage), restore safety rules, recovery scenarios, validation, security.
+- **Package scripts**: `npm run backup:daily`, `npm run backup:current`, `npm run restore:backup`, `npm run validate:backup` added to `package.json`.
+
+### New Files Created
+- `scripts/backup-supabase-daily.ts` — daily backup with Supabase Storage upload
+- `scripts/restore-supabase-backup.ts` — restore with dry-run + protected tables
+- `scripts/validate-backup.ts` — integrity validation
+- `docs/BAHASACERDAS_BACKUP_AND_RESTORE_POLICY.md` — full policy documentation
+
+### Files Modified
+- `package.json` — added 4 backup/restore/validate scripts
+- `AGENTS.md` — updated with Phase 9 status
+
+### Key Design Decisions
+1. **Local-first, storage-second**: Always saves locally first, then attempts Supabase Storage upload (best-effort). Ensures backup works even without storage access.
+2. **SHA256 in manifest**: Each table export has checksum in manifest. Restore refuses to proceed if any checksum is wrong (detect corruption).
+3. **Protected tables**: `User` and `Profile` are excluded by default. Must explicitly name them in `--tables` to restore. Prevents accidental user data overwrite.
+4. **Dry-run default**: Restore script prints plan without writing. Only writes with `--execute`. Safety first.
+5. **Rate-limited export**: 5 tables exported per second avoids overwhelming Prisma/Database.
+6. **Auto-cleaning**: Keeps only 30 most recent daily backups. Oldest removed automatically.
+
 ## Next Steps (Priority Order)
 1. **Game server revival** — find new hosting for game.bahasacerdas.com (VPS or alternative)
 2. **Push notifications** — browser push API for notif when tab not open
-3. **Old standalone routes** — migrate `/api/ai/eyd`, `/api/ai/feedback`, `/api/ai/grading`, `/api/ai/text-analysis` to central runner
-4. **Phase 9 monetization** — NOT yet started. See docs/AI_AGENT_LAYER_PLAN.md for readiness details.
-5. **Content enrichment** — add more latihan/kuis to each bab (ongoing)
+3. **Set up daily cron** — Add Vercel Cron Job (`POST /api/cron/backup`) or external cron for automated daily backup
+4. **Expand JALUR questions** — increase 6 low-count units to 5+ questions each
+5. **Old standalone routes** — migrate `/api/ai/eyd`, `/api/ai/feedback`, `/api/ai/grading`, `/api/ai/text-analysis` to central runner
+6. **Content enrichment** — add more latihan/kuis to each bab (ongoing)
 
 ## Blockers
 - Game server dead (VPS Hostinger expired) — all multiplayer games broken
-- Pre-existing `docx/route.ts(111,1)` syntax error on main branch (unrelated to Phase 8C)
+- Pre-existing `docx/route.ts(111,1)` syntax error on main branch (unrelated to Phase 8C/9)
 
 ## GitHub
 - Repo: https://github.com/dominikus02-source/bahasa-cerdas
@@ -383,3 +412,185 @@ The Belajar page auto-detects content types in `isi[]` strings:
 - Each unit: 4+ materi sections with [Ilustrasi: ...], 10 latihan, 10 kuis, praktik with tips
 - Files: `scripts/seed/materi/26-*.ts` through `37-*.ts`
 - Grade VII/VIII content remains enriched from previous session
+
+## Phase Arena Recovery 1 — Complete (June 29, 2026)
+
+### What
+Audit /arena/jalur-cerdas for VPS dependency → **NO VPS dependency found**. All existing routes use Supabase/Prisma directly.
+
+### Key Findings
+1. **VPS dependency is multiplayer-only** (socket.io in `lib/game/socket.ts`, `hooks/useSocket.ts`) — NOT used by jalur-cerdas
+2. **lib/redis.ts uses Upstash Cloud** (not VPS) — gracefully falls back to DB query if env vars missing
+3. **0 JALUR-type levels existed** — all 12 levels were PANDUAN type (Buku Panduan screen, not Jalur Cerdas)
+4. **Hardcoded promo stats** on arena beranda page ("4 Level", "13 Materi", "1.400 XP")
+
+### What Was Done (Phase 1)
+1. Created `docs/BAHASACERDAS_ARENA_RECOVERY_AUDIT.md` — full audit report
+2. Created `scripts/validate-learning-content.ts` — idempotent validator (dry-run only)
+3. Created `scripts/seed-jalur-levels.ts` — safe seed that copies PANDUAN data as JALUR type (upsert-only, dry-run default)
+4. Seed created 12 JALUR levels + 71 units (WRONG — was duplicate of PANDUAN)
+5. Fixed hardcoded stats on `app/arena/page.tsx` — now dynamically queries DB for level count, unit count, user XP
+6. Added package scripts: `validate:learning-content`, `seed:jalur-levels`, `seed:jalur-levels:execute`
+7. Build passed: 268 pages
+
+### Phase 1B — Correction (June 29, 2026)
+Phase 1 was **wrong direction** — JALUR should NOT be a copy of PANDUAN (grade-based curriculum). JALUR is a **general Bahasa Indonesia ability path** suitable for all ages (SD and above), like Duolingo.
+
+#### Correction
+- **Replaced** the PANDUAN-copied JALUR data with proper Duolingo-style curriculum
+- **12 levels** from "Mulai dari Bahasa" (basic huruf/bunyi) to "Mahir Berbahasa" (menyunting, argumen)
+- **72 units** covering: fonetik, ejaan, kata baku, sinonim/antonim, imbuhan, kalimat efektif, konjungsi, paragraf, membaca pemahaman, fakta/opini, ringkasan, tantangan akhir
+- **0 user progress existed** — safe replacement
+- **PANDUAN untouched** — remains as grade-based curriculum for teachers
+- **UI copy updated**: "Latihan Bahasa Indonesia dari nol sampai mahir", "Cocok untuk semua usia"
+- **New seed**: `scripts/seed-jalur-cerdas-core.ts` (dry-run default, `--execute` to apply)
+- **Package scripts**: `seed:jalur-cerdas:dry-run`, `seed:jalur-cerdas`
+- Build passed: 268 pages
+
+### Key Distinction
+| Track | Type | Audience | Content |
+|-------|------|----------|---------|
+| **Jalur Cerdas** | JALUR | All ages (SD+) | General Bahasa ability path: bunyi → mahir |
+| **Buku Panduan** | PANDUAN | Teachers/students (VII–XII) | Grade-based curriculum per Kemdikbud |
+
+### JALUR Content Note
+The JALUR seed creates level+unit shells (titles, descriptions, emoji, XP). The `content` field (isi[] with actual learning materials like materi, latihan, kuis) is not yet populated — this is next priority.
+
+### Relevant Files
+- `docs/BAHASACERDAS_ARENA_RECOVERY_AUDIT.md` — audit findings
+- `scripts/validate-learning-content.ts` — validator
+- `scripts/seed-jalur-cerdas-core.ts` — correct JALUR curriculum seed
+- `scripts/seed-jalur-levels.ts` — legacy, no longer used
+- `app/arena/jalur-cerdas/page.tsx` — updated copy
+- `app/arena/page.tsx` — dynamic promo stats + updated copy
+- `npm run seed:jalur-cerdas:dry-run` — dry-run seed
+- `npm run seed:jalur-cerdas` — apply seed
+- `npm run validate:learning-content` — run validator
+
+## Phase Arena Recovery 2 — Lesson Engine (June 29, 2026)
+
+### What
+Built Duolingo-style lesson engine for all 72 JALUR units: question-by-question flow, instant feedback, progress bar, XP rewards, lock/unlock progression.
+
+### Key Decisions
+1. **No new Prisma models** — Questions stored in existing `LearningUnit.content` JSON field (no migration needed)
+2. **Sanitized API** — GET `/api/jalur-cerdas/[unitId]` strips `jawaban` field from questions before sending to client
+3. **Server-side validation** — POST `/api/jalur-cerdas/[unitId]/submit` validates answer against stored `jawaban`
+4. **Answer key never exposed** — `jawaban` only sent in submit response (for that specific question)
+5. **Idempotent progress** — Existing `PATCH /api/jalur-cerdas/[unitId]/progress` already prevents duplicate XP via `completed` check
+6. **Lock/unlock** — First unit unlocked by default; each unit unlocks when previous unit in same level is completed
+
+### What Was Built
+- **Lesson page**: `app/arena/jalur-cerdas/[unitId]/lesson/page.tsx` — client component with phases: intro → question → result → complete. Duolingo-style: large answer buttons, instant feedback (green/red flash), progress bar, XP on completion
+- **Question API**: `app/api/jalur-cerdas/[unitId]/route.ts` — returns sanitized questions (no jawaban) + unit data + progress
+- **Submit API**: `app/api/jalur-cerdas/[unitId]/submit/route.ts` — validates answer server-side, returns { correct, correctAnswer, explanation }
+- **Seed script**: `scripts/seed-jalur-questions-core.ts` — 366 questions across 72 units (5+ per unit, dry-run default, --execute to apply)
+- **Unit detail page**: `app/arena/jalur-cerdas/[unitId]/page.tsx` — lock/unlock state, "Mulai latihan"/"Coba lagi" button, "Lanjut ke unit berikutnya" CTA
+- **Lock/unlock**: First unit unlocked; each unit checks if previous unit is completed. Locked units show disabled button with "Selesaikan unit sebelumnya"
+
+### Verification
+- Build: 268 pages ✅
+- Validator: 24 levels, 143 units, 0 errors ✅
+- Backup: 67 tables, 367 rows ✅
+- PANDUAN untouched: 12 levels, 71 units ✅
+
+### Relevant Files
+- `scripts/seed-jalur-questions-core.ts` — questions seed
+- `app/api/jalur-cerdas/[unitId]/route.ts` — sanitized GET
+- `app/api/jalur-cerdas/[unitId]/submit/route.ts` — submit validation
+- `app/arena/jalur-cerdas/[unitId]/lesson/page.tsx` — lesson engine
+- `app/arena/jalur-cerdas/[unitId]/page.tsx` — lock/unlock + Mulai button
+
+## Phase Arena QA 2B — Security, Progress, XP, Production Hardening (June 29, 2026)
+
+### What
+Security audit + hardening for all Jalur Cerdas APIs and UI. Fixed XP farming, isi_blank UX, and TS build errors.
+
+### Vulnerabilities Found & Fixed
+| Issue | Severity | Fix |
+|-------|----------|-----|
+| **XP farming** — progress route awarded 10 XP per incomplete attempt | High | Removed all XP for incomplete. Only first completion (≥70%) awards 50 XP + 10 coins. Replay = 0 XP. |
+| **isi_blank no submit button** — user had to press Enter, confusing on mobile | Medium | Added "Kirim" button next to input |
+| **`xpAwarded` wrong field** in `arena/page.tsx` | Low | Fixed to `xpEarned` |
+
+### Tests Created
+- `scripts/test-jalur-leakage.ts` — tests sanitization logic (366 questions, 0 leaked)
+- `scripts/validate-jalur-questions.ts` — validates all question content
+
+### Results
+| Check | Result |
+|-------|--------|
+| `npm run test:jalur-leakage` | ✅ 0 leaked fields |
+| `npm run validate:jalur-questions` | ✅ 366 questions, 0 issues |
+| `npm run validate:learning-content` | ✅ 24 levels, 143 units |
+| `npm run tsc --noEmit` | ✅ 0 errors |
+| `npm run build` | ✅ 268 pages |
+
+### Remaining Issues
+1. **6 units with ≤3 questions** — low count, should expand to 5+
+2. **No loading skeleton** for unit detail page
+3. **No question transition animation**
+
+## Phase Arena 2C — Micro Lessons (June 29, 2026)
+
+### What
+Duolingo-style micro lessons before practice for all 72 JALUR units. Each unit now has: summary, explanation, examples, tips, and beforePracticePrompt — stored in existing `LearningUnit.content.lesson` JSON (no migration).
+
+### Level Bands
+| Band | Levels | Units | UX |
+|------|--------|-------|----|
+| **Dasar** | L1-4 | 24 | Large fonts, 2-3 sentence explanations, simple examples, child-friendly copy |
+| **Menengah** | L5-8 | 24 | Medium fonts, 3-5 sentence explanations, some reasoning |
+| **Tinggi** | L9-12 | 24 | Normal fonts, detailed explanations, paragraph-based examples, context/strategy |
+
+### Lesson Phase
+- Added to existing lesson engine: Intro → **Lesson Material** → Questions → Result → Complete
+- Material cards: summary, explanation, examples, tips, "Mulai Latihan" CTA
+- Questions (366) preserved intact — no changes to question data
+
+### Verification
+| Check | Result |
+|-------|--------|
+| `npm run validate:jalur-lessons` | ✅ 72/72 lessons valid |
+| `npm run validate:jalur-questions` | ✅ 366 questions preserved |
+| `npm run test:jalur-leakage` | ✅ 0 leaked fields |
+| `npm run validate:learning-content` | ✅ 24 levels, 143 units |
+| `npx tsc --noEmit` | ✅ 0 errors |
+| Backup | 67 tables, 386 rows |
+
+### Relevant Files
+- `scripts/seed-jalur-micro-lessons.ts` — seeds 72 micro lessons
+- `scripts/validate-jalur-lessons.ts` — lesson validator
+- `app/api/jalur-cerdas/[unitId]/route.ts` — added `lesson` field to response
+- `app/arena/jalur-cerdas/[unitId]/lesson/page.tsx` — lesson phase + levelBand styling + isi_blank submit button
+- `package.json` — added `seed:jalur-lessons`, `seed:jalur-lessons:dry-run`, `validate:jalur-lessons`
+
+## Phase Build Hardening 1 — Google Fonts Dependency Removed (June 29, 2026)
+
+### What
+Removed Google Fonts build-time dependency. Build was intermittently failing when Google Fonts API was unreachable.
+
+### Changes
+| Before | After |
+|--------|-------|
+| `next/font/google` (Inter, Playfair_Display) — downloaded at build time | Removed completely |
+| Google Fonts `<link>` tags in `<head>` | Removed (no runtime dependency) |
+| CSS variables `--font-inter`, `--font-playfair` | Removed |
+| Tailwind `sans: ["Inter", "system-ui", "sans-serif"]` | `sans: ["Inter", "ui-sans-serif", "system-ui", "-apple-system", "BlinkMacSystemFont", "\"Segoe UI\"", "sans-serif"]` |
+| Tailwind `display: ["Playfair Display", "Georgia", "serif"]` | `display: ["Georgia", "Cambria", "\"Times New Roman\"", "serif"]` |
+
+### Font Strategy
+- **Sans** (`font-sans`): Inter (if installed) → system-ui → -apple-system → Segoe UI → system sans-serif
+- **Display** (`font-display`): Georgia → Cambria → Times New Roman → system serif
+- Zero external font downloads at build or runtime
+- Graceful degradation — best available system font used
+
+### Verification
+| Check | Result |
+|-------|--------|
+| `grep -R "next/font/google" app components lib` | ✅ 0 matches |
+| `grep -R "fonts.googleapis.com" app components` | ✅ 0 matches |
+| `npx prisma validate` | ✅ Valid |
+| `npx tsc --noEmit` | ✅ 0 errors |
+| `npm run build` | ✅ 268 pages |
+| Visual impact | Minimal — Inter/Playfair fallback to system equivalents |**

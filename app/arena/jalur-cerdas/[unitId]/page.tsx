@@ -2,38 +2,7 @@ import { db } from "@/lib/db"
 import { getUser } from "@/lib/supabase/server"
 import { redirect } from "next/navigation"
 import Link from "next/link"
-import { ArrowLeft, BookOpen, PenLine, Swords, CheckCircle2, Circle, Lock, ArrowRight, Sprout, Image, Clipboard, BarChart3, Sparkles, Music, Trophy, Dumbbell, Mic, Target, MessageCircle } from "lucide-react"
-import type { ReactNode } from "react"
-
-const iconMap: Record<string, ReactNode> = {
-  "🌱": <Sprout className="w-6 h-6 text-white" />,
-  "✏️": <PenLine className="w-6 h-6 text-white" />,
-  "📖": <BookOpen className="w-6 h-6 text-white" />,
-  "💬": <MessageCircle className="w-6 h-6 text-white" />,
-  "📝": <PenLine className="w-6 h-6 text-white" />,
-  "📚": <BookOpen className="w-6 h-6 text-white" />,
-  "🖼️": <Image className="w-6 h-6 text-white" />,
-  "📋": <Clipboard className="w-6 h-6 text-white" />,
-  "📊": <BarChart3 className="w-6 h-6 text-white" />,
-  "🎭": <Sparkles className="w-6 h-6 text-white" />,
-  "🌟": <Sparkles className="w-6 h-6 text-white" />,
-  "🎶": <Music className="w-6 h-6 text-white" />,
-  "🏆": <Trophy className="w-6 h-6 text-white" />,
-  "💪": <Dumbbell className="w-6 h-6 text-white" />,
-  "🎤": <Mic className="w-6 h-6 text-white" />,
-  "🎯": <Target className="w-6 h-6 text-white" />,
-}
-
-interface KontenUnit {
-  belajar: { tujuan: string[]; materi: { judul: string; isi: string[]; contoh: string[]; catatan?: string }[]; rangkuman: string[] }
-  latihan: any[]
-  praktik: { petunjuk: string; tips: string[]; contoh?: string }
-  kuis: any[]
-}
-
-function getUnitIcon(emoji: string | null, fallback: ReactNode = <BookOpen className="w-6 h-6 text-white" />): ReactNode {
-  return emoji && iconMap[emoji] ? iconMap[emoji] : fallback
-}
+import { ArrowLeft, CheckCircle2, Lock, Zap, Trophy, BookOpen, ArrowRight, Sparkles } from "lucide-react"
 
 export default async function UnitDetailPage({ params }: { params: Promise<{ unitId: string }> }) {
   const user = await getUser()
@@ -48,31 +17,79 @@ export default async function UnitDetailPage({ params }: { params: Promise<{ uni
 
   if (!unit) redirect("/arena/jalur-cerdas")
 
-  let konten: KontenUnit | null = null
+  let konten: any = null
   try { konten = unit.content ? JSON.parse(unit.content) : null } catch {}
-  const hasBelajar = (konten?.belajar?.materi?.length ?? 0) > 0
-  const hasLatihan = (konten?.latihan?.length ?? 0) > 0
-  const hasPraktik = !!konten?.praktik?.petunjuk
-  const hasKuis = (konten?.kuis?.length ?? 0) > 0
+
+  const questionCount = konten?.questions?.length ?? 0
 
   let isCompleted = false
+  let userProgress = null
   try {
-    const progress = await db.userUnitProgress.findUnique({
+    userProgress = await db.userUnitProgress.findUnique({
       where: { userId_unitId: { userId: user.id, unitId } },
     })
-    isCompleted = progress?.completed ?? false
-  } catch {} // progress is a nice-to-have, not critical
+    isCompleted = userProgress?.completed ?? false
+  } catch {}
+
+  const prevUnits = await db.learningUnit.findMany({
+    where: {
+      levelId: unit.levelId,
+      order: { lt: unit.order },
+      isActive: true,
+    },
+    orderBy: { order: "desc" },
+    take: 1,
+    select: { id: true },
+  })
+
+  let isUnlocked = unit.order === 1
+  if (!isUnlocked && prevUnits.length > 0) {
+    const prevProgress = await db.userUnitProgress.findUnique({
+      where: { userId_unitId: { userId: user.id, unitId: prevUnits[0].id } },
+    })
+    isUnlocked = prevProgress?.completed ?? false
+  }
+
+  let nextUnit = null
+  if (isCompleted) {
+    nextUnit = await db.learningUnit.findFirst({
+      where: {
+        levelId: unit.levelId,
+        order: { gt: unit.order },
+        isActive: true,
+      },
+      orderBy: { order: "asc" },
+      select: { id: true, title: true },
+    })
+    if (!nextUnit) {
+      const currentLevel = unit.level
+      if (currentLevel) {
+        const nextLevel = await db.learningLevel.findFirst({
+          where: { type: "JALUR", level: { gt: currentLevel.level } },
+          orderBy: { level: "asc" },
+          select: { id: true },
+        })
+        if (nextLevel) {
+          nextUnit = await db.learningUnit.findFirst({
+            where: { levelId: nextLevel.id, isActive: true },
+            orderBy: { order: "asc" },
+            select: { id: true, title: true },
+          })
+        }
+      }
+    }
+  }
 
   return (
-    <div className="px-4 py-6 arena-page">
+    <div className="min-h-screen bg-gradient-to-br from-violet-50 to-purple-100 px-4 py-6">
       <Link href="/arena/jalur-cerdas" className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-violet-600 mb-4">
         <ArrowLeft className="w-4 h-4" />
         Kembali
       </Link>
 
       <div className="flex items-center gap-3 mb-6">
-        <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${unit.level?.color ?? "from-violet-500 to-purple-600"} flex items-center justify-center shadow-lg`}>
-          {getUnitIcon(unit.emoji)}
+        <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${unit.level?.color ?? "from-violet-500 to-purple-600"} flex items-center justify-center shadow-lg text-2xl`}>
+          {unit.emoji || <BookOpen className="w-7 h-7 text-white" />}
         </div>
         <div>
           {unit.level && <p className="text-xs text-violet-600 font-semibold">{unit.level.title}</p>}
@@ -88,90 +105,69 @@ export default async function UnitDetailPage({ params }: { params: Promise<{ uni
         </div>
       )}
 
-      <div className="space-y-3">
-        <SectionCard
-          icon={<BookOpen className="w-5 h-5 text-violet-500" />}
-          title="Belajar"
-          description="Baca teori, lihat contoh nyata"
-          href={hasBelajar ? `/arena/jalur-cerdas/${unitId}/belajar` : `#`}
-          color="violet"
-          isComingSoon={!hasBelajar}
-        />
-        <SectionCard
-          icon={<PenLine className="w-5 h-5 text-emerald-500" />}
-          title="Latihan"
-          description="Kerjakan soal pilihan ganda"
-          href={hasLatihan ? `/arena/jalur-cerdas/${unitId}/latihan` : `#`}
-          color="emerald"
-          isComingSoon={!hasLatihan}
-        />
-        <SectionCard
-          icon={<Swords className="w-5 h-5 text-orange-500" />}
-          title="Praktik"
-          description="Tulis karya sesuai materi"
-          href={hasPraktik ? `/arena/jalur-cerdas/${unitId}/praktik` : `#`}
-          color="orange"
-          isComingSoon={!hasPraktik}
-        />
-        <SectionCard
-          icon={<Swords className="w-5 h-5 text-rose-500" />}
-          title="Kuis"
-          description="Uji pemahaman dengan soal"
-          href={hasKuis ? `/arena/jalur-cerdas/${unitId}/kuis` : `#`}
-          color="rose"
-          isComingSoon={!hasKuis}
-        />
-      </div>
-
-      {unit.xpReward > 0 && (
-        <div className="mt-6 p-4 rounded-xl bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200">
-          <p className="text-sm font-semibold text-amber-800">Reward</p>
-          <p className="text-sm text-amber-700">
-            +{unit.xpReward} XP • +{unit.coinReward} Koin Cerdas
-          </p>
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-4">
+        <div className="flex items-center justify-between mb-4">
+          <span className="text-sm font-semibold text-gray-500">Progress</span>
+          <span className="text-sm font-bold text-violet-600">
+            {isCompleted ? "100%" : "0%"}
+          </span>
         </div>
-      )}
-    </div>
-  )
-}
-
-function SectionCard({ icon, title, description, href, color, isComingSoon }: {
-  icon: React.ReactNode
-  title: string
-  description: string
-  href: string
-  color: string
-  isComingSoon: boolean
-}) {
-  const colorMap: Record<string, string> = {
-    violet: "hover:border-violet-200 hover:bg-violet-50/50",
-    emerald: "hover:border-emerald-200 hover:bg-emerald-50/50",
-    orange: "hover:border-orange-200 hover:bg-orange-50/50",
-    rose: "hover:border-rose-200 hover:bg-rose-50/50",
-  }
-
-  const card = (
-    <div className={`flex items-center gap-4 p-4 rounded-xl bg-white border border-gray-100 transition-all ${isComingSoon ? "opacity-60" : colorMap[color] || ""}`}>
-      <div className="w-12 h-12 rounded-xl bg-gray-50 flex items-center justify-center shrink-0">
-        {icon}
+        <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden mb-4">
+          <div
+            className={`h-full rounded-full transition-all ${isCompleted ? "bg-emerald-500" : "bg-violet-200"}`}
+            style={{ width: isCompleted ? "100%" : "0%" }}
+          />
+        </div>
+        {questionCount > 0 && (
+          <p className="text-sm text-gray-500">{questionCount} soal latihan</p>
+        )}
       </div>
-      <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-2">
-          <p className="font-semibold text-sm text-gray-900">{title}</p>
-          {isComingSoon && (
-            <span className="text-[10px] font-medium text-gray-400 bg-gray-100 px-1.5 py-0.5 rounded">Segera</span>
+
+      {isUnlocked ? (
+        <Link
+          href={`/arena/jalur-cerdas/${unitId}/lesson`}
+          className="flex items-center justify-center gap-2 w-full bg-violet-600 text-white font-bold text-lg py-4 rounded-2xl hover:bg-violet-700 transition-colors active:scale-[0.98] shadow-lg shadow-violet-200 mb-4"
+        >
+          {isCompleted ? (
+            <>
+              <Sparkles className="w-5 h-5" />
+              Coba lagi
+            </>
+          ) : (
+            <>
+              <BookOpen className="w-5 h-5" />
+              Mulai latihan
+            </>
           )}
-        </div>
-        <p className="text-xs text-gray-500">{description}</p>
-      </div>
-      {isComingSoon ? (
-        <Lock className="w-4 h-4 text-gray-300 shrink-0" />
+        </Link>
       ) : (
-        <ArrowRight className="w-4 h-4 text-gray-400 shrink-0" />
+        <div className="flex items-center justify-center gap-2 w-full bg-gray-200 text-gray-400 font-bold text-lg py-4 rounded-2xl mb-4 cursor-not-allowed">
+          <Lock className="w-5 h-5" />
+          Selesaikan unit sebelumnya
+        </div>
       )}
+
+      {isCompleted && nextUnit && (
+        <Link
+          href={`/arena/jalur-cerdas/${nextUnit.id}`}
+          className="flex items-center justify-center gap-2 w-full bg-emerald-600 text-white font-semibold py-3 rounded-2xl hover:bg-emerald-700 transition-colors"
+        >
+          Lanjut ke unit berikutnya
+          <ArrowRight className="w-4 h-4" />
+        </Link>
+      )}
+
+      <div className="mt-6 p-4 rounded-xl bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200">
+        <div className="flex items-center gap-2 mb-1">
+          <Trophy className="w-4 h-4 text-amber-600" />
+          <p className="text-sm font-semibold text-amber-800">Reward</p>
+        </div>
+        <p className="text-sm text-amber-700">
+          <Zap className="w-4 h-4 inline mr-0.5" />+{unit.xpReward || 50} XP
+          <span className="mx-1">&middot;</span>
+          +{unit.coinReward || 10} Koin Cerdas
+        </p>
+      </div>
     </div>
   )
-
-  if (isComingSoon) return card
-  return <Link href={href}>{card}</Link>
 }

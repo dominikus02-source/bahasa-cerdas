@@ -59,7 +59,8 @@ export default async function JalurCerdasPage() {
     <div className="px-4 py-6 arena-page">
       <div className="text-center mb-6">
         <h1 className="text-2xl font-extrabold text-gray-900">Jalur Cerdas</h1>
-        <p className="text-sm text-gray-500 mt-1">Kuasi Bahasa Indonesia dari dasar sampai mahir</p>
+        <p className="text-sm text-gray-500 mt-1">Latihan Bahasa Indonesia dari nol sampai mahir</p>
+        <p className="text-xs text-violet-500 font-medium mt-0.5">Cocok untuk semua usia &middot; Mulai dari dasar</p>
       </div>
 
       {/* Overall progress */}

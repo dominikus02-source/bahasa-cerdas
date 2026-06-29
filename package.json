@@ -27,7 +27,20 @@
     "restore:backup": "npx tsx scripts/restore-supabase-backup.ts",
     "validate:backup": "npx tsx scripts/validate-backup.ts",
     "audit:content": "npx tsx scripts/audit-content-data.ts",
-    "audit:question-data": "npx tsx scripts/audit-question-data.ts"
+    "audit:question-data": "npx tsx scripts/audit-question-data.ts",
+    "validate:learning-content": "npx tsx scripts/validate-learning-content.ts",
+    "seed:jalur-levels": "npx tsx scripts/seed-jalur-levels.ts",
+    "seed:jalur-levels:execute": "npx tsx scripts/seed-jalur-levels.ts --execute",
+    "seed:jalur-cerdas:dry-run": "npx tsx scripts/seed-jalur-cerdas-core.ts",
+    "seed:jalur-cerdas": "npx tsx scripts/seed-jalur-cerdas-core.ts --execute",
+    "seed:jalur-questions:dry-run": "npx tsx scripts/seed-jalur-questions-core.ts",
+    "seed:jalur-questions": "npx tsx scripts/seed-jalur-questions-core.ts --execute",
+    "upload:homepage": "npx tsx scripts/upload-homepage-files.ts",
+    "test:jalur-leakage": "npx tsx scripts/test-jalur-leakage.ts",
+    "validate:jalur-questions": "npx tsx scripts/validate-jalur-questions.ts",
+    "seed:jalur-lessons:dry-run": "npx tsx scripts/seed-jalur-micro-lessons.ts",
+    "seed:jalur-lessons": "npx tsx scripts/seed-jalur-micro-lessons.ts --execute",
+    "validate:jalur-lessons": "npx tsx scripts/validate-jalur-lessons.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.39.0",

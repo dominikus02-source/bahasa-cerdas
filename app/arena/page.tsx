@@ -6,7 +6,7 @@ import Link from "next/link"
 import {
   Flame, Zap, Coins, Target, Bot, PenLine, Rocket, Star, Gift,
   Trophy, BookOpen, ChevronRight, Sparkles, Award, Gamepad2, Heart,
-  MessageCircle, Users, Clock, Swords, Crown,
+  MessageCircle, Users, Clock, Swords, Crown, GraduationCap,
 } from "lucide-react"
 import { trackDailyStreak, getOrCreateDailyQuests } from "@/lib/coins"
 import { TugasCard } from "./tugas-card"
@@ -50,7 +50,7 @@ export default async function BerandaPage() {
   })
   const xpToday = todayXpAgg._sum.xpEarned || 0
 
-  const [aktivitas, juaraBaru, tugasCount] = await Promise.all([
+  const [aktivitas, juaraBaru, tugasCount, jalurStats] = await Promise.all([
     cache.getOrSet("arena:aktivitas", () =>
       db.gameResult.findMany({
         where: { rank: 1 },
@@ -84,6 +84,22 @@ export default async function BerandaPage() {
         const submittedIds = new Set(submissions.filter(s => s.status === "SUBMITTED" || s.status === "GRADED").map(s => s.assignmentId))
         return assignIds.filter(id => !submittedIds.has(id)).length
       } catch { return 0 }
+    })(),
+    (async () => {
+      try {
+        const levels = await db.learningLevel.findMany({
+          where: { type: "JALUR" },
+          select: { id: true, _count: { select: { units: { where: { isActive: true } } } } },
+        })
+        const levelCount = levels.length
+        const unitCount = levels.reduce((s, l) => s + l._count.units, 0)
+        const xpAgg = await db.userUnitProgress.aggregate({
+          where: { userId: user.id },
+          _sum: { xpEarned: true },
+        })
+        const xp = xpAgg._sum?.xpEarned || 0
+        return { levelCount, unitCount, xp }
+      } catch { return { levelCount: 0, unitCount: 0, xp: 0 } }
     })(),
   ])
 
@@ -327,21 +343,21 @@ export default async function BerandaPage() {
             </div>
             <div className="flex-1 min-w-0">
               <h4 className="font-extrabold text-lg text-white truncate">Jalur Cerdas</h4>
-              <p className="text-sm text-white/70 truncate">Belajar dari dasar sampai mahir</p>
+              <p className="text-sm text-white/70 truncate">Latihan Bahasa Indonesia dari nol sampai mahir</p>
             </div>
             <ChevronRight size={22} className="text-white/60 shrink-0" />
           </div>
           <div className="flex gap-2">
             <div className="flex-1 bg-white/10 rounded-xl py-2.5 px-2 text-center min-w-0">
-              <p className="font-extrabold text-lg text-white whitespace-nowrap">4 Level</p>
-              <p className="text-[10px] text-white/70 mt-0.5"><Trophy size={11} className="inline mr-0.5" />Tingkat</p>
+              <p className="font-extrabold text-lg text-white whitespace-nowrap">{jalurStats.levelCount} Level</p>
+              <p className="text-[10px] text-white/70 mt-0.5"><GraduationCap size={11} className="inline mr-0.5" />Tingkat</p>
             </div>
             <div className="flex-1 bg-white/10 rounded-xl py-2.5 px-2 text-center min-w-0">
-              <p className="font-extrabold text-lg text-white whitespace-nowrap">13 Materi</p>
+              <p className="font-extrabold text-lg text-white whitespace-nowrap">{jalurStats.unitCount} Materi</p>
               <p className="text-[10px] text-white/70 mt-0.5"><BookOpen size={11} className="inline mr-0.5" />Pelajaran</p>
             </div>
             <div className="flex-1 bg-white/10 rounded-xl py-2.5 px-2 text-center min-w-0">
-              <p className="font-extrabold text-lg text-white whitespace-nowrap">1.400 XP</p>
+              <p className="font-extrabold text-lg text-white whitespace-nowrap">{jalurStats.xp.toLocaleString()} XP</p>
               <p className="text-[10px] text-white/70 mt-0.5"><Zap size={11} className="inline mr-0.5" />Total</p>
             </div>
           </div>
