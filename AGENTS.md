@@ -748,6 +748,89 @@ Built complete simulation workflow UI for murid and guru: simulation entry pages
 | `npm run validate:learning-content` | ✅ 24 levels, 143 units |
 | `npx prisma validate` | ✅ Valid |
 | `npx tsc --noEmit` | ✅ 0 errors |
-| `npm run build` | ✅ 268 pages |**
+ | `npm run build` | ✅ 268 pages |**
+
+## Phase UKBI DATA 1A — UKBI SD Bank + Runtime Wiring (June 29, 2026)
+
+### What
+Created 250 original UKBI SD questions (JSON source + seeded to DB). Fixed runtime wiring so UKBI/TKA simulation pages use resolver-based packages instead of old hardcoded data. Removed legacy "Kompetensi" section from GuruSidebar.
+
+### Problems Found
+| Issue | Severity | Fix |
+|-------|----------|-----|
+| **GuruSidebar still had old "Kompetensi" section** linking to `/guru/ukbi` (old page that fetches raw `/api/kompetensi?limit=50`) | High | Removed "Kompetensi" section (UKBI-TKA, Buat Paket, Hasil TKA) from GuruSidebar |
+| **Old pages `/guru/ukbi` and `/murid/ukbi` still accessible** with legacy data display | Medium | Added `redirect()` to new `/simulasi/ukbi` pages |
+| **UKBI SD section `seksi` mismatch**: Paket had `seksi: "MENDENGAR"` but questions use `seksi: "MENDENGARKAN"` — Mendengarkan section failed to match questions, triggering fallback | High | Fixed paket section `MENDENGAR` → `MENDENGARKAN` in DB + seed source |
+| **UKBI SMP/SMA still use legacy 25Q data** from old seed-kompetensi era | Low (documented) | Resolver correctly marks as `isLegacy: true`. New 250Q bank needed. |
+| **TKA SMP/SMA still use legacy 25+8/25+10Q data** with no TKA SD bank | Low (documented) | Resolver correctly marks as `isLegacy: true`. New TKA banks needed. |
+
+### Key Findings
+1. **MuridSidebar already correct** — links to `/murid/simulasi/ukbi` (resolver-powered)
+2. **GuruSidebar had DUAL entry** — new "Simulasi" section (correct) + old "Kompetensi" section (legacy) → removed
+3. **All 4 simulation pages** (`/murid/simulasi/ukbi`, `/murid/simulasi/tka`, `/guru/simulasi/ukbi`, `/guru/simulasi/tka`) use `getUKBIPackages()`/`getTKAPackages()` resolver
+4. **API routes** (`/api/kompetensi/[paketId]`) use randomization + snapshot + per-attempt history
+5. **No correctAnswer leakage** in client-bound API responses
+6. **Legacy files** (seed-ukbi.cjs, seed-tka.cjs, seed-tka-utbk.cjs, fix_ukbi.ts) marked with LEGACY warnings
+
+### Files Changed
+| File | Change |
+|------|--------|
+| `components/dashboard/GuruSidebar.tsx` | Removed "Kompetensi" section (UKBI-TKA, Buat Paket, Hasil TKA) |
+| `app/(dashboard)/guru/ukbi/page.tsx` | Changed from fetch-all-page to `redirect("/guru/simulasi/ukbi")` |
+| `app/(dashboard)/murid/ukbi/page.tsx` | Changed from fetch-all-page to `redirect("/murid/simulasi/ukbi")` |
+| `scripts/seed-ukbi-sd-bank.ts` | Fixed `seksi: "MENDENGAR"` → `"MENDENGARKAN"` |
+| `scripts/validate-ukbi-tka-question-structure.ts` | Skip empty-options check for CONSTRUCTED type (menulis/berbicara) |
+| `scripts/audit-ukbi-tka-runtime-wiring.ts` | Fixed correctAnswer assertion to check pre-snapshot selects only |
+| `scripts/test-ukbi-tka-runtime-wiring.ts` | Same fix |
+| `package.json` | Added `audit:ukbi-tka-runtime`, `test:ukbi-tka-runtime` |
+
+### Files Created
+| File | Purpose |
+|------|---------|
+| `data/question-bank/ukbi/sd/` | 5 JSON files (250 questions) |
+| `scripts/seed-ukbi-sd-bank.ts` | Dry-run default seed, upsert-only |
+| `scripts/validate-ukbi-sd-bank.ts` | 5522 structural checks |
+| `scripts/audit-ukbi-tka-runtime-wiring.ts` | 42 runtime wiring checks |
+| `scripts/test-ukbi-tka-runtime-wiring.ts` | 49 runtime wiring tests |
+
+### Verification
+| Check | Result |
+|-------|--------|
+| test:jalur-leakage | ✅ PASS |
+| validate:jalur-questions | ✅ 366 questions |
+| validate:learning-content | ✅ All passed |
+| test:bank-soal-leakage | ✅ 8/8 |
+| test:murid-quiz-leakage | ✅ 9/9 |
+| test:ukbi-tka-randomization | ✅ 27/27 |
+| test:ukbi-tka-session-snapshot | ✅ 32/32 |
+| test:ukbi-tka-per-attempt-snapshot | ✅ 42/42 |
+| validate:ukbi-tka-structure | ✅ 975/975 |
+| audit:ukbi-tka-quality | ✅ 20 good, 8 warnings |
+| audit:ukbi-tka-snapshot | ✅ 21/21 |
+| audit:ukbi-tka-attempt-history | ✅ 19/19 |
+| audit:ukbi-tka-randomization | ✅ Healthy |
+| audit:ukbi-tka-runtime | ✅ 42/42 |
+| test:ukbi-tka-runtime | ✅ 49/49 |
+| validate:ukbi-sd-bank | ✅ 5522/5522 |
+| test:bigt-menu | ✅ 20/20 |
+| test:dokumen-latihan-sanitization | ✅ 10/10 |
+| test:simulation-workflow | ✅ 45/45 |
+| `npx tsc --noEmit` | ✅ 0 errors |
+| `npm run build` | ✅ 268 pages |
+| `npx prisma validate` | ✅ Valid |
+
+### Risks
+1. **UKBI SMP/SMA still legacy**: 25 questions each, marked `isLegacy`. Need 250-question banks.
+2. **TKA all tracks legacy**: No new TKA banks yet. SMP: 35Q, SMA: 33Q, SD/GURU/UTBK: 0Q.
+3. **Old pages still exist**: `/guru/ukbi` and `/murid/ukbi` now redirect but files still present in repo.
+4. **Guru "Buat Paket" and "Hasil TKA"**: No longer linked from sidebar but still exist at `/guru/buat-tka` and `/guru/hasil-tka`.
+5. **TKA sections lack `seksi` field**: Use `kompetensi` field. The API route handles both via `section.kompetensi` filter but the fallback path may pick non-optimal questions.
+
+### Next Phase
+1. **UKBI SMP bank**: Create 250 original SD-style questions for SMP level
+2. **UKBI SMA bank**: Create 250 original questions for SMA level  
+3. **TKA SD bank**: Create first 250 TKA questions for SD level
+4. **Playwright E2E tests**: Add browser tests for UKBI/TKA simulation flow
+
 
 

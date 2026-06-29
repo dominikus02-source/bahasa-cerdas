@@ -1,3 +1,11 @@
+/**
+ * ⚠️ LEGACY — DO NOT RUN for new UKBI bank production.
+ * This was used to fix flat option strings from the original seed-kompetensi era.
+ * New UKBI questions are seeded via scripts/seed-ukbi-sd-bank.ts and JSON source files.
+ * Use data/question-bank/ukbi/sd/ as source of truth for all future UKBI seeding.
+ * Kept for reference only — do not rerun without explicit approval.
+ */
+
 const { PrismaClient } = require('@prisma/client');
 const p = new PrismaClient({ datasources: { db: { url: process.env.DATABASE_URL || 'postgresql://bahasa:***REMOVED-DB-PASSWORD***@***REMOVED-VPS-IP***:5432/bahasacerdas' } } });
 

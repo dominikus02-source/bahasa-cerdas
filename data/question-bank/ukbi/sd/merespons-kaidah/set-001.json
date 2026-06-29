@@ -1,0 +1,2602 @@
+{
+  "meta": {
+    "product": "UKBI_PRACTICE",
+    "track": "UKBI_SD",
+    "section": "merespons-kaidah",
+    "set": "set-001",
+    "totalItems": 70,
+    "source": "BC_UKBI_SD_ORIGINAL"
+  },
+  "questions": [
+    {
+      "id": "BC-UKBI-SD-KAIDAH-TERBATAS-SET001-Q001",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SD",
+      "section": "merespons-kaidah",
+      "band": "TERBATAS",
+      "type": "pilihan_ganda",
+      "difficulty": 1,
+      "stem": "Kata baku yang tepat untuk kata tidak baku 'praktek' adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "praktik"
+        },
+        {
+          "id": "B",
+          "text": "praktis"
+        },
+        {
+          "id": "C",
+          "text": "praktek"
+        },
+        {
+          "id": "D",
+          "text": "pratik"
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Kata baku dari 'praktek' adalah 'praktik' sesuai KBBI.",
+      "tags": [
+        "kata-baku"
+      ],
+      "source": "BC_UKBI_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "MENGINGAT",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-SD-KAIDAH-TERBATAS-SET001-Q002",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SD",
+      "section": "merespons-kaidah",
+      "band": "TERBATAS",
+      "type": "pilihan_ganda",
+      "difficulty": 1,
+      "stem": "Penulisan kata yang benar adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "apotik"
+        },
+        {
+          "id": "B",
+          "text": "apotek"
+        },
+        {
+          "id": "C",
+          "text": "apotiq"
+        },
+        {
+          "id": "D",
+          "text": "apoteke"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Kata baku yang benar adalah 'apotek', bukan 'apotik'.",
+      "tags": [
+        "kata-baku"
+      ],
+      "source": "BC_UKBI_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "MENGINGAT",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-SD-KAIDAH-TERBATAS-SET001-Q003",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SD",
+      "section": "merespons-kaidah",
+      "band": "TERBATAS",
+      "type": "pilihan_ganda",
+      "difficulty": 1,
+      "stem": "Kata yang ditulis sesuai ejaan adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "karir"
+        },
+        {
+          "id": "B",
+          "text": "kariir"
+        },
+        {
+          "id": "C",
+          "text": "karier"
+        },
+        {
+          "id": "D",
+          "text": "karieer"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "Penulisan yang benar sesuai ejaan adalah 'karier'.",
+      "tags": [
+        "ejaan"
+      ],
+      "source": "BC_UKBI_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "MENGINGAT",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-SD-KAIDAH-TERBATAS-SET001-Q004",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SD",
+      "section": "merespons-kaidah",
+      "band": "TERBATAS",
+      "type": "pilihan_ganda",
+      "difficulty": 1,
+      "stem": "Penulisan kata yang tepat sesuai ejaan adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "sistim"
+        },
+        {
+          "id": "B",
+          "text": "sistem"
+        },
+        {
+          "id": "C",
+          "text": "sistam"
+        },
+        {
+          "id": "D",
+          "text": "sistum"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Kata 'sistem' ditulis dengan huruf 'e' pada suku kata kedua.",
+      "tags": [
+        "ejaan"
+      ],
+      "source": "BC_UKBI_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "MENGINGAT",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-SD-KAIDAH-TERBATAS-SET001-Q005",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SD",
+      "section": "merespons-kaidah",
+      "band": "TERBATAS",
+      "type": "pilihan_ganda",
+      "difficulty": 1,
+      "stem": "Bentuk kata yang benar untuk 'rajut + me-' adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "merajud"
+        },
+        {
+          "id": "B",
+          "text": "merajuk"
+        },
+        {
+          "id": "C",
+          "text": "merajut"
+        },
+        {
+          "id": "D",
+          "text": "mengrajut"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "Awalan me- pada kata dasar 'rajut' berubah menjadi 'merajut' karena huruf pertama 'r'.",
+      "tags": [
+        "imbuhan"
+      ],
+      "source": "BC_UKBI_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-SD-KAIDAH-TERBATAS-SET001-Q006",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SD",
+      "section": "merespons-kaidah",
+      "band": "TERBATAS",
+      "type": "pilihan_ganda",
+      "difficulty": 1,
+      "stem": "Kalimat berikut yang menggunakan kata dengan benar adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Adik minum susu setiap pagi."
+        },
+        {
+          "id": "B",
+          "text": "Adik minum-minum susu setiap pagi."
+        },
+        {
+          "id": "C",
+          "text": "Adik di minum susu setiap pagi."
+        },
+        {
+          "id": "D",
+          "text": "Adik meminumkan susu setiap pagi."
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Kalimat A menggunakan kata 'minum' dengan tepat. B menggunakan kata ulang tidak perlu, C penulisan 'di' dipisah padahal seharusnya digabung untuk kata kerja pasif, D 'meminumkan' berarti memberi minum pada orang lain.",
+      "tags": [
+        "kalimat-efektif"
+      ],
+      "source": "BC_UKBI_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SOSIAL"
+    },
+    {
+      "id": "BC-UKBI-SD-KAIDAH-TERBATAS-SET001-Q007",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SD",
+      "section": "merespons-kaidah",
+      "band": "TERBATAS",
+      "type": "pilihan_ganda",
+      "difficulty": 1,
+      "stem": "Kalimat yang menggunakan tanda titik (.) dengan benar adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Rina bermain di taman."
+        },
+        {
+          "id": "B",
+          "text": "Rina bermain di taman"
+        },
+        {
+          "id": "C",
+          "text": "Rina, bermain di taman."
+        },
+        {
+          "id": "D",
+          "text": "Rina bermain. di taman."
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Kalimat berita harus diakhiri dengan tanda titik. B tidak memiliki tanda titik, C memiliki koma tidak perlu, D tanda titik memotong kalimat.",
+      "tags": [
+        "tanda-baca"
+      ],
+      "source": "BC_UKBI_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-SD-KAIDAH-TERBATAS-SET001-Q008",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SD",
+      "section": "merespons-kaidah",
+      "band": "TERBATAS",
+      "type": "pilihan_ganda",
+      "difficulty": 1,
+      "stem": "Kata yang memiliki arti sama dengan 'indah' adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "jelek"
+        },
+        {
+          "id": "B",
+          "text": "buruk"
+        },
+        {
+          "id": "C",
+          "text": "cantik"
+        },
+        {
+          "id": "D",
+          "text": "besar"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "'Cantik' memiliki makna yang mirip dengan 'indah', yaitu sama-sama bermakna elok atau menarik.",
+      "tags": [
+        "sinonim"
+      ],
+      "source": "BC_UKBI_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-SD-KAIDAH-TERBATAS-SET001-Q009",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SD",
+      "section": "merespons-kaidah",
+      "band": "TERBATAS",
+      "type": "pilihan_ganda",
+      "difficulty": 1,
+      "stem": "Penulisan kata depan 'di' yang benar adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Rani bermain dirumah."
+        },
+        {
+          "id": "B",
+          "text": "Rani bermain di rumah."
+        },
+        {
+          "id": "C",
+          "text": "Dirumah Rani bermain."
+        },
+        {
+          "id": "D",
+          "text": "Rani dirumah bermain."
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Kata depan 'di' ditulis terpisah dari kata yang mengikutinya, yaitu 'di rumah'.",
+      "tags": [
+        "kata-depan"
+      ],
+      "source": "BC_UKBI_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-SD-KAIDAH-TERBATAS-SET001-Q010",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SD",
+      "section": "merespons-kaidah",
+      "band": "TERBATAS",
+      "type": "pilihan_ganda",
+      "difficulty": 1,
+      "stem": "Penggunaan kata depan 'ke' yang tepat dalam kalimat adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Adik pergi kesekolah."
+        },
+        {
+          "id": "B",
+          "text": "Adik pergi ke sekolah."
+        },
+        {
+          "id": "C",
+          "text": "Adik ke sekolah pergi."
+        },
+        {
+          "id": "D",
+          "text": "Sekolah adik pergi ke."
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Kata depan 'ke' ditulis terpisah dari kata yang mengikutinya. Susunan kalimat yang benar adalah SPK (subjek-predikat-keterangan).",
+      "tags": [
+        "kata-depan"
+      ],
+      "source": "BC_UKBI_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-SD-KAIDAH-MARGINAL-SET001-Q011",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SD",
+      "section": "merespons-kaidah",
+      "band": "MARGINAL",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "stem": "Penulisan kata yang benar sesuai ejaan adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "jadual"
+        },
+        {
+          "id": "B",
+          "text": "jadwal"
+        },
+        {
+          "id": "C",
+          "text": "djadwal"
+        },
+        {
+          "id": "D",
+          "text": "jadwaal"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Kata 'jadwal' ditulis dengan 'w', bukan 'u' atau 'dj'.",
+      "tags": [
+        "ejaan"
+      ],
+      "source": "BC_UKBI_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "MENGINGAT",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-SD-KAIDAH-MARGINAL-SET001-Q012",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SD",
+      "section": "merespons-kaidah",
+      "band": "MARGINAL",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "stem": "Kata berikut yang penulisannya benar adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "komplek"
+        },
+        {
+          "id": "B",
+          "text": "kompleks"
+        },
+        {
+          "id": "C",
+          "text": "komplék"
+        },
+        {
+          "id": "D",
+          "text": "kompleq"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Kata baku yang benar adalah 'kompleks' dengan akhiran 'ks'.",
+      "tags": [
+        "ejaan"
+      ],
+      "source": "BC_UKBI_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "MENGINGAT",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-SD-KAIDAH-MARGINAL-SET001-Q013",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SD",
+      "section": "merespons-kaidah",
+      "band": "MARGINAL",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "stem": "Penulisan kata serapan yang benar adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "pasian"
+        },
+        {
+          "id": "B",
+          "text": "pasien"
+        },
+        {
+          "id": "C",
+          "text": "pasen"
+        },
+        {
+          "id": "D",
+          "text": "patient"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Kata serapan dari 'patient' yang benar dalam bahasa Indonesia adalah 'pasien'.",
+      "tags": [
+        "ejaan"
+      ],
+      "source": "BC_UKBI_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "MENGINGAT",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-SD-KAIDAH-MARGINAL-SET001-Q014",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SD",
+      "section": "merespons-kaidah",
+      "band": "MARGINAL",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "stem": "Kata yang ditulis sesuai ejaan adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "telor"
+        },
+        {
+          "id": "B",
+          "text": "telur"
+        },
+        {
+          "id": "C",
+          "text": "télur"
+        },
+        {
+          "id": "D",
+          "text": "teloor"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Kata baku yang benar adalah 'telur', bukan 'telor'.",
+      "tags": [
+        "ejaan"
+      ],
+      "source": "BC_UKBI_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "MENGINGAT",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-SD-KAIDAH-MARGINAL-SET001-Q015",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SD",
+      "section": "merespons-kaidah",
+      "band": "MARGINAL",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "stem": "Bentuk baku dari kata 'ijin' adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "ijin"
+        },
+        {
+          "id": "B",
+          "text": "izin"
+        },
+        {
+          "id": "C",
+          "text": "idzin"
+        },
+        {
+          "id": "D",
+          "text": "izinkah"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Kata baku yang benar adalah 'izin' dengan huruf 'z', bukan 'ijin'.",
+      "tags": [
+        "kata-baku"
+      ],
+      "source": "BC_UKBI_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "MENGINGAT",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-SD-KAIDAH-MARGINAL-SET001-Q016",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SD",
+      "section": "merespons-kaidah",
+      "band": "MARGINAL",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "stem": "Kata baku yang benar untuk 'merubah' adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "merubah"
+        },
+        {
+          "id": "B",
+          "text": "mengubah"
+        },
+        {
+          "id": "C",
+          "text": "merobah"
+        },
+        {
+          "id": "D",
+          "text": "ngubah"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Kata baku yang benar adalah 'mengubah' dari kata dasar 'ubah', bukan 'rubah'.",
+      "tags": [
+        "kata-baku"
+      ],
+      "source": "BC_UKBI_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "MENGINGAT",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-SD-KAIDAH-MARGINAL-SET001-Q017",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SD",
+      "section": "merespons-kaidah",
+      "band": "MARGINAL",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "stem": "Penulisan kata baku yang tepat adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "obyek"
+        },
+        {
+          "id": "B",
+          "text": "objek"
+        },
+        {
+          "id": "C",
+          "text": "objec"
+        },
+        {
+          "id": "D",
+          "text": "obyeq"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Kata baku yang benar adalah 'objek', bukan 'obyek'.",
+      "tags": [
+        "kata-baku"
+      ],
+      "source": "BC_UKBI_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "MENGINGAT",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-SD-KAIDAH-MARGINAL-SET001-Q018",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SD",
+      "section": "merespons-kaidah",
+      "band": "MARGINAL",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "stem": "Kata baku yang benar untuk 'resiko' adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "resiko"
+        },
+        {
+          "id": "B",
+          "text": "risiko"
+        },
+        {
+          "id": "C",
+          "text": "resiqo"
+        },
+        {
+          "id": "D",
+          "text": "riskio"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Kata baku yang benar adalah 'risiko' dengan huruf 'i' pada suku kata pertama.",
+      "tags": [
+        "kata-baku"
+      ],
+      "source": "BC_UKBI_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "MENGINGAT",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-SD-KAIDAH-MARGINAL-SET001-Q019",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SD",
+      "section": "merespons-kaidah",
+      "band": "MARGINAL",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "stem": "Bentuk baku dari 'tehnik' adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "tehnik"
+        },
+        {
+          "id": "B",
+          "text": "teknik"
+        },
+        {
+          "id": "C",
+          "text": "ténik"
+        },
+        {
+          "id": "D",
+          "text": "teqnik"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Kata baku yang benar adalah 'teknik' dengan huruf 'k', bukan 'h'.",
+      "tags": [
+        "kata-baku"
+      ],
+      "source": "BC_UKBI_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "MENGINGAT",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-SD-KAIDAH-MARGINAL-SET001-Q020",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SD",
+      "section": "merespons-kaidah",
+      "band": "MARGINAL",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "stem": "Bentuk kata yang benar untuk 'sapu + me-' adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "menyapu"
+        },
+        {
+          "id": "B",
+          "text": "mengsapu"
+        },
+        {
+          "id": "C",
+          "text": "nyapu"
+        },
+        {
+          "id": "D",
+          "text": "manyapu"
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Awalan me- pada kata dasar 'sapu' berubah menjadi 'menyapu' karena huruf awal 's' luluh.",
+      "tags": [
+        "imbuhan"
+      ],
+      "source": "BC_UKBI_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-SD-KAIDAH-MARGINAL-SET001-Q021",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SD",
+      "section": "merespons-kaidah",
+      "band": "MARGINAL",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "stem": "Bentuk kata 'tulis + me-' yang benar adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "menulis"
+        },
+        {
+          "id": "B",
+          "text": "nulis"
+        },
+        {
+          "id": "C",
+          "text": "menulih"
+        },
+        {
+          "id": "D",
+          "text": "menuleh"
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Awalan me- pada kata dasar 'tulis' menjadi 'menulis' karena huruf awal 't' luluh.",
+      "tags": [
+        "imbuhan"
+      ],
+      "source": "BC_UKBI_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-SD-KAIDAH-MARGINAL-SET001-Q022",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SD",
+      "section": "merespons-kaidah",
+      "band": "MARGINAL",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "stem": "Kalimat yang menggunakan kata berimbuhan dengan benar adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Ibu memasak nasi di dapur."
+        },
+        {
+          "id": "B",
+          "text": "Ibu memasakan nasi di dapur."
+        },
+        {
+          "id": "C",
+          "text": "Ibu di masak nasi di dapur."
+        },
+        {
+          "id": "D",
+          "text": "Ibu nasi memasak di dapur."
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "'Memasak' adalah bentuk yang benar. 'Memasakan' berarti memasak untuk orang lain. 'Di masak' seharusnya ditulis 'dimasak' (pasif). D memiliki susunan kata kacau.",
+      "tags": [
+        "imbuhan"
+      ],
+      "source": "BC_UKBI_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PENERAPAN",
+      "domain": "SOSIAL"
+    },
+    {
+      "id": "BC-UKBI-SD-KAIDAH-MARGINAL-SET001-Q023",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SD",
+      "section": "merespons-kaidah",
+      "band": "MARGINAL",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "stem": "Kalimat efektif yang baik adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Ayah pergi ke kantor naik motor."
+        },
+        {
+          "id": "B",
+          "text": "Ayah pergi ke kantor dengan naik motor."
+        },
+        {
+          "id": "C",
+          "text": "Ayah pergi-pergi ke kantor naik motor."
+        },
+        {
+          "id": "D",
+          "text": "Ayah ke kantor pergi naik motor."
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Kalimat A efektif: subjek- predikat-keterangan yang jelas. B menggunakan 'dengan naik' berlebihan. C menggunakan kata ulang tidak perlu. D susunan kata kacau.",
+      "tags": [
+        "kalimat-efektif"
+      ],
+      "source": "BC_UKBI_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SOSIAL"
+    },
+    {
+      "id": "BC-UKBI-SD-KAIDAH-MARGINAL-SET001-Q024",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SD",
+      "section": "merespons-kaidah",
+      "band": "MARGINAL",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "stem": "Kalimat yang paling efektif dan benar adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Sari membaca buku di perpustakaan."
+        },
+        {
+          "id": "B",
+          "text": "Sari membaca buku-buku di perpustakaan."
+        },
+        {
+          "id": "C",
+          "text": "Sari membaca buku dan di perpustakaan."
+        },
+        {
+          "id": "D",
+          "text": "Sari membaca buku perpustakaan."
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Kalimat A efektif: subjek (Sari), predikat (membaca), objek (buku), keterangan (di perpustakaan). B menggunakan bentuk jamak tidak perlu. C penggunaan 'dan' salah. D kehilangan kata depan 'di'.",
+      "tags": [
+        "kalimat-efektif"
+      ],
+      "source": "BC_UKBI_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SOSIAL"
+    },
+    {
+      "id": "BC-UKBI-SD-KAIDAH-MARGINAL-SET001-Q025",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SD",
+      "section": "merespons-kaidah",
+      "band": "MARGINAL",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "stem": "Kalimat yang tidak menggunakan kata yang berlebihan adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Para siswa-siswa sedang belajar."
+        },
+        {
+          "id": "B",
+          "text": "Para siswa sedang belajar."
+        },
+        {
+          "id": "C",
+          "text": "Para siswa-siswa belajar."
+        },
+        {
+          "id": "D",
+          "text": "Para siswa-siswa semuanya belajar."
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "'Para' sudah berarti banyak, jadi 'siswa-siswa' (bentuk jamak) tidak perlu. B cukup menggunakan 'para siswa' atau 'siswa-siswa', tidak keduanya.",
+      "tags": [
+        "kalimat-efektif"
+      ],
+      "source": "BC_UKBI_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PENERAPAN",
+      "domain": "SOSIAL"
+    },
+    {
+      "id": "BC-UKBI-SD-KAIDAH-MARGINAL-SET001-Q026",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SD",
+      "section": "merespons-kaidah",
+      "band": "MARGINAL",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "stem": "Penggunaan tanda koma (,) yang benar dalam kalimat adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Ibu membeli, sayur, ikan, dan buah."
+        },
+        {
+          "id": "B",
+          "text": "Ibu membeli sayur, ikan, dan buah."
+        },
+        {
+          "id": "C",
+          "text": "Ibu membeli sayur ikan, dan buah."
+        },
+        {
+          "id": "D",
+          "text": "Ibu, membeli sayur, ikan, dan buah."
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Tanda koma digunakan untuk memisahkan tiga item atau lebih dalam suatu perincian. B menggunakan koma di antara 'sayur', 'ikan', dan sebelum 'dan buah'.",
+      "tags": [
+        "tanda-baca"
+      ],
+      "source": "BC_UKBI_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-SD-KAIDAH-MARGINAL-SET001-Q027",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SD",
+      "section": "merespons-kaidah",
+      "band": "MARGINAL",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "stem": "Kalimat tanya berikut yang menggunakan tanda baca dengan benar adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Siapa namamu."
+        },
+        {
+          "id": "B",
+          "text": "Siapa namamu?"
+        },
+        {
+          "id": "C",
+          "text": "Siapa namamu,"
+        },
+        {
+          "id": "D",
+          "text": "Siapa namamu!"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Kalimat tanya harus diakhiri dengan tanda tanya (?). A menggunakan titik, C menggunakan koma, D menggunakan tanda seru yang tidak tepat.",
+      "tags": [
+        "tanda-baca"
+      ],
+      "source": "BC_UKBI_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-SD-KAIDAH-MARGINAL-SET001-Q028",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SD",
+      "section": "merespons-kaidah",
+      "band": "MARGINAL",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "stem": "Sinonim yang tepat dari kata 'memperoleh' adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "membeli"
+        },
+        {
+          "id": "B",
+          "text": "mendapatkan"
+        },
+        {
+          "id": "C",
+          "text": "memberikan"
+        },
+        {
+          "id": "D",
+          "text": "melihat"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "'Memperoleh' dan 'mendapatkan' memiliki arti yang sama, yaitu menerima atau meraih sesuatu.",
+      "tags": [
+        "sinonim"
+      ],
+      "source": "BC_UKBI_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-SD-KAIDAH-MARGINAL-SET001-Q029",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SD",
+      "section": "merespons-kaidah",
+      "band": "MARGINAL",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "stem": "Lawan kata dari 'rajin' adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "tekun"
+        },
+        {
+          "id": "B",
+          "text": "giat"
+        },
+        {
+          "id": "C",
+          "text": "malas"
+        },
+        {
+          "id": "D",
+          "text": "pandai"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "'Rajin' berarti suka bekerja atau belajar dengan sungguh-sungguh. Lawannya adalah 'malas' yang berarti enggan bekerja atau belajar.",
+      "tags": [
+        "antonim"
+      ],
+      "source": "BC_UKBI_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-SD-KAIDAH-MARGINAL-SET001-Q030",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SD",
+      "section": "merespons-kaidah",
+      "band": "MARGINAL",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "stem": "Penulisan kata depan yang tepat dalam kalimat berikut adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Buku itu terletak diatas meja."
+        },
+        {
+          "id": "B",
+          "text": "Buku itu terletak di atas meja."
+        },
+        {
+          "id": "C",
+          "text": "Buku itu diatas terletak meja."
+        },
+        {
+          "id": "D",
+          "text": "Buku terletak itu di atas meja."
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Kata depan 'di' ditulis terpisah dari kata yang mengikutinya ('di atas'). C dan D memiliki susunan kalimat yang tidak tepat.",
+      "tags": [
+        "kata-depan"
+      ],
+      "source": "BC_UKBI_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PENERAPAN",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-SD-KAIDAH-SEMENJANA-SET001-Q031",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SD",
+      "section": "merespons-kaidah",
+      "band": "SEMENJANA",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "stem": "Kata yang penulisannya benar sesuai PUEBI adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "kwalitas"
+        },
+        {
+          "id": "B",
+          "text": "kualitas"
+        },
+        {
+          "id": "C",
+          "text": "kualitet"
+        },
+        {
+          "id": "D",
+          "text": "kwaltias"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Kata baku yang benar adalah 'kualitas' (dengan 'ku' bukan 'kwa').",
+      "tags": [
+        "ejaan"
+      ],
+      "source": "BC_UKBI_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "MENGINGAT",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-SD-KAIDAH-SEMENJANA-SET001-Q032",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SD",
+      "section": "merespons-kaidah",
+      "band": "SEMENJANA",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "stem": "Penulisan kata yang tepat adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "atlit"
+        },
+        {
+          "id": "B",
+          "text": "atlet"
+        },
+        {
+          "id": "C",
+          "text": "atleh"
+        },
+        {
+          "id": "D",
+          "text": "atlep"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Kata baku yang benar adalah 'atlet' dari bahasa Inggris 'athlete'.",
+      "tags": [
+        "ejaan"
+      ],
+      "source": "BC_UKBI_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "MENGINGAT",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-SD-KAIDAH-SEMENJANA-SET001-Q033",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SD",
+      "section": "merespons-kaidah",
+      "band": "SEMENJANA",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "stem": "Penulisan kata yang sesuai ejaan adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "ekstrim"
+        },
+        {
+          "id": "B",
+          "text": "ekstrem"
+        },
+        {
+          "id": "C",
+          "text": "extra"
+        },
+        {
+          "id": "D",
+          "text": "ekstremm"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Kata baku yang benar adalah 'ekstrem' dengan akhiran 'em', bukan 'im'.",
+      "tags": [
+        "ejaan"
+      ],
+      "source": "BC_UKBI_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "MENGINGAT",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-SD-KAIDAH-SEMENJANA-SET001-Q034",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SD",
+      "section": "merespons-kaidah",
+      "band": "SEMENJANA",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "stem": "Kata yang ditulis dengan benar adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "propinsi"
+        },
+        {
+          "id": "B",
+          "text": "provinsi"
+        },
+        {
+          "id": "C",
+          "text": "probinsi"
+        },
+        {
+          "id": "D",
+          "text": "propinsa"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Kata baku yang benar adalah 'provinsi', bukan 'propinsi'.",
+      "tags": [
+        "ejaan"
+      ],
+      "source": "BC_UKBI_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "MENGINGAT",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-SD-KAIDAH-SEMENJANA-SET001-Q035",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SD",
+      "section": "merespons-kaidah",
+      "band": "SEMENJANA",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "stem": "Penulisan gabungan kata yang benar adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "olah raga"
+        },
+        {
+          "id": "B",
+          "text": "olahraga"
+        },
+        {
+          "id": "C",
+          "text": "oleh raga"
+        },
+        {
+          "id": "D",
+          "text": "olahragga"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Gabungan kata 'olah' dan 'raga' sudah ditulis serangkai menjadi 'olahraga' sesuai KBBI.",
+      "tags": [
+        "ejaan"
+      ],
+      "source": "BC_UKBI_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-SD-KAIDAH-SEMENJANA-SET001-Q036",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SD",
+      "section": "merespons-kaidah",
+      "band": "SEMENJANA",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "stem": "Bentuk baku dari kata 'kwantitas' adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "kwantitas"
+        },
+        {
+          "id": "B",
+          "text": "kuantitas"
+        },
+        {
+          "id": "C",
+          "text": "kwantitet"
+        },
+        {
+          "id": "D",
+          "text": "kwentitas"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Kata baku yang benar adalah 'kuantitas' dengan 'ku', bukan 'kwa'.",
+      "tags": [
+        "kata-baku"
+      ],
+      "source": "BC_UKBI_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "MENGINGAT",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-SD-KAIDAH-SEMENJANA-SET001-Q037",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SD",
+      "section": "merespons-kaidah",
+      "band": "SEMENJANA",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "stem": "Kata baku yang benar untuk kata 'rubah' (berarti mengubah) adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "rubah"
+        },
+        {
+          "id": "B",
+          "text": "ubah"
+        },
+        {
+          "id": "C",
+          "text": "robah"
+        },
+        {
+          "id": "D",
+          "text": "ngubah"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "'Rubah' adalah nama hewan. Kata dasar yang benar untuk arti 'mengubah' adalah 'ubah'.",
+      "tags": [
+        "kata-baku"
+      ],
+      "source": "BC_UKBI_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-SD-KAIDAH-SEMENJANA-SET001-Q038",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SD",
+      "section": "merespons-kaidah",
+      "band": "SEMENJANA",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "stem": "Penulisan kata baku yang tepat adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "cinderamata"
+        },
+        {
+          "id": "B",
+          "text": "cendera mata"
+        },
+        {
+          "id": "C",
+          "text": "cenderamata"
+        },
+        {
+          "id": "D",
+          "text": "cindramata"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Kata baku yang benar adalah 'cendera mata' (dua kata). Yang lain adalah bentuk tidak baku.",
+      "tags": [
+        "kata-baku"
+      ],
+      "source": "BC_UKBI_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "MENGINGAT",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-SD-KAIDAH-SEMENJANA-SET001-Q039",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SD",
+      "section": "merespons-kaidah",
+      "band": "SEMENJANA",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "stem": "Kata berikut yang merupakan kata baku adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "ijasah"
+        },
+        {
+          "id": "B",
+          "text": "ijazah"
+        },
+        {
+          "id": "C",
+          "text": "jiazah"
+        },
+        {
+          "id": "D",
+          "text": "ijasat"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Kata baku yang benar adalah 'ijazah' menggunakan huruf 'z', bukan 's'.",
+      "tags": [
+        "kata-baku"
+      ],
+      "source": "BC_UKBI_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "MENGINGAT",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-SD-KAIDAH-SEMENJANA-SET001-Q040",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SD",
+      "section": "merespons-kaidah",
+      "band": "SEMENJANA",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "stem": "Kalimat yang menggunakan kata baku adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Kakak kuliah di fakultet hukum."
+        },
+        {
+          "id": "B",
+          "text": "Kakak kuliah di fakultas hukum."
+        },
+        {
+          "id": "C",
+          "text": "Kakak kuliah di fakultés hukum."
+        },
+        {
+          "id": "D",
+          "text": "Kakak kuliah di faculty hukum."
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Kata baku yang benar adalah 'fakultas', bukan 'fakultet', 'fakultés', atau 'faculty'.",
+      "tags": [
+        "kata-baku"
+      ],
+      "source": "BC_UKBI_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PENERAPAN",
+      "domain": "SOSIAL"
+    },
+    {
+      "id": "BC-UKBI-SD-KAIDAH-SEMENJANA-SET001-Q041",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SD",
+      "section": "merespons-kaidah",
+      "band": "SEMENJANA",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "stem": "Bentuk kata 'tolong + me-' yang benar adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "nolong"
+        },
+        {
+          "id": "B",
+          "text": "menolong"
+        },
+        {
+          "id": "C",
+          "text": "mentolong"
+        },
+        {
+          "id": "D",
+          "text": "menulung"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Awalan me- pada kata dasar 'tolong' menjadi 'menolong' karena huruf awal 't' luluh.",
+      "tags": [
+        "imbuhan"
+      ],
+      "source": "BC_UKBI_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-SD-KAIDAH-SEMENJANA-SET001-Q042",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SD",
+      "section": "merespons-kaidah",
+      "band": "SEMENJANA",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "stem": "Kata berimbuhan yang tepat untuk melengkapi kalimat 'Ayah sedang ... bunga di taman.' adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "tanam"
+        },
+        {
+          "id": "B",
+          "text": "menanam"
+        },
+        {
+          "id": "C",
+          "text": "ditanam"
+        },
+        {
+          "id": "D",
+          "text": "menanami"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Subjek 'Ayah' melakukan aksi aktif, sehingga menggunakan awalan me- ('menanam'). 'Ditanam' adalah pasif, 'menanami' berarti menanam pada suatu tempat.",
+      "tags": [
+        "imbuhan"
+      ],
+      "source": "BC_UKBI_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PENERAPAN",
+      "domain": "SOSIAL"
+    },
+    {
+      "id": "BC-UKBI-SD-KAIDAH-SEMENJANA-SET001-Q043",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SD",
+      "section": "merespons-kaidah",
+      "band": "SEMENJANA",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "stem": "Bentuk kata 'berlari' berasal dari kata dasar ... ditambah imbuhan.",
+      "options": [
+        {
+          "id": "A",
+          "text": "lari + ber-"
+        },
+        {
+          "id": "B",
+          "text": "lar + ber-"
+        },
+        {
+          "id": "C",
+          "text": "lari + me-"
+        },
+        {
+          "id": "D",
+          "text": "lari + ter-"
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "'Berlari' berasal dari kata dasar 'lari' yang diberi awalan ber-. Awalan ber- tidak berubah bentuk karena kata dasar 'lari' diawali huruf 'l'.",
+      "tags": [
+        "imbuhan"
+      ],
+      "source": "BC_UKBI_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-SD-KAIDAH-SEMENJANA-SET001-Q044",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SD",
+      "section": "merespons-kaidah",
+      "band": "SEMENJANA",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "stem": "Perbaikan kalimat 'Para siswa-siswa sedang berolahraga di lapangan' yang benar adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Para siswa sedang berolahraga di lapangan."
+        },
+        {
+          "id": "B",
+          "text": "Siswa-siswa sedang berolahraga di lapangan."
+        },
+        {
+          "id": "C",
+          "text": "Para para siswa sedang berolahraga di lapangan."
+        },
+        {
+          "id": "D",
+          "text": "Siswa-siswa para sedang berolahraga di lapangan."
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "'Para' sudah menunjukkan banyak, jadi tidak perlu 'siswa-siswa'. Cukup 'para siswa' saja. B juga bisa diterima, tetapi A lebih ringkas dan tidak menggunakan bentuk ulang pada 'siswa' dan 'berolahraga' sekaligus.",
+      "tags": [
+        "kalimat-efektif"
+      ],
+      "source": "BC_UKBI_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PENERAPAN",
+      "domain": "SOSIAL"
+    },
+    {
+      "id": "BC-UKBI-SD-KAIDAH-SEMENJANA-SET001-Q045",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SD",
+      "section": "merespons-kaidah",
+      "band": "SEMENJANA",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "stem": "Kalimat yang paling efektif adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Karena hujan turun, maka Budi tidak jadi berangkat."
+        },
+        {
+          "id": "B",
+          "text": "Disebabkan karena hujan turun, Budi tidak jadi berangkat."
+        },
+        {
+          "id": "C",
+          "text": "Karena hujan turun, Budi tidak jadi berangkat."
+        },
+        {
+          "id": "D",
+          "text": "Hujan turun maka Budi tidak jadi berangkat."
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "Kalimat C efektif: menggunakan satu konjungsi 'karena' saja. A menggunakan 'karena... maka' (ganda). B menggunakan 'disebabkan karena' (mubazir). D tidak menggunakan konjungsi 'karena' sehingga hubungan kausal kurang jelas.",
+      "tags": [
+        "kalimat-efektif"
+      ],
+      "source": "BC_UKBI_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PENERAPAN",
+      "domain": "SOSIAL"
+    },
+    {
+      "id": "BC-UKBI-SD-KAIDAH-SEMENJANA-SET001-Q046",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SD",
+      "section": "merespons-kaidah",
+      "band": "SEMENJANA",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "stem": "Kalimat berikut yang tidak mengandung pemborosan kata adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Demi untuk kepentingan bersama, kita harus bersatu."
+        },
+        {
+          "id": "B",
+          "text": "Demi kepentingan bersama, kita harus bersatu."
+        },
+        {
+          "id": "C",
+          "text": "Demi untuk bersama-sama, kita harus bersatu."
+        },
+        {
+          "id": "D",
+          "text": "Untuk demi kepentingan, kita harus bersatu."
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Kalimat B efektif: 'demi' sudah cukup tanpa perlu 'untuk'. A dan C menggunakan kata ganda ('demi untuk', 'bersama-sama' dengan 'demi'). D susunan tidak baku.",
+      "tags": [
+        "kalimat-efektif"
+      ],
+      "source": "BC_UKBI_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PENERAPAN",
+      "domain": "SOSIAL"
+    },
+    {
+      "id": "BC-UKBI-SD-KAIDAH-SEMENJANA-SET001-Q047",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SD",
+      "section": "merespons-kaidah",
+      "band": "SEMENJANA",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "stem": "Kalimat yang menggunakan tanda petik (\"...\") dengan benar adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Rina berkata \"Aku suka membaca\"."
+        },
+        {
+          "id": "B",
+          "text": "Rina berkata, \"Aku suka membaca.\""
+        },
+        {
+          "id": "C",
+          "text": "Rina berkata ,\"Aku suka membaca.\""
+        },
+        {
+          "id": "D",
+          "text": "Rina berkata \"Aku suka membaca\""
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Kalimat langsung yang benar: ada koma sebelum tanda petik pembuka, kata dalam tanda petik diawali huruf kapital, dan diakhiri titik di dalam tanda petik.",
+      "tags": [
+        "tanda-baca"
+      ],
+      "source": "BC_UKBI_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PENERAPAN",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-SD-KAIDAH-SEMENJANA-SET001-Q048",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SD",
+      "section": "merespons-kaidah",
+      "band": "SEMENJANA",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "stem": "Penulisan judul karangan yang benar adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Pemandangan di desa sangatlah indah."
+        },
+        {
+          "id": "B",
+          "text": "Keindahan Alam Indonesia sungguh mempesona."
+        },
+        {
+          "id": "C",
+          "text": "Ibu memasak sayur di dapur."
+        },
+        {
+          "id": "D",
+          "text": "Ayah membaca koran setiap pagi."
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Judul ditulis dengan huruf kapital di awal setiap kata utama (kata tugas seperti 'di', 'ke', 'dan' tidak kapital jika bukan kata pertama). 'Keindahan', 'Alam', 'Indonesia' semuanya kata utama.",
+      "tags": [
+        "tanda-baca"
+      ],
+      "source": "BC_UKBI_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-SD-KAIDAH-SEMENJANA-SET001-Q049",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SD",
+      "section": "merespons-kaidah",
+      "band": "SEMENJANA",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "stem": "Kata ulang berikut yang menggunakan tanda hubung (-) dengan benar adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "anak-anak"
+        },
+        {
+          "id": "B",
+          "text": "anak2"
+        },
+        {
+          "id": "C",
+          "text": "anakanak"
+        },
+        {
+          "id": "D",
+          "text": "anak - anak"
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Kata ulang ditulis dengan tanda hubung (-) di antara unsur yang diulang, yaitu 'anak-anak'.",
+      "tags": [
+        "tanda-baca"
+      ],
+      "source": "BC_UKBI_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-SD-KAIDAH-SEMENJANA-SET001-Q050",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SD",
+      "section": "merespons-kaidah",
+      "band": "SEMENJANA",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "stem": "Penulisan alamat yang benar sesuai ejaan adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Toko itu beralamat di Jalan Merdeka No. 10."
+        },
+        {
+          "id": "B",
+          "text": "Toko itu beralamat di jln. Merdeka No. 10."
+        },
+        {
+          "id": "C",
+          "text": "Toko itu beralamat di Jl. Merdeka nomor sepuluh."
+        },
+        {
+          "id": "D",
+          "text": "Alamat toko itu di Merdeka nomor 10."
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Penulisan nama jalan yang benar adalah \"Jalan Merdeka No. 10\" dengan huruf kapital.",
+      "tags": [
+        "tanda-baca"
+      ],
+      "source": "BC_UKBI_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PENERAPAN",
+      "domain": "SOSIAL"
+    },
+    {
+      "id": "BC-UKBI-SD-KAIDAH-SEMENJANA-SET001-Q051",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SD",
+      "section": "merespons-kaidah",
+      "band": "SEMENJANA",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "stem": "Kalimat perintah seperti 'Ayo, cepat selesaikan tugasmu' sebaiknya diakhiri dengan tanda ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "tanda seru (!)"
+        },
+        {
+          "id": "B",
+          "text": "tanda tanya (?)"
+        },
+        {
+          "id": "C",
+          "text": "tanda koma (,)"
+        },
+        {
+          "id": "D",
+          "text": "tanda titik (.)"
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Kalimat perintah yang bersifat ajakan atau instruksi sebaiknya diakhiri dengan tanda seru (!) untuk menunjukkan intonasi perintah.",
+      "tags": [
+        "tanda-baca"
+      ],
+      "source": "BC_UKBI_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-SD-KAIDAH-SEMENJANA-SET001-Q052",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SD",
+      "section": "merespons-kaidah",
+      "band": "SEMENJANA",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "stem": "Sinonim yang tepat dari kata 'gembira' adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "sedih"
+        },
+        {
+          "id": "B",
+          "text": "marah"
+        },
+        {
+          "id": "C",
+          "text": "senang"
+        },
+        {
+          "id": "D",
+          "text": "bosan"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "'Gembira' berarti perasaan senang atau bahagia. Sinonimnya adalah 'senang'.",
+      "tags": [
+        "sinonim"
+      ],
+      "source": "BC_UKBI_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-SD-KAIDAH-SEMENJANA-SET001-Q053",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SD",
+      "section": "merespons-kaidah",
+      "band": "SEMENJANA",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "stem": "Lawan kata dari 'berani' adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "pemberani"
+        },
+        {
+          "id": "B",
+          "text": "penakut"
+        },
+        {
+          "id": "C",
+          "text": "sombong"
+        },
+        {
+          "id": "D",
+          "text": "kuat"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "'Berani' berarti tidak takut. Lawannya adalah 'penakut' yang berarti mudah merasa takut.",
+      "tags": [
+        "antonim"
+      ],
+      "source": "BC_UKBI_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-SD-KAIDAH-SEMENJANA-SET001-Q054",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SD",
+      "section": "merespons-kaidah",
+      "band": "SEMENJANA",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "stem": "Penggunaan kata depan 'dari' yang benar adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Doni berasal dari Jawa Tengah."
+        },
+        {
+          "id": "B",
+          "text": "Doni berasal dari Jawa Tengah"
+        },
+        {
+          "id": "C",
+          "text": "Doni berasal dar i Jawa Tengah."
+        },
+        {
+          "id": "D",
+          "text": "Doni berasal darimana Jawa Tengah."
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Kata depan 'dari' ditulis terpisah dari kata yang mengikutinya. Kalimat harus diakhiri tanda titik.",
+      "tags": [
+        "kata-depan"
+      ],
+      "source": "BC_UKBI_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PENERAPAN",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-SD-KAIDAH-SEMENJANA-SET001-Q055",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SD",
+      "section": "merespons-kaidah",
+      "band": "SEMENJANA",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "stem": "Penulisan kata depan 'di' dan 'ke' yang benar dalam satu kalimat adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Ibu pergi kepasar lalu pulang kerumah."
+        },
+        {
+          "id": "B",
+          "text": "Ibu pergi ke pasar lalu pulang ke rumah."
+        },
+        {
+          "id": "C",
+          "text": "Ibu pergi ke pasar lalu pulang kerumah."
+        },
+        {
+          "id": "D",
+          "text": "Ibu pergi kepasar lalu pulang ke rumah."
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Kata depan 'ke' harus ditulis terpisah dari kata yang mengikutinya, baik 'ke pasar' maupun 'ke rumah'. Hanya B yang benar semua.",
+      "tags": [
+        "kata-depan"
+      ],
+      "source": "BC_UKBI_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PENERAPAN",
+      "domain": "SOSIAL"
+    },
+    {
+      "id": "BC-UKBI-SD-KAIDAH-MADYA-SET001-Q056",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SD",
+      "section": "merespons-kaidah",
+      "band": "MADYA",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "stem": "Penulisan kata yang tepat sesuai PUEBI adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "kongkrit"
+        },
+        {
+          "id": "B",
+          "text": "konkret"
+        },
+        {
+          "id": "C",
+          "text": "konkrit"
+        },
+        {
+          "id": "D",
+          "text": "kongkret"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Kata baku yang benar adalah 'konkret' (dengan 'n' bukan 'ng' dan akhiran 'et').",
+      "tags": [
+        "ejaan"
+      ],
+      "source": "BC_UKBI_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "MENGINGAT",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-SD-KAIDAH-MADYA-SET001-Q057",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SD",
+      "section": "merespons-kaidah",
+      "band": "MADYA",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "stem": "Penulisan kata serapan yang benar adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "diproklamirkan"
+        },
+        {
+          "id": "B",
+          "text": "diproklamasikan"
+        },
+        {
+          "id": "C",
+          "text": "memproklamirkan"
+        },
+        {
+          "id": "D",
+          "text": "mengproklamasikan"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Bentuk pasif yang benar dari 'memproklamasikan' adalah 'diproklamasikan'. 'Meng-' + 'proklamasi' menjadi 'memproklamasikan', sehingga pasifnya 'diproklamasikan'.",
+      "tags": [
+        "ejaan"
+      ],
+      "source": "BC_UKBI_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PENERAPAN",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-SD-KAIDAH-MADYA-SET001-Q058",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SD",
+      "section": "merespons-kaidah",
+      "band": "MADYA",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "stem": "Penulisan kata yang benar adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "analisa"
+        },
+        {
+          "id": "B",
+          "text": "analisis"
+        },
+        {
+          "id": "C",
+          "text": "analis"
+        },
+        {
+          "id": "D",
+          "text": "annalisis"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Kata baku yang benar adalah 'analisis' (berakhiran 'sis'). 'Analisa' dan 'analis' bukan bentuk baku.",
+      "tags": [
+        "ejaan"
+      ],
+      "source": "BC_UKBI_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "MENGINGAT",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-SD-KAIDAH-MADYA-SET001-Q059",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SD",
+      "section": "merespons-kaidah",
+      "band": "MADYA",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "stem": "Bentuk pasif yang benar dari kalimat 'Dia menulis surat' adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Surat ditulis oleh dia."
+        },
+        {
+          "id": "B",
+          "text": "Surat di tulis oleh dia."
+        },
+        {
+          "id": "C",
+          "text": "Surat menulis oleh dia."
+        },
+        {
+          "id": "D",
+          "text": "Surat dituliskan oleh dia."
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Bentuk pasif yang benar: 'Surat ditulis oleh dia.' Awalan di- ditulis serangkai (bukan 'di tulis' terpisah). 'Dituliskan' berarti 'menulis untuk orang lain', bukan pasif yang setara.",
+      "tags": [
+        "ejaan"
+      ],
+      "source": "BC_UKBI_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PENERAPAN",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-SD-KAIDAH-MADYA-SET001-Q060",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SD",
+      "section": "merespons-kaidah",
+      "band": "MADYA",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "stem": "Kata baku untuk menggantikan kata 'mangkok' adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "mangkok"
+        },
+        {
+          "id": "B",
+          "text": "mangkuk"
+        },
+        {
+          "id": "C",
+          "text": "mangkog"
+        },
+        {
+          "id": "D",
+          "text": "mangkut"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Kata baku yang benar adalah 'mangkuk' dengan huruf 'u', bukan 'o'.",
+      "tags": [
+        "kata-baku"
+      ],
+      "source": "BC_UKBI_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "MENGINGAT",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-SD-KAIDAH-MADYA-SET001-Q061",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SD",
+      "section": "merespons-kaidah",
+      "band": "MADYA",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "stem": "Bentuk baku yang benar dari 'menterjemahkan' adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "menterjemahkan"
+        },
+        {
+          "id": "B",
+          "text": "menerjemahkan"
+        },
+        {
+          "id": "C",
+          "text": "mentranslasikan"
+        },
+        {
+          "id": "D",
+          "text": "menyalin"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Kata baku yang benar adalah 'menerjemahkan' dari kata dasar 'terjemah' + me- + -kan. Huruf 't' pada 'terjemah' luluh menjadi 'n'.",
+      "tags": [
+        "kata-baku"
+      ],
+      "source": "BC_UKBI_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-SD-KAIDAH-MADYA-SET001-Q062",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SD",
+      "section": "merespons-kaidah",
+      "band": "MADYA",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "stem": "Kalimat yang seluruhnya menggunakan kata baku adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Motor itu parkir di halaman rumah."
+        },
+        {
+          "id": "B",
+          "text": "Motor itu parkir dihalaman rumah."
+        },
+        {
+          "id": "C",
+          "text": "Motorku parkir di halaman rumah."
+        },
+        {
+          "id": "D",
+          "text": "Motor itu di parkir di halaman rumah."
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Kalimat A menggunakan kata baku: 'motor', 'parkir', 'di halaman', 'rumah'. B salah karena 'dihalaman' seharusnya 'di halaman'. C 'motorku' kurang baku (sebaiknya 'motor saya'). D 'di parkir' seharusnya 'diparkir' (pasif).",
+      "tags": [
+        "kata-baku"
+      ],
+      "source": "BC_UKBI_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PENERAPAN",
+      "domain": "SOSIAL"
+    },
+    {
+      "id": "BC-UKBI-SD-KAIDAH-MADYA-SET001-Q063",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SD",
+      "section": "merespons-kaidah",
+      "band": "MADYA",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "stem": "Kata berimbuhan yang tepat untuk melengkapi 'Petani sedang ... padi di sawah.' adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "menanam"
+        },
+        {
+          "id": "B",
+          "text": "ditanam"
+        },
+        {
+          "id": "C",
+          "text": "tanaman"
+        },
+        {
+          "id": "D",
+          "text": "bertanam"
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "'Petani' sebagai subjek melakukan aksi aktif menanam padi. 'Menanam' adalah bentuk yang tepat. 'Bertanam' lebih mengarah pada kegiatan berkebun secara umum, sedangkan 'menanam padi' lebih spesifik.",
+      "tags": [
+        "imbuhan"
+      ],
+      "source": "BC_UKBI_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PENERAPAN",
+      "domain": "SOSIAL"
+    },
+    {
+      "id": "BC-UKBI-SD-KAIDAH-MADYA-SET001-Q064",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SD",
+      "section": "merespons-kaidah",
+      "band": "MADYA",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "stem": "Kata berimbuhan 'memper-' yang tepat untuk kata dasar 'indah' adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "memperindah"
+        },
+        {
+          "id": "B",
+          "text": "memindah"
+        },
+        {
+          "id": "C",
+          "text": "memerindah"
+        },
+        {
+          "id": "D",
+          "text": "mengindah"
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Awalan 'memper-' pada kata 'indah' menjadi 'memperindah' (tidak berubah karena 'indah' diawali vokal). 'Memindah' berasal dari 'pindah', 'mengindah' tidak baku.",
+      "tags": [
+        "imbuhan"
+      ],
+      "source": "BC_UKBI_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PENERAPAN",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-SD-KAIDAH-MADYA-SET001-Q065",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SD",
+      "section": "merespons-kaidah",
+      "band": "MADYA",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "stem": "Kalimat yang menggunakan awalan 'ber-' dengan benar adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Adik belari di lapangan sekolah."
+        },
+        {
+          "id": "B",
+          "text": "Adik berlari di lapangan sekolah."
+        },
+        {
+          "id": "C",
+          "text": "Adik ber lari di lapangan sekolah."
+        },
+        {
+          "id": "D",
+          "text": "Adik berlaris di lapangan sekolah."
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Awalan 'ber-' pada 'lari' menjadi 'berlari' (tetap karena 'l' bukan konsonan yang meluluhkan 'ber-'). 'Belari' salah (seharusnya 'berlari'). 'Ber lari' dipisah salah. 'Berlaris' bukan kata yang benar.",
+      "tags": [
+        "imbuhan"
+      ],
+      "source": "BC_UKBI_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PENERAPAN",
+      "domain": "SOSIAL"
+    },
+    {
+      "id": "BC-UKBI-SD-KAIDAH-MADYA-SET001-Q066",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SD",
+      "section": "merespons-kaidah",
+      "band": "MADYA",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "stem": "Kalimat yang efektif adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Semua siswa-siswa diharap hadir tepat waktu."
+        },
+        {
+          "id": "B",
+          "text": "Semua siswa diharap hadir tepat waktu."
+        },
+        {
+          "id": "C",
+          "text": "Para semua siswa diharap hadir tepat waktu."
+        },
+        {
+          "id": "D",
+          "text": "Seluruh siswa-siswa diharap hadir tepat waktu."
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "'Semua' sudah berarti banyak, jadi tidak perlu 'siswa-siswa'. C menggunakan 'para' dan 'semua' sekaligus (ganda). D menggunakan 'seluruh' dan 'siswa-siswa' (ganda).",
+      "tags": [
+        "kalimat-efektif"
+      ],
+      "source": "BC_UKBI_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PENERAPAN",
+      "domain": "SOSIAL"
+    },
+    {
+      "id": "BC-UKBI-SD-KAIDAH-MADYA-SET001-Q067",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SD",
+      "section": "merespons-kaidah",
+      "band": "MADYA",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "stem": "Kalimat 'Walaupun hujan turun, tetapi Budi tetap berangkat sekolah' tidak efektif karena ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "menggunakan kata 'walaupun' dan 'tetapi' sekaligus"
+        },
+        {
+          "id": "B",
+          "text": "subjek kalimat tidak jelas"
+        },
+        {
+          "id": "C",
+          "text": "predikat kalimat tidak lengkap"
+        },
+        {
+          "id": "D",
+          "text": "tidak memiliki objek"
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Dalam satu kalimat, cukup gunakan satu konjungsi pertentangan, 'walaupun' atau 'tetapi', tidak keduanya. Perbaikannya: 'Walaupun hujan turun, Budi tetap berangkat sekolah.'",
+      "tags": [
+        "kalimat-efektif"
+      ],
+      "source": "BC_UKBI_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PENERAPAN",
+      "domain": "SOSIAL"
+    },
+    {
+      "id": "BC-UKBI-SD-KAIDAH-MADYA-SET001-Q068",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SD",
+      "section": "merespons-kaidah",
+      "band": "MADYA",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "stem": "Kalimat 'Rudi dan Andi, mereka bermain sepak bola' tidak efektif karena ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "menggunakan kata 'dan'"
+        },
+        {
+          "id": "B",
+          "text": "subjek diulang (Rudi dan Andi = mereka)"
+        },
+        {
+          "id": "C",
+          "text": "predikat tidak lengkap"
+        },
+        {
+          "id": "D",
+          "text": "objek tidak jelas"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Subjek 'Rudi dan Andi' diulang dengan kata 'mereka' (subjek ganda). Perbaikannya: 'Rudi dan Andi bermain sepak bola' atau 'Mereka bermain sepak bola'.",
+      "tags": [
+        "kalimat-efektif"
+      ],
+      "source": "BC_UKBI_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PENERAPAN",
+      "domain": "SOSIAL"
+    },
+    {
+      "id": "BC-UKBI-SD-KAIDAH-MADYA-SET001-Q069",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SD",
+      "section": "merespons-kaidah",
+      "band": "MADYA",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "stem": "Penulisan kalimat langsung yang benar adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Ibu berkata \"Jangan lupa sholat.\""
+        },
+        {
+          "id": "B",
+          "text": "Ibu berkata, \"Jangan lupa sholat.\""
+        },
+        {
+          "id": "C",
+          "text": "Ibu berkata, \"Jangan lupa sholat\"."
+        },
+        {
+          "id": "D",
+          "text": "Ibu berkata \"Jangan lupa sholat\"."
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Kalimat langsung yang benar: ada tanda koma sebelum tanda petik pembuka, huruf kapital di awal kutipan, tanda titik di dalam tanda petik penutup.",
+      "tags": [
+        "tanda-baca"
+      ],
+      "source": "BC_UKBI_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PENERAPAN",
+      "domain": "SOSIAL"
+    },
+    {
+      "id": "BC-UKBI-SD-KAIDAH-MADYA-SET001-Q070",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SD",
+      "section": "merespons-kaidah",
+      "band": "MADYA",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "stem": "Penulisan kata ulang dengan tanda hubung yang benar adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "sayur-mayur, buah-buahan, dan lauk-pauk"
+        },
+        {
+          "id": "B",
+          "text": "sayur mayur, buah buahan, dan lauk pauk"
+        },
+        {
+          "id": "C",
+          "text": "sayurmayur, buahbuahan, dan laukpauk"
+        },
+        {
+          "id": "D",
+          "text": "sayur - mayur, buah - buahan, dan lauk - pauk"
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Kata ulang berubah bunyi (sayur-mayur, lauk-pauk) dan kata ulang biasa (buah-buahan) ditulis dengan tanda hubung (-) tanpa spasi di antara unsur-unsurnya.",
+      "tags": [
+        "tanda-baca"
+      ],
+      "source": "BC_UKBI_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PENERAPAN",
+      "domain": "SINTAS"
+    }
+  ]
+}

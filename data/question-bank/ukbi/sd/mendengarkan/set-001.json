@@ -1,0 +1,1579 @@
+{
+  "meta": {
+    "product": "UKBI_PRACTICE",
+    "track": "UKBI_SD",
+    "section": "mendengarkan",
+    "set": "set-001",
+    "totalItems": 40,
+    "source": "BC_UKBI_SD_ORIGINAL"
+  },
+  "questions": [
+    {
+      "id": "BC-UKBI-SD-MENDENGARKAN-TERBATAS-SET001-Q001",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SD",
+      "section": "mendengarkan",
+      "band": "TERBATAS",
+      "type": "pilihan_ganda",
+      "difficulty": 1,
+      "audioScript": "Ibu: \"Rini, tolong belikan gula di warung ya.\" Rini: \"Baik, Bu. Ada pesanan lain?\" Ibu: \"Belikan juga minyak goreng.\" Rini: \"Siap, Bu. Saya berangkat sekarang.\"",
+      "audioRef": null,
+      "stem": "Apa yang diminta ibu untuk dibelikan oleh Rini?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Gula dan garam"
+        },
+        {
+          "id": "B",
+          "text": "Gula dan minyak goreng"
+        },
+        {
+          "id": "C",
+          "text": "Minyak goreng dan beras"
+        },
+        {
+          "id": "D",
+          "text": "Telur dan gula"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Ibu meminta Rini membeli gula dan minyak goreng, bukan garam, beras, atau telur.",
+      "tags": [
+        "informasi-tersurat"
+      ],
+      "source": "BC_UKBI_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-SD-MENDENGARKAN-TERBATAS-SET001-Q002",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SD",
+      "section": "mendengarkan",
+      "band": "TERBATAS",
+      "type": "pilihan_ganda",
+      "difficulty": 1,
+      "audioScript": "Pak Guru: \"Anak-anak, besok kita akan belajar di luar kelas. Bawalah buku tulis dan pensil masing-masing.\" Siska: \"Apakah boleh membawa makanan, Pak?\" Pak Guru: \"Boleh, asal tidak mengganggu pelajaran.\"",
+      "audioRef": null,
+      "stem": "Di mana mereka akan belajar besok?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Di perpustakaan"
+        },
+        {
+          "id": "B",
+          "text": "Di luar kelas"
+        },
+        {
+          "id": "C",
+          "text": "Di kantin"
+        },
+        {
+          "id": "D",
+          "text": "Di laboratorium"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Pak Guru berkata 'besok kita akan belajar di luar kelas', jadi jawabannya di luar kelas.",
+      "tags": [
+        "informasi-tersurat"
+      ],
+      "source": "BC_UKBI_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-SD-MENDENGARKAN-TERBATAS-SET001-Q003",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SD",
+      "section": "mendengarkan",
+      "band": "TERBATAS",
+      "type": "pilihan_ganda",
+      "difficulty": 1,
+      "audioScript": "Doni: \"Hai, Rina. Mengapa kamu terlihat sedih?\" Rina: \"Kucingku hilang sejak kemarin. Aku sudah mencarinya ke mana-mana.\" Doni: \"Semoga cepat ditemukan, ya.\"",
+      "audioRef": null,
+      "stem": "Mengapa Rina bersedih?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Kucingnya sakit"
+        },
+        {
+          "id": "B",
+          "text": "Kucingnya hilang"
+        },
+        {
+          "id": "C",
+          "text": "Kucingnya dimarahi ibu"
+        },
+        {
+          "id": "D",
+          "text": "Kucingnya tidak mau makan"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Rina berkata 'Kucingku hilang sejak kemarin', itu sebabnya dia sedih.",
+      "tags": [
+        "informasi-tersurat"
+      ],
+      "source": "BC_UKBI_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-SD-MENDENGARKAN-TERBATAS-SET001-Q004",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SD",
+      "section": "mendengarkan",
+      "band": "TERBATAS",
+      "type": "pilihan_ganda",
+      "difficulty": 1,
+      "audioScript": "Bu Rita: \"Dita, tolong matikan kran air di kamar mandi! Airnya sudah penuh.\" Dita: \"Baik, Bu. Saya matikan sekarang.\" Bu Rita: \"Cepat, nanti airnya tumpah ke lantai.\"",
+      "audioRef": null,
+      "stem": "Mengapa Bu Rita menyuruh Dita mematikan kran?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Karena airnya sudah penuh"
+        },
+        {
+          "id": "B",
+          "text": "Karena airnya dingin"
+        },
+        {
+          "id": "C",
+          "text": "Karena kran rusak"
+        },
+        {
+          "id": "D",
+          "text": "Karena Dita mau mandi"
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Bu Rita berkata 'Airnya sudah penuh', jadi kran harus dimatikan agar air tidak tumpah.",
+      "tags": [
+        "informasi-tersurat"
+      ],
+      "source": "BC_UKBI_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-SD-MENDENGARKAN-TERBATAS-SET001-Q005",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SD",
+      "section": "mendengarkan",
+      "band": "TERBATAS",
+      "type": "pilihan_ganda",
+      "difficulty": 1,
+      "audioScript": "Ani: \"Wah, bajumu bagus sekali, Dewi! Baru, ya?\" Dewi: \"Iya, ini hadiah ulang tahun dari ibuku minggu lalu.\" Ani: \"Cocok sekali warnanya dengan kulitmu.\"",
+      "audioRef": null,
+      "stem": "Dari mana Dewi mendapatkan baju baru?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Dibeli di pasar"
+        },
+        {
+          "id": "B",
+          "text": "Hadiah ulang tahun dari ibu"
+        },
+        {
+          "id": "C",
+          "text": "Dipinjam dari kakak"
+        },
+        {
+          "id": "D",
+          "text": "Dibuat sendiri oleh Dewi"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Dewi berkata 'ini hadiah ulang tahun dari ibuku', jadi bajunya adalah hadiah ulang tahun.",
+      "tags": [
+        "informasi-tersurat"
+      ],
+      "source": "BC_UKBI_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SOSIAL"
+    },
+    {
+      "id": "BC-UKBI-SD-MENDENGARKAN-TERBATAS-SET001-Q006",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SD",
+      "section": "mendengarkan",
+      "band": "TERBATAS",
+      "type": "pilihan_ganda",
+      "difficulty": 1,
+      "audioScript": "Rudi: \"Aku haus sekali setelah bermain sepak bola.\" Adi: \"Ayo, kita beli es teh di kantin.\" Rudi: \"Tapi uangku hanya cukup untuk membeli air putih.\" Adi: \"Aku traktir kamu es teh, deh.\"",
+      "audioRef": null,
+      "stem": "Apa yang dilakukan Adi untuk membantu Rudi?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Meminjamkan uang kepada Rudi"
+        },
+        {
+          "id": "B",
+          "text": "Membelikan Rudi es teh"
+        },
+        {
+          "id": "C",
+          "text": "Mengantar Rudi ke kantin"
+        },
+        {
+          "id": "D",
+          "text": "Memberi Rudi air putih"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Adi berkata 'Aku traktir kamu es teh', artinya Adi yang akan membayarkan es teh untuk Rudi.",
+      "tags": [
+        "informasi-tersurat"
+      ],
+      "source": "BC_UKBI_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SOSIAL"
+    },
+    {
+      "id": "BC-UKBI-SD-MENDENGARKAN-TERBATAS-SET001-Q007",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SD",
+      "section": "mendengarkan",
+      "band": "TERBATAS",
+      "type": "pilihan_ganda",
+      "difficulty": 1,
+      "audioScript": "Pengumuman: \"Diberitahukan kepada seluruh siswa kelas 4, 5, dan 6, bahwa lomba kebersihan kelas akan diadakan pada hari Jumat, 15 Maret. Setiap kelas diminta membersihkan dan menghias kelas masing-masing. Kelas terbersih akan mendapat hadiah.\"",
+      "audioRef": null,
+      "stem": "Kapan lomba kebersihan akan diadakan?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Senin, 12 Maret"
+        },
+        {
+          "id": "B",
+          "text": "Rabu, 14 Maret"
+        },
+        {
+          "id": "C",
+          "text": "Jumat, 15 Maret"
+        },
+        {
+          "id": "D",
+          "text": "Sabtu, 16 Maret"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "Pengumuman menyebutkan lomba diadakan pada hari Jumat, 15 Maret.",
+      "tags": [
+        "informasi-tersurat"
+      ],
+      "source": "BC_UKBI_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-SD-MENDENGARKAN-TERBATAS-SET001-Q008",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SD",
+      "section": "mendengarkan",
+      "band": "TERBATAS",
+      "type": "pilihan_ganda",
+      "difficulty": 1,
+      "audioScript": "Budi: \"Bu, aku pamit berangkat sekolah.\" Ibu: \"Jangan lupa sarapan dulu, Nak.\" Budi: \"Aku sudah sarapan tadi, Bu.\" Ibu: \"Bawa payung, hari ini cuaca mendung. Sebentar lagi mungkin hujan.\"",
+      "audioRef": null,
+      "stem": "Apa yang ibu sarankan untuk dibawa Budi?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Jas hujan"
+        },
+        {
+          "id": "B",
+          "text": "Payung"
+        },
+        {
+          "id": "C",
+          "text": "Topi"
+        },
+        {
+          "id": "D",
+          "text": "Tas"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Ibu berkata 'Bawa payung, hari ini cuaca mendung', jadi Budi disarankan membawa payung.",
+      "tags": [
+        "informasi-tersurat"
+      ],
+      "source": "BC_UKBI_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-SD-MENDENGARKAN-MARGINAL-SET001-Q009",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SD",
+      "section": "mendengarkan",
+      "band": "MARGINAL",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "audioScript": "Rina: \"Kenapa kamu tidak ikut piknik kemarin, Sari?\" Sari: \"Aku sedang demam. Tapi kakakku bilang tempatnya sangat indah. Ada danau besar dan taman bunga yang cantik.\" Rina: \"Ya, sayang sekali kamu tidak ikut. Lain kali kita pergi bersama lagi, ya.\"",
+      "audioRef": null,
+      "stem": "Mengapa Sari tidak ikut piknik kemarin?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Sedang sakit demam"
+        },
+        {
+          "id": "B",
+          "text": "Tidak diizinkan orang tua"
+        },
+        {
+          "id": "C",
+          "text": "Harus pergi bersama kakak"
+        },
+        {
+          "id": "D",
+          "text": "Tidak suka danau dan taman"
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Sari berkata 'Aku sedang demam', itulah alasan dia tidak ikut piknik.",
+      "tags": [
+        "informasi-tersurat"
+      ],
+      "source": "BC_UKBI_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SOSIAL"
+    },
+    {
+      "id": "BC-UKBI-SD-MENDENGARKAN-MARGINAL-SET001-Q010",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SD",
+      "section": "mendengarkan",
+      "band": "MARGINAL",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "audioScript": "Pak Guru: \"Siapa yang bisa menyebutkan contoh hewan yang mengalami metamorfosis sempurna?\" Dewi: \"Kupu-kupu, Pak. Dari telur menjadi ulat, lalu kepompong, dan akhirnya kupu-kupu dewasa.\" Pak Guru: \"Tepat sekali. Bisa beri contoh lain?\" Dewi: \"Katak, Pak.\"",
+      "audioRef": null,
+      "stem": "Dua contoh hewan apa yang disebutkan Dewi dalam pelajaran?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Kupu-kupu dan capung"
+        },
+        {
+          "id": "B",
+          "text": "Kupu-kupu dan katak"
+        },
+        {
+          "id": "C",
+          "text": "Katak dan nyamuk"
+        },
+        {
+          "id": "D",
+          "text": "Ulat dan belalang"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Dewi menyebutkan kupu-kupu sebagai contoh pertama dan katak sebagai contoh kedua.",
+      "tags": [
+        "informasi-tersurat"
+      ],
+      "source": "BC_UKBI_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-SD-MENDENGARKAN-MARGINAL-SET001-Q011",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SD",
+      "section": "mendengarkan",
+      "band": "MARGINAL",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "audioScript": "Anton: \"Aku ingin sekali bisa bermain gitar seperti kakakku.\" Dodi: \"Kenapa tidak kamu belajar?\" Anton: \"Aku sudah mencoba, tapi jariku kaku.\" Dodi: \"Kamu harus rutin berlatih setiap hari. Tidak ada yang langsung bisa dalam semalam.\"",
+      "audioRef": null,
+      "stem": "Apa saran Dodi untuk Anton?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Membeli gitar baru"
+        },
+        {
+          "id": "B",
+          "text": "Belajar dari kakaknya"
+        },
+        {
+          "id": "C",
+          "text": "Berlatih setiap hari"
+        },
+        {
+          "id": "D",
+          "text": "Mengikuti kursus musik"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "Dodi menyarankan 'Kamu harus rutin berlatih setiap hari' agar bisa bermain gitar.",
+      "tags": [
+        "informasi-tersirat"
+      ],
+      "source": "BC_UKBI_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SOSIAL"
+    },
+    {
+      "id": "BC-UKBI-SD-MENDENGARKAN-MARGINAL-SET001-Q012",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SD",
+      "section": "mendengarkan",
+      "band": "MARGINAL",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "audioScript": "Pada hari Minggu, keluarga Rian pergi ke kebun binatang. Rian sangat senang melihat jerapah yang lehernya panjang. Adiknya, Maya, lebih suka melihat gajah yang besar. Ayah ibu mereka asyik memotret berbagai macam burung.",
+      "audioRef": null,
+      "stem": "Hewan apa yang paling disukai Maya di kebun binatang?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Jerapah"
+        },
+        {
+          "id": "B",
+          "text": "Gajah"
+        },
+        {
+          "id": "C",
+          "text": "Burung"
+        },
+        {
+          "id": "D",
+          "text": "Harimau"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Kakaknya Rian suka jerapah, tetapi 'Maya lebih suka melihat gajah yang besar'.",
+      "tags": [
+        "informasi-tersurat"
+      ],
+      "source": "BC_UKBI_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-SD-MENDENGARKAN-MARGINAL-SET001-Q013",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SD",
+      "section": "mendengarkan",
+      "band": "MARGINAL",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "audioScript": "Bu Dewi: \"Tomi, mengapa tugas matematikamu tidak selesai?\" Tomi: \"Maaf, Bu. Semalam listrik di rumah padam sejak jam tujuh malam.\" Bu Dewi: \"Baiklah, kamu boleh mengumpulkannya besok pagi. Tapi jangan diulang lagi, ya.\"",
+      "audioRef": null,
+      "stem": "Mengapa Tomi tidak menyelesaikan tugas matematikanya?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Lupa mengerjakannya"
+        },
+        {
+          "id": "B",
+          "text": "Listrik padam semalaman"
+        },
+        {
+          "id": "C",
+          "text": "Tidak mengerti soalnya"
+        },
+        {
+          "id": "D",
+          "text": "Ketiduran di meja belajar"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Tomi menjelaskan 'Semalam listrik di rumah padam sejak jam tujuh malam' sehingga tidak bisa mengerjakan tugas.",
+      "tags": [
+        "informasi-tersurat"
+      ],
+      "source": "BC_UKBI_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SOSIAL"
+    },
+    {
+      "id": "BC-UKBI-SD-MENDENGARKAN-MARGINAL-SET001-Q014",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SD",
+      "section": "mendengarkan",
+      "band": "MARGINAL",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "audioScript": "Pengumuman: \"Mulai minggu depan, perpustakaan sekolah akan buka lebih awal, yaitu pukul setengah tujuh pagi. Siswa dapat membaca atau meminjam buku sebelum jam pelajaran dimulai. Perpustakaan tutup pukul empat sore seperti biasa.\"",
+      "audioRef": null,
+      "stem": "Jam berapa perpustakaan akan buka mulai minggu depan?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Pukul 06.00"
+        },
+        {
+          "id": "B",
+          "text": "Pukul 06.30"
+        },
+        {
+          "id": "C",
+          "text": "Pukul 07.00"
+        },
+        {
+          "id": "D",
+          "text": "Pukul 07.30"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Pengumuman menyebutkan 'pukul setengah tujuh pagi' yang berarti pukul 06.30.",
+      "tags": [
+        "informasi-tersurat"
+      ],
+      "source": "BC_UKBI_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-SD-MENDENGARKAN-MARGINAL-SET001-Q015",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SD",
+      "section": "mendengarkan",
+      "band": "MARGINAL",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "audioScript": "Nita: \"Tasya, buku cerita yang kamu pinjamkan kemarin sangat seru! Aku membacanya sampai habis dalam satu malam.\" Tasya: \"Syukurlah kamu suka. Itu buku kesukaanku. Nanti aku pinjamkan seri keduanya, lebih seru lagi.\"",
+      "audioRef": null,
+      "stem": "Apa yang akan dilakukan Tasya selanjutnya?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Membeli buku baru"
+        },
+        {
+          "id": "B",
+          "text": "Meminjamkan seri kedua bukunya"
+        },
+        {
+          "id": "C",
+          "text": "Membaca buku itu lagi"
+        },
+        {
+          "id": "D",
+          "text": "Kembali ke perpustakaan"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Tasya berkata 'Nanti aku pinjamkan seri keduanya', jadi dia akan meminjamkan seri kedua.",
+      "tags": [
+        "informasi-tersirat"
+      ],
+      "source": "BC_UKBI_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SOSIAL"
+    },
+    {
+      "id": "BC-UKBI-SD-MENDENGARKAN-MARGINAL-SET001-Q016",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SD",
+      "section": "mendengarkan",
+      "band": "MARGINAL",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "audioScript": "Ayah: \"Nak, mengapa tanaman tomat di halaman belakang layu?\" Raka: \"Aku lupa menyiramnya dua hari ini, Yah. Karena sibuk bermain.\" Ayah: \"Tanaman juga makhluk hidup yang perlu dirawat. Mulai besok jangan lupa menyiram, ya.\"",
+      "audioRef": null,
+      "stem": "Pesan apa yang ingin disampaikan Ayah kepada Raka?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Tanaman tomat harus dipindahkan"
+        },
+        {
+          "id": "B",
+          "text": "Raka tidak boleh bermain lagi"
+        },
+        {
+          "id": "C",
+          "text": "Tanaman perlu dirawat dengan baik"
+        },
+        {
+          "id": "D",
+          "text": "Ayah akan menyiram tanaman"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "Ayah mengingatkan 'Tanaman juga makhluk hidup yang perlu dirawat' sebagai pesan agar Raka lebih bertanggung jawab.",
+      "tags": [
+        "informasi-tersirat"
+      ],
+      "source": "BC_UKBI_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PENERAPAN",
+      "domain": "SOSIAL"
+    },
+    {
+      "id": "BC-UKBI-SD-MENDENGARKAN-MARGINAL-SET001-Q017",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SD",
+      "section": "mendengarkan",
+      "band": "MARGINAL",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "audioScript": "Wulan: \"Aku sedih sekali. Nilai bahasa Indonesiaku jelek.\" Sinta: \"Jangan bersedih, Lan. Kamu bisa belajar lebih giat lagi. Aku bisa membantumu belajar setiap sore.\" Wulan: \"Benarkah? Terima kasih, Sinta. Kamu teman yang baik.\"",
+      "audioRef": null,
+      "stem": "Bagaimana perasaan Wulan setelah Sinta menawarkan bantuan?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Semakin sedih"
+        },
+        {
+          "id": "B",
+          "text": "Biasa saja"
+        },
+        {
+          "id": "C",
+          "text": "Marah dan kecewa"
+        },
+        {
+          "id": "D",
+          "text": "Senang dan berterima kasih"
+        }
+      ],
+      "correctAnswer": "D",
+      "explanation": "Wulan berkata 'Terima kasih, Sinta. Kamu teman yang baik', menunjukkan dia senang dan berterima kasih.",
+      "tags": [
+        "informasi-tersirat"
+      ],
+      "source": "BC_UKBI_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SOSIAL"
+    },
+    {
+      "id": "BC-UKBI-SD-MENDENGARKAN-MARGINAL-SET001-Q018",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SD",
+      "section": "mendengarkan",
+      "band": "MARGINAL",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "audioScript": "Pak Rudi: \"Selamat siang, Bu Ana. Ada yang bisa saya bantu?\" Bu Ana: \"Selamat siang, Pak. Saya ingin mendaftarkan anak saya les matematika.\" Pak Rudi: \"Tentu, silakan isi formulir ini. Kelas les diadakan setiap hari Selasa dan Kamis pukul tiga sore.\"",
+      "audioRef": null,
+      "stem": "Kapan jadwal les matematika diadakan?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Senin dan Rabu pukul 15.00"
+        },
+        {
+          "id": "B",
+          "text": "Selasa dan Kamis pukul 15.00"
+        },
+        {
+          "id": "C",
+          "text": "Rabu dan Jumat pukul 14.00"
+        },
+        {
+          "id": "D",
+          "text": "Selasa dan Kamis pukul 14.00"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Pak Rudi mengatakan les diadakan 'setiap hari Selasa dan Kamis pukul tiga sore' (15.00).",
+      "tags": [
+        "informasi-tersurat"
+      ],
+      "source": "BC_UKBI_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-SD-MENDENGARKAN-MARGINAL-SET001-Q019",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SD",
+      "section": "mendengarkan",
+      "band": "MARGINAL",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "audioScript": "Seekor kelinci kecil bernama Coco suka sekali berlari di padang rumput. Suatu hari, ia menemukan sebuah wortel besar berwarna oranye. Coco sangat senang. Ia ingin membawa wortel itu pulang untuk dimakan bersama ibunya.",
+      "audioRef": null,
+      "stem": "Apa yang ditemukan Coco di padang rumput?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Sebuah lobak besar"
+        },
+        {
+          "id": "B",
+          "text": "Seekor teman baru"
+        },
+        {
+          "id": "C",
+          "text": "Sebuah wortel besar"
+        },
+        {
+          "id": "D",
+          "text": "Sebuah rumah baru"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "Cerita mengatakan Coco 'menemukan sebuah wortel besar berwarna oranye'.",
+      "tags": [
+        "informasi-tersurat"
+      ],
+      "source": "BC_UKBI_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-SD-MENDENGARKAN-MARGINAL-SET001-Q020",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SD",
+      "section": "mendengarkan",
+      "band": "MARGINAL",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "audioScript": "Dinda: \"Hp-ku ketinggalan di rumah. Bagaimana kalau ada tugas dari Bu Guru?\" Fani: \"Tenang, kamu bisa pakai hp-ku untuk ngecek grup kelas. Lagipula Bu Guru biasanya memberi tugas di awal pelajaran, bukan lewat grup.\"",
+      "audioRef": null,
+      "stem": "Apa yang dilakukan Fani untuk membantu Dinda?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Mengambil hp Dinda di rumah"
+        },
+        {
+          "id": "B",
+          "text": "Meminjami Dinda hp-nya"
+        },
+        {
+          "id": "C",
+          "text": "Memberitahu Bu Guru"
+        },
+        {
+          "id": "D",
+          "text": "Mengerjakan tugas Dinda"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Fani berkata 'kamu bisa pakai hp-ku untuk ngecek grup kelas', jadi dia meminjamkan hp-nya.",
+      "tags": [
+        "informasi-tersirat"
+      ],
+      "source": "BC_UKBI_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SOSIAL"
+    },
+    {
+      "id": "BC-UKBI-SD-MENDENGARKAN-SEMENJANA-SET001-Q021",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SD",
+      "section": "mendengarkan",
+      "band": "SEMENJANA",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "audioScript": "Andi: \"Liburan nanti aku diajak kakek ke kampung. katanya ada sawah dan sungai yang jernih. Aku bisa belajar menanam padi.\" Bima: \"Wah, pasti seru! Aku cuma di rumah saja liburan ini. Orang tuaku sibuk bekerja.\" Andi: \"Aku bawakan oleh-oleh, ya!\"",
+      "audioRef": null,
+      "stem": "Apa rencana Andi selama liburan?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Bermain di rumah Bima"
+        },
+        {
+          "id": "B",
+          "text": "Pergi ke kampung kakek"
+        },
+        {
+          "id": "C",
+          "text": "Membantu orang tua bekerja"
+        },
+        {
+          "id": "D",
+          "text": "Bekerja di sawah"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Andi berkata 'aku diajak kakek ke kampung', itu rencana liburannya.",
+      "tags": [
+        "informasi-tersurat"
+      ],
+      "source": "BC_UKBI_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SOSIAL"
+    },
+    {
+      "id": "BC-UKBI-SD-MENDENGARKAN-SEMENJANA-SET001-Q022",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SD",
+      "section": "mendengarkan",
+      "band": "SEMENJANA",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "audioScript": "Bu Guru: \"Anak-anak, besok adalah Hari Bumi Sedunia. Kita akan menanam pohon di halaman belakang sekolah. Setiap anak membawa satu bibit tanaman dari rumah. Tanaman yang sudah besar nanti bisa membuat udara kita lebih segar.\"",
+      "audioRef": null,
+      "stem": "Apa tujuan dari kegiatan menanam pohon yang disampaikan Bu Guru?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Memperindah halaman sekolah"
+        },
+        {
+          "id": "B",
+          "text": "Membuat udara lebih segar"
+        },
+        {
+          "id": "C",
+          "text": "Mendapat nilai tambahan"
+        },
+        {
+          "id": "D",
+          "text": "Merayakan ulang tahun sekolah"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Bu Guru menyampaikan 'Tanaman yang sudah besar nanti bisa membuat udara kita lebih segar' sebagai tujuan kegiatan.",
+      "tags": [
+        "informasi-tersirat"
+      ],
+      "source": "BC_UKBI_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PENERAPAN",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-SD-MENDENGARKAN-SEMENJANA-SET001-Q023",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SD",
+      "section": "mendengarkan",
+      "band": "SEMENJANA",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "audioScript": "Rina: \"Dik, tolong matikan televisinya. Kakak mau belajar. Nanti malam ada ulangan.\" Adik: \"Sebentar, Rin. Ini acara kesukaanku tinggal sepuluh menit lagi.\" Rina: \"Ya sudah, kakak tunggu. Tapi setelah itu televisinya dimatikan, ya.\"",
+      "audioRef": null,
+      "stem": "Mengapa Rina ingin televisi dimatikan?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Televisinya rusak"
+        },
+        {
+          "id": "B",
+          "text": "Rina ingin tidur"
+        },
+        {
+          "id": "C",
+          "text": "Rina mau belajar untuk ulangan"
+        },
+        {
+          "id": "D",
+          "text": "Acara televisi sudah selesai"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "Rina berkata 'Kakak mau belajar. Nanti malam ada ulangan.' Jadi dia perlu tenang untuk belajar.",
+      "tags": [
+        "informasi-tersurat"
+      ],
+      "source": "BC_UKBI_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SOSIAL"
+    },
+    {
+      "id": "BC-UKBI-SD-MENDENGARKAN-SEMENJANA-SET001-Q024",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SD",
+      "section": "mendengarkan",
+      "band": "SEMENJANA",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "audioScript": "Petugas perpustakaan: \"Maaf, Dik. Buku ini tidak bisa dipinjam karena termasuk koleksi referensi. Kamu bisa membacanya di tempat saja.\" Dini: \"Baik, Kak. Kalau begitu saya baca di sini dulu. Saya perlu mencari informasi tentang tata surya untuk tugas sekolah.\"",
+      "audioRef": null,
+      "stem": "Mengapa buku itu tidak boleh dipinjam?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Buku itu sudah rusak"
+        },
+        {
+          "id": "B",
+          "text": "Buku sedang dipinjam orang lain"
+        },
+        {
+          "id": "C",
+          "text": "Buku termasuk koleksi referensi"
+        },
+        {
+          "id": "D",
+          "text": "Buku terlalu tebal"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "Petugas berkata 'Buku ini tidak bisa dipinjam karena termasuk koleksi referensi'.",
+      "tags": [
+        "informasi-tersurat"
+      ],
+      "source": "BC_UKBI_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-SD-MENDENGARKAN-SEMENJANA-SET001-Q025",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SD",
+      "section": "mendengarkan",
+      "band": "SEMENJANA",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "audioScript": "Lisa: \"Aku ingin ikut lomba baca puisi, tapi aku malu tampil di depan banyak orang.\" Tika: \"Kamu harus percaya diri, Lis. Kamu sudah berlatih setiap hari. Ingat, semua orang juga pernah pertama kali tampil. Yang penting kamu sudah berusaha.\"",
+      "audioRef": null,
+      "stem": "Apa yang dilakukan Tika untuk menyemangati Lisa?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Menawarkan diri untuk tampil bersama"
+        },
+        {
+          "id": "B",
+          "text": "Mengingatkan bahwa semua orang punya pengalaman pertama"
+        },
+        {
+          "id": "C",
+          "text": "Menyuruh Lisa mundur dari lomba"
+        },
+        {
+          "id": "D",
+          "text": "Berjanji hadir menonton penampilan Lisa"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Tika berkata 'semua orang juga pernah pertama kali tampil' untuk menyemangati Lisa agar tidak malu.",
+      "tags": [
+        "informasi-tersirat"
+      ],
+      "source": "BC_UKBI_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PENERAPAN",
+      "domain": "SOSIAL"
+    },
+    {
+      "id": "BC-UKBI-SD-MENDENGARKAN-SEMENJANA-SET001-Q026",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SD",
+      "section": "mendengarkan",
+      "band": "SEMENJANA",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "audioScript": "Pengumuman: \"Dengan hormat, kami informasikan bahwa lomba mewarnai tingkat SD akan diadakan pada hari Sabtu, 20 April, pukul 08.00 hingga 12.00 di Arama Serbaguna. Pendaftaran ditutup tanggal 15 April. Hadiah utama berupa sepeda dan perlengkapan sekolah.\"",
+      "audioRef": null,
+      "stem": "Apa hadiah utama untuk pemenang lomba mewarnai?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Uang tunai dan piala"
+        },
+        {
+          "id": "B",
+          "text": "Sepeda dan perlengkapan sekolah"
+        },
+        {
+          "id": "C",
+          "text": "Beasiswa dan buku"
+        },
+        {
+          "id": "D",
+          "text": "Trofi dan sertifikat"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Pengumuman menyebutkan 'Hadiah utama berupa sepeda dan perlengkapan sekolah'.",
+      "tags": [
+        "informasi-tersurat"
+      ],
+      "source": "BC_UKBI_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-SD-MENDENGARKAN-SEMENJANA-SET001-Q027",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SD",
+      "section": "mendengarkan",
+      "band": "SEMENJANA",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "audioScript": "Kakek: \"Dulu, kakek pergi ke sekolah berjalan kaki sejauh lima kilometer setiap hari. Tidak ada sepeda apalagi motor. Jalanannya juga masih tanah dan becek kalau hujan.\" Cucu: \"Wah, berat sekali ya, Kek. Aku bersyukur sekolahku dekat dari rumah.\"",
+      "audioRef": null,
+      "stem": "Dari percakapan tersebut, apa yang dirasakan cucu terhadap cerita kakek?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Cucu merasa cerita kakek membosankan"
+        },
+        {
+          "id": "B",
+          "text": "Cucu bersyukur memiliki fasilitas yang lebih baik"
+        },
+        {
+          "id": "C",
+          "text": "Cucu ingin mencoba berjalan kaki jauh"
+        },
+        {
+          "id": "D",
+          "text": "Cucu merasa kasihan pada kakek"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Cucu berkata 'Aku bersyukur sekolahku dekat dari rumah', menunjukkan rasa syukur karena fasilitasnya lebih baik.",
+      "tags": [
+        "informasi-tersirat"
+      ],
+      "source": "BC_UKBI_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PENERAPAN",
+      "domain": "SOSIAL"
+    },
+    {
+      "id": "BC-UKBI-SD-MENDENGARKAN-SEMENJANA-SET001-Q028",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SD",
+      "section": "mendengarkan",
+      "band": "SEMENJANA",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "audioScript": "Pak Hasan: \"Rio, kenapa kamu tidak memakai sepatu olahraga hari ini?\" Rio: \"Sepatu olahragaku sobek, Pak. Aku lupa memberi tahu ibu untuk membelikan yang baru.\" Pak Hasan: \"Kamu boleh meminjam sepatu cadangan di ruang olahraga. Nanti ambil saja ke Pak Penjaga.\"",
+      "audioRef": null,
+      "stem": "Apa solusi yang diberikan Pak Hasan untuk masalah Rio?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Rio dipulangkan untuk mengambil sepatu"
+        },
+        {
+          "id": "B",
+          "text": "Rio boleh meminjam sepatu cadangan"
+        },
+        {
+          "id": "C",
+          "text": "Rio tidak perlu ikut olahraga"
+        },
+        {
+          "id": "D",
+          "text": "Rio membeli sepatu baru di kantin"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Pak Hasan berkata 'Kamu boleh meminjam sepatu cadangan di ruang olahraga' sebagai solusi.",
+      "tags": [
+        "informasi-tersurat"
+      ],
+      "source": "BC_UKBI_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SOSIAL"
+    },
+    {
+      "id": "BC-UKBI-SD-MENDENGARKAN-SEMENJANA-SET001-Q029",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SD",
+      "section": "mendengarkan",
+      "band": "SEMENJANA",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "audioScript": "Di sebuah desa, hiduplah seekor kura-kura yang lambat tetapi rajin. Setiap pagi ia pergi ke kebun untuk menyiram tanaman. Suatu hari, kelinci yang sombong mengejeknya. \"Kamu terlalu lambat!\" Kura-kura tersenyum dan menjawab, \"Yang penting aku tidak pernah menyerah.\"",
+      "audioRef": null,
+      "stem": "Sifat apa yang dimiliki kura-kura dalam cerita tersebut?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Pemarah dan sombong"
+        },
+        {
+          "id": "B",
+          "text": "Malas dan lambat"
+        },
+        {
+          "id": "C",
+          "text": "Rajin dan tidak mudah menyerah"
+        },
+        {
+          "id": "D",
+          "text": "Pemalu dan pendiam"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "Cerita menggambarkan kura-kura 'rajin' (setiap pagi menyiram) dan berkata 'yang penting aku tidak pernah menyerah'.",
+      "tags": [
+        "informasi-tersirat"
+      ],
+      "source": "BC_UKBI_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PENERAPAN",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-SD-MENDENGARKAN-SEMENJANA-SET001-Q030",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SD",
+      "section": "mendengarkan",
+      "band": "SEMENJANA",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "audioScript": "Bu Nina: \"Kenapa kamu tidak masuk sekolah kemarin, Vina?\" Vina: \"Saya harus menjaga adik di rumah, Bu. Ibu saya pergi ke pasar sejak pagi.\" Bu Nina: \"Lain kali, bilang dulu sama Bu Guru ya. Biar tidak dianggap bolos.\" Vina: \"Baik, Bu. Saya minta maaf.\"",
+      "audioRef": null,
+      "stem": "Apa yang seharusnya dilakukan Vina menurut Bu Nina?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Membawa adik ke sekolah"
+        },
+        {
+          "id": "B",
+          "text": "Memberi tahu guru terlebih dahulu"
+        },
+        {
+          "id": "C",
+          "text": "Tetap masuk sekolah"
+        },
+        {
+          "id": "D",
+          "text": "Menyuruh tetangga menjaga adik"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Bu Nina berkata 'Lain kali, bilang dulu sama Bu Guru ya' sebagai nasihat yang seharusnya dilakukan Vina.",
+      "tags": [
+        "informasi-tersirat"
+      ],
+      "source": "BC_UKBI_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PENERAPAN",
+      "domain": "SOSIAL"
+    },
+    {
+      "id": "BC-UKBI-SD-MENDENGARKAN-SEMENJANA-SET001-Q031",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SD",
+      "section": "mendengarkan",
+      "band": "SEMENJANA",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "audioScript": "Fajar: \"Ayah, kenapa kita harus menanam pohon di halaman?\" Ayah: \"Pohon menghasilkan oksigen yang kita hirup setiap hari. Selain itu, akar pohon juga mencegah tanah longsor. Daun-daunnya pun membuat udara teduh dan sejuk.\" Fajar: \"Oh, ternyata banyak sekali manfaatnya, Yah.\"",
+      "audioRef": null,
+      "stem": "Berapa banyak manfaat pohon yang disebutkan Ayah?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Dua manfaat"
+        },
+        {
+          "id": "B",
+          "text": "Tiga manfaat"
+        },
+        {
+          "id": "C",
+          "text": "Empat manfaat"
+        },
+        {
+          "id": "D",
+          "text": "Lima manfaat"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Ayah menyebutkan tiga manfaat: (1) menghasilkan oksigen, (2) mencegah tanah longsor, (3) membuat teduh dan sejuk.",
+      "tags": [
+        "informasi-tersurat"
+      ],
+      "source": "BC_UKBI_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-SD-MENDENGARKAN-SEMENJANA-SET001-Q032",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SD",
+      "section": "mendengarkan",
+      "band": "SEMENJANA",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "audioScript": "Nadia: \"Aku punya masalah, Tia. Teman sebangkuku sering meminjam pensilku tapi tidak pernah mengembalikan.\" Tia: \"Coba bilang dengan sopan kalau kamu butuh pensil itu. Kalau tetap begitu, laporkan ke Bu Guru.\" Nadia: \"Baik, aku coba nasehati dulu.\"",
+      "audioRef": null,
+      "stem": "Apa saran pertama yang diberikan Tia untuk menyelesaikan masalah Nadia?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Langsung melaporkan ke Bu Guru"
+        },
+        {
+          "id": "B",
+          "text": "Meminjamkan pensil lain"
+        },
+        {
+          "id": "C",
+          "text": "Berkata sopan bahwa Nadia butuh pensil itu"
+        },
+        {
+          "id": "D",
+          "text": "Tidak meminjamkan pensil lagi"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "Tia menyarankan 'Coba bilang dengan sopan kalau kamu butuh pensil itu' sebagai langkah pertama.",
+      "tags": [
+        "informasi-tersurat"
+      ],
+      "source": "BC_UKBI_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SOSIAL"
+    },
+    {
+      "id": "BC-UKBI-SD-MENDENGARKAN-MADYA-SET001-Q033",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SD",
+      "section": "mendengarkan",
+      "band": "MADYA",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "audioScript": "Bu Dewi: \"Anak-anak, kita akan membuat kerajinan dari barang bekas besok. Bawalah botol plastik bekas, kertas warna, lem, dan gunting. Kita akan membuat pot bunga yang cantik.\" Rian: \"Apakah boleh menggunakan kaleng bekas juga, Bu?\" Bu Dewi: \"Boleh, asalkan pinggirannya tidak tajam.\"",
+      "audioRef": null,
+      "stem": "Dari dialog tersebut, apa yang bisa disimpulkan tentang Bu Dewi?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Bu Dewi suka barang-barang mahal"
+        },
+        {
+          "id": "B",
+          "text": "Bu Dewi mengajarkan kreativitas dan keselamatan"
+        },
+        {
+          "id": "C",
+          "text": "Bu Dewi tidak suka botol plastik"
+        },
+        {
+          "id": "D",
+          "text": "Bu Dewi malas mengajar"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Bu Dewi mengajarkan kreativitas (membuat pot dari barang bekas) dan keselamatan (mengingatkan pinggiran kaleng jangan tajam).",
+      "tags": [
+        "informasi-tersirat",
+        "kesimpulan"
+      ],
+      "source": "BC_UKBI_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PENERAPAN",
+      "domain": "SOSIAL"
+    },
+    {
+      "id": "BC-UKBI-SD-MENDENGARKAN-MADYA-SET001-Q034",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SD",
+      "section": "mendengarkan",
+      "band": "MADYA",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "audioScript": "Pengumuman: \"Kepada seluruh siswa kelas 6, kegiatan studi wisata ke Museum Nasional diundur dari tanggal 10 Mei menjadi 17 Mei. Keberangkatan tetap pukul 07.00 dari halaman sekolah. Biaya tambahan tidak diperlukan karena tiket sudah dibayar. Harap membawa bekal dan minum masing-masing. Konfirmasi kehadiran paling lambat tanggal 12 Mei kepada wali kelas.\"",
+      "audioRef": null,
+      "stem": "Informasi apa yang TIDAK berubah dari rencana studi wisata?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Tanggal keberangkatan"
+        },
+        {
+          "id": "B",
+          "text": "Jam keberangkatan"
+        },
+        {
+          "id": "C",
+          "text": "Tujuan wisata"
+        },
+        {
+          "id": "D",
+          "text": "B dan C benar"
+        }
+      ],
+      "correctAnswer": "D",
+      "explanation": "Jam keberangkatan tetap pukul 07.00 (B benar) dan tujuan tetap Museum Nasional (C benar). Hanya tanggal yang berubah.",
+      "tags": [
+        "informasi-tersurat",
+        "perbandingan"
+      ],
+      "source": "BC_UKBI_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PENERAPAN",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-SD-MENDENGARKAN-MADYA-SET001-Q035",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SD",
+      "section": "mendengarkan",
+      "band": "MADYA",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "audioScript": "Pak RT: \"Selamat malam, Bapak-Ibu sekalian. Saya ingin mengingatkan bahwa kerja bakti minggu ini akan membersihkan selokan di lingkungan RT kita. Karena musim hujan sudah tiba, selokan yang tersumbat bisa menyebabkan banjir. Mari kita kumpul hari Minggu pukul setengah tujuh pagi di balai warga.\"",
+      "audioRef": null,
+      "stem": "Mengapa Pak RT mengingatkan pentingnya membersihkan selokan sekarang?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Karena selokan sudah penuh sampah"
+        },
+        {
+          "id": "B",
+          "text": "Karena akan ada tamu penting"
+        },
+        {
+          "id": "C",
+          "text": "Karena musim hujan sudah tiba"
+        },
+        {
+          "id": "D",
+          "text": "Karena ada warga yang sakit"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "Pak RT menyampaikan 'Karena musim hujan sudah tiba, selokan yang tersumbat bisa menyebabkan banjir.'",
+      "tags": [
+        "informasi-tersurat"
+      ],
+      "source": "BC_UKBI_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SOSIAL"
+    },
+    {
+      "id": "BC-UKBI-SD-MENDENGARKAN-MADYA-SET001-Q036",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SD",
+      "section": "mendengarkan",
+      "band": "MADYA",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "audioScript": "Tika: \"Aku heran sama Dika. Di kelas dia selalu bercanda dan terlihat tidak serius. Tapi setiap ulangan, nilainya selalu bagus.\" Sari: \"Mungkin dia belajar sungguh-sungguh di rumah. Tidak semua orang harus belajar dengan wajah tegang, kan?\" Tika: \"Iya juga, ya. Yang penting hasilnya.\"",
+      "audioRef": null,
+      "stem": "Apa pendapat Sari tentang sikap Dika?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Dika seharusnya lebih serius di kelas"
+        },
+        {
+          "id": "B",
+          "text": "Setiap orang punya cara belajar yang berbeda"
+        },
+        {
+          "id": "C",
+          "text": "Dika hanya beruntung dalam ulangan"
+        },
+        {
+          "id": "D",
+          "text": "Tika tidak boleh berteman dengan Dika"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Sari berkata 'Tidak semua orang harus belajar dengan wajah tegang, kan?' yang berarti setiap orang punya cara belajar berbeda.",
+      "tags": [
+        "informasi-tersirat",
+        "kesimpulan"
+      ],
+      "source": "BC_UKBI_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PENERAPAN",
+      "domain": "SOSIAL"
+    },
+    {
+      "id": "BC-UKBI-SD-MENDENGARKAN-MADYA-SET001-Q037",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SD",
+      "section": "mendengarkan",
+      "band": "MADYA",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "audioScript": "Seorang anak bernama Boni suka sekali makan permen. Setiap hari ia membeli permen di kantin sekolah. Ibu sudah sering mengingatkan, \"Jangan terlalu banyak makan permen, nanti gigimu rusak.\" Boni tidak mendengarkan. Suatu hari, giginya sakit sekali. Ia harus pergi ke dokter gigi.",
+      "audioRef": null,
+      "stem": "Apa pesan moral yang bisa diambil dari cerita tersebut?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Permen tidak boleh dimakan sama sekali"
+        },
+        {
+          "id": "B",
+          "text": "Nasihat orang tua sebaiknya didengarkan"
+        },
+        {
+          "id": "C",
+          "text": "Dokter gigi itu menakutkan"
+        },
+        {
+          "id": "D",
+          "text": "Permen menyebabkan sakit perut"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Ibu sudah mengingatkan tetapi Boni tidak mendengar, akhirnya giginya sakit. Pesannya: nasihat orang tua sebaiknya didengarkan.",
+      "tags": [
+        "informasi-tersirat",
+        "pesan-moral"
+      ],
+      "source": "BC_UKBI_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PENERAPAN",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-SD-MENDENGARKAN-MADYA-SET001-Q038",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SD",
+      "section": "mendengarkan",
+      "band": "MADYA",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "audioScript": "Bu Guru: \"Siapa yang bisa menyebutkan satu cara menghemat air?\" Dani: \"Mandi dengan air secukupnya, Bu.\" Siska: \"Mematikan kran jika tidak dipakai, Bu.\" Aldo: \"Menyiram tanaman dengan bekas air cucian beras, Bu.\" Bu Guru: \"Bagus sekali, kalian semua benar.\"",
+      "audioRef": null,
+      "stem": "Siapa yang memberikan cara menghemat air yang paling berbeda dari yang lain?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Dani"
+        },
+        {
+          "id": "B",
+          "text": "Siska"
+        },
+        {
+          "id": "C",
+          "text": "Aldo"
+        },
+        {
+          "id": "D",
+          "text": "Semua sama"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "Dani dan Siska menyebutkan cara mengurangi pemakaian air, sedangkan Aldo menyebutkan cara mendaur ulang air bekas cucian beras untuk menyiram.",
+      "tags": [
+        "perbandingan",
+        "analisis"
+      ],
+      "source": "BC_UKBI_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PENERAPAN",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-SD-MENDENGARKAN-MADYA-SET001-Q039",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SD",
+      "section": "mendengarkan",
+      "band": "MADYA",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "audioScript": "Bu Rina: \"Tasya, kenapa kamu kelihatan tidak bersemangat?\" Tasya: \"Aku sedih, Bu. Hewan peliharaanku, seekor kucing, hilang sudah tiga hari.\" Bu Rina: \"Coba pasang pengumuman di grup whatsapp warga. Atau tanyakan ke tetangga sekitar. Mungkin ada yang melihatnya.\" Tasya: \"Baik, Bu. Aku coba.\"",
+      "audioRef": null,
+      "stem": "Apa tujuan Bu Rina memberikan saran tersebut kepada Tasya?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Agar Tasya membeli kucing baru"
+        },
+        {
+          "id": "B",
+          "text": "Agar Tasya mendapat bantuan mencari kucingnya"
+        },
+        {
+          "id": "C",
+          "text": "Agar Tasya lupa dengan kucingnya"
+        },
+        {
+          "id": "D",
+          "text": "Agar Tasya tidak sedih lagi"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Bu Rina menyarankan memasang pengumuman dan bertanya tetangga agar Tasya mendapat bantuan dari orang lain untuk mencari kucingnya.",
+      "tags": [
+        "informasi-tersirat",
+        "tujuan-pembicara"
+      ],
+      "source": "BC_UKBI_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PENERAPAN",
+      "domain": "SOSIAL"
+    },
+    {
+      "id": "BC-UKBI-SD-MENDENGARKAN-MADYA-SET001-Q040",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SD",
+      "section": "mendengarkan",
+      "band": "MADYA",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "audioScript": "Pada hari libur, Dita dan keluarganya pergi ke pantai. Dita sangat gembira. Ia bermain air dan mengumpulkan kerang-kerang cantik di tepi pantai. Adiknya, Raka, membuat istana pasir. Ayah dan ibu duduk di bawah paying sambil menikmati kelapa muda. Mereka pulang saat matahari mulai terbenam.",
+      "audioRef": null,
+      "stem": "Suasana apa yang tergambar dalam cerita tersebut?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Suasana haru dan sedih"
+        },
+        {
+          "id": "B",
+          "text": "Suasana tegang dan menegangkan"
+        },
+        {
+          "id": "C",
+          "text": "Suasana gembira dan menyenangkan"
+        },
+        {
+          "id": "D",
+          "text": "Suasana sepi dan membosankan"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "Cerita menggambarkan Dita gembira, bermain air, mengumpulkan kerang, dan keluarga menikmati waktu bersama, menunjukkan suasana gembira.",
+      "tags": [
+        "informasi-tersirat",
+        "suasana"
+      ],
+      "source": "BC_UKBI_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PENERAPAN",
+      "domain": "SINTAS"
+    }
+  ]
+}

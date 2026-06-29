@@ -1,0 +1,892 @@
+{
+  "meta": {
+    "product": "UKBI_PRACTICE",
+    "track": "UKBI_SMP",
+    "section": "berbicara",
+    "set": "set-001",
+    "totalItems": 20,
+    "source": "BC_UKBI_SMP_ORIGINAL"
+  },
+  "questions": [
+    {
+      "id": "BC-UKBI-SMP-BERBICARA-SEMENJANA-SET001-Q001",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "berbicara",
+      "band": "SEMENJANA",
+      "type": "constructed",
+      "difficulty": 2,
+      "prompt": "Ceritakan pengalaman liburanmu yang paling berkesan dalam waktu 1\u20132 menit. Sebutkan tempat yang kamu kunjungi, apa saja yang kamu lakukan di sana, dan bagaimana perasaanmu selama liburan itu.",
+      "speakingTask": "Bercerita tentang pengalaman liburan pribadi secara runtut dan menarik",
+      "scoringMode": "rubric",
+      "rubric": [
+        { "criterion": "Kelancaran berbicara", "weight": 25, "levels": [
+          { "score": 4, "description": "Lancar tanpa hambatan, jeda wajar" },
+          { "score": 3, "description": "Cukup lancar, sesekali berhenti" },
+          { "score": 2, "description": "Kurang lancar, sering berhenti" },
+          { "score": 1, "description": "Tidak lancar, banyak jeda panjang" }
+        ]},
+        { "criterion": "Kesesuaian isi", "weight": 30, "levels": [
+          { "score": 4, "description": "Isi sangat sesuai dengan topik, detail lengkap" },
+          { "score": 3, "description": "Isi sesuai dengan topik, cukup detail" },
+          { "score": 2, "description": "Isi kurang sesuai dengan topik" },
+          { "score": 1, "description": "Isi tidak sesuai dengan topik" }
+        ]},
+        { "criterion": "Kebahasaan dan pelafalan", "weight": 25, "levels": [
+          { "score": 4, "description": "Sangat baik, pelafalan jelas, tata bahasa tepat" },
+          { "score": 3, "description": "Baik, sebagian besar pelafalan dan tata bahasa tepat" },
+          { "score": 2, "description": "Cukup, masih ada kesalahan pelafalan atau tata bahasa" },
+          { "score": 1, "description": "Perlu perbaikan, banyak kesalahan" }
+        ]},
+        { "criterion": "Kepercayaan diri", "weight": 20, "levels": [
+          { "score": 4, "description": "Sangat percaya diri, ekspresif, kontak mata baik" },
+          { "score": 3, "description": "Cukup percaya diri" },
+          { "score": 2, "description": "Kurang percaya diri, gugup" },
+          { "score": 1, "description": "Tidak percaya diri, menghindar" }
+        ]}
+      ],
+      "sampleExpectedResponse": "Liburan semester lalu saya pergi ke rumah nenek di desa. Saya membantu nenek memberi makan ayam dan bermain dengan sepupu-sepupu di sawah. Kami juga memancing ikan di sungai kecil. Rasanya sangat menyenangkan karena udara di desa sejuk dan pemandangannya indah. Saya pulang dengan banyak cerita seru.",
+      "tags": ["bercerita", "pengalaman", "liburan", "deskripsi"],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved",
+      "cognitive": "KREASI",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-SMP-BERBICARA-SEMENJANA-SET001-Q002",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "berbicara",
+      "band": "SEMENJANA",
+      "type": "constructed",
+      "difficulty": 2,
+      "prompt": "Jelaskan hobimu dan mengapa kamu menyukainya! Sampaikan pendapatmu tentang manfaat hobi tersebut dalam kehidupan sehari-hari. Waktu berbicara sekitar 1\u20132 menit.",
+      "speakingTask": "Menyampaikan pendapat tentang hobi dan manfaatnya",
+      "scoringMode": "rubric",
+      "rubric": [
+        { "criterion": "Kelancaran berbicara", "weight": 25, "levels": [
+          { "score": 4, "description": "Lancar tanpa hambatan, jeda wajar" },
+          { "score": 3, "description": "Cukup lancar, sesekali berhenti" },
+          { "score": 2, "description": "Kurang lancar, sering berhenti" },
+          { "score": 1, "description": "Tidak lancar, banyak jeda panjang" }
+        ]},
+        { "criterion": "Kesesuaian isi", "weight": 30, "levels": [
+          { "score": 4, "description": "Isi sangat sesuai dengan topik, detail lengkap" },
+          { "score": 3, "description": "Isi sesuai dengan topik, cukup detail" },
+          { "score": 2, "description": "Isi kurang sesuai dengan topik" },
+          { "score": 1, "description": "Isi tidak sesuai dengan topik" }
+        ]},
+        { "criterion": "Kebahasaan dan pelafalan", "weight": 25, "levels": [
+          { "score": 4, "description": "Sangat baik, pelafalan jelas, tata bahasa tepat" },
+          { "score": 3, "description": "Baik, sebagian besar pelafalan dan tata bahasa tepat" },
+          { "score": 2, "description": "Cukup, masih ada kesalahan pelafalan atau tata bahasa" },
+          { "score": 1, "description": "Perlu perbaikan, banyak kesalahan" }
+        ]},
+        { "criterion": "Kepercayaan diri", "weight": 20, "levels": [
+          { "score": 4, "description": "Sangat percaya diri, ekspresif, kontak mata baik" },
+          { "score": 3, "description": "Cukup percaya diri" },
+          { "score": 2, "description": "Kurang percaya diri, gugup" },
+          { "score": 1, "description": "Tidak percaya diri, menghindar" }
+        ]}
+      ],
+      "sampleExpectedResponse": "Hobi saya adalah menggambar. Saya suka menggambar pemandangan dan tokoh kartun. Alasannya karena menggambar membuat saya rileks dan bisa mengekspresikan imajinasi. Manfaatnya, saya jadi lebih sabar dan teliti. Kadang gambar saya juga diikutkan lomba di sekolah. Seru sekali!",
+      "tags": ["opini", "hobi", "keseharian", "deskripsi"],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved",
+      "cognitive": "KREASI",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-SMP-BERBICARA-SEMENJANA-SET001-Q003",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "berbicara",
+      "band": "SEMENJANA",
+      "type": "constructed",
+      "difficulty": 2,
+      "prompt": "Bayangkan kamu sedang berdiri di tepi pantai saat matahari terbenam. Deskripsikan apa yang kamu lihat, dengar, dan rasakan dalam waktu 1\u20132 menit. Gunakan kata-kata yang membuat pendengar seolah-olah ikut melihat pemandangan itu.",
+      "speakingTask": "Mendeskripsikan suasana pemandangan berdasarkan imajinasi",
+      "scoringMode": "rubric",
+      "rubric": [
+        { "criterion": "Kelancaran berbicara", "weight": 25, "levels": [
+          { "score": 4, "description": "Lancar tanpa hambatan, jeda wajar" },
+          { "score": 3, "description": "Cukup lancar, sesekali berhenti" },
+          { "score": 2, "description": "Kurang lancar, sering berhenti" },
+          { "score": 1, "description": "Tidak lancar, banyak jeda panjang" }
+        ]},
+        { "criterion": "Kesesuaian isi", "weight": 30, "levels": [
+          { "score": 4, "description": "Isi sangat sesuai dengan topik, detail lengkap" },
+          { "score": 3, "description": "Isi sesuai dengan topik, cukup detail" },
+          { "score": 2, "description": "Isi kurang sesuai dengan topik" },
+          { "score": 1, "description": "Isi tidak sesuai dengan topik" }
+        ]},
+        { "criterion": "Kebahasaan dan pelafalan", "weight": 25, "levels": [
+          { "score": 4, "description": "Sangat baik, pelafalan jelas, tata bahasa tepat" },
+          { "score": 3, "description": "Baik, sebagian besar pelafalan dan tata bahasa tepat" },
+          { "score": 2, "description": "Cukup, masih ada kesalahan pelafalan atau tata bahasa" },
+          { "score": 1, "description": "Perlu perbaikan, banyak kesalahan" }
+        ]},
+        { "criterion": "Kepercayaan diri", "weight": 20, "levels": [
+          { "score": 4, "description": "Sangat percaya diri, ekspresif, kontak mata baik" },
+          { "score": 3, "description": "Cukup percaya diri" },
+          { "score": 2, "description": "Kurang percaya diri, gugup" },
+          { "score": 1, "description": "Tidak percaya diri, menghindar" }
+        ]}
+      ],
+      "sampleExpectedResponse": "Di hadapanku terbentang lautan biru yang luas. Matahari perlahan tenggelam di ujung cakrawala, menyemburatkan warna jingga keemasan di langit. Aku mendengar deburan ombak yang tenang dan angin sepoi-sepoi yang membawa aroma air laut. Pasir putih terasa hangat di kakiku. Suasana ini membuat hatiku damai dan tenang.",
+      "tags": ["deskripsi", "imajinasi", "pemandangan", "panca-indera"],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved",
+      "cognitive": "KREASI",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-SMP-BERBICARA-SEMENJANA-SET001-Q004",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "berbicara",
+      "band": "SEMENJANA",
+      "type": "constructed",
+      "difficulty": 2,
+      "prompt": "Perkenalkan dirimu dan keluargamu secara menarik! Sebutkan nama, hobi, dan hal unik tentang setiap anggota keluarga. Waktu berbicara sekitar 1\u20132 menit.",
+      "speakingTask": "Perkenalan diri dan anggota keluarga",
+      "scoringMode": "rubric",
+      "rubric": [
+        { "criterion": "Kelancaran berbicara", "weight": 25, "levels": [
+          { "score": 4, "description": "Lancar tanpa hambatan, jeda wajar" },
+          { "score": 3, "description": "Cukup lancar, sesekali berhenti" },
+          { "score": 2, "description": "Kurang lancar, sering berhenti" },
+          { "score": 1, "description": "Tidak lancar, banyak jeda panjang" }
+        ]},
+        { "criterion": "Kesesuaian isi", "weight": 30, "levels": [
+          { "score": 4, "description": "Isi sangat sesuai dengan topik, detail lengkap" },
+          { "score": 3, "description": "Isi sesuai dengan topik, cukup detail" },
+          { "score": 2, "description": "Isi kurang sesuai dengan topik" },
+          { "score": 1, "description": "Isi tidak sesuai dengan topik" }
+        ]},
+        { "criterion": "Kebahasaan dan pelafalan", "weight": 25, "levels": [
+          { "score": 4, "description": "Sangat baik, pelafalan jelas, tata bahasa tepat" },
+          { "score": 3, "description": "Baik, sebagian besar pelafalan dan tata bahasa tepat" },
+          { "score": 2, "description": "Cukup, masih ada kesalahan pelafalan atau tata bahasa" },
+          { "score": 1, "description": "Perlu perbaikan, banyak kesalahan" }
+        ]},
+        { "criterion": "Kepercayaan diri", "weight": 20, "levels": [
+          { "score": 4, "description": "Sangat percaya diri, ekspresif, kontak mata baik" },
+          { "score": 3, "description": "Cukup percaya diri" },
+          { "score": 2, "description": "Kurang percaya diri, gugup" },
+          { "score": 1, "description": "Tidak percaya diri, menghindar" }
+        ]}
+      ],
+      "sampleExpectedResponse": "Halo, nama saya Rina. Saya tinggal di Jakarta bersama ayah, ibu, dan adik laki-laki. Ayah saya bekerja sebagai guru, hobinya membaca koran setiap pagi. Ibu saya seorang penjahit yang suka memasak. Adik saya masih duduk di kelas empat, dia sangat lucu dan suka menggambar. Kami sekeluarga suka menonton film bersama setiap akhir pekan.",
+      "tags": ["perkenalan", "keluarga", "deskripsi-diri"],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved",
+      "cognitive": "KREASI",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-SMP-BERBICARA-SEMENJANA-SET001-Q005",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "berbicara",
+      "band": "SEMENJANA",
+      "type": "constructed",
+      "difficulty": 2,
+      "prompt": "Ceritakan tentang makanan favoritmu! Sebutkan nama makanannya, bagaimana rasanya, kapan biasanya kamu menikmatinya, dan apa yang membuatmu sangat menyukai makanan itu. Waktu berbicara sekitar 1\u20132 menit.",
+      "speakingTask": "Deskripsi dan opini tentang makanan favorit beserta alasannya",
+      "scoringMode": "rubric",
+      "rubric": [
+        { "criterion": "Kelancaran berbicara", "weight": 25, "levels": [
+          { "score": 4, "description": "Lancar tanpa hambatan, jeda wajar" },
+          { "score": 3, "description": "Cukup lancar, sesekali berhenti" },
+          { "score": 2, "description": "Kurang lancar, sering berhenti" },
+          { "score": 1, "description": "Tidak lancar, banyak jeda panjang" }
+        ]},
+        { "criterion": "Kesesuaian isi", "weight": 30, "levels": [
+          { "score": 4, "description": "Isi sangat sesuai dengan topik, detail lengkap" },
+          { "score": 3, "description": "Isi sesuai dengan topik, cukup detail" },
+          { "score": 2, "description": "Isi kurang sesuai dengan topik" },
+          { "score": 1, "description": "Isi tidak sesuai dengan topik" }
+        ]},
+        { "criterion": "Kebahasaan dan pelafalan", "weight": 25, "levels": [
+          { "score": 4, "description": "Sangat baik, pelafalan jelas, tata bahasa tepat" },
+          { "score": 3, "description": "Baik, sebagian besar pelafalan dan tata bahasa tepat" },
+          { "score": 2, "description": "Cukup, masih ada kesalahan pelafalan atau tata bahasa" },
+          { "score": 1, "description": "Perlu perbaikan, banyak kesalahan" }
+        ]},
+        { "criterion": "Kepercayaan diri", "weight": 20, "levels": [
+          { "score": 4, "description": "Sangat percaya diri, ekspresif, kontak mata baik" },
+          { "score": 3, "description": "Cukup percaya diri" },
+          { "score": 2, "description": "Kurang percaya diri, gugup" },
+          { "score": 1, "description": "Tidak percaya diri, menghindar" }
+        ]}
+      ],
+      "sampleExpectedResponse": "Makanan favorit saya adalah sate ayam. Sate ayam itu rasanya manis dan gurih karena bumbu kacangnya. Biasanya saya makan sate kalau ada acara keluarga atau saat pergi ke tempat makan favorit. Saya suka sate karena dagingnya empuk dan bumbunya meresap. Dimakan dengan lontong dan sambal, rasanya makin enak!",
+      "tags": ["deskripsi", "makanan", "opini", "keseharian"],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved",
+      "cognitive": "KREASI",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-SMP-BERBICARA-SEMENJANA-SET001-Q006",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "berbicara",
+      "band": "SEMENJANA",
+      "type": "constructed",
+      "difficulty": 3,
+      "prompt": "Siapa tokoh idolamu? Ceritakan tentang tokoh tersebut, apa yang membuatmu mengaguminya, dan nilai-nilai atau pelajaran apa yang bisa kamu ambil dari perjuangannya. Waktu berbicara sekitar 1\u20132 menit.",
+      "speakingTask": "Bercerita tentang tokoh idola dan keteladanan yang diberikan",
+      "scoringMode": "rubric",
+      "rubric": [
+        { "criterion": "Kelancaran berbicara", "weight": 25, "levels": [
+          { "score": 4, "description": "Lancar tanpa hambatan, jeda wajar" },
+          { "score": 3, "description": "Cukup lancar, sesekali berhenti" },
+          { "score": 2, "description": "Kurang lancar, sering berhenti" },
+          { "score": 1, "description": "Tidak lancar, banyak jeda panjang" }
+        ]},
+        { "criterion": "Kesesuaian isi", "weight": 30, "levels": [
+          { "score": 4, "description": "Isi sangat sesuai dengan topik, detail lengkap" },
+          { "score": 3, "description": "Isi sesuai dengan topik, cukup detail" },
+          { "score": 2, "description": "Isi kurang sesuai dengan topik" },
+          { "score": 1, "description": "Isi tidak sesuai dengan topik" }
+        ]},
+        { "criterion": "Kebahasaan dan pelafalan", "weight": 25, "levels": [
+          { "score": 4, "description": "Sangat baik, pelafalan jelas, tata bahasa tepat" },
+          { "score": 3, "description": "Baik, sebagian besar pelafalan dan tata bahasa tepat" },
+          { "score": 2, "description": "Cukup, masih ada kesalahan pelafalan atau tata bahasa" },
+          { "score": 1, "description": "Perlu perbaikan, banyak kesalahan" }
+        ]},
+        { "criterion": "Kepercayaan diri", "weight": 20, "levels": [
+          { "score": 4, "description": "Sangat percaya diri, ekspresif, kontak mata baik" },
+          { "score": 3, "description": "Cukup percaya diri" },
+          { "score": 2, "description": "Kurang percaya diri, gugup" },
+          { "score": 1, "description": "Tidak percaya diri, menghindar" }
+        ]}
+      ],
+      "sampleExpectedResponse": "Tokoh idola saya adalah Ki Hadjar Dewantara. Beliau adalah pahlawan pendidikan Indonesia yang mendirikan Taman Siswa. Saya mengagumi beliau karena perjuangannya memberikan pendidikan bagi semua orang tanpa membedakan kaya atau miskin. Slogan beliau \u2018Ing Ngarso Sung Tulodo, Ing Madyo Mangun Karso, Tut Wuri Handayani\u2019 sangat menginspirasi saya untuk terus belajar dan kelak berguna bagi bangsa.",
+      "tags": ["idola", "tokoh", "inspirasi", "keteladanan"],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved",
+      "cognitive": "KREASI",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-SMP-BERBICARA-SEMENJANA-SET001-Q007",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "berbicara",
+      "band": "SEMENJANA",
+      "type": "constructed",
+      "difficulty": 3,
+      "prompt": "Jelaskan cara melakukan sesuatu yang kamu kuasai, misalnya membuat minuman segar, merawat tanaman, atau membersihkan ruangan! Sampaikan langkah-langkahnya secara urut dan jelas sehingga pendengar bisa mengikuti. Waktu berbicara sekitar 1\u20132 menit.",
+      "speakingTask": "Menjelaskan prosedur atau langkah-langkah melakukan sesuatu secara kronologis",
+      "scoringMode": "rubric",
+      "rubric": [
+        { "criterion": "Kelancaran berbicara", "weight": 25, "levels": [
+          { "score": 4, "description": "Lancar tanpa hambatan, jeda wajar" },
+          { "score": 3, "description": "Cukup lancar, sesekali berhenti" },
+          { "score": 2, "description": "Kurang lancar, sering berhenti" },
+          { "score": 1, "description": "Tidak lancar, banyak jeda panjang" }
+        ]},
+        { "criterion": "Kesesuaian isi", "weight": 30, "levels": [
+          { "score": 4, "description": "Isi sangat sesuai dengan topik, detail lengkap" },
+          { "score": 3, "description": "Isi sesuai dengan topik, cukup detail" },
+          { "score": 2, "description": "Isi kurang sesuai dengan topik" },
+          { "score": 1, "description": "Isi tidak sesuai dengan topik" }
+        ]},
+        { "criterion": "Kebahasaan dan pelafalan", "weight": 25, "levels": [
+          { "score": 4, "description": "Sangat baik, pelafalan jelas, tata bahasa tepat" },
+          { "score": 3, "description": "Baik, sebagian besar pelafalan dan tata bahasa tepat" },
+          { "score": 2, "description": "Cukup, masih ada kesalahan pelafalan atau tata bahasa" },
+          { "score": 1, "description": "Perlu perbaikan, banyak kesalahan" }
+        ]},
+        { "criterion": "Kepercayaan diri", "weight": 20, "levels": [
+          { "score": 4, "description": "Sangat percaya diri, ekspresif, kontak mata baik" },
+          { "score": 3, "description": "Cukup percaya diri" },
+          { "score": 2, "description": "Kurang percaya diri, gugup" },
+          { "score": 1, "description": "Tidak percaya diri, menghindar" }
+        ]}
+      ],
+      "sampleExpectedResponse": "Saya akan menjelaskan cara membuat es jeruk segar. Pertama, siapkan jeruk nipis, gula, air putih, dan es batu. Kedua, peras jeruk nipis dan ambil airnya. Ketiga, campurkan air perasan jeruk dengan gula dan air putih, lalu aduk hingga gula larut. Keempat, tuang ke dalam gelas berisi es batu. Es jeruk segar siap dinikmati!",
+      "tags": ["prosedur", "instruksi", "langkah", "keseharian"],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved",
+      "cognitive": "KREASI",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-SMP-BERBICARA-SEMENJANA-SET001-Q008",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "berbicara",
+      "band": "SEMENJANA",
+      "type": "constructed",
+      "difficulty": 3,
+      "prompt": "Ceritakan pengalaman lucu atau memalukan yang pernah kamu alami! Sampaikan secara menarik dengan urutan yang jelas sehingga pendengar bisa ikut merasakan kelucuannya. Waktu berbicara sekitar 1\u20132 menit.",
+      "speakingTask": "Bercerita tentang pengalaman lucu atau memalukan secara menarik",
+      "scoringMode": "rubric",
+      "rubric": [
+        { "criterion": "Kelancaran berbicara", "weight": 25, "levels": [
+          { "score": 4, "description": "Lancar tanpa hambatan, jeda wajar" },
+          { "score": 3, "description": "Cukup lancar, sesekali berhenti" },
+          { "score": 2, "description": "Kurang lancar, sering berhenti" },
+          { "score": 1, "description": "Tidak lancar, banyak jeda panjang" }
+        ]},
+        { "criterion": "Kesesuaian isi", "weight": 30, "levels": [
+          { "score": 4, "description": "Isi sangat sesuai dengan topik, detail lengkap" },
+          { "score": 3, "description": "Isi sesuai dengan topik, cukup detail" },
+          { "score": 2, "description": "Isi kurang sesuai dengan topik" },
+          { "score": 1, "description": "Isi tidak sesuai dengan topik" }
+        ]},
+        { "criterion": "Kebahasaan dan pelafalan", "weight": 25, "levels": [
+          { "score": 4, "description": "Sangat baik, pelafalan jelas, tata bahasa tepat" },
+          { "score": 3, "description": "Baik, sebagian besar pelafalan dan tata bahasa tepat" },
+          { "score": 2, "description": "Cukup, masih ada kesalahan pelafalan atau tata bahasa" },
+          { "score": 1, "description": "Perlu perbaikan, banyak kesalahan" }
+        ]},
+        { "criterion": "Kepercayaan diri", "weight": 20, "levels": [
+          { "score": 4, "description": "Sangat percaya diri, ekspresif, kontak mata baik" },
+          { "score": 3, "description": "Cukup percaya diri" },
+          { "score": 2, "description": "Kurang percaya diri, gugup" },
+          { "score": 1, "description": "Tidak percaya diri, menghindar" }
+        ]}
+      ],
+      "sampleExpectedResponse": "Waktu itu saya salah masuk ruang ujian. Saya buru-buru masuk ke kelas dan duduk, lalu mengeluarkan alat tulis. Setelah beberapa menit, saya heran karena teman-teman di kelas itu tidak ada yang saya kenal. Ternyata saya salah lantai! Saya langsung minta maaf dan buru-buru keluar. Teman-teman di kelas itu tertawa, dan saya ikut malu sekaligus lucu juga.",
+      "tags": ["bercerita", "pengalaman", "humor", "lucu"],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved",
+      "cognitive": "KREASI",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-SMP-BERBICARA-MADYA-SET001-Q009",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "berbicara",
+      "band": "MADYA",
+      "type": "constructed",
+      "difficulty": 3,
+      "prompt": "Jika kamu harus memilih satu kegiatan ekstrakurikuler, kegiatan apa yang akan kamu pilih? Jelaskan alasanmu secara rinci dan manfaat apa yang kamu harapkan dari kegiatan tersebut. Waktu berbicara sekitar 2 menit.",
+      "speakingTask": "Menyampaikan argumentasi tentang pilihan kegiatan ekstrakurikuler beserta alasannya",
+      "scoringMode": "rubric",
+      "rubric": [
+        { "criterion": "Kelancaran berbicara", "weight": 25, "levels": [
+          { "score": 4, "description": "Lancar tanpa hambatan, jeda wajar" },
+          { "score": 3, "description": "Cukup lancar, sesekali berhenti" },
+          { "score": 2, "description": "Kurang lancar, sering berhenti" },
+          { "score": 1, "description": "Tidak lancar, banyak jeda panjang" }
+        ]},
+        { "criterion": "Kesesuaian isi", "weight": 30, "levels": [
+          { "score": 4, "description": "Isi sangat sesuai dengan topik, detail lengkap" },
+          { "score": 3, "description": "Isi sesuai dengan topik, cukup detail" },
+          { "score": 2, "description": "Isi kurang sesuai dengan topik" },
+          { "score": 1, "description": "Isi tidak sesuai dengan topik" }
+        ]},
+        { "criterion": "Kebahasaan dan pelafalan", "weight": 25, "levels": [
+          { "score": 4, "description": "Sangat baik, pelafalan jelas, tata bahasa tepat" },
+          { "score": 3, "description": "Baik, sebagian besar pelafalan dan tata bahasa tepat" },
+          { "score": 2, "description": "Cukup, masih ada kesalahan pelafalan atau tata bahasa" },
+          { "score": 1, "description": "Perlu perbaikan, banyak kesalahan" }
+        ]},
+        { "criterion": "Kepercayaan diri", "weight": 20, "levels": [
+          { "score": 4, "description": "Sangat percaya diri, ekspresif, kontak mata baik" },
+          { "score": 3, "description": "Cukup percaya diri" },
+          { "score": 2, "description": "Kurang percaya diri, gugup" },
+          { "score": 1, "description": "Tidak percaya diri, menghindar" }
+        ]}
+      ],
+      "sampleExpectedResponse": "Saya akan memilih ekstrakurikuler paskibraka. Alasannya karena saya ingin melatih kedisiplinan, tanggung jawab, dan kekompakan tim. Di paskibraka, saya belajar baris-berbaris, menghormati bendera, dan bekerja sama. Kegiatan ini juga mengajarkan saya untuk tepat waktu dan percaya diri. Saya yakin pengalaman ini akan berguna ketika nanti saya mengikuti kegiatan kepemimpinan.",
+      "tags": ["opini", "argumentasi", "ekstrakurikuler", "sekolah"],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved",
+      "cognitive": "NALAR",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-SMP-BERBICARA-MADYA-SET001-Q010",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "berbicara",
+      "band": "MADYA",
+      "type": "constructed",
+      "difficulty": 3,
+      "prompt": "Temanmu sedang merasa sedih karena nilai ujiannya kurang memuaskan. Berikan saran dan semangat kepada temanmu itu! Sampaikan dengan kata-kata yang menenangkan, membangun, dan memotivasi. Waktu berbicara sekitar 1\u20132 menit.",
+      "speakingTask": "Memberikan saran dan dukungan emosional kepada teman secara empatik",
+      "scoringMode": "rubric",
+      "rubric": [
+        { "criterion": "Kelancaran berbicara", "weight": 25, "levels": [
+          { "score": 4, "description": "Lancar tanpa hambatan, jeda wajar" },
+          { "score": 3, "description": "Cukup lancar, sesekali berhenti" },
+          { "score": 2, "description": "Kurang lancar, sering berhenti" },
+          { "score": 1, "description": "Tidak lancar, banyak jeda panjang" }
+        ]},
+        { "criterion": "Kesesuaian isi", "weight": 30, "levels": [
+          { "score": 4, "description": "Isi sangat sesuai dengan topik, detail lengkap" },
+          { "score": 3, "description": "Isi sesuai dengan topik, cukup detail" },
+          { "score": 2, "description": "Isi kurang sesuai dengan topik" },
+          { "score": 1, "description": "Isi tidak sesuai dengan topik" }
+        ]},
+        { "criterion": "Kebahasaan dan pelafalan", "weight": 25, "levels": [
+          { "score": 4, "description": "Sangat baik, pelafalan jelas, tata bahasa tepat" },
+          { "score": 3, "description": "Baik, sebagian besar pelafalan dan tata bahasa tepat" },
+          { "score": 2, "description": "Cukup, masih ada kesalahan pelafalan atau tata bahasa" },
+          { "score": 1, "description": "Perlu perbaikan, banyak kesalahan" }
+        ]},
+        { "criterion": "Kepercayaan diri", "weight": 20, "levels": [
+          { "score": 4, "description": "Sangat percaya diri, ekspresif, kontak mata baik" },
+          { "score": 3, "description": "Cukup percaya diri" },
+          { "score": 2, "description": "Kurang percaya diri, gugup" },
+          { "score": 1, "description": "Tidak percaya diri, menghindar" }
+        ]}
+      ],
+      "sampleExpectedResponse": "Hai, jangan bersedih terus. Nilai ujian memang penting, tapi itu bukan akhir dari segalanya. Anggap saja ini sebagai bahan evaluasi supaya kita tahu bagian mana yang perlu dipelajari lagi. Yuk, kita belajar bersama untuk ujian selanjutnya. Pasti kamu bisa lebih baik! Yang penting jangan menyerah, oke?",
+      "tags": ["saran", "empati", "motivasi", "sosial"],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved",
+      "cognitive": "NALAR",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-SMP-BERBICARA-MADYA-SET001-Q011",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "berbicara",
+      "band": "MADYA",
+      "type": "constructed",
+      "difficulty": 3,
+      "prompt": "Ceritakan suatu peristiwa yang membuatmu merasa sangat bangga atau sangat senang! Jelaskan peristiwa itu secara detail, bagaimana perasaanmu saat itu, dan mengapa peristiwa itu berarti bagimu. Waktu berbicara sekitar 2 menit.",
+      "speakingTask": "Mengungkapkan perasaan dan pengalaman emosional secara mendalam",
+      "scoringMode": "rubric",
+      "rubric": [
+        { "criterion": "Kelancaran berbicara", "weight": 25, "levels": [
+          { "score": 4, "description": "Lancar tanpa hambatan, jeda wajar" },
+          { "score": 3, "description": "Cukup lancar, sesekali berhenti" },
+          { "score": 2, "description": "Kurang lancar, sering berhenti" },
+          { "score": 1, "description": "Tidak lancar, banyak jeda panjang" }
+        ]},
+        { "criterion": "Kesesuaian isi", "weight": 30, "levels": [
+          { "score": 4, "description": "Isi sangat sesuai dengan topik, detail lengkap" },
+          { "score": 3, "description": "Isi sesuai dengan topik, cukup detail" },
+          { "score": 2, "description": "Isi kurang sesuai dengan topik" },
+          { "score": 1, "description": "Isi tidak sesuai dengan topik" }
+        ]},
+        { "criterion": "Kebahasaan dan pelafalan", "weight": 25, "levels": [
+          { "score": 4, "description": "Sangat baik, pelafalan jelas, tata bahasa tepat" },
+          { "score": 3, "description": "Baik, sebagian besar pelafalan dan tata bahasa tepat" },
+          { "score": 2, "description": "Cukup, masih ada kesalahan pelafalan atau tata bahasa" },
+          { "score": 1, "description": "Perlu perbaikan, banyak kesalahan" }
+        ]},
+        { "criterion": "Kepercayaan diri", "weight": 20, "levels": [
+          { "score": 4, "description": "Sangat percaya diri, ekspresif, kontak mata baik" },
+          { "score": 3, "description": "Cukup percaya diri" },
+          { "score": 2, "description": "Kurang percaya diri, gugup" },
+          { "score": 1, "description": "Tidak percaya diri, menghindar" }
+        ]}
+      ],
+      "sampleExpectedResponse": "Peristiwa yang membuat saya sangat bangga adalah saat menjadi juara dua lomba pidato tingkat kota. Saya berlatih hampir setiap hari selama dua minggu. Ibu guru membimbing saya memilih kata-kata yang tepat dan teknik berbicara di depan umum. Saat nama saya diumumkan sebagai juara, rasanya campur aduk antara haru dan senang. Orang tua dan guru saya tersenyum bangga. Pengalaman itu mengajarkan saya bahwa kerja keras tidak mengkhianati hasil.",
+      "tags": ["perasaan", "pengalaman", "emosi", "kebanggaan"],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved",
+      "cognitive": "NALAR",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-SMP-BERBICARA-MADYA-SET001-Q012",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "berbicara",
+      "band": "MADYA",
+      "type": "constructed",
+      "difficulty": 3,
+      "prompt": "Deskripsikan sekolahmu kepada seseorang yang belum pernah ke sana! Ceritakan tentang lingkungan sekolah, fasilitas yang ada, suasana belajar, dan hal yang paling kamu sukai dari sekolahmu. Waktu berbicara sekitar 2 menit.",
+      "speakingTask": "Deskripsi lingkungan sekolah dan pengalaman bersekolah secara terperinci",
+      "scoringMode": "rubric",
+      "rubric": [
+        { "criterion": "Kelancaran berbicara", "weight": 25, "levels": [
+          { "score": 4, "description": "Lancar tanpa hambatan, jeda wajar" },
+          { "score": 3, "description": "Cukup lancar, sesekali berhenti" },
+          { "score": 2, "description": "Kurang lancar, sering berhenti" },
+          { "score": 1, "description": "Tidak lancar, banyak jeda panjang" }
+        ]},
+        { "criterion": "Kesesuaian isi", "weight": 30, "levels": [
+          { "score": 4, "description": "Isi sangat sesuai dengan topik, detail lengkap" },
+          { "score": 3, "description": "Isi sesuai dengan topik, cukup detail" },
+          { "score": 2, "description": "Isi kurang sesuai dengan topik" },
+          { "score": 1, "description": "Isi tidak sesuai dengan topik" }
+        ]},
+        { "criterion": "Kebahasaan dan pelafalan", "weight": 25, "levels": [
+          { "score": 4, "description": "Sangat baik, pelafalan jelas, tata bahasa tepat" },
+          { "score": 3, "description": "Baik, sebagian besar pelafalan dan tata bahasa tepat" },
+          { "score": 2, "description": "Cukup, masih ada kesalahan pelafalan atau tata bahasa" },
+          { "score": 1, "description": "Perlu perbaikan, banyak kesalahan" }
+        ]},
+        { "criterion": "Kepercayaan diri", "weight": 20, "levels": [
+          { "score": 4, "description": "Sangat percaya diri, ekspresif, kontak mata baik" },
+          { "score": 3, "description": "Cukup percaya diri" },
+          { "score": 2, "description": "Kurang percaya diri, gugup" },
+          { "score": 1, "description": "Tidak percaya diri, menghindar" }
+        ]}
+      ],
+      "sampleExpectedResponse": "Sekolahku bernama SMP Nusantara. Letaknya di daerah yang cukup sejuk karena dikelilingi pohon-pohon rindang. Gedungnya berlantai dua dengan cat putih dan hijau. Ada lapangan upacara yang luas, perpustakaan dengan koleksi buku yang cukup lengkap, laboratorium IPA, dan ruang komputer. Suasana belajarnya menyenangkan, guru-gurunya ramah dan sabar. Yang paling saya suka adalah taman baca di pojok sekolah tempat kami duduk santai sambil membaca buku.",
+      "tags": ["deskripsi", "sekolah", "lingkungan", "pengalaman"],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved",
+      "cognitive": "NALAR",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-SMP-BERBICARA-MADYA-SET001-Q013",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "berbicara",
+      "band": "MADYA",
+      "type": "constructed",
+      "difficulty": 4,
+      "prompt": "Apa cita-cita atau rencanamu untuk masa depan? Jelaskan apa yang ingin kamu capai, mengapa kamu memilih tujuan itu, dan langkah-langkah konkret yang sudah atau akan kamu lakukan untuk mewujudkannya. Waktu berbicara sekitar 2\u20133 menit.",
+      "speakingTask": "Menjelaskan rencana dan cita-cita masa depan disertai strategi pencapaian",
+      "scoringMode": "rubric",
+      "rubric": [
+        { "criterion": "Kelancaran berbicara", "weight": 25, "levels": [
+          { "score": 4, "description": "Lancar tanpa hambatan, jeda wajar" },
+          { "score": 3, "description": "Cukup lancar, sesekali berhenti" },
+          { "score": 2, "description": "Kurang lancar, sering berhenti" },
+          { "score": 1, "description": "Tidak lancar, banyak jeda panjang" }
+        ]},
+        { "criterion": "Kesesuaian isi", "weight": 30, "levels": [
+          { "score": 4, "description": "Isi sangat sesuai dengan topik, detail lengkap" },
+          { "score": 3, "description": "Isi sesuai dengan topik, cukup detail" },
+          { "score": 2, "description": "Isi kurang sesuai dengan topik" },
+          { "score": 1, "description": "Isi tidak sesuai dengan topik" }
+        ]},
+        { "criterion": "Kebahasaan dan pelafalan", "weight": 25, "levels": [
+          { "score": 4, "description": "Sangat baik, pelafalan jelas, tata bahasa tepat" },
+          { "score": 3, "description": "Baik, sebagian besar pelafalan dan tata bahasa tepat" },
+          { "score": 2, "description": "Cukup, masih ada kesalahan pelafalan atau tata bahasa" },
+          { "score": 1, "description": "Perlu perbaikan, banyak kesalahan" }
+        ]},
+        { "criterion": "Kepercayaan diri", "weight": 20, "levels": [
+          { "score": 4, "description": "Sangat percaya diri, ekspresif, kontak mata baik" },
+          { "score": 3, "description": "Cukup percaya diri" },
+          { "score": 2, "description": "Kurang percaya diri, gugup" },
+          { "score": 1, "description": "Tidak percaya diri, menghindar" }
+        ]}
+      ],
+      "sampleExpectedResponse": "Cita-cita saya ingin menjadi penulis novel. Saya sangat suka merangkai kata dan bercerita sejak kecil. Saya ingin menulis buku yang bisa menginspirasi banyak orang, terutama remaja Indonesia. Langkah yang sudah saya lakukan adalah rajin membaca buku dan menulis cerita pendek di buku harian. Saya juga ikut kelas menulis online dan mengirim cerpen ke majalah dinding sekolah. Ke depannya, saya ingin mengikuti lomba menulis dan menerbitkan buku pertama saya.",
+      "tags": ["masa-depan", "cita-cita", "perencanaan", "motivasi"],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved",
+      "cognitive": "NALAR",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-SMP-BERBICARA-MADYA-SET001-Q014",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "berbicara",
+      "band": "MADYA",
+      "type": "constructed",
+      "difficulty": 4,
+      "prompt": "Menurutmu, apa dampak penggunaan gawai dan internet terhadap kehidupan remaja saat ini? Sampaikan pendapatmu tentang sisi positif dan negatifnya, serta berikan saran bagaimana menggunakan teknologi dengan bijak. Waktu berbicara sekitar 2\u20133 menit.",
+      "speakingTask": "Opini kritis tentang dampak teknologi bagi remaja disertai saran solutif",
+      "scoringMode": "rubric",
+      "rubric": [
+        { "criterion": "Kelancaran berbicara", "weight": 25, "levels": [
+          { "score": 4, "description": "Lancar tanpa hambatan, jeda wajar" },
+          { "score": 3, "description": "Cukup lancar, sesekali berhenti" },
+          { "score": 2, "description": "Kurang lancar, sering berhenti" },
+          { "score": 1, "description": "Tidak lancar, banyak jeda panjang" }
+        ]},
+        { "criterion": "Kesesuaian isi", "weight": 30, "levels": [
+          { "score": 4, "description": "Isi sangat sesuai dengan topik, detail lengkap" },
+          { "score": 3, "description": "Isi sesuai dengan topik, cukup detail" },
+          { "score": 2, "description": "Isi kurang sesuai dengan topik" },
+          { "score": 1, "description": "Isi tidak sesuai dengan topik" }
+        ]},
+        { "criterion": "Kebahasaan dan pelafalan", "weight": 25, "levels": [
+          { "score": 4, "description": "Sangat baik, pelafalan jelas, tata bahasa tepat" },
+          { "score": 3, "description": "Baik, sebagian besar pelafalan dan tata bahasa tepat" },
+          { "score": 2, "description": "Cukup, masih ada kesalahan pelafalan atau tata bahasa" },
+          { "score": 1, "description": "Perlu perbaikan, banyak kesalahan" }
+        ]},
+        { "criterion": "Kepercayaan diri", "weight": 20, "levels": [
+          { "score": 4, "description": "Sangat percaya diri, ekspresif, kontak mata baik" },
+          { "score": 3, "description": "Cukup percaya diri" },
+          { "score": 2, "description": "Kurang percaya diri, gugup" },
+          { "score": 1, "description": "Tidak percaya diri, menghindar" }
+        ]}
+      ],
+      "sampleExpectedResponse": "Menurut saya, gawai dan internet memiliki dua sisi. Sisi positifnya, kita bisa mengakses informasi dengan cepat, belajar hal baru, dan terhubung dengan teman yang jauh. Namun sisi negatifnya, banyak remaja jadi jarang bergerak, sulit fokus, dan kecanduan media sosial. Saran saya, kita perlu membatasi waktu penggunaan gawai, misalnya maksimal dua jam untuk bermedia sosial. Gunakan juga gawai untuk hal produktif seperti belajar atau mengerjakan tugas. Bijaklah dalam memilih konten yang kita konsumsi.",
+      "tags": ["opini", "teknologi", "dampak", "argumentasi"],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved",
+      "cognitive": "NALAR",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-SMP-BERBICARA-MADYA-SET001-Q015",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "berbicara",
+      "band": "MADYA",
+      "type": "constructed",
+      "difficulty": 4,
+      "prompt": "Ceritakan tentang tradisi atau kebiasaan unik yang dilakukan keluargamu saat merayakan hari raya, ulang tahun, atau liburan! Jelaskan bagaimana tradisi itu dilakukan, siapa yang terlibat, dan apa maknanya bagimu. Waktu berbicara sekitar 2\u20133 menit.",
+      "speakingTask": "Bercerita tentang tradisi keluarga dan nilai budayanya",
+      "scoringMode": "rubric",
+      "rubric": [
+        { "criterion": "Kelancaran berbicara", "weight": 25, "levels": [
+          { "score": 4, "description": "Lancar tanpa hambatan, jeda wajar" },
+          { "score": 3, "description": "Cukup lancar, sesekali berhenti" },
+          { "score": 2, "description": "Kurang lancar, sering berhenti" },
+          { "score": 1, "description": "Tidak lancar, banyak jeda panjang" }
+        ]},
+        { "criterion": "Kesesuaian isi", "weight": 30, "levels": [
+          { "score": 4, "description": "Isi sangat sesuai dengan topik, detail lengkap" },
+          { "score": 3, "description": "Isi sesuai dengan topik, cukup detail" },
+          { "score": 2, "description": "Isi kurang sesuai dengan topik" },
+          { "score": 1, "description": "Isi tidak sesuai dengan topik" }
+        ]},
+        { "criterion": "Kebahasaan dan pelafalan", "weight": 25, "levels": [
+          { "score": 4, "description": "Sangat baik, pelafalan jelas, tata bahasa tepat" },
+          { "score": 3, "description": "Baik, sebagian besar pelafalan dan tata bahasa tepat" },
+          { "score": 2, "description": "Cukup, masih ada kesalahan pelafalan atau tata bahasa" },
+          { "score": 1, "description": "Perlu perbaikan, banyak kesalahan" }
+        ]},
+        { "criterion": "Kepercayaan diri", "weight": 20, "levels": [
+          { "score": 4, "description": "Sangat percaya diri, ekspresif, kontak mata baik" },
+          { "score": 3, "description": "Cukup percaya diri" },
+          { "score": 2, "description": "Kurang percaya diri, gugup" },
+          { "score": 1, "description": "Tidak percaya diri, menghindar" }
+        ]}
+      ],
+      "sampleExpectedResponse": "Setiap Hari Raya Idul Fitri, keluarga saya punya tradisi unik, yaitu halal bihalal keliling ke tetangga sambil membawa kue nastar buatan ibu. Kami sekeluarga, dari kakek hingga sepupu-sepupu, berjalan kaki dari rumah ke rumah. Yang unik, setiap kali bersalaman dengan tetangga, kami harus mencicipi kue yang mereka sajikan dan memberikan pujian. Tradisi ini mengajarkan saya tentang silaturahmi, saling menghormati, dan kebersamaan. Saya sangat menantikan momen ini setiap tahunnya.",
+      "tags": ["bercerita", "tradisi", "keluarga", "budaya"],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved",
+      "cognitive": "NALAR",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-SMP-BERBICARA-MADYA-SET001-Q016",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "berbicara",
+      "band": "MADYA",
+      "type": "constructed",
+      "difficulty": 4,
+      "prompt": "Menurutmu, apa arti persahabatan yang sesungguhnya? Jelaskan mengapa persahabatan penting dalam kehidupan remaja, ciri-ciri teman yang baik, dan bagaimana cara menjaga persahabatan agar tetap langgeng. Waktu berbicara sekitar 2\u20133 menit.",
+      "speakingTask": "Opini tentang makna persahabatan dan cara mempertahankannya",
+      "scoringMode": "rubric",
+      "rubric": [
+        { "criterion": "Kelancaran berbicara", "weight": 25, "levels": [
+          { "score": 4, "description": "Lancar tanpa hambatan, jeda wajar" },
+          { "score": 3, "description": "Cukup lancar, sesekali berhenti" },
+          { "score": 2, "description": "Kurang lancar, sering berhenti" },
+          { "score": 1, "description": "Tidak lancar, banyak jeda panjang" }
+        ]},
+        { "criterion": "Kesesuaian isi", "weight": 30, "levels": [
+          { "score": 4, "description": "Isi sangat sesuai dengan topik, detail lengkap" },
+          { "score": 3, "description": "Isi sesuai dengan topik, cukup detail" },
+          { "score": 2, "description": "Isi kurang sesuai dengan topik" },
+          { "score": 1, "description": "Isi tidak sesuai dengan topik" }
+        ]},
+        { "criterion": "Kebahasaan dan pelafalan", "weight": 25, "levels": [
+          { "score": 4, "description": "Sangat baik, pelafalan jelas, tata bahasa tepat" },
+          { "score": 3, "description": "Baik, sebagian besar pelafalan dan tata bahasa tepat" },
+          { "score": 2, "description": "Cukup, masih ada kesalahan pelafalan atau tata bahasa" },
+          { "score": 1, "description": "Perlu perbaikan, banyak kesalahan" }
+        ]},
+        { "criterion": "Kepercayaan diri", "weight": 20, "levels": [
+          { "score": 4, "description": "Sangat percaya diri, ekspresif, kontak mata baik" },
+          { "score": 3, "description": "Cukup percaya diri" },
+          { "score": 2, "description": "Kurang percaya diri, gugup" },
+          { "score": 1, "description": "Tidak percaya diri, menghindar" }
+        ]}
+      ],
+      "sampleExpectedResponse": "Menurut saya, persahabatan sejati adalah hubungan yang didasari kejujuran, saling pengertian, dan dukungan. Teman yang baik bukan hanya ada saat senang, tapi juga saat kita susah. Di usia remaja, teman sangat penting karena kita banyak berbagi cerita, keluh kesah, dan pengalaman. Ciri teman baik menurut saya adalah jujur, bisa dipercaya, dan tidak menjerumuskan. Untuk menjaga persahabatan, kita perlu saling menghargai, memberi ruang, dan jangan sungkan untuk meminta maaf jika ada kesalahan.",
+      "tags": ["opini", "persahabatan", "sosial", "nilai"],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved",
+      "cognitive": "NALAR",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-SMP-BERBICARA-UNGGUL-SET001-Q017",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "berbicara",
+      "band": "UNGGUL",
+      "type": "constructed",
+      "difficulty": 4,
+      "prompt": "Berpidatolah selama 2\u20133 menit tentang pentingnya membaca bagi generasi muda! Susun pidatomu secara terstruktur: buka dengan salam dan perkenalan, sampaikan isi dengan argumen yang meyakinkan, dan tutup dengan ajakan serta kesimpulan yang kuat.",
+      "speakingTask": "Pidato persuasif tentang pentingnya membaca dengan struktur retoris yang baik",
+      "scoringMode": "rubric",
+      "rubric": [
+        { "criterion": "Kelancaran berbicara", "weight": 25, "levels": [
+          { "score": 4, "description": "Lancar tanpa hambatan, jeda wajar" },
+          { "score": 3, "description": "Cukup lancar, sesekali berhenti" },
+          { "score": 2, "description": "Kurang lancar, sering berhenti" },
+          { "score": 1, "description": "Tidak lancar, banyak jeda panjang" }
+        ]},
+        { "criterion": "Kesesuaian isi", "weight": 30, "levels": [
+          { "score": 4, "description": "Isi sangat sesuai dengan topik, detail lengkap" },
+          { "score": 3, "description": "Isi sesuai dengan topik, cukup detail" },
+          { "score": 2, "description": "Isi kurang sesuai dengan topik" },
+          { "score": 1, "description": "Isi tidak sesuai dengan topik" }
+        ]},
+        { "criterion": "Kebahasaan dan pelafalan", "weight": 25, "levels": [
+          { "score": 4, "description": "Sangat baik, pelafalan jelas, tata bahasa tepat" },
+          { "score": 3, "description": "Baik, sebagian besar pelafalan dan tata bahasa tepat" },
+          { "score": 2, "description": "Cukup, masih ada kesalahan pelafalan atau tata bahasa" },
+          { "score": 1, "description": "Perlu perbaikan, banyak kesalahan" }
+        ]},
+        { "criterion": "Kepercayaan diri", "weight": 20, "levels": [
+          { "score": 4, "description": "Sangat percaya diri, ekspresif, kontak mata baik" },
+          { "score": 3, "description": "Cukup percaya diri" },
+          { "score": 2, "description": "Kurang percaya diri, gugup" },
+          { "score": 1, "description": "Tidak percaya diri, menghindar" }
+        ]}
+      ],
+      "sampleExpectedResponse": "Assalamualaikum warahmatullahi wabarakatuh. Yang terhormat ibu guru dan teman-teman sekalian. Pada kesempatan ini, saya akan menyampaikan pidato tentang pentingnya membaca bagi generasi muda. Saudara-saudaraku, di era digital seperti sekarang, minat membaca di kalangan remaja semakin menurun. Banyak dari kita yang lebih suka menonton video singkat atau bermain gawai daripada membaca buku. Padahal, membaca memiliki banyak manfaat. Dengan membaca, wawasan kita bertambah, kosakata kita semakin kaya, dan kita bisa memahami dunia lebih luas. Thomas Edison pernah berkata, \u2018Membaca adalah jendela dunia.\u2019 Tanpa membaca, pengetahuan kita terbatas. Oleh karena itu, mari kita mulai membudayakan membaca. Luangkan waktu setidaknya 15 menit sehari untuk membaca buku. Pilihlah buku yang sesuai minat kita, bisa novel, majalah, atau buku pengetahuan. Sekian pidato dari saya. Ayo, jadikan membaca sebagai kebiasaan! Wassalamualaikum warahmatullahi wabarakatuh.",
+      "tags": ["pidato", "persuasif", "membaca", "literasi"],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved",
+      "cognitive": "NALAR",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-SMP-BERBICARA-UNGGUL-SET001-Q018",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "berbicara",
+      "band": "UNGGUL",
+      "type": "constructed",
+      "difficulty": 4,
+      "prompt": "Ceritakan pengalamanmu saat membantu orang lain! Jelaskan situasi saat itu, apa yang kamu lakukan, bagaimana perasaanmu setelah membantu, dan apa pelajaran berharga yang kamu dapatkan dari pengalaman tersebut. Waktu berbicara sekitar 2\u20133 menit.",
+      "speakingTask": "Bercerita tentang pengalaman menolong orang lain dengan refleksi nilai sosial",
+      "scoringMode": "rubric",
+      "rubric": [
+        { "criterion": "Kelancaran berbicara", "weight": 25, "levels": [
+          { "score": 4, "description": "Lancar tanpa hambatan, jeda wajar" },
+          { "score": 3, "description": "Cukup lancar, sesekali berhenti" },
+          { "score": 2, "description": "Kurang lancar, sering berhenti" },
+          { "score": 1, "description": "Tidak lancar, banyak jeda panjang" }
+        ]},
+        { "criterion": "Kesesuaian isi", "weight": 30, "levels": [
+          { "score": 4, "description": "Isi sangat sesuai dengan topik, detail lengkap" },
+          { "score": 3, "description": "Isi sesuai dengan topik, cukup detail" },
+          { "score": 2, "description": "Isi kurang sesuai dengan topik" },
+          { "score": 1, "description": "Isi tidak sesuai dengan topik" }
+        ]},
+        { "criterion": "Kebahasaan dan pelafalan", "weight": 25, "levels": [
+          { "score": 4, "description": "Sangat baik, pelafalan jelas, tata bahasa tepat" },
+          { "score": 3, "description": "Baik, sebagian besar pelafalan dan tata bahasa tepat" },
+          { "score": 2, "description": "Cukup, masih ada kesalahan pelafalan atau tata bahasa" },
+          { "score": 1, "description": "Perlu perbaikan, banyak kesalahan" }
+        ]},
+        { "criterion": "Kepercayaan diri", "weight": 20, "levels": [
+          { "score": 4, "description": "Sangat percaya diri, ekspresif, kontak mata baik" },
+          { "score": 3, "description": "Cukup percaya diri" },
+          { "score": 2, "description": "Kurang percaya diri, gugup" },
+          { "score": 1, "description": "Tidak percaya diri, menghindar" }
+        ]}
+      ],
+      "sampleExpectedResponse": "Pengalaman membantu orang lain yang paling berkesan bagi saya adalah saat ikut kegiatan bakti sosial di panti asuhan bersama kelompok remaja di lingkungan rumah. Kami mengumpulkan donasi berupa buku tulis, pakaian layak pakai, dan makanan ringan. Sesampainya di panti, kami bermain dan mengobrol dengan anak-anak di sana. Saya membantu seorang adik belajar membaca. Awalnya dia malu-malu, tapi lama-lama dia mulai percaya diri. Melihat senyumnya saat berhasil membaca satu kalimat dengan lancar, hati saya terharu. Saya belajar bahwa kebahagiaan tidak selalu datang dari menerima, tapi juga dari memberi. Pengalaman itu membuat saya ingin lebih sering berbagi dengan sesama.",
+      "tags": ["bercerita", "sosial", "tolong-menolong", "pengalaman"],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved",
+      "cognitive": "NALAR",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-SMP-BERBICARA-UNGGUL-SET001-Q019",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "berbicara",
+      "band": "UNGGUL",
+      "type": "constructed",
+      "difficulty": 4,
+      "prompt": "Jelaskan pentingnya olahraga bagi kesehatan fisik dan mental remaja! Sampaikan pendapatmu disertai alasan yang meyakinkan, contoh aktivitas olahraga yang bisa dilakukan, dan ajakan untuk hidup aktif. Waktu berbicara sekitar 2\u20133 menit.",
+      "speakingTask": "Opini persuasif tentang manfaat olahraga bagi kesehatan fisik dan mental",
+      "scoringMode": "rubric",
+      "rubric": [
+        { "criterion": "Kelancaran berbicara", "weight": 25, "levels": [
+          { "score": 4, "description": "Lancar tanpa hambatan, jeda wajar" },
+          { "score": 3, "description": "Cukup lancar, sesekali berhenti" },
+          { "score": 2, "description": "Kurang lancar, sering berhenti" },
+          { "score": 1, "description": "Tidak lancar, banyak jeda panjang" }
+        ]},
+        { "criterion": "Kesesuaian isi", "weight": 30, "levels": [
+          { "score": 4, "description": "Isi sangat sesuai dengan topik, detail lengkap" },
+          { "score": 3, "description": "Isi sesuai dengan topik, cukup detail" },
+          { "score": 2, "description": "Isi kurang sesuai dengan topik" },
+          { "score": 1, "description": "Isi tidak sesuai dengan topik" }
+        ]},
+        { "criterion": "Kebahasaan dan pelafalan", "weight": 25, "levels": [
+          { "score": 4, "description": "Sangat baik, pelafalan jelas, tata bahasa tepat" },
+          { "score": 3, "description": "Baik, sebagian besar pelafalan dan tata bahasa tepat" },
+          { "score": 2, "description": "Cukup, masih ada kesalahan pelafalan atau tata bahasa" },
+          { "score": 1, "description": "Perlu perbaikan, banyak kesalahan" }
+        ]},
+        { "criterion": "Kepercayaan diri", "weight": 20, "levels": [
+          { "score": 4, "description": "Sangat percaya diri, ekspresif, kontak mata baik" },
+          { "score": 3, "description": "Cukup percaya diri" },
+          { "score": 2, "description": "Kurang percaya diri, gugup" },
+          { "score": 1, "description": "Tidak percaya diri, menghindar" }
+        ]}
+      ],
+      "sampleExpectedResponse": "Menurut saya, olahraga sangat penting bagi remaja, baik untuk kesehatan fisik maupun mental. Secara fisik, olahraga membuat tubuh kita bugar, memperkuat otot dan tulang, serta membantu menjaga berat badan ideal. Secara mental, olahraga bisa mengurangi stres, meningkatkan suasana hati, dan membuat tidur lebih nyenyak. Banyak olahraga sederhana yang bisa kita lakukan, seperti jogging, bersepeda, berenang, atau bahkan senam ringan di rumah. Yang penting adalah konsistensi, tidak perlu yang berat-berat. Saya sendiri rutin bersepeda setiap akhir pekan. Rasanya segar dan pikiran jadi lebih jernih. Mari kita sisihkan waktu setidaknya 30 menit setiap hari untuk bergerak. Tubuh sehat, pikiran pun ikut sehat!",
+      "tags": ["opini", "olahraga", "kesehatan", "persuasif"],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved",
+      "cognitive": "NALAR",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-SMP-BERBICARA-UNGGUL-SET001-Q020",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "berbicara",
+      "band": "UNGGUL",
+      "type": "constructed",
+      "difficulty": 4,
+      "prompt": "Akhir-akhir ini banyak gerakan peduli lingkungan yang digerakkan oleh remaja, seperti bank sampah, penghijauan, dan pengurangan sampah plastik. Berikan tanggapanmu tentang fenomena ini! Jelaskan pendapatmu mengenai aksi lingkungan oleh remaja, mengapa hal itu penting, dan apa kontribusi yang bisa kamu lakukan di lingkungan sekitarmu. Waktu berbicara sekitar 2\u20133 menit.",
+      "speakingTask": "Tanggapan kritis terhadap isu lingkungan dan aksi nyata remaja",
+      "scoringMode": "rubric",
+      "rubric": [
+        { "criterion": "Kelancaran berbicara", "weight": 25, "levels": [
+          { "score": 4, "description": "Lancar tanpa hambatan, jeda wajar" },
+          { "score": 3, "description": "Cukup lancar, sesekali berhenti" },
+          { "score": 2, "description": "Kurang lancar, sering berhenti" },
+          { "score": 1, "description": "Tidak lancar, banyak jeda panjang" }
+        ]},
+        { "criterion": "Kesesuaian isi", "weight": 30, "levels": [
+          { "score": 4, "description": "Isi sangat sesuai dengan topik, detail lengkap" },
+          { "score": 3, "description": "Isi sesuai dengan topik, cukup detail" },
+          { "score": 2, "description": "Isi kurang sesuai dengan topik" },
+          { "score": 1, "description": "Isi tidak sesuai dengan topik" }
+        ]},
+        { "criterion": "Kebahasaan dan pelafalan", "weight": 25, "levels": [
+          { "score": 4, "description": "Sangat baik, pelafalan jelas, tata bahasa tepat" },
+          { "score": 3, "description": "Baik, sebagian besar pelafalan dan tata bahasa tepat" },
+          { "score": 2, "description": "Cukup, masih ada kesalahan pelafalan atau tata bahasa" },
+          { "score": 1, "description": "Perlu perbaikan, banyak kesalahan" }
+        ]},
+        { "criterion": "Kepercayaan diri", "weight": 20, "levels": [
+          { "score": 4, "description": "Sangat percaya diri, ekspresif, kontak mata baik" },
+          { "score": 3, "description": "Cukup percaya diri" },
+          { "score": 2, "description": "Kurang percaya diri, gugup" },
+          { "score": 1, "description": "Tidak percaya diri, menghindar" }
+        ]}
+      ],
+      "sampleExpectedResponse": "Saya sangat mendukung gerakan peduli lingkungan yang digerakkan oleh remaja. Ini menunjukkan bahwa generasi muda peduli terhadap masa depan bumi. Menurut saya, aksi seperti bank sampah dan penghijauan bukan hanya bermanfaat untuk lingkungan, tetapi juga mengajarkan kita tanggung jawab dan kepedulian sosial. Masalah sampah plastik misalnya, sudah menjadi darurat di banyak kota. Jika remaja aktif mengurangi sampah plastik, dampaknya akan besar karena kebiasaan baik akan menular ke lingkungan sekitar. Secara pribadi, saya sudah mulai membawa tumblr dan tas belanja sendiri saat keluar. Saya juga ikut kegiatan menanam pohon di desa setiap liburan. Saya percaya, perubahan besar dimulai dari langkah kecil. Ayo, kita jadi bagian dari solusi, bukan masalah!",
+      "tags": ["tanggapan", "lingkungan", "isu-terkini", "argumentasi"],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved",
+      "cognitive": "NALAR",
+      "domain": "SINTAS"
+    }
+  ]
+}

@@ -75,14 +75,14 @@ async function validateUKBI(): Promise<CheckResult[]> {
   results.push({ name: "UKBI: total questions", pass: count >= 50, detail: `count=${count}` });
 
   const questions = await db.uKBIQuestion.findMany({
-    select: { id: true, text: true, options: true, correctAnswer: true, seksi: true, difficulty: true, isActive: true, isVerified: true },
+    select: { id: true, text: true, options: true, correctAnswer: true, seksi: true, difficulty: true, isActive: true, isVerified: true, type: true },
   });
 
   let noText = 0, noOptions = 0, noCorrect = 0, invalidCorrect = 0, inactive = 0;
   for (const q of questions) {
     if (!q.text || q.text.trim() === "") noText++;
-    if (!Array.isArray(q.options) || (q.options as OptionItem[]).length === 0) noOptions++;
-    if (!q.correctAnswer || q.correctAnswer.trim() === "") noCorrect++;
+    if (q.type !== "CONSTRUCTED" && (!Array.isArray(q.options) || (q.options as OptionItem[]).length === 0)) noOptions++;
+    if (q.type !== "CONSTRUCTED" && (!q.correctAnswer || q.correctAnswer.trim() === "")) noCorrect++;
     if (q.correctAnswer && Array.isArray(q.options)) {
       const validIds = (q.options as OptionItem[]).map((o) => o.id);
       if (!validIds.includes(q.correctAnswer)) invalidCorrect++;
@@ -125,7 +125,7 @@ async function validateTKA(): Promise<CheckResult[]> {
   let noText = 0, noOptions = 0, noCorrect = 0, invalidCorrect = 0, invalidWeight = 0, inactive = 0;
   for (const q of questions) {
     if (!q.text || q.text.trim() === "") noText++;
-    if (!Array.isArray(q.options) || (q.options as OptionItem[]).length === 0) noOptions++;
+    if (q.type !== "CONSTRUCTED" && (!Array.isArray(q.options) || (q.options as OptionItem[]).length === 0)) noOptions++;
     if (!q.correctAnswer || q.correctAnswer.trim() === "") noCorrect++;
     if (q.correctAnswer && Array.isArray(q.options)) {
       const validIds = (q.options as OptionItem[]).map((o) => o.id);

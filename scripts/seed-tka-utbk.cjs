@@ -1,3 +1,9 @@
+/**
+ * ⚠️ LEGACY — DO NOT RUN for new TKA bank production.
+ * Original UTBK seed from seed-kompetensi era.
+ * Kept for reference only — do not rerun without explicit approval.
+ */
+
 const { PrismaClient } = require('@prisma/client');
 const p = new PrismaClient();
 

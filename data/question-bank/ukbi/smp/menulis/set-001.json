@@ -1,0 +1,950 @@
+{
+  "meta": {
+    "section": "menulis",
+    "track": "UKBI_SMP",
+    "product": "UKBI_PRACTICE",
+    "totalItems": 20
+  },
+  "questions": [
+    {
+      "id": "BC-UKBI-SMP-MENULIS-SEMENJANA-SET001-Q001",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "menulis",
+      "band": "SEMENJANA",
+      "type": "constructed",
+      "difficulty": 2,
+      "prompt": "Tulislah sebuah paragraf pendek tentang pengalaman liburan yang paling berkesan bagimu! Ceritakan ke mana kamu pergi, apa yang kamu lakukan, dan mengapa liburan itu berkesan. Tulis dalam 3\u20135 kalimat.",
+      "scoringMode": "rubric",
+      "rubric": [
+        {
+          "criterion": "Kesesuaian isi dengan topik",
+          "weight": 40,
+          "levels": [
+            { "score": 4, "description": "Isi sangat sesuai, menceritakan tempat, kegiatan, dan alasan dengan lengkap" },
+            { "score": 3, "description": "Isi sesuai, menyebutkan tempat dan kegiatan tetapi kurang mendetail" },
+            { "score": 2, "description": "Isi kurang sesuai, hanya menyebutkan satu aspek saja" },
+            { "score": 1, "description": "Isi tidak sesuai dengan topik liburan" }
+          ]
+        },
+        {
+          "criterion": "Struktur dan organisasi",
+          "weight": 30,
+          "levels": [
+            { "score": 4, "description": "Paragraf padu dengan alur yang jelas dan kalimat terhubung dengan baik" },
+            { "score": 3, "description": "Cukup terstruktur, alur dapat diikuti meskipun ada loncatan" },
+            { "score": 2, "description": "Kurang terstruktur, kalimat tidak berurutan dan sulit diikuti" },
+            { "score": 1, "description": "Tidak terstruktur, kalimat acak dan tidak membentuk paragraf" }
+          ]
+        },
+        {
+          "criterion": "Kebahasaan (ejaan, tanda baca, diksi)",
+          "weight": 30,
+          "levels": [
+            { "score": 4, "description": "Sangat baik: ejaan tepat, tanda baca benar, pilihan kata bervariasi" },
+            { "score": 3, "description": "Baik: beberapa kesalahan ejaan minor, diksi cukup tepat" },
+            { "score": 2, "description": "Cukup: banyak kesalahan ejaan atau tanda baca, diksi terbatas" },
+            { "score": 1, "description": "Perlu perbaikan: dominan kesalahan ejaan dan tanda baca" }
+          ]
+        }
+      ],
+      "sampleExpectedResponse": "Liburan paling berkesan bagiku adalah saat aku pergi ke Pantai Parangtritis bersama keluarga. Aku bermain air dan membuat istana pasir di tepi pantai. Ayah mengajakku berjalan-jalan di pinggir pantai sambil menikmati pemandangan sore. Aku sangat senang karena bisa bermain sepuasnya tanpa tergesa-gesa. Liburan itu membuatku ingin kembali lagi ke pantai suatu hari nanti.",
+      "tags": ["menulis", "karangan", "pengalaman-pribadi", "liburan"],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved"
+    },
+    {
+      "id": "BC-UKBI-SMP-MENULIS-SEMENJANA-SET001-Q002",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "menulis",
+      "band": "SEMENJANA",
+      "type": "constructed",
+      "difficulty": 2,
+      "prompt": "Setiap orang pasti memiliki sahabat. Tulislah sebuah paragraf pendek yang menggambarkan sahabat baikmu! Jelaskan bagaimana sifatnya, apa yang membuat kalian berteman, dan satu hal yang paling kamu kagumi darinya.",
+      "scoringMode": "rubric",
+      "rubric": [
+        {
+          "criterion": "Kesesuaian isi dengan topik",
+          "weight": 40,
+          "levels": [
+            { "score": 4, "description": "Isi sangat sesuai, menggambarkan sifat, alasan berteman, dan hal yang dikagumi" },
+            { "score": 3, "description": "Isi sesuai, menyebutkan dua dari tiga aspek yang diminta" },
+            { "score": 2, "description": "Isi kurang sesuai, hanya menyebutkan satu aspek" },
+            { "score": 1, "description": "Isi tidak sesuai dengan topik sahabat" }
+          ]
+        },
+        {
+          "criterion": "Struktur dan organisasi",
+          "weight": 30,
+          "levels": [
+            { "score": 4, "description": "Paragraf padu dengan alur deskripsi yang jelas dan kalimat terhubung" },
+            { "score": 3, "description": "Cukup terstruktur, alur deskripsi dapat diikuti" },
+            { "score": 2, "description": "Kurang terstruktur, deskripsi melompat-lompat" },
+            { "score": 1, "description": "Tidak terstruktur, kalimat tidak berhubungan" }
+          ]
+        },
+        {
+          "criterion": "Kebahasaan (ejaan, tanda baca, diksi)",
+          "weight": 30,
+          "levels": [
+            { "score": 4, "description": "Sangat baik: ejaan tepat, tanda baca benar, pilihan kata tepat dan ekspresif" },
+            { "score": 3, "description": "Baik: beberapa kesalahan minor, diksi cukup baik" },
+            { "score": 2, "description": "Cukup: banyak kesalahan ejaan, diksi sederhana" },
+            { "score": 1, "description": "Perlu perbaikan: dominan kesalahan, diksi sangat terbatas" }
+          ]
+        }
+      ],
+      "sampleExpectedResponse": "Sahabat baikku bernama Rina. Dia adalah teman sekelasku yang sangat ramah dan suka membantu siapa pun. Kami berteman sejak pertama kali duduk sebangku di awal tahun ajaran. Yang paling aku kagumi dari Rina adalah dia selalu jujur dan tidak pernah marah meskipun diganggu. Dengannya, aku merasa nyaman dan bisa bercerita tentang apa saja.",
+      "tags": ["menulis", "karangan", "deskripsi", "sahabat"],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved"
+    },
+    {
+      "id": "BC-UKBI-SMP-MENULIS-SEMENJANA-SET001-Q003",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "menulis",
+      "band": "SEMENJANA",
+      "type": "constructed",
+      "difficulty": 3,
+      "prompt": "Kamu ingin memberi tahu orang tuamu bahwa hari ini kamu pulang terlambat karena mengikuti latihan pramuka tambahan. Tulislah pesan singkat yang akan kamu tinggalkan di meja makan! Gunakan bahasa yang sopan, jelas, dan santun.",
+      "scoringMode": "rubric",
+      "rubric": [
+        {
+          "criterion": "Kesesuaian isi dengan topik",
+          "weight": 40,
+          "levels": [
+            { "score": 4, "description": "Isi sangat sesuai: menyampaikan alasan, waktu pulang, dan pesan tambahan dengan lengkap" },
+            { "score": 3, "description": "Isi sesuai: menyebutkan alasan dan waktu pulang" },
+            { "score": 2, "description": "Isi kurang sesuai: hanya menyebutkan alasan tanpa waktu" },
+            { "score": 1, "description": "Isi tidak sesuai dengan konteks pesan untuk orang tua" }
+          ]
+        },
+        {
+          "criterion": "Struktur dan organisasi",
+          "weight": 30,
+          "levels": [
+            { "score": 4, "description": "Pesan terstruktur dengan pembuka, isi, dan penutup yang jelas" },
+            { "score": 3, "description": "Cukup terstruktur, urutan informasi dapat diikuti" },
+            { "score": 2, "description": "Kurang terstruktur, informasi tidak berurutan" },
+            { "score": 1, "description": "Tidak terstruktur, sulit dipahami" }
+          ]
+        },
+        {
+          "criterion": "Kebahasaan (ejaan, tanda baca, diksi)",
+          "weight": 30,
+          "levels": [
+            { "score": 4, "description": "Sangat baik: ejaan tepat, penggunaan kata sopan, tanda baca benar" },
+            { "score": 3, "description": "Baik: beberapa kesalahan minor, bahasa cukup sopan" },
+            { "score": 2, "description": "Cukup: banyak kesalahan, pilihan kata kurang santun" },
+            { "score": 1, "description": "Perlu perbaikan: banyak kesalahan ejaan dan bahasa tidak sopan" }
+          ]
+        }
+      ],
+      "sampleExpectedResponse": "Ayah dan Ibu yang baik, hari ini aku pulang agak terlambat karena ada latihan pramuka tambahan. Latihan akan selesai pukul setengah lima sore. Aku sudah menyiapkan bekal sendiri, jadi tidak perlu menyiapkan makanan untukku. Tolong jangan khawatir, ya. Aku akan pulang secepatnya setelah latihan selesai.",
+      "tags": ["menulis", "pesan", "komunikasi", "santun"],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved"
+    },
+    {
+      "id": "BC-UKBI-SMP-MENULIS-SEMENJANA-SET001-Q004",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "menulis",
+      "band": "SEMENJANA",
+      "type": "constructed",
+      "difficulty": 3,
+      "prompt": "Menurutmu, apakah membaca buku cerita itu penting bagi remaja? Tulislah pendapatmu dalam satu paragraf! Sertakan alasan mengapa kamu berpikir demikian dan bagaimana perasaanmu saat membaca buku cerita.",
+      "scoringMode": "rubric",
+      "rubric": [
+        {
+          "criterion": "Kesesuaian isi dengan topik",
+          "weight": 40,
+          "levels": [
+            { "score": 4, "description": "Isi sangat sesuai: menyampaikan pendapat jelas, alasan kuat, dan perasaan pribadi" },
+            { "score": 3, "description": "Isi sesuai: ada pendapat dan alasan, tetapi kurang mendalam" },
+            { "score": 2, "description": "Isi kurang sesuai: pendapat tidak jelas atau alasan lemah" },
+            { "score": 1, "description": "Isi tidak sesuai dengan topik" }
+          ]
+        },
+        {
+          "criterion": "Struktur dan organisasi",
+          "weight": 30,
+          "levels": [
+            { "score": 4, "description": "Paragraf padu dengan pernyataan pendapat, alasan, dan penutup yang rapi" },
+            { "score": 3, "description": "Cukup terstruktur, alur argumentasi dapat diikuti" },
+            { "score": 2, "description": "Kurang terstruktur, alasan tidak terorganisir" },
+            { "score": 1, "description": "Tidak terstruktur, sulit dipahami" }
+          ]
+        },
+        {
+          "criterion": "Kebahasaan (ejaan, tanda baca, diksi)",
+          "weight": 30,
+          "levels": [
+            { "score": 4, "description": "Sangat baik: ejaan tepat, tanda baca benar, pilihan kata ekspresif dan sesuai" },
+            { "score": 3, "description": "Baik: beberapa kesalahan minor, diksi cukup baik" },
+            { "score": 2, "description": "Cukup: banyak kesalahan ejaan, diksi terbatas" },
+            { "score": 1, "description": "Perlu perbaikan: dominan kesalahan kebahasaan" }
+          ]
+        }
+      ],
+      "sampleExpectedResponse": "Menurutku, membaca buku cerita sangat penting bagi remaja. Selain menambah pengetahuan dan memperkaya kosakata, membaca buku cerita juga melatih imajinasi dan empati. Aku sendiri suka membaca novel remaja karena ceritanya seru dan membuatku larut dalam petualangan tokohnya. Membaca juga membantuku lebih mudah memahami pelajaran Bahasa Indonesia di sekolah. Sayangnya, masih banyak temanku yang lebih suka bermain media sosial daripada membaca buku.",
+      "tags": ["menulis", "opini", "argumentasi", "membaca"],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved"
+    },
+    {
+      "id": "BC-UKBI-SMP-MENULIS-SEMENJANA-SET001-Q005",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "menulis",
+      "band": "SEMENJANA",
+      "type": "constructed",
+      "difficulty": 2,
+      "prompt": "Tulislah langkah-langkah membuat es teh manis atau minuman sederhana lainnya! Tulis secara urut dan jelas sehingga temanmu bisa mengikuti petunjukmu dengan mudah. Gunakan kata-kata seperti pertama, kedua, selanjutnya, dan terakhir.",
+      "scoringMode": "rubric",
+      "rubric": [
+        {
+          "criterion": "Kesesuaian isi dengan topik",
+          "weight": 40,
+          "levels": [
+            { "score": 4, "description": "Isi sangat sesuai: langkah-langkah lengkap, urut, dan mudah diikuti" },
+            { "score": 3, "description": "Isi sesuai: langkah-langkah cukup lengkap dan urut" },
+            { "score": 2, "description": "Isi kurang sesuai: langkah tidak lengkap atau tidak urut" },
+            { "score": 1, "description": "Isi tidak sesuai, bukan petunjuk membuat sesuatu" }
+          ]
+        },
+        {
+          "criterion": "Struktur dan organisasi",
+          "weight": 30,
+          "levels": [
+            { "score": 4, "description": "Tersusun rapi dengan urutan langkah yang logis dan kata penghubung waktu yang tepat" },
+            { "score": 3, "description": "Cukup terstruktur, urutan dapat diikuti meski ada yang terlewat" },
+            { "score": 2, "description": "Kurang terstruktur, langkah tidak urut dan membingungkan" },
+            { "score": 1, "description": "Tidak terstruktur, tidak dapat diikuti" }
+          ]
+        },
+        {
+          "criterion": "Kebahasaan (ejaan, tanda baca, diksi)",
+          "weight": 30,
+          "levels": [
+            { "score": 4, "description": "Sangat baik: ejaan tepat, kalimat imperatif jelas, pilihan kata tepat" },
+            { "score": 3, "description": "Baik: beberapa kesalahan minor, instruksi cukup jelas" },
+            { "score": 2, "description": "Cukup: banyak kesalahan, instruksi sulit diikuti" },
+            { "score": 1, "description": "Perlu perbaikan: dominan kesalahan, instruksi tidak jelas" }
+          ]
+        }
+      ],
+      "sampleExpectedResponse": "Cara membuat es teh manis. Pertama, rebus air hingga mendidih. Kedua, masukkan kantong teh ke dalam gelas dan tuangkan air panas. Ketiga, diamkan selama tiga menit, lalu angkat kantong teh. Keempat, tambahkan dua sendok gula pasir dan aduk sampai larut. Terakhir, masukkan es batu secukupnya dan es teh manis siap dinikmati.",
+      "tags": ["menulis", "prosedur", "instruksi", "minuman"],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved"
+    },
+    {
+      "id": "BC-UKBI-SMP-MENULIS-SEMENJANA-SET001-Q006",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "menulis",
+      "band": "SEMENJANA",
+      "type": "constructed",
+      "difficulty": 3,
+      "prompt": "Kamu akan merayakan ulang tahun dan ingin mengundang sahabatmu. Tulislah undangan sederhana yang berisi hari, tanggal, waktu, tempat acara, dan kegiatan yang akan dilakukan! Gunakan bahasa yang ramah dan menarik agar sahabatmu bersemangat datang.",
+      "scoringMode": "rubric",
+      "rubric": [
+        {
+          "criterion": "Kesesuaian isi dengan topik",
+          "weight": 40,
+          "levels": [
+            { "score": 4, "description": "Isi sangat sesuai: mencantumkan hari, tanggal, waktu, tempat, dan kegiatan secara lengkap" },
+            { "score": 3, "description": "Isi sesuai: mencantumkan sebagian besar informasi yang diminta" },
+            { "score": 2, "description": "Isi kurang sesuai: informasi penting tidak lengkap" },
+            { "score": 1, "description": "Isi tidak sesuai dengan format undangan" }
+          ]
+        },
+        {
+          "criterion": "Struktur dan organisasi",
+          "weight": 30,
+          "levels": [
+            { "score": 4, "description": "Undangan terstruktur dengan pembuka, isi informasi, dan penutup yang jelas" },
+            { "score": 3, "description": "Cukup terstruktur, informasi dapat ditemukan meski tidak rapi" },
+            { "score": 2, "description": "Kurang terstruktur, informasi tersebar tidak teratur" },
+            { "score": 1, "description": "Tidak terstruktur, sulit dipahami" }
+          ]
+        },
+        {
+          "criterion": "Kebahasaan (ejaan, tanda baca, diksi)",
+          "weight": 30,
+          "levels": [
+            { "score": 4, "description": "Sangat baik: ejaan tepat, bahasa ramah dan menarik, tanda baca benar" },
+            { "score": 3, "description": "Baik: beberapa kesalahan minor, bahasa cukup ramah" },
+            { "score": 2, "description": "Cukup: banyak kesalahan, bahasa kurang menarik" },
+            { "score": 1, "description": "Perlu perbaikan: dominan kesalahan, bahasa tidak sesuai" }
+          ]
+        }
+      ],
+      "sampleExpectedResponse": "Hai Sari! Aku mengundangmu ke pesta ulang tahunku yang akan diadakan pada hari Sabtu, 12 Agustus 2026, pukul 15.00\u201318.00 WIB di rumahku, Jalan Mawar No. 5. Kita akan makan kue bersama, bermain games seru, dan menonton film favorit. Aku harap kamu bisa datang, ya! Tanpa kehadiranmu, pestaku tidak akan lengkap. Sampai jumpa!",
+      "tags": ["menulis", "undangan", "komunikasi", "sederhana"],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved"
+    },
+    {
+      "id": "BC-UKBI-SMP-MENULIS-SEMENJANA-SET001-Q007",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "menulis",
+      "band": "SEMENJANA",
+      "type": "constructed",
+      "difficulty": 3,
+      "prompt": "Bacalah paragraf berikut dengan saksama, kemudian tulislah ringkasannya dalam 2\u20133 kalimat dengan bahasamu sendiri!\n\n\"Sampah plastik menjadi masalah besar di Indonesia. Setiap tahun, jutaan ton sampah plastik berakhir di lautan dan mengancam kehidupan biota laut. Banyak hewan laut seperti penyu dan ikan yang mati karena memakan plastik. Pemerintah telah melarang penggunaan kantong plastik sekali pakai di berbagai daerah. Masyarakat juga mulai beralih ke tas belanja kain dan tumbler untuk mengurangi sampah plastik.\"",
+      "scoringMode": "rubric",
+      "rubric": [
+        {
+          "criterion": "Kesesuaian isi dengan topik",
+          "weight": 40,
+          "levels": [
+            { "score": 4, "description": "Isi sangat sesuai: menangkap ide pokok bacaan dengan tepat dan lengkap" },
+            { "score": 3, "description": "Isi sesuai: menyebutkan sebagian besar ide pokok" },
+            { "score": 2, "description": "Isi kurang sesuai: ide pokok tidak lengkap atau kurang tepat" },
+            { "score": 1, "description": "Isi tidak sesuai dengan bacaan asli" }
+          ]
+        },
+        {
+          "criterion": "Struktur dan organisasi",
+          "weight": 30,
+          "levels": [
+            { "score": 4, "description": "Ringkasan padu, kalimat terhubung, dan urut secara logis" },
+            { "score": 3, "description": "Cukup terstruktur, alur ringkasan dapat diikuti" },
+            { "score": 2, "description": "Kurang terstruktur, informasi melompat-lompat" },
+            { "score": 1, "description": "Tidak terstruktur, sulit dipahami" }
+          ]
+        },
+        {
+          "criterion": "Kebahasaan (ejaan, tanda baca, diksi)",
+          "weight": 30,
+          "levels": [
+            { "score": 4, "description": "Sangat baik: ejaan tepat, parafrasa baik, tanda baca benar, kalimat efektif" },
+            { "score": 3, "description": "Baik: beberapa kesalahan minor, parafrasa cukup baik" },
+            { "score": 2, "description": "Cukup: banyak kesalahan, cenderung menyalin kalimat asli" },
+            { "score": 1, "description": "Perlu perbaikan: dominan kesalahan, menyalin langsung tanpa parafrasa" }
+          ]
+        }
+      ],
+      "sampleExpectedResponse": "Sampah plastik merupakan masalah serius yang mengancam lingkungan laut di Indonesia. Pemerintah telah melarang kantong plastik sekali pakai dan masyarakat mulai beralih menggunakan tas kain serta tumbler. Langkah ini penting untuk melindungi biota laut dan menjaga kelestarian lingkungan.",
+      "tags": ["menulis", "ringkasan", "membaca-pemahaman", "lingkungan"],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved"
+    },
+    {
+      "id": "BC-UKBI-SMP-MENULIS-SEMENJANA-SET001-Q008",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "menulis",
+      "band": "SEMENJANA",
+      "type": "constructed",
+      "difficulty": 3,
+      "prompt": "Di sekolahmu, pelajaran olahraga akan dikurangi menjadi seminggu sekali. Apakah kamu setuju dengan keputusan tersebut? Tulislah pendapatmu dalam satu paragraf! Sertakan alasan yang mendukung pendapatmu.",
+      "scoringMode": "rubric",
+      "rubric": [
+        {
+          "criterion": "Kesesuaian isi dengan topik",
+          "weight": 40,
+          "levels": [
+            { "score": 4, "description": "Isi sangat sesuai: pendapat jelas, alasan kuat dan relevan, ada contoh atau pengalaman" },
+            { "score": 3, "description": "Isi sesuai: pendapat jelas dengan alasan yang cukup" },
+            { "score": 2, "description": "Isi kurang sesuai: pendapat kurang jelas atau alasan lemah" },
+            { "score": 1, "description": "Isi tidak sesuai dengan topik" }
+          ]
+        },
+        {
+          "criterion": "Struktur dan organisasi",
+          "weight": 30,
+          "levels": [
+            { "score": 4, "description": "Paragraf padu dengan pernyataan pendapat, alasan, dan kesimpulan yang rapi" },
+            { "score": 3, "description": "Cukup terstruktur, alasan dapat diikuti meski kurang rapi" },
+            { "score": 2, "description": "Kurang terstruktur, alasan tidak tersusun dengan baik" },
+            { "score": 1, "description": "Tidak terstruktur, sulit dipahami" }
+          ]
+        },
+        {
+          "criterion": "Kebahasaan (ejaan, tanda baca, diksi)",
+          "weight": 30,
+          "levels": [
+            { "score": 4, "description": "Sangat baik: ejaan tepat, kalimat efektif, pilihan kata tepat dan meyakinkan" },
+            { "score": 3, "description": "Baik: beberapa kesalahan minor, kalimat cukup efektif" },
+            { "score": 2, "description": "Cukup: banyak kesalahan, kalimat kurang efektif" },
+            { "score": 1, "description": "Perlu perbaikan: dominan kesalahan, kalimat tidak efektif" }
+          ]
+        }
+      ],
+      "sampleExpectedResponse": "Menurutku, keputusan mengurangi jam olahraga menjadi seminggu sekali tidak tepat. Olahraga penting untuk menjaga kebugaran tubuh, apalagi di usia remaja yang sedang aktif bertumbuh. Dengan berolahraga, kami juga bisa melepas stres setelah belajar di kelas. Jika jam olahraga dikurangi, kesehatan siswa bisa terganggu dan waktu duduk diam kami akan semakin panjang. Sebaiknya jam olahraga tetap dua kali seminggu seperti sebelumnya agar tubuh kami tetap bugar.",
+      "tags": ["menulis", "opini", "argumentasi", "kesehatan", "olahraga"],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved"
+    },
+    {
+      "id": "BC-UKBI-SMP-MENULIS-MADYA-SET001-Q009",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "menulis",
+      "band": "MADYA",
+      "type": "constructed",
+      "difficulty": 3,
+      "prompt": "Perbaikilah kalimat berikut agar menjadi kalimat yang efektif dan mudah dipahami! Tulis ulang kalimat yang sudah diperbaiki.\n\n\"Supaya agar kita bisa meraih prestasi yang membanggakan bagi diri sendiri dan orang tua dan juga sekolah, maka dari itu kita harus giat belajar setiap hari dengan sungguh-sungguh.\"",
+      "scoringMode": "rubric",
+      "rubric": [
+        {
+          "criterion": "Kesesuaian isi dengan topik",
+          "weight": 40,
+          "levels": [
+            { "score": 4, "description": "Makna kalimat asli dipertahankan sepenuhnya, tidak ada informasi yang hilang" },
+            { "score": 3, "description": "Makna kalimat sebagian besar dipertahankan" },
+            { "score": 2, "description": "Makna berubah atau ada informasi penting yang hilang" },
+            { "score": 1, "description": "Makna berbeda sama sekali dari kalimat asli" }
+          ]
+        },
+        {
+          "criterion": "Struktur dan organisasi",
+          "weight": 30,
+          "levels": [
+            { "score": 4, "description": "Kalimat efektif: tidak bertele-tele, struktur subjek-predikat-objek jelas dan hemat kata" },
+            { "score": 3, "description": "Cukup efektif: masih ada sedikit pemborosan kata" },
+            { "score": 2, "description": "Kurang efektif: masih banyak kata mubazir" },
+            { "score": 1, "description": "Tidak efektif: sama seperti kalimat asli atau lebih buruk" }
+          ]
+        },
+        {
+          "criterion": "Kebahasaan (ejaan, tanda baca, diksi)",
+          "weight": 30,
+          "levels": [
+            { "score": 4, "description": "Sangat baik: ejaan tepat, tanda baca benar, pilihan kata baku dan tepat" },
+            { "score": 3, "description": "Baik: beberapa kesalahan minor" },
+            { "score": 2, "description": "Cukup: banyak kesalahan ejaan atau pilihan kata tidak baku" },
+            { "score": 1, "description": "Perlu perbaikan: dominan kesalahan kebahasaan" }
+          ]
+        }
+      ],
+      "sampleExpectedResponse": "Agar dapat meraih prestasi yang membanggakan bagi diri sendiri, orang tua, dan sekolah, kita harus giat belajar setiap hari.",
+      "tags": ["menulis", "memperbaiki", "kalimat-efektif", "kebahasaan"],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved"
+    },
+    {
+      "id": "BC-UKBI-SMP-MENULIS-MADYA-SET001-Q010",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "menulis",
+      "band": "MADYA",
+      "type": "constructed",
+      "difficulty": 3,
+      "prompt": "Ceritakan pengalamanmu saat membantu orang tua di rumah! Tulislah dalam satu paragraf. Jelaskan kegiatan apa yang kamu lakukan, bagaimana perasaanmu saat membantu, dan apa pelajaran yang kamu ambil dari pengalaman itu.",
+      "scoringMode": "rubric",
+      "rubric": [
+        {
+          "criterion": "Kesesuaian isi dengan topik",
+          "weight": 40,
+          "levels": [
+            { "score": 4, "description": "Isi sangat sesuai: menceritakan kegiatan, perasaan, dan pelajaran secara mendetail" },
+            { "score": 3, "description": "Isi sesuai: menyebutkan dua dari tiga aspek yang diminta" },
+            { "score": 2, "description": "Isi kurang sesuai: hanya menyebutkan satu aspek" },
+            { "score": 1, "description": "Isi tidak sesuai dengan topik pengalaman membantu" }
+          ]
+        },
+        {
+          "criterion": "Struktur dan organisasi",
+          "weight": 30,
+          "levels": [
+            { "score": 4, "description": "Paragraf padu dengan alur narasi yang jelas: pembuka-isi-penutup" },
+            { "score": 3, "description": "Cukup terstruktur, alur dapat diikuti" },
+            { "score": 2, "description": "Kurang terstruktur, cerita melompat-lompat" },
+            { "score": 1, "description": "Tidak terstruktur, sulit dipahami" }
+          ]
+        },
+        {
+          "criterion": "Kebahasaan (ejaan, tanda baca, diksi)",
+          "weight": 30,
+          "levels": [
+            { "score": 4, "description": "Sangat baik: ejaan tepat, tanda baca benar, diksi variatif dan ekspresif" },
+            { "score": 3, "description": "Baik: beberapa kesalahan minor, diksi cukup baik" },
+            { "score": 2, "description": "Cukup: banyak kesalahan, diksi terbatas" },
+            { "score": 1, "description": "Perlu perbaikan: dominan kesalahan kebahasaan" }
+          ]
+        }
+      ],
+      "sampleExpectedResponse": "Setiap hari Minggu aku membantu ibu membersihkan rumah. Tugasku adalah menyapu halaman dan menyiram tanaman-tanaman di depan rumah. Meskipun capai, aku senang karena ibu terlihat lebih ringan pekerjaannya. Dari pengalaman ini aku belajar bahwa pekerjaan rumah tangga itu tidak mudah dan membutuhkan kerja sama semua anggota keluarga. Aku jadi lebih menghargai jerih payah orang tua yang setiap hari merawat rumah.",
+      "tags": ["menulis", "pengalaman-pribadi", "narasi", "keluarga"],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved"
+    },
+    {
+      "id": "BC-UKBI-SMP-MENULIS-MADYA-SET001-Q011",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "menulis",
+      "band": "MADYA",
+      "type": "constructed",
+      "difficulty": 4,
+      "prompt": "Susunlah kalimat-kalimat berikut menjadi sebuah paragraf yang padu dan bermakna! Tulis ulang dalam bentuk paragraf yang utuh.\n\n1. Mereka bekerja sama membersihkan kelas sebelum pelajaran dimulai.\n2. Hari itu, regu piket datang lebih awal.\n3. Setelah selesai, suasana kelas menjadi rapi dan nyaman untuk belajar.\n4. Beberapa siswa menyapu lantai, sementara yang lain menghapus papan tulis.\n5. Ibu guru tersenyum dan memuji kerja keras mereka.",
+      "scoringMode": "rubric",
+      "rubric": [
+        {
+          "criterion": "Kesesuaian isi dengan topik",
+          "weight": 40,
+          "levels": [
+            { "score": 4, "description": "Semua kalimat tersusun dengan tepat, tidak ada kalimat yang terlewat" },
+            { "score": 3, "description": "Semua kalimat tersusun tetapi urutan kurang logis" },
+            { "score": 2, "description": "Ada kalimat yang tidak digunakan atau urutan sebagian salah" },
+            { "score": 1, "description": "Urutan salah total atau banyak kalimat tidak digunakan" }
+          ]
+        },
+        {
+          "criterion": "Struktur dan organisasi",
+          "weight": 30,
+          "levels": [
+            { "score": 4, "description": "Paragraf sangat padu, urutan kalimat logis, dan hubungan antar kalimat jelas" },
+            { "score": 3, "description": "Cukup padu, urutan kalimat dapat diterima" },
+            { "score": 2, "description": "Kurang padu, hubungan antar kalimat tidak lancar" },
+            { "score": 1, "description": "Tidak padu, kalimat tidak berhubungan satu sama lain" }
+          ]
+        },
+        {
+          "criterion": "Kebahasaan (ejaan, tanda baca, diksi)",
+          "weight": 30,
+          "levels": [
+            { "score": 4, "description": "Sangat baik: ejaan tepat, tanda baca benar, kata penghubung digunakan dengan tepat" },
+            { "score": 3, "description": "Baik: beberapa kesalahan minor" },
+            { "score": 2, "description": "Cukup: banyak kesalahan ejaan atau tanda baca" },
+            { "score": 1, "description": "Perlu perbaikan: dominan kesalahan" }
+          ]
+        }
+      ],
+      "sampleExpectedResponse": "Hari itu, regu piket datang lebih awal. Mereka bekerja sama membersihkan kelas sebelum pelajaran dimulai. Beberapa siswa menyapu lantai, sementara yang lain menghapus papan tulis. Setelah selesai, suasana kelas menjadi rapi dan nyaman untuk belajar. Ibu guru tersenyum dan memuji kerja keras mereka.",
+      "tags": ["menulis", "menyusun", "paragraf", "koherensi"],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved"
+    },
+    {
+      "id": "BC-UKBI-SMP-MENULIS-MADYA-SET001-Q012",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "menulis",
+      "band": "MADYA",
+      "type": "constructed",
+      "difficulty": 3,
+      "prompt": "Seorang teman telah meminjamkan buku catatan IPA-nya saat kamu sakit dan tertinggal pelajaran. Tulislah ucapan terima kasih yang tulus untuknya! Jelaskan bagaimana bantuan itu sangat berarti bagimu dan apa dampaknya terhadap nilai ulanganmu.",
+      "scoringMode": "rubric",
+      "rubric": [
+        {
+          "criterion": "Kesesuaian isi dengan topik",
+          "weight": 40,
+          "levels": [
+            { "score": 4, "description": "Isi sangat sesuai: ucapan terima kasih tulus, menyebutkan bantuan dan dampaknya secara jelas" },
+            { "score": 3, "description": "Isi sesuai: ucapan terima kasih dan menyebutkan bantuan" },
+            { "score": 2, "description": "Isi kurang sesuai: ucapan terima kasih kurang tulus atau tidak menyebutkan bantuan spesifik" },
+            { "score": 1, "description": "Isi tidak sesuai, bukan ucapan terima kasih" }
+          ]
+        },
+        {
+          "criterion": "Struktur dan organisasi",
+          "weight": 30,
+          "levels": [
+            { "score": 4, "description": "Pesan terstruktur: pembukaan, isi, dan penutup yang rapi dan alami" },
+            { "score": 3, "description": "Cukup terstruktur, urutan dapat diikuti" },
+            { "score": 2, "description": "Kurang terstruktur, informasi tidak berurutan" },
+            { "score": 1, "description": "Tidak terstruktur, sulit dipahami" }
+          ]
+        },
+        {
+          "criterion": "Kebahasaan (ejaan, tanda baca, diksi)",
+          "weight": 30,
+          "levels": [
+            { "score": 4, "description": "Sangat baik: ejaan tepat, bahasa akrab namun sopan, tanda baca benar" },
+            { "score": 3, "description": "Baik: beberapa kesalahan minor, bahasa cukup santun" },
+            { "score": 2, "description": "Cukup: banyak kesalahan, bahasa kurang santun" },
+            { "score": 1, "description": "Perlu perbaikan: dominan kesalahan" }
+          ]
+        }
+      ],
+      "sampleExpectedResponse": "Hai Dinda, terima kasih banyak sudah meminjamkan catatan IPA-nya selama aku sakit. Catatanmu sangat rapi dan mudah dipahami, jadi aku tidak kesulitan mengejar pelajaran yang tertinggal. Berkat pinjaman catatanmu, nilai ulangan IPA-ku juga lumayan baik. Aku sangat beruntung punya teman sebaik kamu. Lain kali kalau kamu butuh bantuan, bilang saja padaku, ya!",
+      "tags": ["menulis", "surat", "ucapan-terima-kasih", "komunikasi"],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved"
+    },
+    {
+      "id": "BC-UKBI-SMP-MENULIS-MADYA-SET001-Q013",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "menulis",
+      "band": "MADYA",
+      "type": "constructed",
+      "difficulty": 4,
+      "prompt": "Jelaskan tempat favoritmu di sekolah selain ruang kelas! Tulislah deskripsi yang mendetail sehingga pembaca bisa membayangkan tempat tersebut. Gambarkan suasana, apa yang biasa kamu lakukan di sana, dan mengapa tempat itu menjadi favoritmu.",
+      "scoringMode": "rubric",
+      "rubric": [
+        {
+          "criterion": "Kesesuaian isi dengan topik",
+          "weight": 40,
+          "levels": [
+            { "score": 4, "description": "Isi sangat sesuai: deskripsi detail mencakup suasana, kegiatan, dan alasan secara mendalam" },
+            { "score": 3, "description": "Isi sesuai: deskripsi cukup detail, menyebutkan suasana dan kegiatan" },
+            { "score": 2, "description": "Isi kurang sesuai: deskripsi masih umum dan kurang mendetail" },
+            { "score": 1, "description": "Isi tidak sesuai dengan topik deskripsi tempat" }
+          ]
+        },
+        {
+          "criterion": "Struktur dan organisasi",
+          "weight": 30,
+          "levels": [
+            { "score": 4, "description": "Paragraf deskriptif sangat padu, menggunakan sudut pandang yang konsisten dan urutan ruang yang jelas" },
+            { "score": 3, "description": "Cukup terstruktur, deskripsi dapat diikuti" },
+            { "score": 2, "description": "Kurang terstruktur, deskripsi melompat-lompat" },
+            { "score": 1, "description": "Tidak terstruktur, sulit dipahami" }
+          ]
+        },
+        {
+          "criterion": "Kebahasaan (ejaan, tanda baca, diksi)",
+          "weight": 30,
+          "levels": [
+            { "score": 4, "description": "Sangat baik: ejaan tepat, penggunaan kata sifat dan majas deskriptif yang kaya, tanda baca benar" },
+            { "score": 3, "description": "Baik: beberapa kesalahan minor, pilihan kata cukup variatif" },
+            { "score": 2, "description": "Cukup: banyak kesalahan, pilihan kata terbatas dan kurang variatif" },
+            { "score": 1, "description": "Perlu perbaikan: dominan kesalahan, diksi sangat sederhana" }
+          ]
+        }
+      ],
+      "sampleExpectedResponse": "Tempat favoritku di sekolah adalah perpustakaan. Ruangannya tidak terlalu besar, tetapi pencahayaannya terang dan udaranya sejuk berkat pendingin ruangan. Di sana terdapat beberapa rak buku yang tertata rapi, meja bundar untuk membaca, dan sudut baca dengan bantal empuk. Aku suka menghabiskan waktu istirahat di perpustakaan karena suasananya tenang dan jauh dari keramaian. Aku bisa membaca novel terbaru, mengerjakan PR, atau sekadar melihat-lihat majalah dinding. Perpustakaan adalah tempat yang menenangkan di tengah hiruk-pikuk sekolah.",
+      "tags": ["menulis", "deskripsi", "t tempat", "sekolah"],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved"
+    },
+    {
+      "id": "BC-UKBI-SMP-MENULIS-MADYA-SET001-Q014",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "menulis",
+      "band": "MADYA",
+      "type": "constructed",
+      "difficulty": 4,
+      "prompt": "Banyak remaja menggunakan ponsel setiap hari, baik untuk belajar maupun bermain media sosial. Menurutmu, apakah penggunaan ponsel di kalangan remaja lebih banyak membawa manfaat atau dampak negatif? Tuliskan pendapatmu dalam satu paragraf yang dilengkapi dengan alasan dan contoh nyata!",
+      "scoringMode": "rubric",
+      "rubric": [
+        {
+          "criterion": "Kesesuaian isi dengan topik",
+          "weight": 40,
+          "levels": [
+            { "score": 4, "description": "Isi sangat sesuai: pendapat jelas, alasan kuat, dan dilengkapi contoh konkret" },
+            { "score": 3, "description": "Isi sesuai: pendapat jelas dengan alasan, tetapi contoh kurang spesifik" },
+            { "score": 2, "description": "Isi kurang sesuai: pendapat kurang jelas atau alasan lemah" },
+            { "score": 1, "description": "Isi tidak sesuai dengan topik" }
+          ]
+        },
+        {
+          "criterion": "Struktur dan organisasi",
+          "weight": 30,
+          "levels": [
+            { "score": 4, "description": "Paragraf padu dengan pernyataan pendapat, argumentasi, dan kesimpulan yang rapi" },
+            { "score": 3, "description": "Cukup terstruktur, argumentasi dapat diikuti meski kurang rapi" },
+            { "score": 2, "description": "Kurang terstruktur, argumentasi tidak terorganisir" },
+            { "score": 1, "description": "Tidak terstruktur, sulit dipahami" }
+          ]
+        },
+        {
+          "criterion": "Kebahasaan (ejaan, tanda baca, diksi)",
+          "weight": 30,
+          "levels": [
+            { "score": 4, "description": "Sangat baik: ejaan tepat, kalimat efektif, pilihan kata tepat dan argumentatif" },
+            { "score": 3, "description": "Baik: beberapa kesalahan minor, kalimat cukup efektif" },
+            { "score": 2, "description": "Cukup: banyak kesalahan, kalimat kurang efektif" },
+            { "score": 1, "description": "Perlu perbaikan: dominan kesalahan" }
+          ]
+        }
+      ],
+      "sampleExpectedResponse": "Menurutku, penggunaan ponsel di kalangan remaja memiliki sisi positif dan negatif yang berimbang. Di satu sisi, ponsel sangat membantu untuk mencari informasi pelajaran, berdiskusi tugas kelompok, dan berkomunikasi dengan teman. Namun di sisi lain, banyak temanku yang menghabiskan waktu berjam-jam untuk bermedia sosial sehingga lupa waktu belajar dan istirahat. Ponsel juga bisa mengganggu konsentrasi di kelas jika digunakan sembarangan. Menurutku, kuncinya ada pada pengaturan waktu dan pendampingan orang tua agar ponsel memberikan lebih banyak manfaat bagi perkembangan remaja.",
+      "tags": ["menulis", "opini", "argumentasi", "teknologi", "ponsel"],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved"
+    },
+    {
+      "id": "BC-UKBI-SMP-MENULIS-MADYA-SET001-Q015",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "menulis",
+      "band": "MADYA",
+      "type": "constructed",
+      "difficulty": 3,
+      "prompt": "Sekolahmu akan mengadakan lomba kebersihan antarkelas. Tulislah sebuah pengumuman singkat yang akan dibacakan saat upacara! Cantumkan nama kegiatan, waktu pelaksanaan, ketentuan lomba, dan ajakan untuk berpartisipasi. Gunakan bahasa yang jelas dan menarik.",
+      "scoringMode": "rubric",
+      "rubric": [
+        {
+          "criterion": "Kesesuaian isi dengan topik",
+          "weight": 40,
+          "levels": [
+            { "score": 4, "description": "Isi sangat sesuai: mencantumkan nama kegiatan, waktu, ketentuan, dan ajakan secara lengkap dan jelas" },
+            { "score": 3, "description": "Isi sesuai: mencantumkan sebagian besar informasi yang diminta" },
+            { "score": 2, "description": "Isi kurang sesuai: informasi penting tidak lengkap" },
+            { "score": 1, "description": "Isi tidak sesuai dengan format pengumuman" }
+          ]
+        },
+        {
+          "criterion": "Struktur dan organisasi",
+          "weight": 30,
+          "levels": [
+            { "score": 4, "description": "Pengumuman terstruktur dengan judul, isi informasi, dan penutup yang jelas" },
+            { "score": 3, "description": "Cukup terstruktur, informasi dapat dipahami meski kurang rapi" },
+            { "score": 2, "description": "Kurang terstruktur, informasi tidak berurutan" },
+            { "score": 1, "description": "Tidak terstruktur, sulit dipahami sebagai pengumuman" }
+          ]
+        },
+        {
+          "criterion": "Kebahasaan (ejaan, tanda baca, diksi)",
+          "weight": 30,
+          "levels": [
+            { "score": 4, "description": "Sangat baik: ejaan tepat, kalimat persuasif, pilihan kata menarik dan tepat" },
+            { "score": 3, "description": "Baik: beberapa kesalahan minor, bahasa cukup menarik" },
+            { "score": 2, "description": "Cukup: banyak kesalahan, bahasa kurang menarik" },
+            { "score": 1, "description": "Perlu perbaikan: dominan kesalahan" }
+          ]
+        }
+      ],
+      "sampleExpectedResponse": "Pengumuman! Dalam rangka menyambut Hari Lingkungan Hidup, sekolah kita akan mengadakan Lomba Kebersihan Antarkelas. Lomba akan dilaksanakan pada hari Jumat, 5 September 2026, mulai pukul 07.30 hingga 09.00. Setiap kelas diharapkan membersihkan dan menghias ruang kelas masing-masing dengan tema hijau dan ramah lingkungan. Penilaian meliputi kebersihan, kerapian, dan kreasi daur ulang. Kelas pemenang akan mendapatkan sertifikat dan hadiah menarik. Mari kita jaga kebersihan sekolah bersama-sama!",
+      "tags": ["menulis", "pengumuman", "sekolah", "kebersihan"],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved"
+    },
+    {
+      "id": "BC-UKBI-SMP-MENULIS-MADYA-SET001-Q016",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "menulis",
+      "band": "MADYA",
+      "type": "constructed",
+      "difficulty": 4,
+      "prompt": "Di lingkungan tempat tinggalmu, masih ada warga yang membuang sampah di sungai. Menurutmu, apa saja yang bisa dilakukan untuk mengatasi kebiasaan tersebut? Tulislah tanggapan berupa solusi dalam satu paragraf yang lengkap dan logis!",
+      "scoringMode": "rubric",
+      "rubric": [
+        {
+          "criterion": "Kesesuaian isi dengan topik",
+          "weight": 40,
+          "levels": [
+            { "score": 4, "description": "Isi sangat sesuai: solusi konkret, logis, dan dapat diterapkan, lebih dari satu solusi" },
+            { "score": 3, "description": "Isi sesuai: memberikan solusi yang cukup konkret" },
+            { "score": 2, "description": "Isi kurang sesuai: solusi masih umum dan kurang konkret" },
+            { "score": 1, "description": "Isi tidak sesuai dengan topik" }
+          ]
+        },
+        {
+          "criterion": "Struktur dan organisasi",
+          "weight": 30,
+          "levels": [
+            { "score": 4, "description": "Paragraf padu dengan urutan solusi dari yang paling penting ke yang mendukung" },
+            { "score": 3, "description": "Cukup terstruktur, solusi tersusun cukup rapi" },
+            { "score": 2, "description": "Kurang terstruktur, solusi tidak terorganisir" },
+            { "score": 1, "description": "Tidak terstruktur, sulit dipahami" }
+          ]
+        },
+        {
+          "criterion": "Kebahasaan (ejaan, tanda baca, diksi)",
+          "weight": 30,
+          "levels": [
+            { "score": 4, "description": "Sangat baik: ejaan tepat, kalimat efektif, pilihan kata tepat dan meyakinkan" },
+            { "score": 3, "description": "Baik: beberapa kesalahan minor" },
+            { "score": 2, "description": "Cukup: banyak kesalahan" },
+            { "score": 1, "description": "Perlu perbaikan: dominan kesalahan" }
+          ]
+        }
+      ],
+      "sampleExpectedResponse": "Kebiasaan membuang sampah di sungai harus diatasi dengan pendekatan yang menyeluruh. Pertama, ketua RT perlu mengadakan sosialisasi rutin tentang dampak buruk membuang sampah di sungai bagi lingkungan dan kesehatan. Kedua, tempat sampah harus ditambah di titik-titik strategis seperti dekat jembatan dan sudut jalan. Ketiga, bisa dibentuk bank sampah yang memberikan insentif bagi warga yang mau memilah dan mendaur ulang sampah. Terakhir, perlu ada sanksi sosial yang mendidik, seperti membersihkan lingkungan, bagi yang masih membuang sampah sembarangan. Dengan kerja sama semua warga, kebiasaan buruk ini pasti bisa diatasi.",
+      "tags": ["menulis", "tanggapan", "solusi", "lingkungan", "kebersihan"],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved"
+    },
+    {
+      "id": "BC-UKBI-SMP-MENULIS-UNGGUL-SET001-Q017",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "menulis",
+      "band": "UNGGUL",
+      "type": "constructed",
+      "difficulty": 4,
+      "prompt": "Menurutmu, mana yang lebih efektif untuk memahami pelajaran: belajar sendiri atau belajar bersama teman? Tuliskan argumentasi dalam satu paragraf yang utuh! Sertakan kelebihan dan kekurangan masing-masing cara, serta berikan kesimpulan pilihanmu berdasarkan pengalaman atau alasan logis.",
+      "scoringMode": "rubric",
+      "rubric": [
+        {
+          "criterion": "Kesesuaian isi dengan topik",
+          "weight": 40,
+          "levels": [
+            { "score": 4, "description": "Isi sangat sesuai: membahas kelebihan dan kekurangan kedua cara, serta kesimpulan yang beralasan" },
+            { "score": 3, "description": "Isi sesuai: menyebutkan kelebihan dan kekurangan tetapi kurang seimbang" },
+            { "score": 2, "description": "Isi kurang sesuai: hanya membahas satu sisi tanpa perbandingan" },
+            { "score": 1, "description": "Isi tidak sesuai dengan topik" }
+          ]
+        },
+        {
+          "criterion": "Struktur dan organisasi",
+          "weight": 30,
+          "levels": [
+            { "score": 4, "description": "Argumentasi tersusun sangat rapi: tesis, argumen pro-kontra, dan kesimpulan yang logis" },
+            { "score": 3, "description": "Cukup terstruktur, alur argumentasi dapat diikuti" },
+            { "score": 2, "description": "Kurang terstruktur, argumen tidak berurutan" },
+            { "score": 1, "description": "Tidak terstruktur, sulit dipahami" }
+          ]
+        },
+        {
+          "criterion": "Kebahasaan (ejaan, tanda baca, diksi)",
+          "weight": 30,
+          "levels": [
+            { "score": 4, "description": "Sangat baik: ejaan tepat, kalimat efektif dan bervariasi, pilihan kata akademis sesuai" },
+            { "score": 3, "description": "Baik: beberapa kesalahan minor, kalimat cukup efektif" },
+            { "score": 2, "description": "Cukup: banyak kesalahan, kalimat kurang efektif" },
+            { "score": 1, "description": "Perlu perbaikan: dominan kesalahan, kalimat tidak efektif" }
+          ]
+        }
+      ],
+      "sampleExpectedResponse": "Belajar sendiri dan belajar bersama teman sama-sama memiliki kelebihan dan kekurangan. Belajar sendiri memberi kita kebebasan untuk fokus pada materi yang dirasa sulit dan mengatur waktu sesuai ritme belajar pribadi. Namun, saat menemui kesulitan, kita tidak bisa langsung berdiskusi dan harus mencari jawaban sendiri. Sebaliknya, belajar bersama teman memungkinkan kita bertukar pikiran dan saling menjelaskan materi yang belum dipahami. Akan tetapi, belajar kelompok sering terganggu jika anggotanya tidak serius dan malah mengobrol di luar topik. Menurutku, cara terbaik adalah menggabungkan keduanya: belajar sendiri terlebih dahulu untuk memahami dasar, kemudian berdiskusi dalam kelompok untuk memperdalam pemahaman.",
+      "tags": ["menulis", "argumentasi", "pendidikan", "analisis"],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved"
+    },
+    {
+      "id": "BC-UKBI-SMP-MENULIS-UNGGUL-SET001-Q018",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "menulis",
+      "band": "UNGGUL",
+      "type": "constructed",
+      "difficulty": 4,
+      "prompt": "Paragraf berikut tidak padu. Perbaikilah dengan menata ulang kalimat-kalimatnya agar menjadi paragraf yang koheren dan enak dibaca! Tulis ulang versi perbaikannya.\n\n\"Kota Bandung terkenal dengan udaranya yang sejuk. Di sana juga terdapat berbagai tempat wisata seperti Kawah Putih dan Tangkuban Perahu. Oleh karena itu, banyak wisatawan yang berkunjung ke Bandung setiap akhir pekan. Bandung disebut juga sebagai Paris van Java karena keindahan kotanya. Selain itu, kuliner di Bandung juga sangat beragam dan lezat.\"",
+      "scoringMode": "rubric",
+      "rubric": [
+        {
+          "criterion": "Kesesuaian isi dengan topik",
+          "weight": 40,
+          "levels": [
+            { "score": 4, "description": "Semua informasi asli dipertahankan dalam urutan yang logis dan koheren" },
+            { "score": 3, "description": "Informasi asli dipertahankan, urutan cukup logis" },
+            { "score": 2, "description": "Beberapa informasi asli hilang atau urutan masih kurang logis" },
+            { "score": 1, "description": "Informasi asli banyak berubah atau urutan tidak lebih baik dari aslinya" }
+          ]
+        },
+        {
+          "criterion": "Struktur dan organisasi",
+          "weight": 30,
+          "levels": [
+            { "score": 4, "description": "Paragraf sangat padu, hubungan sebab-akibat dan kata penghubung digunakan dengan tepat" },
+            { "score": 3, "description": "Cukup padu, hubungan antar kalimat cukup jelas" },
+            { "score": 2, "description": "Kurang padu, hubungan antar kalimat masih renggang" },
+            { "score": 1, "description": "Tidak padu, sama seperti paragraf asli" }
+          ]
+        },
+        {
+          "criterion": "Kebahasaan (ejaan, tanda baca, diksi)",
+          "weight": 30,
+          "levels": [
+            { "score": 4, "description": "Sangat baik: ejaan tepat, variasi kalimat baik, konjungsi digunakan tepat" },
+            { "score": 3, "description": "Baik: beberapa kesalahan minor" },
+            { "score": 2, "description": "Cukup: banyak kesalahan" },
+            { "score": 1, "description": "Perlu perbaikan: dominan kesalahan" }
+          ]
+        }
+      ],
+      "sampleExpectedResponse": "Kota Bandung terkenal dengan udaranya yang sejuk sehingga disebut sebagai Paris van Java. Di sana terdapat berbagai tempat wisata menarik seperti Kawah Putih dan Tangkuban Perahu. Selain itu, kuliner di Bandung juga sangat beragam dan lezat. Oleh karena itu, banyak wisatawan yang berkunjung ke Bandung setiap akhir pekan untuk menikmati keindahan dan kulinernya.",
+      "tags": ["menulis", "memperbaiki", "koherensi", "paragraf"],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved"
+    },
+    {
+      "id": "BC-UKBI-SMP-MENULIS-UNGGUL-SET001-Q019",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "menulis",
+      "band": "UNGGUL",
+      "type": "constructed",
+      "difficulty": 4,
+      "prompt": "Fasilitas perpustakaan di sekolahmu sudah lama tidak diperbarui. Buku-buku banyak yang usang dan koleksinya tidak bertambah. Tulislah surat pembaca untuk majalah dinding sekolah yang berisi kritik santun dan saran perbaikan yang konkret!",
+      "scoringMode": "rubric",
+      "rubric": [
+        {
+          "criterion": "Kesesuaian isi dengan topik",
+          "weight": 40,
+          "levels": [
+            { "score": 4, "description": "Isi sangat sesuai: kritik santun, saran konkret dan realistis, bahasa yang membangun" },
+            { "score": 3, "description": "Isi sesuai: kritik dan saran disampaikan dengan cukup baik" },
+            { "score": 2, "description": "Isi kurang sesuai: kritik terlalu keras atau saran tidak konkret" },
+            { "score": 1, "description": "Isi tidak sesuai, bukan surat pembaca" }
+          ]
+        },
+        {
+          "criterion": "Struktur dan organisasi",
+          "weight": 30,
+          "levels": [
+            { "score": 4, "description": "Surat terstruktur: salam pembuka, perkenalan, isi kritik dan saran, penutup yang rapi" },
+            { "score": 3, "description": "Cukup terstruktur, urutan informasi dapat diikuti" },
+            { "score": 2, "description": "Kurang terstruktur, informasi tidak berurutan" },
+            { "score": 1, "description": "Tidak terstruktur, sulit dipahami" }
+          ]
+        },
+        {
+          "criterion": "Kebahasaan (ejaan, tanda baca, diksi)",
+          "weight": 30,
+          "levels": [
+            { "score": 4, "description": "Sangat baik: ejaan tepat, bahasa santun dan persuasif, pilihan kata tepat dan baku" },
+            { "score": 3, "description": "Baik: beberapa kesalahan minor, bahasa cukup santun" },
+            { "score": 2, "description": "Cukup: banyak kesalahan, bahasa kurang santun" },
+            { "score": 1, "description": "Perlu perbaikan: dominan kesalahan" }
+          ]
+        }
+      ],
+      "sampleExpectedResponse": "Saya sangat senang dengan adanya perpustakaan di sekolah kita yang nyaman dan tenang. Namun, saya perhatikan bahwa fasilitas perpustakaan sudah lama tidak diperbarui. Banyak buku yang sampulnya robek dan isinya sudah tidak relevan dengan pelajaran kami. Koleksi novel dan buku cerita juga sangat terbatas sehingga kami kehabisan bacaan menarik. Saya menyarankan agar sekolah mengalokasikan dana khusus untuk pembelian buku baru setiap semester. Selain itu, bisa diadakan program donasi buku dari siswa, orang tua, dan alumni. Dengan perpustakaan yang lebih lengkap, minat baca siswa pasti akan meningkat. Terima kasih atas perhatiannya.",
+      "tags": ["menulis", "surat-pembaca", "kritik", "saran", "sekolah"],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved"
+    },
+    {
+      "id": "BC-UKBI-SMP-MENULIS-UNGGUL-SET001-Q020",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "menulis",
+      "band": "UNGGUL",
+      "type": "constructed",
+      "difficulty": 4,
+      "prompt": "Tulislah sebuah cerita pendek berdasarkan tema \"Persahabatan yang Teruji\"! Ceritamu harus memiliki alur yang jelas, tokoh yang digambarkan secara singkat, konflik ringan, dan pesan moral yang dapat dipetik. Tulis dalam satu paragraf yang padat.",
+      "scoringMode": "rubric",
+      "rubric": [
+        {
+          "criterion": "Kesesuaian isi dengan topik",
+          "weight": 40,
+          "levels": [
+            { "score": 4, "description": "Isi sangat sesuai: cerita memiliki alur jelas, tokoh tergambar, konflik, dan pesan moral" },
+            { "score": 3, "description": "Isi sesuai: memiliki alur dan tokoh tetapi konflik atau pesan moral kurang jelas" },
+            { "score": 2, "description": "Isi kurang sesuai: cerita tidak memiliki alur atau pesan moral yang jelas" },
+            { "score": 1, "description": "Isi tidak sesuai dengan tema persahabatan" }
+          ]
+        },
+        {
+          "criterion": "Struktur dan organisasi",
+          "weight": 30,
+          "levels": [
+            { "score": 4, "description": "Cerita terstruktur sempurna: orientasi, konflik, resolusi, dan amanat tersusun rapi" },
+            { "score": 3, "description": "Cukup terstruktur, alur cerita dapat diikuti" },
+            { "score": 2, "description": "Kurang terstruktur, alur cerita sulit diikuti" },
+            { "score": 1, "description": "Tidak terstruktur, bukan cerita yang utuh" }
+          ]
+        },
+        {
+          "criterion": "Kebahasaan (ejaan, tanda baca, diksi)",
+          "weight": 30,
+          "levels": [
+            { "score": 4, "description": "Sangat baik: ejaan tepat, dialog dan narasi seimbang, pilihan kata ekspresif dan hidup" },
+            { "score": 3, "description": "Baik: beberapa kesalahan minor, bahasa cukup ekspresif" },
+            { "score": 2, "description": "Cukup: banyak kesalahan, bahasa kurang ekspresif" },
+            { "score": 1, "description": "Perlu perbaikan: dominan kesalahan" }
+          ]
+        }
+      ],
+      "sampleExpectedResponse": "Rina dan Sari bersahabat sejak kecil meskipun sifat mereka sangat berbeda. Rina pendiam dan suka membaca, sedangkan Sari aktif dan gemar berolahraga. Suatu hari, Rina terjatuh dari sepeda saat mereka bermain bersama dan kakinya terluka cukup parah. Sari segera menolongnya, membalut lukanya dengan kain, dan mengantarkannya pulang dengan hati-hati. Sejak kejadian itu, Rina menyadari bahwa Sari adalah sahabat sejati yang selalu ada saat dibutuhkan. Persahabatan mereka justru semakin erat karena saling melengkapi dan peduli satu sama lain. Pesan moralnya adalah sahabat sejati tidak dinilai dari kesamaan sifat, melainkan dari kesediaan untuk saling membantu di saat sulit.",
+      "tags": ["menulis", "cerpen", "narasi", "persahabatan", "pesan-moral"],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved"
+    }
+  ]
+}

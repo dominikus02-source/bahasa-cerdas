@@ -1,3 +1,9 @@
+/**
+ * ⚠️ LEGACY — DO NOT RUN for new UKBI bank production.
+ * Original fix script from seed-kompetensi era.
+ * Kept for reference only — do not rerun without explicit approval.
+ */
+
 import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 

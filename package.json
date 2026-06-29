@@ -55,7 +55,12 @@
     "validate:ukbi-tka-structure": "npx tsx scripts/validate-ukbi-tka-question-structure.ts",
     "audit:ukbi-tka-quality": "npx tsx scripts/audit-ukbi-tka-question-quality.ts",
     "fix:ukbi-tka-structure": "npx tsx scripts/fix-ukbi-tka-structure-safe.ts",
-    "fix:ukbi-tka-structure:execute": "npx tsx scripts/fix-ukbi-tka-structure-safe.ts --execute"
+    "fix:ukbi-tka-structure:execute": "npx tsx scripts/fix-ukbi-tka-structure-safe.ts --execute",
+    "seed:ukbi-sd:dry-run": "npx tsx scripts/seed-ukbi-sd-bank.ts",
+    "seed:ukbi-sd": "npx tsx scripts/seed-ukbi-sd-bank.ts --execute",
+    "validate:ukbi-sd-bank": "npx tsx scripts/validate-ukbi-sd-bank.ts",
+    "audit:ukbi-tka-runtime": "npx tsx scripts/audit-ukbi-tka-runtime-wiring.ts",
+    "test:ukbi-tka-runtime": "npx tsx scripts/test-ukbi-tka-runtime-wiring.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.39.0",
