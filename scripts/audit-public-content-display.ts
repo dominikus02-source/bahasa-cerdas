@@ -42,19 +42,31 @@ async function main() {
   console.log(`\n  Founder articles PUBLISHED: ${founderPublished.length}/${founderArticles}`);
   if (founderDraft > 0) console.log(`  ⚠️  ${founderDraft} founder articles masih DRAFT`);
 
-  // Check for email leak
-  const emailsFound = allPublished.filter(a => a.author?.email);
-  if (emailsFound.length > 0) {
-    console.log(`\n  ⚠️  ${emailsFound.length} artikel expose email penulis di query select`);
-    console.log(`     (perlu diperbaiki — email jangan dikirim ke client)`);
+  // Check for email leak — audit script queries email internally for checking,
+  // but the public API route should NOT select email
+  const apiRouteFile = fs.readFileSync("app/api/artikel/route.ts", "utf-8");
+  const apiHasEmailSelect = apiRouteFile.includes("author.email") || apiRouteFile.includes("email: true");
+  if (apiHasEmailSelect) {
+    console.log(`\n  ⚠️  API artikel masih select email`);
   } else {
-    console.log(`\n  ✅ Tidak ada email penulis di query publik`);
+    console.log(`\n  ✅ API artikel tidak select email penulis`);
   }
 
   // Articles without excerpt
   const noExcerpt = allPublished.filter(a => !a.excerpt);
   if (noExcerpt.length > 0) {
     console.log(`  ⚠️  ${noExcerpt.length} artikel tanpa excerpt`);
+  }
+
+  // Per-author stats
+  console.log(`\n  Per penulis:`);
+  const authorStats: Record<string, number> = {};
+  for (const a of allPublished) {
+    const name = a.author?.fullName || a.authorName || "Tanpa nama";
+    authorStats[name] = (authorStats[name] || 0) + 1;
+  }
+  for (const [name, count] of Object.entries(authorStats).sort((a, b) => b[1] - a[1])) {
+    console.log(`    - ${name}: ${count} artikel`);
   }
 
   // ── 2. VIDEOS ──
@@ -170,6 +182,23 @@ async function main() {
 
   // Cart is localStorage only — no server-side guard needed
   console.log(`  Cart: localStorage only (no server-side API)`);
+
+  // ── 5. ARTIKEL UI AUDIT ──
+  console.log("\n── ARTIKEL UI AUDIT ──");
+  const pageContent = fs.readFileSync("app/artikel/page.tsx", "utf-8");
+  const hasOldFilters = pageContent.includes("Semua Artikel") && pageContent.includes("Washadi") && pageContent.includes("Alexander Suryanta") && pageContent.includes("Dominikus Wahyu");
+  const hasAuthorSearch = pageContent.includes("Cari berdasarkan penulis");
+  const hasPlaceholder = pageContent.includes("Ketik nama penulis");
+  const hasCta = pageContent.includes("Cari Artikel");
+  const hasReset = pageContent.includes("Tampilkan Semua");
+  const hasNoEmail = !pageContent.includes("email") || !pageContent.includes("authorEmail");
+
+  console.log(`  Filter kategori lama: ${hasOldFilters ? "❌ MASIH ADA" : "✅ sudah dihapus"}`);
+  console.log(`  Search penulis: ${hasAuthorSearch ? "✅" : "❌"}`);
+  console.log(`  Placeholder: ${hasPlaceholder ? "✅" : "❌"}`);
+  console.log(`  Tombol Cari Artikel: ${hasCta ? "✅" : "❌"}`);
+  console.log(`  Tombol Tampilkan Semua: ${hasReset ? "✅" : "❌"}`);
+  console.log(`  Email founder tidak bocor: ${hasNoEmail ? "✅" : "❌"}`);
 
   // ── SUMMARY ──
   console.log("\n" + "=".repeat(60));

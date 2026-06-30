@@ -211,7 +211,7 @@ async function main() {
   assert(artikelSlugs.length >= 27, `At least 27 found in DB (got ${artikelSlugs.length})`);
 
   // Check the public page renders all via API with pagination
-  assert(publicPage.includes("Muat Lebih Banyak") || publicPage.includes("totalPages"), "Pagination UI exists");
+  assert(publicPage.includes("totalPages"), "Pagination UI exists");
 
   // Check filter per founder
   const washadiArticles = seeded.filter((a) => a.authorName === "Washadi");

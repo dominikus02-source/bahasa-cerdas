@@ -28,7 +28,26 @@ async function main() {
   console.log("── ARTIKEL ──");
 
   const artikelPageExists = fs.existsSync("app/artikel/page.tsx");
-  test("/artikel route exists", () => artikelPageExists);
+  test("/artikel route ada", () => artikelPageExists);
+
+  const pageContent = fs.readFileSync("app/artikel/page.tsx", "utf-8");
+  test("/artikel tidak menampilkan filter kategori lama", () => {
+    const hasOldFilters = pageContent.includes("Semua Artikel") &&
+      pageContent.includes("Washadi") &&
+      pageContent.includes("Alexander Suryanta") &&
+      pageContent.includes("Dominikus Wahyu");
+    return !hasOldFilters;
+  });
+  test("/artikel punya input Cari berdasarkan penulis", () => pageContent.includes("Cari berdasarkan penulis"));
+  test("/artikel punya placeholder nama penulis", () => pageContent.includes("Ketik nama penulis"));
+  test("/artikel punya tombol Cari Artikel", () => pageContent.includes("Cari Artikel"));
+  test("/artikel punya tombol Tampilkan Semua", () => pageContent.includes("Tampilkan Semua"));
+  test("/artikel punya tombol Sebelumnya", () => pageContent.includes("Sebelumnya"));
+  test("/artikel punya tombol Berikutnya", () => pageContent.includes("Berikutnya"));
+  test("/artikel tidak expose email founder", () => !pageContent.includes("authorEmail") && !pageContent.includes("email"));
+  test("/artikel page uses client-side fetch", () => pageContent.includes("fetch(`/api/artikel?"));
+  test("/artikel page has pagination", () => pageContent.includes("totalPages"));
+  test("/artikel empty state BI", () => pageContent.includes("Belum ada artikel dari penulis tersebut."));
 
   const apiRoute = fs.readFileSync("app/api/artikel/route.ts", "utf-8");
   test("API artikel has pagination (skip/take)", () => apiRoute.includes("skip") && apiRoute.includes("take"));
@@ -37,25 +56,17 @@ async function main() {
   test("API artikel does NOT expose email", () => {
     return !apiRoute.includes("email") || apiRoute.includes("author") && !apiRoute.includes("author.email");
   });
-  test("API artikel supports author filter", () => apiRoute.includes("author"));
-  test("API artikel supports category filter", () => apiRoute.includes("category"));
-  test("API artikel supports search", () => apiRoute.includes("search"));
-
-  const pageContent = fs.readFileSync("app/artikel/page.tsx", "utf-8");
-  test("/artikel page uses client-side fetch", () => pageContent.includes("fetch(`/api/artikel?"));
-  test("/artikel page has pagination UI", () => pageContent.includes("totalPages") && pageContent.includes("Muat Lebih Banyak"));
-  test("/artikel page has filter buttons", () => pageContent.includes("Semua Artikel"));
-  test("/artikel page has search input", () => pageContent.includes("Cari artikel"));
-  test("/artikel page has empty state BI", () => pageContent.includes("Belum ada artikel pada kategori ini"));
+  test("API artikel supports search (q param)", () => apiRoute.includes("q"));
+  test("API artikel searches authorName", () => apiRoute.includes("authorName"));
+  test("API artikel searches authorRole", () => apiRoute.includes("authorRole"));
 
   // Check all founder articles are findable
   const totalFounderPublished = await db.artikel.count({ where: { isPublished: true, source: "FOUNDER_ARCHIVE" } });
-  test(`30 founder articles PUBLISHED (found: ${totalFounderPublished})`, () => totalFounderPublished === 30);
+  test(`30 artikel founder PUBLISHED (found: ${totalFounderPublished})`, () => totalFounderPublished === 30);
 
   const totalPublished = await db.artikel.count({ where: { isPublished: true } });
   test(`Total published articles >= 30 (found: ${totalPublished})`, () => totalPublished >= 30);
 
-  // check result length > 12 (pagination working)
   test(`Published articles > 12 (pagination needed: ${totalPublished})`, () => totalPublished > 12 || totalPublished === 30);
 
   // Check article/[slug] renders

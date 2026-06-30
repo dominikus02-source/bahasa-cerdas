@@ -6,9 +6,8 @@ export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url);
     const page = Math.max(1, parseInt(searchParams.get("page") || "1"));
     const limit = Math.min(50, Math.max(1, parseInt(searchParams.get("limit") || "12")));
+    const q = searchParams.get("q") || "";
     const author = searchParams.get("author") || "";
-    const category = searchParams.get("category") || "";
-    const search = searchParams.get("search") || "";
 
     const where: any = { isPublished: true };
 
@@ -17,19 +16,16 @@ export async function GET(req: NextRequest) {
       where.author = {
         OR: [
           { fullName: { contains: authorFilter, mode: "insensitive" } },
-          { email: authorFilter },
         ],
       };
     }
 
-    if (category) {
-      where.tags = { has: category };
-    }
-
-    if (search) {
+    if (q) {
       where.OR = [
-        { title: { contains: search, mode: "insensitive" } },
-        { excerpt: { contains: search, mode: "insensitive" } },
+        { title: { contains: q, mode: "insensitive" } },
+        { excerpt: { contains: q, mode: "insensitive" } },
+        { authorName: { contains: q, mode: "insensitive" } },
+        { authorRole: { contains: q, mode: "insensitive" } },
       ];
     }
 

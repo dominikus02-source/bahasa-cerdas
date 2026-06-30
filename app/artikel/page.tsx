@@ -2,25 +2,9 @@
 
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
-import { Calendar, Clock, ArrowRight, User, BookOpen, Search, ChevronDown } from "lucide-react";
+import { Calendar, ArrowRight, User, BookOpen, Search, X } from "lucide-react";
 import PageNavbar from "@/components/public/PageNavbar";
 import PageFooter from "@/components/public/PageFooter";
-
-const FILTERS = [
-  { value: "", label: "Semua Artikel" },
-  { value: "Washadi", label: "Washadi" },
-  { value: "Alexander Suryanta", label: "Alexander Suryanta" },
-  { value: "Dominikus Wahyu", label: "Dominikus Wahyu" },
-  { value: "Sastra", label: "Sastra dan Komunitas" },
-  { value: "Pembelajaran", label: "Pembelajaran" },
-  { value: "Inovasi", label: "Inovasi dan Fitur" },
-];
-
-const CATEGORY_MAP: Record<string, string> = {
-  Sastra: "Sastra",
-  Pembelajaran: "Pembelajaran",
-  Inovasi: "Inovasi",
-};
 
 type Article = {
   id: string;
@@ -44,22 +28,16 @@ export default function ArtikelPage() {
   const [totalPages, setTotalPages] = useState(1);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState("");
-  const [search, setSearch] = useState("");
-  const [showMobileFilter, setShowMobileFilter] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [submittedQuery, setSubmittedQuery] = useState("");
 
   const LIMIT = 12;
 
-  const fetchArticles = useCallback(async (p: number, f: string, q: string) => {
+  const fetchArticles = useCallback(async (p: number, q: string) => {
     setLoading(true);
     try {
       const params = new URLSearchParams({ page: String(p), limit: String(LIMIT) });
-      if (f) {
-        const categoryKey = Object.entries(CATEGORY_MAP).find(([, v]) => f === v)?.[0];
-        if (categoryKey) params.set("category", categoryKey);
-        else params.set("author", f);
-      }
-      if (q) params.set("search", q);
+      if (q) params.set("q", q);
 
       const res = await fetch(`/api/artikel?${params}`);
       const json = await res.json();
@@ -74,19 +52,19 @@ export default function ArtikelPage() {
   }, []);
 
   useEffect(() => {
-    fetchArticles(page, filter, search);
-  }, [page, filter, search, fetchArticles]);
-
-  const handleFilter = (val: string) => {
-    setFilter(val);
-    setPage(1);
-    setShowMobileFilter(false);
-  };
+    fetchArticles(page, submittedQuery);
+  }, [page, submittedQuery, fetchArticles]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
+    setSubmittedQuery(searchQuery);
     setPage(1);
-    fetchArticles(1, filter, search);
+  };
+
+  const handleReset = () => {
+    setSearchQuery("");
+    setSubmittedQuery("");
+    setPage(1);
   };
 
   return (
@@ -103,60 +81,41 @@ export default function ArtikelPage() {
           </p>
         </div>
 
-        {/* Search + Filter */}
-        <div className="flex flex-col sm:flex-row gap-3 mb-8">
-          <form onSubmit={handleSearch} className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-            <input
-              value={search}
-              onChange={e => setSearch(e.target.value)}
-              placeholder="Cari artikel..."
-              className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:border-red-400 focus:outline-none focus:ring-2 focus:ring-red-100 bg-white"
-            />
-          </form>
-
-          {/* Desktop filter */}
-          <div className="hidden sm:flex flex-wrap gap-2">
-            {FILTERS.map(f => (
-              <button
-                key={f.value}
-                onClick={() => handleFilter(f.value)}
-                className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
-                  filter === f.value
-                    ? "bg-red-600 text-white"
-                    : "bg-white border border-slate-200 text-slate-600 hover:border-red-300"
-                }`}
-              >
-                {f.label}
-              </button>
-            ))}
-          </div>
-
-          {/* Mobile filter */}
-          <div className="sm:hidden relative">
+        {/* Search by author */}
+        <div className="max-w-xl mx-auto mb-10">
+          <label className="block text-sm font-medium text-slate-700 mb-2">
+            Cari berdasarkan penulis
+          </label>
+          <form onSubmit={handleSearch} className="flex gap-2">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+              <input
+                value={searchQuery}
+                onChange={e => setSearchQuery(e.target.value)}
+                placeholder="Ketik nama penulis, misalnya Washadi, Alexander, atau Dominikus"
+                className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:border-red-400 focus:outline-none focus:ring-2 focus:ring-red-100 bg-white"
+              />
+            </div>
             <button
-              onClick={() => setShowMobileFilter(!showMobileFilter)}
-              className="w-full flex items-center justify-between px-4 py-2.5 rounded-xl border border-slate-200 bg-white text-sm"
+              type="submit"
+              className="px-5 py-2.5 bg-red-600 text-white rounded-xl text-sm font-semibold hover:bg-red-700 transition-colors"
             >
-              {FILTERS.find(f => f.value === filter)?.label || "Semua Artikel"}
-              <ChevronDown size={16} />
+              Cari Artikel
             </button>
-            {showMobileFilter && (
-              <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-slate-200 rounded-xl shadow-lg z-10">
-                {FILTERS.map(f => (
-                  <button
-                    key={f.value}
-                    onClick={() => handleFilter(f.value)}
-                    className={`block w-full text-left px-4 py-2.5 text-sm hover:bg-slate-50 ${
-                      filter === f.value ? "text-red-600 font-semibold" : "text-slate-700"
-                    }`}
-                  >
-                    {f.label}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
+          </form>
+          {submittedQuery && (
+            <div className="flex items-center gap-2 mt-3">
+              <span className="text-sm text-slate-500">
+                Menampilkan hasil untuk: <strong>{submittedQuery}</strong>
+              </span>
+              <button
+                onClick={handleReset}
+                className="text-xs text-red-600 font-semibold hover:underline flex items-center gap-1"
+              >
+                <X size={14} /> Tampilkan Semua
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Articles */}
@@ -167,7 +126,7 @@ export default function ArtikelPage() {
         ) : articles.length === 0 ? (
           <div className="text-center py-20 text-slate-400">
             <BookOpen size={48} className="mx-auto mb-3 text-slate-200" />
-            <p>Belum ada artikel pada kategori ini.</p>
+            <p>Belum ada artikel dari penulis tersebut.</p>
           </div>
         ) : (
           <>
@@ -176,6 +135,7 @@ export default function ArtikelPage() {
               {articles.map((a, idx) => {
                 const thumbnail = a.coverImageUrl || a.coverImage;
                 const authorName = a.authorName || a.author?.fullName || "";
+                const authorRoleStr = a.authorRole || "";
                 return (
                   <Link key={a.id} href={`/artikel/${a.slug}`} className="block">
                     <article className={`bg-white rounded-2xl shadow-sm border border-slate-100 hover:shadow-xl hover:border-red-200 transition-all ${idx === 0 ? "md:grid md:grid-cols-2" : ""}`}>
@@ -190,7 +150,7 @@ export default function ArtikelPage() {
                             <span key={t} className="px-2 py-0.5 bg-red-50 text-red-600 rounded-full font-medium">{t}</span>
                           ))}
                           <span className="flex items-center gap-1"><Calendar size={12} /> {new Date(a.publishedAt ?? a.createdAt).toLocaleDateString("id")}</span>
-                          <span className="flex items-center gap-1"><Clock size={12} /> {a.readCount} dibaca</span>
+                          <span className="flex items-center gap-1">{a.readCount} dibaca</span>
                         </div>
                         <h2 className={`font-bold text-slate-900 hover:text-red-600 transition-colors ${idx === 0 ? "text-2xl" : "text-lg"} line-clamp-2`}>
                           {a.title}
@@ -199,6 +159,9 @@ export default function ArtikelPage() {
                         <div className="flex items-center gap-2 mt-4 text-sm text-slate-400">
                           {authorName && (
                             <span className="flex items-center gap-1.5"><User size={14} /> {authorName}</span>
+                          )}
+                          {authorRoleStr && (
+                            <span className="text-xs text-slate-400">{authorRoleStr}</span>
                           )}
                           <span className="ml-auto text-red-600 font-semibold text-xs flex items-center gap-1">
                             Baca Artikel <ArrowRight size={12} />
@@ -214,6 +177,17 @@ export default function ArtikelPage() {
             {/* Pagination */}
             {totalPages > 1 && (
               <div className="flex items-center justify-center gap-2 mt-12">
+                <button
+                  onClick={() => setPage(p => Math.max(1, p - 1))}
+                  disabled={page === 1}
+                  className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
+                    page === 1
+                      ? "bg-slate-100 text-slate-400 cursor-not-allowed"
+                      : "bg-white border border-slate-200 text-slate-600 hover:border-red-300"
+                  }`}
+                >
+                  Sebelumnya
+                </button>
                 {Array.from({ length: totalPages }, (_, i) => i + 1).map(p => (
                   <button
                     key={p}
@@ -227,16 +201,16 @@ export default function ArtikelPage() {
                     {p}
                   </button>
                 ))}
-              </div>
-            )}
-
-            {page < totalPages && (
-              <div className="text-center mt-8">
                 <button
-                  onClick={() => setPage(p => p + 1)}
-                  className="px-6 py-3 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-600 hover:border-red-300 transition-all"
+                  onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                  disabled={page === totalPages}
+                  className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
+                    page === totalPages
+                      ? "bg-slate-100 text-slate-400 cursor-not-allowed"
+                      : "bg-white border border-slate-200 text-slate-600 hover:border-red-300"
+                  }`}
                 >
-                  Muat Lebih Banyak
+                  Berikutnya
                 </button>
               </div>
             )}
