@@ -4,8 +4,11 @@ import { db } from "@/lib/db";
 
 async function getPopularWorks() {
   try {
+    const seedUser = await db.user.findUnique({ where: { email: "guru@demo.com" }, select: { id: true } })
+    const where: any = { isPublished: true }
+    if (seedUser) where.sellerId = { not: seedUser.id }
     return await db.karya.findMany({
-      where: { isPublished: true },
+      where,
       orderBy: { downloads: "desc" },
       take: 3,
       include: {
@@ -89,13 +92,8 @@ export default async function KaryaPopulerSection() {
             ))
           ) : (
             <div className="col-span-full text-center py-12 bg-white rounded-2xl border border-dashed border-zinc-200">
-              <p className="text-zinc-400">Belum ada karya yang dipublikasikan.</p>
-              <Link
-                href="/login"
-                className="mt-2 inline-block text-sm text-primary font-semibold hover:underline"
-              >
-                Login & Unggah Karya →
-              </Link>
+              <p className="text-zinc-400">Toko Karya sedang dikurasi.</p>
+              <p className="text-sm text-zinc-300 mt-1">Produk akan tampil setelah diverifikasi.</p>
             </div>
           )}
         </div>

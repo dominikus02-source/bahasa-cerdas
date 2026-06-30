@@ -1,0 +1,132 @@
+{
+  "meta": {
+    "product": "UKBI_PRACTICE",
+    "track": "UKBI_GURU",
+    "section": "berbicara",
+    "set": "set-001",
+    "totalItems": 5,
+    "source": "BC_UKBI_GURU_ORIGINAL"
+  },
+  "questions": [
+    {
+      "id": "BC-UKBI-GURU-BERBICARA-MADYA-SET001-Q001",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_GURU",
+      "section": "berbicara",
+      "band": "MADYA",
+      "type": "constructed",
+      "difficulty": 3,
+      "scoringMode": "rubric",
+      "prompt": "Bayangkan Anda akan memulai pembelajaran tentang teks deskripsi di kelas VII. Sampaikan pembukaan pelajaran yang mencakup: (1) salam dan sapaan, (2) apersepsi dengan mengaitkan materi dengan pengalaman siswa, (3) penyampaian tujuan pembelajaran secara jelas dan memotivasi, serta (4) gambaran kegiatan pembelajaran yang akan dilakukan. Bicaralah seolah-olah Anda sedang berbicara di depan siswa kelas VII.",
+      "speakingTask": "Pembukaan pembelajaran di kelas (2-3 menit)",
+      "rubric": [
+        { "criteria": "Struktur penyampaian", "weight": 25, "description": "Penyampaian runtut: salam, apersepsi, tujuan, gambaran kegiatan" },
+        { "criteria": "Kemampuan apersepsi dan motivasi", "weight": 25, "description": "Apersepsi relevan dan mampu membangkitkan minat siswa" },
+        { "criteria": "Kejelasan penyampaian tujuan", "weight": 25, "description": "Tujuan pembelajaran disampaikan dengan bahasa yang mudah dipahami siswa kelas VII" },
+        { "criteria": "Intonasi, lafal, dan gaya bicara", "weight": 25, "description": "Intonasi sesuai konteks, lafal jelas, dan gaya bicara komunikatif" }
+      ],
+      "sampleExpectedResponse": "Assalamualaikum warahmatullahi wabarakatuh. Selamat pagi, anak-anak! Apa kabar kalian hari ini? Semoga semuanya dalam keadaan sehat dan semangat ya. Sebelum kita mulai, coba ingat-ingat, siapa di sini yang pernah berlibur ke pantai atau ke gunung? Wah, banyak sekali! Coba kalian bayangkan, jika kalian diminta menceritakan pengalaman liburan itu kepada teman yang tidak ikut, bagaimana cara kalian menggambarkan pemandangan pantai atau gunung itu agar teman kalian bisa membayangkannya? Nah, hari ini kita akan belajar cara mendeskripsikan sesuatu dengan kata-kata yang hidup dan jelas. Materi kita adalah teks deskripsi. Setelah pembelajaran ini, kalian diharapkan mampu mengidentifikasi ciri-ciri teks deskripsi dan menulis deskripsi singkat tentang objek di sekitar kalian. Kegiatan kita hari ini ada tiga: pertama, kita baca contoh teks deskripsi; kedua, kita diskusikan ciri-cirinya; dan ketiga, kalian akan menulis deskripsi tentang benda favorit kalian. Seru, kan? Baik, mari kita mulai.",
+      "tags": ["pembukaan-pembelajaran", "apersepsi", "komunikasi-kelas"],
+      "source": "BC_UKBI_GURU_ORIGINAL",
+      "status": "approved",
+      "cognitive": "KREASI",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-GURU-BERBICARA-UNGGUL-SET001-Q002",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_GURU",
+      "section": "berbicara",
+      "band": "UNGGUL",
+      "type": "constructed",
+      "difficulty": 4,
+      "scoringMode": "rubric",
+      "prompt": "Bayangkan Anda sedang menghadapi orang tua/wali siswa dalam pertemuan orang tua-guru. Orang tua siswa tersebut khawatir karena nilai bahasa Indonesia anak mereka menurun. Sampaikan penjelasan yang: (1) menenangkan kekhawatiran orang tua, (2) menjelaskan hasil asesmen secara objektif dan konstruktif, (3) mengidentifikasi faktor penyebab dan area yang perlu diperbaiki, serta (4) memberikan saran konkret yang dapat dilakukan orang tua di rumah untuk membantu anak. Gunakan bahasa yang santun, empatik, dan profesional.",
+      "speakingTask": "Menjelaskan hasil asesmen kepada orang tua (3-4 menit)",
+      "rubric": [
+        { "criteria": "Empati dan kemampuan menenangkan", "weight": 20, "description": "Mampu menenangkan kekhawatiran orang tua dengan empati" },
+        { "criteria": "Kejelasan penjelasan hasil asesmen", "weight": 30, "description": "Menjelaskan hasil asesmen secara objektif, jelas, dan konstruktif" },
+        { "criteria": "Kualitas saran dan rekomendasi", "weight": 30, "description": "Memberikan saran konkret, realistis, dan aplikatif untuk orang tua" },
+        { "criteria": "Kesantunan dan profesionalisme", "weight": 20, "description": "Menggunakan bahasa yang santun, profesional, dan mudah dipahami" }
+      ],
+      "sampleExpectedResponse": "Selamat siang, Bapak/Ibu. Terima kasih sudah meluangkan waktu untuk bertemu hari ini. Saya memahami kekhawatiran Bapak/Ibu mengenai nilai bahasa Indonesia Ananda yang mengalami penurunan di semester ini. Sebelumnya, saya ingin menyampaikan bahwa penurunan nilai ini tidak berarti kemampuan Ananda menurun secara keseluruhan. Berdasarkan hasil asesmen, Ananda masih memiliki pemahaman yang baik dalam aspek membaca dan menyimak. Nilainya masih di atas Kriteria Ketuntasan Minimal untuk kedua aspek tersebut. Namun, untuk aspek menulis, khususnya dalam menyusun teks argumentasi, Ananda masih perlu banyak latihan. Dari hasil analisis saya, faktor utamanya adalah kurangnya penguasaan struktur teks argumentasi dan keterbatasan kosakata akademik. Ananda cenderung menulis dengan gaya bahasa lisan yang kurang formal. Untuk membantu di rumah, Bapak/Ibu bisa mengajak Ananda membaca artikel opini dari koran atau majalah, lalu mendiskusikan isinya. Tanyakan pendapat Ananda tentang topik yang dibahas dan minta ia menuliskan pendapatnya dalam beberapa paragraf. Kegiatan sederhana ini akan sangat membantu memperkaya kosakata dan pemahaman struktur teks argumentasi. Sekolah juga akan memberikan program remedial dan pendampingan khusus. Saya yakin dengan kerja sama kita, Ananda akan menunjukkan peningkatan yang signifikan.",
+      "tags": ["komunikasi-orang-tua", "hasil-asesmen", "parent-teacher"],
+      "source": "BC_UKBI_GURU_ORIGINAL",
+      "status": "approved",
+      "cognitive": "KREASI",
+      "domain": "SOSIAL"
+    },
+    {
+      "id": "BC-UKBI-GURU-BERBICARA-SANGAT-UNGGUL-SET001-Q003",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_GURU",
+      "section": "berbicara",
+      "band": "SANGAT_UNGGUL",
+      "type": "constructed",
+      "difficulty": 5,
+      "scoringMode": "rubric",
+      "prompt": "Anda adalah guru yang memberikan umpan balik lisan kepada seorang siswa kelas XI setelah membaca tugas esai argumentatifnya. Esai siswa tersebut memiliki argumen yang kuat tetapi masih lemah dalam hal: (1) struktur paragraf (tidak ada kalimat topik yang jelas), (2) penggunaan bukti pendukung yang kurang spesifik, dan (3) banyak kesalahan ejaan dan tanda baca. Sampaikan umpan balik secara lisan dengan pendekatan sandwich (pujian-saran-pujian) agar siswa tetap termotivasi. Gunakan bahasa yang membangun, spesifik, dan memberikan panduan perbaikan yang jelas.",
+      "speakingTask": "Umpan balik lisan kepada siswa (3-4 menit)",
+      "rubric": [
+        { "criteria": "Penerapan pendekatan sandwich", "weight": 25, "description": "Umpan balik diawali pujian, diikuti saran, diakhiri motivasi" },
+        { "criteria": "Spesifisitas umpan balik", "weight": 30, "description": "Umpan balik merujuk pada aspek spesifik tulisan, bukan komentar umum" },
+        { "criteria": "Kualitas panduan perbaikan", "weight": 30, "description": "Memberikan panduan konkret dan jelas tentang cara memperbaiki" },
+        { "criteria": "Nada dan gaya penyampaian", "weight": 15, "description": "Menggunakan nada yang membangun, suportif, dan memotivasi" }
+      ],
+      "sampleExpectedResponse": "Selamat, Rina! Saya baru saja selesai membaca esai argumentatif kamu tentang pentingnya literasi digital. Saya sangat terkesan dengan argumen utamanya, terutama poin kamu tentang korelasi antara literasi digital dan kemampuan berpikir kritis. Itu adalah sudut pandang yang orisinal dan relevan. Argumennya kuat dan menunjukkan bahwa kamu benar-benar memahami topik ini. Nah, sekarang saya ingin membahas beberapa hal yang bisa kita tingkatkan bersama agar esai ini semakin baik. Pertama, soal struktur paragraf. Coba perhatikan paragraf kedua kamu. Isinya bagus, tapi tidak ada kalimat topik yang jelas di awal paragraf. Ingat, setiap paragraf argumentasi idealnya dimulai dengan kalimat topik yang menyatakan ide utama paragraf tersebut, lalu diikuti kalimat penjelas dan bukti. Coba kamu revisi dengan menambahkan kalimat topik di awal setiap paragraf. Kedua, bukti pendukung kamu masih terlalu umum. Kamu menyebutkan 'banyak penelitian menunjukkan', tapi tidak menyebutkan penelitian spesifik. Coba tambahkan data atau kutipan dari sumber yang konkret. Misalnya, sebutkan penelitian dari Kemdikbud atau UNESCO tentang dampak literasi digital. Ketiga, saya temukan beberapa kesalahan ejaan dan tanda baca. Tolong baca ulang dengan teliti, terutama penggunaan huruf kapital di awal kalimat dan tanda titik di akhir kalimat. Kamu bisa gunakan fitur pemeriksa ejaan di pengolah kata untuk membantu. Secara keseluruhan, saya melihat potensi besar dalam esai ini. Dengan sedikit perbaikan pada struktur, bukti yang lebih spesifik, dan pengecekan ejaan, esai ini bisa menjadi sangat bagus. Saya percaya kamu bisa melakukannya. Silakan revisi dan kumpulkan minggu depan, ya.",
+      "tags": ["umpan-balik", "feedback-lisan", "esai-argumentatif"],
+      "source": "BC_UKBI_GURU_ORIGINAL",
+      "status": "approved",
+      "cognitive": "EVALUASI",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-GURU-BERBICARA-UNGGUL-SET001-Q004",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_GURU",
+      "section": "berbicara",
+      "band": "UNGGUL",
+      "type": "constructed",
+      "difficulty": 4,
+      "scoringMode": "rubric",
+      "prompt": "Bayangkan Anda memfasilitasi diskusi kelas tentang isi cerpen 'Robohnya Surau Kami' karya A. A. Navis di kelas XII. Sampaikan pengantar diskusi yang mencakup: (1) pertanyaan pemantik yang merangsang pemikiran kritis siswa, (2) panduan aturan diskusi yang jelas, (3) beberapa pertanyaan lanjutan untuk menggali analisis siswa tentang tokoh, konflik, dan nilai moral, serta (4) ajakan untuk menghubungkan tema cerita dengan kehidupan sehari-hari. Gunakan bahasa yang mendorong partisipasi aktif dan saling menghargai.",
+      "speakingTask": "Memfasilitasi diskusi sastra (3-4 menit)",
+      "rubric": [
+        { "criteria": "Kualitas pertanyaan pemantik", "weight": 25, "description": "Pertanyaan pemantik merangsang berpikir kritis dan analitis" },
+        { "criteria": "Kemampuan memfasilitasi", "weight": 25, "description": "Menyampaikan aturan diskusi, mendorong partisipasi, dan menjaga fokus" },
+        { "criteria": "Kedalaman pertanyaan analitis", "weight": 30, "description": "Pertanyaan lanjutan menggali aspek tokoh, konflik, nilai, dan relevansi" },
+        { "criteria": "Keterampilan berbahasa lisan", "weight": 20, "description": "Intonasi, jeda, dan pilihan kata mendukung suasana dialogis" }
+      ],
+      "sampleExpectedResponse": "Selamat pagi, teman-teman. Kita sudah sama-sama membaca cerpen 'Robohnya Surau Kami' karya A. A. Navis. Saya punya satu pertanyaan pemantik untuk memulai diskusi kita hari ini: Menurut kalian, apa sebenarnya yang 'roboh' dalam cerita ini? Apakah hanya surau sebagai bangunan fisik, atau ada makna lain yang lebih dalam? Pikirkan sejenak, nanti kita bahas bersama. Sebelum diskusi dimulai, mari kita sepakati aturan mainnya. Pertama, setiap pendapat dihargai, tidak ada pendapat yang salah selama didasari argumen. Kedua, jika ingin berbicara, angkat tangan dan tunggu giliran. Ketiga, jika ada teman yang berbicara, dengarkan dengan saksama sebelum menanggapi. Setuju? Baik. Siapa yang ingin menyampaikan pendapat tentang pertanyaan tadi? Pertanyaan lanjutan untuk diskusi kita: Apa yang mendorong tokoh Ajo Sidi untuk bersikap seperti itu? Kemudian, bagaimana pandangan kalian tentang konflik antara Ajo Sidi dan tokoh 'aku'? Nilai moral apa yang bisa kita petik dari cerita ini? Terakhir, mari kita kaitkan dengan kehidupan kita sehari-hari. Di sekitar kita, apakah masih ada orang-orang yang memiliki sikap seperti tokoh dalam cerita ini? Bagaimana seharusnya kita menyikapinya?",
+      "tags": ["diskusi-sastra", "fasilitasi", "cerpen"],
+      "source": "BC_UKBI_GURU_ORIGINAL",
+      "status": "approved",
+      "cognitive": "KREASI",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-GURU-BERBICARA-SANGAT-UNGGUL-SET001-Q005",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_GURU",
+      "section": "berbicara",
+      "band": "SANGAT_UNGGUL",
+      "type": "constructed",
+      "difficulty": 5,
+      "scoringMode": "rubric",
+      "prompt": "Bayangkan Anda diminta menyampaikan presentasi singkat dalam forum MGMP Bahasa Indonesia tentang ide pengembangan profesional. Topik presentasi Anda adalah 'Pemanfaatan Portofolio Digital untuk Meningkatkan Kemampuan Menulis Reflektif Siswa'. Sampaikan presentasi yang mencakup: (1) latar belakang atau masalah yang mendasari ide, (2) konsep portofolio digital dan manfaatnya, (3) langkah-langkah implementasi di kelas, dan (4) ajakan untuk berkolaborasi. Gunakan bahasa yang persuasif, jelas, dan meyakinkan sebagai seorang profesional yang akan mempresentasikan idenya kepada rekan sejawat.",
+      "speakingTask": "Presentasi ide pengembangan profesional (4-5 menit)",
+      "rubric": [
+        { "criteria": "Kualitas latar belakang dan identifikasi masalah", "weight": 20, "description": "Latar belakang jelas, masalah relevan, dan didasari data atau observasi" },
+        { "criteria": "Kejelasan konsep dan manfaat", "weight": 25, "description": "Konsep portofolio digital dijelaskan secara jelas beserta manfaatnya" },
+        { "criteria": "Keterpahaman langkah implementasi", "weight": 30, "description": "Langkah implementasi sistematis, realistis, dan aplikatif di kelas" },
+        { "criteria": "Kemampuan persuasi dan ajakan kolaborasi", "weight": 25, "description": "Presentasi meyakinkan dan mengajak rekan sejawat berkolaborasi secara konkret" }
+      ],
+      "sampleExpectedResponse": "Assalamualaikum dan selamat pagi, rekan-rekan guru hebat. Saya ingin menyampaikan sebuah ide yang saya yakini dapat menjawab tantangan kita bersama: rendahnya kemampuan menulis reflektif siswa. Saya sering mendapati siswa menulis jurnal pembelajaran dengan sangat dangkal, seperti 'Saya belajar teks prosedur' tanpa refleksi mendalam tentang apa yang mereka pahami dan bagaimana proses belajarnya. Untuk mengatasi hal ini, saya mengusulkan pemanfaatan portofolio digital. Konsepnya sederhana: setiap siswa memiliki laman portofolio daring yang berisi tulisan reflektif mingguan, dilengkapi dengan bukti belajar seperti foto, tautan, atau dokumen. Manfaatnya sangat besar. Pertama, portofolio digital mendorong siswa untuk menulis secara lebih bertanggung jawab karena karyanya dapat dilihat oleh guru dan teman sekelas. Kedua, portofolio digital memudahkan guru melacak perkembangan menulis siswa dari waktu ke waktu. Ketiga, siswa dapat saling memberi umpan balik melalui fitur komentar. Langkah implementasinya: pertama, kita pilih platform yang mudah digunakan, misalnya Google Sites atau Blogspot. Kedua, kita buat rubrik penilaian bersama siswa. Ketiga, kita jadwalkan menulis reflektif setiap hari Jumat selama 20 menit. Keempat, kita lakukan review portofolio setiap akhir bulan dan beri umpan balik. Saya mengajak rekan-rekan untuk mencoba menerapkan ide ini di kelas masing-masing. Mari kita mulai dengan satu kelas dulu, lalu kita evaluasi bersama bulan depan, dan hasilnya bisa kita presentasikan di pertemuan MGMP berikutnya. Saya siap berbagi rubrik dan panduan teknisnya. Siapa yang berminat untuk bergabung dalam kelompok kecil untuk mencoba ini bersama? Terima kasih.",
+      "tags": ["presentasi-profesional", "portofolio-digital", "pengembangan-profesional"],
+      "source": "BC_UKBI_GURU_ORIGINAL",
+      "status": "approved",
+      "cognitive": "KREASI",
+      "domain": "VOKASIONAL"
+    }
+  ]
+}

@@ -11,7 +11,9 @@ export async function GET(req: NextRequest) {
     const page = parseInt(searchParams.get("page") || "1");
     const limit = parseInt(searchParams.get("limit") || "24");
 
+    const seedUser = await db.user.findUnique({ where: { email: "guru@demo.com" }, select: { id: true } })
     const where: any = { isPublished: true };
+    if (seedUser) where.sellerId = { not: seedUser.id };
     if (type) where.type = type;
     if (grade) where.grade = grade;
     if (subject) where.subject = subject;

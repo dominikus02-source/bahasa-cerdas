@@ -91,7 +91,11 @@
     "test:founder-article-production": "npx tsx scripts/test-founder-article-production.ts",
     "seed:founder-articles:dry-run": "npx tsx scripts/seed-founder-articles.ts",
     "seed:founder-articles": "npx tsx scripts/seed-founder-articles.ts --execute",
-    "audit:founder-article-quality": "npx tsx scripts/audit-founder-article-quality.ts"
+    "audit:founder-article-quality": "npx tsx scripts/audit-founder-article-quality.ts",
+    "audit:public-content-display": "npx tsx scripts/audit-public-content-display.ts",
+    "cleanup:dummy-public-content:dry-run": "npx tsx scripts/cleanup-dummy-public-content.ts",
+    "cleanup:dummy-public-content": "npx tsx scripts/cleanup-dummy-public-content.ts --execute",
+    "test:public-content-display": "npx tsx scripts/test-public-content-display.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.39.0",

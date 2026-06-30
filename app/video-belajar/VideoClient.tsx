@@ -107,7 +107,7 @@ export default function VideoClient({ initialVideos }: { initialVideos: Video[] 
         {filtered.length === 0 ? (
           <div className="text-center py-20">
             <Film size={48} className="mx-auto text-gray-200 mb-3" />
-            <p className="text-gray-400">Belum ada video</p>
+            <p className="text-gray-400">Video pembelajaran sedang disiapkan.</p>
           </div>
         ) : (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">

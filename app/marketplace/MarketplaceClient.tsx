@@ -113,7 +113,7 @@ export default function MarketplaceClient({ initialItems }: { initialItems: Item
         {filtered.length === 0 ? (
           <div className="text-center py-20">
             <ShoppingBag size={48} className="mx-auto text-slate-200" />
-            <p className="text-slate-500 mt-3">Belum ada karya</p>
+            <p className="text-slate-500 mt-3">Toko Karya sedang dikurasi. Produk akan tampil setelah diverifikasi.</p>
           </div>
         ) : (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">

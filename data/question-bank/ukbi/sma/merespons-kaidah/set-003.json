@@ -1,0 +1,1144 @@
+{
+  "meta": {
+    "product": "UKBI_PRACTICE",
+    "track": "UKBI_SMA",
+    "section": "merespons-kaidah",
+    "set": "set-003",
+    "totalItems": 30,
+    "source": "BC_UKBI_SMA_ORIGINAL"
+  },
+  "questions": [
+    {
+      "id": "BC-UKBI-SMA-KAIDAH-TERBATAS-SET003-Q001",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "merespons-kaidah",
+      "band": "TERBATAS",
+      "type": "pilihan_ganda",
+      "difficulty": 1,
+      "stem": "Penulisan kata baku yang tepat adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "ijazah"
+        },
+        {
+          "id": "B",
+          "text": "ijasah"
+        },
+        {
+          "id": "C",
+          "text": "izajah"
+        },
+        {
+          "id": "D",
+          "text": "ijazak"
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Bentuk baku yang benar adalah 'ijazah' dengan huruf 'z', bukan 's'. Kata ini sudah diserap ke dalam KBBI.",
+      "tags": [
+        "kata-baku"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "MENGINGAT",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-SMA-KAIDAH-TERBATAS-SET003-Q002",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "merespons-kaidah",
+      "band": "TERBATAS",
+      "type": "pilihan_ganda",
+      "difficulty": 1,
+      "stem": "Bentuk baku kata 'tehnik' adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "tehnik"
+        },
+        {
+          "id": "B",
+          "text": "tekhnik"
+        },
+        {
+          "id": "C",
+          "text": "teknik"
+        },
+        {
+          "id": "D",
+          "text": "teknik mesin"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "Bentuk baku yang benar adalah 'teknik' sesuai PUEBI dan KBBI, yaitu tanpa huruf 'h' setelah 'k'.",
+      "tags": [
+        "kata-baku",
+        "ejaan"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "MENGINGAT",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-SMA-KAIDAH-MADYA-SET003-Q003",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "merespons-kaidah",
+      "band": "MADYA",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "stem": "Kalimat yang menggunakan konjungsi subordinatif waktu dengan tepat adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Sejak ia pindah ke Jakarta, kami jarang bertemu."
+        },
+        {
+          "id": "B",
+          "text": "Sejak ia pindah ke Jakarta maka kami jarang bertemu."
+        },
+        {
+          "id": "C",
+          "text": "Sejak ia pindah ke Jakarta, dan kami jarang bertemu."
+        },
+        {
+          "id": "D",
+          "text": "Sejak ia pindah ke Jakarta, tetapi kami jarang bertemu."
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Konjungsi subordinatif 'sejak' menghubungkan keterangan waktu dengan induk kalimat. Kalimat A menggunakan koma sebagai pemisah yang tepat tanpa konjungsi koordinatif tambahan.",
+      "tags": [
+        "konjungsi",
+        "kalimat-majemuk"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-SMA-KAIDAH-MADYA-SET003-Q004",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "merespons-kaidah",
+      "band": "MADYA",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "stem": "Kalimat berikut yang menggunakan prefiks me- dengan tepat adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Ia mentaati peraturan yang berlaku."
+        },
+        {
+          "id": "B",
+          "text": "Ia menaati peraturan yang berlaku."
+        },
+        {
+          "id": "C",
+          "text": "Ia mentaatinya peraturan yang berlaku."
+        },
+        {
+          "id": "D",
+          "text": "Ia menaatiin peraturan yang berlaku."
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Kata 'menaati' berasal dari 'taat' + me- + -i. Bentuk yang benar adalah 'menaati' karena 'taat' berawalan dengan konsonan 't' yang luluh menjadi 'n' saat mendapat prefiks me-.",
+      "tags": [
+        "imbuhan",
+        "prefiks"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PENERAPAN",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-SMA-KAIDAH-MADYA-SET003-Q005",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "merespons-kaidah",
+      "band": "MADYA",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "stem": "Penulisan gabungan kata yang sudah dianggap padu yang tepat adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Adi bekerja sebagai sukarelawan di panti asuhan."
+        },
+        {
+          "id": "B",
+          "text": "Adi bekerja sebagai suka relawan di panti asuhan."
+        },
+        {
+          "id": "C",
+          "text": "Adi bekerja sebagai sukarela wan di panti asuhan."
+        },
+        {
+          "id": "D",
+          "text": "Adi bekerja sebagai suka- relawan di panti asuhan."
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Gabungan kata 'sukarelawan' sudah dianggap padu dan ditulis serangkai. Kata ini berasal dari 'suka' dan 'relawan' yang sudah melebur menjadi satu kata utuh.",
+      "tags": [
+        "ejaan",
+        "kata-majemuk"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-SMA-KAIDAH-MADYA-SET003-Q006",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "merespons-kaidah",
+      "band": "MADYA",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "stem": "Penggunaan tanda baca koma yang tidak tepat terdapat dalam kalimat ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Meskipun hujan deras, ia tetap berangkat ke sekolah."
+        },
+        {
+          "id": "B",
+          "text": "Ia membawa buku, pensil, dan penghapus di dalam tas."
+        },
+        {
+          "id": "C",
+          "text": "Buku yang dibaca oleh Andi, adalah novel laris tahun ini."
+        },
+        {
+          "id": "D",
+          "text": "Kalau tidak salah, ia tinggal di Jalan Merdeka No. 10."
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "Kalimat C salah karena koma memisahkan subjek ('Buku yang dibaca oleh Andi') dari predikat ('adalah novel laris'). Koma tidak boleh berada di antara subjek dan predikat dalam kalimat deklaratif.",
+      "tags": [
+        "tanda-baca"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PENERAPAN",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-SMA-KAIDAH-MADYA-SET003-Q007",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "merespons-kaidah",
+      "band": "MADYA",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "stem": "Bentuk pasif yang tepat dari kalimat 'Masyarakat menanam seribu pohon mangrove' adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Seribu pohon mangrove ditanam oleh masyarakat."
+        },
+        {
+          "id": "B",
+          "text": "Seribu pohon mangrove menanam masyarakat."
+        },
+        {
+          "id": "C",
+          "text": "Seribu pohon mangrove tertanam masyarakat."
+        },
+        {
+          "id": "D",
+          "text": "Pohon mangrove ditanami masyarakat seribu."
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Kalimat pasif mengubah objek (seribu pohon mangrove) menjadi subjek dengan imbuhan di-. Urutan yang benar adalah S-P-O: subjek (seribu pohon mangrove) + predikat (ditanam) + pelaku (oleh masyarakat).",
+      "tags": [
+        "kalimat-efektif",
+        "imbuhan"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PENERAPAN",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-SMA-KAIDAH-MADYA-SET003-Q008",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "merespons-kaidah",
+      "band": "MADYA",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "stem": "Penulisan singkatan untuk 'yang terhormat' yang benar adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Yth. Bapak Kepala Sekolah"
+        },
+        {
+          "id": "B",
+          "text": "Yth. Bpk. Kepala Sekolah"
+        },
+        {
+          "id": "C",
+          "text": "Yth Para Bapak dan Ibu Guru"
+        },
+        {
+          "id": "D",
+          "text": "Yth. Kepala Sekolah"
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Singkatan 'Yth.' (yang terhormat) ditulis dengan huruf kapital pada huruf pertama dan diakhiri tanda titik. Ini adalah bentuk baku untuk sapaan hormat dalam surat resmi.",
+      "tags": [
+        "singkatan",
+        "ejaan"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "MENGINGAT",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-SMA-KAIDAH-MADYA-SET003-Q009",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "merespons-kaidah",
+      "band": "MADYA",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "stem": "Kalimat yang menggunakan kata berantonim dengan tepat adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Sifatnya yang fluktuatif sangat stabil dan tidak pernah berubah."
+        },
+        {
+          "id": "B",
+          "text": "Harga barang di pasar itu relatif murah, tidak mahal."
+        },
+        {
+          "id": "C",
+          "text": "Keputusan itu bersifat sementara dan permanen."
+        },
+        {
+          "id": "D",
+          "text": "Wajahnya tampak cerah karena cuaca mendung."
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Kalimat B menggunakan antonim dengan tepat: 'murah' berlawanan dengan 'mahal'. Kalimat A salah karena 'fluktuatif' dan 'stabil' bertentangan. Kalimat C menggunakan 'sementara' dan 'permanen' yang kontradiktif.",
+      "tags": [
+        "diksi",
+        "antonim"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PENERAPAN",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-SMA-KAIDAH-MADYA-SET003-Q010",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "merespons-kaidah",
+      "band": "MADYA",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "stem": "Penulisan kata serapan asing yang sudah disesuaikan ejaannya terdapat pada kalimat ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Dia membuat akun di platform e-commerce."
+        },
+        {
+          "id": "B",
+          "text": "Dia membuat akun di platform e-dagang."
+        },
+        {
+          "id": "C",
+          "text": "Dia membuat account di platform e-commerce."
+        },
+        {
+          "id": "D",
+          "text": "Dia membuat akun di platoform ecommerce."
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Kata 'platform' dan 'akun' sudah disesuaikan ejaannya dalam bahasa Indonesia baku. 'Account' masih bentuk asing, 'e-dagang' tidak lazim, dan 'platoform' ejaannya salah.",
+      "tags": [
+        "kata-serapan"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-SMA-KAIDAH-UNGGUL-SET003-Q011",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "merespons-kaidah",
+      "band": "UNGGUL",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "stem": "Kalimat yang mengalami kesalahan nalar (kesalahan logika) adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Semua peserta rapat setuju dengan keputusan itu, kecuali ketua."
+        },
+        {
+          "id": "B",
+          "text": "Acara itu dihadiri oleh para siswa-siswi kelas XII."
+        },
+        {
+          "id": "C",
+          "text": "Saya tidak setuju dengan usulan yang tidak saya setujui."
+        },
+        {
+          "id": "D",
+          "text": "Nilai ulangannya lebih baik daripada sebelumnya."
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "Kalimat C mengandung kesalahan nalar (pleonasme logis): 'tidak setuju dengan usulan yang tidak saya setujui' adalah pernyataan yang berputar-putar tanpa informasi baru. Ini termasuk kesalahan penalaran sirkuler.",
+      "tags": [
+        "kalimat-efektif",
+        "penalaran"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "ANALISIS",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMA-KAIDAH-UNGGUL-SET003-Q012",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "merespons-kaidah",
+      "band": "UNGGUL",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "stem": "Penggunaan konjungsi 'padahal' yang tepat terdapat dalam kalimat ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Ia kelihatan tenang, padahal hatinya gelisah."
+        },
+        {
+          "id": "B",
+          "text": "Padahal ia kelihatan tenang, hatinya gelisah."
+        },
+        {
+          "id": "C",
+          "text": "Ia kelihatan tenang padahal dan hatinya gelisah."
+        },
+        {
+          "id": "D",
+          "text": "Ia kelihatan tenang, padahal, hatinya gelisah."
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Konjungsi 'padahal' menyatakan pertentangan antara kenyataan lahir dan batin. Penulisan yang tepat adalah dengan koma sebelum 'padahal' karena menghubungkan dua klausa yang berlawanan.",
+      "tags": [
+        "konjungsi"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-SMA-KAIDAH-UNGGUL-SET003-Q013",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "merespons-kaidah",
+      "band": "UNGGUL",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "stem": "Penulisan kata turunan bersufiks -an yang tepat adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Lukisan itu mendapat pujian dari para kritikus."
+        },
+        {
+          "id": "B",
+          "text": "Lukis an itu mendapat pujian dari para kritikus."
+        },
+        {
+          "id": "C",
+          "text": "Lukis-an itu mendapat pujian dari para kritikus."
+        },
+        {
+          "id": "D",
+          "text": "Lukisan itu mendapat pujian-an dari para kritikus."
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Sufiks -an ditulis serangkai dengan kata dasarnya. 'Lukisan' (lukis + -an) dan 'pujian' (puji + -an) ditulis tanpa spasi atau tanda hubung.",
+      "tags": [
+        "imbuhan",
+        "sufiks"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-SMA-KAIDAH-UNGGUL-SET003-Q014",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "merespons-kaidah",
+      "band": "UNGGUL",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "stem": "Frasa endosentris atributif terdapat dalam kalimat ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Rumah besar itu milik paman."
+        },
+        {
+          "id": "B",
+          "text": "Ia membaca dengan tekun."
+        },
+        {
+          "id": "C",
+          "text": "Mereka berangkat ke pasar."
+        },
+        {
+          "id": "D",
+          "text": "Bunga mawar sangat indah."
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Frasa 'rumah besar' adalah frasa endosentris atributif karena 'rumah' sebagai inti (diterangkan) dan 'besar' sebagai atribut (menerangkan). Inti frasa 'rumah' dapat menggantikan seluruh frasa.",
+      "tags": [
+        "frasa"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "ANALISIS",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMA-KAIDAH-UNGGUL-SET003-Q015",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "merespons-kaidah",
+      "band": "UNGGUL",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "stem": "Kalimat efektif yang tidak mengandung pemborosan kata adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Hadirin dipersilakan untuk berdiri dan menyanyikan lagu kebangsaan."
+        },
+        {
+          "id": "B",
+          "text": "Hadirin dipersilakan berdiri menyanyikan lagu kebangsaan Indonesia Raya."
+        },
+        {
+          "id": "C",
+          "text": "Para hadirin dipersilakan untuk berdiri bersama-sama menyanyikan lagu."
+        },
+        {
+          "id": "D",
+          "text": "Semua hadirin dipersilakan berdiri bersama-sama menyanyi lagu kebangsaan."
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Kalimat B efektif: 'dipersilakan berdiri menyanyikan' tanpa kata 'untuk' dan 'bersama-sama' yang mubazir. 'Para' dan 'semua' juga tidak perlu karena 'hadirin' sudah bermakna jamak.",
+      "tags": [
+        "kalimat-efektif"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "EVALUASI",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMA-KAIDAH-UNGGUL-SET003-Q016",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "merespons-kaidah",
+      "band": "UNGGUL",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "stem": "Perbaikilah kalimat berikut agar menjadi kalimat efektif: 'Bagi para siswa yang ingin mendaftar, harap mengisi formulir pendaftaran dengan menggunakan pulpen, jangan menggunakan pensil.'",
+      "options": [
+        {
+          "id": "A",
+          "text": "Siswa yang ingin mendaftar harap mengisi formulir dengan pulpen, bukan pensil."
+        },
+        {
+          "id": "B",
+          "text": "Bagi siswa yang ingin mendaftar, harap mengisi formulir pendaftaran dengan pulpen."
+        },
+        {
+          "id": "C",
+          "text": "Para siswa yang ingin mendaftar, diharapkan mengisi formulir pakai pulpen."
+        },
+        {
+          "id": "D",
+          "text": "Bagi para siswa, harap mengisi formulir pendaftaran dengan pulpen."
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Kalimat A efektif: menghilangkan 'Bagi' (tidak diperlukan), 'para' (mubazir), 'menggunakan' (cukup 'dengan'), dan 'jangan menggunakan' diganti 'bukan' yang lebih ringkas. 'Pendaftaran' juga redundant setelah 'mendaftar'.",
+      "tags": [
+        "kalimat-efektif"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "EVALUASI",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMA-KAIDAH-UNGGUL-SET003-Q017",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "merespons-kaidah",
+      "band": "UNGGUL",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "stem": "Penulisan judul karangan yang tepat sesuai EYD adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Pengaruh Globalisasi pada Kearifan Lokal Remaja"
+        },
+        {
+          "id": "B",
+          "text": "Dampak Globalisasi terhadap Budaya Lokal di Sekolah"
+        },
+        {
+          "id": "C",
+          "text": "Globalisasi dan Pergeseran Nilai Kearifan Lokal"
+        },
+        {
+          "id": "D",
+          "text": "Dampak Globalisasi pada Kearifan Lokal Generasi Muda"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Setiap awal kata dalam judul ditulis dengan huruf kapital, kecuali kata tugas (seperti 'di', 'ke', 'dari', 'dan', 'yang', 'terhadap') yang tidak terletak di posisi awal. 'Terhadap' adalah kata tugas yang tidak di awal, sehingga 't' kecil. Kata 'Di' adalah kata tugas di tengah judul, ditulis 'di'.",
+      "tags": [
+        "ejaan",
+        "judul"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PENERAPAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMA-KAIDAH-UNGGUL-SET003-Q018",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "merespons-kaidah",
+      "band": "UNGGUL",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "stem": "Kalimat berikut yang menggunakan kata berkonotasi negatif adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Pemerintah melakukan penghematan anggaran di berbagai sektor."
+        },
+        {
+          "id": "B",
+          "text": "Pemerintah melakukan pemangkasan anggaran secara brutal."
+        },
+        {
+          "id": "C",
+          "text": "Pemerintah melakukan efisiensi anggaran di kementerian."
+        },
+        {
+          "id": "D",
+          "text": "Pemerintah melakukan rasionalisasi anggaran belanja."
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Kata 'brutal' memiliki konotasi negatif karena bermakna kasar, kejam, atau tidak manusiawi. Kata 'penghematan', 'efisiensi', dan 'rasionalisasi' memiliki konotasi netral hingga positif.",
+      "tags": [
+        "diksi",
+        "konotasi"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "ANALISIS",
+      "domain": "SOSIAL"
+    },
+    {
+      "id": "BC-UKBI-SMA-KAIDAH-UNGGUL-SET003-Q019",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "merespons-kaidah",
+      "band": "UNGGUL",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "stem": "Penulisan angka dan bilangan yang tepat dalam kalimat adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Terdapat 12 orang siswa yang mengikuti lomba sains tahun ini."
+        },
+        {
+          "id": "B",
+          "text": "Terdapat dua belas orang siswa yang mengikuti lomba sains tahun ini."
+        },
+        {
+          "id": "C",
+          "text": "Terdapat 12 (dua belas) siswa yang mengikuti lomba sains tahun ini."
+        },
+        {
+          "id": "D",
+          "text": "Terdapat dua belas (12) siswa yang mengikuti lomba di tahun ini."
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Dalam kalimat utuh, bilangan di awal kalimat atau bilangan yang dapat dinyatakan dengan satu atau dua kata ditulis dengan huruf. 'Dua belas' dapat ditulis dengan kata. Namun, kaidah yang lebih utama: bilangan pada awal kalimat ditulis dengan huruf.",
+      "tags": [
+        "ejaan",
+        "bilangan"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-SMA-KAIDAH-UNGGUL-SET003-Q020",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "merespons-kaidah",
+      "band": "UNGGUL",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "stem": "Kalimat yang menggunakan konjungsi 'bahwa' secara tepat adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Ia mengatakan bahwa ia akan datang besok."
+        },
+        {
+          "id": "B",
+          "text": "Ia mengatakan bahwa, ia akan datang besok."
+        },
+        {
+          "id": "C",
+          "text": "Ia mengatakan, bahwa ia akan datang besok."
+        },
+        {
+          "id": "D",
+          "text": "Ia mengatakan bahwa ia akan datang, besok."
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Konjungsi 'bahwa' sebagai penghubung dalam kalimat taklangsung tidak diikuti koma. Penulisan yang benar: klausa utama + 'bahwa' + klausa bawahan tanpa jeda koma.",
+      "tags": [
+        "konjungsi"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-SMA-KAIDAH-SANGATUNGGUL-SET003-Q021",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "merespons-kaidah",
+      "band": "SANGATUNGGUL",
+      "type": "pilihan_ganda",
+      "difficulty": 4,
+      "stem": "Analisislah kalimat berikut: 'Penelitian yang dilakukan oleh tim ahli dari Universitas Indonesia menunjukkan bahwa penggunaan media sosial secara berlebihan berkorelasi negatif dengan prestasi akademik siswa.' Pola pengembangan kalimat yang digunakan adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Pola kompleks dengan anak kalimat perluasan subjek dan objek"
+        },
+        {
+          "id": "B",
+          "text": "Pola tunggal subjek-predikat-objek-keterangan"
+        },
+        {
+          "id": "C",
+          "text": "Pola majemuk setara dengan konjungsi 'bahwa'"
+        },
+        {
+          "id": "D",
+          "text": "Pola inversi dengan predikat mendahului subjek"
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Kalimat tersebut memiliki struktur kompleks: subjek ('Penelitian yang dilakukan oleh tim ahli dari Universitas Indonesia') perluasannya adalah klausa relatif (anak kalimat perluasan subjek), dan objeknya juga berupa klausa ('bahwa penggunaan media sosial secara berlebihan berkorelasi negatif dengan prestasi akademik siswa'). Ini adalah kalimat kompleks bertingkat.",
+      "tags": [
+        "analisis-kalimat",
+        "struktur"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "ANALISIS",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMA-KAIDAH-SANGATUNGGUL-SET003-Q022",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "merespons-kaidah",
+      "band": "SANGATUNGGUL",
+      "type": "pilihan_ganda",
+      "difficulty": 4,
+      "stem": "Penggunaan kalimat definisi yang tepat terdapat dalam kalimat ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Ekosistem adalah suatu sistem ekologi yang terbentuk oleh hubungan timbal balik antara makhluk hidup dengan lingkungannya."
+        },
+        {
+          "id": "B",
+          "text": "Ekosistem merupakan adalah hubungan antara makhluk hidup dan lingkungan."
+        },
+        {
+          "id": "C",
+          "text": "Ekosistem yaitu sistem yang terdiri atas makhluk hidup dan lingkungannya."
+        },
+        {
+          "id": "D",
+          "text": "Ekosistem adalah yang disebut sebagai hubungan timbal balik makhluk hidup."
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Kalimat definisi yang tepat menggunakan pola 'istilah + adalah + definisi' dengan penjelasan yang lengkap dan tidak berulang. Kalimat A memberikan definisi yang lengkap dengan struktur yang tepat. Kalimat B redundant ('merupakan adalah'). Kalimat C menggunakan 'yaitu' yang kurang formal untuk definisi ilmiah.",
+      "tags": [
+        "kalimat-efektif",
+        "definisi"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "ANALISIS",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMA-KAIDAH-SANGATUNGGUL-SET003-Q023",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "merespons-kaidah",
+      "band": "SANGATUNGGUL",
+      "type": "pilihan_ganda",
+      "difficulty": 4,
+      "stem": "Penulisan kata ganti '-nya' yang tepat sebagai pengacu takrif (anafora) terdapat dalam kalimat ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Setelah Budi membaca buku itu, ia mengembalikannya ke rak."
+        },
+        {
+          "id": "B",
+          "text": "Bukunya Budi dibaca dan dikembalikan ke rak."
+        },
+        {
+          "id": "C",
+          "text": "Budi membaca buku itu dan Budi mengembalikan raknya."
+        },
+        {
+          "id": "D",
+          "text": "Buku itu dibaca, lalu mengembalikannya Budi ke rak."
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Kalimat A menggunakan '-nya' dengan tepat sebagai pengacu anaforis ke 'buku itu' yang disebut sebelumnya. '-nya' pada 'mengembalikannya' merujuk pada 'buku itu' dengan jelas dan tidak ambigu.",
+      "tags": [
+        "kata-ganti",
+        "kohesi"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "ANALISIS",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMA-KAIDAH-SANGATUNGGUL-SET003-Q024",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "merespons-kaidah",
+      "band": "SANGATUNGGUL",
+      "type": "pilihan_ganda",
+      "difficulty": 4,
+      "stem": "Kalimat yang menggunakan penalaran kausalitas (sebab-akibat) dengan tepat adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Karena kebakaran hutan meluas, pemerintah menerjunkan tim pemadam."
+        },
+        {
+          "id": "B",
+          "text": "Karena kebakaran hutan meluas, maka hujan buatan segera diturunkan."
+        },
+        {
+          "id": "C",
+          "text": "Kebakaran hutan meluas karena tim pemadam diterjunkan."
+        },
+        {
+          "id": "D",
+          "text": "Akibat kebakaran hutan meluas, maka hutan menjadi gundul."
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Kalimat A tepat: 'kebakaran meluas' adalah sebab, 'pemerintah menerjunkan tim pemadam' adalah akibat yang logis. Kalimat B dua sebab tanpa akibat yang jelas. Kalimat C terbalik (akibat disebut sebagai sebab). Kalimat D 'maka' setelah 'akibat' menyebabkan kemubaziran konjungsi.",
+      "tags": [
+        "penalaran",
+        "kausalitas"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "ANALISIS",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMA-KAIDAH-SANGATUNGGUL-SET003-Q025",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "merespons-kaidah",
+      "band": "SANGATUNGGUL",
+      "type": "pilihan_ganda",
+      "difficulty": 4,
+      "stem": "Penggunaan konjungsi antarkalimat yang tepat terdapat dalam kalimat ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Harga BBM naik. Oleh karena itu, tarif transportasi umum ikut meningkat."
+        },
+        {
+          "id": "B",
+          "text": "Harga BBM naik, oleh karena itu tarif transportasi umum ikut meningkat."
+        },
+        {
+          "id": "C",
+          "text": "Harga BBM naik dan oleh karena itu tarif transportasi umum naik."
+        },
+        {
+          "id": "D",
+          "text": "Harga BBM naik. Oleh karena itu, maka tarif transportasi umum ikut meningkat."
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Konjungsi antarkalimat 'Oleh karena itu' digunakan di awal kalimat baru untuk menghubungkan dengan kalimat sebelumnya. Kalimat A tepat: titik setelah 'naik' dan 'Oleh karena itu' memulai kalimat baru. Kalimat B dan C menggabungkan dengan koma yang tidak tepat. Kalimat D redundant ('Oleh karena itu, maka').",
+      "tags": [
+        "konjungsi",
+        "antarkalimat"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PENERAPAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMA-KAIDAH-SANGATUNGGUL-SET003-Q026",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "merespons-kaidah",
+      "band": "SANGATUNGGUL",
+      "type": "pilihan_ganda",
+      "difficulty": 4,
+      "stem": "Perbaikilah kalimat berikut agar efektif: 'Adapun mengenai masalah keterlambatan pengiriman barang tersebut, kami selaku pihak supplier akan segera mungkin untuk menindaklanjutinya dengan cara mengirimkan barang pengganti.'",
+      "options": [
+        {
+          "id": "A",
+          "text": "Mengenai keterlambatan pengiriman, kami akan segera mengirimkan barang pengganti."
+        },
+        {
+          "id": "B",
+          "text": "Adapun mengenai keterlambatan, kami selaku supplier akan menindaklanjuti."
+        },
+        {
+          "id": "C",
+          "text": "Kami selaku pihak supplier akan menindaklanjuti masalah pengiriman."
+        },
+        {
+          "id": "D",
+          "text": "Masalah keterlambatan barang akan kami kirimkan barang pengganti."
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Kalimat A efektif: menghilangkan 'adapun' (mubazir dengan 'mengenai'), 'selaku pihak supplier' (tidak perlu), 'segera mungkin' (cukup 'segera'), 'untuk' (tidak perlu), 'dengan cara' (tidak perlu), dan 'menindaklanjutinya' (cukup dihilangkan). Juga memperbaiki struktur kalimat menjadi lebih ringkas.",
+      "tags": [
+        "kalimat-efektif"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "EVALUASI",
+      "domain": "VOKASIONAL"
+    },
+    {
+      "id": "BC-UKBI-SMA-KAIDAH-SANGATUNGGUL-SET003-Q027",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "merespons-kaidah",
+      "band": "SANGATUNGGUL",
+      "type": "pilihan_ganda",
+      "difficulty": 4,
+      "stem": "Kalimat yang menggunakan bentuk terikat 'maha' dengan tepat adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Tuhan Yang Maha Esa, Maha Pengasih, dan Maha Penyayang."
+        },
+        {
+          "id": "B",
+          "text": "Tuhan Yang Mahaesa, Mahapengasih, dan Mahapenyayang."
+        },
+        {
+          "id": "C",
+          "text": "Tuhan YME, Maha Pengasih, lagi Maha Penyayang."
+        },
+        {
+          "id": "D",
+          "text": "Tuhan Yang Maha Esa lagi Maha Pengasih dan Penyayang."
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Bentuk terikat 'maha' diikuti kata sifat ditulis terpisah dan dengan huruf kapital jika merujuk pada Tuhan. 'Maha Esa', 'Maha Pengasih', 'Maha Penyayang' semuanya ditulis dengan 'Maha' kapital terpisah dari kata yang mengikutinya.",
+      "tags": [
+        "ejaan",
+        "bentuk-terikat"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SOSIAL"
+    },
+    {
+      "id": "BC-UKBI-SMA-KAIDAH-SANGATUNGGUL-SET003-Q028",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "merespons-kaidah",
+      "band": "SANGATUNGGUL",
+      "type": "pilihan_ganda",
+      "difficulty": 4,
+      "stem": "Kalimat di bawah ini yang menggunakan kata bermajas metafora adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Beliau adalah nahkoda yang membawa perusahaan ini melewati badai krisis."
+        },
+        {
+          "id": "B",
+          "text": "Beliau adalah pemimpin yang sangat bijaksana dalam mengambil keputusan."
+        },
+        {
+          "id": "C",
+          "text": "Beliau memimpin rapat dengan tegas dan jelas."
+        },
+        {
+          "id": "D",
+          "text": "Beliau bekerja keras siang dan malam demi kemajuan perusahaan."
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Kalimat A mengandung metafora: 'nahkoda' (kiasan untuk pemimpin) dan 'badai krisis' (kiasan untuk masa sulit). Kedua kata tersebut bukan makna sebenarnya, melainkan perbandingan implisit tanpa kata pembanding seperti 'bagai' atau 'laksana'.",
+      "tags": [
+        "majas",
+        "metafora"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "ANALISIS",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMA-KAIDAH-SANGATUNGGUL-SET003-Q029",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "merespons-kaidah",
+      "band": "SANGATUNGGUL",
+      "type": "pilihan_ganda",
+      "difficulty": 5,
+      "stem": "Kesalahan penggunaan ejaan dalam penulisan unsur serapan terdapat dalam kalimat ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Sistem manajemen perusahaan itu sudah tersertifikasi ISO."
+        },
+        {
+          "id": "B",
+          "text": "Universitas itu memiliki program studi manajemen bisnis."
+        },
+        {
+          "id": "C",
+          "text": "Keputihan manajerial diambil setelah konsultasi dengan dewan direksi."
+        },
+        {
+          "id": "D",
+          "text": "Dia mengikuti pelatihan manajemen waktu yang efektif."
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "Kata 'keputihan' pada kalimat C tidak tepat secara konteks. Seharusnya 'keputusan' (dari 'putus' + ke-an) atau 'keputusan manajerial'. 'Keputihan' dalam KBBI berarti penyakit putih-putih pada alat kelamin wanita, bukan turunan dari 'putus'. Ini adalah kesalahan penggunaan kata yang mirip bentuk tetapi berbeda makna.",
+      "tags": [
+        "ejaan",
+        "kata-serapan",
+        "diksi"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "EVALUASI",
+      "domain": "VOKASIONAL"
+    },
+    {
+      "id": "BC-UKBI-SMA-KAIDAH-SANGATUNGGUL-SET003-Q030",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "merespons-kaidah",
+      "band": "SANGATUNGGUL",
+      "type": "pilihan_ganda",
+      "difficulty": 5,
+      "stem": "Cermati paragraf berikut: '(1) Pendidikan karakter menjadi sorotan utama dalam dunia pendidikan saat ini. (2) Banyak pihak menyadari bahwa kecerdasan intelektual saja tidak cukup untuk membentuk generasi yang berintegritas. (3) Oleh karena itu, sekolah mulai mengintegrasikan nilai-nilai karakter dalam setiap mata pelajaran. (4) Hal ini merupakan langkah konkret yang patut diapresiasi. (5) Namun, implementasinya masih menghadapi berbagai kendala di lapangan.' Kalimat manakah yang menggunakan konjungsi antarkalimat?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Kalimat (2) dan (3)"
+        },
+        {
+          "id": "B",
+          "text": "Kalimat (3) dan (5)"
+        },
+        {
+          "id": "C",
+          "text": "Kalimat (1) dan (4)"
+        },
+        {
+          "id": "D",
+          "text": "Kalimat (4) dan (5)"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Kalimat (3) diawali konjungsi antarkalimat 'Oleh karena itu' yang menghubungkan dengan kalimat (2). Kalimat (5) diawali konjungsi antarkalimat 'Namun' yang menghubungkan dengan kalimat (4). Kedua konjungsi ini termasuk konjungsi antarkalimat karena menghubungkan kalimat satu dengan kalimat berikutnya.",
+      "tags": [
+        "konjungsi",
+        "analisis-paragraf"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "ANALISIS",
+      "domain": "AKADEMIK"
+    }
+  ]
+}

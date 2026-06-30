@@ -1,0 +1,802 @@
+{
+  "meta": {
+    "product": "UKBI_PRACTICE",
+    "track": "UKBI_SMA",
+    "section": "mendengarkan",
+    "set": "set-003",
+    "totalItems": 20,
+    "source": "BC_UKBI_SMA_ORIGINAL"
+  },
+  "questions": [
+    {
+      "id": "BC-UKBI-SMA-MENDENGARKAN-MADYA-SET003-Q001",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "mendengarkan",
+      "band": "MADYA",
+      "type": "pilihan_ganda",
+      "difficulty": 1,
+      "audioScript": "Pengumuman: \"Kepada seluruh peserta lomba debat tingkat kota, diumumkan bahwa babak penyisihan akan dilaksanakan pada hari Sabtu, 18 November, bertempat di Aula SMA Negeri 2. Setiap tim wajib hadir 30 menit sebelum jadwal pertandingan. Dimohon membawa surat keterangan dari sekolah dan kartu identitas diri. Technical meeting akan diadakan pada hari Jumat, 17 November, pukul 14.00 WIB di tempat yang sama. Kehadiran perwakilan tim sangat diharapkan.\"",
+      "audioRef": null,
+      "stem": "Kapan technical meeting lomba debat dilaksanakan?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Sabtu, 18 November pukul 07.00"
+        },
+        {
+          "id": "B",
+          "text": "Jumat, 17 November pukul 14.00"
+        },
+        {
+          "id": "C",
+          "text": "Jumat, 17 November pukul 08.00"
+        },
+        {
+          "id": "D",
+          "text": "Sabtu, 18 November pukul 14.00"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Pengumuman menyebut 'Technical meeting akan diadakan pada hari Jumat, 17 November, pukul 14.00 WIB di tempat yang sama.'",
+      "tags": [
+        "informasi-tersurat"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SOSIAL"
+    },
+    {
+      "id": "BC-UKBI-SMA-MENDENGARKAN-MADYA-SET003-Q002",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "mendengarkan",
+      "band": "MADYA",
+      "type": "pilihan_ganda",
+      "difficulty": 1,
+      "audioScript": "Percakapan: Andi: \"San, kamu udah baca novel terbaru karya Tere Liye?\" Santi: \"Udah dong. Ceritanya seru banget, bikin aku nangis di bagian akhir.\" Andi: \"Iya, aku juga. Menurutmu, siapa tokoh yang paling menarik?\" Santi: \"Menurutku tokoh Ayah. Meskipun diam, dia sangat bijaksana. Dialog-dialognya penuh makna.\" Andi: \"Setuju. Aku jadi ingin membaca ulang novel itu.\"",
+      "audioRef": null,
+      "stem": "Tokoh mana yang paling menarik menurut Santi?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Tokoh Ibu"
+        },
+        {
+          "id": "B",
+          "text": "Tokoh Ayah"
+        },
+        {
+          "id": "C",
+          "text": "Tokoh utama"
+        },
+        {
+          "id": "D",
+          "text": "Tokoh antagonis"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Santi menyebut 'Menurutku tokoh Ayah. Meskipun diam, dia sangat bijaksana.'",
+      "tags": [
+        "informasi-tersurat"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SOSIAL"
+    },
+    {
+      "id": "BC-UKBI-SMA-MENDENGARKAN-MADYA-SET003-Q003",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "mendengarkan",
+      "band": "MADYA",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "audioScript": "Iklan layanan masyarakat: \"Tahukah Anda bahwa setiap tahun, ribuan hektare hutan hilang akibat kebakaran yang disebabkan oleh ulah manusia? Mari kita jaga paru-paru dunia dengan tidak membuka lahan dengan cara membakar. Laporkan setiap aktivitas pembakaran hutan dan lahan kepada petugas setempat. Bersama kita cegah karhutla, selamatkan generasi mendatang. Informasi lebih lanjut hubungi call center Kementerian Lingkungan Hidup di 1-500-XXX.\"",
+      "audioRef": null,
+      "stem": "Apa ajakan utama dalam iklan tersebut?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Menanam pohon di lahan kritis"
+        },
+        {
+          "id": "B",
+          "text": "Tidak membuka lahan dengan cara membakar dan melaporkan aktivitas karhutla"
+        },
+        {
+          "id": "C",
+          "text": "Menyumbang dana untuk reboisasi"
+        },
+        {
+          "id": "D",
+          "text": "Menggunakan produk ramah lingkungan"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Iklan mengajak untuk 'tidak membuka lahan dengan cara membakar' dan 'laporkan setiap aktivitas pembakaran hutan dan lahan kepada petugas setempat.'",
+      "tags": [
+        "informasi-tersurat"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SOSIAL"
+    },
+    {
+      "id": "BC-UKBI-SMA-MENDENGARKAN-MADYA-SET003-Q004",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "mendengarkan",
+      "band": "MADYA",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "audioScript": "Wawancara: Reporter: \"Kak Dewi, sebagai juara umum olimpiade sains nasional, apa kunci sukses Kakak?\" Dewi: \"Kuncinya adalah konsistensi. Saya belajar setiap hari meskipun hanya satu jam. Juga, saya tidak malu bertanya kalau ada yang tidak mengerti.\" Reporter: \"Apa pesan Kakak untuk adik-adik yang ingin berprestasi?\" Dewi: \"Jangan takut gagal. Kegagalan adalah bagian dari proses. Yang penting kita belajar dari kesalahan dan terus mencoba.\"",
+      "audioRef": null,
+      "stem": "Apa kunci sukses yang disebutkan oleh Kak Dewi?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Bimbel dan les privat"
+        },
+        {
+          "id": "B",
+          "text": "Konsistensi belajar dan tidak malu bertanya"
+        },
+        {
+          "id": "C",
+          "text": "Belajar semalaman sebelum ujian"
+        },
+        {
+          "id": "D",
+          "text": "Membaca buku di perpustakaan setiap hari"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Dewi menyebut 'Saya belajar setiap hari meskipun hanya satu jam. Juga, saya tidak malu bertanya kalau ada yang tidak mengerti.'",
+      "tags": [
+        "informasi-tersurat"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMA-MENDENGARKAN-UNGGUL-SET003-Q005",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "mendengarkan",
+      "band": "UNGGUL",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "audioScript": "Berita: \"Pemerintah resmi meluncurkan program 'Satu Juta Data Terbuka' yang bertujuan meningkatkan transparansi publik. Melalui program ini, seluruh kementerian dan lembaga pemerintahan diwajibkan mempublikasikan data non-sensitif mereka melalui portal data terbuka nasional. Menteri Komunikasi dan Informatika menyatakan bahwa langkah ini akan memudahkan masyarakat dan peneliti untuk mengakses informasi publik. Program ini juga diharapkan mendorong inovasi berbasis data di sektor swasta. Tahap pertama akan mencakup data dari 50 instansi pemerintah pusat, dan akan diperluas ke pemerintah daerah pada tahun berikutnya.\"",
+      "audioRef": null,
+      "stem": "Apa tujuan utama dari program 'Satu Juta Data Terbuka'?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Meningkatkan jumlah data yang dimiliki pemerintah"
+        },
+        {
+          "id": "B",
+          "text": "Meningkatkan transparansi publik dan mendorong inovasi berbasis data"
+        },
+        {
+          "id": "C",
+          "text": "Membatasi akses masyarakat terhadap informasi pemerintah"
+        },
+        {
+          "id": "D",
+          "text": "Mengumpulkan data pribadi warga negara"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Berita menyebut program bertujuan 'meningkatkan transparansi publik' dan 'diharapkan mendorong inovasi berbasis data di sektor swasta.'",
+      "tags": [
+        "informasi-tersurat",
+        "tujuan"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SOSIAL"
+    },
+    {
+      "id": "BC-UKBI-SMA-MENDENGARKAN-MADYA-SET003-Q006",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "mendengarkan",
+      "band": "MADYA",
+      "type": "pilihan_ganda",
+      "difficulty": 1,
+      "audioScript": "Percakapan: Rizky: \"Hai, Dina. Kamu sudah daftar untuk menjadi panitia peringatan Hari Sumpah Pemuda?\" Dina: \"Sudah. Aku masuk divisi acara. Kalau kamu?\" Rizky: \"Aku di divisi publikasi. Tugas kita barengan nanti ngurus poster dan dokumentasi.\" Dina: \"Bagus, kita jadi sering ketemu untuk koordinasi. Oh iya, rapat pertama besok jam 3 sore di ruang OSIS, ya?\" Rizky: \"Iya, jangan lupa bawa proposal kegiatan.\"",
+      "audioRef": null,
+      "stem": "Divisi apa yang diikuti oleh Rizky?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Divisi acara"
+        },
+        {
+          "id": "B",
+          "text": "Divisi publikasi"
+        },
+        {
+          "id": "C",
+          "text": "Divisi dokumentasi"
+        },
+        {
+          "id": "D",
+          "text": "Divisi perlengkapan"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Rizky berkata 'Aku di divisi publikasi.'",
+      "tags": [
+        "informasi-tersurat"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SOSIAL"
+    },
+    {
+      "id": "BC-UKBI-SMA-MENDENGARKAN-MADYA-SET003-Q007",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "mendengarkan",
+      "band": "MADYA",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "audioScript": "Ceramah: \"Hadirin yang berbahagia, izinkan saya menyampaikan sedikit renungan tentang pentingnya menjaga lisan di era media sosial. Saat ini, banyak orang dengan mudahnya menulis komentar pedas di kolom komentar tanpa berpikir panjang. Padahal, setiap kata yang kita ucapkan atau tulis akan dipertanggungjawabkan. Ingatlah bahwa kebaikan itu tidak hanya berupa perbuatan, tetapi juga perkataan. Jika tidak bisa berkata baik, lebih baik diam. Mari kita jadikan media sosial sebagai ruang yang menyejukkan, bukan ruang yang menyakiti.\"",
+      "audioRef": null,
+      "stem": "Apa pesan utama yang disampaikan dalam ceramah tersebut?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Media sosial harus dihindari karena penuh komentar pedas"
+        },
+        {
+          "id": "B",
+          "text": "Pentingnya menjaga perkataan di media sosial karena setiap kata akan dipertanggungjawabkan"
+        },
+        {
+          "id": "C",
+          "text": "Lebih baik tidak menggunakan media sosial sama sekali"
+        },
+        {
+          "id": "D",
+          "text": "Media sosial hanya untuk bersenang-senang"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Ceramah menekankan 'setiap kata yang kita ucapkan atau tulis akan dipertanggungjawabkan' dan mengajak 'jadikan media sosial sebagai ruang yang menyejukkan.'",
+      "tags": [
+        "informasi-tersirat"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "ANALISIS",
+      "domain": "SOSIAL"
+    },
+    {
+      "id": "BC-UKBI-SMA-MENDENGARKAN-UNGGUL-SET003-Q008",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "mendengarkan",
+      "band": "UNGGUL",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "audioScript": "Diskusi: Toni: \"Menurutku, kurikulum merdeka sudah tepat. Siswa jadi punya lebih banyak waktu untuk eksplorasi minat dan bakat.\" Sari: \"Setuju, tapi implementasinya masih berat. Guru harus menyiapkan modul ajar sendiri dan itu butuh waktu.\" Toni: \"Iya, itu tantangannya. Tapi pemerintah sudah menyediakan platform dan pelatihan.\" Sari: \"Pelatihannya masih kurang merata. Di daerah, banyak guru yang belum paham konsep merdeka belajar.\" Toni: \"Nah, itu PR kita bersama. Semoga ke depannya infrastruktur pendukungnya lebih baik.\"",
+      "audioRef": null,
+      "stem": "Apa kekurangan implementasi kurikulum merdeka yang disebutkan Sari?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Siswa tidak suka dengan kurikulum baru"
+        },
+        {
+          "id": "B",
+          "text": "Guru harus menyiapkan modul ajar sendiri dan pelatihan belum merata di daerah"
+        },
+        {
+          "id": "C",
+          "text": "Kurikulum merdeka terlalu sulit bagi siswa"
+        },
+        {
+          "id": "D",
+          "text": "Platform digital tidak tersedia sama sekali"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Sari menyebut 'Guru harus menyiapkan modul ajar sendiri dan itu butuh waktu' serta 'Pelatihannya masih kurang merata. Di daerah, banyak guru yang belum paham.'",
+      "tags": [
+        "informasi-tersurat",
+        "argumen"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMA-MENDENGARKAN-UNGGUL-SET003-Q009",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "mendengarkan",
+      "band": "UNGGUL",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "audioScript": "Pidato: \"Saudara-saudara sebangsa dan setanah air, kita patut bersyukur karena keberagaman Indonesia adalah anugerah yang tak ternilai. Namun, belakangan ini kita menyaksikan meningkatnya intoleransi di tengah masyarakat. Perbedaan suku, agama, ras, dan antargolongan justru dijadikan alasan untuk saling membenci. Padahal, para pendiri bangsa telah mewariskan semangat Bhinneka Tunggal Ika. Saya mengajak seluruh elemen masyarakat untuk kembali merajut kebersamaan. Mulailah dari lingkungan terkecil: kenali tetangga yang berbeda keyakinan, hargai teman yang berbeda suku, dan hormati setiap perbedaan. Karena Indonesia kuat bukan karena seragam, tetapi karena keberagaman yang bersatu.\"",
+      "audioRef": null,
+      "stem": "Apa inti ajakan dalam pidato tersebut?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Menghindari pergaulan dengan orang yang berbeda keyakinan"
+        },
+        {
+          "id": "B",
+          "text": "Merajut kebersamaan dengan menghargai perbedaan mulai dari lingkungan terkecil"
+        },
+        {
+          "id": "C",
+          "text": "Mengutamakan kepentingan golongan sendiri"
+        },
+        {
+          "id": "D",
+          "text": "Kembali ke budaya masing-masing tanpa berbaur"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Pidato mengajak 'kembali merajut kebersamaan' dengan 'mulailah dari lingkungan terkecil: kenali tetangga yang berbeda keyakinan, hargai teman yang berbeda suku.'",
+      "tags": [
+        "informasi-tersirat",
+        "gagasan-pokok"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "ANALISIS",
+      "domain": "SOSIAL"
+    },
+    {
+      "id": "BC-UKBI-SMA-MENDENGARKAN-MADYA-SET003-Q010",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "mendengarkan",
+      "band": "MADYA",
+      "type": "pilihan_ganda",
+      "difficulty": 1,
+      "audioScript": "Percakapan: Ibu: \"Nak, tolong belikan gula pasir satu kilogram di warung.\" Ani: \"Baik, Bu. Ada pesanan lain?\" Ibu: \"Iya, belikan juga telur setengah kilo dan minyak goreng kemasan.\" Ani: \"Uangnya pas, Bu?\" Ibu: \"Ini uang lima puluh ribu. Gula Rp15.000, telur Rp14.000, minyak Rp12.000. Hitung sendiri kembaliannya, ya.\" Ani: \"Siap, Bu. Berarti totalnya Rp41.000, kembalian Rp9.000.\"",
+      "audioRef": null,
+      "stem": "Berapa total belanja yang harus dibayar Ani?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Rp39.000"
+        },
+        {
+          "id": "B",
+          "text": "Rp41.000"
+        },
+        {
+          "id": "C",
+          "text": "Rp43.000"
+        },
+        {
+          "id": "D",
+          "text": "Rp45.000"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Ani menghitung: gula Rp15.000 + telur Rp14.000 + minyak Rp12.000 = Rp41.000.",
+      "tags": [
+        "informasi-tersurat",
+        "hitung"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SOSIAL"
+    },
+    {
+      "id": "BC-UKBI-SMA-MENDENGARKAN-MADYA-SET003-Q011",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "mendengarkan",
+      "band": "MADYA",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "audioScript": "Pengumuman: \"Diberitahukan kepada seluruh anggota klub jurnalistik, bahwa kegiatan peliputan berita ke acara Car Free Day akan dilaksanakan pada hari Minggu, 3 Desember. Kita akan berkumpul di halaman sekolah pukul 06.00 WIB. Setiap peserta wajib membawa kamera atau ponsel yang bisa merekam video, buku catatan, dan topi. Tema liputan kali ini adalah 'Aktivitas Warga di Car Free Day'. Hasil liputan akan diterbitkan di majalah dinding dan portal berita sekolah. Bagi yang berminat, silakan mendaftar ke ketua klub paling lambat hari Jumat.\"",
+      "audioRef": null,
+      "stem": "Tema liputan klub jurnalistik pada Car Free Day adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Transportasi ramah lingkungan"
+        },
+        {
+          "id": "B",
+          "text": "Aktivitas Warga di Car Free Day"
+        },
+        {
+          "id": "C",
+          "text": "Kuliner di Car Free Day"
+        },
+        {
+          "id": "D",
+          "text": "Olahraga pagi bersama komunitas"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Pengumuman menyebut 'Tema liputan kali ini adalah Aktivitas Warga di Car Free Day.'",
+      "tags": [
+        "informasi-tersurat"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SOSIAL"
+    },
+    {
+      "id": "BC-UKBI-SMA-MENDENGARKAN-UNGGUL-SET003-Q012",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "mendengarkan",
+      "band": "UNGGUL",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "audioScript": "Wawancara: Reporter: \"Menurut Dokter, apa penyebab utama meningkatnya kasus obesitas pada remaja?\" Dokter: \"Ada dua faktor utama: pola makan dan kurang aktivitas fisik. Remaja sekarang cenderung mengonsumsi makanan cepat saji yang tinggi kalori dan rendah serat. Ditambah lagi, mereka lebih banyak menghabiskan waktu di depan layar gawai daripada bergerak.\" Reporter: \"Apa solusi yang bisa dilakukan?\" Dokter: \"Orang tua perlu membatasi konsumsi makanan siap saji dan mendorong anak untuk berolahraga setidaknya 30 menit setiap hari. Sekolah juga bisa menyediakan kantin sehat dengan pilihan makanan bergizi.\"",
+      "audioRef": null,
+      "stem": "Apa solusi yang disarankan Dokter untuk mengatasi obesitas pada remaja?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Memberikan obat penurun berat badan dan diet ketat"
+        },
+        {
+          "id": "B",
+          "text": "Membatasi makanan siap saji, berolahraga 30 menit per hari, dan menyediakan kantin sehat di sekolah"
+        },
+        {
+          "id": "C",
+          "text": "Melarang remaja menggunakan gawai sepenuhnya"
+        },
+        {
+          "id": "D",
+          "text": "Mengirim remaja ke pusat kebugaran setiap hari"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Dokter menyarankan 'membatasi konsumsi makanan siap saji, mendorong anak untuk berolahraga setidaknya 30 menit setiap hari, dan sekolah menyediakan kantin sehat.'",
+      "tags": [
+        "informasi-tersurat",
+        "solusi"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SOSIAL"
+    },
+    {
+      "id": "BC-UKBI-SMA-MENDENGARKAN-UNGGUL-SET003-Q013",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "mendengarkan",
+      "band": "UNGGUL",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "audioScript": "Debat: Pembicara 1: \"Saya mendukung penggunaan seragam sekolah karena menciptakan kesetaraan dan mengurangi kesenjangan sosial ekonomi di antara siswa.\" Pembicara 2: \"Saya kurang setuju. Seragam justru membatasi kreativitas dan kebebasan ekspresi siswa. Di negara-negara maju, banyak sekolah yang tidak mewajibkan seragam dan hasilnya tetap baik.\" Pembicara 1: \"Kebebasan berekspresi bisa disalurkan melalui kegiatan ekstrakurikuler dan hari bebas seragam. Seragam mengajarkan siswa tentang disiplin dan identitas sekolah.\" Pembicara 2: \"Disiplin tidak harus melalui seragam. Yang lebih penting adalah suasana belajar yang kondusif dan kualitas pengajaran.\"",
+      "audioRef": null,
+      "stem": "Argumen apa yang disampaikan Pembicara 1 untuk mendukung seragam sekolah?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Seragam menghemat biaya belanja pakaian siswa"
+        },
+        {
+          "id": "B",
+          "text": "Seragam menciptakan kesetaraan, kesan disiplin, dan identitas sekolah"
+        },
+        {
+          "id": "C",
+          "text": "Seragam membuat siswa lebih rapi dalam berpakaian"
+        },
+        {
+          "id": "D",
+          "text": "Seragam memudahkan guru dalam mengawasi siswa"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Pembicara 1 berargumen seragam 'menciptakan kesetaraan dan mengurangi kesenjangan sosial ekonomi' serta 'mengajarkan siswa tentang disiplin dan identitas sekolah.'",
+      "tags": [
+        "informasi-tersurat",
+        "argumen"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SOSIAL"
+    },
+    {
+      "id": "BC-UKBI-SMA-MENDENGARKAN-SANGATUNGGUL-SET003-Q014",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "mendengarkan",
+      "band": "SANGATUNGGUL",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "audioScript": "Kuliah umum: \"Selamat siang, para mahasiswa. Hari ini kita akan membahas konsep 'circular economy' atau ekonomi sirkular. Berbeda dengan ekonomi linear yang menganut pola ambil-pakai-buang, ekonomi sirkular menekankan pada penggunaan kembali, perbaikan, dan daur ulang produk. Tujuannya adalah meminimalkan limbah dan memaksimalkan nilai guna sumber daya. Contohnya, alih-alih membeli botol air mineral baru setiap hari, kita membawa tumbler yang bisa diisi ulang. Dalam skala industri, perusahaan didesain agar produknya bisa dibongkar kembali dan komponennya digunakan untuk produk baru. Konsep ini menjadi solusi nyata untuk mengatasi masalah sampah yang semakin menggunung.\"",
+      "audioRef": null,
+      "stem": "Apa perbedaan utama antara ekonomi linear dan ekonomi sirkular menurut pembicara?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Ekonomi linear lebih modern daripada ekonomi sirkular"
+        },
+        {
+          "id": "B",
+          "text": "Ekonomi linear menggunakan pola ambil-pakai-buang, sedangkan ekonomi sirkular menekankan penggunaan kembali dan daur ulang"
+        },
+        {
+          "id": "C",
+          "text": "Ekonomi sirkular lebih murah daripada ekonomi linear"
+        },
+        {
+          "id": "D",
+          "text": "Ekonomi linear hanya berlaku untuk produk makanan"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Pembicara menjelaskan 'Ekonomi linear yang menganut pola ambil-pakai-buang, ekonomi sirkular menekankan pada penggunaan kembali, perbaikan, dan daur ulang produk.'",
+      "tags": [
+        "informasi-tersirat",
+        "konsep"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "ANALISIS",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMA-MENDENGARKAN-SANGATUNGGUL-SET003-Q015",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "mendengarkan",
+      "band": "SANGATUNGGUL",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "audioScript": "Wawancara: Reporter: \"Profesor, bagaimana pandangan Bapak tentang fenomena 'FOMO' atau Fear of Missing Out di kalangan remaja?\" Profesor: \"FOMO adalah kecemasan sosial yang timbul karena perasaan ketinggalan pengalaman yang dialami orang lain. Dalam konteks media sosial, FOMO diperparah oleh unggahan teman-teman yang tampak selalu bersenang-senang. Remaja yang mengalami FOMO cenderung terus-menerus mengecek ponsel, merasa tidak puas dengan hidupnya sendiri, dan rentan mengalami stres.\" Reporter: \"Apa saran Bapak untuk mengatasinya?\" Profesor: \"Kuncinya adalah kesadaran diri dan pengelolaan penggunaan media sosial. Coba lakukan detoks digital secara berkala. Alihkan fokus ke kegiatan nyata yang bermakna, seperti hobi, olahraga, atau bertemu teman secara langsung. Ingatlah bahwa apa yang kita lihat di media sosial hanyalah cuplikan terbaik dari kehidupan seseorang, bukan gambaran utuh.\"",
+      "audioRef": null,
+      "stem": "Apa yang disarankan Profesor untuk mengatasi FOMO?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Menghapus semua akun media sosial selamanya"
+        },
+        {
+          "id": "B",
+          "text": "Membandingkan diri dengan orang lain agar termotivasi"
+        },
+        {
+          "id": "C",
+          "text": "Detoks digital, fokus pada kegiatan nyata dan hobi, serta sadar bahwa media sosial hanya cuplikan terbaik"
+        },
+        {
+          "id": "D",
+          "text": "Mengikuti semua tren yang sedang viral di media sosial"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "Profesor menyarankan 'detoks digital secara berkala', 'alihkan fokus ke kegiatan nyata yang bermakna', dan 'ingatlah bahwa apa yang kita lihat di media sosial hanyalah cuplikan terbaik.'",
+      "tags": [
+        "informasi-tersirat",
+        "saran"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "ANALISIS",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMA-MENDENGARKAN-MADYA-SET003-Q016",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "mendengarkan",
+      "band": "MADYA",
+      "type": "pilihan_ganda",
+      "difficulty": 1,
+      "audioScript": "Percakapan: Dian: \"Pin, kamu punya rencana liburan semester nanti?\" Pipin: \"Aku mau ikut program pertukaran pelajar ke Jogja selama seminggu. Di sana kami akan belajar batik dan tari tradisional.\" Dian: \"Wah, seru! Kebetulan aku juga mau ke Jogja, cuma untuk wisata biasa. Aku mau ke Malioboro dan Candi Borobudur.\" Pipin: \"Kalau gitu, kita bisa bertemu di Jogja!\"",
+      "audioRef": null,
+      "stem": "Apa tujuan Pipin pergi ke Jogja?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Wisata ke Malioboro dan Candi Borobudur"
+        },
+        {
+          "id": "B",
+          "text": "Program pertukaran pelajar untuk belajar batik dan tari tradisional"
+        },
+        {
+          "id": "C",
+          "text": "Menjenguk keluarga yang tinggal di Jogja"
+        },
+        {
+          "id": "D",
+          "text": "Mengikuti lomba batik tingkat nasional"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Pipin menyebut 'Aku mau ikut program pertukaran pelajar ke Jogja selama seminggu. Di sana kami akan belajar batik dan tari tradisional.'",
+      "tags": [
+        "informasi-tersurat"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SOSIAL"
+    },
+    {
+      "id": "BC-UKBI-SMA-MENDENGARKAN-MADYA-SET003-Q017",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "mendengarkan",
+      "band": "MADYA",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "audioScript": "Pengumuman: \"Dalam rangka meningkatkan literasi digital, perpustakaan kota bekerja sama dengan markas besar Google Indonesia akan mengadakan workshop gratis bertajuk 'Cerdas Bermedia Sosial'. Workshop ini akan membahas cara membedakan berita asli dan hoaks, etika bermedia sosial, serta tips membuat konten positif. Acara akan diselenggarakan pada hari Sabtu, 10 Desember, pukul 09.00-12.00 WIB di Aula Perpustakaan Kota. Pendaftaran dibuka hingga 5 Desember melalui website resmi perpustakaan. Peserta akan mendapatkan sertifikat elektronik.\"",
+      "audioRef": null,
+      "stem": "Apa saja yang akan dibahas dalam workshop 'Cerdas Bermedia Sosial'?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Cara membuat aplikasi media sosial, desain grafis, dan coding"
+        },
+        {
+          "id": "B",
+          "text": "Membedakan berita asli dan hoaks, etika bermedia sosial, dan tips membuat konten positif"
+        },
+        {
+          "id": "C",
+          "text": "Strategi marketing digital, optimasi SEO, dan iklan berbayar"
+        },
+        {
+          "id": "D",
+          "text": "Cara menjadi influencer, mengedit video, dan foto produk"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Pengumuman menyebut workshop membahas 'cara membedakan berita asli dan hoaks, etika bermedia sosial, serta tips membuat konten positif.'",
+      "tags": [
+        "informasi-tersurat"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMA-MENDENGARKAN-UNGGUL-SET003-Q018",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "mendengarkan",
+      "band": "UNGGUL",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "audioScript": "Ceramah: \"Anak-anakku sekalian, hari ini saya ingin mengajak kalian merenungkan makna dari gotong royong. Budaya gotong royong adalah warisan leluhur yang mulai luntur di era modern. Dulu, ketika ada tetangga yang punya hajatan, semua warga datang membantu tanpa diminta. Ketika ada yang tertimpa musibah, semua menjenguk dan memberi bantuan. Kini, banyak dari kita yang lebih suka menyendiri di kamar dan sibuk dengan ponsel masing-masing. Penting bagi generasi muda untuk menghidupkan kembali semangat gotong royong. Mulailah dari hal-hal sederhana: sapalah tetangga, tawarkan bantuan kepada teman yang kesulitan, dan ikutilah kegiatan kerja bakti di lingkungan tempat tinggal.\"",
+      "audioRef": null,
+      "stem": "Apa yang dikhawatirkan oleh pembicara dalam ceramah tersebut?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Biaya gotong royong yang semakin mahal"
+        },
+        {
+          "id": "B",
+          "text": "Budaya gotong royong mulai luntur karena individualisme di era modern"
+        },
+        {
+          "id": "C",
+          "text": "Generasi muda terlalu sibuk dengan pekerjaan"
+        },
+        {
+          "id": "D",
+          "text": "Teknologi menghilangkan semua nilai tradisional"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Pembicara menyampaikan kekhawatiran bahwa 'Budaya gotong royong adalah warisan leluhur yang mulai luntur di era modern' dan 'banyak dari kita yang lebih suka menyendiri di kamar dan sibuk dengan ponsel.'",
+      "tags": [
+        "informasi-tersirat"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "ANALISIS",
+      "domain": "SOSIAL"
+    },
+    {
+      "id": "BC-UKBI-SMA-MENDENGARKAN-SANGATUNGGUL-SET003-Q019",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "mendengarkan",
+      "band": "SANGATUNGGUL",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "audioScript": "Diskusi panel: Moderator: \"Kita mulai diskusi tentang penerapan teknologi AI di kelas. Bagaimana pandangan panelis?\" Panelis 1: \"Saya optimis. AI bisa membantu personalisasi pembelajaran. Setiap siswa punya kecepatan belajar yang berbeda, dan AI bisa menyesuaikan materi dengan kemampuan masing-masing.\" Panelis 2: \"Saya lebih hati-hati. Ketergantungan pada AI bisa mengurangi kemampuan berpikir kritis siswa. Jika AI yang mengerjakan semua tugas, siswa tidak belajar memecahkan masalah sendiri.\" Panelis 3: \"Saya di tengah. AI adalah alat, bukan pengganti. Kuncinya adalah bagaimana guru mengintegrasikannya secara bijak. AI bisa menjadi asisten yang membantu, tetapi keputusan pedagogis tetap di tangan guru.\"",
+      "audioRef": null,
+      "stem": "Berdasarkan diskusi, posisi mana yang paling tepat menggambarkan pandangan Panelis 3?",
+      "options": [
+        {
+          "id": "A",
+          "text": "AI harus diterapkan sepenuhnya di semua kelas tanpa pengecualian"
+        },
+        {
+          "id": "B",
+          "text": "AI adalah alat yang harus diintegrasikan secara bijak oleh guru, bukan pengganti guru"
+        },
+        {
+          "id": "C",
+          "text": "AI berbahaya dan harus dilarang di lingkungan pendidikan"
+        },
+        {
+          "id": "D",
+          "text": "AI hanya cocok untuk pelajaran sains dan matematika"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Panelis 3 menyatakan 'AI adalah alat, bukan pengganti. Kuncinya adalah bagaimana guru mengintegrasikannya secara bijak' dan 'keputusan pedagogis tetap di tangan guru.'",
+      "tags": [
+        "informasi-tersirat",
+        "sintesis"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "ANALISIS",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMA-MENDENGARKAN-SANGATUNGGUL-SET003-Q020",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "mendengarkan",
+      "band": "SANGATUNGGUL",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "audioScript": "Kuliah singkat: \"Baiklah, saya akan menjelaskan tentang bias kognitif yang sering kita alami tanpa sadar. Salah satu yang paling umum adalah confirmation bias, yaitu kecenderungan kita untuk mencari dan mempercayai informasi yang sesuai dengan keyakinan kita, sambil mengabaikan bukti yang bertentangan. Misalnya, jika kita sudah yakin bahwa suatu produk bagus, kita akan cenderung mencari ulasan positif dan mengabaikan ulasan negatif. Bias ini berbahaya karena membuat pengambilan keputusan kita tidak objektif. Cara mengatasinya adalah dengan secara sadar mencari perspektif yang berbeda, mengajukan pertanyaan kritis, dan selalu memverifikasi informasi dari berbagai sumber sebelum mengambil kesimpulan.\"",
+      "audioRef": null,
+      "stem": "Apa yang dimaksud dengan 'confirmation bias' menurut pembicara?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Kecenderungan untuk selalu setuju dengan pendapat orang lain"
+        },
+        {
+          "id": "B",
+          "text": "Kecenderungan mencari dan mempercayai informasi yang sesuai keyakinan sendiri sambil mengabaikan bukti yang bertentangan"
+        },
+        {
+          "id": "C",
+          "text": "Kemampuan mengingat informasi yang tepat dan akurat"
+        },
+        {
+          "id": "D",
+          "text": "Kecenderungan untuk ragu dalam mengambil keputusan"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Pembicara menjelaskan confirmation bias sebagai 'kecenderungan kita untuk mencari dan mempercayai informasi yang sesuai dengan keyakinan kita, sambil mengabaikan bukti yang bertentangan.'",
+      "tags": [
+        "informasi-tersirat",
+        "konsep"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "ANALISIS",
+      "domain": "AKADEMIK"
+    }
+  ]
+}

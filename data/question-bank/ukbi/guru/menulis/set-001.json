@@ -1,0 +1,132 @@
+{
+  "meta": {
+    "product": "UKBI_PRACTICE",
+    "track": "UKBI_GURU",
+    "section": "menulis",
+    "set": "set-001",
+    "totalItems": 5,
+    "source": "BC_UKBI_GURU_ORIGINAL"
+  },
+  "questions": [
+    {
+      "id": "BC-UKBI-GURU-MENULIS-UNGGUL-SET001-Q001",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_GURU",
+      "section": "menulis",
+      "band": "UNGGUL",
+      "type": "constructed",
+      "difficulty": 3,
+      "scoringMode": "rubric",
+      "prompt": "Anda adalah guru bahasa Indonesia kelas IX. Tulislah tujuan pembelajaran (indikator pencapaian kompetensi) untuk materi 'Menyusun Teks Pidato Persuasif' dengan ketentuan: (1) tujuan pembelajaran dirumuskan menggunakan kata kerja operasional yang tepat, (2) mencakup aspek pengetahuan dan keterampilan, (3) sesuai dengan tingkat perkembangan siswa kelas IX. Tuliskan dalam bentuk paragraf yang padu dan jelas.",
+      "wordLimit": { "min": 100, "max": 300 },
+      "rubric": [
+        { "criteria": "Ketepatan perumusan tujuan pembelajaran", "weight": 30, "description": "Tujuan dirumuskan dengan kata kerja operasional yang sesuai (misal: mengidentifikasi, menyusun, mempresentasikan)" },
+        { "criteria": "Kesesuaian aspek pengetahuan dan keterampilan", "weight": 25, "description": "Tujuan mencakup aspek kognitif dan psikomotorik secara seimbang" },
+        { "criteria": "Kesesuaian dengan tingkat perkembangan siswa", "weight": 20, "description": "Tujuan sesuai dengan kompetensi yang diharapkan untuk kelas IX" },
+        { "criteria": "Penggunaan bahasa Indonesia yang baik", "weight": 25, "description": "Kalimat efektif, ejaan benar, paragraf padu dan kohesif" }
+      ],
+      "sampleExpectedResponse": "Pembelajaran teks pidato persuasif di kelas IX bertujuan agar siswa mampu mengidentifikasi struktur dan kaidah kebahasaan teks pidato persuasif melalui membaca contoh-contoh pidato. Selanjutnya, siswa dapat menyusun kerangka teks pidato persuasif sesuai dengan topik yang dipilih dengan memperhatikan struktur yang tepat. Pada tahap akhir, siswa mampu mempresentasikan teks pidato persuasif di depan kelas dengan intonasi, lafal, dan gestur yang sesuai. Tujuan ini dirancang untuk mengembangkan kemampuan berpikir kritis dan keterampilan berkomunikasi siswa secara bertahap.",
+      "tags": ["tujuan-pembelajaran", "indikator", "teks-pidato"],
+      "source": "BC_UKBI_GURU_ORIGINAL",
+      "status": "approved",
+      "cognitive": "KREASI",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-GURU-MENULIS-SANGAT-UNGGUL-SET001-Q002",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_GURU",
+      "section": "menulis",
+      "band": "SANGAT_UNGGUL",
+      "type": "constructed",
+      "difficulty": 4,
+      "scoringMode": "rubric",
+      "prompt": "Cermati teks akademik berikut yang belum efektif:\n\n\"Pembelajaran berbasis proyek ini adalah suatu model pembelajaran yang mana di dalamnya siswa dapat belajar sambil melakukan proyek-proyek nyata yang ada hubungannya dengan kehidupan sehari-hari mereka, sehingga dengan demikian siswa bisa mendapatkan pengalaman belajar yang lebih bermakna dan juga bisa mengembangkan berbagai keterampilan yang mereka butuhkan.\"\n\nTulislah kembali teks tersebut agar menjadi paragraf yang efektif, ringkas, dan jelas. Perbaiki dari segi pilihan kata, struktur kalimat, dan efisiensi bahasa. Jelaskan pula alasan perbaikan yang Anda lakukan dalam bentuk catatan singkat di akhir paragraf.",
+      "wordLimit": { "min": 150, "max": 300 },
+      "rubric": [
+        { "criteria": "Ketepatan revisi kalimat", "weight": 30, "description": "Menghilangkan pemborosan kata tanpa menghilangkan informasi penting" },
+        { "criteria": "Pilihan kata dan istilah", "weight": 25, "description": "Menggunakan diksi yang tepat, baku, dan efisien" },
+        { "criteria": "Keterpaduan paragraf", "weight": 25, "description": "Paragraf kohesif, kalimat padu, dan alur logis" },
+        { "criteria": "Kualitas catatan alasan revisi", "weight": 20, "description": "Catatan singkat menjelaskan secara tepat alasan perubahan yang dilakukan" }
+      ],
+      "sampleExpectedResponse": "Pembelajaran berbasis proyek adalah model yang menghubungkan siswa dengan proyek nyata sesuai kehidupan sehari-hari. Model ini memberikan pengalaman belajar bermakna dan mengembangkan berbagai keterampilan yang dibutuhkan siswa.\n\nCatatan revisi: Kata 'yang mana' diganti 'yang' lebih ringkas. Frasa 'di dalamnya' dihilangkan karena maknanya sudah tercakup. 'Ada hubungannya dengan' disederhanakan menjadi 'sesuai'. 'Sehingga dengan demikian' dan 'bisa' dihilangkan atau diganti dengan bentuk yang lebih baku. Kata 'juga' di akhir tidak diperlukan karena makna penambahan sudah tersirat dari struktur kalimat.",
+      "tags": ["revisi-teks", "kalimat-efektif", "akademik"],
+      "source": "BC_UKBI_GURU_ORIGINAL",
+      "status": "approved",
+      "cognitive": "EVALUASI",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-GURU-MENULIS-MADYA-SET001-Q003",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_GURU",
+      "section": "menulis",
+      "band": "MADYA",
+      "type": "constructed",
+      "difficulty": 3,
+      "scoringMode": "rubric",
+      "prompt": "Anda akan menilai tugas menulis cerita pendek siswa kelas XI. Buatlah sebuah rubrik penilaian yang mencakup empat kriteria penilaian untuk tugas tersebut. Setiap kriteria harus disertai deskripsi yang jelas tentang apa yang dinilai dan indikator kinerja untuk skor tinggi (sangat baik) dan skor rendah (perlu perbaikan). Tuliskan rubrik dalam bentuk paragraf naratif yang menjelaskan setiap kriteria secara berurutan.",
+      "wordLimit": { "min": 150, "max": 300 },
+      "rubric": [
+        { "criteria": "Kelengkapan dan ketepatan kriteria", "weight": 30, "description": "Rubrik mencakup empat kriteria yang relevan dengan penilaian cerpen" },
+        { "criteria": "Kualitas deskripsi kriteria", "weight": 30, "description": "Setiap kriteria dideskripsikan secara jelas dan operasional" },
+        { "criteria": "Indikator skor tinggi dan rendah", "weight": 20, "description": "Menyertakan indikator untuk skor sangat baik dan perlu perbaikan" },
+        { "criteria": "Penggunaan bahasa Indonesia baku", "weight": 20, "description": "Menggunakan bahasa yang baku, jelas, dan mudah dipahami" }
+      ],
+      "sampleExpectedResponse": "Rubrik penilaian cerpen ini mencakup empat kriteria. Pertama, kesesuaian isi dengan tema, yang menilai apakah cerita yang ditulis sesuai dengan tema yang ditentukan. Skor tinggi diberikan jika cerita relevan dan mengembangkan tema secara kreatif, sedangkan skor rendah jika cerita menyimpang dari tema. Kedua, struktur cerita, yang mencakup kelengkapan orientasi, komplikasi, dan resolusi. Skor tinggi jika struktur lengkap dan alur berkembang logis. Ketiga, penggunaan bahasa, yang meliputi pilihan kata, gaya bahasa, dan ejaan. Skor tinggi jika diksi tepat dan bervariasi. Keempat, orisinalitas dan kreativitas, yang menilai kebaruan ide dan cara penyampaian cerita. Skor tinggi jika cerita menunjukkan sudut pandang yang unik dan orisinal.",
+      "tags": ["rubrik-penilaian", "asesmen", "cerpen"],
+      "source": "BC_UKBI_GURU_ORIGINAL",
+      "status": "approved",
+      "cognitive": "KREASI",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-GURU-MENULIS-SANGAT-UNGGUL-SET001-Q004",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_GURU",
+      "section": "menulis",
+      "band": "SANGAT_UNGGUL",
+      "type": "constructed",
+      "difficulty": 5,
+      "scoringMode": "rubric",
+      "prompt": "Anda diminta mengembangkan deskripsi materi pembelajaran untuk modul ajar tentang 'Menganalisis Unsur Kebahasaan dalam Teks Argumentasi' untuk siswa kelas XII. Tulislah deskripsi materi yang mencakup: (1) pengertian dan ciri-ciri teks argumentasi, (2) unsur kebahasaan yang khas dalam teks argumentasi (konjungsi argumentatif, verba mental, istilah teknis, dan adverbia frekuensi), (3) contoh analisis singkat, dan (4) panduan langkah-langkah menganalisis. Gunakan bahasa yang komunikatif, sistematis, dan sesuai untuk siswa SMA.",
+      "wordLimit": { "min": 200, "max": 300 },
+      "rubric": [
+        { "criteria": "Kelengkapan komponen materi", "weight": 25, "description": "Mencakup pengertian, ciri, unsur kebahasaan, contoh, dan langkah analisis" },
+        { "criteria": "Kedalaman dan ketepatan isi", "weight": 25, "description": "Penjelasan akurat, contoh relevan, dan langkah analisis logis" },
+        { "criteria": "Sistematika penyampaian", "weight": 25, "description": "Materi disusun secara sistematis dan mudah diikuti" },
+        { "criteria": "Kualitas bahasa dan gaya penyampaian", "weight": 25, "description": "Bahasa komunikatif, baku, dan sesuai untuk siswa SMA" }
+      ],
+      "sampleExpectedResponse": "Teks argumentasi adalah karangan yang bertujuan meyakinkan pembaca melalui bukti dan alasan logis. Ciri-cirinya meliputi: adanya pendapat atau tesis, disertai data atau fakta pendukung, dan menggunakan penalaran yang logis. Unsur kebahasaan teks argumentasi meliputi: (a) konjungsi argumentatif seperti 'sebab', 'oleh karena itu', 'dengan demikian'; (b) verba mental seperti 'berpendapat', 'menyimpulkan', 'meyakini'; (c) istilah teknis sesuai topik; dan (d) adverbia frekuensi seperti 'sering', 'umumnya'. Contoh: 'Pencemaran udara di perkotaan semakin meningkat. Hal ini disebabkan oleh meningkatnya jumlah kendaraan bermotor. Oleh karena itu, pemerintah perlu mendorong penggunaan transportasi umum.' Analisis: kalimat pertama adalah tesis, kalimat kedua adalah argumen yang ditandai konjungsi kausal 'disebabkan', dan kalimat ketiga adalah simpulan. Langkah menganalisis: (1) baca teks secara keseluruhan, (2) identifikasi tesis, (3) temukan argumen dan data pendukung, (4) tandai unsur kebahasaan yang muncul, (5) simpulkan pola argumentasi penulis.",
+      "tags": ["materi-pembelajaran", "teks-argumentasi", "unsur-kebahasaan"],
+      "source": "BC_UKBI_GURU_ORIGINAL",
+      "status": "approved",
+      "cognitive": "KREASI",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-GURU-MENULIS-UNGGUL-SET001-Q005",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_GURU",
+      "section": "menulis",
+      "band": "UNGGUL",
+      "type": "constructed",
+      "difficulty": 4,
+      "scoringMode": "rubric",
+      "prompt": "Tulislah sebuah refleksi profesional singkat sebagai guru bahasa Indonesia setelah menyelesaikan satu semester pembelajaran. Refleksi Anda harus mencakup: (1) satu strategi pembelajaran yang berhasil dan mengapa berhasil, (2) satu tantangan yang dihadapi dan cara mengatasinya, (3) satu hal yang akan Anda lakukan secara berbeda di semester depan, dan (4) komitmen pengembangan kompetensi diri ke depannya. Gunakan gaya bahasa yang reflektif, jujur, dan profesional.",
+      "wordLimit": { "min": 150, "max": 300 },
+      "rubric": [
+        { "criteria": "Kedalaman refleksi", "weight": 30, "description": "Refleksi menunjukkan pemikiran kritis dan introspeksi diri yang jujur" },
+        { "criteria": "Kelengkapan komponen", "weight": 25, "description": "Mencakup strategi berhasil, tantangan, rencana perubahan, dan komitmen" },
+        { "criteria": "Kualitas solusi dan rencana tindak lanjut", "weight": 25, "description": "Solusi yang ditawarkan realistis dan rencana perbaikan relevan" },
+        { "criteria": "Penggunaan bahasa reflektif", "weight": 20, "description": "Gaya bahasa reflektif, personal namun tetap profesional, ejaan benar" }
+      ],
+      "sampleExpectedResponse": "Semester ini saya menerapkan strategi menulis jurnal harian selama lima menit di awal pelajaran. Strategi ini berhasil meningkatkan kelancaran menulis siswa karena mengurangi tekanan dan memberikan ruang ekspresi bebas. Siswa yang sebelumnya enggan menulis mulai menunjukkan antusiasme. Tantangan terbesar adalah perbedaan tingkat kemampuan menulis yang cukup ekstrem. Beberapa siswa masih kesulitan menyusun kalimat efektif. Saya mengatasinya dengan memberikan bimbingan individual singkat setiap akhir pekan dan menyediakan bank kalimat sebagai referensi. Semester depan, saya akan mengintegrasikan umpan balik teman sejawat (peer review) dalam proses menulis agar siswa lebih kritis terhadap karya sendiri. Ke depannya, saya berkomitmen untuk mengikuti pelatihan asesmen menulis dan memperbanyak membaca referensi tentang pedagogi menulis kreatif.",
+      "tags": ["refleksi-profesional", "pengembangan-diri", "evaluasi"],
+      "source": "BC_UKBI_GURU_ORIGINAL",
+      "status": "approved",
+      "cognitive": "EVALUASI",
+      "domain": "AKADEMIK"
+    }
+  ]
+}

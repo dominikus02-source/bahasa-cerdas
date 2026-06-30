@@ -112,6 +112,9 @@ export async function POST(req: NextRequest) {
       if (!karya.isPublished) {
         return err("ITEM_NOT_PURCHASABLE", `"${karya.title}" tidak tersedia.`, 400);
       }
+      if (!karya.fileKey || karya.fileUrl?.includes("example.com")) {
+        return err("ITEM_NOT_PURCHASABLE", `"${karya.title}" belum tersedia untuk dibeli.`, 400);
+      }
       if (karya.sellerId === dbUser.id) {
         return err("INVALID_ITEM", `Tidak bisa membeli "${karya.title}" — itu karya Anda sendiri.`, 400);
       }

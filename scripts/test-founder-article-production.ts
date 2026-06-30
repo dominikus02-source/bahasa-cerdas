@@ -202,6 +202,29 @@ async function main() {
     }
   }
 
+  // === 20. All 30 founder articles accessible from public listing ===
+  console.log("20. Founder articles in public listing...");
+  const apiRoute = fs.readFileSync(path.join(__dirname, "..", "app/api/artikel/route.ts"), "utf-8");
+  assert(apiRoute.includes("skip") && apiRoute.includes("take"), "Pagination in API");
+
+  const artikelSlugs = seeded.map((a) => a.slug);
+  assert(artikelSlugs.length >= 27, `At least 27 found in DB (got ${artikelSlugs.length})`);
+
+  // Check the public page renders all via API with pagination
+  assert(publicPage.includes("Muat Lebih Banyak") || publicPage.includes("totalPages"), "Pagination UI exists");
+
+  // Check filter per founder
+  const washadiArticles = seeded.filter((a) => a.authorName === "Washadi");
+  const alexArticles = seeded.filter((a) => a.authorName === "Alexander Suryanta");
+  const domArticles = seeded.filter((a) => a.authorName === "Dominikus Wahyu");
+  assert(washadiArticles.length === 10, `Washadi has 10 articles (got ${washadiArticles.length})`);
+  assert(alexArticles.length === 10, `Alexander has 10 articles (got ${alexArticles.length})`);
+  assert(domArticles.length === 10, `Dominikus has 10 articles (got ${domArticles.length})`);
+
+  // === 21. No email in API response ===
+  console.log("21. API tidak expose email...");
+  assert(!apiRoute.includes("author.email") && !apiRoute.includes("authorEmail"), "API does not select email");
+
   // === Summary ===
   console.log("\n=== RESULTS ===");
   console.log(`Passed: ${passed}`);

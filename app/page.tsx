@@ -67,9 +67,12 @@ async function getLatestArtikel() {
 
 async function getLatestVideos() {
   try {
+    const seedUser = await db.user.findUnique({ where: { email: "guru@demo.com" }, select: { id: true } })
+    const where: any = { isPublished: true }
+    if (seedUser) where.creatorId = { not: seedUser.id }
     return await queryWithTimeout(
       db.video.findMany({
-        where: { isPublished: true },
+        where,
         orderBy: { views: "desc" },
         take: 3,
         select: {
@@ -268,7 +271,7 @@ export default async function HomePage() {
               ) : (
                 <div className="text-center py-12 bg-zinc-50 rounded-2xl border border-dashed border-zinc-200">
                   <p className="text-zinc-400">
-                    Belum ada video pembelajaran.
+                    Video pembelajaran pilihan akan segera tersedia.
                   </p>
                 </div>
               )}
