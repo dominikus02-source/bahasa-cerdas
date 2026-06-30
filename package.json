@@ -85,7 +85,12 @@
     "seed:mgmp-groups": "npx tsx scripts/seed-mgmp-community-groups.ts --execute",
     "validate:mgmp-groups": "npx tsx scripts/validate-mgmp-community-groups.ts",
     "audit:mgmp-community": "npx tsx scripts/audit-mgmp-community.ts",
-    "test:mgmp-community": "npx tsx scripts/test-mgmp-community-flow.ts"
+    "test:mgmp-community": "npx tsx scripts/test-mgmp-community-flow.ts",
+    "validate:founder-articles": "npx tsx scripts/validate-founder-articles.ts",
+    "audit:founder-articles": "npx tsx scripts/audit-founder-articles.ts",
+    "test:founder-article-production": "npx tsx scripts/test-founder-article-production.ts",
+    "seed:founder-articles:dry-run": "npx tsx scripts/seed-founder-articles.ts",
+    "seed:founder-articles": "npx tsx scripts/seed-founder-articles.ts --execute"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.39.0",

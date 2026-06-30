@@ -21,11 +21,11 @@ export default async function ArtikelPage() {
   try {
     artikel = await db.artikel.findMany({
       where: { isPublished: true },
-      orderBy: { createdAt: "desc" },
+      orderBy: [{ publishedAt: "desc" }, { createdAt: "desc" }],
       take: 12,
       select: {
         id: true, title: true, slug: true, excerpt: true,
-        coverImage: true, tags: true, readCount: true, createdAt: true,
+        coverImage: true, tags: true, readCount: true, createdAt: true, publishedAt: true,
         author: { select: { id: true, fullName: true } },
       },
     });
@@ -65,7 +65,7 @@ export default async function ArtikelPage() {
                       {a.tags?.slice(0, 2).map((t: string) => (
                         <span key={t} className="px-2 py-0.5 bg-red-50 text-red-600 rounded-full font-medium">{t}</span>
                       ))}
-                      <span className="flex items-center gap-1"><Calendar size={12} /> {new Date(a.createdAt).toLocaleDateString("id")}</span>
+                      <span className="flex items-center gap-1"><Calendar size={12} /> {new Date(a.publishedAt ?? a.createdAt).toLocaleDateString("id")}</span>
                       <span className="flex items-center gap-1"><Clock size={12} /> {a.readCount} dibaca</span>
                     </div>
                     <h2 className={`font-bold text-slate-900 hover:text-red-600 transition-colors ${idx === 0 ? "text-2xl" : "text-lg"} line-clamp-2`}>

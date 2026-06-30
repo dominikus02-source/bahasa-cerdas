@@ -48,7 +48,7 @@ export default async function ArtikelDetailPage({ params }: Props) {
       where: { slug, isPublished: true },
       select: {
         id: true, title: true, slug: true, content: true, excerpt: true,
-        coverImage: true, tags: true, readCount: true, createdAt: true, updatedAt: true,
+        coverImage: true, tags: true, readCount: true, createdAt: true, updatedAt: true, publishedAt: true,
         author: { select: { id: true, fullName: true, avatar: true } },
       },
     });
@@ -91,7 +91,7 @@ export default async function ArtikelDetailPage({ params }: Props) {
                 <User size={12} /> {artikel.author.fullName}
               </Link>
             )}
-            <span className="flex items-center gap-1"><Calendar size={12} /> {new Date(artikel.createdAt).toLocaleDateString("id", { day: "numeric", month: "long", year: "numeric" })}</span>
+            <span className="flex items-center gap-1"><Calendar size={12} /> {new Date(artikel.publishedAt ?? artikel.createdAt).toLocaleDateString("id", { day: "numeric", month: "long", year: "numeric" })}</span>
             <span className="flex items-center gap-1"><Clock size={12} /> {artikel.readCount} dibaca</span>
           </div>
 

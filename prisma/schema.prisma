@@ -1222,6 +1222,12 @@ model Artikel {
   authorId    String
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+  publishedAt DateTime?
+  authorName  String?
+  authorRole  String?
+  articleType String?
+  source      String   @default("USER_CREATED")
+  featured    Boolean  @default(false)
   author      User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
 
   @@index([isPublished, createdAt])
