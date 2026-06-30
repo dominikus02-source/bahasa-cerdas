@@ -61,6 +61,8 @@ export interface SimulationTrack {
   isLegacy?: boolean
   track: string
   type: string
+  href?: string
+  statusLabel?: string
 }
 
 const UKBI_TRACK_DEFS: Record<string, Omit<SimulationTrack, "questionCount" | "duration" | "paketId" | "available" | "isLegacy">> = {
@@ -109,6 +111,16 @@ export async function getUKBIPackages(): Promise<SimulationTrack[]> {
     trackMap["SMA"].isLegacy = true;
   }
 
+  // Set href and statusLabel
+  for (const t of Object.values(trackMap)) {
+    if (t.available && t.paketId) {
+      t.href = `/kompetisi/${t.paketId}`;
+      t.statusLabel = t.isLegacy ? "Paket awal tersedia" : "Tersedia";
+    } else {
+      t.statusLabel = "Segera tersedia";
+    }
+  }
+
   return Object.values(trackMap);
 }
 
@@ -144,6 +156,16 @@ export async function getTKAPackages(): Promise<SimulationTrack[]> {
   }
   if (trackMap["SMA"] && trackMap["SMA"].questionCount <= 33) {
     trackMap["SMA"].isLegacy = true;
+  }
+
+  // Set href and statusLabel
+  for (const t of Object.values(trackMap)) {
+    if (t.available && t.paketId) {
+      t.href = `/kompetisi/${t.paketId}`;
+      t.statusLabel = t.isLegacy ? "Paket awal tersedia" : "Tersedia";
+    } else {
+      t.statusLabel = "Segera tersedia";
+    }
   }
 
   return Object.values(trackMap);

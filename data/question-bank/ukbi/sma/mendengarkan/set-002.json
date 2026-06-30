@@ -1,0 +1,801 @@
+{
+  "meta": {
+    "product": "UKBI_PRACTICE",
+    "track": "UKBI_SMA",
+    "section": "mendengarkan",
+    "set": "set-002",
+    "totalItems": 20,
+    "source": "BC_UKBI_SMA_ORIGINAL"
+  },
+  "questions": [
+    {
+      "id": "BC-UKBI-SMA-MENDENGARKAN-MADYA-SET002-Q001",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "mendengarkan",
+      "band": "MADYA",
+      "type": "pilihan_ganda",
+      "difficulty": 1,
+      "audioScript": "Pengumuman: \"Diberitahukan kepada seluruh siswa kelas XII bahwa jadwal ujian akhir semester telah mengalami perubahan. Ujian Bahasa Indonesia yang semula dijadwalkan hari Senin, 4 Desember, dimajukan menjadi hari Jumat, 1 Desember. Ujian Matematika tetap pada hari Rabu, 6 Desember. Harap perhatikan perubahan ini dan persiapkan diri dengan baik.\"",
+      "audioRef": null,
+      "stem": "Perubahan apa yang terjadi pada jadwal ujian?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Ujian Matematika dimajukan"
+        },
+        {
+          "id": "B",
+          "text": "Ujian Bahasa Indonesia dimajukan"
+        },
+        {
+          "id": "C",
+          "text": "Semua ujian diundur"
+        },
+        {
+          "id": "D",
+          "text": "Ujian Bahasa Indonesia diundur"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Pengumuman menyatakan 'Ujian Bahasa Indonesia yang semula dijadwalkan hari Senin, 4 Desember, dimajukan menjadi hari Jumat, 1 Desember.'",
+      "tags": [
+        "informasi-tersurat"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SOSIAL"
+    },
+    {
+      "id": "BC-UKBI-SMA-MENDENGARKAN-MADYA-SET002-Q002",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "mendengarkan",
+      "band": "MADYA",
+      "type": "pilihan_ganda",
+      "difficulty": 1,
+      "audioScript": "Percakapan: Rina: \"Menurut kamu, kita pilih topik apa untuk tugas presentasi Bahasa Indonesia?\" Andi: \"Gimana kalau tentang dampak media sosial terhadap prestasi belajar?\" Rina: \"Wah, menarik. Tapi apa kita bisa dapat data yang cukup?\" Andi: \"Kita bisa buat angket dan sebarkan ke siswa kelas lain. Pasti banyak yang mau isi.\" Rina: \"Oke, setuju. Nanti aku buat proposalnya dulu ya.\"",
+      "audioRef": null,
+      "stem": "Topik apa yang dipilih Rina dan Andi untuk tugas presentasi?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Pengaruh internet terhadap remaja"
+        },
+        {
+          "id": "B",
+          "text": "Dampak media sosial terhadap prestasi belajar"
+        },
+        {
+          "id": "C",
+          "text": "Peran teknologi di dunia pendidikan"
+        },
+        {
+          "id": "D",
+          "text": "Cara membuat angket penelitian"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Andi mengusulkan 'dampak media sosial terhadap prestasi belajar' dan Rina setuju.",
+      "tags": [
+        "informasi-tersurat"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SOSIAL"
+    },
+    {
+      "id": "BC-UKBI-SMA-MENDENGARKAN-MADYA-SET002-Q003",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "mendengarkan",
+      "band": "MADYA",
+      "type": "pilihan_ganda",
+      "difficulty": 1,
+      "audioScript": "Pengumuman: \"Dalam rangka memperingati Bulan Bahasa, perpustakaan sekolah mengadakan lomba resensi buku. Peserta diminta memilih satu buku nonfiksi dan menulis resensi sepanjang 500-700 kata. Hasil resensi dikumpulkan paling lambat 28 Oktober di meja sirkulasi perpustakaan. Pemenang akan mendapatkan voucher buku senilai Rp200.000.\"",
+      "audioRef": null,
+      "stem": "Apa hadiah bagi pemenang lomba resensi buku?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Uang tunai Rp200.000"
+        },
+        {
+          "id": "B",
+          "text": "Voucher buku senilai Rp200.000"
+        },
+        {
+          "id": "C",
+          "text": "Tumpukan buku senilai Rp200.000"
+        },
+        {
+          "id": "D",
+          "text": "Beasiswa perpustakaan"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Pengumuman menyebut 'Pemenang akan mendapatkan voucher buku senilai Rp200.000.'",
+      "tags": [
+        "informasi-tersurat"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SOSIAL"
+    },
+    {
+      "id": "BC-UKBI-SMA-MENDENGARKAN-MADYA-SET002-Q004",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "mendengarkan",
+      "band": "MADYA",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "audioScript": "Percakapan: Guru: \"Selamat pagi, Anita. Saya sudah membaca esaimu tentang kebudayaan lokal. Isinya bagus, tetapi ada beberapa bagian yang perlu direvisi.\" Anita: \"Bagian mana, Bu?\" Guru: \"Pada paragraf ketiga, argumenmu tentang globalisasi kurang didukung data. Coba cari referensi dari jurnal atau buku di perpustakaan. Juga, perhatikan penggunaan tanda baca pada dialog.\" Anita: \"Baik, Bu. Berapa lama waktu revisi?\" Guru: \"Kumpulkan hari Jumat ya, supaya saya bisa nilai sebelum rapor.\"",
+      "audioRef": null,
+      "stem": "Apa yang menjadi catatan guru terhadap esai Anita?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Esai terlalu panjang dan tidak fokus"
+        },
+        {
+          "id": "B",
+          "text": "Paragraf ketiga kurang data pendukung dan tanda baca perlu diperbaiki"
+        },
+        {
+          "id": "C",
+          "text": "Topik esai tidak sesuai dengan pelajaran"
+        },
+        {
+          "id": "D",
+          "text": "Esai dikumpulkan terlambat"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Guru menyebut 'paragraf ketiga, argumenmu tentang globalisasi kurang didukung data' dan 'perhatikan penggunaan tanda baca pada dialog.'",
+      "tags": [
+        "informasi-tersurat",
+        "revisi"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMA-MENDENGARKAN-MADYA-SET002-Q005",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "mendengarkan",
+      "band": "MADYA",
+      "type": "pilihan_ganda",
+      "difficulty": 1,
+      "audioScript": "Amanat pembina upacara: \"Anak-anak, pagi ini saya ingin mengingatkan pentingnya kedisiplinan. Dalam dua minggu terakhir, masih ada beberapa siswa yang datang terlambat. Mulai minggu depan, saya akan memberlakukan aturan baru: setiap siswa yang terlambat lebih dari 15 menit harus mengumpulkan tugas membaca buku dan membuat ringkasan. Saya harap kalian bisa lebih tertib. Disiplin adalah kunci kesuksesan.\"",
+      "audioRef": null,
+      "stem": "Apa konsekuensi baru bagi siswa yang terlambat lebih dari 15 menit?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Tidak boleh mengikuti pelajaran"
+        },
+        {
+          "id": "B",
+          "text": "Membersihkan lingkungan sekolah"
+        },
+        {
+          "id": "C",
+          "text": "Mengumpulkan tugas membaca buku dan membuat ringkasan"
+        },
+        {
+          "id": "D",
+          "text": "Dicatat di buku pelanggaran"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "Pembina upacara menyebut 'setiap siswa yang terlambat lebih dari 15 menit harus mengumpulkan tugas membaca buku dan membuat ringkasan.'",
+      "tags": [
+        "informasi-tersurat"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SOSIAL"
+    },
+    {
+      "id": "BC-UKBI-SMA-MENDENGARKAN-MADYA-SET002-Q006",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "mendengarkan",
+      "band": "MADYA",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "audioScript": "Iklan layanan masyarakat: \"Musim hujan telah tiba. Bersama kita cegah demam berdarah dengan gerakan 3M: Menguras tempat penampungan air, Menutup wadah air, dan Mendaur ulang barang bekas. Jangan lupa juga untuk menaburkan bubuk abate di bak mandi, dan tidur menggunakan kelambu. Lakukan tindakan ini setiap minggu. Cegah DBD, selamatkan keluarga. Informasi lebih lanjut kunjungi puskesmas terdekat.\"",
+      "audioRef": null,
+      "stem": "Selain 3M, apa langkah tambahan yang dianjurkan untuk mencegah DBD?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Minum vitamin setiap hari dan olahraga rutin"
+        },
+        {
+          "id": "B",
+          "text": "Menabur bubuk abate di bak mandi dan tidur menggunakan kelambu"
+        },
+        {
+          "id": "C",
+          "text": "Menggunakan obat nyamuk semprot dan lotion anti nyamuk"
+        },
+        {
+          "id": "D",
+          "text": "Menanam tanaman pengusir nyamuk di halaman"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Iklan menyebut 'menaburkan bubuk abate di bak mandi, dan tidur menggunakan kelambu' sebagai langkah tambahan.",
+      "tags": [
+        "informasi-tersurat"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SOSIAL"
+    },
+    {
+      "id": "BC-UKBI-SMA-MENDENGARKAN-MADYA-SET002-Q007",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "mendengarkan",
+      "band": "MADYA",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "audioScript": "Percakapan: Dinda: \"Kak, aku bingung milih ekstrakurikuler. Antara jurnalistik atau teater.\" Kakak: \"Menarik dua-duanya. Kalau kamu suka nulis dan wawancara, ambil jurnalistik. Tapi kalau kamu suka akting dan tampil di panggung, teater cocok.\" Dinda: \"Aku suka keduanya sebenarnya. Tapi aku lebih sering menulis cerita daripada bermain drama.\" Kakak: \"Nah, itu jawabannya. Ambil jurnalistik dulu. Nanti kalau bosan, bisa pindah.\"",
+      "audioRef": null,
+      "stem": "Ekstrakurikuler apa yang disarankan kakak untuk Dinda?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Teater"
+        },
+        {
+          "id": "B",
+          "text": "Menulis cerita"
+        },
+        {
+          "id": "C",
+          "text": "Jurnalistik"
+        },
+        {
+          "id": "D",
+          "text": "Kedua-duanya"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "Kakak menyarankan 'Ambil jurnalistik dulu' karena Dinda lebih sering menulis cerita.",
+      "tags": [
+        "informasi-tersirat"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SOSIAL"
+    },
+    {
+      "id": "BC-UKBI-SMA-MENDENGARKAN-MADYA-SET002-Q008",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "mendengarkan",
+      "band": "MADYA",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "audioScript": "Berita: \"Siswa SMA Negeri 5 Bandung berhasil meraih medali emas dalam ajang Indonesia Science Fair 2026 yang digelar di Jakarta. Mereka mengembangkan alat pendeteksi polusi udara berbasis Internet of Things. Alat ini mampu mendeteksi kadar karbon monoksida dan partikel debu secara real-time dan mengirimkan data ke smartphone. Kepala sekolah menyampaikan rasa bangganya dan berharap prestasi ini bisa menginspirasi siswa lainnya.\"",
+      "audioRef": null,
+      "stem": "Apa fungsi utama dari alat yang dikembangkan siswa SMA Negeri 5 Bandung?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Membersihkan udara dari polusi"
+        },
+        {
+          "id": "B",
+          "text": "Mendeteksi polusi udara secara real-time dan mengirim data ke smartphone"
+        },
+        {
+          "id": "C",
+          "text": "Mengukur suhu dan kelembaban udara"
+        },
+        {
+          "id": "D",
+          "text": "Menanam pohon penyerap polusi"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Berita menyebut alat tersebut 'mampu mendeteksi kadar karbon monoksida dan partikel debu secara real-time dan mengirimkan data ke smartphone.'",
+      "tags": [
+        "informasi-tersurat"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMA-MENDENGARKAN-MADYA-SET002-Q009",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "mendengarkan",
+      "band": "MADYA",
+      "type": "pilihan_ganda",
+      "difficulty": 1,
+      "audioScript": "Percakapan: Guru: \"Selamat, kelas XII IPA 1 meraih nilai tertinggi untuk ujian Bahasa Indonesia. Rata-rata kelas kalian 88. Tapi, saya perhatikan masih ada beberapa siswa yang nilainya di bawah 70. Saya mohon yang bersangkutan lebih giat belajar, terutama pada materi menulis karya ilmiah.\" Ketua kelas: \"Terima kasih, Bu. Kami akan terus berusaha.\" Guru: \"Bagus. Untuk remedial, akan saya umumkan jadwalnya minggu depan.\"",
+      "audioRef": null,
+      "stem": "Materi apa yang perlu diperbaiki oleh siswa yang nilainya di bawah 70?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Membaca pemahaman"
+        },
+        {
+          "id": "B",
+          "text": "Tata bahasa dan ejaan"
+        },
+        {
+          "id": "C",
+          "text": "Menulis karya ilmiah"
+        },
+        {
+          "id": "D",
+          "text": "Apresiasi sastra"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "Guru menyebut 'terutama pada materi menulis karya ilmiah' sebagai bagian yang perlu diperbaiki.",
+      "tags": [
+        "informasi-tersurat"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMA-MENDENGARKAN-MADYA-SET002-Q010",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "mendengarkan",
+      "band": "MADYA",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "audioScript": "Wawancara: Reporter: \"Selamat siang, Kak Dita. Sebagai ketua OSIS, bagaimana persiapan untuk acara Class Meeting?\" Dita: \"Selamat siang. Alhamdulillah, persiapan sudah 80 persen. Kami sudah menyusun jadwal pertandingan, menyiapkan peralatan olahraga, dan mengkonfirmasi juri. Tapi kami masih kekurangan dana untuk hadiah.\" Reporter: \"Apa rencana untuk menutupi kekurangan dana?\" Dita: \"Kami berencana mengadakan bazar makanan selama acara berlangsung. Hasil penjualan akan kami tambahkan ke dana hadiah.\"",
+      "audioRef": null,
+      "stem": "Apa rencana OSIS untuk menutupi kekurangan dana Class Meeting?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Meminta sumbangan dari guru"
+        },
+        {
+          "id": "B",
+          "text": "Mengadakan bazar makanan selama acara"
+        },
+        {
+          "id": "C",
+          "text": "Mengurangi jumlah hadiah"
+        },
+        {
+          "id": "D",
+          "text": "Menunda acara hingga dana terkumpul"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Dita menyebut 'Kami berencana mengadakan bazar makanan selama acara berlangsung' untuk menutupi kekurangan dana.",
+      "tags": [
+        "informasi-tersurat"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SOSIAL"
+    },
+    {
+      "id": "BC-UKBI-SMA-MENDENGARKAN-MADYA-SET002-Q011",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "mendengarkan",
+      "band": "MADYA",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "audioScript": "Pengumuman: \"Dengan hormat, kami sampaikan bahwa kunjungan edukatif ke Museum Nasional akan dilaksanakan pada hari Sabtu, 12 November. Keberangkatan dari sekolah pukul 07.00 WIB. Setiap siswa diwajibkan membawa buku catatan, alat tulis, dan bekal makanan ringan. Mohon menggunakan seragam putih abu-abu dan sepatu hitam. Biaya transportasi sebesar Rp25.000 sudah termasuk tiket masuk. Harap melunasi pembayaran ke wali kelas paling lambat 5 November.\"",
+      "audioRef": null,
+      "stem": "Apa saja yang wajib dibawa siswa saat kunjungan ke Museum Nasional?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Uang saku dan kamera"
+        },
+        {
+          "id": "B",
+          "text": "Buku catatan, alat tulis, dan bekal makanan ringan"
+        },
+        {
+          "id": "C",
+          "text": "Seragam olahraga dan topi"
+        },
+        {
+          "id": "D",
+          "text": "Tas ransel dan botol minum"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Pengumuman menyebut 'Setiap siswa diwajibkan membawa buku catatan, alat tulis, dan bekal makanan ringan.'",
+      "tags": [
+        "informasi-tersurat"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SOSIAL"
+    },
+    {
+      "id": "BC-UKBI-SMA-MENDENGARKAN-MADYA-SET002-Q012",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "mendengarkan",
+      "band": "MADYA",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "audioScript": "Percakapan: Siska: 'Lihat, ada lomba poster lingkungan tingkat kota. Hadiahnya Rp1.000.000! Ayo kita ikut.' Dani: 'Tapi kita kan bukan anak seni, Sis.' Siska: 'Nggak masalah. Yang dinilai idenya, bukan gambarnya saja. Temaku tahun lalu ikut dan dapat juara harapan, padahal dia juga bukan anak seni.' Dani: 'Oke deh, coba. Tema apa?' Siska: 'Tema lombanya \"Generasi Muda dan Lingkungan Berkelanjutan\". Kita harus kumpulin paling lambat 20 November.'",
+      "audioRef": null,
+      "stem": "Apa tema lomba poster yang diikuti Siska dan Dani?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Lingkungan Bersih, Hidup Sehat"
+        },
+        {
+          "id": "B",
+          "text": "Generasi Muda dan Lingkungan Berkelanjutan"
+        },
+        {
+          "id": "C",
+          "text": "Selamatkan Bumi Kita"
+        },
+        {
+          "id": "D",
+          "text": "Seni dan Lingkungan"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Siska menyebut 'Tema lombanya Generasi Muda dan Lingkungan Berkelanjutan.'",
+      "tags": [
+        "informasi-tersurat"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SOSIAL"
+    },
+    {
+      "id": "BC-UKBI-SMA-MENDENGARKAN-UNGGUL-SET002-Q013",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "mendengarkan",
+      "band": "UNGGUL",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "audioScript": "Diskusi: Rizky: \"Aku baca artikel, konon katanya kecerdasan buatan bakal menggantikan banyak pekerjaan manusia dalam 10 tahun ke depan. Termasuk guru.\" Maya: \"Setuju sih, untuk tugas administratif. Tapi untuk mengajar, terutama menyangkut karakter dan empati, aku rasa AI nggak bisa menggantikan manusia.\" Rizky: \"Iya juga. Tapi kalau lihat perkembangan sekarang, AI bisa ngajarin materi pelajaran dengan sangat baik, bahkan bisa adaptasi dengan gaya belajar masing-masing siswa.\" Maya: \"Nah, itu justru bisa jadi alat bantu buat guru, bukan pengganti. Guru bisa fokus ke pembentukan karakter.\"",
+      "audioRef": null,
+      "stem": "Apa kesimpulan dari diskusi antara Rizky dan Maya tentang AI dalam pendidikan?",
+      "options": [
+        {
+          "id": "A",
+          "text": "AI akan menggantikan seluruh peran guru di masa depan"
+        },
+        {
+          "id": "B",
+          "text": "AI dapat menjadi alat bantu guru, bukan pengganti, terutama untuk pembentukan karakter"
+        },
+        {
+          "id": "C",
+          "text": "AI hanya berguna untuk tugas administratif dan tidak bisa mengajar"
+        },
+        {
+          "id": "D",
+          "text": "Perkembangan AI harus dihentikan karena mengancam pekerjaan guru"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Maya menyimpulkan bahwa AI bisa menjadi alat bantu dan guru bisa fokus ke pembentukan karakter. Mereka sepakat AI tidak bisa menggantikan guru sepenuhnya.",
+      "tags": [
+        "informasi-tersirat",
+        "kesimpulan"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "ANALISIS",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMA-MENDENGARKAN-UNGGUL-SET002-Q014",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "mendengarkan",
+      "band": "UNGGUL",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "audioScript": "Debat: Pembicara 1: \"Saya berpendapat bahwa ujian nasional perlu dihapuskan karena menimbulkan stres berlebihan pada siswa dan memicu praktik kecurangan.\" Pembicara 2: \"Saya tidak setuju. Ujian nasional justru menjadi standar mutu pendidikan yang merata di seluruh Indonesia. Tanpa ujian nasional, kualitas lulusan akan sulit diukur.\" Pembicara 1: \"Standar mutu bisa diukur dengan asesmen kompetensi yang lebih komprehensif, bukan hanya ujian tertulis. Banyak negara sudah beralih ke sistem portofolio dan proyek.\" Pembicara 2: \"Itu idealis. Dalam praktiknya, sistem portofolio rawan manipulasi dan membutuhkan sumber daya yang besar. Ujian nasional adalah solusi paling praktis saat ini.\"",
+      "audioRef": null,
+      "stem": "Argumen apa yang disampaikan Pembicara 2 untuk menolak penghapusan ujian nasional?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Ujian nasional sudah menjadi budaya turun-temurun"
+        },
+        {
+          "id": "B",
+          "text": "Ujian nasional menjadi standar mutu pendidikan yang merata dan solusi paling praktis"
+        },
+        {
+          "id": "C",
+          "text": "Siswa justru senang dengan ujian nasional"
+        },
+        {
+          "id": "D",
+          "text": "Tidak ada alternatif lain selain ujian nasional"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Pembicara 2 berargumen bahwa ujian nasional 'menjadi standar mutu pendidikan yang merata di seluruh Indonesia' dan merupakan 'solusi paling praktis saat ini.'",
+      "tags": [
+        "informasi-tersurat",
+        "argumen"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "ANALISIS",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMA-MENDENGARKAN-UNGGUL-SET002-Q015",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "mendengarkan",
+      "band": "UNGGUL",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "audioScript": "Berita: \"Badan Bahasa Kementerian Pendidikan dan Kebudayaan melaporkan bahwa indeks literasi nasional tahun 2026 mengalami peningkatan sebesar 4,2 persen dibandingkan tahun sebelumnya. Namun, peningkatan ini masih belum merata. Daerah perkotaan menunjukkan skor literasi yang jauh lebih tinggi dibandingkan daerah pedesaan dan daerah terluar. Kepala Badan Bahasa menyatakan bahwa program Gerakan Literasi Nasional akan difokuskan pada 50 kabupaten prioritas dengan skor literasi terendah. Program ini meliputi penyediaan pojok baca, pelatihan guru, dan pendampingan komunitas literasi.\"",
+      "audioRef": null,
+      "stem": "Berdasarkan berita tersebut, apa strategi utama Badan Bahasa untuk mengatasi ketidakmerataan literasi?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Membangun perpustakaan baru di setiap kota"
+        },
+        {
+          "id": "B",
+          "text": "Memfokuskan program pada 50 kabupaten prioritas dengan skor literasi terendah"
+        },
+        {
+          "id": "C",
+          "text": "Mendistribusikan buku gratis ke seluruh sekolah"
+        },
+        {
+          "id": "D",
+          "text": "Meningkatkan anggaran pendidikan nasional"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Berita menyebut 'program Gerakan Literasi Nasional akan difokuskan pada 50 kabupaten prioritas dengan skor literasi terendah' sebagai strategi mengatasi ketidakmerataan.",
+      "tags": [
+        "informasi-tersurat",
+        "strategi"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMA-MENDENGARKAN-UNGGUL-SET002-Q016",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "mendengarkan",
+      "band": "UNGGUL",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "audioScript": "Wawancara: Reporter: \"Dokter, belakangan ini banyak beredar informasi tentang bahaya vape di kalangan remaja. Bagaimana pandangan Dokter?\" Dokter: \"Vape atau rokok elektrik sering dianggap lebih aman daripada rokok tembakau. Ini anggapan yang keliru. Kandungan nikotin dalam vape tetap tinggi dan bisa menyebabkan kecanduan. Selain itu, cairan perasa dalam vape mengandung bahan kimia yang berbahaya bagi paru-paru.\" Reporter: \"Apa yang harus dilakukan orang tua?\" Dokter: \"Edukasi adalah kunci. Orang tua harus terbuka berdiskusi dengan anak tentang risiko vape. Jangan melarang tanpa penjelasan, karena itu justru bisa membuat anak semakin penasaran. Berikan contoh dengan gaya hidup sehat.\"",
+      "audioRef": null,
+      "stem": "Apa kesalahan umum yang sering dilakukan orang tua menurut Dokter dalam menangani masalah vape pada remaja?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Terlalu permisif dan membiarkan anak mencoba vape"
+        },
+        {
+          "id": "B",
+          "text": "Melarang tanpa penjelasan sehingga anak semakin penasaran"
+        },
+        {
+          "id": "C",
+          "text": "Memberikan vape sebagai alternatif yang lebih aman"
+        },
+        {
+          "id": "D",
+          "text": "Tidak peduli dengan pergaulan anak"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Dokter menyatakan 'Jangan melarang tanpa penjelasan, karena itu justru bisa membuat anak semakin penasaran' sebagai kesalahan yang perlu dihindari.",
+      "tags": [
+        "informasi-tersirat",
+        "nasihat"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "ANALISIS",
+      "domain": "SOSIAL"
+    },
+    {
+      "id": "BC-UKBI-SMA-MENDENGARKAN-UNGGUL-SET002-Q017",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "mendengarkan",
+      "band": "UNGGUL",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "audioScript": "Pidato: \"Para hadirin yang saya hormati, kita saat ini berada di persimpangan jalan. Kemajuan teknologi digital telah mengubah cara kita belajar, bekerja, dan berinteraksi. Namun, di balik kemudahan yang ditawarkan, ada bahaya yang mengintai generasi muda kita: kecanduan gawai, berkurangnya interaksi sosial secara langsung, dan rentannya privasi data. Saya mengajak kita semua, baik guru, orang tua, maupun masyarakat, untuk bersama-sama membangun literasi digital yang kuat. Bekali anak-anak kita dengan kemampuan memilah informasi, menjaga etika di dunia maya, dan melindungi data pribadi. Hanya dengan cara ini kita bisa memanfaatkan teknologi tanpa menjadi budaknya.\"",
+      "audioRef": null,
+      "stem": "Apa inti ajakan yang disampaikan dalam pidato tersebut?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Menolak semua bentuk teknologi digital di sekolah"
+        },
+        {
+          "id": "B",
+          "text": "Membangun literasi digital yang kuat untuk memanfaatkan teknologi tanpa menjadi budaknya"
+        },
+        {
+          "id": "C",
+          "text": "Membatasi penggunaan gawai hanya untuk keperluan belajar"
+        },
+        {
+          "id": "D",
+          "text": "Mengembalikan sistem pendidikan ke cara tradisional"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Pidato mengajak 'membangun literasi digital yang kuat' agar dapat 'memanfaatkan teknologi tanpa menjadi budaknya.'",
+      "tags": [
+        "informasi-tersirat",
+        "gagasan-pokok"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "ANALISIS",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMA-MENDENGARKAN-UNGGUL-SET002-Q018",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "mendengarkan",
+      "band": "UNGGUL",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "audioScript": "Percakapan: Ibu Guru: \"Selamat siang, Ibu Wati. Saya guru BK dari sekolah. Kami ingin membahas perkembangan Ananda Raka.\" Ibu Wati: \"Selamat siang, Bu. Ada apa dengan Raka?\" Ibu Guru: \"Kami melihat Raka akhir-akhir ini sering menyendiri dan nilainya menurun. Apakah ada masalah di rumah?\" Ibu Wati: \"Sejak ayahnya bekerja di luar kota, Raka jadi lebih pendiam. Saya khawatir dia kesepian.\" Ibu Guru: \"Kami sarankan Raka untuk mengikuti kegiatan ekstrakurikuler. Ada klub robotik yang mungkin cocok dengan hobinya. Bagaimana kalau Ibu membicarakannya dengan Raka?\" Ibu Wati: \"Baik, Bu. Terima kasih sarannya.\"",
+      "audioRef": null,
+      "stem": "Apa penyebab perubahan perilaku Raka menurut ibunya?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Masalah dengan teman-teman di sekolah"
+        },
+        {
+          "id": "B",
+          "text": "Kesepian sejak ayahnya bekerja di luar kota"
+        },
+        {
+          "id": "C",
+          "text": "Terlalu banyak bermain game"
+        },
+        {
+          "id": "D",
+          "text": "Kesulitan mengikuti pelajaran"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Ibu Raka menyebut 'Sejak ayahnya bekerja di luar kota, Raka jadi lebih pendiam. Saya khawatir dia kesepian.'",
+      "tags": [
+        "informasi-tersirat",
+        "sebab-akibat"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "ANALISIS",
+      "domain": "SOSIAL"
+    },
+    {
+      "id": "BC-UKBI-SMA-MENDENGARKAN-SANGATUNGGUL-SET002-Q019",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "mendengarkan",
+      "band": "SANGATUNGGUL",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "audioScript": "Diskusi panel: Moderator: \"Kita mulai diskusi tentang fenomena budaya populer. Bagaimana pendapat panelis tentang pengaruh K-Pop terhadap identitas budaya remaja Indonesia?\" Panelis 1: \"Saya melihat ini sebagai bentuk globalisasi budaya yang wajar. Remaja Indonesia mengadopsi elemen K-Pop bukan karena meninggalkan budaya sendiri, tapi karena mereka mencari identitas yang lebih global. Yang penting adalah bagaimana kita menyeimbangkannya dengan pengenalan budaya lokal.\" Panelis 2: \"Saya kurang setuju. Fenomena ini justru menggeser apresiasi remaja terhadap budaya tradisional. Banyak remaja sekarang lebih hafal lirik lagu Korea daripada lagu daerah sendiri. Ini darurat budaya.\" Panelis 3: \"Saya di posisi tengah. Menurut penelitian yang saya lakukan, remaja yang menggemari K-Pop justru lebih terbuka untuk mempelajari budaya asing, termasuk budaya mereka sendiri. Kuncinya ada di pendidikan multikultural di sekolah.\"",
+      "audioRef": null,
+      "stem": "Berdasarkan diskusi panel tersebut, posisi mana yang paling tepat menggambarkan argumen Panelis 3?",
+      "options": [
+        {
+          "id": "A",
+          "text": "K-Pop adalah ancaman serius bagi budaya tradisional Indonesia"
+        },
+        {
+          "id": "B",
+          "text": "Globalisasi budaya tidak bisa dihindari dan harus diterima sepenuhnya"
+        },
+        {
+          "id": "C",
+          "text": "Remaja penggemar K-Pop justru lebih terbuka belajar budaya sendiri dengan pendidikan multikultural yang tepat"
+        },
+        {
+          "id": "D",
+          "text": "Fenomena K-Pop tidak perlu dipermasalahkan karena hanya sementara"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "Panelis 3 menyatakan bahwa remaja penggemar K-Pop lebih terbuka mempelajari budaya asing termasuk budaya sendiri, dan kuncinya ada di pendidikan multikultural.",
+      "tags": [
+        "informasi-tersirat",
+        "sintesis"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "ANALISIS",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMA-MENDENGARKAN-SANGATUNGGUL-SET002-Q020",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "mendengarkan",
+      "band": "SANGATUNGGUL",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "audioScript": "Kuliah umum: \"Selamat pagi, para siswa. Saya akan menjelaskan konsep 'double-edged sword' dalam konteks media sosial. Di satu sisi, media sosial menjadi ruang demokratis di mana setiap orang bisa menyuarakan pendapat. Gerakan sosial seperti kampanye lingkungan dan penggalangan dana bisa menyebar luas dalam hitungan jam. Namun, di sisi lain, media sosial juga menjadi ladang subur bagi penyebaran informasi palsu, perundungan siber, dan polarisasi opini. Sebagai generasi kritis, kalian harus mampu membedakan antara fakta dan opini, serta verifikasi informasi sebelum menyebarkannya. Inilah yang disebut literasi digital tingkat lanjut. Bukan sekadar bisa menggunakan teknologi, tapi mampu bernavigasi di ekosistem informasi yang kompleks dengan bijak.\"",
+      "audioRef": null,
+      "stem": "Apa makna 'literasi digital tingkat lanjut' menurut pembicara?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Kemampuan menggunakan berbagai platform media sosial dengan mahir"
+        },
+        {
+          "id": "B",
+          "text": "Kemampuan bernavigasi di ekosistem informasi yang kompleks dengan bijak, termasuk membedakan fakta dan opini"
+        },
+        {
+          "id": "C",
+          "text": "Kemampuan membuat konten viral di media sosial"
+        },
+        {
+          "id": "D",
+          "text": "Kemampuan mengoperasikan perangkat digital terbaru"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Pembicara menjelaskan literasi digital tingkat lanjut sebagai 'bukan sekadar bisa menggunakan teknologi, tapi mampu bernavigasi di ekosistem informasi yang kompleks dengan bijak' termasuk verifikasi informasi.",
+      "tags": [
+        "informasi-tersirat",
+        "konsep"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "ANALISIS",
+      "domain": "AKADEMIK"
+    }
+  ]
+}

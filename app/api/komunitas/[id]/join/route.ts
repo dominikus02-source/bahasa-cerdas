@@ -13,7 +13,13 @@ export async function POST(
     if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const dbUser = await db.user.findUnique({ where: { supabaseId: user.id } });
-    if (!dbUser) return NextResponse.json({ error: "User not found" }, { status: 404 });
+    if (!dbUser) return NextResponse.json({ error: "User tidak ditemukan" }, { status: 404 });
+
+    const community = await db.community.findUnique({ where: { id } });
+    if (!community) return NextResponse.json({ error: "Komunitas tidak ditemukan" }, { status: 404 });
+    if (community.status !== "APPROVED" || !community.isPublic) {
+      return NextResponse.json({ error: "Komunitas ini tidak dapat diakses" }, { status: 403 });
+    }
 
     const existing = await db.communityMember.findUnique({
       where: { communityId_userId: { communityId: id, userId: dbUser.id } },

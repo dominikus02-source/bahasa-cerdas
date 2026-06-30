@@ -1,0 +1,137 @@
+{
+  "meta": {
+    "product": "UKBI_PRACTICE",
+    "track": "UKBI_GURU",
+    "section": "mendengarkan",
+    "set": "set-001",
+    "totalItems": 5,
+    "source": "BC_UKBI_GURU_ORIGINAL"
+  },
+  "questions": [
+    {
+      "id": "BC-UKBI-GURU-MENDENGARKAN-TERBATAS-SET001-Q001",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_GURU",
+      "section": "mendengarkan",
+      "band": "TERBATAS",
+      "type": "pilihan_ganda",
+      "difficulty": 1,
+      "audioScript": "Pengumuman rapat: \"Yth. Bapak/Ibu guru, diharapkan hadir dalam rapat dinas pada hari Jumat, 10 Januari 2025, pukul 13.00 WIB di ruang guru. Agenda rapat meliputi evaluasi kegiatan tengah semester dan persiapan laporan hasil belajar. Hadir tepat waktu.\"",
+      "audioRef": null,
+      "stem": "Kapan rapat dinas akan dilaksanakan?",
+      "options": [
+        { "id": "A", "text": "Senin, 6 Januari 2025" },
+        { "id": "B", "text": "Jumat, 10 Januari 2025" },
+        { "id": "C", "text": "Sabtu, 11 Januari 2025" },
+        { "id": "D", "text": "Kamis, 9 Januari 2025" }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Pengumuman menyebut 'rapat dinas pada hari Jumat, 10 Januari 2025, pukul 13.00 WIB.'",
+      "tags": ["informasi-tersurat"],
+      "source": "BC_UKBI_GURU_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SOSIAL"
+    },
+    {
+      "id": "BC-UKBI-GURU-MENDENGARKAN-SEMENJANA-SET001-Q002",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_GURU",
+      "section": "mendengarkan",
+      "band": "SEMENJANA",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "audioScript": "Diskusi kelompok guru: Bu Dewi: \"Menurut saya, metode proyek sangat cocok untuk materi ekosistem.\" Pak Adi: \"Saya setuju, tapi alokasi waktunya perlu diperhatikan. Proyek biasanya butuh waktu lama.\" Bu Dewi: \"Kita bisa bagi proyek dalam beberapa tahap. Setiap tahap dinilai terpisah.\" Pak Adi: \"Baik, nanti kita susun rubrik penilaian tahapannya. Saya siapkan formatnya.\"",
+      "audioRef": null,
+      "stem": "Apa kekhawatiran Pak Adi terhadap metode proyek?",
+      "options": [
+        { "id": "A", "text": "Siswa tidak tertarik dengan proyek" },
+        { "id": "B", "text": "Alokasi waktu yang dibutuhkan lama" },
+        { "id": "C", "text": "Biaya proyek terlalu mahal" },
+        { "id": "D", "text": "Rubrik penilaian sulit dibuat" }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Pak Adi berkata 'Saya setuju, tapi alokasi waktunya perlu diperhatikan. Proyek biasanya butuh waktu lama.'",
+      "tags": ["informasi-tersurat"],
+      "source": "BC_UKBI_GURU_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-GURU-MENDENGARKAN-MADYA-SET001-Q003",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_GURU",
+      "section": "mendengarkan",
+      "band": "MADYA",
+      "type": "pilihan_ganda",
+      "difficulty": 4,
+      "audioScript": "Sambutan kepala sekolah: \"Bapak/Ibu guru yang saya hormati, tahun ajaran baru akan segera dimulai. Saya mengajak kita semua untuk merefleksikan kembali praktik pembelajaran kita. Tantangan terbesar kita adalah adaptasi teknologi dalam pembelajaran. Saya harap setiap guru dapat mengikuti pelatihan Google for Education yang akan diadakan bulan depan. Kehadiran dalam pelatihan ini wajib bagi seluruh guru. Sekian sambutan dari saya.\"",
+      "audioRef": null,
+      "stem": "Apa tantangan terbesar dalam pembelajaran menurut kepala sekolah?",
+      "options": [
+        { "id": "A", "text": "Kurangnya buku pelajaran" },
+        { "id": "B", "text": "Adaptasi teknologi dalam pembelajaran" },
+        { "id": "C", "text": "Rendahnya motivasi siswa" },
+        { "id": "D", "text": "Keterbatasan ruang kelas" }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Kepala sekolah menyebut 'Tantangan terbesar kita adalah adaptasi teknologi dalam pembelajaran.'",
+      "tags": ["informasi-tersurat"],
+      "source": "BC_UKBI_GURU_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-GURU-MENDENGARKAN-MADYA-SET001-Q004",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_GURU",
+      "section": "mendengarkan",
+      "band": "MADYA",
+      "type": "pilihan_ganda",
+      "difficulty": 4,
+      "audioScript": "Wawancara dengan pengawas sekolah: \"Pengawas: Bagaimana implementasi Kurikulum Merdeka di sekolah-sekolah saat ini?\" Narasumber: \"Secara umum sudah berjalan baik. Namun, masih ada beberapa guru yang kesulitan dalam menyusun modul ajar yang sesuai dengan prinsip pembelajaran berdiferensiasi. Oleh karena itu, kami mengadakan pendampingan intensif di setiap gugus sekolah.\" Pengawas: \"Apa target pendampingan tersebut?\" Narasumber: \"Semua guru mampu menyusun modul ajar mandiri pada akhir semester ini.\"",
+      "audioRef": null,
+      "stem": "Kesulitan utama guru dalam implementasi Kurikulum Merdeka adalah ...",
+      "options": [
+        { "id": "A", "text": "Menilai hasil belajar siswa" },
+        { "id": "B", "text": "Menyusun modul ajar berdiferensiasi" },
+        { "id": "C", "text": "Mengelola kelas yang heterogen" },
+        { "id": "D", "text": "Berkomunikasi dengan orang tua" }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Narasumber menyebut 'masih ada beberapa guru yang kesulitan dalam menyusun modul ajar yang sesuai dengan prinsip pembelajaran berdiferensiasi.'",
+      "tags": ["informasi-tersurat"],
+      "source": "BC_UKBI_GURU_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-GURU-MENDENGARKAN-UNGGUL-SET001-Q005",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_GURU",
+      "section": "mendengarkan",
+      "band": "UNGGUL",
+      "type": "pilihan_ganda",
+      "difficulty": 4,
+      "audioScript": "Ceramah motivasi pendidikan: \"Saudara-saudara, menjadi guru bukan sekadar profesi. Guru adalah arsitek peradaban. Setiap hari, di dalam kelas, Anda sedang membentuk masa depan bangsa. Jangan pernah remehkan kekuatan satu kalimat motivasi yang Anda ucapkan kepada murid. Bisa jadi, kalimat itulah yang akan mengubah arah hidup mereka. Teruslah belajar, teruslah berinovasi, karena dunia berubah setiap detik. Jika guru berhenti belajar, maka peradaban akan mandek.\"",
+      "audioRef": null,
+      "stem": "Apa pesan utama dari ceramah tersebut?",
+      "options": [
+        { "id": "A", "text": "Guru harus bekerja lembur setiap hari" },
+        { "id": "B", "text": "Guru adalah arsitek peradaban yang harus terus belajar dan berinovasi" },
+        { "id": "C", "text": "Gaji guru harus dinaikkan" },
+        { "id": "D", "text": "Guru harus menjadi pejabat publik" }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Pesan utama ceramah adalah bahwa guru adalah arsitek peradaban yang memiliki peran besar, dan harus terus belajar serta berinovasi karena jika guru berhenti belajar, peradaban akan mandek.",
+      "tags": ["pesan"],
+      "source": "BC_UKBI_GURU_ORIGINAL",
+      "status": "approved",
+      "cognitive": "ANALISIS",
+      "domain": "SOSIAL"
+    }
+  ]
+}

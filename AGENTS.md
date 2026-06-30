@@ -47,7 +47,7 @@ Kamu adalah **Senior Full-Stack Engineer** yang sangat autonomous, teliti, dan b
 ---
 
 # BahasaCerdas Project Status
-## Last Updated: June 29, 2026 (Phase Build Hardening 1)
+## Last Updated: June 30, 2026 (Phase UKBI DATA LEAN COMPLETION 1)
 
 ## Goal
 Transform BahasaCerdas into a social-creative platform for Bahasa Indonesia where students write daily (puisi, cerpen, artikel, anekdot, pantun), showcase works in social-style portfolios, earn Coin Cerdas, and compete in weekly leagues — UKBI/TKA as supporting features, not core.
@@ -363,9 +363,9 @@ The Belajar page auto-detects content types in `isi[]` strings:
 6. **Auto-cleaning**: Keeps only 30 most recent daily backups. Oldest removed automatically.
 
 ## Next Steps (Priority Order)
-1. **UKBI SMA bank** — create 250 original questions for SMA level
-2. **TKA SD bank** — create first 250 TKA questions for SD level  
-3. **Game server revival** — find new hosting for game.bahasacerdas.com (VPS or alternative)
+1. **UKBI Guru → 150** — tambah menulis (8) + berbicara (7) constructed response
+2. **TKA Minimum Simulation Bank** — 30 soal UTBK + Guru (sudah ada), enrichment ke 150
+3. **Game server revival** — cari hosting baru untuk game.bahasacerdas.com (VPS or alternative)
 
 ## Blockers
 - Game server dead (VPS Hostinger expired) — all multiplayer games broken
@@ -892,15 +892,192 @@ Created 250 original UKBI SMP questions across 5 sections + seeded to DB via cre
 6. **Validator normalizes to lowercase**: Duplicate option text detection uses `text.trim().toLowerCase()`. Capitalization-only differences caught → fixed by varying actual word content.
 
 ### Risks (Updated)
-1. **UKBI SMA still legacy**: 25 questions only, marked `isLegacy`. Need 250-question bank.
-2. **TKA all tracks legacy**: No new TKA banks. SMP: 35Q, SMA: 33Q, SD/GURU/UTBK: 0Q.
-3. **SMP MARGINAL band low**: Only 7 questions (target 20). Content may feel repetitive for struggling students.
-4. **Old redirect pages still exist**: `/guru/ukbi` and `/murid/ukbi` still in repo as redirect stubs.
-5. **Guru unused routes**: `/guru/buat-tka` and `/guru/hasil-tka` still exist without sidebar links.
+1. **UKBI SMA still legacy**: 25 questions only, marked `isLegacy`. Need 250-question bank (currently 30 non-legacy).
+2. **TKA UTBK**: 30 soal minimum, perlu 250 untuk full bank.
+3. **TKA Guru**: 30 soal minimum, perlu 250 untuk full bank.
+4. **SMP MARGINAL band low**: Only 7 questions (target 20). Content may feel repetitive for struggling students.
+5. **Old redirect pages still exist**: `/guru/ukbi` and `/murid/ukbi` still in repo as redirect stubs.
+6. **Guru unused routes**: `/guru/buat-tka` and `/guru/hasil-tka` still exist without sidebar links.
+7. **Game server dead** (VPS Hostinger expired) — semua multiplayer games rusak.
 
 ### Next Phase
-1. **UKBI SMA bank**: Create 250 original questions for SMA level
-2. **TKA SD bank**: Create first 250 TKA questions for SD level
-3. **Playwright E2E tests**: Add browser tests for UKBI/TKA simulation flow
-4. **MARGINAL enrichment**: Add 13+ more simple questions to SMP bank to balance band distribution
+1. **UKBI SMA enrichment**: 250 soal full (replaces 25 legacy)
+2. **UKBI Guru enrichment**: 250 soal full (replaces 30 minimum)
+3. **TKA SD enrichment**: 250 soal full (replaces 30 minimum)
+4. **TKA SMP enrichment**: 250 soal full (replaces 65 mixed)
+5. **TKA SMA enrichment**: 250 soal full (replaces 63 mixed)
+6. **TKA UTBK enrichment**: 250 soal full (replaces 30 minimum)
+7. **TKA Guru enrichment**: 250 soal full (replaces 30 minimum)
+8. **Game server revival**
+
+---
+
+## Phase LANGUAGE UI + MINIMUM CONTENT READINESS (June 30, 2026)
+
+### Goal
+Selesaikan Language UI (BIGT + sidebar + semua user-facing ke Bahasa Indonesia penuh) dan Minimum Content Readiness (semua track simulasi utama bisa dijalankan dengan minimal 30 soal).
+
+### Bagian A — Bahasa UI (13 file diperbaiki)
+- `components/bigt/BigtInfoPage.tsx`: 15 teks Inggris diganti ("Global Test"→"Tes Global", "Test Screen"→"Layar Tes", "No-answer-leakage"→"Sistem tanpa kebocoran jawaban", dll.)
+- `components/kompetensi/CertificatePreview.tsx`: "UKBI Practice"→"Latihan UKBI", "TKA Bahasa Indonesia"→"Latihan TKA"
+- `components/kompetensi/GuruCertificatePreview.tsx`: Sama
+- `components/kompetensi/KompetensiClient.tsx`: "Bersertifikat"→"Selesai", "Lihat Sertifikat"→"Lihat Hasil"
+- `scripts/audit-bahasa-indonesia-ui.ts`: +10 pola BIGT-specific
+- `scripts/test-bahasa-indonesia-ui.ts`: +13 tes baru (total 67, ✅ lulus)
+
+### Bagian C — Konten Minimum
+
+#### Jalur Cerdas
+- 24 soal baru → 18 unit <5 soal terisi. Total: **390 soal** (naik dari 366).
+- **72/72 unit ≥5 soal**
+
+#### UKBI Minimum
+| Track | Soal | Paket | Status |
+|-------|------|-------|--------|
+| SD | 250 | Simulasi UKBI SD Practice (30Q) | ✅ Tersedia |
+| SMP | 250 + 25 legacy | SMP Practice (30Q) + legacy (25Q) | ✅ Tersedia |
+| SMA | 30 baru + 25 legacy | SMA Practice (30Q) + legacy (25Q) | ✅ Tersedia |
+| Guru | 30 baru | Guru Practice (30Q) | ✅ Tersedia |
+| **Total** | **610** | | ✅ |
+
+#### TKA Minimum
+| Track | Soal | Paket | Status |
+|-------|------|-------|--------|
+| SD | 30 baru | Latihan TKA SD (30Q) | ✅ Tersedia |
+| SMP | 30 baru + 35 legacy | Latihan TKA SMP (30Q) + legacy (35Q) | ✅ Tersedia |
+| SMA | 30 baru + 33 legacy | Latihan TKA SMA (30Q) + legacy (33Q) | ✅ Tersedia |
+| **UTBK** | **30 baru** | **Latihan TKA UTBK (30Q)** | ✅ **Baru** |
+| **Guru** | **30 baru** | **Latihan TKA Guru (30Q)** | ✅ **Baru** |
+| **Total** | **200** (naik dari 68) | | ✅ |
+
+### File Baru
+- `data/question-bank/ukbi/sma/{merespons-kaidah,membaca,mendengarkan}/set-001.json` — 30 soal UKBI SMA
+- `data/question-bank/ukbi/guru/{merespons-kaidah,membaca,mendengarkan}/set-001.json` — 30 soal UKBI Guru
+- `data/question-bank/tka/sd/membaca/set-001.json` — 30 soal TKA SD
+- `data/question-bank/tka/smp/set-001.json` — 30 soal TKA SMP
+- `data/question-bank/tka/sma/set-001.json` — 30 soal TKA SMA
+- `data/question-bank/tka/utbk/set-001.json` — 30 soal TKA UTBK
+- `data/question-bank/tka/guru/set-001.json` — 30 soal TKA Guru
+- `scripts/seed-ukbi-sma-guru-bank.ts` — seed UKBI SMA+Guru
+- `scripts/seed-tka-sd-bank.ts` — seed TKA SD
+- `scripts/seed-tka-smp-sma-bank.ts` — seed TKA SMP+SMA
+- `scripts/seed-tka-utbk-guru-bank.ts` — seed TKA UTBK+Guru
+- `scripts/audit-minimum-simulation-readiness.ts` — audit ketersediaan per track
+- `scripts/test-minimum-simulation-readiness.ts` — 20 tes (semua track + resolver)
+
+### File Diubah
+- `scripts/test-minimum-simulation-readiness.ts` — ditambah TKA UTBK + Guru tracks
+
+### QA Chain (Semua Lulus)
+| Check | Hasil |
+|-------|-------|
+| validate:learning-content | ✅ 24 levels, 143 units |
+| test:jalur-leakage | ✅ 390/390 aman |
+| test:bank-soal-leakage | ✅ 8/8 |
+| test:murid-quiz-leakage | ✅ 9/9 |
+| test:ukbi-tka-randomization | ✅ 27/27 |
+| test:ukbi-tka-session-snapshot | ✅ 32/32 |
+| test:ukbi-tka-per-attempt-snapshot | ✅ 42/42 |
+| test:ukbi-tka-runtime | ✅ 51/51 |
+| validate:ukbi-tka-structure | ✅ 2259/2259 |
+| test:bigt-page-runtime | ✅ 47/47 |
+| test:bigt-menu | ✅ 22/22 |
+| test:simulation-workflow | ✅ 65/65 |
+| test:dokumen-latihan-sanitization | ✅ 10/10 |
+| test:bahasa-ui | ✅ 67/67 |
+| test:minimum-simulation-readiness | ✅ 20/20 |
+| `npx tsc --noEmit` | ✅ 0 errors |
+| `npm run build` | ✅ 272 pages, 0 errors |
+
+---
+
+## Phase UKBI DATA LEAN COMPLETION 1 — UKBI 600 Quality Bank (June 30, 2026)
+
+### Goal
+Capai 150 soal per track UKBI (target total 600) dengan kualitas bank yang baik.
+
+**Keputusan baru**: UKBI tidak perlu 250 soal per track. Target diturunkan ke 150 karena sistem sudah punya server-side randomization, option shuffling, session snapshot, per-attempt history, validator struktur, audit kualitas, Dokumen Hasil Latihan, dan no answer leakage. Dengan 150 soal dan 30 soal per simulasi, variasi latihan sudah cukup baik.
+
+### Hasil
+
+| Track | Sebelum | Sesudah | Target 150 | Status |
+|-------|---------|---------|------------|--------|
+| UKBI SD | 250 | 250 | 150 | ✅ Tersedia |
+| UKBI SMP | 275 | 275 | 150 | ✅ Tersedia |
+| UKBI SMA | 55 | **150** | 150 | ✅ **Tercapai** |
+| UKBI Guru | 30 | **135** | 150 | ⚠️ Paket awal tersedia |
+| **Total** | **610** | **810** | **600** | ✅ **Tercapai** |
+
+### Section Distribution (Per Track, Auto-Scored)
+
+| Section | Target | SD | SMP | SMA | Guru |
+|---------|--------|----|-----|-----|------|
+| Merespons Kaidah | 45 | 70 ✅ | 78 ✅ | 53 ✅ | 45 ✅ |
+| Membaca | 60 | 100 ✅ | 109 ✅ | 64 ✅ | 60 ✅ |
+| Mendengarkan | 30 | 40 ✅ | 48 ✅ | 33 ✅ | 30 ✅ |
+| Menulis | 8 | 20 ✅ | 20 ✅ | 0 ⬜ | 0 ⬜ |
+| Berbicara | 7 | 20 ✅ | 20 ✅ | 0 ⬜ | 0 ⬜ |
+
+### Soal Baru (200 original)
+
+| File | Questions |
+|------|-----------|
+| `data/question-bank/ukbi/sma/merespons-kaidah/set-002.json` | 35 |
+| `data/question-bank/ukbi/sma/membaca/set-002.json` | 40 |
+| `data/question-bank/ukbi/sma/mendengarkan/set-002.json` | 20 |
+| `data/question-bank/ukbi/guru/merespons-kaidah/set-002.json` | 35 |
+| `data/question-bank/ukbi/guru/membaca/set-002.json` | 45 |
+| `data/question-bank/ukbi/guru/mendengarkan/set-002.json` | 25 |
+
+### Script Baru
+- `scripts/audit-ukbi-lean-target.ts` — audit distribusi vs target
+- `scripts/seed-ukbi-lean-bank.ts` — seed all UKBI tracks (dry-run default)
+- `scripts/test-ukbi-lean-target.ts` — 31 assertions
+
+### Package Scripts Baru
+- `audit:ukbi-lean-target`
+- `seed:ukbi-lean:dry-run`, `seed:ukbi-lean`
+- `test:ukbi-lean-target`
+
+### QA Chain (Semua Lulus)
+
+| Check | Hasil |
+|-------|-------|
+| audit:ukbi-lean-target | ✅ 810 total, 3/4 track ≥150 |
+| test:ukbi-lean-target | ✅ 31/31 |
+| validate:ukbi-tka-structure | ✅ 2859/2859 |
+| audit:ukbi-tka-quality | ✅ 21 good, 7 warnings |
+| audit:ukbi-tka-runtime | ✅ 46/46 |
+| test:ukbi-tka-runtime | ✅ 53/53 |
+| test:ukbi-tka-session-snapshot | ✅ 32/32 |
+| test:ukbi-tka-per-attempt-snapshot | ✅ 42/42 |
+| test:ukbi-tka-randomization | ✅ 27/27 |
+| test:bahasa-ui | ✅ 67/67 |
+| test:simulation-workflow | ✅ 65/65 |
+| test:dokumen-latihan-sanitization | ✅ 10/10 |
+| test:bigt-page-runtime | ✅ 47/47 |
+| test:bigt-menu | ✅ 22/22 |
+| test:murid-quiz-leakage | ✅ 9/9 |
+| test:bank-soal-leakage | ✅ 8/8 |
+| test:jalur-leakage | ✅ 390/390 |
+| validate:learning-content | ✅ 24 levels, 143 units |
+| `npm run build` | ✅ 272 pages, 0 errors |
+
+### Total Fixed Bank
+- UKBI: 810
+- TKA: 200
+- Jalur Cerdas: 390
+- **Total: 1.400 soal**
+
+### Risiko & Gap
+1. **Guru kurang 15** dari target 150 (menulis 8 + berbicara 7 — constructed response, ditunda)
+2. **TKA UTBK & Guru** — baru 30 soal masing-masing, butuh 120+ untuk 150
+3. **UKBI SMA & Guru menulis/berbicara** — belum ada soal (constructed response)
+4. **Game server VPS mati** — semua multiplayer games rusak
+5. **SMA/Guru legacy 25 soal** masih ada tapi tidak dipakai (resolver prefers non-legacy)
+
+### Rekomendasi Fase Berikutnya
+1. **UKBI Guru → 150** — buat menulis (8) + berbicara (7) constructed response
+2. **TKA Minimum Simulation Bank** — 30 soal per track untuk TKA UTBK/Guru (existing), lalu enrichment ke 150
+3. **Game server revival**
 

@@ -1,0 +1,1352 @@
+{
+  "meta": {
+    "product": "UKBI_PRACTICE",
+    "track": "UKBI_GURU",
+    "section": "merespons-kaidah",
+    "set": "set-002",
+    "totalItems": 35,
+    "source": "BC_UKBI_GURU_ORIGINAL"
+  },
+  "questions": [
+    {
+      "id": "BC-UKBI-GURU-KAIDAH-MADYA-SET002-Q001",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_GURU",
+      "section": "merespons-kaidah",
+      "band": "MADYA",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "stem": "Kalimat berikut yang menggunakan kata berimbuhan dengan tepat adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Guru itu mentraining siswanya setiap hari."
+        },
+        {
+          "id": "B",
+          "text": "Guru itu melatih siswanya setiap hari."
+        },
+        {
+          "id": "C",
+          "text": "Guru itu men-training siswanya setiap hari."
+        },
+        {
+          "id": "D",
+          "text": "Guru itu latih siswanya setiap hari."
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Kata 'melatih' adalah bentuk baku dari 'latih' + imbuhan me-. 'Mentraining' dan 'men-training' tidak baku karena mencampurkan bahasa asing dengan imbuhan Indonesia.",
+      "tags": [
+        "imbuhan",
+        "kata-baku"
+      ],
+      "source": "BC_UKBI_GURU_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-GURU-KAIDAH-MADYA-SET002-Q002",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_GURU",
+      "section": "merespons-kaidah",
+      "band": "MADYA",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "stem": "Penulisan judul karya ilmiah yang tepat sesuai EYD adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Judul proposal: Pengaruh Media Sosial terhadap Prestasi Belajar"
+        },
+        {
+          "id": "B",
+          "text": "pengaruh media sosial terhadap prestasi siswa di sekolah"
+        },
+        {
+          "id": "C",
+          "text": "PENGARUH MEDIA TERHADAP MOTIVASI BELAJAR SISWA SEKOLAH DASAR"
+        },
+        {
+          "id": "D",
+          "text": "Analisis Dampak Media Sosial pada Prestasi Akademik Siswa"
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Penulisan judul yang benar menggunakan huruf kapital di awal setiap unsur utama.",
+      "tags": [
+        "eyd",
+        "penulisan-judul"
+      ],
+      "source": "BC_UKBI_GURU_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-GURU-KAIDAH-MADYA-SET002-Q003",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_GURU",
+      "section": "merespons-kaidah",
+      "band": "MADYA",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "stem": "Kalimat yang menggunakan kata serapan dengan tepat adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Siswa harus aktif berpartisipasi dalam kegiatan ekstrakurikuler."
+        },
+        {
+          "id": "B",
+          "text": "Siswa harus aktip berpartisipasi dalam kegiatan ekstrakurikuler."
+        },
+        {
+          "id": "C",
+          "text": "Siswa harus aktif berpartisipasi dalam kegiatan extrakurikuler."
+        },
+        {
+          "id": "D",
+          "text": "Siswa harus aktip berpartisipasi dalam kegiatan extrakurikuler."
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Kata serapan yang baku: 'aktif' (bukan aktip), 'ekstrakurikuler' (bukan extrakurikuler).",
+      "tags": [
+        "kata-serapan",
+        "kata-baku"
+      ],
+      "source": "BC_UKBI_GURU_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-GURU-KAIDAH-MADYA-SET002-Q004",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_GURU",
+      "section": "merespons-kaidah",
+      "band": "MADYA",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "stem": "Kalimat yang tidak mengandung pemborosan kata adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Para guru-guru sedang mengikuti pelatihan kurikulum merdeka."
+        },
+        {
+          "id": "B",
+          "text": "Para guru sedang mengikuti pelatihan kurikulum merdeka."
+        },
+        {
+          "id": "C",
+          "text": "Para guru-guru itu sedang mengikuti pelatihan kurikulum merdeka."
+        },
+        {
+          "id": "D",
+          "text": "Guru-guru para sedang mengikuti pelatihan kurikulum merdeka."
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Kata 'para' sudah menunjukkan makna jamak, sehingga tidak perlu diikuti bentuk ulang 'guru-guru'. Cukup 'para guru' atau 'guru-guru' saja.",
+      "tags": [
+        "kalimat-efektif",
+        "pemborosan-kata"
+      ],
+      "source": "BC_UKBI_GURU_ORIGINAL",
+      "status": "approved",
+      "cognitive": "ANALISIS",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-GURU-KAIDAH-MADYA-SET002-Q005",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_GURU",
+      "section": "merespons-kaidah",
+      "band": "MADYA",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "stem": "Cermati paragraf berikut! \"Penggunaan gawai di kalangan siswa meningkat pesat. Hal ini berdampak pada menurunnya konsentrasi belajar. Banyak siswa lebih tertarik bermain game daripada membaca buku. (…) Peran orang tua sangat diperlukan untuk mengawasi penggunaan gawai.\" Kata hubung yang tepat untuk melengkapi paragraf tersebut adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Akibatnya,"
+        },
+        {
+          "id": "B",
+          "text": "Selain itu,"
+        },
+        {
+          "id": "C",
+          "text": "Oleh karena itu,"
+        },
+        {
+          "id": "D",
+          "text": "Bahkan,"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "Paragraf menunjukkan hubungan sebab-akibat: penggunaan gawai meningkat (sebab) → perlu peran orang tua (akibat). Konjungsi 'Oleh karena itu' paling tepat untuk menyimpulkan.",
+      "tags": [
+        "konjungsi",
+        "kohesi",
+        "paragraf"
+      ],
+      "source": "BC_UKBI_GURU_ORIGINAL",
+      "status": "approved",
+      "cognitive": "ANALISIS",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-GURU-KAIDAH-MADYA-SET002-Q006",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_GURU",
+      "section": "merespons-kaidah",
+      "band": "MADYA",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "stem": "Penulisan singkatan yang tepat terdapat dalam kalimat ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Kepala Sekolah, Drs. Ahmad Sutisna, M.Pd. hadir dalam acara tersebut."
+        },
+        {
+          "id": "B",
+          "text": "Kepala Sekolah, Drs Ahmad Sutisna, M.Pd hadir dalam acara tersebut."
+        },
+        {
+          "id": "C",
+          "text": "Kepala Sekolah, Drs. Ahmad Sutisna, M.Pd hadir dalam acara tersebut."
+        },
+        {
+          "id": "D",
+          "text": "Kepala Sekolah, Drs Ahmad Sutisna. M.Pd. hadir dalam acara tersebut."
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Penulisan singkatan gelar yang tepat: menggunakan tanda titik setelah setiap singkatan, dan ada spasi antargelar, misalnya Drs. dan M.Pd.",
+      "tags": [
+        "eyd",
+        "singkatan",
+        "gelar"
+      ],
+      "source": "BC_UKBI_GURU_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-GURU-KAIDAH-MADYA-SET002-Q007",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_GURU",
+      "section": "merespons-kaidah",
+      "band": "MADYA",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "stem": "Kalimat berikut yang merupakan kalimat efektif adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Dalam rapat tersebut membahas tentang kurikulum baru."
+        },
+        {
+          "id": "B",
+          "text": "Rapat tersebut membahas tentang kurikulum baru."
+        },
+        {
+          "id": "C",
+          "text": "Rapat tersebut membahas kurikulum baru."
+        },
+        {
+          "id": "D",
+          "text": "Tentang kurikulum baru dibahas dalam rapat tersebut."
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "Kalimat C paling efektif. Kalimat A tidak bersubjek ('Dalam rapat tersebut' adalah keterangan). Kalimat B menggunakan 'tentang' yang tidak perlu karena 'membahas' sudah mengandung makna 'tentang'. Kalimat D tidak efektif karena subjek tidak jelas.",
+      "tags": [
+        "kalimat-efektif"
+      ],
+      "source": "BC_UKBI_GURU_ORIGINAL",
+      "status": "approved",
+      "cognitive": "ANALISIS",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-GURU-KAIDAH-MADYA-SET002-Q008",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_GURU",
+      "section": "merespons-kaidah",
+      "band": "MADYA",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "stem": "Penulisan kata depan 'di' yang tepat terdapat dalam kalimat ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Buku itu ada di meja guru."
+        },
+        {
+          "id": "B",
+          "text": "Buku itu ada dimeja guru."
+        },
+        {
+          "id": "C",
+          "text": "Buku itu berada di atas meja guru."
+        },
+        {
+          "id": "D",
+          "text": "Buku itu ada diatas meja guru."
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Kata depan di ditulis terpisah dari kata yang mengikutinya.",
+      "tags": [
+        "eyd",
+        "kata-depan"
+      ],
+      "source": "BC_UKBI_GURU_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-GURU-KAIDAH-MADYA-SET002-Q009",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_GURU",
+      "section": "merespons-kaidah",
+      "band": "MADYA",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "stem": "Penggunaan tanda koma yang tepat terdapat dalam kalimat ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Ibu Guru membawa buku, pensil dan penggaris ke kelas."
+        },
+        {
+          "id": "B",
+          "text": "Ibu Guru membawa buku, pensil, dan penggaris ke kelas."
+        },
+        {
+          "id": "C",
+          "text": "Ibu Guru membawa buku pensil dan penggaris ke kelas."
+        },
+        {
+          "id": "D",
+          "text": "Ibu Guru membawa buku, pensil, dan, penggaris ke kelas."
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Dalam perincian tiga item atau lebih, tanda koma digunakan setelah setiap item sebelum kata 'dan'. Penggunaan koma sebelum 'dan' (oxford comma) bersifat opsional dalam bahasa Indonesia.",
+      "tags": [
+        "tanda-baca",
+        "eyd"
+      ],
+      "source": "BC_UKBI_GURU_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-GURU-KAIDAH-MADYA-SET002-Q010",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_GURU",
+      "section": "merespons-kaidah",
+      "band": "MADYA",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "stem": "Kalimat berikut yang mengandung kesalahan penalaran adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Karena rajin belajar, Rina berhasil meraih peringkat pertama."
+        },
+        {
+          "id": "B",
+          "text": "Jika guru hadir tepat waktu, maka siswa akan meniru kebiasaan baik tersebut."
+        },
+        {
+          "id": "C",
+          "text": "Semua siswa yang lulus ujian pasti pandai. Budi lulus ujian, jadi Budi pasti pandai."
+        },
+        {
+          "id": "D",
+          "text": "Hari ini hujan deras, sehingga beberapa siswa datang terlambat."
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "Kalimat C mengandung kesalahan logika (fallacy). Premis 'Semua siswa yang lulus ujian pasti pandai' belum tentu benar karena ada faktor lain seperti keberuntungan atau kecurangan. Ini adalah contoh kekeliruan penalaran sebab-akibat yang terlalu menyederhanakan.",
+      "tags": [
+        "penalaran",
+        "logika",
+        "kesesatan-berpikir"
+      ],
+      "source": "BC_UKBI_GURU_ORIGINAL",
+      "status": "approved",
+      "cognitive": "ANALISIS",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-GURU-KAIDAH-MADYA-SET002-Q011",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_GURU",
+      "section": "merespons-kaidah",
+      "band": "MADYA",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "stem": "Penulisan kata bilangan yang tepat adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Terdapat 75 orang siswa yang mengikuti lomba."
+        },
+        {
+          "id": "B",
+          "text": "Terdapat tujuhpuluh lima orang siswa yang mengikuti lomba."
+        },
+        {
+          "id": "C",
+          "text": "Terdapat 75 (tujuh puluh lima) orang siswa yang mengikuti lomba."
+        },
+        {
+          "id": "D",
+          "text": "Terdapat tujuh puluh lima (75) orang siswa yang mengikuti lomba."
+        }
+      ],
+      "correctAnswer": "D",
+      "explanation": "Penulisan bilangan yang tepat: angka ditulis dalam bentuk huruf jika dapat dinyatakan dengan satu atau dua kata, dan ditulis dengan angka jika diikuti unit. Bentuk 'tujuh puluh lima (75)' adalah yang paling baku dalam konteks formal.",
+      "tags": [
+        "eyd",
+        "bilangan"
+      ],
+      "source": "BC_UKBI_GURU_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-GURU-KAIDAH-MADYA-SET002-Q012",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_GURU",
+      "section": "merespons-kaidah",
+      "band": "MADYA",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "stem": "Kalimat yang menggunakan konjungsi korelatif dengan tepat adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Baik guru dan siswa diharapkan hadir dalam acara tersebut."
+        },
+        {
+          "id": "B",
+          "text": "Baik guru maupun siswa diharapkan hadir dalam acara tersebut."
+        },
+        {
+          "id": "C",
+          "text": "Entah guru atau siswa diharapkan hadir dalam acara tersebut."
+        },
+        {
+          "id": "D",
+          "text": "Baik guru serta siswa diharapkan hadir dalam acara tersebut."
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Konjungsi korelatif yang tepat untuk menyatakan dua hal yang setara adalah 'baik ... maupun ...'. 'Baik dan' tidak baku dalam konstruksi korelatif.",
+      "tags": [
+        "konjungsi",
+        "kalimat-efektif"
+      ],
+      "source": "BC_UKBI_GURU_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-GURU-KAIDAH-MADYA-SET002-Q013",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_GURU",
+      "section": "merespons-kaidah",
+      "band": "MADYA",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "stem": "Cermati kalimat berikut! \"Kepala sekolah mengumumkan bahwa bahwa mulai bulan depan akan ada perubahan jadwal pelajaran.\" Kesalahan dalam kalimat tersebut adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Penggunaan kata 'bahwa' yang berulang (pleonasme)"
+        },
+        {
+          "id": "B",
+          "text": "Kata 'mengumumkan' tidak tepat konteks"
+        },
+        {
+          "id": "C",
+          "text": "Tidak ada subjek dalam kalimat"
+        },
+        {
+          "id": "D",
+          "text": "Penggunaan kata 'bulan depan' tidak baku"
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Kalimat tersebut menggunakan kata 'bahwa' sebanyak dua kali secara berurutan ('bahwa bahwa'). Ini adalah kesalahan pleonasme (pemborosan kata) karena satu kata 'bahwa' sudah cukup.",
+      "tags": [
+        "pleonasme",
+        "kalimat-efektif"
+      ],
+      "source": "BC_UKBI_GURU_ORIGINAL",
+      "status": "approved",
+      "cognitive": "ANALISIS",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-GURU-KAIDAH-MADYA-SET002-Q014",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_GURU",
+      "section": "merespons-kaidah",
+      "band": "MADYA",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "stem": "Perhatikan kalimat berikut! \"Banyak siswa yang tidak mengerjakan PR sehingga guru memberikan hukuman.\" Agar menjadi kalimat efektif, perbaikan yang tepat adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Banyak siswa tidak mengerjakan PR, guru memberikan hukuman."
+        },
+        {
+          "id": "B",
+          "text": "Banyak siswa tidak mengerjakan PR sehingga guru memberikan hukuman."
+        },
+        {
+          "id": "C",
+          "text": "Karena banyak siswa tidak mengerjakan PR, guru memberikan hukuman."
+        },
+        {
+          "id": "D",
+          "text": "Banyak siswa yang tidak mengerjakan PR, sehingga guru memberikan hukuman."
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "Kalimat awal tidak efektif karena subjek kalimat pertama ('Banyak siswa yang tidak mengerjakan PR') menggunakan 'yang' yang membuatnya menjadi perluasan subjek, sehingga kalimat kehilangan fokus. Perbaikan dengan 'Karena...' membuat hubungan kausal menjadi lebih jelas dan efektif.",
+      "tags": [
+        "kalimat-efektif",
+        "subjek"
+      ],
+      "source": "BC_UKBI_GURU_ORIGINAL",
+      "status": "approved",
+      "cognitive": "ANALISIS",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-GURU-KAIDAH-MADYA-SET002-Q015",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_GURU",
+      "section": "merespons-kaidah",
+      "band": "MADYA",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "stem": "Penulisan unsur serapan yang tepat adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Aktivitas belajar mengajar berjalan dengan kondusif."
+        },
+        {
+          "id": "B",
+          "text": "Aktifitas belajar mengajar berjalan dengan kondusif."
+        },
+        {
+          "id": "C",
+          "text": "Aktivitas belajar mengajar berjalan dengan kondusip."
+        },
+        {
+          "id": "D",
+          "text": "Aktifitas belajar mengajar berjalan dengan kondusip."
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Kata serapan yang baku: 'aktivitas' (dari activity, bukan 'aktifitas') dan 'kondusif' (dari conducive, bukan 'kondusip').",
+      "tags": [
+        "kata-serapan",
+        "kata-baku"
+      ],
+      "source": "BC_UKBI_GURU_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-GURU-KAIDAH-MADYA-SET002-Q016",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_GURU",
+      "section": "merespons-kaidah",
+      "band": "MADYA",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "stem": "Kalimat yang menggunakan tanda petik dengan tepat adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Guru bertanya, \"Siapa yang sudah mengerjakan tugas?\"."
+        },
+        {
+          "id": "B",
+          "text": "Guru bertanya, \"Siapa yang sudah mengerjakan tugas?\""
+        },
+        {
+          "id": "C",
+          "text": "Guru bertanya, \"Siapa yang sudah mengerjakan tugas\"?"
+        },
+        {
+          "id": "D",
+          "text": "Guru bertanya, 'Siapa yang sudah mengerjakan tugas?'"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Tanda petik digunakan mengapit petikan langsung. Jika petikan diakhiri dengan tanda tanya atau seru, tanda tersebut berada di dalam tanda petik, dan tidak perlu ditambah tanda titik lagi.",
+      "tags": [
+        "tanda-baca",
+        "eyd",
+        "tanda-petik"
+      ],
+      "source": "BC_UKBI_GURU_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-GURU-KAIDAH-MADYA-SET002-Q017",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_GURU",
+      "section": "merespons-kaidah",
+      "band": "MADYA",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "stem": "Cermati teks berikut! \"Program merdeka belajar memberikan keleluasaan kepada sekolah untuk mengembangkan kurikulum operasionalnya masing-masing. (1) Kepala sekolah bersama guru merumuskan visi, misi, dan tujuan satuan pendidikan. (2) Kemudian, guru-guru secara kolaboratif menyusun modul ajar yang kontekstual. (3) Pembelajaran menjadi lebih bermakna bagi siswa. (4) Evaluasi program dilakukan secara berkala setiap semester.\" Kalimat yang tidak padu dalam paragraf tersebut adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Kalimat (1)"
+        },
+        {
+          "id": "B",
+          "text": "Kalimat (2)"
+        },
+        {
+          "id": "C",
+          "text": "Kalimat (3)"
+        },
+        {
+          "id": "D",
+          "text": "Kalimat (4)"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "Kalimat (3) 'Pembelajaran menjadi lebih bermakna bagi siswa' merupakan akibat atau hasil yang belum saatnya disebutkan. Paragraf tersebut menjelaskan proses atau langkah-langkah, sehingga kalimat simpulan seperti (3) mengganggu koherensi. Kalimat (3) sebaiknya menjadi kalimat penutup setelah semua langkah dijelaskan.",
+      "tags": [
+        "paragraf",
+        "koherensi",
+        "kepaduan"
+      ],
+      "source": "BC_UKBI_GURU_ORIGINAL",
+      "status": "approved",
+      "cognitive": "ANALISIS",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-GURU-KAIDAH-MADYA-SET002-Q018",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_GURU",
+      "section": "merespons-kaidah",
+      "band": "MADYA",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "stem": "Penggunaan huruf kapital yang tepat terdapat dalam kalimat ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Bahasa Indonesia diajarkan setiap hari Senin."
+        },
+        {
+          "id": "B",
+          "text": "bahasa Indonesia diajarkan setiap hari Senin oleh Bu Dewi."
+        },
+        {
+          "id": "C",
+          "text": "Bahasa Indonesia diajarkan setiap hari Selasa dan Kamis."
+        },
+        {
+          "id": "D",
+          "text": "Mata pelajaran bahasa Indonesia dijadwalkan setiap hari Senin."
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Nama mata pelajaran dan nama hari ditulis dengan huruf kapital.",
+      "tags": [
+        "eyd",
+        "huruf-kapital"
+      ],
+      "source": "BC_UKBI_GURU_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-GURU-KAIDAH-UNGGUL-SET002-Q019",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_GURU",
+      "section": "merespons-kaidah",
+      "band": "UNGGUL",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "stem": "Cermati paragraf rumpang berikut! \"Proses pembelajaran abad 21 menuntut guru untuk menguasai berbagai kompetensi. … guru harus mampu mengintegrasikan teknologi dalam pembelajaran. … guru perlu mengembangkan kemampuan berpikir kritis siswa. … guru dituntut untuk menjadi fasilitator yang mampu menumbuhkan kreativitas.\" Konjungsi yang tepat untuk melengkapi paragraf tersebut secara berurutan adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Pertama, Kedua, Ketiga"
+        },
+        {
+          "id": "B",
+          "text": "Selain itu, Namun, Akhirnya"
+        },
+        {
+          "id": "C",
+          "text": "Sementara itu, Bahkan, Oleh karena itu"
+        },
+        {
+          "id": "D",
+          "text": "Di samping itu, Sebaliknya, Dengan demikian"
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Paragraf tersebut memaparkan urutan kompetensi yang harus dikuasai guru. Konjungsi 'Pertama, Kedua, Ketiga' paling tepat untuk menyatakan urutan atau langkah secara terstruktur.",
+      "tags": [
+        "konjungsi",
+        "paragraf",
+        "kohesi"
+      ],
+      "source": "BC_UKBI_GURU_ORIGINAL",
+      "status": "approved",
+      "cognitive": "ANALISIS",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-GURU-KAIDAH-UNGGUL-SET002-Q020",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_GURU",
+      "section": "merespons-kaidah",
+      "band": "UNGGUL",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "stem": "Bentuk pasif yang tepat untuk kalimat 'Guru akan mengevaluasi program pembelajaran semester ini' adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Program pembelajaran semester ini akan dievaluasi oleh guru."
+        },
+        {
+          "id": "B",
+          "text": "Program pembelajaran semester ini akan dievaluasi guru."
+        },
+        {
+          "id": "C",
+          "text": "Program pembelajaran semester ini akan di evaluasi oleh guru."
+        },
+        {
+          "id": "D",
+          "text": "Di evaluasi program pembelajaran semester ini oleh guru."
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Bentuk pasif dengan kata 'akan' menggunakan imbuhan 'di-' pada kata kerja. Penulisan 'dievaluasi' ditulis serangkai, bukan 'di evaluasi'. Keberadaan 'oleh' bersifat opsional namun lazim dalam kalimat formal.",
+      "tags": [
+        "kalimat-pasif",
+        "eyd"
+      ],
+      "source": "BC_UKBI_GURU_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-GURU-KAIDAH-UNGGUL-SET002-Q021",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_GURU",
+      "section": "merespons-kaidah",
+      "band": "UNGGUL",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "stem": "Perhatikan kalimat berikut! \"Tidak hanya siswa yang harus disiplin, melainkan guru pun harus memberi teladan.\" Perbaikan konjungsi yang tepat untuk kalimat tersebut adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Tidak hanya siswa yang harus disiplin, tetapi guru pun harus memberi teladan."
+        },
+        {
+          "id": "B",
+          "text": "Tidak hanya siswa yang harus disiplin, melainkan guru harus memberi teladan."
+        },
+        {
+          "id": "C",
+          "text": "Tidak hanya siswa yang harus disiplin, akan tetapi guru pun harus memberi teladan."
+        },
+        {
+          "id": "D",
+          "text": "Tidak hanya siswa yang harus disiplin, namun guru pun harus memberi teladan."
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Konjungsi 'tidak hanya... tetapi juga/pun' adalah pasangan korelatif yang baku. 'Melainkan' digunakan untuk menyatakan pertentangan yang bersifat menyangkal, bukan untuk hubungan setara seperti dalam kalimat tersebut.",
+      "tags": [
+        "konjungsi",
+        "kalimat-efektif"
+      ],
+      "source": "BC_UKBI_GURU_ORIGINAL",
+      "status": "approved",
+      "cognitive": "ANALISIS",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-GURU-KAIDAH-UNGGUL-SET002-Q022",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_GURU",
+      "section": "merespons-kaidah",
+      "band": "UNGGUL",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "stem": "Manakah kalimat di bawah ini yang paling tepat dari segi diksi?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Bapak Kepala Sekolah memberikan pemaparan tentang visi misi sekolah."
+        },
+        {
+          "id": "B",
+          "text": "Bapak Kepala Sekolah memaparkan visi dan misi sekolah."
+        },
+        {
+          "id": "C",
+          "text": "Bapak Kepala Sekolah memberikan paparan tentang visi dan juga misi sekolah."
+        },
+        {
+          "id": "D",
+          "text": "Bapak Kepala Sekolah paparkan visi misi sekolah."
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Kalimat B paling efektif dan tepat diksinya. 'Memaparkan' sudah mengandung makna 'memberikan paparan'. Penggunaan kata 'dan' pada 'visi dan misi' lebih tepat daripada 'visi misi' (tanpa konjungsi).",
+      "tags": [
+        "diksi",
+        "kalimat-efektif"
+      ],
+      "source": "BC_UKBI_GURU_ORIGINAL",
+      "status": "approved",
+      "cognitive": "ANALISIS",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-GURU-KAIDAH-UNGGUL-SET002-Q023",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_GURU",
+      "section": "merespons-kaidah",
+      "band": "UNGGUL",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "stem": "Cermati paragraf berikut! \"Kurikulum merdeka memberikan otonomi kepada sekolah. Sekolah dapat mengembangkan kurikulum sesuai dengan konteks dan kebutuhan peserta didik. Dengan demikian, pembelajaran menjadi lebih relevan dan bermakna.\" Pola pengembangan paragraf tersebut adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Deduktif"
+        },
+        {
+          "id": "B",
+          "text": "Induktif"
+        },
+        {
+          "id": "C",
+          "text": "Campuran"
+        },
+        {
+          "id": "D",
+          "text": "Deskriptif"
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Paragraf deduktif memiliki kalimat utama di awal ('Kurikulum merdeka memberikan otonomi kepada sekolah'), kemudian diikuti kalimat-kalimat penjelas yang mengembangkan ide tersebut.",
+      "tags": [
+        "paragraf",
+        "pola-pengembangan"
+      ],
+      "source": "BC_UKBI_GURU_ORIGINAL",
+      "status": "approved",
+      "cognitive": "ANALISIS",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-GURU-KAIDAH-UNGGUL-SET002-Q024",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_GURU",
+      "section": "merespons-kaidah",
+      "band": "UNGGUL",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "stem": "Kalimat yang menggunakan ragam bahasa ilmiah yang tepat adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Penelitian ini bertujuan untuk ngelihat pengaruh metode diskusi terhadap hasil belajar."
+        },
+        {
+          "id": "B",
+          "text": "Penelitian ini bermaksud untuk melihat pengaruh metode diskusi terhadap hasil belajar."
+        },
+        {
+          "id": "C",
+          "text": "Penelitian ini bertujuan buat ngelihat pengaruh metode diskusi terhadap hasil belajar."
+        },
+        {
+          "id": "D",
+          "text": "Penelitian ini tujuannya adalah melihat pengaruh dari metode diskusi ke hasil belajar."
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Ragam bahasa ilmiah menggunakan kata baku dan struktur formal. 'Bertujuan' atau 'bermaksud' adalah pilihan kata yang tepat. 'Ngelihat', 'buat', 'ke' (dalam konteks ini) adalah bentuk tidak baku atau non-formal.",
+      "tags": [
+        "ragam-bahasa",
+        "karya-ilmiah"
+      ],
+      "source": "BC_UKBI_GURU_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-GURU-KAIDAH-UNGGUL-SET002-Q025",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_GURU",
+      "section": "merespons-kaidah",
+      "band": "UNGGUL",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "stem": "Cermati dua kalimat berikut! (1) \"Penerapan teknologi dalam pembelajaran meningkat pesat.\" (2) \"Guru perlu menguasai berbagai platform digital.\" Penggabungan kedua kalimat menjadi kalimat majemuk yang tepat adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Penerapan teknologi dalam pembelajaran meningkat pesat dan guru perlu menguasai berbagai platform digital."
+        },
+        {
+          "id": "B",
+          "text": "Seiring dengan meningkatnya penerapan teknologi dalam pembelajaran, guru perlu menguasai berbagai platform digital."
+        },
+        {
+          "id": "C",
+          "text": "Penerapan teknologi dalam pembelajaran meningkat pesat, guru perlu menguasai berbagai platform digital."
+        },
+        {
+          "id": "D",
+          "text": "Penerapan teknologi dalam pembelajaran meningkat pesat maka guru perlu menguasai berbagai platform digital."
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Kalimat (1) dan (2) memiliki hubungan kausalitas atau hubungan waktu. 'Seiring dengan meningkatnya...' menunjukkan hubungan yang paling logis antara meningkatnya teknologi dan kebutuhan guru menguasai platform digital.",
+      "tags": [
+        "kalimat-majemuk",
+        "konjungsi"
+      ],
+      "source": "BC_UKBI_GURU_ORIGINAL",
+      "status": "approved",
+      "cognitive": "ANALISIS",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-GURU-KAIDAH-UNGGUL-SET002-Q026",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_GURU",
+      "section": "merespons-kaidah",
+      "band": "UNGGUL",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "stem": "Perhatikan kalimat berikut! \"Siswa yang tidak mengumpulkan tugas tepat waktu, nilainya akan dikurangi.\" Penggunaan tanda baca yang tepat untuk kalimat tersebut adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Siswa yang tidak mengumpulkan tugas tepat waktu nilainya akan dikurangi."
+        },
+        {
+          "id": "B",
+          "text": "Siswa yang tidak mengumpulkan tugas tepat waktu, nilainya akan dikurangi."
+        },
+        {
+          "id": "C",
+          "text": "Siswa, yang tidak mengumpulkan tugas tepat waktu nilainya akan dikurangi."
+        },
+        {
+          "id": "D",
+          "text": "Siswa yang tidak mengumpulkan tugas tepat waktu; nilainya akan dikurangi."
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Klausa 'yang tidak mengumpulkan tugas tepat waktu' adalah perluasan subjek yang bersifat membatasi (restriktif), sehingga tidak boleh dipisahkan dengan koma dari subjeknya. Kalimat tanpa koma adalah yang paling tepat.",
+      "tags": [
+        "tanda-baca",
+        "klausa",
+        "eyd"
+      ],
+      "source": "BC_UKBI_GURU_ORIGINAL",
+      "status": "approved",
+      "cognitive": "ANALISIS",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-GURU-KAIDAH-UNGGUL-SET002-Q027",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_GURU",
+      "section": "merespons-kaidah",
+      "band": "UNGGUL",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "stem": "Penggunaan istilah peristilahan yang tepat dalam konteks pendidikan adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Guru melakukan asesmen diagnostik untuk mengetahui kemampuan awal siswa."
+        },
+        {
+          "id": "B",
+          "text": "Guru melakukan assessment diagnostic untuk mengetahui kemampuan awal siswa."
+        },
+        {
+          "id": "C",
+          "text": "Guru melakukan asesmen diagnostic untuk mengetahui kemampuan awal siswa."
+        },
+        {
+          "id": "D",
+          "text": "Guru melakukan assessment diagnostik untuk mengetahui kemampuan awal siswa."
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Istilah baku dalam bahasa Indonesia: 'asesmen' (bukan assessment), 'diagnostik' (bukan diagnostic). Penulisan istilah asing yang sudah memiliki padanan baku harus menggunakan bentuk Indonesianya.",
+      "tags": [
+        "peristilahan",
+        "kata-baku",
+        "pendidikan"
+      ],
+      "source": "BC_UKBI_GURU_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-GURU-KAIDAH-UNGGUL-SET002-Q028",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_GURU",
+      "section": "merespons-kaidah",
+      "band": "UNGGUL",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "stem": "Cermati paragraf berikut! \"(1) Guru penggerak adalah agen transformasi dalam ekosistem pendidikan. (2) Mereka mendorong terciptanya pembelajaran yang berpusat pada siswa. (3) Guru penggerak juga menjadi teladan bagi rekan sejawatnya. (4) Oleh karena itu, program guru penggerak perlu terus didukung.\" Ide pokok paragraf tersebut adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Program guru penggerak perlu didukung"
+        },
+        {
+          "id": "B",
+          "text": "Guru penggerak adalah agen transformasi pendidikan"
+        },
+        {
+          "id": "C",
+          "text": "Guru penggerak menjadi teladan bagi rekan sejawat"
+        },
+        {
+          "id": "D",
+          "text": "Pembelajaran berpusat pada siswa"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Kalimat (1) merupakan kalimat utama yang menyatakan ide pokok, yaitu 'Guru penggerak adalah agen transformasi dalam ekosistem pendidikan.' Kalimat (2)-(4) merupakan kalimat penjelas.",
+      "tags": [
+        "ide-pokok",
+        "paragraf"
+      ],
+      "source": "BC_UKBI_GURU_ORIGINAL",
+      "status": "approved",
+      "cognitive": "ANALISIS",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-GURU-KAIDAH-UNGGUL-SET002-Q029",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_GURU",
+      "section": "merespons-kaidah",
+      "band": "UNGGUL",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "stem": "Kalimat yang menggunakan konjungsi subordinatif waktu dengan tepat adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Sejak guru memasuki kelas, semua siswa langsung diam."
+        },
+        {
+          "id": "B",
+          "text": "Guru memasuki kelas, sejak semua siswa langsung diam."
+        },
+        {
+          "id": "C",
+          "text": "Semua siswa langsung diam sejak guru memasuki kelas."
+        },
+        {
+          "id": "D",
+          "text": "Guru memasuki kelas sejak semua siswa langsung diam."
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "Konjungsi subordinatif 'sejak' menghubungkan klausa waktu dengan klausa utama. Urutan yang paling tepat adalah klausa utama (semua siswa langsung diam) diikuti klausa subordinatif (sejak guru memasuki kelas). Kalimat A juga dapat diterima tetapi lebih lazim menempatkan klausa utama di awal.",
+      "tags": [
+        "konjungsi",
+        "kalimat-majemuk"
+      ],
+      "source": "BC_UKBI_GURU_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-GURU-KAIDAH-UNGGUL-SET002-Q030",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_GURU",
+      "section": "merespons-kaidah",
+      "band": "UNGGUL",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "stem": "Perhatikan penulisan daftar pustaka berikut! \"(1) Suwignyo, Agus. 2020. Pendidikan Indonesia: Antara Harapan dan Realitas. Yogyakarta: Gadjah Mada University Press.\" Penulisan daftar pustaka tersebut belum tepat. Perbaikan yang tepat adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Suwignyo, Agus. 2020. Pendidikan Indonesia: Antara Harapan dan Realitas. Yogyakarta: Gadjah Mada University Press."
+        },
+        {
+          "id": "B",
+          "text": "Suwignyo, Agus. (2020). Pendidikan Indonesia: Antara Harapan dan Realitas. Yogyakarta: Gadjah Mada University Press."
+        },
+        {
+          "id": "C",
+          "text": "Agus Suwignyo. 2020. Pendidikan Indonesia: Antara Harapan dan Realitas. Gadjah Mada University Press: Yogyakarta."
+        },
+        {
+          "id": "D",
+          "text": "Suwignyo, A. 2020. Pendidikan Indonesia: Antara Harapan dan Realitas. Gadjah Mada University Press, Yogyakarta."
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Penulisan daftar pustaka yang tepat: nama belakang diikuti nama depan (dibalik), tahun dalam tanda kurung, judul dicetak miring, kota: penerbit. Tahun sebaiknya dalam tanda kurung sesuai gaya APA.",
+      "tags": [
+        "karya-ilmiah",
+        "daftar-pustaka"
+      ],
+      "source": "BC_UKBI_GURU_ORIGINAL",
+      "status": "approved",
+      "cognitive": "ANALISIS",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-GURU-KAIDAH-SANGATUNGGUL-SET002-Q031",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_GURU",
+      "section": "merespons-kaidah",
+      "band": "SANGATUNGGUL",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "stem": "Cermati teks berikut! \"Penelitian ini menyimpulkan bahwa terdapat korelasi positif yang signifikan antara kebiasaan membaca dan kemampuan menulis argumentatif siswa. Semakin tinggi frekuensi membaca, semakin baik kualitas tulisan argumentatif yang dihasilkan. Temuan ini mengonfirmasi teori bahwa input reseptif yang memadai berkontribusi terhadap output produktif yang berkualitas.\" Kalimat yang mengandung kesalahan nalar atau kekeliruan logika adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Kalimat pertama: menyimpulkan korelasi positif antara kebiasaan membaca dan kemampuan menulis"
+        },
+        {
+          "id": "B",
+          "text": "Kalimat kedua: semakin tinggi frekuensi membaca, semakin baik kualitas tulisan"
+        },
+        {
+          "id": "C",
+          "text": "Kalimat ketiga: mengonfirmasi teori yang belum terbukti secara universal"
+        },
+        {
+          "id": "D",
+          "text": "Tidak ada kesalahan nalar dalam teks tersebut"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "Kalimat ketiga mengandung kesalahan nalar karena 'mengonfirmasi teori' mengimplikasikan bahwa satu penelitian sudah cukup untuk membuktikan kebenaran suatu teori. Dalam metodologi ilmiah, sebuah teori dikonfirmasi melalui akumulasi bukti dari banyak penelitian, bukan hanya satu studi. Pernyataan 'mengonfirmasi teori' terlalu kuat dan menunjukkan overgeneralisasi.",
+      "tags": [
+        "penalaran",
+        "logika-ilmiah"
+      ],
+      "source": "BC_UKBI_GURU_ORIGINAL",
+      "status": "approved",
+      "cognitive": "EVALUASI",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-GURU-KAIDAH-SANGATUNGGUL-SET002-Q032",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_GURU",
+      "section": "merespons-kaidah",
+      "band": "SANGATUNGGUL",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "stem": "Cermati kalimat kompleks berikut! \"Meskipun berbagai upaya telah dilakukan pemerintah untuk meningkatkan kualitas pendidikan melalui program revitalisasi Kurikulum Merdeka yang diluncurkan sejak tahun 2022 dan telah menjangkau lebih dari 250.000 satuan pendidikan di seluruh Indonesia, masih terdapat kesenjangan capaian pembelajaran yang signifikan antara sekolah di perkotaan dan pedesaan.\" Inti kalimat tersebut adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Pemerintah meningkatkan kualitas pendidikan melalui Kurikulum Merdeka"
+        },
+        {
+          "id": "B",
+          "text": "Kurikulum Merdeka menjangkau 250.000 satuan pendidikan"
+        },
+        {
+          "id": "C",
+          "text": "Masih terdapat kesenjangan capaian pembelajaran yang signifikan antara sekolah di perkotaan dan pedesaan"
+        },
+        {
+          "id": "D",
+          "text": "Upaya pemerintah telah dilakukan sejak tahun 2022"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "Inti kalimat kompleks ini adalah klausa utama yang terletak setelah anak kalimat (yang diawali 'Meskipun'). Klausa utamanya adalah 'masih terdapat kesenjangan capaian pembelajaran yang signifikan antara sekolah di perkotaan dan pedesaan.' Bagian sebelum koma adalah anak kalimat konsesif.",
+      "tags": [
+        "kalimat-kompleks",
+        "intisari",
+        "analisis-kalimat"
+      ],
+      "source": "BC_UKBI_GURU_ORIGINAL",
+      "status": "approved",
+      "cognitive": "ANALISIS",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-GURU-KAIDAH-SANGATUNGGUL-SET002-Q033",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_GURU",
+      "section": "merespons-kaidah",
+      "band": "SANGATUNGGUL",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "stem": "Perhatikan penulisan catatan kaki (footnote) berikut! \"¹Prof. Dr. Siti Aisyah, M.Pd., Metodologi Pembelajaran Bahasa Indonesia, (Jakarta: Kencana, 2021), hlm. 87.\" Kesalahan dalam penulisan catatan kaki tersebut adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Singkatan 'hlm.' seharusnya tidak menggunakan titik"
+        },
+        {
+          "id": "B",
+          "text": "Nama penulis tidak perlu gelar akademik dalam catatan kaki"
+        },
+        {
+          "id": "C",
+          "text": "Tahun penerbit seharusnya setelah kota penerbit"
+        },
+        {
+          "id": "D",
+          "text": "Judul buku seharusnya ditulis dalam tanda petik"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Dalam penulisan catatan kaki (footnote) yang sesuai kaidah karya ilmiah, gelar akademik penulis tidak dicantumkan. Catatan kaki hanya mencantumkan nama penulis tanpa gelar, judul karya, data publikasi, dan nomor halaman.",
+      "tags": [
+        "karya-ilmiah",
+        "catatan-kaki"
+      ],
+      "source": "BC_UKBI_GURU_ORIGINAL",
+      "status": "approved",
+      "cognitive": "ANALISIS",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-GURU-KAIDAH-SANGATUNGGUL-SET002-Q034",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_GURU",
+      "section": "merespons-kaidah",
+      "band": "SANGATUNGGUL",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "stem": "Cermati teks berikut! Metode penelitian yang digunakan adalah studi kasus dengan pendekatan kualitatif. Data dikumpulkan melalui wawancara mendalam, observasi partisipatif, dan analisis dokumen. (1) Validasi data dilakukan dengan triangulasi sumber dan teknik. (2) Informan dalam penelitian ini berjumlah 12 orang guru Bahasa Indonesia. (3) Subjek penelitian ditentukan secara purposif. (4) Hasil penelitian menunjukkan bahwa penggunaan media digital dalam pembelajaran puisi meningkatkan apresiasi sastra siswa. Urutan kalimat yang tepat agar menjadi paragraf metodologi yang koheren adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "(3), (2), (1), (4)"
+        },
+        {
+          "id": "B",
+          "text": "(2), (3), (1), (4)"
+        },
+        {
+          "id": "C",
+          "text": "(4), (1), (2), (3)"
+        },
+        {
+          "id": "D",
+          "text": "(1), (2), (3), (4)"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Urutan yang logis untuk paragraf metodologi: setelah menyebutkan metode dan teknik pengumpulan data, langkah selanjutnya adalah menjelaskan subjek/informan penelitian (2), kemudian teknik penentuan subjek (3), lalu validasi data (1), dan terakhir hasil penelitian (4). Hasil penelitian (4) sebenarnya bisa dipisahkan sebagai paragraf tersendiri.",
+      "tags": [
+        "paragraf",
+        "koherensi",
+        "karya-ilmiah"
+      ],
+      "source": "BC_UKBI_GURU_ORIGINAL",
+      "status": "approved",
+      "cognitive": "EVALUASI",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-GURU-KAIDAH-SANGATUNGGUL-SET002-Q035",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_GURU",
+      "section": "merespons-kaidah",
+      "band": "SANGATUNGGUL",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "stem": "Cermati wacana berikut! \"Fenomena teacher burnout di Indonesia menunjukkan angka yang mengkhawatirkan. Berdasarkan survei nasional tahun 2025, 67% guru mengalami kelelahan emosional berat. Faktor utamanya adalah beban administratif yang berlebihan, kurangnya dukungan sistem, dan tuntutan pekerjaan yang melampaui jam kerja normal.\" Kalimat simpulan yang paling tepat untuk melengkapi wacana tersebut adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Guru harus lebih sabar dalam menghadapi pekerjaannya."
+        },
+        {
+          "id": "B",
+          "text": "Diperlukan kebijakan komprehensif yang mengurangi beban administratif guru dan memperkuat dukungan sistem di sekolah."
+        },
+        {
+          "id": "C",
+          "text": "Teacher burnout adalah masalah pribadi yang harus diatasi masing-masing individu."
+        },
+        {
+          "id": "D",
+          "text": "Sebaiknya guru mengurangi jam mengajar agar tidak kelelahan."
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Simpulan yang tepat harus merujuk pada fakta yang disajikan dalam wacana. Wacana menyebutkan faktor utama teacher burnout adalah 'beban administratif yang berlebihan' dan 'kurangnya dukungan sistem', sehingga simpulan yang logis adalah perlunya kebijakan yang mengatasi faktor-faktor tersebut. Opsi A, C, dan D cenderung menyalahkan individu dan tidak sesuai dengan data yang disajikan.",
+      "tags": [
+        "penalaran",
+        "simpulan",
+        "logika"
+      ],
+      "source": "BC_UKBI_GURU_ORIGINAL",
+      "status": "approved",
+      "cognitive": "EVALUASI",
+      "domain": "AKADEMIK"
+    }
+  ]
+}

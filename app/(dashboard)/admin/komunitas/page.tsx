@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Modal } from "@/components/ui/modal";
-import { Users, CheckCircle, XCircle, Clock, Trash2, Eye, Loader2, MessageSquare, AlertCircle } from "lucide-react";
+import { Users, CheckCircle, XCircle, Clock, Archive, Eye, Loader2, MessageSquare, AlertCircle } from "lucide-react";
 
 type CommunityStatus = "PENDING" | "APPROVED" | "REJECTED";
 
@@ -87,14 +87,14 @@ export default function AdminKomunitasPage() {
     setActionLoading(null);
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm("Yakin hapus komunitas ini?")) return;
+  const handleArchive = async (id: string) => {
+    if (!confirm("Yakin mengarsipkan komunitas ini?")) return;
     setActionLoading(id);
     try {
       const res = await fetch(`/api/admin/komunitas?id=${id}`, { method: "DELETE" });
       const data = await res.json();
       if (data.success) fetchData();
-      else setError(data.error || "Gagal menghapus");
+      else setError(data.error || "Gagal mengarsipkan");
     } catch (e: any) {
       setError(e.message);
     }
@@ -102,7 +102,7 @@ export default function AdminKomunitasPage() {
   };
 
   const filters: { id: CommunityStatus | "ALL"; label: string; count: number; color: string }[] = [
-    { id: "PENDING", label: "Menunggu Review", count: stats.pending, color: "bg-amber-100 text-amber-700 border-amber-200" },
+    { id: "PENDING", label: "Menunggu Peninjauan", count: stats.pending, color: "bg-amber-100 text-amber-700 border-amber-200" },
     { id: "APPROVED", label: "Disetujui", count: stats.approved, color: "bg-emerald-100 text-emerald-700 border-emerald-200" },
     { id: "REJECTED", label: "Ditolak", count: stats.rejected, color: "bg-red-100 text-red-700 border-red-200" },
     { id: "ALL", label: "Semua", count: stats.total, color: "bg-gray-100 text-gray-700 border-gray-200" },
@@ -146,7 +146,7 @@ export default function AdminKomunitasPage() {
           <Users className="mx-auto h-16 w-16 text-gray-300" />
           <h3 className="mt-4 font-semibold">Tidak ada komunitas</h3>
           <p className="mt-2 text-sm text-gray-500">
-            {filter === "PENDING" ? "Belum ada komunitas menunggu review" : `Belum ada komunitas ${filter.toLowerCase()}`}
+            {filter === "PENDING" ? "Belum ada komunitas menunggu peninjauan" : `Belum ada komunitas ${filter.toLowerCase()}`}
           </p>
         </Card>
       ) : (
@@ -158,7 +158,7 @@ export default function AdminKomunitasPage() {
                   <div className="flex items-center gap-2 mb-2 flex-wrap">
                     <Badge variant={c.type === "MGMP" ? "default" : c.type === "KKG" ? "secondary" : "outline"}>{c.type}</Badge>
                     <Badge variant={c.status === "APPROVED" ? "success" : c.status === "REJECTED" ? "destructive" : "warning"}>
-                      {c.status === "APPROVED" ? "Disetujui" : c.status === "REJECTED" ? "Ditolak" : "Menunggu Review"}
+                      {c.status === "APPROVED" ? "Disetujui" : c.status === "REJECTED" ? "Ditolak" : "Menunggu Peninjauan"}
                     </Badge>
                   </div>
                   <h3 className="font-semibold text-gray-900 text-lg">{c.name}</h3>
@@ -190,8 +190,9 @@ export default function AdminKomunitasPage() {
                       </Button>
                     </>
                   )}
-                  <Button size="sm" variant="ghost" onClick={() => handleDelete(c.id)} disabled={actionLoading === c.id} className="text-red-500 hover:text-red-700 hover:bg-red-50">
-                    {actionLoading === c.id ? <Loader2 size={14} className="animate-spin" /> : <Trash2 size={14} />}
+                  <Button size="sm" variant="ghost" onClick={() => handleArchive(c.id)} disabled={actionLoading === c.id} className="text-amber-500 hover:text-amber-700 hover:bg-amber-50">
+                    {actionLoading === c.id ? <Loader2 size={14} className="animate-spin" /> : <Archive size={14} />}
+                    Arsipkan
                   </Button>
                 </div>
               </div>

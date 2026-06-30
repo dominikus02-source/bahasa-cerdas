@@ -65,8 +65,22 @@ async function main() {
   // 4. Halaman BIGT — Bahasa Indonesia
   console.log("\n── Halaman BIGT ──")
   const bigtComp = "components/bigt/BigtInfoPage.tsx"
-  test("Judul 'BIGT' pakai Bahasa Indonesia", () => fileContains(bigtComp, "BIGT"))
+  test("Judul 'BIGT — Tes Global Bahasa Indonesia'", () => fileContains(bigtComp, "Tes Global Bahasa Indonesia"))
+  test("Tidak ada 'Bahasa Indonesia Global Test'", () => fileNotContains(bigtComp, "Bahasa Indonesia Global Test"))
+  test("Tidak ada 'Test Screen'", () => fileNotContains(bigtComp, "Test Screen"))
+  test("Tidak ada 'Section Progress'", () => fileNotContains(bigtComp, "Section Progress"))
+  test("Tidak ada 'No-answer-leakage'", () => fileNotContains(bigtComp, "No-answer-leakage"))
+  test("Tidak ada kata Inggris di fitur cards", () => {
+    const content = readFileSync(bigtComp, "utf-8")
+    const englishTerms = ["Layar Tes", "Pengatur Waktu Akurat", "Progres Bagian", "Hasil dan Skor", "Keamanan", "Standar Tes"]
+    return englishTerms.every(t => content.includes(t))
+  })
   test("Perbedaan pakai Bahasa Indonesia", () => fileContains(bigtComp, "Perbedaan"))
+  test("'Platform belajar dan latihan harian' bukan '&'", () => fileContains(bigtComp, "Platform belajar dan latihan harian"))
+  test("'Bank soal untuk guru dan murid'", () => fileContains(bigtComp, "Bank soal untuk guru dan murid"))
+  test("'Komunitas guru dan murid'", () => fileContains(bigtComp, "Komunitas guru dan murid"))
+  test("'Pengatur waktu dan progres bagian yang terstruktur'", () => fileContains(bigtComp, "Pengatur waktu dan progres bagian yang terstruktur"))
+  test("'Sistem tanpa kebocoran jawaban'", () => fileContains(bigtComp, "Sistem tanpa kebocoran jawaban"))
   test("CTA 'Buka BIGT'", () => fileContains(bigtComp, "Buka BIGT"))
   test("Link external ke bahasacerdas.site", () => fileContains(bigtComp, "https://www.bahasacerdas.site"))
 
@@ -98,10 +112,25 @@ async function main() {
   test("Judul halaman 'Dokumen Hasil Latihan'", () => fileContains(dokumenMurid, "Dokumen Hasil Latihan"))
   const certPrev = "components/kompetensi/CertificatePreview.tsx"
   if (existsSync(certPrev)) {
-    test("CertificatePreview tidak tampilkan 'Certificate' sebagai judul", () => {
+    test("CertificatePreview pakai 'Latihan UKBI' bukan 'UKBI Practice'", () => {
       const content = readFileSync(certPrev, "utf-8")
-      return !content.includes("Certificate") || content.includes("Dokumen")
+      return content.includes("Latihan UKBI") && !content.includes("UKBI Practice")
     })
+  }
+  const guruPreview = "components/kompetensi/GuruCertificatePreview.tsx"
+  if (existsSync(guruPreview)) {
+    test("GuruCertificatePreview pakai 'Latihan UKBI' bukan 'UKBI Practice'", () => {
+      const content = readFileSync(guruPreview, "utf-8")
+      return content.includes("Latihan UKBI") && !content.includes("UKBI Practice")
+    })
+  }
+
+  // 7b. KompetensiClient — no "Sertifikat" term
+  console.log("\n── KompetensiClient ──")
+  const kompetensiFile = "components/kompetensi/KompetensiClient.tsx"
+  if (existsSync(kompetensiFile)) {
+    test("Tidak ada 'Sertifikat' sebagai label UI", () => fileNotContains(kompetensiFile, "Sertifikat"))
+    test("Tidak ada 'Bersertifikat' sebagai badge", () => fileNotContains(kompetensiFile, "Bersertifikat"))
   }
 
   // 8. Landing pages — no English UI terms

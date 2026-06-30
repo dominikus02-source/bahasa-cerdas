@@ -1,0 +1,1723 @@
+{
+  "meta": {
+    "product": "UKBI_PRACTICE",
+    "track": "UKBI_GURU",
+    "section": "membaca",
+    "set": "set-002",
+    "totalItems": 45,
+    "totalPassages": 9,
+    "source": "BC_UKBI_GURU_ORIGINAL"
+  },
+  "questions": [
+    {
+      "id": "BC-UKBI-GURU-MEMBACA-MADYA-SET002-Q001",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_GURU",
+      "section": "membaca",
+      "band": "MADYA",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "passage": "Penerapan Kurikulum Merdeka di sekolah-sekolah Indonesia telah berlangsung secara bertahap sejak tahun 2022. Kurikulum ini memberikan fleksibilitas kepada guru untuk mengembangkan pembelajaran yang sesuai dengan konteks dan kebutuhan peserta didik. Struktur kurikulum berbasis pada projek penguatan Profil Pelajar Pancasila yang menjadi ciri khas utama. Dalam implementasinya, guru diberikan kebebasan untuk memilih, memodifikasi, atau mengembangkan perangkat ajar yang tersedia di platform Merdeka Mengajar. Kepala sekolah berperan sebagai pemimpin pembelajaran yang mendorong kolaborasi antarguru dalam merancang kegiatan projek. Meskipun demikian, tantangan masih muncul terutama dalam hal kesiapan guru dalam merancang asesmen yang autentik dan bermakna. Oleh karena itu, pemerintah terus mengadakan pelatihan dan pendampingan bagi guru di berbagai daerah. Evaluasi berkala juga dilakukan untuk memastikan bahwa Kurikulum Merdeka benar-benar meningkatkan kualitas pembelajaran, bukan sekadar berganti nama tanpa perubahan substansial.",
+      "stem": "Ide pokok bacaan tersebut adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Pelatihan guru dalam menerapkan kurikulum baru"
+        },
+        {
+          "id": "B",
+          "text": "Penerapan Kurikulum Merdeka secara bertahap beserta fleksibilitas dan tantangannya"
+        },
+        {
+          "id": "C",
+          "text": "Peran kepala sekolah dalam mendorong kolaborasi guru"
+        },
+        {
+          "id": "D",
+          "text": "Platform Merdeka Mengajar sebagai sumber perangkat ajar"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Teks secara keseluruhan membahas penerapan Kurikulum Merdeka, fleksibilitas yang diberikan, peran kepala sekolah, tantangan, dan upaya pemerintah. Semua ini dirangkum dalam ide pokok tentang penerapan Kurikulum Merdeka secara bertahap beserta fleksibilitas dan tantangannya.",
+      "tags": [
+        "ide-pokok"
+      ],
+      "source": "BC_UKBI_GURU_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-GURU-MEMBACA-MADYA-SET002-Q002",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_GURU",
+      "section": "membaca",
+      "band": "MADYA",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "passage": "",
+      "stem": "Apa yang menjadi ciri khas utama struktur Kurikulum Merdeka?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Pembelajaran berbasis projek penguatan Profil Pelajar Pancasila"
+        },
+        {
+          "id": "B",
+          "text": "Penggunaan ujian nasional sebagai evaluasi akhir"
+        },
+        {
+          "id": "C",
+          "text": "Pembagian jurusan di tingkat SMA"
+        },
+        {
+          "id": "D",
+          "text": "Sistem kenaikan kelas otomatis"
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Teks menyebut 'Struktur kurikulum berbasis pada projek penguatan Profil Pelajar Pancasila yang menjadi ciri khas utama.'",
+      "tags": [
+        "informasi-tersurat"
+      ],
+      "source": "BC_UKBI_GURU_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-GURU-MEMBACA-MADYA-SET002-Q003",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_GURU",
+      "section": "membaca",
+      "band": "MADYA",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "passage": "",
+      "stem": "Di mana guru dapat mengakses perangkat ajar yang tersedia menurut teks?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Perpustakaan sekolah"
+        },
+        {
+          "id": "B",
+          "text": "Portal Kemendikbudristek"
+        },
+        {
+          "id": "C",
+          "text": "Platform Merdeka Mengajar"
+        },
+        {
+          "id": "D",
+          "text": "Aplikasi rapor digital"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "Teks menyebut 'guru diberikan kebebasan untuk memilih, memodifikasi, atau mengembangkan perangkat ajar yang tersedia di platform Merdeka Mengajar.'",
+      "tags": [
+        "informasi-tersurat"
+      ],
+      "source": "BC_UKBI_GURU_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-GURU-MEMBACA-UNGGUL-SET002-Q004",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_GURU",
+      "section": "membaca",
+      "band": "UNGGUL",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "passage": "",
+      "stem": "Berdasarkan teks, dapat disimpulkan bahwa tantangan utama implementasi Kurikulum Merdeka adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Kurangnya dana operasional sekolah"
+        },
+        {
+          "id": "B",
+          "text": "Rendahnya partisipasi orang tua murid"
+        },
+        {
+          "id": "C",
+          "text": "Kesiapan guru dalam merancang asesmen autentik dan bermakna"
+        },
+        {
+          "id": "D",
+          "text": "Keterbatasan sarana prasarana di daerah terpencil"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "Teks menyebut 'tantangan masih muncul terutama dalam hal kesiapan guru dalam merancang asesmen yang autentik dan bermakna.' Ini menunjukkan bahwa kesiapan guru dalam asesmen merupakan tantangan utama yang disebut secara eksplisit.",
+      "tags": [
+        "inferensi"
+      ],
+      "source": "BC_UKBI_GURU_ORIGINAL",
+      "status": "approved",
+      "cognitive": "ANALISIS",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-GURU-MEMBACA-SANGATUNGGUL-SET002-Q005",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_GURU",
+      "section": "membaca",
+      "band": "SANGATUNGGUL",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "passage": "",
+      "stem": "Tujuan penulis dalam bacaan tersebut adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Mengkritik kebijakan Kurikulum Merdeka yang terlalu membebani guru"
+        },
+        {
+          "id": "B",
+          "text": "Memaparkan implementasi Kurikulum Merdeka secara objektif beserta dukungan dan tantangannya"
+        },
+        {
+          "id": "C",
+          "text": "Membandingkan Kurikulum Merdeka dengan kurikulum sebelumnya"
+        },
+        {
+          "id": "D",
+          "text": "Menganjurkan sekolah untuk menunda penerapan Kurikulum Merdeka"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Teks bersifat informatif dan deskriptif: menjelaskan implementasi, fleksibilitas, peran kepala sekolah, platform, tantangan, serta upaya pemerintah. Penulis tidak mengkritik, membandingkan secara mendalam, atau menganjurkan penundaan, melainkan memaparkan fakta secara objektif.",
+      "tags": [
+        "tujuan-penulis"
+      ],
+      "source": "BC_UKBI_GURU_ORIGINAL",
+      "status": "approved",
+      "cognitive": "ANALISIS",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-GURU-MEMBACA-MADYA-SET002-Q006",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_GURU",
+      "section": "membaca",
+      "band": "MADYA",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "passage": "Pembelajaran aktif (active learning) merupakan pendekatan yang menempatkan siswa sebagai subjek pembelajaran, bukan objek yang pasif menerima informasi. Metode ini mendorong siswa untuk terlibat langsung dalam proses belajar melalui diskusi, praktik, pemecahan masalah, dan refleksi. Beberapa metode pembelajaran aktif yang populer antara lain problem-based learning (PBL), project-based learning (PjBL), discovery learning, dan cooperative learning. Dalam PBL, siswa dihadapkan pada masalah nyata yang harus dipecahkan secara berkelompok. Sementara itu, PjBL menekankan pada penciptaan produk atau karya sebagai hasil pembelajaran. Discovery learning mengajak siswa menemukan konsep melalui eksperimen dan eksplorasi. Cooperative learning membagi siswa dalam kelompok kecil untuk mencapai tujuan bersama. Pemilihan metode harus disesuaikan dengan karakteristik materi, tujuan pembelajaran, dan profil siswa. Guru yang efektif mampu mengombinasikan berbagai metode secara fleksibel untuk menciptakan pengalaman belajar yang bermakna.",
+      "stem": "Ide pokok bacaan tersebut adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Perbedaan problem-based learning dan project-based learning"
+        },
+        {
+          "id": "B",
+          "text": "Pembelajaran aktif sebagai pendekatan yang menempatkan siswa sebagai subjek dengan berbagai metode"
+        },
+        {
+          "id": "C",
+          "text": "Keunggulan cooperative learning dibanding metode lain"
+        },
+        {
+          "id": "D",
+          "text": "Cara guru memilih metode pembelajaran yang tepat"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Teks membahas pembelajaran aktif secara umum, definisinya, dan berbagai metodenya secara keseluruhan, bukan hanya satu aspek tertentu.",
+      "tags": [
+        "ide-pokok"
+      ],
+      "source": "BC_UKBI_GURU_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-GURU-MEMBACA-MADYA-SET002-Q007",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_GURU",
+      "section": "membaca",
+      "band": "MADYA",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "passage": "",
+      "stem": "Apa yang menjadi ciri pembelajaran aktif menurut teks?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Guru menjelaskan materi dengan ceramah"
+        },
+        {
+          "id": "B",
+          "text": "Siswa mencatat penjelasan guru"
+        },
+        {
+          "id": "C",
+          "text": "Siswa terlibat langsung dalam proses belajar"
+        },
+        {
+          "id": "D",
+          "text": "Guru menjadi satu-satunya sumber belajar"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "Teks menyebut 'Metode ini mendorong siswa untuk terlibat langsung dalam proses belajar melalui diskusi, praktik, pemecahan masalah, dan refleksi.'",
+      "tags": [
+        "informasi-tersurat"
+      ],
+      "source": "BC_UKBI_GURU_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-GURU-MEMBACA-MADYA-SET002-Q008",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_GURU",
+      "section": "membaca",
+      "band": "MADYA",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "passage": "",
+      "stem": "Metode pembelajaran yang menekankan pada penciptaan produk atau karya disebut ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Problem-based learning"
+        },
+        {
+          "id": "B",
+          "text": "Discovery learning"
+        },
+        {
+          "id": "C",
+          "text": "Cooperative learning"
+        },
+        {
+          "id": "D",
+          "text": "Project-based learning"
+        }
+      ],
+      "correctAnswer": "D",
+      "explanation": "Teks menyebut 'PjBL menekankan pada penciptaan produk atau karya sebagai hasil pembelajaran.'",
+      "tags": [
+        "informasi-tersurat"
+      ],
+      "source": "BC_UKBI_GURU_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-GURU-MEMBACA-UNGGUL-SET002-Q009",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_GURU",
+      "section": "membaca",
+      "band": "UNGGUL",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "passage": "",
+      "stem": "Apa yang harus dipertimbangkan guru dalam memilih metode pembelajaran?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Popularitas metode di kalangan guru"
+        },
+        {
+          "id": "B",
+          "text": "Karakteristik materi, tujuan pembelajaran, dan profil siswa"
+        },
+        {
+          "id": "C",
+          "text": "Ketersediaan buku panduan"
+        },
+        {
+          "id": "D",
+          "text": "Biaya pelatihan yang murah"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Teks menyebut 'Pemilihan metode harus disesuaikan dengan karakteristik materi, tujuan pembelajaran, dan profil siswa.'",
+      "tags": [
+        "informasi-tersurat"
+      ],
+      "source": "BC_UKBI_GURU_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-GURU-MEMBACA-UNGGUL-SET002-Q010",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_GURU",
+      "section": "membaca",
+      "band": "UNGGUL",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "passage": "",
+      "stem": "Kata 'fleksibel' pada teks tersebut bermakna ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "kaku dan terikat aturan"
+        },
+        {
+          "id": "B",
+          "text": "tetap dan tidak berubah"
+        },
+        {
+          "id": "C",
+          "text": "luwes dan mudah menyesuaikan"
+        },
+        {
+          "id": "D",
+          "text": "terbatas pada satu pilihan"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "'Fleksibel' berarti luwes, mudah menyesuaikan diri, tidak kaku. Guru yang fleksibel mampu mengombinasikan metode sesuai kebutuhan, bukan terpaku pada satu cara.",
+      "tags": [
+        "makna-kata"
+      ],
+      "source": "BC_UKBI_GURU_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-GURU-MEMBACA-MADYA-SET002-Q011",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_GURU",
+      "section": "membaca",
+      "band": "MADYA",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "passage": "Pengembangan karakter peserta didik merupakan tanggung jawab yang melekat pada profesi guru, bukan sekadar tugas tambahan. Dalam kerangka Profil Pelajar Pancasila, terdapat enam dimensi karakter yang harus dikembangkan: beriman dan bertakwa kepada Tuhan Yang Maha Esa, berkebinekaan global, bergotong royong, mandiri, bernalar kritis, dan kreatif. Guru tidak hanya mengajarkan nilai-nilai tersebut secara teoretis, tetapi juga menjadi teladan dalam kehidupan sehari-hari di sekolah. Keteladanan guru memiliki dampak yang lebih kuat dibandingkan sekadar ceramah tentang moral. Seorang guru yang datang tepat waktu, berbicara sopan, dan menghargai perbedaan secara otomatis mengajarkan kedisiplinan, kesantunan, dan toleransi kepada siswa. Selain itu, guru juga perlu menciptakan lingkungan kelas yang mendukung internalisasi nilai-nilai karakter melalui pembiasaan, seperti kegiatan literasi pagi, gotong royong membersihkan kelas, dan diskusi reflektif. Pendidikan karakter bukanlah mata pelajaran terpisah, melainkan terintegrasi dalam setiap mata pelajaran dan kegiatan sekolah.",
+      "stem": "Berapa jumlah dimensi karakter dalam Profil Pelajar Pancasila yang disebutkan dalam teks?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Empat dimensi"
+        },
+        {
+          "id": "B",
+          "text": "Lima dimensi"
+        },
+        {
+          "id": "C",
+          "text": "Enam dimensi"
+        },
+        {
+          "id": "D",
+          "text": "Tujuh dimensi"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "Teks menyebut 'terdapat enam dimensi karakter yang harus dikembangkan: beriman, berkebinekaan global, bergotong royong, mandiri, bernalar kritis, dan kreatif.'",
+      "tags": [
+        "informasi-tersurat"
+      ],
+      "source": "BC_UKBI_GURU_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-GURU-MEMBACA-MADYA-SET002-Q012",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_GURU",
+      "section": "membaca",
+      "band": "MADYA",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "passage": "",
+      "stem": "Menurut teks, apa yang memiliki dampak lebih kuat dibandingkan ceramah tentang moral?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Buku pelajaran karakter"
+        },
+        {
+          "id": "B",
+          "text": "Keteladanan guru dalam kehidupan sehari-hari"
+        },
+        {
+          "id": "C",
+          "text": "Kegiatan ekstrakurikuler"
+        },
+        {
+          "id": "D",
+          "text": "Hukuman bagi siswa yang melanggar"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Teks menyebut 'Keteladanan guru memiliki dampak yang lebih kuat dibandingkan sekadar ceramah tentang moral.'",
+      "tags": [
+        "informasi-tersurat"
+      ],
+      "source": "BC_UKBI_GURU_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-GURU-MEMBACA-MADYA-SET002-Q013",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_GURU",
+      "section": "membaca",
+      "band": "MADYA",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "passage": "",
+      "stem": "Ide pokok paragraf tersebut adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Enam dimensi Profil Pelajar Pancasila"
+        },
+        {
+          "id": "B",
+          "text": "Keteladanan guru dalam membentuk karakter siswa"
+        },
+        {
+          "id": "C",
+          "text": "Peran guru dalam pengembangan karakter melalui keteladanan, pembiasaan, dan integrasi"
+        },
+        {
+          "id": "D",
+          "text": "Kegiatan literasi pagi sebagai pembiasaan karakter"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "Teks membahas peran guru dalam pengembangan karakter secara menyeluruh: sebagai teladan, melalui pembiasaan, dan integrasi dalam setiap mata pelajaran dan kegiatan sekolah.",
+      "tags": [
+        "ide-pokok"
+      ],
+      "source": "BC_UKBI_GURU_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-GURU-MEMBACA-UNGGUL-SET002-Q014",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_GURU",
+      "section": "membaca",
+      "band": "UNGGUL",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "passage": "",
+      "stem": "Kata 'internalisasi' dalam teks tersebut bermakna ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "penghafalan nilai-nilai tanpa pemahaman"
+        },
+        {
+          "id": "B",
+          "text": "pemaksaan nilai dari luar"
+        },
+        {
+          "id": "C",
+          "text": "penghayatan dan penanaman nilai secara mendalam dalam diri"
+        },
+        {
+          "id": "D",
+          "text": "penilaian terhadap pencapaian nilai"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "'Internalisasi' berarti proses penghayatan dan penanaman nilai, sikap, atau norma ke dalam diri seseorang sehingga menjadi bagian dari kepribadiannya, bukan sekadar hafalan atau paksaan.",
+      "tags": [
+        "makna-kata"
+      ],
+      "source": "BC_UKBI_GURU_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-GURU-MEMBACA-SANGATUNGGUL-SET002-Q015",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_GURU",
+      "section": "membaca",
+      "band": "SANGATUNGGUL",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "passage": "",
+      "stem": "Simpulan yang tepat berdasarkan teks adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Pendidikan karakter harus diajarkan sebagai mata pelajaran khusus"
+        },
+        {
+          "id": "B",
+          "text": "Pendidikan karakter hanya efektif jika guru menjadi teladan yang baik"
+        },
+        {
+          "id": "C",
+          "text": "Pengembangan karakter merupakan tanggung jawab guru yang terintegrasi dalam seluruh aspek kehidupan sekolah"
+        },
+        {
+          "id": "D",
+          "text": "Karakter siswa hanya terbentuk melalui kegiatan ekstrakurikuler"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "Teks menyatakan pendidikan karakter adalah tanggung jawab guru, dilakukan melalui keteladanan, pembiasaan, dan terintegrasi dalam setiap mata pelajaran dan kegiatan sekolah. Simpulan yang tepat adalah bahwa pengembangan karakter bersifat holistik dan terintegrasi.",
+      "tags": [
+        "simpulan"
+      ],
+      "source": "BC_UKBI_GURU_ORIGINAL",
+      "status": "approved",
+      "cognitive": "ANALISIS",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-GURU-MEMBACA-MADYA-SET002-Q016",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_GURU",
+      "section": "membaca",
+      "band": "MADYA",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "passage": "Portofolio sebagai alat evaluasi pembelajaran merupakan kumpulan karya siswa yang disusun secara sistematis untuk menunjukkan perkembangan belajar dalam periode tertentu. Berbeda dengan tes tertulis yang hanya mengukur hasil akhir, portofolio memberikan gambaran utuh tentang proses belajar siswa. Portofolio dapat berupa kumpulan tugas, proyek, jurnal refleksi, catatan observasi, dan hasil penilaian diri. Dalam penggunaannya, guru perlu menentukan tujuan portofolio, jenis karya yang akan dikumpulkan, serta kriteria penilaian yang jelas. Portofolio juga mendorong siswa untuk melakukan refleksi terhadap karya mereka sendiri, sehingga mengembangkan kemampuan metakognitif. Kelebihan portofolio antara lain: menilai kemampuan autentik, menghargai proses, dan memberikan umpan balik yang kaya. Namun, portofolio membutuhkan waktu dan pengelolaan yang cermat. Guru harus menyediakan waktu untuk membimbing siswa dalam memilih karya terbaik dan memberikan umpan balik yang konstruktif. Tantangan lainnya adalah konsistensi penilaian karena sifat portofolio yang sangat kontekstual.",
+      "stem": "Pokok bahasan dalam bacaan tersebut adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Perbedaan portofolio dan tes tertulis"
+        },
+        {
+          "id": "B",
+          "text": "Portofolio sebagai alat evaluasi pembelajaran yang autentik dan komprehensif"
+        },
+        {
+          "id": "C",
+          "text": "Cara menyusun portofolio siswa"
+        },
+        {
+          "id": "D",
+          "text": "Kelemahan portofolio dalam penilaian"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Teks membahas portofolio sebagai alat evaluasi, definisi, isi, cara penggunaan, kelebihan, dan tantangannya secara komprehensif.",
+      "tags": [
+        "ide-pokok"
+      ],
+      "source": "BC_UKBI_GURU_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-GURU-MEMBACA-MADYA-SET002-Q017",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_GURU",
+      "section": "membaca",
+      "band": "MADYA",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "passage": "",
+      "stem": "Apa perbedaan utama portofolio dengan tes tertulis menurut teks?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Portofolio lebih mudah dinilai"
+        },
+        {
+          "id": "B",
+          "text": "Portofolio mengukur hasil akhir, tes tertulis mengukur proses"
+        },
+        {
+          "id": "C",
+          "text": "Portofolio memberikan gambaran proses belajar, tes tertulis hanya mengukur hasil akhir"
+        },
+        {
+          "id": "D",
+          "text": "Portofolio hanya digunakan untuk mata pelajaran seni"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "Teks menyebut 'Berbeda dengan tes tertulis yang hanya mengukur hasil akhir, portofolio memberikan gambaran utuh tentang proses belajar siswa.'",
+      "tags": [
+        "informasi-tersurat"
+      ],
+      "source": "BC_UKBI_GURU_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-GURU-MEMBACA-MADYA-SET002-Q018",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_GURU",
+      "section": "membaca",
+      "band": "MADYA",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "passage": "",
+      "stem": "Kemampuan apa yang dikembangkan melalui portofolio menurut teks?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Kemampuan kognitif tingkat dasar"
+        },
+        {
+          "id": "B",
+          "text": "Kemampuan metakognitif"
+        },
+        {
+          "id": "C",
+          "text": "Kemampuan motorik halus"
+        },
+        {
+          "id": "D",
+          "text": "Kemampuan sosial emosional"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Teks menyebut 'Portofolio juga mendorong siswa untuk melakukan refleksi terhadap karya mereka sendiri, sehingga mengembangkan kemampuan metakognitif.'",
+      "tags": [
+        "informasi-tersurat"
+      ],
+      "source": "BC_UKBI_GURU_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-GURU-MEMBACA-UNGGUL-SET002-Q019",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_GURU",
+      "section": "membaca",
+      "band": "UNGGUL",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "passage": "",
+      "stem": "Berdasarkan teks, dapat disimpulkan bahwa portofolio lebih cocok digunakan untuk ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Menghitung nilai akhir semester dengan cepat"
+        },
+        {
+          "id": "B",
+          "text": "Memantau perkembangan belajar siswa secara menyeluruh dan berkelanjutan"
+        },
+        {
+          "id": "C",
+          "text": "Membandingkan prestasi antarsiswa dalam satu kelas"
+        },
+        {
+          "id": "D",
+          "text": "Menentukan kelulusan siswa secara objektif"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Portofolio memberikan gambaran proses belajar, mendorong refleksi, dan menghargai proses. Ini menunjukkan portofolio cocok untuk memantau perkembangan secara menyeluruh dan berkelanjutan.",
+      "tags": [
+        "inferensi"
+      ],
+      "source": "BC_UKBI_GURU_ORIGINAL",
+      "status": "approved",
+      "cognitive": "ANALISIS",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-GURU-MEMBACA-UNGGUL-SET002-Q020",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_GURU",
+      "section": "membaca",
+      "band": "UNGGUL",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "passage": "",
+      "stem": "Tujuan penulis menulis bacaan tersebut adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Mengajak guru beralih sepenuhnya ke penilaian portofolio"
+        },
+        {
+          "id": "B",
+          "text": "Memaparkan konsep, kelebihan, dan tantangan portofolio sebagai alat evaluasi"
+        },
+        {
+          "id": "C",
+          "text": "Membandingkan efektivitas portofolio di berbagai mata pelajaran"
+        },
+        {
+          "id": "D",
+          "text": "Mengkritik penggunaan tes tertulis dalam pendidikan"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Penulis menjelaskan definisi portofolio, kelebihannya, cara penggunaannya, dan tantangannya secara seimbang, tanpa mengajak beralih sepenuhnya atau mengkritik tes tertulis.",
+      "tags": [
+        "tujuan-penulis"
+      ],
+      "source": "BC_UKBI_GURU_ORIGINAL",
+      "status": "approved",
+      "cognitive": "ANALISIS",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-GURU-MEMBACA-MADYA-SET002-Q021",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_GURU",
+      "section": "membaca",
+      "band": "MADYA",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "passage": "Perkembangan teknologi informasi telah membawa perubahan signifikan dalam administrasi pendidikan di Indonesia. Sistem informasi manajemen sekolah, seperti Dapodik dan e-Rapor, kini menjadi tulang punggung pengelolaan data pendidikan. Guru tidak hanya dituntut mengajar, tetapi juga menguasai berbagai platform digital untuk administrasi pembelajaran, termasuk pengisian jurnal mengajar, input nilai, absensi digital, dan laporan hasil belajar. Platform Merdeka Mengajar juga menyediakan berbagai perangkat ajar dan materi pelatihan yang dapat diakses kapan saja. Namun, tantangan digital divide masih nyata. Tidak semua guru memiliki literasi digital yang memadai, terutama di daerah terpencil. Koneksi internet yang tidak stabil dan keterbatasan perangkat menjadi hambatan serius. Oleh karena itu, diperlukan pendekatan yang humanis dalam transformasi digital pendidikan: pelatihan bertahap, pendampingan berkelanjutan, dan penyediaan infrastruktur yang merata. Pemerintah melalui Kemendikbudristek terus berupaya menjembatani kesenjangan ini melalui program-program afirmasi.",
+      "stem": "Apa yang menjadi tulang punggung pengelolaan data pendidikan menurut teks?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Google Classroom dan Zoom"
+        },
+        {
+          "id": "B",
+          "text": "Dapodik dan e-Rapor"
+        },
+        {
+          "id": "C",
+          "text": "WhatsApp dan Telegram"
+        },
+        {
+          "id": "D",
+          "text": "Aplikasi media sosial"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Teks menyebut 'Sistem informasi manajemen sekolah, seperti Dapodik dan e-Rapor, kini menjadi tulang punggung pengelolaan data pendidikan.'",
+      "tags": [
+        "informasi-tersurat"
+      ],
+      "source": "BC_UKBI_GURU_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-GURU-MEMBACA-MADYA-SET002-Q022",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_GURU",
+      "section": "membaca",
+      "band": "MADYA",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "passage": "",
+      "stem": "Ide pokok bacaan tersebut adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Tantangan digital divide dalam pendidikan"
+        },
+        {
+          "id": "B",
+          "text": "Perubahan administrasi pendidikan melalui teknologi dan tantangan yang menyertainya"
+        },
+        {
+          "id": "C",
+          "text": "Program afirmasi pemerintah untuk daerah terpencil"
+        },
+        {
+          "id": "D",
+          "text": "Platform Merdeka Mengajar sebagai solusi administrasi"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Teks membahas perubahan administrasi pendidikan melalui teknologi, platform yang digunakan, dan tantangan digital divide secara keseluruhan.",
+      "tags": [
+        "ide-pokok"
+      ],
+      "source": "BC_UKBI_GURU_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-GURU-MEMBACA-MADYA-SET002-Q023",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_GURU",
+      "section": "membaca",
+      "band": "MADYA",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "passage": "",
+      "stem": "Apa yang menjadi hambatan serius dalam transformasi digital pendidikan menurut teks?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Kurangnya minat guru terhadap teknologi"
+        },
+        {
+          "id": "B",
+          "text": "Koneksi internet tidak stabil dan keterbatasan perangkat"
+        },
+        {
+          "id": "C",
+          "text": "Mahalnya biaya pelatihan"
+        },
+        {
+          "id": "D",
+          "text": "Sistem Dapodik yang rumit"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Teks menyebut 'Koneksi internet yang tidak stabil dan keterbatasan perangkat menjadi hambatan serius.'",
+      "tags": [
+        "informasi-tersurat"
+      ],
+      "source": "BC_UKBI_GURU_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-GURU-MEMBACA-UNGGUL-SET002-Q024",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_GURU",
+      "section": "membaca",
+      "band": "UNGGUL",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "passage": "",
+      "stem": "Istilah 'digital divide' dalam teks tersebut mengacu pada ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Persaingan antarsekolah dalam penggunaan teknologi"
+        },
+        {
+          "id": "B",
+          "text": "Kesenjangan akses dan kemampuan teknologi antara kelompok masyarakat"
+        },
+        {
+          "id": "C",
+          "text": "Pembagian perangkat digital secara merata"
+        },
+        {
+          "id": "D",
+          "text": "Pemutusan hubungan internet di sekolah"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "'Digital divide' atau kesenjangan digital merujuk pada ketimpangan akses dan kemampuan menggunakan teknologi informasi antara kelompok masyarakat, misalnya antara daerah maju dan terpencil.",
+      "tags": [
+        "makna-kata"
+      ],
+      "source": "BC_UKBI_GURU_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-GURU-MEMBACA-SANGATUNGGUL-SET002-Q025",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_GURU",
+      "section": "membaca",
+      "band": "SANGATUNGGUL",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "passage": "",
+      "stem": "Simpulan yang paling tepat dari bacaan tersebut adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Transformasi digital administrasi pendidikan telah berhasil sepenuhnya"
+        },
+        {
+          "id": "B",
+          "text": "Keberhasilan transformasi digital membutuhkan pendekatan humanis yang meliputi pelatihan, pendampingan, dan pemerataan infrastruktur"
+        },
+        {
+          "id": "C",
+          "text": "Guru harus menguasai semua platform digital agar dapat mengajar"
+        },
+        {
+          "id": "D",
+          "text": "Pemerintah harus mengganti seluruh sistem administrasi manual dengan digital"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Teks menyebut tantangan digital divide dan solusinya: pendekatan humanis dengan pelatihan bertahap, pendampingan berkelanjutan, dan infrastruktur merata. Ini merupakan simpulan yang komprehensif dari isi bacaan.",
+      "tags": [
+        "simpulan"
+      ],
+      "source": "BC_UKBI_GURU_ORIGINAL",
+      "status": "approved",
+      "cognitive": "ANALISIS",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-GURU-MEMBACA-MADYA-SET002-Q026",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_GURU",
+      "section": "membaca",
+      "band": "MADYA",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "passage": "Gerakan Literasi Sekolah (GLS) telah dicanangkan pemerintah sebagai upaya membangun budaya membaca dan menulis di lingkungan pendidikan. Strategi GLS mencakup tiga tahap: pembiasaan, pengembangan, dan pembelajaran. Tahap pembiasaan dilakukan melalui kegiatan membaca 15 menit sebelum pelajaran dimulai. Tahap pengembangan menekankan pada kegiatan menanggapi buku bacaan melalui diskusi, resensi, atau buku harian membaca. Tahap pembelajaran memanfaatkan buku bacaan sebagai sumber belajar dalam mata pelajaran. Keberhasilan GLS sangat bergantung pada ketersediaan bahan bacaan yang menarik dan beragam. Sekolah perlu menyediakan perpustakaan yang nyaman, sudut baca di setiap kelas, dan pojok literasi digital. Guru juga berperan sebagai model literasi dengan menunjukkan kebiasaan membaca dan menulis di hadapan siswa. Tantangan yang dihadapi antara lain rendahnya minat baca siswa akibat gawai, terbatasnya koleksi buku nonteks, dan kurangnya keterlibatan orang tua dalam mendukung literasi di rumah. Kolaborasi antara sekolah, keluarga, dan masyarakat menjadi kunci keberhasilan peningkatan literasi.",
+      "stem": "Pokok bahasan dalam bacaan tersebut adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Tiga tahap Gerakan Literasi Sekolah"
+        },
+        {
+          "id": "B",
+          "text": "Strategi peningkatan literasi melalui GLS beserta faktor pendukung dan tantangannya"
+        },
+        {
+          "id": "C",
+          "text": "Peran guru sebagai model literasi"
+        },
+        {
+          "id": "D",
+          "text": "Kolaborasi sekolah, keluarga, dan masyarakat"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Teks membahas GLS secara menyeluruh: tahapan, faktor pendukung, peran guru, tantangan, dan kolaborasi yang diperlukan.",
+      "tags": [
+        "ide-pokok"
+      ],
+      "source": "BC_UKBI_GURU_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-GURU-MEMBACA-MADYA-SET002-Q027",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_GURU",
+      "section": "membaca",
+      "band": "MADYA",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "passage": "",
+      "stem": "Berapa lama waktu membaca yang dilakukan pada tahap pembiasaan GLS?",
+      "options": [
+        {
+          "id": "A",
+          "text": "10 menit"
+        },
+        {
+          "id": "B",
+          "text": "15 menit"
+        },
+        {
+          "id": "C",
+          "text": "20 menit"
+        },
+        {
+          "id": "D",
+          "text": "30 menit"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Teks menyebut 'Tahap pembiasaan dilakukan melalui kegiatan membaca 15 menit sebelum pelajaran dimulai.'",
+      "tags": [
+        "informasi-tersurat"
+      ],
+      "source": "BC_UKBI_GURU_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-GURU-MEMBACA-MADYA-SET002-Q028",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_GURU",
+      "section": "membaca",
+      "band": "MADYA",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "passage": "",
+      "stem": "Kegiatan pada tahap pengembangan GLS menekankan pada ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Membaca dalam hati"
+        },
+        {
+          "id": "B",
+          "text": "Menulis puisi bebas"
+        },
+        {
+          "id": "C",
+          "text": "Menanggapi buku bacaan melalui diskusi, resensi, atau buku harian membaca"
+        },
+        {
+          "id": "D",
+          "text": "Membaca buku pelajaran"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "Teks menyebut 'Tahap pengembangan menekankan pada kegiatan menanggapi buku bacaan melalui diskusi, resensi, atau buku harian membaca.'",
+      "tags": [
+        "informasi-tersurat"
+      ],
+      "source": "BC_UKBI_GURU_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-GURU-MEMBACA-UNGGUL-SET002-Q029",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_GURU",
+      "section": "membaca",
+      "band": "UNGGUL",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "passage": "",
+      "stem": "Berdasarkan teks, faktor yang paling mempengaruhi keberhasilan GLS adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Anggaran sekolah yang besar"
+        },
+        {
+          "id": "B",
+          "text": "Ketersediaan bahan bacaan menarik dan peran aktif guru sebagai model literasi"
+        },
+        {
+          "id": "C",
+          "text": "Jumlah jam pelajaran bahasa Indonesia"
+        },
+        {
+          "id": "D",
+          "text": "Dukungan pemerintah pusat"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Teks menyebut 'Keberhasilan GLS sangat bergantung pada ketersediaan bahan bacaan yang menarik dan beragam' dan 'Guru juga berperan sebagai model literasi.' Kedua faktor ini disebut secara eksplisit sebagai penentu keberhasilan.",
+      "tags": [
+        "inferensi"
+      ],
+      "source": "BC_UKBI_GURU_ORIGINAL",
+      "status": "approved",
+      "cognitive": "ANALISIS",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-GURU-MEMBACA-UNGGUL-SET002-Q030",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_GURU",
+      "section": "membaca",
+      "band": "UNGGUL",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "passage": "",
+      "stem": "Penulis menyebut tantangan literasi di bagian akhir dengan tujuan ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Menunjukkan bahwa GLS tidak efektif"
+        },
+        {
+          "id": "B",
+          "text": "Memberikan gambaran realistis bahwa upaya peningkatan literasi masih menghadapi hambatan yang perlu diatasi bersama"
+        },
+        {
+          "id": "C",
+          "text": "Menyalahkan orang tua yang tidak mendukung literasi"
+        },
+        {
+          "id": "D",
+          "text": "Mengusulkan penghapusan program GLS"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Penulis memaparkan tantangan secara faktual, bukan untuk mengkritik program, melainkan untuk menunjukkan bahwa masih ada hambatan yang perlu diatasi secara kolaboratif antara sekolah, keluarga, dan masyarakat.",
+      "tags": [
+        "tujuan-penulis"
+      ],
+      "source": "BC_UKBI_GURU_ORIGINAL",
+      "status": "approved",
+      "cognitive": "ANALISIS",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-GURU-MEMBACA-MADYA-SET002-Q031",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_GURU",
+      "section": "membaca",
+      "band": "MADYA",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "passage": "Manajemen kelas merupakan keterampilan esensial yang harus dikuasai setiap guru. Manajemen kelas yang efektif bukan sekadar mengatur tempat duduk dan menjaga ketenangan, melainkan menciptakan lingkungan belajar yang kondusif, aman, dan menyenangkan. Guru perlu menetapkan rutinitas dan prosedur kelas secara konsisten agar siswa memahami apa yang diharapkan dari mereka. Pencegahan perilaku disruptif lebih efektif daripada hukuman. Strategi pencegahan meliputi: membangun hubungan positif dengan siswa, memberikan instruksi yang jelas, menggunakan variasi metode mengajar, dan memberikan umpan balik yang membangun. Guru juga perlu peka terhadap kebutuhan individual siswa, karena sering kali perilaku bermasalah disebabkan oleh faktor eksternal seperti kelelahan, masalah keluarga, atau kesulitan belajar. Pendekatan restoratif lebih dianjurkan daripada pendekatan punitif dalam menyelesaikan konflik di kelas. Dengan manajemen kelas yang baik, waktu pembelajaran dapat dimanfaatkan secara optimal dan prestasi akademik siswa pun meningkat.",
+      "stem": "Menurut teks, apa yang lebih efektif daripada hukuman dalam manajemen kelas?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Teguran keras"
+        },
+        {
+          "id": "B",
+          "text": "Pencegahan perilaku disruptif"
+        },
+        {
+          "id": "C",
+          "text": "Pengurangan nilai"
+        },
+        {
+          "id": "D",
+          "text": "Panggilan orang tua"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Teks menyebut 'Pencegahan perilaku disruptif lebih efektif daripada hukuman.'",
+      "tags": [
+        "informasi-tersurat"
+      ],
+      "source": "BC_UKBI_GURU_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-GURU-MEMBACA-MADYA-SET002-Q032",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_GURU",
+      "section": "membaca",
+      "band": "MADYA",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "passage": "",
+      "stem": "Pendekatan apa yang dianjurkan dalam menyelesaikan konflik di kelas menurut teks?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Pendekatan punitif"
+        },
+        {
+          "id": "B",
+          "text": "Pendekatan restoratif"
+        },
+        {
+          "id": "C",
+          "text": "Pendekatan otoriter"
+        },
+        {
+          "id": "D",
+          "text": "Pendekatan liberal"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Teks menyebut 'Pendekatan restoratif lebih dianjurkan daripada pendekatan punitif dalam menyelesaikan konflik di kelas.'",
+      "tags": [
+        "informasi-tersurat"
+      ],
+      "source": "BC_UKBI_GURU_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-GURU-MEMBACA-MADYA-SET002-Q033",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_GURU",
+      "section": "membaca",
+      "band": "MADYA",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "passage": "",
+      "stem": "Ide pokok bacaan tersebut adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Cara mengatur tempat duduk siswa"
+        },
+        {
+          "id": "B",
+          "text": "Strategi pencegahan perilaku disruptif"
+        },
+        {
+          "id": "C",
+          "text": "Manajemen kelas yang efektif untuk menciptakan lingkungan belajar kondusif"
+        },
+        {
+          "id": "D",
+          "text": "Perbedaan pendekatan restoratif dan punitif"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "Teks secara umum membahas manajemen kelas efektif yang mencakup rutinitas, pencegahan, strategi, dan pendekatan dalam menciptakan lingkungan belajar yang kondusif.",
+      "tags": [
+        "ide-pokok"
+      ],
+      "source": "BC_UKBI_GURU_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-GURU-MEMBACA-UNGGUL-SET002-Q034",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_GURU",
+      "section": "membaca",
+      "band": "UNGGUL",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "passage": "",
+      "stem": "Kata 'disruptif' pada teks tersebut bermakna ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "perilaku yang patuh dan tertib"
+        },
+        {
+          "id": "B",
+          "text": "perilaku yang mengganggu atau merusak proses pembelajaran"
+        },
+        {
+          "id": "C",
+          "text": "perilaku yang kreatif dan inovatif"
+        },
+        {
+          "id": "D",
+          "text": "perilaku yang mandiri dan aktif"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "'Disruptif' berarti bersifat mengganggu atau merusak. Perilaku disruptif di kelas adalah perilaku yang mengganggu jalannya proses pembelajaran, melanggar ketertiban, atau menghambat pencapaian tujuan pembelajaran.",
+      "tags": [
+        "makna-kata"
+      ],
+      "source": "BC_UKBI_GURU_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-GURU-MEMBACA-SANGATUNGGUL-SET002-Q035",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_GURU",
+      "section": "membaca",
+      "band": "SANGATUNGGUL",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "passage": "",
+      "stem": "Berdasarkan teks, simpulan yang tepat tentang manajemen kelas yang efektif adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Manajemen kelas hanya diperlukan untuk kelas yang bermasalah"
+        },
+        {
+          "id": "B",
+          "text": "Manajemen kelas efektif bersifat multidimensional: mencakup pencegahan, hubungan positif, dan pendekatan humanis"
+        },
+        {
+          "id": "C",
+          "text": "Manajemen kelas efektif berarti guru harus bersikap keras kepada siswa"
+        },
+        {
+          "id": "D",
+          "text": "Manajemen kelas efektif bergantung pada pengaturan fisik kelas"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Teks menunjukkan manajemen kelas efektif mencakup banyak aspek: rutinitas, pencegahan, hubungan positif dengan siswa, variasi metode, kepekaan terhadap kebutuhan individual, dan pendekatan restoratif. Ini menunjukkan sifat multidimensional dan humanis.",
+      "tags": [
+        "simpulan"
+      ],
+      "source": "BC_UKBI_GURU_ORIGINAL",
+      "status": "approved",
+      "cognitive": "ANALISIS",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-GURU-MEMBACA-MADYA-SET002-Q036",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_GURU",
+      "section": "membaca",
+      "band": "MADYA",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "passage": "Supervisi akademik merupakan upaya pembinaan yang dilakukan kepala sekolah atau pengawas untuk membantu guru mengembangkan kompetensi pedagogik, profesional, sosial, dan kepribadian secara berkelanjutan. Berbeda dengan evaluasi kinerja yang bersifat administratif, supervisi akademik berfokus pada peningkatan kualitas pembelajaran melalui siklus perencanaan, observasi, dan umpan balik reflektif. Dalam praktiknya, supervisi akademik dilakukan melalui kunjungan kelas, pertemuan individual, dan diskusi kelompok terfokus. Kepala sekolah berperan sebagai supervisor yang membangun dialog profesional dengan guru, bukan sebagai atasan yang menghakimi. Hasil supervisi digunakan sebagai dasar pengembangan profesi guru secara personal. Guru dapat mengidentifikasi area yang perlu ditingkatkan dan merencanakan pengembangan diri yang relevan. Pengembangan profesi guru tidak hanya terbatas pada pelatihan formal, tetapi juga melalui kegiatan komunitas belajar, penelitian tindakan kelas, publikasi ilmiah, dan berbagi praktik baik antarguru.",
+      "stem": "Pokok bahasan dalam bacaan tersebut adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Perbedaan supervisi akademik dan evaluasi kinerja"
+        },
+        {
+          "id": "B",
+          "text": "Supervisi akademik sebagai upaya pembinaan guru untuk pengembangan kompetensi berkelanjutan"
+        },
+        {
+          "id": "C",
+          "text": "Peran kepala sekolah dalam kunjungan kelas"
+        },
+        {
+          "id": "D",
+          "text": "Penelitian tindakan kelas sebagai pengembangan profesi"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Teks membahas supervisi akademik secara konseptual, tujuannya, pelaksanaannya, dan kaitannya dengan pengembangan profesi guru secara keseluruhan.",
+      "tags": [
+        "ide-pokok"
+      ],
+      "source": "BC_UKBI_GURU_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-GURU-MEMBACA-MADYA-SET002-Q037",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_GURU",
+      "section": "membaca",
+      "band": "MADYA",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "passage": "",
+      "stem": "Apa yang menjadi fokus supervisi akademik menurut teks?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Administrasi keuangan sekolah"
+        },
+        {
+          "id": "B",
+          "text": "Peningkatan kualitas pembelajaran"
+        },
+        {
+          "id": "C",
+          "text": "Kehadiran guru setiap hari"
+        },
+        {
+          "id": "D",
+          "text": "Kelengkapan perangkat mengajar"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Teks menyebut 'supervisi akademik berfokus pada peningkatan kualitas pembelajaran melalui siklus perencanaan, observasi, dan umpan balik reflektif.'",
+      "tags": [
+        "informasi-tersurat"
+      ],
+      "source": "BC_UKBI_GURU_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-GURU-MEMBACA-UNGGUL-SET002-Q038",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_GURU",
+      "section": "membaca",
+      "band": "UNGGUL",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "passage": "",
+      "stem": "Apa peran kepala sekolah dalam supervisi akademik menurut teks?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Sebagai atasan yang menghakimi guru"
+        },
+        {
+          "id": "B",
+          "text": "Sebagai supervisor yang membangun dialog profesional dengan guru"
+        },
+        {
+          "id": "C",
+          "text": "Sebagai penilai kinerja guru"
+        },
+        {
+          "id": "D",
+          "text": "Sebagai pengawas yang mencatat kekurangan guru"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Teks menyebut 'Kepala sekolah berperan sebagai supervisor yang membangun dialog profesional dengan guru, bukan sebagai atasan yang menghakimi.'",
+      "tags": [
+        "informasi-tersurat"
+      ],
+      "source": "BC_UKBI_GURU_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SOSIAL"
+    },
+    {
+      "id": "BC-UKBI-GURU-MEMBACA-UNGGUL-SET002-Q039",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_GURU",
+      "section": "membaca",
+      "band": "UNGGUL",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "passage": "",
+      "stem": "Berdasarkan teks, dapat disimpulkan bahwa supervisi akademik berbeda dengan evaluasi kinerja karena ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Supervisi akademik bersifat administratif"
+        },
+        {
+          "id": "B",
+          "text": "Supervisi akademik berfokus pada peningkatan kualitas, bukan penilaian administratif"
+        },
+        {
+          "id": "C",
+          "text": "Evaluasi kinerja dilakukan setiap hari"
+        },
+        {
+          "id": "D",
+          "text": "Supervisi akademik hanya dilakukan oleh pengawas"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Teks menyebut 'Berbeda dengan evaluasi kinerja yang bersifat administratif, supervisi akademik berfokus pada peningkatan kualitas pembelajaran.' Ini menunjukkan perbedaan mendasar pada fokus dan tujuannya.",
+      "tags": [
+        "inferensi"
+      ],
+      "source": "BC_UKBI_GURU_ORIGINAL",
+      "status": "approved",
+      "cognitive": "ANALISIS",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-GURU-MEMBACA-SANGATUNGGUL-SET002-Q040",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_GURU",
+      "section": "membaca",
+      "band": "SANGATUNGGUL",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "passage": "",
+      "stem": "Tujuan penulis dalam bacaan tersebut adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Mengkritik praktik supervisi akademik yang ada"
+        },
+        {
+          "id": "B",
+          "text": "Menjelaskan hakikat supervisi akademik sebagai pembinaan profesional yang berfokus pada peningkatan kualitas pembelajaran"
+        },
+        {
+          "id": "C",
+          "text": "Membandingkan supervisi akademik di berbagai negara"
+        },
+        {
+          "id": "D",
+          "text": "Mewajibkan semua guru untuk melakukan penelitian tindakan kelas"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Penulis menjelaskan definisi, fokus, metode, peran kepala sekolah, dan hasil supervisi akademik secara informatif dan objektif. Tujuannya adalah menjelaskan hakikat supervisi akademik, bukan mengkritik, membandingkan, atau mewajibkan sesuatu.",
+      "tags": [
+        "tujuan-penulis"
+      ],
+      "source": "BC_UKBI_GURU_ORIGINAL",
+      "status": "approved",
+      "cognitive": "ANALISIS",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-GURU-MEMBACA-MADYA-SET002-Q041",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_GURU",
+      "section": "membaca",
+      "band": "MADYA",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "passage": "Pendidikan inklusif merupakan sistem penyelenggaraan pendidikan yang memberikan kesempatan kepada semua peserta didik, termasuk anak berkebutuhan khusus (ABK), untuk belajar bersama dalam lingkungan yang sama. Prinsip dasarnya adalah tidak boleh ada diskriminasi dalam pendidikan. Setiap anak berhak mendapatkan pendidikan yang bermutu sesuai dengan potensi dan kebutuhannya. Implementasi pendidikan inklusif di Indonesia masih menghadapi berbagai tantangan. Kesiapan guru menjadi faktor utama, karena tidak semua guru memiliki kompetensi dalam menangani ABK di kelas reguler. Kurangnya guru pendamping khusus (GPK) dan terbatasnya sarana prasarana yang aksesibel juga menjadi kendala serius. Di sisi lain, pendidikan inklusif membuka peluang besar bagi tumbuhnya empati, toleransi, dan penghargaan terhadap keberagaman sejak dini. Siswa reguler belajar untuk memahami dan membantu teman-teman yang memiliki kebutuhan berbeda. Pendidikan inklusif juga mendorong sekolah untuk mengembangkan pendekatan pembelajaran yang lebih fleksibel dan humanis. Kolaborasi antara guru, orang tua, tenaga kesehatan, dan masyarakat menjadi kunci keberhasilan pendidikan inklusif.",
+      "stem": "Apa prinsip dasar pendidikan inklusif menurut teks?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Setiap anak harus belajar di sekolah khusus"
+        },
+        {
+          "id": "B",
+          "text": "Tidak boleh ada diskriminasi dalam pendidikan"
+        },
+        {
+          "id": "C",
+          "text": "ABK harus mendapat guru privat"
+        },
+        {
+          "id": "D",
+          "text": "Sekolah reguler tidak perlu menerima ABK"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Teks menyebut 'Prinsip dasarnya adalah tidak boleh ada diskriminasi dalam pendidikan.'",
+      "tags": [
+        "informasi-tersurat"
+      ],
+      "source": "BC_UKBI_GURU_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-GURU-MEMBACA-MADYA-SET002-Q042",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_GURU",
+      "section": "membaca",
+      "band": "MADYA",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "passage": "",
+      "stem": "Ide pokok bacaan tersebut adalah ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Tantangan implementasi pendidikan inklusif di Indonesia"
+        },
+        {
+          "id": "B",
+          "text": "Pengertian, prinsip, tantangan, dan peluang pendidikan inklusif di Indonesia"
+        },
+        {
+          "id": "C",
+          "text": "Peran guru pendamping khusus dalam pendidikan inklusif"
+        },
+        {
+          "id": "D",
+          "text": "Kolaborasi dalam keberhasilan pendidikan inklusif"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Teks membahas pengertian, prinsip, tantangan, peluang, dan faktor keberhasilan pendidikan inklusif secara komprehensif.",
+      "tags": [
+        "ide-pokok"
+      ],
+      "source": "BC_UKBI_GURU_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-GURU-MEMBACA-UNGGUL-SET002-Q043",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_GURU",
+      "section": "membaca",
+      "band": "UNGGUL",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "passage": "",
+      "stem": "Apa yang menjadi faktor utama dalam implementasi pendidikan inklusif menurut teks?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Anggaran sekolah yang memadai"
+        },
+        {
+          "id": "B",
+          "text": "Kesiapan guru dalam menangani ABK"
+        },
+        {
+          "id": "C",
+          "text": "Jumlah siswa dalam kelas"
+        },
+        {
+          "id": "D",
+          "text": "Lokasi sekolah yang strategis"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Teks menyebut 'Kesiapan guru menjadi faktor utama, karena tidak semua guru memiliki kompetensi dalam menangani ABK di kelas reguler.'",
+      "tags": [
+        "informasi-tersurat"
+      ],
+      "source": "BC_UKBI_GURU_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-GURU-MEMBACA-UNGGUL-SET002-Q044",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_GURU",
+      "section": "membaca",
+      "band": "UNGGUL",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "passage": "",
+      "stem": "Kata 'aksesibel' dalam teks tersebut bermakna ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "mahal dan sulit dijangkau"
+        },
+        {
+          "id": "B",
+          "text": "mudah diakses, digunakan, atau dimasuki oleh semua orang"
+        },
+        {
+          "id": "C",
+          "text": "bersifat sementara dan tidak permanen"
+        },
+        {
+          "id": "D",
+          "text": "dapat dipindahkan dengan mudah"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "'Aksesibel' berarti mudah diakses, dijangkau, atau digunakan, terutama oleh penyandang disabilitas. Sarana yang aksesibel adalah sarana yang ramah bagi semua pengguna termasuk ABK.",
+      "tags": [
+        "makna-kata"
+      ],
+      "source": "BC_UKBI_GURU_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-GURU-MEMBACA-UNGGUL-SET002-Q045",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_GURU",
+      "section": "membaca",
+      "band": "UNGGUL",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "passage": "",
+      "stem": "Berdasarkan teks, dapat disimpulkan bahwa keberhasilan pendidikan inklusif membutuhkan ...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Guru pendamping khusus yang bertugas menangani semua ABK"
+        },
+        {
+          "id": "B",
+          "text": "Kolaborasi antara guru, orang tua, tenaga kesehatan, dan masyarakat"
+        },
+        {
+          "id": "C",
+          "text": "Sekolah khusus yang terpisah untuk ABK"
+        },
+        {
+          "id": "D",
+          "text": "Anggaran besar dari pemerintah pusat"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Teks menyebut 'Kolaborasi antara guru, orang tua, tenaga kesehatan, dan masyarakat menjadi kunci keberhasilan pendidikan inklusif.' Pendekatan multisektor ini diperlukan karena ABK membutuhkan dukungan dari berbagai pihak, bukan hanya guru.",
+      "tags": [
+        "simpulan"
+      ],
+      "source": "BC_UKBI_GURU_ORIGINAL",
+      "status": "approved",
+      "cognitive": "ANALISIS",
+      "domain": "AKADEMIK"
+    }
+  ]
+}

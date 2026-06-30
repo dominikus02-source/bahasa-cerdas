@@ -157,6 +157,7 @@ const questions_paragraf: Question[] = [
   { id: "pg2", tipe: "benar_salah", soal: "Paragraf harus memiliki minimal 3 kalimat.", opsi: ["Benar", "Salah"], jawaban: "Salah", penjelasan: "Paragraf bisa terdiri dari satu kalimat (paragraf minimalis)." },
   { id: "pg3", tipe: "pilihan_ganda", soal: "Alur paragraf yang baik harus ...", opsi: ["runtut", "acak", "panjang", "rumit"], jawaban: 0, penjelasan: "Paragraf yang baik memiliki alur runtut dan logis." },
   { id: "pg4", tipe: "pilihan_ganda", soal: "Paragraf induktif memiliki kalimat utama di bagian ...", opsi: ["awal", "tengah", "akhir", "semua"], jawaban: 2, penjelasan: "Induktif: kalimat utama di akhir paragraf." },
+  { id: "enrich_paragraf_1", tipe: "pilihan_ganda", soal: "Ciri paragraf yang baik adalah setiap kalimat saling ...", opsi: ["berdiri sendiri", "berhubungan dan padu", "berlawanan makna", "mengulang kata yang sama"], jawaban: 1, penjelasan: "Paragraf yang baik memiliki kohesi dan koherensi: setiap kalimat berhubungan dan mendukung satu gagasan utama." },
 ]
 
 const questions_membaca: Question[] = [
@@ -172,12 +173,15 @@ const questions_menulis: Question[] = [
   { id: "mu2", tipe: "benar_salah", soal: "Judul harus singkat dan mewakili isi.", opsi: ["Benar", "Salah"], jawaban: "Benar", penjelasan: "Judul yang baik adalah yang singkat dan mencerminkan isi." },
   { id: "mu3", tipe: "pilihan_ganda", soal: "Kata yang sebaiknya dihindari dalam tulisan ringkas adalah ...", opsi: ["inti", "berlebihan", "penting", "ringkas"], jawaban: 1, penjelasan: "Kata berlebihan membuat tulisan tidak ringkas." },
   { id: "mu4", tipe: "pilihan_ganda", soal: "Pesan yang efektif harus ...", opsi: ["panjang dan detail", "jelas dan singkat", "rumit", "bertele-tele"], jawaban: 1, penjelasan: "Pesan efektif: jelas, singkat, dan mudah dipahami." },
+  { id: "enrich_menulis_1", tipe: "pilihan_ganda", soal: "Langkah pertama dalam membuat ringkasan adalah ...", opsi: ["menyalin semua kalimat", "membaca teks dengan saksama", "membuang kata sulit", "menambah ilustrasi"], jawaban: 1, penjelasan: "Sebelum meringkas, kita harus membaca teks dengan saksama untuk memahami isinya." },
 ]
 
 const questions_homonim: Question[] = [
   { id: "ho1", tipe: "pilihan_ganda", soal: "Kata 'bisa' memiliki arti ...", opsi: ["racun", "dapat", "racun dan dapat", "tidak bisa"], jawaban: 2, penjelasan: "'Bisa' berarti 'racun' (ular berbisa) dan 'dapat' (saya bisa)." },
   { id: "ho2", tipe: "pilihan_ganda", soal: "Kata 'kali' dalam 'sungai itu deras' berarti ...", opsi: ["sungai", "kali lipat", "sungai dan kali lipat", "pengali"], jawaban: 0, penjelasan: "'Kali' bisa berarti 'sungai' atau kata bilangan pengali." },
   { id: "ho3", tipe: "benar_salah", soal: "Homonim adalah kata yang sama bunyi tapi beda arti.", opsi: ["Benar", "Salah"], jawaban: "Benar", penjelasan: "Homonim: bunyi sama, ejaan sama, arti berbeda." },
+  { id: "enrich_homonim_1", tipe: "pilihan_ganda", soal: "Kata 'tahu' dalam kalimat 'Apakah kamu tahu alamatnya?' berarti ...", opsi: ["makanan dari kedelai", "mengerti atau kenal", "lupa ingatan", "sayuran hijau"], jawaban: 1, penjelasan: "'Tahu' di sini berarti mengerti/kenal, bukan makanan dari kedelai. Ini contoh homonim." },
+  { id: "enrich_homonim_2", tipe: "pilihan_ganda", soal: "Manakah pasangan kata yang termasuk homonim?", opsi: ["besar — kecil", "bisa (racun) — bisa (dapat)", "membaca — menulis", "pintar — pandai"], jawaban: 1, penjelasan: "'Bisa' memiliki dua arti (racun dan mampu) dengan ejaan dan bunyi yang sama — itulah homonim." },
 ]
 
 const questions_nalar: Question[] = [
@@ -185,12 +189,15 @@ const questions_nalar: Question[] = [
   { id: "nl2", tipe: "benar_salah", soal: "Sebab-akibat adalah hubungan logis antara dua peristiwa.", opsi: ["Benar", "Salah"], jawaban: "Benar", penjelasan: "Sebab-akibat menghubungkan peristiwa penyebab dan hasilnya." },
   { id: "nl3", tipe: "pilihan_ganda", soal: "Alasan yang baik harus didukung oleh ...", opsi: ["perasaan", "bukti", "tebakan", "imajinasi"], jawaban: 1, penjelasan: "Argumen yang baik didukung bukti atau data." },
   { id: "nl4", tipe: "pilihan_ganda", soal: "Manakah yang menunjukkan hubungan sebab-akibat?", opsi: ["Ibu pergi ke pasar", "Hujan deras sehingga banjir", "Adik bermain bola", "Ayah membaca koran"], jawaban: 1, penjelasan: "'Sehingga' menunjukkan hubungan sebab (hujan) dan akibat (banjir)." },
+  { id: "enrich_nalar_1", tipe: "pilihan_ganda", soal: "Jika 'Semua siswa suka membaca' dan 'Budi adalah siswa', maka kesimpulan yang tepat adalah ...", opsi: ["Budi tidak suka membaca", "Budi suka membaca", "Tidak semua siswa suka membaca", "Budi bukan siswa teladan"], jawaban: 1, penjelasan: "Jika semua siswa suka membaca dan Budi adalah siswa, maka Budi pasti suka membaca. Ini adalah penalaran deduktif." },
 ]
 
 const questions_sunting: Question[] = [
   { id: "st1", tipe: "pilihan_ganda", soal: "Menyunting berarti ...", opsi: ["menulis baru", "memperbaiki kesalahan", "menghapus semua", "menambah panjang"], jawaban: 1, penjelasan: "Menyunting adalah memperbaiki kesalahan dalam tulisan." },
   { id: "st2", tipe: "benar_salah", soal: "Suntingan hanya memperbaiki ejaan.", opsi: ["Benar", "Salah"], jawaban: "Salah", penjelasan: "Menyunting juga meliputi struktur kalimat, pilihan kata, dan tanda baca." },
   { id: "st3", tipe: "pilihan_ganda", soal: "Kalimat 'Dia pergi keBandung' perlu diperbaiki menjadi ...", opsi: ["Dia pergi kebandung", "Dia pergi ke Bandung", "Dia pergi Ke Bandung", "dia pergi ke bandung"], jawaban: 1, penjelasan: "Kata depan 'ke' ditulis terpisah dari nama tempat." },
+  { id: "enrich_sunting_1", tipe: "pilihan_ganda", soal: "Kalimat 'Buku itu sangat mahal sekali' termasuk tidak efektif karena ...", opsi: ["subjek tidak jelas", "pemborosan kata", "predikat hilang", "objek ganda"], jawaban: 1, penjelasan: "'Sangat' dan 'sekali' bermakna sama sehingga terjadi pemborosan kata." },
+  { id: "enrich_sunting_2", tipe: "pilihan_ganda", soal: "Menyunting tulisan orang lain sebaiknya dilakukan dengan sikap ...", opsi: ["sembarangan", "cermat dan objektif", "cepat tanpa membaca", "mengubah semua kata"], jawaban: 1, penjelasan: "Menyunting harus dilakukan secara cermat, objektif, dan tidak mengubah makna asli." },
 ]
 
 // Map topics to units

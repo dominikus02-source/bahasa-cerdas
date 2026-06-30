@@ -1,0 +1,137 @@
+{
+  "meta": {
+    "product": "UKBI_PRACTICE",
+    "track": "UKBI_SMA",
+    "section": "mendengarkan",
+    "set": "set-001",
+    "totalItems": 5,
+    "source": "BC_UKBI_SMA_ORIGINAL"
+  },
+  "questions": [
+    {
+      "id": "BC-UKBI-SMA-MENDENGARKAN-TERBATAS-SET001-Q001",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "mendengarkan",
+      "band": "TERBATAS",
+      "type": "pilihan_ganda",
+      "difficulty": 1,
+      "audioScript": "Pengumuman: \"Diberitahukan kepada seluruh siswa kelas X, XI, dan XII bahwa kegiatan ekstrakurikuler pada hari Sabtu ini ditiadakan karena guru pembimbing mengikuti pelatihan. Kegiatan akan dilanjutkan kembali pada Sabtu depan sesuai jadwal masing-masing. Terima kasih.\"",
+      "audioRef": null,
+      "stem": "Mengapa kegiatan ekstrakurikuler ditiadakan?",
+      "options": [
+        { "id": "A", "text": "Hari libur nasional" },
+        { "id": "B", "text": "Guru pembimbing mengikuti pelatihan" },
+        { "id": "C", "text": "Siswa sedang ujian" },
+        { "id": "D", "text": "Cuaca buruk" }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Pengumuman menyebut 'kegiatan ekstrakurikuler pada hari Sabtu ini ditiadakan karena guru pembimbing mengikuti pelatihan.'",
+      "tags": ["informasi-tersurat"],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SOSIAL"
+    },
+    {
+      "id": "BC-UKBI-SMA-MENDENGARKAN-SEMENJANA-SET001-Q002",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "mendengarkan",
+      "band": "SEMENJANA",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "audioScript": "Wawancara radio: Pewawancara: \"Selamat siang, Pak. Bagaimana kondisi Sungai Ciliwung saat ini?\" Narasumber: \"Selamat siang. Kondisi sungai saat ini cukup memprihatinkan. Banyak sampah plastik dan limbah rumah tangga yang dibuang sembarangan. Debit air juga menurun drastis di musim kemarau. Kami menghimbau masyarakat untuk tidak membuang sampah ke sungai dan mulai melakukan gerakan bersih sungai secara rutin.\"",
+      "audioRef": null,
+      "stem": "Apa yang menjadi penyebab utama pencemaran sungai menurut narasumber?",
+      "options": [
+        { "id": "A", "text": "Limbah pabrik dan industri" },
+        { "id": "B", "text": "Sampah plastik dan limbah rumah tangga" },
+        { "id": "C", "text": "Pertanian dan peternakan" },
+        { "id": "D", "text": "Pertambangan pasir" }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Narasumber menyebut 'Banyak sampah plastik dan limbah rumah tangga yang dibuang sembarangan' sebagai penyebab utama.",
+      "tags": ["informasi-tersurat"],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SOSIAL"
+    },
+    {
+      "id": "BC-UKBI-SMA-MENDENGARKAN-MADYA-SET001-Q003",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "mendengarkan",
+      "band": "MADYA",
+      "type": "pilihan_ganda",
+      "difficulty": 4,
+      "audioScript": "Naskah pidato: \"Hadirin yang saya hormati, kita berkumpul di sini untuk memperingati Hari Pendidikan Nasional. Tema tahun ini adalah 'Bergerak Bersama, Lanjutkan Merdeka Belajar'. Pendidikan adalah kunci kemajuan bangsa. Namun, kita masih menghadapi tantangan besar: kesenjangan akses pendidikan antara daerah perkotaan dan pedesaan. Oleh karena itu, mari kita bergotong royong mewujudkan pendidikan yang merata dan berkualitas untuk seluruh anak bangsa. Selamat Hari Pendidikan Nasional.\"",
+      "audioRef": null,
+      "stem": "Apa tema peringatan Hari Pendidikan Nasional tahun ini?",
+      "options": [
+        { "id": "A", "text": "Pendidikan untuk Semua" },
+        { "id": "B", "text": "Bergerak Bersama, Lanjutkan Merdeka Belajar" },
+        { "id": "C", "text": "Gotong Royong Wujudkan Pendidikan Berkualitas" },
+        { "id": "D", "text": "Merdeka dari Kesenjangan" }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Pidato menyebut 'Tema tahun ini adalah Bergerak Bersama, Lanjutkan Merdeka Belajar.'",
+      "tags": ["informasi-tersurat"],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SOSIAL"
+    },
+    {
+      "id": "BC-UKBI-SMA-MENDENGARKAN-MADYA-SET001-Q004",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "mendengarkan",
+      "band": "MADYA",
+      "type": "pilihan_ganda",
+      "difficulty": 4,
+      "audioScript": "Percakapan antara dua siswa: Rina: \"Dim, kamu sudah daftar lomba debat tingkat kota?\" Dimas: \"Sudah, Rin. Tim kita lawan SMA Bina Bangsa di babak pertama.\" Rina: \"Wah, berat itu. Mereka juara tahun lalu. Topik debatnya apa?\" Dimas: \"Dampak media sosial terhadap demokrasi. Kita harus siapkan argumen yang kuat.\" Rina: \"Oke, kita latihan setiap sore ya.\" Dimas: \"Setuju. Aku sudah siapkan data dan referensi.\"",
+      "audioRef": null,
+      "stem": "Siapa lawan tim Rina dan Dimas di babak pertama?",
+      "options": [
+        { "id": "A", "text": "SMA Negeri 1" },
+        { "id": "B", "text": "SMA Bina Bangsa" },
+        { "id": "C", "text": "SMA Harapan Bangsa" },
+        { "id": "D", "text": "SMA Bakti Persada" }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Dimas berkata 'Tim kita lawan SMA Bina Bangsa di babak pertama.'",
+      "tags": ["informasi-tersurat"],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SOSIAL"
+    },
+    {
+      "id": "BC-UKBI-SMA-MENDENGARKAN-SEMENJANA-SET001-Q005",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "mendengarkan",
+      "band": "SEMENJANA",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "audioScript": "Cerita rakyat: \"Pada zaman dahulu, hiduplah seorang pemuda bernama Jaka Tarub. Suatu hari ia melihat tujuh bidadari sedang mandi di telaga. Ia mengambil selendang salah satu bidadari, yaitu Nawang Wulan. Karena kehilangan selendang, Nawang Wulan tidak bisa kembali ke kahyangan. Jaka Tarub menikahinya dan mereka dikaruniai seorang anak perempuan bernama Nawang Sih. Namun, karena melanggar janji, Nawang Wulan akhirnya kembali ke kahyangan.\"",
+      "audioRef": null,
+      "stem": "Mengapa Nawang Wulan tidak bisa kembali ke kahyangan?",
+      "options": [
+        { "id": "A", "text": "Ia jatuh cinta kepada Jaka Tarub" },
+        { "id": "B", "text": "Selendangnya diambil oleh Jaka Tarub" },
+        { "id": "C", "text": "Ia ingin tinggal di bumi selamanya" },
+        { "id": "D", "text": "Kahyangan menutup pintu untuknya" }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Cerita menyebut 'Ia mengambil selendang salah satu bidadari... Karena kehilangan selendang, Nawang Wulan tidak bisa kembali ke kahyangan.'",
+      "tags": ["informasi-tersurat"],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    }
+  ]
+}

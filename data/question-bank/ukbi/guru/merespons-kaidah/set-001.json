@@ -1,0 +1,242 @@
+{
+  "meta": {
+    "product": "UKBI_PRACTICE",
+    "track": "UKBI_GURU",
+    "section": "merespons-kaidah",
+    "set": "set-001",
+    "totalItems": 10,
+    "source": "BC_UKBI_GURU_ORIGINAL"
+  },
+  "questions": [
+    {
+      "id": "BC-UKBI-GURU-KAIDAH-TERBATAS-SET001-Q001",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_GURU",
+      "section": "merespons-kaidah",
+      "band": "TERBATAS",
+      "type": "pilihan_ganda",
+      "difficulty": 1,
+      "stem": "Penulisan kata yang tepat untuk 'ijazah' dalam bentuk baku adalah ...",
+      "options": [
+        { "id": "A", "text": "ijasah" },
+        { "id": "B", "text": "ijazah" },
+        { "id": "C", "text": "ijazat" },
+        { "id": "D", "text": "ijazak" }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Kata baku yang benar adalah 'ijazah', ditulis dengan huruf 'z' dan 'h' di akhir.",
+      "tags": ["kata-baku"],
+      "source": "BC_UKBI_GURU_ORIGINAL",
+      "status": "approved",
+      "cognitive": "MENGINGAT",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-GURU-KAIDAH-TERBATAS-SET001-Q002",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_GURU",
+      "section": "merespons-kaidah",
+      "band": "TERBATAS",
+      "type": "pilihan_ganda",
+      "difficulty": 1,
+      "stem": "Bentuk baku dari kata 'team' adalah ...",
+      "options": [
+        { "id": "A", "text": "team" },
+        { "id": "B", "text": "tim" },
+        { "id": "C", "text": "tiem" },
+        { "id": "D", "text": "teim" }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Kata serapan dari 'team' yang baku dalam bahasa Indonesia adalah 'tim'.",
+      "tags": ["kata-serapan"],
+      "source": "BC_UKBI_GURU_ORIGINAL",
+      "status": "approved",
+      "cognitive": "MENGINGAT",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-GURU-KAIDAH-SEMENJANA-SET001-Q003",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_GURU",
+      "section": "merespons-kaidah",
+      "band": "SEMENJANA",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "stem": "Penulisan kata 'kaji' + 'me-' + 'pe-' yang benar adalah ...",
+      "options": [
+        { "id": "A", "text": "pengkaji" },
+        { "id": "B", "text": "pengaji" },
+        { "id": "C", "text": "pengkajih" },
+        { "id": "D", "text": "pengakaji" }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Kata 'kaji' mendapat awalan 'me-' menjadi 'mengkaji', kemudian mendapat awalan 'pe-' menjadi 'pengkaji' (tidak ada peluluhan pada huruf 'k').",
+      "tags": ["imbuhan"],
+      "source": "BC_UKBI_GURU_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-GURU-KAIDAH-SEMENJANA-SET001-Q004",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_GURU",
+      "section": "merespons-kaidah",
+      "band": "SEMENJANA",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "stem": "Kalimat berikut yang menggunakan konjungsi temporal dengan tepat adalah ...",
+      "options": [
+        { "id": "A", "text": "Setelah guru menjelaskan, siswa kemudian mengerjakan latihan." },
+        { "id": "B", "text": "Setelah guru menjelaskan dan kemudian siswa mengerjakan latihan." },
+        { "id": "C", "text": "Sesudah itu guru menjelaskan, kemudian siswa mengerjakan latihan." },
+        { "id": "D", "text": "Setelah guru menjelaskan lalu siswa kemudian mengerjakan latihan." }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Kalimat A menggunakan konjungsi temporal 'setelah' dan 'kemudian' dengan tepat. B menggunakan 'dan kemudian' yang mubazir. C 'sesudah itu' tidak jelas acuannya. D menggunakan tiga penanda urutan.",
+      "tags": ["konjungsi"],
+      "source": "BC_UKBI_GURU_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-GURU-KAIDAH-SEMENJANA-SET001-Q005",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_GURU",
+      "section": "merespons-kaidah",
+      "band": "SEMENJANA",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "stem": "Penulisan singkatan gelar akademik yang benar adalah ...",
+      "options": [
+        { "id": "A", "text": "S.H." },
+        { "id": "B", "text": "SH" },
+        { "id": "C", "text": "S, H." },
+        { "id": "D", "text": "S.H" }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Singkatan gelar S.H. (Sarjana Hukum) ditulis dengan huruf kapital diikuti tanda titik setelah setiap huruf. B tidak menggunakan titik, C menggunakan koma, D tidak ada titik setelah H.",
+      "tags": ["singkatan"],
+      "source": "BC_UKBI_GURU_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SOSIAL"
+    },
+    {
+      "id": "BC-UKBI-GURU-KAIDAH-MADYA-SET001-Q006",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_GURU",
+      "section": "merespons-kaidah",
+      "band": "MADYA",
+      "type": "pilihan_ganda",
+      "difficulty": 4,
+      "stem": "Kalimat yang menggunakan ungkapan idiomatik dengan benar adalah ...",
+      "options": [
+        { "id": "A", "text": "Kegiatan belajar mengajar berlangsung sesuai dengan rencana." },
+        { "id": "B", "text": "Kegiatan belajar mengajar berlangsung sesuai rencana." },
+        { "id": "C", "text": "Kegiatan belajar mengajar berlangsung sesuai oleh rencana." },
+        { "id": "D", "text": "Kegiatan belajar mengajar berlangsung sesuai pada rencana." }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Ungkapan idiomatik yang tepat adalah 'sesuai dengan'. Bentuk 'sesuai' membutuhkan preposisi 'dengan' untuk menyatakan keselarasan. B menghilangkan 'dengan', C dan D menggunakan preposisi yang salah.",
+      "tags": ["ungkapan-idiomatik"],
+      "source": "BC_UKBI_GURU_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PENERAPAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-GURU-KAIDAH-MADYA-SET001-Q007",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_GURU",
+      "section": "merespons-kaidah",
+      "band": "MADYA",
+      "type": "pilihan_ganda",
+      "difficulty": 4,
+      "stem": "Cermati kalimat berikut: 'Kurikulum merdeka memberikan keleluasaan kepada pendidik untuk merancang pembelajaran yang berpusat pada peserta didik.' Kata 'keleluasaan' bermakna ...",
+      "options": [
+        { "id": "A", "text": "kebebasan atau kelapangan" },
+        { "id": "B", "text": "keterbatasan atau kekangan" },
+        { "id": "C", "text": "kesulitan atau kesusahan" },
+        { "id": "D", "text": "kewajiban atau keharusan" }
+      ],
+      "correctAnswer": "A",
+      "explanation": "'Keleluasaan' berarti kebebasan, kelapangan, atau kesempatan untuk bertindak tanpa hambatan. Dalam konteks Kurikulum Merdeka, guru diberi keleluasaan (kebebasan) dalam merancang pembelajaran.",
+      "tags": ["makna-kata"],
+      "source": "BC_UKBI_GURU_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-GURU-KAIDAH-MADYA-SET001-Q008",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_GURU",
+      "section": "merespons-kaidah",
+      "band": "MADYA",
+      "type": "pilihan_ganda",
+      "difficulty": 4,
+      "stem": "Kalimat yang menggunakan kata berimbuhan me- dengan tepat adalah ...",
+      "options": [
+        { "id": "A", "text": "Beliau menandatangani surat tugas itu kemarin." },
+        { "id": "B", "text": "Beliau menanda tangani surat tugas itu kemarin." },
+        { "id": "C", "text": "Beliau menadatangan surat tugas itu kemarin." },
+        { "id": "D", "text": "Beliau menantatangani surat tugas itu kemarin." }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Kata 'tanda tangan' mendapat awalan me- menjadi 'menandatangani' (ditulis serangkai). B ditulis terpisah, C menghilangkan suku kata, D menggunakan bentuk ulang yang salah.",
+      "tags": ["imbuhan"],
+      "source": "BC_UKBI_GURU_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PENERAPAN",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-GURU-KAIDAH-UNGGUL-SET001-Q009",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_GURU",
+      "section": "merespons-kaidah",
+      "band": "UNGGUL",
+      "type": "pilihan_ganda",
+      "difficulty": 4,
+      "stem": "Kalimat berikut yang mengandung kesalahan nalar adalah ...",
+      "options": [
+        { "id": "A", "text": "Semua guru yang hadir dalam pelatihan itu mendapatkan sertifikat. Pak Budi hadir, jadi ia mendapatkan sertifikat." },
+        { "id": "B", "text": "Hanya peserta yang mengumpulkan tugas tepat waktu yang lulus. Rina lulus, berarti ia mengumpulkan tugas tepat waktu." },
+        { "id": "C", "text": "Jika siswa rajin belajar, maka nilainya baik. Nilai Doni baik, maka ia pasti rajin belajar." },
+        { "id": "D", "text": "Setiap kepala sekolah wajib membuat laporan tahunan. Bu Sari adalah kepala sekolah, maka ia wajib membuat laporan tahunan." }
+      ],
+      "correctAnswer": "C",
+      "explanation": "Kalimat C mengandung kekeliruan nalar (fallacy): 'jika P maka Q, Q benar, maka P benar' tidak sah secara logika. Nilai baik bisa diperoleh karena faktor lain, bukan hanya rajin belajar. A, B, D bernalar valid.",
+      "tags": ["penalaran", "logika"],
+      "source": "BC_UKBI_GURU_ORIGINAL",
+      "status": "approved",
+      "cognitive": "ANALISIS",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-GURU-KAIDAH-UNGGUL-SET001-Q010",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_GURU",
+      "section": "merespons-kaidah",
+      "band": "UNGGUL",
+      "type": "pilihan_ganda",
+      "difficulty": 4,
+      "stem": "Perbaikilah kalimat berikut agar efektif: 'Dalam rangka untuk meningkatkan mutu pendidikan, maka pemerintah melalui Kementerian Pendidikan telah mengeluarkan kebijakan yang baru mengenai Kurikulum Merdeka yang bersifat fleksibel dan adaptif.'",
+      "options": [
+        { "id": "A", "text": "Untuk meningkatkan mutu pendidikan, pemerintah melalui Kemendikbud mengeluarkan kebijakan Kurikulum Merdeka yang fleksibel dan adaptif." },
+        { "id": "B", "text": "Dalam rangka untuk meningkatkan mutu pendidikan, maka pemerintah melalui Kemendikbud telah mengeluarkan kebijakan Kurikulum Merdeka." },
+        { "id": "C", "text": "Dalam rangka meningkatkan mutu pendidikan, maka pemerintah telah mengeluarkan kebijakan Kurikulum Merdeka yang fleksibel dan adaptif." },
+        { "id": "D", "text": "Untuk meningkatkan mutu pendidikan maka pemerintah melalui Kementerian Pendidikan mengeluarkan kebijakan baru yang bersifat fleksibel." }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Kalimat A efektif: menghilangkan 'dalam rangka' (sudah tercakup dalam 'untuk'), 'maka' (mubazir setelah 'untuk'), 'telah' (tidak perlu), 'yang bersifat' (panjang), dan 'Kementerian Pendidikan' (cukup 'Kemendikbud'). Lebih ringkas dan jelas.",
+      "tags": ["kalimat-efektif"],
+      "source": "BC_UKBI_GURU_ORIGINAL",
+      "status": "approved",
+      "cognitive": "EVALUASI",
+      "domain": "AKADEMIK"
+    }
+  ]
+}

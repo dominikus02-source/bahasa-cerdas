@@ -54,6 +54,18 @@ const ENGLISH_PATTERNS: { pattern: RegExp; suggest: string; severity: "critical"
   { pattern: /\bAuto-generate\b/gi, suggest: "Buat otomatis", severity: "critical" },
   { pattern: /\bHigher Order Thinking Skills\b/gi, suggest: "Keterampilan Berpikir Tingkat Tinggi (HOTS)", severity: "warning" },
   { pattern: /(?<![a-zA-Z])(?:Export|Generate|Preview|Upload|Download|Edit|Update|Import)\s/gi, suggest: "Gunakan Bahasa Indonesia", severity: "critical" },
+  // BIGT-specific
+  { pattern: /\bBahasa Indonesia Global Test\b/gi, suggest: "Tes Global Bahasa Indonesia", severity: "critical" },
+  { pattern: /\bGlobal Test\b/gi, suggest: "Tes Global", severity: "critical" },
+  { pattern: /\bTest Screen\b/gi, suggest: "Layar Tes", severity: "critical" },
+  { pattern: /\bSection Progress\b/gi, suggest: "Progres Bagian", severity: "critical" },
+  { pattern: /\bNo-answer-leakage\b/gi, suggest: "Sistem tanpa kebocoran jawaban", severity: "critical" },
+  { pattern: /\bPractice\b(?!\s*(?:Area|Mode|Session))/gi, suggest: "Latihan", severity: "critical" },
+  { pattern: /\b(?:Timer|Timer Akurat)\b/g, suggest: "Pengatur Waktu", severity: "critical" },
+  { pattern: /\bstandar[td] test\b/gi, suggest: "standar tes", severity: "critical" },
+  { pattern: /\bStandar Formal\b/g, suggest: "Standar Tes", severity: "critical" },
+  { pattern: /\bplatform belajar & latihan harian\b/gi, suggest: "platform belajar dan latihan harian", severity: "critical" },
+  { pattern: /\b(?:Kelas|Guru|Hasil|Komunitas) & (?:penugasan|murid|Skor)\b/g, suggest: "Gunakan 'dan' bukan '&'", severity: "critical" },
 ]
 
 function walk(dir: string): string[] {

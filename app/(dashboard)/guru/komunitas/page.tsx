@@ -11,7 +11,7 @@ const COMMUNITY_TYPES = [
   { value: "MGMP", label: "MGMP" },
   { value: "KKG", label: "KKG" },
   { value: "PUBLIKASI", label: "Publikasi" },
-  { value: "STUDY_GROUP", label: "Study Group" },
+  { value: "STUDY_GROUP", label: "Kelompok Belajar" },
   { value: "LAINNYA", label: "Lainnya" },
 ];
 
@@ -293,6 +293,21 @@ export default function KomunitasPage() {
                         {getTypeIcon(c.type)}
                         {c.type}
                       </span>
+                      {!c.creator && (
+                        <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full border bg-violet-100 text-violet-700 border-violet-200">
+                          Ruang BahasaCerdas
+                        </span>
+                      )}
+                      {!c.isVerified && (
+                        <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full border bg-slate-100 text-slate-500 border-slate-200">
+                          Belum Terverifikasi
+                        </span>
+                      )}
+                      {c.isVerified && (
+                        <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full border bg-emerald-100 text-emerald-700 border-emerald-200">
+                          Terverifikasi
+                        </span>
+                      )}
                     </div>
                   </div>
                   {c.description && (
@@ -339,7 +354,7 @@ export default function KomunitasPage() {
                       <div className="flex items-center gap-2 mb-1 flex-wrap">
                         <h3 className="font-bold text-slate-900">{c.name}</h3>
                         <span className={`inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full border ${getTypeColor(c.type)}`}>{c.type}</span>
-                        {c.status === "PENDING" && <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full border bg-amber-50 text-amber-700 border-amber-200">⏳ Menunggu Review</span>}
+                        {c.status === "PENDING" && <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full border bg-amber-50 text-amber-700 border-amber-200">⏳ Menunggu Peninjauan</span>}
                         {c.status === "APPROVED" && <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full border bg-emerald-50 text-emerald-700 border-emerald-200">✅ Disetujui</span>}
                         {c.status === "REJECTED" && <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full border bg-red-50 text-red-700 border-red-200">❌ Ditolak</span>}
                       </div>
@@ -422,7 +437,7 @@ export default function KomunitasPage() {
                     <option value="MGMP">MGMP</option>
                     <option value="KKG">KKG</option>
                     <option value="PUBLIKASI">Publikasi</option>
-                    <option value="STUDY_GROUP">Study Group</option>
+                    <option value="STUDY_GROUP">Kelompok Belajar</option>
                     <option value="LAINNYA">Lainnya</option>
                   </select>
                 </div>

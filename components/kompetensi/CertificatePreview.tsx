@@ -43,7 +43,7 @@ export function CertificatePreview({ certificate }: CertificateProps) {
   const isUKBI = certificate.paket?.type?.includes("UKBI");
   const isTKA = certificate.paket?.type?.includes("TKA");
 
-  const productLabel = isUKBI ? "UKBI Practice" : isTKA ? "TKA Bahasa Indonesia" : "UKBI/TKA Practice";
+  const productLabel = isUKBI ? "Latihan UKBI" : isTKA ? "Latihan TKA" : "Latihan UKBI/TKA";
 
   const formatDate = (dateStr: string) => {
     const date = new Date(dateStr);
@@ -118,10 +118,10 @@ export function CertificatePreview({ certificate }: CertificateProps) {
             <p className="text-gray-500 mb-2">yang telah menyelesaikan</p>
             
             {isUKBI && (
-              <h3 className="text-xl font-bold text-gray-800 mb-2">Dokumen Hasil Latihan UKBI Practice</h3>
+              <h3 className="text-xl font-bold text-gray-800 mb-2">Dokumen Hasil Latihan UKBI</h3>
             )}
             {isTKA && (
-              <h3 className="text-xl font-bold text-gray-800 mb-2">Dokumen Hasil Latihan TKA Bahasa Indonesia</h3>
+              <h3 className="text-xl font-bold text-gray-800 mb-2">Dokumen Hasil Latihan TKA</h3>
             )}
             {!isUKBI && !isTKA && (
               <h3 className="text-xl font-bold text-gray-800 mb-2">{certificate.paket?.title || "Simulasi Bahasa Indonesia"}</h3>

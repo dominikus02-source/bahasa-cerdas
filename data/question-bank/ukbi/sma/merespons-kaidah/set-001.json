@@ -1,0 +1,242 @@
+{
+  "meta": {
+    "product": "UKBI_PRACTICE",
+    "track": "UKBI_SMA",
+    "section": "merespons-kaidah",
+    "set": "set-001",
+    "totalItems": 10,
+    "source": "BC_UKBI_SMA_ORIGINAL"
+  },
+  "questions": [
+    {
+      "id": "BC-UKBI-SMA-KAIDAH-TERBATAS-SET001-Q001",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "merespons-kaidah",
+      "band": "TERBATAS",
+      "type": "pilihan_ganda",
+      "difficulty": 1,
+      "stem": "Penulisan kata serapan yang benar adalah ...",
+      "options": [
+        { "id": "A", "text": "akomodasi" },
+        { "id": "B", "text": "akomodir" },
+        { "id": "C", "text": "akamodasi" },
+        { "id": "D", "text": "akomudasi" }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Kata baku yang benar adalah 'akomodasi' sesuai KBBI, bukan 'akomodir' atau 'akomudasi'.",
+      "tags": ["kata-serapan"],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "MENGINGAT",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-SMA-KAIDAH-TERBATAS-SET001-Q002",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "merespons-kaidah",
+      "band": "TERBATAS",
+      "type": "pilihan_ganda",
+      "difficulty": 1,
+      "stem": "Bentuk baku dari kata 'aktifitas' adalah ...",
+      "options": [
+        { "id": "A", "text": "aktifitas" },
+        { "id": "B", "text": "aktivitas" },
+        { "id": "C", "text": "aktipitas" },
+        { "id": "D", "text": "aktiftas" }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Kata baku yang benar adalah 'aktivitas' dengan huruf 'v', bukan 'f' seperti pada 'aktifitas'.",
+      "tags": ["kata-baku"],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "MENGINGAT",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-SMA-KAIDAH-SEMENJANA-SET001-Q003",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "merespons-kaidah",
+      "band": "SEMENJANA",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "stem": "Kalimat yang menggunakan konjungsi korelatif dengan tepat adalah ...",
+      "options": [
+        { "id": "A", "text": "Baik Rina maupun Rani hadir dalam acara itu." },
+        { "id": "B", "text": "Baik Rina dan Rani hadir dalam acara itu." },
+        { "id": "C", "text": "Rina baik maupun Rani hadir dalam acara itu." },
+        { "id": "D", "text": "Rina hadir baik juga Rani dalam acara itu." }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Konjungsi korelatif 'baik...maupun' digunakan dengan benar pada kalimat A. Pasangan yang tepat adalah 'baik...maupun', bukan 'baik...dan'.",
+      "tags": ["konjungsi"],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMA-KAIDAH-SEMENJANA-SET001-Q004",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "merespons-kaidah",
+      "band": "SEMENJANA",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "stem": "Penulisan judul karya ilmiah yang tepat adalah ...",
+      "options": [
+        { "id": "A", "text": "Pengaruh Media Sosial terhadap Prestasi Belajar" },
+        { "id": "B", "text": "Pengaruh media sosial terhadap prestasi belajar dan motivasi" },
+        { "id": "C", "text": "dampak Game Online terhadap Motivasi Belajar Remaja" },
+        { "id": "D", "text": "Efektivitas pembelajaran daring di masa pandemi" }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Judul karangan ditulis dengan huruf kapital pada setiap awal kata, kecuali kata tugas (seperti 'di', 'ke', 'dari', 'dan', 'yang', 'terhadap') yang tidak terletak di awal.",
+      "tags": ["ejaan", "judul"],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PENERAPAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMA-KAIDAH-SEMENJANA-SET001-Q005",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "merespons-kaidah",
+      "band": "SEMENJANA",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "stem": "Kalimat yang tidak mengandung pleonasme adalah ...",
+      "options": [
+        { "id": "A", "text": "Para siswa saling tolong-menolong saat kerja kelompok." },
+        { "id": "B", "text": "Para siswa saling membantu satu sama lain saat kerja kelompok." },
+        { "id": "C", "text": "Para siswa tolong-menolong antara sesama teman." },
+        { "id": "D", "text": "Para siswa saling bahu-membahu bersama-sama." }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Kalimat A tidak pleonastis. 'Saling tolong-menolong' masih bisa diterima. B 'saling membantu satu sama lain' mubazir, C 'antara sesama' mubazir, D 'saling bahu-membahu bersama-sama' terlalu berlebihan.",
+      "tags": ["kalimat-efektif"],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PENERAPAN",
+      "domain": "SOSIAL"
+    },
+    {
+      "id": "BC-UKBI-SMA-KAIDAH-MADYA-SET001-Q006",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "merespons-kaidah",
+      "band": "MADYA",
+      "type": "pilihan_ganda",
+      "difficulty": 4,
+      "stem": "Penggunaan tanda baca yang tepat untuk memisahkan unsur dalam rincian yang sudah mengandung tanda koma adalah ...",
+      "options": [
+        { "id": "A", "text": "Peserta lomba berasal dari Jakarta, DKI Jakarta; Bandung, Jawa Barat; dan Surabaya, Jawa Timur." },
+        { "id": "B", "text": "Peserta lomba berasal dari Jakarta, DKI Jakarta, Bandung, Jawa Barat, dan Surabaya, Jawa Timur." },
+        { "id": "C", "text": "Peserta lomba berasal dari Jakarta; DKI Jakarta; Bandung; Jawa Barat; dan Surabaya; Jawa Timur." },
+        { "id": "D", "text": "Peserta lomba berasal dari Jakarta DKI Jakarta, Bandung Jawa Barat, dan Surabaya Jawa Timur." }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Titik koma (;) digunakan untuk memisahkan unsur-unsur dalam rincian yang masing-masing sudah mengandung koma. A adalah satu-satunya yang menggunakan titik koma dengan tepat di antara setiap pasangan kota-provinsi.",
+      "tags": ["tanda-baca"],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PENERAPAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMA-KAIDAH-MADYA-SET001-Q007",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "merespons-kaidah",
+      "band": "MADYA",
+      "type": "pilihan_ganda",
+      "difficulty": 4,
+      "stem": "Penulisan kata berimbuhan asing yang tepat adalah ...",
+      "options": [
+        { "id": "A", "text": "di-update" },
+        { "id": "B", "text": "diupdate" },
+        { "id": "C", "text": "di-up date" },
+        { "id": "D", "text": "di update" }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Kata berimbuhan asing seperti 'update' jika mendapat imbuhan 'di-', ditulis serangkai: 'diupdate'. Ini mengikuti kaidah penulisan kata berimbuhan secara umum.",
+      "tags": ["imbuhan", "kata-serapan"],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PENERAPAN",
+      "domain": "SINTAS"
+    },
+    {
+      "id": "BC-UKBI-SMA-KAIDAH-MADYA-SET001-Q008",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "merespons-kaidah",
+      "band": "MADYA",
+      "type": "pilihan_ganda",
+      "difficulty": 4,
+      "stem": "Kalimat yang menggunakan kata berkonotasi positif dengan tepat adalah ...",
+      "options": [
+        { "id": "A", "text": "Kepala sekolah memberikan apresiasi kepada siswa berprestasi." },
+        { "id": "B", "text": "Kepala sekolah memberikan hadiah kepada siswa yang pintar-pintar." },
+        { "id": "C", "text": "Kepala sekolah kasih penghargaan kepada siswa hebat." },
+        { "id": "D", "text": "Kepala sekolah mengasih apresiasi kepada murid pandai." }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Kalimat A menggunakan diksi formal dan tepat: 'memberikan apresiasi' dan 'berprestasi'. B menggunakan 'pintar-pintar' (tidak baku), C dan D menggunakan 'kasih' (ragam informal).",
+      "tags": ["diksi"],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PENERAPAN",
+      "domain": "SOSIAL"
+    },
+    {
+      "id": "BC-UKBI-SMA-KAIDAH-UNGGUL-SET001-Q009",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "merespons-kaidah",
+      "band": "UNGGUL",
+      "type": "pilihan_ganda",
+      "difficulty": 4,
+      "stem": "Perbaikilah kalimat berikut agar menjadi kalimat efektif: 'Berdasarkan dari hasil penelitian tersebut, maka dapat disimpulkan bahwa penggunaan gadget yang berlebihan mengakibatkan terjadinya penurunan konsentrasi belajar pada siswa.'",
+      "options": [
+        { "id": "A", "text": "Berdasarkan hasil penelitian, penggunaan gadget berlebihan menurunkan konsentrasi belajar siswa." },
+        { "id": "B", "text": "Berdasarkan dari hasil penelitian tersebut maka penggunaan gadget berlebihan mengakibatkan penurunan konsentrasi belajar." },
+        { "id": "C", "text": "Dari hasil penelitian tersebut maka dapat disimpulkan bahwa gadget mengakibatkan konsentrasi belajar siswa menurun." },
+        { "id": "D", "text": "Berdasarkan hasil penelitian tersebut, maka disimpulkan bahwa penggunaan gadget yang berlebihan mengakibatkan konsentrasi belajar siswa menjadi turun." }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Kalimat A efektif: menghilangkan 'dari' (mubazir setelah 'berdasarkan'), 'maka' (konjungsi ganda setelah 'berdasarkan'), dan 'terjadinya' (mubazir). 'Menurunkan' lebih ringkas dari 'mengakibatkan terjadinya penurunan'.",
+      "tags": ["kalimat-efektif"],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "EVALUASI",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMA-KAIDAH-UNGGUL-SET001-Q010",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "merespons-kaidah",
+      "band": "UNGGUL",
+      "type": "pilihan_ganda",
+      "difficulty": 4,
+      "stem": "Kalimat yang menggunakan penalaran analogi paling tepat adalah ...",
+      "options": [
+        { "id": "A", "text": "Belajar bahasa asing seperti berenang: semakin sering berlatih, semakin mahir kita menguasainya." },
+        { "id": "B", "text": "Belajar bahasa asing seperti makan: harus tiga kali sehari." },
+        { "id": "C", "text": "Belajar bahasa asing seperti tidur: membuat kita lelap." },
+        { "id": "D", "text": "Belajar bahasa asing seperti bernapas: tidak perlu dipelajari." }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Analogi yang paling tepat adalah A karena belajar bahasa asing dan berenang sama-sama memerlukan latihan berulang untuk mencapai kemahiran. B, C, dan D tidak memiliki kesamaan logis yang relevan dengan proses belajar.",
+      "tags": ["penalaran", "analogi"],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "ANALISIS",
+      "domain": "AKADEMIK"
+    }
+  ]
+}

@@ -102,8 +102,11 @@ export async function DELETE(req: NextRequest) {
     const id = searchParams.get("id");
     if (!id) return NextResponse.json({ error: "ID required" }, { status: 400 });
 
-    await db.community.deleteMany({ where: { id } });
-    return NextResponse.json({ success: true });
+    await db.community.update({
+      where: { id },
+      data: { isPublic: false, status: "REJECTED", reviewNote: "Diarsipkan oleh admin", reviewedBy: dbUser.id, reviewedAt: new Date() },
+    });
+    return NextResponse.json({ success: true, message: "Komunitas diarsipkan" });
   } catch (error) {
     console.error("DELETE /api/admin/komunitas error:", error);
     return NextResponse.json({ error: "Internal error" }, { status: 500 });

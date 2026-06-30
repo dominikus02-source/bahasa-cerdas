@@ -20,9 +20,9 @@ export function BigtInfoPage({ role }: Props) {
             <BookOpen size={24} className="text-white" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold">BIGT — Bahasa Indonesia Global Test</h1>
+            <h1 className="text-2xl font-bold">BIGT — Tes Global Bahasa Indonesia</h1>
             <p className={`text-sm ${isGuru ? "text-emerald-200" : "text-violet-200"}`}>
-              Tes kemampuan Bahasa Indonesia dengan standar test screen, keamanan, dan penilaian formal.
+              Tes kemampuan Bahasa Indonesia dengan layar tes yang fokus, keamanan jawaban, dan penilaian yang terstruktur.
             </p>
           </div>
         </div>
@@ -30,26 +30,26 @@ export function BigtInfoPage({ role }: Props) {
 
       {/* Perbedaan */}
       <div className="bg-white rounded-2xl border border-gray-100 p-6 mb-6">
-        <h2 className="font-bold text-gray-900 text-lg mb-4">Perbedaan BahasaCerdas vs BIGT</h2>
+        <h2 className="font-bold text-gray-900 text-lg mb-4">Perbedaan BahasaCerdas dan BIGT</h2>
         <div className="grid md:grid-cols-2 gap-4">
           <div className="p-4 rounded-xl bg-violet-50 border border-violet-100">
             <h3 className="font-bold text-violet-700 mb-2">BahasaCerdas.com</h3>
             <ul className="text-sm text-gray-600 space-y-1.5">
-              <li>✓ Platform belajar & latihan harian</li>
-              <li>✓ Simulasi UKBI/TKA practice</li>
-              <li>✓ Bank soal untuk guru</li>
-              <li>✓ Komunitas guru & murid</li>
-              <li>✓ Kelas & penugasan</li>
+              <li>✓ Platform belajar dan latihan harian</li>
+              <li>✓ Simulasi UKBI/TKA</li>
+              <li>✓ Bank soal untuk guru dan murid</li>
+              <li>✓ Komunitas guru dan murid</li>
+              <li>✓ Kelas dan penugasan</li>
             </ul>
           </div>
           <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-100">
             <h3 className="font-bold text-emerald-700 mb-2">BIGT (Tes Terpisah)</h3>
             <ul className="text-sm text-gray-600 space-y-1.5">
-              <li>✓ Test screen fokus tanpa gangguan</li>
-              <li>✓ Timer & section progress ketat</li>
-              <li>✓ No-answer-leakage system</li>
+              <li>✓ Layar tes fokus tanpa gangguan</li>
+              <li>✓ Pengatur waktu dan progres bagian yang terstruktur</li>
+              <li>✓ Sistem tanpa kebocoran jawaban</li>
               <li>✓ Hasil tes dengan standar penilaian</li>
-              <li>✓ Produk tes formal terpisah</li>
+              <li>✓ Produk tes formal yang terpisah</li>
             </ul>
           </div>
         </div>
@@ -58,12 +58,12 @@ export function BigtInfoPage({ role }: Props) {
       {/* Fitur BIGT */}
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
         {[
-          { icon: <Shield size={24} />, title: "Test Screen", desc: "Layar penuh fokus, minim distraksi" },
-          { icon: <Timer size={24} />, title: "Timer Akurat", desc: "Waktu pengerjaan terukur per section" },
-          { icon: <FileText size={24} />, title: "Section Progress", desc: "Progress jelas per bagian tes" },
-          { icon: <Award size={24} />, title: "Hasil & Skor", desc: "Penilaiaan dengan standar yang jelas" },
-          { icon: <Shield size={24} />, title: "Keamanan", desc: "Data jawaban terenkripsi, tidak bocor" },
-          { icon: <BookOpen size={24} />, title: "Standar Formal", desc: "Penilaian dengan standar test" },
+          { icon: <Shield size={24} />, title: "Layar Tes", desc: "Layar penuh, fokus, dan minim distraksi" },
+          { icon: <Timer size={24} />, title: "Pengatur Waktu Akurat", desc: "Waktu pengerjaan terukur per bagian" },
+          { icon: <FileText size={24} />, title: "Progres Bagian", desc: "Progres jelas pada setiap bagian tes" },
+          { icon: <Award size={24} />, title: "Hasil dan Skor", desc: "Penilaian dengan standar yang jelas" },
+          { icon: <Shield size={24} />, title: "Keamanan", desc: "Data jawaban terlindungi dan tidak bocor" },
+          { icon: <BookOpen size={24} />, title: "Standar Tes", desc: "Penilaian dibuat lebih terstruktur" },
         ].map(f => (
           <div key={f.title} className="bg-white rounded-xl border border-gray-100 p-5 hover:shadow-md transition-shadow">
             <div className={`w-10 h-10 rounded-lg ${isGuru ? "bg-emerald-100 text-emerald-600" : "bg-violet-100 text-violet-600"} flex items-center justify-center mb-3`}>
@@ -77,8 +77,8 @@ export function BigtInfoPage({ role }: Props) {
 
       {/* CTA */}
       <div className="bg-gray-50 rounded-2xl border border-gray-100 p-8 text-center">
-        <h2 className="font-bold text-gray-900 text-lg mb-2">Siap mencoba BIGT?</h2>
-        <p className="text-sm text-gray-500 mb-6">Anda akan diarahkan ke situs BIGT di tab baru.</p>
+          <h2 className="font-bold text-gray-900 text-lg mb-2">Siap Mencoba BIGT?</h2>
+          <p className="text-sm text-gray-500 mb-6">Anda akan diarahkan ke situs BIGT di tab baru.</p>
         <a
           href="https://www.bahasacerdas.site"
           target="_blank"

@@ -61,14 +61,24 @@ export default async function GuruUKBISimulasiPage() {
             <div className="text-xs text-gray-400 mb-3">
               {track.available ? `${track.questionCount} soal · ${track.duration} menit` : "Segera tersedia"}
             </div>
-            {track.available && (
-              <Link
-                href="/guru/hasil-simulasi"
-                className="text-xs text-emerald-600 font-semibold hover:underline flex items-center gap-1"
-              >
-                <TrendingUp size={12} /> Lihat Hasil Murid
-              </Link>
-            )}
+            <div className="flex items-center gap-3 mt-2">
+              {track.available && track.paketId && (
+                <Link
+                  href={`/kompetisi/${track.paketId}`}
+                  className="text-xs text-emerald-600 font-bold bg-emerald-50 px-3 py-1.5 rounded-lg hover:bg-emerald-100 transition-colors inline-flex items-center gap-1"
+                >
+                  <BookOpen size={12} /> Coba Simulasi
+                </Link>
+              )}
+              {track.available && (
+                <Link
+                  href="/guru/hasil-simulasi"
+                  className="text-xs text-gray-500 font-semibold hover:underline flex items-center gap-1"
+                >
+                  <TrendingUp size={12} /> Lihat Hasil Murid
+                </Link>
+              )}
+            </div>
           </div>
         ))}
       </div>
