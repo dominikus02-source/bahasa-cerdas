@@ -1215,8 +1215,14 @@ model Artikel {
   slug        String   @unique
   content     String
   excerpt     String?
-  coverImage  String?
-  tags        String[]
+  coverImage         String?
+  coverImageUrl      String?
+  coverImageAlt      String?
+  coverImageCredit   String?
+  coverImageSourceUrl String?
+  coverImageLicense  String?
+  coverImageProvider String?
+  tags               String[]
   isPublished Boolean  @default(false)
   readCount   Int      @default(0)
   authorId    String

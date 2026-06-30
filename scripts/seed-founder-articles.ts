@@ -24,6 +24,12 @@ interface ArticleItem {
   publishedAt: string;
   source: string;
   featured: boolean;
+  coverImageUrl: string;
+  coverImageAlt: string;
+  coverImageCredit: string;
+  coverImageSourceUrl: string;
+  coverImageLicense: string;
+  coverImageProvider: string;
 }
 
 const FOUNDER_EMAILS = [
@@ -101,7 +107,13 @@ async function main() {
         existing.excerpt === a.excerpt &&
         existing.articleType === a.articleType &&
         existing.isPublished === (a.status === "PUBLISHED") &&
-        existing.source === a.source;
+        existing.source === a.source &&
+        existing.coverImage === a.coverImageUrl &&
+        existing.coverImageAlt === a.coverImageAlt &&
+        existing.coverImageCredit === a.coverImageCredit &&
+        existing.coverImageSourceUrl === a.coverImageSourceUrl &&
+        existing.coverImageLicense === a.coverImageLicense &&
+        existing.coverImageProvider === a.coverImageProvider;
 
       if (same) {
         unchanged++;
@@ -124,6 +136,13 @@ async function main() {
             authorName: a.authorName,
             authorRole: a.authorRole,
             authorId,
+            coverImage: a.coverImageUrl,
+            coverImageUrl: a.coverImageUrl,
+            coverImageAlt: a.coverImageAlt,
+            coverImageCredit: a.coverImageCredit,
+            coverImageSourceUrl: a.coverImageSourceUrl,
+            coverImageLicense: a.coverImageLicense,
+            coverImageProvider: a.coverImageProvider,
           },
         });
         updated++;
@@ -147,6 +166,13 @@ async function main() {
             authorName: a.authorName,
             authorRole: a.authorRole,
             authorId,
+            coverImage: a.coverImageUrl,
+            coverImageUrl: a.coverImageUrl,
+            coverImageAlt: a.coverImageAlt,
+            coverImageCredit: a.coverImageCredit,
+            coverImageSourceUrl: a.coverImageSourceUrl,
+            coverImageLicense: a.coverImageLicense,
+            coverImageProvider: a.coverImageProvider,
           },
         });
         inserted++;

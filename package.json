@@ -90,7 +90,8 @@
     "audit:founder-articles": "npx tsx scripts/audit-founder-articles.ts",
     "test:founder-article-production": "npx tsx scripts/test-founder-article-production.ts",
     "seed:founder-articles:dry-run": "npx tsx scripts/seed-founder-articles.ts",
-    "seed:founder-articles": "npx tsx scripts/seed-founder-articles.ts --execute"
+    "seed:founder-articles": "npx tsx scripts/seed-founder-articles.ts --execute",
+    "audit:founder-article-quality": "npx tsx scripts/audit-founder-article-quality.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.39.0",

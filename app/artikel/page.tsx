@@ -25,7 +25,7 @@ export default async function ArtikelPage() {
       take: 12,
       select: {
         id: true, title: true, slug: true, excerpt: true,
-        coverImage: true, tags: true, readCount: true, createdAt: true, publishedAt: true,
+        coverImage: true, coverImageUrl: true, tags: true, readCount: true, createdAt: true, publishedAt: true,
         author: { select: { id: true, fullName: true } },
       },
     });
@@ -52,38 +52,41 @@ export default async function ArtikelPage() {
           </div>
         ) : (
           <div className="flex flex-col gap-10">
-            {artikel.map((a: any, idx: number) => (
-              <Link key={a.id} href={`/artikel/${a.slug}`} className="block">
-                <article className={`bg-white rounded-2xl shadow-sm border border-slate-100 hover:shadow-xl hover:border-red-200 transition-all ${idx === 0 ? "md:grid md:grid-cols-2" : ""}`}>
-                  {a.coverImage && (
-                    <div className={`${idx === 0 ? "h-full min-h-[280px]" : "aspect-video"} bg-slate-100 overflow-hidden`}>
-                      <img src={a.coverImage} alt={a.title} className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+            {artikel.map((a: any, idx: number) => {
+              const thumbnail = a.coverImageUrl || a.coverImage;
+              return (
+                <Link key={a.id} href={`/artikel/${a.slug}`} className="block">
+                  <article className={`bg-white rounded-2xl shadow-sm border border-slate-100 hover:shadow-xl hover:border-red-200 transition-all ${idx === 0 ? "md:grid md:grid-cols-2" : ""}`}>
+                    {thumbnail && (
+                      <div className={`${idx === 0 ? "h-full min-h-[280px]" : "aspect-video"} bg-slate-100 overflow-hidden`}>
+                        <img src={thumbnail} alt={a.title} className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+                      </div>
+                    )}
+                    <div className="p-7 flex flex-col justify-center">
+                      <div className="flex flex-wrap items-center gap-2 text-xs text-slate-400 mb-3">
+                        {a.tags?.slice(0, 2).map((t: string) => (
+                          <span key={t} className="px-2 py-0.5 bg-red-50 text-red-600 rounded-full font-medium">{t}</span>
+                        ))}
+                        <span className="flex items-center gap-1"><Calendar size={12} /> {new Date(a.publishedAt ?? a.createdAt).toLocaleDateString("id")}</span>
+                        <span className="flex items-center gap-1"><Clock size={12} /> {a.readCount} dibaca</span>
+                      </div>
+                      <h2 className={`font-bold text-slate-900 hover:text-red-600 transition-colors ${idx === 0 ? "text-2xl" : "text-lg"} line-clamp-2`}>
+                        {a.title}
+                      </h2>
+                      {a.excerpt && <p className="text-sm text-slate-500 mt-2 line-clamp-2">{a.excerpt}</p>}
+                      <div className="flex items-center gap-2 mt-4 text-sm text-slate-400">
+                        {a.author?.fullName && (
+                          <span className="flex items-center gap-1.5"><User size={14} /> {a.author.fullName}</span>
+                        )}
+                        <span className="ml-auto text-red-600 font-semibold text-xs flex items-center gap-1">
+                          Baca selengkapnya <ArrowRight size={12} />
+                        </span>
+                      </div>
                     </div>
-                  )}
-                  <div className="p-7 flex flex-col justify-center">
-                    <div className="flex flex-wrap items-center gap-2 text-xs text-slate-400 mb-3">
-                      {a.tags?.slice(0, 2).map((t: string) => (
-                        <span key={t} className="px-2 py-0.5 bg-red-50 text-red-600 rounded-full font-medium">{t}</span>
-                      ))}
-                      <span className="flex items-center gap-1"><Calendar size={12} /> {new Date(a.publishedAt ?? a.createdAt).toLocaleDateString("id")}</span>
-                      <span className="flex items-center gap-1"><Clock size={12} /> {a.readCount} dibaca</span>
-                    </div>
-                    <h2 className={`font-bold text-slate-900 hover:text-red-600 transition-colors ${idx === 0 ? "text-2xl" : "text-lg"} line-clamp-2`}>
-                      {a.title}
-                    </h2>
-                    {a.excerpt && <p className="text-sm text-slate-500 mt-2 line-clamp-2">{a.excerpt}</p>}
-                    <div className="flex items-center gap-2 mt-4 text-sm text-slate-400">
-                      {a.author?.fullName && (
-                        <span className="flex items-center gap-1.5"><User size={14} /> {a.author.fullName}</span>
-                      )}
-                      <span className="ml-auto text-red-600 font-semibold text-xs flex items-center gap-1">
-                        Baca selengkapnya <ArrowRight size={12} />
-                      </span>
-                    </div>
-                  </div>
-                </article>
-              </Link>
-            ))}
+                  </article>
+                </Link>
+              );
+            })}
           </div>
         )}
       </div>

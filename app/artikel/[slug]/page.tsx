@@ -15,7 +15,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   try {
     const artikel = await db.artikel.findUnique({
       where: { slug, isPublished: true },
-      select: { title: true, excerpt: true, coverImage: true, tags: true },
+      select: { title: true, excerpt: true, coverImage: true, tags: true, coverImageCredit: true },
     });
     if (!artikel) return { title: "Artikel Tidak Ditemukan" };
     return {
@@ -48,7 +48,7 @@ export default async function ArtikelDetailPage({ params }: Props) {
       where: { slug, isPublished: true },
       select: {
         id: true, title: true, slug: true, content: true, excerpt: true,
-        coverImage: true, tags: true, readCount: true, createdAt: true, updatedAt: true, publishedAt: true,
+        coverImage: true, coverImageCredit: true, tags: true, readCount: true, createdAt: true, updatedAt: true, publishedAt: true,
         author: { select: { id: true, fullName: true, avatar: true } },
       },
     });
@@ -80,9 +80,12 @@ export default async function ArtikelDetailPage({ params }: Props) {
 
         <article>
           {artikel.coverImage && (
-            <div className="aspect-video rounded-2xl overflow-hidden mb-8 bg-slate-100 shadow-lg">
+            <div className="aspect-video rounded-2xl overflow-hidden mb-2 bg-slate-100 shadow-lg">
               <img src={artikel.coverImage} alt={artikel.title} className="w-full h-full object-cover" />
             </div>
+          )}
+          {artikel.coverImageCredit && (
+            <p className="text-xs text-slate-400 mt-1 mb-8">Foto: {artikel.coverImageCredit}</p>
           )}
 
           <div className="flex flex-wrap items-center gap-3 text-xs text-slate-400 mb-4">
