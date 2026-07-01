@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import { db } from "@/lib/db";
 import { organizationLd, webSiteLd, faqPageLd, breadcrumbLd } from "@/lib/json-ld";
+import { withQueryTimeout as queryWithTimeout } from "@/lib/db/with-query-timeout";
 import PageNavbar from "@/components/public/PageNavbar";
 import PageFooter from "@/components/public/PageFooter";
 import HeroSection from "@/components/landing/HeroSection";
@@ -17,7 +18,7 @@ import FinalCTA from "@/components/landing/FinalCTA";
 import AnswerBlock from "@/components/aeo/AnswerBlock";
 import JsonLd from "@/components/aeo/JsonLd";
 
-export const revalidate = 60;
+export const revalidate = 300;
 
 export const metadata: Metadata = {
   title: "BahasaCerdas — Platform Edukasi Bahasa Indonesia untuk Guru & Siswa",
@@ -33,13 +34,6 @@ export const metadata: Metadata = {
   },
 };
 
-async function queryWithTimeout<T>(promise: Promise<T>, ms = 5000): Promise<T> {
-  const timeout = new Promise<T>((_, reject) =>
-    setTimeout(() => reject(new Error("DB timeout")), ms)
-  );
-  return Promise.race([promise, timeout]);
-}
-
 async function getLatestArtikel() {
   try {
     return await queryWithTimeout(
@@ -54,7 +48,6 @@ async function getLatestArtikel() {
           excerpt: true,
           coverImage: true,
           tags: true,
-          readCount: true,
           createdAt: true,
           author: { select: { fullName: true } },
         },

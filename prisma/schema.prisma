@@ -158,6 +158,7 @@ model CommunityPost {
 
   @@index([communityId])
   @@index([userId])
+  @@index([createdAt])
 }
 
 model User {
@@ -370,6 +371,7 @@ model PaketKompetensi {
   testSessions   TestSession[]
 
   @@index([type, isActive])
+  @@index([type, isActive, createdAt])
 }
 
 model ProgresKompetensi {
@@ -395,6 +397,7 @@ model ProgresKompetensi {
 
   @@unique([userId, paketId, attemptNumber])
   @@index([userId])
+  @@index([paketId])
 }
 
 model KompetensiCertificate {
@@ -435,6 +438,7 @@ model TestSession {
 
   @@unique([userId, paketId])
   @@index([userId])
+  @@index([paketId])
 }
 
 model TestAnswer {
@@ -454,6 +458,7 @@ model TestAnswer {
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId, paketId])
+  @@index([sessionId])
 }
 
 model Materi {
@@ -726,6 +731,7 @@ model Karya {
 
   @@index([sellerId])
   @@index([isPublished])
+  @@index([downloads])
 }
 
 model StudentKarya {

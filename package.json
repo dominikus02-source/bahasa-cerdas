@@ -95,7 +95,14 @@
     "audit:public-content-display": "npx tsx scripts/audit-public-content-display.ts",
     "cleanup:dummy-public-content:dry-run": "npx tsx scripts/cleanup-dummy-public-content.ts",
     "cleanup:dummy-public-content": "npx tsx scripts/cleanup-dummy-public-content.ts --execute",
-    "test:public-content-display": "npx tsx scripts/test-public-content-display.ts"
+    "test:public-content-display": "npx tsx scripts/test-public-content-display.ts",
+    "test:kompetensi-route-safety": "npx tsx scripts/test-kompetensi-route-performance-safety.ts",
+    "audit:production-capacity": "npx tsx scripts/audit-production-capacity.ts",
+    "load:public-browsing": "k6 run tests/load/public-browsing.js",
+    "load:public-browsing:staged": "k6 run --vus 100 --duration 5m tests/load/public-browsing.js",
+    "load:simulation-read": "k6 run --vus 30 --duration 3m tests/load/simulation-read.js",
+    "load:simulation-submit": "k6 run tests/load/simulation-submit.js",
+    "load:dashboard": "k6 run tests/load/dashboard-authenticated.js"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.39.0",

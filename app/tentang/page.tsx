@@ -5,6 +5,8 @@ import PageNavbar from "@/components/public/PageNavbar";
 import PageFooter from "@/components/public/PageFooter";
 import { Sparkles, Users, ShoppingBag, Heart, Shield, BrainCircuit, BookOpen, Lightbulb, ArrowRight, GraduationCap, Globe, PenTool } from "lucide-react";
 
+export const revalidate = 600;
+
 export const metadata: Metadata = {
   title: "Tentang BahasaCerdas — Misi, Visi & Tim",
   description: "Pelajari tentang BahasaCerdas: platform edukasi Bahasa Indonesia yang dibangun oleh guru, untuk guru. Misi kami membantu guru mengajar lebih efektif dengan teknologi AI dan komunitas MGMP.",

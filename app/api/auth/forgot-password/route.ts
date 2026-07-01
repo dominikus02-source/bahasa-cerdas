@@ -1,9 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { db } from "@/lib/db";
+import { rateLimitRoute } from "@/lib/rate-limit";
 
 export async function POST(req: NextRequest) {
   try {
+    const rl = await rateLimitRoute(req, { maxRequests: 3, windowSeconds: 1800, identifier: "forgot-password" });
+    if (rl) return rl;
+
     const { email } = await req.json();
     if (!email) return NextResponse.json({ error: "Email diperlukan" }, { status: 400 });
 

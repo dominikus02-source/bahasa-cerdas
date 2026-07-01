@@ -3,11 +3,94 @@ import { createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 import { fisherYatesShuffle, shuffleOptionsForQuestion, createSessionSeed } from "@/lib/question-bank/randomization";
 import type { AttemptSnapshot, QuestionSnapshot } from "@/lib/types/snapshot";
+import { withQueryTimeout } from "@/lib/db/with-query-timeout";
 
 const UKBI_TYPES = ["UKBI", "UKBI_SIMULASI", "UKBI_LATIHAN", "UKBI_SD", "UKBI_LATIHAN_SD", "UKBI_SMP", "UKBI_LATIHAN_SMP", "UKBI_SMA", "UKBI_LATIHAN_SMA", "UKBI_GURU_SIMULASI", "UKBI_GURU_LATIHAN"];
 
 function isUKBI(type: string) {
   return UKBI_TYPES.includes(type);
+}
+
+// UKBI question select — no correctAnswer sent to client
+const UKBI_SELECT = { id: true, seksi: true, text: true, audioUrl: true, imageUrl: true, passage: true, type: true, options: true, difficulty: true, cognitive: true, domain: true, passageType: true, wordCount: true } as const;
+
+// TKA question select — no correctAnswer sent to client
+const TKA_SELECT = { id: true, kompetensi: true, subKompetensi: true, text: true, passage: true, type: true, options: true, difficulty: true, weight: true } as const;
+
+// Snapshot select — includes correctAnswer for server-side scoring
+const UKBI_SNAPSHOT_SELECT = { id: true, correctAnswer: true, difficulty: true, seksi: true } as const;
+const TKA_SNAPSHOT_SELECT = { id: true, correctAnswer: true, weight: true, kompetensi: true } as const;
+
+async function fetchUKBIQuestions(where: any, take?: number) {
+  return db.uKBIQuestion.findMany({
+    where,
+    ...(take ? { take, orderBy: { difficulty: "asc" as const } } : {}),
+    select: UKBI_SELECT,
+  });
+}
+
+async function fetchTKAQuestions(where: any, take?: number) {
+  return db.tKAQuestion.findMany({
+    where,
+    ...(take ? { take, orderBy: { difficulty: "asc" as const } } : {}),
+    select: TKA_SELECT,
+  });
+}
+
+async function fetchSectionByIds(
+  section: any,
+  ukbi: boolean
+): Promise<any[]> {
+  if (ukbi) {
+    return fetchUKBIQuestions({ id: { in: section.questionIds }, isActive: true });
+  }
+  return fetchTKAQuestions({ id: { in: section.questionIds }, isActive: true });
+}
+
+async function fetchSectionByCriteria(
+  section: any,
+  paketType: string,
+  ukbi: boolean
+): Promise<any[]> {
+  const where: any = { isActive: true };
+  if (ukbi) {
+    if (section.seksi) where.seksi = section.seksi;
+  } else {
+    if (section.kompetensi) where.kompetensi = section.kompetensi;
+    if (section.subKompetensi) where.subKompetensi = section.subKompetensi;
+  }
+
+  if (paketType.includes("SD")) where.tingkat = "SD";
+  else if (paketType.includes("SMP")) where.tingkat = "SMP";
+  else if (paketType.includes("SMA")) where.tingkat = "SMA";
+  else if (paketType.includes("GURU")) {
+    // GURU: try GURU tingkat first, then fallback
+    const guruWhere = { ...where, tingkat: "GURU" };
+    if (ukbi) {
+      const guruQuestions = await fetchUKBIQuestions(guruWhere, section.count);
+      if (guruQuestions.length > 0) return guruQuestions;
+    } else {
+      const guruQuestions = await fetchTKAQuestions(guruWhere, section.count);
+      if (guruQuestions.length > 0) return guruQuestions;
+    }
+    // Fallback: without tingkat filter
+  }
+
+  if (ukbi) {
+    return fetchUKBIQuestions(where, section.count);
+  }
+  return fetchTKAQuestions(where, section.count);
+}
+
+async function fetchSectionGeneralFallback(
+  section: any,
+  paketType: string,
+  ukbi: boolean
+): Promise<any[]> {
+  if (ukbi) {
+    return fetchUKBIQuestions({ isActive: true }, section.count);
+  }
+  return fetchTKAQuestions({ isActive: true }, section.count);
 }
 
 export async function GET(
@@ -26,43 +109,57 @@ export async function GET(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const dbUser = await db.user.findUnique({ where: { supabaseId: user.id } });
+    const [dbUser, paket] = await Promise.all([
+      withQueryTimeout(db.user.findUnique({ where: { supabaseId: user.id } }), 5000, "User lookup timeout"),
+      withQueryTimeout(db.paketKompetensi.findUnique({ where: { id: paketId } }), 5000, "Paket lookup timeout"),
+    ]);
+
     if (!dbUser) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
-
-    const paket = await db.paketKompetensi.findUnique({ where: { id: paketId } });
     if (!paket) {
       return NextResponse.json({ error: "Paket tidak ditemukan" }, { status: 404 });
     }
 
-    let session = await db.testSession.findUnique({
-      where: { userId_paketId: { userId: dbUser.id, paketId } },
-    });
+    let session = await withQueryTimeout(
+      db.testSession.findUnique({
+        where: { userId_paketId: { userId: dbUser.id, paketId } },
+      }),
+      5000,
+      "Session lookup timeout"
+    );
 
     if (!session) {
       const expiresAt = new Date();
       expiresAt.setMinutes(expiresAt.getMinutes() + paket.duration);
 
-      session = await db.testSession.create({
-        data: {
-          userId: dbUser.id,
-          paketId,
-          status: "IN_PROGRESS",
-          expiresAt,
-          startedAt: new Date(),
-          answers: {},
-          flagged: [],
-        },
-      });
+      session = await withQueryTimeout(
+        db.testSession.create({
+          data: {
+            userId: dbUser.id,
+            paketId,
+            status: "IN_PROGRESS",
+            expiresAt,
+            startedAt: new Date(),
+            answers: {},
+            flagged: [],
+          },
+        }),
+        5000,
+        "Session create timeout"
+      );
     } else if (session.status === "COMPLETED") {
       if (retry) {
         const expiresAt = new Date();
         expiresAt.setMinutes(expiresAt.getMinutes() + paket.duration);
-        session = await db.testSession.update({
-          where: { id: session.id },
-          data: { status: "IN_PROGRESS", expiresAt, startedAt: new Date(), answers: {}, flagged: [] },
-        });
+        session = await withQueryTimeout(
+          db.testSession.update({
+            where: { id: session.id },
+            data: { status: "IN_PROGRESS", expiresAt, startedAt: new Date(), answers: {}, flagged: [] },
+          }),
+          5000,
+          "Session retry timeout"
+        );
       } else {
         return NextResponse.json({
           error: "Tes sudah selesai",
@@ -73,139 +170,61 @@ export async function GET(
     }
 
     const sections = (paket.sectionsData as any[]) || (paket.sections as any[]) || [];
-    const questions: any[] = [];
     const sessionSeed = createSessionSeed(dbUser.id, paket.id, session.createdAt?.getTime());
+    const ukbi = isUKBI(paket.type);
 
-    for (let i = 0; i < sections.length; i++) {
-      const section = sections[i];
-      let sectionQuestions: any[] = [];
+    // ── PARALLEL SECTION QUERIES ──
+    // All sections fetched in parallel via Promise.all instead of sequential for loop
+    const rawSectionResults = await Promise.all(
+      sections.map(async (section, i) => {
+        let sectionQuestions: any[] = [];
 
-      if (section.questionIds && section.questionIds.length > 0) {
-        if (isUKBI(paket.type)) {
-          const fetched = await db.uKBIQuestion.findMany({
-            where: { id: { in: section.questionIds }, isActive: true },
-            select: { id: true, seksi: true, text: true, audioUrl: true, imageUrl: true, passage: true, type: true, options: true, difficulty: true, cognitive: true, domain: true, passageType: true, wordCount: true },
-          });
-          sectionQuestions.push(...fetched);
-        } else {
-          const fetched = await db.tKAQuestion.findMany({
-            where: { id: { in: section.questionIds }, isActive: true },
-            select: { id: true, kompetensi: true, subKompetensi: true, text: true, passage: true, type: true, options: true, difficulty: true, weight: true },
-          });
-          sectionQuestions.push(...fetched);
-        }
-      }
+        if (section.questionIds && section.questionIds.length > 0) {
+          sectionQuestions = await withQueryTimeout(
+            fetchSectionByIds(section, ukbi),
+            10000,
+            `Question fetch timeout (section ${i}: by IDs)`
+          );
+        } else if (section.count && section.count > 0) {
+          sectionQuestions = await withQueryTimeout(
+            fetchSectionByCriteria(section, paket.type, ukbi),
+            10000,
+            `Question fetch timeout (section ${i}: by criteria)`
+          );
 
-      if (sectionQuestions.length === 0 && section.count && section.count > 0) {
-        if (isUKBI(paket.type)) {
-          const where: any = { isActive: true };
-          if (section.seksi) where.seksi = section.seksi;
-          if (paket.type.includes("SD")) where.tingkat = "SD";
-          else if (paket.type.includes("SMP")) where.tingkat = "SMP";
-          else if (paket.type.includes("SMA")) where.tingkat = "SMA";
-          else if (paket.type.includes("GURU")) {
-            const guruFetched = await db.uKBIQuestion.findMany({
-              where: { ...where, tingkat: "GURU" },
-              take: section.count,
-              orderBy: { difficulty: "asc" },
-              select: { id: true, seksi: true, text: true, audioUrl: true, imageUrl: true, passage: true, type: true, options: true, difficulty: true, cognitive: true, domain: true, passageType: true, wordCount: true },
-            });
-            if (guruFetched.length > 0) {
-              sectionQuestions.push(...guruFetched);
-            } else {
-              const fallback = await db.uKBIQuestion.findMany({
-                where,
-                take: section.count,
-                orderBy: { difficulty: "asc" },
-                select: { id: true, seksi: true, text: true, audioUrl: true, imageUrl: true, passage: true, type: true, options: true, difficulty: true, cognitive: true, domain: true, passageType: true, wordCount: true },
-              });
-              sectionQuestions.push(...fallback);
-            }
-          } else {
-            const fetched = await db.uKBIQuestion.findMany({
-              where,
-              take: section.count,
-              orderBy: { difficulty: "asc" },
-              select: { id: true, seksi: true, text: true, audioUrl: true, imageUrl: true, passage: true, type: true, options: true, difficulty: true, cognitive: true, domain: true, passageType: true, wordCount: true },
-            });
-            sectionQuestions.push(...fetched);
-          }
-        } else {
-          const where: any = { isActive: true };
-          if (section.kompetensi) where.kompetensi = section.kompetensi;
-          if (section.subKompetensi) where.subKompetensi = section.subKompetensi;
-          if (paket.type.includes("SD")) where.tingkat = "SD";
-          else if (paket.type.includes("SMP")) where.tingkat = "SMP";
-          else if (paket.type.includes("SMA")) where.tingkat = "SMA";
-          else if (paket.type.includes("GURU")) {
-            const guruFetched = await db.tKAQuestion.findMany({
-              where: { ...where, tingkat: "GURU" },
-              take: section.count,
-              orderBy: { difficulty: "asc" },
-              select: { id: true, kompetensi: true, subKompetensi: true, text: true, passage: true, type: true, options: true, difficulty: true, weight: true },
-            });
-            if (guruFetched.length > 0) {
-              sectionQuestions.push(...guruFetched);
-            } else {
-              const fallback = await db.tKAQuestion.findMany({
-                where,
-                take: section.count,
-                orderBy: { difficulty: "asc" },
-                select: { id: true, kompetensi: true, subKompetensi: true, text: true, passage: true, type: true, options: true, difficulty: true, weight: true },
-              });
-              sectionQuestions.push(...fallback);
-            }
-          } else {
-            const fetched = await db.tKAQuestion.findMany({
-              where,
-              take: section.count,
-              orderBy: { difficulty: "asc" },
-              select: { id: true, kompetensi: true, subKompetensi: true, text: true, passage: true, type: true, options: true, difficulty: true, weight: true },
-            });
-            sectionQuestions.push(...fetched);
+          // General fallback (non-GURU only) if criteria returned nothing
+          if (sectionQuestions.length === 0 && !paket.type.includes("GURU")) {
+            sectionQuestions = await withQueryTimeout(
+              fetchSectionGeneralFallback(section, paket.type, ukbi),
+              10000,
+              `Question fetch timeout (section ${i}: fallback)`
+            );
           }
         }
-      }
 
-      if (sectionQuestions.length === 0 && section.count && section.count > 0 && !paket.type.includes("GURU")) {
-        if (isUKBI(paket.type)) {
-          const fallback = await db.uKBIQuestion.findMany({
-            where: { isActive: true },
-            take: section.count,
-            orderBy: { difficulty: "asc" },
-            select: { id: true, seksi: true, text: true, audioUrl: true, imageUrl: true, passage: true, type: true, options: true, difficulty: true, cognitive: true, domain: true, passageType: true, wordCount: true },
-          });
-          sectionQuestions.push(...fallback);
-        } else {
-          const fallback = await db.tKAQuestion.findMany({
-            where: { isActive: true },
-            take: section.count,
-            orderBy: { difficulty: "asc" },
-            select: { id: true, kompetensi: true, subKompetensi: true, text: true, passage: true, type: true, options: true, difficulty: true, weight: true },
-          });
-          sectionQuestions.push(...fallback);
+        // Shuffle questions within section
+        sectionQuestions = fisherYatesShuffle(sectionQuestions, sessionSeed + "-sec" + i);
+
+        // Shuffle options per question
+        for (const q of sectionQuestions) {
+          if (q.options && Array.isArray(q.options) && q.options.length > 1) {
+            q.options = shuffleOptionsForQuestion(q.options, sessionSeed + "-q" + q.id);
+          }
         }
-      }
 
-      sectionQuestions = fisherYatesShuffle(sectionQuestions, sessionSeed + "-sec" + i);
-      for (const q of sectionQuestions) {
-        if (q.options && Array.isArray(q.options) && q.options.length > 1) {
-          q.options = shuffleOptionsForQuestion(q.options, sessionSeed + "-q" + q.id);
-        }
-      }
+        return {
+          sectionIndex: i,
+          sectionName: section.name,
+          seksi: section.seksi,
+          timeLimit: section.timeLimit,
+          questions: sectionQuestions,
+        };
+      })
+    );
 
-      questions.push({
-        sectionIndex: i,
-        sectionName: section.name,
-        seksi: section.seksi,
-        timeLimit: section.timeLimit,
-        questions: sectionQuestions,
-      });
-    }
-
-    const allSnapshots: QuestionSnapshot[] = [];
+    // ── SNAPSHOT ──
     const allIds: string[] = [];
-    for (const section of questions) {
+    for (const section of rawSectionResults) {
       for (const q of section.questions) {
         allIds.push(q.id);
       }
@@ -222,29 +241,39 @@ export async function GET(
 
     let answerMap = new Map<string, SnapshotAnswerData>();
     if (allIds.length > 0) {
-      if (isUKBI(paket.type)) {
-        const answers = await db.uKBIQuestion.findMany({
-          where: { id: { in: allIds } },
-          select: { id: true, correctAnswer: true, difficulty: true, seksi: true },
-        });
+      if (ukbi) {
+        const answers = await withQueryTimeout(
+          db.uKBIQuestion.findMany({
+            where: { id: { in: allIds } },
+            select: UKBI_SNAPSHOT_SELECT,
+          }),
+          10000,
+          "Snapshot fetch timeout"
+        );
         answerMap = new Map(answers.map(a => [a.id, a as SnapshotAnswerData]));
       } else {
-        const answers = await db.tKAQuestion.findMany({
-          where: { id: { in: allIds } },
-          select: { id: true, correctAnswer: true, weight: true, kompetensi: true },
-        });
+        const answers = await withQueryTimeout(
+          db.tKAQuestion.findMany({
+            where: { id: { in: allIds } },
+            select: TKA_SNAPSHOT_SELECT,
+          }),
+          10000,
+          "Snapshot fetch timeout"
+        );
         answerMap = new Map(answers.map(a => [a.id, { ...a, difficulty: "" } as SnapshotAnswerData]));
       }
     }
 
     const questionOrder: string[] = [];
-    for (const section of questions) {
+    const allSnapshots: QuestionSnapshot[] = [];
+
+    for (const section of rawSectionResults) {
       for (const q of section.questions) {
         const answerData = answerMap.get(q.id);
         questionOrder.push(q.id);
         allSnapshots.push({
           id: q.id,
-          product: isUKBI(paket.type) ? "UKBI" : "TKA",
+          product: ukbi ? "UKBI" : "TKA",
           section: answerData?.seksi || answerData?.kompetensi || section.seksi || section.sectionName,
           type: q.type,
           text: q.text,
@@ -258,22 +287,26 @@ export async function GET(
       }
     }
 
-    await db.testSession.update({
-      where: { id: session.id },
-      data: {
-        questionSnapshot: JSON.parse(JSON.stringify({
-          version: "1.0",
-          createdAt: new Date().toISOString(),
-          seed: sessionSeed,
-          paketId: paket.id,
-          userId: dbUser.id,
-          questionOrder,
-          questions: allSnapshots,
-        })),
-      },
-    });
+    await withQueryTimeout(
+      db.testSession.update({
+        where: { id: session.id },
+        data: {
+          questionSnapshot: JSON.parse(JSON.stringify({
+            version: "1.0",
+            createdAt: new Date().toISOString(),
+            seed: sessionSeed,
+            paketId: paket.id,
+            userId: dbUser.id,
+            questionOrder,
+            questions: allSnapshots,
+          })),
+        },
+      }),
+      5000,
+      "Snapshot save timeout"
+    );
 
-    const totalQuestions = questions.reduce((sum, s) => sum + s.questions.length, 0);
+    const totalQuestions = rawSectionResults.reduce((sum, s) => sum + s.questions.length, 0);
     if (totalQuestions === 0) {
       return NextResponse.json({
         error: "Tidak ada soal tersedia",
@@ -305,7 +338,7 @@ export async function GET(
         passingScore: paket.passingScore,
         passingGrade: paket.passingGrade,
       },
-      questions,
+      questions: rawSectionResults,
     });
   } catch (error: any) {
     console.error("GET /api/kompetensi/[paketId] error:", error);

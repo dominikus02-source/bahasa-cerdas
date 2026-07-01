@@ -84,6 +84,13 @@ export async function getUKBIPackages(): Promise<SimulationTrack[]> {
   const pakets = await db.paketKompetensi.findMany({
     where: { isActive: true, type: { in: UKBI_TYPES } },
     orderBy: { createdAt: "desc" },
+    select: {
+      id: true,
+      type: true,
+      totalQuestions: true,
+      duration: true,
+      createdAt: true,
+    },
   });
 
   const trackMap: Record<string, SimulationTrack> = {};
@@ -103,14 +110,6 @@ export async function getUKBIPackages(): Promise<SimulationTrack[]> {
     }
   }
 
-  // Mark limited legacy banks
-  if (trackMap["SMP"] && trackMap["SMP"].questionCount <= 25) {
-    trackMap["SMP"].isLegacy = true;
-  }
-  if (trackMap["SMA"] && trackMap["SMA"].questionCount <= 25) {
-    trackMap["SMA"].isLegacy = true;
-  }
-
   // Set href and statusLabel
   for (const t of Object.values(trackMap)) {
     if (t.available && t.paketId) {
@@ -128,6 +127,13 @@ export async function getTKAPackages(): Promise<SimulationTrack[]> {
   const pakets = await db.paketKompetensi.findMany({
     where: { isActive: true, type: { in: TKA_TYPES } },
     orderBy: { createdAt: "desc" },
+    select: {
+      id: true,
+      type: true,
+      totalQuestions: true,
+      duration: true,
+      createdAt: true,
+    },
   });
 
   const trackMap: Record<string, SimulationTrack> = {};
@@ -145,17 +151,6 @@ export async function getTKAPackages(): Promise<SimulationTrack[]> {
         trackMap[track].paketId = p.id;
       }
     }
-  }
-
-  // Mark limited legacy banks
-  if (trackMap["SD"] && trackMap["SD"].questionCount <= 10) {
-    trackMap["SD"].isLegacy = true;
-  }
-  if (trackMap["SMP"] && trackMap["SMP"].questionCount <= 35) {
-    trackMap["SMP"].isLegacy = true;
-  }
-  if (trackMap["SMA"] && trackMap["SMA"].questionCount <= 33) {
-    trackMap["SMA"].isLegacy = true;
   }
 
   // Set href and statusLabel

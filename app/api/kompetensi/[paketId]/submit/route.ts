@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
+import { rateLimitRoute } from "@/lib/rate-limit";
 import type { AttemptSnapshot, AttemptAnswerDetails, UserAnswerRecord } from "@/lib/types/snapshot";
 
 export async function GET(
@@ -98,6 +99,13 @@ export async function POST(
   { params }: { params: Promise<{ paketId: string }> }
 ) {
   try {
+    const rateLimitResponse = await rateLimitRoute(req, {
+      maxRequests: 30,
+      windowSeconds: 60,
+      identifier: "simulation-submit",
+    });
+    if (rateLimitResponse) return rateLimitResponse;
+
     const { paketId } = await params;
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
