@@ -2,7 +2,13 @@
 
 import { useState, useEffect, useCallback, useRef, use } from "react";
 import { useRouter } from "next/navigation";
-import { Clock, ChevronLeft, ChevronRight, Flag, AlertTriangle, CheckCircle, XCircle } from "lucide-react";
+import { ChevronLeft, ChevronRight, Flag, XCircle } from "lucide-react";
+import TestShell from "@/components/kompetensi/TestShell";
+import TestHeader from "@/components/kompetensi/TestHeader";
+import QuestionCard from "@/components/kompetensi/QuestionCard";
+import QuestionNavigator from "@/components/kompetensi/QuestionNavigator";
+import SectionProgress from "@/components/kompetensi/SectionProgress";
+import SubmitConfirmModal from "@/components/kompetensi/SubmitConfirmModal";
 
 interface Question {
   id: string;
@@ -15,10 +21,9 @@ interface Question {
   difficulty?: string;
   seksi?: string;
   kompetensi?: string;
-  subKompetensi?: string;
 }
 
-interface Section {
+interface SectionData {
   sectionIndex: number;
   sectionName: string;
   seksi?: string;
@@ -29,7 +34,7 @@ interface Section {
 interface PacketData {
   session: any;
   packet: any;
-  questions: Section[];
+  questions: SectionData[];
 }
 
 export default function KompetisiPage({ params }: { params: Promise<{ paketId: string }> }) {
@@ -54,7 +59,6 @@ export default function KompetisiPage({ params }: { params: Promise<{ paketId: s
       const result = await res.json();
 
       if (result.error) {
-        console.error("Kompetisi API error:", result.error, result.message);
         if (result.session?.status === "COMPLETED") {
           router.push(`/kompetisi/${resolvedParams.paketId}/hasil`);
           return;
@@ -68,23 +72,19 @@ export default function KompetisiPage({ params }: { params: Promise<{ paketId: s
       }
 
       if (!result.questions || result.questions.length === 0) {
-        setError("Tidak ada soal tersedia untuk paket ini. Hubungi admin untuk menambahkan soal.");
+        setError("Tidak ada soal tersedia untuk paket ini.");
         return;
       }
 
       const hasQuestions = result.questions.some((s: any) => s.questions && s.questions.length > 0);
       if (!hasQuestions) {
-        setError("Tidak ada soal tersedia untuk paket ini. Hubungi admin untuk menambahkan soal.");
+        setError("Tidak ada soal tersedia untuk paket ini.");
         return;
       }
 
       setData(result);
-      if (result.session?.answers) {
-        setAnswers(result.session.answers);
-      }
-      if (result.session?.flagged) {
-        setFlagged(result.session.flagged);
-      }
+      if (result.session?.answers) setAnswers(result.session.answers);
+      if (result.session?.flagged) setFlagged(result.session.flagged);
 
       if (result.session?.expiresAt) {
         const expires = new Date(result.session.expiresAt);
@@ -94,7 +94,7 @@ export default function KompetisiPage({ params }: { params: Promise<{ paketId: s
       } else if (result.packet?.duration) {
         setTimeLeft(result.packet.duration * 60);
       }
-    } catch (e) {
+    } catch {
       setError("Gagal memuat soal");
     } finally {
       setLoading(false);
@@ -117,11 +117,11 @@ export default function KompetisiPage({ params }: { params: Promise<{ paketId: s
     if (timeLeft <= 0) return;
     timerStartedRef.current = true;
     if (timerRef.current) clearInterval(timerRef.current);
-    
+
     timerRef.current = setInterval(() => {
       setTimeLeft((t) => (t <= 1 ? 0 : t - 1));
     }, 1000);
-    
+
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
@@ -137,7 +137,17 @@ export default function KompetisiPage({ params }: { params: Promise<{ paketId: s
   const currentSectionData = sections[currentSection];
   const questions = currentSectionData?.questions || [];
   const currentQ = questions[currentQuestion];
-  const isFlagged = flagged.includes(currentQuestion);
+  const isFlagged = currentSection === 0 ? flagged.includes(currentQuestion) : false;
+
+  // Track flagged per section — use absolute index across all sections
+  const getAbsoluteIndex = (sIdx: number, qIdx: number) => {
+    let idx = 0;
+    for (let s = 0; s < sIdx; s++) {
+      idx += sections[s]?.questions.length || 0;
+    }
+    return idx + qIdx;
+  };
+  const absoluteIdx = getAbsoluteIndex(currentSection, currentQuestion);
 
   const selectAnswer = (questionId: string, optionId: string) => {
     setAnswers((prev) => ({ ...prev, [questionId]: optionId }));
@@ -145,7 +155,9 @@ export default function KompetisiPage({ params }: { params: Promise<{ paketId: s
 
   const toggleFlag = () => {
     setFlagged((prev) =>
-      prev.includes(currentQuestion) ? prev.filter((f) => f !== currentQuestion) : [...prev, currentQuestion]
+      prev.includes(absoluteIdx)
+        ? prev.filter((f) => f !== absoluteIdx)
+        : [...prev, absoluteIdx]
     );
   };
 
@@ -190,7 +202,7 @@ export default function KompetisiPage({ params }: { params: Promise<{ paketId: s
       } else {
         setError(result.error || "Submit gagal");
       }
-    } catch (e) {
+    } catch {
       setError("Terjadi kesalahan saat submit");
     } finally {
       setSubmitting(false);
@@ -198,234 +210,220 @@ export default function KompetisiPage({ params }: { params: Promise<{ paketId: s
     }
   };
 
-  const formatTime = (seconds: number) => {
-    const m = Math.floor(seconds / 60);
-    const s = seconds % 60;
-    return `${m}:${s.toString().padStart(2, "0")}`;
-  };
-
-  const answeredCount = Object.keys(answers).length;
-  const totalInSection = questions.length;
+  const answeredCount = sections.reduce((s, sec) => s + sec.questions.filter((q) => answers[q.id]).length, 0);
+  const totalQuestions = sections.reduce((s, sec) => s + sec.questions.length, 0);
+  const flaggedCount = flagged.length;
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-100 flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-12 h-12 border-4 border-indigo-500/30 border-t-indigo-500 rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-slate-500">Memuat soal...</p>
+      <TestShell>
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <div className="text-center">
+            <div className="w-10 h-10 border-3 border-emerald-500/30 border-t-emerald-500 rounded-full animate-spin mx-auto mb-3" />
+            <p className="text-sm text-slate-500">Memuat soal...</p>
+          </div>
         </div>
-      </div>
+      </TestShell>
     );
   }
 
   if (error) {
     return (
-      <div className="min-h-screen bg-slate-100 flex items-center justify-center">
-        <div className="text-center bg-white rounded-2xl p-8 shadow-sm max-w-md">
-          <XCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
-          <h2 className="font-bold text-xl mb-2">{error}</h2>
-          <button onClick={() => router.back()} className="mt-4 px-6 py-2 bg-indigo-600 text-white rounded-xl font-bold">
-            Kembali
-          </button>
+      <TestShell>
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <div className="text-center bg-white rounded-2xl p-8 shadow-sm max-w-md border border-slate-200">
+            <XCircle className="w-14 h-14 text-red-400 mx-auto mb-4" />
+            <h2 className="font-bold text-lg mb-2 text-slate-800">{error}</h2>
+            <button
+              onClick={() => router.back()}
+              className="mt-4 px-6 py-2.5 bg-emerald-600 text-white rounded-xl font-bold hover:bg-emerald-700 transition-colors"
+            >
+              Kembali
+            </button>
+          </div>
         </div>
-      </div>
+      </TestShell>
     );
   }
 
   if (!currentQ) {
     return (
-      <div className="min-h-screen bg-slate-100 flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-slate-500">Tidak ada soal tersedia.</p>
-          <button onClick={() => router.back()} className="mt-4 px-6 py-2 bg-indigo-600 text-white rounded-xl font-bold">
-            Kembali
-          </button>
+      <TestShell>
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <div className="text-center bg-white rounded-2xl p-8 shadow-sm max-w-md border border-slate-200">
+            <XCircle className="w-14 h-14 text-slate-300 mx-auto mb-4" />
+            <p className="text-slate-500 mb-4">Tidak ada soal tersedia.</p>
+            <button
+              onClick={() => router.back()}
+              className="px-6 py-2.5 bg-emerald-600 text-white rounded-xl font-bold hover:bg-emerald-700 transition-colors"
+            >
+              Kembali
+            </button>
+          </div>
         </div>
-      </div>
+      </TestShell>
     );
   }
 
   return (
-    <div className="min-h-screen bg-slate-100 flex flex-col">
-      <div className="bg-white shadow-sm px-4 py-3 flex items-center justify-between sticky top-0 z-50">
-        <div className="flex items-center gap-3">
-          <button onClick={() => router.back()} className="p-2 hover:bg-slate-100 rounded-lg">
-            <ChevronLeft className="w-5 h-5" />
-          </button>
-          <div>
-            <h1 className="font-bold text-slate-900 text-sm">{data?.packet?.title}</h1>
-            <p className="text-xs text-slate-500">
-              Seksi {currentSection + 1}/{sections.length} · {currentQuestion + 1}/{totalInSection}
-            </p>
-          </div>
-        </div>
+    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100/50">
+      <TestHeader
+        title={data?.packet?.title || "Latihan"}
+        type={data?.packet?.type || ""}
+        currentSection={currentSection}
+        totalSections={sections.length}
+        currentQuestion={currentQuestion}
+        totalInSection={questions.length}
+        timeLeft={timeLeft}
+        answeredCount={answeredCount}
+        totalQuestions={totalQuestions}
+        onExit={() => {
+          if (answeredCount > 0) {
+            if (confirm("Anda akan keluar dari latihan. Jawaban yang belum dikirim akan hilang. Lanjutkan?")) {
+              router.back();
+            }
+          } else {
+            router.back();
+          }
+        }}
+      />
 
-        <div className="flex items-center gap-3">
-          <div className={`flex items-center gap-2 px-3 py-1.5 rounded-lg font-mono font-bold text-sm ${
-            timeLeft <= 60 ? "bg-red-100 text-red-600 animate-pulse" : "bg-slate-100 text-slate-700"
-          }`}>
-            <Clock className="w-4 h-4" />
-            {formatTime(timeLeft)}
-          </div>
-
-          <div className="flex items-center gap-1.5 px-3 py-1.5 bg-green-100 text-green-700 rounded-lg text-xs font-bold">
-            <CheckCircle className="w-3.5 h-3.5" />
-            {answeredCount} dijawab
-          </div>
-        </div>
-      </div>
-
-      <div className="flex-1 max-w-4xl mx-auto w-full p-4 space-y-4">
-        <div className="bg-white rounded-xl p-5 shadow-sm">
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-xs font-bold text-indigo-600 bg-indigo-50 px-3 py-1 rounded-full">
-              {currentSectionData?.sectionName || data?.packet?.type}
-            </span>
-            <button
-              onClick={toggleFlag}
-              className={`p-2 rounded-lg transition-colors ${isFlagged ? "bg-yellow-100 text-yellow-600" : "hover:bg-slate-100 text-slate-400"}`}
-            >
-              <Flag className="w-4 h-4" />
-            </button>
-          </div>
-
-          {currentQ.passage && (
-            <div className="bg-indigo-50 rounded-xl p-4 text-sm text-slate-700 mb-4 border-l-4 border-indigo-400 leading-relaxed">
-              <div className="text-[10px] font-bold text-indigo-500 uppercase tracking-wider mb-1">Bacaan</div>
-              {currentQ.passage}
+      <div className="max-w-5xl mx-auto px-3 sm:px-4 lg:px-6 py-4 sm:py-6">
+        <div className="flex gap-4 sm:gap-6">
+          {/* Side section progress (desktop) */}
+          <aside className="hidden lg:block w-56 shrink-0">
+            <div className="sticky top-24">
+              <SectionProgress
+                sections={sections}
+                currentSection={currentSection}
+                answers={answers}
+                flagged={[]}
+                onGoToSection={(sIdx) => {
+                  setCurrentSection(sIdx);
+                  setCurrentQuestion(0);
+                }}
+              />
             </div>
-          )}
+          </aside>
 
-          {currentQ.imageUrl && (
-            <div className="mb-4 rounded-xl overflow-hidden">
-              <img src={currentQ.imageUrl} alt="soal" className="max-h-48 object-contain mx-auto" />
+          {/* Main content */}
+          <div className="flex-1 min-w-0 space-y-4 sm:space-y-5">
+            {/* Section progress (mobile) */}
+            <div className="lg:hidden">
+              <SectionProgress
+                sections={sections}
+                currentSection={currentSection}
+                answers={answers}
+                flagged={[]}
+                onGoToSection={(sIdx) => {
+                  setCurrentSection(sIdx);
+                  setCurrentQuestion(0);
+                }}
+              />
             </div>
-          )}
 
-          <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Soal</div>
-          <p className="text-slate-800 leading-relaxed font-medium">{currentQ.text}</p>
-        </div>
+            <QuestionCard
+              questionNumber={currentQuestion + 1}
+              totalInSection={questions.length}
+              sectionName={currentSectionData?.sectionName || ""}
+              question={currentQ}
+              selectedAnswer={answers[currentQ.id] || null}
+              isFlagged={isFlagged}
+              onSelectAnswer={selectAnswer}
+              onToggleFlag={toggleFlag}
+              isListening={currentQ.type?.toLowerCase() === "listening" || currentQ.type?.toLowerCase() === "mendengarkan"}
+            />
 
-        <div className="space-y-2.5">
-          {currentQ.options?.map((option: any, optIdx: number) => {
-            const LETTERS = ["A", "B", "C", "D", "E"];
-            const optId = option.id || LETTERS[optIdx] || String(optIdx);
-            const optText = option.text || option;
-            const isSelected = answers[currentQ.id] === optId;
-            return (
+            {/* Navigation buttons */}
+            <div className="flex items-center justify-between gap-3">
               <button
-                key={option.id}
-                onClick={() => selectAnswer(currentQ.id, option.id)}
-                className={`w-full text-left rounded-xl p-4 transition-all flex items-start gap-3 ${
-                  isSelected
-                    ? "bg-indigo-50 border-2 border-indigo-500 shadow-sm"
-                    : "bg-white border-2 border-slate-100 hover:border-indigo-300 hover:bg-indigo-50/50"
-                }`}
+                onClick={goPrev}
+                disabled={currentSection === 0 && currentQuestion === 0}
+                className="flex items-center gap-1.5 px-3.5 sm:px-5 py-2.5 sm:py-3 bg-white border border-slate-200 text-slate-600 rounded-xl text-xs sm:text-sm font-medium hover:bg-slate-50 disabled:opacity-30 disabled:cursor-not-allowed transition-colors shadow-sm"
               >
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold shrink-0 ${
-                  isSelected ? "bg-indigo-600 text-white" : "bg-slate-100 text-slate-500"
-                }`}>
-                  {optId}
-                </div>
-                <span className={`text-sm font-medium pt-1 ${isSelected ? "text-indigo-900" : "text-slate-700"}`}>
-                  {optText}
-                </span>
+                <ChevronLeft className="w-4 h-4" />
+                <span className="hidden sm:inline">Sebelumnya</span>
+                <span className="sm:hidden">Sebelum</span>
               </button>
-            );
-          })}
-        </div>
 
-        <div className="flex items-center justify-between pt-4">
-          <button
-            onClick={goPrev}
-            disabled={currentSection === 0 && currentQuestion === 0}
-            className="flex items-center gap-2 px-4 py-2.5 bg-white border border-slate-200 text-slate-600 rounded-xl text-sm font-medium hover:bg-slate-50 disabled:opacity-30 disabled:cursor-not-allowed"
-          >
-            <ChevronLeft className="w-4 h-4" /> Sebelumnya
-          </button>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={toggleFlag}
+                  className={`flex items-center gap-1.5 px-3 sm:px-4 py-2.5 sm:py-3 rounded-xl text-xs sm:text-sm font-medium transition-colors border ${
+                    isFlagged
+                      ? "bg-amber-50 text-amber-600 border-amber-200"
+                      : "bg-white text-slate-500 border-slate-200 hover:bg-slate-50"
+                  } shadow-sm`}
+                >
+                  <Flag className={`w-3.5 h-3.5 ${isFlagged ? "fill-amber-500" : ""}`} />
+                  <span className="hidden sm:inline">{isFlagged ? "Sudah ditandai" : "Tandai"}</span>
+                  <span className="sm:hidden">{isFlagged ? "Ditandai" : "Tandai"}</span>
+                </button>
+              </div>
 
-          <button
-            onClick={goNext}
-            disabled={currentSection === sections.length - 1 && currentQuestion === questions.length - 1}
-            className="flex items-center gap-2 px-4 py-2.5 bg-indigo-600 text-white rounded-xl text-sm font-medium hover:bg-indigo-700 disabled:opacity-30 disabled:cursor-not-allowed"
-          >
-            Selanjutnya <ChevronRight className="w-4 h-4" />
-          </button>
-        </div>
-      </div>
+              <button
+                onClick={goNext}
+                disabled={currentQuestion === questions.length - 1 && currentSection === sections.length - 1}
+                className="flex items-center gap-1.5 px-3.5 sm:px-5 py-2.5 sm:py-3 bg-emerald-600 text-white rounded-xl text-xs sm:text-sm font-bold hover:bg-emerald-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors shadow-sm"
+              >
+                <span className="hidden sm:inline">Selanjutnya</span>
+                <span className="sm:hidden">Lanjut</span>
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            </div>
 
-      <div className="bg-white border-t border-slate-200 px-4 py-3 sticky bottom-0">
-        <div className="max-w-4xl mx-auto">
-          <div className="flex gap-3 overflow-x-auto pb-2" style={{ scrollbarWidth: "none" }}>
-            {sections.map((section, sIdx) => (
-              <div key={sIdx} className="shrink-0">
-                <p className="text-xs font-bold text-slate-500 mb-1">{section.sectionName}</p>
-                <div className="flex gap-1 flex-wrap">
-                  {section.questions.map((q, qIdx) => {
-                    const isAnswered = !!answers[q.id];
-                    const isFlag = sIdx === currentSection && flagged.includes(qIdx);
-                    const isCurrent = sIdx === currentSection && qIdx === currentQuestion;
-                    return (
-                      <button
-                        key={q.id}
-                        onClick={() => goToQuestion(sIdx, qIdx)}
-                        className={`w-8 h-8 rounded-lg text-xs font-bold flex items-center justify-center transition-all ${
-                          isCurrent ? "ring-2 ring-indigo-500 ring-offset-1" : ""
-                        } ${
-                          isFlag
-                            ? "bg-yellow-100 text-yellow-700 border-2 border-yellow-300"
-                            : isAnswered
-                            ? "bg-green-100 text-green-700 border-2 border-green-300"
-                            : "bg-slate-100 text-slate-500 border-2 border-transparent hover:bg-slate-200"
-                        }`}
-                      >
-                        {qIdx + 1}
-                      </button>
-                    );
-                  })}
+            {/* Bottom bar */}
+            <div className="bg-white rounded-xl sm:rounded-2xl border border-slate-200/70 shadow-sm p-3 sm:p-4">
+              <div className="flex items-center justify-between gap-3">
+                <QuestionNavigator
+                  sections={sections}
+                  currentSection={currentSection}
+                  currentQuestion={currentQuestion}
+                  answers={answers}
+                  flagged={flagged}
+                  onGoToQuestion={goToQuestion}
+                />
+
+                <div className="flex items-center gap-2">
+                  <div className="hidden sm:flex items-center gap-1.5 text-[10px] sm:text-xs text-slate-500">
+                    <span className="inline-flex items-center gap-1">
+                      <span className="w-2 h-2 rounded-sm bg-emerald-100 border border-emerald-300" />
+                      Dijawab
+                    </span>
+                    <span className="inline-flex items-center gap-1">
+                      <span className="w-2 h-2 rounded-sm bg-amber-100 border border-amber-300" />
+                      Ragu
+                    </span>
+                    <span className="inline-flex items-center gap-1">
+                      <span className="w-2 h-2 rounded-sm bg-slate-50 border border-slate-200" />
+                      Kosong
+                    </span>
+                  </div>
+
+                  <button
+                    onClick={() => setShowConfirm(true)}
+                    className="px-4 sm:px-6 py-2.5 sm:py-3 bg-emerald-600 text-white font-bold rounded-xl hover:bg-emerald-700 transition-colors text-xs sm:text-sm shadow-sm"
+                  >
+                    Kirim Jawaban
+                  </button>
                 </div>
               </div>
-            ))}
+            </div>
           </div>
-
-          <button
-            onClick={() => handleSubmit(false)}
-            className="w-full mt-2 py-3 bg-red-600 text-white font-bold rounded-xl hover:bg-red-700 transition-colors"
-          >
-            Kirim Jawaban
-          </button>
         </div>
       </div>
 
-      {showConfirm && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={() => setShowConfirm(false)}>
-          <div className="bg-white rounded-2xl p-6 max-w-sm w-full" onClick={(e) => e.stopPropagation()}>
-            <div className="flex items-center gap-3 mb-4">
-              <AlertTriangle className="w-6 h-6 text-yellow-500" />
-              <h2 className="font-bold text-lg">Konfirmasi Kirim?</h2>
-            </div>
-            <p className="text-sm text-slate-600 mb-4">
-              Anda telah menjawab <strong>{answeredCount}</strong> soal. 
-              {answeredCount < (data?.packet?.totalQuestions || 0) && (
-                <span className="text-red-500"> Masih ada {(data?.packet?.totalQuestions || 0) - answeredCount} soal belum dijawab.</span>
-              )}
-            </p>
-            <p className="text-xs text-slate-400 mb-5">Setelah dikirim, Anda tidak dapat mengubah jawaban.</p>
-            <div className="flex gap-3">
-              <button onClick={() => setShowConfirm(false)} className="flex-1 py-2.5 border-2 border-slate-200 text-slate-600 font-bold rounded-xl">
-                Batal
-              </button>
-              <button onClick={() => handleSubmit(true)} disabled={submitting} className="flex-1 py-2.5 bg-red-600 text-white font-bold rounded-xl flex items-center justify-center gap-2">
-                {submitting ? (
-                  <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                ) : (
-                  "Ya, Kirim"
-                )}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <SubmitConfirmModal
+        open={showConfirm}
+        onClose={() => setShowConfirm(false)}
+        onConfirm={() => handleSubmit(false)}
+        submitting={submitting}
+        answeredCount={answeredCount}
+        totalQuestions={totalQuestions}
+        flaggedCount={flaggedCount}
+        sections={sections}
+        answers={answers}
+      />
     </div>
   );
 }

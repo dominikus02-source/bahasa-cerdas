@@ -1,0 +1,1377 @@
+{
+  "meta": {
+    "product": "TKA_PRACTICE",
+    "track": "TKA_SD",
+    "section": "membaca",
+    "set": "set-002",
+    "totalItems": 35,
+    "source": "BC_TKA_SD_ORIGINAL"
+  },
+  "questions": [
+    {
+      "id": "BC-TKA-SD-BACA-SET002-Q001",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_SD",
+      "section": "membaca",
+      "band": "RENDAH",
+      "type": "pilihan_ganda",
+      "difficulty": 1,
+      "passage": "Pak Rudi adalah seorang petani yang rajin. Setiap pagi ia pergi ke sawah untuk menanam padi. Ia juga memupuk tanaman agar tumbuh subur. Hasil panen Pak Rudi selalu melimpah karena ia bekerja keras.",
+      "stem": "Apa yang dilakukan Pak Rudi setiap pagi?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Bekerja di kantor"
+        },
+        {
+          "id": "B",
+          "text": "Pergi ke sawah"
+        },
+        {
+          "id": "C",
+          "text": "Berbelanja di pasar"
+        },
+        {
+          "id": "D",
+          "text": "Bermain bersama tetangga"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Teks menyebutkan bahwa Pak Rudi pergi ke sawah setiap pagi.",
+      "tags": [
+        "informasi-tersurat",
+        "pertanian"
+      ],
+      "source": "BC_TKA_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "FUNGSIONAL"
+    },
+    {
+      "id": "BC-TKA-SD-BACA-SET002-Q002",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_SD",
+      "section": "membaca",
+      "band": "RENDAH",
+      "type": "pilihan_ganda",
+      "difficulty": 1,
+      "passage": "Sampah plastik sangat berbahaya bagi lingkungan. Plastik membutuhkan waktu ratusan tahun untuk terurai. Oleh karena itu, kita harus mengurangi penggunaan plastik. Salah satu caranya adalah dengan membawa tas belanja sendiri.",
+      "stem": "Mengapa sampah plastik berbahaya bagi lingkungan?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Mudah terurai"
+        },
+        {
+          "id": "B",
+          "text": "Membutuhkan waktu lama untuk terurai"
+        },
+        {
+          "id": "C",
+          "text": "Tidak berbahaya"
+        },
+        {
+          "id": "D",
+          "text": "Dapat dimakan hewan"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Teks menyebutkan plastik membutuhkan waktu ratusan tahun untuk terurai.",
+      "tags": [
+        "informasi-tersurat",
+        "lingkungan"
+      ],
+      "source": "BC_TKA_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "INFORMASI"
+    },
+    {
+      "id": "BC-TKA-SD-BACA-SET002-Q003",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_SD",
+      "section": "membaca",
+      "band": "RENDAH",
+      "type": "pilihan_ganda",
+      "difficulty": 1,
+      "passage": "Indonesia memiliki banyak gunung berapi. Gunung berapi dapat meletus kapan saja. Saat meletus, gunung mengeluarkan lava dan abu vulkanik. Abu vulkanik dapat menyuburkan tanah di sekitarnya.",
+      "stem": "Apa yang dikeluarkan gunung berapi saat meletus?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Air dan pasir"
+        },
+        {
+          "id": "B",
+          "text": "Lava dan abu vulkanik"
+        },
+        {
+          "id": "C",
+          "text": "Batu bara"
+        },
+        {
+          "id": "D",
+          "text": "Minyak bumi"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Teks menyebutkan gunung berapi mengeluarkan lava dan abu vulkanik saat meletus.",
+      "tags": [
+        "informasi-tersurat",
+        "geografi"
+      ],
+      "source": "BC_TKA_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "INFORMASI"
+    },
+    {
+      "id": "BC-TKA-SD-BACA-SET002-Q004",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_SD",
+      "section": "membaca",
+      "band": "RENDAH",
+      "type": "pilihan_ganda",
+      "difficulty": 1,
+      "passage": "Sari dan teman-temannya mengadakan kerja bakti di sekolah. Mereka membersihkan kelas dan halaman sekolah. Setelah bersih, mereka bermain bersama di halaman.",
+      "stem": "Apa yang dilakukan Sari dan teman-temannya setelah membersihkan sekolah?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Pulang ke rumah"
+        },
+        {
+          "id": "B",
+          "text": "Bermain bersama"
+        },
+        {
+          "id": "C",
+          "text": "Belajar di kelas"
+        },
+        {
+          "id": "D",
+          "text": "Makan siang"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Teks menyebutkan setelah bersih mereka bermain bersama di halaman.",
+      "tags": [
+        "informasi-tersurat",
+        "kegiatan"
+      ],
+      "source": "BC_TKA_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "FUNGSIONAL"
+    },
+    {
+      "id": "BC-TKA-SD-BACA-SET002-Q005",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_SD",
+      "section": "membaca",
+      "band": "RENDAH",
+      "type": "pilihan_ganda",
+      "difficulty": 1,
+      "passage": "Kucing adalah hewan peliharaan yang lucu. Kucing memiliki bulu yang lembut dan mata yang indah. Kucing juga pandai menangkap tikus. Banyak orang memelihara kucing di rumah.",
+      "stem": "Mengapa banyak orang memelihara kucing?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Karena kucing besar dan kuat"
+        },
+        {
+          "id": "B",
+          "text": "Karena kucing lucu dan pandai menangkap tikus"
+        },
+        {
+          "id": "C",
+          "text": "Karena kucing bisa terbang"
+        },
+        {
+          "id": "D",
+          "text": "Karena kucing suka berenang"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Teks menyebutkan kucing lucu dan pandai menangkap tikus, sehingga banyak orang memeliharanya.",
+      "tags": [
+        "kesimpulan",
+        "hewan"
+      ],
+      "source": "BC_TKA_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PENALARAN",
+      "domain": "INFORMASI"
+    },
+    {
+      "id": "BC-TKA-SD-BACA-SET002-Q006",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_SD",
+      "section": "membaca",
+      "band": "RENDAH",
+      "type": "pilihan_ganda",
+      "difficulty": 1,
+      "passage": "Hutan mangrove tumbuh di daerah pantai. Akar pohon mangrove berfungsi menahan abrasi air laut. Selain itu, hutan mangrove menjadi tempat tinggal berbagai hewan laut seperti kepiting dan ikan kecil.",
+      "stem": "Apa fungsi akar pohon mangrove?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Menahan abrasi air laut"
+        },
+        {
+          "id": "B",
+          "text": "Menghasilkan buah"
+        },
+        {
+          "id": "C",
+          "text": "Menyerap polusi udara"
+        },
+        {
+          "id": "D",
+          "text": "Membuat udara sejuk"
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Teks menyebutkan akar pohon mangrove berfungsi menahan abrasi air laut.",
+      "tags": [
+        "informasi-tersurat",
+        "lingkungan"
+      ],
+      "source": "BC_TKA_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "INFORMASI"
+    },
+    {
+      "id": "BC-TKA-SD-BACA-SET002-Q007",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_SD",
+      "section": "membaca",
+      "band": "SEDANG",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "passage": "Membaca buku memiliki banyak manfaat. Selain menambah pengetahuan, membaca juga dapat melatih otak dan meningkatkan kemampuan berpikir. Anak yang rajin membaca biasanya memiliki prestasi belajar yang baik. Oleh karena itu, biasakanlah membaca setiap hari.",
+      "stem": "Manakah pernyataan yang sesuai dengan teks?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Membaca hanya menambah pengetahuan"
+        },
+        {
+          "id": "B",
+          "text": "Membaca dapat melatih otak dan meningkatkan kemampuan berpikir"
+        },
+        {
+          "id": "C",
+          "text": "Membaca membuat badan lelah"
+        },
+        {
+          "id": "D",
+          "text": "Hanya anak pintar yang suka membaca"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Teks menyebutkan membaca dapat melatih otak dan meningkatkan kemampuan berpikir.",
+      "tags": [
+        "informasi-tersurat",
+        "literasi"
+      ],
+      "source": "BC_TKA_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "INFORMASI"
+    },
+    {
+      "id": "BC-TKA-SD-BACA-SET002-Q008",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_SD",
+      "section": "membaca",
+      "band": "SEDANG",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "passage": "Pada musim kemarau, sungai-sungai di desa mengalami kekeringan. Para petani kesulitan mendapatkan air untuk mengairi sawah mereka. Pemerintah desa kemudian membangun sumur bor untuk membantu warga mendapatkan air bersih.",
+      "stem": "Apa yang dilakukan pemerintah desa untuk mengatasi kekeringan?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Menutup semua sungai"
+        },
+        {
+          "id": "B",
+          "text": "Membangun sumur bor"
+        },
+        {
+          "id": "C",
+          "text": "Mengirim bantuan makanan"
+        },
+        {
+          "id": "D",
+          "text": "Mengungsikan warga"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Teks menyebutkan pemerintah desa membangun sumur bor untuk membantu warga mendapatkan air bersih.",
+      "tags": [
+        "informasi-tersurat",
+        "lingkungan"
+      ],
+      "source": "BC_TKA_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "FUNGSIONAL"
+    },
+    {
+      "id": "BC-TKA-SD-BACA-SET002-Q009",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_SD",
+      "section": "membaca",
+      "band": "SEDANG",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "passage": "Kopi merupakan salah satu komoditas ekspor andalan Indonesia. Kopi Indonesia dikenal memiliki cita rasa yang khas. Daerah penghasil kopi terbesar di Indonesia antara lain Aceh, Lampung, Toraja, dan Jawa Timur. Petani kopi Indonesia terus berinovasi untuk meningkatkan kualitas dan produktivitas kopi.",
+      "stem": "Apa yang membuat kopi Indonesia dikenal di dunia?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Harganya murah"
+        },
+        {
+          "id": "B",
+          "text": "Cita rasanya yang khas"
+        },
+        {
+          "id": "C",
+          "text": "Produksinya sangat sedikit"
+        },
+        {
+          "id": "D",
+          "text": "Hanya dijual di pasar lokal"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Teks menyebutkan kopi Indonesia dikenal memiliki cita rasa yang khas.",
+      "tags": [
+        "informasi-tersurat",
+        "ekonomi"
+      ],
+      "source": "BC_TKA_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "INFORMASI"
+    },
+    {
+      "id": "BC-TKA-SD-BACA-SET002-Q010",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_SD",
+      "section": "membaca",
+      "band": "SEDANG",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "passage": "Selain menyenangkan, bermain musik juga bermanfaat bagi perkembangan otak anak. Bermain alat musik melatih koordinasi tangan dan mata. Musik juga dapat membantu anak mengekspresikan perasaan mereka.",
+      "stem": "Manfaat bermain musik bagi anak adalah...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Membuat anak malas belajar"
+        },
+        {
+          "id": "B",
+          "text": "Melatih koordinasi tangan dan mata"
+        },
+        {
+          "id": "C",
+          "text": "Mengurangi kreativitas"
+        },
+        {
+          "id": "D",
+          "text": "Membuat anak pendiam"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Teks menyebutkan bermain alat musik melatih koordinasi tangan dan mata.",
+      "tags": [
+        "informasi-tersurat",
+        "pendidikan"
+      ],
+      "source": "BC_TKA_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "INFORMASI"
+    },
+    {
+      "id": "BC-TKA-SD-BACA-SET002-Q011",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_SD",
+      "section": "membaca",
+      "band": "SEDANG",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "passage": "Setiap tanggal 2 Mei, Indonesia memperingati Hari Pendidikan Nasional. Tanggal ini dipilih karena merupakan hari lahir Ki Hajar Dewantara, tokoh pendidikan Indonesia. Ki Hajar Dewantara mendirikan perguruan Taman Siswa pada tahun 1922. Beliau dikenal dengan semboyannya 'Ing Ngarsa Sung Tuladha, Ing Madya Mangun Karsa, Tut Wuri Handayani'.",
+      "stem": "Siapa tokoh pendidikan yang lahir pada tanggal 2 Mei?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Ir. Soekarno"
+        },
+        {
+          "id": "B",
+          "text": "Ki Hajar Dewantara"
+        },
+        {
+          "id": "C",
+          "text": "R.A. Kartini"
+        },
+        {
+          "id": "D",
+          "text": "Mohammad Hatta"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Teks menyebutkan Hari Pendidikan Nasional diperingati pada hari lahir Ki Hajar Dewantara.",
+      "tags": [
+        "informasi-tersurat",
+        "sejarah"
+      ],
+      "source": "BC_TKA_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "INFORMASI"
+    },
+    {
+      "id": "BC-TKA-SD-BACA-SET002-Q012",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_SD",
+      "section": "membaca",
+      "band": "SEDANG",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "passage": "Saat ini teknologi digital berkembang sangat pesat. Banyak pekerjaan yang sebelumnya dilakukan secara manual kini beralih ke digital. Misalnya, surat-menyurat kini digantikan oleh surel atau email. Belanja pun bisa dilakukan secara daring tanpa harus pergi ke toko.",
+      "stem": "Apa contoh perubahan akibat perkembangan teknologi digital?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Surat menyurat digantikan surel"
+        },
+        {
+          "id": "B",
+          "text": "Semua orang kehilangan pekerjaan"
+        },
+        {
+          "id": "C",
+          "text": "Belanja harus ke toko"
+        },
+        {
+          "id": "D",
+          "text": "Komunikasi menjadi lebih sulit"
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Teks menyebutkan surat-menyurat kini digantikan oleh surel atau email sebagai contoh perubahan digital.",
+      "tags": [
+        "informasi-tersurat",
+        "teknologi"
+      ],
+      "source": "BC_TKA_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "INFORMASI"
+    },
+    {
+      "id": "BC-TKA-SD-BACA-SET002-Q013",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_SD",
+      "section": "membaca",
+      "band": "SEDANG",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "passage": "Gempa bumi terjadi ketika lempeng bumi bergerak dan bertabrakan. Getaran gempa dapat dirasakan hingga jarak yang jauh. Gempa bumi yang kuat dapat merusak bangunan dan menimbulkan korban jiwa. Oleh karena itu, penting untuk mengetahui cara evakuasi saat gempa.",
+      "stem": "Apa yang menyebabkan terjadinya gempa bumi?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Angin kencang"
+        },
+        {
+          "id": "B",
+          "text": "Pergerakan lempeng bumi"
+        },
+        {
+          "id": "C",
+          "text": "Hujan deras"
+        },
+        {
+          "id": "D",
+          "text": "Gelombang laut"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Teks menyebutkan gempa bumi terjadi ketika lempeng bumi bergerak dan bertabrakan.",
+      "tags": [
+        "informasi-tersurat",
+        "bencana"
+      ],
+      "source": "BC_TKA_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "INFORMASI"
+    },
+    {
+      "id": "BC-TKA-SD-BACA-SET002-Q014",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_SD",
+      "section": "membaca",
+      "band": "SEDANG",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "passage": "Kerja bakti adalah kegiatan gotong royong yang sering dilakukan masyarakat Indonesia. Dalam kerja bakti, warga bekerja sama membersihkan lingkungan, memperbaiki jalan, atau membangun fasilitas umum. Kegiatan ini mempererat tali persaudaraan antarwarga.",
+      "stem": "Apa manfaat kerja bakti bagi masyarakat?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Menghabiskan waktu"
+        },
+        {
+          "id": "B",
+          "text": "Mempererat tali persaudaraan"
+        },
+        {
+          "id": "C",
+          "text": "Membuat lelah"
+        },
+        {
+          "id": "D",
+          "text": "Membuang biaya"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Teks menyebutkan kerja bakti mempererat tali persaudaraan antarwarga.",
+      "tags": [
+        "informasi-tersurat",
+        "sosial"
+      ],
+      "source": "BC_TKA_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "FUNGSIONAL"
+    },
+    {
+      "id": "BC-TKA-SD-BACA-SET002-Q015",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_SD",
+      "section": "membaca",
+      "band": "SEDANG",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "passage": "Batik adalah warisan budaya Indonesia yang diakui UNESCO. Setiap daerah di Indonesia memiliki motif batik yang khas. Misalnya, batik Solo memiliki motif parang, batik Pekalongan terkenal dengan motif bunga, dan batik Bali memiliki corak alam.",
+      "stem": "Pernyataan yang benar tentang batik Indonesia adalah...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Batik hanya ada di Solo"
+        },
+        {
+          "id": "B",
+          "text": "Setiap daerah memiliki motif batik yang berbeda"
+        },
+        {
+          "id": "C",
+          "text": "UNESCO melarang pembuatan batik"
+        },
+        {
+          "id": "D",
+          "text": "Semua batik memiliki motif yang sama"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Teks menyebutkan setiap daerah memiliki motif batik yang khas dan berbeda.",
+      "tags": [
+        "informasi-tersurat",
+        "budaya"
+      ],
+      "source": "BC_TKA_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "INFORMASI"
+    },
+    {
+      "id": "BC-TKA-SD-BACA-SET002-Q016",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_SD",
+      "section": "membaca",
+      "band": "SEDANG",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "passage": "Salah satu cara menjaga kesehatan tubuh adalah dengan berolahraga secara teratur. Olahraga membuat jantung sehat, otot kuat, dan tubuh bugar. Anak-anak dianjurkan berolahraga setidaknya 30 menit setiap hari.",
+      "stem": "Berapa lama waktu olahraga yang dianjurkan untuk anak-anak?",
+      "options": [
+        {
+          "id": "A",
+          "text": "10 menit"
+        },
+        {
+          "id": "B",
+          "text": "30 menit setiap hari"
+        },
+        {
+          "id": "C",
+          "text": "2 jam setiap hari"
+        },
+        {
+          "id": "D",
+          "text": "Seminggu sekali"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Teks menyebutkan anak-anak dianjurkan berolahraga setidaknya 30 menit setiap hari.",
+      "tags": [
+        "informasi-tersurat",
+        "kesehatan"
+      ],
+      "source": "BC_TKA_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "INFORMASI"
+    },
+    {
+      "id": "BC-TKA-SD-BACA-SET002-Q017",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_SD",
+      "section": "membaca",
+      "band": "SEDANG",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "passage": "Sungai Amazon di Brasil adalah sungai terbesar di dunia. Panjang sungai ini mencapai sekitar 6.400 kilometer. Sungai Amazon mengalir melalui hutan hujan tropis yang sangat luas. Di sungai ini hidup berbagai jenis ikan, termasuk piranha yang terkenal.",
+      "stem": "Di benua manakah Sungai Amazon berada?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Asia"
+        },
+        {
+          "id": "B",
+          "text": "Amerika Selatan"
+        },
+        {
+          "id": "C",
+          "text": "Afrika"
+        },
+        {
+          "id": "D",
+          "text": "Eropa"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Teks menyebutkan Sungai Amazon berada di Brasil yang terletak di Amerika Selatan.",
+      "tags": [
+        "informasi-tersirat",
+        "geografi"
+      ],
+      "source": "BC_TKA_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PENALARAN",
+      "domain": "INFORMASI"
+    },
+    {
+      "id": "BC-TKA-SD-BACA-SET002-Q018",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_SD",
+      "section": "membaca",
+      "band": "SEDANG",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "passage": "Diabetes adalah penyakit yang ditandai dengan tingginya kadar gula darah. Penyakit ini dapat dicegah dengan pola makan sehat dan olahraga teratur. Mengonsumsi makanan berserat seperti sayur dan buah juga membantu mengontrol gula darah.",
+      "stem": "Bagaimana cara mencegah diabetes menurut teks?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Mengonsumsi makanan manis"
+        },
+        {
+          "id": "B",
+          "text": "Pola makan sehat dan olahraga teratur"
+        },
+        {
+          "id": "C",
+          "text": "Tidur sepanjang hari"
+        },
+        {
+          "id": "D",
+          "text": "Minum obat setiap hari"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Teks menyebutkan diabetes dapat dicegah dengan pola makan sehat dan olahraga teratur.",
+      "tags": [
+        "informasi-tersurat",
+        "kesehatan"
+      ],
+      "source": "BC_TKA_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "INFORMASI"
+    },
+    {
+      "id": "BC-TKA-SD-BACA-SET002-Q019",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_SD",
+      "section": "membaca",
+      "band": "SEDANG",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "passage": "Komodo adalah hewan khas Indonesia yang hanya ditemukan di Pulau Komodo, Nusa Tenggara Timur. Komodo merupakan kadal terbesar di dunia. Panjangnya bisa mencapai 3 meter dan beratnya mencapai 90 kilogram. Hewan ini dilindungi di Taman Nasional Komodo.",
+      "stem": "Di mana habitat asli komodo?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Pulau Bali"
+        },
+        {
+          "id": "B",
+          "text": "Pulau Komodo, NTT"
+        },
+        {
+          "id": "C",
+          "text": "Pulau Sumatera"
+        },
+        {
+          "id": "D",
+          "text": "Pulau Kalimantan"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Teks menyebutkan komodo hanya ditemukan di Pulau Komodo, Nusa Tenggara Timur.",
+      "tags": [
+        "informasi-tersurat",
+        "hewan"
+      ],
+      "source": "BC_TKA_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "INFORMASI"
+    },
+    {
+      "id": "BC-TKA-SD-BACA-SET002-Q020",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_SD",
+      "section": "membaca",
+      "band": "SEDANG",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "passage": "Kegiatan menabung sejak dini sangat penting. Dengan menabung, kita bisa membeli barang yang kita inginkan di kemudian hari. Menabung juga mengajarkan kita untuk hidup hemat dan tidak boros.",
+      "stem": "Apa manfaat menabung menurut teks?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Menghabiskan uang"
+        },
+        {
+          "id": "B",
+          "text": "Mengajarkan hidup hemat"
+        },
+        {
+          "id": "C",
+          "text": "Membuat kita miskin"
+        },
+        {
+          "id": "D",
+          "text": "Menambah hutang"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Teks menyebutkan menabung mengajarkan kita untuk hidup hemat dan tidak boros.",
+      "tags": [
+        "informasi-tersurat",
+        "keuangan"
+      ],
+      "source": "BC_TKA_SD_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "FUNGSIONAL"
+    },
+    {
+      "id": "BC-TKA-SD-BACA-SET002-Q021",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_SD",
+      "section": "membaca",
+      "passage": "Indonesia terletak di garis khatulistiwa sehingga memiliki iklim tropis. Ciri-ciri iklim tropis adalah suhu udara yang hangat sepanjang tahun dan curah hujan yang tinggi. Kelembapan udara juga relatif tinggi karena penguapan laut yang deras.",
+      "stem": "Apa ciri-ciri iklim tropis menurut teks?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Suhu dingin sepanjang tahun"
+        },
+        {
+          "id": "B",
+          "text": "Suhu hangat dan curah hujan tinggi"
+        },
+        {
+          "id": "C",
+          "text": "Salju turun setiap bulan"
+        },
+        {
+          "id": "D",
+          "text": "Udara sangat kering"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Teks menyebutkan iklim tropis memiliki suhu hangat dan curah hujan tinggi.",
+      "tags": [
+        "informasi-tersurat",
+        "geografi"
+      ],
+      "band": "SEDANG",
+      "difficulty": 2,
+      "cognitive": "PEMAHAMAN",
+      "domain": "INFORMASI",
+      "type": "pilihan_ganda",
+      "source": "BC_TKA_SD_ORIGINAL",
+      "status": "approved"
+    },
+    {
+      "id": "BC-TKA-SD-BACA-SET002-Q022",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_SD",
+      "section": "membaca",
+      "passage": "Kebersihan lingkungan sekolah adalah tanggung jawab seluruh warga sekolah. Setiap siswa harus membuang sampah pada tempatnya. Selain itu, perlu diadakan jadwal piket kebersihan secara bergiliran agar lingkungan sekolah selalu bersih dan nyaman.",
+      "stem": "Siapa yang bertanggung jawab menjaga kebersihan lingkungan sekolah?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Hanya guru"
+        },
+        {
+          "id": "B",
+          "text": "Hanya petugas kebersihan"
+        },
+        {
+          "id": "C",
+          "text": "Seluruh warga sekolah"
+        },
+        {
+          "id": "D",
+          "text": "Hanya kepala sekolah"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "Teks menyebutkan kebersihan adalah tanggung jawab seluruh warga sekolah.",
+      "tags": [
+        "informasi-tersurat",
+        "sekolah"
+      ],
+      "band": "RENDAH",
+      "difficulty": 1,
+      "cognitive": "PEMAHAMAN",
+      "domain": "FUNGSIONAL",
+      "type": "pilihan_ganda",
+      "source": "BC_TKA_SD_ORIGINAL",
+      "status": "approved"
+    },
+    {
+      "id": "BC-TKA-SD-BACA-SET002-Q023",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_SD",
+      "section": "membaca",
+      "passage": "Pohon memiliki peran penting bagi kehidupan manusia. Pohon menghasilkan oksigen yang kita hirup. Akar pohon juga mencegah erosi tanah. Selain itu, pohon memberikan keteduhan dan keindahan lingkungan.",
+      "stem": "Apa peran akar pohon bagi lingkungan?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Menghasilkan oksigen"
+        },
+        {
+          "id": "B",
+          "text": "Mencegah erosi tanah"
+        },
+        {
+          "id": "C",
+          "text": "Memberikan keteduhan"
+        },
+        {
+          "id": "D",
+          "text": "Menyerap karbondioksida"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Teks menyebutkan akar pohon mencegah erosi tanah.",
+      "tags": [
+        "informasi-tersurat",
+        "lingkungan"
+      ],
+      "band": "RENDAH",
+      "difficulty": 1,
+      "cognitive": "PEMAHAMAN",
+      "domain": "INFORMASI",
+      "type": "pilihan_ganda",
+      "source": "BC_TKA_SD_ORIGINAL",
+      "status": "approved"
+    },
+    {
+      "id": "BC-TKA-SD-BACA-SET002-Q024",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_SD",
+      "section": "membaca",
+      "passage": "Rena sangat menyukai buku cerita bergambar. Setiap akhir pekan, ia pergi ke perpustakaan desa untuk membaca buku baru. Ia juga sering meminjam buku untuk dibaca di rumah. Hobinya membuat ia pandai bercerita di depan kelas.",
+      "stem": "Mengapa Rena pandai bercerita di depan kelas?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Karena ia sering menonton televisi"
+        },
+        {
+          "id": "B",
+          "text": "Karena hobinya membaca buku"
+        },
+        {
+          "id": "C",
+          "text": "Karena ia punya banyak mainan"
+        },
+        {
+          "id": "D",
+          "text": "Karena ia les privat"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Teks menyebutkan hobi membaca membuat Rena pandai bercerita.",
+      "tags": [
+        "sebab-akibat",
+        "hobi"
+      ],
+      "band": "SEDANG",
+      "difficulty": 2,
+      "cognitive": "PENALARAN",
+      "domain": "FUNGSIONAL",
+      "type": "pilihan_ganda",
+      "source": "BC_TKA_SD_ORIGINAL",
+      "status": "approved"
+    },
+    {
+      "id": "BC-TKA-SD-BACA-SET002-Q025",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_SD",
+      "section": "membaca",
+      "passage": "Setiap hari Senin, sekolah mengadakan upacara bendera. Semua siswa mengenakan seragam lengkap dengan topi dan dasi. Upacara dimulai pukul tujuh pagi. Petugas upacara bergantian setiap minggu agar semua siswa mendapatkan pengalaman menjadi petugas.",
+      "stem": "Kapan upacara bendera dimulai?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Pukul enam pagi"
+        },
+        {
+          "id": "B",
+          "text": "Pukul tujuh pagi"
+        },
+        {
+          "id": "C",
+          "text": "Pukul delapan pagi"
+        },
+        {
+          "id": "D",
+          "text": "Pukul sembilan pagi"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Teks menyebutkan upacara dimulai pukul tujuh pagi.",
+      "tags": [
+        "informasi-tersurat",
+        "sekolah"
+      ],
+      "band": "RENDAH",
+      "difficulty": 1,
+      "cognitive": "PEMAHAMAN",
+      "domain": "FUNGSIONAL",
+      "type": "pilihan_ganda",
+      "source": "BC_TKA_SD_ORIGINAL",
+      "status": "approved"
+    },
+    {
+      "id": "BC-TKA-SD-BACA-SET002-Q026",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_SD",
+      "section": "membaca",
+      "passage": "Indonesia memiliki dua musim, yaitu musim kemarau dan musim hujan. Musim kemarau biasanya terjadi antara bulan April hingga Oktober. Ciri-ciri musim kemarau adalah sedikit curah hujan dan udara yang panas. Sebaliknya, musim hujan terjadi antara bulan November hingga Maret dengan curah hujan tinggi.",
+      "stem": "Kapan musim hujan terjadi di Indonesia?",
+      "options": [
+        {
+          "id": "A",
+          "text": "April hingga Oktober"
+        },
+        {
+          "id": "B",
+          "text": "November hingga Maret"
+        },
+        {
+          "id": "C",
+          "text": "Januari hingga Juni"
+        },
+        {
+          "id": "D",
+          "text": "Juli hingga Desember"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Teks menyebutkan musim hujan terjadi antara November hingga Maret.",
+      "tags": [
+        "informasi-tersurat",
+        "geografi"
+      ],
+      "band": "SEDANG",
+      "difficulty": 2,
+      "cognitive": "PEMAHAMAN",
+      "domain": "INFORMASI",
+      "type": "pilihan_ganda",
+      "source": "BC_TKA_SD_ORIGINAL",
+      "status": "approved"
+    },
+    {
+      "id": "BC-TKA-SD-BACA-SET002-Q027",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_SD",
+      "section": "membaca",
+      "passage": "Bu Rina adalah seorang guru matematika yang sabar. Ia selalu mengajari murid-muridnya dengan telaten. Jika ada murid yang belum paham, Bu Rina dengan senang hati mengulangi penjelasannya. Murid-murid sangat menyukai cara mengajar Bu Rina.",
+      "stem": "Bagaimana sikap Bu Rina terhadap murid yang belum paham?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Memarahi murid tersebut"
+        },
+        {
+          "id": "B",
+          "text": "Mengulangi penjelasan dengan sabar"
+        },
+        {
+          "id": "C",
+          "text": "Menyuruh murid belajar sendiri"
+        },
+        {
+          "id": "D",
+          "text": "Memberi hukuman"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Teks menyebutkan Bu Rina mengulangi penjelasan jika ada murid yang belum paham.",
+      "tags": [
+        "informasi-tersurat",
+        "pendidikan"
+      ],
+      "band": "RENDAH",
+      "difficulty": 1,
+      "cognitive": "PEMAHAMAN",
+      "domain": "FUNGSIONAL",
+      "type": "pilihan_ganda",
+      "source": "BC_TKA_SD_ORIGINAL",
+      "status": "approved"
+    },
+    {
+      "id": "BC-TKA-SD-BACA-SET002-Q028",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_SD",
+      "section": "membaca",
+      "passage": "Wayang adalah kesenian tradisional Indonesia yang sangat terkenal. Pertunjukan wayang menggunakan boneka yang dimainkan oleh dalang. Cerita wayang biasanya diambil dari kisah Ramayana dan Mahabharata. UNESCO telah menetapkan wayang sebagai warisan budaya dunia.",
+      "stem": "Siapa yang memainkan boneka wayang dalam pertunjukan?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Penari"
+        },
+        {
+          "id": "B",
+          "text": "Dalang"
+        },
+        {
+          "id": "C",
+          "text": "Penyanyi"
+        },
+        {
+          "id": "D",
+          "text": "Pemusik"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Teks menyebutkan boneka wayang dimainkan oleh dalang.",
+      "tags": [
+        "informasi-tersurat",
+        "budaya"
+      ],
+      "band": "RENDAH",
+      "difficulty": 1,
+      "cognitive": "PEMAHAMAN",
+      "domain": "SASTRA",
+      "type": "pilihan_ganda",
+      "source": "BC_TKA_SD_ORIGINAL",
+      "status": "approved"
+    },
+    {
+      "id": "BC-TKA-SD-BACA-SET002-Q029",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_SD",
+      "section": "membaca",
+      "passage": "Sebuah penelitian menunjukkan bahwa bermain di alam terbuka baik untuk perkembangan anak. Anak-anak yang sering bermain di luar rumah memiliki kreativitas yang lebih tinggi. Mereka juga lebih sehat secara fisik dan mental dibandingkan anak yang lebih banyak menghabiskan waktu di dalam rumah.",
+      "stem": "Apa manfaat bermain di alam terbuka bagi anak?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Membuat anak lelah"
+        },
+        {
+          "id": "B",
+          "text": "Meningkatkan kreativitas dan kesehatan"
+        },
+        {
+          "id": "C",
+          "text": "Membuat anak malas"
+        },
+        {
+          "id": "D",
+          "text": "Menurunkan kreativitas"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Penelitian menyebutkan bermain di alam terbuka meningkatkan kreativitas dan kesehatan fisik mental.",
+      "tags": [
+        "informasi-tersurat",
+        "kesehatan"
+      ],
+      "band": "SEDANG",
+      "difficulty": 2,
+      "cognitive": "PEMAHAMAN",
+      "domain": "INFORMASI",
+      "type": "pilihan_ganda",
+      "source": "BC_TKA_SD_ORIGINAL",
+      "status": "approved"
+    },
+    {
+      "id": "BC-TKA-SD-BACA-SET002-Q030",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_SD",
+      "section": "membaca",
+      "passage": "Daun kelor dikenal sebagai superfood karena kandungan nutrisinya yang sangat tinggi. Daun ini mengandung vitamin A, vitamin C, kalsium, zat besi, dan protein. Di Indonesia, daun kelor sering diolah menjadi sayur bening atau campuran bubur.",
+      "stem": "Mengapa daun kelor disebut superfood?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Karena rasanya enak"
+        },
+        {
+          "id": "B",
+          "text": "Karena kandungan nutrisinya tinggi"
+        },
+        {
+          "id": "C",
+          "text": "Karena mudah ditemukan"
+        },
+        {
+          "id": "D",
+          "text": "Karena harganya murah"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Teks menyebutkan daun kelor disebut superfood karena kandungan nutrisinya sangat tinggi.",
+      "tags": [
+        "informasi-tersurat",
+        "kesehatan"
+      ],
+      "band": "SEDANG",
+      "difficulty": 2,
+      "cognitive": "PEMAHAMAN",
+      "domain": "INFORMASI",
+      "type": "pilihan_ganda",
+      "source": "BC_TKA_SD_ORIGINAL",
+      "status": "approved"
+    },
+    {
+      "id": "BC-TKA-SD-BACA-SET002-Q031",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_SD",
+      "section": "membaca",
+      "passage": "Pak Danu memiliki ayam jago yang sangat gagah. Ayam tersebut memiliki bulu yang indah berwarna merah menyala dan ekor panjang yang melengkung. Setiap pagi, ayam jago itu berkokok dengan suara nyaring membangunkan seluruh penghuni rumah.",
+      "stem": "Apa yang dilakukan ayam jago Pak Danu setiap pagi?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Berlari ke sawah"
+        },
+        {
+          "id": "B",
+          "text": "Berkokok dengan nyaring"
+        },
+        {
+          "id": "C",
+          "text": "Mencari makan"
+        },
+        {
+          "id": "D",
+          "text": "Mandi di sungai"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Teks menyebutkan setiap pagi ayam jago berkokok dengan suara nyaring.",
+      "tags": [
+        "informasi-tersurat",
+        "hewan"
+      ],
+      "band": "RENDAH",
+      "difficulty": 1,
+      "cognitive": "PEMAHAMAN",
+      "domain": "FUNGSIONAL",
+      "type": "pilihan_ganda",
+      "source": "BC_TKA_SD_ORIGINAL",
+      "status": "approved"
+    },
+    {
+      "id": "BC-TKA-SD-BACA-SET002-Q032",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_SD",
+      "section": "membaca",
+      "passage": "Reksa dan teman-temannya mengikuti lomba cerdas cermat antar sekolah. Mereka sudah belajar keras selama sebulan. Pada babak final, mereka berhasil menjawab semua pertanyaan dengan benar. Reksa dan timnya berhasil meraih juara pertama.",
+      "stem": "Apa yang diraih Reksa dan timnya dalam lomba?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Juara kedua"
+        },
+        {
+          "id": "B",
+          "text": "Juara pertama"
+        },
+        {
+          "id": "C",
+          "text": "Juara harapan"
+        },
+        {
+          "id": "D",
+          "text": "Peserta terbaik"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Teks menyebutkan Reksa dan timnya berhasil meraih juara pertama.",
+      "tags": [
+        "informasi-tersurat",
+        "prestasi"
+      ],
+      "band": "RENDAH",
+      "difficulty": 1,
+      "cognitive": "PEMAHAMAN",
+      "domain": "FUNGSIONAL",
+      "type": "pilihan_ganda",
+      "source": "BC_TKA_SD_ORIGINAL",
+      "status": "approved"
+    },
+    {
+      "id": "BC-TKA-SD-BACA-SET002-Q033",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_SD",
+      "section": "membaca",
+      "passage": "Daur ulang adalah proses mengolah kembali barang bekas menjadi barang baru yang berguna. Botol plastik bekas dapat didaur ulang menjadi pot bunga, tempat pensil, atau hiasan dinding. Dengan mendaur ulang, kita mengurangi jumlah sampah yang dibuang ke tempat pembuangan akhir.",
+      "stem": "Apa manfaat dari mendaur ulang barang bekas?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Menambah jumlah sampah"
+        },
+        {
+          "id": "B",
+          "text": "Mengurangi sampah yang dibuang"
+        },
+        {
+          "id": "C",
+          "text": "Menghabiskan uang"
+        },
+        {
+          "id": "D",
+          "text": "Membuat lingkungan kotor"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Teks menyebutkan daur ulang mengurangi jumlah sampah yang dibuang ke TPA.",
+      "tags": [
+        "informasi-tersurat",
+        "lingkungan"
+      ],
+      "band": "SEDANG",
+      "difficulty": 2,
+      "cognitive": "PEMAHAMAN",
+      "domain": "INFORMASI",
+      "type": "pilihan_ganda",
+      "source": "BC_TKA_SD_ORIGINAL",
+      "status": "approved"
+    },
+    {
+      "id": "BC-TKA-SD-BACA-SET002-Q034",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_SD",
+      "section": "membaca",
+      "passage": "Olahraga berenang memiliki banyak manfaat bagi kesehatan. Berenang melatih seluruh otot tubuh tanpa memberikan tekanan berlebih pada persendian. Olahraga ini juga baik untuk kesehatan jantung dan paru-paru. Tidak heran jika berenang dianjurkan untuk segala usia.",
+      "stem": "Mengapa berenang dianjurkan untuk segala usia?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Karena tidak memerlukan biaya"
+        },
+        {
+          "id": "B",
+          "text": "Karena aman untuk persendian dan baik untuk jantung"
+        },
+        {
+          "id": "C",
+          "text": "Karena hanya dilakukan di kolam"
+        },
+        {
+          "id": "D",
+          "text": "Karena tidak butuh pelatih"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Teks menyebutkan berenang melatih otot tanpa tekanan pada persendian dan baik untuk jantung.",
+      "tags": [
+        "kesimpulan",
+        "olahraga"
+      ],
+      "band": "SULIT",
+      "difficulty": 3,
+      "cognitive": "PENALARAN",
+      "domain": "INFORMASI",
+      "type": "pilihan_ganda",
+      "source": "BC_TKA_SD_ORIGINAL",
+      "status": "approved"
+    },
+    {
+      "id": "BC-TKA-SD-BACA-SET002-Q035",
+      "product": "TKA_PRACTICE",
+      "track": "TKA_SD",
+      "section": "membaca",
+      "passage": "Pada era digital saat ini, berita palsu atau hoaks mudah menyebar melalui media sosial. Banyak orang yang percaya dan menyebarkan berita tanpa memeriksa kebenarannya terlebih dahulu. Oleh karena itu, kita harus menjadi pembaca yang cerdas dengan melakukan verifikasi informasi sebelum membagikannya kepada orang lain.",
+      "stem": "Apa yang harus dilakukan untuk mencegah penyebaran hoaks?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Langsung membagikan berita"
+        },
+        {
+          "id": "B",
+          "text": "Memverifikasi informasi sebelum membagikan"
+        },
+        {
+          "id": "C",
+          "text": "Menghapus akun media sosial"
+        },
+        {
+          "id": "D",
+          "text": "Tidak membaca berita sama sekali"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Teks menyarankan memverifikasi informasi sebelum membagikannya untuk mencegah penyebaran hoaks.",
+      "tags": [
+        "informasi-tersurat",
+        "literasi-digital"
+      ],
+      "band": "SEDANG",
+      "difficulty": 2,
+      "cognitive": "PEMAHAMAN",
+      "domain": "INFORMASI",
+      "type": "pilihan_ganda",
+      "source": "BC_TKA_SD_ORIGINAL",
+      "status": "approved"
+    }
+  ]
+}
