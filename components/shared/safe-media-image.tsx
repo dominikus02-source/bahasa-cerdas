@@ -84,7 +84,7 @@ export default function SafeMediaImage({
 
   if (!showImage) {
     return (
-      <div className={containerClasses}>
+      <div className={`relative ${containerClasses}`}>
         <FallbackInner type={fallbackType} />
       </div>
     );
