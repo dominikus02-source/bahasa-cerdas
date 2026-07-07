@@ -23,6 +23,9 @@ import { runAgentStream, type StreamEvent } from "@/src/ai/core/agent-stream-run
 import { checkAndPrepareDeduction, deductCreditsAtomic, ensureMonthlyLedger } from "@/lib/ai-gateway/quota-checker";
 import type { AgentRunContext } from "@/src/ai/core/agent-types";
 
+// Streaming generasi panjang — jangan diputus default timeout serverless
+export const maxDuration = 300;
+
 const QUOTA_ERROR_MSG = "Credit AI Anda sudah habis. Upgrade atau tunggu periode berikutnya.";
 
 function eventToSSE(event: StreamEvent): string {

@@ -1,3 +1,7 @@
+// Deprecated: AI generation is centralized in /guru/ai-tools.
+// Polling job RPP lama — tidak dipakai lagi setelah /guru/rpp-modul diarahkan ke Alat AI.
+// Endpoint dipertahankan sementara untuk kompatibilitas; jangan tambahkan
+// pemanggil baru — gunakan POST /api/ai/agents/run dengan agentId yang sesuai.
 import { NextRequest, NextResponse } from "next/server";
 import { getUser } from "@/lib/supabase/server";
 import { getJobStatus } from "@/lib/ai-queue";

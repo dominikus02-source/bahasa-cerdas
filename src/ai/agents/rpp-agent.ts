@@ -48,6 +48,11 @@ export const rppOutputSchema = z.object({
   priorKnowledge: z.string(),
   learningObjectives: z.array(z.string()),
   successCriteria: z.array(z.string()),
+  // Komponen Kurikulum Merdeka (gabungan dari prompt RPP lama /api/ai/rpp)
+  capaianPembelajaran: z.string().optional(),
+  profilPelajarPancasila: z.array(z.string()).optional(),
+  pemahamanBermakna: z.string().optional(),
+  pertanyaanPemantik: z.array(z.string()).optional(),
   learningMaterials: z.array(z.string()),
   learningResources: z.array(z.string()),
   learningModel: z.string(),
@@ -143,6 +148,10 @@ OUTPUT JSON WAJIB mengandung field berikut:
 - priorKnowledge: pengetahuan prasyarat
 - learningObjectives: array tujuan pembelajaran (minimal 2)
 - successCriteria: array kriteria keberhasilan
+- capaianPembelajaran: capaian pembelajaran (CP) sesuai fase — WAJIB diisi untuk Kurikulum Merdeka
+- profilPelajarPancasila: array minimal 2 dimensi Profil Pelajar Pancasila yang dikembangkan — WAJIB untuk Kurikulum Merdeka
+- pemahamanBermakna: satu paragraf pemahaman bermakna — WAJIB untuk Kurikulum Merdeka
+- pertanyaanPemantik: array minimal 2 pertanyaan pemantik — WAJIB untuk Kurikulum Merdeka
 - learningMaterials: array materi pembelajaran
 - learningResources: array sumber belajar
 - learningModel: model pembelajaran yang digunakan
@@ -162,8 +171,8 @@ ATURAN:
 3. Jangan menyertakan API key atau data pribadi dalam output.
 4. Kegiatan harus praktis dan siap pakai di kelas.
 5. Sesuaikan tingkat kesulitan dengan jenjang kelas.
-6. Jika curriculum="Kurikulum Merdeka", gunakan istilah CP/TP/ATP dan Profil Pelajar Pancasila.
-7. Jika curriculum="K13", gunakan istilah KI/KD/IPK dan pendekatan saintifik.
+6. Jika curriculum="Kurikulum Merdeka", gunakan istilah CP/TP/ATP dan Profil Pelajar Pancasila. Struktur Modul Ajar Merdeka lengkap: informasi umum (identitas, kompetensi awal, profil pelajar Pancasila min 2 dimensi, sarana prasarana, target peserta didik, model pembelajaran), komponen inti (CP, tujuan min 3, pemahaman bermakna, pertanyaan pemantik, kegiatan pendahuluan-inti-penutup dengan durasi, asesmen diagnostik-formatif-sumatif), dan lampiran di dalam editableText (LKPD, pengayaan & remedial, bahan bacaan, glosarium, daftar pustaka).
+7. Jika curriculum="K13", gunakan istilah KI-1/2/3/4, KD, IPK (min 3 per KD), tujuan format ABCD, dan pendekatan saintifik 5M (mengamati, menanya, mengumpulkan informasi, mengasosiasi, mengomunikasikan) pada kegiatan inti; penilaian mencakup sikap, pengetahuan, dan keterampilan.
 8. edtiableText harus berupa dokumen teks yang diformat rapi (bukan JSON), bisa langsung dicopy guru.
 9. Gunakan Bahasa Indonesia yang baik dan benar sesuai EYD/PUEBI.`,
   defaultModel: "deepseek-chat",

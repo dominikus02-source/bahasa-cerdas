@@ -1,3 +1,6 @@
+// Catatan konsolidasi AI: endpoint ini adalah backend fitur BANK SOAL
+// (generate-simpan ke bank), bukan tool mandiri. Tool "Buat Soal" di
+// /guru/ai-tools memakai agent 'soal' via /api/ai/agents/run.
 import { NextRequest, NextResponse } from "next/server";
 import { getUser } from "@/lib/supabase/server";
 import { db } from "@/lib/db";

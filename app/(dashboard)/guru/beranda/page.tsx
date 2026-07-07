@@ -58,7 +58,7 @@ export default function GuruBerandaPage() {
           <p className="text-gray-400 text-sm mt-0.5">Dasbor Guru - BahasaCerdas</p>
         </div>
         <div className="flex gap-2">
-          <Link href="/guru/rpp-modul" className="flex items-center gap-1.5 px-4 py-2.5 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white rounded-xl text-sm font-semibold hover:from-emerald-600 hover:to-emerald-700 transition-all shadow-lg shadow-emerald-500/20">
+          <Link href="/guru/ai-tools?tool=rpp-modul" className="flex items-center gap-1.5 px-4 py-2.5 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white rounded-xl text-sm font-semibold hover:from-emerald-600 hover:to-emerald-700 transition-all shadow-lg shadow-emerald-500/20">
             <Wand2 size={16} /> Buat RPP
           </Link>
           <Link href="/guru/toko-karya" className="flex items-center gap-1.5 px-4 py-2.5 bg-white border-2 border-gray-200 text-gray-700 rounded-xl text-sm font-semibold hover:bg-gray-50 transition-all">
@@ -196,7 +196,7 @@ export default function GuruBerandaPage() {
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-            <Link href="/guru/rpp-modul" className="flex items-center gap-3 p-4 rounded-xl bg-emerald-50 hover:bg-emerald-100 transition-colors group">
+            <Link href="/guru/ai-tools?tool=rpp-modul" className="flex items-center gap-3 p-4 rounded-xl bg-emerald-50 hover:bg-emerald-100 transition-colors group">
               <div className="w-10 h-10 rounded-xl bg-emerald-500 flex items-center justify-center">
                 <Wand2 size={18} className="text-white" />
               </div>
@@ -236,7 +236,7 @@ export default function GuruBerandaPage() {
               </div>
             </Link>
 
-            <Link href="/guru/rpp-modul" className="flex items-center gap-3 p-4 rounded-xl bg-teal-50 hover:bg-teal-100 transition-colors group">
+            <Link href="/guru/ai-tools?tool=rpp-modul" className="flex items-center gap-3 p-4 rounded-xl bg-teal-50 hover:bg-teal-100 transition-colors group">
               <div className="w-10 h-10 rounded-xl bg-teal-500 flex items-center justify-center">
                 <FileUp size={18} className="text-white" />
               </div>

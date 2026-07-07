@@ -55,7 +55,9 @@ async function attemptProviderCall(
     messages: built.messages,
     temperature: agent.temperature,
     maxTokens: agent.maxTokens,
-    timeoutMs: 30000,
+    // 30s terlalu pendek untuk output 8000 token (RPP/PPT/Soal) — penyebab
+    // utama "AI Tools gagal/tidak stabil"; route sudah diberi maxDuration
+    timeoutMs: 120000,
     responseFormat: outputFormat === "json" ? "json" : undefined,
   });
 
@@ -127,6 +129,7 @@ export async function runAgent(opts: RunAgentOptions): Promise<AgentRunResult> {
   const warn: string[] = [];
   let finalError: string | null = null;
   let finalOutput: AgentOutput | null = null;
+  let salvagedText: string | null = null;
   let provider = "none";
   let model = agent.defaultModel;
   let usageTokens = { prompt: 0, completion: 0, total: 0 };
@@ -199,10 +202,19 @@ export async function runAgent(opts: RunAgentOptions): Promise<AgentRunResult> {
         finalOutput = secondAttempt.output;
         warn.push("Retry successful after correction");
       } else {
-        finalError = OUTPUT_VALIDATION_FAILED;
         warn.push(
           `Attempt 2 failed: ${secondAttempt.postValidationError || secondAttempt.parseError || "Unknown"}`
         );
+        // Salvage (paritas dengan perilaku endpoint RPP lama): bila model
+        // menghasilkan konten tapi format terstruktur gagal divalidasi,
+        // tetap kembalikan teks mentah agar guru tidak kehilangan hasil.
+        const rawFallback = (secondAttempt.content || firstAttempt.content || "").trim();
+        if (rawFallback) {
+          salvagedText = rawFallback.replace(/```json\n?/g, "").replace(/\n?```/g, "").trim();
+          warn.push("Format terstruktur gagal divalidasi — menampilkan hasil sebagai teks yang bisa diedit");
+        } else {
+          finalError = OUTPUT_VALIDATION_FAILED;
+        }
       }
     }
 
@@ -253,7 +265,7 @@ export async function runAgent(opts: RunAgentOptions): Promise<AgentRunResult> {
       success: !finalError,
       agentId: agent.id,
       output: finalOutput,
-      text: finalOutput ? JSON.stringify(finalOutput) : null,
+      text: salvagedText ?? (finalOutput ? JSON.stringify(finalOutput) : null),
       error: finalError,
       warnings: warn,
       qualityScore,

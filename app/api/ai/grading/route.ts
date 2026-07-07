@@ -1,3 +1,7 @@
+// Deprecated: AI generation is centralized in /guru/ai-tools.
+// Bekas backend halaman lama /guru/ai-tools/grading yang kini redirect ke workspace utama.
+// Endpoint dipertahankan sementara untuk kompatibilitas; jangan tambahkan
+// pemanggil baru — gunakan POST /api/ai/agents/run dengan agentId yang sesuai.
 import { NextRequest, NextResponse } from "next/server";
 import { getUser } from "@/lib/supabase/server";
 import { checkAIQuota, recordAIUsage } from "@/lib/premium";

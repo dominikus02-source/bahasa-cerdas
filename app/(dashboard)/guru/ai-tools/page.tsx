@@ -6,7 +6,24 @@ export default async function AIToolsPage({
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
   const sp = await searchParams;
-  const agentParam = typeof sp.agent === "string" ? sp.agent : undefined;
+  // Terima ?agent= (id internal) dan ?tool= (alias shortcut/link lama)
+  const TOOL_ALIASES: Record<string, string> = {
+    "rpp-modul": "rpp",
+    "modul-ajar": "rpp",
+    "buat-soal": "soal",
+    "buat-ppt": "ppt",
+    "review-materi": "review",
+    "feedback-siswa": "feedback",
+    "penilaian-otomatis": "grading",
+    "analisis-teks": "text-analysis",
+    "korektor-eyd": "eyd",
+    "asisten": "bc-assistant",
+  };
+  const rawParam =
+    (typeof sp.agent === "string" && sp.agent) ||
+    (typeof sp.tool === "string" && sp.tool) ||
+    undefined;
+  const agentParam = rawParam ? TOOL_ALIASES[rawParam] ?? rawParam : undefined;
 
   return (
     <div className="min-h-screen">
@@ -33,29 +50,29 @@ export default async function AIToolsPage({
         {/* Legacy tool links — all migrated to new workspace */}
         <div className="mt-10 pt-6 border-t border-gray-100">
           <p className="text-xs font-medium text-gray-400 mb-3">
-            Halaman lama (masih tersedia untuk akses langsung, gunakan Alat AI utama untuk fitur lengkap)
+            Akses cepat
           </p>
           <div className="flex flex-wrap gap-2">
             <a
-              href="/guru/ai-tools/eyd"
+              href="/guru/ai-tools?agent=eyd"
               className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full bg-blue-50 text-blue-600 hover:bg-blue-100 border border-blue-100 transition-all"
             >
               Korektor EYD
             </a>
             <a
-              href="/guru/ai-tools/feedback"
+              href="/guru/ai-tools?agent=feedback"
               className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full bg-pink-50 text-pink-600 hover:bg-pink-100 border border-pink-100 transition-all"
             >
               Feedback Siswa
             </a>
             <a
-              href="/guru/ai-tools/grading"
+              href="/guru/ai-tools?agent=grading"
               className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full bg-violet-50 text-violet-600 hover:bg-violet-100 border border-violet-100 transition-all"
             >
               Penilaian Otomatis
             </a>
             <a
-              href="/guru/ai-tools/text-analysis"
+              href="/guru/ai-tools?agent=text-analysis"
               className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full bg-green-50 text-green-600 hover:bg-green-100 border border-green-100 transition-all"
             >
               Analisis Teks

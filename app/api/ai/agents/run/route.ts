@@ -27,6 +27,10 @@ import { checkAndPrepareDeduction, deductCreditsAtomic, ensureMonthlyLedger } fr
 import { resolveUserAiPlan } from "@/lib/ai-gateway/plan-resolver";
 import type { AgentRunContext, AgentRunResult } from "@/src/ai/core/agent-types";
 
+// Generasi dokumen panjang (RPP 8000 token + retry) bisa melewati default
+// timeout serverless — tanpa ini fungsi diputus di tengah dan user melihat gagal.
+export const maxDuration = 150;
+
 const QUOTA_ERROR = "Credit AI Anda sudah habis. Upgrade atau tunggu periode berikutnya.";
 
 export async function POST(req: NextRequest) {

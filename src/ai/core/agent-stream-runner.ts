@@ -110,7 +110,8 @@ export async function runAgentStream(
           messages: built.messages,
           temperature: agent.temperature,
           maxTokens: agent.maxTokens,
-          timeoutMs: 30000,
+          // Selaras dengan agent-runner: generasi panjang butuh >30s
+          timeoutMs: 120000,
           responseFormat: outputFormat === "json" ? "json" : undefined,
         },
         (delta) => {
