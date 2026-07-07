@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo, useRef } from "react";
 import { resolveMediaUrl } from "@/lib/media/resolve-media-url";
 import { FileText, Play, ImageIcon } from "lucide-react";
 
@@ -47,7 +47,7 @@ const FALLBACK_CONFIG: Record<FallbackType, {
 function FallbackInner({ type }: { type: FallbackType }) {
   const cfg = FALLBACK_CONFIG[type];
   return (
-    <div className={`w-full h-full flex items-center justify-center ${cfg.bg}`} aria-label={cfg.label}>
+    <div className={`w-full h-full flex items-center justify-center ${cfg.bg}`}>
       <div className="flex flex-col items-center gap-2">
         <div className={`w-12 h-12 rounded-full ${cfg.iconBg} flex items-center justify-center`}>
           {cfg.icon}
@@ -68,6 +68,7 @@ export default function SafeMediaImage({
   const resolvedSrc = useMemo(() => resolveMediaUrl(src), [src]);
   const [imgError, setImgError] = useState(false);
   const [imgLoaded, setImgLoaded] = useState(false);
+  const imgRef = useRef<HTMLImageElement>(null);
 
   const showImage = !!resolvedSrc && !imgError;
 
@@ -79,28 +80,32 @@ export default function SafeMediaImage({
     setImgLoaded(true);
   }, []);
 
+  const containerClasses = containerClassName || className;
+
   if (!showImage) {
     return (
-      <div className={`relative overflow-hidden bg-slate-100 ${containerClassName || className}`}>
+      <div className={containerClasses}>
         <FallbackInner type={fallbackType} />
       </div>
     );
   }
 
   return (
-    <div className={`relative overflow-hidden ${containerClassName || className}`}>
+    <div className={`relative ${containerClasses}`}>
       {!imgLoaded && (
         <div className="absolute inset-0 z-10">
           <FallbackInner type={fallbackType} />
         </div>
       )}
       <img
+        ref={imgRef}
         src={resolvedSrc}
         alt={alt}
-        className={`w-full h-full object-cover ${imgLoaded ? "opacity-100" : "opacity-0"} transition-opacity duration-300 ${className}`}
+        className={`absolute inset-0 w-full h-full object-cover ${imgLoaded ? "opacity-100" : "opacity-0"} transition-opacity duration-300 ${className}`}
         onError={handleError}
         onLoad={handleLoad}
         loading="lazy"
+        draggable={false}
       />
     </div>
   );
