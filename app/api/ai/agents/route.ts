@@ -8,6 +8,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { getUser } from "@/lib/supabase/server";
+import "@/src/ai";
 import { listAgents, getAgentsForUser } from "@/src/ai/core/agent-registry";
 
 export async function GET(req: NextRequest) {

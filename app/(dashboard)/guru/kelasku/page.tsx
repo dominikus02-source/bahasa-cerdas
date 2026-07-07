@@ -5,7 +5,7 @@ import Link from "next/link";
 import {
   Users, Plus, Copy, ChevronLeft, Trash2, Edit3,
   CheckCircle, Clock, BookOpen, Gamepad2, GraduationCap,
-  MoreVertical, X, Eye, EyeOff, RefreshCw, Search, Crown
+  MoreVertical, X, Eye, EyeOff, RefreshCw, Search, Crown, AlertCircle
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -43,6 +43,7 @@ export default function KelasKuPage() {
   const [creating, setCreating] = useState(false);
   const [copied, setCopied] = useState("");
   const [search, setSearch] = useState("");
+  const [error, setError] = useState("");
 
   const fetchGroups = async () => {
     setLoading(true);
@@ -63,6 +64,7 @@ export default function KelasKuPage() {
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError("");
     setCreating(true);
     try {
       const res = await fetch("/api/group", {
@@ -71,12 +73,18 @@ export default function KelasKuPage() {
         body: JSON.stringify(createForm),
       });
       const data = await res.json();
+      if (!res.ok) {
+        setError(data.error || "Gagal membuat kelas");
+        return;
+      }
       if (data.group) {
         setShowCreate(false);
         setCreateForm({ name: "", description: "", grade: "X", tahunAjaran: "" });
+        setError("");
         fetchGroups();
       }
     } catch (e) {
+      setError("Gagal membuat kelas. Periksa koneksi Anda.");
       console.error(e);
     } finally {
       setCreating(false);
@@ -284,6 +292,12 @@ export default function KelasKuPage() {
                   placeholder="Deskripsi singkat..."
                 />
               </div>
+              {error && (
+                <div className="flex items-center gap-2 p-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm">
+                  <AlertCircle className="w-4 h-4 shrink-0" />
+                  <span>{error}</span>
+                </div>
+              )}
               <div className="flex gap-3">
                 <button type="button" onClick={() => setShowCreate(false)} className="flex-1 py-2.5 border-2 border-slate-200 text-slate-600 font-bold rounded-xl">
                   Batal

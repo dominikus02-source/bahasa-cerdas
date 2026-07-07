@@ -17,6 +17,7 @@
 
 import { NextRequest } from "next/server";
 import { getUser } from "@/lib/supabase/server";
+import "@/src/ai";
 import { checkAgentRateLimit } from "@/src/ai/core/rate-limit";
 import { runAgentStream, type StreamEvent } from "@/src/ai/core/agent-stream-runner";
 import { checkAndPrepareDeduction, deductCreditsAtomic, ensureMonthlyLedger } from "@/lib/ai-gateway/quota-checker";

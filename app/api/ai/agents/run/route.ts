@@ -19,6 +19,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { getUser } from "@/lib/supabase/server";
+import "@/src/ai";
 import { getAgent } from "@/src/ai/core/agent-registry";
 import { runAgent } from "@/src/ai/core/agent-runner";
 import { checkAgentRateLimit } from "@/src/ai/core/rate-limit";

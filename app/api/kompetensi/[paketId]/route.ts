@@ -118,6 +118,7 @@ export async function GET(
     const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) {
+      console.log(`[kompetensi] Unauthorized access to paket ${paketId}`);
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -127,11 +128,16 @@ export async function GET(
     ]);
 
     if (!dbUser) {
+      console.log(`[kompetensi] User not found for supabaseId ${user.id}`);
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
     if (!paket) {
+      console.log(`[kompetensi] Paket ${paketId} not found`);
       return NextResponse.json({ error: "Paket tidak ditemukan" }, { status: 404 });
     }
+
+    const sectionCount = (paket.sectionsData as any[])?.length || (paket.sections as any[])?.length || 0;
+    console.log(`[kompetensi] OK user=${dbUser.id} role=${dbUser.role} paket=${paketId} type=${paket.type} sections=${sectionCount}`);
 
     let session = await withQueryTimeout(
       db.testSession.findUnique({

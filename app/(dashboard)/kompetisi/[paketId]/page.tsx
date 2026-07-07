@@ -33,7 +33,7 @@ interface SectionData {
 
 interface PacketData {
   session: any;
-  packet: any;
+  paket: any;
   questions: SectionData[];
 }
 
@@ -94,8 +94,8 @@ export default function KompetisiPage({ params }: { params: Promise<{ paketId: s
       let expiresMs: number | null = null;
       if (result.session?.expiresAt) {
         expiresMs = new Date(result.session.expiresAt).getTime();
-      } else if (result.packet?.duration) {
-        expiresMs = Date.now() + result.packet.duration * 60 * 1000;
+      } else if (result.paket?.duration) {
+        expiresMs = Date.now() + result.paket.duration * 60 * 1000;
       } else {
         // Fallback: 30 minutes
         expiresMs = Date.now() + 30 * 60 * 1000;
@@ -111,6 +111,11 @@ export default function KompetisiPage({ params }: { params: Promise<{ paketId: s
       setLoading(false);
     }
   }, [resolvedParams.paketId, router]);
+
+  // Fetch test data on mount
+  useEffect(() => {
+    fetchTest();
+  }, [fetchTest]);
 
   // Timer interval — runs based on expiresAtRef
   useEffect(() => {
@@ -205,7 +210,7 @@ export default function KompetisiPage({ params }: { params: Promise<{ paketId: s
       const res = await fetch(`/api/kompetensi/${resolvedParams.paketId}/submit`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ answers, timeSpent: (data?.packet?.duration || 30) * 60 - timeLeft }),
+        body: JSON.stringify({ answers, timeSpent: (data?.paket?.duration || 30) * 60 - timeLeft }),
       });
       const result = await res.json();
       if (result.success) {
@@ -247,12 +252,21 @@ export default function KompetisiPage({ params }: { params: Promise<{ paketId: s
           <div className="text-center bg-white rounded-2xl p-8 shadow-sm max-w-md border border-slate-200">
             <XCircle className="w-14 h-14 text-red-400 mx-auto mb-4" />
             <h2 className="font-bold text-lg mb-2 text-slate-800">{error}</h2>
-            <button
-              onClick={() => router.back()}
-              className="mt-4 px-6 py-2.5 bg-emerald-600 text-white rounded-xl font-bold hover:bg-emerald-700 transition-colors"
-            >
-              Kembali
-            </button>
+            <p className="text-sm text-slate-500 mb-4">Paket simulasi tidak dapat dimuat. Silakan coba lagi.</p>
+            <div className="flex flex-col gap-2">
+              <button
+                onClick={() => { setError(""); fetchTest(); }}
+                className="px-6 py-2.5 bg-emerald-600 text-white rounded-xl font-bold hover:bg-emerald-700 transition-colors"
+              >
+                Coba Lagi
+              </button>
+              <button
+                onClick={() => router.back()}
+                className="px-6 py-2.5 border-2 border-slate-200 text-slate-600 rounded-xl font-bold hover:bg-slate-50 transition-colors"
+              >
+                Kembali
+              </button>
+            </div>
           </div>
         </div>
       </TestShell>
@@ -291,8 +305,8 @@ export default function KompetisiPage({ params }: { params: Promise<{ paketId: s
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100/50">
       <TestHeader
-        title={data?.packet?.title || "Latihan"}
-        type={data?.packet?.type || ""}
+        title={data?.paket?.title || "Latihan"}
+        type={data?.paket?.type || ""}
         currentSection={currentSection}
         totalSections={sections.length}
         currentQuestion={currentQuestion}
