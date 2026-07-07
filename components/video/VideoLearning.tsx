@@ -1,9 +1,9 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { Play, Clock, Eye, ChevronLeft, ChevronRight, Search, Filter } from "lucide-react";
+import SafeMediaImage from "@/components/shared/safe-media-image";
 import { VideoCategory } from "@prisma/client";
 
 const CATEGORY_LABELS: Record<string, string> = {
@@ -191,11 +191,12 @@ export default function VideoLearning() {
                   onClick={() => setSelectedVideo(video)}
                   className="relative aspect-[9/16] rounded-xl overflow-hidden cursor-pointer snap-center bg-slate-800 group"
                 >
-                  <Image
+                  <SafeMediaImage
                     src={video.thumbnailUrl || getYouTubeThumbnail(video.videoUrl)}
                     alt={video.title}
-                    fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-300"
+                    fallbackType="video"
+                    containerClassName="w-full h-full"
+                    className="group-hover:scale-105 transition-transform duration-300"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
                   <div className="absolute top-2 right-2 bg-black/70 px-2 py-0.5 rounded text-xs flex items-center gap-1">
@@ -252,11 +253,12 @@ export default function VideoLearning() {
                   className="bg-slate-800 rounded-xl overflow-hidden cursor-pointer hover:ring-2 hover:ring-yellow-500/50 transition-all group"
                 >
                   <div className="relative aspect-video">
-                    <Image
+                    <SafeMediaImage
                       src={video.thumbnailUrl || getYouTubeThumbnail(video.videoUrl)}
                       alt={video.title}
-                      fill
-                      className="object-cover group-hover:scale-105 transition-transform duration-300"
+                      fallbackType="video"
+                      containerClassName="w-full h-full"
+                      className="group-hover:scale-105 transition-transform duration-300"
                     />
                     <div className="absolute bottom-2 right-2 bg-black/70 px-2 py-0.5 rounded text-xs font-medium flex items-center gap-1">
                       <Clock className="w-3 h-3" />

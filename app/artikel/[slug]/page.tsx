@@ -7,6 +7,7 @@ import remarkGfm from "remark-gfm";
 import PageNavbar from "@/components/public/PageNavbar";
 import PageFooter from "@/components/public/PageFooter";
 import ShareButton from "@/components/shared/ShareButton";
+import SafeMediaImage from "@/components/shared/safe-media-image";
 
 export const revalidate = 600;
 
@@ -81,9 +82,23 @@ export default async function ArtikelDetailPage({ params }: Props) {
         </Link>
 
         <article>
-          {artikel.coverImage && (
+          {artikel.coverImage || artikel.coverImageUrl ? (
             <div className="aspect-video rounded-2xl overflow-hidden mb-2 bg-slate-100 shadow-lg">
-              <img src={artikel.coverImage} alt={artikel.title} className="w-full h-full object-cover" />
+              <SafeMediaImage
+                src={artikel.coverImageUrl || artikel.coverImage}
+                alt={artikel.title}
+                fallbackType="article"
+                containerClassName="w-full h-full"
+              />
+            </div>
+          ) : (
+            <div className="aspect-video rounded-2xl overflow-hidden mb-2 shadow-lg">
+              <SafeMediaImage
+                src={null}
+                alt={artikel.title}
+                fallbackType="article"
+                containerClassName="w-full h-full"
+              />
             </div>
           )}
           {artikel.coverImageCredit && (

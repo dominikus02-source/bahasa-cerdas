@@ -1,7 +1,10 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { Plus, Download, Pencil, Trash2, RefreshCw, X, FileText, FileSpreadsheet, Check, BookOpen, Users as UsersIcon } from "lucide-react";
+import {
+  Plus, Download, Pencil, Trash2, RefreshCw, X, FileText, FileSpreadsheet,
+  Check, BookOpen, Users as UsersIcon, Filter, ShieldCheck,
+} from "lucide-react";
 
 type Group = { id: string; name: string; grade: string; _count?: { members: number } };
 type Kategori = { id: string; groupId: string; nama: string; bobot: number; createdAt: string };
@@ -11,8 +14,15 @@ type NilaiEntry = {
   sumberType: string; sumberId?: string; keterangan?: string;
 };
 
-const SUMBER_LABEL: Record<string, string> = {
-  PENUGASAN: "Tugas", KARYA: "Karya", QUIZ: "Kuis", MANUAL: "Manual",
+const SUMBER_LABEL: Record<string, { label: string; color: string }> = {
+  MANUAL: { label: "Manual", color: "bg-slate-100 text-slate-600" },
+  PENUGASAN: { label: "Tugas", color: "bg-blue-100 text-blue-700" },
+  KARYA: { label: "Karya", color: "bg-purple-100 text-purple-700" },
+  QUIZ: { label: "Kuis", color: "bg-amber-100 text-amber-700" },
+  GAME: { label: "Game", color: "bg-green-100 text-green-700" },
+  JALUR_CERDAS: { label: "Jalur Cerdas", color: "bg-teal-100 text-teal-700" },
+  UKBI_TKA: { label: "UKBI/TKA", color: "bg-indigo-100 text-indigo-700" },
+  MATERI_LATIHAN: { label: "Latihan Materi", color: "bg-orange-100 text-orange-700" },
 };
 
 function getColor(skor: number | undefined | null): string {
@@ -33,7 +43,7 @@ export default function PenilaianPage() {
   const [loading, setLoading] = useState(true);
   const [populating, setPopulating] = useState(false);
 
-  // Category management modal
+  // Category modal
   const [showKategoriModal, setShowKategoriModal] = useState(false);
   const [editKategori, setEditKategori] = useState<Kategori | null>(null);
   const [kategoriNama, setKategoriNama] = useState("");
@@ -48,7 +58,17 @@ export default function PenilaianPage() {
   const [editExistingId, setEditExistingId] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
 
-  // Group download format
+  // Auto-populate modal
+  const [showAutoPopulate, setShowAutoPopulate] = useState(false);
+  const [autoSources, setAutoSources] = useState<Record<string, boolean>>({
+    PENUGASAN: true, QUIZ: true, GAME: true, JALUR_CERDAS: true, UKBI_TKA: true,
+  });
+  const [autoFromDate, setAutoFromDate] = useState("");
+  const [autoToDate, setAutoToDate] = useState("");
+  const [autoPreview, setAutoPreview] = useState<any>(null);
+  const [autoSubmitting, setAutoSubmitting] = useState(false);
+
+  // Download dropdown
   const [showDownload, setShowDownload] = useState(false);
 
   useEffect(() => {
@@ -68,7 +88,6 @@ export default function PenilaianPage() {
     setKategoris(kData.kategori || []);
     setNilais(nData.nilais || []);
 
-    // Get students from stored group members
     const g = groups.find(gr => gr.id === gid);
     if (g && (g as any).members) {
       setSiswas((g as any).members.map((m: any) => m.user));
@@ -132,7 +151,7 @@ export default function PenilaianPage() {
         groupId: selectedGroupId,
         kategoriId: editKategoriId,
         skor,
-        sumberType: editSumberType,
+        sumberType: "MANUAL",
         keterangan: editKeterangan || null,
       }),
     });
@@ -144,18 +163,34 @@ export default function PenilaianPage() {
   };
 
   // ── Auto-populate ──
-  const handleAutoPopulate = async () => {
+  const runAutoPopulate = async (execute = false) => {
     if (!selectedGroupId) return;
-    setPopulating(true);
+    setAutoSubmitting(true);
+    const body: any = { groupId: selectedGroupId, dryRun: !execute };
+    const activeSources = Object.entries(autoSources)
+      .filter(([, v]) => v)
+      .map(([k]) => k);
+    if (activeSources.length > 0 && activeSources.length < 5) {
+      body.sourceTypes = activeSources;
+    }
+    if (autoFromDate) body.dateFrom = autoFromDate;
+    if (autoToDate) body.dateTo = autoToDate;
+    if (execute) body.overwriteAuto = true;
+
     const res = await fetch("/api/guru/nilai/auto-populate", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ groupId: selectedGroupId }),
+      body: JSON.stringify(body),
     });
+    const data = await res.json();
     if (res.ok) {
-      loadGroupData(selectedGroupId);
+      setAutoPreview(data);
+      if (execute) {
+        setShowAutoPopulate(false);
+        loadGroupData(selectedGroupId);
+      }
     }
-    setPopulating(false);
+    setAutoSubmitting(false);
   };
 
   // ── Helpers ──
@@ -165,10 +200,16 @@ export default function PenilaianPage() {
     return Math.round(entries.reduce((sum, n) => sum + n.skor, 0) / entries.length);
   };
 
+  const getSumberType = (userId: string, katId: string): string | undefined => {
+    const entry = nilais.find(n => n.userId === userId && n.kategoriId === katId);
+    return entry?.sumberType;
+  };
+
   const getKeterangan = (userId: string, katId: string): string => {
-    return nilais.filter(n => n.userId === userId && n.kategoriId === katId).map(n =>
-      `${n.skor} (${SUMBER_LABEL[n.sumberType] || n.sumberType}${n.keterangan ? `: ${n.keterangan}` : ""})`
-    ).join("; ");
+    return nilais.filter(n => n.userId === userId && n.kategoriId === katId).map(n => {
+      const label = SUMBER_LABEL[n.sumberType]?.label || n.sumberType;
+      return `${n.skor} (${label}${n.keterangan ? `: ${n.keterangan}` : ""})`;
+    }).join("; ");
   };
 
   const overall = (userId: string): number | undefined => {
@@ -184,7 +225,9 @@ export default function PenilaianPage() {
         <div className="flex items-center justify-between">
           <div>
             <p className="font-bold text-lg">Penilaian Siswa</p>
-            <p className="text-sm text-emerald-200 mt-0.5">Input nilai latihan, praktik, dan ulangan harian</p>
+            <p className="text-sm text-emerald-200 mt-0.5">
+              Kelola nilai manual, tugas, kuis, game, dan simulasi dalam satu tempat.
+            </p>
           </div>
           <BookOpen size={24} />
         </div>
@@ -216,14 +259,14 @@ export default function PenilaianPage() {
               className="flex items-center gap-1.5 px-3.5 py-2 bg-white border border-emerald-200 text-emerald-700 rounded-lg text-xs font-semibold hover:bg-emerald-50 transition-all">
               <Plus size={14} /> Atur Kategori
             </button>
-            <button onClick={handleAutoPopulate} disabled={populating}
-              className="flex items-center gap-1.5 px-3.5 py-2 bg-white border border-blue-200 text-blue-700 rounded-lg text-xs font-semibold hover:bg-blue-50 transition-all disabled:opacity-50">
-              <RefreshCw size={14} className={populating ? "animate-spin" : ""} /> {populating ? "Memproses..." : "Ambil dari Tugas"}
+            <button onClick={() => { setAutoPreview(null); setShowAutoPopulate(true); }}
+              className="flex items-center gap-1.5 px-3.5 py-2 bg-white border border-blue-200 text-blue-700 rounded-lg text-xs font-semibold hover:bg-blue-50 transition-all">
+              <Filter size={14} /> Ambil Nilai Otomatis
             </button>
             <div className="relative">
               <button onClick={() => setShowDownload(!showDownload)}
                 className="flex items-center gap-1.5 px-3.5 py-2 bg-emerald-600 text-white rounded-lg text-xs font-semibold hover:bg-emerald-700 transition-all">
-                <Download size={14} /> Download
+                <Download size={14} /> Unduh
               </button>
               {showDownload && (
                 <div className="absolute top-full left-0 mt-1 bg-white rounded-xl shadow-xl border border-gray-100 z-10 w-44 overflow-hidden">
@@ -294,12 +337,20 @@ export default function PenilaianPage() {
                         </td>
                         {kategoris.map(k => {
                           const skor = getSkor(siswa.id, k.id);
+                          const sumber = getSumberType(siswa.id, k.id);
+                          const sumberInfo = sumber ? SUMBER_LABEL[sumber] : null;
                           return (
-                            <td key={k.id} className="text-center py-2.5 px-3">
+                            <td key={k.id} className="text-center py-2.5 px-3 relative group">
                               <button onClick={() => openScoreEdit(siswa, k.id)}
-                                className={`inline-block min-w-[40px] px-2 py-1 rounded-lg text-xs font-bold transition-all hover:ring-2 hover:ring-emerald-300 ${getColor(skor)} ${skor !== undefined ? "bg-gray-50" : "text-gray-300 bg-gray-50/50"}`}>
+                                className={`inline-block min-w-[40px] px-2 py-1 rounded-lg text-xs font-bold transition-all hover:ring-2 hover:ring-emerald-300 ${getColor(skor)} ${skor !== undefined ? "bg-gray-50" : "text-gray-300 bg-gray-50/50"}`}
+                                title={getKeterangan(siswa.id, k.id) || undefined}>
                                 {skor !== undefined ? skor : "—"}
                               </button>
+                              {sumberInfo && (
+                                <span className={`absolute -top-1.5 -right-1.5 text-[8px] px-1 py-0.5 rounded-full ${sumberInfo.color} opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10`}>
+                                  {sumberInfo.label}
+                                </span>
+                              )}
                             </td>
                           );
                         })}
@@ -335,7 +386,7 @@ export default function PenilaianPage() {
               <div>
                 <label className="block text-xs font-semibold text-gray-500 mb-1">Nama Kategori</label>
                 <input value={kategoriNama} onChange={e => setKategoriNama(e.target.value)}
-                  placeholder="Latihan / Praktik / Ulangan Harian"
+                  placeholder="Tugas Harian / Kuis / Game Edukasi / Simulasi"
                   className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-200 focus:border-emerald-400" />
               </div>
               <div>
@@ -347,6 +398,91 @@ export default function PenilaianPage() {
               <button onClick={handleSaveKategori}
                 className="w-full py-2.5 bg-emerald-600 text-white rounded-xl font-semibold text-sm hover:bg-emerald-700 transition-all">
                 {editKategori ? "Simpan" : "Tambah"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ═══ AUTO POPULATE MODAL ═══ */}
+      {showAutoPopulate && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center" onClick={() => setShowAutoPopulate(false)}>
+          <div className="fixed inset-0 bg-black/40 backdrop-blur-sm" />
+          <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg mx-4 p-6" onClick={e => e.stopPropagation()}>
+            <button onClick={() => setShowAutoPopulate(false)} className="absolute top-3 right-3 w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center">
+              <X size={16} className="text-gray-500" />
+            </button>
+            <h3 className="font-bold text-gray-900 text-lg mb-1">Ambil Nilai Otomatis</h3>
+            <p className="text-xs text-gray-400 mb-5">Pilih sumber dan rentang tanggal untuk mengambil nilai dari tugas, kuis, game, dan simulasi.</p>
+
+            <div className="space-y-3 mb-4">
+              <label className="block text-xs font-semibold text-gray-500 mb-1">Sumber Nilai</label>
+              <div className="grid grid-cols-2 gap-2">
+                {Object.entries({PENUGASAN:"Tugas",QUIZ:"Kuis",GAME:"Game",JALUR_CERDAS:"Jalur Cerdas",UKBI_TKA:"UKBI/TKA"}).map(([key, label]) => (
+                  <label key={key} className="flex items-center gap-2 p-2.5 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 text-xs">
+                    <input type="checkbox" checked={autoSources[key]} onChange={e => setAutoSources(prev => ({...prev, [key]: e.target.checked}))} className="rounded border-gray-300 text-emerald-600 focus:ring-emerald-500" />
+                    {label}
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3 mb-5">
+              <div>
+                <label className="block text-xs font-semibold text-gray-500 mb-1">Dari Tanggal</label>
+                <input type="date" value={autoFromDate} onChange={e => setAutoFromDate(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-200" />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-gray-500 mb-1">Sampai Tanggal</label>
+                <input type="date" value={autoToDate} onChange={e => setAutoToDate(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-200" />
+              </div>
+            </div>
+
+            {/* Preview */}
+            {autoPreview && (
+              <div className="bg-gray-50 rounded-xl p-4 mb-5 space-y-2 text-xs">
+                <p className="font-semibold text-gray-700 mb-2">
+                  {autoPreview.dryRun ? "📋 Pratinjau:" : "✅ Hasil:"}
+                </p>
+                <div className="flex items-center justify-between text-gray-600">
+                  <span>Total baru:</span>
+                  <span className="font-bold text-emerald-600">{autoPreview.totals?.created || 0}</span>
+                </div>
+                <div className="flex items-center justify-between text-gray-600">
+                  <span>Diperbarui:</span>
+                  <span className="font-bold text-blue-600">{autoPreview.totals?.updated || 0}</span>
+                </div>
+                <div className="flex items-center justify-between text-gray-600">
+                  <span>Manual dilindungi:</span>
+                  <span className="font-bold text-amber-600">{autoPreview.totals?.protected || 0}</span>
+                </div>
+                <div className="flex items-center justify-between text-gray-600">
+                  <span>Dilewati:</span>
+                  <span className="font-bold text-gray-400">{autoPreview.totals?.skipped || 0}</span>
+                </div>
+                {autoPreview.perSource && Object.keys(autoPreview.perSource).length > 0 && (
+                  <div className="mt-2 pt-2 border-t border-gray-200">
+                    {Object.entries(autoPreview.perSource).map(([source, data]: [string, any]) => (
+                      <div key={source} className="flex items-center justify-between text-gray-500">
+                        <span>{SUMBER_LABEL[source]?.label || source}:</span>
+                        <span>{data.created} baru, {data.updated} diperbarui</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+
+            <div className="flex gap-2">
+              <button onClick={() => runAutoPopulate(false)} disabled={autoSubmitting}
+                className="flex-1 py-2.5 border-2 border-gray-200 text-gray-600 rounded-xl font-semibold text-sm hover:bg-gray-50 disabled:opacity-50 transition-all">
+                {autoSubmitting ? "..." : autoPreview ? "Refresh Pratinjau" : "Pratinjau"}
+              </button>
+              <button onClick={() => runAutoPopulate(true)} disabled={autoSubmitting || !autoPreview}
+                className="flex-1 py-2.5 bg-emerald-600 text-white rounded-xl font-semibold text-sm hover:bg-emerald-700 disabled:opacity-50 transition-all">
+                {autoSubmitting ? "Memproses..." : "Impor Nilai"}
               </button>
             </div>
           </div>
@@ -368,6 +504,12 @@ export default function PenilaianPage() {
               <div>
                 <p className="font-semibold text-gray-900">{editSiswa.fullName}</p>
                 <p className="text-xs text-gray-400">{kategoris.find(k => k.id === editKategoriId)?.nama || "Nilai"}</p>
+                {editSumberType !== "MANUAL" && (
+                  <p className="text-[10px] text-amber-600 mt-0.5 flex items-center gap-1">
+                    <ShieldCheck size={10} />
+                    Nilai ini berasal dari sistem. Guru dapat mengubahnya jika diperlukan.
+                  </p>
+                )}
               </div>
             </div>
             <div className="space-y-4">
@@ -376,16 +518,6 @@ export default function PenilaianPage() {
                 <input type="number" value={editSkor} onChange={e => setEditSkor(e.target.value)}
                   min={0} max={100}
                   className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-200 focus:border-emerald-400" />
-              </div>
-              <div>
-                <label className="block text-xs font-semibold text-gray-500 mb-1">Sumber Nilai</label>
-                <select value={editSumberType} onChange={e => setEditSumberType(e.target.value)}
-                  className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-200 focus:border-emerald-400">
-                  <option value="MANUAL">Input Manual</option>
-                  <option value="PENUGASAN">Dari Tugas (Buku Panduan)</option>
-                  <option value="KARYA">Dari Karya Siswa</option>
-                  <option value="QUIZ">Dari Kuis</option>
-                </select>
               </div>
               <div>
                 <label className="block text-xs font-semibold text-gray-500 mb-1">Keterangan (opsional)</label>

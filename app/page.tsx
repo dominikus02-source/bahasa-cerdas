@@ -1,6 +1,5 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import Image from "next/image";
 import { db } from "@/lib/db";
 import { organizationLd, webSiteLd, faqPageLd, breadcrumbLd } from "@/lib/json-ld";
 import { withQueryTimeout as queryWithTimeout } from "@/lib/db/with-query-timeout";
@@ -17,6 +16,7 @@ import FAQSection from "@/components/landing/FAQSection";
 import FinalCTA from "@/components/landing/FinalCTA";
 import AnswerBlock from "@/components/aeo/AnswerBlock";
 import JsonLd from "@/components/aeo/JsonLd";
+import SafeMediaImage from "@/components/shared/safe-media-image";
 
 export const revalidate = 300;
 
@@ -222,20 +222,13 @@ export default async function HomePage() {
                       aria-label={`Video: ${v.title}`}
                     >
                       <div className="aspect-video bg-zinc-100 relative overflow-hidden">
-                        {v.thumbnailUrl ? (
-                          <Image
-                            src={v.thumbnailUrl}
-                            alt=""
-                            fill
-                            className="object-cover group-hover:scale-105 transition-transform duration-500"
-                          />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center bg-zinc-200">
-                            <div className="w-12 h-12 rounded-full bg-white/80 flex items-center justify-center">
-                              <div className="w-0 h-0 border-y-8 border-l-[14px] border-y-transparent border-l-zinc-600 ml-1" />
-                            </div>
-                          </div>
-                        )}
+                        <SafeMediaImage
+                          src={v.thumbnailUrl}
+                          alt=""
+                          fallbackType="video"
+                          containerClassName="w-full h-full"
+                          className="group-hover:scale-105 transition-transform duration-500"
+                        />
                         {v.isPremium && (
                           <span className="absolute top-3 left-3 px-2.5 py-1 rounded-lg bg-amber-400 text-white text-[10px] font-bold">
                             PREMIUM

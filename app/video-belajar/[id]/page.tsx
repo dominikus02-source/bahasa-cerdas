@@ -7,6 +7,7 @@ import { Play, Clock, Eye, User, ArrowLeft, Lock, Film, Share2, Calendar, Tag } 
 import PageNavbar from "@/components/public/PageNavbar";
 import PageFooter from "@/components/public/PageFooter";
 import ShareButton from "@/components/shared/ShareButton";
+import SafeMediaImage from "@/components/shared/safe-media-image";
 
 const CATEGORIES: Record<string, string> = {
   PEMBELAJARAN: "Pembelajaran", GRAMMATIKA: "Grammatika", SASTRA: "Sastra",
@@ -112,10 +113,12 @@ export default function VideoDetailPage() {
                     >
                       {/* Thumbnail background */}
                       {video.thumbnailUrl && (
-                        <img
+                        <SafeMediaImage
                           src={video.thumbnailUrl}
                           alt={video.title}
-                          className="absolute inset-0 w-full h-full object-cover opacity-80"
+                          fallbackType="video"
+                          containerClassName="absolute inset-0 w-full h-full"
+                          className="opacity-80"
                         />
                       )}
                       <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />

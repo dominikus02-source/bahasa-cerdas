@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Calendar, ArrowRight, User, BookOpen, Search, X } from "lucide-react";
 import PageNavbar from "@/components/public/PageNavbar";
 import PageFooter from "@/components/public/PageFooter";
+import SafeMediaImage from "@/components/shared/safe-media-image";
 
 type Article = {
   id: string;
@@ -139,9 +140,24 @@ export default function ArtikelPage() {
                 return (
                   <Link key={a.id} href={`/artikel/${a.slug}`} className="block">
                     <article className={`bg-white rounded-2xl shadow-sm border border-slate-100 hover:shadow-xl hover:border-red-200 transition-all ${idx === 0 ? "md:grid md:grid-cols-2" : ""}`}>
-                      {thumbnail && (
+                      {thumbnail ? (
                         <div className={`${idx === 0 ? "h-full min-h-[280px]" : "aspect-video"} bg-slate-100 overflow-hidden`}>
-                          <img src={thumbnail} alt={a.title} className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+                          <SafeMediaImage
+                            src={thumbnail}
+                            alt={a.title}
+                            fallbackType="article"
+                            className="hover:scale-105 transition-transform duration-500"
+                            containerClassName="w-full h-full"
+                          />
+                        </div>
+                      ) : (
+                        <div className={`${idx === 0 ? "h-full min-h-[280px]" : "aspect-video"} overflow-hidden`}>
+                          <SafeMediaImage
+                            src={null}
+                            alt={a.title}
+                            fallbackType="article"
+                            containerClassName="w-full h-full"
+                          />
                         </div>
                       )}
                       <div className="p-7 flex flex-col justify-center">

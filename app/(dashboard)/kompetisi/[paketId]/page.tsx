@@ -50,12 +50,16 @@ export default function KompetisiPage({ params }: { params: Promise<{ paketId: s
   const [timeLeft, setTimeLeft] = useState<number>(0);
   const [showConfirm, setShowConfirm] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [timeUp, setTimeUp] = useState(false);
+
+  const expiresAtRef = useRef<number | null>(null);
+  const timerStartedRef = useRef(false);
+  const submittedRef = useRef(false);
 
   const fetchTest = useCallback(async () => {
     setLoading(true);
     try {
-      const retry = typeof window !== "undefined" ? window.location.search.includes("retry=1") : false;
-      const res = await fetch(`/api/kompetensi/${resolvedParams.paketId}${retry ? "?retry=1" : ""}`);
+      const res = await fetch(`/api/kompetensi/${resolvedParams.paketId}`);
       const result = await res.json();
 
       if (result.error) {
@@ -86,14 +90,21 @@ export default function KompetisiPage({ params }: { params: Promise<{ paketId: s
       if (result.session?.answers) setAnswers(result.session.answers);
       if (result.session?.flagged) setFlagged(result.session.flagged);
 
+      // Compute expiresAt timestamp
+      let expiresMs: number | null = null;
       if (result.session?.expiresAt) {
-        const expires = new Date(result.session.expiresAt);
-        const now = new Date();
-        const diff = Math.max(0, Math.floor((expires.getTime() - now.getTime()) / 1000));
-        setTimeLeft(diff);
+        expiresMs = new Date(result.session.expiresAt).getTime();
       } else if (result.packet?.duration) {
-        setTimeLeft(result.packet.duration * 60);
+        expiresMs = Date.now() + result.packet.duration * 60 * 1000;
+      } else {
+        // Fallback: 30 minutes
+        expiresMs = Date.now() + 30 * 60 * 1000;
       }
+
+      expiresAtRef.current = expiresMs;
+
+      const remaining = Math.max(0, Math.floor((expiresMs - Date.now()) / 1000));
+      setTimeLeft(remaining);
     } catch {
       setError("Gagal memuat soal");
     } finally {
@@ -101,37 +112,37 @@ export default function KompetisiPage({ params }: { params: Promise<{ paketId: s
     }
   }, [resolvedParams.paketId, router]);
 
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
-  const handleSubmitRef = useRef<(auto?: boolean) => Promise<void>>(() => Promise.resolve());
-  const timerStartedRef = useRef(false);
-
+  // Timer interval — runs based on expiresAtRef
   useEffect(() => {
-    fetchTest();
-  }, [fetchTest]);
+    if (!expiresAtRef.current) return;
+
+    timerStartedRef.current = true;
+
+    const interval = setInterval(() => {
+      const remaining = Math.max(0, Math.floor((expiresAtRef.current! - Date.now()) / 1000));
+      setTimeLeft(remaining);
+      if (remaining <= 0) {
+        clearInterval(interval);
+        setTimeUp(true);
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [data?.session?.id]); // Re-run only when session changes (new test)
+
+  // Auto-submit when time is up
+  const handleSubmitRef = useRef<(auto?: boolean) => Promise<void>>(() => Promise.resolve());
 
   useEffect(() => {
     handleSubmitRef.current = handleSubmit;
   });
 
   useEffect(() => {
-    if (timeLeft <= 0) return;
-    timerStartedRef.current = true;
-    if (timerRef.current) clearInterval(timerRef.current);
-
-    timerRef.current = setInterval(() => {
-      setTimeLeft((t) => (t <= 1 ? 0 : t - 1));
-    }, 1000);
-
-    return () => {
-      if (timerRef.current) clearInterval(timerRef.current);
-    };
-  }, [timeLeft > 0]);
-
-  useEffect(() => {
-    if (timeLeft === 0 && timerStartedRef.current) {
-      handleSubmitRef.current(true);
+    if (timeUp && !submittedRef.current) {
+      // Don't auto-submit for now — show message + manual submit button
+      setShowConfirm(true);
     }
-  }, [timeLeft]);
+  }, [timeUp]);
 
   const sections = data?.questions || [];
   const currentSectionData = sections[currentSection];
@@ -139,7 +150,6 @@ export default function KompetisiPage({ params }: { params: Promise<{ paketId: s
   const currentQ = questions[currentQuestion];
   const isFlagged = currentSection === 0 ? flagged.includes(currentQuestion) : false;
 
-  // Track flagged per section — use absolute index across all sections
   const getAbsoluteIndex = (sIdx: number, qIdx: number) => {
     let idx = 0;
     for (let s = 0; s < sIdx; s++) {
@@ -186,24 +196,27 @@ export default function KompetisiPage({ params }: { params: Promise<{ paketId: s
   };
 
   const handleSubmit = async (autoSubmit = false) => {
-    if (!autoSubmit) setShowConfirm(true);
-    if (submitting) return;
+    if (!autoSubmit && !timeUp) setShowConfirm(true);
+    if (submitting || submittedRef.current) return;
+    submittedRef.current = true;
 
     setSubmitting(true);
     try {
       const res = await fetch(`/api/kompetensi/${resolvedParams.paketId}/submit`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ answers, timeSpent: (data?.packet?.duration || 60) * 60 - timeLeft }),
+        body: JSON.stringify({ answers, timeSpent: (data?.packet?.duration || 30) * 60 - timeLeft }),
       });
       const result = await res.json();
       if (result.success) {
         router.push(`/kompetisi/${resolvedParams.paketId}/hasil?attempt=${result.attemptNumber}`);
       } else {
         setError(result.error || "Submit gagal");
+        submittedRef.current = false;
       }
     } catch {
       setError("Terjadi kesalahan saat submit");
+      submittedRef.current = false;
     } finally {
       setSubmitting(false);
       setShowConfirm(false);
@@ -247,22 +260,32 @@ export default function KompetisiPage({ params }: { params: Promise<{ paketId: s
   }
 
   if (!currentQ) {
-    return (
-      <TestShell>
-        <div className="flex items-center justify-center min-h-[60vh]">
-          <div className="text-center bg-white rounded-2xl p-8 shadow-sm max-w-md border border-slate-200">
-            <XCircle className="w-14 h-14 text-slate-300 mx-auto mb-4" />
-            <p className="text-slate-500 mb-4">Tidak ada soal tersedia.</p>
-            <button
-              onClick={() => router.back()}
-              className="px-6 py-2.5 bg-emerald-600 text-white rounded-xl font-bold hover:bg-emerald-700 transition-colors"
-            >
-              Kembali
-            </button>
+    // Check if any section has questions
+    const hasAnyQuestion = sections.some(s => s.questions.length > 0);
+    if (!hasAnyQuestion) {
+      return (
+        <TestShell>
+          <div className="flex items-center justify-center min-h-[60vh]">
+            <div className="text-center bg-white rounded-2xl p-8 shadow-sm max-w-md border border-slate-200">
+              <XCircle className="w-14 h-14 text-slate-300 mx-auto mb-4" />
+              <p className="text-slate-500 mb-4">Tidak ada soal tersedia untuk paket ini.</p>
+              <button
+                onClick={() => router.back()}
+                className="mt-4 px-6 py-2.5 bg-emerald-600 text-white rounded-xl font-bold hover:bg-emerald-700 transition-colors"
+              >
+                Kembali
+              </button>
+            </div>
           </div>
-        </div>
-      </TestShell>
-    );
+        </TestShell>
+      );
+    }
+    // Skip sections with 0 questions (e.g., listening without audio)
+    const nextSectionWithQuestions = sections.find(s => s.questions.length > 0);
+    if (nextSectionWithQuestions) {
+      setCurrentSection(nextSectionWithQuestions.sectionIndex);
+      setCurrentQuestion(0);
+    }
   }
 
   return (
@@ -321,6 +344,20 @@ export default function KompetisiPage({ params }: { params: Promise<{ paketId: s
                 }}
               />
             </div>
+
+            {/* Time up banner */}
+            {timeUp && (
+              <div className="bg-red-50 border-2 border-red-300 rounded-xl p-4 text-center">
+                <p className="text-sm font-bold text-red-700 mb-2">Waktu habis. Silakan kirim jawaban Anda.</p>
+                <button
+                  onClick={() => handleSubmit(false)}
+                  disabled={submitting}
+                  className="px-6 py-2.5 bg-red-600 text-white rounded-xl font-bold hover:bg-red-700 disabled:opacity-50 transition-colors"
+                >
+                  {submitting ? "Mengirim..." : "Kirim Jawaban"}
+                </button>
+              </div>
+            )}
 
             <QuestionCard
               questionNumber={currentQuestion + 1}
@@ -402,7 +439,8 @@ export default function KompetisiPage({ params }: { params: Promise<{ paketId: s
 
                   <button
                     onClick={() => setShowConfirm(true)}
-                    className="px-4 sm:px-6 py-2.5 sm:py-3 bg-emerald-600 text-white font-bold rounded-xl hover:bg-emerald-700 transition-colors text-xs sm:text-sm shadow-sm"
+                    disabled={submitting || timeUp}
+                    className="px-4 sm:px-6 py-2.5 sm:py-3 bg-emerald-600 text-white font-bold rounded-xl hover:bg-emerald-700 transition-colors text-xs sm:text-sm shadow-sm disabled:opacity-50"
                   >
                     Kirim Jawaban
                   </button>
@@ -415,7 +453,9 @@ export default function KompetisiPage({ params }: { params: Promise<{ paketId: s
 
       <SubmitConfirmModal
         open={showConfirm}
-        onClose={() => setShowConfirm(false)}
+        onClose={() => {
+          if (!timeUp) setShowConfirm(false);
+        }}
         onConfirm={() => handleSubmit(false)}
         submitting={submitting}
         answeredCount={answeredCount}
@@ -423,6 +463,7 @@ export default function KompetisiPage({ params }: { params: Promise<{ paketId: s
         flaggedCount={flaggedCount}
         sections={sections}
         answers={answers}
+        timeUp={timeUp}
       />
     </div>
   );

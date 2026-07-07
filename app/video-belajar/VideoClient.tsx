@@ -3,6 +3,7 @@
 import { useState, useMemo } from "react";
 import Link from "next/link";
 import { Play, Clock, Eye, Search, Film } from "lucide-react";
+import SafeMediaImage from "@/components/shared/safe-media-image";
 
 const CATEGORIES = [
   { value: "", label: "Semua" },
@@ -119,17 +120,13 @@ export default function VideoClient({ initialVideos }: { initialVideos: Video[] 
               >
                 <div className="bg-white rounded-2xl overflow-hidden border border-gray-100 hover:border-gray-200 hover:shadow-lg transition-all h-full">
                   <div className="aspect-video bg-gray-100 relative overflow-hidden">
-                    {video.thumbnailUrl ? (
-                      <img
-                        src={video.thumbnailUrl}
-                        alt={video.title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200">
-                        <Play size={32} className="text-gray-300" />
-                      </div>
-                    )}
+                    <SafeMediaImage
+                      src={video.thumbnailUrl}
+                      alt={video.title}
+                      fallbackType="video"
+                      containerClassName="w-full h-full"
+                      className="group-hover:scale-105 transition-transform duration-500"
+                    />
                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
                       <div className="w-14 h-14 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all group-hover:scale-110 shadow-lg">
                         <Play size={24} className="text-primary ml-0.5" />

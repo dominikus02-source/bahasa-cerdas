@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { ChevronLeft, Trash2, Search, Eye, User, Calendar, Play, AlertTriangle } from "lucide-react";
+import SafeMediaImage from "@/components/shared/safe-media-image";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
@@ -167,18 +168,17 @@ export default function AdminVideoPage() {
             <Card key={v.id} className="p-5 border border-slate-100 hover:border-red-200 transition-colors">
               <div className="flex items-start justify-between gap-4">
                 <div className="flex items-start gap-4 flex-1 min-w-0">
-                  {v.thumbnailUrl ? (
-                    <div className="w-32 h-20 rounded-lg bg-slate-100 overflow-hidden shrink-0 relative">
-                      <img src={v.thumbnailUrl} alt={v.title} className="w-full h-full object-cover" />
-                      <div className="absolute inset-0 flex items-center justify-center bg-black/30">
-                        <Play className="w-6 h-6 text-white" />
-                      </div>
+                  <div className="w-32 h-20 rounded-lg bg-slate-100 overflow-hidden shrink-0 relative">
+                    <SafeMediaImage
+                      src={v.thumbnailUrl}
+                      alt={v.title}
+                      fallbackType="video"
+                      containerClassName="w-full h-full"
+                    />
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/30 pointer-events-none">
+                      <Play className="w-6 h-6 text-white" />
                     </div>
-                  ) : (
-                    <div className="w-32 h-20 rounded-lg bg-slate-100 flex items-center justify-center shrink-0">
-                      <Play className="w-8 h-8 text-slate-300" />
-                    </div>
-                  )}
+                  </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1 flex-wrap">
                       <h3 className="font-bold text-slate-900 truncate">{v.title}</h3>

@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { createClient } from "@/lib/supabase/client";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import SafeMediaImage from "@/components/shared/safe-media-image";
 
 export default function GuruArtikelPage() {
   const [artikel, setArtikel] = useState<any[]>([]);
@@ -173,7 +174,12 @@ export default function GuruArtikelPage() {
                   </div>
                   {form.coverImage && (
                     <div className="relative mt-3 rounded-xl overflow-hidden border border-gray-200">
-                      <img src={form.coverImage} alt="cover" className="w-full h-48 object-cover" />
+                      <SafeMediaImage
+                        src={form.coverImage}
+                        alt={form.title || "Cover artikel"}
+                        fallbackType="article"
+                        containerClassName="w-full h-48"
+                      />
                       <button type="button" onClick={() => setForm({ ...form, coverImage: "" })}
                         className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 shadow">
                         <X size={14} />

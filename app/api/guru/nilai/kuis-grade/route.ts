@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
+import { upsertNilaiOtomatis } from "@/lib/penilaian/upsert-nilai";
 
 export async function GET(req: NextRequest) {
   try {
@@ -89,16 +90,39 @@ export async function POST(req: NextRequest) {
 
     const totalPossible = await db.quizAnswer.count({ where: { submissionId } });
 
+    const finalScore = totalPossible > 0 ? Math.round((totalPoints / totalPossible) * 100) : 0;
+
     await db.quizSubmission.update({
       where: { id: submissionId },
       data: {
         status: "GRADED",
-        score: totalPossible > 0 ? (totalPoints / totalPossible) * 100 : 0,
+        score: finalScore,
         pointsEarned: totalPoints,
       },
     });
 
-    return NextResponse.json({ success: true, score: totalPossible > 0 ? Math.round((totalPoints / totalPossible) * 100) : 0 });
+    // Save to Nilai model
+    const assignment = submission.assignment;
+    if (assignment?.groupId) {
+      try {
+        await upsertNilaiOtomatis({
+          userId: submission.userId,
+          groupId: assignment.groupId,
+          kategoriNama: "Kuis",
+          kategoriBobot: 100,
+          skor: finalScore,
+          sumberType: "QUIZ",
+          sumberId: submission.id,
+          keterangan: `Kuis: ${assignment.quiz.title} (nilai ${finalScore})`,
+          allowUpdateAuto: true,
+          neverOverwriteManual: true,
+        });
+      } catch (e) {
+        console.error("Failed to save Nilai for quiz grade:", e);
+      }
+    }
+
+    return NextResponse.json({ success: true, score: finalScore });
   } catch (error) {
     console.error("POST /api/guru/nilai/kuis-grade error:", error);
     return NextResponse.json({ error: "Internal error" }, { status: 500 });

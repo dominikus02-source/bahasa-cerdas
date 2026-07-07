@@ -36,8 +36,6 @@ export default function QuestionCard({
   onToggleFlag,
   isListening,
 }: QuestionCardProps) {
-  const LETTERS = ["A", "B", "C", "D", "E"];
-
   return (
     <div className="space-y-4 sm:space-y-5">
       {/* Question card */}
@@ -75,6 +73,20 @@ export default function QuestionCard({
             </div>
           )}
 
+          {/* Audio player */}
+          {isListening && question.audioUrl && (
+            <div className="mb-4 p-3 bg-indigo-50/50 rounded-xl border border-indigo-100">
+              <audio
+                controls
+                className="w-full h-10"
+                src={question.audioUrl}
+                preload="auto"
+              >
+                Browser tidak mendukung pemutar audio.
+              </audio>
+            </div>
+          )}
+
           {/* Passage */}
           {question.passage && (
             <div className="mb-4 p-3 sm:p-4 bg-slate-50 rounded-xl border border-slate-100 text-xs sm:text-sm text-slate-700 leading-relaxed">
@@ -106,33 +118,27 @@ export default function QuestionCard({
       </div>
 
       {/* Options */}
-      <div className="grid gap-2.5 sm:gap-3">
-        {question.options?.map((option, idx) => {
-          const optId = option.id || LETTERS[idx] || String(idx);
-          const optText = option.text || option;
+      <div className="grid gap-2.5 sm:gap-3" role="radiogroup" aria-label="Pilihan jawaban">
+        {question.options?.map((option) => {
+          const optId = option.id || option.text;
+          const optText = typeof option === "string" ? option : option.text;
           const isSelected = selectedAnswer === optId;
 
           return (
             <button
               key={optId}
               onClick={() => onSelectAnswer(question.id, optId)}
-              className={`w-full text-left rounded-xl sm:rounded-2xl p-3.5 sm:p-5 transition-all flex items-start gap-3 sm:gap-4 group ${
+              role="radio"
+              aria-checked={isSelected}
+              aria-label={`Pilihan jawaban: ${optText}`}
+              className={`w-full text-left rounded-xl sm:rounded-2xl p-3.5 sm:p-5 transition-all group ${
                 isSelected
                   ? "bg-emerald-50 border-2 border-emerald-500 shadow-sm"
                   : "bg-white border-2 border-slate-100 hover:border-emerald-200 hover:bg-emerald-50/30 hover:shadow-sm"
               }`}
             >
-              <div
-                className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-sm sm:text-base font-bold shrink-0 transition-all ${
-                  isSelected
-                    ? "bg-emerald-500 text-white shadow-sm"
-                    : "bg-slate-50 text-slate-400 group-hover:bg-emerald-100 group-hover:text-emerald-600"
-                }`}
-              >
-                {optId}
-              </div>
               <span
-                className={`text-sm sm:text-base pt-0.5 sm:pt-1 leading-snug ${
+                className={`text-sm sm:text-base leading-snug block ${
                   isSelected ? "text-emerald-900 font-medium" : "text-slate-700"
                 }`}
               >

@@ -12,6 +12,7 @@ interface SubmitConfirmModalProps {
   flaggedCount: number;
   sections: { sectionName: string; questions: { id: string }[] }[];
   answers: Record<string, string>;
+  timeUp?: boolean;
 }
 
 export default function SubmitConfirmModal({
@@ -24,6 +25,7 @@ export default function SubmitConfirmModal({
   flaggedCount,
   sections,
   answers,
+  timeUp,
 }: SubmitConfirmModalProps) {
   if (!open) return null;
 
@@ -42,24 +44,26 @@ export default function SubmitConfirmModal({
         {/* Header */}
         <div className="flex items-center justify-between px-5 sm:px-6 pt-5 sm:pt-6 pb-3">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-amber-50 flex items-center justify-center">
-              <AlertTriangle className="w-5 h-5 text-amber-500" />
+            <div className={`w-10 h-10 rounded-full flex items-center justify-center ${timeUp ? "bg-red-50" : "bg-amber-50"}`}>
+              <AlertTriangle className={`w-5 h-5 ${timeUp ? "text-red-500" : "text-amber-500"}`} />
             </div>
             <div>
               <h2 className="font-bold text-base sm:text-lg text-slate-900">
-                Kirim Jawaban?
+                {timeUp ? "Waktu Habis" : "Kirim Jawaban?"}
               </h2>
               <p className="text-xs sm:text-sm text-slate-500">
-                Pastikan semua jawaban sudah final
+                {timeUp ? "Waktu pengerjaan telah habis. Jawaban akan dikirim." : "Pastikan semua jawaban sudah final"}
               </p>
             </div>
           </div>
-          <button
-            onClick={onClose}
-            className="p-1.5 rounded-lg hover:bg-slate-100 text-slate-400"
-          >
-            <X className="w-5 h-5" />
-          </button>
+          {!timeUp && (
+            <button
+              onClick={onClose}
+              className="p-1.5 rounded-lg hover:bg-slate-100 text-slate-400"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          )}
         </div>
 
         {/* Body */}
@@ -137,12 +141,14 @@ export default function SubmitConfirmModal({
 
         {/* Actions */}
         <div className="px-5 sm:px-6 pb-5 sm:pb-6 pt-2 flex flex-col sm:flex-row gap-2 sm:gap-3">
-          <button
-            onClick={onClose}
-            className="flex-1 py-2.5 sm:py-3 border-2 border-slate-200 text-slate-600 font-bold rounded-xl hover:bg-slate-50 transition-colors text-sm sm:text-base"
-          >
-            Lanjut Kerjakan
-          </button>
+          {!timeUp && (
+            <button
+              onClick={onClose}
+              className="flex-1 py-2.5 sm:py-3 border-2 border-slate-200 text-slate-600 font-bold rounded-xl hover:bg-slate-50 transition-colors text-sm sm:text-base"
+            >
+              Lanjut Kerjakan
+            </button>
+          )}
           <button
             onClick={onConfirm}
             disabled={submitting}

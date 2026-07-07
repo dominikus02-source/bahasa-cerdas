@@ -42,7 +42,11 @@ async function fetchSectionByIds(
   ukbi: boolean
 ): Promise<any[]> {
   if (ukbi) {
-    return fetchUKBIQuestions({ id: { in: section.questionIds }, isActive: true });
+    const where: any = { id: { in: section.questionIds }, isActive: true };
+    if (section.seksi === "MENDENGARKAN") {
+      where.audioUrl = { not: null };
+    }
+    return fetchUKBIQuestions(where);
   }
   return fetchTKAQuestions({ id: { in: section.questionIds }, isActive: true });
 }
@@ -55,6 +59,10 @@ async function fetchSectionByCriteria(
   const where: any = { isActive: true };
   if (ukbi) {
     if (section.seksi) where.seksi = section.seksi;
+    // Only include listening questions that have audio available
+    if (section.seksi === "MENDENGARKAN") {
+      where.audioUrl = { not: null };
+    }
   } else {
     if (section.kompetensi) where.kompetensi = section.kompetensi;
     if (section.subKompetensi) where.subKompetensi = section.subKompetensi;
@@ -88,7 +96,11 @@ async function fetchSectionGeneralFallback(
   ukbi: boolean
 ): Promise<any[]> {
   if (ukbi) {
-    return fetchUKBIQuestions({ isActive: true }, section.count);
+    const baseWhere: any = { isActive: true };
+    if (section.seksi === "MENDENGARKAN") {
+      baseWhere.audioUrl = { not: null };
+    }
+    return fetchUKBIQuestions(baseWhere, section.count);
   }
   return fetchTKAQuestions({ isActive: true }, section.count);
 }

@@ -9,26 +9,30 @@ datasource db {
 }
 
 model GameRoom {
-  id              String         @id @default(cuid())
-  code            String         @unique
-  name            String
-  gameType        GameType       @default(KUIS_BATTLE)
-  hostId          String
-  status          GameRoomStatus @default(WAITING)
-  category        String?
-  difficulty      Difficulty     @default(MEDIUM)
-  questionIds     String[]
-  questionCount   Int            @default(10)
-  timePerQuestion Int            @default(20)
-  currentQuestion Int            @default(0)
-  createdAt       DateTime       @default(now())
-  startedAt       DateTime?
-  endedAt         DateTime?
-  results         GameResult[]
-  sessions        GameSession[]
+  id                  String         @id @default(cuid())
+  code                String         @unique
+  name                String
+  gameType            GameType       @default(KUIS_BATTLE)
+  hostId              String
+  status              GameRoomStatus @default(WAITING)
+  category            String?
+  difficulty          Difficulty     @default(MEDIUM)
+  questionIds         String[]
+  questionCount       Int            @default(10)
+  timePerQuestion     Int            @default(20)
+  currentQuestion     Int            @default(0)
+  createdAt           DateTime       @default(now())
+  startedAt           DateTime?
+  endedAt             DateTime?
+  groupId             String?        // for penilaian integration
+  includeInPenilaian  Boolean        @default(false)
+  penilaianKategori   String?
+  results             GameResult[]
+  sessions            GameSession[]
 
   @@index([code])
   @@index([hostId])
+  @@index([groupId])
 }
 
 model GameQuestion {

@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Play, Clock, Search, Upload, Video, AlertCircle, CheckCircle2, Camera, Mic, Sun, X, Loader2, Trash2, Eye, EyeOff } from "lucide-react";
+import SafeMediaImage from "@/components/shared/safe-media-image";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -242,13 +243,13 @@ export default function VideoBelajarPage() {
             <Card key={video.id} className="overflow-hidden hover:shadow-lg transition-all duration-200 border border-gray-100 group">
               <Link href={`/video-belajar/${video.id}`} className="block group">
                 <div className="aspect-video bg-gray-100 relative overflow-hidden">
-                  {video.thumbnailUrl ? (
-                    <img src={video.thumbnailUrl} alt={video.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200">
-                      <Play className="h-12 w-12 text-gray-300" />
-                    </div>
-                  )}
+                  <SafeMediaImage
+                    src={video.thumbnailUrl}
+                    alt={video.title}
+                    fallbackType="video"
+                    containerClassName="w-full h-full"
+                    className="group-hover:scale-105 transition-transform duration-300"
+                  />
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors duration-200 flex items-center justify-center">
                     <div className="w-12 h-12 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-200 group-hover:scale-110 shadow-lg">
                       <Play size={20} className="text-red-500 ml-0.5" />

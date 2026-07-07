@@ -1081,3 +1081,207 @@ Capai 150 soal per track UKBI (target total 600) dengan kualitas bank yang baik.
 2. **TKA Minimum Simulation Bank** — 30 soal per track untuk TKA UTBK/Guru (existing), lalu enrichment ke 150
 3. **Game server revival**
 
+---
+
+## Phase UKBI TKA PRACTICE SCREEN 1 — Modernisasi Layar Latihan (July 1, 2026)
+
+### Goal
+Modernisasi pengalaman latihan UKBI/TKA dengan UI Duolingo-style yang premium, mobile-friendly, dan informatif.
+
+### Apa yang Dibuat
+- **7 komponen baru**: `TestShell` (layout), `TestHeader` (timer/kategori), `QuestionCard` (opsi A/B/C/D), `QuestionNavigator` (bottom sheet), `SectionProgress` (section bar), `SubmitConfirmModal` (review), `TestResultPanel` (hero score + bars)
+- **Rewrite 2 halaman**: `app/(dashboard)/kompetisi/[paketId]/page.tsx` (test screen), `hasil/page.tsx` (result page)
+- **105 soal TKA baru**: SD/SMP/SMA masing-masing +35 soal (set-002.json)
+- **Seed script**: `scripts/seed-tka-all-tracks.ts`
+
+### UX Sebelum → Sesudah
+| Sebelum | Sesudah |
+|---------|---------|
+| Header biasa | Premium header + timer warning (menit <5 = merah) |
+| Opsi A/B/C/D kecil | Tombol besar dengan badge huruf |
+| Tidak ada navigator | Bottom sheet 3 warna (hijau/merah/putih) |
+| Submit langsung | Review modal dengan detail per soal |
+| Result sederhana | Hero score animasi + section bars + rekomendasi |
+
+### Files Created
+- `components/kompetensi/TestShell.tsx`, `TestHeader.tsx`, `QuestionCard.tsx`, `QuestionNavigator.tsx`, `SectionProgress.tsx`, `SubmitConfirmModal.tsx`, `TestResultPanel.tsx`
+- `scripts/seed-tka-all-tracks.ts`
+- `scripts/test-ukbi-tka-test-screen-ui.ts` (69/69 ✅)
+- `scripts/audit-ukbi-tka-test-screen.ts` (68/68 ✅)
+- `data/question-bank/tka/sd/membaca/set-002.json`
+- `data/question-bank/tka/smp/set-002.json`
+- `data/question-bank/tka/sma/set-002.json`
+
+### Verification
+- `npm run test:ukbi-tka-test-screen-ui` — ✅ 69/69
+- `npm run audit:ukbi-tka-test-screen` — ✅ 68/68
+- `npm run build` — ✅ 272 pages, 0 errors
+- Deployed to production
+
+## Phase EXISTING PENILAIAN HARDENING 1 — Auto-Score, Gradebook, UI Hardening (July 1, 2026)
+
+### Goal
+Sempurnakan sistem penilaian existing: auto-score dari Quiz/Game/Jalur Cerdas/UKBI-TKA ke model Nilai → tampil di /guru/penilaian dan /guru/gradebook → guru review, override, ekspor.
+
+### Constraints Followed
+- ✅ Tidak deleteMany/truncate/drop
+- ✅ Tidak expose correctAnswer/answerKey
+- ✅ Tidak lemahkan leakage tests
+- ✅ Tidak buat tabel penilaian duplikat
+- ✅ Migration add-only (GameRoom groupId nullable)
+- ✅ Bahasa Indonesia semua UI
+- ✅ Manual protection (neverOverwriteManual)
+- ✅ Supabase runtime
+
+### Bagian A-D (Dari AGENTS.md sebelumnya)
+- **Audit**: Semua file penilaian existing dibaca (penilaian, gradebook, nilai, nilai-kategori, quiz, penugasan routes).
+- **Schema**: GameRoom +3 field (groupId, includeInPenilaian, penilaianKategori) — add-only nullable.
+- **Helper**: `lib/penilaian/upsert-nilai.ts` — 8 sumberType, upsertNilaiOtomatis(), ensureKategori(), manual protection.
+- **Auto-populate**: POST /api/guru/nilai/auto-populate — 5 source types, dry-run, per-source breakdown, B. Indonesia.
+
+### Bagian E — Quiz to Nilai
+- **POST** `/api/guru/nilai/kuis-grade/route.ts` — setelah grade submission, panggil `upsertNilaiOtomatis()` dengan `sumberType: "QUIZ"`, kategori "Kuis"
+- ✅ 54/54 test lulus, 18/18 audit lulus
+
+### Bagian F-G-H — Game/Jalur Cerdas/UKBI-TKA ke Nilai
+- **Game**: Auto-populate membaca GameResult via GameRoom.groupId + includeInPenilaian
+- **Jalur Cerdas**: Auto-populate membaca PenugasanSubmission COMPLETED dengan score + penugasan.groupId
+- **UKBI/TKA**: Auto-populate membaca ProgresKompetensi COMPLETED, hitung percentage/maxScore
+- ✅ Semua sudah di-handle oleh auto-populate route
+
+### Bagian I — UI /guru/penilaian (Modern)
+| Fitur | Status |
+|-------|--------|
+| Class selector | ✅ Dropdown dengan jumlah murid |
+| Atur Kategori | ✅ CRUD modal (Tambah/Ubah/Hapus dengan nama + bobot) |
+| Ambil Nilai Otomatis | ✅ Source checkboxes (Tugas/Kuis/Game/Jalur Cerdas/UKBI-TKA), date range, dry-run preview, import |
+| Tabel nilai per siswa × kategori | ✅ Dengan badge sumber (hover), klik untuk edit |
+| Edit score modal | ✅ Manual protection indicator (shield icon), keterangan opsional |
+| Unduh CSV/DOC | ✅ Export dropdown |
+
+### Bagian J — /guru/gradebook
+| Fitur | Status |
+|-------|--------|
+| Pilih kelas (button tabs) | ✅ |
+| Per Kategori view | ✅ Kategori sebagai kolom, stats bar (rata/tertinggi/terendah) |
+| Per Tugas view (legacy) | ✅ Backward compat dengan penugasan |
+| Search siswa | ✅ |
+| Export CSV | ✅ Per view |
+| Rata-rata per siswa | ✅ |
+
+### Bagian K — Export Aman
+- ✅ Export route (`/api/guru/nilai/export`) hanya baca skor, kategori, nama — tidak ada correctAnswer/answerKey/jawaban
+
+### Bagian L — Keamanan
+- ✅ Role-gated GURU di semua endpoint
+- ✅ Teacher-only group access (verify teacherId === group.teacherId)
+
+### Bagian M — Test Script
+- `scripts/test-existing-penilaian-flow.ts` — 54 assertions ✅
+- Package: `npm run test:existing-penilaian`
+
+### Bagian N — Audit Script
+- `scripts/audit-existing-penilaian-flow.ts` — 18 checks ✅ (17 pass, 1 ⚠️ GameRoom column not in DB yet)
+- Package: `npm run audit:existing-penilaian`
+
+### Verification
+| Check | Result |
+|-------|--------|
+| `npm run test:existing-penilaian` | ✅ 54/54 |
+| `npm run audit:existing-penilaian` | ✅ 17/18 + ⚠️ 1 (GameRoom not migrated) |
+| `npx tsc --noEmit` | ✅ 0 errors |
+| `npm run build` | ✅ 340 pages, 0 errors |
+| Quiz → Nilai | ✅ POST /api/guru/nilai/kuis-grade calls upsertNilaiOtomatis |
+| Export safe | ✅ No correctAnswer/answerKey exposed |
+| Manual protection | ✅ neverOverwriteManual default true |
+
+### Files Modified
+- `app/(dashboard)/guru/penilaian/page.tsx` — Full rewrite (modern UI)
+- `app/(dashboard)/guru/gradebook/page.tsx` — Full rewrite (Nilai + kategori stats)
+- `app/api/guru/gradebook/route.ts` — Added kategoris, kategoriStats, scores from Nilai model
+- `app/api/guru/nilai/kuis-grade/route.ts` — Added upsertNilaiOtomatis call after grading
+- `app/api/guru/nilai/auto-populate/route.ts` — Fixed unitId query (not nullable), totalScore null safety
+- `components/kompetensi/QuestionCard.tsx` — Fixed option text type
+- `package.json` — Added `test:existing-penilaian`, `audit:existing-penilaian` scripts
+
+### Files Created
+- `scripts/test-existing-penilaian-flow.ts` — 54 structural + code review tests
+- `scripts/audit-existing-penilaian-flow.ts` — 18 data integrity checks
+
+### Known Issues
+1. **GameRoom.groupId not in DB**: Schema has fields but `prisma db push` failed (cross-schema auth.users). Need psql migration or Supabase SQL editor.
+2. **Nilai/ProgresKompetensi records = 0**: No user activity in current DB (fresh Supabase).
+3. **Game server dead**: Multiplayer game → Nilai flow untestable until GameRoom revived.
+4. **TKA UTBK/Guru only 30 soal**: Need enrichment to 150.
+
+## Phase UKBI TKA TEST SCREEN HOTFIX 1 — Complete (July 1, 2026)
+
+### Goal
+Modernisasi UX test screen UKBI/TKA: hapus label A/B/C/D, perbaiki timer reliability, aktifkan soal Mendengarkan dengan aman.
+
+### BAGIAN A — Hilangkan A/B/C/D Label
+- **QuestionCard.tsx**: Hapus `LETTERS` array + badge huruf. Opsi sekarang langsung `<button role="radio">` dengan `aria-label`. `optId` dipakai internal untuk key + mapping.
+- Tidak ada `A.`, `B.`, `C.`, `D.` yang dirender sebagai teks.
+
+### BAGIAN B — Timer Fix
+- Sebelum: `expiresAt` di-set client-side dari `Date.now() + duration * 60000` — interval tidak re-fire.
+- Sesudah: `expiresAtRef` di-set dari server response (`session.expiresAt` atau paket `duration`). Interval baca `Date.now()` setiap detik. 30 menit fallback jika duration invalid. `timeUp` state → banner merah + tombol "Kirim Jawaban" + lock input.
+- **SubmitConfirmModal**: Dukung `timeUp` prop — "Waktu Habis", sembunyikan "Lanjut Kerjakan" & tombol X.
+
+### BAGIAN C — Soal Mendengarkan
+- API filter `audioUrl: { not: null }` untuk seksi MENDENGARKAN di UKBI.
+- QuestionCard: audio player (`<audio>` + play button), `isListening` indicator, "Simak audio berikut" instruction.
+- Page: section dilewati jika 0 soal dengan filter.
+
+### BAGIAN D — Audit Listening
+- 191 soal MENDENGARKAN total (GURU 50, SD 40, SMA 53, SMP 48).
+- 0 dengan `audioUrl` — butuh produksi audio file.
+- 0 audioScript/transkrip leakage.
+- TQA: TKA tidak punya seksi MENDENGARKAN (tidak perlu filter).
+
+### BAGIAN E — Test/Audit Update
+- `test-ukbi-tka-test-screen-ui.ts`: 89 tests (timer, listening, no A/B/C/D, audio)
+- `audit-listening-questions.ts`: 46 checks (schema, sanitasi, UI, DB, duration)
+- All leakage tests pass
+
+### Files Modified
+| File | Perubahan |
+|------|-----------|
+| `components/kompetensi/QuestionCard.tsx` | Hapus LETTERS, role=radio, audioUrl player, isListening |
+| `app/(dashboard)/kompetisi/[paketId]/page.tsx` | Timer expiresAtRef, 30-min fallback, timeUp banner, listening section skip |
+| `components/kompetensi/SubmitConfirmModal.tsx` | timeUp prop, Waktu Habis modal, hidden close |
+| `app/api/kompetensi/[paketId]/route.ts` | MENDENGARKAN filter `audioUrl: { not: null }` |
+| `scripts/test-ukbi-tka-test-screen-ui.ts` | + timer, listening, A/B/C/D, audio checks |
+| `scripts/audit-listening-questions.ts` | New — 46 checks |
+| `package.json` | Added `audit:listening-questions` |
+
+### Verification
+| Check | Hasil |
+|-------|-------|
+| test:ukbi-tka-test-screen-ui | ✅ 89/89 |
+| audit:listening-questions | ✅ 46 checks (45 ✅, 1 ⚠️) |
+| test:bank-soal-leakage | ✅ 8/8 |
+| test:jalur-leakage | ✅ 390/390 |
+| test:murid-quiz-leakage | ✅ 9/9 |
+| test:ukbi-tka-randomization | ✅ 27/27 |
+| test:ukbi-tka-runtime | ✅ 53/53 |
+| validate:ukbi-tka-structure | ✅ 3774/3774 |
+| test:dokumen-latihan-sanitization | ✅ 10/10 |
+| test:bahasa-ui | ✅ 67/67 |
+| test:bigt-menu | ✅ 22/22 |
+| test:simulation-workflow | ✅ 65/65 |
+| `npx tsc --noEmit` | ✅ 0 errors |
+| `npm run build` | ✅ 272 pages, 0 errors |
+
+### Known Issues
+1. **0 audioUrl**: 191 listening questions but no audio files produced yet — section MENDENGARKAN akan skip (0 questions) sampai audio siap.
+2. **GameRoom.groupId not in DB**: need SQL via Supabase dashboard.
+3. **Game server dead**: VPS Hostinger expired.
+
+### Next Steps
+1. **Produksi audio**: Generate audio file dari 191 UKBI listening questions (TTS atau rekaman).
+2. **UKBI Guru → 150**: buat menulis (8) + berbicara (7) constructed response
+3. **TKA enrichment**: 30→150 untuk UTBK & Guru
+4. **Game server revival**: VPS baru untuk multiplayer
+5. **Push GameRoom migration**: SQL via Supabase dashboard
+

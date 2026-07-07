@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Heart, MessageCircle, Share2, Clock, Eye, Send, PenLine, BookOpen, Newspaper, Lightbulb, Music } from "lucide-react";
+import SafeMediaImage from "@/components/shared/safe-media-image";
 
 interface KaryaDetail {
   id: string; title: string; content: string; excerpt?: string;
@@ -126,8 +127,13 @@ export default function DetailKaryaPage() {
 
       {/* Cover Image */}
       {karya.coverImage && (
-        <div className="mb-6 rounded-2xl overflow-hidden">
-          <img src={karya.coverImage} alt="" className="w-full h-64 object-cover" />
+        <div className="relative w-full h-64 rounded-xl overflow-hidden bg-gradient-to-br from-violet-100 to-violet-200">
+          <SafeMediaImage
+            src={karya.coverImage}
+            alt=""
+            fallbackType="default"
+            containerClassName="w-full h-full"
+          />
         </div>
       )}
 
