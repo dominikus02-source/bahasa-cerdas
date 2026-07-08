@@ -19,7 +19,7 @@ export function subscribeNotifications(userId: string, onNew: NotifCallback) {
       {
         event: "INSERT",
         schema: "public",
-        table: "notifikasi",
+        table: "Notifikasi",
         filter: `userId=eq.${userId}`,
       },
       (payload) => {
