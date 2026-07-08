@@ -63,9 +63,11 @@ function RPPDisplay({ output }: { output: Record<string, unknown> }) {
 
   if (mainContent.trim().length > 0) {
     return (
-      <div className="p-4 bg-white border border-gray-100 rounded-xl">
-        <div className="prose prose-sm max-w-none prose-headings:text-gray-900 prose-headings:font-semibold prose-p:text-gray-700 prose-ul:text-gray-700 prose-li:text-gray-700 prose-strong:text-gray-900">
-          <RPPContent text={mainContent} />
+      <div className="flex justify-center">
+        <div className="w-full max-w-[210mm] bg-white shadow-lg border border-gray-200 rounded-none print:shadow-none print:border-none">
+          <div className="px-8 py-10 font-serif text-sm leading-relaxed text-gray-800">
+            <RPPContent text={mainContent} />
+          </div>
         </div>
       </div>
     );
@@ -76,40 +78,188 @@ function RPPDisplay({ output }: { output: Record<string, unknown> }) {
 }
 
 function RPPContent({ text }: { text: string }) {
-  const lines = text.split("\n").filter(Boolean);
+  // Split into lines but preserve empty lines
+  const rawLines = text.split("\n");
+  const lines = rawLines;
+  
+  // Collect table rows between | ... | markers
+  const elements: React.ReactNode[] = [];
+  let tableBuffer: string[] | null = null;
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    const trimmed = line.trim();
+
+    // Table detection: line starts with |
+    if (trimmed.startsWith("|") && trimmed.endsWith("|")) {
+      // Separator row (| --- | --- |) — skip
+      if (/^\|[\s\-:]+\|[\s\-:]+\|$/.test(trimmed)) continue;
+      if (tableBuffer === null) tableBuffer = [];
+      tableBuffer.push(trimmed);
+      continue;
+    }
+
+    // If we were building a table and hit a non-table line, render it
+    if (tableBuffer !== null) {
+      elements.push(renderTable(tableBuffer, elements.length));
+      tableBuffer = null;
+    }
+
+    // Empty line
+    if (!trimmed) {
+      elements.push(<div key={elements.length} className="h-3" />);
+      continue;
+    }
+
+    // Horizontal rule
+    if (/^[-*_]{3,}$/.test(trimmed)) {
+      elements.push(<hr key={elements.length} className="my-4 border-gray-300" />);
+      continue;
+    }
+
+    // Headings
+    if (trimmed.startsWith("### ")) {
+      elements.push(
+        <h3 key={elements.length} className="text-base font-bold text-gray-900 mt-5 mb-2">
+          {trimmed.replace("### ", "")}
+        </h3>
+      );
+      continue;
+    }
+    if (trimmed.startsWith("## ")) {
+      elements.push(
+        <h2 key={elements.length} className="text-lg font-bold text-gray-900 mt-6 mb-3">
+          {trimmed.replace("## ", "")}
+        </h2>
+      );
+      continue;
+    }
+    if (trimmed.startsWith("# ")) {
+      elements.push(
+        <h1 key={elements.length} className="text-xl font-bold text-gray-900 mt-6 mb-4 text-center">
+          {trimmed.replace("# ", "")}
+        </h1>
+      );
+      continue;
+    }
+
+    // Bold bullet (### is already handled above, so ** at start is bold)
+    // Bullet with bold: - **text** content
+    if (trimmed.startsWith("- **") && trimmed.includes("**", 5)) {
+      const closeBold = trimmed.indexOf("**", 5);
+      const boldText = trimmed.slice(4, closeBold);
+      const rest = trimmed.slice(closeBold + 2);
+      elements.push(
+        <p key={elements.length} className="text-gray-800 mb-1.5 ml-0">
+          <strong className="font-bold text-gray-900">{boldText}</strong>
+          {rest}
+        </p>
+      );
+      continue;
+    }
+
+    // Regular bullet
+    if (trimmed.startsWith("- ")) {
+      elements.push(
+        <p key={elements.length} className="text-gray-700 mb-1 ml-4 flex items-start gap-2">
+          <span className="text-gray-400 select-none">•</span>
+          <span>{renderInline(trimmed.slice(2))}</span>
+        </p>
+      );
+      continue;
+    }
+
+    // Numbered item
+    if (/^\d+\.\s/.test(trimmed)) {
+      const [num, ...rest] = trimmed.split(/\.\s/);
+      elements.push(
+        <p key={elements.length} className="text-gray-700 mb-1 ml-4">
+          <span className="font-medium text-gray-600">{num}.</span> {renderInline(rest.join(". "))}
+        </p>
+      );
+      continue;
+    }
+
+    // Regular line with possible inline bold
+    elements.push(
+      <p key={elements.length} className="text-gray-800 mb-1.5 leading-relaxed">
+        {renderInline(trimmed)}
+      </p>
+    );
+  }
+
+  // Flush remaining table buffer
+  if (tableBuffer !== null) {
+    elements.push(renderTable(tableBuffer, elements.length));
+  }
+
+  return <>{elements}</>;
+}
+
+function renderTable(rows: string[], key: number) {
+  const headers: string[] = [];
+  const data: string[][] = [];
+
+  rows.forEach((row, idx) => {
+    const cells = row.split("|").filter((_, ci) => ci > 0 && ci < row.split("|").length - 1).map(c => c.trim());
+    if (idx === 0) {
+      headers.push(...cells);
+    } else {
+      data.push(cells);
+    }
+  });
+
+  // If only header row, show as info block
+  if (data.length === 0 && headers.length > 0) {
+    return (
+      <div key={key} className="my-3 grid grid-cols-2 gap-2 text-sm">
+        {headers.map((h, i) => {
+          const val = i < headers.length ? headers[i] : "";
+          return (
+            <div key={i} className="flex border-b border-gray-100 py-1.5">
+              <span className="text-gray-500 font-medium w-40 flex-shrink-0">{h}</span>
+              <span className="text-gray-800">{val}</span>
+            </div>
+          );
+        })}
+      </div>
+    );
+  }
+
+  // Full table
   return (
-    <div className="whitespace-pre-wrap font-sans text-sm leading-relaxed">
-      {lines.map((line, i) => {
-        // Headings
-        if (line.startsWith("### ")) {
-          return <h3 key={i} className="text-base font-semibold text-gray-900 mt-4 mb-2">{line.replace("### ", "")}</h3>;
-        }
-        if (line.startsWith("## ")) {
-          return <h2 key={i} className="text-lg font-bold text-gray-900 mt-5 mb-2">{line.replace("## ", "")}</h2>;
-        }
-        if (line.startsWith("# ")) {
-          return <h1 key={i} className="text-xl font-bold text-gray-900 mt-5 mb-3">{line.replace("# ", "")}</h1>;
-        }
-        // Bullet points
-        if (line.startsWith("- ")) {
-          return <p key={i} className="text-gray-700 ml-4 mb-1">• {line.slice(2)}</p>;
-        }
-        if (/^\d+\.\s/.test(line)) {
-          return <p key={i} className="text-gray-700 ml-4 mb-1">{line}</p>;
-        }
-        // Bold markers
-        if (line.includes("**") && line.includes("**", line.indexOf("**") + 2)) {
-          return <p key={i} className="text-gray-700 mb-1"><strong>{line.split("**").filter((_, idx) => idx % 2 === 1).join("")}</strong></p>;
-        }
-        // Regular text
-        if (line.trim()) {
-          return <p key={i} className="text-gray-700 mb-1">{line}</p>;
-        }
-        // Empty line
-        return <div key={i} className="h-2" />;
-      })}
+    <div key={key} className="my-3 overflow-x-auto">
+      <table className="w-full text-sm border-collapse">
+        <thead>
+          <tr className="border-b-2 border-gray-300">
+            {headers.map((h, i) => (
+              <th key={i} className="text-left font-semibold text-gray-700 py-2 px-3">{h}</th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {data.map((row, ri) => (
+            <tr key={ri} className="border-b border-gray-100 hover:bg-gray-50">
+              {row.map((cell, ci) => (
+                <td key={ci} className="py-2 px-3 text-gray-700">{renderInline(cell)}</td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
+}
+
+function renderInline(text: string): React.ReactNode {
+  // Handle **bold** markers
+  const parts = text.split(/(\*\*[^*]+\*\*)/g);
+  return parts.map((part, i) => {
+    if (part.startsWith("**") && part.endsWith("**")) {
+      return <strong key={i} className="font-bold text-gray-900">{part.slice(2, -2)}</strong>;
+    }
+    return part;
+  });
 }
 
 function StructuredRPPFallback({ output }: { output: Record<string, unknown> }) {

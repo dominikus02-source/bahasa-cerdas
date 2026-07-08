@@ -104,14 +104,28 @@ export function validateAgentOutput(
 function validateRPPOutput(parsed: Record<string, unknown>): string | null {
   const issues: string[] = [];
   const editable = parsed.editableText as string | undefined;
+  const identity = parsed.identity as Record<string, unknown> | undefined;
 
-  // Primary check: editableText must exist and be substantial
-  if (typeof editable !== "string" || !editable || editable.trim().length < 1000) {
-    issues.push("editableText harus minimal 1.000 karakter");
+  // Primary check: editableText must exist and be print-ready
+  if (typeof editable !== "string" || !editable || editable.trim().length < 1200) {
+    issues.push("editableText harus minimal 1.200 karakter — pastikan konten print-ready lengkap");
   } else {
-    // Content quality checks on editableText
-    if (!editable.includes("Identitas") && !editable.includes("Identitas Dokumen") && !editable.includes("A. Identitas")) {
-      issues.push("editableText belum memuat bagian Identitas");
+    // Print-ready content checks
+    if (!editable.includes("MODUL AJAR") && !editable.includes("RENCANA PELAKSANAAN PEMBELAJARAN") && !editable.includes("RPP")) {
+      issues.push("editableText belum memuat judul MODUL AJAR / RPP");
+    }
+    if (!editable.includes("Identitas") && !editable.includes("A. Identitas")) {
+      issues.push("editableText belum memuat bagian A. Identitas Dokumen");
+    }
+    // Table-based identitas check
+    if (!editable.includes("|")) {
+      issues.push("editableText belum menggunakan tabel untuk Identitas Dokumen");
+    }
+    if (!editable.includes("Informasi Umum") && !editable.includes("B. Informasi")) {
+      issues.push("editableText belum memuat bagian B. Informasi Umum");
+    }
+    if (!editable.includes("Komponen Inti") && !editable.includes("C. Komponen")) {
+      issues.push("editableText belum memuat bagian C. Komponen Inti");
     }
     if (!editable.includes("Tujuan Pembelajaran") && !editable.includes("tujuan pembelajaran")) {
       issues.push("editableText belum memuat Tujuan Pembelajaran");
@@ -122,11 +136,31 @@ function validateRPPOutput(parsed: Record<string, unknown>): string | null {
     if (!editable.includes("Asesmen") && !editable.includes("asesmen") && !editable.includes("Penilaian")) {
       issues.push("editableText belum memuat Asesmen");
     }
+    if (!editable.includes("Lampiran") && !editable.includes("D. Lampiran")) {
+      issues.push("editableText belum memuat bagian D. Lampiran");
+    }
+    if (!editable.includes("Lembar Pengesahan") && !editable.includes("E. Lembar")) {
+      issues.push("editableText belum memuat bagian E. Lembar Pengesahan");
+    }
+    if (!editable.includes("BahasaCerdas.com") && !editable.includes("bahasacerdas.com")) {
+      issues.push("editableText belum memuat footer BahasaCerdas.com");
+    }
+    // Check if teacher/school/principal names from input appear in document
+    if (identity) {
+      const schoolName = identity.schoolName as string | undefined;
+      if (schoolName && !editable.includes(schoolName)) {
+        issues.push(`Nama Sekolah "${schoolName}" belum muncul di dokumen`);
+      }
+      const teacherName = identity.teacherName as string | undefined;
+      if (teacherName && !editable.includes(teacherName)) {
+        issues.push(`Nama Guru "${teacherName}" belum muncul di dokumen`);
+      }
+    }
   }
 
   // Secondary checks on structured fields (informational only)
   if (!parsed.title || typeof parsed.title !== "string") issues.push("Field 'title' tidak terisi");
-  if (!parsed.identity || typeof parsed.identity !== "object") issues.push("Field 'identity' tidak terisi");
+  if (!identity || typeof identity !== "object") issues.push("Field 'identity' tidak terisi");
 
   return issues.length > 0 ? issues.join("; ") : null;
 }

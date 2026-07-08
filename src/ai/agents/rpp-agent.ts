@@ -31,9 +31,12 @@ export const rppInputSchema = z.object({
   includeRubric: z.boolean().default(false),
   includeRemedialEnrichment: z.boolean().default(false),
   teacherName: z.string().optional(),
+  nipGuru: z.string().optional(),
   schoolName: z.string().optional(),
   principalName: z.string().optional(),
+  principalNip: z.string().optional(),
   academicYear: z.string().optional(),
+  cityDate: z.string().optional(),
 });
 
 export const rppOutputSchema = z.object({
@@ -48,9 +51,12 @@ export const rppOutputSchema = z.object({
     duration: z.string(),
     meetingCount: z.number().optional(),
     teacherName: z.string().optional(),
+    nipGuru: z.string().optional(),
     schoolName: z.string().optional(),
     principalName: z.string().optional(),
+    principalNip: z.string().optional(),
     academicYear: z.string().optional(),
+    cityDate: z.string().optional(),
   }),
   studentProfile: z.string(),
   priorKnowledge: z.string(),
@@ -199,53 +205,104 @@ KUALITAS BAHASA:
 - Jangan terlalu umum. Output harus relevan dengan topik dan kelas yang diminta.
 - Jangan terlalu pendek. Setiap komponen harus substansial.
 
-editableText WAJIB: string berisi RPP/Modul Ajar LENGKAP dalam format markdown/teks dokumen rapi yang bisa langsung dicopy dan diedit guru di Word/Google Docs. BUKAN JSON. BUKAN array. Format seperti dokumen sungguhan dengan heading, subheading, daftar, dan paragraf.
+PRIORITAS UTAMA — EDITABLETEXT:
+editableText adalah SATU-SATUNYA output yang dilihat user. 80% token AI harus dihabiskan untuk membuat editableText yang sempurna. editableText harus berupa dokumen RPP/Modul Ajar siap print dalam format markdown dengan struktur berikut:
 
-Struktur editableText:
-# MODUL AJAR / RPP
-## [Nama Mata Pelajaran]
+========================================
+HEADER DOKUMEN (blok pertama, rata kiri):
+Nama Sekolah: {schoolName atau "[Nama Sekolah]"}
+Mata Pelajaran: Bahasa Indonesia
+Kelas/Fase: {grade}/{phase}
+Tahun Ajaran: {academicYear atau "[Tahun Ajaran]"}
+Semester: {semester atau "[Semester]"}
+Dibuat dengan bantuan BahasaCerdas.com
+
+# MODUL AJAR / RENCANA PELAKSANAAN PEMBELAJARAN
+## BAHASA INDONESIA
 
 ### A. Identitas Dokumen
-- Nama Sekolah: ...
-- Nama Guru: ...
-- Nama Kepala Sekolah: ...
-- Mata Pelajaran: ...
-- Kelas/Fase: ...
-- Semester: ...
-- Tahun Ajaran: ...
-- Topik/Materi: ...
-- Alokasi Waktu: ...
+| Komponen | Keterangan |
+|---|---|
+| Nama Sekolah | {schoolName atau "[Nama Sekolah]"} |
+| Nama Guru | {teacherName atau "[Nama Guru]"} |
+| NIP Guru | {nipGuru atau "........................"} |
+| Kepala Sekolah | {principalName atau "[Nama Kepala Sekolah]"} |
+| NIP Kepala Sekolah | {principalNip atau "........................"} |
+| Mata Pelajaran | Bahasa Indonesia |
+| Kelas/Fase | {grade}/{phase} |
+| Semester | {semester atau "Ganjil/Genap"} |
+| Tahun Ajaran | {academicYear atau "[Tahun Ajaran]"} |
+| Kota, Tanggal | {cityDate atau "...................., ...................."} |
+| Topik/Materi | {topic} |
+| Alokasi Waktu | {duration} |
+| Jumlah Pertemuan | {meetingCount} |
 
 ### B. Informasi Umum
-- Kompetensi Awal
-- Profil Pelajar Pancasila
-- Sarana dan Prasarana
-- Target Peserta Didik
-- Model Pembelajaran
+1. **Kompetensi Awal**: [deskripsi pengetahuan prasyarat]
+2. **Profil Pelajar Pancasila**: [2-3 dimensi yang dikembangkan, untuk Kurikulum Merdeka]
+3. **Sarana dan Prasarana**: [media, alat, sumber belajar]
+4. **Target Peserta Didik**: [karakteristik siswa]
+5. **Model/Metode Pembelajaran**: {learningModel atau "[model pembelajaran]"}
 
 ### C. Komponen Inti
-1. Capaian Pembelajaran
-2. Tujuan Pembelajaran
-3. Kriteria Ketercapaian
-4. Pemahaman Bermakna
-5. Pertanyaan Pemantik
-6. Materi Pembelajaran
-7. Kegiatan Pembelajaran (Pendahuluan, Inti, Penutup)
-8. Asesmen (Diagnostik, Formatif, Sumatif)
-9. Diferensiasi Pembelajaran
-10. Remedial dan Pengayaan
-11. Refleksi Guru dan Peserta Didik
+1. **Capaian Pembelajaran**: [uraian CP sesuai fase — jika tidak ada data, tulis "Perlu disesuaikan dengan CP resmi"]
+2. **Tujuan Pembelajaran**: [tujuan ABCD, minimal 2]
+3. **Kriteria Ketercapaian Tujuan Pembelajaran**: [indikator terukur]
+4. **Pemahaman Bermakna**: [inti yang dipahami siswa]
+5. **Pertanyaan Pemantik**: [2-3 pertanyaan]
+6. **Materi Pokok**: [uraian singkat materi]
+7. **Kegiatan Pembelajaran**:
+   - **Pendahuluan** (10 menit): [langkah dengan durasi]
+   - **Kegiatan Inti** (60 menit): [langkah dengan sintaks model pembelajaran]
+   - **Penutup** (20 menit): [refleksi dan tindak lanjut]
+8. **Asesmen**:
+   - Diagnostik: [teknik dan instrumen]
+   - Formatif: [observasi, diskusi, produk]
+   - Sumatif: [tes tertulis, proyek]
+9. **Diferensiasi Pembelajaran**:
+   - Konten: [perbedaan materi]
+   - Proses: [perbedaan kegiatan]
+   - Produk: [perbedaan hasil]
+10. **Remedial dan Pengayaan**: [hanya jika includeRemedialEnrichment=true]
+11. **Refleksi Guru**: [pertanyaan refleksi]
+12. **Refleksi Peserta Didik**: [pertanyaan refleksi]
 
 ### D. Lampiran
-(LKPD, Rubrik, Bahan Bacaan sesuai permintaan user)
+1. **LKPD** (Lembar Kerja Peserta Didik): [hanya jika includeWorksheet=true]
+2. **Bahan Bacaan Guru dan Peserta Didik**
+3. **Glosarium Sederhana**
+4. **Rubrik Penilaian**: [hanya jika includeRubric=true]
+5. **Pedoman Penskoran**
 
 ### E. Lembar Pengesahan
+{cityDate atau "...................., ...................."}
+
 Mengetahui,
-Kepala Sekolah                    Guru Mata Pelajaran
+Kepala Sekolah                                      Guru Mata Pelajaran
 
-{principalName atau "disesuaikan"}                 {teacherName atau "disesuaikan"}
+<br><br><br>
 
-editableText HARUS berupa dokumen lengkap dengan semua komponen di atas, dalam format markdown yang rapi dan siap cetak. editableText BUKAN JSON string — langsung konten dokumen.`,
+{principalName atau "[Nama Kepala Sekolah]"}        {teacherName atau "[Nama Guru]"}
+NIP. {principalNip atau "........................"} NIP. {teacherNip atau "........................"}
+
+========================================
+FOOTER DOKUMEN:
+---
+*Dokumen ini dibuat dengan bantuan BahasaCerdas.com pada {tanggal sekarang}. Silakan menyesuaikan isi dokumen dengan Capaian Pembelajaran (CP) dan Alur Tujuan Pembelajaran (ATP) resmi, karakteristik peserta didik, serta kebijakan satuan pendidikan masing-masing.*
+
+ATURAN EDITABLETEXT:
+1. Tabel identitas menggunakan format markdown | kolom | kolom |
+2. Gunakan heading ### untuk sub-bagian A, B, C, D, E
+3. Gunakan **bold** untuk nama sub-komponen (seperti "Kompetensi Awal", "Tujuan Pembelajaran")
+4. Gunakan - daftar atau 1. penomoran untuk poin-poin
+5. Konten setiap komponen harus SUBSTANSIAL dan SPESIFIK sesuai topik/kelas — jangan template kosong
+6. Jika tidak ada NIP, tulis "........................"
+7. Jika tidak ada cityDate, tulis "...................., ...................."
+8. Jumlah karakter editableText minimal 1.800 karakter
+9. Jangan menulis "sebagai AI", "saya adalah AI", atau "saya tidak bisa"
+10. Gunakan Bahasa Indonesia formal pendidikan — mudah diedit guru, siap print, siap diserahkan ke dinas
+
+editableText HARUS dokumen lengkap dengan header, tabel identitas, komponen A-E, lembar pengesahan, dan footer BahasaCerdas. BUKAN JSON. BUKAN array.`,
   defaultModel: "deepseek-chat",
   temperature: 0.7,
   maxTokens: 8000,
@@ -366,6 +423,13 @@ editableText HARUS berupa dokumen lengkap dengan semua komponen di atas, dalam f
           topic: "Teks Negosiasi",
           duration: "2 JP x 45 menit",
           meetingCount: 1,
+          teacherName: "Dewi Sartika, S.Pd.",
+          nipGuru: "198507162010012001",
+          schoolName: "SMA Negeri 1 Jakarta",
+          principalName: "Dr. Ahmad Faiz, M.Pd.",
+          principalNip: "197003152005011002",
+          academicYear: "2025/2026",
+          cityDate: "Jakarta, 1 Juli 2025",
         },
         studentProfile:
           "Siswa kelas X fase E, sudah memahami teks deskripsi dan narasi",
@@ -457,8 +521,37 @@ editableText HARUS berupa dokumen lengkap dengan semua komponen di atas, dalam f
           ],
         },
         teacherNotes: ["Pastikan siswa aktif berdiskusi"],
-        editableText:
-          "RPP Teks Negosiasi\n... (format teks rapi panjang)",
+        editableText: `Nama Sekolah: SMA Negeri 1 Jakarta
+Mata Pelajaran: Bahasa Indonesia
+Kelas/Fase: X/E
+Tahun Ajaran: 2025/2026
+Semester: 1 (Ganjil)
+Dibuat dengan bantuan BahasaCerdas.com
+
+# MODUL AJAR / RENCANA PELAKSANAAN PEMBELAJARAN
+## BAHASA INDONESIA
+
+### A. Identitas Dokumen
+| Komponen | Keterangan |
+|---|---|
+| Nama Sekolah | SMA Negeri 1 Jakarta |
+| Nama Guru | Dewi Sartika, S.Pd. |
+| NIP Guru | 198507162010012001 |
+| Kepala Sekolah | Dr. Ahmad Faiz, M.Pd. |
+| NIP Kepala Sekolah | 197003152005011002 |
+| Mata Pelajaran | Bahasa Indonesia |
+| Kelas/Fase | X/E |
+| Semester | 1 (Ganjil) |
+| Tahun Ajaran | 2025/2026 |
+| Kota, Tanggal | Jakarta, 1 Juli 2025 |
+| Topik/Materi | Teks Negosiasi |
+| Alokasi Waktu | 2 JP x 45 menit |
+| Jumlah Pertemuan | 1 |
+
+### B. Informasi Umum
+... (format teks rapi panjang dengan semua komponen A-E)`,
+
+/* Contoh editableText singkat di atas — dalam produksi minimum 1.800 karakter */
       },
     },
   ],

@@ -16,6 +16,20 @@ const KURIKULUM_OPTIONS = [
   { value: "Custom", label: "Custom" },
 ];
 
+const PHASE_OPTIONS = [
+  { value: "A", label: "A (SD Kelas I-II)" },
+  { value: "B", label: "B (SD Kelas III-IV)" },
+  { value: "C", label: "C (SD Kelas V-VI)" },
+  { value: "D", label: "D (SMP Kelas VII-IX)" },
+  { value: "E", label: "E (SMA Kelas X)" },
+  { value: "F", label: "F (SMA Kelas XI-XII)" },
+];
+
+const SEMESTER_OPTIONS = [
+  { value: "1 (Ganjil)", label: "1 (Ganjil)" },
+  { value: "2 (Genap)", label: "2 (Genap)" },
+];
+
 const GRADE_OPTIONS = [
   "VII", "VIII", "IX", "X", "XI", "XII",
 ];
@@ -35,6 +49,8 @@ const MODEL_OPTIONS = [
 export function RPPForm({ onSubmit, loading }: RPPFormProps) {
   const [subject, setSubject] = useState("Bahasa Indonesia");
   const [grade, setGrade] = useState("X");
+  const [phase, setPhase] = useState("E");
+  const [semester, setSemester] = useState("1 (Ganjil)");
   const [curriculum, setCurriculum] = useState("Kurikulum Merdeka");
   const [topic, setTopic] = useState("");
   const [objectives, setObjectives] = useState<string[]>([""]);
@@ -44,9 +60,12 @@ export function RPPForm({ onSubmit, loading }: RPPFormProps) {
   const [duration, setDuration] = useState("2 JP x 45 menit");
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [teacherName, setTeacherName] = useState("");
+  const [nipGuru, setNipGuru] = useState("");
   const [schoolName, setSchoolName] = useState("");
   const [principalName, setPrincipalName] = useState("");
+  const [principalNip, setPrincipalNip] = useState("");
   const [academicYear, setAcademicYear] = useState("");
+  const [cityDate, setCityDate] = useState("");
 
   const PANCASILA_OPTIONS = [
     "Beriman, bertakwa kepada Tuhan YME, dan berakhlak mulia",
@@ -86,6 +105,8 @@ export function RPPForm({ onSubmit, loading }: RPPFormProps) {
     onSubmit({
       subject: subject.trim(),
       grade,
+      phase: phase.trim() || undefined,
+      semester: semester.trim() || undefined,
       curriculum,
       topic: topic.trim(),
       learningObjectives: filteredObjectives,
@@ -99,9 +120,12 @@ export function RPPForm({ onSubmit, loading }: RPPFormProps) {
       includeRubric: true,
       includeRemedialEnrichment: true,
       teacherName: teacherName.trim() || undefined,
+      nipGuru: nipGuru.trim() || undefined,
       schoolName: schoolName.trim() || undefined,
       principalName: principalName.trim() || undefined,
+      principalNip: principalNip.trim() || undefined,
       academicYear: academicYear.trim() || undefined,
+      cityDate: cityDate.trim() || undefined,
     });
   };
 
@@ -118,25 +142,61 @@ export function RPPForm({ onSubmit, loading }: RPPFormProps) {
               className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-400 focus:border-emerald-400 outline-none" />
           </div>
           <div>
+            <label className="block text-xs font-medium text-gray-600 mb-1">NIP Guru</label>
+            <input type="text" value={nipGuru} onChange={(e) => setNipGuru(e.target.value)}
+              placeholder="Cth: 198507162010012001"
+              className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-400 focus:border-emerald-400 outline-none" />
+          </div>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">
+          <div>
             <label className="block text-xs font-medium text-gray-600 mb-1">Nama Sekolah</label>
             <input type="text" value={schoolName} onChange={(e) => setSchoolName(e.target.value)}
               placeholder="Cth: SMPN 1 Jakarta"
               className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-400 focus:border-emerald-400 outline-none" />
           </div>
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">
           <div>
             <label className="block text-xs font-medium text-gray-600 mb-1">Kepala Sekolah</label>
             <input type="text" value={principalName} onChange={(e) => setPrincipalName(e.target.value)}
               placeholder="Cth: Drs. Ahmad Fauzi, M.Pd."
               className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-400 focus:border-emerald-400 outline-none" />
           </div>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">
+          <div>
+            <label className="block text-xs font-medium text-gray-600 mb-1">NIP Kepala Sekolah</label>
+            <input type="text" value={principalNip} onChange={(e) => setPrincipalNip(e.target.value)}
+              placeholder="Cth: 197003152005011002"
+              className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-400 focus:border-emerald-400 outline-none" />
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-gray-600 mb-1">Kota, Tanggal</label>
+            <input type="text" value={cityDate} onChange={(e) => setCityDate(e.target.value)}
+              placeholder="Cth: Jakarta, 1 Juli 2025"
+              className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-400 focus:border-emerald-400 outline-none" />
+          </div>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">
           <div>
             <label className="block text-xs font-medium text-gray-600 mb-1">Tahun Ajaran</label>
             <input type="text" value={academicYear} onChange={(e) => setAcademicYear(e.target.value)}
               placeholder="Cth: 2025/2026"
               className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-400 focus:border-emerald-400 outline-none" />
           </div>
+          <div>
+            <label className="block text-xs font-medium text-gray-600 mb-1">Fase</label>
+            <select value={phase} onChange={(e) => setPhase(e.target.value)}
+              className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-400 focus:border-emerald-400 outline-none bg-white">
+              {PHASE_OPTIONS.map((p) => <option key={p.value} value={p.value}>{p.label}</option>)}
+            </select>
+          </div>
+        </div>
+        <div className="mt-3">
+          <label className="block text-xs font-medium text-gray-600 mb-1">Semester</label>
+          <select value={semester} onChange={(e) => setSemester(e.target.value)}
+            className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-400 focus:border-emerald-400 outline-none bg-white">
+            {SEMESTER_OPTIONS.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}
+          </select>
         </div>
       </div>
 
