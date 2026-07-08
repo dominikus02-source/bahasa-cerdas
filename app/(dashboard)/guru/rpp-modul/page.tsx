@@ -5,5 +5,5 @@
 import { redirect } from "next/navigation";
 
 export default function RppModulRedirect() {
-  redirect("/guru/ai-tools?tool=rpp-modul");
+  redirect("/guru/ai-tools?tool=rpp");
 }

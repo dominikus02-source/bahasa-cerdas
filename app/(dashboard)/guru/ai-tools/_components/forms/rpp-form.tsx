@@ -38,8 +38,20 @@ export function RPPForm({ onSubmit, loading }: RPPFormProps) {
   const [curriculum, setCurriculum] = useState("Kurikulum Merdeka");
   const [topic, setTopic] = useState("");
   const [objectives, setObjectives] = useState<string[]>([""]);
+  const [promptingQuestions, setPromptingQuestions] = useState<string[]>([""]);
+  const [meaningfulUnderstanding, setMeaningfulUnderstanding] = useState("");
+  const [pancasilaValues, setPancasilaValues] = useState<string[]>([]);
   const [duration, setDuration] = useState("2 JP x 45 menit");
   const [showAdvanced, setShowAdvanced] = useState(false);
+
+  const PANCASILA_OPTIONS = [
+    "Beriman, bertakwa kepada Tuhan YME, dan berakhlak mulia",
+    "Berkebinekaan global",
+    "Bergotong royong",
+    "Kreatif",
+    "Bernalar kritis",
+    "Mandiri",
+  ];
 
   const handleAddObjective = () => setObjectives([...objectives, ""]);
   const handleRemoveObjective = (i: number) => {
@@ -49,8 +61,23 @@ export function RPPForm({ onSubmit, loading }: RPPFormProps) {
     const next = [...objectives]; next[i] = v; setObjectives(next);
   };
 
+  const handleAddQuestion = () => setPromptingQuestions([...promptingQuestions, ""]);
+  const handleRemoveQuestion = (i: number) => {
+    if (promptingQuestions.length > 1) setPromptingQuestions(promptingQuestions.filter((_, idx) => idx !== i));
+  };
+  const handleQuestionChange = (i: number, v: string) => {
+    const next = [...promptingQuestions]; next[i] = v; setPromptingQuestions(next);
+  };
+
+  const togglePancasila = (value: string) => {
+    setPancasilaValues((prev) =>
+      prev.includes(value) ? prev.filter((v) => v !== value) : [...prev, value]
+    );
+  };
+
   const handleSubmit = () => {
     const filteredObjectives = objectives.filter((o) => o.trim().length > 0);
+    const filteredQuestions = promptingQuestions.filter((q) => q.trim().length > 0);
     if (!topic.trim() || filteredObjectives.length === 0) return;
     onSubmit({
       subject: subject.trim(),
@@ -58,6 +85,9 @@ export function RPPForm({ onSubmit, loading }: RPPFormProps) {
       curriculum,
       topic: topic.trim(),
       learningObjectives: filteredObjectives,
+      promptingQuestions: filteredQuestions.length > 0 ? filteredQuestions : undefined,
+      meaningfulUnderstanding: meaningfulUnderstanding.trim() || undefined,
+      pancasilaProfile: pancasilaValues.length > 0 ? pancasilaValues : undefined,
       duration,
       meetingCount: 1,
       languageStyle: "praktis",
@@ -131,6 +161,68 @@ export function RPPForm({ onSubmit, loading }: RPPFormProps) {
           ))}
         </div>
       </div>
+
+      {curriculum === "Kurikulum Merdeka" && (
+        <div>
+          <label className="block text-xs font-medium text-gray-600 mb-1">Pertanyaan Pemantik (opsional)</label>
+          <div className="space-y-2">
+            {promptingQuestions.map((q, i) => (
+              <div key={i} className="flex items-center gap-2">
+                <input type="text"
+                  value={q}
+                  onChange={(e) => handleQuestionChange(i, e.target.value)}
+                  placeholder={`Pertanyaan ${i + 1}`}
+                  className="flex-1 px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-400 focus:border-emerald-400 outline-none" />
+                {promptingQuestions.length > 1 && (
+                  <button onClick={() => handleRemoveQuestion(i)} className="text-gray-400 hover:text-red-500 p-1">
+                    <X className="w-4 h-4" />
+                  </button>
+                )}
+              </div>
+            ))}
+            <button type="button" onClick={handleAddQuestion}
+              className="text-xs text-emerald-600 hover:text-emerald-700 flex items-center gap-0.5">
+              <Plus className="w-3 h-3" /> Tambah pertanyaan
+            </button>
+          </div>
+        </div>
+      )}
+
+      {curriculum === "Kurikulum Merdeka" && (
+        <div>
+          <label className="block text-xs font-medium text-gray-600 mb-1">Pemahaman Bermakna (opsional)</label>
+          <textarea
+            value={meaningfulUnderstanding}
+            onChange={(e) => setMeaningfulUnderstanding(e.target.value)}
+            placeholder="Contoh: Siswa memahami bahwa negosiasi adalah keterampilan hidup yang membantu mencapai kesepakatan tanpa konflik"
+            className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-400 focus:border-emerald-400 outline-none resize-none"
+            rows={2}
+          />
+        </div>
+      )}
+
+      {curriculum === "Kurikulum Merdeka" && (
+        <div>
+          <label className="block text-xs font-medium text-gray-600 mb-1">Profil Pelajar Pancasila (opsional)</label>
+          <div className="flex flex-wrap gap-2">
+            {PANCASILA_OPTIONS.map((v) => (
+              <button
+                key={v}
+                type="button"
+                onClick={() => togglePancasila(v)}
+                className={`text-xs px-3 py-1.5 rounded-full border transition-all ${
+                  pancasilaValues.includes(v)
+                    ? "bg-emerald-100 border-emerald-300 text-emerald-700"
+                    : "bg-white border-gray-200 text-gray-600 hover:border-gray-300"
+                }`}
+              >
+                {pancasilaValues.includes(v) && "✓ "}
+                {v}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
 
       <button
         onClick={() => setShowAdvanced(!showAdvanced)}
