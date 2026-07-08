@@ -62,18 +62,9 @@ export function buildPrompt(opts: PromptBuildOptions): BuiltPrompt {
   }
 
   if (opts.outputFormat === "json") {
-    // Add output schema summary — describe fields from quality checklist
-    parts.push(`\n## Required Output Fields`);
-    parts.push(`Produksi JSON dengan field-field berikut:`);
-    parts.push(`- success: boolean — true jika berhasil`);
-    parts.push(`- error: string | null — null jika berhasil`);
-    for (const check of opts.agent.qualityChecklist) {
-      parts.push(`- "${check.id}": ${check.description}`);
-    }
-
-    // Add quality checklist
+    // Quality checklist — guidance only, no field names that conflict with schema
     parts.push(`\n## Quality Checklist`);
-    parts.push(`Pastikan output memenuhi berikut:`);
+    parts.push(`Pastikan output memenuhi standar kualitas berikut:`);
     for (const check of opts.agent.qualityChecklist) {
       parts.push(`- [${check.severity === "error" ? "WAJIB" : "SEBAIKNYA"}] ${check.description}`);
     }

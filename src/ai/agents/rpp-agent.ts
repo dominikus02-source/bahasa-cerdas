@@ -30,6 +30,10 @@ export const rppInputSchema = z.object({
   includeWorksheet: z.boolean().default(false),
   includeRubric: z.boolean().default(false),
   includeRemedialEnrichment: z.boolean().default(false),
+  teacherName: z.string().optional(),
+  schoolName: z.string().optional(),
+  principalName: z.string().optional(),
+  academicYear: z.string().optional(),
 });
 
 export const rppOutputSchema = z.object({
@@ -43,6 +47,10 @@ export const rppOutputSchema = z.object({
     topic: z.string(),
     duration: z.string(),
     meetingCount: z.number().optional(),
+    teacherName: z.string().optional(),
+    schoolName: z.string().optional(),
+    principalName: z.string().optional(),
+    academicYear: z.string().optional(),
   }),
   studentProfile: z.string(),
   priorKnowledge: z.string(),
@@ -52,11 +60,6 @@ export const rppOutputSchema = z.object({
   capaianPembelajaran: z.string().optional(),
   learningObjectives: z.array(z.string()),
   successCriteria: z.array(z.string()),
-  // Komponen Kurikulum Merdeka (gabungan dari prompt RPP lama /api/ai/rpp)
-  capaianPembelajaran: z.string().optional(),
-  profilPelajarPancasila: z.array(z.string()).optional(),
-  pemahamanBermakna: z.string().optional(),
-  pertanyaanPemantik: z.array(z.string()).optional(),
   learningMaterials: z.array(z.string()),
   learningResources: z.array(z.string()),
   learningModel: z.string(),
@@ -152,7 +155,7 @@ KURIKULUM YANG DIDUKUNG:
 
 OUTPUT JSON WAJIB mengandung field berikut:
 - title: judul RPP/Modul Ajar
-- identity: objek { subject, grade, phase, semester, curriculum, topic, duration, meetingCount }
+- identity: objek { subject, grade, phase, semester, curriculum, topic, duration, meetingCount, teacherName, schoolName, principalName, academicYear }
 - studentProfile: deskripsi profil dan karakteristik peserta didik (diferensiasi)
 - priorKnowledge: pengetahuan atau keterampilan prasyarat yang sudah dimiliki siswa
 - pancasilaProfile: array nilai Profil Pelajar Pancasila yang dikembangkan (min 2 untuk Kurikulum Merdeka)
@@ -172,10 +175,11 @@ OUTPUT JSON WAJIB mengandung field berikut:
 - remedialAndEnrichment: { remedial[], enrichment[] } — hanya jika includeRemedialEnrichment=true
 - reflection: { teacherReflection[], studentReflection[] }
 - teacherNotes: array catatan guru
+- lembarPengesahan: objek { teacherName, principalName, date } — hanya jika teacherName/principalName diisi
 
 ATURAN:
 1. Output JSON VALID SAJA. Tidak ada markdown fences. Tidak ada teks di luar JSON.
-2. Jangan gunakan nama sekolah atau nama guru fiktif. Tulis "dapat disesuaikan" untuk identitas satuan pendidikan.
+2. Jika user memberikan teacherName, schoolName, principalName, academicYear, gunakan sebagai identitas dokumen. Jika tidak ada, tulis "dapat disesuaikan" untuk identitas satuan pendidikan.
 3. Jangan menyertakan API key atau data pribadi dalam output.
 4. Kegiatan harus praktis, konkret, dan siap pakai di kelas. Setiap langkah harus bisa dieksekusi guru.
 5. Sesuaikan tingkat kesulitan, bahasa, dan aktivitas dengan jenjang kelas (SD/SMP/SMA).
@@ -196,7 +200,7 @@ KUALITAS BAHASA:
 - Jangan terlalu umum. Output harus relevan dengan topik dan kelas yang diminta.
 - Jangan terlalu pendek. Setiap komponen harus substansial.
 
-editableText WAJIB: string berisi RPP/Modul Ajar lengkap dalam format teks dokumen yang rapi, bisa langsung dicopy dan diedit guru di Word/Google Docs. BUKAN JSON. Formatnya seperti dokumen sungguhan: judul, subjudul, poin-poin, dan paragraf.`,
+editableText WAJIB: string berisi RPP/Modul Ajar lengkap dalam format teks dokumen yang rapi, bisa langsung dicopy dan diedit guru di Word/Google Docs. BUKAN JSON. Formatnya seperti dokumen sungguhan: judul, subjudul, poin-poin, dan paragraf. Sertakan Lembar Pengesahan di akhir dokumen jika user memberikan teacherName/principalName/schoolName.`,
   defaultModel: "deepseek-chat",
   temperature: 0.7,
   maxTokens: 8000,
@@ -234,7 +238,7 @@ editableText WAJIB: string berisi RPP/Modul Ajar lengkap dalam format teks dokum
     {
       id: "q-structure",
       label: "Struktur Lengkap",
-      description: "Semua komponen RPP terisi dengan baik",
+      description: "Semua komponen RPP terisi dengan baik, termasuk identitas dokumen (teacherName, schoolName, principalName, academicYear jika disediakan)",
       severity: "error",
     },
     {

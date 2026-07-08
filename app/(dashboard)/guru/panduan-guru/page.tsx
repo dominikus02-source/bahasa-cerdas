@@ -27,7 +27,7 @@ type Level = {
   units: Unit[]
 }
 
-const GRADES = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII"]
+const GRADES = ["VII", "VIII", "IX", "X", "XI", "XII"]
 const GRADE_OFFSET: Record<string, number> = {
   I: 13, II: 15, III: 17, IV: 19, V: 21, VI: 23,
   VII: 1, VIII: 3, IX: 5, X: 7, XI: 9, XII: 11,
@@ -141,7 +141,8 @@ export default function PanduanGuruPage() {
       ) : (
         <div className="space-y-4">
           {GRADES.map(grade => {
-            const hasAny = [1, 2].some(sem => {
+            const isSma = ["X", "XI", "XII"].includes(grade)
+            const hasAny = isSma || [1, 2].some(sem => {
               const lvl = getLevel(grade, sem)
               return lvl && (filteredUnits(grade, sem).length > 0 || !search)
             })
@@ -157,16 +158,29 @@ export default function PanduanGuruPage() {
                   <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center text-white font-bold text-sm shrink-0">
                     {grade}
                   </div>
-                  <div className="flex-1">
-                    <h3 className="font-bold text-slate-900">Kelas {grade}</h3>
-                    <p className="text-xs text-slate-500">2 semester &middot; {[1, 2].reduce((sum, s) => sum + (getLevel(grade, s)?.units.length || 0), 0)} bab</p>
-                  </div>
+                    <div className="flex-1">
+                      <h3 className="font-bold text-slate-900">Kelas {grade}</h3>
+                      {["X", "XI", "XII"].includes(grade) ? (
+                        <p className="text-xs text-amber-600">Daftar materi kelas ini sedang disiapkan</p>
+                      ) : (
+                        <p className="text-xs text-slate-500">2 semester &middot; {[1, 2].reduce((sum, s) => sum + (getLevel(grade, s)?.units.length || 0), 0)} bab</p>
+                      )}
+                    </div>
                   {isExpanded ? <ChevronDown className="w-5 h-5 text-slate-400" /> : <ChevronRight className="w-5 h-5 text-slate-400" />}
                 </button>
 
                 {isExpanded && (
                   <div className="border-t border-slate-100">
-                    {SEMESTERS.map(sem => {
+                    {isSma ? (
+                      <div className="px-4 py-6 text-center">
+                        <div className="w-16 h-16 rounded-full bg-amber-100 flex items-center justify-center mx-auto mb-3">
+                          <BookOpen className="w-7 h-7 text-amber-500" />
+                        </div>
+                        <p className="text-sm font-medium text-slate-800 mb-1">Materi Kelas {grade} Sedang Disiapkan</p>
+                        <p className="text-xs text-slate-400">Tim BahasaCerdas sedang menyusun materi untuk jenjang ini.</p>
+                      </div>
+                    ) : (
+                      SEMESTERS.map(sem => {
                       const lvl = getLevel(grade, sem)
                       const units = filteredUnits(grade, sem)
                       const isSemExpanded = expandedSem === sem
@@ -220,7 +234,8 @@ export default function PanduanGuruPage() {
                           )}
                         </div>
                       )
-                    })}
+                    })
+                    )}
                   </div>
                 )}
               </Card>

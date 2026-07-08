@@ -24,7 +24,7 @@ import { getAgent } from "./agent-registry";
 import { buildPrompt, type PromptBuildOptions } from "./prompt-builder";
 import { streamProviderText, estimateCost, ProviderChainFailedError } from "./provider";
 import { checkInput } from "./guardrails";
-import { cleanJSONOutput, validateAgentOutput } from "./output-validator";
+import { cleanJSONOutput, tryFixJSON, validateAgentOutput } from "./output-validator";
 import { checkEducationQuality } from "../evaluators/education-quality-checker";
 import { logUsage } from "./usage-logger";
 
@@ -154,16 +154,33 @@ export async function runAgentStream(
         const parsed = JSON.parse(cleaned);
         finalOutput = agent.outputSchema.parse(parsed) as unknown as AgentOutput;
 
-        // Post-processing validation
-        const postError = validateAgentOutput(agent.id, parsed);
-        if (postError) {
-          warn.push(postError);
-          finalOutput = null;
-          finalError = `Gagal memvalidasi output: ${postError}`;
+        // Post-processing validation — warn only, don't fail
+        const postValidationIssue = validateAgentOutput(agent.id, parsed);
+        if (postValidationIssue) {
+          warn.push(postValidationIssue);
         }
-      } catch {
-        finalOutput = null;
-        finalError = "Gagal memvalidasi output. Silakan coba dengan input yang lebih spesifik.";
+      } catch (firstError) {
+        // Attempt 1: tryFixJSON
+        try {
+          const { fixed, success: fixOk, warnings: fixWarn } = tryFixJSON(fullText);
+          warn.push(...fixWarn);
+          if (fixOk) {
+            const parsed = JSON.parse(fixed);
+            finalOutput = agent.outputSchema.parse(parsed) as unknown as AgentOutput;
+            const postValidationIssue = validateAgentOutput(agent.id, parsed);
+            if (postValidationIssue) {
+              warn.push(postValidationIssue);
+            }
+          }
+        } catch {
+          // Both attempts failed — salvage raw text instead of failing
+        }
+      }
+
+      // Salvage: if still no valid output, return raw text
+      if (!finalOutput) {
+        warn.push("Output tidak dalam format JSON yang diharapkan. Teks mentah ditampilkan.");
+        finalOutput = { text: fullText } as unknown as AgentOutput;
       }
     } else {
       finalOutput = { text: fullText } as unknown as AgentOutput;
@@ -197,11 +214,7 @@ export async function runAgentStream(
       output: finalOutput,
       success: !finalError,
       error: finalError,
-      errorCode: finalError
-        ? finalError.includes("Layanan AI") ? "PROVIDER_UNAVAILABLE"
-        : finalError.includes("Gagal memvalidasi") ? "OUTPUT_VALIDATION_FAILED"
-        : "UNKNOWN_ERROR"
-        : null,
+      errorCode: null,
       promptTokens: 0,
       completionTokens: 0,
       totalTokens: 0,

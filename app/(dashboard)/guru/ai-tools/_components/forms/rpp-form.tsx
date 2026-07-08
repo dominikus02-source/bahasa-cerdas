@@ -43,6 +43,10 @@ export function RPPForm({ onSubmit, loading }: RPPFormProps) {
   const [pancasilaValues, setPancasilaValues] = useState<string[]>([]);
   const [duration, setDuration] = useState("2 JP x 45 menit");
   const [showAdvanced, setShowAdvanced] = useState(false);
+  const [teacherName, setTeacherName] = useState("");
+  const [schoolName, setSchoolName] = useState("");
+  const [principalName, setPrincipalName] = useState("");
+  const [academicYear, setAcademicYear] = useState("");
 
   const PANCASILA_OPTIONS = [
     "Beriman, bertakwa kepada Tuhan YME, dan berakhlak mulia",
@@ -94,11 +98,48 @@ export function RPPForm({ onSubmit, loading }: RPPFormProps) {
       includeWorksheet: true,
       includeRubric: true,
       includeRemedialEnrichment: true,
+      teacherName: teacherName.trim() || undefined,
+      schoolName: schoolName.trim() || undefined,
+      principalName: principalName.trim() || undefined,
+      academicYear: academicYear.trim() || undefined,
     });
   };
 
   return (
     <div className="space-y-4">
+      {/* Identitas Dokumen */}
+      <div className="p-3 bg-emerald-50 border border-emerald-100 rounded-xl">
+        <p className="text-xs font-semibold text-emerald-700 mb-2">Identitas Dokumen</p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label className="block text-xs font-medium text-gray-600 mb-1">Nama Guru</label>
+            <input type="text" value={teacherName} onChange={(e) => setTeacherName(e.target.value)}
+              placeholder="Cth: Siti Nurhaliza, S.Pd."
+              className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-400 focus:border-emerald-400 outline-none" />
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-gray-600 mb-1">Nama Sekolah</label>
+            <input type="text" value={schoolName} onChange={(e) => setSchoolName(e.target.value)}
+              placeholder="Cth: SMPN 1 Jakarta"
+              className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-400 focus:border-emerald-400 outline-none" />
+          </div>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">
+          <div>
+            <label className="block text-xs font-medium text-gray-600 mb-1">Kepala Sekolah</label>
+            <input type="text" value={principalName} onChange={(e) => setPrincipalName(e.target.value)}
+              placeholder="Cth: Drs. Ahmad Fauzi, M.Pd."
+              className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-400 focus:border-emerald-400 outline-none" />
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-gray-600 mb-1">Tahun Ajaran</label>
+            <input type="text" value={academicYear} onChange={(e) => setAcademicYear(e.target.value)}
+              placeholder="Cth: 2025/2026"
+              className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-400 focus:border-emerald-400 outline-none" />
+          </div>
+        </div>
+      </div>
+
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div>
           <label className="block text-xs font-medium text-gray-600 mb-1">Mata Pelajaran</label>

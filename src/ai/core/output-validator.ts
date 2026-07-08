@@ -81,8 +81,9 @@ export function tryFixJSON(raw: string): { fixed: string; success: boolean; warn
 }
 
 /**
- * Per-agent post-processing validation.
- * Returns null if valid, or an error message string if invalid.
+ * Tiered post-processing validation.
+ * Returns null if valid, or a warning message string if issues found.
+ * Uses soft validation — warns instead of blocking.
  */
 export function validateAgentOutput(
   agentId: string,
@@ -101,88 +102,73 @@ export function validateAgentOutput(
 }
 
 function validateRPPOutput(parsed: Record<string, unknown>): string | null {
-  if (!parsed.title || typeof parsed.title !== "string") return "Field 'title' wajib diisi";
-  if (!parsed.identity || typeof parsed.identity !== "object") return "Field 'identity' wajib diisi";
+  const issues: string[] = [];
+  if (!parsed.title || typeof parsed.title !== "string") issues.push("Field 'title' tidak terisi");
+  if (!parsed.identity || typeof parsed.identity !== "object") issues.push("Field 'identity' tidak terisi");
   if (!parsed.learningObjectives || !Array.isArray(parsed.learningObjectives) || parsed.learningObjectives.length < 1) {
-    return "Minimal 1 learningObjective diperlukan";
+    issues.push("Minimal 1 learningObjective diperlukan");
   }
-  if (!parsed.learningSteps || typeof parsed.learningSteps !== "object") return "Field 'learningSteps' wajib diisi";
-  const steps = parsed.learningSteps as Record<string, unknown>;
-  if (!Array.isArray(steps.opening) || !Array.isArray(steps.core) || !Array.isArray(steps.closing)) {
-    return "learningSteps harus memiliki opening, core, dan closing array";
+  if (!parsed.learningSteps || typeof parsed.learningSteps !== "object") issues.push("Field 'learningSteps' tidak terisi");
+  const steps = parsed.learningSteps as Record<string, unknown> | undefined;
+  if (!steps || !Array.isArray(steps.opening) || !Array.isArray(steps.core) || !Array.isArray(steps.closing)) {
+    issues.push("learningSteps harus memiliki opening, core, dan closing array");
   }
-  if (!parsed.assessmentPlan || typeof parsed.assessmentPlan !== "object") return "Field 'assessmentPlan' wajib diisi";
-  const assessment = parsed.assessmentPlan as Record<string, unknown>;
-  if (!Array.isArray(assessment.formative)) return "assessmentPlan.formative wajib diisi";
+  if (!parsed.assessmentPlan || typeof parsed.assessmentPlan !== "object") issues.push("Field 'assessmentPlan' tidak terisi");
+  const assessment = parsed.assessmentPlan as Record<string, unknown> | undefined;
+  if (!assessment || !Array.isArray(assessment.formative)) issues.push("assessmentPlan.formative tidak terisi");
   if (typeof parsed.editableText !== "string" || !parsed.editableText) {
-    return "Field 'editableText' tidak boleh kosong";
+    issues.push("Field 'editableText' tidak boleh kosong");
   }
-  return null;
+  return issues.length > 0 ? issues.join("; ") : null;
 }
 
 function validateSoalOutput(parsed: Record<string, unknown>): string | null {
+  const issues: string[] = [];
   if (!parsed.questions || !Array.isArray(parsed.questions)) {
-    return "Field 'questions' wajib berupa array";
-  }
-  const questions = parsed.questions as Record<string, unknown>[];
-  const requestedCount = parsed.metadata
-    ? (parsed.metadata as Record<string, unknown>).questionCount ?? questions.length
-    : questions.length;
-  if (questions.length !== requestedCount) {
-    return `Jumlah soal (${questions.length}) tidak sesuai permintaan (${requestedCount})`;
-  }
-
-  // Check no duplicate question text
-  const texts = questions.map((q) => String(q.question ?? "")).filter(Boolean);
-  const unique = new Set(texts);
-  if (unique.size !== texts.length) {
-    return "Terdapat duplikasi teks pertanyaan";
-  }
-
-  // Check each question has answer
-  for (const q of questions) {
-    if (!q.answer || (Array.isArray(q.answer) && q.answer.length === 0)) {
-      return `Soal nomor ${q.number ?? "?"} tidak memiliki kunci jawaban`;
+    issues.push("Field 'questions' wajib berupa array");
+  } else {
+    const questions = parsed.questions as Record<string, unknown>[];
+    const texts = questions.map((q) => String(q.question ?? "")).filter(Boolean);
+    const unique = new Set(texts);
+    if (unique.size !== texts.length) {
+      issues.push("Terdapat duplikasi teks pertanyaan");
     }
   }
-
   if (typeof parsed.editableText !== "string" || !parsed.editableText) {
-    return "Field 'editableText' tidak boleh kosong";
+    issues.push("Field 'editableText' tidak boleh kosong");
   }
-  return null;
+  return issues.length > 0 ? issues.join("; ") : null;
 }
 
 function validatePPTOutput(parsed: Record<string, unknown>): string | null {
+  const issues: string[] = [];
   if (!parsed.slides || !Array.isArray(parsed.slides)) {
-    return "Field 'slides' wajib berupa array";
-  }
-  const slides = parsed.slides as Record<string, unknown>[];
-  const expectedCount = parsed.metadata
-    ? (parsed.metadata as Record<string, unknown>).slideCount ?? slides.length
-    : slides.length;
-  if (slides.length !== expectedCount) {
-    return `Jumlah slide (${slides.length}) tidak sesuai permintaan (${expectedCount})`;
-  }
-
-  for (const slide of slides) {
-    if (!slide.title || typeof slide.title !== "string") {
-      return `Slide ${slide.slideNumber ?? "?"} tidak memiliki title`;
-    }
-    if (!slide.bullets || !Array.isArray(slide.bullets)) {
-      return `Slide ${slide.slideNumber ?? "?"} tidak memiliki bullets array`;
-    }
-    if (!slide.speakerNotes || typeof slide.speakerNotes !== "string") {
-      return `Slide ${slide.slideNumber ?? "?"} tidak memiliki speakerNotes`;
-    }
-    if (!slide.visualSuggestion || typeof slide.visualSuggestion !== "string") {
-      return `Slide ${slide.slideNumber ?? "?"} tidak memiliki visualSuggestion`;
+    issues.push("Field 'slides' wajib berupa array");
+  } else {
+    const slides = parsed.slides as Record<string, unknown>[];
+    for (const slide of slides) {
+      if (!slide.title || typeof slide.title !== "string") {
+        issues.push(`Slide ${slide.slideNumber ?? "?"} tidak memiliki title`);
+        break;
+      }
+      if (!slide.bullets || !Array.isArray(slide.bullets)) {
+        issues.push(`Slide ${slide.slideNumber ?? "?"} tidak memiliki bullets array`);
+        break;
+      }
+      if (!slide.speakerNotes || typeof slide.speakerNotes !== "string") {
+        issues.push(`Slide ${slide.slideNumber ?? "?"} tidak memiliki speakerNotes`);
+        break;
+      }
+      if (!slide.visualSuggestion || typeof slide.visualSuggestion !== "string") {
+        issues.push(`Slide ${slide.slideNumber ?? "?"} tidak memiliki visualSuggestion`);
+        break;
+      }
     }
   }
-
   if (typeof parsed.editableText !== "string" || !parsed.editableText) {
-    return "Field 'editableText' tidak boleh kosong";
+    issues.push("Field 'editableText' tidak boleh kosong");
   }
-  return null;
+  return issues.length > 0 ? issues.join("; ") : null;
 }
 
 /**

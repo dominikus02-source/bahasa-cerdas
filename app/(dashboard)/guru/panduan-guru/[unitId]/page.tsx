@@ -5,7 +5,8 @@ import { useParams, useRouter } from "next/navigation"
 import {
   BookOpen, ArrowLeft, Send, CheckCircle, XCircle, Lightbulb,
   Target, Sparkles, Brain, Maximize2, Minimize2, Eye, EyeOff,
-  ChevronLeft, ChevronRight, ImageIcon, Loader2,
+  ChevronLeft, ChevronRight, ImageIcon, Loader2, Wand2,
+  FileText, HelpCircle, ClipboardList,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -16,11 +17,31 @@ type Konten = {
   latihan: Soal[]
   praktik: { petunjuk: string; tips: string[]; contoh?: string }
   kuis: Soal[]
+  guide?: {
+    learningGoals: string[]
+    keyConcepts: {
+      definition: string
+      characteristics: string[]
+      structure: { name: string; description: string }[]
+      languageFeatures: string[]
+      examples: { label: string; content: string; analysis?: string }[]
+    }
+    languageFocus: { aspects: string[]; notes?: string }
+    activities: { opening: string[]; core: string[]; group: string[]; reflection: string[] }
+    studentTasks: { type: string; description: string }[]
+    assessment: { diagnostic: { question: string; purpose: string }[]; formative: { method: string; criteria: string[] }[]; summative: { type: string; description: string }[] }
+    rubric: { aspects: { name: string; criteria: { level: string; description: string }[] }[] }
+    differentiation: { support: string[]; challenge: string[] }
+    remedial: string[]
+    enrichment: string[]
+    teacherNotes: string[]
+    tags: string[]
+  }
 }
 
-type TabKey = "belajar" | "latihan" | "praktik" | "kuis"
+type TabKey = "belajar" | "latihan" | "praktik" | "kuis" | "panduan"
 
-const TAB_ORDER: TabKey[] = ["belajar", "latihan", "praktik", "kuis"]
+const TAB_ORDER: TabKey[] = ["belajar", "latihan", "praktik", "kuis", "panduan"]
 
 export default function UnitPreviewPage() {
   const params = useParams()
@@ -132,7 +153,10 @@ export default function UnitPreviewPage() {
     { key: "latihan" as TabKey, label: "Latihan", icon: Target, count: content.latihan.length },
     { key: "praktik" as TabKey, label: "Praktik", icon: Lightbulb },
     { key: "kuis" as TabKey, label: "Kuis", icon: Sparkles, count: content.kuis.length },
+    { key: "panduan" as TabKey, label: "Panduan Guru", icon: ClipboardList },
   ]
+
+  const gradeParam = data?.grade?.toLowerCase() || ""
 
   if (presentMode) return (
     <PresentationView
@@ -162,13 +186,45 @@ export default function UnitPreviewPage() {
           <h1 className="text-2xl font-bold text-slate-900">{data.title}</h1>
           <p className="text-sm text-slate-500 mt-1">{data.level?.title}</p>
         </div>
-        <Button onClick={() => setPresentMode(true)} variant="outline" className="shrink-0 border-emerald-200 text-emerald-600 hover:bg-emerald-50">
-          <Maximize2 className="w-4 h-4 mr-2" />
-          Tayangkan
+        <div className="flex items-center gap-2 shrink-0">
+          <Button onClick={() => setPresentMode(true)} variant="outline" className="border-emerald-200 text-emerald-600 hover:bg-emerald-50">
+            <Maximize2 className="w-4 h-4 mr-2" />
+            Tayangkan
+          </Button>
+          <Button onClick={() => setShowAssign(true)} className="bg-emerald-600 hover:bg-emerald-700 text-white">
+            <Send className="w-4 h-4 mr-2" />
+            Kirim ke Kelas
+          </Button>
+        </div>
+      </div>
+
+      <div className="flex flex-wrap gap-2 mb-4">
+        <Button
+          size="sm"
+          variant="outline"
+          className="border-violet-200 text-violet-600 hover:bg-violet-50"
+          onClick={() => window.open(`/guru/ai-tools?tool=rpp&topic=${encodeURIComponent(data.title)}&grade=${gradeParam}`, "_blank")}
+        >
+          <FileText className="w-3.5 h-3.5 mr-1" />
+          Buat RPP
         </Button>
-        <Button onClick={() => setShowAssign(true)} className="bg-emerald-600 hover:bg-emerald-700 text-white shrink-0">
-          <Send className="w-4 h-4 mr-2" />
-          Kirim ke Kelas
+        <Button
+          size="sm"
+          variant="outline"
+          className="border-violet-200 text-violet-600 hover:bg-violet-50"
+          onClick={() => window.open(`/guru/ai-tools?tool=soal&topic=${encodeURIComponent(data.title)}&grade=${gradeParam}`, "_blank")}
+        >
+          <HelpCircle className="w-3.5 h-3.5 mr-1" />
+          Buat Soal
+        </Button>
+        <Button
+          size="sm"
+          variant="outline"
+          className="border-violet-200 text-violet-600 hover:bg-violet-50"
+          onClick={() => window.open(`/guru/ai-tools?tool=ppt&topic=${encodeURIComponent(data.title)}&grade=${gradeParam}`, "_blank")}
+        >
+          <Wand2 className="w-3.5 h-3.5 mr-1" />
+          Buat PPT
         </Button>
       </div>
 
@@ -194,6 +250,7 @@ function ContentPanel({ content, tab, showAnswers, setShowAnswers, ilustrasiUrls
   if (tab === "latihan") return <SoalContent label="Latihan" soal={content.latihan} showAnswers={showAnswers} setShowAnswers={setShowAnswers} />
   if (tab === "praktik") return <PraktikContent content={content.praktik} />
   if (tab === "kuis") return <SoalContent label="Kuis" soal={content.kuis} showAnswers={showAnswers} setShowAnswers={setShowAnswers} />
+  if (tab === "panduan" && content.guide) return <GuideContent guide={content.guide} />
   return null
 }
 
@@ -375,6 +432,7 @@ function PresentationView({ data, content, tab, setTab, showAnswers, setShowAnsw
     { key: "latihan" as TabKey, label: "Latihan", icon: Target, count: content.latihan.length },
     { key: "praktik" as TabKey, label: "Praktik", icon: Lightbulb },
     { key: "kuis" as TabKey, label: "Kuis", icon: Sparkles, count: content.kuis.length },
+    { key: "panduan" as TabKey, label: "Panduan Guru", icon: ClipboardList },
   ]
 
   return (
@@ -466,6 +524,7 @@ function PresentationView({ data, content, tab, setTab, showAnswers, setShowAnsw
           )}
 
           {tab === "latihan" && <SoalPresentation soal={content.latihan} label="Latihan" showAnswers={showAnswers} color="emerald" />}
+          {tab === "panduan" && content.guide && <PanduanPresentation guide={content.guide} />}
           {tab === "praktik" && (
             <div>
               <h2 className="text-xl font-bold text-slate-900 mb-4 flex items-center gap-2"><Lightbulb className="w-6 h-6 text-amber-500" />Praktik</h2>
@@ -499,6 +558,73 @@ function PresentationView({ data, content, tab, setTab, showAnswers, setShowAnsw
         <button onClick={() => goTab(1)} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium text-slate-500 hover:bg-slate-100">
           Selanjutnya<ChevronRight className="w-4 h-4" />
         </button>
+      </div>
+    </div>
+  )
+}
+
+function PanduanPresentation({ guide }: { guide: NonNullable<Konten["guide"]> }) {
+  return (
+    <div className="space-y-8">
+      <div>
+        <h2 className="text-xl font-bold text-slate-900 mb-4 flex items-center gap-2"><Target className="w-6 h-6 text-emerald-500" />Tujuan Pembelajaran</h2>
+        <ul className="space-y-2">
+          {guide.learningGoals.map((t, i) => (
+            <li key={i} className="flex items-start gap-3 text-slate-800">
+              <span className="w-7 h-7 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center text-sm font-bold shrink-0 mt-0.5">{i + 1}</span>
+              {t}
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div>
+        <h2 className="text-xl font-bold text-slate-900 mb-4 flex items-center gap-2"><BookOpen className="w-6 h-6 text-blue-500" />Konsep Utama</h2>
+        <p className="text-slate-800 leading-relaxed text-lg mb-4">{guide.keyConcepts.definition}</p>
+
+        <h3 className="font-semibold text-slate-800 mb-2">Ciri-Ciri</h3>
+        <ul className="space-y-1 mb-4">
+          {guide.keyConcepts.characteristics.map((c, i) => (
+            <li key={i} className="flex items-start gap-3 text-slate-700"><span className="w-2 h-2 rounded-full bg-blue-400 mt-2 shrink-0" />{c}</li>
+          ))}
+        </ul>
+
+        <h3 className="font-semibold text-slate-800 mb-2">Struktur</h3>
+        <div className="space-y-2 mb-4">
+          {guide.keyConcepts.structure.map((s, i) => (
+            <div key={i} className="flex items-start gap-3 text-base">
+              <Badge variant="outline" className="text-xs shrink-0 mt-0.5 bg-blue-50 text-blue-700 border-blue-200">{s.name}</Badge>
+              <span className="text-slate-600">{s.description}</span>
+            </div>
+          ))}
+        </div>
+
+        <h3 className="font-semibold text-slate-800 mb-2">Kebahasaan</h3>
+        <ul className="space-y-1">
+          {guide.keyConcepts.languageFeatures.map((f, i) => (
+            <li key={i} className="flex items-start gap-3 text-slate-700"><span className="w-2 h-2 rounded-full bg-emerald-400 mt-2 shrink-0" />{f}</li>
+          ))}
+        </ul>
+      </div>
+
+      <div>
+        <h2 className="text-xl font-bold text-slate-900 mb-4 flex items-center gap-2"><Brain className="w-6 h-6 text-violet-500" />Kegiatan Pembelajaran</h2>
+        {guide.activities.opening.length > 0 && (
+          <div className="mb-4">
+            <h3 className="font-semibold text-slate-800 mb-2">Pembukaan</h3>
+            <ol className="space-y-1">
+              {guide.activities.opening.map((a, i) => (<li key={i} className="flex items-start gap-3 text-slate-700"><span className="w-7 h-7 rounded-full bg-violet-100 text-violet-700 flex items-center justify-center text-sm font-bold shrink-0">{i + 1}</span>{a}</li>))}
+            </ol>
+          </div>
+        )}
+        {guide.activities.core.length > 0 && (
+          <div className="mb-4">
+            <h3 className="font-semibold text-slate-800 mb-2">Inti</h3>
+            <ol className="space-y-1">
+              {guide.activities.core.map((a, i) => (<li key={i} className="flex items-start gap-3 text-slate-700"><span className="w-7 h-7 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center text-sm font-bold shrink-0">{i + 1}</span>{a}</li>))}
+            </ol>
+          </div>
+        )}
       </div>
     </div>
   )
@@ -553,6 +679,254 @@ function SoalPresentation({ soal, label, showAnswers, color }: { soal: Soal[]; l
           )
         })}
       </div>
+    </div>
+  )
+}
+
+function GuideContent({ guide }: { guide: NonNullable<Konten["guide"]> }) {
+  return (
+    <div className="space-y-6">
+      <div className="bg-white rounded-xl border border-slate-200 p-5">
+        <h2 className="font-bold text-slate-900 mb-3 flex items-center gap-2"><Target className="w-4 h-4 text-emerald-500" />Tujuan Pembelajaran</h2>
+        <ul className="space-y-1.5">
+          {guide.learningGoals.map((t, i) => (
+            <li key={i} className="flex items-start gap-2 text-sm text-slate-700">
+              <span className="w-5 h-5 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">{i + 1}</span>
+              {t}
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div className="bg-white rounded-xl border border-slate-200 p-5">
+        <h2 className="font-bold text-slate-900 mb-3 flex items-center gap-2"><BookOpen className="w-4 h-4 text-blue-500" />Konsep Utama</h2>
+        <p className="text-sm text-slate-700 mb-4">{guide.keyConcepts.definition}</p>
+
+        <h3 className="font-semibold text-sm text-slate-800 mb-2">Ciri-Ciri</h3>
+        <ul className="space-y-1 mb-4">
+          {guide.keyConcepts.characteristics.map((c, i) => (
+            <li key={i} className="flex items-start gap-2 text-sm text-slate-700">
+              <span className="w-1.5 h-1.5 rounded-full bg-blue-400 mt-1.5 shrink-0" />{c}
+            </li>
+          ))}
+        </ul>
+
+        <h3 className="font-semibold text-sm text-slate-800 mb-2">Struktur</h3>
+        <div className="space-y-2 mb-4">
+          {guide.keyConcepts.structure.map((s, i) => (
+            <div key={i} className="flex items-start gap-2 text-sm">
+              <Badge variant="outline" className="text-[10px] shrink-0 mt-0.5 bg-blue-50 text-blue-700 border-blue-200">{s.name}</Badge>
+              <span className="text-slate-600">{s.description}</span>
+            </div>
+          ))}
+        </div>
+
+        <h3 className="font-semibold text-sm text-slate-800 mb-2">Ciri Kebahasaan</h3>
+        <ul className="space-y-1 mb-4">
+          {guide.keyConcepts.languageFeatures.map((f, i) => (
+            <li key={i} className="flex items-start gap-2 text-sm text-slate-700">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 mt-1.5 shrink-0" />{f}
+            </li>
+          ))}
+        </ul>
+
+        <h3 className="font-semibold text-sm text-slate-800 mb-2">Fokus Bahasa</h3>
+        <ul className="space-y-1 mb-2">
+          {guide.languageFocus.aspects.map((a, i) => (
+            <li key={i} className="flex items-start gap-2 text-sm text-slate-700">
+              <span className="w-1.5 h-1.5 rounded-full bg-amber-400 mt-1.5 shrink-0" />{a}
+            </li>
+          ))}
+        </ul>
+        {guide.languageFocus.notes && (
+          <div className="mt-2 bg-blue-50 border border-blue-100 rounded-lg p-3 flex items-start gap-2">
+            <Sparkles className="w-4 h-4 text-blue-500 mt-0.5 shrink-0" />
+            <p className="text-sm text-blue-800">{guide.languageFocus.notes}</p>
+          </div>
+        )}
+
+        {guide.keyConcepts.examples.length > 0 && (
+          <div className="mt-4">
+            <h3 className="font-semibold text-sm text-slate-800 mb-2">Contoh</h3>
+            {guide.keyConcepts.examples.map((ex, i) => (
+              <div key={i} className="bg-amber-50 border border-amber-100 rounded-lg p-3 mb-2">
+                <p className="text-xs font-semibold text-amber-800 mb-1">{ex.label}</p>
+                <p className="text-sm text-amber-900 whitespace-pre-line mb-2">{ex.content}</p>
+                {ex.analysis && <p className="text-xs text-amber-700 italic">{ex.analysis}</p>}
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      <div className="bg-white rounded-xl border border-slate-200 p-5">
+        <h2 className="font-bold text-slate-900 mb-3 flex items-center gap-2"><Brain className="w-4 h-4 text-violet-500" />Kegiatan Pembelajaran</h2>
+        {guide.activities.opening.length > 0 && (
+          <div className="mb-4">
+            <h3 className="font-semibold text-sm text-slate-800 mb-2">Pembukaan</h3>
+            <ol className="space-y-1">
+              {guide.activities.opening.map((a, i) => (
+                <li key={i} className="flex items-start gap-2 text-sm text-slate-700">
+                  <span className="w-5 h-5 rounded-full bg-violet-100 text-violet-700 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">{i + 1}</span>
+                  {a}
+                </li>
+              ))}
+            </ol>
+          </div>
+        )}
+        {guide.activities.core.length > 0 && (
+          <div className="mb-4">
+            <h3 className="font-semibold text-sm text-slate-800 mb-2">Inti</h3>
+            <ol className="space-y-1">
+              {guide.activities.core.map((a, i) => (
+                <li key={i} className="flex items-start gap-2 text-sm text-slate-700">
+                  <span className="w-5 h-5 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">{i + 1}</span>
+                  {a}
+                </li>
+              ))}
+            </ol>
+          </div>
+        )}
+        {guide.activities.group.length > 0 && (
+          <div className="mb-4">
+            <h3 className="font-semibold text-sm text-slate-800 mb-2">Kelompok</h3>
+            <ul className="space-y-1">
+              {guide.activities.group.map((a, i) => (
+                <li key={i} className="flex items-start gap-2 text-sm text-slate-700">
+                  <span className="w-1.5 h-1.5 rounded-full bg-amber-400 mt-1.5 shrink-0" />{a}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+        {guide.activities.reflection.length > 0 && (
+          <div>
+            <h3 className="font-semibold text-sm text-slate-800 mb-2">Refleksi</h3>
+            <ul className="space-y-1">
+              {guide.activities.reflection.map((a, i) => (
+                <li key={i} className="flex items-start gap-2 text-sm text-slate-700">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 mt-1.5 shrink-0" />{a}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
+
+      <div className="bg-white rounded-xl border border-slate-200 p-5">
+        <h2 className="font-bold text-slate-900 mb-3 flex items-center gap-2"><Target className="w-4 h-4 text-emerald-500" />Assessment</h2>
+        {guide.assessment.diagnostic.length > 0 && (
+          <div className="mb-4">
+            <h3 className="font-semibold text-sm text-slate-800 mb-2">Diagnostik</h3>
+            <ul className="space-y-1">
+              {guide.assessment.diagnostic.map((d, i) => (
+                <li key={i} className="flex items-start gap-2 text-sm text-slate-700 bg-slate-50 rounded-lg p-2">
+                  <span className="text-xs font-bold text-slate-400 shrink-0">Q{i + 1}</span>
+                  <div>
+                    <p className="text-sm">{d.question}</p>
+                    <p className="text-xs text-slate-400 italic">Tujuan: {d.purpose}</p>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+        {guide.assessment.formative.length > 0 && (
+          <div className="mb-4">
+            <h3 className="font-semibold text-sm text-slate-800 mb-2">Formatif</h3>
+            <ul className="space-y-2">
+              {guide.assessment.formative.map((f, i) => (
+                <li key={i} className="text-sm text-slate-700 bg-blue-50 rounded-lg p-2">
+                  <p className="font-medium text-blue-800">{f.method}</p>
+                  <ul className="space-y-0.5 mt-1">
+                    {f.criteria.map((c, j) => (
+                      <li key={j} className="flex items-start gap-1.5 text-xs text-blue-700">
+                        <CheckCircle className="w-3 h-3 text-blue-400 mt-0.5 shrink-0" />{c}
+                      </li>
+                    ))}
+                  </ul>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+        {guide.assessment.summative.length > 0 && (
+          <div>
+            <h3 className="font-semibold text-sm text-slate-800 mb-2">Sumatif</h3>
+            <ul className="space-y-1">
+              {guide.assessment.summative.map((s, i) => (
+                <li key={i} className="flex items-start gap-2 text-sm text-slate-700">
+                  <CheckCircle className="w-4 h-4 text-emerald-500 mt-0.5 shrink-0" />
+                  <div><span className="font-medium">{s.type}:</span> {s.description}</div>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
+
+      <div className="bg-white rounded-xl border border-slate-200 p-5">
+        <h2 className="font-bold text-slate-900 mb-3 flex items-center gap-2"><ClipboardList className="w-4 h-4 text-amber-500" />Rubrik Penilaian</h2>
+        {guide.rubric.aspects.map((aspect, i) => (
+          <div key={i} className="mb-3 last:mb-0">
+            <h3 className="font-semibold text-sm text-slate-800 mb-1.5">{aspect.name}</h3>
+            <div className="space-y-1">
+              {aspect.criteria.map((c, j) => (
+                <div key={j} className="flex items-start gap-2 text-xs">
+                  <Badge variant="outline" className={`text-[10px] shrink-0 mt-0.5 ${
+                    c.level === "Sangat Baik" ? "bg-emerald-50 text-emerald-700 border-emerald-200" :
+                    c.level === "Baik" ? "bg-blue-50 text-blue-700 border-blue-200" :
+                    c.level === "Cukup" ? "bg-amber-50 text-amber-700 border-amber-200" :
+                    "bg-red-50 text-red-700 border-red-200"
+                  }`}>{c.level}</Badge>
+                  <span className="text-slate-600">{c.description}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="bg-white rounded-xl border border-slate-200 p-5">
+        <h2 className="font-bold text-slate-900 mb-3 flex items-center gap-2"><Brain className="w-4 h-4 text-violet-500" />Diferensiasi</h2>
+        {guide.differentiation.support.length > 0 && (
+          <div className="mb-3">
+            <h3 className="font-semibold text-sm text-blue-700 mb-1.5">Dukungan</h3>
+            <ul className="space-y-1">
+              {guide.differentiation.support.map((s, i) => (
+                <li key={i} className="flex items-start gap-2 text-sm text-slate-700">
+                  <span className="w-1.5 h-1.5 rounded-full bg-blue-400 mt-1.5 shrink-0" />{s}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+        {guide.differentiation.challenge.length > 0 && (
+          <div>
+            <h3 className="font-semibold text-sm text-amber-700 mb-1.5">Pengayaan</h3>
+            <ul className="space-y-1">
+              {guide.differentiation.challenge.map((c, i) => (
+                <li key={i} className="flex items-start gap-2 text-sm text-slate-700">
+                  <span className="w-1.5 h-1.5 rounded-full bg-amber-400 mt-1.5 shrink-0" />{c}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
+
+      {guide.teacherNotes.length > 0 && (
+        <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
+          <h2 className="font-bold text-amber-800 mb-2 text-sm flex items-center gap-2"><Lightbulb className="w-4 h-4" />Catatan Guru</h2>
+          <ul className="space-y-1">
+            {guide.teacherNotes.map((n, i) => (
+              <li key={i} className="flex items-start gap-2 text-sm text-amber-900">
+                <span className="w-1.5 h-1.5 rounded-full bg-amber-400 mt-1.5 shrink-0" />{n}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </div>
   )
 }

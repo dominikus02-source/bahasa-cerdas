@@ -85,12 +85,12 @@ function StructuredRPP({ output }: { output: Record<string, unknown> }) {
       </Section>}
       {rubric && <Section title="Rubrik Penilaian">
         <div className="space-y-2">
-          {((rubric as any).criteria as any[] ?? []).map((c: any, i: number) => (
+          {(Array.isArray((rubric as any)?.criteria) ? (rubric as any).criteria : []).map((c: any, i: number) => (
             <div key={i} className="p-2 bg-blue-50 rounded-lg text-xs">
-              <p className="font-medium text-blue-700 mb-1">{c.name}</p>
-              <p className="text-blue-600">Unggul: {c.excellent}</p>
-              <p className="text-blue-500">Baik: {c.good}</p>
-              <p className="text-blue-400">Perlu Perbaikan: {c.needsImprovement}</p>
+              <p className="font-medium text-blue-700 mb-1">{c?.name ?? ""}</p>
+              <p className="text-blue-600">Unggul: {c?.excellent ?? ""}</p>
+              <p className="text-blue-500">Baik: {c?.good ?? ""}</p>
+              <p className="text-blue-400">Perlu Perbaikan: {c?.needsImprovement ?? ""}</p>
             </div>
           ))}
         </div>
@@ -585,11 +585,25 @@ export function AgentResultPanel({ agentId, result, loading, error, isStreaming 
         </>
       )}
 
-      {/* Editable text output */}
-      {result.text && (
+        {/* Editable text output */}
+      {result.text && !result.output && (
         <div>
           <div className="flex items-center justify-between mb-2">
-            <p className="text-xs font-medium text-gray-500">Teks Siap Edit</p>
+            <p className="text-xs font-medium text-gray-500">Hasil (format teks mentah)</p>
+            <CopyButton text={result.text} />
+          </div>
+          <div className="p-3 bg-white border border-gray-200 rounded-xl max-h-80 overflow-y-auto">
+            <pre className="text-xs text-gray-700 whitespace-pre-wrap font-sans leading-relaxed">
+              {result.text}
+            </pre>
+          </div>
+        </div>
+      )}
+      {/* Editable text when output also exists (RPP/Soal/PPT have both) */}
+      {result.text && result.output && (
+        <div>
+          <div className="flex items-center justify-between mb-2">
+            <p className="text-xs font-medium text-gray-500">Dokumen Siap Edit</p>
             <CopyButton text={result.text} />
           </div>
           <div className="p-3 bg-white border border-gray-200 rounded-xl max-h-80 overflow-y-auto">

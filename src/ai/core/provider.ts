@@ -91,16 +91,20 @@ async function callDeepSeek(req: ProviderRequest): Promise<ProviderResponse> {
   const apiKey = process.env.DEEPSEEK_API_KEY;
   if (!apiKey) throw new Error("DEEPSEEK_API_KEY not configured");
 
+  const dsBody: Record<string, unknown> = {
+    model: req.model,
+    messages: req.messages,
+    temperature: req.temperature,
+    max_tokens: req.maxTokens,
+  };
+  if (req.responseFormat === "json") {
+    dsBody.response_format = { type: "json_object" };
+  }
   const { result: raw, latencyMs } = await timedCall(() =>
     fetch("https://api.deepseek.com/v1/chat/completions", {
       method: "POST",
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiKey}` },
-      body: JSON.stringify({
-        model: req.model,
-        messages: req.messages,
-        temperature: req.temperature,
-        max_tokens: req.maxTokens,
-      }),
+      body: JSON.stringify(dsBody),
       signal: AbortSignal.timeout(req.timeoutMs),
     })
   );
@@ -244,16 +248,20 @@ async function streamDeepSeek(
   if (!apiKey) throw new Error("DEEPSEEK_API_KEY not configured");
 
   const startTime = Date.now();
+  const streamBody: Record<string, unknown> = {
+    model: req.model,
+    messages: req.messages,
+    temperature: req.temperature,
+    max_tokens: req.maxTokens,
+    stream: true,
+  };
+  if (req.responseFormat === "json") {
+    streamBody.response_format = { type: "json_object" };
+  }
   const response = await fetch("https://api.deepseek.com/v1/chat/completions", {
     method: "POST",
     headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiKey}` },
-    body: JSON.stringify({
-      model: req.model,
-      messages: req.messages,
-      temperature: req.temperature,
-      max_tokens: req.maxTokens,
-      stream: true,
-    }),
+    body: JSON.stringify(streamBody),
     signal: AbortSignal.timeout(req.timeoutMs),
   });
 
