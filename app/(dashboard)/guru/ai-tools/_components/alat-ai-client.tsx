@@ -211,9 +211,10 @@ export function AlatAiClient({ agentParam }: { agentParam?: string }) {
         setResultSource("generated");
         setStreamIncomplete(false);
       },
-      onError: (code, message) => {
+      onError: (code, message, reqId) => {
         clearTimeout(fallbackTimer);
         setCurrentErrorCode(code || "STREAM_ERROR");
+        if (reqId) setCurrentRequestId(reqId);
         if (message === "Pembuatan dihentikan.") {
           isCancelled = true;
           setStreamCancelled(true);
@@ -237,9 +238,12 @@ export function AlatAiClient({ agentParam }: { agentParam?: string }) {
     await streamPromise;
     abortRef.current = null;
 
-    // Fallback: streaming failed before any output — try non-streaming
-    if (!streamingResolved && !isCancelled && !streamingStarted) {
-      setStreamProgress("Menggunakan mode non-streaming...");
+    // Fallback: stream gagal (belum mulai ATAU mati di tengah tanpa hasil final)
+    // — coba jalur non-streaming yang punya salvage + fallback template sendiri.
+    if (!streamingResolved && !isCancelled) {
+      setStreamProgress("Menyambung ulang tanpa streaming...");
+      setCurrentError(null);
+      setStreamIncomplete(false);
       try {
         const data = await runAgent(agentId, input);
         setCurrentResult({

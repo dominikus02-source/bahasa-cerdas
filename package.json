@@ -113,7 +113,8 @@
     "load:public-browsing:staged": "k6 run --vus 100 --duration 5m tests/load/public-browsing.js",
     "load:simulation-read": "k6 run --vus 30 --duration 3m tests/load/simulation-read.js",
     "load:simulation-submit": "k6 run tests/load/simulation-submit.js",
-    "load:dashboard": "k6 run tests/load/dashboard-authenticated.js"
+    "load:dashboard": "k6 run tests/load/dashboard-authenticated.js",
+    "test:rpp-pipeline": "tsx scripts/test-rpp-pipeline.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.39.0",

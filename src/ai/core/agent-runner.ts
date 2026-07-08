@@ -34,6 +34,7 @@ import {
 import { logUsage } from "./usage-logger";
 import { checkEducationQuality } from "../evaluators/education-quality-checker";
 import { generateRPPFallback } from "./rpp-fallback-template";
+import { normalizeRppResult } from "./rpp-normalizer";
 
 export interface RunAgentOptions {
   agent: AgentDefinition<any, any>;
@@ -237,6 +238,34 @@ export async function runAgent(opts: RunAgentOptions): Promise<AgentRunResult> {
       }
     }
 
+    // ── Normalisasi RPP: hasil ke UI harus dokumen, bukan JSON mentah ──
+    if (agent.id === "rpp" && !finalError) {
+      const normalized =
+        normalizeRppResult(finalOutput ?? salvagedText, input as never) ??
+        normalizeRppResult(salvagedText, input as never);
+      if (normalized) {
+        warn.push(...normalized.warnings);
+        salvagedText = normalized.doc;
+      } else {
+        try {
+          salvagedText = generateRPPFallback(input as never);
+          warn.push("Generator AI utama gagal, sistem menampilkan template RPP fallback yang dapat diedit guru.");
+        } catch {
+          // biarkan apa adanya
+        }
+      }
+      if (salvagedText) {
+        const base = finalOutput && typeof finalOutput === "object" ? finalOutput : {};
+        finalOutput = {
+          ...(base as Record<string, unknown>),
+          text: salvagedText,
+          editableText: salvagedText,
+          displayText: salvagedText,
+        } as unknown as AgentOutput;
+        finalError = null;
+      }
+    }
+
     // ── Step 9: Quality checks ────────────────────────────
     if (finalOutput) {
       const outputText = JSON.stringify(finalOutput);
@@ -305,6 +334,60 @@ export async function runAgent(opts: RunAgentOptions): Promise<AgentRunResult> {
     };
   } catch (error) {
     const durationMs = Date.now() - startTime;
+
+    // RPP: provider mati total pun harus tetap memberi dokumen fallback
+    if (agent.id === "rpp" && (error instanceof ProviderChainFailedError)) {
+      try {
+        const fallbackText = generateRPPFallback(input as never);
+        warn.push("Generator AI utama gagal, sistem menampilkan template RPP fallback yang dapat diedit guru.");
+        const fallbackOutput = {
+          text: fallbackText,
+          editableText: fallbackText,
+          displayText: fallbackText,
+        } as unknown as AgentOutput;
+        logUsage({
+          userId: context.userId,
+          agentId: agent.id,
+          input,
+          output: fallbackOutput,
+          success: true,
+          error: null,
+          promptTokens: 0,
+          completionTokens: 0,
+          totalTokens: 0,
+          costUSD: 0,
+          provider: "fallback-template",
+          model,
+          durationMs,
+          createdAt: new Date(),
+        }).catch(() => {});
+        return {
+          success: true,
+          agentId: agent.id,
+          output: fallbackOutput,
+          text: fallbackText,
+          error: null,
+          warnings: warn,
+          qualityScore: 60,
+          qualityChecks: [],
+          provider: "fallback-template",
+          model,
+          usage: {
+            promptTokens: 0,
+            completionTokens: 0,
+            totalTokens: 0,
+            costUSD: 0,
+            provider: "fallback-template",
+            model,
+            durationMs,
+          },
+          latencyMs,
+          metadata: { requestId: context.requestId, timestamp: context.timestamp, userId: context.userId },
+        };
+      } catch {
+        // template gagal — lanjut ke jalur error normal
+      }
+    }
 
     if (error instanceof ProviderChainFailedError) {
       finalError = "Layanan AI sedang sibuk. Silakan coba lagi.";

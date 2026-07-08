@@ -39,83 +39,17 @@ export const rppInputSchema = z.object({
   cityDate: z.string().optional(),
 });
 
-export const rppOutputSchema = z.object({
-  title: z.string(),
-  identity: z.object({
-    subject: z.string(),
-    grade: z.string(),
-    phase: z.string().optional(),
-    semester: z.string().optional(),
-    curriculum: z.string(),
-    topic: z.string(),
-    duration: z.string(),
-    meetingCount: z.number().optional(),
-    teacherName: z.string().optional(),
-    nipGuru: z.string().optional(),
-    schoolName: z.string().optional(),
-    principalName: z.string().optional(),
-    principalNip: z.string().optional(),
-    academicYear: z.string().optional(),
-    cityDate: z.string().optional(),
-  }),
-  studentProfile: z.string(),
-  priorKnowledge: z.string(),
-  pancasilaProfile: z.array(z.string()).optional(),
-  meaningfulUnderstanding: z.string().optional(),
-  promptingQuestions: z.array(z.string()).optional(),
-  capaianPembelajaran: z.string().optional(),
-  learningObjectives: z.array(z.string()),
-  successCriteria: z.array(z.string()),
-  learningMaterials: z.array(z.string()),
-  learningResources: z.array(z.string()),
-  learningModel: z.string(),
-  learningSteps: z.object({
-    opening: z.array(z.string()),
-    core: z.array(z.string()),
-    closing: z.array(z.string()),
-  }),
-  assessmentPlan: z.object({
-    diagnostic: z.array(z.string()),
-    formative: z.array(z.string()),
-    summative: z.array(z.string()),
-  }),
-  differentiationStrategy: z.object({
-    content: z.array(z.string()),
-    process: z.array(z.string()),
-    product: z.array(z.string()),
-  }),
-  worksheetSuggestion: z
-    .object({
-      title: z.string(),
-      instructions: z.array(z.string()),
-      activities: z.array(z.string()),
-    })
-    .optional(),
-  rubric: z
-    .object({
-      criteria: z.array(
-        z.object({
-          name: z.string(),
-          excellent: z.string(),
-          good: z.string(),
-          needsImprovement: z.string(),
-        })
-      ),
-    })
-    .optional(),
-  remedialAndEnrichment: z
-    .object({
-      remedial: z.array(z.string()),
-      enrichment: z.array(z.string()),
-    })
-    .optional(),
-  reflection: z.object({
-    teacherReflection: z.array(z.string()),
-    studentReflection: z.array(z.string()),
-  }),
-  teacherNotes: z.array(z.string()),
-  editableText: z.string().min(1, "editableText tidak boleh kosong"),
-});
+// Schema output DILONGGARKAN dengan sengaja: kontrak utama adalah
+// editableText (dokumen siap cetak); field terstruktur apa pun tetap
+// diterima dan dirender oleh rpp-normalizer. Schema ketat sebelumnya
+// membuat respons AI yang sebenarnya layak gagal divalidasi.
+export const rppOutputSchema = z
+  .object({
+    title: z.string().optional(),
+    editableText: z.string().optional(),
+    displayText: z.string().optional(),
+  })
+  .passthrough();
 
 const agent: AgentDefinition<
   z.infer<typeof rppInputSchema>,

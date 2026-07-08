@@ -22,12 +22,13 @@
 import type { AgentDefinition, AgentInput, AgentOutput, AgentRunContext, AgentRunResult } from "./agent-types";
 import { getAgent } from "./agent-registry";
 import { buildPrompt, type PromptBuildOptions } from "./prompt-builder";
-import { streamProviderText, estimateCost, ProviderChainFailedError } from "./provider";
+import { streamProviderText, estimateCost, ProviderChainFailedError, ProviderStreamInterruptedError } from "./provider";
 import { checkInput } from "./guardrails";
 import { cleanJSONOutput, tryFixJSON, validateAgentOutput } from "./output-validator";
 import { checkEducationQuality } from "../evaluators/education-quality-checker";
 import { logUsage } from "./usage-logger";
 import { generateRPPFallback } from "./rpp-fallback-template";
+import { normalizeRppResult, pickTextDeep } from "./rpp-normalizer";
 
 export type StreamEvent =
   | { type: "start"; agentId: string }
@@ -104,6 +105,56 @@ export async function runAgentStream(
     let streamProvider = "";
     let streamModel = agent.defaultModel;
 
+    // Kirim hasil final sukses (dipakai jalur fallback template RPP)
+    const emitFinal = (docText: string, opts?: { fallbackUsed?: boolean }) => {
+      const durationMs = Date.now() - startTime;
+      const provider = opts?.fallbackUsed ? "fallback-template" : (streamProvider || "none");
+      const finalOutput = { text: docText, editableText: docText, displayText: docText } as unknown as AgentOutput;
+      logUsage({
+        userId: context.userId,
+        agentId: agent.id as never,
+        input,
+        output: finalOutput,
+        success: true,
+        error: null,
+        errorCode: null,
+        promptTokens: 0,
+        completionTokens: 0,
+        totalTokens: 0,
+        costUSD: 0,
+        provider,
+        model: streamModel,
+        latencyMs: durationMs,
+        durationMs,
+        createdAt: new Date(),
+      }).catch(() => {});
+      const result: AgentRunResult = {
+        success: true,
+        agentId: agent.id as never,
+        output: finalOutput,
+        text: docText,
+        error: null,
+        warnings: warn,
+        qualityScore: opts?.fallbackUsed ? 60 : 100,
+        qualityChecks: [],
+        provider,
+        model: streamModel,
+        usage: {
+          promptTokens: 0,
+          completionTokens: 0,
+          totalTokens: 0,
+          costUSD: 0,
+          provider,
+          model: streamModel,
+          durationMs,
+        },
+        latencyMs: durationMs,
+        metadata: { requestId: context.requestId, timestamp: context.timestamp, userId: context.userId },
+      };
+      onEvent({ type: "final_result", result });
+      onEvent({ type: "done" });
+    };
+
     try {
       const streamResult = await streamProviderText(
         {
@@ -127,15 +178,52 @@ export async function runAgentStream(
       onEvent({ type: "provider", provider: streamProvider, model: streamModel });
       onEvent({ type: "progress", message: "AI sedang menulis..." });
     } catch (e) {
-      const msg = e instanceof ProviderChainFailedError
-        ? "Layanan AI sedang sibuk. Silakan coba lagi."
-        : "Gagal terhubung ke layanan AI. Silakan coba lagi.";
-      onEvent({ type: "error", code: "PROVIDER_UNAVAILABLE", message: msg });
-      onEvent({ type: "done" });
-      return;
+      if (e instanceof ProviderStreamInterruptedError) {
+        // Stream terputus di tengah — teks parsial diselamatkan, lanjut ke
+        // normalisasi (JANGAN gagal, jangan ganti provider).
+        if (e.partialText.length > fullText.length) fullText = e.partialText;
+        streamProvider = e.provider;
+        streamModel = e.model;
+        warn.push("Koneksi AI terputus di tengah — hasil parsial diselamatkan dan dirapikan");
+        onEvent({ type: "provider", provider: streamProvider, model: streamModel });
+      } else if (agentId === "rpp") {
+        // Provider gagal total — untuk RPP jangan menyerah: pakai template
+        // fallback yang tetap layak diedit guru.
+        try {
+          const fallbackText = generateRPPFallback(input as never);
+          warn.push("Generator AI utama gagal, sistem menampilkan template RPP fallback yang dapat diedit guru.");
+          emitFinal(fallbackText, { fallbackUsed: true });
+          return;
+        } catch {
+          // template pun gagal — jatuh ke error di bawah
+        }
+        const msg = e instanceof ProviderChainFailedError
+          ? "Layanan AI sedang sibuk. Silakan coba lagi."
+          : "Gagal terhubung ke layanan AI. Silakan coba lagi.";
+        onEvent({ type: "error", code: "PROVIDER_UNAVAILABLE", message: msg });
+        onEvent({ type: "done" });
+        return;
+      } else {
+        const msg = e instanceof ProviderChainFailedError
+          ? "Layanan AI sedang sibuk. Silakan coba lagi."
+          : "Gagal terhubung ke layanan AI. Silakan coba lagi.";
+        onEvent({ type: "error", code: "PROVIDER_UNAVAILABLE", message: msg });
+        onEvent({ type: "done" });
+        return;
+      }
     }
 
     if (!fullText.trim()) {
+      if (agentId === "rpp") {
+        try {
+          const fallbackText = generateRPPFallback(input as never);
+          warn.push("Generator AI utama gagal, sistem menampilkan template RPP fallback yang dapat diedit guru.");
+          emitFinal(fallbackText, { fallbackUsed: true });
+          return;
+        } catch {
+          // jatuh ke error di bawah
+        }
+      }
       onEvent({ type: "error", code: "EMPTY_RESPONSE", message: "AI tidak menghasilkan output. Silakan coba lagi." });
       onEvent({ type: "done" });
       return;
@@ -200,22 +288,16 @@ export async function runAgentStream(
         }
       }
 
-      // Salvage: if still no valid output, try fallback template for RPP
+      // Salvage: ambil teks dari bentuk apa pun (string/objek/nested)
       if (!finalOutput) {
-        const displayText = salvageDisplayText(parsed ?? fullText);
+        const displayText = pickTextDeep(parsed ?? fullText);
         if (displayText) {
           warn.push("Output tidak sesuai format yang diharapkan — konten ditampilkan apa adanya");
           finalOutput = { text: displayText } as unknown as AgentOutput;
-        } else if (agentId === "rpp" && typeof input === "object" && input !== null) {
-          // RPP fallback template when provider fails
-          try {
-            const fallbackText = generateRPPFallback(input as any);
-            warn.push("RPP dibuat dengan template cadangan karena AI tidak menghasilkan output yang valid");
-            finalOutput = { text: fallbackText } as unknown as AgentOutput;
-          } catch {
-            warn.push("AI tidak menghasilkan output yang valid");
-            finalOutput = { text: "" } as unknown as AgentOutput;
-          }
+        } else if (parsed && typeof parsed === "object") {
+          // Objek tanpa field teks — simpan untuk dirender tahap normalisasi
+          finalOutput = parsed as unknown as AgentOutput;
+          warn.push("Output berbentuk data terstruktur — dirender menjadi dokumen");
         } else {
           warn.push("AI tidak menghasilkan output yang valid");
           finalOutput = { text: "" } as unknown as AgentOutput;
@@ -223,6 +305,34 @@ export async function runAgentStream(
       }
     } else {
       finalOutput = { text: fullText } as unknown as AgentOutput;
+    }
+
+    // ── Normalisasi RPP: UI harus menerima DOKUMEN, bukan JSON mentah ──
+    let resultText = fullText;
+    if (agent.id === "rpp") {
+      const normalized =
+        normalizeRppResult(finalOutput ?? fullText, input as never) ??
+        normalizeRppResult(fullText, input as never);
+      if (normalized) {
+        warn.push(...normalized.warnings);
+        resultText = normalized.doc;
+      } else {
+        try {
+          resultText = generateRPPFallback(input as never);
+          warn.push("Generator AI utama gagal, sistem menampilkan template RPP fallback yang dapat diedit guru.");
+        } catch {
+          resultText = fullText;
+        }
+      }
+      const base = finalOutput && typeof finalOutput === "object" ? finalOutput : {};
+      finalOutput = {
+        ...(base as Record<string, unknown>),
+        text: resultText,
+        editableText: resultText,
+        displayText: resultText,
+      } as unknown as AgentOutput;
+    } else if (finalOutput && typeof (finalOutput as Record<string, unknown>).text === "string") {
+      resultText = (finalOutput as Record<string, unknown>).text as string;
     }
 
     // ── Step 9: Quality check ──────────────────────────────
@@ -274,7 +384,7 @@ export async function runAgentStream(
       success: !finalError,
       agentId: agent.id as never,
       output: finalOutput,
-      text: fullText,
+      text: resultText,
       error: finalError,
       warnings: warn,
       qualityScore,
@@ -303,38 +413,3 @@ export async function runAgentStream(
   }
 }
 
-/**
- * Extract displayable text from a salvage attempt.
- * Handles: parsed JSON object with editableText, object with text field, or raw string.
- */
-function salvageDisplayText(raw: unknown): string | null {
-  if (!raw) return null;
-
-  // If raw is a string
-  if (typeof raw === "string") {
-    const trimmed = raw.trim();
-    if (trimmed.length > 0) return trimmed;
-    return null;
-  }
-
-  // If raw is an object with editableText
-  if (typeof raw === "object" && !Array.isArray(raw)) {
-    const obj = raw as Record<string, unknown>;
-    if (typeof obj.editableText === "string" && obj.editableText.trim().length > 0) {
-      return obj.editableText;
-    }
-    if (typeof obj.displayText === "string" && obj.displayText.trim().length > 0) {
-      return obj.displayText;
-    }
-    if (typeof obj.text === "string" && obj.text.trim().length > 0) {
-      return obj.text;
-    }
-  }
-
-  // If raw is an array, try first element
-  if (Array.isArray(raw) && raw.length > 0) {
-    return salvageDisplayText(raw[0]);
-  }
-
-  return null;
-}

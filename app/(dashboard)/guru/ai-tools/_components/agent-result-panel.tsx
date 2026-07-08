@@ -6,6 +6,18 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { CopyButton } from "./copy-button";
 
+// Petakan kode error ke fase pipeline supaya guru/support tahu di mana gagalnya
+function phaseFromCode(code?: string | null): string | null {
+  if (!code) return null;
+  if (/AUTH/.test(code)) return "autentikasi";
+  if (/QUOTA/.test(code)) return "kuota";
+  if (/INPUT|AGENT_ID|AGENT_NOT_FOUND|INVALID_JSON/.test(code)) return "input";
+  if (/PROVIDER|EMPTY_RESPONSE|CONNECTION|STREAM|HTTP|INCOMPLETE/.test(code)) return "provider";
+  if (/VALID|PARSE|NORMALIZE/.test(code)) return "normalisasi";
+  if (/HISTORY|SAVE/.test(code)) return "penyimpanan";
+  return "server";
+}
+
 export interface AgentResultData {
   success: boolean;
   output: Record<string, unknown> | null;
@@ -715,6 +727,7 @@ export function AgentResultPanel({ agentId, result, loading, error, errorCode, r
             <p className="text-sm font-medium text-red-700 mb-1">Gagal memproses</p>
             <p className="text-xs text-red-600">{error}</p>
             {errorCode && <p className="text-[10px] text-red-400 mt-1 font-mono">Kode: {errorCode}</p>}
+            {phaseFromCode(errorCode) && <p className="text-[10px] text-red-400 mt-0.5 font-mono">Fase: {phaseFromCode(errorCode)}</p>}
             {requestId && <p className="text-[10px] text-red-300 mt-0.5 font-mono">ID: {requestId}</p>}
             <div className="flex items-center gap-2 mt-3">
               <Button variant="outline" size="sm" onClick={onRegenerate}>

@@ -30,7 +30,7 @@ import type { AgentRunContext, AgentRunResult } from "@/src/ai/core/agent-types"
 
 // Generasi dokumen panjang (RPP 8000 token + retry) bisa melewati default
 // timeout serverless — tanpa ini fungsi diputus di tengah dan user melihat gagal.
-export const maxDuration = 150;
+export const maxDuration = 300;
 
 function makeRequestId(): string {
   return `ai_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;

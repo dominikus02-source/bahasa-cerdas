@@ -147,7 +147,7 @@ export interface StreamCallbacks {
   onProgress?: (message: string) => void;
   onProvider?: (provider: string, model: string) => void;
   onFinalResult?: (result: AgentRunResponse) => void;
-  onError?: (code: string, message: string) => void;
+  onError?: (code: string, message: string, requestId?: string) => void;
   onDone?: () => void;
 }
 
@@ -268,7 +268,7 @@ export function runAgentStream(
                 break;
               case "error":
                 hasErrorEvent = true;
-                callbacks.onError?.(event.code ?? "UNKNOWN", event.error ?? event.message ?? "Terjadi kesalahan.");
+                callbacks.onError?.(event.code ?? "UNKNOWN", event.error ?? event.message ?? "Terjadi kesalahan.", (event as { requestId?: string }).requestId);
                 break;
               case "done":
                 callbacks.onDone?.();

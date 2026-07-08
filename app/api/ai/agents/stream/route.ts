@@ -136,6 +136,11 @@ export async function POST(req: NextRequest) {
           if (event.type === "final_result") {
             hasFinalResult = true;
           }
+          // Sertakan requestId di event penting supaya UI bisa menampilkannya
+          if (event.type === "error" || event.type === "final_result") {
+            sendEvent({ ...event, requestId: context.requestId } as unknown as StreamEvent);
+            return;
+          }
           sendEvent(event);
         };
 

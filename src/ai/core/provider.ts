@@ -240,6 +240,47 @@ export interface ProviderStreamResult {
   };
 }
 
+/**
+ * Error khusus: stream terputus SETELAH sebagian teks diterima.
+ * Membawa teks parsial supaya pemanggil bisa menyelamatkan konten —
+ * dan supaya chain TIDAK berpindah provider (yang akan menyambung dua
+ * respons berbeda menjadi satu teks rusak).
+ */
+export class ProviderStreamInterruptedError extends Error {
+  constructor(
+    public readonly provider: string,
+    public readonly model: string,
+    public readonly partialText: string,
+    cause?: unknown
+  ) {
+    super(`[${provider}] stream interrupted after ${partialText.length} chars`);
+    this.name = "ProviderStreamInterruptedError";
+    if (cause instanceof Error) this.cause = cause;
+  }
+}
+
+/**
+ * Watchdog streaming: abort hanya bila TIDAK ADA chunk baru (idle),
+ * bukan durasi total — AbortSignal.timeout() lama memutus RPP panjang
+ * di tengah walau stream masih sehat.
+ */
+function createStreamWatchdog(connectMs = 30000, idleMs = 60000, totalMs = 280000) {
+  const controller = new AbortController();
+  const start = Date.now();
+  let timer: ReturnType<typeof setTimeout> = setTimeout(() => controller.abort(), connectMs);
+  return {
+    signal: controller.signal,
+    touch() {
+      clearTimeout(timer);
+      const sisaTotal = totalMs - (Date.now() - start);
+      timer = setTimeout(() => controller.abort(), Math.max(1000, Math.min(idleMs, sisaTotal)));
+    },
+    clear() {
+      clearTimeout(timer);
+    },
+  };
+}
+
 async function streamDeepSeek(
   req: ProviderRequest,
   onDelta: (text: string) => void
@@ -258,29 +299,43 @@ async function streamDeepSeek(
   if (req.responseFormat === "json") {
     streamBody.response_format = { type: "json_object" };
   }
-  const response = await fetch("https://api.deepseek.com/v1/chat/completions", {
-    method: "POST",
-    headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiKey}` },
-    body: JSON.stringify(streamBody),
-    signal: AbortSignal.timeout(req.timeoutMs),
-  });
+  const watchdog = createStreamWatchdog();
+  let acc = "";
+  try {
+    const response = await fetch("https://api.deepseek.com/v1/chat/completions", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiKey}` },
+      body: JSON.stringify(streamBody),
+      signal: watchdog.signal,
+    });
 
-  if (!response.ok) {
-    const status = response.status;
-    const body = await response.text().catch(() => "");
-    throw new ProviderHttpError("deepseek", status, body);
+    if (!response.ok) {
+      const status = response.status;
+      const body = await response.text().catch(() => "");
+      throw new ProviderHttpError("deepseek", status, body);
+    }
+
+    watchdog.touch();
+    const fullText = await collectStreamTextAndParseOpenAI(response, (d) => {
+      acc += d;
+      watchdog.touch();
+      onDelta(d);
+    });
+    const latencyMs = Date.now() - startTime;
+
+    return {
+      fullText,
+      provider: "deepseek",
+      model: req.model,
+      usage: { promptTokens: 0, completionTokens: 0, totalTokens: 0 },
+      latencyMs,
+    };
+  } catch (e) {
+    if (acc.trim().length > 0) throw new ProviderStreamInterruptedError("deepseek", req.model, acc, e);
+    throw e;
+  } finally {
+    watchdog.clear();
   }
-
-  const fullText = await collectStreamTextAndParseOpenAI(response, onDelta);
-  const latencyMs = Date.now() - startTime;
-
-  return {
-    fullText,
-    provider: "deepseek",
-    model: req.model,
-    usage: { promptTokens: 0, completionTokens: 0, totalTokens: 0 },
-    latencyMs,
-  };
 }
 
 /**
@@ -342,6 +397,9 @@ async function streamGemini(
   if (!apiKey) throw new Error("GEMINI_API_KEY not configured");
 
   const startTime = Date.now();
+  const watchdog = createStreamWatchdog();
+  let acc = "";
+  try {
   const response = await fetch(
     `https://generativelanguage.googleapis.com/v1beta/models/${req.model}:streamGenerateContent?alt=sse`,
     {
@@ -357,26 +415,37 @@ async function streamGemini(
           maxOutputTokens: req.maxTokens,
         },
       }),
-      signal: AbortSignal.timeout(req.timeoutMs),
+      signal: watchdog.signal,
     }
   );
 
-  if (!response.ok) {
-    const status = response.status;
-    const body = await response.text().catch(() => "");
-    throw new ProviderHttpError("gemini", status, body);
+    if (!response.ok) {
+      const status = response.status;
+      const body = await response.text().catch(() => "");
+      throw new ProviderHttpError("gemini", status, body);
+    }
+
+    watchdog.touch();
+    const fullText = await collectStreamTextAndParseGemini(response, (d) => {
+      acc += d;
+      watchdog.touch();
+      onDelta(d);
+    });
+    const latencyMs = Date.now() - startTime;
+
+    return {
+      fullText,
+      provider: "gemini",
+      model: req.model,
+      usage: { promptTokens: 0, completionTokens: 0, totalTokens: 0 },
+      latencyMs,
+    };
+  } catch (e) {
+    if (acc.trim().length > 0) throw new ProviderStreamInterruptedError("gemini", req.model, acc, e);
+    throw e;
+  } finally {
+    watchdog.clear();
   }
-
-  const fullText = await collectStreamTextAndParseGemini(response, onDelta);
-  const latencyMs = Date.now() - startTime;
-
-  return {
-    fullText,
-    provider: "gemini",
-    model: req.model,
-    usage: { promptTokens: 0, completionTokens: 0, totalTokens: 0 },
-    latencyMs,
-  };
 }
 
 /**
@@ -445,34 +514,47 @@ async function streamGroq(
     temperature: req.temperature,
     max_tokens: req.maxTokens,
     stream: true,
+    // Catatan: JANGAN kirim response_format json_object saat streaming —
+    // Groq menolak kombinasi itu (HTTP 400); prompt sudah memaksa JSON.
   };
-  if (req.responseFormat === "json") {
-    body.response_format = { type: "json_object" };
-  }
 
+  const watchdog = createStreamWatchdog();
+  let acc = "";
+  try {
   const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
     method: "POST",
     headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiKey}` },
     body: JSON.stringify(body),
-    signal: AbortSignal.timeout(req.timeoutMs),
+    signal: watchdog.signal,
   });
 
-  if (!response.ok) {
-    const status = response.status;
-    const text = await response.text().catch(() => "");
-    throw new ProviderHttpError("groq", status, text);
+    if (!response.ok) {
+      const status = response.status;
+      const text = await response.text().catch(() => "");
+      throw new ProviderHttpError("groq", status, text);
+    }
+
+    watchdog.touch();
+    const fullText = await collectStreamTextAndParseOpenAI(response, (d) => {
+      acc += d;
+      watchdog.touch();
+      onDelta(d);
+    });
+    const latencyMs = Date.now() - startTime;
+
+    return {
+      fullText,
+      provider: "groq",
+      model: req.model,
+      usage: { promptTokens: 0, completionTokens: 0, totalTokens: 0 },
+      latencyMs,
+    };
+  } catch (e) {
+    if (acc.trim().length > 0) throw new ProviderStreamInterruptedError("groq", req.model, acc, e);
+    throw e;
+  } finally {
+    watchdog.clear();
   }
-
-  const fullText = await collectStreamTextAndParseOpenAI(response, onDelta);
-  const latencyMs = Date.now() - startTime;
-
-  return {
-    fullText,
-    provider: "groq",
-    model: req.model,
-    usage: { promptTokens: 0, completionTokens: 0, totalTokens: 0 },
-    latencyMs,
-  };
 }
 
 /**
@@ -506,6 +588,10 @@ export async function streamProviderText(
     try {
       return await streamer({ ...req, model: getModelForProvider(providerName, req.model) }, onDelta);
     } catch (e) {
+      // Teks sudah mengalir ke client — berpindah provider akan menyambung
+      // dua respons berbeda jadi satu teks rusak. Lempar ke pemanggil agar
+      // teks parsial diselamatkan.
+      if (e instanceof ProviderStreamInterruptedError) throw e;
       const message = e instanceof ProviderHttpError
         ? `HTTP ${e.status}`
         : e instanceof Error
