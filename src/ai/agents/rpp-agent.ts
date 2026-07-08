@@ -175,10 +175,9 @@ OUTPUT JSON WAJIB mengandung field berikut:
 - remedialAndEnrichment: { remedial[], enrichment[] } — hanya jika includeRemedialEnrichment=true
 - reflection: { teacherReflection[], studentReflection[] }
 - teacherNotes: array catatan guru
-- lembarPengesahan: objek { teacherName, principalName, date } — hanya jika teacherName/principalName diisi
 
 ATURAN:
-1. Output JSON VALID SAJA. Tidak ada markdown fences. Tidak ada teks di luar JSON.
+1. Output adalah SATU objek JSON valid. BUKAN array. BUKAN daftar. Output JANGAN dibungkus kurung siku [...] atau kurung array.
 2. Jika user memberikan teacherName, schoolName, principalName, academicYear, gunakan sebagai identitas dokumen. Jika tidak ada, tulis "dapat disesuaikan" untuk identitas satuan pendidikan.
 3. Jangan menyertakan API key atau data pribadi dalam output.
 4. Kegiatan harus praktis, konkret, dan siap pakai di kelas. Setiap langkah harus bisa dieksekusi guru.
@@ -200,7 +199,53 @@ KUALITAS BAHASA:
 - Jangan terlalu umum. Output harus relevan dengan topik dan kelas yang diminta.
 - Jangan terlalu pendek. Setiap komponen harus substansial.
 
-editableText WAJIB: string berisi RPP/Modul Ajar lengkap dalam format teks dokumen yang rapi, bisa langsung dicopy dan diedit guru di Word/Google Docs. BUKAN JSON. Formatnya seperti dokumen sungguhan: judul, subjudul, poin-poin, dan paragraf. Sertakan Lembar Pengesahan di akhir dokumen jika user memberikan teacherName/principalName/schoolName.`,
+editableText WAJIB: string berisi RPP/Modul Ajar LENGKAP dalam format markdown/teks dokumen rapi yang bisa langsung dicopy dan diedit guru di Word/Google Docs. BUKAN JSON. BUKAN array. Format seperti dokumen sungguhan dengan heading, subheading, daftar, dan paragraf.
+
+Struktur editableText:
+# MODUL AJAR / RPP
+## [Nama Mata Pelajaran]
+
+### A. Identitas Dokumen
+- Nama Sekolah: ...
+- Nama Guru: ...
+- Nama Kepala Sekolah: ...
+- Mata Pelajaran: ...
+- Kelas/Fase: ...
+- Semester: ...
+- Tahun Ajaran: ...
+- Topik/Materi: ...
+- Alokasi Waktu: ...
+
+### B. Informasi Umum
+- Kompetensi Awal
+- Profil Pelajar Pancasila
+- Sarana dan Prasarana
+- Target Peserta Didik
+- Model Pembelajaran
+
+### C. Komponen Inti
+1. Capaian Pembelajaran
+2. Tujuan Pembelajaran
+3. Kriteria Ketercapaian
+4. Pemahaman Bermakna
+5. Pertanyaan Pemantik
+6. Materi Pembelajaran
+7. Kegiatan Pembelajaran (Pendahuluan, Inti, Penutup)
+8. Asesmen (Diagnostik, Formatif, Sumatif)
+9. Diferensiasi Pembelajaran
+10. Remedial dan Pengayaan
+11. Refleksi Guru dan Peserta Didik
+
+### D. Lampiran
+(LKPD, Rubrik, Bahan Bacaan sesuai permintaan user)
+
+### E. Lembar Pengesahan
+Mengetahui,
+Kepala Sekolah                    Guru Mata Pelajaran
+
+{principalName atau "disesuaikan"}                 {teacherName atau "disesuaikan"}
+
+editableText HARUS berupa dokumen lengkap dengan semua komponen di atas, dalam format markdown yang rapi dan siap cetak. editableText BUKAN JSON string — langsung konten dokumen.`,
   defaultModel: "deepseek-chat",
   temperature: 0.7,
   maxTokens: 8000,

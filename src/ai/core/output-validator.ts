@@ -103,22 +103,31 @@ export function validateAgentOutput(
 
 function validateRPPOutput(parsed: Record<string, unknown>): string | null {
   const issues: string[] = [];
+  const editable = parsed.editableText as string | undefined;
+
+  // Primary check: editableText must exist and be substantial
+  if (typeof editable !== "string" || !editable || editable.trim().length < 1000) {
+    issues.push("editableText harus minimal 1.000 karakter");
+  } else {
+    // Content quality checks on editableText
+    if (!editable.includes("Identitas") && !editable.includes("Identitas Dokumen") && !editable.includes("A. Identitas")) {
+      issues.push("editableText belum memuat bagian Identitas");
+    }
+    if (!editable.includes("Tujuan Pembelajaran") && !editable.includes("tujuan pembelajaran")) {
+      issues.push("editableText belum memuat Tujuan Pembelajaran");
+    }
+    if (!editable.includes("Kegiatan") && !editable.includes("Langkah")) {
+      issues.push("editableText belum memuat Kegiatan Pembelajaran");
+    }
+    if (!editable.includes("Asesmen") && !editable.includes("asesmen") && !editable.includes("Penilaian")) {
+      issues.push("editableText belum memuat Asesmen");
+    }
+  }
+
+  // Secondary checks on structured fields (informational only)
   if (!parsed.title || typeof parsed.title !== "string") issues.push("Field 'title' tidak terisi");
   if (!parsed.identity || typeof parsed.identity !== "object") issues.push("Field 'identity' tidak terisi");
-  if (!parsed.learningObjectives || !Array.isArray(parsed.learningObjectives) || parsed.learningObjectives.length < 1) {
-    issues.push("Minimal 1 learningObjective diperlukan");
-  }
-  if (!parsed.learningSteps || typeof parsed.learningSteps !== "object") issues.push("Field 'learningSteps' tidak terisi");
-  const steps = parsed.learningSteps as Record<string, unknown> | undefined;
-  if (!steps || !Array.isArray(steps.opening) || !Array.isArray(steps.core) || !Array.isArray(steps.closing)) {
-    issues.push("learningSteps harus memiliki opening, core, dan closing array");
-  }
-  if (!parsed.assessmentPlan || typeof parsed.assessmentPlan !== "object") issues.push("Field 'assessmentPlan' tidak terisi");
-  const assessment = parsed.assessmentPlan as Record<string, unknown> | undefined;
-  if (!assessment || !Array.isArray(assessment.formative)) issues.push("assessmentPlan.formative tidak terisi");
-  if (typeof parsed.editableText !== "string" || !parsed.editableText) {
-    issues.push("Field 'editableText' tidak boleh kosong");
-  }
+
   return issues.length > 0 ? issues.join("; ") : null;
 }
 

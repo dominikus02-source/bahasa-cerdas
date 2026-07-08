@@ -53,7 +53,66 @@ function QualityBadge({ score }: { score: number }) {
   return <Badge variant="destructive">{score}/100</Badge>;
 }
 
-function StructuredRPP({ output }: { output: Record<string, unknown> }) {
+function RPPDisplay({ output }: { output: Record<string, unknown> }) {
+  const editableText = output.editableText as string | undefined;
+  const displayText = output.displayText as string | undefined;
+  const text = output.text as string | undefined;
+
+  // Prioritize editableText > displayText > text > structured rendering
+  const mainContent = editableText || displayText || text || "";
+
+  if (mainContent.trim().length > 0) {
+    return (
+      <div className="p-4 bg-white border border-gray-100 rounded-xl">
+        <div className="prose prose-sm max-w-none prose-headings:text-gray-900 prose-headings:font-semibold prose-p:text-gray-700 prose-ul:text-gray-700 prose-li:text-gray-700 prose-strong:text-gray-900">
+          <RPPContent text={mainContent} />
+        </div>
+      </div>
+    );
+  }
+
+  // Fallback: structured rendering
+  return <StructuredRPPFallback output={output} />;
+}
+
+function RPPContent({ text }: { text: string }) {
+  const lines = text.split("\n").filter(Boolean);
+  return (
+    <div className="whitespace-pre-wrap font-sans text-sm leading-relaxed">
+      {lines.map((line, i) => {
+        // Headings
+        if (line.startsWith("### ")) {
+          return <h3 key={i} className="text-base font-semibold text-gray-900 mt-4 mb-2">{line.replace("### ", "")}</h3>;
+        }
+        if (line.startsWith("## ")) {
+          return <h2 key={i} className="text-lg font-bold text-gray-900 mt-5 mb-2">{line.replace("## ", "")}</h2>;
+        }
+        if (line.startsWith("# ")) {
+          return <h1 key={i} className="text-xl font-bold text-gray-900 mt-5 mb-3">{line.replace("# ", "")}</h1>;
+        }
+        // Bullet points
+        if (line.startsWith("- ")) {
+          return <p key={i} className="text-gray-700 ml-4 mb-1">• {line.slice(2)}</p>;
+        }
+        if (/^\d+\.\s/.test(line)) {
+          return <p key={i} className="text-gray-700 ml-4 mb-1">{line}</p>;
+        }
+        // Bold markers
+        if (line.includes("**") && line.includes("**", line.indexOf("**") + 2)) {
+          return <p key={i} className="text-gray-700 mb-1"><strong>{line.split("**").filter((_, idx) => idx % 2 === 1).join("")}</strong></p>;
+        }
+        // Regular text
+        if (line.trim()) {
+          return <p key={i} className="text-gray-700 mb-1">{line}</p>;
+        }
+        // Empty line
+        return <div key={i} className="h-2" />;
+      })}
+    </div>
+  );
+}
+
+function StructuredRPPFallback({ output }: { output: Record<string, unknown> }) {
   const steps = output.learningSteps as Record<string, string[]> | undefined;
   const assessment = output.assessmentPlan as Record<string, string[]> | undefined;
   const diff = output.differentiationStrategy as Record<string, string[]> | undefined;
@@ -573,7 +632,7 @@ export function AgentResultPanel({ agentId, result, loading, error, isStreaming 
       {/* Structured view based on agent type */}
       {result.output && (
         <>
-          {agentId === "rpp" && <StructuredRPP output={result.output} />}
+          {agentId === "rpp" && <RPPDisplay output={result.output} />}
           {agentId === "soal" && <StructuredSoal output={result.output} />}
           {agentId === "ppt" && <StructuredPPT output={result.output} />}
           {agentId === "review" && <StructuredReview output={result.output} />}
@@ -604,11 +663,11 @@ export function AgentResultPanel({ agentId, result, loading, error, isStreaming 
         <div>
           <div className="flex items-center justify-between mb-2">
             <p className="text-xs font-medium text-gray-500">Dokumen Siap Edit</p>
-            <CopyButton text={result.text} />
+            <CopyButton text={result.output?.editableText as string ?? result.text} />
           </div>
           <div className="p-3 bg-white border border-gray-200 rounded-xl max-h-80 overflow-y-auto">
             <pre className="text-xs text-gray-700 whitespace-pre-wrap font-sans leading-relaxed">
-              {result.text}
+              {(result.output?.editableText as string) || result.text}
             </pre>
           </div>
         </div>

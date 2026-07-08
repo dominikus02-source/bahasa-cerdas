@@ -150,37 +150,65 @@ export async function runAgentStream(
       const { cleaned, warnings: cleanWarn } = cleanJSONOutput(fullText);
       warn.push(...cleanWarn);
 
+      let parsed: unknown = null;
       try {
-        const parsed = JSON.parse(cleaned);
-        finalOutput = agent.outputSchema.parse(parsed) as unknown as AgentOutput;
+        parsed = JSON.parse(cleaned);
+      } catch {
+        // Will try to fix below
+      }
 
-        // Post-processing validation — warn only, don't fail
-        const postValidationIssue = validateAgentOutput(agent.id, parsed);
-        if (postValidationIssue) {
-          warn.push(postValidationIssue);
+      // If parsed is an array with a single element, unwrap it
+      if (Array.isArray(parsed) && parsed.length === 1) {
+        parsed = parsed[0];
+        warn.push("Output JSON dibungkus array — dibuka secara otomatis");
+      }
+
+      // Try Zod validation on the parsed result
+      if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) {
+        try {
+          finalOutput = agent.outputSchema.parse(parsed) as unknown as AgentOutput;
+          const postValidationIssue = validateAgentOutput(agent.id, parsed as Record<string, unknown>);
+          if (postValidationIssue) {
+            warn.push(postValidationIssue);
+          }
+        } catch {
+          // Schema validation failed — will try salvage
         }
-      } catch (firstError) {
-        // Attempt 1: tryFixJSON
+      }
+
+      // If first parse/validate failed, try tryFixJSON + array unwrap
+      if (!finalOutput) {
         try {
           const { fixed, success: fixOk, warnings: fixWarn } = tryFixJSON(fullText);
           warn.push(...fixWarn);
           if (fixOk) {
-            const parsed = JSON.parse(fixed);
-            finalOutput = agent.outputSchema.parse(parsed) as unknown as AgentOutput;
-            const postValidationIssue = validateAgentOutput(agent.id, parsed);
-            if (postValidationIssue) {
-              warn.push(postValidationIssue);
+            let fixedParsed: unknown = JSON.parse(fixed);
+            if (Array.isArray(fixedParsed) && fixedParsed.length === 1) {
+              fixedParsed = fixedParsed[0];
+            }
+            if (fixedParsed && typeof fixedParsed === "object" && !Array.isArray(fixedParsed)) {
+              finalOutput = agent.outputSchema.parse(fixedParsed) as unknown as AgentOutput;
+              const postValidationIssue = validateAgentOutput(agent.id, fixedParsed as Record<string, unknown>);
+              if (postValidationIssue) {
+                warn.push(postValidationIssue);
+              }
             }
           }
         } catch {
-          // Both attempts failed — salvage raw text instead of failing
+          // Both attempts failed
         }
       }
 
-      // Salvage: if still no valid output, return raw text
+      // Salvage: if still no valid output, extract editableText or show raw text
       if (!finalOutput) {
-        warn.push("Output tidak dalam format JSON yang diharapkan. Teks mentah ditampilkan.");
-        finalOutput = { text: fullText } as unknown as AgentOutput;
+        const displayText = salvageDisplayText(parsed ?? fullText);
+        if (displayText) {
+          warn.push("Output tidak sesuai format yang diharapkan — konten ditampilkan apa adanya");
+          finalOutput = { text: displayText } as unknown as AgentOutput;
+        } else {
+          warn.push("AI tidak menghasilkan output yang valid");
+          finalOutput = { text: "" } as unknown as AgentOutput;
+        }
       }
     } else {
       finalOutput = { text: fullText } as unknown as AgentOutput;
@@ -262,4 +290,40 @@ export async function runAgentStream(
     onEvent({ type: "error", code: "INTERNAL_ERROR", message: "Terjadi kesalahan internal server. Silakan coba lagi." });
     onEvent({ type: "done" });
   }
+}
+
+/**
+ * Extract displayable text from a salvage attempt.
+ * Handles: parsed JSON object with editableText, object with text field, or raw string.
+ */
+function salvageDisplayText(raw: unknown): string | null {
+  if (!raw) return null;
+
+  // If raw is a string
+  if (typeof raw === "string") {
+    const trimmed = raw.trim();
+    if (trimmed.length > 0) return trimmed;
+    return null;
+  }
+
+  // If raw is an object with editableText
+  if (typeof raw === "object" && !Array.isArray(raw)) {
+    const obj = raw as Record<string, unknown>;
+    if (typeof obj.editableText === "string" && obj.editableText.trim().length > 0) {
+      return obj.editableText;
+    }
+    if (typeof obj.displayText === "string" && obj.displayText.trim().length > 0) {
+      return obj.displayText;
+    }
+    if (typeof obj.text === "string" && obj.text.trim().length > 0) {
+      return obj.text;
+    }
+  }
+
+  // If raw is an array, try first element
+  if (Array.isArray(raw) && raw.length > 0) {
+    return salvageDisplayText(raw[0]);
+  }
+
+  return null;
 }
