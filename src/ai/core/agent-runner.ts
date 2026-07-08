@@ -33,6 +33,7 @@ import {
 } from "./output-validator";
 import { logUsage } from "./usage-logger";
 import { checkEducationQuality } from "../evaluators/education-quality-checker";
+import { generateRPPFallback } from "./rpp-fallback-template";
 
 export interface RunAgentOptions {
   agent: AgentDefinition<any, any>;
@@ -83,24 +84,34 @@ async function attemptProviderCall(
     } else {
       output = { text: rawContent } as unknown as AgentOutput;
     }
-  } catch (e) {
-    // Try to fix JSON
-    const { fixed, success } = tryFixJSON(rawContent);
-    if (success) {
-      try {
-        const parsed = JSON.parse(fixed);
-        output = agent.outputSchema.parse(parsed) as unknown as AgentOutput;
-        postValidationError = validateAgentOutput(agent.id, parsed);
-        if (postValidationError) {
-          output = null;
+    } catch (e) {
+      // Try to fix JSON
+      const { fixed, success } = tryFixJSON(rawContent);
+      if (success) {
+        try {
+          const parsed = JSON.parse(fixed);
+          output = agent.outputSchema.parse(parsed) as unknown as AgentOutput;
+          postValidationError = validateAgentOutput(agent.id, parsed);
+          if (postValidationError) {
+            output = null;
+          }
+        } catch {
+          parseError = e instanceof Error ? e.message : "Parse error";
         }
-      } catch {
+      } else {
         parseError = e instanceof Error ? e.message : "Parse error";
       }
-    } else {
-      parseError = e instanceof Error ? e.message : "Parse error";
     }
-  }
+
+    // Salvage: if all parsing/validation failed, try to extract text as fallback
+    if (!output && rawContent && rawContent.trim().length > 0) {
+      const cleaned = rawContent.replace(/```(?:json)?\n?/g, "").trim();
+      if (cleaned.length > 0) {
+        output = { text: cleaned } as unknown as AgentOutput;
+        postValidationError = null;
+        parseError = null;
+      }
+    }
 
   return {
     output,
@@ -212,6 +223,14 @@ export async function runAgent(opts: RunAgentOptions): Promise<AgentRunResult> {
         if (rawFallback) {
           salvagedText = rawFallback.replace(/```json\n?/g, "").replace(/\n?```/g, "").trim();
           warn.push("Format terstruktur gagal divalidasi — menampilkan hasil sebagai teks yang bisa diedit");
+        } else if (agent.id === "rpp" && typeof input === "object" && input !== null) {
+          // RPP fallback template when provider returns empty
+          try {
+            salvagedText = generateRPPFallback(input as any);
+            warn.push("RPP dibuat dengan template cadangan karena AI tidak menghasilkan output. Silakan lengkapi kembali sebelum digunakan.");
+          } catch {
+            finalError = OUTPUT_VALIDATION_FAILED;
+          }
         } else {
           finalError = OUTPUT_VALIDATION_FAILED;
         }

@@ -27,6 +27,7 @@ import { checkInput } from "./guardrails";
 import { cleanJSONOutput, tryFixJSON, validateAgentOutput } from "./output-validator";
 import { checkEducationQuality } from "../evaluators/education-quality-checker";
 import { logUsage } from "./usage-logger";
+import { generateRPPFallback } from "./rpp-fallback-template";
 
 export type StreamEvent =
   | { type: "start"; agentId: string }
@@ -199,12 +200,22 @@ export async function runAgentStream(
         }
       }
 
-      // Salvage: if still no valid output, extract editableText or show raw text
+      // Salvage: if still no valid output, try fallback template for RPP
       if (!finalOutput) {
         const displayText = salvageDisplayText(parsed ?? fullText);
         if (displayText) {
           warn.push("Output tidak sesuai format yang diharapkan — konten ditampilkan apa adanya");
           finalOutput = { text: displayText } as unknown as AgentOutput;
+        } else if (agentId === "rpp" && typeof input === "object" && input !== null) {
+          // RPP fallback template when provider fails
+          try {
+            const fallbackText = generateRPPFallback(input as any);
+            warn.push("RPP dibuat dengan template cadangan karena AI tidak menghasilkan output yang valid");
+            finalOutput = { text: fallbackText } as unknown as AgentOutput;
+          } catch {
+            warn.push("AI tidak menghasilkan output yang valid");
+            finalOutput = { text: "" } as unknown as AgentOutput;
+          }
         } else {
           warn.push("AI tidak menghasilkan output yang valid");
           finalOutput = { text: "" } as unknown as AgentOutput;

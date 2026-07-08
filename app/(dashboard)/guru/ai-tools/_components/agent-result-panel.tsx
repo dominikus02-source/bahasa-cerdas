@@ -23,6 +23,8 @@ interface AgentResultPanelProps {
   result: AgentResultData | null;
   loading: boolean;
   error: string | null;
+  errorCode?: string | null;
+  requestId?: string;
   isStreaming?: boolean;
   streamingText?: string;
   streamingProvider?: string;
@@ -606,7 +608,7 @@ function SubSection({ label, items }: { label: string; items?: string[] }) {
   );
 }
 
-export function AgentResultPanel({ agentId, result, loading, error, isStreaming = false, streamingText = "", streamingProvider = "", streamingModel = "", streamProgress = "", streamCancelled = false, streamIncomplete = false, onCancelStream, onRegenerate, onClear, onSuggestedAgent, onSave, saveState = "idle", saveError, onExportDocx, exportDocxState = "idle", onExportPptx, exportPptxState = "idle", onExportPdf, exportPdfState = "idle", resultSource, savedResultId }: AgentResultPanelProps) {
+export function AgentResultPanel({ agentId, result, loading, error, errorCode, requestId, isStreaming = false, streamingText = "", streamingProvider = "", streamingModel = "", streamProgress = "", streamCancelled = false, streamIncomplete = false, onCancelStream, onRegenerate, onClear, onSuggestedAgent, onSave, saveState = "idle", saveError, onExportDocx, exportDocxState = "idle", onExportPptx, exportPptxState = "idle", onExportPdf, exportPdfState = "idle", resultSource, savedResultId }: AgentResultPanelProps) {
   if (loading) {
     if (isStreaming && (streamingText || streamProgress || streamingProvider)) {
       return (
@@ -676,6 +678,7 @@ export function AgentResultPanel({ agentId, result, loading, error, isStreaming 
                   {streamCancelled ? "Pembuatan dihentikan" : "Streaming terputus"}
                 </p>
                 <p className="text-xs text-amber-600">{error}</p>
+                {errorCode && <p className="text-[10px] text-amber-400 mt-1 font-mono">Kode: {errorCode}</p>}
               </div>
             </div>
           </div>
@@ -711,10 +714,18 @@ export function AgentResultPanel({ agentId, result, loading, error, isStreaming 
           <div>
             <p className="text-sm font-medium text-red-700 mb-1">Gagal memproses</p>
             <p className="text-xs text-red-600">{error}</p>
-            <Button variant="outline" size="sm" className="mt-3" onClick={onRegenerate}>
-              <RotateCw className="w-3.5 h-3.5 mr-1" />
-              Coba Lagi
-            </Button>
+            {errorCode && <p className="text-[10px] text-red-400 mt-1 font-mono">Kode: {errorCode}</p>}
+            {requestId && <p className="text-[10px] text-red-300 mt-0.5 font-mono">ID: {requestId}</p>}
+            <div className="flex items-center gap-2 mt-3">
+              <Button variant="outline" size="sm" onClick={onRegenerate}>
+                <RotateCw className="w-3.5 h-3.5 mr-1" />
+                Coba Lagi
+              </Button>
+              <Button variant="ghost" size="sm" onClick={onClear}>
+                <X className="w-3.5 h-3.5 mr-1" />
+                Hapus
+              </Button>
+            </div>
           </div>
         </div>
       </div>

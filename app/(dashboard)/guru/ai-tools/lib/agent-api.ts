@@ -12,6 +12,8 @@ export interface AgentRunResponse {
   output: Record<string, unknown> | null;
   text: string | null;
   error: string | null;
+  code?: string | null;
+  requestId?: string;
   warnings: string[];
   qualityScore: number;
   provider: string;
@@ -30,6 +32,14 @@ export interface AgentRunResponse {
 
 export interface AgentErrorResponse {
   error: string;
+  code?: string;
+  requestId?: string;
+}
+
+export interface AgentErrorWithCode {
+  message: string;
+  code: string;
+  requestId?: string;
 }
 
 export interface QuotaErrorInfo {
@@ -84,11 +94,11 @@ export async function runAgent(
   });
 
   if (res.status === 401) {
-    throw new Error("Sesi Anda sudah berakhir. Silakan login kembali.");
+    throw new AgentErrorWithCodeClass("Sesi Anda sudah berakhir. Silakan login kembali.", "AUTH_REQUIRED");
   }
 
   if (res.status === 429) {
-    throw new Error("Batas penggunaan AI sementara tercapai. Coba lagi sebentar lagi atau tingkatkan paket Anda.");
+    throw new AgentErrorWithCodeClass("Batas penggunaan AI sementara tercapai. Coba lagi sebentar lagi atau tingkatkan paket Anda.", "RATE_LIMITED");
   }
 
   const data = await res.json();
@@ -100,10 +110,23 @@ export async function runAgent(
 
   if (!res.ok || data.success === false) {
     const msg = data.error || "Terjadi kesalahan. Silakan coba lagi.";
-    throw new Error(getUserFriendlyMessage(msg));
+    const code = data.code || "UNKNOWN_ERROR";
+    throw new AgentErrorWithCodeClass(getUserFriendlyMessage(msg), code, data.requestId);
   }
 
   return data as AgentRunResponse;
+}
+
+export class AgentErrorWithCodeClass extends Error {
+  public code: string;
+  public requestId?: string;
+
+  constructor(message: string, code: string, requestId?: string) {
+    super(message);
+    this.name = "AgentErrorWithCode";
+    this.code = code;
+    this.requestId = requestId;
+  }
 }
 
 export class QuotaExceededError extends Error {

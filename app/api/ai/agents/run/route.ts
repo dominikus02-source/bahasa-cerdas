@@ -32,6 +32,10 @@ import type { AgentRunContext, AgentRunResult } from "@/src/ai/core/agent-types"
 // timeout serverless — tanpa ini fungsi diputus di tengah dan user melihat gagal.
 export const maxDuration = 150;
 
+function makeRequestId(): string {
+  return `ai_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+}
+
 const QUOTA_ERROR = "Credit AI Anda sudah habis. Upgrade atau tunggu periode berikutnya.";
 const AUTH_ERROR = "Sesi Anda sudah berakhir. Silakan login kembali.";
 const FORBIDDEN_ERROR = "Fitur AI hanya tersedia untuk Guru, Admin, dan Founder.";
@@ -43,19 +47,26 @@ const UNLIMITED_ROLES = new Set(["ADMIN", "FOUNDER"]);
 
 export async function POST(req: NextRequest) {
   const startTime = Date.now();
+  const requestId = makeRequestId();
   let resolvedAgentId: string | null = null;
   let userId = "unknown";
   let userRole = "unknown";
 
+  function jsonError(error: string, code: string, status: number, extras?: Record<string, unknown>) {
+    return NextResponse.json({
+      success: false,
+      error,
+      code,
+      requestId,
+      ...extras,
+    }, { status });
+  }
+
   try {
     const user = await getUser();
     if (!user) {
-      console.log("[AI Agents Run] No user session");
-      return NextResponse.json({
-        success: false,
-        error: AUTH_ERROR,
-        code: "AUTH_REQUIRED",
-      }, { status: 401 });
+      console.log(`[AI Agents Run] No user session requestId=${requestId}`);
+      return jsonError(AUTH_ERROR, "AUTH_REQUIRED", 401);
     }
 
     userId = user.id;
@@ -65,11 +76,7 @@ export async function POST(req: NextRequest) {
     const isFounder = user.isFounder === true;
     if (!ALLOWED_ROLES.has(userRole) && !isFounder) {
       console.log(`[AI Agents Run] Forbidden: user=${userId} role=${userRole}`);
-      return NextResponse.json({
-        success: false,
-        error: FORBIDDEN_ERROR,
-        code: "FORBIDDEN_ROLE",
-      }, { status: 403 });
+      return jsonError(FORBIDDEN_ERROR, "FORBIDDEN_ROLE", 403);
     }
 
     // Parse body
@@ -77,20 +84,12 @@ export async function POST(req: NextRequest) {
     try {
       body = await req.json();
     } catch {
-      return NextResponse.json({
-        success: false,
-        error: "Data tidak valid. Mohon periksa kembali isian Anda.",
-        code: "INVALID_JSON",
-      }, { status: 400 });
+      return jsonError("Data tidak valid. Mohon periksa kembali isian Anda.", "INVALID_JSON", 400);
     }
 
     const agentId = typeof body.agentId === "string" ? body.agentId.trim() : "";
     if (!agentId) {
-      return NextResponse.json({
-        success: false,
-        error: "Fitur AI belum dipilih. Silakan pilih alat terlebih dahulu.",
-        code: "AGENT_ID_REQUIRED",
-      }, { status: 400 });
+      return jsonError("Fitur AI belum dipilih. Silakan pilih alat terlebih dahulu.", "AGENT_ID_REQUIRED", 400);
     }
 
     const input = (body.input ?? {}) as Record<string, unknown>;
@@ -99,12 +98,8 @@ export async function POST(req: NextRequest) {
     // Resolve alias to canonical agent ID
     const canonicalAgentId = resolveAgentId(agentId);
     if (!canonicalAgentId) {
-      console.log(`[AI Agents Run] Unknown agent alias: ${agentId} (user=${userId})`);
-      return NextResponse.json({
-        success: false,
-        error: AGENT_NOT_FOUND_ERROR,
-        code: "AGENT_NOT_FOUND",
-      }, { status: 404 });
+      console.log(`[AI Agents Run] Unknown agent alias: ${agentId} (user=${userId}) requestId=${requestId}`);
+      return jsonError(AGENT_NOT_FOUND_ERROR, "AGENT_NOT_FOUND", 404);
     }
 
     resolvedAgentId = canonicalAgentId;
@@ -112,12 +107,8 @@ export async function POST(req: NextRequest) {
     // Get registered agent
     const agent = getAgent(canonicalAgentId as never);
     if (!agent) {
-      console.log(`[AI Agents Run] Agent not registered: ${canonicalAgentId} (alias: ${agentId})`);
-      return NextResponse.json({
-        success: false,
-        error: AGENT_NOT_FOUND_ERROR,
-        code: "AGENT_NOT_FOUND",
-      }, { status: 404 });
+      console.log(`[AI Agents Run] Agent not registered: ${canonicalAgentId} (alias: ${agentId}) requestId=${requestId}`);
+      return jsonError(AGENT_NOT_FOUND_ERROR, "AGENT_NOT_FOUND", 404);
     }
 
     const agentLabel = AGENT_LABELS[canonicalAgentId as keyof typeof AGENT_LABELS] || canonicalAgentId;
@@ -136,10 +127,7 @@ export async function POST(req: NextRequest) {
       await ensureMonthlyLedger(user);
       const quotaCheck = await checkAndPrepareDeduction(user, canonicalAgentId, input);
       if (quotaCheck.blocked) {
-        return NextResponse.json({
-          success: false,
-          error: QUOTA_ERROR,
-          code: "QUOTA_EXCEEDED",
+        return jsonError(QUOTA_ERROR, "QUOTA_EXCEEDED", 402, {
           quota: {
             plan: quotaCheck.quota.plan,
             creditsRequired: quotaCheck.quota.creditsRequired,
@@ -149,7 +137,7 @@ export async function POST(req: NextRequest) {
             resetAt: quotaCheck.quota.period === "trial" ? null : new Date(new Date().getFullYear(), new Date().getMonth() + 1, 1).toISOString(),
             upgradeRecommended: true,
           },
-        }, { status: 402 });
+        });
       }
       quota = quotaCheck.quota;
       planInfo = quotaCheck.planInfo;
@@ -166,7 +154,7 @@ export async function POST(req: NextRequest) {
       db: null,
     };
 
-    console.log(`[AI Agents Run] START user=${userId} role=${userRole} agent=${canonicalAgentId} alias=${agentId} unlimited=${isUnlimited}`);
+    console.log(`[AI Agents Run] START requestId=${requestId} user=${userId} role=${userRole} agent=${canonicalAgentId} alias=${agentId} unlimited=${isUnlimited}`);
 
     const result: AgentRunResult = await runAgent({
       agent,
@@ -176,7 +164,22 @@ export async function POST(req: NextRequest) {
     });
 
     const durationMs = Date.now() - startTime;
-    console.log(`[AI Agents Run] END user=${userId} agent=${canonicalAgentId} success=${result.success} duration=${durationMs}ms`);
+    console.log(`[AI Agents Run] END requestId=${requestId} user=${userId} agent=${canonicalAgentId} success=${result.success} duration=${durationMs}ms`);
+
+    // Determine error code from result if failed
+    let errorCode: string | null = null;
+    if (!result.success) {
+      const err = (result.error || "").toLowerCase();
+      if (err.includes("output") && (err.includes("valid") || err.includes("format"))) {
+        errorCode = "OUTPUT_VALIDATION_ERROR";
+      } else if (err.includes("provider") || err.includes("timeout") || err.includes("busy")) {
+        errorCode = "PROVIDER_ERROR";
+      } else if (err.includes("empty") || err.includes("no output") || err.includes("tidak")) {
+        errorCode = "PROVIDER_EMPTY_RESPONSE";
+      } else {
+        errorCode = "UNKNOWN_ERROR";
+      }
+    }
 
     // Deduct credits only after successful result
     let deductionResult: { deducted: boolean; reason?: string } | undefined;
@@ -187,10 +190,12 @@ export async function POST(req: NextRequest) {
     // Build standardized response
     return NextResponse.json({
       success: result.success,
+      requestId,
       agentId: canonicalAgentId,
       output: result.output,
       text: result.text,
       error: result.success ? null : (result.error || GENERIC_ERROR),
+      code: errorCode,
       warnings: result.warnings || [],
       qualityScore: result.qualityScore || 0,
       provider: result.provider || "none",
@@ -201,6 +206,7 @@ export async function POST(req: NextRequest) {
         toolLabel: agentLabel,
         model: result.model || "unknown",
         createdAt: new Date().toISOString(),
+        requestId,
       },
       _quota: isUnlimited ? {
         mode: "unlimited",
@@ -222,36 +228,20 @@ export async function POST(req: NextRequest) {
     });
   } catch (error) {
     const durationMs = Date.now() - startTime;
-    console.error(`[AI Agents Run] ERROR user=${userId} role=${userRole} agent=${resolvedAgentId || "unknown"} duration=${durationMs}ms:`, error);
+    console.error(`[AI Agents Run] ERROR requestId=${requestId} user=${userId} role=${userRole} agent=${resolvedAgentId || "unknown"} duration=${durationMs}ms:`, error);
 
     if (error instanceof Error && error.name === "ProviderChainFailedError") {
-      return NextResponse.json({
-        success: false,
-        error: "Server kecerdasan artifisial sedang sibuk. Coba lagi beberapa saat.",
-        code: "PROVIDER_BUSY",
-        metadata: {
-          agentId: resolvedAgentId,
-          createdAt: new Date().toISOString(),
-        },
-      }, { status: 503 });
+      return jsonError("Server kecerdasan artifisial sedang sibuk. Coba lagi beberapa saat.", "PROVIDER_BUSY", 503, {
+        metadata: { agentId: resolvedAgentId, createdAt: new Date().toISOString(), requestId },
+      });
     }
 
     if (error instanceof SyntaxError) {
-      return NextResponse.json({
-        success: false,
-        error: "Data tidak valid. Mohon periksa kembali isian Anda.",
-        code: "INVALID_INPUT",
-      }, { status: 400 });
+      return jsonError("Data tidak valid. Mohon periksa kembali isian Anda.", "INVALID_INPUT", 400);
     }
 
-    return NextResponse.json({
-      success: false,
-      error: GENERIC_ERROR,
-      code: "INTERNAL_ERROR",
-      metadata: {
-        agentId: resolvedAgentId,
-        createdAt: new Date().toISOString(),
-      },
-    }, { status: 500 });
+    return jsonError(GENERIC_ERROR, "INTERNAL_ERROR", 500, {
+      metadata: { agentId: resolvedAgentId, createdAt: new Date().toISOString(), requestId },
+    });
   }
 }

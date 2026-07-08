@@ -205,8 +205,15 @@ KUALITAS BAHASA:
 - Jangan terlalu umum. Output harus relevan dengan topik dan kelas yang diminta.
 - Jangan terlalu pendek. Setiap komponen harus substansial.
 
-PRIORITAS UTAMA — EDITABLETEXT:
-editableText adalah SATU-SATUNYA output yang dilihat user. 80% token AI harus dihabiskan untuk membuat editableText yang sempurna. editableText harus berupa dokumen RPP/Modul Ajar siap print dalam format markdown dengan struktur berikut:
+PRIORITAS UTAMA — EDITABLETEXT (dalam JSON):
+Anda harus menghasilkan SATU objek JSON yang valid dengan field "editableText" berisi dokumen RPP/Modul Ajar siap print dalam format markdown. EDITABLETEXT adalah SATU-SATUNYA output yang dilihat user. 80% token AI harus dihabiskan untuk membuat konten editableText yang sempurna.
+
+Format JSON yang harus dihasilkan:
+{
+  "editableText": "seluruh dokumen RPP siap print dalam format markdown..."
+}
+
+Konten editableText harus berupa dokumen RPP siap print dengan struktur berikut:
 
 ========================================
 HEADER DOKUMEN (blok pertama, rata kiri):
@@ -290,7 +297,7 @@ FOOTER DOKUMEN:
 ---
 *Dokumen ini dibuat dengan bantuan BahasaCerdas.com pada {tanggal sekarang}. Silakan menyesuaikan isi dokumen dengan Capaian Pembelajaran (CP) dan Alur Tujuan Pembelajaran (ATP) resmi, karakteristik peserta didik, serta kebijakan satuan pendidikan masing-masing.*
 
-ATURAN EDITABLETEXT:
+ATURAN EDITABLETEXT (dalam field "editableText" JSON):
 1. Tabel identitas menggunakan format markdown | kolom | kolom |
 2. Gunakan heading ### untuk sub-bagian A, B, C, D, E
 3. Gunakan **bold** untuk nama sub-komponen (seperti "Kompetensi Awal", "Tujuan Pembelajaran")
@@ -301,8 +308,8 @@ ATURAN EDITABLETEXT:
 8. Jumlah karakter editableText minimal 1.800 karakter
 9. Jangan menulis "sebagai AI", "saya adalah AI", atau "saya tidak bisa"
 10. Gunakan Bahasa Indonesia formal pendidikan — mudah diedit guru, siap print, siap diserahkan ke dinas
-
-editableText HARUS dokumen lengkap dengan header, tabel identitas, komponen A-E, lembar pengesahan, dan footer BahasaCerdas. BUKAN JSON. BUKAN array.`,
+11. editableText HARUS dokumen lengkap dengan header, tabel identitas, komponen A-E, lembar pengesahan, dan footer BahasaCerdas.
+12. SELURUH output HARUS SATU objek JSON — field "editableText" berisi markdown. Jangan output teks di luar objek JSON.`,
   defaultModel: "deepseek-chat",
   temperature: 0.7,
   maxTokens: 8000,

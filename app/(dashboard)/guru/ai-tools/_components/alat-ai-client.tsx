@@ -18,7 +18,7 @@ import { EydForm } from "./forms/eyd-form";
 import { FeedbackForm } from "./forms/feedback-form";
 import { GradingForm } from "./forms/grading-form";
 import { TextAnalysisForm } from "./forms/text-analysis-form";
-import { runAgent, runAgentStream, QuotaExceededError, type StreamCallbacks, type QuotaErrorInfo } from "../lib/agent-api";
+import { runAgent, runAgentStream, QuotaExceededError, AgentErrorWithCodeClass, type StreamCallbacks, type QuotaErrorInfo } from "../lib/agent-api";
 import { saveAiResult, listSavedResults, deleteSavedResult, updateSavedResult } from "../lib/saved-results-api";
 import { downloadDocxExport, downloadPptxExport, downloadPdfExport } from "../lib/export-api";
 import type { AgentId } from "../lib/agent-api";
@@ -95,6 +95,8 @@ export function AlatAiClient({ agentParam }: { agentParam?: string }) {
   const [isLoading, setIsLoading] = useState(false);
   const [currentResult, setCurrentResult] = useState<AgentResultData | null>(null);
   const [currentError, setCurrentError] = useState<string | null>(null);
+  const [currentErrorCode, setCurrentErrorCode] = useState<string | null>(null);
+  const [currentRequestId, setCurrentRequestId] = useState<string | undefined>(undefined);
   const [lastPayload, setLastPayload] = useState<Record<string, unknown> | null>(null);
 
   const [quotaError, setQuotaError] = useState<QuotaErrorInfo | null>(null);
@@ -209,8 +211,9 @@ export function AlatAiClient({ agentParam }: { agentParam?: string }) {
         setResultSource("generated");
         setStreamIncomplete(false);
       },
-      onError: (_code, message) => {
+      onError: (code, message) => {
         clearTimeout(fallbackTimer);
+        setCurrentErrorCode(code || "STREAM_ERROR");
         if (message === "Pembuatan dihentikan.") {
           isCancelled = true;
           setStreamCancelled(true);
@@ -250,13 +253,20 @@ export function AlatAiClient({ agentParam }: { agentParam?: string }) {
           model: data.model,
           latencyMs: data.latencyMs,
         });
+        setCurrentErrorCode(null);
+        setCurrentRequestId(data.requestId);
         setResultSource("generated");
         setStreamIncomplete(false);
       } catch (e) {
         if (e instanceof QuotaExceededError) {
           setQuotaError({ error: "QUOTA_EXCEEDED", message: e.message, quota: e.quota ?? undefined });
+        } else if (e instanceof AgentErrorWithCodeClass) {
+          setCurrentError(e.message);
+          setCurrentErrorCode(e.code);
+          setCurrentRequestId(e.requestId);
         } else {
           setCurrentError(e instanceof Error ? e.message : "Terjadi kesalahan. Silakan coba lagi.");
+          setCurrentErrorCode("UNKNOWN_ERROR");
         }
       }
     }
@@ -275,6 +285,8 @@ export function AlatAiClient({ agentParam }: { agentParam?: string }) {
     if (!lastPayload) return;
     setCurrentResult(null);
     setCurrentError(null);
+    setCurrentErrorCode(null);
+    setCurrentRequestId(undefined);
     setSavedResultId(null);
     setResultSource(null);
     setSaveState("idle");
@@ -673,6 +685,8 @@ export function AlatAiClient({ agentParam }: { agentParam?: string }) {
               result={currentResult}
               loading={isLoading}
               error={currentError}
+              errorCode={currentErrorCode}
+              requestId={currentRequestId}
               isStreaming={isStreaming}
               streamingText={streamingText}
               streamingProvider={streamingProvider}
