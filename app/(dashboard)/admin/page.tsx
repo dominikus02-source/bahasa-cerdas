@@ -84,29 +84,35 @@ async function getStats() {
     const pct = (cur: number, prev: number) =>
       prev === 0 ? (cur > 0 ? 100 : 0) : Math.round(((cur - prev) / prev) * 100);
 
-    // Payment stats
-    const totalPaymentsToday = await db.transaksi.count({ where: { type: "PREMIUM_UPGRADE", createdAt: { gte: new Date(now.getFullYear(), now.getMonth(), now.getDate()) } } });
-    const totalPaymentsPending = await db.transaksi.count({ where: { type: "PREMIUM_UPGRADE", status: "PENDING" } });
-    const totalPaymentsSuccess = await db.transaksi.count({ where: { type: "PREMIUM_UPGRADE", status: "SUCCESS" } });
-    const totalPaymentsRevenue = (await db.transaksi.aggregate({ _sum: { amount: true }, where: { type: "PREMIUM_UPGRADE", status: "SUCCESS" } }))._sum.amount || 0;
+    // 12 rentang mingguan (sama untuk tren user & karya)
+    const weekRanges = Array.from({ length: 12 }, (_, idx) => {
+      const i = 11 - idx;
+      const start = new Date(); start.setDate(start.getDate() - start.getDay() - i * 7); start.setHours(0, 0, 0, 0);
+      const end = new Date(start); end.setDate(end.getDate() + 7);
+      return { label: start.toLocaleDateString("id-ID", { day: "numeric", month: "short" }), start, end };
+    });
 
+    // Sebelumnya 28 query dijalankan sekuensial (~1 dtk+ latensi DB). Sekarang paralel.
+    const [
+      totalPaymentsToday,
+      totalPaymentsPending,
+      totalPaymentsSuccess,
+      paymentsRevenueAgg,
+      userTrendCounts,
+      karyaTrendCounts,
+    ] = await Promise.all([
+      db.transaksi.count({ where: { type: "PREMIUM_UPGRADE", createdAt: { gte: new Date(now.getFullYear(), now.getMonth(), now.getDate()) } } }),
+      db.transaksi.count({ where: { type: "PREMIUM_UPGRADE", status: "PENDING" } }),
+      db.transaksi.count({ where: { type: "PREMIUM_UPGRADE", status: "SUCCESS" } }),
+      db.transaksi.aggregate({ _sum: { amount: true }, where: { type: "PREMIUM_UPGRADE", status: "SUCCESS" } }),
+      Promise.all(weekRanges.map((w) => db.user.count({ where: { createdAt: { gte: w.start, lt: w.end } } }))),
+      Promise.all(weekRanges.map((w) => db.studentKarya.count({ where: { createdAt: { gte: w.start, lt: w.end } } }))),
+    ]);
+
+    const totalPaymentsRevenue = paymentsRevenueAgg._sum.amount || 0;
     const totalWithdrawalPending = pendingWithdrawals.reduce((s, w) => s + w.amount, 0);
-
-    const userTrend: { week: string; count: number }[] = [];
-    for (let i = 11; i >= 0; i--) {
-      const start = new Date(); start.setDate(start.getDate() - start.getDay() - i * 7); start.setHours(0, 0, 0, 0);
-      const end = new Date(start); end.setDate(end.getDate() + 7);
-      const count = await db.user.count({ where: { createdAt: { gte: start, lt: end } } });
-      userTrend.push({ week: start.toLocaleDateString("id-ID", { day: "numeric", month: "short" }), count });
-    }
-
-    const karyaTrend: { week: string; count: number }[] = [];
-    for (let i = 11; i >= 0; i--) {
-      const start = new Date(); start.setDate(start.getDate() - start.getDay() - i * 7); start.setHours(0, 0, 0, 0);
-      const end = new Date(start); end.setDate(end.getDate() + 7);
-      const count = await db.studentKarya.count({ where: { createdAt: { gte: start, lt: end } } });
-      karyaTrend.push({ week: start.toLocaleDateString("id-ID", { day: "numeric", month: "short" }), count });
-    }
+    const userTrend = weekRanges.map((w, i) => ({ week: w.label, count: userTrendCounts[i] }));
+    const karyaTrend = weekRanges.map((w, i) => ({ week: w.label, count: karyaTrendCounts[i] }));
 
     return {
       totals: { users: totalUsers, premium: premiumUsers, murid: muridUsers, guru: guruUsers, karya: totalKarya, video: totalVideo, artikel: totalArtikel, pembelian: totalPembelian, revenue: totalRevenue._sum.amount || 0, withdrawalPending: totalWithdrawalPending },

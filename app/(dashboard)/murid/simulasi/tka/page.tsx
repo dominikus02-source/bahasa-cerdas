@@ -12,7 +12,9 @@ export default async function TKASimulasiPage() {
   if (!user) redirect("/login")
 
   const dbUser = await db.user.findUnique({ where: { supabaseId: user.id } })
-  if (!dbUser || dbUser.role !== "MURID") redirect("/login")
+  if (!dbUser) redirect("/login")
+  // Founder/admin boleh melihat untuk pratinjau; murid = akses normal.
+  if (dbUser.role !== "MURID" && dbUser.role !== "ADMIN" && !dbUser.isFounder) redirect("/guru/beranda")
 
   const tracks = await getTKAPackages()
 

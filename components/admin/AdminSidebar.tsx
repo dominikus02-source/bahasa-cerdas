@@ -94,7 +94,7 @@ export function AdminSidebar({ user }: Props) {
             {showNotifs && (
               <>
                 <div className="fixed inset-0 z-40" onClick={() => setShowNotifs(false)} />
-                <div className="absolute right-0 top-full mt-2 w-80 bg-white rounded-xl border border-slate-200 shadow-xl z-50 max-h-96 overflow-y-auto">
+                <div className="absolute left-0 top-full mt-2 w-72 max-w-[calc(100vw-2rem)] bg-white rounded-xl border border-slate-200 shadow-xl z-50 max-h-96 overflow-y-auto">
                   <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100">
                     <span className="text-sm font-semibold text-slate-900">Notifikasi</span>
                     {unread > 0 && (
