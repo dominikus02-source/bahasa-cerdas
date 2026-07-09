@@ -305,8 +305,10 @@ export default function MateriAjarPage() {
                   try {
                     // 1. Upload file directly to Supabase Storage (bypass Vercel 4.5MB limit)
                     const supabase = createClient()
+                    const { data: { user } } = await supabase.auth.getUser()
+                    const userId = user?.id || "anonymous"
                     const fileExt = uploadFile.name.split(".").pop()?.toLowerCase() || "pdf"
-                    const fileName = `materi/${Date.now()}-${Math.random().toString(36).substring(2, 8)}.${fileExt}`
+                    const fileName = `${userId}/materi/${Date.now()}-${Math.random().toString(36).substring(2, 8)}.${fileExt}`
 
                     const { data: uploadData, error: uploadError } = await supabase.storage
                       .from("documents")
