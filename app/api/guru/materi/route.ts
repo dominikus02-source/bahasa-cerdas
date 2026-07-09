@@ -8,6 +8,11 @@ export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url);
     const page = parseInt(searchParams.get("page") || "1");
     const limit = parseInt(searchParams.get("limit") || "20");
+    const q = (searchParams.get("q") || "").trim();
+    const grade = (searchParams.get("grade") || "").trim();
+    const subject = (searchParams.get("subject") || "").trim();
+    const tema = (searchParams.get("tema") || "").trim();
+    const sort = searchParams.get("sort") || "recent"; // "recent" | "popular"
 
     let dbUser: any = null
 
@@ -32,14 +37,36 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    // Basis: materi yang dipublikasikan (bank bersama) atau milik sendiri.
+    // Ditambah filter pencarian tema/kata kunci/kelas/mapel (AND).
+    const and: any[] = [];
+    if (q) {
+      and.push({
+        OR: [
+          { title: { contains: q, mode: "insensitive" } },
+          { tema: { contains: q, mode: "insensitive" } },
+          { subtema: { contains: q, mode: "insensitive" } },
+          { description: { contains: q, mode: "insensitive" } },
+        ],
+      });
+    }
+    if (grade) and.push({ grade });
+    if (subject) and.push({ subject });
+    if (tema) and.push({ tema: { contains: tema, mode: "insensitive" } });
+    // Jenjang (SD/SMP/SMA) — nilai grade tersimpan seperti "SMP Kelas 7".
+    const level = (searchParams.get("level") || "").trim();
+    if (level) and.push({ grade: { startsWith: level } });
+
+    const where: any = { OR: [{ isPublished: true }, { uploaderId: dbUser.id }] };
+    if (and.length) where.AND = and;
+
+    const orderBy = sort === "popular"
+      ? [{ downloads: "desc" as const }, { createdAt: "desc" as const }]
+      : [{ createdAt: "desc" as const }];
+
     const [materis, total] = await Promise.all([
-      db.materi.findMany({
-        where: { OR: [{ isPublished: true }, { uploaderId: dbUser.id }] },
-        orderBy: { createdAt: "desc" },
-        skip: (page - 1) * limit,
-        take: limit,
-      }),
-      db.materi.count({ where: { OR: [{ isPublished: true }, { uploaderId: dbUser.id }] } }),
+      db.materi.findMany({ where, orderBy, skip: (page - 1) * limit, take: limit }),
+      db.materi.count({ where }),
     ]);
 
     return NextResponse.json({ data: materis, total, page, totalPages: Math.ceil(total / limit) });
@@ -80,6 +107,7 @@ export async function POST(req: NextRequest) {
     const tahunAjaran = formData.get("tahunAjaran") as string | null;
     const tema = formData.get("tema") as string | null;
     const subtema = formData.get("subtema") as string | null;
+    const subject = (formData.get("subject") as string | null) || "Bahasa Indonesia";
     const isPublished = formData.get("isPublished") === "true";
     const isPremium = formData.get("isPremium") === "true";
     const price = parseInt(formData.get("price") as string) || 0;
@@ -137,6 +165,7 @@ export async function POST(req: NextRequest) {
         tahunAjaran,
         tema,
         subtema,
+        subject,
         isPublished,
         isPremium,
         price,
@@ -253,5 +282,18 @@ export async function DELETE(req: NextRequest) {
   } catch (error) {
     console.error("DELETE /api/guru/materi error:", error);
     return NextResponse.json({ error: "Internal error" }, { status: 500 });
+  }
+}
+
+// Increment penghitung unduhan (fire-and-forget dari kartu modul).
+export async function PATCH(req: NextRequest) {
+  try {
+    const { id } = await req.json();
+    if (!id) return NextResponse.json({ error: "id wajib" }, { status: 400 });
+    await db.materi.update({ where: { id }, data: { downloads: { increment: 1 } } });
+    return NextResponse.json({ ok: true });
+  } catch {
+    // Jangan ganggu UX unduhan jika penghitung gagal.
+    return NextResponse.json({ ok: false });
   }
 }

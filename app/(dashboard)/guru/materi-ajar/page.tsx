@@ -5,7 +5,7 @@ import {
   Presentation, Search, Grid3x3, List,
   Maximize2, BookOpen, ChevronLeft, ChevronRight,
   Upload, X, Loader2, FileText, Check, AlertTriangle,
-  ExternalLink
+  ExternalLink, Sparkles, Download
 } from "lucide-react"
 import { MateriViewer } from "@/components/materi/MateriViewer"
 import { FILE_TYPE_LABELS } from "@/lib/upload"
@@ -52,17 +52,28 @@ export default function MateriAjarPage() {
   const [showViewer, setShowViewer] = useState(false)
   const [viewingMateri, setViewingMateri] = useState<Materi | null>(null)
   const [showUpload, setShowUpload] = useState(false)
-  const [uploadForm, setUploadForm] = useState({ title: "", description: "", grade: "SMP Kelas 7" })
-  const [uploadFile, setUploadFile] = useState<File | null>(null)
+  const [uploadForm, setUploadForm] = useState({ title: "", description: "", grade: "SMP Kelas 7", tema: "" })
+  const [uploadFiles, setUploadFiles] = useState<File[]>([])
   const [uploading, setUploading] = useState(false)
+  const [uploadProgress, setUploadProgress] = useState<{ done: number; total: number } | null>(null)
+  const [sort, setSort] = useState<"recent" | "popular">("recent")
+  const [debouncedSearch, setDebouncedSearch] = useState("")
+
+  // Debounce kotak pencarian → cari di server (bukan hanya di halaman yang termuat)
+  useEffect(() => {
+    const t = setTimeout(() => { setDebouncedSearch(search.trim()); setPage(1) }, 350)
+    return () => clearTimeout(t)
+  }, [search])
 
   const fetchMateris = useCallback(async () => {
     setLoading(true)
     try {
       let sid = ""
       try { const stored = localStorage.getItem("bc-user"); if (stored) sid = JSON.parse(stored).state?.supabaseId || "" } catch {}
-      const params = new URLSearchParams({ page: String(page), limit: "24" })
+      const params = new URLSearchParams({ page: String(page), limit: "24", sort })
       if (sid) params.set("supabaseId", sid)
+      if (debouncedSearch) params.set("q", debouncedSearch)
+      if (activeTab) params.set("level", activeTab)
       const res = await fetch(`/api/guru/materi?${params}`)
       const data = await res.json()
       if (data.data) {
@@ -74,7 +85,7 @@ export default function MateriAjarPage() {
     } finally {
       setLoading(false)
     }
-  }, [page])
+  }, [page, sort, debouncedSearch, activeTab])
 
   useEffect(() => { fetchMateris() }, [fetchMateris])
 
@@ -83,13 +94,8 @@ export default function MateriAjarPage() {
     setShowViewer(true)
   }
 
-  const grades = GRADES_BY_LEVEL[activeTab]
-  const filtered = materis.filter(m => {
-    const matchLevel = m.grade ? grades.includes(m.grade) : false
-    const matchSearch = m.title.toLowerCase().includes(search.toLowerCase()) ||
-      (m.description || "").toLowerCase().includes(search.toLowerCase())
-    return matchLevel && matchSearch
-  })
+  // Pencarian & filter jenjang dilakukan di server (lihat fetchMateris).
+  const filtered = materis
 
   return (
     <div>
@@ -97,14 +103,14 @@ export default function MateriAjarPage() {
           <div>
             <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
               <Presentation className="text-emerald-500" size={28} />
-              Materi Ajar
+              Bank Modul Ajar
             </h1>
-            <p className="text-gray-500 mt-1">Materi pembelajaran BahasaCerdas untuk SD–SMA</p>
+            <p className="text-gray-500 mt-1">Cari modul ajar sesuai tema, unduh, atau buat sendiri dengan AI</p>
           </div>
           <div className="flex items-center gap-3">
             <button onClick={() => setShowUpload(true)}
               className="flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-xl text-sm font-semibold hover:bg-emerald-700 transition-colors">
-              <Upload size={16} /> Unggah Materi
+              <Upload size={16} /> Unggah Modul
             </button>
             <div className="flex items-center gap-2 px-4 py-2 bg-emerald-50 text-emerald-700 rounded-xl text-sm font-medium">
               <BookOpen size={16} />
@@ -135,12 +141,21 @@ export default function MateriAjarPage() {
             <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
             <input
               type="text"
-              placeholder={`Cari materi ${activeTab}...`}
+              placeholder="Cari modul ajar berdasarkan tema, judul, atau kata kunci..."
               value={search}
               onChange={e => setSearch(e.target.value)}
               className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500"
             />
           </div>
+
+          <select
+            value={sort}
+            onChange={e => { setSort(e.target.value as "recent" | "popular"); setPage(1) }}
+            className="px-3 py-2.5 border border-gray-200 rounded-xl text-sm text-gray-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500"
+          >
+            <option value="recent">Terbaru</option>
+            <option value="popular">Terpopuler</option>
+          </select>
 
           <div className="flex border border-gray-200 rounded-xl overflow-hidden">
             <button
@@ -172,8 +187,16 @@ export default function MateriAjarPage() {
       ) : filtered.length === 0 ? (
         <div className="bg-white rounded-2xl border border-gray-100 p-12 text-center">
           <BookOpen size={48} className="mx-auto text-gray-300 mb-4" />
-          <h3 className="text-lg font-semibold text-gray-700 mb-1">Belum ada materi {activeTab}</h3>
-          <p className="text-gray-500">Materi akan ditambahkan oleh admin BahasaCerdas</p>
+          <h3 className="text-lg font-semibold text-gray-700 mb-1">
+            {debouncedSearch ? `Tidak ada modul ajar untuk "${debouncedSearch}"` : `Belum ada modul ajar ${activeTab}`}
+          </h3>
+          <p className="text-gray-500 mb-4">
+            {debouncedSearch ? "Coba kata kunci/tema lain, atau buat sendiri dengan AI." : "Unggah modul ajar atau buat dengan AI."}
+          </p>
+          <a href="/guru/ai-tools?tool=rpp" target="_blank" rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-violet-600 text-white rounded-xl text-sm font-semibold hover:bg-violet-700 transition-colors">
+            <Sparkles size={16} /> Buat dengan AI
+          </a>
         </div>
       ) : viewMode === "grid" ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
@@ -246,14 +269,21 @@ export default function MateriAjarPage() {
             <button onClick={() => { if (!uploading) setShowUpload(false) }} className="absolute top-3 right-3 w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center">
               <X size={16} className="text-gray-500" />
             </button>
-            <h2 className="font-bold text-lg text-gray-900 mb-4">Upload Materi Ajar</h2>
+            <h2 className="font-bold text-lg text-gray-900 mb-1">Unggah Modul Ajar</h2>
+            <p className="text-xs text-gray-500 mb-4">Bisa pilih banyak file Word/PDF sekaligus. Isi tema agar mudah ditemukan guru saat mencari.</p>
 
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-semibold text-gray-600 mb-1">Judul *</label>
+                <label className="block text-sm font-semibold text-gray-600 mb-1">Tema *</label>
+                <input value={uploadForm.tema} onChange={e => setUploadForm({ ...uploadForm, tema: e.target.value })}
+                  className="w-full rounded-xl border-2 border-gray-200 px-4 py-2.5 text-sm focus:border-emerald-500 focus:outline-none"
+                  placeholder="mis. Teks Deskripsi, Puisi, Teks Prosedur" />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-gray-600 mb-1">Judul <span className="font-normal text-gray-400">(opsional — jika banyak file, otomatis dari nama file)</span></label>
                 <input value={uploadForm.title} onChange={e => setUploadForm({ ...uploadForm, title: e.target.value })}
                   className="w-full rounded-xl border-2 border-gray-200 px-4 py-2.5 text-sm focus:border-emerald-500 focus:outline-none"
-                  placeholder="RPP Teks Deskripsi Kelas 7" />
+                  placeholder="Kosongkan untuk memakai nama file" />
               </div>
               <div>
                 <label className="block text-sm font-semibold text-gray-600 mb-1">Deskripsi</label>
@@ -261,7 +291,7 @@ export default function MateriAjarPage() {
                   className="w-full rounded-xl border-2 border-gray-200 px-4 py-2.5 text-sm focus:border-emerald-500 focus:outline-none" rows={2} />
               </div>
               <div>
-                <label className="block text-sm font-semibold text-gray-600 mb-1">Jenjang *</label>
+                <label className="block text-sm font-semibold text-gray-600 mb-1">Jenjang / Kelas *</label>
                 <select value={uploadForm.grade} onChange={e => setUploadForm({ ...uploadForm, grade: e.target.value })}
                   className="w-full rounded-xl border-2 border-gray-200 px-4 py-2.5 text-sm focus:border-emerald-500 focus:outline-none">
                   {Object.entries(GRADES_BY_LEVEL).flatMap(([level, grades]) => grades.map(g => ({ level, grade: g }))).map(({ level, grade }) => (
@@ -270,93 +300,98 @@ export default function MateriAjarPage() {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-semibold text-gray-600 mb-1">File *</label>
-                <input type="file" accept=".pdf,.pptx,.docx,.xlsx,.zip,.mp4"
-                  onChange={e => setUploadFile(e.target.files?.[0] || null)}
+                <label className="block text-sm font-semibold text-gray-600 mb-1">File * <span className="font-normal text-gray-400">(bisa pilih banyak)</span></label>
+                <input type="file" multiple accept=".pdf,.docx,.pptx,.xlsx,.zip"
+                  onChange={e => {
+                    const picked = Array.from(e.target.files || [])
+                    const allowed = ["pdf", "docx", "pptx", "xlsx", "zip"]
+                    const valid = picked.filter(f => allowed.includes(f.name.split(".").pop()?.toLowerCase() || ""))
+                    if (valid.length < picked.length) alert("Sebagian file dilewati — hanya PDF, DOCX, PPTX, XLSX, ZIP.")
+                    setUploadFiles(valid)
+                  }}
                   className="hidden" id="materi-file-input" />
                 <label htmlFor="materi-file-input"
-                  className="flex items-center gap-3 border-2 border-dashed border-gray-300 rounded-xl p-4 cursor-pointer hover:border-emerald-500 hover:bg-emerald-50 transition-colors">
-                  {uploadFile ? (
-                    <div className="flex items-center gap-2 flex-1 min-w-0">
-                      <FileText size={20} className="text-emerald-600 shrink-0" />
-                      <span className="text-sm font-medium text-gray-700 truncate">{uploadFile.name}</span>
-                      <span className="text-xs text-gray-400 shrink-0">({(uploadFile.size / 1024 / 1024).toFixed(1)} MB)</span>
-                      <button onClick={e => { e.stopPropagation(); setUploadFile(null) }} className="p-1 rounded hover:bg-red-100 ml-auto">
-                        <X size={14} className="text-red-500" />
-                      </button>
-                    </div>
-                  ) : (
-                    <div className="flex items-center gap-2 flex-1 justify-center">
-                      <Upload size={20} className="text-gray-400" />
-                      <span className="text-sm text-gray-500 font-medium">Klik untuk pilih file</span>
-                    </div>
-                  )}
+                  className="flex items-center gap-2 justify-center border-2 border-dashed border-gray-300 rounded-xl p-4 cursor-pointer hover:border-emerald-500 hover:bg-emerald-50 transition-colors">
+                  <Upload size={20} className="text-gray-400" />
+                  <span className="text-sm text-gray-500 font-medium">{uploadFiles.length > 0 ? `${uploadFiles.length} file dipilih — klik untuk ganti` : "Klik untuk pilih file (bisa banyak)"}</span>
                 </label>
-                <p className="text-[10px] text-gray-400 mt-1">PDF, PPTX, DOCX, XLSX, ZIP, MP4 — Maks 50MB</p>
+                {uploadFiles.length > 0 && (
+                  <div className="mt-2 max-h-32 overflow-y-auto space-y-1">
+                    {uploadFiles.map((f, i) => (
+                      <div key={i} className="flex items-center gap-2 text-xs bg-gray-50 rounded-lg px-2 py-1.5">
+                        <FileText size={14} className="text-emerald-600 shrink-0" />
+                        <span className="truncate flex-1 text-gray-700">{f.name}</span>
+                        <span className="text-gray-400 shrink-0">{(f.size / 1024 / 1024).toFixed(1)} MB</span>
+                        <button onClick={() => setUploadFiles(files => files.filter((_, idx) => idx !== i))} className="p-0.5 rounded hover:bg-red-100 shrink-0">
+                          <X size={12} className="text-red-500" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                <p className="text-[10px] text-gray-400 mt-1">Word (DOCX), PDF, PPTX, XLSX, ZIP — Maks 50MB per file</p>
               </div>
+              {uploadProgress && (
+                <div className="text-xs text-emerald-700 bg-emerald-50 rounded-lg px-3 py-2">
+                  Mengunggah {uploadProgress.done}/{uploadProgress.total} file...
+                </div>
+              )}
               <div className="flex gap-3 pt-2">
-                <button onClick={() => { setShowUpload(false); setUploadFile(null); setUploadForm({ title: "", description: "", grade: "SMP Kelas 7" }) }}
-                  className="flex-1 py-2.5 border-2 border-gray-200 rounded-xl text-sm font-semibold text-gray-600 hover:bg-gray-50 transition-colors">
+                <button onClick={() => { setShowUpload(false); setUploadFiles([]); setUploadForm({ title: "", description: "", grade: "SMP Kelas 7", tema: "" }) }}
+                  disabled={uploading}
+                  className="flex-1 py-2.5 border-2 border-gray-200 rounded-xl text-sm font-semibold text-gray-600 hover:bg-gray-50 disabled:opacity-50 transition-colors">
                   Batal
                 </button>
                 <button onClick={async () => {
-                  if (!uploadForm.title || !uploadFile) return
+                  if (uploadFiles.length === 0 || !uploadForm.tema.trim()) return
                   setUploading(true)
-                  try {
-                    // 1. Upload file directly to Supabase Storage (bypass Vercel 4.5MB limit)
-                    const supabase = createClient()
-                    const { data: { user } } = await supabase.auth.getUser()
-                    const userId = user?.id || "anonymous"
-                    const fileExt = uploadFile.name.split(".").pop()?.toLowerCase() || "pdf"
-                    const fileName = `${userId}/materi/${Date.now()}-${Math.random().toString(36).substring(2, 8)}.${fileExt}`
-
-                    const { data: uploadData, error: uploadError } = await supabase.storage
-                      .from("documents")
-                      .upload(fileName, uploadFile, {
-                        cacheControl: "31536000",
-                        upsert: false,
-                      })
-
-                    if (uploadError) {
-                      const isRLS = uploadError.message?.toLowerCase().includes("row-level security") ||
-                                    uploadError.message?.includes("policy")
-                      if (isRLS) {
-                        alert("Izin upload ditolak. Hubungi admin untuk mengaktifkan izin storage.")
+                  setUploadProgress({ done: 0, total: uploadFiles.length })
+                  const supabase = createClient()
+                  const { data: { user } } = await supabase.auth.getUser()
+                  const userId = user?.id || "anonymous"
+                  let sid = ""
+                  try { const stored = localStorage.getItem("bc-user"); if (stored) sid = JSON.parse(stored).state?.supabaseId || "" } catch {}
+                  let ok = 0, failed = 0, rlsBlocked = false
+                  for (const f of uploadFiles) {
+                    try {
+                      const fileExt = f.name.split(".").pop()?.toLowerCase() || "pdf"
+                      const fileName = `${userId}/materi/${Date.now()}-${Math.random().toString(36).substring(2, 8)}.${fileExt}`
+                      const { data: uploadData, error: uploadError } = await supabase.storage
+                        .from("documents").upload(fileName, f, { cacheControl: "31536000", upsert: false })
+                      if (uploadError || !uploadData) {
+                        if (uploadError?.message?.toLowerCase().includes("row-level security") || uploadError?.message?.includes("policy")) rlsBlocked = true
+                        failed++
                       } else {
-                        alert("Gagal upload file: " + uploadError.message)
+                        const { data: urlData } = supabase.storage.from("documents").getPublicUrl(uploadData.path)
+                        const baseName = f.name.replace(/\.[^.]+$/, "")
+                        const title = (uploadFiles.length === 1 && uploadForm.title.trim()) ? uploadForm.title.trim() : baseName
+                        const fd = new FormData()
+                        fd.set("title", title)
+                        fd.set("description", uploadForm.description)
+                        fd.set("grade", uploadForm.grade)
+                        fd.set("tema", uploadForm.tema.trim())
+                        fd.set("isPublished", "true")
+                        fd.set("fileUrl", urlData.publicUrl)
+                        fd.set("fileKey", uploadData.path)
+                        fd.set("fileType", fileExt.toUpperCase())
+                        if (sid) fd.set("supabaseId", sid)
+                        const res = await fetch("/api/guru/materi", { method: "POST", body: fd })
+                        if (res.ok) ok++; else failed++
                       }
-                      return
-                    }
-
-                    const { data: urlData } = supabase.storage.from("documents").getPublicUrl(uploadData.path)
-
-                    // 2. Send metadata only to API (no file)
-                    let sid = ""
-                    try { const stored = localStorage.getItem("bc-user"); if (stored) sid = JSON.parse(stored).state?.supabaseId || "" } catch {}
-                    const fd = new FormData()
-                    fd.set("title", uploadForm.title)
-                    fd.set("description", uploadForm.description)
-                    fd.set("grade", uploadForm.grade)
-                    fd.set("isPublished", "true")
-                    fd.set("fileUrl", urlData.publicUrl)
-                    fd.set("fileKey", uploadData.path)
-                    fd.set("fileType", fileExt.toUpperCase())
-                    if (sid) fd.set("supabaseId", sid)
-
-                    const res = await fetch("/api/guru/materi", { method: "POST", body: fd })
-                    const data = await res.json()
-                    if (res.ok) {
-                      setShowUpload(false); setUploadFile(null)
-                      setUploadForm({ title: "", description: "", grade: "SMP Kelas 7" })
-                      fetchMateris()
-                    } else {
-                      alert(data.error || "Gagal upload")
-                    }
-                  } catch (e: any) { alert(e?.message || "Error") }
-                  setUploading(false)
-                }} disabled={uploading || !uploadForm.title || !uploadFile}
+                    } catch { failed++ }
+                    setUploadProgress(p => ({ done: (p?.done || 0) + 1, total: uploadFiles.length }))
+                  }
+                  setUploading(false); setUploadProgress(null)
+                  if (rlsBlocked) alert("Izin upload ditolak. Hubungi admin untuk mengaktifkan izin storage.")
+                  else if (failed > 0) alert(`${ok} berhasil diunggah, ${failed} gagal.`)
+                  if (ok > 0) {
+                    setShowUpload(false); setUploadFiles([])
+                    setUploadForm({ title: "", description: "", grade: "SMP Kelas 7", tema: "" })
+                    setSort("recent"); setPage(1); fetchMateris()
+                  }
+                }} disabled={uploading || uploadFiles.length === 0 || !uploadForm.tema.trim()}
                   className="flex-1 py-2.5 bg-emerald-600 text-white rounded-xl text-sm font-semibold hover:bg-emerald-700 disabled:opacity-50 transition-colors flex items-center justify-center gap-2">
-                  {uploading ? <><Loader2 size={16} className="animate-spin" /> Mengunggah...</> : <><Upload size={16} /> Unggah</>}
+                  {uploading ? <><Loader2 size={16} className="animate-spin" /> Mengunggah...</> : <><Upload size={16} /> Unggah {uploadFiles.length > 0 ? `(${uploadFiles.length})` : ""}</>}
                 </button>
               </div>
             </div>
@@ -385,9 +420,14 @@ function MateriCard({ materi, onPresent }: { materi: Materi; onPresent: () => vo
             <span className="shrink-0 text-[10px] px-1.5 py-0.5 bg-emerald-100 text-emerald-700 rounded-full font-medium">Resmi</span>
           )}
         </div>
-        {materi.grade && (
-          <p className="text-xs text-gray-500 mb-3">{materi.grade}</p>
+        {materi.tema && (
+          <span className="inline-block text-[10px] px-2 py-0.5 bg-violet-50 text-violet-700 rounded-full font-medium mb-1.5">{materi.tema}</span>
         )}
+        <div className="flex items-center gap-2 text-xs text-gray-500 mb-3">
+          {materi.grade && <span>{materi.grade}</span>}
+          {materi.grade && <span className="text-gray-300">•</span>}
+          <span className="flex items-center gap-1"><Download size={11} /> {materi.downloads ?? 0}</span>
+        </div>
         {materi.fileUrl && (
           <div className="flex gap-2">
             {isPPT && (
@@ -397,8 +437,9 @@ function MateriCard({ materi, onPresent }: { materi: Materi; onPresent: () => vo
               </button>
             )}
             <a href={materi.fileUrl} target="_blank" rel="noopener noreferrer"
+              onClick={() => { fetch("/api/guru/materi", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: materi.id }) }).catch(() => {}) }}
               className={`${isPPT ? "flex-shrink-0 w-10" : "flex-1"} flex items-center justify-center gap-2 py-2.5 text-xs font-semibold text-white bg-emerald-600 rounded-lg hover:bg-emerald-700 transition-colors`}>
-              <ExternalLink size={14} /> {isPPT ? "" : "Buka Materi"}
+              <ExternalLink size={14} /> {isPPT ? "" : "Buka Modul"}
             </a>
           </div>
         )}
