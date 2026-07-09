@@ -5,18 +5,6 @@ import { Loader2, Sparkles, CheckCircle2, AlertTriangle, RotateCw, X, ArrowRight
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
-// Petakan kode error ke fase pipeline supaya guru/support tahu di mana gagalnya
-function phaseFromCode(code?: string | null): string | null {
-  if (!code) return null;
-  if (/AUTH/.test(code)) return "autentikasi";
-  if (/QUOTA/.test(code)) return "kuota";
-  if (/INPUT|AGENT_ID|AGENT_NOT_FOUND|INVALID_JSON/.test(code)) return "input";
-  if (/PROVIDER|EMPTY_RESPONSE|CONNECTION|STREAM|HTTP|INCOMPLETE/.test(code)) return "provider";
-  if (/VALID|PARSE|NORMALIZE/.test(code)) return "normalisasi";
-  if (/HISTORY|SAVE/.test(code)) return "penyimpanan";
-  return "server";
-}
-
 export interface AgentResultData {
   success: boolean;
   output: Record<string, unknown> | null;
@@ -618,20 +606,13 @@ export function AgentResultPanel({ agentId, result, loading, error, errorCode, r
     if (isStreaming && (streamingText || streamProgress || streamingProvider)) {
       return (
         <div className="space-y-4">
-          {streamingProvider && (
-            <div className="flex items-center justify-between flex-wrap gap-2 p-3 bg-gradient-to-r from-emerald-50 to-green-50 rounded-xl border border-emerald-100">
-              <div className="flex items-center gap-2">
-                <Loader2 className="w-4 h-4 animate-spin text-emerald-500" />
-                <span className="text-xs text-gray-500">
-                  {streamingProvider}/{streamingModel || "..."}
-                </span>
-                {streamProgress && (
-                  <span className="text-xs text-gray-400 ml-1">{streamProgress}</span>
-                )}
-              </div>
-              <span className="text-[10px] text-gray-400">Hasil sementara</span>
-            </div>
-          )}
+          <div className="flex items-center gap-2 p-3 bg-gradient-to-r from-emerald-50 to-green-50 rounded-xl border border-emerald-100">
+            <Loader2 className="w-4 h-4 animate-spin text-emerald-500" />
+            <span className="text-xs text-gray-600">AI sedang menulis...</span>
+            {streamProgress && (
+              <span className="text-xs text-gray-400 ml-1">{streamProgress}</span>
+            )}
+          </div>
           {streamingText ? (
             <div className="p-4 bg-white border border-gray-100 rounded-xl">
               <p className="text-xs text-gray-700 whitespace-pre-wrap font-sans leading-relaxed max-h-80 overflow-y-auto">
@@ -683,7 +664,6 @@ export function AgentResultPanel({ agentId, result, loading, error, errorCode, r
                   {streamCancelled ? "Pembuatan dihentikan" : "Streaming terputus"}
                 </p>
                 <p className="text-xs text-amber-600">{error}</p>
-                {errorCode && <p className="text-[10px] text-amber-400 mt-1 font-mono">Kode: {errorCode}</p>}
               </div>
             </div>
           </div>
@@ -719,9 +699,6 @@ export function AgentResultPanel({ agentId, result, loading, error, errorCode, r
           <div>
             <p className="text-sm font-medium text-red-700 mb-1">Gagal memproses</p>
             <p className="text-xs text-red-600">{error}</p>
-            {errorCode && <p className="text-[10px] text-red-400 mt-1 font-mono">Kode: {errorCode}</p>}
-            {phaseFromCode(errorCode) && <p className="text-[10px] text-red-400 mt-0.5 font-mono">Fase: {phaseFromCode(errorCode)}</p>}
-            {requestId && <p className="text-[10px] text-red-300 mt-0.5 font-mono">ID: {requestId}</p>}
             <div className="flex items-center gap-2 mt-3">
               <Button variant="outline" size="sm" onClick={onRegenerate}>
                 <RotateCw className="w-3.5 h-3.5 mr-1" />

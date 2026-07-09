@@ -79,23 +79,27 @@ export async function POST(req: NextRequest) {
       docEditableText = editableText;
     }
 
-    let buffer: Buffer;
+    let buffer: Buffer | null = null;
     let filename: string;
 
     if (agentId === "rpp") {
       const meta = getRPPMetadata(output);
       docTitle = title || meta.title;
-      try {
-        buffer = await generateRPPDocx({
-          title: docTitle,
-          output,
-          editableText: docEditableText,
-        });
-      } catch {
-        buffer = await generateFallbackDocx(docTitle, docEditableText ?? "");
+      const hasStructuredContent = output.identity && (output.learningObjectives || output.learningSteps);
+      if (hasStructuredContent) {
+        try {
+          buffer = await generateRPPDocx({
+            title: docTitle,
+            output,
+            editableText: docEditableText,
+          });
+          if (buffer && buffer.length < 200) buffer = null;
+        } catch {
+          buffer = null;
+        }
       }
-      if (!buffer || buffer.length < 100) {
-        buffer = await generateFallbackDocx(docTitle, docEditableText ?? "");
+      if (!buffer) {
+        buffer = await generateFallbackDocx(docTitle, docEditableText ?? docTitle);
       }
       filename = meta.filename;
     } else if (agentId === "soal") {
@@ -107,11 +111,12 @@ export async function POST(req: NextRequest) {
           output,
           editableText: docEditableText,
         });
+        if (buffer && buffer.length < 200) buffer = null;
       } catch {
-        buffer = await generateFallbackDocx(docTitle, docEditableText ?? "");
+        buffer = null;
       }
-      if (!buffer || buffer.length < 100) {
-        buffer = await generateFallbackDocx(docTitle, docEditableText ?? "");
+      if (!buffer) {
+        buffer = await generateFallbackDocx(docTitle, docEditableText ?? docTitle);
       }
       filename = meta.filename;
     } else {
@@ -132,12 +137,12 @@ export async function POST(req: NextRequest) {
     // Fire-and-forget export event logging
     logExportEvent(user.id, "docx", agentId, Date.now() - exportStartTime).catch(() => {});
 
-    return new NextResponse(new Uint8Array(buffer), {
+    return new NextResponse(new Uint8Array(buffer!), {
       status: 200,
       headers: {
         "Content-Type": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
         "Content-Disposition": `attachment; filename="${filename}"`,
-        "Content-Length": String(buffer.length),
+        "Content-Length": String(buffer!.length),
       },
     });
   } catch (error) {
