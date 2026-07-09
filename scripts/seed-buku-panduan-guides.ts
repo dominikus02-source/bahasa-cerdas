@@ -6,8 +6,13 @@
  * Usage:
  *   npx tsx scripts/seed-buku-panduan-guides.ts           # dry-run
  *   npx tsx scripts/seed-buku-panduan-guides.ts --execute  # write
+ *
+ * Requires DATABASE_URL. Next.js loads .env/.env.local automatically at
+ * runtime, but a standalone `tsx script` does not — the ./load-env import
+ * (kept first, before lib/db) handles that.
  */
 
+import "./load-env"
 import { db } from "../lib/db"
 import { allGrades, getAllChapters } from "../data/buku-panduan/index"
 
