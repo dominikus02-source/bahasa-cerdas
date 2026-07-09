@@ -89,8 +89,12 @@ function generateTitle(agentId: string, input: Record<string, unknown>, resultTe
 
 const VALID_AGENT_IDS = new Set(AGENTS.map((a) => a.id));
 
+// Agent yang disembunyikan dari menu (belum diperlukan). Tetap terdaftar di
+// AGENTS agar mudah diaktifkan lagi — cukup hapus id-nya dari set ini.
+const HIDDEN_AGENT_IDS = new Set<AgentId>(["soal", "ppt"]);
+
 export function AlatAiClient({ agentParam }: { agentParam?: string }) {
-  const initialAgent = agentParam && VALID_AGENT_IDS.has(agentParam as AgentId) ? (agentParam as AgentId) : "rpp";
+  const initialAgent = agentParam && VALID_AGENT_IDS.has(agentParam as AgentId) && !HIDDEN_AGENT_IDS.has(agentParam as AgentId) ? (agentParam as AgentId) : "rpp";
   const [selectedAgent, setSelectedAgent] = useState<AgentId>(initialAgent);
   const [isLoading, setIsLoading] = useState(false);
   const [currentResult, setCurrentResult] = useState<AgentResultData | null>(null);
@@ -557,12 +561,12 @@ export function AlatAiClient({ agentParam }: { agentParam?: string }) {
     }
   };
 
-  // Group agents by category
+  // Group agents by category (agent tersembunyi dikeluarkan; grup kosong dilewati)
   const groupedAgents = CATEGORY_ORDER.map((cat) => ({
     category: cat,
     label: CATEGORY_LABELS[cat],
-    agents: AGENTS.filter((a) => a.category === cat),
-  }));
+    agents: AGENTS.filter((a) => a.category === cat && !HIDDEN_AGENT_IDS.has(a.id)),
+  })).filter((group) => group.agents.length > 0);
 
   return (
     <div className="grid grid-cols-1 xl:grid-cols-4 gap-6">

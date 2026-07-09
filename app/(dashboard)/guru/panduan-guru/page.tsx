@@ -115,7 +115,7 @@ export default function PanduanGuruPage() {
           <BookOpen className="w-5 h-5" />
         </div>
         <div className="flex-1">
-          <h1 className="text-2xl font-bold text-slate-900">Buku Panduan Guru</h1>
+          <h1 className="text-2xl font-bold text-slate-900">Buku Ajar</h1>
           <p className="text-sm text-slate-500">Browse materi berdasarkan jenjang kelas &mdash; Kirim ke kelas sebagai penugasan</p>
         </div>
       </div>

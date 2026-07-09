@@ -5,7 +5,7 @@ import { useParams, useRouter } from "next/navigation"
 import {
   BookOpen, ArrowLeft, Send, CheckCircle, XCircle, Lightbulb,
   Target, Sparkles, Brain, Maximize2, Minimize2, Eye, EyeOff,
-  ChevronLeft, ChevronRight, ImageIcon, Loader2, Wand2,
+  ChevronLeft, ChevronRight, ImageIcon, Loader2,
   FileText, HelpCircle, ClipboardList,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -261,24 +261,7 @@ export default function UnitPreviewPage() {
           <FileText className="w-3.5 h-3.5 mr-1" />
           Buat RPP
         </Button>
-        <Button
-          size="sm"
-          variant="outline"
-          className="border-violet-200 text-violet-600 hover:bg-violet-50"
-          onClick={() => window.open(`/guru/ai-tools?tool=soal&topic=${encodeURIComponent(data.title)}&grade=${gradeParam}`, "_blank")}
-        >
-          <HelpCircle className="w-3.5 h-3.5 mr-1" />
-          Buat Soal
-        </Button>
-        <Button
-          size="sm"
-          variant="outline"
-          className="border-violet-200 text-violet-600 hover:bg-violet-50"
-          onClick={() => window.open(`/guru/ai-tools?tool=ppt&topic=${encodeURIComponent(data.title)}&grade=${gradeParam}`, "_blank")}
-        >
-          <Wand2 className="w-3.5 h-3.5 mr-1" />
-          Buat PPT
-        </Button>
+        {/* Pintasan "Buat Soal" & "Buat PPT" disembunyikan sementara (belum diperlukan). */}
       </div>
 
       <div className="flex gap-1 bg-slate-100 rounded-xl p-1 mb-6">

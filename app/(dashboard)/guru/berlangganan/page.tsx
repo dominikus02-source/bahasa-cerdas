@@ -10,7 +10,7 @@ import { loadMidtransSnap } from "@/lib/midtrans-client";
 const FEATURES = [
   { free: true, pro: true, label: "AI Tools (Buat RPP, Soal, PPT, dll)" },
   { free: true, pro: true, label: "Bank Soal & Kuis" },
-  { free: true, pro: true, label: "KelasKu & Buku Panduan" },
+  { free: true, pro: true, label: "KelasKu & Buku Ajar" },
   { free: true, pro: true, label: "Buku Nilai & Rapor" },
   { free: false, pro: true, label: "500 Kredit AI per bulan (Free: 30)" },
   { free: false, pro: true, label: "Ekspor PDF, DOCX, PPTX" },
