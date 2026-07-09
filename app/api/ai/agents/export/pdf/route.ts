@@ -95,27 +95,23 @@ export async function POST(req: NextRequest) {
       docEditableText = editableText;
     }
 
-    let buffer: Buffer | null = null;
+    let buffer: Buffer;
     let filename: string;
 
     if (agentId === "rpp") {
       const meta = getRPPMetadata(output);
       docTitle = title || meta.title;
-      const hasStructuredContent = output.identity && (output.learningObjectives || output.learningSteps);
-      if (hasStructuredContent) {
-        try {
-          buffer = await generateRPppdf({
-            title: docTitle,
-            output,
-            editableText: docEditableText,
-          });
-          if (buffer && buffer.length < 200) buffer = null;
-        } catch {
-          buffer = null;
-        }
+      try {
+        buffer = await generateRPppdf({
+          title: docTitle,
+          output,
+          editableText: docEditableText,
+        });
+      } catch {
+        buffer = await generateFallbackPdf(docTitle, docEditableText ?? "");
       }
-      if (!buffer) {
-        buffer = await generateFallbackPdf(docTitle, docEditableText ?? docTitle);
+      if (!buffer || buffer.length < 100) {
+        buffer = await generateFallbackPdf(docTitle, docEditableText ?? "");
       }
       filename = meta.filename;
     } else {
@@ -127,12 +123,11 @@ export async function POST(req: NextRequest) {
           output,
           editableText: docEditableText,
         });
-        if (buffer && buffer.length < 200) buffer = null;
       } catch {
-        buffer = null;
+        buffer = await generateFallbackPdf(docTitle, docEditableText ?? "");
       }
-      if (!buffer) {
-        buffer = await generateFallbackPdf(docTitle, docEditableText ?? docTitle);
+      if (!buffer || buffer.length < 100) {
+        buffer = await generateFallbackPdf(docTitle, docEditableText ?? "");
       }
       filename = meta.filename;
     }
@@ -141,12 +136,12 @@ export async function POST(req: NextRequest) {
     // Fire-and-forget export event logging
     logExportEvent(user.id, "pdf", agentId, Date.now() - exportStartTime).catch(() => {});
 
-    return new NextResponse(new Uint8Array(buffer!), {
+    return new NextResponse(new Uint8Array(buffer), {
       status: 200,
       headers: {
         "Content-Type": "application/pdf",
         "Content-Disposition": `attachment; filename="${filename}"`,
-        "Content-Length": String(buffer!.length),
+        "Content-Length": String(buffer.length),
       },
     });
   } catch (error) {
