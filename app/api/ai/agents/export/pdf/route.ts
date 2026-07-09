@@ -5,6 +5,7 @@ import { logExportEvent } from "@/src/ai/core/usage-logger";
 import { z } from "zod";
 import { generateRPppdf, getRPPMetadata } from "@/src/ai/export/pdf/rpp-pdf";
 import { generateSoalPdf, getSoalMetadata } from "@/src/ai/export/pdf/soal-pdf";
+import { generateFallbackPdf } from "@/src/ai/export/pdf/fallback-pdf";
 import { checkExportQuota, deductCreditsAtomic, ensureMonthlyLedger } from "@/lib/ai-gateway/quota-checker";
 import { resolveUserAiPlan } from "@/lib/ai-gateway/plan-resolver";
 
@@ -89,10 +90,7 @@ export async function POST(req: NextRequest) {
       docTitle = saved.title;
       docEditableText = saved.editableText;
     } else {
-      if (!outputJson) {
-        return NextResponse.json({ error: "outputJson tidak boleh kosong." }, { status: 400 });
-      }
-      output = outputJson;
+      output = outputJson ?? {};
       docTitle = title || (agentId === "rpp" ? "RPP" : "Soal");
       docEditableText = editableText;
     }
@@ -103,20 +101,34 @@ export async function POST(req: NextRequest) {
     if (agentId === "rpp") {
       const meta = getRPPMetadata(output);
       docTitle = title || meta.title;
-      buffer = await generateRPppdf({
-        title: docTitle,
-        output,
-        editableText: docEditableText,
-      });
+      try {
+        buffer = await generateRPppdf({
+          title: docTitle,
+          output,
+          editableText: docEditableText,
+        });
+      } catch {
+        buffer = await generateFallbackPdf(docTitle, docEditableText ?? "");
+      }
+      if (!buffer || buffer.length < 100) {
+        buffer = await generateFallbackPdf(docTitle, docEditableText ?? "");
+      }
       filename = meta.filename;
     } else {
       const meta = getSoalMetadata(output);
       docTitle = title || meta.title;
-      buffer = await generateSoalPdf({
-        title: docTitle,
-        output,
-        editableText: docEditableText,
-      });
+      try {
+        buffer = await generateSoalPdf({
+          title: docTitle,
+          output,
+          editableText: docEditableText,
+        });
+      } catch {
+        buffer = await generateFallbackPdf(docTitle, docEditableText ?? "");
+      }
+      if (!buffer || buffer.length < 100) {
+        buffer = await generateFallbackPdf(docTitle, docEditableText ?? "");
+      }
       filename = meta.filename;
     }
 

@@ -4,6 +4,7 @@ import { db as prisma } from "@/lib/db";
 import { logExportEvent } from "@/src/ai/core/usage-logger";
 import { z } from "zod";
 import { generateRPPDocx, getRPPMetadata } from "@/src/ai/export/docx/rpp-docx";
+import { generateFallbackDocx, getFallbackDocxMetadata } from "@/src/ai/export/docx/fallback-docx";
 import { generateSoalDocx, getSoalMetadata } from "@/src/ai/export/docx/soal-docx";
 import { checkExportQuota, deductCreditsAtomic, ensureMonthlyLedger } from "@/lib/ai-gateway/quota-checker";
 import { resolveUserAiPlan } from "@/lib/ai-gateway/plan-resolver";
@@ -73,10 +74,7 @@ export async function POST(req: NextRequest) {
       docEditableText = saved.editableText;
     } else {
       // Use provided data
-      if (!outputJson) {
-        return NextResponse.json({ error: "outputJson tidak boleh kosong." }, { status: 400 });
-      }
-      output = outputJson;
+      output = outputJson ?? {};
       docTitle = title || "Hasil AI";
       docEditableText = editableText;
     }
@@ -87,20 +85,34 @@ export async function POST(req: NextRequest) {
     if (agentId === "rpp") {
       const meta = getRPPMetadata(output);
       docTitle = title || meta.title;
-      buffer = await generateRPPDocx({
-        title: docTitle,
-        output,
-        editableText: docEditableText,
-      });
+      try {
+        buffer = await generateRPPDocx({
+          title: docTitle,
+          output,
+          editableText: docEditableText,
+        });
+      } catch {
+        buffer = await generateFallbackDocx(docTitle, docEditableText ?? "");
+      }
+      if (!buffer || buffer.length < 100) {
+        buffer = await generateFallbackDocx(docTitle, docEditableText ?? "");
+      }
       filename = meta.filename;
     } else if (agentId === "soal") {
       const meta = getSoalMetadata(output);
       docTitle = title || meta.title;
-      buffer = await generateSoalDocx({
-        title: docTitle,
-        output,
-        editableText: docEditableText,
-      });
+      try {
+        buffer = await generateSoalDocx({
+          title: docTitle,
+          output,
+          editableText: docEditableText,
+        });
+      } catch {
+        buffer = await generateFallbackDocx(docTitle, docEditableText ?? "");
+      }
+      if (!buffer || buffer.length < 100) {
+        buffer = await generateFallbackDocx(docTitle, docEditableText ?? "");
+      }
       filename = meta.filename;
     } else {
       return NextResponse.json({

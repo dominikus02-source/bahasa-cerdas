@@ -350,11 +350,14 @@ export function AlatAiClient({ agentParam }: { agentParam?: string }) {
     } else if (currentResult?.success && lastPayload) {
       setExportDocxState("loading");
       try {
+        const editableText = typeof (currentResult.output as Record<string, unknown>)?.editableText === "string"
+          ? (currentResult.output as Record<string, unknown>).editableText as string
+          : currentResult.text ?? undefined;
         await downloadDocxExport({
           agentId: selectedAgent as "rpp" | "soal",
           title: generateTitle(selectedAgent, lastPayload, currentResult.text),
           outputJson: (currentResult.output ?? {}) as Record<string, unknown>,
-          editableText: currentResult.text ?? undefined,
+          editableText,
         });
       } catch {
         setExportDocxState("error");
@@ -382,11 +385,14 @@ export function AlatAiClient({ agentParam }: { agentParam?: string }) {
     } else if (currentResult?.success && lastPayload) {
       setExportPptxState("loading");
       try {
+        const editableText = typeof (currentResult.output as Record<string, unknown>)?.editableText === "string"
+          ? (currentResult.output as Record<string, unknown>).editableText as string
+          : currentResult.text ?? undefined;
         await downloadPptxExport({
           agentId: "ppt",
           title: generateTitle(selectedAgent, lastPayload, currentResult.text),
           outputJson: (currentResult.output ?? {}) as Record<string, unknown>,
-          editableText: currentResult.text ?? undefined,
+          editableText,
         });
       } catch {
         setExportPptxState("error");
@@ -414,11 +420,14 @@ export function AlatAiClient({ agentParam }: { agentParam?: string }) {
     } else if (currentResult?.success && lastPayload) {
       setExportPdfState("loading");
       try {
+        const editableText = typeof (currentResult.output as Record<string, unknown>)?.editableText === "string"
+          ? (currentResult.output as Record<string, unknown>).editableText as string
+          : currentResult.text ?? undefined;
         await downloadPdfExport({
           agentId: selectedAgent as "rpp" | "soal",
           title: generateTitle(selectedAgent, lastPayload, currentResult.text),
           outputJson: (currentResult.output ?? {}) as Record<string, unknown>,
-          editableText: currentResult.text ?? undefined,
+          editableText,
         });
       } catch {
         setExportPdfState("error");

@@ -1,10 +1,9 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { Loader2, Sparkles, CheckCircle2, AlertTriangle, RotateCw, X, Copy, FileText, Monitor, ArrowRight, StopCircle } from "lucide-react";
+import { Loader2, Sparkles, CheckCircle2, AlertTriangle, RotateCw, X, ArrowRight, StopCircle, FileText, Monitor } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { CopyButton } from "./copy-button";
 
 // Petakan kode error ke fase pipeline supaya guru/support tahu di mana gagalnya
 function phaseFromCode(code?: string | null): string | null {
@@ -59,12 +58,6 @@ interface AgentResultPanelProps {
   exportPdfState?: "idle" | "loading" | "error";
   resultSource?: "generated" | "history" | null;
   savedResultId?: string | null;
-}
-
-function QualityBadge({ score }: { score: number }) {
-  if (score >= 80) return <Badge variant="success">{score}/100</Badge>;
-  if (score >= 50) return <Badge variant="warning">{score}/100</Badge>;
-  return <Badge variant="destructive">{score}/100</Badge>;
 }
 
 function RPPDisplay({ output }: { output: Record<string, unknown> }) {
@@ -761,7 +754,7 @@ export function AgentResultPanel({ agentId, result, loading, error, errorCode, r
         <div className="flex items-start gap-3">
           <AlertTriangle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
           <div>
-            <p className="text-sm font-medium text-red-700 mb-1">{result.error || "Gagal memproses"}</p>
+            <p className="text-sm font-medium text-red-700 mb-1">Dokumen gagal dibuat</p>
             <Button variant="outline" size="sm" className="mt-3" onClick={onRegenerate}>
               <RotateCw className="w-3.5 h-3.5 mr-1" />
               Coba Lagi
@@ -777,24 +770,16 @@ export function AgentResultPanel({ agentId, result, loading, error, errorCode, r
 
   return (
     <div className="space-y-4">
-      {/* Quality + Metadata bar */}
+      {/* Status bar — clean, no technical details */}
       <div className="flex items-center justify-between flex-wrap gap-2 p-3 bg-gradient-to-r from-emerald-50 to-green-50 rounded-xl border border-emerald-100">
-        <div className="flex items-center gap-3">
-          <QualityBadge score={result.qualityScore} />
-          <span className="text-xs text-gray-500">
-            {result.provider}/{result.model}
-          </span>
-          <span className="text-xs text-gray-400">{result.latencyMs}ms</span>
+        <div className="flex items-center gap-2">
+          <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+          <span className="text-sm font-medium text-emerald-700">Dokumen berhasil dibuat</span>
         </div>
         <div className="flex items-center gap-2">
           {resultSource === "history" && (
             <span className="text-[10px] text-violet-600 bg-violet-50 px-2 py-0.5 rounded-full">
               Riwayat
-            </span>
-          )}
-          {result.warnings.length > 0 && (
-            <span className="text-[10px] text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full">
-              {result.warnings.length} peringatan
             </span>
           )}
           <button onClick={onClear} className="text-xs text-gray-400 hover:text-gray-600 px-2 py-1 rounded-lg hover:bg-gray-100">
@@ -818,45 +803,14 @@ export function AgentResultPanel({ agentId, result, loading, error, errorCode, r
         </>
       )}
 
-        {/* Editable text output */}
+        {/* For agents without structured output, show plain text */}
       {result.text && !result.output && (
-        <div>
-          <div className="flex items-center justify-between mb-2">
-            <p className="text-xs font-medium text-gray-500">Hasil (format teks mentah)</p>
-            <CopyButton text={result.text} />
-          </div>
-          <div className="p-3 bg-white border border-gray-200 rounded-xl max-h-80 overflow-y-auto">
-            <pre className="text-xs text-gray-700 whitespace-pre-wrap font-sans leading-relaxed">
+        <div className="flex justify-center">
+          <div className="w-full max-w-[210mm] bg-white shadow-lg border border-gray-200 rounded-none">
+            <div className="px-8 py-10 font-serif text-sm leading-relaxed text-gray-800 whitespace-pre-wrap">
               {result.text}
-            </pre>
+            </div>
           </div>
-        </div>
-      )}
-      {/* Editable text when output also exists (RPP/Soal/PPT have both) */}
-      {result.text && result.output && (
-        <div>
-          <div className="flex items-center justify-between mb-2">
-            <p className="text-xs font-medium text-gray-500">Dokumen Siap Edit</p>
-            <CopyButton text={result.output?.editableText as string ?? result.text} />
-          </div>
-          <div className="p-3 bg-white border border-gray-200 rounded-xl max-h-80 overflow-y-auto">
-            <pre className="text-xs text-gray-700 whitespace-pre-wrap font-sans leading-relaxed">
-              {(result.output?.editableText as string) || result.text}
-            </pre>
-          </div>
-        </div>
-      )}
-
-      {/* Warnings */}
-      {result.warnings.length > 0 && (
-        <div className="p-3 bg-amber-50 border border-amber-100 rounded-xl">
-          <p className="text-xs font-medium text-amber-700 mb-1">Peringatan</p>
-          {result.warnings.map((w, i) => (
-            <p key={i} className="text-xs text-amber-600 flex items-start gap-1.5">
-              <AlertTriangle className="w-3 h-3 mt-0.5 flex-shrink-0" />
-              {w}
-            </p>
-          ))}
         </div>
       )}
 
