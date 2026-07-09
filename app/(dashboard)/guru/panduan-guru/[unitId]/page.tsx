@@ -12,10 +12,14 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 
 type Soal = { id: number; tipe?: "PG" | "BENAR_SALAH" | "ISIAN"; soal: string; opsi: string[]; jawaban: number | string; penjelasan: string }
+type Praktik = { petunjuk: string; tips: string[]; contoh?: string }
 type Konten = {
   belajar: { tujuan: string[]; materi: { judul: string; isi: string[]; contoh: string[]; catatan?: string }[]; rangkuman: string[] }
   latihan: Soal[]
-  praktik: { petunjuk: string; tips: string[]; contoh?: string }
+  // Opsional — seed buku-panduan (VII–XII) tidak menulis `praktik`; kontennya
+  // diturunkan dari guide.worksheet (LKPD) via resolvePraktik(). Konten lama
+  // yang punya `praktik` tetap dipakai apa adanya.
+  praktik?: Praktik
   kuis: Soal[]
   guide?: {
     overview?: string
@@ -58,6 +62,34 @@ type Konten = {
 function toList(v: string | string[] | undefined): string[] {
   if (!v) return []
   return Array.isArray(v) ? v : [v]
+}
+
+/**
+ * Resolve the "Praktik" tab content. Prefers an explicit `praktik` block (older
+ * content), otherwise derives one from the LKPD worksheet in guide.worksheet so
+ * the tab stays useful for buku-panduan units (which don't ship `praktik`).
+ * Returns null when there's genuinely nothing to show — never throws.
+ */
+function resolvePraktik(content: Konten): Praktik | null {
+  const p = content.praktik
+  if (p && (p.petunjuk || (p.tips?.length ?? 0) > 0 || p.contoh)) return p
+  const ws = content.guide?.worksheet
+  if (ws && (ws.purpose || ws.title || (ws.instructions?.length ?? 0) > 0)) {
+    return {
+      petunjuk: [ws.title, ws.purpose].filter(Boolean).join("\n\n"),
+      tips: ws.instructions ?? [],
+      contoh: ws.studentOutput || undefined,
+    }
+  }
+  return null
+}
+
+function EmptyState({ label }: { label: string }) {
+  return (
+    <div className="bg-white rounded-xl border border-slate-200 p-8 text-center">
+      <p className="text-sm text-slate-400">Belum ada materi {label.toLowerCase()} untuk bab ini.</p>
+    </div>
+  )
 }
 
 type TabKey = "belajar" | "latihan" | "praktik" | "kuis" | "panduan"
@@ -269,7 +301,7 @@ function ContentPanel({ content, tab, showAnswers, setShowAnswers, ilustrasiUrls
 }) {
   if (tab === "belajar") return <BelajarContent content={content.belajar} ilustrasiUrls={ilustrasiUrls} />
   if (tab === "latihan") return <SoalContent label="Latihan" soal={content.latihan} showAnswers={showAnswers} setShowAnswers={setShowAnswers} />
-  if (tab === "praktik") return <PraktikContent content={content.praktik} />
+  if (tab === "praktik") { const p = resolvePraktik(content); return p ? <PraktikContent content={p} /> : <EmptyState label="Praktik" /> }
   if (tab === "kuis") return <SoalContent label="Kuis" soal={content.kuis} showAnswers={showAnswers} setShowAnswers={setShowAnswers} />
   if (tab === "panduan" && content.guide) return <GuideContent guide={content.guide} />
   return null
@@ -423,7 +455,7 @@ function SoalContent({ label, soal, showAnswers, setShowAnswers }: { label: stri
   )
 }
 
-function PraktikContent({ content }: { content: Konten["praktik"] }) {
+function PraktikContent({ content }: { content: Praktik }) {
   return (
     <div className="bg-white rounded-xl border border-slate-200 p-5">
       <h2 className="font-bold text-slate-900 mb-3 flex items-center gap-2"><Lightbulb className="w-4 h-4 text-amber-500" />Petunjuk Praktik</h2>
@@ -546,24 +578,28 @@ function PresentationView({ data, content, tab, setTab, showAnswers, setShowAnsw
 
           {tab === "latihan" && <SoalPresentation soal={content.latihan} label="Latihan" showAnswers={showAnswers} color="emerald" />}
           {tab === "panduan" && content.guide && <PanduanPresentation guide={content.guide} />}
-          {tab === "praktik" && (
+          {tab === "praktik" && (() => {
+            const praktik = resolvePraktik(content)
+            if (!praktik) return <EmptyState label="Praktik" />
+            return (
             <div>
               <h2 className="text-xl font-bold text-slate-900 mb-4 flex items-center gap-2"><Lightbulb className="w-6 h-6 text-amber-500" />Praktik</h2>
-              <div className="text-slate-800 leading-relaxed whitespace-pre-line text-lg mb-6">{content.praktik.petunjuk ?? ""}</div>
-              {(content.praktik.tips?.length ?? 0) > 0 && (
+              <div className="text-slate-800 leading-relaxed whitespace-pre-line text-lg mb-6">{praktik.petunjuk ?? ""}</div>
+              {(praktik.tips?.length ?? 0) > 0 && (
                 <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-4">
                   <p className="font-semibold text-blue-800 mb-2 flex items-center gap-2"><Brain className="w-5 h-5" />Tips</p>
-                  <ul className="space-y-2">{(content.praktik.tips ?? []).map((t, i) => <li key={i} className="flex items-start gap-3 text-blue-700"><span className="w-2 h-2 rounded-full bg-blue-400 mt-2 shrink-0" />{t}</li>)}</ul>
+                  <ul className="space-y-2">{(praktik.tips ?? []).map((t, i) => <li key={i} className="flex items-start gap-3 text-blue-700"><span className="w-2 h-2 rounded-full bg-blue-400 mt-2 shrink-0" />{t}</li>)}</ul>
                 </div>
               )}
-              {content.praktik.contoh && (
+              {praktik.contoh && (
                 <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
                   <p className="font-semibold text-amber-800 mb-2">Contoh:</p>
-                  <p className="text-amber-900 whitespace-pre-line">{content.praktik.contoh}</p>
+                  <p className="text-amber-900 whitespace-pre-line">{praktik.contoh}</p>
                 </div>
               )}
             </div>
-          )}
+            )
+          })()}
           {tab === "kuis" && <SoalPresentation soal={content.kuis} label="Kuis" showAnswers={showAnswers} color="violet" />}
         </div>
       </div>
