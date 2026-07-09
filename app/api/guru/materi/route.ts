@@ -64,12 +64,17 @@ export async function GET(req: NextRequest) {
       ? [{ downloads: "desc" as const }, { createdAt: "desc" as const }]
       : [{ createdAt: "desc" as const }];
 
-    const [materis, total] = await Promise.all([
+    const [materis, total, downloadsUsed] = await Promise.all([
       db.materi.findMany({ where, orderBy, skip: (page - 1) * limit, take: limit }),
       db.materi.count({ where }),
+      db.materiDownload.count({ where: { userId: dbUser.id } }),
     ]);
 
-    return NextResponse.json({ data: materis, total, page, totalPages: Math.ceil(total / limit) });
+    // Kuota unduh: gratis 10 modul, premium/founder/admin tak terbatas.
+    const unlimited = dbUser.isPremium || dbUser.isFounder || dbUser.role === "ADMIN";
+    const quota = { used: downloadsUsed, limit: unlimited ? null : 10, unlimited };
+
+    return NextResponse.json({ data: materis, total, page, totalPages: Math.ceil(total / limit), quota });
   } catch (error) {
     console.error("GET /api/guru/materi error:", error);
     return NextResponse.json({ error: "Internal error" }, { status: 500 });

@@ -222,6 +222,7 @@ model User {
   loker              Loker[]
   lombaPeserta       LombaPeserta[]
   uploadedMateris    Materi[]
+  materiDownloads    MateriDownload[]
   notifications      Notifikasi[]
   competencyPackets  PaketKompetensi[]
   purchases          Pembelian[]
@@ -487,9 +488,24 @@ model Materi {
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
   uploader    User      @relation(fields: [uploaderId], references: [id], onDelete: Cascade)
+  downloadRecords MateriDownload[]
 
   @@index([uploaderId])
   @@index([isPublished])
+}
+
+// Catatan unduhan per user — untuk batas unduh (gratis 10 modul, premium tak terbatas).
+model MateriDownload {
+  id        String   @id @default(cuid())
+  userId    String
+  materiId  String
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  materi    Materi   @relation(fields: [materiId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, materiId])
+  @@index([userId])
+  @@index([materiId])
 }
 
 model BankSoal {
