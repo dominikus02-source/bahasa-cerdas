@@ -49,6 +49,47 @@ export interface TeachingSection {
   }
 }
 
+export interface ReadingMultipleChoice {
+  question: string
+  options: string[]
+  correctIndex: number
+  explanation: string
+  skillTarget: string
+}
+
+export interface ReadingShortAnswer {
+  question: string
+  sampleAnswer: string
+  explanation: string
+}
+
+export interface ReadingEssay {
+  question: string
+  guidance: string
+  rubricNote: string
+}
+
+/**
+ * Latihan Berbasis Bacaan — bacaan asli + soal yang menguji pemahaman
+ * literal, inferensial, struktur, dan fitur kebahasaan, bukan sekadar
+ * definisi. Dipakai untuk mengisi tab Latihan/Kuis interaktif (multipleChoice
+ * dipetakan jadi PG, shortAnswer jadi ISIAN) sekaligus tab Panduan Guru
+ * (bacaan lengkap + esai + kunci jawaban untuk referensi guru).
+ */
+export interface ReadingPractice {
+  stimulusTitle: string
+  stimulusText: string
+  multipleChoice: ReadingMultipleChoice[]
+  shortAnswer: ReadingShortAnswer[]
+  essay: ReadingEssay[]
+  quiz: {
+    stimulusExcerpt: string
+    multipleChoice: ReadingMultipleChoice[]
+    shortAnswer: ReadingShortAnswer[]
+    miniEssay: ReadingEssay
+  }
+}
+
 export interface GuideChapter {
   id: string
   slug: string
@@ -117,6 +158,8 @@ export interface GuideChapter {
     teacherQuestions: string[]
   }
   aiContextPrompt: string
+  /** Opsional — hanya diisi untuk bab yang sudah punya latihan berbasis bacaan (kelas X-XII per Juli 2026). */
+  readingPractice?: ReadingPractice
   sourceBasis: SourceBasis
   reviewStatus: ReviewStatus
   tags: string[]

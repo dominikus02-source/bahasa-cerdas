@@ -143,6 +143,7 @@ function buildContent(chapter: (typeof allGrades)[0]["semesters"][0]["chapters"]
       teacherNotes: chapter.teacherNotes,
       reflection: chapter.reflection,
       aiContextPrompt: chapter.aiContextPrompt,
+      readingPractice: chapter.readingPractice,
       sourceBasis: chapter.sourceBasis,
       reviewStatus: chapter.reviewStatus,
       tags: chapter.tags,
@@ -204,7 +205,35 @@ function formatBelajar(chapter: (typeof allGrades)[0]["semesters"][0]["chapters"
   }
 }
 
+/**
+ * Latihan interaktif — untuk bab yang sudah punya readingPractice (kelas
+ * X-XII), soal PG + isian singkat berbasis bacaan asli menggantikan
+ * derivasi lama dari assessment.diagnostic (opsi Ya/Tidak/Mungkin generik,
+ * jawaban selalu index 0 — tidak menguji pemahaman bacaan sama sekali).
+ * Bab tanpa readingPractice (VII-IX) tetap memakai derivasi lama, tidak disentuh.
+ */
 function formatLatihan(chapter: (typeof allGrades)[0]["semesters"][0]["chapters"][0]) {
+  const rp = chapter.readingPractice
+  if (rp) {
+    const pg = rp.multipleChoice.map((q, i) => ({
+      id: i + 1,
+      tipe: "PG" as const,
+      soal: q.question,
+      opsi: q.options,
+      jawaban: q.correctIndex,
+      penjelasan: q.explanation,
+    }))
+    const isian = rp.shortAnswer.map((q, i) => ({
+      id: pg.length + i + 1,
+      tipe: "ISIAN" as const,
+      soal: q.question,
+      opsi: [] as string[],
+      jawaban: q.sampleAnswer,
+      penjelasan: q.explanation,
+    }))
+    return [...pg, ...isian]
+  }
+
   const diag = chapter.assessment.diagnostic
   if (Array.isArray(diag) && diag.length > 0 && typeof diag[0] === "object" && "question" in diag[0]) {
     return (diag as { question: string; purpose: string }[]).map((q, i) => ({
@@ -227,7 +256,41 @@ function formatLatihan(chapter: (typeof allGrades)[0]["semesters"][0]["chapters"
   return []
 }
 
+/**
+ * Kuis cepat — sama seperti formatLatihan, memakai readingPractice.quiz
+ * (5 PG + 2 isian + 1 uraian mini dijadikan isian) jika tersedia; bab
+ * tanpa readingPractice tetap memakai derivasi lama dari assessment.summative.
+ */
 function formatKuis(chapter: (typeof allGrades)[0]["semesters"][0]["chapters"][0]) {
+  const rp = chapter.readingPractice
+  if (rp) {
+    const pg = rp.quiz.multipleChoice.map((q, i) => ({
+      id: i + 1,
+      tipe: "PG" as const,
+      soal: q.question,
+      opsi: q.options,
+      jawaban: q.correctIndex,
+      penjelasan: q.explanation,
+    }))
+    const isian = rp.quiz.shortAnswer.map((q, i) => ({
+      id: pg.length + i + 1,
+      tipe: "ISIAN" as const,
+      soal: q.question,
+      opsi: [] as string[],
+      jawaban: q.sampleAnswer,
+      penjelasan: q.explanation,
+    }))
+    const mini = {
+      id: pg.length + isian.length + 1,
+      tipe: "ISIAN" as const,
+      soal: rp.quiz.miniEssay.question,
+      opsi: [] as string[],
+      jawaban: rp.quiz.miniEssay.guidance,
+      penjelasan: rp.quiz.miniEssay.rubricNote,
+    }
+    return [...pg, ...isian, mini]
+  }
+
   const sum = chapter.assessment.summative
   if (Array.isArray(sum) && sum.length > 0 && typeof sum[0] === "object" && "type" in sum[0]) {
     return (sum as { type: string; description: string }[]).map((s, i) => ({
