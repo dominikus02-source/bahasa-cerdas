@@ -36,27 +36,34 @@ export default function HomeFeedPage() {
   const loaderRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    fetch("/api/user/me").then(r => r.ok ? r.json() : null).then(d => setUser(d?.user || null));
-    fetch("/api/siswa/karya?featured=true&limit=5").then(r => r.ok ? r.json() : null).then(d => setFeatured(d?.karya || []));
-    const hb = setInterval(() => fetch("/api/user/heartbeat", { method: "POST" }), 60000);
-    fetch("/api/user/heartbeat", { method: "POST" });
+    fetch("/api/user/me").then(r => r.ok ? r.json() : null).then(d => setUser(d?.user || null)).catch(() => {});
+    fetch("/api/siswa/karya?featured=true&limit=5").then(r => r.ok ? r.json() : null).then(d => setFeatured(d?.karya || [])).catch(() => {});
+    const hb = setInterval(() => { fetch("/api/user/heartbeat", { method: "POST" }).catch(() => {}); }, 60000);
+    fetch("/api/user/heartbeat", { method: "POST" }).catch(() => {});
     return () => clearInterval(hb);
   }, []);
 
   const fetchKarya = useCallback(async (cursor: string | null, type: string, append: boolean) => {
-    const params = new URLSearchParams({ limit: "10" });
-    if (type) params.set("type", type);
-    if (cursor) params.set("cursor", cursor);
-    const res = await fetch(`/api/siswa/karya?${params}`);
-    const data = await res.json();
-    setKaryaList(prev => append ? [...prev, ...data.karya] : data.karya);
-    setHasMore(!!data.nextCursor);
-    setCursor(data.nextCursor);
+    try {
+      const params = new URLSearchParams({ limit: "10" });
+      if (type) params.set("type", type);
+      if (cursor) params.set("cursor", cursor);
+      const res = await fetch(`/api/siswa/karya?${params}`);
+      const data = res.ok ? await res.json() : null;
+      const items = Array.isArray(data?.karya) ? data.karya : [];
+      setKaryaList(prev => append ? [...prev, ...items] : items);
+      setHasMore(!!data?.nextCursor);
+      setCursor(data?.nextCursor ?? null);
+    } catch {
+      // Jangan gantungkan loading kalau fetch gagal — tampilkan empty state.
+      if (!append) setKaryaList([]);
+      setHasMore(false);
+    }
   }, []);
 
   useEffect(() => {
     setLoading(true); setKaryaList([]); setCursor(null); setHasMore(true);
-    fetchKarya(null, activeType, false);
+    fetchKarya(null, activeType, false).finally(() => setLoading(false));
   }, [activeType, fetchKarya]);
 
   useEffect(() => {
@@ -236,7 +243,7 @@ export default function HomeFeedPage() {
 
 function LeagueWidget() {
   const [league, setLeague] = useState<any>(null);
-  useEffect(() => { fetch("/api/siswa/league").then(r => r.ok ? r.json() : null).then(d => setLeague(d)); }, []);
+  useEffect(() => { fetch("/api/siswa/league").then(r => r.ok ? r.json() : null).then(d => setLeague(d)).catch(() => {}); }, []);
   if (!league) return null;
 
   const tierColors: Record<string, string> = {

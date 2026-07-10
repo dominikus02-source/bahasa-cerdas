@@ -134,7 +134,7 @@ export default function KelasKuPage() {
   return (
     <div className="p-6 max-w-6xl mx-auto">
       <div className="flex items-center gap-3 mb-6">
-        <Link href="/guru" className="p-2 hover:bg-slate-100 rounded-lg">
+        <Link href="/guru/beranda" className="p-2 hover:bg-slate-100 rounded-lg">
           <ChevronLeft className="w-5 h-5 text-slate-600" />
         </Link>
         <div className="flex-1">

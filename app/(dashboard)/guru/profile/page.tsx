@@ -161,7 +161,7 @@ export default function GuruProfilePage() {
         {[
           { icon: FileText, label: "Karya", color: "bg-amber-100 text-amber-600", href: "/guru/toko-karya" },
           { icon: ShoppingBag, label: "Toko", color: "bg-orange-100 text-orange-600", href: "/guru/toko-karya" },
-          { icon: DollarSign, label: "Pendapatan", color: "bg-green-100 text-green-600", href: "/guru/karya/pendapatan" },
+          { icon: DollarSign, label: "Pendapatan", color: "bg-green-100 text-green-600", href: "/guru/pengaturan/saldo" },
           { icon: Users, label: "Siswa", color: "bg-blue-100 text-blue-600", href: "/guru/data-siswa" },
           { icon: Award, label: "Sertifikat", color: "bg-purple-100 text-purple-600", href: "/guru/sertifikat" },
           { icon: Trophy, label: "Kuis", color: "bg-pink-100 text-pink-600", href: "/guru/kuis-game" },
@@ -201,7 +201,7 @@ export default function GuruProfilePage() {
           <span className="text-gray-400">›</span>
         </Link>
         
-        <Link href="/guru/karya/pesanan" className="flex items-center gap-3 p-4 bg-white rounded-xl border border-gray-100 hover:shadow-md transition-shadow">
+        <Link href="/guru/toko-karya" className="flex items-center gap-3 p-4 bg-white rounded-xl border border-gray-100 hover:shadow-md transition-shadow">
           <div className="w-10 h-10 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center">
             <ShoppingBag size={18} />
           </div>
