@@ -6,8 +6,10 @@ import { z } from "zod";
 import { generateRPPDocx, getRPPMetadata } from "@/src/ai/export/docx/rpp-docx";
 import { generateFallbackDocx, getFallbackDocxMetadata } from "@/src/ai/export/docx/fallback-docx";
 import { generateSoalDocx, getSoalMetadata } from "@/src/ai/export/docx/soal-docx";
-import { checkExportQuota, deductCreditsAtomic, ensureMonthlyLedger } from "@/lib/ai-gateway/quota-checker";
-import { resolveUserAiPlan } from "@/lib/ai-gateway/plan-resolver";
+import { checkExportQuota, ensureMonthlyLedger } from "@/lib/ai-gateway/quota-checker";
+
+export const runtime = "nodejs";
+export const maxDuration = 60;
 
 const VALID_AGENTS = ["rpp", "soal"] as const;
 
@@ -120,14 +122,7 @@ export async function POST(req: NextRequest) {
       }, { status: 400 });
     }
 
-    // Deduct credit only after successful export generation
-    const planInfo = resolveUserAiPlan(user);
-    await deductCreditsAtomic(user.id, {
-      plan: planInfo.plan,
-      unlimited: planInfo.unlimited,
-      period: planInfo.isTrial ? "trial" : new Date().toISOString().slice(0, 7),
-      isTrial: planInfo.isTrial,
-    }, 1);
+    // DOCX export is free (0 credits) — no deduction needed.
 
     // Fire-and-forget export event logging
     logExportEvent(user.id, "docx", agentId, Date.now() - exportStartTime).catch(() => {});

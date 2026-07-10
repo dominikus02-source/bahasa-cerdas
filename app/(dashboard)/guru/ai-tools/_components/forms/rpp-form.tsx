@@ -11,9 +11,9 @@ interface RPPFormProps {
 }
 
 const KURIKULUM_OPTIONS = [
-  { value: "Kurikulum Merdeka", label: "Kurikulum Merdeka" },
-  { value: "K13", label: "K13" },
-  { value: "Custom", label: "Custom" },
+  { value: "Kurikulum Merdeka", label: "Kurikulum Merdeka (Modul Ajar)" },
+  { value: "K13", label: "Kurikulum 2013 / K13 (RPP)" },
+  { value: "Custom", label: "Custom (Modul Ajar)" },
 ];
 
 const PHASE_OPTIONS = [
@@ -222,6 +222,11 @@ export function RPPForm({ onSubmit, loading }: RPPFormProps) {
             className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-400 focus:border-emerald-400 outline-none bg-white">
             {KURIKULUM_OPTIONS.map((k) => <option key={k.value} value={k.value}>{k.label}</option>)}
           </select>
+          <p className="mt-1 text-[11px] text-gray-400">
+            {curriculum === "K13"
+              ? "Menghasilkan RPP (KI/KD, IPK, saintifik 5M, penilaian sikap-pengetahuan-keterampilan)."
+              : "Menghasilkan Modul Ajar (CP/TP, Profil Pelajar Pancasila, pemahaman bermakna, pertanyaan pemantik)."}
+          </p>
         </div>
         <div>
           <label className="block text-xs font-medium text-gray-600 mb-1">Durasi</label>
@@ -372,9 +377,9 @@ export function RPPForm({ onSubmit, loading }: RPPFormProps) {
         className="w-full bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700"
       >
         {loading ? (
-          <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> AI sedang menyusun RPP yang siap diedit...</>
+          <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> AI sedang menyusun {curriculum === "K13" ? "RPP" : "Modul Ajar"} yang siap diedit...</>
         ) : (
-          <><Sparkles className="w-4 h-4 mr-2" /> Buat RPP</>
+          <><Sparkles className="w-4 h-4 mr-2" /> Buat {curriculum === "K13" ? "RPP" : "Modul Ajar"}</>
         )}
       </Button>
     </div>

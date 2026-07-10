@@ -75,7 +75,7 @@ export function calculateAgentCost(
 export function getExportCost(format: "docx" | "pdf" | "pptx"): CostPolicyResult {
   switch (format) {
     case "docx":
-      return { credits: 1, weight: "light", reason: "DOCX export — 1 credit" };
+      return { credits: 0, weight: "light", reason: "DOCX export — free" };
     case "pptx":
       return { credits: 1, weight: "light", reason: "PPTX export — 1 credit" };
     case "pdf":

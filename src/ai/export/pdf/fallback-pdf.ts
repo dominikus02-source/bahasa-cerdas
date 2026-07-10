@@ -1,14 +1,13 @@
-import PDFDocument from "pdfkit";
 import {
-  MARGIN, CONTENT_WIDTH, PAGE_HEIGHT, FONT, FONT_BOLD, COLORS,
-  sanitizeFilename, addFooter,
+  CONTENT_WIDTH, PAGE_HEIGHT, FONT, FONT_BOLD, COLORS,
+  sanitizeFilename, addFooter, createPdfDoc,
 } from "./pdf-utils";
 
 export async function generateFallbackPdf(
   title: string,
   content: string,
 ): Promise<Buffer> {
-  const doc = new PDFDocument({ size: "A4", margin: MARGIN });
+  const doc = createPdfDoc();
   const buffers: Buffer[] = [];
   doc.on("data", (chunk: Buffer) => buffers.push(chunk));
   doc.on("end", () => {});
@@ -53,8 +52,11 @@ export async function generateFallbackPdf(
   doc.moveDown(1);
   addFooter(doc);
 
-  doc.end();
-  return Buffer.concat(buffers);
+  return new Promise((resolve, reject) => {
+    doc.on("end", () => resolve(Buffer.concat(buffers)));
+    doc.on("error", reject);
+    doc.end();
+  });
 }
 
 export function getFallbackPdfMetadata(title: string): { title: string; filename: string } {

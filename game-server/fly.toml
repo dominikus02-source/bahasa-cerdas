@@ -1,4 +1,5 @@
 app = "bahasacerdas-game"
+primary_region = "sin"  # Singapore — terdekat ke Indonesia
 
 [build]
   dockerfile = "Dockerfile"

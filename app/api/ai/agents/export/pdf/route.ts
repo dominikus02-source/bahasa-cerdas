@@ -9,6 +9,9 @@ import { generateFallbackPdf } from "@/src/ai/export/pdf/fallback-pdf";
 import { checkExportQuota, deductCreditsAtomic, ensureMonthlyLedger } from "@/lib/ai-gateway/quota-checker";
 import { resolveUserAiPlan } from "@/lib/ai-gateway/plan-resolver";
 
+export const runtime = "nodejs";
+export const maxDuration = 60;
+
 const VALID_AGENTS = ["rpp", "soal"] as const;
 
 const bodySchema = z.object({

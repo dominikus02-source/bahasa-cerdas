@@ -64,8 +64,11 @@ function generateTitle(agentId: string, input: Record<string, unknown>, resultTe
   const message = (input.message as string) || "";
   const text = (input.text as string) || "";
   switch (agentId) {
-    case "rpp":
-      return topic ? `RPP ${subject} — ${topic}` : `RPP ${subject}`;
+    case "rpp": {
+      const curriculum = (input.curriculum as string) || "";
+      const docType = /k13|2013/i.test(curriculum) ? "RPP" : "Modul Ajar";
+      return topic ? `${docType} ${subject} — ${topic}` : `${docType} ${subject}`;
+    }
     case "soal":
       return topic ? `Soal ${subject} — ${topic}` : `Soal ${subject}`;
     case "ppt":
@@ -128,6 +131,9 @@ export function AlatAiClient({ agentParam }: { agentParam?: string }) {
 
   const [exportPdfState, setExportPdfState] = useState<"idle" | "loading" | "error">("idle");
   const [exportPdfId, setExportPdfId] = useState<string | null>(null);
+
+  // Pesan error ekspor terakhir — ditampilkan ke user agar tidak gagal senyap
+  const [exportError, setExportError] = useState<string | null>(null);
 
   const [historyItems, setHistoryItems] = useState<SavedAiResult[]>([]);
   const [historyLoading, setHistoryLoading] = useState(true);
@@ -353,6 +359,7 @@ export function AlatAiClient({ agentParam }: { agentParam?: string }) {
       }
     } else if (currentResult?.success && lastPayload) {
       setExportDocxState("loading");
+      setExportError(null);
       try {
         const editableText = typeof (currentResult.output as Record<string, unknown>)?.editableText === "string"
           ? (currentResult.output as Record<string, unknown>).editableText as string
@@ -363,7 +370,8 @@ export function AlatAiClient({ agentParam }: { agentParam?: string }) {
           outputJson: (currentResult.output ?? {}) as Record<string, unknown>,
           editableText,
         });
-      } catch {
+      } catch (e) {
+        setExportError(e instanceof Error ? e.message : "Gagal mengunduh DOCX. Coba lagi.");
         setExportDocxState("error");
         setTimeout(() => setExportDocxState("idle"), 3000);
         return;
@@ -423,6 +431,7 @@ export function AlatAiClient({ agentParam }: { agentParam?: string }) {
       }
     } else if (currentResult?.success && lastPayload) {
       setExportPdfState("loading");
+      setExportError(null);
       try {
         const editableText = typeof (currentResult.output as Record<string, unknown>)?.editableText === "string"
           ? (currentResult.output as Record<string, unknown>).editableText as string
@@ -433,7 +442,8 @@ export function AlatAiClient({ agentParam }: { agentParam?: string }) {
           outputJson: (currentResult.output ?? {}) as Record<string, unknown>,
           editableText,
         });
-      } catch {
+      } catch (e) {
+        setExportError(e instanceof Error ? e.message : "Gagal mengunduh PDF. Coba lagi.");
         setExportPdfState("error");
         setTimeout(() => setExportPdfState("idle"), 3000);
         return;
@@ -724,6 +734,7 @@ export function AlatAiClient({ agentParam }: { agentParam?: string }) {
               exportPptxState={exportPptxState}
               onExportPdf={() => handleExportPdf()}
               exportPdfState={exportPdfState}
+              exportError={exportError}
               resultSource={resultSource}
               savedResultId={savedResultId}
             />

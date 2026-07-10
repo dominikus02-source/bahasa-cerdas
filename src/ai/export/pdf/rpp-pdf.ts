@@ -2,8 +2,19 @@ import PDFDocument from "pdfkit";
 import {
   MARGIN, CONTENT_WIDTH, PAGE_HEIGHT, FONT, FONT_BOLD, COLORS,
   sanitizeFilename, addFooter, sectionHeading, bodyText, bulletItem,
-  numberedItem, infoLine, emptyLine, separator, checkPageSpace,
+  numberedItem, infoLine, emptyLine, separator, checkPageSpace, createPdfDoc,
 } from "./pdf-utils";
+import { renderMarkdownToPdf } from "../shared/md-to-pdf";
+import { hasRenderableText } from "../shared/markdown";
+
+/** Collect a PDFKit document into a Buffer, resolving only after the stream ends. */
+function docToBuffer(doc: typeof PDFDocument.prototype, buffers: Buffer[]): Promise<Buffer> {
+  return new Promise((resolve, reject) => {
+    doc.on("end", () => resolve(Buffer.concat(buffers)));
+    doc.on("error", reject);
+    doc.end();
+  });
+}
 
 function getStr(obj: Record<string, unknown>, key: string, fallback = ""): string {
   const val = obj[key];
@@ -44,12 +55,22 @@ export async function generateRPppdf(input: RPPInput): Promise<Buffer> {
   const assessment = getSubMap(out, "assessmentPlan");
   const differentiation = getSubMap(out, "differentiationStrategy");
 
-  const doc = new PDFDocument({ size: "A4", margin: MARGIN });
+  const doc = createPdfDoc();
   const buffers: Buffer[] = [];
   doc.on("data", (chunk: Buffer) => buffers.push(chunk));
-  doc.on("end", () => {});
 
   doc.font(FONT).fontSize(10).fillColor(COLORS.DARK);
+
+  // Prefer the editable markdown text so the PDF matches the on-screen preview.
+  const editable = input.editableText
+    || (typeof out.editableText === "string" ? (out.editableText as string) : "")
+    || (typeof out.text === "string" ? (out.text as string) : "");
+  if (hasRenderableText(editable)) {
+    renderMarkdownToPdf(doc, editable);
+    separator(doc);
+    addFooter(doc);
+    return docToBuffer(doc, buffers);
+  }
 
   // === Cover / Header ===
   doc.font(FONT_BOLD).fontSize(18).fillColor(COLORS.PRIMARY_DARK);
@@ -270,20 +291,28 @@ export async function generateRPppdf(input: RPPInput): Promise<Buffer> {
   separator(doc);
   addFooter(doc);
 
-  doc.end();
-
-  return new Promise((resolve) => {
-    doc.on("end", () => {
-      resolve(Buffer.concat(buffers));
-    });
-  });
+  return docToBuffer(doc, buffers);
 }
 
 export function getRPPMetadata(output: Record<string, unknown>): { title: string; filename: string } {
   const identity = (output.identity as Record<string, unknown>) ?? {};
   const subject = getStr(identity, "subject", "Bahasa Indonesia");
-  const topic = getStr(identity, "topic", "RPP");
-  const title = `RPP ${subject} — ${topic}`;
+  const docType = detectDocType(output);
+  const topic = getStr(identity, "topic", docType);
+  const title = `${docType} ${subject} — ${topic}`;
   const filename = `${sanitizeFilename(title)}.pdf`;
   return { title, filename };
+}
+
+/** Detect whether the document is a K13 "RPP" or a Merdeka "Modul Ajar". */
+function detectDocType(output: Record<string, unknown>): "RPP" | "Modul Ajar" {
+  const editable = (typeof output.editableText === "string" ? output.editableText : "")
+    || (typeof output.text === "string" ? output.text : "");
+  if (/MODUL AJAR/i.test(editable)) return "Modul Ajar";
+  if (/RENCANA PELAKSANAAN PEMBELAJARAN/i.test(editable)) return "RPP";
+  const identity = (output.identity as Record<string, unknown>) ?? {};
+  const cur = getStr(identity, "curriculum");
+  if (/k13|2013/i.test(cur)) return "RPP";
+  if (/merdeka/i.test(cur)) return "Modul Ajar";
+  return "RPP";
 }

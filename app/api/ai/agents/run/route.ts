@@ -23,6 +23,7 @@ import "@/src/ai";
 import { getAgent } from "@/src/ai/core/agent-registry";
 import { runAgent } from "@/src/ai/core/agent-runner";
 import { checkAgentRateLimit } from "@/src/ai/core/rate-limit";
+import { acquireAiSlot } from "@/lib/ai-concurrency";
 import { checkAndPrepareDeduction, deductCreditsAtomic, ensureMonthlyLedger } from "@/lib/ai-gateway/quota-checker";
 import { resolveUserAiPlan } from "@/lib/ai-gateway/plan-resolver";
 import { resolveAgentId, AGENT_LABELS } from "@/lib/ai/agent-id-map";
@@ -156,12 +157,32 @@ export async function POST(req: NextRequest) {
 
     console.log(`[AI Agents Run] START requestId=${requestId} user=${userId} role=${userRole} agent=${canonicalAgentId} alias=${agentId} unlimited=${isUnlimited}`);
 
-    const result: AgentRunResult = await runAgent({
-      agent,
-      input,
-      context,
-      outputFormat,
-    });
+    // Global backpressure: cap concurrent upstream AI calls across all instances
+    // so a burst doesn't fire at the providers at once. Fail-open (no Redis =>
+    // always granted). We acquire AFTER quota checks and release right after the
+    // provider call, so a rejected request never deducts credits.
+    const slot = await acquireAiSlot({ pool: "agents", maxWaitMs: 8000 });
+    if (!slot) {
+      console.log(`[AI Agents Run] BUSY requestId=${requestId} user=${userId} agent=${canonicalAgentId}`);
+      return jsonError(
+        "Sistem AI sedang sibuk. Mohon coba lagi beberapa saat.",
+        "AI_BUSY",
+        503,
+        { retryable: true }
+      );
+    }
+
+    let result: AgentRunResult;
+    try {
+      result = await runAgent({
+        agent,
+        input,
+        context,
+        outputFormat,
+      });
+    } finally {
+      await slot.release();
+    }
 
     const durationMs = Date.now() - startTime;
     console.log(`[AI Agents Run] END requestId=${requestId} user=${userId} agent=${canonicalAgentId} success=${result.success} duration=${durationMs}ms`);

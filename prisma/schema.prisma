@@ -99,6 +99,7 @@ model GameResult {
   @@index([rank, createdAt])
   @@index([userId, createdAt])
   @@index([createdAt])
+  @@index([createdAt, userId, xpEarned])  // daily league groupBy(userId) sum(xpEarned)
 }
 
 model Community {
@@ -266,6 +267,8 @@ model User {
 
   @@index([role, lastActiveAt])
   @@index([xp])
+  @@index([role, xp])          // leaderboard: role=MURID ORDER BY xp DESC
+  @@index([lastActiveAt])      // monitoring: active users in last N minutes
   @@index([supabaseId])
   @@index([email])
 }
@@ -1083,6 +1086,7 @@ model AIUsage {
   @@index([feature, createdAt])
   @@index([provider, createdAt])
   @@index([status, createdAt])
+  @@index([createdAt])         // monitoring: time-windowed AI request counts
 }
 
 model Transaksi {

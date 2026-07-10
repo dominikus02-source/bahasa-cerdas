@@ -8,14 +8,21 @@ RUN apt-get update -y && apt-get install -y openssl && rm -rf /var/lib/apt/lists
 # Copy package files
 COPY package.json package-lock.json* ./
 
-# Install dependencies
-RUN npm ci --only=production
+# Install ALL dependencies (typescript/tsx are devDeps and are needed to build).
+RUN npm ci
 
-# Copy source
+# Copy source (includes prisma/schema.prisma)
 COPY . .
 
-# Build
+# Generate the Prisma client BEFORE compiling — without this the runtime throws
+# "@prisma/client did not initialize yet".
+RUN npx prisma generate
+
+# Compile TypeScript -> dist/
 RUN npx tsc
+
+# Drop dev dependencies to slim the runtime image (keeps generated client).
+RUN npm prune --omit=dev
 
 # Expose port
 EXPOSE 3001

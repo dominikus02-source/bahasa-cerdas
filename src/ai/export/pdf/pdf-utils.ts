@@ -1,11 +1,31 @@
 import PDFDocument from "pdfkit";
+import { EMBEDDED_FONT } from "./embedded-font";
 
 export const PAGE_WIDTH = 595.28;
 export const PAGE_HEIGHT = 841.89;
 export const MARGIN = 50;
 export const CONTENT_WIDTH = PAGE_WIDTH - MARGIN * 2;
-export const FONT = "Helvetica";
-export const FONT_BOLD = "Helvetica-Bold";
+// Use an embedded TTF (registered per-document) instead of pdfkit's built-in
+// standard fonts — the standard-font .afm metrics are not reliably present on
+// Vercel and cause ENOENT at runtime.
+export const FONT = "Body";
+export const FONT_BOLD = "Body-Bold";
+
+/**
+ * Create an A4 PDFDocument with the embedded font registered as "Body" and
+ * "Body-Bold". Call this instead of `new PDFDocument(...)` so no code path ever
+ * falls back to a standard font that needs an on-disk .afm file.
+ */
+export function createPdfDoc(options?: PDFKit.PDFDocumentOptions): typeof PDFDocument.prototype {
+  // `font: null` stops pdfkit's constructor from loading its default "Helvetica"
+  // standard font (whose .afm metrics are missing on Vercel → ENOENT). We then
+  // register and select the embedded TTF instead.
+  const doc = new PDFDocument({ size: "A4", margin: MARGIN, font: null, ...options } as PDFKit.PDFDocumentOptions);
+  doc.registerFont(FONT, EMBEDDED_FONT);
+  doc.registerFont(FONT_BOLD, EMBEDDED_FONT);
+  doc.font(FONT);
+  return doc;
+}
 
 export const COLORS = {
   PRIMARY: "#10B981",
@@ -18,6 +38,8 @@ export const COLORS = {
 
 export function sanitizeFilename(title: string): string {
   const safe = title
+    .replace(/[—–]/g, "-") // em/en dash → hyphen (invalid in latin1 HTTP headers)
+    .replace(/[^\x20-\x7E]/g, "") // strip any remaining non-ASCII (header-safe)
     .replace(/[<>:"/\\|?*]/g, "")
     .replace(/\s+/g, " ")
     .trim();

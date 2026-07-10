@@ -3,7 +3,8 @@ import { createServer } from 'http';
 import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
-const PORT = parseInt(process.env.GAME_PORT || '3001', 10);
+// Prefer PORT (injected by Render/Railway/Koyeb/etc.), fall back to GAME_PORT (Fly), then 3001.
+const PORT = parseInt(process.env.PORT || process.env.GAME_PORT || '3001', 10);
 
 interface Player {
   id: string;

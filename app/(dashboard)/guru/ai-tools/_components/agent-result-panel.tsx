@@ -4,6 +4,7 @@ import { useState, useCallback } from "react";
 import { Loader2, Sparkles, CheckCircle2, AlertTriangle, RotateCw, X, ArrowRight, StopCircle, FileText, Monitor } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { normalizeExportText, stripLeadingRppHeader } from "@/src/ai/export/shared/markdown";
 
 // Petakan kode error ke fase pipeline supaya guru/support tahu di mana gagalnya
 function phaseFromCode(code?: string | null): string | null {
@@ -56,6 +57,7 @@ interface AgentResultPanelProps {
   exportPptxState?: "idle" | "loading" | "error";
   onExportPdf?: () => void;
   exportPdfState?: "idle" | "loading" | "error";
+  exportError?: string | null;
   resultSource?: "generated" | "history" | null;
   savedResultId?: string | null;
 }
@@ -71,8 +73,8 @@ function RPPDisplay({ output }: { output: Record<string, unknown> }) {
   if (mainContent.trim().length > 0) {
     return (
       <div className="flex justify-center">
-        <div className="w-full max-w-[210mm] bg-white shadow-lg border border-gray-200 rounded-none print:shadow-none print:border-none">
-          <div className="px-8 py-10 font-serif text-sm leading-relaxed text-gray-800">
+        <div className="w-full max-w-[210mm] bg-white shadow-lg border border-gray-200 rounded-none print:shadow-none print:border-none overflow-hidden">
+          <div className="px-4 sm:px-8 py-6 sm:py-10 font-serif text-sm leading-relaxed text-gray-800 break-words">
             <RPPContent text={mainContent} />
           </div>
         </div>
@@ -85,9 +87,12 @@ function RPPDisplay({ output }: { output: Record<string, unknown> }) {
 }
 
 function RPPContent({ text }: { text: string }) {
+  // Convert stray HTML (e.g. <br><br>) to newlines and strip tags so it does
+  // not show up as literal text in the preview, and drop any duplicate header
+  // block that repeats the identity table.
+  const normalized = stripLeadingRppHeader(normalizeExportText(text));
   // Split into lines but preserve empty lines
-  const rawLines = text.split("\n");
-  const lines = rawLines;
+  const lines = normalized.split("\n");
   
   // Collect table rows between | ... | markers
   const elements: React.ReactNode[] = [];
@@ -613,7 +618,7 @@ function SubSection({ label, items }: { label: string; items?: string[] }) {
   );
 }
 
-export function AgentResultPanel({ agentId, result, loading, error, errorCode, requestId, isStreaming = false, streamingText = "", streamingProvider = "", streamingModel = "", streamProgress = "", streamCancelled = false, streamIncomplete = false, onCancelStream, onRegenerate, onClear, onSuggestedAgent, onSave, saveState = "idle", saveError, onExportDocx, exportDocxState = "idle", onExportPptx, exportPptxState = "idle", onExportPdf, exportPdfState = "idle", resultSource, savedResultId }: AgentResultPanelProps) {
+export function AgentResultPanel({ agentId, result, loading, error, errorCode, requestId, isStreaming = false, streamingText = "", streamingProvider = "", streamingModel = "", streamProgress = "", streamCancelled = false, streamIncomplete = false, onCancelStream, onRegenerate, onClear, onSuggestedAgent, onSave, saveState = "idle", saveError, onExportDocx, exportDocxState = "idle", onExportPptx, exportPptxState = "idle", onExportPdf, exportPdfState = "idle", exportError, resultSource, savedResultId }: AgentResultPanelProps) {
   if (loading) {
     if (isStreaming && (streamingText || streamProgress || streamingProvider)) {
       return (
@@ -806,9 +811,9 @@ export function AgentResultPanel({ agentId, result, loading, error, errorCode, r
         {/* For agents without structured output, show plain text */}
       {result.text && !result.output && (
         <div className="flex justify-center">
-          <div className="w-full max-w-[210mm] bg-white shadow-lg border border-gray-200 rounded-none">
-            <div className="px-8 py-10 font-serif text-sm leading-relaxed text-gray-800 whitespace-pre-wrap">
-              {result.text}
+          <div className="w-full max-w-[210mm] bg-white shadow-lg border border-gray-200 rounded-none overflow-hidden">
+            <div className="px-4 sm:px-8 py-6 sm:py-10 font-serif text-sm leading-relaxed text-gray-800 whitespace-pre-wrap break-words">
+              {normalizeExportText(result.text)}
             </div>
           </div>
         </div>
@@ -911,6 +916,11 @@ export function AgentResultPanel({ agentId, result, loading, error, errorCode, r
       {saveError && saveState === "error" && (
         <div className="p-2 bg-red-50 border border-red-100 rounded-lg">
           <p className="text-xs text-red-600">{saveError}</p>
+        </div>
+      )}
+      {exportError && (exportDocxState === "error" || exportPdfState === "error") && (
+        <div className="p-2 bg-red-50 border border-red-100 rounded-lg">
+          <p className="text-xs text-red-600">Gagal mengunduh: {exportError}</p>
         </div>
       )}
     </div>

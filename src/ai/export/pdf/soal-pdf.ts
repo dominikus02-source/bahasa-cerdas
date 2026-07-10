@@ -1,8 +1,7 @@
-import PDFDocument from "pdfkit";
 import {
-  MARGIN, CONTENT_WIDTH, PAGE_HEIGHT, FONT, FONT_BOLD, COLORS,
+  CONTENT_WIDTH, PAGE_HEIGHT, FONT, FONT_BOLD, COLORS,
   sanitizeFilename, addFooter, sectionHeading, bodyText, bulletItem,
-  numberedItem, infoLine, emptyLine, separator, checkPageSpace,
+  numberedItem, infoLine, emptyLine, separator, checkPageSpace, createPdfDoc,
 } from "./pdf-utils";
 
 function getStr(obj: Record<string, unknown>, key: string, fallback = ""): string {
@@ -27,7 +26,7 @@ export async function generateSoalPdf(input: SoalInput): Promise<Buffer> {
   const out = input.output;
   const questions = (out.questions as Record<string, unknown>[]) ?? [];
 
-  const doc = new PDFDocument({ size: "A4", margin: MARGIN });
+  const doc = createPdfDoc();
   const buffers: Buffer[] = [];
   doc.on("data", (chunk: Buffer) => buffers.push(chunk));
 

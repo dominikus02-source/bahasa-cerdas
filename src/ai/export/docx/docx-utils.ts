@@ -5,6 +5,8 @@ import {
 
 export function sanitizeFilename(title: string): string {
   const safe = title
+    .replace(/[—–]/g, "-") // em/en dash → hyphen (invalid in latin1 HTTP headers)
+    .replace(/[^\x20-\x7E]/g, "") // strip any remaining non-ASCII (header-safe)
     .replace(/[<>:"/\\|?*]/g, "")
     .replace(/\s+/g, " ")
     .trim();

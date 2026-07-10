@@ -147,19 +147,18 @@ Format JSON yang harus dihasilkan:
   "editableText": "seluruh dokumen RPP siap print dalam format markdown..."
 }
 
-Konten editableText harus berupa dokumen RPP siap print dengan struktur berikut:
+LANGKAH PERTAMA — TENTUKAN JENIS DOKUMEN BERDASARKAN nilai curriculum:
+- Jika curriculum mengandung kata "Merdeka" (atau "Custom"): buat **MODUL AJAR** (Kurikulum Merdeka) — gunakan STRUKTUR A.
+- Jika curriculum = "K13" / "Kurikulum 2013" / "2013": buat **RPP / Rencana Pelaksanaan Pembelajaran** (Kurikulum 2013) — gunakan STRUKTUR B.
+PENTING: JANGAN mencampur istilah. Untuk RPP K13 JANGAN pakai CP, Profil Pelajar Pancasila, Pemahaman Bermakna, atau Pertanyaan Pemantik. Untuk Modul Ajar Merdeka JANGAN pakai KI-1/2/3/4, KD, IPK, atau "pendekatan saintifik 5M". Judul dokumen (# ...) HARUS sesuai jenis yang dipilih.
 
-========================================
-HEADER DOKUMEN (blok pertama, rata kiri):
-Nama Sekolah: {schoolName atau "[Nama Sekolah]"}
-Mata Pelajaran: Bahasa Indonesia
-Kelas/Fase: {grade}/{phase}
-Tahun Ajaran: {academicYear atau "[Tahun Ajaran]"}
-Semester: {semester atau "[Semester]"}
-Dibuat dengan bantuan BahasaCerdas.com
+ATURAN AWAL DOKUMEN: MULAI dokumen LANGSUNG dengan judul (# MODUL AJAR atau # RENCANA PELAKSANAAN PEMBELAJARAN (RPP)). JANGAN menulis blok header/identitas apa pun (seperti "Nama Sekolah: ...", "Mata Pelajaran: ...", "Dibuat dengan bantuan BahasaCerdas.com") DI ATAS judul. Seluruh identitas HANYA ditulis SEKALI di dalam tabel "A. Identitas". JANGAN menduplikasi identitas.
 
-# MODUL AJAR / RENCANA PELAKSANAAN PEMBELAJARAN
-## BAHASA INDONESIA
+============================================================
+STRUKTUR A — MODUL AJAR (Kurikulum Merdeka):
+
+# MODUL AJAR
+## {NAMA MATA PELAJARAN HURUF KAPITAL}
 
 ### A. Identitas Dokumen
 | Komponen | Keterangan |
@@ -169,71 +168,140 @@ Dibuat dengan bantuan BahasaCerdas.com
 | NIP Guru | {nipGuru atau "........................"} |
 | Kepala Sekolah | {principalName atau "[Nama Kepala Sekolah]"} |
 | NIP Kepala Sekolah | {principalNip atau "........................"} |
-| Mata Pelajaran | Bahasa Indonesia |
+| Mata Pelajaran | {subject} |
 | Kelas/Fase | {grade}/{phase} |
 | Semester | {semester atau "Ganjil/Genap"} |
 | Tahun Ajaran | {academicYear atau "[Tahun Ajaran]"} |
-| Kota, Tanggal | {cityDate atau "...................., ...................."} |
 | Topik/Materi | {topic} |
 | Alokasi Waktu | {duration} |
 | Jumlah Pertemuan | {meetingCount} |
 
 ### B. Informasi Umum
-1. **Kompetensi Awal**: [deskripsi pengetahuan prasyarat]
-2. **Profil Pelajar Pancasila**: [2-3 dimensi yang dikembangkan, untuk Kurikulum Merdeka]
+1. **Kompetensi Awal**: [pengetahuan prasyarat]
+2. **Profil Pelajar Pancasila**: [minimal 2 dimensi]
 3. **Sarana dan Prasarana**: [media, alat, sumber belajar]
 4. **Target Peserta Didik**: [karakteristik siswa]
-5. **Model/Metode Pembelajaran**: {learningModel atau "[model pembelajaran]"}
+5. **Model Pembelajaran**: {learningModel atau "[model pembelajaran]"}
 
 ### C. Komponen Inti
-1. **Capaian Pembelajaran**: [uraian CP sesuai fase — jika tidak ada data, tulis "Perlu disesuaikan dengan CP resmi"]
-2. **Tujuan Pembelajaran**: [tujuan ABCD, minimal 2]
-3. **Kriteria Ketercapaian Tujuan Pembelajaran**: [indikator terukur]
+1. **Capaian Pembelajaran (CP)**: [sesuai fase; jika tidak ada data tulis "Perlu disesuaikan dengan CP resmi Kemendikdasmen"]
+2. **Tujuan Pembelajaran**: [rumusan ABCD, minimal 2]
+3. **Kriteria Ketercapaian Tujuan Pembelajaran (KKTP)**: [indikator terukur]
 4. **Pemahaman Bermakna**: [inti yang dipahami siswa]
 5. **Pertanyaan Pemantik**: [2-3 pertanyaan]
-6. **Materi Pokok**: [uraian singkat materi]
-7. **Kegiatan Pembelajaran**:
+6. **Kegiatan Pembelajaran**:
    - **Pendahuluan** (10 menit): [langkah dengan durasi]
-   - **Kegiatan Inti** (60 menit): [langkah dengan sintaks model pembelajaran]
+   - **Kegiatan Inti** ({durasi} menit): [langkah sesuai sintaks model pembelajaran]
    - **Penutup** (20 menit): [refleksi dan tindak lanjut]
-8. **Asesmen**:
+7. **Asesmen**:
    - Diagnostik: [teknik dan instrumen]
    - Formatif: [observasi, diskusi, produk]
    - Sumatif: [tes tertulis, proyek]
-9. **Diferensiasi Pembelajaran**:
-   - Konten: [perbedaan materi]
-   - Proses: [perbedaan kegiatan]
-   - Produk: [perbedaan hasil]
-10. **Remedial dan Pengayaan**: [hanya jika includeRemedialEnrichment=true]
-11. **Refleksi Guru**: [pertanyaan refleksi]
-12. **Refleksi Peserta Didik**: [pertanyaan refleksi]
+8. **Pengayaan dan Remedial**: [hanya jika includeRemedialEnrichment=true]
+9. **Refleksi Peserta Didik dan Guru**: [pertanyaan refleksi]
 
 ### D. Lampiran
 1. **LKPD** (Lembar Kerja Peserta Didik): [hanya jika includeWorksheet=true]
 2. **Bahan Bacaan Guru dan Peserta Didik**
-3. **Glosarium Sederhana**
+3. **Glosarium**
 4. **Rubrik Penilaian**: [hanya jika includeRubric=true]
-5. **Pedoman Penskoran**
+5. **Daftar Pustaka**
 
-### E. Lembar Pengesahan
+(Setelah D, lanjut ke BLOK PENUTUP dengan judul "### E. Lembar Pengesahan".)
+
+============================================================
+STRUKTUR B — RPP / RENCANA PELAKSANAAN PEMBELAJARAN (Kurikulum 2013):
+
+# RENCANA PELAKSANAAN PEMBELAJARAN (RPP)
+## {NAMA MATA PELAJARAN HURUF KAPITAL}
+
+### A. Identitas
+| Komponen | Keterangan |
+|---|---|
+| Nama Sekolah | {schoolName atau "[Nama Sekolah]"} |
+| Nama Guru | {teacherName atau "[Nama Guru]"} |
+| NIP Guru | {nipGuru atau "........................"} |
+| Kepala Sekolah | {principalName atau "[Nama Kepala Sekolah]"} |
+| NIP Kepala Sekolah | {principalNip atau "........................"} |
+| Mata Pelajaran | {subject} |
+| Kelas/Semester | {grade}/{semester} |
+| Tahun Ajaran | {academicYear atau "[Tahun Ajaran]"} |
+| Materi Pokok | {topic} |
+| Alokasi Waktu | {duration} |
+
+### B. Kompetensi Inti (KI)
+- **KI-1 (Sikap Spiritual)**: [rumusan]
+- **KI-2 (Sikap Sosial)**: [rumusan]
+- **KI-3 (Pengetahuan)**: [rumusan]
+- **KI-4 (Keterampilan)**: [rumusan]
+
+### C. Kompetensi Dasar (KD) dan Indikator Pencapaian Kompetensi (IPK)
+| Kompetensi Dasar | Indikator Pencapaian Kompetensi (IPK) |
+|---|---|
+| 3.x [KD pengetahuan] | 3.x.1 ...; 3.x.2 ...; 3.x.3 ... (minimal 3 IPK) |
+| 4.x [KD keterampilan] | 4.x.1 ...; 4.x.2 ... |
+
+### D. Tujuan Pembelajaran
+[rumusan ABCD (Audience, Behaviour, Condition, Degree), minimal 2, sejalan dengan IPK]
+
+### E. Materi Pembelajaran
+- **Materi Reguler**: [uraian]
+- **Materi Remedial**: [uraian]
+- **Materi Pengayaan**: [uraian]
+
+### F. Pendekatan, Model, dan Metode Pembelajaran
+- **Pendekatan**: Saintifik
+- **Model**: {learningModel atau "[model pembelajaran]"}
+- **Metode**: [diskusi, tanya jawab, penugasan, dll]
+
+### G. Media, Alat, dan Sumber Belajar
+[media, alat/bahan, dan sumber belajar]
+
+### H. Langkah-Langkah Pembelajaran
+- **Pendahuluan** (10 menit): [apersepsi, motivasi, tujuan]
+- **Kegiatan Inti** (60 menit) — Pendekatan Saintifik 5M:
+   1. **Mengamati**: [aktivitas]
+   2. **Menanya**: [aktivitas]
+   3. **Mengumpulkan Informasi/Mencoba**: [aktivitas]
+   4. **Menalar/Mengasosiasi**: [aktivitas]
+   5. **Mengomunikasikan**: [aktivitas]
+- **Penutup** (20 menit): [simpulan, refleksi, tindak lanjut]
+
+### I. Penilaian
+- **Penilaian Sikap**: [teknik observasi + jurnal]
+- **Penilaian Pengetahuan**: [tes tertulis/lisan/penugasan]
+- **Penilaian Keterampilan**: [praktik/produk/proyek/portofolio]
+- **Pembelajaran Remedial**: [rencana]
+- **Pembelajaran Pengayaan**: [rencana]
+
+### J. Lampiran
+1. **LKPD**: [hanya jika includeWorksheet=true]
+2. **Instrumen dan Rubrik Penilaian**: [hanya jika includeRubric=true]
+3. **Bahan Ajar**
+
+(Setelah J, lanjut ke BLOK PENUTUP dengan judul "### K. Lembar Pengesahan".)
+
+============================================================
+BLOK PENUTUP (sama untuk kedua jenis — judul huruf mengikuti bagian terakhir: "E" untuk Modul Ajar, "K" untuk RPP):
+
+### {E/K}. Lembar Pengesahan
 {cityDate atau "...................., ...................."}
 
 Mengetahui,
 Kepala Sekolah                                      Guru Mata Pelajaran
 
-<br><br><br>
+
+
 
 {principalName atau "[Nama Kepala Sekolah]"}        {teacherName atau "[Nama Guru]"}
-NIP. {principalNip atau "........................"} NIP. {teacherNip atau "........................"}
+NIP. {principalNip atau "........................"} NIP. {nipGuru atau "........................"}
 
-========================================
-FOOTER DOKUMEN:
 ---
-*Dokumen ini dibuat dengan bantuan BahasaCerdas.com pada {tanggal sekarang}. Silakan menyesuaikan isi dokumen dengan Capaian Pembelajaran (CP) dan Alur Tujuan Pembelajaran (ATP) resmi, karakteristik peserta didik, serta kebijakan satuan pendidikan masing-masing.*
+*Dokumen ini dibuat dengan bantuan BahasaCerdas.com. Silakan menyesuaikan isi dokumen dengan kurikulum resmi (CP/ATP untuk Merdeka atau KI/KD untuk K13), karakteristik peserta didik, serta kebijakan satuan pendidikan masing-masing.*
 
 ATURAN EDITABLETEXT (dalam field "editableText" JSON):
 1. Tabel identitas menggunakan format markdown | kolom | kolom |
-2. Gunakan heading ### untuk sub-bagian A, B, C, D, E
+2. Gunakan heading ### untuk setiap bagian (A, B, C, ... sesuai struktur yang dipilih)
 3. Gunakan **bold** untuk nama sub-komponen (seperti "Kompetensi Awal", "Tujuan Pembelajaran")
 4. Gunakan - daftar atau 1. penomoran untuk poin-poin
 5. Konten setiap komponen harus SUBSTANSIAL dan SPESIFIK sesuai topik/kelas — jangan template kosong
@@ -242,8 +310,9 @@ ATURAN EDITABLETEXT (dalam field "editableText" JSON):
 8. Jumlah karakter editableText minimal 1.800 karakter
 9. Jangan menulis "sebagai AI", "saya adalah AI", atau "saya tidak bisa"
 10. Gunakan Bahasa Indonesia formal pendidikan — mudah diedit guru, siap print, siap diserahkan ke dinas
-11. editableText HARUS dokumen lengkap dengan header, tabel identitas, komponen A-E, lembar pengesahan, dan footer BahasaCerdas.
-12. SELURUH output HARUS SATU objek JSON — field "editableText" berisi markdown. Jangan output teks di luar objek JSON.`,
+11. editableText HARUS dokumen lengkap: blok header, tabel identitas, seluruh bagian sesuai struktur yang dipilih (Modul Ajar atau RPP), lembar pengesahan, dan footer BahasaCerdas.
+12. SELURUH output HARUS SATU objek JSON — field "editableText" berisi markdown. Jangan output teks di luar objek JSON.
+13. JANGAN gunakan tag HTML apa pun (seperti <br>, <b>, <p>) di dalam editableText — gunakan hanya markdown dan baris kosong untuk spasi.`,
   defaultModel: "deepseek-chat",
   temperature: 0.7,
   maxTokens: 8000,
@@ -462,14 +531,7 @@ ATURAN EDITABLETEXT (dalam field "editableText" JSON):
           ],
         },
         teacherNotes: ["Pastikan siswa aktif berdiskusi"],
-        editableText: `Nama Sekolah: SMA Negeri 1 Jakarta
-Mata Pelajaran: Bahasa Indonesia
-Kelas/Fase: X/E
-Tahun Ajaran: 2025/2026
-Semester: 1 (Ganjil)
-Dibuat dengan bantuan BahasaCerdas.com
-
-# MODUL AJAR / RENCANA PELAKSANAAN PEMBELAJARAN
+        editableText: `# MODUL AJAR
 ## BAHASA INDONESIA
 
 ### A. Identitas Dokumen
