@@ -183,6 +183,18 @@ export default function BenarSalah({ backHref = "/arena/game" }: { backHref?: st
   const timePct = (timeLeft / ROUND_SECONDS) * 100;
   return (
     <Shell flash={flash}>
+      {/* judgment stamp — thematic decoration */}
+      <AnimatePresence>
+        {flash && (
+          <motion.div key={`${flash}-${idx}`} initial={{ scale: 2.2, opacity: 0, rotate: -28 }} animate={{ scale: 1, opacity: 1, rotate: -12 }} exit={{ opacity: 0, scale: 0.7 }} transition={{ type: "spring", stiffness: 320, damping: 15 }}
+            className="pointer-events-none absolute inset-0 z-30 flex items-center justify-center">
+            <div className={`w-28 h-28 rounded-full border-[6px] flex items-center justify-center backdrop-blur-sm ${flash === "ok" ? "border-emerald-400 text-emerald-300 bg-emerald-500/10" : "border-rose-400 text-rose-300 bg-rose-500/10"}`}>
+              {flash === "ok" ? <Check className="w-16 h-16" strokeWidth={3} /> : <X className="w-16 h-16" strokeWidth={3} />}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* HUD */}
       <div className="px-5 pt-4 pb-2 flex items-center justify-between">
         <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10">

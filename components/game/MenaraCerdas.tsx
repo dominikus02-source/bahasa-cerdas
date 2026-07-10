@@ -160,7 +160,6 @@ export default function MenaraCerdas({ backHref = "/arena/game" }: { backHref?: 
   }
 
   // ---------- PLAYING ----------
-  const progressPct = total ? (idx / total) * 100 : 0;
   return (
     <Shell>
       {/* HUD */}
@@ -184,55 +183,90 @@ export default function MenaraCerdas({ backHref = "/arena/game" }: { backHref?: 
         </div>
       </div>
 
-      {/* progress rail */}
-      <div className="px-5 mb-3">
-        <div className="h-2 rounded-full bg-white/10 overflow-hidden">
-          <motion.div className="h-full rounded-full bg-gradient-to-r from-violet-400 to-fuchsia-500" animate={{ width: `${progressPct}%` }} transition={{ type: "spring", stiffness: 120 }} />
+      {/* tower + question */}
+      <div className="flex-1 flex gap-3 px-4 pb-5 min-h-0">
+        <Tower floor={floor} total={total} />
+
+        <div className="flex-1 flex flex-col min-w-0">
+          <AnimatePresence mode="wait">
+            <motion.div key={current?.id ?? idx} initial={{ opacity: 0, x: 24 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -24 }} transition={{ duration: 0.22 }}
+              className="flex-1 flex flex-col">
+              <div className="rounded-3xl bg-white/[0.07] border border-white/10 p-5 mb-4">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-violet-300/80">Soal {idx + 1} / {total}</span>
+                <h2 className="text-lg font-bold text-white mt-2 leading-snug">{current?.soal}</h2>
+              </div>
+
+              <div className="grid gap-2.5 mt-1">
+                {current?.opsi.map((opt, i) => {
+                  const isPicked = picked === i;
+                  const isCorrect = i === current.jawaban;
+                  const reveal = picked !== null;
+                  let cls = "bg-white/[0.06] border-white/10 text-white hover:bg-white/[0.1]";
+                  if (reveal && isCorrect) cls = "bg-emerald-500/20 border-emerald-400 text-emerald-100";
+                  else if (reveal && isPicked && !isCorrect) cls = "bg-rose-500/20 border-rose-400 text-rose-100";
+                  else if (reveal) cls = "bg-white/[0.04] border-white/10 text-white/40";
+                  return (
+                    <button key={i} onClick={() => choose(i)} disabled={reveal}
+                      className={`relative w-full text-left px-4 py-3.5 rounded-2xl border font-medium transition-all active:scale-[0.98] ${cls}`}>
+                      <span className="pr-7">{opt}</span>
+                      {reveal && isCorrect && <Check className="w-5 h-5 absolute right-3.5 top-1/2 -translate-y-1/2 text-emerald-300" />}
+                      {reveal && isPicked && !isCorrect && <X className="w-5 h-5 absolute right-3.5 top-1/2 -translate-y-1/2 text-rose-300" />}
+                    </button>
+                  );
+                })}
+              </div>
+
+              <AnimatePresence>
+                {picked !== null && picked !== current.jawaban && current?.penjelasan && (
+                  <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
+                    className="mt-4 p-3.5 rounded-2xl bg-amber-400/10 border border-amber-400/20">
+                    <p className="text-xs text-amber-200/90 leading-relaxed"><span className="font-bold">💡 </span>{current.penjelasan}</p>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </motion.div>
+          </AnimatePresence>
         </div>
       </div>
-
-      {/* question */}
-      <div className="flex-1 flex flex-col px-5 pb-6">
-        <AnimatePresence mode="wait">
-          <motion.div key={current?.id ?? idx} initial={{ opacity: 0, x: 24 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -24 }} transition={{ duration: 0.22 }}
-            className="flex-1 flex flex-col">
-            <div className="rounded-3xl bg-white/[0.07] border border-white/10 p-5 mb-4">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-violet-300/80">Soal {idx + 1} / {total}</span>
-              <h2 className="text-lg font-bold text-white mt-2 leading-snug">{current?.soal}</h2>
-            </div>
-
-            <div className="grid gap-2.5 mt-1">
-              {current?.opsi.map((opt, i) => {
-                const isPicked = picked === i;
-                const isCorrect = i === current.jawaban;
-                const reveal = picked !== null;
-                let cls = "bg-white/[0.06] border-white/10 text-white hover:bg-white/[0.1]";
-                if (reveal && isCorrect) cls = "bg-emerald-500/20 border-emerald-400 text-emerald-100";
-                else if (reveal && isPicked && !isCorrect) cls = "bg-rose-500/20 border-rose-400 text-rose-100";
-                else if (reveal) cls = "bg-white/[0.04] border-white/10 text-white/40";
-                return (
-                  <button key={i} onClick={() => choose(i)} disabled={reveal}
-                    className={`relative w-full text-left px-4 py-3.5 rounded-2xl border font-medium transition-all active:scale-[0.98] ${cls}`}>
-                    <span className="pr-7">{opt}</span>
-                    {reveal && isCorrect && <Check className="w-5 h-5 absolute right-3.5 top-1/2 -translate-y-1/2 text-emerald-300" />}
-                    {reveal && isPicked && !isCorrect && <X className="w-5 h-5 absolute right-3.5 top-1/2 -translate-y-1/2 text-rose-300" />}
-                  </button>
-                );
-              })}
-            </div>
-
-            <AnimatePresence>
-              {picked !== null && picked !== current.jawaban && current?.penjelasan && (
-                <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
-                  className="mt-4 p-3.5 rounded-2xl bg-amber-400/10 border border-amber-400/20">
-                  <p className="text-xs text-amber-200/90 leading-relaxed"><span className="font-bold">💡 </span>{current.penjelasan}</p>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </motion.div>
-        </AnimatePresence>
-      </div>
     </Shell>
+  );
+}
+
+// Live tower that fills up as the player climbs floors, with a climber rising.
+function Tower({ floor, total }: { floor: number; total: number }) {
+  const pct = total ? Math.min(100, (floor / total) * 100) : 0;
+  const cleared = floor >= total && total > 0;
+  return (
+    <div className="w-16 shrink-0 flex flex-col items-center">
+      {/* summit flag */}
+      <motion.div animate={{ y: cleared ? [0, -4, 0] : 0 }} transition={{ repeat: cleared ? Infinity : 0, duration: 1 }} className="mb-1 text-base">
+        {cleared ? "🚩" : "⛰️"}
+      </motion.div>
+
+      <div className="relative flex-1 w-full rounded-2xl overflow-hidden border border-white/10 bg-white/[0.03]">
+        {/* rising fill = climbed floors */}
+        <motion.div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-violet-700 via-violet-500 to-fuchsia-500"
+          animate={{ height: `${pct}%` }} transition={{ type: "spring", stiffness: 120, damping: 16 }} />
+
+        {/* floor dividers + windows for a tower look */}
+        <div className="absolute inset-0 flex flex-col-reverse">
+          {Array.from({ length: total || 1 }).map((_, i) => (
+            <div key={i} className="flex-1 border-t border-white/10 flex items-center justify-center gap-1">
+              <span className={`w-1.5 h-1.5 rounded-[2px] ${i < floor ? "bg-amber-200/90" : "bg-white/10"}`} />
+              <span className={`w-1.5 h-1.5 rounded-[2px] ${i < floor ? "bg-amber-200/90" : "bg-white/10"}`} />
+            </div>
+          ))}
+        </div>
+
+        {/* climber rising with the fill */}
+        <motion.div className="absolute left-1/2 -translate-x-1/2 text-lg drop-shadow-lg z-10"
+          animate={{ bottom: `calc(${pct}% - 2px)` }} transition={{ type: "spring", stiffness: 120, damping: 16 }}>
+          🧗
+        </motion.div>
+      </div>
+
+      <span className="mt-1 text-[10px] font-bold text-white/50">{floor}/{total}</span>
+    </div>
   );
 }
 

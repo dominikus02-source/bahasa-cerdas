@@ -10,8 +10,23 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getUser } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
+import { QUESTION_BANK } from "@/lib/game/question-bank";
 
 export const dynamic = "force-dynamic";
+
+type GameQuestion = { id: string; soal: string; opsi: string[]; jawaban: number; penjelasan: string };
+
+// Quality gate: reject anything ambiguous or malformed. A question is valid only
+// if it has >=3 distinct options, exactly one answer in range. This automatically
+// filters out bad lesson questions (duplicate options, out-of-range answers).
+function isValid(q: GameQuestion): boolean {
+  if (!q.soal || !Array.isArray(q.opsi) || q.opsi.length < 3) return false;
+  if (q.jawaban < 0 || q.jawaban >= q.opsi.length) return false;
+  const norm = q.opsi.map((o) => o.trim().toLowerCase());
+  if (norm.some((o) => !o)) return false;
+  if (new Set(norm).size !== norm.length) return false; // duplicate options = ambiguous
+  return true;
+}
 
 type LessonQuestion = {
   id?: string;
@@ -67,7 +82,14 @@ export async function GET(req: NextRequest) {
     select: { content: true },
   });
 
-  const pool: ReturnType<typeof normalize>[] = [];
+  const pool: GameQuestion[] = [];
+
+  // 1) Curated, hand-verified bank (guaranteed quality).
+  for (const b of QUESTION_BANK) {
+    pool.push({ id: `bank_${pool.length}`, soal: b.soal, opsi: b.opsi, jawaban: b.jawaban, penjelasan: b.penjelasan });
+  }
+
+  // 2) Real lesson questions from Jalur Cerdas.
   for (const u of units) {
     if (!u.content) continue;
     try {
@@ -83,7 +105,18 @@ export async function GET(req: NextRequest) {
     }
   }
 
-  const questions = shuffle(pool.filter(Boolean) as NonNullable<ReturnType<typeof normalize>>[]).slice(0, count);
+  // Dedupe by question text + drop ambiguous/malformed items, then shuffle so
+  // every player gets a different random subset.
+  const seen = new Set<string>();
+  const clean = pool.filter((q) => {
+    if (!isValid(q)) return false;
+    const key = q.soal.trim().toLowerCase();
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+
+  const questions = shuffle(clean).slice(0, count);
   return NextResponse.json({ questions });
 }
 
