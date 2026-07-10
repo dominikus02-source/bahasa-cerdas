@@ -2,8 +2,10 @@
 
 import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import Link from "next/link";
-import { motion, AnimatePresence } from "framer-motion";
-import { Check, X, Zap, Flame, Trophy, Timer, RotateCcw, Loader2, Sparkles } from "lucide-react";
+import { motion, AnimatePresence, useAnimationControls } from "framer-motion";
+import { Check, X, Zap, Flame, Trophy, Timer, RotateCcw, Loader2, Sparkles, Volume2, VolumeX } from "lucide-react";
+import Burst from "@/components/game/Burst";
+import { sfx, haptic, isSoundOn, toggleSound } from "@/lib/game/sound";
 
 interface Q {
   id: string;
@@ -27,6 +29,9 @@ export default function BenarSalah({ backHref = "/arena/game" }: { backHref?: st
   const [timeLeft, setTimeLeft] = useState(ROUND_SECONDS);
   const [flash, setFlash] = useState<null | "ok" | "no">(null);
   const [xpResult, setXpResult] = useState<{ xpEarned: number; leveledUp: boolean } | null>(null);
+  const [burst, setBurst] = useState(0);
+  const [soundOn, setSoundOn] = useState(true);
+  const controls = useAnimationControls();
   const lockRef = useRef(false);
 
   const current = questions[idx];
@@ -40,6 +45,7 @@ export default function BenarSalah({ backHref = "/arena/game" }: { backHref?: st
   }, [idx, current]);
 
   const start = useCallback(async () => {
+    sfx.start(); setSoundOn(isSoundOn());
     setPhase("loading");
     setIdx(0); setScore(0); setCombo(0); setBest(0); setAnswered(0);
     setTimeLeft(ROUND_SECONDS); setFlash(null); setXpResult(null); lockRef.current = false;
@@ -58,6 +64,8 @@ export default function BenarSalah({ backHref = "/arena/game" }: { backHref?: st
   }, []);
 
   const finish = useCallback(async (finalScore: number, finalAnswered: number) => {
+    if (finalScore > 0) { sfx.win(); haptic([40, 40, 80]); setBurst((b) => b + 1); }
+    else { sfx.gameover(); haptic(120); }
     setPhase("gameover");
     try {
       const res = await fetch("/api/game/menara", {
@@ -79,6 +87,7 @@ export default function BenarSalah({ backHref = "/arena/game" }: { backHref?: st
       finish(score, answered);
       return;
     }
+    if (timeLeft <= 5) sfx.tick();
     const t = setTimeout(() => setTimeLeft((s) => s - 1), 1000);
     return () => clearTimeout(t);
   }, [phase, timeLeft, score, answered, finish]);
@@ -91,11 +100,12 @@ export default function BenarSalah({ backHref = "/arena/game" }: { backHref?: st
     setAnswered((a) => a + 1);
     if (correct) {
       setScore((s) => s + 1);
-      setCombo((c) => { const nc = c + 1; setBest((b) => Math.max(b, nc)); return nc; });
-      setFlash("ok");
+      setCombo((c) => { const nc = c + 1; setBest((b) => Math.max(b, nc)); if (nc >= 3) sfx.combo(nc); else sfx.correct(); return nc; });
+      setFlash("ok"); haptic(25); setBurst((b) => b + 1);
     } else {
       setCombo(0);
-      setFlash("no");
+      setFlash("no"); sfx.wrong(); haptic([60, 40, 60]);
+      controls.start({ x: [0, -10, 10, -7, 7, 0], transition: { duration: 0.4 } });
     }
 
     setTimeout(() => {
@@ -146,6 +156,7 @@ export default function BenarSalah({ backHref = "/arena/game" }: { backHref?: st
     const accuracy = answered ? Math.round((score / answered) * 100) : 0;
     return (
       <Shell>
+        <Burst trigger={burst} x={50} y={38} count={28} />
         <div className="flex-1 flex flex-col items-center justify-center text-center px-6">
           <motion.div initial={{ scale: 0, rotate: -20 }} animate={{ scale: 1, rotate: 0 }} transition={{ type: "spring", stiffness: 180 }}
             className="w-24 h-24 rounded-[28px] bg-gradient-to-br from-emerald-400 to-teal-600 flex items-center justify-center shadow-2xl shadow-teal-500/40 mb-5">
@@ -182,7 +193,8 @@ export default function BenarSalah({ backHref = "/arena/game" }: { backHref?: st
   // ---------- PLAYING ----------
   const timePct = (timeLeft / ROUND_SECONDS) * 100;
   return (
-    <Shell flash={flash}>
+    <Shell flash={flash} controls={controls}>
+      <Burst trigger={burst} x={50} y={42} />
       {/* judgment stamp — thematic decoration */}
       <AnimatePresence>
         {flash && (
@@ -209,9 +221,12 @@ export default function BenarSalah({ backHref = "/arena/game" }: { backHref?: st
             </motion.div>
           )}
         </AnimatePresence>
-        <div className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full ${timeLeft <= 10 ? "bg-rose-500/25 text-rose-200" : "bg-white/10 text-white"}`}>
-          <Timer className="w-4 h-4" />
-          <span className="text-sm font-bold tabular-nums">{timeLeft}s</span>
+        <div className="flex items-center gap-2">
+          <div className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full ${timeLeft <= 10 ? "bg-rose-500/25 text-rose-200" : "bg-white/10 text-white"}`}>
+            <Timer className="w-4 h-4" />
+            <span className="text-sm font-bold tabular-nums">{timeLeft}s</span>
+          </div>
+          <MuteButton on={soundOn} onToggle={() => setSoundOn(toggleSound())} />
         </div>
       </div>
 
@@ -251,14 +266,23 @@ export default function BenarSalah({ backHref = "/arena/game" }: { backHref?: st
   );
 }
 
-function Shell({ children, flash }: { children: React.ReactNode; flash?: null | "ok" | "no" }) {
+function Shell({ children, flash, controls }: { children: React.ReactNode; flash?: null | "ok" | "no"; controls?: ReturnType<typeof useAnimationControls> }) {
   return (
     <div className="fixed inset-0 z-[60] flex flex-col overflow-hidden transition-colors duration-200"
       style={{ background: flash === "ok" ? "radial-gradient(120% 80% at 50% 0%, #064E3B 0%, #06251C 60%, #04120E 100%)"
         : flash === "no" ? "radial-gradient(120% 80% at 50% 0%, #4C0519 0%, #2A0410 60%, #150207 100%)"
         : "radial-gradient(120% 80% at 50% 0%, #0F3D3A 0%, #0A2320 45%, #05100F 100%)" }}>
-      <div className="relative z-10 flex-1 flex flex-col max-w-md w-full mx-auto">{children}</div>
+      <motion.div animate={controls} className="relative z-10 flex-1 flex flex-col max-w-md w-full mx-auto">{children}</motion.div>
     </div>
+  );
+}
+
+function MuteButton({ on, onToggle }: { on: boolean; onToggle: () => void }) {
+  return (
+    <button onClick={onToggle} aria-label={on ? "Matikan suara" : "Nyalakan suara"}
+      className="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center text-white/70 active:scale-90 transition-all">
+      {on ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
+    </button>
   );
 }
 

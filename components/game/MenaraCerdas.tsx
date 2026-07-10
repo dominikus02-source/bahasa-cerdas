@@ -1,9 +1,11 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useCallback } from "react";
 import Link from "next/link";
-import { motion, AnimatePresence } from "framer-motion";
-import { Heart, Flame, Trophy, Zap, Star, RotateCcw, Mountain, Check, X, Loader2, Sparkles } from "lucide-react";
+import { motion, AnimatePresence, useAnimationControls } from "framer-motion";
+import { Heart, Flame, Trophy, RotateCcw, Mountain, Check, X, Loader2, Sparkles, Zap, Volume2, VolumeX } from "lucide-react";
+import Burst from "@/components/game/Burst";
+import { sfx, haptic, isSoundOn, toggleSound } from "@/lib/game/sound";
 
 interface Q {
   id: string;
@@ -26,11 +28,15 @@ export default function MenaraCerdas({ backHref = "/arena/game" }: { backHref?: 
   const [best, setBest] = useState(0);
   const [picked, setPicked] = useState<number | null>(null);
   const [xpResult, setXpResult] = useState<{ xpEarned: number; leveledUp: boolean } | null>(null);
+  const [burst, setBurst] = useState(0);
+  const [soundOn, setSoundOn] = useState(true);
+  const controls = useAnimationControls();
 
   const total = questions.length;
   const current = questions[idx];
 
   const start = useCallback(async () => {
+    sfx.start(); setSoundOn(isSoundOn());
     setPhase("loading");
     setIdx(0); setFloor(0); setHearts(MAX_HEARTS); setCombo(0); setBest(0); setPicked(null); setXpResult(null);
     try {
@@ -48,6 +54,9 @@ export default function MenaraCerdas({ backHref = "/arena/game" }: { backHref?: 
   }, []);
 
   const finish = useCallback(async (finalFloor: number) => {
+    const cleared = finalFloor >= total && total > 0;
+    if (cleared) { sfx.win(); haptic([40, 40, 80]); setBurst((b) => b + 1); }
+    else { sfx.gameover(); haptic(120); }
     setPhase("gameover");
     try {
       const res = await fetch("/api/game/menara", {
@@ -66,6 +75,14 @@ export default function MenaraCerdas({ backHref = "/arena/game" }: { backHref?: 
     if (picked !== null) return;
     setPicked(i);
     const correct = i === current.jawaban;
+
+    if (correct) {
+      sfx.climb(combo + 1); haptic(25); setBurst((b) => b + 1);
+      controls.start({ y: [0, -6, 0], transition: { duration: 0.3 } });
+    } else {
+      sfx.wrong(); haptic([60, 40, 60]);
+      controls.start({ x: [0, -10, 10, -7, 7, 0], transition: { duration: 0.4 } });
+    }
 
     setTimeout(() => {
       if (correct) {
@@ -125,6 +142,7 @@ export default function MenaraCerdas({ backHref = "/arena/game" }: { backHref?: 
     const cleared = floor >= total && total > 0;
     return (
       <Shell>
+        <Burst trigger={burst} x={50} y={38} count={28} />
         <div className="flex-1 flex flex-col items-center justify-center text-center px-6">
           <motion.div initial={{ scale: 0, rotate: -20 }} animate={{ scale: 1, rotate: 0 }} transition={{ type: "spring", stiffness: 180 }}
             className={`w-24 h-24 rounded-[28px] flex items-center justify-center shadow-2xl mb-5 ${cleared ? "bg-gradient-to-br from-amber-400 to-orange-500 shadow-amber-500/40" : "bg-gradient-to-br from-violet-500 to-purple-600 shadow-purple-500/40"}`}>
@@ -161,7 +179,8 @@ export default function MenaraCerdas({ backHref = "/arena/game" }: { backHref?: 
 
   // ---------- PLAYING ----------
   return (
-    <Shell>
+    <Shell controls={controls}>
+      <Burst trigger={burst} x={16} y={48} />
       {/* HUD */}
       <div className="px-5 pt-4 pb-2 flex items-center justify-between">
         <div className="flex items-center gap-1">
@@ -177,9 +196,12 @@ export default function MenaraCerdas({ backHref = "/arena/game" }: { backHref?: 
             </motion.div>
           )}
         </AnimatePresence>
-        <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10">
-          <Mountain className="w-4 h-4 text-violet-300" />
-          <span className="text-sm font-bold text-white">Lt. {floor}</span>
+        <div className="flex items-center gap-2">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10">
+            <Mountain className="w-4 h-4 text-violet-300" />
+            <span className="text-sm font-bold text-white">Lt. {floor}</span>
+          </div>
+          <MuteButton on={soundOn} onToggle={() => setSoundOn(toggleSound())} />
         </div>
       </div>
 
@@ -270,15 +292,24 @@ function Tower({ floor, total }: { floor: number; total: number }) {
   );
 }
 
-function Shell({ children }: { children: React.ReactNode }) {
+function Shell({ children, controls }: { children: React.ReactNode; controls?: ReturnType<typeof useAnimationControls> }) {
   return (
     <div className="fixed inset-0 z-[60] flex flex-col overflow-hidden"
       style={{ background: "radial-gradient(120% 80% at 50% 0%, #2E1065 0%, #1A0B3B 45%, #0B0718 100%)" }}>
       {/* decorative stars */}
       <div className="pointer-events-none absolute inset-0 opacity-40"
         style={{ backgroundImage: "radial-gradient(1.5px 1.5px at 20% 30%, #fff, transparent), radial-gradient(1.5px 1.5px at 70% 20%, #fff, transparent), radial-gradient(1px 1px at 40% 60%, #fff, transparent), radial-gradient(1.5px 1.5px at 85% 50%, #fff, transparent), radial-gradient(1px 1px at 15% 80%, #fff, transparent)" }} />
-      <div className="relative z-10 flex-1 flex flex-col max-w-md w-full mx-auto">{children}</div>
+      <motion.div animate={controls} className="relative z-10 flex-1 flex flex-col max-w-md w-full mx-auto">{children}</motion.div>
     </div>
+  );
+}
+
+function MuteButton({ on, onToggle }: { on: boolean; onToggle: () => void }) {
+  return (
+    <button onClick={onToggle} aria-label={on ? "Matikan suara" : "Nyalakan suara"}
+      className="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center text-white/70 active:scale-90 transition-all">
+      {on ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
+    </button>
   );
 }
 
