@@ -4,8 +4,12 @@ import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import GamePlay from '@/components/game/GamePlay';
 import { gameSocket } from '@/lib/game/socket';
+import { MULTIPLAYER_ENABLED } from '@/lib/features';
+import ComingSoon from '@/components/game/ComingSoon';
 
 export default function MuridGamePlayPage() {
+  if (!MULTIPLAYER_ENABLED) return <ComingSoon title="Kuis Tempur — Segera Hadir" backHref="/murid/game" />;
+
   const params = useParams();
   const router = useRouter();
   const [started, setStarted] = useState(false);

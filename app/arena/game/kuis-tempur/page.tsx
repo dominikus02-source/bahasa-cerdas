@@ -4,8 +4,12 @@ import { useCallback } from "react"
 import GameLobby from "@/components/game/GameLobby"
 import { gameSocket } from "@/lib/game/socket"
 import { ArrowLeft } from "lucide-react"
+import { MULTIPLAYER_ENABLED } from "@/lib/features"
+import ComingSoon from "@/components/game/ComingSoon"
 
 export default function KuisTempurPage() {
+  if (!MULTIPLAYER_ENABLED) return <ComingSoon title="Kuis Tempur — Segera Hadir" />
+
   const handleBack = useCallback(() => {
     gameSocket.disconnect()
     window.location.href = "/arena/game"

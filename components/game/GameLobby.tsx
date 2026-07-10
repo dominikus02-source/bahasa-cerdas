@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import { gameSocket } from "@/lib/game/socket";
 import { motion } from "framer-motion";
 import { Zap, Trophy, Swords, Heart, Timer, Copy, Check, Users, Sparkles, ArrowRight, Maximize, Minimize, Lightbulb, Shuffle } from "lucide-react";
+import { MULTIPLAYER_ENABLED } from "@/lib/features";
+import ComingSoon from "@/components/game/ComingSoon";
 
 const GAME_MODES = [
   {
@@ -90,6 +92,8 @@ interface GameLobbyProps {
 }
 
 export default function GameLobby({ isHost = false, roomCode: initialCode, onStart, role = "MURID" }: GameLobbyProps) {
+  if (!MULTIPLAYER_ENABLED) return <ComingSoon title="Kuis Tempur — Segera Hadir" backHref={role === "GURU" ? "/guru/game" : "/murid/game"} />;
+
   const router = useRouter();
   const [room, setRoom] = useState<any>(null);
   const [code, setCode] = useState(initialCode || "");

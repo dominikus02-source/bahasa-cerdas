@@ -4,16 +4,17 @@ import { redirect } from "next/navigation"
 import Link from "next/link"
 import { Zap, Swords, Puzzle, Trophy, Type, Flame, BookOpen, Users, Clock, Crown } from "lucide-react"
 import BattleCard from "@/components/arena/BattleCard"
+import { MULTIPLAYER_ENABLED } from "@/lib/features"
 
 interface Game {
   title: string; desc: string; icon: any; href: string
   accentColor: string; iconGradient: string
   featured?: boolean; badge?: { text: string; type: "hot" | "new" }
-  xp: string; players: string; time: string
+  xp: string; players: string; time: string; multiplayer?: boolean
 }
 
 const GAMES: Game[] = [
-  { title: "Kuis Tempur", desc: "Lawan murid lain real-time! Siapa cepat dan benar dia menang.", icon: Swords, href: "/arena/game/kuis-tempur", accentColor: "#EF4444", iconGradient: "from-red-500 to-red-600", featured: true, badge: { text: "Terpopuler", type: "hot" }, xp: "+80 XP", players: "2-8 pemain", time: "~5 menit" },
+  { title: "Kuis Tempur", desc: "Lawan murid lain real-time! Siapa cepat dan benar dia menang.", icon: Swords, href: "/arena/game/kuis-tempur", accentColor: "#EF4444", iconGradient: "from-red-500 to-red-600", featured: true, badge: { text: "Terpopuler", type: "hot" }, xp: "+80 XP", players: "2-8 pemain", time: "~5 menit", multiplayer: true },
   { title: "KataPlay", desc: "Belajar membaca dari nol! 4 tingkat, puluhan soal seru!", icon: BookOpen, href: "/arena/game/kata-play", accentColor: "#7C3AED", iconGradient: "from-violet-500 to-purple-600", badge: { text: "Baru", type: "new" }, xp: "+50 XP", players: "Solo", time: "~3 mnt" },
   { title: "Tebak Kata", desc: "Tebak dari petunjuk. Seru bareng teman!", icon: Type, href: "/arena/game/tebak-kata", accentColor: "#06B6D4", iconGradient: "from-cyan-500 to-cyan-600", xp: "+60 XP", players: "Solo", time: "~3 mnt" },
   { title: "Susun Kata", desc: "Acak huruf jadi kata benar dalam waktu limit!", icon: Puzzle, href: "/arena/game/susun-kata", accentColor: "#10B981", iconGradient: "from-emerald-500 to-emerald-600", xp: "+50 XP", players: "Solo", time: "~3 mnt" },
@@ -68,6 +69,14 @@ export default async function ArenaGimPage() {
   const totalXp = user.xp || 0
   const userRank = topUsers.findIndex((u) => u.id === user.id) + 1
 
+  // While the multiplayer server is offline, present multiplayer games as
+  // "Segera Hadir". Their link lands on a guarded page showing a teaser screen.
+  const games: Game[] = GAMES.map((g) =>
+    g.multiplayer && !MULTIPLAYER_ENABLED
+      ? { ...g, badge: { text: "Segera Hadir", type: "new" }, players: "Segera", desc: "Mode lawan real-time sedang kami siapkan. Segera hadir!" }
+      : g
+  )
+
   return (
     <div className="game-hub arena-page">
       <div className="game-ambient" />
@@ -97,7 +106,7 @@ export default async function ArenaGimPage() {
 
         {/* Game grid */}
         <div className="grid grid-cols-2 gap-3 mb-8">
-          {GAMES.map((g) => (
+          {games.map((g) => (
             <Link key={g.href} href={g.href}
               className={`game-card-anim relative overflow-hidden p-4 rounded-[20px] border active:scale-[0.96] transition-all hover:-translate-y-0.5 hover:shadow-xl game-card-hover`}
               style={{ background: "#16122A", borderColor: "rgba(124,58,237,0.2)" }}

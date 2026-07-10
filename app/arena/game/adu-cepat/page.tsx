@@ -5,10 +5,14 @@ import Link from "next/link"
 import { gameSocket } from "@/lib/game/socket"
 import GamePlay from "@/components/game/GamePlay"
 import { ArrowLeft, Swords, Zap, Trophy, Search, Users, Sparkles, RefreshCw } from "lucide-react"
+import { MULTIPLAYER_ENABLED } from "@/lib/features"
+import ComingSoon from "@/components/game/ComingSoon"
 
 type Phase = "idle" | "searching" | "found" | "countdown" | "playing" | "result"
 
 export default function AduCepatPage() {
+  if (!MULTIPLAYER_ENABLED) return <ComingSoon title="Adu Cepat — Segera Hadir" />
+
   const [phase, setPhase] = useState<Phase>("idle")
   const [countdown, setCountdown] = useState(3)
   const [roomCode, setRoomCode] = useState("")

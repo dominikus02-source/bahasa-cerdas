@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { MULTIPLAYER_ENABLED } from "@/lib/features";
 
 // Better inline SVG icons for games
 const BattleIcon = () => <svg className="w-10 h-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M7 11l5-5 5 5M7 13l5 5 5-5" strokeLinecap="round" strokeLinejoin="round"/></svg>;
@@ -130,8 +131,14 @@ const GAMES = [
 ];
 
 export default function GameHubPage() {
-  const liveGames = GAMES.filter(g => g.status === "LIVE");
-  const comingSoon = GAMES.filter(g => g.status === "COMING_SOON");
+  // Multiplayer server offline → move Kuis Tempur into the "Segera Hadir" section.
+  const gamesList = GAMES.map(g =>
+    g.id === "battle" && !MULTIPLAYER_ENABLED
+      ? { ...g, status: "COMING_SOON", subtitle: "Segera Hadir" }
+      : g
+  );
+  const liveGames = gamesList.filter(g => g.status === "LIVE");
+  const comingSoon = gamesList.filter(g => g.status === "COMING_SOON");
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-violet-50">
