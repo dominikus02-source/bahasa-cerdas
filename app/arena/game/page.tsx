@@ -2,7 +2,7 @@ import { getUser } from "@/lib/supabase/server"
 import { db } from "@/lib/db"
 import { redirect } from "next/navigation"
 import Link from "next/link"
-import { Zap, Swords, Puzzle, Trophy, Type, Flame, BookOpen, Users, Clock, Crown, Mountain } from "lucide-react"
+import { Zap, Swords, Puzzle, Trophy, Type, Flame, BookOpen, Users, Clock, Crown, Mountain, ThumbsUp } from "lucide-react"
 import BattleCard from "@/components/arena/BattleCard"
 import { MULTIPLAYER_ENABLED } from "@/lib/features"
 
@@ -15,6 +15,7 @@ interface Game {
 
 const GAMES: Game[] = [
   { title: "Menara Cerdas", desc: "Panjat menara dengan soal dari pelajaranmu! Makin tinggi, makin seru.", icon: Mountain, href: "/arena/game/menara", accentColor: "#8B5CF6", iconGradient: "from-violet-500 to-fuchsia-600", featured: true, badge: { text: "Baru", type: "new" }, xp: "+60 XP", players: "Solo", time: "~3 mnt" },
+  { title: "Benar atau Salah", desc: "Kuis kilat 60 detik! Tentukan jawaban yang muncul benar atau salah.", icon: ThumbsUp, href: "/arena/game/benar-salah", accentColor: "#14B8A6", iconGradient: "from-emerald-400 to-teal-600", badge: { text: "Baru", type: "new" }, xp: "+50 XP", players: "Solo", time: "~1 mnt" },
   { title: "Kuis Tempur", desc: "Lawan murid lain real-time! Siapa cepat dan benar dia menang.", icon: Swords, href: "/arena/game/kuis-tempur", accentColor: "#EF4444", iconGradient: "from-red-500 to-red-600", featured: true, badge: { text: "Terpopuler", type: "hot" }, xp: "+80 XP", players: "2-8 pemain", time: "~5 menit", multiplayer: true },
   { title: "KataPlay", desc: "Belajar membaca dari nol! 4 tingkat, puluhan soal seru!", icon: BookOpen, href: "/arena/game/kata-play", accentColor: "#7C3AED", iconGradient: "from-violet-500 to-purple-600", badge: { text: "Baru", type: "new" }, xp: "+50 XP", players: "Solo", time: "~3 mnt" },
   { title: "Tebak Kata", desc: "Tebak dari petunjuk. Seru bareng teman!", icon: Type, href: "/arena/game/tebak-kata", accentColor: "#06B6D4", iconGradient: "from-cyan-500 to-cyan-600", xp: "+60 XP", players: "Solo", time: "~3 mnt" },

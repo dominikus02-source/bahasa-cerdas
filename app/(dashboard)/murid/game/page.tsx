@@ -13,6 +13,7 @@ const PuzzleIcon = () => <svg className="w-10 h-10" viewBox="0 0 24 24" fill="no
 const PantunIcon = () => <svg className="w-10 h-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M4 4l16 16M4 20L20 4" strokeLinecap="round"/><path d="M9 9h.01M14 10h.01M10 14h.01M15 15h.01" strokeLinecap="round"/></svg>;
 const KoreksiIcon = () => <svg className="w-10 h-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" strokeLinecap="round"/></svg>;
 const MenaraIcon = () => <svg className="w-10 h-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M12 3l9 16H3l9-16z" strokeLinecap="round" strokeLinejoin="round"/><path d="M8.5 12h7M10 8h4" strokeLinecap="round"/></svg>;
+const BenarSalahIcon = () => <svg className="w-10 h-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M5 13l3 3 5-6" strokeLinecap="round" strokeLinejoin="round"/><path d="M16 8l5 5m0-5l-5 5" strokeLinecap="round"/></svg>;
 
 const GAMES = [
   {
@@ -28,6 +29,20 @@ const GAMES = [
     badgeColor: "bg-violet-500",
     players: "Solo",
     time: "~3 menit",
+  },
+  {
+    id: "benar-salah",
+    title: "Benar atau Salah",
+    subtitle: "Kuis Kilat 60 Detik",
+    desc: "Baca soal dari pelajaran + jawaban yang muncul, lalu tentukan benar atau salah secepat mungkin! Kejar combo tertinggi.",
+    Icon: BenarSalahIcon,
+    gradient: "from-emerald-400 via-teal-500 to-cyan-600",
+    href: "/arena/game/benar-salah",
+    status: "LIVE",
+    badge: "BARU",
+    badgeColor: "bg-teal-500",
+    players: "Solo",
+    time: "~1 menit",
   },
   {
     id: "battle",
