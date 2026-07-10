@@ -12,8 +12,23 @@ const DuelIcon = () => <svg className="w-10 h-10" viewBox="0 0 24 24" fill="none
 const PuzzleIcon = () => <svg className="w-10 h-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6zM9 9h6v6H9z" strokeLinecap="round"/></svg>;
 const PantunIcon = () => <svg className="w-10 h-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M4 4l16 16M4 20L20 4" strokeLinecap="round"/><path d="M9 9h.01M14 10h.01M10 14h.01M15 15h.01" strokeLinecap="round"/></svg>;
 const KoreksiIcon = () => <svg className="w-10 h-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" strokeLinecap="round"/></svg>;
+const MenaraIcon = () => <svg className="w-10 h-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M12 3l9 16H3l9-16z" strokeLinecap="round" strokeLinejoin="round"/><path d="M8.5 12h7M10 8h4" strokeLinecap="round"/></svg>;
 
 const GAMES = [
+  {
+    id: "menara",
+    title: "Menara Cerdas",
+    subtitle: "Panjat Soal Pelajaran",
+    desc: "Panjat menara dengan menjawab soal dari pelajaranmu! Jawab benar untuk naik, jaga 3 nyawamu, dan raih combo tertinggi.",
+    Icon: MenaraIcon,
+    gradient: "from-violet-500 via-purple-600 to-fuchsia-700",
+    href: "/arena/game/menara",
+    status: "LIVE",
+    badge: "BARU",
+    badgeColor: "bg-violet-500",
+    players: "Solo",
+    time: "~3 menit",
+  },
   {
     id: "battle",
     title: "Kuis Tempur",
@@ -27,20 +42,6 @@ const GAMES = [
     badgeColor: "bg-red-500",
     players: "2-8 Pemain",
     time: "~5 menit",
-  },
-  {
-    id: "katastra",
-    title: "Katastra",
-    subtitle: "Pusat Gim Kata",
-    desc: "Taklukkan kata, kuasai bahasa! Lari Kata, Duel Kata, dan Teka-teki Makna dalam satu tempat.",
-    Icon: DashIcon,
-    gradient: "from-violet-500 via-purple-600 to-violet-800",
-    href: "/murid/katastra",
-    status: "LIVE",
-    badge: "BARU",
-    badgeColor: "bg-emerald-500",
-    players: "Solo + Multi",
-    time: "~3-5 menit",
   },
   {
     id: "dash",
