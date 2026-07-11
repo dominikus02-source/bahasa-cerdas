@@ -1,0 +1,44 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    # Placeholder values — CI only type-checks/builds, it never connects to real
+    # services. Real secrets live in Vercel, not in CI.
+    env:
+      NEXT_TELEMETRY_DISABLED: "1"
+      DATABASE_URL: "postgresql://user:pass@localhost:5432/db"
+      DIRECT_URL: "postgresql://user:pass@localhost:5432/db"
+      NEXT_PUBLIC_SUPABASE_URL: "https://placeholder.supabase.co"
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: "placeholder-anon-key"
+      NEXT_PUBLIC_SITE_URL: "https://example.com"
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Prisma generate
+        run: npx prisma generate
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Build
+        run: npm run build

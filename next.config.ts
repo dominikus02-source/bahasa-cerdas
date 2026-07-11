@@ -18,7 +18,8 @@ const nextConfig: NextConfig = {
     ],
   },
   typescript: {
-    ignoreBuildErrors: true,
+    // Type errors must fail the build. Run `npm run typecheck` locally / in CI.
+    ignoreBuildErrors: false,
   },
   async redirects() {
     return [
