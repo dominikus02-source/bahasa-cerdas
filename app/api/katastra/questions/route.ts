@@ -188,12 +188,17 @@ function getLevelForGrade(level: number): keyof typeof QUESTIONS {
 }
 
 export async function GET(req: NextRequest) {
-  const { searchParams } = new URL(req.url);
-  const level = parseInt(searchParams.get("level") || "1");
-  const count = parseInt(searchParams.get("count") || "15");
-  const grade = searchParams.get("grade") as keyof typeof QUESTIONS || getLevelForGrade(level);
-  const questionPool = QUESTIONS[grade] || QUESTIONS.SD;
-  const selected = shuffleArray(questionPool).slice(0, Math.min(count, questionPool.length));
+  try {
+    const { searchParams } = new URL(req.url);
+    const level = parseInt(searchParams.get("level") || "1");
+    const count = parseInt(searchParams.get("count") || "15");
+    const grade = searchParams.get("grade") as keyof typeof QUESTIONS || getLevelForGrade(level);
+    const questionPool = QUESTIONS[grade] || QUESTIONS.SD;
+    const selected = shuffleArray(questionPool).slice(0, Math.min(count, questionPool.length));
 
-  return NextResponse.json({ questions: selected, grade, totalPool: questionPool.length });
+    return NextResponse.json({ questions: selected, grade, totalPool: questionPool.length });
+  } catch (error) {
+    console.error("GET /api/katastra/questions error:", error);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  }
 }

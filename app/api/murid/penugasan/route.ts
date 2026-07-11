@@ -3,6 +3,7 @@ import { db } from "@/lib/db"
 import { getUser } from "@/lib/supabase/server"
 
 export async function GET() {
+  try {
   const user = await getUser()
   if (!user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
@@ -63,9 +64,14 @@ export async function GET() {
   }))
 
   return NextResponse.json({ data })
+  } catch (error) {
+    console.error("GET /api/murid/penugasan error:", error)
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 })
+  }
 }
 
 export async function PATCH(req: Request) {
+  try {
   const user = await getUser()
   if (!user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
@@ -103,4 +109,8 @@ export async function PATCH(req: Request) {
   })
 
   return NextResponse.json({ data: submission })
+  } catch (error) {
+    console.error("PATCH /api/murid/penugasan error:", error)
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 })
+  }
 }

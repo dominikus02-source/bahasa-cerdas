@@ -3,6 +3,7 @@ import { db } from "@/lib/db"
 import { getUser } from "@/lib/supabase/server"
 
 export async function GET(req: Request) {
+  try {
   const user = await getUser()
   if (!user || (user.role !== "GURU" && !user.isFounder)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
@@ -142,4 +143,8 @@ export async function GET(req: Request) {
   }
 
   return NextResponse.json({ data })
+  } catch (error) {
+    console.error("GET /api/guru/gradebook error:", error)
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 })
+  }
 }
