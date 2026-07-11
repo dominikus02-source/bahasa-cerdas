@@ -2,7 +2,7 @@ import "./arena.css"
 import { getUser } from "@/lib/supabase/server"
 import { redirect } from "next/navigation"
 import Link from "next/link"
-import { Compass, Flame, Gamepad2, MessageCircle, Trophy, LogOut } from "lucide-react"
+import { Compass, Flame, Gamepad2, MessageCircle, Trophy, LogOut, LayoutDashboard } from "lucide-react"
 import { SwRegister } from "@/components/SwRegister"
 import { ArenaClientWrapper } from "./arena-client"
 import { BottomNav } from "./bottom-nav"
@@ -49,6 +49,9 @@ export default async function ArenaLayout({ children }: { children: React.ReactN
         </nav>
 
         <div className="flex items-center gap-2">
+          <Link href="/murid/beranda" className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold text-violet-700 bg-violet-50 hover:bg-violet-100 transition-colors">
+            <LayoutDashboard className="w-4 h-4" /> Dasbor Murid
+          </Link>
           <HeaderActions />
           <LogoutButton variant="icon" />
         </div>
@@ -63,6 +66,9 @@ export default async function ArenaLayout({ children }: { children: React.ReactN
           <span className="font-bold text-sm text-gray-900">Arena</span>
         </Link>
         <div className="flex items-center gap-1">
+          <Link href="/murid/beranda" aria-label="Kembali ke Dasbor Murid" className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-semibold text-violet-700 bg-violet-50 active:scale-95 transition-all">
+            <LayoutDashboard className="w-3.5 h-3.5" /> Dasbor
+          </Link>
           <HeaderActions />
           <LogoutButton variant="icon" />
         </div>
