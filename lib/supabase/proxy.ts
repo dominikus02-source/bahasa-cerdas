@@ -18,9 +18,15 @@ const selfAuthPaths = ["/api/", "/arena/", "/guru/", "/admin/", "/murid/", "/gam
 // Dashboard routes that require onboarding
 const dashboardPaths = ["/guru/", "/admin/", "/murid/"];
 
-export async function updateSession(request: NextRequest) {
+export async function updateSession(request: NextRequest, nonce?: string) {
   const { pathname, search } = request.nextUrl;
   const host = request.headers.get("host") || "";
+
+  // Carry the CSP nonce to the downstream render via a request header so Next.js
+  // applies it to its own scripts. Cloned so we don't mutate the original.
+  const requestHeaders = new Headers(request.headers);
+  if (nonce) requestHeaders.set("x-nonce", nonce);
+  const nextWithNonce = () => NextResponse.next({ request: { headers: requestHeaders } });
 
   // Redirect non-primary domains to www.bahasacerdas.com for SEO consistency
   if (host && !host.includes("bahasacerdas.com") && !host.includes("localhost") && !host.includes("vercel.app")) {
@@ -40,7 +46,7 @@ export async function updateSession(request: NextRequest) {
   // On login page, clear any stale Supabase cookies unconditionally
   // This ensures users with expired sessions from old VPS can log in fresh
   if (pathname === "/login" || pathname === "/auth/arena-login") {
-    const response = NextResponse.next({ request });
+    const response = nextWithNonce();
     request.cookies.getAll()
       .filter((c) => c.name.startsWith("sb-") || c.name.startsWith("supabase-"))
       .forEach((c) => response.cookies.set(c.name, "", { maxAge: 0, path: "/" }));
@@ -55,16 +61,16 @@ export async function updateSession(request: NextRequest) {
   // This avoids redundant Supabase auth calls and reduces rate limit pressure
   const isSelfAuth = selfAuthPaths.some((p) => pathname.startsWith(p));
   if (isPublic || isAuthPath || isSelfAuth) {
-    const response = NextResponse.next({ request });
+    const response = nextWithNonce();
     response.headers.set("X-RateLimit-Remaining", String(limit.remaining));
     return response;
   }
 
   if (pathname.includes(".")) {
-    return NextResponse.next({ request });
+    return nextWithNonce();
   }
 
-  let supabaseResponse = NextResponse.next({ request });
+  let supabaseResponse = nextWithNonce();
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -79,7 +85,7 @@ export async function updateSession(request: NextRequest) {
           cookiesToSet.forEach(({ name, value }) =>
             request.cookies.set(name, value)
           );
-          supabaseResponse = NextResponse.next({ request });
+          supabaseResponse = nextWithNonce();
           cookiesToSet.forEach(({ name, value, options }) =>
             supabaseResponse.cookies.set(name, value, { ...options, domain })
           );

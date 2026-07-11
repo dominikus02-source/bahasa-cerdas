@@ -2,10 +2,24 @@ import { type NextRequest, NextResponse } from "next/server";
 import { updateSession } from "@/lib/supabase/proxy";
 import { rateLimit } from "@/lib/rate-limit";
 
-function buildCsp(): string {
+// Content-Security-Policy with a per-request nonce for inline scripts.
+// script-src uses 'nonce-<value>' (NO 'unsafe-inline') so injected inline scripts
+// are blocked unless they carry our nonce. Host allowlists (Midtrans, Supabase)
+// remain so their EXTERNAL scripts still load (we intentionally do NOT use
+// 'strict-dynamic', which would nullify those allowlists).
+// style-src keeps 'unsafe-inline' — Tailwind/inline styles rely on it; removing it
+// causes broad breakage, so it is left in place by design.
+function buildCsp(nonce: string): string {
   const csp: Record<string, string[]> = {
     "default-src": ["'self'"],
-    "script-src": ["'self'", "'unsafe-inline'", "https://*.supabase.co", "https://app.midtrans.com", "https://app.sandbox.midtrans.com", "https://api.unsplash.com"],
+    "script-src": [
+      "'self'",
+      `'nonce-${nonce}'`,
+      "https://*.supabase.co",
+      "https://app.midtrans.com",
+      "https://app.sandbox.midtrans.com",
+      "https://api.unsplash.com",
+    ],
     "style-src": ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
     "img-src": ["'self'", "blob:", "data:", "https://*.supabase.co", "https://images.unsplash.com", "https://api.dicebear.com", "https://img.youtube.com", "https://i.ytimg.com"],
     "font-src": ["'self'", "https://fonts.gstatic.com"],
@@ -15,10 +29,11 @@ function buildCsp(): string {
     "object-src": ["'none'"],
     "base-uri": ["'self'"],
     "form-action": ["'self'"],
+    "report-uri": ["/api/csp-report"],
     "upgrade-insecure-requests": [],
   };
   return Object.entries(csp)
-    .map(([key, values]) => `${key} ${values.join(" ")}`)
+    .map(([key, values]) => (values.length ? `${key} ${values.join(" ")}` : key))
     .join("; ");
 }
 
@@ -34,7 +49,7 @@ export async function middleware(request: NextRequest) {
   // Rate limit /api/ai/* routes in middleware (30 req/min blanket — per-route handlers enforce tighter limits)
   if (pathname.startsWith("/api/ai/")) {
     const ip = getClientIp(request);
-    const result = await rateLimit(ip, "ai", 30); // 30 req/min blanket — per-route handlers enforce tighter limits
+    const result = await rateLimit(ip, "ai", 30);
     if (!result.success) {
       return new NextResponse(JSON.stringify({ error: "Too many requests" }), {
         status: 429,
@@ -43,9 +58,13 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  const response = await updateSession(request);
+  // Per-request nonce, propagated to the render via the x-nonce request header so
+  // Next.js applies it to its framework scripts and our JSON-LD blocks can read it.
+  const nonce = btoa(crypto.randomUUID());
 
-  response.headers.set("Content-Security-Policy", buildCsp());
+  const response = await updateSession(request, nonce);
+
+  response.headers.set("Content-Security-Policy", buildCsp(nonce));
 
   return response;
 }
