@@ -5,7 +5,10 @@ const nextConfig: NextConfig = {
   experimental: {
     serverActions: {
       allowedOrigins: ["localhost:3000", "bahasacerdas.com", "www.bahasacerdas.com"],
-      bodySizeLimit: "50mb",
+      // Server Actions carry small payloads only (forms/metadata). Large file
+      // uploads go directly to Supabase Storage from the client, NOT through a
+      // Server Action — so keep this tight to limit abuse.
+      bodySizeLimit: "2mb",
     },
   },
   images: {
