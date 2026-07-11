@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { getUser } from "@/lib/supabase/server";
+import { validateUpload, IMAGE_MIMES } from "@/lib/upload-validation";
 
 export async function POST(req: NextRequest) {
   try {
@@ -11,8 +12,11 @@ export async function POST(req: NextRequest) {
     const file = formData.get("file") as File;
     if (!file) return NextResponse.json({ error: "File tidak ditemukan" }, { status: 400 });
 
-    const ext = file.name.split(".").pop()?.toLowerCase() || "jpg";
-    const fileName = `toko/${user.id}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+    // Images only — MIME + extension + size + magic-byte validation.
+    const check = await validateUpload(file, IMAGE_MIMES);
+    if (!check.ok) return NextResponse.json({ error: check.error }, { status: check.status });
+
+    const fileName = `toko/${user.id}/${Date.now()}-${Math.random().toString(36).slice(2)}.${check.ext}`;
 
     // Try service_role key first, fallback to anon key
     let supabase = createClient(
