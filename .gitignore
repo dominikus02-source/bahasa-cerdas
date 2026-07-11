@@ -55,3 +55,6 @@ secrets.txt
 
 # SSL / keys
 *.pem
+
+# TypeScript incremental build info
+*.tsbuildinfo
