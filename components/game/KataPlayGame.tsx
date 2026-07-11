@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import GameBackground from "@/components/game/GameBackground"
-import { sfx, haptic } from "@/lib/game/sound"
+import { sfx, haptic, startBGM, stopBGM } from "@/lib/game/sound"
 import {
   Heart, Star, Trophy, RefreshCw, Crown, BookOpen,
   ChevronRight, Lock, Sparkles, Bot, Cat,
@@ -82,6 +82,7 @@ function pickQuestions(level: KataPlayLevel, count: number): KataPlayQuestion[] 
 
 export default function KataPlayGame({ hideBackButton }: { hideBackButton?: boolean }) {
   const [phase, setPhase] = useState<Phase>("splash")
+  useEffect(() => { if (phase === "playing") startBGM(); else stopBGM(); return () => stopBGM() }, [phase])
   const [progress, setProgress] = useState<ProgressData>({ completedLessons: [], xp: 0 })
   const [selectedLevel, setSelectedLevel] = useState<KataPlayLevel | null>(null)
   const [levelLessons, setLevelLessons] = useState<KataPlayLesson[]>([])

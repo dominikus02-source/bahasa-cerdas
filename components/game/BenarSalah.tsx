@@ -5,7 +5,8 @@ import Link from "next/link";
 import { motion, AnimatePresence, useAnimationControls } from "framer-motion";
 import { Check, X, Zap, Flame, Trophy, Timer, RotateCcw, Loader2, Sparkles, Volume2, VolumeX } from "lucide-react";
 import Burst from "@/components/game/Burst";
-import { sfx, haptic, isSoundOn, toggleSound } from "@/lib/game/sound";
+import ComboFlash from "@/components/game/ComboFlash";
+import { sfx, haptic, isSoundOn, toggleSound, startBGM, stopBGM } from "@/lib/game/sound";
 
 interface Q {
   id: string;
@@ -45,7 +46,7 @@ export default function BenarSalah({ backHref = "/arena/game" }: { backHref?: st
   }, [idx, current]);
 
   const start = useCallback(async () => {
-    sfx.start(); setSoundOn(isSoundOn());
+    sfx.start(); setSoundOn(isSoundOn()); startBGM();
     setPhase("loading");
     setIdx(0); setScore(0); setCombo(0); setBest(0); setAnswered(0);
     setTimeLeft(ROUND_SECONDS); setFlash(null); setXpResult(null); lockRef.current = false;
@@ -64,6 +65,7 @@ export default function BenarSalah({ backHref = "/arena/game" }: { backHref?: st
   }, []);
 
   const finish = useCallback(async (finalScore: number, finalAnswered: number) => {
+    stopBGM();
     if (finalScore > 0) { sfx.win(); haptic([40, 40, 80]); setBurst((b) => b + 1); }
     else { sfx.gameover(); haptic(120); }
     setPhase("gameover");
@@ -79,6 +81,8 @@ export default function BenarSalah({ backHref = "/arena/game" }: { backHref?: st
       /* keep local result */
     }
   }, []);
+
+  useEffect(() => () => stopBGM(), []);
 
   // Countdown timer
   useEffect(() => {
@@ -195,6 +199,7 @@ export default function BenarSalah({ backHref = "/arena/game" }: { backHref?: st
   return (
     <Shell flash={flash} controls={controls}>
       <Burst trigger={burst} x={50} y={42} />
+      <ComboFlash combo={combo} />
       {/* judgment stamp — thematic decoration */}
       <AnimatePresence>
         {flash && (

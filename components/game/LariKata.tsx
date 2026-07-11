@@ -4,7 +4,8 @@ import { useState, useEffect, useRef, useCallback } from "react"
 import { useRouter } from "next/navigation"
 import { Zap, Clock, Star, Flame, Trophy, ArrowLeft, RefreshCw, Home, Sparkles } from "lucide-react"
 import GameBackground from "@/components/game/GameBackground"
-import { sfx, haptic } from "@/lib/game/sound"
+import ComboFlash from "@/components/game/ComboFlash"
+import { sfx, haptic, startBGM, stopBGM } from "@/lib/game/sound"
 
 interface Question {
   text: string
@@ -43,8 +44,10 @@ export default function LariKataGame({ hideBackButton }: LariKataGameProps) {
     }
   }, [])
 
+  useEffect(() => () => stopBGM(), [])
+
   const startGame = useCallback(async () => {
-    sfx.start()
+    sfx.start(); startBGM()
     const res = await fetch("/api/katastra/questions?count=20")
     const data = await res.json()
     setQuestions(data.questions || [])
@@ -79,6 +82,7 @@ export default function LariKataGame({ hideBackButton }: LariKataGameProps) {
 
   const endGame = async () => {
     if (timerRef.current) clearInterval(timerRef.current)
+    stopBGM()
     if (correct > 0) { sfx.win(); haptic([40, 40, 80]) } else { sfx.gameover() }
     setPhase("result")
     setSubmitting(true)
@@ -236,6 +240,7 @@ export default function LariKataGame({ hideBackButton }: LariKataGameProps) {
   return (
     <div className="relative isolate min-h-screen text-white flex flex-col">
       <GameBackground theme="violet" />
+      <ComboFlash combo={streak} />
       <div className="relative z-10 px-4 pt-4 pb-2">
         <div className="flex items-center justify-between mb-2">
           {!hideBackButton && (

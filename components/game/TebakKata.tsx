@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, Heart, Star, Trophy, Zap, Lightbulb, Check, X, RefreshCw, Crown, Sparkles } from "lucide-react";
 import GameBackground from "@/components/game/GameBackground";
-import { sfx, haptic } from "@/lib/game/sound";
+import { sfx, haptic, startBGM, stopBGM } from "@/lib/game/sound";
 
 const WORDS_DB = [
   { word: "BUDAYA", clues: ["Kebiasaan turun-temurun", "Warisan leluhur", "Identitas bangsa"], category: "Sosial" },
@@ -258,6 +258,7 @@ function getLevelProgress(xp: number) {
 
 export default function TebakKataGame({ hideBackButton }: { hideBackButton?: boolean }) {
   const [gameState, setGameState] = useState<"menu" | "playing" | "result">("menu");
+  useEffect(() => { if (gameState === "playing") startBGM(); else stopBGM(); return () => stopBGM(); }, [gameState]);
   const [xp, setXp] = useState(0);
   const [lives, setLives] = useState(3);
   const [currentWord, setCurrentWord] = useState<any>(null);

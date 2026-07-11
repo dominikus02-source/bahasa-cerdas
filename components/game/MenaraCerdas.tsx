@@ -1,11 +1,12 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence, useAnimationControls } from "framer-motion";
 import { Heart, Flame, Trophy, RotateCcw, Mountain, Check, X, Loader2, Sparkles, Zap, Volume2, VolumeX } from "lucide-react";
 import Burst from "@/components/game/Burst";
-import { sfx, haptic, isSoundOn, toggleSound } from "@/lib/game/sound";
+import ComboFlash from "@/components/game/ComboFlash";
+import { sfx, haptic, isSoundOn, toggleSound, startBGM, stopBGM } from "@/lib/game/sound";
 
 interface Q {
   id: string;
@@ -35,8 +36,10 @@ export default function MenaraCerdas({ backHref = "/arena/game" }: { backHref?: 
   const total = questions.length;
   const current = questions[idx];
 
+  useEffect(() => () => stopBGM(), []);
+
   const start = useCallback(async () => {
-    sfx.start(); setSoundOn(isSoundOn());
+    sfx.start(); setSoundOn(isSoundOn()); startBGM();
     setPhase("loading");
     setIdx(0); setFloor(0); setHearts(MAX_HEARTS); setCombo(0); setBest(0); setPicked(null); setXpResult(null);
     try {
@@ -54,6 +57,7 @@ export default function MenaraCerdas({ backHref = "/arena/game" }: { backHref?: 
   }, []);
 
   const finish = useCallback(async (finalFloor: number) => {
+    stopBGM();
     const cleared = finalFloor >= total && total > 0;
     if (cleared) { sfx.win(); haptic([40, 40, 80]); setBurst((b) => b + 1); }
     else { sfx.gameover(); haptic(120); }
@@ -181,6 +185,7 @@ export default function MenaraCerdas({ backHref = "/arena/game" }: { backHref?: 
   return (
     <Shell controls={controls}>
       <Burst trigger={burst} x={16} y={48} />
+      <ComboFlash combo={combo} />
       {/* HUD */}
       <div className="px-5 pt-4 pb-2 flex items-center justify-between">
         <div className="flex items-center gap-1">

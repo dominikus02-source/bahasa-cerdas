@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, Heart, Star, Trophy, Zap, RefreshCw, Crown, Shuffle, Check, X, Timer, Sparkles } from "lucide-react";
 import GameBackground from "@/components/game/GameBackground";
-import { sfx, haptic } from "@/lib/game/sound";
+import { sfx, haptic, startBGM, stopBGM } from "@/lib/game/sound";
 
 const SCRAMBLE_WORDS = [
   { word: "BAHASA", meaning: "Sistem lambang bunyi yang arbitrer" },
@@ -161,6 +161,7 @@ function scrambleWord(word: string): string {
 
 export default function SusunKataGame({ hideBackButton }: { hideBackButton?: boolean }) {
   const [gameState, setGameState] = useState<"menu" | "playing" | "result">("menu");
+  useEffect(() => { if (gameState === "playing") startBGM(); else stopBGM(); return () => stopBGM(); }, [gameState]);
   const [xp, setXp] = useState(0);
   const [lives, setLives] = useState(3);
   const [currentWord, setCurrentWord] = useState<any>(null);

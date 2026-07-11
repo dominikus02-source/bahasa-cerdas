@@ -88,6 +88,84 @@ export const sfx = {
   levelup: () => { [659, 880, 1175].forEach((f, i) => blip(f, 0.14, "triangle", 0.2, i * 0.09)); },
 };
 
+/* ----------------------------- Background music ----------------------------- *
+ * A gentle procedurally-generated ambient loop (chord pad + arpeggio) scheduled
+ * with a look-ahead timer. No audio files. Volume sits low so SFX cut through.
+ * Respects the mute flag: when muted, the scheduler simply skips notes, so
+ * toggling sound silences/resumes the music instantly.
+ */
+let bgmTimer: ReturnType<typeof setInterval> | null = null;
+let bgmGain: GainNode | null = null;
+let bgmStep = 0;
+let bgmNextTime = 0;
+const BPM = 96;
+const STEP = 60 / BPM / 2; // 8th notes
+
+// Am – F – C – G, one chord per bar (8 steps). [bass, ...chord tones for arpeggio]
+const PROG: { bass: number; tones: number[] }[] = [
+  { bass: 110.0, tones: [220.0, 261.63, 329.63, 440.0] }, // Am
+  { bass: 87.31, tones: [174.61, 220.0, 261.63, 349.23] }, // F
+  { bass: 130.81, tones: [261.63, 329.63, 392.0, 523.25] }, // C
+  { bass: 98.0, tones: [196.0, 246.94, 293.66, 392.0] }, // G
+];
+
+function bgmNote(freq: number, dur: number, type: OscillatorType, vol: number, when: number) {
+  const c = getCtx();
+  if (!c || !bgmGain) return;
+  const osc = c.createOscillator();
+  const g = c.createGain();
+  osc.type = type;
+  osc.frequency.setValueAtTime(freq, when);
+  g.gain.setValueAtTime(0.0001, when);
+  g.gain.exponentialRampToValueAtTime(vol, when + 0.04);
+  g.gain.exponentialRampToValueAtTime(0.0001, when + dur);
+  osc.connect(g).connect(bgmGain);
+  osc.start(when);
+  osc.stop(when + dur + 0.03);
+}
+
+function bgmScheduler() {
+  const c = getCtx();
+  if (!c) return;
+  while (bgmNextTime < c.currentTime + 0.25) {
+    if (enabled) {
+      const bar = Math.floor(bgmStep / 8) % PROG.length;
+      const s = bgmStep % 8;
+      const chord = PROG[bar];
+      if (s === 0) bgmNote(chord.bass, STEP * 7, "sine", 0.5, bgmNextTime); // soft bass pad
+      // sparse arpeggio on off-beats
+      if (s % 2 === 0) {
+        const tone = chord.tones[(s / 2) % chord.tones.length];
+        bgmNote(tone, STEP * 1.6, "triangle", 0.28, bgmNextTime);
+      }
+    }
+    bgmNextTime += STEP;
+    bgmStep++;
+  }
+}
+
+export function startBGM() {
+  const c = getCtx();
+  if (!c || bgmTimer) return;
+  bgmGain = c.createGain();
+  bgmGain.gain.value = 0.11;
+  bgmGain.connect(c.destination);
+  bgmStep = 0;
+  bgmNextTime = c.currentTime + 0.15;
+  bgmTimer = setInterval(bgmScheduler, 60);
+}
+
+export function stopBGM() {
+  if (bgmTimer) { clearInterval(bgmTimer); bgmTimer = null; }
+  const c = getCtx();
+  if (bgmGain && c) {
+    try { bgmGain.gain.setTargetAtTime(0.0001, c.currentTime, 0.15); } catch { /* ignore */ }
+    const g = bgmGain;
+    setTimeout(() => { try { g.disconnect(); } catch { /* ignore */ } }, 500);
+  }
+  bgmGain = null;
+}
+
 // Haptic feedback (mobile). No-op where unsupported.
 export function haptic(pattern: number | number[]) {
   try {
