@@ -3,6 +3,8 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, Heart, Star, Trophy, Zap, Lightbulb, Check, X, RefreshCw, Crown, Sparkles } from "lucide-react";
+import GameBackground from "@/components/game/GameBackground";
+import { sfx, haptic } from "@/lib/game/sound";
 
 const WORDS_DB = [
   { word: "BUDAYA", clues: ["Kebiasaan turun-temurun", "Warisan leluhur", "Identitas bangsa"], category: "Sosial" },
@@ -306,6 +308,7 @@ export default function TebakKataGame({ hideBackButton }: { hideBackButton?: boo
   }, []);
 
   const startGame = () => {
+    sfx.start();
     setGameState("playing");
     setLives(3);
     setScore(0);
@@ -338,6 +341,7 @@ export default function TebakKataGame({ hideBackButton }: { hideBackButton?: boo
   const checkAnswer = () => {
     if (!currentWord || !guess.trim()) return;
     const isCorrect = guess.trim().toUpperCase() === currentWord.word;
+    if (isCorrect) { sfx.correct(); haptic(25); } else { sfx.wrong(); haptic([60, 40, 60]); }
 
     if (isCorrect) {
       const basePoints = 100;
@@ -394,7 +398,8 @@ export default function TebakKataGame({ hideBackButton }: { hideBackButton?: boo
   const levelInfo = getLevelProgress(xp);
 
   return (
-    <div className="min-h-screen bg-[#F2F2F7] flex flex-col">
+    <div className="relative isolate min-h-screen bg-[#F2F2F7] flex flex-col">
+      <GameBackground theme="violet" light lightAccent="violet" />
       {/* iOS-style Header */}
       <div className="bg-white/80 backdrop-blur-xl border-b border-gray-200/50 px-4 py-3 sticky top-0 z-50">
         <div className="max-w-lg mx-auto flex items-center justify-between">

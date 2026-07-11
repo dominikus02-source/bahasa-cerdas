@@ -3,6 +3,8 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, Heart, Star, Trophy, Zap, RefreshCw, Crown, Shuffle, Check, X, Timer, Sparkles } from "lucide-react";
+import GameBackground from "@/components/game/GameBackground";
+import { sfx, haptic } from "@/lib/game/sound";
 
 const SCRAMBLE_WORDS = [
   { word: "BAHASA", meaning: "Sistem lambang bunyi yang arbitrer" },
@@ -237,6 +239,7 @@ export default function SusunKataGame({ hideBackButton }: { hideBackButton?: boo
   };
 
   const startGame = () => {
+    sfx.start();
     setGameState("playing");
     setLives(3);
     setScore(0);
@@ -288,6 +291,7 @@ export default function SusunKataGame({ hideBackButton }: { hideBackButton?: boo
     if (!currentWord || selectedLetters.length === 0) return;
     const answer = selectedLetters.join("");
     const isCorrect = answer === currentWord.word;
+    if (isCorrect) { sfx.correct(); haptic(25); } else { sfx.wrong(); haptic([60, 40, 60]); }
 
     setTimerActive(false);
 
@@ -355,7 +359,8 @@ export default function SusunKataGame({ hideBackButton }: { hideBackButton?: boo
   const levelInfo = getLevelProgress(xp);
 
   return (
-    <div className="min-h-screen bg-[#F2F2F7] flex flex-col">
+    <div className="relative isolate min-h-screen bg-[#F2F2F7] flex flex-col">
+      <GameBackground theme="emerald" light lightAccent="emerald" />
       {/* iOS-style Header */}
       <div className="bg-white/80 backdrop-blur-xl border-b border-gray-200/50 px-4 py-3 sticky top-0 z-50">
         <div className="max-w-lg mx-auto flex items-center justify-between">

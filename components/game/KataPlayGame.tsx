@@ -2,6 +2,8 @@
 
 import { useState, useEffect, useCallback, useRef } from "react"
 import { motion, AnimatePresence } from "framer-motion"
+import GameBackground from "@/components/game/GameBackground"
+import { sfx, haptic } from "@/lib/game/sound"
 import {
   Heart, Star, Trophy, RefreshCw, Crown, BookOpen,
   ChevronRight, Lock, Sparkles, Bot, Cat,
@@ -211,6 +213,7 @@ export default function KataPlayGame({ hideBackButton }: { hideBackButton?: bool
     const context = engine.getContext()
     const diff = context.difficulty
     setSelected(idx)
+    if (isCorrect) { sfx.climb(streak + 1); haptic(25) } else { sfx.wrong(); haptic([60, 40, 60]) }
 
     const eventType = isCorrect ? "answer_correct" : "answer_wrong"
     const gameEvent = {
@@ -308,7 +311,8 @@ export default function KataPlayGame({ hideBackButton }: { hideBackButton?: bool
   // ── Splash ──
   if (phase === "splash") {
     return (
-      <div className="fixed inset-0 z-[60] bg-gradient-to-br from-violet-900 via-purple-900 to-indigo-900 flex items-center justify-center">
+      <div className="fixed inset-0 z-[60] isolate flex items-center justify-center">
+        <GameBackground theme="violet" />
         <motion.div
           initial={{ scale: 0.5, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
@@ -338,7 +342,8 @@ export default function KataPlayGame({ hideBackButton }: { hideBackButton?: bool
   // ── Level Select ──
   if (phase === "levels") {
     return (
-      <div className="min-h-screen bg-[#0D0A1F] flex flex-col">
+      <div className="relative isolate min-h-screen flex flex-col">
+        <GameBackground theme="night" />
         <div className="px-5 pt-6 pb-4">
           <div className="flex items-center justify-between mb-6">
             <div>
@@ -401,7 +406,8 @@ export default function KataPlayGame({ hideBackButton }: { hideBackButton?: bool
   if (phase === "lessons" && selectedLevel) {
     const color = levelColors[(selectedLevel.levelNumber - 1) % levelColors.length]
     return (
-      <div className="min-h-screen bg-[#0D0A1F] flex flex-col">
+      <div className="relative isolate min-h-screen flex flex-col">
+        <GameBackground theme="night" />
         {/* Background glow */}
         <div className="fixed inset-0 pointer-events-none">
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[500px] h-[500px] rounded-full opacity-[0.08] blur-3xl"
@@ -483,7 +489,8 @@ export default function KataPlayGame({ hideBackButton }: { hideBackButton?: bool
     const color = selectedLevel ? levelColors[(selectedLevel.levelNumber - 1) % levelColors.length] : levelColors[0]
 
     return (
-      <div className="min-h-screen bg-[#0D0A1F] flex flex-col">
+      <div className="relative isolate min-h-screen flex flex-col">
+        <GameBackground theme="night" />
         {/* Background glow */}
         <div className="fixed inset-0 pointer-events-none">
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full opacity-[0.06] blur-3xl"
@@ -664,7 +671,8 @@ export default function KataPlayGame({ hideBackButton }: { hideBackButton?: bool
   const gradeColors = ["from-amber-400 to-orange-500", "from-violet-400 to-purple-500", "from-blue-400 to-cyan-500", "from-gray-400 to-gray-500"]
 
   return (
-    <div className="min-h-screen bg-[#0D0A1F] flex items-center justify-center px-5">
+    <div className="relative isolate min-h-screen flex items-center justify-center px-5">
+      <GameBackground theme="night" />
       {/* Background glow */}
       <div className="fixed inset-0 pointer-events-none">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full opacity-[0.06] blur-3xl"

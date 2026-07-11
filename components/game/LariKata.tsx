@@ -3,6 +3,8 @@
 import { useState, useEffect, useRef, useCallback } from "react"
 import { useRouter } from "next/navigation"
 import { Zap, Clock, Star, Flame, Trophy, ArrowLeft, RefreshCw, Home, Sparkles } from "lucide-react"
+import GameBackground from "@/components/game/GameBackground"
+import { sfx, haptic } from "@/lib/game/sound"
 
 interface Question {
   text: string
@@ -42,6 +44,7 @@ export default function LariKataGame({ hideBackButton }: LariKataGameProps) {
   }, [])
 
   const startGame = useCallback(async () => {
+    sfx.start()
     const res = await fetch("/api/katastra/questions?count=20")
     const data = await res.json()
     setQuestions(data.questions || [])
@@ -76,6 +79,7 @@ export default function LariKataGame({ hideBackButton }: LariKataGameProps) {
 
   const endGame = async () => {
     if (timerRef.current) clearInterval(timerRef.current)
+    if (correct > 0) { sfx.win(); haptic([40, 40, 80]) } else { sfx.gameover() }
     setPhase("result")
     setSubmitting(true)
     try {
@@ -97,6 +101,7 @@ export default function LariKataGame({ hideBackButton }: LariKataGameProps) {
     const isCorrect = idx === q.correct
     setSelected(idx)
     setFeedback(isCorrect ? "correct" : "wrong")
+    if (isCorrect) { sfx.climb(streak + 1); haptic(25) } else { sfx.wrong(); haptic([60, 40, 60]) }
 
     if (isCorrect) {
       const timeBonus = Math.floor(timeLeft / 6)
@@ -130,8 +135,9 @@ export default function LariKataGame({ hideBackButton }: LariKataGameProps) {
 
   if (phase === "start") {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-slate-900 via-violet-950 to-slate-900 text-white flex items-center justify-center p-4">
-        <div className="max-w-sm w-full text-center">
+      <div className="relative isolate min-h-screen text-white flex items-center justify-center p-4">
+        <GameBackground theme="violet" />
+        <div className="relative z-10 max-w-sm w-full text-center">
           <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center mx-auto mb-6 shadow-2xl">
             <Zap size={40} className="text-white" />
           </div>
@@ -162,8 +168,9 @@ export default function LariKataGame({ hideBackButton }: LariKataGameProps) {
 
   if (phase === "result") {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-slate-900 via-violet-950 to-slate-900 text-white flex items-center justify-center p-4">
-        <div className="max-w-sm w-full text-center">
+      <div className="relative isolate min-h-screen text-white flex items-center justify-center p-4">
+        <GameBackground theme="violet" />
+        <div className="relative z-10 max-w-sm w-full text-center">
           <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center mx-auto mb-4 shadow-2xl animate-bounce">
             <Trophy size={40} className="text-white" />
           </div>
@@ -227,8 +234,9 @@ export default function LariKataGame({ hideBackButton }: LariKataGameProps) {
   if (!q) return null
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-900 via-violet-950 to-slate-900 text-white flex flex-col">
-      <div className="px-4 pt-4 pb-2">
+    <div className="relative isolate min-h-screen text-white flex flex-col">
+      <GameBackground theme="violet" />
+      <div className="relative z-10 px-4 pt-4 pb-2">
         <div className="flex items-center justify-between mb-2">
           {!hideBackButton && (
             <button onClick={() => router.push("/murid/katastra")} className="p-2 hover:bg-white/10 rounded-xl transition-colors">
