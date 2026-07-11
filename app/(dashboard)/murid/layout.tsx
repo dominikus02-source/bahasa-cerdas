@@ -4,6 +4,7 @@ import Link from "next/link";
 import AIFloatingButton from "@/components/shared/AIFloatingButton";
 import { LogoutButton } from "@/components/dashboard/LogoutButton";
 import { NotificationBell } from "@/components/dashboard/NotificationBell";
+import MuridMobileNav from "@/components/dashboard/MuridMobileNav";
 import { IconFlame, IconBolt, IconTarget } from "@/lib/icons";
 
 const MenuIcon = ({ path, label, href }: { path: string; label: string; href: string }) => (
@@ -35,7 +36,7 @@ export default async function MuridLayout({ children }: { children: React.ReactN
 
   return (
     <div className="flex min-h-screen bg-gradient-to-br from-slate-50 via-white to-violet-50">
-      <aside className="w-64 h-screen bg-white/80 backdrop-blur-xl border-r border-gray-100/50 flex flex-col fixed left-0 top-0 shadow-xl shadow-gray-100/50">
+      <aside className="w-64 h-screen bg-white/80 backdrop-blur-xl border-r border-gray-100/50 hidden md:flex md:flex-col fixed left-0 top-0 shadow-xl shadow-gray-100/50">
         <div className="p-5 border-b border-gray-100/50 bg-gradient-to-r from-violet-600 to-purple-600">
           <Link href="/murid/beranda" className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-white/20 backdrop-blur flex items-center justify-center text-white font-bold text-sm border border-white/20 shadow-lg">
@@ -129,7 +130,9 @@ export default async function MuridLayout({ children }: { children: React.ReactN
         </div>
       </aside>
 
-      <main className="flex-1 ml-64 p-8 bg-transparent">
+      <MuridMobileNav fullName={user.fullName} />
+
+      <main className="flex-1 md:ml-64 p-4 md:p-8 pb-24 md:pb-8 bg-transparent">
         {children}
       </main>
       <AIFloatingButton />

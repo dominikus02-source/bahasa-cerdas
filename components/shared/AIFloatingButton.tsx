@@ -15,7 +15,7 @@ export default function AIFloatingButton() {
   }, []);
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 flex items-center gap-3">
+    <div className="fixed bottom-20 md:bottom-6 right-6 z-50 flex items-center gap-3">
       {showBubble && (
         <div className="animate-fade-in bg-white rounded-2xl shadow-lg border border-gray-100 px-4 py-2.5 relative">
           <p className="text-sm font-medium text-gray-700">Mau tanya apa?</p>
