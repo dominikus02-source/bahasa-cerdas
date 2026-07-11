@@ -5,6 +5,7 @@ import AIFloatingButton from "@/components/shared/AIFloatingButton";
 import { LogoutButton } from "@/components/dashboard/LogoutButton";
 import { NotificationBell } from "@/components/dashboard/NotificationBell";
 import MuridMobileNav from "@/components/dashboard/MuridMobileNav";
+import { InstallBanner } from "@/components/InstallBanner";
 import { IconFlame, IconBolt, IconTarget } from "@/lib/icons";
 
 const MenuIcon = ({ path, label, href }: { path: string; label: string; href: string }) => (
@@ -131,6 +132,7 @@ export default async function MuridLayout({ children }: { children: React.ReactN
       </aside>
 
       <MuridMobileNav fullName={user.fullName} />
+      <InstallBanner />
 
       <main className="flex-1 md:ml-64 p-4 md:p-8 pb-24 md:pb-8 bg-transparent">
         {children}
