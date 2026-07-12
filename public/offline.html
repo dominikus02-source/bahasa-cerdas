@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Arena BC — Offline</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; }
+    body {
+      min-height: 100vh; display: flex; align-items: center; justify-content: center;
+      padding: 24px; text-align: center;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+      background: linear-gradient(160deg, #f5f3ff, #ede9fe);
+      color: #1e1b3a;
+    }
+    .card {
+      max-width: 340px; background: #fff; border-radius: 24px; padding: 32px 24px;
+      box-shadow: 0 20px 45px -20px rgba(124, 58, 237, .45);
+    }
+    .logo {
+      width: 60px; height: 60px; margin: 0 auto 16px; border-radius: 18px;
+      background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; font-weight: 800; font-size: 26px;
+    }
+    h1 { font-size: 20px; font-weight: 800; margin-bottom: 8px; }
+    p { font-size: 14px; color: #6b7280; line-height: 1.6; margin-bottom: 20px; }
+    button {
+      width: 100%; padding: 14px; border: 0; border-radius: 14px; cursor: pointer;
+      background: linear-gradient(135deg, #8b5cf6, #7c3aed); color: #fff;
+      font-size: 15px; font-weight: 700;
+    }
+    button:active { transform: scale(.98); }
+    @media (prefers-color-scheme: dark) {
+      body { background: linear-gradient(160deg, #1e1b3a, #14122b); color: #f5f3ff; }
+      .card { background: #241f45; box-shadow: 0 20px 45px -20px rgba(0,0,0,.6); }
+      p { color: #b5aee0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="logo">BC</div>
+    <h1>Kamu sedang offline</h1>
+    <p>Sambungan internet terputus. Periksa koneksimu, lalu coba lagi untuk kembali belajar di Arena BC.</p>
+    <button onclick="location.reload()">Coba Lagi</button>
+  </div>
+  <script>
+    window.addEventListener("online", function () { location.reload(); });
+  </script>
+</body>
+</html>

@@ -1,8 +1,9 @@
 {
+  "id": "/",
   "name": "Arena BC — Belajar Bahasa Indonesia",
   "short_name": "Arena BC",
   "description": "Belajar Bahasa Indonesia sambil main — Jalur Cerdas, gim, dan simulasi UKBI/TKA.",
-  "start_url": "/",
+  "start_url": "/arena?utm_source=pwa",
   "display": "standalone",
   "background_color": "#f8fafc",
   "theme_color": "#7c3aed",
