@@ -21,20 +21,38 @@ const TKA_SELECT = { id: true, kompetensi: true, subKompetensi: true, text: true
 const UKBI_SNAPSHOT_SELECT = { id: true, correctAnswer: true, difficulty: true, seksi: true } as const;
 const TKA_SNAPSHOT_SELECT = { id: true, correctAnswer: true, weight: true, kompetensi: true } as const;
 
+// Reading passages are stored only on the first question of each group in the
+// bank; sibling questions have an empty passage. This build-time map (id ->
+// group passage, forward-filled from the authoritative JSON order) patches those
+// siblings so every reading question shows its "Bacaan" regardless of shuffle.
+import passageFillMap from "@/lib/kompetensi/passage-map.json";
+const PASSAGE_MAP = passageFillMap as Record<string, string>;
+
+function fillMissingPassages<T extends { id: string; passage?: string | null }>(rows: T[]): T[] {
+  for (const q of rows) {
+    if ((!q.passage || !String(q.passage).trim()) && PASSAGE_MAP[q.id]) {
+      q.passage = PASSAGE_MAP[q.id];
+    }
+  }
+  return rows;
+}
+
 async function fetchUKBIQuestions(where: any, take?: number) {
-  return db.uKBIQuestion.findMany({
+  const rows = await db.uKBIQuestion.findMany({
     where,
     ...(take ? { take, orderBy: { difficulty: "asc" as const } } : {}),
     select: UKBI_SELECT,
   });
+  return fillMissingPassages(rows);
 }
 
 async function fetchTKAQuestions(where: any, take?: number) {
-  return db.tKAQuestion.findMany({
+  const rows = await db.tKAQuestion.findMany({
     where,
     ...(take ? { take, orderBy: { difficulty: "asc" as const } } : {}),
     select: TKA_SELECT,
   });
+  return fillMissingPassages(rows);
 }
 
 async function fetchSectionByIds(
