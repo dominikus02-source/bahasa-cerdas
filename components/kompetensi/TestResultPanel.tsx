@@ -37,9 +37,11 @@ const PREDIKAT_STYLES: Record<string, { bg: string; border: string; text: string
 interface TestResultPanelProps {
   result: ResultData;
   paketId: string;
+  /** Where "Kembali ke Latihan" / "Paket Lainnya" go — the list the user came from. */
+  backHref?: string;
 }
 
-export default function TestResultPanel({ result, paketId }: TestResultPanelProps) {
+export default function TestResultPanel({ result, paketId, backHref = "/kompetisi/latihan" }: TestResultPanelProps) {
   const style = PREDIKAT_STYLES[result.predikat] || { bg: "bg-slate-50", border: "border-slate-300", text: "text-slate-700", icon: "📋" };
   const passed = result.status === "COMPLETED";
   const title = result.paket?.title || result.paketTitle || "Hasil Latihan";
@@ -56,7 +58,7 @@ export default function TestResultPanel({ result, paketId }: TestResultPanelProp
       <div className="max-w-2xl mx-auto px-3 sm:px-4 py-4 sm:py-8 space-y-4 sm:space-y-6">
         {/* Back link */}
         <Link
-          href="/kompetisi/latihan"
+          href={backHref}
           className="inline-flex items-center gap-1.5 text-xs sm:text-sm text-slate-500 hover:text-slate-700 transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
@@ -183,7 +185,7 @@ export default function TestResultPanel({ result, paketId }: TestResultPanelProp
             Ulangi Latihan
           </Link>
           <Link
-            href="/kompetisi/latihan"
+            href={backHref}
             className="flex-1 flex items-center justify-center gap-2 py-2.5 sm:py-3 border-2 border-slate-200 text-slate-600 font-bold rounded-xl hover:bg-slate-50 transition-colors text-sm sm:text-base"
           >
             <FileText className="w-4 h-4" />

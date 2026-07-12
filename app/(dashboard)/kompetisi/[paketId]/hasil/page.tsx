@@ -28,16 +28,44 @@ interface Result {
   };
 }
 
+// Return the user to the simulation list they actually came from — a UKBI/TKA
+// list inside their own dashboard shell — instead of the bare /kompetisi/latihan.
+function computeBackHref(role: string, isFounder: boolean, paketType?: string): string {
+  const type = (paketType || "").toUpperCase();
+  const isTKA = type.startsWith("TKA");
+  const kind = isTKA ? "tka" : "ukbi"; // default to UKBI when type is unknown
+  const isGuru = role === "GURU" && !isFounder;
+  return isGuru ? `/guru/simulasi/${kind}` : `/murid/simulasi/${kind}`;
+}
+
 export default function HasilPage({ params }: { params: Promise<{ paketId: string }> }) {
   const router = useRouter();
   const [result, setResult] = useState<Result | null>(null);
   const [paketId, setPaketId] = useState<string>("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [backHref, setBackHref] = useState("/kompetisi/latihan");
 
   useEffect(() => {
     params.then((p) => setPaketId(p.paketId));
   }, [params]);
+
+  // Resolve the correct "back to list" destination from the user's role.
+  useEffect(() => {
+    let active = true;
+    fetch("/api/user/me")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => {
+        if (!active) return;
+        const u = d?.user;
+        const type = result?.paket?.type || result?.paketTitle;
+        setBackHref(computeBackHref(u?.role || "MURID", !!u?.isFounder, type));
+      })
+      .catch(() => {});
+    return () => {
+      active = false;
+    };
+  }, [result?.paket?.type, result?.paketTitle]);
 
   useEffect(() => {
     if (!paketId) return;
@@ -90,7 +118,7 @@ export default function HasilPage({ params }: { params: Promise<{ paketId: strin
               Mulai Ulang Latihan
             </button>
             <button
-              onClick={() => router.back()}
+              onClick={() => router.push(backHref)}
               className="px-6 py-2.5 border-2 border-slate-200 text-slate-600 rounded-xl font-bold hover:bg-slate-50 transition-colors"
             >
               Kembali
@@ -101,5 +129,5 @@ export default function HasilPage({ params }: { params: Promise<{ paketId: strin
     );
   }
 
-  return <TestResultPanel result={result} paketId={paketId} />;
+  return <TestResultPanel result={result} paketId={paketId} backHref={backHref} />;
 }
