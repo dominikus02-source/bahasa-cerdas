@@ -36,8 +36,27 @@ export default function QuestionCard({
   onToggleFlag,
   isListening,
 }: QuestionCardProps) {
+  const hasPassage = !!question.passage;
+
   return (
-    <div className="space-y-4 sm:space-y-5">
+    // With a passage: split into two columns on large screens (bacaan | soal).
+    // Without: single column. On mobile it's always stacked.
+    <div className={hasPassage ? "lg:grid lg:grid-cols-2 lg:gap-5 lg:items-start" : ""}>
+      {/* Passage — capped height with its own scroll so it never pushes the
+          question far down on mobile; sticky beside the question on large screens. */}
+      {hasPassage && (
+        <div className="mb-4 lg:mb-0 lg:sticky lg:top-4 bg-slate-50 rounded-xl border border-slate-200/70 p-3.5 sm:p-4">
+          <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">
+            Bacaan
+          </div>
+          <div className="prose prose-sm max-w-none text-xs sm:text-sm text-slate-700 leading-relaxed overflow-y-auto pr-1 max-h-[38vh] lg:max-h-[calc(100vh-9rem)]">
+            {question.passage}
+          </div>
+        </div>
+      )}
+
+      {/* Question + options */}
+      <div className="space-y-4 sm:space-y-5">
       {/* Question card */}
       <div className="bg-white rounded-xl sm:rounded-2xl border border-slate-200/70 shadow-sm">
         <div className="p-4 sm:p-6">
@@ -84,16 +103,6 @@ export default function QuestionCard({
               >
                 Browser tidak mendukung pemutar audio.
               </audio>
-            </div>
-          )}
-
-          {/* Passage */}
-          {question.passage && (
-            <div className="mb-4 p-3 sm:p-4 bg-slate-50 rounded-xl border border-slate-100 text-xs sm:text-sm text-slate-700 leading-relaxed">
-              <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">
-                Bacaan
-              </div>
-              <div className="prose prose-sm max-w-none">{question.passage}</div>
             </div>
           )}
 
@@ -147,6 +156,7 @@ export default function QuestionCard({
             </button>
           );
         })}
+      </div>
       </div>
     </div>
   );
