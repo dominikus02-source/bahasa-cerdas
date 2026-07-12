@@ -364,6 +364,35 @@ export default async function BerandaPage() {
         </Link>
       </div>
 
+      {/* SIMULASI & UJIAN — belajar serius, tetap di dalam Arena */}
+      <div className="beranda-section">
+        <div className="beranda-section-head">
+          <h3 className="flex items-center gap-1.5">
+            <Award size={16} className="text-violet-500" /> Simulasi & Ujian
+          </h3>
+        </div>
+        <div className="grid grid-cols-3 gap-2">
+          <Link href="/murid/simulasi/ukbi" className="flex flex-col items-center gap-1.5 bg-white rounded-2xl border border-gray-100 p-3 shadow-sm active:scale-95 transition-transform">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center">
+              <BookOpen size={20} className="text-white" />
+            </div>
+            <span className="text-[11px] font-bold text-gray-700 text-center leading-tight">Simulasi UKBI</span>
+          </Link>
+          <Link href="/murid/simulasi/tka" className="flex flex-col items-center gap-1.5 bg-white rounded-2xl border border-gray-100 p-3 shadow-sm active:scale-95 transition-transform">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center">
+              <GraduationCap size={20} className="text-white" />
+            </div>
+            <span className="text-[11px] font-bold text-gray-700 text-center leading-tight">Simulasi TKA</span>
+          </Link>
+          <Link href="/murid/dokumen-latihan" className="flex flex-col items-center gap-1.5 bg-white rounded-2xl border border-gray-100 p-3 shadow-sm active:scale-95 transition-transform">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center">
+              <Award size={20} className="text-white" />
+            </div>
+            <span className="text-[11px] font-bold text-gray-700 text-center leading-tight">Dokumen Latihan</span>
+          </Link>
+        </div>
+      </div>
+
       {/* LIGA MINI */}
       {topUsers.length > 0 && (
         <div className="beranda-section">
