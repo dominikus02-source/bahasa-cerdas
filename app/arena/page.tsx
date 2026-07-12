@@ -89,17 +89,35 @@ export default async function BerandaPage() {
       try {
         const levels = await db.learningLevel.findMany({
           where: { type: "JALUR" },
-          select: { id: true, _count: { select: { units: { where: { isActive: true } } } } },
+          orderBy: { order: "asc" },
+          select: {
+            id: true,
+            title: true,
+            units: {
+              where: { isActive: true },
+              orderBy: { order: "asc" },
+              select: { id: true, title: true, emoji: true },
+            },
+          },
         })
         const levelCount = levels.length
-        const unitCount = levels.reduce((s, l) => s + l._count.units, 0)
-        const xpAgg = await db.userUnitProgress.aggregate({
+        // Flatten units in curriculum order, remembering their level title.
+        const orderedUnits = levels.flatMap((l) =>
+          l.units.map((u) => ({ ...u, levelTitle: l.title }))
+        )
+        const unitCount = orderedUnits.length
+        const progressRows = await db.userUnitProgress.findMany({
           where: { userId: user.id },
-          _sum: { xpEarned: true },
+          select: { unitId: true, completed: true, xpEarned: true },
         })
-        const xp = xpAgg._sum?.xpEarned || 0
-        return { levelCount, unitCount, xp }
-      } catch { return { levelCount: 0, unitCount: 0, xp: 0 } }
+        const xp = progressRows.reduce((s, p) => s + (p.xpEarned || 0), 0)
+        const completedIds = new Set(progressRows.filter((p) => p.completed).map((p) => p.unitId))
+        const completedCount = orderedUnits.filter((u) => completedIds.has(u.id)).length
+        // Resume point = first unit in curriculum order the student hasn't finished.
+        const nextUnit = orderedUnits.find((u) => !completedIds.has(u.id)) || null
+        const isFirstTime = progressRows.length === 0
+        return { levelCount, unitCount, xp, nextUnit, completedCount, isFirstTime }
+      } catch { return { levelCount: 0, unitCount: 0, xp: 0, nextUnit: null, completedCount: 0, isFirstTime: true } }
     })(),
   ])
 
@@ -332,6 +350,54 @@ export default async function BerandaPage() {
       <div className="beranda-section">
         <TugasCard pendingCount={tugasCount} />
       </div>
+
+      {/* LANJUTKAN BELAJAR — one-tap resume to the next Jalur Cerdas unit */}
+      {jalurStats.nextUnit && (
+        <div className="beranda-section">
+          <div className="beranda-section-head">
+            <h3 className="flex items-center gap-1.5">
+              <Rocket size={16} className="text-purple-600" /> {jalurStats.isFirstTime ? "Mulai Belajar" : "Lanjutkan Belajar"}
+            </h3>
+            {jalurStats.unitCount > 0 && (
+              <span className="text-xs font-semibold text-purple-600">{jalurStats.completedCount}/{jalurStats.unitCount} materi</span>
+            )}
+          </div>
+          <Link
+            href={`/arena/jalur-cerdas/${jalurStats.nextUnit.id}`}
+            className="flex items-center gap-3 bg-white rounded-2xl border border-purple-100 p-4 shadow-sm active:scale-[0.98] transition-transform"
+          >
+            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-purple-500 to-violet-600 flex items-center justify-center text-2xl shrink-0">
+              {jalurStats.nextUnit.emoji || "📘"}
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-[11px] font-semibold text-purple-500 truncate">{jalurStats.nextUnit.levelTitle}</p>
+              <h4 className="font-bold text-sm text-[#1A1033] truncate">{jalurStats.nextUnit.title}</h4>
+              {jalurStats.unitCount > 0 && (
+                <div className="h-1.5 bg-purple-100 rounded-full overflow-hidden mt-1.5">
+                  <div className="h-full rounded-full bg-gradient-to-r from-purple-500 to-violet-500" style={{ width: `${Math.round((jalurStats.completedCount / jalurStats.unitCount) * 100)}%` }} />
+                </div>
+              )}
+            </div>
+            <span className="flex items-center gap-0.5 bg-purple-600 text-white text-xs font-bold px-3 py-2 rounded-xl shrink-0">
+              {jalurStats.isFirstTime ? "Mulai" : "Lanjut"} <ChevronRight size={14} />
+            </span>
+          </Link>
+        </div>
+      )}
+
+      {/* Semua materi selesai — ajak mengulang */}
+      {!jalurStats.nextUnit && jalurStats.unitCount > 0 && (
+        <div className="beranda-section">
+          <Link href="/arena/jalur-cerdas" className="flex items-center gap-3 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-2xl p-4 text-white shadow-sm active:scale-[0.98] transition-transform">
+            <Trophy size={24} className="shrink-0" />
+            <div className="flex-1 min-w-0">
+              <h4 className="font-bold text-sm">Semua materi selesai! 🎉</h4>
+              <p className="text-[11px] text-white/80">Ulangi materi untuk memperkuat pemahamanmu</p>
+            </div>
+            <ChevronRight size={20} className="text-white/70 shrink-0" />
+          </Link>
+        </div>
+      )}
 
       {/* JALUR CERDAS — full width, no side padding */}
       <div className="-mx-4 mt-5">
