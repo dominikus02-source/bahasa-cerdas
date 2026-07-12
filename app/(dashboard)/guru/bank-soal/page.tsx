@@ -392,7 +392,8 @@ export default function BankSoalPage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+        {/* iOS-style single-color compact list */}
+        <div className="bg-white rounded-2xl border border-gray-100 divide-y divide-gray-100 overflow-hidden">
           {pools
             .filter(p => {
               if (poolFilter === "all") return true;
@@ -400,81 +401,57 @@ export default function BankSoalPage() {
               if (poolFilter === "TKA") return p.type?.includes("TKA");
               return true;
             })
-            .map(pool => {
-              const isUKBI = pool.type?.includes("UKBI");
-              const isTKA = pool.type?.includes("TKA");
-              const isSimulasi = pool.mode === "SIMULASI";
-              const gradient = isUKBI
-                ? "from-blue-500 to-indigo-600"
-                : isTKA && pool.title?.includes("SMA")
-                ? "from-purple-500 to-fuchsia-600"
-                : "from-teal-500 to-emerald-600";
-
-              const PoolIcon = isUKBI ? Headphones : isTKA ? Brain : BookOpen;
-
+            .map((pool, idx) => {
+              const product = pool.type?.includes("UKBI") ? "UKBI" : "TKA";
+              const level = pool.type?.includes("SD") ? "SD"
+                : pool.type?.includes("SMP") ? "SMP"
+                : pool.type?.includes("SMA") ? "SMA"
+                : pool.type?.includes("UTBK") ? "UTBK"
+                : pool.type?.includes("GURU") ? "Guru"
+                : "Umum";
               return (
-                <Card key={pool.id} className={`overflow-hidden transition-all hover:shadow-lg bg-gradient-to-br ${gradient}`}>
-                  <div className="p-4">
-                    <div className="flex items-start justify-between mb-2">
-                      <div className="w-10 h-10 rounded-lg bg-white/20 flex items-center justify-center">
-                        <PoolIcon size={20} className="text-white" />
-                      </div>
-                      <div className="flex gap-1 items-start">
-                        {isUKBI && (
-                          <span className="text-[10px] px-1.5 py-0.5 bg-white/20 text-white rounded-full font-medium">UKBI</span>
-                        )}
-                        {isTKA && (
-                          <span className="text-[10px] px-1.5 py-0.5 bg-white/20 text-white rounded-full font-medium">TKA</span>
-                        )}
-                        {isSimulasi && (
-                          <span className="text-[10px] px-1.5 py-0.5 bg-yellow-400/30 text-yellow-100 rounded-full font-medium">Simulasi</span>
-                        )}
-                        {!isSimulasi && (
-                          <span className="text-[10px] px-1.5 py-0.5 bg-white/20 text-white rounded-full font-medium">Latihan</span>
-                        )}
-                        {/* Three-dot menu */}
-                        <div className="relative">
-                          <button
-                            onClick={(e) => { e.stopPropagation(); setOpenMenuPoolId(openMenuPoolId === pool.id ? null : pool.id); }}
-                            className="p-1 rounded-lg hover:bg-white/20 text-white/70 hover:text-white transition-colors"
-                          >
-                            <MoreVertical size={14} />
-                          </button>
-                          {openMenuPoolId === pool.id && (
-                            <div className="absolute right-0 top-8 z-50 bg-white rounded-xl shadow-xl border py-1 min-w-[160px]">
-                              <button
-                                onClick={(e) => { 
-                                  e.stopPropagation(); 
-                                  window.location.href = `/kompetisi/${pool.id}?mode=latihan`;
-                                }}
-                                className="w-full flex items-center gap-2 px-3 py-2 text-xs text-gray-700 hover:bg-emerald-50 hover:text-emerald-700"
-                              >
-                                <Play size={14} /> Latihan (Solo)
-                              </button>
-                              <button
-                                onClick={(e) => { e.stopPropagation(); router.push(`/guru/game/lobby?pool=${pool.id}`); }}
-                                className="w-full flex items-center gap-2 px-3 py-2 text-xs text-gray-700 hover:bg-gray-50"
-                              >
-                                <Gamepad2 size={14} /> Pertandingkan (Multi)
-                              </button>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                    <h3 className="font-bold text-white text-sm leading-tight mb-1 line-clamp-2">{pool.title}</h3>
-                    <p className="text-white/70 text-xs line-clamp-1 mb-3">{pool.description}</p>
-                    <div className="flex items-center gap-3 text-white/80 text-xs mb-3">
-                      <span className="flex items-center gap-1">
-                        <BookOpen className="w-3.5 h-3.5" /> {pool.totalQuestions} soal
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <Clock className="w-3.5 h-3.5" /> {pool.duration} mnt
-                      </span>
-                    </div>
-
+                <div key={pool.id} className="flex items-center gap-3 px-4 py-2.5">
+                  <div className="w-9 h-9 rounded-[10px] bg-emerald-50 flex items-center justify-center shrink-0">
+                    <BookOpen size={18} className="text-emerald-600" />
                   </div>
-                </Card>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <span className="font-semibold text-[15px] text-gray-900 truncate">Latihan {idx + 1}</span>
+                      <span className="text-[10px] font-semibold text-gray-500 bg-gray-100 rounded-full px-1.5 py-0.5 shrink-0">{product}</span>
+                    </div>
+                    <p className="text-[12px] text-gray-400 mt-0.5 truncate">{level} · {pool.totalQuestions} soal · {pool.duration} mnt</p>
+                  </div>
+                  <button
+                    onClick={() => openAssessment(pool)}
+                    className="text-xs font-semibold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 px-3 py-1.5 rounded-lg shrink-0 transition-colors"
+                  >
+                    Kirim ke Murid
+                  </button>
+                  <div className="relative shrink-0">
+                    <button
+                      onClick={(e) => { e.stopPropagation(); setOpenMenuPoolId(openMenuPoolId === pool.id ? null : pool.id); }}
+                      className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors"
+                    >
+                      <MoreVertical size={16} />
+                    </button>
+                    {openMenuPoolId === pool.id && (
+                      <div className="absolute right-0 top-9 z-50 bg-white rounded-xl shadow-xl border py-1 min-w-[190px]">
+                        <button
+                          onClick={(e) => { e.stopPropagation(); openAssessment(pool); }}
+                          className="w-full flex items-center gap-2 px-3 py-2 text-xs text-gray-700 hover:bg-emerald-50 hover:text-emerald-700"
+                        >
+                          <ClipboardList size={14} /> Kirim ke Murid (Tugas)
+                        </button>
+                        <button
+                          onClick={(e) => { e.stopPropagation(); router.push(`/guru/game/lobby?pool=${pool.id}`); }}
+                          className="w-full flex items-center gap-2 px-3 py-2 text-xs text-gray-700 hover:bg-gray-50"
+                        >
+                          <Gamepad2 size={14} /> Pertandingkan (Multi)
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </div>
               );
             })}
         </div>
