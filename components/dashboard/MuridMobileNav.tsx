@@ -25,7 +25,7 @@ const GROUPS: { title: string; items: { href: string; label: string; icon: any }
     title: "Menu Utama",
     items: [
       { href: "/murid/beranda", label: "Beranda", icon: Home },
-      { href: "/arena/jalur-cerdas", label: "Arena", icon: GraduationCap },
+      { href: "/arena", label: "Arena", icon: GraduationCap },
       { href: "/murid/karya/tulis", label: "Tulis Karya", icon: PenSquare },
       { href: "/murid/tugasku", label: "Tugasku", icon: BookOpen },
       { href: "/murid/gabung-kelas", label: "Gabung Kelas", icon: Users },

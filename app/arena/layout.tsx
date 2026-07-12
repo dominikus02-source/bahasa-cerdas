@@ -28,7 +28,7 @@ export default async function ArenaLayout({ children }: { children: React.ReactN
 
       {/* Desktop Header */}
       <header className="hidden md:flex items-center justify-between px-6 h-16 bg-white border-b border-gray-200 sticky top-0 z-40">
-        <Link href="/arena/jalur-cerdas" className="flex items-center gap-2">
+        <Link href="/arena" className="flex items-center gap-2">
           <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center text-white font-bold text-xs">
             A
           </div>
@@ -59,7 +59,7 @@ export default async function ArenaLayout({ children }: { children: React.ReactN
 
       {/* Mobile Top Bar */}
       <div className="md:hidden sticky top-0 z-40 flex items-center justify-between px-4 h-12 bg-white/95 backdrop-blur-xl border-b border-gray-100">
-        <Link href="/arena/jalur-cerdas" className="flex items-center gap-1.5">
+        <Link href="/arena" className="flex items-center gap-1.5">
           <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center text-white font-bold text-[10px]">
             A
           </div>

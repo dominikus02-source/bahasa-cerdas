@@ -402,24 +402,24 @@ export default function LessonPage({ params }: { params: Promise<{ unitId: strin
             </div>
           )}
 
-          {/* Answer area */}
+          {/* Answer area — sits right under the question (no big gap) */}
           {!isResult && (
-            <div className="flex flex-col gap-3 mt-auto">
+            <div className="flex flex-col gap-2.5 mt-1">
               {q.tipe === "pilihan_ganda" && q.opsi?.map((opt, i) => (
                 <button
                   key={i}
                   onClick={() => handleAnswer(i)}
                   disabled={submitting}
-                  className={`w-full text-left p-4 rounded-2xl border-2 font-medium transition-all
+                  className={`w-full flex items-center gap-3 text-left p-4 rounded-2xl border-2 font-medium transition-all
                     ${selectedAnswer === i ? "border-violet-500 bg-violet-50" : "border-gray-200 bg-white hover:border-violet-300 hover:bg-violet-50/50"}
                     ${submitting ? "opacity-50 cursor-not-allowed" : ""}
                     ${isDasar ? "text-lg p-5" : "text-base"}
                   `}
                 >
-                  <span className={`inline-flex items-center justify-center w-7 h-7 rounded-lg bg-gray-100 font-bold text-gray-500 mr-3 shrink-0 ${isDasar ? "w-8 h-8" : ""}`}>
+                  <span className={`inline-flex items-center justify-center w-7 h-7 rounded-lg bg-gray-100 font-bold text-gray-500 shrink-0 ${isDasar ? "w-8 h-8" : ""}`}>
                     {String.fromCharCode(65 + i)}
                   </span>
-                  {opt}
+                  <span className="flex-1">{opt}</span>
                 </button>
               ))}
               {q.tipe === "benar_salah" && (
