@@ -1,7 +1,7 @@
 {
-  "name": "BahasaCerdas Arena",
-  "short_name": "Arena",
-  "description": "Arena Bahasa Indonesia — belajar sambil main game bareng teman",
+  "name": "Arena BC — Belajar Bahasa Indonesia",
+  "short_name": "Arena BC",
+  "description": "Belajar Bahasa Indonesia sambil main — Jalur Cerdas, gim, dan simulasi UKBI/TKA.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#f8fafc",
@@ -11,10 +11,8 @@
   "categories": ["education", "games"],
   "lang": "id-ID",
   "icons": [
-    { "src": "/logo.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
-    { "src": "/logo.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
-    { "src": "/logo.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
   ],
-  "screenshots": [],
   "prefer_related_applications": false
 }
