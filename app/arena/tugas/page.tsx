@@ -57,13 +57,17 @@ export default function TugasPage() {
       .finally(() => setLoading(false))
   }, [])
 
+  const penugasanAvailable = penugasans.filter(p => p.submission?.status !== "COMPLETED")
+  const penugasanCompleted = penugasans.filter(p => p.submission?.status === "COMPLETED")
+
   const tabs: { key: Tab; label: string; count: number }[] = [
-    { key: "available", label: "Tersedia", count: available.length + penugasans.filter(p => !p.submission || p.submission.status === "ASSIGNED").length },
+    { key: "available", label: "Tersedia", count: available.length + penugasanAvailable.length },
     { key: "inProgress", label: "Dikerjakan", count: inProgress.length },
-    { key: "completed", label: "Selesai", count: completed.length },
+    { key: "completed", label: "Selesai", count: completed.length + penugasanCompleted.length },
   ]
 
   const data: Record<Tab, Assignment[]> = { available, inProgress, completed }
+  const penugasanForTab = tab === "available" ? penugasanAvailable : tab === "completed" ? penugasanCompleted : []
 
   const formatDate = (d: string | null) => {
     if (!d) return ""
@@ -121,7 +125,7 @@ export default function TugasPage() {
             </div>
           ))}
         </div>
-      ) : data[tab].length === 0 ? (
+      ) : data[tab].length === 0 && penugasanForTab.length === 0 ? (
         <div className="text-center py-12">
           <div className="w-14 h-14 rounded-2xl bg-gray-100 flex items-center justify-center mx-auto mb-3">
             <FileText className="w-7 h-7 text-gray-400" />
@@ -135,36 +139,52 @@ export default function TugasPage() {
         </div>
       ) : (
         <div className="space-y-3">
-          {tab === "available" && penugasans.filter(p => !p.submission || p.submission.status === "ASSIGNED").map(p => (
-            <Link
-              key={p.id}
-              href={`/arena/jalur-cerdas/${p.unitId}/belajar`}
-              className="block bg-white rounded-2xl border border-emerald-100 p-4 active:scale-[0.98] transition-all"
-            >
-              <div className="flex items-start justify-between mb-2">
-                <div className="flex-1 min-w-0 mr-2">
-                  <h3 className="font-bold text-sm text-gray-900 truncate">{p.judul}</h3>
-                  <p className="text-xs text-gray-500 mt-0.5">{p.groupName} · Tugas Materi</p>
-                </div>
-                <span className="text-[9px] font-semibold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 shrink-0">
-                  BUKU PANDUAN
-                </span>
-              </div>
-              <div className="flex items-center gap-3 text-[11px] text-gray-400">
-                <span className="flex items-center gap-1">
-                  <BookOpen size={12} /> Belajar + Latihan + Praktik + Kuis
-                </span>
-                {p.tenggat && (
-                  <span className="flex items-center gap-1">
-                    <AlertCircle size={12} /> {formatDate(p.tenggat)}
+          {penugasanForTab.map(p => {
+            const done = p.submission?.status === "COMPLETED"
+            const score = p.submission?.score
+            return (
+              <Link
+                key={p.id}
+                href={`/arena/tugas/${p.id}/kerjakan`}
+                className="block bg-white rounded-2xl border border-emerald-100 p-4 active:scale-[0.98] transition-all"
+              >
+                <div className="flex items-start justify-between mb-2">
+                  <div className="flex-1 min-w-0 mr-2">
+                    <h3 className="font-bold text-sm text-gray-900 truncate">{p.judul}</h3>
+                    <p className="text-xs text-gray-500 mt-0.5">{p.groupName} · Tugas Materi</p>
+                  </div>
+                  <span className="text-[9px] font-semibold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 shrink-0">
+                    BUKU PANDUAN
                   </span>
+                </div>
+                <div className="flex items-center gap-3 text-[11px] text-gray-400">
+                  <span className="flex items-center gap-1">
+                    <BookOpen size={12} /> Materi + Latihan + Praktik
+                  </span>
+                  {p.tenggat && (
+                    <span className="flex items-center gap-1">
+                      <AlertCircle size={12} /> {formatDate(p.tenggat)}
+                    </span>
+                  )}
+                </div>
+                {done && score !== null && score !== undefined ? (
+                  <div className="mt-2 flex items-center gap-2">
+                    <div className="flex-1 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                      <div
+                        className={`h-full rounded-full ${score >= 80 ? "bg-emerald-500" : score >= 60 ? "bg-amber-500" : "bg-red-500"}`}
+                        style={{ width: `${score}%` }}
+                      />
+                    </div>
+                    <span className="text-xs font-bold text-gray-900">Nilai {score}</span>
+                  </div>
+                ) : (
+                  <div className="mt-2 flex items-center gap-1.5 text-[11px] text-emerald-600 font-medium">
+                    +{p.xpReward || 50} XP · +{p.coinReward || 10} Koin
+                  </div>
                 )}
-              </div>
-              <div className="mt-2 flex items-center gap-1.5 text-[11px] text-emerald-600 font-medium">
-                +{p.xpReward || 50} XP · +{p.coinReward || 10} Koin
-              </div>
-            </Link>
-          ))}
+              </Link>
+            )
+          })}
           {data[tab].map(a => (
             <Link
               key={a.id}
