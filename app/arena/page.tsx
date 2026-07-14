@@ -296,11 +296,12 @@ export default async function BerandaPage() {
             <Zap size={16} className="text-purple-600" /> Aksi Cepat
           </h3>
         </div>
-        <div className="grid grid-cols-4 gap-2.5">
+        <div className="grid grid-cols-5 gap-2.5">
           <QuickAction icon={<Bot size={24} />} label="AI Cerdik" href="/arena/ai" warna="from-cyan-500 to-blue-600" />
           <QuickAction icon={<PenLine size={24} />} label="Tulis" href="/arena/tulis" warna="from-orange-500 to-red-600" />
           <QuickAction icon={<Gift size={24} />} label="Kotak" href="/arena/mystery-box" warna="from-amber-500 to-orange-600" />
           <QuickAction icon={<Gamepad2 size={24} />} label="Gim" href="/arena/game" warna="from-purple-600 to-violet-700" />
+          <QuickAction icon={<Users size={24} />} label="Gabung Kelas" href="/murid/gabung-kelas" warna="from-emerald-500 to-teal-600" />
         </div>
       </div>
 

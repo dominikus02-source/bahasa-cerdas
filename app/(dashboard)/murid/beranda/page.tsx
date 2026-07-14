@@ -139,6 +139,10 @@ export default function HomeFeedPage() {
             <IconCoin size={14} />
             Toko
           </Link>
+          <Link href="/murid/gabung-kelas" className="flex items-center gap-1.5 px-3 py-2 bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-200 rounded-xl text-xs font-semibold text-emerald-600 hover:shadow-md transition-all">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+            Gabung Kelas
+          </Link>
         </div>
 
         {/* ── Karya Pilihan ── */}
