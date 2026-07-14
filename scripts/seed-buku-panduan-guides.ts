@@ -148,7 +148,6 @@ function buildContent(chapter: (typeof allGrades)[0]["semesters"][0]["chapters"]
       teacherNotes: chapter.teacherNotes,
       reflection: chapter.reflection,
       aiContextPrompt: chapter.aiContextPrompt,
-      readingPractice: chapter.readingPractice,
       sourceBasis: chapter.sourceBasis,
       reviewStatus: chapter.reviewStatus,
       tags: chapter.tags,
@@ -157,6 +156,8 @@ function buildContent(chapter: (typeof allGrades)[0]["semesters"][0]["chapters"]
     belajar: formatBelajar(chapter),
     latihan: formatLatihan(chapter),
     kuis: formatKuis(chapter),
+    readingPractice: chapter.readingPractice || null,
+    quickQuiz: chapter.quickQuiz || null,
   }
 }
 

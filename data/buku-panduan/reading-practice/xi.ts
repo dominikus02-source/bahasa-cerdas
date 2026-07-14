@@ -1,4 +1,4 @@
-import type { ReadingPractice } from "../types"
+import type { BacaanPractice } from "../types"
 
 /**
  * Latihan Berbasis Bacaan — Kelas XI (Fase F)
@@ -7,7 +7,7 @@ import type { ReadingPractice } from "../types"
  * jawaban dan pembahasan. Kuis cepat memakai kutipan pendek dari bacaan
  * yang sama.
  */
-export const readingPracticeXI: Record<string, ReadingPractice> = {
+export const readingPracticeXI: Record<string, BacaanPractice> = {
   // ── Bab 1: Teks Ceramah ──────────────────────
   "xi-ceramah": {
     stimulusTitle: "Ceramah: Merawat Bumi dari Halaman Sekolah",

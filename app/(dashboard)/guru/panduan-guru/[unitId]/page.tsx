@@ -13,6 +13,16 @@ import { Badge } from "@/components/ui/badge"
 
 type Soal = { id: number; tipe?: "PG" | "BENAR_SALAH" | "ISIAN"; soal: string; opsi: string[]; jawaban: number | string; penjelasan: string }
 type Praktik = { petunjuk: string; tips: string[]; contoh?: string }
+type PracticeSoal = {
+  id: string
+  type: "pilihan_ganda" | "jawaban_singkat" | "uraian" | "produksi"
+  questionText: string
+  options?: string[]
+  correctAnswer: string | string[]
+  explanation: string
+  skillTarget: string
+  difficulty: "mudah" | "sedang" | "menantang"
+}
 type Konten = {
   belajar: { tujuan: string[]; materi: { judul: string; isi: string[]; contoh: string[]; catatan?: string }[]; rangkuman: string[] }
   latihan: Soal[]
@@ -21,6 +31,18 @@ type Konten = {
   // yang punya `praktik` tetap dipakai apa adanya.
   praktik?: Praktik
   kuis: Soal[]
+  readingPractice?: {
+    title: string
+    stimulusTitle: string
+    stimulusText: string
+    questions: PracticeSoal[]
+  }
+  quickQuiz?: {
+    title: string
+    stimulusTitle?: string
+    stimulusText?: string
+    questions: PracticeSoal[]
+  }
   guide?: {
     overview?: string
     learningGoals: string[]
@@ -92,9 +114,15 @@ function EmptyState({ label }: { label: string }) {
   )
 }
 
-type TabKey = "belajar" | "latihan" | "praktik" | "kuis" | "panduan"
+type TabKey = "belajar" | "latihan" | "praktik" | "kuis" | "reading-practice" | "quick-quiz" | "panduan"
 
-const TAB_ORDER: TabKey[] = ["belajar", "latihan", "praktik", "kuis", "panduan"]
+function getTabOrder(content: Konten | null): TabKey[] {
+  const base: TabKey[] = ["belajar", "latihan", "praktik", "kuis"]
+  if (content?.readingPractice) base.push("reading-practice")
+  if (content?.quickQuiz) base.push("quick-quiz")
+  base.push("panduan")
+  return base
+}
 
 export default function UnitPreviewPage() {
   const params = useParams()
@@ -155,12 +183,13 @@ export default function UnitPreviewPage() {
 
   const goTab = useCallback((dir: 1 | -1) => {
     setPresentTab(prev => {
-      const idx = TAB_ORDER.indexOf(prev)
+      const order = getTabOrder(content)
+      const idx = order.indexOf(prev)
       const next = idx + dir
-      if (next < 0 || next >= TAB_ORDER.length) return prev
-      return TAB_ORDER[next]
+      if (next < 0 || next >= order.length) return prev
+      return order[next]
     })
-  }, [])
+  }, [content])
 
   useEffect(() => {
     if (!presentMode) return
@@ -206,6 +235,8 @@ export default function UnitPreviewPage() {
     { key: "latihan" as TabKey, label: "Latihan", icon: Target, count: content.latihan.length },
     { key: "praktik" as TabKey, label: "Praktik", icon: Lightbulb },
     { key: "kuis" as TabKey, label: "Kuis", icon: Sparkles, count: content.kuis.length },
+    ...(content.readingPractice ? [{ key: "reading-practice" as TabKey, label: "Latihan Membaca", icon: BookOpen, count: content.readingPractice.questions.length }] : []),
+    ...(content.quickQuiz ? [{ key: "quick-quiz" as TabKey, label: "Kuis Cepat", icon: HelpCircle, count: content.quickQuiz.questions.length }] : []),
     { key: "panduan" as TabKey, label: "Panduan Guru", icon: ClipboardList },
   ]
 
@@ -286,6 +317,8 @@ function ContentPanel({ content, tab, showAnswers, setShowAnswers, ilustrasiUrls
   if (tab === "latihan") return <SoalContent label="Latihan" soal={content.latihan} showAnswers={showAnswers} setShowAnswers={setShowAnswers} />
   if (tab === "praktik") { const p = resolvePraktik(content); return p ? <PraktikContent content={p} /> : <EmptyState label="Praktik" /> }
   if (tab === "kuis") return <SoalContent label="Kuis" soal={content.kuis} showAnswers={showAnswers} setShowAnswers={setShowAnswers} />
+  if (tab === "reading-practice" && content.readingPractice) return <PracticeQuizContent data={content.readingPractice} color="emerald" type="Latihan Membaca" showAnswers={showAnswers} setShowAnswers={setShowAnswers} />
+  if (tab === "quick-quiz" && content.quickQuiz) return <PracticeQuizContent data={content.quickQuiz} color="violet" type="Kuis Cepat" showAnswers={showAnswers} setShowAnswers={setShowAnswers} />
   if (tab === "panduan" && content.guide) return <GuideContent guide={content.guide} />
   return null
 }
@@ -468,6 +501,8 @@ function PresentationView({ data, content, tab, setTab, showAnswers, setShowAnsw
     { key: "latihan" as TabKey, label: "Latihan", icon: Target, count: content.latihan.length },
     { key: "praktik" as TabKey, label: "Praktik", icon: Lightbulb },
     { key: "kuis" as TabKey, label: "Kuis", icon: Sparkles, count: content.kuis.length },
+    ...(content.readingPractice ? [{ key: "reading-practice" as TabKey, label: "Latihan Membaca", icon: BookOpen, count: content.readingPractice.questions.length }] : []),
+    ...(content.quickQuiz ? [{ key: "quick-quiz" as TabKey, label: "Kuis Cepat", icon: HelpCircle, count: content.quickQuiz.questions.length }] : []),
     { key: "panduan" as TabKey, label: "Panduan Guru", icon: ClipboardList },
   ]
 
@@ -581,8 +616,9 @@ function PresentationView({ data, content, tab, setTab, showAnswers, setShowAnsw
                 </div>
               )}
             </div>
-            )
-          })()}
+          )})()}
+          {tab === "reading-practice" && content.readingPractice && <PracticePresentation data={content.readingPractice} color="emerald" type="Latihan Membaca" showAnswers={showAnswers} />}
+          {tab === "quick-quiz" && content.quickQuiz && <PracticePresentation data={content.quickQuiz} color="violet" type="Kuis Cepat" showAnswers={showAnswers} />}
           {tab === "kuis" && <SoalPresentation soal={content.kuis} label="Kuis" showAnswers={showAnswers} color="violet" />}
         </div>
       </div>
@@ -593,7 +629,7 @@ function PresentationView({ data, content, tab, setTab, showAnswers, setShowAnsw
           <ChevronLeft className="w-4 h-4" />Sebelumnya
         </button>
         <span className="text-xs text-slate-400">
-          {tab.charAt(0).toUpperCase() + tab.slice(1)} · {TAB_ORDER.indexOf(tab) + 1}/{TAB_ORDER.length}
+          {tab === "reading-practice" ? "Latihan Membaca" : tab === "quick-quiz" ? "Kuis Cepat" : tab.charAt(0).toUpperCase() + tab.slice(1)} · {getTabOrder(content).indexOf(tab) + 1}/{getTabOrder(content).length}
         </span>
         <button onClick={() => goTab(1)} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium text-slate-500 hover:bg-slate-100">
           Selanjutnya<ChevronRight className="w-4 h-4" />
@@ -685,6 +721,125 @@ function PanduanPresentation({ guide }: { guide: NonNullable<Konten["guide"]> })
           <p className="text-slate-700 leading-relaxed whitespace-pre-line">{guide.readingPractice.stimulusText}</p>
         </div>
       )}
+    </div>
+  )
+}
+
+function PracticeQuizContent({ data, color, type, showAnswers, setShowAnswers }: { data: NonNullable<Konten["readingPractice" | "quickQuiz"]>; color: string; type: string; showAnswers: boolean; setShowAnswers: (v: boolean) => void }) {
+  const colorClasses = color === "violet" ? "text-violet-600" : "text-emerald-600"
+  const difficultyBadge = (d: string) => {
+    if (d === "mudah") return "bg-emerald-100 text-emerald-700"
+    if (d === "sedang") return "bg-amber-100 text-amber-700"
+    return "bg-red-100 text-red-700"
+  }
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <p className="text-sm text-slate-500">{data.questions.length} soal</p>
+        <Button variant="outline" size="sm" onClick={() => setShowAnswers(!showAnswers)} className={`text-xs ${showAnswers ? "text-emerald-600 border-emerald-200" : ""}`}>
+          {showAnswers ? <><EyeOff className="w-3.5 h-3.5 mr-1" />Sembunyikan Jawaban</> : <><Eye className="w-3.5 h-3.5 mr-1" />Tampilkan Jawaban</>}
+        </Button>
+      </div>
+      {data.stimulusText && (
+        <div className="bg-blue-50 border border-blue-100 rounded-xl p-4">
+          <h3 className="font-bold text-blue-800 text-sm mb-2">{data.stimulusTitle || "Stimulus"}</h3>
+          <p className="text-sm text-blue-900 whitespace-pre-line leading-relaxed">{data.stimulusText}</p>
+        </div>
+      )}
+      {data.questions.map((q, i) => {
+        const isCorrectOpt = (o: string) => Array.isArray(q.correctAnswer) ? q.correctAnswer.includes(o) : q.correctAnswer === o
+        return (
+        <div key={q.id} className="bg-white rounded-xl border border-slate-200 p-4">
+          <div className="flex items-start gap-2 mb-2">
+            <span className={`font-bold ${colorClasses}`}>{i + 1}.</span>
+            <span className="text-sm font-medium text-slate-900">{q.questionText}</span>
+            <span className={`ml-auto text-[10px] px-1.5 py-0.5 rounded-full font-medium ${difficultyBadge(q.difficulty)}`}>{q.difficulty}</span>
+          </div>
+          {q.skillTarget && <p className="text-[10px] text-slate-400 mb-2">Target: {q.skillTarget}</p>}
+          {q.options ? (
+            <div className="space-y-1.5 mb-2">
+              {q.options.map((o, j) => (
+                <div key={j} className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm ${showAnswers && isCorrectOpt(o) ? "bg-emerald-50 text-emerald-700 border border-emerald-200" : "text-slate-700 bg-slate-50"}`}>
+                  <span className="w-5 h-5 rounded-full border border-slate-300 flex items-center justify-center text-[10px] text-slate-500 font-medium shrink-0">{String.fromCharCode(65 + j)}</span>
+                  {o}{showAnswers && isCorrectOpt(o) && <CheckCircle className="w-3.5 h-3.5 text-emerald-500 ml-auto" />}
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="border border-dashed border-slate-300 rounded-lg p-3 text-sm">
+              {showAnswers && <p className="text-emerald-700 font-medium mb-1">Jawaban: <strong>{Array.isArray(q.correctAnswer) ? q.correctAnswer.join(", ") : q.correctAnswer}</strong></p>}
+              <p className="text-xs text-slate-400 italic">({q.type === "uraian" ? "Jawaban uraian" : q.type === "produksi" ? "Jawaban terbuka" : "Jawaban singkat"})</p>
+            </div>
+          )}
+          {showAnswers && q.explanation && (
+            <div className="mt-2 bg-blue-50 border border-blue-100 rounded-lg p-3 flex items-start gap-2">
+              <Sparkles className="w-4 h-4 text-blue-500 mt-0.5 shrink-0" />
+              <p className="text-sm text-blue-800">{q.explanation}</p>
+            </div>
+          )}
+        </div>
+        )
+      })}
+    </div>
+  )
+}
+
+function PracticePresentation({ data, color, type, showAnswers }: { data: NonNullable<Konten["readingPractice" | "quickQuiz"]>; color: string; type: string; showAnswers: boolean }) {
+  const colorClasses = color === "violet" ? "text-violet-600" : "text-emerald-600"
+  const difficultyBadge = (d: string) => {
+    if (d === "mudah") return "bg-emerald-100 text-emerald-700"
+    if (d === "sedang") return "bg-amber-100 text-amber-700"
+    return "bg-red-100 text-red-700"
+  }
+  return (
+    <div>
+      <h2 className="text-xl font-bold text-slate-900 mb-6 flex items-center gap-2"><BookOpen className={`w-6 h-6 ${colorClasses}`} />{type} ({data.questions.length} soal)</h2>
+      {data.stimulusText && (
+        <div className="bg-blue-50 border border-blue-200 rounded-xl p-5 mb-6">
+          <h3 className="font-bold text-blue-800 text-lg mb-3">{data.stimulusTitle || "Stimulus"}</h3>
+          <p className="text-blue-900 whitespace-pre-line leading-relaxed text-lg">{data.stimulusText}</p>
+        </div>
+      )}
+      <div className="space-y-6">
+        {data.questions.map((q, i) => (
+          <div key={q.id} className="bg-white border border-slate-200 rounded-xl p-5">
+            <div className="flex items-start gap-3 mb-3">
+              <span className={`font-bold text-lg ${colorClasses}`}>{i + 1}.</span>
+              <span className="text-lg font-semibold text-slate-900 flex-1">{q.questionText}</span>
+              <div className="flex items-center gap-2 shrink-0">
+                <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${difficultyBadge(q.difficulty)}`}>{q.difficulty}</span>
+              </div>
+            </div>
+            {q.skillTarget && <p className="text-sm text-slate-400 mb-3">Target keterampilan: {q.skillTarget}</p>}
+            {q.options ? (
+              <div className="space-y-2">
+                {q.options.map((o, j) => {
+                  const isCorrect = Array.isArray(q.correctAnswer) ? q.correctAnswer.includes(o) : q.correctAnswer === o
+                  return (
+                    <div key={j} className={`flex items-center gap-3 px-4 py-3 rounded-xl text-base ${showAnswers && isCorrect ? "bg-emerald-50 border-2 border-emerald-300" : "border border-slate-200"}`}>
+                      <span className={`w-7 h-7 rounded-full border-2 flex items-center justify-center text-sm font-bold shrink-0 ${showAnswers && isCorrect ? "border-emerald-500 bg-emerald-500 text-white" : "border-slate-300 text-slate-500"}`}>
+                        {String.fromCharCode(65 + j)}
+                      </span>
+                      <span className={showAnswers && isCorrect ? "font-semibold text-emerald-800" : "text-slate-800"}>{o}</span>
+                    </div>
+                  )
+                })}
+              </div>
+            ) : (
+              <div className="border border-dashed border-slate-300 rounded-xl p-4 text-sm text-slate-400">
+                {showAnswers && <p className="text-emerald-700 font-medium mb-1">Jawaban: <strong>{Array.isArray(q.correctAnswer) ? q.correctAnswer.join(", ") : q.correctAnswer}</strong></p>}
+                <p className="text-slate-400 italic">({q.type === "uraian" ? "Jawaban uraian" : q.type === "produksi" ? "Jawaban terbuka (produksi)" : "Jawaban singkat"})</p>
+              </div>
+            )}
+            {showAnswers && q.explanation && (
+              <div className="mt-3 bg-blue-50 border border-blue-200 rounded-lg p-3 flex items-start gap-2">
+                <Sparkles className="w-4 h-4 text-blue-500 mt-0.5 shrink-0" />
+                <p className="text-sm text-blue-800">{q.explanation}</p>
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
     </div>
   )
 }

@@ -122,7 +122,9 @@
     "load:simulation-read": "k6 run --vus 30 --duration 3m tests/load/simulation-read.js",
     "load:simulation-submit": "k6 run tests/load/simulation-submit.js",
     "load:dashboard": "k6 run tests/load/dashboard-authenticated.js",
-    "test:rpp-pipeline": "tsx scripts/test-rpp-pipeline.ts"
+    "test:rpp-pipeline": "tsx scripts/test-rpp-pipeline.ts",
+    "audit:smp-practice": "npx tsx scripts/audit-smp-practice-content.ts",
+    "test:smp-practice": "npx tsx scripts/test-smp-practice-content.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.39.0",

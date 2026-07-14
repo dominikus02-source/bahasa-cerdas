@@ -1,4 +1,4 @@
-import type { ReadingPractice } from "../types"
+import type { BacaanPractice } from "../types"
 
 /**
  * Latihan Berbasis Bacaan — Kelas X (Fase E)
@@ -7,7 +7,7 @@ import type { ReadingPractice } from "../types"
  * jawaban dan pembahasan. Kuis cepat memakai kutipan pendek dari bacaan
  * yang sama.
  */
-export const readingPracticeX: Record<string, ReadingPractice> = {
+export const readingPracticeX: Record<string, BacaanPractice> = {
   // ── Bab 1: Teks Laporan Hasil Observasi ──────────────────────
   "x-lho": {
     stimulusTitle: "Kolam Sekolah sebagai Ekosistem Mini",

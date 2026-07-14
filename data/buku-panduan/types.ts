@@ -70,13 +70,10 @@ export interface ReadingEssay {
 }
 
 /**
- * Latihan Berbasis Bacaan — bacaan asli + soal yang menguji pemahaman
- * literal, inferensial, struktur, dan fitur kebahasaan, bukan sekadar
- * definisi. Dipakai untuk mengisi tab Latihan/Kuis interaktif (multipleChoice
- * dipetakan jadi PG, shortAnswer jadi ISIAN) sekaligus tab Panduan Guru
- * (bacaan lengkap + esai + kunci jawaban untuk referensi guru).
+ * Latihan Berbasis Bacaan (format pedagogik) — untuk kelas X-XII.
+ * Memisahkan PG, isian, dan esai dalam array terpisah.
  */
-export interface ReadingPractice {
+export interface BacaanPractice {
   stimulusTitle: string
   stimulusText: string
   multipleChoice: ReadingMultipleChoice[]
@@ -88,6 +85,31 @@ export interface ReadingPractice {
     shortAnswer: ReadingShortAnswer[]
     miniEssay: ReadingEssay
   }
+}
+
+export interface PracticeQuestion {
+  id: string
+  type: "pilihan_ganda" | "jawaban_singkat" | "uraian" | "produksi"
+  questionText: string
+  options?: string[]
+  correctAnswer: string | string[]
+  explanation: string
+  skillTarget: string
+  difficulty: "mudah" | "sedang" | "menantang"
+}
+
+export interface ReadingPractice {
+  title: string
+  stimulusTitle: string
+  stimulusText: string
+  questions: PracticeQuestion[]
+}
+
+export interface QuickQuiz {
+  title: string
+  stimulusTitle?: string
+  stimulusText?: string
+  questions: PracticeQuestion[]
 }
 
 export interface GuideChapter {
@@ -157,9 +179,11 @@ export interface GuideChapter {
     studentQuestions: string[]
     teacherQuestions: string[]
   }
-  aiContextPrompt: string
-  /** Opsional — hanya diisi untuk bab yang sudah punya latihan berbasis bacaan (kelas X-XII per Juli 2026). */
   readingPractice?: ReadingPractice
+  quickQuiz?: QuickQuiz
+  /** Opsional — hanya diisi untuk bab yang sudah punya latihan berbasis bacaan (kelas X-XII per Juli 2026). */
+  bacaanPractice?: BacaanPractice
+  aiContextPrompt: string
   sourceBasis: SourceBasis
   reviewStatus: ReviewStatus
   tags: string[]

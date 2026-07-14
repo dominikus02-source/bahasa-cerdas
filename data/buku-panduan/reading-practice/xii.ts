@@ -1,4 +1,4 @@
-import type { ReadingPractice } from "../types"
+import type { BacaanPractice } from "../types"
 
 /**
  * Latihan Berbasis Bacaan — Kelas XII (Fase F)
@@ -7,7 +7,7 @@ import type { ReadingPractice } from "../types"
  * jawaban dan pembahasan. Kuis cepat memakai kutipan pendek dari bacaan
  * yang sama.
  */
-export const readingPracticeXII: Record<string, ReadingPractice> = {
+export const readingPracticeXII: Record<string, BacaanPractice> = {
   // ── Bab 1: Surat Lamaran Pekerjaan ──────────────────────
   "xii-surat-lamaran": {
     stimulusTitle: "Surat Lamaran Pekerjaan: Staf Perpustakaan Daerah",
