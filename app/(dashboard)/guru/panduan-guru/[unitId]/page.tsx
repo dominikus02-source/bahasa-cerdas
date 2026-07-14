@@ -161,6 +161,7 @@ export default function UnitPreviewPage() {
   const [assignLoading, setAssignLoading] = useState(false)
   const [assignSuccess, setAssignSuccess] = useState(false)
   const [showAssign, setShowAssign] = useState(false)
+  const [jenis, setJenis] = useState<"MATERI" | "KUIS">("MATERI")
   const [presentMode, setPresentMode] = useState(false)
   const [presentTab, setPresentTab] = useState<TabKey>("belajar")
   const [ilustrasiUrls, setIlustrasiUrls] = useState<Record<string, string>>({})
@@ -174,7 +175,7 @@ export default function UnitPreviewPage() {
   }, [unitId])
 
   useEffect(() => {
-    fetch("/api/group").then(r => r.json()).then(d => { if (d.data) setGroups(d.data) }).catch(() => {})
+    fetch("/api/group").then(r => r.json()).then(d => { setGroups(d.groups || d.data || []) }).catch(() => {})
   }, [])
 
   useEffect(() => {
@@ -231,7 +232,13 @@ export default function UnitPreviewPage() {
       const res = await fetch("/api/guru/penugasan", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ unitId: data.id, groupIds: selectedGroups, judul: data.title, tenggat: tenggat || null }),
+        body: JSON.stringify({
+          unitId: data.id,
+          groupIds: selectedGroups,
+          judul: jenis === "KUIS" ? `Ulangan Harian: ${data.title}` : data.title,
+          jenis,
+          tenggat: tenggat || null,
+        }),
       })
       if (res.ok) { setAssignSuccess(true); setTimeout(() => { setShowAssign(false); setAssignSuccess(false); setSelectedGroups([]); setTenggat("") }, 1500) }
     } catch {}
@@ -324,6 +331,63 @@ export default function UnitPreviewPage() {
       </div>
 
       <ContentPanel content={content} tab={activeTab} showAnswers={showAnswers} setShowAnswers={setShowAnswers} ilustrasiUrls={ilustrasiUrls} />
+
+      {/* Kirim ke Kelas modal — Tugas Materi vs Ulangan Harian (Kuis) */}
+      {showAssign && (
+        <div className="fixed inset-0 z-[90] bg-black/50 flex items-center justify-center p-4" onClick={() => !assignLoading && setShowAssign(false)}>
+          <div className="bg-white rounded-2xl p-5 max-w-md w-full max-h-[85vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+            {assignSuccess ? (
+              <div className="text-center py-8">
+                <CheckCircle className="w-12 h-12 text-emerald-500 mx-auto mb-3" />
+                <p className="font-bold text-slate-900">Terkirim ke kelas!</p>
+              </div>
+            ) : (
+              <>
+                <h2 className="text-lg font-bold text-slate-900 mb-1">Kirim ke Kelas</h2>
+                <p className="text-xs text-slate-500 mb-4">{data.title}</p>
+
+                <div className="flex gap-2 mb-2">
+                  <button onClick={() => setJenis("MATERI")} className={`flex-1 py-2.5 rounded-xl text-sm font-semibold border-2 transition-colors ${jenis === "MATERI" ? "border-emerald-500 bg-emerald-50 text-emerald-700" : "border-slate-200 text-slate-500"}`}>Tugas Materi</button>
+                  <button onClick={() => setJenis("KUIS")} className={`flex-1 py-2.5 rounded-xl text-sm font-semibold border-2 transition-colors ${jenis === "KUIS" ? "border-violet-500 bg-violet-50 text-violet-700" : "border-slate-200 text-slate-500"}`}>Ulangan Harian</button>
+                </div>
+                <p className="text-[11px] text-slate-400 mb-4">
+                  {jenis === "MATERI"
+                    ? "Murid menerima Materi + Latihan + Praktik (tanpa kunci jawaban). Kuis & Panduan Guru tidak dikirim."
+                    : "Murid mengerjakan Kuis sebagai ulangan harian — nilai otomatis langsung keluar."}
+                </p>
+
+                <p className="text-xs font-semibold text-slate-600 mb-2">Pilih Kelas</p>
+                {groups.length === 0 ? (
+                  <p className="text-xs text-slate-400 py-4 text-center">Belum ada kelas. Buat dulu di KelasKu.</p>
+                ) : (
+                  <div className="space-y-1.5 mb-4 max-h-48 overflow-y-auto">
+                    {groups.map(g => {
+                      const sel = selectedGroups.includes(g.id)
+                      return (
+                        <button key={g.id} onClick={() => setSelectedGroups(prev => sel ? prev.filter(x => x !== g.id) : [...prev, g.id])}
+                          className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl border text-sm ${sel ? "border-emerald-500 bg-emerald-50" : "border-slate-200"}`}>
+                          <span className="font-medium text-slate-700">{g.name} <span className="text-xs text-slate-400">· {g.grade}</span></span>
+                          {sel && <CheckCircle className="w-4 h-4 text-emerald-500" />}
+                        </button>
+                      )
+                    })}
+                  </div>
+                )}
+
+                <label className="block text-xs font-semibold text-slate-600 mb-1">Tenggat (opsional)</label>
+                <input type="date" value={tenggat} onChange={e => setTenggat(e.target.value)} className="w-full h-10 px-3 rounded-xl border border-slate-200 text-sm mb-4" />
+
+                <div className="flex gap-2">
+                  <button onClick={() => setShowAssign(false)} disabled={assignLoading} className="flex-1 py-2.5 rounded-xl border border-slate-200 text-slate-600 font-semibold text-sm">Batal</button>
+                  <button onClick={handleAssign} disabled={assignLoading || selectedGroups.length === 0} className="flex-1 py-2.5 rounded-xl bg-emerald-600 text-white font-semibold text-sm disabled:opacity-50">
+                    {assignLoading ? "Mengirim..." : "Kirim"}
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   )
 }

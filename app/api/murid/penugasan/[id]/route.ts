@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { getUser } from "@/lib/supabase/server";
-import { buildLatihan, toStudentQuestions, resolvePraktik, resolveBelajar } from "@/lib/penugasan-content";
+import { buildLatihan, buildKuis, toStudentQuestions, resolvePraktik, resolveBelajar } from "@/lib/penugasan-content";
 
 // GET one assignment's student content: Belajar + Latihan (no answer keys) +
 // Praktik. Kuis and Panduan Guru are intentionally excluded.
@@ -17,7 +17,13 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
       include: {
         unit: { select: { id: true, title: true, content: true, xpReward: true } },
         group: { include: { members: { where: { userId: user.id }, select: { id: true } } } },
-        submissions: { where: { userId: user.id }, select: { status: true, score: true, completedAt: true } },
+        submissions: {
+          where: { userId: user.id },
+          select: {
+            status: true, score: true, completedAt: true,
+            praktikUrl: true, praktikCatatan: true, praktikNilai: true, praktikDinilai: true,
+          },
+        },
       },
     });
 
@@ -28,25 +34,33 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
     let content: any = {};
     try { content = penugasan.unit.content ? JSON.parse(penugasan.unit.content) : {}; } catch { content = {}; }
 
-    const latihan = buildLatihan(content);
-    const rp = content?.readingPractice;
+    const base = {
+      id: penugasan.id,
+      jenis: penugasan.jenis,
+      judul: penugasan.judul,
+      deskripsi: penugasan.deskripsi,
+      tenggat: penugasan.tenggat,
+      unitTitle: penugasan.unit.title,
+      xpReward: penugasan.unit.xpReward,
+      submission: penugasan.submissions[0] ?? null,
+    };
 
+    // KUIS (ulangan harian): only questions, no keys, auto-graded on submit.
+    if (penugasan.jenis === "KUIS") {
+      return NextResponse.json({ data: { ...base, kuis: toStudentQuestions(buildKuis(content)) } });
+    }
+
+    // MATERI: Belajar + Latihan (no keys) + Praktik. Kuis & Panduan Guru excluded.
+    const rp = content?.readingPractice;
     return NextResponse.json({
       data: {
-        id: penugasan.id,
-        judul: penugasan.judul,
-        deskripsi: penugasan.deskripsi,
-        tenggat: penugasan.tenggat,
-        unitTitle: penugasan.unit.title,
-        xpReward: penugasan.unit.xpReward,
+        ...base,
         belajar: resolveBelajar(content),
-        // Latihan questions WITHOUT answer keys.
-        latihan: toStudentQuestions(latihan),
+        latihan: toStudentQuestions(buildLatihan(content)),
         reading: rp && (rp.stimulusText || rp.stimulusTitle)
           ? { title: rp.stimulusTitle || rp.title || "Bacaan", text: rp.stimulusText || "" }
           : null,
         praktik: resolvePraktik(content),
-        submission: penugasan.submissions[0] ?? null,
       },
     });
   } catch (error) {

@@ -1710,6 +1710,7 @@ model Penugasan {
   teacherId   String
   judul       String
   deskripsi   String?
+  jenis       String   @default("MATERI") // MATERI (belajar+latihan+praktik) | KUIS (ulangan harian, auto-nilai)
   tenggat     DateTime?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -1726,13 +1727,18 @@ model Penugasan {
 }
 
 model PenugasanSubmission {
-  id          String    @id @default(cuid())
-  penugasanId String
-  userId      String
-  status      String    @default("ASSIGNED")
-  startedAt   DateTime?
-  completedAt DateTime?
-  score       Int?
+  id             String    @id @default(cuid())
+  penugasanId    String
+  userId         String
+  status         String    @default("ASSIGNED")
+  startedAt      DateTime?
+  completedAt    DateTime?
+  score          Int?
+  // Praktik (Google-Classroom style): student uploads a result, teacher grades it.
+  praktikUrl     String?
+  praktikCatatan String?
+  praktikNilai   Int?
+  praktikDinilai Boolean   @default(false)
 
   penugasan Penugasan @relation(fields: [penugasanId], references: [id], onDelete: Cascade)
   user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)

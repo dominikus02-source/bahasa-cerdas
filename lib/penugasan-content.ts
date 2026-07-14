@@ -26,35 +26,47 @@ function asArray<T>(v: unknown): T[] {
   return Array.isArray(v) ? (v as T[]) : [];
 }
 
-/** Build the gradeable Latihan list from a unit's content JSON. */
-export function buildLatihan(content: any): GradeQuestion[] {
-  const out: GradeQuestion[] = [];
-
-  for (const [i, s] of asArray<any>(content?.latihan).entries()) {
+function fromSoal(arr: any[], prefix: string): GradeQuestion[] {
+  return arr.map((s, i) => {
     const tipe: LatihanTipe = s?.tipe === "BENAR_SALAH" ? "BENAR_SALAH" : s?.tipe === "ISIAN" ? "ISIAN" : "PG";
-    out.push({
-      id: `l${i}`,
+    return {
+      id: `${prefix}${i}`,
       question: String(s?.soal ?? ""),
       options: tipe === "ISIAN" ? [] : asArray<string>(s?.opsi),
       tipe,
       correct: s?.jawaban,
-    });
-  }
+    };
+  });
+}
 
-  // Some units carry extra reading-practice questions instead of `latihan`.
-  for (const [i, q] of asArray<any>(content?.readingPractice?.questions).entries()) {
+function fromPractice(arr: any[], prefix: string): GradeQuestion[] {
+  return arr.map((q, i) => {
     const isMC = q?.type === "pilihan_ganda" && Array.isArray(q?.options);
     const opts = isMC ? asArray<string>(q.options) : [];
-    out.push({
-      id: `rp${i}`,
+    return {
+      id: `${prefix}${i}`,
       question: String(q?.questionText ?? ""),
       options: opts,
-      tipe: isMC ? "PG" : "ISIAN",
+      tipe: (isMC ? "PG" : "ISIAN") as LatihanTipe,
       correct: isMC ? opts.indexOf(String(q?.correctAnswer)) : String(q?.correctAnswer ?? ""),
-    });
-  }
+    };
+  });
+}
 
-  return out.filter((q) => q.question.trim().length > 0);
+/** Build the gradeable Latihan list from a unit's content JSON. */
+export function buildLatihan(content: any): GradeQuestion[] {
+  return [
+    ...fromSoal(asArray<any>(content?.latihan), "l"),
+    ...fromPractice(asArray<any>(content?.readingPractice?.questions), "rp"),
+  ].filter((q) => q.question.trim().length > 0);
+}
+
+/** Build the gradeable Kuis (ulangan harian) list from a unit's content JSON. */
+export function buildKuis(content: any): GradeQuestion[] {
+  return [
+    ...fromSoal(asArray<any>(content?.kuis), "k"),
+    ...fromPractice(asArray<any>(content?.quickQuiz?.questions), "qq"),
+  ].filter((q) => q.question.trim().length > 0);
 }
 
 /** Strip answer keys before sending questions to the student. */

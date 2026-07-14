@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { getUser } from "@/lib/supabase/server";
-import { buildLatihan, gradeLatihan } from "@/lib/penugasan-content";
+import { buildLatihan, buildKuis, gradeLatihan } from "@/lib/penugasan-content";
 import { upsertNilaiOtomatis } from "@/lib/penilaian/upsert-nilai";
 
 // Submit a Penugasan: grade the Latihan server-side, store the score, and push
@@ -31,7 +31,8 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     let content: any = {};
     try { content = penugasan.unit.content ? JSON.parse(penugasan.unit.content) : {}; } catch { content = {}; }
 
-    const questions = buildLatihan(content);
+    const isKuis = penugasan.jenis === "KUIS";
+    const questions = isKuis ? buildKuis(content) : buildLatihan(content);
     const { correct, total, score } = gradeLatihan(questions, answers);
 
     const alreadyDone = penugasan.submissions[0]?.status === "COMPLETED";
@@ -44,13 +45,13 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
 
     // Best-effort side effects — never fail the submission.
     try {
-      // Push the score into the teacher's rekap nilai (kategori "Tugas Harian").
+      // Push the score into the teacher's rekap nilai.
       await upsertNilaiOtomatis({
         userId: user.id,
         groupId: penugasan.groupId,
-        kategoriNama: "Tugas Harian",
+        kategoriNama: isKuis ? "Kuis" : "Tugas Harian",
         skor: score,
-        sumberType: "PENUGASAN",
+        sumberType: isKuis ? "QUIZ" : "PENUGASAN",
         sumberId: penugasan.id,
         keterangan: penugasan.judul,
       });
