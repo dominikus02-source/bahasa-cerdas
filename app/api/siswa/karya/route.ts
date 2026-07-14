@@ -6,6 +6,23 @@ import { karyaSchema, sanitize } from "@/lib/validations";
 import cache from "@/lib/redis";
 import { invalidateKaryaCache } from "@/lib/ai-queue";
 
+// Attaches the current user's like status per item. Kept OUT of the shared
+// cache because it is per-user — the base list stays cacheable and public.
+async function attachLikedStatus<T extends { id: string }>(
+  items: T[],
+  userId: string | null,
+): Promise<(T & { likedByCurrentUser: boolean })[]> {
+  if (!userId || items.length === 0) {
+    return items.map((k) => ({ ...k, likedByCurrentUser: false }));
+  }
+  const likes = await db.studentKaryaLike.findMany({
+    where: { userId, karyaId: { in: items.map((k) => k.id) } },
+    select: { karyaId: true },
+  });
+  const likedIds = new Set(likes.map((l) => l.karyaId));
+  return items.map((k) => ({ ...k, likedByCurrentUser: likedIds.has(k.id) }));
+}
+
 export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
@@ -15,12 +32,23 @@ export async function GET(req: NextRequest) {
     const featured = searchParams.get("featured") === "true";
     const groupId = searchParams.get("groupId");
 
+    // Current user id (best-effort) — used for likedByCurrentUser + group scope.
+    let currentUserId: string | null = null;
+    try {
+      const supabase = await createClient();
+      const { data: { user: authUser } } = await supabase.auth.getUser();
+      if (authUser) {
+        const dbUser = await db.user.findUnique({ where: { supabaseId: authUser.id }, select: { id: true } });
+        currentUserId = dbUser?.id ?? null;
+      }
+    } catch {}
+
     const cacheKey = `karya:feed:cursor:${type || "all"}:${cursor || "start"}:${limit}`;
 
-    const cached = await cache.get<{ karya: unknown[]; nextCursor: string | null; total: number }>(cacheKey);
+    const cached = await cache.get<{ karya: any[]; nextCursor: string | null; total: number }>(cacheKey);
     if (cached && !/page=\d+/.test(req.url)) {
       return NextResponse.json({
-        karya: cached.karya,
+        karya: await attachLikedStatus(cached.karya, currentUserId),
         nextCursor: cached.nextCursor,
         total: cached.total,
       });
@@ -30,24 +58,17 @@ export async function GET(req: NextRequest) {
     if (type) where.type = type;
     if (featured) where.isFeatured = true;
 
-    if (groupId) {
-      const supabase = await createClient();
-      const { data: { user: authUser } } = await supabase.auth.getUser();
-      if (authUser) {
-        const dbUser = await db.user.findUnique({ where: { supabaseId: authUser.id } });
-        if (dbUser) {
-          const group = await db.group.findUnique({
-            where: { id: groupId },
-            select: { teacherId: true },
-          });
-          if (group && group.teacherId === dbUser.id) {
-            const members = await db.groupMember.findMany({
-              where: { groupId, role: "member" },
-              select: { userId: true },
-            });
-            where.userId = { in: members.map(m => m.userId) };
-          }
-        }
+    if (groupId && currentUserId) {
+      const group = await db.group.findUnique({
+        where: { id: groupId },
+        select: { teacherId: true },
+      });
+      if (group && group.teacherId === currentUserId) {
+        const members = await db.groupMember.findMany({
+          where: { groupId, role: "member" },
+          select: { userId: true },
+        });
+        where.userId = { in: members.map(m => m.userId) };
       }
     }
 
@@ -75,9 +96,9 @@ export async function GET(req: NextRequest) {
       : null;
 
     const result = { karya: items, nextCursor, total };
-    await cache.set(cacheKey, result, 120);
+    await cache.set(cacheKey, result, 120); // base list (no per-user field) stays cacheable
 
-    return NextResponse.json(result);
+    return NextResponse.json({ ...result, karya: await attachLikedStatus(items, currentUserId) });
   } catch (error) {
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }

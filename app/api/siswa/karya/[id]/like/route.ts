@@ -16,21 +16,30 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
 
     if (existing) {
       await db.studentKaryaLike.delete({ where: { id: existing.id } });
-      await db.studentKarya.update({ where: { id }, data: { likesCount: { decrement: 1 } } });
-      return NextResponse.json({ liked: false });
+      const updated = await db.studentKarya.update({
+        where: { id },
+        data: { likesCount: { decrement: 1 } },
+        select: { likesCount: true },
+      });
+      return NextResponse.json({ success: true, liked: false, likeCount: Math.max(0, updated.likesCount) });
     }
 
     const karya = await db.studentKarya.findUnique({ where: { id }, select: { userId: true, title: true } });
+    if (!karya) return NextResponse.json({ error: "Karya tidak ditemukan", code: "KARYA_NOT_FOUND" }, { status: 404 });
 
     await db.studentKaryaLike.create({ data: { karyaId: id, userId: user.id } });
-    await db.studentKarya.update({ where: { id }, data: { likesCount: { increment: 1 } } });
+    const updated = await db.studentKarya.update({
+      where: { id },
+      data: { likesCount: { increment: 1 } },
+      select: { likesCount: true },
+    });
 
     await Promise.all([
       trackDailyStreak(user.id),
       trackQuestProgress(user.id, "MEMBERI_LIKE"),
     ]);
 
-    if (karya && karya.userId !== user.id) {
+    if (karya.userId !== user.id) {
       await awardCoins(karya.userId, "MENDAPAT_LIKE", id);
       await db.notifikasi.create({
         data: {
@@ -43,8 +52,8 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
       });
     }
 
-    return NextResponse.json({ liked: true });
+    return NextResponse.json({ success: true, liked: true, likeCount: updated.likesCount });
   } catch (error) {
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json({ error: "Belum berhasil menyukai karya.", code: "KARYA_LIKE_FAILED" }, { status: 500 });
   }
 }

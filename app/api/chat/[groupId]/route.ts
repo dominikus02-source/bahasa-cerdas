@@ -9,10 +9,18 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ grou
 
     const { groupId } = await params;
 
-    const membership = await db.groupMember.findUnique({
-      where: { groupId_userId: { groupId, userId: user.id } },
-    });
-    if (!membership) return NextResponse.json({ error: "Not a member" }, { status: 403 });
+    // Access: the class teacher (owner), an enrolled member, or admin/founder.
+    const group = await db.group.findUnique({ where: { id: groupId }, select: { teacherId: true } });
+    if (!group) return NextResponse.json({ error: "Kelas tidak ditemukan", code: "CLASS_NOT_FOUND" }, { status: 404 });
+
+    let allowed = group.teacherId === user.id || user.role === "ADMIN" || user.isFounder;
+    if (!allowed) {
+      const membership = await db.groupMember.findUnique({
+        where: { groupId_userId: { groupId, userId: user.id } },
+      });
+      allowed = !!membership;
+    }
+    if (!allowed) return NextResponse.json({ error: "Tidak memiliki akses", code: "CLASS_MESSAGE_FORBIDDEN" }, { status: 403 });
 
     const { searchParams } = new URL(req.url);
     const limit = parseInt(searchParams.get("limit") || "50");
