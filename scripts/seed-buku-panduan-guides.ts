@@ -219,7 +219,7 @@ function formatBelajar(chapter: (typeof allGrades)[0]["semesters"][0]["chapters"
  * Bab tanpa readingPractice (VII-IX) tetap memakai derivasi lama, tidak disentuh.
  */
 function formatLatihan(chapter: (typeof allGrades)[0]["semesters"][0]["chapters"][0]) {
-  const rp = chapter.readingPractice
+  const rp = chapter.bacaanPractice
   if (rp) {
     const pg = rp.multipleChoice.map((q, i) => ({
       id: i + 1,
@@ -268,7 +268,7 @@ function formatLatihan(chapter: (typeof allGrades)[0]["semesters"][0]["chapters"
  * tanpa readingPractice tetap memakai derivasi lama dari assessment.summative.
  */
 function formatKuis(chapter: (typeof allGrades)[0]["semesters"][0]["chapters"][0]) {
-  const rp = chapter.readingPractice
+  const rp = chapter.bacaanPractice
   if (rp) {
     const pg = rp.quiz.multipleChoice.map((q, i) => ({
       id: i + 1,
