@@ -303,7 +303,7 @@ export default async function BerandaPage() {
           <QuickAction icon={<Gift size={24} />} label="Kotak" href="/arena/mystery-box" warna="from-amber-500 to-orange-600" />
           <QuickAction icon={<Gamepad2 size={24} />} label="Gim" href="/arena/game" warna="from-purple-600 to-violet-700" />
           <QuickAction icon={<Users size={24} />} label="Gabung Kelas" href="/murid/gabung-kelas" warna="from-emerald-500 to-teal-600" />
-          <QuickAction icon={<Coins size={24} />} label="Toko" href="/murid/toko-koin" warna="from-amber-500 to-yellow-600" />
+          <QuickAction icon={<Coins size={24} />} label="Toko" href="/arena/toko-koin" warna="from-amber-500 to-yellow-600" />
         </div>
       </div>
 

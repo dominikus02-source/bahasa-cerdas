@@ -1,6 +1,7 @@
 import { getUser } from '@/lib/supabase/server';
 import { db } from '@/lib/db';
 import { NextResponse } from 'next/server';
+import { calcLevel, calcLeagueFromXP } from '@/lib/xp';
 
 export async function POST(request: Request) {
   try {
@@ -31,10 +32,14 @@ export async function POST(request: Request) {
       },
     });
 
+    const earned = xpEarned || Math.floor(score / 10)
+    const newXp = (user.xp || 0) + earned
     await db.user.update({
       where: { id: user.id },
       data: {
-        xp: { increment: xpEarned || Math.floor(score / 10) },
+        xp: { increment: earned },
+        level: calcLevel(newXp),
+        league: calcLeagueFromXP(newXp),
       },
     });
 

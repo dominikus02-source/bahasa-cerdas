@@ -128,7 +128,7 @@ export async function trackQuestProgress(
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
-  const config = QUEST_TYPES.find((q) => q.type === questType);
+  const config = QUEST_POOL.find((q) => q.type === questType);
   if (!config) return null; // unknown quest type — nothing to track
 
   // Self-heal: create today's quest if it doesn't exist yet, so like/comment/
