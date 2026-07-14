@@ -1,13 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
-
-function calcLevel(xp: number) {
-  return Math.floor(Math.sqrt(xp / 100)) + 1;
-}
-
-function calcXpForNextLevel(level: number) {
-  return level * level * 100;
-}
+import { calcLevel, calcLeagueFromXP, calcXpForNextLevel } from "@/lib/xp";
 
 export async function POST(req: NextRequest) {
   try {
@@ -43,12 +36,7 @@ export async function POST(req: NextRequest) {
     const newXp = dbUser.xp + totalXp;
     const newLevel = calcLevel(newXp);
     const levelUp = newLevel > oldLevel;
-
-    const leagues = ["BRONZE", "SILVER", "GOLD", "DIAMOND"] as const;
-    let newLeague = dbUser.league;
-    if (newLevel >= 80) newLeague = "DIAMOND";
-    else if (newLevel >= 50) newLeague = "GOLD";
-    else if (newLevel >= 25) newLeague = "SILVER";
+    const newLeague = calcLeagueFromXP(newXp);
 
     await db.user.update({
       where: { id: dbUser.id },

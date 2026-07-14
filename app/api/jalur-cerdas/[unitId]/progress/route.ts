@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { db } from "@/lib/db"
 import { getUser } from "@/lib/supabase/server"
+import { calcLevel, calcLeagueFromXP } from "@/lib/xp"
 
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ unitId: string }> }) {
   try {
@@ -51,9 +52,12 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ un
       },
     })
 
+    const jcXp = user.xp + XP_REWARD
+    const jcLevel = calcLevel(jcXp)
+    const jcLeague = calcLeagueFromXP(jcXp)
     await db.user.update({
       where: { id: user.id },
-      data: { xp: { increment: XP_REWARD }, coins: { increment: COIN_REWARD }, lastActiveAt: new Date() },
+      data: { xp: jcXp, level: jcLevel, league: jcLeague, coins: { increment: COIN_REWARD }, lastActiveAt: new Date() },
     })
 
     return NextResponse.json({ progress, isComplete: true, earnedXp: XP_REWARD })

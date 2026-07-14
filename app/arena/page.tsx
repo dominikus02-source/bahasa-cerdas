@@ -9,14 +9,9 @@ import {
   MessageCircle, Users, Clock, Swords, Crown, GraduationCap,
 } from "lucide-react"
 import { trackDailyStreak, getOrCreateDailyQuests } from "@/lib/coins"
+import { calcLevelProgress, calcLevel, calcLeagueFromXP } from "@/lib/xp"
 import { TugasCard } from "./tugas-card"
 import BattleCard from "@/components/arena/BattleCard"
-
-function xpProgress(xp: number, level: number) {
-  const needed = level * 150
-  const current = xp % needed
-  return { current, needed, pct: Math.min(Math.round((current / needed) * 100), 100) }
-}
 
 function initials(name: string) {
   return name?.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2) || "?"
@@ -40,7 +35,9 @@ export default async function BerandaPage() {
   const doneQuest = quests.filter((q: any) => q.completed).length
   const totalQuest = quests.length
 
-  const progress = xpProgress(user.xp || 0, user.level || 1)
+  const displayLevel = calcLevel(user.xp || 0)
+  const displayLeague = calcLeagueFromXP(user.xp || 0)
+  const progress = calcLevelProgress(user.xp || 0, displayLevel)
 
   const todayStart = new Date()
   todayStart.setHours(0, 0, 0, 0)
@@ -174,7 +171,7 @@ export default async function BerandaPage() {
             </div>
             <div>
               <h2 className="font-bold text-base text-white">Halo, {user.fullName?.split(" ")[0]}!</h2>
-              <p className="text-xs text-white/65">{user.league || "Perunggu"} &middot; Tingkat {user.level || 1}</p>
+              <p className="text-xs text-white/65">{displayLeague || "Perunggu"} &middot; Tingkat {displayLevel}</p>
             </div>
           </div>
 
@@ -198,7 +195,7 @@ export default async function BerandaPage() {
 
           <div>
             <div className="flex justify-between mb-1.5">
-              <span className="text-[11px] text-white/70 font-semibold">Tingkat {user.level || 1} &rarr; Tingkat {(user.level || 1) + 1}</span>
+              <span className="text-[11px] text-white/70 font-semibold">Tingkat {displayLevel} &rarr; Tingkat {displayLevel + 1}</span>
               <span className="text-[11px] text-amber-300 font-bold">{progress.current} / {progress.needed} XP</span>
             </div>
             <div className="h-2 bg-white/15 rounded-full overflow-hidden">
@@ -264,6 +261,10 @@ export default async function BerandaPage() {
                   MEMBERI_LIKE: { icon: Heart, color: "text-red-400" },
                   MENGOMENTARI: { icon: MessageCircle, color: "text-blue-400" },
                   MENULIS: { icon: PenLine, color: "text-purple-400" },
+                  MENJAWAB_KUIS: { icon: Zap, color: "text-amber-400" },
+                  MAIN_GAME: { icon: Gamepad2, color: "text-emerald-400" },
+                  STREAK_LOGIN: { icon: Flame, color: "text-orange-400" },
+                  BACA_MATERI: { icon: BookOpen, color: "text-cyan-400" },
                 }
                 const meta = iconMap[q.questType] || { icon: Star, color: "text-amber-400" }
                 const Icon = meta.icon
@@ -273,7 +274,7 @@ export default async function BerandaPage() {
                     <Icon size={16} className={meta.color} />
                     <div className="flex-1 min-w-0">
                       <p className={`text-xs font-semibold ${q.completed ? "text-emerald-600 line-through" : "text-[#1A1033]"}`}>
-                        {q.questType === "MEMBERI_LIKE" ? `Beri Suka ${q.target} Karya` : q.questType === "MENGOMENTARI" ? `Komentari ${q.target} Karya` : `Tulis ${q.target} Karya`}
+                        {q.questType === "MEMBERI_LIKE" ? `Beri Suka ${q.target} Karya` : q.questType === "MENGOMENTARI" ? `Komentari ${q.target} Karya` : q.questType === "MENULIS" ? `Tulis ${q.target} Karya` : q.questType === "MENJAWAB_KUIS" ? `Jawab ${q.target} Soal Kuis` : q.questType === "MAIN_GAME" ? `Main ${q.target} Gim` : q.questType === "BACA_MATERI" ? `Baca ${q.target} Materi` : `Streak ${q.target} Hari`}
                       </p>
                       <p className="text-[10px] text-[#9B93B8]">{q.progress}/{q.target} selesai</p>
                       <div className="h-1 bg-black/5 rounded-full overflow-hidden mt-1">
@@ -302,6 +303,7 @@ export default async function BerandaPage() {
           <QuickAction icon={<Gift size={24} />} label="Kotak" href="/arena/mystery-box" warna="from-amber-500 to-orange-600" />
           <QuickAction icon={<Gamepad2 size={24} />} label="Gim" href="/arena/game" warna="from-purple-600 to-violet-700" />
           <QuickAction icon={<Users size={24} />} label="Gabung Kelas" href="/murid/gabung-kelas" warna="from-emerald-500 to-teal-600" />
+          <QuickAction icon={<Coins size={24} />} label="Toko" href="/murid/toko-koin" warna="from-amber-500 to-yellow-600" />
         </div>
       </div>
 

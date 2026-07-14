@@ -6,8 +6,9 @@ import Link from "next/link"
 import {
   Heart, MessageCircle, Eye, Clock, Sparkles, BookOpen, FileText,
   Smile, Music, MessageSquare, PenLine, Send, Flame,
-  Zap, Trophy, Target, TrendingUp, Share2,
+  Zap, Trophy, Target, TrendingUp, Share2, Loader2,
 } from "lucide-react"
+import { getWeeklyChallenge } from "@/lib/weekly-challenge"
 
 const typeColors: Record<string, { label: string; bg: string; text: string; border: string }> = {
   PUISI: { label: "Puisi", bg: "bg-fuchsia-100", text: "text-fuchsia-700", border: "border-fuchsia-200" },
@@ -65,6 +66,9 @@ export default function FeedPage() {
   const [cursor, setCursor] = useState<string | null>(null)
   const [hasMore, setHasMore] = useState(true)
   const [deletingId, setDeletingId] = useState<string | null>(null)
+  const [challengeCount, setChallengeCount] = useState(0)
+  const [loadingChallenge, setLoadingChallenge] = useState(true)
+  const challenge = getWeeklyChallenge()
   const router = useRouter()
 
   const loadKarya = useCallback(async (cursorVal: string | null, append: boolean) => {
@@ -93,12 +97,15 @@ export default function FeedPage() {
   useEffect(() => {
     async function init() {
       await loadKarya(null, false);
-      const [uData, stats] = await Promise.all([
+      const [uData, stats, chCount] = await Promise.all([
         fetch("/api/user/me").then(r => r.ok ? r.json() : null),
         fetch("/api/arena/stats").then(r => r.json()).catch(() => ({})),
+        fetch(`/api/siswa/karya/count?type=${challenge.type}`).then(r => r.json()).catch(() => ({ count: 0 })),
       ]);
       setCurrentUserId(uData?.user?.id || uData?.user?.userId || null)
       setOnlineCount(stats.onlineCount || 0)
+      setChallengeCount(chCount.count || 0)
+      setLoadingChallenge(false)
       setLoading(false)
     }
     init();
@@ -308,10 +315,10 @@ export default function FeedPage() {
               </div>
               <div className="flex-1">
                 <p className="text-sm font-extrabold text-white">Tantangan Minggu Ini</p>
-                <p className="text-[11px] text-white/60">Pantun Persahabatan &middot; 134 karya masuk</p>
+                <p className="text-[11px] text-white/60">{challenge.theme} &middot; {loadingChallenge ? "..." : `${challengeCount} karya masuk`}</p>
               </div>
               <Link
-                href="/arena/tulis?type=PANTUN"
+                href={`/arena/tulis?type=${challenge.type}`}
                 className="bg-violet-600 text-white border-none rounded-xl px-3 py-2 text-[11px] font-bold cursor-pointer font-sans whitespace-nowrap hover:bg-violet-500 active:scale-95 transition-all inline-flex items-center"
               >
                 Ikut

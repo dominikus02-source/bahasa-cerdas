@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 import { rateLimitRoute } from "@/lib/rate-limit";
+import { calcLevel, calcLeagueFromXP } from "@/lib/xp";
 import type { AttemptSnapshot, AttemptAnswerDetails, UserAnswerRecord } from "@/lib/types/snapshot";
 
 export async function GET(
@@ -300,9 +301,12 @@ export async function POST(
         });
       }
 
+      const ukbiXp = dbUser.xp + Math.round(rawScore / 10);
+      const ukbiLevel = calcLevel(ukbiXp);
+      const ukbiLeague = calcLeagueFromXP(ukbiXp);
       await db.user.update({
         where: { id: dbUser.id },
-        data: { xp: { increment: Math.round(rawScore / 10) } },
+        data: { xp: ukbiXp, level: ukbiLevel, league: ukbiLeague },
       });
 
       return NextResponse.json({
@@ -452,9 +456,12 @@ export async function POST(
         });
       }
 
+      const tkaXp = dbUser.xp + Math.round(rawScore);
+      const tkaLevel = calcLevel(tkaXp);
+      const tkaLeague = calcLeagueFromXP(tkaXp);
       await db.user.update({
         where: { id: dbUser.id },
-        data: { xp: { increment: Math.round(rawScore) } },
+        data: { xp: tkaXp, level: tkaLevel, league: tkaLeague },
       });
 
       return NextResponse.json({

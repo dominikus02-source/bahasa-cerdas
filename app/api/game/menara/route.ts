@@ -11,6 +11,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getUser } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 import { QUESTION_BANK } from "@/lib/game/question-bank";
+import { calcLevel, calcLeagueFromXP } from "@/lib/xp";
 
 export const dynamic = "force-dynamic";
 
@@ -135,11 +136,12 @@ export async function POST(req: NextRequest) {
   if (!dbUser) return NextResponse.json({ error: "User not found" }, { status: 404 });
 
   const newXp = dbUser.xp + xpEarned;
-  const newLevel = Math.floor(Math.sqrt(newXp / 100)) + 1;
+  const newLevel = calcLevel(newXp);
+  const newLeague = calcLeagueFromXP(newXp);
 
   await db.user.update({
     where: { id: user.id },
-    data: { xp: newXp, level: newLevel, lastActiveAt: new Date() },
+    data: { xp: newXp, level: newLevel, league: newLeague, lastActiveAt: new Date() },
   });
 
   return NextResponse.json({

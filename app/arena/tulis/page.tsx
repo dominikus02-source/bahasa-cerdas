@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { PenLine, Send, Image, Sparkles, BookOpen, FileText, Smile, Music, MessageSquare } from "lucide-react"
+import { getWeeklyChallenge } from "@/lib/weekly-challenge"
 
 const karyaTypes = [
   { value: "PUISI", label: "Puisi", icon: <Sparkles className="w-6 h-6" />, color: "from-fuchsia-500 to-pink-600" },
@@ -24,6 +25,8 @@ export default function ArenaTulisPage() {
       setType(t)
     }
   }, [searchParams])
+  const challenge = getWeeklyChallenge()
+  const isChallengeType = type === challenge.type
   const [title, setTitle] = useState("")
   const [content, setContent] = useState("")
   const [coverUrl, setCoverUrl] = useState("")
@@ -88,6 +91,17 @@ export default function ArenaTulisPage() {
             ))}
           </div>
         </div>
+
+        {/* Challenge banner */}
+        {isChallengeType && (
+          <div className="flex items-center gap-3 p-3 rounded-xl bg-gradient-to-r from-violet-600 to-purple-600 text-white">
+            <Sparkles size={20} className="text-yellow-300 shrink-0" />
+            <div className="flex-1">
+              <p className="text-sm font-extrabold">Tantangan Minggu Ini</p>
+              <p className="text-[11px] text-white/80">{challenge.prompt}</p>
+            </div>
+          </div>
+        )}
 
         {/* Title */}
         <div>

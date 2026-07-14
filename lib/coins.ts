@@ -11,11 +11,28 @@ const COIN_REWARDS = {
   STREAK_100: 1000,
 } as const;
 
-const QUEST_TYPES = [
+const QUEST_POOL = [
   { type: "MENULIS", target: 1, rewardCoins: 10 },
   { type: "MENGOMENTARI", target: 3, rewardCoins: 5 },
   { type: "MEMBERI_LIKE", target: 5, rewardCoins: 5 },
+  { type: "MENJAWAB_KUIS", target: 5, rewardCoins: 8 },
+  { type: "MAIN_GAME", target: 2, rewardCoins: 10 },
+  { type: "STREAK_LOGIN", target: 1, rewardCoins: 5 },
+  { type: "BACA_MATERI", target: 2, rewardCoins: 8 },
 ] as const;
+
+function pickDailyQuests(seed: number) {
+  const shuffled = [...QUEST_POOL].sort((a, b) => {
+    const ha = (a.type.charCodeAt(0) + seed) % 7
+    const hb = (b.type.charCodeAt(0) + seed + 3) % 7
+    return ha - hb
+  })
+  return shuffled.slice(0, 3).map(q => ({
+    type: q.type,
+    target: q.target,
+    rewardCoins: q.rewardCoins,
+  }))
+}
 
 export async function awardCoins(
   userId: string,
@@ -84,11 +101,11 @@ export async function getOrCreateDailyQuests(userId: string) {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
-  // Ensure ALL quest types exist for today. Some may already exist (created by a
-  // like/comment before this page was opened), so we fill only the missing ones —
-  // skipDuplicates relies on @@unique([userId, date, questType]).
+  const daySeed = today.getFullYear() * 10000 + (today.getMonth() + 1) * 100 + today.getDate()
+  const todaysQuests = pickDailyQuests(daySeed)
+
   await db.dailyQuest.createMany({
-    data: QUEST_TYPES.map((q) => ({
+    data: todaysQuests.map((q) => ({
       userId,
       date: today,
       questType: q.type,
@@ -148,9 +165,12 @@ export async function claimQuestReward(userId: string, questId: string) {
       throw new Error("Quest belum selesai atau tidak valid");
     }
 
-    const amount = COIN_REWARDS.QUEST_COMPLETE;
     await tx.coinTransaction.create({
-      data: { userId, amount, reason: "QUEST_COMPLETE", reference: questId },
+      data: { userId, amount: quest.rewardCoins, reason: "QUEST_COMPLETE", reference: questId },
+    });
+    await tx.user.update({
+      where: { id: userId },
+      data: { coins: { increment: quest.rewardCoins } },
     });
     await tx.dailyQuest.update({
       where: { id: questId },

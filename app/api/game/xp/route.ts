@@ -1,10 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { db } from "@/lib/db"
 import { invalidateLeagueCache } from "@/lib/ai-queue"
-
-function calcLevel(xp: number) {
-  return Math.floor(Math.sqrt(xp / 100)) + 1
-}
+import { calcLevel, calcLeagueFromXP } from "@/lib/xp"
 
 export async function POST(req: NextRequest) {
   try {
@@ -19,12 +16,7 @@ export async function POST(req: NextRequest) {
     const oldLevel = dbUser.level
     const newXp = dbUser.xp + earnedXp
     const newLevel = calcLevel(newXp)
-
-    const leagues = ["BRONZE", "SILVER", "GOLD", "DIAMOND"] as const
-    let newLeague = dbUser.league as string
-    if (newLevel >= 80) newLeague = "DIAMOND"
-    else if (newLevel >= 50) newLeague = "GOLD"
-    else if (newLevel >= 25) newLeague = "SILVER"
+    const newLeague = calcLeagueFromXP(newXp)
 
     let roomId = roomCode
     if (roomCode) {
