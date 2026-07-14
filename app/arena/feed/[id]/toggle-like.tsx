@@ -38,7 +38,7 @@ export function ToggleLike({ karyaId, initialLiked, initialCount }: { karyaId: s
       aria-label={liked ? "Batal menyukai karya" : "Sukai karya"}
       className="flex items-center gap-1.5 text-sm disabled:opacity-70"
     >
-      <Heart className={`w-5 h-5 transition-all ${liked ? "text-rose-500 fill-rose-500" : "text-gray-400"} ${loading ? "opacity-50" : ""}`} />
+      <Heart fill={liked ? "currentColor" : "none"} className={`w-5 h-5 transition-all ${liked ? "text-rose-500" : "text-gray-400"} ${loading ? "opacity-50" : ""}`} />
       <span className={liked ? "text-rose-500 font-semibold" : "text-gray-500"}>{count}</span>
     </button>
   )

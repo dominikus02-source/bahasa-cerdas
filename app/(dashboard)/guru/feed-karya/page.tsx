@@ -353,7 +353,7 @@ export default function GuruFeedKaryaPage() {
                   <button onClick={(e) => handleLike(karya.id, e)}
                     className={`flex items-center gap-1 transition-colors ${isLiked ? "text-red-500" : "hover:text-red-500"}`}
                   >
-                    <IconHeart size={14} fill={isLiked ? "currentColor" : "none"} />
+                    <IconHeart size={14} fill={isLiked ? "currentColor" : "none"} className={isLiked ? "text-red-500" : "text-gray-400"} />
                     {karya.likesCount}
                   </button>
                   <span className="flex items-center gap-1" onClick={(e) => { e.stopPropagation(); openModal(karya); }}>
@@ -435,7 +435,7 @@ export default function GuruFeedKaryaPage() {
                     likedMap[modalKarya.id] ? "text-red-500" : "text-gray-400 hover:text-red-500"
                   }`}
                 >
-                  <IconHeart size={18} fill={likedMap[modalKarya.id] ? "currentColor" : "none"} />
+                  <IconHeart size={18} fill={likedMap[modalKarya.id] ? "currentColor" : "none"} className={likedMap[modalKarya.id] ? "text-red-500" : "text-gray-400"} />
                   {modalKarya.likesCount}
                 </button>
                 <span className="flex items-center gap-1.5 text-sm text-gray-400">

@@ -398,7 +398,7 @@ export default function FeedPage() {
                         isLiked ? "text-rose-500 bg-rose-50" : "text-gray-400 hover:bg-[#F9F7FF]"
                       }`}
                     >
-                      <Heart size={15} className={isLiked ? "fill-rose-500 text-rose-500" : ""} />
+                      <Heart size={15} fill={isLiked ? "currentColor" : "none"} className={isLiked ? "text-rose-500" : ""} />
                       <span>{likeCount}</span>
                     </button>
                     <button
