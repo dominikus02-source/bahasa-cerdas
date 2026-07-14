@@ -114,14 +114,10 @@ function EmptyState({ label }: { label: string }) {
   )
 }
 
-type TabKey = "belajar" | "latihan" | "praktik" | "kuis" | "reading-practice" | "quick-quiz" | "panduan"
+type TabKey = "belajar" | "latihan" | "praktik" | "kuis" | "panduan"
 
-function getTabOrder(content: Konten | null): TabKey[] {
-  const base: TabKey[] = ["belajar", "latihan", "praktik", "kuis"]
-  if (content?.readingPractice) base.push("reading-practice")
-  if (content?.quickQuiz) base.push("quick-quiz")
-  base.push("panduan")
-  return base
+function getTabOrder(_content: Konten | null): TabKey[] {
+  return ["belajar", "latihan", "praktik", "kuis", "panduan"]
 }
 
 export default function UnitPreviewPage() {
@@ -232,11 +228,9 @@ export default function UnitPreviewPage() {
 
   const tabs = [
     { key: "belajar" as TabKey, label: "Belajar", icon: BookOpen },
-    { key: "latihan" as TabKey, label: "Latihan", icon: Target, count: content.latihan.length },
+    { key: "latihan" as TabKey, label: "Latihan", icon: Target, count: content.latihan.length + (content.readingPractice?.questions.length ?? 0) },
     { key: "praktik" as TabKey, label: "Praktik", icon: Lightbulb },
-    { key: "kuis" as TabKey, label: "Kuis", icon: Sparkles, count: content.kuis.length },
-    ...(content.readingPractice ? [{ key: "reading-practice" as TabKey, label: "Latihan Membaca", icon: BookOpen, count: content.readingPractice.questions.length }] : []),
-    ...(content.quickQuiz ? [{ key: "quick-quiz" as TabKey, label: "Kuis Cepat", icon: HelpCircle, count: content.quickQuiz.questions.length }] : []),
+    { key: "kuis" as TabKey, label: "Kuis", icon: Sparkles, count: content.kuis.length + (content.quickQuiz?.questions.length ?? 0) },
     { key: "panduan" as TabKey, label: "Panduan Guru", icon: ClipboardList },
   ]
 
@@ -292,7 +286,6 @@ export default function UnitPreviewPage() {
           <FileText className="w-3.5 h-3.5 mr-1" />
           Buat RPP
         </Button>
-        {/* Pintasan "Buat Soal" & "Buat PPT" disembunyikan sementara (belum diperlukan). */}
       </div>
 
       <div className="flex gap-1 bg-slate-100 rounded-xl p-1 mb-6">
@@ -314,11 +307,29 @@ function ContentPanel({ content, tab, showAnswers, setShowAnswers, ilustrasiUrls
   content: Konten; tab: TabKey; showAnswers: boolean; setShowAnswers: (v: boolean) => void; ilustrasiUrls: Record<string, string>
 }) {
   if (tab === "belajar") return <BelajarContent content={content.belajar} ilustrasiUrls={ilustrasiUrls} />
-  if (tab === "latihan") return <SoalContent label="Latihan" soal={content.latihan} showAnswers={showAnswers} setShowAnswers={setShowAnswers} />
+  if (tab === "latihan") return (
+    <div className="space-y-6">
+      <SoalContent label="Latihan" soal={content.latihan} showAnswers={showAnswers} setShowAnswers={setShowAnswers} />
+      {content.readingPractice && (
+        <div>
+          <h3 className="font-bold text-slate-900 mb-3 flex items-center gap-2"><BookOpen className="w-4 h-4 text-emerald-500" />Latihan Membaca</h3>
+          <PracticeQuizContent data={content.readingPractice} color="emerald" type="Latihan Membaca" showAnswers={showAnswers} setShowAnswers={setShowAnswers} />
+        </div>
+      )}
+    </div>
+  )
   if (tab === "praktik") { const p = resolvePraktik(content); return p ? <PraktikContent content={p} /> : <EmptyState label="Praktik" /> }
-  if (tab === "kuis") return <SoalContent label="Kuis" soal={content.kuis} showAnswers={showAnswers} setShowAnswers={setShowAnswers} />
-  if (tab === "reading-practice" && content.readingPractice) return <PracticeQuizContent data={content.readingPractice} color="emerald" type="Latihan Membaca" showAnswers={showAnswers} setShowAnswers={setShowAnswers} />
-  if (tab === "quick-quiz" && content.quickQuiz) return <PracticeQuizContent data={content.quickQuiz} color="violet" type="Kuis Cepat" showAnswers={showAnswers} setShowAnswers={setShowAnswers} />
+  if (tab === "kuis") return (
+    <div className="space-y-6">
+      <SoalContent label="Kuis" soal={content.kuis} showAnswers={showAnswers} setShowAnswers={setShowAnswers} />
+      {content.quickQuiz && (
+        <div>
+          <h3 className="font-bold text-slate-900 mb-3 flex items-center gap-2"><Sparkles className="w-4 h-4 text-violet-500" />Kuis Cepat</h3>
+          <PracticeQuizContent data={content.quickQuiz} color="violet" type="Kuis Cepat" showAnswers={showAnswers} setShowAnswers={setShowAnswers} />
+        </div>
+      )}
+    </div>
+  )
   if (tab === "panduan" && content.guide) return <GuideContent guide={content.guide} />
   return null
 }
@@ -498,11 +509,9 @@ function PresentationView({ data, content, tab, setTab, showAnswers, setShowAnsw
 }) {
   const tabs = [
     { key: "belajar" as TabKey, label: "Belajar", icon: BookOpen },
-    { key: "latihan" as TabKey, label: "Latihan", icon: Target, count: content.latihan.length },
+    { key: "latihan" as TabKey, label: "Latihan", icon: Target, count: content.latihan.length + (content.readingPractice?.questions.length ?? 0) },
     { key: "praktik" as TabKey, label: "Praktik", icon: Lightbulb },
-    { key: "kuis" as TabKey, label: "Kuis", icon: Sparkles, count: content.kuis.length },
-    ...(content.readingPractice ? [{ key: "reading-practice" as TabKey, label: "Latihan Membaca", icon: BookOpen, count: content.readingPractice.questions.length }] : []),
-    ...(content.quickQuiz ? [{ key: "quick-quiz" as TabKey, label: "Kuis Cepat", icon: HelpCircle, count: content.quickQuiz.questions.length }] : []),
+    { key: "kuis" as TabKey, label: "Kuis", icon: Sparkles, count: content.kuis.length + (content.quickQuiz?.questions.length ?? 0) },
     { key: "panduan" as TabKey, label: "Panduan Guru", icon: ClipboardList },
   ]
 
@@ -594,7 +603,12 @@ function PresentationView({ data, content, tab, setTab, showAnswers, setShowAnsw
             </div>
           )}
 
-          {tab === "latihan" && <SoalPresentation soal={content.latihan} label="Latihan" showAnswers={showAnswers} color="emerald" />}
+          {tab === "latihan" && (
+            <div className="space-y-8">
+              <SoalPresentation soal={content.latihan} label="Latihan" showAnswers={showAnswers} color="emerald" />
+              {content.readingPractice && <PracticePresentation data={content.readingPractice} color="emerald" type="Latihan Membaca" showAnswers={showAnswers} />}
+            </div>
+          )}
           {tab === "panduan" && content.guide && <PanduanPresentation guide={content.guide} />}
           {tab === "praktik" && (() => {
             const praktik = resolvePraktik(content)
@@ -617,9 +631,12 @@ function PresentationView({ data, content, tab, setTab, showAnswers, setShowAnsw
               )}
             </div>
           )})()}
-          {tab === "reading-practice" && content.readingPractice && <PracticePresentation data={content.readingPractice} color="emerald" type="Latihan Membaca" showAnswers={showAnswers} />}
-          {tab === "quick-quiz" && content.quickQuiz && <PracticePresentation data={content.quickQuiz} color="violet" type="Kuis Cepat" showAnswers={showAnswers} />}
-          {tab === "kuis" && <SoalPresentation soal={content.kuis} label="Kuis" showAnswers={showAnswers} color="violet" />}
+          {tab === "kuis" && (
+            <div className="space-y-8">
+              <SoalPresentation soal={content.kuis} label="Kuis" showAnswers={showAnswers} color="violet" />
+              {content.quickQuiz && <PracticePresentation data={content.quickQuiz} color="violet" type="Kuis Cepat" showAnswers={showAnswers} />}
+            </div>
+          )}
         </div>
       </div>
 
@@ -629,7 +646,7 @@ function PresentationView({ data, content, tab, setTab, showAnswers, setShowAnsw
           <ChevronLeft className="w-4 h-4" />Sebelumnya
         </button>
         <span className="text-xs text-slate-400">
-          {tab === "reading-practice" ? "Latihan Membaca" : tab === "quick-quiz" ? "Kuis Cepat" : tab.charAt(0).toUpperCase() + tab.slice(1)} · {getTabOrder(content).indexOf(tab) + 1}/{getTabOrder(content).length}
+          {tab.charAt(0).toUpperCase() + tab.slice(1)} · {getTabOrder(content).indexOf(tab) + 1}/{getTabOrder(content).length}
         </span>
         <button onClick={() => goTab(1)} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium text-slate-500 hover:bg-slate-100">
           Selanjutnya<ChevronRight className="w-4 h-4" />
