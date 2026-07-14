@@ -84,23 +84,22 @@ export async function getOrCreateDailyQuests(userId: string) {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
-  const existing = await db.dailyQuest.findMany({
-    where: { userId, date: today },
+  // Ensure ALL quest types exist for today. Some may already exist (created by a
+  // like/comment before this page was opened), so we fill only the missing ones —
+  // skipDuplicates relies on @@unique([userId, date, questType]).
+  await db.dailyQuest.createMany({
+    data: QUEST_TYPES.map((q) => ({
+      userId,
+      date: today,
+      questType: q.type,
+      target: q.target,
+      rewardCoins: q.rewardCoins,
+      progress: 0,
+      completed: false,
+    })),
+    skipDuplicates: true,
   });
 
-  if (existing.length > 0) return existing;
-
-  const quests = QUEST_TYPES.map(q => ({
-    userId,
-    date: today,
-    questType: q.type,
-    target: q.target,
-    rewardCoins: q.rewardCoins,
-    progress: 0,
-    completed: false,
-  }));
-
-  await db.dailyQuest.createMany({ data: quests });
   return db.dailyQuest.findMany({ where: { userId, date: today } });
 }
 
@@ -112,24 +111,34 @@ export async function trackQuestProgress(
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
-  const quest = await db.dailyQuest.findUnique({
+  const config = QUEST_TYPES.find((q) => q.type === questType);
+  if (!config) return null; // unknown quest type — nothing to track
+
+  // Self-heal: create today's quest if it doesn't exist yet, so like/comment/
+  // write always count even when the student hasn't opened the Misi Harian page.
+  const quest = await db.dailyQuest.upsert({
     where: { userId_date_questType: { userId, date: today, questType } },
-  });
-
-  if (!quest || quest.completed) return null;
-
-  const newProgress = Math.min(quest.progress + increment, quest.target);
-  const justCompleted = newProgress >= quest.target && !quest.completed;
-
-  const updated = await db.dailyQuest.update({
-    where: { id: quest.id },
-    data: {
-      progress: newProgress,
-      completed: justCompleted,
+    update: {},
+    create: {
+      userId,
+      date: today,
+      questType,
+      target: config.target,
+      rewardCoins: config.rewardCoins,
+      progress: 0,
+      completed: false,
     },
   });
 
-  return updated;
+  if (quest.completed) return quest;
+
+  const newProgress = Math.min(quest.progress + increment, quest.target);
+  const justCompleted = newProgress >= quest.target;
+
+  return db.dailyQuest.update({
+    where: { id: quest.id },
+    data: { progress: newProgress, completed: justCompleted },
+  });
 }
 
 export async function claimQuestReward(userId: string, questId: string) {
