@@ -34,23 +34,28 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
       select: { likesCount: true },
     });
 
-    await Promise.all([
-      trackDailyStreak(user.id),
-      trackQuestProgress(user.id, "MEMBERI_LIKE"),
-    ]);
-
-    if (karya.userId !== user.id) {
-      await awardCoins(karya.userId, "MENDAPAT_LIKE", id);
-      await db.notifikasi.create({
-        data: {
-          userId: karya.userId,
-          title: "Karya Disukai ❤️",
-          body: `${user.fullName} menyukai karyamu "${karya.title}"`,
-          type: "LIKE",
-          data: { karyaId: id, userId: user.id, userName: user.fullName },
-        },
-      });
-    }
+    // Bonus side-effects (streak/quest/coins/notif) are best-effort — a failure
+    // here must never break the like itself.
+    try {
+      await Promise.allSettled([
+        trackDailyStreak(user.id),
+        trackQuestProgress(user.id, "MEMBERI_LIKE"),
+        ...(karya.userId !== user.id
+          ? [
+              awardCoins(karya.userId, "MENDAPAT_LIKE", id),
+              db.notifikasi.create({
+                data: {
+                  userId: karya.userId,
+                  title: "Karya Disukai ❤️",
+                  body: `${user.fullName} menyukai karyamu "${karya.title}"`,
+                  type: "LIKE",
+                  data: { karyaId: id, userId: user.id, userName: user.fullName },
+                },
+              }),
+            ]
+          : []),
+      ]);
+    } catch { /* ignore — the like already succeeded */ }
 
     return NextResponse.json({ success: true, liked: true, likeCount: updated.likesCount });
   } catch (error) {

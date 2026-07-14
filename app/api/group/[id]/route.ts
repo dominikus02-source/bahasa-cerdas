@@ -111,10 +111,11 @@ export async function PATCH(
     if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const dbUser = await db.user.findUnique({ where: { supabaseId: user.id } });
-    if (!dbUser || dbUser.role !== "GURU") return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    const isPrivileged = dbUser?.role === "ADMIN" || dbUser?.isFounder;
+    if (!dbUser || (dbUser.role !== "GURU" && !isPrivileged)) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
     const group = await db.group.findUnique({ where: { id } });
-    if (!group || group.teacherId !== dbUser.id) return NextResponse.json({ error: "Not found" }, { status: 404 });
+    if (!group || (group.teacherId !== dbUser.id && !isPrivileged)) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
     const body = await req.json();
     const { name, description, grade, tahunAjaran, isActive } = body;
@@ -148,10 +149,11 @@ export async function DELETE(
     if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const dbUser = await db.user.findUnique({ where: { supabaseId: user.id } });
-    if (!dbUser || dbUser.role !== "GURU") return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    const isPrivileged = dbUser?.role === "ADMIN" || dbUser?.isFounder;
+    if (!dbUser || (dbUser.role !== "GURU" && !isPrivileged)) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
     const group = await db.group.findUnique({ where: { id } });
-    if (!group || group.teacherId !== dbUser.id) {
+    if (!group || (group.teacherId !== dbUser.id && !isPrivileged)) {
       return NextResponse.json({ error: "Kelas tidak ditemukan", code: "CLASS_NOT_FOUND" }, { status: 404 });
     }
 

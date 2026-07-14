@@ -63,7 +63,14 @@ export default function GuruFeedKaryaPage() {
     if (selectedGroupId) params.set("groupId", selectedGroupId);
     const res = await fetch(`/api/siswa/karya?${params}`);
     const data = await res.json();
-    setKaryaList(prev => append ? [...prev, ...data.karya] : data.karya);
+    const items = data.karya || [];
+    setKaryaList(prev => append ? [...prev, ...items] : items);
+    // Seed like state from the server so already-liked hearts render red.
+    setLikedMap(prev => {
+      const n = append ? { ...prev } : ({} as Record<string, boolean>);
+      for (const k of items) if (k?.likedByCurrentUser) n[k.id] = true;
+      return n;
+    });
     setTotalPages(data.totalPages);
     setLoading(false);
     setLoadingMore(false);
@@ -88,16 +95,28 @@ export default function GuruFeedKaryaPage() {
 
   const TYPES = ["", "PUISI", "CERPEN", "ARTIKEL", "ANEKDOT", "PANTUN", "OPINI"];
 
-  // ── Like handler ──
+  // ── Like handler (optimistic + rollback) ──
   const handleLike = async (karyaId: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    const res = await fetch(`/api/siswa/karya/${karyaId}/like`, { method: "POST" });
-    if (!res.ok) return;
-    const data = await res.json();
-    setLikedMap(prev => ({ ...prev, [karyaId]: data.liked }));
+    const wasLiked = !!likedMap[karyaId];
+    setLikedMap(prev => ({ ...prev, [karyaId]: !wasLiked }));
     setKaryaList(prev => prev.map(k =>
-      k.id === karyaId ? { ...k, likesCount: k.likesCount + (data.liked ? 1 : -1) } : k
+      k.id === karyaId ? { ...k, likesCount: Math.max(0, k.likesCount + (wasLiked ? -1 : 1)) } : k
     ));
+    try {
+      const res = await fetch(`/api/siswa/karya/${karyaId}/like`, { method: "POST" });
+      if (!res.ok) throw new Error();
+      const data = await res.json();
+      if (typeof data.liked === "boolean") setLikedMap(prev => ({ ...prev, [karyaId]: data.liked }));
+      if (typeof data.likeCount === "number") {
+        setKaryaList(prev => prev.map(k => k.id === karyaId ? { ...k, likesCount: data.likeCount } : k));
+      }
+    } catch {
+      setLikedMap(prev => ({ ...prev, [karyaId]: wasLiked }));
+      setKaryaList(prev => prev.map(k =>
+        k.id === karyaId ? { ...k, likesCount: Math.max(0, k.likesCount + (wasLiked ? 1 : -1)) } : k
+      ));
+    }
   };
 
   // ── Open modal ──
