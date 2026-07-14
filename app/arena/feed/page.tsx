@@ -45,6 +45,7 @@ interface KaryaItem {
     likes: number
     comments: number
   }
+  likedByCurrentUser?: boolean
 }
 
 export default function FeedPage() {
@@ -54,6 +55,8 @@ export default function FeedPage() {
   const [likeCounts, setLikeCounts] = useState<Record<string, number>>({})
   const [commentTexts, setCommentTexts] = useState<Record<string, string>>({})
   const [submittingComment, setSubmittingComment] = useState<Record<string, boolean>>({})
+  const [likePending, setLikePending] = useState<Record<string, boolean>>({})
+  const [toast, setToast] = useState<string | null>(null)
   const [onlineCount, setOnlineCount] = useState(0)
   const [totalKarya, setTotalKarya] = useState(0)
   const [currentUserId, setCurrentUserId] = useState<string | null>(null)
@@ -69,7 +72,19 @@ export default function FeedPage() {
     if (cursorVal) params.set("cursor", cursorVal);
     const res = await fetch(`/api/siswa/karya?${params}`);
     const data = await res.json();
-    setKaryaList(prev => append ? [...prev, ...data.karya] : data.karya);
+    const items: KaryaItem[] = data.karya || [];
+    setKaryaList(prev => append ? [...prev, ...items] : items);
+    // Seed like state from the server so hearts render red for already-liked karya.
+    setLikedSet(prev => {
+      const n = append ? new Set(prev) : new Set<string>();
+      for (const k of items) if (k.likedByCurrentUser) n.add(k.id);
+      return n;
+    });
+    setLikeCounts(prev => {
+      const n = append ? { ...prev } : {} as Record<string, number>;
+      for (const k of items) n[k.id] = k._count?.likes ?? k.likesCount ?? 0;
+      return n;
+    });
     setTotalKarya(data.total || 0);
     setHasMore(!!data.nextCursor);
     setCursor(data.nextCursor);
@@ -89,6 +104,12 @@ export default function FeedPage() {
     init();
   }, [loadKarya])
 
+  useEffect(() => {
+    if (!toast) return
+    const t = setTimeout(() => setToast(null), 3000)
+    return () => clearTimeout(t)
+  }, [toast])
+
   const loadMore = async () => {
     if (!hasMore || loadingMore) return;
     setLoadingMore(true);
@@ -106,10 +127,32 @@ export default function FeedPage() {
   const trending = [...karyaList].sort((a, b) => b.likesCount - a.likesCount).slice(0, 4)
 
   const toggleLike = async (id: string) => {
+    if (likePending[id]) return // ignore rapid double-clicks while in flight
     const wasLiked = likedSet.has(id)
+    const baseCount = likeCounts[id] ?? karyaList.find(k => k.id === id)?.likesCount ?? 0
+    // optimistic
+    setLikePending(prev => ({ ...prev, [id]: true }))
     setLikedSet(prev => { const n = new Set(prev); wasLiked ? n.delete(id) : n.add(id); return n })
-    setLikeCounts(prev => ({ ...prev, [id]: (prev[id] || 0) + (wasLiked ? -1 : 1) }))
-    try { await fetch(`/api/siswa/karya/${id}/like`, { method: "POST" }) } catch {}
+    setLikeCounts(prev => ({ ...prev, [id]: Math.max(0, baseCount + (wasLiked ? -1 : 1)) }))
+    try {
+      const res = await fetch(`/api/siswa/karya/${id}/like`, { method: "POST" })
+      if (!res.ok) throw new Error("failed")
+      const data = await res.json()
+      // reconcile with the server's authoritative state
+      if (typeof data.liked === "boolean") {
+        setLikedSet(prev => { const n = new Set(prev); data.liked ? n.add(id) : n.delete(id); return n })
+      }
+      if (typeof data.likeCount === "number") {
+        setLikeCounts(prev => ({ ...prev, [id]: data.likeCount }))
+      }
+    } catch {
+      // rollback
+      setLikedSet(prev => { const n = new Set(prev); wasLiked ? n.add(id) : n.delete(id); return n })
+      setLikeCounts(prev => ({ ...prev, [id]: baseCount }))
+      setToast("Belum berhasil menyukai karya. Silakan coba lagi.")
+    } finally {
+      setLikePending(prev => ({ ...prev, [id]: false }))
+    }
   }
 
   const submitComment = async (karyaId: string) => {
@@ -127,6 +170,7 @@ export default function FeedPage() {
       if (!res.ok) {
         setKaryaList(prev => prev.map(k => k.id === karyaId ? { ...k, _count: { ...k._count, comments: k._count.comments - 1 } } : k))
         setCommentTexts(prev => ({ ...prev, [karyaId]: text }))
+        setToast("Komentar belum terkirim. Silakan coba lagi.")
       }
     } catch {
       setKaryaList(prev => prev.map(k => k.id === karyaId ? { ...k, _count: { ...k._count, comments: k._count.comments - 1 } } : k))
@@ -347,7 +391,10 @@ export default function FeedPage() {
                   <div className="flex items-center gap-0">
                     <button
                       onClick={() => toggleLike(karya.id)}
-                      className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold transition-all active:scale-95 ${
+                      disabled={likePending[karya.id]}
+                      aria-pressed={isLiked}
+                      aria-label={isLiked ? "Batal menyukai karya" : "Sukai karya"}
+                      className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold transition-all active:scale-95 disabled:opacity-70 ${
                         isLiked ? "text-rose-500 bg-rose-50" : "text-gray-400 hover:bg-[#F9F7FF]"
                       }`}
                     >
@@ -431,6 +478,16 @@ export default function FeedPage() {
           </>
         )}
       </div>
+
+      {/* Toast — friendly, non-technical errors */}
+      {toast && (
+        <div
+          role="status"
+          className="fixed left-1/2 -translate-x-1/2 bottom-24 md:bottom-8 z-[60] px-4 py-2.5 rounded-xl bg-gray-900 text-white text-xs font-semibold shadow-lg max-w-[90%] text-center"
+        >
+          {toast}
+        </div>
+      )}
     </div>
   )
 }

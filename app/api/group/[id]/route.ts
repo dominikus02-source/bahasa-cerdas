@@ -151,11 +151,32 @@ export async function DELETE(
     if (!dbUser || dbUser.role !== "GURU") return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
     const group = await db.group.findUnique({ where: { id } });
-    if (!group || group.teacherId !== dbUser.id) return NextResponse.json({ error: "Not found" }, { status: 404 });
+    if (!group || group.teacherId !== dbUser.id) {
+      return NextResponse.json({ error: "Kelas tidak ditemukan", code: "CLASS_NOT_FOUND" }, { status: 404 });
+    }
 
-    await db.group.update({ where: { id }, data: { isActive: false } });
-    return NextResponse.json({ message: "Group deleted" });
+    // Only a completely pristine class (a mistake with no student/task/grade data)
+    // may be hard-deleted; anything with important relations is archived instead so
+    // no student/task/grade data is ever destroyed.
+    const [members, quizzes, assignments, penugasans, nilais, messages, kategoris] = await Promise.all([
+      db.groupMember.count({ where: { groupId: id } }),
+      db.groupQuiz.count({ where: { groupId: id } }),
+      db.quizAssignment.count({ where: { groupId: id } }),
+      db.penugasan.count({ where: { groupId: id } }),
+      db.nilai.count({ where: { groupId: id } }),
+      db.chatMessage.count({ where: { groupId: id } }),
+      db.nilaiKategori.count({ where: { groupId: id } }),
+    ]);
+    const hasRelations = members + quizzes + assignments + penugasans + nilais + messages + kategoris > 0;
+
+    if (hasRelations) {
+      await db.group.update({ where: { id }, data: { isActive: false } });
+      return NextResponse.json({ success: true, data: { id, deleted: false, archived: true } });
+    }
+
+    await db.group.delete({ where: { id } });
+    return NextResponse.json({ success: true, data: { id, deleted: true, archived: false } });
   } catch (error) {
-    return NextResponse.json({ error: "Internal error" }, { status: 500 });
+    return NextResponse.json({ error: "Kelas belum berhasil dihapus.", code: "CLASS_DELETE_FAILED" }, { status: 500 });
   }
 }

@@ -44,6 +44,9 @@ export default function KelasKuPage() {
   const [copied, setCopied] = useState("");
   const [search, setSearch] = useState("");
   const [error, setError] = useState("");
+  const [confirmDelete, setConfirmDelete] = useState<Group | null>(null);
+  const [deleting, setDeleting] = useState(false);
+  const [toast, setToast] = useState<string | null>(null);
 
   const fetchGroups = async () => {
     setLoading(true);
@@ -61,6 +64,12 @@ export default function KelasKuPage() {
   useEffect(() => {
     fetchGroups();
   }, []);
+
+  useEffect(() => {
+    if (!toast) return;
+    const t = setTimeout(() => setToast(null), 3000);
+    return () => clearTimeout(t);
+  }, [toast]);
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -91,13 +100,21 @@ export default function KelasKuPage() {
     }
   };
 
-  const handleDelete = async (groupId: string) => {
-    if (!confirm("Yakin ingin menghapus grup ini? Murid tidak akan bisa akses lagi.")) return;
+  const confirmDeleteGroup = async () => {
+    if (!confirmDelete || deleting) return;
+    const groupId = confirmDelete.id;
+    setDeleting(true);
     try {
-      await fetch(`/api/group/${groupId}`, { method: "DELETE" });
-      fetchGroups();
-    } catch (e) {
-      console.error(e);
+      const res = await fetch(`/api/group/${groupId}`, { method: "DELETE" });
+      if (!res.ok) throw new Error();
+      // Remove from the active list without a full reload.
+      setGroups((prev) => prev.filter((g) => g.id !== groupId));
+      setConfirmDelete(null);
+      setToast("Kelas berhasil dihapus dari daftar aktif.");
+    } catch {
+      setToast("Kelas belum berhasil dihapus. Silakan coba lagi.");
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -228,7 +245,7 @@ export default function KelasKuPage() {
                     </button>
                   </div>
                   <button
-                    onClick={(e) => { e.stopPropagation(); handleDelete(group.id); }}
+                    onClick={(e) => { e.stopPropagation(); setConfirmDelete(group); }}
                     className="mt-2 w-full flex items-center justify-center gap-1 px-3 py-1.5 text-xs text-red-500 hover:bg-red-50 rounded-xl"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
@@ -404,6 +421,45 @@ export default function KelasKuPage() {
               </div>
             )}
           </div>
+        </div>
+      )}
+
+      {/* Confirm delete dialog */}
+      {confirmDelete && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[60] p-4" onClick={() => !deleting && setConfirmDelete(null)}>
+          <div className="bg-white rounded-2xl p-6 max-w-sm w-full" onClick={(e) => e.stopPropagation()}>
+            <div className="w-11 h-11 rounded-xl bg-red-50 flex items-center justify-center mb-3">
+              <Trash2 className="w-5 h-5 text-red-500" />
+            </div>
+            <h2 className="text-lg font-bold text-slate-900 mb-1">Hapus kelas?</h2>
+            <p className="text-sm text-slate-500 mb-5">
+              Kelas <span className="font-semibold text-slate-700">{confirmDelete.name}</span> akan dihapus dari daftar
+              kelas aktif. Data murid, tugas, dan nilai yang sudah terkait <span className="font-semibold">tidak dihapus permanen</span>.
+            </p>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setConfirmDelete(null)}
+                disabled={deleting}
+                className="flex-1 py-2.5 rounded-xl border border-slate-200 text-slate-600 font-semibold text-sm hover:bg-slate-50 disabled:opacity-50"
+              >
+                Batal
+              </button>
+              <button
+                onClick={confirmDeleteGroup}
+                disabled={deleting}
+                className="flex-1 py-2.5 rounded-xl bg-red-600 text-white font-semibold text-sm hover:bg-red-700 disabled:opacity-60"
+              >
+                {deleting ? "Menghapus..." : "Hapus Kelas"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Toast */}
+      {toast && (
+        <div role="status" className="fixed left-1/2 -translate-x-1/2 bottom-8 z-[70] px-4 py-2.5 rounded-xl bg-slate-900 text-white text-xs font-semibold shadow-lg max-w-[90%] text-center">
+          {toast}
         </div>
       )}
     </div>

@@ -30,6 +30,8 @@ export default function GuruChatPanel({ userId }: { userId: string }) {
   const [showEmoji, setShowEmoji] = useState(false);
   const [showStickers, setShowStickers] = useState(false);
   const [groupOpen, setGroupOpen] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [sendError, setSendError] = useState("");
   const messagesEnd = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -71,18 +73,31 @@ export default function GuruChatPanel({ userId }: { userId: string }) {
   }, [messages]);
 
   const sendMessage = async () => {
-    if (!text.trim() || !activeGroup) return;
-    const res = await fetch("/api/chat/send", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ groupId: activeGroup, content: text.trim() }),
-    });
-    if (res.ok) {
+    const content = text.trim();
+    if (!content || !activeGroup || sending) return;
+    setSending(true);
+    setSendError("");
+    try {
+      const res = await fetch("/api/chat/send", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ groupId: activeGroup, content }),
+      });
+      if (!res.ok) {
+        const d = await res.json().catch(() => ({}));
+        // Keep the text so the guru can retry without retyping.
+        setSendError(d.error || "Pesan belum terkirim. Silakan coba lagi.");
+        return;
+      }
       const data = await res.json();
       setMessages(prev => [...prev, data.message]);
       setText("");
       setShowEmoji(false);
       setShowStickers(false);
+    } catch {
+      setSendError("Pesan belum terkirim. Silakan coba lagi.");
+    } finally {
+      setSending(false);
     }
   };
 
@@ -218,6 +233,9 @@ export default function GuruChatPanel({ userId }: { userId: string }) {
 
       {/* Input */}
       <div className="p-3 border-t border-gray-50">
+        {sendError && (
+          <p className="text-[11px] text-red-500 font-medium mb-2 px-1">{sendError}</p>
+        )}
         <div className="flex gap-2 items-end">
           <div className="flex gap-0.5">
             <button onClick={() => { setShowEmoji(!showEmoji); setShowStickers(false); }}
@@ -239,7 +257,8 @@ export default function GuruChatPanel({ userId }: { userId: string }) {
             className="flex-1 px-3 py-2 bg-emerald-50 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-emerald-200 resize-none"
             onKeyDown={e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMessage(); } }}
           />
-          <button onClick={sendMessage} disabled={!text.trim() || !activeGroup}
+          <button onClick={sendMessage} disabled={!text.trim() || !activeGroup || sending}
+            aria-label="Kirim pesan"
             className="p-2 bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 disabled:opacity-40 transition-all"
           >
             <Send size={16} />
