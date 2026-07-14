@@ -106,6 +106,31 @@ function resolvePraktik(content: Konten): Praktik | null {
   return null
 }
 
+function toPracticeSoal(q: Soal): PracticeSoal {
+  let type: PracticeSoal["type"]
+  let correctAnswer: string | string[]
+  if (q.tipe === "BENAR_SALAH") {
+    type = "pilihan_ganda"
+    correctAnswer = q.opsi[q.jawaban as number] ?? ""
+  } else if (q.tipe === "ISIAN") {
+    type = "jawaban_singkat"
+    correctAnswer = q.jawaban as string
+  } else {
+    type = "pilihan_ganda"
+    correctAnswer = q.opsi[q.jawaban as number] ?? ""
+  }
+  return {
+    id: String(q.id),
+    type,
+    questionText: q.soal,
+    options: q.tipe === "ISIAN" ? undefined : q.opsi,
+    correctAnswer,
+    explanation: q.penjelasan,
+    skillTarget: "Pemahaman umum",
+    difficulty: "sedang",
+  }
+}
+
 function EmptyState({ label }: { label: string }) {
   return (
     <div className="bg-white rounded-xl border border-slate-200 p-8 text-center">
@@ -307,29 +332,25 @@ function ContentPanel({ content, tab, showAnswers, setShowAnswers, ilustrasiUrls
   content: Konten; tab: TabKey; showAnswers: boolean; setShowAnswers: (v: boolean) => void; ilustrasiUrls: Record<string, string>
 }) {
   if (tab === "belajar") return <BelajarContent content={content.belajar} ilustrasiUrls={ilustrasiUrls} />
-  if (tab === "latihan") return (
-    <div className="space-y-6">
-      <SoalContent label="Latihan" soal={content.latihan} showAnswers={showAnswers} setShowAnswers={setShowAnswers} />
-      {content.readingPractice && (
-        <div>
-          <h3 className="font-bold text-slate-900 mb-3 flex items-center gap-2"><BookOpen className="w-4 h-4 text-emerald-500" />Latihan Membaca</h3>
-          <PracticeQuizContent data={content.readingPractice} color="emerald" type="Latihan Membaca" showAnswers={showAnswers} setShowAnswers={setShowAnswers} />
-        </div>
-      )}
-    </div>
-  )
+  if (tab === "latihan") {
+    const merged = {
+      title: "Latihan",
+      stimulusTitle: content.readingPractice?.stimulusTitle,
+      stimulusText: content.readingPractice?.stimulusText,
+      questions: [...content.latihan.map(toPracticeSoal), ...(content.readingPractice?.questions ?? [])],
+    }
+    return <PracticeQuizContent data={merged} color="emerald" type="Latihan" showAnswers={showAnswers} setShowAnswers={setShowAnswers} />
+  }
   if (tab === "praktik") { const p = resolvePraktik(content); return p ? <PraktikContent content={p} /> : <EmptyState label="Praktik" /> }
-  if (tab === "kuis") return (
-    <div className="space-y-6">
-      <SoalContent label="Kuis" soal={content.kuis} showAnswers={showAnswers} setShowAnswers={setShowAnswers} />
-      {content.quickQuiz && (
-        <div>
-          <h3 className="font-bold text-slate-900 mb-3 flex items-center gap-2"><Sparkles className="w-4 h-4 text-violet-500" />Kuis Cepat</h3>
-          <PracticeQuizContent data={content.quickQuiz} color="violet" type="Kuis Cepat" showAnswers={showAnswers} setShowAnswers={setShowAnswers} />
-        </div>
-      )}
-    </div>
-  )
+  if (tab === "kuis") {
+    const merged = {
+      title: "Kuis",
+      stimulusTitle: content.quickQuiz?.stimulusTitle,
+      stimulusText: content.quickQuiz?.stimulusText,
+      questions: [...content.kuis.map(toPracticeSoal), ...(content.quickQuiz?.questions ?? [])],
+    }
+    return <PracticeQuizContent data={merged} color="violet" type="Kuis" showAnswers={showAnswers} setShowAnswers={setShowAnswers} />
+  }
   if (tab === "panduan" && content.guide) return <GuideContent guide={content.guide} />
   return null
 }
@@ -430,54 +451,6 @@ function BelajarContent({ content, ilustrasiUrls }: { content: Konten["belajar"]
           </ul>
         </div>
       )}
-    </div>
-  )
-}
-
-function SoalContent({ label, soal, showAnswers, setShowAnswers }: { label: string; soal: Soal[]; showAnswers: boolean; setShowAnswers: (v: boolean) => void }) {
-  return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <p className="text-sm text-slate-500">{soal.length} soal {label.toLowerCase()}</p>
-        <Button variant="outline" size="sm" onClick={() => setShowAnswers(!showAnswers)}
-          className={`text-xs ${showAnswers ? "text-emerald-600 border-emerald-200" : ""}`}>
-          {showAnswers ? <><EyeOff className="w-3.5 h-3.5 mr-1" />Sembunyikan Jawaban</> : <><Eye className="w-3.5 h-3.5 mr-1" />Tampilkan Jawaban</>}
-        </Button>
-      </div>
-      {soal.map((q, i) => {
-        const tipe = q.tipe || "PG"
-        const jawabStr = tipe === "ISIAN" ? q.jawaban as string : (q.opsi[q.jawaban as number] ?? "")
-        const jawabNum = q.jawaban as number
-        return (
-        <div key={q.id} className="bg-white rounded-xl border border-slate-200 p-4">
-          <p className="text-sm font-medium text-slate-900 mb-3">
-            <span className={`font-bold mr-2 ${label === "Kuis" ? "text-violet-600" : "text-emerald-600"}`}>{i + 1}.</span>
-            {q.soal}
-            {tipe !== "PG" && <span className="ml-2 text-[10px] text-slate-400 font-normal">({tipe === "BENAR_SALAH" ? "Benar/Salah" : "Isian"})</span>}
-          </p>
-          {tipe === "ISIAN" ? (
-            <div className="text-sm text-slate-600">
-              {showAnswers && <p className="text-emerald-700 font-medium">Jawaban: <strong>{jawabStr}</strong></p>}
-            </div>
-          ) : (
-          <div className="space-y-1.5 mb-2">
-            {q.opsi.map((o, j) => {
-              const isCorrect = tipe === "BENAR_SALAH" ? j === jawabNum : j === jawabNum
-              return (
-                <div key={j} className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm ${showAnswers && isCorrect ? "bg-emerald-50 text-emerald-700 border border-emerald-200" : "text-slate-700"}`}>
-                  <span className="w-5 h-5 rounded-full border border-slate-300 flex items-center justify-center text-[10px] text-slate-500 font-medium shrink-0">
-                    {tipe === "BENAR_SALAH" ? (j === 0 ? "✓" : "✗") : String.fromCharCode(65 + j)}
-                  </span>
-                  {o}{showAnswers && isCorrect && <CheckCircle className="w-3.5 h-3.5 text-emerald-500 ml-auto" />}
-                </div>
-              )
-            })}
-          </div>
-          )}
-          {showAnswers && q.penjelasan && <p className="text-xs text-slate-500 italic mt-2 border-t border-slate-100 pt-2">{q.penjelasan}</p>}
-        </div>
-        )
-      })}
     </div>
   )
 }
@@ -603,12 +576,15 @@ function PresentationView({ data, content, tab, setTab, showAnswers, setShowAnsw
             </div>
           )}
 
-          {tab === "latihan" && (
-            <div className="space-y-8">
-              <SoalPresentation soal={content.latihan} label="Latihan" showAnswers={showAnswers} color="emerald" />
-              {content.readingPractice && <PracticePresentation data={content.readingPractice} color="emerald" type="Latihan Membaca" showAnswers={showAnswers} />}
-            </div>
-          )}
+          {tab === "latihan" && (() => {
+            const merged = {
+              title: "Latihan",
+              stimulusTitle: content.readingPractice?.stimulusTitle,
+              stimulusText: content.readingPractice?.stimulusText,
+              questions: [...content.latihan.map(toPracticeSoal), ...(content.readingPractice?.questions ?? [])],
+            }
+            return <PracticePresentation data={merged} color="emerald" type="Latihan" showAnswers={showAnswers} />
+          })()}
           {tab === "panduan" && content.guide && <PanduanPresentation guide={content.guide} />}
           {tab === "praktik" && (() => {
             const praktik = resolvePraktik(content)
@@ -631,12 +607,15 @@ function PresentationView({ data, content, tab, setTab, showAnswers, setShowAnsw
               )}
             </div>
           )})()}
-          {tab === "kuis" && (
-            <div className="space-y-8">
-              <SoalPresentation soal={content.kuis} label="Kuis" showAnswers={showAnswers} color="violet" />
-              {content.quickQuiz && <PracticePresentation data={content.quickQuiz} color="violet" type="Kuis Cepat" showAnswers={showAnswers} />}
-            </div>
-          )}
+          {tab === "kuis" && (() => {
+            const merged = {
+              title: "Kuis",
+              stimulusTitle: content.quickQuiz?.stimulusTitle,
+              stimulusText: content.quickQuiz?.stimulusText,
+              questions: [...content.kuis.map(toPracticeSoal), ...(content.quickQuiz?.questions ?? [])],
+            }
+            return <PracticePresentation data={merged} color="violet" type="Kuis" showAnswers={showAnswers} />
+          })()}
         </div>
       </div>
 
@@ -856,59 +835,6 @@ function PracticePresentation({ data, color, type, showAnswers }: { data: NonNul
             )}
           </div>
         ))}
-      </div>
-    </div>
-  )
-}
-
-function SoalPresentation({ soal, label, showAnswers, color }: { soal: Soal[]; label: string; showAnswers: boolean; color: string }) {
-  const colorClasses = color === "violet" ? "text-violet-600" : "text-emerald-600"
-  const bgColor = color === "violet" ? "bg-violet-50" : "bg-emerald-50"
-
-  return (
-    <div>
-      <h2 className="text-xl font-bold text-slate-900 mb-6 flex items-center gap-2"><Target className={`w-6 h-6 ${colorClasses}`} />{label} ({soal.length} soal)</h2>
-      <div className="space-y-6">
-        {soal.map((q, i) => {
-          const tipe = q.tipe || "PG"
-          const jawabStr = tipe === "ISIAN" ? q.jawaban as string : (q.opsi[q.jawaban as number] ?? "")
-          const jawabNum = q.jawaban as number
-          return (
-          <div key={q.id} className="bg-white border border-slate-200 rounded-xl p-5">
-            <p className="text-lg font-semibold text-slate-900 mb-4">
-              <span className={`font-bold mr-3 ${colorClasses}`}>{i + 1}.</span>
-              {q.soal}
-              {tipe !== "PG" && <span className="ml-2 text-sm text-slate-400 font-normal">({tipe === "BENAR_SALAH" ? "Benar/Salah" : "Isian"})</span>}
-            </p>
-            {tipe === "ISIAN" ? (
-              <div className="text-lg text-slate-600">
-                {showAnswers && <p className="text-emerald-700 font-medium">Jawaban: <strong>{jawabStr}</strong></p>}
-              </div>
-            ) : (
-            <div className="space-y-2">
-              {q.opsi.map((o, j) => {
-                const isCorrect = j === jawabNum
-                return (
-                  <div key={j} className={`flex items-center gap-3 px-4 py-3 rounded-xl text-base ${showAnswers && isCorrect ? `${bgColor} border-2 border-emerald-300` : "border border-slate-200"}`}>
-                    <span className={`w-7 h-7 rounded-full border-2 flex items-center justify-center text-sm font-bold shrink-0 ${isCorrect && showAnswers ? "border-emerald-500 bg-emerald-500 text-white" : "border-slate-300 text-slate-500"}`}>
-                      {tipe === "BENAR_SALAH" ? (j === 0 ? "✓" : "✗") : String.fromCharCode(65 + j)}
-                    </span>
-                    <span className={isCorrect && showAnswers ? "font-semibold text-emerald-800" : "text-slate-800"}>{o}</span>
-                    {showAnswers && isCorrect && <CheckCircle className="w-5 h-5 text-emerald-500 ml-auto shrink-0" />}
-                  </div>
-                )
-              })}
-            </div>
-            )}
-            {showAnswers && q.penjelasan && (
-              <div className="mt-3 bg-blue-50 border border-blue-200 rounded-lg p-3 flex items-start gap-2">
-                <Sparkles className="w-4 h-4 text-blue-500 mt-0.5 shrink-0" />
-                <p className="text-sm text-blue-800">{q.penjelasan}</p>
-              </div>
-            )}
-          </div>
-          )
-        })}
       </div>
     </div>
   )
