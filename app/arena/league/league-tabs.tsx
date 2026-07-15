@@ -3,6 +3,7 @@
 import { useState } from "react"
 import Link from "next/link"
 import { Medal, Crown, Diamond } from "lucide-react"
+import { calcLevel, calcLeagueFromXP } from "@/lib/xp"
 
 export interface LeagueRow {
   id: string
@@ -45,8 +46,8 @@ export default function LeagueTabs({ weekly, daily, userId, userXP, initialTab =
   const isHarian = tab === "harian"
   const board = isHarian ? daily : weekly
 
-  const userTier = userXP >= 10000 ? "DIAMOND" : userXP >= 5000 ? "GOLD" : userXP >= 2000 ? "SILVER" : "BRONZE"
-  const nextTierXP = userTier === "BRONZE" ? 2000 : userTier === "SILVER" ? 5000 : userTier === "GOLD" ? 10000 : null
+  const userTier = calcLeagueFromXP(userXP)
+  const nextTierXP = userTier === "BRONZE" ? 1000 : userTier === "SILVER" ? 3000 : userTier === "GOLD" ? 8000 : null
   const nextTierName = userTier === "BRONZE" ? "Perak" : userTier === "SILVER" ? "Emas" : userTier === "GOLD" ? "Berlian" : null
 
   return (
@@ -132,7 +133,7 @@ export default function LeagueTabs({ weekly, daily, userId, userXP, initialTab =
                     {u.fullName}
                     {isMe && <span className="text-[10px] text-violet-600 ml-1">(kamu)</span>}
                   </p>
-                  <p className="text-[10px] text-gray-400">Level {u.level || 0} • Streak {u.streak || 0}</p>
+                  <p className="text-[10px] text-gray-400">Level {calcLevel(u.xp || 0)} • Streak {u.streak || 0}</p>
                 </div>
                 <div className="text-right shrink-0">
                   <p className="text-sm font-bold text-gray-900">
