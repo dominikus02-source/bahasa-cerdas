@@ -2,11 +2,12 @@ import { NextResponse } from "next/server";
 import { getUser } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 import cache from "@/lib/redis";
+import { calcLeagueFromXP } from "@/lib/xp";
 
 const LEAGUE_THRESHOLDS = [
-  { tier: "DIAMOND", minXP: 10000 },
-  { tier: "GOLD", minXP: 5000 },
-  { tier: "SILVER", minXP: 2000 },
+  { tier: "DIAMOND", minXP: 8000 },
+  { tier: "GOLD", minXP: 3000 },
+  { tier: "SILVER", minXP: 1000 },
   { tier: "BRONZE", minXP: 0 },
 ] as const;
 
@@ -22,7 +23,7 @@ export async function GET() {
     const data = await cache.getOrSet(
       `league:peers:${user.id}`,
       async () => {
-        const tier = LEAGUE_THRESHOLDS.find(t => user.xp >= t.minXP)?.tier || "BRONZE";
+        const tier = calcLeagueFromXP(user.xp || 0);
         const threshold = LEAGUE_THRESHOLDS.find(t => t.tier === tier)!;
         const nextTier = LEAGUE_THRESHOLDS[LEAGUE_THRESHOLDS.findIndex(t => t.tier === tier) - 1];
 
@@ -52,7 +53,7 @@ export async function GET() {
           nextTier: nextTier ? LEAGUE_LABELS[nextTier.tier] : null,
         };
       },
-      300
+      60
     );
 
     return NextResponse.json(data);
