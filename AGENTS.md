@@ -1364,3 +1364,30 @@ Fix AI Tools (RPP, Soal, PPT, EYD, Feedback, dll.) at `/guru/ai-tools` — stop 
 3. **Game server dead**: semua multiplayer games rusak
 4. **GameRoom migration**: perlu SQL via Supabase dashboard
 
+---
+
+## Phase BUKU PANDUAN KELAS VI SD — Complete (July 15, 2026)
+
+### Goal
+Create a complete `guides-vi.ts` for Kelas VI SD Fase C with 10 full chapters matching `GradeData`/`GuideChapter` types, and register it in `index.ts`.
+
+### Keputusan Desain
+- All user-facing text in Bahasa Indonesia
+- `reviewStatus: "needs-review"`, `sourceBasis: "cp-atp-research"`, `isReady: false`
+- Semester 1: 5 chapters (laporan/artikel, pidato, argumentasi, cerpen, membaca kritis)
+- Semester 2: 5 chapters (diskusi, publikasi karya, literasi SMP, menyunting/publikasi, apresiasi sastra)
+- Age 11–12, Fase C (last SD grade → SMP transition)
+- `rubric.aspects[].criteria[].level` is `number` (1–4)
+
+### Files Created
+- `data/buku-panduan/guides-vi.ts` — ~1935 lines, 10 chapters with full content (learning objectives, activities step-by-step, assessment rubric, reflection, remedial, enrichment)
+
+### Files Modified
+- `data/buku-panduan/index.ts` — added `import { kelasVI }`, `export { kelasVI }`, included in `allGrades`
+
+### Verification
+| Check | Result |
+|-------|--------|
+| `npx tsc --noEmit data/buku-panduan/guides-vi.ts` | ✅ 0 errors |
+| `npx tsc --noEmit data/buku-panduan/index.ts` | ✅ 0 errors |
+

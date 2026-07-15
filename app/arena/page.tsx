@@ -37,9 +37,23 @@ export default async function BerandaPage() {
   const doneQuest = quests.filter((q: any) => q.completed).length
   const totalQuest = quests.length
 
-  const displayLevel = calcLevel(user.xp || 0)
-  const displayLeague = calcLeagueFromXP(user.xp || 0)
-  const progress = calcLevelProgress(user.xp || 0, displayLevel)
+  // Compute total XP from all tracked sources for bulletproof accuracy
+  const [jalurXpAgg, gameXpAgg] = await Promise.all([
+    db.userUnitProgress.aggregate({
+      where: { userId: user.id },
+      _sum: { xpEarned: true },
+    }),
+    db.gameResult.aggregate({
+      where: { userId: user.id },
+      _sum: { xpEarned: true },
+    }),
+  ])
+  const computedTotalXp = (jalurXpAgg._sum.xpEarned || 0) + (gameXpAgg._sum.xpEarned || 0)
+  const totalXp = Math.max(user.xp || 0, computedTotalXp)
+
+  const displayLevel = calcLevel(totalXp)
+  const displayLeague = calcLeagueFromXP(totalXp)
+  const progress = calcLevelProgress(totalXp, displayLevel)
 
   const todayStart = new Date()
   todayStart.setHours(0, 0, 0, 0)

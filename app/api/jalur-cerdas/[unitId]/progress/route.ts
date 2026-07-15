@@ -52,12 +52,17 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ un
       },
     })
 
-    const jcXp = user.xp + XP_REWARD
-    const jcLevel = calcLevel(jcXp)
-    const jcLeague = calcLeagueFromXP(jcXp)
     await db.user.update({
       where: { id: user.id },
-      data: { xp: jcXp, level: jcLevel, league: jcLeague, coins: { increment: COIN_REWARD }, lastActiveAt: new Date() },
+      data: { xp: { increment: XP_REWARD }, coins: { increment: COIN_REWARD }, lastActiveAt: new Date() },
+    })
+    const updatedUser = await db.user.findUnique({ where: { id: user.id }, select: { xp: true } })
+    const finalXp = updatedUser?.xp ?? user.xp + XP_REWARD
+    const jcLevel = calcLevel(finalXp)
+    const jcLeague = calcLeagueFromXP(finalXp)
+    await db.user.update({
+      where: { id: user.id },
+      data: { level: jcLevel, league: jcLeague },
     })
 
     return NextResponse.json({ progress, isComplete: true, earnedXp: XP_REWARD })

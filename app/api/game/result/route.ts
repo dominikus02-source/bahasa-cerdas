@@ -33,13 +33,17 @@ export async function POST(request: Request) {
     });
 
     const earned = xpEarned || Math.floor(score / 10)
-    const newXp = (user.xp || 0) + earned
+    await db.user.update({
+      where: { id: user.id },
+      data: { xp: { increment: earned } },
+    });
+    const updatedUser = await db.user.findUnique({ where: { id: user.id }, select: { xp: true } })
+    const finalXp = updatedUser?.xp ?? (user.xp || 0) + earned
     await db.user.update({
       where: { id: user.id },
       data: {
-        xp: { increment: earned },
-        level: calcLevel(newXp),
-        league: calcLeagueFromXP(newXp),
+        level: calcLevel(finalXp),
+        league: calcLeagueFromXP(finalXp),
       },
     });
 
