@@ -1,3 +1,9 @@
+import { kelasI } from "./guides-i"
+import { kelasII } from "./guides-ii"
+import { kelasIII } from "./guides-iii"
+import { kelasIV } from "./guides-iv"
+import { kelasV } from "./guides-v"
+import { kelasVI } from "./guides-vi"
 import { kelasVII } from "./guides-vii"
 import { kelasVIII } from "./guides-viii"
 import { kelasIX } from "./guides-ix"
@@ -6,9 +12,9 @@ import { kelasXI } from "./guides-xi"
 import { kelasXII } from "./guides-xii"
 
 export type { GuideChapter, GradeData, Phase } from "./types"
-export { kelasVII, kelasVIII, kelasIX, kelasX, kelasXI, kelasXII }
+export { kelasI, kelasII, kelasIII, kelasIV, kelasV, kelasVI, kelasVII, kelasVIII, kelasIX, kelasX, kelasXI, kelasXII }
 
-export const allGrades = [kelasVII, kelasVIII, kelasIX, kelasX, kelasXI, kelasXII]
+export const allGrades = [kelasI, kelasII, kelasIII, kelasIV, kelasV, kelasVI, kelasVII, kelasVIII, kelasIX, kelasX, kelasXI, kelasXII]
 
 export function getChapterById(id: string) {
   for (const grade of allGrades) {

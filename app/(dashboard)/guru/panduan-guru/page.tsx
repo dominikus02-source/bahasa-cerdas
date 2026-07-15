@@ -27,7 +27,7 @@ type Level = {
   units: Unit[]
 }
 
-const GRADES = ["VII", "VIII", "IX", "X", "XI", "XII"]
+const GRADES = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII"]
 const GRADE_OFFSET: Record<string, number> = {
   I: 13, II: 15, III: 17, IV: 19, V: 21, VI: 23,
   VII: 1, VIII: 3, IX: 5, X: 7, XI: 9, XII: 11,
