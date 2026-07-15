@@ -3,6 +3,8 @@ import { db } from "@/lib/db"
 import cache from "@/lib/redis"
 import { redirect } from "next/navigation"
 import Link from "next/link"
+
+export const dynamic = "force-dynamic"
 import {
   Flame, Zap, Coins, Target, Bot, PenLine, Rocket, Star, Gift,
   Trophy, BookOpen, ChevronRight, Sparkles, Award, Gamepad2, Heart,
