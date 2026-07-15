@@ -27,7 +27,7 @@ export async function GET(req: NextRequest) {
     if (topik) where.topik = topik;
     if (source) where.source = source;
 
-    const soals = await db.soal.findMany({ where, orderBy: { createdAt: "desc" } });
+    const soals = await db.soal.findMany({ where, orderBy: { createdAt: "desc" }, take: 50 });
 
     const kelasList = await db.soal.findMany({
       where: { uploaderId: dbUser.id },

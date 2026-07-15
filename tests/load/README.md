@@ -16,15 +16,80 @@ Verify:
 k6 version
 ```
 
+# Load Testing — BahasaCerdas.com
+
+## Tool
+
+**k6** — industry-standard load testing tool (Go + JavaScript).
+
+## Installation
+
+```bash
+brew install k6
+# Or download from https://k6.io/docs/getting-started/installation/
+```
+
+Verify:
+```bash
+k6 version
+```
+
+## Auth Mechanism
+
+All UKBI/TKA simulation endpoints require authentication. The k6 scripts handle auth in two steps:
+
+1. **Login**: POST `{BASE_URL}/api/auth/login` with `{ email, password }`
+2. **Token extraction**: The scripts extract auth from the response in two ways:
+   - **Preferred**: `sb-*-auth-token` cookie from `Set-Cookie` response header (Supabase SSR)
+   - **Fallback**: `Authorization: Bearer <access_token>` using the `session.access_token` from JSON body
+
+The scripts cache the auth token per VU (virtual user), so login happens only once per VU even across multiple iterations.
+
 ## Environment Variables
 
 | Variable | Required | Default | Description |
 |----------|----------|---------|-------------|
 | `BASE_URL` | No | `https://bahasacerdas.com` | Target URL |
-| `EMAIL` | Yes (auth flow) | — | Login email |
-| `PASSWORD` | Yes (auth flow) | — | Login password |
+| `EMAIL` | **Yes** | — | Login email (no default — must be set) |
+| `PASSWORD` | **Yes** | — | Login password (no default — must be set) |
 | `PAKET_ID` | No | (auto-fetch) | Specific UKBI/TKA paket to test |
-| `KOOKIE_NAME` | No | (auto-detect) | Supabase auth cookie name |
+
+**Important**: Unlike previous versions, `EMAIL` and `PASSWORD` no longer have default values. Tests will fail early if these are not provided.
+
+## Getting Auth Credentials
+
+### Demo Accounts (Pre-seeded)
+
+| Role | Email | Password | Notes |
+|------|-------|----------|-------|
+| Murid | murid@demo.com | murid123 | Active demo account |
+| Guru | guru@demo.com | guru123 | Active demo account |
+
+### Creating Test Accounts via Supabase
+
+For larger scale tests, you need multiple accounts to avoid rate limiting:
+
+1. Go to [Supabase Dashboard](https://supabase.com) → Authentication → Users
+2. Click "Invite user" or "Add user"
+3. Create accounts with email/password
+4. These accounts will auto-create Prisma User records on first login via `GET /api/user/me`
+
+Alternatively, use the Supabase Management API:
+
+```bash
+curl -X POST https://<project>.supabase.co/auth/v1/admin/users \
+  -H "apikey: <service_role_key>" \
+  -H "Authorization: Bearer <service_role_key>" \
+  -H "Content-Type: application/json" \
+  -d '{"email":"test1@test.com","password":"test123","email_confirm":true}'
+```
+
+### Credential Pooling Strategy
+
+For 100+ VU tests, consider:
+- **Single account approach**: All VUs use `murid@demo.com`. Risk: rate limiting at login phase (10 req/10min per IP on `/api/auth/login`).
+- **Account pool**: Create N accounts, distribute via `__ENV.EMAIL`. Each VU logs in once and reuses the session.
+- **Pre-fetched token**: Not recommended — tokens expire.
 
 ## ⚠️ WARNING
 
@@ -46,6 +111,11 @@ Quick sanity check — verifies the full simulation flow works.
 k6 run tests/load/ukbi-smoke.js \
   --env EMAIL=murid@demo.com \
   --env PASSWORD=murid123
+```
+
+Or via environment variables:
+```bash
+EMAIL=murid@demo.com PASSWORD=murid123 k6 run tests/load/ukbi-smoke.js
 ```
 
 Expected: All checks pass, no errors.
@@ -92,6 +162,18 @@ k6 run tests/load/ukbi-1000.js \
   --env PASSWORD=murid123
 ```
 
+### Using npm scripts
+
+```bash
+npm run test:load:smoke
+npm run test:load:ukbi-100
+```
+
+Set env vars inline:
+```bash
+EMAIL=staging@test.com PASSWORD=test123 npm run test:load:smoke
+```
+
 ### Combining with Existing Tests
 
 Run the existing public browsing + authenticated dashboard tests for a mixed workload:
@@ -132,15 +214,6 @@ k6 run --dry-run tests/load/ukbi-1000.js
 - `submit_duration` — answer submission
 - `result_duration` — result view
 - `full_flow_duration` — total flow time per iteration
-
-## Test User Credentials
-
-| Role | Email | Password | Notes |
-|------|-------|----------|-------|
-| Murid | murid@demo.com | murid123 | Demo account, pre-seeded |
-| Guru | guru@demo.com | guru123 | Demo account, pre-seeded |
-
-For larger tests (>1 VU), create additional test accounts or use a shared account with high rate-limit tolerance.
 
 ## Output Formats
 

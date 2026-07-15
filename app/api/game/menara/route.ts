@@ -81,6 +81,7 @@ export async function GET(req: NextRequest) {
   const units = await db.learningUnit.findMany({
     where: { isActive: true, level: { type: "JALUR" } },
     select: { content: true },
+    take: 50,
   });
 
   const pool: GameQuestion[] = [];

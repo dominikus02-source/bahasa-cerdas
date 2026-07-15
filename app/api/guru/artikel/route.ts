@@ -18,6 +18,7 @@ export async function GET() {
     const data = await db.artikel.findMany({
       where: { authorId: user.id },
       orderBy: { createdAt: "desc" },
+      take: 50,
       select: {
         id: true, title: true, slug: true, excerpt: true,
         isPublished: true, readCount: true, createdAt: true,

@@ -14,6 +14,7 @@ export async function GET(req: NextRequest) {
     const memberships = await db.groupMember.findMany({
       where: { userId: dbUser.id },
       select: { groupId: true },
+      take: 50,
     });
     const groupIds = memberships.map(m => m.groupId);
 
@@ -39,11 +40,13 @@ export async function GET(req: NextRequest) {
         _count: { select: { submissions: true } },
       },
       orderBy: { assignedAt: "desc" },
+      take: 50,
     });
 
     const submissions = await db.quizSubmission.findMany({
       where: { userId: dbUser.id },
       select: { assignmentId: true, status: true, score: true, attemptNumber: true, submittedAt: true },
+      take: 50,
     });
     const submissionMap = new Map(submissions.map(s => [s.assignmentId, s]));
 

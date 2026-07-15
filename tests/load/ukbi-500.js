@@ -15,8 +15,8 @@ import { check, sleep, group } from "k6";
 import { Rate, Trend } from "k6/metrics";
 
 const BASE_URL = __ENV.BASE_URL || "https://bahasacerdas.com";
-const EMAIL = __ENV.EMAIL || "murid@demo.com";
-const PASSWORD = __ENV.PASSWORD || "murid123";
+const EMAIL = __ENV.EMAIL || "";
+const PASSWORD = __ENV.PASSWORD || "";
 const PAKET_ID = __ENV.PAKET_ID || "";
 
 const errorRate = new Rate("errors");
@@ -40,61 +40,86 @@ export const options = {
 };
 
 let vuAuthCookie = "";
+let vuAuthToken = "";
 let vuPaketId = "";
 
+function doLogin() {
+  const loginRes = http.post(
+    `${BASE_URL}/api/auth/login`,
+    JSON.stringify({ email: EMAIL, password: PASSWORD }),
+    { headers: { "Content-Type": "application/json" } }
+  );
+
+  const ok = check(loginRes, {
+    "login status 200": (r) => r.status === 200,
+    "login has session": (r) => {
+      try {
+        const body = JSON.parse(r.body);
+        return !!(body.session && body.session.access_token);
+      } catch {
+        return false;
+      }
+    },
+  });
+  errorRate.add(!ok);
+  loginDuration.add(loginRes.timings.duration);
+
+  if (!ok) {
+    let errMsg = `VU ${__VU} login failed (HTTP ${loginRes.status})`;
+    try {
+      const body = JSON.parse(loginRes.body);
+      if (body.error) errMsg += `: ${body.error}`;
+    } catch { /* ignore */ }
+    console.error(errMsg);
+    return { cookie: "", token: "" };
+  }
+
+  let cookie = "";
+  let token = "";
+
+  if (loginRes.headers["Set-Cookie"]) {
+    const match = loginRes.headers["Set-Cookie"].match(
+      /(sb-[a-z0-9]+-auth-token[^;]*)/i
+    );
+    if (match) cookie = match[1];
+  }
+
+  if (!cookie) {
+    try {
+      const body = JSON.parse(loginRes.body);
+      if (body.session && body.session.access_token) {
+        token = body.session.access_token;
+      }
+    } catch { /* ignore */ }
+  }
+
+  if (!cookie && !token) {
+    console.error(`VU ${__VU} login succeeded but no auth token found`);
+  }
+
+  return { cookie, token };
+}
+
+function buildAuthHeaders() {
+  const h = { "Content-Type": "application/json" };
+  if (vuAuthCookie) h["Cookie"] = vuAuthCookie;
+  else if (vuAuthToken) h["Authorization"] = `Bearer ${vuAuthToken}`;
+  return h;
+}
+
 export default function () {
-  const headers = { "Content-Type": "application/json" };
-
-  if (!vuAuthCookie) {
+  if (!vuAuthCookie && !vuAuthToken) {
     group("Login", function () {
-      const loginRes = http.post(
-        `${BASE_URL}/api/auth/login`,
-        JSON.stringify({ email: EMAIL, password: PASSWORD }),
-        { headers }
-      );
-
-      const ok = check(loginRes, {
-        "login status 200": (r) => r.status === 200,
-      });
-      errorRate.add(!ok);
-
-      let cookie = "";
-      if (loginRes.headers["Set-Cookie"]) {
-        const match = loginRes.headers["Set-Cookie"].match(
-          /(sb-[a-z0-9]+-auth-token[^;]*)/i
-        );
-        if (match) cookie = match[1];
-      }
-
-      if (!cookie) {
-        try {
-          const body = JSON.parse(loginRes.body);
-          if (body.session && body.session.access_token) {
-            cookie = `sb-auth-token=${body.session.access_token}`;
-          }
-        } catch {
-          // ignore
-        }
-      }
-
-      vuAuthCookie = cookie;
-      loginDuration.add(loginRes.timings.duration);
-
-      if (!vuAuthCookie) {
-        console.error(`VU ${__VU} FAILED login`);
-        return;
-      }
+      const result = doLogin();
+      vuAuthCookie = result.cookie;
+      vuAuthToken = result.token;
     });
 
+    if (!vuAuthCookie && !vuAuthToken) return;
     sleep(2);
   }
 
-  if (!vuAuthCookie) return;
-
-  const authHeaders = {
-    Cookie: vuAuthCookie,
-    "Content-Type": "application/json",
-  };
+  const authHeaders = buildAuthHeaders();
 
   if (!vuPaketId) {
     group("Fetch Paket", function () {

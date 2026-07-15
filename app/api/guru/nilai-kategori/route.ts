@@ -25,6 +25,7 @@ export async function GET(req: NextRequest) {
     const kategori = await db.nilaiKategori.findMany({
       where: { groupId },
       orderBy: { createdAt: "asc" },
+      take: 50,
     });
 
     return NextResponse.json({ kategori });

@@ -34,6 +34,7 @@ export async function GET(req: NextRequest) {
         _count: { select: { questions: true, assignments: true } },
       },
       orderBy: { updatedAt: "desc" },
+      take: 50,
     });
 
     return NextResponse.json({ quizzes });

@@ -14,6 +14,7 @@ export async function GET() {
     const pools = await db.paketKompetensi.findMany({
       where: { isActive: true },
       orderBy: [{ type: "asc" }, { title: "asc" }],
+      take: 50,
     });
 
     return NextResponse.json({ pools });

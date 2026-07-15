@@ -223,6 +223,96 @@ Vercel (1000 concurrent) → PgBouncer (200 conns) → PostgreSQL (max_connectio
 
 ---
 
+## Staging Environment Plan
+
+### Required Infrastructure
+
+| Resource | Required | Notes |
+|----------|----------|-------|
+| **Staging URL** | Vercel Preview Deployment or custom domain | e.g. `staging.bahasacerdas.com` or `bahasacerdas-git-staging.vercel.app` |
+| **Supabase Staging** | Separate Supabase project | Do NOT use production Supabase. Create a Free/Pro tier staging project. |
+| **Vercel Project** | Separate Vercel project or Preview alias | Use `--target=staging` for Vercel CLI deployments |
+
+### Dummy Data Requirements
+
+For meaningful load tests, seed the staging database with realistic data:
+
+| Entity | Count | Description |
+|--------|-------|-------------|
+| **Murid accounts** | 1.000 | Test accounts for concurrent simulation load |
+| **Guru accounts** | 50 | Teacher accounts for mixed-role tests |
+| **Paket UKBI** | 10+ | One per tingkat (SD, SMP, SMA, Guru) with 30+ questions each |
+| **Paket TKA** | 10+ | One per tingkat (SD, SMP, SMA, UTBK, Guru) with 30+ questions each |
+| **Test sessions** | 0 (runtime) | Created dynamically during test execution |
+
+### Seeding Dummy Data
+
+1. **Create Supabase staging project** at [supabase.com](https://supabase.com)
+2. **Push Prisma schema**:
+   ```bash
+   DIRECT_URL=<staging-direct-url> DATABASE_URL=<staging-pooler-url> npx prisma db push
+   ```
+3. **Run seeds** — all the seeds below must be run on the staging database:
+
+   ```bash
+   # UKBI/TKA question banks
+   npm run seed:ukbi-lean
+   npm run seed:tka-all
+
+   # Create test user accounts via Supabase Admin API or dashboard
+   # Then run the user sync:
+   curl -X POST https://<staging-project>.supabase.co/auth/v1/admin/users \
+     -H "apikey: <staging-service-role-key>" \
+     -H "Authorization: Bearer <staging-service-role-key>" \
+     -H "Content-Type: application/json" \
+     -d '{"email":"test1@test.com","password":"test123","email_confirm":true}'
+   # Repeat for all 1000+ accounts, or use a script
+   ```
+
+4. **Verify seeding**:
+   ```bash
+   npm run validate:ukbi-tka-structure
+   npm run audit:minimum-simulation-readiness
+   ```
+
+### Safe Limits for Running Tests
+
+| Test Level | Max VUs | Min Staging Spec | Notes |
+|------------|---------|------------------|-------|
+| **Smoke** | 1–5 | Any | Quick validation, no infra needed |
+| **Light** | 50–100 | Supabase Free | Classroom simulation |
+| **Medium** | 200–300 | Supabase Pro + Vercel Pro | School-wide load |
+| **Heavy** | 400–500 | Supabase Team plan (200+ conns) | District event |
+| **Stress** | 800–1000 | Supabase Team + Vercel Pro (provisioned) | Capacity planning |
+
+### Target Metrics (Staging)
+
+| Metric | Smoke (1) | Light (100) | Medium (300) | Heavy (500) | Stress (1000) |
+|--------|-----------|-------------|--------------|-------------|---------------|
+| Error rate | 0% | < 1% | < 1% | < 2% | < 5% |
+| p95 login | < 2s | < 3s | < 5s | < 8s | < 10s |
+| p95 fetch questions | < 2s | < 4s | < 6s | < 8s | < 12s |
+| p95 submit | < 3s | < 5s | < 7s | < 10s | < 15s |
+| p95 result | < 2s | < 3s | < 5s | < 7s | < 10s |
+
+### ⚠️ CRITICAL WARNING
+
+**Never run 1000-user (or 500-user) tests against production without explicit written authorization from the project owner.**
+
+Production load tests can cause:
+- **Vercel billing spikes**: Serverless function overage charges
+- **Supabase connection pool saturation**: Affecting real users
+- **Database CPU exhaustion**: Causing timeouts for all users
+- **Rate limit triggering**: 429 responses blocking legitimate users
+- **Auth provider throttling**: Supabase Auth may tempoarily block login
+
+Always use staging. If staging is unavailable, create a preview deployment:
+```bash
+npx vercel deploy --preview --target=staging
+```
+
+---
+
 ## Load Test Results and Interpretation
 
 ### Metrics to Track

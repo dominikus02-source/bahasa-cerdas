@@ -13,6 +13,7 @@ export async function GET(req: NextRequest) {
 
     const memberships = await db.groupMember.findMany({
       where: { userId: dbUser.id },
+      take: 50,
       include: {
         group: {
           include: {

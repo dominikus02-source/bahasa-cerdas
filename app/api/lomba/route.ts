@@ -17,6 +17,7 @@ export async function GET(req: NextRequest) {
     const lombas = await db.lomba.findMany({
       where,
       orderBy: { date: "asc" },
+      take: 50,
     });
 
     return NextResponse.json({ lombas });

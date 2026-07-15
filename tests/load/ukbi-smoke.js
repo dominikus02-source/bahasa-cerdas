@@ -2,9 +2,7 @@
 // Validates the full simulation flow: login → fetch questions → answer → submit → result
 //
 // Usage:
-//   k6 run tests/load/ukbi-smoke.js \
-//     --env EMAIL=murid@demo.com \
-//     --env PASSWORD=murid123
+//   EMAIL=murid@demo.com PASSWORD=murid123 k6 run tests/load/ukbi-smoke.js
 //
 // Dry run (syntax check):
 //   k6 run --dry-run tests/load/ukbi-smoke.js
@@ -14,8 +12,8 @@ import { check, sleep, group } from "k6";
 import { Rate, Trend } from "k6/metrics";
 
 const BASE_URL = __ENV.BASE_URL || "https://bahasacerdas.com";
-const EMAIL = __ENV.EMAIL || "murid@demo.com";
-const PASSWORD = __ENV.PASSWORD || "murid123";
+const EMAIL = __ENV.EMAIL || "";
+const PASSWORD = __ENV.PASSWORD || "";
 const PAKET_ID = __ENV.PAKET_ID || "";
 
 const errorRate = new Rate("errors");
@@ -35,74 +33,87 @@ export const options = {
   },
 };
 
+function doLogin() {
+  const loginRes = http.post(
+    `${BASE_URL}/api/auth/login`,
+    JSON.stringify({ email: EMAIL, password: PASSWORD }),
+    { headers: { "Content-Type": "application/json" } }
+  );
+
+  const ok = check(loginRes, {
+    "login status 200": (r) => r.status === 200,
+    "login has session": (r) => {
+      try {
+        const body = JSON.parse(r.body);
+        return !!(body.session && body.session.access_token);
+      } catch {
+        return false;
+      }
+    },
+  });
+  errorRate.add(!ok);
+  loginDuration.add(loginRes.timings.duration);
+
+  if (!ok) {
+    let errMsg = `Login failed (HTTP ${loginRes.status})`;
+    try {
+      const body = JSON.parse(loginRes.body);
+      if (body.error) errMsg += `: ${body.error}`;
+    } catch { /* ignore */ }
+    console.error(errMsg);
+    return { authCookie: "", authToken: "" };
+  }
+
+  let authCookie = "";
+  let authToken = "";
+
+  if (loginRes.headers["Set-Cookie"]) {
+    const match = loginRes.headers["Set-Cookie"].match(
+      /(sb-[a-z0-9]+-auth-token[^;]*)/i
+    );
+    if (match) authCookie = match[1];
+  }
+
+  if (!authCookie) {
+    try {
+      const body = JSON.parse(loginRes.body);
+      if (body.session && body.session.access_token) {
+        authToken = body.session.access_token;
+      }
+    } catch { /* ignore */ }
+  }
+
+  if (!authCookie && !authToken) {
+    console.error("Login succeeded but no auth token found in response");
+  }
+
+  return { authCookie, authToken };
+}
+
+function buildHeaders(authCookie, authToken) {
+  const h = { "Content-Type": "application/json" };
+  if (authCookie) h["Cookie"] = authCookie;
+  else if (authToken) h["Authorization"] = `Bearer ${authToken}`;
+  return h;
+}
+
 export default function () {
   const startTime = Date.now();
-  let authCookie = __ENV.KOOKIE || "";
 
   // ── PHASE 1: Login ──
+  let authCookie = "";
+  let authToken = "";
+
   group("Login", function () {
-    if (authCookie) {
-      return; // Use pre-provided token
-    }
-
-    const loginRes = http.post(
-      `${BASE_URL}/api/auth/login`,
-      JSON.stringify({ email: EMAIL, password: PASSWORD }),
-      { headers: { "Content-Type": "application/json" } }
-    );
-
-    const ok = check(loginRes, {
-      "login status 200": (r) => r.status === 200,
-      "login has session": (r) => {
-        try {
-          const body = JSON.parse(r.body);
-          return body.session && body.session.access_token;
-        } catch {
-          return false;
-        }
-      },
-    });
-    errorRate.add(!ok);
-    loginDuration.add(loginRes.timings.duration);
-
-    // Extract auth cookie from Set-Cookie header
-    if (ok && loginRes.headers["Set-Cookie"]) {
-      const setCookie = loginRes.headers["Set-Cookie"];
-      // Find the auth-token cookie — supports multiple cookie formats
-      const match = setCookie.match(
-        /(sb-[a-z0-9]+-auth-token[^;]*)/i
-      );
-      if (match) {
-        authCookie = match[1];
-      }
-    }
-
-    if (!authCookie) {
-      // Fallback: parse the JSON session and construct minimal cookie
-      try {
-        const body = JSON.parse(loginRes.body);
-        if (body.session && body.session.access_token) {
-          authCookie = `sb-auth-token=${body.session.access_token}`;
-        }
-      } catch {
-        // give up
-      }
-    }
-
-    if (!authCookie) {
-      console.error("FAILED to obtain auth cookie");
-      return;
-    }
-
+    const result = doLogin();
+    authCookie = result.authCookie;
+    authToken = result.authToken;
     sleep(1);
   });
 
-  if (!authCookie) return;
+  if (!authCookie && !authToken) return;
 
-  const headers = {
-    Cookie: authCookie,
-    "Content-Type": "application/json",
-  };
+  const headers = buildHeaders(authCookie, authToken);
 
   // ── PHASE 2: Fetch Paket List ──
   let paketId = PAKET_ID;

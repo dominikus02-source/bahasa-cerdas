@@ -122,6 +122,8 @@
     "load:simulation-read": "k6 run --vus 30 --duration 3m tests/load/simulation-read.js",
     "load:simulation-submit": "k6 run tests/load/simulation-submit.js",
     "load:dashboard": "k6 run tests/load/dashboard-authenticated.js",
+    "test:load:smoke": "k6 run tests/load/ukbi-smoke.js",
+    "test:load:ukbi-100": "k6 run tests/load/ukbi-100.js",
     "test:rpp-pipeline": "tsx scripts/test-rpp-pipeline.ts",
     "audit:smp-practice": "npx tsx scripts/audit-smp-practice-content.ts",
     "test:smp-practice": "npx tsx scripts/test-smp-practice-content.ts"

@@ -16,6 +16,7 @@ export async function GET(req: NextRequest) {
       where: { paketId },
       include: { user: { select: { id: true, fullName: true, email: true } } },
       orderBy: { percentage: "desc" },
+      take: 50,
     });
 
     return NextResponse.json({

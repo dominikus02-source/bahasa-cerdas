@@ -36,6 +36,7 @@ export async function GET(req: NextRequest) {
         user: { select: { id: true, fullName: true, avatar: true, profile: { select: { nisn: true, school: true } } } },
       },
       orderBy: { createdAt: "desc" },
+      take: 100,
     });
 
     return NextResponse.json({ nilais });

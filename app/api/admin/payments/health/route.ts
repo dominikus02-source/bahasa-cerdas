@@ -53,6 +53,7 @@ export async function GET(req: NextRequest) {
     const proUsers = await db.user.findMany({
       where: { isPremium: true, premiumUntil: { gt: now } },
       select: { id: true },
+      take: 50,
     });
 
     const period = now.toISOString().slice(0, 7);

@@ -185,6 +185,7 @@ export async function POST(req: NextRequest) {
       const admins = await db.user.findMany({
         where: { OR: [{ role: "ADMIN" }, { isFounder: true }] },
         select: { id: true },
+        take: 50,
       });
       if (admins.length > 0) {
         await db.notifikasi.createMany({

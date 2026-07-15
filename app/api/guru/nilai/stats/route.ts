@@ -16,13 +16,14 @@ export async function GET(req: NextRequest) {
     const groups = await db.group.findMany({
       where: { teacherId: dbUser.id, isActive: true },
       select: { id: true, name: true, grade: true },
+      take: 50,
     });
 
     const stats: any[] = [];
 
     for (const g of groups) {
       const totalSiswa = await db.groupMember.count({ where: { groupId: g.id, role: "member" } });
-      const kategoris = await db.nilaiKategori.findMany({ where: { groupId: g.id } });
+      const kategoris = await db.nilaiKategori.findMany({ where: { groupId: g.id }, take: 50 });
       const totalNilai = await db.nilai.count({ where: { groupId: g.id } });
 
       const belumDinilai = Math.max(0, (totalSiswa * kategoris.length) - totalNilai);

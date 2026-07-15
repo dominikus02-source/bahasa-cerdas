@@ -6,6 +6,7 @@ export async function GET() {
     const items = await db.storeItem.findMany({
       where: { isActive: true },
       orderBy: { price: "asc" },
+      take: 50,
     });
     return NextResponse.json({ items });
   } catch (error) {

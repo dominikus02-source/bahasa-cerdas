@@ -13,6 +13,7 @@ export async function GET() {
     await db.groupMember.findMany({
       where: { userId: user.id },
       select: { groupId: true },
+      take: 50,
     })
   ).map(gm => gm.groupId)
 
@@ -23,6 +24,7 @@ export async function GET() {
   const penugasans = await db.penugasan.findMany({
     where: { groupId: { in: groupIds } },
     orderBy: { createdAt: "desc" },
+    take: 50,
     include: {
       unit: {
         select: {

@@ -13,6 +13,7 @@ export async function GET() {
     const dbLevels = await db.learningLevel.findMany({
       where: { type: "PANDUAN" },
       orderBy: { level: "asc" },
+      take: 50,
       include: {
         units: {
           where: { isActive: true },

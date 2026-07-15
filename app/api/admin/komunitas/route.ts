@@ -22,6 +22,7 @@ export async function GET(req: NextRequest) {
         where,
         include: { creator: { select: { id: true, fullName: true, email: true, avatar: true } } },
         orderBy: { createdAt: "desc" },
+        take: 50,
       }),
       db.community.count({ where: { status: "PENDING" } }),
       db.community.count({ where: { status: "APPROVED" } }),

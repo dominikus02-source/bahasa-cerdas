@@ -58,3 +58,5 @@ secrets.txt
 
 # TypeScript incremental build info
 *.tsbuildinfo
+*.tmp
+generate-iv.ts

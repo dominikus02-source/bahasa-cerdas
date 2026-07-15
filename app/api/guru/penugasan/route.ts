@@ -13,6 +13,7 @@ export async function GET() {
     const penugasans = await db.penugasan.findMany({
       where: { teacherId: user.id },
       orderBy: { createdAt: "desc" },
+      take: 50,
       include: {
         unit: { select: { title: true } },
         group: { select: { name: true, _count: { select: { members: true } } } },

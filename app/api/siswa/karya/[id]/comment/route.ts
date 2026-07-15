@@ -69,6 +69,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
         user: { select: { id: true, fullName: true, avatar: true } },
       },
       orderBy: { createdAt: "desc" },
+      take: 50,
     });
 
     return NextResponse.json({ comments });

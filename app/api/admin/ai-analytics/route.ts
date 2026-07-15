@@ -133,7 +133,7 @@ export async function GET(req: NextRequest) {
       }));
     } catch {
       // Fallback: load rows and group in-memory
-      const fallback = await prisma.aIUsage.findMany({ where: usageWhere, select: { createdAt: true }, orderBy: { createdAt: "asc" } });
+      const fallback = await prisma.aIUsage.findMany({ where: usageWhere, select: { createdAt: true }, orderBy: { createdAt: "asc" }, take: 1000 });
       const map = new Map<string, number>();
       for (const r of fallback) {
         const d = r.createdAt.toISOString().slice(0, 10);

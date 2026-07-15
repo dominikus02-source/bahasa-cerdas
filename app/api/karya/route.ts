@@ -16,6 +16,7 @@ export async function GET(req: NextRequest) {
       where: { isPublished: true },
       include: { seller: { select: { id: true, fullName: true, avatar: true } } },
       orderBy: { createdAt: "desc" },
+      take: 50,
     });
 
     const result = { karya };

@@ -31,6 +31,7 @@ export async function GET(req: NextRequest) {
     const videos = await db.video.findMany({
       where,
       orderBy: { createdAt: "desc" },
+      take: 50,
       include: { creator: { select: { id: true, fullName: true, avatar: true } } },
     });
 

@@ -14,6 +14,7 @@ export async function GET(req: NextRequest) {
     const communities = await db.community.findMany({
       where: { creatorId: dbUser.id },
       orderBy: { createdAt: "desc" },
+      take: 50,
     });
 
     return NextResponse.json({ communities });

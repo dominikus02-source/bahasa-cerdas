@@ -95,7 +95,7 @@ export async function GET() {
 
       db.pembelian.aggregate({ _sum: { amount: true }, where: { status: "PAID" } }),
 
-      db.withdrawal.findMany({ where: { status: "PENDING" }, select: { amount: true } }),
+      db.withdrawal.findMany({ where: { status: "PENDING" }, select: { amount: true }, take: 50 }),
 
       db.user.findMany({ take: 5, orderBy: { createdAt: "desc" }, select: { id: true, fullName: true, email: true, role: true, isPremium: true, createdAt: true } }),
 

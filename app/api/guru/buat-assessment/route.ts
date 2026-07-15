@@ -21,6 +21,7 @@ export async function GET(req: NextRequest) {
         _count: { select: { members: true } },
       },
       orderBy: { createdAt: "desc" },
+      take: 50,
     });
 
     return NextResponse.json({ groups });
