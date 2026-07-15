@@ -3,7 +3,6 @@ import { getUser } from "@/lib/supabase/server";
 import { db as prisma } from "@/lib/db";
 import { logExportEvent } from "@/src/ai/core/usage-logger";
 import { z } from "zod";
-import { generatePptAgentPptx, getPptMetadata } from "@/src/ai/export/pptx";
 import { checkExportQuota, deductCreditsAtomic, ensureMonthlyLedger } from "@/lib/ai-gateway/quota-checker";
 import { resolveUserAiPlan } from "@/lib/ai-gateway/plan-resolver";
 
@@ -69,6 +68,9 @@ export async function POST(req: NextRequest) {
     }
 
     const { savedResultId, title, outputJson, editableText } = parsed.data;
+
+    // Dynamic import to avoid loading pptxgenjs at module level
+    const { generatePptAgentPptx, getPptMetadata } = await import("@/src/ai/export/pptx");
 
     let output: Record<string, unknown>;
     let docTitle: string;

@@ -149,6 +149,28 @@ export async function POST(
       });
     }
 
+    // Idempotency: if already scored, return existing result
+    const existingProgres = await db.progresKompetensi.findFirst({
+      where: { userId: dbUser.id, paketId },
+      orderBy: { attemptNumber: "desc" },
+    });
+    if (existingProgres && existingProgres.status === "COMPLETED") {
+      const passingScore = paket.type?.includes("TKA") ? (paket.passingScore || 55) : 482;
+      return NextResponse.json({
+        success: true,
+        result: {
+          totalScore: existingProgres.totalScore || 0,
+          percentage: existingProgres.percentage || 0,
+          predikat: existingProgres.predikat || "",
+          rawScore: existingProgres.rawScore || 0,
+          seksiScores: existingProgres.sectionScores || {},
+          passed: (existingProgres.totalScore || 0) >= passingScore,
+        },
+        attemptNumber: existingProgres.attemptNumber,
+        alreadyScored: true,
+      });
+    }
+
     const rawSnapshot = session.questionSnapshot as AttemptSnapshot | null;
     const snapshotQuestions = rawSnapshot?.questions || null;
 

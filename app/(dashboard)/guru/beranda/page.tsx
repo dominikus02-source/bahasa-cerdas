@@ -17,6 +17,20 @@ function formatRp(n: number) {
   return new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", maximumFractionDigits: 0 }).format(n)
 }
 
+function StatCardSkeleton() {
+  return (
+    <div className="rounded-2xl border border-gray-100 p-5 animate-pulse bg-gray-50">
+      <div className="flex items-center gap-3">
+        <div className="w-12 h-12 rounded-xl bg-gray-200" />
+        <div className="space-y-2">
+          <div className="h-7 bg-gray-200 rounded w-16" />
+          <div className="h-4 bg-gray-200 rounded w-20" />
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function GuruBerandaPage() {
   const user = useUserStore()
   const [stats, setStats] = useState<any>({
@@ -24,14 +38,21 @@ export default function GuruBerandaPage() {
     terjualBulanIni: 0, saldo: 0, aiUsage: { rpp: 0, soal: 0 },
   })
   const [nilaiStats, setNilaiStats] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    fetch("/api/guru/dashboard").then(r => r.json()).then(d => {
-      if (d.totalKarya !== undefined) setStats(d)
-    }).catch(() => {})
-    fetch("/api/guru/nilai/stats").then(r => r.ok ? r.json() : null).then(d => {
-      if (d?.stats) setNilaiStats(d.stats)
-    }).catch(() => {})
+    setLoading(true); setError(null);
+    Promise.all([
+      fetch("/api/guru/dashboard").then(r => r.ok ? r.json() : Promise.reject("Gagal memuat dashboard")),
+      fetch("/api/guru/nilai/stats").then(r => r.ok ? r.json() : null),
+    ])
+      .then(([dashboardData, nilaiData]) => {
+        if (dashboardData.totalKarya !== undefined) setStats(dashboardData)
+        if (nilaiData?.stats) setNilaiStats(nilaiData.stats)
+      })
+      .catch(() => setError("Gagal memuat data dashboard"))
+      .finally(() => setLoading(false));
   }, [])
 
   const greeting = () => {
@@ -67,64 +88,77 @@ export default function GuruBerandaPage() {
         </div>
       </div>
 
-      {/* Phase 9C — Trial/Plan status card */}
       <div className="mb-6">
         <TrialStatusCard />
       </div>
 
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        <div className="bg-gradient-to-br from-emerald-50 to-teal-50 rounded-2xl border border-emerald-100 p-5 hover:shadow-lg transition-all">
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center shadow-md">
-              <ShoppingBag size={22} className="text-white" />
-            </div>
-            <div>
-              <p className="text-2xl font-bold text-gray-900">{stats.totalKarya}</p>
-              <p className="text-sm text-gray-500">Total Karya</p>
-            </div>
-          </div>
-          <div className="mt-3 text-xs text-emerald-600 font-medium">+{stats.terjualBulanIni} terjual bulan ini</div>
+      {error ? (
+        <div className="bg-red-50 border border-red-200 rounded-2xl p-8 text-center mb-8">
+          <p className="text-red-600 font-medium">{error}</p>
+          <button onClick={() => window.location.reload()} className="mt-3 text-sm text-red-500 underline">Muat ulang</button>
         </div>
+      ) : loading ? (
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+          <StatCardSkeleton />
+          <StatCardSkeleton />
+          <StatCardSkeleton />
+          <StatCardSkeleton />
+        </div>
+      ) : (
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+          <div className="bg-gradient-to-br from-emerald-50 to-teal-50 rounded-2xl border border-emerald-100 p-5 hover:shadow-lg transition-all">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center shadow-md">
+                <ShoppingBag size={22} className="text-white" />
+              </div>
+              <div>
+                <p className="text-2xl font-bold text-gray-900">{stats.totalKarya}</p>
+                <p className="text-sm text-gray-500">Total Karya</p>
+              </div>
+            </div>
+            <div className="mt-3 text-xs text-emerald-600 font-medium">+{stats.terjualBulanIni} terjual bulan ini</div>
+          </div>
 
-        <div className="bg-gradient-to-br from-violet-50 to-purple-50 rounded-2xl border border-violet-100 p-5 hover:shadow-lg transition-all">
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-violet-400 to-purple-600 flex items-center justify-center shadow-md">
-              <Gamepad2 size={22} className="text-white" />
+          <div className="bg-gradient-to-br from-violet-50 to-purple-50 rounded-2xl border border-violet-100 p-5 hover:shadow-lg transition-all">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-violet-400 to-purple-600 flex items-center justify-center shadow-md">
+                <Gamepad2 size={22} className="text-white" />
+              </div>
+              <div>
+                <p className="text-2xl font-bold text-gray-900">{stats.totalKuis}</p>
+                <p className="text-sm text-gray-500">Kuis Aktif</p>
+              </div>
             </div>
-            <div>
-              <p className="text-2xl font-bold text-gray-900">{stats.totalKuis}</p>
-              <p className="text-sm text-gray-500">Kuis Aktif</p>
-            </div>
+            <div className="mt-3 text-xs text-violet-600 font-medium">Game multiplayer</div>
           </div>
-          <div className="mt-3 text-xs text-violet-600 font-medium">Game multiplayer</div>
-        </div>
 
-        <div className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-2xl border border-blue-100 p-5 hover:shadow-lg transition-all">
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-400 to-cyan-600 flex items-center justify-center shadow-md">
-              <Users size={22} className="text-white" />
+          <div className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-2xl border border-blue-100 p-5 hover:shadow-lg transition-all">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-400 to-cyan-600 flex items-center justify-center shadow-md">
+                <Users size={22} className="text-white" />
+              </div>
+              <div>
+                <p className="text-2xl font-bold text-gray-900">{stats.totalSiswa}</p>
+                <p className="text-sm text-gray-500">Total Siswa</p>
+              </div>
             </div>
-            <div>
-              <p className="text-2xl font-bold text-gray-900">{stats.totalSiswa}</p>
-              <p className="text-sm text-gray-500">Total Siswa</p>
-            </div>
+            <div className="mt-3 text-xs text-blue-600 font-medium">Terdaftar di kelas</div>
           </div>
-          <div className="mt-3 text-xs text-blue-600 font-medium">Terdaftar di kelas</div>
-        </div>
 
-        <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-2xl border border-amber-100 p-5 hover:shadow-lg transition-all">
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-400 to-orange-600 flex items-center justify-center shadow-md">
-              <TrendingUp size={22} className="text-white" />
+          <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-2xl border border-amber-100 p-5 hover:shadow-lg transition-all">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-400 to-orange-600 flex items-center justify-center shadow-md">
+                <TrendingUp size={22} className="text-white" />
+              </div>
+              <div>
+                <p className="text-2xl font-bold text-gray-900">{formatRp(stats.saldo)}</p>
+                <p className="text-sm text-gray-500">Saldo</p>
+              </div>
             </div>
-            <div>
-              <p className="text-2xl font-bold text-gray-900">{formatRp(stats.saldo)}</p>
-              <p className="text-sm text-gray-500">Saldo</p>
-            </div>
+            <div className="mt-3 text-xs text-amber-600 font-medium">Dari penjualan karya</div>
           </div>
-          <div className="mt-3 text-xs text-amber-600 font-medium">Dari penjualan karya</div>
         </div>
-      </div>
+      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
@@ -156,7 +190,7 @@ export default function GuruBerandaPage() {
           )}
         </div>
 
-        {nilaiStats.length > 0 && (
+        {!loading && nilaiStats.length > 0 && (
           <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm">
             <Link href="/guru/penilaian" className="flex items-center justify-between mb-4 group">
               <h3 className="font-semibold text-gray-900 group-hover:text-emerald-700 transition-colors flex items-center gap-2">
@@ -259,74 +293,78 @@ export default function GuruBerandaPage() {
         </div>
       </div>
 
-      <div className="mt-6 bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="font-semibold text-gray-900">Karya Ditayangkan</h3>
-          <Link href="/guru/toko-karya" className="text-xs text-emerald-600 font-semibold hover:underline flex items-center gap-1">
-            Lihat Semua <ChevronRight size={12} />
-          </Link>
-        </div>
-        {stats.karyaList && stats.karyaList.length > 0 ? (
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {stats.karyaList.map((karya: any) => (
-              <div key={karya.id} className="rounded-xl border border-gray-100 p-4 hover:shadow-md transition-shadow">
-                <div className="flex items-center gap-2 mb-2">
-                  <Badge variant="secondary" className="text-[10px]">{karya.type}</Badge>
-                  <Badge variant={karya.price > 0 ? "warning" : "success"} className="text-[10px]">
-                    {karya.price > 0 ? `Rp ${Number(karya.price).toLocaleString("id")}` : "Gratis"}
-                  </Badge>
-                </div>
-                <h4 className="font-semibold text-sm text-gray-900 truncate">{karya.title}</h4>
-                {karya.grade && <p className="text-[10px] text-gray-400 mt-1">Kelas {karya.grade}</p>}
-                <p className="text-[10px] text-gray-400 mt-1">{new Date(karya.createdAt).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" })}</p>
+      {!loading && (
+        <>
+          <div className="mt-6 bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="font-semibold text-gray-900">Karya Ditayangkan</h3>
+              <Link href="/guru/toko-karya" className="text-xs text-emerald-600 font-semibold hover:underline flex items-center gap-1">
+                Lihat Semua <ChevronRight size={12} />
+              </Link>
+            </div>
+            {stats.karyaList && stats.karyaList.length > 0 ? (
+              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                {stats.karyaList.map((karya: any) => (
+                  <div key={karya.id} className="rounded-xl border border-gray-100 p-4 hover:shadow-md transition-shadow">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Badge variant="secondary" className="text-[10px]">{karya.type}</Badge>
+                      <Badge variant={karya.price > 0 ? "warning" : "success"} className="text-[10px]">
+                        {karya.price > 0 ? `Rp ${Number(karya.price).toLocaleString("id")}` : "Gratis"}
+                      </Badge>
+                    </div>
+                    <h4 className="font-semibold text-sm text-gray-900 truncate">{karya.title}</h4>
+                    {karya.grade && <p className="text-[10px] text-gray-400 mt-1">Kelas {karya.grade}</p>}
+                    <p className="text-[10px] text-gray-400 mt-1">{new Date(karya.createdAt).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" })}</p>
+                  </div>
+                ))}
               </div>
-            ))}
+            ) : (
+              <div className="text-center py-8">
+                <FileText size={32} className="mx-auto text-gray-200 mb-2" />
+                <p className="text-sm text-gray-500">Belum ada karya ditayangkan</p>
+                <Link href="/guru/toko-karya" className="text-xs text-emerald-600 font-semibold hover:underline mt-1 inline-block">
+                  Upload karya pertamamu
+                </Link>
+              </div>
+            )}
           </div>
-        ) : (
-          <div className="text-center py-8">
-            <FileText size={32} className="mx-auto text-gray-200 mb-2" />
-            <p className="text-sm text-gray-500">Belum ada karya ditayangkan</p>
-            <Link href="/guru/toko-karya" className="text-xs text-emerald-600 font-semibold hover:underline mt-1 inline-block">
-              Upload karya pertamamu
-            </Link>
-          </div>
-        )}
-      </div>
 
-      <div className="mt-6 bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="font-semibold text-gray-900">Tips</h3>
-        </div>
-        <div className="space-y-3">
-          <div className="flex items-start gap-3 p-3 rounded-xl bg-gradient-to-r from-emerald-50 to-teal-50">
-            <div className="w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center flex-shrink-0">
-              <Star size={16} className="text-emerald-600" />
+          <div className="mt-6 bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="font-semibold text-gray-900">Tips</h3>
             </div>
-            <div>
-              <p className="text-sm font-medium text-gray-900">Gunakan AI untuk generate soal HOTS</p>
-              <p className="text-xs text-gray-500 mt-0.5">Agar pembelajaran lebih menarik dan tantangan.</p>
+            <div className="space-y-3">
+              <div className="flex items-start gap-3 p-3 rounded-xl bg-gradient-to-r from-emerald-50 to-teal-50">
+                <div className="w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center flex-shrink-0">
+                  <Star size={16} className="text-emerald-600" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-gray-900">Gunakan AI untuk generate soal HOTS</p>
+                  <p className="text-xs text-gray-500 mt-0.5">Agar pembelajaran lebih menarik dan tantangan.</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3 p-3 rounded-xl bg-gradient-to-r from-amber-50 to-orange-50">
+                <div className="w-8 h-8 rounded-lg bg-amber-100 flex items-center justify-center flex-shrink-0">
+                  <TrendingUp size={16} className="text-amber-600" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-gray-900">Publikasikan karya di Toko</p>
+                  <p className="text-xs text-gray-500 mt-0.5">Dapat income tambahan dari profesi pendidik.</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3 p-3 rounded-xl bg-gradient-to-r from-violet-50 to-purple-50">
+                <div className="w-8 h-8 rounded-lg bg-violet-100 flex items-center justify-center flex-shrink-0">
+                  <Gamepad2 size={16} className="text-violet-600" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-gray-900">Ajak siswa bermain kuis multiplayer</p>
+                  <p className="text-xs text-gray-500 mt-0.5">Agar belajar jadi lebih seru dan interaktif!</p>
+                </div>
+              </div>
             </div>
           </div>
-          <div className="flex items-start gap-3 p-3 rounded-xl bg-gradient-to-r from-amber-50 to-orange-50">
-            <div className="w-8 h-8 rounded-lg bg-amber-100 flex items-center justify-center flex-shrink-0">
-              <TrendingUp size={16} className="text-amber-600" />
-            </div>
-            <div>
-              <p className="text-sm font-medium text-gray-900">Publikasikan karya di Toko</p>
-              <p className="text-xs text-gray-500 mt-0.5">Dapat income tambahan dari profesi pendidik.</p>
-            </div>
-          </div>
-          <div className="flex items-start gap-3 p-3 rounded-xl bg-gradient-to-r from-violet-50 to-purple-50">
-            <div className="w-8 h-8 rounded-lg bg-violet-100 flex items-center justify-center flex-shrink-0">
-              <Gamepad2 size={16} className="text-violet-600" />
-            </div>
-            <div>
-              <p className="text-sm font-medium text-gray-900">Ajak siswa bermain kuis multiplayer</p>
-              <p className="text-xs text-gray-500 mt-0.5">Agar belajar jadi lebih seru dan interaktif!</p>
-            </div>
-          </div>
-        </div>
-      </div>
+        </>
+      )}
     </div>
   )
 }

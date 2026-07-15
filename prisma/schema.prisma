@@ -406,6 +406,7 @@ model ProgresKompetensi {
   @@unique([userId, paketId, attemptNumber])
   @@index([userId])
   @@index([paketId])
+  @@index([userId, status])
 }
 
 model KompetensiCertificate {
@@ -447,6 +448,8 @@ model TestSession {
   @@unique([userId, paketId])
   @@index([userId])
   @@index([paketId])
+  @@index([userId, status])
+  @@index([paketId, status])
 }
 
 model TestAnswer {
@@ -779,6 +782,7 @@ model StudentKarya {
   @@index([createdAt])
   @@index([likesCount])
   @@index([userId])
+  @@index([type, createdAt])
 }
 
 model StudentKaryaLike {
@@ -806,6 +810,7 @@ model StudentKaryaComment {
   user  User         @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([karyaId])
+  @@index([karyaId, createdAt])
 }
 
 enum StudentKaryaType {
@@ -1745,6 +1750,7 @@ model PenugasanSubmission {
 
   @@unique([penugasanId, userId])
   @@index([userId])
+  @@index([status])
 }
 
 enum SubscriptionPlan {

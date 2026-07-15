@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState, useEffect, useRef, useCallback } from "react";
-import { IconBolt, IconFlame, IconCoin, IconTarget, IconSchool, IconLocation, IconCheck, IconPen, IconChat, IconHeart, IconEye, IconClock } from "@/lib/icons";
+import { IconBolt, IconFlame, IconCoin, IconTarget, IconPen, IconChat, IconHeart, IconEye, IconClock } from "@/lib/icons";
 import ChatPanel from "@/components/chat/ChatPanel";
 
 type KaryaType = "PUISI" | "CERPEN" | "ARTIKEL" | "ANEKDOT" | "PANTUN" | "OPINI";
@@ -31,38 +31,74 @@ export default function HomeFeedPage() {
   const [cursor, setCursor] = useState<string | null>(null);
   const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(true);
+  const [loadingUser, setLoadingUser] = useState(true);
+  const [loadingFeatured, setLoadingFeatured] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [activeType, setActiveType] = useState<string>("");
+  const [userError, setUserError] = useState<string | null>(null);
+  const [featuredError, setFeaturedError] = useState<string | null>(null);
+  const [feedError, setFeedError] = useState<string | null>(null);
+  const [showLeague, setShowLeague] = useState(false);
   const loaderRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    fetch("/api/user/me").then(r => r.ok ? r.json() : null).then(d => setUser(d?.user || null)).catch(() => {});
-    fetch("/api/siswa/karya?featured=true&limit=5").then(r => r.ok ? r.json() : null).then(d => setFeatured(d?.karya || [])).catch(() => {});
     const hb = setInterval(() => { fetch("/api/user/heartbeat", { method: "POST" }).catch(() => {}); }, 60000);
-    fetch("/api/user/heartbeat", { method: "POST" }).catch(() => {});
-    return () => clearInterval(hb);
+    const hbTimeout = setTimeout(() => { fetch("/api/user/heartbeat", { method: "POST" }).catch(() => {}); }, 5000);
+    return () => { clearInterval(hb); clearTimeout(hbTimeout); };
+  }, []);
+
+  useEffect(() => {
+    setLoadingUser(true);
+    setLoadingFeatured(true);
+    setUserError(null);
+    setFeaturedError(null);
+
+    Promise.all([
+      fetch("/api/user/me").then(r => r.ok ? r.json() : Promise.reject("Gagal memuat profil")),
+      fetch("/api/siswa/karya?featured=true&limit=5").then(r => r.ok ? r.json() : Promise.reject("Gagal memuat karya pilihan")),
+    ])
+      .then(([userData, featuredData]) => {
+        setUser(userData?.user || null);
+        setFeatured(featuredData?.karya || []);
+      })
+      .catch(err => {
+        if (typeof err === "string") {
+          if (err.includes("profil")) setUserError(err);
+          else setFeaturedError(err);
+        } else {
+          setUserError("Gagal memuat data pengguna");
+          setFeaturedError("Gagal memuat karya pilihan");
+        }
+      })
+      .finally(() => { setLoadingUser(false); setLoadingFeatured(false); });
+  }, []);
+
+  useEffect(() => {
+    const id = requestAnimationFrame(() => setShowLeague(true));
+    return () => cancelAnimationFrame(id);
   }, []);
 
   const fetchKarya = useCallback(async (cursor: string | null, type: string, append: boolean) => {
     try {
+      setFeedError(null);
       const params = new URLSearchParams({ limit: "10" });
       if (type) params.set("type", type);
       if (cursor) params.set("cursor", cursor);
       const res = await fetch(`/api/siswa/karya?${params}`);
-      const data = res.ok ? await res.json() : null;
+      if (!res.ok) throw new Error("Gagal memuat karya");
+      const data = await res.json();
       const items = Array.isArray(data?.karya) ? data.karya : [];
       setKaryaList(prev => append ? [...prev, ...items] : items);
       setHasMore(!!data?.nextCursor);
       setCursor(data?.nextCursor ?? null);
     } catch {
-      // Jangan gantungkan loading kalau fetch gagal — tampilkan empty state.
-      if (!append) setKaryaList([]);
+      if (!append) { setKaryaList([]); setFeedError("Gagal memuat karya. Coba lagi."); }
       setHasMore(false);
     }
   }, []);
 
   useEffect(() => {
-    setLoading(true); setKaryaList([]); setCursor(null); setHasMore(true);
+    setLoading(true); setKaryaList([]); setCursor(null); setHasMore(true); setFeedError(null);
     fetchKarya(null, activeType, false).finally(() => setLoading(false));
   }, [activeType, fetchKarya]);
 
@@ -85,7 +121,27 @@ export default function HomeFeedPage() {
       {/* ═══ CENTER FEED ═══ */}
       <div className="min-w-0 max-w-2xl w-full">
         {/* ── Header ── */}
-        {user && (
+        {loadingUser ? (
+          <div className="bg-gradient-to-br from-violet-600 via-purple-600 to-indigo-700 rounded-2xl p-5 text-white mb-5 animate-pulse">
+            <div className="flex items-center gap-3">
+              <div className="w-11 h-11 rounded-full bg-white/20" />
+              <div className="space-y-2 flex-1">
+                <div className="h-4 bg-white/20 rounded w-32" />
+                <div className="h-3 bg-white/20 rounded w-24" />
+              </div>
+            </div>
+            <div className="flex gap-2 mt-3">
+              <div className="h-5 bg-white/20 rounded-full w-16" />
+              <div className="h-5 bg-white/20 rounded-full w-16" />
+              <div className="h-5 bg-white/20 rounded-full w-16" />
+            </div>
+          </div>
+        ) : userError ? (
+          <div className="bg-red-50 border border-red-200 rounded-2xl p-5 mb-5 text-center">
+            <p className="text-sm text-red-600 font-medium">{userError}</p>
+            <button onClick={() => window.location.reload()} className="mt-2 text-xs text-red-500 underline">Muat ulang</button>
+          </div>
+        ) : user && (
           <div className="bg-gradient-to-br from-violet-600 via-purple-600 to-indigo-700 rounded-2xl p-5 text-white mb-5">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
@@ -126,8 +182,8 @@ export default function HomeFeedPage() {
           </div>
         </Link>
 
-        {/* ── League ── */}
-        <LeagueWidget />
+        {/* ── League (lazy loaded) ── */}
+        {showLeague && <LeagueWidget />}
 
         {/* ── Quick links ── */}
         <div className="flex gap-2 mb-5">
@@ -146,7 +202,25 @@ export default function HomeFeedPage() {
         </div>
 
         {/* ── Karya Pilihan ── */}
-        {featured.length > 0 && (
+        {loadingFeatured ? (
+          <div className="mb-6">
+            <h2 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Karya Pilihan</h2>
+            <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
+              {[1, 2, 3].map(i => (
+                <div key={i} className="shrink-0 w-56 bg-gray-100 rounded-xl p-4 animate-pulse">
+                  <div className="h-4 bg-gray-200 rounded w-16 mb-3" />
+                  <div className="h-4 bg-gray-200 rounded w-40 mb-2" />
+                  <div className="h-3 bg-gray-200 rounded w-48 mb-2" />
+                  <div className="h-3 bg-gray-200 rounded w-24" />
+                </div>
+              ))}
+            </div>
+          </div>
+        ) : featuredError ? (
+          <div className="mb-6 text-center py-4">
+            <p className="text-xs text-gray-400">{featuredError}</p>
+          </div>
+        ) : featured.length > 0 && (
           <div className="mb-6">
             <h2 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Karya Pilihan</h2>
             <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide -mx-1 px-1">
@@ -184,6 +258,14 @@ export default function HomeFeedPage() {
         {loading ? (
           <div className="flex justify-center py-20">
             <div className="animate-spin w-7 h-7 border-[3px] border-violet-500 border-t-transparent rounded-full" />
+          </div>
+        ) : feedError ? (
+          <div className="text-center py-20 bg-white rounded-2xl border border-gray-100">
+            <div className="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-4">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-red-500"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            </div>
+            <p className="text-gray-500 font-medium">{feedError}</p>
+            <button onClick={() => { setActiveType(prev => prev); }} className="mt-4 px-5 py-2.5 bg-violet-600 text-white rounded-xl text-sm font-semibold hover:bg-violet-700 transition-colors">Coba Lagi</button>
           </div>
         ) : karyaList.length === 0 ? (
           <div className="text-center py-20 bg-white rounded-2xl border border-gray-100">
@@ -247,8 +329,36 @@ export default function HomeFeedPage() {
 
 function LeagueWidget() {
   const [league, setLeague] = useState<any>(null);
-  useEffect(() => { fetch("/api/siswa/league").then(r => r.ok ? r.json() : null).then(d => setLeague(d)).catch(() => {}); }, []);
-  if (!league) return null;
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    setLoading(true); setError(null);
+    fetch("/api/siswa/league")
+      .then(r => r.ok ? r.json() : Promise.reject("Gagal memuat liga"))
+      .then(d => setLeague(d))
+      .catch(() => setError("Gagal memuat liga"))
+      .finally(() => setLoading(false));
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="rounded-xl border border-gray-100 px-4 py-3 mb-4 animate-pulse bg-gray-50">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-6 h-6 rounded-full bg-gray-200" />
+            <div className="space-y-1.5">
+              <div className="h-3 bg-gray-200 rounded w-20" />
+              <div className="h-4 bg-gray-200 rounded w-28" />
+            </div>
+          </div>
+          <div className="h-3 bg-gray-200 rounded w-24" />
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !league) return null;
 
   const tierColors: Record<string, string> = {
     BRONZE: "border-orange-200 bg-orange-50",

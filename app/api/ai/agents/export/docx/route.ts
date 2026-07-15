@@ -3,9 +3,6 @@ import { getUser } from "@/lib/supabase/server";
 import { db as prisma } from "@/lib/db";
 import { logExportEvent } from "@/src/ai/core/usage-logger";
 import { z } from "zod";
-import { generateRPPDocx, getRPPMetadata } from "@/src/ai/export/docx/rpp-docx";
-import { generateFallbackDocx, getFallbackDocxMetadata } from "@/src/ai/export/docx/fallback-docx";
-import { generateSoalDocx, getSoalMetadata } from "@/src/ai/export/docx/soal-docx";
 import { checkExportQuota, ensureMonthlyLedger } from "@/lib/ai-gateway/quota-checker";
 
 export const runtime = "nodejs";
@@ -53,6 +50,17 @@ export async function POST(req: NextRequest) {
     }
 
     const { agentId, savedResultId, title, outputJson, editableText } = parsed.data;
+
+    // Dynamic imports to avoid loading docx/pdfkit/pptxgenjs at module level
+    const [
+      { generateRPPDocx, getRPPMetadata },
+      { generateFallbackDocx },
+      { generateSoalDocx, getSoalMetadata },
+    ] = await Promise.all([
+      import("@/src/ai/export/docx/rpp-docx"),
+      import("@/src/ai/export/docx/fallback-docx"),
+      import("@/src/ai/export/docx/soal-docx"),
+    ]);
 
     let output: Record<string, unknown>;
     let docTitle: string;

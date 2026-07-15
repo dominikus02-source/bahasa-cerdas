@@ -166,8 +166,9 @@ export async function GET(
     );
 
     if (!session) {
+      const duration = paket.duration || 30;
       const expiresAt = new Date();
-      expiresAt.setMinutes(expiresAt.getMinutes() + paket.duration);
+      expiresAt.setMinutes(expiresAt.getMinutes() + duration);
 
       session = await withQueryTimeout(
         db.testSession.create({
@@ -378,6 +379,54 @@ export async function GET(
     });
   } catch (error: any) {
     console.error("GET /api/kompetensi/[paketId] error:", error);
+    return NextResponse.json({ error: "Internal error", message: error?.message }, { status: 500 });
+  }
+}
+
+export async function PATCH(
+  req: NextRequest,
+  { params }: { params: Promise<{ paketId: string }> }
+) {
+  try {
+    const { paketId } = await params;
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const dbUser = await db.user.findUnique({ where: { supabaseId: user.id } });
+    if (!dbUser) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
+
+    const body = await req.json();
+    const { answers, flagged } = body;
+
+    const session = await db.testSession.findUnique({
+      where: { userId_paketId: { userId: dbUser.id, paketId } },
+    });
+
+    if (!session) {
+      return NextResponse.json({ error: "Session not found" }, { status: 404 });
+    }
+
+    if (session.status === "COMPLETED") {
+      return NextResponse.json({ error: "Tes sudah selesai" }, { status: 400 });
+    }
+
+    await db.testSession.update({
+      where: { id: session.id },
+      data: {
+        ...(answers !== undefined ? { answers } : {}),
+        ...(flagged !== undefined ? { flagged } : {}),
+      },
+    });
+
+    return NextResponse.json({ success: true });
+  } catch (error: any) {
+    console.error("PATCH /api/kompetensi/[paketId] error:", error);
     return NextResponse.json({ error: "Internal error", message: error?.message }, { status: 500 });
   }
 }

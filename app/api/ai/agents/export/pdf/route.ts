@@ -3,9 +3,6 @@ import { getUser } from "@/lib/supabase/server";
 import { db as prisma } from "@/lib/db";
 import { logExportEvent } from "@/src/ai/core/usage-logger";
 import { z } from "zod";
-import { generateRPppdf, getRPPMetadata } from "@/src/ai/export/pdf/rpp-pdf";
-import { generateSoalPdf, getSoalMetadata } from "@/src/ai/export/pdf/soal-pdf";
-import { generateFallbackPdf } from "@/src/ai/export/pdf/fallback-pdf";
 import { checkExportQuota, deductCreditsAtomic, ensureMonthlyLedger } from "@/lib/ai-gateway/quota-checker";
 import { resolveUserAiPlan } from "@/lib/ai-gateway/plan-resolver";
 
@@ -72,6 +69,17 @@ export async function POST(req: NextRequest) {
     }
 
     const { savedResultId, title, outputJson, editableText } = parsed.data;
+
+    // Dynamic imports to avoid loading pdfkit at module level
+    const [
+      { generateRPppdf, getRPPMetadata },
+      { generateSoalPdf, getSoalMetadata },
+      { generateFallbackPdf },
+    ] = await Promise.all([
+      import("@/src/ai/export/pdf/rpp-pdf"),
+      import("@/src/ai/export/pdf/soal-pdf"),
+      import("@/src/ai/export/pdf/fallback-pdf"),
+    ]);
 
     let output: Record<string, unknown>;
     let docTitle: string;

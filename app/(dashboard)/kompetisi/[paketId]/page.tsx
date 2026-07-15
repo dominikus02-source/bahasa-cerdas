@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef, use } from "react";
+import { useState, useEffect, useCallback, useRef, use, Component } from "react";
 import { useRouter } from "next/navigation";
 import { ChevronLeft, ChevronRight, Flag, XCircle } from "lucide-react";
 import TestShell from "@/components/kompetensi/TestShell";
@@ -55,6 +55,7 @@ export default function KompetisiPage({ params }: { params: Promise<{ paketId: s
   const expiresAtRef = useRef<number | null>(null);
   const timerStartedRef = useRef(false);
   const submittedRef = useRef(false);
+  const lastSavedJsonRef = useRef("{}");
 
   const fetchTest = useCallback(async () => {
     setLoading(true);
@@ -148,6 +149,25 @@ export default function KompetisiPage({ params }: { params: Promise<{ paketId: s
       setShowConfirm(true);
     }
   }, [timeUp]);
+
+  // Autosave: save answers to server every 30s and on section change
+  useEffect(() => {
+    if (submittedRef.current) return;
+    const save = async () => {
+      const currentJson = JSON.stringify(answers);
+      if (currentJson === lastSavedJsonRef.current) return;
+      try {
+        const res = await fetch(`/api/kompetensi/${resolvedParams.paketId}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ answers }),
+        });
+        if (res.ok) lastSavedJsonRef.current = currentJson;
+      } catch { /* silent */ }
+    };
+    const timer = setTimeout(save, 30000);
+    return () => clearTimeout(timer);
+  }, [answers, resolvedParams.paketId]);
 
   const sections = data?.questions || [];
   const currentSectionData = sections[currentSection];
@@ -303,6 +323,7 @@ export default function KompetisiPage({ params }: { params: Promise<{ paketId: s
   }
 
   return (
+    <ErrorBoundary>
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100/50">
       <TestHeader
         title={data?.paket?.title || "Latihan"}
@@ -480,5 +501,40 @@ export default function KompetisiPage({ params }: { params: Promise<{ paketId: s
         timeUp={timeUp}
       />
     </div>
+    </ErrorBoundary>
   );
+}
+
+class ErrorBoundary extends Component<{ children: any }, { hasError: boolean; error: string }> {
+  constructor(props: { children: any }) {
+    super(props);
+    this.state = { hasError: false, error: "" };
+  }
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+  componentDidCatch(error: Error) {
+    this.setState({ error: error.message || "Terjadi kesalahan" });
+  }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <div className="text-center bg-white rounded-2xl p-8 shadow-sm max-w-md border border-slate-200">
+            <h2 className="font-bold text-lg mb-2 text-slate-800">
+              {this.state.error || "Terjadi kesalahan"}
+            </h2>
+            <p className="text-sm text-slate-500 mb-4">Coba muat ulang halaman.</p>
+            <button
+              onClick={() => window.location.reload()}
+              className="px-6 py-2.5 bg-emerald-600 text-white rounded-xl font-bold hover:bg-emerald-700 transition-colors"
+            >
+              Muat Ulang
+            </button>
+          </div>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
 }
