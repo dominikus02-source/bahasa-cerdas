@@ -73,6 +73,15 @@ export default function () {
   const headers = buildHeaders(cookie);
   const startTime = Date.now();
 
+  // ── Warmup: auto-create Prisma User record ──
+  const warmupRes = http.get(`${BASE_URL}/api/user/me`, { headers });
+  if (warmupRes.status !== 200) {
+    console.error(`VU ${__VU}: warmup failed (HTTP ${warmupRes.status})`);
+    errorRate.add(true);
+    return;
+  }
+  sleep(1);
+
   // ── Fetch Questions ──
   let questions = [];
 

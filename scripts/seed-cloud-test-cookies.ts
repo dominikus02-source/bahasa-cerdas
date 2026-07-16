@@ -131,26 +131,24 @@ async function main() {
     }
 
     try {
-      // Step 1: Ensure user exists via Admin API (create if not exists)
-      const { data: existingUser, error: lookupError } = await supabaseAdmin.auth.admin.getUserByEmail(email);
-      
-      if (lookupError || !existingUser?.user) {
-        // Create user
-        const { data: newUser, error: createError } = await supabaseAdmin.auth.admin.createUser({
-          email,
-          password: PASSWORD,
-          email_confirm: true,
-          user_metadata: { role: "MURID", source: "loadtest" },
-        });
+      // Step 1: Create user or skip if already exists
+      let userCreated = false;
+      const { error: createError } = await supabaseAdmin.auth.admin.createUser({
+        email,
+        password: PASSWORD,
+        email_confirm: true,
+        user_metadata: { role: "MURID", source: "loadtest" },
+      });
 
-        if (createError) {
-          console.error(`  ✗ ${email}: create failed - ${createError.message}`);
-          failed++;
-          continue;
-        }
+      if (!createError) {
         console.log(`  ✓ ${email}: created`);
-      } else {
+        userCreated = true;
+      } else if (createError.message?.includes("already exists") || createError.status === 409) {
         console.log(`  ✓ ${email}: already exists`);
+      } else {
+        console.error(`  ✗ ${email}: create failed - ${createError.message}`);
+        failed++;
+        continue;
       }
 
       // Step 2: Sign in to get session
