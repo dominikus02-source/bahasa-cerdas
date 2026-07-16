@@ -30,9 +30,13 @@ const INITIALS_COLORS = [
 export default async function BerandaPage() {
   const user = await getUser()
   if (!user) redirect("/auth/arena-login")
-  if (user.role !== "MURID" && !user.isFounder) redirect("/guru/beranda")
 
-  await trackDailyStreak(user.id)
+  // Guru boleh mengintip dasbor murid (mode pratinjau) tanpa berubah peran.
+  // Founder tetap mendapat pengalaman murid penuh seperti sebelumnya.
+  const isGuruPreview = user.role !== "MURID" && !user.isFounder
+
+  // Jangan tulis streak/koin untuk pratinjau guru — akun guru tak boleh terubah.
+  if (!isGuruPreview) await trackDailyStreak(user.id)
   const quests = await getOrCreateDailyQuests(user.id)
   const doneQuest = quests.filter((q: any) => q.completed).length
   const totalQuest = quests.length
@@ -171,6 +175,17 @@ export default async function BerandaPage() {
 
   return (
     <div className="beranda arena-page">
+      {isGuruPreview && (
+        <div className="mx-4 mt-3 mb-1 flex items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-2">
+          <GraduationCap size={16} className="text-emerald-600 shrink-0" />
+          <p className="flex-1 text-[12px] font-medium text-emerald-800">
+            Mode Pratinjau Guru — kamu melihat tampilan murid. Peranmu tetap Guru.
+          </p>
+          <Link href="/guru/beranda" className="text-[12px] font-bold text-emerald-700 whitespace-nowrap hover:underline">
+            Kembali
+          </Link>
+        </div>
+      )}
       {/* HERO */}
       <div className="hero-section">
         <div className="relative z-10">

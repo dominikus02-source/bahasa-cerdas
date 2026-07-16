@@ -85,6 +85,9 @@ export default function GuruBerandaPage() {
           <Link href="/guru/toko-karya" className="flex items-center gap-1.5 px-4 py-2.5 bg-white border-2 border-gray-200 text-gray-700 rounded-xl text-sm font-semibold hover:bg-gray-50 transition-all">
             <ShoppingBag size={16} /> Upload Karya
           </Link>
+          <Link href="/arena" className="flex items-center gap-1.5 px-4 py-2.5 bg-white border-2 border-violet-200 text-violet-700 rounded-xl text-sm font-semibold hover:bg-violet-50 transition-all">
+            <Users size={16} /> Dasbor Murid
+          </Link>
         </div>
       </div>
 
