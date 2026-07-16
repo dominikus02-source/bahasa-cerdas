@@ -61,5 +61,6 @@ secrets.txt
 *.tmp
 generate-iv.ts
 
-# Load test auth tokens (contains JWT tokens)
+# Load test auth tokens (contains JWT tokens — never commit)
 tests/load/auth-tokens.json
+tests/load/.tokens.*.json
