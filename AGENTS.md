@@ -116,8 +116,8 @@ Transform BahasaCerdas into a social-creative platform for Bahasa Indonesia wher
 - GET /api/user/me now auto-creates User record if missing (fix deployed)
 
 ## Build Config
-- next.config.ts: typescript.ignoreBuildErrors: true, eslint.ignoreDuringBuilds: true
-- Build command: prisma generate && next build
+- `next.config.ts`: `typescript.ignoreBuildErrors: false` (build fails on real TS errors)
+- Build command: `prisma generate && next build`
 - Uses npm (NOT pnpm — pnpm workspace caused build failures)
 
 ## Completed Features

@@ -18,6 +18,7 @@ const BASE_URL = __ENV.BASE_URL || "https://bahasacerdas.com";
 const EMAIL = __ENV.EMAIL || "";
 const PASSWORD = __ENV.PASSWORD || "";
 const PAKET_ID = __ENV.PAKET_ID || "";
+const BEARER_TOKEN = __ENV.TOKEN || "";
 
 const errorRate = new Rate("errors");
 const loginDuration = new Trend("login_duration");
@@ -56,7 +57,8 @@ function doLogin() {
     "login has session": (r) => {
       try {
         const body = JSON.parse(r.body);
-        return !!(body.session && body.session.access_token);
+        const d = body.data || body;
+        return !!(d.session && d.session.access_token);
       } catch {
         return false;
       }
@@ -78,8 +80,9 @@ function doLogin() {
   let cookie = "";
   let token = "";
 
-  if (loginRes.headers["Set-Cookie"]) {
-    const match = loginRes.headers["Set-Cookie"].match(
+  const cookieHeader = loginRes.headers["Set-Cookie"] || loginRes.headers["set-cookie"] || "";
+  if (cookieHeader) {
+    const match = cookieHeader.match(
       /(sb-[a-z0-9]+-auth-token[^;]*)/i
     );
     if (match) cookie = match[1];
@@ -88,8 +91,9 @@ function doLogin() {
   if (!cookie) {
     try {
       const body = JSON.parse(loginRes.body);
-      if (body.session && body.session.access_token) {
-        token = body.session.access_token;
+      const d = body.data || body;
+      if (d.session && d.session.access_token) {
+        token = d.session.access_token;
       }
     } catch { /* ignore */ }
   }
@@ -111,14 +115,18 @@ function buildAuthHeaders() {
 export default function () {
   // ── Login (once per VU) ──
   if (!vuAuthCookie && !vuAuthToken) {
-    group("Login", function () {
-      const result = doLogin();
-      vuAuthCookie = result.cookie;
-      vuAuthToken = result.token;
-    });
+    if (BEARER_TOKEN) {
+      vuAuthToken = BEARER_TOKEN;
+    } else {
+      group("Login", function () {
+        const result = doLogin();
+        vuAuthCookie = result.cookie;
+        vuAuthToken = result.token;
+      });
 
-    if (!vuAuthCookie && !vuAuthToken) return;
-    sleep(2);
+      if (!vuAuthCookie && !vuAuthToken) return;
+      sleep(2);
+    }
   }
 
   const authHeaders = buildAuthHeaders();
@@ -198,16 +206,19 @@ function fullSimulation(headers) {
   let questions = [];
 
   group("Fetch Questions", function () {
-    const res = http.get(`${BASE_URL}/api/kompetensi/${vuPaketId}`, {
-      headers,
-    });
+    let res = http.get(`${BASE_URL}/api/kompetensi/${vuPaketId}`, { headers });
+
+    if (res.status === 400) {
+      res = http.get(`${BASE_URL}/api/kompetensi/${vuPaketId}?retry=1`, { headers });
+    }
 
     const ok = check(res, {
       "fetch questions status 200": (r) => r.status === 200,
       "questions available": (r) => {
         try {
-          const data = JSON.parse(r.body);
-          return data.questions && data.questions.length > 0;
+          const body = JSON.parse(r.body);
+          const d = body.data || body;
+          return d.questions && d.questions.length > 0;
         } catch {
           return false;
         }
@@ -218,8 +229,9 @@ function fullSimulation(headers) {
 
     if (ok) {
       try {
-        const data = JSON.parse(r.body);
-        for (const section of data.questions) {
+        const body = JSON.parse(r.body);
+        const d = body.data || body;
+        for (const section of d.questions) {
           if (section.questions) {
             for (const q of section.questions) {
               questions.push(q);
@@ -270,6 +282,22 @@ function fullSimulation(headers) {
           return false;
         }
       },
+      "submit accepted": (r) => {
+        try {
+          const body = JSON.parse(r.body);
+          const d = body.data || body;
+          const res = d.result || d;
+          // Fresh: has benar/salah. AlreadyScored: has totalScore or d.alreadyScored=true
+          return (
+            (typeof res.benar === "number" && typeof res.salah === "number") ||
+            typeof res.totalScore === "number" ||
+            d.alreadyScored === true ||
+            res.alreadyScored === true
+          );
+        } catch {
+          return false;
+        }
+      },
     });
     errorRate.add(!ok);
     submitDuration.add(submitRes.timings.duration);
@@ -289,7 +317,9 @@ function fullSimulation(headers) {
       "result has percentage": (r) => {
         try {
           const body = JSON.parse(r.body);
-          return body.result && body.result.percentage !== undefined;
+          const d = body.data || body;
+          const result = d.result || d;
+          return result.percentage !== undefined;
         } catch {
           return false;
         }

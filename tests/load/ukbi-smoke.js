@@ -40,17 +40,18 @@ function doLogin() {
     { headers: { "Content-Type": "application/json" } }
   );
 
-  const ok = check(loginRes, {
-    "login status 200": (r) => r.status === 200,
-    "login has session": (r) => {
-      try {
-        const body = JSON.parse(r.body);
-        return !!(body.session && body.session.access_token);
-      } catch {
-        return false;
-      }
-    },
-  });
+    const ok = check(loginRes, {
+      "login status 200": (r) => r.status === 200,
+      "login has session": (r) => {
+        try {
+          const body = JSON.parse(r.body);
+          const d = body.data || body;
+          return !!(d.session && d.session.access_token);
+        } catch {
+          return false;
+        }
+      },
+    });
   errorRate.add(!ok);
   loginDuration.add(loginRes.timings.duration);
 
@@ -67,8 +68,9 @@ function doLogin() {
   let authCookie = "";
   let authToken = "";
 
-  if (loginRes.headers["Set-Cookie"]) {
-    const match = loginRes.headers["Set-Cookie"].match(
+  const cookieHeader = loginRes.headers["Set-Cookie"] || loginRes.headers["set-cookie"] || "";
+  if (cookieHeader) {
+    const match = cookieHeader.match(
       /(sb-[a-z0-9]+-auth-token[^;]*)/i
     );
     if (match) authCookie = match[1];
@@ -77,8 +79,9 @@ function doLogin() {
   if (!authCookie) {
     try {
       const body = JSON.parse(loginRes.body);
-      if (body.session && body.session.access_token) {
-        authToken = body.session.access_token;
+      const d = body.data || body;
+      if (d.session && d.session.access_token) {
+        authToken = d.session.access_token;
       }
     } catch { /* ignore */ }
   }
@@ -166,24 +169,29 @@ export default function () {
   let questions = [];
 
   group("Fetch Questions", function () {
-    const res = http.get(`${BASE_URL}/api/kompetensi/${paketId}`, {
-      headers,
-    });
+    // Use retry=1 if session was already completed (e.g., re-testing same paket)
+    let res = http.get(`${BASE_URL}/api/kompetensi/${paketId}`, { headers });
+
+    if (res.status === 400) {
+      res = http.get(`${BASE_URL}/api/kompetensi/${paketId}?retry=1`, { headers });
+    }
 
     const ok = check(res, {
       "fetch questions status 200": (r) => r.status === 200,
       "response has session": (r) => {
         try {
-          const data = JSON.parse(r.body);
-          return data.session && data.session.id;
+          const body = JSON.parse(r.body);
+          const d = body.data || body;
+          return d.session && d.session.id;
         } catch {
           return false;
         }
       },
       "response has questions": (r) => {
         try {
-          const data = JSON.parse(r.body);
-          return data.questions && data.questions.length > 0;
+          const body = JSON.parse(r.body);
+          const d = body.data || body;
+          return d.questions && d.questions.length > 0;
         } catch {
           return false;
         }
@@ -194,10 +202,11 @@ export default function () {
 
     if (ok) {
       try {
-        const data = JSON.parse(res.body);
-        sessionData = data.session;
+        const body = JSON.parse(res.body);
+        const d = body.data || body;
+        sessionData = d.session;
         // Collect all questions across sections
-        for (const section of data.questions) {
+        for (const section of (d.questions || [])) {
           if (section.questions && section.questions.length > 0) {
             for (const q of section.questions) {
               questions.push(q);
@@ -267,11 +276,12 @@ export default function () {
       "submit has result": (r) => {
         try {
           const body = JSON.parse(r.body);
+          const d = body.data || body;
+          const res = d.result || d;
+          // Normal result has benar/salah/total; alreadyScored has totalScore/percentage
           return (
-            body.result &&
-            typeof body.result.benar === "number" &&
-            typeof body.result.salah === "number" &&
-            typeof body.result.total === "number"
+            (typeof res.benar === "number" && typeof res.salah === "number" && typeof res.total === "number") ||
+            (typeof res.totalScore === "number" && typeof res.percentage === "number")
           );
         } catch {
           return false;
@@ -296,7 +306,9 @@ export default function () {
       "result has data": (r) => {
         try {
           const body = JSON.parse(r.body);
-          return body.result && body.result.percentage !== undefined;
+          const d = body.data || body;
+          const result = d.result || d;
+          return result.percentage !== undefined;
         } catch {
           return false;
         }

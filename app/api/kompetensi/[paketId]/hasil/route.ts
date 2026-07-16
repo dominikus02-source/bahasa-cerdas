@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
+import { ok, err } from "@/lib/api/response";
+import { ERR } from "@/lib/api/errors";
 
 export async function GET(
   req: NextRequest,
@@ -12,12 +14,12 @@ export async function GET(
     const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return err(ERR.UNAUTHORIZED.error, ERR.UNAUTHORIZED.code, ERR.UNAUTHORIZED.status);
     }
 
     const dbUser = await db.user.findUnique({ where: { supabaseId: user.id } });
     if (!dbUser) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
+      return err(ERR.NOT_FOUND.error, ERR.NOT_FOUND.code, ERR.NOT_FOUND.status);
     }
 
     const latestResult = await db.progresKompetensi.findFirst({
@@ -26,7 +28,7 @@ export async function GET(
     });
 
     if (!latestResult) {
-      return NextResponse.json({ result: null, error: "Belum ada hasil tes" });
+      return err("Hasil tidak ditemukan", "NOT_FOUND", 404);
     }
 
     const paket = await db.paketKompetensi.findUnique({
@@ -38,7 +40,7 @@ export async function GET(
       where: { progresId: latestResult.id },
     });
 
-    return NextResponse.json({
+    return ok({
       result: {
         id: latestResult.id,
         paketId: latestResult.paketId,
@@ -66,6 +68,6 @@ export async function GET(
     });
   } catch (error) {
     console.error("GET /api/kompetensi/[paketId]/hasil error:", error);
-    return NextResponse.json({ error: "Internal error", details: error instanceof Error ? error.message : "Unknown" }, { status: 500 });
+    return err(ERR.INTERNAL.error, ERR.INTERNAL.code, ERR.INTERNAL.status);
   }
 }

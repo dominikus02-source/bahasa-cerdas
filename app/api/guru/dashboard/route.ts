@@ -1,11 +1,13 @@
 import { NextResponse } from "next/server";
 import { getUser } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
+import { ok, err } from "@/lib/api/response";
+import { ERR } from "@/lib/api/errors";
 
 export async function GET() {
   try {
     const user = await getUser();
-    if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    if (!user) return err(ERR.UNAUTHORIZED.error, ERR.UNAUTHORIZED.code, ERR.UNAUTHORIZED.status);
 
     const [karyaCount, siswaCount, kuisCount, purchases, earnings, rppCount, soalCount] = await Promise.all([
       db.karya.count({ where: { sellerId: user.id } }),
@@ -42,7 +44,7 @@ export async function GET() {
       select: { id: true, title: true, type: true, price: true, grade: true, createdAt: true, images: true },
     });
 
-    return NextResponse.json({
+    const payload = {
       totalKarya: karyaCount,
       totalSiswa: siswaCount,
       totalKuis: kuisCount,
@@ -54,6 +56,7 @@ export async function GET() {
       rppCount,
       soalCount,
       karyaList,
-    });
-  } catch { return NextResponse.json({ error: "Internal error" }, { status: 500 }); }
+    };
+    return NextResponse.json({ success: true, data: payload, ...payload });
+  } catch { return err(ERR.INTERNAL.error, ERR.INTERNAL.code, ERR.INTERNAL.status); }
 }

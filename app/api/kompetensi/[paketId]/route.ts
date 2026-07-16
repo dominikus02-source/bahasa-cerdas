@@ -4,6 +4,8 @@ import { db } from "@/lib/db";
 import { fisherYatesShuffle, shuffleOptionsForQuestion, createSessionSeed } from "@/lib/question-bank/randomization";
 import type { AttemptSnapshot, QuestionSnapshot } from "@/lib/types/snapshot";
 import { withQueryTimeout } from "@/lib/db/with-query-timeout";
+import { ok, err } from "@/lib/api/response";
+import { ERR } from "@/lib/api/errors";
 
 const UKBI_TYPES = ["UKBI", "UKBI_SIMULASI", "UKBI_LATIHAN", "UKBI_SD", "UKBI_LATIHAN_SD", "UKBI_SMP", "UKBI_LATIHAN_SMP", "UKBI_SMA", "UKBI_LATIHAN_SMA", "UKBI_GURU_SIMULASI", "UKBI_GURU_LATIHAN"];
 
@@ -137,7 +139,7 @@ export async function GET(
 
     if (!user) {
       console.log(`[kompetensi] Unauthorized access to paket ${paketId}`);
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return err(ERR.UNAUTHORIZED.error, ERR.UNAUTHORIZED.code, ERR.UNAUTHORIZED.status);
     }
 
     const [dbUser, paket] = await Promise.all([
@@ -147,11 +149,11 @@ export async function GET(
 
     if (!dbUser) {
       console.log(`[kompetensi] User not found for supabaseId ${user.id}`);
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
+      return err(ERR.NOT_FOUND.error, ERR.NOT_FOUND.code, ERR.NOT_FOUND.status);
     }
     if (!paket) {
       console.log(`[kompetensi] Paket ${paketId} not found`);
-      return NextResponse.json({ error: "Paket tidak ditemukan" }, { status: 404 });
+      return err("Paket tidak ditemukan", "NOT_FOUND", 404);
     }
 
     const sectionCount = (paket.sectionsData as any[])?.length || (paket.sections as any[])?.length || 0;
@@ -198,11 +200,7 @@ export async function GET(
           "Session retry timeout"
         );
       } else {
-        return NextResponse.json({
-          error: "Tes sudah selesai",
-          session,
-          message: "Anda sudah menyelesaikan tes ini",
-        }, { status: 400 });
+        return err("Tes sudah selesai", "VALIDATION", 400);
       }
     }
 
@@ -345,16 +343,12 @@ export async function GET(
 
     const totalQuestions = rawSectionResults.reduce((sum, s) => sum + s.questions.length, 0);
     if (totalQuestions === 0) {
-      return NextResponse.json({
-        error: "Tidak ada soal tersedia",
-        message: `Paket "${paket.title}" belum memiliki soal. Total sections: ${sections.length}`,
-        debug: { sections: sections.map(s => ({ name: s.name, count: s.count, seksi: s.seksi })) },
-      }, { status: 404 });
+      return err("Tidak ada soal tersedia", "NOT_FOUND", 404);
     }
 
     const answers = session.answers as Record<string, string>;
 
-    return NextResponse.json({
+    return ok({
       session: {
         id: session.id,
         status: session.status,
@@ -379,7 +373,7 @@ export async function GET(
     });
   } catch (error: any) {
     console.error("GET /api/kompetensi/[paketId] error:", error);
-    return NextResponse.json({ error: "Internal error", message: error?.message }, { status: 500 });
+    return err(ERR.INTERNAL.error, ERR.INTERNAL.code, ERR.INTERNAL.status);
   }
 }
 
@@ -393,12 +387,12 @@ export async function PATCH(
     const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return err(ERR.UNAUTHORIZED.error, ERR.UNAUTHORIZED.code, ERR.UNAUTHORIZED.status);
     }
 
     const dbUser = await db.user.findUnique({ where: { supabaseId: user.id } });
     if (!dbUser) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
+      return err(ERR.NOT_FOUND.error, ERR.NOT_FOUND.code, ERR.NOT_FOUND.status);
     }
 
     const body = await req.json();
@@ -409,11 +403,11 @@ export async function PATCH(
     });
 
     if (!session) {
-      return NextResponse.json({ error: "Session not found" }, { status: 404 });
+      return err("Session not found", "NOT_FOUND", 404);
     }
 
     if (session.status === "COMPLETED") {
-      return NextResponse.json({ error: "Tes sudah selesai" }, { status: 400 });
+      return err("Tes sudah selesai", "VALIDATION", 400);
     }
 
     await db.testSession.update({
@@ -424,9 +418,9 @@ export async function PATCH(
       },
     });
 
-    return NextResponse.json({ success: true });
+    return ok({ saved: true });
   } catch (error: any) {
     console.error("PATCH /api/kompetensi/[paketId] error:", error);
-    return NextResponse.json({ error: "Internal error", message: error?.message }, { status: 500 });
+    return err(ERR.INTERNAL.error, ERR.INTERNAL.code, ERR.INTERNAL.status);
   }
 }

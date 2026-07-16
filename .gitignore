@@ -60,3 +60,6 @@ secrets.txt
 *.tsbuildinfo
 *.tmp
 generate-iv.ts
+
+# Load test auth tokens (contains JWT tokens)
+tests/load/auth-tokens.json

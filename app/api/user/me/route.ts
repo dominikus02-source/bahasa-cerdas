@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { getGravatarUrl } from "@/lib/avatar";
 import cache from "@/lib/redis";
+import { err } from "@/lib/api/response";
+import { ERR } from "@/lib/api/errors";
 
 const FOUNDER_EMAILS = ["hdsastra47@gmail.com", "dominikus.02@gmail.com", "alexsurya1968@gmail.com"];
 
@@ -56,14 +58,14 @@ export async function GET() {
     const { createClient } = await import("@/lib/supabase/server");
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return NextResponse.json({ user: null });
+    if (!user) return NextResponse.json({ success: true, user: null, data: { user: null } });
 
     const email = user.email?.toLowerCase() || "";
     const cacheKey = `user:me:${email}`;
     const cached = await cache.get<Record<string, unknown>>(cacheKey);
     if (cached) {
       return NextResponse.json(
-        { user: cached },
+        { success: true, user: cached, data: { user: cached } },
         { headers: { "X-Cache": "HIT", "Cache-Control": "private, max-age=30" } }
       );
     }
@@ -77,7 +79,7 @@ export async function GET() {
         role: user.user_metadata?.role || "MURID",
       });
     }
-    if (!found) return NextResponse.json({ error: "User not found" }, { status: 404 });
+    if (!found) return err(ERR.NOT_FOUND.error, ERR.NOT_FOUND.code, ERR.NOT_FOUND.status);
 
     const updates: Record<string, unknown> = {};
     if (found.supabaseId !== user.id) updates.supabaseId = user.id;
@@ -97,12 +99,12 @@ export async function GET() {
     cache.set(cacheKey, result, 30);
 
     return NextResponse.json(
-      { user: result },
+      { success: true, user: result, data: { user: result } },
       { headers: { "X-Cache": "MISS", "Cache-Control": "private, max-age=30" } }
     );
   } catch (e: any) {
     console.error("GET /api/user/me error:", e?.message || e);
-    return NextResponse.json({ error: "Gagal memuat data" }, { status: 500 });
+    return err(ERR.INTERNAL.error, ERR.INTERNAL.code, ERR.INTERNAL.status);
   }
 }
 
@@ -121,7 +123,7 @@ export async function POST(request: NextRequest) {
     }
 
     if (!body.supabaseId || !body.email) {
-      return NextResponse.json({ error: "Data tidak lengkap" }, { status: 400 });
+      return err("Data tidak lengkap", "VALIDATION", 400);
     }
 
     const user = await findOrCreateUser({
@@ -131,9 +133,9 @@ export async function POST(request: NextRequest) {
       role: body.role || "MURID",
     });
 
-    return NextResponse.json({ user });
+    return NextResponse.json({ success: true, user, data: { user } });
   } catch (e: any) {
     console.error("POST /api/user/me error:", e?.message || e, e?.stack || "");
-    return NextResponse.json({ error: `Gagal: ${e?.message || "Internal server error"}` }, { status: 500 });
+    return err(ERR.INTERNAL.error, ERR.INTERNAL.code, ERR.INTERNAL.status);
   }
 }

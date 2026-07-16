@@ -125,6 +125,7 @@
     "test:load:smoke": "k6 run tests/load/ukbi-smoke.js",
     "test:load:ukbi-100": "k6 run tests/load/ukbi-100.js",
     "test:rpp-pipeline": "tsx scripts/test-rpp-pipeline.ts",
+    "seed:load-test": "npx tsx scripts/seed-load-test-data.ts",
     "audit:smp-practice": "npx tsx scripts/audit-smp-practice-content.ts",
     "test:smp-practice": "npx tsx scripts/test-smp-practice-content.ts"
   },
