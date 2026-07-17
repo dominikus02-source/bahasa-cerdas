@@ -186,6 +186,21 @@ async function main() {
     const domain = (item.domain || "SINTAS") as any
     const tingkat = TRACK_TINGKAT[track] || "UMUM"
 
+    // Soal konstruktif (Menulis/Berbicara) tak punya opsi PG. Simpan metadata
+    // (instruksi, rubrik, batas kata/waktu) di field `options` agar layar
+    // simulasi bisa membacanya tanpa perlu kolom baru di skema.
+    const it = item as any
+    const optionsData =
+      questionType === "CONSTRUCTED"
+        ? {
+            instruction: it.speakingTask || it.instruction || null,
+            constraints: it.constraints || null,
+            rubric: it.rubric || null,
+            scoringMode: it.scoringMode || "rubric",
+            sampleExpectedResponse: it.sampleExpectedResponse || null,
+          }
+        : item.options || []
+
     if (!isExecute) {
       inserted++
       continue
@@ -199,7 +214,7 @@ async function main() {
           existing.text !== text ||
           existing.seksi !== seksi ||
           existing.difficulty !== difficulty ||
-          JSON.stringify(existing.options) !== JSON.stringify(item.options) ||
+          JSON.stringify(existing.options) !== JSON.stringify(optionsData) ||
           existing.correctAnswer !== item.correctAnswer ||
           existing.explanation !== explanation ||
           existing.passage !== (item.passage || null) ||
@@ -215,7 +230,7 @@ async function main() {
               text,
               passage: item.passage || null,
               type: questionType,
-              options: item.options || [],
+              options: optionsData,
               correctAnswer: item.correctAnswer || "",
               explanation,
               difficulty: difficulty as any,

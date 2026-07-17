@@ -9,6 +9,9 @@ import QuestionCard from "@/components/kompetensi/QuestionCard";
 import QuestionNavigator from "@/components/kompetensi/QuestionNavigator";
 import SectionProgress from "@/components/kompetensi/SectionProgress";
 import SubmitConfirmModal from "@/components/kompetensi/SubmitConfirmModal";
+import DeviceCheck from "@/components/kompetensi/DeviceCheck";
+import WritingAnswer from "@/components/kompetensi/WritingAnswer";
+import SpeakingRecorder from "@/components/kompetensi/SpeakingRecorder";
 
 interface Question {
   id: string;
@@ -21,6 +24,7 @@ interface Question {
   difficulty?: string;
   seksi?: string;
   kompetensi?: string;
+  wordCount?: number;
 }
 
 interface SectionData {
@@ -51,6 +55,7 @@ export default function KompetisiPage({ params }: { params: Promise<{ paketId: s
   const [showConfirm, setShowConfirm] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [timeUp, setTimeUp] = useState(false);
+  const [deviceReady, setDeviceReady] = useState(false);
 
   const expiresAtRef = useRef<number | null>(null);
   const timerStartedRef = useRef(false);
@@ -174,6 +179,19 @@ export default function KompetisiPage({ params }: { params: Promise<{ paketId: s
   const questions = currentSectionData?.questions || [];
   const currentQ = questions[currentQuestion];
   const isFlagged = currentSection === 0 ? flagged.includes(currentQuestion) : false;
+
+  // Seksi keterampilan yang membutuhkan perangkat audio.
+  const hasSeksi = (name: string) =>
+    sections.some((s) => (s.seksi || "").toUpperCase() === name && s.questions.length > 0);
+  const requireMic = hasSeksi("BERBICARA");
+  const requireSpeaker = hasSeksi("MENDENGARKAN");
+  const needsDeviceCheck = requireMic || requireSpeaker;
+  const curSeksi = (currentSectionData?.seksi || "").toUpperCase();
+  // Metadata konstruktif (rubrik/batas) disimpan di field `options` untuk soal esai/lisan.
+  const cmeta: any =
+    currentQ?.options && typeof currentQ.options === "object" && !Array.isArray(currentQ.options)
+      ? currentQ.options
+      : {};
 
   const getAbsoluteIndex = (sIdx: number, qIdx: number) => {
     let idx = 0;
@@ -322,6 +340,21 @@ export default function KompetisiPage({ params }: { params: Promise<{ paketId: s
     }
   }
 
+  // Gerbang wajib: cek perangkat sebelum simulasi bila ada seksi audio.
+  if (needsDeviceCheck && !deviceReady) {
+    return (
+      <ErrorBoundary>
+        <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100/50">
+          <DeviceCheck
+            requireMic={requireMic}
+            requireSpeaker={requireSpeaker}
+            onComplete={() => setDeviceReady(true)}
+          />
+        </div>
+      </ErrorBoundary>
+    );
+  }
+
   return (
     <ErrorBoundary>
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100/50">
@@ -394,17 +427,47 @@ export default function KompetisiPage({ params }: { params: Promise<{ paketId: s
               </div>
             )}
 
-            <QuestionCard
-              questionNumber={currentQuestion + 1}
-              totalInSection={questions.length}
-              sectionName={currentSectionData?.sectionName || ""}
-              question={currentQ}
-              selectedAnswer={answers[currentQ.id] || null}
-              isFlagged={isFlagged}
-              onSelectAnswer={selectAnswer}
-              onToggleFlag={toggleFlag}
-              isListening={currentQ.type?.toLowerCase() === "listening" || currentQ.type?.toLowerCase() === "mendengarkan"}
-            />
+            {curSeksi === "MENULIS" ? (
+              <WritingAnswer
+                questionId={currentQ.id}
+                questionNumber={currentQuestion + 1}
+                sectionName={currentSectionData?.sectionName || "Menulis"}
+                prompt={currentQ.text}
+                instruction={cmeta.instruction}
+                passage={currentQ.passage}
+                imageUrl={currentQ.imageUrl}
+                minWords={cmeta?.constraints?.minWords}
+                maxWords={cmeta?.constraints?.maxWords || currentQ.wordCount || undefined}
+                value={answers[currentQ.id] || ""}
+                onChange={selectAnswer}
+              />
+            ) : curSeksi === "BERBICARA" ? (
+              <SpeakingRecorder
+                questionId={currentQ.id}
+                questionNumber={currentQuestion + 1}
+                sectionName={currentSectionData?.sectionName || "Berbicara"}
+                prompt={currentQ.text}
+                instruction={cmeta.instruction}
+                passage={currentQ.passage}
+                imageUrl={currentQ.imageUrl}
+                prepSec={cmeta?.constraints?.preparationTimeSec ?? 30}
+                recordSec={cmeta?.constraints?.responseTimeSec ?? 60}
+                value={answers[currentQ.id] || ""}
+                onChange={selectAnswer}
+              />
+            ) : (
+              <QuestionCard
+                questionNumber={currentQuestion + 1}
+                totalInSection={questions.length}
+                sectionName={currentSectionData?.sectionName || ""}
+                question={currentQ}
+                selectedAnswer={answers[currentQ.id] || null}
+                isFlagged={isFlagged}
+                onSelectAnswer={selectAnswer}
+                onToggleFlag={toggleFlag}
+                isListening={curSeksi === "MENDENGARKAN" || currentQ.type?.toLowerCase() === "listening" || currentQ.type?.toLowerCase() === "mendengarkan"}
+              />
+            )}
 
             {/* Navigation buttons */}
             <div className="flex items-center justify-between gap-3">

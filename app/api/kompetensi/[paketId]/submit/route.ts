@@ -123,6 +123,27 @@ function buildAnswerRows(
   for (const q of questions) {
     const userAnswer = answers[q.id] || "";
     const { isCorrect, score, seksi } = scoringFn(q, userAnswer);
+
+    // Seksi konstruktif (Menulis/Berbicara) dinilai MANUAL oleh guru — jawaban
+    // (teks / URL rekaman) tetap disimpan untuk ditinjau, tapi TIDAK ikut skor otomatis.
+    const isConstructed =
+      String(q.type || "").toUpperCase() === "CONSTRUCTED" ||
+      ["MENULIS", "BERBICARA"].includes(String(seksi).toUpperCase());
+
+    rows.push({
+      userId,
+      sessionId,
+      paketId,
+      questionId: q.id,
+      questionType: q.type || (isConstructed ? "CONSTRUCTED" : "PILIHAN_GANDA"),
+      answer: userAnswer,
+      isCorrect: isConstructed ? false : isCorrect,
+      score: isConstructed ? 0 : score,
+      seksi,
+    });
+
+    if (isConstructed) continue; // keluar dari perhitungan skor otomatis
+
     rawScore += score;
     totalQuestions++;
     if (isCorrect) totalCorrect++;
@@ -133,18 +154,6 @@ function buildAnswerRows(
       sectionScores[seksi].correct++;
       sectionScores[seksi].score += score;
     }
-
-    rows.push({
-      userId,
-      sessionId,
-      paketId,
-      questionId: q.id,
-      questionType: q.type || "PILIHAN_GANDA",
-      answer: userAnswer,
-      isCorrect,
-      score,
-      seksi,
-    });
 
     if (useCompetencyKey) {
       userAnswerRecords.push({
