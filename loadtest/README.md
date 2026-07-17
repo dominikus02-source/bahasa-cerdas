@@ -15,6 +15,29 @@ brew install k6          # macOS
 accounts.** `02-generate-rpp.js` burns real AI credits and `03-submit-simulasi.js`
 writes attempt/progress rows. Never point the write scenarios at production.
 
+## Preview di-proteksi SSO Vercel? Pakai Bypass Token
+
+Preview deployment Vercel default-nya dilindungi SSO — k6 akan dapat halaman
+login, bukan API. Buat **Protection Bypass for Automation** (bukan share link):
+
+1. Vercel → project **bahasa-cerdas** → **Settings** → **Deployment Protection**.
+2. Scroll ke **Protection Bypass for Automation** → klik **Add Secret** (kalau
+   sudah ada, pakai yang ada / **Regenerate**). Ini otomatis membuat secret.
+   > Catatan: token muncul SEKALI. Simpan aman, jangan commit, jangan paste ke chat.
+3. Jalankan k6 dengan token itu sebagai env (script mengirim header
+   `x-vercel-protection-bypass` otomatis):
+
+```bash
+export VERCEL_BYPASS_TOKEN='<secret-dari-vercel>'
+```
+
+Alternatif tanpa dashboard: Vercel meng-expose secret ini sebagai env otomatis
+`VERCEL_AUTOMATION_BYPASS_SECRET` di deployment — nilainya sama. Untuk k6 di
+mesinmu, tetap set `VERCEL_BYPASS_TOKEN` manual dari nilai tsb.
+
+Untuk load test yang realistis, **lebih baik lawan domain non-preview**
+(staging alias / production-non-protected) supaya tak ada faktor SSO sama sekali.
+
 ## Seed test accounts
 
 Create a few throwaway users on staging and pass them as a JSON pool so load

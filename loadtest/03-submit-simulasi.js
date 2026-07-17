@@ -13,7 +13,7 @@
 import http from 'k6/http';
 import { check, sleep } from 'k6';
 import { Trend } from 'k6/metrics';
-import { CONFIG, login, pickUser } from './lib.js';
+import { CONFIG, login, pickUser, bypassHeaders } from './lib.js';
 
 const submitDuration = new Trend('simulasi_submit_ms', true);
 
@@ -60,7 +60,7 @@ export default function () {
     `${CONFIG.baseUrl}/api/kompetensi/${PAKET_ID}/submit`,
     JSON.stringify({ answers: ANSWERS, timeSpent: Math.floor(Math.random() * 1800) + 300 }),
     {
-      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${accessToken}` },
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${accessToken}`, ...bypassHeaders() },
       tags: { name: 'submit-simulasi' },
     }
   );
