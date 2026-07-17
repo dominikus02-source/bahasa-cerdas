@@ -1,237 +1,552 @@
-"use client";
+"use client"
 
-import { useCallback, useEffect, useRef, useState } from "react";
-import { Volume2, Mic, CheckCircle2, XCircle, Loader2, AlertCircle, Play, ShieldCheck } from "lucide-react";
+import { useState, useEffect, useRef, useCallback } from "react"
+import { Mic, Headphones, CheckCircle2, Volume2, Sparkles, ChevronRight } from "lucide-react"
 
-interface DeviceCheckProps {
-  /** Wajib cek mikrofon (paket punya seksi Berbicara). */
-  requireMic: boolean;
-  /** Wajib cek speaker (paket punya seksi Mendengarkan). */
-  requireSpeaker: boolean;
-  onComplete: () => void;
+interface Props {
+  paketId: string
+  onComplete: (micOk: boolean, speakerOk: boolean) => void
 }
 
-type CheckState = "idle" | "pending" | "pass" | "fail";
+type Step = "mic" | "speaker" | "ready"
 
-/**
- * Gerbang wajib sebelum simulasi: cek kompatibilitas, speaker, dan mikrofon.
- * Tombol "Mulai Simulasi" hanya aktif jika semua pemeriksaan RELEVAN lulus.
- */
-export default function DeviceCheck({ requireMic, requireSpeaker, onComplete }: DeviceCheckProps) {
-  const [compat, setCompat] = useState<CheckState>("pending");
-  const [speaker, setSpeaker] = useState<CheckState>(requireSpeaker ? "idle" : "pass");
-  const [mic, setMic] = useState<CheckState>(requireMic ? "idle" : "pass");
-  const [micErr, setMicErr] = useState("");
-  const [level, setLevel] = useState(0);
-  const [recState, setRecState] = useState<"idle" | "recording" | "recorded">("idle");
-  const [recUrl, setRecUrl] = useState<string | null>(null);
+export default function DeviceCheck({ paketId, onComplete }: Props) {
+  const [step, setStep] = useState<Step>("mic")
+  const [micPassed, setMicPassed] = useState(false)
+  const [speakerPassed, setSpeakerPassed] = useState(false)
+  const [micChecking, setMicChecking] = useState(false)
+  const [speakerChecking, setSpeakerChecking] = useState(false)
+  const [micError, setMicError] = useState("")
+  const [speakerError, setSpeakerError] = useState("")
+  const [micLevel, setMicLevel] = useState(0)
+  const [micActive, setMicActive] = useState(false)
+  const [playing, setPlaying] = useState(false)
+  const [starting, setStarting] = useState(false)
 
-  const streamRef = useRef<MediaStream | null>(null);
-  const ctxRef = useRef<AudioContext | null>(null);
-  const rafRef = useRef<number | null>(null);
-  const recorderRef = useRef<MediaRecorder | null>(null);
-  const chunksRef = useRef<BlobPart[]>([]);
+  const audioContextRef = useRef<AudioContext | null>(null)
+  const analyserRef = useRef<AnalyserNode | null>(null)
+  const streamRef = useRef<MediaStream | null>(null)
+  const canvasRef = useRef<HTMLCanvasElement | null>(null)
+  const animFrameRef = useRef<number>(0)
+  const oscillatorRef = useRef<OscillatorNode | null>(null)
 
-  // Langkah 1: kompatibilitas browser.
-  useEffect(() => {
-    const ok =
-      typeof navigator !== "undefined" &&
-      !!navigator.mediaDevices?.getUserMedia &&
-      typeof window !== "undefined" &&
-      (typeof AudioContext !== "undefined" || typeof (window as any).webkitAudioContext !== "undefined") &&
-      (!requireMic || typeof MediaRecorder !== "undefined");
-    setCompat(ok ? "pass" : "fail");
-  }, [requireMic]);
+  const cleanupAudio = useCallback(() => {
+    if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current)
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach(t => t.stop())
+      streamRef.current = null
+    }
+    if (audioContextRef.current && audioContextRef.current.state !== "closed") {
+      audioContextRef.current.close()
+      audioContextRef.current = null
+    }
+    analyserRef.current = null
+    setMicLevel(0)
+  }, [])
 
-  const stopAll = useCallback(() => {
-    if (rafRef.current) cancelAnimationFrame(rafRef.current);
-    if (ctxRef.current) { ctxRef.current.close().catch(() => {}); ctxRef.current = null; }
-    if (streamRef.current) { streamRef.current.getTracks().forEach((t) => t.stop()); streamRef.current = null; }
-  }, []);
+  // Waveform canvas rendering
+  const drawWaveform = useCallback(() => {
+    const canvas = canvasRef.current
+    const analyser = analyserRef.current
+    if (!canvas || !analyser) return
 
-  useEffect(() => () => stopAll(), [stopAll]);
+    const ctx = canvas.getContext("2d")
+    if (!ctx) return
 
-  // Langkah 2: putar nada uji speaker.
-  const playTone = async () => {
+    const rect = canvas.getBoundingClientRect()
+    canvas.width = rect.width * 2
+    canvas.height = rect.height * 2
+    ctx.scale(2, 2)
+
+    const w = rect.width
+    const h = rect.height
+    const bufferLength = analyser.frequencyBinCount
+    const dataArray = new Uint8Array(bufferLength)
+    analyser.getByteTimeDomainData(dataArray)
+
+    ctx.clearRect(0, 0, w, h)
+
+    // Background
+    ctx.fillStyle = "rgba(255,255,255,0.5)"
+    ctx.beginPath()
+    ctx.roundRect(0, 0, w, h, 12)
+    ctx.fill()
+
+    // Gradient line
+    const grad = ctx.createLinearGradient(0, 0, w, 0)
+    grad.addColorStop(0, "#6366f1")
+    grad.addColorStop(0.5, "#8b5cf6")
+    grad.addColorStop(1, "#a855f7")
+
+    ctx.lineWidth = 2
+    ctx.strokeStyle = grad
+    ctx.shadowColor = "rgba(99, 102, 241, 0.2)"
+    ctx.shadowBlur = 6
+    ctx.beginPath()
+
+    const sliceWidth = w / bufferLength
+    let x = 0
+    for (let i = 0; i < bufferLength; i++) {
+      const v = dataArray[i] / 128.0
+      const y = (v * h) / 2
+      if (i === 0) ctx.moveTo(x, y)
+      else ctx.lineTo(x, y)
+      x += sliceWidth
+    }
+    ctx.stroke()
+
+    // Filled area
+    ctx.shadowBlur = 0
+    ctx.globalAlpha = 0.06
+    ctx.fillStyle = "#8b5cf6"
+    ctx.lineTo(w, h / 2)
+    ctx.lineTo(0, h / 2)
+    ctx.closePath()
+    ctx.fill()
+    ctx.globalAlpha = 1
+
+    // Update level
+    const avg = dataArray.reduce((s, v) => s + Math.abs(v - 128), 0) / bufferLength
+    const level = Math.min(100, Math.round((avg / 128) * 200))
+    setMicLevel(level)
+    if (level > 8) setMicActive(true)
+
+    animFrameRef.current = requestAnimationFrame(drawWaveform)
+  }, [])
+
+  const checkMicrophone = async () => {
+    setMicChecking(true)
+    setMicError("")
+    setMicActive(false)
+    setMicLevel(0)
+
+    if (!navigator.mediaDevices?.getUserMedia) {
+      setMicError("Browser tidak mendukung akses mikrofon. Gunakan Chrome, Firefox, atau Safari terbaru.")
+      setMicChecking(false)
+      return
+    }
+
     try {
-      const AC = window.AudioContext || (window as any).webkitAudioContext;
-      const ctx = new AC();
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.frequency.value = 440;
-      gain.gain.value = 0.15;
-      osc.connect(gain).connect(ctx.destination);
-      osc.start();
-      setTimeout(() => { osc.stop(); ctx.close().catch(() => {}); }, 1200);
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
+      streamRef.current = stream
+
+      const ctx = new AudioContext()
+      audioContextRef.current = ctx
+      const source = ctx.createMediaStreamSource(stream)
+      const analyser = ctx.createAnalyser()
+      analyser.fftSize = 2048
+      source.connect(analyser)
+      analyserRef.current = analyser
+
+      drawWaveform()
+    } catch (err: any) {
+      if (err.name === "NotAllowedError" || err.name === "PermissionDeniedError") {
+        setMicError("Izin mikrofon ditolak. Izinkan akses mikrofon di pengaturan browser, lalu coba lagi.")
+      } else if (err.name === "NotFoundError") {
+        setMicError("Tidak ada mikrofon yang terdeteksi. Sambungkan mikrofon atau headset.")
+      } else if (err.name === "NotReadableError") {
+        setMicError("Mikrofon sedang digunakan aplikasi lain. Tutup dan coba lagi.")
+      } else {
+        setMicError("Mikrofon tidak terdeteksi. Periksa sambungan perangkat.")
+      }
+      setMicChecking(false)
+    }
+  }
+
+  const confirmMic = () => {
+    setMicPassed(true)
+    setMicChecking(false)
+  }
+
+  const retryMicrophone = () => {
+    cleanupAudio()
+    setMicPassed(false)
+    setMicError("")
+    setMicLevel(0)
+    setMicActive(false)
+    setMicChecking(false)
+  }
+
+  const checkSpeaker = async () => {
+    setSpeakerChecking(true)
+    setSpeakerError("")
+
+    try {
+      const AudioCtx = window.AudioContext || (window as any).webkitAudioContext
+      const ctx = new AudioCtx()
+      audioContextRef.current = ctx
+
+      const osc = ctx.createOscillator()
+      const gain = ctx.createGain()
+      gain.gain.value = 0.3
+      osc.type = "sine"
+      osc.frequency.value = 440
+      osc.connect(gain)
+      gain.connect(ctx.destination)
+      osc.start()
+      oscillatorRef.current = osc
+      setPlaying(true)
     } catch {
-      /* biarkan user menilai sendiri */
+      setSpeakerError("Tidak dapat memutar audio. Periksa speaker/headset.")
+      setSpeakerChecking(false)
     }
-  };
+  }
 
-  // Langkah 3: cek mikrofon — izin + visualizer + rekam 4 detik + putar ulang.
-  const startMicCheck = async () => {
-    setMicErr("");
-    setMic("pending");
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      streamRef.current = stream;
-      const AC = window.AudioContext || (window as any).webkitAudioContext;
-      const ctx = new AC();
-      ctxRef.current = ctx;
-      const analyser = ctx.createAnalyser();
-      analyser.fftSize = 256;
-      ctx.createMediaStreamSource(stream).connect(analyser);
-      const buf = new Uint8Array(analyser.frequencyBinCount);
-      const tick = () => {
-        analyser.getByteFrequencyData(buf);
-        setLevel(Math.min(1, buf.reduce((s, v) => s + v, 0) / buf.length / 128));
-        rafRef.current = requestAnimationFrame(tick);
-      };
-      tick();
-
-      // Rekam 4 detik.
-      const rec = new MediaRecorder(stream);
-      recorderRef.current = rec;
-      chunksRef.current = [];
-      rec.ondataavailable = (e) => { if (e.data.size > 0) chunksRef.current.push(e.data); };
-      rec.onstop = () => {
-        const blob = new Blob(chunksRef.current, { type: rec.mimeType || "audio/webm" });
-        setRecUrl(URL.createObjectURL(blob));
-        setRecState("recorded");
-        if (rafRef.current) cancelAnimationFrame(rafRef.current);
-      };
-      rec.start();
-      setRecState("recording");
-      setTimeout(() => { if (rec.state !== "inactive") rec.stop(); }, 4000);
-    } catch (e: any) {
-      const denied = e?.name === "NotAllowedError" || e?.name === "SecurityError";
-      setMicErr(denied
-        ? "Izin mikrofon ditolak — buka pengaturan izin di browser Anda, aktifkan mikrofon untuk situs ini, lalu ulangi."
-        : "Mikrofon tidak terdeteksi. Pastikan perangkat mikrofon terpasang lalu ulangi.");
-      setMic("fail");
-      stopAll();
+  const confirmHeard = () => {
+    if (oscillatorRef.current) {
+      oscillatorRef.current.stop()
+      oscillatorRef.current = null
     }
-  };
+    setPlaying(false)
+    setSpeakerPassed(true)
+    setSpeakerChecking(false)
+  }
 
-  const allRelevantPass =
-    compat === "pass" &&
-    (!requireSpeaker || speaker === "pass") &&
-    (!requireMic || mic === "pass");
+  const retrySpeaker = () => {
+    if (oscillatorRef.current) {
+      oscillatorRef.current.stop()
+      oscillatorRef.current = null
+    }
+    setPlaying(false)
+    setSpeakerPassed(false)
+    setSpeakerError("")
+  }
 
-  const Row = ({ state, icon, title, children }: { state: CheckState; icon: React.ReactNode; title: string; children?: React.ReactNode }) => (
-    <div className={`rounded-xl border p-4 ${state === "pass" ? "border-emerald-200 bg-emerald-50" : state === "fail" ? "border-red-200 bg-red-50" : "border-slate-200 bg-white"}`}>
-      <div className="flex items-center gap-2">
-        <span className="text-slate-500">{icon}</span>
-        <span className="flex-1 text-sm font-semibold text-slate-800">{title}</span>
-        {state === "pass" && <CheckCircle2 className="h-5 w-5 text-emerald-500" />}
-        {state === "fail" && <XCircle className="h-5 w-5 text-red-500" />}
-        {state === "pending" && <Loader2 className="h-5 w-5 animate-spin text-slate-400" />}
-      </div>
-      {children && <div className="mt-3">{children}</div>}
-    </div>
-  );
+  const handleStart = () => {
+    setStarting(true)
+    cleanupAudio()
+    onComplete(micPassed, speakerPassed)
+  }
+
+  const handleSkip = () => {
+    cleanupAudio()
+    onComplete(false, false)
+  }
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => cleanupAudio()
+  }, [cleanupAudio])
 
   return (
-    <div className="mx-auto max-w-lg px-4 py-8">
-      <div className="mb-6 text-center">
-        <ShieldCheck className="mx-auto mb-2 h-10 w-10 text-emerald-500" />
-        <h1 className="text-xl font-black text-slate-900">Pemeriksaan Perangkat</h1>
-        <p className="mt-1 text-sm text-slate-500">
-          Pastikan perangkat Anda siap sebelum memulai simulasi.
-        </p>
+    <div className="min-h-dvh bg-[#f5f5f7] flex flex-col">
+      {/* Top Navigation */}
+      <div className="flex items-center justify-between px-5 py-3 bg-white/80 backdrop-blur-xl border-b border-[#e5e5ea]">
+        <div className="flex items-center gap-2">
+          <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
+            <Sparkles className="w-3.5 h-3.5 text-white" />
+          </div>
+          <span className="text-[13px] font-semibold text-[#1d1d1f]">Penyiapan Perangkat</span>
+        </div>
+        <button onClick={handleSkip} className="text-[13px] text-[#8e8e93] hover:text-[#1d1d1f] transition-colors">
+          Lewati
+        </button>
       </div>
 
-      <div className="space-y-3">
-        {/* 1. Kompatibilitas */}
-        <Row state={compat} icon={<ShieldCheck className="h-5 w-5" />} title="Kompatibilitas browser">
-          {compat === "fail" && (
-            <p className="flex items-start gap-1.5 text-xs text-red-600">
-              <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
-              Browser Anda tidak mendukung fitur audio yang diperlukan. Gunakan Google Chrome versi terbaru.
-            </p>
-          )}
-        </Row>
+      {/* Step Indicator */}
+      <div className="flex items-center justify-center gap-2 px-5 pt-6 pb-4">
+        {(["mic", "speaker", "ready"] as const).map((s, i) => {
+          const isDone = (s === "mic" && micPassed) || (s === "speaker" && speakerPassed)
+          const isCurrent = step === s
+          return (
+            <div key={s} className="flex items-center gap-2">
+              <div className={`flex items-center gap-1.5 ${isDone || isCurrent ? "opacity-100" : "opacity-40"}`}>
+                <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-semibold transition-all ${
+                  isDone || (s === "ready" && micPassed && speakerPassed)
+                    ? "bg-indigo-600 text-white"
+                    : "bg-[#e5e5ea] text-[#8e8e93]"
+                }`}>
+                  {isDone ? <CheckCircle2 className="w-3.5 h-3.5" /> : i + 1}
+                </div>
+                <span className="text-[11px] font-medium text-[#1d1d1f]">
+                  {s === "mic" ? "Mikrofon" : s === "speaker" ? "Audio" : "Siap"}
+                </span>
+              </div>
+              {i < 2 && <ChevronRight className="w-3 h-3 text-[#c7c7cc]" />}
+            </div>
+          )
+        })}
+      </div>
 
-        {/* 2. Speaker */}
-        {requireSpeaker && (
-          <Row state={speaker} icon={<Volume2 className="h-5 w-5" />} title="Speaker / keluaran suara">
-            <div className="flex flex-wrap items-center gap-2">
-              <button onClick={playTone} className="flex items-center gap-1.5 rounded-lg bg-indigo-600 px-3 py-2 text-xs font-bold text-white hover:bg-indigo-700">
-                <Play className="h-3.5 w-3.5" /> Putar suara uji
-              </button>
-              <span className="text-xs text-slate-500">Apakah Anda mendengar nada?</span>
-              <button onClick={() => setSpeaker("pass")} className={`rounded-lg px-3 py-1.5 text-xs font-bold ${speaker === "pass" ? "bg-emerald-600 text-white" : "border border-emerald-300 text-emerald-700 hover:bg-emerald-50"}`}>
-                Ya, saya mendengar
-              </button>
-              <button onClick={() => setSpeaker("fail")} className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-500 hover:bg-slate-50">
-                Tidak
+      <div className="flex-1 flex flex-col px-5 pb-8">
+        {/* STEP 1: MICROPHONE */}
+        {step === "mic" && (
+          <div className="flex-1 flex flex-col">
+            <div className="flex-1 flex flex-col items-center justify-center -mt-8">
+              {/* Mic Icon */}
+              <div className="relative mb-6">
+                <div className={`w-24 h-24 rounded-full flex items-center justify-center transition-all duration-300 ${
+                  micPassed
+                    ? "bg-green-100"
+                    : micChecking
+                    ? "bg-indigo-50"
+                    : "bg-[#e8e8ed]"
+                }`}>
+                  <Mic className={`w-10 h-10 transition-colors ${
+                    micPassed ? "text-green-600" : micChecking ? "text-indigo-500" : "text-[#8e8e93]"
+                  }`} />
+                </div>
+                {micChecking && !micPassed && (
+                  <span className="absolute -top-1 -right-1">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75" />
+                    <span className="relative inline-flex rounded-full w-5 h-5 bg-indigo-500" />
+                  </span>
+                )}
+              </div>
+
+              <h2 className="text-[22px] font-bold text-[#1d1d1f] text-center mb-1">
+                {micPassed ? "Mikrofon Berfungsi" : micChecking ? "Mikrofon Aktif" : "Periksa Mikrofon"}
+              </h2>
+              <p className="text-[13px] text-[#8e8e93] text-center mb-6 max-w-xs">
+                {micPassed
+                  ? "Mikrofon terdeteksi dan berfungsi dengan baik."
+                  : micChecking
+                  ? "Bicaralah — gelombang suara akan muncul jika mikrofon berfungsi."
+                  : "Klik tombol di bawah untuk mengizinkan akses mikrofon."}
+              </p>
+
+              {/* Waveform Canvas */}
+              {micChecking && !micPassed && (
+                <div className="w-full max-w-sm mb-4">
+                  <canvas
+                    ref={canvasRef}
+                    className="w-full h-20 rounded-xl"
+                  />
+                </div>
+              )}
+
+              {/* Level Meter */}
+              {micChecking && !micPassed && (
+                <div className="w-full max-w-sm bg-white rounded-2xl p-4 shadow-sm border border-[#f0f0f0]">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-[11px] font-medium text-[#8e8e93]">Level Suara</span>
+                    <span className="text-[11px] font-mono text-[#8e8e93]">{micLevel}%</span>
+                  </div>
+                  <div className="h-2.5 bg-[#f0f0f0] rounded-full overflow-hidden">
+                    <div
+                      className="h-full rounded-full transition-all duration-75"
+                      style={{
+                        width: `${Math.min(100, micLevel)}%`,
+                        background: micLevel > 70
+                          ? "linear-gradient(90deg, #6366f1, #22c55e)"
+                          : micLevel > 30
+                          ? "linear-gradient(90deg, #6366f1, #8b5cf6)"
+                          : "linear-gradient(90deg, #a1a1aa, #6366f1)",
+                      }}
+                    />
+                  </div>
+                  {micActive && (
+                    <p className="text-[11px] text-green-600 font-medium mt-2 text-center">
+                      Suara terdeteksi! Klik konfirmasi di bawah.
+                    </p>
+                  )}
+                </div>
+              )}
+
+              {/* Error */}
+              {micError && (
+                <div className="w-full max-w-sm mt-4 bg-red-50 rounded-2xl p-4 border border-red-100">
+                  <p className="text-[13px] text-red-600 text-center">{micError}</p>
+                  <button
+                    onClick={retryMicrophone}
+                    className="mt-3 w-full py-2.5 bg-red-600 text-white text-[13px] font-semibold rounded-xl hover:bg-red-700 transition-colors"
+                  >
+                    Coba Lagi
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* Bottom Button */}
+            <div className="pt-4">
+              {!micChecking && !micPassed && !micError && (
+                <button
+                  onClick={checkMicrophone}
+                  className="w-full py-3.5 bg-indigo-600 text-white text-[15px] font-semibold rounded-2xl hover:bg-indigo-700 active:scale-[0.98] transition-all shadow-lg shadow-indigo-500/20"
+                >
+                  Izinkan & Uji Mikrofon
+                </button>
+              )}
+              {micChecking && !micPassed && (
+                <button
+                  onClick={confirmMic}
+                  disabled={!micActive}
+                  className="w-full py-3.5 bg-indigo-600 text-white text-[15px] font-semibold rounded-2xl hover:bg-indigo-700 active:scale-[0.98] transition-all shadow-lg shadow-indigo-500/20 disabled:opacity-30 disabled:cursor-not-allowed"
+                >
+                  {micActive ? "Mikrofon Berfungsi" : "Tunggu deteksi suara..."}
+                </button>
+              )}
+              {micPassed && (
+                <button
+                  onClick={() => { cleanupAudio(); setStep("speaker") }}
+                  className="w-full py-3.5 bg-indigo-600 text-white text-[15px] font-semibold rounded-2xl hover:bg-indigo-700 active:scale-[0.98] transition-all shadow-lg shadow-indigo-500/20"
+                >
+                  Lanjutkan
+                </button>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* STEP 2: SPEAKER */}
+        {step === "speaker" && (
+          <div className="flex-1 flex flex-col">
+            <div className="flex-1 flex flex-col items-center justify-center -mt-8">
+              {/* Speaker Icon */}
+              <div className="relative mb-6">
+                <div className={`w-24 h-24 rounded-full flex items-center justify-center transition-all ${
+                  speakerPassed ? "bg-green-100" : playing ? "bg-indigo-50" : "bg-[#e8e8ed]"
+                }`}>
+                  <Headphones className={`w-10 h-10 ${
+                    speakerPassed ? "text-green-600" : playing ? "text-indigo-500" : "text-[#8e8e93]"
+                  }`} />
+                </div>
+                {playing && (
+                  <>
+                    <span className="absolute -inset-4 rounded-full border-2 border-indigo-200 animate-ping" />
+                    <span className="absolute -inset-8 rounded-full border-2 border-indigo-100 animate-ping" style={{ animationDelay: "0.3s" }} />
+                  </>
+                )}
+              </div>
+
+              <h2 className="text-[22px] font-bold text-[#1d1d1f] text-center mb-1">
+                {speakerPassed ? "Audio Berfungsi" : playing ? "Memutar Nada Uji..." : "Periksa Speaker"}
+              </h2>
+              <p className="text-[13px] text-[#8e8e93] text-center mb-6 max-w-xs">
+                {speakerPassed
+                  ? "Speaker/headset berfungsi dengan baik."
+                  : playing
+                  ? "Apakah Anda mendengar nada uji?"
+                  : "Pastikan speaker atau headset terhubung."}
+              </p>
+
+              {/* Sound Wave Visual */}
+              {playing && !speakerPassed && (
+                <div className="flex items-center justify-center gap-1 h-12 mb-2">
+                  {[...Array(20)].map((_, i) => (
+                    <div
+                      key={i}
+                      className="w-[3px] bg-indigo-500 rounded-full"
+                      style={{
+                        height: `${20 + Math.abs(Math.sin((Date.now() / 200) + i * 0.5)) * 30}px`,
+                        opacity: 0.3 + (i / 20) * 0.7,
+                        transition: "height 0.1s",
+                      }}
+                    />
+                  ))}
+                </div>
+              )}
+
+              {/* Action Buttons */}
+              {playing && !speakerPassed && (
+                <div className="flex gap-3 w-full max-w-sm">
+                  <button
+                    onClick={confirmHeard}
+                    className="flex-1 py-3.5 bg-green-600 text-white text-[15px] font-semibold rounded-2xl hover:bg-green-700 active:scale-[0.98] transition-all shadow-lg shadow-green-500/20"
+                  >
+                    Saya Dengar
+                  </button>
+                  <button
+                    onClick={retrySpeaker}
+                    className="flex-1 py-3.5 bg-[#e8e8ed] text-[#1d1d1f] text-[15px] font-semibold rounded-2xl hover:bg-[#d8d8dd] active:scale-[0.98] transition-all"
+                  >
+                    Tidak
+                  </button>
+                </div>
+              )}
+
+              {/* Error */}
+              {speakerError && (
+                <div className="w-full max-w-sm bg-red-50 rounded-2xl p-4 border border-red-100">
+                  <p className="text-[13px] text-red-600 text-center">{speakerError}</p>
+                  <button
+                    onClick={retrySpeaker}
+                    className="mt-3 w-full py-2.5 bg-red-600 text-white text-[13px] font-semibold rounded-xl hover:bg-red-700 transition-colors"
+                  >
+                    Coba Lagi
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* Bottom Button */}
+            <div className="pt-4">
+              {!playing && !speakerPassed && !speakerError && (
+                <button
+                  onClick={checkSpeaker}
+                  className="w-full py-3.5 bg-indigo-600 text-white text-[15px] font-semibold rounded-2xl hover:bg-indigo-700 active:scale-[0.98] transition-all shadow-lg shadow-indigo-500/20 flex items-center justify-center gap-2"
+                >
+                  <Volume2 className="w-4 h-4" />
+                  Putar Nada Uji
+                </button>
+              )}
+              {speakerPassed && (
+                <button
+                  onClick={() => setStep("ready")}
+                  className="w-full py-3.5 bg-indigo-600 text-white text-[15px] font-semibold rounded-2xl hover:bg-indigo-700 active:scale-[0.98] transition-all shadow-lg shadow-indigo-500/20"
+                >
+                  Lanjutkan
+                </button>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* STEP 3: READY */}
+        {step === "ready" && (
+          <div className="flex-1 flex flex-col">
+            <div className="flex-1 flex flex-col items-center justify-center -mt-8">
+              <div className="relative mb-6">
+                <div className="w-24 h-24 rounded-full bg-green-100 flex items-center justify-center">
+                  <CheckCircle2 className="w-12 h-12 text-green-600" />
+                </div>
+                <span className="absolute -top-2 -right-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
+                  <span className="relative inline-flex rounded-full w-5 h-5 bg-green-500" />
+                </span>
+              </div>
+
+              <h2 className="text-[22px] font-bold text-[#1d1d1f] text-center mb-1">
+                Semua Siap!
+              </h2>
+              <p className="text-[13px] text-[#8e8e93] text-center mb-8 max-w-xs">
+                Mikrofon dan audio telah terverifikasi. Anda siap memulai simulasi.
+              </p>
+
+              <div className="w-full max-w-sm space-y-2 mb-8">
+                <div className="bg-white rounded-2xl p-4 flex items-center gap-3 shadow-sm border border-[#f0f0f0]">
+                  <div className="w-9 h-9 rounded-full bg-green-100 flex items-center justify-center shrink-0">
+                    <CheckCircle2 className="w-4 h-4 text-green-600" />
+                  </div>
+                  <div>
+                    <p className="text-[13px] font-semibold text-[#1d1d1f]">Mikrofon</p>
+                    <p className="text-[11px] text-[#8e8e93]">Berfungsi — level suara terdeteksi</p>
+                  </div>
+                </div>
+                <div className="bg-white rounded-2xl p-4 flex items-center gap-3 shadow-sm border border-[#f0f0f0]">
+                  <div className="w-9 h-9 rounded-full bg-green-100 flex items-center justify-center shrink-0">
+                    <CheckCircle2 className="w-4 h-4 text-green-600" />
+                  </div>
+                  <div>
+                    <p className="text-[13px] font-semibold text-[#1d1d1f]">Speaker / Headset</p>
+                    <p className="text-[11px] text-[#8e8e93]">Berfungsi — nada uji terkonfirmasi</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="pt-4">
+              <button
+                onClick={handleStart}
+                disabled={starting}
+                className="w-full py-3.5 bg-gradient-to-r from-indigo-600 to-purple-600 text-white text-[15px] font-semibold rounded-2xl hover:from-indigo-700 hover:to-purple-700 active:scale-[0.98] transition-all shadow-lg shadow-indigo-500/30 disabled:opacity-50"
+              >
+                {starting ? "Memuat..." : "Mulai Simulasi"}
               </button>
             </div>
-            {speaker === "fail" && (
-              <p className="mt-2 text-xs text-red-600">Naikkan volume perangkat, pastikan speaker/headphone aktif, lalu putar ulang.</p>
-            )}
-          </Row>
-        )}
-
-        {/* 3. Mikrofon */}
-        {requireMic && (
-          <Row state={mic} icon={<Mic className="h-5 w-5" />} title="Mikrofon">
-            {mic !== "pass" && (
-              <>
-                {recState === "idle" && mic !== "fail" && (
-                  <button onClick={startMicCheck} className="w-full rounded-lg bg-rose-600 py-2.5 text-xs font-bold text-white hover:bg-rose-700">
-                    Mulai uji mikrofon (rekam 4 detik)
-                  </button>
-                )}
-                {recState === "recording" && (
-                  <div className="text-center">
-                    <div className="mb-2 flex items-end justify-center gap-1" style={{ height: 28 }} aria-hidden>
-                      {Array.from({ length: 10 }).map((_, i) => (
-                        <span key={i} className="w-1.5 rounded-full bg-rose-500 transition-all" style={{ height: `${8 + (level * 10 > i ? level : 0.05) * 20}px`, opacity: level * 10 > i ? 1 : 0.3 }} />
-                      ))}
-                    </div>
-                    <p className="text-xs font-semibold text-rose-600">Berbicaralah… sedang merekam</p>
-                  </div>
-                )}
-                {recState === "recorded" && recUrl && (
-                  <div>
-                    <p className="mb-2 text-xs text-slate-600">Putar ulang — apakah suara Anda terdengar jelas?</p>
-                    <audio controls src={recUrl} className="w-full" />
-                    <div className="mt-2 flex gap-2">
-                      <button onClick={() => setMic("pass")} className="flex-1 rounded-lg bg-emerald-600 py-2 text-xs font-bold text-white hover:bg-emerald-700">
-                        Ya, jelas
-                      </button>
-                      <button onClick={() => { setRecState("idle"); setRecUrl(null); }} className="rounded-lg border border-slate-200 px-3 py-2 text-xs font-medium text-slate-500 hover:bg-slate-50">
-                        Ulangi
-                      </button>
-                    </div>
-                  </div>
-                )}
-                {mic === "fail" && (
-                  <div>
-                    <p className="flex items-start gap-1.5 text-xs text-red-600">
-                      <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" /> {micErr}
-                    </p>
-                    <button onClick={() => { setMic("idle"); setRecState("idle"); }} className="mt-2 rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-bold text-slate-600 hover:bg-slate-50">
-                      Coba lagi
-                    </button>
-                  </div>
-                )}
-              </>
-            )}
-          </Row>
+          </div>
         )}
       </div>
-
-      <button
-        onClick={() => { stopAll(); onComplete(); }}
-        disabled={!allRelevantPass}
-        className={`mt-6 w-full rounded-xl py-3.5 text-sm font-bold transition-all ${
-          allRelevantPass ? "bg-emerald-600 text-white hover:bg-emerald-700 active:scale-[0.99]" : "cursor-not-allowed bg-slate-200 text-slate-400"
-        }`}
-      >
-        {allRelevantPass ? "Mulai Simulasi" : "Selesaikan pemeriksaan di atas dulu"}
-      </button>
     </div>
-  );
+  )
 }

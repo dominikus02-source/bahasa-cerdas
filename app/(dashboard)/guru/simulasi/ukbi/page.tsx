@@ -64,7 +64,7 @@ export default async function GuruUKBISimulasiPage() {
             <div className="flex items-center gap-3 mt-2">
               {track.available && track.paketId && (
                 <Link
-                  href={`/kompetisi/${track.paketId}`}
+                  href={`/kompetisi/${track.paketId}/device-check`}
                   className="text-xs text-emerald-600 font-bold bg-emerald-50 px-3 py-1.5 rounded-lg hover:bg-emerald-100 transition-colors inline-flex items-center gap-1"
                 >
                   <BookOpen size={12} /> Coba Simulasi

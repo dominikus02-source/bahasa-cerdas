@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef, use, Component } from "react";
 import { useRouter } from "next/navigation";
-import { ChevronLeft, ChevronRight, Flag, XCircle } from "lucide-react";
+import { ChevronLeft, ChevronRight, Flag, XCircle, MicOff, VolumeX } from "lucide-react";
 import TestShell from "@/components/kompetensi/TestShell";
 import TestHeader from "@/components/kompetensi/TestHeader";
 import QuestionCard from "@/components/kompetensi/QuestionCard";
@@ -41,9 +41,23 @@ interface PacketData {
   questions: SectionData[];
 }
 
-export default function KompetisiPage({ params }: { params: Promise<{ paketId: string }> }) {
+export default function KompetisiPage({ params, searchParams: sp }: { params: Promise<{ paketId: string }>; searchParams?: Promise<{ mic?: string; speaker?: string }> }) {
   const resolvedParams = use(params);
   const router = useRouter();
+  const [micAvailable, setMicAvailable] = useState(false);
+  const [speakerAvailable, setSpeakerAvailable] = useState(false);
+  const [deviceChecked, setDeviceChecked] = useState(false);
+
+  useEffect(() => {
+    const p = new URLSearchParams(window.location.search);
+    const mic = p.get("mic");
+    const speaker = p.get("speaker");
+    if (mic !== null && speaker !== null) {
+      setMicAvailable(mic === "1");
+      setSpeakerAvailable(speaker === "1");
+      setDeviceChecked(true);
+    }
+  }, []);
   const [data, setData] = useState<PacketData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -426,6 +440,23 @@ export default function KompetisiPage({ params }: { params: Promise<{ paketId: s
                 }}
               />
             </div>
+
+            {/* Device notice */}
+            {deviceChecked && (!micAvailable || !speakerAvailable) && (
+              <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 flex items-start gap-2">
+                {!micAvailable ? <MicOff className="w-4 h-4 text-amber-600 mt-0.5 shrink-0" /> : null}
+                {!speakerAvailable && micAvailable ? <VolumeX className="w-4 h-4 text-amber-600 mt-0.5 shrink-0" /> : null}
+                <p className="text-xs text-amber-700">
+                  {
+                    !micAvailable && !speakerAvailable
+                      ? "Mikrofon dan speaker tidak terdeteksi. Soal Mendengarkan dan Berbicara dilewati."
+                      : !micAvailable
+                      ? "Mikrofon tidak terdeteksi. Soal Berbicara dilewati."
+                      : "Speaker/headset tidak terdeteksi. Soal Mendengarkan dilewati."
+                  }
+                </p>
+              </div>
+            )}
 
             {/* Time up banner */}
             {timeUp && (

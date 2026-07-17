@@ -81,7 +81,7 @@ export function UKBISimulationClient({ tracks }: Props) {
                 </div>
                 {isAvailable && track.paketId && (
                   <Link
-                    href={`/kompetisi/${track.paketId}`}
+                    href={`/kompetisi/${track.paketId}/device-check`}
                     className="mt-4 block text-center py-2.5 bg-violet-600 text-white text-sm font-bold rounded-xl hover:bg-violet-700 transition-colors"
                   >
                     Mulai Simulasi
