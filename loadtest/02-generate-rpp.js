@@ -11,7 +11,7 @@
 import http from 'k6/http';
 import { check, sleep } from 'k6';
 import { Trend, Rate } from 'k6/metrics';
-import { CONFIG, login, pickUser } from './lib.js';
+import { CONFIG, login, pickUser, bypassHeaders } from './lib.js';
 
 const genDuration = new Trend('rpp_generation_ms', true);
 const quotaExceeded = new Rate('rpp_quota_exceeded');
@@ -63,6 +63,7 @@ export default function () {
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${accessToken}`, // cookie jar also carries the SSR session
+      ...bypassHeaders(),
     },
     tags: { name: 'generate-rpp' },
     timeout: '120s',

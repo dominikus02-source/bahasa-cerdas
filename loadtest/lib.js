@@ -16,7 +16,24 @@ export const CONFIG = {
         { email: __ENV.TEST_EMAIL || 'loadtest@bahasacerdas.test', password: __ENV.TEST_PASSWORD || 'changeme' },
       ])
   ),
+  // Token "Protection Bypass for Automation" dari Vercel — dibutuhkan agar k6
+  // bisa menembus SSO di Preview deployment. Isi lewat env, JANGAN di-hardcode:
+  //   -e VERCEL_BYPASS_TOKEN=xxxxxxxx
+  // Kosong = tidak dikirim (aman untuk target produksi/staging non-protected).
+  bypassToken: __ENV.VERCEL_BYPASS_TOKEN || '',
 };
+
+// Header bypass proteksi Vercel. `x-vercel-set-bypass-cookie` membuat response
+// pertama menaruh cookie bypass di cookie jar per-VU, jadi request berikutnya
+// otomatis ikut lolos. Header lebih aman daripada query param (rahasia tak
+// bocor ke URL/log).
+export function bypassHeaders() {
+  if (!CONFIG.bypassToken) return {};
+  return {
+    'x-vercel-protection-bypass': CONFIG.bypassToken,
+    'x-vercel-set-bypass-cookie': 'samesitenone',
+  };
+}
 
 // Logs in via POST /api/auth/login and returns { accessToken, cookies }.
 // The login route returns { session } and also sets Supabase SSR cookies,
@@ -25,7 +42,7 @@ export function login(user) {
   const res = http.post(
     `${CONFIG.baseUrl}/api/auth/login`,
     JSON.stringify({ email: user.email, password: user.password }),
-    { headers: { 'Content-Type': 'application/json' }, tags: { name: 'login' } }
+    { headers: { 'Content-Type': 'application/json', ...bypassHeaders() }, tags: { name: 'login' } }
   );
 
   check(res, {

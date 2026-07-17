@@ -1,7 +1,9 @@
 import { Redis } from "@upstash/redis"
 
-const url = process.env.UPSTASH_REDIS_REST_URL
-const token = process.env.UPSTASH_REDIS_REST_TOKEN
+// Terima kedua penamaan: `UPSTASH_REDIS_REST_*` (manual) atau `KV_REST_API_*`
+// (yang di-provision oleh integrasi Upstash/KV di Vercel Marketplace).
+const url = process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL
+const token = process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN
 
 const redis = url && token ? new Redis({ url, token }) : null
 
