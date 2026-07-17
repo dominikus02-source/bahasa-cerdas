@@ -1,0 +1,834 @@
+{
+  "meta": {
+    "product": "UKBI_PRACTICE",
+    "track": "UKBI_SMA",
+    "section": "menulis",
+    "set": "set-002",
+    "totalItems": 20,
+    "totalConstructed": 20,
+    "scoringMode": "rubric",
+    "source": "BC_UKBI_SMA_ORIGINAL"
+  },
+  "questions": [
+    {
+      "id": "BC-UKBI-SMA-MENULIS-SET002-Q001",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "menulis",
+      "band": "SEMENJAK",
+      "type": "constructed",
+      "scoringMode": "rubric",
+      "difficulty": 3,
+      "stem": "Menurut pendapat Anda, apakah media sosial lebih banyak membawa dampak positif atau negatif bagi remaja? Tuliskan esai argumentatif yang memuat tesis, argumen pendukung, dan simpulan. Gunakan data atau contoh konkret untuk memperkuat argumen Anda.",
+      "wordLimit": {
+        "min": 200,
+        "max": 400
+      },
+      "rubric": [
+        {
+          "criteria": "Kesesuaian isi dengan topik",
+          "weight": 40,
+          "description": "Ketepatan menjawab sesuai dengan topik yang diminta"
+        },
+        {
+          "criteria": "Penggunaan ejaan dan tata bahasa baku",
+          "weight": 30,
+          "description": "Ketepatan EYD, pilihan kata, dan struktur kalimat"
+        },
+        {
+          "criteria": "Keruntutan dan koherensi",
+          "weight": 30,
+          "description": "Kelogisan urutan pikiran dan keterkaitan antarkalimat"
+        }
+      ],
+      "tags": [
+        "esai-argumentatif",
+        "media-sosial",
+        "remaja"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "KREASI",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMA-MENULIS-SET002-Q002",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "menulis",
+      "band": "SEMENJAK",
+      "type": "constructed",
+      "scoringMode": "rubric",
+      "difficulty": 3,
+      "stem": "Bacalah kutipan novel 'Laskar Pelangi' karya Andrea Hirata. Tulislah sebuah resensi kritis yang mencakup identitas buku, sinopsis, kelebihan dan kekurangan, serta simpulan akhir. Berikan penilaian pribadi Anda secara objektif.",
+      "wordLimit": {
+        "min": 200,
+        "max": 350
+      },
+      "rubric": [
+        {
+          "criteria": "Kesesuaian isi dengan topik",
+          "weight": 40,
+          "description": "Ketepatan menjawab sesuai dengan topik yang diminta"
+        },
+        {
+          "criteria": "Penggunaan ejaan dan tata bahasa baku",
+          "weight": 30,
+          "description": "Ketepatan EYD, pilihan kata, dan struktur kalimat"
+        },
+        {
+          "criteria": "Keruntutan dan koherensi",
+          "weight": 30,
+          "description": "Kelogisan urutan pikiran dan keterkaitan antarkalimat"
+        }
+      ],
+      "tags": [
+        "resensi",
+        "kritis",
+        "sastra"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "KREASI",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMA-MENULIS-SET002-Q003",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "menulis",
+      "band": "SEMENJAK",
+      "type": "constructed",
+      "scoringMode": "rubric",
+      "difficulty": 4,
+      "stem": "Kecerdasan buatan (AI) diprediksi akan menggantikan banyak profesi manusia di masa depan. Tuliskan opini Anda tentang profesi-profesi apa saja yang paling mungkin bertahan di era AI dan mengapa. Sertakan argumen logis dan contoh konkret dalam tulisan Anda.",
+      "wordLimit": {
+        "min": 250,
+        "max": 400
+      },
+      "rubric": [
+        {
+          "criteria": "Kesesuaian isi dengan topik",
+          "weight": 40,
+          "description": "Ketepatan menjawab sesuai dengan topik yang diminta"
+        },
+        {
+          "criteria": "Penggunaan ejaan dan tata bahasa baku",
+          "weight": 30,
+          "description": "Ketepatan EYD, pilihan kata, dan struktur kalimat"
+        },
+        {
+          "criteria": "Keruntutan dan koherensi",
+          "weight": 30,
+          "description": "Kelogisan urutan pikiran dan keterkaitan antarkalimat"
+        }
+      ],
+      "tags": [
+        "opini",
+        "AI",
+        "dunia-kerja"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "KREASI",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMA-MENULIS-SET002-Q004",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "menulis",
+      "band": "SEMENJAK",
+      "type": "constructed",
+      "scoringMode": "rubric",
+      "difficulty": 4,
+      "stem": "Analisislah puisi 'Aku' karya Chairil Anwar berikut:\n\nAku\n\nKalau sampai waktuku\nKu mau tak seorang kan merayu\nTidak juga kau\n\nTak perlu sedu sedan itu\nAku ini binatang jalang\nDari kumpulannya terbuang\n\nBiar peluru menembus kulitku\nAku tetap meradang menerjang\n\nLuka dan bisa kubawa berlari\nBerlari\nHingga hilang pedih peri\n\nDan aku akan lebih tidak perduli\nAku mau hidup seribu tahun lagi\n\nTuliskan analisis Anda mengenai tema, diksi, imaji, dan pesan yang ingin disampaikan penyair melalui puisi tersebut.",
+      "wordLimit": {
+        "min": 200,
+        "max": 350
+      },
+      "rubric": [
+        {
+          "criteria": "Kesesuaian isi dengan topik",
+          "weight": 40,
+          "description": "Ketepatan menjawab sesuai dengan topik yang diminta"
+        },
+        {
+          "criteria": "Penggunaan ejaan dan tata bahasa baku",
+          "weight": 30,
+          "description": "Ketepatan EYD, pilihan kata, dan struktur kalimat"
+        },
+        {
+          "criteria": "Keruntutan dan koherensi",
+          "weight": 30,
+          "description": "Kelogisan urutan pikiran dan keterkaitan antarkalimat"
+        }
+      ],
+      "tags": [
+        "analisis-puisi",
+        "chairil-anwar",
+        "sastra"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "KREASI",
+      "domain": "SOSIAL"
+    },
+    {
+      "id": "BC-UKBI-SMA-MENULIS-SET002-Q005",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "menulis",
+      "band": "SEMENJAK",
+      "type": "constructed",
+      "scoringMode": "rubric",
+      "difficulty": 3,
+      "stem": "Sebagai ketua OSIS, Anda diminta menyampaikan pidato dalam acara peringatan Hari Sumpah Pemuda di sekolah. Tuliskan teks pidato yang membangkitkan semangat persatuan dan cinta tanah air di kalangan generasi muda. Gunakan bahasa yang persuasif dan menggugah.",
+      "wordLimit": {
+        "min": 200,
+        "max": 350
+      },
+      "rubric": [
+        {
+          "criteria": "Kesesuaian isi dengan topik",
+          "weight": 40,
+          "description": "Ketepatan menjawab sesuai dengan topik yang diminta"
+        },
+        {
+          "criteria": "Penggunaan ejaan dan tata bahasa baku",
+          "weight": 30,
+          "description": "Ketepatan EYD, pilihan kata, dan struktur kalimat"
+        },
+        {
+          "criteria": "Keruntutan dan koherensi",
+          "weight": 30,
+          "description": "Kelogisan urutan pikiran dan keterkaitan antarkalimat"
+        }
+      ],
+      "tags": [
+        "pidato",
+        "persuasif",
+        "sumpah-pemuda"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "KREASI",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMA-MENULIS-SET002-Q006",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "menulis",
+      "band": "SEMENJAK",
+      "type": "constructed",
+      "scoringMode": "rubric",
+      "difficulty": 4,
+      "stem": "Buatlah laporan singkat tentang hasil observasi di lingkungan sekolah Anda terkait masalah pengelolaan sampah. Laporan harus mencakup: latar belakang, metode observasi, temuan, analisis, dan rekomendasi. Gunakan bahasa ilmiah yang objektif.",
+      "wordLimit": {
+        "min": 250,
+        "max": 400
+      },
+      "rubric": [
+        {
+          "criteria": "Kesesuaian isi dengan topik",
+          "weight": 40,
+          "description": "Ketepatan menjawab sesuai dengan topik yang diminta"
+        },
+        {
+          "criteria": "Penggunaan ejaan dan tata bahasa baku",
+          "weight": 30,
+          "description": "Ketepatan EYD, pilihan kata, dan struktur kalimat"
+        },
+        {
+          "criteria": "Keruntutan dan koherensi",
+          "weight": 30,
+          "description": "Kelogisan urutan pikiran dan keterkaitan antarkalimat"
+        }
+      ],
+      "tags": [
+        "laporan",
+        "observasi",
+        "ilmiah"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "KREASI",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMA-MENULIS-SET002-Q007",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "menulis",
+      "band": "SEMENJAK",
+      "type": "constructed",
+      "scoringMode": "rubric",
+      "difficulty": 3,
+      "stem": "Tuliskan surat pembaca untuk dimuat di koran sekolah yang menyuarakan keprihatinan tentang menurunnya minat baca di kalangan siswa. Sertakan data atau pengamatan pribadi serta usulan solusi yang konkret dan dapat dilakukan oleh pihak sekolah.",
+      "wordLimit": {
+        "min": 150,
+        "max": 300
+      },
+      "rubric": [
+        {
+          "criteria": "Kesesuaian isi dengan topik",
+          "weight": 40,
+          "description": "Ketepatan menjawab sesuai dengan topik yang diminta"
+        },
+        {
+          "criteria": "Penggunaan ejaan dan tata bahasa baku",
+          "weight": 30,
+          "description": "Ketepatan EYD, pilihan kata, dan struktur kalimat"
+        },
+        {
+          "criteria": "Keruntutan dan koherensi",
+          "weight": 30,
+          "description": "Kelogisan urutan pikiran dan keterkaitan antarkalimat"
+        }
+      ],
+      "tags": [
+        "surat-pembaca",
+        "minat-baca",
+        "opini"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "KREASI",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMA-MENULIS-SET002-Q008",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "menulis",
+      "band": "SEMENJAK",
+      "type": "constructed",
+      "scoringMode": "rubric",
+      "difficulty": 3,
+      "stem": "Krisis iklim menjadi ancaman nyata bagi dunia. Tulislah esai argumentatif yang membahas peran generasi muda dalam menghadapi krisis iklim. Gunakan argumen logis, data atau fakta terkini, dan tutup dengan ajakan bertindak yang kuat.",
+      "wordLimit": {
+        "min": 200,
+        "max": 350
+      },
+      "rubric": [
+        {
+          "criteria": "Kesesuaian isi dengan topik",
+          "weight": 40,
+          "description": "Ketepatan menjawab sesuai dengan topik yang diminta"
+        },
+        {
+          "criteria": "Penggunaan ejaan dan tata bahasa baku",
+          "weight": 30,
+          "description": "Ketepatan EYD, pilihan kata, dan struktur kalimat"
+        },
+        {
+          "criteria": "Keruntutan dan koherensi",
+          "weight": 30,
+          "description": "Kelogisan urutan pikiran dan keterkaitan antarkalimat"
+        }
+      ],
+      "tags": [
+        "esai",
+        "krisis-iklim",
+        "generasi-muda"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "KREASI",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMA-MENULIS-SET002-Q009",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "menulis",
+      "band": "SEMENJAK",
+      "type": "constructed",
+      "scoringMode": "rubric",
+      "difficulty": 4,
+      "stem": "Pendidikan karakter di sekolah sering dianggap kurang efektif. Tuliskan opini kritis Anda tentang pentingnya pendidikan karakter dan bagaimana cara mengintegrasikannya secara efektif dalam kurikulum sekolah saat ini. Sertakan contoh program atau kegiatan yang dapat diterapkan.",
+      "wordLimit": {
+        "min": 250,
+        "max": 400
+      },
+      "rubric": [
+        {
+          "criteria": "Kesesuaian isi dengan topik",
+          "weight": 40,
+          "description": "Ketepatan menjawab sesuai dengan topik yang diminta"
+        },
+        {
+          "criteria": "Penggunaan ejaan dan tata bahasa baku",
+          "weight": 30,
+          "description": "Ketepatan EYD, pilihan kata, dan struktur kalimat"
+        },
+        {
+          "criteria": "Keruntutan dan koherensi",
+          "weight": 30,
+          "description": "Kelogisan urutan pikiran dan keterkaitan antarkalimat"
+        }
+      ],
+      "tags": [
+        "opini",
+        "pendidikan-karakter",
+        "kurikulum"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "KREASI",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMA-MENULIS-SET002-Q010",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "menulis",
+      "band": "SEMENJAK",
+      "type": "constructed",
+      "scoringMode": "rubric",
+      "difficulty": 3,
+      "stem": "Kemajuan teknologi digital telah mengubah cara belajar siswa. Tulislah artikel populer yang membahas tiga dampak positif dan tiga dampak negatif teknologi digital dalam dunia pendidikan. Gunakan bahasa yang menarik dan mudah dipahami oleh pembaca awam.",
+      "wordLimit": {
+        "min": 200,
+        "max": 350
+      },
+      "rubric": [
+        {
+          "criteria": "Kesesuaian isi dengan topik",
+          "weight": 40,
+          "description": "Ketepatan menjawab sesuai dengan topik yang diminta"
+        },
+        {
+          "criteria": "Penggunaan ejaan dan tata bahasa baku",
+          "weight": 30,
+          "description": "Ketepatan EYD, pilihan kata, dan struktur kalimat"
+        },
+        {
+          "criteria": "Keruntutan dan koherensi",
+          "weight": 30,
+          "description": "Kelogisan urutan pikiran dan keterkaitan antarkalimat"
+        }
+      ],
+      "tags": [
+        "artikel-populer",
+        "teknologi",
+        "pendidikan"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "KREASI",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMA-MENULIS-SET002-Q011",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "menulis",
+      "band": "SEMENJAK",
+      "type": "constructed",
+      "scoringMode": "rubric",
+      "difficulty": 4,
+      "stem": "Budaya gotong royong mulai tergerus oleh individualisme di perkotaan. Tuliskan sebuah artikel opini yang menganalisis penyebab memudarnya gotong royong dan menawarkan strategi untuk menghidupkannya kembali di tengah masyarakat urban. Sertakan contoh konkret.",
+      "wordLimit": {
+        "min": 250,
+        "max": 400
+      },
+      "rubric": [
+        {
+          "criteria": "Kesesuaian isi dengan topik",
+          "weight": 40,
+          "description": "Ketepatan menjawab sesuai dengan topik yang diminta"
+        },
+        {
+          "criteria": "Penggunaan ejaan dan tata bahasa baku",
+          "weight": 30,
+          "description": "Ketepatan EYD, pilihan kata, dan struktur kalimat"
+        },
+        {
+          "criteria": "Keruntutan dan koherensi",
+          "weight": 30,
+          "description": "Kelogisan urutan pikiran dan keterkaitan antarkalimat"
+        }
+      ],
+      "tags": [
+        "opini",
+        "gotong-royong",
+        "urban"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "KREASI",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMA-MENULIS-SET002-Q012",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "menulis",
+      "band": "SEMENJAK",
+      "type": "constructed",
+      "scoringMode": "rubric",
+      "difficulty": 3,
+      "stem": "Kamu menemukan dompet berisi uang jutaan rupiah di jalan. Tuliskan sebuah cerita pendek berdasarkan pengalaman tersebut yang mengandung nilai kejujuran dan konflik batin tokoh utama. Gunakan sudut pandang orang pertama.",
+      "wordLimit": {
+        "min": 200,
+        "max": 350
+      },
+      "rubric": [
+        {
+          "criteria": "Kesesuaian isi dengan topik",
+          "weight": 40,
+          "description": "Ketepatan menjawab sesuai dengan topik yang diminta"
+        },
+        {
+          "criteria": "Penggunaan ejaan dan tata bahasa baku",
+          "weight": 30,
+          "description": "Ketepatan EYD, pilihan kata, dan struktur kalimat"
+        },
+        {
+          "criteria": "Keruntutan dan koherensi",
+          "weight": 30,
+          "description": "Kelogisan urutan pikiran dan keterkaitan antarkalimat"
+        }
+      ],
+      "tags": [
+        "cerita-pendek",
+        "kejujuran",
+        "narasi"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "KREASI",
+      "domain": "SOSIAL"
+    },
+    {
+      "id": "BC-UKBI-SMA-MENULIS-SET002-Q013",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "menulis",
+      "band": "SEMENJAK",
+      "type": "constructed",
+      "scoringMode": "rubric",
+      "difficulty": 4,
+      "stem": "Sebuah perusahaan teknologi global berencana membangun pusat data besar di daerah pedesaan di Indonesia. Tulislah esai argumentatif yang membahas pro dan kontra dari rencana tersebut. Gunakan perspektif ekonomi, sosial, dan lingkungan dalam analisis Anda.",
+      "wordLimit": {
+        "min": 300,
+        "max": 400
+      },
+      "rubric": [
+        {
+          "criteria": "Kesesuaian isi dengan topik",
+          "weight": 40,
+          "description": "Ketepatan menjawab sesuai dengan topik yang diminta"
+        },
+        {
+          "criteria": "Penggunaan ejaan dan tata bahasa baku",
+          "weight": 30,
+          "description": "Ketepatan EYD, pilihan kata, dan struktur kalimat"
+        },
+        {
+          "criteria": "Keruntutan dan koherensi",
+          "weight": 30,
+          "description": "Kelogisan urutan pikiran dan keterkaitan antarkalimat"
+        }
+      ],
+      "tags": [
+        "esai-argumentatif",
+        "ekonomi",
+        "lingkungan"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "KREASI",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMA-MENULIS-SET002-Q014",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "menulis",
+      "band": "SEMENJAK",
+      "type": "constructed",
+      "scoringMode": "rubric",
+      "difficulty": 3,
+      "stem": "Tuliskan teks eksposisi tentang pentingnya menjaga kelestarian bahasa daerah di era globalisasi. Paparkan fakta tentang jumlah bahasa daerah yang terancam punah dan langkah-langkah konkret yang dapat dilakukan generasi muda untuk melestarikannya.",
+      "wordLimit": {
+        "min": 200,
+        "max": 350
+      },
+      "rubric": [
+        {
+          "criteria": "Kesesuaian isi dengan topik",
+          "weight": 40,
+          "description": "Ketepatan menjawab sesuai dengan topik yang diminta"
+        },
+        {
+          "criteria": "Penggunaan ejaan dan tata bahasa baku",
+          "weight": 30,
+          "description": "Ketepatan EYD, pilihan kata, dan struktur kalimat"
+        },
+        {
+          "criteria": "Keruntutan dan koherensi",
+          "weight": 30,
+          "description": "Kelogisan urutan pikiran dan keterkaitan antarkalimat"
+        }
+      ],
+      "tags": [
+        "eksposisi",
+        "bahasa-daerah",
+        "globalisasi"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "KREASI",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMA-MENULIS-SET002-Q015",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "menulis",
+      "band": "SEMENJAK",
+      "type": "constructed",
+      "scoringMode": "rubric",
+      "difficulty": 4,
+      "stem": "Analisislah peran sastra dalam membentuk karakter bangsa. Dalam esai Anda, jelaskan bagaimana karya sastra dapat menjadi media pendidikan karakter, berikan contoh minimal dua karya sastra Indonesia, dan kemukakan pendapat Anda tentang relevansi sastra di era digital saat ini.",
+      "wordLimit": {
+        "min": 300,
+        "max": 400
+      },
+      "rubric": [
+        {
+          "criteria": "Kesesuaian isi dengan topik",
+          "weight": 40,
+          "description": "Ketepatan menjawab sesuai dengan topik yang diminta"
+        },
+        {
+          "criteria": "Penggunaan ejaan dan tata bahasa baku",
+          "weight": 30,
+          "description": "Ketepatan EYD, pilihan kata, dan struktur kalimat"
+        },
+        {
+          "criteria": "Keruntutan dan koherensi",
+          "weight": 30,
+          "description": "Kelogisan urutan pikiran dan keterkaitan antarkalimat"
+        }
+      ],
+      "tags": [
+        "esai",
+        "sastra",
+        "pendidikan-karakter"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "KREASI",
+      "domain": "SOSIAL"
+    },
+    {
+      "id": "BC-UKBI-SMA-MENULIS-SET002-Q016",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "menulis",
+      "band": "SEMENJAK",
+      "type": "constructed",
+      "scoringMode": "rubric",
+      "difficulty": 3,
+      "stem": "Sebagai seorang ilmuwan muda, kamu diminta menyampaikan presentasi dalam forum ilmiah tentang pentingnya riset dan inovasi bagi kemajuan bangsa. Tuliskan naskah pidato ilmiah yang mencakup: pentingnya riset, contoh keberhasilan riset Indonesia, dan ajakan untuk berinovasi.",
+      "wordLimit": {
+        "min": 200,
+        "max": 350
+      },
+      "rubric": [
+        {
+          "criteria": "Kesesuaian isi dengan topik",
+          "weight": 40,
+          "description": "Ketepatan menjawab sesuai dengan topik yang diminta"
+        },
+        {
+          "criteria": "Penggunaan ejaan dan tata bahasa baku",
+          "weight": 30,
+          "description": "Ketepatan EYD, pilihan kata, dan struktur kalimat"
+        },
+        {
+          "criteria": "Keruntutan dan koherensi",
+          "weight": 30,
+          "description": "Kelogisan urutan pikiran dan keterkaitan antarkalimat"
+        }
+      ],
+      "tags": [
+        "pidato-ilmiah",
+        "riset",
+        "inovasi"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "KREASI",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMA-MENULIS-SET002-Q017",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "menulis",
+      "band": "SEMENJAK",
+      "type": "constructed",
+      "scoringMode": "rubric",
+      "difficulty": 4,
+      "stem": "Fenomena fear of missing out (FOMO) di kalangan remaja akibat media sosial semakin mengkhawatirkan. Tulislah sebuah artikel ilmiah populer yang menjelaskan apa itu FOMO, dampak psikologisnya pada remaja, dan strategi mengatasinya. Gunakan bahasa yang informatif namun mudah dipahami.",
+      "wordLimit": {
+        "min": 250,
+        "max": 400
+      },
+      "rubric": [
+        {
+          "criteria": "Kesesuaian isi dengan topik",
+          "weight": 40,
+          "description": "Ketepatan menjawab sesuai dengan topik yang diminta"
+        },
+        {
+          "criteria": "Penggunaan ejaan dan tata bahasa baku",
+          "weight": 30,
+          "description": "Ketepatan EYD, pilihan kata, dan struktur kalimat"
+        },
+        {
+          "criteria": "Keruntutan dan koherensi",
+          "weight": 30,
+          "description": "Kelogisan urutan pikiran dan keterkaitan antarkalimat"
+        }
+      ],
+      "tags": [
+        "artikel",
+        "FOMO",
+        "psikologi-remaja"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "KREASI",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMA-MENULIS-SET002-Q018",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "menulis",
+      "band": "SEMENJAK",
+      "type": "constructed",
+      "scoringMode": "rubric",
+      "difficulty": 3,
+      "stem": "Kunjungan ke museum dinilai membosankan oleh sebagian besar remaja. Tulislah sebuah teks persuasif yang bertujuan mengajak remaja untuk lebih sering mengunjungi museum. Gunakan argumen yang menarik dan contoh museum-museum menarik di Indonesia yang dapat dikunjungi.",
+      "wordLimit": {
+        "min": 200,
+        "max": 300
+      },
+      "rubric": [
+        {
+          "criteria": "Kesesuaian isi dengan topik",
+          "weight": 40,
+          "description": "Ketepatan menjawab sesuai dengan topik yang diminta"
+        },
+        {
+          "criteria": "Penggunaan ejaan dan tata bahasa baku",
+          "weight": 30,
+          "description": "Ketepatan EYD, pilihan kata, dan struktur kalimat"
+        },
+        {
+          "criteria": "Keruntutan dan koherensi",
+          "weight": 30,
+          "description": "Kelogisan urutan pikiran dan keterkaitan antarkalimat"
+        }
+      ],
+      "tags": [
+        "teks-persuasif",
+        "museum",
+        "remaja"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "KREASI",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMA-MENULIS-SET002-Q019",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "menulis",
+      "band": "SEMENJAK",
+      "type": "constructed",
+      "scoringMode": "rubric",
+      "difficulty": 4,
+      "stem": "Perubahan kurikulum pendidikan yang terlalu sering dinilai membuat guru dan siswa kesulitan beradaptasi. Tuliskan esai argumentatif yang membahas dampak positif dan negatif dari perubahan kurikulum serta usul Anda tentang bagaimana seharusnya perubahan kurikulum dilakukan agar efektif.",
+      "wordLimit": {
+        "min": 300,
+        "max": 400
+      },
+      "rubric": [
+        {
+          "criteria": "Kesesuaian isi dengan topik",
+          "weight": 40,
+          "description": "Ketepatan menjawab sesuai dengan topik yang diminta"
+        },
+        {
+          "criteria": "Penggunaan ejaan dan tata bahasa baku",
+          "weight": 30,
+          "description": "Ketepatan EYD, pilihan kata, dan struktur kalimat"
+        },
+        {
+          "criteria": "Keruntutan dan koherensi",
+          "weight": 30,
+          "description": "Kelogisan urutan pikiran dan keterkaitan antarkalimat"
+        }
+      ],
+      "tags": [
+        "esai",
+        "kurikulum",
+        "pendidikan"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "KREASI",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMA-MENULIS-SET002-Q020",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "menulis",
+      "band": "SEMENJAK",
+      "type": "constructed",
+      "scoringMode": "rubric",
+      "difficulty": 3,
+      "stem": "Kamu terpilih menjadi duta baca di sekolah. Tuliskan naskah orasi yang akan kamu sampaikan pada acara pelantikan duta baca. Orasi harus mencakup: pentingnya budaya baca, kondisi minat baca di Indonesia saat ini, dan program kerja yang akan kamu lakukan selama menjadi duta baca.",
+      "wordLimit": {
+        "min": 200,
+        "max": 350
+      },
+      "rubric": [
+        {
+          "criteria": "Kesesuaian isi dengan topik",
+          "weight": 40,
+          "description": "Ketepatan menjawab sesuai dengan topik yang diminta"
+        },
+        {
+          "criteria": "Penggunaan ejaan dan tata bahasa baku",
+          "weight": 30,
+          "description": "Ketepatan EYD, pilihan kata, dan struktur kalimat"
+        },
+        {
+          "criteria": "Keruntutan dan koherensi",
+          "weight": 30,
+          "description": "Kelogisan urutan pikiran dan keterkaitan antarkalimat"
+        }
+      ],
+      "tags": [
+        "orasi",
+        "duta-baca",
+        "literasi"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "KREASI",
+      "domain": "AKADEMIK"
+    }
+  ]
+}

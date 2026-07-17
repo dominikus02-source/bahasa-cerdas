@@ -1,0 +1,1122 @@
+{
+  "meta": {
+    "product": "UKBI_PRACTICE",
+    "track": "UKBI_SMP",
+    "section": "merespons-kaidah",
+    "set": "set-002",
+    "totalItems": 30,
+    "source": "BC_UKBI_SMP_ORIGINAL"
+  },
+  "questions": [
+    {
+      "id": "BC-UKBI-SMP-KAIDAH-SET002-Q001",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "merespons-kaidah",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "stem": "Penulisan kata baku yang tepat terdapat pada kalimat?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Ayah mempengaruhi keputusan saya untuk memilih sekolah"
+        },
+        {
+          "id": "B",
+          "text": "Kami mengadakan study tour ke Yogyakarta minggu depan"
+        },
+        {
+          "id": "C",
+          "text": "Dia aktif dalam organisasi OSIS di sekolahnya"
+        },
+        {
+          "id": "D",
+          "text": "Mereka membuat jadwal piket secara kolektif"
+        }
+      ],
+      "correctAnswer": "D",
+      "explanation": "Kata 'kolektif' adalah bentuk baku. 'Mempengaruhi' seharusnya 'memengaruhi' tanpa p, 'study tour' seharusnya 'studi tur'.",
+      "tags": [
+        "kata baku"
+      ],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMP-KAIDAH-SET002-Q002",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "merespons-kaidah",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "stem": "Penulisan kata serapan yang benar terdapat pada kalimat?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Ia memberikan analisa yang mendalam terhadap masalah itu"
+        },
+        {
+          "id": "B",
+          "text": "Dokter melakukan diagnosa dengan teliti"
+        },
+        {
+          "id": "C",
+          "text": "Sistem pendidikan nasional perlu dievaluasi secara berkala"
+        },
+        {
+          "id": "D",
+          "text": "Kami menerima intruksi dari kepala sekolah"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "Kata 'dievaluasi' adalah bentuk baku. 'Analisa' seharusnya 'analisis', 'diagnosa' seharusnya 'diagnosis', 'intruksi' seharusnya 'instruksi'.",
+      "tags": [
+        "kata serapan"
+      ],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMP-KAIDAH-SET002-Q003",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "merespons-kaidah",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 1,
+      "stem": "Kalimat berikut yang menggunakan kata tidak baku adalah?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Kami menggunakan metode ilmiah dalam penelitian ini"
+        },
+        {
+          "id": "B",
+          "text": "Praktik kerja lapangan dimulai bulan depan"
+        },
+        {
+          "id": "C",
+          "text": "Aktifitas ekstrakurikuler berjalan dengan lancar"
+        },
+        {
+          "id": "D",
+          "text": "Mereka mengikuti upacara bendera setiap Senin"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "Kata 'aktifitas' adalah bentuk tidak baku, seharusnya 'aktivitas'.",
+      "tags": [
+        "kata baku"
+      ],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMP-KAIDAH-SET002-Q004",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "merespons-kaidah",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "stem": "Penulisan kata berimbuhan yang tepat adalah?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Kami mentaati peraturan sekolah dengan disiplin"
+        },
+        {
+          "id": "B",
+          "text": "Dia menuliskan pengalamannya di buku harian"
+        },
+        {
+          "id": "C",
+          "text": "Mereka memperbaharui perpustakaan sekolah"
+        },
+        {
+          "id": "D",
+          "text": "Guru menugaskan kami untuk merangkum materi"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "'Menuliskan' adalah bentuk yang tepat meN- + tulis + -kan. 'Mentaati' seharusnya 'menaati', 'memperbaharui' seharusnya 'memperbarui'.",
+      "tags": [
+        "imbuhan"
+      ],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMP-KAIDAH-SET002-Q005",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "merespons-kaidah",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "stem": "Kalimat berikut yang menggunakan imbuhan meN- dengan benar adalah?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Ibu memasak sayur di dapur"
+        },
+        {
+          "id": "B",
+          "text": "Ayah memarkir mobil di garasi"
+        },
+        {
+          "id": "C",
+          "text": "Kami mentranfer uang melalui bank"
+        },
+        {
+          "id": "D",
+          "text": "Dia memfoto pemandangan di pantai"
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "'Memasak' adalah bentuk yang benar meN- + masak.",
+      "tags": [
+        "imbuhan"
+      ],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMP-KAIDAH-SET002-Q006",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "merespons-kaidah",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "stem": "Kalimat efektif berikut yang menggunakan konjungsi yang tepat adalah?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Saya suka membaca buku, sedangkan adik saya suka bermain bola"
+        },
+        {
+          "id": "B",
+          "text": "Dia rajin belajar sehingga ia tidak naik kelas"
+        },
+        {
+          "id": "C",
+          "text": "Kami pergi ke perpustakaan walaupun buku sudah dipinjam"
+        },
+        {
+          "id": "D",
+          "text": "Ibu memasak di dapur tetapi ayah membaca koran"
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Konjungsi 'sedangkan' tepat untuk menyatakan pertentangan antara dua hal.",
+      "tags": [
+        "konjungsi"
+      ],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMP-KAIDAH-SET002-Q007",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "merespons-kaidah",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "stem": "Penggunaan konjungsi korelatif yang tepat terdapat pada kalimat?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Baik guru maupun siswa ikut serta dalam kegiatan bakti sosial"
+        },
+        {
+          "id": "B",
+          "text": "Tidak hanya belajar di kelas tetapi siswa juga praktik di laboratorium"
+        },
+        {
+          "id": "C",
+          "text": "Dia entah datang entah tidak, kami tetap melanjutkan acara"
+        },
+        {
+          "id": "D",
+          "text": "Semakin dia belajar maka semakin pintar dia"
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Pasangan konjungsi korelatif 'baik... maupun...' digunakan dengan tepat.",
+      "tags": [
+        "konjungsi korelatif"
+      ],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMP-KAIDAH-SET002-Q008",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "merespons-kaidah",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "stem": "Kalimat berikut yang merupakan kalimat efektif adalah?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Bagi semua siswa diwajibkan untuk mengikuti upacara"
+        },
+        {
+          "id": "B",
+          "text": "Dalam rapat itu membahas tentang kegiatan sekolah"
+        },
+        {
+          "id": "C",
+          "text": "Kami membersihkan kelas setiap hari"
+        },
+        {
+          "id": "D",
+          "text": "Sebab karena dia sakit, maka dia tidak masuk sekolah"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "'Kami membersihkan kelas setiap hari' adalah kalimat efektif karena subjek dan predikat jelas.",
+      "tags": [
+        "kalimat efektif"
+      ],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMP-KAIDAH-SET002-Q009",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "merespons-kaidah",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "stem": "Kalimat 'Mereka saling bertengkar satu sama lain' tidak efektif karena?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Pemborosan kata"
+        },
+        {
+          "id": "B",
+          "text": "Tidak bersubjek"
+        },
+        {
+          "id": "C",
+          "text": "Makna ambigu"
+        },
+        {
+          "id": "D",
+          "text": "Tidak logis"
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Kata 'saling' dan 'bertengkar' memiliki makna yang tumpang tindih sehingga menimbulkan pemborosan kata.",
+      "tags": [
+        "kalimat efektif"
+      ],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved",
+      "cognitive": "ANALISIS",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMP-KAIDAH-SET002-Q010",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "merespons-kaidah",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "stem": "Penulisan tanda baca yang tepat terdapat pada kalimat?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Ibu membeli: sayur, buah, dan daging di pasar"
+        },
+        {
+          "id": "B",
+          "text": "Kami berasal dari Bandung, Jawa Barat"
+        },
+        {
+          "id": "C",
+          "text": "Dia berkata: \"Saya akan datang besok\""
+        },
+        {
+          "id": "D",
+          "text": "Apakah kamu sudah makan? tanya ibu"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Penulisan 'Bandung, Jawa Barat' menggunakan koma dengan tepat sebagai pemisah antara kota dan provinsi.",
+      "tags": [
+        "tanda baca"
+      ],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMP-KAIDAH-SET002-Q011",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "merespons-kaidah",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "stem": "Penggunaan tanda petik yang tepat terdapat pada kalimat?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Ibu mengatakan, \"Jangan lupa sholat.\""
+        },
+        {
+          "id": "B",
+          "text": "Dia membaca buku \"Laskar Pelangi\""
+        },
+        {
+          "id": "C",
+          "text": "\"Maju terus\"! teriak komandan"
+        },
+        {
+          "id": "D",
+          "text": "Apakah \"kata\" itu baku?"
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Tanda petik digunakan dengan tepat untuk mengapit petikan langsung. Judul buku seharusnya dicetak miring.",
+      "tags": [
+        "tanda baca"
+      ],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMP-KAIDAH-SET002-Q012",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "merespons-kaidah",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 1,
+      "stem": "Penulisan huruf kapital yang tepat adalah?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Pada hari minggu kami pergi ke museum"
+        },
+        {
+          "id": "B",
+          "text": "Mata Pelajaran Matematika sangat menyenangkan"
+        },
+        {
+          "id": "C",
+          "text": "Presiden Joko Widodo meresmikan gedung itu"
+        },
+        {
+          "id": "D",
+          "text": "Kami tinggal di Jl. Merdeka No. 10"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "'Presiden Joko Widodo' ditulis dengan huruf kapital karena merupakan gelar dan nama orang.",
+      "tags": [
+        "huruf kapital"
+      ],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMP-KAIDAH-SET002-Q013",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "merespons-kaidah",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "stem": "Paragraf berikut yang merupakan paragraf deduktif adalah?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Olahraga teratur memiliki banyak manfaat. Pertama, olahraga menjaga kesehatan jantung. Kedua, olahraga meningkatkan kekuatan otot. Ketiga, olahraga membantu mengelola stres. Oleh karena itu, kita perlu berolahraga secara rutin."
+        },
+        {
+          "id": "B",
+          "text": "Kita perlu berolahraga secara rutin. Olahraga menjaga kesehatan jantung. Olahraga juga meningkatkan kekuatan otot. Selain itu, olahraga membantu mengelola stres."
+        },
+        {
+          "id": "C",
+          "text": "Setiap pagi, Andi berlari di lapangan. Ia melakukan peregangan. Setelah berlari, ia minum air putih. Andi merasa segar."
+        },
+        {
+          "id": "D",
+          "text": "Kesehatan jantung menjadi lebih baik. Kekuatan otot meningkat. Stres berkurang. Itulah manfaat olahraga."
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Paragraf deduktif memiliki kalimat utama di awal paragraf. Pilihan A diawali dengan kalimat utama 'Olahraga teratur memiliki banyak manfaat'.",
+      "tags": [
+        "paragraf deduktif"
+      ],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMP-KAIDAH-SET002-Q014",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "merespons-kaidah",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "stem": "Paragraf induktif adalah paragraf yang gagasan utamanya terletak di?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Awal paragraf"
+        },
+        {
+          "id": "B",
+          "text": "Tengah paragraf"
+        },
+        {
+          "id": "C",
+          "text": "Akhir paragraf"
+        },
+        {
+          "id": "D",
+          "text": "Tersebar di seluruh paragraf"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "Paragraf induktif memiliki gagasan utama atau kalimat utama di akhir paragraf.",
+      "tags": [
+        "paragraf induktif"
+      ],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMP-KAIDAH-SET002-Q015",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "merespons-kaidah",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "stem": "Penulisan kata depan 'di' yang tepat adalah?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Buku itu di letakkan di atas meja"
+        },
+        {
+          "id": "B",
+          "text": "Dia bekerja diSurabaya sejak tahun lalu"
+        },
+        {
+          "id": "C",
+          "text": "Mereka bermain di halaman sekolah"
+        },
+        {
+          "id": "D",
+          "text": "Kue itu di makan oleh adik"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "'Di halaman' ditulis terpisah karena 'di' merupakan kata depan yang menunjukkan tempat.",
+      "tags": [
+        "kata depan"
+      ],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMP-KAIDAH-SET002-Q016",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "merespons-kaidah",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "stem": "Kalimat berikut yang termasuk kalimat majemuk setara adalah?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Kami pergi ke perpustakaan setelah pelajaran selesai"
+        },
+        {
+          "id": "B",
+          "text": "Ibu memasak di dapur dan ayah membaca koran"
+        },
+        {
+          "id": "C",
+          "text": "Dia tidak masuk sekolah karena sakit"
+        },
+        {
+          "id": "D",
+          "text": "Buku yang dipinjam dari perpustakaan itu sangat menarik"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Kalimat majemuk setara menggunakan konjungsi 'dan' yang menghubungkan dua klausa sederajat.",
+      "tags": [
+        "kalimat majemuk"
+      ],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMP-KAIDAH-SET002-Q017",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "merespons-kaidah",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "stem": "Penulisan singkatan nama lembaga yang tepat adalah?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Pki (Partai Komunis Indonesia)"
+        },
+        {
+          "id": "B",
+          "text": "Smp N 5 Jakarta"
+        },
+        {
+          "id": "C",
+          "text": "Mts Al-Hidayah"
+        },
+        {
+          "id": "D",
+          "text": "SMA Negeri 1 Bandung"
+        }
+      ],
+      "correctAnswer": "D",
+      "explanation": "'SMA' ditulis dengan huruf kapital karena merupakan singkatan nama lembaga.",
+      "tags": [
+        "singkatan"
+      ],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMP-KAIDAH-SET002-Q018",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "merespons-kaidah",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 1,
+      "stem": "Kalimat yang menggunakan kata 'di mana' dengan tepat adalah?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Sekolah di mana saya belajar memiliki perpustakaan yang besar"
+        },
+        {
+          "id": "B",
+          "text": "Rumah di mana dia tinggal sangat jauh dari sini"
+        },
+        {
+          "id": "C",
+          "text": "Di mana kamu meletakkan buku saya?"
+        },
+        {
+          "id": "D",
+          "text": "Kota di mana dia lahir adalah Surabaya"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "Kata 'di mana' tepat digunakan sebagai kata tanya. Sebagai kata penghubung sebaiknya diganti 'yang' atau 'tempat'.",
+      "tags": [
+        "kata tanya"
+      ],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMP-KAIDAH-SET002-Q019",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "merespons-kaidah",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "stem": "Penggunaan partikel '-lah' yang tepat adalah?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Makanlah yang teratur agar tetap sehat"
+        },
+        {
+          "id": "B",
+          "text": "Bukulah itu milik saya"
+        },
+        {
+          "id": "C",
+          "text": "Dialah yang memenangkan lomba"
+        },
+        {
+          "id": "D",
+          "text": "Apalah itu yang kamu bawa?"
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Partikel '-lah' pada kata 'makanlah' berfungsi sebagai penekanan perintah.",
+      "tags": [
+        "partikel"
+      ],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMP-KAIDAH-SET002-Q020",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "merespons-kaidah",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "stem": "Kalimat berikut yang menggunakan kata ulang dengan tepat adalah?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Anak-anak itu bermain bola di lapangan"
+        },
+        {
+          "id": "B",
+          "text": "Rumah-rumah itu catnya berwarna-warni"
+        },
+        {
+          "id": "C",
+          "text": "Pohon-pohon itu ditanam oleh bapak-bapak"
+        },
+        {
+          "id": "D",
+          "text": "Semua jawaban benar"
+        }
+      ],
+      "correctAnswer": "D",
+      "explanation": "Semua kalimat menggunakan kata ulang dengan tepat untuk menyatakan jamak.",
+      "tags": [
+        "kata ulang"
+      ],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMP-KAIDAH-SET002-Q021",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "merespons-kaidah",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 1,
+      "stem": "Penulisan bilangan yang tepat adalah?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Terdapat 20 orang siswa di kelas kami"
+        },
+        {
+          "id": "B",
+          "text": "Dia mendapat peringkat ke-1 di kelas"
+        },
+        {
+          "id": "C",
+          "text": "Kami memiliki 3 orang kucing di rumah"
+        },
+        {
+          "id": "D",
+          "text": "Harga buku itu Rp. 50.000,-"
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Penulisan '20 orang siswa' tepat karena bilangan diikuti kata. Peringkat ke-1 seharusnya 'peringkat pertama', '3 orang kucing' tidak perlu 'orang', Rp tidak pakai titik dan tanda '-'.",
+      "tags": [
+        "bilangan"
+      ],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMP-KAIDAH-SET002-Q022",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "merespons-kaidah",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "stem": "Kalimat yang menggunakan konjungsi 'akan tetapi' dengan tepat adalah?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Dia pandai matematika akan tetapi ia juga pandai fisika"
+        },
+        {
+          "id": "B",
+          "text": "Kami ingin pergi akan tetapi hujan turun dengan deras"
+        },
+        {
+          "id": "C",
+          "text": "Ibu membeli sayur akan tetapi buah di pasar"
+        },
+        {
+          "id": "D",
+          "text": "Mereka datang akan tetapi acara sudah selesai"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "'Akan tetapi' digunakan untuk menyatakan pertentangan. Keinginan pergi bertentangan dengan hujan deras.",
+      "tags": [
+        "konjungsi"
+      ],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMP-KAIDAH-SET002-Q023",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "merespons-kaidah",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "stem": "Kalimat pasif yang tepat adalah?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Buku itu saya baca dengan saksama"
+        },
+        {
+          "id": "B",
+          "text": "Nasi goreng dimasak oleh ibu di dapur"
+        },
+        {
+          "id": "C",
+          "text": "Mobil dikendarai oleh ayah ke kantor"
+        },
+        {
+          "id": "D",
+          "text": "Kue itu saya dan adik makan bersama"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "'Nasi goreng dimasak oleh ibu' adalah kalimat pasif dengan di- + pelaku. Kalimat A seharusnya 'Saya membaca buku', D tidak tepat karena 'saya dan adik' tidak bisa menjadi pelaku dalam struktur pasif seperti itu.",
+      "tags": [
+        "kalimat pasif"
+      ],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMP-KAIDAH-SET002-Q024",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "merespons-kaidah",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "stem": "Penulisan gelar akademik yang tepat adalah?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Dr. Andi Wijaya, S.Pd., M.Pd."
+        },
+        {
+          "id": "B",
+          "text": "Dr Andi Wijaya S.Pd M.Pd"
+        },
+        {
+          "id": "C",
+          "text": "dr. Andi Wijaya, S.Pd, M.Pd"
+        },
+        {
+          "id": "D",
+          "text": "Andi Wijaya, Dr., S.Pd., M.Pd."
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Penulisan gelar menggunakan titik setelah singkatan gelar dan dipisahkan koma.",
+      "tags": [
+        "gelar"
+      ],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMP-KAIDAH-SET002-Q025",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "merespons-kaidah",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "stem": "Kata baku dari 'kreatifitas' adalah?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Kreatifitas"
+        },
+        {
+          "id": "B",
+          "text": "Kreativitas"
+        },
+        {
+          "id": "C",
+          "text": "Kreatifvitas"
+        },
+        {
+          "id": "D",
+          "text": "Kreativitet"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Bentuk baku dari 'kreatifitas' adalah 'kreativitas' dengan akhiran -itas.",
+      "tags": [
+        "kata baku"
+      ],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMP-KAIDAH-SET002-Q026",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "merespons-kaidah",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "stem": "Kalimat berikut yang termasuk kalimat majemuk bertingkat adalah?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Ayah membaca koran dan ibu memasak di dapur"
+        },
+        {
+          "id": "B",
+          "text": "Kami pergi ke perpustakaan setelah pelajaran selesai"
+        },
+        {
+          "id": "C",
+          "text": "Dia membeli buku, pensil, dan penggaris"
+        },
+        {
+          "id": "D",
+          "text": "Mereka bernyanyi dan menari di panggung"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Kalimat majemuk bertingkat memiliki klausa utama dan klausa bawahan. 'Setelah pelajaran selesai' adalah klausa bawahan yang menerangkan waktu.",
+      "tags": [
+        "kalimat majemuk"
+      ],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMP-KAIDAH-SET002-Q027",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "merespons-kaidah",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 1,
+      "stem": "Penggunaan tanda titik yang tepat adalah?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Ibu pergi ke pasar. Dan membeli sayur."
+        },
+        {
+          "id": "B",
+          "text": "Kami belajar. Di perpustakaan."
+        },
+        {
+          "id": "C",
+          "text": "Dia membaca buku. Kemudian menulis ringkasan."
+        },
+        {
+          "id": "D",
+          "text": "Mereka bermain sepak bola di lapangan."
+        }
+      ],
+      "correctAnswer": "D",
+      "explanation": "Kalimat 'Mereka bermain sepak bola di lapangan' adalah kalimat utuh yang diakhiri titik. Pilihan A, B, dan C memiliki klausa tidak utuh setelah titik.",
+      "tags": [
+        "tanda baca"
+      ],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMP-KAIDAH-SET002-Q028",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "merespons-kaidah",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "stem": "Kalimat yang menggunakan konjungsi temporal adalah?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Ibu memasak sayur dan ayam goreng"
+        },
+        {
+          "id": "B",
+          "text": "Kami belajar sebelum ujian dimulai"
+        },
+        {
+          "id": "C",
+          "text": "Dia pandai tetapi malas belajar"
+        },
+        {
+          "id": "D",
+          "text": "Mereka bernyanyi atau menari"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Konjungsi temporal 'sebelum' menyatakan hubungan waktu.",
+      "tags": [
+        "konjungsi temporal"
+      ],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMP-KAIDAH-SET002-Q029",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "merespons-kaidah",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "stem": "Kalimat berikut yang menggunakan kata penghubung 'walaupun' dengan tepat adalah?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Walaupun hujan deras, tetapi ia tetap berangkat"
+        },
+        {
+          "id": "B",
+          "text": "Walaupun sakit, dia tetap masuk sekolah"
+        },
+        {
+          "id": "C",
+          "text": "Walaupun lelah akan tetapi ia tersenyum"
+        },
+        {
+          "id": "D",
+          "text": "Walaupun sibuk namun ia membantu saya"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "'Walaupun' tidak perlu diikuti konjungsi lain seperti 'tetapi', 'akan tetapi', atau 'namun'. Cukup satu konjungsi saja.",
+      "tags": [
+        "konjungsi"
+      ],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMP-KAIDAH-SET002-Q030",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "merespons-kaidah",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "stem": "Penulisan judul karangan yang tepat adalah?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Pengaruh Media Sosial Terhadap Prestasi Belajar Siswa"
+        },
+        {
+          "id": "B",
+          "text": "Dampak Media Sosial bagi Prestasi Belajar Remaja"
+        },
+        {
+          "id": "C",
+          "text": "Pengaruh negatif media sosial terhadap belajar siswa"
+        },
+        {
+          "id": "D",
+          "text": "Menulis Resensi Buku Fiksi dan Nonfiksi"
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Penulisan judul menggunakan huruf kapital di awal setiap kata kecuali kata tugas seperti 'di', 'ke', 'dari', 'dan', 'yang', 'untuk' yang tidak di awal judul. 'Terhadap' ditulis kapital karena merupakan kata depan yang diikuti oleh kata benda.",
+      "tags": [
+        "judul"
+      ],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    }
+  ]
+}
