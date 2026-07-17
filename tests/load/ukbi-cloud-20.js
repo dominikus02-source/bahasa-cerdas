@@ -20,7 +20,9 @@ const PAKET_ID = __ENV.PAKET_ID || "";
 const COOKIE_FILE = __ENV.K6_COOKIE_FILE || "";
 const ALLOW_PRODUCTION = __ENV.ALLOW_PRODUCTION_LOAD_TEST === "true";
 const VUS = 20;
-const IS_PRODUCTION = BASE_URL.includes("bahasacerdas.com") || BASE_URL.includes("www.bahasacerdas");
+const IS_PRODUCTION = BASE_URL.includes("bahasacerdas.com") || BASE_URL.includes("www.bahasacerdas") || BASE_URL.includes(".vercel.app");
+const VERCEL_BYPASS = __ENV.VERCEL_BYPASS_SECRET || "";
+const BASE = VERCEL_BYPASS ? `${BASE_URL}?x-vercel-protection-bypass=${VERCEL_BYPASS}` : BASE_URL;
 
 // Safety guard: prevent running >20 VUs against production
 if (IS_PRODUCTION && !ALLOW_PRODUCTION && VUS > 20) {
@@ -87,7 +89,7 @@ export default function () {
   const startTime = Date.now();
 
   // ── Warmup: auto-create Prisma User record ──
-  const warmupRes = http.get(`${BASE_URL}/api/user/me`, { headers });
+  const warmupRes = http.get(`${BASE}/api/user/me`, { headers });
   if (warmupRes.status !== 200) {
     console.error(`VU ${__VU}: warmup failed (HTTP ${warmupRes.status})`);
     errorRate.add(true);
@@ -97,7 +99,7 @@ export default function () {
   sleep(0.5);
 
   // ── Fetch questions ──
-  const fetchRes = http.get(`${BASE_URL}/api/kompetensi/${PAKET_ID}`, { headers });
+  const fetchRes = http.get(`${BASE}/api/kompetensi/${PAKET_ID}`, { headers });
   const fetchMs = Date.now() - startTime;
   fetchQuestionsDuration.add(fetchMs);
 
@@ -120,7 +122,7 @@ export default function () {
   // ── Submit answers (60% probability) ──
   if (Math.random() < 0.6) {
     const submitRes = http.post(
-      `${BASE_URL}/api/kompetensi/${PAKET_ID}/submit`,
+      `${BASE}/api/kompetensi/${PAKET_ID}/submit`,
       JSON.stringify({ answers: {}, timeSpent: 15 }),
       { headers }
     );
@@ -138,7 +140,7 @@ export default function () {
     }
 
     // ── Fetch result ──
-    const resultRes = http.get(`${BASE_URL}/api/kompetensi/${PAKET_ID}/hasil`, { headers });
+    const resultRes = http.get(`${BASE}/api/kompetensi/${PAKET_ID}/hasil`, { headers });
     const resultMs = Date.now() - startTime - fetchMs - submitMs;
     resultDuration.add(resultMs);
 

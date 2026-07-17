@@ -20,7 +20,9 @@ const PAKET_ID = __ENV.PAKET_ID || "";
 const COOKIE_FILE = __ENV.K6_COOKIE_FILE || "";
 const INLINE_COOKIE = __ENV.K6_COOKIE || "";
 const ALLOW_PRODUCTION = __ENV.ALLOW_PRODUCTION_LOAD_TEST === "true";
+const VERCEL_BYPASS = __ENV.VERCEL_BYPASS_SECRET || "";
 const VUS = 1;
+const BASE = VERCEL_BYPASS ? `${BASE_URL}?x-vercel-protection-bypass=${VERCEL_BYPASS}` : BASE_URL;
 // Read cookies from file if provided (init-time)
 let allCookies = [];
 if (COOKIE_FILE) {
