@@ -331,7 +331,9 @@ async function main() {
       if (existingPk) {
         await db.paketKompetensi.update({
           where: { id: existingPk.id },
-          data: { duration: cfg.duration, totalQuestions: 30, sections, isActive: true },
+          // Set `sectionsData` juga (dipakai rute GET; `sections` sebagai fallback)
+          // agar paket tak pernah "0 soal" karena definisi seksi kosong.
+          data: { duration: cfg.duration, totalQuestions: 30, sections, sectionsData: sections, isActive: true },
         })
         console.log(`  ✅ Updated Paket: ${cfg.title}`)
       } else {
@@ -345,6 +347,7 @@ async function main() {
             passingScore: 0,
             passingGrade: "D",
             sections: sections as any,
+            sectionsData: sections as any,
             totalQuestions: 30,
             isActive: true,
             isPremium: false,
