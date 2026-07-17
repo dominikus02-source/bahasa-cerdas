@@ -9,6 +9,7 @@ langkah yang butuh kredensial (Supabase / Vercel / Fly) — jalankan sesuai urut
 | Area | File | Efek |
 |------|------|------|
 | Pool DB | `lib/db.ts` | Auto-deteksi pooler → `pgbouncer=true`, `connection_limit=5` (env `DB_CONNECTION_LIMIT`), buang `statement_cache_size` |
+| Cache pool soal | `app/api/kompetensi/[paketId]/route.ts` + `lib/redis.ts` | Cache TTL paket + pool soal per (paket, seksi) via Upstash → potong ~N+1 query baca DB tiap start simulasi. Pengacakan tetap per-sesi (di memori). **Butuh env Upstash aktif** (di bawah) untuk benar-benar hemat DB |
 | Index | `prisma/schema.prisma` | +4 `@@index` (leaderboard, monitoring) |
 | Queue AI | `lib/ai-concurrency.ts` + `app/api/ai/agents/run/route.ts` | Cap concurrency global fail-open, `503 AI_BUSY` saat jenuh |
 | Load test | `loadtest/*.js` | k6: login, generate RPP, submit simulasi |
@@ -71,6 +72,36 @@ k6 run -e BASE_URL=$BASE_URL -e USERS="$USERS" -e PAKET_ID=... -e ANSWERS='{}' l
 
 Sinyal batas: p95 latency melonjak, error 5xx naik, atau error `P2024`
 (connection pool habis) muncul → itu plafon saat ini.
+
+## 4b. Cache pool soal simulasi (Upstash) — WAJIB agar hemat DB
+
+Rute start simulasi (`GET /api/kompetensi/[paketId]`) kini membungkus lookup
+paket + pool soal per seksi dengan `cache.getOrSet` (server-side). Efeknya:
+1000 user yang start bareng **tidak** lagi masing-masing menembak N query
+`findMany` soal — cukup 1 kali per paket per TTL, sisanya dari cache.
+
+**Syarat aktif:** env Upstash harus ada di Vercel (Production + Preview):
+
+```
+UPSTASH_REDIS_REST_URL=...
+UPSTASH_REDIS_REST_TOKEN=...
+```
+
+Tanpa env ini, `lib/redis.ts` **tidak error** — `getOrSet` cuma jatuh ke query
+DB seperti sebelumnya (tidak ada regresi, tapi juga tidak ada penghematan).
+
+**Tuning (opsional):** `SIM_POOL_TTL` (detik, default `300`). Naikkan (mis. 600)
+saat ujian serentak agar cache lebih dingin/hemat; turunkan bila bank soal sering
+diedit dan perubahan harus cepat tampil. Kunci cache: `komp:paket:v1:*`,
+`komp:pool:v1:*` — hapus manual di Upstash bila perlu invalidasi cepat.
+
+**Keamanan:** yang di-cache **bebas kunci jawaban** (select `UKBI_SELECT`/
+`TKA_SELECT` tanpa `correctAnswer`). Snapshot jawaban tetap diambil langsung dari
+DB per sesi. Jadi tidak ada answer key yang mendarat di cache eksternal.
+
+**Verifikasi:** setelah env di-set + redeploy, buka satu simulasi 2×; start kedua
+harus lebih cepat & (di Supabase → Database) tak menambah query pool soal. Load
+test `loadtest/03-submit-simulasi.js` + start berulang → p95 lebih stabil.
 
 ## 5. Monitoring
 

@@ -6,6 +6,16 @@ import type { AttemptSnapshot, QuestionSnapshot } from "@/lib/types/snapshot";
 import { withQueryTimeout } from "@/lib/db/with-query-timeout";
 import { ok, err } from "@/lib/api/response";
 import { ERR } from "@/lib/api/errors";
+import cache from "@/lib/redis";
+
+// TTL cache pool soal & paket (server-side, Upstash). Bump versi kunci saat
+// bentuk data pool berubah agar cache lama otomatis di-bypass. Data yang
+// di-cache BEBAS kunci jawaban (UKBI_SELECT/TKA_SELECT tanpa correctAnswer) —
+// snapshot jawaban tetap diambil langsung dari DB. Perubahan bank soal
+// terpropagasi dalam <= TTL. Nol perubahan jika Upstash tak diset (getOrSet
+// jatuh ke fungsi fetch aslinya).
+const POOL_CACHE_VERSION = "v1";
+const POOL_TTL = Number(process.env.SIM_POOL_TTL || 300);
 
 const UKBI_TYPES = ["UKBI", "UKBI_SIMULASI", "UKBI_LATIHAN", "UKBI_SD", "UKBI_LATIHAN_SD", "UKBI_SMP", "UKBI_LATIHAN_SMP", "UKBI_SMA", "UKBI_LATIHAN_SMA", "UKBI_GURU_SIMULASI", "UKBI_GURU_LATIHAN"];
 
@@ -125,6 +135,41 @@ async function fetchSectionGeneralFallback(
   return fetchTKAQuestions({ isActive: true }, section.count);
 }
 
+// Resolve the answer-free candidate pool for one section (pre-shuffle). Same
+// output for a given paket+section across all users, so it is cache-friendly.
+// The per-session shuffle happens AFTER this, on a fresh per-request copy.
+async function resolveSectionPool(
+  section: any,
+  paketType: string,
+  ukbi: boolean,
+  sectionIndex: number
+): Promise<any[]> {
+  if (section.questionIds && section.questionIds.length > 0) {
+    return withQueryTimeout(
+      fetchSectionByIds(section, ukbi),
+      10000,
+      `Question fetch timeout (section ${sectionIndex}: by IDs)`
+    );
+  }
+  if (section.count && section.count > 0) {
+    let pool = await withQueryTimeout(
+      fetchSectionByCriteria(section, paketType, ukbi),
+      10000,
+      `Question fetch timeout (section ${sectionIndex}: by criteria)`
+    );
+    // General fallback (non-GURU only) if criteria returned nothing
+    if (pool.length === 0 && !paketType.includes("GURU")) {
+      pool = await withQueryTimeout(
+        fetchSectionGeneralFallback(section, paketType, ukbi),
+        10000,
+        `Question fetch timeout (section ${sectionIndex}: fallback)`
+      );
+    }
+    return pool;
+  }
+  return [];
+}
+
 export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ paketId: string }> }
@@ -144,7 +189,12 @@ export async function GET(
 
     const [dbUser, paket] = await Promise.all([
       withQueryTimeout(db.user.findUnique({ where: { supabaseId: user.id } }), 5000, "User lookup timeout"),
-      withQueryTimeout(db.paketKompetensi.findUnique({ where: { id: paketId } }), 5000, "Paket lookup timeout"),
+      // Paket bersifat statis lintas pengguna → cache TTL (server-side).
+      cache.getOrSet(
+        `komp:paket:${POOL_CACHE_VERSION}:${paketId}`,
+        () => withQueryTimeout(db.paketKompetensi.findUnique({ where: { id: paketId } }), 5000, "Paket lookup timeout"),
+        POOL_TTL
+      ),
     ]);
 
     if (!dbUser) {
@@ -212,30 +262,15 @@ export async function GET(
     // All sections fetched in parallel via Promise.all instead of sequential for loop
     const rawSectionResults = await Promise.all(
       sections.map(async (section, i) => {
-        let sectionQuestions: any[] = [];
-
-        if (section.questionIds && section.questionIds.length > 0) {
-          sectionQuestions = await withQueryTimeout(
-            fetchSectionByIds(section, ukbi),
-            10000,
-            `Question fetch timeout (section ${i}: by IDs)`
-          );
-        } else if (section.count && section.count > 0) {
-          sectionQuestions = await withQueryTimeout(
-            fetchSectionByCriteria(section, paket.type, ukbi),
-            10000,
-            `Question fetch timeout (section ${i}: by criteria)`
-          );
-
-          // General fallback (non-GURU only) if criteria returned nothing
-          if (sectionQuestions.length === 0 && !paket.type.includes("GURU")) {
-            sectionQuestions = await withQueryTimeout(
-              fetchSectionGeneralFallback(section, paket.type, ukbi),
-              10000,
-              `Question fetch timeout (section ${i}: fallback)`
-            );
-          }
-        }
+        // Candidate pool (answer-free) is identical per paket+section → cache it.
+        // Shuffle below is per-session on a shallow copy, so the cached objects
+        // are never mutated across requests.
+        const pool = await cache.getOrSet(
+          `komp:pool:${POOL_CACHE_VERSION}:${paketId}:${i}`,
+          () => resolveSectionPool(section, paket.type, ukbi, i),
+          POOL_TTL
+        );
+        let sectionQuestions: any[] = (pool || []).map((q: any) => ({ ...q }));
 
         // Shuffle questions within section
         sectionQuestions = fisherYatesShuffle(sectionQuestions, sessionSeed + "-sec" + i);
