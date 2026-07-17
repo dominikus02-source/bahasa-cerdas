@@ -322,18 +322,23 @@ async function main() {
       const existingPk = await db.paketKompetensi.findFirst({
         where: { type: cfg.type as any, title: cfg.title },
       })
+      // Simulasi UKBI 5 seksi. Menulis & Berbicara (konstruktif) dinilai AI otomatis.
+      // Track tanpa stok konstruktif (SMA/Guru) → seksi itu resolve 0 & ke-skip aman.
       const sections = [
-        { name: "Seksi I: Merespons Kaidah", count: 10, seksi: "MERESPONS_KAIDAH", timeLimit: Math.round(cfg.duration * 0.3) },
-        { name: "Seksi II: Membaca", count: 15, seksi: "MEMBACA", timeLimit: Math.round(cfg.duration * 0.45) },
-        { name: "Seksi III: Mendengarkan", count: 5, seksi: "MENDENGARKAN", timeLimit: Math.round(cfg.duration * 0.25) },
+        { name: "Seksi I: Merespons Kaidah", count: 10, seksi: "MERESPONS_KAIDAH", timeLimit: Math.round(cfg.duration * 0.25) },
+        { name: "Seksi II: Membaca", count: 15, seksi: "MEMBACA", timeLimit: Math.round(cfg.duration * 0.35) },
+        { name: "Seksi III: Mendengarkan", count: 5, seksi: "MENDENGARKAN", timeLimit: Math.round(cfg.duration * 0.15) },
+        { name: "Seksi IV: Menulis", count: 2, seksi: "MENULIS", timeLimit: Math.round(cfg.duration * 0.15) },
+        { name: "Seksi V: Berbicara", count: 2, seksi: "BERBICARA", timeLimit: Math.round(cfg.duration * 0.10) },
       ]
+      const totalQ = sections.reduce((s, x) => s + x.count, 0)
 
       if (existingPk) {
         await db.paketKompetensi.update({
           where: { id: existingPk.id },
           // Set `sectionsData` juga (dipakai rute GET; `sections` sebagai fallback)
           // agar paket tak pernah "0 soal" karena definisi seksi kosong.
-          data: { duration: cfg.duration, totalQuestions: 30, sections, sectionsData: sections, isActive: true },
+          data: { duration: cfg.duration, totalQuestions: totalQ, sections, sectionsData: sections, isActive: true },
         })
         console.log(`  ✅ Updated Paket: ${cfg.title}`)
       } else {
@@ -348,7 +353,7 @@ async function main() {
             passingGrade: "D",
             sections: sections as any,
             sectionsData: sections as any,
-            totalQuestions: 30,
+            totalQuestions: totalQ,
             isActive: true,
             isPremium: false,
             attemptLimit: -1,

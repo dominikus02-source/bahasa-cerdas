@@ -14,7 +14,7 @@ import cache from "@/lib/redis";
 // snapshot jawaban tetap diambil langsung dari DB. Perubahan bank soal
 // terpropagasi dalam <= TTL. Nol perubahan jika Upstash tak diset (getOrSet
 // jatuh ke fungsi fetch aslinya).
-const POOL_CACHE_VERSION = "v1";
+const POOL_CACHE_VERSION = "v2";
 const POOL_TTL = Number(process.env.SIM_POOL_TTL || 300);
 
 const UKBI_TYPES = ["UKBI", "UKBI_SIMULASI", "UKBI_LATIHAN", "UKBI_SD", "UKBI_LATIHAN_SD", "UKBI_SMP", "UKBI_LATIHAN_SMP", "UKBI_SMA", "UKBI_LATIHAN_SMA", "UKBI_GURU_SIMULASI", "UKBI_GURU_LATIHAN"];
@@ -138,6 +138,23 @@ async function fetchSectionGeneralFallback(
 // Resolve the answer-free candidate pool for one section (pre-shuffle). Same
 // output for a given paket+section across all users, so it is cache-friendly.
 // The per-session shuffle happens AFTER this, on a fresh per-request copy.
+// Soal konstruktif (Menulis/Berbicara) menaruh metadata di `options`:
+// {instruction, constraints, rubric, scoringMode, sampleExpectedResponse}.
+// rubric/scoringMode/sampleExpectedResponse adalah kunci penilaian → JANGAN
+// dikirim ke client (bocor). Client hanya butuh instruction + constraints.
+// Penilaian AI di submit membaca rubrik langsung dari DB, bukan dari client.
+function sanitizeConstructedPool(pool: any[]): any[] {
+  for (const q of pool) {
+    const isConstructed =
+      q?.type === "CONSTRUCTED" || q?.seksi === "MENULIS" || q?.seksi === "BERBICARA";
+    if (isConstructed && q.options && typeof q.options === "object" && !Array.isArray(q.options)) {
+      const o = q.options as any;
+      q.options = { instruction: o.instruction ?? null, constraints: o.constraints ?? null };
+    }
+  }
+  return pool;
+}
+
 async function resolveSectionPool(
   section: any,
   paketType: string,
@@ -145,11 +162,12 @@ async function resolveSectionPool(
   sectionIndex: number
 ): Promise<any[]> {
   if (section.questionIds && section.questionIds.length > 0) {
-    return withQueryTimeout(
+    const pool = await withQueryTimeout(
       fetchSectionByIds(section, ukbi),
       10000,
       `Question fetch timeout (section ${sectionIndex}: by IDs)`
     );
+    return sanitizeConstructedPool(pool);
   }
   if (section.count && section.count > 0) {
     let pool = await withQueryTimeout(
@@ -165,7 +183,7 @@ async function resolveSectionPool(
         `Question fetch timeout (section ${sectionIndex}: fallback)`
       );
     }
-    return pool;
+    return sanitizeConstructedPool(pool);
   }
   return [];
 }
