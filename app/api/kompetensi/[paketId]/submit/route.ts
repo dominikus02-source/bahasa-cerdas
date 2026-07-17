@@ -306,10 +306,22 @@ export async function POST(
     );
     if (constructedRows.length > 0) {
       const qMap = new Map<string, any>((questions as any[]).map((q: any) => [q.id, q]));
+      // Rubrik/prompt konstruktif diambil langsung dari DB (bukan snapshot) karena
+      // snapshot/pool yang dikirim ke client sudah disanitasi (rubrik dibuang agar
+      // tak bocor). Grading butuh rubrik asli.
+      const cIds = constructedRows.map((r) => r.questionId).filter(Boolean) as string[];
+      const cRows =
+        cIds.length > 0
+          ? await db.uKBIQuestion.findMany({
+              where: { id: { in: cIds } },
+              select: { id: true, text: true, options: true, seksi: true },
+            })
+          : [];
+      const metaMap = new Map<string, any>(cRows.map((q) => [q.id, q]));
       const agg: Record<string, { sum: number; n: number }> = {};
       await Promise.allSettled(
         constructedRows.map(async (r) => {
-          const q = qMap.get(r.questionId || "");
+          const q = metaMap.get(r.questionId || "") || qMap.get(r.questionId || "");
           const meta =
             q?.options && typeof q.options === "object" && !Array.isArray(q.options) ? q.options : {};
           const res = await gradeConstructed({
