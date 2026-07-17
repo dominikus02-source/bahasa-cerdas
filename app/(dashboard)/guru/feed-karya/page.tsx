@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState, useEffect, useRef, useCallback } from "react";
-import { X, Send, Star, Check } from "lucide-react";
+import { X, Send, Star, Check, Trash2 } from "lucide-react";
 import { IconBolt, IconFlame, IconTarget, IconPen, IconChat, IconHeart, IconEye, IconClock, IconSchool, IconLocation } from "@/lib/icons";
 import GuruChatPanel from "@/components/chat/GuruChatPanel";
 
@@ -49,6 +49,7 @@ export default function GuruFeedKaryaPage() {
   const [commentText, setCommentText] = useState("");
   const [submittingComment, setSubmittingComment] = useState(false);
   const [modalLoading, setModalLoading] = useState(false);
+  const [deletingCommentId, setDeletingCommentId] = useState<string | null>(null);
 
   useEffect(() => {
     fetch("/api/user/me").then(r => r.ok ? r.json() : null).then(d => setUser(d?.user || null));
@@ -170,6 +171,32 @@ export default function GuruFeedKaryaPage() {
       setCommentText("");
     }
     setSubmittingComment(false);
+  };
+
+  // ── Hapus komentar (screening guru) ──
+  const handleDeleteComment = async (commentId: string) => {
+    if (deletingCommentId) return;
+    if (!confirm("Hapus komentar ini? Tindakan ini tidak bisa dibatalkan.")) return;
+    setDeletingCommentId(commentId);
+    try {
+      const res = await fetch(`/api/guru/karya-comment/${commentId}`, { method: "DELETE" });
+      if (res.ok) {
+        setComments(prev => prev.filter(c => c.id !== commentId));
+        if (modalKarya) {
+          setKaryaList(prev => prev.map(k =>
+            k.id === modalKarya.id
+              ? { ...k, _count: { likes: k._count?.likes ?? 0, comments: Math.max(0, (k._count?.comments ?? 1) - 1) } }
+              : k
+          ) as Karya[]);
+        }
+      } else {
+        const data = await res.json().catch(() => ({}));
+        alert(data.error || "Gagal menghapus komentar");
+      }
+    } catch {
+      alert("Gagal menghapus komentar");
+    }
+    setDeletingCommentId(null);
   };
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -494,6 +521,17 @@ export default function GuruFeedKaryaPage() {
                           <span className="text-[10px] text-gray-400">
                             {new Date(c.createdAt).toLocaleDateString("id-ID", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}
                           </span>
+                          <button
+                            onClick={() => handleDeleteComment(c.id)}
+                            disabled={deletingCommentId === c.id}
+                            title="Hapus komentar (screening)"
+                            aria-label="Hapus komentar"
+                            className="ml-auto text-gray-300 hover:text-red-500 disabled:opacity-40 transition-colors shrink-0"
+                          >
+                            {deletingCommentId === c.id
+                              ? <div className="animate-spin w-3.5 h-3.5 border-2 border-red-400 border-t-transparent rounded-full" />
+                              : <Trash2 size={14} />}
+                          </button>
                         </div>
                         <p className="text-sm text-gray-600">{c.content}</p>
                       </div>
