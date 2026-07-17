@@ -7,7 +7,7 @@ import {
   Home, ShoppingBag, Video, Gamepad2, FileText, Database,
   Users, Settings, ChevronDown, ChevronRight,
   BookOpen, Trophy, Calendar, GraduationCap, Brain, Star, Award,
-  LogOut, Crown, Zap, Flame, TrendingUp, Bell, Presentation, Sparkles, ExternalLink, BarChart3
+  LogOut, Crown, Zap, Flame, TrendingUp, Bell, Presentation, Sparkles, ExternalLink, BarChart3, PenLine
 } from "lucide-react"
 import { createClient } from "@/lib/supabase/client"
 import { useRouter } from "next/navigation"
@@ -40,6 +40,7 @@ const NAV: NavItem[] = [
     ],
   },
   { label: "Hasil Murid", href: "/guru/hasil-simulasi", icon: <TrendingUp size={18} /> },
+  { label: "Tinjau Menulis & Berbicara", href: "/guru/tinjau-simulasi", icon: <PenLine size={18} /> },
   { label: "Dokumen Latihan Murid", href: "/guru/dokumen-latihan", icon: <Star size={18} /> },
   { label: "BIGT", href: "/guru/bigt", icon: <ExternalLink size={18} /> },
   { label: "Data Siswa", href: "/guru/data-siswa", icon: <Users size={18} /> },

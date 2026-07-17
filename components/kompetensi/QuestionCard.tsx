@@ -1,4 +1,5 @@
-import { Volume2, Flag } from "lucide-react";
+import { Flag } from "lucide-react";
+import ListeningAudioPlayer from "./ListeningAudioPlayer";
 
 interface Option {
   id: string;
@@ -82,28 +83,9 @@ export default function QuestionCard({
             </button>
           </div>
 
-          {/* Listening indicator */}
-          {isListening && (
-            <div className="flex items-center gap-2 mb-4 p-3 bg-indigo-50 rounded-xl border border-indigo-100">
-              <Volume2 className="w-4 h-4 text-indigo-500" />
-              <span className="text-xs sm:text-sm text-indigo-700 font-medium">
-                Simak audio dengan saksama, lalu jawab pertanyaan berikut.
-              </span>
-            </div>
-          )}
-
-          {/* Audio player */}
+          {/* Audio player Mendengarkan — kontrol terbatas (maks 1× putar, tanpa seek) */}
           {isListening && question.audioUrl && (
-            <div className="mb-4 p-3 bg-indigo-50/50 rounded-xl border border-indigo-100">
-              <audio
-                controls
-                className="w-full h-10"
-                src={question.audioUrl}
-                preload="auto"
-              >
-                Browser tidak mendukung pemutar audio.
-              </audio>
-            </div>
+            <ListeningAudioPlayer src={question.audioUrl} maxPlays={1} storageKey={question.id} />
           )}
 
           {/* Image */}

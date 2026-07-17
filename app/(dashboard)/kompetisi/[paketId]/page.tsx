@@ -9,6 +9,9 @@ import QuestionCard from "@/components/kompetensi/QuestionCard";
 import QuestionNavigator from "@/components/kompetensi/QuestionNavigator";
 import SectionProgress from "@/components/kompetensi/SectionProgress";
 import SubmitConfirmModal from "@/components/kompetensi/SubmitConfirmModal";
+import SimulationStart from "@/components/kompetensi/SimulationStart";
+import WritingAnswer from "@/components/kompetensi/WritingAnswer";
+import SpeakingRecorder from "@/components/kompetensi/SpeakingRecorder";
 
 interface Question {
   id: string;
@@ -21,6 +24,7 @@ interface Question {
   difficulty?: string;
   seksi?: string;
   kompetensi?: string;
+  wordCount?: number;
 }
 
 interface SectionData {
@@ -51,61 +55,65 @@ export default function KompetisiPage({ params }: { params: Promise<{ paketId: s
   const [showConfirm, setShowConfirm] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [timeUp, setTimeUp] = useState(false);
+  const [started, setStarted] = useState(false);
+  const [mode, setMode] = useState<"full" | "noDevice">("full");
 
   const expiresAtRef = useRef<number | null>(null);
+  const retriedRef = useRef(false);
   const timerStartedRef = useRef(false);
   const submittedRef = useRef(false);
   const lastSavedJsonRef = useRef("{}");
 
   const fetchTest = useCallback(async () => {
     setLoading(true);
+    setError("");
     try {
-      const res = await fetch(`/api/kompetensi/${resolvedParams.paketId}`);
-      const result = await res.json();
+      // Preload soal. Jika sesi sebelumnya SUDAH SELESAI, mulai percobaan baru
+      // (retry=1) satu kali — riwayat lama tetap tersimpan di halaman Hasil.
+      let useRetry = false;
+      for (let attempt = 0; attempt < 2; attempt++) {
+        const url = `/api/kompetensi/${resolvedParams.paketId}${useRetry ? "?retry=1" : ""}`;
+        const res = await fetch(url);
+        const result = await res.json();
 
-      if (result.error) {
-        if (result.session?.status === "COMPLETED") {
-          router.push(`/kompetisi/${resolvedParams.paketId}/hasil`);
+        if (result.error) {
+          const completed =
+            result.session?.status === "COMPLETED" ||
+            /sudah selesai/i.test(result.error || "") ||
+            /sudah menyelesaikan/i.test(result.message || "");
+          if (completed && !useRetry) {
+            useRetry = true;
+            retriedRef.current = true;
+            continue;
+          }
+          if (completed) {
+            router.push(`/kompetisi/${resolvedParams.paketId}/hasil`);
+            return;
+          }
+          setError(result.error || "Gagal memuat soal");
           return;
         }
-        if (result.message === "Anda sudah menyelesaikan tes ini") {
-          router.push(`/kompetisi/${resolvedParams.paketId}/hasil`);
+
+        const hasQuestions =
+          Array.isArray(result.questions) &&
+          result.questions.some((s: any) => s.questions && s.questions.length > 0);
+        if (!hasQuestions) {
+          setError("Tidak ada soal tersedia untuk paket ini.");
           return;
         }
-        setError(result.error);
+
+        setData(result);
+        if (result.session?.answers) setAnswers(result.session.answers);
+        if (result.session?.flagged) setFlagged(result.session.flagged);
+
+        let expiresMs: number;
+        if (result.session?.expiresAt) expiresMs = new Date(result.session.expiresAt).getTime();
+        else if (result.paket?.duration) expiresMs = Date.now() + result.paket.duration * 60 * 1000;
+        else expiresMs = Date.now() + 30 * 60 * 1000;
+        expiresAtRef.current = expiresMs;
+        setTimeLeft(Math.max(0, Math.floor((expiresMs - Date.now()) / 1000)));
         return;
       }
-
-      if (!result.questions || result.questions.length === 0) {
-        setError("Tidak ada soal tersedia untuk paket ini.");
-        return;
-      }
-
-      const hasQuestions = result.questions.some((s: any) => s.questions && s.questions.length > 0);
-      if (!hasQuestions) {
-        setError("Tidak ada soal tersedia untuk paket ini.");
-        return;
-      }
-
-      setData(result);
-      if (result.session?.answers) setAnswers(result.session.answers);
-      if (result.session?.flagged) setFlagged(result.session.flagged);
-
-      // Compute expiresAt timestamp
-      let expiresMs: number | null = null;
-      if (result.session?.expiresAt) {
-        expiresMs = new Date(result.session.expiresAt).getTime();
-      } else if (result.paket?.duration) {
-        expiresMs = Date.now() + result.paket.duration * 60 * 1000;
-      } else {
-        // Fallback: 30 minutes
-        expiresMs = Date.now() + 30 * 60 * 1000;
-      }
-
-      expiresAtRef.current = expiresMs;
-
-      const remaining = Math.max(0, Math.floor((expiresMs - Date.now()) / 1000));
-      setTimeLeft(remaining);
     } catch {
       setError("Gagal memuat soal");
     } finally {
@@ -169,11 +177,23 @@ export default function KompetisiPage({ params }: { params: Promise<{ paketId: s
     return () => clearTimeout(timer);
   }, [answers, resolvedParams.paketId]);
 
-  const sections = data?.questions || [];
+  const allSections = data?.questions || [];
+  // Mode "tanpa perangkat" → lewati seksi audio (Mendengarkan & Berbicara).
+  const sections =
+    mode === "noDevice"
+      ? allSections.filter((s) => !["MENDENGARKAN", "BERBICARA"].includes((s.seksi || "").toUpperCase()))
+      : allSections;
   const currentSectionData = sections[currentSection];
   const questions = currentSectionData?.questions || [];
   const currentQ = questions[currentQuestion];
   const isFlagged = currentSection === 0 ? flagged.includes(currentQuestion) : false;
+
+  const curSeksi = (currentSectionData?.seksi || "").toUpperCase();
+  // Metadata konstruktif (rubrik/batas) disimpan di field `options` untuk soal esai/lisan.
+  const cmeta: any =
+    currentQ?.options && typeof currentQ.options === "object" && !Array.isArray(currentQ.options)
+      ? currentQ.options
+      : {};
 
   const getAbsoluteIndex = (sIdx: number, qIdx: number) => {
     let idx = 0;
@@ -293,6 +313,27 @@ export default function KompetisiPage({ params }: { params: Promise<{ paketId: s
     );
   }
 
+  // Layar mulai simulasi: pilih mode perangkat (dengan/tanpa) + cek perangkat.
+  // Soal sudah di-preload → menekan "Mulai" langsung menampilkan soal.
+  if (data && !started) {
+    return (
+      <ErrorBoundary>
+        <SimulationStart
+          title={data.paket?.title || "Simulasi"}
+          sections={allSections}
+          ready={!!data}
+          onStart={(m) => {
+            setMode(m);
+            setCurrentSection(0);
+            setCurrentQuestion(0);
+            setStarted(true);
+          }}
+          onExit={() => router.back()}
+        />
+      </ErrorBoundary>
+    );
+  }
+
   if (!currentQ) {
     // Check if any section has questions
     const hasAnyQuestion = sections.some(s => s.questions.length > 0);
@@ -394,17 +435,47 @@ export default function KompetisiPage({ params }: { params: Promise<{ paketId: s
               </div>
             )}
 
-            <QuestionCard
-              questionNumber={currentQuestion + 1}
-              totalInSection={questions.length}
-              sectionName={currentSectionData?.sectionName || ""}
-              question={currentQ}
-              selectedAnswer={answers[currentQ.id] || null}
-              isFlagged={isFlagged}
-              onSelectAnswer={selectAnswer}
-              onToggleFlag={toggleFlag}
-              isListening={currentQ.type?.toLowerCase() === "listening" || currentQ.type?.toLowerCase() === "mendengarkan"}
-            />
+            {curSeksi === "MENULIS" ? (
+              <WritingAnswer
+                questionId={currentQ.id}
+                questionNumber={currentQuestion + 1}
+                sectionName={currentSectionData?.sectionName || "Menulis"}
+                prompt={currentQ.text}
+                instruction={cmeta.instruction}
+                passage={currentQ.passage}
+                imageUrl={currentQ.imageUrl}
+                minWords={cmeta?.constraints?.minWords}
+                maxWords={cmeta?.constraints?.maxWords || currentQ.wordCount || undefined}
+                value={answers[currentQ.id] || ""}
+                onChange={selectAnswer}
+              />
+            ) : curSeksi === "BERBICARA" ? (
+              <SpeakingRecorder
+                questionId={currentQ.id}
+                questionNumber={currentQuestion + 1}
+                sectionName={currentSectionData?.sectionName || "Berbicara"}
+                prompt={currentQ.text}
+                instruction={cmeta.instruction}
+                passage={currentQ.passage}
+                imageUrl={currentQ.imageUrl}
+                prepSec={cmeta?.constraints?.preparationTimeSec ?? 30}
+                recordSec={cmeta?.constraints?.responseTimeSec ?? 60}
+                value={answers[currentQ.id] || ""}
+                onChange={selectAnswer}
+              />
+            ) : (
+              <QuestionCard
+                questionNumber={currentQuestion + 1}
+                totalInSection={questions.length}
+                sectionName={currentSectionData?.sectionName || ""}
+                question={currentQ}
+                selectedAnswer={answers[currentQ.id] || null}
+                isFlagged={isFlagged}
+                onSelectAnswer={selectAnswer}
+                onToggleFlag={toggleFlag}
+                isListening={curSeksi === "MENDENGARKAN" || currentQ.type?.toLowerCase() === "listening" || currentQ.type?.toLowerCase() === "mendengarkan"}
+              />
+            )}
 
             {/* Navigation buttons */}
             <div className="flex items-center justify-between gap-3">

@@ -37,9 +37,14 @@ export const UPLOAD_RULES: Record<string, Rule> = {
   "application/x-zip-compressed": { ext: ["zip"], maxBytes: 50 * MB, sig: ZIP },
   // MP4 = ....(4 bytes size)"ftyp" at offset 4
   "video/mp4": { ext: ["mp4"], maxBytes: 500 * MB, sig: [{ offset: 4, bytes: [0x66, 0x74, 0x79, 0x70] }] },
+  // Audio rekaman Berbicara (MediaRecorder). WebM = EBML header 1A 45 DF A3.
+  "audio/webm": { ext: ["webm"], maxBytes: 25 * MB, sig: [{ offset: 0, bytes: [0x1a, 0x45, 0xdf, 0xa3] }] },
+  // M4A/MP4 audio (Safari) = "ftyp" at offset 4.
+  "audio/mp4": { ext: ["mp4", "m4a"], maxBytes: 25 * MB, sig: [{ offset: 4, bytes: [0x66, 0x74, 0x79, 0x70] }] },
 };
 
 export const IMAGE_MIMES = ["image/jpeg", "image/png", "image/webp"];
+export const AUDIO_MIMES = ["audio/webm", "audio/mp4"];
 
 function sigMatches(header: Uint8Array, sig: Rule["sig"]): boolean {
   // ALL parts of a signature must match (e.g. RIFF + WEBP for webp).
