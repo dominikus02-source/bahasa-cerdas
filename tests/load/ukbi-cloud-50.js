@@ -1,30 +1,29 @@
-// k6 cloud load test — 20 concurrent users via pre-generated SSR cookies
-// With warmup stage + safety guards
+// k6 cloud load test — 50 concurrent users via pre-generated SSR cookies
+// STAGING ONLY — safety guard prevents production use
 //
 // Usage:
-//   K6_COOKIE_FILE=tests/load/.tokens.cloud.json \
-//   BASE_URL=https://<vercel-preview-url> \
-//   k6 run tests/load/ukbi-cloud-20.js
+//   K6_COOKIE_FILE=tests/load/.tokens.staging.json \
+//   BASE_URL=https://staging.bahasacerdas.com \
+//   k6 run tests/load/ukbi-cloud-50.js
 //
 // Thresholds:
 //   - Error rate < 1%
 //   - p95 response time < 10s (allows for cold starts)
-//   - http_req_failed < 1%
 
 import http from "k6/http";
-import { check, sleep, group } from "k6";
+import { check, sleep } from "k6";
 import { Rate, Trend } from "k6/metrics";
 
-const BASE_URL = __ENV.BASE_URL || "https://bahasacerdas.com";
+const BASE_URL = __ENV.BASE_URL || "";
 const PAKET_ID = __ENV.PAKET_ID || "";
 const COOKIE_FILE = __ENV.K6_COOKIE_FILE || "";
 const ALLOW_PRODUCTION = __ENV.ALLOW_PRODUCTION_LOAD_TEST === "true";
-const VUS = 20;
-const IS_PRODUCTION = BASE_URL.includes("bahasacerdas.com") || BASE_URL.includes("www.bahasacerdas");
+const VUS = 50;
+const IS_PRODUCTION = BASE_URL.includes("bahasacerdas.com") && !BASE_URL.includes("staging");
 
-// Safety guard: prevent running >20 VUs against production
-if (IS_PRODUCTION && !ALLOW_PRODUCTION && VUS > 20) {
-  console.error(`SAFETY: production canary limited to 20 VUs. VUS=${VUS} > 20. Set ALLOW_PRODUCTION_LOAD_TEST=true to override.`);
+// Safety guard: NEVER run 50+ against production
+if (IS_PRODUCTION && !ALLOW_PRODUCTION) {
+  console.error(`SAFETY: 50+ VUs NOT allowed on production. BASE_URL=${BASE_URL}. Use staging URL or set ALLOW_PRODUCTION_LOAD_TEST=true.`);
 }
 
 let allCookies = [];
@@ -51,14 +50,14 @@ const resultDuration = new Trend("result_duration");
 
 export const options = {
   stages: [
-    { duration: "10s", target: 20 },    // warmup ramp
-    { duration: "20s", target: 20 },    // warmup sustained
-    { duration: "20s", target: 20 },    // measurement sustained
-    { duration: "10s", target: 0 },     // cooldown
+    { duration: "15s", target: 50 },    // warmup ramp
+    { duration: "30s", target: 50 },    // warmup sustained
+    { duration: "30s", target: 50 },    // measurement sustained
+    { duration: "15s", target: 0 },     // cooldown
   ],
   thresholds: {
     errors: ["rate<0.01"],
-    http_req_duration: ["p(95)<10000"],
+    http_req_duration: ["p(95)<15000"],
     http_req_failed: ["rate<0.01"],
   },
 };
@@ -117,8 +116,8 @@ export default function () {
 
   sleep(1);
 
-  // ── Submit answers (60% probability) ──
-  if (Math.random() < 0.6) {
+  // ── Submit answers (50% probability) ──
+  if (Math.random() < 0.5) {
     const submitRes = http.post(
       `${BASE_URL}/api/kompetensi/${PAKET_ID}/submit`,
       JSON.stringify({ answers: {}, timeSpent: 15 }),

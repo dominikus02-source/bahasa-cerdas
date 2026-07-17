@@ -9,8 +9,19 @@ import type { AttemptSnapshot, AttemptAnswerDetails, UserAnswerRecord } from "@/
 
 const PERF_LOG = true;
 
+// Module-level boot timestamp for cold start detection
+const MODULE_BOOT_MS = Date.now();
+
 function perfLog(label: string, data: Record<string, unknown>) {
-  if (PERF_LOG) console.log(`[SUBMIT_PERF] ${label}`, data);
+  if (!PERF_LOG) return;
+  const processAgeMs = Date.now() - MODULE_BOOT_MS;
+  console.log(JSON.stringify({
+    event: `submit_${label}`,
+    processAgeMs,
+    coldStart: processAgeMs < 5000,
+    ...data,
+    ts: new Date().toISOString(),
+  }));
 }
 
 async function getLatestProgres(userId: string, paketId: string) {

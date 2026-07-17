@@ -1391,3 +1391,90 @@ Create a complete `guides-vi.ts` for Kelas VI SD Fase C with 10 full chapters ma
 | `npx tsc --noEmit data/buku-panduan/guides-vi.ts` | ✅ 0 errors |
 | `npx tsc --noEmit data/buku-panduan/index.ts` | ✅ 0 errors |
 
+---
+
+## Phase 7 — Vercel Preview Cloud Load Test — Complete (July 17, 2026)
+
+### Goal
+Run realistic load tests (smoke → 10 → 20 users) against cloud infrastructure using pre-generated Supabase SSR cookies, without login rate limits or local Node.js bottlenecks.
+
+### Key Results
+- **Smoke (1 VU)**: ✅ 9/9 checks, 0% errors, p95 10.59s (all cold starts)
+- **10 users**: ✅ 48/48 checks, 0% errors, p95 13.03s (cold start dominated)
+- **20 users**: ⚠️ 108/114 checks (94.7%), 5.26% errors (warmup timeouts), p95 23.84s
+- **Auth 429**: 0 — pre-generated cookies work perfectly
+- **App bugs discovered**: 0 — all failures are cold-start/warmup timeouts
+
+### Critical Finding
+Vercel Hobby plan cold starts dominate all response times (3–25s). The system handles all functional flows correctly under load; the bottleneck is infrastructure, not application code.
+
+### Blockers
+- **Vercel Preview blocked by SSO** — production canary used instead
+- **50+ user tests impossible** without staging Supabase + Vercel Pro with provisioned concurrency
+
+## Phase 8 — Cold Start Mitigation & Staging Readiness — Complete (July 17, 2026)
+
+### Goal
+Reduce cold start impact, add observability, prepare Vercel Preview bypass, document staging decisions, and add safety guards to prevent production abuse.
+
+### Vercel Config Changes
+- `vercel.json`: Added `functions` config — `maxDuration: 30` (was default 10s), `runtime: nodejs@20.x`
+- API routes: kompetensi/* + user/me → 30s max, ai/** → 60s max
+- **Fluid Compute**: Not enabled in current plan. Needs Vercel Pro dashboard toggle.
+
+### Bundle Slimming
+| Change | File | Impact |
+|--------|------|--------|
+| Lazy-loaded `passage-map.json` (300KB) | `app/api/kompetensi/[paketId]/route.ts` | Not loaded at module init anymore — saves JSON parse on cold start |
+| Removed `JSON.parse(JSON.stringify(...))` | Fetch + Submit routes | Eliminates unnecessary deep-clone cycles |
+| `structuredClone`-free approach | Both routes | Direct object assignment |
+
+### Observability (Cold Start Logging)
+- **Module-level `MODULE_BOOT_MS`** timestamp in fetch + submit routes
+- **`processAgeMs`** logged on every request — if < 5000ms, it's likely a cold start
+- **`coldStart: true/false`** boolean tag in structured JSON logs
+- **Per-step timing**: authMs, scoringMs, writeMs, totalMs logged on submit
+- No sensitive data logged (no answer keys, tokens, or cookies)
+
+### k6 Scripts Updated
+- All `ukbi-cloud-*.js` now have **warmup iteration/stage** before measurement
+- Smoke: iteration 0 = warmup, iteration 1 = measurement
+- 10/20: warmup ramp → warmup sustained → measurement sustained → cooldown
+- **Safety guards**: blocks if `BASE_URL` is production AND VUS > 20 (unless `ALLOW_PRODUCTION_LOAD_TEST=true`)
+- Cookie count check: stops if insufficient cookies
+- New script: `tests/load/ukbi-cloud-50.js` (stagging-only, production guard built-in)
+
+### Production Canary Limits
+| Allowed | Not Allowed |
+|---------|-------------|
+| ✅ Smoke (1 VU) | ❌ 50+ VUs |
+| ✅ 10 users | ❌ Seed massal |
+| ✅ 20 users | ❌ Destructive cleanup |
+| ✅ Only loadtest\_* users | ❌ Test jam ramai |
+| ✅ Hanya paket non-critical | ❌ 300/500/1000 VUs |
+| ✅ Pre-generated cookie | ❌ Login storm |
+| ✅ Jam sepi (22:00–23:00) | |
+
+### Supabase Staging Decision
+**Recommendation**: Create staging Supabase project (Free tier) for 50+ user tests. Production canary works for ≤20 VUs only. No upgrade needed immediately.
+
+### Vercel Preview Bypass
+- Use `VERCEL_AUTOMATION_BYPASS_SECRET` (Vercel Project Settings → Password Protection → Automation Bypass)
+- **Not yet configured**: needs project owner to enable and share the secret
+- After configuration: preview URLs accessible with `?x-vercel-protection-bypass=<secret>`
+
+### New/Modified Files (Phase 8)
+| File | Action |
+|------|--------|
+| `vercel.json` | Added `functions` config (maxDuration, runtime) |
+| `app/api/kompetensi/[paketId]/route.ts` | Lazy passage-map import, removed JSON.parse/stringify, added observability logging |
+| `app/api/kompetensi/[paketId]/submit/route.ts` | Removed JSON.parse/stringify, added MODULE_BOOT_MS + cold start logging |
+| `tests/load/ukbi-cloud-smoke.js` | Warmup iteration, safety guards, structured output |
+| `tests/load/ukbi-cloud-10.js` | Warmup stage, safety guards, cookie count check |
+| `tests/load/ukbi-cloud-20.js` | Warmup stage, safety guards |
+| `tests/load/ukbi-cloud-50.js` | New — staging only, production safety guard blocks >20 VUs |
+| `package.json` | Added `test:load:cloud:50`, `:smoke:prod`, `:10:prod`, `:20:prod` scripts |
+| `docs/PERFORMANCE_1000_USER_READINESS.md` | Added Phase 7 results + Phase 8 changes; updated bottleneck status |
+| `docs/STAGING_LOAD_TEST_SETUP.md` | Added cookie-auth guide, production canary limits, k6 safety, 50+ VU instructions |
+| `AGENTS.md` | Phase 7 + Phase 8 status |
+

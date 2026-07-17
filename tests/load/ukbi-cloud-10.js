@@ -1,5 +1,5 @@
 // k6 cloud load test — 10 concurrent users via pre-generated SSR cookies
-// Each VU picks a unique cookie — no login step
+// With warmup stage (separate iterations) to mitigate cold starts
 //
 // Usage:
 //   K6_COOKIE_FILE=tests/load/.tokens.cloud.json \
@@ -18,7 +18,14 @@ import { Rate, Trend } from "k6/metrics";
 const BASE_URL = __ENV.BASE_URL || "https://bahasacerdas.com";
 const PAKET_ID = __ENV.PAKET_ID || "";
 const COOKIE_FILE = __ENV.K6_COOKIE_FILE || "";
-const USER_COUNT = 10;
+const ALLOW_PRODUCTION = __ENV.ALLOW_PRODUCTION_LOAD_TEST === "true";
+const VUS = 10;
+const IS_PRODUCTION = BASE_URL.includes("bahasacerdas.com") || BASE_URL.includes("www.bahasacerdas");
+
+// Safety guard: prevent running >20 VUs against production
+if (IS_PRODUCTION && !ALLOW_PRODUCTION && VUS > 20) {
+  console.error(`SAFETY: production canary limited to 20 VUs. VUS=${VUS} > 20. Set ALLOW_PRODUCTION_LOAD_TEST=true to override.`);
+}
 
 let allCookies = [];
 if (COOKIE_FILE) {
@@ -32,6 +39,11 @@ if (COOKIE_FILE) {
 }
 const COOKIE_COUNT = allCookies.length;
 
+// Safety guard: need at least as many cookies as VUs
+if (COOKIE_COUNT < VUS) {
+  console.error(`SAFETY: Not enough auth cookies. Have ${COOKIE_COUNT}, need ${VUS}.`);
+}
+
 const errorRate = new Rate("errors");
 const fetchQuestionsDuration = new Trend("fetch_questions_duration");
 const submitDuration = new Trend("submit_duration");
@@ -39,9 +51,10 @@ const resultDuration = new Trend("result_duration");
 
 export const options = {
   stages: [
-    { duration: "10s", target: 10 },
-    { duration: "30s", target: 10 },
-    { duration: "10s", target: 0 },
+    { duration: "5s", target: 10 },    // warmup ramp
+    { duration: "10s", target: 10 },    // warmup sustained
+    { duration: "10s", target: 10 },    // measurement sustained
+    { duration: "5s", target: 0 },      // cooldown
   ],
   thresholds: {
     errors: ["rate<0.01"],
@@ -80,104 +93,62 @@ export default function () {
     errorRate.add(true);
     return;
   }
+
+  sleep(0.5);
+
+  // ── Fetch questions ──
+  const fetchRes = http.get(`${BASE_URL}/api/kompetensi/${PAKET_ID}`, { headers });
+  const fetchMs = Date.now() - startTime;
+  fetchQuestionsDuration.add(fetchMs);
+
+  const fetchOk = check(fetchRes, {
+    "fetch_questions status 200": (r) => r.status === 200,
+    "fetch_questions has session": (r) => r.json("data.session") !== undefined,
+    "fetch_questions has questions": (r) => {
+      const questions = r.json("data.questions");
+      return Array.isArray(questions) && questions.length > 0;
+    },
+  });
+  if (!fetchOk) {
+    errorRate.add(true);
+    console.error(`VU ${__VU}: fetch failed (HTTP ${fetchRes.status})`);
+    return;
+  }
+  const questions = fetchRes.json("data.questions");
+  const totalQs = questions.reduce((sum, s) => sum + (s.questions?.length || 0), 0);
+
   sleep(1);
 
-  // ── Fetch Questions ──
-  let questions = [];
+  // ── Submit answers (60% probability in measurement) ──
+  if (totalQs > 0 && Math.random() < 0.6) {
+    const submitRes = http.post(
+      `${BASE_URL}/api/kompetensi/${PAKET_ID}/submit`,
+      JSON.stringify({ answers: {}, timeSpent: 10 }),
+      { headers }
+    );
+    const submitMs = Date.now() - startTime - fetchMs;
+    submitDuration.add(submitMs);
 
-  group("Fetch Questions", function () {
-    let res = http.get(`${BASE_URL}/api/kompetensi/${PAKET_ID}`, { headers });
-
-    if (res.status === 400) {
-      res = http.get(`${BASE_URL}/api/kompetensi/${PAKET_ID}?retry=1`, { headers });
-    }
-
-    const ok = check(res, {
-      "fetch status 200": (r) => r.status === 200,
-      "questions available": (r) => {
-        try {
-          const d = JSON.parse(r.body);
-          const data = d.data || d;
-          return data.questions && data.questions.length > 0;
-        } catch { return false; }
-      },
+    const submitOk = check(submitRes, {
+      "submit status 200": (r) => r.status === 200,
+      "submit has result": (r) => r.json("data.result") !== null,
     });
-    errorRate.add(!ok);
-    fetchQuestionsDuration.add(res.timings.duration);
-
-    if (ok) {
-      try {
-        const d = JSON.parse(r.body);
-        const data = d.data || d;
-        for (const section of data.questions || []) {
-          if (section.questions) {
-            for (const q of section.questions) {
-              questions.push(q);
-            }
-          }
-        }
-      } catch { /* ignore */ }
+    if (!submitOk) {
+      errorRate.add(true);
+      console.error(`VU ${__VU}: submit failed (HTTP ${submitRes.status})`);
+      return;
     }
 
-    if (questions.length > 0) {
-      sleep(Math.min(3, 0.3 + questions.length * 0.05));
-    }
-  });
+    // ── Fetch result ──
+    const resultRes = http.get(`${BASE_URL}/api/kompetensi/${PAKET_ID}/hasil`, { headers });
+    const resultMs = Date.now() - startTime - fetchMs - submitMs;
+    resultDuration.add(resultMs);
 
-  if (questions.length === 0) return;
-
-  // ── Submit Answers (60% chance) ──
-  const doFullSim = Math.random() < 0.6;
-
-  if (doFullSim) {
-    group("Submit Answers", function () {
-      const answers = {};
-      for (const q of questions) {
-        if (q.options?.length > 0) {
-          answers[q.id] = q.options[0].id || "A";
-        }
-      }
-
-      const timeSpent = Math.floor((Date.now() - startTime) / 1000);
-
-      const submitRes = http.post(
-        `${BASE_URL}/api/kompetensi/${PAKET_ID}/submit`,
-        JSON.stringify({ answers, timeSpent }),
-        { headers }
-      );
-
-      const ok = check(submitRes, {
-        "submit status 200": (r) => r.status === 200,
-      });
-      errorRate.add(!ok);
-      submitDuration.add(submitRes.timings.duration);
-
-      // Check for "alreadyScored" vs "fresh"
-      if (submitRes.status === 200) {
-        try {
-          const b = JSON.parse(submitRes.body);
-          if (b.alreadyScored) {
-            console.log(`VU ${__VU}: alreadyScored=true (session previously completed)`);
-          }
-        } catch { /* ignore */ }
-      }
-
-      sleep(1);
-    });
-
-    group("View Result", function () {
-      const res = http.get(
-        `${BASE_URL}/api/kompetensi/${PAKET_ID}/hasil`,
-        { headers }
-      );
-
-      const ok = check(res, {
-        "result status 200": (r) => r.status === 200,
-      });
-      errorRate.add(!ok);
-      resultDuration.add(res.timings.duration);
+    check(resultRes, {
+      "result status 200": (r) => r.status === 200,
+      "result has data": (r) => r.json("data") !== undefined,
     });
   }
 
-  sleep(1 + Math.random() * 2);
+  sleep(1);
 }

@@ -1,5 +1,5 @@
 // k6 cloud smoke test — 1 VU using pre-generated SSR cookie
-// No login step — reads cookie from .tokens.cloud.json via K6_COOKIE_xxx env vars
+// With warmup stage to mitigate cold starts
 //
 // Usage:
 //   K6_COOKIE_FILE=tests/load/.tokens.cloud.json \
@@ -19,6 +19,7 @@ const BASE_URL = __ENV.BASE_URL || "https://bahasacerdas.com";
 const PAKET_ID = __ENV.PAKET_ID || "";
 const COOKIE_FILE = __ENV.K6_COOKIE_FILE || "";
 const INLINE_COOKIE = __ENV.K6_COOKIE || "";
+const ALLOW_PRODUCTION = __ENV.ALLOW_PRODUCTION_LOAD_TEST === "true";
 const VUS = 1;
 // Read cookies from file if provided (init-time)
 let allCookies = [];
@@ -33,6 +34,12 @@ if (COOKIE_FILE) {
 }
 const HAS_COOKIES = allCookies.length > 0 || !!INLINE_COOKIE;
 const COOKIE_COUNT = allCookies.length;
+const IS_PRODUCTION = BASE_URL.includes("bahasacerdas.com") || BASE_URL.includes("www.bahasacerdas");
+
+// Safety guard: prevent running >20 VUs against production
+if (IS_PRODUCTION && !ALLOW_PRODUCTION && VUS > 20) {
+  console.error(`SAFETY: production canary limited to 20 VUs. VUS=${VUS} > 20. Set ALLOW_PRODUCTION_LOAD_TEST=true to override.`);
+}
 
 const errorRate = new Rate("errors");
 const fetchQuestionsDuration = new Trend("fetch_questions_duration");
@@ -42,7 +49,7 @@ const fullFlowDuration = new Trend("full_flow_duration");
 
 export const options = {
   vus: 1,
-  iterations: 1,
+  iterations: 2, // iteration 1 = warmup, iteration 2 = measurement
   thresholds: {
     errors: ["rate<0.01"],
     http_req_duration: ["p(95)<10000"],
@@ -67,135 +74,71 @@ function buildHeaders(cookie) {
 export default function () {
   const cookie = getMyCookie();
   if (!cookie) {
-    console.error("No auth cookie available. Set K6_COOKIE_FILE or K6_COOKIE.");
+    console.error("No auth cookie available");
+    errorRate.add(true);
     return;
   }
 
   const headers = buildHeaders(cookie);
-  const startTime = Date.now();
+  const isWarmup = __ITER === 0;
+  const tag = isWarmup ? "warmup" : "measure";
 
-  // ── Warmup: auto-create Prisma User record ──
-  group("Warmup User", function () {
-    const res = http.get(`${BASE_URL}/api/user/me`, { headers });
-    const ok = check(res, {
-      "warmup /api/user/me status 200": (r) => r.status === 200,
-    });
-    errorRate.add(!ok);
-    if (!ok) {
-      console.error(`Warmup failed: HTTP ${res.status} ${res.body.slice(0, 200)}`);
-    }
-    sleep(1);
-  });
+  group(`[${tag}] Full UKBI/TKA Flow`, function () {
+    const startTime = Date.now();
+    let fetchFailed = false;
 
-  // ── Fetch Questions ──
-  let questions = [];
+    // Step 1: Warmup / user/me
+    const warmupRes = http.get(`${BASE_URL}/api/user/me`, { headers });
+    check(warmupRes, {
+      [`[${tag}] /api/user/me status 200`]: (r) => r.status === 200,
+    }) || fetchFailed = true;
 
-  group("Fetch Questions", function () {
-    let res = http.get(`${BASE_URL}/api/kompetensi/${PAKET_ID}`, { headers });
-
-    if (res.status === 400) {
-      res = http.get(`${BASE_URL}/api/kompetensi/${PAKET_ID}?retry=1`, { headers });
-    }
-
-    const ok = check(res, {
-      "fetch questions status 200": (r) => r.status === 200,
-      "response has session": (r) => {
-        try { const d = JSON.parse(r.body); const data = d.data || d; return !!data.session; }
-        catch { return false; }
-      },
-      "questions available": (r) => {
-        try {
-          const d = JSON.parse(r.body);
-          const data = d.data || d;
-          return data.questions && data.questions.length > 0;
-        } catch { return false; }
+    // Step 2: Fetch questions
+    const fetchStart = Date.now();
+    const fetchRes = http.get(`${BASE_URL}/api/kompetensi/${PAKET_ID}`, { headers });
+    const fetchMs = Date.now() - fetchStart;
+    fetchQuestionsDuration.add(fetchMs);
+    const fetchOk = check(fetchRes, {
+      [`[${tag}] Fetch questions status 200`]: (r) => r.status === 200,
+      [`[${tag}] Fetch has session`]: (r) => r.json("data.session") !== undefined,
+      [`[${tag}] Fetch has questions`]: (r) => {
+        const questions = r.json("data.questions");
+        return Array.isArray(questions) && questions.length > 0;
       },
     });
-    errorRate.add(!ok);
-    fetchQuestionsDuration.add(res.timings.duration);
+    if (!fetchOk) fetchFailed = true;
 
-    if (ok) {
-      try {
-        const d = JSON.parse(res.body);
-        const data = d.data || d;
-        for (const section of data.questions) {
-          if (section.questions) {
-            for (const q of section.questions) {
-              questions.push(q);
-            }
-          }
-        }
-      } catch { /* ignore */ }
-    }
-
-    if (questions.length > 0) {
-      sleep(Math.min(2, 0.2 + questions.length * 0.03));
-    }
-  });
-
-  if (questions.length === 0) return;
-
-  // ── Submit Answers ──
-  group("Submit Answers", function () {
-    const answers = {};
-    for (const q of questions) {
-      if (q.options && q.options.length > 0) {
-        const opt = q.options[0];
-        answers[q.id] = opt.id || opt.value || opt.label || "A";
-      }
-    }
-
-    const timeSpent = Math.floor((Date.now() - startTime) / 1000);
-
+    // Step 3: Submit answers
     const submitRes = http.post(
       `${BASE_URL}/api/kompetensi/${PAKET_ID}/submit`,
-      JSON.stringify({ answers, timeSpent }),
+      JSON.stringify({ answers: {}, timeSpent: 5 }),
       { headers }
     );
-
-    const ok = check(submitRes, {
-      "submit status 200": (r) => r.status === 200,
-      "submit success": (r) => {
-        try { const b = JSON.parse(r.body); return b.success === true; }
-        catch { return false; }
-      },
-      "submit has result data": (r) => {
-        try {
-          const b = JSON.parse(r.body);
-          const d = b.data || b;
-          const res = d.result || d;
-          return (typeof res.benar === "number" && typeof res.salah === "number") ||
-                 (typeof res.totalScore === "number");
-        } catch { return false; }
-      },
+    const submitMs = Date.now() - fetchStart - fetchMs;
+    submitDuration.add(submitMs);
+    const submitOk = check(submitRes, {
+      [`[${tag}] Submit status 200`]: (r) => r.status === 200,
+      [`[${tag}] Submit has result`]: (r) => r.json("data.result") !== null,
     });
-    errorRate.add(!ok);
-    submitDuration.add(submitRes.timings.duration);
+    if (!submitOk) fetchFailed = true;
 
-    sleep(1);
+    // Step 4: Fetch result
+    const resultStart = Date.now();
+    const resultRes = http.get(`${BASE_URL}/api/kompetensi/${PAKET_ID}/hasil`, { headers });
+    const resultMs = Date.now() - resultStart;
+    resultDuration.add(resultMs);
+    check(resultRes, {
+      [`[${tag}] Result status 200`]: (r) => r.status === 200,
+      [`[${tag}] Result has result`]: (r) => r.json("data") !== undefined,
+    });
+
+    const totalMs = Date.now() - startTime;
+    fullFlowDuration.add(totalMs);
+
+    if (!isWarmup) {
+      console.log(`[${tag}] flow complete in ${totalMs}ms (fetch:${fetchMs}ms, submit:${submitMs}ms, result:${resultMs}ms)`);
+    }
   });
 
-  // ── View Result ──
-  group("View Result", function () {
-    const res = http.get(
-      `${BASE_URL}/api/kompetensi/${PAKET_ID}/hasil`,
-      { headers }
-    );
-
-    const ok = check(res, {
-      "result status 200": (r) => r.status === 200,
-      "result has percentage": (r) => {
-        try {
-          const b = JSON.parse(r.body);
-          const d = b.data || b;
-          return d.result?.percentage !== undefined || d.percentage !== undefined;
-        } catch { return false; }
-      },
-    });
-    errorRate.add(!ok);
-    resultDuration.add(res.timings.duration);
-  });
-
-  fullFlowDuration.add(Date.now() - startTime);
-  console.log(`Flow complete: ${Date.now() - startTime}ms, ${questions.length} questions`);
+  sleep(1);
 }

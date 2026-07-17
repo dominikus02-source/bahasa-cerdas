@@ -11,5 +11,27 @@
       "destination": "https://www.bahasacerdas.com/$1",
       "permanent": true
     }
-  ]
+  ],
+  "functions": {
+    "api/kompetensi/*/route": {
+      "maxDuration": 30,
+      "runtime": "nodejs@20.x"
+    },
+    "api/kompetensi/*/submit/route": {
+      "maxDuration": 30,
+      "runtime": "nodejs@20.x"
+    },
+    "api/kompetensi/*/hasil/route": {
+      "maxDuration": 30,
+      "runtime": "nodejs@20.x"
+    },
+    "api/user/me/route": {
+      "maxDuration": 30,
+      "runtime": "nodejs@20.x"
+    },
+    "api/ai/**/*/route": {
+      "maxDuration": 60,
+      "runtime": "nodejs@20.x"
+    }
+  }
 }

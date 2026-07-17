@@ -9,8 +9,21 @@ import { ERR } from "@/lib/api/errors";
 
 const UKBI_TYPES = ["UKBI", "UKBI_SIMULASI", "UKBI_LATIHAN", "UKBI_SD", "UKBI_LATIHAN_SD", "UKBI_SMP", "UKBI_LATIHAN_SMP", "UKBI_SMA", "UKBI_LATIHAN_SMA", "UKBI_GURU_SIMULASI", "UKBI_GURU_LATIHAN"];
 
+const MODULE_BOOT_MS = Date.now();
+
 function isUKBI(type: string) {
   return UKBI_TYPES.includes(type);
+}
+
+function logPerf(label: string, data: Record<string, unknown>) {
+  const processAgeMs = Date.now() - MODULE_BOOT_MS;
+  console.log(JSON.stringify({
+    event: `kompetensi_${label}`,
+    processAgeMs,
+    coldStart: processAgeMs < 5000,
+    ...data,
+    ts: new Date().toISOString(),
+  }));
 }
 
 // UKBI question select — no correctAnswer sent to client
@@ -27,13 +40,24 @@ const TKA_SNAPSHOT_SELECT = { id: true, correctAnswer: true, weight: true, kompe
 // bank; sibling questions have an empty passage. This build-time map (id ->
 // group passage, forward-filled from the authoritative JSON order) patches those
 // siblings so every reading question shows its "Bacaan" regardless of shuffle.
-import passageFillMap from "@/lib/kompetensi/passage-map.json";
-const PASSAGE_MAP = passageFillMap as Record<string, string>;
+// NOTE: lazy-loaded to avoid 300KB JSON parse on every module init (cold start).
 
-function fillMissingPassages<T extends { id: string; passage?: string | null }>(rows: T[]): T[] {
+let _passageMap: Record<string, string> | null = null;
+
+async function getPassageMap(): Promise<Record<string, string>> {
+  if (!_passageMap) {
+    const mod = await import("@/lib/kompetensi/passage-map.json");
+    _passageMap = mod.default as Record<string, string>;
+  }
+  return _passageMap;
+}
+
+async function fillMissingPassages<T extends { id: string; passage?: string | null }>(rows: T[]): Promise<T[]> {
+  if (rows.length === 0) return rows;
+  const passageFillMap = await getPassageMap();
   for (const q of rows) {
-    if ((!q.passage || !String(q.passage).trim()) && PASSAGE_MAP[q.id]) {
-      q.passage = PASSAGE_MAP[q.id];
+    if ((!q.passage || !String(q.passage).trim()) && passageFillMap[q.id]) {
+      q.passage = passageFillMap[q.id];
     }
   }
   return rows;
@@ -129,8 +153,10 @@ export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ paketId: string }> }
 ) {
+  const t0 = Date.now();
   try {
     const { paketId } = await params;
+    logPerf("GET_start", { paketId });
     const { searchParams } = new URL(req.url);
     const retry = searchParams.get("retry") === "1";
 
@@ -348,6 +374,8 @@ export async function GET(
 
     const answers = session.answers as Record<string, string>;
 
+    logPerf("GET_ok", { paketId, totalQuestions, totalMs: Date.now() - t0 });
+
     return ok({
       session: {
         id: session.id,
@@ -372,6 +400,7 @@ export async function GET(
       questions: rawSectionResults,
     });
   } catch (error: any) {
+    logPerf("GET_error", { paketId: "unknown", error: error?.message, totalMs: Date.now() - t0 });
     console.error("GET /api/kompetensi/[paketId] error:", error);
     return err(ERR.INTERNAL.error, ERR.INTERNAL.code, ERR.INTERNAL.status);
   }
