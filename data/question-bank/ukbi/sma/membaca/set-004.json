@@ -1,0 +1,1982 @@
+{
+  "meta": {
+    "product": "UKBI_PRACTICE",
+    "track": "UKBI_SMA",
+    "section": "membaca",
+    "set": "set-004",
+    "totalItems": 50,
+    "totalPassages": 10,
+    "source": "BC_UKBI_SMA_ORIGINAL"
+  },
+  "questions": [
+    {
+      "id": "BC-UKBI-SMA-MEMBACA-SET004-Q001",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "membaca",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "passage": "Pemanasan global telah menjadi isu sentral dalam diskusi kebijakan publik di berbagai negara. Fenomena ini ditandai oleh meningkatnya suhu rata-rata permukaan bumi akibat akumulasi gas rumah kaca di atmosfer. Aktivitas manusia, terutama pembakaran bahan bakar fosil dan deforestasi, menjadi penyumbang utama emisi karbon dioksida. Dampak yang sudah terasa meliputi mencairnya es di kutub, naiknya permukaan air laut, serta perubahan pola cuaca ekstrem. Para ilmuwan sepakat bahwa tanpa intervensi signifikan, suhu global diprediksi naik hingga 2,5 derajat Celsius pada akhir abad ini. Upaya mitigasi seperti transisi energi terbarukan dan efisiensi energi terus digalakkan, namun tantangan ekonomi dan politik masih menjadi hambatan utama.",
+      "stem": "Ide pokok paragraf tersebut adalah...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Dampak pemanasan global terhadap pola cuaca ekstrem"
+        },
+        {
+          "id": "B",
+          "text": "Pemanasan global sebagai isu sentral yang disebabkan aktivitas manusia dan berdampak luas"
+        },
+        {
+          "id": "C",
+          "text": "Upaya mitigasi pemanasan global melalui energi terbarukan"
+        },
+        {
+          "id": "D",
+          "text": "Prediksi kenaikan suhu bumi akibat gas rumah kaca"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Ide pokok paragraf mencakup keseluruhan isi: pemanasan global sebagai isu sentral, penyebab dari aktivitas manusia, dan dampaknya. Jawaban A, C, dan D hanya menyebutkan sebagian isi paragraf.",
+      "tags": [
+        "ide-pokok",
+        "pemanasan-global",
+        "teks-eksposisi"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMA-MEMBACA-SET004-Q002",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "membaca",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "passage": "Pemanasan global telah menjadi isu sentral dalam diskusi kebijakan publik di berbagai negara. Fenomena ini ditandai oleh meningkatnya suhu rata-rata permukaan bumi akibat akumulasi gas rumah kaca di atmosfer. Aktivitas manusia, terutama pembakaran bahan bakar fosil dan deforestasi, menjadi penyumbang utama emisi karbon dioksida. Dampak yang sudah terasa meliputi mencairnya es di kutub, naiknya permukaan air laut, serta perubahan pola cuaca ekstrem. Para ilmuwan sepakat bahwa tanpa intervensi signifikan, suhu global diprediksi naik hingga 2,5 derajat Celsius pada akhir abad ini. Upaya mitigasi seperti transisi energi terbarukan dan efisiensi energi terus digalakkan, namun tantangan ekonomi dan politik masih menjadi hambatan utama.",
+      "stem": "Pernyataan yang sesuai dengan isi paragraf adalah...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Pemanasan global terjadi secara alami tanpa campur tangan manusia."
+        },
+        {
+          "id": "B",
+          "text": "Deforestasi merupakan salah satu penyumbang emisi karbon dioksida."
+        },
+        {
+          "id": "C",
+          "text": "Kenaikan suhu global sudah dapat dihentikan sepenuhnya."
+        },
+        {
+          "id": "D",
+          "text": "Tidak ada dampak nyata dari pemanasan global yang sudah terasa."
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Paragraf menyebutkan 'pembakaran bahan bakar fosil dan deforestasi, menjadi penyumbang utama emisi karbon dioksida'.",
+      "tags": [
+        "informasi-tersurat",
+        "pemanasan-global"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMA-MEMBACA-SET004-Q003",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "membaca",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "passage": "Pemanasan global telah menjadi isu sentral dalam diskusi kebijakan publik di berbagai negara. Fenomena ini ditandai oleh meningkatnya suhu rata-rata permukaan bumi akibat akumulasi gas rumah kaca di atmosfer. Aktivitas manusia, terutama pembakaran bahan bakar fosil dan deforestasi, menjadi penyumbang utama emisi karbon dioksida. Dampak yang sudah terasa meliputi mencairnya es di kutub, naiknya permukaan air laut, serta perubahan pola cuaca ekstrem. Para ilmuwan sepakat bahwa tanpa intervensi signifikan, suhu global diprediksi naik hingga 2,5 derajat Celsius pada akhir abad ini. Upaya mitigasi seperti transisi energi terbarukan dan efisiensi energi terus digalakkan, namun tantangan ekonomi dan politik masih menjadi hambatan utama.",
+      "stem": "Kata 'mitigasi' dalam paragraf tersebut bermakna...",
+      "options": [
+        {
+          "id": "A",
+          "text": "tindakan memperburuk keadaan"
+        },
+        {
+          "id": "B",
+          "text": "usaha meringankan atau mengurangi dampak"
+        },
+        {
+          "id": "C",
+          "text": "proses adaptasi terhadap perubahan"
+        },
+        {
+          "id": "D",
+          "text": "kebijakan yang bersifat sementara"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Dalam konteks paragraf, 'mitigasi' merujuk pada upaya mengurangi dampak pemanasan global melalui transisi energi terbarukan dan efisiensi energi. Makna leksikal mitigasi adalah tindakan meringankan atau mengurangi dampak buruk.",
+      "tags": [
+        "makna-kata",
+        "istilah",
+        "mitigasi"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMA-MEMBACA-SET004-Q004",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "membaca",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 4,
+      "passage": "Pemanasan global telah menjadi isu sentral dalam diskusi kebijakan publik di berbagai negara. Fenomena ini ditandai oleh meningkatnya suhu rata-rata permukaan bumi akibat akumulasi gas rumah kaca di atmosfer. Aktivitas manusia, terutama pembakaran bahan bakar fosil dan deforestasi, menjadi penyumbang utama emisi karbon dioksida. Dampak yang sudah terasa meliputi mencairnya es di kutub, naiknya permukaan air laut, serta perubahan pola cuaca ekstrem. Para ilmuwan sepakat bahwa tanpa intervensi signifikan, suhu global diprediksi naik hingga 2,5 derajat Celsius pada akhir abad ini. Upaya mitigasi seperti transisi energi terbarukan dan efisiensi energi terus digalakkan, namun tantangan ekonomi dan politik masih menjadi hambatan utama.",
+      "stem": "Simpulan yang paling tepat berdasarkan paragraf tersebut adalah...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Pemanasan global tidak memerlukan intervensi karena akan membaik dengan sendirinya."
+        },
+        {
+          "id": "B",
+          "text": "Transisi energi terbarukan adalah satu-satunya solusi pemanasan global."
+        },
+        {
+          "id": "C",
+          "text": "Pemanasan global membutuhkan intervensi signifikan, tetapi menghadapi hambatan ekonomi dan politik."
+        },
+        {
+          "id": "D",
+          "text": "Kenaikan suhu 2,5 derajat Celsius sudah pasti terjadi tanpa bisa dicegah."
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "Simpulan yang tepat mencakup dua sisi: intervensi diperlukan (mitigasi) dan hambatan yang ada (ekonomi dan politik). Jawaban A salah karena bertentangan dengan teks, B terlalu sempit, D terlalu pasti.",
+      "tags": [
+        "simpulan",
+        "pemanasan-global",
+        "teks-eksposisi"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "ANALISIS",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMA-MEMBACA-SET004-Q005",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "membaca",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 4,
+      "passage": "Pemanasan global telah menjadi isu sentral dalam diskusi kebijakan publik di berbagai negara. Fenomena ini ditandai oleh meningkatnya suhu rata-rata permukaan bumi akibat akumulasi gas rumah kaca di atmosfer. Aktivitas manusia, terutama pembakaran bahan bakar fosil dan deforestasi, menjadi penyumbang utama emisi karbon dioksida. Dampak yang sudah terasa meliputi mencairnya es di kutub, naiknya permukaan air laut, serta perubahan pola cuaca ekstrem. Para ilmuwan sepakat bahwa tanpa intervensi signifikan, suhu global diprediksi naik hingga 2,5 derajat Celsius pada akhir abad ini. Upaya mitigasi seperti transisi energi terbarukan dan efisiensi energi terus digalakkan, namun tantangan ekonomi dan politik masih menjadi hambatan utama.",
+      "stem": "Kalimat utama paragraf tersebut terdapat pada...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Kalimat pertama: 'Pemanasan global telah menjadi isu sentral...'"
+        },
+        {
+          "id": "B",
+          "text": "Kalimat kedua: 'Fenomena ini ditandai oleh meningkatnya suhu...'"
+        },
+        {
+          "id": "C",
+          "text": "Kalimat keempat: 'Dampak yang sudah terasa meliputi...'"
+        },
+        {
+          "id": "D",
+          "text": "Kalimat terakhir: 'Upaya mitigasi seperti transisi energi...'"
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Kalimat pertama merupakan kalimat utama karena berisi gagasan pokok paragraf yang kemudian dijelaskan oleh kalimat-kalimat selanjutnya (deduktif).",
+      "tags": [
+        "kalimat-utama",
+        "paragraf-deduktif"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "ANALISIS",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMA-MEMBACA-SET004-Q006",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "membaca",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "passage": "Kecerdasan buatan atau artificial intelligence (AI) telah mengubah lanskap dunia kerja secara fundamental. Di sektor manufaktur, robot pintar mampu menggantikan tenaga manusia dalam pekerjaan repetitif dengan tingkat presisi yang lebih tinggi. Di bidang kesehatan, algoritma AI dapat mendiagnosis penyakit dari citra medis dengan akurasi melampaui dokter spesialis. Di dunia pendidikan, platform pembelajaran adaptif mampu menyesuaikan materi dengan kemampuan individual siswa. Namun, transformasi ini menimbulkan kekhawatiran akan pengangguran teknologi. Banyak pekerja di sektor tradisional kehilangan mata pencaharian karena digantikan otomatisasi. Para ahli menekankan pentingnya reskilling dan upskilling agar tenaga kerja Indonesia siap menghadapi era AI. Pendidikan vokasi dan pelatihan digital harus diperkuat untuk menjembatani kesenjangan keterampilan.",
+      "stem": "Pernyataan yang tepat sesuai isi paragraf adalah...",
+      "options": [
+        {
+          "id": "A",
+          "text": "AI hanya berdampak pada sektor manufaktur dan pendidikan."
+        },
+        {
+          "id": "B",
+          "text": "Algoritma AI dalam diagnosis medis memiliki akurasi yang lebih rendah dari dokter."
+        },
+        {
+          "id": "C",
+          "text": "Transformasi AI menimbulkan kekhawatiran pengangguran teknologi."
+        },
+        {
+          "id": "D",
+          "text": "Pendidikan vokasi tidak relevan dengan perkembangan AI."
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "Paragraf secara eksplisit menyebutkan 'transformasi ini menimbulkan kekhawatiran akan pengangguran teknologi'.",
+      "tags": [
+        "informasi-tersurat",
+        "AI",
+        "dunia-kerja"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMA-MEMBACA-SET004-Q007",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "membaca",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "passage": "Kecerdasan buatan atau artificial intelligence (AI) telah mengubah lanskap dunia kerja secara fundamental. Di sektor manufaktur, robot pintar mampu menggantikan tenaga manusia dalam pekerjaan repetitif dengan tingkat presisi yang lebih tinggi. Di bidang kesehatan, algoritma AI dapat mendiagnosis penyakit dari citra medis dengan akurasi melampaui dokter spesialis. Di dunia pendidikan, platform pembelajaran adaptif mampu menyesuaikan materi dengan kemampuan individual siswa. Namun, transformasi ini menimbulkan kekhawatiran akan pengangguran teknologi. Banyak pekerja di sektor tradisional kehilangan mata pencaharian karena digantikan otomatisasi. Para ahli menekankan pentingnya reskilling dan upskilling agar tenaga kerja Indonesia siap menghadapi era AI. Pendidikan vokasi dan pelatihan digital harus diperkuat untuk menjembatani kesenjangan keterampilan.",
+      "stem": "Kata 'reskilling' dalam paragraf tersebut berarti...",
+      "options": [
+        {
+          "id": "A",
+          "text": "pemutusan hubungan kerja massal"
+        },
+        {
+          "id": "B",
+          "text": "pelatihan ulang untuk keterampilan baru"
+        },
+        {
+          "id": "C",
+          "text": "pengalihan tugas ke mesin otomatis"
+        },
+        {
+          "id": "D",
+          "text": "peningkatan gaji tenaga kerja terampil"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Reskilling merujuk pada pelatihan ulang tenaga kerja untuk memperoleh keterampilan baru yang relevan dengan kebutuhan industri digital.",
+      "tags": [
+        "makna-kata",
+        "istilah",
+        "reskilling"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMA-MEMBACA-SET004-Q008",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "membaca",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "passage": "Kecerdasan buatan atau artificial intelligence (AI) telah mengubah lanskap dunia kerja secara fundamental. Di sektor manufaktur, robot pintar mampu menggantikan tenaga manusia dalam pekerjaan repetitif dengan tingkat presisi yang lebih tinggi. Di bidang kesehatan, algoritma AI dapat mendiagnosis penyakit dari citra medis dengan akurasi melampaui dokter spesialis. Di dunia pendidikan, platform pembelajaran adaptif mampu menyesuaikan materi dengan kemampuan individual siswa. Namun, transformasi ini menimbulkan kekhawatiran akan pengangguran teknologi. Banyak pekerja di sektor tradisional kehilangan mata pencaharian karena digantikan otomatisasi. Para ahli menekankan pentingnya reskilling dan upskilling agar tenaga kerja Indonesia siap menghadapi era AI. Pendidikan vokasi dan pelatihan digital harus diperkuat untuk menjembatani kesenjangan keterampilan.",
+      "stem": "Hubungan antarkalimat dalam paragraf tersebut bersifat...",
+      "options": [
+        {
+          "id": "A",
+          "text": "sebab-akibat, diikuti solusi"
+        },
+        {
+          "id": "B",
+          "text": "perbandingan dan pertentangan"
+        },
+        {
+          "id": "C",
+          "text": "kronologi berdasarkan urutan waktu"
+        },
+        {
+          "id": "D",
+          "text": "contoh-contoh yang mendukung satu pernyataan utama"
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Paragraf menunjukkan hubungan sebab-akibat: AI menyebabkan perubahan positif (manufaktur, kesehatan, pendidikan) tetapi juga menyebabkan kekhawatiran pengangguran, lalu diikuti solusi (reskilling dan upskilling).",
+      "tags": [
+        "hubungan-antarkalimat",
+        "struktur-teks"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "ANALISIS",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMA-MEMBACA-SET004-Q009",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "membaca",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 4,
+      "passage": "Kecerdasan buatan atau artificial intelligence (AI) telah mengubah lanskap dunia kerja secara fundamental. Di sektor manufaktur, robot pintar mampu menggantikan tenaga manusia dalam pekerjaan repetitif dengan tingkat presisi yang lebih tinggi. Di bidang kesehatan, algoritma AI dapat mendiagnosis penyakit dari citra medis dengan akurasi melampaui dokter spesialis. Di dunia pendidikan, platform pembelajaran adaptif mampu menyesuaikan materi dengan kemampuan individual siswa. Namun, transformasi ini menimbulkan kekhawatiran akan pengangguran teknologi. Banyak pekerja di sektor tradisional kehilangan mata pencaharian karena digantikan otomatisasi. Para ahli menekankan pentingnya reskilling dan upskilling agar tenaga kerja Indonesia siap menghadapi era AI. Pendidikan vokasi dan pelatihan digital harus diperkuat untuk menjembatani kesenjangan keterampilan.",
+      "stem": "Sikap penulis dalam paragraf tersebut cenderung...",
+      "options": [
+        {
+          "id": "A",
+          "text": "pesimistis terhadap perkembangan AI"
+        },
+        {
+          "id": "B",
+          "text": "optimistis tanpa menyebut kekurangan"
+        },
+        {
+          "id": "C",
+          "text": "skeptis terhadap manfaat AI"
+        },
+        {
+          "id": "D",
+          "text": "objektif dengan menyajikan manfaat dan tantangan"
+        }
+      ],
+      "correctAnswer": "D",
+      "explanation": "Penulis menyajikan sisi positif AI (presisi, akurasi, adaptif) sekaligus sisi negatif (pengangguran) serta solusinya (reskilling), menunjukkan sikap objektif dan berimbang.",
+      "tags": [
+        "sikap-penulis",
+        "nada-teks"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "EVALUASI",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMA-MEMBACA-SET004-Q010",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "membaca",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "passage": "Kecerdasan buatan atau artificial intelligence (AI) telah mengubah lanskap dunia kerja secara fundamental. Di sektor manufaktur, robot pintar mampu menggantikan tenaga manusia dalam pekerjaan repetitif dengan tingkat presisi yang lebih tinggi. Di bidang kesehatan, algoritma AI dapat mendiagnosis penyakit dari citra medis dengan akurasi melampaui dokter spesialis. Di dunia pendidikan, platform pembelajaran adaptif mampu menyesuaikan materi dengan kemampuan individual siswa. Namun, transformasi ini menimbulkan kekhawatiran akan pengangguran teknologi. Banyak pekerja di sektor tradisional kehilangan mata pencaharian karena digantikan otomatisasi. Para ahli menekankan pentingnya reskilling dan upskilling agar tenaga kerja Indonesia siap menghadapi era AI. Pendidikan vokasi dan pelatihan digital harus diperkuat untuk menjembatani kesenjangan keterampilan.",
+      "stem": "Kesimpulan yang tepat dari paragraf tersebut adalah...",
+      "options": [
+        {
+          "id": "A",
+          "text": "AI hanya menguntungkan sektor manufaktur dan merugikan sektor lainnya."
+        },
+        {
+          "id": "B",
+          "text": "Transformasi AI memerlukan kesiapan tenaga kerja melalui pendidikan dan pelatihan."
+        },
+        {
+          "id": "C",
+          "text": "AI harus dihentikan perkembangannya karena menyebabkan pengangguran."
+        },
+        {
+          "id": "D",
+          "text": "Pendidikan vokasi tidak berkaitan dengan perkembangan AI."
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Paragraf menyimpulkan bahwa reskilling, upskilling, pendidikan vokasi, dan pelatihan digital diperlukan agar tenaga kerja siap menghadapi era AI.",
+      "tags": [
+        "simpulan",
+        "AI"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "ANALISIS",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMA-MEMBACA-SET004-Q011",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "membaca",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "passage": "Novel 'Laut Bercerita' karya Leila S. Chudori mengisahkan perjalanan para aktivis mahasiswa yang diculik dan menghilang pada era Orde Baru. Melalui perspektif tokoh utama, pembaca diajak menyelami pahitnya perjuangan melawan ketidakadilan. Chudori menggunakan gaya realisme magis untuk menyampaikan trauma yang dialami para korban. Narasi bergerak maju-mundur antara masa penculikan dan masa setelahnya, menciptakan efek fragmentaris yang merepresentasikan ingatan yang hancur. Novel ini tidak hanya menjadi dokumen sejarah, tetapi juga menjadi ruang empati bagi pembaca untuk memahami luka kolektif bangsa. Kekuatan novel ini terletak pada kemampuannya menyuarakan kisah-kisah yang selama ini dibungkam. Dengan riset mendalam selama bertahun-tahun, Chudori berhasil menghidupkan kembali atmosfer Jakarta era 1990-an secara autentik.",
+      "stem": "Tema utama novel 'Laut Bercerita' adalah...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Percintaan mahasiswa di era reformasi"
+        },
+        {
+          "id": "B",
+          "text": "Penculikan dan penghilangan aktivis mahasiswa pada era Orde Baru"
+        },
+        {
+          "id": "C",
+          "text": "Kehidupan sehari-hari masyarakat Jakarta tahun 1990-an"
+        },
+        {
+          "id": "D",
+          "text": "Perjuangan seorang penulis dalam melakukan riset novel"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Teks menyebutkan novel ini 'mengisahkan perjalanan para aktivis mahasiswa yang diculik dan menghilang pada era Orde Baru', yang merupakan tema utamanya.",
+      "tags": [
+        "tema",
+        "resensi",
+        "sastra"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SOSIAL"
+    },
+    {
+      "id": "BC-UKBI-SMA-MEMBACA-SET004-Q012",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "membaca",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "passage": "Novel 'Laut Bercerita' karya Leila S. Chudori mengisahkan perjalanan para aktivis mahasiswa yang diculik dan menghilang pada era Orde Baru. Melalui perspektif tokoh utama, pembaca diajak menyelami pahitnya perjuangan melawan ketidakadilan. Chudori menggunakan gaya realisme magis untuk menyampaikan trauma yang dialami para korban. Narasi bergerak maju-mundur antara masa penculikan dan masa setelahnya, menciptakan efek fragmentaris yang merepresentasikan ingatan yang hancur. Novel ini tidak hanya menjadi dokumen sejarah, tetapi juga menjadi ruang empati bagi pembaca untuk memahami luka kolektif bangsa. Kekuatan novel ini terletak pada kemampuannya menyuarakan kisah-kisah yang selama ini dibungkam. Dengan riset mendalam selama bertahun-tahun, Chudori berhasil menghidupkan kembali atmosfer Jakarta era 1990-an secara autentik.",
+      "stem": "Gaya narasi yang digunakan pengarang dalam novel tersebut adalah...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Linier kronologis dari awal hingga akhir"
+        },
+        {
+          "id": "B",
+          "text": "Maju-mundur (fragmentaris) untuk merepresentasikan ingatan yang hancur"
+        },
+        {
+          "id": "C",
+          "text": "Alur circular yang kembali ke titik awal cerita"
+        },
+        {
+          "id": "D",
+          "text": "Paralel dengan dua jalan cerita yang terpisah"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Teks menyebut 'Narasi bergerak maju-mundur antara masa penculikan dan masa setelahnya, menciptakan efek fragmentaris yang merepresentasikan ingatan yang hancur'.",
+      "tags": [
+        "gaya-narasi",
+        "alur",
+        "resensi"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SOSIAL"
+    },
+    {
+      "id": "BC-UKBI-SMA-MEMBACA-SET004-Q013",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "membaca",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 4,
+      "passage": "Novel 'Laut Bercerita' karya Leila S. Chudori mengisahkan perjalanan para aktivis mahasiswa yang diculik dan menghilang pada era Orde Baru. Melalui perspektif tokoh utama, pembaca diajak menyelami pahitnya perjuangan melawan ketidakadilan. Chudori menggunakan gaya realisme magis untuk menyampaikan trauma yang dialami para korban. Narasi bergerak maju-mundur antara masa penculikan dan masa setelahnya, menciptakan efek fragmentaris yang merepresentasikan ingatan yang hancur. Novel ini tidak hanya menjadi dokumen sejarah, tetapi juga menjadi ruang empati bagi pembaca untuk memahami luka kolektif bangsa. Kekuatan novel ini terletak pada kemampuannya menyuarakan kisah-kisah yang selama ini dibungkam. Dengan riset mendalam selama bertahun-tahun, Chudori berhasil menghidupkan kembali atmosfer Jakarta era 1990-an secara autentik.",
+      "stem": "Fungsi realisme magis dalam novel tersebut adalah...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Menambah unsur fantasi agar cerita lebih menarik"
+        },
+        {
+          "id": "B",
+          "text": "Menyampaikan trauma korban secara simbolis dan metaforis"
+        },
+        {
+          "id": "C",
+          "text": "Menciptakan jarak antara pembaca dan realita sejarah"
+        },
+        {
+          "id": "D",
+          "text": "Menghindari sensor dari pemerintah Orde Baru"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Teks menyebut 'realisme magis untuk menyampaikan trauma yang dialami para korban' — realisme magis berfungsi sebagai medium simbolis untuk mengekspresikan pengalaman traumatis yang sulit diungkapkan secara literal.",
+      "tags": [
+        "realisme-magis",
+        "teknik-sastra",
+        "resensi"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "ANALISIS",
+      "domain": "SOSIAL"
+    },
+    {
+      "id": "BC-UKBI-SMA-MEMBACA-SET004-Q014",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "membaca",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "passage": "Novel 'Laut Bercerita' karya Leila S. Chudori mengisahkan perjalanan para aktivis mahasiswa yang diculik dan menghilang pada era Orde Baru. Melalui perspektif tokoh utama, pembaca diajak menyelami pahitnya perjuangan melawan ketidakadilan. Chudori menggunakan gaya realisme magis untuk menyampaikan trauma yang dialami para korban. Narasi bergerak maju-mundur antara masa penculikan dan masa setelahnya, menciptakan efek fragmentaris yang merepresentasikan ingatan yang hancur. Novel ini tidak hanya menjadi dokumen sejarah, tetapi juga menjadi ruang empati bagi pembaca untuk memahami luka kolektif bangsa. Kekuatan novel ini terletak pada kemampuannya menyuarakan kisah-kisah yang selama ini dibungkam. Dengan riset mendalam selama bertahun-tahun, Chudori berhasil menghidupkan kembali atmosfer Jakarta era 1990-an secara autentik.",
+      "stem": "Nilai yang dominan dalam novel tersebut adalah nilai...",
+      "options": [
+        {
+          "id": "A",
+          "text": "moral dan sejarah"
+        },
+        {
+          "id": "B",
+          "text": "ekonomi dan politik"
+        },
+        {
+          "id": "C",
+          "text": "agama dan budaya"
+        },
+        {
+          "id": "D",
+          "text": "pendidikan dan sosial"
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Nilai moral tampak pada perjuangan melawan ketidakadilan dan nilai sejarah tampak pada dokumen sejarah peristiwa penculikan aktivis. Dua nilai ini dominan dalam teks resensi.",
+      "tags": [
+        "nilai-sastra",
+        "resensi"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "EVALUASI",
+      "domain": "SOSIAL"
+    },
+    {
+      "id": "BC-UKBI-SMA-MEMBACA-SET004-Q015",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "membaca",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 4,
+      "passage": "Novel 'Laut Bercerita' karya Leila S. Chudori mengisahkan perjalanan para aktivis mahasiswa yang diculik dan menghilang pada era Orde Baru. Melalui perspektif tokoh utama, pembaca diajak menyelami pahitnya perjuangan melawan ketidakadilan. Chudori menggunakan gaya realisme magis untuk menyampaikan trauma yang dialami para korban. Narasi bergerak maju-mundur antara masa penculikan dan masa setelahnya, menciptakan efek fragmentaris yang merepresentasikan ingatan yang hancur. Novel ini tidak hanya menjadi dokumen sejarah, tetapi juga menjadi ruang empati bagi pembaca untuk memahami luka kolektif bangsa. Kekuatan novel ini terletak pada kemampuannya menyuarakan kisah-kisah yang selama ini dibungkam. Dengan riset mendalam selama bertahun-tahun, Chudori berhasil menghidupkan kembali atmosfer Jakarta era 1990-an secara autentik.",
+      "stem": "Maksud frasa 'ruang empati' dalam paragraf tersebut adalah...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Tempat pembaca bersimpati kepada tokoh tanpa memahami latar belakang"
+        },
+        {
+          "id": "B",
+          "text": "Media yang memungkinkan pembaca merasakan dan memahami pengalaman korban"
+        },
+        {
+          "id": "C",
+          "text": "Bagian novel yang berisi pesan moral kepada pembaca"
+        },
+        {
+          "id": "D",
+          "text": "Ruang diskusi antara penulis dan pembaca dalam novel"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Frasa 'ruang empati' bermakna novel menyediakan medium bagi pembaca untuk ikut merasakan dan memahami pengalaman traumatis korban penculikan.",
+      "tags": [
+        "makna-frasa",
+        "resensi"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "ANALISIS",
+      "domain": "SOSIAL"
+    },
+    {
+      "id": "BC-UKBI-SMA-MEMBACA-SET004-Q016",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "membaca",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "passage": "Media sosial telah mengubah cara masyarakat mengonsumsi berita. Jika dulu orang mengandalkan koran pagi atau siaran berita televisi pada jam tertentu, kini berita dapat diakses kapan saja melalui gawai masing-masing. Kemudahan ini membawa konsekuensi serius: maraknya penyebaran berita palsu atau hoaks. Sebuah studi dari Massachusetts Institute of Technology menemukan bahwa berita palsu menyebar enam kali lebih cepat daripada berita benar di platform Twitter. Faktor utamanya adalah konten yang sensasional dan emosional cenderung lebih menarik perhatian pengguna. Kondisi ini diperparah oleh fenomena echo chamber, di mana algoritma media sosial menampilkan konten yang sesuai dengan keyakinan pengguna, sehingga memperkuat bias konfirmasi. Literasi digital menjadi keterampilan vital yang harus dimiliki setiap warga negara untuk menyaring informasi sebelum menyebarkannya.",
+      "stem": "Fakta yang disebutkan dalam paragraf tersebut adalah...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Berita palsu menyebar enam kali lebih cepat daripada berita benar."
+        },
+        {
+          "id": "B",
+          "text": "Media sosial adalah penyebab utama kebodohan masyarakat."
+        },
+        {
+          "id": "C",
+          "text": "Koran dan televisi sudah tidak digunakan lagi."
+        },
+        {
+          "id": "D",
+          "text": "Literasi digital tidak penting di era modern."
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Teks menyebutkan 'sebuah studi dari Massachusetts Institute of Technology menemukan bahwa berita palsu menyebar enam kali lebih cepat daripada berita benar di platform Twitter' — ini adalah fakta yang didukung riset.",
+      "tags": [
+        "fakta",
+        "media-sosial",
+        "hoaks"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMA-MEMBACA-SET004-Q017",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "membaca",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "passage": "Media sosial telah mengubah cara masyarakat mengonsumsi berita. Jika dulu orang mengandalkan koran pagi atau siaran berita televisi pada jam tertentu, kini berita dapat diakses kapan saja melalui gawai masing-masing. Kemudahan ini membawa konsekuensi serius: maraknya penyebaran berita palsu atau hoaks. Sebuah studi dari Massachusetts Institute of Technology menemukan bahwa berita palsu menyebar enam kali lebih cepat daripada berita benar di platform Twitter. Faktor utamanya adalah konten yang sensasional dan emosional cenderung lebih menarik perhatian pengguna. Kondisi ini diperparah oleh fenomena echo chamber, di mana algoritma media sosial menampilkan konten yang sesuai dengan keyakinan pengguna, sehingga memperkuat bias konfirmasi. Literasi digital menjadi keterampilan vital yang harus dimiliki setiap warga negara untuk menyaring informasi sebelum menyebarkannya.",
+      "stem": "Yang dimaksud dengan 'echo chamber' dalam paragraf tersebut adalah...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Ruang gema di media sosial tempat pengguna berdebat"
+        },
+        {
+          "id": "B",
+          "text": "Fenomena algoritma yang menampilkan konten sesuai keyakinan pengguna"
+        },
+        {
+          "id": "C",
+          "text": "Saluran berita yang hanya menyiarkan satu sudut pandang"
+        },
+        {
+          "id": "D",
+          "text": "Grup diskusi tertutup di aplikasi pesan"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Teks mendefinisikan echo chamber sebagai 'algoritma media sosial menampilkan konten yang sesuai dengan keyakinan pengguna, sehingga memperkuat bias konfirmasi'.",
+      "tags": [
+        "istilah",
+        "echo-chamber",
+        "media-sosial"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMA-MEMBACA-SET004-Q018",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "membaca",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 4,
+      "passage": "Media sosial telah mengubah cara masyarakat mengonsumsi berita. Jika dulu orang mengandalkan koran pagi atau siaran berita televisi pada jam tertentu, kini berita dapat diakses kapan saja melalui gawai masing-masing. Kemudahan ini membawa konsekuensi serius: maraknya penyebaran berita palsu atau hoaks. Sebuah studi dari Massachusetts Institute of Technology menemukan bahwa berita palsu menyebar enam kali lebih cepat daripada berita benar di platform Twitter. Faktor utamanya adalah konten yang sensasional dan emosional cenderung lebih menarik perhatian pengguna. Kondisi ini diperparah oleh fenomena echo chamber, di mana algoritma media sosial menampilkan konten yang sesuai dengan keyakinan pengguna, sehingga memperkuat bias konfirmasi. Literasi digital menjadi keterampilan vital yang harus dimiliki setiap warga negara untuk menyaring informasi sebelum menyebarkannya.",
+      "stem": "Solusi yang ditawarkan penulis terhadap masalah dalam paragraf tersebut adalah...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Menutup semua platform media sosial"
+        },
+        {
+          "id": "B",
+          "text": "Kembali menggunakan koran dan televisi"
+        },
+        {
+          "id": "C",
+          "text": "Meningkatkan literasi digital masyarakat"
+        },
+        {
+          "id": "D",
+          "text": "Memblokir akun penyebar hoaks"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "Kalimat terakhir menyebutkan 'Literasi digital menjadi keterampilan vital yang harus dimiliki setiap warga negara untuk menyaring informasi sebelum menyebarkannya' sebagai solusi.",
+      "tags": [
+        "solusi",
+        "literasi-digital"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "ANALISIS",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMA-MEMBACA-SET004-Q019",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "membaca",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "passage": "Media sosial telah mengubah cara masyarakat mengonsumsi berita. Jika dulu orang mengandalkan koran pagi atau siaran berita televisi pada jam tertentu, kini berita dapat diakses kapan saja melalui gawai masing-masing. Kemudahan ini membawa konsekuensi serius: maraknya penyebaran berita palsu atau hoaks. Sebuah studi dari Massachusetts Institute of Technology menemukan bahwa berita palsu menyebar enam kali lebih cepat daripada berita benar di platform Twitter. Faktor utamanya adalah konten yang sensasional dan emosional cenderung lebih menarik perhatian pengguna. Kondisi ini diperparah oleh fenomena echo chamber, di mana algoritma media sosial menampilkan konten yang sesuai dengan keyakinan pengguna, sehingga memperkuat bias konfirmasi. Literasi digital menjadi keterampilan vital yang harus dimiliki setiap warga negara untuk menyaring informasi sebelum menyebarkannya.",
+      "stem": "Pola pengembangan paragraf tersebut adalah...",
+      "options": [
+        {
+          "id": "A",
+          "text": "deduktif: umum ke khusus"
+        },
+        {
+          "id": "B",
+          "text": "induktif: khusus ke umum"
+        },
+        {
+          "id": "C",
+          "text": "kronologis: urutan waktu"
+        },
+        {
+          "id": "D",
+          "text": "komparatif: perbandingan"
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Paragraf diawali pernyataan umum tentang perubahan konsumsi berita, lalu diikuti penjelasan khusus tentang hoaks, echo chamber, dan literasi digital. Pola ini deduktif.",
+      "tags": [
+        "pola-paragraf",
+        "deduktif"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "ANALISIS",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMA-MEMBACA-SET004-Q020",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "membaca",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "passage": "Media sosial telah mengubah cara masyarakat mengonsumsi berita. Jika dulu orang mengandalkan koran pagi atau siaran berita televisi pada jam tertentu, kini berita dapat diakses kapan saja melalui gawai masing-masing. Kemudahan ini membawa konsekuensi serius: maraknya penyebaran berita palsu atau hoaks. Sebuah studi dari Massachusetts Institute of Technology menemukan bahwa berita palsu menyebar enam kali lebih cepat daripada berita benar di platform Twitter. Faktor utamanya adalah konten yang sensasional dan emosional cenderung lebih menarik perhatian pengguna. Kondisi ini diperparah oleh fenomena echo chamber, di mana algoritma media sosial menampilkan konten yang sesuai dengan keyakinan pengguna, sehingga memperkuat bias konfirmasi. Literasi digital menjadi keterampilan vital yang harus dimiliki setiap warga negara untuk menyaring informasi sebelum menyebarkannya.",
+      "stem": "Gagasan utama paragraf tersebut adalah...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Perbandingan berita di media sosial dan televisi"
+        },
+        {
+          "id": "B",
+          "text": "Dampak negatif media sosial terhadap penyebaran informasi"
+        },
+        {
+          "id": "C",
+          "text": "Sejarah perkembangan media massa di Indonesia"
+        },
+        {
+          "id": "D",
+          "text": "Cara membedakan berita benar dan palsu"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Gagasan utama berfokus pada dampak negatif media sosial dalam penyebaran informasi — kemudahan akses berita berujung pada maraknya hoaks, echo chamber, dan perlunya literasi digital.",
+      "tags": [
+        "gagasan-utama",
+        "media-sosial"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMA-MEMBACA-SET004-Q021",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "membaca",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "passage": "Prof. Dr. Khoirul Anwar, ilmuwan asal Indonesia, dikenal luas berkat kontribusinya dalam pengembangan teknologi 4G LTE. Pria kelahiran Blitar ini menyelesaikan studi doktoralnya di Nara Institute of Science and Technology, Jepang, pada 2005. Temuannya berupa sistem pengiriman data yang lebih efisien untuk komunikasi nirkabel telah dipatenkan dan digunakan secara global. Yang menarik, Anwar memilih untuk tidak mengomersialkan hak patennya secara penuh agar teknologi terjangkau oleh negara berkembang. Ia percaya bahwa ilmu pengetahuan harus menjadi alat pemerataan kesejahteraan, bukan sekadar komoditas bisnis. Dedikasinya pada dunia pendidikan juga ditunjukkan dengan aktif mengajar dan membimbing mahasiswa di Telkom University Bandung. Sosoknya membuktikan bahwa ilmuwan Indonesia mampu bersaing di kancah global tanpa melupakan kontribusi untuk bangsa.",
+      "stem": "Informasi yang tepat berdasarkan teks biografi tersebut adalah...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Khoirul Anwar menyelesaikan studi S3 di Amerika Serikat pada 2005."
+        },
+        {
+          "id": "B",
+          "text": "Temuan Anwar berupa sistem pengiriman data untuk komunikasi nirkabel."
+        },
+        {
+          "id": "C",
+          "text": "Anwar mengomersialkan hak patennya untuk keuntungan pribadi."
+        },
+        {
+          "id": "D",
+          "text": "Ia saat ini bekerja di luar negeri dan tidak mengajar di Indonesia."
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Teks menyebut 'Temuannya berupa sistem pengiriman data yang lebih efisien untuk komunikasi nirkabel telah dipatenkan dan digunakan secara global.'",
+      "tags": [
+        "informasi-tersurat",
+        "biografi",
+        "ilmuwan"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMA-MEMBACA-SET004-Q022",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "membaca",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "passage": "Prof. Dr. Khoirul Anwar, ilmuwan asal Indonesia, dikenal luas berkat kontribusinya dalam pengembangan teknologi 4G LTE. Pria kelahiran Blitar ini menyelesaikan studi doktoralnya di Nara Institute of Science and Technology, Jepang, pada 2005. Temuannya berupa sistem pengiriman data yang lebih efisien untuk komunikasi nirkabel telah dipatenkan dan digunakan secara global. Yang menarik, Anwar memilih untuk tidak mengomersialkan hak patennya secara penuh agar teknologi terjangkau oleh negara berkembang. Ia percaya bahwa ilmu pengetahuan harus menjadi alat pemerataan kesejahteraan, bukan sekadar komoditas bisnis. Dedikasinya pada dunia pendidikan juga ditunjukkan dengan aktif mengajar dan membimbing mahasiswa di Telkom University Bandung. Sosoknya membuktikan bahwa ilmuwan Indonesia mampu bersaing di kancah global tanpa melupakan kontribusi untuk bangsa.",
+      "stem": "Nilai keteladanan yang dapat diteladani dari tokoh tersebut adalah...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Kekayaan dan ketenaran yang diraih dari paten global"
+        },
+        {
+          "id": "B",
+          "text": "Pengabdian pada ilmu pengetahuan dan kepedulian pada negara berkembang"
+        },
+        {
+          "id": "C",
+          "text": "Kemampuan bersaing dengan ilmuwan asing"
+        },
+        {
+          "id": "D",
+          "text": "Pendidikan di luar negeri yang bergengsi"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Nilai keteladanan utama adalah dedikasinya pada ilmu pengetahuan (mengajar, membimbing mahasiswa) dan kepeduliannya pada negara berkembang (tidak mengomersialkan paten agar teknologi terjangkau).",
+      "tags": [
+        "keteladanan",
+        "biografi",
+        "nilai"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "EVALUASI",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMA-MEMBACA-SET004-Q023",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "membaca",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "passage": "Prof. Dr. Khoirul Anwar, ilmuwan asal Indonesia, dikenal luas berkat kontribusinya dalam pengembangan teknologi 4G LTE. Pria kelahiran Blitar ini menyelesaikan studi doktoralnya di Nara Institute of Science and Technology, Jepang, pada 2005. Temuannya berupa sistem pengiriman data yang lebih efisien untuk komunikasi nirkabel telah dipatenkan dan digunakan secara global. Yang menarik, Anwar memilih untuk tidak mengomersialkan hak patennya secara penuh agar teknologi terjangkau oleh negara berkembang. Ia percaya bahwa ilmu pengetahuan harus menjadi alat pemerataan kesejahteraan, bukan sekadar komoditas bisnis. Dedikasinya pada dunia pendidikan juga ditunjukkan dengan aktif mengajar dan membimbing mahasiswa di Telkom University Bandung. Sosoknya membuktikan bahwa ilmuwan Indonesia mampu bersaing di kancah global tanpa melupakan kontribusi untuk bangsa.",
+      "stem": "Mengapa Khoirul Anwar memilih untuk tidak mengomersialkan hak patennya secara penuh?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Agar ia bisa mendapatkan keuntungan jangka panjang dari royalti"
+        },
+        {
+          "id": "B",
+          "text": "Karena teknologi tersebut belum layak dipasarkan"
+        },
+        {
+          "id": "C",
+          "text": "Agar teknologi tetap terjangkau oleh negara berkembang"
+        },
+        {
+          "id": "D",
+          "text": "Karena ia tidak memiliki hak penuh atas paten tersebut"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "Teks menyatakan 'Anwar memilih untuk tidak mengomersialkan hak patennya secara penuh agar teknologi terjangkau oleh negara berkembang.'",
+      "tags": [
+        "sebab-akibat",
+        "biografi"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMA-MEMBACA-SET004-Q024",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "membaca",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 4,
+      "passage": "Prof. Dr. Khoirul Anwar, ilmuwan asal Indonesia, dikenal luas berkat kontribusinya dalam pengembangan teknologi 4G LTE. Pria kelahiran Blitar ini menyelesaikan studi doktoralnya di Nara Institute of Science and Technology, Jepang, pada 2005. Temuannya berupa sistem pengiriman data yang lebih efisien untuk komunikasi nirkabel telah dipatenkan dan digunakan secara global. Yang menarik, Anwar memilih untuk tidak mengomersialkan hak patennya secara penuh agar teknologi terjangkau oleh negara berkembang. Ia percaya bahwa ilmu pengetahuan harus menjadi alat pemerataan kesejahteraan, bukan sekadar komoditas bisnis. Dedikasinya pada dunia pendidikan juga ditunjukkan dengan aktif mengajar dan membimbing mahasiswa di Telkom University Bandung. Sosoknya membuktikan bahwa ilmuwan Indonesia mampu bersaing di kancah global tanpa melupakan kontribusi untuk bangsa.",
+      "stem": "Makna tersirat dari teks tersebut adalah...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Ilmuwan Indonesia lebih suka bekerja di luar negeri daripada di dalam negeri."
+        },
+        {
+          "id": "B",
+          "text": "Kesuksesan ilmuwan tidak hanya diukur dari pencapaian akademik, tetapi juga kontribusi sosial."
+        },
+        {
+          "id": "C",
+          "text": "Teknologi 4G LTE hanya bisa dikembangkan oleh negara maju."
+        },
+        {
+          "id": "D",
+          "text": "Pendidikan di Jepang lebih unggul daripada di Indonesia."
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Makna tersirat adalah bahwa seorang ilmuwan sukses tidak hanya karena temuan akademiknya (paten 4G LTE), tetapi juga karena kontribusi sosialnya (tidak mengomersialkan paten, mengajar, membimbing mahasiswa).",
+      "tags": [
+        "makna-tersirat",
+        "biografi"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "ANALISIS",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMA-MEMBACA-SET004-Q025",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "membaca",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "passage": "Prof. Dr. Khoirul Anwar, ilmuwan asal Indonesia, dikenal luas berkat kontribusinya dalam pengembangan teknologi 4G LTE. Pria kelahiran Blitar ini menyelesaikan studi doktoralnya di Nara Institute of Science and Technology, Jepang, pada 2005. Temuannya berupa sistem pengiriman data yang lebih efisien untuk komunikasi nirkabel telah dipatenkan dan digunakan secara global. Yang menarik, Anwar memilih untuk tidak mengomersialkan hak patennya secara penuh agar teknologi terjangkau oleh negara berkembang. Ia percaya bahwa ilmu pengetahuan harus menjadi alat pemerataan kesejahteraan, bukan sekadar komoditas bisnis. Dedikasinya pada dunia pendidikan juga ditunjukkan dengan aktif mengajar dan membimbing mahasiswa di Telkom University Bandung. Sosoknya membuktikan bahwa ilmuwan Indonesia mampu bersaing di kancah global tanpa melupakan kontribusi untuk bangsa.",
+      "stem": "Teks tersebut menggunakan sudut pandang...",
+      "options": [
+        {
+          "id": "A",
+          "text": "orang pertama sebagai tokoh utama"
+        },
+        {
+          "id": "B",
+          "text": "orang kedua yang ditujukan kepada pembaca"
+        },
+        {
+          "id": "C",
+          "text": "orang ketiga yang menceritakan tokoh lain"
+        },
+        {
+          "id": "D",
+          "text": "campuran orang pertama dan ketiga"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "Teks menggunakan sudut pandang orang ketiga — penulis menceritakan tentang tokoh (Khoirul Anwar) dengan menggunakan nama tokoh dan kata ganti 'ia'.",
+      "tags": [
+        "sudut-pandang",
+        "biografi"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SOSIAL"
+    },
+    {
+      "id": "BC-UKBI-SMA-MEMBACA-SET004-Q026",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "membaca",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "passage": "Hasil penelitian menunjukkan bahwa konsumsi minuman berpemanis berkaitan erat dengan peningkatan risiko obesitas pada remaja. Studi yang dilakukan oleh Fakultas Kesehatan Masyarakat Universitas Indonesia melibatkan 1.200 responden berusia 13—18 tahun di Jakarta dan sekitarnya. Data dikumpulkan melalui kuesioner frekuensi konsumsi dan pengukuran indeks massa tubuh secara langsung. Hasilnya, remaja yang mengonsumsi minuman berpemanis lebih dari tiga kali per minggu memiliki risiko obesitas 2,5 kali lebih tinggi dibandingkan mereka yang jarang mengonsumsinya. Peneliti juga menemukan bahwa faktor aktivitas fisik dan pola tidur turut memengaruhi hubungan tersebut. Penelitian ini merekomendasikan kebijakan pembatasan iklan minuman berpemanis yang menyasar remaja serta pengaturan zona bebas minuman berpemanis di lingkungan sekolah.",
+      "stem": "Tujuan penelitian tersebut adalah...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Mengetahui hubungan konsumsi minuman berpemanis dengan risiko obesitas pada remaja"
+        },
+        {
+          "id": "B",
+          "text": "Menghitung jumlah remaja yang mengonsumsi minuman berpemanis"
+        },
+        {
+          "id": "C",
+          "text": "Membandingkan obesitas remaja di Jakarta dan luar Jakarta"
+        },
+        {
+          "id": "D",
+          "text": "Menguji efektivitas kebijakan pembatasan iklan minuman"
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Kalimat pertama menyatakan tujuan penelitian: 'menunjukkan bahwa konsumsi minuman berpemanis berkaitan erat dengan peningkatan risiko obesitas pada remaja.'",
+      "tags": [
+        "tujuan-penelitian",
+        "laporan-penelitian"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMA-MEMBACA-SET004-Q027",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "membaca",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "passage": "Hasil penelitian menunjukkan bahwa konsumsi minuman berpemanis berkaitan erat dengan peningkatan risiko obesitas pada remaja. Studi yang dilakukan oleh Fakultas Kesehatan Masyarakat Universitas Indonesia melibatkan 1.200 responden berusia 13—18 tahun di Jakarta dan sekitarnya. Data dikumpulkan melalui kuesioner frekuensi konsumsi dan pengukuran indeks massa tubuh secara langsung. Hasilnya, remaja yang mengonsumsi minuman berpemanis lebih dari tiga kali per minggu memiliki risiko obesitas 2,5 kali lebih tinggi dibandingkan mereka yang jarang mengonsumsinya. Peneliti juga menemukan bahwa faktor aktivitas fisik dan pola tidur turut memengaruhi hubungan tersebut. Penelitian ini merekomendasikan kebijakan pembatasan iklan minuman berpemanis yang menyasar remaja serta pengaturan zona bebas minuman berpemanis di lingkungan sekolah.",
+      "stem": "Berdasarkan hasil penelitian, risiko obesitas pada remaja yang sering mengonsumsi minuman berpemanis adalah...",
+      "options": [
+        {
+          "id": "A",
+          "text": "sama dengan yang jarang mengonsumsi"
+        },
+        {
+          "id": "B",
+          "text": "1,5 kali lebih tinggi"
+        },
+        {
+          "id": "C",
+          "text": "2,5 kali lebih tinggi"
+        },
+        {
+          "id": "D",
+          "text": "3 kali lebih tinggi"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "Teks menyebutkan 'remaja yang mengonsumsi minuman berpemanis lebih dari tiga kali per minggu memiliki risiko obesitas 2,5 kali lebih tinggi.'",
+      "tags": [
+        "data-penelitian",
+        "laporan-penelitian"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMA-MEMBACA-SET004-Q028",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "membaca",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 4,
+      "passage": "Hasil penelitian menunjukkan bahwa konsumsi minuman berpemanis berkaitan erat dengan peningkatan risiko obesitas pada remaja. Studi yang dilakukan oleh Fakultas Kesehatan Masyarakat Universitas Indonesia melibatkan 1.200 responden berusia 13—18 tahun di Jakarta dan sekitarnya. Data dikumpulkan melalui kuesioner frekuensi konsumsi dan pengukuran indeks massa tubuh secara langsung. Hasilnya, remaja yang mengonsumsi minuman berpemanis lebih dari tiga kali per minggu memiliki risiko obesitas 2,5 kali lebih tinggi dibandingkan mereka yang jarang mengonsumsinya. Peneliti juga menemukan bahwa faktor aktivitas fisik dan pola tidur turut memengaruhi hubungan tersebut. Penelitian ini merekomendasikan kebijakan pembatasan iklan minuman berpemanis yang menyasar remaja serta pengaturan zona bebas minuman berpemanis di lingkungan sekolah.",
+      "stem": "Rekomendasi yang diajukan peneliti didasarkan pada...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Opini publik tentang bahaya minuman berpemanis"
+        },
+        {
+          "id": "B",
+          "text": "Hasil penelitian yang menunjukkan keterkaitan konsumsi minuman berpemanis dengan obesitas"
+        },
+        {
+          "id": "C",
+          "text": "Kebijakan sekolah yang sudah ada sebelumnya"
+        },
+        {
+          "id": "D",
+          "text": "Laporan dari perusahaan minuman"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Rekomendasi (pembatasan iklan, zona bebas minuman berpemanis) didasarkan pada hasil penelitian yang menemukan hubungan antara konsumsi minuman berpemanis dan risiko obesitas pada remaja.",
+      "tags": [
+        "rekomendasi",
+        "laporan-penelitian",
+        "analisis"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "ANALISIS",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMA-MEMBACA-SET004-Q029",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "membaca",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "passage": "Hasil penelitian menunjukkan bahwa konsumsi minuman berpemanis berkaitan erat dengan peningkatan risiko obesitas pada remaja. Studi yang dilakukan oleh Fakultas Kesehatan Masyarakat Universitas Indonesia melibatkan 1.200 responden berusia 13—18 tahun di Jakarta dan sekitarnya. Data dikumpulkan melalui kuesioner frekuensi konsumsi dan pengukuran indeks massa tubuh secara langsung. Hasilnya, remaja yang mengonsumsi minuman berpemanis lebih dari tiga kali per minggu memiliki risiko obesitas 2,5 kali lebih tinggi dibandingkan mereka yang jarang mengonsumsinya. Peneliti juga menemukan bahwa faktor aktivitas fisik dan pola tidur turut memengaruhi hubungan tersebut. Penelitian ini merekomendasikan kebijakan pembatasan iklan minuman berpemanis yang menyasar remaja serta pengaturan zona bebas minuman berpemanis di lingkungan sekolah.",
+      "stem": "Kata 'memengaruhi' dalam paragraf tersebut memiliki pola pembentukan yang sama dengan kata...",
+      "options": [
+        {
+          "id": "A",
+          "text": "bertanya"
+        },
+        {
+          "id": "B",
+          "text": "menyanyikan"
+        },
+        {
+          "id": "C",
+          "text": "mempertemukan"
+        },
+        {
+          "id": "D",
+          "text": "menuliskan"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "Kata 'memengaruhi' terbentuk dari prefiks meN- + adjektiva 'pengaruh' + sufiks -i. Pola yang sama adalah 'mempertemukan' (meN- + adjektiva 'temu' + -kan). 'Menuliskan' berbeda (verba + -kan). 'Menyanyikan' (nomina + -i). 'Bertanya' (ber- + nomina).",
+      "tags": [
+        "pembentukan-kata",
+        "morfologi",
+        "afiksasi"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "ANALISIS",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMA-MEMBACA-SET004-Q030",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "membaca",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "passage": "Hasil penelitian menunjukkan bahwa konsumsi minuman berpemanis berkaitan erat dengan peningkatan risiko obesitas pada remaja. Studi yang dilakukan oleh Fakultas Kesehatan Masyarakat Universitas Indonesia melibatkan 1.200 responden berusia 13—18 tahun di Jakarta dan sekitarnya. Data dikumpulkan melalui kuesioner frekuensi konsumsi dan pengukuran indeks massa tubuh secara langsung. Hasilnya, remaja yang mengonsumsi minuman berpemanis lebih dari tiga kali per minggu memiliki risiko obesitas 2,5 kali lebih tinggi dibandingkan mereka yang jarang mengonsumsinya. Peneliti juga menemukan bahwa faktor aktivitas fisik dan pola tidur turut memengaruhi hubungan tersebut. Penelitian ini merekomendasikan kebijakan pembatasan iklan minuman berpemanis yang menyasar remaja serta pengaturan zona bebas minuman berpemanis di lingkungan sekolah.",
+      "stem": "Metode pengumpulan data yang digunakan dalam penelitian tersebut adalah...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Wawancara mendalam dan observasi partisipatif"
+        },
+        {
+          "id": "B",
+          "text": "Kuesioner dan pengukuran indeks massa tubuh"
+        },
+        {
+          "id": "C",
+          "text": "Studi pustaka dan analisis dokumen"
+        },
+        {
+          "id": "D",
+          "text": "Eksperimen laboratorium dan tes darah"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Teks menyebut 'Data dikumpulkan melalui kuesioner frekuensi konsumsi dan pengukuran indeks massa tubuh secara langsung.'",
+      "tags": [
+        "metode-penelitian",
+        "data"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMA-MEMBACA-SET004-Q031",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "membaca",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "passage": "Teks editorial berikut untuk soal nomor 31—35.\n\nKemacetan lalu lintas di kota-kota besar Indonesia telah mencapai tahap kritis. Data dari Kementerian Perhubungan mencatat bahwa kerugian ekonomi akibat kemacetan di Jakarta mencapai lebih dari Rp70 triliun per tahun. Angka ini mencakup pemborosan bahan bakar, produktivitas yang hilang, dan biaya kesehatan akibat polusi. Berbagai solusi telah ditawarkan, mulai dari perluasan jalan tol, pengembangan transportasi massal, hingga penerapan sistem ganjil-genap. Namun, solusi infrastruktur saja tidak cukup tanpa perubahan perilaku masyarakat. Budaya menggunakan kendaraan pribadi masih sangat kuat, sementara transportasi publik belum menjadi pilihan utama. Pemerintah perlu mendorong integrasi antarmoda transportasi, memperbaiki pelayanan transportasi publik, dan menerapkan kebijakan parkir yang progresif. Tanpa langkah komprehensif, kemacetan akan terus menggerogoti produktivitas bangsa.",
+      "stem": "Opini penulis dalam teks editorial tersebut adalah...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Kemacetan Jakarta menyebabkan kerugian Rp70 triliun per tahun."
+        },
+        {
+          "id": "B",
+          "text": "Solusi infrastruktur saja tidak cukup tanpa perubahan perilaku masyarakat."
+        },
+        {
+          "id": "C",
+          "text": "Penerapan sistem ganjil-genap sudah berhasil mengatasi kemacetan."
+        },
+        {
+          "id": "D",
+          "text": "Transportasi publik sudah menjadi pilihan utama masyarakat."
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Kalimat 'Namun, solusi infrastruktur saja tidak cukup tanpa perubahan perilaku masyarakat' merupakan opini penulis. Kalimat A adalah fakta (data Kemenhub). C dan D bertentangan dengan teks.",
+      "tags": [
+        "opini",
+        "editorial",
+        "fakta-opini"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "EVALUASI",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMA-MEMBACA-SET004-Q032",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "membaca",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "passage": "Teks editorial berikut untuk soal nomor 31—35.\n\nKemacetan lalu lintas di kota-kota besar Indonesia telah mencapai tahap kritis. Data dari Kementerian Perhubungan mencatat bahwa kerugian ekonomi akibat kemacetan di Jakarta mencapai lebih dari Rp70 triliun per tahun. Angka ini mencakup pemborosan bahan bakar, produktivitas yang hilang, dan biaya kesehatan akibat polusi. Berbagai solusi telah ditawarkan, mulai dari perluasan jalan tol, pengembangan transportasi massal, hingga penerapan sistem ganjil-genap. Namun, solusi infrastruktur saja tidak cukup tanpa perubahan perilaku masyarakat. Budaya menggunakan kendaraan pribadi masih sangat kuat, sementara transportasi publik belum menjadi pilihan utama. Pemerintah perlu mendorong integrasi antarmoda transportasi, memperbaiki pelayanan transportasi publik, dan menerapkan kebijakan parkir yang progresif. Tanpa langkah komprehensif, kemacetan akan terus menggerogoti produktivitas bangsa.",
+      "stem": "Pernyataan yang berupa fakta dalam teks tersebut adalah...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Solusi infrastruktur saja tidak cukup."
+        },
+        {
+          "id": "B",
+          "text": "Pemerintah perlu mendorong integrasi antarmoda transportasi."
+        },
+        {
+          "id": "C",
+          "text": "Kerugian ekonomi akibat kemacetan mencapai lebih dari Rp70 triliun per tahun."
+        },
+        {
+          "id": "D",
+          "text": "Tanpa langkah komprehensif, kemacetan akan terus menggerogoti produktivitas bangsa."
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "Fakta adalah data yang dapat diverifikasi. 'Kerugian ekonomi akibat kemacetan mencapai lebih dari Rp70 triliun per tahun' adalah data dari Kementerian Perhubungan. Pilihan A, B, dan D merupakan opini penulis.",
+      "tags": [
+        "fakta",
+        "editorial"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "EVALUASI",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMA-MEMBACA-SET004-Q033",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "membaca",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "passage": "Teks editorial berikut untuk soal nomor 31—35.\n\nKemacetan lalu lintas di kota-kota besar Indonesia telah mencapai tahap kritis. Data dari Kementerian Perhubungan mencatat bahwa kerugian ekonomi akibat kemacetan di Jakarta mencapai lebih dari Rp70 triliun per tahun. Angka ini mencakup pemborosan bahan bakar, produktivitas yang hilang, dan biaya kesehatan akibat polusi. Berbagai solusi telah ditawarkan, mulai dari perluasan jalan tol, pengembangan transportasi massal, hingga penerapan sistem ganjil-genap. Namun, solusi infrastruktur saja tidak cukup tanpa perubahan perilaku masyarakat. Budaya menggunakan kendaraan pribadi masih sangat kuat, sementara transportasi publik belum menjadi pilihan utama. Pemerintah perlu mendorong integrasi antarmoda transportasi, memperbaiki pelayanan transportasi publik, dan menerapkan kebijakan parkir yang progresif. Tanpa langkah komprehensif, kemacetan akan terus menggerogoti produktivitas bangsa.",
+      "stem": "Masalah yang diangkat dalam teks editorial tersebut adalah...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Biaya kesehatan akibat polusi udara di Jakarta"
+        },
+        {
+          "id": "B",
+          "text": "Kerugian ekonomi akibat kemacetan lalu lintas"
+        },
+        {
+          "id": "C",
+          "text": "Kemacetan lalu lintas di kota-kota besar Indonesia"
+        },
+        {
+          "id": "D",
+          "text": "Penerapan sistem ganjil-genap yang kurang efektif"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "Masalah utama yang diangkat adalah kemacetan lalu lintas di kota-kota besar Indonesia, yang kemudian dibahas lebih detail pada aspek kerugian ekonomi, solusi, dan perubahan perilaku.",
+      "tags": [
+        "masalah",
+        "editorial"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMA-MEMBACA-SET004-Q034",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "membaca",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 4,
+      "passage": "Teks editorial berikut untuk soal nomor 31—35.\n\nKemacetan lalu lintas di kota-kota besar Indonesia telah mencapai tahap kritis. Data dari Kementerian Perhubungan mencatat bahwa kerugian ekonomi akibat kemacetan di Jakarta mencapai lebih dari Rp70 triliun per tahun. Angka ini mencakup pemborosan bahan bakar, produktivitas yang hilang, dan biaya kesehatan akibat polusi. Berbagai solusi telah ditawarkan, mulai dari perluasan jalan tol, pengembangan transportasi massal, hingga penerapan sistem ganjil-genap. Namun, solusi infrastruktur saja tidak cukup tanpa perubahan perilaku masyarakat. Budaya menggunakan kendaraan pribadi masih sangat kuat, sementara transportasi publik belum menjadi pilihan utama. Pemerintah perlu mendorong integrasi antarmoda transportasi, memperbaiki pelayanan transportasi publik, dan menerapkan kebijakan parkir yang progresif. Tanpa langkah komprehensif, kemacetan akan terus menggerogoti produktivitas bangsa.",
+      "stem": "Struktur teks editorial tersebut terdiri atas...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Pernyataan pendapat — argumentasi — penegasan ulang"
+        },
+        {
+          "id": "B",
+          "text": "Orientasi — komplikasi — resolusi"
+        },
+        {
+          "id": "C",
+          "text": "Pembukaan — isi — penutup"
+        },
+        {
+          "id": "D",
+          "text": "Tesis — antitesis — sintesis"
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Teks editorial memiliki struktur: pernyataan pendapat (kemacetan kritis, kerugian Rp70 triliun), argumentasi (solusi ditawarkan, budaya kendaraan pribadi), dan penegasan ulang (perlunya langkah komprehensif).",
+      "tags": [
+        "struktur-teks",
+        "editorial"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "ANALISIS",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMA-MEMBACA-SET004-Q035",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "membaca",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "passage": "Teks editorial berikut untuk soal nomor 31—35.\n\nKemacetan lalu lintas di kota-kota besar Indonesia telah mencapai tahap kritis. Data dari Kementerian Perhubungan mencatat bahwa kerugian ekonomi akibat kemacetan di Jakarta mencapai lebih dari Rp70 triliun per tahun. Angka ini mencakup pemborosan bahan bakar, produktivitas yang hilang, dan biaya kesehatan akibat polusi. Berbagai solusi telah ditawarkan, mulai dari perluasan jalan tol, pengembangan transportasi massal, hingga penerapan sistem ganjil-genap. Namun, solusi infrastruktur saja tidak cukup tanpa perubahan perilaku masyarakat. Budaya menggunakan kendaraan pribadi masih sangat kuat, sementara transportasi publik belum menjadi pilihan utama. Pemerintah perlu mendorong integrasi antarmoda transportasi, memperbaiki pelayanan transportasi publik, dan menerapkan kebijakan parkir yang progresif. Tanpa langkah komprehensif, kemacetan akan terus menggerogoti produktivitas bangsa.",
+      "stem": "Kata 'komprehensif' dalam kalimat terakhir bermakna...",
+      "options": [
+        {
+          "id": "A",
+          "text": "parsial dan terbatas"
+        },
+        {
+          "id": "B",
+          "text": "menyeluruh dan terpadu"
+        },
+        {
+          "id": "C",
+          "text": "cepat dan instan"
+        },
+        {
+          "id": "D",
+          "text": "sementara dan sementara"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Komprehensif berarti meliputi segala aspek, menyeluruh, dan terpadu. Dalam konteks kalimat, 'langkah komprehensif' merujuk pada pendekatan yang mencakup infrastruktur, perubahan perilaku, dan kebijakan pendukung.",
+      "tags": [
+        "makna-kata",
+        "kosa-kata"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMA-MEMBACA-SET004-Q036",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "membaca",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "passage": "Puisi kontemporer 'Aku Ingin' karya Sapardi Djoko Damono merupakan salah satu karya sastra yang sederhana namun sarat makna. Dengan diksi yang minimalis, penyair mampu menyampaikan esensi cinta yang tidak memerlukan kata-kata berlebihan. Pengulangan frasa 'Aku ingin' di awal setiap bait menegaskan keinginan yang mendalam namun disampaikan dengan tenang. Puisi ini mengajak pembaca merenungkan bahwa cinta sejati tidak perlu diucapkan dengan kemewahan bahasa, cukup dengan kehadiran dan ketulusan. Gaya penulisan yang lugas dan tanpa ornamen berlebihan justru menjadi kekuatan puisi ini. Pembaca dari berbagai usia dapat menikmati dan memahami pesan yang disampaikan. Inilah yang membuat 'Aku Ingin' bertahan sebagai salah satu puisi cinta paling dikenal dalam khazanah sastra Indonesia modern.",
+      "stem": "Ciri khas puisi 'Aku Ingin' yang disebutkan dalam teks adalah...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Penggunaan diksi yang rumit dan penuh metafora"
+        },
+        {
+          "id": "B",
+          "text": "Diksi minimalis dengan pengulangan frasa sebagai penegasan"
+        },
+        {
+          "id": "C",
+          "text": "Struktur bait yang panjang dan naratif"
+        },
+        {
+          "id": "D",
+          "text": "Tema kepahlawanan dan perjuangan"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Teks menyebut 'diksi yang minimalis' dan 'pengulangan frasa Aku ingin di awal setiap bait menegaskan keinginan yang mendalam' sebagai ciri khas puisi tersebut.",
+      "tags": [
+        "ciri-sastra",
+        "puisi",
+        "apresiasi"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SOSIAL"
+    },
+    {
+      "id": "BC-UKBI-SMA-MEMBACA-SET004-Q037",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "membaca",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "passage": "Puisi kontemporer 'Aku Ingin' karya Sapardi Djoko Damono merupakan salah satu karya sastra yang sederhana namun sarat makna. Dengan diksi yang minimalis, penyair mampu menyampaikan esensi cinta yang tidak memerlukan kata-kata berlebihan. Pengulangan frasa 'Aku ingin' di awal setiap bait menegaskan keinginan yang mendalam namun disampaikan dengan tenang. Puisi ini mengajak pembaca merenungkan bahwa cinta sejati tidak perlu diucapkan dengan kemewahan bahasa, cukup dengan kehadiran dan ketulusan. Gaya penulisan yang lugas dan tanpa ornamen berlebihan justru menjadi kekuatan puisi ini. Pembaca dari berbagai usia dapat menikmati dan memahami pesan yang disampaikan. Inilah yang membuat 'Aku Ingin' bertahan sebagai salah satu puisi cinta paling dikenal dalam khazanah sastra Indonesia modern.",
+      "stem": "Gaya bahasa yang dominan dalam puisi tersebut menurut teks adalah...",
+      "options": [
+        {
+          "id": "A",
+          "text": "metafora dan personifikasi"
+        },
+        {
+          "id": "B",
+          "text": "hiperbola dan ironi"
+        },
+        {
+          "id": "C",
+          "text": "lugas dan minimalis tanpa ornamen berlebihan"
+        },
+        {
+          "id": "D",
+          "text": "sarkasme dan sinisme"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "Teks menyebut 'Gaya penulisan yang lugas dan tanpa ornamen berlebihan justru menjadi kekuatan puisi ini.'",
+      "tags": [
+        "gaya-bahasa",
+        "puisi",
+        "apresiasi"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "ANALISIS",
+      "domain": "SOSIAL"
+    },
+    {
+      "id": "BC-UKBI-SMA-MEMBACA-SET004-Q038",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "membaca",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 4,
+      "passage": "Puisi kontemporer 'Aku Ingin' karya Sapardi Djoko Damono merupakan salah satu karya sastra yang sederhana namun sarat makna. Dengan diksi yang minimalis, penyair mampu menyampaikan esensi cinta yang tidak memerlukan kata-kata berlebihan. Pengulangan frasa 'Aku ingin' di awal setiap bait menegaskan keinginan yang mendalam namun disampaikan dengan tenang. Puisi ini mengajak pembaca merenungkan bahwa cinta sejati tidak perlu diucapkan dengan kemewahan bahasa, cukup dengan kehadiran dan ketulusan. Gaya penulisan yang lugas dan tanpa ornamen berlebihan justru menjadi kekuatan puisi ini. Pembaca dari berbagai usia dapat menikmati dan memahami pesan yang disampaikan. Inilah yang membuat 'Aku Ingin' bertahan sebagai salah satu puisi cinta paling dikenal dalam khazanah sastra Indonesia modern.",
+      "stem": "Mengapa puisi 'Aku Ingin' digambarkan dapat dinikmati oleh pembaca dari berbagai usia?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Karena menggunakan bahasa asing yang mendunia"
+        },
+        {
+          "id": "B",
+          "text": "Karena temanya universal dan bahasanya sederhana"
+        },
+        {
+          "id": "C",
+          "text": "Karena panjangnya lebih dari 10 bait"
+        },
+        {
+          "id": "D",
+          "text": "Karya penyair terkenal"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Teks menyebut puisi ini 'sederhana namun sarat makna' dengan 'diksi minimalis' sehingga 'pembaca dari berbagai usia dapat menikmati dan memahami pesan yang disampaikan.'",
+      "tags": [
+        "interpretasi",
+        "puisi"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "ANALISIS",
+      "domain": "SOSIAL"
+    },
+    {
+      "id": "BC-UKBI-SMA-MEMBACA-SET004-Q039",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "membaca",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "passage": "Puisi kontemporer 'Aku Ingin' karya Sapardi Djoko Damono merupakan salah satu karya sastra yang sederhana namun sarat makna. Dengan diksi yang minimalis, penyair mampu menyampaikan esensi cinta yang tidak memerlukan kata-kata berlebihan. Pengulangan frasa 'Aku ingin' di awal setiap bait menegaskan keinginan yang mendalam namun disampaikan dengan tenang. Puisi ini mengajak pembaca merenungkan bahwa cinta sejati tidak perlu diucapkan dengan kemewahan bahasa, cukup dengan kehadiran dan ketulusan. Gaya penulisan yang lugas dan tanpa ornamen berlebihan justru menjadi kekuatan puisi ini. Pembaca dari berbagai usia dapat menikmati dan memahami pesan yang disampaikan. Inilah yang membuat 'Aku Ingin' bertahan sebagai salah satu puisi cinta paling dikenal dalam khazanah sastra Indonesia modern.",
+      "stem": "Fungsi pengulangan frasa 'Aku ingin' dalam puisi tersebut adalah...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Memperindah bunyi puisi"
+        },
+        {
+          "id": "B",
+          "text": "Menegaskan keinginan yang mendalam"
+        },
+        {
+          "id": "C",
+          "text": "Memenuhi jumlah baris dalam bait"
+        },
+        {
+          "id": "D",
+          "text": "Menunjukkan kebingungan penyair"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Teks menyebut 'Pengulangan frasa Aku ingin di awal setiap bait menegaskan keinginan yang mendalam namun disampaikan dengan tenang.'",
+      "tags": [
+        "majas",
+        "repetisi",
+        "puisi"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SOSIAL"
+    },
+    {
+      "id": "BC-UKBI-SMA-MEMBACA-SET004-Q040",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "membaca",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 4,
+      "passage": "Puisi kontemporer 'Aku Ingin' karya Sapardi Djoko Damono merupakan salah satu karya sastra yang sederhana namun sarat makna. Dengan diksi yang minimalis, penyair mampu menyampaikan esensi cinta yang tidak memerlukan kata-kata berlebihan. Pengulangan frasa 'Aku ingin' di awal setiap bait menegaskan keinginan yang mendalam namun disampaikan dengan tenang. Puisi ini mengajak pembaca merenungkan bahwa cinta sejati tidak perlu diucapkan dengan kemewahan bahasa, cukup dengan kehadiran dan ketulusan. Gaya penulisan yang lugas dan tanpa ornamen berlebihan justru menjadi kekuatan puisi ini. Pembaca dari berbagai usia dapat menikmati dan memahami pesan yang disampaikan. Inilah yang membuat 'Aku Ingin' bertahan sebagai salah satu puisi cinta paling dikenal dalam khazanah sastra Indonesia modern.",
+      "stem": "Pernyataan yang tepat tentang sudut pandang teks tersebut adalah...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Teks ditulis dari sudut pandang penyair Sapardi."
+        },
+        {
+          "id": "B",
+          "text": "Teks merupakan analisis objektif dari seorang kritikus sastra."
+        },
+        {
+          "id": "C",
+          "text": "Teks menggunakan sudut pandang tokoh dalam puisi."
+        },
+        {
+          "id": "D",
+          "text": "Teks adalah sinopsis dari isi puisi."
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Teks bersifat analitis dan objektif, ditulis dari sudut pandang pengamat atau kritikus sastra yang membahas gaya bahasa, tema, dan kekuatan puisi. Teks menggunakan kata 'penyair' untuk merujuk Sapardi dari sudut pandang luar.",
+      "tags": [
+        "sudut-pandang",
+        "apresiasi-sastra"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "ANALISIS",
+      "domain": "SOSIAL"
+    },
+    {
+      "id": "BC-UKBI-SMA-MEMBACA-SET004-Q041",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "membaca",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "passage": "Pendidikan inklusif menjadi agenda penting dalam sistem pendidikan nasional. Konsep ini menekankan bahwa setiap anak, termasuk penyandang disabilitas, berhak mendapatkan pendidikan yang setara di lingkungan belajar yang sama. Implementasi pendidikan inklusif di Indonesia masih menghadapi berbagai tantangan. Ketersediaan guru pendamping khusus masih sangat terbatas, terutama di daerah terpencil. Sarana dan prasarana yang ramah disabilitas juga belum merata. Selain itu, kurikulum yang adaptif masih perlu dikembangkan agar dapat mengakomodasi kebutuhan beragam siswa. Di sisi lain, kesadaran masyarakat tentang pentingnya inklusivitas dalam pendidikan terus meningkat. Banyak sekolah reguler mulai membuka diri untuk menerima siswa berkebutuhan khusus. Dukungan orang tua dan komunitas menjadi faktor kunci keberhasilan pendidikan inklusif.",
+      "stem": "Ide pokok paragraf tersebut adalah...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Ketersediaan guru pendamping khusus di daerah terpencil"
+        },
+        {
+          "id": "B",
+          "text": "Pendidikan inklusif sebagai agenda penting yang menghadapi tantangan implementasi"
+        },
+        {
+          "id": "C",
+          "text": "Peran orang tua dalam pendidikan inklusif"
+        },
+        {
+          "id": "D",
+          "text": "Kurikulum adaptif untuk siswa berkebutuhan khusus"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Ide pokok paragraf mencakup pendidikan inklusif sebagai agenda penting (kalimat 1-2) dan tantangan implementasinya (kalimat 3-7).",
+      "tags": [
+        "ide-pokok",
+        "pendidikan-inklusif"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMA-MEMBACA-SET004-Q042",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "membaca",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "passage": "Pendidikan inklusif menjadi agenda penting dalam sistem pendidikan nasional. Konsep ini menekankan bahwa setiap anak, termasuk penyandang disabilitas, berhak mendapatkan pendidikan yang setara di lingkungan belajar yang sama. Implementasi pendidikan inklusif di Indonesia masih menghadapi berbagai tantangan. Ketersediaan guru pendamping khusus masih sangat terbatas, terutama di daerah terpencil. Sarana dan prasarana yang ramah disabilitas juga belum merata. Selain itu, kurikulum yang adaptif masih perlu dikembangkan agar dapat mengakomodasi kebutuhan beragam siswa. Di sisi lain, kesadaran masyarakat tentang pentingnya inklusivitas dalam pendidikan terus meningkat. Banyak sekolah reguler mulai membuka diri untuk menerima siswa berkebutuhan khusus. Dukungan orang tua dan komunitas menjadi faktor kunci keberhasilan pendidikan inklusif.",
+      "stem": "Pernyataan yang tidak sesuai dengan isi paragraf adalah...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Ketersediaan guru pendamping khusus masih terbatas, terutama di daerah terpencil."
+        },
+        {
+          "id": "B",
+          "text": "Sarana dan prasarana ramah disabilitas sudah merata di seluruh Indonesia."
+        },
+        {
+          "id": "C",
+          "text": "Kesadaran masyarakat tentang pentingnya inklusivitas terus meningkat."
+        },
+        {
+          "id": "D",
+          "text": "Dukungan orang tua dan komunitas menjadi faktor kunci keberhasilan."
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Pernyataan B bertentangan dengan teks yang menyebut 'Sarana dan prasarana yang ramah disabilitas juga belum merata.'",
+      "tags": [
+        "informasi-tersirat",
+        "pendidikan-inklusif"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "EVALUASI",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMA-MEMBACA-SET004-Q043",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "membaca",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "passage": "Pendidikan inklusif menjadi agenda penting dalam sistem pendidikan nasional. Konsep ini menekankan bahwa setiap anak, termasuk penyandang disabilitas, berhak mendapatkan pendidikan yang setara di lingkungan belajar yang sama. Implementasi pendidikan inklusif di Indonesia masih menghadapi berbagai tantangan. Ketersediaan guru pendamping khusus masih sangat terbatas, terutama di daerah terpencil. Sarana dan prasarana yang ramah disabilitas juga belum merata. Selain itu, kurikulum yang adaptif masih perlu dikembangkan agar dapat mengakomodasi kebutuhan beragam siswa. Di sisi lain, kesadaran masyarakat tentang pentingnya inklusivitas dalam pendidikan terus meningkat. Banyak sekolah reguler mulai membuka diri untuk menerima siswa berkebutuhan khusus. Dukungan orang tua dan komunitas menjadi faktor kunci keberhasilan pendidikan inklusif.",
+      "stem": "Kata 'inklusivitas' dalam paragraf tersebut dapat diganti dengan kata...",
+      "options": [
+        {
+          "id": "A",
+          "text": "eksklusivitas"
+        },
+        {
+          "id": "B",
+          "text": "keterbukaan"
+        },
+        {
+          "id": "C",
+          "text": "kebersamaan"
+        },
+        {
+          "id": "D",
+          "text": "persatuan"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Inklusivitas bermakna sikap terbuka dan menerima perbedaan. Dalam konteks paragraf, 'kesadaran masyarakat tentang pentingnya inklusivitas' berarti kesadaran tentang pentingnya keterbukaan menerima semua siswa tanpa diskriminasi.",
+      "tags": [
+        "makna-kata",
+        "sinonim"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMA-MEMBACA-SET004-Q044",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "membaca",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 4,
+      "passage": "Pendidikan inklusif menjadi agenda penting dalam sistem pendidikan nasional. Konsep ini menekankan bahwa setiap anak, termasuk penyandang disabilitas, berhak mendapatkan pendidikan yang setara di lingkungan belajar yang sama. Implementasi pendidikan inklusif di Indonesia masih menghadapi berbagai tantangan. Ketersediaan guru pendamping khusus masih sangat terbatas, terutama di daerah terpencil. Sarana dan prasarana yang ramah disabilitas juga belum merata. Selain itu, kurikulum yang adaptif masih perlu dikembangkan agar dapat mengakomodasi kebutuhan beragam siswa. Di sisi lain, kesadaran masyarakat tentang pentingnya inklusivitas dalam pendidikan terus meningkat. Banyak sekolah reguler mulai membuka diri untuk menerima siswa berkebutuhan khusus. Dukungan orang tua dan komunitas menjadi faktor kunci keberhasilan pendidikan inklusif.",
+      "stem": "Berdasarkan paragraf tersebut, faktor apa yang menjadi kunci keberhasilan pendidikan inklusif?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Ketersediaan dana dari pemerintah pusat"
+        },
+        {
+          "id": "B",
+          "text": "Infrastruktur gedung sekolah yang modern"
+        },
+        {
+          "id": "C",
+          "text": "Dukungan orang tua dan komunitas"
+        },
+        {
+          "id": "D",
+          "text": "Kurikulum nasional yang seragam"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "Kalimat terakhir paragraf menyebutkan 'Dukungan orang tua dan komunitas menjadi faktor kunci keberhasilan pendidikan inklusif.'",
+      "tags": [
+        "informasi-tersurat",
+        "pendidikan-inklusif"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMA-MEMBACA-SET004-Q045",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "membaca",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "passage": "Pendidikan inklusif menjadi agenda penting dalam sistem pendidikan nasional. Konsep ini menekankan bahwa setiap anak, termasuk penyandang disabilitas, berhak mendapatkan pendidikan yang setara di lingkungan belajar yang sama. Implementasi pendidikan inklusif di Indonesia masih menghadapi berbagai tantangan. Ketersediaan guru pendamping khusus masih sangat terbatas, terutama di daerah terpencil. Sarana dan prasarana yang ramah disabilitas juga belum merata. Selain itu, kurikulum yang adaptif masih perlu dikembangkan agar dapat mengakomodasi kebutuhan beragam siswa. Di sisi lain, kesadaran masyarakat tentang pentingnya inklusivitas dalam pendidikan terus meningkat. Banyak sekolah reguler mulai membuka diri untuk menerima siswa berkebutuhan khusus. Dukungan orang tua dan komunitas menjadi faktor kunci keberhasilan pendidikan inklusif.",
+      "stem": "Teks tersebut dikembangkan dengan pola...",
+      "options": [
+        {
+          "id": "A",
+          "text": "deduktif"
+        },
+        {
+          "id": "B",
+          "text": "induktif"
+        },
+        {
+          "id": "C",
+          "text": "deskriptif"
+        },
+        {
+          "id": "D",
+          "text": "naratif"
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Paragraf diawali pernyataan umum (pendidikan inklusif sebagai agenda penting) lalu diikuti penjelasan khusus (tantangan, kesadaran masyarakat, dukungan ortu) — pola deduktif.",
+      "tags": [
+        "pola-paragraf",
+        "deduktif"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "ANALISIS",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMA-MEMBACA-SET004-Q046",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "membaca",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "passage": "Literasi umum — Ketahanan pangan nasional merupakan isu strategis yang berkaitan langsung dengan kesejahteraan masyarakat. Indonesia sebagai negara agraris seharusnya mampu memenuhi kebutuhan pangannya sendiri. Namun, kenyataannya kita masih mengimpor komoditas pangan pokok seperti beras, kedelai, dan gandum. Perubahan iklim yang tidak menentu, alih fungsi lahan pertanian menjadi kawasan industri, dan regenerasi petani yang rendah menjadi faktor penyebab menurunnya produksi pangan domestik. Di sisi lain, jumlah penduduk terus bertambah sehingga kebutuhan pangan meningkat setiap tahun. Pemerintah telah mencanangkan program food estate dan intensifikasi pertanian, namun hasilnya belum optimal. Diperlukan pendekatan terpadu yang melibatkan teknologi pertanian modern, kebijakan perlindungan lahan, dan insentif bagi petani muda untuk mewujudkan kedaulatan pangan.",
+      "stem": "Pernyataan yang sesuai dengan isi teks adalah...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Indonesia sudah sepenuhnya swasembada pangan."
+        },
+        {
+          "id": "B",
+          "text": "Indonesia masih mengimpor beberapa komoditas pangan pokok."
+        },
+        {
+          "id": "C",
+          "text": "Program food estate sudah berhasil optimal."
+        },
+        {
+          "id": "D",
+          "text": "Regenerasi petani sudah berjalan dengan baik."
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Teks menyebut 'kita masih mengimpor komoditas pangan pokok seperti beras, kedelai, dan gandum.'",
+      "tags": [
+        "informasi-tersurat",
+        "ketahanan-pangan"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMA-MEMBACA-SET004-Q047",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "membaca",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "passage": "Literasi umum — Ketahanan pangan nasional merupakan isu strategis yang berkaitan langsung dengan kesejahteraan masyarakat. Indonesia sebagai negara agraris seharusnya mampu memenuhi kebutuhan pangannya sendiri. Namun, kenyataannya kita masih mengimpor komoditas pangan pokok seperti beras, kedelai, dan gandum. Perubahan iklim yang tidak menentu, alih fungsi lahan pertanian menjadi kawasan industri, dan regenerasi petani yang rendah menjadi faktor penyebab menurunnya produksi pangan domestik. Di sisi lain, jumlah penduduk terus bertambah sehingga kebutuhan pangan meningkat setiap tahun. Pemerintah telah mencanangkan program food estate dan intensifikasi pertanian, namun hasilnya belum optimal. Diperlukan pendekatan terpadu yang melibatkan teknologi pertanian modern, kebijakan perlindungan lahan, dan insentif bagi petani muda untuk mewujudkan kedaulatan pangan.",
+      "stem": "Faktor-faktor yang menyebabkan menurunnya produksi pangan domestik meliputi...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Perubahan iklim, alih fungsi lahan, dan regenerasi petani rendah"
+        },
+        {
+          "id": "B",
+          "text": "Impor beras, gandum, dan kedelai yang terus meningkat"
+        },
+        {
+          "id": "C",
+          "text": "Program food estate yang gagal total"
+        },
+        {
+          "id": "D",
+          "text": "Pertambahan penduduk dan modernisasi pertanian"
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Teks menyebut 'Perubahan iklim yang tidak menentu, alih fungsi lahan pertanian menjadi kawasan industri, dan regenerasi petani yang rendah menjadi faktor penyebab menurunnya produksi pangan domestik.'",
+      "tags": [
+        "sebab-akibat",
+        "ketahanan-pangan"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMA-MEMBACA-SET004-Q048",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "membaca",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 4,
+      "passage": "Literasi umum — Ketahanan pangan nasional merupakan isu strategis yang berkaitan langsung dengan kesejahteraan masyarakat. Indonesia sebagai negara agraris seharusnya mampu memenuhi kebutuhan pangannya sendiri. Namun, kenyataannya kita masih mengimpor komoditas pangan pokok seperti beras, kedelai, dan gandum. Perubahan iklim yang tidak menentu, alih fungsi lahan pertanian menjadi kawasan industri, dan regenerasi petani yang rendah menjadi faktor penyebab menurunnya produksi pangan domestik. Di sisi lain, jumlah penduduk terus bertambah sehingga kebutuhan pangan meningkat setiap tahun. Pemerintah telah mencanangkan program food estate dan intensifikasi pertanian, namun hasilnya belum optimal. Diperlukan pendekatan terpadu yang melibatkan teknologi pertanian modern, kebijakan perlindungan lahan, dan insentif bagi petani muda untuk mewujudkan kedaulatan pangan.",
+      "stem": "Solusi yang ditawarkan penulis untuk mewujudkan kedaulatan pangan adalah...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Mengurangi jumlah penduduk melalui program KB"
+        },
+        {
+          "id": "B",
+          "text": "Menghentikan impor semua komoditas pangan"
+        },
+        {
+          "id": "C",
+          "text": "Pendekatan terpadu: teknologi modern, perlindungan lahan, dan insentif petani muda"
+        },
+        {
+          "id": "D",
+          "text": "Memperluas kawasan industri di lahan pertanian"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "Kalimat terakhir menyebutkan solusi: 'pendekatan terpadu yang melibatkan teknologi pertanian modern, kebijakan perlindungan lahan, dan insentif bagi petani muda.'",
+      "tags": [
+        "solusi",
+        "ketahanan-pangan"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "ANALISIS",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMA-MEMBACA-SET004-Q049",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "membaca",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "passage": "Literasi umum — Ketahanan pangan nasional merupakan isu strategis yang berkaitan langsung dengan kesejahteraan masyarakat. Indonesia sebagai negara agraris seharusnya mampu memenuhi kebutuhan pangannya sendiri. Namun, kenyataannya kita masih mengimpor komoditas pangan pokok seperti beras, kedelai, dan gandum. Perubahan iklim yang tidak menentu, alih fungsi lahan pertanian menjadi kawasan industri, dan regenerasi petani yang rendah menjadi faktor penyebab menurunnya produksi pangan domestik. Di sisi lain, jumlah penduduk terus bertambah sehingga kebutuhan pangan meningkat setiap tahun. Pemerintah telah mencanangkan program food estate dan intensifikasi pertanian, namun hasilnya belum optimal. Diperlukan pendekatan terpadu yang melibatkan teknologi pertanian modern, kebijakan perlindungan lahan, dan insentif bagi petani muda untuk mewujudkan kedaulatan pangan.",
+      "stem": "Kata 'food estate' dalam teks tersebut merujuk pada...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Kawasan industri pengolahan makanan"
+        },
+        {
+          "id": "B",
+          "text": "Program lumbung pangan berskala besar"
+        },
+        {
+          "id": "C",
+          "text": "Restoran milik negara"
+        },
+        {
+          "id": "D",
+          "text": "Ekspor hasil pertanian"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Food estate adalah program pemerintah untuk menciptakan lumbung pangan berskala besar melalui pengembangan kawasan pertanian terintegrasi, sebagaimana konteks penggunaannya dalam teks.",
+      "tags": [
+        "istilah",
+        "food-estate",
+        "ketahanan-pangan"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMA-MEMBACA-SET004-Q050",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMA",
+      "section": "membaca",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "passage": "Literasi umum — Ketahanan pangan nasional merupakan isu strategis yang berkaitan langsung dengan kesejahteraan masyarakat. Indonesia sebagai negara agraris seharusnya mampu memenuhi kebutuhan pangannya sendiri. Namun, kenyataannya kita masih mengimpor komoditas pangan pokok seperti beras, kedelai, dan gandum. Perubahan iklim yang tidak menentu, alih fungsi lahan pertanian menjadi kawasan industri, dan regenerasi petani yang rendah menjadi faktor penyebab menurunnya produksi pangan domestik. Di sisi lain, jumlah penduduk terus bertambah sehingga kebutuhan pangan meningkat setiap tahun. Pemerintah telah mencanangkan program food estate dan intensifikasi pertanian, namun hasilnya belum optimal. Diperlukan pendekatan terpadu yang melibatkan teknologi pertanian modern, kebijakan perlindungan lahan, dan insentif bagi petani muda untuk mewujudkan kedaulatan pangan.",
+      "stem": "Inti permasalahan yang dibahas dalam teks tersebut adalah...",
+      "options": [
+        {
+          "id": "A",
+          "text": "Modernisasi sektor pertanian Indonesia"
+        },
+        {
+          "id": "B",
+          "text": "Ketahanan pangan nasional dan upaya mewujudkannya"
+        },
+        {
+          "id": "C",
+          "text": "Dampak perubahan iklim terhadap pertanian"
+        },
+        {
+          "id": "D",
+          "text": "Program pemerintah di bidang pangan"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Inti permasalahan adalah ketahanan pangan nasional — mulai dari masalah impor, faktor penurunan produksi, hingga solusi untuk mencapai kedaulatan pangan.",
+      "tags": [
+        "inti-masalah",
+        "ketahanan-pangan"
+      ],
+      "source": "BC_UKBI_SMA_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    }
+  ]
+}

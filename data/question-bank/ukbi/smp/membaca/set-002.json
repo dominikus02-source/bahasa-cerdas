@@ -1,0 +1,1965 @@
+{
+  "meta": {
+    "product": "UKBI_PRACTICE",
+    "track": "UKBI_SMP",
+    "section": "membaca",
+    "set": "set-002",
+    "totalItems": 50,
+    "totalPassages": 10,
+    "source": "BC_UKBI_SMP_ORIGINAL"
+  },
+  "questions": [
+    {
+      "id": "BC-UKBI-SMP-MEMBACA-SET002-Q001",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "membaca",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "passage": "Ekstrakurikuler Pramuka di SMP Nusantara telah berjalan selama lima tahun. Setiap hari Sabtu, para siswa berkumpul di lapangan untuk berlatih baris-berbaris, mendirikan tenda, dan belajar tali-temali. Kegiatan ini tidak hanya melatih kedisiplinan, tetapi juga membentuk karakter kepemimpinan. Banyak alumni yang mengaku bahwa pengalaman pramuka sangat bermanfaat ketika mereka melanjutkan pendidikan ke jenjang yang lebih tinggi. Pembina pramuka, Pak Budiman, selalu menekankan pentingnya gotong royong dan kemandirian. Salah satu kegiatan unggulan adalah perkemahan akhir tahun yang diadakan di Bumi Perkemahan Cibubur. Dalam perkemahan tersebut, siswa belajar memasak, navigasi medan, dan pertolongan pertama. Kegiatan pramuka juga menjadi ajang silaturahmi antarsekolah melalui jambore yang diadakan setiap dua tahun sekali. Pramuka mengajarkan bahwa kesuksesan tidak dapat dicapai sendirian, melainkan melalui kerja sama dan saling menghargai.",
+      "stem": "Kegiatan ekstrakurikuler Pramuka di SMP Nusantara dilaksanakan setiap hari?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Senin"
+        },
+        {
+          "id": "B",
+          "text": "Rabu"
+        },
+        {
+          "id": "C",
+          "text": "Jumat"
+        },
+        {
+          "id": "D",
+          "text": "Sabtu"
+        }
+      ],
+      "correctAnswer": "D",
+      "explanation": "Teks menyebutkan bahwa latihan pramuka dilaksanakan setiap hari Sabtu.",
+      "tags": [
+        "membaca",
+        "informasi eksplisit"
+      ],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SOSIAL"
+    },
+    {
+      "id": "BC-UKBI-SMP-MEMBACA-SET002-Q002",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "membaca",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "passage": "Ekstrakurikuler Pramuka di SMP Nusantara telah berjalan selama lima tahun. Setiap hari Sabtu, para siswa berkumpul di lapangan untuk berlatih baris-berbaris, mendirikan tenda, dan belajar tali-temali. Kegiatan ini tidak hanya melatih kedisiplinan, tetapi juga membentuk karakter kepemimpinan. Banyak alumni yang mengaku bahwa pengalaman pramuka sangat bermanfaat ketika mereka melanjutkan pendidikan ke jenjang yang lebih tinggi. Pembina pramuka, Pak Budiman, selalu menekankan pentingnya gotong royong dan kemandirian. Salah satu kegiatan unggulan adalah perkemahan akhir tahun yang diadakan di Bumi Perkemahan Cibubur. Dalam perkemahan tersebut, siswa belajar memasak, navigasi medan, dan pertolongan pertama. Kegiatan pramuka juga menjadi ajang silaturahmi antarsekolah melalui jambore yang diadakan setiap dua tahun sekali. Pramuka mengajarkan bahwa kesuksesan tidak dapat dicapai sendirian, melainkan melalui kerja sama dan saling menghargai.",
+      "stem": "Manakah pernyataan berikut yang sesuai dengan isi teks?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Pramuka hanya melatih baris-berbaris dan tali-temali"
+        },
+        {
+          "id": "B",
+          "text": "Jambore diadakan setiap tahun sekali"
+        },
+        {
+          "id": "C",
+          "text": "Perkemahan akhir tahun diadakan di Cibubur"
+        },
+        {
+          "id": "D",
+          "text": "Pembina pramuka bernama Pak Suparman"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "Teks menyebutkan, 'Salah satu kegiatan unggulan adalah perkemahan akhir tahun yang diadakan di Bumi Perkemahan Cibubur.'",
+      "tags": [
+        "membaca",
+        "informasi eksplisit"
+      ],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SOSIAL"
+    },
+    {
+      "id": "BC-UKBI-SMP-MEMBACA-SET002-Q003",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "membaca",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "passage": "Ekstrakurikuler Pramuka di SMP Nusantara telah berjalan selama lima tahun. Setiap hari Sabtu, para siswa berkumpul di lapangan untuk berlatih baris-berbaris, mendirikan tenda, dan belajar tali-temali. Kegiatan ini tidak hanya melatih kedisiplinan, tetapi juga membentuk karakter kepemimpinan. Banyak alumni yang mengaku bahwa pengalaman pramuka sangat bermanfaat ketika mereka melanjutkan pendidikan ke jenjang yang lebih tinggi. Pembina pramuka, Pak Budiman, selalu menekankan pentingnya gotong royong dan kemandirian. Salah satu kegiatan unggulan adalah perkemahan akhir tahun yang diadakan di Bumi Perkemahan Cibubur. Dalam perkemahan tersebut, siswa belajar memasak, navigasi medan, dan pertolongan pertama. Kegiatan pramuka juga menjadi ajang silaturahmi antarsekolah melalui jambore yang diadakan setiap dua tahun sekali. Pramuka mengajarkan bahwa kesuksesan tidak dapat dicapai sendirian, melainkan melalui kerja sama dan saling menghargai.",
+      "stem": "Nilai karakter yang paling ditekankan dalam kegiatan pramuka menurut teks adalah?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Kompetisi dan kemenangan"
+        },
+        {
+          "id": "B",
+          "text": "Gotong royong dan kemandirian"
+        },
+        {
+          "id": "C",
+          "text": "Kecepatan dan ketangkasan"
+        },
+        {
+          "id": "D",
+          "text": "Kecerdasan dan kreativitas"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Teks menyebutkan, 'Pembina pramuka, Pak Budiman, selalu menekankan pentingnya gotong royong dan kemandirian.'",
+      "tags": [
+        "membaca",
+        "informasi tersirat"
+      ],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SOSIAL"
+    },
+    {
+      "id": "BC-UKBI-SMP-MEMBACA-SET002-Q004",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "membaca",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "passage": "Ekstrakurikuler Pramuka di SMP Nusantara telah berjalan selama lima tahun. Setiap hari Sabtu, para siswa berkumpul di lapangan untuk berlatih baris-berbaris, mendirikan tenda, dan belajar tali-temali. Kegiatan ini tidak hanya melatih kedisiplinan, tetapi juga membentuk karakter kepemimpinan. Banyak alumni yang mengaku bahwa pengalaman pramuka sangat bermanfaat ketika mereka melanjutkan pendidikan ke jenjang yang lebih tinggi. Pembina pramuka, Pak Budiman, selalu menekankan pentingnya gotong royong dan kemandirian. Salah satu kegiatan unggulan adalah perkemahan akhir tahun yang diadakan di Bumi Perkemahan Cibubur. Dalam perkemahan tersebut, siswa belajar memasak, navigasi medan, dan pertolongan pertama. Kegiatan pramuka juga menjadi ajang silaturahmi antarsekolah melalui jambore yang diadakan setiap dua tahun sekali. Pramuka mengajarkan bahwa kesuksesan tidak dapat dicapai sendirian, melainkan melalui kerja sama dan saling menghargai.",
+      "stem": "Simpulan yang tepat berdasarkan teks tersebut adalah?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Pramuka hanya bermanfaat untuk siswa yang aktif secara fisik"
+        },
+        {
+          "id": "B",
+          "text": "Pramuka mengajarkan kerja sama dan kedisiplinan yang berguna di masa depan"
+        },
+        {
+          "id": "C",
+          "text": "Pramuka mengharuskan siswa mengikuti jambore setiap tahun"
+        },
+        {
+          "id": "D",
+          "text": "Pramuka lebih mengutamakan kegiatan di alam terbuka"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Teks menyebutkan pramuka melatih kedisiplinan, kepemimpinan, dan alumni merasakan manfaatnya dijenjang pendidikan lebih tinggi. Jadi kesimpulan yang tepat adalah pramuka mengajarkan kerja sama dan kedisiplinan yang berguna di masa depan.",
+      "tags": [
+        "membaca",
+        "simpulan"
+      ],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved",
+      "cognitive": "ANALISIS",
+      "domain": "SOSIAL"
+    },
+    {
+      "id": "BC-UKBI-SMP-MEMBACA-SET002-Q005",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "membaca",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 1,
+      "passage": "Ekstrakurikuler Pramuka di SMP Nusantara telah berjalan selama lima tahun. Setiap hari Sabtu, para siswa berkumpul di lapangan untuk berlatih baris-berbaris, mendirikan tenda, dan belajar tali-temali. Kegiatan ini tidak hanya melatih kedisiplinan, tetapi juga membentuk karakter kepemimpinan. Banyak alumni yang mengaku bahwa pengalaman pramuka sangat bermanfaat ketika mereka melanjutkan pendidikan ke jenjang yang lebih tinggi. Pembina pramuka, Pak Budiman, selalu menekankan pentingnya gotong royong dan kemandirian. Salah satu kegiatan unggulan adalah perkemahan akhir tahun yang diadakan di Bumi Perkemahan Cibubur. Dalam perkemahan tersebut, siswa belajar memasak, navigasi medan, dan pertolongan pertama. Kegiatan pramuka juga menjadi ajang silaturahmi antarsekolah melalui jambore yang diadakan setiap dua tahun sekali. Pramuka mengajarkan bahwa kesuksesan tidak dapat dicapai sendirian, melainkan melalui kerja sama dan saling menghargai.",
+      "stem": "Apa yang dimaksud dengan jambore dalam teks tersebut?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Perlombaan memasak antarsiswa"
+        },
+        {
+          "id": "B",
+          "text": "Perkemahan akhir tahun di sekolah"
+        },
+        {
+          "id": "C",
+          "text": "Ajang silaturahmi antarsekolah"
+        },
+        {
+          "id": "D",
+          "text": "Latihan baris-berbaris rutin"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "Teks menyebutkan, 'Kegiatan pramuka juga menjadi ajang silaturahmi antarsekolah melalui jambore yang diadakan setiap dua tahun sekali.'",
+      "tags": [
+        "membaca",
+        "kosakata"
+      ],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SOSIAL"
+    },
+    {
+      "id": "BC-UKBI-SMP-MEMBACA-SET002-Q006",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "membaca",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "passage": "Kesehatan remaja menjadi perhatian penting di Indonesia. Data Kementerian Kesehatan menunjukkan bahwa satu dari tiga remaja mengalami masalah gizi akibat pola makan yang tidak seimbang. Konsumsi makanan cepat saji yang tinggi gula, garam, dan lemak menjadi penyebab utama obesitas pada remaja. Selain itu, kurangnya aktivitas fisik memperburuk kondisi tersebut. Remaja disarankan untuk berolahraga setidaknya tiga puluh menit setiap hari. Olahraga tidak hanya menjaga kebugaran fisik, tetapi juga meningkatkan konsentrasi belajar dan mengurangi stres. Pemerintah melalui program Usaha Kesehatan Sekolah atau UKS gencar mengedukasi siswa tentang pentingnya sarapan pagi sebelum berangkat sekolah. Sarapan yang sehat memberikan energi yang cukup untuk beraktivitas dan belajar. Sayangnya, masih banyak remaja yang melewatkan sarapan karena terburu-buru ke sekolah.",
+      "stem": "Masalah gizi utama yang disebutkan dalam teks adalah?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Kekurangan vitamin pada remaja"
+        },
+        {
+          "id": "B",
+          "text": "Obesitas akibat pola makan tidak seimbang"
+        },
+        {
+          "id": "C",
+          "text": "Anemia karena kurang zat besi"
+        },
+        {
+          "id": "D",
+          "text": "Stunting akibat malnutrisi kronis"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Teks menyebutkan, 'Konsumsi makanan cepat saji yang tinggi gula, garam, dan lemak menjadi penyebab utama obesitas pada remaja.'",
+      "tags": [
+        "membaca",
+        "kesehatan",
+        "informasi eksplisit"
+      ],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMP-MEMBACA-SET002-Q007",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "membaca",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 1,
+      "passage": "Kesehatan remaja menjadi perhatian penting di Indonesia. Data Kementerian Kesehatan menunjukkan bahwa satu dari tiga remaja mengalami masalah gizi akibat pola makan yang tidak seimbang. Konsumsi makanan cepat saji yang tinggi gula, garam, dan lemak menjadi penyebab utama obesitas pada remaja. Selain itu, kurangnya aktivitas fisik memperburuk kondisi tersebut. Remaja disarankan untuk berolahraga setidaknya tiga puluh menit setiap hari. Olahraga tidak hanya menjaga kebugaran fisik, tetapi juga meningkatkan konsentrasi belajar dan mengurangi stres. Pemerintah melalui program Usaha Kesehatan Sekolah atau UKS gencar mengedukasi siswa tentang pentingnya sarapan pagi sebelum berangkat sekolah. Sarapan yang sehat memberikan energi yang cukup untuk beraktivitas dan belajar. Sayangnya, masih banyak remaja yang melewatkan sarapan karena terburu-buru ke sekolah.",
+      "stem": "Berapa lama durasi olahraga yang disarankan bagi remaja setiap hari?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Sepuluh menit"
+        },
+        {
+          "id": "B",
+          "text": "Dua puluh menit"
+        },
+        {
+          "id": "C",
+          "text": "Tiga puluh menit"
+        },
+        {
+          "id": "D",
+          "text": "Enam puluh menit"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "Teks menyebutkan, 'Remaja disarankan untuk berolahraga setidaknya tiga puluh menit setiap hari.'",
+      "tags": [
+        "membaca",
+        "informasi eksplisit"
+      ],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMP-MEMBACA-SET002-Q008",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "membaca",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "passage": "Kesehatan remaja menjadi perhatian penting di Indonesia. Data Kementerian Kesehatan menunjukkan bahwa satu dari tiga remaja mengalami masalah gizi akibat pola makan yang tidak seimbang. Konsumsi makanan cepat saji yang tinggi gula, garam, dan lemak menjadi penyebab utama obesitas pada remaja. Selain itu, kurangnya aktivitas fisik memperburuk kondisi tersebut. Remaja disarankan untuk berolahraga setidaknya tiga puluh menit setiap hari. Olahraga tidak hanya menjaga kebugaran fisik, tetapi juga meningkatkan konsentrasi belajar dan mengurangi stres. Pemerintah melalui program Usaha Kesehatan Sekolah atau UKS gencar mengedukasi siswa tentang pentingnya sarapan pagi sebelum berangkat sekolah. Sarapan yang sehat memberikan energi yang cukup untuk beraktivitas dan belajar. Sayangnya, masih banyak remaja yang melewatkan sarapan karena terburu-buru ke sekolah.",
+      "stem": "Manakah pernyataan yang PALING TEPAT mengenai hubungan antara sarapan dan aktivitas belajar?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Sarapan hanya penting untuk kesehatan fisik, bukan untuk belajar"
+        },
+        {
+          "id": "B",
+          "text": "Sarapan memberikan energi yang cukup untuk beraktivitas dan belajar"
+        },
+        {
+          "id": "C",
+          "text": "Sarapan sebaiknya dilakukan setelah sampai di sekolah"
+        },
+        {
+          "id": "D",
+          "text": "Sarapan pagi tidak memengaruhi konsentrasi belajar"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Teks menyebutkan, 'Sarapan yang sehat memberikan energi yang cukup untuk beraktivitas dan belajar.'",
+      "tags": [
+        "membaca",
+        "hubungan kausal"
+      ],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved",
+      "cognitive": "ANALISIS",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMP-MEMBACA-SET002-Q009",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "membaca",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "passage": "Kesehatan remaja menjadi perhatian penting di Indonesia. Data Kementerian Kesehatan menunjukkan bahwa satu dari tiga remaja mengalami masalah gizi akibat pola makan yang tidak seimbang. Konsumsi makanan cepat saji yang tinggi gula, garam, dan lemak menjadi penyebab utama obesitas pada remaja. Selain itu, kurangnya aktivitas fisik memperburuk kondisi tersebut. Remaja disarankan untuk berolahraga setidaknya tiga puluh menit setiap hari. Olahraga tidak hanya menjaga kebugaran fisik, tetapi juga meningkatkan konsentrasi belajar dan mengurangi stres. Pemerintah melalui program Usaha Kesehatan Sekolah atau UKS gencar mengedukasi siswa tentang pentingnya sarapan pagi sebelum berangkat sekolah. Sarapan yang sehat memberikan energi yang cukup untuk beraktivitas dan belajar. Sayangnya, masih banyak remaja yang melewatkan sarapan karena terburu-buru ke sekolah.",
+      "stem": "Ide pokok paragraf pertama teks tersebut adalah?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Manfaat olahraga bagi remaja"
+        },
+        {
+          "id": "B",
+          "text": "Pola makan sehat untuk remaja"
+        },
+        {
+          "id": "C",
+          "text": "Masalah gizi pada remaja akibat pola makan tidak seimbang"
+        },
+        {
+          "id": "D",
+          "text": "Program pemerintah untuk kesehatan remaja"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "Paragraf pertama membahas masalah gizi pada remaja yang disebabkan oleh pola makan tidak seimbang, dengan obesitas sebagai contoh utama.",
+      "tags": [
+        "membaca",
+        "ide pokok"
+      ],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved",
+      "cognitive": "ANALISIS",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMP-MEMBACA-SET002-Q010",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "membaca",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "passage": "Kesehatan remaja menjadi perhatian penting di Indonesia. Data Kementerian Kesehatan menunjukkan bahwa satu dari tiga remaja mengalami masalah gizi akibat pola makan yang tidak seimbang. Konsumsi makanan cepat saji yang tinggi gula, garam, dan lemak menjadi penyebab utama obesitas pada remaja. Selain itu, kurangnya aktivitas fisik memperburuk kondisi tersebut. Remaja disarankan untuk berolahraga setidaknya tiga puluh menit setiap hari. Olahraga tidak hanya menjaga kebugaran fisik, tetapi juga meningkatkan konsentrasi belajar dan mengurangi stres. Pemerintah melalui program Usaha Kesehatan Sekolah atau UKS gencar mengedukasi siswa tentang pentingnya sarapan pagi sebelum berangkat sekolah. Sarapan yang sehat memberikan energi yang cukup untuk beraktivitas dan belajar. Sayangnya, masih banyak remaja yang melewatkan sarapan karena terburu-buru ke sekolah.",
+      "stem": "Kepanjangan dari UKS yang disebutkan dalam teks adalah?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Usaha Kesejahteraan Siswa"
+        },
+        {
+          "id": "B",
+          "text": "Usaha Kesehatan Sekolah"
+        },
+        {
+          "id": "C",
+          "text": "Unit Kesehatan Siswa"
+        },
+        {
+          "id": "D",
+          "text": "Usaha Kolaborasi Sekolah"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Teks menyebutkan, 'Pemerintah melalui program Usaha Kesehatan Sekolah atau UKS.'",
+      "tags": [
+        "membaca",
+        "informasi eksplisit"
+      ],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMP-MEMBACA-SET002-Q011",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "membaca",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "passage": "Media sosial telah menjadi bagian tak terpisahkan dari kehidupan remaja saat ini. Berdasarkan survei yang dilakukan oleh Asosiasi Penyelenggara Jasa Internet Indonesia, lebih dari sembilan puluh persen remaja Indonesia memiliki akun media sosial. Platform seperti Instagram, TikTok, dan YouTube menjadi favorit karena menyajikan konten visual yang menarik. Di satu sisi, media sosial memberikan manfaat sebagai sarana berekspresi dan mendapatkan informasi. Namun, di sisi lain, penggunaan media sosial yang berlebihan dapat menyebabkan kecanduan dan menurunkan produktivitas belajar. Remaja perlu bijak dalam menggunakan media sosial dengan membatasi waktu penggunaan dan memilah konten yang dikonsumsi. Orang tua dan guru juga berperan penting dalam mendampingi remaja agar tidak terjebak dalam dampak negatif media sosial.",
+      "stem": "Berdasarkan teks, berapa persen remaja Indonesia yang memiliki akun media sosial?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Lebih dari lima puluh persen"
+        },
+        {
+          "id": "B",
+          "text": "Lebih dari tujuh puluh persen"
+        },
+        {
+          "id": "C",
+          "text": "Lebih dari sembilan puluh persen"
+        },
+        {
+          "id": "D",
+          "text": "Seratus persen"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "Teks menyebutkan, 'lebih dari sembilan puluh persen remaja Indonesia memiliki akun media sosial.'",
+      "tags": [
+        "membaca",
+        "informasi eksplisit"
+      ],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SOSIAL"
+    },
+    {
+      "id": "BC-UKBI-SMP-MEMBACA-SET002-Q012",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "membaca",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "passage": "Media sosial telah menjadi bagian tak terpisahkan dari kehidupan remaja saat ini. Berdasarkan survei yang dilakukan oleh Asosiasi Penyelenggara Jasa Internet Indonesia, lebih dari sembilan puluh persen remaja Indonesia memiliki akun media sosial. Platform seperti Instagram, TikTok, dan YouTube menjadi favorit karena menyajikan konten visual yang menarik. Di satu sisi, media sosial memberikan manfaat sebagai sarana berekspresi dan mendapatkan informasi. Namun, di sisi lain, penggunaan media sosial yang berlebihan dapat menyebabkan kecanduan dan menurunkan produktivitas belajar. Remaja perlu bijak dalam menggunakan media sosial dengan membatasi waktu penggunaan dan memilah konten yang dikonsumsi. Orang tua dan guru juga berperan penting dalam mendampingi remaja agar tidak terjebak dalam dampak negatif media sosial.",
+      "stem": "Mengapa platform seperti Instagram dan TikTok menjadi favorit remaja menurut teks?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Karena menyediakan fitur chatting yang lengkap"
+        },
+        {
+          "id": "B",
+          "text": "Karena menyajikan konten visual yang menarik"
+        },
+        {
+          "id": "C",
+          "text": "Karena tidak ada batasan usia pengguna"
+        },
+        {
+          "id": "D",
+          "text": "Kamera yang bagus untuk foto"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Teks menyebutkan, 'Platform seperti Instagram, TikTok, dan YouTube menjadi favorit karena menyajikan konten visual yang menarik.'",
+      "tags": [
+        "membaca",
+        "informasi eksplisit"
+      ],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SOSIAL"
+    },
+    {
+      "id": "BC-UKBI-SMP-MEMBACA-SET002-Q013",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "membaca",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "passage": "Media sosial telah menjadi bagian tak terpisahkan dari kehidupan remaja saat ini. Berdasarkan survei yang dilakukan oleh Asosiasi Penyelenggara Jasa Internet Indonesia, lebih dari sembilan puluh persen remaja Indonesia memiliki akun media sosial. Platform seperti Instagram, TikTok, dan YouTube menjadi favorit karena menyajikan konten visual yang menarik. Di satu sisi, media sosial memberikan manfaat sebagai sarana berekspresi dan mendapatkan informasi. Namun, di sisi lain, penggunaan media sosial yang berlebihan dapat menyebabkan kecanduan dan menurunkan produktivitas belajar. Remaja perlu bijak dalam menggunakan media sosial dengan membatasi waktu penggunaan dan memilah konten yang dikonsumsi. Orang tua dan guru juga berperan penting dalam mendampingi remaja agar tidak terjebak dalam dampak negatif media sosial.",
+      "stem": "Dampak negatif penggunaan media sosial yang berlebihan menurut teks adalah?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Meningkatkan wawasan dan pengetahuan"
+        },
+        {
+          "id": "B",
+          "text": "Memperluas jaringan pertemanan"
+        },
+        {
+          "id": "C",
+          "text": "Kecanduan dan menurunkan produktivitas belajar"
+        },
+        {
+          "id": "D",
+          "text": "Memudahkan komunikasi jarak jauh"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "Teks menyebutkan, 'penggunaan media sosial yang berlebihan dapat menyebabkan kecanduan dan menurunkan produktivitas belajar.'",
+      "tags": [
+        "membaca",
+        "informasi tersirat"
+      ],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SOSIAL"
+    },
+    {
+      "id": "BC-UKBI-SMP-MEMBACA-SET002-Q014",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "membaca",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "passage": "Media sosial telah menjadi bagian tak terpisahkan dari kehidupan remaja saat ini. Berdasarkan survei yang dilakukan oleh Asosiasi Penyelenggara Jasa Internet Indonesia, lebih dari sembilan puluh persen remaja Indonesia memiliki akun media sosial. Platform seperti Instagram, TikTok, dan YouTube menjadi favorit karena menyajikan konten visual yang menarik. Di satu sisi, media sosial memberikan manfaat sebagai sarana berekspresi dan mendapatkan informasi. Namun, di sisi lain, penggunaan media sosial yang berlebihan dapat menyebabkan kecanduan dan menurunkan produktivitas belajar. Remaja perlu bijak dalam menggunakan media sosial dengan membatasi waktu penggunaan dan memilah konten yang dikonsumsi. Orang tua dan guru juga berperan penting dalam mendampingi remaja agar tidak terjebak dalam dampak negatif media sosial.",
+      "stem": "Siapa saja yang berperan dalam mendampingi remaja menggunakan media sosial menurut teks?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Teman sebaya dan tetangga"
+        },
+        {
+          "id": "B",
+          "text": "Orang tua dan guru"
+        },
+        {
+          "id": "C",
+          "text": "Polisi dan pemerintah"
+        },
+        {
+          "id": "D",
+          "text": "Dokter dan psikolog"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Teks menyebutkan, 'Orang tua dan guru juga berperan penting dalam mendampingi remaja agar tidak terjebak dalam dampak negatif media sosial.'",
+      "tags": [
+        "membaca",
+        "informasi eksplisit"
+      ],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SOSIAL"
+    },
+    {
+      "id": "BC-UKBI-SMP-MEMBACA-SET002-Q015",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "membaca",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "passage": "Media sosial telah menjadi bagian tak terpisahkan dari kehidupan remaja saat ini. Berdasarkan survei yang dilakukan oleh Asosiasi Penyelenggara Jasa Internet Indonesia, lebih dari sembilan puluh persen remaja Indonesia memiliki akun media sosial. Platform seperti Instagram, TikTok, dan YouTube menjadi favorit karena menyajikan konten visual yang menarik. Di satu sisi, media sosial memberikan manfaat sebagai sarana berekspresi dan mendapatkan informasi. Namun, di sisi lain, penggunaan media sosial yang berlebihan dapat menyebabkan kecanduan dan menurunkan produktivitas belajar. Remaja perlu bijak dalam menggunakan media sosial dengan membatasi waktu penggunaan dan memilah konten yang dikonsumsi. Orang tua dan guru juga berperan penting dalam mendampingi remaja agar tidak terjebak dalam dampak negatif media sosial.",
+      "stem": "Tujuan penulis dalam teks tersebut adalah?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Mengajak remaja menghapus akun media sosial"
+        },
+        {
+          "id": "B",
+          "text": "Menyadarkan remaja untuk bijak menggunakan media sosial"
+        },
+        {
+          "id": "C",
+          "text": "Membandingkan Instagram dan TikTok"
+        },
+        {
+          "id": "D",
+          "text": "Menjelaskan sejarah media sosial"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Penulis memaparkan dampak positif dan negatif media sosial serta menekankan pentingnya kebijakan dalam penggunaannya.",
+      "tags": [
+        "membaca",
+        "tujuan penulis"
+      ],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved",
+      "cognitive": "ANALISIS",
+      "domain": "SOSIAL"
+    },
+    {
+      "id": "BC-UKBI-SMP-MEMBACA-SET002-Q016",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "membaca",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "passage": "Lingkungan sekolah yang bersih dan hijau memberikan banyak manfaat bagi siswa. Pepohonan rindang di halaman sekolah tidak hanya memperindah pemandangan, tetapi juga menghasilkan oksigen yang segar. Sayangnya, masih banyak sekolah yang kurang memperhatikan kebersihan lingkungannya. Sampah berserakan di sudut-sudut halaman dan kelas. Padahal, kesadaran menjaga kebersihan lingkungan harus ditanamkan sejak dini. Program penghijauan seperti menanam pohon dan membuat taman sekolah dapat menjadi solusi. Selain membuat lingkungan lebih asri, kegiatan ini juga mengajarkan siswa tentang pentingnya merawat alam. Setiap kelas dapat bertanggung jawab merawat satu area taman. Dengan demikian, rasa memiliki dan kepedulian terhadap lingkungan akan tumbuh secara alami.",
+      "stem": "Apa manfaat utama pepohonan rindang di halaman sekolah menurut teks?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Tempat bermain siswa"
+        },
+        {
+          "id": "B",
+          "text": "Menghasilkan oksigen yang segar"
+        },
+        {
+          "id": "C",
+          "text": "Menahan air hujan"
+        },
+        {
+          "id": "D",
+          "text": "Menjadi pagar alami"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Teks menyebutkan, 'Pepohonan rindang di halaman sekolah tidak hanya memperindah pemandangan, tetapi juga menghasilkan oksigen yang segar.'",
+      "tags": [
+        "membaca",
+        "informasi eksplisit"
+      ],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMP-MEMBACA-SET002-Q017",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "membaca",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 1,
+      "passage": "Lingkungan sekolah yang bersih dan hijau memberikan banyak manfaat bagi siswa. Pepohonan rindang di halaman sekolah tidak hanya memperindah pemandangan, tetapi juga menghasilkan oksigen yang segar. Sayangnya, masih banyak sekolah yang kurang memperhatikan kebersihan lingkungannya. Sampah berserakan di sudut-sudut halaman dan kelas. Padahal, kesadaran menjaga kebersihan lingkungan harus ditanamkan sejak dini. Program penghijauan seperti menanam pohon dan membuat taman sekolah dapat menjadi solusi. Selain membuat lingkungan lebih asri, kegiatan ini juga mengajarkan siswa tentang pentingnya merawat alam. Setiap kelas dapat bertanggung jawab merawat satu area taman. Dengan demikian, rasa memiliki dan kepedulian terhadap lingkungan akan tumbuh secara alami.",
+      "stem": "Program apa yang disarankan untuk mengatasi masalah kebersihan lingkungan sekolah?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Program belajar di luar kelas"
+        },
+        {
+          "id": "B",
+          "text": "Program penghijauan seperti menanam pohon"
+        },
+        {
+          "id": "C",
+          "text": "Program lomba kebersihan antarsekolah"
+        },
+        {
+          "id": "D",
+          "text": "Program denda bagi yang membuang sampah"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Teks menyebutkan, 'Program penghijauan seperti menanam pohon dan membuat taman sekolah dapat menjadi solusi.'",
+      "tags": [
+        "membaca",
+        "informasi eksplisit"
+      ],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMP-MEMBACA-SET002-Q018",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "membaca",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "passage": "Lingkungan sekolah yang bersih dan hijau memberikan banyak manfaat bagi siswa. Pepohonan rindang di halaman sekolah tidak hanya memperindah pemandangan, tetapi juga menghasilkan oksigen yang segar. Sayangnya, masih banyak sekolah yang kurang memperhatikan kebersihan lingkungannya. Sampah berserakan di sudut-sudut halaman dan kelas. Padahal, kesadaran menjaga kebersihan lingkungan harus ditanamkan sejak dini. Program penghijauan seperti menanam pohon dan membuat taman sekolah dapat menjadi solusi. Selain membuat lingkungan lebih asri, kegiatan ini juga mengajarkan siswa tentang pentingnya merawat alam. Setiap kelas dapat bertanggung jawab merawat satu area taman. Dengan demikian, rasa memiliki dan kepedulian terhadap lingkungan akan tumbuh secara alami.",
+      "stem": "Kata 'asri' dalam teks tersebut memiliki makna yang sama dengan?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Kotor dan kumuh"
+        },
+        {
+          "id": "B",
+          "text": "Indah dan rapi"
+        },
+        {
+          "id": "C",
+          "text": "Sempit dan pengap"
+        },
+        {
+          "id": "D",
+          "text": "Luas dan terbuka"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Kata 'asri' berarti indah, rapi, dan nyaman dipandang. Konteksnya adalah lingkungan yang hijau dan bersih.",
+      "tags": [
+        "membaca",
+        "kosakata"
+      ],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMP-MEMBACA-SET002-Q019",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "membaca",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "passage": "Lingkungan sekolah yang bersih dan hijau memberikan banyak manfaat bagi siswa. Pepohonan rindang di halaman sekolah tidak hanya memperindah pemandangan, tetapi juga menghasilkan oksigen yang segar. Sayangnya, masih banyak sekolah yang kurang memperhatikan kebersihan lingkungannya. Sampah berserakan di sudut-sudut halaman dan kelas. Padahal, kesadaran menjaga kebersihan lingkungan harus ditanamkan sejak dini. Program penghijauan seperti menanam pohon dan membuat taman sekolah dapat menjadi solusi. Selain membuat lingkungan lebih asri, kegiatan ini juga mengajarkan siswa tentang pentingnya merawat alam. Setiap kelas dapat bertanggung jawab merawat satu area taman. Dengan demikian, rasa memiliki dan kepedulian terhadap lingkungan akan tumbuh secara alami.",
+      "stem": "Nilai karakter yang ditanamkan melalui program penghijauan di sekolah adalah?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Kompetisi dan persaingan sehat"
+        },
+        {
+          "id": "B",
+          "text": "Kemandirian dan kebebasan"
+        },
+        {
+          "id": "C",
+          "text": "Tanggung jawab dan kepedulian"
+        },
+        {
+          "id": "D",
+          "text": "Kreativitas dan inovasi"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "Teks menyebutkan, 'Setiap kelas dapat bertanggung jawab merawat satu area taman. Dengan demikian, rasa memiliki dan kepedulian terhadap lingkungan akan tumbuh.'",
+      "tags": [
+        "membaca",
+        "nilai karakter"
+      ],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved",
+      "cognitive": "ANALISIS",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMP-MEMBACA-SET002-Q020",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "membaca",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "passage": "Lingkungan sekolah yang bersih dan hijau memberikan banyak manfaat bagi siswa. Pepohonan rindang di halaman sekolah tidak hanya memperindah pemandangan, tetapi juga menghasilkan oksigen yang segar. Sayangnya, masih banyak sekolah yang kurang memperhatikan kebersihan lingkungannya. Sampah berserakan di sudut-sudut halaman dan kelas. Padahal, kesadaran menjaga kebersihan lingkungan harus ditanamkan sejak dini. Program penghijauan seperti menanam pohon dan membuat taman sekolah dapat menjadi solusi. Selain membuat lingkungan lebih asri, kegiatan ini juga mengajarkan siswa tentang pentingnya merawat alam. Setiap kelas dapat bertanggung jawab merawat satu area taman. Dengan demikian, rasa memiliki dan kepedulian terhadap lingkungan akan tumbuh secara alami.",
+      "stem": "Pernyataan yang merupakan opini dalam teks tersebut adalah?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Sampah berserakan di sudut-sudut halaman dan kelas"
+        },
+        {
+          "id": "B",
+          "text": "Program penghijauan seperti menanam pohon dapat menjadi solusi"
+        },
+        {
+          "id": "C",
+          "text": "Setiap kelas dapat bertanggung jawab merawat satu area taman"
+        },
+        {
+          "id": "D",
+          "text": "Pepohonan menghasilkan oksigen yang segar"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Pernyataan bahwa program penghijauan dapat menjadi solusi adalah opini penulis, bukan fakta yang terverifikasi. Pilihan A, C, dan D adalah fakta yang disebutkan dalam teks.",
+      "tags": [
+        "membaca",
+        "fakta opini"
+      ],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved",
+      "cognitive": "ANALISIS",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMP-MEMBACA-SET002-Q021",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "membaca",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "passage": "Teknologi kecerdasan buatan atau AI semakin berkembang pesat di Indonesia. Dalam dunia pendidikan, AI digunakan untuk membuat materi pembelajaran yang interaktif dan personalisasi sesuai kemampuan siswa. Misalnya, platform belajar daring yang mampu menyesuaikan tingkat kesulitan soal berdasarkan hasil jawaban siswa. Selain itu, AI juga membantu guru dalam mengoreksi tugas secara otomatis sehingga guru memiliki lebih banyak waktu untuk berinteraksi dengan siswa. Namun, penggunaan AI juga memiliki tantangan. Tidak semua sekolah memiliki infrastruktur internet yang memadai. Kesenjangan digital antara sekolah di kota dan di desa masih menjadi masalah. Pemerintah terus berupaya memperluas akses internet ke daerah terpencil agar semua siswa dapat merasakan manfaat teknologi ini.",
+      "stem": "Salah satu manfaat AI dalam pendidikan menurut teks adalah?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Menggantikan peran guru sepenuhnya"
+        },
+        {
+          "id": "B",
+          "text": "Membuat materi pembelajaran interaktif dan personalisasi"
+        },
+        {
+          "id": "C",
+          "text": "Menghilangkan kebutuhan akan buku pelajaran"
+        },
+        {
+          "id": "D",
+          "text": "Mengurangi jam belajar siswa"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Teks menyebutkan, 'AI digunakan untuk membuat materi pembelajaran yang interaktif dan personalisasi sesuai kemampuan siswa.'",
+      "tags": [
+        "membaca",
+        "informasi eksplisit"
+      ],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMP-MEMBACA-SET002-Q022",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "membaca",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 1,
+      "passage": "Teknologi kecerdasan buatan atau AI semakin berkembang pesat di Indonesia. Dalam dunia pendidikan, AI digunakan untuk membuat materi pembelajaran yang interaktif dan personalisasi sesuai kemampuan siswa. Misalnya, platform belajar daring yang mampu menyesuaikan tingkat kesulitan soal berdasarkan hasil jawaban siswa. Selain itu, AI juga membantu guru dalam mengoreksi tugas secara otomatis sehingga guru memiliki lebih banyak waktu untuk berinteraksi dengan siswa. Namun, penggunaan AI juga memiliki tantangan. Tidak semua sekolah memiliki infrastruktur internet yang memadai. Kesenjangan digital antara sekolah di kota dan di desa masih menjadi masalah. Pemerintah terus berupaya memperluas akses internet ke daerah terpencil agar semua siswa dapat merasakan manfaat teknologi ini.",
+      "stem": "Apa tantangan utama penggunaan AI dalam pendidikan di Indonesia?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Kurangnya tenaga pengajar"
+        },
+        {
+          "id": "B",
+          "text": "Infrastruktur internet yang tidak memadai"
+        },
+        {
+          "id": "C",
+          "text": "Mahalnya perangkat AI"
+        },
+        {
+          "id": "D",
+          "text": "Kurangnya minat siswa terhadap teknologi"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Teks menyebutkan, 'Tidak semua sekolah memiliki infrastruktur internet yang memadai. Kesenjangan digital antara sekolah di kota dan di desa masih menjadi masalah.'",
+      "tags": [
+        "membaca",
+        "informasi eksplisit"
+      ],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMP-MEMBACA-SET002-Q023",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "membaca",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "passage": "Teknologi kecerdasan buatan atau AI semakin berkembang pesat di Indonesia. Dalam dunia pendidikan, AI digunakan untuk membuat materi pembelajaran yang interaktif dan personalisasi sesuai kemampuan siswa. Misalnya, platform belajar daring yang mampu menyesuaikan tingkat kesulitan soal berdasarkan hasil jawaban siswa. Selain itu, AI juga membantu guru dalam mengoreksi tugas secara otomatis sehingga guru memiliki lebih banyak waktu untuk berinteraksi dengan siswa. Namun, penggunaan AI juga memiliki tantangan. Tidak semua sekolah memiliki infrastruktur internet yang memadai. Kesenjangan digital antara sekolah di kota dan di desa masih menjadi masalah. Pemerintah terus berupaya memperluas akses internet ke daerah terpencil agar semua siswa dapat merasakan manfaat teknologi ini.",
+      "stem": "Kata 'personalisasi' dalam teks memiliki arti?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Penyesuaian berdasarkan kebutuhan individu"
+        },
+        {
+          "id": "B",
+          "text": "Pembelajaran secara berkelompok"
+        },
+        {
+          "id": "C",
+          "text": "Penggunaan teknologi modern"
+        },
+        {
+          "id": "D",
+          "text": "Pengembangan karakter siswa"
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Personalisasi berarti penyesuaian atau kustomisasi berdasarkan kebutuhan individu. Dalam konteks teks, materi pembelajaran disesuaikan dengan kemampuan masing-masing siswa.",
+      "tags": [
+        "membaca",
+        "kosakata"
+      ],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMP-MEMBACA-SET002-Q024",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "membaca",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "passage": "Teknologi kecerdasan buatan atau AI semakin berkembang pesat di Indonesia. Dalam dunia pendidikan, AI digunakan untuk membuat materi pembelajaran yang interaktif dan personalisasi sesuai kemampuan siswa. Misalnya, platform belajar daring yang mampu menyesuaikan tingkat kesulitan soal berdasarkan hasil jawaban siswa. Selain itu, AI juga membantu guru dalam mengoreksi tugas secara otomatis sehingga guru memiliki lebih banyak waktu untuk berinteraksi dengan siswa. Namun, penggunaan AI juga memiliki tantangan. Tidak semua sekolah memiliki infrastruktur internet yang memadai. Kesenjangan digital antara sekolah di kota dan di desa masih menjadi masalah. Pemerintah terus berupaya memperluas akses internet ke daerah terpencil agar semua siswa dapat merasakan manfaat teknologi ini.",
+      "stem": "Bagaimana AI membantu guru dalam proses pembelajaran?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Menggantikan guru mengajar di kelas"
+        },
+        {
+          "id": "B",
+          "text": "Mengoreksi tugas secara otomatis"
+        },
+        {
+          "id": "C",
+          "text": "Membuat jadwal pelajaran"
+        },
+        {
+          "id": "D",
+          "text": "Menghitung nilai rapor"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Teks menyebutkan, 'AI juga membantu guru dalam mengoreksi tugas secara otomatis sehingga guru memiliki lebih banyak waktu untuk berinteraksi dengan siswa.'",
+      "tags": [
+        "membaca",
+        "informasi eksplisit"
+      ],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMP-MEMBACA-SET002-Q025",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "membaca",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "passage": "Teknologi kecerdasan buatan atau AI semakin berkembang pesat di Indonesia. Dalam dunia pendidikan, AI digunakan untuk membuat materi pembelajaran yang interaktif dan personalisasi sesuai kemampuan siswa. Misalnya, platform belajar daring yang mampu menyesuaikan tingkat kesulitan soal berdasarkan hasil jawaban siswa. Selain itu, AI juga membantu guru dalam mengoreksi tugas secara otomatis sehingga guru memiliki lebih banyak waktu untuk berinteraksi dengan siswa. Namun, penggunaan AI juga memiliki tantangan. Tidak semua sekolah memiliki infrastruktur internet yang memadai. Kesenjangan digital antara sekolah di kota dan di desa masih menjadi masalah. Pemerintah terus berupaya memperluas akses internet ke daerah terpencil agar semua siswa dapat merasakan manfaat teknologi ini.",
+      "stem": "Solusi yang ditawarkan pemerintah untuk mengatasi kesenjangan digital adalah?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Memberikan subsidi laptop untuk siswa"
+        },
+        {
+          "id": "B",
+          "text": "Memperluas akses internet ke daerah terpencil"
+        },
+        {
+          "id": "C",
+          "text": "Membangun sekolah baru di desa"
+        },
+        {
+          "id": "D",
+          "text": "Melatih guru menggunakan AI"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Teks menyebutkan, 'Pemerintah terus berupaya memperluas akses internet ke daerah terpencil agar semua siswa dapat merasakan manfaat teknologi ini.'",
+      "tags": [
+        "membaca",
+        "informasi eksplisit"
+      ],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMP-MEMBACA-SET002-Q026",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "membaca",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "passage": "Tari Saman dari Aceh merupakan salah satu warisan budaya Nusantara yang telah diakui UNESCO sebagai Warisan Budaya Takbenda. Tarian ini terkenal dengan gerakannya yang cepat, kompak, dan penuh energi. Penari Saman duduk berbaris dan menepuk dada, paha, serta telapak tangan secara bersamaan. Keunikan Tari Saman terletak pada kekompakan gerakan tanpa menggunakan alat musik pengiring, melainkan hanya tepukan dan nyanyian para penari. Tari Saman biasanya ditampilkan pada acara-acara adat dan perayaan hari besar Islam. Nilai-nilai yang terkandung dalam Tari Saman antara lain kebersamaan, kedisiplinan, dan religiusitas. Generasi muda saat ini perlu dilibatkan dalam pelestarian tarian tradisional agar budaya Nusantara tidak punah.",
+      "stem": "Apa yang membuat Tari Saman unik dibandingkan tarian lain?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Menggunakan alat musik gamelan"
+        },
+        {
+          "id": "B",
+          "text": "Gerakan lambat dan lemah gemulai"
+        },
+        {
+          "id": "C",
+          "text": "Tanpa alat musik, hanya tepukan dan nyanyian"
+        },
+        {
+          "id": "D",
+          "text": "Ditarikan secara individu"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "Teks menyebutkan, 'Keunikan Tari Saman terletak pada kekompakan gerakan tanpa menggunakan alat musik pengiring, melainkan hanya tepukan dan nyanyian para penari.'",
+      "tags": [
+        "membaca",
+        "budaya",
+        "informasi eksplisit"
+      ],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SOSIAL"
+    },
+    {
+      "id": "BC-UKBI-SMP-MEMBACA-SET002-Q027",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "membaca",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "passage": "Tari Saman dari Aceh merupakan salah satu warisan budaya Nusantara yang telah diakui UNESCO sebagai Warisan Budaya Takbenda. Tarian ini terkenal dengan gerakannya yang cepat, kompak, dan penuh energi. Penari Saman duduk berbaris dan menepuk dada, paha, serta telapak tangan secara bersamaan. Keunikan Tari Saman terletak pada kekompakan gerakan tanpa menggunakan alat musik pengiring, melainkan hanya tepukan dan nyanyian para penari. Tari Saman biasanya ditampilkan pada acara-acara adat dan perayaan hari besar Islam. Nilai-nilai yang terkandung dalam Tari Saman antara lain kebersamaan, kedisiplinan, dan religiusitas. Generasi muda saat ini perlu dilibatkan dalam pelestarian tarian tradisional agar budaya Nusantara tidak punah.",
+      "stem": "Nilai religiusitas dalam Tari Saman tercermin dari?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Gerakan yang cepat dan energik"
+        },
+        {
+          "id": "B",
+          "text": "Penampilan pada perayaan hari besar Islam"
+        },
+        {
+          "id": "C",
+          "text": "Kostum yang berwarna cerah"
+        },
+        {
+          "id": "D",
+          "text": "Jumlah penari yang ganjil"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Teks menyebutkan Tari Saman ditampilkan pada perayaan hari besar Islam, yang menunjukkan nilai religiusitas.",
+      "tags": [
+        "membaca",
+        "nilai budaya"
+      ],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved",
+      "cognitive": "ANALISIS",
+      "domain": "SOSIAL"
+    },
+    {
+      "id": "BC-UKBI-SMP-MEMBACA-SET002-Q028",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "membaca",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "passage": "Tari Saman dari Aceh merupakan salah satu warisan budaya Nusantara yang telah diakui UNESCO sebagai Warisan Budaya Takbenda. Tarian ini terkenal dengan gerakannya yang cepat, kompak, dan penuh energi. Penari Saman duduk berbaris dan menepuk dada, paha, serta telapak tangan secara bersamaan. Keunikan Tari Saman terletak pada kekompakan gerakan tanpa menggunakan alat musik pengiring, melainkan hanya tepukan dan nyanyian para penari. Tari Saman biasanya ditampilkan pada acara-acara adat dan perayaan hari besar Islam. Nilai-nilai yang terkandung dalam Tari Saman antara lain kebersamaan, kedisiplinan, dan religiusitas. Generasi muda saat ini perlu dilibatkan dalam pelestarian tarian tradisional agar budaya Nusantara tidak punah.",
+      "stem": "Apa yang dipukul oleh penari Saman saat menari?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Dada, paha, dan telapak tangan"
+        },
+        {
+          "id": "B",
+          "text": "Kepala, bahu, dan lutut"
+        },
+        {
+          "id": "C",
+          "text": "Pinggang, siku, dan punggung"
+        },
+        {
+          "id": "D",
+          "text": "Lantai dan kursi"
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Teks menyebutkan, 'Penari Saman duduk berbaris dan menepuk dada, paha, serta telapak tangan secara bersamaan.'",
+      "tags": [
+        "membaca",
+        "informasi eksplisit"
+      ],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SOSIAL"
+    },
+    {
+      "id": "BC-UKBI-SMP-MEMBACA-SET002-Q029",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "membaca",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "passage": "Tari Saman dari Aceh merupakan salah satu warisan budaya Nusantara yang telah diakui UNESCO sebagai Warisan Budaya Takbenda. Tarian ini terkenal dengan gerakannya yang cepat, kompak, dan penuh energi. Penari Saman duduk berbaris dan menepuk dada, paha, serta telapak tangan secara bersamaan. Keunikan Tari Saman terletak pada kekompakan gerakan tanpa menggunakan alat musik pengiring, melainkan hanya tepukan dan nyanyian para penari. Tari Saman biasanya ditampilkan pada acara-acara adat dan perayaan hari besar Islam. Nilai-nilai yang terkandung dalam Tari Saman antara lain kebersamaan, kedisiplinan, dan religiusitas. Generasi muda saat ini perlu dilibatkan dalam pelestarian tarian tradisional agar budaya Nusantara tidak punah.",
+      "stem": "Simpulan yang tepat berdasarkan teks adalah?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Tari Saman tidak memerlukan kekompakan karena setiap penari bergerak sendiri"
+        },
+        {
+          "id": "B",
+          "text": "Tari Saman adalah tarian yang kaya akan nilai kebersamaan dan kedisiplinan"
+        },
+        {
+          "id": "C",
+          "text": "UNESCO belum mengakui Tari Saman sebagai warisan budaya"
+        },
+        {
+          "id": "D",
+          "text": "Tari Saman hanya ditampilkan di Aceh saja"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Teks menyebutkan nilai-nilai kebersamaan, kedisiplinan, dan religiusitas dalam Tari Saman, serta gerakannya yang kompak.",
+      "tags": [
+        "membaca",
+        "simpulan"
+      ],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved",
+      "cognitive": "ANALISIS",
+      "domain": "SOSIAL"
+    },
+    {
+      "id": "BC-UKBI-SMP-MEMBACA-SET002-Q030",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "membaca",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 1,
+      "passage": "Tari Saman dari Aceh merupakan salah satu warisan budaya Nusantara yang telah diakui UNESCO sebagai Warisan Budaya Takbenda. Tarian ini terkenal dengan gerakannya yang cepat, kompak, dan penuh energi. Penari Saman duduk berbaris dan menepuk dada, paha, serta telapak tangan secara bersamaan. Keunikan Tari Saman terletak pada kekompakan gerakan tanpa menggunakan alat musik pengiring, melainkan hanya tepukan dan nyanyian para penari. Tari Saman biasanya ditampilkan pada acara-acara adat dan perayaan hari besar Islam. Nilai-nilai yang terkandung dalam Tari Saman antara lain kebersamaan, kedisiplinan, dan religiusitas. Generasi muda saat ini perlu dilibatkan dalam pelestarian tarian tradisional agar budaya Nusantara tidak punah.",
+      "stem": "Dari daerah manakah Tari Saman berasal?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Sumatera Barat"
+        },
+        {
+          "id": "B",
+          "text": "Aceh"
+        },
+        {
+          "id": "C",
+          "text": "Sumatera Utara"
+        },
+        {
+          "id": "D",
+          "text": "Riau"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Kalimat pertama teks menyebutkan, 'Tari Saman dari Aceh merupakan salah satu warisan budaya Nusantara.'",
+      "tags": [
+        "membaca",
+        "informasi eksplisit"
+      ],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SOSIAL"
+    },
+    {
+      "id": "BC-UKBI-SMP-MEMBACA-SET002-Q031",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "membaca",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "passage": "R.A. Kartini adalah pahlawan nasional yang dikenal karena perjuangannya dalam emansipasi wanita. Lahir pada tanggal 21 April 1879 di Jepara, Jawa Tengah, Kartini berasal dari keluarga bangsawan. Karena keterbatasan akses pendidikan bagi perempuan saat itu, Kartini hanya bisa bersekolah hingga usia dua belas tahun. Namun, semangat belajarnya tidak pernah padam. Ia membaca buku-buku dari luar negeri yang dikirim oleh teman-temannya. Pemikiran Kartini tentang kesetaraan gender dan pentingnya pendidikan bagi perempuan tertuang dalam buku Habis Gelap Terbitlah Terang yang merupakan kumpulan surat-suratnya. Berkat perjuangan Kartini, kini perempuan Indonesia memiliki kesempatan yang sama dalam pendidikan dan karier. Setiap tanggal 21 April, bangsa Indonesia memperingati Hari Kartini untuk mengenang jasanya.",
+      "stem": "Siapa yang dimaksud dalam teks tersebut?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Cut Nyak Dien"
+        },
+        {
+          "id": "B",
+          "text": "R.A. Kartini"
+        },
+        {
+          "id": "C",
+          "text": "Dewi Sartika"
+        },
+        {
+          "id": "D",
+          "text": "Maria Walanda Maramis"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Teks secara eksplisit membahas tentang R.A. Kartini.",
+      "tags": [
+        "membaca",
+        "biografi"
+      ],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SOSIAL"
+    },
+    {
+      "id": "BC-UKBI-SMP-MEMBACA-SET002-Q032",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "membaca",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "passage": "R.A. Kartini adalah pahlawan nasional yang dikenal karena perjuangannya dalam emansipasi wanita. Lahir pada tanggal 21 April 1879 di Jepara, Jawa Tengah, Kartini berasal dari keluarga bangsawan. Karena keterbatasan akses pendidikan bagi perempuan saat itu, Kartini hanya bisa bersekolah hingga usia dua belas tahun. Namun, semangat belajarnya tidak pernah padam. Ia membaca buku-buku dari luar negeri yang dikirim oleh teman-temannya. Pemikiran Kartini tentang kesetaraan gender dan pentingnya pendidikan bagi perempuan tertuang dalam buku Habis Gelap Terbitlah Terang yang merupakan kumpulan surat-suratnya. Berkat perjuangan Kartini, kini perempuan Indonesia memiliki kesempatan yang sama dalam pendidikan dan karier. Setiap tanggal 21 April, bangsa Indonesia memperingati Hari Kartini untuk mengenang jasanya.",
+      "stem": "Mengapa Kartini tidak dapat melanjutkan pendidikan ke jenjang yang lebih tinggi?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Ia tidak menyukai pelajaran di sekolah"
+        },
+        {
+          "id": "B",
+          "text": "Keterbatasan akses pendidikan bagi perempuan saat itu"
+        },
+        {
+          "id": "C",
+          "text": "Keluarganya tidak memiliki biaya"
+        },
+        {
+          "id": "D",
+          "text": "Sekolahnya tutup"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Teks menyebutkan, 'Karena keterbatasan akses pendidikan bagi perempuan saat itu, Kartini hanya bisa bersekolah hingga usia dua belas tahun.'",
+      "tags": [
+        "membaca",
+        "sebab akibat"
+      ],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved",
+      "cognitive": "ANALISIS",
+      "domain": "SOSIAL"
+    },
+    {
+      "id": "BC-UKBI-SMP-MEMBACA-SET002-Q033",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "membaca",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "passage": "R.A. Kartini adalah pahlawan nasional yang dikenal karena perjuangannya dalam emansipasi wanita. Lahir pada tanggal 21 April 1879 di Jepara, Jawa Tengah, Kartini berasal dari keluarga bangsawan. Karena keterbatasan akses pendidikan bagi perempuan saat itu, Kartini hanya bisa bersekolah hingga usia dua belas tahun. Namun, semangat belajarnya tidak pernah padam. Ia membaca buku-buku dari luar negeri yang dikirim oleh teman-temannya. Pemikiran Kartini tentang kesetaraan gender dan pentingnya pendidikan bagi perempuan tertuang dalam buku Habis Gelap Terbitlah Terang yang merupakan kumpulan surat-suratnya. Berkat perjuangan Kartini, kini perempuan Indonesia memiliki kesempatan yang sama dalam pendidikan dan karier. Setiap tanggal 21 April, bangsa Indonesia memperingati Hari Kartini untuk mengenang jasanya.",
+      "stem": "Judul buku kumpulan surat Kartini adalah?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Surat-Surat Kartini"
+        },
+        {
+          "id": "B",
+          "text": "Habis Gelap Terbitlah Terang"
+        },
+        {
+          "id": "C",
+          "text": "Gelap Menuju Terang"
+        },
+        {
+          "id": "D",
+          "text": "Emansipasi Wanita"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Teks menyebutkan, 'Pemikiran Kartini... tertuang dalam buku Habis Gelap Terbitlah Terang yang merupakan kumpulan surat-suratnya.'",
+      "tags": [
+        "membaca",
+        "informasi eksplisit"
+      ],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SOSIAL"
+    },
+    {
+      "id": "BC-UKBI-SMP-MEMBACA-SET002-Q034",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "membaca",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "passage": "R.A. Kartini adalah pahlawan nasional yang dikenal karena perjuangannya dalam emansipasi wanita. Lahir pada tanggal 21 April 1879 di Jepara, Jawa Tengah, Kartini berasal dari keluarga bangsawan. Karena keterbatasan akses pendidikan bagi perempuan saat itu, Kartini hanya bisa bersekolah hingga usia dua belas tahun. Namun, semangat belajarnya tidak pernah padam. Ia membaca buku-buku dari luar negeri yang dikirim oleh teman-temannya. Pemikiran Kartini tentang kesetaraan gender dan pentingnya pendidikan bagi perempuan tertuang dalam buku Habis Gelap Terbitlah Terang yang merupakan kumpulan surat-suratnya. Berkat perjuangan Kartini, kini perempuan Indonesia memiliki kesempatan yang sama dalam pendidikan dan karier. Setiap tanggal 21 April, bangsa Indonesia memperingati Hari Kartini untuk mengenang jasanya.",
+      "stem": "Kata 'emansipasi' dalam teks bermakna?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Pemberontakan"
+        },
+        {
+          "id": "B",
+          "text": "Persamaan hak"
+        },
+        {
+          "id": "C",
+          "text": "Kemerdekaan"
+        },
+        {
+          "id": "D",
+          "text": "Perlawanan"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Emansipasi berarti proses pembebasan dari penindasan atau persamaan hak, khususnya dalam konteks kesetaraan gender.",
+      "tags": [
+        "membaca",
+        "kosakata"
+      ],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SOSIAL"
+    },
+    {
+      "id": "BC-UKBI-SMP-MEMBACA-SET002-Q035",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "membaca",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 1,
+      "passage": "R.A. Kartini adalah pahlawan nasional yang dikenal karena perjuangannya dalam emansipasi wanita. Lahir pada tanggal 21 April 1879 di Jepara, Jawa Tengah, Kartini berasal dari keluarga bangsawan. Karena keterbatasan akses pendidikan bagi perempuan saat itu, Kartini hanya bisa bersekolah hingga usia dua belas tahun. Namun, semangat belajarnya tidak pernah padam. Ia membaca buku-buku dari luar negeri yang dikirim oleh teman-temannya. Pemikiran Kartini tentang kesetaraan gender dan pentingnya pendidikan bagi perempuan tertuang dalam buku Habis Gelap Terbitlah Terang yang merupakan kumpulan surat-suratnya. Berkat perjuangan Kartini, kini perempuan Indonesia memiliki kesempatan yang sama dalam pendidikan dan karier. Setiap tanggal 21 April, bangsa Indonesia memperingati Hari Kartini untuk mengenang jasanya.",
+      "stem": "Kapan Hari Kartini diperingati setiap tahunnya?",
+      "options": [
+        {
+          "id": "A",
+          "text": "21 April"
+        },
+        {
+          "id": "B",
+          "text": "20 Mei"
+        },
+        {
+          "id": "C",
+          "text": "10 November"
+        },
+        {
+          "id": "D",
+          "text": "2 Mei"
+        }
+      ],
+      "correctAnswer": "A",
+      "explanation": "Teks menyebutkan, 'Setiap tanggal 21 April, bangsa Indonesia memperingati Hari Kartini untuk mengenang jasanya.'",
+      "tags": [
+        "membaca",
+        "informasi eksplisit"
+      ],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "SOSIAL"
+    },
+    {
+      "id": "BC-UKBI-SMP-MEMBACA-SET002-Q036",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "membaca",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "passage": "Cara Membuat Kerajinan dari Kertas Bekas. Pertama, siapkan bahan dan alat berupa kertas bekas, gunting, lem, penggaris, dan cat air. Kedua, potong kertas bekas menjadi bentuk persegi panjang berukuran sepuluh kali lima belas sentimeter. Ketiga, lipat kertas menjadi dua bagian sama besar, kemudian buat pola sesuai keinginan. Keempat, gunting kertas mengikuti pola yang telah dibuat. Kelima, rekatkan potongan kertas menggunakan lem hingga membentuk bangun tiga dimensi. Keenam, hias kerajinan dengan cat air agar terlihat menarik. Setelah kering, kerajinan siap dipajang. Kegiatan ini sangat bermanfaat untuk melatih kreativitas dan keterampilan motorik halus, serta mengajarkan daur ulang sampah kertas.",
+      "stem": "Berapa ukuran kertas yang dipotong pada langkah kedua?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Lima kali sepuluh sentimeter"
+        },
+        {
+          "id": "B",
+          "text": "Sepuluh kali lima belas sentimeter"
+        },
+        {
+          "id": "C",
+          "text": "Lima belas kali dua puluh sentimeter"
+        },
+        {
+          "id": "D",
+          "text": "Dua puluh kali dua puluh lima sentimeter"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Teks menyebutkan, 'potong kertas bekas menjadi bentuk persegi panjang berukuran sepuluh kali lima belas sentimeter.'",
+      "tags": [
+        "membaca",
+        "prosedur"
+      ],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMP-MEMBACA-SET002-Q037",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "membaca",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 1,
+      "passage": "Cara Membuat Kerajinan dari Kertas Bekas. Pertama, siapkan bahan dan alat berupa kertas bekas, gunting, lem, penggaris, dan cat air. Kedua, potong kertas bekas menjadi bentuk persegi panjang berukuran sepuluh kali lima belas sentimeter. Ketiga, lipat kertas menjadi dua bagian sama besar, kemudian buat pola sesuai keinginan. Keempat, gunting kertas mengikuti pola yang telah dibuat. Kelima, rekatkan potongan kertas menggunakan lem hingga membentuk bangun tiga dimensi. Keenam, hias kerajinan dengan cat air agar terlihat menarik. Setelah kering, kerajinan siap dipajang. Kegiatan ini sangat bermanfaat untuk melatih kreativitas dan keterampilan motorik halus, serta mengajarkan daur ulang sampah kertas.",
+      "stem": "Langkah ke berapa kertas digunting mengikuti pola?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Langkah kedua"
+        },
+        {
+          "id": "B",
+          "text": "Langkah ketiga"
+        },
+        {
+          "id": "C",
+          "text": "Langkah keempat"
+        },
+        {
+          "id": "D",
+          "text": "Langkah kelima"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "Langkah keempat adalah 'gunting kertas mengikuti pola yang telah dibuat.'",
+      "tags": [
+        "membaca",
+        "prosedur"
+      ],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMP-MEMBACA-SET002-Q038",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "membaca",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "passage": "Cara Membuat Kerajinan dari Kertas Bekas. Pertama, siapkan bahan dan alat berupa kertas bekas, gunting, lem, penggaris, dan cat air. Kedua, potong kertas bekas menjadi bentuk persegi panjang berukuran sepuluh kali lima belas sentimeter. Ketiga, lipat kertas menjadi dua bagian sama besar, kemudian buat pola sesuai keinginan. Keempat, gunting kertas mengikuti pola yang telah dibuat. Kelima, rekatkan potongan kertas menggunakan lem hingga membentuk bangun tiga dimensi. Keenam, hias kerajinan dengan cat air agar terlihat menarik. Setelah kering, kerajinan siap dipajang. Kegiatan ini sangat bermanfaat untuk melatih kreativitas dan keterampilan motorik halus, serta mengajarkan daur ulang sampah kertas.",
+      "stem": "Apa manfaat dari kegiatan membuat kerajinan dari kertas bekas?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Menghasilkan uang"
+        },
+        {
+          "id": "B",
+          "text": "Melatih kreativitas dan keterampilan motorik halus"
+        },
+        {
+          "id": "C",
+          "text": "Mengisi waktu luang"
+        },
+        {
+          "id": "D",
+          "text": "Mengumpulkan kertas bekas"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Teks menyebutkan, 'Kegiatan ini sangat bermanfaat untuk melatih kreativitas dan keterampilan motorik halus, serta mengajarkan daur ulang sampah kertas.'",
+      "tags": [
+        "membaca",
+        "prosedur"
+      ],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMP-MEMBACA-SET002-Q039",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "membaca",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "passage": "Cara Membuat Kerajinan dari Kertas Bekas. Pertama, siapkan bahan dan alat berupa kertas bekas, gunting, lem, penggaris, dan cat air. Kedua, potong kertas bekas menjadi bentuk persegi panjang berukuran sepuluh kali lima belas sentimeter. Ketiga, lipat kertas menjadi dua bagian sama besar, kemudian buat pola sesuai keinginan. Keempat, gunting kertas mengikuti pola yang telah dibuat. Kelima, rekatkan potongan kertas menggunakan lem hingga membentuk bangun tiga dimensi. Keenam, hias kerajinan dengan cat air agar terlihat menarik. Setelah kering, kerajinan siap dipajang. Kegiatan ini sangat bermanfaat untuk melatih kreativitas dan keterampilan motorik halus, serta mengajarkan daur ulang sampah kertas.",
+      "stem": "Teks tersebut termasuk jenis teks?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Teks narasi"
+        },
+        {
+          "id": "B",
+          "text": "Teks prosedur"
+        },
+        {
+          "id": "C",
+          "text": "Teks deskripsi"
+        },
+        {
+          "id": "D",
+          "text": "Teks eksposisi"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Teks tersebut berisi langkah-langkah atau prosedur membuat kerajinan dari kertas bekas, ciri khas teks prosedur.",
+      "tags": [
+        "membaca",
+        "jenis teks"
+      ],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved",
+      "cognitive": "ANALISIS",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMP-MEMBACA-SET002-Q040",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "membaca",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "passage": "Cara Membuat Kerajinan dari Kertas Bekas. Pertama, siapkan bahan dan alat berupa kertas bekas, gunting, lem, penggaris, dan cat air. Kedua, potong kertas bekas menjadi bentuk persegi panjang berukuran sepuluh kali lima belas sentimeter. Ketiga, lipat kertas menjadi dua bagian sama besar, kemudian buat pola sesuai keinginan. Keempat, gunting kertas mengikuti pola yang telah dibuat. Kelima, rekatkan potongan kertas menggunakan lem hingga membentuk bangun tiga dimensi. Keenam, hias kerajinan dengan cat air agar terlihat menarik. Setelah kering, kerajinan siap dipajang. Kegiatan ini sangat bermanfaat untuk melatih kreativitas dan keterampilan motorik halus, serta mengajarkan daur ulang sampah kertas.",
+      "stem": "Apa yang dilakukan pada langkah keenam?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Menggunting kertas"
+        },
+        {
+          "id": "B",
+          "text": "Merekatkan potongan kertas"
+        },
+        {
+          "id": "C",
+          "text": "Menghias kerajinan dengan cat air"
+        },
+        {
+          "id": "D",
+          "text": "Melipat kertas"
+        }
+      ],
+      "correctAnswer": "C",
+      "explanation": "Langkah keenam adalah 'hias kerajinan dengan cat air agar terlihat menarik.'",
+      "tags": [
+        "membaca",
+        "prosedur"
+      ],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMP-MEMBACA-SET002-Q041",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "membaca",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "passage": "Laporan hasil observasi halaman sekolah menunjukkan bahwa terdapat berbagai jenis tumbuhan yang tumbuh di area seluas lima puluh meter persegi. Tercatat ada dua belas pohon pelindung, tiga puluh tanaman hias, dan dua jenis rumput. Kondisi tanah di halaman sekolah cukup subur dengan pH sekitar enam koma lima. Kelembapan udara rata-rata mencapai tujuh puluh persen. Suhu harian berkisar antara dua puluh lima hingga tiga puluh dua derajat Celcius. Berdasarkan pengamatan selama satu minggu, aktivitas serangga seperti kupu-kupu dan lebah paling banyak terlihat pada pagi hari antara pukul tujuh hingga sembilan. Keanekaragaman hayati di halaman sekolah tergolong sedang dengan indeks keanekaragaman satu koma delapan. Disarankan untuk menambah variasi tanaman agar ekosistem halaman sekolah semakin stabil.",
+      "stem": "Berapa luas area halaman sekolah yang diobservasi?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Dua puluh lima meter persegi"
+        },
+        {
+          "id": "B",
+          "text": "Lima puluh meter persegi"
+        },
+        {
+          "id": "C",
+          "text": "Seratus meter persegi"
+        },
+        {
+          "id": "D",
+          "text": "Lima belas meter persegi"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Teks menyebutkan 'area seluas lima puluh meter persegi.'",
+      "tags": [
+        "membaca",
+        "informasi eksplisit"
+      ],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMP-MEMBACA-SET002-Q042",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "membaca",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "passage": "Laporan hasil observasi halaman sekolah menunjukkan bahwa terdapat berbagai jenis tumbuhan yang tumbuh di area seluas lima puluh meter persegi. Tercatat ada dua belas pohon pelindung, tiga puluh tanaman hias, dan dua jenis rumput. Kondisi tanah di halaman sekolah cukup subur dengan pH sekitar enam koma lima. Kelembapan udara rata-rata mencapai tujuh puluh persen. Suhu harian berkisar antara dua puluh lima hingga tiga puluh dua derajat Celcius. Berdasarkan pengamatan selama satu minggu, aktivitas serangga seperti kupu-kupu dan lebah paling banyak terlihat pada pagi hari antara pukul tujuh hingga sembilan. Keanekaragaman hayati di halaman sekolah tergolong sedang dengan indeks keanekaragaman satu koma delapan. Disarankan untuk menambah variasi tanaman agar ekosistem halaman sekolah semakin stabil.",
+      "stem": "Kapan aktivitas serangga paling banyak terlihat?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Siang hari antara pukul dua belas hingga dua"
+        },
+        {
+          "id": "B",
+          "text": "Pagi hari antara pukul tujuh hingga sembilan"
+        },
+        {
+          "id": "C",
+          "text": "Sore hari antara pukul empat hingga enam"
+        },
+        {
+          "id": "D",
+          "text": "Malam hari antara pukul tujuh hingga sembilan"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Teks menyebutkan, 'aktivitas serangga seperti kupu-kupu dan lebah paling banyak terlihat pada pagi hari antara pukul tujuh hingga sembilan.'",
+      "tags": [
+        "membaca",
+        "informasi eksplisit"
+      ],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMP-MEMBACA-SET002-Q043",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "membaca",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "passage": "Laporan hasil observasi halaman sekolah menunjukkan bahwa terdapat berbagai jenis tumbuhan yang tumbuh di area seluas lima puluh meter persegi. Tercatat ada dua belas pohon pelindung, tiga puluh tanaman hias, dan dua jenis rumput. Kondisi tanah di halaman sekolah cukup subur dengan pH sekitar enam koma lima. Kelembapan udara rata-rata mencapai tujuh puluh persen. Suhu harian berkisar antara dua puluh lima hingga tiga puluh dua derajat Celcius. Berdasarkan pengamatan selama satu minggu, aktivitas serangga seperti kupu-kupu dan lebah paling banyak terlihat pada pagi hari antara pukul tujuh hingga sembilan. Keanekaragaman hayati di halaman sekolah tergolong sedang dengan indeks keanekaragaman satu koma delapan. Disarankan untuk menambah variasi tanaman agar ekosistem halaman sekolah semakin stabil.",
+      "stem": "Saran yang tepat berdasarkan hasil observasi tersebut adalah?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Mengurangi jumlah tanaman hias"
+        },
+        {
+          "id": "B",
+          "text": "Menambah variasi tanaman"
+        },
+        {
+          "id": "C",
+          "text": "Memindahkan semua pohon pelindung"
+        },
+        {
+          "id": "D",
+          "text": "Mengganti rumput dengan paving block"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Teks menyebutkan, 'Disarankan untuk menambah variasi tanaman agar ekosistem halaman sekolah semakin stabil.'",
+      "tags": [
+        "membaca",
+        "simpulan"
+      ],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved",
+      "cognitive": "ANALISIS",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMP-MEMBACA-SET002-Q044",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "membaca",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "passage": "Laporan hasil observasi halaman sekolah menunjukkan bahwa terdapat berbagai jenis tumbuhan yang tumbuh di area seluas lima puluh meter persegi. Tercatat ada dua belas pohon pelindung, tiga puluh tanaman hias, dan dua jenis rumput. Kondisi tanah di halaman sekolah cukup subur dengan pH sekitar enam koma lima. Kelembapan udara rata-rata mencapai tujuh puluh persen. Suhu harian berkisar antara dua puluh lima hingga tiga puluh dua derajat Celcius. Berdasarkan pengamatan selama satu minggu, aktivitas serangga seperti kupu-kupu dan lebah paling banyak terlihat pada pagi hari antara pukul tujuh hingga sembilan. Keanekaragaman hayati di halaman sekolah tergolong sedang dengan indeks keanekaragaman satu koma delapan. Disarankan untuk menambah variasi tanaman agar ekosistem halaman sekolah semakin stabil.",
+      "stem": "Informasi yang tidak sesuai dengan teks adalah?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Terdapat dua belas pohon pelindung di halaman sekolah"
+        },
+        {
+          "id": "B",
+          "text": "Kelembapan udara rata-rata mencapai tujuh puluh persen"
+        },
+        {
+          "id": "C",
+          "text": "Indeks keanekaragaman hayati adalah satu koma delapan"
+        },
+        {
+          "id": "D",
+          "text": "Aktivitas serangga paling banyak pada siang hari"
+        }
+      ],
+      "correctAnswer": "D",
+      "explanation": "Teks menyebutkan aktivitas serangga paling banyak pada pagi hari pukul tujuh hingga sembilan, bukan siang hari.",
+      "tags": [
+        "membaca",
+        "informasi tidak sesuai"
+      ],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved",
+      "cognitive": "ANALISIS",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMP-MEMBACA-SET002-Q045",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "membaca",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 1,
+      "passage": "Laporan hasil observasi halaman sekolah menunjukkan bahwa terdapat berbagai jenis tumbuhan yang tumbuh di area seluas lima puluh meter persegi. Tercatat ada dua belas pohon pelindung, tiga puluh tanaman hias, dan dua jenis rumput. Kondisi tanah di halaman sekolah cukup subur dengan pH sekitar enam koma lima. Kelembapan udara rata-rata mencapai tujuh puluh persen. Suhu harian berkisar antara dua puluh lima hingga tiga puluh dua derajat Celcius. Berdasarkan pengamatan selama satu minggu, aktivitas serangga seperti kupu-kupu dan lebah paling banyak terlihat pada pagi hari antara pukul tujuh hingga sembilan. Keanekaragaman hayati di halaman sekolah tergolong sedang dengan indeks keanekaragaman satu koma delapan. Disarankan untuk menambah variasi tanaman agar ekosistem halaman sekolah semakin stabil.",
+      "stem": "Berapa jumlah pohon pelindung yang tercatat dalam teks?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Sepuluh pohon"
+        },
+        {
+          "id": "B",
+          "text": "Dua belas pohon"
+        },
+        {
+          "id": "C",
+          "text": "Lima belas pohon"
+        },
+        {
+          "id": "D",
+          "text": "Dua puluh pohon"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Teks menyebutkan 'Tercatat ada dua belas pohon pelindung'.",
+      "tags": [
+        "membaca",
+        "informasi eksplisit"
+      ],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMP-MEMBACA-SET002-Q046",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "membaca",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "passage": "Sampah plastik telah menjadi masalah serius di Indonesia. Setiap tahun, jutaan ton sampah plastik berakhir di lautan dan mengancam ekosistem laut. Penyu, ikan, dan burung laut sering kali memakan plastik yang dikira makanan, yang berakibat fatal bagi mereka. Pemerintah Indonesia telah menerapkan kebijakan pengurangan penggunaan kantong plastik di berbagai daerah. Beberapa kota bahkan melarang penggunaan sedotan plastik dan styrofoam. Namun, kesadaran masyarakat masih menjadi tantangan utama. Banyak orang masih enggan membawa tas belanja sendiri atau menggunakan kembali botol plastik. Solusi jangka panjang adalah mengubah kebiasaan masyarakat melalui edukasi dan penyediaan infrastruktur daur ulang yang memadai. Gerakan zero waste perlu didorong sejak usia dini di sekolah-sekolah.",
+      "stem": "Apa dampak sampah plastik terhadap hewan laut?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Hewan laut berkembang biak lebih cepat"
+        },
+        {
+          "id": "B",
+          "text": "Hewan laut memakan plastik yang berakibat fatal"
+        },
+        {
+          "id": "C",
+          "text": "Hewan laut menggunakan plastik sebagai tempat tinggal"
+        },
+        {
+          "id": "D",
+          "text": "Hewan laut tidak terpengaruh oleh sampah plastik"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Teks menyebutkan, 'Penyu, ikan, dan burung laut sering kali memakan plastik yang dikira makanan, yang berakibat fatal bagi mereka.'",
+      "tags": [
+        "membaca",
+        "lingkungan"
+      ],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMP-MEMBACA-SET002-Q047",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "membaca",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "passage": "Sampah plastik telah menjadi masalah serius di Indonesia. Setiap tahun, jutaan ton sampah plastik berakhir di lautan dan mengancam ekosistem laut. Penyu, ikan, dan burung laut sering kali memakan plastik yang dikira makanan, yang berakibat fatal bagi mereka. Pemerintah Indonesia telah menerapkan kebijakan pengurangan penggunaan kantong plastik di berbagai daerah. Beberapa kota bahkan melarang penggunaan sedotan plastik dan styrofoam. Namun, kesadaran masyarakat masih menjadi tantangan utama. Banyak orang masih enggan membawa tas belanja sendiri atau menggunakan kembali botol plastik. Solusi jangka panjang adalah mengubah kebiasaan masyarakat melalui edukasi dan penyediaan infrastruktur daur ulang yang memadai. Gerakan zero waste perlu didorong sejak usia dini di sekolah-sekolah.",
+      "stem": "Apa tantangan utama dalam penanganan sampah plastik menurut teks?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Kurangnya teknologi daur ulang"
+        },
+        {
+          "id": "B",
+          "text": "Kesadaran masyarakat yang masih rendah"
+        },
+        {
+          "id": "C",
+          "text": "Mahalnya biaya pengelolaan sampah"
+        },
+        {
+          "id": "D",
+          "text": "Tidak ada kebijakan pemerintah"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Teks menyebutkan, 'Namun, kesadaran masyarakat masih menjadi tantangan utama.'",
+      "tags": [
+        "membaca",
+        "informasi eksplisit"
+      ],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMP-MEMBACA-SET002-Q048",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "membaca",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "passage": "Sampah plastik telah menjadi masalah serius di Indonesia. Setiap tahun, jutaan ton sampah plastik berakhir di lautan dan mengancam ekosistem laut. Penyu, ikan, dan burung laut sering kali memakan plastik yang dikira makanan, yang berakibat fatal bagi mereka. Pemerintah Indonesia telah menerapkan kebijakan pengurangan penggunaan kantong plastik di berbagai daerah. Beberapa kota bahkan melarang penggunaan sedotan plastik dan styrofoam. Namun, kesadaran masyarakat masih menjadi tantangan utama. Banyak orang masih enggan membawa tas belanja sendiri atau menggunakan kembali botol plastik. Solusi jangka panjang adalah mengubah kebiasaan masyarakat melalui edukasi dan penyediaan infrastruktur daur ulang yang memadai. Gerakan zero waste perlu didorong sejak usia dini di sekolah-sekolah.",
+      "stem": "Kebijakan apa yang telah diterapkan pemerintah terkait sampah plastik?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Melarang semua produk plastik"
+        },
+        {
+          "id": "B",
+          "text": "Pengurangan penggunaan kantong plastik di berbagai daerah"
+        },
+        {
+          "id": "C",
+          "text": "Menaikkan harga plastik"
+        },
+        {
+          "id": "D",
+          "text": "Mengimpor sampah plastik"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Teks menyebutkan, 'Pemerintah Indonesia telah menerapkan kebijakan pengurangan penggunaan kantong plastik di berbagai daerah.'",
+      "tags": [
+        "membaca",
+        "informasi eksplisit"
+      ],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMP-MEMBACA-SET002-Q049",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "membaca",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 3,
+      "passage": "Sampah plastik telah menjadi masalah serius di Indonesia. Setiap tahun, jutaan ton sampah plastik berakhir di lautan dan mengancam ekosistem laut. Penyu, ikan, dan burung laut sering kali memakan plastik yang dikira makanan, yang berakibat fatal bagi mereka. Pemerintah Indonesia telah menerapkan kebijakan pengurangan penggunaan kantong plastik di berbagai daerah. Beberapa kota bahkan melarang penggunaan sedotan plastik dan styrofoam. Namun, kesadaran masyarakat masih menjadi tantangan utama. Banyak orang masih enggan membawa tas belanja sendiri atau menggunakan kembali botol plastik. Solusi jangka panjang adalah mengubah kebiasaan masyarakat melalui edukasi dan penyediaan infrastruktur daur ulang yang memadai. Gerakan zero waste perlu didorong sejak usia dini di sekolah-sekolah.",
+      "stem": "Apa yang dimaksud dengan 'zero waste' dalam konteks teks?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Membakar semua sampah"
+        },
+        {
+          "id": "B",
+          "text": "Mengurangi sampah seminimal mungkin"
+        },
+        {
+          "id": "C",
+          "text": "Membuang sampah ke laut"
+        },
+        {
+          "id": "D",
+          "text": "Menimbun sampah di tanah"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Zero waste berarti mengurangi sampah seminimal mungkin, dijelaskan dalam konteks mengubah kebiasaan masyarakat untuk mengurangi plastik.",
+      "tags": [
+        "membaca",
+        "kosakata"
+      ],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMP-MEMBACA-SET002-Q050",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "membaca",
+      "band": "SEMENJAK",
+      "type": "pilihan_ganda",
+      "difficulty": 2,
+      "passage": "Sampah plastik telah menjadi masalah serius di Indonesia. Setiap tahun, jutaan ton sampah plastik berakhir di lautan dan mengancam ekosistem laut. Penyu, ikan, dan burung laut sering kali memakan plastik yang dikira makanan, yang berakibat fatal bagi mereka. Pemerintah Indonesia telah menerapkan kebijakan pengurangan penggunaan kantong plastik di berbagai daerah. Beberapa kota bahkan melarang penggunaan sedotan plastik dan styrofoam. Namun, kesadaran masyarakat masih menjadi tantangan utama. Banyak orang masih enggan membawa tas belanja sendiri atau menggunakan kembali botol plastik. Solusi jangka panjang adalah mengubah kebiasaan masyarakat melalui edukasi dan penyediaan infrastruktur daur ulang yang memadai. Gerakan zero waste perlu didorong sejak usia dini di sekolah-sekolah.",
+      "stem": "Di manakah gerakan zero waste perlu didorong menurut teks?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Di perkantoran"
+        },
+        {
+          "id": "B",
+          "text": "Di sekolah-sekolah"
+        },
+        {
+          "id": "C",
+          "text": "Di pabrik"
+        },
+        {
+          "id": "D",
+          "text": "Di pasar tradisional"
+        }
+      ],
+      "correctAnswer": "B",
+      "explanation": "Teks menyebutkan, 'Gerakan zero waste perlu didorong sejak usia dini di sekolah-sekolah.'",
+      "tags": [
+        "membaca",
+        "informasi eksplisit"
+      ],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "approved",
+      "cognitive": "PEMAHAMAN",
+      "domain": "AKADEMIK"
+    }
+  ]
+}

@@ -1,0 +1,814 @@
+{
+  "meta": {
+    "product": "UKBI_PRACTICE",
+    "track": "UKBI_SMP",
+    "section": "menulis",
+    "set": "set-002",
+    "totalItems": 20,
+    "source": "BC_UKBI_SMP_ORIGINAL"
+  },
+  "questions": [
+    {
+      "id": "BC-UKBI-SMP-MENULIS-SET002-Q001",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "menulis",
+      "band": "SEMENJAK",
+      "type": "constructed",
+      "difficulty": 3,
+      "scoringMode": "rubric",
+      "stem": "Tuliskan sebuah paragraf deskripsi tentang lingkungan sekolahmu. Jelaskan suasana, fasilitas, dan hal-hal yang membuat sekolahmu nyaman untuk belajar.",
+      "wordLimit": {
+        "min": 80,
+        "max": 150
+      },
+      "rubric": [
+        {
+          "criteria": "Kesesuaian isi dengan topik",
+          "weight": 40,
+          "description": "Kesesuaian isi dengan topik dan instruksi yang diberikan"
+        },
+        {
+          "criteria": "Penggunaan ejaan dan tanda baca",
+          "weight": 30,
+          "description": "Ketepatan penggunaan huruf kapital, tanda titik, koma, dan tanda baca lainnya"
+        },
+        {
+          "criteria": "Kelengkapan dan keruntutan kalimat",
+          "weight": 30,
+          "description": "Kalimat lengkap dengan struktur yang jelas dan urut"
+        }
+      ],
+      "tags": [
+        "deskripsi",
+        "lingkungan sekolah"
+      ],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "needs-review",
+      "cognitive": "KREASI",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMP-MENULIS-SET002-Q002",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "menulis",
+      "band": "SEMENJAK",
+      "type": "constructed",
+      "difficulty": 3,
+      "scoringMode": "rubric",
+      "stem": "Buatlah sebuah cerita pendek tentang pengalamanmu membantu orang tua di rumah. Ceritakan kegiatan yang kamu lakukan dan perasaanmu setelah membantu mereka.",
+      "wordLimit": {
+        "min": 100,
+        "max": 200
+      },
+      "rubric": [
+        {
+          "criteria": "Kesesuaian isi dengan topik",
+          "weight": 40,
+          "description": "Kesesuaian isi dengan topik dan instruksi yang diberikan"
+        },
+        {
+          "criteria": "Penggunaan ejaan dan tanda baca",
+          "weight": 30,
+          "description": "Ketepatan penggunaan huruf kapital, tanda titik, koma, dan tanda baca lainnya"
+        },
+        {
+          "criteria": "Kelengkapan dan keruntutan kalimat",
+          "weight": 30,
+          "description": "Kalimat lengkap dengan struktur yang jelas dan urut"
+        }
+      ],
+      "tags": [
+        "cerpen",
+        "pengalaman pribadi"
+      ],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "needs-review",
+      "cognitive": "KREASI",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMP-MENULIS-SET002-Q003",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "menulis",
+      "band": "SEMENJAK",
+      "type": "constructed",
+      "difficulty": 3,
+      "scoringMode": "rubric",
+      "stem": "Tuliskan pendapatmu tentang pentingnya membaca buku di kalangan remaja. Sertakan alasan dan contoh manfaat yang kamu rasakan.",
+      "wordLimit": {
+        "min": 80,
+        "max": 150
+      },
+      "rubric": [
+        {
+          "criteria": "Kesesuaian isi dengan topik",
+          "weight": 40,
+          "description": "Kesesuaian isi dengan topik dan instruksi yang diberikan"
+        },
+        {
+          "criteria": "Penggunaan ejaan dan tanda baca",
+          "weight": 30,
+          "description": "Ketepatan penggunaan huruf kapital, tanda titik, koma, dan tanda baca lainnya"
+        },
+        {
+          "criteria": "Kelengkapan dan keruntutan kalimat",
+          "weight": 30,
+          "description": "Kalimat lengkap dengan struktur yang jelas dan urut"
+        }
+      ],
+      "tags": [
+        "opini",
+        "membaca"
+      ],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "needs-review",
+      "cognitive": "KREASI",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMP-MENULIS-SET002-Q004",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "menulis",
+      "band": "SEMENJAK",
+      "type": "constructed",
+      "difficulty": 3,
+      "scoringMode": "rubric",
+      "stem": "Buatlah sebuah surat pribadi untuk sahabatmu yang pindah ke kota lain. Ungkapkan kerinduan dan ceritakan kegiatan terbarumu di sekolah.",
+      "wordLimit": {
+        "min": 80,
+        "max": 150
+      },
+      "rubric": [
+        {
+          "criteria": "Kesesuaian isi dengan topik",
+          "weight": 40,
+          "description": "Kesesuaian isi dengan topik dan instruksi yang diberikan"
+        },
+        {
+          "criteria": "Penggunaan ejaan dan tanda baca",
+          "weight": 30,
+          "description": "Ketepatan penggunaan huruf kapital, tanda titik, koma, dan tanda baca lainnya"
+        },
+        {
+          "criteria": "Kelengkapan dan keruntutan kalimat",
+          "weight": 30,
+          "description": "Kalimat lengkap dengan struktur yang jelas dan urut"
+        }
+      ],
+      "tags": [
+        "surat pribadi",
+        "persahabatan"
+      ],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "needs-review",
+      "cognitive": "KREASI",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMP-MENULIS-SET002-Q005",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "menulis",
+      "band": "SEMENJAK",
+      "type": "constructed",
+      "difficulty": 3,
+      "scoringMode": "rubric",
+      "stem": "Tuliskan langkah-langkah membuat minuman atau makanan favoritmu. Gunakan kata kerja perintah yang jelas dan urutan yang tepat.",
+      "wordLimit": {
+        "min": 60,
+        "max": 120
+      },
+      "rubric": [
+        {
+          "criteria": "Kesesuaian isi dengan topik",
+          "weight": 40,
+          "description": "Kesesuaian isi dengan topik dan instruksi yang diberikan"
+        },
+        {
+          "criteria": "Penggunaan ejaan dan tanda baca",
+          "weight": 30,
+          "description": "Ketepatan penggunaan huruf kapital, tanda titik, koma, dan tanda baca lainnya"
+        },
+        {
+          "criteria": "Kelengkapan dan keruntutan kalimat",
+          "weight": 30,
+          "description": "Kalimat lengkap dengan struktur yang jelas dan urut"
+        }
+      ],
+      "tags": [
+        "prosedur",
+        "makanan"
+      ],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "needs-review",
+      "cognitive": "KREASI",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMP-MENULIS-SET002-Q006",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "menulis",
+      "band": "SEMENJAK",
+      "type": "constructed",
+      "difficulty": 3,
+      "scoringMode": "rubric",
+      "stem": "Ceritakan pengalamanmu saat pertama kali mengikuti lomba atau kompetisi. Jelaskan persiapan, perasaan, dan hasil yang kamu capai.",
+      "wordLimit": {
+        "min": 100,
+        "max": 200
+      },
+      "rubric": [
+        {
+          "criteria": "Kesesuaian isi dengan topik",
+          "weight": 40,
+          "description": "Kesesuaian isi dengan topik dan instruksi yang diberikan"
+        },
+        {
+          "criteria": "Penggunaan ejaan dan tanda baca",
+          "weight": 30,
+          "description": "Ketepatan penggunaan huruf kapital, tanda titik, koma, dan tanda baca lainnya"
+        },
+        {
+          "criteria": "Kelengkapan dan keruntutan kalimat",
+          "weight": 30,
+          "description": "Kalimat lengkap dengan struktur yang jelas dan urut"
+        }
+      ],
+      "tags": [
+        "pengalaman",
+        "lomba"
+      ],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "needs-review",
+      "cognitive": "KREASI",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMP-MENULIS-SET002-Q007",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "menulis",
+      "band": "SEMENJAK",
+      "type": "constructed",
+      "difficulty": 3,
+      "scoringMode": "rubric",
+      "stem": "Tuliskan sebuah puisi bertema persahabatan. Gunakan pilihan kata yang indah dan ekspresif. Minimal empat bait.",
+      "wordLimit": {
+        "min": 60,
+        "max": 120
+      },
+      "rubric": [
+        {
+          "criteria": "Kesesuaian isi dengan topik",
+          "weight": 40,
+          "description": "Kesesuaian isi dengan topik dan instruksi yang diberikan"
+        },
+        {
+          "criteria": "Penggunaan ejaan dan tanda baca",
+          "weight": 30,
+          "description": "Ketepatan penggunaan huruf kapital, tanda titik, koma, dan tanda baca lainnya"
+        },
+        {
+          "criteria": "Kelengkapan dan keruntutan kalimat",
+          "weight": 30,
+          "description": "Kalimat lengkap dengan struktur yang jelas dan urut"
+        }
+      ],
+      "tags": [
+        "puisi",
+        "persahabatan"
+      ],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "needs-review",
+      "cognitive": "KREASI",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMP-MENULIS-SET002-Q008",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "menulis",
+      "band": "SEMENJAK",
+      "type": "constructed",
+      "difficulty": 3,
+      "scoringMode": "rubric",
+      "stem": "Buatlah ringkasan dari sebuah buku atau film yang pernah kamu baca atau tonton. Sertakan tokoh, alur cerita, dan pesan moralnya.",
+      "wordLimit": {
+        "min": 100,
+        "max": 200
+      },
+      "rubric": [
+        {
+          "criteria": "Kesesuaian isi dengan topik",
+          "weight": 40,
+          "description": "Kesesuaian isi dengan topik dan instruksi yang diberikan"
+        },
+        {
+          "criteria": "Penggunaan ejaan dan tanda baca",
+          "weight": 30,
+          "description": "Ketepatan penggunaan huruf kapital, tanda titik, koma, dan tanda baca lainnya"
+        },
+        {
+          "criteria": "Kelengkapan dan keruntutan kalimat",
+          "weight": 30,
+          "description": "Kalimat lengkap dengan struktur yang jelas dan urut"
+        }
+      ],
+      "tags": [
+        "ringkasan",
+        "buku",
+        "film"
+      ],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "needs-review",
+      "cognitive": "KREASI",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMP-MENULIS-SET002-Q009",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "menulis",
+      "band": "SEMENJAK",
+      "type": "constructed",
+      "difficulty": 3,
+      "scoringMode": "rubric",
+      "stem": "Tuliskan argumentasimu tentang mengapa remaja perlu mengurangi penggunaan gawai. Berikan tiga alasan yang didukung data atau pengamatan.",
+      "wordLimit": {
+        "min": 100,
+        "max": 200
+      },
+      "rubric": [
+        {
+          "criteria": "Kesesuaian isi dengan topik",
+          "weight": 40,
+          "description": "Kesesuaian isi dengan topik dan instruksi yang diberikan"
+        },
+        {
+          "criteria": "Penggunaan ejaan dan tanda baca",
+          "weight": 30,
+          "description": "Ketepatan penggunaan huruf kapital, tanda titik, koma, dan tanda baca lainnya"
+        },
+        {
+          "criteria": "Kelengkapan dan keruntutan kalimat",
+          "weight": 30,
+          "description": "Kalimat lengkap dengan struktur yang jelas dan urut"
+        }
+      ],
+      "tags": [
+        "argumentasi",
+        "gawai"
+      ],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "needs-review",
+      "cognitive": "KREASI",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMP-MENULIS-SET002-Q010",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "menulis",
+      "band": "SEMENJAK",
+      "type": "constructed",
+      "difficulty": 3,
+      "scoringMode": "rubric",
+      "stem": "Ceritakan tokoh idolamu dalam bahasa Indonesia. Jelaskan siapa dia, mengapa kamu mengaguminya, dan pelajaran apa yang bisa kamu ambil dari tokoh tersebut.",
+      "wordLimit": {
+        "min": 100,
+        "max": 200
+      },
+      "rubric": [
+        {
+          "criteria": "Kesesuaian isi dengan topik",
+          "weight": 40,
+          "description": "Kesesuaian isi dengan topik dan instruksi yang diberikan"
+        },
+        {
+          "criteria": "Penggunaan ejaan dan tanda baca",
+          "weight": 30,
+          "description": "Ketepatan penggunaan huruf kapital, tanda titik, koma, dan tanda baca lainnya"
+        },
+        {
+          "criteria": "Kelengkapan dan keruntutan kalimat",
+          "weight": 30,
+          "description": "Kalimat lengkap dengan struktur yang jelas dan urut"
+        }
+      ],
+      "tags": [
+        "deskripsi tokoh",
+        "idola"
+      ],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "needs-review",
+      "cognitive": "KREASI",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMP-MENULIS-SET002-Q011",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "menulis",
+      "band": "SEMENJAK",
+      "type": "constructed",
+      "difficulty": 3,
+      "scoringMode": "rubric",
+      "stem": "Tuliskan pengalamanmu saat mengikuti kegiatan ekstrakurikuler di sekolah. Jelaskan kegiatan yang dilakukan, teman-teman yang kamu temui, dan manfaat yang kamu dapatkan.",
+      "wordLimit": {
+        "min": 100,
+        "max": 200
+      },
+      "rubric": [
+        {
+          "criteria": "Kesesuaian isi dengan topik",
+          "weight": 40,
+          "description": "Kesesuaian isi dengan topik dan instruksi yang diberikan"
+        },
+        {
+          "criteria": "Penggunaan ejaan dan tanda baca",
+          "weight": 30,
+          "description": "Ketepatan penggunaan huruf kapital, tanda titik, koma, dan tanda baca lainnya"
+        },
+        {
+          "criteria": "Kelengkapan dan keruntutan kalimat",
+          "weight": 30,
+          "description": "Kalimat lengkap dengan struktur yang jelas dan urut"
+        }
+      ],
+      "tags": [
+        "pengalaman",
+        "ekstrakurikuler"
+      ],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "needs-review",
+      "cognitive": "KREASI",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMP-MENULIS-SET002-Q012",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "menulis",
+      "band": "SEMENJAK",
+      "type": "constructed",
+      "difficulty": 3,
+      "scoringMode": "rubric",
+      "stem": "Buatlah sebuah karangan tentang keindahan alam Indonesia. Pilih satu tempat wisata yang pernah kamu kunjungi dan gambarkan keindahannya.",
+      "wordLimit": {
+        "min": 80,
+        "max": 200
+      },
+      "rubric": [
+        {
+          "criteria": "Kesesuaian isi dengan topik",
+          "weight": 40,
+          "description": "Kesesuaian isi dengan topik dan instruksi yang diberikan"
+        },
+        {
+          "criteria": "Penggunaan ejaan dan tanda baca",
+          "weight": 30,
+          "description": "Ketepatan penggunaan huruf kapital, tanda titik, koma, dan tanda baca lainnya"
+        },
+        {
+          "criteria": "Kelengkapan dan keruntutan kalimat",
+          "weight": 30,
+          "description": "Kalimat lengkap dengan struktur yang jelas dan urut"
+        }
+      ],
+      "tags": [
+        "karangan",
+        "alam",
+        "wisata"
+      ],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "needs-review",
+      "cognitive": "KREASI",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMP-MENULIS-SET002-Q013",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "menulis",
+      "band": "SEMENJAK",
+      "type": "constructed",
+      "difficulty": 3,
+      "scoringMode": "rubric",
+      "stem": "Tuliskan pendapatmu tentang pentingnya menjaga kebersihan lingkungan. Sertakan solusi yang bisa dilakukan oleh siswa di sekolah.",
+      "wordLimit": {
+        "min": 80,
+        "max": 150
+      },
+      "rubric": [
+        {
+          "criteria": "Kesesuaian isi dengan topik",
+          "weight": 40,
+          "description": "Kesesuaian isi dengan topik dan instruksi yang diberikan"
+        },
+        {
+          "criteria": "Penggunaan ejaan dan tanda baca",
+          "weight": 30,
+          "description": "Ketepatan penggunaan huruf kapital, tanda titik, koma, dan tanda baca lainnya"
+        },
+        {
+          "criteria": "Kelengkapan dan keruntutan kalimat",
+          "weight": 30,
+          "description": "Kalimat lengkap dengan struktur yang jelas dan urut"
+        }
+      ],
+      "tags": [
+        "opini",
+        "kebersihan lingkungan"
+      ],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "needs-review",
+      "cognitive": "KREASI",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMP-MENULIS-SET002-Q014",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "menulis",
+      "band": "SEMENJAK",
+      "type": "constructed",
+      "difficulty": 3,
+      "scoringMode": "rubric",
+      "stem": "Buatlah sebuah dialog singkat antara dua orang tentang rencana liburan sekolah. Gunakan kalimat langsung yang tepat.",
+      "wordLimit": {
+        "min": 60,
+        "max": 150
+      },
+      "rubric": [
+        {
+          "criteria": "Kesesuaian isi dengan topik",
+          "weight": 40,
+          "description": "Kesesuaian isi dengan topik dan instruksi yang diberikan"
+        },
+        {
+          "criteria": "Penggunaan ejaan dan tanda baca",
+          "weight": 30,
+          "description": "Ketepatan penggunaan huruf kapital, tanda titik, koma, dan tanda baca lainnya"
+        },
+        {
+          "criteria": "Kelengkapan dan keruntutan kalimat",
+          "weight": 30,
+          "description": "Kalimat lengkap dengan struktur yang jelas dan urut"
+        }
+      ],
+      "tags": [
+        "dialog",
+        "liburan"
+      ],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "needs-review",
+      "cognitive": "KREASI",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMP-MENULIS-SET002-Q015",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "menulis",
+      "band": "SEMENJAK",
+      "type": "constructed",
+      "difficulty": 3,
+      "scoringMode": "rubric",
+      "stem": "Tuliskan laporan singkat tentang kegiatan kerja bakti di lingkungan rumahmu. Gunakan struktur laporan yang benar: tujuan, waktu, peserta, kegiatan, hasil.",
+      "wordLimit": {
+        "min": 100,
+        "max": 200
+      },
+      "rubric": [
+        {
+          "criteria": "Kesesuaian isi dengan topik",
+          "weight": 40,
+          "description": "Kesesuaian isi dengan topik dan instruksi yang diberikan"
+        },
+        {
+          "criteria": "Penggunaan ejaan dan tanda baca",
+          "weight": 30,
+          "description": "Ketepatan penggunaan huruf kapital, tanda titik, koma, dan tanda baca lainnya"
+        },
+        {
+          "criteria": "Kelengkapan dan keruntutan kalimat",
+          "weight": 30,
+          "description": "Kalimat lengkap dengan struktur yang jelas dan urut"
+        }
+      ],
+      "tags": [
+        "laporan",
+        "kerja bakti"
+      ],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "needs-review",
+      "cognitive": "KREASI",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMP-MENULIS-SET002-Q016",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "menulis",
+      "band": "SEMENJAK",
+      "type": "constructed",
+      "difficulty": 3,
+      "scoringMode": "rubric",
+      "stem": "Ceritakan bagaimana caramu mengatasi rasa malas belajar. Berikan tips yang menurutmu efektif untuk tetap semangat belajar.",
+      "wordLimit": {
+        "min": 80,
+        "max": 150
+      },
+      "rubric": [
+        {
+          "criteria": "Kesesuaian isi dengan topik",
+          "weight": 40,
+          "description": "Kesesuaian isi dengan topik dan instruksi yang diberikan"
+        },
+        {
+          "criteria": "Penggunaan ejaan dan tanda baca",
+          "weight": 30,
+          "description": "Ketepatan penggunaan huruf kapital, tanda titik, koma, dan tanda baca lainnya"
+        },
+        {
+          "criteria": "Kelengkapan dan keruntutan kalimat",
+          "weight": 30,
+          "description": "Kalimat lengkap dengan struktur yang jelas dan urut"
+        }
+      ],
+      "tags": [
+        "tips",
+        "belajar"
+      ],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "needs-review",
+      "cognitive": "KREASI",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMP-MENULIS-SET002-Q017",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "menulis",
+      "band": "SEMENJAK",
+      "type": "constructed",
+      "difficulty": 3,
+      "scoringMode": "rubric",
+      "stem": "Tuliskan sebuah cerita fiksi pendek tentang petualangan seekor kucing yang tersesat di kota besar. Hidupkan cerita dengan deskripsi yang detail.",
+      "wordLimit": {
+        "min": 100,
+        "max": 200
+      },
+      "rubric": [
+        {
+          "criteria": "Kesesuaian isi dengan topik",
+          "weight": 40,
+          "description": "Kesesuaian isi dengan topik dan instruksi yang diberikan"
+        },
+        {
+          "criteria": "Penggunaan ejaan dan tanda baca",
+          "weight": 30,
+          "description": "Ketepatan penggunaan huruf kapital, tanda titik, koma, dan tanda baca lainnya"
+        },
+        {
+          "criteria": "Kelengkapan dan keruntutan kalimat",
+          "weight": 30,
+          "description": "Kalimat lengkap dengan struktur yang jelas dan urut"
+        }
+      ],
+      "tags": [
+        "fiksi",
+        "petualangan"
+      ],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "needs-review",
+      "cognitive": "KREASI",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMP-MENULIS-SET002-Q018",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "menulis",
+      "band": "SEMENJAK",
+      "type": "constructed",
+      "difficulty": 3,
+      "scoringMode": "rubric",
+      "stem": "Buatlah karangan tentang cita-citamu di masa depan. Jelaskan profesi yang kamu inginkan, alasan memilihnya, dan langkah yang akan kamu tempuh.",
+      "wordLimit": {
+        "min": 80,
+        "max": 150
+      },
+      "rubric": [
+        {
+          "criteria": "Kesesuaian isi dengan topik",
+          "weight": 40,
+          "description": "Kesesuaian isi dengan topik dan instruksi yang diberikan"
+        },
+        {
+          "criteria": "Penggunaan ejaan dan tanda baca",
+          "weight": 30,
+          "description": "Ketepatan penggunaan huruf kapital, tanda titik, koma, dan tanda baca lainnya"
+        },
+        {
+          "criteria": "Kelengkapan dan keruntutan kalimat",
+          "weight": 30,
+          "description": "Kalimat lengkap dengan struktur yang jelas dan urut"
+        }
+      ],
+      "tags": [
+        "cita-cita",
+        "masa depan"
+      ],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "needs-review",
+      "cognitive": "KREASI",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMP-MENULIS-SET002-Q019",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "menulis",
+      "band": "SEMENJAK",
+      "type": "constructed",
+      "difficulty": 3,
+      "scoringMode": "rubric",
+      "stem": "Tuliskan resensi singkat sebuah buku cerita yang pernah kamu baca. Sertakan identitas buku, sinopsis, kelebihan, kekurangan, dan kesimpulan.",
+      "wordLimit": {
+        "min": 100,
+        "max": 200
+      },
+      "rubric": [
+        {
+          "criteria": "Kesesuaian isi dengan topik",
+          "weight": 40,
+          "description": "Kesesuaian isi dengan topik dan instruksi yang diberikan"
+        },
+        {
+          "criteria": "Penggunaan ejaan dan tanda baca",
+          "weight": 30,
+          "description": "Ketepatan penggunaan huruf kapital, tanda titik, koma, dan tanda baca lainnya"
+        },
+        {
+          "criteria": "Kelengkapan dan keruntutan kalimat",
+          "weight": 30,
+          "description": "Kalimat lengkap dengan struktur yang jelas dan urut"
+        }
+      ],
+      "tags": [
+        "resensi",
+        "buku"
+      ],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "needs-review",
+      "cognitive": "KREASI",
+      "domain": "AKADEMIK"
+    },
+    {
+      "id": "BC-UKBI-SMP-MENULIS-SET002-Q020",
+      "product": "UKBI_PRACTICE",
+      "track": "UKBI_SMP",
+      "section": "menulis",
+      "band": "SEMENJAK",
+      "type": "constructed",
+      "difficulty": 3,
+      "scoringMode": "rubric",
+      "stem": "Kamu diminta menjadi ketua kelas. Tuliskan pidato singkat yang akan kamu sampaikan di depan kelas saat pencalonan. Sertakan visi, misi, dan program kerjamu.",
+      "wordLimit": {
+        "min": 80,
+        "max": 200
+      },
+      "rubric": [
+        {
+          "criteria": "Kesesuaian isi dengan topik",
+          "weight": 40,
+          "description": "Kesesuaian isi dengan topik dan instruksi yang diberikan"
+        },
+        {
+          "criteria": "Penggunaan ejaan dan tanda baca",
+          "weight": 30,
+          "description": "Ketepatan penggunaan huruf kapital, tanda titik, koma, dan tanda baca lainnya"
+        },
+        {
+          "criteria": "Kelengkapan dan keruntutan kalimat",
+          "weight": 30,
+          "description": "Kalimat lengkap dengan struktur yang jelas dan urut"
+        }
+      ],
+      "tags": [
+        "pidato",
+        "kepemimpinan"
+      ],
+      "source": "BC_UKBI_SMP_ORIGINAL",
+      "status": "needs-review",
+      "cognitive": "KREASI",
+      "domain": "AKADEMIK"
+    }
+  ]
+}
