@@ -14,7 +14,7 @@ import cache from "@/lib/redis";
 // snapshot jawaban tetap diambil langsung dari DB. Perubahan bank soal
 // terpropagasi dalam <= TTL. Nol perubahan jika Upstash tak diset (getOrSet
 // jatuh ke fungsi fetch aslinya).
-const POOL_CACHE_VERSION = "v1";
+const POOL_CACHE_VERSION = "v2";
 const POOL_TTL = Number(process.env.SIM_POOL_TTL || 300);
 
 const UKBI_TYPES = ["UKBI", "UKBI_SIMULASI", "UKBI_LATIHAN", "UKBI_SD", "UKBI_LATIHAN_SD", "UKBI_SMP", "UKBI_LATIHAN_SMP", "UKBI_SMA", "UKBI_LATIHAN_SMA", "UKBI_GURU_SIMULASI", "UKBI_GURU_LATIHAN"];
