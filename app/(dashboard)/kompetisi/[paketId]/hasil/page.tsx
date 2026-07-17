@@ -74,8 +74,10 @@ export default function HasilPage({ params }: { params: Promise<{ paketId: strin
       try {
         const res = await fetch(`/api/kompetensi/${paketId}/hasil`);
         const data = await res.json();
-        if (data.result) {
-          setResult(data.result);
+        // Respons sukses dibungkus ok() → { success, data:{ result } }.
+        const body = data.data ?? data;
+        if (body.result) {
+          setResult(body.result);
         } else if (data.error) {
           setError(data.error);
         }

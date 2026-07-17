@@ -94,21 +94,26 @@ export default function KompetisiPage({ params }: { params: Promise<{ paketId: s
           return;
         }
 
+        // Respons sukses dibungkus helper ok() → { success, data }. Payload
+        // (session/paket/questions) ada di result.data. Fallback ke result
+        // untuk kompatibilitas bila suatu saat dikembalikan flat.
+        const body = result.data ?? result;
+
         const hasQuestions =
-          Array.isArray(result.questions) &&
-          result.questions.some((s: any) => s.questions && s.questions.length > 0);
+          Array.isArray(body.questions) &&
+          body.questions.some((s: any) => s.questions && s.questions.length > 0);
         if (!hasQuestions) {
           setError("Tidak ada soal tersedia untuk paket ini.");
           return;
         }
 
-        setData(result);
-        if (result.session?.answers) setAnswers(result.session.answers);
-        if (result.session?.flagged) setFlagged(result.session.flagged);
+        setData(body);
+        if (body.session?.answers) setAnswers(body.session.answers);
+        if (body.session?.flagged) setFlagged(body.session.flagged);
 
         let expiresMs: number;
-        if (result.session?.expiresAt) expiresMs = new Date(result.session.expiresAt).getTime();
-        else if (result.paket?.duration) expiresMs = Date.now() + result.paket.duration * 60 * 1000;
+        if (body.session?.expiresAt) expiresMs = new Date(body.session.expiresAt).getTime();
+        else if (body.paket?.duration) expiresMs = Date.now() + body.paket.duration * 60 * 1000;
         else expiresMs = Date.now() + 30 * 60 * 1000;
         expiresAtRef.current = expiresMs;
         setTimeLeft(Math.max(0, Math.floor((expiresMs - Date.now()) / 1000)));
@@ -254,7 +259,8 @@ export default function KompetisiPage({ params }: { params: Promise<{ paketId: s
       });
       const result = await res.json();
       if (result.success) {
-        router.push(`/kompetisi/${resolvedParams.paketId}/hasil?attempt=${result.attemptNumber}`);
+        const sbody = result.data ?? result;
+        router.push(`/kompetisi/${resolvedParams.paketId}/hasil?attempt=${sbody.attemptNumber}`);
       } else {
         setError(result.error || "Submit gagal");
         submittedRef.current = false;
