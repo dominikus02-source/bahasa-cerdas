@@ -62,7 +62,8 @@ export default function TinjauSimulasiPage() {
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-gray-900">Tinjau Simulasi (Menulis & Berbicara)</h1>
         <p className="mt-1 text-sm text-gray-500">
-          Nilai jawaban esai dan putar rekaman lisan murid di kelasmu. Beri skor 0–100 per jawaban.
+          Nilai sudah diisi <span className="font-semibold text-emerald-600">otomatis oleh sistem (AI)</span>.
+          Kamu bisa memutar rekaman / membaca esai dan menyesuaikan skor bila perlu.
         </p>
       </div>
 

@@ -6,6 +6,7 @@ import { calcLevel, calcLeagueFromXP } from "@/lib/xp";
 import { ok, err } from "@/lib/api/response";
 import { ERR } from "@/lib/api/errors";
 import type { AttemptSnapshot, AttemptAnswerDetails, UserAnswerRecord } from "@/lib/types/snapshot";
+import { gradeConstructed } from "@/lib/penilaian/ai-grade";
 
 const PERF_LOG = true;
 
@@ -293,6 +294,43 @@ export async function POST(
       !isUKBI
     );
     const scoringMs = Date.now() - scoringT0;
+
+    // ── Penilaian OTOMATIS jawaban konstruktif (Menulis/Berbicara) via AI ──
+    // Menulis: teks dinilai LLM; Berbicara: rekaman ditranskrip (Whisper) lalu
+    // dinilai. Fail-safe: bila AI gagal, skor 0 (tak menggagalkan submit).
+    // Ditampilkan sebagai bar seksi terpisah (0–100), TIDAK mengubah band UKBI utama.
+    const constructedRows = answerRows.filter(
+      (r) =>
+        String(r.questionType || "").toUpperCase() === "CONSTRUCTED" ||
+        ["MENULIS", "BERBICARA"].includes(String(r.seksi || "").toUpperCase())
+    );
+    if (constructedRows.length > 0) {
+      const qMap = new Map<string, any>((questions as any[]).map((q: any) => [q.id, q]));
+      const agg: Record<string, { sum: number; n: number }> = {};
+      await Promise.allSettled(
+        constructedRows.map(async (r) => {
+          const q = qMap.get(r.questionId || "");
+          const meta =
+            q?.options && typeof q.options === "object" && !Array.isArray(q.options) ? q.options : {};
+          const res = await gradeConstructed({
+            seksi: r.seksi || q?.seksi || "MENULIS",
+            prompt: q?.text || "",
+            rubric: (meta as any)?.rubric || null,
+            answer: r.answer || "",
+          });
+          r.score = res.score;
+          r.isCorrect = res.score >= 60;
+          const sk = String(r.seksi || q?.seksi || "MENULIS").toUpperCase();
+          if (!agg[sk]) agg[sk] = { sum: 0, n: 0 };
+          agg[sk].sum += res.score;
+          agg[sk].n += 1;
+        })
+      );
+      for (const [sk, a] of Object.entries(agg)) {
+        const avg = a.n > 0 ? Math.round(a.sum / a.n) : 0;
+        sectionScores[sk] = { correct: avg, total: 100, score: avg };
+      }
+    }
 
     const maxPossible = isUKBI
       ? totalQuestions * 2.5 * 10
