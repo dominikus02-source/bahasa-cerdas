@@ -65,17 +65,60 @@ export default function TestResultPanel({ result, paketId, backHref = "/kompetis
           Kembali ke Latihan
         </Link>
 
-        {/* Hero score */}
-        <div className={`rounded-2xl sm:rounded-3xl border-2 ${style.bg} ${style.border} p-5 sm:p-8 text-center`}>
-          <div className="text-3xl sm:text-5xl mb-2">{style.icon}</div>
-          <h1 className={`text-2xl sm:text-4xl font-black ${style.text} mb-1`}>
-            {result.predikat}
-          </h1>
-          <p className="text-slate-500 text-xs sm:text-sm mb-1">
-            Skor: {result.totalScore} / {result.maxScore || 100}
+        {/* Hero score — premium branded */}
+        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-900 via-slate-800 to-emerald-950 p-6 sm:p-9 text-center shadow-xl shadow-slate-900/20 ring-1 ring-white/10">
+          {/* Batik texture overlay */}
+          <div
+            className="pointer-events-none absolute inset-0 opacity-[0.07] bg-cover bg-center"
+            style={{ backgroundImage: "url('/batik-header-profile-bc.png')" }}
+          />
+          {/* Soft glow */}
+          <div className="pointer-events-none absolute -top-16 left-1/2 h-40 w-40 -translate-x-1/2 rounded-full bg-emerald-500/20 blur-3xl" />
+
+          {/* Brand row */}
+          <div className="relative flex items-center justify-center gap-2">
+            <img src="/BC-logo.png" alt="BahasaCerdas" className="h-7 w-7 sm:h-8 sm:w-8 object-contain" />
+            <span className="text-sm sm:text-base font-extrabold tracking-wide text-white">
+              Bahasa<span className="text-emerald-400">Cerdas</span>
+            </span>
+          </div>
+          <div className="relative mx-auto my-4 h-px w-16 bg-gradient-to-r from-transparent via-white/25 to-transparent" />
+
+          {/* Score ring */}
+          {(() => {
+            const pct = Math.max(0, Math.min(100, result.percentage || 0));
+            const R = 44;
+            const C = 2 * Math.PI * R;
+            const tier = pct >= 70 ? "#34d399" : pct >= 50 ? "#fbbf24" : "#fb7185";
+            return (
+              <div className="relative mx-auto h-32 w-32 sm:h-40 sm:w-40">
+                <svg viewBox="0 0 100 100" className="h-full w-full -rotate-90">
+                  <circle cx="50" cy="50" r={R} fill="none" stroke="rgba(255,255,255,0.12)" strokeWidth="7" />
+                  <circle
+                    cx="50" cy="50" r={R} fill="none" stroke={tier} strokeWidth="7" strokeLinecap="round"
+                    strokeDasharray={C} strokeDashoffset={C * (1 - pct / 100)}
+                  />
+                </svg>
+                <div className="absolute inset-0 flex flex-col items-center justify-center">
+                  <span className="text-3xl sm:text-5xl font-black leading-none text-white">{pct.toFixed(0)}</span>
+                  <span className="mt-0.5 text-[10px] sm:text-xs font-medium text-white/50">Nilai</span>
+                </div>
+              </div>
+            );
+          })()}
+
+          {/* Predikat badge */}
+          <div className="relative mt-4 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 backdrop-blur-sm">
+            <span className="text-base sm:text-lg">{style.icon}</span>
+            <span className="text-sm sm:text-base font-bold text-white">{result.predikat}</span>
+          </div>
+
+          {/* Meta line */}
+          <p className="relative mt-3 text-[11px] sm:text-xs text-white/60">
+            {title}
           </p>
-          <p className="text-slate-400 text-[10px] sm:text-xs">
-            Percobaan #{result.attemptNumber}
+          <p className="relative mt-0.5 text-[10px] sm:text-[11px] text-white/40">
+            Skor {result.totalScore} / {result.maxScore || 100} &middot; Percobaan #{result.attemptNumber}
           </p>
         </div>
 
@@ -102,9 +145,9 @@ export default function TestResultPanel({ result, paketId, backHref = "/kompetis
           <div className="bg-white rounded-xl sm:rounded-2xl border border-slate-100 p-3 sm:p-4 text-center shadow-sm">
             <Clock className="w-4 h-4 sm:w-5 sm:h-5 text-slate-400 mx-auto mb-1" />
             <p className="text-xs sm:text-sm font-bold text-slate-800">
-              {result.percentage.toFixed(0)}%
+              {Math.floor(result.timeSpent / 60)}:{String(result.timeSpent % 60).padStart(2, "0")}
             </p>
-            <p className="text-[10px] sm:text-xs text-slate-400">Nilai</p>
+            <p className="text-[10px] sm:text-xs text-slate-400">Waktu</p>
           </div>
         </div>
 
@@ -198,6 +241,17 @@ export default function TestResultPanel({ result, paketId, backHref = "/kompetis
             <Award className="w-4 h-4" />
             Dokumen Hasil Latihan
           </Link>
+        </div>
+
+        {/* Branded footer */}
+        <div className="flex flex-col items-center gap-1 pt-2 pb-1">
+          <div className="flex items-center gap-1.5 opacity-70">
+            <img src="/BC-logo.png" alt="" className="h-4 w-4 object-contain" />
+            <span className="text-[11px] font-bold tracking-wide text-slate-500">BahasaCerdas</span>
+          </div>
+          <p className="text-center text-[9px] sm:text-[10px] text-slate-400 max-w-sm leading-relaxed">
+            Hasil latihan/simulasi di BahasaCerdas — bukan sertifikat resmi UKBI/TKA dari lembaga pemerintah.
+          </p>
         </div>
       </div>
     </div>
