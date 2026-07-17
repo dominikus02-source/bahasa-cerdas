@@ -14,7 +14,7 @@ import cache from "@/lib/redis";
 // snapshot jawaban tetap diambil langsung dari DB. Perubahan bank soal
 // terpropagasi dalam <= TTL. Nol perubahan jika Upstash tak diset (getOrSet
 // jatuh ke fungsi fetch aslinya).
-const POOL_CACHE_VERSION = "v2";
+const POOL_CACHE_VERSION = "v3";
 const POOL_TTL = Number(process.env.SIM_POOL_TTL || 300);
 
 const UKBI_TYPES = ["UKBI", "UKBI_SIMULASI", "UKBI_LATIHAN", "UKBI_SD", "UKBI_LATIHAN_SD", "UKBI_SMP", "UKBI_LATIHAN_SMP", "UKBI_SMA", "UKBI_LATIHAN_SMA", "UKBI_GURU_SIMULASI", "UKBI_GURU_LATIHAN"];
@@ -283,11 +283,17 @@ export async function GET(
         // Candidate pool (answer-free) is identical per paket+section → cache it.
         // Shuffle below is per-session on a shallow copy, so the cached objects
         // are never mutated across requests.
-        const pool = await cache.getOrSet(
-          `komp:pool:${POOL_CACHE_VERSION}:${paketId}:${i}`,
-          () => resolveSectionPool(section, paket.type, ukbi, i),
-          POOL_TTL
-        );
+        // Manual cache: JANGAN pernah cache hasil kosong. Hasil kosong yang
+        // ter-cache (mis. ke-cache transien saat seeding) akan bertahan
+        // selama TTL & bikin paket "0 soal" persisten. Hanya cache pool berisi.
+        const poolKey = `komp:pool:${POOL_CACHE_VERSION}:${paketId}:${i}`;
+        let pool = (await cache.get(poolKey)) as any[] | null;
+        if (pool === null || pool === undefined) {
+          pool = await resolveSectionPool(section, paket.type, ukbi, i);
+          if (Array.isArray(pool) && pool.length > 0) {
+            await cache.set(poolKey, pool, POOL_TTL);
+          }
+        }
         let sectionQuestions: any[] = (pool || []).map((q: any) => ({ ...q }));
 
         // Shuffle questions within section
