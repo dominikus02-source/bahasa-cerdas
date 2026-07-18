@@ -141,12 +141,19 @@ export default function SubmitConfirmModal({
 
         {/* Actions */}
         <div className="px-5 sm:px-6 pb-5 sm:pb-6 pt-2 flex flex-col sm:flex-row gap-2 sm:gap-3">
-          {!timeUp && (
+          {!timeUp ? (
             <button
               onClick={onClose}
               className="flex-1 py-2.5 sm:py-3 border-2 border-slate-200 text-slate-600 font-bold rounded-xl hover:bg-slate-50 transition-colors text-sm sm:text-base"
             >
               Lanjut Kerjakan
+            </button>
+          ) : (
+            <button
+              onClick={onClose}
+              className="flex-1 py-2.5 sm:py-3 border-2 border-slate-200 text-slate-600 font-bold rounded-xl hover:bg-slate-50 transition-colors text-sm sm:text-base"
+            >
+              Kembali
             </button>
           )}
           <button

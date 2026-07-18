@@ -1,8 +1,8 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { Headphones, FileText, Mic, Volume2, Loader2, ArrowRight, ChevronLeft } from "lucide-react";
-import DeviceCheck from "./DeviceCheck";
+import { useMemo } from "react";
+import { useRouter } from "next/navigation";
+import { Headphones, FileText, Mic, Volume2, Loader2, ArrowRight } from "lucide-react";
 
 interface SectionLike {
   seksi?: string;
@@ -10,28 +10,21 @@ interface SectionLike {
 }
 
 interface SimulationStartProps {
+  paketId: string;
   title: string;
   sections: SectionLike[];
-  /** Apakah soal sudah selesai dimuat di belakang layar. */
   ready: boolean;
-  /** mode "full" = pakai perangkat (semua seksi); "noDevice" = tanpa perangkat (tanpa Mendengarkan/Berbicara). */
   onStart: (mode: "full" | "noDevice") => void;
   onExit: () => void;
 }
 
-/**
- * Layar mulai simulasi: pilih mode perangkat, cek perangkat bila perlu, lalu
- * mulai. Soal di-preload di belakang layar → "Mulai" langsung tampil.
- */
-export default function SimulationStart({ title, sections, ready, onStart, onExit }: SimulationStartProps) {
+export default function SimulationStart({ paketId, title, sections, ready, onStart, onExit }: SimulationStartProps) {
+  const router = useRouter();
   const has = (name: string) => sections.some((s) => (s.seksi || "").toUpperCase() === name && (s.questions?.length || 0) > 0);
   const hasSpeaker = useMemo(() => has("MENDENGARKAN"), [sections]);
   const hasMic = useMemo(() => has("BERBICARA"), [sections]);
   const hasAudio = hasSpeaker || hasMic;
 
-  const [step, setStep] = useState<"choose" | "device">("choose");
-
-  // Tombol "Mulai" nonaktif sampai soal siap; label berubah jadi menyiapkan.
   const StartCta = ({ onClick, label }: { onClick: () => void; label: string }) => (
     <button
       onClick={onClick}
@@ -52,24 +45,11 @@ export default function SimulationStart({ title, sections, ready, onStart, onExi
     </button>
   );
 
-  if (step === "device") {
-    return (
-      <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100/50">
-        <div className="mx-auto max-w-lg px-4 pt-4">
-          <button onClick={() => setStep("choose")} className="inline-flex items-center gap-1 text-sm text-slate-500 hover:text-slate-700">
-            <ChevronLeft className="h-4 w-4" /> Ganti mode
-          </button>
-        </div>
-        <DeviceCheck requireMic={hasMic} requireSpeaker={hasSpeaker} onComplete={() => onStart("full")} />
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100/50">
       <div className="mx-auto max-w-lg px-4 py-8">
         <button onClick={onExit} className="mb-4 inline-flex items-center gap-1 text-sm text-slate-500 hover:text-slate-700">
-          <ChevronLeft className="h-4 w-4" /> Kembali
+          <ArrowRight className="h-4 w-4 rotate-180" /> Kembali
         </button>
 
         <div className="mb-6 text-center">
@@ -89,7 +69,7 @@ export default function SimulationStart({ title, sections, ready, onStart, onExi
           </div>
         ) : (
           <div className="space-y-3">
-            {/* Mode DENGAN perangkat */}
+            {/* Mode DENGAN perangkat → redirect ke device-check */}
             <div className="rounded-2xl border-2 border-emerald-200 bg-white p-5 shadow-sm">
               <div className="mb-2 flex items-center gap-2">
                 <Headphones className="h-5 w-5 text-emerald-600" />
@@ -106,7 +86,19 @@ export default function SimulationStart({ title, sections, ready, onStart, onExi
                 )}
                 . Membutuhkan {hasSpeaker && "speaker/headset"}{hasSpeaker && hasMic && " & "}{hasMic && "mikrofon"}.
               </p>
-              <StartCta onClick={() => setStep("device")} label="Cek perangkat & mulai" />
+              <button
+                onClick={() => router.push(`/kompetisi/${paketId}/device-check`)}
+                disabled={!ready}
+                className={`flex w-full items-center justify-center gap-2 rounded-xl py-3.5 text-sm font-bold transition-all ${
+                  ready ? "bg-emerald-600 text-white hover:bg-emerald-700 active:scale-[0.99]" : "cursor-wait bg-slate-200 text-slate-400"
+                }`}
+              >
+                {ready ? (
+                  <>Cek perangkat & mulai <ArrowRight className="h-4 w-4" /></>
+                ) : (
+                  <><Loader2 className="h-4 w-4 animate-spin" /> Menyiapkan soal…</>
+                )}
+              </button>
             </div>
 
             {/* Mode TANPA perangkat */}

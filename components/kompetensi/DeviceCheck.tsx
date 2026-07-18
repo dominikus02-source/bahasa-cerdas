@@ -1,17 +1,23 @@
 "use client"
 
 import { useState, useEffect, useRef, useCallback } from "react"
-import { Mic, Headphones, CheckCircle2, Volume2, Sparkles, ChevronRight } from "lucide-react"
+import { useRouter } from "next/navigation"
+import { Mic, Headphones, CheckCircle2, Volume2, Sparkles, ChevronRight, ChevronLeft } from "lucide-react"
 
 interface Props {
-  paketId: string
+  paketId?: string
+  requireMic?: boolean
+  requireSpeaker?: boolean
   onComplete: (micOk: boolean, speakerOk: boolean) => void
 }
 
 type Step = "mic" | "speaker" | "ready"
 
-export default function DeviceCheck({ paketId, onComplete }: Props) {
-  const [step, setStep] = useState<Step>("mic")
+export default function DeviceCheck({ paketId, requireMic = true, requireSpeaker = true, onComplete }: Props) {
+  const router = useRouter()
+  const micRequired = paketId ? requireMic : (requireMic ?? true);
+  const speakerRequired = paketId ? requireSpeaker : (requireSpeaker ?? true);
+  const [step, setStep] = useState<Step>(micRequired ? "mic" : speakerRequired ? "speaker" : "ready")
   const [micPassed, setMicPassed] = useState(false)
   const [speakerPassed, setSpeakerPassed] = useState(false)
   const [micChecking, setMicChecking] = useState(false)
@@ -220,7 +226,7 @@ export default function DeviceCheck({ paketId, onComplete }: Props) {
 
   const handleSkip = () => {
     cleanupAudio()
-    onComplete(false, false)
+    onComplete(micPassed, speakerPassed)
   }
 
   // Cleanup on unmount
@@ -233,6 +239,13 @@ export default function DeviceCheck({ paketId, onComplete }: Props) {
       {/* Top Navigation */}
       <div className="flex items-center justify-between px-5 py-3 bg-white/80 backdrop-blur-xl border-b border-[#e5e5ea]">
         <div className="flex items-center gap-2">
+          <button
+            onClick={() => router.back()}
+            className="flex items-center gap-1 text-[#8e8e93] hover:text-[#1d1d1f] transition-colors -ml-1 pr-2"
+          >
+            <ChevronLeft className="w-4 h-4" />
+            <span className="text-[13px] font-medium">Kembali</span>
+          </button>
           <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
             <Sparkles className="w-3.5 h-3.5 text-white" />
           </div>
@@ -245,14 +258,18 @@ export default function DeviceCheck({ paketId, onComplete }: Props) {
 
       {/* Step Indicator */}
       <div className="flex items-center justify-center gap-2 px-5 pt-6 pb-4">
-        {(["mic", "speaker", "ready"] as const).map((s, i) => {
+        {([
+          micRequired && "mic",
+          speakerRequired && "speaker",
+          "ready",
+        ].filter(Boolean) as string[]).map((s, i, arr) => {
           const isDone = (s === "mic" && micPassed) || (s === "speaker" && speakerPassed)
           const isCurrent = step === s
           return (
             <div key={s} className="flex items-center gap-2">
               <div className={`flex items-center gap-1.5 ${isDone || isCurrent ? "opacity-100" : "opacity-40"}`}>
                 <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-semibold transition-all ${
-                  isDone || (s === "ready" && micPassed && speakerPassed)
+                  isDone || (s === "ready" && (!micRequired || micPassed) && (!speakerRequired || speakerPassed))
                     ? "bg-indigo-600 text-white"
                     : "bg-[#e5e5ea] text-[#8e8e93]"
                 }`}>
@@ -262,7 +279,7 @@ export default function DeviceCheck({ paketId, onComplete }: Props) {
                   {s === "mic" ? "Mikrofon" : s === "speaker" ? "Audio" : "Siap"}
                 </span>
               </div>
-              {i < 2 && <ChevronRight className="w-3 h-3 text-[#c7c7cc]" />}
+              {i < arr.length - 1 && <ChevronRight className="w-3 h-3 text-[#c7c7cc]" />}
             </div>
           )
         })}
@@ -378,7 +395,7 @@ export default function DeviceCheck({ paketId, onComplete }: Props) {
               )}
               {micPassed && (
                 <button
-                  onClick={() => { cleanupAudio(); setStep("speaker") }}
+                  onClick={() => { cleanupAudio(); setStep(speakerRequired ? "speaker" : "ready") }}
                   className="w-full py-3.5 bg-indigo-600 text-white text-[15px] font-semibold rounded-2xl hover:bg-indigo-700 active:scale-[0.98] transition-all shadow-lg shadow-indigo-500/20"
                 >
                   Lanjutkan
@@ -510,28 +527,34 @@ export default function DeviceCheck({ paketId, onComplete }: Props) {
                 Semua Siap!
               </h2>
               <p className="text-[13px] text-[#8e8e93] text-center mb-8 max-w-xs">
-                Mikrofon dan audio telah terverifikasi. Anda siap memulai simulasi.
+                {micRequired || speakerRequired
+                  ? "Perangkat telah terverifikasi. Anda siap memulai simulasi."
+                  : "Anda siap memulai simulasi."}
               </p>
 
               <div className="w-full max-w-sm space-y-2 mb-8">
-                <div className="bg-white rounded-2xl p-4 flex items-center gap-3 shadow-sm border border-[#f0f0f0]">
-                  <div className="w-9 h-9 rounded-full bg-green-100 flex items-center justify-center shrink-0">
-                    <CheckCircle2 className="w-4 h-4 text-green-600" />
+                {micRequired && (
+                  <div className="bg-white rounded-2xl p-4 flex items-center gap-3 shadow-sm border border-[#f0f0f0]">
+                    <div className="w-9 h-9 rounded-full bg-green-100 flex items-center justify-center shrink-0">
+                      <CheckCircle2 className="w-4 h-4 text-green-600" />
+                    </div>
+                    <div>
+                      <p className="text-[13px] font-semibold text-[#1d1d1f]">Mikrofon</p>
+                      <p className="text-[11px] text-[#8e8e93]">Berfungsi — level suara terdeteksi</p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-[13px] font-semibold text-[#1d1d1f]">Mikrofon</p>
-                    <p className="text-[11px] text-[#8e8e93]">Berfungsi — level suara terdeteksi</p>
+                )}
+                {speakerRequired && (
+                  <div className="bg-white rounded-2xl p-4 flex items-center gap-3 shadow-sm border border-[#f0f0f0]">
+                    <div className="w-9 h-9 rounded-full bg-green-100 flex items-center justify-center shrink-0">
+                      <CheckCircle2 className="w-4 h-4 text-green-600" />
+                    </div>
+                    <div>
+                      <p className="text-[13px] font-semibold text-[#1d1d1f]">Speaker / Headset</p>
+                      <p className="text-[11px] text-[#8e8e93]">Berfungsi — nada uji terkonfirmasi</p>
+                    </div>
                   </div>
-                </div>
-                <div className="bg-white rounded-2xl p-4 flex items-center gap-3 shadow-sm border border-[#f0f0f0]">
-                  <div className="w-9 h-9 rounded-full bg-green-100 flex items-center justify-center shrink-0">
-                    <CheckCircle2 className="w-4 h-4 text-green-600" />
-                  </div>
-                  <div>
-                    <p className="text-[13px] font-semibold text-[#1d1d1f]">Speaker / Headset</p>
-                    <p className="text-[11px] text-[#8e8e93]">Berfungsi — nada uji terkonfirmasi</p>
-                  </div>
-                </div>
+                )}
               </div>
             </div>
 

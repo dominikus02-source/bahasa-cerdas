@@ -40,6 +40,35 @@ export interface ProviderResponse {
 
 export type ProviderName = "deepseek" | "groq" | "gemini";
 
+// ─── Multi-key rotation ───────────────────────────────────
+// Env var boleh berisi beberapa key dipisah koma: "key1,key2,key3".
+// Rotasi round-robin per proses; pada kegagalan (429/401) caller
+// mencoba key berikutnya sebelum pindah provider.
+const keyRotationCursor: Record<string, number> = {};
+
+export function getApiKeys(varName: string): string[] {
+  const raw = process.env[varName] || "";
+  return raw
+    .split(",")
+    .map((k) => k.trim())
+    .filter(Boolean);
+}
+
+/** Ambil key berikutnya secara round-robin (titik awal tersebar antar request). */
+function nextKey(varName: string, keys: string[]): string {
+  if (keys.length === 1) return keys[0];
+  const cursor = keyRotationCursor[varName] ?? Math.floor(Math.random() * keys.length);
+  const key = keys[cursor % keys.length];
+  keyRotationCursor[varName] = (cursor + 1) % keys.length;
+  return key;
+}
+
+const PROVIDER_KEY_ENV: Record<ProviderName, string> = {
+  deepseek: "DEEPSEEK_API_KEY",
+  groq: "GROQ_API_KEY",
+  gemini: "GEMINI_API_KEY",
+};
+
 // ─── Provider routing ─────────────────────────────────────
 
 function loadPriority(): ProviderName[] {
@@ -87,8 +116,7 @@ async function timedCall<T>(fn: () => Promise<T>): Promise<{ result: T; latencyM
 
 // ─── Individual provider callers ──────────────────────────
 
-async function callDeepSeek(req: ProviderRequest): Promise<ProviderResponse> {
-  const apiKey = process.env.DEEPSEEK_API_KEY;
+async function callDeepSeek(req: ProviderRequest, apiKey: string): Promise<ProviderResponse> {
   if (!apiKey) throw new Error("DEEPSEEK_API_KEY not configured");
 
   const dsBody: Record<string, unknown> = {
@@ -132,8 +160,7 @@ async function callDeepSeek(req: ProviderRequest): Promise<ProviderResponse> {
   };
 }
 
-async function callGroq(req: ProviderRequest): Promise<ProviderResponse> {
-  const apiKey = process.env.GROQ_API_KEY;
+async function callGroq(req: ProviderRequest, apiKey: string): Promise<ProviderResponse> {
   if (!apiKey) throw new Error("GROQ_API_KEY not configured");
 
   const body: Record<string, unknown> = {
@@ -178,8 +205,7 @@ async function callGroq(req: ProviderRequest): Promise<ProviderResponse> {
   };
 }
 
-async function callGemini(req: ProviderRequest): Promise<ProviderResponse> {
-  const apiKey = process.env.GEMINI_API_KEY;
+async function callGemini(req: ProviderRequest, apiKey: string): Promise<ProviderResponse> {
   if (!apiKey) throw new Error("GEMINI_API_KEY not configured");
 
   const { result: raw, latencyMs } = await timedCall(() =>
@@ -285,7 +311,8 @@ async function streamDeepSeek(
   req: ProviderRequest,
   onDelta: (text: string) => void
 ): Promise<ProviderStreamResult> {
-  const apiKey = process.env.DEEPSEEK_API_KEY;
+  const keys = getApiKeys("DEEPSEEK_API_KEY");
+  const apiKey = nextKey("DEEPSEEK_API_KEY", keys);
   if (!apiKey) throw new Error("DEEPSEEK_API_KEY not configured");
 
   const startTime = Date.now();
@@ -635,7 +662,7 @@ class ProviderEmptyError extends Error {
 
 // ─── Public API ────────────────────────────────────────────
 
-const PROVIDER_CALLERS: Record<ProviderName, (req: ProviderRequest) => Promise<ProviderResponse>> = {
+const PROVIDER_CALLERS: Record<ProviderName, (req: ProviderRequest, apiKey: string) => Promise<ProviderResponse>> = {
   deepseek: callDeepSeek,
   groq: callGroq,
   gemini: callGemini,
@@ -649,7 +676,9 @@ export async function callProvider(req: ProviderRequest): Promise<ProviderRespon
   const provider = getProviderForModel(req.model);
   if (!provider) throw new Error(`Unknown model: ${req.model}`);
   const caller = PROVIDER_CALLERS[provider];
-  return caller(req);
+  const keys = getApiKeys(PROVIDER_KEY_ENV[provider]);
+  if (keys.length === 0) throw new Error(`${PROVIDER_KEY_ENV[provider]} not configured`);
+  return caller(req, nextKey(PROVIDER_KEY_ENV[provider], keys));
 }
 
 /**
@@ -663,27 +692,30 @@ export async function callWithFallback(req: ProviderRequest): Promise<ProviderRe
 
   for (const providerName of priority) {
     const caller = PROVIDER_CALLERS[providerName];
-    const apiKeyVar =
-      providerName === "deepseek" ? "DEEPSEEK_API_KEY" :
-      providerName === "groq" ? "GROQ_API_KEY" :
-      "GEMINI_API_KEY";
+    const keyEnv = PROVIDER_KEY_ENV[providerName];
+    const keys = getApiKeys(keyEnv);
 
-    if (!process.env[apiKeyVar]) {
+    if (keys.length === 0) {
       errors.push(`${providerName}: No API key configured`);
       continue;
     }
 
-    try {
-      return await caller(req);
-    } catch (e) {
-      const message = e instanceof ProviderHttpError
-        ? `HTTP ${e.status}`
-        : e instanceof ProviderEmptyError
-        ? "empty response"
-        : e instanceof Error
-        ? e.message.slice(0, 100)
-        : "unknown error";
-      errors.push(`${providerName}: ${message}`);
+    // Coba tiap key (rotasi) sebelum pindah ke provider berikutnya.
+    const model = getModelForProvider(providerName, req.model);
+    for (let i = 0; i < keys.length; i++) {
+      const apiKey = nextKey(keyEnv, keys);
+      try {
+        return await caller({ ...req, model }, apiKey);
+      } catch (e) {
+        const message = e instanceof ProviderHttpError
+          ? `HTTP ${e.status}`
+          : e instanceof ProviderEmptyError
+          ? "empty response"
+          : e instanceof Error
+          ? e.message.slice(0, 100)
+          : "unknown error";
+        errors.push(`${providerName}${keys.length > 1 ? `[key${i + 1}]` : ""}: ${message}`);
+      }
     }
   }
 

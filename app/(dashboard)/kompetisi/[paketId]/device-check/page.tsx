@@ -1,9 +1,10 @@
 "use client"
 
-import { use, useCallback } from "react"
+import { useEffect, use, useCallback } from "react"
 import { useRouter } from "next/navigation"
 import dynamic from "next/dynamic"
 import { Loader2 } from "lucide-react"
+import { preloadCompetition } from "@/lib/competition-cache"
 
 const DeviceCheck = dynamic(() => import("@/components/kompetensi/DeviceCheck"), {
   loading: () => (
@@ -21,11 +22,16 @@ export default function DeviceCheckPage({ params }: { params: Promise<{ paketId:
   const { paketId } = use(params)
   const router = useRouter()
 
+  // Pre-load soal di background saat user cek perangkat
+  useEffect(() => {
+    preloadCompetition(paketId)
+  }, [paketId])
+
   const handleComplete = useCallback((micOk: boolean, speakerOk: boolean) => {
-    const params = new URLSearchParams()
-    params.set("mic", micOk ? "1" : "0")
-    params.set("speaker", speakerOk ? "1" : "0")
-    router.push(`/kompetisi/${paketId}?${params.toString()}`)
+    const searchParams = new URLSearchParams()
+    searchParams.set("mic", micOk ? "1" : "0")
+    searchParams.set("speaker", speakerOk ? "1" : "0")
+    router.push(`/kompetisi/${paketId}?${searchParams.toString()}`)
   }, [paketId, router])
 
   return <DeviceCheck paketId={paketId} onComplete={handleComplete} />

@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback, useRef, use, Component } from "react";
 import { useRouter } from "next/navigation";
 import { ChevronLeft, ChevronRight, Flag, XCircle, MicOff, VolumeX } from "lucide-react";
+import { getCachedCompetition, clearCompetitionCache } from "@/lib/competition-cache";
 import TestShell from "@/components/kompetensi/TestShell";
 import TestHeader from "@/components/kompetensi/TestHeader";
 import QuestionCard from "@/components/kompetensi/QuestionCard";
@@ -77,10 +78,34 @@ export default function KompetisiPage({ params, searchParams: sp }: { params: Pr
   const timerStartedRef = useRef(false);
   const submittedRef = useRef(false);
   const lastSavedJsonRef = useRef("{}");
+  const didAutoStart = useRef(false);
+
+  const applyTestData = useCallback((body: any) => {
+    setData(body);
+    if (body.session?.answers) setAnswers(body.session.answers);
+    if (body.session?.flagged) setFlagged(body.session.flagged);
+
+    let expiresMs: number;
+    if (body.session?.expiresAt) expiresMs = new Date(body.session.expiresAt).getTime();
+    else if (body.paket?.duration) expiresMs = Date.now() + body.paket.duration * 60 * 1000;
+    else expiresMs = Date.now() + 30 * 60 * 1000;
+    expiresAtRef.current = expiresMs;
+    setTimeLeft(Math.max(0, Math.floor((expiresMs - Date.now()) / 1000)));
+  }, []);
 
   const fetchTest = useCallback(async () => {
     setLoading(true);
     setError("");
+
+    // Coba pakai cache dari pre-load (device-check page)
+    const cached = getCachedCompetition(resolvedParams.paketId);
+    if (cached) {
+      clearCompetitionCache(resolvedParams.paketId);
+      applyTestData(cached);
+      setLoading(false);
+      return;
+    }
+
     try {
       // Preload soal. Jika sesi sebelumnya SUDAH SELESAI, mulai percobaan baru
       // (retry=1) satu kali — riwayat lama tetap tersimpan di halaman Hasil.
@@ -91,16 +116,17 @@ export default function KompetisiPage({ params, searchParams: sp }: { params: Pr
         const result = await res.json();
 
         if (result.error) {
-          const completed =
+          const canRetry =
             result.session?.status === "COMPLETED" ||
             /sudah selesai/i.test(result.error || "") ||
-            /sudah menyelesaikan/i.test(result.message || "");
-          if (completed && !useRetry) {
+            /sudah menyelesaikan/i.test(result.message || "") ||
+            /kadaluarsa/i.test(result.error || "");
+          if (canRetry && !useRetry) {
             useRetry = true;
             retriedRef.current = true;
             continue;
           }
-          if (completed) {
+          if (canRetry) {
             router.push(`/kompetisi/${resolvedParams.paketId}/hasil`);
             return;
           }
@@ -121,16 +147,7 @@ export default function KompetisiPage({ params, searchParams: sp }: { params: Pr
           return;
         }
 
-        setData(body);
-        if (body.session?.answers) setAnswers(body.session.answers);
-        if (body.session?.flagged) setFlagged(body.session.flagged);
-
-        let expiresMs: number;
-        if (body.session?.expiresAt) expiresMs = new Date(body.session.expiresAt).getTime();
-        else if (body.paket?.duration) expiresMs = Date.now() + body.paket.duration * 60 * 1000;
-        else expiresMs = Date.now() + 30 * 60 * 1000;
-        expiresAtRef.current = expiresMs;
-        setTimeLeft(Math.max(0, Math.floor((expiresMs - Date.now()) / 1000)));
+        applyTestData(body);
         return;
       }
     } catch {
@@ -196,12 +213,31 @@ export default function KompetisiPage({ params, searchParams: sp }: { params: Pr
     return () => clearTimeout(timer);
   }, [answers, resolvedParams.paketId]);
 
+  // Auto-start jika datang dari device-check (query params mic=&speaker=).
+  // DILETAKKAN SEBELUM EARLY RETURN — menjaga hooks order.
+  useEffect(() => {
+    if (data && deviceChecked && !started && !didAutoStart.current) {
+      didAutoStart.current = true;
+      setStarted(true);
+    }
+  }, [data, deviceChecked, started]);
+
   const allSections = data?.questions || [];
-  // Mode "tanpa perangkat" → lewati seksi audio (Mendengarkan & Berbicara).
-  const sections =
-    mode === "noDevice"
-      ? allSections.filter((s) => !["MENDENGARKAN", "BERBICARA"].includes((s.seksi || "").toUpperCase()))
-      : allSections;
+  const sections = (() => {
+    let filtered = allSections;
+    if (mode === "noDevice") {
+      filtered = filtered.filter((s) => !["MENDENGARKAN", "BERBICARA"].includes((s.seksi || "").toUpperCase()));
+    }
+    if (deviceChecked) {
+      if (!micAvailable) {
+        filtered = filtered.filter((s) => (s.seksi || "").toUpperCase() !== "BERBICARA");
+      }
+      if (!speakerAvailable) {
+        filtered = filtered.filter((s) => (s.seksi || "").toUpperCase() !== "MENDENGARKAN");
+      }
+    }
+    return filtered;
+  })();
   const currentSectionData = sections[currentSection];
   const questions = currentSectionData?.questions || [];
   const currentQ = questions[currentQuestion];
@@ -333,12 +369,13 @@ export default function KompetisiPage({ params, searchParams: sp }: { params: Pr
     );
   }
 
-  // Layar mulai simulasi: pilih mode perangkat (dengan/tanpa) + cek perangkat.
-  // Soal sudah di-preload → menekan "Mulai" langsung menampilkan soal.
+  // Layar mulai simulasi: pilih mode perangkat (dengan/tanpa).
+  // Tidak muncul jika dari device-check (auto-start).
   if (data && !started) {
     return (
       <ErrorBoundary>
         <SimulationStart
+          paketId={resolvedParams.paketId}
           title={data.paket?.title || "Simulasi"}
           sections={allSections}
           ready={!!data}
@@ -462,13 +499,21 @@ export default function KompetisiPage({ params, searchParams: sp }: { params: Pr
             {timeUp && (
               <div className="bg-red-50 border-2 border-red-300 rounded-xl p-4 text-center">
                 <p className="text-sm font-bold text-red-700 mb-2">Waktu habis. Silakan kirim jawaban Anda.</p>
-                <button
-                  onClick={() => handleSubmit(false)}
-                  disabled={submitting}
-                  className="px-6 py-2.5 bg-red-600 text-white rounded-xl font-bold hover:bg-red-700 disabled:opacity-50 transition-colors"
-                >
-                  {submitting ? "Mengirim..." : "Kirim Jawaban"}
-                </button>
+                <div className="flex items-center justify-center gap-3">
+                  <button
+                    onClick={() => router.push(`/kompetisi/${resolvedParams.paketId}?retry=1`)}
+                    className="px-4 py-2.5 border-2 border-red-300 text-red-700 rounded-xl font-bold hover:bg-red-100 transition-colors text-sm"
+                  >
+                    Mulai Ulang
+                  </button>
+                  <button
+                    onClick={() => handleSubmit(false)}
+                    disabled={submitting}
+                    className="px-6 py-2.5 bg-red-600 text-white rounded-xl font-bold hover:bg-red-700 disabled:opacity-50 transition-colors text-sm"
+                  >
+                    {submitting ? "Mengirim..." : "Kirim Jawaban"}
+                  </button>
+                </div>
               </div>
             )}
 
@@ -596,9 +641,7 @@ export default function KompetisiPage({ params, searchParams: sp }: { params: Pr
 
       <SubmitConfirmModal
         open={showConfirm}
-        onClose={() => {
-          if (!timeUp) setShowConfirm(false);
-        }}
+        onClose={() => setShowConfirm(false)}
         onConfirm={() => handleSubmit(false)}
         submitting={submitting}
         answeredCount={answeredCount}

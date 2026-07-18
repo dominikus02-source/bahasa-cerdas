@@ -20,14 +20,28 @@
       "audioRef": null,
       "stem": "Kapan workshop pengembangan media pembelajaran akan dilaksanakan?",
       "options": [
-        { "id": "A", "text": "Senin, 14 Agustus 2025" },
-        { "id": "B", "text": "Selasa, 15 Agustus 2025" },
-        { "id": "C", "text": "Rabu, 16 Agustus 2025" },
-        { "id": "D", "text": "Kamis, 17 Agustus 2025" }
+        {
+          "id": "A",
+          "text": "Senin, 14 Agustus 2025"
+        },
+        {
+          "id": "B",
+          "text": "Selasa, 15 Agustus 2025"
+        },
+        {
+          "id": "C",
+          "text": "Rabu, 16 Agustus 2025"
+        },
+        {
+          "id": "D",
+          "text": "Kamis, 17 Agustus 2025"
+        }
       ],
       "correctAnswer": "B",
       "explanation": "Pengumuman menyebut workshop pada 'hari Selasa, 15 Agustus 2025, pukul 08.00 WIB sampai dengan 15.00 WIB di Aula Sekolah.'",
-      "tags": ["informasi-tersurat"],
+      "tags": [
+        "informasi-tersurat"
+      ],
       "source": "BC_UKBI_GURU_ORIGINAL",
       "status": "approved",
       "cognitive": "PEMAHAMAN",
@@ -41,18 +55,32 @@
       "band": "MADYA",
       "type": "pilihan_ganda",
       "difficulty": 2,
-      "audioScript": "",
+      "audioScript": "Pengumuman panitia workshop: \"Kepada Bapak dan Ibu guru peserta workshop pengembangan RPP, mohon mempersiapkan diri dengan baik. Setiap peserta wajib membawa laptop pribadi dan RPP yang akan dikembangkan selama kegiatan berlangsung. RPP tersebut akan didiskusikan bersama narasumber dan direvisi langsung di tempat. Kegiatan dimulai pukul delapan pagi di aula Dinas Pendidikan. Mohon hadir lima belas menit lebih awal untuk registrasi.\"",
       "audioRef": null,
       "stem": "Apa yang harus dibawa oleh guru saat mengikuti workshop?",
       "options": [
-        { "id": "A", "text": "Buku pegangan dan spidol" },
-        { "id": "B", "text": "Laptop dan RPP yang akan dikembangkan" },
-        { "id": "C", "text": "Seragam olahraga dan alat tulis" },
-        { "id": "D", "text": "Modul ajar dan daftar nilai siswa" }
+        {
+          "id": "A",
+          "text": "Buku pegangan dan spidol"
+        },
+        {
+          "id": "B",
+          "text": "Laptop dan RPP yang akan dikembangkan"
+        },
+        {
+          "id": "C",
+          "text": "Seragam olahraga dan alat tulis"
+        },
+        {
+          "id": "D",
+          "text": "Modul ajar dan daftar nilai siswa"
+        }
       ],
       "correctAnswer": "B",
       "explanation": "Pengumuman menyebut 'Setiap guru WAJIB membawa laptop dan RPP yang akan dikembangkan.'",
-      "tags": ["informasi-tersurat"],
+      "tags": [
+        "informasi-tersurat"
+      ],
       "source": "BC_UKBI_GURU_ORIGINAL",
       "status": "approved",
       "cognitive": "PEMAHAMAN",
@@ -70,14 +98,28 @@
       "audioRef": null,
       "stem": "Apa masalah yang diidentifikasi Bu Rina?",
       "options": [
-        { "id": "A", "text": "Siswa malas membaca buku" },
-        { "id": "B", "text": "Kemampuan menulis siswa kelas VII masih rendah" },
-        { "id": "C", "text": "Siswa tidak suka pelajaran bahasa Indonesia" },
-        { "id": "D", "text": "Kurangnya buku di perpustakaan" }
+        {
+          "id": "A",
+          "text": "Siswa malas membaca buku"
+        },
+        {
+          "id": "B",
+          "text": "Kemampuan menulis siswa kelas VII masih rendah"
+        },
+        {
+          "id": "C",
+          "text": "Siswa tidak suka pelajaran bahasa Indonesia"
+        },
+        {
+          "id": "D",
+          "text": "Kurangnya buku di perpustakaan"
+        }
       ],
       "correctAnswer": "B",
       "explanation": "Bu Rina menyebut 'Saya melihat kemampuan menulis siswa kelas VII masih rendah. Mereka kesulitan mengembangkan ide dalam paragraf.'",
-      "tags": ["informasi-tersurat"],
+      "tags": [
+        "informasi-tersurat"
+      ],
       "source": "BC_UKBI_GURU_ORIGINAL",
       "status": "approved",
       "cognitive": "PEMAHAMAN",
@@ -91,18 +133,32 @@
       "band": "MADYA",
       "type": "pilihan_ganda",
       "difficulty": 2,
-      "audioScript": "",
+      "audioScript": "Diskusi kelompok guru: Bu Sari: \"Bagaimana cara Bapak meningkatkan minat menulis siswa?\" Pak Toni: \"Saya biasanya menggunakan strategi menulis berantai. Setiap siswa melanjutkan tulisan temannya, sehingga mereka merasa tertantang dan tidak merasa menulis sendirian. Hasilnya, tulisan mereka jadi lebih panjang dan kreatif karena saling melengkapi ide.\"",
       "audioRef": null,
       "stem": "Strategi yang diusulkan Pak Toni adalah ...",
       "options": [
-        { "id": "A", "text": "Menulis puisi bersama-sama" },
-        { "id": "B", "text": "Menulis berantai, setiap siswa melanjutkan kalimat temannya" },
-        { "id": "C", "text": "Membaca buku lalu merangkumnya" },
-        { "id": "D", "text": "Menyalin teks dari buku paket" }
+        {
+          "id": "A",
+          "text": "Menulis puisi bersama-sama"
+        },
+        {
+          "id": "B",
+          "text": "Menulis berantai, setiap siswa melanjutkan kalimat temannya"
+        },
+        {
+          "id": "C",
+          "text": "Membaca buku lalu merangkumnya"
+        },
+        {
+          "id": "D",
+          "text": "Menyalin teks dari buku paket"
+        }
       ],
       "correctAnswer": "B",
       "explanation": "Pak Toni menjelaskan 'Setiap siswa menulis satu kalimat, lalu melanjutkan kalimat temannya. Ini melatih koherensi dan kreativitas.'",
-      "tags": ["informasi-tersurat"],
+      "tags": [
+        "informasi-tersurat"
+      ],
       "source": "BC_UKBI_GURU_ORIGINAL",
       "status": "approved",
       "cognitive": "PEMAHAMAN",
@@ -120,14 +176,28 @@
       "audioRef": null,
       "stem": "Apa yang dimaksud dengan HOTS menurut ceramah tersebut?",
       "options": [
-        { "id": "A", "text": "Keterampilan menghafal fakta dan konsep" },
-        { "id": "B", "text": "Kemampuan membaca cepat dan memahami teks" },
-        { "id": "C", "text": "Kemampuan menganalisis, mengevaluasi, dan menciptakan" },
-        { "id": "D", "text": "Keterampilan berkomunikasi lisan dan tulis" }
+        {
+          "id": "A",
+          "text": "Keterampilan menghafal fakta dan konsep"
+        },
+        {
+          "id": "B",
+          "text": "Kemampuan membaca cepat dan memahami teks"
+        },
+        {
+          "id": "C",
+          "text": "Kemampuan menganalisis, mengevaluasi, dan menciptakan"
+        },
+        {
+          "id": "D",
+          "text": "Keterampilan berkomunikasi lisan dan tulis"
+        }
       ],
       "correctAnswer": "C",
       "explanation": "Ceramah menyebut 'HOTS mencakup kemampuan menganalisis, mengevaluasi, dan menciptakan.'",
-      "tags": ["informasi-tersurat"],
+      "tags": [
+        "informasi-tersurat"
+      ],
       "source": "BC_UKBI_GURU_ORIGINAL",
       "status": "approved",
       "cognitive": "PEMAHAMAN",
@@ -141,18 +211,32 @@
       "band": "UNGGUL",
       "type": "pilihan_ganda",
       "difficulty": 4,
-      "audioScript": "",
+      "audioScript": "Ceramah pelatihan: \"Untuk mengembangkan kemampuan berpikir tingkat tinggi atau HOTS, guru perlu memberikan stimulus yang tepat. Stimulus yang efektif bukanlah soal hafalan, melainkan kasus otentik dan masalah kompleks yang dekat dengan kehidupan siswa. Ketika siswa dihadapkan pada persoalan nyata yang tidak memiliki satu jawaban tunggal, mereka terdorong untuk menganalisis, mengevaluasi, dan menciptakan solusi.\"",
       "audioRef": null,
       "stem": "Stimulus yang dapat digunakan untuk mengembangkan HOTS menurut ceramah adalah ...",
       "options": [
-        { "id": "A", "text": "Soal hafalan dan latihan berulang" },
-        { "id": "B", "text": "Kasus otentik, masalah kompleks, dan proyek inovatif" },
-        { "id": "C", "text": "Mendengarkan ceramah dan mencatat" },
-        { "id": "D", "text": "Mengerjakan LKS secara individu" }
+        {
+          "id": "A",
+          "text": "Soal hafalan dan latihan berulang"
+        },
+        {
+          "id": "B",
+          "text": "Kasus otentik, masalah kompleks, dan proyek inovatif"
+        },
+        {
+          "id": "C",
+          "text": "Mendengarkan ceramah dan mencatat"
+        },
+        {
+          "id": "D",
+          "text": "Mengerjakan LKS secara individu"
+        }
       ],
       "correctAnswer": "B",
       "explanation": "Ceramah menyebut 'Memberikan kasus otentik, meminta siswa memecahkan masalah kompleks, atau merancang proyek inovatif' sebagai stimulus pengembangan HOTS.",
-      "tags": ["informasi-tersurat"],
+      "tags": [
+        "informasi-tersurat"
+      ],
       "source": "BC_UKBI_GURU_ORIGINAL",
       "status": "approved",
       "cognitive": "PEMAHAMAN",
@@ -166,18 +250,32 @@
       "band": "UNGGUL",
       "type": "pilihan_ganda",
       "difficulty": 4,
-      "audioScript": "",
+      "audioScript": "Lanjutan ceramah: \"Siswa yang terbiasa mengerjakan soal-soal HOTS akan memperoleh manfaat jangka panjang. Mereka mengembangkan fleksibilitas kognitif yang lebih baik, yakni kemampuan berpindah dari satu sudut pandang ke sudut pandang lain dengan lincah. Kemampuan ini sangat dibutuhkan di dunia kerja modern yang penuh ketidakpastian dan perubahan cepat.\"",
       "audioRef": null,
       "stem": "Manfaat siswa yang terbiasa dengan soal HOTS adalah ...",
       "options": [
-        { "id": "A", "text": "Nilai ujian menjadi lebih tinggi" },
-        { "id": "B", "text": "Fleksibilitas kognitif yang lebih baik dalam menghadapi tantangan baru" },
-        { "id": "C", "text": "Mendapat beasiswa ke luar negeri" },
-        { "id": "D", "text": "Lulus lebih cepat dari sekolah" }
+        {
+          "id": "A",
+          "text": "Nilai ujian menjadi lebih tinggi"
+        },
+        {
+          "id": "B",
+          "text": "Fleksibilitas kognitif yang lebih baik dalam menghadapi tantangan baru"
+        },
+        {
+          "id": "C",
+          "text": "Mendapat beasiswa ke luar negeri"
+        },
+        {
+          "id": "D",
+          "text": "Lulus lebih cepat dari sekolah"
+        }
       ],
       "correctAnswer": "B",
       "explanation": "Ceramah menyebut 'siswa yang terbiasa dengan soal HOTS memiliki fleksibilitas kognitif yang lebih baik dalam menghadapi tantangan baru.'",
-      "tags": ["informasi-tersurat"],
+      "tags": [
+        "informasi-tersurat"
+      ],
       "source": "BC_UKBI_GURU_ORIGINAL",
       "status": "approved",
       "cognitive": "PEMAHAMAN",
@@ -191,18 +289,32 @@
       "band": "SANGAT_UNGGUL",
       "type": "pilihan_ganda",
       "difficulty": 5,
-      "audioScript": "",
+      "audioScript": "Kutipan ceramah: \"Kita tidak bisa lagi mengajar dengan cara lama untuk generasi baru. Pembelajaran harus dirancang untuk melatih nalar, bukan sekadar mengingat. Jika kita terus memberi siswa jawaban, kita sedang menciptakan generasi penurut yang tidak siap menghadapi masa depan. Rancanglah setiap pertemuan agar siswa bertanya, mempertanyakan, dan menemukan sendiri jawabannya.\"",
       "audioRef": null,
       "stem": "Apa pesan tersirat utama dari ceramah tersebut?",
       "options": [
-        { "id": "A", "text": "Guru harus berhenti menggunakan soal hafalan sepenuhnya." },
-        { "id": "B", "text": "Pembelajaran harus dirancang untuk mengembangkan kemampuan berpikir tingkat tinggi, bukan sekadar hafalan." },
-        { "id": "C", "text": "Siswa yang cerdas tidak perlu dilatih HOTS." },
-        { "id": "D", "text": "HOTS hanya penting untuk siswa yang akan kuliah." }
+        {
+          "id": "A",
+          "text": "Guru harus berhenti menggunakan soal hafalan sepenuhnya."
+        },
+        {
+          "id": "B",
+          "text": "Pembelajaran harus dirancang untuk mengembangkan kemampuan berpikir tingkat tinggi, bukan sekadar hafalan."
+        },
+        {
+          "id": "C",
+          "text": "Siswa yang cerdas tidak perlu dilatih HOTS."
+        },
+        {
+          "id": "D",
+          "text": "HOTS hanya penting untuk siswa yang akan kuliah."
+        }
       ],
       "correctAnswer": "B",
       "explanation": "Pesan tersirat utama adalah perlunya menggeser paradigma pembelajaran dari hafalan ke pengembangan HOTS. Ceramah menekankan pentingnya HOTS dan memberikan contoh stimulasi, tetapi tidak menyatakan bahwa hafalan harus dihilangkan sepenuhnya (A terlalu ekstrem). C dan D bertentangan dengan semangat teks.",
-      "tags": ["pesan"],
+      "tags": [
+        "pesan"
+      ],
       "source": "BC_UKBI_GURU_ORIGINAL",
       "status": "approved",
       "cognitive": "ANALISIS",
@@ -220,14 +332,28 @@
       "audioRef": null,
       "stem": "Menurut Bu Dewi, kunci sukses dalam mengajar adalah ...",
       "options": [
-        { "id": "A", "text": "Menguasai semua materi pelajaran" },
-        { "id": "B", "text": "Mengenali setiap siswa sebagai individu yang unik" },
-        { "id": "C", "text": "Memiliki sertifikasi guru" },
-        { "id": "D", "text": "Mengajar sesuai buku paket" }
+        {
+          "id": "A",
+          "text": "Menguasai semua materi pelajaran"
+        },
+        {
+          "id": "B",
+          "text": "Mengenali setiap siswa sebagai individu yang unik"
+        },
+        {
+          "id": "C",
+          "text": "Memiliki sertifikasi guru"
+        },
+        {
+          "id": "D",
+          "text": "Mengajar sesuai buku paket"
+        }
       ],
       "correctAnswer": "B",
       "explanation": "Bu Dewi menjawab 'Kuncinya adalah mengenali setiap siswa sebagai individu yang unik. Saya selalu berusaha memahami latar belakang, minat, dan gaya belajar mereka.'",
-      "tags": ["informasi-tersurat"],
+      "tags": [
+        "informasi-tersurat"
+      ],
       "source": "BC_UKBI_GURU_ORIGINAL",
       "status": "approved",
       "cognitive": "PEMAHAMAN",
@@ -241,18 +367,32 @@
       "band": "MADYA",
       "type": "pilihan_ganda",
       "difficulty": 3,
-      "audioScript": "",
+      "audioScript": "Wawancara: \"Pewawancara: Bu Dewi, apa pesan Ibu untuk guru-guru muda? Bu Dewi: Saya selalu bilang, jangan takut mencoba metode baru. Guru muda punya energi dan kreativitas. Kalau metode lama tidak berhasil di kelas, beranikan diri bereksperimen. Gagal itu biasa, yang penting kita terus belajar untuk anak-anak.\"",
       "audioRef": null,
       "stem": "Pesan Bu Dewi untuk guru muda adalah ...",
       "options": [
-        { "id": "A", "text": "Ikuti metode mengajar yang sudah terbukti berhasil" },
-        { "id": "B", "text": "Jangan takut mencoba metode baru; kegagalan adalah bagian dari belajar" },
-        { "id": "C", "text": "Fokus pada penguasaan materi saja" },
-        { "id": "D", "text": "Hindari risiko dalam mengajar" }
+        {
+          "id": "A",
+          "text": "Ikuti metode mengajar yang sudah terbukti berhasil"
+        },
+        {
+          "id": "B",
+          "text": "Jangan takut mencoba metode baru; kegagalan adalah bagian dari belajar"
+        },
+        {
+          "id": "C",
+          "text": "Fokus pada penguasaan materi saja"
+        },
+        {
+          "id": "D",
+          "text": "Hindari risiko dalam mengajar"
+        }
       ],
       "correctAnswer": "B",
       "explanation": "Bu Dewi berkata 'Jangan takut mencoba metode baru. Kegagalan adalah bagian dari proses belajar.'",
-      "tags": ["informasi-tersurat"],
+      "tags": [
+        "informasi-tersurat"
+      ],
       "source": "BC_UKBI_GURU_ORIGINAL",
       "status": "approved",
       "cognitive": "PEMAHAMAN",
@@ -270,14 +410,28 @@
       "audioRef": null,
       "stem": "Apa usulan ketua MGMP dalam forum tersebut?",
       "options": [
-        { "id": "A", "text": "Menghapus ujian bersama" },
-        { "id": "B", "text": "Beralih dari soal hafalan ke soal yang mengukur penalaran" },
-        { "id": "C", "text": "Menambah jumlah soal ujian" },
-        { "id": "D", "text": "Menggunakan soal dari penerbit tertentu" }
+        {
+          "id": "A",
+          "text": "Menghapus ujian bersama"
+        },
+        {
+          "id": "B",
+          "text": "Beralih dari soal hafalan ke soal yang mengukur penalaran"
+        },
+        {
+          "id": "C",
+          "text": "Menambah jumlah soal ujian"
+        },
+        {
+          "id": "D",
+          "text": "Menggunakan soal dari penerbit tertentu"
+        }
       ],
       "correctAnswer": "B",
       "explanation": "Ketua MGMP menyatakan 'Saya usul kita beralih dari soal hafalan ke soal yang mengukur penalaran.'",
-      "tags": ["informasi-tersurat"],
+      "tags": [
+        "informasi-tersurat"
+      ],
       "source": "BC_UKBI_GURU_ORIGINAL",
       "status": "approved",
       "cognitive": "PEMAHAMAN",
@@ -291,18 +445,32 @@
       "band": "UNGGUL",
       "type": "pilihan_ganda",
       "difficulty": 4,
-      "audioScript": "",
+      "audioScript": "Forum MGMP: \"Guru 2: Saya sebenarnya setuju dengan usulan asesmen baru ini, tapi saya khawatir. Selama ini kita terbiasa membuat soal pilihan ganda yang langsung jadi. Kalau harus menyusun soal uraian dan proyek dengan rubrik, guru belum terbiasa membuat soal seperti itu. Butuh waktu dan pelatihan ekstra.\"",
       "audioRef": null,
       "stem": "Kekhawatiran yang disampaikan oleh Guru 2 adalah ...",
       "options": [
-        { "id": "A", "text": "Siswa tidak akan lulus ujian" },
-        { "id": "B", "text": "Guru belum terbiasa membuat soal penalaran" },
-        { "id": "C", "text": "Biaya pembuatan soal terlalu mahal" },
-        { "id": "D", "text": "Orang tua siswa akan protes" }
+        {
+          "id": "A",
+          "text": "Siswa tidak akan lulus ujian"
+        },
+        {
+          "id": "B",
+          "text": "Guru belum terbiasa membuat soal penalaran"
+        },
+        {
+          "id": "C",
+          "text": "Biaya pembuatan soal terlalu mahal"
+        },
+        {
+          "id": "D",
+          "text": "Orang tua siswa akan protes"
+        }
       ],
       "correctAnswer": "B",
       "explanation": "Guru 2 bertanya 'Bagaimana dengan guru yang belum terbiasa membuat soal penalaran?' yang menunjukkan kekhawatiran tentang kesiapan guru.",
-      "tags": ["informasi-tersurat"],
+      "tags": [
+        "informasi-tersurat"
+      ],
       "source": "BC_UKBI_GURU_ORIGINAL",
       "status": "approved",
       "cognitive": "PEMAHAMAN",
@@ -316,18 +484,32 @@
       "band": "SANGAT_UNGGUL",
       "type": "pilihan_ganda",
       "difficulty": 5,
-      "audioScript": "",
+      "audioScript": "Tanggapan ketua MGMP: \"Saya memahami kekhawatiran Bapak dan Ibu. Karena itu, mari kita ambil jalan tengah. Kita terapkan perubahan ini secara bertahap: semester pertama kita adakan pelatihan penyusunan soal HOTS dulu, semester berikutnya baru diterapkan di kelas. Tidak perlu langsung semuanya berubah.\"",
       "audioRef": null,
       "stem": "Bagaimana sikap ketua MGMP terhadap kekhawatiran para guru?",
       "options": [
-        { "id": "A", "text": "Mengabaikan kekhawatiran dan memaksakan perubahan" },
-        { "id": "B", "text": "Menunda perubahan sampai semua guru siap" },
-        { "id": "C", "text": "Menawarkan solusi bertahap: revisi soal sekarang dan pelatihan bulan depan" },
-        { "id": "D", "text": "Membatalkan usulan perubahan" }
+        {
+          "id": "A",
+          "text": "Mengabaikan kekhawatiran dan memaksakan perubahan"
+        },
+        {
+          "id": "B",
+          "text": "Menunda perubahan sampai semua guru siap"
+        },
+        {
+          "id": "C",
+          "text": "Menawarkan solusi bertahap: revisi soal sekarang dan pelatihan bulan depan"
+        },
+        {
+          "id": "D",
+          "text": "Membatalkan usulan perubahan"
+        }
       ],
       "correctAnswer": "C",
       "explanation": "Ketua MGMP memberikan solusi bertahap: 'Untuk sekarang, kita revisi soal yang ada secara bertahap' dan 'Kita akan adakan pelatihan pembuatan soal HOTS bulan depan.' Ini menunjukkan sikap responsif dan realistis.",
-      "tags": ["sikap"],
+      "tags": [
+        "sikap"
+      ],
       "source": "BC_UKBI_GURU_ORIGINAL",
       "status": "approved",
       "cognitive": "ANALISIS",
@@ -345,14 +527,28 @@
       "audioRef": null,
       "stem": "Siapa yang dapat mengikuti lomba cipta puisi tersebut?",
       "options": [
-        { "id": "A", "text": "Hanya siswa kelas XII" },
-        { "id": "B", "text": "Semua siswa kelas VII sampai XII" },
-        { "id": "C", "text": "Hanya anggota klub sastra" },
-        { "id": "D", "text": "Semua guru dan karyawan" }
+        {
+          "id": "A",
+          "text": "Hanya siswa kelas XII"
+        },
+        {
+          "id": "B",
+          "text": "Semua siswa kelas VII sampai XII"
+        },
+        {
+          "id": "C",
+          "text": "Hanya anggota klub sastra"
+        },
+        {
+          "id": "D",
+          "text": "Semua guru dan karyawan"
+        }
       ],
       "correctAnswer": "B",
       "explanation": "Pengumuman menyebut 'Lomba ini terbuka untuk semua siswa kelas VII sampai kelas XII.'",
-      "tags": ["informasi-tersurat"],
+      "tags": [
+        "informasi-tersurat"
+      ],
       "source": "BC_UKBI_GURU_ORIGINAL",
       "status": "approved",
       "cognitive": "PEMAHAMAN",
@@ -366,18 +562,32 @@
       "band": "MADYA",
       "type": "pilihan_ganda",
       "difficulty": 3,
-      "audioScript": "",
+      "audioScript": "Pembacaan pengumuman: \"Dalam rangka memperingati Bulan Bahasa, OSIS mengadakan lomba cipta puisi untuk seluruh siswa. Tema lomba tahun ini adalah Bahasaku, Identitasku. Karya dikumpulkan paling lambat tanggal dua puluh lima Oktober kepada pembina OSIS. Pemenang akan diumumkan pada upacara Hari Sumpah Pemuda.\"",
       "audioRef": null,
       "stem": "Tema lomba cipta puisi adalah ...",
       "options": [
-        { "id": "A", "text": "Hari Sumpah Pemuda" },
-        { "id": "B", "text": "Bahasaku, Identitasku" },
-        { "id": "C", "text": "Cinta Tanah Air" },
-        { "id": "D", "text": "Bulan Bahasa dan Sastra" }
+        {
+          "id": "A",
+          "text": "Hari Sumpah Pemuda"
+        },
+        {
+          "id": "B",
+          "text": "Bahasaku, Identitasku"
+        },
+        {
+          "id": "C",
+          "text": "Cinta Tanah Air"
+        },
+        {
+          "id": "D",
+          "text": "Bulan Bahasa dan Sastra"
+        }
       ],
       "correctAnswer": "B",
       "explanation": "Pengumuman menyebut 'Tema lomba adalah 'Bahasaku, Identitasku'.'",
-      "tags": ["informasi-tersurat"],
+      "tags": [
+        "informasi-tersurat"
+      ],
       "source": "BC_UKBI_GURU_ORIGINAL",
       "status": "approved",
       "cognitive": "PEMAHAMAN",
@@ -395,14 +605,28 @@
       "audioRef": null,
       "stem": "Topik seminar tersebut adalah ...",
       "options": [
-        { "id": "A", "text": "Membangun Literasi di Era Digital" },
-        { "id": "B", "text": "Bahaya Media Sosial bagi Pelajar" },
-        { "id": "C", "text": "Strategi Mengajar Abad 21" },
-        { "id": "D", "text": "Kurikulum Merdeka dan Implementasinya" }
+        {
+          "id": "A",
+          "text": "Membangun Literasi di Era Digital"
+        },
+        {
+          "id": "B",
+          "text": "Bahaya Media Sosial bagi Pelajar"
+        },
+        {
+          "id": "C",
+          "text": "Strategi Mengajar Abad 21"
+        },
+        {
+          "id": "D",
+          "text": "Kurikulum Merdeka dan Implementasinya"
+        }
       ],
       "correctAnswer": "A",
       "explanation": "Pembawa acara menyebut 'topik yang sangat relevan, yaitu 'Membangun Literasi di Era Digital'.'",
-      "tags": ["informasi-tersurat"],
+      "tags": [
+        "informasi-tersurat"
+      ],
       "source": "BC_UKBI_GURU_ORIGINAL",
       "status": "approved",
       "cognitive": "PEMAHAMAN",
@@ -416,18 +640,32 @@
       "band": "UNGGUL",
       "type": "pilihan_ganda",
       "difficulty": 4,
-      "audioScript": "",
+      "audioScript": "Pengantar seminar: \"Di era digital ini, literasi tidak lagi berarti sekadar bisa membaca dan menulis. Literasi digital mencakup kemampuan memahami, menganalisis, dan mengevaluasi informasi dari berbagai sumber daring. Peserta didik harus mampu memilah mana informasi yang kredibel dan mana yang menyesatkan.\"",
       "audioRef": null,
       "stem": "Menurut pembicara, literasi di era digital mencakup kemampuan ...",
       "options": [
-        { "id": "A", "text": "Membaca dan menulis dengan cepat" },
-        { "id": "B", "text": "Memahami, menganalisis, dan memanfaatkan informasi secara kritis" },
-        { "id": "C", "text": "Mengoperasikan gawai dan aplikasi" },
-        { "id": "D", "text": "Membuat konten media sosial" }
+        {
+          "id": "A",
+          "text": "Membaca dan menulis dengan cepat"
+        },
+        {
+          "id": "B",
+          "text": "Memahami, menganalisis, dan memanfaatkan informasi secara kritis"
+        },
+        {
+          "id": "C",
+          "text": "Mengoperasikan gawai dan aplikasi"
+        },
+        {
+          "id": "D",
+          "text": "Membuat konten media sosial"
+        }
       ],
       "correctAnswer": "B",
       "explanation": "Pembicara menyebut 'Literasi bukan sekadar kemampuan membaca dan menulis, melainkan kemampuan memahami, menganalisis, dan memanfaatkan informasi secara kritis.'",
-      "tags": ["informasi-tersurat"],
+      "tags": [
+        "informasi-tersurat"
+      ],
       "source": "BC_UKBI_GURU_ORIGINAL",
       "status": "approved",
       "cognitive": "PEMAHAMAN",
@@ -441,18 +679,32 @@
       "band": "SANGAT_UNGGUL",
       "type": "pilihan_ganda",
       "difficulty": 5,
-      "audioScript": "",
+      "audioScript": "Lanjutan seminar: \"Namun, ada kekhawatiran yang tidak bisa kita abaikan. Gempuran konten media sosial yang serba cepat membuat siswa terbiasa membaca sekilas tanpa mendalami. Informasi hoaks menyebar lebih cepat daripada klarifikasinya. Inilah tantangan terbesar pendidik hari ini: menanamkan berpikir kritis di tengah banjir informasi.\"",
       "audioRef": null,
       "stem": "Apa yang menjadi kekhawatiran utama pembicara terkait era digital?",
       "options": [
-        { "id": "A", "text": "Semakin mahalnya harga kuota internet" },
-        { "id": "B", "text": "Gempuran konten media sosial yang instan dan dangkal" },
-        { "id": "C", "text": "Kurangnya perangkat digital di sekolah" },
-        { "id": "D", "text": "Rendahnya partisipasi orang tua" }
+        {
+          "id": "A",
+          "text": "Semakin mahalnya harga kuota internet"
+        },
+        {
+          "id": "B",
+          "text": "Gempuran konten media sosial yang instan dan dangkal"
+        },
+        {
+          "id": "C",
+          "text": "Kurangnya perangkat digital di sekolah"
+        },
+        {
+          "id": "D",
+          "text": "Rendahnya partisipasi orang tua"
+        }
       ],
       "correctAnswer": "B",
       "explanation": "Pembicara menyebut 'di tengah gempuran konten media sosial yang instan dan dangkal, bagaimana kita sebagai pendidik dapat menumbuhkan kembali budaya literasi yang mendalam?' Kekhawatiran ini yang mendorong urgensi seminar.",
-      "tags": ["kekhawatiran"],
+      "tags": [
+        "kekhawatiran"
+      ],
       "source": "BC_UKBI_GURU_ORIGINAL",
       "status": "approved",
       "cognitive": "ANALISIS",
@@ -470,14 +722,28 @@
       "audioRef": null,
       "stem": "Apa yang dimaksud dengan 'penerang dalam gelap' dalam puisi tersebut?",
       "options": [
-        { "id": "A", "text": "Guru yang mengajar di malam hari" },
-        { "id": "B", "text": "Guru yang memberikan pengetahuan dan petunjuk di tengah kebingungan" },
-        { "id": "C", "text": "Guru yang menggunakan senter saat mengajar" },
-        { "id": "D", "text": "Guru yang menerangi ruang kelas dengan lampu" }
+        {
+          "id": "A",
+          "text": "Guru yang mengajar di malam hari"
+        },
+        {
+          "id": "B",
+          "text": "Guru yang memberikan pengetahuan dan petunjuk di tengah kebingungan"
+        },
+        {
+          "id": "C",
+          "text": "Guru yang menggunakan senter saat mengajar"
+        },
+        {
+          "id": "D",
+          "text": "Guru yang menerangi ruang kelas dengan lampu"
+        }
       ],
       "correctAnswer": "B",
       "explanation": "'Penerang dalam gelap' adalah majas atau kiasan yang berarti guru memberikan pengetahuan, pencerahan, dan petunjuk di saat siswa mengalami kebingungan atau ketidaktahuan (lambang 'gelap'). Bukan makna harfiah tentang cahaya fisik.",
-      "tags": ["makna-kiasan"],
+      "tags": [
+        "makna-kiasan"
+      ],
       "source": "BC_UKBI_GURU_ORIGINAL",
       "status": "approved",
       "cognitive": "ANALISIS",
@@ -491,18 +757,32 @@
       "band": "SANGAT_UNGGUL",
       "type": "pilihan_ganda",
       "difficulty": 5,
-      "audioScript": "",
+      "audioScript": "Pembacaan puisi: \"Guru, engkau pelita di gulita malam, menuntun langkah tanpa pamrih dalam diam. Jasamu tak terhitung oleh angka, namamu tak selalu tercatat prasasti. Guru adalah makhluk paling mulia, menabur ilmu meski tak dipuja.\"",
       "audioRef": null,
       "stem": "Pesan utama puisi tersebut adalah ...",
       "options": [
-        { "id": "A", "text": "Guru harus bekerja keras setiap hari" },
-        { "id": "B", "text": "Guru adalah makhluk paling mulia yang berperan penting bagi masa depan bangsa" },
-        { "id": "C", "text": "Guru sering kali tidak dihargai oleh masyarakat" },
-        { "id": "D", "text": "Menjadi guru adalah profesi yang mudah" }
+        {
+          "id": "A",
+          "text": "Guru harus bekerja keras setiap hari"
+        },
+        {
+          "id": "B",
+          "text": "Guru adalah makhluk paling mulia yang berperan penting bagi masa depan bangsa"
+        },
+        {
+          "id": "C",
+          "text": "Guru sering kali tidak dihargai oleh masyarakat"
+        },
+        {
+          "id": "D",
+          "text": "Menjadi guru adalah profesi yang mudah"
+        }
       ],
       "correctAnswer": "B",
       "explanation": "Puisi secara keseluruhan memuliakan profesi guru: 'yang paling mulia adalah guru', 'penerang dalam gelap', 'masa depan bangsa dipertaruhkan'. Pesan utamanya adalah penghargaan terhadap peran guru yang sangat penting bagi bangsa.",
-      "tags": ["pesan"],
+      "tags": [
+        "pesan"
+      ],
       "source": "BC_UKBI_GURU_ORIGINAL",
       "status": "approved",
       "cognitive": "ANALISIS",

@@ -20,7 +20,7 @@ const TRACK_CONFIGS: Record<string, { tingkat: string; paketType: string }> = {
   sd: { tingkat: "SD", paketType: "TKA_SD" },
   smp: { tingkat: "SMP", paketType: "TKA_SMP" },
   sma: { tingkat: "SMA", paketType: "TKA_SMA" },
-  utbk: { tingkat: "UTBK", paketType: "TKA_UTBK" },
+  utbk: { tingkat: "SMA", paketType: "TKA_UTBK" },
   guru: { tingkat: "GURU", paketType: "TKA_GURU" },
 };
 
@@ -106,10 +106,12 @@ function mapKompetensi(section: string): string {
   const map: Record<string, string> = {
     membaca: "LITERASI_MEMBACA",
     menulis: "MENULIS",
-    kebahasaan: "KEBAHASAAN",
+    kebahasaan: "TATA_BAHASA",
   };
   return map[section?.toLowerCase()] || "LITERASI_MEMBACA";
 }
+
+const SIM_QUESTIONS_PER_SECTION = 30;
 
 async function ensurePaket(trackKey: string, questionsCount: number) {
   const cfg = PAKET_CONFIGS[trackKey];
@@ -120,20 +122,23 @@ async function ensurePaket(trackKey: string, questionsCount: number) {
     where: { type: trackCfg.paketType as any, title: cfg.title },
   });
 
+  // Setiap simulasi mengambil 30 soal random dari bank agar murid tidak capek
+  const perSimulasi = Math.min(questionsCount, SIM_QUESTIONS_PER_SECTION);
+
   const sectionData = [
-    { name: "Membaca", count: questionsCount, seksi: "MEMBACA", timeLimit: 60 },
+    { name: "Membaca", count: perSimulasi, seksi: "MEMBACA", timeLimit: 30 },
   ];
 
   if (existingPk) {
     await db.paketKompetensi.update({
       where: { id: existingPk.id },
       data: {
-        totalQuestions: questionsCount,
+        totalQuestions: perSimulasi,
         sections: sectionData,
         isActive: true,
       },
     });
-    console.log(`  ✅ Updated PaketKompetensi: ${cfg.title} (${existingPk.id})`);
+    console.log(`  ✅ Updated PaketKompetensi: ${cfg.title} (${existingPk.id}) → ${perSimulasi} soal`);
   } else {
     await db.paketKompetensi.create({
       data: {
@@ -141,17 +146,17 @@ async function ensurePaket(trackKey: string, questionsCount: number) {
         description: `Latihan TKA untuk ${trackKey.toUpperCase()}. Soal membaca pemahaman original BahasaCerdas.`,
         type: trackCfg.paketType as any,
         mode: "SIMULASI",
-        duration: 60,
+        duration: 45,
         passingScore: cfg.passingScore,
         passingGrade: cfg.passingGrade,
         sections: sectionData as any,
-        totalQuestions: questionsCount,
+        totalQuestions: perSimulasi,
         isActive: true,
         isPremium: false,
         attemptLimit: -1,
       },
     });
-    console.log(`  ✅ Created PaketKompetensi: ${cfg.title}`);
+    console.log(`  ✅ Created PaketKompetensi: ${cfg.title} → ${perSimulasi} soal`);
   }
 }
 

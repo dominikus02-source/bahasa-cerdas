@@ -18,12 +18,42 @@
       "difficulty": 3,
       "prompt": "Bacalah paragraf argumentatif berikut yang belum lengkap dan belum efektif. Tulislah ulang paragraf ini dengan perbaikan dari segi struktur argumen, pilihan kata, dan keefektifan kalimat. Pertahankan gagasan utama bahwa media sosial memiliki dampak ganda bagi remaja.\n\n\"Saya berpendapat bahwa media sosial itu punya dampak positif dan negatif untuk remaja. Dampak positifnya sih bagus untuk belajar karena bisa cari informasi di internet. Tapi negatifnya juga banyak, remaja jadi malas belajar karena buka TikTok mulu. Pokoknya media sosial itu pisau bermata dua, tergantung pemakainya.\"",
       "scoringMode": "holistic",
-      "wordLimit": { "min": 100, "max": 200 },
-      "tags": ["menulis", "argumentasi", "revisi", "kalimat-efektif"],
+      "wordLimit": {
+        "min": 100,
+        "max": 200
+      },
+      "tags": [
+        "menulis",
+        "argumentasi",
+        "revisi",
+        "kalimat-efektif"
+      ],
       "source": "BC_UKBI_SMA_ORIGINAL",
       "status": "approved",
       "cognitive": "EVALUASI",
-      "domain": "SOSIAL"
+      "domain": "SOSIAL",
+      "rubric": [
+        {
+          "criteria": "Kesesuaian isi dengan tujuan teks",
+          "weight": 35,
+          "description": "Isi tulisan sesuai dengan perintah dan tujuan genre teks"
+        },
+        {
+          "criteria": "Struktur dan koherensi",
+          "weight": 25,
+          "description": "Alur ide logis, antarkalimat saling terhubung"
+        },
+        {
+          "criteria": "Ketepatan kaidah bahasa",
+          "weight": 25,
+          "description": "Ejaan, diksi, dan struktur kalimat sesuai kaidah Bahasa Indonesia"
+        },
+        {
+          "criteria": "Kelengkapan",
+          "weight": 15,
+          "description": "Memenuhi batas kata dan unsur yang diminta"
+        }
+      ]
     },
     {
       "id": "BC-UKBI-SMA-MENULIS-UNGGUL-SET001-Q002",
@@ -35,12 +65,42 @@
       "difficulty": 3,
       "prompt": "Kamu diminta untuk menulis teks informasi singkat tentang salah satu budaya tradisional Indonesia untuk website pariwisata. Pilihlah satu budaya tradisional (misalnya: tari saman, wayang kulit, batik, atau gamelan). Tulislah teks informatif yang mencakup: (1) asal-usul atau sejarah singkat, (2) keunikan budaya tersebut, dan (3) mengapa budaya tersebut penting untuk dilestarikan. Gunakan bahasa yang formal, informatif, dan menarik.",
       "scoringMode": "holistic",
-      "wordLimit": { "min": 100, "max": 200 },
-      "tags": ["menulis", "informatif", "budaya", "deskripsi"],
+      "wordLimit": {
+        "min": 100,
+        "max": 200
+      },
+      "tags": [
+        "menulis",
+        "informatif",
+        "budaya",
+        "deskripsi"
+      ],
       "source": "BC_UKBI_SMA_ORIGINAL",
       "status": "approved",
       "cognitive": "KREASI",
-      "domain": "AKADEMIK"
+      "domain": "AKADEMIK",
+      "rubric": [
+        {
+          "criteria": "Kesesuaian isi dengan tujuan teks",
+          "weight": 35,
+          "description": "Isi tulisan sesuai dengan perintah dan tujuan genre teks"
+        },
+        {
+          "criteria": "Struktur dan koherensi",
+          "weight": 25,
+          "description": "Alur ide logis, antarkalimat saling terhubung"
+        },
+        {
+          "criteria": "Ketepatan kaidah bahasa",
+          "weight": 25,
+          "description": "Ejaan, diksi, dan struktur kalimat sesuai kaidah Bahasa Indonesia"
+        },
+        {
+          "criteria": "Kelengkapan",
+          "weight": 15,
+          "description": "Memenuhi batas kata dan unsur yang diminta"
+        }
+      ]
     },
     {
       "id": "BC-UKBI-SMA-MENULIS-SANGATUNGGUL-SET001-Q003",
@@ -52,12 +112,42 @@
       "difficulty": 4,
       "prompt": "Tulislah sebuah paragraf persuasif yang bertujuan meyakinkan pembaca untuk mengurangi penggunaan plastik sekali pakai. Dalam tulisanmu, gunakan struktur persuasi yang jelas: (1) pernyataan ajakan, (2) argumen yang mendukung (minimal dua argumen dengan data atau contoh logis), (3) sanggahan terhadap kemungkinan keberatan pembaca, dan (4) penegasan kembali ajakan. Gunakan bahasa yang meyakinkan, lugas, dan sesuai dengan kaidah bahasa Indonesia baku.",
       "scoringMode": "holistic",
-      "wordLimit": { "min": 150, "max": 250 },
-      "tags": ["menulis", "persuasi", "lingkungan", "argumentasi"],
+      "wordLimit": {
+        "min": 150,
+        "max": 250
+      },
+      "tags": [
+        "menulis",
+        "persuasi",
+        "lingkungan",
+        "argumentasi"
+      ],
       "source": "BC_UKBI_SMA_ORIGINAL",
       "status": "approved",
       "cognitive": "KREASI",
-      "domain": "AKADEMIK"
+      "domain": "AKADEMIK",
+      "rubric": [
+        {
+          "criteria": "Kesesuaian isi dengan tujuan teks",
+          "weight": 35,
+          "description": "Isi tulisan sesuai dengan perintah dan tujuan genre teks"
+        },
+        {
+          "criteria": "Struktur dan koherensi",
+          "weight": 25,
+          "description": "Alur ide logis, antarkalimat saling terhubung"
+        },
+        {
+          "criteria": "Ketepatan kaidah bahasa",
+          "weight": 25,
+          "description": "Ejaan, diksi, dan struktur kalimat sesuai kaidah Bahasa Indonesia"
+        },
+        {
+          "criteria": "Kelengkapan",
+          "weight": 15,
+          "description": "Memenuhi batas kata dan unsur yang diminta"
+        }
+      ]
     }
   ]
 }

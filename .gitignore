@@ -63,3 +63,8 @@ generate-iv.ts
 
 # Load test auth tokens (contains JWT tokens)
 tests/load/auth-tokens.json
+tests/load/.tokens.cloud.json
+
+# Audio generation artifacts (regeneratable via generate-audio.py)
+audio-out/
+.venv-tts/

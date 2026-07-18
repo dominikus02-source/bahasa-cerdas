@@ -19,11 +19,38 @@
       "prompt": "Menurutmu, apakah pendidikan karakter di sekolah sudah berjalan efektif? Sampaikan pendapatmu secara lisan dalam waktu 2–3 menit. Jelaskan apa yang sudah berjalan dengan baik, apa kekurangannya, dan berikan saran konkret untuk meningkatkan efektivitas pendidikan karakter di sekolah. Gunakan argumen yang logis dan contoh nyata dari pengalamanmu atau lingkungan sekitarmu.",
       "speakingTask": "Menyampaikan tanggapan kritis dan argumentasi tentang efektivitas pendidikan karakter di sekolah, disertai saran konkret. Waktu berbicara 2-3 menit.",
       "scoringMode": "analytic",
-      "tags": ["berbicara", "argumentasi", "pendidikan", "karakter"],
+      "tags": [
+        "berbicara",
+        "argumentasi",
+        "pendidikan",
+        "karakter"
+      ],
       "source": "BC_UKBI_SMA_ORIGINAL",
       "status": "approved",
       "cognitive": "KREASI",
-      "domain": "AKADEMIK"
+      "domain": "AKADEMIK",
+      "rubric": [
+        {
+          "criteria": "Kelancaran berbicara",
+          "weight": 30,
+          "description": "Berbicara lancar tanpa jeda panjang yang mengganggu"
+        },
+        {
+          "criteria": "Kesesuaian isi dengan topik",
+          "weight": 30,
+          "description": "Isi ucapan relevan dan menjawab tugas"
+        },
+        {
+          "criteria": "Pelafalan dan intonasi",
+          "weight": 20,
+          "description": "Ucapan jelas dengan intonasi wajar"
+        },
+        {
+          "criteria": "Struktur penyampaian",
+          "weight": 20,
+          "description": "Gagasan tersusun runtut dan mudah diikuti"
+        }
+      ]
     },
     {
       "id": "BC-UKBI-SMA-BERBICARA-SANGATUNGGUL-SET001-Q002",
@@ -36,11 +63,38 @@
       "prompt": "Sampaikan sebuah pidato persuasif tentang pentingnya integritas akademik bagi generasi muda! Pidatomu harus mencakup: (1) definisi integritas akademik dan contoh pelanggarannya, (2) dampak negatif kecurangan akademik bagi masa depan siswa, dan (3) langkah konkret yang bisa dilakukan siswa, guru, dan orang tua untuk membudayakan kejujuran di lingkungan sekolah. Gunakan bahasa yang meyakinkan, struktur pidato yang jelas (pembukaan, isi, penutup), serta intonasi dan ekspresi yang tepat. Waktu berbicara 2–3 menit.",
       "speakingTask": "Menyampaikan pidato persuasif tentang integritas akademik yang mencakup definisi, dampak negatif kecurangan, dan langkah konkret untuk membudayakan kejujuran. Waktu berbicara 2-3 menit.",
       "scoringMode": "analytic",
-      "tags": ["berbicara", "pidato", "integritas", "akademik"],
+      "tags": [
+        "berbicara",
+        "pidato",
+        "integritas",
+        "akademik"
+      ],
       "source": "BC_UKBI_SMA_ORIGINAL",
       "status": "approved",
       "cognitive": "KREASI",
-      "domain": "AKADEMIK"
+      "domain": "AKADEMIK",
+      "rubric": [
+        {
+          "criteria": "Kelancaran berbicara",
+          "weight": 30,
+          "description": "Berbicara lancar tanpa jeda panjang yang mengganggu"
+        },
+        {
+          "criteria": "Kesesuaian isi dengan topik",
+          "weight": 30,
+          "description": "Isi ucapan relevan dan menjawab tugas"
+        },
+        {
+          "criteria": "Pelafalan dan intonasi",
+          "weight": 20,
+          "description": "Ucapan jelas dengan intonasi wajar"
+        },
+        {
+          "criteria": "Struktur penyampaian",
+          "weight": 20,
+          "description": "Gagasan tersusun runtut dan mudah diikuti"
+        }
+      ]
     }
   ]
 }

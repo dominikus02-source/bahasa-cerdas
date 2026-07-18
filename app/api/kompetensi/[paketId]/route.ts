@@ -14,7 +14,7 @@ import cache from "@/lib/redis";
 // snapshot jawaban tetap diambil langsung dari DB. Perubahan bank soal
 // terpropagasi dalam <= TTL. Nol perubahan jika Upstash tak diset (getOrSet
 // jatuh ke fungsi fetch aslinya).
-const POOL_CACHE_VERSION = "v3";
+const POOL_CACHE_VERSION = "v4";
 const POOL_TTL = Number(process.env.SIM_POOL_TTL || 300);
 
 const UKBI_TYPES = ["UKBI", "UKBI_SIMULASI", "UKBI_LATIHAN", "UKBI_SD", "UKBI_LATIHAN_SD", "UKBI_SMP", "UKBI_LATIHAN_SMP", "UKBI_SMA", "UKBI_LATIHAN_SMA", "UKBI_GURU_SIMULASI", "UKBI_GURU_LATIHAN"];
@@ -255,20 +255,28 @@ export async function GET(
         5000,
         "Session create timeout"
       );
-    } else if (session.status === "COMPLETED") {
-      if (retry) {
-        const expiresAt = new Date();
-        expiresAt.setMinutes(expiresAt.getMinutes() + paket.duration);
-        session = await withQueryTimeout(
-          db.testSession.update({
-            where: { id: session.id },
-            data: { status: "IN_PROGRESS", expiresAt, startedAt: new Date(), answers: {}, flagged: [] },
-          }),
-          5000,
-          "Session retry timeout"
-        );
-      } else {
-        return err("Tes sudah selesai", "VALIDATION", 400);
+    } else {
+      const isExpired = session.status === "IN_PROGRESS" && session.expiresAt && new Date(session.expiresAt) < new Date();
+
+      if (session.status === "COMPLETED" || isExpired) {
+        if (retry) {
+          const expiresAt = new Date();
+          expiresAt.setMinutes(expiresAt.getMinutes() + paket.duration);
+          session = await withQueryTimeout(
+            db.testSession.update({
+              where: { id: session.id },
+              data: { status: "IN_PROGRESS", expiresAt, startedAt: new Date(), answers: {}, flagged: [] },
+            }),
+            5000,
+            "Session retry timeout"
+          );
+        } else {
+          return err(
+            isExpired ? "Sesi sebelumnya sudah kadaluarsa" : "Tes sudah selesai",
+            "VALIDATION",
+            400
+          );
+        }
       }
     }
 
