@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { use } from "react";
-import { ChevronLeft, Users, MapPin, Send, CheckCircle, Calendar, UserPlus, Crown } from "lucide-react";
+import { ChevronLeft, Users, MapPin, Send, CheckCircle, Calendar, UserPlus, Crown, LogOut } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
@@ -67,6 +67,12 @@ export default function CommunityDetailPage({ params }: { params: Promise<{ id: 
         }
         if (me.user) {
           setCurrentUserId(me.user.id);
+          // Check if current user is already a member
+          const isUserMember = data.members?.some(
+            (m: any) => m.userId === me.user.id
+          );
+          setJoined(!!isUserMember);
+          setIsMember(!!isUserMember);
         }
       } catch (e) {
         console.error(e);
@@ -85,6 +91,13 @@ export default function CommunityDetailPage({ params }: { params: Promise<{ id: 
       if (data.joined !== undefined) {
         setJoined(data.joined);
         setIsMember(data.joined);
+        // Refetch community to get updated member count
+        const refetch = await fetch(`/api/komunitas/${resolvedParams.id}`);
+        const refetched = await refetch.json();
+        if (refetched.community) {
+          setCommunity(refetched.community);
+          setMembers(refetched.members || []);
+        }
       }
     } catch (e) {
       console.error(e);
@@ -191,10 +204,10 @@ export default function CommunityDetailPage({ params }: { params: Promise<{ id: 
             <Button
               onClick={handleJoin}
               disabled={joining}
-              className={`shrink-0 ${joined ? "bg-white text-emerald-700 hover:bg-white" : "bg-emerald-800 hover:bg-emerald-900"}`}
+              className={`shrink-0 ${joined ? "bg-red-50 text-red-600 hover:bg-red-100 border border-red-200" : "bg-emerald-800 hover:bg-emerald-900"}`}
             >
-              <UserPlus className="w-4 h-4 mr-2" />
-              {joined ? "Anggota" : "Gabung"}
+              {joined ? <LogOut className="w-4 h-4 mr-2" /> : <UserPlus className="w-4 h-4 mr-2" />}
+              {joining ? "Memproses..." : joined ? "Keluar" : "Gabung"}
             </Button>
           </div>
           <div className="flex items-center gap-4 mt-4 text-sm text-white/80">
