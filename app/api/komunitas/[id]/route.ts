@@ -8,6 +8,9 @@ export async function GET(
 ) {
   try {
     const { id } = await params;
+    const supabase = await createClient();
+    const { data: { user: authUser } } = await supabase.auth.getUser();
+
     const { searchParams } = new URL(req.url);
     const page = parseInt(searchParams.get("page") || "1");
     const limit = parseInt(searchParams.get("limit") || "20");
@@ -20,7 +23,15 @@ export async function GET(
     });
     if (!community) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
-    const [posts, members, totalPosts] = await Promise.all([
+    let dbUser: { id: string } | null = null;
+    if (authUser) {
+      dbUser = await db.user.findFirst({
+        where: { supabaseId: authUser.id },
+        select: { id: true },
+      });
+    }
+
+    const [posts, members, totalPosts, isMember] = await Promise.all([
       db.communityPost.findMany({
         where: { communityId: id },
         include: { user: { select: { id: true, fullName: true, avatar: true } } },
@@ -34,11 +45,16 @@ export async function GET(
         take: 10,
       }),
       db.communityPost.count({ where: { communityId: id } }),
+      dbUser
+        ? db.communityMember
+            .findFirst({ where: { communityId: id, userId: dbUser.id } })
+            .then(Boolean)
+        : Promise.resolve(false),
     ]);
 
     const ketua = members.find((m) => m.role === "ketua") || null;
 
-    return NextResponse.json({ community, posts, members, totalPosts, ketua });
+    return NextResponse.json({ community, posts, members, totalPosts, ketua, isMember });
   } catch (error) {
     return NextResponse.json({ error: "Internal error" }, { status: 500 });
   }

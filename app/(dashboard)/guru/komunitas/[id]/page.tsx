@@ -67,12 +67,8 @@ export default function CommunityDetailPage({ params }: { params: Promise<{ id: 
         }
         if (me.user) {
           setCurrentUserId(me.user.id);
-          // Check if current user is already a member
-          const isUserMember = data.members?.some(
-            (m: any) => m.userId === me.user.id
-          );
-          setJoined(!!isUserMember);
-          setIsMember(!!isUserMember);
+          setJoined(!!data.isMember);
+          setIsMember(!!data.isMember);
         }
       } catch (e) {
         console.error(e);
