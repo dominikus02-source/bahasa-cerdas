@@ -25,6 +25,8 @@
     "backup:current": "npx tsx scripts/backup-current-supabase.ts",
     "delete:dummy-content:dry-run": "npx tsx scripts/delete-dummy-content.ts --dry-run",
     "delete:dummy-content": "npx tsx scripts/delete-dummy-content.ts --execute",
+    "promo:premium:dry-run": "npx tsx scripts/buka-premium-2-bulan.ts",
+    "promo:premium": "npx tsx scripts/buka-premium-2-bulan.ts --execute",
     "backup:daily": "npx tsx scripts/backup-supabase-daily.ts",
     "restore:backup": "npx tsx scripts/restore-supabase-backup.ts",
     "validate:backup": "npx tsx scripts/validate-backup.ts",

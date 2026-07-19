@@ -56,7 +56,7 @@ export async function GET(req: NextRequest) {
       page,
       totalPages: Math.ceil(total / limit),
       publishedCount,
-      canPublishMore: dbUser.isPremium || publishedCount < 3,
+      canPublishMore: true,
     });
   } catch (error) {
     console.error("GET /api/marketplace error:", error);
@@ -158,18 +158,6 @@ export async function PUT(req: NextRequest) {
     const existing = await db.karya.findUnique({ where: { id } });
     if (!existing || existing.sellerId !== dbUser.id) {
       return NextResponse.json({ error: "Not found or not owner" }, { status: 404 });
-    }
-
-    if (data.isPublished && !dbUser.isPremium) {
-      const publishedCount = await db.karya.count({
-        where: { sellerId: dbUser.id, isPublished: true, id: { not: id } },
-      });
-      if (publishedCount >= 3) {
-        return NextResponse.json({
-          error: "Batas 3 karya gratis sudah tercapai. Upgrade ke Premium untuk upload unlimited.",
-          upgradeUrl: "/guru/pengaturan/premium",
-        }, { status: 403 });
-      }
     }
 
     const karya = await db.karya.update({ where: { id }, data });
