@@ -519,6 +519,7 @@ export default function KompetisiPage({ params, searchParams: sp }: { params: Pr
 
             {curSeksi === "MENULIS" ? (
               <WritingAnswer
+                key={currentQ.id}
                 questionId={currentQ.id}
                 questionNumber={currentQuestion + 1}
                 sectionName={currentSectionData?.sectionName || "Menulis"}
@@ -533,6 +534,7 @@ export default function KompetisiPage({ params, searchParams: sp }: { params: Pr
               />
             ) : curSeksi === "BERBICARA" ? (
               <SpeakingRecorder
+                key={currentQ.id}
                 questionId={currentQ.id}
                 questionNumber={currentQuestion + 1}
                 sectionName={currentSectionData?.sectionName || "Berbicara"}
@@ -547,6 +549,7 @@ export default function KompetisiPage({ params, searchParams: sp }: { params: Pr
               />
             ) : (
               <QuestionCard
+                key={currentQ.id}
                 questionNumber={currentQuestion + 1}
                 totalInSection={questions.length}
                 sectionName={currentSectionData?.sectionName || ""}

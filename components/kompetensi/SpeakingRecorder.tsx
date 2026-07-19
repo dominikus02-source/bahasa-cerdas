@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Mic, Square, RotateCcw, Loader2, AlertCircle, CheckCircle2, Clock } from "lucide-react";
+import { Mic, Square, RotateCcw, Loader2, AlertCircle, CheckCircle2, Clock, Volume2 } from "lucide-react";
 
 interface SpeakingRecorderProps {
   questionId: string;
@@ -74,24 +74,38 @@ export default function SpeakingRecorder({
 
   useEffect(() => cleanup, [cleanup]);
 
+  const saveAnswerImmediate = useCallback(async (qid: string, val: string) => {
+    try {
+      const match = window.location.pathname.match(/\/kompetisi\/([^/]+)/);
+      if (!match) return;
+      const paketId = match[1];
+      await fetch(`/api/kompetensi/${paketId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ answers: { [qid]: val } }),
+      });
+    } catch {}
+  }, []);
+
   const uploadBlob = useCallback(async (blob: Blob, ext: string, mime: string) => {
     setPhase("uploading");
     try {
       const file = new File([blob], `rekaman-${questionId}-${Date.now()}.${ext}`, { type: mime });
       const fd = new FormData();
       fd.append("file", file);
-      fd.append("folder", "rekaman-ukbi");
-      const res = await fetch("/api/upload/file", { method: "POST", body: fd });
+      const res = await fetch("/api/upload/rekaman", { method: "POST", body: fd });
       const data = await res.json();
       if (!res.ok || !data.url) throw new Error(data.error || "Unggah gagal");
-      setAudioUrl(data.url);
-      onChange(questionId, data.url);
+      const url = data.url;
+      setAudioUrl(url);
+      onChange(questionId, url);
+      saveAnswerImmediate(questionId, url);
       setPhase("done");
     } catch (e: any) {
       setError(e?.message || "Rekaman gagal diunggah. Coba rekam ulang.");
       setPhase("error");
     }
-  }, [questionId, onChange]);
+  }, [questionId, onChange, saveAnswerImmediate]);
 
   const stopRecording = useCallback(() => {
     if (recTimerRef.current) clearInterval(recTimerRef.current);
@@ -256,9 +270,20 @@ export default function SpeakingRecorder({
             <div className="mb-3 flex items-center gap-2 text-sm font-semibold text-emerald-600">
               <CheckCircle2 className="h-4 w-4" /> Rekaman tersimpan
             </div>
-            <audio controls src={audioUrl} className="w-full" preload="metadata">
-              Browser tidak mendukung pemutar audio.
-            </audio>
+            <div className="mb-2 rounded-xl border border-emerald-200 bg-emerald-50 p-4">
+              <div className="mb-2 flex items-center gap-2">
+                <Volume2 className="h-4 w-4 text-emerald-600" />
+                <span className="text-xs font-semibold text-emerald-700">Putar hasil rekaman Anda</span>
+              </div>
+              <audio
+                controls
+                src={audioUrl.includes("supabase.co") ? `/api/audio-proxy?url=${encodeURIComponent(audioUrl)}` : audioUrl}
+                className="w-full"
+                preload="metadata"
+              >
+                Browser tidak mendukung pemutar audio.
+              </audio>
+            </div>
             <button onClick={reRecord} className="mt-3 flex items-center gap-1.5 text-xs font-medium text-slate-500 hover:text-slate-700">
               <RotateCcw className="h-3.5 w-3.5" /> Rekam ulang
             </button>

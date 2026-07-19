@@ -85,7 +85,11 @@ export default function QuestionCard({
 
           {/* Audio player Mendengarkan — kontrol terbatas (maks 1× putar, tanpa seek) */}
           {isListening && question.audioUrl && (
-            <ListeningAudioPlayer src={question.audioUrl} maxPlays={1} storageKey={question.id} />
+            <ListeningAudioPlayer
+              src={question.audioUrl.includes("supabase.co") ? `/api/kompetensi/audio/${question.id}` : question.audioUrl}
+              maxPlays={1}
+              storageKey={question.id}
+            />
           )}
 
           {/* Image */}
