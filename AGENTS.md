@@ -119,6 +119,7 @@ Transform BahasaCerdas into a social-creative platform for Bahasa Indonesia wher
 - `next.config.ts`: `typescript.ignoreBuildErrors: false` (build fails on real TS errors)
 - Build command: `prisma generate && next build`
 - Uses npm (NOT pnpm — pnpm workspace caused build failures)
+- `vercel.json`: `"regions": ["sin1"]` — DO NOT remove. Supabase lives in `ap-southeast-1` (Singapore) and users are Indonesian schools. Functions defaulted to `iad1` (Washington), which put a ~230ms Pacific crossing on every DB roundtrip AND on every user request. Functions must stay co-located with the database.
 
 ## Completed Features
 
