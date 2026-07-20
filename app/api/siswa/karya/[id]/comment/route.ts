@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse, after } from "next/server";
 import { getUser } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 import { awardCoins, trackQuestProgress, trackDailyStreak } from "@/lib/coins";
@@ -33,25 +33,30 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
       },
     });
 
-    const karya = await db.studentKarya.findUnique({ where: { id }, select: { userId: true, title: true } });
-
-    await Promise.all([
-      awardCoins(user.id, "MEMBERI_KOMENTAR", id),
-      trackDailyStreak(user.id),
-      trackQuestProgress(user.id, "MENGOMENTARI"),
-    ]);
-
-    if (karya && karya.userId !== user.id) {
-      await db.notifikasi.create({
-        data: {
-          userId: karya.userId,
-          title: "Komentar Baru 💬",
-          body: `${user.fullName} berkomentar di "${sanitize(karya.title)}"`,
-          type: "COMMENT",
-          data: { karyaId: id, userId: user.id, userName: sanitize(user.fullName), commentId: comment.id },
-        },
-      });
-    }
+    // Coins/streak/quest/notif run after the response: none of them change what
+    // the client renders, and awaiting them made posting a comment wait on
+    // several extra roundtrips. They were also under Promise.all, so one failing
+    // bonus returned a 500 for a comment that had in fact been saved.
+    after(async () => {
+      await Promise.allSettled([
+        awardCoins(user.id, "MEMBERI_KOMENTAR", id),
+        trackDailyStreak(user.id),
+        trackQuestProgress(user.id, "MENGOMENTARI"),
+        (async () => {
+          const karya = await db.studentKarya.findUnique({ where: { id }, select: { userId: true, title: true } });
+          if (!karya || karya.userId === user.id) return;
+          await db.notifikasi.create({
+            data: {
+              userId: karya.userId,
+              title: "Komentar Baru 💬",
+              body: `${user.fullName} berkomentar di "${sanitize(karya.title)}"`,
+              type: "COMMENT",
+              data: { karyaId: id, userId: user.id, userName: sanitize(user.fullName), commentId: comment.id },
+            },
+          });
+        })(),
+      ]);
+    });
 
     return NextResponse.json({ comment, coinsEarned: 1 }, { status: 201 });
   } catch (error) {

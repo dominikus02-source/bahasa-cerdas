@@ -1,6 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
-import { checkRateLimit, rateLimitResponse, type RateLimitScope } from "@/lib/security";
+import { checkRateLimit, getClientKey, rateLimitResponse, type RateLimitScope } from "@/lib/security";
 
 // Routes that NEVER need getUser() in middleware — public pages or SSG
 const publicPaths = [
@@ -34,11 +34,18 @@ export async function updateSession(request: NextRequest, nonce?: string) {
     return NextResponse.redirect(url, { status: 301 });
   }
 
-  // Rate limiting
+  // Rate limiting. Two tiers: a wide per-IP backstop against a runaway client,
+  // then the real limit keyed per session so students sharing a school NAT get
+  // their own budget instead of splitting one.
   const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
   const isAuthPath = pathname.startsWith("/api/auth/");
   const scope: RateLimitScope = isAuthPath ? "auth" : "api";
-  const limit = checkRateLimit(ip, scope);
+
+  const burst = checkRateLimit(ip, "ipBurst");
+  if (!burst.allowed) return rateLimitResponse("ipBurst");
+
+  // Pre-login there is no session cookie, so `auth` is intentionally IP-keyed.
+  const limit = checkRateLimit(isAuthPath ? ip : getClientKey(request), scope);
   if (!limit.allowed) return rateLimitResponse(scope);
 
   const isPublic = publicPaths.some((p) => pathname === p || pathname.startsWith(p + "/"));

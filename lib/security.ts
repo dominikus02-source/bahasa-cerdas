@@ -2,13 +2,50 @@ import { NextResponse } from "next/server";
 
 const rateMap = new Map<string, { count: number; resetAt: number }>();
 
+// IMPORTANT: a whole class shares ONE public IP (school NAT). Limits keyed on IP
+// alone therefore divide by the number of students in the room — the old
+// `api: 120` meant ~6 requests/minute each for 20 students, which a single page
+// load exceeds. So:
+//   - `api` is keyed per SESSION (see getClientKey) and sized for one student.
+//   - `auth` must stay IP-keyed (no session cookie exists before login yet), so
+//     it is sized for a whole class signing in at the same time.
+//   - `ipBurst` is the only true per-IP limit: an abuse backstop, deliberately
+//     far above what a full classroom generates.
 const LIMITS = {
-  auth: { window: 60_000, max: 20 },
-  api: { window: 60_000, max: 120 },
-  ai: { window: 60_000, max: 10 },
+  auth: { window: 60_000, max: 300 },
+  api: { window: 60_000, max: 300 },
+  ai: { window: 60_000, max: 30 },
+  ipBurst: { window: 60_000, max: 4000 },
 } as const;
 
 export type RateLimitScope = keyof typeof LIMITS;
+
+// Cheap non-cryptographic hash (djb2). This only picks a counter bucket — it is
+// not a security boundary — so it needs no crypto and works in any runtime.
+function hashToBucket(value: string): string {
+  let h = 5381;
+  for (let i = 0; i < value.length; i++) h = ((h << 5) + h + value.charCodeAt(i)) | 0;
+  return (h >>> 0).toString(36);
+}
+
+// Identifies the individual client, not the network they sit behind. Falls back
+// to the raw IP for anonymous traffic (pre-login), which is why `auth` is sized
+// for a classroom rather than a person.
+// Reads the raw Cookie header rather than a framework cookie jar so this works
+// for both NextRequest (middleware) and a plain Request (route handlers).
+export function getClientKey(request: { headers: Headers }): string {
+  const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim()
+    || request.headers.get("x-real-ip")
+    || "unknown";
+
+  const authCookie = (request.headers.get("cookie") || "")
+    .split(";")
+    .map((c) => c.trim())
+    .filter((c) => c.startsWith("sb-") && c.slice(0, c.indexOf("=")).includes("auth-token"))
+    .join("");
+
+  return authCookie ? `${ip}:${hashToBucket(authCookie)}` : ip;
+}
 
 export function checkRateLimit(
   identifier: string,
