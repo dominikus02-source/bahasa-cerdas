@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
+import { Prisma } from "@prisma/client";
 import { fisherYatesShuffle, shuffleOptionsForQuestion, createSessionSeed } from "@/lib/question-bank/randomization";
 import type { AttemptSnapshot, QuestionSnapshot } from "@/lib/types/snapshot";
 import { withQueryTimeout } from "@/lib/db/with-query-timeout";
@@ -265,7 +266,9 @@ export async function GET(
           session = await withQueryTimeout(
             db.testSession.update({
               where: { id: session.id },
-              data: { status: "IN_PROGRESS", expiresAt, startedAt: new Date(), answers: {}, flagged: [] },
+              // questionSnapshot is cleared so the retry builds a fresh one
+              // instead of being served the previous attempt's cached payload.
+              data: { status: "IN_PROGRESS", expiresAt, startedAt: new Date(), answers: {}, flagged: [], questionSnapshot: Prisma.DbNull },
             }),
             5000,
             "Session retry timeout"
@@ -278,6 +281,55 @@ export async function GET(
           );
         }
       }
+    }
+
+    // Shape of the payload the client renders. Identical whether it was just
+    // built or replayed from the snapshot.
+    const sessionPayload = () => ({
+      session: {
+        id: session!.id,
+        status: session!.status,
+        startedAt: session!.startedAt,
+        expiresAt: session!.expiresAt,
+        currentSection: session!.currentSection,
+        currentQuestion: session!.currentQuestion,
+        answers: session!.answers as Record<string, string>,
+        flagged: session!.flagged,
+      },
+      paket: {
+        id: paket.id,
+        title: paket.title,
+        description: paket.description,
+        type: paket.type,
+        mode: paket.mode,
+        duration: paket.duration,
+        passingScore: paket.passingScore,
+        passingGrade: paket.passingGrade,
+      },
+    });
+
+    // ── SNAPSHOT REPLAY ──
+    // An in-progress session already has its questions fixed. Rebuilding them on
+    // every GET meant each page refresh re-read the pools, re-shuffled, re-fetched
+    // the answer key and rewrote the whole snapshot JSON — the single heaviest
+    // write in this route, repeated for no gain.
+    //
+    // It was also a correctness hazard: the pool cache has a 300s TTL, so if the
+    // question bank changed mid-test a student who refreshed could be handed a
+    // different set of questions than the ones their answers are keyed to.
+    // Replaying the stored payload makes the question set genuinely immutable for
+    // the duration of an attempt.
+    //
+    // `clientSections` is built from UKBI_SELECT/TKA_SELECT, which exclude
+    // correctAnswer, so it is the same answer-free payload the client already got.
+    const storedSnapshot = session.questionSnapshot as { clientSections?: unknown } | null;
+    const replayable =
+      session.status === "IN_PROGRESS" &&
+      Array.isArray(storedSnapshot?.clientSections) &&
+      storedSnapshot.clientSections.length > 0;
+
+    if (replayable) {
+      return ok({ ...sessionPayload(), questions: storedSnapshot!.clientSections });
     }
 
     const sections = (paket.sectionsData as any[]) || (paket.sections as any[]) || [];
@@ -394,13 +446,16 @@ export async function GET(
         where: { id: session.id },
         data: {
           questionSnapshot: JSON.parse(JSON.stringify({
-            version: "1.0",
+            version: "1.1",
             createdAt: new Date().toISOString(),
             seed: sessionSeed,
             paketId: paket.id,
             userId: dbUser.id,
             questionOrder,
             questions: allSnapshots,
+            // Answer-free payload for replay on subsequent GETs. Version 1.0
+            // snapshots lack this and simply fall through to a full rebuild.
+            clientSections: rawSectionResults,
           })),
         },
       }),
@@ -413,31 +468,7 @@ export async function GET(
       return err("Tidak ada soal tersedia", "NOT_FOUND", 404);
     }
 
-    const answers = session.answers as Record<string, string>;
-
-    return ok({
-      session: {
-        id: session.id,
-        status: session.status,
-        startedAt: session.startedAt,
-        expiresAt: session.expiresAt,
-        currentSection: session.currentSection,
-        currentQuestion: session.currentQuestion,
-        answers,
-        flagged: session.flagged,
-      },
-      paket: {
-        id: paket.id,
-        title: paket.title,
-        description: paket.description,
-        type: paket.type,
-        mode: paket.mode,
-        duration: paket.duration,
-        passingScore: paket.passingScore,
-        passingGrade: paket.passingGrade,
-      },
-      questions: rawSectionResults,
-    });
+    return ok({ ...sessionPayload(), questions: rawSectionResults });
   } catch (error: any) {
     console.error("GET /api/kompetensi/[paketId] error:", error);
     return err(ERR.INTERNAL.error, ERR.INTERNAL.code, ERR.INTERNAL.status);

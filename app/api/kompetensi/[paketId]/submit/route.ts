@@ -353,17 +353,18 @@ export async function POST(
     const writeT0 = Date.now();
     const nextAttempt = (existingProgres?.attemptNumber || 0) + 1;
 
-    const progres = await db.$transaction(async (tx) => {
+    // Batched ($transaction([...])) rather than interactive ($transaction(fn)).
+    // The three statements are independent, so they do not need a connection held
+    // open across round trips — and holding one is what exhausts the pgbouncer
+    // pool (connection_limit is 5 per instance) when a whole cohort submits at
+    // once, surfacing as P2024 timeouts. Same atomicity, one round trip.
+    const writeOps = [
       // 1. Clear old answers for this session (safe—scoped to sessionId)
-      await tx.testAnswer.deleteMany({ where: { sessionId: session.id } });
-
+      db.testAnswer.deleteMany({ where: { sessionId: session.id } }),
       // 2. Batch insert all answers (1 query instead of 30)
-      if (answerRows.length > 0) {
-        await tx.testAnswer.createMany({ data: answerRows });
-      }
-
+      ...(answerRows.length > 0 ? [db.testAnswer.createMany({ data: answerRows })] : []),
       // 3. Create progres (unique constraint on userId+paketId+attemptNumber prevents duplicates)
-      return tx.progresKompetensi.create({
+      db.progresKompetensi.create({
         data: {
           userId: dbUser.id,
           paketId,
@@ -385,8 +386,10 @@ export async function POST(
           finishedAt: new Date(),
           timeSpent: timeSpent || 0,
         },
-      });
-    });
+      }),
+    ];
+    const writeResults = await db.$transaction(writeOps);
+    const progres = writeResults[writeResults.length - 1] as Awaited<ReturnType<typeof db.progresKompetensi.create>>;
     const writeMs = Date.now() - writeT0;
 
     // ── Certificate (outside transaction—non-critical) ──
