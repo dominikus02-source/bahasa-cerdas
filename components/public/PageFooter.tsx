@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import { Instagram } from "lucide-react";
 
 const footerLinks = {
   Produk: [
@@ -20,6 +21,9 @@ const footerLinks = {
     { href: "/faq", label: "FAQ" },
     { href: "/kebijakan-privasi", label: "Kebijakan Privasi" },
     { href: "/syarat-ketentuan", label: "Syarat & Ketentuan" },
+  ],
+  Sosial: [
+    { href: "https://instagram.com/bahasa_cerdas", label: "Instagram" },
   ],
 };
 
@@ -64,12 +68,24 @@ export default function PageFooter() {
                 <ul className="space-y-2.5">
                   {links.map((link) => (
                     <li key={link.label}>
-                      <Link
-                        href={link.href}
-                        className="text-sm text-zinc-400 hover:text-white transition-colors duration-200 focus-ring rounded"
-                      >
-                        {link.label}
-                      </Link>
+                      {link.href.startsWith("http") ? (
+                        <a
+                          href={link.href}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-2 text-sm text-zinc-400 hover:text-pink-400 transition-colors duration-200 focus-ring rounded"
+                        >
+                          <Instagram className="w-4 h-4" />
+                          {link.label}
+                        </a>
+                      ) : (
+                        <Link
+                          href={link.href}
+                          className="text-sm text-zinc-400 hover:text-white transition-colors duration-200 focus-ring rounded"
+                        >
+                          {link.label}
+                        </Link>
+                      )}
                     </li>
                   ))}
                 </ul>
