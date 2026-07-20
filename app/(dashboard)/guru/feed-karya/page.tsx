@@ -154,21 +154,42 @@ export default function GuruFeedKaryaPage() {
   };
 
   // ── Comment in modal ──
+  // Optimistic, like CommentSection: render the comment straight away and swap
+  // in the server copy on success, roll back on failure.
   const handleModalComment = async () => {
-    if (!modalKarya || !commentText.trim()) return;
+    const text = commentText.trim();
+    if (!modalKarya || !text || submittingComment) return;
     setSubmittingComment(true);
-    const res = await fetch(`/api/siswa/karya/${modalKarya.id}/comment`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ content: commentText.trim() }),
-    });
-    if (res.ok) {
-      const data = await res.json();
-      setComments(prev => [data.comment, ...prev]);
+
+    const karyaId = modalKarya.id;
+    const optimistic: Comment = {
+      id: `temp-${Date.now()}`,
+      content: text,
+      createdAt: new Date().toISOString(),
+      user: { id: "", fullName: "" },
+    };
+    const bumpCount = (delta: number) =>
       setKaryaList(prev => prev.map(k =>
-        k.id === modalKarya.id ? { ...k, _count: { likes: k._count?.likes ?? 0, comments: (k._count?.comments ?? 0) + 1 } } : k
+        k.id === karyaId ? { ...k, _count: { likes: k._count?.likes ?? 0, comments: (k._count?.comments ?? 0) + delta } } : k
       ) as Karya[]);
-      setCommentText("");
+
+    setComments(prev => [optimistic, ...prev]);
+    bumpCount(1);
+    setCommentText("");
+
+    try {
+      const res = await fetch(`/api/siswa/karya/${karyaId}/comment`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ content: text }),
+      });
+      if (!res.ok) throw new Error("gagal");
+      const data = await res.json();
+      setComments(prev => prev.map(c => (c.id === optimistic.id ? data.comment : c)));
+    } catch {
+      setComments(prev => prev.filter(c => c.id !== optimistic.id));
+      bumpCount(-1);
+      setCommentText(text);
     }
     setSubmittingComment(false);
   };

@@ -132,7 +132,8 @@
     "test:rpp-pipeline": "tsx scripts/test-rpp-pipeline.ts",
     "seed:load-test": "npx tsx scripts/seed-load-test-data.ts",
     "audit:smp-practice": "npx tsx scripts/audit-smp-practice-content.ts",
-    "test:smp-practice": "npx tsx scripts/test-smp-practice-content.ts"
+    "test:smp-practice": "npx tsx scripts/test-smp-practice-content.ts",
+    "test:rate-limit-nat": "tsx scripts/test-rate-limit-nat.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.39.0",

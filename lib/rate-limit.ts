@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server"
 import cache from "@/lib/redis"
+import { getClientKey } from "@/lib/security"
 
 interface RateLimitResult {
   success: boolean
@@ -31,11 +32,8 @@ export async function rateLimitRoute(
   req: Request,
   config: { maxRequests: number; windowSeconds: number; identifier: string }
 ): Promise<NextResponse | null> {
-  const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim()
-    || req.headers.get("x-real-ip")
-    || "unknown"
-
-  const result = await rateLimit(ip, config.identifier, config.maxRequests, config.windowSeconds)
+  // Per session, not per IP — a whole class submits from one school NAT address.
+  const result = await rateLimit(getClientKey(req), config.identifier, config.maxRequests, config.windowSeconds)
   if (!result.success) {
     return NextResponse.json(
       { error: "Terlalu banyak permintaan. Silakan coba lagi nanti." },

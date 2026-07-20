@@ -70,18 +70,35 @@ export default function DetailKaryaPage() {
     }
   };
 
+  // Shows the comment immediately and reconciles with the server copy when it
+  // lands, matching CommentSection. Waiting for the response before rendering
+  // made posting feel like it took seconds even when the request was fast.
   const handleComment = async () => {
-    if (!commentText.trim()) return;
+    const text = commentText.trim();
+    if (!text || submittingComment) return;
     setSubmittingComment(true);
-    const res = await fetch(`/api/siswa/karya/${id}/comment`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ content: commentText.trim() }),
-    });
-    if (res.ok) {
+
+    const optimistic = {
+      id: `temp-${Date.now()}`,
+      content: text,
+      createdAt: new Date().toISOString(),
+      user: { id: currentUserId || "", fullName: "", avatar: undefined },
+    };
+    setComments(prev => [optimistic, ...prev]);
+    setCommentText("");
+
+    try {
+      const res = await fetch(`/api/siswa/karya/${id}/comment`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ content: text }),
+      });
+      if (!res.ok) throw new Error("gagal");
       const data = await res.json();
-      setComments(prev => [data.comment, ...prev]);
-      setCommentText("");
+      setComments(prev => prev.map(c => (c.id === optimistic.id ? data.comment : c)));
+    } catch {
+      setComments(prev => prev.filter(c => c.id !== optimistic.id));
+      setCommentText(text);
     }
     setSubmittingComment(false);
   };

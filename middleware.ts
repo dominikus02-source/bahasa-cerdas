@@ -1,6 +1,7 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { updateSession } from "@/lib/supabase/proxy";
 import { rateLimit } from "@/lib/rate-limit";
+import { getClientKey } from "@/lib/security";
 
 // Content-Security-Policy with a per-request nonce for inline scripts.
 // script-src uses 'nonce-<value>' (NO 'unsafe-inline') so injected inline scripts
@@ -37,19 +38,14 @@ function buildCsp(nonce: string): string {
     .join("; ");
 }
 
-function getClientIp(request: NextRequest): string {
-  return request.headers.get("x-forwarded-for")?.split(",")[0]?.trim()
-    || request.headers.get("x-real-ip")
-    || "127.0.0.1";
-}
-
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Rate limit /api/ai/* routes in middleware (30 req/min blanket — per-route handlers enforce tighter limits)
+  // Rate limit /api/ai/* routes in middleware (30 req/min blanket — per-route handlers enforce tighter limits).
+  // Keyed per session, not per IP: a class shares one NAT IP, so an IP key would
+  // divide the budget across every student in the room.
   if (pathname.startsWith("/api/ai/")) {
-    const ip = getClientIp(request);
-    const result = await rateLimit(ip, "ai", 30);
+    const result = await rateLimit(getClientKey(request), "ai", 30);
     if (!result.success) {
       return new NextResponse(JSON.stringify({ error: "Too many requests" }), {
         status: 429,
