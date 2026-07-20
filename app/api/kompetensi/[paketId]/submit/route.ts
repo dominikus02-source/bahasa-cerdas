@@ -217,6 +217,26 @@ export async function POST(
 
     const { answers, timeSpent } = await req.json();
 
+    // Guard against completing a test with an empty answers payload. A paket
+    // with real questions but zero submitted answers is never a legitimate
+    // finish — it means the client lost its answer state before POSTing
+    // (a mid-test reload is the leading suspect: the autosave used to be a
+    // debounce that could go a whole test without firing, so a remount would
+    // rehydrate from an empty session.answers and silently wipe local state).
+    // Recording that as a COMPLETED 0-score attempt would burn the student's
+    // attempt and show a misleading result, so this is rejected BEFORE the
+    // session is marked COMPLETED — the student can simply resubmit with their
+    // real answers, no retry flow needed.
+    const expectedQuestionCount = ((paket.sectionsData as any[]) || (paket.sections as any[]) || [])
+      .reduce((s: number, sec: any) => s + (sec.count || sec.questionIds?.length || 0), 0);
+    if (expectedQuestionCount > 0 && Object.keys(answers || {}).length === 0) {
+      return err(
+        "Jawaban tidak diterima server — kemungkinan koneksi terputus atau halaman ter-refresh saat tes berlangsung. Tes ini BELUM dianggap selesai; silakan jawab ulang dan kirim kembali.",
+        "EMPTY_ANSWERS",
+        400
+      );
+    }
+
     let session = await db.testSession.findUnique({
       where: { userId_paketId: { userId: dbUser.id, paketId } },
     });

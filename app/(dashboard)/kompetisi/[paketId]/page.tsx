@@ -62,6 +62,14 @@ export default function KompetisiPage({ params, searchParams: sp }: { params: Pr
   const [data, setData] = useState<PacketData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  // Separate from `error`: a submit failure must NOT route through the
+  // full-page error view below, because its only recovery action is
+  // "Coba Lagi" -> fetchTest(), which re-fetches the test and re-hydrates
+  // `answers` from the server. That is correct for a load failure, but for a
+  // submit failure the student's real, complete answers are still sitting in
+  // memory — replacing them with whatever was last autosaved would be a second
+  // way to lose them right when the student is trying to recover.
+  const [submitError, setSubmitError] = useState("");
   const [currentSection, setCurrentSection] = useState(0);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
@@ -194,24 +202,46 @@ export default function KompetisiPage({ params, searchParams: sp }: { params: Pr
     }
   }, [timeUp]);
 
-  // Autosave: save answers to server every 30s and on section change
+  // Autosave: persist answers to the server every 30s while the test is
+  // running, plus a best-effort save on unmount/tab-close.
+  //
+  // The previous version re-armed a setTimeout on every `answers` change,
+  // which makes it a DEBOUNCE, not a periodic save: a student answering
+  // faster than 30s apart — entirely normal across dozens of MC questions —
+  // could go through the whole test without the save ever firing. If the
+  // page ever remounted mid-test (reload, a network drop, the browser
+  // reclaiming a backgrounded tab), the fresh mount would hydrate `answers`
+  // from session.answers in the DB — still {} — silently wiping everything
+  // the student had done. That is the leading suspect for the empty-result
+  // bug reported after the 2026-07-20 UKBI SD test: 0 benar / 0 salah is what
+  // a truly empty answers object produces.
+  const answersRef = useRef(answers);
+  useEffect(() => { answersRef.current = answers; }, [answers]);
+
   useEffect(() => {
-    if (submittedRef.current) return;
+    if (!started) return;
     const save = async () => {
-      const currentJson = JSON.stringify(answers);
+      const currentJson = JSON.stringify(answersRef.current);
       if (currentJson === lastSavedJsonRef.current) return;
       try {
         const res = await fetch(`/api/kompetensi/${resolvedParams.paketId}`, {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ answers }),
+          body: JSON.stringify({ answers: answersRef.current }),
+          keepalive: true,
         });
         if (res.ok) lastSavedJsonRef.current = currentJson;
-      } catch { /* silent */ }
+      } catch { /* silent — next tick retries */ }
     };
-    const timer = setTimeout(save, 30000);
-    return () => clearTimeout(timer);
-  }, [answers, resolvedParams.paketId]);
+    const interval = setInterval(save, 30000);
+    const saveOnHide = () => { if (document.visibilityState === "hidden") save(); };
+    document.addEventListener("visibilitychange", saveOnHide);
+    return () => {
+      clearInterval(interval);
+      document.removeEventListener("visibilitychange", saveOnHide);
+      if (!submittedRef.current) save();
+    };
+  }, [started, resolvedParams.paketId]);
 
   // Auto-start jika datang dari device-check (query params mic=&speaker=).
   // DILETAKKAN SEBELUM EARLY RETURN — menjaga hooks order.
@@ -301,6 +331,7 @@ export default function KompetisiPage({ params, searchParams: sp }: { params: Pr
     submittedRef.current = true;
 
     setSubmitting(true);
+    setSubmitError("");
     try {
       const res = await fetch(`/api/kompetensi/${resolvedParams.paketId}/submit`, {
         method: "POST",
@@ -312,11 +343,11 @@ export default function KompetisiPage({ params, searchParams: sp }: { params: Pr
         const sbody = result.data ?? result;
         router.push(`/kompetisi/${resolvedParams.paketId}/hasil?attempt=${sbody.attemptNumber}`);
       } else {
-        setError(result.error || "Submit gagal");
+        setSubmitError(result.error || "Submit gagal. Jawaban Anda masih tersimpan — coba kirim lagi.");
         submittedRef.current = false;
       }
     } catch {
-      setError("Terjadi kesalahan saat submit");
+      setSubmitError("Tidak dapat terhubung ke server. Jawaban Anda masih tersimpan — coba kirim lagi.");
       submittedRef.current = false;
     } finally {
       setSubmitting(false);
@@ -445,6 +476,22 @@ export default function KompetisiPage({ params, searchParams: sp }: { params: Pr
       />
 
       <div className="max-w-5xl mx-auto px-3 sm:px-4 lg:px-6 py-4 sm:py-6">
+        {submitError && (
+          <div className="mb-4 flex items-start gap-3 rounded-xl border-2 border-red-200 bg-red-50 p-4">
+            <XCircle className="w-5 h-5 text-red-500 shrink-0 mt-0.5" />
+            <div className="flex-1">
+              <p className="text-sm font-bold text-red-700">Gagal mengirim jawaban</p>
+              <p className="text-sm text-red-600 mt-0.5">{submitError}</p>
+            </div>
+            <button
+              onClick={() => setSubmitError("")}
+              className="text-red-400 hover:text-red-600 shrink-0"
+              aria-label="Tutup"
+            >
+              <XCircle className="w-5 h-5" />
+            </button>
+          </div>
+        )}
         <div className="flex gap-4 sm:gap-6">
           {/* Side section progress (desktop) */}
           <aside className="hidden lg:block w-56 shrink-0">
