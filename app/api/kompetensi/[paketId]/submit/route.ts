@@ -7,6 +7,7 @@ import { ok, err } from "@/lib/api/response";
 import { ERR } from "@/lib/api/errors";
 import type { AttemptSnapshot, AttemptAnswerDetails, UserAnswerRecord } from "@/lib/types/snapshot";
 import { gradeConstructed } from "@/lib/penilaian/ai-grade";
+import { acquireAiSlot } from "@/lib/ai-concurrency";
 
 const PERF_LOG = true;
 
@@ -98,7 +99,9 @@ interface AnswerRow {
   questionId: string;
   questionType: string;
   answer: string;
-  isCorrect: boolean;
+  // null = not evaluated yet (AI grading unavailable), distinct from false =
+  // evaluated and wrong. score stays 0 because the column is non-nullable.
+  isCorrect: boolean | null;
   score: number;
   seksi: string;
 }
@@ -113,10 +116,10 @@ function buildAnswerRows(
   paketId: string,
   scoringFn: (q: any, userAnswer: string) => { isCorrect: boolean; score: number; seksi: string },
   useCompetencyKey: boolean
-): { rows: AnswerRow[]; userAnswerRecords: UserAnswerRecord[]; totalCorrect: number; totalQuestions: number; rawScore: number; sectionScores: Record<string, { correct: number; total: number; score: number }> } {
+): { rows: AnswerRow[]; userAnswerRecords: UserAnswerRecord[]; totalCorrect: number; totalQuestions: number; rawScore: number; sectionScores: Record<string, { correct: number; total: number; score: number; pendingReview?: number; graded?: number }> } {
   const rows: AnswerRow[] = [];
   const userAnswerRecords: UserAnswerRecord[] = [];
-  const sectionScores: Record<string, { correct: number; total: number; score: number }> = {};
+  const sectionScores: Record<string, { correct: number; total: number; score: number; pendingReview?: number; graded?: number }> = {};
   let totalCorrect = 0;
   let totalQuestions = 0;
   let rawScore = 0;
@@ -318,29 +321,80 @@ export async function POST(
             })
           : [];
       const metaMap = new Map<string, any>(cRows.map((q) => [q.id, q]));
-      const agg: Record<string, { sum: number; n: number }> = {};
+      // Constructed answers are graded by an upstream LLM, so this is the one
+      // part of scoring that can fail for reasons unrelated to the student.
+      // Two safeguards:
+      //
+      // 1. Backpressure. Each call takes a slot from the global AI concurrency
+      //    gate. A cohort submitting together would otherwise fire hundreds of
+      //    provider calls at once and trigger upstream 429s.
+      // 2. Ungraded answers are NEVER averaged in as zero. gradeConstructed is
+      //    fail-safe and returns { score: 0, graded: false } when the provider
+      //    fails — a flag this route previously discarded, so a provider outage
+      //    silently handed every student a 0 for Menulis and Berbicara. Ungraded
+      //    answers are now excluded from the average and reported as pending, so
+      //    a teacher can see what still needs marking.
+      const agg: Record<string, { sum: number; n: number; pending: number }> = {};
+      const bumpSection = (sk: string) => (agg[sk] ??= { sum: 0, n: 0, pending: 0 });
+
       await Promise.allSettled(
         constructedRows.map(async (r) => {
           const q = metaMap.get(r.questionId || "") || qMap.get(r.questionId || "");
           const meta =
             q?.options && typeof q.options === "object" && !Array.isArray(q.options) ? q.options : {};
-          const res = await gradeConstructed({
-            seksi: r.seksi || q?.seksi || "MENULIS",
-            prompt: q?.text || "",
-            rubric: (meta as any)?.rubric || null,
-            answer: r.answer || "",
-          });
-          r.score = res.score;
-          r.isCorrect = res.score >= 60;
           const sk = String(r.seksi || q?.seksi || "MENULIS").toUpperCase();
-          if (!agg[sk]) agg[sk] = { sum: 0, n: 0 };
-          agg[sk].sum += res.score;
-          agg[sk].n += 1;
+
+          const slot = await acquireAiSlot({ pool: "grade-constructed" });
+          if (!slot) {
+            // Saturated past the wait window — leave it for manual marking
+            // rather than recording an unearned zero.
+            r.score = 0;
+            r.isCorrect = null;
+            bumpSection(sk).pending += 1;
+            return;
+          }
+
+          try {
+            const res = await gradeConstructed({
+              seksi: r.seksi || q?.seksi || "MENULIS",
+              prompt: q?.text || "",
+              rubric: (meta as any)?.rubric || null,
+              answer: r.answer || "",
+            });
+            if (!res.graded) {
+              r.score = 0;
+              r.isCorrect = null;
+              bumpSection(sk).pending += 1;
+              return;
+            }
+            r.score = res.score;
+            r.isCorrect = res.score >= 60;
+            const a = bumpSection(sk);
+            a.sum += res.score;
+            a.n += 1;
+          } finally {
+            await slot.release();
+          }
         })
       );
+
+      let pendingTotal = 0;
       for (const [sk, a] of Object.entries(agg)) {
+        pendingTotal += a.pending;
         const avg = a.n > 0 ? Math.round(a.sum / a.n) : 0;
-        sectionScores[sk] = { correct: avg, total: 100, score: avg };
+        sectionScores[sk] = {
+          correct: avg,
+          total: 100,
+          score: avg,
+          // Consumed by the result page so an unmarked section reads as
+          // "menunggu penilaian" instead of a legitimate zero.
+          ...(a.pending > 0 ? { pendingReview: a.pending, graded: a.n } : {}),
+        };
+      }
+      if (pendingTotal > 0) {
+        console.warn(
+          `[kompetensi/submit] ${pendingTotal} jawaban konstruktif belum ternilai (paket=${paketId} user=${dbUser.id}) — menunggu penilaian manual`
+        );
       }
     }
 
@@ -463,7 +517,7 @@ export async function POST(
   }
 }
 
-function buildSectionScores(sectionScores: Record<string, { correct: number; total: number; score: number }>) {
+function buildSectionScores(sectionScores: Record<string, { correct: number; total: number; score: number; pendingReview?: number; graded?: number }>) {
   return Object.fromEntries(
     Object.entries(sectionScores).map(([key, val]) => [
       key,
@@ -474,6 +528,9 @@ function buildSectionScores(sectionScores: Record<string, { correct: number; tot
         skor: val.score,
         score: val.score,
         percentage: val.total > 0 ? Math.round((val.correct / val.total) * 100) : 0,
+        // Propagated so the result page can render "menunggu penilaian" rather
+        // than presenting an unmarked section as a zero.
+        ...(val.pendingReview ? { pendingReview: val.pendingReview, graded: val.graded ?? 0 } : {}),
       },
     ])
   );
@@ -491,7 +548,7 @@ function buildDetails(
   rawScore: number,
   percentage: number,
   predicate: string,
-  sectionScores: Record<string, { correct: number; total: number; score: number }>
+  sectionScores: Record<string, { correct: number; total: number; score: number; pendingReview?: number; graded?: number }>
 ): AttemptAnswerDetails {
   const base = {
     version: "1.0",

@@ -163,24 +163,41 @@ export default function TestResultPanel({ result, paketId, backHref = "/kompetis
                 const benar = data.benar ?? 0;
                 const total = data.total ?? 0;
                 const pct = total > 0 ? Math.round((benar / total) * 100) : 0;
+                // Menulis/Berbicara are graded by AI. When that grading did not
+                // run, the section is NOT a zero — it is simply unmarked, and
+                // must not be shown as a failing red bar.
+                const pending = data.pendingReview ?? 0;
                 return (
                   <div key={section}>
                     <div className="flex items-center justify-between mb-1">
                       <span className="text-xs sm:text-sm font-medium text-slate-700 truncate mr-2">
                         {section}
                       </span>
-                      <span className="text-[10px] sm:text-xs font-bold text-slate-500 shrink-0">
-                        {benar}/{total}
-                      </span>
+                      {pending > 0 ? (
+                        <span className="text-[10px] sm:text-xs font-bold text-amber-600 shrink-0">
+                          Menunggu penilaian
+                        </span>
+                      ) : (
+                        <span className="text-[10px] sm:text-xs font-bold text-slate-500 shrink-0">
+                          {benar}/{total}
+                        </span>
+                      )}
                     </div>
                     <div className="w-full h-2 sm:h-2.5 bg-slate-100 rounded-full overflow-hidden">
                       <div
                         className={`h-full rounded-full transition-all duration-700 ${
-                          pct >= 70 ? "bg-emerald-500" : pct >= 50 ? "bg-amber-500" : "bg-red-400"
+                          pending > 0
+                            ? "bg-amber-300"
+                            : pct >= 70 ? "bg-emerald-500" : pct >= 50 ? "bg-amber-500" : "bg-red-400"
                         }`}
-                        style={{ width: `${pct}%` }}
+                        style={{ width: pending > 0 ? "100%" : `${pct}%` }}
                       />
                     </div>
+                    {pending > 0 && (
+                      <p className="mt-1 text-[10px] sm:text-xs text-amber-700">
+                        {pending} jawaban belum dinilai otomatis dan akan ditinjau gurumu. Ini bukan nilai nol.
+                      </p>
+                    )}
                   </div>
                 );
               })}

@@ -21,8 +21,12 @@
  */
 import { Redis } from "@upstash/redis";
 
-const url = process.env.UPSTASH_REDIS_REST_URL;
-const token = process.env.UPSTASH_REDIS_REST_TOKEN;
+// Accept both namings, matching lib/redis.ts: `UPSTASH_REDIS_REST_*` when set by
+// hand, or `KV_REST_API_*` as provisioned by the Vercel Upstash/KV integration.
+// Reading only the former meant this limiter silently fail-opened in production,
+// where the integration supplies the KV_ names — i.e. no backpressure at all.
+const url = process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL;
+const token = process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN;
 const redis = url && token ? new Redis({ url, token }) : null;
 
 // Global cap on concurrent AI provider calls. Tune via env once you know the
