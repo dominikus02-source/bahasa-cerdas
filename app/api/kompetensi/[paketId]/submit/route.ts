@@ -114,19 +114,20 @@ function buildAnswerRows(
   sessionId: string,
   userId: string,
   paketId: string,
-  scoringFn: (q: any, userAnswer: string) => { isCorrect: boolean; score: number; seksi: string },
+  scoringFn: (q: any, userAnswer: string) => { isCorrect: boolean; score: number; maxScore: number; seksi: string },
   useCompetencyKey: boolean
-): { rows: AnswerRow[]; userAnswerRecords: UserAnswerRecord[]; totalCorrect: number; totalQuestions: number; rawScore: number; sectionScores: Record<string, { correct: number; total: number; score: number; pendingReview?: number; graded?: number }> } {
+): { rows: AnswerRow[]; userAnswerRecords: UserAnswerRecord[]; totalCorrect: number; totalQuestions: number; rawScore: number; maxPossible: number; sectionScores: Record<string, { correct: number; total: number; score: number; pendingReview?: number; graded?: number; constructed?: boolean }> } {
   const rows: AnswerRow[] = [];
   const userAnswerRecords: UserAnswerRecord[] = [];
-  const sectionScores: Record<string, { correct: number; total: number; score: number; pendingReview?: number; graded?: number }> = {};
+  const sectionScores: Record<string, { correct: number; total: number; score: number; pendingReview?: number; graded?: number; constructed?: boolean }> = {};
   let totalCorrect = 0;
   let totalQuestions = 0;
   let rawScore = 0;
+  let maxPossible = 0;
 
   for (const q of questions) {
     const userAnswer = answers[q.id] || "";
-    const { isCorrect, score, seksi } = scoringFn(q, userAnswer);
+    const { isCorrect, score, maxScore, seksi } = scoringFn(q, userAnswer);
 
     // Seksi konstruktif (Menulis/Berbicara) dinilai MANUAL oleh guru — jawaban
     // (teks / URL rekaman) tetap disimpan untuk ditinjau, tapi TIDAK ikut skor otomatis.
@@ -149,6 +150,7 @@ function buildAnswerRows(
     if (isConstructed) continue; // keluar dari perhitungan skor otomatis
 
     rawScore += score;
+    maxPossible += maxScore;
     totalQuestions++;
     if (isCorrect) totalCorrect++;
 
@@ -178,7 +180,7 @@ function buildAnswerRows(
     }
   }
 
-  return { rows, userAnswerRecords, totalCorrect, totalQuestions, rawScore, sectionScores };
+  return { rows, userAnswerRecords, totalCorrect, totalQuestions, rawScore, maxPossible, sectionScores };
 }
 
 export async function POST(
@@ -312,7 +314,7 @@ export async function POST(
     }
 
     const scoringT0 = Date.now();
-    const { rows: answerRows, userAnswerRecords, totalCorrect, totalQuestions, rawScore, sectionScores } = buildAnswerRows(
+    const { rows: answerRows, userAnswerRecords, totalCorrect, totalQuestions, rawScore, maxPossible, sectionScores } = buildAnswerRows(
       questions,
       answers as AnswerMap,
       session.id,
@@ -323,11 +325,12 @@ export async function POST(
             const isCorrect = ua === q.correctAnswer;
             const diff = String(q.difficulty || "MEDIUM");
             const w = diff === "EASY" ? 1 : diff === "MEDIUM" ? 1.5 : diff === "HARD" ? 2 : 2.5;
-            return { isCorrect, score: isCorrect ? w * 10 : 0, seksi: q.seksi || q.section || "UMUM" };
+            return { isCorrect, score: isCorrect ? w * 10 : 0, maxScore: w * 10, seksi: q.seksi || q.section || "UMUM" };
           }
         : (q: any, ua: string) => {
             const isCorrect = ua === q.correctAnswer;
-            return { isCorrect, score: isCorrect ? (q.weight || 1) * 10 : 0, seksi: q.kompetensi || q.section || "UMUM" };
+            const wMax = (q.weight || 1) * 10;
+            return { isCorrect, score: isCorrect ? wMax : 0, maxScore: wMax, seksi: q.kompetensi || q.section || "UMUM" };
           },
       !isUKBI
     );
@@ -421,6 +424,10 @@ export async function POST(
           correct: avg,
           total: 100,
           score: avg,
+          // 0-100 scale, not a question count — the result page must not add
+          // this into the Benar/Salah tally (it made 151 "correct" out of 34
+          // questions on the 2026-07-20 attempt).
+          constructed: true,
           // Consumed by the result page so an unmarked section reads as
           // "menunggu penilaian" instead of a legitimate zero.
           ...(a.pending > 0 ? { pendingReview: a.pending, graded: a.n } : {}),
@@ -433,9 +440,6 @@ export async function POST(
       }
     }
 
-    const maxPossible = isUKBI
-      ? totalQuestions * 2.5 * 10
-      : totalQuestions * 2;
     const percentage = maxPossible > 0 ? (rawScore / maxPossible) * 100 : 0;
 
     // ── BATCH WRITE in transaction ──
@@ -552,7 +556,7 @@ export async function POST(
   }
 }
 
-function buildSectionScores(sectionScores: Record<string, { correct: number; total: number; score: number; pendingReview?: number; graded?: number }>) {
+function buildSectionScores(sectionScores: Record<string, { correct: number; total: number; score: number; pendingReview?: number; graded?: number; constructed?: boolean }>) {
   return Object.fromEntries(
     Object.entries(sectionScores).map(([key, val]) => [
       key,
@@ -563,6 +567,7 @@ function buildSectionScores(sectionScores: Record<string, { correct: number; tot
         skor: val.score,
         score: val.score,
         percentage: val.total > 0 ? Math.round((val.correct / val.total) * 100) : 0,
+        ...(val.constructed ? { constructed: true } : {}),
         // Propagated so the result page can render "menunggu penilaian" rather
         // than presenting an unmarked section as a zero.
         ...(val.pendingReview ? { pendingReview: val.pendingReview, graded: val.graded ?? 0 } : {}),
@@ -583,7 +588,7 @@ function buildDetails(
   rawScore: number,
   percentage: number,
   predicate: string,
-  sectionScores: Record<string, { correct: number; total: number; score: number; pendingReview?: number; graded?: number }>
+  sectionScores: Record<string, { correct: number; total: number; score: number; pendingReview?: number; graded?: number; constructed?: boolean }>
 ): AttemptAnswerDetails {
   const base = {
     version: "1.0",

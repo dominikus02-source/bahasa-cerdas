@@ -128,7 +128,10 @@ export default function TestResultPanel({ result, paketId, backHref = "/kompetis
             <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-500 mx-auto mb-1" />
             <p className="text-xs sm:text-sm font-bold text-slate-800">
               {result.sectionScores
-                ? Object.values(result.sectionScores).reduce((s: number, v: any) => s + (v.benar || 0), 0)
+                // Constructed sections (Menulis/Berbicara) hold a 0-100 score,
+                // not a question count — adding them here once produced
+                // "151 Benar" on a 34-question test.
+                ? Object.values(result.sectionScores).reduce((s: number, v: any) => s + (v.constructed ? 0 : v.benar || 0), 0)
                 : 0}
             </p>
             <p className="text-[10px] sm:text-xs text-slate-400">Benar</p>
@@ -137,7 +140,7 @@ export default function TestResultPanel({ result, paketId, backHref = "/kompetis
             <XCircle className="w-4 h-4 sm:w-5 sm:h-5 text-red-400 mx-auto mb-1" />
             <p className="text-xs sm:text-sm font-bold text-slate-800">
               {result.sectionScores
-                ? Object.values(result.sectionScores).reduce((s: number, v: any) => s + (v.salah || 0), 0)
+                ? Object.values(result.sectionScores).reduce((s: number, v: any) => s + (v.constructed ? 0 : v.salah || 0), 0)
                 : 0}
             </p>
             <p className="text-[10px] sm:text-xs text-slate-400">Salah</p>
