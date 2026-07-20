@@ -261,9 +261,24 @@ export async function POST(
 
     const sessionMs = Date.now() - t0;
 
-    // Idempotency: if already scored, return existing result
+    // Idempotency: return the existing result ONLY if it was produced by THIS
+    // attempt — i.e. the progres was finished after the current session started.
+    // That is the double-POST case (double click, client retry) this check
+    // exists for.
+    //
+    // The previous condition matched ANY completed progres for this user+paket,
+    // which meant one finished attempt blocked every future submission forever:
+    // a student retaking the test got their answers silently discarded and the
+    // STALE result replayed back. Confirmed against production data on
+    // 2026-07-20 — a submit with 34 saved answers returned an empty attempt #1
+    // from July 7 (0/0/0, timeSpent 3600), and no TestAnswer rows were ever
+    // written for the new attempt.
     const existingProgres = await getLatestProgres(dbUser.id, paketId);
-    if (existingProgres && existingProgres.status === "COMPLETED") {
+    const isSameAttempt =
+      existingProgres &&
+      session.startedAt &&
+      (existingProgres.finishedAt ?? existingProgres.startedAt) >= session.startedAt;
+    if (existingProgres && existingProgres.status === "COMPLETED" && isSameAttempt) {
       const passingScore = paket.type?.includes("TKA") ? (paket.passingScore || 55) : 482;
       perfLog("ALREADY_SCORED", { paketId, totalMs: Date.now() - t0 });
       return ok({
