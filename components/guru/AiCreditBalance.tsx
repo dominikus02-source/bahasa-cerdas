@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Zap, Crown, Sparkles, Clock, Infinity } from "lucide-react";
+import { fetchQuotaStatus } from "@/lib/ai-gateway/quota-status-client";
 
 interface QuotaStatus {
   plan: string;
@@ -18,10 +19,8 @@ export function AiCreditBalance() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("/api/ai/quota/status")
-      .then((r) => (r.ok ? r.json() : null))
+    fetchQuotaStatus()
       .then((d) => setStatus(d))
-      .catch(() => {})
       .finally(() => setLoading(false));
   }, []);
 

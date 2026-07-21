@@ -8,8 +8,13 @@ export async function GET(req: NextRequest) {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
+    // Founders reach the guru dashboard by design (the layout admits them), so
+    // rejecting them here made the dashboard log a 403 on every load. Matches
+    // the guard already used by the other guru routes. Data stays scoped to
+    // groups the caller actually teaches, so this widens who may ask, not what
+    // they can see.
     const dbUser = await db.user.findUnique({ where: { supabaseId: user.id } });
-    if (!dbUser || dbUser.role !== "GURU") {
+    if (!dbUser || (dbUser.role !== "GURU" && !dbUser.isFounder)) {
       return NextResponse.json({ error: "Hanya guru" }, { status: 403 });
     }
 

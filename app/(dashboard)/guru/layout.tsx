@@ -3,7 +3,7 @@ import { getUser } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import AIFloatingButton from "@/components/shared/AIFloatingButton";
-import { startGuruTrialIfEligible, getTrialStatus } from "@/lib/ai-gateway/trial-service";
+import { startGuruTrialIfEligible, shouldStartGuruTrial, getTrialStatus } from "@/lib/ai-gateway/trial-service";
 import { resolveUserAiPlan } from "@/lib/ai-gateway/plan-resolver";
 import { getRemainingCredits } from "@/lib/ai-gateway/quota-checker";
 import { SidebarPremiumBadge } from "@/components/guru/SidebarPremiumBadge";
@@ -32,10 +32,28 @@ export default async function GuruLayout({ children }: { children: React.ReactNo
     redirect("/onboarding");
   }
 
-  // Phase 9C — auto-start trial for eligible Guru users on dashboard access
-  const trialStart = await startGuruTrialIfEligible(user.id);
-  if (trialStart.started) {
-    console.log(`[GuruLayout] Trial auto-started for ${user.id}`);
+  // Phase 9C — auto-start trial for eligible Guru users on dashboard access.
+  //
+  // This layout wraps EVERY guru page, so it runs on every navigation and on
+  // every RSC prefetch. startGuruTrialIfEligible() re-reads the user from the
+  // database, even though getUser() above already loaded exactly those fields —
+  // a wasted round trip on every page view for a check that can only ever fire
+  // once in a user's lifetime, and never for founders or premium accounts.
+  // Gate it on the data already in hand so the database is touched only when
+  // there is genuinely a trial to start.
+  if (shouldStartGuruTrial({
+    id: user.id,
+    role: user.role,
+    isFounder: user.isFounder,
+    isPremium: user.isPremium,
+    premiumUntil: user.premiumUntil,
+    trialStartedAt: user.trialStartedAt,
+    trialEndsAt: user.trialEndsAt,
+  })) {
+    const trialStart = await startGuruTrialIfEligible(user.id);
+    if (trialStart.started) {
+      console.log(`[GuruLayout] Trial auto-started for ${user.id}`);
+    }
   }
 
   // Fetch plan + remaining credits for sidebar display

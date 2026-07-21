@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Crown, Sparkles, Clock, Zap, AlertCircle } from "lucide-react";
 import Link from "next/link";
+import { fetchQuotaStatus } from "@/lib/ai-gateway/quota-status-client";
 
 interface QuotaStatus {
   plan: string;
@@ -19,12 +20,10 @@ export function TrialStatusCard() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("/api/ai/quota/status")
-      .then((r) => (r.ok ? r.json() : null))
+    fetchQuotaStatus()
       .then((d) => {
         if (d) setStatus(d);
       })
-      .catch(() => {})
       .finally(() => setLoading(false));
   }, []);
 
