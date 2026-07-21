@@ -128,8 +128,14 @@ export function NotificationBell() {
         )}
       </button>
 
+      {/* The panel is 320px wide but the desktop sidebars holding this bell are
+          only 256px, so anchoring it right-0 pushed 80px of it off the left of
+          the screen and the list was unreadable. On md+ it therefore opens
+          rightward into the content area; on mobile the bell sits at the right
+          of the top bar, where opening leftward is correct. max-w keeps it
+          inside the viewport at any width. */}
       {open && (
-        <div className="absolute right-0 top-full mt-2 w-80 bg-white rounded-xl shadow-xl border border-slate-200 z-50 overflow-hidden">
+        <div className="absolute right-0 md:right-auto md:left-0 top-full mt-2 w-80 max-w-[calc(100vw-1.5rem)] bg-white rounded-xl shadow-xl border border-slate-200 z-50 overflow-hidden">
           <div className="p-3 border-b border-slate-100 flex items-center justify-between">
             <h3 className="font-semibold text-sm text-slate-900">Notifikasi</h3>
             {notifications.length > 0 && (
