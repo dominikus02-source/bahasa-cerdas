@@ -13,6 +13,24 @@ import { Badge } from "@/components/ui/badge"
 import { TrialStatusCard } from "@/components/guru/TrialStatusCard"
 import { AiCreditBalance } from "@/components/guru/AiCreditBalance"
 
+function jakartaHour(): number {
+  // Same instant, same zone, on both server and client — no drift to hydrate over.
+  return Number(
+    new Intl.DateTimeFormat("en-GB", {
+      timeZone: "Asia/Jakarta",
+      hour: "2-digit",
+      hour12: false,
+    }).format(new Date())
+  )
+}
+
+function greetingForHour(h: number): string {
+  if (h < 11) return "Selamat pagi"
+  if (h < 15) return "Selamat siang"
+  if (h < 18) return "Selamat sore"
+  return "Selamat malam"
+}
+
 function formatRp(n: number) {
   return new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", maximumFractionDigits: 0 }).format(n)
 }
@@ -55,19 +73,27 @@ export default function GuruBerandaPage() {
       .finally(() => setLoading(false));
   }, [])
 
-  const greeting = () => {
-    const h = new Date().getHours()
-    if (h < 11) return "Selamat pagi"
-    if (h < 15) return "Selamat siang"
-    if (h < 18) return "Selamat sore"
-    return "Selamat malam"
-  }
+  // Greeting must not be derived from the raw local clock during render.
+  // A "use client" component is still server-rendered for the initial HTML, and
+  // the server runs in UTC while the reader is in WIB/WITA/WIT — so 15:09 WIB
+  // rendered as "Selamat pagi" on the server and "Selamat siang" in the browser.
+  // React saw the mismatch, threw hydration error #418, and discarded the whole
+  // server render to redo it client-side.
+  //
+  // The first paint is therefore pinned to Asia/Jakarta, which server and client
+  // both compute identically, and the effect below corrects it to the reader's
+  // real timezone once hydration is done (a state update after mount is safe).
+  const [greeting, setGreeting] = useState(() => greetingForHour(jakartaHour()))
+
+  useEffect(() => {
+    setGreeting(greetingForHour(new Date().getHours()))
+  }, [])
 
   return (
     <div className="p-6 max-w-6xl mx-auto">
       <div className="flex items-start justify-between mb-8">
         <div>
-          <p className="text-sm text-gray-400">{greeting()},</p>
+          <p className="text-sm text-gray-400">{greeting},</p>
           <h1 className="text-2xl font-semibold text-gray-900 flex items-center gap-2">
             {user.fullName}
             {user.isFounder && (
