@@ -165,16 +165,32 @@ export async function claimQuestReward(userId: string, questId: string) {
       throw new Error("Quest belum selesai atau tidak valid");
     }
 
+    // A quest may only pay out once.
+    //
+    // This used to gate on quest.completed and then set completed: true — a
+    // value that was already true — so nothing recorded that the reward had
+    // been handed over and the same quest could be claimed indefinitely. On
+    // 2026-07-21 that produced 69 claims against 6 quests in a single day, one
+    // of them claimed 17 times: roughly 430 of the 460 quest coins issued that
+    // day were duplicates, and the daily leaderboard was topped by whoever
+    // clicked the most rather than whoever did the most.
+    //
+    // DailyQuest has no "claimed" column and adding one is a schema change, so
+    // the payout ledger itself is the record: one CoinTransaction per questId.
+    const already = await tx.coinTransaction.findFirst({
+      where: { userId, reason: "QUEST_COMPLETE", reference: questId },
+      select: { id: true },
+    });
+    if (already) {
+      throw new Error("Hadiah misi ini sudah diambil");
+    }
+
     await tx.coinTransaction.create({
       data: { userId, amount: quest.rewardCoins, reason: "QUEST_COMPLETE", reference: questId },
     });
     await tx.user.update({
       where: { id: userId },
       data: { coins: { increment: quest.rewardCoins } },
-    });
-    await tx.dailyQuest.update({
-      where: { id: questId },
-      data: { completed: true },
     });
   });
 }

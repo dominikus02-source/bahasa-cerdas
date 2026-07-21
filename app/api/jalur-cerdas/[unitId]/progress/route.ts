@@ -56,6 +56,20 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ un
       where: { id: user.id },
       data: { xp: { increment: XP_REWARD }, coins: { increment: COIN_REWARD }, lastActiveAt: new Date() },
     })
+
+    // Record the payout in the coin ledger.
+    //
+    // Finishing a unit incremented User.coins directly and wrote nothing to
+    // CoinTransaction, so learning was invisible to anything reading that
+    // ledger — including the daily leaderboard, which meant a board meant to
+    // celebrate effort could not see the one activity that is actual learning.
+    // Guarded by the existing "already completed" check above, so this cannot
+    // pay out twice. Best-effort: a ledger write must never fail the lesson.
+    try {
+      await db.coinTransaction.create({
+        data: { userId: user.id, amount: COIN_REWARD, reason: "SELESAI_BELAJAR", reference: unitId },
+      })
+    } catch { /* progress and coins already saved */ }
     const updatedUser = await db.user.findUnique({ where: { id: user.id }, select: { xp: true } })
     const finalXp = updatedUser?.xp ?? user.xp + XP_REWARD
     const jcLevel = calcLevel(finalXp)
