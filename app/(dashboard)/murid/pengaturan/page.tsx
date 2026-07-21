@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { createClient } from "@/lib/supabase/client";
 import { Settings, User, Bell, Camera, Save, CheckCircle2, AlertCircle, LogOut, Loader2, Crown } from "lucide-react";
+import { AvatarPicker } from "@/components/murid/AvatarPicker";
 
 export default function MuridPengaturanPage() {
   const [loading, setLoading] = useState(false);
@@ -167,9 +168,16 @@ export default function MuridPengaturanPage() {
             <div className="text-sm text-gray-500">
               <p>JPG, PNG. Maks 2MB</p>
               <Button type="button" size="sm" variant="outline" className="mt-2" onClick={() => fileInputRef.current?.click()}>
-                Ganti Foto
+                Unggah Foto
               </Button>
             </div>
+          </div>
+
+          <div className="mb-6 pt-5 border-t border-gray-100">
+            <AvatarPicker
+              value={profile.avatarUrl || null}
+              onChange={(src) => setProfile((prev) => ({ ...prev, avatarUrl: src }))}
+            />
           </div>
 
           <div className="space-y-4">

@@ -138,7 +138,8 @@
     "test:hydration-safety": "tsx scripts/test-hydration-safety.ts",
     "test:feed-infinite-scroll": "tsx scripts/test-feed-infinite-scroll.ts",
     "test:reward-integrity": "tsx scripts/test-reward-integrity.ts",
-    "test:no-emoji-icons": "tsx scripts/test-no-emoji-icons.ts"
+    "test:no-emoji-icons": "tsx scripts/test-no-emoji-icons.ts",
+    "test:avatar-unlock": "tsx scripts/test-avatar-unlock.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.39.0",
