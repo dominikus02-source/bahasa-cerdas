@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState, useEffect, useRef, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import { IconBolt, IconFlame, IconCoin, IconTarget, IconPen, IconChat, IconHeart, IconEye, IconClock } from "@/lib/icons";
 import ChatPanel from "@/components/chat/ChatPanel";
 
@@ -25,6 +26,7 @@ const TYPE_META: Record<string, { label: string; badge: string }> = {
 };
 
 export default function HomeFeedPage() {
+  const router = useRouter();
   const [user, setUser] = useState<any>(null);
   const [karyaList, setKaryaList] = useState<Karya[]>([]);
   const [featured, setFeatured] = useState<Karya[]>([]);
@@ -311,11 +313,25 @@ export default function HomeFeedPage() {
                     {karya.excerpt || karya.content.replace(/<[^>]*>/g, "").slice(0, 200)}
                   </p>
                   <div className="flex items-center gap-3">
-                    <div className="w-7 h-7 rounded-full bg-gradient-to-br from-violet-400 to-purple-500 flex items-center justify-center text-white text-[10px] font-bold shrink-0">
+                    <button
+                      type="button"
+                      onClick={(e) => { e.preventDefault(); e.stopPropagation(); if (karya.user.id) router.push(`/profile/${karya.user.id}`); }}
+                      className="w-7 h-7 rounded-full bg-gradient-to-br from-violet-400 to-purple-500 flex items-center justify-center text-white text-[10px] font-bold shrink-0 hover:ring-2 hover:ring-violet-300 transition-all"
+                      aria-label={`Lihat profil ${karya.user.fullName}`}
+                    >
                       {karya.user.avatar ? <img src={karya.user.avatar} alt="" className="w-full h-full rounded-full object-cover" /> : karya.user.fullName.charAt(0)}
-                    </div>
+                    </button>
                     <div className="flex-1 min-w-0 text-xs">
-                      <span className="font-semibold text-gray-800">{karya.user.fullName}</span>
+                      {/* Not a nested <Link>: the whole card is already an anchor,
+                          and anchors cannot nest. This intercepts the click,
+                          stops the card navigation, and goes to the author. */}
+                      <button
+                        type="button"
+                        onClick={(e) => { e.preventDefault(); e.stopPropagation(); if (karya.user.id) router.push(`/profile/${karya.user.id}`); }}
+                        className="font-semibold text-gray-800 hover:text-violet-600 transition-colors"
+                      >
+                        {karya.user.fullName}
+                      </button>
                       <span className="text-gray-400 mx-1">·</span>
                       <span className="text-gray-400">{karya.user.profile?.school ? karya.user.profile.school.split(" ").slice(0, 2).join(" ") : "Siswa"}</span>
                       {karya.user.profile?.city && <span className="text-gray-300 mx-1">·</span>}

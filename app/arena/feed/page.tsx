@@ -351,14 +351,25 @@ export default function FeedPage() {
 
                   {/* Author row */}
                   <div className="flex items-center gap-2.5 mb-3 pr-[60px]">
-                    <div className="relative shrink-0">
+                    <button
+                      type="button"
+                      onClick={() => { if (karya.user?.id) router.push(`/profile/${karya.user.id}`) }}
+                      className="relative shrink-0"
+                      aria-label={`Lihat profil ${karya.user?.fullName || "pengguna"}`}
+                    >
                       <div className={`w-[38px] h-[38px] rounded-full bg-gradient-to-br ${likersColor} flex items-center justify-center text-white text-sm font-extrabold`}>
                         {karya.user?.fullName?.charAt(0).toUpperCase() || "?"}
                       </div>
                       <div className="absolute bottom-0 right-0 w-[10px] h-[10px] bg-emerald-500 border-2 border-white rounded-full" />
-                    </div>
+                    </button>
                     <div className="flex-1 min-w-0">
-                      <p className="text-[13px] font-bold text-[#1F1B3A] truncate">{karya.user?.fullName || "Pengguna"}</p>
+                      <button
+                        type="button"
+                        onClick={() => { if (karya.user?.id) router.push(`/profile/${karya.user.id}`) }}
+                        className="block text-[13px] font-bold text-[#1F1B3A] truncate hover:text-violet-600 transition-colors text-left max-w-full"
+                      >
+                        {karya.user?.fullName || "Pengguna"}
+                      </button>
                       <p className="text-[11px] text-gray-400 truncate">{school}</p>
                     </div>
                     <span className="text-[11px] text-[#C4B5FD] font-semibold shrink-0">{waktuLalu(karya.createdAt)}</span>
