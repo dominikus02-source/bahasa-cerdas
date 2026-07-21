@@ -190,7 +190,7 @@ export default function ChatPanel({ userId }: { userId: string }) {
               <span className="text-[11px] text-gray-400">Tidak ada yang online</span>
             ) : (
               onlineUsers.slice(0, 8).map((u: any) => (
-                <Link key={u.id} href={`/murid/profile`}
+                <Link key={u.id} href={`/profile/${u.id}`}
                   className="flex flex-col items-center gap-0.5 shrink-0 group"
                 >
                   <div className="relative">

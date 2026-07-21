@@ -115,11 +115,14 @@ export default function DetailKaryaPage() {
 
       {/* Author Info */}
       <div className="flex items-center gap-3 mb-6">
-        <Link href={`/murid/profile`} className="w-10 h-10 rounded-full bg-gradient-to-br from-violet-400 to-purple-500 flex items-center justify-center text-white font-bold text-sm shrink-0">
+        {/* These linked to /murid/profile — the viewer's OWN profile, with no id
+            in the path — so tapping any student's name opened your own page
+            instead of theirs. */}
+        <Link href={`/profile/${karya.user.id}`} className="w-10 h-10 rounded-full bg-gradient-to-br from-violet-400 to-purple-500 flex items-center justify-center text-white font-bold text-sm shrink-0">
           {karya.user.avatar ? <img src={karya.user.avatar} alt="" className="w-full h-full rounded-full object-cover" /> : karya.user.fullName.charAt(0)}
         </Link>
         <div className="flex-1">
-          <Link href={`/murid/profile`} className="text-sm font-semibold text-gray-900 hover:text-violet-600">{karya.user.fullName}</Link>
+          <Link href={`/profile/${karya.user.id}`} className="text-sm font-semibold text-gray-900 hover:text-violet-600">{karya.user.fullName}</Link>
           <p className="text-xs text-gray-400">
             {karya.user.profile?.school && `${karya.user.profile.school}${karya.user.profile.city ? ` · ${karya.user.profile.city}` : ""}`}
           </p>
