@@ -41,8 +41,12 @@ export default function ChatPanel({ userId }: { userId: string }) {
         }));
         setGroups(gs);
         if (gs.length > 0) setActiveGroup(gs[0].id);
-        setLoading(false);
-      });
+      })
+      // Without this the panel had no way out of its loading skeleton: a
+      // dropped request left setLoading(false) unreached and the whole room
+      // stayed a grey placeholder for the rest of the session.
+      .catch(() => setGroups([]))
+      .finally(() => setLoading(false));
   }, []);
 
   useEffect(() => {
