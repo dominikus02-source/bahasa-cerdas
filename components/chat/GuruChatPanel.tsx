@@ -231,8 +231,11 @@ export default function GuruChatPanel({ userId }: { userId: string }) {
         </div>
       )}
 
-      {/* Input */}
-      <div className="p-3 border-t border-gray-50">
+      {/* Input.
+          Right padding keeps the send button clear of the floating AI button,
+          which the dashboard layout fixes to the bottom-right at z-50 and which
+          otherwise sits directly on top of it. */}
+      <div className="p-3 pr-20 border-t border-gray-50">
         {sendError && (
           <p className="text-[11px] text-red-500 font-medium mb-2 px-1">{sendError}</p>
         )}

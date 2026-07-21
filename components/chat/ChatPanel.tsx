@@ -236,8 +236,26 @@ export default function ChatPanel({ userId }: { userId: string }) {
           <div ref={bottomRef} />
         </div>
 
-        {/* Input */}
-        <div className="px-4 py-3 border-t border-gray-100">
+        {/* Input.
+            When the student is in no class there is nowhere to post, so the
+            composer is replaced with a way in. Previously it still rendered and
+            sendMessage() returned at its first line, so typing a message and
+            pressing send did nothing and said nothing.
+            The right padding keeps the send button clear of the floating AI
+            button, which is fixed bottom-right at z-50 and sat directly on top
+            of it. */}
+        {groups.length === 0 ? (
+          <div className="px-4 py-4 border-t border-gray-100 text-center">
+            <p className="text-sm text-gray-500 mb-2">Kamu belum bergabung ke kelas mana pun.</p>
+            <Link
+              href="/murid/gabung-kelas"
+              className="inline-flex items-center gap-1.5 text-sm font-semibold text-violet-600 hover:text-violet-700"
+            >
+              Gabung Kelas
+            </Link>
+          </div>
+        ) : (
+        <div className="px-4 py-3 pr-20 border-t border-gray-100">
           {sendError && <p className="mb-2 text-xs text-rose-600 font-medium">{sendError}</p>}
           <div className="flex gap-2">
             <input
@@ -258,6 +276,7 @@ export default function ChatPanel({ userId }: { userId: string }) {
             </button>
           </div>
         </div>
+        )}
       </div>
     </div>
   );
