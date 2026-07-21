@@ -291,15 +291,30 @@
 }
 
 /* Quick actions */
+/* Quick actions.
+   The icon scales a little with the viewport instead of being locked to 54px,
+   so six tiles fit a phone row without crowding, and every tile reserves the
+   same label height — a two-word label like "Gabung Kelas" used to make its
+   column taller than the rest and the row read as misaligned. */
 .quick-icon {
-  width: 54px; height: 54px;
+  width: clamp(46px, 13vw, 54px);
+  height: clamp(46px, 13vw, 54px);
   border-radius: 18px;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: transform 0.15s;
+  transition: transform 0.15s, box-shadow 0.15s;
 }
 .quick-icon:active { transform: scale(0.92); }
+
+.quick-action { min-height: 88px; }
+.quick-label {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  min-height: 1.9em;
+}
 
 /* Activity feed */
 .activity-feed {

@@ -14,6 +14,7 @@ import { trackDailyStreak, getOrCreateDailyQuests } from "@/lib/coins"
 import { calcLevelProgress, calcLevel, calcLeagueFromXP } from "@/lib/xp"
 import { TugasCard } from "./tugas-card"
 import BattleCard from "@/components/arena/BattleCard"
+import LeagueMini from "./league-mini"
 
 function initials(name: string) {
   return name?.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2) || "?"
@@ -61,11 +62,15 @@ export default async function BerandaPage() {
 
   const todayStart = new Date()
   todayStart.setHours(0, 0, 0, 0)
-  const todayXpAgg = await db.gameResult.aggregate({
-    where: { userId: user.id, createdAt: { gte: todayStart } },
-    _sum: { xpEarned: true },
+  // This stat read GameResult, which only the offline multiplayer server ever
+  // wrote to — the table is empty, so it showed 0 for every student regardless
+  // of what they did today. Coins earned today is the ledger daily activity
+  // actually writes to.
+  const todayCoinAgg = await db.coinTransaction.aggregate({
+    where: { userId: user.id, createdAt: { gte: todayStart }, amount: { gt: 0 } },
+    _sum: { amount: true },
   })
-  const xpToday = todayXpAgg._sum.xpEarned || 0
+  const koinHariIni = todayCoinAgg._sum.amount || 0
 
   const [aktivitas, juaraBaru, tugasCount, jalurStats] = await Promise.all([
     cache.getOrSet("arena:aktivitas", () =>
@@ -158,6 +163,31 @@ export default async function BerandaPage() {
     select: { id: true, fullName: true, xp: true },
   })
 
+  // Daily standings for the mini league widget. Mirrors /arena/league so both
+  // places agree; cached because every student loads this page.
+  const topHarian = await cache.getOrSet<{ id: string; fullName: string; xp: number }[]>(
+    "arena:liga:harian:top3",
+    async () => {
+      const earned = await db.coinTransaction.groupBy({
+        by: ["userId"],
+        where: { createdAt: { gte: todayStart }, amount: { gt: 0 }, user: { role: "MURID" } },
+        _sum: { amount: true },
+        orderBy: { _sum: { amount: "desc" } },
+        take: 3,
+      })
+      if (earned.length === 0) return []
+      const users = await db.user.findMany({
+        where: { id: { in: earned.map(e => e.userId) } },
+        select: { id: true, fullName: true },
+      })
+      const map = Object.fromEntries(users.map(u => [u.id, u.fullName]))
+      return earned
+        .filter(e => map[e.userId])
+        .map(e => ({ id: e.userId, fullName: map[e.userId], xp: e._sum.amount || 0 }))
+    },
+    120
+  )
+
   const limaMenitLalu = new Date(Date.now() - 5 * 60 * 1000)
   const sepuluhMenitLalu = new Date(Date.now() - 10 * 60 * 1000)
 
@@ -214,8 +244,8 @@ export default async function BerandaPage() {
             </div>
             <div className="hero-stat">
               <Zap size={16} className="text-yellow-300 mx-auto mb-0.5" />
-              <p className="font-extrabold text-xl text-white">{xpToday.toLocaleString()}</p>
-              <p className="text-[10px] text-white/60 font-medium">XP Hari Ini</p>
+              <p className="font-extrabold text-xl text-white">{koinHariIni.toLocaleString()}</p>
+              <p className="text-[10px] text-white/60 font-medium">Koin Hari Ini</p>
             </div>
             <div className="hero-stat">
               <Coins size={16} className="text-amber-300 mx-auto mb-0.5" />
@@ -328,13 +358,15 @@ export default async function BerandaPage() {
             <Zap size={16} className="text-purple-600" /> Aksi Cepat
           </h3>
         </div>
-        <div className="grid grid-cols-5 gap-2.5">
-          <QuickAction icon={<Bot size={24} />} label="AI Cerdik" href="/arena/ai" warna="from-cyan-500 to-blue-600" />
-          <QuickAction icon={<PenLine size={24} />} label="Tulis" href="/arena/tulis" warna="from-orange-500 to-red-600" />
-          <QuickAction icon={<Gift size={24} />} label="Kotak" href="/arena/mystery-box" warna="from-amber-500 to-orange-600" />
-          <QuickAction icon={<Gamepad2 size={24} />} label="Gim" href="/arena/game" warna="from-purple-600 to-violet-700" />
-          <QuickAction icon={<Users size={24} />} label="Gabung Kelas" href="/murid/gabung-kelas" warna="from-emerald-500 to-teal-600" />
-          <QuickAction icon={<Coins size={24} />} label="Toko" href="/arena/toko-koin" warna="from-amber-500 to-yellow-600" />
+        {/* Six actions in a five-column grid left one orphan on its own row.
+            Three columns on phones and six on wider screens divide evenly. */}
+        <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
+          <QuickAction icon={<Bot size={22} />} label="AI Cerdik" href="/arena/ai" warna="from-cyan-500 to-blue-600" />
+          <QuickAction icon={<PenLine size={22} />} label="Tulis" href="/arena/tulis" warna="from-orange-500 to-red-600" />
+          <QuickAction icon={<Gift size={22} />} label="Kotak" href="/arena/mystery-box" warna="from-amber-500 to-orange-600" />
+          <QuickAction icon={<Gamepad2 size={22} />} label="Gim" href="/arena/game" warna="from-purple-600 to-violet-700" />
+          <QuickAction icon={<Users size={22} />} label="Kelas" href="/murid/gabung-kelas" warna="from-emerald-500 to-teal-600" />
+          <QuickAction icon={<Coins size={22} />} label="Toko" href="/arena/toko-koin" warna="from-amber-500 to-yellow-600" />
         </div>
       </div>
 
@@ -494,7 +526,7 @@ export default async function BerandaPage() {
       </div>
 
       {/* LIGA MINI */}
-      {topUsers.length > 0 && (
+      {(topUsers.length > 0 || topHarian.length > 0) && (
         <div className="beranda-section">
           <div className="beranda-section-head">
             <h3 className="flex items-center gap-1.5">
@@ -502,42 +534,7 @@ export default async function BerandaPage() {
             </h3>
             <Link href="/arena/league" className="text-xs font-semibold text-purple-600">Lihat semua</Link>
           </div>
-          <div className="liga-card">
-            <div className="flex border-b border-gray-200">
-              <Link href="/arena/league?tab=harian" className="flex-1 text-center py-2.5 text-xs font-semibold text-gray-500 border-b-2 border-transparent hover:text-purple-600 transition-colors">
-                Harian
-              </Link>
-              <Link href="/arena/league" className="flex-1 text-center py-2.5 text-xs font-bold text-purple-700 border-b-2 border-purple-600 transition-colors">
-                Mingguan
-              </Link>
-            </div>
-            <div className="bg-gradient-to-r from-amber-500 to-orange-500 p-3 px-4 flex items-center justify-between">
-              <h4 className="font-extrabold text-sm text-white">Peringkat Minggu Ini</h4>
-              <div className="flex items-center gap-1 bg-black/20 px-2.5 py-1 rounded-[10px] text-[11px] font-bold text-white">
-                <Clock size={12} /> 5h 22m lagi
-              </div>
-            </div>
-            <div className="py-2">
-              {topUsers.map((u: any, i: number) => {
-                const isMe = u.id === user.id
-                const rankClass = i === 0 ? "text-amber-500" : i === 1 ? "text-gray-400" : "text-orange-700"
-                return (
-                  <div key={u.id} className={`flex items-center gap-2.5 px-4 py-2 ${isMe ? "bg-purple-50" : ""}`}>
-                    <span className={`font-extrabold text-sm w-5 text-center shrink-0 ${rankClass}`}>{i + 1}</span>
-                    <div className={`w-8 h-8 rounded-xl bg-gradient-to-br ${INITIALS_COLORS[i]} flex items-center justify-center text-white text-sm font-bold shrink-0`}>
-                      {initials(u.fullName || "")}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-xs font-semibold text-[#1A1033]">
-                        {isMe ? "Kamu" : u.fullName}
-                      </p>
-                    </div>
-                    <span className="font-extrabold text-sm text-purple-600 shrink-0">{u.xp.toLocaleString()}</span>
-                  </div>
-                )
-              })}
-            </div>
-          </div>
+          <LeagueMini userId={user.id} harian={topHarian} mingguan={topUsers} />
         </div>
       )}
 
@@ -580,12 +577,17 @@ export default async function BerandaPage() {
 }
 
 function QuickAction({ icon, label, href, warna }: { icon: React.ReactNode; label: string; href: string; warna: string }) {
+  // The whole tile is the target, not just the 54px icon, and every tile is the
+  // same height so a longer label cannot knock the row out of alignment.
   return (
-    <Link href={href} className="flex flex-col items-center gap-1.5">
-      <div className={`quick-icon bg-gradient-to-br ${warna} text-white shadow-md`}>
+    <Link
+      href={href}
+      className="quick-action group flex flex-col items-center justify-start gap-1.5 rounded-2xl px-1 py-2.5 hover:bg-white active:scale-[0.97] transition-all"
+    >
+      <div className={`quick-icon bg-gradient-to-br ${warna} text-white shadow-md group-hover:shadow-lg transition-shadow`}>
         {icon}
       </div>
-      <span className="text-[11px] font-semibold text-[#5A5278]">{label}</span>
+      <span className="quick-label text-[11px] font-semibold text-[#5A5278] text-center leading-tight">{label}</span>
     </Link>
   )
 }

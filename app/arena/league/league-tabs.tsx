@@ -94,7 +94,7 @@ export default function LeagueTabs({ weekly, daily, userId, userXP, initialTab =
       </div>
 
       <h2 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">
-        {isHarian ? "XP Hari Ini" : "Papan Peringkat"}
+        {isHarian ? "Koin Hari Ini" : "Papan Peringkat"}
       </h2>
 
       {board.rows.length === 0 ? (
@@ -102,7 +102,7 @@ export default function LeagueTabs({ weekly, daily, userId, userXP, initialTab =
           <Crown className="w-10 h-10 text-gray-200 mx-auto mb-3" />
           <p className="text-sm text-gray-500 font-medium px-6">
             {isHarian
-              ? "Belum ada peringkat harian. Mainkan Arena untuk mulai mengumpulkan poin."
+              ? "Belum ada yang mengumpulkan koin hari ini. Tulis karya, beri suka, atau selesaikan misi untuk masuk papan."
               : "Belum ada peringkat mingguan. Kumpulkan poin minggu ini untuk masuk papan liga."}
           </p>
         </div>
@@ -139,7 +139,7 @@ export default function LeagueTabs({ weekly, daily, userId, userXP, initialTab =
                   <p className="text-sm font-bold text-gray-900">
                     {isHarian ? (u.todayXP?.toLocaleString() || "0") : u.xp?.toLocaleString()}
                   </p>
-                  <p className="text-[10px] text-gray-400">XP{isHarian ? " hari ini" : ""}</p>
+                  <p className="text-[10px] text-gray-400">{isHarian ? "koin hari ini" : "XP"}</p>
                 </div>
               </Link>
             )

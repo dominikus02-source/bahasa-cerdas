@@ -28,24 +28,34 @@ export default async function LeaguePage({
         select: { id: true, fullName: true, avatar: true, xp: true, level: true, coins: true, streak: true },
       }) as Promise<LeagueRow[]>,
     300),
-    cache.getOrSet<LeagueRow[]>("league:harian:top50", async () => {
+    // Daily board = coins earned today.
+    //
+    // This used to aggregate GameResult.xpEarned, but GameResult only ever gets
+    // written by the multiplayer game server, which is offline and gated off —
+    // the table holds zero rows, so the daily tab was permanently empty while
+    // the weekly tab worked. CoinTransaction is the ledger that daily activity
+    // actually writes to (writing karya, likes, comments, quests): 833 entries
+    // across 69 students on the day this was changed.
+    cache.getOrSet<LeagueRow[]>("league:harian:v2:top50", async () => {
       const today = new Date()
       today.setHours(0, 0, 0, 0)
-      const dailyResults = await db.gameResult.groupBy({
+      const earned = await db.coinTransaction.groupBy({
         by: ["userId"],
-        where: { createdAt: { gte: today }, user: { role: "MURID" } },
-        _sum: { xpEarned: true },
-        orderBy: { _sum: { xpEarned: "desc" } },
+        // Positive only: spending in the shop must not count as achievement.
+        where: { createdAt: { gte: today }, amount: { gt: 0 }, user: { role: "MURID" } },
+        _sum: { amount: true },
+        orderBy: { _sum: { amount: "desc" } },
         take: 50,
       })
-      const userIds = dailyResults.map(r => r.userId).filter(Boolean)
+      const userIds = earned.map(r => r.userId).filter(Boolean)
+      if (userIds.length === 0) return []
       const users = await db.user.findMany({
         where: { id: { in: userIds } },
         select: { id: true, fullName: true, avatar: true, xp: true, level: true, coins: true, streak: true },
       })
       const userMap = Object.fromEntries(users.map(u => [u.id, u]))
-      return dailyResults
-        .map(r => ({ ...userMap[r.userId], id: r.userId, todayXP: r._sum.xpEarned || 0 }))
+      return earned
+        .map(r => ({ ...userMap[r.userId], id: r.userId, todayXP: r._sum.amount || 0 }))
         .filter(u => u.fullName) as LeagueRow[]
     }, 300),
   ])
