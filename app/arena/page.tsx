@@ -269,6 +269,59 @@ export default async function BerandaPage() {
         </div>
       </div>
 
+      {/* ── BELAJAR: the one thing that matters most on this screen ──
+          This card used to sit eighth, below quick actions, friend activity
+          and assignments — which is why only 5 of 157 students had ever opened
+          the learning path. It is now the first thing after the hero, given
+          the visual weight of a primary action rather than a list row. */}
+      {jalurStats.nextUnit && (
+        <div className="beranda-section">
+          <Link href={`/arena/jalur-cerdas/${jalurStats.nextUnit.id}`} className="belajar-hero group">
+            <div className="belajar-hero-top">
+              <div className="belajar-medali">{jalurStats.nextUnit.emoji || "📘"}</div>
+              <div className="flex-1 min-w-0">
+                <p className="belajar-eyebrow">
+                  {jalurStats.isFirstTime ? "Mulai perjalananmu" : jalurStats.nextUnit.levelTitle}
+                </p>
+                <h3 className="belajar-judul">{jalurStats.nextUnit.title}</h3>
+              </div>
+            </div>
+
+            {jalurStats.unitCount > 0 && (
+              <div className="belajar-progres">
+                <div className="belajar-bar">
+                  <div
+                    className="belajar-bar-isi"
+                    style={{ width: `${Math.max(3, Math.round((jalurStats.completedCount / jalurStats.unitCount) * 100))}%` }}
+                  />
+                </div>
+                <span className="belajar-hitung">
+                  {jalurStats.completedCount}/{jalurStats.unitCount}
+                </span>
+              </div>
+            )}
+
+            <span className="belajar-tombol">
+              {jalurStats.isFirstTime ? "MULAI BELAJAR" : "LANJUTKAN"}
+            </span>
+          </Link>
+        </div>
+      )}
+
+      {/* Semua materi selesai — ajak mengulang */}
+      {!jalurStats.nextUnit && jalurStats.unitCount > 0 && (
+        <div className="beranda-section">
+          <Link href="/arena/jalur-cerdas" className="flex items-center gap-3 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-2xl p-4 text-white shadow-sm active:scale-[0.98] transition-transform">
+            <Trophy size={24} className="shrink-0" />
+            <div className="flex-1 min-w-0">
+              <h4 className="font-bold text-sm">Semua materi selesai! 🎉</h4>
+              <p className="text-[11px] text-white/80">Ulangi materi untuk memperkuat pemahamanmu</p>
+            </div>
+            <ChevronRight size={20} className="text-white/70 shrink-0" />
+          </Link>
+        </div>
+      )}
+
       {/* STREAK BANNER */}
       {(user.streak || 0) > 0 && (
         <div className="streak-banner">
@@ -286,11 +339,6 @@ export default async function BerandaPage() {
           </Link>
         </div>
       )}
-
-      {/* FOMO BATTLE CARD */}
-      <div className="px-4 mt-4">
-        <BattleCard onlineCount={onlineCount} recentBattles={recentBattles} recentPlayers={recentPlayers} />
-      </div>
 
       {/* MISI HARIAN */}
       {totalQuest > 0 && (
@@ -417,54 +465,6 @@ export default async function BerandaPage() {
         <TugasCard pendingCount={tugasCount} />
       </div>
 
-      {/* LANJUTKAN BELAJAR — one-tap resume to the next Jalur Cerdas unit */}
-      {jalurStats.nextUnit && (
-        <div className="beranda-section">
-          <div className="beranda-section-head">
-            <h3 className="flex items-center gap-1.5">
-              <Rocket size={16} className="text-purple-600" /> {jalurStats.isFirstTime ? "Mulai Belajar" : "Lanjutkan Belajar"}
-            </h3>
-            {jalurStats.unitCount > 0 && (
-              <span className="text-xs font-semibold text-purple-600">{jalurStats.completedCount}/{jalurStats.unitCount} materi</span>
-            )}
-          </div>
-          <Link
-            href={`/arena/jalur-cerdas/${jalurStats.nextUnit.id}`}
-            className="flex items-center gap-3 bg-white rounded-2xl border border-purple-100 p-4 shadow-sm active:scale-[0.98] transition-transform"
-          >
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-purple-500 to-violet-600 flex items-center justify-center text-2xl shrink-0">
-              {jalurStats.nextUnit.emoji || "📘"}
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-[11px] font-semibold text-purple-500 truncate">{jalurStats.nextUnit.levelTitle}</p>
-              <h4 className="font-bold text-sm text-[#1A1033] truncate">{jalurStats.nextUnit.title}</h4>
-              {jalurStats.unitCount > 0 && (
-                <div className="h-1.5 bg-purple-100 rounded-full overflow-hidden mt-1.5">
-                  <div className="h-full rounded-full bg-gradient-to-r from-purple-500 to-violet-500" style={{ width: `${Math.round((jalurStats.completedCount / jalurStats.unitCount) * 100)}%` }} />
-                </div>
-              )}
-            </div>
-            <span className="flex items-center gap-0.5 bg-purple-600 text-white text-xs font-bold px-3 py-2 rounded-xl shrink-0">
-              {jalurStats.isFirstTime ? "Mulai" : "Lanjut"} <ChevronRight size={14} />
-            </span>
-          </Link>
-        </div>
-      )}
-
-      {/* Semua materi selesai — ajak mengulang */}
-      {!jalurStats.nextUnit && jalurStats.unitCount > 0 && (
-        <div className="beranda-section">
-          <Link href="/arena/jalur-cerdas" className="flex items-center gap-3 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-2xl p-4 text-white shadow-sm active:scale-[0.98] transition-transform">
-            <Trophy size={24} className="shrink-0" />
-            <div className="flex-1 min-w-0">
-              <h4 className="font-bold text-sm">Semua materi selesai! 🎉</h4>
-              <p className="text-[11px] text-white/80">Ulangi materi untuk memperkuat pemahamanmu</p>
-            </div>
-            <ChevronRight size={20} className="text-white/70 shrink-0" />
-          </Link>
-        </div>
-      )}
-
       {/* JALUR CERDAS — full width, no side padding */}
       <div className="-mx-4 mt-5">
         <Link href="/arena/jalur-cerdas" className="flex flex-col gap-3 bg-gradient-to-r from-purple-600 to-violet-500 px-5 py-4 shadow-lg shadow-purple-500/30 active:scale-[0.98] transition-transform relative overflow-hidden">
@@ -537,6 +537,14 @@ export default async function BerandaPage() {
           <LeagueMini userId={user.id} harian={topHarian} mingguan={topUsers} />
         </div>
       )}
+
+      {/* Teaser for a mode that is not available yet. It used to sit third from
+          the top, so the third thing a student saw was a large card for
+          something they cannot open — prime space spent on a promise. Moved
+          below the sections that offer something to actually do. */}
+      <div className="px-4 mt-4">
+        <BattleCard onlineCount={onlineCount} recentBattles={recentBattles} recentPlayers={recentPlayers} />
+      </div>
 
       {/* KARYA TERPOPULER */}
       <div className="beranda-section pb-6">
