@@ -49,11 +49,21 @@ export function ChatClient({ userId, groups }: { userId: string; groups: Group[]
   const [joinError, setJoinError] = useState("")
   const [joinLoading, setJoinLoading] = useState(false)
   const endRef = useRef<HTMLDivElement>(null)
+  const [sendError, setSendError] = useState("")
+  // Newest timestamp we hold, read by the poller without restarting it.
+  const lastStampRef = useRef<string | null>(null)
 
   useEffect(() => { endRef.current?.scrollIntoView({ behavior: "smooth" }) }, [messages])
 
+  useEffect(() => {
+    const real = messages.filter((m) => !m.id.startsWith("temp-"))
+    lastStampRef.current = real.length > 0 ? real[real.length - 1].createdAt : null
+  }, [messages])
+
   const pilihGrup = async (g: Group) => {
     setSelected(g)
+    setMessages([])
+    setSendError("")
     try {
       const res = await fetch(`/api/chat/${g.id}`)
       if (!res.ok) { setMessages([]); return }
@@ -62,25 +72,105 @@ export function ChatClient({ userId, groups }: { userId: string; groups: Group[]
     } catch { setMessages([]) }
   }
 
+  // Poll for messages from other people.
+  //
+  // Opening a class used to fetch once and never again, so a student only ever
+  // saw their own messages — the class chat looked dead even while others were
+  // typing. There is no realtime transport available (the Socket.IO server is
+  // offline and multiplayer is gated off), so this polls.
+  //
+  // Kept cheap deliberately, because a full class polls at once: it asks only
+  // for messages newer than the one it already has (`after`), pauses entirely
+  // while the tab is hidden, and backs off from 4s to 15s while nothing is
+  // being said, snapping back to fast polling as soon as a message arrives or
+  // the student sends one.
+  useEffect(() => {
+    if (!selected) return
+    let timer: ReturnType<typeof setTimeout> | null = null
+    let delay = 4000
+    let stopped = false
+
+    const tick = async () => {
+      if (stopped) return
+      if (document.visibilityState !== "visible") { schedule(); return }
+      try {
+        const newest = lastStampRef.current
+        const url = newest
+          ? `/api/chat/${selected.id}?after=${encodeURIComponent(newest)}`
+          : `/api/chat/${selected.id}`
+        const res = await fetch(url)
+        if (res.ok) {
+          const data = await res.json()
+          const fresh: Message[] = data.messages || []
+          if (fresh.length > 0) {
+            setMessages((prev) => {
+              const known = new Set(prev.map((m) => m.id))
+              const added = fresh.filter((m) => !known.has(m.id))
+              return added.length > 0 ? [...prev, ...added] : prev
+            })
+            delay = 4000
+          } else {
+            delay = Math.min(delay + 2000, 15000)
+          }
+        }
+      } catch { /* offline for a moment — the next tick retries */ }
+      schedule()
+    }
+
+    const schedule = () => {
+      if (stopped) return
+      timer = setTimeout(tick, delay)
+    }
+
+    const onVisible = () => {
+      if (document.visibilityState === "visible") {
+        delay = 4000
+        if (timer) clearTimeout(timer)
+        tick()
+      }
+    }
+    document.addEventListener("visibilitychange", onVisible)
+    schedule()
+
+    return () => {
+      stopped = true
+      if (timer) clearTimeout(timer)
+      document.removeEventListener("visibilitychange", onVisible)
+    }
+  }, [selected])
+
   const kirim = async () => {
     if (!input.trim() || !selected || loading) return
     setLoading(true)
+    setSendError("")
     const text = input.trim()
     setInput("")
+    const tempId = `temp-${Date.now()}`
     setMessages(prev => [...prev, {
-      id: Date.now().toString(),
+      id: tempId,
       content: text,
       userId,
       createdAt: new Date().toISOString(),
       user: { id: userId, fullName: "" },
     }])
     try {
-      await fetch("/api/chat/send", {
+      const res = await fetch("/api/chat/send", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ groupId: selected.id, content: text }),
       })
-    } catch {}
+      // The response used to be discarded, so a rejected message stayed on
+      // screen as if it had been delivered and only vanished on reload.
+      if (!res.ok) throw new Error("gagal")
+      const data = await res.json()
+      if (data?.message) {
+        setMessages(prev => prev.map(m => (m.id === tempId ? data.message : m)))
+      }
+    } catch {
+      setMessages(prev => prev.filter(m => m.id !== tempId))
+      setInput(text)
+      setSendError("Pesan belum terkirim. Coba lagi.")
+    }
     setLoading(false)
   }
 
@@ -137,6 +227,9 @@ export function ChatClient({ userId, groups }: { userId: string; groups: Group[]
 
         {/* Input */}
         <div className="px-4 py-3 bg-white border-t border-gray-100 shrink-0">
+          {sendError && (
+            <p className="mb-2 text-xs text-rose-600 font-medium">{sendError}</p>
+          )}
           <form onSubmit={(e) => { e.preventDefault(); kirim() }} className="flex items-center gap-2">
             <input
               value={input}
