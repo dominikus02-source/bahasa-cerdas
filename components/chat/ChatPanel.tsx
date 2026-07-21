@@ -26,6 +26,9 @@ export default function ChatPanel({ userId }: { userId: string }) {
   const [loading, setLoading] = useState(true);
   const bottomRef = useRef<HTMLDivElement>(null);
   const pollingRef = useRef<ReturnType<typeof setInterval>>();
+  const lastStampRef = useRef<string | null>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [sendError, setSendError] = useState("");
 
   useEffect(() => {
     fetch("/api/group/memberships")
@@ -44,21 +47,62 @@ export default function ChatPanel({ userId }: { userId: string }) {
 
   useEffect(() => {
     if (!activeGroup) return;
+    let alive = true;
+    lastStampRef.current = null;
+
     fetch(`/api/chat/${activeGroup}`)
       .then(r => r.ok ? r.json() : null)
-      .then(d => setMessages(d?.messages || []));
+      .then(d => {
+        if (!alive) return;
+        const list = d?.messages || [];
+        setMessages(list);
+        if (list.length > 0) lastStampRef.current = list[list.length - 1].createdAt;
+      });
 
+    // Ask only for what arrived since the newest message we hold. The previous
+    // version re-fetched the whole list every 5s and replaced the array
+    // wholesale, so React saw a new array on every tick even when nothing had
+    // been said — which re-fired the scroll effect below and yanked the reader
+    // back to the bottom every five seconds while they were reading upward.
     if (pollingRef.current) clearInterval(pollingRef.current);
     pollingRef.current = setInterval(() => {
-      fetch(`/api/chat/${activeGroup}`)
+      if (document.visibilityState !== "visible") return;
+      const since = lastStampRef.current;
+      const url = since
+        ? `/api/chat/${activeGroup}?after=${encodeURIComponent(since)}`
+        : `/api/chat/${activeGroup}`;
+      fetch(url)
         .then(r => r.ok ? r.json() : null)
-        .then(d => setMessages(d?.messages || []));
+        .then(d => {
+          if (!alive) return;
+          const fresh = d?.messages || [];
+          if (fresh.length === 0) return; // nothing new: leave state untouched
+          setMessages(prev => {
+            const known = new Set(prev.map((m: any) => m.id));
+            const added = fresh.filter((m: any) => !known.has(m.id));
+            if (added.length === 0) return prev;
+            const next = since ? [...prev, ...added] : added;
+            lastStampRef.current = next[next.length - 1].createdAt;
+            return next;
+          });
+        });
     }, 5000);
 
-    return () => { if (pollingRef.current) clearInterval(pollingRef.current); };
+    return () => {
+      alive = false;
+      if (pollingRef.current) clearInterval(pollingRef.current);
+    };
   }, [activeGroup]);
 
-  useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: "smooth" }); }, [messages]);
+  // Only follow the conversation when the reader is already at the bottom.
+  // Scrolling unconditionally stole the view from anyone reading earlier
+  // messages.
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) { bottomRef.current?.scrollIntoView({ behavior: "smooth" }); return; }
+    const nearBottom = el.scrollHeight - el.scrollTop - el.clientHeight < 120;
+    if (nearBottom) bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
 
   useEffect(() => {
     fetch("/api/user/online")
@@ -74,15 +118,24 @@ export default function ChatPanel({ userId }: { userId: string }) {
 
   const sendMessage = async () => {
     if (!text.trim() || !activeGroup) return;
-    const res = await fetch("/api/chat/send", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ groupId: activeGroup, content: text.trim() }),
-    });
-    if (res.ok) {
+    setSendError("");
+    try {
+      const res = await fetch("/api/chat/send", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ groupId: activeGroup, content: text.trim() }),
+      });
+      if (!res.ok) throw new Error("gagal");
       setText("");
       const data = await res.json();
-      setMessages(prev => [...prev, data.message]);
+      if (data?.message) {
+        setMessages(prev => [...prev, data.message]);
+        // Move the cursor past our own message so polling does not fetch it back.
+        lastStampRef.current = data.message.createdAt;
+      }
+    } catch {
+      // Previously a rejected send did nothing at all: no message, no warning.
+      setSendError("Pesan belum terkirim. Coba lagi.");
     }
   };
 
@@ -150,7 +203,7 @@ export default function ChatPanel({ userId }: { userId: string }) {
         </div>
 
         {/* Messages */}
-        <div className="flex-1 overflow-y-auto px-4 py-3 space-y-2 min-h-0">
+        <div ref={scrollRef} className="flex-1 overflow-y-auto px-4 py-3 space-y-2 min-h-0">
           {messages.length === 0 ? (
             <div className="text-center py-8">
               <p className="text-xs text-gray-400">Belum ada pesan. Mulai diskusi!</p>
@@ -185,6 +238,7 @@ export default function ChatPanel({ userId }: { userId: string }) {
 
         {/* Input */}
         <div className="px-4 py-3 border-t border-gray-100">
+          {sendError && <p className="mb-2 text-xs text-rose-600 font-medium">{sendError}</p>}
           <div className="flex gap-2">
             <input
               value={text}

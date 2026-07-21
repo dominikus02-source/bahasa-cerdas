@@ -9,11 +9,20 @@ type NotifCallback = (notification: {
   createdAt: string;
 }) => void;
 
+let channelSeq = 0;
+
 export function subscribeNotifications(userId: string, onNew: NotifCallback) {
   const supabase = createClient();
 
+  // The channel name must be unique per subscription. It used to be the fixed
+  // string "notifikasi_realtime", and the bell renders twice on student pages —
+  // once in the desktop sidebar, once in the mobile top bar. The second mount
+  // got handed the same already-subscribed channel and threw
+  //   cannot add `postgres_changes` callbacks for realtime:notifikasi_realtime
+  //   after `subscribe()`
+  // which killed live notifications for that mount.
   const channel = supabase
-    .channel("notifikasi_realtime")
+    .channel(`notifikasi_realtime:${userId}:${++channelSeq}`)
     .on(
       "postgres_changes",
       {
