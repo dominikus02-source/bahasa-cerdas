@@ -77,7 +77,11 @@ export default async function ArtikelDetailPage({ params }: Props) {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-white">
       <PageNavbar />
-      <div className="max-w-3xl mx-auto px-4 py-12">
+      {/* PageNavbar is fixed, so the page owns the offset. py-12 was not enough
+          to clear it: the back link landed underneath the header and could not
+          be clicked, and the cover image sat cramped against it. Matches the
+          spacing the other public pages already use. */}
+      <div className="max-w-3xl mx-auto px-4 pt-28 pb-12">
         <Link href="/artikel" className="inline-flex items-center gap-1 text-sm text-slate-400 hover:text-red-600 mb-8 transition-colors">
           <ArrowLeft size={16} /> Kembali ke Artikel
         </Link>
