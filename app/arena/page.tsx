@@ -15,6 +15,7 @@ import { calcLevelProgress, calcLevel, calcLeagueFromXP } from "@/lib/xp"
 import { TugasCard } from "./tugas-card"
 import BattleCard from "@/components/arena/BattleCard"
 import LeagueMini from "./league-mini"
+import { UnitIcon } from "@/components/arena/UnitIcon"
 
 function initials(name: string) {
   return name?.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2) || "?"
@@ -278,7 +279,7 @@ export default async function BerandaPage() {
         <div className="beranda-section">
           <Link href={`/arena/jalur-cerdas/${jalurStats.nextUnit.id}`} className="belajar-hero group">
             <div className="belajar-hero-top">
-              <div className="belajar-medali">{jalurStats.nextUnit.emoji || "📘"}</div>
+              <div className="belajar-medali"><UnitIcon emoji={jalurStats.nextUnit.emoji} className="w-7 h-7" /></div>
               <div className="flex-1 min-w-0">
                 <p className="belajar-eyebrow">
                   {jalurStats.isFirstTime ? "Mulai perjalananmu" : jalurStats.nextUnit.levelTitle}
@@ -314,7 +315,7 @@ export default async function BerandaPage() {
           <Link href="/arena/jalur-cerdas" className="flex items-center gap-3 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-2xl p-4 text-white shadow-sm active:scale-[0.98] transition-transform">
             <Trophy size={24} className="shrink-0" />
             <div className="flex-1 min-w-0">
-              <h4 className="font-bold text-sm">Semua materi selesai! 🎉</h4>
+              <h4 className="font-bold text-sm">Semua materi selesai!</h4>
               <p className="text-[11px] text-white/80">Ulangi materi untuk memperkuat pemahamanmu</p>
             </div>
             <ChevronRight size={20} className="text-white/70 shrink-0" />

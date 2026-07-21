@@ -2,8 +2,7 @@
 
 import { useState, useEffect, useRef } from "react"
 import {
-  MessageCircle, Send, ChevronRight, Users, ArrowLeft,
-  Search, Plus, Sparkles, Eye,
+  MessageCircle, Send, ChevronRight, Users, ArrowLeft, Search, Plus, Sparkles, Eye, X,
 } from "lucide-react"
 
 interface Group {
@@ -277,7 +276,7 @@ export function ChatClient({ userId, groups }: { userId: string; groups: Group[]
             className="flex-1 bg-transparent text-sm text-white placeholder:text-white/60 focus:outline-none border-none"
           />
           {searchQuery && (
-            <button onClick={() => setSearchQuery("")} className="text-white/50 hover:text-white text-xs font-bold">✕</button>
+            <button onClick={() => setSearchQuery("")} className="text-white/50 hover:text-white" aria-label="Hapus pencarian"><X className="w-4 h-4" /></button>
           )}
         </div>
       </div>

@@ -4,29 +4,7 @@ import Link from "next/link"
 import { redirect } from "next/navigation"
 import { CheckCircle2, ChevronRight, Sprout, PenLine, BookOpen, Image, Clipboard, BarChart3, Sparkles, Music, Trophy, Dumbbell, Mic, Target, MessageCircle, Crown, Lock } from "lucide-react"
 import type { ReactNode } from "react"
-
-const iconMap: Record<string, ReactNode> = {
-  "🌱": <Sprout className="w-5 h-5" />,
-  "✏️": <PenLine className="w-5 h-5" />,
-  "📖": <BookOpen className="w-5 h-5" />,
-  "💬": <MessageCircle className="w-5 h-5" />,
-  "📝": <PenLine className="w-5 h-5" />,
-  "📚": <BookOpen className="w-5 h-5" />,
-  "🖼️": <Image className="w-5 h-5" />,
-  "📋": <Clipboard className="w-5 h-5" />,
-  "📊": <BarChart3 className="w-5 h-5" />,
-  "🎭": <Sparkles className="w-5 h-5" />,
-  "🌟": <Sparkles className="w-5 h-5" />,
-  "🎶": <Music className="w-5 h-5" />,
-  "🏆": <Trophy className="w-5 h-5" />,
-  "💪": <Dumbbell className="w-5 h-5" />,
-  "🎤": <Mic className="w-5 h-5" />,
-  "🎯": <Target className="w-5 h-5" />,
-}
-
-function getIcon(emoji: string | null, fallback: ReactNode = <BookOpen className="w-5 h-5" />): ReactNode {
-  return emoji && iconMap[emoji] ? iconMap[emoji] : fallback
-}
+import { UnitIcon } from "@/components/arena/UnitIcon"
 
 export default async function JalurCerdasPage() {
   const user = await getUser()
@@ -79,7 +57,7 @@ export default async function JalurCerdasPage() {
             <div className="flex-1">
               {allDone ? (
                 <>
-                  <p className="text-lg font-bold text-white">Selamat! 🎉</p>
+                  <p className="text-lg font-bold text-white">Selamat!</p>
                   <p className="text-sm text-yellow-200">Kamu sudah menyelesaikan semua materi!</p>
                 </>
               ) : (
@@ -108,7 +86,7 @@ export default async function JalurCerdasPage() {
           <div key={level.id} className={`mb-8 ${!unlocked ? "opacity-50" : ""}`}>
             <div className="flex items-center gap-3 mb-4">
               <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${level.color} flex items-center justify-center text-white shadow-lg`}>
-                {levelDone ? <Trophy className="w-6 h-6" /> : unlocked ? getIcon(level.emoji, <BookOpen className="w-6 h-6" />) : <Lock className="w-5 h-5" />}
+                {levelDone ? <Trophy className="w-6 h-6" /> : unlocked ? <UnitIcon emoji={level.emoji} className="w-6 h-6" /> : <Lock className="w-5 h-5" />}
               </div>
               <div className="flex-1">
                 <div className="flex items-center gap-2">
@@ -149,14 +127,14 @@ export default async function JalurCerdasPage() {
                         {unitCompleted ? (
                           <CheckCircle2 className="w-6 h-6 text-emerald-500" />
                         ) : (
-                          <div className="text-violet-600">{getIcon(unit.emoji, <BookOpen className="w-5 h-5" />)}</div>
+                          <div className="text-violet-600">{<UnitIcon emoji={unit.emoji} className="w-5 h-5" />}</div>
                         )}
                       </div>
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className={`font-semibold text-sm truncate ${unitCompleted ? "text-emerald-700" : "text-gray-900"}`}>
                         {unit.title}
-                        {unitCompleted && <span className="ml-1.5 text-emerald-500">✓</span>}
+                        {unitCompleted && <CheckCircle2 className="inline-block ml-1.5 w-4 h-4 text-emerald-500 align-text-bottom" />}
                       </p>
                       {unit.subtitle && <p className="text-xs truncate text-gray-400">{unit.subtitle}</p>}
                       {hasProgress(unit.id) && !unitCompleted && (

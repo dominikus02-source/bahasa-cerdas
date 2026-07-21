@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback, useRef } from "react"
 import { useParams, useRouter } from "next/navigation"
-import { ArrowLeft, Timer, CheckCircle2, XCircle, HelpCircle, Award, Zap } from "lucide-react"
+import { ArrowLeft, Timer, CheckCircle2, XCircle, HelpCircle, Award, Zap, Check, X } from "lucide-react"
 
 interface SoalKuis {
   id: number
@@ -264,8 +264,8 @@ export default function KuisPage() {
                 <button key={idx} onClick={() => pilihBS(idx)} disabled={showResult}
                   className={`${btnClass} py-4 rounded-xl text-center font-bold text-sm transition-all`}
                 >
-                  <span className={`block text-lg mb-0.5 ${idx === 0 ? "text-emerald-600" : "text-red-600"}`}>
-                    {idx === 0 ? "✓" : "✗"}
+                  <span className={`flex justify-center mb-0.5 ${idx === 0 ? "text-emerald-600" : "text-red-600"}`}>
+                    {idx === 0 ? <Check className="w-5 h-5" /> : <X className="w-5 h-5" />}
                   </span>
                   {label}
                 </button>

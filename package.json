@@ -137,7 +137,8 @@
     "test:ai-tools-jenjang": "tsx scripts/test-ai-tools-jenjang.ts",
     "test:hydration-safety": "tsx scripts/test-hydration-safety.ts",
     "test:feed-infinite-scroll": "tsx scripts/test-feed-infinite-scroll.ts",
-    "test:reward-integrity": "tsx scripts/test-reward-integrity.ts"
+    "test:reward-integrity": "tsx scripts/test-reward-integrity.ts",
+    "test:no-emoji-icons": "tsx scripts/test-no-emoji-icons.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.39.0",

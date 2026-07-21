@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { useParams, useRouter } from "next/navigation"
-import { ArrowLeft, CheckCircle2, XCircle, ChevronRight, HelpCircle, Award } from "lucide-react"
+import { ArrowLeft, CheckCircle2, XCircle, ChevronRight, HelpCircle, Award, Check, X } from "lucide-react"
 
 interface Soal {
   id: number
@@ -201,8 +201,8 @@ export default function LatihanPage() {
                 <button key={idx} onClick={() => pilihBS(idx)}
                   className={`${btnClass} py-4 rounded-xl text-center font-bold text-sm transition-all`}
                 >
-                  <span className={`block text-lg mb-0.5 ${idx === 0 ? "text-emerald-600" : "text-red-600"}`}>
-                    {idx === 0 ? "✓" : "✗"}
+                  <span className={`flex justify-center mb-0.5 ${idx === 0 ? "text-emerald-600" : "text-red-600"}`}>
+                    {idx === 0 ? <Check className="w-5 h-5" /> : <X className="w-5 h-5" />}
                   </span>
                   {label}
                 </button>

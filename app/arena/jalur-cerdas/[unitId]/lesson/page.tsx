@@ -264,7 +264,7 @@ export default function LessonPage({ params }: { params: Promise<{ unitId: strin
               <ul className="space-y-2">
                 {lesson.tips.map((tip, i) => (
                   <li key={i} className={`flex items-start gap-2 text-gray-700 ${isDasar ? "text-lg" : "text-sm"}`}>
-                    <span className="text-cyan-500 mt-0.5 shrink-0">✦</span>
+                    <Sparkles className="w-4 h-4 text-cyan-500 mt-0.5 shrink-0" />
                     {tip}
                   </li>
                 ))}
