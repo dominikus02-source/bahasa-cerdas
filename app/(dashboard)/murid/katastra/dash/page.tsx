@@ -195,11 +195,11 @@ export default function WordDashPage() {
               </div>
               {result.levelUp && (
                 <div className="bg-yellow-500/20 text-yellow-300 px-3 py-1 rounded-full text-sm font-bold animate-pulse inline-block">
-                  🎉 Naik Tingkat! Tingkat {result.newLevel}!
+                  Naik Tingkat! Tingkat {result.newLevel}!
                 </div>
               )}
               <div className="flex justify-center gap-4 mt-2 text-xs text-violet-200/60">
-                <span>Rentetan: {result.streak}🔥</span>
+                <span>Rentetan: {result.streak}</span>
                 <span>{result.league}</span>
               </div>
             </div>

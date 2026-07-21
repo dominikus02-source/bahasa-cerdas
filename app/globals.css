@@ -129,9 +129,16 @@
 .artikel-content p {
   @apply text-slate-700 leading-relaxed mb-4 text-justify;
 }
+/* Tailwind preflight sets list-style: none on every ul/ol, and this block only
+   restored the indentation — so a teacher's bulleted list published as
+   indented text with no bullets or numbers at all. */
 .artikel-content ul, .artikel-content ol {
   @apply pl-6 mb-4 text-slate-700;
 }
+.artikel-content ul { list-style: disc outside; }
+.artikel-content ol { list-style: decimal outside; }
+.artikel-content ul ul { list-style: circle outside; }
+.artikel-content ol ol { list-style: lower-alpha outside; }
 .artikel-content li {
   @apply mb-2;
 }

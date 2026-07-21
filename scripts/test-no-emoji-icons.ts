@@ -22,7 +22,7 @@ const KEY_MAP = "components/arena/UnitIcon.tsx";
 // drawn — the parser turns them into styled components.
 const PARSER_EXEMPT = ["app/arena/jalur-cerdas/[unitId]/belajar/page.tsx"];
 
-const ROOTS = ["app/arena", "components/arena"];
+const ROOTS = ["app/arena", "components/arena", "app/(dashboard)/murid"];
 
 function walk(dir: string, out: string[] = []): string[] {
   for (const entry of readdirSync(dir)) {
@@ -49,10 +49,10 @@ for (const root of ROOTS) {
 
 if (offenders.length > 0) {
   fail++;
-  console.log("FAIL  emoji ditemukan di UI Arena:");
+  console.log("FAIL  emoji ditemukan di UI murid:");
   offenders.forEach((o) => console.log("        " + o));
 } else {
-  console.log("PASS  tidak ada emoji dirender di UI Arena");
+  console.log("PASS  tidak ada emoji dirender di UI Arena & dasbor murid");
 }
 
 // The key map must still exist and still resolve to real icons, otherwise the

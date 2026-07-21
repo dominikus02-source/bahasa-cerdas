@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { createClient } from "@/lib/supabase/client";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import remarkBreaks from "remark-breaks";
 import SafeMediaImage from "@/components/shared/safe-media-image";
 
 export default function GuruArtikelPage() {
@@ -237,7 +238,7 @@ export default function GuruArtikelPage() {
               ) : (
                 <div className="border-2 border-gray-200 rounded-xl p-6 min-h-[400px] prose prose-sm max-w-none bg-white">
                   {form.content ? (
-                    <ReactMarkdown remarkPlugins={[remarkGfm]}>{form.content}</ReactMarkdown>
+                    <ReactMarkdown remarkPlugins={[remarkGfm, remarkBreaks]}>{form.content}</ReactMarkdown>
                   ) : (
                     <p className="text-gray-400 italic">Belum ada konten</p>
                   )}

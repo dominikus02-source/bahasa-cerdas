@@ -2,16 +2,14 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import {
-  Flame, Zap, Trophy, Swords, Puzzle, Star, Shield,
-  ChevronRight, Play, Users, TrendingUp, Sparkles,
-} from "lucide-react";
+import { Flame, Zap, Trophy, Swords, Puzzle, Star, Shield, ChevronRight, Play, Users, TrendingUp, Sparkles, Medal, Gem, Check } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 
-const LEAGUE_META: Record<string, { label: string; color: string; bg: string; icon: string }> = {
-  BRONZE: { label: "Perunggu", color: "text-amber-700", bg: "bg-amber-100", icon: "🥉" },
-  SILVER: { label: "Perak", color: "text-slate-600", bg: "bg-slate-100", icon: "🥈" },
-  GOLD: { label: "Emas", color: "text-yellow-600", bg: "bg-yellow-100", icon: "🥇" },
-  DIAMOND: { label: "Berlian", color: "text-cyan-600", bg: "bg-cyan-100", icon: "💎" },
+const LEAGUE_META: Record<string, { label: string; color: string; bg: string; icon: LucideIcon }> = {
+  BRONZE: { label: "Perunggu", color: "text-amber-700", bg: "bg-amber-100", icon: Medal },
+  SILVER: { label: "Perak", color: "text-slate-600", bg: "bg-slate-100", icon: Medal },
+  GOLD: { label: "Emas", color: "text-yellow-600", bg: "bg-yellow-100", icon: Trophy },
+  DIAMOND: { label: "Berlian", color: "text-cyan-600", bg: "bg-cyan-100", icon: Gem },
 };
 
 const MODES = [
@@ -113,8 +111,8 @@ export default function KataStraPage() {
                 <div>
                   <p className="font-bold text-sm">Tingkat {level}</p>
                   <div className="flex items-center gap-1.5 mt-0.5">
-                    <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded-full ${meta.bg} ${meta.color}`}>
-                      {meta.icon} {meta.label}
+                    <span className={`inline-flex items-center gap-1 text-[10px] font-semibold px-1.5 py-0.5 rounded-full ${meta.bg} ${meta.color}`}>
+                      <meta.icon className="w-3 h-3" /> {meta.label}
                     </span>
                   </div>
                 </div>
@@ -143,7 +141,7 @@ export default function KataStraPage() {
                 <Flame size={14} className="text-orange-400" /> Rentetan Harian
               </p>
               {playedToday ? (
-                <span className="text-[10px] px-2 py-0.5 bg-green-500/20 text-green-300 rounded-full font-medium">Selesai ✅</span>
+                <span className="inline-flex items-center gap-1 text-[10px] px-2 py-0.5 bg-green-500/20 text-green-300 rounded-full font-medium"><Check className="w-3 h-3" /> Selesai</span>
               ) : (
                 <span className="text-[10px] px-2 py-0.5 bg-yellow-500/20 text-yellow-300 rounded-full font-medium animate-pulse">Main sekarang!</span>
               )}

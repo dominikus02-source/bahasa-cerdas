@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { BarChart3, Star, TrendingUp, Target, Flame, Award } from "lucide-react";
+import { BarChart3, Star, TrendingUp, Target, Flame, Award, Trophy, Zap, CheckCircle2 } from "lucide-react";
 
 export default function ProgresPage() {
   const [period, setPeriod] = useState<"week" | "month" | "all">("week");
@@ -22,12 +22,12 @@ export default function ProgresPage() {
   const maxXP = Math.max(...weeklyData.map(d => d.xp));
 
   const achievements = [
-    { title: "First Quiz", desc: "Selesaikan 1 kuis", icon: "🎯", unlocked: true },
-    { title: "Streak 7", desc: "Aktif 7 hari berturut-turut", icon: "🔥", unlocked: true },
-    { title: "100 XP", desc: "Kumpulkan 100 XP", icon: "⭐", unlocked: true },
-    { title: "First Gold", desc: "Masuk league Gold", icon: "🏆", unlocked: true },
-    { title: "Speed Demon", desc: "Jawab 10 soal <5 detik", icon: "⚡", unlocked: false },
-    { title: "Perfect Score", desc: "100% benar di 1 kuis", icon: "💯", unlocked: false },
+    { title: "First Quiz", desc: "Selesaikan 1 kuis", icon: Target, unlocked: true },
+    { title: "Streak 7", desc: "Aktif 7 hari berturut-turut", icon: Flame, unlocked: true },
+    { title: "100 XP", desc: "Kumpulkan 100 XP", icon: Star, unlocked: true },
+    { title: "First Gold", desc: "Masuk league Gold", icon: Trophy, unlocked: true },
+    { title: "Speed Demon", desc: "Jawab 10 soal <5 detik", icon: Zap, unlocked: false },
+    { title: "Perfect Score", desc: "100% benar di 1 kuis", icon: CheckCircle2, unlocked: false },
   ];
 
   const stats = [
@@ -94,7 +94,7 @@ export default function ProgresPage() {
                 key={i}
                 className={`flex flex-col items-center rounded-xl p-3 text-center ${a.unlocked ? "bg-yellow-50" : "bg-gray-50 opacity-50"}`}
               >
-                <span className="text-2xl mb-1">{a.icon}</span>
+                <a.icon className="w-7 h-7 mb-1" />
                 <p className="text-xs font-medium">{a.title}</p>
                 <p className="text-[10px] text-gray-500">{a.desc}</p>
               </div>

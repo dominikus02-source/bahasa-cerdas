@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { ArrowLeft, Calendar, Clock, User } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import remarkBreaks from "remark-breaks";
 import PageNavbar from "@/components/public/PageNavbar";
 import PageFooter from "@/components/public/PageFooter";
 import ShareButton from "@/components/shared/ShareButton";
@@ -126,7 +127,7 @@ export default async function ArtikelDetailPage({ params }: Props) {
           )}
 
           <div className="bg-white rounded-2xl p-6 md:p-8 border border-slate-100 shadow-sm artikel-content">
-            <ReactMarkdown remarkPlugins={[remarkGfm]}>{artikel.content}</ReactMarkdown>
+            <ReactMarkdown remarkPlugins={[remarkGfm, remarkBreaks]}>{artikel.content}</ReactMarkdown>
           </div>
 
           <div className="mt-8 pt-6 border-t border-slate-100 flex items-center justify-between">

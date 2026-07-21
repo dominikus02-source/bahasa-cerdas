@@ -33,7 +33,6 @@ export default async function MuridLayout({ children }: { children: React.ReactN
   }
 
   const leagueLabel = { BRONZE: "Perunggu", SILVER: "Perak", GOLD: "Emas", DIAMOND: "Berlian" }[user.league || "BRONZE"] || "Perunggu"
-  const leagueEmoji = { BRONZE: "🥉", SILVER: "🥈", GOLD: "🥇", DIAMOND: "💎" }[user.league || "BRONZE"] || "🥉"
 
   return (
     <div className="flex min-h-screen bg-gradient-to-br from-slate-50 via-white to-violet-50">

@@ -28,7 +28,7 @@ const BotIcon = () => (
 
 export default function MuridAIPage() {
   const [messages, setMessages] = useState<Message[]>([
-    { role: "assistant", content: "Halo! 👋\n\nAku AI Tutor BahasaCerdas.\n\n**Kamu mau tanya apa?**\n\nAku bisa bantu:\n- 📖 Arti kata & KBBI\n- ✍️ Tata bahasa & PUEBI\n- 📝 Sinonim & antonim\n- 📚 Sastra Indonesia\n- 🎯 Persiapan UKBI", timestamp: new Date().toISOString() }
+    { role: "assistant", content: "Halo!\n\nAku AI Tutor BahasaCerdas.\n\n**Kamu mau tanya apa?**\n\nAku bisa bantu:\n- Arti kata & KBBI\n- Tata bahasa & PUEBI\n- Sinonim & antonim\n- Sastra Indonesia\n- Persiapan UKBI", timestamp: new Date().toISOString() }
   ]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);

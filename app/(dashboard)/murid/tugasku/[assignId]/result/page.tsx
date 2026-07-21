@@ -120,7 +120,7 @@ export default function MuridQuizResultPage() {
             <div>
               <p className="text-4xl font-bold text-slate-900">{Math.round(score)}%</p>
               <p className="text-sm text-slate-500">
-                {passed ? "Lulus! Selamat 🎉" : "Belum lulus, terus belajar!"}
+                {passed ? "Lulus! Selamat" : "Belum lulus, terus belajar!"}
               </p>
             </div>
           </div>
