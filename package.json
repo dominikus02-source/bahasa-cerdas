@@ -135,7 +135,8 @@
     "test:smp-practice": "npx tsx scripts/test-smp-practice-content.ts",
     "test:rate-limit-nat": "tsx scripts/test-rate-limit-nat.ts",
     "test:ai-tools-jenjang": "tsx scripts/test-ai-tools-jenjang.ts",
-    "test:hydration-safety": "tsx scripts/test-hydration-safety.ts"
+    "test:hydration-safety": "tsx scripts/test-hydration-safety.ts",
+    "test:feed-infinite-scroll": "tsx scripts/test-feed-infinite-scroll.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.39.0",

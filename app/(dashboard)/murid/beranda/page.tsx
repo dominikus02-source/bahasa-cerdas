@@ -102,17 +102,36 @@ export default function HomeFeedPage() {
     fetchKarya(null, activeType, false).finally(() => setLoading(false));
   }, [activeType, fetchKarya]);
 
+  // Infinite scroll — same reasoning as the guru feed.
+  //
+  // observe() fires its callback immediately on attach, so an effect keyed on
+  // cursor/hasMore/loadingMore rebuilds the observer after every load and the
+  // new one triggers again while the sentinel is still visible. The feed then
+  // pulled page after page by itself and the page kept scrolling away under
+  // the reader. Paging state moves to refs so the observer is built once.
+  const loadingMoreRef = useRef(false);
+  const cursorRef = useRef<string | null>(null);
+  const hasMoreRef = useRef(true);
+  useEffect(() => { loadingMoreRef.current = loadingMore; }, [loadingMore]);
+  useEffect(() => { cursorRef.current = cursor; }, [cursor]);
+  useEffect(() => { hasMoreRef.current = hasMore; }, [hasMore]);
+
   useEffect(() => {
-    if (!loaderRef.current) return;
+    const el = loaderRef.current;
+    if (!el) return;
     const observer = new IntersectionObserver(entries => {
-      if (entries[0].isIntersecting && !loadingMore && hasMore) {
-        setLoadingMore(true);
-        fetchKarya(cursor, activeType, true).finally(() => setLoadingMore(false));
-      }
+      if (!entries[0].isIntersecting) return;
+      if (loadingMoreRef.current || !hasMoreRef.current) return;
+      loadingMoreRef.current = true; // claim before React state catches up
+      setLoadingMore(true);
+      fetchKarya(cursorRef.current, activeType, true).finally(() => {
+        loadingMoreRef.current = false;
+        setLoadingMore(false);
+      });
     }, { threshold: 0.3 });
-    observer.observe(loaderRef.current);
+    observer.observe(el);
     return () => observer.disconnect();
-  }, [cursor, hasMore, loadingMore, activeType, fetchKarya]);
+  }, [activeType, fetchKarya]);
 
   const TYPES = ["", "PUISI", "CERPEN", "ARTIKEL", "ANEKDOT", "PANTUN", "OPINI"];
 

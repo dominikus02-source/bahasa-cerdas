@@ -41,6 +41,11 @@ export default function GuruFeedKaryaPage() {
   const [groups, setGroups] = useState<any[]>([]);
   const [selectedGroupId, setSelectedGroupId] = useState<string>("");
   const loaderRef = useRef<HTMLDivElement>(null);
+  // Paging state mirrored into refs so the IntersectionObserver below can read
+  // current values without being rebuilt (see the observer effect).
+  const loadingMoreRef = useRef(false);
+  const pageRef = useRef(1);
+  const totalPagesRef = useRef(1);
 
   // Modal state
   const [modalKarya, setModalKarya] = useState<Karya | null>(null);
@@ -58,23 +63,33 @@ export default function GuruFeedKaryaPage() {
     });
   }, []);
 
+  // A failed request used to leave loading flags stuck on, which froze the
+  // spinner and killed infinite scroll for the rest of the session — easy to
+  // hit on school wifi. The finally block always clears them.
   const fetchKarya = useCallback(async (pageNum: number, type: string, append: boolean) => {
-    const params = new URLSearchParams({ page: String(pageNum), limit: "10" });
-    if (type) params.set("type", type);
-    if (selectedGroupId) params.set("groupId", selectedGroupId);
-    const res = await fetch(`/api/siswa/karya?${params}`);
-    const data = await res.json();
-    const items = data.karya || [];
-    setKaryaList(prev => append ? [...prev, ...items] : items);
-    // Seed like state from the server so already-liked hearts render red.
-    setLikedMap(prev => {
-      const n = append ? { ...prev } : ({} as Record<string, boolean>);
-      for (const k of items) if (k?.likedByCurrentUser) n[k.id] = true;
-      return n;
-    });
-    setTotalPages(data.totalPages);
-    setLoading(false);
-    setLoadingMore(false);
+    try {
+      const params = new URLSearchParams({ page: String(pageNum), limit: "10" });
+      if (type) params.set("type", type);
+      if (selectedGroupId) params.set("groupId", selectedGroupId);
+      const res = await fetch(`/api/siswa/karya?${params}`);
+      if (!res.ok) throw new Error("Gagal memuat karya");
+      const data = await res.json();
+      const items = Array.isArray(data?.karya) ? data.karya : [];
+      setKaryaList(prev => append ? [...prev, ...items] : items);
+      // Seed like state from the server so already-liked hearts render red.
+      setLikedMap(prev => {
+        const n = append ? { ...prev } : ({} as Record<string, boolean>);
+        for (const k of items) if (k?.likedByCurrentUser) n[k.id] = true;
+        return n;
+      });
+      if (typeof data?.totalPages === "number") setTotalPages(data.totalPages);
+    } catch {
+      if (!append) setKaryaList([]);
+    } finally {
+      setLoading(false);
+      setLoadingMore(false);
+      loadingMoreRef.current = false;
+    }
   }, [selectedGroupId]);
 
   useEffect(() => {
@@ -82,17 +97,38 @@ export default function GuruFeedKaryaPage() {
     fetchKarya(1, activeType, false);
   }, [activeType, fetchKarya]);
 
+  // Infinite scroll.
+  //
+  // The observer must NOT be rebuilt whenever paging state changes. observe()
+  // invokes its callback immediately with the current intersection, so an
+  // effect that depends on page/loadingMore tears the observer down and
+  // recreates it after every load — and the fresh observer fires again while
+  // the sentinel is still on screen. That chain-loaded page after page on its
+  // own, so the feed kept growing and the viewport jumped while a teacher was
+  // trying to read a student's work.
+  //
+  // Paging state therefore lives in refs, read at fire time, and the observer
+  // is created once per filter.
+  useEffect(() => { loadingMoreRef.current = loadingMore; }, [loadingMore]);
+  useEffect(() => { pageRef.current = page; }, [page]);
+  useEffect(() => { totalPagesRef.current = totalPages; }, [totalPages]);
+
   useEffect(() => {
-    if (!loaderRef.current) return;
+    const el = loaderRef.current;
+    if (!el) return;
     const observer = new IntersectionObserver(entries => {
-      if (entries[0].isIntersecting && !loadingMore && page < totalPages) {
-        setLoadingMore(true); setPage(p => p + 1);
-        fetchKarya(page + 1, activeType, true);
-      }
+      if (!entries[0].isIntersecting) return;
+      if (loadingMoreRef.current) return;
+      if (pageRef.current >= totalPagesRef.current) return;
+      loadingMoreRef.current = true; // claim immediately; state lands a tick later
+      const next = pageRef.current + 1;
+      setLoadingMore(true);
+      setPage(next);
+      fetchKarya(next, activeType, true);
     }, { threshold: 0.3 });
-    observer.observe(loaderRef.current);
+    observer.observe(el);
     return () => observer.disconnect();
-  }, [page, totalPages, loadingMore, activeType, fetchKarya]);
+  }, [activeType, fetchKarya]);
 
   const TYPES = ["", "PUISI", "CERPEN", "ARTIKEL", "ANEKDOT", "PANTUN", "OPINI"];
 
