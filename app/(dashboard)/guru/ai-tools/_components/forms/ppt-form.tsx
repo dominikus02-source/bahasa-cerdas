@@ -3,13 +3,14 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Loader2, Sparkles } from "lucide-react";
+import { GRADE_OPTIONS } from "@/lib/kurikulum/jenjang";
 
 interface PPTFormProps {
   onSubmit: (input: Record<string, unknown>) => void;
   loading: boolean;
 }
 
-const GRADE_OPTIONS = ["VII", "VIII", "IX", "X", "XI", "XII"];
+// Grades come from the shared list so SD (I-VI) is available here too.
 const TEACHING_STYLES = [
   { value: "ceramah_interaktif", label: "Ceramah Interaktif" },
   { value: "diskusi", label: "Diskusi" },
@@ -56,7 +57,7 @@ export function PPTForm({ onSubmit, loading }: PPTFormProps) {
           <label className="block text-xs font-medium text-gray-600 mb-1">Kelas</label>
           <select value={grade} onChange={(e) => setGrade(e.target.value)}
             className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-400 focus:border-emerald-400 outline-none bg-white">
-            {GRADE_OPTIONS.map((g) => <option key={g} value={g}>{g}</option>)}
+            {GRADE_OPTIONS.map((g) => <option key={g.value} value={g.value}>{g.label}</option>)}
           </select>
         </div>
       </div>

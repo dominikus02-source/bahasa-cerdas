@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Loader2, Sparkles, Plus, X } from "lucide-react";
+import { GRADE_OPTIONS, PHASE_OPTIONS, gradesForPhase, phaseForGrade } from "@/lib/kurikulum/jenjang";
 
 interface RPPFormProps {
   onSubmit: (input: Record<string, unknown>) => void;
@@ -16,22 +17,9 @@ const KURIKULUM_OPTIONS = [
   { value: "Custom", label: "Custom (Modul Ajar)" },
 ];
 
-const PHASE_OPTIONS = [
-  { value: "A", label: "A (SD Kelas I-II)" },
-  { value: "B", label: "B (SD Kelas III-IV)" },
-  { value: "C", label: "C (SD Kelas V-VI)" },
-  { value: "D", label: "D (SMP Kelas VII-IX)" },
-  { value: "E", label: "E (SMA Kelas X)" },
-  { value: "F", label: "F (SMA Kelas XI-XII)" },
-];
-
 const SEMESTER_OPTIONS = [
   { value: "1 (Ganjil)", label: "1 (Ganjil)" },
   { value: "2 (Genap)", label: "2 (Genap)" },
-];
-
-const GRADE_OPTIONS = [
-  "VII", "VIII", "IX", "X", "XI", "XII",
 ];
 
 const LANGUAGE_STYLE_OPTIONS = [
@@ -50,6 +38,19 @@ export function RPPForm({ onSubmit, loading }: RPPFormProps) {
   const [subject, setSubject] = useState("Bahasa Indonesia");
   const [grade, setGrade] = useState("X");
   const [phase, setPhase] = useState("E");
+
+  // Phase and grade must never disagree: picking Fase B used to leave the grade
+  // on X, so an SD modul ajar was generated for a senior-high class.
+  const gradeChoices = gradesForPhase(phase);
+  const handlePhaseChange = (nextPhase: string) => {
+    setPhase(nextPhase);
+    const allowed = gradesForPhase(nextPhase);
+    if (!allowed.some((g) => g.value === grade)) setGrade(allowed[0]?.value ?? grade);
+  };
+  const handleGradeChange = (nextGrade: string) => {
+    setGrade(nextGrade);
+    setPhase(phaseForGrade(nextGrade));
+  };
   const [semester, setSemester] = useState("1 (Ganjil)");
   const [curriculum, setCurriculum] = useState("Kurikulum Merdeka");
   const [topic, setTopic] = useState("");
@@ -185,7 +186,7 @@ export function RPPForm({ onSubmit, loading }: RPPFormProps) {
           </div>
           <div>
             <label className="block text-xs font-medium text-gray-600 mb-1">Fase</label>
-            <select value={phase} onChange={(e) => setPhase(e.target.value)}
+            <select value={phase} onChange={(e) => handlePhaseChange(e.target.value)}
               className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-400 focus:border-emerald-400 outline-none bg-white">
               {PHASE_OPTIONS.map((p) => <option key={p.value} value={p.value}>{p.label}</option>)}
             </select>
@@ -208,10 +209,11 @@ export function RPPForm({ onSubmit, loading }: RPPFormProps) {
         </div>
         <div>
           <label className="block text-xs font-medium text-gray-600 mb-1">Kelas</label>
-          <select value={grade} onChange={(e) => setGrade(e.target.value)}
+          <select value={grade} onChange={(e) => handleGradeChange(e.target.value)}
             className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-400 focus:border-emerald-400 outline-none bg-white">
-            {GRADE_OPTIONS.map((g) => <option key={g} value={g}>{g}</option>)}
+            {gradeChoices.map((g) => <option key={g.value} value={g.value}>{g.label}</option>)}
           </select>
+          <p className="mt-1 text-[11px] text-gray-400">Mengikuti Fase {phase}. Ubah Fase untuk jenjang lain.</p>
         </div>
       </div>
 

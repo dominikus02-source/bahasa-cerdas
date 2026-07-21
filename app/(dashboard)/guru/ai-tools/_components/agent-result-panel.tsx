@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { Loader2, Sparkles, CheckCircle2, AlertTriangle, RotateCw, X, ArrowRight, StopCircle, FileText, Monitor } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -86,6 +86,60 @@ function RPPDisplay({ output }: { output: Record<string, unknown> }) {
   return <StructuredRPPFallback output={output} />;
 }
 
+// Renders an [Ilustrasi: ...] line as a real photo.
+//
+// The model is told never to emit image URLs — it would invent them and every
+// picture would be broken. It emits a description instead, and /api/ai/ilustrasi
+// resolves that into a photo cached in Supabase Storage. Same convention already
+// used by Jalur Cerdas and Panduan Guru, so one route serves all of them.
+//
+// Fails silently to a caption-only card: a missing photo must never block a
+// teacher from reading or printing their modul ajar.
+function IllustrationBlock({ prompt }: { prompt: string }) {
+  const [url, setUrl] = useState<string | null>(null);
+  const [state, setState] = useState<"loading" | "done" | "failed">("loading");
+
+  useEffect(() => {
+    let alive = true;
+    fetch(`/api/ai/ilustrasi?prompt=${encodeURIComponent(prompt)}`)
+      .then((r) => r.json())
+      .then((d) => {
+        if (!alive) return;
+        if (d?.url) { setUrl(d.url); setState("done"); } else setState("failed");
+      })
+      .catch(() => { if (alive) setState("failed"); });
+    return () => { alive = false; };
+  }, [prompt]);
+
+  return (
+    <figure className="my-4 print:break-inside-avoid">
+      {state === "loading" && (
+        <div className="w-full h-44 rounded-lg bg-gray-100 animate-pulse flex items-center justify-center">
+          <span className="text-xs text-gray-400 font-sans">Menyiapkan ilustrasi…</span>
+        </div>
+      )}
+      {state === "done" && url && (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={url}
+          alt={prompt}
+          loading="lazy"
+          className="w-full max-h-72 object-cover rounded-lg border border-gray-200"
+          onError={() => setState("failed")}
+        />
+      )}
+      {state === "failed" && (
+        <div className="w-full rounded-lg border border-dashed border-gray-300 bg-gray-50 px-4 py-6 text-center">
+          <span className="text-xs text-gray-500 font-sans">Saran ilustrasi (gambar belum tersedia)</span>
+        </div>
+      )}
+      <figcaption className="mt-1.5 text-xs text-gray-500 italic font-sans text-center">
+        Ilustrasi: {prompt}
+      </figcaption>
+    </figure>
+  );
+}
+
 function RPPContent({ text }: { text: string }) {
   // Convert stray HTML (e.g. <br><br>) to newlines and strip tags so it does
   // not show up as literal text in the preview, and drop any duplicate header
@@ -120,6 +174,13 @@ function RPPContent({ text }: { text: string }) {
     // Empty line
     if (!trimmed) {
       elements.push(<div key={elements.length} className="h-3" />);
+      continue;
+    }
+
+    // Illustration suggestion -> resolved photo
+    const ilustrasi = trimmed.match(/^\[Ilustrasi:\s*(.+?)\]$/i);
+    if (ilustrasi) {
+      elements.push(<IllustrationBlock key={elements.length} prompt={ilustrasi[1].trim()} />);
       continue;
     }
 
@@ -224,7 +285,7 @@ function renderTable(rows: string[], key: number) {
   // If only header row, show as info block
   if (data.length === 0 && headers.length > 0) {
     return (
-      <div key={key} className="my-3 grid grid-cols-2 gap-2 text-sm">
+      <div key={key} className="my-3 grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-1 text-sm">
         {headers.map((h, i) => {
           const val = i < headers.length ? headers[i] : "";
           return (
@@ -240,20 +301,20 @@ function renderTable(rows: string[], key: number) {
 
   // Full table
   return (
-    <div key={key} className="my-3 overflow-x-auto">
-      <table className="w-full text-sm border-collapse">
+    <div key={key} className="my-4 overflow-x-auto print:break-inside-avoid">
+      <table className="w-full text-sm border-collapse border border-gray-400">
         <thead>
-          <tr className="border-b-2 border-gray-300">
+          <tr className="bg-gray-100">
             {headers.map((h, i) => (
-              <th key={i} className="text-left font-semibold text-gray-700 py-2 px-3">{h}</th>
+              <th key={i} className="text-left font-semibold text-gray-900 py-2 px-3 border border-gray-400 align-top">{h}</th>
             ))}
           </tr>
         </thead>
         <tbody>
           {data.map((row, ri) => (
-            <tr key={ri} className="border-b border-gray-100 hover:bg-gray-50">
+            <tr key={ri}>
               {row.map((cell, ci) => (
-                <td key={ci} className="py-2 px-3 text-gray-700">{renderInline(cell)}</td>
+                <td key={ci} className="py-2 px-3 text-gray-800 border border-gray-400 align-top">{renderInline(cell)}</td>
               ))}
             </tr>
           ))}

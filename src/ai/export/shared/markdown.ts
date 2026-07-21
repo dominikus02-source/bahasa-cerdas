@@ -117,6 +117,15 @@ export function tokenizeMarkdown(raw: string): MdBlock[] {
       blocks.push({ type: "hr" });
       continue;
     }
+    // Illustration markers are a screen-only affordance: the preview resolves
+    // them into photos. Exports have no image pipeline, so emit the caption as
+    // an italic note instead of leaking the raw "[Ilustrasi: ...]" syntax into
+    // a document the teacher submits to their school.
+    const ilustrasi = line.match(/^\[Ilustrasi:\s*(.+?)\]$/i);
+    if (ilustrasi) {
+      blocks.push({ type: "paragraph", text: `*Saran ilustrasi: ${ilustrasi[1].trim()}*` });
+      continue;
+    }
     if (line.startsWith("### ")) {
       blocks.push({ type: "heading", level: 3, text: line.slice(4).trim() });
       continue;

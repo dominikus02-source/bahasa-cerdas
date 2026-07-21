@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Loader2, Sparkles } from "lucide-react";
+import { GRADE_OPTIONS } from "@/lib/kurikulum/jenjang";
 
 interface SoalFormProps {
   onSubmit: (input: Record<string, unknown>) => void;
@@ -21,7 +22,7 @@ const QUESTION_TYPES = [
   { value: "pisa_style", label: "PISA Style" },
 ];
 
-const GRADE_OPTIONS = ["VII", "VIII", "IX", "X", "XI", "XII"];
+// Grades come from the shared list so SD (I-VI) is available here too.
 
 export function SoalForm({ onSubmit, loading }: SoalFormProps) {
   const [subject, setSubject] = useState("Bahasa Indonesia");
@@ -67,7 +68,7 @@ export function SoalForm({ onSubmit, loading }: SoalFormProps) {
           <label className="block text-xs font-medium text-gray-600 mb-1">Kelas</label>
           <select value={grade} onChange={(e) => setGrade(e.target.value)}
             className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-400 focus:border-emerald-400 outline-none bg-white">
-            {GRADE_OPTIONS.map((g) => <option key={g} value={g}>{g}</option>)}
+            {GRADE_OPTIONS.map((g) => <option key={g.value} value={g.value}>{g.label}</option>)}
           </select>
         </div>
       </div>
