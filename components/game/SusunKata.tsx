@@ -114,7 +114,7 @@ const SCRAMBLE_WORDS = [
   { word: "EDITORIAL", meaning: "Artikel opini resmi dari media" },
   { word: "BIOGRAFI", meaning: "Riwayat hidup seseorang yang ditulis orang lain" },
   { word: "OTOBIOGRAFI", meaning: "Riwayat hidup yang ditulis sendiri" },
-  { word: "DUBLING", meaning: "Pengisian suara dalam film" },
+  { word: "DIALEK", meaning: "Variasi bahasa menurut daerah atau kelompok pemakainya" },
   { word: "MONOLOG", meaning: "Percakapan seorang diri di atas panggung" },
   { word: "PROLOG", meaning: "Bagian pembuka dalam sebuah karya sastra" },
   { word: "EPILOG", meaning: "Bagian penutup dalam sebuah karya sastra" },
@@ -127,6 +127,59 @@ const SCRAMBLE_WORDS = [
   { word: "LAYAR", meaning: "Permukaan tempat gambar ditampilkan" },
   { word: "PENULIS", meaning: "Orang yang menghasilkan karya tulis" },
   { word: "PEMBACA", meaning: "Orang yang membaca karya tulis" },
+  { word: "ARTI", meaning: "Maksud yang terkandung dalam suatu kata" },
+  { word: "BAIT", meaning: "Satu kesatuan larik dalam puisi" },
+  { word: "BAKU", meaning: "Sesuai dengan kaidah bahasa yang resmi" },
+  { word: "NADA", meaning: "Tinggi rendahnya bunyi atau sikap dalam tulisan" },
+  { word: "TEKS", meaning: "Naskah berupa kata-kata asli dari pengarang" },
+  { word: "FAKTA", meaning: "Hal yang benar-benar terjadi" },
+  { word: "FRASA", meaning: "Gabungan dua kata atau lebih yang tidak melampaui batas fungsi" },
+  { word: "IDIOM", meaning: "Ungkapan yang maknanya tidak sama dengan gabungan makna unsurnya" },
+  { word: "JUDUL", meaning: "Nama yang dipakai untuk buku atau karangan" },
+  { word: "KISAH", meaning: "Cerita tentang kejadian dalam kehidupan" },
+  { word: "LARIK", meaning: "Baris dalam puisi" },
+  { word: "OPINI", meaning: "Pendapat atau pikiran seseorang" },
+  { word: "SAJAK", meaning: "Persamaan bunyi dalam puisi" },
+  { word: "TANDA", meaning: "Sesuatu yang menyatakan maksud tertentu" },
+  { word: "WARTA", meaning: "Berita atau kabar" },
+  { word: "ALINEA", meaning: "Bagian wacana yang mengandung satu ide pokok" },
+  { word: "PANTUN", meaning: "Puisi lama bersajak a-b-a-b" },
+  { word: "PIDATO", meaning: "Pengungkapan pikiran dalam bentuk kata-kata kepada orang banyak" },
+  { word: "ANTONIM", meaning: "Kata yang berlawanan makna dengan kata lain" },
+  { word: "SINONIM", meaning: "Kata yang sama atau mirip maknanya dengan kata lain" },
+  { word: "HOMONIM", meaning: "Kata yang sama lafal dan ejaannya tetapi berbeda makna" },
+  { word: "IMBUHAN", meaning: "Bubuhan pada kata dasar untuk membentuk kata baru" },
+  { word: "GAGASAN", meaning: "Ide atau hasil pemikiran" },
+  { word: "KUTIPAN", meaning: "Pengambilalihan kalimat dari buku atau ucapan orang lain" },
+  { word: "MAJALAH", meaning: "Terbitan berkala yang berisi beragam artikel" },
+  { word: "RUJUKAN", meaning: "Sumber yang dipakai untuk mendukung tulisan" },
+  { word: "WAWASAN", meaning: "Cara pandang atau pengetahuan yang luas" },
+  { word: "CITRAAN", meaning: "Gambaran yang ditimbulkan kata-kata dalam puisi" },
+  { word: "AFORISME", meaning: "Pernyataan padat yang mengandung kebenaran umum" },
+  { word: "GURINDAM", meaning: "Puisi lama dua baris berisi nasihat" },
+  { word: "KHAYALAN", meaning: "Hasil imajinasi yang tidak nyata" },
+  { word: "LAMPIRAN", meaning: "Dokumen tambahan yang disertakan pada dokumen utama" },
+  { word: "UNGKAPAN", meaning: "Kelompok kata yang menyatakan makna khusus" },
+  { word: "SEMANTIK", meaning: "Cabang linguistik tentang makna kata" },
+  { word: "ANTOLOGI", meaning: "Kumpulan karya tulis pilihan dari beberapa pengarang" },
+  { word: "DEKLAMASI", meaning: "Pembacaan puisi disertai gerak dan mimik" },
+  { word: "ETIMOLOGI", meaning: "Ilmu tentang asal-usul kata" },
+  { word: "GLOSARIUM", meaning: "Daftar kata dengan penjelasannya di bidang tertentu" },
+  { word: "MORFOLOGI", meaning: "Cabang linguistik tentang pembentukan kata" },
+  { word: "LOKAKARYA", meaning: "Pertemuan untuk membahas dan berlatih suatu keterampilan" },
+  { word: "MANUSKRIP", meaning: "Naskah tulisan tangan yang belum diterbitkan" },
+  { word: "SIMPOSIUM", meaning: "Pertemuan membahas suatu topik dengan beberapa ahli" },
+  { word: "PERIBAHASA", meaning: "Kalimat kiasan turun-temurun yang berisi nasihat" },
+  { word: "PUSTAKAWAN", meaning: "Orang yang mengelola perpustakaan" },
+  { word: "DRAMATURGI", meaning: "Seni dan teknik penyusunan naskah drama" },
+  { word: "JURNALISTIK", meaning: "Kegiatan menghimpun dan menyebarkan berita" },
+  { word: "BIBLIOGRAFI", meaning: "Daftar buku atau sumber yang dipakai dalam karangan" },
+  { word: "PLAGIARISME", meaning: "Penjiplakan karya orang lain tanpa izin" },
+  { word: "TRANSKRIPSI", meaning: "Pengalihan tuturan lisan ke bentuk tulisan" },
+  { word: "INTERPRETASI", meaning: "Pemberian kesan atau tafsiran terhadap sesuatu" },
+  { word: "ENSIKLOPEDIA", meaning: "Buku rujukan berisi keterangan berbagai ilmu" },
+  { word: "LEKSIKOGRAFI", meaning: "Ilmu tentang penyusunan kamus" },
+  { word: "KORESPONDENSI", meaning: "Kegiatan surat-menyurat" },
 ];
 
 const LEVEL_THRESHOLDS = [0, 80, 200, 400, 700, 1100, 1600, 2200, 2900, 3700, 4600, 5600, 6700, 7900, 9200, 10600, 12100, 13700, 15400, 17200, 19100, 21100, 23200, 25400, 27700, 30100, 32600, 35200, 37900, 40700, 43600, 46600, 49700, 52900, 56200, 59600, 63100, 66700, 70400, 74200, 78100, 82100, 86200, 90400, 94700, 99100, 103600, 108200, 112900, 117700];
@@ -143,6 +196,15 @@ function getLevelProgress(xp: number) {
   const current = LEVEL_THRESHOLDS[level - 1] || 0;
   const next = LEVEL_THRESHOLDS[level] || LEVEL_THRESHOLDS[LEVEL_THRESHOLDS.length - 1] + 10000;
   return { level, progress: ((xp - current) / (next - current)) * 100, current, next };
+}
+
+// Kata yang diacak makin panjang mengikuti level — menyusun 5 huruf mudah,
+// menyusun 10+ huruf butuh kosakata yang jauh lebih kuat.
+function wordBandForLevel(level: number) {
+  if (level <= 4) return { min: 0, max: 5 };
+  if (level <= 9) return { min: 5, max: 7 };
+  if (level <= 19) return { min: 7, max: 9 };
+  return { min: 8, max: 99 };
 }
 
 function scrambleWord(word: string): string {
@@ -251,7 +313,12 @@ export default function SusunKataGame({ hideBackButton }: { hideBackButton?: boo
   };
 
   const nextWord = (used: Set<string>) => {
-    const available = SCRAMBLE_WORDS.filter((w) => !used.has(w.word));
+    const band = wordBandForLevel(getLevel(xp));
+    let available = SCRAMBLE_WORDS.filter(
+      (w) => !used.has(w.word) && w.word.length >= band.min && w.word.length <= band.max
+    );
+    // Band kehabisan kata → buka seluruh bank agar permainan tetap jalan.
+    if (available.length === 0) available = SCRAMBLE_WORDS.filter((w) => !used.has(w.word));
     let word: any;
     if (available.length === 0) {
       setUsedWords(new Set());

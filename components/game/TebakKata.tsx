@@ -98,7 +98,7 @@ const WORDS_DB = [
   { word: "FONOLOGI", clues: ["Cabang linguistik tentang bunyi", "Fonem dan alofon", "Sistem bunyi bahasa"], category: "Bahasa" },
   { word: "SEMANTIK", clues: ["Cabang linguistik tentang makna", "Arti kata dan kalimat", "Interpretasi bahasa"], category: "Bahasa" },
   { word: "KONTEKS", clues: ["Situasi di sekitar teks", "Latar belakang peristiwa", "Pengaruh lingkungan terhadap makna"], category: "Bahasa" },
-  { word: "SUBTANSI", clues: ["Inti atau isi pokok", "Bagian paling penting", "Esensi dari suatu hal"], category: "Bahasa" },
+  { word: "SUBSTANSI", clues: ["Inti atau isi pokok", "Bagian paling penting", "Esensi dari suatu hal"], category: "Bahasa" },
   { word: "RELEVAN", clues: ["Ada kaitannya", "Berhubungan dengan topik", "Sesuai dengan konteks"], category: "Bahasa" },
   { word: "VALIDITAS", clues: ["Keabsahan atau kesahihan", "Dapat dipercaya kebenarannya", "Ukuran keandalan data"], category: "Bahasa" },
   { word: "KONSISTEN", clues: ["Tetap dan tidak berubah", "Ajeg dalam pendirian", "Selaras antara ucapan dan perbuatan"], category: "Bahasa" },
@@ -127,8 +127,6 @@ const WORDS_DB = [
   { word: "MEMBACA", clues: ["Melihat dan memahami tulisan", "Kegiatan literasi", "Menyerap informasi dari teks"], category: "Bahasa" },
   { word: "MENULIS", clues: ["Menuangkan ide dalam bentuk tulisan", "Berkomunikasi secara tertulis", "Kegiatan produktif berbahasa"], category: "Seni" },
   { word: "WAWANCARA", clues: ["Tanya jawab dengan narasumber", "Mengumpulkan informasi", "Percakapan untuk berita"], category: "Sosial" },
-  { word: "DISKUSI", clues: ["Bertukar pikiran tentang suatu hal", "Musyawarah untuk mufakat", "Forum bertukar pendapat"], category: "Sosial" },
-  { word: "PRESENTASI", clues: ["Menyampaikan informasi di depan umum", "Pakai slide atau visual", "Paparan di depan audiens"], category: "Sosial" },
   { word: "NEGOSIASI", clues: ["Tawar-menawar mencapai sepakat", "Proses perundingan", "Jual beli butuh ini"], category: "Sosial" },
   { word: "KRITIK", clues: ["Tanggapan disertai alasan", "Bukan sekadar mencela", "Saran perbaikan yang membangun"], category: "Sosial" },
   { word: "APRESIASI", clues: ["Penghargaan terhadap karya", "Mengakui kelebihan", "Respon positif terhadap seni"], category: "Seni" },
@@ -147,15 +145,11 @@ const WORDS_DB = [
   { word: "PADAT", clues: ["Berisi banyak dalam sedikit ruang", "Tidak longgar", "Informasi yang ringkas"], category: "Bahasa" },
   { word: "LOGIS", clues: ["Masuk akal", "Dapat diterima nalar", "Tidak bertentangan"], category: "Bahasa" },
   { word: "KRITIS", clues: ["Tidak menerima begitu saja", "Menganalisis dengan tajam", "Berpikir mendalam"], category: "Sosial" },
-  { word: "KREATIF", clues: ["Memiliki daya cipta", "Inovatif dan orisinal", "Banyak ide baru"], category: "Seni" },
-  { word: "INOVASI", clues: ["Pembaruan yang bermanfaat", "Perubahan ke arah lebih baik", "Temuan baru"], category: "Sosial" },
   { word: "EFEKTIF", clues: ["Tepat sasaran", "Berhasil mencapai tujuan", "Tidak mubazir"], category: "Bahasa" },
   { word: "EFISIEN", clues: ["Hemat waktu dan tenaga", "Optimal dalam penggunaan sumber", "Tidak boros"], category: "Bahasa" },
-  { word: "RELEVAN", clues: ["Ada hubungan dengan topik", "Tidak melenceng", "Sesuai konteks"], category: "Bahasa" },
   { word: "AKURAT", clues: ["Tepat dan benar", "Sesuai fakta", "Tidak salah"], category: "Bahasa" },
   { word: "OBJEKTIF", clues: ["Berdasarkan fakta", "Tidak memihak", "Netral dan apa adanya"], category: "Sosial" },
   { word: "SUBJEKTIF", clues: ["Berdasarkan pendapat pribadi", "Mengandung perasaan", "Tidak netral"], category: "Sosial" },
-  { word: "KONSISTEN", clues: ["Tetap dan tidak berubah", "Ajeg dalam pendirian", "Selaras antara ucapan dan perbuatan"], category: "Sosial" },
   { word: "KOMPETEN", clues: ["Mampu dan cakap", "Ahli di bidangnya", "Memiliki kualifikasi"], category: "Sosial" },
   { word: "INTEGRITAS", clues: ["Kejujuran dan keteguhan", "Konsisten pada prinsip", "Berpegang pada nilai"], category: "Sosial" },
   { word: "PROFESIONAL", clues: ["Bekerja sesuai standar", "Ahli dan bertanggung jawab", "Tidak amatiran"], category: "Sosial" },
@@ -228,7 +222,7 @@ const WORDS_DB = [
   { word: "GARIS", clues: ["Goresan pensil yang memanjang", "Unsur dasar seni rupa", "Lurus, lengkung, patah"], category: "Seni" },
   { word: "BENTUK", clues: ["Wujud suatu objek", "Bulat, kotak, segitiga", "Struktur visual"], category: "Seni" },
   { word: "TEKSTUR", clues: ["Permukaan suatu benda", "Kasar, halus, licin", "Diraba dengan tangan"], category: "Seni" },
-  { word: "PENCIL", clues: ["Alat tulis dari grafit", "Bisa dihapus", "Biasa untuk sketsa"], category: "Seni" },
+  { word: "PENSIL", clues: ["Alat tulis dari grafit", "Bisa dihapus", "Biasa untuk sketsa"], category: "Seni" },
   { word: "KUAS", clues: ["Alat untuk melukis", "Bulu halus bertangkai", "Alat aplikasi cat"], category: "Seni" },
   { word: "KANVAS", clues: ["Kain tempat melukis", "Media seni lukis", "Permukaan gambar"], category: "Seni" },
   { word: "PATUNG", clues: ["Karya seni tiga dimensi", "Pahatan dari batu atau kayu", "Seni rupa bentuk"], category: "Seni" },
@@ -237,7 +231,36 @@ const WORDS_DB = [
   { word: "WAYANG", clues: ["Pertunjukan boneka tradisional", "Kulit atau kayu", "Cerita Mahabharata"], category: "Seni" },
   { word: "ANGKLUNG", clues: ["Alat musik dari bambu", "Getar dan bunyi", "Warisan dunia UNESCO"], category: "Seni" },
   { word: "GAMELAN", clues: ["Alat musik tradisional Jawa", "Saron, bonang, gong", "Pengiring wayang"], category: "Seni" },
-  { word: "KOLABORASI", clues: ["Kerja sama antara dua pihak", "Sinergi untuk hasil", "Bersama lebih baik"], category: "Sosial" },
+  { word: "KOSAKATA", clues: ["Perbendaharaan kata", "Makin banyak makin lancar berbahasa", "Dikuasai lewat rajin membaca"], category: "Bahasa" },
+  { word: "IMBUHAN", clues: ["Ditambahkan pada kata dasar", "Me-, ber-, ter-, di-", "Mengubah makna kata"], category: "Bahasa" },
+  { word: "LITERASI", clues: ["Kemampuan membaca dan menulis", "Gerakan nasional di sekolah", "Kunci memahami informasi"], category: "Bahasa" },
+  { word: "NASKAH", clues: ["Teks tertulis untuk dipentaskan", "Dipegang sutradara dan aktor", "Karangan yang belum diterbitkan"], category: "Sastra" },
+  { word: "SAJAK", clues: ["Persamaan bunyi dalam puisi", "Ada di akhir larik", "Karya puisi bebas"], category: "Sastra" },
+  { word: "ORASI", clues: ["Pidato di depan umum", "Disampaikan dengan berapi-api", "Sering terdengar saat demonstrasi"], category: "Bahasa" },
+  { word: "FRASA", clues: ["Gabungan dua kata atau lebih", "Tidak melampaui batas fungsi", "Contohnya 'meja hijau'"], category: "Bahasa" },
+  { word: "MAJALAH", clues: ["Terbitan berkala bergambar", "Berisi artikel beragam", "Dibaca di ruang tunggu"], category: "Media" },
+  { word: "SANGGAR", clues: ["Tempat berlatih seni", "Ada sanggar tari dan lukis", "Wadah kreativitas"], category: "Seni" },
+  { word: "ANTOLOGI", clues: ["Kumpulan karya sastra", "Berisi puisi atau cerpen banyak penulis", "Buku bunga rampai"], category: "Sastra" },
+  { word: "KHAZANAH", clues: ["Kekayaan atau perbendaharaan", "Sering disandingkan dengan budaya", "Harta yang terhimpun"], category: "Bahasa" },
+  { word: "KALIGRAFI", clues: ["Seni menulis indah", "Huruf jadi lukisan", "Sering menghiasi dinding"], category: "Seni" },
+  { word: "DEKLAMASI", clues: ["Membaca puisi dengan gaya", "Disertai gerak dan mimik", "Lomba favorit saat Bulan Bahasa"], category: "Sastra" },
+  { word: "ETIMOLOGI", clues: ["Ilmu asal-usul kata", "Menelusuri sejarah kata", "Cabang linguistik"], category: "Bahasa" },
+  { word: "GLOSARIUM", clues: ["Daftar istilah dan artinya", "Ada di bagian belakang buku", "Kamus kecil khusus"], category: "Bahasa" },
+  { word: "LOKAKARYA", clues: ["Pertemuan untuk berlatih keterampilan", "Padanan kata workshop", "Pesertanya praktik langsung"], category: "Sosial" },
+  { word: "MANUSKRIP", clues: ["Naskah tulisan tangan", "Dokumen kuno berharga", "Tersimpan di perpustakaan nasional"], category: "Sastra" },
+  { word: "SIMPOSIUM", clues: ["Pertemuan membahas satu topik", "Menghadirkan beberapa ahli", "Mirip seminar besar"], category: "Sosial" },
+  { word: "SASTRAWAN", clues: ["Penulis karya sastra", "Chairil Anwar salah satunya", "Ahli menggubah kata"], category: "Sastra" },
+  { word: "KATA BAKU", clues: ["Sesuai kaidah KBBI", "Dipakai dalam tulisan resmi", "Lawan dari kata gaul"], category: "Bahasa" },
+  { word: "PERIBAHASA", clues: ["Kalimat kiasan turun-temurun", "Berakit-rakit ke hulu contohnya", "Mengandung nasihat"], category: "Sastra" },
+  { word: "PUSTAKAWAN", clues: ["Penjaga dan pengelola perpustakaan", "Ahli menata buku", "Membantu mencari referensi"], category: "Sosial" },
+  { word: "ALITERASI", clues: ["Pengulangan bunyi konsonan", "Gaya bunyi dalam puisi", "Membuat larik terdengar merdu"], category: "Sastra" },
+  { word: "AMBIGUITAS", clues: ["Makna ganda dalam kalimat", "Membuat pembaca bingung", "Harus dihindari dalam kalimat efektif"], category: "Bahasa" },
+  { word: "INFOGRAFIK", clues: ["Informasi dalam bentuk gambar", "Data jadi mudah dipahami", "Sering muncul di media daring"], category: "Media" },
+  { word: "PLAGIARISME", clues: ["Menjiplak karya orang lain", "Pelanggaran etika menulis", "Dicegah dengan mencantumkan sumber"], category: "Bahasa" },
+  { word: "PERPUSTAKAAN", clues: ["Gudang ilmu di sekolah", "Tempat meminjam buku", "Harus tenang di dalamnya"], category: "Sosial" },
+  { word: "ENSIKLOPEDIA", clues: ["Buku rujukan segala ilmu", "Disusun menurut abjad", "Wikipedia versi cetak"], category: "Bahasa" },
+  { word: "PALINDROM", clues: ["Kata yang sama dibaca bolak-balik", "Contohnya 'katak'", "Permainan kata unik"], category: "Bahasa" },
+  { word: "TRANSLITERASI", clues: ["Alih aksara antar sistem tulisan", "Dari huruf Arab ke Latin misalnya", "Menjaga bunyi tetap sama"], category: "Bahasa" },
 ];
 
 const LEVEL_THRESHOLDS = [0, 100, 250, 500, 800, 1200, 1700, 2300, 3000, 3800, 4700, 5700, 6800, 8000, 9300, 10700, 12200, 13800, 15500, 17300, 19200, 21200, 23300, 25500, 27800, 30200, 32700, 35300, 38000, 40800, 43700, 46700, 49800, 53000, 56300, 59700, 63200, 66800, 70500, 74300, 78200, 82200, 86300, 90500, 94800, 99200, 103700, 108300, 113000, 117800];
@@ -254,6 +277,15 @@ function getLevelProgress(xp: number) {
   const current = LEVEL_THRESHOLDS[level - 1] || 0;
   const next = LEVEL_THRESHOLDS[level] || LEVEL_THRESHOLDS[LEVEL_THRESHOLDS.length - 1] + 10000;
   return { level, progress: ((xp - current) / (next - current)) * 100, current, next };
+}
+
+// Panjang kata naik mengikuti level pemain — level rendah dapat kata pendek
+// yang akrab, makin tinggi level makin panjang dan makin jarang katanya.
+function wordBandForLevel(level: number) {
+  if (level <= 4) return { min: 0, max: 6 };
+  if (level <= 9) return { min: 5, max: 8 };
+  if (level <= 19) return { min: 6, max: 10 };
+  return { min: 8, max: 99 };
 }
 
 export default function TebakKataGame({ hideBackButton }: { hideBackButton?: boolean }) {
@@ -321,7 +353,12 @@ export default function TebakKataGame({ hideBackButton }: { hideBackButton?: boo
   };
 
   const nextWord = (used: Set<string>) => {
-    const available = WORDS_DB.filter((w) => !used.has(w.word));
+    const band = wordBandForLevel(getLevel(xp));
+    let available = WORDS_DB.filter(
+      (w) => !used.has(w.word) && w.word.length >= band.min && w.word.length <= band.max
+    );
+    // Band kehabisan kata → buka seluruh bank agar permainan tetap jalan.
+    if (available.length === 0) available = WORDS_DB.filter((w) => !used.has(w.word));
     if (available.length === 0) {
       setUsedWords(new Set());
       const pool = [...WORDS_DB];

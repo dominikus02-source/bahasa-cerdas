@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getUser } from "@/lib/supabase/server";
+import { db } from "@/lib/db";
 
 const QUESTIONS = {
   SD: [
@@ -10,27 +12,27 @@ const QUESTIONS = {
     { text: "Sinonim kata 'bahagia' adalah...", options: ["Sedih", "Senang", "Marah", "Cemas"], correct: 1, type: "sinonim" },
     { text: "Antonim kata 'besar' adalah...", options: ["Lebar", "Kecil", "Panjang", "Tinggi"], correct: 1, type: "antonim" },
     { text: "Kata 'berlari' mendapat imbuhan...", options: ["ber-", "me-", "ter-", "di-"], correct: 0, type: "imbuhan" },
-    { text: "Kata baku dari 'apotik' adalah...", options: ["Apotik", "Apotek", "Appotek", "Apotik"], correct: 1, type: "kata_baku" },
+    { text: "Kata baku dari 'apotik' adalah...", options: ["Apotik", "Apotek", "Appotek", "Apotiek"], correct: 1, type: "kata_baku" },
     { text: "Sinonim kata 'indah' adalah...", options: ["Jelek", "Cantik", "Kotor", "Buru"], correct: 1, type: "sinonim" },
     { text: "'Dia ___ buku di perpustakaan.' Kata yang tepat adalah...", options: ["Membaca", "Membacakan", "Terbaca", "Dibacakan"], correct: 0, type: "kalimat" },
     { text: "Antonim kata 'pagi' adalah...", options: ["Siang", "Sore", "Malam", "Subuh"], correct: 2, type: "antonim" },
-    { text: "Kata baku dari 'pebruari' adalah...", options: ["Pebruari", "Februari", "Februari", "Pebruari"], correct: 1, type: "kata_baku" },
+    { text: "Kata baku dari 'pebruari' adalah...", options: ["Pebruari", "Februari", "Febuari", "Pebuari"], correct: 1, type: "kata_baku" },
     { text: "Kata 'tertinggi' mendapat imbuhan...", options: ["ber-", "me-", "ter-", "pe-"], correct: 2, type: "imbuhan" },
     { text: "Sinonim kata 'cepat' adalah...", options: ["Lambat", "Lecet", "Kencang", "Pelan"], correct: 2, type: "sinonim" },
     { text: "Kalimat yang tepat: 'Ibu ___ nasi di dapur.'", options: ["Masak", "Memasak", "Dimasak", "Ter masak"], correct: 1, type: "kalimat" },
-    { text: "Kata baku dari 'resiko' adalah...", options: ["Resiko", "Reski", "Risiko", "Risiko"], correct: 2, type: "kata_baku" },
+    { text: "Kata baku dari 'resiko' adalah...", options: ["Resiko", "Reziko", "Risiko", "Riziko"], correct: 2, type: "kata_baku" },
     { text: "Antonim kata 'panjang' adalah...", options: ["Lebar", "Pendek", "Tinggi", "Dalam"], correct: 1, type: "antonim" },
     { text: "'Mereka sedang ___ bola di lapangan.'", options: ["Bermain", "Dimainkan", "Ter main", "Memainkan"], correct: 0, type: "kalimat" },
     { text: "Sinonim kata 'gemar' adalah...", options: ["Benci", "Suka", "Malas", "Malu"], correct: 1, type: "sinonim" },
     { text: "Kata baku dari 'aktifitas' adalah...", options: ["Aktivitas", "Aktifitas", "Aktipitas", "Activity"], correct: 0, type: "kata_baku" },
     { text: "Antonim kata 'kaya' adalah...", options: ["Miskin", "Harta", "Dermawan", "Mewah"], correct: 0, type: "antonim" },
     { text: "'Budi ___ sepeda setiap hari.'", options: ["Naik", "Menaiki", "Mengendarai", "Dinaiki"], correct: 2, type: "kalimat" },
-    { text: "Sinonim 'bernyanyi' adalah...", options: ["Menari", "Bersuara", "Melantun", "Bicara"], correct: 2, type: "sinonim" },
-    { text: "Kata baku dari 'tehnik' adalah...", options: ["Tehnik", "Tekhnik", "Teknik", "Tehnik"], correct: 2, type: "kata_baku" },
+    { text: "Sinonim 'rajin' adalah...", options: ["Tekun", "Malas", "Lambat", "Lalai"], correct: 0, type: "sinonim" },
+    { text: "Kata baku dari 'tehnik' adalah...", options: ["Tehnik", "Tekhnik", "Teknik", "Tehknik"], correct: 2, type: "kata_baku" },
     { text: "Antonim 'tinggi' adalah...", options: ["Dalam", "Lebar", "Pendek", "Besar"], correct: 2, type: "antonim" },
     { text: "'Kucing itu ___ di atas genteng.'", options: ["Duduk", "Berbaring", "Memanjat", "Berdiri"], correct: 2, type: "kalimat" },
     { text: "Sinonim 'berani' adalah...", options: ["Takutan", "Pemberani", "Penakut", "Lemah"], correct: 1, type: "sinonim" },
-    { text: "Kata baku dari 'diagnosa' adalah...", options: ["Diagnosa", "Diagnosis", "Diagnosa", "Dignosa"], correct: 1, type: "kata_baku" },
+    { text: "Kata baku dari 'diagnosa' adalah...", options: ["Diagnosa", "Diagnosis", "Diaknosa", "Dignosa"], correct: 1, type: "kata_baku" },
     { text: "Antonim 'terang' adalah...", options: ["Cerah", "Gelap", "Benderang", "Silau"], correct: 1, type: "antonim" },
     { text: "'Kami ___ upacara setiap hari Senin.'", options: ["Mengikuti", "Diikuti", "Mengikut", "Ikuti"], correct: 0, type: "kalimat" },
     { text: "Huruf kapital digunakan untuk...", options: ["Nama orang", "Kata depan", "Kata sambung", "Partikel"], correct: 0, type: "ejaan" },
@@ -54,7 +56,7 @@ const QUESTIONS = {
     { text: "'Kami ___ sepak bola setiap sore.'", options: ["Main", "Bermain", "Dimain", "Termain"], correct: 1, type: "kalimat" },
     { text: "Huruf kapital dipakai untuk nama...", options: ["Orang", "Kata depan", "Kata sambung", "Partikel"], correct: 0, type: "ejaan" },
     { text: "Sinonim 'bernyanyi' adalah...", options: ["Bersuara", "Melantunkan lagu", "Bertepuk", "Menari"], correct: 1, type: "sinonim" },
-    { text: "Kata baku dari 'cenderamata' adalah...", options: ["Cenderamata", "Cinderamata", "Cenderamata", "Cindera"], correct: 1, type: "kata_baku" },
+    { text: "Kata baku dari 'cinderamata' adalah...", options: ["Cinderamata", "Cenderamata", "Cenderemata", "Cindramata"], correct: 1, type: "kata_baku" },
     { text: "Antonim 'subur' adalah...", options: ["Hijau", "Kering", "Gersang", "Lembab"], correct: 2, type: "antonim" },
     { text: "'Paman ___ mobil baru.'", options: ["Punya", "Memiliki", "Punya punya", "Dimiliki"], correct: 1, type: "kalimat" },
     { text: "Kata 'berenang' mendapat imbuhan...", options: ["me-", "ber-", "ter-", "di-"], correct: 1, type: "imbuhan" },
@@ -64,10 +66,40 @@ const QUESTIONS = {
     { text: "'Dia ___ ke sekolah naik bis.'", options: ["Pergi", "Pergikan", "Pergi pergi", "Kepergian"], correct: 0, type: "kalimat" },
     { text: "Kata depan 'ke' yang benar: '___ sekolah'", options: ["Kesekolah", "Ke sekolah", "Ke-sekolah", "ke Sekolah"], correct: 1, type: "ejaan" },
     { text: "Sinonim 'merah' adalah...", options: ["Biru", "Kuning", "Hijau", "Merona"], correct: 3, type: "sinonim" },
+    { text: "Kata baku dari 'jaman' adalah...", options: ["Jaman", "Zaman", "Zamman", "Jamman"], correct: 1, type: "kata_baku" },
+    { text: "Kata baku dari 'sistim' adalah...", options: ["Sistim", "Sistem", "Sistiem", "Sisttem"], correct: 1, type: "kata_baku" },
+    { text: "Kata baku dari 'nomer' adalah...", options: ["Nomer", "Nomor", "Nommer", "Noomor"], correct: 1, type: "kata_baku" },
+    { text: "Kata baku dari 'hapal' adalah...", options: ["Hapal", "Hafal", "Haffal", "Happal"], correct: 1, type: "kata_baku" },
+    { text: "Kata baku dari 'himbau' adalah...", options: ["Himbau", "Imbau", "Himbaw", "Imbaau"], correct: 1, type: "kata_baku" },
+    { text: "Kata baku dari 'cabe' adalah...", options: ["Cabe", "Cabai", "Cabee", "Cabay"], correct: 1, type: "kata_baku" },
+    { text: "Sinonim 'pintar' adalah...", options: ["Pandai", "Malas", "Lambat", "Bingung"], correct: 0, type: "sinonim" },
+    { text: "Sinonim 'lelah' adalah...", options: ["Letih", "Segar", "Kuat", "Sehat"], correct: 0, type: "sinonim" },
+    { text: "Sinonim 'riang' adalah...", options: ["Ceria", "Murung", "Sedih", "Lesu"], correct: 0, type: "sinonim" },
+    { text: "Sinonim 'melihat' adalah...", options: ["Memandang", "Mendengar", "Meraba", "Mencium"], correct: 0, type: "sinonim" },
+    { text: "Sinonim 'bohong' adalah...", options: ["Dusta", "Jujur", "Benar", "Nyata"], correct: 0, type: "sinonim" },
+    { text: "Sinonim 'harum' adalah...", options: ["Wangi", "Busuk", "Apek", "Asam"], correct: 0, type: "sinonim" },
+    { text: "Antonim 'datang' adalah...", options: ["Pergi", "Tiba", "Hadir", "Muncul"], correct: 0, type: "antonim" },
+    { text: "Antonim 'mudah' adalah...", options: ["Sulit", "Gampang", "Ringan", "Lancar"], correct: 0, type: "antonim" },
+    { text: "Antonim 'cepat' adalah...", options: ["Lambat", "Kencang", "Gesit", "Lincah"], correct: 0, type: "antonim" },
+    { text: "Antonim 'basah' adalah...", options: ["Kering", "Lembap", "Dingin", "Sejuk"], correct: 0, type: "antonim" },
+    { text: "Antonim 'untung' adalah...", options: ["Rugi", "Laba", "Hasil", "Modal"], correct: 0, type: "antonim" },
+    { text: "Antonim 'membuka' adalah...", options: ["Menutup", "Melebar", "Membentang", "Mengangkat"], correct: 0, type: "antonim" },
+    { text: "Kata dasar dari 'membaca' adalah...", options: ["Baca", "Bacaan", "Pembaca", "Terbaca"], correct: 0, type: "imbuhan" },
+    { text: "Kata 'penulis' mendapat imbuhan...", options: ["pe-", "me-", "ber-", "ter-"], correct: 0, type: "imbuhan" },
+    { text: "Kata dasar dari 'bermain' adalah...", options: ["Main", "Mainan", "Pemain", "Permainan"], correct: 0, type: "imbuhan" },
+    { text: "Kata 'terjatuh' mendapat imbuhan...", options: ["ter-", "di-", "me-", "ber-"], correct: 0, type: "imbuhan" },
+    { text: "Imbuhan 'di-' pada kata 'dibaca' menunjukkan kalimat...", options: ["Pasif", "Aktif", "Tanya", "Perintah"], correct: 0, type: "imbuhan" },
+    { text: "'Adik ___ susu setiap pagi.'", options: ["Minum", "Meminum", "Diminum", "Terminum"], correct: 1, type: "kalimat" },
+    { text: "'Petani ___ padi di sawah.'", options: ["Menanam", "Ditanam", "Tertanam", "Tanaman"], correct: 0, type: "kalimat" },
+    { text: "'Burung itu ___ tinggi di langit.'", options: ["Terbang", "Diterbangkan", "Menerbangkan", "Penerbangan"], correct: 0, type: "kalimat" },
+    { text: "'Nenek ___ kue untuk kami.'", options: ["Membuat", "Dibuat", "Terbuat", "Buatan"], correct: 0, type: "kalimat" },
+    { text: "Penulisan nama orang yang benar adalah...", options: ["budi santoso", "Budi Santoso", "BUDI santoso", "budi Santoso"], correct: 1, type: "ejaan" },
+    { text: "Kalimat tanya diakhiri dengan tanda...", options: ["Titik (.)", "Koma (,)", "Tanya (?)", "Seru (!)"], correct: 2, type: "ejaan" },
+    { text: "Penulisan nama hari yang benar: 'Kami libur pada hari ___.'", options: ["senin", "Senin", "SENIN", "sEnin"], correct: 1, type: "ejaan" },
   ],
   SMP: [
     { text: "Kalimat efektif: 'Dia adalah siswa yang pandai sekali.' Perbaikannya...", options: ["Dia siswa pandai", "Dia adalah siswa pandai", "Dia siswa yang pandai", "Ia adalah pandai"], correct: 2, type: "kalimat_efektif" },
-    { text: "Kata depan 'di' yang tepat terdapat pada kalimat...", options: ["Disekolah", "Di sekolah", "Di sekolah", "di Sekolah"], correct: 1, type: "ejaan" },
+    { text: "Kata depan 'di' yang tepat terdapat pada kalimat...", options: ["Disekolah", "Di sekolah", "Di-sekolah", "di Sekolah"], correct: 1, type: "ejaan" },
     { text: "'Bagai air di daun talas' adalah peribahasa untuk orang yang...", options: ["Pendiam", "Tidak punya pendirian", "Pemarah", "Pemalas"], correct: 1, type: "peribahasa" },
     { text: "Majas personifikasi terdapat pada kalimat...", options: ["Angin berbisik", "Dia lari kencang", "Buku itu tebal", "Air sungai jernih"], correct: 0, type: "majas" },
     { text: "Kalimat berikut yang baku: 'Saya ___ bahwa dia benar.'", options: ["Percaya", "Mempercayai", "Mempercaya", "Berpercaya"], correct: 1, type: "kata_baku" },
@@ -115,6 +147,36 @@ const QUESTIONS = {
     { text: "'Air tenang menghanyutkan' artinya...", options: ["Air yang tenang berbahaya", "Orang pendiam biasanya berpengetahuan", "Hati-hati dengan air", "Tidak boleh bermain air"], correct: 1, type: "peribahasa" },
     { text: "Sinonim 'distingsi' adalah...", options: ["Persamaan", "Perbedaan", "Penyatuan", "Percampuran"], correct: 1, type: "sinonim" },
     { text: "Kalimat majemuk bertingkat adalah kalimat yang...", options: ["Terdiri dari satu klausa", "Memiliki anak kalimat", "Tidak memiliki predikat", "Hanya satu subjek"], correct: 1, type: "tata_bahasa" },
+    { text: "Kata baku dari 'praktek' adalah...", options: ["Praktek", "Praktik", "Prakteek", "Praktick"], correct: 1, type: "kata_baku" },
+    { text: "Kata baku dari 'nafas' adalah...", options: ["Nafas", "Napas", "Naffas", "Nappas"], correct: 1, type: "kata_baku" },
+    { text: "Kata baku dari 'obyek' adalah...", options: ["Obyek", "Objek", "Obyec", "Objec"], correct: 1, type: "kata_baku" },
+    { text: "Kata baku dari 'silahkan' adalah...", options: ["Silahkan", "Silakan", "Sillakan", "Silaken"], correct: 1, type: "kata_baku" },
+    { text: "Kata baku dari 'kwitansi' adalah...", options: ["Kwitansi", "Kuitansi", "Kwitanci", "Kuitanci"], correct: 1, type: "kata_baku" },
+    { text: "Sinonim 'signifikan' adalah...", options: ["Berarti", "Kecil", "Samar", "Biasa"], correct: 0, type: "sinonim" },
+    { text: "Sinonim 'potensi' adalah...", options: ["Kemampuan", "Kelemahan", "Kegagalan", "Keterbatasan"], correct: 0, type: "sinonim" },
+    { text: "Sinonim 'motivasi' adalah...", options: ["Dorongan", "Halangan", "Larangan", "Ancaman"], correct: 0, type: "sinonim" },
+    { text: "Sinonim 'efisien' adalah...", options: ["Hemat", "Boros", "Lambat", "Rumit"], correct: 0, type: "sinonim" },
+    { text: "Antonim 'optimis' adalah...", options: ["Pesimis", "Yakin", "Percaya", "Semangat"], correct: 0, type: "antonim" },
+    { text: "Antonim 'ekspor' adalah...", options: ["Impor", "Kirim", "Jual", "Muat"], correct: 0, type: "antonim" },
+    { text: "Antonim 'individual' adalah...", options: ["Kolektif", "Pribadi", "Sendiri", "Tunggal"], correct: 0, type: "antonim" },
+    { text: "Antonim 'formal' adalah...", options: ["Nonformal", "Resmi", "Baku", "Teratur"], correct: 0, type: "antonim" },
+    { text: "'Berakit-rakit ke hulu, berenang-renang ke tepian' artinya...", options: ["Bersusah dahulu, bersenang kemudian", "Suka berpetualang", "Pandai berenang", "Hidup di sungai"], correct: 0, type: "peribahasa" },
+    { text: "'Ada udang di balik batu' artinya...", options: ["Ada maksud tersembunyi", "Pandai mencari udang", "Suka bersembunyi", "Rajin bekerja"], correct: 0, type: "peribahasa" },
+    { text: "'Bagai katak dalam tempurung' artinya...", options: ["Berwawasan sempit", "Suka bersembunyi", "Hidup nyaman", "Pandai melompat"], correct: 0, type: "peribahasa" },
+    { text: "'Sedia payung sebelum hujan' artinya...", options: ["Bersiap sebelum sesuatu terjadi", "Selalu membawa payung", "Takut kehujanan", "Rajin menabung"], correct: 0, type: "peribahasa" },
+    { text: "Majas asosiasi terdapat pada kalimat...", options: ["Wajahnya bagaikan bulan purnama", "Dia sangat pandai", "Ibu memasak nasi", "Kami pergi ke pasar"], correct: 0, type: "majas" },
+    { text: "Contoh majas pleonasme adalah...", options: ["Naik ke atas", "Dia membaca buku", "Kami belajar bersama", "Adik bermain bola"], correct: 0, type: "majas" },
+    { text: "Majas metonimia terdapat pada kalimat...", options: ["Ayah pergi mengendarai Kijang", "Dia berlari cepat", "Kami makan bersama", "Ibu menyapu halaman"], correct: 0, type: "majas" },
+    { text: "Ciri kalimat perintah adalah...", options: ["Diakhiri tanda seru", "Diakhiri tanda tanya", "Berisi pertanyaan", "Berisi berita"], correct: 0, type: "tata_bahasa" },
+    { text: "Kata kerja transitif adalah kata kerja yang...", options: ["Memerlukan objek", "Tidak memerlukan objek", "Berdiri sendiri", "Berupa kata sifat"], correct: 0, type: "tata_bahasa" },
+    { text: "Kalimat langsung ditandai dengan...", options: ["Tanda petik", "Tanda titik dua saja", "Huruf miring", "Tanda kurung"], correct: 0, type: "tata_bahasa" },
+    { text: "Subjek kalimat 'Para siswa mengerjakan ujian' adalah...", options: ["Para siswa", "Mengerjakan", "Ujian", "Para"], correct: 0, type: "tata_bahasa" },
+    { text: "Kata 'inovasi' berarti...", options: ["Pembaruan", "Peniruan", "Pengulangan", "Penghapusan"], correct: 0, type: "kosakata" },
+    { text: "Kata 'kolaborasi' berarti...", options: ["Kerja sama", "Persaingan", "Perpecahan", "Perlombaan"], correct: 0, type: "kosakata" },
+    { text: "Kata 'evaluasi' berarti...", options: ["Penilaian", "Pembukaan", "Penutupan", "Pelaksanaan"], correct: 0, type: "kosakata" },
+    { text: "Imbuhan 'ke-an' pada kata 'keindahan' membentuk kata...", options: ["Benda", "Kerja", "Sifat", "Keterangan"], correct: 0, type: "imbuhan" },
+    { text: "Imbuhan 'me-kan' pada 'membacakan' berarti melakukan...", options: ["Untuk orang lain", "Sendiri", "Berulang-ulang", "Tanpa sengaja"], correct: 0, type: "imbuhan" },
+    { text: "Imbuhan 'pe-an' pada kata 'pendidikan' menyatakan...", options: ["Proses atau hal", "Pelaku", "Alat", "Tempat"], correct: 0, type: "imbuhan" },
   ],
   SMA: [
     { text: "Bacalah: 'Polusi udara di kota besar semakin mengkhawatirkan. Partikel PM2.5 melampaui ambang batas.' Ide pokok paragraf tersebut adalah...", options: ["Polusi udara mengkhawatirkan", "Partikel PM2.5 berbahaya", "Kota besar tercemar", "Ambang batas polusi"], correct: 0, type: "HOTS" },
@@ -127,7 +189,7 @@ const QUESTIONS = {
     { text: "Sinonim 'komprehensif' adalah...", options: ["Parsial", "Menyeluruh", "Sebagian", "Cepat"], correct: 1, type: "sinonim" },
     { text: "Ciri kebahasaan teks prosedur adalah banyak menggunakan kata...", options: ["Imperatif", "Interogatif", "Deklaratif", "Eksklamatif"], correct: 0, type: "tata_bahasa" },
     { text: "Kalimat ambiguous (ambigu): 'Mahasiswa baru itu mengikuti OSKM.' Arti lain dari kalimat tersebut...", options: ["Mahasiswa baru saja datang", "Mahasiswa yang baru mengikuti OSKM", "OSKM untuk mahasiswa baru", "Semua benar"], correct: 1, type: "HOTS" },
-    { text: "Penulisan kata serapan yang benar: '___'", options: ["Standard", "Standar", "Standaar", "Standard"], correct: 1, type: "kata_baku" },
+    { text: "Penulisan kata serapan yang benar: '___'", options: ["Standard", "Standar", "Standaar", "Setandar"], correct: 1, type: "kata_baku" },
     { text: "Majas hiperbola terdapat pada...", options: ["Rambutnya sehitam malam", "Dia menangis tersedu-sedu", "Aku menunggu seribu tahun", "Bunga itu layu"], correct: 2, type: "majas" },
     { text: "Konflik dalam cerita pendek berfungsi untuk...", options: ["Menggambarkan latar", "Membangun ketegangan", "Memperkenalkan tokoh", "Menutup cerita"], correct: 1, type: "sastra" },
     { text: "Kalimat yang menggunakan ejaan yang benar: '___'", options: ["Di karnakan", "Dikarenakan", "Di karenakan", "Di karena kan"], correct: 1, type: "ejaan" },
@@ -159,7 +221,7 @@ const QUESTIONS = {
     { text: "Kata 'antropologi' berarti ilmu tentang...", options: ["Bahasa", "Manusia", "Bintang", "Hewan"], correct: 1, type: "kosakata" },
     { text: "'Ada gula ada semut' artinya...", options: ["Gula manis", "Di mana ada kemudahan di situ banyak orang", "Semut suka gula", "Makanan manis"], correct: 1, type: "peribahasa" },
     { text: "Majas sarkasme adalah sindiran yang...", options: ["Halus", "Kasar dan langsung", "Tersembunyi", "Penuh kiasan"], correct: 1, type: "majas" },
-    { text: "Penulisan partikel '-pun' yang benar...", options: ["Apa pun", "Apapun", "Apa-pun", "Apa pun"], correct: 0, type: "ejaan" },
+    { text: "Penulisan partikel '-pun' yang benar...", options: ["Apa pun", "Apapun", "Apa-pun", "Apa Pun"], correct: 0, type: "ejaan" },
     { text: "Kata benda abstrak adalah kata yang...", options: ["Bisa dilihat", "Tidak bisa diraba", "Berwujud fisik", "Berkaitan dengan alat"], correct: 1, type: "tata_bahasa" },
     { text: "Sinonim 'relevan' adalah...", options: ["Tidak penting", "Bersangkutan", "Berbeda", "Terpisah"], correct: 1, type: "sinonim" },
     { text: "Antonim 'vertikal' adalah...", options: ["Horizontal", "Lurus", "Tegak", "Miring"], correct: 0, type: "antonim" },
@@ -169,6 +231,36 @@ const QUESTIONS = {
     { text: "Konjungsi intrakalimat yang menyatakan tujuan...", options: ["Karena", "Agar", "Tetapi", "Atau"], correct: 1, type: "tata_bahasa" },
     { text: "Majas eufemisme digunakan untuk...", options: ["Menyakiti hati", "Menghaluskan kata", "Membesar-besarkan", "Menyindir"], correct: 1, type: "majas" },
     { text: "Sinonim 'kontradiksi' adalah...", options: ["Persamaan", "Pertentangan", "Persetujuan", "Perpaduan"], correct: 1, type: "sinonim" },
+    { text: "Kata baku dari 'analisa' adalah...", options: ["Analisa", "Analisis", "Analiza", "Analysa"], correct: 1, type: "kata_baku" },
+    { text: "Kata baku dari 'hakekat' adalah...", options: ["Hakekat", "Hakikat", "Hakiekat", "Hakkikat"], correct: 1, type: "kata_baku" },
+    { text: "Kata baku dari 'kaedah' adalah...", options: ["Kaedah", "Kaidah", "Kaideh", "Kaeda"], correct: 1, type: "kata_baku" },
+    { text: "Kata baku dari 'jadual' adalah...", options: ["Jadual", "Jadwal", "Jadwall", "Jaduwal"], correct: 1, type: "kata_baku" },
+    { text: "Sinonim 'ambigu' adalah...", options: ["Jelas", "Taksa", "Tegas", "Lugas"], correct: 1, type: "sinonim" },
+    { text: "Sinonim 'esensi' adalah...", options: ["Hiasan", "Inti", "Tambahan", "Lampiran"], correct: 1, type: "sinonim" },
+    { text: "Sinonim 'validitas' adalah...", options: ["Kepalsuan", "Kesahihan", "Keraguan", "Kelemahan"], correct: 1, type: "sinonim" },
+    { text: "'Hipotesis' dalam penelitian berarti...", options: ["Kesimpulan akhir", "Dugaan sementara", "Data lapangan", "Daftar pustaka"], correct: 1, type: "kosakata" },
+    { text: "Sinonim 'koheren' adalah...", options: ["Terpecah", "Padu", "Acak", "Renggang"], correct: 1, type: "sinonim" },
+    { text: "Antonim 'eksplisit' adalah...", options: ["Terang-terangan", "Implisit", "Jelas", "Gamblang"], correct: 1, type: "antonim" },
+    { text: "Antonim 'heterogen' adalah...", options: ["Beragam", "Homogen", "Campuran", "Majemuk"], correct: 1, type: "antonim" },
+    { text: "Antonim 'objektif' adalah...", options: ["Netral", "Subjektif", "Adil", "Faktual"], correct: 1, type: "antonim" },
+    { text: "Antonim 'radikal' adalah...", options: ["Ekstrem", "Moderat", "Keras", "Total"], correct: 1, type: "antonim" },
+    { text: "Majas sinekdoke pars pro toto terdapat pada kalimat...", options: ["Indonesia menang dalam pertandingan itu", "Sudah lama batang hidungnya tidak tampak", "Dia sangat rajin belajar", "Kami makan di kantin"], correct: 1, type: "majas" },
+    { text: "Majas anafora adalah pengulangan kata pada...", options: ["Akhir kalimat", "Awal larik atau kalimat", "Tengah paragraf", "Judul karangan"], correct: 1, type: "majas" },
+    { text: "Majas antitesis terdapat pada kalimat...", options: ["Dia pandai sekali", "Tua muda hadir di acara itu", "Angin berbisik lembut", "Kami belajar bersama"], correct: 1, type: "majas" },
+    { text: "Cerita kiasan yang seluruh isinya melambangkan hal lain disebut majas...", options: ["Hiperbola", "Alegori", "Ironi", "Litotes"], correct: 1, type: "majas" },
+    { text: "'Menepuk air di dulang, terpercik muka sendiri' artinya...", options: ["Rajin membersihkan diri", "Menjelekkan keluarga sendiri berakibat pada diri sendiri", "Suka bermain air", "Bekerja tanpa hasil"], correct: 1, type: "peribahasa" },
+    { text: "'Bagai menegakkan benang basah' artinya...", options: ["Pekerjaan mudah", "Melakukan hal yang sia-sia", "Menjemur pakaian", "Bekerja dengan teliti"], correct: 1, type: "peribahasa" },
+    { text: "'Karena nila setitik, rusak susu sebelanga' artinya...", options: ["Susu mudah basi", "Kesalahan kecil merusak kebaikan yang banyak", "Harus rajin menabung", "Jangan menyusahkan orang"], correct: 1, type: "peribahasa" },
+    { text: "Ciri kalimat efektif adalah...", options: ["Bertele-tele", "Hemat kata dan jelas maknanya", "Banyak pengulangan", "Panjang dan rumit"], correct: 1, type: "tata_bahasa" },
+    { text: "Klausa subordinatif adalah klausa yang...", options: ["Berdiri sendiri", "Bergantung pada klausa utama", "Selalu di awal kalimat", "Tidak memiliki predikat"], correct: 1, type: "tata_bahasa" },
+    { text: "Frasa verbal memiliki inti berupa kata...", options: ["Benda", "Kerja", "Sifat", "Bilangan"], correct: 1, type: "tata_bahasa" },
+    { text: "Kalimat inversi adalah kalimat yang...", options: ["Subjeknya di awal", "Predikatnya mendahului subjek", "Tidak memiliki objek", "Berupa pertanyaan"], correct: 1, type: "tata_bahasa" },
+    { text: "Konjungsi konsesif (pertentangan harapan) contohnya...", options: ["Karena", "Meskipun", "Sehingga", "Kemudian"], correct: 1, type: "tata_bahasa" },
+    { text: "'Etimologi' adalah ilmu tentang...", options: ["Serangga", "Asal-usul kata", "Bintang", "Batuan"], correct: 1, type: "kosakata" },
+    { text: "Kata 'paradigma' berarti...", options: ["Contoh soal", "Kerangka berpikir", "Daftar isi", "Judul buku"], correct: 1, type: "kosakata" },
+    { text: "'Retorika' adalah seni...", options: ["Melukis", "Berbicara", "Menari", "Memahat"], correct: 1, type: "kosakata" },
+    { text: "Teks editorial berisi...", options: ["Cerita fiksi", "Opini redaksi tentang isu aktual", "Iklan produk", "Data statistik saja"], correct: 1, type: "teks" },
+    { text: "Struktur teks argumentasi yang lengkap adalah...", options: ["Orientasi-komplikasi-resolusi", "Tesis-argumen-penegasan ulang", "Abstrak-isi-koda", "Pembuka-isi-lampiran"], correct: 1, type: "teks" },
   ],
 };
 
@@ -181,22 +273,72 @@ function shuffleArray(arr: any[]) {
   return a;
 }
 
-function getLevelForGrade(level: number): keyof typeof QUESTIONS {
-  if (level <= 30) return "SD";
-  if (level <= 60) return "SMP";
-  return "SMA";
+type Tier = keyof typeof QUESTIONS;
+
+// Campuran tingkat kesulitan per level pemain (level global = XP / 500 + 1).
+// Makin tinggi level murid, makin besar porsi soal SMP lalu SMA — permainan
+// terasa naik kelas, bukan mengulang soal yang sama terus.
+function getTierMix(level: number): Record<Tier, number> {
+  if (level <= 3) return { SD: 1, SMP: 0, SMA: 0 };
+  if (level <= 6) return { SD: 0.7, SMP: 0.3, SMA: 0 };
+  if (level <= 9) return { SD: 0.4, SMP: 0.5, SMA: 0.1 };
+  if (level <= 13) return { SD: 0.15, SMP: 0.55, SMA: 0.3 };
+  return { SD: 0, SMP: 0.3, SMA: 0.7 };
+}
+
+function buildMixedQuestions(level: number, count: number) {
+  const mix = getTierMix(level);
+  const tiers = Object.keys(mix) as Tier[];
+  const picked: Array<(typeof QUESTIONS.SD)[number] & { tier: Tier }> = [];
+
+  for (const t of tiers) {
+    const n = Math.round(count * mix[t]);
+    if (n <= 0) continue;
+    picked.push(...shuffleArray([...QUESTIONS[t]]).slice(0, n).map((q) => ({ ...q, tier: t })));
+  }
+
+  // Pembulatan bisa menyisakan kekurangan — isi dari gabungan semua tier.
+  if (picked.length < count) {
+    const have = new Set(picked.map((q) => q.text));
+    const rest = shuffleArray(
+      tiers.flatMap((t) => QUESTIONS[t].map((q) => ({ ...q, tier: t })))
+    ).filter((q) => !have.has(q.text));
+    picked.push(...rest.slice(0, count - picked.length));
+  }
+
+  return shuffleArray(picked).slice(0, count);
 }
 
 export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
-    const level = parseInt(searchParams.get("level") || "1");
     const count = parseInt(searchParams.get("count") || "15");
-    const grade = searchParams.get("grade") as keyof typeof QUESTIONS || getLevelForGrade(level);
-    const questionPool = QUESTIONS[grade] || QUESTIONS.SD;
-    const selected = shuffleArray(questionPool).slice(0, Math.min(count, questionPool.length));
+    const explicitGrade = searchParams.get("grade") as Tier | null;
 
-    return NextResponse.json({ questions: selected, grade, totalPool: questionPool.length });
+    // Level diambil server-side dari XP murid — klien tidak perlu (dan tidak
+    // bisa) memilih sendiri. Query param `level` hanya fallback saat tanpa sesi.
+    let level = parseInt(searchParams.get("level") || "1");
+    const user = await getUser().catch(() => null);
+    if (user) {
+      const dbUser = await db.user.findUnique({ where: { id: user.id }, select: { level: true } });
+      if (dbUser?.level) level = dbUser.level;
+    }
+
+    if (explicitGrade && QUESTIONS[explicitGrade]) {
+      const pool = QUESTIONS[explicitGrade];
+      const selected = shuffleArray([...pool]).slice(0, Math.min(count, pool.length));
+      return NextResponse.json({ questions: selected, grade: explicitGrade, playerLevel: level, totalPool: pool.length });
+    }
+
+    const questions = buildMixedQuestions(level, count);
+    const mix = getTierMix(level);
+    const grade = (Object.keys(mix) as Tier[]).reduce((a, b) => (mix[a] >= mix[b] ? a : b));
+    return NextResponse.json({
+      questions,
+      grade,
+      playerLevel: level,
+      totalPool: QUESTIONS.SD.length + QUESTIONS.SMP.length + QUESTIONS.SMA.length,
+    });
   } catch (error) {
     console.error("GET /api/katastra/questions error:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });

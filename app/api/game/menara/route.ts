@@ -77,21 +77,22 @@ export async function GET(req: NextRequest) {
 
   const count = Math.min(Math.max(Number(new URL(req.url).searchParams.get("count")) || 12, 5), 20);
 
-  // Pull all active Jalur Cerdas lesson units and harvest their MCQ questions.
+  // Pull ALL active Jalur Cerdas lesson units (72) and harvest their MCQ
+  // questions, keeping each unit's level so the run can ramp up in difficulty.
   const units = await db.learningUnit.findMany({
     where: { isActive: true, level: { type: "JALUR" } },
-    select: { content: true },
-    take: 50,
+    select: { content: true, level: { select: { level: true } } },
   });
 
-  const pool: GameQuestion[] = [];
+  type RampQuestion = GameQuestion & { lvl: number };
+  const pool: RampQuestion[] = [];
 
-  // 1) Curated, hand-verified bank (guaranteed quality).
+  // 1) Curated, hand-verified bank (guaranteed quality) — mid difficulty.
   for (const b of QUESTION_BANK) {
-    pool.push({ id: `bank_${pool.length}`, soal: b.soal, opsi: b.opsi, jawaban: b.jawaban, penjelasan: b.penjelasan });
+    pool.push({ id: `bank_${pool.length}`, soal: b.soal, opsi: b.opsi, jawaban: b.jawaban, penjelasan: b.penjelasan, lvl: 6 });
   }
 
-  // 2) Real lesson questions from Jalur Cerdas.
+  // 2) Real lesson questions from Jalur Cerdas, tagged with their unit level.
   for (const u of units) {
     if (!u.content) continue;
     try {
@@ -99,7 +100,7 @@ export async function GET(req: NextRequest) {
       if (Array.isArray(parsed?.questions)) {
         for (const q of parsed.questions) {
           const n = normalize(q);
-          if (n) pool.push(n);
+          if (n) pool.push({ ...n, lvl: u.level?.level ?? 6 });
         }
       }
     } catch {
@@ -107,8 +108,7 @@ export async function GET(req: NextRequest) {
     }
   }
 
-  // Dedupe by question text + drop ambiguous/malformed items, then shuffle so
-  // every player gets a different random subset.
+  // Dedupe by question text + drop ambiguous/malformed items.
   const seen = new Set<string>();
   const clean = pool.filter((q) => {
     if (!isValid(q)) return false;
@@ -118,7 +118,27 @@ export async function GET(req: NextRequest) {
     return true;
   });
 
-  const questions = shuffle(clean).slice(0, count);
+  // Stratified pick: sepertiga mudah (L1-4), sepertiga menengah (L5-8),
+  // sepertiga sulit (L9-12) — lalu urutkan naik supaya lantai awal menara
+  // mudah dan makin tinggi makin menantang. Subset tetap acak per pemain.
+  const bands = [
+    clean.filter((q) => q.lvl <= 4),
+    clean.filter((q) => q.lvl > 4 && q.lvl <= 8),
+    clean.filter((q) => q.lvl > 8),
+  ];
+  const per = Math.floor(count / 3);
+  const targets = [per, per, count - 2 * per];
+  const picked: RampQuestion[] = [];
+  bands.forEach((band, i) => picked.push(...shuffle(band).slice(0, targets[i])));
+  if (picked.length < count) {
+    const have = new Set(picked.map((q) => q.soal));
+    picked.push(...shuffle(clean).filter((q) => !have.has(q.soal)).slice(0, count - picked.length));
+  }
+
+  const questions = picked
+    .sort((a, b) => a.lvl - b.lvl)
+    .slice(0, count)
+    .map(({ lvl: _lvl, ...q }) => q);
   return NextResponse.json({ questions });
 }
 
