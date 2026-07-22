@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { Send, Trash2, AlertTriangle, Coins } from "lucide-react"
+import Link from "next/link"
 
 interface CommentUser {
   id: string
@@ -174,17 +175,21 @@ export default function CommentSection({ karyaId, initialComments, initialCount,
             const isTemp = c.id.startsWith("temp-")
             return (
               <div key={c.id} className={`flex gap-3 group ${isTemp ? "opacity-60" : ""}`}>
-                <div className={`w-9 h-9 rounded-full bg-gradient-to-br ${COLORS[userIdx(c.user.id)]} flex items-center justify-center text-white font-bold text-sm shrink-0`}>
-                  {c.user.avatar ? (
-                    <img src={c.user.avatar} alt="" className="w-full h-full rounded-full object-cover" />
-                  ) : (
-                    c.user.fullName?.charAt(0).toUpperCase() || "?"
-                  )}
-                </div>
+                {c.user.id && !isTemp ? (
+                  <Link href={`/profile/${c.user.id}`} className={`w-9 h-9 rounded-full bg-gradient-to-br ${COLORS[userIdx(c.user.id)]} flex items-center justify-center text-white font-bold text-sm shrink-0 hover:ring-2 hover:ring-violet-300 transition-all`}>
+                    {c.user.avatar ? <img src={c.user.avatar} alt="" className="w-full h-full rounded-full object-cover" /> : (c.user.fullName?.charAt(0).toUpperCase() || "?")}
+                  </Link>
+                ) : (
+                  <div className={`w-9 h-9 rounded-full bg-gradient-to-br ${COLORS[userIdx(c.user.id)]} flex items-center justify-center text-white font-bold text-sm shrink-0`}>
+                    {c.user.avatar ? <img src={c.user.avatar} alt="" className="w-full h-full rounded-full object-cover" /> : (c.user.fullName?.charAt(0).toUpperCase() || "?")}
+                  </div>
+                )}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
                     <p className="text-sm font-semibold text-gray-900 truncate">
-                      {c.user.fullName || "Pengguna"}
+                      {c.user.id && !isTemp ? (
+                        <Link href={`/profile/${c.user.id}`} className="hover:text-violet-600 transition-colors">{c.user.fullName || "Pengguna"}</Link>
+                      ) : (c.user.fullName || "Pengguna")}
                       {isOwn && <span className="text-[10px] text-violet-500 ml-1 font-medium">(kamu)</span>}
                     </p>
                     <span className="text-xs text-gray-400 shrink-0">{waktuLalu(c.createdAt)}</span>

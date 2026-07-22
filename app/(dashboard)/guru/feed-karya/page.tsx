@@ -569,12 +569,22 @@ export default function GuruFeedKaryaPage() {
                 <div className="space-y-3 max-h-60 overflow-y-auto">
                   {comments.map(c => (
                     <div key={c.id} className="flex gap-3">
-                      <div className="w-7 h-7 rounded-full bg-gradient-to-br from-emerald-300 to-green-400 flex items-center justify-center text-white text-[10px] font-bold shrink-0">
-                        {c.user.avatar ? <img src={c.user.avatar} alt="" className="w-full h-full rounded-full object-cover" /> : c.user.fullName.charAt(0)}
-                      </div>
+                      {c.user.id && !c.id.startsWith("temp-") ? (
+                        <Link href={`/profile/${c.user.id}`} className="w-7 h-7 rounded-full bg-gradient-to-br from-emerald-300 to-green-400 flex items-center justify-center text-white text-[10px] font-bold shrink-0 hover:ring-2 hover:ring-emerald-300 transition-all">
+                          {c.user.avatar ? <img src={c.user.avatar} alt="" className="w-full h-full rounded-full object-cover" /> : c.user.fullName.charAt(0)}
+                        </Link>
+                      ) : (
+                        <div className="w-7 h-7 rounded-full bg-gradient-to-br from-emerald-300 to-green-400 flex items-center justify-center text-white text-[10px] font-bold shrink-0">
+                          {c.user.avatar ? <img src={c.user.avatar} alt="" className="w-full h-full rounded-full object-cover" /> : c.user.fullName.charAt(0)}
+                        </div>
+                      )}
                       <div className="flex-1 bg-emerald-50 rounded-xl p-3">
                         <div className="flex items-center gap-2 mb-0.5">
-                          <span className="text-sm font-semibold text-gray-900">{c.user.fullName}</span>
+                          {c.user.id && !c.id.startsWith("temp-") ? (
+                            <Link href={`/profile/${c.user.id}`} className="text-sm font-semibold text-gray-900 hover:text-emerald-700 transition-colors">{c.user.fullName}</Link>
+                          ) : (
+                            <span className="text-sm font-semibold text-gray-900">{c.user.fullName}</span>
+                          )}
                           <span className="text-[10px] text-gray-400">
                             {new Date(c.createdAt).toLocaleDateString("id-ID", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}
                           </span>
