@@ -127,6 +127,24 @@ check("Submit: XP dibatasi (maks 50)", tantangSubmit.includes("Math.min(correct 
 check("Submit: idempoten (tidak bisa main ulang)", tantangSubmit.includes("sudahSelesai: true"));
 check("Submit: tanpa hadiah koin (anti farming antar teman)", !tantangSubmit.includes("coins"));
 
+// ---------- 6. Irama Kata ----------
+console.log("\n[6] Irama Kata (ritme bahasa)");
+const irama = read("components/game/IramaKata.tsx");
+function bank(name: string): string[] {
+  const m = irama.match(new RegExp(`const ${name} = \\[([^\\]]*)\\]`));
+  return m ? [...m[1].matchAll(/"([^"]*)"/g)].map((x) => x[1]) : [];
+}
+const bBaku = bank("BAKU"), bNon = bank("NONBAKU"), bBenda = bank("BENDA"), bKerja = bank("KERJA"), bSifat = bank("SIFAT");
+check("Bank baku & nonbaku berpasangan (>= 25, sama panjang)", bBaku.length >= 25 && bBaku.length === bNon.length, `${bBaku.length}/${bNon.length}`);
+check("Baku dan nonbaku tidak tumpang tindih", bBaku.every((w) => !bNon.includes(w)));
+check("Bank benda/kerja/sifat cukup (>= 18 masing-masing)", bBenda.length >= 18 && bKerja.length >= 18 && bSifat.length >= 18, `${bBenda.length}/${bKerja.length}/${bSifat.length}`);
+const kelasKata = [...bBenda, ...bKerja, ...bSifat];
+check("Benda/kerja/sifat saling eksklusif", new Set(kelasKata).size === kelasKata.length);
+const semua = [...bBaku, ...bNon, ...kelasKata];
+check("Semua kata muat di jalur (<= 10 huruf)", semua.every((w) => w.length <= 10), semua.filter((w) => w.length > 10).join(", "));
+check("XP dibatasi (maks 60)", irama.includes("Math.min(Math.floor(g.score / 40), 60)"));
+check("Progresi level terkunci (unlocked)", irama.includes("unlocked.includes"));
+
 // ---------- Ringkasan ----------
 console.log(`\n${"=".repeat(50)}`);
 console.log(`Hasil: ${pass} lulus, ${fail} gagal`);

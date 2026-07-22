@@ -15,6 +15,7 @@ const KoreksiIcon = () => <svg className="w-10 h-10" viewBox="0 0 24 24" fill="n
 const MenaraIcon = () => <svg className="w-10 h-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M12 3l9 16H3l9-16z" strokeLinecap="round" strokeLinejoin="round"/><path d="M8.5 12h7M10 8h4" strokeLinecap="round"/></svg>;
 const BenarSalahIcon = () => <svg className="w-10 h-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M5 13l3 3 5-6" strokeLinecap="round" strokeLinejoin="round"/><path d="M16 8l5 5m0-5l-5 5" strokeLinecap="round"/></svg>;
 const TantangIcon = () => <svg className="w-10 h-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M4 20l6-6M20 20l-6-6M4 4l7 7M20 4l-7 7" strokeLinecap="round" strokeLinejoin="round"/><path d="M4 16v4h4M20 16v4h-4" strokeLinecap="round" strokeLinejoin="round"/></svg>;
+const IramaIcon = () => <svg className="w-10 h-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M9 18V5l12-2v13" strokeLinecap="round" strokeLinejoin="round"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>;
 
 const GAMES = [
   {
@@ -44,6 +45,20 @@ const GAMES = [
     badgeColor: "bg-fuchsia-500",
     players: "2 pemain",
     time: "~3 menit",
+  },
+  {
+    id: "irama-kata",
+    title: "Irama Kata",
+    subtitle: "Ritme + Refleks Bahasa",
+    desc: "Kata-kata jatuh di 4 jalur mengikuti irama. Ketuk hanya kata yang sesuai aturan level — kata baku, kata benda, kata kerja — dan biarkan sisanya lewat!",
+    Icon: IramaIcon,
+    gradient: "from-orange-500 via-rose-500 to-red-600",
+    href: "/arena/game/irama-kata",
+    status: "LIVE",
+    badge: "BARU",
+    badgeColor: "bg-orange-500",
+    players: "Solo",
+    time: "~1 menit",
   },
   {
     id: "benar-salah",
