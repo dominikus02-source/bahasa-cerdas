@@ -384,7 +384,7 @@ export default async function BerandaPage() {
                     <Icon size={16} className={meta.color} />
                     <div className="flex-1 min-w-0">
                       <p className={`text-xs font-semibold ${q.completed ? "text-emerald-600 line-through" : "text-[#1A1033]"}`}>
-                        {q.questType === "MEMBERI_LIKE" ? `Beri Suka ${q.target} Karya` : q.questType === "MENGOMENTARI" ? `Komentari ${q.target} Karya` : q.questType === "MENULIS" ? `Tulis ${q.target} Karya` : q.questType === "MENJAWAB_KUIS" ? `Jawab ${q.target} Soal Kuis` : q.questType === "MAIN_GAME" ? `Main ${q.target} Gim` : q.questType === "BACA_MATERI" ? `Baca ${q.target} Materi` : `Streak ${q.target} Hari`}
+                        {q.questType === "MEMBERI_LIKE" ? `Beri Suka ${q.target} Karya` : q.questType === "MENGOMENTARI" ? `Komentari ${q.target} Karya` : q.questType === "MENULIS" ? `Tulis ${q.target} Karya` : q.questType === "MENJAWAB_KUIS" ? `Jawab ${q.target} Soal Kuis` : q.questType === "MAIN_GAME" ? `Main ${q.target} Gim` : q.questType === "BACA_MATERI" ? `Selesaikan ${q.target} Materi` : `Streak ${q.target} Hari`}
                       </p>
                       <p className="text-[10px] text-[#9B93B8]">{q.progress}/{q.target} selesai</p>
                       <div className="h-1 bg-black/5 rounded-full overflow-hidden mt-1">

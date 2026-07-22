@@ -1,6 +1,7 @@
-import { NextRequest, NextResponse } from "next/server"
+import { NextRequest, NextResponse, after } from "next/server"
 import { db } from "@/lib/db"
 import { getUser } from "@/lib/supabase/server"
+import { trackQuestProgress } from "@/lib/coins"
 
 export async function POST(req: NextRequest, { params }: { params: Promise<{ unitId: string }> }) {
   try {
@@ -11,7 +12,13 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ uni
     const { questionId, answer } = await req.json()
 
     if (!questionId || answer === undefined || answer === null) {
-      return NextResponse.json({ error: "Missing questionId or answer" }, { status: 400 })
+      // Daily quest: every answered question advances the quiz mission. After the
+    // response and best-effort — this is the hottest path in the lesson engine.
+    after(async () => {
+      try { await trackQuestProgress(user.id, "MENJAWAB_KUIS"); } catch { /* best-effort */ }
+    });
+
+    return NextResponse.json({ error: "Missing questionId or answer" }, { status: 400 })
     }
 
     const unit = await db.learningUnit.findUnique({

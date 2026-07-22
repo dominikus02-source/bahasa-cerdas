@@ -11,27 +11,37 @@ const COIN_REWARDS = {
   STREAK_100: 1000,
 } as const;
 
+// Every type in this pool MUST have a tracker call somewhere, or the quest can
+// appear on a student's list and be permanently uncompletable. MAIN_GAME and
+// STREAK_LOGIN used to sit here with no tracker anywhere in the codebase —
+// dead quests waiting to be picked. Removed until something actually tracks
+// them. Trackers today: MENULIS/MENGOMENTARI/MEMBERI_LIKE in the karya routes,
+// BACA_MATERI on Jalur Cerdas unit completion, MENJAWAB_KUIS on each answered
+// Jalur Cerdas question.
 const QUEST_POOL = [
   { type: "MENULIS", target: 1, rewardCoins: 10 },
   { type: "MENGOMENTARI", target: 3, rewardCoins: 5 },
   { type: "MEMBERI_LIKE", target: 5, rewardCoins: 5 },
-  { type: "MENJAWAB_KUIS", target: 5, rewardCoins: 8 },
-  { type: "MAIN_GAME", target: 2, rewardCoins: 10 },
-  { type: "STREAK_LOGIN", target: 1, rewardCoins: 5 },
-  { type: "BACA_MATERI", target: 2, rewardCoins: 8 },
+  { type: "MENJAWAB_KUIS", target: 10, rewardCoins: 10 },
+  { type: "BACA_MATERI", target: 2, rewardCoins: 15 },
 ] as const;
 
+// One learning quest is guaranteed every day. The quests used to be whatever a
+// hash happened to pick, and on 2026-07-22 all three were social — the daily
+// missions were pushing students toward like-farming on the very day learning
+// finally overtook it. Learning also pays better than any social quest, so the
+// missions and the leaderboard point the same way.
+const LEARNING_TYPES = ["BACA_MATERI", "MENJAWAB_KUIS"] as const;
+
 function pickDailyQuests(seed: number) {
-  const shuffled = [...QUEST_POOL].sort((a, b) => {
-    const ha = (a.type.charCodeAt(0) + seed) % 7
-    const hb = (b.type.charCodeAt(0) + seed + 3) % 7
-    return ha - hb
-  })
-  return shuffled.slice(0, 3).map(q => ({
-    type: q.type,
-    target: q.target,
-    rewardCoins: q.rewardCoins,
-  }))
+  const learning = QUEST_POOL.filter(q => (LEARNING_TYPES as readonly string[]).includes(q.type));
+  const social = QUEST_POOL.filter(q => !(LEARNING_TYPES as readonly string[]).includes(q.type));
+  const picks = [
+    learning[seed % learning.length],
+    social[seed % social.length],
+    social[(seed + 1) % social.length],
+  ];
+  return picks.map(q => ({ type: q.type, target: q.target, rewardCoins: q.rewardCoins }));
 }
 
 export async function awardCoins(

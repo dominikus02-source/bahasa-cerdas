@@ -3,7 +3,7 @@ import { db } from "@/lib/db"
 import { redirect } from "next/navigation"
 import Link from "next/link"
 import { getOrCreateDailyQuests, trackDailyStreak, claimQuestReward } from "@/lib/coins"
-import { Flame, Gift, CheckCircle2, PenLine, MessageCircle, Heart, Zap, Target, Sparkles } from "lucide-react"
+import { Flame, Gift, CheckCircle2, PenLine, MessageCircle, Heart, Zap, Target, Sparkles, BookOpen, Brain } from "lucide-react"
 import { ClaimButton } from "./claim-button"
 
 const questIcons: Record<string, { icon: React.ReactNode; label: string; emoji: React.ReactNode; warna: string }> = {
@@ -24,6 +24,20 @@ const questIcons: Record<string, { icon: React.ReactNode; label: string; emoji: 
     label: "Memberi Suka",
     emoji: <Heart className="w-7 h-7 text-white" />,
     warna: "from-rose-500 to-pink-600",
+  },
+  // Learning quests — guaranteed daily since 2026-07-22. Without entries here
+  // they would render with no label the moment the picker includes them.
+  BACA_MATERI: {
+    icon: <BookOpen className="w-5 h-5" />,
+    label: "Selesaikan Materi",
+    emoji: <BookOpen className="w-7 h-7 text-white" />,
+    warna: "from-violet-500 to-purple-600",
+  },
+  MENJAWAB_KUIS: {
+    icon: <Brain className="w-5 h-5" />,
+    label: "Jawab Soal Kuis",
+    emoji: <Brain className="w-7 h-7 text-white" />,
+    warna: "from-cyan-500 to-blue-600",
   },
 }
 

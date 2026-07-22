@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Target } from "lucide-react";
-import { IconCoin, IconFlame, IconCheck, IconPen, IconChat, IconHeart, IconBolt } from "@/lib/icons";
+import { IconCoin, IconFlame, IconCheck, IconPen, IconChat, IconHeart, IconBolt, IconTarget } from "@/lib/icons";
 
 interface Quest {
   id: string; questType: string; target: number; progress: number;
@@ -13,6 +13,8 @@ const QUEST_LABELS: Record<string, string> = {
   MENULIS: "Menulis Karya",
   MENGOMENTARI: "Mengomentari Karya",
   MEMBERI_LIKE: "Memberi Like",
+  BACA_MATERI: "Selesaikan Materi",
+  MENJAWAB_KUIS: "Jawab Soal Kuis",
 };
 
 function QuestTypeIcon({ type, completed }: { type: string; completed: boolean }) {
@@ -22,6 +24,7 @@ function QuestTypeIcon({ type, completed }: { type: string; completed: boolean }
     case "MENULIS": return <IconPen size={24} className={cls} />;
     case "MENGOMENTARI": return <IconChat size={24} className={cls} />;
     case "MEMBERI_LIKE": return <IconHeart size={24} className={cls} />;
+    case "BACA_MATERI": return <IconTarget size={24} className={cls} />;
     default: return <IconBolt size={24} className={cls} />;
   }
 }

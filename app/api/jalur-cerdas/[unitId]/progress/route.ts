@@ -1,5 +1,6 @@
-import { NextRequest, NextResponse } from "next/server"
+import { NextRequest, NextResponse, after } from "next/server"
 import { db } from "@/lib/db"
+import { trackQuestProgress } from "@/lib/coins"
 import { getUser } from "@/lib/supabase/server"
 import { calcLevel, calcLeagueFromXP } from "@/lib/xp"
 
@@ -56,6 +57,12 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ un
       where: { id: user.id },
       data: { xp: { increment: XP_REWARD }, coins: { increment: COIN_REWARD }, lastActiveAt: new Date() },
     })
+
+    // Daily quest: finishing a unit advances the learning mission. Runs after
+    // the response — quest bookkeeping must never slow down or fail the lesson.
+    after(async () => {
+      try { await trackQuestProgress(user.id, "BACA_MATERI"); } catch { /* best-effort */ }
+    });
 
     // Record the payout in the coin ledger.
     //
