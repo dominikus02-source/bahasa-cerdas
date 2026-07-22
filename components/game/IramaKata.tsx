@@ -366,6 +366,13 @@ export default function IramaKata() {
         c.beginPath(); c.roundRect(x + 3, y + 4, nw, nh, 12); c.fill();
         c.fillStyle = n.missed || n.wrong ? "#3a3f5c" : LANE_COLORS[n.lane];
         c.beginPath(); c.roundRect(x, y, nw, nh, 12); c.fill();
+        // Kilau atas (glossy stripe) + titik kilau — ciri chunky BeatCraft
+        if (!n.missed && !n.wrong) {
+          c.fillStyle = "rgba(255,255,255,.4)";
+          c.beginPath(); c.roundRect(x + 5, y + 4, nw - 10, 6, 3); c.fill();
+          c.fillStyle = "rgba(255,255,255,.6)";
+          c.beginPath(); c.arc(x + nw - 11, y + nh / 2 + 3, 3, 0, Math.PI * 2); c.fill();
+        }
         c.strokeStyle = "#0E1330";
         c.lineWidth = 3;
         c.beginPath(); c.roundRect(x, y, nw, nh, 12); c.stroke();
@@ -373,7 +380,7 @@ export default function IramaKata() {
         c.textAlign = "center";
         c.textBaseline = "middle";
         c.fillStyle = n.missed || n.wrong ? "rgba(255,255,255,.4)" : "#0E1330";
-        c.fillText(n.word, x + nw / 2, y + nh / 2 + 1, nw - 10);
+        c.fillText(n.word, x + nw / 2, y + nh / 2 + 4, nw - 14);
         c.textBaseline = "alphabetic";
       }
 
@@ -575,17 +582,29 @@ export default function IramaKata() {
 
   return (
     <div className="fixed inset-0 z-[60] overflow-y-auto bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] text-[#161B3A]">
-      {/* Dekorasi */}
-      <div className="pointer-events-none fixed top-[8%] left-[3%] w-16 h-16 bg-[#FF6B6B] border-4 border-[#161B3A] rounded-3xl rotate-6" />
-      <div className="pointer-events-none fixed top-[16%] right-[5%] w-12 h-12 bg-[#38BDF8] border-4 border-[#161B3A] rounded-full" />
-      <div className="pointer-events-none fixed bottom-[14%] left-[2%] w-14 h-14 bg-[#FBBF24] border-4 border-[#161B3A] rounded-2xl -rotate-6" />
-      <div className="pointer-events-none fixed bottom-[10%] right-[4%] w-11 h-11 bg-[#4ADE80] border-4 border-[#161B3A] rounded-[30%_70%_70%_30%]" />
+      <style>{`
+        @keyframes ik-float1{0%,100%{transform:translate(0,0) rotate(6deg)}50%{transform:translate(16px,-22px) rotate(18deg)}}
+        @keyframes ik-float2{0%,100%{transform:translate(0,0) rotate(0)}50%{transform:translate(-18px,16px) rotate(-12deg)}}
+        @keyframes ik-eq{0%{height:25%}100%{height:100%}}
+        @keyframes ik-pop{0%{transform:scale(0) rotate(-30deg)}60%{transform:scale(1.3) rotate(8deg)}100%{transform:scale(1) rotate(0)}}
+        @keyframes ik-fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+        @keyframes ik-pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+        .ik-screen{animation:ik-fade .35s ease}
+        .ik-star-lit{animation:ik-pop .5s ease}
+        .ik-logo{animation:ik-pulse 1.4s ease-in-out infinite}
+        .ik-eq span{display:block;width:8px;border-radius:3px 3px 0 0;border:2.5px solid #161B3A;box-shadow:2px 2px 0 #161B3A;animation:ik-eq 1s ease-in-out infinite alternate}
+      `}</style>
+      {/* Dekorasi melayang */}
+      <div className="pointer-events-none fixed top-[8%] left-[3%] w-16 h-16 bg-[#FF6B6B] border-4 border-[#161B3A] rounded-3xl" style={{ animation: "ik-float1 9s ease-in-out infinite" }} />
+      <div className="pointer-events-none fixed top-[16%] right-[5%] w-12 h-12 bg-[#38BDF8] border-4 border-[#161B3A] rounded-full" style={{ animation: "ik-float2 10s ease-in-out infinite" }} />
+      <div className="pointer-events-none fixed bottom-[14%] left-[2%] w-14 h-14 bg-[#FBBF24] border-4 border-[#161B3A] rounded-2xl" style={{ animation: "ik-float1 11s ease-in-out infinite" }} />
+      <div className="pointer-events-none fixed bottom-[10%] right-[4%] w-11 h-11 bg-[#4ADE80] border-4 border-[#161B3A] rounded-[30%_70%_70%_30%]" style={{ animation: "ik-float2 8s ease-in-out infinite" }} />
 
       <div className="relative max-w-xl mx-auto px-4 py-5 min-h-full flex flex-col">
         {/* Header */}
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2.5">
-            <div className={`w-11 h-11 bg-[#FF6B6B] rounded-2xl ${chunky} !shadow-[4px_4px_0_#161B3A] flex items-center justify-center`}>
+            <div className={`ik-logo w-11 h-11 bg-[#FF6B6B] rounded-2xl ${chunky} !shadow-[4px_4px_0_#161B3A] flex items-center justify-center`}>
               <Music4 className="w-6 h-6 text-white" />
             </div>
             <div>
@@ -604,11 +623,21 @@ export default function IramaKata() {
 
         {/* ---------- MULAI ---------- */}
         {screen === "start" && (
-          <div className={`bg-white rounded-3xl ${chunky} p-6 text-center`}>
+          <div className={`ik-screen bg-white rounded-3xl ${chunky} p-6 text-center`}>
             <span className="inline-block px-4 py-1.5 bg-[#FBBF24] border-[3px] border-[#161B3A] rounded-full font-extrabold text-xs shadow-[3px_3px_0_#161B3A] mb-4">
               Sesi 60 detik · 9 level
             </span>
-            <h1 className="font-extrabold text-4xl mb-2">Ketuk Kata yang Tepat!</h1>
+            {/* Equalizer */}
+            <div className="ik-eq flex gap-1.5 items-end h-10 justify-center mb-4">
+              <span style={{ background: "#FF6B6B", animationDelay: "-.2s" }} />
+              <span style={{ background: "#FBBF24", animationDelay: "-.5s" }} />
+              <span style={{ background: "#4ADE80", animationDelay: "-.8s" }} />
+              <span style={{ background: "#38BDF8", animationDelay: "-.3s" }} />
+              <span style={{ background: "#FF6B6B", animationDelay: "-.6s" }} />
+              <span style={{ background: "#FBBF24", animationDelay: "-.1s" }} />
+              <span style={{ background: "#4ADE80", animationDelay: "-.9s" }} />
+            </div>
+            <h1 className="font-extrabold text-4xl mb-2">Ketuk Kata yang <span className="text-[#FF6B6B]">Tepat!</span></h1>
             <p className="opacity-70 text-sm max-w-sm mx-auto mb-5">
               Kata-kata jatuh di 4 jalur. Ketuk hanya kata yang <b>sesuai aturan level</b> saat menyentuh garis — biarkan sisanya lewat. Salah ketuk, combo hangus!
             </p>
@@ -647,7 +676,7 @@ export default function IramaKata() {
 
         {/* ---------- PILIH LEVEL ---------- */}
         {screen === "levels" && (
-          <div className={`bg-white rounded-3xl ${chunky} p-5`}>
+          <div className={`ik-screen bg-white rounded-3xl ${chunky} p-5`}>
             <div className="flex items-center justify-between mb-4">
               <button className={`${btn} w-11 h-11 bg-white`} onClick={() => setScreen("start")} aria-label="Kembali">
                 <X className="w-5 h-5" />
@@ -697,7 +726,7 @@ export default function IramaKata() {
 
         {/* ---------- MAIN ---------- */}
         {screen === "game" && (
-          <div className="flex flex-col items-center">
+          <div className="ik-screen flex flex-col items-center">
             {/* HUD */}
             <div className="w-full max-w-[480px] grid grid-cols-3 gap-2 mb-3">
               <div className="rounded-xl border-[3px] border-[#161B3A] bg-[#161B3A] text-white px-3 py-1.5 shadow-[3px_3px_0_#161B3A]">
@@ -758,7 +787,7 @@ export default function IramaKata() {
 
         {/* ---------- HASIL ---------- */}
         {screen === "result" && result && (
-          <div className={`bg-white rounded-3xl ${chunky} p-6 text-center`}>
+          <div className={`ik-screen bg-white rounded-3xl ${chunky} p-6 text-center`}>
             <h2 className="font-extrabold text-3xl mb-1" style={{ color: result.gameOver ? "#FF6B6B" : result.acc >= 90 ? "#10B981" : "#161B3A" }}>
               {result.gameOver ? "Nyawa Habis!" : result.acc >= 90 ? "Sempurna!" : "Level Selesai!"}
             </h2>
@@ -768,7 +797,14 @@ export default function IramaKata() {
 
             <div className="flex justify-center gap-1.5 mb-4">
               {[1, 2, 3].map((i) => (
-                <Star key={i} className="w-12 h-12" fill={i <= result.stars ? "#FBBF24" : "none"} stroke={i <= result.stars ? "#F59E0B" : "#D1D5DB"} strokeWidth={2} />
+                <Star
+                  key={i}
+                  className={`w-12 h-12 ${i <= result.stars ? "ik-star-lit" : ""}`}
+                  style={i <= result.stars ? { animationDelay: `${i * 0.15}s` } : undefined}
+                  fill={i <= result.stars ? "#FBBF24" : "none"}
+                  stroke={i <= result.stars ? "#F59E0B" : "#D1D5DB"}
+                  strokeWidth={2}
+                />
               ))}
             </div>
 
