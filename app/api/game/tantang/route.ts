@@ -68,7 +68,7 @@ export async function GET() {
   const user = await getUser();
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const [rooms, myGroups] = await Promise.all([
+  const [rooms, myGroups, taughtGroups] = await Promise.all([
     db.gameRoom.findMany({
       where: { category: "TANTANGAN", sessions: { some: { userId: user.id } } },
       orderBy: { createdAt: "desc" },
@@ -79,10 +79,13 @@ export async function GET() {
       },
     }),
     db.groupMember.findMany({ where: { userId: user.id }, select: { groupId: true } }),
+    // Guru bukan GroupMember — kelas yang dia ampu dihitung sebagai "kelasnya"
+    // supaya guru bisa menantang (dan menguji fitur bersama) murid-muridnya.
+    db.group.findMany({ where: { teacherId: user.id, isActive: true }, select: { id: true } }),
   ]);
 
-  // Teman sekelas (murid lain yang berbagi minimal satu kelas).
-  const groupIds = myGroups.map((g) => g.groupId);
+  // Teman sekelas (murid lain yang berbagi minimal satu kelas atau diampu).
+  const groupIds = [...myGroups.map((g) => g.groupId), ...taughtGroups.map((g) => g.id)];
   const teman = groupIds.length
     ? await db.groupMember.findMany({
         where: { groupId: { in: groupIds }, userId: { not: user.id }, user: { role: "MURID" } },
@@ -108,9 +111,13 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Pilih teman yang mau ditantang dulu." }, { status: 400 });
   }
 
-  // Lawan harus teman sekelas (berbagi minimal satu kelas).
-  const shared = await db.groupMember.findFirst({
-    where: { userId: user.id, group: { members: { some: { userId: opponentId } } } },
+  // Lawan harus teman sekelas (berbagi minimal satu kelas), atau murid di
+  // kelas yang diampu si penantang (guru boleh menantang muridnya).
+  const shared = await db.group.findFirst({
+    where: {
+      members: { some: { userId: opponentId } },
+      OR: [{ teacherId: user.id }, { members: { some: { userId: user.id } } }],
+    },
     select: { id: true },
   });
   if (!shared) {
