@@ -55,6 +55,20 @@ export async function GET(
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
+    // The student's own writings (puisi/cerpen/etc). The profile only ever
+    // showed a "Karya" count that reads User.karya — the marketplace relation,
+    // which is 0 for students — so a student who had written six pieces saw
+    // "Karya 0" and no list. These are the works they actually made.
+    const [works, totalWorks] = await Promise.all([
+      db.studentKarya.findMany({
+        where: { userId: id },
+        orderBy: { createdAt: "desc" },
+        take: 24,
+        select: { id: true, title: true, type: true, likesCount: true, viewsCount: true, createdAt: true },
+      }),
+      db.studentKarya.count({ where: { userId: id } }),
+    ]);
+
     // Hitung total penjualan karya
     const totalSold = await db.pembelian.count({
       where: {
@@ -84,8 +98,9 @@ export async function GET(
         league: user.league,
         joinedAt: user.createdAt,
         profile: user.profile,
+        works,
         stats: {
-          totalKarya: user._count.karya,
+          totalKarya: totalWorks,
           totalArtikel: user._count.artikel,
           totalSoal: user._count.soals + user._count.ukbiQuestions + user._count.tkaQuestions + user._count.uploadedBankSoals,
           totalMateri: user._count.uploadedMateris,

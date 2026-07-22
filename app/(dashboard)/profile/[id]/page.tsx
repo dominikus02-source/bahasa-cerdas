@@ -6,8 +6,10 @@ import {
   BookOpen, ShoppingBag, FileText, Award, Download,
   MapPin, School, Briefcase, Calendar, Star, Crown,
   Target, GraduationCap, Zap, Flame, TrendingUp,
-  ChevronLeft, Sparkles, Users
+  ChevronLeft, Sparkles, Users, Heart, Eye, Medal, Gem, PenLine
 } from "lucide-react";
+import Link from "next/link";
+import type { LucideIcon } from "lucide-react";
 
 interface ProfileUser {
   id: string;
@@ -29,6 +31,7 @@ interface ProfileUser {
     school: string | null;
     subject: string | null;
   } | null;
+  works?: { id: string; title: string; type: string; likesCount: number; viewsCount: number; createdAt: string }[];
   stats: {
     totalKarya: number;
     totalArtikel: number;
@@ -46,11 +49,17 @@ const LEAGUE_COLORS: Record<string, string> = {
   DIAMOND: "from-cyan-500 to-blue-400",
 };
 
-const LEAGUE_ICONS: Record<string, string> = {
-  BRONZE: "🥉",
-  SILVER: "🥈",
-  GOLD: "🥇",
-  DIAMOND: "💎",
+// Real icons, not emoji, per the no-emoji-as-icon rule.
+const LEAGUE_ICONS: Record<string, LucideIcon> = {
+  BRONZE: Medal,
+  SILVER: Medal,
+  GOLD: Award,
+  DIAMOND: Gem,
+};
+
+const KARYA_LABELS: Record<string, string> = {
+  PUISI: "Puisi", CERPEN: "Cerpen", ARTIKEL: "Artikel",
+  ANEKDOT: "Anekdot", PANTUN: "Pantun", OPINI: "Opini",
 };
 
 export default function ProfilePage() {
@@ -110,7 +119,7 @@ export default function ProfilePage() {
   const initials = user.fullName.slice(0, 2).toUpperCase();
   const isGuru = user.role === "GURU";
   const leagueColor = LEAGUE_COLORS[user.league] || LEAGUE_COLORS.BRONZE;
-  const leagueIcon = LEAGUE_ICONS[user.league] || LEAGUE_ICONS.BRONZE;
+  const LeagueIcon = LEAGUE_ICONS[user.league] || LEAGUE_ICONS.BRONZE;
 
   const gradientFrom = isGuru ? "from-emerald-600" : "from-violet-600";
   const gradientVia = isGuru ? "via-teal-500" : "via-purple-500";
@@ -237,7 +246,7 @@ export default function ProfilePage() {
               <div className="w-px h-8 bg-amber-200" />
               <div className="flex items-center gap-2">
                 <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${leagueColor} flex items-center justify-center shadow-sm`}>
-                  <span className="text-sm">{leagueIcon}</span>
+                  <LeagueIcon size={16} className="text-white" />
                 </div>
                 <div>
                   <p className="text-xs text-gray-400">Level</p>
@@ -291,6 +300,48 @@ export default function ProfilePage() {
             </div>
           </div>
         </div>
+
+        {/* Karya — the student's actual writings. Absent before: the page
+            showed only stat numbers, so a student's work never appeared on
+            their own profile. Links go to /arena/feed/[id], which admits
+            murid, guru and founder, unlike /murid/karya/[id] which bounces
+            teachers. */}
+        {user.role === "MURID" && (
+          <div className="mt-6">
+            <div className="flex items-center gap-2 mb-3">
+              <PenLine size={16} className="text-violet-500" />
+              <h3 className="font-bold text-gray-900">Karya {user.fullName.split(" ")[0]}</h3>
+              <span className="text-xs text-gray-400">({user.stats.totalKarya})</span>
+            </div>
+
+            {!user.works || user.works.length === 0 ? (
+              <div className="text-center py-10 bg-gray-50 rounded-2xl border border-gray-100">
+                <BookOpen size={28} className="mx-auto text-gray-300 mb-2" />
+                <p className="text-sm text-gray-400">Belum ada karya.</p>
+              </div>
+            ) : (
+              <div className="grid gap-3 sm:grid-cols-2">
+                {user.works.map((w) => (
+                  <Link
+                    key={w.id}
+                    href={`/arena/feed/${w.id}`}
+                    className="block bg-white rounded-2xl border border-gray-100 p-4 hover:shadow-md hover:border-violet-200 transition-all"
+                  >
+                    <span className="inline-block text-[10px] font-bold uppercase tracking-wide text-violet-600 mb-1.5">
+                      {KARYA_LABELS[w.type] || "Karya"}
+                    </span>
+                    <h4 className="font-bold text-sm text-gray-900 leading-snug mb-2 line-clamp-2">{w.title}</h4>
+                    <div className="flex items-center gap-3 text-xs text-gray-400">
+                      <span className="flex items-center gap-1"><Heart size={12} />{w.likesCount}</span>
+                      <span className="flex items-center gap-1"><Eye size={12} />{w.viewsCount}</span>
+                      <span className="ml-auto">{new Date(w.createdAt).toLocaleDateString("id-ID", { day: "numeric", month: "short" })}</span>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Cerdas title */}
         <div className="mt-6 text-center">
