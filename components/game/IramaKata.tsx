@@ -78,6 +78,35 @@ function tone(muted: boolean, freq: number, type: OscillatorType, dur: number, g
   osc.connect(g); g.connect(ctx.destination);
   osc.start(t0); osc.stop(t0 + dur + 0.02);
 }
+// Hi-hat: burst noise pendek lewat highpass filter.
+function noise(muted: boolean, dur = 0.04, gain = 0.05) {
+  if (muted) return;
+  const ctx = ensureAudio();
+  if (!ctx) return;
+  const buffer = ctx.createBuffer(1, Math.max(1, Math.floor(ctx.sampleRate * dur)), ctx.sampleRate);
+  const data = buffer.getChannelData(0);
+  for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
+  const src = ctx.createBufferSource();
+  src.buffer = buffer;
+  const f = ctx.createBiquadFilter();
+  f.type = "highpass";
+  f.frequency.value = 6000;
+  const g = ctx.createGain();
+  g.gain.setValueAtTime(gain, ctx.currentTime);
+  g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + dur);
+  src.connect(f); f.connect(g); g.connect(ctx.destination);
+  src.start();
+}
+
+/* ---------- Musik prosedural ----------
+ * Chiptune ringan yang dibangkitkan dari clock BPM yang sama dengan jatuhnya
+ * kata: kick + bass di tiap ketukan, hi-hat + arpeggio melodi di antara
+ * ketukan. Nada dasar berbeda per level -> tiap level terdengar beda,
+ * selalu sinkron sempurna, tanpa file audio & tanpa lisensi. */
+const PENT = [1, 1.125, 1.25, 1.5, 1.667, 2]; // tangga nada pentatonik mayor
+const BASS_PAT = [0, 0, 3, 4]; // pola bass per bar (4 ketukan)
+const ARP_PAT = [0, 2, 4, 5, 4, 2, 1, 3]; // pola melodi arpeggio
+const ROOTS = [262, 294, 330, 349, 392]; // C4 D4 E4 F4 G4 — nada dasar per level
 
 /* ---------- Tipe catatan ---------- */
 type Note = { time: number; lane: number; word: string; valid: boolean; hit: boolean; missed: boolean; wrong: boolean };
@@ -168,10 +197,12 @@ export default function IramaKata() {
     paused = false; running = false; countdownMs = 2000; countingDown = true;
     lastBeat = -1; beatPulse = 0; shake = 0; lastFrame = 0;
     endTime: number;
+    root: number; // nada dasar musik level ini
     constructor(lv: Level) {
       this.level = lv;
       this.notes = makeNotes(lv);
       this.endTime = (lv.duration + 2.5) * 1000;
+      this.root = ROOTS[(lv.id - 1) % ROOTS.length];
     }
     start() {
       ensureAudio();
@@ -257,11 +288,22 @@ export default function IramaKata() {
         } else {
           this.elapsed = now - this.startTime - this.totalPauseMs;
           const beatMs = 60000 / this.level.bpm;
-          const beat = Math.floor(this.elapsed / beatMs);
-          if (beat !== this.lastBeat && beat >= 0) {
-            this.lastBeat = beat;
-            this.beatPulse = 1;
-            tone(mutedRef.current, beat % 4 === 0 ? 130 : 95, "sine", 0.14, beat % 4 === 0 ? 0.32 : 0.2, 44);
+          // Musik prosedural: resolusi setengah ketukan. Ketukan = kick + bass;
+          // antara ketukan = hi-hat + arpeggio melodi. Semua dari clock BPM
+          // yang sama dengan jatuhnya kata -> selalu sinkron.
+          const half = Math.floor(this.elapsed / (beatMs / 2));
+          if (half !== this.lastBeat && half >= 0) {
+            this.lastBeat = half;
+            const beat = half >> 1;
+            if (half % 2 === 0) {
+              this.beatPulse = 1;
+              const accent = beat % 4 === 0;
+              tone(mutedRef.current, accent ? 130 : 95, "sine", 0.14, accent ? 0.3 : 0.18, 44); // kick
+              tone(mutedRef.current, (this.root / 2) * PENT[BASS_PAT[beat % 4]], "triangle", 0.3, 0.1); // bass
+            } else {
+              noise(mutedRef.current); // hi-hat
+              tone(mutedRef.current, this.root * PENT[ARP_PAT[half % 8] % 6], "square", 0.09, 0.04); // melodi
+            }
           }
           this.beatPulse *= 0.9;
           for (const n of this.notes) {
