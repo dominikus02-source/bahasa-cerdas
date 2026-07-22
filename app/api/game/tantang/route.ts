@@ -152,21 +152,12 @@ export async function POST(req: NextRequest) {
 
   // Batched transaction (bukan interaktif) — aman untuk pooler.
   await db.$transaction([
-    db.gameRoom.create({
-      data: {
-        id: roomId,
-        code,
-        name: `Tantangan ${me.fullName}`.slice(0, 60),
-        gameType: "KUIS_BATTLE",
-        hostId: user.id,
-        category: "TANTANGAN",
-        status: "WAITING",
-        questionCount: SOAL_PER_DUEL,
-      },
-      // select eksplisit: kolom groupId dkk ada di schema Prisma tapi belum
-      // dimigrasikan ke DB — tanpa select, RETURNING menyentuh kolom hilang.
-      select: { id: true },
-    }),
+    // Raw SQL dengan kolom eksplisit: kolom groupId/includeInPenilaian ada di
+    // schema Prisma tapi belum dimigrasikan ke DB prod — gameRoom.create Prisma
+    // selalu ikut menulis kolom ber-default itu dan meledak (P2022).
+    // gameType/status/difficulty terisi default DB (KUIS_BATTLE/WAITING/MEDIUM).
+    db.$executeRaw`INSERT INTO "GameRoom" ("id", "code", "name", "hostId", "category", "questionCount")
+      VALUES (${roomId}, ${code}, ${`Tantangan ${me.fullName}`.slice(0, 60)}, ${user.id}, 'TANTANGAN', ${SOAL_PER_DUEL})`,
     db.gameQuestion.createMany({
       data: soal.map((q, i) => ({
         gameRoomId: roomId,

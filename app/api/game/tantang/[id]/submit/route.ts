@@ -95,12 +95,11 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
       where: { id: user.id },
       data: { xp: newXp, level: calcLevel(newXp), league: calcLeagueFromXP(newXp), lastActiveAt: new Date() },
     }),
-    db.gameRoom.update({
-      where: { id: room.id },
-      data: bothDone ? { status: "FINISHED", endedAt: new Date() } : { status: "IN_PROGRESS", startedAt: new Date() },
-      // select eksplisit: hindari RETURNING kolom groupId yang belum ada di DB.
-      select: { id: true },
-    }),
+    // Raw SQL: hindari kolom GameRoom yang belum dimigrasikan ke DB prod
+    // (groupId dkk) — update Prisma ikut me-RETURNING kolom hilang itu.
+    bothDone
+      ? db.$executeRaw`UPDATE "GameRoom" SET "status" = 'FINISHED', "endedAt" = NOW() WHERE "id" = ${room.id}`
+      : db.$executeRaw`UPDATE "GameRoom" SET "status" = 'IN_PROGRESS', "startedAt" = NOW() WHERE "id" = ${room.id}`,
   ];
 
   if (bothDone && other) {
