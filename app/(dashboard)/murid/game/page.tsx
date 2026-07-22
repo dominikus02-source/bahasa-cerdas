@@ -14,6 +14,7 @@ const PantunIcon = () => <svg className="w-10 h-10" viewBox="0 0 24 24" fill="no
 const KoreksiIcon = () => <svg className="w-10 h-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" strokeLinecap="round"/></svg>;
 const MenaraIcon = () => <svg className="w-10 h-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M12 3l9 16H3l9-16z" strokeLinecap="round" strokeLinejoin="round"/><path d="M8.5 12h7M10 8h4" strokeLinecap="round"/></svg>;
 const BenarSalahIcon = () => <svg className="w-10 h-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M5 13l3 3 5-6" strokeLinecap="round" strokeLinejoin="round"/><path d="M16 8l5 5m0-5l-5 5" strokeLinecap="round"/></svg>;
+const TantangIcon = () => <svg className="w-10 h-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M4 20l6-6M20 20l-6-6M4 4l7 7M20 4l-7 7" strokeLinecap="round" strokeLinejoin="round"/><path d="M4 16v4h4M20 16v4h-4" strokeLinecap="round" strokeLinejoin="round"/></svg>;
 
 const GAMES = [
   {
@@ -28,6 +29,20 @@ const GAMES = [
     badge: "BARU",
     badgeColor: "bg-violet-500",
     players: "Solo",
+    time: "~3 menit",
+  },
+  {
+    id: "tantang",
+    title: "Tantang Teman",
+    subtitle: "Duel Asinkron 10 Soal",
+    desc: "Tantang teman sekelasmu! Kalian mengerjakan 10 soal yang sama — siapa skornya lebih tinggi, dia juaranya.",
+    Icon: TantangIcon,
+    gradient: "from-fuchsia-500 via-pink-600 to-rose-600",
+    href: "/arena/game/tantang",
+    status: "LIVE",
+    badge: "BARU",
+    badgeColor: "bg-fuchsia-500",
+    players: "2 pemain",
     time: "~3 menit",
   },
   {

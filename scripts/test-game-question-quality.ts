@@ -75,14 +75,16 @@ check("Level diambil server-side (getUser + db.user)", katastra.includes("getUse
 check("Ada campuran tier progresif (getTierMix)", katastra.includes("getTierMix"));
 check("Threshold lama getLevelForGrade sudah dihapus", !katastra.includes("getLevelForGrade"));
 
-// ---------- 2. Menara ----------
-console.log("\n[2] Menara Cerdas route");
+// ---------- 2. Menara + lib panen bersama ----------
+console.log("\n[2] Menara Cerdas + lib/game/harvest");
 const menara = read("app/api/game/menara/route.ts");
-check("Panen semua unit (tidak ada take: 50)", !menara.includes("take: 50"));
-check("Soal ditandai level unit (lvl)", menara.includes("lvl: u.level?.level"));
-check("Ramp kesulitan: sort naik berdasarkan lvl", menara.includes(".sort((a, b) => a.lvl - b.lvl)"));
-check("Stratified bands mudah/menengah/sulit", menara.includes("q.lvl <= 4") && menara.includes("q.lvl > 8"));
-check("Quality gate isValid masih aktif", menara.includes("function isValid"));
+const harvest = read("lib/game/harvest.ts");
+check("Menara memakai lib panen bersama", menara.includes("harvestJalurQuestions") && menara.includes("pickRampedQuestions"));
+check("Panen semua unit (tidak ada take: 50)", !harvest.includes("take: 50") && !menara.includes("take: 50"));
+check("Soal ditandai level unit (lvl)", harvest.includes("lvl: u.level?.level"));
+check("Ramp kesulitan: sort naik berdasarkan lvl", harvest.includes(".sort((a, b) => a.lvl - b.lvl)"));
+check("Stratified bands mudah/menengah/sulit", harvest.includes("q.lvl <= 4") && harvest.includes("q.lvl > 8"));
+check("Quality gate isValidQuestion aktif", harvest.includes("function isValidQuestion"));
 
 // ---------- 3. Tebak Kata ----------
 console.log("\n[3] Tebak Kata");
@@ -108,6 +110,22 @@ check("Setiap kata punya makna", susunWords.every((w) => w.meaning.trim().length
 check("Band panjang kata per level (wordBandForLevel)", susun.includes("function wordBandForLevel"));
 check("nextWord memakai band level", susun.includes("wordBandForLevel(getLevel(xp))"));
 check("Kata palsu DUBLING sudah diganti", !susun.includes('"DUBLING"'));
+
+// ---------- 5. Tantang Teman ----------
+console.log("\n[5] Tantang Teman (duel asinkron)");
+const tantangCreate = read("app/api/game/tantang/route.ts");
+const tantangDetail = read("app/api/game/tantang/[id]/route.ts");
+const tantangSubmit = read("app/api/game/tantang/[id]/submit/route.ts");
+check("Kunci jawaban disimpan server-side saat buat", tantangCreate.includes("correctAnswer: String(q.jawaban)"));
+check("Lawan wajib teman sekelas", tantangCreate.includes("menantang teman sekelasmu"));
+check("Anti-spam tantangan terbuka", tantangCreate.includes("MAX_TANTANGAN_TERBUKA"));
+check("Notifikasi ke lawan saat ditantang", tantangCreate.includes('type: "TANTANGAN"'));
+check("Detail: kunci HANYA setelah selesai (select kondisional)", tantangDetail.includes("select: iFinished"));
+check("Detail: skor lawan disembunyikan sebelum keduanya selesai", tantangDetail.includes("done ? other!.score : null"));
+check("Submit: dinilai server-side dari kunci DB", tantangSubmit.includes("parseInt(q.correctAnswer)"));
+check("Submit: XP dibatasi (maks 50)", tantangSubmit.includes("Math.min(correct * 5, 50)"));
+check("Submit: idempoten (tidak bisa main ulang)", tantangSubmit.includes("sudahSelesai: true"));
+check("Submit: tanpa hadiah koin (anti farming antar teman)", !tantangSubmit.includes("coins"));
 
 // ---------- Ringkasan ----------
 console.log(`\n${"=".repeat(50)}`);
