@@ -65,125 +65,135 @@ function serializeRoom(room: {
 }
 
 export async function GET() {
-  const user = await getUser();
-  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  try {
+    const user = await getUser();
+    if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const [rooms, myGroups, taughtGroups] = await Promise.all([
-    db.gameRoom.findMany({
-      where: { category: "TANTANGAN", sessions: { some: { userId: user.id } } },
-      orderBy: { createdAt: "desc" },
-      take: 30,
-      select: {
-        id: true, status: true, createdAt: true, hostId: true, questionCount: true,
-        sessions: { select: { userId: true, playerName: true, score: true, correct: true, finishedAt: true } },
-      },
-    }),
-    db.groupMember.findMany({ where: { userId: user.id }, select: { groupId: true } }),
-    // Guru bukan GroupMember — kelas yang dia ampu dihitung sebagai "kelasnya"
-    // supaya guru bisa menantang (dan menguji fitur bersama) murid-muridnya.
-    db.group.findMany({ where: { teacherId: user.id, isActive: true }, select: { id: true } }),
-  ]);
+    const [rooms, myGroups, taughtGroups] = await Promise.all([
+      db.gameRoom.findMany({
+        where: { category: "TANTANGAN", sessions: { some: { userId: user.id } } },
+        orderBy: { createdAt: "desc" },
+        take: 30,
+        select: {
+          id: true, status: true, createdAt: true, hostId: true, questionCount: true,
+          sessions: { select: { userId: true, playerName: true, score: true, correct: true, finishedAt: true } },
+        },
+      }),
+      db.groupMember.findMany({ where: { userId: user.id }, select: { groupId: true } }),
+      // Guru bukan GroupMember — kelas yang dia ampu dihitung sebagai "kelasnya"
+      // supaya guru bisa menantang (dan menguji fitur bersama) murid-muridnya.
+      db.group.findMany({ where: { teacherId: user.id, isActive: true }, select: { id: true } }),
+    ]);
 
-  // Teman sekelas (murid lain yang berbagi minimal satu kelas atau diampu).
-  const groupIds = [...myGroups.map((g) => g.groupId), ...taughtGroups.map((g) => g.id)];
-  const teman = groupIds.length
-    ? await db.groupMember.findMany({
-        where: { groupId: { in: groupIds }, userId: { not: user.id }, user: { role: "MURID" } },
-        select: { user: { select: { id: true, fullName: true, avatar: true, level: true } } },
-        distinct: ["userId"],
-        take: 100,
-      })
-    : [];
+    // Teman sekelas (murid lain yang berbagi minimal satu kelas atau diampu).
+    const groupIds = [...myGroups.map((g) => g.groupId), ...taughtGroups.map((g) => g.id)];
+    const teman = groupIds.length
+      ? await db.groupMember.findMany({
+          where: { groupId: { in: groupIds }, userId: { not: user.id }, user: { role: "MURID" } },
+          select: { user: { select: { id: true, fullName: true, avatar: true, level: true } } },
+          distinct: ["userId"],
+          take: 100,
+        })
+      : [];
 
-  return NextResponse.json({
-    tantangan: rooms.map((r) => serializeRoom(r, user.id)),
-    teman: teman.map((t) => t.user),
-  });
+    return NextResponse.json({
+      tantangan: rooms.map((r) => serializeRoom(r, user.id)),
+      teman: teman.map((t) => t.user),
+    });
+  } catch (error) {
+    console.error("tantang::GET error:", error);
+    return NextResponse.json({ error: "Terjadi kesalahan di server. Coba lagi, ya." }, { status: 500 });
+  }
 }
 
 export async function POST(req: NextRequest) {
-  const user = await getUser();
-  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  try {
+    const user = await getUser();
+    if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const body = await req.json().catch(() => ({}));
-  const opponentId = String(body.opponentId || "");
-  if (!opponentId || opponentId === user.id) {
-    return NextResponse.json({ error: "Pilih teman yang mau ditantang dulu." }, { status: 400 });
-  }
+    const body = await req.json().catch(() => ({}));
+    const opponentId = String(body.opponentId || "");
+    if (!opponentId || opponentId === user.id) {
+      return NextResponse.json({ error: "Pilih teman yang mau ditantang dulu." }, { status: 400 });
+    }
 
-  // Lawan harus teman sekelas (berbagi minimal satu kelas), atau murid di
-  // kelas yang diampu si penantang (guru boleh menantang muridnya).
-  const shared = await db.group.findFirst({
-    where: {
-      members: { some: { userId: opponentId } },
-      OR: [{ teacherId: user.id }, { members: { some: { userId: user.id } } }],
-    },
-    select: { id: true },
-  });
-  if (!shared) {
-    return NextResponse.json({ error: "Kamu hanya bisa menantang teman sekelasmu." }, { status: 403 });
-  }
-
-  // Anti-spam: batasi tantangan yang belum selesai.
-  const terbuka = await db.gameRoom.count({
-    where: { category: "TANTANGAN", hostId: user.id, status: { in: ["WAITING", "IN_PROGRESS"] } },
-  });
-  if (terbuka >= MAX_TANTANGAN_TERBUKA) {
-    return NextResponse.json({ error: "Selesaikan tantanganmu yang masih berjalan dulu, ya." }, { status: 429 });
-  }
-
-  const [me, opponent] = await Promise.all([
-    db.user.findUnique({ where: { id: user.id }, select: { fullName: true, avatar: true } }),
-    db.user.findUnique({ where: { id: opponentId }, select: { id: true, fullName: true, avatar: true, role: true } }),
-  ]);
-  if (!me || !opponent || opponent.role !== "MURID") {
-    return NextResponse.json({ error: "Teman tidak ditemukan." }, { status: 404 });
-  }
-
-  // Snapshot soal: keduanya mengerjakan set yang sama, urut naik kesulitan.
-  const clean = await harvestJalurQuestions();
-  const soal = pickRampedQuestions(clean, SOAL_PER_DUEL);
-  if (soal.length < SOAL_PER_DUEL) {
-    return NextResponse.json({ error: "Bank soal belum siap. Coba lagi nanti." }, { status: 503 });
-  }
-
-  const roomId = randomUUID();
-  const code = randomUUID().replace(/-/g, "").slice(0, 6).toUpperCase();
-
-  // Batched transaction (bukan interaktif) — aman untuk pooler.
-  await db.$transaction([
-    // Raw SQL dengan kolom eksplisit: kolom groupId/includeInPenilaian ada di
-    // schema Prisma tapi belum dimigrasikan ke DB prod — gameRoom.create Prisma
-    // selalu ikut menulis kolom ber-default itu dan meledak (P2022).
-    // gameType/status/difficulty terisi default DB (KUIS_BATTLE/WAITING/MEDIUM).
-    db.$executeRaw`INSERT INTO "GameRoom" ("id", "code", "name", "hostId", "category", "questionCount")
-      VALUES (${roomId}, ${code}, ${`Tantangan ${me.fullName}`.slice(0, 60)}, ${user.id}, 'TANTANGAN', ${SOAL_PER_DUEL})`,
-    db.gameQuestion.createMany({
-      data: soal.map((q, i) => ({
-        gameRoomId: roomId,
-        text: q.soal,
-        options: q.opsi,
-        correctAnswer: String(q.jawaban),
-        explanation: q.penjelasan || null,
-        orderIndex: i,
-      })),
-    }),
-    db.gameSession.createMany({
-      data: [
-        { roomId, userId: user.id, playerName: me.fullName, avatarUrl: me.avatar },
-        { roomId, userId: opponent.id, playerName: opponent.fullName, avatarUrl: opponent.avatar },
-      ],
-    }),
-    db.notifikasi.create({
-      data: {
-        userId: opponent.id,
-        title: "Tantangan Baru!",
-        body: `${me.fullName} menantangmu duel ${SOAL_PER_DUEL} soal. Berani terima?`,
-        type: "TANTANGAN",
-        data: { link: "/arena/game/tantang" },
+    // Lawan harus teman sekelas (berbagi minimal satu kelas), atau murid di
+    // kelas yang diampu si penantang (guru boleh menantang muridnya).
+    const shared = await db.group.findFirst({
+      where: {
+        members: { some: { userId: opponentId } },
+        OR: [{ teacherId: user.id }, { members: { some: { userId: user.id } } }],
       },
-    }),
-  ]);
+      select: { id: true },
+    });
+    if (!shared) {
+      return NextResponse.json({ error: "Kamu hanya bisa menantang teman sekelasmu." }, { status: 403 });
+    }
 
-  return NextResponse.json({ id: roomId, message: `Tantangan terkirim ke ${opponent.fullName}!` });
+    // Anti-spam: batasi tantangan yang belum selesai.
+    const terbuka = await db.gameRoom.count({
+      where: { category: "TANTANGAN", hostId: user.id, status: { in: ["WAITING", "IN_PROGRESS"] } },
+    });
+    if (terbuka >= MAX_TANTANGAN_TERBUKA) {
+      return NextResponse.json({ error: "Selesaikan tantanganmu yang masih berjalan dulu, ya." }, { status: 429 });
+    }
+
+    const [me, opponent] = await Promise.all([
+      db.user.findUnique({ where: { id: user.id }, select: { fullName: true, avatar: true } }),
+      db.user.findUnique({ where: { id: opponentId }, select: { id: true, fullName: true, avatar: true, role: true } }),
+    ]);
+    if (!me || !opponent || opponent.role !== "MURID") {
+      return NextResponse.json({ error: "Teman tidak ditemukan." }, { status: 404 });
+    }
+
+    // Snapshot soal: keduanya mengerjakan set yang sama, urut naik kesulitan.
+    const clean = await harvestJalurQuestions();
+    const soal = pickRampedQuestions(clean, SOAL_PER_DUEL);
+    if (soal.length < SOAL_PER_DUEL) {
+      return NextResponse.json({ error: "Bank soal belum siap. Coba lagi nanti." }, { status: 503 });
+    }
+
+    const roomId = randomUUID();
+    const code = randomUUID().replace(/-/g, "").slice(0, 6).toUpperCase();
+
+    // Batched transaction (bukan interaktif) — aman untuk pooler.
+    await db.$transaction([
+      // Raw SQL dengan kolom eksplisit: kolom groupId/includeInPenilaian ada di
+      // schema Prisma tapi belum dimigrasikan ke DB prod — gameRoom.create Prisma
+      // selalu ikut menulis kolom ber-default itu dan meledak (P2022).
+      // gameType/status/difficulty terisi default DB (KUIS_BATTLE/WAITING/MEDIUM).
+      db.$executeRaw`INSERT INTO "GameRoom" ("id", "code", "name", "hostId", "category", "questionCount")
+        VALUES (${roomId}, ${code}, ${`Tantangan ${me.fullName}`.slice(0, 60)}, ${user.id}, 'TANTANGAN', ${SOAL_PER_DUEL})`,
+      db.gameQuestion.createMany({
+        data: soal.map((q, i) => ({
+          gameRoomId: roomId,
+          text: q.soal,
+          options: q.opsi,
+          correctAnswer: String(q.jawaban),
+          explanation: q.penjelasan || null,
+          orderIndex: i,
+        })),
+      }),
+      db.gameSession.createMany({
+        data: [
+          { roomId, userId: user.id, playerName: me.fullName, avatarUrl: me.avatar },
+          { roomId, userId: opponent.id, playerName: opponent.fullName, avatarUrl: opponent.avatar },
+        ],
+      }),
+      db.notifikasi.create({
+        data: {
+          userId: opponent.id,
+          title: "Tantangan Baru!",
+          body: `${me.fullName} menantangmu duel ${SOAL_PER_DUEL} soal. Berani terima?`,
+          type: "TANTANGAN",
+          data: { link: "/arena/game/tantang" },
+        },
+      }),
+    ]);
+
+    return NextResponse.json({ id: roomId, message: `Tantangan terkirim ke ${opponent.fullName}!` });
+  } catch (error) {
+    console.error("tantang::POST error:", error);
+    return NextResponse.json({ error: "Terjadi kesalahan di server. Coba lagi, ya." }, { status: 500 });
+  }
 }

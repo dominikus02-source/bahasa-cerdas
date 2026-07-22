@@ -13,6 +13,7 @@ import { db } from "@/lib/db";
 export const dynamic = "force-dynamic";
 
 export async function GET(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  try {
   const user = await getUser();
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
@@ -54,4 +55,8 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ id:
     hasil: done ? (mine.score > other!.score ? "MENANG" : mine.score < other!.score ? "KALAH" : "SERI") : null,
     questions,
   });
+  } catch (error) {
+    console.error("tantang detail GET error:", error);
+    return NextResponse.json({ error: "Terjadi kesalahan di server. Coba lagi, ya." }, { status: 500 });
+  }
 }

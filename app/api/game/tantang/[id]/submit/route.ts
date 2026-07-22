@@ -17,6 +17,7 @@ import { calcLevel, calcLeagueFromXP } from "@/lib/xp";
 export const dynamic = "force-dynamic";
 
 export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  try {
   const user = await getUser();
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
@@ -151,4 +152,8 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     selesai: bothDone,
     hasil: bothDone && other ? (score > other.score ? "MENANG" : score < other.score ? "KALAH" : "SERI") : null,
   });
+  } catch (error) {
+    console.error("tantang submit POST error:", error);
+    return NextResponse.json({ error: "Terjadi kesalahan di server. Coba lagi, ya." }, { status: 500 });
+  }
 }

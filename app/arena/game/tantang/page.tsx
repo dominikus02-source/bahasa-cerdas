@@ -58,7 +58,7 @@ export default function TantangTemanPage() {
     try {
       const res = await fetch("/api/game/tantang");
       if (!res.ok) throw new Error();
-      const d = await res.json();
+      const d = await res.json().catch(() => ({}) as any);
       setTantangan(d.tantangan || []);
       setTeman(d.teman || []);
     } catch {
@@ -81,7 +81,7 @@ export default function TantangTemanPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ opponentId }),
       });
-      const d = await res.json();
+      const d = await res.json().catch(() => ({}) as any);
       if (!res.ok) throw new Error(d.error || "Gagal mengirim tantangan.");
       setPesan(d.message);
       setView("list");
@@ -98,7 +98,7 @@ export default function TantangTemanPage() {
     setError(null);
     try {
       const res = await fetch(`/api/game/tantang/${t.id}`);
-      const d = await res.json();
+      const d = await res.json().catch(() => ({}) as any);
       if (!res.ok) throw new Error(d.error || "Gagal memuat soal.");
       setAktif(t);
       setSoal(d.questions || []);
@@ -127,7 +127,7 @@ export default function TantangTemanPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ answers: next, durationMs: Date.now() - mulaiRef.current }),
       });
-      const d = await res.json();
+      const d = await res.json().catch(() => ({}) as any);
       if (!res.ok) throw new Error(d.error || "Gagal mengirim jawaban.");
       setHasil(d);
       setView("hasil");
