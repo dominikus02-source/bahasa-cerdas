@@ -98,6 +98,8 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     db.gameRoom.update({
       where: { id: room.id },
       data: bothDone ? { status: "FINISHED", endedAt: new Date() } : { status: "IN_PROGRESS", startedAt: new Date() },
+      // select eksplisit: hindari RETURNING kolom groupId yang belum ada di DB.
+      select: { id: true },
     }),
   ];
 

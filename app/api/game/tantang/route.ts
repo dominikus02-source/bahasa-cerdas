@@ -163,6 +163,9 @@ export async function POST(req: NextRequest) {
         status: "WAITING",
         questionCount: SOAL_PER_DUEL,
       },
+      // select eksplisit: kolom groupId dkk ada di schema Prisma tapi belum
+      // dimigrasikan ke DB — tanpa select, RETURNING menyentuh kolom hilang.
+      select: { id: true },
     }),
     db.gameQuestion.createMany({
       data: soal.map((q, i) => ({
