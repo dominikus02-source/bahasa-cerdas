@@ -83,6 +83,22 @@ export function getLevelFromXP(xp: number): number {
   return Math.floor(xp / 500) + 1;
 }
 
+const GELAR_BANDS: { min: number; label: string }[] = [
+  { min: 16, label: "Legenda BahasaCerdas" },
+  { min: 13, label: "Pujangga Muda" },
+  { min: 10, label: "Maestro Kata" },
+  { min: 7, label: "Juru Bahasa" },
+  { min: 5, label: "Pencerita Andal" },
+  { min: 3, label: "Perangkai Kata" },
+  { min: 1, label: "Penulis Pemula" },
+];
+
+// "Gelar" — a level-derived title shown alongside the avatar on the profile
+// card, e.g. "Si Pantun · Perangkai Kata · Penulis #00147".
+export function getGelarFromLevel(level: number): string {
+  return (GELAR_BANDS.find((b) => level >= b.min) || GELAR_BANDS[GELAR_BANDS.length - 1]).label;
+}
+
 export function getPredikatUKBI(skor: number): string {
   if (skor >= 725) return "Istimewa (I)";
   if (skor >= 641) return "Sangat Unggul (II)";

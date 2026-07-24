@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import cache from "@/lib/redis";
+import { getDisplayName } from "@/lib/nickname";
 
 export async function GET(
   req: NextRequest,
@@ -18,6 +19,7 @@ export async function GET(
       select: {
         id: true,
         fullName: true,
+        nickname: true,
         avatar: true,
         role: true,
         isFounder: true,
@@ -83,10 +85,16 @@ export async function GET(
       _sum: { downloads: true },
     });
 
+    // This route is fully public/unauthenticated (link-preview-able) — it is
+    // exactly the "profil publik" context, so a MURID subject's real name
+    // never leaves the server here, only the nickname layer. Guru subjects
+    // are unaffected: the nickname system is a murid-only privacy feature.
+    const publicName = user.role === "MURID" ? getDisplayName(user, "peer") : user.fullName;
+
     const result = {
       user: {
         id: user.id,
-        fullName: user.fullName,
+        fullName: publicName,
         avatar: user.avatar,
         role: user.role,
         isFounder: user.isFounder,

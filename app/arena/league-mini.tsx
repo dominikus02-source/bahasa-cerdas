@@ -6,6 +6,7 @@ import { useState } from "react"
 export interface MiniRow {
   id: string
   fullName: string
+  displayName?: string
   xp: number
 }
 
@@ -89,11 +90,11 @@ export default function LeagueMini({
                 <div
                   className={`w-8 h-8 rounded-xl bg-gradient-to-br ${INITIALS_COLORS[i] ?? INITIALS_COLORS[2]} flex items-center justify-center text-white text-sm font-bold shrink-0`}
                 >
-                  {initials(u.fullName)}
+                  {initials(u.displayName || u.fullName)}
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-xs font-semibold text-[#1A1033] truncate">
-                    {isMe ? "Kamu" : u.fullName}
+                    {isMe ? "Kamu" : (u.displayName || u.fullName)}
                   </p>
                 </div>
                 <span className="font-extrabold text-sm text-purple-600 shrink-0">

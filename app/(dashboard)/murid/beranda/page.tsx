@@ -12,9 +12,13 @@ interface Karya {
   id: string; title: string; content: string; excerpt: string;
   type: KaryaType; coverImage?: string; isFeatured: boolean;
   likesCount: number; viewsCount: number; createdAt: string;
-  user: { id: string; fullName: string; avatar?: string; profile?: { school?: string; city?: string } };
+  user: { id: string; fullName: string; displayName?: string; avatar?: string; profile?: { school?: string; city?: string } };
   _count?: { likes: number; comments: number };
 }
+
+// This page is murid-only (the layout redirects any non-MURID/non-founder
+// away), so every author shown here is a peer — always the nickname layer.
+const nameOf = (u: { fullName: string; displayName?: string }) => u.displayName || u.fullName;
 
 const TYPE_META: Record<string, { label: string; badge: string }> = {
   PUISI:    { label: "Puisi",    badge: "bg-rose-100 text-rose-700" },
@@ -252,7 +256,7 @@ export default function HomeFeedPage() {
                     <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${m.badge}`}>{m.label}</span>
                     <h3 className="font-bold text-sm mt-2 line-clamp-2 leading-snug">{k.title}</h3>
                     <p className="text-xs text-violet-200 mt-2 line-clamp-2">{k.excerpt?.slice(0, 80)}</p>
-                    <p className="text-[10px] text-violet-300 mt-2">{k.user.fullName}</p>
+                    <p className="text-[10px] text-violet-300 mt-2">{nameOf(k.user)}</p>
                   </Link>
                 );
               })}
@@ -317,9 +321,9 @@ export default function HomeFeedPage() {
                       type="button"
                       onClick={(e) => { e.preventDefault(); e.stopPropagation(); if (karya.user.id) router.push(`/profile/${karya.user.id}`); }}
                       className="w-7 h-7 rounded-full bg-gradient-to-br from-violet-400 to-purple-500 flex items-center justify-center text-white text-[10px] font-bold shrink-0 hover:ring-2 hover:ring-violet-300 transition-all"
-                      aria-label={`Lihat profil ${karya.user.fullName}`}
+                      aria-label={`Lihat profil ${nameOf(karya.user)}`}
                     >
-                      {karya.user.avatar ? <img src={karya.user.avatar} alt="" className="w-full h-full rounded-full object-cover" /> : karya.user.fullName.charAt(0)}
+                      {karya.user.avatar ? <img src={karya.user.avatar} alt="" className="w-full h-full rounded-full object-cover" /> : nameOf(karya.user).charAt(0)}
                     </button>
                     <div className="flex-1 min-w-0 text-xs">
                       {/* Not a nested <Link>: the whole card is already an anchor,
@@ -330,7 +334,7 @@ export default function HomeFeedPage() {
                         onClick={(e) => { e.preventDefault(); e.stopPropagation(); if (karya.user.id) router.push(`/profile/${karya.user.id}`); }}
                         className="font-semibold text-gray-800 hover:text-violet-600 transition-colors"
                       >
-                        {karya.user.fullName}
+                        {nameOf(karya.user)}
                       </button>
                       <span className="text-gray-400 mx-1">·</span>
                       <span className="text-gray-400">{karya.user.profile?.school ? karya.user.profile.school.split(" ").slice(0, 2).join(" ") : "Siswa"}</span>

@@ -3,6 +3,7 @@ import { getUser } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 import { awardCoins, trackQuestProgress, trackDailyStreak } from "@/lib/coins";
 import { commentSchema, sanitize } from "@/lib/validations";
+import { getDisplayName } from "@/lib/nickname";
 
 export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -29,9 +30,11 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
         content: sanitizedContent,
       },
       include: {
-        user: { select: { id: true, fullName: true, avatar: true } },
+        user: { select: { id: true, fullName: true, nickname: true, avatar: true } },
       },
     });
+
+    const commentWithDisplay = { ...comment, user: { ...comment.user, displayName: getDisplayName(comment.user, "peer") } };
 
     // Coins/streak/quest/notif run after the response: none of them change what
     // the client renders, and awaiting them made posting a comment wait on
@@ -45,20 +48,21 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
         (async () => {
           const karya = await db.studentKarya.findUnique({ where: { id }, select: { userId: true, title: true } });
           if (!karya || karya.userId === user.id) return;
+          const commenterName = getDisplayName(user, "peer");
           await db.notifikasi.create({
             data: {
               userId: karya.userId,
               title: "Komentar Baru 💬",
-              body: `${user.fullName} berkomentar di "${sanitize(karya.title)}"`,
+              body: `${commenterName} berkomentar di "${sanitize(karya.title)}"`,
               type: "COMMENT",
-              data: { karyaId: id, userId: user.id, userName: sanitize(user.fullName), commentId: comment.id },
+              data: { karyaId: id, userId: user.id, userName: sanitize(commenterName), commentId: comment.id },
             },
           });
         })(),
       ]);
     });
 
-    return NextResponse.json({ comment, coinsEarned: 1 }, { status: 201 });
+    return NextResponse.json({ comment: commentWithDisplay, coinsEarned: 1 }, { status: 201 });
   } catch (error) {
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
@@ -71,13 +75,15 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     const comments = await db.studentKaryaComment.findMany({
       where: { karyaId: id },
       include: {
-        user: { select: { id: true, fullName: true, avatar: true } },
+        user: { select: { id: true, fullName: true, nickname: true, avatar: true } },
       },
       orderBy: { createdAt: "desc" },
       take: 50,
     });
 
-    return NextResponse.json({ comments });
+    const withDisplay = comments.map((c) => ({ ...c, user: { ...c.user, displayName: getDisplayName(c.user, "peer") } }));
+
+    return NextResponse.json({ comments: withDisplay });
   } catch (error) {
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }

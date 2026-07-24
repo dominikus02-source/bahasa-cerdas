@@ -5,6 +5,14 @@ import { awardCoins, trackQuestProgress, trackDailyStreak } from "@/lib/coins";
 import { karyaSchema, sanitize } from "@/lib/validations";
 import cache from "@/lib/redis";
 import { invalidateKaryaCache } from "@/lib/ai-queue";
+import { getDisplayName } from "@/lib/nickname";
+
+// Peers/public only ever see the nickname layer for a karya's author — guru
+// consumers of this same endpoint (e.g. guru/feed-karya) keep reading
+// `user.fullName` untouched, so it stays real for moderation.
+function withDisplayName<T extends { user: { fullName: string; nickname?: string | null } }>(item: T) {
+  return { ...item, user: { ...item.user, displayName: getDisplayName(item.user, "peer") } };
+}
 
 // Attaches the current user's like status per item. Kept OUT of the shared
 // cache because it is per-user — the base list stays cacheable and public.
@@ -48,7 +56,7 @@ export async function GET(req: NextRequest) {
     const cached = await cache.get<{ karya: any[]; nextCursor: string | null; total: number }>(cacheKey);
     if (cached && !/page=\d+/.test(req.url)) {
       return NextResponse.json({
-        karya: await attachLikedStatus(cached.karya, currentUserId),
+        karya: (await attachLikedStatus(cached.karya, currentUserId)).map(withDisplayName),
         nextCursor: cached.nextCursor,
         total: cached.total,
       });
@@ -80,7 +88,7 @@ export async function GET(req: NextRequest) {
       db.studentKarya.findMany({
         where,
         include: {
-          user: { select: { id: true, fullName: true, avatar: true, profile: { select: { school: true, city: true } } } },
+          user: { select: { id: true, fullName: true, nickname: true, avatar: true, profile: { select: { school: true, city: true } } } },
           _count: { select: { likes: true, comments: true } },
         },
         orderBy: { createdAt: "desc" },
@@ -98,7 +106,7 @@ export async function GET(req: NextRequest) {
     const result = { karya: items, nextCursor, total };
     await cache.set(cacheKey, result, 120); // base list (no per-user field) stays cacheable
 
-    return NextResponse.json({ ...result, karya: await attachLikedStatus(items, currentUserId) });
+    return NextResponse.json({ ...result, karya: (await attachLikedStatus(items, currentUserId)).map(withDisplayName) });
   } catch (error) {
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
@@ -138,7 +146,7 @@ export async function POST(req: NextRequest) {
         userId: user.id,
       },
       include: {
-        user: { select: { id: true, fullName: true, avatar: true, profile: { select: { school: true, city: true } } } },
+        user: { select: { id: true, fullName: true, nickname: true, avatar: true, profile: { select: { school: true, city: true } } } },
       },
     });
 

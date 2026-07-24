@@ -10,9 +10,13 @@ interface KaryaDetail {
   id: string; title: string; content: string; excerpt?: string;
   type: string; coverImage?: string; likesCount: number; viewsCount: number;
   createdAt: string;
-  user: { id: string; fullName: string; avatar?: string; profile?: { school?: string; city?: string } };
-  comments: { id: string; content: string; createdAt: string; user: { id: string; fullName: string; avatar?: string } }[];
+  user: { id: string; fullName: string; displayName?: string; avatar?: string; profile?: { school?: string; city?: string } };
+  comments: { id: string; content: string; createdAt: string; user: { id: string; fullName: string; displayName?: string; avatar?: string } }[];
 }
+
+// Murid-only route — every author/commenter shown here is a peer, so we
+// always render the nickname layer the API already computed.
+const nameOf = (u: { fullName: string; displayName?: string }) => u.displayName || u.fullName;
 
 const TYPE_ICON: Record<string, any> = { PUISI: PenLine, CERPEN: BookOpen, ARTIKEL: Newspaper, ANEKDOT: MessageCircle, PANTUN: Music, OPINI: Lightbulb };
 const TYPE_LABELS: Record<string, string> = { PUISI: "Puisi", CERPEN: "Cerpen", ARTIKEL: "Artikel", ANEKDOT: "Anekdot", PANTUN: "Pantun", OPINI: "Opini" };
@@ -119,10 +123,10 @@ export default function DetailKaryaPage() {
             in the path — so tapping any student's name opened your own page
             instead of theirs. */}
         <Link href={`/profile/${karya.user.id}`} className="w-10 h-10 rounded-full bg-gradient-to-br from-violet-400 to-purple-500 flex items-center justify-center text-white font-bold text-sm shrink-0">
-          {karya.user.avatar ? <img src={karya.user.avatar} alt="" className="w-full h-full rounded-full object-cover" /> : karya.user.fullName.charAt(0)}
+          {karya.user.avatar ? <img src={karya.user.avatar} alt="" className="w-full h-full rounded-full object-cover" /> : nameOf(karya.user).charAt(0)}
         </Link>
         <div className="flex-1">
-          <Link href={`/profile/${karya.user.id}`} className="text-sm font-semibold text-gray-900 hover:text-violet-600">{karya.user.fullName}</Link>
+          <Link href={`/profile/${karya.user.id}`} className="text-sm font-semibold text-gray-900 hover:text-violet-600">{nameOf(karya.user)}</Link>
           <p className="text-xs text-gray-400">
             {karya.user.profile?.school && `${karya.user.profile.school}${karya.user.profile.city ? ` · ${karya.user.profile.city}` : ""}`}
           </p>
@@ -223,19 +227,19 @@ export default function DetailKaryaPage() {
               <div key={c.id} className="flex gap-3">
                 {c.user.id && !c.id.startsWith("temp-") ? (
                   <Link href={`/profile/${c.user.id}`} className="w-8 h-8 rounded-full bg-gradient-to-br from-violet-300 to-purple-400 flex items-center justify-center text-white text-xs font-bold shrink-0 hover:ring-2 hover:ring-violet-300 transition-all">
-                    {c.user.avatar ? <img src={c.user.avatar} alt="" className="w-full h-full rounded-full object-cover" /> : c.user.fullName.charAt(0)}
+                    {c.user.avatar ? <img src={c.user.avatar} alt="" className="w-full h-full rounded-full object-cover" /> : nameOf(c.user).charAt(0)}
                   </Link>
                 ) : (
                   <div className="w-8 h-8 rounded-full bg-gradient-to-br from-violet-300 to-purple-400 flex items-center justify-center text-white text-xs font-bold shrink-0">
-                    {c.user.avatar ? <img src={c.user.avatar} alt="" className="w-full h-full rounded-full object-cover" /> : c.user.fullName.charAt(0)}
+                    {c.user.avatar ? <img src={c.user.avatar} alt="" className="w-full h-full rounded-full object-cover" /> : nameOf(c.user).charAt(0)}
                   </div>
                 )}
                 <div className="flex-1 bg-white rounded-xl border border-gray-100 p-3">
                   <div className="flex items-center gap-2 mb-1">
                     {c.user.id && !c.id.startsWith("temp-") ? (
-                      <Link href={`/profile/${c.user.id}`} className="text-sm font-semibold text-gray-900 hover:text-violet-600 transition-colors">{c.user.fullName}</Link>
+                      <Link href={`/profile/${c.user.id}`} className="text-sm font-semibold text-gray-900 hover:text-violet-600 transition-colors">{nameOf(c.user)}</Link>
                     ) : (
-                      <span className="text-sm font-semibold text-gray-900">{c.user.fullName}</span>
+                      <span className="text-sm font-semibold text-gray-900">{nameOf(c.user)}</span>
                     )}
                     <span className="text-xs text-gray-400">{new Date(c.createdAt).toLocaleDateString("id-ID", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}</span>
                   </div>

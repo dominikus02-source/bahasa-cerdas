@@ -6,6 +6,7 @@ import { ArrowLeft, Heart, MessageCircle, Eye, Clock, Sparkles, BookOpen, FileTe
 import { ToggleLike } from "./toggle-like"
 import CommentSection from "@/components/arena/CommentSection"
 import DeleteKaryaButton from "@/components/arena/DeleteKaryaButton"
+import { getDisplayName } from "@/lib/nickname"
 
 const typeIcon: Record<string, { icon: React.ReactNode }> = {
   PUISI: { icon: <Sparkles className="w-5 h-5" /> },
@@ -28,7 +29,7 @@ export default async function FeedDetailPage({ params }: { params: Promise<{ id:
   const karya = await db.studentKarya.findUnique({
     where: { id },
     include: {
-      user: { select: { id: true, fullName: true, avatar: true } },
+      user: { select: { id: true, fullName: true, nickname: true, avatar: true } },
       _count: { select: { likes: true, comments: true } },
       likes: { where: { userId: user.id }, take: 1 },
     },
@@ -36,13 +37,22 @@ export default async function FeedDetailPage({ params }: { params: Promise<{ id:
 
   if (!karya) redirect("/arena/feed")
 
+  // Guru always sees real names (accountability); peers only ever get the
+  // nickname layer, computed server-side so the client never has a choice.
+  const isGuruViewer = user.role === "GURU" || user.isFounder
+  const authorName = karya.user ? (isGuruViewer ? karya.user.fullName : getDisplayName(karya.user, "peer")) : "Pengguna"
+
   const rawComments = await db.studentKaryaComment.findMany({
     where: { karyaId: id },
-    include: { user: { select: { id: true, fullName: true, avatar: true } } },
+    include: { user: { select: { id: true, fullName: true, nickname: true, avatar: true } } },
     orderBy: { createdAt: "desc" },
     take: 20,
   })
-  const comments = rawComments.map(c => ({ ...c, createdAt: c.createdAt.toISOString() }))
+  const comments = rawComments.map(c => ({
+    ...c,
+    createdAt: c.createdAt.toISOString(),
+    user: { ...c.user, displayName: isGuruViewer ? c.user.fullName : getDisplayName(c.user, "peer") },
+  }))
 
   await db.studentKarya.update({ where: { id }, data: { viewsCount: { increment: 1 } } })
 
@@ -64,10 +74,10 @@ export default async function FeedDetailPage({ params }: { params: Promise<{ id:
           {karya.user ? (
             <>
               <div className="w-12 h-12 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center text-white font-bold text-base shrink-0">
-                {karya.user.fullName?.charAt(0).toUpperCase() || "?"}
+                {authorName.charAt(0).toUpperCase() || "?"}
               </div>
               <div>
-                <p className="font-bold text-gray-900 text-base">{karya.user.fullName}</p>
+                <p className="font-bold text-gray-900 text-base">{authorName}</p>
                 <p className="text-sm text-gray-500">
                   {typeLabel[karya.type] || karya.type}
                 </p>

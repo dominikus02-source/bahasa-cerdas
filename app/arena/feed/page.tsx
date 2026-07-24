@@ -39,6 +39,7 @@ interface KaryaItem {
   user: {
     id: string
     fullName: string
+    displayName?: string
     avatar: string | null
     profile?: { school?: string; city?: string } | null
   }
@@ -61,6 +62,11 @@ export default function FeedPage() {
   const [onlineCount, setOnlineCount] = useState(0)
   const [totalKarya, setTotalKarya] = useState(0)
   const [currentUserId, setCurrentUserId] = useState<string | null>(null)
+  // Guru always sees real names (accountability); everyone else gets the
+  // nickname layer the API already computed as `user.displayName`.
+  const [isGuruViewer, setIsGuruViewer] = useState(false)
+  const nameOf = (u?: { fullName: string; displayName?: string }) =>
+    !u ? "Pengguna" : (isGuruViewer ? u.fullName : (u.displayName || u.fullName))
   const [loading, setLoading] = useState(true)
   const [loadingMore, setLoadingMore] = useState(false)
   const [cursor, setCursor] = useState<string | null>(null)
@@ -103,6 +109,7 @@ export default function FeedPage() {
         fetch(`/api/siswa/karya/count?type=${challenge.type}`).then(r => r.json()).catch(() => ({ count: 0 })),
       ]);
       setCurrentUserId(uData?.user?.id || uData?.user?.userId || null)
+      setIsGuruViewer(uData?.user?.role === "GURU" || !!uData?.user?.isFounder)
       setOnlineCount(stats.onlineCount || 0)
       setChallengeCount(chCount.count || 0)
       setLoadingChallenge(false)
@@ -269,7 +276,7 @@ export default function FeedPage() {
                 </p>
                 <p className="text-[11px] font-bold text-[#1F1B3A] leading-tight mb-2 line-clamp-2">{k.title}</p>
                 <p className="text-[10px] text-gray-400">
-                  {k.user?.fullName?.split(" ")[0] || "User"} &middot; {k.likesCount} suka
+                  {nameOf(k.user).split(" ")[0]} &middot; {k.likesCount} suka
                 </p>
               </Link>
             ))}
@@ -355,10 +362,10 @@ export default function FeedPage() {
                       type="button"
                       onClick={() => { if (karya.user?.id) router.push(`/profile/${karya.user.id}`) }}
                       className="relative shrink-0"
-                      aria-label={`Lihat profil ${karya.user?.fullName || "pengguna"}`}
+                      aria-label={`Lihat profil ${nameOf(karya.user)}`}
                     >
                       <div className={`w-[38px] h-[38px] rounded-full bg-gradient-to-br ${likersColor} flex items-center justify-center text-white text-sm font-extrabold`}>
-                        {karya.user?.fullName?.charAt(0).toUpperCase() || "?"}
+                        {nameOf(karya.user).charAt(0).toUpperCase() || "?"}
                       </div>
                       <div className="absolute bottom-0 right-0 w-[10px] h-[10px] bg-emerald-500 border-2 border-white rounded-full" />
                     </button>
@@ -368,7 +375,7 @@ export default function FeedPage() {
                         onClick={() => { if (karya.user?.id) router.push(`/profile/${karya.user.id}`) }}
                         className="block text-[13px] font-bold text-[#1F1B3A] truncate hover:text-violet-600 transition-colors text-left max-w-full"
                       >
-                        {karya.user?.fullName || "Pengguna"}
+                        {nameOf(karya.user)}
                       </button>
                       <p className="text-[11px] text-gray-400 truncate">{school}</p>
                     </div>

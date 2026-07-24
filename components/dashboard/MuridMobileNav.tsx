@@ -8,7 +8,7 @@ import { NotificationBell } from "@/components/dashboard/NotificationBell";
 import {
   Home, BookOpen, Gamepad2, BarChart3, Menu as MenuIcon, X,
   GraduationCap, PenSquare, Users, Coins, CalendarCheck, ClipboardCheck,
-  FileText, Award, ExternalLink, Trophy, Calendar, User, Settings,
+  FileText, Award, ExternalLink, Trophy, Calendar, User,
 } from "lucide-react";
 
 // Primary bottom-nav destinations (thumb-reachable). The 5th opens the full menu.
@@ -25,6 +25,7 @@ const GROUPS: { title: string; items: { href: string; label: string; icon: any }
     title: "Menu Utama",
     items: [
       { href: "/murid/beranda", label: "Beranda", icon: Home },
+      { href: "/murid/profile", label: "Profil", icon: User },
       { href: "/arena", label: "Arena", icon: GraduationCap },
       { href: "/murid/karya/tulis", label: "Tulis Karya", icon: PenSquare },
       { href: "/murid/tugasku", label: "Tugasku", icon: BookOpen },
@@ -49,8 +50,6 @@ const GROUPS: { title: string; items: { href: string; label: string; icon: any }
       { href: "/murid/olimpiade/info", label: "Info Lomba", icon: Trophy },
       { href: "/murid/olimpiade/kalender", label: "Kalender", icon: Calendar },
       { href: "/murid/progresku", label: "Kemajuanku", icon: BarChart3 },
-      { href: "/murid/profile", label: "Profil", icon: User },
-      { href: "/murid/pengaturan", label: "Pengaturan", icon: Settings },
     ],
   },
 ];

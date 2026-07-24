@@ -9,26 +9,26 @@ datasource db {
 }
 
 model GameRoom {
-  id                  String         @id @default(cuid())
-  code                String         @unique
-  name                String
-  gameType            GameType       @default(KUIS_BATTLE)
-  hostId              String
-  status              GameRoomStatus @default(WAITING)
-  category            String?
-  difficulty          Difficulty     @default(MEDIUM)
-  questionIds         String[]
-  questionCount       Int            @default(10)
-  timePerQuestion     Int            @default(20)
-  currentQuestion     Int            @default(0)
-  createdAt           DateTime       @default(now())
-  startedAt           DateTime?
-  endedAt             DateTime?
-  groupId             String?        // for penilaian integration
-  includeInPenilaian  Boolean        @default(false)
-  penilaianKategori   String?
-  results             GameResult[]
-  sessions            GameSession[]
+  id                 String         @id @default(cuid())
+  code               String         @unique
+  name               String
+  gameType           GameType       @default(KUIS_BATTLE)
+  hostId             String
+  status             GameRoomStatus @default(WAITING)
+  category           String?
+  difficulty         Difficulty     @default(MEDIUM)
+  questionIds        String[]
+  questionCount      Int            @default(10)
+  timePerQuestion    Int            @default(20)
+  currentQuestion    Int            @default(0)
+  createdAt          DateTime       @default(now())
+  startedAt          DateTime?
+  endedAt            DateTime?
+  groupId            String? // for penilaian integration
+  includeInPenilaian Boolean        @default(false)
+  penilaianKategori  String?
+  results            GameResult[]
+  sessions           GameSession[]
 
   @@index([code])
   @@index([hostId])
@@ -99,7 +99,7 @@ model GameResult {
   @@index([rank, createdAt])
   @@index([userId, createdAt])
   @@index([createdAt])
-  @@index([createdAt, userId, xpEarned])  // daily league groupBy(userId) sum(xpEarned)
+  @@index([createdAt, userId, xpEarned]) // daily league groupBy(userId) sum(xpEarned)
 }
 
 model Community {
@@ -167,108 +167,111 @@ model CommunityPost {
 }
 
 model User {
-  id                 String                  @id @default(cuid())
-  supabaseId         String                  @unique
-  email              String                  @unique
-  fullName           String
-  avatar             String?
-  emailConfirmed     Boolean                 @default(false)
-  onboarded          Boolean                 @default(false)
-  role               Role                    @default(MURID)
-  isFounder          Boolean                 @default(false)
-  premiumPlan        PremiumPlan             @default(FREE)
-  premiumUntil       DateTime?
-  isPremium          Boolean                 @default(false)
-  midtransCustomerId String?
-  trialStartedAt     DateTime?
-  trialEndsAt        DateTime?
-  trialPlan          String?                 // "GURU_PRO_TRIAL" if trial is active
-  trialCreditsTotal  Int?                    // total credits allocated for trial
-  xp                 Int                     @default(0)
-  level              Int                     @default(1)
-  streak             Int                     @default(0)
-  lastActiveAt       DateTime?
-  league             LeagueType              @default(BRONZE)
-  saldo              Int                     @default(0)
-  totalEarned        Int                     @default(0)
-  coins              Int                     @default(0)
-  totalLikes         Int                     @default(0)
-  totalViews         Int                     @default(0)
-  createdAt          DateTime                @default(now())
-  updatedAt          DateTime                @updatedAt
-  aiUsage            AIUsage[]
-  aiCreditLedger     AiCreditLedger[]
-  artikel            Artikel[]
-  uploadedBankSoals  BankSoal[]
-  certificates       Certificate[]
-  createdCommunities Community[]
-  komunitas          CommunityMember[]
-  communityPosts     CommunityPost[]
-  playlists          CoursePlaylist[]
-  gameQuestions      GameQuestion[]
-  gameResults        GameResult[]
-  gameSessions       GameSession[]
-  generatedRPPs      GeneratedRPP[]
-  aiJobs             AIJob[]
-  aiSavedResults     AiSavedResult[]
-  groups             Group[]
-  groupMemberships   GroupMember[]
-  groupQuizResults   GroupQuizResult[]
-  karya              Karya[]
-  studentKarya       StudentKarya[]
-  studentKaryaLikes  StudentKaryaLike[]
+  id                   String                  @id @default(cuid())
+  supabaseId           String                  @unique
+  email                String                  @unique
+  fullName             String
+  nickname             String?
+  nicknameUpdatedAt    DateTime?
+  avatar               String?
+  emailConfirmed       Boolean                 @default(false)
+  onboarded            Boolean                 @default(false)
+  role                 Role                    @default(MURID)
+  isFounder            Boolean                 @default(false)
+  premiumPlan          PremiumPlan             @default(FREE)
+  premiumUntil         DateTime?
+  isPremium            Boolean                 @default(false)
+  midtransCustomerId   String?
+  trialStartedAt       DateTime?
+  trialEndsAt          DateTime?
+  trialPlan            String? // "GURU_PRO_TRIAL" if trial is active
+  trialCreditsTotal    Int? // total credits allocated for trial
+  xp                   Int                     @default(0)
+  level                Int                     @default(1)
+  streak               Int                     @default(0)
+  lastActiveAt         DateTime?
+  league               LeagueType              @default(BRONZE)
+  saldo                Int                     @default(0)
+  totalEarned          Int                     @default(0)
+  coins                Int                     @default(0)
+  totalLikes           Int                     @default(0)
+  totalViews           Int                     @default(0)
+  createdAt            DateTime                @default(now())
+  updatedAt            DateTime                @updatedAt
+  aiUsage              AIUsage[]
+  aiCreditLedger       AiCreditLedger[]
+  artikel              Artikel[]
+  uploadedBankSoals    BankSoal[]
+  certificates         Certificate[]
+  createdCommunities   Community[]
+  komunitas            CommunityMember[]
+  communityPosts       CommunityPost[]
+  playlists            CoursePlaylist[]
+  gameQuestions        GameQuestion[]
+  gameResults          GameResult[]
+  gameSessions         GameSession[]
+  generatedRPPs        GeneratedRPP[]
+  aiJobs               AIJob[]
+  aiSavedResults       AiSavedResult[]
+  groups               Group[]
+  groupMemberships     GroupMember[]
+  groupQuizResults     GroupQuizResult[]
+  karya                Karya[]
+  studentKarya         StudentKarya[]
+  studentKaryaLikes    StudentKaryaLike[]
   studentKaryaComments StudentKaryaComment[]
-  koleksiKata        KoleksiKata[]
-  competencyCerts    KompetensiCertificate[]
-  loker              Loker[]
-  lombaPeserta       LombaPeserta[]
-  uploadedMateris    Materi[]
-  materiDownloads    MateriDownload[]
-  notifications      Notifikasi[]
-  competencyPackets  PaketKompetensi[]
-  purchases          Pembelian[]
-  profile            Profile?
-  competencyResults  ProgresKompetensi[]
-  purchasesHistory   PurchaseHistory[]
-  quizzes            Quiz[]
-  quizSessions       QuizSession[]
-  quizSubmissions    QuizSubmission[]
-  uploadedRPPs       RPP[]
-  sellerEarnings     SellerEarning[]
-  soals              Soal[]
-  soalSets           SoalSet[]
-  tkaQuestions       TKAQuestion[]
-  testAnswers        TestAnswer[]
-  testSessions       TestSession[]
-  transaksi          Transaksi[]
-  ukbiQuestions      UKBIQuestion[]
-  videos             Video[]
-  withdrawals        Withdrawal[]
-  coinTransactions   CoinTransaction[]
-  dailyQuests        DailyQuest[]
-  userItems          UserItem[]
-  chatMessages       ChatMessage[]
-  unitProgress       UserUnitProgress[]
-  penugasans         Penugasan[]
+  koleksiKata          KoleksiKata[]
+  competencyCerts      KompetensiCertificate[]
+  loker                Loker[]
+  lombaPeserta         LombaPeserta[]
+  uploadedMateris      Materi[]
+  materiDownloads      MateriDownload[]
+  notifications        Notifikasi[]
+  competencyPackets    PaketKompetensi[]
+  purchases            Pembelian[]
+  profile              Profile?
+  competencyResults    ProgresKompetensi[]
+  purchasesHistory     PurchaseHistory[]
+  quizzes              Quiz[]
+  quizSessions         QuizSession[]
+  quizSubmissions      QuizSubmission[]
+  uploadedRPPs         RPP[]
+  sellerEarnings       SellerEarning[]
+  soals                Soal[]
+  soalSets             SoalSet[]
+  tkaQuestions         TKAQuestion[]
+  testAnswers          TestAnswer[]
+  testSessions         TestSession[]
+  transaksi            Transaksi[]
+  ukbiQuestions        UKBIQuestion[]
+  videos               Video[]
+  withdrawals          Withdrawal[]
+  coinTransactions     CoinTransaction[]
+  dailyQuests          DailyQuest[]
+  userItems            UserItem[]
+  chatMessages         ChatMessage[]
+  unitProgress         UserUnitProgress[]
+  penugasans           Penugasan[]
   penugasanSubmissions PenugasanSubmission[]
-  nilais             Nilai[]
-  subscriptions      Subscription[]
+  nilais               Nilai[]
+  subscriptions        Subscription[]
+  nicknameHistory      NicknameHistory[]
 
   // Admin quota audit logs where this user was the acting admin
-  adminQuotaActions  AdminQuotaAuditLog[] @relation("AdminActions")
+  adminQuotaActions    AdminQuotaAuditLog[]   @relation("AdminActions")
   // Admin quota audit logs where this user was the target
-  targetOfQuotaActions AdminQuotaAuditLog[] @relation("TargetActions")
+  targetOfQuotaActions AdminQuotaAuditLog[]   @relation("TargetActions")
   // Admin payment audit logs where this user was the acting admin
   paymentAdminActions  AdminPaymentAuditLog[] @relation("PaymentAdminActions")
   // Admin payment audit logs where this user was the target
   paymentTargetActions AdminPaymentAuditLog[] @relation("PaymentTargetActions")
   // Backup manifests created by this user
-  backupManifests    BackupManifest[] @relation("UserBackupManifests")
+  backupManifests      BackupManifest[]       @relation("UserBackupManifests")
 
   @@index([role, lastActiveAt])
   @@index([xp])
-  @@index([role, xp])          // leaderboard: role=MURID ORDER BY xp DESC
-  @@index([lastActiveAt])      // monitoring: active users in last N minutes
+  @@index([role, xp]) // leaderboard: role=MURID ORDER BY xp DESC
+  @@index([lastActiveAt]) // monitoring: active users in last N minutes
   @@index([supabaseId])
   @@index([email])
 }
@@ -292,6 +295,22 @@ model Profile {
   bankHolder String?
   bankNumber String?
   user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// Audit trail for "nama panggilan" (display nickname) changes — visible to guru,
+// exists because the 30-day rate limit and moderation accountability need real history,
+// not just the current value.
+model NicknameHistory {
+  id          String   @id @default(cuid())
+  userId      String
+  oldNickname String?
+  newNickname String?
+  changedAt   DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([changedAt])
 }
 
 model UKBIQuestion {
@@ -429,21 +448,21 @@ model KompetensiCertificate {
 }
 
 model TestSession {
-  id              String          @id @default(cuid())
-  userId          String
-  paketId         String
-  status          TestStatus      @default(NOT_STARTED)
-  currentSection  Int             @default(0)
-  currentQuestion Int             @default(0)
-  answers         Json            @default("{}")
+  id               String          @id @default(cuid())
+  userId           String
+  paketId          String
+  status           TestStatus      @default(NOT_STARTED)
+  currentSection   Int             @default(0)
+  currentQuestion  Int             @default(0)
+  answers          Json            @default("{}")
   questionSnapshot Json?
-  flagged         Int[]           @default([])
-  startedAt       DateTime?
-  finishedAt      DateTime?
-  expiresAt       DateTime?
-  createdAt       DateTime        @default(now())
-  paket           PaketKompetensi @relation(fields: [paketId], references: [id])
-  user            User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  flagged          Int[]           @default([])
+  startedAt        DateTime?
+  finishedAt       DateTime?
+  expiresAt        DateTime?
+  createdAt        DateTime        @default(now())
+  paket            PaketKompetensi @relation(fields: [paketId], references: [id])
+  user             User            @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, paketId])
   @@index([userId])
@@ -473,27 +492,27 @@ model TestAnswer {
 }
 
 model Materi {
-  id          String    @id @default(cuid())
-  title       String
-  description String?
-  content     String
-  fileUrl     String?
-  fileKey     String?
-  fileType    FileType?
-  grade       String?
-  semester    Int?
-  tahunAjaran String?
-  tema        String?
-  subtema     String?
-  isPublished Boolean   @default(false)
-  isPremium   Boolean   @default(false)
-  price       Int       @default(0)
-  downloads   Int       @default(0)
-  subject     String?
-  uploaderId  String
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  uploader    User      @relation(fields: [uploaderId], references: [id], onDelete: Cascade)
+  id              String           @id @default(cuid())
+  title           String
+  description     String?
+  content         String
+  fileUrl         String?
+  fileKey         String?
+  fileType        FileType?
+  grade           String?
+  semester        Int?
+  tahunAjaran     String?
+  tema            String?
+  subtema         String?
+  isPublished     Boolean          @default(false)
+  isPremium       Boolean          @default(false)
+  price           Int              @default(0)
+  downloads       Int              @default(0)
+  subject         String?
+  uploaderId      String
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  uploader        User             @relation(fields: [uploaderId], references: [id], onDelete: Cascade)
   downloadRecords MateriDownload[]
 
   @@index([uploaderId])
@@ -651,36 +670,36 @@ model GeneratedRPP {
 }
 
 model AIJob {
-  id          String   @id @default(cuid())
-  userId      String
-  type        String                        // "RPP", "SOAL", "PPT"
-  status      String   @default("PENDING")  // PENDING, PROCESSING, COMPLETED, FAILED
-  input       Json
-  output      Json?
-  error       String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id        String   @id @default(cuid())
+  userId    String
+  type      String // "RPP", "SOAL", "PPT"
+  status    String   @default("PENDING") // PENDING, PROCESSING, COMPLETED, FAILED
+  input     Json
+  output    Json?
+  error     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId, createdAt])
   @@index([status, createdAt])
 }
 
 model AiSavedResult {
-  id            String    @id @default(cuid())
-  userId        String
-  agentId       String
-  title         String
-  inputJson     Json
-  outputJson    Json
-  editableText  String?
-  qualityScore  Int?
-  provider      String?
-  model         String?
-  metadata      Json?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id           String   @id @default(cuid())
+  userId       String
+  agentId      String
+  title        String
+  inputJson    Json
+  outputJson   Json
+  editableText String?
+  qualityScore Int?
+  provider     String?
+  model        String?
+  metadata     Json?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId, agentId, createdAt])
   @@index([userId, createdAt])
@@ -761,20 +780,20 @@ model Karya {
 }
 
 model StudentKarya {
-  id         String                @id @default(cuid())
+  id         String           @id @default(cuid())
   userId     String
   title      String
   content    String
   excerpt    String?
   type       StudentKaryaType
   coverImage String?
-  likesCount Int                   @default(0)
-  viewsCount Int                   @default(0)
-  isFeatured Boolean               @default(false)
-  createdAt  DateTime              @default(now())
-  updatedAt  DateTime              @updatedAt
+  likesCount Int              @default(0)
+  viewsCount Int              @default(0)
+  isFeatured Boolean          @default(false)
+  createdAt  DateTime         @default(now())
+  updatedAt  DateTime         @updatedAt
 
-  user     User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user     User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
   likes    StudentKaryaLike[]
   comments StudentKaryaComment[]
 
@@ -1053,19 +1072,19 @@ model Loker {
 }
 
 model AiCreditLedger {
-  id             String   @id @default(cuid())
-  userId         String
-  period         String                 // e.g. "2026-06" or "trial"
-  plan           String                 // FREE, GURU_PRO_TRIAL, GURU_PRO, SCHOOL, FOUNDER
-  creditsTotal   Int
-  creditsUsed    Int      @default(0)
-  creditsReserved Int    @default(0)
-  source         String                 // monthly, trial, manual, admin_adjustment
-  startsAt       DateTime
-  endsAt         DateTime
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
-  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id              String   @id @default(cuid())
+  userId          String
+  period          String // e.g. "2026-06" or "trial"
+  plan            String // FREE, GURU_PRO_TRIAL, GURU_PRO, SCHOOL, FOUNDER
+  creditsTotal    Int
+  creditsUsed     Int      @default(0)
+  creditsReserved Int      @default(0)
+  source          String // monthly, trial, manual, admin_adjustment
+  startsAt        DateTime
+  endsAt          DateTime
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, period, plan])
   @@index([userId, period])
@@ -1091,22 +1110,22 @@ model AIUsage {
   @@index([feature, createdAt])
   @@index([provider, createdAt])
   @@index([status, createdAt])
-  @@index([createdAt])         // monitoring: time-windowed AI request counts
+  @@index([createdAt]) // monitoring: time-windowed AI request counts
 }
 
 model Transaksi {
-  id         String   @id @default(cuid())
-  userId     String
-  type       String
-  amount     Int
-  status     String   @default("PENDING")
-  reference  String?
-  orderId    String?
-  midtransId String?
-  metadata   Json?
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id            String                 @id @default(cuid())
+  userId        String
+  type          String
+  amount        Int
+  status        String                 @default("PENDING")
+  reference     String?
+  orderId       String?
+  midtransId    String?
+  metadata      Json?
+  createdAt     DateTime               @default(now())
+  updatedAt     DateTime               @updatedAt
+  user          User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
   paymentAudits AdminPaymentAuditLog[]
 
   @@index([userId])
@@ -1123,7 +1142,7 @@ model Notifikasi {
   isRead    Boolean  @default(false)
   data      Json?
   createdAt DateTime @default(now())
-  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId, createdAt])
   @@index([userId, isRead])
@@ -1187,7 +1206,7 @@ model Nilai {
   groupId    String
   kategoriId String
   skor       Int
-  sumberType String   // "PENUGASAN", "KARYA", "QUIZ", "MANUAL"
+  sumberType String // "PENUGASAN", "KARYA", "QUIZ", "MANUAL"
   sumberId   String?
   keterangan String?
   createdAt  DateTime @default(now())
@@ -1245,31 +1264,31 @@ model GroupQuizResult {
 }
 
 model Artikel {
-  id          String   @id @default(cuid())
-  title       String
-  slug        String   @unique
-  content     String
-  excerpt     String?
-  coverImage         String?
-  coverImageUrl      String?
-  coverImageAlt      String?
-  coverImageCredit   String?
+  id                  String    @id @default(cuid())
+  title               String
+  slug                String    @unique
+  content             String
+  excerpt             String?
+  coverImage          String?
+  coverImageUrl       String?
+  coverImageAlt       String?
+  coverImageCredit    String?
   coverImageSourceUrl String?
-  coverImageLicense  String?
-  coverImageProvider String?
-  tags               String[]
-  isPublished Boolean  @default(false)
-  readCount   Int      @default(0)
-  authorId    String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  publishedAt DateTime?
-  authorName  String?
-  authorRole  String?
-  articleType String?
-  source      String   @default("USER_CREATED")
-  featured    Boolean  @default(false)
-  author      User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  coverImageLicense   String?
+  coverImageProvider  String?
+  tags                String[]
+  isPublished         Boolean   @default(false)
+  readCount           Int       @default(0)
+  authorId            String
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+  publishedAt         DateTime?
+  authorName          String?
+  authorRole          String?
+  articleType         String?
+  source              String    @default("USER_CREATED")
+  featured            Boolean   @default(false)
+  author              User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
 
   @@index([isPublished, createdAt])
   @@index([authorId])
@@ -1682,7 +1701,7 @@ model LearningUnit {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  level      LearningLevel        @relation(fields: [levelId], references: [id], onDelete: Cascade)
+  level      LearningLevel      @relation(fields: [levelId], references: [id], onDelete: Cascade)
   progress   UserUnitProgress[]
   penugasans Penugasan[]
 
@@ -1690,17 +1709,17 @@ model LearningUnit {
 }
 
 model UserUnitProgress {
-  id        String   @id @default(cuid())
-  userId    String
-  unitId    String
-  completed Boolean  @default(false)
-  score     Int      @default(0)
-  xpEarned  Int      @default(0)
-  coinEarned Int     @default(0)
-  createdAt DateTime @default(now())
+  id          String    @id @default(cuid())
+  userId      String
+  unitId      String
+  completed   Boolean   @default(false)
+  score       Int       @default(0)
+  xpEarned    Int       @default(0)
+  coinEarned  Int       @default(0)
+  createdAt   DateTime  @default(now())
   completedAt DateTime?
 
-  user User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   unit LearningUnit @relation(fields: [unitId], references: [id], onDelete: Cascade)
 
   @@unique([userId, unitId])
@@ -1709,20 +1728,20 @@ model UserUnitProgress {
 }
 
 model Penugasan {
-  id          String   @id @default(cuid())
-  unitId      String
-  groupId     String
-  teacherId   String
-  judul       String
-  deskripsi   String?
-  jenis       String   @default("MATERI") // MATERI (belajar+latihan+praktik) | KUIS (ulangan harian, auto-nilai)
-  tenggat     DateTime?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id        String    @id @default(cuid())
+  unitId    String
+  groupId   String
+  teacherId String
+  judul     String
+  deskripsi String?
+  jenis     String    @default("MATERI") // MATERI (belajar+latihan+praktik) | KUIS (ulangan harian, auto-nilai)
+  tenggat   DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 
-  unit     LearningUnit @relation(fields: [unitId], references: [id], onDelete: Cascade)
-  group    Group        @relation(fields: [groupId], references: [id], onDelete: Cascade)
-  teacher  User         @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+  unit    LearningUnit @relation(fields: [unitId], references: [id], onDelete: Cascade)
+  group   Group        @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  teacher User         @relation(fields: [teacherId], references: [id], onDelete: Cascade)
 
   submissions PenugasanSubmission[]
 
@@ -1766,22 +1785,22 @@ enum SubscriptionStatus {
 }
 
 model Subscription {
-  id                       String             @id @default(cuid())
-  userId                   String
-  plan                     SubscriptionPlan   @default(PRO_MONTHLY)
-  status                   SubscriptionStatus @default(PENDING)
-  midtransSubscriptionId   String?            @unique
-  currentPeriodStart       DateTime           @default(now())
-  currentPeriodEnd         DateTime
-  paymentMethodId          String?
-  paymentMethodType        String?
-  willRenew                Boolean            @default(true)
-  cancelledAt              DateTime?
-  lastTransactionId        String?
-  metadata                 Json?
-  createdAt                DateTime           @default(now())
-  updatedAt                DateTime           @updatedAt
-  user                     User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id                     String             @id @default(cuid())
+  userId                 String
+  plan                   SubscriptionPlan   @default(PRO_MONTHLY)
+  status                 SubscriptionStatus @default(PENDING)
+  midtransSubscriptionId String?            @unique
+  currentPeriodStart     DateTime           @default(now())
+  currentPeriodEnd       DateTime
+  paymentMethodId        String?
+  paymentMethodType      String?
+  willRenew              Boolean            @default(true)
+  cancelledAt            DateTime?
+  lastTransactionId      String?
+  metadata               Json?
+  createdAt              DateTime           @default(now())
+  updatedAt              DateTime           @updatedAt
+  user                   User               @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([status])
@@ -1793,16 +1812,16 @@ model AdminPaymentAuditLog {
   adminUserId   String
   targetUserId  String?
   transactionId String?
-  action        String   // MANUAL_ACTIVATE
+  action        String // MANUAL_ACTIVATE
   previousValue String?
   newValue      String?
   reason        String?
   metadata      Json?
   createdAt     DateTime @default(now())
 
-  admin       User       @relation("PaymentAdminActions", fields: [adminUserId], references: [id], onDelete: Cascade)
-  target      User?      @relation("PaymentTargetActions", fields: [targetUserId], references: [id], onDelete: SetNull)
-  transaksi   Transaksi? @relation(fields: [transactionId], references: [id], onDelete: SetNull)
+  admin     User       @relation("PaymentAdminActions", fields: [adminUserId], references: [id], onDelete: Cascade)
+  target    User?      @relation("PaymentTargetActions", fields: [targetUserId], references: [id], onDelete: SetNull)
+  transaksi Transaksi? @relation(fields: [transactionId], references: [id], onDelete: SetNull)
 
   @@index([adminUserId])
   @@index([targetUserId])
@@ -1815,7 +1834,7 @@ model AdminQuotaAuditLog {
   id            String   @id @default(cuid())
   adminUserId   String
   targetUserId  String
-  action        String   // EXTEND_TRIAL, RESET_CREDITS, ALLOCATE_CREDITS
+  action        String // EXTEND_TRIAL, RESET_CREDITS, ALLOCATE_CREDITS
   amount        Int?
   previousValue String?
   newValue      String?

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getUser } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
+import { getDisplayName } from "@/lib/nickname";
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -9,10 +10,10 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     const karya = await db.studentKarya.findUnique({
       where: { id },
       include: {
-        user: { select: { id: true, fullName: true, avatar: true, profile: { select: { school: true, city: true } } } },
+        user: { select: { id: true, fullName: true, nickname: true, avatar: true, profile: { select: { school: true, city: true } } } },
         comments: {
           include: {
-            user: { select: { id: true, fullName: true, avatar: true } },
+            user: { select: { id: true, fullName: true, nickname: true, avatar: true } },
           },
           orderBy: { createdAt: "asc" },
         },
@@ -28,7 +29,15 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
       data: { viewsCount: { increment: 1 } },
     });
 
-    return NextResponse.json({ karya });
+    // Peers/public see the nickname layer; `fullName` stays untouched for guru
+    // moderation views that read the same shape.
+    const withDisplay = {
+      ...karya,
+      user: { ...karya.user, displayName: getDisplayName(karya.user, "peer") },
+      comments: karya.comments.map((c) => ({ ...c, user: { ...c.user, displayName: getDisplayName(c.user, "peer") } })),
+    };
+
+    return NextResponse.json({ karya: withDisplay });
   } catch (error) {
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }

@@ -8,6 +8,7 @@ import { calcLevel, calcLeagueFromXP } from "@/lib/xp"
 export interface LeagueRow {
   id: string
   fullName: string
+  displayName?: string
   avatar: string | null
   xp: number
   level: number
@@ -126,11 +127,11 @@ export default function LeagueTabs({ weekly, daily, userId, userXP, initialTab =
                     : <span className="text-sm font-bold text-gray-400">{rank}</span>}
                 </div>
                 <div className="w-9 h-9 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center text-white font-bold text-xs shrink-0">
-                  {u.fullName?.charAt(0).toUpperCase() || "?"}
+                  {(u.displayName || u.fullName)?.charAt(0).toUpperCase() || "?"}
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-semibold text-gray-900 truncate">
-                    {u.fullName}
+                    {u.displayName || u.fullName}
                     {isMe && <span className="text-[10px] text-violet-600 ml-1">(kamu)</span>}
                   </p>
                   <p className="text-[10px] text-gray-400">Level {calcLevel(u.xp || 0)} • Streak {u.streak || 0}</p>

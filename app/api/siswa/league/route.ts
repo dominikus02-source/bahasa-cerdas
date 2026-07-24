@@ -3,6 +3,7 @@ import { getUser } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 import cache from "@/lib/redis";
 import { calcLeagueFromXP } from "@/lib/xp";
+import { getDisplayName } from "@/lib/nickname";
 
 const LEAGUE_THRESHOLDS = [
   { tier: "DIAMOND", minXP: 8000 },
@@ -27,15 +28,17 @@ export async function GET() {
         const threshold = LEAGUE_THRESHOLDS.find(t => t.tier === tier)!;
         const nextTier = LEAGUE_THRESHOLDS[LEAGUE_THRESHOLDS.findIndex(t => t.tier === tier) - 1];
 
-        const peers = await db.user.findMany({
+        const peersRaw = await db.user.findMany({
           where: {
             xp: { gte: threshold.minXP },
             ...(nextTier ? { xp: { lt: nextTier.minXP } } : {}),
           },
-          select: { id: true, fullName: true, avatar: true, xp: true, level: true },
+          select: { id: true, fullName: true, nickname: true, avatar: true, xp: true, level: true },
           orderBy: { xp: "desc" },
           take: 30,
         });
+        // Papan sekolah is peer-facing — only the nickname layer travels here.
+        const peers = peersRaw.map((p) => ({ ...p, displayName: getDisplayName(p, "peer") }));
 
         const userRank = peers.findIndex(p => p.id === user.id) + 1;
         const promoted = peers.length >= 30 && userRank <= 3 && tier !== "DIAMOND";

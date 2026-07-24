@@ -3,6 +3,7 @@ import { db } from "@/lib/db"
 import { redirect } from "next/navigation"
 import cache from "@/lib/redis"
 import LeagueTabs, { type LeagueRow } from "./league-tabs"
+import { getDisplayName } from "@/lib/nickname"
 
 export const dynamic = "force-dynamic"
 
@@ -25,7 +26,7 @@ export default async function LeaguePage({
         where: { role: "MURID", xp: { gt: 0 } },
         orderBy: { xp: "desc" },
         take: 50,
-        select: { id: true, fullName: true, avatar: true, xp: true, level: true, coins: true, streak: true },
+        select: { id: true, fullName: true, nickname: true, avatar: true, xp: true, level: true, coins: true, streak: true },
       }) as Promise<LeagueRow[]>,
     300),
     // Daily board = coins earned today.
@@ -51,7 +52,7 @@ export default async function LeaguePage({
       if (userIds.length === 0) return []
       const users = await db.user.findMany({
         where: { id: { in: userIds } },
-        select: { id: true, fullName: true, avatar: true, xp: true, level: true, coins: true, streak: true },
+        select: { id: true, fullName: true, nickname: true, avatar: true, xp: true, level: true, coins: true, streak: true },
       })
       const userMap = Object.fromEntries(users.map(u => [u.id, u]))
       return earned
@@ -64,14 +65,21 @@ export default async function LeaguePage({
   const dailyRank = dailyRows.findIndex(u => u.id === user.id) + 1
   const dailyMyXP = dailyRows.find(u => u.id === user.id)?.todayXP || 0
 
+  // Guru always sees real names; a murid viewing papan sekolah only sees the
+  // nickname layer. Rows are cached viewer-independent, so displayName is
+  // computed per request instead of baked into the cache.
+  const isGuruViewer = user.role === "GURU" || user.isFounder
+  const withDisplay = (rows: LeagueRow[]) =>
+    rows.map((r) => ({ ...r, displayName: isGuruViewer ? r.fullName : getDisplayName(r, "peer") }))
+
   return (
     <div className="px-4 py-5 arena-page">
       <h1 className="text-xl font-extrabold text-gray-900 mb-1">Liga</h1>
       <p className="text-sm text-gray-500 mb-5">Peringkat — 50 murid teratas</p>
 
       <LeagueTabs
-        weekly={{ rows: weeklyRows, myRank: weeklyRank, myXP: user.xp || 0 }}
-        daily={{ rows: dailyRows, myRank: dailyRank, myXP: dailyMyXP }}
+        weekly={{ rows: withDisplay(weeklyRows), myRank: weeklyRank, myXP: user.xp || 0 }}
+        daily={{ rows: withDisplay(dailyRows), myRank: dailyRank, myXP: dailyMyXP }}
         userId={user.id}
         userXP={user.xp || 0}
         initialTab={initialTab}

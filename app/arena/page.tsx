@@ -12,6 +12,7 @@ import {
 } from "lucide-react"
 import { trackDailyStreak, getOrCreateDailyQuests } from "@/lib/coins"
 import { calcLevelProgress, calcLevel, calcLeagueFromXP } from "@/lib/xp"
+import { getDisplayName } from "@/lib/nickname"
 import { TugasCard } from "./tugas-card"
 import BattleCard from "@/components/arena/BattleCard"
 import LeagueMini from "./league-mini"
@@ -36,6 +37,10 @@ export default async function BerandaPage() {
   // Guru boleh mengintip dasbor murid (mode pratinjau) tanpa berubah peran.
   // Founder tetap mendapat pengalaman murid penuh seperti sebelumnya.
   const isGuruPreview = user.role !== "MURID" && !user.isFounder
+  // Guru (preview mode) always sees real names; a murid browsing Arena only
+  // ever sees the nickname layer for peers.
+  const nameOf = (u: { fullName: string; nickname?: string | null }) =>
+    isGuruPreview ? u.fullName : getDisplayName(u, "peer")
 
   // Jangan tulis streak/koin untuk pratinjau guru — akun guru tak boleh terubah.
   if (!isGuruPreview) await trackDailyStreak(user.id)
@@ -78,7 +83,7 @@ export default async function BerandaPage() {
       db.gameResult.findMany({
         where: { rank: 1 },
         include: {
-          user: { select: { id: true, fullName: true, avatar: true } },
+          user: { select: { id: true, fullName: true, nickname: true, avatar: true } },
           room: { select: { code: true, gameType: true } },
         },
         orderBy: { createdAt: "desc" },
@@ -88,7 +93,7 @@ export default async function BerandaPage() {
     ),
     cache.getOrSet("arena:juara-baru", () =>
       db.studentKarya.findMany({
-        include: { user: { select: { id: true, fullName: true, avatar: true } } },
+        include: { user: { select: { id: true, fullName: true, nickname: true, avatar: true } } },
         where: { userId: { not: user.id } },
         orderBy: { createdAt: "desc" },
         take: 3,
@@ -145,13 +150,13 @@ export default async function BerandaPage() {
   ])
 
   let trendingKarya = await db.studentKarya.findMany({
-    include: { user: { select: { id: true, fullName: true, avatar: true } } },
+    include: { user: { select: { id: true, fullName: true, nickname: true, avatar: true } } },
     orderBy: { likesCount: "desc" },
     take: 6,
   })
   if (trendingKarya.length === 0) {
     trendingKarya = await db.studentKarya.findMany({
-      include: { user: { select: { id: true, fullName: true, avatar: true } } },
+      include: { user: { select: { id: true, fullName: true, nickname: true, avatar: true } } },
       orderBy: { createdAt: "desc" },
       take: 3,
     })
@@ -161,12 +166,12 @@ export default async function BerandaPage() {
     where: { xp: { gt: 0 } },
     orderBy: { xp: "desc" },
     take: 3,
-    select: { id: true, fullName: true, xp: true },
+    select: { id: true, fullName: true, nickname: true, xp: true },
   })
 
   // Daily standings for the mini league widget. Mirrors /arena/league so both
   // places agree; cached because every student loads this page.
-  const topHarian = await cache.getOrSet<{ id: string; fullName: string; xp: number }[]>(
+  const topHarian = await cache.getOrSet<{ id: string; fullName: string; nickname: string | null; xp: number }[]>(
     "arena:liga:harian:top3",
     async () => {
       const earned = await db.coinTransaction.groupBy({
@@ -179,12 +184,12 @@ export default async function BerandaPage() {
       if (earned.length === 0) return []
       const users = await db.user.findMany({
         where: { id: { in: earned.map(e => e.userId) } },
-        select: { id: true, fullName: true },
+        select: { id: true, fullName: true, nickname: true },
       })
-      const map = Object.fromEntries(users.map(u => [u.id, u.fullName]))
+      const map = Object.fromEntries(users.map(u => [u.id, u]))
       return earned
         .filter(e => map[e.userId])
-        .map(e => ({ id: e.userId, fullName: map[e.userId], xp: e._sum.amount || 0 }))
+        .map(e => ({ id: e.userId, fullName: map[e.userId].fullName, nickname: map[e.userId].nickname, xp: e._sum.amount || 0 }))
     },
     120
   )
@@ -197,7 +202,7 @@ export default async function BerandaPage() {
     db.gameResult.count({ where: { createdAt: { gte: sepuluhMenitLalu } } }),
     db.gameResult.findMany({
       where: { createdAt: { gte: sepuluhMenitLalu } },
-      include: { user: { select: { id: true, fullName: true } } },
+      include: { user: { select: { id: true, fullName: true, nickname: true } } },
       orderBy: { createdAt: "desc" },
       take: 5,
       distinct: ["userId"],
@@ -432,11 +437,11 @@ export default async function BerandaPage() {
             {aktivitas.slice(0, 2).map((a: any) => (
               <div key={a.id} className="flex items-center gap-2.5 p-3 bg-white border-b border-black/[0.04]">
                 <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white text-sm font-bold shrink-0">
-                  {a.user?.fullName?.charAt(0) || "?"}
+                  {(a.user ? nameOf(a.user) : "").charAt(0) || "?"}
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-xs font-semibold text-[#1A1033]">
-                    <span className="text-purple-600">{a.user?.fullName?.split(" ")[0] || "User"}</span> baru mengalahkan lawan di Adu Cepat
+                    <span className="text-purple-600">{(a.user ? nameOf(a.user) : "User").split(" ")[0]}</span> baru mengalahkan lawan di Adu Cepat
                   </p>
                   <p className="text-[11px] text-[#9B93B8]">{waktuLalu(a.createdAt)} &middot; +{a.xpEarned || 0} XP</p>
                 </div>
@@ -446,11 +451,11 @@ export default async function BerandaPage() {
             {juaraBaru.slice(0, 2).map((k: any) => (
               <Link key={k.id} href={`/arena/feed/${k.id}`} className="flex items-center gap-2.5 p-3 bg-white border-b border-black/[0.04]">
                 <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center text-white text-sm font-bold shrink-0">
-                  {k.user?.fullName?.charAt(0) || "?"}
+                  {(k.user ? nameOf(k.user) : "").charAt(0) || "?"}
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-xs font-semibold text-[#1A1033]">
-                    <span className="text-purple-600">{k.user?.fullName?.split(" ")[0] || "User"}</span> menulis {k.type?.toLowerCase() || "karya"} baru
+                    <span className="text-purple-600">{(k.user ? nameOf(k.user) : "User").split(" ")[0]}</span> menulis {k.type?.toLowerCase() || "karya"} baru
                   </p>
                   <p className="text-[11px] text-[#9B93B8]">{k.title} &middot; {k.likesCount || 0} suka</p>
                 </div>
@@ -535,7 +540,11 @@ export default async function BerandaPage() {
             </h3>
             <Link href="/arena/league" className="text-xs font-semibold text-purple-600">Lihat semua</Link>
           </div>
-          <LeagueMini userId={user.id} harian={topHarian} mingguan={topUsers} />
+          <LeagueMini
+            userId={user.id}
+            harian={topHarian.map((u) => ({ ...u, displayName: nameOf(u) }))}
+            mingguan={topUsers.map((u) => ({ ...u, displayName: nameOf(u) }))}
+          />
         </div>
       )}
 
@@ -566,9 +575,9 @@ export default async function BerandaPage() {
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-1.5">
                   <div className="w-5 h-5 rounded-[7px] bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center text-[8px] font-bold text-white">
-                    {karya.user?.fullName?.charAt(0) || "?"}
+                    {(karya.user ? nameOf(karya.user) : "").charAt(0) || "?"}
                   </div>
-                  <span className="text-[10px] text-[#9B93B8]">{karya.user?.fullName?.split(" ")[0] || "User"}</span>
+                  <span className="text-[10px] text-[#9B93B8]">{(karya.user ? nameOf(karya.user) : "User").split(" ")[0]}</span>
                 </div>
                 <div className="flex items-center gap-1 text-[11px] text-red-500 font-semibold">
                   <Heart size={10} /> {karya.likesCount || 0}
