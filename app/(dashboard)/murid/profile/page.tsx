@@ -124,12 +124,14 @@ export default function MuridProfilePage() {
   }, []);
 
   const [settingsForm, setSettingsForm] = useState({ fullName: "", school: "", city: "", province: "", grade: "", bio: "" });
+  const [avatarSrc, setAvatarSrc] = useState<string | null>(null);
   const [savingSettings, setSavingSettings] = useState(false);
   const [settingsMessage, setSettingsMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
   const openSettings = () => {
     if (!user) return;
     setSettingsForm({ fullName: user.fullName, school: user.school || "", city: user.city || "", province: user.province || "", grade: user.grade || "", bio: user.bio || "" });
+    setAvatarSrc(user.avatar || null);
     setSettingsMessage(null);
     setShowSettings(true);
   };
@@ -141,11 +143,14 @@ export default function MuridProfilePage() {
       const res = await fetch("/api/user/profile", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(settingsForm),
+        body: JSON.stringify({ ...settingsForm, avatar: avatarSrc }),
       });
-      if (!res.ok) throw new Error("Gagal menyimpan");
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || "Gagal menyimpan");
+      }
       setSettingsMessage({ type: "success", text: "Profil berhasil diperbarui!" });
-      setUser(prev => prev ? { ...prev, ...settingsForm } : prev);
+      setUser(prev => prev ? { ...prev, ...settingsForm, avatar: avatarSrc || undefined } : prev);
     } catch (e: any) {
       setSettingsMessage({ type: "error", text: e.message || "Gagal menyimpan" });
     } finally {
@@ -224,8 +229,12 @@ export default function MuridProfilePage() {
         <div className="relative z-10">
           <div className="flex items-start justify-between">
             <div className="flex items-center gap-4">
-              <div className={`w-20 h-20 rounded-full bg-white/20 backdrop-blur flex items-center justify-center text-3xl font-bold border-4 border-white/30 shadow-lg shrink-0 ${league.ring}`}>
-                {initials(displayNickname)}
+              <div className={`w-20 h-20 rounded-full bg-white/20 backdrop-blur flex items-center justify-center text-3xl font-bold border-4 border-white/30 shadow-lg shrink-0 overflow-hidden ${league.ring}`}>
+                {user.avatar ? (
+                  <img src={user.avatar} alt="" className="w-full h-full object-cover" />
+                ) : (
+                  initials(displayNickname)
+                )}
               </div>
               <div>
                 <h1 className="text-2xl font-bold">{displayNickname}</h1>
@@ -408,6 +417,10 @@ export default function MuridProfilePage() {
                   {settingsMessage.text}
                 </div>
               )}
+
+              {/* Avatar */}
+              <AvatarPicker value={avatarSrc} onChange={setAvatarSrc} />
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Nama Lengkap</label>
                 <Input value={settingsForm.fullName} onChange={e => setSettingsForm(p => ({ ...p, fullName: e.target.value }))} className="h-11 rounded-xl" />

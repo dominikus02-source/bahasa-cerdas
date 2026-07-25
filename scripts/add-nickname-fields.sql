@@ -24,8 +24,16 @@ BEGIN
     SELECT 1 FROM information_schema.table_constraints
     WHERE constraint_name = 'NicknameHistory_userId_fkey'
   ) THEN
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.table_constraints
+    WHERE constraint_name = 'NicknameHistory_userId_fkey'
+  ) THEN
     ALTER TABLE "NicknameHistory"
       ADD CONSTRAINT "NicknameHistory_userId_fkey"
       FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE;
+  END IF;
+END $$;
   END IF;
 END $$;
