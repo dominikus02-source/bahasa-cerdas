@@ -171,6 +171,8 @@ model User {
   supabaseId         String                  @unique
   email              String                  @unique
   fullName           String
+  nickname           String?
+  nicknameUpdatedAt  DateTime?
   avatar             String?
   emailConfirmed     Boolean                 @default(false)
   onboarded          Boolean                 @default(false)
@@ -253,6 +255,7 @@ model User {
   penugasanSubmissions PenugasanSubmission[]
   nilais             Nilai[]
   subscriptions      Subscription[]
+  nicknameHistory    NicknameHistory[]
 
   // Admin quota audit logs where this user was the acting admin
   adminQuotaActions  AdminQuotaAuditLog[] @relation("AdminActions")
@@ -292,6 +295,19 @@ model Profile {
   bankHolder String?
   bankNumber String?
   user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model NicknameHistory {
+  id          String   @id @default(cuid())
+  userId      String
+  oldNickname String?
+  newNickname String?
+  changedAt   DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([changedAt])
 }
 
 model UKBIQuestion {

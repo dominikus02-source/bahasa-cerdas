@@ -12,9 +12,11 @@ interface Karya {
   id: string; title: string; content: string; excerpt: string;
   type: KaryaType; coverImage?: string; isFeatured: boolean;
   likesCount: number; viewsCount: number; createdAt: string;
-  user: { id: string; fullName: string; avatar?: string; profile?: { school?: string; city?: string } };
+  user: { id: string; fullName: string; displayName?: string; avatar?: string; profile?: { school?: string; city?: string } };
   _count?: { likes: number; comments: number };
 }
+
+const nameOf = (u: { fullName: string; displayName?: string }) => u.displayName || u.fullName;
 
 const TYPE_META: Record<string, { label: string; badge: string }> = {
   PUISI:    { label: "Puisi",    badge: "bg-rose-100 text-rose-700" },
@@ -54,371 +56,194 @@ export default function HomeFeedPage() {
     setLoadingFeatured(true);
     setUserError(null);
     setFeaturedError(null);
+    setFeedError(null);
 
-    Promise.all([
-      fetch("/api/user/me").then(r => r.ok ? r.json() : Promise.reject("Gagal memuat profil")),
-      fetch("/api/siswa/karya?featured=true&limit=5").then(r => r.ok ? r.json() : Promise.reject("Gagal memuat karya pilihan")),
-    ])
-      .then(([userData, featuredData]) => {
-        setUser(userData?.user || null);
-        setFeatured(featuredData?.karya || []);
+    fetch("/api/user/me")
+      .then(r => { if (!r.ok) throw new Error("Gagal memuat user"); return r.json(); })
+      .then(d => { setUser(d.user || d); setLoadingUser(false); })
+      .catch(e => { setUserError(e.message); setLoadingUser(false); });
+
+    fetch("/api/siswa/karya?limit=6&featured=true")
+      .then(r => { if (!r.ok) throw new Error("Gagal memuat featured"); return r.json(); })
+      .then(d => { setFeatured(d.karya || []); setLoadingFeatured(false); })
+      .catch(e => { setFeaturedError(e.message); setLoadingFeatured(false); });
+
+    fetch("/api/siswa/karya?limit=10")
+      .then(r => { if (!r.ok) throw new Error("Gagal memuat feed"); return r.json(); })
+      .then(d => {
+        setKaryaList(d.karya || []);
+        setCursor(d.nextCursor);
+        setHasMore(!!d.nextCursor);
+        setLoading(false);
       })
-      .catch(err => {
-        if (typeof err === "string") {
-          if (err.includes("profil")) setUserError(err);
-          else setFeaturedError(err);
-        } else {
-          setUserError("Gagal memuat data pengguna");
-          setFeaturedError("Gagal memuat karya pilihan");
-        }
-      })
-      .finally(() => { setLoadingUser(false); setLoadingFeatured(false); });
+      .catch(e => { setFeedError(e.message); setLoading(false); });
   }, []);
 
-  useEffect(() => {
-    const id = requestAnimationFrame(() => setShowLeague(true));
-    return () => cancelAnimationFrame(id);
-  }, []);
-
-  const fetchKarya = useCallback(async (cursor: string | null, type: string, append: boolean) => {
+  const loadMore = useCallback(async () => {
+    if (loadingMore || !cursor) return;
+    setLoadingMore(true);
     try {
-      setFeedError(null);
-      const params = new URLSearchParams({ limit: "10" });
-      if (type) params.set("type", type);
-      if (cursor) params.set("cursor", cursor);
-      const res = await fetch(`/api/siswa/karya?${params}`);
-      if (!res.ok) throw new Error("Gagal memuat karya");
-      const data = await res.json();
-      const items = Array.isArray(data?.karya) ? data.karya : [];
-      setKaryaList(prev => append ? [...prev, ...items] : items);
-      setHasMore(!!data?.nextCursor);
-      setCursor(data?.nextCursor ?? null);
-    } catch {
-      if (!append) { setKaryaList([]); setFeedError("Gagal memuat karya. Coba lagi."); }
-      setHasMore(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    setLoading(true); setKaryaList([]); setCursor(null); setHasMore(true); setFeedError(null);
-    fetchKarya(null, activeType, false).finally(() => setLoading(false));
-  }, [activeType, fetchKarya]);
-
-  // Infinite scroll — same reasoning as the guru feed.
-  //
-  // observe() fires its callback immediately on attach, so an effect keyed on
-  // cursor/hasMore/loadingMore rebuilds the observer after every load and the
-  // new one triggers again while the sentinel is still visible. The feed then
-  // pulled page after page by itself and the page kept scrolling away under
-  // the reader. Paging state moves to refs so the observer is built once.
-  const loadingMoreRef = useRef(false);
-  const cursorRef = useRef<string | null>(null);
-  const hasMoreRef = useRef(true);
-  useEffect(() => { loadingMoreRef.current = loadingMore; }, [loadingMore]);
-  useEffect(() => { cursorRef.current = cursor; }, [cursor]);
-  useEffect(() => { hasMoreRef.current = hasMore; }, [hasMore]);
+      const params = new URLSearchParams({ limit: "10", cursor });
+      if (activeType) params.set("type", activeType);
+      const r = await fetch(`/api/siswa/karya?${params}`);
+      const d = await r.json();
+      setKaryaList(prev => [...prev, ...(d.karya || [])]);
+      setCursor(d.nextCursor);
+      setHasMore(!!d.nextCursor);
+    } catch { setFeedError("Gagal memuat lebih banyak"); }
+    finally { setLoadingMore(false); }
+  }, [cursor, loadingMore, activeType]);
 
   useEffect(() => {
     const el = loaderRef.current;
     if (!el) return;
-    const observer = new IntersectionObserver(entries => {
-      if (!entries[0].isIntersecting) return;
-      if (loadingMoreRef.current || !hasMoreRef.current) return;
-      loadingMoreRef.current = true; // claim before React state catches up
-      setLoadingMore(true);
-      fetchKarya(cursorRef.current, activeType, true).finally(() => {
-        loadingMoreRef.current = false;
-        setLoadingMore(false);
-      });
-    }, { threshold: 0.3 });
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, [activeType, fetchKarya]);
+    const io = new IntersectionObserver(entries => { if (entries[0].isIntersecting && hasMore) loadMore(); }, { rootMargin: "200px" });
+    io.observe(el);
+    return () => io.disconnect();
+  }, [loadMore, hasMore]);
 
-  const TYPES = ["", "PUISI", "CERPEN", "ARTIKEL", "ANEKDOT", "PANTUN", "OPINI"];
+  const isComplete = !loadingUser && user && !loadingFeatured;
 
   return (
-    <div className="grid grid-cols-1 xl:grid-cols-[1fr_360px] gap-5 items-start">
-      {/* ═══ CENTER FEED ═══ */}
-      <div className="min-w-0 max-w-2xl w-full">
-        {/* ── Header ── */}
-        {loadingUser ? (
-          <div className="bg-gradient-to-br from-violet-600 via-purple-600 to-indigo-700 rounded-2xl p-5 text-white mb-5 animate-pulse">
-            <div className="flex items-center gap-3">
-              <div className="w-11 h-11 rounded-full bg-white/20" />
-              <div className="space-y-2 flex-1">
-                <div className="h-4 bg-white/20 rounded w-32" />
-                <div className="h-3 bg-white/20 rounded w-24" />
-              </div>
-            </div>
-            <div className="flex gap-2 mt-3">
-              <div className="h-5 bg-white/20 rounded-full w-16" />
-              <div className="h-5 bg-white/20 rounded-full w-16" />
-              <div className="h-5 bg-white/20 rounded-full w-16" />
-            </div>
-          </div>
-        ) : userError ? (
-          <div className="bg-red-50 border border-red-200 rounded-2xl p-5 mb-5 text-center">
-            <p className="text-sm text-red-600 font-medium">{userError}</p>
-            <button onClick={() => window.location.reload()} className="mt-2 text-xs text-red-500 underline">Muat ulang</button>
-          </div>
-        ) : user && (
-          <div className="bg-gradient-to-br from-violet-600 via-purple-600 to-indigo-700 rounded-2xl p-5 text-white mb-5">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="w-11 h-11 rounded-full bg-white/20 backdrop-blur flex items-center justify-center text-white font-bold border border-white/30 overflow-hidden">
-                  {user.avatar ? <img src={user.avatar} alt="" className="w-full h-full object-cover" /> : user.fullName?.charAt(0).toUpperCase() || "M"}
+    <div className="max-w-3xl mx-auto">
+      {loadingUser ? (
+        <div className="flex justify-center py-16"><div className="animate-spin w-8 h-8 border-4 border-violet-500 border-t-transparent rounded-full" /></div>
+      ) : userError ? (
+        <div className="text-center py-16"><p className="text-gray-500">{userError}</p></div>
+      ) : (
+        <>
+          {/* User Hero */}
+          {user && (
+            <div className="bg-gradient-to-br from-violet-500 via-violet-600 to-purple-700 rounded-[24px] p-6 md:p-8 text-white mb-6 relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2" />
+              <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-full translate-y-1/2 -translate-x-1/2" />
+              <div className="relative z-10">
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="w-16 h-16 rounded-full bg-white/20 backdrop-blur flex items-center justify-center text-2xl font-bold border-2 border-white/30 shadow-lg shrink-0">
+                    {user.displayName?.charAt(0)?.toUpperCase() || user.fullName?.charAt(0)?.toUpperCase() || "M"}
+                  </div>
+                  <div>
+                    <h1 className="text-xl font-bold">{user.displayName || user.fullName}</h1>
+                    <p className="text-sm text-violet-200">{user.school || "BahasaCerdas"}</p>
+                  </div>
                 </div>
-                <div className="leading-tight">
-                  <p className="font-bold text-sm">Halo, {user.fullName?.split(" ")[0]}!</p>
-                  <p className="text-[11px] text-violet-200">Indonesia Menulis</p>
+                <div className="flex flex-wrap gap-3">
+                  <div className="flex items-center gap-1.5 bg-white/15 backdrop-blur rounded-full px-3.5 py-1.5 text-xs font-medium">
+                    <IconFlame size={14} /> {user.streak || 0}
+                  </div>
+                  <div className="flex items-center gap-1.5 bg-white/15 backdrop-blur rounded-full px-3.5 py-1.5 text-xs font-medium">
+                    <IconBolt size={14} /> {user.xp?.toLocaleString() || 0}
+                  </div>
+                  <div className="flex items-center gap-1.5 bg-white/15 backdrop-blur rounded-full px-3.5 py-1.5 text-xs font-medium">
+                    <IconCoin size={14} /> {user.coins || 0}
+                  </div>
                 </div>
               </div>
-              <Link href="/murid/karya/tulis" className="flex items-center gap-1.5 bg-white text-violet-700 px-3.5 py-2 rounded-xl text-xs font-bold hover:bg-violet-50 transition-all shadow-lg">
-                <IconPen size={18} /> Tulis
+            </div>
+          )}
+
+          {/* Featured Karya */}
+          {isComplete && (
+            <section className="mb-8">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+                  <IconTarget size={18} className="text-amber-500" />
+                  Karya Pilihan
+                </h2>
+                <Link href="/murid/beranda?tab=karya" className="text-xs font-semibold text-violet-600 hover:text-violet-700">Lihat semua</Link>
+              </div>
+              {loadingFeatured ? (
+                <div className="flex justify-center py-8"><div className="animate-spin w-6 h-6 border-2 border-violet-500 border-t-transparent rounded-full" /></div>
+              ) : featuredError ? (
+                <div className="bg-amber-50 rounded-2xl p-4 text-sm text-amber-700 text-center">{featuredError}</div>
+              ) : featured.length === 0 ? (
+                <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-2xl p-6 text-center border border-amber-100">
+                  <p className="text-sm text-gray-500">Belum ada karya pilihan.</p>
+                </div>
+              ) : (
+                <div className="grid md:grid-cols-2 gap-4">
+                  {featured.map(k => {
+                    const meta = TYPE_META[k.type] || { label: k.type, badge: "bg-gray-100 text-gray-700" };
+                    return (
+                      <Link key={k.id} href={`/murid/karya/${k.id}`} className="group bg-white rounded-2xl border border-gray-100 p-5 hover:shadow-lg hover:border-violet-200 transition-all duration-200">
+                        <div className="flex items-start justify-between mb-3">
+                          <div className={`px-2.5 py-1 rounded-full text-[11px] font-semibold ${meta.badge}`}>{meta.label}</div>
+                        </div>
+                        <h3 className="font-bold text-gray-900 mb-2 group-hover:text-violet-700 transition-colors line-clamp-2">{k.title}</h3>
+                        <p className="text-sm text-gray-500 line-clamp-2 mb-4">{k.excerpt || k.content?.slice(0, 120)}</p>
+                        <div className="flex items-center gap-3 text-xs text-gray-400">
+                          <span className="flex items-center gap-1"><IconHeart size={12} className="text-red-400" />{k._count?.likes ?? k.likesCount ?? 0}</span>
+                          <span className="flex items-center gap-1"><IconEye size={12} />{k.viewsCount || 0}</span>
+                          <span className="flex items-center gap-1 ml-auto">{nameOf(k.user)}</span>
+                        </div>
+                      </Link>
+                    );
+                  })}
+                </div>
+              )}
+            </section>
+          )}
+
+          {/* Feed */}
+          <section>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+                <IconPen size={18} className="text-violet-500" />
+                Karya Terbaru
+              </h2>
+              <Link href="/murid/karya/tulis" className="flex items-center gap-1.5 px-4 py-2 bg-violet-600 text-white rounded-full text-xs font-bold hover:bg-violet-700 transition-all shadow-sm">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                Tulis
               </Link>
             </div>
-            <div className="flex gap-3 mt-3 text-[11px]">
-              <span className="flex items-center gap-1 bg-white/15 px-2.5 py-1 rounded-full"><IconBolt size={14} />{user.xp?.toLocaleString() || 0} XP</span>
-              <span className="flex items-center gap-1 bg-white/15 px-2.5 py-1 rounded-full"><IconFlame size={14} />{user.streak || 0} hr</span>
-              <span className="flex items-center gap-1 bg-white/15 px-2.5 py-1 rounded-full"><IconCoin size={14} />{user.coins || 0}</span>
-              <span className="flex items-center gap-1 bg-white/15 px-2.5 py-1 rounded-full"><IconTarget size={14} />Lv.{user.level || 1}</span>
-            </div>
-          </div>
-        )}
-
-        {/* ── Arena Promo ── */}
-        <Link href="/arena/jalur-cerdas" className="block mb-4">
-          <div className="bg-gradient-to-r from-violet-600 via-purple-600 to-indigo-700 rounded-xl p-4 shadow-lg">
-            <div className="flex items-center gap-3">
-              <div className="shrink-0 w-10 h-10 rounded-xl bg-white/20 backdrop-blur flex items-center justify-center text-white font-bold border border-white/30">
-                A
+            {loading ? (
+              <div className="flex justify-center py-12"><div className="animate-spin w-8 h-8 border-4 border-violet-500 border-t-transparent rounded-full" /></div>
+            ) : feedError ? (
+              <div className="bg-red-50 rounded-2xl p-4 text-sm text-red-700 text-center">{feedError}</div>
+            ) : karyaList.length === 0 ? (
+              <div className="bg-gradient-to-br from-violet-50 to-purple-50 rounded-2xl p-8 text-center border border-violet-100">
+                <IconPen size={32} className="mx-auto text-violet-300 mb-2" />
+                <p className="text-sm text-gray-500">Belum ada karya. Jadilah yang pertama menulis!</p>
               </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-bold text-white">Coba Arena Mode!</p>
-                <p className="text-[11px] text-violet-200">Belajar seru kayak game — install di HP-mu</p>
+            ) : (
+              <div className="space-y-4">
+                {karyaList.map(k => {
+                  const meta = TYPE_META[k.type] || { label: k.type, badge: "bg-gray-100 text-gray-700" };
+                  return (
+                    <Link key={k.id} href={`/murid/karya/${k.id}`} className="block bg-white rounded-2xl border border-gray-100 p-5 hover:shadow-md hover:border-violet-200 transition-all duration-200">
+                      <div className="flex items-center gap-2 mb-3">
+                        <div className={`px-2.5 py-1 rounded-full text-[11px] font-semibold ${meta.badge}`}>{meta.label}</div>
+                        {k.isFeatured && <span className="text-[11px] font-semibold text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full">Pilihan</span>}
+                      </div>
+                      <h3 className="font-bold text-gray-900 mb-1.5 group-hover:text-violet-700 transition-colors">{k.title}</h3>
+                      <p className="text-sm text-gray-500 line-clamp-2 mb-3">{k.excerpt || k.content?.slice(0, 150)}</p>
+                      <div className="flex items-center gap-3 text-xs text-gray-400">
+                        <span className="flex items-center gap-1"><IconHeart size={12} className="text-red-400" />{k._count?.likes ?? k.likesCount ?? 0}</span>
+                        <span className="flex items-center gap-1"><IconEye size={12} />{k.viewsCount || 0}</span>
+                        <span className="flex items-center gap-1 ml-auto"><IconClock size={12} />{waktuLalu(k.createdAt)}</span>
+                      </div>
+                    </Link>
+                  );
+                })}
+                <div ref={loaderRef} className="py-4 text-center">
+                  {loadingMore && <div className="animate-spin w-6 h-6 border-2 border-violet-500 border-t-transparent rounded-full mx-auto" />}
+                  {!hasMore && karyaList.length > 0 && <p className="text-xs text-gray-400">Semua karya telah dimuat</p>}
+                </div>
               </div>
-              <svg className="w-5 h-5 text-white/70 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7"/></svg>
-            </div>
-          </div>
-        </Link>
-
-        {/* ── League (lazy loaded) ── */}
-        {showLeague && <LeagueWidget />}
-
-        {/* ── Quick links ── */}
-        <div className="flex gap-2 mb-5">
-          <Link href="/murid/kuest-harian" className="flex items-center gap-1.5 px-3 py-2 bg-gradient-to-r from-orange-50 to-amber-50 border border-orange-200 rounded-xl text-xs font-semibold text-orange-600 hover:shadow-md transition-all">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
-            Quest
-          </Link>
-          <Link href="/murid/toko-koin" className="flex items-center gap-1.5 px-3 py-2 bg-gradient-to-r from-amber-50 to-yellow-50 border border-amber-200 rounded-xl text-xs font-semibold text-amber-600 hover:shadow-md transition-all">
-            <IconCoin size={14} />
-            Toko
-          </Link>
-          <Link href="/murid/gabung-kelas" className="flex items-center gap-1.5 px-3 py-2 bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-200 rounded-xl text-xs font-semibold text-emerald-600 hover:shadow-md transition-all">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
-            Gabung Kelas
-          </Link>
-        </div>
-
-        {/* ── Karya Pilihan ── */}
-        {loadingFeatured ? (
-          <div className="mb-6">
-            <h2 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Karya Pilihan</h2>
-            <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
-              {[1, 2, 3].map(i => (
-                <div key={i} className="shrink-0 w-56 bg-gray-100 rounded-xl p-4 animate-pulse">
-                  <div className="h-4 bg-gray-200 rounded w-16 mb-3" />
-                  <div className="h-4 bg-gray-200 rounded w-40 mb-2" />
-                  <div className="h-3 bg-gray-200 rounded w-48 mb-2" />
-                  <div className="h-3 bg-gray-200 rounded w-24" />
-                </div>
-              ))}
-            </div>
-          </div>
-        ) : featuredError ? (
-          <div className="mb-6 text-center py-4">
-            <p className="text-xs text-gray-400">{featuredError}</p>
-          </div>
-        ) : featured.length > 0 && (
-          <div className="mb-6">
-            <h2 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Karya Pilihan</h2>
-            <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide -mx-1 px-1">
-              {featured.map(k => {
-                const m = TYPE_META[k.type] || TYPE_META.OPINI;
-                return (
-                  <Link key={k.id} href={`/murid/karya/${k.id}`} className="shrink-0 w-56 bg-gradient-to-br from-violet-500 to-purple-700 rounded-xl p-4 text-white hover:shadow-xl hover:-translate-y-0.5 transition-all">
-                    <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${m.badge}`}>{m.label}</span>
-                    <h3 className="font-bold text-sm mt-2 line-clamp-2 leading-snug">{k.title}</h3>
-                    <p className="text-xs text-violet-200 mt-2 line-clamp-2">{k.excerpt?.slice(0, 80)}</p>
-                    <p className="text-[10px] text-violet-300 mt-2">{k.user.fullName}</p>
-                  </Link>
-                );
-              })}
-            </div>
-          </div>
-        )}
-
-        {/* ── Kategori ── */}
-        <div className="flex gap-1.5 mb-5 overflow-x-auto pb-1 scrollbar-hide">
-          {TYPES.map(type => (
-            <button key={type} onClick={() => setActiveType(type)}
-              className={`whitespace-nowrap px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-                activeType === type
-                  ? "bg-violet-600 text-white shadow-lg shadow-violet-200"
-                  : "bg-gray-100 text-gray-500 hover:bg-gray-200"
-              }`}
-            >
-              {TYPE_META[type]?.label || type || "Semua"}
-            </button>
-          ))}
-        </div>
-
-        {/* ── Feed ── */}
-        {loading ? (
-          <div className="flex justify-center py-20">
-            <div className="animate-spin w-7 h-7 border-[3px] border-violet-500 border-t-transparent rounded-full" />
-          </div>
-        ) : feedError ? (
-          <div className="text-center py-20 bg-white rounded-2xl border border-gray-100">
-            <div className="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-4">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-red-500"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-            </div>
-            <p className="text-gray-500 font-medium">{feedError}</p>
-            <button onClick={() => { setActiveType(prev => prev); }} className="mt-4 px-5 py-2.5 bg-violet-600 text-white rounded-xl text-sm font-semibold hover:bg-violet-700 transition-colors">Coba Lagi</button>
-          </div>
-        ) : karyaList.length === 0 ? (
-          <div className="text-center py-20 bg-white rounded-2xl border border-gray-100">
-            <div className="w-16 h-16 rounded-full bg-violet-100 flex items-center justify-center mx-auto mb-4">
-              <IconPen size={24} className="text-violet-500" />
-            </div>
-            <p className="text-gray-500 font-medium">Belum ada karya</p>
-            <p className="text-gray-400 text-sm mt-1">Jadilah yang pertama menulis!</p>
-            <Link href="/murid/karya/tulis" className="inline-block mt-4 px-5 py-2.5 bg-violet-600 text-white rounded-xl text-sm font-semibold hover:bg-violet-700 transition-colors">Tulis Karya</Link>
-          </div>
-        ) : (
-          <div className="space-y-4">
-            {karyaList.map(karya => {
-              const m = TYPE_META[karya.type] || TYPE_META.OPINI;
-              return (
-              <Link key={karya.id} href={`/murid/karya/${karya.id}`} className="block bg-white rounded-xl border border-gray-100 hover:shadow-lg hover:border-violet-200 transition-all overflow-hidden group">
-                <div className="p-5">
-                  <div className="flex items-center gap-2 mb-3">
-                    <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${m.badge}`}>{m.label}</span>
-                    {karya.isFeatured && <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-yellow-100 text-yellow-700">Pilihan</span>}
-                  </div>
-                  <h2 className="font-bold text-gray-900 text-lg leading-snug group-hover:text-violet-700 transition-colors mb-2">{karya.title}</h2>
-                  <p className="text-sm text-gray-500 line-clamp-3 leading-relaxed mb-4">
-                    {karya.excerpt || karya.content.replace(/<[^>]*>/g, "").slice(0, 200)}
-                  </p>
-                  <div className="flex items-center gap-3">
-                    <button
-                      type="button"
-                      onClick={(e) => { e.preventDefault(); e.stopPropagation(); if (karya.user.id) router.push(`/profile/${karya.user.id}`); }}
-                      className="w-7 h-7 rounded-full bg-gradient-to-br from-violet-400 to-purple-500 flex items-center justify-center text-white text-[10px] font-bold shrink-0 hover:ring-2 hover:ring-violet-300 transition-all"
-                      aria-label={`Lihat profil ${karya.user.fullName}`}
-                    >
-                      {karya.user.avatar ? <img src={karya.user.avatar} alt="" className="w-full h-full rounded-full object-cover" /> : karya.user.fullName.charAt(0)}
-                    </button>
-                    <div className="flex-1 min-w-0 text-xs">
-                      {/* Not a nested <Link>: the whole card is already an anchor,
-                          and anchors cannot nest. This intercepts the click,
-                          stops the card navigation, and goes to the author. */}
-                      <button
-                        type="button"
-                        onClick={(e) => { e.preventDefault(); e.stopPropagation(); if (karya.user.id) router.push(`/profile/${karya.user.id}`); }}
-                        className="font-semibold text-gray-800 hover:text-violet-600 transition-colors"
-                      >
-                        {karya.user.fullName}
-                      </button>
-                      <span className="text-gray-400 mx-1">·</span>
-                      <span className="text-gray-400">{karya.user.profile?.school ? karya.user.profile.school.split(" ").slice(0, 2).join(" ") : "Siswa"}</span>
-                      {karya.user.profile?.city && <span className="text-gray-300 mx-1">·</span>}
-                      {karya.user.profile?.city && <span className="text-gray-400">{karya.user.profile.city}</span>}
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-4 mt-3 pt-3 border-t border-gray-50 text-xs text-gray-400">
-                    <span className="flex items-center gap-1"><IconHeart size={13} />{karya.likesCount}</span>
-                    <span className="flex items-center gap-1"><IconChat size={13} />{karya._count?.comments || 0}</span>
-                    <span className="flex items-center gap-1"><IconEye size={13} />{karya.viewsCount}</span>
-                    <span className="flex items-center gap-1 ml-auto"><IconClock size={13} />{new Date(karya.createdAt).toLocaleDateString("id-ID", { day: "numeric", month: "short" })}</span>
-                  </div>
-                </div>
-              </Link>
-            );})}
-            <div ref={loaderRef} className="flex justify-center py-4">
-              {loadingMore && <div className="animate-spin w-6 h-6 border-[3px] border-violet-500 border-t-transparent rounded-full" />}
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* ═══ RIGHT PANEL ═══ */}
-      <div className="xl:sticky xl:top-5 min-w-0">
-        {user && <ChatPanel userId={user.id || user.userId} />}
-      </div>
+            )}
+          </section>
+        </>
+      )}
     </div>
   );
 }
 
-function LeagueWidget() {
-  const [league, setLeague] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    setLoading(true); setError(null);
-    fetch("/api/siswa/league")
-      .then(r => r.ok ? r.json() : Promise.reject("Gagal memuat liga"))
-      .then(d => setLeague(d))
-      .catch(() => setError("Gagal memuat liga"))
-      .finally(() => setLoading(false));
-  }, []);
-
-  if (loading) {
-    return (
-      <div className="rounded-xl border border-gray-100 px-4 py-3 mb-4 animate-pulse bg-gray-50">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-6 h-6 rounded-full bg-gray-200" />
-            <div className="space-y-1.5">
-              <div className="h-3 bg-gray-200 rounded w-20" />
-              <div className="h-4 bg-gray-200 rounded w-28" />
-            </div>
-          </div>
-          <div className="h-3 bg-gray-200 rounded w-24" />
-        </div>
-      </div>
-    );
-  }
-
-  if (error || !league) return null;
-
-  const tierColors: Record<string, string> = {
-    BRONZE: "border-orange-200 bg-orange-50",
-    SILVER: "border-gray-200 bg-gray-50",
-    GOLD: "border-yellow-200 bg-yellow-50",
-    DIAMOND: "border-sky-200 bg-sky-50",
-  };
-  const tierText: Record<string, string> = {
-    BRONZE: "text-orange-600", SILVER: "text-gray-600", GOLD: "text-yellow-600", DIAMOND: "text-sky-600",
-  };
-
-  return (
-    <Link href="/murid/progresku" className={`flex items-center justify-between rounded-xl border px-4 py-3 mb-4 hover:shadow-md transition-all ${tierColors[league.tier] || "border-violet-100 bg-violet-50"}`}>
-      <div className="flex items-center gap-3">
-        <IconTarget size={24} className={tierText[league.tier] || "text-violet-500"} />
-        <div>
-          <p className="text-[11px] text-gray-500 font-medium">Liga {league.label}</p>
-          <p className="text-sm font-bold text-gray-900">#{league.rank} dari {league.total}</p>
-        </div>
-      </div>
-      <div className="text-right text-[11px]">
-        {league.xpToNext > 0 ? <p className="text-gray-500"><span className="font-semibold text-violet-600">{league.xpToNext}</span> XP ke {league.nextTier}</p> : <p className="text-emerald-600 font-semibold">Puncak!</p>}
-        {league.promoted && <p className="text-emerald-600 font-bold mt-0.5">Naik liga!</p>}
-        {league.demoted && <p className="text-red-500 font-bold mt-0.5">Turun</p>}
-      </div>
-    </Link>
-  );
+function waktuLalu(t: string) {
+  const diff = Date.now() - new Date(t).getTime();
+  const m = Math.floor(diff / 60000);
+  if (m < 1) return "baru saja";
+  if (m < 60) return `${m}m`;
+  const h = Math.floor(m / 60);
+  if (h < 24) return `${h}j`;
+  return `${Math.floor(h / 24)}h`;
 }

@@ -10,9 +10,11 @@ interface KaryaDetail {
   id: string; title: string; content: string; excerpt?: string;
   type: string; coverImage?: string; likesCount: number; viewsCount: number;
   createdAt: string;
-  user: { id: string; fullName: string; avatar?: string; profile?: { school?: string; city?: string } };
-  comments: { id: string; content: string; createdAt: string; user: { id: string; fullName: string; avatar?: string } }[];
+  user: { id: string; fullName: string; displayName?: string; avatar?: string; profile?: { school?: string; city?: string } };
+  comments: { id: string; content: string; createdAt: string; user: { id: string; fullName: string; displayName?: string; avatar?: string } }[];
 }
+
+const nameOf = (u: { fullName: string; displayName?: string }) => u.displayName || u.fullName;
 
 const TYPE_ICON: Record<string, any> = { PUISI: PenLine, CERPEN: BookOpen, ARTIKEL: Newspaper, ANEKDOT: MessageCircle, PANTUN: Music, OPINI: Lightbulb };
 const TYPE_LABELS: Record<string, string> = { PUISI: "Puisi", CERPEN: "Cerpen", ARTIKEL: "Artikel", ANEKDOT: "Anekdot", PANTUN: "Pantun", OPINI: "Opini" };
@@ -70,9 +72,6 @@ export default function DetailKaryaPage() {
     }
   };
 
-  // Shows the comment immediately and reconciles with the server copy when it
-  // lands, matching CommentSection. Waiting for the response before rendering
-  // made posting feel like it took seconds even when the request was fast.
   const handleComment = async () => {
     const text = commentText.trim();
     if (!text || submittingComment) return;
@@ -108,21 +107,16 @@ export default function DetailKaryaPage() {
 
   return (
     <div className="max-w-2xl mx-auto">
-      {/* Back */}
       <button onClick={() => router.back()} className="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-900 mb-4 transition-colors">
         <ArrowLeft size={16} /> Kembali
       </button>
 
-      {/* Author Info */}
       <div className="flex items-center gap-3 mb-6">
-        {/* These linked to /murid/profile — the viewer's OWN profile, with no id
-            in the path — so tapping any student's name opened your own page
-            instead of theirs. */}
         <Link href={`/profile/${karya.user.id}`} className="w-10 h-10 rounded-full bg-gradient-to-br from-violet-400 to-purple-500 flex items-center justify-center text-white font-bold text-sm shrink-0">
-          {karya.user.avatar ? <img src={karya.user.avatar} alt="" className="w-full h-full rounded-full object-cover" /> : karya.user.fullName.charAt(0)}
+          {karya.user.avatar ? <img src={karya.user.avatar} alt="" className="w-full h-full rounded-full object-cover" /> : nameOf(karya.user).charAt(0)}
         </Link>
         <div className="flex-1">
-          <Link href={`/profile/${karya.user.id}`} className="text-sm font-semibold text-gray-900 hover:text-violet-600">{karya.user.fullName}</Link>
+          <Link href={`/profile/${karya.user.id}`} className="text-sm font-semibold text-gray-900 hover:text-violet-600">{nameOf(karya.user)}</Link>
           <p className="text-xs text-gray-400">
             {karya.user.profile?.school && `${karya.user.profile.school}${karya.user.profile.city ? ` · ${karya.user.profile.city}` : ""}`}
           </p>
@@ -133,7 +127,6 @@ export default function DetailKaryaPage() {
         </div>
       </div>
 
-      {/* Type Badge */}
       <div className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold mb-4 ${
         karya.type === "PUISI" ? "bg-rose-100 text-rose-600" :
         karya.type === "CERPEN" ? "bg-blue-100 text-blue-600" :
@@ -145,7 +138,6 @@ export default function DetailKaryaPage() {
           <span>{TYPE_LABELS[karya.type]}</span>
       </div>
 
-      {/* Cover Image */}
       {karya.coverImage && (
         <div className="relative w-full h-64 rounded-xl overflow-hidden bg-gradient-to-br from-violet-100 to-violet-200">
           <SafeMediaImage
@@ -157,15 +149,12 @@ export default function DetailKaryaPage() {
         </div>
       )}
 
-      {/* Title */}
       <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-6 leading-snug">{karya.title}</h1>
 
-      {/* Content */}
       <div className="prose prose-gray max-w-none mb-8 whitespace-pre-wrap leading-relaxed text-gray-700">
         {karya.content}
       </div>
 
-      {/* Action Bar */}
       <div className="flex items-center gap-4 mb-8 pb-8 border-b border-gray-100">
         <button onClick={handleLike} className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all ${
           liked ? "bg-red-50 text-red-500" : "bg-gray-50 text-gray-500 hover:bg-red-50 hover:text-red-500"
@@ -196,11 +185,9 @@ export default function DetailKaryaPage() {
         )}
       </div>
 
-      {/* Comments */}
       <div className="mb-6">
         <h3 className="font-bold text-gray-900 mb-4">Komentar ({comments.length})</h3>
 
-        {/* Comment Input */}
         <div className="flex gap-3 mb-6">
           <input
             value={commentText} onChange={e => setCommentText(e.target.value)}
@@ -214,7 +201,6 @@ export default function DetailKaryaPage() {
           </button>
         </div>
 
-        {/* Comment List */}
         {comments.length === 0 ? (
           <div className="text-center py-8 text-gray-400 text-sm">Belum ada komentar. Jadilah yang pertama!</div>
         ) : (
@@ -223,19 +209,19 @@ export default function DetailKaryaPage() {
               <div key={c.id} className="flex gap-3">
                 {c.user.id && !c.id.startsWith("temp-") ? (
                   <Link href={`/profile/${c.user.id}`} className="w-8 h-8 rounded-full bg-gradient-to-br from-violet-300 to-purple-400 flex items-center justify-center text-white text-xs font-bold shrink-0 hover:ring-2 hover:ring-violet-300 transition-all">
-                    {c.user.avatar ? <img src={c.user.avatar} alt="" className="w-full h-full rounded-full object-cover" /> : c.user.fullName.charAt(0)}
+                    {c.user.avatar ? <img src={c.user.avatar} alt="" className="w-full h-full rounded-full object-cover" /> : nameOf(c.user).charAt(0)}
                   </Link>
                 ) : (
                   <div className="w-8 h-8 rounded-full bg-gradient-to-br from-violet-300 to-purple-400 flex items-center justify-center text-white text-xs font-bold shrink-0">
-                    {c.user.avatar ? <img src={c.user.avatar} alt="" className="w-full h-full rounded-full object-cover" /> : c.user.fullName.charAt(0)}
+                    {c.user.avatar ? <img src={c.user.avatar} alt="" className="w-full h-full rounded-full object-cover" /> : nameOf(c.user).charAt(0)}
                   </div>
                 )}
                 <div className="flex-1 bg-white rounded-xl border border-gray-100 p-3">
                   <div className="flex items-center gap-2 mb-1">
                     {c.user.id && !c.id.startsWith("temp-") ? (
-                      <Link href={`/profile/${c.user.id}`} className="text-sm font-semibold text-gray-900 hover:text-violet-600 transition-colors">{c.user.fullName}</Link>
+                      <Link href={`/profile/${c.user.id}`} className="text-sm font-semibold text-gray-900 hover:text-violet-600 transition-colors">{nameOf(c.user)}</Link>
                     ) : (
-                      <span className="text-sm font-semibold text-gray-900">{c.user.fullName}</span>
+                      <span className="text-sm font-semibold text-gray-900">{nameOf(c.user)}</span>
                     )}
                     <span className="text-xs text-gray-400">{new Date(c.createdAt).toLocaleDateString("id-ID", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}</span>
                   </div>

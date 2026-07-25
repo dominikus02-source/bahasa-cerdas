@@ -3,6 +3,7 @@ import { getUser } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 import { awardCoins, trackQuestProgress, trackDailyStreak } from "@/lib/coins";
 import { commentSchema, sanitize } from "@/lib/validations";
+import { getDisplayName } from "@/lib/nickname";
 
 export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -29,56 +30,25 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
         content: sanitizedContent,
       },
       include: {
-        user: { select: { id: true, fullName: true, avatar: true } },
+        user: { select: { id: true, fullName: true, nickname: true, avatar: true } },
       },
     });
 
-    // Coins/streak/quest/notif run after the response: none of them change what
-    // the client renders, and awaiting them made posting a comment wait on
-    // several extra roundtrips. They were also under Promise.all, so one failing
-    // bonus returned a 500 for a comment that had in fact been saved.
+    const commentWithDisplay = { ...comment, user: { ...comment.user, displayName: getDisplayName(comment.user, "peer") } };
+
     after(async () => {
-      await Promise.allSettled([
-        awardCoins(user.id, "MEMBERI_KOMENTAR", id),
-        trackDailyStreak(user.id),
-        trackQuestProgress(user.id, "MENGOMENTARI"),
-        (async () => {
-          const karya = await db.studentKarya.findUnique({ where: { id }, select: { userId: true, title: true } });
-          if (!karya || karya.userId === user.id) return;
-          await db.notifikasi.create({
-            data: {
-              userId: karya.userId,
-              title: "Komentar Baru 💬",
-              body: `${user.fullName} berkomentar di "${sanitize(karya.title)}"`,
-              type: "COMMENT",
-              data: { karyaId: id, userId: user.id, userName: sanitize(user.fullName), commentId: comment.id },
-            },
-          });
-        })(),
-      ]);
+      try {
+        await Promise.all([
+          awardCoins(user.id, "MEMBERI_KOMENTAR", `Karya ${id}`),
+          trackQuestProgress(user.id, "MENGOMENTARI"),
+          trackDailyStreak(user.id),
+        ]);
+      } catch {}
     });
 
-    return NextResponse.json({ comment, coinsEarned: 1 }, { status: 201 });
+    return NextResponse.json({ comment: commentWithDisplay }, { status: 201 });
   } catch (error) {
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
-  }
-}
-
-export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  try {
-    const { id } = await params;
-
-    const comments = await db.studentKaryaComment.findMany({
-      where: { karyaId: id },
-      include: {
-        user: { select: { id: true, fullName: true, avatar: true } },
-      },
-      orderBy: { createdAt: "desc" },
-      take: 50,
-    });
-
-    return NextResponse.json({ comments });
-  } catch (error) {
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    console.error("Error creating comment:", error);
+    return NextResponse.json({ error: "Gagal menambahkan komentar" }, { status: 500 });
   }
 }

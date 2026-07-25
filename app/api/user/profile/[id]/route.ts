@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import cache from "@/lib/redis";
+import { getDisplayName } from "@/lib/nickname";
 
 export async function GET(
   req: NextRequest,
@@ -18,6 +19,7 @@ export async function GET(
       select: {
         id: true,
         fullName: true,
+        nickname: true,
         avatar: true,
         role: true,
         isFounder: true,
@@ -37,84 +39,38 @@ export async function GET(
             subject: true,
           },
         },
-        _count: {
-          select: {
-            karya: true,
-            artikel: true,
-            soals: true,
-            ukbiQuestions: true,
-            tkaQuestions: true,
-            uploadedBankSoals: true,
-            uploadedMateris: true,
-          },
-        },
       },
     });
 
     if (!user) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
+      return NextResponse.json({ error: "User tidak ditemukan" }, { status: 404 });
     }
 
-    // The student's own writings (puisi/cerpen/etc). The profile only ever
-    // showed a "Karya" count that reads User.karya — the marketplace relation,
-    // which is 0 for students — so a student who had written six pieces saw
-    // "Karya 0" and no list. These are the works they actually made.
-    const [works, totalWorks] = await Promise.all([
-      db.studentKarya.findMany({
-        where: { userId: id },
-        orderBy: { createdAt: "desc" },
-        take: 24,
-        select: { id: true, title: true, type: true, likesCount: true, viewsCount: true, createdAt: true },
-      }),
+    const [karyaCount, totalLikes, totalViews] = await Promise.all([
       db.studentKarya.count({ where: { userId: id } }),
+      db.studentKarya.aggregate({ where: { userId: id }, _sum: { likesCount: true } }),
+      db.studentKarya.aggregate({ where: { userId: id }, _sum: { viewsCount: true } }),
     ]);
 
-    // Hitung total penjualan karya
-    const totalSold = await db.pembelian.count({
-      where: {
-        karya: { sellerId: id },
-        status: "PAID",
-      },
-    });
-
-    // Hitung total downloads karya
-    const totalDownloads = await db.karya.aggregate({
-      where: { sellerId: id, isPublished: true },
-      _sum: { downloads: true },
-    });
-
-    const result = {
+    const response = {
       user: {
-        id: user.id,
-        fullName: user.fullName,
-        avatar: user.avatar,
-        role: user.role,
-        isFounder: user.isFounder,
-        isPremium: user.isPremium,
-        premiumPlan: user.premiumPlan,
-        xp: user.xp,
-        level: user.level,
-        streak: user.streak,
-        league: user.league,
-        joinedAt: user.createdAt,
-        profile: user.profile,
-        works,
-        stats: {
-          totalKarya: totalWorks,
-          totalArtikel: user._count.artikel,
-          totalSoal: user._count.soals + user._count.ukbiQuestions + user._count.tkaQuestions + user._count.uploadedBankSoals,
-          totalMateri: user._count.uploadedMateris,
-          totalSold,
-          totalDownloads: totalDownloads._sum.downloads || 0,
-        },
+        ...user,
+        displayName: getDisplayName(user, "peer"),
+        bio: user.profile?.bio || null,
+        school: user.profile?.school || null,
+      },
+      stats: {
+        karyaCount,
+        totalLikes: totalLikes._sum.likesCount || 0,
+        totalViews: totalViews._sum.viewsCount || 0,
       },
     };
 
-    await cache.set(cacheKey, result, 60); // 1 min — profile data changes moderately
+    await cache.set(cacheKey, response, 300);
 
-    return NextResponse.json(result, { headers: { "X-Cache": "MISS" } });
+    return NextResponse.json(response, { headers: { "X-Cache": "MISS" } });
   } catch (error) {
-    console.error("GET /api/user/profile/[id] error:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    console.error("Error fetching public profile:", error);
+    return NextResponse.json({ error: "Gagal memuat profil" }, { status: 500 });
   }
 }

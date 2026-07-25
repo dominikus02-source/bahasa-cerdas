@@ -3,6 +3,7 @@ import { getUser } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 import cache from "@/lib/redis";
 import { calcLeagueFromXP } from "@/lib/xp";
+import { getDisplayName } from "@/lib/nickname";
 
 const LEAGUE_THRESHOLDS = [
   { tier: "DIAMOND", minXP: 8000 },
@@ -27,37 +28,37 @@ export async function GET() {
         const threshold = LEAGUE_THRESHOLDS.find(t => t.tier === tier)!;
         const nextTier = LEAGUE_THRESHOLDS[LEAGUE_THRESHOLDS.findIndex(t => t.tier === tier) - 1];
 
-        const peers = await db.user.findMany({
+        const peersRaw = await db.user.findMany({
           where: {
             xp: { gte: threshold.minXP },
             ...(nextTier ? { xp: { lt: nextTier.minXP } } : {}),
           },
-          select: { id: true, fullName: true, avatar: true, xp: true, level: true },
+          select: { id: true, fullName: true, nickname: true, avatar: true, xp: true, level: true },
           orderBy: { xp: "desc" },
           take: 30,
         });
 
-        const userRank = peers.findIndex(p => p.id === user.id) + 1;
-        const promoted = peers.length >= 30 && userRank <= 3 && tier !== "DIAMOND";
-        const demoted = userRank > peers.length * 0.8 && tier !== "BRONZE";
+        const peers = peersRaw.map(p => ({
+          ...p,
+          displayName: getDisplayName(p, "peer"),
+        }));
+
+        const myRank = peers.findIndex(p => p.id === user.id) + 1;
 
         return {
-          tier,
-          label: LEAGUE_LABELS[tier],
-          rank: userRank || peers.length,
-          total: peers.length,
           peers,
-          promoted,
-          demoted,
-          xpToNext: nextTier ? nextTier.minXP - user.xp : 0,
-          nextTier: nextTier ? LEAGUE_LABELS[nextTier.tier] : null,
+          myRank,
+          myXP: user.xp || 0,
+          tier: LEAGUE_LABELS[tier] || "Perunggu",
+          nextTier: nextTier ? { label: LEAGUE_LABELS[nextTier.tier] || "", minXP: nextTier.minXP } : null,
         };
       },
-      60
+      120
     );
 
     return NextResponse.json(data);
   } catch (error) {
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    console.error("Error fetching league:", error);
+    return NextResponse.json({ error: "Gagal memuat papan peringkat" }, { status: 500 });
   }
 }

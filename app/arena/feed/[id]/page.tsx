@@ -6,6 +6,7 @@ import { ArrowLeft, Heart, MessageCircle, Eye, Clock, Sparkles, BookOpen, FileTe
 import { ToggleLike } from "./toggle-like"
 import CommentSection from "@/components/arena/CommentSection"
 import DeleteKaryaButton from "@/components/arena/DeleteKaryaButton"
+import { getDisplayName } from "@/lib/nickname"
 
 const typeIcon: Record<string, { icon: React.ReactNode }> = {
   PUISI: { icon: <Sparkles className="w-5 h-5" /> },
@@ -28,7 +29,7 @@ export default async function FeedDetailPage({ params }: { params: Promise<{ id:
   const karya = await db.studentKarya.findUnique({
     where: { id },
     include: {
-      user: { select: { id: true, fullName: true, avatar: true } },
+      user: { select: { id: true, fullName: true, nickname: true, avatar: true } },
       _count: { select: { likes: true, comments: true } },
       likes: { where: { userId: user.id }, take: 1 },
     },
@@ -36,13 +37,20 @@ export default async function FeedDetailPage({ params }: { params: Promise<{ id:
 
   if (!karya) redirect("/arena/feed")
 
+  const isGuruViewer = user.role === "GURU" || user.isFounder
+  const authorName = karya.user ? (isGuruViewer ? karya.user.fullName : getDisplayName(karya.user, "peer")) : "Pengguna"
+
   const rawComments = await db.studentKaryaComment.findMany({
     where: { karyaId: id },
-    include: { user: { select: { id: true, fullName: true, avatar: true } } },
+    include: { user: { select: { id: true, fullName: true, nickname: true, avatar: true } } },
     orderBy: { createdAt: "desc" },
     take: 20,
   })
-  const comments = rawComments.map(c => ({ ...c, createdAt: c.createdAt.toISOString() }))
+  const comments = rawComments.map(c => ({
+    ...c,
+    createdAt: c.createdAt.toISOString(),
+    user: { ...c.user, displayName: isGuruViewer ? c.user.fullName : getDisplayName(c.user, "peer") },
+  }))
 
   await db.studentKarya.update({ where: { id }, data: { viewsCount: { increment: 1 } } })
 
@@ -50,7 +58,6 @@ export default async function FeedDetailPage({ params }: { params: Promise<{ id:
 
   return (
     <div className="arena-page">
-      {/* Top bar */}
       <div className="flex items-center gap-3 px-4 py-4 border-b border-gray-100 bg-white sticky top-0 z-10">
         <Link href="/arena/feed" className="w-9 h-9 rounded-xl bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-gray-200 transition-all">
           <ArrowLeft className="w-5 h-5" />
@@ -58,16 +65,15 @@ export default async function FeedDetailPage({ params }: { params: Promise<{ id:
         <p className="font-semibold text-gray-900 text-sm">Karya</p>
       </div>
 
-      {/* Konten karya */}
       <div className="px-4 py-5">
         <div className="flex items-center gap-3 mb-4">
           {karya.user ? (
             <>
               <div className="w-12 h-12 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center text-white font-bold text-base shrink-0">
-                {karya.user.fullName?.charAt(0).toUpperCase() || "?"}
+                {authorName.charAt(0).toUpperCase() || "?"}
               </div>
               <div>
-                <p className="font-bold text-gray-900 text-base">{karya.user.fullName}</p>
+                <p className="font-bold text-gray-900 text-base">{authorName}</p>
                 <p className="text-sm text-gray-500">
                   {typeLabel[karya.type] || karya.type}
                 </p>
@@ -90,7 +96,6 @@ export default async function FeedDetailPage({ params }: { params: Promise<{ id:
           {karya.content}
         </div>
 
-        {/* Stat bar */}
         <div className="flex items-center gap-4 py-4 border-t border-gray-100">
           <ToggleLike karyaId={karya.id} initialLiked={userLiked} initialCount={karya._count.likes} />
           <span className="flex items-center gap-1.5 text-sm text-gray-500">
@@ -105,7 +110,6 @@ export default async function FeedDetailPage({ params }: { params: Promise<{ id:
         </div>
       </div>
 
-      {/* Komentar */}
       <div className="px-4 pb-6">
         <CommentSection
           karyaId={karya.id}

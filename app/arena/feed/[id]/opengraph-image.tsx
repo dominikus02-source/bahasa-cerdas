@@ -1,5 +1,6 @@
 import { ImageResponse } from "next/og"
 import { db } from "@/lib/db"
+import { getDisplayName } from "@/lib/nickname"
 
 export const runtime = "edge"
 export const contentType = "image/png"
@@ -24,14 +25,14 @@ export default async function OGImage({ params }: { params: Promise<{ id: string
 
   const karya = await db.studentKarya.findUnique({
     where: { id },
-    include: { user: { select: { fullName: true } } },
+    include: { user: { select: { fullName: true, nickname: true } } },
   })
 
   const jenis = karya?.type || "PUISI"
   const bgColor = typeColors[jenis] || "#8B5CF6"
   const label = typeLabels[jenis] || jenis
   const judul = karya?.title || "Karya Siswa"
-  const penulis = karya?.user?.fullName || "Siswa BahasaCerdas"
+  const penulis = karya?.user ? getDisplayName(karya.user, "peer") : "Siswa BahasaCerdas"
   const konten = karya?.excerpt || karya?.content?.slice(0, 200) || ""
 
   const inter = await fetch(

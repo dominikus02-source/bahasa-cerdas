@@ -5,9 +5,12 @@ import { awardCoins, trackQuestProgress, trackDailyStreak } from "@/lib/coins";
 import { karyaSchema, sanitize } from "@/lib/validations";
 import cache from "@/lib/redis";
 import { invalidateKaryaCache } from "@/lib/ai-queue";
+import { getDisplayName } from "@/lib/nickname";
 
-// Attaches the current user's like status per item. Kept OUT of the shared
-// cache because it is per-user — the base list stays cacheable and public.
+function withDisplayName<T extends { user: { fullName: string; nickname?: string | null } }>(item: T) {
+  return { ...item, user: { ...item.user, displayName: getDisplayName(item.user, "peer") } };
+}
+
 async function attachLikedStatus<T extends { id: string }>(
   items: T[],
   userId: string | null,
@@ -30,77 +33,46 @@ export async function GET(req: NextRequest) {
     const limit = Math.min(parseInt(searchParams.get("limit") || "10"), 50);
     const cursor = searchParams.get("cursor");
     const featured = searchParams.get("featured") === "true";
-    const groupId = searchParams.get("groupId");
 
-    // Current user id (best-effort) — used for likedByCurrentUser + group scope.
-    let currentUserId: string | null = null;
-    try {
-      const supabase = await createClient();
-      const { data: { user: authUser } } = await supabase.auth.getUser();
-      if (authUser) {
-        const dbUser = await db.user.findUnique({ where: { supabaseId: authUser.id }, select: { id: true } });
-        currentUserId = dbUser?.id ?? null;
-      }
-    } catch {}
-
-    const cacheKey = `karya:feed:cursor:${type || "all"}:${cursor || "start"}:${limit}`;
-
-    const cached = await cache.get<{ karya: any[]; nextCursor: string | null; total: number }>(cacheKey);
-    if (cached && !/page=\d+/.test(req.url)) {
-      return NextResponse.json({
-        karya: await attachLikedStatus(cached.karya, currentUserId),
-        nextCursor: cached.nextCursor,
-        total: cached.total,
-      });
-    }
+    const user = await getUser();
+    const userId = user?.id || null;
 
     const where: any = {};
     if (type) where.type = type;
     if (featured) where.isFeatured = true;
 
-    if (groupId && currentUserId) {
-      const group = await db.group.findUnique({
-        where: { id: groupId },
-        select: { teacherId: true },
-      });
-      if (group && group.teacherId === currentUserId) {
-        const members = await db.groupMember.findMany({
-          where: { groupId, role: "member" },
-          select: { userId: true },
-        });
-        where.userId = { in: members.map(m => m.userId) };
-      }
-    }
-
-    if (cursor) {
-      where.createdAt = { lt: new Date(cursor) };
-    }
-
-    const [karya, total] = await Promise.all([
-      db.studentKarya.findMany({
-        where,
-        include: {
-          user: { select: { id: true, fullName: true, avatar: true, profile: { select: { school: true, city: true } } } },
-          _count: { select: { likes: true, comments: true } },
-        },
-        orderBy: { createdAt: "desc" },
-        take: limit + 1,
-      }),
-      db.studentKarya.count({ where: { ...where, createdAt: undefined } }),
-    ]);
+    const karya = await db.studentKarya.findMany({
+      where,
+      include: {
+        user: { select: { id: true, fullName: true, nickname: true, avatar: true, profile: { select: { school: true, city: true } } } },
+        _count: { select: { likes: true, comments: true } },
+      },
+      orderBy: { createdAt: "desc" },
+      take: limit + 1,
+      ...(cursor ? { skip: 1, cursor: { id: cursor } } : {}),
+    });
 
     const hasMore = karya.length > limit;
     const items = hasMore ? karya.slice(0, limit) : karya;
-    const nextCursor = hasMore && items.length > 0
-      ? items[items.length - 1].createdAt.toISOString()
-      : null;
 
-    const result = { karya: items, nextCursor, total };
-    await cache.set(cacheKey, result, 120); // base list (no per-user field) stays cacheable
+    const withDisplay = items.map((k) => ({
+      ...k,
+      createdAt: k.createdAt.toISOString(),
+      user: { ...k.user, displayName: getDisplayName(k.user, "peer") },
+    }));
 
-    return NextResponse.json({ ...result, karya: await attachLikedStatus(items, currentUserId) });
+    const withLikes = await attachLikedStatus(withDisplay, userId);
+
+    const total = await db.studentKarya.count({ where });
+
+    return NextResponse.json({
+      karya: withLikes,
+      total,
+      nextCursor: hasMore ? items[items.length - 1].id : null,
+    });
   } catch (error) {
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    console.error("Error fetching karya:", error);
+    return NextResponse.json({ error: "Gagal memuat karya" }, { status: 500 });
   }
 }
 
@@ -114,7 +86,6 @@ export async function POST(req: NextRequest) {
       judul: body.title,
       jenis: body.type,
       konten: body.content,
-      coverImage: body.coverImage || null,
     });
 
     if (!parsed.success) {
@@ -124,33 +95,28 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { judul, konten, jenis, coverImage } = parsed.data;
-    const sanitizedContent = sanitize(konten);
-    const excerpt = sanitizedContent.replace(/<[^>]*>/g, "").slice(0, 150);
+    const sanitizedContent = sanitize(parsed.data.konten);
+    const excerpt = sanitizedContent.replace(/<[^>]*>/g, "").replace(/\s+/g, " ").trim().slice(0, 200);
 
     const karya = await db.studentKarya.create({
       data: {
-        title: sanitize(judul),
+        userId: user.id,
+        title: parsed.data.judul,
+        type: parsed.data.jenis,
         content: sanitizedContent,
         excerpt,
-        type: jenis,
-        coverImage: coverImage || null,
-        userId: user.id,
-      },
-      include: {
-        user: { select: { id: true, fullName: true, avatar: true, profile: { select: { school: true, city: true } } } },
       },
     });
 
-    await Promise.all([
-      awardCoins(user.id, "MENULIS_KARYA", karya.id),
-      trackDailyStreak(user.id),
-      trackQuestProgress(user.id, "MENULIS"),
-      invalidateKaryaCache(),
-    ]);
+    awardCoins(user.id, "MENULIS_KARYA", `Karya: ${karya.title}`).catch(() => {});
+    trackQuestProgress(user.id, "TULIS_KARYA").catch(() => {});
+    if (!user.isFounder) trackDailyStreak(user.id).catch(() => {});
 
-    return NextResponse.json({ karya, coinsEarned: 10 }, { status: 201 });
+    invalidateKaryaCache().catch(() => {});
+
+    return NextResponse.json({ karya }, { status: 201 });
   } catch (error) {
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    console.error("Error creating karya:", error);
+    return NextResponse.json({ error: "Gagal membuat karya" }, { status: 500 });
   }
 }
