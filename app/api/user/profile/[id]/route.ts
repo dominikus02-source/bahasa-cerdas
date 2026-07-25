@@ -46,10 +46,16 @@ export async function GET(
       return NextResponse.json({ error: "User tidak ditemukan" }, { status: 404 });
     }
 
-    const [karyaCount, totalLikes, totalViews] = await Promise.all([
+    const [karyaCount, totalLikes, totalViews, works] = await Promise.all([
       db.studentKarya.count({ where: { userId: id } }),
       db.studentKarya.aggregate({ where: { userId: id }, _sum: { likesCount: true } }),
       db.studentKarya.aggregate({ where: { userId: id }, _sum: { viewsCount: true } }),
+      db.studentKarya.findMany({
+        where: { userId: id },
+        select: { id: true, title: true, type: true, likesCount: true, viewsCount: true, createdAt: true },
+        orderBy: { createdAt: "desc" },
+        take: 20,
+      }),
     ]);
 
     const response = {
@@ -59,6 +65,7 @@ export async function GET(
         bio: user.profile?.bio || null,
         school: user.profile?.school || null,
       },
+      works,
       stats: {
         karyaCount,
         totalLikes: totalLikes._sum.likesCount || 0,

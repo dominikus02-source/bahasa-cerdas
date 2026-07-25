@@ -78,7 +78,18 @@ export default function ProfilePage() {
           return;
         }
         const data = await res.json();
-        setUser(data.user);
+        setUser({
+          ...data.user,
+          stats: {
+            totalKarya: data.stats?.karyaCount ?? 0,
+            totalArtikel: data.stats?.totalArtikel ?? 0,
+            totalSoal: data.stats?.totalSoal ?? 0,
+            totalMateri: data.stats?.totalMateri ?? 0,
+            totalSold: data.stats?.totalSold ?? 0,
+            totalDownloads: data.stats?.totalDownloads ?? 0,
+          },
+          works: data.works || [],
+        });
       } catch {
         setError("Gagal memuat profil");
       } finally {
