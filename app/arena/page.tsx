@@ -158,8 +158,8 @@ export default async function BerandaPage() {
         <div className="absolute bottom-0 left-0 w-56 h-56 bg-white/5 rounded-full translate-y-1/2 -translate-x-1/2 pointer-events-none" />
         <div className="relative z-10">
           <div className="flex items-center gap-4 mb-4">
-            <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-gradient-to-br from-amber-300 to-orange-500 flex items-center justify-center text-white font-bold text-2xl border-4 border-white/30 shadow-lg shrink-0">
-              {initials(nameOf(user))}
+            <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-gradient-to-br from-amber-300 to-orange-500 flex items-center justify-center text-white font-bold text-2xl border-4 border-white/30 shadow-lg shrink-0 overflow-hidden">
+              {user?.avatar ? <img src={user.avatar} alt="" className="w-full h-full object-cover" /> : initials(nameOf(user))}
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-sm text-violet-200 font-medium">Arena BahasaCerdas</p>
@@ -305,8 +305,8 @@ export default async function BerandaPage() {
               <div className="bg-white rounded-2xl border border-gray-100 divide-y divide-gray-50">
                 {aktivitas.map((a: any) => (
                   <div key={a.id} className="flex items-center gap-3 px-4 py-3">
-                    <div className="w-9 h-9 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center text-white text-xs font-bold shrink-0">
-                      {nameOf(a.user).charAt(0)}
+                    <div className="w-9 h-9 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center text-white text-xs font-bold shrink-0 overflow-hidden">
+                      {a.user?.avatar ? <img src={a.user.avatar} alt="" className="w-full h-full object-cover" /> : nameOf(a.user).charAt(0)}
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-semibold text-gray-900 truncate">{nameOf(a.user)}</p>

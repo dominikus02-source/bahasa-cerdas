@@ -69,8 +69,8 @@ export default async function FeedDetailPage({ params }: { params: Promise<{ id:
         <div className="flex items-center gap-3 mb-4">
           {karya.user ? (
             <>
-              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center text-white font-bold text-base shrink-0">
-                {authorName.charAt(0).toUpperCase() || "?"}
+              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center text-white font-bold text-base shrink-0 overflow-hidden">
+                {karya.user.avatar ? <img src={karya.user.avatar} alt="" className="w-full h-full object-cover" /> : authorName.charAt(0).toUpperCase() || "?"}
               </div>
               <div>
                 <p className="font-bold text-gray-900 text-base">{authorName}</p>

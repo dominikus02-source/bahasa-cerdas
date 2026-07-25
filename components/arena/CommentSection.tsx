@@ -132,8 +132,8 @@ export default function CommentSection({ karyaId, initialComments, initialCount,
             const isOwner = c.user.id === currentUserId
             return (
               <div key={c.id} className="flex gap-2.5">
-                <Link href={`/profile/${c.user.id}`} className={`w-8 h-8 rounded-full bg-gradient-to-br ${COLORS[colorIdx]} flex items-center justify-center text-white text-xs font-bold shrink-0 hover:ring-2 hover:ring-violet-300 transition-all`}>
-                  {nameOf(c.user).charAt(0).toUpperCase()}
+                <Link href={`/profile/${c.user.id}`} className={`w-8 h-8 rounded-full bg-gradient-to-br ${COLORS[colorIdx]} flex items-center justify-center text-white text-xs font-bold shrink-0 hover:ring-2 hover:ring-violet-300 transition-all overflow-hidden`}>
+                  {c.user.avatar ? <img src={c.user.avatar} alt="" className="w-full h-full object-cover" /> : nameOf(c.user).charAt(0).toUpperCase()}
                 </Link>
                 <div className="flex-1 bg-white rounded-xl border border-gray-100 p-3">
                   <div className="flex items-center gap-2 mb-0.5">
