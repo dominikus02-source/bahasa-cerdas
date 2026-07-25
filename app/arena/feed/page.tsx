@@ -59,8 +59,6 @@ export default function FeedPage() {
   const [submittingComment, setSubmittingComment] = useState<Record<string, boolean>>({})
   const [likePending, setLikePending] = useState<Record<string, boolean>>({})
   const [toast, setToast] = useState<string | null>(null)
-  const [onlineCount, setOnlineCount] = useState(0)
-  const [totalKarya, setTotalKarya] = useState(0)
   const [currentUserId, setCurrentUserId] = useState<string | null>(null)
   const [isGuruViewer, setIsGuruViewer] = useState(false)
   const nameOf = (u?: { fullName: string; displayName?: string }) =>
@@ -71,7 +69,6 @@ export default function FeedPage() {
   const [hasMore, setHasMore] = useState(true)
   const [deletingId, setDeletingId] = useState<string | null>(null)
   const [challengeCount, setChallengeCount] = useState(0)
-  const [loadingChallenge, setLoadingChallenge] = useState(true)
   const challenge = getWeeklyChallenge()
   const router = useRouter()
 
@@ -92,7 +89,6 @@ export default function FeedPage() {
       for (const k of items) n[k.id] = k._count?.likes ?? k.likesCount ?? 0;
       return n;
     });
-    setTotalKarya(data.total || 0);
     setHasMore(!!data.nextCursor);
     setCursor(data.nextCursor);
   }, []);
@@ -100,18 +96,15 @@ export default function FeedPage() {
   useEffect(() => {
     async function init() {
       await loadKarya(null, false);
-      const [uData, stats, chCount] = await Promise.all([
+      const [uData, chCount] = await Promise.all([
         fetch("/api/user/me").then(r => r.ok ? r.json() : null),
-        fetch("/api/arena/stats").then(r => r.json()).catch(() => ({})),
         fetch(`/api/siswa/karya/count?type=${challenge.type}`).then(r => r.json()).catch(() => ({ count: 0 })),
       ]);
       if (uData) {
         setCurrentUserId(uData.user?.id || uData.id);
         setIsGuruViewer(uData.user?.role === "GURU" || uData.role === "GURU" || false);
       }
-      setOnlineCount(stats.onlineCount || 0);
       setChallengeCount(chCount.count || 0);
-      setLoadingChallenge(false);
     }
     init();
   }, [loadKarya, challenge.type]);
