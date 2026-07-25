@@ -34,24 +34,26 @@ export async function GET(req: NextRequest) {
     const cursor = searchParams.get("cursor");
     const featured = searchParams.get("featured") === "true";
 
-    const user = await getUser();
-    const userId = user?.id || null;
-
     const where: any = {};
     if (type) where.type = type;
     if (featured) where.isFeatured = true;
 
-    const karya = await db.studentKarya.findMany({
-      where,
-      include: {
-        user: { select: { id: true, fullName: true, nickname: true, avatar: true, profile: { select: { school: true, city: true } } } },
-        _count: { select: { likes: true, comments: true } },
-      },
-      orderBy: { createdAt: "desc" },
-      take: limit + 1,
-      ...(cursor ? { skip: 1, cursor: { id: cursor } } : {}),
-    });
+    // Fetch karya + user session in parallel — auth shouldn't block data retrieval
+    const [karya, user] = await Promise.all([
+      db.studentKarya.findMany({
+        where,
+        include: {
+          user: { select: { id: true, fullName: true, nickname: true, avatar: true, profile: { select: { school: true, city: true } } } },
+          _count: { select: { likes: true, comments: true } },
+        },
+        orderBy: { createdAt: "desc" },
+        take: limit + 1,
+        ...(cursor ? { skip: 1, cursor: { id: cursor } } : {}),
+      }),
+      getUser().catch(() => null),
+    ]);
 
+    const userId = user?.id || null;
     const hasMore = karya.length > limit;
     const items = hasMore ? karya.slice(0, limit) : karya;
 
@@ -63,11 +65,8 @@ export async function GET(req: NextRequest) {
 
     const withLikes = await attachLikedStatus(withDisplay, userId);
 
-    const total = await db.studentKarya.count({ where });
-
     return NextResponse.json({
       karya: withLikes,
-      total,
       nextCursor: hasMore ? items[items.length - 1].id : null,
     });
   } catch (error) {

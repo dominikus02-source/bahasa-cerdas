@@ -117,9 +117,9 @@ export default function FeedPage() {
   }, [loadKarya, challenge.type]);
 
   useEffect(() => {
-    if (filter === "SEMUA") return;
     setLoading(true);
-    const params = new URLSearchParams({ type: filter, limit: "20" });
+    const params = new URLSearchParams({ limit: "20" });
+    if (filter !== "SEMUA") params.set("type", filter);
     fetch(`/api/siswa/karya?${params}`)
       .then(r => r.json())
       .then(data => {
