@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Send, Trash2, AlertTriangle, Coins } from "lucide-react"
+import { Send, Trash2, AlertTriangle, CornerDownRight, X } from "lucide-react"
 import Link from "next/link"
 
 interface CommentUser {
@@ -15,6 +15,7 @@ interface CommentData {
   id: string
   content: string
   createdAt: string
+  parentId: string | null
   user: CommentUser
 }
 
@@ -50,49 +51,107 @@ export default function CommentSection({ karyaId, initialComments, initialCount,
   const [text, setText] = useState("")
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [replyTo, setReplyTo] = useState<{ id: string; name: string } | null>(null)
+  const [replyText, setReplyText] = useState("")
+  const [submittingReply, setSubmittingReply] = useState(false)
 
   const nameOf = (u: CommentUser) => u.displayName || u.fullName
+
+  const topLevel = comments.filter(c => !c.parentId)
+  const repliesOf = (id: string) => comments.filter(c => c.parentId === id).sort((a, b) => a.createdAt.localeCompare(b.createdAt))
+
+  const postComment = async (content: string, parentId: string | null) => {
+    const optimistic: CommentData = {
+      id: `temp-${Date.now()}`,
+      content,
+      createdAt: new Date().toISOString(),
+      parentId,
+      user: { id: currentUserId, fullName: "", displayName: "", avatar: null },
+    }
+    setComments(prev => [optimistic, ...prev])
+    setCount(prev => prev + 1)
+
+    try {
+      const res = await fetch(`/api/siswa/karya/${karyaId}/comment`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ content, parentId }),
+      })
+      if (!res.ok) throw new Error("Gagal")
+      const data = await res.json()
+      setComments(prev => prev.map(c => c.id === optimistic.id ? data.comment : c))
+      return true
+    } catch {
+      setComments(prev => prev.filter(c => c.id !== optimistic.id))
+      setCount(prev => prev - 1)
+      return false
+    }
+  }
 
   const handleSubmit = async () => {
     const content = text.trim()
     if (!content || submitting) return
     setSubmitting(true)
     setError(null)
-
-    const optimistic: CommentData = {
-      id: `temp-${Date.now()}`,
-      content,
-      createdAt: new Date().toISOString(),
-      user: { id: currentUserId, fullName: "", displayName: "", avatar: null },
-    }
-    setComments(prev => [optimistic, ...prev])
-    setCount(prev => prev + 1)
     setText("")
-
-    try {
-      const res = await fetch(`/api/siswa/karya/${karyaId}/comment`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ content }),
-      })
-      if (!res.ok) throw new Error("Gagal")
-      const data = await res.json()
-      setComments(prev => prev.map(c => c.id === optimistic.id ? data.comment : c))
-    } catch {
-      setComments(prev => prev.filter(c => c.id !== optimistic.id))
-      setCount(prev => prev - 1)
-      setText(content)
-      setError("Gagal mengirim komentar")
-    }
+    const ok = await postComment(content, null)
+    if (!ok) { setText(content); setError("Gagal mengirim komentar") }
     setSubmitting(false)
+  }
+
+  const handleSubmitReply = async () => {
+    const content = replyText.trim()
+    if (!content || !replyTo || submittingReply) return
+    setSubmittingReply(true)
+    setError(null)
+    const parentId = replyTo.id
+    setReplyText("")
+    setReplyTo(null)
+    const ok = await postComment(content, parentId)
+    if (!ok) setError("Gagal mengirim balasan")
+    setSubmittingReply(false)
   }
 
   const handleDelete = async (commentId: string) => {
     const res = await fetch(`/api/siswa/karya/${karyaId}/comment/${commentId}`, { method: "DELETE" })
     if (res.ok) {
-      setComments(prev => prev.filter(c => c.id !== commentId))
-      setCount(prev => prev - 1)
+      const removedReplies = repliesOf(commentId).length
+      setComments(prev => prev.filter(c => c.id !== commentId && c.parentId !== commentId))
+      setCount(prev => prev - 1 - removedReplies)
     }
+  }
+
+  const startReply = (c: CommentData) => setReplyTo({ id: c.id, name: nameOf(c.user) })
+
+  const renderComment = (c: CommentData, isReply: boolean) => {
+    const colorIdx = c.user.id ? c.user.id.charCodeAt(0) % COLORS.length : 0
+    const isOwner = c.user.id === currentUserId
+    return (
+      <div key={c.id} className={`flex gap-2.5 ${isReply ? "mt-2.5" : ""}`}>
+        <Link href={`/profile/${c.user.id}`} className={`rounded-full bg-gradient-to-br ${COLORS[colorIdx]} flex items-center justify-center text-white font-bold shrink-0 hover:ring-2 hover:ring-violet-300 transition-all overflow-hidden ${isReply ? "w-6 h-6 text-[10px]" : "w-8 h-8 text-xs"}`}>
+          {c.user.avatar ? <img src={c.user.avatar} alt="" className="w-full h-full object-cover" /> : nameOf(c.user).charAt(0).toUpperCase()}
+        </Link>
+        <div className="flex-1 min-w-0">
+          <div className="bg-white rounded-xl border border-gray-100 p-3">
+            <div className="flex items-center gap-2 mb-0.5">
+              <Link href={`/profile/${c.user.id}`} className="text-xs font-bold text-gray-900 hover:text-violet-600">{nameOf(c.user)}</Link>
+              <span className="text-[10px] text-gray-400">{waktuLalu(c.createdAt)}</span>
+              {isOwner && (
+                <button onClick={() => handleDelete(c.id)} className="ml-auto text-gray-300 hover:text-red-500 transition-colors">
+                  <Trash2 size={12} />
+                </button>
+              )}
+            </div>
+            <p className="text-sm text-gray-700 whitespace-pre-wrap">{c.content}</p>
+          </div>
+          {!isReply && (
+            <button onClick={() => startReply(c)} className="flex items-center gap-1 text-[11px] font-semibold text-gray-400 hover:text-violet-600 mt-1 ml-1 transition-colors">
+              <CornerDownRight size={11} /> Balas
+            </button>
+          )}
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -123,33 +182,46 @@ export default function CommentSection({ karyaId, initialComments, initialCount,
       )}
 
       {/* List */}
-      {comments.length === 0 ? (
+      {topLevel.length === 0 ? (
         <p className="text-center text-sm text-gray-400 py-6">Belum ada komentar.</p>
       ) : (
-        <div className="space-y-3">
-          {comments.map(c => {
-            const colorIdx = c.user.id ? c.user.id.charCodeAt(0) % COLORS.length : 0
-            const isOwner = c.user.id === currentUserId
-            return (
-              <div key={c.id} className="flex gap-2.5">
-                <Link href={`/profile/${c.user.id}`} className={`w-8 h-8 rounded-full bg-gradient-to-br ${COLORS[colorIdx]} flex items-center justify-center text-white text-xs font-bold shrink-0 hover:ring-2 hover:ring-violet-300 transition-all overflow-hidden`}>
-                  {c.user.avatar ? <img src={c.user.avatar} alt="" className="w-full h-full object-cover" /> : nameOf(c.user).charAt(0).toUpperCase()}
-                </Link>
-                <div className="flex-1 bg-white rounded-xl border border-gray-100 p-3">
-                  <div className="flex items-center gap-2 mb-0.5">
-                    <Link href={`/profile/${c.user.id}`} className="text-xs font-bold text-gray-900 hover:text-violet-600">{nameOf(c.user)}</Link>
-                    <span className="text-[10px] text-gray-400">{waktuLalu(c.createdAt)}</span>
-                    {isOwner && (
-                      <button onClick={() => handleDelete(c.id)} className="ml-auto text-gray-300 hover:text-red-500 transition-colors">
-                        <Trash2 size={12} />
-                      </button>
-                    )}
-                  </div>
-                  <p className="text-sm text-gray-700">{c.content}</p>
+        <div className="space-y-4">
+          {topLevel.map(c => (
+            <div key={c.id}>
+              {renderComment(c, false)}
+              {repliesOf(c.id).length > 0 && (
+                <div className="ml-[38px] pl-3 border-l-2 border-gray-100">
+                  {repliesOf(c.id).map(r => renderComment(r, true))}
                 </div>
-              </div>
-            )
-          })}
+              )}
+              {replyTo?.id === c.id && (
+                <div className="ml-[38px] mt-2.5 flex gap-2 items-start">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-1.5 mb-1.5 text-[11px] text-violet-600 font-semibold">
+                      Membalas {replyTo.name}
+                      <button onClick={() => { setReplyTo(null); setReplyText("") }} className="text-gray-300 hover:text-gray-500">
+                        <X size={12} />
+                      </button>
+                    </div>
+                    <div className="flex gap-2">
+                      <input
+                        autoFocus
+                        value={replyText} onChange={e => setReplyText(e.target.value)}
+                        placeholder={`Balas ${replyTo.name}...`}
+                        className="flex-1 px-3.5 py-2 bg-white rounded-xl border border-violet-200 text-sm focus:outline-none focus:ring-2 focus:ring-violet-200"
+                        onKeyDown={e => { if (e.key === "Enter") handleSubmitReply() }}
+                      />
+                      <button onClick={handleSubmitReply} disabled={submittingReply || !replyText.trim()}
+                        className="px-3.5 py-2 bg-violet-600 text-white rounded-xl hover:bg-violet-700 disabled:opacity-50 transition-all shrink-0"
+                      >
+                        {submittingReply ? <div className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full" /> : <Send size={14} />}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          ))}
         </div>
       )}
     </div>

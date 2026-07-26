@@ -3,15 +3,16 @@
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Heart, MessageCircle, Share2, Clock, Eye, Send, PenLine, BookOpen, Newspaper, Lightbulb, Music } from "lucide-react";
+import { ArrowLeft, Heart, Share2, Clock, Eye, PenLine, BookOpen, Newspaper, MessageCircle, Lightbulb, Music } from "lucide-react";
 import SafeMediaImage from "@/components/shared/safe-media-image";
+import CommentSection from "@/components/arena/CommentSection";
 
 interface KaryaDetail {
   id: string; title: string; content: string; excerpt?: string;
   type: string; coverImage?: string; likesCount: number; viewsCount: number;
   createdAt: string;
   user: { id: string; fullName: string; displayName?: string; avatar?: string; profile?: { school?: string; city?: string } };
-  comments: { id: string; content: string; createdAt: string; user: { id: string; fullName: string; displayName?: string; avatar?: string } }[];
+  comments: { id: string; content: string; createdAt: string; parentId: string | null; user: { id: string; fullName: string; displayName?: string; avatar: string | null } }[];
 }
 
 const nameOf = (u: { fullName: string; displayName?: string }) => u.displayName || u.fullName;
@@ -31,9 +32,6 @@ export default function DetailKaryaPage() {
   const [karya, setKarya] = useState<KaryaDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [liked, setLiked] = useState(false);
-  const [commentText, setCommentText] = useState("");
-  const [comments, setComments] = useState<KaryaDetail["comments"]>([]);
-  const [submittingComment, setSubmittingComment] = useState(false);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
 
@@ -43,7 +41,6 @@ export default function DetailKaryaPage() {
       fetch("/api/user/me").then(r => r.ok ? r.json() : null),
     ]).then(([kData, uData]) => {
       setKarya(kData?.karya || null);
-      setComments(kData?.karya?.comments || []);
       setCurrentUserId(uData?.user?.id || uData?.user?.userId || null);
       setLoading(false);
     }).catch(() => setLoading(false));
@@ -70,36 +67,6 @@ export default function DetailKaryaPage() {
       setLiked(data.liked);
       setKarya(prev => prev ? { ...prev, likesCount: prev.likesCount + (data.liked ? 1 : -1) } : prev);
     }
-  };
-
-  const handleComment = async () => {
-    const text = commentText.trim();
-    if (!text || submittingComment) return;
-    setSubmittingComment(true);
-
-    const optimistic = {
-      id: `temp-${Date.now()}`,
-      content: text,
-      createdAt: new Date().toISOString(),
-      user: { id: currentUserId || "", fullName: "", avatar: undefined },
-    };
-    setComments(prev => [optimistic, ...prev]);
-    setCommentText("");
-
-    try {
-      const res = await fetch(`/api/siswa/karya/${id}/comment`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ content: text }),
-      });
-      if (!res.ok) throw new Error("gagal");
-      const data = await res.json();
-      setComments(prev => prev.map(c => (c.id === optimistic.id ? data.comment : c)));
-    } catch {
-      setComments(prev => prev.filter(c => c.id !== optimistic.id));
-      setCommentText(text);
-    }
-    setSubmittingComment(false);
   };
 
   if (loading) return <div className="flex justify-center py-20"><div className="animate-spin w-8 h-8 border-4 border-violet-500 border-t-transparent rounded-full" /></div>;
@@ -186,51 +153,12 @@ export default function DetailKaryaPage() {
       </div>
 
       <div className="mb-6">
-        <h3 className="font-bold text-gray-900 mb-4">Komentar ({comments.length})</h3>
-
-        <div className="flex gap-3 mb-6">
-          <input
-            value={commentText} onChange={e => setCommentText(e.target.value)}
-            placeholder="Tulis komentar..."
-            className="flex-1 px-4 py-2.5 bg-white rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-violet-200 focus:border-violet-400"
-            onKeyDown={e => e.key === "Enter" && handleComment()}
-          />
-          <button onClick={handleComment} disabled={submittingComment || !commentText.trim()}
-            className="px-4 py-2.5 bg-violet-600 text-white rounded-xl hover:bg-violet-700 disabled:opacity-50 transition-all">
-            {submittingComment ? <div className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full" /> : <Send size={16} />}
-          </button>
-        </div>
-
-        {comments.length === 0 ? (
-          <div className="text-center py-8 text-gray-400 text-sm">Belum ada komentar. Jadilah yang pertama!</div>
-        ) : (
-          <div className="space-y-4">
-            {comments.map(c => (
-              <div key={c.id} className="flex gap-3">
-                {c.user.id && !c.id.startsWith("temp-") ? (
-                  <Link href={`/profile/${c.user.id}`} className="w-8 h-8 rounded-full bg-gradient-to-br from-violet-300 to-purple-400 flex items-center justify-center text-white text-xs font-bold shrink-0 hover:ring-2 hover:ring-violet-300 transition-all">
-                    {c.user.avatar ? <img src={c.user.avatar} alt="" className="w-full h-full rounded-full object-cover" /> : nameOf(c.user).charAt(0)}
-                  </Link>
-                ) : (
-                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-violet-300 to-purple-400 flex items-center justify-center text-white text-xs font-bold shrink-0">
-                    {c.user.avatar ? <img src={c.user.avatar} alt="" className="w-full h-full rounded-full object-cover" /> : nameOf(c.user).charAt(0)}
-                  </div>
-                )}
-                <div className="flex-1 bg-white rounded-xl border border-gray-100 p-3">
-                  <div className="flex items-center gap-2 mb-1">
-                    {c.user.id && !c.id.startsWith("temp-") ? (
-                      <Link href={`/profile/${c.user.id}`} className="text-sm font-semibold text-gray-900 hover:text-violet-600 transition-colors">{nameOf(c.user)}</Link>
-                    ) : (
-                      <span className="text-sm font-semibold text-gray-900">{nameOf(c.user)}</span>
-                    )}
-                    <span className="text-xs text-gray-400">{new Date(c.createdAt).toLocaleDateString("id-ID", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}</span>
-                  </div>
-                  <p className="text-sm text-gray-600">{c.content}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
+        <CommentSection
+          karyaId={karya.id}
+          initialComments={karya.comments}
+          initialCount={karya.comments.length}
+          currentUserId={currentUserId || ""}
+        />
       </div>
     </div>
   );

@@ -841,13 +841,17 @@ model StudentKaryaComment {
   karyaId   String
   userId    String
   content   String
+  parentId  String?
   createdAt DateTime @default(now())
 
-  karya StudentKarya @relation(fields: [karyaId], references: [id], onDelete: Cascade)
-  user  User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  karya   StudentKarya          @relation(fields: [karyaId], references: [id], onDelete: Cascade)
+  user    User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  parent  StudentKaryaComment?  @relation("CommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
+  replies StudentKaryaComment[] @relation("CommentReplies")
 
   @@index([karyaId])
   @@index([karyaId, createdAt])
+  @@index([parentId])
 }
 
 enum StudentKaryaType {

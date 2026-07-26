@@ -23,11 +23,27 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
 
     const sanitizedContent = sanitize(parsed.data.konten);
 
+    // Balasan selalu menempel ke komentar tingkat-atas — kalau parentId yang
+    // dikirim ternyata milik balasan lain, ikuti ke induknya supaya thread
+    // tetap datar 2 tingkat (komentar + balasan), bukan bersarang tanpa akhir.
+    let parentId: string | null = null;
+    if (typeof body.parentId === "string" && body.parentId) {
+      const parent = await db.studentKaryaComment.findUnique({
+        where: { id: body.parentId },
+        select: { id: true, karyaId: true, parentId: true },
+      });
+      if (!parent || parent.karyaId !== id) {
+        return NextResponse.json({ error: "Komentar yang dibalas tidak ditemukan" }, { status: 400 });
+      }
+      parentId = parent.parentId || parent.id;
+    }
+
     const comment = await db.studentKaryaComment.create({
       data: {
         karyaId: id,
         userId: user.id,
         content: sanitizedContent,
+        parentId,
       },
       include: {
         user: { select: { id: true, fullName: true, nickname: true, avatar: true } },
