@@ -5,9 +5,9 @@ import { Providers } from "./providers";
 
 const SITE_URL = "https://www.bahasacerdas.com";
 const SITE_NAME = "BahasaCerdas";
-const DEFAULT_DESC = "Platform edukasi Bahasa Indonesia untuk guru dan murid. AI RPP generator, bank soal interaktif, kuis battle, simulasi UKBI/TKA, toko karya, dan marketplace bahan ajar — all-in-one!";
+const DEFAULT_DESC = "Platform edukasi Bahasa Indonesia untuk guru dan murid. AI Rencana Pembelajaran generator, bank soal interaktif, kuis battle, simulasi UKBI/TKA, toko karya, dan marketplace bahan ajar — all-in-one!";
 const OG_TITLE = `${SITE_NAME} — Platform Edukasi Bahasa Indonesia #BahasaCerdas`;
-const OG_DESC = "Belajar Bahasa Indonesia makin seru! AI bikin RPP, bank soal, kuis game, UKBI, komunitas MGMP, dan toko karya guru. Cobain gratis sekarang!";
+const OG_DESC = "Belajar Bahasa Indonesia makin seru! AI bikin Rencana Pembelajaran, bank soal, kuis game, UKBI, komunitas MGMP, dan toko karya guru. Cobain gratis sekarang!";
 
 export const viewport: Viewport = {
   themeColor: [
@@ -27,8 +27,8 @@ export const metadata: Metadata = {
   },
   description: DEFAULT_DESC,
   keywords: [
-    "Bahasa Indonesia", "guru Bahasa Indonesia", "RPP", "bank soal",
-    "AI pendidikan", "UKBI", "TKA", "kurikulum merdeka", "edukasi",
+    "Bahasa Indonesia", "guru Bahasa Indonesia", "Rencana Pembelajaran", "bank soal",
+    "AI pendidikan", "UKBI", "TKA", "kurikulum nasional", "edukasi",
     "MGMP Bahasa Indonesia", "kuis interaktif", "pembelajaran bahasa",
   ],
   authors: [{ name: "BahasaCerdas Team" }],
@@ -71,7 +71,7 @@ const jsonLdOrganization = {
   "@id": `${SITE_URL}/#organization`,
   name: SITE_NAME,
   url: SITE_URL,
-  description: "Platform edukasi Bahasa Indonesia lengkap dengan AI generator RPP, bank soal HOTS, kuis multiplayer, toko karya, dan komunitas MGMP.",
+  description: "Platform edukasi Bahasa Indonesia lengkap dengan AI generator Rencana Pembelajaran, bank soal HOTS, kuis multiplayer, toko karya, dan komunitas MGMP.",
   logo: `${SITE_URL}/BC-logo.png`,
   foundingDate: "2024",
   areaServed: { "@type": "Country", name: "ID" },
@@ -95,7 +95,7 @@ const jsonLdWebsite = {
   "@id": `${SITE_URL}/#website`,
   name: SITE_NAME,
   url: SITE_URL,
-  description: "Platform edukasi Bahasa Indonesia: AI generator RPP, bank soal HOTS, kuis multiplayer, toko karya, dan komunitas MGMP.",
+  description: "Platform edukasi Bahasa Indonesia: AI generator Rencana Pembelajaran, bank soal HOTS, kuis multiplayer, toko karya, dan komunitas MGMP.",
   inLanguage: "id-ID",
   potentialAction: {
     "@type": "SearchAction",

@@ -106,7 +106,7 @@ export default function GuruBerandaPage() {
         </div>
         <div className="flex gap-2">
           <Link href="/guru/ai-tools?tool=rpp-modul" className="flex items-center gap-1.5 px-4 py-2.5 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white rounded-xl text-sm font-semibold hover:from-emerald-600 hover:to-emerald-700 transition-all shadow-lg shadow-emerald-500/20">
-            <Wand2 size={16} /> Buat RPP
+            <Wand2 size={16} /> Buat Rencana Pembelajaran
           </Link>
           <Link href="/guru/toko-karya" className="flex items-center gap-1.5 px-4 py-2.5 bg-white border-2 border-gray-200 text-gray-700 rounded-xl text-sm font-semibold hover:bg-gray-50 transition-all">
             <ShoppingBag size={16} /> Upload Karya
@@ -206,7 +206,7 @@ export default function GuruBerandaPage() {
 
           <div className="mt-3 text-xs text-gray-400 space-y-1">
             <p>Setiap generasi AI menggunakan kredit berdasarkan agent.</p>
-            <p>RPP = 5 kredit, Soal = 3 kredit, PPT = 5 kredit, dll.</p>
+            <p>Rencana Pembelajaran = 5 kredit, Soal = 3 kredit, PPT = 5 kredit, dll.</p>
           </div>
 
           {!user.isPremium && !user.isFounder && (
@@ -264,7 +264,7 @@ export default function GuruBerandaPage() {
                 <Wand2 size={18} className="text-white" />
               </div>
               <div>
-                <p className="text-sm font-semibold text-gray-900 group-hover:text-emerald-700">Generator RPP</p>
+                <p className="text-sm font-semibold text-gray-900 group-hover:text-emerald-700">Generator Rencana Pembelajaran</p>
                 <p className="text-xs text-gray-500">AI powered</p>
               </div>
             </Link>
@@ -304,7 +304,7 @@ export default function GuruBerandaPage() {
                 <FileUp size={18} className="text-white" />
               </div>
               <div>
-                <p className="text-sm font-semibold text-gray-900 group-hover:text-teal-700">Upload RPP</p>
+                <p className="text-sm font-semibold text-gray-900 group-hover:text-teal-700">Upload Rencana Pembelajaran</p>
                 <p className="text-xs text-gray-500">DOCX or PDF</p>
               </div>
             </Link>

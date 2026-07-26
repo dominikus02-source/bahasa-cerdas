@@ -157,13 +157,13 @@ export function renderRppDocument(
   const grade = val("grade", "grade", "kelas") || TITIK;
   const phase = val("phase", "phase", "fase");
   const semester = val("semester", "semester") || TITIK;
-  const curriculum = val("curriculum", "curriculum", "kurikulum") || "Kurikulum Merdeka";
+  const curriculum = val("curriculum", "curriculum", "kurikulum") || "Kurikulum Nasional";
   const topic = val("topic", "topic", "topik", "materi") || TITIK;
   const duration = val("duration", "duration", "alokasiWaktu") || TITIK;
 
   const title =
     asText(pick(data, "title", "judul")) ||
-    `Modul Ajar ${subject} — ${topic !== TITIK ? topic : "Materi Pembelajaran"}`;
+    `Rencana Pembelajaran ${subject} — ${topic !== TITIK ? topic : "Materi Pembelajaran"}`;
 
   const steps = (pick(data, "learningSteps", "kegiatanPembelajaran", "langkahPembelajaran") ?? {}) as Record<string, unknown>;
   const assessment = (pick(data, "assessmentPlan", "asesmen", "penilaian") ?? {}) as Record<string, unknown>;
@@ -176,7 +176,7 @@ export function renderRppDocument(
   const parts: string[] = [];
 
   parts.push(`# ${title}`);
-  parts.push(`## MODUL AJAR / RENCANA PELAKSANAAN PEMBELAJARAN\n`);
+  parts.push(`## RENCANA PEMBELAJARAN\n`);
 
   parts.push(`### Identitas Dokumen
 | | |

@@ -11,7 +11,7 @@ interface ReviewFormProps {
 }
 
 const CONTENT_TYPES = [
-  { value: "rpp", label: "RPP / Modul Ajar" },
+  { value: "rpp", label: "Rencana Pembelajaran" },
   { value: "soal", label: "Soal" },
   { value: "ppt", label: "PPT / Slide" },
   { value: "artikel", label: "Artikel / Karya" },
@@ -45,7 +45,7 @@ export function ReviewForm({ onSubmit, loading }: ReviewFormProps) {
         <Textarea
           value={content}
           onChange={(e) => setContent(e.target.value)}
-          placeholder="Tempelkan konten RPP, soal, atau materi yang ingin direview oleh AI..."
+          placeholder="Tempelkan konten Rencana Pembelajaran, soal, atau materi yang ingin direview oleh AI..."
           className="min-h-[200px] resize-none"
         />
       </div>

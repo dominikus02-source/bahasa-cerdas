@@ -42,7 +42,7 @@ const AGENT_ICONS: Record<string, React.ReactNode> = {
 };
 
 const AGENT_LABELS: Record<string, string> = {
-  rpp: "RPP",
+  rpp: "Rencana Pembelajaran",
   soal: "Soal",
   ppt: "PPT",
   review: "Review",
@@ -71,7 +71,7 @@ export function HistoryPanel({ items, loading, activeFilter, onFilterChange, onO
 
   const filterOptions = [
     { value: "", label: "Semua" },
-    { value: "rpp", label: "RPP" },
+    { value: "rpp", label: "Rencana Pembelajaran" },
     { value: "soal", label: "Soal" },
     { value: "ppt", label: "PPT" },
     { value: "eyd", label: "EYD" },

@@ -168,7 +168,7 @@ export default function RegisterPage() {
                     <GraduationCap className={`h-7 w-7 md:h-8 md:w-8 ${role === "GURU" ? config.iconColor : "text-gray-400"}`} />
                   </div>
                   <span className={`font-bold text-base md:text-lg ${role === "GURU" ? config.textActive : "text-gray-700"}`}>Guru</span>
-                  <span className="text-[11px] md:text-xs text-center text-gray-500">AI RPP, Bank Soal, Kuis Game</span>
+                  <span className="text-[11px] md:text-xs text-center text-gray-500">AI Rencana Pembelajaran, Bank Soal, Kuis Game</span>
                 </button>
                 
                 <button

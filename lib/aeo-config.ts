@@ -12,19 +12,19 @@ export const aeoPages: Record<string, AeoMeta> = {
   home: {
     title: "BahasaCerdas — Platform Edukasi Bahasa Indonesia untuk Guru & Siswa",
     description:
-      "Platform edukasi Bahasa Indonesia lengkap: AI generator RPP, bank soal HOTS, kuis multiplayer, toko karya, dan komunitas MGMP aktif. Gratis untuk memulai.",
+      "Platform edukasi Bahasa Indonesia lengkap: AI generator Rencana Pembelajaran, bank soal HOTS, kuis multiplayer, toko karya, dan komunitas MGMP aktif. Gratis untuk memulai.",
     path: "/",
     ogTitle: "BahasaCerdas — Platform Edukasi Bahasa Indonesia",
     ogDescription:
       "MGMP + AI + Toko Karya dalam satu platform. Daftar gratis.",
   },
   fitur: {
-    title: "Fitur Lengkap BahasaCerdas — AI RPP, Soal HOTS, Kuis Multiplayer & Toko Karya",
+    title: "Fitur Lengkap BahasaCerdas — AI Rencana Pembelajaran, Soal HOTS, Kuis Multiplayer & Toko Karya",
     description:
-      "Jelajahi semua fitur BahasaCerdas: AI generator RPP Kurikulum Merdeka, bank soal HOTS, kuis multiplayer interaktif, toko karya guru, dan komunitas MGMP. Satu platform untuk semua kebutuhan mengajar Bahasa Indonesia.",
+      "Jelajahi semua fitur BahasaCerdas: AI generator Rencana Pembelajaran Kurikulum Nasional, bank soal HOTS, kuis multiplayer interaktif, toko karya guru, dan komunitas MGMP. Satu platform untuk semua kebutuhan mengajar Bahasa Indonesia.",
     path: "/fitur",
     ogTitle: "Fitur Lengkap | BahasaCerdas",
-    ogDescription: "AI RPP, soal HOTS, kuis multiplayer, toko karya, dan komunitas MGMP dalam satu platform.",
+    ogDescription: "AI Rencana Pembelajaran, soal HOTS, kuis multiplayer, toko karya, dan komunitas MGMP dalam satu platform.",
   },
   tentang: {
     title: "Tentang BahasaCerdas — Misi, Visi & Tim",
@@ -55,15 +55,15 @@ export const aeoPages: Record<string, AeoMeta> = {
     path: "/syarat-ketentuan",
   },
   aiRpp: {
-    title: "AI Generator RPP — Buat RPP Kurikulum Merdeka Otomatis | BahasaCerdas",
+    title: "AI Generator Rencana Pembelajaran — Buat Rencana Pembelajaran Kurikulum Nasional Otomatis | BahasaCerdas",
     description:
-      "Buat RPP Kurikulum Merdeka otomatis dengan AI generator RPP BahasaCerdas. Cukup masukkan topik, kelas, dan durasi — RPP siap pakai dalam hitungan detik. Hemat waktu persiapan mengajar hingga 90%.",
+      "Buat Rencana Pembelajaran Kurikulum Nasional otomatis dengan AI generator Rencana Pembelajaran BahasaCerdas. Cukup masukkan topik, kelas, dan durasi — Rencana Pembelajaran siap pakai dalam hitungan detik. Hemat waktu persiapan mengajar hingga 90%.",
     path: /*** path to be defined */ "",
   },
   soalHots: {
     title: "Bank Soal HOTS — Generator Soal Higher Order Thinking Skills | BahasaCerdas",
     description:
-      "Hasilkan soal HOTS (Higher Order Thinking Skills) untuk Bahasa Indonesia secara otomatis. Soal berbasis level kognitif C4-C6, sesuai Kurikulum Merdeka. Cocok untuk asesmen formatif dan sumatif.",
+      "Hasilkan soal HOTS (Higher Order Thinking Skills) untuk Bahasa Indonesia secara otomatis. Soal berbasis level kognitif C4-C6, sesuai Kurikulum Nasional. Cocok untuk asesmen formatif dan sumatif.",
     path: "",
   },
 };

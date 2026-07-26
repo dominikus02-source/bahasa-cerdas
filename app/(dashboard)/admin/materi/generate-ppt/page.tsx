@@ -264,7 +264,7 @@ export default function AdminPPTGeneratorPage() {
                     <div>
                       <label className="text-sm font-medium text-gray-700 mb-1 block">Kurikulum</label>
                       <select value={aiKurikulum} onChange={(e) => setAiKurikulum(e.target.value)} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm bg-white">
-                        <option value="MERDEKA">Kurikulum Merdeka</option>
+                        <option value="MERDEKA">Kurikulum Nasional</option>
                         <option value="K13">Kurikulum 2013</option>
                       </select>
                     </div>
@@ -359,7 +359,7 @@ export default function AdminPPTGeneratorPage() {
                     <div>
                       <label className="text-sm font-medium text-gray-700 mb-1 block">Kurikulum</label>
                       <select value={manualKurikulum} onChange={(e) => setManualKurikulum(e.target.value)} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm bg-white">
-                        <option value="MERDEKA">Kurikulum Merdeka</option>
+                        <option value="MERDEKA">Kurikulum Nasional</option>
                         <option value="K13">Kurikulum 2013</option>
                       </select>
                     </div>

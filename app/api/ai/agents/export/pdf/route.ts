@@ -102,7 +102,7 @@ export async function POST(req: NextRequest) {
       docEditableText = saved.editableText;
     } else {
       output = outputJson ?? {};
-      docTitle = title || (agentId === "rpp" ? "RPP" : "Soal");
+      docTitle = title || (agentId === "rpp" ? "Rencana Pembelajaran" : "Soal");
       docEditableText = editableText;
     }
 

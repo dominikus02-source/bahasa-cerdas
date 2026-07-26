@@ -14,19 +14,19 @@ const AI_TIMEOUT = 15000;
 async function processRPP(jobId: string, body: Record<string, unknown>) {
   const { kd, kelas, topik, alokasi, metode, curriculum, schoolName, teacherName, semester } = body;
 
-  const curriculumLabels: Record<string, string> = { K13: "Kurikulum 2013", MERDEKA: "Kurikulum Merdeka", MERDEKA_DL: "Kurikulum Merdeka Deep Learning" };
-  const currLabel = curriculumLabels[curriculum as string] || "Kurikulum Merdeka";
+  const curriculumLabels: Record<string, string> = { K13: "Kurikulum 2013", MERDEKA: "Kurikulum Nasional", MERDEKA_DL: "Kurikulum Nasional Deep Learning" };
+  const currLabel = curriculumLabels[curriculum as string] || "Kurikulum Nasional";
 
   const k = (kelas as string) || "X", t = (topik as string) || "Teks Negosiasi", m = (metode as string) || "Diskusi, ceramah, penugasan";
   const parsedKelas = parseInt(kelas as string || "10");
   const fase = parsedKelas <= 6 ? (parsedKelas <= 2 ? "A" : parsedKelas <= 4 ? "B" : "C") : (parsedKelas <= 9 ? "D" : (parsedKelas === 10 ? "E" : "F"));
 
   const curriculumSpecific = curriculum === "K13" ? `
-RPP K13 — komponen: KI-1/2/3/4, KD, IPK (min 3 per KD), tujuan (format ABCD), materi pokok + uraian, kegiatan: pendahuluan (10-15'), inti (5M saintifik: mengamati, menanya, mengumpulkan, mengasosiasi, mengomunikasikan), penutup (10-15'), penilaian (sikap/pengetahuan/keterampilan), media/alat/sumber` : curriculum === "MERDEKA" ? `
-Modul Ajar Merdeka — komponen: informasi umum (identitas, kompetensi awal, profil pelajar Pancasila min 2 dimensi, sarana, target, model), komponen inti (CP, tujuan min 3, pemahaman bermakna, pertanyaan pemantik, kegiatan: pendahuluan-inti-penutup, asesmen: diagnostik-formatif-sumatif), lampiran (LKPD, pengayaan, bahan bacaan, glosarium, daftar pustaka)` : `
-Modul Ajar Deep Learning — komponen: informasi umum (identitas, kompetensi awal, profil pelajar Pancasila min 3 dimensi, sarana, target, model), komponen inti (CP, tujuan bermakna, pemahaman bermakna, pertanyaan pemantik HOTS, kegiatan: aktivasi-eksplorasi-elaborasi&diferensiasi-kreasi&kolaborasi-refleksi metakognitif, asesmen autentik), lampiran (LKPD, pengayaan, bahan bacaan, glosarium, daftar pustaka)`;
+Rencana Pembelajaran K13 — komponen: KI-1/2/3/4, KD, IPK (min 3 per KD), tujuan (format ABCD), materi pokok + uraian, kegiatan: pendahuluan (10-15'), inti (5M saintifik: mengamati, menanya, mengumpulkan, mengasosiasi, mengomunikasikan), penutup (10-15'), penilaian (sikap/pengetahuan/keterampilan), media/alat/sumber` : curriculum === "MERDEKA" ? `
+Rencana Pembelajaran Kurikulum Nasional — komponen: informasi umum (identitas, kompetensi awal, profil pelajar Pancasila min 2 dimensi, sarana, target, model), komponen inti (CP, tujuan min 3, pemahaman bermakna, pertanyaan pemantik, kegiatan: pendahuluan-inti-penutup, asesmen: diagnostik-formatif-sumatif), lampiran (LKPD, pengayaan, bahan bacaan, glosarium, daftar pustaka)` : `
+Rencana Pembelajaran Deep Learning — komponen: informasi umum (identitas, kompetensi awal, profil pelajar Pancasila min 3 dimensi, sarana, target, model), komponen inti (CP, tujuan bermakna, pemahaman bermakna, pertanyaan pemantik HOTS, kegiatan: aktivasi-eksplorasi-elaborasi&diferensiasi-kreasi&kolaborasi-refleksi metakognitif, asesmen autentik), lampiran (LKPD, pengayaan, bahan bacaan, glosarium, daftar pustaka)`;
 
-  const prompt = `Buat ${curriculum === "K13" ? "RPP" : "Modul Ajar"} Bhs Indonesia:
+  const prompt = `Buat Rencana Pembelajaran Bhs Indonesia:
 Kurikulum: ${currLabel}
 Kelas: ${k}
 Semester: ${semester as string || "1 (Ganjil)"}
@@ -40,7 +40,7 @@ ${curriculumSpecific}
 
 Output JSON SAJA tanpa markdown:
 ${curriculum === "K13" ? JSON.stringify({
-  title: `RPP Bhs Indo Kelas ${k} - ${t}`,
+  title: `Rencana Pembelajaran Bhs Indo Kelas ${k} - ${t}`,
   ki1: "KI-1", ki2: "KI-2", ki3: "KI-3", ki4: "KI-4",
   kdPengetahuan: `KD 3.x ${t}`, kdKeterampilan: `KD 4.x ${t}`,
   ipkPengetahuan: [], ipkKeterampilan: [],
@@ -49,7 +49,7 @@ ${curriculum === "K13" ? JSON.stringify({
   kegiatanPenutup: [], penilaianSikap: "", penilaianPengetahuan: "", penilaianKeterampilan: "",
   media: "", alat: "", sumberBelajar: ""
 }) : curriculum === "MERDEKA" ? JSON.stringify({
-  title: `Modul Ajar Bhs Indo Kelas ${k} - ${t}`,
+  title: `Rencana Pembelajaran Bhs Indo Kelas ${k} - ${t}`,
   fase: `Fase ${fase}`, kompetensiAwal: "", profilPelajarPancasila: [],
   saranaPrasarana: "", targetPesertaDidik: "", modelPembelajaran: m,
   capaianPembelajaran: "", tujuanPembelajaran: [], pemahamanBermakna: "",
@@ -58,7 +58,7 @@ ${curriculum === "K13" ? JSON.stringify({
   lkpd: "", pengayaanRemedial: "", bahanBacaan: "",
   glosarium: {}, daftarPustaka: ""
 }) : JSON.stringify({
-  title: `Modul Ajar Deep Learning Bhs Indo Kelas ${k} - ${t}`,
+  title: `Rencana Pembelajaran Deep Learning Bhs Indo Kelas ${k} - ${t}`,
   fase: `Fase ${fase}`, kompetensiAwal: "", profilPelajarPancasila: [],
   saranaPrasarana: "", targetPesertaDidik: "", modelPembelajaran: "Deep Learning",
   capaianPembelajaran: "", tujuanPembelajaranBermakna: [], pemahamanBermakna: "",

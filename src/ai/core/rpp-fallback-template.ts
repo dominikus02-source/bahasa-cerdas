@@ -44,7 +44,7 @@ Tahun Ajaran: ${academicYear}
 Semester: ${semester}
 Dibuat dengan bantuan BahasaCerdas.com
 
-# MODUL AJAR / RENCANA PELAKSANAAN PEMBELAJARAN
+# RENCANA PEMBELAJARAN
 ## ${input.subject.toUpperCase()}
 
 ### A. Identitas Dokumen

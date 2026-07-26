@@ -23,8 +23,8 @@ interface Karya {
 }
 
 const TYPE_LABELS: Record<string, string> = {
-  RPP: "RPP",
-  MODUL: "Modul",
+  RPP: "Rencana Pembelajaran",
+  MODUL: "Rencana Pembelajaran (Modul)",
   PPT: "PowerPoint",
   SOAL: "Bank Soal",
   VIDEO: "Video",
@@ -121,7 +121,7 @@ export default function MarketplaceBrowse() {
             <ShoppingBag className="w-8 h-8" />
             <h1 className="text-2xl font-bold">Toko Karya</h1>
           </div>
-          <p className="text-emerald-100">Temukan RPP, Modul, Soal, dan sumber belajar berkualitas dari guru-guru Indonesia</p>
+          <p className="text-emerald-100">Temukan Rencana Pembelajaran, Modul, Soal, dan sumber belajar berkualitas dari guru-guru Indonesia</p>
         </div>
       </div>
 

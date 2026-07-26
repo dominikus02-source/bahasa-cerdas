@@ -8,7 +8,7 @@ import { Check, Crown, Zap, AlertCircle, Loader2, X, Shield, CreditCard, Calenda
 import { loadMidtransSnap } from "@/lib/midtrans-client";
 
 const FEATURES = [
-  { free: true, pro: true, label: "AI Tools (Buat RPP, Soal, PPT, dll)" },
+  { free: true, pro: true, label: "AI Tools (Buat Rencana Pembelajaran, Soal, PPT, dll)" },
   { free: true, pro: true, label: "Bank Soal & Kuis" },
   { free: true, pro: true, label: "KelasKu & Buku Ajar" },
   { free: true, pro: true, label: "Buku Nilai & Rapor" },

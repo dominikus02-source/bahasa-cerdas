@@ -43,7 +43,7 @@ const GRADES_BY_LEVEL: Record<LevelTab, string[]> = {
 }
 
 const FOLDERS: { value: Folder; label: string; hint: string }[] = [
-  { value: "MODUL", label: "Modul Ajar", hint: "DOCX, XLSX, ZIP" },
+  { value: "MODUL", label: "Rencana Pembelajaran", hint: "DOCX, XLSX, ZIP" },
   { value: "PPT", label: "PPT", hint: "Presentasi" },
   { value: "PDF", label: "PDF", hint: "Dokumen PDF" },
 ]
@@ -124,14 +124,14 @@ export default function MateriAjarPage() {
           <div>
             <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
               <Presentation className="text-emerald-500" size={28} />
-              Bank Modul Ajar
+              Bank Rencana Pembelajaran
             </h1>
-            <p className="text-gray-500 mt-1">Cari modul ajar sesuai tema, unduh, atau buat sendiri dengan AI</p>
+            <p className="text-gray-500 mt-1">Cari Rencana Pembelajaran sesuai tema, unduh, atau buat sendiri dengan AI</p>
           </div>
           <div className="flex items-center gap-3">
             <button onClick={() => setShowUpload(true)}
               className="flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-xl text-sm font-semibold hover:bg-emerald-700 transition-colors">
-              <Upload size={16} /> Unggah Modul
+              <Upload size={16} /> Unggah Rencana Pembelajaran
             </button>
             {quota && (
               quota.unlimited ? (
@@ -169,7 +169,7 @@ export default function MateriAjarPage() {
             <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
             <input
               type="text"
-              placeholder="Cari modul ajar berdasarkan tema, judul, atau kata kunci..."
+              placeholder="Cari Rencana Pembelajaran berdasarkan tema, judul, atau kata kunci..."
               value={search}
               onChange={e => setSearch(e.target.value)}
               className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500"
@@ -260,10 +260,10 @@ export default function MateriAjarPage() {
         <div className="bg-white rounded-2xl border border-gray-100 p-12 text-center">
           <BookOpen size={48} className="mx-auto text-gray-300 mb-4" />
           <h3 className="text-lg font-semibold text-gray-700 mb-1">
-            {debouncedSearch ? `Tidak ada modul ajar untuk "${debouncedSearch}"` : `Belum ada modul ajar ${activeTab}`}
+            {debouncedSearch ? `Tidak ada Rencana Pembelajaran untuk "${debouncedSearch}"` : `Belum ada Rencana Pembelajaran ${activeTab}`}
           </h3>
           <p className="text-gray-500 mb-4">
-            {debouncedSearch ? "Coba kata kunci/tema lain, atau buat sendiri dengan AI." : "Unggah modul ajar atau buat dengan AI."}
+            {debouncedSearch ? "Coba kata kunci/tema lain, atau buat sendiri dengan AI." : "Unggah Rencana Pembelajaran atau buat dengan AI."}
           </p>
           <a href="/guru/ai-tools?tool=rpp" target="_blank" rel="noopener noreferrer"
             className="inline-flex items-center gap-2 px-4 py-2 bg-violet-600 text-white rounded-xl text-sm font-semibold hover:bg-violet-700 transition-colors">
@@ -351,7 +351,7 @@ export default function MateriAjarPage() {
             <button onClick={() => { if (!uploading) setShowUpload(false) }} className="absolute top-3 right-3 w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center">
               <X size={16} className="text-gray-500" />
             </button>
-            <h2 className="font-bold text-lg text-gray-900 mb-1">Unggah Modul Ajar</h2>
+            <h2 className="font-bold text-lg text-gray-900 mb-1">Unggah Rencana Pembelajaran</h2>
             <p className="text-xs text-gray-500 mb-4">Bisa pilih banyak file Word/PDF sekaligus. Isi tema agar mudah ditemukan guru saat mencari.</p>
 
             <div className="space-y-4">

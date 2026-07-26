@@ -26,7 +26,7 @@ const NAV: NavItem[] = [
   { label: "Jelajahi Toko Karya", href: "/marketplace", icon: <ShoppingBag size={18} /> },
   { label: "Video Belajar", href: "/guru/video-belajar", icon: <Video size={18} /> },
   { label: "Kuis Game", href: "/guru/game/lobby", icon: <Gamepad2 size={18} /> },
-  { label: "RPP & Modul", href: "/guru/ai-tools?tool=rpp-modul", icon: <FileText size={18} /> },
+  { label: "Rencana Pembelajaran", href: "/guru/ai-tools?tool=rpp-modul", icon: <FileText size={18} /> },
   { label: "AI Tools", href: "/guru/ai-tools", icon: <Sparkles size={18} /> },
   { label: "Materi Ajar", href: "/guru/materi-ajar", icon: <Presentation size={18} /> },
   { label: "Buku Ajar", href: "/guru/panduan-guru", icon: <BookOpen size={18} /> },

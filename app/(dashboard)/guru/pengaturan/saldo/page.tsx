@@ -100,7 +100,7 @@ export default function SaldoPage() {
             </div>
             <div>
               <p className="font-medium">Jual Karya Berkualitas</p>
-              <p className="text-xs text-gray-500">RPP, modul, dan soal yang dibuat dengan baik akan lebih laku</p>
+              <p className="text-xs text-gray-500">Rencana Pembelajaran, modul, dan soal yang dibuat dengan baik akan lebih laku</p>
             </div>
           </div>
           <div className="flex items-center gap-3 p-3 rounded-lg border">

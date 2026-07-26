@@ -21,7 +21,7 @@ export const metadata: Metadata = {
 const faqs = [
   {
     q: "Apa itu BahasaCerdas?",
-    a: "BahasaCerdas adalah platform edukasi Bahasa Indonesia yang menyediakan AI generator RPP, bank soal HOTS, kuis multiplayer, toko karya guru, dan komunitas MGMP dalam satu platform. Dibangun khusus untuk guru Bahasa Indonesia di SMP, SMA, SMK, dan MA.",
+    a: "BahasaCerdas adalah platform edukasi Bahasa Indonesia yang menyediakan AI generator Rencana Pembelajaran, bank soal HOTS, kuis multiplayer, toko karya guru, dan komunitas MGMP dalam satu platform. Dibangun khusus untuk guru Bahasa Indonesia di SMP, SMA, SMK, dan MA.",
   },
   {
     q: "Apakah BahasaCerdas gratis?",
@@ -33,11 +33,11 @@ const faqs = [
   },
   {
     q: "Fitur AI apa saja yang tersedia?",
-    a: "BahasaCerdas memiliki enam alat AI: AI Generator RPP (buat RPP Kurikulum Merdeka dalam 30 detik), Generator Soal HOTS (soal level kognitif C4-C6), Koreksi EYD Otomatis, Analisis Teks Kebahasaan, Feedback Karangan Otomatis, dan Asisten BC untuk membantu persiapan mengajar.",
+    a: "BahasaCerdas memiliki enam alat AI: AI Generator Rencana Pembelajaran (buat Rencana Pembelajaran Kurikulum Nasional dalam 30 detik), Generator Soal HOTS (soal level kognitif C4-C6), Koreksi EYD Otomatis, Analisis Teks Kebahasaan, Feedback Karangan Otomatis, dan Asisten BC untuk membantu persiapan mengajar.",
   },
   {
-    q: "Bagaimana cara AI Generator RPP bekerja?",
-    a: "Cukup masukkan topik pembelajaran, kelas, dan durasi. AI akan menghasilkan RPP lengkap dengan tujuan pembelajaran, kegiatan inti, asesmen, dan lampiran — semuanya sesuai Kurikulum Merdeka terbaru. Proses hanya membutuhkan waktu sekitar 30 detik.",
+    q: "Bagaimana cara AI Generator Rencana Pembelajaran bekerja?",
+    a: "Cukup masukkan topik pembelajaran, kelas, dan durasi. AI akan menghasilkan Rencana Pembelajaran lengkap dengan tujuan pembelajaran, kegiatan inti, asesmen, dan lampiran — semuanya sesuai Kurikulum Nasional terbaru. Proses hanya membutuhkan waktu sekitar 30 detik.",
   },
   {
     q: "Siapa saja yang bisa menggunakan BahasaCerdas?",
@@ -45,7 +45,7 @@ const faqs = [
   },
   {
     q: "Apa itu Toko Karya Guru?",
-    a: "Toko Karya adalah marketplace untuk guru menjual dan membeli perangkat ajar seperti RPP, modul ajar, PPT, soal, video pembelajaran, dan administrasi guru. Penjual mendapatkan 80% dari setiap penjualan, dan sisanya 20% untuk pengembangan platform.",
+    a: "Toko Karya adalah marketplace untuk guru menjual dan membeli perangkat ajar seperti Rencana Pembelajaran, PPT, soal, video pembelajaran, dan administrasi guru. Penjual mendapatkan 80% dari setiap penjualan, dan sisanya 20% untuk pengembangan platform.",
   },
   {
     q: "Bagaimana cara bergabung dengan komunitas MGMP?",
@@ -69,7 +69,7 @@ const faqs = [
   },
   {
     q: "Apa perbedaan Guru Pro dengan akun gratis?",
-    a: "Akun gratis bisa mengakses fitur dasar seperti materi pembelajaran, kuis, toko karya, dan komunitas. Guru Pro mendapatkan akses penuh ke semua alat AI (RPP generator, soal HOTS, koreksi EYD), kuota lebih besar, dan fitur premium lainnya.",
+    a: "Akun gratis bisa mengakses fitur dasar seperti materi pembelajaran, kuis, toko karya, dan komunitas. Guru Pro mendapatkan akses penuh ke semua alat AI (Rencana Pembelajaran generator, soal HOTS, koreksi EYD), kuota lebih besar, dan fitur premium lainnya.",
   },
   {
     q: "Bagaimana cara menghubungi tim BahasaCerdas?",

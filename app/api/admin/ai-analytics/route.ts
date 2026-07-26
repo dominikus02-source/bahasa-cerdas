@@ -3,7 +3,7 @@ import { getUser } from "@/lib/supabase/server";
 import { db as prisma } from "@/lib/db";
 
 const AGENT_LABELS: Record<string, string> = {
-  rpp: "RPP",
+  rpp: "Rencana Pembelajaran",
   soal: "Soal",
   ppt: "PPT",
   review: "Review",

@@ -316,7 +316,7 @@ export default function UnitPreviewPage() {
           onClick={() => window.open(`/guru/ai-tools?tool=rpp&topic=${encodeURIComponent(data.title)}&grade=${gradeParam}`, "_blank")}
         >
           <FileText className="w-3.5 h-3.5 mr-1" />
-          Buat RPP
+          Buat Rencana Pembelajaran
         </Button>
       </div>
 

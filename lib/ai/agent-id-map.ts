@@ -82,7 +82,7 @@ export const CANONICAL_AGENTS = [
 export type CanonicalAgentId = (typeof CANONICAL_AGENTS)[number];
 
 export const AGENT_LABELS: Record<CanonicalAgentId, string> = {
-  rpp: "RPP / Modul Ajar",
+  rpp: "Rencana Pembelajaran",
   soal: "Buat Soal",
   ppt: "Buat PPT",
   review: "Review Materi",

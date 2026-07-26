@@ -127,13 +127,13 @@ export default function TentangPage() {
             <p className="text-base lg:text-lg text-zinc-500 leading-relaxed">
               Bahasa Indonesia adalah mata pelajaran wajib, tetapi sering kali belum
               diajarkan dengan cara yang cukup relevan dengan dunia siswa hari ini. Di sisi
-              lain, guru Bahasa Indonesia menghadapi beban besar: menyiapkan RPP, modul ajar,
+              lain, guru Bahasa Indonesia menghadapi beban besar: menyiapkan Rencana Pembelajaran,
               soal, penilaian, presentasi, dan materi kreatif hampir setiap minggu.
             </p>
             <p className="text-base lg:text-lg text-zinc-500 leading-relaxed mt-4">
               BahasaCerdas dibangun untuk menjawab kebutuhan itu. Bukan untuk menggantikan
               guru, tetapi untuk memperkuat peran guru melalui teknologi yang memahami
-              konteks Bahasa Indonesia, Kurikulum Merdeka, literasi, dan karya.
+              konteks Bahasa Indonesia, Kurikulum Nasional, literasi, dan karya.
             </p>
           </div>
 
@@ -181,7 +181,7 @@ export default function TentangPage() {
                 AI untuk Guru Bahasa Indonesia
               </h3>
               <p className="text-sm text-zinc-500 leading-relaxed">
-                Alat AI untuk membantu guru membuat RPP, modul ajar, soal, presentasi,
+                Alat AI untuk membantu guru membuat Rencana Pembelajaran, soal, presentasi,
                 koreksi EYD, feedback tulisan, penilaian, dan analisis teks.
               </p>
             </div>
@@ -208,7 +208,7 @@ export default function TentangPage() {
               </h3>
               <p className="text-sm text-zinc-500 leading-relaxed">
                 Ruang bagi guru untuk berbagi dan menjual karya pendidikan seperti modul,
-                RPP, video, ebook, dan materi ajar lainnya.
+                Rencana Pembelajaran, video, ebook, dan materi ajar lainnya.
               </p>
             </div>
           </div>
