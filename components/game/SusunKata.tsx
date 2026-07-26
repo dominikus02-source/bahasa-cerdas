@@ -214,6 +214,25 @@ function loadSaved(): Saved {
 function saveSaved(s: Saved) {
   try { localStorage.setItem("susun-kata-progress", JSON.stringify(s)); } catch { /* abaikan */ }
 }
+
+// Sama seperti TebakKata: hindari kata yang baru saja muncul supaya replay
+// level yang sama terasa lebih segar meski bank katanya tetap sama.
+const RECENT_WORDS_KEY = "susun-kata-recent";
+const RECENT_WORDS_LIMIT = 60;
+function loadRecentWords(): string[] {
+  try { const raw = localStorage.getItem(RECENT_WORDS_KEY); return raw ? JSON.parse(raw) : []; } catch { return []; }
+}
+function rememberWords(used: string[]) {
+  try {
+    const prev = loadRecentWords();
+    const next = [...used, ...prev].slice(0, RECENT_WORDS_LIMIT);
+    localStorage.setItem(RECENT_WORDS_KEY, JSON.stringify(next));
+  } catch { /* abaikan */ }
+}
+function preferFresh(candidates: Word[], recent: string[], need: number): Word[] {
+  const fresh = candidates.filter((w) => !recent.includes(w.word));
+  return fresh.length >= need ? fresh : candidates;
+}
 function starsFor(score: number, rounds: number): number {
   const perRound = rounds > 0 ? score / rounds : 0;
   if (perRound >= 260) return 3;
@@ -354,7 +373,9 @@ export default function SusunKataGame({ hideBackButton, backHref = "/arena/game"
     const lv = LEVELS.find((l) => l.id === id) || LEVELS[0];
     let candidates = SCRAMBLE_WORDS.filter((w) => w.word.length >= lv.min && w.word.length <= lv.max);
     if (candidates.length < lv.rounds) candidates = SCRAMBLE_WORDS;
+    candidates = preferFresh(candidates, loadRecentWords(), lv.rounds);
     const shuffled = [...candidates].sort(() => Math.random() - 0.5).slice(0, lv.rounds);
+    rememberWords(shuffled.map((w) => w.word));
 
     setLevelId(id);
     setPool(shuffled);

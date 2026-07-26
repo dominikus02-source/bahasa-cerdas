@@ -69,7 +69,7 @@ export default async function BerandaPage() {
   })
   const koinHariIni = todayCoinAgg._sum.amount || 0
 
-  const [aktivitas, juaraBaru, tugasCount, jalurStats] = await Promise.all([
+  const [aktivitas, juaraBaru, tugasCount, jalurStats, myKaryaCount] = await Promise.all([
     cache.getOrSet("arena:aktivitas", () =>
       db.gameResult.findMany({
         where: { rank: 1 },
@@ -117,6 +117,7 @@ export default async function BerandaPage() {
       where: { userId: user.id },
       _sum: { xpEarned: true },
     }),
+    db.studentKarya.count({ where: { userId: user.id } }),
   ])
 
   const leagueRows = await cache.getOrSet("arena:league-mini:top5", async () =>
@@ -347,23 +348,21 @@ export default async function BerandaPage() {
           {/* Stats */}
           <div className="bg-gradient-to-br from-violet-600 to-purple-700 rounded-2xl p-5 text-white">
             <h4 className="font-bold text-sm mb-4 text-violet-200">Statistik Kamu</h4>
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-violet-200">Total Karya</span>
-                <span className="font-bold">{juaraBaru.length > 0 ? "—" : "0"}</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-violet-200">Level</span>
-                <span className="font-bold">{displayLevel}</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-violet-200">Streak</span>
-                <span className="font-bold">{user.streak || 0} hari</span>
-              </div>
-              <div className="flex items-center justify-between pt-2 border-t border-violet-500/30">
-                <span className="text-sm text-violet-200">Koin Terkumpul</span>
-                <span className="font-bold text-amber-300">{user.coins || 0}</span>
-              </div>
+            <div className="divide-y divide-white/10">
+              {[
+                { icon: PenLine, label: "Total Karya", value: myKaryaCount, color: "text-pink-300" },
+                { icon: Star, label: "Level", value: displayLevel, color: "text-amber-300" },
+                { icon: Flame, label: "Streak", value: `${user.streak || 0} hari`, color: "text-orange-300" },
+                { icon: Coins, label: "Koin Terkumpul", value: user.coins || 0, color: "text-amber-300" },
+              ].map((s) => (
+                <div key={s.label} className="flex items-center gap-3 py-2.5 first:pt-0 last:pb-0">
+                  <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center shrink-0">
+                    <s.icon size={15} className={s.color} />
+                  </div>
+                  <span className="text-sm text-violet-100 flex-1">{s.label}</span>
+                  <span className="font-bold">{s.value}</span>
+                </div>
+              ))}
             </div>
           </div>
         </div>
