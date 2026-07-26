@@ -15,10 +15,12 @@ export default function PromoVideoPlayer({ videoId }: { videoId: string | null }
         </div>
       ) : playing ? (
         <iframe
-          src={`https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1`}
+          // youtube-nocookie.com bukan bagian dari frame-src di middleware.ts
+          // (CSP), jadi diblok browser. youtube.com sudah diizinkan di sana.
+          src={`https://www.youtube.com/embed/${videoId}?autoplay=1`}
           title="Video pengenalan BahasaCerdas"
           className="absolute inset-0 w-full h-full"
-          allow="accelerate-compute; autoplay; encrypted-media; picture-in-picture"
+          allow="autoplay; encrypted-media; picture-in-picture"
           allowFullScreen
         />
       ) : (
