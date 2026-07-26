@@ -2,11 +2,9 @@
 
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
-import SusunKataGame from "@/components/game/SusunKata";
+import MenaraCerdas from "@/components/game/MenaraCerdas";
 
-// SusunKataGame renders as a fixed full-screen overlay (chunky redesign) —
-// the old inline p-8 header pattern would sit underneath it, unreachable.
-export default function GuruSusunKataPage() {
+export default function GuruMenaraCerdasPage() {
   return (
     <div className="fixed inset-0 z-[60] bg-[#FFF6E0]">
       <Link
@@ -15,7 +13,7 @@ export default function GuruSusunKataPage() {
       >
         <ArrowLeft className="w-5 h-5" />
       </Link>
-      <SusunKataGame hideBackButton backHref="/guru/game" />
+      <MenaraCerdas backHref="/guru/game" />
     </div>
   );
 }

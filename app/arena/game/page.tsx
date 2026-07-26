@@ -18,11 +18,14 @@ const GAMES: Game[] = [
   { title: "Tantang Teman", desc: "Duel 10 soal melawan teman sekelasmu! Soal sama, siapa lebih jago?", icon: Users, href: "/arena/game/tantang", accentColor: "#D946EF", iconGradient: "from-fuchsia-500 to-pink-600", featured: true, badge: { text: "Baru", type: "new" }, xp: "+50 XP", players: "2 pemain", time: "~3 mnt" },
   { title: "Irama Kata", desc: "Kata jatuh di 4 jalur — ketuk hanya yang sesuai aturan! Ritme + refleks bahasa.", icon: Clock, href: "/arena/game/irama-kata", accentColor: "#F97316", iconGradient: "from-orange-500 to-rose-500", badge: { text: "Baru", type: "new" }, xp: "+60 XP", players: "Solo", time: "~1 mnt" },
   { title: "Benar atau Salah", desc: "Kuis kilat 60 detik! Tentukan jawaban yang muncul benar atau salah.", icon: ThumbsUp, href: "/arena/game/benar-salah", accentColor: "#14B8A6", iconGradient: "from-emerald-400 to-teal-600", badge: { text: "Baru", type: "new" }, xp: "+50 XP", players: "Solo", time: "~1 mnt" },
-  { title: "Kuis Tempur", desc: "Lawan murid lain real-time! Siapa cepat dan benar dia menang.", icon: Swords, href: "/arena/game/kuis-tempur", accentColor: "#EF4444", iconGradient: "from-red-500 to-red-600", featured: true, badge: { text: "Terpopuler", type: "hot" }, xp: "+80 XP", players: "2-8 pemain", time: "~5 menit", multiplayer: true },
   { title: "KataPlay", desc: "Belajar membaca dari nol! 4 tingkat, puluhan soal seru!", icon: BookOpen, href: "/arena/game/kata-play", accentColor: "#7C3AED", iconGradient: "from-violet-500 to-purple-600", badge: { text: "Baru", type: "new" }, xp: "+50 XP", players: "Solo", time: "~3 mnt" },
   { title: "Tebak Kata", desc: "Tebak dari petunjuk. Seru bareng teman!", icon: Type, href: "/arena/game/tebak-kata", accentColor: "#06B6D4", iconGradient: "from-cyan-500 to-cyan-600", xp: "+60 XP", players: "Solo", time: "~3 mnt" },
   { title: "Susun Kata", desc: "Acak huruf jadi kata benar dalam waktu limit!", icon: Puzzle, href: "/arena/game/susun-kata", accentColor: "#10B981", iconGradient: "from-emerald-500 to-emerald-600", xp: "+50 XP", players: "Solo", time: "~3 mnt" },
   { title: "Lari Kata", desc: "60 detik, 20 soal. Jawab secepat kilat!", icon: Zap, href: "/arena/game/lari-kata", accentColor: "#F59E0B", iconGradient: "from-amber-500 to-amber-600", badge: { text: "Baru", type: "new" }, xp: "+70 XP", players: "~1 mnt", time: "~1 mnt" },
+  // Multiplayer — butuh game server yang saat ini mati. Ditaruh terakhir di
+  // array sebagai baseline; sort di bawah tetap menjaminnya di posisi
+  // terbawah kalau game multiplayer lain ditambahkan tanpa urutan ini diingat.
+  { title: "Kuis Tempur", desc: "Lawan murid lain real-time! Siapa cepat dan benar dia menang.", icon: Swords, href: "/arena/game/kuis-tempur", accentColor: "#EF4444", iconGradient: "from-red-500 to-red-600", featured: true, badge: { text: "Terpopuler", type: "hot" }, xp: "+80 XP", players: "2-8 pemain", time: "~5 menit", multiplayer: true },
 ]
 
 const INITIALS_COLORS = [
@@ -74,12 +77,14 @@ export default async function ArenaGimPage() {
   const userRank = topUsers.findIndex((u) => u.id === user.id) + 1
 
   // While the multiplayer server is offline, present multiplayer games as
-  // "Segera Hadir". Their link lands on a guarded page showing a teaser screen.
-  const games: Game[] = GAMES.map((g) =>
+  // "Segera Hadir" AND sink them below every playable game — a mislabeled
+  // "Terpopuler" badge sitting mid-grid on a dead link is worse than the
+  // label alone. Sort is stable, so playable games keep their authored order.
+  const games: Game[] = GAMES.map((g): Game =>
     g.multiplayer && !MULTIPLAYER_ENABLED
-      ? { ...g, badge: { text: "Segera Hadir", type: "new" }, players: "Segera", desc: "Mode lawan real-time sedang kami siapkan. Segera hadir!" }
+      ? { ...g, badge: { text: "Segera Hadir", type: "new" as const }, players: "Segera", desc: "Mode lawan real-time sedang kami siapkan. Segera hadir!" }
       : g
-  )
+  ).sort((a, b) => Number(a.multiplayer && !MULTIPLAYER_ENABLED) - Number(b.multiplayer && !MULTIPLAYER_ENABLED))
 
   return (
     <div className="game-hub arena-page">

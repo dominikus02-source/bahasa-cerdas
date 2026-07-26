@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { MULTIPLAYER_ENABLED } from "@/lib/features";
 
 const BattleIcon = () => <svg className="w-10 h-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M7 11l5-5 5 5M7 13l5 5 5-5" strokeLinecap="round" strokeLinejoin="round"/></svg>;
 const SetupIcon = () => <svg className="w-10 h-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z M15 12a3 3 0 11-6 0 3 3 0 016 0z" strokeLinecap="round" strokeLinejoin="round"/></svg>;
@@ -14,6 +15,10 @@ const TebakIcon = () => <svg className="w-10 h-10" viewBox="0 0 24 24" fill="non
 const PuzzleIcon = () => <svg className="w-10 h-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6zM9 9h6v6H9z" strokeLinecap="round"/></svg>;
 const PantunIcon = () => <svg className="w-10 h-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M4 4l16 16M4 20L20 4" strokeLinecap="round"/><path d="M9 9h.01M14 10h.01M10 14h.01M15 15h.01" strokeLinecap="round"/></svg>;
 const KoreksiIcon = () => <svg className="w-10 h-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" strokeLinecap="round"/></svg>;
+const MenaraIcon = () => <svg className="w-10 h-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M12 3l9 16H3l9-16z" strokeLinecap="round" strokeLinejoin="round"/><path d="M8.5 12h7M10 8h4" strokeLinecap="round"/></svg>;
+const BenarSalahIcon = () => <svg className="w-10 h-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M5 13l3 3 5-6" strokeLinecap="round" strokeLinejoin="round"/><path d="M16 8l5 5m0-5l-5 5" strokeLinecap="round"/></svg>;
+const IramaIcon = () => <svg className="w-10 h-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M9 18V5l12-2v13" strokeLinecap="round" strokeLinejoin="round"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>;
+const KataPlayIcon = () => <svg className="w-10 h-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M12 6.5C10.5 5 8 4 5 4v13c3 0 5.5 1 7 2.5C13.5 18 16 17 19 17V4c-3 0-5.5 1-7 2.5z" strokeLinecap="round" strokeLinejoin="round"/></svg>;
 
 const GAMES = [
   {
@@ -70,6 +75,48 @@ const GAMES = [
 
 const SOLO_GAMES = [
   {
+    id: "menara",
+    title: "Menara Cerdas",
+    subtitle: "Solo - Panjat Soal",
+    desc: "Panjat menara dengan soal dari pelajaran murid! Jawab benar untuk naik, jaga 3 nyawa.",
+    Icon: MenaraIcon,
+    gradient: "from-violet-500 via-purple-600 to-fuchsia-700",
+    href: "/guru/game/menara",
+    status: "LIVE",
+    badge: "SOLO",
+    badgeColor: "bg-violet-500",
+    players: "Solo",
+    time: "~3 menit",
+  },
+  {
+    id: "irama",
+    title: "Irama Kata",
+    subtitle: "Solo - Ritme Bahasa",
+    desc: "Kata jatuh di 4 jalur — ketuk hanya yang sesuai aturan level. Refleks + klasifikasi kata.",
+    Icon: IramaIcon,
+    gradient: "from-orange-500 via-rose-500 to-red-600",
+    href: "/guru/game/irama-kata",
+    status: "LIVE",
+    badge: "SOLO",
+    badgeColor: "bg-orange-500",
+    players: "Solo",
+    time: "~1 menit",
+  },
+  {
+    id: "benar-salah",
+    title: "Benar atau Salah",
+    subtitle: "Solo - Kuis Kilat",
+    desc: "Kuis kilat 60 detik! Tentukan jawaban yang muncul benar atau salah.",
+    Icon: BenarSalahIcon,
+    gradient: "from-emerald-400 via-teal-500 to-cyan-600",
+    href: "/guru/game/benar-salah",
+    status: "LIVE",
+    badge: "SOLO",
+    badgeColor: "bg-teal-500",
+    players: "Solo",
+    time: "~1 menit",
+  },
+  {
     id: "dash",
     title: "Lari Kata",
     subtitle: "Solo - Lari Cepat",
@@ -112,6 +159,20 @@ const SOLO_GAMES = [
     time: "~3 menit",
   },
   {
+    id: "kataplay",
+    title: "KataPlay",
+    subtitle: "Solo - Belajar Membaca",
+    desc: "Belajar membaca dari nol! 4 tingkat, puluhan soal seru — cocok untuk kelas awal.",
+    Icon: KataPlayIcon,
+    gradient: "from-violet-500 via-purple-600 to-fuchsia-700",
+    href: "/guru/game/kata-play",
+    status: "LIVE",
+    badge: "SOLO",
+    badgeColor: "bg-purple-500",
+    players: "Solo",
+    time: "~3 menit",
+  },
+  {
     id: "puzzle",
     title: "Teka-teki Makna",
     subtitle: "Koneksi Harian",
@@ -150,8 +211,15 @@ const SOLO_GAMES = [
 ];
 
 export default function GuruGameHubPage() {
-  const liveGames = GAMES.filter(g => g.status === "LIVE");
-  const comingSoon = GAMES.filter(g => g.status === "COMING_SOON");
+  // Server multiplayer mati -> "Kuis Battle" (ruang gim real-time) bukan LIVE
+  // sungguhan. Turunkan ke Segera Hadir alih-alih membiarkannya salah label.
+  const gamesList = GAMES.map((g) =>
+    g.id === "battle" && !MULTIPLAYER_ENABLED
+      ? { ...g, status: "COMING_SOON", subtitle: "Segera Hadir", badge: "SEGERA HADIR" }
+      : g
+  );
+  const liveGames = gamesList.filter(g => g.status === "LIVE");
+  const comingSoon = gamesList.filter(g => g.status === "COMING_SOON");
   const soloGames = SOLO_GAMES.filter(g => g.status === "LIVE");
   const soloComingSoon = SOLO_GAMES.filter(g => g.status === "COMING_SOON");
 

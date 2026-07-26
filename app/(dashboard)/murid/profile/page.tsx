@@ -15,6 +15,7 @@ import { Input } from "@/components/ui/input";
 import { AvatarPicker } from "@/components/murid/AvatarPicker";
 import { createClient } from "@/lib/supabase/client";
 import { validateNicknameFormat, defaultNicknameFromFullName, NICKNAME_MAX_LENGTH } from "@/lib/nickname";
+import { calcLevelProgress } from "@/lib/xp";
 
 interface UserData {
   id: string; fullName: string; nickname?: string | null; xp: number; level: number; streak: number;
@@ -81,6 +82,17 @@ const KEBUN_LEVELS = [
   { level: 3, label: "3-4 kata", color: "bg-emerald-400" },
   { level: 4, label: "5+ kata", color: "bg-emerald-500" },
 ];
+
+// Deret hari beruntun ("kebun" aktif hari ini + kemarin) — dipakai untuk
+// membuat flame di hero berdenyut saat streak sedang hidup.
+function isStreakLive(kebunKata: { date: string; level: 0 | 1 | 2 | 3 | 4 }[] | undefined) {
+  if (!kebunKata || kebunKata.length === 0) return false;
+  const last = kebunKata[kebunKata.length - 1];
+  const lastDate = new Date(last.date);
+  const today = new Date();
+  const diffDays = Math.floor((today.setHours(0, 0, 0, 0) - lastDate.setHours(0, 0, 0, 0)) / 86400000);
+  return last.level > 0 && diffDays <= 1;
+}
 
 export default function MuridProfilePage() {
   const [user, setUser] = useState<UserData | null>(null);
@@ -219,17 +231,35 @@ export default function MuridProfilePage() {
 
   const league = LEAGUE_META[user.league] || LEAGUE_META.BRONZE;
   const displayNickname = user.nickname || user.fullName;
+  const levelProgress = calcLevelProgress(user.xp || 0, user.level || 1);
+  const streakLive = isStreakLive(meta?.kebunKata);
+
+  // Lencana paling dekat dibuka (progress tertinggi di antara yang belum
+  // terbuka) — dipakai sebagai teaser "tinggal X lagi" ala Duolingo.
+  const nextBadge = meta?.lencana
+    .filter(l => !l.unlocked)
+    .sort((a, b) => b.progress / b.target - a.progress / a.target)[0];
 
   return (
     <div className="max-w-3xl mx-auto">
+      <style>{`
+        @keyframes profile-flame{0%,100%{transform:scale(1) rotate(-2deg)}50%{transform:scale(1.12) rotate(2deg)}}
+        @keyframes profile-ring{0%,100%{box-shadow:0 0 0 0 rgba(255,255,255,.45)}50%{box-shadow:0 0 0 8px rgba(255,255,255,0)}}
+        @keyframes profile-shine{0%{transform:translateX(-120%) rotate(20deg)}100%{transform:translateX(220%) rotate(20deg)}}
+        @keyframes profile-badge-pop{0%{transform:scale(0)}70%{transform:scale(1.15)}100%{transform:scale(1)}}
+        .profile-flame-live{animation:profile-flame 1.1s ease-in-out infinite}
+        .profile-avatar-ring{animation:profile-ring 2.2s ease-in-out infinite}
+        .profile-badge-unlocked{animation:profile-badge-pop .4s ease}
+      `}</style>
+
       {/* Hero */}
-      <div className={`bg-gradient-to-br ${league.gradient} rounded-[24px] p-6 md:p-8 text-white relative overflow-hidden mb-6`}>
+      <div className={`bg-gradient-to-br ${league.gradient} rounded-[24px] p-6 md:p-8 text-white relative overflow-hidden mb-6 shadow-xl ${league.glow}`}>
         <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2" />
         <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-full translate-y-1/2 -translate-x-1/2" />
         <div className="relative z-10">
           <div className="flex items-start justify-between">
             <div className="flex items-center gap-4">
-              <div className={`w-20 h-20 rounded-full bg-white/20 backdrop-blur flex items-center justify-center text-3xl font-bold border-4 border-white/30 shadow-lg shrink-0 overflow-hidden ${league.ring}`}>
+              <div className={`profile-avatar-ring w-20 h-20 rounded-full bg-white/20 backdrop-blur flex items-center justify-center text-3xl font-bold border-4 border-white/30 shadow-lg shrink-0 overflow-hidden ${league.ring}`}>
                 {user.avatar ? (
                   <img src={user.avatar} alt="" className="w-full h-full object-cover" />
                 ) : (
@@ -242,7 +272,6 @@ export default function MuridProfilePage() {
                 {meta?.gelar && <p className="text-sm text-amber-200 font-semibold mt-1">{meta.gelar}</p>}
                 <div className="flex flex-wrap gap-2 mt-2">
                   <span className="bg-white/20 backdrop-blur rounded-full px-3 py-1 text-xs font-semibold">{league.label}</span>
-                  <span className="bg-white/15 backdrop-blur rounded-full px-3 py-1 text-xs">Level {user.level}</span>
                 </div>
               </div>
             </div>
@@ -250,18 +279,33 @@ export default function MuridProfilePage() {
               <Settings size={20} />
             </button>
           </div>
-          <div className="flex flex-wrap gap-4 mt-5">
-            <div className="flex items-center gap-1.5 bg-white/15 backdrop-blur rounded-full px-3.5 py-1.5 text-xs font-medium">
-              <IconFlame size={14} /> {user.streak || 0}
+
+          {/* Level progress bar — jarak ke level berikutnya selalu terlihat */}
+          <div className="mt-5">
+            <div className="flex items-center justify-between text-xs font-semibold mb-1.5">
+              <span className="bg-white/20 backdrop-blur rounded-full px-2.5 py-0.5">Level {user.level}</span>
+              <span className="text-white/70">{levelProgress.current} / {levelProgress.needed} XP menuju Level {(user.level || 1) + 1}</span>
             </div>
-            <div className="flex items-center gap-1.5 bg-white/15 backdrop-blur rounded-full px-3.5 py-1.5 text-xs font-medium">
-              <IconBolt size={14} /> {user.xp?.toLocaleString() || 0}
+            <div className="h-3 bg-white/20 rounded-full overflow-hidden">
+              <div
+                className="h-full bg-white rounded-full transition-all duration-700 ease-out"
+                style={{ width: `${levelProgress.pct}%` }}
+              />
             </div>
-            <div className="flex items-center gap-1.5 bg-white/15 backdrop-blur rounded-full px-3.5 py-1.5 text-xs font-medium">
-              <IconCoin size={14} /> {user.coins || 0}
+          </div>
+
+          <div className="flex flex-wrap gap-3 mt-5">
+            <div className={`flex items-center gap-1.5 backdrop-blur rounded-full px-3.5 py-1.5 text-sm font-bold ${streakLive ? "bg-orange-400/30" : "bg-white/15"}`}>
+              <span className={streakLive ? "profile-flame-live inline-flex" : "inline-flex"}><IconFlame size={15} /></span> {user.streak || 0}
             </div>
-            <div className="flex items-center gap-1.5 bg-white/15 backdrop-blur rounded-full px-3.5 py-1.5 text-xs font-medium">
-              <IconHeart size={14} /> {user.totalLikes || 0}
+            <div className="flex items-center gap-1.5 bg-white/15 backdrop-blur rounded-full px-3.5 py-1.5 text-sm font-bold">
+              <IconBolt size={15} /> {user.xp?.toLocaleString() || 0}
+            </div>
+            <div className="flex items-center gap-1.5 bg-white/15 backdrop-blur rounded-full px-3.5 py-1.5 text-sm font-bold">
+              <IconCoin size={15} /> {user.coins || 0}
+            </div>
+            <div className="flex items-center gap-1.5 bg-white/15 backdrop-blur rounded-full px-3.5 py-1.5 text-sm font-bold">
+              <IconHeart size={15} /> {user.totalLikes || 0}
             </div>
           </div>
         </div>
@@ -308,38 +352,73 @@ export default function MuridProfilePage() {
           {/* Lencana */}
           {meta && (
             <div className="bg-white rounded-2xl border border-gray-100 p-4">
-              <h3 className="text-sm font-bold text-gray-900 mb-3 flex items-center gap-2">
-                <Award size={14} className="text-amber-500" />
-                Lencana
-              </h3>
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="text-sm font-bold text-gray-900 flex items-center gap-2">
+                  <Award size={14} className="text-amber-500" />
+                  Lencana
+                </h3>
+                <span className="text-[11px] font-semibold text-gray-400">
+                  {meta.lencana.filter(l => l.unlocked).length}/{meta.lencana.length}
+                </span>
+              </div>
               <div className="grid grid-cols-3 gap-2">
                 {meta.lencana.slice(0, 9).map(l => (
-                  <div key={l.id} className={`flex flex-col items-center gap-1 p-2 rounded-xl text-center ${l.unlocked ? "bg-amber-50" : "bg-gray-50 opacity-50"}`}>
-                    <span className="text-xl">{l.icon}</span>
-                    <span className="text-[10px] font-semibold text-gray-600 leading-tight">{l.name}</span>
-                    {!l.unlocked && <span className="text-[9px] text-gray-400">{l.progress}/{l.target}</span>}
+                  <div
+                    key={l.id}
+                    title={l.unlocked ? l.name : `${l.name} — ${l.progress}/${l.target}`}
+                    className={`relative flex flex-col items-center gap-1 p-2.5 rounded-xl text-center transition-transform ${
+                      l.unlocked
+                        ? "profile-badge-unlocked bg-gradient-to-b from-amber-50 to-amber-100 ring-1 ring-amber-200 hover:scale-105"
+                        : "bg-gray-50"
+                    }`}
+                  >
+                    <span className={`text-2xl ${l.unlocked ? "" : "grayscale opacity-30"}`}>{l.icon}</span>
+                    <span className={`text-[10px] font-semibold leading-tight ${l.unlocked ? "text-amber-700" : "text-gray-400"}`}>{l.name}</span>
+                    {!l.unlocked && (
+                      <div className="w-full h-1 bg-gray-200 rounded-full overflow-hidden mt-0.5">
+                        <div className="h-full bg-violet-400 rounded-full" style={{ width: `${Math.min(100, (l.progress / l.target) * 100)}%` }} />
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
+              {nextBadge && (
+                <p className="text-[11px] text-violet-600 font-semibold mt-3 flex items-center gap-1 bg-violet-50 rounded-lg px-2.5 py-2">
+                  <Award size={12} /> {nextBadge.target - nextBadge.progress} lagi untuk buka &ldquo;{nextBadge.name}&rdquo;!
+                </p>
+              )}
             </div>
           )}
 
           {/* Kebun Kata */}
           {meta && (
             <div className="bg-white rounded-2xl border border-gray-100 p-4">
-              <h3 className="text-sm font-bold text-gray-900 mb-3 flex items-center gap-2">
-                <IconPen size={14} className="text-emerald-500" />
-                Kebun Kata
-              </h3>
-              <div className="flex flex-wrap gap-1">
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="text-sm font-bold text-gray-900 flex items-center gap-2">
+                  <IconPen size={14} className="text-emerald-500" />
+                  Kebun Kata
+                </h3>
+                {streakLive && user.streak > 0 && (
+                  <span className="text-[10px] font-bold text-orange-600 bg-orange-50 rounded-full px-2 py-0.5 flex items-center gap-1">
+                    <IconFlame size={10} /> {user.streak} hari beruntun
+                  </span>
+                )}
+              </div>
+              <div className="grid grid-cols-10 gap-1">
                 {meta.kebunKata.slice(-30).map((d, i) => (
-                  <div key={i} className={`w-3 h-3 rounded-sm ${KEBUN_LEVELS[d.level].color}`} title={KEBUN_LEVELS[d.level].label} />
+                  <div
+                    key={i}
+                    className={`aspect-square rounded-[3px] ${KEBUN_LEVELS[d.level].color} hover:ring-2 hover:ring-emerald-300 transition-all`}
+                    title={`${new Date(d.date).toLocaleDateString("id-ID", { day: "numeric", month: "short" })} — ${KEBUN_LEVELS[d.level].label}`}
+                  />
                 ))}
               </div>
-              <div className="flex items-center gap-3 mt-2 text-[10px] text-gray-400">
-                <span className="flex items-center gap-1"><span className="w-2 h-2 rounded bg-gray-100 inline-block" /> Tidak</span>
-                <span className="flex items-center gap-1"><span className="w-2 h-2 rounded bg-emerald-300 inline-block" /> 2</span>
-                <span className="flex items-center gap-1"><span className="w-2 h-2 rounded bg-emerald-500 inline-block" /> 5+</span>
+              <div className="flex items-center gap-2 mt-3 text-[10px] text-gray-400">
+                <span>Sedikit</span>
+                {KEBUN_LEVELS.map(k => (
+                  <span key={k.level} className={`w-2.5 h-2.5 rounded-[2px] ${k.color} inline-block`} />
+                ))}
+                <span>Banyak</span>
               </div>
             </div>
           )}
