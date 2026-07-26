@@ -90,11 +90,11 @@ export default function KomunitasMgmpCard({ media }: { media: MgmpMedia }) {
           Aktif
         </div>
         <div className="text-sm text-zinc-500 mt-2">
-          Forum diskusi sudah live di platform
+          Forum diskusi sudah aktif di platform
         </div>
         <div className="inline-flex items-center gap-1.5 mt-3 bg-green-50 text-green-700 text-xs font-semibold px-3 py-1 rounded-full border border-green-100">
           <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
-          Live sekarang
+          Aktif sekarang
         </div>
       </div>
     </div>

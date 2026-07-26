@@ -9,19 +9,19 @@ import { fadeInUp } from "@/lib/motion";
 const faqs = [
   {
     q: "Apa itu BahasaCerdas?",
-    a: "BahasaCerdas adalah platform lengkap untuk guru Bahasa Indonesia. Kami menyediakan AI generator RPP, bank soal, kuis multiplayer, toko karya, dan komunitas MGMP aktif di Indonesia. Semua dalam satu platform.",
+    a: "BahasaCerdas adalah platform lengkap untuk guru Bahasa Indonesia. Kami menyediakan AI generator Rencana Pembelajaran, bank soal, kuis multiplayer, toko karya, dan komunitas MGMP aktif di Indonesia. Semua dalam satu platform.",
   },
   {
     q: "Apakah BahasaCerdas gratis?",
     a: "Ya! Anda bisa mencoba gratis selama 30 hari tanpa komitmen. Setelah itu, tersedia paket PRO dengan fitur lengkap mulai dari Rp 49.000/bulan. Guru juga bisa mendapat akses gratis dengan bergabung di komunitas aktif.",
   },
   {
-    q: "Bagaimana cara AI RPP bekerja?",
-    a: "Cukup masukkan topik, kelas, dan durasi pembelajaran. AI kami akan menghasilkan RPP lengkap dengan tujuan pembelajaran, kegiatan inti, asesmen, dan lampiran — semuanya sesuai Kurikulum Merdeka terbaru.",
+    q: "Bagaimana cara AI Rencana Pembelajaran bekerja?",
+    a: "Cukup masukkan topik, kelas, dan durasi pembelajaran. AI kami akan menghasilkan Rencana Pembelajaran lengkap dengan tujuan pembelajaran, kegiatan inti, asesmen, dan lampiran — semuanya sesuai Kurikulum Nasional terbaru.",
   },
   {
     q: "Apakah saya bisa menjual karya di Toko Karya?",
-    a: "Tentu! Setiap guru bisa upload dan jual RPP, modul, PPT, soal, atau video pembelajaran. Anda mendapatkan 80% dari setiap penjualan. Pembayaran bisa dicairkan setiap bulan.",
+    a: "Tentu! Setiap guru bisa mengunggah dan menjual Rencana Pembelajaran, modul, PPT, soal, atau video pembelajaran. Anda mendapatkan 80% dari setiap penjualan. Pembayaran bisa dicairkan setiap bulan.",
   },
   {
     q: "Bagaimana cara bergabung dengan komunitas?",

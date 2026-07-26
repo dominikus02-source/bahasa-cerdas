@@ -24,7 +24,7 @@ export const revalidate = 300;
 export const metadata: Metadata = {
   title: "BahasaCerdas — Platform Edukasi Bahasa Indonesia untuk Guru & Siswa",
   description:
-    "Platform edukasi Bahasa Indonesia lengkap: AI generator RPP Kurikulum Merdeka, bank soal HOTS, kuis multiplayer, toko karya, dan komunitas MGMP aktif. Gratis untuk memulai.",
+    "Platform edukasi Bahasa Indonesia lengkap: AI generator Rencana Pembelajaran Kurikulum Nasional, bank soal HOTS, kuis multiplayer, toko karya, dan komunitas MGMP aktif. Gratis untuk memulai.",
   openGraph: {
     title: "BahasaCerdas — Platform Edukasi Bahasa Indonesia",
     description:
@@ -95,9 +95,9 @@ export default async function HomePage() {
   ]);
 
   const faqs = [
-    { q: "Apa itu BahasaCerdas?", a: "BahasaCerdas adalah platform edukasi Bahasa Indonesia yang menyediakan AI generator RPP, bank soal HOTS, kuis multiplayer, toko karya guru, dan komunitas MGMP dalam satu platform. Dibangun oleh guru, untuk guru." },
+    { q: "Apa itu BahasaCerdas?", a: "BahasaCerdas adalah platform edukasi Bahasa Indonesia yang menyediakan AI generator Rencana Pembelajaran, bank soal HOTS, kuis multiplayer, toko karya guru, dan komunitas MGMP dalam satu platform. Dibangun oleh guru, untuk guru." },
     { q: "Apakah BahasaCerdas gratis?", a: "Ya, BahasaCerdas gratis untuk memulai. Guru bisa mencoba Guru Pro selama 30 hari tanpa komitmen. Setelah itu tersedia paket berbayar mulai Rp 49.000/bulan." },
-    { q: "Fitur AI apa saja yang tersedia?", a: "BahasaCerdas memiliki AI generator RPP, generator soal HOTS, koreksi EYD otomatis, analisis teks, feedback karangan, dan asisten pembelajaran — semuanya untuk membantu guru Bahasa Indonesia." },
+    { q: "Fitur AI apa saja yang tersedia?", a: "BahasaCerdas memiliki AI generator Rencana Pembelajaran, generator soal HOTS, koreksi EYD otomatis, analisis teks, feedback karangan, dan asisten pembelajaran — semuanya untuk membantu guru Bahasa Indonesia." },
     { q: "Siapa yang bisa menggunakan BahasaCerdas?", a: "BahasaCerdas untuk guru Bahasa Indonesia di semua jenjang (SMP, SMA, SMK, MA) dan siswa yang ingin belajar Bahasa Indonesia secara interaktif." },
   ];
 
@@ -153,7 +153,7 @@ export default async function HomePage() {
 
               <AnswerBlock question="Fitur apa saja yang tersedia di BahasaCerdas?">
                 <ul className="list-disc pl-5 space-y-1.5">
-                  <li><strong>AI Generator RPP</strong> — Buat RPP Kurikulum Merdeka dalam 30 detik</li>
+                  <li><strong>AI Generator Rencana Pembelajaran</strong> — Buat Rencana Pembelajaran Kurikulum Nasional dalam 30 detik</li>
                   <li><strong>Generator Soal HOTS</strong> — Soal berbasis level kognitif C4-C6</li>
                   <li><strong>Koreksi EYD Otomatis</strong> — Periksa ejaan dan tata bahasa otomatis</li>
                   <li><strong>Kuis Multiplayer</strong> — Game edukasi interaktif untuk siswa</li>

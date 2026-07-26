@@ -49,7 +49,7 @@ export default function HeroSection() {
               <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary-light border border-primary/10 mb-6">
                 <Sparkles size={14} className="text-primary" aria-hidden="true" />
                 <span className="text-xs font-semibold text-primary">
-                  Platform AI Bahasa Indonesia — Live
+                  Platform AI Bahasa Indonesia — Aktif
                 </span>
               </div>
             </motion.div>
@@ -73,8 +73,8 @@ export default function HeroSection() {
               transition={{ duration: 0.5, ease: "easeOut", delay: 0.2 }}
               className="text-base lg:text-lg text-zinc-500 leading-relaxed mb-8 max-w-xl"
             >
-              Satu ekosistem: guru buat RPP dalam 30 detik, siswa nulis, bersaing,
-              dan berkembang lewat AI + gamifikasi. Dirancang untuk Kurikulum Merdeka.
+              Satu ekosistem: guru buat Rencana Pembelajaran dalam 30 detik, siswa nulis, bersaing,
+              dan berkembang lewat AI + gamifikasi. Dirancang untuk Kurikulum Nasional.
             </motion.p>
 
             <motion.div
@@ -147,7 +147,7 @@ export default function HeroSection() {
               <div className="absolute -top-3 -right-3 px-4 py-2 rounded-xl bg-white border border-zinc-100 shadow-lg shadow-zinc-900/5">
                 <div className="flex items-center gap-2">
                   <div className="w-3 h-3 rounded-full bg-emerald-500" aria-hidden="true" />
-                  <span className="text-xs font-semibold text-zinc-700">Live &bull; Platform aktif</span>
+                  <span className="text-xs font-semibold text-zinc-700">Platform aktif</span>
                 </div>
               </div>
             </div>

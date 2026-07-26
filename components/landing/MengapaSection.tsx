@@ -10,7 +10,7 @@ const reasons = [
     icon: Sparkles,
     title: "AI Canggih untuk Guru",
     description:
-      "Hasilkan RPP, soal HOTS, dan materi ajar dalam hitungan detik dengan AI yang dilatih khusus untuk kurikulum Bahasa Indonesia.",
+      "Hasilkan Rencana Pembelajaran, soal HOTS, dan materi ajar dalam hitungan detik dengan AI yang dilatih khusus untuk kurikulum Bahasa Indonesia.",
     color: "bg-red-50 text-primary",
   },
   {
@@ -24,7 +24,7 @@ const reasons = [
     icon: ShoppingBag,
     title: "Toko Karya Guru",
     description:
-      "Jual RPP, modul, dan materi ajar Anda. Dapatkan penghasilan tambahan sambil berbagi karya terbaik dengan sesama guru.",
+      "Jual Rencana Pembelajaran, modul, dan materi ajar Anda. Dapatkan penghasilan tambahan sambil berbagi karya terbaik dengan sesama guru.",
     color: "bg-emerald-50 text-emerald-600",
   },
   {
