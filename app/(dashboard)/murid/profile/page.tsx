@@ -56,7 +56,7 @@ const TYPE_META: Record<string, { label: string; badge: string }> = {
 
 const LEAGUE_META: Record<string, { label: string; gradient: string; ring: string; glow: string }> = {
   BRONZE: { label: "Perunggu", gradient: "from-amber-500 to-orange-600", ring: "ring-amber-400", glow: "shadow-amber-200" },
-  SILVER: { label: "Perak", gradient: "from-gray-300 to-gray-500", ring: "ring-gray-300", glow: "shadow-gray-200" },
+  SILVER: { label: "Perak", gradient: "from-slate-400 to-slate-600", ring: "ring-slate-300", glow: "shadow-slate-200" },
   GOLD: { label: "Emas", gradient: "from-yellow-400 to-amber-500", ring: "ring-yellow-400", glow: "shadow-yellow-200" },
   DIAMOND: { label: "Berlian", gradient: "from-cyan-400 to-blue-500", ring: "ring-cyan-400", glow: "shadow-cyan-200" },
 };
@@ -145,6 +145,12 @@ export default function MuridProfilePage() {
     setSettingsForm({ fullName: user.fullName, school: user.school || "", city: user.city || "", province: user.province || "", grade: user.grade || "", bio: user.bio || "" });
     setAvatarSrc(user.avatar || null);
     setSettingsMessage(null);
+    // Selalu isi ulang dari nickname yang tersimpan — draft ini sebelumnya
+    // tidak pernah diisi sama sekali, jadi kotaknya selalu kosong meski
+    // murid sudah punya nama panggilan. Klik simpan tanpa mengetik apa-apa
+    // akan mengosongkan nickname mereka secara diam-diam.
+    setNicknameDraft(user.nickname || "");
+    setNicknameError(null);
     setShowSettings(true);
   };
 
@@ -252,14 +258,20 @@ export default function MuridProfilePage() {
         .profile-badge-unlocked{animation:profile-badge-pop .4s ease}
       `}</style>
 
-      {/* Hero */}
-      <div className={`bg-gradient-to-br ${league.gradient} rounded-[24px] p-6 md:p-8 text-white relative overflow-hidden mb-6 shadow-xl ${league.glow}`}>
-        <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2" />
-        <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-full translate-y-1/2 -translate-x-1/2" />
+      {/* Hero — gradasi ungu tua tetap (bukan warna liga) supaya kontras teks
+          selalu tinggi; liga Perak dulu memakai abu-abu datar sebagai LATAR
+          PENUH, jadi tulisan putih nyaris tak kebaca. Warna liga sekarang
+          cuma aksen kecil (chip + ring avatar). */}
+      <div className="relative overflow-hidden rounded-[24px] p-6 md:p-8 text-white mb-6 shadow-2xl" style={{ background: "linear-gradient(135deg, #1B1035 0%, #3B1878 55%, #6D28D9 100%)" }}>
+        <div className="absolute top-0 right-0 w-72 h-72 rounded-full -translate-y-1/3 translate-x-1/3 pointer-events-none" style={{ background: "radial-gradient(circle, rgba(168,85,247,0.35), transparent 70%)" }} />
+        <div className="absolute bottom-0 left-0 w-56 h-56 rounded-full translate-y-1/3 -translate-x-1/3 pointer-events-none" style={{ background: "radial-gradient(circle, rgba(236,72,153,0.18), transparent 70%)" }} />
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-0 left-0 w-1/4 h-[250%] bg-white/10" style={{ animation: "profile-shine 3.5s ease-in-out infinite", transform: "skewX(-20deg)" }} />
+        </div>
         <div className="relative z-10">
           <div className="flex items-start justify-between">
             <div className="flex items-center gap-4">
-              <div className={`profile-avatar-ring w-20 h-20 rounded-full bg-white/20 backdrop-blur flex items-center justify-center text-3xl font-bold border-4 border-white/30 shadow-lg shrink-0 overflow-hidden ${league.ring}`}>
+              <div className={`profile-avatar-ring w-20 h-20 rounded-full bg-white/10 backdrop-blur flex items-center justify-center text-3xl font-bold border-4 border-white/20 shadow-lg shrink-0 overflow-hidden ring-4 ${league.ring}`}>
                 {user.avatar ? (
                   <img src={user.avatar} alt="" className="w-full h-full object-cover" />
                 ) : (
@@ -268,14 +280,14 @@ export default function MuridProfilePage() {
               </div>
               <div>
                 <h1 className="text-2xl font-bold">{displayNickname}</h1>
-                {user.nickname && <p className="text-sm text-white/70">{user.fullName}</p>}
-                {meta?.gelar && <p className="text-sm text-amber-200 font-semibold mt-1">{meta.gelar}</p>}
+                {user.nickname && <p className="text-sm text-white/60">{user.fullName}</p>}
+                {meta?.gelar && <p className="text-sm text-amber-300 font-semibold mt-1">{meta.gelar}</p>}
                 <div className="flex flex-wrap gap-2 mt-2">
-                  <span className="bg-white/20 backdrop-blur rounded-full px-3 py-1 text-xs font-semibold">{league.label}</span>
+                  <span className={`bg-gradient-to-r ${league.gradient} rounded-full px-3 py-1 text-xs font-bold shadow-sm`}>{league.label}</span>
                 </div>
               </div>
             </div>
-            <button onClick={openSettings} className="bg-white/20 hover:bg-white/30 backdrop-blur rounded-xl p-2.5 transition-all">
+            <button onClick={openSettings} className="bg-white/10 hover:bg-white/20 backdrop-blur rounded-xl p-2.5 transition-all border border-white/10">
               <Settings size={20} />
             </button>
           </div>
@@ -283,29 +295,29 @@ export default function MuridProfilePage() {
           {/* Level progress bar — jarak ke level berikutnya selalu terlihat */}
           <div className="mt-5">
             <div className="flex items-center justify-between text-xs font-semibold mb-1.5">
-              <span className="bg-white/20 backdrop-blur rounded-full px-2.5 py-0.5">Level {user.level}</span>
-              <span className="text-white/70">{levelProgress.current} / {levelProgress.needed} XP menuju Level {(user.level || 1) + 1}</span>
+              <span className="bg-white/10 backdrop-blur rounded-full px-2.5 py-0.5 border border-white/10">Level {user.level}</span>
+              <span className="text-white/60">{levelProgress.current} / {levelProgress.needed} XP menuju Level {(user.level || 1) + 1}</span>
             </div>
-            <div className="h-3 bg-white/20 rounded-full overflow-hidden">
+            <div className="h-3 bg-black/20 rounded-full overflow-hidden">
               <div
-                className="h-full bg-white rounded-full transition-all duration-700 ease-out"
+                className="h-full bg-gradient-to-r from-amber-300 to-amber-500 rounded-full transition-all duration-700 ease-out"
                 style={{ width: `${levelProgress.pct}%` }}
               />
             </div>
           </div>
 
           <div className="flex flex-wrap gap-3 mt-5">
-            <div className={`flex items-center gap-1.5 backdrop-blur rounded-full px-3.5 py-1.5 text-sm font-bold ${streakLive ? "bg-orange-400/30" : "bg-white/15"}`}>
-              <span className={streakLive ? "profile-flame-live inline-flex" : "inline-flex"}><IconFlame size={15} /></span> {user.streak || 0}
+            <div className={`flex items-center gap-2 backdrop-blur rounded-2xl pl-2 pr-3.5 py-1.5 text-sm font-bold border border-white/10 ${streakLive ? "bg-orange-400/20" : "bg-white/5"}`}>
+              <span className={`w-6 h-6 rounded-lg bg-orange-400/20 flex items-center justify-center text-orange-300 ${streakLive ? "profile-flame-live" : ""}`}><IconFlame size={13} /></span> {user.streak || 0}
             </div>
-            <div className="flex items-center gap-1.5 bg-white/15 backdrop-blur rounded-full px-3.5 py-1.5 text-sm font-bold">
-              <IconBolt size={15} /> {user.xp?.toLocaleString() || 0}
+            <div className="flex items-center gap-2 bg-white/5 backdrop-blur rounded-2xl pl-2 pr-3.5 py-1.5 text-sm font-bold border border-white/10">
+              <span className="w-6 h-6 rounded-lg bg-amber-400/20 flex items-center justify-center text-amber-300"><IconBolt size={13} /></span> {user.xp?.toLocaleString() || 0}
             </div>
-            <div className="flex items-center gap-1.5 bg-white/15 backdrop-blur rounded-full px-3.5 py-1.5 text-sm font-bold">
-              <IconCoin size={15} /> {user.coins || 0}
+            <div className="flex items-center gap-2 bg-white/5 backdrop-blur rounded-2xl pl-2 pr-3.5 py-1.5 text-sm font-bold border border-white/10">
+              <span className="w-6 h-6 rounded-lg bg-yellow-400/20 flex items-center justify-center text-yellow-300"><IconCoin size={13} /></span> {user.coins || 0}
             </div>
-            <div className="flex items-center gap-1.5 bg-white/15 backdrop-blur rounded-full px-3.5 py-1.5 text-sm font-bold">
-              <IconHeart size={15} /> {user.totalLikes || 0}
+            <div className="flex items-center gap-2 bg-white/5 backdrop-blur rounded-2xl pl-2 pr-3.5 py-1.5 text-sm font-bold border border-white/10">
+              <span className="w-6 h-6 rounded-lg bg-rose-400/20 flex items-center justify-center text-rose-300"><IconHeart size={13} /></span> {user.totalLikes || 0}
             </div>
           </div>
         </div>
@@ -314,47 +326,14 @@ export default function MuridProfilePage() {
       <div className="grid md:grid-cols-3 gap-6">
         {/* Left - Info + Badges */}
         <div className="space-y-4">
-          {/* Nickname Card */}
-          {meta && (
-            <div className="bg-white rounded-2xl border border-gray-100 p-4">
-              <h3 className="text-sm font-bold text-gray-900 mb-3 flex items-center gap-2">
-                <Pencil size={14} className="text-violet-500" />
-                Nama Panggilan
-              </h3>
-              <div className="flex items-center gap-2">
-                <Input
-                  value={nicknameDraft}
-                  onChange={e => setNicknameDraft(e.target.value)}
-                  placeholder={defaultNicknameFromFullName(user.fullName)}
-                  maxLength={NICKNAME_MAX_LENGTH}
-                  className="h-10 text-sm rounded-xl"
-                />
-                <button
-                  onClick={handleSaveNickname}
-                  disabled={savingNickname || nicknameDraft.trim() === (user.nickname || "")}
-                  className="px-3 py-2 bg-violet-600 text-white rounded-xl hover:bg-violet-700 disabled:opacity-50 text-sm shrink-0"
-                >
-                  {savingNickname ? <Loader2 size={14} className="animate-spin" /> : <Save size={14} />}
-                </button>
-              </div>
-              {nicknameError && <p className="text-xs text-red-500 mt-1">{nicknameError}</p>}
-              {meta.nickname.daysLeftForChange > 0 && (
-                <p className="text-xs text-gray-400 mt-1">Ganti lagi dalam {meta.nickname.daysLeftForChange} hari</p>
-              )}
-              {user.nickname && (
-                <button onClick={loadNicknameHistory} className="text-xs text-violet-600 hover:text-violet-700 mt-2 flex items-center gap-1">
-                  <History size={12} /> Riwayat perubahan
-                </button>
-              )}
-            </div>
-          )}
-
           {/* Lencana */}
           {meta && (
-            <div className="bg-white rounded-2xl border border-gray-100 p-4">
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
               <div className="flex items-center justify-between mb-3">
                 <h3 className="text-sm font-bold text-gray-900 flex items-center gap-2">
-                  <Award size={14} className="text-amber-500" />
+                  <span className="w-6 h-6 rounded-lg bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-sm">
+                    <Award size={13} className="text-white" />
+                  </span>
                   Lencana
                 </h3>
                 <span className="text-[11px] font-semibold text-gray-400">
@@ -392,10 +371,12 @@ export default function MuridProfilePage() {
 
           {/* Kebun Kata */}
           {meta && (
-            <div className="bg-white rounded-2xl border border-gray-100 p-4">
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
               <div className="flex items-center justify-between mb-3">
                 <h3 className="text-sm font-bold text-gray-900 flex items-center gap-2">
-                  <IconPen size={14} className="text-emerald-500" />
+                  <span className="w-6 h-6 rounded-lg bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center shadow-sm">
+                    <IconPen size={12} className="text-white" />
+                  </span>
                   Kebun Kata
                 </h3>
                 {streakLive && user.streak > 0 && (
@@ -428,7 +409,9 @@ export default function MuridProfilePage() {
         <div className="md:col-span-2 space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
-              <IconPen size={18} className="text-violet-500" />
+              <span className="w-7 h-7 rounded-lg bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center shadow-sm">
+                <IconPen size={15} className="text-white" />
+              </span>
               Karyaku
               {meta && <span className="text-sm font-normal text-gray-400">({meta.stats.karyaCount})</span>}
             </h2>
@@ -499,6 +482,37 @@ export default function MuridProfilePage() {
 
               {/* Avatar */}
               <AvatarPicker value={avatarSrc} onChange={setAvatarSrc} />
+
+              <div className="bg-violet-50/60 border border-violet-100 rounded-xl p-3.5">
+                <label className="text-sm font-medium text-gray-700 mb-1 flex items-center gap-1.5">
+                  <Pencil size={14} className="text-violet-500" /> Nama Panggilan
+                </label>
+                <div className="flex items-center gap-2 mt-1">
+                  <Input
+                    value={nicknameDraft}
+                    onChange={e => setNicknameDraft(e.target.value)}
+                    placeholder={defaultNicknameFromFullName(user.fullName)}
+                    maxLength={NICKNAME_MAX_LENGTH}
+                    className="h-10 text-sm rounded-xl bg-white"
+                  />
+                  <button
+                    onClick={handleSaveNickname}
+                    disabled={savingNickname || nicknameDraft.trim() === (user.nickname || "")}
+                    className="px-3 py-2 bg-violet-600 text-white rounded-xl hover:bg-violet-700 disabled:opacity-50 text-sm shrink-0"
+                  >
+                    {savingNickname ? <Loader2 size={14} className="animate-spin" /> : <Save size={14} />}
+                  </button>
+                </div>
+                {nicknameError && <p className="text-xs text-red-500 mt-1">{nicknameError}</p>}
+                {meta && meta.nickname.daysLeftForChange > 0 && (
+                  <p className="text-xs text-gray-400 mt-1">Ganti lagi dalam {meta.nickname.daysLeftForChange} hari</p>
+                )}
+                {user.nickname && (
+                  <button onClick={loadNicknameHistory} className="text-xs text-violet-600 hover:text-violet-700 mt-2 flex items-center gap-1">
+                    <History size={12} /> Riwayat perubahan
+                  </button>
+                )}
+              </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Nama Lengkap</label>
