@@ -6,15 +6,15 @@ import { usePathname } from "next/navigation";
 import { LogoutButton } from "@/components/dashboard/LogoutButton";
 import { NotificationBell } from "@/components/dashboard/NotificationBell";
 import {
-  Home, BookOpen, Gamepad2, BarChart3, Menu as MenuIcon, X,
-  GraduationCap, PenSquare, Users, Coins, CalendarCheck, ClipboardCheck,
+  Home, BarChart3, Menu as MenuIcon, X,
+  GraduationCap, Coins, ClipboardCheck,
   FileText, Award, ExternalLink, Trophy, Calendar, User,
 } from "lucide-react";
 
 const PRIMARY = [
   { href: "/murid/beranda", label: "Beranda", icon: Home },
-  { href: "/murid/tugasku", label: "Tugasku", icon: BookOpen },
-  { href: "/murid/game", label: "Gim", icon: Gamepad2 },
+  { href: "/arena", label: "Arena", icon: GraduationCap },
+  { href: "/murid/profile", label: "Profil", icon: User },
   { href: "/murid/progresku", label: "Kemajuan", icon: BarChart3 },
 ];
 
@@ -25,12 +25,7 @@ const GROUPS: { title: string; items: { href: string; label: string; icon: any }
       { href: "/murid/beranda", label: "Beranda", icon: Home },
       { href: "/murid/profile", label: "Profil", icon: User },
       { href: "/arena", label: "Arena", icon: GraduationCap },
-      { href: "/murid/karya/tulis", label: "Tulis Karya", icon: PenSquare },
-      { href: "/murid/tugasku", label: "Tugasku", icon: BookOpen },
-      { href: "/murid/gabung-kelas", label: "Gabung Kelas", icon: Users },
-      { href: "/murid/game", label: "Gim", icon: Gamepad2 },
       { href: "/murid/toko-koin", label: "Toko Koin", icon: Coins },
-      { href: "/murid/kuest-harian", label: "Quest Harian", icon: CalendarCheck },
     ],
   },
   {
