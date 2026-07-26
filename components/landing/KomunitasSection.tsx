@@ -16,7 +16,7 @@ const features = [
   {
     icon: Calendar,
     title: "Webinar & Workshop",
-    description: "Ikuti webinar dan workshop gratis dari praktisi pendidikan terkemuka di Indonesia.",
+    description: "Webinar dan workshop gratis seputar pengajaran Bahasa Indonesia, terjadwal berkala.",
     color: "bg-amber-50 text-amber-600",
   },
   {
@@ -63,8 +63,8 @@ export default function KomunitasSection() {
               Bahasa Indonesia
             </h2>
             <p className="text-base lg:text-lg text-zinc-500 leading-relaxed mb-8 max-w-xl">
-Komunitas guru Bahasa Indonesia terdepan di Indonesia. Tempat
-berbagi, belajar, dan tumbuh bersama.
+Ruang bagi guru Bahasa Indonesia untuk berbagi, belajar, dan
+berkembang bersama sesama pengajar.
             </p>
 
             {/* Feature List */}
@@ -114,8 +114,7 @@ berbagi, belajar, dan tumbuh bersama.
             transition={{ duration: 0.5, ease: "easeOut", delay: 0.2 }}
           >
             <div className="bg-white rounded-2xl border border-zinc-200 p-6 shadow-sm">
-              {/* Stat utama */}
-              <div className="text-center border-b border-zinc-100 pb-5 mb-5">
+              <div className="text-center pb-1">
                 <div className="text-5xl font-display font-bold text-zinc-900 leading-none">
                   Aktif
                 </div>
@@ -127,38 +126,6 @@ berbagi, belajar, dan tumbuh bersama.
                   Live sekarang
                 </div>
               </div>
-
-              {/* Grid 4 stats kecil */}
-              <div className="grid grid-cols-2 gap-px bg-zinc-100 rounded-xl overflow-hidden">
-                <div className="bg-white px-4 py-4 text-center">
-                    <div className="text-2xl font-display font-bold text-zinc-900">Tangsel</div>
-                    <div className="text-xs text-zinc-500 mt-1 leading-snug">
-                      Pusat jaringan MGMP aktif
-                    </div>
-                  </div>
-                  <div className="bg-white px-4 py-4 text-center">
-                    <div className="text-2xl font-display font-bold text-zinc-900">5+ Kota</div>
-                    <div className="text-xs text-zinc-500 mt-1 leading-snug">
-                      Jaringan guru tersambung
-                    </div>
-                  </div>
-                  <div className="bg-white px-4 py-4 text-center">
-                    <div className="text-2xl font-display font-bold text-zinc-900">Q3 2026</div>
-                    <div className="text-xs text-zinc-500 mt-1 leading-snug">
-                      Webinar perdana direncanakan
-                    </div>
-                  </div>
-                  <div className="bg-white px-4 py-4 text-center">
-                    <div className="text-2xl font-display font-bold text-zinc-900">350K+</div>
-                    <div className="text-xs text-zinc-500 mt-1 leading-snug">
-                      Guru BI se-Indonesia (target)
-                  </div>
-                </div>
-              </div>
-
-              <p className="text-center text-xs text-zinc-400 mt-4">
-                Angka mencerminkan jaringan aktual, bukan proyeksi
-              </p>
             </div>
           </motion.div>
         </div>

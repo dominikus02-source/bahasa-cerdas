@@ -25,7 +25,7 @@ const faqs = [
   },
   {
     q: "Bagaimana cara bergabung dengan komunitas?",
-    a: "Setelah mendaftar, Anda langsung bisa mengakses forum diskusi, grup MGMP, webinar, dan mentoring. Komunitas kami aktif setiap hari dengan ribuan guru dari seluruh Indonesia.",
+    a: "Setelah mendaftar, Anda langsung bisa mengakses forum diskusi dan grup MGMP digital untuk berbagi dan belajar dengan sesama guru Bahasa Indonesia.",
   },
   {
     q: "Apakah tersedia untuk siswa?",

@@ -4,11 +4,9 @@ import { useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { Sparkles, ChevronRight, User, Star } from "lucide-react";
+import { Sparkles, ChevronRight } from "lucide-react";
 import BatikDecor from "@/components/landing/batik-decor";
 import { fadeInUp, staggerContainer, sectionProps, itemProps } from "@/lib/motion";
-
-const avatarColors = ["#c0aede", "#d1d4f9", "#ffd5dc", "#ffdfbf"];
 
 export default function HeroSection() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -82,30 +80,11 @@ export default function HeroSection() {
             <motion.div
               variants={fadeInUp}
               transition={{ duration: 0.5, ease: "easeOut", delay: 0.25 }}
-              className="flex items-center gap-3 mb-8"
+              className="mb-8"
             >
-              <div className="flex -space-x-2" role="group" aria-label="Foto avatar guru">
-                {avatarColors.map((color, i) => (
-                  <div
-                    key={i}
-                    className="w-8 h-8 rounded-full border-2 border-white flex items-center justify-center shrink-0"
-                    style={{ backgroundColor: color }}
-                    title={`Guru ${i + 1}`}
-                  >
-                    <User size={14} className="text-white/70" />
-                  </div>
-                ))}
-              </div>
-              <div>
-                <div className="flex items-center gap-1" aria-label="Rating 5 dari 5">
-                  {[1, 2, 3, 4, 5].map((i) => (
-                    <Star key={i} size={14} className="fill-amber-400 text-amber-400" aria-hidden="true" />
-                  ))}
-                </div>
-                <p className="text-xs text-zinc-500 font-medium">
-                  Dibuat oleh <span className="text-zinc-700 font-semibold">guru</span>, untuk guru
-                </p>
-              </div>
+              <p className="text-sm text-zinc-500 font-medium">
+                Dibuat oleh <span className="text-zinc-700 font-semibold">guru Bahasa Indonesia</span>, untuk guru
+              </p>
             </motion.div>
 
             <motion.div

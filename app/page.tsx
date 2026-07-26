@@ -7,10 +7,10 @@ import PageNavbar from "@/components/public/PageNavbar";
 import PageFooter from "@/components/public/PageFooter";
 import HeroSection from "@/components/landing/HeroSection";
 import TrustBar from "@/components/landing/TrustBar";
+import PromoVideoSection from "@/components/landing/PromoVideoSection";
 import MengapaSection from "@/components/landing/MengapaSection";
 import AIToolsSection from "@/components/landing/AIToolsSection";
 import KaryaPopulerSection from "@/components/landing/KaryaPopulerSection";
-import TestimoniSection from "@/components/landing/TestimoniSection";
 import KomunitasSection from "@/components/landing/KomunitasSection";
 import FAQSection from "@/components/landing/FAQSection";
 import FinalCTA from "@/components/landing/FinalCTA";
@@ -118,6 +118,7 @@ export default async function HomePage() {
       <main id="main-content" className="min-h-screen">
         <HeroSection />
         <TrustBar />
+        <PromoVideoSection />
         <MengapaSection />
 
         {/* Jawaban Singkat — AEO-optimized Q&A block */}
@@ -156,7 +157,7 @@ export default async function HomePage() {
                   <li><strong>Kuis Multiplayer</strong> — Game edukasi interaktif untuk siswa</li>
                   <li><strong>Toko Karya Guru</strong> — Jual dan beli perangkat ajar</li>
                   <li><strong>Komunitas MGMP</strong> — Forum diskusi, webinar, dan kolaborasi guru</li>
-                  <li><strong>Bank Soal</strong> — Ribuan soal siap pakai untuk asesmen</li>
+                  <li><strong>Bank Soal</strong> — Soal siap pakai untuk asesmen</li>
                 </ul>
               </AnswerBlock>
 
@@ -180,7 +181,6 @@ export default async function HomePage() {
         </section>
         <AIToolsSection />
         <KaryaPopulerSection />
-        <TestimoniSection />
 
         <section className="relative py-20 lg:py-28 bg-white" id="artikel" aria-labelledby="media-heading">
           <div className="section-container">

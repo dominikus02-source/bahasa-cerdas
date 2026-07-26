@@ -89,8 +89,8 @@ export default function AIToolsSection() {
             <span className="text-primary">Mempermudah Mengajar</span>
           </h2>
           <p className="text-base lg:text-lg text-zinc-500 leading-relaxed">
-            Hemat waktu hingga 10x lipat dengan 6 alat AI yang dirancang khusus
-            untuk guru Bahasa Indonesia.
+            6 alat AI yang dirancang khusus untuk guru Bahasa Indonesia — dari
+            RPP, soal, hingga koreksi tulisan.
           </p>
         </motion.div>
 
