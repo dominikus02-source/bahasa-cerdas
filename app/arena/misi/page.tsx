@@ -3,43 +3,9 @@ import { db } from "@/lib/db"
 import { redirect } from "next/navigation"
 import Link from "next/link"
 import { getOrCreateDailyQuests, trackDailyStreak, claimQuestReward } from "@/lib/coins"
-import { Flame, Gift, CheckCircle2, PenLine, MessageCircle, Heart, Zap, Target, Sparkles, BookOpen, Brain } from "lucide-react"
+import { Flame, CheckCircle2, PenLine, MessageCircle, Heart, Zap, Sparkles } from "lucide-react"
 import { ClaimButton } from "./claim-button"
-
-const questIcons: Record<string, { icon: React.ReactNode; label: string; emoji: React.ReactNode; warna: string }> = {
-  MENULIS: {
-    icon: <PenLine className="w-5 h-5" />,
-    label: "Menulis Karya",
-    emoji: <PenLine className="w-7 h-7 text-white" />,
-    warna: "from-amber-500 to-orange-600",
-  },
-  MENGOMENTARI: {
-    icon: <MessageCircle className="w-5 h-5" />,
-    label: "Mengomentari",
-    emoji: <MessageCircle className="w-7 h-7 text-white" />,
-    warna: "from-blue-500 to-cyan-600",
-  },
-  MEMBERI_LIKE: {
-    icon: <Heart className="w-5 h-5" />,
-    label: "Memberi Suka",
-    emoji: <Heart className="w-7 h-7 text-white" />,
-    warna: "from-rose-500 to-pink-600",
-  },
-  // Learning quests — guaranteed daily since 2026-07-22. Without entries here
-  // they would render with no label the moment the picker includes them.
-  BACA_MATERI: {
-    icon: <BookOpen className="w-5 h-5" />,
-    label: "Selesaikan Materi",
-    emoji: <BookOpen className="w-7 h-7 text-white" />,
-    warna: "from-violet-500 to-purple-600",
-  },
-  MENJAWAB_KUIS: {
-    icon: <Brain className="w-5 h-5" />,
-    label: "Jawab Soal Kuis",
-    emoji: <Brain className="w-7 h-7 text-white" />,
-    warna: "from-cyan-500 to-blue-600",
-  },
-}
+import { getQuestMeta, questProgressText } from "@/lib/quest-meta"
 
 export default async function MisiHarianPage() {
   const user = await getUser()
@@ -90,12 +56,7 @@ export default async function MisiHarianPage() {
       {/* Daftar misi */}
       <div className="space-y-3 mb-6">
         {quests.map((quest: any) => {
-          const meta = questIcons[quest.questType] || {
-            icon: <Gift className="w-5 h-5" />,
-            label: quest.questType,
-            emoji: <Target className="w-7 h-7 text-white" />,
-            warna: "from-gray-500 to-gray-600",
-          }
+          const meta = getQuestMeta(quest.questType)
           const progress = Math.min(quest.progress, quest.target)
           const progressPct = quest.target > 0 ? (progress / quest.target) * 100 : 0
           const isDone = quest.completed
@@ -109,12 +70,12 @@ export default async function MisiHarianPage() {
             >
               <div className="flex items-center gap-4">
                 <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${meta.warna} flex items-center justify-center text-2xl shadow-md shrink-0`}>
-                  {isDone ? <CheckCircle2 className="w-7 h-7 text-white" /> : meta.emoji}
+                  {isDone ? <CheckCircle2 className="w-7 h-7 text-white" /> : <meta.Icon className="w-7 h-7 text-white" />}
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="font-bold text-gray-900 text-base">{meta.label}</p>
                   <p className="text-sm text-gray-500">
-                    {progress}/{quest.target} — {isDone ? "Selesai!" : `${quest.target - progress} lagi`}
+                    {progress}/{quest.target} — {questProgressText(progress, quest.target, isDone)}
                   </p>
                 </div>
                 <div className="text-right shrink-0">

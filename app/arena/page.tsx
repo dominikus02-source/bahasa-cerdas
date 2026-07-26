@@ -11,6 +11,7 @@ import {
   MessageCircle, Users, Clock, Swords, Crown, GraduationCap,
 } from "lucide-react"
 import { trackDailyStreak, getOrCreateDailyQuests } from "@/lib/coins"
+import { getQuestMeta, questProgressText } from "@/lib/quest-meta"
 import { calcLevelProgress, calcLevel, calcLeagueFromXP } from "@/lib/xp"
 import { getDisplayName } from "@/lib/nickname"
 import { TugasCard } from "./tugas-card"
@@ -226,70 +227,64 @@ export default async function BerandaPage() {
           <div>
             <h3 className="text-base font-bold text-gray-900 mb-3">Aksi Cepat</h3>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-              <Link href="/arena/tulis" className="flex flex-col items-center gap-2 bg-white rounded-2xl p-4 border border-gray-100 hover:border-violet-200 hover:shadow-md transition-all text-center">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center">
-                  <PenLine size={22} className="text-white" />
-                </div>
-                <span className="text-xs font-semibold text-gray-700">Tulis Karya</span>
-              </Link>
-              <Link href="/arena/jalur-cerdas" className="flex flex-col items-center gap-2 bg-white rounded-2xl p-4 border border-gray-100 hover:border-violet-200 hover:shadow-md transition-all text-center">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center">
-                  <BookOpen size={22} className="text-white" />
-                </div>
-                <span className="text-xs font-semibold text-gray-700">Jalur Cerdas</span>
-              </Link>
-              <Link href="/arena/game" className="flex flex-col items-center gap-2 bg-white rounded-2xl p-4 border border-gray-100 hover:border-violet-200 hover:shadow-md transition-all text-center">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-pink-500 to-rose-600 flex items-center justify-center">
-                  <Gamepad2 size={22} className="text-white" />
-                </div>
-                <span className="text-xs font-semibold text-gray-700">Game</span>
-              </Link>
-              <Link href="/arena/feed" className="flex flex-col items-center gap-2 bg-white rounded-2xl p-4 border border-gray-100 hover:border-violet-200 hover:shadow-md transition-all text-center">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center">
-                  <Heart size={22} className="text-white" />
-                </div>
-                <span className="text-xs font-semibold text-gray-700">Feed Karya</span>
-              </Link>
+              {[
+                { href: "/arena/tulis", label: "Tulis Karya", icon: PenLine, warna: "from-violet-500 to-purple-600" },
+                { href: "/arena/jalur-cerdas", label: "Jalur Cerdas", icon: BookOpen, warna: "from-emerald-500 to-teal-600" },
+                { href: "/arena/game", label: "Gim", icon: Gamepad2, warna: "from-pink-500 to-rose-600" },
+                { href: "/arena/ai", label: "AI Cerdik", icon: Bot, warna: "from-blue-500 to-indigo-600" },
+                { href: "/arena/mystery-box", label: "Kotak Misterius", icon: Gift, warna: "from-amber-500 to-yellow-600" },
+                { href: "/murid/gabung-kelas", label: "Gabung Kelas", icon: Users, warna: "from-teal-500 to-cyan-600" },
+                { href: "/arena/feed", label: "Feed Karya", icon: Heart, warna: "from-cyan-500 to-blue-600" },
+              ].map((a) => (
+                <Link key={a.href} href={a.href} className="flex flex-col items-center gap-2 bg-white rounded-2xl p-4 border border-gray-100 hover:border-violet-200 hover:shadow-md transition-all text-center">
+                  <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${a.warna} flex items-center justify-center`}>
+                    <a.icon size={22} className="text-white" />
+                  </div>
+                  <span className="text-xs font-semibold text-gray-700">{a.label}</span>
+                </Link>
+              ))}
             </div>
           </div>
 
-          {/* Quest Harian */}
+          {/* Misi Harian */}
           <div>
             <div className="flex items-center justify-between mb-3">
               <h3 className="text-base font-bold text-gray-900 flex items-center gap-2">
                 <Target size={18} className="text-orange-500" />
-                Quest Harian
+                Misi Harian
               </h3>
               <Link href="/arena/misi" className="text-xs font-semibold text-violet-600 hover:text-violet-700">{doneQuest}/{totalQuest} selesai</Link>
             </div>
             <div className="bg-white rounded-2xl border border-gray-100 p-4">
               {quests.length === 0 ? (
-                <p className="text-sm text-gray-400">Belum ada quest hari ini.</p>
+                <p className="text-sm text-gray-400">Belum ada misi hari ini.</p>
               ) : (
                 <div className="space-y-2">
-                  {quests.slice(0, 3).map((q: any) => (
-                    <div key={q.id} className="flex items-center gap-3 py-2">
-                      <div className={`w-10 h-10 rounded-xl ${q.completed ? "bg-emerald-100 text-emerald-600" : "bg-orange-100 text-orange-600"} flex items-center justify-center shrink-0`}>
-                        <Star size={18} />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className={`text-sm font-semibold ${q.completed ? "text-gray-400 line-through" : "text-gray-900"}`}>{q.desc || q.description || "Quest"}</p>
-                        {q.progress !== undefined && q.target !== undefined && (
+                  {quests.slice(0, 3).map((q: any) => {
+                    const meta = getQuestMeta(q.questType)
+                    const progress = Math.min(q.progress, q.target)
+                    return (
+                      <div key={q.id} className="flex items-center gap-3 py-2">
+                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${q.completed ? "bg-emerald-100 text-emerald-600" : `bg-gradient-to-br ${meta.warna} text-white`}`}>
+                          <meta.Icon size={18} />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className={`text-sm font-semibold ${q.completed ? "text-gray-400 line-through" : "text-gray-900"}`}>{meta.label}</p>
                           <div className="flex items-center gap-2 mt-1">
                             <div className="flex-1 h-1.5 bg-gray-100 rounded-full overflow-hidden">
-                              <div className="h-full bg-gradient-to-r from-orange-400 to-amber-500 rounded-full" style={{ width: `${Math.min(100, (q.progress / q.target) * 100)}%` }} />
+                              <div className="h-full bg-gradient-to-r from-orange-400 to-amber-500 rounded-full" style={{ width: `${Math.min(100, (progress / q.target) * 100)}%` }} />
                             </div>
-                            <span className="text-xs text-gray-400">{q.progress}/{q.target}</span>
+                            <span className="text-xs text-gray-400 shrink-0">{questProgressText(progress, q.target, q.completed)}</span>
                           </div>
+                        </div>
+                        {q.rewardCoins > 0 && (
+                          <span className="text-xs font-bold text-amber-600 shrink-0 flex items-center gap-1">
+                            <Coins size={12} />{q.rewardCoins}
+                          </span>
                         )}
                       </div>
-                      {q.coins > 0 && (
-                        <span className="text-xs font-bold text-amber-600 shrink-0 flex items-center gap-1">
-                          <Coins size={12} />{q.coins}
-                        </span>
-                      )}
-                    </div>
-                  ))}
+                    )
+                  })}
                 </div>
               )}
             </div>
