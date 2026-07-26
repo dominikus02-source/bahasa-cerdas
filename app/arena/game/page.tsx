@@ -17,7 +17,6 @@ interface Game {
 
 const GAMES: Game[] = [
   { title: "Menara Cerdas", desc: "Panjat menara dengan soal dari pelajaranmu! Makin tinggi, makin seru.", icon: Mountain, href: "/arena/game/menara", accentColor: "#8B5CF6", iconGradient: "from-violet-500 to-fuchsia-600", featured: true, badge: { text: "Baru", type: "new" }, xp: "+60 XP", players: "Solo", time: "~3 mnt" },
-  { title: "Tantang Teman", desc: "Duel 10 soal melawan teman sekelasmu! Soal sama, siapa lebih jago?", icon: Users, href: "/arena/game/tantang", accentColor: "#D946EF", iconGradient: "from-fuchsia-500 to-pink-600", featured: true, badge: { text: "Baru", type: "new" }, xp: "+50 XP", players: "2 pemain", time: "~3 mnt" },
   { title: "Irama Kata", desc: "Kata jatuh di 4 jalur — ketuk hanya yang sesuai aturan! Ritme + refleks bahasa.", icon: Clock, href: "/arena/game/irama-kata", accentColor: "#F97316", iconGradient: "from-orange-500 to-rose-500", badge: { text: "Baru", type: "new" }, xp: "+60 XP", players: "Solo", time: "~1 mnt" },
   { title: "Benar atau Salah", desc: "Kuis kilat 60 detik! Tentukan jawaban yang muncul benar atau salah.", icon: ThumbsUp, href: "/arena/game/benar-salah", accentColor: "#14B8A6", iconGradient: "from-emerald-400 to-teal-600", badge: { text: "Baru", type: "new" }, xp: "+50 XP", players: "Solo", time: "~1 mnt" },
   { title: "KataPlay", desc: "Belajar membaca dari nol! 4 tingkat, puluhan soal seru!", icon: BookOpen, href: "/arena/game/kata-play", accentColor: "#7C3AED", iconGradient: "from-violet-500 to-purple-600", badge: { text: "Baru", type: "new" }, xp: "+50 XP", players: "Solo", time: "~3 mnt" },
@@ -114,9 +113,33 @@ export default async function ArenaGimPage() {
         </div>
 
         {/* Live battle banner */}
-        <div className="mb-6">
+        <div className="mb-4">
           <BattleCard onlineCount={onlineCount} recentBattles={recentBattles} recentPlayers={recentPlayers} />
         </div>
+
+        {/* Tantang Teman — promo card khusus, biar murid ngeh ini fitur duel yang beneran jalan */}
+        <Link
+          href="/arena/game/tantang"
+          className="block relative overflow-hidden rounded-[20px] mb-6 active:scale-[0.98] transition-transform group"
+          style={{ background: "linear-gradient(120deg, #4C1D95, #A21CAF 55%, #DB2777)", boxShadow: "0 8px 28px rgba(190,24,190,0.25)" }}
+        >
+          <div className="absolute top-[-30px] right-[10px] w-[160px] h-[160px] rounded-full pointer-events-none" style={{ background: "radial-gradient(circle, rgba(255,255,255,0.18), transparent 70%)" }} />
+          <div className="relative z-10 p-[18px] flex items-center gap-4">
+            <div className="w-16 h-16 rounded-2xl bg-white/15 backdrop-blur flex items-center justify-center shrink-0 border border-white/20 group-hover:scale-105 transition-transform">
+              <Users size={30} className="text-white" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="inline-flex items-center gap-1 bg-white/20 backdrop-blur px-2 py-0.5 rounded-full text-[10px] font-extrabold text-white tracking-wider mb-1.5">
+                <Swords size={10} /> DUEL 1 LAWAN 1
+              </div>
+              <h3 className="font-extrabold text-lg text-white leading-tight">Tantang Teman Sekelas!</h3>
+              <p className="text-xs mt-0.5" style={{ color: "rgba(255,255,255,0.75)" }}>10 soal sama, siapa jawab lebih cepat & benar menang. Yuk buktikan!</p>
+            </div>
+            <div className="shrink-0 w-9 h-9 rounded-full bg-white/15 flex items-center justify-center text-white group-hover:bg-white/25 transition-colors">
+              &rarr;
+            </div>
+          </div>
+        </Link>
 
         {/* Pilih Gim */}
         <div className="flex items-center justify-between mb-3.5">
@@ -124,36 +147,49 @@ export default async function ArenaGimPage() {
           <Link href="/arena" className="text-xs font-semibold" style={{ color: "#A855F7" }}>Lihat semua &rarr;</Link>
         </div>
 
-        {/* Game grid */}
+        {/* Game grid — kartu pertama (featured) tampil lebar biar tidak terasa kaku */}
         <div className="grid grid-cols-2 gap-3 mb-8">
-          {games.map((g) => (
-            <Link key={g.href} href={g.href}
-              className={`game-card-anim relative overflow-hidden p-4 rounded-[20px] border active:scale-[0.96] transition-all hover:-translate-y-0.5 hover:shadow-xl game-card-hover`}
-              style={{ background: "#16122A", borderColor: "rgba(124,58,237,0.2)" }}
-            >
-              <div className="absolute top-0 left-0 right-0 h-[2px] rounded-t-[20px]" style={{ background: g.accentColor }} />
-              <div className={`w-[52px] h-[52px] rounded-2xl bg-gradient-to-br ${g.iconGradient} flex items-center justify-center mb-3 shrink-0`}>
-                <g.icon size={24} className="text-white" />
-              </div>
-              <div className="flex items-center gap-1.5 mb-2 flex-wrap">
-                {g.badge && (
-                  <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full text-white ${g.badge.type === "hot" ? "bg-gradient-to-r from-red-500 to-red-600" : "bg-gradient-to-r from-emerald-500 to-green-600"}`}>
-                    {g.badge.type === "hot" ? <Flame size={10} className="inline mr-0.5" /> : <Zap size={10} className="inline mr-0.5" />}
-                    {g.badge.text}
-                  </span>
-                )}
-                <span className="text-[10px] font-medium px-1.5 py-0.5 rounded-md" style={{ background: "rgba(255,255,255,0.08)", color: "rgba(255,255,255,0.6)" }}>{g.players}</span>
-              </div>
-              <h4 className="text-[15px] font-bold text-white mb-1">{g.title}</h4>
-              <p className="text-[11px] leading-relaxed mb-2" style={{ color: "#7C7A9E" }}>{g.desc}</p>
-              <div className="flex items-center gap-1.5">
-                <span className="text-[10px] font-semibold px-2 py-0.5 rounded-md" style={{ background: "rgba(245,158,11,0.15)", color: "#F59E0B" }}>
-                  <Zap size={9} className="inline mr-0.5" />{g.xp}
-                </span>
-                <span className="text-[10px]" style={{ color: "rgba(255,255,255,0.4)" }}>{g.time}</span>
-              </div>
-            </Link>
-          ))}
+          {games.map((g, i) => {
+            const isHero = i === 0
+            return (
+              <Link key={g.href} href={g.href}
+                className={`game-card-anim relative overflow-hidden rounded-[20px] border active:scale-[0.96] transition-all hover:-translate-y-0.5 hover:shadow-xl game-card-hover ${isHero ? "col-span-2 p-5 flex items-center gap-4" : "p-4"}`}
+                style={{ background: "#16122A", borderColor: "rgba(124,58,237,0.2)" }}
+              >
+                <div
+                  className="absolute rounded-full pointer-events-none"
+                  style={isHero
+                    ? { top: -30, right: -30, width: 140, height: 140, background: `radial-gradient(circle, ${g.accentColor}33, transparent 70%)` }
+                    : { top: -20, right: -20, width: 90, height: 90, background: `radial-gradient(circle, ${g.accentColor}22, transparent 70%)` }}
+                />
+                {!isHero && <div className="absolute top-0 left-0 right-0 h-[2px] rounded-t-[20px]" style={{ background: g.accentColor }} />}
+
+                <div className={`relative z-10 rounded-2xl bg-gradient-to-br ${g.iconGradient} flex items-center justify-center shrink-0 ${isHero ? "w-16 h-16" : "w-[52px] h-[52px] mb-3"}`}>
+                  <g.icon size={isHero ? 28 : 24} className="text-white" />
+                </div>
+
+                <div className="relative z-10 flex-1 min-w-0">
+                  <div className="flex items-center gap-1.5 mb-2 flex-wrap">
+                    {g.badge && (
+                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full text-white ${g.badge.type === "hot" ? "bg-gradient-to-r from-red-500 to-red-600" : "bg-gradient-to-r from-emerald-500 to-green-600"}`}>
+                        {g.badge.type === "hot" ? <Flame size={10} className="inline mr-0.5" /> : <Zap size={10} className="inline mr-0.5" />}
+                        {g.badge.text}
+                      </span>
+                    )}
+                    <span className="text-[10px] font-medium px-1.5 py-0.5 rounded-md" style={{ background: "rgba(255,255,255,0.08)", color: "rgba(255,255,255,0.6)" }}>{g.players}</span>
+                  </div>
+                  <h4 className={`font-bold text-white mb-1 ${isHero ? "text-lg" : "text-[15px]"}`}>{g.title}</h4>
+                  <p className={`leading-relaxed mb-2 ${isHero ? "text-xs" : "text-[11px]"}`} style={{ color: "#7C7A9E" }}>{g.desc}</p>
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-[10px] font-semibold px-2 py-0.5 rounded-md" style={{ background: "rgba(245,158,11,0.15)", color: "#F59E0B" }}>
+                      <Zap size={9} className="inline mr-0.5" />{g.xp}
+                    </span>
+                    <span className="text-[10px]" style={{ color: "rgba(255,255,255,0.4)" }}>{g.time}</span>
+                  </div>
+                </div>
+              </Link>
+            )
+          })}
         </div>
 
         {/* Stats ringkas */}

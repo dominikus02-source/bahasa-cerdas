@@ -16,6 +16,10 @@ interface Karya {
   _count?: { likes: number; comments: number };
 }
 
+interface MuridAktif {
+  id: string; displayName: string; avatar?: string; lastActiveAt: string;
+}
+
 const nameOf = (u: { fullName: string; displayName?: string }) => u.displayName || u.fullName;
 
 const TYPE_META: Record<string, { label: string; badge: string }> = {
@@ -32,6 +36,7 @@ export default function HomeFeedPage() {
   const [user, setUser] = useState<any>(null);
   const [karyaList, setKaryaList] = useState<Karya[]>([]);
   const [featured, setFeatured] = useState<Karya[]>([]);
+  const [aktif, setAktif] = useState<{ count: number; users: MuridAktif[] }>({ count: 0, users: [] });
   const [cursor, setCursor] = useState<string | null>(null);
   const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(true);
@@ -67,6 +72,11 @@ export default function HomeFeedPage() {
       .then(r => { if (!r.ok) throw new Error("Gagal memuat featured"); return r.json(); })
       .then(d => { setFeatured(d.karya || []); setLoadingFeatured(false); })
       .catch(e => { setFeaturedError(e.message); setLoadingFeatured(false); });
+
+    fetch("/api/siswa/aktif")
+      .then(r => r.ok ? r.json() : Promise.reject())
+      .then(d => setAktif({ count: d.count || 0, users: d.users || [] }))
+      .catch(() => {});
 
     fetch("/api/siswa/karya?limit=10")
       .then(r => { if (!r.ok) throw new Error("Gagal memuat feed"); return r.json(); })
@@ -142,6 +152,32 @@ export default function HomeFeedPage() {
                     <IconCoin size={14} /> {user.coins || 0}
                   </div>
                 </div>
+              </div>
+            </div>
+          )}
+
+          {/* Murid Aktif */}
+          {aktif.users.length > 0 && (
+            <div className="bg-white rounded-2xl border border-gray-100 p-4 mb-6">
+              <div className="flex items-center gap-2 mb-3">
+                <span className="relative flex h-2.5 w-2.5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500" />
+                </span>
+                <h2 className="text-sm font-bold text-gray-900">{aktif.count} murid aktif sekarang</h2>
+              </div>
+              <div className="flex gap-3 overflow-x-auto pb-1 -mx-1 px-1" style={{ scrollbarWidth: "none" }}>
+                {aktif.users.map(u => (
+                  <Link key={u.id} href={`/profile/${u.id}`} className="flex flex-col items-center gap-1.5 shrink-0 w-14 group">
+                    <div className="relative">
+                      <div className="w-12 h-12 rounded-full bg-gradient-to-br from-violet-400 to-purple-500 flex items-center justify-center text-white text-sm font-bold overflow-hidden border-2 border-white shadow ring-2 ring-emerald-400/60 group-hover:ring-emerald-500 transition-all">
+                        {u.avatar ? <img src={u.avatar} alt="" className="w-full h-full object-cover" /> : u.displayName?.charAt(0)?.toUpperCase()}
+                      </div>
+                      <span className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-white" />
+                    </div>
+                    <p className="text-[10px] text-gray-500 font-medium truncate w-full text-center">{u.displayName}</p>
+                  </Link>
+                ))}
               </div>
             </div>
           )}

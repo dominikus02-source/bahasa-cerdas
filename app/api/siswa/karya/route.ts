@@ -34,28 +34,64 @@ export async function GET(req: NextRequest) {
     const cursor = searchParams.get("cursor");
     const featured = searchParams.get("featured") === "true";
 
-    const where: any = {};
-    if (type) where.type = type;
-    if (featured) where.isFeatured = true;
+    const karyaInclude = {
+      user: { select: { id: true, fullName: true, nickname: true, avatar: true, profile: { select: { school: true, city: true } } } },
+      _count: { select: { likes: true, comments: true } },
+    } as const;
 
-    // Fetch karya + user session in parallel — auth shouldn't block data retrieval
-    const [karya, user] = await Promise.all([
-      db.studentKarya.findMany({
+    const user = await getUser().catch(() => null);
+    const userId = user?.id || null;
+
+    let items: any[];
+    let hasMore = false;
+
+    if (featured) {
+      // Karya Pilihan: automatically curated by engagement, not a manual guru
+      // toggle. A guru-pinned karya (isFeatured=true) still guarantees a slot
+      // — the rest fills from the most-liked karya of the last 30 days, and
+      // falls back to all-time best if recent activity is too thin.
+      const pinned = await db.studentKarya.findMany({
+        where: { isFeatured: true },
+        include: karyaInclude,
+        orderBy: { createdAt: "desc" },
+        take: limit,
+      });
+      const remaining = limit - pinned.length;
+      let auto: any[] = [];
+      if (remaining > 0) {
+        const since = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+        const excludeIds = pinned.map((k) => k.id);
+        auto = await db.studentKarya.findMany({
+          where: { id: { notIn: excludeIds }, createdAt: { gte: since } },
+          include: karyaInclude,
+          orderBy: [{ likesCount: "desc" }, { viewsCount: "desc" }],
+          take: remaining,
+        });
+        if (auto.length < remaining) {
+          const more = await db.studentKarya.findMany({
+            where: { id: { notIn: [...excludeIds, ...auto.map((k) => k.id)] } },
+            include: karyaInclude,
+            orderBy: [{ likesCount: "desc" }, { viewsCount: "desc" }],
+            take: remaining - auto.length,
+          });
+          auto = [...auto, ...more];
+        }
+      }
+      items = [...pinned, ...auto];
+    } else {
+      const where: any = {};
+      if (type) where.type = type;
+
+      const karya = await db.studentKarya.findMany({
         where,
-        include: {
-          user: { select: { id: true, fullName: true, nickname: true, avatar: true, profile: { select: { school: true, city: true } } } },
-          _count: { select: { likes: true, comments: true } },
-        },
+        include: karyaInclude,
         orderBy: { createdAt: "desc" },
         take: limit + 1,
         ...(cursor ? { skip: 1, cursor: { id: cursor } } : {}),
-      }),
-      getUser().catch(() => null),
-    ]);
-
-    const userId = user?.id || null;
-    const hasMore = karya.length > limit;
-    const items = hasMore ? karya.slice(0, limit) : karya;
+      });
+      hasMore = karya.length > limit;
+      items = hasMore ? karya.slice(0, limit) : karya;
+    }
 
     const withDisplay = items.map((k) => ({
       ...k,
@@ -108,7 +144,10 @@ export async function POST(req: NextRequest) {
     });
 
     awardCoins(user.id, "MENULIS_KARYA", `Karya: ${karya.title}`).catch(() => {});
-    trackQuestProgress(user.id, "TULIS_KARYA").catch(() => {});
+    // Must match QUEST_POOL's type string in lib/coins.ts ("MENULIS") — this
+    // used to say "TULIS_KARYA", which matches nothing, so the "Tulis 1
+    // Karya" daily quest could never actually be completed by writing one.
+    trackQuestProgress(user.id, "MENULIS").catch(() => {});
     if (!user.isFounder) trackDailyStreak(user.id).catch(() => {});
 
     invalidateKaryaCache().catch(() => {});
