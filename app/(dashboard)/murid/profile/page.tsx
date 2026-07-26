@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import {
   Plus, Settings, X, Camera, Save, CheckCircle2, AlertCircle, LogOut, Loader2, Crown,
   Bell, User as UserIcon, Award, History, Share2, Pencil,
@@ -341,7 +342,7 @@ export default function MuridProfilePage() {
                 </span>
               </div>
               <div className="grid grid-cols-3 gap-2">
-                {meta.lencana.slice(0, 9).map(l => (
+                {meta.lencana.map(l => (
                   <div
                     key={l.id}
                     title={l.unlocked ? l.name : `${l.name} — ${l.progress}/${l.target}`}
@@ -351,7 +352,13 @@ export default function MuridProfilePage() {
                         : "bg-gray-50"
                     }`}
                   >
-                    <span className={`text-2xl ${l.unlocked ? "" : "grayscale opacity-30"}`}>{l.icon}</span>
+                    <Image
+                      src={l.icon}
+                      alt={l.name}
+                      width={40}
+                      height={40}
+                      className={`w-10 h-10 object-contain ${l.unlocked ? "" : "grayscale opacity-30"}`}
+                    />
                     <span className={`text-[10px] font-semibold leading-tight ${l.unlocked ? "text-amber-700" : "text-gray-400"}`}>{l.name}</span>
                     {!l.unlocked && (
                       <div className="w-full h-1 bg-gray-200 rounded-full overflow-hidden mt-0.5">
