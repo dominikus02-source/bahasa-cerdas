@@ -1,9 +1,11 @@
 import { getUser } from "@/lib/supabase/server"
 import { db } from "@/lib/db"
+import cache from "@/lib/redis"
 import { redirect } from "next/navigation"
 import Link from "next/link"
-import { Zap, Swords, Puzzle, Trophy, Type, Flame, BookOpen, Users, Clock, Crown, Mountain, ThumbsUp } from "lucide-react"
+import { Zap, Swords, Puzzle, Type, Flame, BookOpen, Users, Clock, Crown, Mountain, ThumbsUp } from "lucide-react"
 import BattleCard from "@/components/arena/BattleCard"
+import GameHubLeagueTabs from "./league-tabs"
 import { MULTIPLAYER_ENABLED } from "@/lib/features"
 
 interface Game {
@@ -28,18 +30,6 @@ const GAMES: Game[] = [
   { title: "Kuis Tempur", desc: "Lawan murid lain real-time! Siapa cepat dan benar dia menang.", icon: Swords, href: "/arena/game/kuis-tempur", accentColor: "#EF4444", iconGradient: "from-red-500 to-red-600", featured: true, badge: { text: "Terpopuler", type: "hot" }, xp: "+80 XP", players: "2-8 pemain", time: "~5 menit", multiplayer: true },
 ]
 
-const INITIALS_COLORS = [
-  "from-violet-500 to-purple-600",
-  "from-emerald-500 to-teal-600",
-  "from-pink-500 to-rose-600",
-  "from-cyan-500 to-blue-600",
-  "from-orange-500 to-amber-600",
-]
-
-function initials(name: string) {
-  return name?.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2) || "?"
-}
-
 export default async function ArenaGimPage() {
   const user = await getUser()
   if (!user) redirect("/auth/arena-login")
@@ -47,7 +37,7 @@ export default async function ArenaGimPage() {
   const limaMenitLalu = new Date(Date.now() - 5 * 60 * 1000)
   const sepuluhMenitLalu = new Date(Date.now() - 10 * 60 * 1000)
 
-  const [totalMain, hasilAkhir, topUsers, onlineCount, recentBattles, recentPlayers] = await Promise.all([
+  const [totalMain, hasilAkhir, leagueRows, dailyCoinRows, onlineCount, recentBattles, recentPlayers] = await Promise.all([
     db.gameResult.count({ where: { userId: user.id } }),
     db.gameResult.findMany({
       where: { userId: user.id },
@@ -55,12 +45,34 @@ export default async function ArenaGimPage() {
       take: 5,
       include: { room: { select: { code: true } } },
     }),
-    db.user.findMany({
-      where: { xp: { gt: 0 } },
-      orderBy: { xp: "desc" },
-      take: 5,
-      select: { id: true, fullName: true, xp: true },
-    }),
+    // Same cache key as the Arena beranda's LeagueMini — shares the hit, one query for both pages.
+    cache.getOrSet("arena:league-mini:top5", async () =>
+      db.user.findMany({
+        where: { role: "MURID", xp: { gt: 0 } },
+        orderBy: { xp: "desc" },
+        take: 5,
+        select: { id: true, fullName: true, nickname: true, xp: true },
+      }),
+      120
+    ),
+    cache.getOrSet("arena:league-mini:daily:v2", async () => {
+      const today = new Date()
+      today.setHours(0, 0, 0, 0)
+      const earned = await db.coinTransaction.groupBy({
+        by: ["userId"],
+        where: { createdAt: { gte: today }, amount: { gt: 0 }, user: { role: "MURID" } },
+        _sum: { amount: true },
+        orderBy: { _sum: { amount: "desc" } },
+        take: 5,
+      })
+      const userIds = earned.map((e) => e.userId)
+      if (userIds.length === 0) return []
+      const users = await db.user.findMany({ where: { id: { in: userIds } }, select: { id: true, fullName: true, nickname: true } })
+      return earned.map((e) => {
+        const u = users.find((us) => us.id === e.userId)
+        return { id: e.userId, fullName: u?.fullName || "", nickname: u?.nickname, xp: e._sum.amount || 0 }
+      })
+    }, 120),
     db.user.count({ where: { lastActiveAt: { gte: limaMenitLalu }, role: "MURID" } }),
     db.gameResult.count({ where: { createdAt: { gte: sepuluhMenitLalu } } }),
     db.gameResult.findMany({
@@ -74,7 +86,6 @@ export default async function ArenaGimPage() {
 
   const winCount = hasilAkhir.filter((h: any) => h.rank === 1).length
   const totalXp = user.xp || 0
-  const userRank = topUsers.findIndex((u) => u.id === user.id) + 1
 
   // While the multiplayer server is offline, present multiplayer games as
   // "Segera Hadir" AND sink them below every playable game — a mislabeled
@@ -172,43 +183,11 @@ export default async function ArenaGimPage() {
           <Link href="/arena/league" className="text-xs font-semibold" style={{ color: "#A855F7" }}>Lihat semua &rarr;</Link>
         </div>
 
-        <div className="rounded-[20px] border overflow-hidden mb-6" style={{ background: "#16122A", borderColor: "rgba(124,58,237,0.2)" }}>
-          <div className="px-5 py-4 flex items-center justify-between border-b" style={{ borderColor: "rgba(255,255,255,0.05)" }}>
-            <h3 className="font-bold text-white flex items-center gap-2">
-              <Trophy size={16} className="text-amber-400" /> Liga Perunggu
-            </h3>
-            <div className="flex gap-1 p-0.5 rounded-[10px]" style={{ background: "rgba(255,255,255,0.05)" }}>
-              <span className="px-2.5 py-1 rounded-lg text-[11px] font-semibold text-white" style={{ background: "#7C3AED" }}>Harian</span>
-              <span className="px-2.5 py-1 rounded-lg text-[11px] font-semibold" style={{ color: "#7C7A9E" }}>Mingguan</span>
-            </div>
-          </div>
-
-          {topUsers.map((u, i) => {
-            const isMe = u.id === user.id
-            const rankColors = ["text-amber-400", "text-gray-400", "text-orange-700"]
-            const rankEmoji = i === 0 ? <Crown size={13} className="text-amber-400" /> : null
-            return (
-              <div key={u.id} className="px-5 py-3 flex items-center gap-3 transition-colors border-b last:border-b-0" style={{ borderColor: "rgba(255,255,255,0.04)", background: isMe ? "rgba(124,58,237,0.08)" : "transparent" }}>
-                <div className="w-6 text-center shrink-0">
-                  {rankEmoji || <span className={`text-sm font-extrabold ${rankColors[i] || ""}`} style={{ color: !rankColors[i] ? "#7C7A9E" : undefined }}>{i + 1}</span>}
-                </div>
-                <div className={`w-9 h-9 rounded-xl bg-gradient-to-br ${INITIALS_COLORS[i % INITIALS_COLORS.length]} flex items-center justify-center text-white text-sm font-bold shrink-0`}>
-                  {initials(u.fullName || "")}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold text-white truncate">
-                    {u.fullName}
-                    {isMe && <span className="text-[11px] font-medium ml-1" style={{ color: "#A855F7" }}>(Kamu)</span>}
-                  </p>
-                </div>
-                <div className="text-right shrink-0">
-                  <p className="text-[15px] font-extrabold" style={{ color: "#A855F7" }}>{u.xp.toLocaleString()}</p>
-                  <p className="text-[10px]" style={{ color: "#7C7A9E" }}>XP</p>
-                </div>
-              </div>
-            )
-          })}
-        </div>
+        <GameHubLeagueTabs
+          userId={user.id}
+          harian={dailyCoinRows.map((u) => ({ id: u.id, fullName: u.fullName, displayName: u.nickname || undefined, xp: u.xp }))}
+          mingguan={leagueRows.map((u) => ({ id: u.id, fullName: u.fullName, displayName: u.nickname || undefined, xp: u.xp }))}
+        />
 
         {/* Riwayat */}
         {hasilAkhir.length > 0 && (
