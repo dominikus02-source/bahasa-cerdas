@@ -3,8 +3,9 @@
 import Link from "next/link";
 import { Users, MessageCircle, Calendar, ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
-import BatikDecor from "@/components/landing/batik-decor";
 import { fadeInUp, staggerContainer } from "@/lib/motion";
+import KomunitasMgmpCard from "@/components/landing/KomunitasMgmpCard";
+import type { MgmpMedia } from "@/lib/site-settings";
 
 const features = [
   {
@@ -27,7 +28,7 @@ const features = [
   },
 ];
 
-export default function KomunitasSection() {
+export default function KomunitasSection({ mgmpMedia }: { mgmpMedia: MgmpMedia }) {
   return (
     <section className="relative py-20 lg:py-28 bg-zinc-50 overflow-hidden">
       {/* Non-blocking batik decor */}
@@ -105,7 +106,7 @@ berkembang bersama sesama pengajar.
             </Link>
           </motion.div>
 
-          {/* Right - Stats Card */}
+          {/* Right - MGMP Media Card */}
           <motion.div
             className="lg:col-span-2"
             initial={{ opacity: 0, y: 20 }}
@@ -113,20 +114,7 @@ berkembang bersama sesama pengajar.
             viewport={{ once: true }}
             transition={{ duration: 0.5, ease: "easeOut", delay: 0.2 }}
           >
-            <div className="bg-white rounded-2xl border border-zinc-200 p-6 shadow-sm">
-              <div className="text-center pb-1">
-                <div className="text-5xl font-display font-bold text-zinc-900 leading-none">
-                  Aktif
-                </div>
-                <div className="text-sm text-zinc-500 mt-2">
-                  Forum diskusi sudah live di platform
-                </div>
-                <div className="inline-flex items-center gap-1.5 mt-3 bg-green-50 text-green-700 text-xs font-semibold px-3 py-1 rounded-full border border-green-100">
-                  <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
-                  Live sekarang
-                </div>
-              </div>
-            </div>
+            <KomunitasMgmpCard media={mgmpMedia} />
           </motion.div>
         </div>
       </div>

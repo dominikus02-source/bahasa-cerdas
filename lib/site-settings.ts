@@ -1,6 +1,29 @@
 import { db } from "@/lib/db";
 
 export const PROMO_VIDEO_KEY = "promo_video_id";
+export const MGMP_MEDIA_KEY = "mgmp_media";
+
+export type MgmpMedia =
+  | { type: "none" }
+  | { type: "photo"; photos: { url: string; key: string }[] }
+  | { type: "video"; videoId: string };
+
+export async function getMgmpMedia(): Promise<MgmpMedia> {
+  const raw = await getSetting(MGMP_MEDIA_KEY);
+  if (!raw) return { type: "none" };
+  try {
+    const parsed = JSON.parse(raw);
+    if (parsed?.type === "photo" && Array.isArray(parsed.photos)) return parsed;
+    if (parsed?.type === "video" && typeof parsed.videoId === "string") return parsed;
+    return { type: "none" };
+  } catch {
+    return { type: "none" };
+  }
+}
+
+export async function setMgmpMedia(media: MgmpMedia) {
+  return setSetting(MGMP_MEDIA_KEY, media.type === "none" ? null : JSON.stringify(media));
+}
 
 export async function getSetting(key: string): Promise<string | null> {
   try {

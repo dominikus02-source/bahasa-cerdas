@@ -12,6 +12,7 @@ import MengapaSection from "@/components/landing/MengapaSection";
 import AIToolsSection from "@/components/landing/AIToolsSection";
 import KaryaPopulerSection from "@/components/landing/KaryaPopulerSection";
 import KomunitasSection from "@/components/landing/KomunitasSection";
+import { getMgmpMedia } from "@/lib/site-settings";
 import FAQSection from "@/components/landing/FAQSection";
 import FinalCTA from "@/components/landing/FinalCTA";
 import AnswerBlock from "@/components/aeo/AnswerBlock";
@@ -87,9 +88,10 @@ async function getLatestVideos() {
 }
 
 export default async function HomePage() {
-  const [artikel, videos] = await Promise.all([
+  const [artikel, videos, mgmpMedia] = await Promise.all([
     getLatestArtikel(),
     getLatestVideos(),
+    getMgmpMedia(),
   ]);
 
   const faqs = [
@@ -334,7 +336,7 @@ export default async function HomePage() {
           </div>
         </section>
 
-        <KomunitasSection />
+        <KomunitasSection mgmpMedia={mgmpMedia} />
         <FAQSection />
         <FinalCTA />
       </main>
