@@ -223,7 +223,7 @@ export default function PanduanGuruPage() {
                                           size="sm"
                                           variant="outline"
                                           className="text-emerald-600 border-emerald-200 hover:bg-emerald-50"
-                                          onClick={(e) => { e.preventDefault(); e.stopPropagation(); setAssignUnit({ ...unit, levelTitle: lvl?.title || "" }); setJenis("MATERI"); setAssignError("") }}
+                                          onClick={(e) => { e.preventDefault(); e.stopPropagation(); setAssignUnit({ ...unit, levelTitle: lvl?.title || "" }); setJenis("MATERI"); setAssignError(""); setSelectedGroups([]); setTenggat("") }}
                                         >
                                           <Send className="w-3.5 h-3.5 mr-1" />
                                           Kirim
