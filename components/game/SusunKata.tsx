@@ -2,9 +2,11 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, Heart, Star, Trophy, Zap, RefreshCw, Crown, Shuffle, Check, X, Timer, Sparkles } from "lucide-react";
-import GameBackground from "@/components/game/GameBackground";
-import { sfx, haptic, startBGM, stopBGM } from "@/lib/game/sound";
+import {
+  X, Heart, Star, Trophy, Zap, Shuffle, Check, RotateCcw, Lock,
+  ChevronRight, Play, Volume2, VolumeX, Loader2, Sparkles, Timer,
+} from "lucide-react";
+import { sfx, haptic, isSoundOn, toggleSound, startBGM, stopBGM } from "@/lib/game/sound";
 
 const SCRAMBLE_WORDS = [
   { word: "BAHASA", meaning: "Sistem lambang bunyi yang arbitrer" },
@@ -72,7 +74,7 @@ const SCRAMBLE_WORDS = [
   { word: "IMPLIKATUR", meaning: "Makna tersirat dalam percakapan" },
   { word: "DEIKSIS", meaning: "Kata yang rujukannya berpindah-pindah" },
   { word: "ANAFORA", meaning: "Pengacuan kembali pada unsur yang telah disebut" },
-  { word: "KATAfora", meaning: "Pengacuan pada unsur yang akan disebut" },
+  { word: "KATAFORA", meaning: "Pengacuan pada unsur yang akan disebut" },
   { word: "ELIPSIS", meaning: "Penghilangan unsur kalimat yang telah diketahui" },
   { word: "REMEDIASI", meaning: "Perbaikan atau pengobatan" },
   { word: "KONSELING", meaning: "Pemberian bimbingan oleh ahli" },
@@ -182,31 +184,43 @@ const SCRAMBLE_WORDS = [
   { word: "KORESPONDENSI", meaning: "Kegiatan surat-menyurat" },
 ];
 
-const LEVEL_THRESHOLDS = [0, 80, 200, 400, 700, 1100, 1600, 2200, 2900, 3700, 4600, 5600, 6700, 7900, 9200, 10600, 12100, 13700, 15400, 17200, 19100, 21100, 23200, 25400, 27700, 30100, 32600, 35200, 37900, 40700, 43600, 46600, 49700, 52900, 56200, 59600, 63100, 66700, 70400, 74200, 78100, 82100, 86200, 90400, 94700, 99100, 103600, 108200, 112900, 117700];
+type Word = (typeof SCRAMBLE_WORDS)[number];
+type Screen = "start" | "levels" | "playing" | "result";
 
-function getLevel(xp: number) {
-  for (let i = LEVEL_THRESHOLDS.length - 1; i >= 0; i--) {
-    if (xp >= LEVEL_THRESHOLDS[i]) return i + 1;
-  }
-  return 1;
+type Level = { id: number; name: string; rounds: number; min: number; max: number; time: number; color: string };
+const LEVELS: Level[] = [
+  { id: 1, name: "Pemula", rounds: 6, min: 0, max: 5, time: 30, color: "#FF6B6B" },
+  { id: 2, name: "Siaga", rounds: 7, min: 4, max: 6, time: 30, color: "#F59E0B" },
+  { id: 3, name: "Petarung", rounds: 8, min: 5, max: 7, time: 28, color: "#10B981" },
+  { id: 4, name: "Jawara", rounds: 9, min: 6, max: 8, time: 28, color: "#38BDF8" },
+  { id: 5, name: "Pahlawan", rounds: 10, min: 6, max: 9, time: 26, color: "#8B5CF6" },
+  { id: 6, name: "Legenda", rounds: 11, min: 7, max: 10, time: 26, color: "#EC4899" },
+  { id: 7, name: "Dewa", rounds: 12, min: 7, max: 11, time: 24, color: "#F43F5E" },
+  { id: 8, name: "Naga", rounds: 13, min: 8, max: 12, time: 24, color: "#14B8A6" },
+  { id: 9, name: "Maha Guru", rounds: 15, min: 8, max: 99, time: 22, color: "#6366F1" },
+];
+
+type Saved = { unlocked: number[]; best: Record<number, number>; stars: Record<number, number> };
+function loadSaved(): Saved {
+  try {
+    const raw = localStorage.getItem("susun-kata-progress");
+    if (raw) {
+      const d = JSON.parse(raw);
+      if (Array.isArray(d.unlocked)) return { unlocked: d.unlocked, best: d.best || {}, stars: d.stars || {} };
+    }
+  } catch { /* abaikan */ }
+  return { unlocked: [1], best: {}, stars: {} };
 }
-
-function getLevelProgress(xp: number) {
-  const level = getLevel(xp);
-  const current = LEVEL_THRESHOLDS[level - 1] || 0;
-  const next = LEVEL_THRESHOLDS[level] || LEVEL_THRESHOLDS[LEVEL_THRESHOLDS.length - 1] + 10000;
-  return { level, progress: ((xp - current) / (next - current)) * 100, current, next };
+function saveSaved(s: Saved) {
+  try { localStorage.setItem("susun-kata-progress", JSON.stringify(s)); } catch { /* abaikan */ }
 }
-
-// Kata yang diacak makin panjang mengikuti level — menyusun 5 huruf mudah,
-// menyusun 10+ huruf butuh kosakata yang jauh lebih kuat.
-function wordBandForLevel(level: number) {
-  if (level <= 4) return { min: 0, max: 5 };
-  if (level <= 9) return { min: 5, max: 7 };
-  if (level <= 19) return { min: 7, max: 9 };
-  return { min: 8, max: 99 };
+function starsFor(score: number, rounds: number): number {
+  const perRound = rounds > 0 ? score / rounds : 0;
+  if (perRound >= 260) return 3;
+  if (perRound >= 170) return 2;
+  if (perRound >= 60) return 1;
+  return 0;
 }
-
 function scrambleWord(word: string): string {
   const letters = word.split("");
   let scrambled = [...letters];
@@ -221,329 +235,393 @@ function scrambleWord(word: string): string {
   return scrambled.join("");
 }
 
-export default function SusunKataGame({ hideBackButton }: { hideBackButton?: boolean }) {
-  const [gameState, setGameState] = useState<"menu" | "playing" | "result">("menu");
-  useEffect(() => { if (gameState === "playing") startBGM(); else stopBGM(); return () => stopBGM(); }, [gameState]);
-  const [xp, setXp] = useState(0);
-  const [lives, setLives] = useState(3);
-  const [currentWord, setCurrentWord] = useState<any>(null);
-  const [scrambled, setScrambled] = useState("");
-  const [selectedLetters, setSelectedLetters] = useState<string[]>([]);
+export default function SusunKataGame({ hideBackButton, backHref = "/arena/game" }: { hideBackButton?: boolean; backHref?: string }) {
+  const [screen, setScreen] = useState<Screen>("start");
+  const [saved, setSaved] = useState<Saved>({ unlocked: [1], best: {}, stars: {} });
+  const [soundOn, setSoundOn] = useState(true);
+  const [levelId, setLevelId] = useState(1);
+  const [pool, setPool] = useState<Word[]>([]);
+  const [round, setRound] = useState(0);
+  const [currentWord, setCurrentWord] = useState<Word | null>(null);
   const [availableLetters, setAvailableLetters] = useState<string[]>([]);
+  const [selectedLetters, setSelectedLetters] = useState<string[]>([]);
   const [score, setScore] = useState(0);
+  const [lives, setLives] = useState(3);
   const [streak, setStreak] = useState(0);
   const [bestStreak, setBestStreak] = useState(0);
-  const [round, setRound] = useState(0);
-  const [totalRounds, setTotalRounds] = useState(10);
   const [feedback, setFeedback] = useState<{ correct: boolean; message: string } | null>(null);
   const [timeLeft, setTimeLeft] = useState(30);
   const [timerActive, setTimerActive] = useState(false);
-  const [usedWords, setUsedWords] = useState<Set<string>>(new Set());
-  const [xpSaved, setXpSaved] = useState(false);
+  const [result, setResult] = useState<null | { score: number; stars: number; bestStreak: number; xpEarned: number; gameOver: boolean }>(null);
+  const xpSentRef = useRef(false);
+  const supabaseIdRef = useRef("");
+
+  const level = LEVELS.find((l) => l.id === levelId) || LEVELS[0];
 
   useEffect(() => {
-    const saved = localStorage.getItem("susun-kata-progress");
-    if (saved) {
-      try {
-        const data = JSON.parse(saved);
-        setXp(data.xp || 0);
-        setBestStreak(data.bestStreak || 0);
-      } catch {}
-    }
+    setSaved(loadSaved());
+    try { setSoundOn(isSoundOn()); } catch { /* abaikan */ }
+    const stored = localStorage.getItem("bc-user");
+    if (stored) { try { supabaseIdRef.current = JSON.parse(stored).state?.supabaseId || ""; } catch { /* abaikan */ } }
   }, []);
-
-  const supabaseIdRef = useRef("")
-  useEffect(() => {
-    const stored = localStorage.getItem("bc-user")
-    if (stored) {
-      try { supabaseIdRef.current = JSON.parse(stored).state?.supabaseId || "" } catch {}
-    }
-  }, [])
-
-  useEffect(() => {
-    if (gameState !== "result" || xpSaved || score <= 0) return
-    setXpSaved(true)
-    fetch("/api/game/xp", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ score, correct: 0, wrong: 0, maxStreak: bestStreak, xpEarned: score, gameType: "SUSUN_KATA", supabaseId: supabaseIdRef.current }),
-    }).catch(() => {})
-  }, [gameState, xpSaved, score, bestStreak])
+  useEffect(() => () => stopBGM(), []);
 
   useEffect(() => {
     if (!timerActive || timeLeft <= 0) return;
-    const timer = setInterval(() => {
-      setTimeLeft((t) => {
-        if (t <= 1) {
-          setTimerActive(false);
-          handleTimeUp();
-          return 0;
-        }
-        return t - 1;
+    if (timeLeft <= 5) sfx.tick();
+    const t = setInterval(() => {
+      setTimeLeft((s) => {
+        if (s <= 1) { setTimerActive(false); handleTimeUpRef.current(); return 0; }
+        return s - 1;
       });
     }, 1000);
-    return () => clearInterval(timer);
+    return () => clearInterval(t);
   }, [timerActive, timeLeft]);
 
-  const saveProgress = useCallback((newXp: number, newBestStreak: number) => {
-    localStorage.setItem("susun-kata-progress", JSON.stringify({ xp: newXp, bestStreak: newBestStreak }));
-  }, []);
+  const finish = useCallback((finalScore: number, finalBestStreak: number, gameOver: boolean) => {
+    stopBGM();
+    const stars = starsFor(finalScore, level.rounds);
+    const xpEarned = Math.min(Math.floor(finalScore / 40), 60);
+    if (!gameOver && finalScore > 0) { sfx.win(); haptic([40, 40, 80]); } else if (gameOver) { sfx.gameover(); haptic(120); }
 
-  const handleTimeUp = () => {
-    const newLives = lives - 1;
-    setLives(newLives);
-    setStreak(0);
-    setFeedback({ correct: false, message: currentWord?.word });
-    if (newLives <= 0) {
-      setTimeout(() => setGameState("result"), 2000);
-    } else {
-      setTimeout(() => nextWord(usedWords), 2000);
+    setResult({ score: finalScore, stars, bestStreak: finalBestStreak, xpEarned, gameOver });
+    setScreen("result");
+
+    setSaved((prev) => {
+      const next: Saved = { unlocked: [...prev.unlocked], best: { ...prev.best }, stars: { ...prev.stars } };
+      if (!gameOver) {
+        if (!next.best[levelId] || finalScore > next.best[levelId]) next.best[levelId] = finalScore;
+        if (!next.stars[levelId] || stars > next.stars[levelId]) next.stars[levelId] = stars;
+        const nid = levelId + 1;
+        if (nid <= LEVELS.length && !next.unlocked.includes(nid)) next.unlocked.push(nid);
+      }
+      saveSaved(next);
+      return next;
+    });
+
+    if (!xpSentRef.current && finalScore > 0) {
+      xpSentRef.current = true;
+      fetch("/api/game/xp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ score: finalScore, correct: 0, wrong: 0, maxStreak: finalBestStreak, xpEarned, gameType: "SUSUN_KATA", supabaseId: supabaseIdRef.current }),
+      }).catch(() => { /* abaikan */ });
     }
-  };
+  }, [level.rounds, levelId]);
 
-  const startGame = () => {
-    sfx.start();
-    setGameState("playing");
-    setLives(3);
-    setScore(0);
-    setStreak(0);
-    setRound(0);
-    setUsedWords(new Set());
-    nextWord(new Set());
-  };
-
-  const nextWord = (used: Set<string>) => {
-    const band = wordBandForLevel(getLevel(xp));
-    let available = SCRAMBLE_WORDS.filter(
-      (w) => !used.has(w.word) && w.word.length >= band.min && w.word.length <= band.max
-    );
-    // Band kehabisan kata → buka seluruh bank agar permainan tetap jalan.
-    if (available.length === 0) available = SCRAMBLE_WORDS.filter((w) => !used.has(w.word));
-    let word: any;
-    if (available.length === 0) {
-      setUsedWords(new Set());
-      word = SCRAMBLE_WORDS[Math.floor(Math.random() * SCRAMBLE_WORDS.length)];
-      setUsedWords(new Set([word.word]));
-    } else {
-      word = available[Math.floor(Math.random() * available.length)];
-      setUsedWords(new Set([...used, word.word]));
-    }
-
-    const scrambled = scrambleWord(word.word);
-    setCurrentWord(word);
-    setScrambled(scrambled);
+  const goToRound = useCallback((currentPool: Word[], idx: number, lv: Level) => {
+    const w = currentPool[idx];
+    const scrambled = scrambleWord(w.word);
+    setCurrentWord(w);
     setAvailableLetters(scrambled.split(""));
     setSelectedLetters([]);
     setFeedback(null);
-    setTimeLeft(30);
+    setTimeLeft(lv.time);
     setTimerActive(true);
+  }, []);
+
+  const scoreRef = useRef(0);
+  const bestStreakRef = useRef(0);
+  const roundRef = useRef(0);
+  const poolRef = useRef<Word[]>([]);
+  useEffect(() => { scoreRef.current = score; }, [score]);
+  useEffect(() => { bestStreakRef.current = bestStreak; }, [bestStreak]);
+  useEffect(() => { roundRef.current = round; }, [round]);
+  useEffect(() => { poolRef.current = pool; }, [pool]);
+
+  const handleTimeUpRef = useRef(() => {});
+  handleTimeUpRef.current = () => {
+    setLives((prevLives) => {
+      const newLives = prevLives - 1;
+      setStreak(0);
+      setFeedback({ correct: false, message: currentWord?.word || "" });
+      if (newLives <= 0) {
+        setTimeout(() => finish(scoreRef.current, bestStreakRef.current, true), 1600);
+      } else {
+        setTimeout(() => {
+          const nextRound = roundRef.current + 1;
+          setRound(nextRound);
+          if (nextRound >= poolRef.current.length) finish(scoreRef.current, bestStreakRef.current, false);
+          else goToRound(poolRef.current, nextRound, level);
+        }, 1600);
+      }
+      return newLives;
+    });
+  };
+
+  const startLevel = (id: number) => {
+    sfx.start(); setSoundOn(isSoundOn()); startBGM();
+    const lv = LEVELS.find((l) => l.id === id) || LEVELS[0];
+    let candidates = SCRAMBLE_WORDS.filter((w) => w.word.length >= lv.min && w.word.length <= lv.max);
+    if (candidates.length < lv.rounds) candidates = SCRAMBLE_WORDS;
+    const shuffled = [...candidates].sort(() => Math.random() - 0.5).slice(0, lv.rounds);
+
+    setLevelId(id);
+    setPool(shuffled);
+    setRound(0);
+    setScore(0);
+    setLives(3);
+    setStreak(0);
+    setBestStreak(0);
+    setResult(null);
+    xpSentRef.current = false;
+    setScreen("playing");
+    goToRound(shuffled, 0, lv);
   };
 
   const selectLetter = (index: number) => {
     const letter = availableLetters[index];
-    const newAvailable = [...availableLetters];
-    newAvailable.splice(index, 1);
-    setAvailableLetters(newAvailable);
-    setSelectedLetters([...selectedLetters, letter]);
+    const next = [...availableLetters];
+    next.splice(index, 1);
+    setAvailableLetters(next);
+    setSelectedLetters((s) => [...s, letter]);
   };
-
   const deselectLetter = (index: number) => {
     const letter = selectedLetters[index];
-    const newSelected = [...selectedLetters];
-    newSelected.splice(index, 1);
-    setSelectedLetters(newSelected);
-    setAvailableLetters([...availableLetters, letter]);
+    const next = [...selectedLetters];
+    next.splice(index, 1);
+    setSelectedLetters(next);
+    setAvailableLetters((a) => [...a, letter]);
+  };
+  const clearSelection = () => {
+    if (!currentWord) return;
+    setAvailableLetters(scrambleWord(currentWord.word).split(""));
+    setSelectedLetters([]);
+  };
+  const reshuffle = () => {
+    setAvailableLetters((prev) => {
+      const all = [...prev, ...selectedLetters];
+      setSelectedLetters([]);
+      for (let i = all.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [all[i], all[j]] = [all[j], all[i]];
+      }
+      return all;
+    });
   };
 
   const checkAnswer = () => {
-    if (!currentWord || selectedLetters.length === 0) return;
+    if (!currentWord || selectedLetters.length === 0 || feedback) return;
     const answer = selectedLetters.join("");
     const isCorrect = answer === currentWord.word;
     if (isCorrect) { sfx.correct(); haptic(25); } else { sfx.wrong(); haptic([60, 40, 60]); }
-
     setTimerActive(false);
 
     if (isCorrect) {
       const timeBonus = timeLeft * 5;
-      const basePoints = 150;
       const streakBonus = streak * 15;
-      const totalPoints = basePoints + timeBonus + streakBonus;
+      const totalPoints = 150 + timeBonus + streakBonus;
       const newStreak = streak + 1;
-      const newBestStreak = Math.max(bestStreak, newStreak);
-      const newXp = xp + totalPoints;
-
-      setScore((s) => s + totalPoints);
+      const newScore = score + totalPoints;
+      const newBest = Math.max(bestStreak, newStreak);
+      setScore(newScore);
       setStreak(newStreak);
-      setBestStreak(newBestStreak);
-      setXp(newXp);
+      setBestStreak(newBest);
       setFeedback({ correct: true, message: `+${totalPoints}` });
-      saveProgress(newXp, newBestStreak);
 
       setTimeout(() => {
-        const newRound = round + 1;
-        setRound(newRound);
-        if (newRound >= totalRounds) {
-          setGameState("result");
-        } else {
-          nextWord(usedWords);
-        }
-      }, 1200);
+        const nextRound = round + 1;
+        setRound(nextRound);
+        if (nextRound >= pool.length) finish(newScore, newBest, false);
+        else goToRound(pool, nextRound, level);
+      }, 1100);
     } else {
       const newLives = lives - 1;
       setLives(newLives);
       setStreak(0);
       setFeedback({ correct: false, message: `${newLives} nyawa tersisa` });
-
       if (newLives <= 0) {
-        setTimeout(() => setGameState("result"), 2000);
+        setTimeout(() => finish(score, bestStreak, true), 1600);
       } else {
         setTimeout(() => {
           setSelectedLetters([]);
-          setAvailableLetters(scrambled.split(""));
+          if (currentWord) setAvailableLetters(scrambleWord(currentWord.word).split(""));
           setFeedback(null);
+          setTimerActive(true);
         }, 1000);
       }
     }
   };
 
-  const clearSelection = () => {
-    setSelectedLetters([]);
-    setAvailableLetters(scrambled.split(""));
-  };
+  const chunky = "border-4 border-[#161B3A] shadow-[6px_6px_0_#161B3A]";
+  const btnBase = `inline-flex items-center justify-center gap-2 font-extrabold rounded-2xl ${chunky} transition-transform active:translate-x-1.5 active:translate-y-1.5 active:shadow-none hover:-translate-x-0.5 hover:-translate-y-0.5`;
+  const timePct = level.time > 0 ? (timeLeft / level.time) * 100 : 0;
 
-  const reshuffle = () => {
-    setAvailableLetters((prev) => {
-      const all = [...prev, ...selectedLetters];
-      setSelectedLetters([]);
-      const shuffled = [...all];
-      for (let i = shuffled.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-      }
-      return shuffled;
-    });
-  };
+  /* ---------- START ---------- */
+  if (screen === "start") {
+    return (
+      <div className="fixed inset-0 z-[60] overflow-y-auto bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] text-[#161B3A]">
+        <style>{`@keyframes sk-float1{0%,100%{transform:translate(0,0) rotate(6deg)}50%{transform:translate(16px,-22px) rotate(18deg)}}
+        @keyframes sk-float2{0%,100%{transform:translate(0,0) rotate(0)}50%{transform:translate(-18px,16px) rotate(-12deg)}}
+        @keyframes sk-fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+        @keyframes sk-pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+        .sk-screen{animation:sk-fade .35s ease}
+        .sk-logo{animation:sk-pulse 1.4s ease-in-out infinite}`}</style>
+        <div className="pointer-events-none fixed top-[8%] left-[3%] w-16 h-16 bg-[#10B981] border-4 border-[#161B3A] rounded-3xl" style={{ animation: "sk-float1 9s ease-in-out infinite" }} />
+        <div className="pointer-events-none fixed top-[16%] right-[5%] w-12 h-12 bg-[#38BDF8] border-4 border-[#161B3A] rounded-full" style={{ animation: "sk-float2 10s ease-in-out infinite" }} />
+        <div className="pointer-events-none fixed bottom-[14%] left-[2%] w-14 h-14 bg-[#FBBF24] border-4 border-[#161B3A] rounded-2xl" style={{ animation: "sk-float1 11s ease-in-out infinite" }} />
+        <div className="pointer-events-none fixed bottom-[10%] right-[4%] w-11 h-11 bg-[#EC4899] border-4 border-[#161B3A] rounded-[30%_70%_70%_30%]" style={{ animation: "sk-float2 8s ease-in-out infinite" }} />
 
-  const levelInfo = getLevelProgress(xp);
-
-  return (
-    <div className="relative isolate min-h-screen bg-[#F2F2F7] flex flex-col">
-      <GameBackground theme="emerald" light lightAccent="emerald" />
-      {/* iOS-style Header */}
-      <div className="bg-white/80 backdrop-blur-xl border-b border-gray-200/50 px-4 py-3 sticky top-0 z-50">
-        <div className="max-w-lg mx-auto flex items-center justify-between">
-          {!hideBackButton && (
-            <button onClick={() => setGameState("menu")} className="text-blue-500 font-medium text-sm flex items-center gap-0.5">
-              <ArrowLeft size={20} /> Menu
-            </button>
-          )}
-          {hideBackButton && <div />}
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-1 bg-amber-50 px-2.5 py-1 rounded-full">
-              <Star size={14} className="text-amber-500 fill-amber-500" />
-              <span className="text-amber-700 font-bold text-sm">{score}</span>
+        <div className="relative max-w-xl mx-auto px-4 py-5 min-h-full flex flex-col">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2.5">
+              <div className={`sk-logo w-11 h-11 bg-[#10B981] rounded-2xl ${chunky} !shadow-[4px_4px_0_#161B3A] flex items-center justify-center`}>
+                <Shuffle className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <div className="font-extrabold text-xl leading-none">Susun Kata</div>
+                <div className="text-[11px] font-semibold opacity-60 mt-0.5">Rakit huruf jadi kata sebelum waktu habis</div>
+              </div>
             </div>
-            <div className="flex items-center gap-0.5">
-              {[...Array(3)].map((_, i) => (
-                <Heart key={i} size={18} className={i < lives ? "text-red-500 fill-red-500" : "text-gray-300"} />
-              ))}
+            <button onClick={() => setSoundOn((m) => { toggleSound(); return !m; })} className={`${btnBase} w-11 h-11 bg-white`} aria-label={soundOn ? "Matikan suara" : "Nyalakan suara"}>
+              {soundOn ? <Volume2 className="w-5 h-5" /> : <VolumeX className="w-5 h-5" />}
+            </button>
+          </div>
+
+          <div className="sk-screen bg-white rounded-3xl p-6 text-center flex-1 flex flex-col items-center justify-center">
+            <span className="inline-block px-4 py-1.5 bg-[#FBBF24] border-[3px] border-[#161B3A] rounded-full font-extrabold text-xs shadow-[3px_3px_0_#161B3A] mb-4">9 Level • 3 Nyawa</span>
+            <h1 className="font-extrabold text-4xl mb-2">Susun <span className="text-[#10B981]">Kata!</span></h1>
+            <p className="opacity-70 text-sm max-w-sm mb-1">Huruf teracak muncul lengkap dengan artinya. Susun jadi kata yang benar sebelum waktu habis!</p>
+            <p className="text-xs opacity-50 mb-6">Makin cepat kamu susun, makin besar bonus skornya.</p>
+
+            <div className="grid grid-cols-3 gap-2.5 mb-6 w-full max-w-xs">
+              <div className="bg-[#4ADE80] border-[3px] border-[#161B3A] rounded-xl p-2 shadow-[3px_3px_0_#161B3A]">
+                <div className="text-[10px] font-extrabold uppercase opacity-70">Benar</div>
+                <div className="font-extrabold text-lg">+150</div>
+              </div>
+              <div className="bg-[#FBBF24] border-[3px] border-[#161B3A] rounded-xl p-2 shadow-[3px_3px_0_#161B3A]">
+                <div className="text-[10px] font-extrabold uppercase opacity-70">Sisa Waktu</div>
+                <div className="font-extrabold text-lg">Bonus</div>
+              </div>
+              <div className="bg-[#FF6B6B] text-white border-[3px] border-[#161B3A] rounded-xl p-2 shadow-[3px_3px_0_#161B3A]">
+                <div className="text-[10px] font-extrabold uppercase opacity-70">Salah</div>
+                <div className="font-extrabold text-lg">-1 ❤️</div>
+              </div>
+            </div>
+
+            <div className="flex flex-wrap justify-center gap-3 mb-2">
+              <button className={`${btnBase} px-6 py-3.5 bg-[#10B981] text-white text-lg`} onClick={() => setScreen("levels")}>
+                <Play className="w-5 h-5" /> Pilih Level
+              </button>
+              <button className={`${btnBase} px-5 py-3.5 bg-white`} onClick={() => startLevel(1)}>
+                Langsung Level 1
+              </button>
+            </div>
+          </div>
+          <p className="text-center text-[11px] opacity-50 mt-4 pb-4">Kumpulkan ⭐ di setiap level untuk buka level berikutnya!</p>
+        </div>
+      </div>
+    );
+  }
+
+  /* ---------- LEVELS ---------- */
+  if (screen === "levels") {
+    return (
+      <div className="fixed inset-0 z-[60] overflow-y-auto bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] text-[#161B3A]">
+        <style>{`.sk-screen{animation:sk-fade .35s ease}@keyframes sk-fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}`}</style>
+        <div className="relative max-w-xl mx-auto px-4 py-5 min-h-full flex flex-col">
+          <div className="flex items-center justify-between mb-4">
+            <button className={`${btnBase} w-11 h-11 bg-white`} onClick={() => setScreen("start")} aria-label="Kembali">
+              <X className="w-5 h-5" />
+            </button>
+            <h2 className="font-extrabold text-2xl">Pilih Level</h2>
+            <div className="w-11" />
+          </div>
+          <div className="sk-screen bg-white rounded-3xl p-5 shadow-[6px_6px_0_#161B3A] border-4 border-[#161B3A]">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+              {LEVELS.map((lv) => {
+                const unlocked = saved.unlocked.includes(lv.id);
+                const best = saved.best[lv.id] || 0;
+                const st = saved.stars[lv.id] || 0;
+                return (
+                  <button
+                    key={lv.id}
+                    disabled={!unlocked}
+                    onClick={() => unlocked && startLevel(lv.id)}
+                    className={`text-left rounded-2xl border-4 border-[#161B3A] p-3.5 transition-transform ${
+                      unlocked ? "shadow-[5px_5px_0_#161B3A] hover:-translate-x-0.5 hover:-translate-y-0.5 cursor-pointer" : "bg-gray-200 text-gray-400 cursor-not-allowed shadow-[5px_5px_0_#9CA3AF]"
+                    }`}
+                    style={unlocked ? { background: lv.color, color: ["#FBBF24", "#F59E0B", "#4ADE80", "#38BDF8"].includes(lv.color) ? "#161B3A" : "#fff" } : undefined}
+                  >
+                    <div className="flex items-start justify-between mb-1.5">
+                      <span className="font-extrabold text-2xl leading-none">#{lv.id}</span>
+                      {unlocked ? <span className="text-[9px] font-extrabold uppercase px-1.5 py-0.5 rounded bg-black/15">{lv.time}dtk</span> : <Lock className="w-4 h-4" />}
+                    </div>
+                    <div className="font-extrabold text-sm leading-tight mb-0.5">{lv.name}</div>
+                    <div className="text-[10px] font-semibold opacity-75 mb-1.5">{lv.rounds} kata</div>
+                    {unlocked ? (
+                      <div className="flex items-center gap-0.5">
+                        {[1, 2, 3].map((i) => (
+                          <Star key={i} className="w-4 h-4" fill={i <= st ? "currentColor" : "none"} style={{ opacity: i <= st ? 1 : 0.35 }} />
+                        ))}
+                        {best > 0 && <span className="text-[10px] font-extrabold ml-1.5 opacity-80">{best}</span>}
+                      </div>
+                    ) : (
+                      <div className="text-[10px] font-bold">Selesaikan level sebelumnya</div>
+                    )}
+                  </button>
+                );
+              })}
             </div>
           </div>
         </div>
       </div>
+    );
+  }
 
-      {/* Menu */}
-      {gameState === "menu" && (
-        <div className="flex-1 flex items-center justify-center px-6">
-          <motion.div initial={{ y: 30, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="text-center max-w-sm w-full">
-            <motion.div animate={{ rotate: [0, 10, -10, 10, 0] }} transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }} className="w-28 h-28 rounded-[2rem] bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center mx-auto mb-6 shadow-xl shadow-emerald-500/30">
-              <Shuffle size={52} className="text-white" />
-            </motion.div>
-            <h1 className="text-4xl font-extrabold text-gray-900 mb-2 tracking-tight">Susun Kata</h1>
-            <p className="text-gray-500 mb-8 text-base">Susun huruf acak menjadi kata yang benar</p>
-
-            {/* Stats Card */}
-            <div className="bg-white rounded-2xl p-5 mb-8 shadow-sm border border-gray-100">
-              <div className="grid grid-cols-3 gap-4">
-                <div className="text-center">
-                  <div className="flex items-center justify-center gap-1 mb-1">
-                    <Crown size={16} className="text-amber-500" />
-                  </div>
-                  <p className="text-2xl font-bold text-gray-900">{levelInfo.level}</p>
-                  <p className="text-xs text-gray-400">Level</p>
-                </div>
-                <div className="text-center border-x border-gray-100">
-                  <div className="flex items-center justify-center gap-1 mb-1">
-                    <Zap size={16} className="text-emerald-500" />
-                  </div>
-                  <p className="text-2xl font-bold text-gray-900">{Math.floor(xp)}</p>
-                  <p className="text-xs text-gray-400">XP</p>
-                </div>
-                <div className="text-center">
-                  <div className="flex items-center justify-center gap-1 mb-1">
-                    <Sparkles size={16} className="text-orange-500" />
-                  </div>
-                  <p className="text-2xl font-bold text-gray-900">{bestStreak}</p>
-                  <p className="text-xs text-gray-400">Streak</p>
-                </div>
-              </div>
-              {/* XP Progress */}
-              <div className="mt-4">
-                <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-                  <motion.div className="h-full bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full" initial={{ width: 0 }} animate={{ width: `${levelInfo.progress}%` }} transition={{ duration: 0.8 }} />
-                </div>
-                <p className="text-xs text-gray-400 mt-1.5 text-center">{Math.floor(xp)} / {levelInfo.next} XP</p>
-              </div>
-            </div>
-
-            <button onClick={startGame} className="w-full bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-bold py-4 rounded-2xl text-lg shadow-lg shadow-emerald-500/25 active:scale-[0.98] transition-transform flex items-center justify-center gap-2">
-              <Zap size={20} /> Mulai Bermain
+  /* ---------- PLAYING ---------- */
+  if (screen === "playing" && currentWord) {
+    return (
+      <div className="fixed inset-0 z-[60] overflow-y-auto bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] text-[#161B3A]">
+        <div className="relative max-w-lg mx-auto px-5 pt-4 pb-8 min-h-full flex flex-col">
+          <div className="flex items-center justify-between mb-4">
+            <button className={`${btnBase} w-10 h-10 bg-white`} onClick={() => { stopBGM(); setScreen("levels"); }} aria-label="Keluar">
+              <X className="w-4 h-4" />
             </button>
-          </motion.div>
-        </div>
-      )}
-
-      {/* Playing */}
-      {gameState === "playing" && currentWord && (
-        <div className="flex-1 flex flex-col px-6 py-6 max-w-lg mx-auto w-full">
-          {/* Round, Timer & Streak */}
-          <div className="flex items-center justify-between mb-6">
-            <span className="text-sm font-medium text-gray-400">{round + 1} / {totalRounds}</span>
             <div className="flex items-center gap-2">
               {streak > 0 && (
-                <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="flex items-center gap-1 bg-orange-50 px-3 py-1.5 rounded-full">
-                  <Zap size={14} className="text-orange-500 fill-orange-500" />
-                  <span className="text-orange-700 font-bold text-sm">{streak}</span>
-                </motion.div>
+                <div className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-orange-100 border border-orange-300">
+                  <Zap className="w-3.5 h-3.5 text-orange-500 fill-orange-500" />
+                  <span className="text-orange-700 font-bold text-xs">{streak}</span>
+                </div>
               )}
-              <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full ${timeLeft <= 10 ? "bg-red-50" : "bg-gray-100"}`}>
-                <Timer size={14} className={timeLeft <= 10 ? "text-red-500 animate-pulse" : "text-gray-500"} />
-                <span className={`font-bold text-sm ${timeLeft <= 10 ? "text-red-600" : "text-gray-700"}`}>{timeLeft}s</span>
+              <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border-2 border-[#161B3A]">
+                <Star className="w-4 h-4 text-amber-500 fill-amber-500" />
+                <span className="text-sm font-bold">{score}</span>
+              </div>
+              <div className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-white border-2 border-[#161B3A]">
+                {[...Array(3)].map((_, i) => (
+                  <Heart key={i} className={`w-4 h-4 ${i < lives ? "text-rose-500 fill-rose-500" : "text-gray-300"}`} />
+                ))}
               </div>
             </div>
           </div>
 
-          {/* Meaning Hint */}
-          <div className="bg-white rounded-2xl p-4 mb-6 shadow-sm border border-gray-100 text-center">
-            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Arti Kata</p>
-            <p className="text-sm text-gray-700 leading-relaxed">{currentWord.meaning}</p>
+          <div className="flex items-center justify-between mb-1">
+            <span className="text-xs font-bold opacity-50">{round + 1} / {pool.length}</span>
+            <div className="flex items-center gap-1.5">
+              <Timer className={`w-3.5 h-3.5 ${timeLeft <= 5 ? "text-rose-500" : "opacity-50"}`} />
+              <span className={`text-xs font-bold tabular-nums ${timeLeft <= 5 ? "text-rose-600" : "opacity-70"}`}>{timeLeft}s</span>
+            </div>
+          </div>
+          <div className="h-2.5 rounded-full bg-white border-2 border-[#161B3A] overflow-hidden mb-5">
+            <motion.div className={`h-full rounded-full ${timeLeft <= 5 ? "bg-rose-500" : "bg-gradient-to-r from-emerald-400 to-teal-500"}`} animate={{ width: `${timePct}%` }} transition={{ ease: "linear", duration: 1 }} />
           </div>
 
-          {/* Answer Area */}
-          <div className="bg-white rounded-2xl p-5 mb-6 shadow-sm border border-gray-100 min-h-[80px]">
-            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Jawaban</p>
-            <div className="flex items-center justify-center gap-2 flex-wrap min-h-[50px]">
+          <div className="bg-white rounded-2xl p-4 mb-5 text-center border-4 border-[#161B3A] shadow-[4px_4px_0_#161B3A]">
+            <p className="text-[10px] font-extrabold uppercase tracking-wider opacity-50 mb-1">Arti Kata</p>
+            <p className="text-sm font-semibold leading-relaxed">{currentWord.meaning}</p>
+          </div>
+
+          <div className="bg-white rounded-2xl p-5 mb-5 border-4 border-[#161B3A] shadow-[5px_5px_0_#161B3A] min-h-[92px]">
+            <p className="text-[10px] font-extrabold uppercase tracking-wider opacity-50 mb-3">Jawaban</p>
+            <div className="flex items-center justify-center gap-2 flex-wrap min-h-[52px]">
               {selectedLetters.length === 0 ? (
-                <span className="text-gray-300 text-sm">Klik huruf di bawah</span>
+                <span className="opacity-30 text-sm font-semibold">Ketuk huruf di bawah</span>
               ) : (
                 selectedLetters.map((letter, i) => (
-                  <motion.button
-                    key={i}
-                    initial={{ scale: 0, y: 20 }}
-                    animate={{ scale: 1, y: 0 }}
-                    onClick={() => deselectLetter(i)}
-                    className="w-10 h-12 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white font-bold text-lg shadow-md active:scale-95 transition-transform"
-                  >
+                  <motion.button key={i} initial={{ scale: 0, y: 16 }} animate={{ scale: 1, y: 0 }} onClick={() => deselectLetter(i)}
+                    className="w-11 h-12 rounded-xl bg-[#10B981] text-white font-extrabold text-lg border-[3px] border-[#161B3A] shadow-[3px_3px_0_#161B3A] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-transform">
                     {letter}
                   </motion.button>
                 ))
@@ -551,83 +629,100 @@ export default function SusunKataGame({ hideBackButton }: { hideBackButton?: boo
             </div>
           </div>
 
-          {/* Letter Tiles */}
-          <div className="flex items-center justify-center gap-2 flex-wrap mb-8">
+          <div className="flex items-center justify-center gap-2 flex-wrap mb-6">
             {availableLetters.map((letter, i) => (
-              <motion.button
-                key={i}
-                initial={{ scale: 0, y: 20 }}
-                animate={{ scale: 1, y: 0 }}
-                transition={{ delay: i * 0.03 }}
-                onClick={() => selectLetter(i)}
-                className="w-11 h-13 rounded-xl bg-white border-2 border-gray-200 text-gray-800 font-bold text-lg shadow-sm active:scale-95 transition-transform hover:border-emerald-300"
-              >
+              <motion.button key={i} initial={{ scale: 0, y: 16 }} animate={{ scale: 1, y: 0 }} transition={{ delay: i * 0.03 }} onClick={() => selectLetter(i)}
+                className="w-11 h-12 rounded-xl bg-white text-[#161B3A] font-extrabold text-lg border-[3px] border-[#161B3A] shadow-[3px_3px_0_#161B3A] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-transform">
                 {letter}
               </motion.button>
             ))}
           </div>
 
-          {/* Action Buttons */}
-          <div className="flex gap-3 mb-6">
-            <button onClick={clearSelection} className="flex-1 bg-white border border-gray-200 text-gray-700 font-semibold py-3.5 rounded-2xl active:scale-[0.98] transition-transform flex items-center justify-center gap-2 shadow-sm">
-              <X size={18} /> Hapus
+          <div className="flex gap-3 mb-5">
+            <button onClick={clearSelection} className={`${btnBase} flex-1 py-3.5 bg-white`}>
+              <X className="w-4 h-4" /> Hapus
             </button>
-            <button onClick={reshuffle} className="flex-1 bg-white border border-gray-200 text-gray-700 font-semibold py-3.5 rounded-2xl active:scale-[0.98] transition-transform flex items-center justify-center gap-2 shadow-sm">
-              <Shuffle size={18} /> Acak
+            <button onClick={reshuffle} className={`${btnBase} flex-1 py-3.5 bg-white`}>
+              <Shuffle className="w-4 h-4" /> Acak
             </button>
-            <button onClick={checkAnswer} disabled={selectedLetters.length === 0} className="flex-1 bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-bold py-3.5 rounded-2xl shadow-lg shadow-emerald-500/25 active:scale-[0.98] transition-transform disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2">
-              <Check size={18} /> Cek
+            <button onClick={checkAnswer} disabled={selectedLetters.length === 0} className={`${btnBase} flex-1 py-3.5 bg-[#10B981] text-white disabled:opacity-40`}>
+              <Check className="w-4 h-4" /> Cek
             </button>
           </div>
 
-          {/* Feedback */}
           <AnimatePresence>
             {feedback && (
-              <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: -20, opacity: 0 }} className={`p-4 rounded-2xl text-center ${feedback.correct ? "bg-green-50 border border-green-200" : "bg-red-50 border border-red-200"}`}>
-                <p className={`text-lg font-bold ${feedback.correct ? "text-green-700" : "text-red-700"}`}>{feedback.message}</p>
+              <motion.div initial={{ y: 16, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: -16, opacity: 0 }} className={`p-4 rounded-2xl text-center border-[3px] border-[#161B3A] shadow-[3px_3px_0_#161B3A] ${feedback.correct ? "bg-emerald-100" : "bg-rose-100"}`}>
+                <p className={`text-lg font-extrabold ${feedback.correct ? "text-emerald-700" : "text-rose-700"}`}>{feedback.message}</p>
               </motion.div>
             )}
           </AnimatePresence>
         </div>
-      )}
+      </div>
+    );
+  }
 
-      {/* Result */}
-      {gameState === "result" && (
-        <div className="flex-1 flex items-center justify-center px-6">
-          <motion.div initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="text-center max-w-sm w-full">
-            <motion.div animate={{ rotate: [0, 10, -10, 10, 0] }} transition={{ duration: 1 }} className="w-28 h-28 rounded-[2rem] bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center mx-auto mb-6 shadow-xl shadow-amber-500/30">
-              <Trophy size={52} className="text-white" />
-            </motion.div>
-            <h2 className="text-3xl font-extrabold text-gray-900 mb-1">Selesai!</h2>
-            <p className="text-gray-500 mb-6">Skor kamu</p>
-            <p className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-500 to-teal-600 mb-8">{score}</p>
-
-            <div className="bg-white rounded-2xl p-5 mb-8 shadow-sm border border-gray-100 space-y-3">
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-500">XP Didapat</span>
-                <span className="font-bold text-green-600">+{score}</span>
-              </div>
-              <div className="h-px bg-gray-100" />
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-500">Best Streak</span>
-                <span className="font-bold text-orange-600">{bestStreak}</span>
-              </div>
-              <div className="h-px bg-gray-100" />
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-500">Level</span>
-                <span className="font-bold text-emerald-600">{levelInfo.level}</span>
-              </div>
-            </div>
-
-            <button onClick={startGame} className="w-full bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-bold py-4 rounded-2xl shadow-lg shadow-emerald-500/25 active:scale-[0.98] transition-transform flex items-center justify-center gap-2">
-              <RefreshCw size={20} /> Main Lagi
-            </button>
-            <button onClick={() => setGameState("menu")} className="w-full mt-3 bg-white border border-gray-200 text-gray-700 font-semibold py-4 rounded-2xl active:scale-[0.98] transition-transform shadow-sm">
-              Kembali ke Menu
-            </button>
+  /* ---------- RESULT ---------- */
+  if (screen === "result" && result) {
+    return (
+      <div className="fixed inset-0 z-[60] overflow-y-auto bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] text-[#161B3A]">
+        <style>{`@keyframes sk-pop{0%{transform:scale(0) rotate(-30deg)}60%{transform:scale(1.3) rotate(8deg)}100%{transform:scale(1) rotate(0)}}.sk-star{animation:sk-pop .5s ease}`}</style>
+        <div className="relative max-w-xl mx-auto px-4 py-5 min-h-full flex flex-col items-center justify-center text-center">
+          <motion.div initial={{ scale: 0, rotate: -20 }} animate={{ scale: 1, rotate: 0 }} transition={{ type: "spring", stiffness: 180 }} className={`w-24 h-24 rounded-[28px] bg-gradient-to-br ${result.gameOver ? "from-rose-400 to-red-600" : result.stars >= 2 ? "from-emerald-400 to-teal-600" : "from-amber-400 to-orange-600"} flex items-center justify-center shadow-2xl mb-5`}>
+            {result.gameOver ? <X className="w-12 h-12 text-white" /> : <Trophy className="w-12 h-12 text-white" />}
           </motion.div>
+          <h1 className="text-2xl font-extrabold mb-1">{result.gameOver ? "Nyawa Habis!" : result.stars === 3 ? "Sempurna!" : "Level Selesai!"}</h1>
+          <p className="text-sm opacity-60 mb-6">{result.gameOver ? "Jangan menyerah, coba lagi!" : "Kerja bagus! Kejar skor lebih tinggi?"}</p>
+
+          <div className="flex justify-center gap-1.5 mb-4">
+            {[1, 2, 3].map((i) => (
+              <Star key={i} className={`w-12 h-12 ${i <= result.stars ? "sk-star" : ""}`} style={{ animationDelay: `${i * 0.15}s` }} fill={i <= result.stars ? "#FBBF24" : "none"} stroke={i <= result.stars ? "#F59E0B" : "#D1D5DB"} strokeWidth={2} />
+            ))}
+          </div>
+
+          <div className="inline-block bg-[#161B3A] text-white rounded-2xl px-7 py-3 mb-4 shadow-[5px_5px_0_#10B981]">
+            <div className="text-[10px] font-extrabold uppercase tracking-wider opacity-70">Skor Akhir</div>
+            <div className="font-extrabold text-4xl leading-none">{result.score}</div>
+          </div>
+
+          <div className="flex justify-center gap-3 mb-5 text-sm">
+            <div className="bg-white border-[3px] border-[#161B3A] rounded-xl px-3 py-1.5 shadow-[2px_2px_0_#161B3A]">
+              <Zap className="w-4 h-4 inline mr-1 text-amber-500" /> Combo maks <b>{result.bestStreak}</b>
+            </div>
+          </div>
+
+          {result.xpEarned > 0 && (
+            <div className="mb-5 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-400/20 text-amber-700 text-xs font-bold">
+              <Sparkles className="w-3.5 h-3.5" /> +{result.xpEarned} XP
+            </div>
+          )}
+
+          <div className="w-full max-w-xs flex flex-col gap-2.5">
+            <button onClick={() => startLevel(levelId)} className={`${btnBase} w-full py-3.5 bg-gradient-to-r from-emerald-400 to-teal-600 text-white`}>
+              <RotateCcw className="w-4 h-4" /> Ulangi Level
+            </button>
+            {!result.gameOver && levelId < LEVELS.length && (
+              <button onClick={() => startLevel(levelId + 1)} className={`${btnBase} w-full py-3.5 bg-[#FF6B6B] text-white`}>
+                Level Berikutnya <ChevronRight className="w-4 h-4" />
+              </button>
+            )}
+            <button onClick={() => setScreen("levels")} className={`${btnBase} w-full py-3.5 bg-[#FBBF24]`}>
+              Pilih Level
+            </button>
+            {!hideBackButton && (
+              <a href={backHref} className={`${btnBase} w-full py-3.5 bg-white/80 text-center`}>
+                Kembali ke Arena
+              </a>
+            )}
+          </div>
         </div>
-      )}
+      </div>
+    );
+  }
+
+  return (
+    <div className="fixed inset-0 z-[60] flex items-center justify-center bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] text-[#161B3A]">
+      <Loader2 className="w-10 h-10 animate-spin" />
     </div>
   );
 }

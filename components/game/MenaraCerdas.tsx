@@ -3,7 +3,7 @@
 import { useState, useCallback, useEffect } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence, useAnimationControls } from "framer-motion";
-import { Heart, Flame, Trophy, RotateCcw, Mountain, Check, X, Loader2, Sparkles, Zap, Volume2, VolumeX } from "lucide-react";
+import { Heart, Flame, Trophy, RotateCcw, Mountain, Check, X, Loader2, Sparkles, Zap, Volume2, VolumeX, Play } from "lucide-react";
 import Burst from "@/components/game/Burst";
 import ComboFlash from "@/components/game/ComboFlash";
 import { sfx, haptic, isSoundOn, toggleSound, startBGM, stopBGM } from "@/lib/game/sound";
@@ -23,7 +23,7 @@ export default function MenaraCerdas({ backHref = "/arena/game" }: { backHref?: 
   const [phase, setPhase] = useState<Phase>("start");
   const [questions, setQuestions] = useState<Q[]>([]);
   const [idx, setIdx] = useState(0);
-  const [floor, setFloor] = useState(0); // correct answers = floors climbed
+  const [floor, setFloor] = useState(0);
   const [hearts, setHearts] = useState(MAX_HEARTS);
   const [combo, setCombo] = useState(0);
   const [best, setBest] = useState(0);
@@ -37,6 +37,7 @@ export default function MenaraCerdas({ backHref = "/arena/game" }: { backHref?: 
   const current = questions[idx];
 
   useEffect(() => () => stopBGM(), []);
+  useEffect(() => { try { setSoundOn(isSoundOn()); } catch { /* abaikan */ } }, []);
 
   const start = useCallback(async () => {
     sfx.start(); setSoundOn(isSoundOn()); startBGM();
@@ -70,17 +71,15 @@ export default function MenaraCerdas({ backHref = "/arena/game" }: { backHref?: 
       });
       const data = await res.json();
       if (res.ok) setXpResult({ xpEarned: data.xpEarned ?? 0, leveledUp: !!data.leveledUp });
-    } catch {
-      /* keep local result */
-    }
+    } catch { /* keep local result */ }
   }, [total]);
 
   const choose = (i: number) => {
     if (picked !== null) return;
     setPicked(i);
-    const correct = i === current.jawaban;
+    const isCorrect = i === current.jawaban;
 
-    if (correct) {
+    if (isCorrect) {
       sfx.climb(combo + 1); haptic(25); setBurst((b) => b + 1);
       controls.start({ y: [0, -6, 0], transition: { duration: 0.3 } });
     } else {
@@ -89,249 +88,242 @@ export default function MenaraCerdas({ backHref = "/arena/game" }: { backHref?: 
     }
 
     setTimeout(() => {
-      if (correct) {
+      if (isCorrect) {
         const nf = floor + 1;
         setFloor(nf);
         setCombo((c) => { const nc = c + 1; setBest((b) => Math.max(b, nc)); return nc; });
-        if (idx + 1 >= total) {
-          finish(nf);
-        } else {
-          setIdx(idx + 1); setPicked(null);
-        }
+        if (idx + 1 >= total) finish(nf);
+        else { setIdx(idx + 1); setPicked(null); }
       } else {
         setCombo(0);
         const nh = hearts - 1;
         setHearts(nh);
-        if (nh <= 0) {
-          finish(floor);
-        } else if (idx + 1 >= total) {
-          finish(floor);
-        } else {
-          setIdx(idx + 1); setPicked(null);
-        }
+        if (nh <= 0) finish(floor);
+        else if (idx + 1 >= total) finish(floor);
+        else { setIdx(idx + 1); setPicked(null); }
       }
-    }, correct ? 650 : 1400);
+    }, isCorrect ? 650 : 1400);
   };
 
-  // ---------- START ----------
+  const chunky = "border-4 border-[#161B3A] shadow-[6px_6px_0_#161B3A]";
+  const btnBase = `inline-flex items-center justify-center gap-2 font-extrabold rounded-2xl ${chunky} transition-transform active:translate-x-1.5 active:translate-y-1.5 active:shadow-none hover:-translate-x-0.5 hover:-translate-y-0.5`;
+
+  /* ---------- START ---------- */
   if (phase === "start" || phase === "loading") {
     return (
-      <Shell>
-        <div className="flex-1 flex flex-col items-center justify-center text-center px-6">
-          <motion.div initial={{ scale: 0.6, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ type: "spring", stiffness: 200 }}
-            className="w-24 h-24 rounded-[28px] bg-gradient-to-br from-violet-500 via-purple-500 to-fuchsia-600 flex items-center justify-center shadow-2xl shadow-purple-500/40 mb-6">
-            <Mountain className="w-12 h-12 text-white" />
-          </motion.div>
-          <h1 className="text-3xl font-extrabold text-white mb-2">Menara Cerdas</h1>
-          <p className="text-sm text-white/60 max-w-xs mb-1">Panjat menara dengan menjawab soal dari pelajaranmu!</p>
-          <p className="text-xs text-white/40 max-w-xs mb-8">Setiap jawaban benar = naik 1 lantai. Salah = kehilangan ❤️. Bertahanlah setinggi mungkin!</p>
+      <div className="fixed inset-0 z-[60] overflow-y-auto bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] text-[#161B3A]">
+        <style>{`@keyframes mc-float1{0%,100%{transform:translate(0,0) rotate(6deg)}50%{transform:translate(16px,-22px) rotate(18deg)}}
+        @keyframes mc-float2{0%,100%{transform:translate(0,0) rotate(0)}50%{transform:translate(-18px,16px) rotate(-12deg)}}
+        @keyframes mc-fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+        @keyframes mc-pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+        .mc-screen{animation:mc-fade .35s ease}
+        .mc-logo{animation:mc-pulse 1.4s ease-in-out infinite}`}</style>
+        <div className="pointer-events-none fixed top-[8%] left-[3%] w-16 h-16 bg-[#8B5CF6] border-4 border-[#161B3A] rounded-3xl" style={{ animation: "mc-float1 9s ease-in-out infinite" }} />
+        <div className="pointer-events-none fixed top-[16%] right-[5%] w-12 h-12 bg-[#38BDF8] border-4 border-[#161B3A] rounded-full" style={{ animation: "mc-float2 10s ease-in-out infinite" }} />
+        <div className="pointer-events-none fixed bottom-[14%] left-[2%] w-14 h-14 bg-[#FBBF24] border-4 border-[#161B3A] rounded-2xl" style={{ animation: "mc-float1 11s ease-in-out infinite" }} />
+        <div className="pointer-events-none fixed bottom-[10%] right-[4%] w-11 h-11 bg-[#EC4899] border-4 border-[#161B3A] rounded-[30%_70%_70%_30%]" style={{ animation: "mc-float2 8s ease-in-out infinite" }} />
 
-          <div className="flex items-center gap-3 mb-8">
-            <Badge icon={<Heart className="w-4 h-4 text-rose-400" />} label="3 Nyawa" />
-            <Badge icon={<Flame className="w-4 h-4 text-orange-400" />} label="Combo Bonus" />
-            <Badge icon={<Zap className="w-4 h-4 text-amber-400" />} label="+XP" />
+        <div className="relative max-w-xl mx-auto px-4 py-5 min-h-full flex flex-col">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2.5">
+              <div className={`mc-logo w-11 h-11 bg-[#8B5CF6] rounded-2xl ${chunky} !shadow-[4px_4px_0_#161B3A] flex items-center justify-center`}>
+                <Mountain className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <div className="font-extrabold text-xl leading-none">Menara Cerdas</div>
+                <div className="text-[11px] font-semibold opacity-60 mt-0.5">Panjat setinggi mungkin</div>
+              </div>
+            </div>
+            <button onClick={() => setSoundOn((m) => { toggleSound(); return !m; })} className={`${btnBase} w-11 h-11 bg-white`} aria-label={soundOn ? "Matikan suara" : "Nyalakan suara"}>
+              {soundOn ? <Volume2 className="w-5 h-5" /> : <VolumeX className="w-5 h-5" />}
+            </button>
           </div>
 
-          <button onClick={start} disabled={phase === "loading"}
-            className="w-full max-w-xs py-4 rounded-2xl bg-gradient-to-r from-violet-500 to-fuchsia-600 text-white font-bold text-lg shadow-xl shadow-purple-600/40 active:scale-95 transition-all disabled:opacity-70 flex items-center justify-center gap-2">
-            {phase === "loading" ? <><Loader2 className="w-5 h-5 animate-spin" /> Menyiapkan…</> : <><Mountain className="w-5 h-5" /> Mulai Memanjat</>}
-          </button>
+          <div className="mc-screen bg-white rounded-3xl p-6 text-center flex-1 flex flex-col items-center justify-center">
+            <span className="inline-block px-4 py-1.5 bg-[#FBBF24] border-[3px] border-[#161B3A] rounded-full font-extrabold text-xs shadow-[3px_3px_0_#161B3A] mb-4">Soal dari Pelajaranmu</span>
+            <h1 className="font-extrabold text-4xl mb-2">Menara <span className="text-[#8B5CF6]">Cerdas!</span></h1>
+            <p className="opacity-70 text-sm max-w-sm mb-1">Panjat menara dengan menjawab soal dari pelajaranmu. Setiap jawaban benar = naik 1 lantai!</p>
+            <p className="text-xs opacity-50 mb-6">Jaga 3 nyawamu, bertahanlah setinggi mungkin.</p>
+
+            <div className="grid grid-cols-3 gap-2.5 mb-6 w-full max-w-xs">
+              <div className="bg-[#FF6B6B] text-white border-[3px] border-[#161B3A] rounded-xl p-2 shadow-[3px_3px_0_#161B3A]">
+                <div className="text-[10px] font-extrabold uppercase opacity-80">Nyawa</div>
+                <div className="font-extrabold text-lg">3 ❤️</div>
+              </div>
+              <div className="bg-[#FBBF24] border-[3px] border-[#161B3A] rounded-xl p-2 shadow-[3px_3px_0_#161B3A]">
+                <div className="text-[10px] font-extrabold uppercase opacity-70">Combo</div>
+                <div className="font-extrabold text-lg">Bonus</div>
+              </div>
+              <div className="bg-[#4ADE80] border-[3px] border-[#161B3A] rounded-xl p-2 shadow-[3px_3px_0_#161B3A]">
+                <div className="text-[10px] font-extrabold uppercase opacity-70">Naik</div>
+                <div className="font-extrabold text-lg">+XP</div>
+              </div>
+            </div>
+
+            <button onClick={start} disabled={phase === "loading"} className={`${btnBase} px-8 py-3.5 bg-[#8B5CF6] text-white text-lg disabled:opacity-70`}>
+              {phase === "loading" ? <><Loader2 className="w-5 h-5 animate-spin" /> Menyiapkan…</> : <><Play className="w-5 h-5" /> Mulai Memanjat</>}
+            </button>
+          </div>
         </div>
-      </Shell>
+      </div>
     );
   }
 
-  // ---------- GAME OVER ----------
+  /* ---------- GAME OVER ---------- */
   if (phase === "gameover") {
     const cleared = floor >= total && total > 0;
     return (
-      <Shell>
+      <div className="fixed inset-0 z-[60] overflow-y-auto bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] text-[#161B3A]">
         <Burst trigger={burst} x={50} y={38} count={28} />
-        <div className="flex-1 flex flex-col items-center justify-center text-center px-6">
+        <div className="relative max-w-xl mx-auto px-4 py-5 min-h-full flex flex-col items-center justify-center text-center">
           <motion.div initial={{ scale: 0, rotate: -20 }} animate={{ scale: 1, rotate: 0 }} transition={{ type: "spring", stiffness: 180 }}
-            className={`w-24 h-24 rounded-[28px] flex items-center justify-center shadow-2xl mb-5 ${cleared ? "bg-gradient-to-br from-amber-400 to-orange-500 shadow-amber-500/40" : "bg-gradient-to-br from-violet-500 to-purple-600 shadow-purple-500/40"}`}>
+            className={`w-24 h-24 rounded-[28px] flex items-center justify-center shadow-2xl mb-5 border-4 border-[#161B3A] ${cleared ? "bg-gradient-to-br from-amber-400 to-orange-500" : "bg-gradient-to-br from-violet-500 to-purple-600"}`}>
             {cleared ? <Trophy className="w-12 h-12 text-white" /> : <Mountain className="w-12 h-12 text-white" />}
           </motion.div>
-          <h1 className="text-2xl font-extrabold text-white mb-1">{cleared ? "Puncak Ditaklukkan! 🎉" : "Permainan Selesai"}</h1>
-          <p className="text-sm text-white/60 mb-6">Kamu memanjat <span className="text-white font-bold">{floor} lantai</span></p>
+          <h1 className="text-2xl font-extrabold mb-1">{cleared ? "Puncak Ditaklukkan!" : "Permainan Selesai"}</h1>
+          <p className="text-sm opacity-60 mb-6">Kamu memanjat <span className="font-extrabold">{floor} lantai</span></p>
 
-          <div className="w-full max-w-xs grid grid-cols-3 gap-2 mb-6">
-            <Stat big={`${floor}`} label="Lantai" tone="violet" />
-            <Stat big={`${best}🔥`} label="Combo" tone="orange" />
-            <Stat big={xpResult ? `+${xpResult.xpEarned}` : "…"} label="XP" tone="amber" />
+          <div className="grid grid-cols-3 gap-2.5 mb-5 w-full max-w-xs">
+            <div className="bg-[#8B5CF6] text-white border-[3px] border-[#161B3A] rounded-xl p-2 shadow-[3px_3px_0_#161B3A]">
+              <div className="text-[9px] font-extrabold uppercase opacity-80">Lantai</div>
+              <div className="font-extrabold text-lg">{floor}</div>
+            </div>
+            <div className="bg-[#FBBF24] border-[3px] border-[#161B3A] rounded-xl p-2 shadow-[3px_3px_0_#161B3A]">
+              <div className="text-[9px] font-extrabold uppercase opacity-70">Combo</div>
+              <div className="font-extrabold text-lg">{best}🔥</div>
+            </div>
+            <div className="bg-[#4ADE80] border-[3px] border-[#161B3A] rounded-xl p-2 shadow-[3px_3px_0_#161B3A]">
+              <div className="text-[9px] font-extrabold uppercase opacity-70">XP</div>
+              <div className="font-extrabold text-lg">{xpResult ? `+${xpResult.xpEarned}` : "…"}</div>
+            </div>
           </div>
 
           {xpResult?.leveledUp && (
-            <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
-              className="mb-5 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-400/20 text-amber-300 text-xs font-bold">
+            <div className="mb-5 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-400/20 text-amber-700 text-xs font-bold">
               <Sparkles className="w-3.5 h-3.5" /> Naik Level!
-            </motion.div>
+            </div>
           )}
 
           <div className="w-full max-w-xs flex flex-col gap-2.5">
-            <button onClick={start} className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-violet-500 to-fuchsia-600 text-white font-bold shadow-lg shadow-purple-600/30 active:scale-95 transition-all flex items-center justify-center gap-2">
+            <button onClick={start} className={`${btnBase} w-full py-3.5 bg-gradient-to-r from-violet-500 to-purple-600 text-white`}>
               <RotateCcw className="w-4 h-4" /> Main Lagi
             </button>
-            <Link href={backHref} className="w-full py-3.5 rounded-2xl bg-white/10 text-white/80 font-semibold active:scale-95 transition-all text-center">
+            <Link href={backHref} className={`${btnBase} w-full py-3.5 bg-white/80 text-center`}>
               Kembali ke Arena
             </Link>
           </div>
         </div>
-      </Shell>
+      </div>
     );
   }
 
-  // ---------- PLAYING ----------
+  /* ---------- PLAYING ---------- */
   return (
-    <Shell controls={controls}>
+    <div className="fixed inset-0 z-[60] flex flex-col overflow-hidden bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] text-[#161B3A]">
       <Burst trigger={burst} x={16} y={48} />
       <ComboFlash combo={combo} />
-      {/* HUD */}
-      <div className="px-5 pt-4 pb-2 flex items-center justify-between">
-        <div className="flex items-center gap-1">
-          {Array.from({ length: MAX_HEARTS }).map((_, i) => (
-            <Heart key={i} className={`w-6 h-6 transition-all ${i < hearts ? "text-rose-500 fill-rose-500" : "text-white/15"}`} />
-          ))}
-        </div>
-        <AnimatePresence>
-          {combo >= 2 && (
-            <motion.div key={combo} initial={{ scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ opacity: 0 }}
-              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-orange-500/20 text-orange-300 text-sm font-extrabold">
-              <Flame className="w-4 h-4 fill-orange-400 text-orange-400" /> {combo}x
-            </motion.div>
-          )}
-        </AnimatePresence>
-        <div className="flex items-center gap-2">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10">
-            <Mountain className="w-4 h-4 text-violet-300" />
-            <span className="text-sm font-bold text-white">Lt. {floor}</span>
+      <motion.div animate={controls} className="relative z-10 flex-1 flex flex-col max-w-md w-full mx-auto px-4 pt-4 pb-5 min-h-0">
+        {/* HUD */}
+        <div className="flex items-center justify-between mb-3">
+          <div className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-white border-2 border-[#161B3A]">
+            {Array.from({ length: MAX_HEARTS }).map((_, i) => (
+              <Heart key={i} className={`w-4 h-4 ${i < hearts ? "text-rose-500 fill-rose-500" : "text-gray-300"}`} />
+            ))}
           </div>
-          <MuteButton on={soundOn} onToggle={() => setSoundOn(toggleSound())} />
-        </div>
-      </div>
-
-      {/* tower + question */}
-      <div className="flex-1 flex gap-3 px-4 pb-5 min-h-0">
-        <Tower floor={floor} total={total} />
-
-        <div className="flex-1 flex flex-col min-w-0">
-          <AnimatePresence mode="wait">
-            <motion.div key={current?.id ?? idx} initial={{ opacity: 0, x: 24 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -24 }} transition={{ duration: 0.22 }}
-              className="flex-1 flex flex-col">
-              <div className="rounded-3xl bg-white/[0.07] border border-white/10 p-5 mb-4">
-                <span className="text-[11px] font-bold uppercase tracking-wider text-violet-300/80">Soal {idx + 1} / {total}</span>
-                <h2 className="text-lg font-bold text-white mt-2 leading-snug">{current?.soal}</h2>
-              </div>
-
-              <div className="grid gap-2.5 mt-1">
-                {current?.opsi.map((opt, i) => {
-                  const isPicked = picked === i;
-                  const isCorrect = i === current.jawaban;
-                  const reveal = picked !== null;
-                  let cls = "bg-white/[0.06] border-white/10 text-white hover:bg-white/[0.1]";
-                  if (reveal && isCorrect) cls = "bg-emerald-500/20 border-emerald-400 text-emerald-100";
-                  else if (reveal && isPicked && !isCorrect) cls = "bg-rose-500/20 border-rose-400 text-rose-100";
-                  else if (reveal) cls = "bg-white/[0.04] border-white/10 text-white/40";
-                  return (
-                    <button key={i} onClick={() => choose(i)} disabled={reveal}
-                      className={`relative w-full text-left px-4 py-3.5 rounded-2xl border font-medium transition-all active:scale-[0.98] ${cls}`}>
-                      <span className="pr-7">{opt}</span>
-                      {reveal && isCorrect && <Check className="w-5 h-5 absolute right-3.5 top-1/2 -translate-y-1/2 text-emerald-300" />}
-                      {reveal && isPicked && !isCorrect && <X className="w-5 h-5 absolute right-3.5 top-1/2 -translate-y-1/2 text-rose-300" />}
-                    </button>
-                  );
-                })}
-              </div>
-
-              <AnimatePresence>
-                {picked !== null && picked !== current.jawaban && current?.penjelasan && (
-                  <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
-                    className="mt-4 p-3.5 rounded-2xl bg-amber-400/10 border border-amber-400/20">
-                    <p className="text-xs text-amber-200/90 leading-relaxed"><span className="font-bold">💡 </span>{current.penjelasan}</p>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </motion.div>
+          <AnimatePresence>
+            {combo >= 2 && (
+              <motion.div key={combo} initial={{ scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ opacity: 0 }}
+                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-orange-100 border border-orange-300">
+                <Flame className="w-4 h-4 fill-orange-500 text-orange-500" /> <span className="text-orange-700 font-extrabold text-sm">{combo}x</span>
+              </motion.div>
+            )}
           </AnimatePresence>
+          <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#8B5CF6] text-white border-2 border-[#161B3A]">
+            <Mountain className="w-4 h-4" />
+            <span className="text-sm font-bold">Lt. {floor}</span>
+          </div>
         </div>
-      </div>
-    </Shell>
+
+        {/* tower + question */}
+        <div className="flex-1 flex gap-3 min-h-0">
+          <Tower floor={floor} total={total} />
+
+          <div className="flex-1 flex flex-col min-w-0">
+            <AnimatePresence mode="wait">
+              <motion.div key={current?.id ?? idx} initial={{ opacity: 0, x: 24 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -24 }} transition={{ duration: 0.22 }}
+                className="flex-1 flex flex-col">
+                <div className="rounded-3xl bg-white border-4 border-[#161B3A] shadow-[5px_5px_0_#161B3A] p-5 mb-4">
+                  <span className="text-[11px] font-extrabold uppercase tracking-wider text-[#8B5CF6]">Soal {idx + 1} / {total}</span>
+                  <h2 className="text-lg font-bold mt-2 leading-snug">{current?.soal}</h2>
+                </div>
+
+                <div className="grid gap-2.5 mt-1">
+                  {current?.opsi.map((opt, i) => {
+                    const isPicked = picked === i;
+                    const isCorrect = i === current.jawaban;
+                    const reveal = picked !== null;
+                    let cls = "bg-white border-[#161B3A]";
+                    if (reveal && isCorrect) cls = "bg-emerald-100 border-emerald-600";
+                    else if (reveal && isPicked && !isCorrect) cls = "bg-rose-100 border-rose-600";
+                    else if (reveal) cls = "bg-white/50 border-[#161B3A]/20 opacity-50";
+                    return (
+                      <button key={i} onClick={() => choose(i)} disabled={reveal}
+                        className={`relative w-full text-left px-4 py-3.5 rounded-2xl border-[3px] font-semibold transition-all active:scale-[0.98] shadow-[3px_3px_0_#161B3A] ${cls}`}>
+                        <span className="pr-7">{opt}</span>
+                        {reveal && isCorrect && <Check className="w-5 h-5 absolute right-3.5 top-1/2 -translate-y-1/2 text-emerald-600" />}
+                        {reveal && isPicked && !isCorrect && <X className="w-5 h-5 absolute right-3.5 top-1/2 -translate-y-1/2 text-rose-600" />}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                <AnimatePresence>
+                  {picked !== null && picked !== current.jawaban && current?.penjelasan && (
+                    <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
+                      className="mt-4 p-3.5 rounded-2xl bg-amber-100 border-[3px] border-[#161B3A] shadow-[3px_3px_0_#161B3A]">
+                      <p className="text-xs leading-relaxed"><span className="font-extrabold">Penjelasan: </span>{current.penjelasan}</p>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.div>
+            </AnimatePresence>
+          </div>
+        </div>
+      </motion.div>
+    </div>
   );
 }
 
-// Live tower that fills up as the player climbs floors, with a climber rising.
+/* Live tower that fills up as the player climbs floors, with a climber rising. */
 function Tower({ floor, total }: { floor: number; total: number }) {
   const pct = total ? Math.min(100, (floor / total) * 100) : 0;
   const cleared = floor >= total && total > 0;
   return (
     <div className="w-16 shrink-0 flex flex-col items-center">
-      {/* summit flag */}
       <motion.div animate={{ y: cleared ? [0, -4, 0] : 0 }} transition={{ repeat: cleared ? Infinity : 0, duration: 1 }} className="mb-1 text-base">
         {cleared ? "🚩" : "⛰️"}
       </motion.div>
 
-      <div className="relative flex-1 w-full rounded-2xl overflow-hidden border border-white/10 bg-white/[0.03]">
-        {/* rising fill = climbed floors */}
-        <motion.div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-violet-700 via-violet-500 to-fuchsia-500"
+      <div className="relative flex-1 w-full rounded-2xl overflow-hidden border-[3px] border-[#161B3A] bg-white shadow-[3px_3px_0_#161B3A]">
+        <motion.div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-violet-600 via-violet-500 to-fuchsia-500"
           animate={{ height: `${pct}%` }} transition={{ type: "spring", stiffness: 120, damping: 16 }} />
 
-        {/* floor dividers + windows for a tower look */}
         <div className="absolute inset-0 flex flex-col-reverse">
           {Array.from({ length: total || 1 }).map((_, i) => (
-            <div key={i} className="flex-1 border-t border-white/10 flex items-center justify-center gap-1">
-              <span className={`w-1.5 h-1.5 rounded-[2px] ${i < floor ? "bg-amber-200/90" : "bg-white/10"}`} />
-              <span className={`w-1.5 h-1.5 rounded-[2px] ${i < floor ? "bg-amber-200/90" : "bg-white/10"}`} />
+            <div key={i} className="flex-1 border-t-2 border-[#161B3A]/10 flex items-center justify-center gap-1">
+              <span className={`w-1.5 h-1.5 rounded-[2px] ${i < floor ? "bg-amber-300" : "bg-[#161B3A]/10"}`} />
+              <span className={`w-1.5 h-1.5 rounded-[2px] ${i < floor ? "bg-amber-300" : "bg-[#161B3A]/10"}`} />
             </div>
           ))}
         </div>
 
-        {/* climber rising with the fill */}
-        <motion.div className="absolute left-1/2 -translate-x-1/2 text-lg drop-shadow-lg z-10"
+        <motion.div className="absolute left-1/2 -translate-x-1/2 text-lg z-10"
           animate={{ bottom: `calc(${pct}% - 2px)` }} transition={{ type: "spring", stiffness: 120, damping: 16 }}>
           🧗
         </motion.div>
       </div>
 
-      <span className="mt-1 text-[10px] font-bold text-white/50">{floor}/{total}</span>
-    </div>
-  );
-}
-
-function Shell({ children, controls }: { children: React.ReactNode; controls?: ReturnType<typeof useAnimationControls> }) {
-  return (
-    <div className="fixed inset-0 z-[60] flex flex-col overflow-hidden"
-      style={{ background: "radial-gradient(120% 80% at 50% 0%, #2E1065 0%, #1A0B3B 45%, #0B0718 100%)" }}>
-      {/* decorative stars */}
-      <div className="pointer-events-none absolute inset-0 opacity-40"
-        style={{ backgroundImage: "radial-gradient(1.5px 1.5px at 20% 30%, #fff, transparent), radial-gradient(1.5px 1.5px at 70% 20%, #fff, transparent), radial-gradient(1px 1px at 40% 60%, #fff, transparent), radial-gradient(1.5px 1.5px at 85% 50%, #fff, transparent), radial-gradient(1px 1px at 15% 80%, #fff, transparent)" }} />
-      <motion.div animate={controls} className="relative z-10 flex-1 flex flex-col max-w-md w-full mx-auto">{children}</motion.div>
-    </div>
-  );
-}
-
-function MuteButton({ on, onToggle }: { on: boolean; onToggle: () => void }) {
-  return (
-    <button onClick={onToggle} aria-label={on ? "Matikan suara" : "Nyalakan suara"}
-      className="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center text-white/70 active:scale-90 transition-all">
-      {on ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
-    </button>
-  );
-}
-
-function Badge({ icon, label }: { icon: React.ReactNode; label: string }) {
-  return (
-    <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/[0.07] border border-white/10">
-      {icon}<span className="text-xs font-semibold text-white/80">{label}</span>
-    </div>
-  );
-}
-
-function Stat({ big, label, tone }: { big: string; label: string; tone: "violet" | "orange" | "amber" }) {
-  const tones = { violet: "text-violet-300", orange: "text-orange-300", amber: "text-amber-300" };
-  return (
-    <div className="rounded-2xl bg-white/[0.06] border border-white/10 py-3 px-1 text-center">
-      <p className={`text-xl font-extrabold ${tones[tone]}`}>{big}</p>
-      <p className="text-[10px] font-semibold uppercase tracking-wide text-white/40 mt-0.5">{label}</p>
+      <span className="mt-1 text-[10px] font-extrabold opacity-60">{floor}/{total}</span>
     </div>
   );
 }
