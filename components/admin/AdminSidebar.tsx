@@ -24,6 +24,7 @@ const NAV = [
   { label: "Kuota AI", href: "/admin/ai-quota", icon: Coins },
   { label: "Pusat Data", href: "/admin/data-center", icon: Database },
   { label: "Pembayaran", href: "/admin/payments", icon: DollarSign },
+  { label: "Pengaturan", href: "/admin/pengaturan", icon: Settings },
   { type: "divider" as const },
   { label: "Dasbor Guru", href: "/guru/beranda", icon: ChevronRight },
   { label: "Dasbor Murid", href: "/murid/beranda", icon: ChevronRight },

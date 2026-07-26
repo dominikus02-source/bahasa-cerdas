@@ -1,48 +1,30 @@
-import { db } from "@/lib/db";
+import { ScrollText, FileText, GraduationCap, Users } from "lucide-react";
 
-// Statistik nyata, dihitung langsung dari database saat halaman dirender —
-// bukan angka target/aspirasi yang dipoles jadi terlihat seperti pencapaian.
-// TrustBar sebelumnya menampilkan "57K+ baris kode" dan "350K+ guru yang
-// bisa kami jangkau" (target pasar, bukan pengguna) lengkap dengan catatan
-// kaki yang mengakui itu bukan angka pengguna — kredibilitas yang merusak
-// dirinya sendiri. Sekarang hanya angka yang benar-benar bisa diperiksa.
-async function getStats() {
-  try {
-    const [soalCount, materiCount, userCount] = await Promise.all([
-      db.soal.count(),
-      db.materi.count({ where: { isPublished: true } }),
-      db.user.count({ where: { role: { in: ["GURU", "MURID"] } } }),
-    ]);
-    return { soalCount, materiCount, userCount };
-  } catch {
-    return { soalCount: 0, materiCount: 0, userCount: 0 };
-  }
-}
+// Sengaja tanpa angka spesifik (jumlah soal, jumlah pengguna, dst) — angka
+// itu terus berubah dan akhirnya butuh dijelaskan/diperbarui terus-menerus.
+// Ini hanya menunjukkan apa yang tersedia, bukan seberapa banyak.
+const coverage = [
+  { icon: ScrollText, label: "Bank Soal", sub: "Terus bertambah" },
+  { icon: FileText, label: "Materi Ajar", sub: "Siap diunduh" },
+  { icon: GraduationCap, label: "Kelas 1–12", sub: "SD, SMP, SMA/SMK" },
+  { icon: Users, label: "Komunitas Guru", sub: "MGMP digital" },
+];
 
-export default async function TrustBar() {
-  const { soalCount, materiCount, userCount } = await getStats();
-
-  const stats = [
-    { value: soalCount.toLocaleString("id-ID") + "+", label: "Soal di bank soal", sub: "Bahasa Indonesia" },
-    { value: materiCount.toLocaleString("id-ID") + "+", label: "Materi ajar tersedia", sub: "Siap diunduh" },
-    { value: "Kelas 1–12", label: "Jenjang yang dicakup", sub: "SD, SMP, SMA/SMK" },
-    { value: userCount.toLocaleString("id-ID") + "+", label: "Guru & siswa terdaftar", sub: "Dan terus bertambah" },
-  ];
-
+export default function TrustBar() {
   return (
-    <section className="relative py-12 lg:py-16 bg-white border-y border-zinc-100" aria-label="Statistik platform">
+    <section className="relative py-12 lg:py-16 bg-white border-y border-zinc-100" aria-label="Yang tersedia di BahasaCerdas">
       <div className="section-container">
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-px bg-zinc-200 rounded-2xl overflow-hidden border border-zinc-200">
-          {stats.map((stat) => (
-            <div key={stat.label} className="bg-white px-6 py-7 text-center">
-              <div className="font-display text-4xl font-normal leading-none mb-2 text-primary">
-                {stat.value}
+          {coverage.map((c) => (
+            <div key={c.label} className="bg-white px-6 py-7 text-center flex flex-col items-center">
+              <div className="w-11 h-11 rounded-xl bg-primary-light flex items-center justify-center mb-3">
+                <c.icon size={20} className="text-primary" aria-hidden="true" />
               </div>
-              <div className="text-zinc-500 text-sm leading-snug mb-2">
-                {stat.label}
+              <div className="text-zinc-900 font-semibold text-base leading-snug mb-1">
+                {c.label}
               </div>
               <div className="text-xs font-bold tracking-wider uppercase text-primary/70">
-                {stat.sub}
+                {c.sub}
               </div>
             </div>
           ))}

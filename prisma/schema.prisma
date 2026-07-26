@@ -1093,6 +1093,17 @@ model Loker {
   @@index([createdAt])
 }
 
+// Key-value store untuk konten yang admin ingin ubah tanpa deploy kode —
+// mis. link video promosi landing page yang diganti sesuai event. Dibuat
+// generik (bukan tabel khusus video) supaya bisa dipakai ulang untuk
+// pengaturan serupa di masa depan.
+model SiteSetting {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     String?
+  updatedAt DateTime @updatedAt
+}
+
 model AiCreditLedger {
   id             String   @id @default(cuid())
   userId         String
