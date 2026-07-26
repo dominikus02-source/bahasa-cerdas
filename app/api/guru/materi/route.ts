@@ -3,6 +3,13 @@ import { createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 import { uploadFileServer } from "@/lib/upload";
 
+// Folder guru: Modul Ajar / PPT / PDF — dikelompokkan dari fileType.
+const FOLDER_TYPES: Record<string, string[]> = {
+  MODUL: ["DOCX", "XLSX", "MP4", "ZIP"],
+  PPT: ["PPTX"],
+  PDF: ["PDF"],
+};
+
 export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
@@ -13,6 +20,7 @@ export async function GET(req: NextRequest) {
     const subject = (searchParams.get("subject") || "").trim();
     const tema = (searchParams.get("tema") || "").trim();
     const sort = searchParams.get("sort") || "recent"; // "recent" | "popular"
+    const folder = (searchParams.get("folder") || "").trim().toUpperCase(); // "MODUL" | "PPT" | "PDF"
 
     let dbUser: any = null
 
@@ -57,6 +65,20 @@ export async function GET(req: NextRequest) {
     const level = (searchParams.get("level") || "").trim();
     if (level) and.push({ grade: { startsWith: level } });
 
+    // Hitung jumlah per folder (jenjang/kelas/pencarian saja, tanpa filter folder) — untuk badge di UI.
+    const countsWhere: any = { OR: [{ isPublished: true }, { uploaderId: dbUser.id }] };
+    if (and.length) countsWhere.AND = [...and];
+
+    // Folder guru: Modul Ajar / PPT / PDF (dari fileType). Modul juga mencakup
+    // entri lama tanpa fileType (materi konten-only).
+    if (folder && FOLDER_TYPES[folder]) {
+      and.push(
+        folder === "MODUL"
+          ? { OR: [{ fileType: { in: FOLDER_TYPES.MODUL } }, { fileType: null }] }
+          : { fileType: { in: FOLDER_TYPES[folder] } }
+      );
+    }
+
     const where: any = { OR: [{ isPublished: true }, { uploaderId: dbUser.id }] };
     if (and.length) where.AND = and;
 
@@ -64,17 +86,21 @@ export async function GET(req: NextRequest) {
       ? [{ downloads: "desc" as const }, { createdAt: "desc" as const }]
       : [{ createdAt: "desc" as const }];
 
-    const [materis, total, downloadsUsed] = await Promise.all([
+    const [materis, total, downloadsUsed, modulCount, pptCount, pdfCount] = await Promise.all([
       db.materi.findMany({ where, orderBy, skip: (page - 1) * limit, take: limit }),
       db.materi.count({ where }),
       db.materiDownload.count({ where: { userId: dbUser.id } }),
+      db.materi.count({ where: { ...countsWhere, AND: [...(countsWhere.AND || []), { OR: [{ fileType: { in: FOLDER_TYPES.MODUL } }, { fileType: null }] }] } }),
+      db.materi.count({ where: { ...countsWhere, AND: [...(countsWhere.AND || []), { fileType: { in: FOLDER_TYPES.PPT } }] } }),
+      db.materi.count({ where: { ...countsWhere, AND: [...(countsWhere.AND || []), { fileType: { in: FOLDER_TYPES.PDF } }] } }),
     ]);
+    const folderCounts = { MODUL: modulCount, PPT: pptCount, PDF: pdfCount };
 
     // Kuota unduh: gratis 10 modul, premium/founder/admin tak terbatas.
     const unlimited = dbUser.isPremium || dbUser.isFounder || dbUser.role === "ADMIN";
     const quota = { used: downloadsUsed, limit: unlimited ? null : 10, unlimited };
 
-    return NextResponse.json({ data: materis, total, page, totalPages: Math.ceil(total / limit), quota });
+    return NextResponse.json({ data: materis, total, page, totalPages: Math.ceil(total / limit), quota, folderCounts });
   } catch (error) {
     console.error("GET /api/guru/materi error:", error);
     return NextResponse.json({ error: "Internal error" }, { status: 500 });

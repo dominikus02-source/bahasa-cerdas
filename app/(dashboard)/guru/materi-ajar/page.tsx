@@ -5,7 +5,7 @@ import {
   Presentation, Search, Grid3x3, List,
   Maximize2, BookOpen, ChevronLeft, ChevronRight,
   Upload, X, Loader2, FileText, Check,
-  Sparkles, Download, Eye, Crown
+  Sparkles, Download, Eye, Crown, Folder, Send, AlertCircle
 } from "lucide-react"
 import { MateriViewer } from "@/components/materi/MateriViewer"
 import { FILE_TYPE_LABELS } from "@/lib/upload"
@@ -34,12 +34,19 @@ interface Materi {
 }
 
 type LevelTab = "SD" | "SMP" | "SMA"
+type Folder = "" | "MODUL" | "PPT" | "PDF"
 
 const GRADES_BY_LEVEL: Record<LevelTab, string[]> = {
   SD: ["SD Kelas 1", "SD Kelas 2", "SD Kelas 3", "SD Kelas 4", "SD Kelas 5", "SD Kelas 6"],
   SMP: ["SMP Kelas 7", "SMP Kelas 8", "SMP Kelas 9"],
   SMA: ["SMA Kelas 10", "SMA Kelas 11", "SMA Kelas 12"],
 }
+
+const FOLDERS: { value: Folder; label: string; hint: string }[] = [
+  { value: "MODUL", label: "Modul Ajar", hint: "DOCX, XLSX, ZIP" },
+  { value: "PPT", label: "PPT", hint: "Presentasi" },
+  { value: "PDF", label: "PDF", hint: "Dokumen PDF" },
+]
 
 export default function MateriAjarPage() {
   const [materis, setMateris] = useState<Materi[]>([])
@@ -59,8 +66,11 @@ export default function MateriAjarPage() {
   const [sort, setSort] = useState<"recent" | "popular">("recent")
   const [debouncedSearch, setDebouncedSearch] = useState("")
   const [kelasFilter, setKelasFilter] = useState<string>("") // grade spesifik, "" = semua di jenjang
+  const [folder, setFolder] = useState<Folder>("")
+  const [folderCounts, setFolderCounts] = useState<{ MODUL: number; PPT: number; PDF: number }>({ MODUL: 0, PPT: 0, PDF: 0 })
   const [quota, setQuota] = useState<{ used: number; limit: number | null; unlimited: boolean } | null>(null)
   const [detailMateri, setDetailMateri] = useState<Materi | null>(null)
+  const [kirimMateri, setKirimMateri] = useState<Materi | null>(null)
 
   // Debounce kotak pencarian → cari di server (bukan hanya di halaman yang termuat)
   useEffect(() => {
@@ -82,19 +92,21 @@ export default function MateriAjarPage() {
       if (debouncedSearch) params.set("q", debouncedSearch)
       if (kelasFilter) params.set("grade", kelasFilter)
       else if (activeTab) params.set("level", activeTab)
+      if (folder) params.set("folder", folder)
       const res = await fetch(`/api/guru/materi?${params}`)
       const data = await res.json()
       if (data.data) {
         setMateris(data.data)
         setTotalPages(data.totalPages || 1)
         if (data.quota) setQuota(data.quota)
+        if (data.folderCounts) setFolderCounts(data.folderCounts)
       }
     } catch (err) {
       console.error("Fetch error:", err)
     } finally {
       setLoading(false)
     }
-  }, [page, sort, debouncedSearch, activeTab, kelasFilter])
+  }, [page, sort, debouncedSearch, activeTab, kelasFilter, folder])
 
   useEffect(() => { fetchMateris() }, [fetchMateris])
 
@@ -141,7 +153,7 @@ export default function MateriAjarPage() {
             {(["SD", "SMP", "SMA"] as LevelTab[]).map(tab => (
               <button
                 key={tab}
-                onClick={() => { setActiveTab(tab); setKelasFilter(""); setPage(1) }}
+                onClick={() => { setActiveTab(tab); setKelasFilter(""); setFolder(""); setPage(1) }}
                 className={`px-5 py-2 rounded-lg text-sm font-semibold transition-all ${
                   activeTab === tab
                     ? "bg-white text-emerald-700 shadow-sm"
@@ -208,6 +220,30 @@ export default function MateriAjarPage() {
             </button>
           ))}
         </div>
+
+        {/* Folder: Modul Ajar / PPT / PDF */}
+        <div className="flex flex-wrap items-center gap-2 mt-3 pt-3 border-t border-gray-100">
+          <span className="text-xs font-medium text-gray-400 mr-1">Folder:</span>
+          <button
+            onClick={() => { setFolder(""); setPage(1) }}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${folder === "" ? "bg-gray-800 text-white" : "bg-gray-50 text-gray-600 hover:bg-gray-100"}`}
+          >
+            Semua
+          </button>
+          {FOLDERS.map(f => (
+            <button
+              key={f.value}
+              onClick={() => { setFolder(f.value); setPage(1) }}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${folder === f.value ? "bg-emerald-600 text-white" : "bg-gray-50 text-gray-600 hover:bg-gray-100"}`}
+              title={f.hint}
+            >
+              <Folder size={13} /> {f.label}
+              <span className={`ml-0.5 px-1.5 rounded-full text-[10px] ${folder === f.value ? "bg-white/20" : "bg-gray-200 text-gray-500"}`}>
+                {folderCounts[f.value as "MODUL" | "PPT" | "PDF"] ?? 0}
+              </span>
+            </button>
+          ))}
+        </div>
       </div>
 
       {loading ? (
@@ -237,22 +273,29 @@ export default function MateriAjarPage() {
       ) : viewMode === "grid" ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {filtered.map(m => (
-            <MateriCard key={m.id} materi={m} onView={() => setDetailMateri(m)} />
+            <MateriCard key={m.id} materi={m} onView={() => setDetailMateri(m)} onKirim={() => setKirimMateri(m)} />
           ))}
         </div>
       ) : (
         <div className="bg-white rounded-2xl border border-gray-100 divide-y divide-gray-50">
           {filtered.map(m => (
-            <button key={m.id} onClick={() => setDetailMateri(m)} className="w-full text-left flex items-center gap-4 p-4 hover:bg-gray-50 transition-colors">
-              <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold text-xs shrink-0 ${m.fileType === "PPTX" ? "bg-orange-500" : m.fileType === "PDF" ? "bg-red-500" : "bg-blue-500"}`}>
-                {m.fileType || "FILE"}
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="font-semibold text-gray-900 truncate">{m.title}</p>
-                <p className="text-xs text-gray-500 truncate">{m.grade || "—"}{m.tema ? ` • ${m.tema}` : ""}</p>
-              </div>
-              <span className="shrink-0 flex items-center gap-1.5 text-xs font-semibold text-emerald-700"><Eye size={15} /> Lihat</span>
-            </button>
+            <div key={m.id} className="w-full flex items-center gap-4 p-4 hover:bg-gray-50 transition-colors">
+              <button onClick={() => setDetailMateri(m)} className="flex-1 flex items-center gap-4 text-left min-w-0">
+                <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold text-xs shrink-0 ${m.fileType === "PPTX" ? "bg-orange-500" : m.fileType === "PDF" ? "bg-red-500" : "bg-blue-500"}`}>
+                  {m.fileType || "FILE"}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="font-semibold text-gray-900 truncate">{m.title}</p>
+                  <p className="text-xs text-gray-500 truncate">{m.grade || "—"}{m.tema ? ` • ${m.tema}` : ""}</p>
+                </div>
+                <span className="shrink-0 flex items-center gap-1.5 text-xs font-semibold text-emerald-700"><Eye size={15} /> Lihat</span>
+              </button>
+              {m.fileUrl && (
+                <button onClick={() => setKirimMateri(m)} className="shrink-0 flex items-center gap-1.5 text-xs font-semibold text-violet-700 bg-violet-50 rounded-lg px-3 py-2 hover:bg-violet-100 transition-colors">
+                  <Send size={14} /> Kirim
+                </button>
+              )}
+            </div>
           ))}
         </div>
       )}
@@ -265,7 +308,12 @@ export default function MateriAjarPage() {
           onClose={() => setDetailMateri(null)}
           onQuota={(q) => setQuota(q)}
           onPresent={() => { const m = detailMateri; setDetailMateri(null); if (m) handlePresent(m) }}
+          onKirim={() => { const m = detailMateri; setDetailMateri(null); if (m) setKirimMateri(m) }}
         />
+      )}
+
+      {kirimMateri && (
+        <MateriKirimModal materi={kirimMateri} onClose={() => setKirimMateri(null)} />
       )}
 
       {totalPages > 1 && (
@@ -436,7 +484,7 @@ export default function MateriAjarPage() {
   )
 }
 
-function MateriCard({ materi, onView }: { materi: Materi; onView: () => void }) {
+function MateriCard({ materi, onView, onKirim }: { materi: Materi; onView: () => void; onKirim: () => void }) {
   const isPPT = materi.fileType === "PPTX"
   const isPDF = materi.fileType === "PDF"
 
@@ -463,10 +511,16 @@ function MateriCard({ materi, onView }: { materi: Materi; onView: () => void }) 
           <span className="flex items-center gap-1"><Download size={11} /> {materi.downloads ?? 0}</span>
         </div>
         {materi.fileUrl && (
-          <button onClick={onView}
-            className="w-full flex items-center justify-center gap-2 py-2.5 text-xs font-semibold text-emerald-700 bg-emerald-50 rounded-lg hover:bg-emerald-100 transition-colors">
-            <Eye size={14} /> Lihat detail
-          </button>
+          <div className="flex gap-2">
+            <button onClick={onView}
+              className="flex-1 flex items-center justify-center gap-2 py-2.5 text-xs font-semibold text-emerald-700 bg-emerald-50 rounded-lg hover:bg-emerald-100 transition-colors">
+              <Eye size={14} /> Detail
+            </button>
+            <button onClick={onKirim}
+              className="flex-1 flex items-center justify-center gap-2 py-2.5 text-xs font-semibold text-violet-700 bg-violet-50 rounded-lg hover:bg-violet-100 transition-colors">
+              <Send size={14} /> Kirim
+            </button>
+          </div>
         )}
       </div>
     </div>
@@ -475,8 +529,8 @@ function MateriCard({ materi, onView }: { materi: Materi; onView: () => void }) 
 
 type Quota = { used: number; limit: number | null; unlimited: boolean }
 
-function MateriDetailModal({ materi, quota, getSid, onClose, onQuota, onPresent }: {
-  materi: Materi; quota: Quota | null; getSid: () => string; onClose: () => void; onQuota: (q: Quota) => void; onPresent: () => void
+function MateriDetailModal({ materi, quota, getSid, onClose, onQuota, onPresent, onKirim }: {
+  materi: Materi; quota: Quota | null; getSid: () => string; onClose: () => void; onQuota: (q: Quota) => void; onPresent: () => void; onKirim: () => void
 }) {
   const [downloading, setDownloading] = useState(false)
   const [limitReached, setLimitReached] = useState(false)
@@ -561,6 +615,9 @@ function MateriDetailModal({ materi, quota, getSid, onClose, onQuota, onPresent 
                   {downloading ? <><Loader2 size={16} className="animate-spin" /> Mengunduh...</> : done ? <><Check size={16} /> Terunduh</> : <><Download size={16} /> Unduh</>}
                 </button>
               </div>
+              <button onClick={onKirim} className="w-full mt-2 flex items-center justify-center gap-2 py-2.5 text-sm font-semibold text-white bg-violet-600 rounded-xl hover:bg-violet-700 transition-colors">
+                <Send size={16} /> Kirim ke Kelas
+              </button>
               {isPPT && (
                 <button onClick={onPresent} className="w-full mt-2 flex items-center justify-center gap-2 py-2 text-xs font-semibold text-orange-700 bg-orange-50 rounded-xl hover:bg-orange-100 transition-colors">
                   <Maximize2 size={14} /> Presentasi
@@ -571,6 +628,121 @@ function MateriDetailModal({ materi, quota, getSid, onClose, onQuota, onPresent 
             </>
           )}
         </div>
+      </div>
+    </div>
+  )
+}
+
+function MateriKirimModal({ materi, onClose }: { materi: Materi; onClose: () => void }) {
+  const [groups, setGroups] = useState<{ id: string; name: string; grade: string }[]>([])
+  const [sentGroupIds, setSentGroupIds] = useState<string[]>([])
+  const [selected, setSelected] = useState<string[]>([])
+  const [loading, setLoading] = useState(true)
+  const [sending, setSending] = useState(false)
+  const [error, setError] = useState("")
+  const [success, setSuccess] = useState(false)
+
+  useEffect(() => {
+    Promise.all([
+      fetch("/api/group").then(r => r.json()).catch(() => ({})),
+      fetch(`/api/guru/materi/${materi.id}/kirim`).then(r => r.json()).catch(() => ({})),
+    ]).then(([g, k]) => {
+      setGroups(g.groups || [])
+      setSentGroupIds((k.data || []).map((row: { groupId: string }) => row.groupId))
+    }).finally(() => setLoading(false))
+  }, [materi.id])
+
+  const send = async () => {
+    if (selected.length === 0) return
+    setSending(true); setError("")
+    try {
+      const res = await fetch(`/api/guru/materi/${materi.id}/kirim`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ groupIds: selected }),
+      })
+      const d = await res.json()
+      if (res.ok) {
+        setSuccess(true)
+        setTimeout(onClose, 1500)
+      } else {
+        setError(d.error || "Gagal mengirim materi.")
+      }
+    } catch {
+      setError("Gagal mengirim materi.")
+    }
+    setSending(false)
+  }
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" onClick={() => !sending && onClose()}>
+      <div className="fixed inset-0 bg-black/40 backdrop-blur-sm" />
+      <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-md p-6" onClick={e => e.stopPropagation()}>
+        <div className="flex items-center justify-between mb-1">
+          <h2 className="font-bold text-gray-900">Kirim ke Kelas</h2>
+          <button onClick={onClose} className="w-8 h-8 rounded-full hover:bg-gray-100 flex items-center justify-center">
+            <X size={16} className="text-gray-500" />
+          </button>
+        </div>
+        <p className="text-sm text-gray-500 mb-4 truncate">{materi.title}</p>
+
+        {success ? (
+          <div className="flex flex-col items-center gap-3 py-8 text-violet-600">
+            <div className="w-12 h-12 rounded-full bg-violet-100 flex items-center justify-center">
+              <Check className="w-6 h-6" />
+            </div>
+            <p className="font-medium">Materi terkirim!</p>
+          </div>
+        ) : loading ? (
+          <div className="py-8 flex justify-center"><Loader2 className="w-5 h-5 animate-spin text-gray-400" /></div>
+        ) : groups.length === 0 ? (
+          <p className="text-xs text-gray-400 text-center py-6">Belum ada kelas. Buat kelas dulu di KelasKu.</p>
+        ) : (
+          <>
+            <div className="space-y-1.5 max-h-56 overflow-y-auto mb-4">
+              {groups.map(g => {
+                const alreadySent = sentGroupIds.includes(g.id)
+                const checked = selected.includes(g.id)
+                return (
+                  <label
+                    key={g.id}
+                    className={`flex items-center gap-3 px-3 py-2 rounded-lg border cursor-pointer transition-colors ${
+                      checked ? "border-violet-300 bg-violet-50" : "border-gray-100 hover:border-gray-200"
+                    }`}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={checked}
+                      onChange={() => setSelected(prev => prev.includes(g.id) ? prev.filter(id => id !== g.id) : [...prev, g.id])}
+                      className="rounded text-violet-600 focus:ring-violet-500"
+                    />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-gray-800 truncate">{g.name}</p>
+                      <p className="text-xs text-gray-400">Kelas {g.grade}</p>
+                    </div>
+                    {alreadySent && <span className="shrink-0 text-[10px] px-1.5 py-0.5 bg-emerald-100 text-emerald-700 rounded-full font-medium">Sudah dikirim</span>}
+                  </label>
+                )
+              })}
+            </div>
+
+            {error && (
+              <div className="flex items-center gap-2 text-xs text-red-600 bg-red-50 rounded-lg px-3 py-2 mb-3">
+                <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                {error}
+              </div>
+            )}
+
+            <button
+              onClick={send}
+              disabled={selected.length === 0 || sending}
+              className="w-full py-2.5 bg-violet-600 text-white rounded-xl text-sm font-semibold hover:bg-violet-700 disabled:opacity-50 transition-colors flex items-center justify-center gap-2"
+            >
+              {sending ? <Loader2 size={16} className="animate-spin" /> : <Send size={16} />}
+              Kirim ke {selected.length} Kelas
+            </button>
+          </>
+        )}
       </div>
     </div>
   )

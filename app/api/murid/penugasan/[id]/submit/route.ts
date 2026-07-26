@@ -33,7 +33,9 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     try { content = penugasan.unit.content ? JSON.parse(penugasan.unit.content) : {}; } catch { content = {}; }
 
     const isKuis = penugasan.jenis === "KUIS";
-    const questions = isKuis ? buildKuis(content) : buildLatihan(content);
+    // PRAKTIK-only assignments have no gradeable questions — the student never saw
+    // any latihan, so grading against buildLatihan(content) here would push a false 0.
+    const questions = isKuis ? buildKuis(content) : penugasan.jenis === "PRAKTIK" ? [] : buildLatihan(content);
     const { correct, total, score } = gradeLatihan(questions, answers);
 
     const alreadyDone = penugasan.submissions[0]?.status === "COMPLETED";
@@ -46,16 +48,20 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
 
     // Best-effort side effects — never fail the submission.
     try {
-      // Push the score into the teacher's rekap nilai.
-      await upsertNilaiOtomatis({
-        userId: user.id,
-        groupId: penugasan.groupId,
-        kategoriNama: isKuis ? "Kuis" : "Tugas Harian",
-        skor: score,
-        sumberType: isKuis ? "QUIZ" : "PENUGASAN",
-        sumberId: penugasan.id,
-        keterangan: penugasan.judul,
-      });
+      // Push the score into the teacher's rekap nilai — skip when there were no
+      // gradeable questions (PRAKTIK-only); that nilai comes later from the
+      // teacher's manual praktikNilai review instead.
+      if (total > 0) {
+        await upsertNilaiOtomatis({
+          userId: user.id,
+          groupId: penugasan.groupId,
+          kategoriNama: isKuis ? "Kuis" : "Tugas Harian",
+          skor: score,
+          sumberType: isKuis ? "QUIZ" : "PENUGASAN",
+          sumberId: penugasan.id,
+          keterangan: penugasan.judul,
+        });
+      }
       // Award XP + coins only on the first completion.
       if (!alreadyDone) {
         const newXp = (user.xp || 0) + (penugasan.unit.xpReward || 0)

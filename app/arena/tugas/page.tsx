@@ -95,6 +95,20 @@ export default function TugasPage() {
         </div>
       </div>
 
+      <Link
+        href="/arena/materi"
+        className="flex items-center gap-3 bg-blue-50 border border-blue-100 rounded-2xl p-3 mb-4 active:scale-[0.98] transition-all"
+      >
+        <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shrink-0">
+          <FileText className="w-4 h-4 text-white" />
+        </div>
+        <div className="flex-1 min-w-0">
+          <p className="text-sm font-bold text-blue-900">Materi dari Guru</p>
+          <p className="text-xs text-blue-500">File modul, PPT, dan PDF yang dikirim gurumu</p>
+        </div>
+        <ChevronRight className="w-4 h-4 text-blue-400 shrink-0" />
+      </Link>
+
       <div className="flex gap-1 bg-gray-100 rounded-xl p-1 mb-4">
         {tabs.map(t => (
           <button

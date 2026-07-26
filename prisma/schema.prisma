@@ -256,6 +256,7 @@ model User {
   nilais             Nilai[]
   subscriptions      Subscription[]
   nicknameHistory    NicknameHistory[]
+  materiKirims       MateriKirim[]
 
   // Admin quota audit logs where this user was the acting admin
   adminQuotaActions  AdminQuotaAuditLog[] @relation("AdminActions")
@@ -511,6 +512,7 @@ model Materi {
   updatedAt   DateTime  @updatedAt
   uploader    User      @relation(fields: [uploaderId], references: [id], onDelete: Cascade)
   downloadRecords MateriDownload[]
+  kirims      MateriKirim[]
 
   @@index([uploaderId])
   @@index([isPublished])
@@ -528,6 +530,25 @@ model MateriDownload {
   @@unique([userId, materiId])
   @@index([userId])
   @@index([materiId])
+}
+
+// Guru mengirim satu Materi (file) ke satu kelas — riwayat kirim + sumber
+// daftar "Materi dari Guru" di sisi murid.
+model MateriKirim {
+  id        String   @id @default(cuid())
+  materiId  String
+  groupId   String
+  teacherId String
+  createdAt DateTime @default(now())
+
+  materi  Materi @relation(fields: [materiId], references: [id], onDelete: Cascade)
+  group   Group  @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  teacher User   @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+
+  @@unique([materiId, groupId])
+  @@index([groupId])
+  @@index([materiId])
+  @@index([teacherId])
 }
 
 model BankSoal {
@@ -1164,6 +1185,7 @@ model Group {
   penugasans      Penugasan[]
   nilaiKategoris  NilaiKategori[]
   nilais          Nilai[]
+  materiKirims    MateriKirim[]
 
   @@index([teacherId])
   @@index([accessCode])

@@ -29,6 +29,7 @@ const NAV: NavItem[] = [
   { label: "RPP & Modul", href: "/guru/ai-tools?tool=rpp-modul", icon: <FileText size={18} /> },
   { label: "AI Tools", href: "/guru/ai-tools", icon: <Sparkles size={18} /> },
   { label: "Materi Ajar", href: "/guru/materi-ajar", icon: <Presentation size={18} /> },
+  { label: "Buku Ajar", href: "/guru/panduan-guru", icon: <BookOpen size={18} /> },
   { label: "Bank Soal", href: "/guru/bank-soal", icon: <Database size={18} /> },
   { label: "Semua Soal", href: "/guru/soal", icon: <BookOpen size={18} /> },
   {

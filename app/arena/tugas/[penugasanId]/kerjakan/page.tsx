@@ -84,7 +84,7 @@ export default function KerjakanTugasPage() {
       .then(d => {
         const dt: Data = d.data
         setData(dt)
-        setPhase(dt.jenis === "KUIS" ? "kuis" : "belajar")
+        setPhase(dt.jenis === "KUIS" ? "kuis" : dt.jenis === "LATIHAN" ? "latihan" : dt.jenis === "PRAKTIK" ? "praktik" : "belajar")
         setPraktikUrl(dt.submission?.praktikUrl ?? null)
       })
       .catch(() => setError("Gagal memuat tugas."))
@@ -135,7 +135,12 @@ export default function KerjakanTugasPage() {
     </div>
   )
 
-  const steps: Phase[] = isKuis ? ["kuis"] : (["belajar", ...(hasLatihan ? ["latihan"] : []), ...(hasPraktik ? ["praktik"] : [])] as Phase[])
+  const steps: Phase[] = isKuis ? ["kuis"]
+    : data.jenis === "LATIHAN" ? ["latihan"]
+    : data.jenis === "PRAKTIK" ? ["praktik"]
+    : (["belajar", ...(hasLatihan ? ["latihan"] : []), ...(hasPraktik ? ["praktik"] : [])] as Phase[])
+  const stepLabel: Record<Phase, string> = { belajar: "Belajar", latihan: "Latihan", praktik: "Praktik", kuis: "Ulangan", done: "" }
+  const nextPhase = steps[steps.indexOf(phase) + 1]
 
   return (
     <div className="min-h-screen bg-[#F7F6FF] pb-28">
@@ -278,19 +283,13 @@ export default function KerjakanTugasPage() {
         <div className="fixed bottom-0 left-0 right-0 z-20 bg-white/95 backdrop-blur border-t border-gray-100 px-4 py-3 safe-area-bottom">
           <div className="max-w-2xl mx-auto">
             <button
-              onClick={() => {
-                if (phase === "kuis") { submit(); return }
-                if (phase === "belajar") setPhase(hasLatihan ? "latihan" : hasPraktik ? "praktik" : "done")
-                else if (phase === "latihan") { if (hasPraktik) setPhase("praktik"); else submit() }
-                else if (phase === "praktik") submit()
-              }}
+              onClick={() => { if (nextPhase) setPhase(nextPhase); else submit() }}
               disabled={submitting}
               className="w-full py-3.5 bg-violet-600 text-white rounded-xl font-bold text-sm flex items-center justify-center gap-2 active:scale-[0.98] transition-transform disabled:opacity-60"
             >
               {submitting ? <><Loader2 className="w-4 h-4 animate-spin" /> Mengirim...</>
-                : phase === "kuis" ? <>Selesaikan Ulangan <ArrowRight className="w-4 h-4" /></>
-                : phase === "belajar" ? <>Lanjut ke {hasLatihan ? "Latihan" : "Praktik"} <ArrowRight className="w-4 h-4" /></>
-                : phase === "latihan" && hasPraktik ? <>Lanjut ke Praktik <ArrowRight className="w-4 h-4" /></>
+                : nextPhase ? <>Lanjut ke {stepLabel[nextPhase]} <ArrowRight className="w-4 h-4" /></>
+                : isKuis ? <>Selesaikan Ulangan <ArrowRight className="w-4 h-4" /></>
                 : <>Selesaikan Tugas <ArrowRight className="w-4 h-4" /></>}
             </button>
           </div>

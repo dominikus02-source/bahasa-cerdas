@@ -3,7 +3,7 @@
 import { useEffect, useState, useCallback } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
-import { BookOpen, ChevronDown, ChevronRight, Send, Search, X, Calendar, Loader2, Check, GraduationCap, Eye } from "lucide-react"
+import { BookOpen, ChevronDown, ChevronRight, Send, Search, X, Calendar, Loader2, Check, GraduationCap, Eye, PenLine, FlaskConical, Award, AlertCircle } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -34,6 +34,13 @@ const GRADE_OFFSET: Record<string, number> = {
 }
 const SEMESTERS = [1, 2]
 
+const JENIS_OPTIONS: { value: "MATERI" | "LATIHAN" | "PRAKTIK" | "KUIS"; label: string; desc: string; icon: React.ReactNode }[] = [
+  { value: "MATERI", label: "Materi Lengkap", desc: "Belajar + latihan + praktik", icon: <BookOpen className="w-4 h-4" /> },
+  { value: "LATIHAN", label: "Latihan Saja", desc: "Hanya soal latihan, dinilai otomatis", icon: <PenLine className="w-4 h-4" /> },
+  { value: "PRAKTIK", label: "Praktik Saja", desc: "Murid unggah hasil, guru menilai", icon: <FlaskConical className="w-4 h-4" /> },
+  { value: "KUIS", label: "Kuis / Ulangan", desc: "Soal ulangan harian, dinilai otomatis", icon: <Award className="w-4 h-4" /> },
+]
+
 export default function PanduanGuruPage() {
   const router = useRouter()
   const [levels, setLevels] = useState<Level[]>([])
@@ -47,6 +54,8 @@ export default function PanduanGuruPage() {
   const [tenggat, setTenggat] = useState("")
   const [assignLoading, setAssignLoading] = useState(false)
   const [assignSuccess, setAssignSuccess] = useState(false)
+  const [assignError, setAssignError] = useState("")
+  const [jenis, setJenis] = useState<"MATERI" | "LATIHAN" | "PRAKTIK" | "KUIS">("MATERI")
 
   useEffect(() => {
     fetch("/api/guru/panduan")
@@ -88,6 +97,7 @@ export default function PanduanGuruPage() {
   const handleAssign = async () => {
     if (!assignUnit || selectedGroups.length === 0) return
     setAssignLoading(true)
+    setAssignError("")
     try {
       const res = await fetch("/api/guru/penugasan", {
         method: "POST",
@@ -97,13 +107,19 @@ export default function PanduanGuruPage() {
           groupIds: selectedGroups,
           judul: assignUnit.title,
           tenggat: tenggat || null,
+          jenis,
         }),
       })
+      const d = await res.json().catch(() => ({}))
       if (res.ok) {
         setAssignSuccess(true)
-        setTimeout(() => { setAssignUnit(null); setAssignSuccess(false); setSelectedGroups([]); setTenggat("") }, 1500)
+        setTimeout(() => { setAssignUnit(null); setAssignSuccess(false); setSelectedGroups([]); setTenggat(""); setJenis("MATERI") }, 1500)
+      } else {
+        setAssignError(d.error || "Gagal mengirim tugas.")
       }
-    } catch {}
+    } catch {
+      setAssignError("Gagal mengirim tugas.")
+    }
     setAssignLoading(false)
   }
 
@@ -207,7 +223,7 @@ export default function PanduanGuruPage() {
                                           size="sm"
                                           variant="outline"
                                           className="text-emerald-600 border-emerald-200 hover:bg-emerald-50"
-                                          onClick={(e) => { e.preventDefault(); e.stopPropagation(); setAssignUnit({ ...unit, levelTitle: lvl?.title || "" }) }}
+                                          onClick={(e) => { e.preventDefault(); e.stopPropagation(); setAssignUnit({ ...unit, levelTitle: lvl?.title || "" }); setJenis("MATERI"); setAssignError("") }}
                                         >
                                           <Send className="w-3.5 h-3.5 mr-1" />
                                           Kirim
@@ -254,6 +270,26 @@ export default function PanduanGuruPage() {
               </div>
             ) : (
               <>
+                <p className="text-xs font-medium text-slate-700 mb-2">Kirim Apa:</p>
+                <div className="grid grid-cols-2 gap-2 mb-4">
+                  {JENIS_OPTIONS.map(opt => (
+                    <button
+                      key={opt.value}
+                      type="button"
+                      onClick={() => setJenis(opt.value)}
+                      className={`text-left px-3 py-2.5 rounded-lg border transition-colors ${
+                        jenis === opt.value ? "border-emerald-300 bg-emerald-50" : "border-slate-100 hover:border-slate-200"
+                      }`}
+                    >
+                      <div className={`flex items-center gap-1.5 text-sm font-medium ${jenis === opt.value ? "text-emerald-700" : "text-slate-800"}`}>
+                        {opt.icon}
+                        {opt.label}
+                      </div>
+                      <p className="text-[11px] text-slate-400 mt-0.5">{opt.desc}</p>
+                    </button>
+                  ))}
+                </div>
+
                 <p className="text-xs font-medium text-slate-700 mb-2">Pilih Kelas:</p>
                 <div className="space-y-1.5 max-h-48 overflow-y-auto mb-4">
                   {groups.length === 0 ? (
@@ -297,6 +333,13 @@ export default function PanduanGuruPage() {
                     />
                   </div>
                 </div>
+
+                {assignError && (
+                  <div className="flex items-center gap-2 text-xs text-red-600 bg-red-50 rounded-lg px-3 py-2 mb-3">
+                    <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                    {assignError}
+                  </div>
+                )}
 
                 <Button
                   onClick={handleAssign}
