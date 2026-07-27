@@ -20,9 +20,9 @@ export function BigtInfoPage({ role }: Props) {
             <BookOpen size={24} className="text-white" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold">BIGT — Tes Global Bahasa Indonesia</h1>
+            <h1 className="text-2xl font-bold">BIGT — Bahasa Indonesia Growth Track</h1>
             <p className={`text-sm ${isGuru ? "text-emerald-200" : "text-violet-200"}`}>
-              Tes kemampuan Bahasa Indonesia dengan layar tes yang fokus, keamanan jawaban, dan penilaian yang terstruktur.
+              Sistem pembelajaran bahasa Indonesia bertahap level A1–C2, dengan umpan balik AI dan peta kesiapan menuju UKBI.
             </p>
           </div>
         </div>
@@ -43,13 +43,13 @@ export function BigtInfoPage({ role }: Props) {
             </ul>
           </div>
           <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-100">
-            <h3 className="font-bold text-emerald-700 mb-2">BIGT (Tes Terpisah)</h3>
+            <h3 className="font-bold text-emerald-700 mb-2">BIGT (Jalur Belajar Terpisah)</h3>
             <ul className="text-sm text-gray-600 space-y-1.5">
-              <li>✓ Layar tes fokus tanpa gangguan</li>
-              <li>✓ Pengatur waktu dan progres bagian yang terstruktur</li>
-              <li>✓ Sistem tanpa kebocoran jawaban</li>
-              <li>✓ Hasil tes dengan standar penilaian</li>
-              <li>✓ Produk tes formal yang terpisah</li>
+              <li>✓ Jalur belajar bertahap A1–C2 selaras kerangka BIPA</li>
+              <li>✓ Peta kesiapan yang menerjemahkan latihan ke gambaran hasil UKBI</li>
+              <li>✓ Umpan balik menulis dan berbicara berbantuan AI</li>
+              <li>✓ Laporan per keterampilan dan rekomendasi materi</li>
+              <li>✓ Sertifikat Kesiapan — bukan sertifikat UKBI</li>
             </ul>
           </div>
         </div>
@@ -58,12 +58,12 @@ export function BigtInfoPage({ role }: Props) {
       {/* Fitur BIGT */}
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
         {[
-          { icon: <Shield size={24} />, title: "Layar Tes", desc: "Layar penuh, fokus, dan minim distraksi" },
-          { icon: <Timer size={24} />, title: "Pengatur Waktu Akurat", desc: "Waktu pengerjaan terukur per bagian" },
-          { icon: <FileText size={24} />, title: "Progres Bagian", desc: "Progres jelas pada setiap bagian tes" },
-          { icon: <Award size={24} />, title: "Hasil dan Skor", desc: "Penilaian dengan standar yang jelas" },
-          { icon: <Shield size={24} />, title: "Keamanan", desc: "Data jawaban terlindungi dan tidak bocor" },
-          { icon: <BookOpen size={24} />, title: "Standar Tes", desc: "Penilaian dibuat lebih terstruktur" },
+          { icon: <BookOpen size={24} />, title: "Jalur Belajar A1–C2", desc: "Materi terbuka bertahap sesuai skala BIPA Badan Bahasa" },
+          { icon: <Shield size={24} />, title: "Umpan Balik AI", desc: "Latihan menulis dan berbicara dinilai otomatis, kapan saja" },
+          { icon: <Timer size={24} />, title: "Latihan Adaptif", desc: "Tingkat kesulitan menyesuaikan kemampuan secara langsung" },
+          { icon: <FileText size={24} />, title: "6 Area Latihan", desc: "Menyimak, Membaca, Berbicara, Menulis, Mediasi, Tugas Terintegrasi" },
+          { icon: <Award size={24} />, title: "Laporan Kemajuan", desc: "Per keterampilan, dengan rekomendasi materi berikutnya" },
+          { icon: <BookOpen size={24} />, title: "Sertifikat Kesiapan", desc: "Verifikasi QR — mencatat capaian belajar, bukan sertifikat UKBI" },
         ].map(f => (
           <div key={f.title} className="bg-white rounded-xl border border-gray-100 p-5 hover:shadow-md transition-shadow">
             <div className={`w-10 h-10 rounded-lg ${isGuru ? "bg-emerald-100 text-emerald-600" : "bg-violet-100 text-violet-600"} flex items-center justify-center mb-3`}>
@@ -78,7 +78,7 @@ export function BigtInfoPage({ role }: Props) {
       {/* CTA */}
       <div className="bg-gray-50 rounded-2xl border border-gray-100 p-8 text-center">
           <h2 className="font-bold text-gray-900 text-lg mb-2">Siap Mencoba BIGT?</h2>
-          <p className="text-sm text-gray-500 mb-6">Anda akan diarahkan ke situs BIGT di tab baru.</p>
+          <p className="text-sm text-gray-500 mb-6">Materi A1–A2 sudah tersedia, level lanjutan menyusul bertahap. Anda akan diarahkan ke situs BIGT di tab baru.</p>
         <a
           href="https://www.bahasacerdas.site"
           target="_blank"
