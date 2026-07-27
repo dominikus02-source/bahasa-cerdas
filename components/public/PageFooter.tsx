@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { Instagram } from "lucide-react";
+import { Instagram, Youtube } from "lucide-react";
 
 const footerLinks = {
   Produk: [
@@ -23,7 +23,8 @@ const footerLinks = {
     { href: "/syarat-ketentuan", label: "Syarat & Ketentuan" },
   ],
   Sosial: [
-    { href: "https://instagram.com/bahasa_cerdas", label: "Instagram" },
+    { href: "https://instagram.com/bahasa_cerdas", label: "Instagram", icon: Instagram, hoverColor: "hover:text-pink-400" },
+    { href: "https://www.youtube.com/@bahasacerdasdotcom", label: "YouTube", icon: Youtube, hoverColor: "hover:text-red-400" },
   ],
 };
 
@@ -66,16 +67,18 @@ export default function PageFooter() {
               <h4 className="font-semibold text-white text-sm mb-4">{title}</h4>
               <nav aria-label={`Tautan ${title}`}>
                 <ul className="space-y-2.5">
-                  {links.map((link) => (
+                  {links.map((link) => {
+                    const Icon = "icon" in link ? link.icon : null;
+                    return (
                     <li key={link.label}>
                       {link.href.startsWith("http") ? (
                         <a
                           href={link.href}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center gap-2 text-sm text-zinc-400 hover:text-pink-400 transition-colors duration-200 focus-ring rounded"
+                          className={`inline-flex items-center gap-2 text-sm text-zinc-400 transition-colors duration-200 focus-ring rounded ${"hoverColor" in link ? link.hoverColor : "hover:text-white"}`}
                         >
-                          <Instagram className="w-4 h-4" />
+                          {Icon && <Icon className="w-4 h-4" />}
                           {link.label}
                         </a>
                       ) : (
@@ -87,7 +90,7 @@ export default function PageFooter() {
                         </Link>
                       )}
                     </li>
-                  ))}
+                  );})}
                 </ul>
               </nav>
             </div>
