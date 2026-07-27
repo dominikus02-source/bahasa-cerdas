@@ -41,3 +41,23 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     return NextResponse.json({ error: "Gagal memuat karya" }, { status: 500 });
   }
 }
+
+export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  try {
+    const user = await getUser();
+    if (!user) return NextResponse.json({ error: "Silakan login" }, { status: 401 });
+
+    const { id } = await params;
+
+    const karya = await db.studentKarya.findUnique({ where: { id }, select: { userId: true } });
+    if (!karya) return NextResponse.json({ error: "Karya tidak ditemukan" }, { status: 404 });
+    if (karya.userId !== user.id) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+
+    await db.studentKarya.delete({ where: { id } });
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error("Error deleting karya:", error);
+    return NextResponse.json({ error: "Gagal menghapus karya" }, { status: 500 });
+  }
+}
