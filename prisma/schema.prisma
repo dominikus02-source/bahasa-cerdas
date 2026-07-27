@@ -805,6 +805,7 @@ model StudentKarya {
   excerpt    String?
   type       StudentKaryaType
   coverImage String?
+  photos     String[]              @default([])
   likesCount Int                   @default(0)
   viewsCount Int                   @default(0)
   isFeatured Boolean               @default(false)

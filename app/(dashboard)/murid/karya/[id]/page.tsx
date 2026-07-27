@@ -9,7 +9,7 @@ import CommentSection from "@/components/arena/CommentSection";
 
 interface KaryaDetail {
   id: string; title: string; content: string; excerpt?: string;
-  type: string; coverImage?: string; likesCount: number; viewsCount: number;
+  type: string; coverImage?: string; photos?: string[]; likesCount: number; viewsCount: number;
   createdAt: string;
   user: { id: string; fullName: string; displayName?: string; avatar?: string; profile?: { school?: string; city?: string } };
   comments: { id: string; content: string; createdAt: string; parentId: string | null; user: { id: string; fullName: string; displayName?: string; avatar: string | null } }[];
@@ -121,6 +121,14 @@ export default function DetailKaryaPage() {
       <div className="prose prose-gray max-w-none mb-8 whitespace-pre-wrap leading-relaxed text-gray-700">
         {karya.content}
       </div>
+
+      {karya.photos && karya.photos.length > 0 && (
+        <div className="grid grid-cols-2 gap-2 mb-8">
+          {karya.photos.map((url) => (
+            <img key={url} src={url} alt={karya.title} className="w-full aspect-square rounded-xl border border-gray-100 object-cover" />
+          ))}
+        </div>
+      )}
 
       <div className="flex items-center gap-4 mb-8 pb-8 border-b border-gray-100">
         <button onClick={handleLike} className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all ${

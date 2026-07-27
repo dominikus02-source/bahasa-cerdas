@@ -104,6 +104,14 @@ export default async function FeedDetailPage({ params }: { params: Promise<{ id:
           {karya.content}
         </div>
 
+        {karya.photos.length > 0 && (
+          <div className="grid grid-cols-2 gap-2 mb-6">
+            {karya.photos.map((url) => (
+              <img key={url} src={url} alt={karya.title} className="w-full aspect-square rounded-xl border border-gray-100 object-cover" />
+            ))}
+          </div>
+        )}
+
         <div className="flex items-center gap-4 py-4 border-t border-gray-100">
           <ToggleLike karyaId={karya.id} initialLiked={userLiked} initialCount={karya._count.likes} />
           <span className="flex items-center gap-1.5 text-sm text-gray-500">

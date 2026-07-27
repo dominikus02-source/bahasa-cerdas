@@ -122,6 +122,7 @@ export async function POST(req: NextRequest) {
       jenis: body.type,
       konten: body.content,
       coverImage: body.coverImage || undefined,
+      photos: Array.isArray(body.photos) ? body.photos : undefined,
     });
 
     if (!parsed.success) {
@@ -142,6 +143,7 @@ export async function POST(req: NextRequest) {
         content: sanitizedContent,
         excerpt,
         coverImage: parsed.data.coverImage || null,
+        photos: parsed.data.photos || [],
       },
     });
 
