@@ -196,5 +196,5 @@
   animation: slide-up 0.3s ease-out forwards;
 }
 .safe-area-bottom {
-  padding-bottom: env(safe-area-inside-bottom, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
 }

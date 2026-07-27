@@ -87,6 +87,13 @@
   padding-bottom: 0 !important;
 }
 
+/* Pages with their own fixed bottom action bar (e.g. tugas/kerjakan) must
+   hide the global tab bar so the two fixed-bottom elements don't stack —
+   the tab bar's higher z-index otherwise covers the page's own CTA. */
+.arena-theme:has(.owns-bottom-bar) .arena-bottom-nav {
+  display: none;
+}
+
 /* Game Hub dark theme */
 .game-hub {
   --gh-bg: #0E0B1A;
