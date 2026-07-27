@@ -2,14 +2,14 @@ import { NextRequest, NextResponse } from "next/server"
 import { db } from "@/lib/db"
 import { invalidateLeagueCache } from "@/lib/ai-queue"
 import { calcLevel, calcLeagueFromXP } from "@/lib/xp"
+import { getUser } from "@/lib/supabase/server"
 
 export async function POST(req: NextRequest) {
   try {
-    const { score, correct, wrong, maxStreak, xpEarned, gameType, roomCode, supabaseId } = await req.json()
-    if (!supabaseId) return NextResponse.json({ error: "supabaseId required" }, { status: 400 })
+    const dbUser = await getUser()
+    if (!dbUser) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
-    const dbUser = await db.user.findUnique({ where: { supabaseId } })
-    if (!dbUser) return NextResponse.json({ error: "User not found" }, { status: 404 })
+    const { score, correct, wrong, maxStreak, xpEarned, gameType, roomCode } = await req.json()
 
     const earnedXp = xpEarned ?? Math.floor((score || 0) / 10)
 

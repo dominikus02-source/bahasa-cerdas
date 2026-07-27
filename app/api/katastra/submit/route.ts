@@ -1,14 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { calcLevel, calcLeagueFromXP, calcXpForNextLevel } from "@/lib/xp";
+import { getUser } from "@/lib/supabase/server";
 
 export async function POST(req: NextRequest) {
   try {
-    const { score, correct, wrong, maxStreak, mode, supabaseId } = await req.json();
-    if (!supabaseId) return NextResponse.json({ error: "supabaseId required" }, { status: 400 });
+    const dbUser = await getUser();
+    if (!dbUser) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-    const dbUser = await db.user.findUnique({ where: { supabaseId } });
-    if (!dbUser) return NextResponse.json({ error: "User not found" }, { status: 404 });
+    const { score, correct, wrong, maxStreak, mode } = await req.json();
     if (score == null) return NextResponse.json({ error: "Score required" }, { status: 400 });
 
     const baseXp = Math.max(0, correct * 15 - wrong * 5);
