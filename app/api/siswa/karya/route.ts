@@ -121,6 +121,7 @@ export async function POST(req: NextRequest) {
       judul: body.title,
       jenis: body.type,
       konten: body.content,
+      coverImage: body.coverImage || undefined,
     });
 
     if (!parsed.success) {
@@ -140,6 +141,7 @@ export async function POST(req: NextRequest) {
         type: parsed.data.jenis,
         content: sanitizedContent,
         excerpt,
+        coverImage: parsed.data.coverImage || null,
       },
     });
 

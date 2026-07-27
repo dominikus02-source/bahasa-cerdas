@@ -92,6 +92,14 @@ export default async function FeedDetailPage({ params }: { params: Promise<{ id:
 
         <h1 className="text-xl font-extrabold text-gray-900 mb-4 arena-balance">{karya.title}</h1>
 
+        {karya.coverImage && (
+          <img
+            src={karya.coverImage}
+            alt={karya.title}
+            className="w-full rounded-2xl border border-gray-100 mb-5 object-cover max-h-96"
+          />
+        )}
+
         <div className="text-base text-gray-700 leading-relaxed whitespace-pre-wrap mb-6">
           {karya.content}
         </div>
