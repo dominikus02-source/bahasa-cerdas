@@ -107,6 +107,17 @@ export async function updateSession(request: NextRequest, nonce?: string) {
     }
   );
 
+  // Sengaja TETAP memakai getUser() di sini, bukan getClaims().
+  //
+  // Blok ini hanya berjalan untuk rute yang tidak masuk publicPaths maupun
+  // selfAuthPaths — jadi /api/, /arena/, /guru/, /murid/ (yaitu hampir seluruh
+  // trafik) sudah melewatinya. Middleware bukan sumber lonjakan panggilan auth;
+  // yang menjadi sumber adalah getUser() di lib/supabase/server.ts.
+  //
+  // Lagipula pemeriksaan email_confirmed_at di bawah butuh objek User utuh:
+  // JwtPayload tidak memuat field itu, sehingga memakai klaim di sini akan
+  // membuat SETIAP pengguna dianggap belum memverifikasi email dan dilempar ke
+  // /verify-email. Risikonya jauh lebih besar daripada hematnya.
   let user: any = null;
   try {
     const result = await supabase.auth.getUser();
