@@ -2,6 +2,7 @@ import { db } from "./db";
 
 const COIN_REWARDS = {
   MENULIS_KARYA: 10,
+  TANTANGAN_MINGGUAN: 25,
   MENDAPAT_LIKE: 2,
   MEMBERI_KOMENTAR: 1,
   DAILY_LOGIN: 5,
@@ -10,6 +11,9 @@ const COIN_REWARDS = {
   STREAK_30: 150,
   STREAK_100: 1000,
 } as const;
+
+/** Koin dasar untuk setiap karya yang diterbitkan (dipakai UI untuk umpan balik). */
+export const COIN_MENULIS_KARYA = COIN_REWARDS.MENULIS_KARYA;
 
 // Every type in this pool MUST have a tracker call somewhere, or the quest can
 // appear on a student's list and be permanently uncompletable. MAIN_GAME and
@@ -63,6 +67,45 @@ export async function awardCoins(
   ]);
 
   return { coins: amount, transaction: tx };
+}
+
+/**
+ * Bonus koin untuk karya yang menjawab tantangan minggu berjalan.
+ *
+ * Hanya cair sekali per periode tantangan. Sama seperti claimQuestReward,
+ * ledger CoinTransaction sendiri yang jadi catatannya (reason + reference),
+ * jadi tidak perlu kolom baru: satu transaksi per challengeId per murid.
+ *
+ * Mengembalikan jumlah koin yang benar-benar diberikan (0 kalau sudah pernah).
+ */
+export async function awardChallengeBonus(
+  userId: string,
+  challengeId: string,
+  karyaId: string
+): Promise<number> {
+  const amount = COIN_REWARDS.TANTANGAN_MINGGUAN;
+
+  try {
+    return await db.$transaction(async (tx) => {
+      const already = await tx.coinTransaction.findFirst({
+        where: { userId, reason: "TANTANGAN_MINGGUAN", reference: challengeId },
+        select: { id: true },
+      });
+      if (already) return 0;
+
+      await tx.coinTransaction.create({
+        data: { userId, amount, reason: "TANTANGAN_MINGGUAN", reference: challengeId },
+      });
+      await tx.user.update({
+        where: { id: userId },
+        data: { coins: { increment: amount } },
+      });
+      return amount;
+    });
+  } catch {
+    // Bonus gagal tidak boleh menggagalkan penyimpanan karyanya.
+    return 0;
+  }
 }
 
 export async function spendCoins(

@@ -6,6 +6,7 @@ import { ArrowLeft, Heart, MessageCircle, Eye, Clock, Sparkles, BookOpen, FileTe
 import { ToggleLike } from "./toggle-like"
 import CommentSection from "@/components/arena/CommentSection"
 import DeleteKaryaButton from "@/components/arena/DeleteKaryaButton"
+import KaryaRewardToast from "@/components/arena/KaryaRewardToast"
 import { getDisplayName } from "@/lib/nickname"
 
 const typeIcon: Record<string, { icon: React.ReactNode }> = {
@@ -58,6 +59,7 @@ export default async function FeedDetailPage({ params }: { params: Promise<{ id:
 
   return (
     <div className="arena-page">
+      <KaryaRewardToast />
       <div className="flex items-center gap-3 px-4 py-4 border-b border-gray-100 bg-white sticky top-0 z-10">
         <Link href="/arena/feed" className="w-9 h-9 rounded-xl bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-gray-200 transition-all">
           <ArrowLeft className="w-5 h-5" />

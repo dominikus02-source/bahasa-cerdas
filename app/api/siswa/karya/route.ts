@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getUser, createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
-import { awardCoins, trackQuestProgress, trackDailyStreak } from "@/lib/coins";
+import { awardCoins, trackQuestProgress, trackDailyStreak, awardChallengeBonus, COIN_MENULIS_KARYA } from "@/lib/coins";
+import { getWeeklyChallenge } from "@/lib/weekly-challenge";
 import { karyaSchema, sanitize } from "@/lib/validations";
 import cache from "@/lib/redis";
 import { invalidateKaryaCache } from "@/lib/ai-queue";
@@ -154,9 +155,22 @@ export async function POST(req: NextRequest) {
     trackQuestProgress(user.id, "MENULIS").catch(() => {});
     if (!user.isFounder) trackDailyStreak(user.id).catch(() => {});
 
+    // Bonus tantangan mingguan — awaited (bukan fire-and-forget) supaya jumlah
+    // koinnya bisa ikut dikembalikan dan langsung ditampilkan ke murid.
+    const challenge = getWeeklyChallenge();
+    const challengeBonus = karya.type === challenge.type
+      ? await awardChallengeBonus(user.id, challenge.id, karya.id)
+      : 0;
+
     invalidateKaryaCache().catch(() => {});
 
-    return NextResponse.json({ karya }, { status: 201 });
+    return NextResponse.json({
+      karya,
+      id: karya.id,
+      coins: COIN_MENULIS_KARYA,
+      challengeBonus,
+      challengeTheme: challengeBonus > 0 ? challenge.theme : null,
+    }, { status: 201 });
   } catch (error) {
     console.error("Error creating karya:", error);
     return NextResponse.json({ error: "Gagal membuat karya" }, { status: 500 });
