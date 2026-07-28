@@ -2,6 +2,8 @@
 
 import { useState, useRef, useEffect } from "react"
 import { Bot, Send, Sparkles, BookOpen, MessageSquare, PenTool, Globe, GraduationCap } from "lucide-react"
+import ReactMarkdown from "react-markdown"
+import remarkGfm from "remark-gfm"
 
 const quickActions = [
   { label: "Arti kata", icon: <BookOpen className="w-4 h-4" />, prompt: "Apa arti kata..." },
@@ -71,10 +73,18 @@ export default function ArenaAIPage() {
                 <Sparkles className="w-4 h-4" />
               </div>
             )}
-            <div className={`max-w-[80%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${
-              msg.role === "user" ? "bg-violet-600 text-white rounded-br-md" : "bg-gray-100 text-gray-800 rounded-bl-md"
+            <div className={`rounded-2xl px-4 py-3 text-sm leading-relaxed ${
+              msg.role === "user"
+                ? "max-w-[80%] bg-violet-600 text-white rounded-br-md"
+                : "max-w-[88%] bg-gray-100 text-gray-800 rounded-bl-md"
             }`}>
-              {msg.content}
+              {msg.role === "assistant" ? (
+                <div className="prose prose-sm max-w-none text-gray-800 prose-headings:text-gray-900 prose-headings:font-bold prose-headings:mt-3 prose-headings:mb-1.5 first:prose-headings:mt-0 prose-p:my-1.5 prose-strong:text-gray-900 prose-a:text-emerald-600 prose-ul:my-1.5 prose-ol:my-1.5 prose-li:my-0.5 prose-code:text-emerald-700 prose-code:bg-emerald-50 prose-code:px-1 prose-code:py-0.5 prose-code:rounded prose-code:before:content-none prose-code:after:content-none prose-table:my-2 prose-th:text-gray-700 prose-blockquote:border-emerald-300 prose-blockquote:text-gray-600">
+                  <ReactMarkdown remarkPlugins={[remarkGfm]}>{msg.content}</ReactMarkdown>
+                </div>
+              ) : (
+                msg.content
+              )}
             </div>
           </div>
         ))}
