@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 import { rateLimitRoute } from "@/lib/rate-limit";
 import { calcLevel, calcLeagueFromXP } from "@/lib/xp";
+import { applyXpBoost } from "@/lib/xp-boost";
 import { ok, err } from "@/lib/api/response";
 import { ERR } from "@/lib/api/errors";
 import type { AttemptSnapshot, AttemptAnswerDetails, UserAnswerRecord } from "@/lib/types/snapshot";
@@ -506,7 +507,10 @@ export async function POST(
     }
 
     // ── XP Update ──
-    const xpGain = isUKBI ? Math.round(rawScore / 10) : Math.round(rawScore);
+    const baseXpGain = isUKBI ? Math.round(rawScore / 10) : Math.round(rawScore);
+    // XP Boost toko koin dikalikan lebih dulu, supaya level & liga di bawah
+    // memakai angka akhir.
+    const { xp: xpGain, boosted: xpBoosted } = await applyXpBoost(dbUser.id, baseXpGain);
     const newXp = dbUser.xp + xpGain;
     await db.user.update({
       where: { id: dbUser.id },
@@ -526,6 +530,8 @@ export async function POST(
       rawScore,
       seksiScores: buildSectionScores(sectionScores),
       passed: finalScore >= passingThreshold,
+      xpEarned: xpGain,
+      xpBoosted,
     };
 
     if (!isUKBI) {

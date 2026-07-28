@@ -12,6 +12,7 @@ import { getUser } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 import { calcLevel, calcLeagueFromXP } from "@/lib/xp";
 import { harvestJalurQuestions, pickRampedQuestions } from "@/lib/game/harvest";
+import { applyXpBoost } from "@/lib/xp-boost";
 
 export const dynamic = "force-dynamic";
 
@@ -37,11 +38,13 @@ export async function POST(req: NextRequest) {
   const correct = Math.min(Math.max(Number(body.correct) || 0, 0), total);
 
   // Server-capped reward — prevents inflated client claims / XP farming.
-  const xpEarned = correct * 5; // max 100 XP per run
+  const baseXp = correct * 5; // max 100 XP per run
 
   const dbUser = await db.user.findUnique({ where: { id: user.id }, select: { xp: true, level: true } });
   if (!dbUser) return NextResponse.json({ error: "User not found" }, { status: 404 });
 
+  // XP Boost toko koin dikalikan sebelum level & liga dihitung.
+  const { xp: xpEarned, boosted } = await applyXpBoost(user.id, baseXp);
   const newXp = dbUser.xp + xpEarned;
   const newLevel = calcLevel(newXp);
   const newLeague = calcLeagueFromXP(newXp);
@@ -53,6 +56,8 @@ export async function POST(req: NextRequest) {
 
   return NextResponse.json({
     xpEarned,
+    baseXp,
+    boosted,
     newXp,
     newLevel,
     leveledUp: newLevel > dbUser.level,

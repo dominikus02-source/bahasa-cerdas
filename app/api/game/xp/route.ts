@@ -3,6 +3,7 @@ import { db } from "@/lib/db"
 import { invalidateLeagueCache } from "@/lib/ai-queue"
 import { calcLevel, calcLeagueFromXP } from "@/lib/xp"
 import { getUser } from "@/lib/supabase/server"
+import { applyXpBoost } from "@/lib/xp-boost"
 
 export async function POST(req: NextRequest) {
   try {
@@ -11,7 +12,10 @@ export async function POST(req: NextRequest) {
 
     const { score, correct, wrong, maxStreak, xpEarned, gameType, roomCode } = await req.json()
 
-    const earnedXp = xpEarned ?? Math.floor((score || 0) / 10)
+    const baseXp = xpEarned ?? Math.floor((score || 0) / 10)
+    // XP Boost toko koin dikalikan sebelum apa pun disimpan, supaya level & liga
+    // di bawah ikut memakai angka akhir.
+    const { xp: earnedXp, boosted } = await applyXpBoost(dbUser.id, baseXp)
 
     const oldLevel = dbUser.level
     const newXp = dbUser.xp + earnedXp
@@ -54,6 +58,8 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({
       xpEarned: earnedXp,
+      baseXp,
+      boosted,
       totalXp: newXp,
       oldLevel,
       newLevel,

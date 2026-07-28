@@ -2,6 +2,7 @@ import { getUser } from '@/lib/supabase/server';
 import { db } from '@/lib/db';
 import { NextResponse } from 'next/server';
 import { calcLevel, calcLeagueFromXP } from '@/lib/xp';
+import { applyXpBoost } from '@/lib/xp-boost';
 
 export async function POST(request: Request) {
   try {
@@ -18,6 +19,12 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Session not found' }, { status: 404 });
     }
 
+    // XP Boost toko koin dihitung sekali di depan, lalu dipakai baik untuk baris
+    // GameResult maupun User.xp — kalau berbeda, riwayat game akan bertentangan
+    // dengan XP yang benar-benar diterima murid.
+    const baseXp = xpEarned || Math.floor(score / 10)
+    const { xp: earned, boosted } = await applyXpBoost(user.id, baseXp)
+
     const result = await db.gameResult.create({
       data: {
         roomId,
@@ -28,11 +35,10 @@ export async function POST(request: Request) {
         wrong,
         maxStreak,
         avgTime,
-        xpEarned: xpEarned || Math.floor(score / 10),
+        xpEarned: earned,
       },
     });
 
-    const earned = xpEarned || Math.floor(score / 10)
     await db.user.update({
       where: { id: user.id },
       data: { xp: { increment: earned } },
@@ -47,7 +53,7 @@ export async function POST(request: Request) {
       },
     });
 
-    return NextResponse.json({ result }, { status: 201 });
+    return NextResponse.json({ result, xpEarned: earned, baseXp, boosted }, { status: 201 });
   } catch (error) {
     console.error('Error saving game result:', error);
     return NextResponse.json({ error: 'Failed to save result' }, { status: 500 });

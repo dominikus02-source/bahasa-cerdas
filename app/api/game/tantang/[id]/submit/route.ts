@@ -13,6 +13,7 @@ import type { Prisma } from "@prisma/client";
 import { getUser } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 import { calcLevel, calcLeagueFromXP } from "@/lib/xp";
+import { applyXpBoost } from "@/lib/xp-boost";
 
 export const dynamic = "force-dynamic";
 
@@ -65,10 +66,13 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   });
   const wrong = questions.length - correct;
   const score = correct * 10;
-  const xpEarned = Math.min(correct * 5, 50);
+  const baseXp = Math.min(correct * 5, 50);
 
   const dbUser = await db.user.findUnique({ where: { id: user.id }, select: { xp: true, level: true } });
   if (!dbUser) return NextResponse.json({ error: "User not found" }, { status: 404 });
+
+  // XP Boost toko koin — dipakai untuk GameResult sekaligus User.xp/level/liga.
+  const { xp: xpEarned, boosted } = await applyXpBoost(user.id, baseXp);
   const newXp = dbUser.xp + xpEarned;
 
   const theyFinished = Boolean(other?.finishedAt);
@@ -145,6 +149,8 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     benar: correct,
     salah: wrong,
     xpEarned,
+    baseXp,
+    boosted,
     review,
     lawan: other
       ? { nama: other.playerName, selesai: theyFinished, skor: theyFinished ? other.score : null }

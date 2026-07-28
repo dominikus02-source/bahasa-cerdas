@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { calcLevel, calcLeagueFromXP, calcXpForNextLevel } from "@/lib/xp";
 import { getUser } from "@/lib/supabase/server";
+import { applyXpBoost } from "@/lib/xp-boost";
 
 export async function POST(req: NextRequest) {
   try {
@@ -13,7 +14,9 @@ export async function POST(req: NextRequest) {
 
     const baseXp = Math.max(0, correct * 15 - wrong * 5);
     const streakBonus = Math.min(maxStreak || 0, 10) * 5;
-    const totalXp = baseXp + streakBonus + (score >= 100 ? 10 : 0);
+    const rawXp = baseXp + streakBonus + (score >= 100 ? 10 : 0);
+    // Dikalikan dulu, supaya level & liga di bawah memakai XP akhir.
+    const { xp: totalXp, boosted } = await applyXpBoost(dbUser.id, rawXp);
 
     const now = new Date();
     const lastActive = dbUser.lastActiveAt;
@@ -51,6 +54,8 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({
       xpEarned: totalXp,
+      baseXp: rawXp,
+      boosted,
       totalXp: newXp,
       oldLevel,
       newLevel,

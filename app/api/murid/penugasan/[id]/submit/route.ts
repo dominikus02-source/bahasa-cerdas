@@ -4,6 +4,7 @@ import { getUser } from "@/lib/supabase/server";
 import { buildLatihan, buildKuis, gradeLatihan } from "@/lib/penugasan-content";
 import { upsertNilaiOtomatis } from "@/lib/penilaian/upsert-nilai";
 import { calcLevel, calcLeagueFromXP } from "@/lib/xp";
+import { applyXpBoost } from "@/lib/xp-boost";
 
 // Submit a Penugasan: grade the Latihan server-side, store the score, and push
 // it into the teacher's Nilai rekap. XP is awarded once (first completion).
@@ -64,11 +65,14 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
       }
       // Award XP + coins only on the first completion.
       if (!alreadyDone) {
-        const newXp = (user.xp || 0) + (penugasan.unit.xpReward || 0)
+        // XP Boost toko koin dikalikan lebih dulu supaya level & liga memakai
+        // angka akhir yang sama dengan yang benar-benar ditambahkan.
+        const { xp: xpDiberikan } = await applyXpBoost(user.id, penugasan.unit.xpReward || 0)
+        const newXp = (user.xp || 0) + xpDiberikan
         await db.user.update({
           where: { id: user.id },
           data: {
-            xp: { increment: penugasan.unit.xpReward || 0 },
+            xp: { increment: xpDiberikan },
             coins: { increment: penugasan.unit.coinReward || 0 },
             level: calcLevel(newXp),
             league: calcLeagueFromXP(newXp),

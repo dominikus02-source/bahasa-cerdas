@@ -194,6 +194,12 @@ model User {
   saldo              Int                     @default(0)
   totalEarned        Int                     @default(0)
   coins              Int                     @default(0)
+  // Kosmetik yang sedang dipakai. Isinya `icon` dari StoreItem yang dimiliki
+  // (mis. "frame-gold", "color-purple"), null artinya tidak memakai apa pun.
+  equippedFrame      String?
+  equippedNameColor  String?
+  equippedBadge      String?
+  equippedEffect     String?
   totalLikes         Int                     @default(0)
   totalViews         Int                     @default(0)
   createdAt          DateTime                @default(now())

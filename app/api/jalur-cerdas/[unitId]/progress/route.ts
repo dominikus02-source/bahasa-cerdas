@@ -3,6 +3,7 @@ import { db } from "@/lib/db"
 import { trackQuestProgress } from "@/lib/coins"
 import { getUser } from "@/lib/supabase/server"
 import { calcLevel, calcLeagueFromXP } from "@/lib/xp"
+import { applyXpBoost } from "@/lib/xp-boost"
 
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ unitId: string }> }) {
   try {
@@ -35,8 +36,11 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ un
       return NextResponse.json({ progress, isComplete: false, earnedXp: 0 })
     }
 
-    const XP_REWARD = 50
+    const BASE_XP_REWARD = 50
     const COIN_REWARD = 10
+    // XP Boost dari toko koin. Angka akhir juga yang dicatat di UserUnitProgress,
+    // supaya rekap XP belajar tetap sama dengan XP yang masuk ke User.xp.
+    const { xp: XP_REWARD, boosted } = await applyXpBoost(user.id, BASE_XP_REWARD)
 
     const progress = await db.userUnitProgress.upsert({
       where: { userId_unitId: { userId: user.id, unitId } },
@@ -86,7 +90,13 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ un
       data: { level: jcLevel, league: jcLeague },
     })
 
-    return NextResponse.json({ progress, isComplete: true, earnedXp: XP_REWARD })
+    return NextResponse.json({
+      progress,
+      isComplete: true,
+      earnedXp: XP_REWARD,
+      baseXp: BASE_XP_REWARD,
+      boosted,
+    })
   } catch (error) {
     console.error("Progress error:", error)
     return NextResponse.json({ error: "Internal error" }, { status: 500 })
