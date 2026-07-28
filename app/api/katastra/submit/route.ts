@@ -2,9 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { calcLevel, calcLeagueFromXP, calcXpForNextLevel } from "@/lib/xp";
 import { getUser } from "@/lib/supabase/server";
-import { applyXpBoost } from "@/lib/xp-boost";
 import { rateLimitRoute } from "@/lib/rate-limit";
-import { batasiXpSubmit } from "@/lib/xp-guard";
+import { awardXp } from "@/lib/award-xp";
 
 export async function POST(req: NextRequest) {
   try {
@@ -33,9 +32,13 @@ export async function POST(req: NextRequest) {
 
     const baseXp = Math.max(0, benar * 15 - salah * 5);
     const streakBonus = Math.min(streakMaks, 10) * 5;
-    const rawXp = batasiXpSubmit("KATASTRA", baseXp + streakBonus + (score >= 100 ? 10 : 0));
-    // Dikalikan dulu, supaya level & liga di bawah memakai XP akhir.
-    const { xp: totalXp, boosted } = await applyXpBoost(dbUser.id, rawXp);
+    const rawXp = baseXp + streakBonus + (score >= 100 ? 10 : 0);
+
+    // Lewat pintu tunggal: batas per submit, kuota harian dari XpLedger, boost,
+    // pencatatan jejak, dan pembaruan xp/level/liga sekaligus.
+    const hasil = await awardXp(dbUser.id, "KATASTRA", rawXp, mode || undefined);
+    const totalXp = hasil.xpDiberikan;
+    const boosted = hasil.boosted;
 
     const now = new Date();
     const lastActive = dbUser.lastActiveAt;
@@ -54,27 +57,23 @@ export async function POST(req: NextRequest) {
       newStreak = 1;
     }
 
-    const oldLevel = dbUser.level;
-    const newXp = dbUser.xp + totalXp;
-    const newLevel = calcLevel(newXp);
-    const levelUp = newLevel > oldLevel;
-    const newLeague = calcLeagueFromXP(newXp);
+    // xp/level/liga sudah disimpan awardXp(); di sini tinggal streak harian.
+    const oldLevel = hasil.levelLama;
+    const newXp = hasil.totalXp;
+    const newLevel = hasil.levelBaru;
+    const levelUp = hasil.naikLevel;
+    const newLeague = hasil.liga;
 
     await db.user.update({
       where: { id: dbUser.id },
-      data: {
-        xp: newXp,
-        level: newLevel,
-        streak: newStreak,
-        lastActiveAt: now,
-        league: newLeague,
-      },
+      data: { streak: newStreak, lastActiveAt: now },
     });
 
     return NextResponse.json({
       xpEarned: totalXp,
       baseXp: rawXp,
       boosted,
+      kuotaHarianHabis: hasil.kuotaHabis,
       totalXp: newXp,
       oldLevel,
       newLevel,

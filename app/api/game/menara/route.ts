@@ -12,7 +12,7 @@ import { getUser } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 import { calcLevel, calcLeagueFromXP } from "@/lib/xp";
 import { harvestJalurQuestions, pickRampedQuestions } from "@/lib/game/harvest";
-import { applyXpBoost } from "@/lib/xp-boost";
+import { awardXp } from "@/lib/award-xp";
 import { rateLimitRoute } from "@/lib/rate-limit";
 
 export const dynamic = "force-dynamic";
@@ -50,19 +50,14 @@ export async function POST(req: NextRequest) {
   // Server-capped reward — prevents inflated client claims / XP farming.
   const baseXp = correct * 5; // max 100 XP per run
 
-  const dbUser = await db.user.findUnique({ where: { id: user.id }, select: { xp: true, level: true } });
-  if (!dbUser) return NextResponse.json({ error: "User not found" }, { status: 404 });
-
-  // XP Boost toko koin dikalikan sebelum level & liga dihitung.
-  const { xp: xpEarned, boosted } = await applyXpBoost(user.id, baseXp);
-  const newXp = dbUser.xp + xpEarned;
-  const newLevel = calcLevel(newXp);
-  const newLeague = calcLeagueFromXP(newXp);
-
-  await db.user.update({
-    where: { id: user.id },
-    data: { xp: newXp, level: newLevel, league: newLeague, lastActiveAt: new Date() },
-  });
+  // Lewat pintu tunggal: batas per submit, kuota harian, boost, jejak ledger,
+  // dan pembaruan xp/level/liga sekaligus.
+  const hasil = await awardXp(user.id, "MENARA", baseXp);
+  const xpEarned = hasil.xpDiberikan;
+  const boosted = hasil.boosted;
+  const newXp = hasil.totalXp;
+  const newLevel = hasil.levelBaru;
+  const newLeague = hasil.liga;
 
   return NextResponse.json({
     xpEarned,
@@ -70,6 +65,7 @@ export async function POST(req: NextRequest) {
     boosted,
     newXp,
     newLevel,
-    leveledUp: newLevel > dbUser.level,
+    kuotaHarianHabis: hasil.kuotaHabis,
+    leveledUp: hasil.naikLevel,
   });
 }

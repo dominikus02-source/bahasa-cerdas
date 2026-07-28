@@ -3,7 +3,7 @@ import { db } from "@/lib/db"
 import { trackQuestProgress } from "@/lib/coins"
 import { getUser } from "@/lib/supabase/server"
 import { calcLevel, calcLeagueFromXP } from "@/lib/xp"
-import { applyXpBoost } from "@/lib/xp-boost"
+import { awardXp } from "@/lib/award-xp"
 
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ unitId: string }> }) {
   try {
@@ -40,7 +40,12 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ un
     const COIN_REWARD = 10
     // XP Boost dari toko koin. Angka akhir juga yang dicatat di UserUnitProgress,
     // supaya rekap XP belajar tetap sama dengan XP yang masuk ke User.xp.
-    const { xp: XP_REWARD, boosted } = await applyXpBoost(user.id, BASE_XP_REWARD)
+    // Lewat pintu tunggal: batas per submit, kuota harian, boost, jejak ledger,
+    // dan pembaruan xp/level/liga sekaligus. Unit ini dijaga "Already completed"
+    // di atas, jadi XP-nya memang hanya bisa cair sekali per unit.
+    const hasilXp = await awardXp(user.id, "JALUR_CERDAS", BASE_XP_REWARD, unitId)
+    const XP_REWARD = hasilXp.xpDiberikan
+    const boosted = hasilXp.boosted
 
     const progress = await db.userUnitProgress.upsert({
       where: { userId_unitId: { userId: user.id, unitId } },
@@ -57,9 +62,10 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ un
       },
     })
 
+    // xp/level/liga sudah disimpan awardXp(); di sini tinggal koinnya.
     await db.user.update({
       where: { id: user.id },
-      data: { xp: { increment: XP_REWARD }, coins: { increment: COIN_REWARD }, lastActiveAt: new Date() },
+      data: { coins: { increment: COIN_REWARD }, lastActiveAt: new Date() },
     })
 
     // Daily quest: finishing a unit advances the learning mission. Runs after

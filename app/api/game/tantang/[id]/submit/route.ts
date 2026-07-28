@@ -13,7 +13,7 @@ import type { Prisma } from "@prisma/client";
 import { getUser } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 import { calcLevel, calcLeagueFromXP } from "@/lib/xp";
-import { applyXpBoost } from "@/lib/xp-boost";
+import { awardXp } from "@/lib/award-xp";
 
 export const dynamic = "force-dynamic";
 
@@ -71,9 +71,13 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   const dbUser = await db.user.findUnique({ where: { id: user.id }, select: { xp: true, level: true } });
   if (!dbUser) return NextResponse.json({ error: "User not found" }, { status: 404 });
 
-  // XP Boost toko koin — dipakai untuk GameResult sekaligus User.xp/level/liga.
-  const { xp: xpEarned, boosted } = await applyXpBoost(user.id, baseXp);
-  const newXp = dbUser.xp + xpEarned;
+  // Lewat pintu tunggal supaya duel ikut terhitung ke kuota harian dan tercatat
+  // di ledger. `correct` di sini sudah dihitung server dari jawaban, jadi aman —
+  // ini soal konsistensi pencatatan, bukan menambal lubang.
+  const hasil = await awardXp(user.id, "TANTANG", baseXp, room.id);
+  const xpEarned = hasil.xpDiberikan;
+  const boosted = hasil.boosted;
+  const newXp = hasil.totalXp;
 
   const theyFinished = Boolean(other?.finishedAt);
   const bothDone = theyFinished; // aku selesai sekarang
@@ -96,10 +100,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
         xpEarned,
       },
     }),
-    db.user.update({
-      where: { id: user.id },
-      data: { xp: newXp, level: calcLevel(newXp), league: calcLeagueFromXP(newXp), lastActiveAt: new Date() },
-    }),
+    // xp/level/liga sudah disimpan awardXp() di atas.
     db.gameRoom.update({
       where: { id: room.id },
       data: bothDone ? { status: "FINISHED", endedAt: new Date() } : { status: "IN_PROGRESS", startedAt: new Date() },

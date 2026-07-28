@@ -1,10 +1,8 @@
 import { getUser } from '@/lib/supabase/server';
 import { db } from '@/lib/db';
 import { NextResponse } from 'next/server';
-import { calcLevel, calcLeagueFromXP } from '@/lib/xp';
-import { applyXpBoost } from '@/lib/xp-boost';
+import { awardXp } from '@/lib/award-xp';
 import { rateLimitRoute } from '@/lib/rate-limit';
-import { batasiXpSubmit } from '@/lib/xp-guard';
 
 export async function POST(request: Request) {
   try {
@@ -43,8 +41,13 @@ export async function POST(request: Request) {
     // Sebelumnya `xpEarned || ...` memakai angka kiriman klien apa adanya —
     // lubang yang sama dengan /api/game/xp yang dipakai memanen XP autoclicker.
     const skor = Number.isFinite(score) && score > 0 ? Math.floor(score) : 0;
-    const baseXp = batasiXpSubmit('GAME', Math.floor(skor / 10))
-    const { xp: earned, boosted } = await applyXpBoost(user.id, baseXp)
+    const baseXp = Math.floor(skor / 10)
+
+    // Lewat pintu tunggal: batas per submit, kuota harian, boost, jejak ledger,
+    // dan pembaruan xp/level/liga sekaligus.
+    const hasil = await awardXp(user.id, 'GAME', baseXp, session.id)
+    const earned = hasil.xpDiberikan
+    const boosted = hasil.boosted
 
     const result = await db.gameResult.create({
       data: {
@@ -60,21 +63,15 @@ export async function POST(request: Request) {
       },
     });
 
-    await db.user.update({
-      where: { id: user.id },
-      data: { xp: { increment: earned } },
-    });
-    const updatedUser = await db.user.findUnique({ where: { id: user.id }, select: { xp: true } })
-    const finalXp = updatedUser?.xp ?? (user.xp || 0) + earned
-    await db.user.update({
-      where: { id: user.id },
-      data: {
-        level: calcLevel(finalXp),
-        league: calcLeagueFromXP(finalXp),
-      },
-    });
-
-    return NextResponse.json({ result, xpEarned: earned, baseXp, boosted }, { status: 201 });
+    // xp/level/liga sudah disimpan awardXp() dalam satu transaksi — tidak perlu
+    // increment lalu baca-ulang lalu update lagi seperti sebelumnya.
+    return NextResponse.json({
+      result,
+      xpEarned: earned,
+      baseXp,
+      boosted,
+      kuotaHarianHabis: hasil.kuotaHabis,
+    }, { status: 201 });
   } catch (error) {
     console.error('Error saving game result:', error);
     return NextResponse.json({ error: 'Failed to save result' }, { status: 500 });

@@ -253,6 +253,7 @@ model User {
   videos             Video[]
   withdrawals        Withdrawal[]
   coinTransactions   CoinTransaction[]
+  xpLedger           XpLedger[]
   dailyQuests        DailyQuest[]
   userItems          UserItem[]
   chatMessages       ChatMessage[]
@@ -868,6 +869,26 @@ enum StudentKaryaType {
   ANEKDOT
   PANTUN
   OPINI
+}
+
+/// Jejak setiap pemberian XP. Dipakai untuk menegakkan kuota harian di SEMUA
+/// jalur (sebelumnya kuota hanya bisa dihitung dari GameResult, sehingga
+/// KataStra tidak terpantau sama sekali) sekaligus jadi bahan audit kalau ada
+/// lonjakan XP mencurigakan lagi.
+model XpLedger {
+  id        String   @id @default(cuid())
+  userId    String
+  amount    Int
+  /// Sumber XP: GAME, KATASTRA, MENARA, TANTANG, JALUR_CERDAS, KOMPETENSI, PENUGASAN, KOTAK_HARIAN
+  source    String
+  /// Penanda opsional (sessionId / unitId / paketId) untuk penelusuran.
+  reference String?
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@index([createdAt])
 }
 
 model CoinTransaction {
