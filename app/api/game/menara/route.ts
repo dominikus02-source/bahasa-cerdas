@@ -13,6 +13,7 @@ import { db } from "@/lib/db";
 import { calcLevel, calcLeagueFromXP } from "@/lib/xp";
 import { harvestJalurQuestions, pickRampedQuestions } from "@/lib/game/harvest";
 import { applyXpBoost } from "@/lib/xp-boost";
+import { rateLimitRoute } from "@/lib/rate-limit";
 
 export const dynamic = "force-dynamic";
 
@@ -32,6 +33,15 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   const user = await getUser();
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  // Nilai per ronde sudah dijepit di bawah, tapi tanpa jeda sebuah skrip masih
+  // bisa mengulang ronde ratusan kali per menit.
+  const limited = await rateLimitRoute(req, {
+    maxRequests: 20,
+    windowSeconds: 60,
+    identifier: "game-menara",
+  });
+  if (limited) return limited;
 
   const body = await req.json().catch(() => ({}));
   const total = Math.min(Math.max(Number(body.total) || 0, 0), 20);

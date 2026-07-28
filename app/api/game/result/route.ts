@@ -3,13 +3,22 @@ import { db } from '@/lib/db';
 import { NextResponse } from 'next/server';
 import { calcLevel, calcLeagueFromXP } from '@/lib/xp';
 import { applyXpBoost } from '@/lib/xp-boost';
+import { rateLimitRoute } from '@/lib/rate-limit';
+import { batasiXpSubmit } from '@/lib/xp-guard';
 
 export async function POST(request: Request) {
   try {
     const user = await getUser();
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-    const { roomId, score, correct, wrong, maxStreak, avgTime, xpEarned } = await request.json();
+    const limited = await rateLimitRoute(request, {
+      maxRequests: 20,
+      windowSeconds: 60,
+      identifier: 'game-result',
+    });
+    if (limited) return limited;
+
+    const { roomId, score, correct, wrong, maxStreak, avgTime } = await request.json();
 
     const session = await db.gameSession.findFirst({
       where: { roomId, userId: user.id },
@@ -19,10 +28,22 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Session not found' }, { status: 404 });
     }
 
-    // XP Boost toko koin dihitung sekali di depan, lalu dipakai baik untuk baris
-    // GameResult maupun User.xp — kalau berbeda, riwayat game akan bertentangan
-    // dengan XP yang benar-benar diterima murid.
-    const baseXp = xpEarned || Math.floor(score / 10)
+    // Satu sesi hanya boleh menghasilkan satu GameResult. Tanpa ini, memanggil
+    // ulang endpoint dengan roomId yang sama memberi XP berkali-kali dari satu
+    // permainan.
+    const sudahAda = await db.gameResult.findUnique({
+      where: { sessionId: session.id },
+      select: { id: true },
+    });
+    if (sudahAda) {
+      return NextResponse.json({ error: 'Hasil permainan ini sudah tercatat' }, { status: 409 });
+    }
+
+    // XP dihitung server dari skor, lalu dipangkas ke batas per submit.
+    // Sebelumnya `xpEarned || ...` memakai angka kiriman klien apa adanya —
+    // lubang yang sama dengan /api/game/xp yang dipakai memanen XP autoclicker.
+    const skor = Number.isFinite(score) && score > 0 ? Math.floor(score) : 0;
+    const baseXp = batasiXpSubmit('GAME', Math.floor(skor / 10))
     const { xp: earned, boosted } = await applyXpBoost(user.id, baseXp)
 
     const result = await db.gameResult.create({
@@ -30,7 +51,7 @@ export async function POST(request: Request) {
         roomId,
         userId: user.id,
         sessionId: session.id,
-        finalScore: score,
+        finalScore: skor,
         correct,
         wrong,
         maxStreak,

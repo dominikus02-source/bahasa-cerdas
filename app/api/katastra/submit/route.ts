@@ -3,18 +3,37 @@ import { db } from "@/lib/db";
 import { calcLevel, calcLeagueFromXP, calcXpForNextLevel } from "@/lib/xp";
 import { getUser } from "@/lib/supabase/server";
 import { applyXpBoost } from "@/lib/xp-boost";
+import { rateLimitRoute } from "@/lib/rate-limit";
+import { batasiXpSubmit } from "@/lib/xp-guard";
 
 export async function POST(req: NextRequest) {
   try {
     const dbUser = await getUser();
     if (!dbUser) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
+    // Jeda antar-submit — satu ronde KataStra berdurasi puluhan detik.
+    const limited = await rateLimitRoute(req, {
+      maxRequests: 20,
+      windowSeconds: 60,
+      identifier: "katastra-submit",
+    });
+    if (limited) return limited;
+
     const { score, correct, wrong, maxStreak, mode } = await req.json();
     if (score == null) return NextResponse.json({ error: "Score required" }, { status: 400 });
 
-    const baseXp = Math.max(0, correct * 15 - wrong * 5);
-    const streakBonus = Math.min(maxStreak || 0, 10) * 5;
-    const rawXp = baseXp + streakBonus + (score >= 100 ? 10 : 0);
+    // `correct`, `wrong`, dan `maxStreak` semuanya berasal dari klien, jadi
+    // rumus di bawah bisa menghasilkan angka apa pun kalau nilainya dikarang
+    // (mis. correct: 100000 -> 1,5 juta XP). Dinormalkan dulu ke rentang yang
+    // masuk akal untuk satu ronde, lalu hasil akhirnya dipangkas lagi ke
+    // BATAS_XP_PER_SUBMIT.KATASTRA.
+    const benar = Math.max(0, Math.min(Math.floor(Number(correct) || 0), 50));
+    const salah = Math.max(0, Math.min(Math.floor(Number(wrong) || 0), 50));
+    const streakMaks = Math.max(0, Math.min(Math.floor(Number(maxStreak) || 0), 50));
+
+    const baseXp = Math.max(0, benar * 15 - salah * 5);
+    const streakBonus = Math.min(streakMaks, 10) * 5;
+    const rawXp = batasiXpSubmit("KATASTRA", baseXp + streakBonus + (score >= 100 ? 10 : 0));
     // Dikalikan dulu, supaya level & liga di bawah memakai XP akhir.
     const { xp: totalXp, boosted } = await applyXpBoost(dbUser.id, rawXp);
 
