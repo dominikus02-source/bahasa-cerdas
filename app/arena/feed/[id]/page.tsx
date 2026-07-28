@@ -8,6 +8,8 @@ import CommentSection from "@/components/arena/CommentSection"
 import DeleteKaryaButton from "@/components/arena/DeleteKaryaButton"
 import KaryaRewardToast from "@/components/arena/KaryaRewardToast"
 import { getDisplayName } from "@/lib/nickname"
+import UserAvatar from "@/components/arena/UserAvatar"
+import UserName from "@/components/arena/UserName"
 
 const typeIcon: Record<string, { icon: React.ReactNode }> = {
   PUISI: { icon: <Sparkles className="w-5 h-5" /> },
@@ -30,7 +32,12 @@ export default async function FeedDetailPage({ params }: { params: Promise<{ id:
   const karya = await db.studentKarya.findUnique({
     where: { id },
     include: {
-      user: { select: { id: true, fullName: true, nickname: true, avatar: true } },
+      user: {
+        select: {
+          id: true, fullName: true, nickname: true, avatar: true,
+          equippedFrame: true, equippedNameColor: true, equippedBadge: true,
+        },
+      },
       _count: { select: { likes: true, comments: true } },
       likes: { where: { userId: user.id }, take: 1 },
     },
@@ -43,7 +50,14 @@ export default async function FeedDetailPage({ params }: { params: Promise<{ id:
 
   const rawComments = await db.studentKaryaComment.findMany({
     where: { karyaId: id },
-    include: { user: { select: { id: true, fullName: true, nickname: true, avatar: true } } },
+    include: {
+      user: {
+        select: {
+          id: true, fullName: true, nickname: true, avatar: true,
+          equippedFrame: true, equippedNameColor: true, equippedBadge: true,
+        },
+      },
+    },
     orderBy: { createdAt: "desc" },
     take: 20,
   })
@@ -71,11 +85,21 @@ export default async function FeedDetailPage({ params }: { params: Promise<{ id:
         <div className="flex items-center gap-3 mb-4">
           {karya.user ? (
             <>
-              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center text-white font-bold text-base shrink-0 overflow-hidden">
-                {karya.user.avatar ? <img src={karya.user.avatar} alt="" className="w-full h-full object-cover" /> : authorName.charAt(0).toUpperCase() || "?"}
-              </div>
+              <UserAvatar
+                size={48}
+                avatar={karya.user.avatar}
+                frame={karya.user.equippedFrame}
+                initials={authorName.charAt(0).toUpperCase() || "?"}
+                textClassName="text-base"
+              />
               <div>
-                <p className="font-bold text-gray-900 text-base">{authorName}</p>
+                <UserName
+                  name={authorName}
+                  color={karya.user.equippedNameColor}
+                  badge={karya.user.equippedBadge}
+                  className="font-bold text-gray-900 text-base"
+                  badgeSize={16}
+                />
                 <p className="text-sm text-gray-500">
                   {typeLabel[karya.type] || karya.type}
                 </p>

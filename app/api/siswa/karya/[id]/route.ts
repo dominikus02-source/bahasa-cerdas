@@ -10,10 +10,21 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     const karya = await db.studentKarya.findUnique({
       where: { id },
       include: {
-        user: { select: { id: true, fullName: true, nickname: true, avatar: true, profile: { select: { school: true, city: true } } } },
+        user: {
+          select: {
+            id: true, fullName: true, nickname: true, avatar: true,
+            equippedFrame: true, equippedNameColor: true, equippedBadge: true,
+            profile: { select: { school: true, city: true } },
+          },
+        },
         comments: {
           include: {
-            user: { select: { id: true, fullName: true, nickname: true, avatar: true } },
+            user: {
+              select: {
+                id: true, fullName: true, nickname: true, avatar: true,
+                equippedFrame: true, equippedNameColor: true, equippedBadge: true,
+              },
+            },
           },
           orderBy: { createdAt: "asc" },
         },

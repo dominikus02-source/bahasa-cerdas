@@ -6,13 +6,21 @@ import Link from "next/link";
 import { ArrowLeft, Heart, Share2, Clock, Eye, PenLine, BookOpen, Newspaper, MessageCircle, Lightbulb, Music } from "lucide-react";
 import SafeMediaImage from "@/components/shared/safe-media-image";
 import CommentSection from "@/components/arena/CommentSection";
+import UserAvatar from "@/components/arena/UserAvatar";
+import UserName from "@/components/arena/UserName";
+
+interface CosmeticFields {
+  equippedFrame?: string | null;
+  equippedNameColor?: string | null;
+  equippedBadge?: string | null;
+}
 
 interface KaryaDetail {
   id: string; title: string; content: string; excerpt?: string;
   type: string; coverImage?: string; photos?: string[]; likesCount: number; viewsCount: number;
   createdAt: string;
-  user: { id: string; fullName: string; displayName?: string; avatar?: string; profile?: { school?: string; city?: string } };
-  comments: { id: string; content: string; createdAt: string; parentId: string | null; user: { id: string; fullName: string; displayName?: string; avatar: string | null } }[];
+  user: { id: string; fullName: string; displayName?: string; avatar?: string; profile?: { school?: string; city?: string } } & CosmeticFields;
+  comments: { id: string; content: string; createdAt: string; parentId: string | null; user: { id: string; fullName: string; displayName?: string; avatar: string | null } & CosmeticFields }[];
 }
 
 const nameOf = (u: { fullName: string; displayName?: string }) => u.displayName || u.fullName;
@@ -79,11 +87,25 @@ export default function DetailKaryaPage() {
       </button>
 
       <div className="flex items-center gap-3 mb-6">
-        <Link href={`/profile/${karya.user.id}`} className="w-10 h-10 rounded-full bg-gradient-to-br from-violet-400 to-purple-500 flex items-center justify-center text-white font-bold text-sm shrink-0">
-          {karya.user.avatar ? <img src={karya.user.avatar} alt="" className="w-full h-full rounded-full object-cover" /> : nameOf(karya.user).charAt(0)}
+        <Link href={`/profile/${karya.user.id}`} className="shrink-0">
+          <UserAvatar
+            size={40}
+            avatar={karya.user.avatar}
+            frame={karya.user.equippedFrame}
+            initials={nameOf(karya.user).charAt(0)}
+            gradient="from-violet-400 to-purple-500"
+            textClassName="text-sm"
+          />
         </Link>
         <div className="flex-1">
-          <Link href={`/profile/${karya.user.id}`} className="text-sm font-semibold text-gray-900 hover:text-violet-600">{nameOf(karya.user)}</Link>
+          <UserName
+            name={nameOf(karya.user)}
+            href={`/profile/${karya.user.id}`}
+            color={karya.user.equippedNameColor}
+            badge={karya.user.equippedBadge}
+            className="text-sm font-semibold text-gray-900 hover:text-violet-600"
+            badgeSize={15}
+          />
           <p className="text-xs text-gray-400">
             {karya.user.profile?.school && `${karya.user.profile.school}${karya.user.profile.city ? ` · ${karya.user.profile.city}` : ""}`}
           </p>

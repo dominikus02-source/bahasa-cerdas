@@ -9,6 +9,8 @@ import {
   Zap, Trophy, Target, TrendingUp, Share2, Loader2,
 } from "lucide-react"
 import { getWeeklyChallenge } from "@/lib/weekly-challenge"
+import UserAvatar from "@/components/arena/UserAvatar"
+import UserName from "@/components/arena/UserName"
 
 const typeColors: Record<string, { label: string; bg: string; text: string; border: string }> = {
   PUISI: { label: "Puisi", bg: "bg-fuchsia-100", text: "text-fuchsia-700", border: "border-fuchsia-200" },
@@ -41,6 +43,9 @@ interface KaryaItem {
     fullName: string
     displayName?: string
     avatar: string | null
+    equippedFrame?: string | null
+    equippedNameColor?: string | null
+    equippedBadge?: string | null
     profile?: { school?: string; city?: string } | null
   }
   _count: {
@@ -293,11 +298,24 @@ export default function FeedPage() {
               <div key={k.id} className="bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-md transition-all">
                 {/* Header */}
                 <div className="flex items-center gap-3 px-5 pt-4 pb-2">
-                  <Link href={`/profile/${k.user.id}`} className={`w-9 h-9 rounded-full bg-gradient-to-br ${INITIALS_COLORS[0]} flex items-center justify-center text-white text-xs font-bold shrink-0`}>
-                    {k.user.avatar ? <img src={k.user.avatar} alt="" className="w-full h-full rounded-full object-cover" /> : initials(nameOf(k.user))}
+                  <Link href={`/profile/${k.user.id}`} className="shrink-0">
+                    <UserAvatar
+                      size={36}
+                      avatar={k.user.avatar}
+                      frame={k.user.equippedFrame}
+                      initials={initials(nameOf(k.user))}
+                      gradient={INITIALS_COLORS[0]}
+                    />
                   </Link>
                   <div className="flex-1 min-w-0">
-                    <Link href={`/profile/${k.user.id}`} className="text-sm font-semibold text-gray-900 hover:text-violet-600">{nameOf(k.user)}</Link>
+                    <UserName
+                      name={nameOf(k.user)}
+                      href={`/profile/${k.user.id}`}
+                      color={k.user.equippedNameColor}
+                      badge={k.user.equippedBadge}
+                      className="text-sm font-semibold text-gray-900 hover:text-violet-600"
+                      badgeSize={15}
+                    />
                     <p className="text-xs text-gray-400">{k.user.profile?.school || ""}</p>
                   </div>
                   <div className="flex items-center gap-1 text-xs text-gray-400">

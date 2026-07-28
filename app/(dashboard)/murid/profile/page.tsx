@@ -17,11 +17,14 @@ import { AvatarPicker } from "@/components/murid/AvatarPicker";
 import { createClient } from "@/lib/supabase/client";
 import { validateNicknameFormat, defaultNicknameFromFullName, NICKNAME_MAX_LENGTH } from "@/lib/nickname";
 import { calcLevelProgress } from "@/lib/xp";
+import UserAvatar from "@/components/arena/UserAvatar";
+import UserName from "@/components/arena/UserName";
 
 interface UserData {
   id: string; fullName: string; nickname?: string | null; xp: number; level: number; streak: number;
   league: string; avatar?: string; coins: number; totalLikes: number; totalViews: number;
   school?: string; city?: string; province?: string; grade?: string; bio?: string; email?: string;
+  equippedFrame?: string | null; equippedNameColor?: string | null; equippedBadge?: string | null;
 }
 
 interface KaryaItem {
@@ -272,15 +275,28 @@ export default function MuridProfilePage() {
         <div className="relative z-10">
           <div className="flex items-start justify-between">
             <div className="flex items-center gap-4">
-              <div className={`profile-avatar-ring w-20 h-20 rounded-full bg-white/10 backdrop-blur flex items-center justify-center text-3xl font-bold border-4 border-white/20 shadow-lg shrink-0 overflow-hidden ring-4 ${league.ring}`}>
-                {user.avatar ? (
-                  <img src={user.avatar} alt="" className="w-full h-full object-cover" />
-                ) : (
-                  initials(displayNickname)
-                )}
-              </div>
+              {/* Bingkai kosmetik menggantikan ring liga supaya keduanya tidak
+                  bertumpuk; tanpa bingkai, tampilannya persis seperti semula. */}
+              <UserAvatar
+                size={80}
+                avatar={user.avatar}
+                frame={user.equippedFrame}
+                initials={initials(displayNickname)}
+                gradient=""
+                textClassName="text-3xl"
+                wrapperClassName="profile-avatar-ring rounded-full"
+                className={`bg-white/10 backdrop-blur border-4 border-white/20 shadow-lg ${user.equippedFrame ? "" : `ring-4 ${league.ring}`}`}
+              />
               <div>
-                <h1 className="text-2xl font-bold">{displayNickname}</h1>
+                <h1 className="text-2xl font-bold">
+                  <UserName
+                    name={displayNickname}
+                    color={user.equippedNameColor}
+                    badge={user.equippedBadge}
+                    onDark
+                    badgeSize={20}
+                  />
+                </h1>
                 {user.nickname && <p className="text-sm text-white/60">{user.fullName}</p>}
                 {meta?.gelar && <p className="text-sm text-amber-300 font-semibold mt-1">{meta.gelar}</p>}
                 <div className="flex flex-wrap gap-2 mt-2">

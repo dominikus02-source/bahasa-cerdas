@@ -10,11 +10,16 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import type { LucideIcon } from "lucide-react";
+import UserAvatar from "@/components/arena/UserAvatar";
+import UserName from "@/components/arena/UserName";
 
 interface ProfileUser {
   id: string;
   fullName: string;
   avatar: string | null;
+  equippedFrame?: string | null;
+  equippedNameColor?: string | null;
+  equippedBadge?: string | null;
   role: string;
   isFounder: boolean;
   isPremium: boolean;
@@ -155,13 +160,15 @@ export default function ProfilePage() {
         <div className="relative z-10">
           <div className="flex items-center gap-4">
             <div className="relative shrink-0">
-              <div className="w-20 h-20 rounded-full bg-white/10 backdrop-blur flex items-center justify-center text-2xl font-bold border-4 border-white/20 shadow-lg overflow-hidden">
-                {user.avatar ? (
-                  <img src={user.avatar} alt={user.fullName} className="w-full h-full object-cover" />
-                ) : (
-                  initials
-                )}
-              </div>
+              <UserAvatar
+                size={80}
+                avatar={user.avatar}
+                frame={user.equippedFrame}
+                initials={initials}
+                gradient=""
+                textClassName="text-2xl"
+                className="bg-white/10 backdrop-blur border-4 border-white/20 shadow-lg"
+              />
               {user.isFounder && (
                 <div className="absolute -top-1 -right-1 w-7 h-7 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-lg ring-2 ring-white/80">
                   <Crown size={13} className="text-white" />
@@ -175,7 +182,15 @@ export default function ProfilePage() {
             </div>
 
             <div className="flex-1 min-w-0">
-              <h1 className="text-xl font-bold truncate">{user.fullName}</h1>
+              <h1 className="text-xl font-bold truncate">
+                <UserName
+                  name={user.fullName}
+                  color={user.equippedNameColor}
+                  badge={user.equippedBadge}
+                  onDark
+                  badgeSize={18}
+                />
+              </h1>
               <div className="flex flex-wrap items-center gap-1.5 mt-1.5">
                 <span className={`${roleBadgeClass} backdrop-blur rounded-full px-2.5 py-1 text-[11px] font-bold flex items-center gap-1`}>
                   <GraduationCap size={11} /> {isGuru ? "Guru" : "Murid"}

@@ -36,7 +36,14 @@ export async function GET(req: NextRequest) {
     const featured = searchParams.get("featured") === "true";
 
     const karyaInclude = {
-      user: { select: { id: true, fullName: true, nickname: true, avatar: true, profile: { select: { school: true, city: true } } } },
+      user: {
+        select: {
+          id: true, fullName: true, nickname: true, avatar: true,
+          // Kosmetik toko koin — dipakai untuk bingkai avatar, warna nama, badge
+          equippedFrame: true, equippedNameColor: true, equippedBadge: true,
+          profile: { select: { school: true, city: true } },
+        },
+      },
       _count: { select: { likes: true, comments: true } },
     } as const;
 

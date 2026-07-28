@@ -30,6 +30,10 @@ export async function GET(
         streak: true,
         league: true,
         createdAt: true,
+        // Kosmetik toko koin — bingkai avatar, warna nama, badge
+        equippedFrame: true,
+        equippedNameColor: true,
+        equippedBadge: true,
         profile: {
           select: {
             bio: true,
