@@ -5,8 +5,10 @@ import { calcLevel, calcLeagueFromXP } from "@/lib/xp";
 import {
   KOTAK_HARIAN_REASON,
   getJakartaDateKey,
-  getRewardForClaimCount,
-  BOX_REWARDS,
+  getSlotForClaimCount,
+  rollMysteryReward,
+  BOX_SLOTS,
+  type BoxReward,
 } from "@/lib/mystery-box";
 
 /**
@@ -35,10 +37,14 @@ export async function POST() {
       const claimCount = await tx.coinTransaction.count({
         where: { userId: user.id, reason: KOTAK_HARIAN_REASON },
       });
-      const reward = getRewardForClaimCount(claimCount);
+
+      const slot = getSlotForClaimCount(claimCount);
+      // Hari ke-7 hadiahnya diundi; undiannya di server supaya murid tidak
+      // bisa mengulang-ulang sampai dapat hadiah terbaik.
+      const reward: BoxReward = slot.misteri ? rollMysteryReward() : slot.reward!;
 
       // Satu baris ledger per hari — inilah penanda "sudah diklaim". Untuk
-      // hadiah XP, amount-nya 0: barisnya tetap dibuat sebagai penanda.
+      // hadiah non-koin, amount-nya 0: barisnya tetap dibuat sebagai penanda.
       await tx.coinTransaction.create({
         data: {
           userId: user.id,
@@ -53,7 +59,7 @@ export async function POST() {
           where: { id: user.id },
           data: { coins: { increment: reward.jumlah } },
         });
-      } else {
+      } else if (reward.jenis === "XP") {
         const current = await tx.user.findUnique({
           where: { id: user.id },
           select: { xp: true },
@@ -67,12 +73,42 @@ export async function POST() {
             league: calcLeagueFromXP(newXp),
           },
         });
+      } else {
+        // Streak Freeze masuk ke inventaris sebagai UserItem, jadi barangnya
+        // sama persis dengan yang dijual di toko koin dan ikut dikonsumsi
+        // trackDailyStreak saat murid bolong sehari.
+        // Dibuat kalau belum ada (mis. seed toko belum pernah dijalankan di
+        // environment ini) — tanpa ini hadiahnya diam-diam tidak berefek.
+        // Nama & harganya disamakan dengan scripts/seed-store.ts.
+        let freezeItem = await tx.storeItem.findFirst({
+          where: { type: "STREAK_FREEZE" },
+          select: { id: true },
+        });
+        if (!freezeItem) {
+          freezeItem = await tx.storeItem.create({
+            data: {
+              name: "Streak Freeze",
+              description: "Lindungi streak-mu agar tidak putus selama 1 hari",
+              type: "STREAK_FREEZE",
+              price: 50,
+              icon: "freeze",
+            },
+            select: { id: true },
+          });
+        }
+
+        await tx.userItem.upsert({
+          where: { userId_itemId: { userId: user.id, itemId: freezeItem.id } },
+          update: { quantity: { increment: reward.jumlah } },
+          create: { userId: user.id, itemId: freezeItem.id, quantity: reward.jumlah },
+        });
       }
 
       return {
         duplicate: false as const,
         reward,
-        cycleDay: (claimCount % BOX_REWARDS.length) + 1,
+        misteri: !!slot.misteri,
+        cycleDay: (claimCount % BOX_SLOTS.length) + 1,
       };
     });
 
@@ -86,6 +122,7 @@ export async function POST() {
     return NextResponse.json({
       success: true,
       reward: result.reward,
+      misteri: result.misteri,
       cycleDay: result.cycleDay,
     });
   } catch {

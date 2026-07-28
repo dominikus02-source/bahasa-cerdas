@@ -286,7 +286,34 @@ export async function trackDailyStreak(userId: string) {
       ? (today.getTime() - last.getTime()) === 86400000
       : false;
 
-    const newStreak = isConsecutive ? (user.streak || 0) + 1 : 1;
+    // Streak Freeze — dijual di toko koin seharga 50 koin sejak lama, tapi
+    // sampai sekarang tidak ada satu pun kode yang memakainya: streak murid
+    // tetap putus walau sudah beli. Di sinilah item itu akhirnya dipakai.
+    // Satu freeze menutup satu hari bolong; kalau bolongnya lebih banyak
+    // daripada freeze yang dimiliki, streak tetap direset.
+    let streakFrozen = false;
+    if (last && !isConsecutive) {
+      const daysMissed = Math.round((today.getTime() - last.getTime()) / 86400000) - 1;
+
+      if (daysMissed > 0) {
+        const freeze = await tx.userItem.findFirst({
+          where: { userId, item: { type: "STREAK_FREEZE" }, quantity: { gt: 0 } },
+          select: { id: true, quantity: true },
+        });
+
+        if (freeze && freeze.quantity >= daysMissed) {
+          const sisa = freeze.quantity - daysMissed;
+          if (sisa > 0) {
+            await tx.userItem.update({ where: { id: freeze.id }, data: { quantity: sisa } });
+          } else {
+            await tx.userItem.delete({ where: { id: freeze.id } });
+          }
+          streakFrozen = true;
+        }
+      }
+    }
+
+    const newStreak = isConsecutive || streakFrozen ? (user.streak || 0) + 1 : 1;
 
     await tx.user.update({
       where: { id: userId },

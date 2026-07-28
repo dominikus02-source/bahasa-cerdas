@@ -1,18 +1,31 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Gift, Sparkles, Zap, Star, CheckCircle2, Loader2 } from "lucide-react"
-import { BOX_REWARDS, type BoxReward } from "@/lib/mystery-box"
+import { Gift, Sparkles, Zap, Star, Shield, CheckCircle2, Loader2 } from "lucide-react"
+import { BOX_SLOTS, MYSTERY_POOL, type BoxReward, type BoxSlot, type RewardKind } from "@/lib/mystery-box"
 
 type Status = {
   claimedToday: boolean
   claimCount: number
   cycleDay: number
-  reward: BoxReward
+  slot: BoxSlot
+}
+
+const ICON_FOR: Record<RewardKind, typeof Zap> = {
+  XP: Zap,
+  KOIN: Star,
+  FREEZE: Shield,
+}
+
+const COLOR_FOR: Record<RewardKind, string> = {
+  XP: "from-violet-400 to-purple-500",
+  KOIN: "from-yellow-400 to-amber-500",
+  FREEZE: "from-cyan-400 to-blue-500",
 }
 
 export default function MysteryBoxPage() {
   const [status, setStatus] = useState<Status | null>(null)
+  const [hadiah, setHadiah] = useState<BoxReward | null>(null)
   const [loading, setLoading] = useState(true)
   const [phase, setPhase] = useState<"idle" | "shaking" | "opening" | "revealed">("idle")
   const [claiming, setClaiming] = useState(false)
@@ -58,13 +71,8 @@ export default function MysteryBoxPage() {
 
       // Tunggu animasinya selesai dulu baru tampilkan hadiah.
       setTimeout(() => {
-        setStatus(s => s ? {
-          ...s,
-          claimedToday: true,
-          claimCount: s.claimCount + 1,
-          cycleDay: data.cycleDay,
-          reward: data.reward,
-        } : s)
+        setHadiah(data.reward)
+        setStatus(s => s ? { ...s, claimedToday: true, claimCount: s.claimCount + 1, cycleDay: data.cycleDay } : s)
         setPhase("revealed")
       }, 1200)
     } catch {
@@ -83,8 +91,8 @@ export default function MysteryBoxPage() {
     )
   }
 
-  const reward = status?.reward
-  const RewardIcon = reward?.jenis === "KOIN" ? Star : Zap
+  const HadiahIcon = hadiah ? ICON_FOR[hadiah.jenis] : Gift
+  const slotHariIni = status?.slot
 
   return (
     <div className="px-4 py-5 arena-page">
@@ -96,7 +104,7 @@ export default function MysteryBoxPage() {
       {/* Kotak utama */}
       <div className="flex flex-col items-center mb-6">
         <div className="relative" onClick={handleBuka}>
-          {phase === "revealed" && !sudahDiklaim && (
+          {phase === "revealed" && hadiah && (
             <div className="absolute -inset-4 rounded-full bg-gradient-to-r from-yellow-300 via-amber-400 to-orange-400 opacity-30 animate-ping" />
           )}
 
@@ -117,20 +125,24 @@ export default function MysteryBoxPage() {
           >
             {phase === "idle" && <Gift className="w-16 h-16 text-white" />}
             {(phase === "shaking" || phase === "opening") && <Sparkles className="w-16 h-16 text-white" />}
-            {phase === "revealed" && reward && (
-              <div className="text-center">
-                <RewardIcon className="w-10 h-10 text-yellow-300 mx-auto mb-1" />
-                <p className="text-white font-bold text-xs">{reward.label}</p>
-              </div>
+            {phase === "revealed" && (
+              hadiah ? (
+                <div className="text-center px-2">
+                  <HadiahIcon className="w-10 h-10 text-yellow-300 mx-auto mb-1" />
+                  <p className="text-white font-bold text-xs leading-tight">{hadiah.label}</p>
+                </div>
+              ) : (
+                <CheckCircle2 className="w-16 h-16 text-white" />
+              )
             )}
           </div>
         </div>
 
         <p className="text-base font-bold text-gray-700 mt-4">
-          {phase === "idle" && "Ketuk untuk membuka"}
+          {phase === "idle" && (slotHariIni?.misteri ? "Kotak Misterius menantimu!" : "Ketuk untuk membuka")}
           {phase === "shaking" && "Bersiaplah..."}
           {phase === "opening" && "Membuka..."}
-          {phase === "revealed" && "Hadiah diklaim!"}
+          {phase === "revealed" && (hadiah ? "Hadiah diklaim!" : "Sudah dibuka hari ini")}
         </p>
         <p className="text-sm text-gray-400">
           {sudahDiklaim ? "Kembali lagi besok untuk kotak berikutnya" : "Buka setiap hari untuk hadiah spesial"}
@@ -139,23 +151,26 @@ export default function MysteryBoxPage() {
         {error && <p className="text-sm text-red-500 mt-3">{error}</p>}
       </div>
 
-      {phase === "revealed" && reward && (
+      {phase === "revealed" && hadiah && (
         <div className="text-center mb-6 animate-fade-in">
           <div className="inline-flex items-center gap-2 bg-gradient-to-r from-amber-500 to-orange-600 text-white px-6 py-3 rounded-2xl shadow-lg shadow-amber-200">
-            <RewardIcon className="w-5 h-5" />
-            <span className="font-bold">{reward.label}</span>
+            <HadiahIcon className="w-5 h-5" />
+            <span className="font-bold">{hadiah.label}</span>
           </div>
+          {hadiah.jenis === "FREEZE" && (
+            <p className="text-xs text-gray-500 mt-2">Streak-mu aman satu hari kalau kamu absen.</p>
+          )}
         </div>
       )}
 
       {/* Siklus 7 hari */}
       <h2 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Siklus 7 Hari</h2>
       <div className="flex gap-2 mb-6">
-        {BOX_REWARDS.map((box) => {
-          const Icon = box.jenis === "KOIN" ? Star : Zap
+        {BOX_SLOTS.map((box) => {
           const hariIni = status?.cycleDay === box.hari
           const sudahLewat = (status?.cycleDay ?? 1) > box.hari
           const selesai = sudahLewat || (hariIni && sudahDiklaim)
+          const Icon = box.misteri ? Gift : ICON_FOR[box.reward!.jenis]
 
           return (
             <div
@@ -169,7 +184,11 @@ export default function MysteryBoxPage() {
               }`}
             >
               <div className={`w-8 h-8 rounded-lg bg-gradient-to-br flex items-center justify-center text-white ${
-                selesai ? "from-gray-300 to-gray-400" : box.jenis === "KOIN" ? "from-yellow-400 to-amber-500" : "from-violet-400 to-purple-500"
+                selesai
+                  ? "from-gray-300 to-gray-400"
+                  : box.misteri
+                    ? "from-amber-400 to-orange-500"
+                    : COLOR_FOR[box.reward!.jenis]
               }`}>
                 {selesai ? <CheckCircle2 className="w-4 h-4" /> : <Icon className="w-4 h-4" />}
               </div>
@@ -181,19 +200,42 @@ export default function MysteryBoxPage() {
         })}
       </div>
 
-      {/* Daftar hadiah */}
-      <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-2xl border border-amber-200 p-5">
-        <h3 className="font-bold text-amber-800 text-base mb-3 flex items-center gap-1.5">
-          <Sparkles className="w-5 h-5" />
-          Hadiah Siklus 7 Hari
+      {/* Isi Kotak Misterius (hari ke-7) */}
+      <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-2xl border border-amber-200 p-5 mb-4">
+        <h3 className="font-bold text-amber-800 text-base mb-1 flex items-center gap-1.5">
+          <Gift className="w-5 h-5" />
+          Isi Kotak Misterius
+        </h3>
+        <p className="text-xs text-amber-700/70 mb-3">Diundi setiap hari ke-7</p>
+        <div className="space-y-3">
+          {MYSTERY_POOL.map((p, i) => {
+            const Icon = ICON_FOR[p.reward.jenis]
+            return (
+              <div key={i} className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Icon className={`w-4 h-4 ${p.reward.jenis === "KOIN" ? "text-yellow-500" : p.reward.jenis === "FREEZE" ? "text-cyan-500" : "text-violet-500"}`} />
+                  <span className="text-sm font-medium text-gray-700">{p.reward.label}</span>
+                </div>
+                <span className="text-xs text-gray-400 font-medium">{p.bobot}%</span>
+              </div>
+            )
+          })}
+        </div>
+      </div>
+
+      {/* Hadiah harian */}
+      <div className="bg-white rounded-2xl border border-gray-100 p-5">
+        <h3 className="font-bold text-gray-800 text-base mb-3 flex items-center gap-1.5">
+          <Sparkles className="w-5 h-5 text-violet-500" />
+          Hadiah Harian
         </h3>
         <div className="space-y-3">
-          {BOX_REWARDS.map((r) => {
-            const Icon = r.jenis === "KOIN" ? Star : Zap
+          {BOX_SLOTS.map((r) => {
+            const Icon = r.misteri ? Gift : ICON_FOR[r.reward!.jenis]
             return (
               <div key={r.hari} className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <Icon className={`w-4 h-4 ${r.jenis === "KOIN" ? "text-yellow-500" : "text-violet-500"}`} />
+                  <Icon className={`w-4 h-4 ${r.misteri ? "text-amber-500" : r.reward!.jenis === "KOIN" ? "text-yellow-500" : r.reward!.jenis === "FREEZE" ? "text-cyan-500" : "text-violet-500"}`} />
                   <span className="text-sm font-medium text-gray-700">Hari {r.hari}</span>
                 </div>
                 <span className="text-xs font-bold text-gray-500">{r.label}</span>
