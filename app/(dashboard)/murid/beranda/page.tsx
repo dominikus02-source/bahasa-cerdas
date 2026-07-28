@@ -51,8 +51,16 @@ export default function HomeFeedPage() {
   const loaderRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const hb = setInterval(() => { fetch("/api/user/heartbeat", { method: "POST" }).catch(() => {}); }, 60000);
-    const hbTimeout = setTimeout(() => { fetch("/api/user/heartbeat", { method: "POST" }).catch(() => {}); }, 5000);
+    const detak = () => {
+      // Tab di latar belakang tidak sedang "aktif" — tidak perlu dilaporkan.
+      if (document.visibilityState !== "visible") return;
+      fetch("/api/user/heartbeat", { method: "POST" }).catch(() => {});
+    };
+    // Dulu tiap 60 detik. Penanda "sedang online" tidak butuh setepat itu,
+    // sementara tiap panggilan memvalidasi sesi ke server Auth Supabase —
+    // dengan ~200 murid, itu 12.000 panggilan auth per jam hanya untuk ini.
+    const hb = setInterval(detak, 300000);
+    const hbTimeout = setTimeout(detak, 5000);
     return () => { clearInterval(hb); clearTimeout(hbTimeout); };
   }, []);
 

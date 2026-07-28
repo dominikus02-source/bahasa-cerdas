@@ -112,11 +112,15 @@ export default function ChatPanel({ userId }: { userId: string }) {
     fetch("/api/user/online")
       .then(r => r.ok ? r.json() : null)
       .then(d => setOnlineUsers(d?.users || []));
+    // Daftar "sedang online" tidak perlu tiap 15 detik, dan tidak perlu jalan
+    // sama sekali saat tab ditinggalkan — tiap panggilan memvalidasi sesi ke
+    // server Auth Supabase.
     const iv = setInterval(() => {
+      if (document.visibilityState !== "visible") return;
       fetch("/api/user/online")
         .then(r => r.ok ? r.json() : null)
         .then(d => setOnlineUsers(d?.users || []));
-    }, 15000);
+    }, 60000);
     return () => clearInterval(iv);
   }, []);
 

@@ -47,7 +47,15 @@ export function AdminSidebar({ user }: Props) {
     } catch {}
   }, []);
 
-  useEffect(() => { fetchNotifs(); const t = setInterval(fetchNotifs, 30000); return () => clearInterval(t); }, [fetchNotifs]);
+  // 3 menit, dan berhenti saat tab ditinggalkan (dulu 30 detik tanpa henti).
+  useEffect(() => {
+    fetchNotifs();
+    const t = setInterval(() => {
+      if (document.visibilityState !== "visible") return;
+      fetchNotifs();
+    }, 180000);
+    return () => clearInterval(t);
+  }, [fetchNotifs]);
 
   const markRead = async (id: string) => {
     await fetch("/api/admin/notifications", {

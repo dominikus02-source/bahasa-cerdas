@@ -54,17 +54,32 @@ export default function GuruChatPanel({ userId }: { userId: string }) {
       fetch(`/api/chat/${activeGroup}?limit=50`).then(r => r.ok ? r.json() : null).then(data => setMessages(data?.messages || []));
     };
     fetchMessages();
-    const interval = setInterval(fetchMessages, 5000);
-    return () => clearInterval(interval);
+    // Hanya menarik pesan saat panel benar-benar dilihat. Sebelumnya berjalan
+    // terus tiap 5 detik walau tab ditinggalkan, dan tiap panggilan memvalidasi
+    // sesi ke server Auth Supabase.
+    const interval = setInterval(() => {
+      if (document.visibilityState !== "visible") return;
+      fetchMessages();
+    }, 8000);
+    const onVisible = () => {
+      if (document.visibilityState === "visible") fetchMessages();
+    };
+    document.addEventListener("visibilitychange", onVisible);
+    return () => {
+      clearInterval(interval);
+      document.removeEventListener("visibilitychange", onVisible);
+    };
   }, [activeGroup]);
 
   // Poll online users
   useEffect(() => {
     const fetchOnline = () => {
+      if (document.visibilityState !== "visible") return;
       fetch("/api/user/online").then(r => r.ok ? r.json() : null).then(data => setOnlineUsers(data?.users || data || []));
     };
     fetchOnline();
-    const interval = setInterval(fetchOnline, 15000);
+    // Daftar "sedang online" tidak perlu setiap 15 detik.
+    const interval = setInterval(fetchOnline, 60000);
     return () => clearInterval(interval);
   }, []);
 
