@@ -2,7 +2,10 @@
 
 import { useEffect, useState } from "react"
 import { useParams, useRouter } from "next/navigation"
-import { ArrowLeft, CheckCircle2, XCircle, ChevronRight, HelpCircle, Award, Check, X } from "lucide-react"
+import { ArrowLeft, CheckCircle2, XCircle, ChevronRight, HelpCircle, Award, Check, X, Lightbulb } from "lucide-react"
+import { usePowerUps } from "@/hooks/usePowerUps"
+import ConfettiBurst from "@/components/game/ConfettiBurst"
+import { pilihOpsiSalah } from "@/lib/power-up-hint"
 
 interface Soal {
   id: number
@@ -23,6 +26,13 @@ export default function LatihanPage() {
   const [loading, setLoading] = useState(true)
   const [inputIsian, setInputIsian] = useState("")
 
+  // Item bantuan dari Toko Koin (Hint Token + efek confetti). Tanpa item,
+  // semuanya nol/false dan halaman ini berperilaku persis seperti sebelumnya.
+  const { hintCount, confettiAktif, consume, error: powerUpError, clearError } = usePowerUps()
+  const [opsiDicoret, setOpsiDicoret] = useState<Record<number, number>>({})
+  const [hintProses, setHintProses] = useState(false)
+  const [confettiTrigger, setConfettiTrigger] = useState(0)
+
   useEffect(() => {
     fetch(`/api/jalur-cerdas/${unitId}`)
       .then(r => r.json())
@@ -39,14 +49,36 @@ export default function LatihanPage() {
     ? picked === soal?.jawaban
     : picked === soal?.jawaban
 
+  const dicoret = soal ? opsiDicoret[soal.id] : undefined
+  const bolehPakaiHint = tipe === "PG" && !showResult && dicoret === undefined && hintCount > 0
+
+  const rayakanJawabanBenar = () => {
+    if (confettiAktif) setConfettiTrigger(t => t + 1)
+  }
+
+  /** Hint Token: coret satu opsi salah, hanya setelah server berhasil mengurangi stok. */
+  const pakaiHint = async () => {
+    if (!soal || !bolehPakaiHint || hintProses) return
+    const target = pilihOpsiSalah(`${unitId}-${soal.id}`, soal.opsi.length, soal.jawaban as number)
+    if (target === null) return
+    setHintProses(true)
+    const berhasil = await consume("HINT_TOKEN")
+    setHintProses(false)
+    if (!berhasil) return
+    setOpsiDicoret(prev => (prev[soal.id] !== undefined ? prev : { ...prev, [soal.id]: target }))
+  }
+
   const pilihPG = (idx: number) => {
     if (showResult) return
+    if (dicoret === idx) return
     setJawaban(prev => ({ ...prev, [soal.id]: idx }))
+    if (idx === soal.jawaban) rayakanJawabanBenar()
   }
 
   const pilihBS = (idx: number) => {
     if (showResult) return
     setJawaban(prev => ({ ...prev, [soal.id]: idx }))
+    if (idx === soal.jawaban) rayakanJawabanBenar()
   }
 
   const submitIsian = () => {
@@ -54,6 +86,7 @@ export default function LatihanPage() {
     const jawab = inputIsian.trim().toLowerCase()
     const kunci = (soal.jawaban as string).toLowerCase()
     setJawaban(prev => ({ ...prev, [soal.id]: jawab === kunci ? soal.jawaban : jawab }))
+    if (jawab === kunci) rayakanJawabanBenar()
   }
 
   const getJawabanBenar = (s: Soal) => {
@@ -125,6 +158,7 @@ export default function LatihanPage() {
 
   return (
     <div className="px-4 py-6 arena-page">
+      {confettiAktif && <ConfettiBurst trigger={confettiTrigger} />}
       {/* Header */}
       <div className="flex items-center gap-3 mb-6">
         <button onClick={() => router.back()} className="w-9 h-9 rounded-xl bg-gray-100 flex items-center justify-center shrink-0 hover:bg-gray-200 transition-colors">
@@ -141,6 +175,33 @@ export default function LatihanPage() {
         </div>
       </div>
 
+      {/* Item bantuan — hanya muncul kalau murid punya Hint Token */}
+      {(bolehPakaiHint || dicoret !== undefined) && (
+        <div className="flex flex-wrap items-center gap-2 mb-3">
+          {dicoret !== undefined ? (
+            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-50 border border-amber-200 text-amber-700 text-xs font-semibold">
+              <Lightbulb className="w-3.5 h-3.5" /> Petunjuk terpakai di soal ini
+            </span>
+          ) : (
+            <button onClick={pakaiHint} disabled={hintProses}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-100 border border-amber-300 text-amber-800 text-xs font-bold hover:bg-amber-200 disabled:opacity-60 transition-colors"
+            >
+              <Lightbulb className="w-3.5 h-3.5" />
+              {hintProses ? "Memakai…" : `Coret 1 opsi salah (${hintCount})`}
+            </button>
+          )}
+        </div>
+      )}
+
+      {powerUpError && (
+        <div className="mb-3 flex items-center justify-between gap-3 p-3 rounded-xl bg-red-50 border border-red-200">
+          <p className="text-xs text-red-700 font-medium">{powerUpError}</p>
+          <button onClick={clearError} className="text-red-500 shrink-0" aria-label="Tutup pesan">
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+      )}
+
       {/* Soal */}
       <div className="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm mb-4">
         <p className="text-sm font-medium text-gray-400 mb-1">Soal #{current + 1}</p>
@@ -152,7 +213,10 @@ export default function LatihanPage() {
               const letters = ["A", "B", "C", "D"]
               const isSelected = picked === idx
               const isRight = idx === soal.jawaban
+              const isDicoret = dicoret === idx
               let btnClass = "border-gray-200 bg-white hover:border-violet-300 hover:bg-violet-50"
+
+              if (isDicoret && !showResult) btnClass = "border-gray-100 bg-gray-50 opacity-50 line-through cursor-not-allowed"
 
               if (showResult) {
                 if (isRight) btnClass = "border-emerald-400 bg-emerald-50"
@@ -161,7 +225,7 @@ export default function LatihanPage() {
               }
 
               return (
-                <button key={idx} onClick={() => pilihPG(idx)}
+                <button key={idx} onClick={() => pilihPG(idx)} disabled={!showResult && isDicoret}
                   className={`w-full flex items-center gap-3 p-3.5 rounded-xl border-2 text-left transition-all ${btnClass}`}
                 >
                   <span className={`w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold shrink-0 ${
@@ -171,6 +235,7 @@ export default function LatihanPage() {
                   }`}>
                     {showResult && isRight ? <CheckCircle2 className="w-4 h-4" /> :
                      showResult && isSelected && !isRight ? <XCircle className="w-4 h-4" /> :
+                     !showResult && isDicoret ? <X className="w-4 h-4" /> :
                      letters[idx]}
                   </span>
                   <span className={`text-sm font-medium ${

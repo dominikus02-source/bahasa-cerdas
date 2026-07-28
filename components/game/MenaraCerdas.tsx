@@ -3,9 +3,12 @@
 import { useState, useCallback, useEffect } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence, useAnimationControls } from "framer-motion";
-import { Heart, Flame, Trophy, RotateCcw, Mountain, Check, X, Loader2, Sparkles, Zap, Volume2, VolumeX, Play } from "lucide-react";
+import { Heart, Flame, Trophy, RotateCcw, Mountain, Check, X, Loader2, Sparkles, Zap, Volume2, VolumeX, Play, Lightbulb } from "lucide-react";
 import Burst from "@/components/game/Burst";
 import ComboFlash from "@/components/game/ComboFlash";
+import ConfettiBurst from "@/components/game/ConfettiBurst";
+import { usePowerUps } from "@/hooks/usePowerUps";
+import { pilihOpsiSalah } from "@/lib/power-up-hint";
 import { sfx, haptic, isSoundOn, toggleSound, startBGM, stopBGM } from "@/lib/game/sound";
 
 interface Q {
@@ -33,6 +36,13 @@ export default function MenaraCerdas({ backHref = "/arena/game" }: { backHref?: 
   const [soundOn, setSoundOn] = useState(true);
   const controls = useAnimationControls();
 
+  // Item bantuan Toko Koin. Tanpa Hint Token tombolnya tidak dirender sama
+  // sekali, dan permainan berjalan persis seperti sebelumnya.
+  const { hintCount, confettiAktif, consume, error: powerUpError, clearError } = usePowerUps();
+  const [opsiDicoret, setOpsiDicoret] = useState<Record<string, number>>({});
+  const [hintProses, setHintProses] = useState(false);
+  const [confetti, setConfetti] = useState(0);
+
   const total = questions.length;
   const current = questions[idx];
 
@@ -43,6 +53,7 @@ export default function MenaraCerdas({ backHref = "/arena/game" }: { backHref?: 
     sfx.start(); setSoundOn(isSoundOn()); startBGM();
     setPhase("loading");
     setIdx(0); setFloor(0); setHearts(MAX_HEARTS); setCombo(0); setBest(0); setPicked(null); setXpResult(null);
+    setOpsiDicoret({}); clearError();
     try {
       const res = await fetch("/api/game/menara?count=12", { cache: "no-store" });
       const data = await res.json();
@@ -55,7 +66,7 @@ export default function MenaraCerdas({ backHref = "/arena/game" }: { backHref?: 
     } catch {
       setPhase("start");
     }
-  }, []);
+  }, [clearError]);
 
   const finish = useCallback(async (finalFloor: number) => {
     stopBGM();
@@ -74,13 +85,30 @@ export default function MenaraCerdas({ backHref = "/arena/game" }: { backHref?: 
     } catch { /* keep local result */ }
   }, [total]);
 
+  const dicoret = current ? opsiDicoret[current.id] : undefined;
+  const bolehPakaiHint = !!current && picked === null && dicoret === undefined && hintCount > 0;
+
+  /** Hint Token: coret satu opsi salah. Efeknya hanya jalan kalau server sukses. */
+  const pakaiHint = async () => {
+    if (!current || !bolehPakaiHint || hintProses) return;
+    const target = pilihOpsiSalah(current.id, current.opsi.length, current.jawaban);
+    if (target === null) return;
+    setHintProses(true);
+    const berhasil = await consume("HINT_TOKEN");
+    setHintProses(false);
+    if (!berhasil) return;
+    setOpsiDicoret((prev) => (prev[current.id] !== undefined ? prev : { ...prev, [current.id]: target }));
+  };
+
   const choose = (i: number) => {
     if (picked !== null) return;
+    if (dicoret === i) return;
     setPicked(i);
     const isCorrect = i === current.jawaban;
 
     if (isCorrect) {
       sfx.climb(combo + 1); haptic(25); setBurst((b) => b + 1);
+      if (confettiAktif) setConfetti((c) => c + 1);
       controls.start({ y: [0, -6, 0], transition: { duration: 0.3 } });
     } else {
       sfx.wrong(); haptic([60, 40, 60]);
@@ -221,6 +249,7 @@ export default function MenaraCerdas({ backHref = "/arena/game" }: { backHref?: 
   return (
     <div className="fixed inset-0 z-[60] flex flex-col overflow-hidden bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] text-[#161B3A]">
       <Burst trigger={burst} x={16} y={48} />
+      {confettiAktif && <ConfettiBurst trigger={confetti} />}
       <ComboFlash combo={combo} />
       <motion.div animate={controls} className="relative z-10 flex-1 flex flex-col max-w-md w-full mx-auto px-4 pt-4 pb-5 min-h-0">
         {/* HUD */}
@@ -257,17 +286,40 @@ export default function MenaraCerdas({ backHref = "/arena/game" }: { backHref?: 
                   <h2 className="text-lg font-bold mt-2 leading-snug">{current?.soal}</h2>
                 </div>
 
+                {/* Item bantuan — hanya dirender kalau murid punya Hint Token */}
+                {(bolehPakaiHint || dicoret !== undefined) && (
+                  <div className="mt-1 mb-1 flex items-center gap-2">
+                    {dicoret !== undefined ? (
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-100 border-2 border-[#161B3A] text-[11px] font-extrabold">
+                        <Lightbulb className="w-3.5 h-3.5" /> Petunjuk terpakai
+                      </span>
+                    ) : (
+                      <button onClick={pakaiHint} disabled={hintProses}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#FBBF24] border-2 border-[#161B3A] shadow-[3px_3px_0_#161B3A] text-[11px] font-extrabold active:translate-x-0.5 active:translate-y-0.5 active:shadow-none disabled:opacity-60">
+                        <Lightbulb className="w-3.5 h-3.5" />
+                        {hintProses ? "Memakai…" : `Coret 1 opsi salah (${hintCount})`}
+                      </button>
+                    )}
+                  </div>
+                )}
+
+                {powerUpError && (
+                  <p className="mt-1 text-[11px] font-bold text-rose-600">{powerUpError}</p>
+                )}
+
                 <div className="grid gap-2.5 mt-1">
                   {current?.opsi.map((opt, i) => {
                     const isPicked = picked === i;
                     const isCorrect = i === current.jawaban;
                     const reveal = picked !== null;
+                    const isDicoret = dicoret === i;
                     let cls = "bg-white border-[#161B3A]";
+                    if (!reveal && isDicoret) cls = "bg-gray-100 border-[#161B3A]/20 opacity-50 line-through";
                     if (reveal && isCorrect) cls = "bg-emerald-100 border-emerald-600";
                     else if (reveal && isPicked && !isCorrect) cls = "bg-rose-100 border-rose-600";
                     else if (reveal) cls = "bg-white/50 border-[#161B3A]/20 opacity-50";
                     return (
-                      <button key={i} onClick={() => choose(i)} disabled={reveal}
+                      <button key={i} onClick={() => choose(i)} disabled={reveal || isDicoret}
                         className={`relative w-full text-left px-4 py-3.5 rounded-2xl border-[3px] font-semibold transition-all active:scale-[0.98] shadow-[3px_3px_0_#161B3A] ${cls}`}>
                         <span className="pr-7">{opt}</span>
                         {reveal && isCorrect && <Check className="w-5 h-5 absolute right-3.5 top-1/2 -translate-y-1/2 text-emerald-600" />}

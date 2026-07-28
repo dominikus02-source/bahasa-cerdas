@@ -2,7 +2,10 @@
 
 import { useEffect, useState, useCallback, useRef } from "react"
 import { useParams, useRouter } from "next/navigation"
-import { ArrowLeft, Timer, CheckCircle2, XCircle, HelpCircle, Award, Zap, Check, X } from "lucide-react"
+import { ArrowLeft, Timer, CheckCircle2, XCircle, HelpCircle, Award, Zap, Check, X, Lightbulb, TimerReset } from "lucide-react"
+import { usePowerUps } from "@/hooks/usePowerUps"
+import ConfettiBurst from "@/components/game/ConfettiBurst"
+import { pilihOpsiSalah } from "@/lib/power-up-hint"
 
 interface SoalKuis {
   id: number
@@ -11,6 +14,9 @@ interface SoalKuis {
   opsi: string[]
   jawaban: number | string
 }
+
+/** Batas pemakaian Time Extension dalam satu sesi kuis (3 × 30 detik). */
+const MAKS_TAMBAH_WAKTU = 3
 
 export default function KuisPage() {
   const { unitId } = useParams()
@@ -26,6 +32,16 @@ export default function KuisPage() {
   const [progressSaved, setProgressSaved] = useState(false)
   const [inputIsian, setInputIsian] = useState("")
   const timerRef = useRef<NodeJS.Timeout | null>(null)
+
+  // Item bantuan dari Toko Koin. Murid yang tidak punya apa pun: semua nol,
+  // tombolnya tidak dirender, dan kuis berjalan persis seperti sebelumnya.
+  const { hintCount, timeCount, confettiAktif, consume, error: powerUpError, clearError } = usePowerUps()
+  // Opsi yang sudah dicoret per soal — sekali terisi, tidak pernah dihitung ulang.
+  const [opsiDicoret, setOpsiDicoret] = useState<Record<number, number>>({})
+  const [hintProses, setHintProses] = useState(false)
+  const [tambahWaktuDipakai, setTambahWaktuDipakai] = useState(0)
+  const [waktuProses, setWaktuProses] = useState(false)
+  const [confettiTrigger, setConfettiTrigger] = useState(0)
 
   const benar = soalList.filter(s => {
     const j = jawaban[s.id]
@@ -86,9 +102,41 @@ export default function KuisPage() {
     ? picked === soal?.jawaban
     : picked === soal?.jawaban
 
+  const dicoret = soal ? opsiDicoret[soal.id] : undefined
+  const bolehPakaiHint = tipe === "PG" && !showResult && dicoret === undefined && hintCount > 0
+
+  /** Pakai Hint Token: coret satu opsi salah — HANYA kalau server sudah mengurangi stok. */
+  const pakaiHint = async () => {
+    if (!soal || !bolehPakaiHint || hintProses) return
+    const target = pilihOpsiSalah(`${unitId}-${soal.id}`, soal.opsi.length, soal.jawaban as number)
+    if (target === null) return
+    setHintProses(true)
+    const berhasil = await consume("HINT_TOKEN")
+    setHintProses(false)
+    if (!berhasil) return
+    setOpsiDicoret(prev => (prev[soal.id] !== undefined ? prev : { ...prev, [soal.id]: target }))
+  }
+
+  /** Pakai Time Extension: +30 detik untuk sisa kuis. */
+  const pakaiTambahWaktu = async () => {
+    if (waktuProses || timeCount <= 0 || tambahWaktuDipakai >= MAKS_TAMBAH_WAKTU || selesai) return
+    setWaktuProses(true)
+    const berhasil = await consume("TIME_EXTENSION")
+    setWaktuProses(false)
+    if (!berhasil) return
+    setTambahWaktuDipakai(n => n + 1)
+    setTimeLeft(t => t + 30)
+  }
+
+  const rayakanJawabanBenar = () => {
+    if (confettiAktif) setConfettiTrigger(t => t + 1)
+  }
+
   const pilihPG = (idx: number) => {
     if (showResult) return
+    if (dicoret === idx) return
     setJawaban(prev => ({ ...prev, [soal.id]: idx }))
+    if (idx === soal.jawaban) rayakanJawabanBenar()
     setShowingResult(true)
     setTimeout(() => {
       setShowingResult(false)
@@ -99,6 +147,7 @@ export default function KuisPage() {
   const pilihBS = (idx: number) => {
     if (showResult) return
     setJawaban(prev => ({ ...prev, [soal.id]: idx }))
+    if (idx === soal.jawaban) rayakanJawabanBenar()
     setShowingResult(true)
     setTimeout(() => {
       setShowingResult(false)
@@ -111,6 +160,7 @@ export default function KuisPage() {
     const jawab = inputIsian.trim().toLowerCase()
     const kunci = (soal.jawaban as string).toLowerCase()
     setJawaban(prev => ({ ...prev, [soal.id]: jawab === kunci ? soal.jawaban : jawab }))
+    if (jawab === kunci) rayakanJawabanBenar()
     setShowingResult(true)
     setTimeout(() => {
       setShowingResult(false)
@@ -184,6 +234,7 @@ export default function KuisPage() {
 
   return (
     <div className="px-4 py-6 arena-page">
+      {confettiAktif && <ConfettiBurst trigger={confettiTrigger} />}
       {/* Header with timer */}
       <div className="flex items-center gap-3 mb-6">
         <button onClick={() => router.back()} className="w-9 h-9 rounded-xl bg-gray-100 flex items-center justify-center shrink-0 hover:bg-gray-200 transition-colors">
@@ -205,6 +256,44 @@ export default function KuisPage() {
         </div>
       </div>
 
+      {/* Item bantuan — hanya muncul kalau murid memilikinya */}
+      {(bolehPakaiHint || dicoret !== undefined || timeCount > 0) && (
+        <div className="flex flex-wrap items-center gap-2 mb-3">
+          {tipe === "PG" && dicoret !== undefined && (
+            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-50 border border-amber-200 text-amber-700 text-xs font-semibold">
+              <Lightbulb className="w-3.5 h-3.5" /> Petunjuk terpakai di soal ini
+            </span>
+          )}
+          {bolehPakaiHint && (
+            <button onClick={pakaiHint} disabled={hintProses}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-100 border border-amber-300 text-amber-800 text-xs font-bold hover:bg-amber-200 disabled:opacity-60 transition-colors"
+            >
+              <Lightbulb className="w-3.5 h-3.5" />
+              {hintProses ? "Memakai…" : `Coret 1 opsi salah (${hintCount})`}
+            </button>
+          )}
+          {timeCount > 0 && (
+            <button onClick={pakaiTambahWaktu} disabled={waktuProses || tambahWaktuDipakai >= MAKS_TAMBAH_WAKTU}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-sky-100 border border-sky-300 text-sky-800 text-xs font-bold hover:bg-sky-200 disabled:opacity-50 transition-colors"
+            >
+              <TimerReset className="w-3.5 h-3.5" />
+              {tambahWaktuDipakai >= MAKS_TAMBAH_WAKTU
+                ? "Batas tambah waktu tercapai"
+                : waktuProses ? "Menambah…" : `+30 detik (${timeCount})`}
+            </button>
+          )}
+        </div>
+      )}
+
+      {powerUpError && (
+        <div className="mb-3 flex items-center justify-between gap-3 p-3 rounded-xl bg-red-50 border border-red-200">
+          <p className="text-xs text-red-700 font-medium">{powerUpError}</p>
+          <button onClick={clearError} className="text-red-500 shrink-0" aria-label="Tutup pesan">
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+      )}
+
       {/* Soal */}
       <div className="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm mb-4 min-h-[200px]">
         <p className="text-base font-bold text-gray-900 leading-relaxed mb-5">{soal.soal}</p>
@@ -215,7 +304,10 @@ export default function KuisPage() {
               const letters = ["A", "B", "C", "D"]
               const isSelected = picked === idx
               const isRight = idx === soal.jawaban
+              const isDicoret = dicoret === idx
               let btnClass = "border-gray-200 bg-white hover:border-violet-300 hover:bg-violet-50"
+
+              if (isDicoret && !showResult) btnClass = "border-gray-100 bg-gray-50 opacity-50 line-through cursor-not-allowed"
 
               if (showResult) {
                 if (isRight) btnClass = "border-emerald-400 bg-emerald-50"
@@ -224,7 +316,7 @@ export default function KuisPage() {
               }
 
               return (
-                <button key={idx} onClick={() => pilihPG(idx)} disabled={showResult}
+                <button key={idx} onClick={() => pilihPG(idx)} disabled={showResult || isDicoret}
                   className={`w-full flex items-center gap-3 p-3.5 rounded-xl border-2 text-left transition-all ${btnClass}`}
                 >
                   <span className={`w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold shrink-0 ${
@@ -234,6 +326,7 @@ export default function KuisPage() {
                   }`}>
                     {showResult && isRight ? <CheckCircle2 className="w-4 h-4" /> :
                      showResult && isSelected && !isRight ? <XCircle className="w-4 h-4" /> :
+                     !showResult && isDicoret ? <X className="w-4 h-4" /> :
                      letters[idx]}
                   </span>
                   <span className={`text-sm font-medium ${
