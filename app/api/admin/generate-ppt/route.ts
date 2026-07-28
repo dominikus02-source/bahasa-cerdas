@@ -199,7 +199,7 @@ HARUS JSON VALID. Tidak ada teks lain di luar JSON. Semua teks dalam BAHASA INDO
           method: "POST",
           headers: { "Content-Type": "application/json", "Authorization": `Bearer ${GROQ_API_KEY}` },
           body: JSON.stringify({
-            model: "llama-3.3-70b-versatile",
+            model: "openai/gpt-oss-120b",
             messages: [
               { role: "system", content: "You are a JSON-only API. Always respond with valid JSON. Never include explanations, markdown, or text outside the JSON object." },
               { role: "user", content: prompt }

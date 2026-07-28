@@ -163,7 +163,7 @@ Hanya output JSON, tanpa markdown.`;
           method: "POST",
           headers: { "Content-Type": "application/json", "Authorization": `Bearer ${GROQ_API_KEY}` },
           body: JSON.stringify({
-            model: "llama-3.1-8b-instant",
+            model: "openai/gpt-oss-20b",
             messages: [{ role: "user", content: prompt }],
             max_tokens: 8000,
             temperature: 0.3,
@@ -178,7 +178,7 @@ Hanya output JSON, tanpa markdown.`;
           if (content) {
             tokens = content.length;
             usedProvider = "groq";
-            usedModel = "llama-3.1-8b-instant";
+            usedModel = "openai/gpt-oss-20b";
           }
         }
       } catch { errors.push("Groq gagal"); }
@@ -188,7 +188,7 @@ Hanya output JSON, tanpa markdown.`;
 
     if (!content && GEMINI_API_KEY) {
       try {
-        const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent`, {
+        const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent`, {
           method: "POST",
           headers: { "Content-Type": "application/json", "X-goog-api-key": GEMINI_API_KEY },
           body: JSON.stringify({
@@ -205,7 +205,7 @@ Hanya output JSON, tanpa markdown.`;
           if (content) {
             tokens = content.length;
             usedProvider = "gemini";
-            usedModel = "gemini-2.0-flash";
+            usedModel = "gemini-2.5-flash";
           }
         }
       } catch { errors.push("Gemini gagal"); }

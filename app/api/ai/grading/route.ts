@@ -138,18 +138,18 @@ Hanya output JSON, tanpa markdown.`;
         const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
           method: "POST",
           headers: { "Content-Type": "application/json", "Authorization": `Bearer ${GROQ_API_KEY}` },
-          body: JSON.stringify({ model: "llama-3.1-8b-instant", messages: [{ role: "user", content: prompt }], max_tokens: 4000, temperature: 0.3 }),
+          body: JSON.stringify({ model: "openai/gpt-oss-20b", messages: [{ role: "user", content: prompt }], max_tokens: 4000, temperature: 0.3 }),
           signal: AbortSignal.timeout(AI_TIMEOUT),
         });
         const json = await res.json();
         if (json.error) { errors.push("Groq gagal"); }
-        else { content = json.choices?.[0]?.message?.content || ""; if (content) { tokens = content.length; usedProvider = "groq"; usedModel = "llama-3.1-8b-instant"; } }
+        else { content = json.choices?.[0]?.message?.content || ""; if (content) { tokens = content.length; usedProvider = "groq"; usedModel = "openai/gpt-oss-20b"; } }
       } catch { errors.push("Groq gagal"); }
     } else if (!content) { errors.push("Groq: No API key"); }
 
     if (!content && GEMINI_API_KEY) {
       try {
-        const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent`, {
+        const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent`, {
           method: "POST",
           headers: { "Content-Type": "application/json", "X-goog-api-key": GEMINI_API_KEY },
           body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }], generationConfig: { temperature: 0.3, maxOutputTokens: 4000 } }),
@@ -157,7 +157,7 @@ Hanya output JSON, tanpa markdown.`;
         });
         const json = await res.json();
         if (json.error) { errors.push("Gemini gagal"); }
-        else { content = json?.candidates?.[0]?.content?.parts?.[0]?.text || ""; if (content) { tokens = content.length; usedProvider = "gemini"; usedModel = "gemini-2.0-flash"; } }
+        else { content = json?.candidates?.[0]?.content?.parts?.[0]?.text || ""; if (content) { tokens = content.length; usedProvider = "gemini"; usedModel = "gemini-2.5-flash"; } }
       } catch { errors.push("Gemini gagal"); }
     } else if (!content) { errors.push("Gemini: No API key"); }
 

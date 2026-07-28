@@ -81,7 +81,7 @@ Isi semua field untuk topik "${t}" dan kelas ${k}. Gunakan Bahasa Indonesia.`;
   async function callGemini() {
     if (!GEMINI_API_KEY) { errors.push("Gemini: No API key"); return; }
     try {
-      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent`, {
+      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent`, {
         method: "POST",
         headers: { "Content-Type": "application/json", "X-goog-api-key": GEMINI_API_KEY },
         body: JSON.stringify({
@@ -124,7 +124,7 @@ Isi semua field untuk topik "${t}" dan kelas ${k}. Gunakan Bahasa Indonesia.`;
         method: "POST",
         headers: { "Content-Type": "application/json", "Authorization": `Bearer ${GROQ_API_KEY}` },
         body: JSON.stringify({
-          model: "llama-3.1-8b-instant",
+          model: "openai/gpt-oss-20b",
           messages: [{ role: "user", content: prompt }],
           max_tokens: 5000, temperature: 0.7,
         }),

@@ -3,7 +3,9 @@ import { getUser } from "@/lib/supabase/server";
 import { rateLimitRoute } from "@/lib/rate-limit";
 
 const AI_TIMEOUT = 15000;
-const GROQ_API_KEY = process.env.GROQ_API_KEY || "";
+// Kunci khusus AI Cerdik, jatah 30 req/menit tier gratis Groq tidak dibagi
+// dengan EYD/Feedback/Grading/Soal yang memakai GROQ_API_KEY bersama.
+const GROQ_API_KEY = process.env.GROQ_API_KEY_CHAT || process.env.GROQ_API_KEY || "";
 const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY || "";
 
 const SYSTEM_PROMPT = `Kamu adalah **AI BC**, Asisten Bahasa Indonesia yang ramah, sabar, cerdas, dan antusias. Kamu adalah kakak guru Bahasa Indonesia yang asyik, teliti, dan selalu mendukung siswa serta guru.
@@ -114,7 +116,9 @@ export async function POST(req: NextRequest) {
           Authorization: `Bearer ${GROQ_API_KEY}`,
         },
         body: JSON.stringify({
-          model: "llama-3.3-70b-versatile",
+          // llama-3.3-70b-versatile dihentikan Groq 16 Agustus 2026 —
+          // openai/gpt-oss-120b pengganti resmi yang mereka rekomendasikan.
+          model: "openai/gpt-oss-120b",
           messages: chatMessages,
           temperature: 0.7,
           max_tokens: 4096,
