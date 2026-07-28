@@ -248,6 +248,24 @@ export async function claimQuestReward(userId: string, questId: string) {
   });
 }
 
+/**
+ * Misi mana saja yang hadiahnya sudah benar-benar cair.
+ *
+ * DailyQuest.completed hanya menyatakan targetnya tercapai, bukan hadiahnya
+ * sudah diambil — jadi halaman misi tidak punya cara tahu mana yang sudah
+ * diklaim, dan tombol "Klaim" muncul lagi setiap halaman dimuat ulang.
+ * Ledger CoinTransaction adalah satu-satunya catatan pembayaran (lihat
+ * claimQuestReward), jadi dari situ pula status klaimnya dibaca.
+ */
+export async function getClaimedQuestIds(userId: string, questIds: string[]): Promise<Set<string>> {
+  if (questIds.length === 0) return new Set();
+  const rows = await db.coinTransaction.findMany({
+    where: { userId, reason: "QUEST_COMPLETE", reference: { in: questIds } },
+    select: { reference: true },
+  });
+  return new Set(rows.map((r) => r.reference).filter((r): r is string => !!r));
+}
+
 export async function trackDailyStreak(userId: string) {
   await db.$transaction(async (tx) => {
     const user = await tx.user.findUnique({

@@ -2,7 +2,7 @@ import { getUser } from "@/lib/supabase/server"
 import { db } from "@/lib/db"
 import { redirect } from "next/navigation"
 import Link from "next/link"
-import { getOrCreateDailyQuests, trackDailyStreak, claimQuestReward } from "@/lib/coins"
+import { getOrCreateDailyQuests, trackDailyStreak, getClaimedQuestIds } from "@/lib/coins"
 import { Flame, CheckCircle2, PenLine, MessageCircle, Heart, Zap, Sparkles } from "lucide-react"
 import { ClaimButton } from "./claim-button"
 import { getQuestMeta, questProgressText } from "@/lib/quest-meta"
@@ -17,6 +17,8 @@ export default async function MisiHarianPage() {
     where: { id: user.id },
     select: { streak: true, coins: true, xp: true },
   })
+
+  const claimedIds = await getClaimedQuestIds(user.id, quests.map((q: any) => q.id))
 
   const completedQuests = quests.filter((q: any) => q.completed).length
   const totalQuests = quests.length
@@ -80,7 +82,7 @@ export default async function MisiHarianPage() {
                 </div>
                 <div className="text-right shrink-0">
                   <p className="text-sm font-bold text-amber-600">+{quest.rewardCoins} Koin</p>
-                  {isDone && <ClaimButton questId={quest.id} />}
+                  {isDone && <ClaimButton questId={quest.id} alreadyClaimed={claimedIds.has(quest.id)} />}
                 </div>
               </div>
               <div className="w-full h-2 bg-gray-100 rounded-full mt-3 overflow-hidden">
