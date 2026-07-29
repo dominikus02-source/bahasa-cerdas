@@ -119,11 +119,11 @@ export async function GET(req: NextRequest) {
       items = hasMore ? karya.slice(0, limit) : karya;
     }
 
-    const withDisplay = items.map((k) => ({
-      ...k,
-      createdAt: k.createdAt.toISOString(),
-      user: { ...k.user, displayName: getDisplayName(k.user, "peer") },
-    }));
+      const withDisplay = items.map((k) => ({
+        ...k,
+        createdAt: typeof k.createdAt === "string" ? k.createdAt : k.createdAt.toISOString(),
+        user: { ...k.user, displayName: getDisplayName(k.user, "peer") },
+      }));
 
     const withLikes = await attachLikedStatus(withDisplay, userId);
 
