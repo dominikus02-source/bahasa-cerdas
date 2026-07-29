@@ -165,8 +165,8 @@ export default function GuruProfilePage() {
           { icon: Users, label: "Siswa", color: "bg-blue-100 text-blue-600", href: "/guru/data-siswa" },
           { icon: Award, label: "Sertifikat", color: "bg-purple-100 text-purple-600", href: "/guru/sertifikat" },
           { icon: Trophy, label: "Kuis", color: "bg-pink-100 text-pink-600", href: "/guru/kuis-game" },
-          { icon: Calendar, label: "Kalender", color: "bg-cyan-100 text-cyan-600", href: "#" },
-          { icon: Star, label: "Komunitas", color: "bg-violet-100 text-violet-600", href: "/guru/komunitas/daftar" },
+          { icon: Calendar, label: "Kalender", color: "bg-cyan-100 text-cyan-600", href: "/guru/olimpiade/kalender" },
+          { icon: Star, label: "Komunitas", color: "bg-violet-100 text-violet-600", href: "/guru/komunitas" },
         ].map((item, idx) => (
           <Link key={idx} href={item.href} className="flex flex-col items-center gap-2 p-4 bg-white rounded-2xl border border-gray-50 shadow-sm hover:shadow-md transition-shadow">
             <div className={`w-12 h-12 rounded-xl ${item.color} flex items-center justify-center`}>

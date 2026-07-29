@@ -12,7 +12,7 @@ export default function GuruDokumenLatihanPage() {
   const [filter, setFilter] = useState<"semua" | "UKBI" | "TKA">("semua");
 
   useEffect(() => {
-    fetch("/api/user/sertifikat")
+    fetch("/api/guru/dokumen-siswa")
       .then(r => { if (r.ok) return r.json(); throw new Error(); })
       .then(d => setCertificates(d.data || []))
       .catch(() => {})
@@ -109,7 +109,7 @@ export default function GuruDokumenLatihanPage() {
                   <GraduationCap size={20} className="text-white" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-xs text-gray-400 font-medium">Dokumen Latihan</p>
+                  <p className="text-xs text-gray-400 font-medium">{c.user?.fullName || "Murid"}</p>
                   <h3 className="font-bold text-gray-900 truncate">{c.paket?.title || "UKBI - TKA"}</h3>
                 </div>
                 <span className={`text-[10px] px-2 py-1 rounded-full font-bold ${getPredikatColor(c.predikat)}`}>

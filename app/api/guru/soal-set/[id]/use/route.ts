@@ -54,7 +54,7 @@ export async function POST(
     }
 
     return NextResponse.json({
-      redirect: `/guru/latihan/new?soalIds=${questionIds.join(",")}`,
+      redirect: `/guru/kuis/new?soalIds=${questionIds.join(",")}&setTitle=${encodeURIComponent(set.title)}`,
     });
   } catch (error) {
     console.error("POST /api/guru/soal-set/[id]/use error:", error);

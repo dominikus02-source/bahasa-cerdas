@@ -43,7 +43,7 @@ const COVER_COLORS = [
   "from-lime-500 to-green-600",
 ];
 
-const EMOJIS = ["📚", "", "🎯", "", "✏️", "", "🎓", "", "🔤", "", "🌟", ""];
+const EMOJIS = ["📚", "📖", "🎯", "🏆", "✏️", "📝", "🎓", "🏅", "🔤", "💡", "🌟", "⭐"];
 
 export default function BankSoalPage() {
   const router = useRouter();
