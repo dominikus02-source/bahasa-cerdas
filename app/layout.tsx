@@ -114,6 +114,9 @@ export default async function RootLayout({
 }) {
   // CSP nonce (set by middleware) so our inline JSON-LD passes the strict policy.
   const nonce = (await headers()).get("x-nonce") ?? undefined;
+  const supabaseHost = process.env.NEXT_PUBLIC_SUPABASE_URL
+    ? new URL(process.env.NEXT_PUBLIC_SUPABASE_URL).hostname
+    : null;
   return (
     <html lang="id">
       <head>
@@ -122,6 +125,10 @@ export default async function RootLayout({
         <meta name="apple-mobile-web-app-title" content="Arena BC" />
         <meta name="format-detection" content="telephone=no" />
         <meta name="mobile-web-app-capable" content="yes" />
+        <link rel="dns-prefetch" href="https://www.gravatar.com" />
+        {supabaseHost && <link rel="dns-prefetch" href={`https://${supabaseHost}`} />}
+        <link rel="preconnect" href="https://www.gravatar.com" />
+        {supabaseHost && <link rel="preconnect" href={`https://${supabaseHost}`} />}
         <script
           nonce={nonce}
           type="application/ld+json"

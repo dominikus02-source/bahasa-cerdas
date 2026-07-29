@@ -1,3 +1,4 @@
+import Image from "next/image"
 import { getFrameStyle } from "@/lib/cosmetics";
 
 interface UserAvatarProps {
@@ -87,8 +88,7 @@ export default function UserAvatar({
         className={`relative z-[1] w-full h-full rounded-full overflow-hidden flex items-center justify-center bg-gradient-to-br ${gradient} text-white font-bold ${textClassName} ${className}`}
       >
         {avatar ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={avatar} alt="" className="w-full h-full object-cover" />
+          <Image src={avatar} alt="" fill className="object-cover" sizes="96px" />
         ) : (
           label
         )}
