@@ -32,6 +32,7 @@ export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
     const type = searchParams.get("type");
+    const q = searchParams.get("q")?.trim();
     const limit = Math.min(parseInt(searchParams.get("limit") || "10"), 50);
     const cursor = searchParams.get("cursor");
     const featured = searchParams.get("featured") === "true";
@@ -90,9 +91,17 @@ export async function GET(req: NextRequest) {
     } else {
       const where: any = {};
       if (type) where.type = type;
+      if (q) {
+        where.OR = [
+          { title: { contains: q, mode: "insensitive" } },
+          { content: { contains: q, mode: "insensitive" } },
+          { user: { fullName: { contains: q, mode: "insensitive" } } },
+        ];
+      }
 
       // Cache first page (no cursor) for 30s — absorbs feed bursts from a whole class
-      const cacheKey = cursor ? null : `feed:${type || "all"}:${limit}`;
+      // Skip cache when searching so results are always fresh
+      const cacheKey = cursor || q ? null : `feed:${type || "all"}:${limit}`;
       let karya: any[];
       if (cacheKey) {
         const cached = await cache.get<any[]>(cacheKey);

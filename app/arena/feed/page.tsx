@@ -1,7 +1,7 @@
 "use client"
 
-import { useEffect, useState, useCallback } from "react"
-import { useRouter } from "next/navigation"
+import { useEffect, useState, useCallback, Suspense } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
 import Link from "next/link"
 import {
   Heart, MessageCircle, Eye, Clock, Sparkles, BookOpen, FileText,
@@ -55,7 +55,10 @@ interface KaryaItem {
   likedByCurrentUser?: boolean
 }
 
-export default function FeedPage() {
+function FeedContent() {
+  const searchParams = useSearchParams()
+  const searchQuery = searchParams.get("q") || ""
+
   const [karyaList, setKaryaList] = useState<KaryaItem[]>([])
   const [filter, setFilter] = useState("SEMUA")
   const [likedSet, setLikedSet] = useState<Set<string>>(new Set())
@@ -77,9 +80,10 @@ export default function FeedPage() {
   const challenge = getWeeklyChallenge()
   const router = useRouter()
 
-  const loadKarya = useCallback(async (cursorVal: string | null, append: boolean) => {
+  const loadKarya = useCallback(async (cursorVal: string | null, append: boolean, q?: string) => {
     const params = new URLSearchParams({ limit: "20" });
     if (cursorVal) params.set("cursor", cursorVal);
+    if (q) params.set("q", q);
     const res = await fetch(`/api/siswa/karya?${params}`);
     const data = await res.json();
     const items: KaryaItem[] = data.karya || [];
@@ -100,7 +104,7 @@ export default function FeedPage() {
 
   useEffect(() => {
     async function init() {
-      await loadKarya(null, false);
+      await loadKarya(null, false, searchQuery || undefined);
       const [uData, chCount] = await Promise.all([
         fetch("/api/user/me").then(r => r.ok ? r.json() : null),
         fetch(`/api/siswa/karya/count?type=${challenge.type}`).then(r => r.json()).catch(() => ({ count: 0 })),
@@ -112,12 +116,13 @@ export default function FeedPage() {
       setChallengeCount(chCount.count || 0);
     }
     init();
-  }, [loadKarya, challenge.type]);
+  }, [loadKarya, challenge.type, searchQuery]);
 
   useEffect(() => {
     setLoading(true);
     const params = new URLSearchParams({ limit: "20" });
     if (filter !== "SEMUA") params.set("type", filter);
+    if (searchQuery) params.set("q", searchQuery);
     fetch(`/api/siswa/karya?${params}`)
       .then(r => r.json())
       .then(data => {
@@ -126,20 +131,21 @@ export default function FeedPage() {
         setHasMore(!!data.nextCursor);
         setLoading(false);
       });
-  }, [filter]);
+  }, [filter, searchQuery]);
 
   const loadMore = useCallback(async () => {
     if (loadingMore || !cursor) return;
     setLoadingMore(true);
     const params = new URLSearchParams({ limit: "20", cursor });
     if (filter !== "SEMUA") params.set("type", filter);
+    if (searchQuery) params.set("q", searchQuery);
     const res = await fetch(`/api/siswa/karya?${params}`);
     const data = await res.json();
     setKaryaList(prev => [...prev, ...(data.karya || [])]);
     setCursor(data.nextCursor);
     setHasMore(!!data.nextCursor);
     setLoadingMore(false);
-  }, [cursor, loadingMore, filter]);
+  }, [cursor, loadingMore, filter, searchQuery]);
 
   useEffect(() => {
     const io = new IntersectionObserver(entries => {
@@ -266,6 +272,19 @@ export default function FeedPage() {
         </div>
       </Link>
 
+      {/* Search context */}
+      {searchQuery && (
+        <div className="mb-4 flex items-center gap-2 px-4 py-2.5 bg-violet-50 rounded-xl border border-violet-200">
+          <span className="text-sm text-violet-700">
+            Hasil untuk: "<span className="font-bold">{searchQuery}</span>"
+            {karyaList.length > 0 && <> &mdash; {karyaList.length} ditemukan</>}
+          </span>
+          <button onClick={() => router.push("/arena/feed")} className="ml-auto text-xs font-semibold text-violet-600 hover:text-violet-800">
+            Hapus Filter
+          </button>
+        </div>
+      )}
+
       {/* Filter Tabs */}
       <div className="flex gap-2 mb-5 overflow-x-auto pb-2 scrollbar-hide">
         {["SEMUA", "PUISI", "CERPEN", "ARTIKEL", "ANEKDOT", "PANTUN", "OPINI"].map(t => (
@@ -365,5 +384,17 @@ export default function FeedPage() {
         </div>
       )}
     </div>
+  )
+}
+
+export default function FeedPage() {
+  return (
+    <Suspense fallback={
+      <div className="arena-page max-w-3xl mx-auto p-4">
+        <div className="flex justify-center py-16"><Loader2 size={32} className="animate-spin text-violet-500" /></div>
+      </div>
+    }>
+      <FeedContent />
+    </Suspense>
   )
 }
