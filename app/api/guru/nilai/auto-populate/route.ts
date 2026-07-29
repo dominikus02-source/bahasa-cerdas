@@ -11,7 +11,7 @@ export async function POST(req: NextRequest) {
     if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const dbUser = await db.user.findUnique({ where: { supabaseId: user.id } });
-    if (!dbUser || dbUser.role !== "GURU") {
+    if (!dbUser || (dbUser.role !== "GURU" && !dbUser.isFounder && dbUser.role !== "ADMIN")) {
       return NextResponse.json({ error: "Hanya guru yang bisa mengakses" }, { status: 403 });
     }
 
@@ -63,6 +63,10 @@ export async function POST(req: NextRequest) {
       });
 
       for (const sub of submissions) {
+        if (dryRun) {
+          results.PENUGASAN.created++;
+          continue;
+        }
         const r = await upsertNilaiOtomatis({
           userId: sub.userId,
           groupId,
@@ -77,7 +81,7 @@ export async function POST(req: NextRequest) {
         else if (r.status === "updated") results.PENUGASAN.updated++;
         else if (r.status === "skipped_manual_protected") results.PENUGASAN.protected++;
         else results.PENUGASAN.skipped++;
-        if (!dryRun) results.PENUGASAN.details.push({ userId: sub.userId, status: r.status });
+        results.PENUGASAN.details.push({ userId: sub.userId, status: r.status });
       }
     }
 
@@ -97,6 +101,7 @@ export async function POST(req: NextRequest) {
       });
 
       for (const qs of quizSubmissions) {
+        if (dryRun) { results.QUIZ.created++; continue; }
         const r = await upsertNilaiOtomatis({
           userId: qs.userId,
           groupId,
@@ -111,7 +116,7 @@ export async function POST(req: NextRequest) {
         else if (r.status === "updated") results.QUIZ.updated++;
         else if (r.status === "skipped_manual_protected") results.QUIZ.protected++;
         else results.QUIZ.skipped++;
-        if (!dryRun) results.QUIZ.details.push({ userId: qs.userId, status: r.status });
+        results.QUIZ.details.push({ userId: qs.userId, status: r.status });
       }
 
       // From GroupQuizResult (legacy)
@@ -121,6 +126,7 @@ export async function POST(req: NextRequest) {
       });
 
       for (const qr of quizResults) {
+        if (dryRun) { results.QUIZ.created++; continue; }
         const r = await upsertNilaiOtomatis({
           userId: qr.userId,
           groupId,
@@ -135,7 +141,7 @@ export async function POST(req: NextRequest) {
         else if (r.status === "updated") results.QUIZ.updated++;
         else if (r.status === "skipped_manual_protected") results.QUIZ.protected++;
         else results.QUIZ.skipped++;
-        if (!dryRun) results.QUIZ.details.push({ userId: qr.userId, status: r.status });
+        results.QUIZ.details.push({ userId: qr.userId, status: r.status });
       }
     }
 
@@ -161,6 +167,7 @@ export async function POST(req: NextRequest) {
         });
 
         for (const gr of gameResults) {
+          if (dryRun) { results.GAME.created++; continue; }
           const skor = Math.round((gr.finalScore / (gr.correct + gr.wrong || 1)) * 100);
           const r = await upsertNilaiOtomatis({
             userId: gr.userId,
@@ -176,7 +183,7 @@ export async function POST(req: NextRequest) {
           else if (r.status === "updated") results.GAME.updated++;
           else if (r.status === "skipped_manual_protected") results.GAME.protected++;
           else results.GAME.skipped++;
-          if (!dryRun) results.GAME.details.push({ userId: gr.userId, status: r.status });
+          results.GAME.details.push({ userId: gr.userId, status: r.status });
         }
       }
     }
@@ -204,6 +211,7 @@ export async function POST(req: NextRequest) {
         });
 
         for (const sub of submissions) {
+          if (dryRun) { results.JALUR_CERDAS.created++; continue; }
           const r = await upsertNilaiOtomatis({
             userId: sub.userId,
             groupId,
@@ -218,7 +226,7 @@ export async function POST(req: NextRequest) {
           else if (r.status === "updated") results.JALUR_CERDAS.updated++;
           else if (r.status === "skipped_manual_protected") results.JALUR_CERDAS.protected++;
           else results.JALUR_CERDAS.skipped++;
-          if (!dryRun) results.JALUR_CERDAS.details.push({ userId: sub.userId, status: r.status });
+          results.JALUR_CERDAS.details.push({ userId: sub.userId, status: r.status });
         }
       }
     }
@@ -242,6 +250,7 @@ export async function POST(req: NextRequest) {
       });
 
       for (const p of progres) {
+        if (dryRun) { results.UKBI_TKA.created++; continue; }
         const totalScore = p.totalScore || 0;
         const maxScore = p.maxScore || 100;
         const skor = p.percentage !== null && p.percentage !== undefined
@@ -261,7 +270,7 @@ export async function POST(req: NextRequest) {
         else if (r.status === "updated") results.UKBI_TKA.updated++;
         else if (r.status === "skipped_manual_protected") results.UKBI_TKA.protected++;
         else results.UKBI_TKA.skipped++;
-        if (!dryRun) results.UKBI_TKA.details.push({ userId: p.userId, status: r.status });
+        results.UKBI_TKA.details.push({ userId: p.userId, status: r.status });
       }
     }
 

@@ -272,8 +272,15 @@ export async function POST(req: NextRequest) {
           const { karyaId, sellerId, subtotal: itemSubtotal } = item;
           if (!karyaId) continue;
 
-          const platformFee = Math.round(itemSubtotal * 0.2);
-          const sellerEarning = itemSubtotal - platformFee;
+          // Baca netAmount dari sellerEarning (pre-calculated with 85/15 split)
+          // Supaya webhook tidak menghitung ulang fee dengan persentase berbeda
+          const earning = await db.sellerEarning.findFirst({
+            where: { sellerId, itemId: karyaId, status: "PENDING" },
+            orderBy: { soldAt: "desc" },
+            select: { netAmount: true },
+          });
+
+          const sellerEarning = earning?.netAmount ?? Math.round(itemSubtotal * 0.85);
 
           const karya = await db.karya.findUnique({
             where: { id: karyaId },
