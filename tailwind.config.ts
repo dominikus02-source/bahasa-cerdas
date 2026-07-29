@@ -1,4 +1,5 @@
 import type { Config } from "tailwindcss";
+import typography from "@tailwindcss/typography";
 
 const config: Config = {
   darkMode: ["class"],
@@ -113,6 +114,13 @@ const config: Config = {
       },
     },
   },
+  // Dibutuhkan oleh setiap tempat yang memakai kelas `prose` (AI Cerdik, AI BC,
+  // artikel, marketplace, artikel guru) untuk merender <ReactMarkdown>. Sudah
+  // dipakai di 4 halaman sebelum ini, tapi paketnya tidak pernah terpasang —
+  // kelas `prose` selama ini tidak menghasilkan CSS apa pun (Tailwind Preflight
+  // menghapus margin/ukuran bawaan heading & list, jadi hasilnya bukan cuma
+  // "tidak berubah" tapi tanpa jarak antar-elemen sama sekali).
+  plugins: [typography],
 };
 
 export default config;

@@ -38,7 +38,7 @@ const agent: AgentDefinition<z.infer<typeof inputSchema>, z.infer<typeof outputS
     { id: "rekomendasi-fitur", label: "Rekomendasi Fitur", description: "Mengarahkan user ke fitur yang sesuai di dashboard" },
   ],
   limitations: [
-    "Tidak bisa generate RPP/Modul Ajar penuh — arahkan ke fitur RPP Agent",
+    "Tidak bisa generate Rencana Pembelajaran penuh — arahkan ke fitur Rencana Pembelajaran",
     "Tidak bisa generate soal dalam jumlah banyak — arahkan ke fitur Bank Soal",
     "Tidak memiliki akses ke data real-time siswa atau kelas",
   ],
@@ -53,12 +53,12 @@ Kepribadian:
 Pengetahuan inti:
 - PUEBI / EYD V terbaru
 - KBBI
-- Kurikulum Merdeka (ATP, RPP, HOTS, proyek, diferensiasi)
+- Kurikulum Nasional (ATP, Rencana Pembelajaran, HOTS, proyek, diferensiasi)
 - Sastra Indonesia (puisi, prosa, drama, sejarah sastra)
 - UKBI dan persiapan kompetensi
 
 Aturan:
-1. Jika ditanya RPP/Modul: arahkan ke fitur RPP Agent di dashboard guru
+1. Jika ditanya Rencana Pembelajaran/Modul: arahkan ke fitur Rencana Pembelajaran di dashboard guru
 2. Jika ditanya soal: arahkan ke Bank Soal
 3. Jika ditanya materi ajar: arahkan ke Materi Ajar
 4. Jika diminta koreksi ejaan/tata bahasa: arahkan ke agent EYD
@@ -95,10 +95,10 @@ Aturan:
       output: { reply: "Hai! 👋 Aku AI Cerdik, asisten Bahasa Indonesia. Ada yang bisa aku bantu? 😊" },
     },
     {
-      name: "Request RPP",
-      description: "Guru minta dibuatkan RPP",
-      input: { message: "Tolong buatkan RPP teks negosiasi", mode: "guru" },
-      output: { reply: "Tentu! Untuk RPP yang lengkap, silakan gunakan fitur **RPP Agent** di dashboard guru. Saya bisa bantu menyusun kerangka awalnya. Kelas berapa?", suggestedAgent: "rpp" },
+      name: "Request Rencana Pembelajaran",
+      description: "Guru minta dibuatkan Rencana Pembelajaran",
+      input: { message: "Tolong buatkan Rencana Pembelajaran teks negosiasi", mode: "guru" },
+      output: { reply: "Tentu! Untuk Rencana Pembelajaran yang lengkap, silakan gunakan fitur **Rencana Pembelajaran** di dashboard guru. Saya bisa bantu menyusun kerangka awalnya. Kelas berapa?", suggestedAgent: "rpp" },
     },
     {
       name: "Koreksi EYD",

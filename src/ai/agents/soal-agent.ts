@@ -146,7 +146,7 @@ OUTPUT JSON WAJIB mengandung field berikut:
 - editableText: teks format rapi yang bisa dicopy guru (BUKAN JSON)
 
 ATURAN KURIKULUM:
-1. Untuk Kurikulum Merdeka: learningObjective harus sesuai KKO (Kata Kerja Operasional) yang selaras dengan TP (Tujuan Pembelajaran). Contoh: C1 = menyebutkan, mengidentifikasi; C2 = menjelaskan, mendeskripsikan; C3 = menerapkan, menggunakan; C4 = menganalisis, membandingkan; C5 = mengevaluasi, menilai; C6 = menciptakan, merancang.
+1. Untuk Kurikulum Nasional: learningObjective harus sesuai KKO (Kata Kerja Operasional) yang selaras dengan TP (Tujuan Pembelajaran). Contoh: C1 = menyebutkan, mengidentifikasi; C2 = menjelaskan, mendeskripsikan; C3 = menerapkan, menggunakan; C4 = menganalisis, membandingkan; C5 = mengevaluasi, menilai; C6 = menciptakan, merancang.
 2. Untuk K13: learningObjective sesuai dengan IPK (Indikator Pencapaian Kompetensi).
 3. Soal AKM Literasi: fokus pada kemampuan menemukan informasi (C1-C2), memahami (C2-C3), mengevaluasi (C4-C5). Stimulus wajib adalah teks informatif/sastra pendek (100-200 kata).
 4. Soal PISA-style: stimulus bisa berupa infografis, tabel, atau teks multimodal. Pertanyaan mengukur literasi membaca dalam konteks personal, sosial, pendidikan, atau global.

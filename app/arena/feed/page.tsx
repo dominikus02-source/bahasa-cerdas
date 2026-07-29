@@ -1,7 +1,7 @@
 "use client"
 
-import { useEffect, useState, useCallback } from "react"
-import { useRouter } from "next/navigation"
+import { useEffect, useState, useCallback, Suspense } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
 import Link from "next/link"
 import {
   Heart, MessageCircle, Eye, Clock, Sparkles, BookOpen, FileText,
@@ -9,6 +9,8 @@ import {
   Zap, Trophy, Target, TrendingUp, Share2, Loader2,
 } from "lucide-react"
 import { getWeeklyChallenge } from "@/lib/weekly-challenge"
+import UserAvatar from "@/components/arena/UserAvatar"
+import UserName from "@/components/arena/UserName"
 
 const typeColors: Record<string, { label: string; bg: string; text: string; border: string }> = {
   PUISI: { label: "Puisi", bg: "bg-fuchsia-100", text: "text-fuchsia-700", border: "border-fuchsia-200" },
@@ -39,7 +41,11 @@ interface KaryaItem {
   user: {
     id: string
     fullName: string
+    displayName?: string
     avatar: string | null
+    equippedFrame?: string | null
+    equippedNameColor?: string | null
+    equippedBadge?: string | null
     profile?: { school?: string; city?: string } | null
   }
   _count: {
@@ -49,7 +55,10 @@ interface KaryaItem {
   likedByCurrentUser?: boolean
 }
 
-export default function FeedPage() {
+function FeedContent() {
+  const searchParams = useSearchParams()
+  const searchQuery = searchParams.get("q") || ""
+
   const [karyaList, setKaryaList] = useState<KaryaItem[]>([])
   const [filter, setFilter] = useState("SEMUA")
   const [likedSet, setLikedSet] = useState<Set<string>>(new Set())
@@ -58,27 +67,27 @@ export default function FeedPage() {
   const [submittingComment, setSubmittingComment] = useState<Record<string, boolean>>({})
   const [likePending, setLikePending] = useState<Record<string, boolean>>({})
   const [toast, setToast] = useState<string | null>(null)
-  const [onlineCount, setOnlineCount] = useState(0)
-  const [totalKarya, setTotalKarya] = useState(0)
   const [currentUserId, setCurrentUserId] = useState<string | null>(null)
+  const [isGuruViewer, setIsGuruViewer] = useState(false)
+  const nameOf = (u?: { fullName: string; displayName?: string }) =>
+    !u ? "Pengguna" : (isGuruViewer ? u.fullName : (u.displayName || u.fullName))
   const [loading, setLoading] = useState(true)
   const [loadingMore, setLoadingMore] = useState(false)
   const [cursor, setCursor] = useState<string | null>(null)
   const [hasMore, setHasMore] = useState(true)
   const [deletingId, setDeletingId] = useState<string | null>(null)
   const [challengeCount, setChallengeCount] = useState(0)
-  const [loadingChallenge, setLoadingChallenge] = useState(true)
   const challenge = getWeeklyChallenge()
   const router = useRouter()
 
-  const loadKarya = useCallback(async (cursorVal: string | null, append: boolean) => {
+  const loadKarya = useCallback(async (cursorVal: string | null, append: boolean, q?: string) => {
     const params = new URLSearchParams({ limit: "20" });
     if (cursorVal) params.set("cursor", cursorVal);
+    if (q) params.set("q", q);
     const res = await fetch(`/api/siswa/karya?${params}`);
     const data = await res.json();
     const items: KaryaItem[] = data.karya || [];
     setKaryaList(prev => append ? [...prev, ...items] : items);
-    // Seed like state from the server so hearts render red for already-liked karya.
     setLikedSet(prev => {
       const n = append ? new Set(prev) : new Set<string>();
       for (const k of items) if (k.likedByCurrentUser) n.add(k.id);
@@ -89,423 +98,303 @@ export default function FeedPage() {
       for (const k of items) n[k.id] = k._count?.likes ?? k.likesCount ?? 0;
       return n;
     });
-    setTotalKarya(data.total || 0);
     setHasMore(!!data.nextCursor);
     setCursor(data.nextCursor);
   }, []);
 
   useEffect(() => {
     async function init() {
-      await loadKarya(null, false);
-      const [uData, stats, chCount] = await Promise.all([
+      await loadKarya(null, false, searchQuery || undefined);
+      const [uData, chCount] = await Promise.all([
         fetch("/api/user/me").then(r => r.ok ? r.json() : null),
-        fetch("/api/arena/stats").then(r => r.json()).catch(() => ({})),
         fetch(`/api/siswa/karya/count?type=${challenge.type}`).then(r => r.json()).catch(() => ({ count: 0 })),
       ]);
-      setCurrentUserId(uData?.user?.id || uData?.user?.userId || null)
-      setOnlineCount(stats.onlineCount || 0)
-      setChallengeCount(chCount.count || 0)
-      setLoadingChallenge(false)
-      setLoading(false)
+      if (uData) {
+        setCurrentUserId(uData.user?.id || uData.id);
+        setIsGuruViewer(uData.user?.role === "GURU" || uData.role === "GURU" || false);
+      }
+      setChallengeCount(chCount.count || 0);
     }
     init();
-  }, [loadKarya])
+  }, [loadKarya, challenge.type, searchQuery]);
 
   useEffect(() => {
-    if (!toast) return
-    const t = setTimeout(() => setToast(null), 3000)
-    return () => clearTimeout(t)
-  }, [toast])
+    setLoading(true);
+    const params = new URLSearchParams({ limit: "20" });
+    if (filter !== "SEMUA") params.set("type", filter);
+    if (searchQuery) params.set("q", searchQuery);
+    fetch(`/api/siswa/karya?${params}`)
+      .then(r => r.json())
+      .then(data => {
+        setKaryaList(data.karya || []);
+        setCursor(data.nextCursor);
+        setHasMore(!!data.nextCursor);
+        setLoading(false);
+      });
+  }, [filter, searchQuery]);
 
-  const loadMore = async () => {
-    if (!hasMore || loadingMore) return;
+  const loadMore = useCallback(async () => {
+    if (loadingMore || !cursor) return;
     setLoadingMore(true);
-    await loadKarya(cursor, true);
+    const params = new URLSearchParams({ limit: "20", cursor });
+    if (filter !== "SEMUA") params.set("type", filter);
+    if (searchQuery) params.set("q", searchQuery);
+    const res = await fetch(`/api/siswa/karya?${params}`);
+    const data = await res.json();
+    setKaryaList(prev => [...prev, ...(data.karya || [])]);
+    setCursor(data.nextCursor);
+    setHasMore(!!data.nextCursor);
     setLoadingMore(false);
-  };
+  }, [cursor, loadingMore, filter, searchQuery]);
 
-  const filtered = filter === "POPULER"
-    ? [...karyaList].sort((a, b) => b.likesCount - a.likesCount)
-    : filter === "KU"
-      ? karyaList.filter(k => k.user.id === currentUserId)
-      : filter === "SEMUA"
-        ? karyaList
-        : karyaList.filter(k => k.type === filter)
-  const trending = [...karyaList].sort((a, b) => b.likesCount - a.likesCount).slice(0, 4)
+  useEffect(() => {
+    const io = new IntersectionObserver(entries => {
+      if (entries[0].isIntersecting && hasMore && !loadingMore) loadMore();
+    }, { rootMargin: "300px" });
+    const el = document.getElementById("feed-sentinel");
+    if (el) io.observe(el);
+    return () => io.disconnect();
+  }, [loadMore, hasMore, loadingMore]);
 
-  const toggleLike = async (id: string) => {
-    if (likePending[id]) return // ignore rapid double-clicks while in flight
-    const wasLiked = likedSet.has(id)
-    const baseCount = likeCounts[id] ?? karyaList.find(k => k.id === id)?.likesCount ?? 0
+  const handleLike = async (id: string) => {
+    if (likePending[id]) return;
+    setLikePending(prev => ({ ...prev, [id]: true }));
+    const isLiked = likedSet.has(id);
     // optimistic
-    setLikePending(prev => ({ ...prev, [id]: true }))
-    setLikedSet(prev => { const n = new Set(prev); wasLiked ? n.delete(id) : n.add(id); return n })
-    setLikeCounts(prev => ({ ...prev, [id]: Math.max(0, baseCount + (wasLiked ? -1 : 1)) }))
+    setLikedSet(prev => { const n = new Set(prev); isLiked ? n.delete(id) : n.add(id); return n; });
+    setLikeCounts(prev => ({ ...prev, [id]: prev[id] + (isLiked ? -1 : 1) }));
     try {
-      const res = await fetch(`/api/siswa/karya/${id}/like`, { method: "POST" })
-      if (!res.ok) throw new Error("failed")
-      const data = await res.json()
-      // reconcile with the server's authoritative state
-      if (typeof data.liked === "boolean") {
-        setLikedSet(prev => { const n = new Set(prev); data.liked ? n.add(id) : n.delete(id); return n })
-      }
-      if (typeof data.likeCount === "number") {
-        setLikeCounts(prev => ({ ...prev, [id]: data.likeCount }))
-      }
+      const res = await fetch(`/api/siswa/karya/${id}/like`, { method: "POST" });
+      if (!res.ok) throw new Error();
+      const data = await res.json();
+      setLikeCounts(prev => ({ ...prev, [id]: data.likesCount }));
     } catch {
       // rollback
-      setLikedSet(prev => { const n = new Set(prev); wasLiked ? n.add(id) : n.delete(id); return n })
-      setLikeCounts(prev => ({ ...prev, [id]: baseCount }))
-      setToast("Belum berhasil menyukai karya. Silakan coba lagi.")
-    } finally {
-      setLikePending(prev => ({ ...prev, [id]: false }))
+      setLikedSet(prev => { const n = new Set(prev); isLiked ? n.add(id) : n.delete(id); return n; });
+      setLikeCounts(prev => ({ ...prev, [id]: prev[id] + (isLiked ? 1 : -1) }));
     }
-  }
+    setLikePending(prev => ({ ...prev, [id]: false }));
+  };
 
-  const submitComment = async (karyaId: string) => {
-    const text = commentTexts[karyaId]?.trim()
-    if (!text || submittingComment[karyaId]) return
-    setSubmittingComment(prev => ({ ...prev, [karyaId]: true }))
-    setCommentTexts(prev => ({ ...prev, [karyaId]: "" }))
-    setKaryaList(prev => prev.map(k => k.id === karyaId ? { ...k, _count: { ...k._count, comments: k._count.comments + 1 } } : k))
+  const handleComment = async (karyaId: string) => {
+    const text = commentTexts[karyaId]?.trim();
+    if (!text || submittingComment[karyaId]) return;
+    setSubmittingComment(prev => ({ ...prev, [karyaId]: true }));
+    // optimistic
+    const tempId = `temp-${Date.now()}`;
+    setKaryaList(prev => prev.map(k => k.id === karyaId ? { ...k, _count: { ...k._count, comments: k._count.comments + 1 } } : k));
+    setCommentTexts(prev => ({ ...prev, [karyaId]: "" }));
     try {
       const res = await fetch(`/api/siswa/karya/${karyaId}/comment`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ content: text }),
-      })
-      if (!res.ok) {
-        setKaryaList(prev => prev.map(k => k.id === karyaId ? { ...k, _count: { ...k._count, comments: k._count.comments - 1 } } : k))
-        setCommentTexts(prev => ({ ...prev, [karyaId]: text }))
-        setToast("Komentar belum terkirim. Silakan coba lagi.")
-      }
+      });
+      if (!res.ok) throw new Error();
     } catch {
-      setKaryaList(prev => prev.map(k => k.id === karyaId ? { ...k, _count: { ...k._count, comments: k._count.comments - 1 } } : k))
-      setCommentTexts(prev => ({ ...prev, [karyaId]: text }))
+      setKaryaList(prev => prev.map(k => k.id === karyaId ? { ...k, _count: { ...k._count, comments: k._count.comments - 1 } } : k));
+      setCommentTexts(prev => ({ ...prev, [karyaId]: text }));
     }
-    setSubmittingComment(prev => ({ ...prev, [karyaId]: false }))
-  }
+    setSubmittingComment(prev => ({ ...prev, [karyaId]: false }));
+  };
 
-  const getLikeCount = (karya: KaryaItem) => likeCounts[karya.id] ?? karya.likesCount
-  const excerpt = (karya: KaryaItem) => {
-    const text = karya.excerpt || karya.content?.replace(/\n/g, " ").trim() || ""
-    return text.length > 120 ? text.slice(0, 120) + "..." : text
-  }
-
-  const waktuLalu = (date: string) => {
-    const diff = Date.now() - new Date(date).getTime()
-    const mins = Math.floor(diff / 60000)
-    if (mins < 1) return "baru saja"
-    if (mins < 60) return `${mins}m`
-    const hours = Math.floor(mins / 60)
-    if (hours < 24) return `${hours}j`
-    return `${Math.floor(hours / 24)}h`
-  }
-
-  const handleDeleteKarya = async (karyaId: string, e: React.MouseEvent) => {
-    e.preventDefault()
-    e.stopPropagation()
-    if (!confirm("Yakin ingin menghapus karya ini?")) return
-    setDeletingId(karyaId)
-    const res = await fetch(`/api/siswa/karya/${karyaId}`, { method: "DELETE" })
+  const handleDelete = async (id: string) => {
+    if (!confirm("Hapus karya ini?")) return;
+    setDeletingId(id);
+    const res = await fetch(`/api/siswa/karya/${id}`, { method: "DELETE" });
     if (res.ok) {
-      setKaryaList(prev => prev.filter(k => k.id !== karyaId))
-    } else {
-      alert("Gagal menghapus karya")
+      setKaryaList(prev => prev.filter(k => k.id !== id));
+      setToast("Karya berhasil dihapus");
+      setTimeout(() => setToast(null), 3000);
     }
-    setDeletingId(null)
+    setDeletingId(null);
+  };
+
+  const initials = (name: string) =>
+    name?.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2) || "?"
+
+  function waktuLalu(t: string) {
+    const diff = Date.now() - new Date(t).getTime()
+    const m = Math.floor(diff / 60000)
+    if (m < 1) return "baru saja"
+    if (m < 60) return `${m}m`
+    const h = Math.floor(m / 60)
+    if (h < 24) return `${h}j`
+    return `${Math.floor(h / 24)}h`
   }
 
-  const filters = [
-    { value: "SEMUA", label: "Semua" },
-    { value: "KU", label: "Karya Saya" },
-    { value: "PANTUN", label: "Pantun" },
-    { value: "PUISI", label: "Puisi" },
-    { value: "CERPEN", label: "Cerpen" },
-    { value: "ARTIKEL", label: "Artikel" },
-    { value: "POPULER", label: "Terpopuler" },
-  ]
+  const isOwner = (karyaUserId: string) => currentUserId === karyaUserId
 
   return (
-    <div className="min-h-screen bg-[#F7F6FF]">
-      {/* HEADER */}
-      <div className="feed-header">
-          <div className="mb-1">
-            <h1 className="text-xl font-extrabold text-white">KARYA</h1>
+    <div className="arena-page max-w-3xl mx-auto p-4">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-5">
+        <div>
+          <h1 className="text-xl font-extrabold text-gray-900">Feed Karya</h1>
+          <p className="text-sm text-gray-500">Karya terbaru dari siswa</p>
+        </div>
+        <Link href="/arena/tulis" className="flex items-center gap-1.5 px-4 py-2.5 bg-violet-600 text-white rounded-xl text-sm font-bold hover:bg-violet-700 transition-all shadow-sm">
+          <PenLine size={16} /> Tulis
+        </Link>
+      </div>
+
+      {/* Tantangan Minggu Ini — kartu besar, dulu sempat hilang saat dasbor
+          murid dirombak (state & fetch-nya tertinggal jadi kode mati). */}
+      <Link
+        href={`/arena/tulis?type=${challenge.type}`}
+        className="block mb-5 rounded-2xl bg-gradient-to-br from-violet-600 via-purple-600 to-fuchsia-600 p-5 text-white shadow-lg shadow-violet-500/25 hover:shadow-xl hover:shadow-violet-500/30 active:scale-[0.99] transition-all"
+      >
+        <div className="flex items-start gap-4">
+          <div className="w-12 h-12 rounded-2xl bg-white/20 flex items-center justify-center shrink-0">
+            <Sparkles size={24} className="text-yellow-300" />
           </div>
-        <p className="text-sm text-white/70">Karya terbaru dari murid di seluruh Indonesia</p>
-      </div>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 mb-1">
+              <span className="text-[10px] font-bold uppercase tracking-wider bg-white/20 px-2 py-0.5 rounded-full">
+                Tantangan Minggu Ini
+              </span>
+            </div>
+            <p className="text-lg font-extrabold leading-tight">{challenge.theme}</p>
+            <p className="text-sm text-white/80 mt-1 leading-snug">{challenge.prompt}</p>
 
-      {/* LIVE STATS */}
-      <div className="feed-ticker">
-        <div className="w-[7px] h-[7px] bg-red-500 rounded-full ticker-dot shrink-0" />
-        <p className="text-xs text-white font-semibold truncate">
-          {totalKarya > 0 ? `${totalKarya} karya telah dipublikasikan` : `${onlineCount} anak online sekarang`}
-        </p>
-      </div>
+            <div className="flex flex-wrap items-center gap-2 mt-3">
+              <span className="inline-flex items-center gap-1.5 bg-yellow-400 text-yellow-950 text-xs font-extrabold px-3 py-1.5 rounded-full">
+                <Trophy size={13} /> +{challenge.bonusCoins} koin
+              </span>
+              <span className="inline-flex items-center gap-1.5 bg-white/15 text-white text-xs font-semibold px-3 py-1.5 rounded-full">
+                {challengeCount} karya masuk
+              </span>
+              <span className="ml-auto inline-flex items-center gap-1.5 bg-white text-violet-700 text-sm font-extrabold px-4 py-2 rounded-xl">
+                <PenLine size={14} /> Ikut Tantangan
+              </span>
+            </div>
+          </div>
+        </div>
+      </Link>
 
-      {/* FILTER CHIPS */}
-      <div className="feed-chips">
-        {filters.map(f => (
-          <button
-            key={f.value}
-            onClick={() => setFilter(f.value)}
-            className={`feed-chip ${filter === f.value ? "active" : ""}`}
+      {/* Search context */}
+      {searchQuery && (
+        <div className="mb-4 flex items-center gap-2 px-4 py-2.5 bg-violet-50 rounded-xl border border-violet-200">
+          <span className="text-sm text-violet-700">
+            Hasil untuk: "<span className="font-bold">{searchQuery}</span>"
+            {karyaList.length > 0 && <> &mdash; {karyaList.length} ditemukan</>}
+          </span>
+          <button onClick={() => router.push("/arena/feed")} className="ml-auto text-xs font-semibold text-violet-600 hover:text-violet-800">
+            Hapus Filter
+          </button>
+        </div>
+      )}
+
+      {/* Filter Tabs */}
+      <div className="flex gap-2 mb-5 overflow-x-auto pb-2 scrollbar-hide">
+        {["SEMUA", "PUISI", "CERPEN", "ARTIKEL", "ANEKDOT", "PANTUN", "OPINI"].map(t => (
+          <button key={t} onClick={() => setFilter(t)}
+            className={`px-4 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all ${
+              filter === t ? "bg-violet-600 text-white shadow-sm" : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+            }`}
           >
-            {f.label}
+            {t === "SEMUA" ? "Semua" : typeColors[t]?.label || t}
           </button>
         ))}
       </div>
 
-      {/* TRENDING STRIP */}
-      {trending.length > 0 && (
-        <div className="px-4 pb-2">
-          <p className="text-[11px] font-bold text-gray-400 uppercase tracking-[0.8px] mb-2">Trending sekarang</p>
-          <div className="trending-scroll">
-            {trending.map(k => (
-              <Link key={k.id} href={`/arena/feed/${k.id}`} className="trend-card block">
-                <p className="text-[10px] font-bold text-violet-700 uppercase tracking-[0.5px] mb-1">
-                  {typeColors[k.type]?.label || k.type}
-                </p>
-                <p className="text-[11px] font-bold text-[#1F1B3A] leading-tight mb-2 line-clamp-2">{k.title}</p>
-                <p className="text-[10px] text-gray-400">
-                  {k.user?.fullName?.split(" ")[0] || "User"} &middot; {k.likesCount} suka
-                </p>
-              </Link>
-            ))}
-          </div>
+      {/* List */}
+      {loading ? (
+        <div className="flex justify-center py-16"><Loader2 size={32} className="animate-spin text-violet-500" /></div>
+      ) : karyaList.length === 0 ? (
+        <div className="text-center py-16 text-gray-400">
+          <FileText size={48} className="mx-auto mb-3 opacity-50" />
+          <p>Belum ada karya.</p>
+        </div>
+      ) : (
+        <div className="space-y-5">
+          {karyaList.map(k => {
+            const tc = typeColors[k.type] || typeColors.PUISI
+            const likeCount = likeCounts[k.id] ?? k._count?.likes ?? k.likesCount ?? 0
+            const isLiked = likedSet.has(k.id)
+            const isDeleting = deletingId === k.id
+            return (
+              <div key={k.id} className="bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-md transition-all">
+                {/* Header */}
+                <div className="flex items-center gap-3 px-5 pt-4 pb-2">
+                  <Link href={`/profile/${k.user.id}`} className="shrink-0">
+                    <UserAvatar
+                      size={36}
+                      avatar={k.user.avatar}
+                      frame={k.user.equippedFrame}
+                      initials={initials(nameOf(k.user))}
+                      gradient={INITIALS_COLORS[0]}
+                    />
+                  </Link>
+                  <div className="flex-1 min-w-0">
+                    <UserName
+                      name={nameOf(k.user)}
+                      href={`/profile/${k.user.id}`}
+                      color={k.user.equippedNameColor}
+                      badge={k.user.equippedBadge}
+                      className="text-sm font-semibold text-gray-900 hover:text-violet-600"
+                      badgeSize={15}
+                    />
+                    <p className="text-xs text-gray-400">{k.user.profile?.school || ""}</p>
+                  </div>
+                  <div className="flex items-center gap-1 text-xs text-gray-400">
+                    <Clock size={12} /> {waktuLalu(k.createdAt)}
+                  </div>
+                </div>
+
+                {/* Content */}
+                <Link href={`/arena/feed/${k.id}`} className="block px-5 py-2">
+                  <div className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold ${tc.bg} ${tc.text} mb-2`}>
+                    <span>{tc.label}</span>
+                  </div>
+                  <h3 className="font-bold text-gray-900 mb-1">{k.title}</h3>
+                  <p className="text-sm text-gray-600 line-clamp-3 leading-relaxed">{k.content?.slice(0, 250)}</p>
+                </Link>
+
+                {/* Actions */}
+                <div className="flex items-center gap-4 px-5 py-3 border-t border-gray-50">
+                  <button onClick={() => handleLike(k.id)} disabled={likePending[k.id]} className={`flex items-center gap-1.5 text-sm font-medium transition-all ${isLiked ? "text-red-500" : "text-gray-400 hover:text-red-500"}`}>
+                    {isLiked ? <Heart size={16} fill="currentColor" /> : <Heart size={16} />}
+                    {likeCount}
+                  </button>
+                  <Link href={`/arena/feed/${k.id}`} className="flex items-center gap-1.5 text-sm text-gray-400 hover:text-violet-500 transition-all">
+                    <MessageCircle size={16} /> {k._count?.comments ?? 0}
+                  </Link>
+                  <span className="flex items-center gap-1.5 text-sm text-gray-400 ml-auto">
+                    <Eye size={16} /> {k.viewsCount || 0}
+                  </span>
+                  {isOwner(k.user.id) && (
+                    <button onClick={() => handleDelete(k.id)} disabled={isDeleting} className="text-gray-300 hover:text-red-500 transition-all">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 6h18" /><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" /><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" /></svg>
+                    </button>
+                  )}
+                </div>
+              </div>
+            )
+          })}
+          <div id="feed-sentinel" className="h-4" />
+          {loadingMore && <div className="flex justify-center py-4"><Loader2 size={24} className="animate-spin text-violet-400" /></div>}
         </div>
       )}
 
-      {/* FEED ITEMS */}
-      <div className="px-4 pb-6">
-        {loading ? (
-          <div className="space-y-4">
-            {[1,2,3].map(i => (
-              <div key={i} className="bg-white rounded-2xl border border-gray-100 p-4 animate-pulse">
-                <div className="flex items-center gap-2.5 mb-4">
-                  <div className="w-9 h-9 rounded-full bg-gray-100" />
-                  <div className="flex-1">
-                    <div className="h-3 w-28 bg-gray-100 rounded-full" />
-                    <div className="h-2.5 w-20 bg-gray-50 rounded-full mt-2" />
-                  </div>
-                </div>
-                <div className="h-4 w-3/4 bg-gray-100 rounded-full mb-3" />
-                <div className="h-3 w-full bg-gray-50 rounded-full mb-1.5" />
-                <div className="h-3 w-2/3 bg-gray-50 rounded-full" />
-              </div>
-            ))}
-          </div>
-        ) : filtered.length === 0 ? (
-          <div className="text-center py-20">
-            <div className="w-16 h-16 rounded-3xl bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center mx-auto mb-4">
-              <PenLine className="w-8 h-8 text-gray-400" />
-            </div>
-            <p className="text-gray-500 font-medium">Belum ada karya nih!</p>
-            <Link href="/arena/tulis" className="inline-block mt-3 px-5 py-2.5 bg-violet-600 text-white rounded-xl text-sm font-semibold">
-              Tulis Karya Pertama
-            </Link>
-          </div>
-        ) : (
-          <>
-            {/* CHALLENGE BANNER */}
-            <div className="challenge-banner">
-              <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center shrink-0">
-                <Sparkles size={20} className="text-yellow-400" />
-              </div>
-              <div className="flex-1">
-                <p className="text-sm font-extrabold text-white">Tantangan Minggu Ini</p>
-                <p className="text-[11px] text-white/60">{challenge.theme} &middot; {loadingChallenge ? "..." : `${challengeCount} karya masuk`}</p>
-              </div>
-              <Link
-                href={`/arena/tulis?type=${challenge.type}`}
-                className="bg-violet-600 text-white border-none rounded-xl px-3 py-2 text-[11px] font-bold cursor-pointer font-sans whitespace-nowrap hover:bg-violet-500 active:scale-95 transition-all inline-flex items-center"
-              >
-                Ikut
-              </Link>
-            </div>
-
-            {/* FEED CARDS */}
-            {filtered.map((karya, idx) => {
-              const likersColor = INITIALS_COLORS[idx % INITIALS_COLORS.length]
-              const isHot = karya.likesCount >= 10
-              const isViral = karya.likesCount >= 5 && karya.likesCount < 10
-              const isNew = Date.now() - new Date(karya.createdAt).getTime() < 3600000
-              const likeCount = getLikeCount(karya)
-              const isLiked = likedSet.has(karya.id)
-              const school = karya.user?.profile?.school || "Siswa"
-
-              return (
-                <div key={karya.id} className={`feed-card relative ${isHot ? "hot" : isViral ? "viral" : ""}`}>
-                  {/* Badges */}
-                  {isHot && (
-                    <div className="absolute top-3 right-3 bg-amber-50 text-amber-600 text-[10px] font-bold px-2 py-1 rounded-full flex items-center gap-1">
-                      <Flame size={11} /> Hot
-                    </div>
-                  )}
-                  {isNew && !isHot && (
-                    <div className="absolute top-3 right-3 bg-violet-50 text-violet-700 text-[10px] font-bold px-2 py-1 rounded-full">
-                      Baru
-                    </div>
-                  )}
-
-                  {/* Author row */}
-                  <div className="flex items-center gap-2.5 mb-3 pr-[60px]">
-                    <button
-                      type="button"
-                      onClick={() => { if (karya.user?.id) router.push(`/profile/${karya.user.id}`) }}
-                      className="relative shrink-0"
-                      aria-label={`Lihat profil ${karya.user?.fullName || "pengguna"}`}
-                    >
-                      <div className={`w-[38px] h-[38px] rounded-full bg-gradient-to-br ${likersColor} flex items-center justify-center text-white text-sm font-extrabold`}>
-                        {karya.user?.fullName?.charAt(0).toUpperCase() || "?"}
-                      </div>
-                      <div className="absolute bottom-0 right-0 w-[10px] h-[10px] bg-emerald-500 border-2 border-white rounded-full" />
-                    </button>
-                    <div className="flex-1 min-w-0">
-                      <button
-                        type="button"
-                        onClick={() => { if (karya.user?.id) router.push(`/profile/${karya.user.id}`) }}
-                        className="block text-[13px] font-bold text-[#1F1B3A] truncate hover:text-violet-600 transition-colors text-left max-w-full"
-                      >
-                        {karya.user?.fullName || "Pengguna"}
-                      </button>
-                      <p className="text-[11px] text-gray-400 truncate">{school}</p>
-                    </div>
-                    <span className="text-[11px] text-[#C4B5FD] font-semibold shrink-0">{waktuLalu(karya.createdAt)}</span>
-                  </div>
-
-                  {/* Type Badge */}
-                  <span className={`inline-block text-[10px] font-bold tracking-[0.5px] uppercase ${typeColors[karya.type]?.bg || "bg-gray-100"} ${typeColors[karya.type]?.text || "text-gray-700"} px-2 py-1 rounded-md mb-2`}>
-                    {typeColors[karya.type]?.label || karya.type}
-                  </span>
-
-                  {/* Title */}
-                  <Link href={`/arena/feed/${karya.id}`}>
-                    <h3 className="text-[16px] font-extrabold text-[#1F1B3A] leading-tight mb-2">{karya.title}</h3>
-                  </Link>
-
-                  {/* Excerpt */}
-                  <div className="text-[13px] text-gray-500 leading-relaxed italic border-l-[3px] border-[#EDE9FE] pl-2.5 mb-3 line-clamp-3">
-                    {excerpt(karya)}
-                  </div>
-
-                  {/* View count */}
-                  <div className="flex items-center mb-2.5">
-                    <div className="flex items-center gap-1">
-                      <Eye size={12} className="text-[#C4B5FD]" />
-                      <span className="text-[11px] text-[#C4B5FD] font-semibold">{karya.viewsCount || 0} dilihat</span>
-                    </div>
-                    <div className="ml-auto flex items-center gap-1">
-                      <MessageCircle size={12} className="text-[#C4B5FD]" />
-                      <span className="text-[11px] text-[#C4B5FD] font-semibold">{karya._count.comments}</span>
-                    </div>
-                  </div>
-
-                  {/* Comment preview */}
-                  {/* {karya._count.comments > 0 && firstComment(karya) && ( ... )} */}
-
-                  {/* Action buttons */}
-                  <div className="flex items-center gap-0">
-                    <button
-                      onClick={() => toggleLike(karya.id)}
-                      disabled={likePending[karya.id]}
-                      aria-pressed={isLiked}
-                      aria-label={isLiked ? "Batal menyukai karya" : "Sukai karya"}
-                      className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold transition-all active:scale-95 disabled:opacity-70 ${
-                        isLiked ? "text-rose-500 bg-rose-50" : "text-gray-400 hover:bg-[#F9F7FF]"
-                      }`}
-                    >
-                      <Heart size={15} fill={isLiked ? "currentColor" : "none"} className={isLiked ? "text-rose-500" : ""} />
-                      <span>{likeCount}</span>
-                    </button>
-                    <button
-                      onClick={() => document.getElementById(`comment-${karya.id}`)?.focus()}
-                      className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold text-gray-400 hover:bg-[#F9F7FF] transition-all"
-                    >
-                      <MessageCircle size={15} />
-                      <span>{karya._count.comments}</span>
-                    </button>
-                    <button className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold text-gray-400 hover:bg-[#F9F7FF] transition-all">
-                      <Share2 size={15} />
-                    </button>
-                    {karya.user.id === currentUserId && (
-                      <button
-                        onClick={(e) => handleDeleteKarya(karya.id, e)}
-                        disabled={deletingId === karya.id}
-                        className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold text-red-400 hover:bg-red-50 hover:text-red-500 transition-all disabled:opacity-50"
-                      >
-                        {deletingId === karya.id ? (
-                          <div className="animate-spin w-3.5 h-3.5 border-2 border-red-400 border-t-transparent rounded-full" />
-                        ) : (
-                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="M3 6h18" /><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" /><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
-                          </svg>
-                        )}
-                      </button>
-                    )}
-                    <div className="flex-1" />
-                    <button
-                      onClick={() => router.push(`/arena/feed/${karya.id}`)}
-                      className="flex items-center gap-1 px-3 py-2 rounded-xl text-xs font-bold text-violet-700 hover:bg-[#F9F7FF] transition-all"
-                    >
-                      <MessageSquare size={14} />
-                      {karya.type === "PANTUN" ? "Balas" : "Komentar"}
-                    </button>
-                  </div>
-
-                  {/* Inline comment input */}
-                  <div className="flex items-center gap-2 bg-[#F9F7FF] rounded-xl px-3 py-2.5 mt-3">
-                    <div className="w-6 h-6 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center text-white text-[9px] font-extrabold shrink-0">
-                      K
-                    </div>
-                    <input
-                      id={`comment-${karya.id}`}
-                      value={commentTexts[karya.id] || ""}
-                      onChange={e => setCommentTexts(prev => ({ ...prev, [karya.id]: e.target.value }))}
-                      onKeyDown={e => e.key === "Enter" && submitComment(karya.id)}
-                      placeholder="Tulis komentar... (Enter kirim)"
-                      className="flex-1 bg-transparent text-xs text-gray-500 placeholder:text-gray-400 focus:outline-none border-none"
-                      maxLength={500}
-                    />
-                    {karya._count.comments === 0 && !commentTexts[karya.id] && (
-                      <span className="text-[9px] font-bold text-amber-500 shrink-0 whitespace-nowrap">+1 Koin</span>
-                    )}
-                    <button
-                      onClick={() => submitComment(karya.id)}
-                      disabled={!commentTexts[karya.id]?.trim()}
-                      className="text-violet-700 disabled:text-gray-300 transition-colors disabled:cursor-not-allowed"
-                    >
-                      <Send size={15} />
-                    </button>
-                  </div>
-                </div>
-              )
-            })}
-            {hasMore && (
-              <div className="text-center py-4">
-                <button
-                  onClick={loadMore}
-                  disabled={loadingMore}
-                  className="px-6 py-2.5 bg-violet-600 text-white rounded-xl text-sm font-semibold hover:bg-violet-700 transition disabled:opacity-50"
-                >
-                  {loadingMore ? "Memuat..." : "Muat Lainnya"}
-                </button>
-              </div>
-            )}
-          </>
-        )}
-      </div>
-
-      {/* Toast — friendly, non-technical errors */}
+      {/* Toast */}
       {toast && (
-        <div
-          role="status"
-          className="fixed left-1/2 -translate-x-1/2 bottom-24 md:bottom-8 z-[60] px-4 py-2.5 rounded-xl bg-gray-900 text-white text-xs font-semibold shadow-lg max-w-[90%] text-center"
-        >
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-gray-900 text-white px-5 py-3 rounded-xl text-sm font-medium shadow-lg z-50 animate-fade-in">
           {toast}
         </div>
       )}
     </div>
+  )
+}
+
+export default function FeedPage() {
+  return (
+    <Suspense fallback={
+      <div className="arena-page max-w-3xl mx-auto p-4">
+        <div className="flex justify-center py-16"><Loader2 size={32} className="animate-spin text-violet-500" /></div>
+      </div>
+    }>
+      <FeedContent />
+    </Suspense>
   )
 }

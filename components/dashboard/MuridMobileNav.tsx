@@ -1,37 +1,30 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { LogoutButton } from "@/components/dashboard/LogoutButton";
-import { NotificationBell } from "@/components/dashboard/NotificationBell";
 import {
-  Home, BookOpen, Gamepad2, BarChart3, Menu as MenuIcon, X,
-  GraduationCap, PenSquare, Users, Coins, CalendarCheck, ClipboardCheck,
-  FileText, Award, ExternalLink, Trophy, Calendar, User, Settings,
+  Home, BarChart3, Menu as MenuIcon, X, Bell,
+  GraduationCap, Coins, ClipboardCheck,
+  FileText, Award, ExternalLink, Trophy, Calendar, User,
 } from "lucide-react";
 
-// Primary bottom-nav destinations (thumb-reachable). The 5th opens the full menu.
 const PRIMARY = [
   { href: "/murid/beranda", label: "Beranda", icon: Home },
-  { href: "/murid/tugasku", label: "Tugasku", icon: BookOpen },
-  { href: "/murid/game", label: "Gim", icon: Gamepad2 },
+  { href: "/arena", label: "Arena", icon: GraduationCap },
+  { href: "/murid/profile", label: "Profil", icon: User },
   { href: "/murid/progresku", label: "Kemajuan", icon: BarChart3 },
 ];
 
-// Full menu — mirrors the desktop sidebar so nothing is unreachable on mobile.
 const GROUPS: { title: string; items: { href: string; label: string; icon: any }[] }[] = [
   {
     title: "Menu Utama",
     items: [
       { href: "/murid/beranda", label: "Beranda", icon: Home },
+      { href: "/murid/profile", label: "Profil", icon: User },
       { href: "/arena", label: "Arena", icon: GraduationCap },
-      { href: "/murid/karya/tulis", label: "Tulis Karya", icon: PenSquare },
-      { href: "/murid/tugasku", label: "Tugasku", icon: BookOpen },
-      { href: "/murid/gabung-kelas", label: "Gabung Kelas", icon: Users },
-      { href: "/murid/game", label: "Gim", icon: Gamepad2 },
       { href: "/murid/toko-koin", label: "Toko Koin", icon: Coins },
-      { href: "/murid/kuest-harian", label: "Quest Harian", icon: CalendarCheck },
     ],
   },
   {
@@ -49,75 +42,100 @@ const GROUPS: { title: string; items: { href: string; label: string; icon: any }
       { href: "/murid/olimpiade/info", label: "Info Lomba", icon: Trophy },
       { href: "/murid/olimpiade/kalender", label: "Kalender", icon: Calendar },
       { href: "/murid/progresku", label: "Kemajuanku", icon: BarChart3 },
-      { href: "/murid/profile", label: "Profil", icon: User },
-      { href: "/murid/pengaturan", label: "Pengaturan", icon: Settings },
     ],
   },
 ];
 
-export default function MuridMobileNav({ fullName }: { fullName?: string }) {
-  const [open, setOpen] = useState(false);
-  const path = usePathname();
-  const isActive = (href: string) => path === href || path.startsWith(href + "/");
+export default function MuridMobileNav({ fullName }: { fullName: string }) {
+  const pathname = usePathname();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  useEffect(() => {
+    const fetchUnread = () => {
+      fetch("/api/notifikasi?unread=true")
+        .then(r => r.ok ? r.json() : null)
+        .then(d => { if (d?.unreadCount) setUnreadCount(d.unreadCount); })
+        .catch(() => {});
+    };
+    fetchUnread();
+    const interval = setInterval(fetchUnread, 60000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const isActive = (href: string) => pathname === href || pathname?.startsWith(href + "/");
 
   return (
     <>
-      {/* Mobile top bar */}
-      <div className="md:hidden sticky top-0 z-40 flex items-center justify-between px-4 h-14 bg-white/95 backdrop-blur-xl border-b border-gray-100">
-        <Link href="/murid/beranda" className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center text-white font-bold text-xs">B</div>
-          <span className="font-bold text-sm text-gray-900">Dasbor Murid</span>
-        </Link>
-        <NotificationBell />
-      </div>
-
-      {/* Bottom nav */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 border-t border-gray-200 bg-white/95 backdrop-blur-xl safe-area-bottom">
-        <div className="flex items-center justify-around h-16 px-1">
-          {PRIMARY.map((item) => {
-            const aktif = isActive(item.href);
+      {/* Bottom Nav */}
+      <nav className="md:hidden fixed bottom-0 inset-x-0 z-40 bg-white/90 backdrop-blur-xl border-t border-gray-100/80 safe-area-bottom">
+        <div className="flex items-center justify-around py-2">
+          {PRIMARY.map(({ href, label, icon: Icon }) => {
+            const active = isActive(href);
             return (
-              <Link key={item.href} href={item.href}
-                className={`flex flex-col items-center gap-0.5 py-1 px-3 rounded-xl transition-all ${aktif ? "text-violet-600" : "text-gray-400"}`}>
-                <item.icon className="w-5 h-5" />
-                <span className={`text-[10px] ${aktif ? "font-bold" : "font-medium"}`}>{item.label}</span>
+              <Link key={href} href={href} className={`flex flex-col items-center gap-0.5 py-1 px-3 rounded-xl transition-colors ${active ? "text-violet-600" : "text-gray-500 hover:text-gray-700"}`}>
+                <Icon size={20} />
+                <span className="text-[10px] font-semibold">{label}</span>
               </Link>
             );
           })}
-          <button onClick={() => setOpen(true)} className="flex flex-col items-center gap-0.5 py-1 px-3 rounded-xl text-gray-400">
-            <MenuIcon className="w-5 h-5" />
-            <span className="text-[10px] font-medium">Menu</span>
+          <Link href="/arena/notifikasi" className="relative flex flex-col items-center gap-0.5 py-1 px-2 text-gray-500 hover:text-gray-700">
+            <div className="relative">
+              <Bell size={20} />
+              {unreadCount > 0 && (
+                <span className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-red-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center shadow">
+                  {unreadCount > 9 ? "9+" : unreadCount}
+                </span>
+              )}
+            </div>
+            <span className="text-[10px] font-semibold">Notif</span>
+          </Link>
+          <button onClick={() => setMenuOpen(true)} className="flex flex-col items-center gap-0.5 py-1 px-3 text-gray-500 hover:text-gray-700">
+            <MenuIcon size={20} />
+            <span className="text-[10px] font-semibold">Menu</span>
           </button>
         </div>
       </nav>
 
-      {/* Full-menu drawer */}
-      {open && (
-        <div className="md:hidden fixed inset-0 z-[60]" role="dialog" aria-modal="true">
-          <div className="absolute inset-0 bg-black/40" onClick={() => setOpen(false)} />
-          <div className="absolute right-0 top-0 h-full w-[82%] max-w-xs bg-white shadow-2xl flex flex-col animate-in slide-in-from-right">
-            <div className="flex items-center justify-between px-5 h-14 bg-gradient-to-r from-violet-600 to-purple-600 text-white">
-              <span className="font-bold text-sm truncate">{fullName || "Menu"}</span>
-              <button onClick={() => setOpen(false)} aria-label="Tutup menu"><X className="w-5 h-5" /></button>
+      {/* Full Menu Overlay */}
+      {menuOpen && (
+        <div className="fixed inset-0 z-50 md:hidden">
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setMenuOpen(false)} />
+          <div className="absolute bottom-0 inset-x-0 bg-white rounded-t-[24px] max-h-[85vh] overflow-y-auto shadow-2xl pb-20">
+            <div className="sticky top-0 bg-white z-10 flex items-center justify-between px-5 pt-4 pb-3 border-b border-gray-100">
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center text-white text-sm font-bold">
+                  {fullName?.charAt(0)?.toUpperCase() || "M"}
+                </div>
+                <span className="font-bold text-gray-900">{fullName}</span>
+              </div>
+              <button onClick={() => setMenuOpen(false)} className="p-2 hover:bg-gray-100 rounded-xl transition-colors">
+                <X size={20} className="text-gray-500" />
+              </button>
             </div>
-            <div className="flex-1 overflow-y-auto py-3 px-2">
-              {GROUPS.map((g) => (
-                <div key={g.title} className="mb-3">
-                  <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider px-3 mb-1">{g.title}</div>
-                  {g.items.map((item) => {
-                    const aktif = isActive(item.href);
+
+            <div className="px-4 py-3 space-y-5">
+              {GROUPS.map(group => (
+                <div key={group.title}>
+                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2 px-2">{group.title}</p>
+                  {group.items.map(({ href, label, icon: Icon }) => {
+                    const active = isActive(href);
                     return (
-                      <Link key={item.href} href={item.href} onClick={() => setOpen(false)}
-                        className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm mb-0.5 ${aktif ? "bg-violet-50 text-violet-700 font-semibold" : "text-gray-600 hover:bg-gray-50"}`}>
-                        <item.icon className="w-4 h-4 shrink-0" />
-                        {item.label}
+                      <Link key={href} href={href} onClick={() => setMenuOpen(false)}
+                        className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${
+                          active ? "bg-violet-50 text-violet-700" : "text-gray-600 hover:bg-gray-50"
+                        }`}
+                      >
+                        <Icon size={18} className={active ? "text-violet-500" : "text-gray-400"} />
+                        {label}
                       </Link>
                     );
                   })}
                 </div>
               ))}
             </div>
-            <div className="p-3 border-t border-gray-100">
+
+            <div className="px-4 pt-3 pb-6 border-t border-gray-100">
               <LogoutButton />
             </div>
           </div>

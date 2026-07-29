@@ -5,7 +5,7 @@ export function organizationLd() {
     name: "BahasaCerdas",
     url: "https://www.bahasacerdas.com",
     description:
-      "Platform edukasi Bahasa Indonesia dengan AI generator RPP, bank soal HOTS, kuis multiplayer, toko karya, dan komunitas MGMP.",
+      "Platform edukasi Bahasa Indonesia dengan AI generator Rencana Pembelajaran, bank soal HOTS, kuis multiplayer, toko karya, dan komunitas MGMP.",
     foundingDate: "2025",
     email: "halo@bahasacerdas.com",
     areaServed: { "@type": "Country", name: "ID" },
@@ -77,7 +77,7 @@ export function webSiteLd() {
     name: "BahasaCerdas",
     url: "https://www.bahasacerdas.com",
     description:
-      "Platform edukasi Bahasa Indonesia dengan AI generator RPP, bank soal HOTS, kuis multiplayer, toko karya, dan komunitas MGMP.",
+      "Platform edukasi Bahasa Indonesia dengan AI generator Rencana Pembelajaran, bank soal HOTS, kuis multiplayer, toko karya, dan komunitas MGMP.",
     potentialAction: {
       "@type": "SearchAction",
       target: {

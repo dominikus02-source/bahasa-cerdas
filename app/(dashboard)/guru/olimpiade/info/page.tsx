@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { ChevronLeft, Trophy, Calendar, MapPin, Gift, ExternalLink, Search, Clock, Shield } from "lucide-react";
+import { ChevronLeft, Trophy, Calendar, MapPin, Gift, ExternalLink, Search, Clock, Shield, Plus, X } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
@@ -49,6 +49,9 @@ export default function LombaInfoPage() {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("all");
   const [search, setSearch] = useState("");
+  const [showForm, setShowForm] = useState(false);
+  const [form, setForm] = useState({ title: "", description: "", type: "Lomba", level: "SEKOLAH", date: "", registrationDeadline: "", prize: "", location: "", contact: "", registrationUrl: "" });
+  const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     const fetchLombas = async () => {
@@ -114,8 +117,64 @@ export default function LombaInfoPage() {
               {f === "all" ? "Semua" : STATUS_LABELS[f]?.label || f}
             </button>
           ))}
+          <button onClick={() => setShowForm(!showForm)} className="px-4 py-2 rounded-xl text-sm font-medium bg-emerald-600 text-white hover:bg-emerald-700 transition-all flex items-center gap-1.5">
+            {showForm ? <X size={16} /> : <Plus size={16} />}
+            {showForm ? "Tutup" : "Tambah Lomba"}
+          </button>
         </div>
       </div>
+
+      {showForm && (
+        <Card className="p-5 mb-6 border-emerald-200 bg-emerald-50/30">
+          <h3 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
+            <Plus size={18} className="text-emerald-600" /> Tambah Lomba Baru
+          </h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-4">
+            <input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} placeholder="Nama Lomba *" className="h-10 px-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500" />
+            <input value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} placeholder="Deskripsi" className="h-10 px-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500" />
+            <select value={form.type} onChange={(e) => setForm({ ...form, type: e.target.value })} className="h-10 px-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 bg-white">
+              <option value="Lomba">Lomba</option>
+              <option value="Olimpiade">Olimpiade</option>
+              <option value="Festival">Festival</option>
+              <option value="Seminar">Seminar</option>
+            </select>
+            <select value={form.level} onChange={(e) => setForm({ ...form, level: e.target.value })} className="h-10 px-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 bg-white">
+              <option value="SEKOLAH">Sekolah</option>
+              <option value="KOTA">Kota</option>
+              <option value="PROVINSI">Provinsi</option>
+              <option value="NASIONAL">Nasional</option>
+            </select>
+            <input type="date" value={form.date} onChange={(e) => setForm({ ...form, date: e.target.value })} className="h-10 px-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500" />
+            <input type="date" value={form.registrationDeadline} onChange={(e) => setForm({ ...form, registrationDeadline: e.target.value })} className="h-10 px-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500" />
+            <input value={form.prize} onChange={(e) => setForm({ ...form, prize: e.target.value })} placeholder="Hadiah" className="h-10 px-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500" />
+            <input value={form.location} onChange={(e) => setForm({ ...form, location: e.target.value })} placeholder="Lokasi" className="h-10 px-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500" />
+            <input value={form.contact} onChange={(e) => setForm({ ...form, contact: e.target.value })} placeholder="Kontak (WA)" className="h-10 px-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500" />
+            <input value={form.registrationUrl} onChange={(e) => setForm({ ...form, registrationUrl: e.target.value })} placeholder="Link daftar" className="h-10 px-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500" />
+          </div>
+          <div className="flex gap-2">
+            <Button onClick={async () => {
+              if (!form.title || !form.date) return;
+              setSubmitting(true);
+              try {
+                const res = await fetch("/api/lomba", {
+                  method: "POST", headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ ...form, status: form.date > new Date().toISOString().slice(0, 10) ? "UPCOMING" : "OPEN" }),
+                });
+                if (res.ok) {
+                  setForm({ title: "", description: "", type: "Lomba", level: "SEKOLAH", date: "", registrationDeadline: "", prize: "", location: "", contact: "", registrationUrl: "" });
+                  setShowForm(false);
+                  const data = await fetch("/api/lomba").then(r => r.json());
+                  setLombas(data.lombas || []);
+                }
+              } catch {}
+              setSubmitting(false);
+            }} disabled={submitting || !form.title || !form.date} className="bg-emerald-600 hover:bg-emerald-700">
+              {submitting ? "Menyimpan..." : "Simpan Lomba"}
+            </Button>
+            <Button variant="outline" onClick={() => setShowForm(false)}>Batal</Button>
+          </div>
+        </Card>
+      )}
 
       {loading ? (
         <div className="text-center py-20">

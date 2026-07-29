@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
 import { getUser } from "@/lib/supabase/server"
+import { buildLatihan, buildKuis, resolvePraktik } from "@/lib/penugasan-content"
+
+const JENIS_VALUES = ["MATERI", "LATIHAN", "PRAKTIK", "KUIS"]
 
 // List the teacher's assignments with submission progress (for the review page).
 export async function GET() {
@@ -60,7 +63,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "unitId, groupIds, dan judul diperlukan" }, { status: 400 })
     }
 
-    const jenisFinal = jenis === "KUIS" ? "KUIS" : "MATERI"
+    const jenisFinal = JENIS_VALUES.includes(jenis) ? jenis : "MATERI"
 
     const unit = await db.learningUnit.findUnique({
       where: { id: unitId },
@@ -68,6 +71,19 @@ export async function POST(req: Request) {
     })
     if (!unit || unit.level.type !== "PANDUAN") {
       return NextResponse.json({ error: "Unit tidak ditemukan" }, { status: 404 })
+    }
+
+    // Pastikan unit benar-benar punya konten untuk jenis yang dipilih.
+    let content: any = {}
+    try { content = unit.content ? JSON.parse(unit.content) : {} } catch { content = {} }
+    if (jenisFinal === "LATIHAN" && buildLatihan(content).length === 0) {
+      return NextResponse.json({ error: "Unit ini belum punya soal Latihan" }, { status: 400 })
+    }
+    if (jenisFinal === "PRAKTIK" && !resolvePraktik(content)) {
+      return NextResponse.json({ error: "Unit ini belum punya materi Praktik" }, { status: 400 })
+    }
+    if (jenisFinal === "KUIS" && buildKuis(content).length === 0) {
+      return NextResponse.json({ error: "Unit ini belum punya soal Kuis" }, { status: 400 })
     }
 
     const groups = await db.group.findMany({

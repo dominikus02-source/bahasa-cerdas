@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Send, PenLine, BookOpen, Newspaper, MessageCircle, Music, Lightbulb } from "lucide-react";
+import { ArrowLeft, Send, PenLine, BookOpen, Newspaper, MessageCircle, Music, Lightbulb, Upload, X, Loader2 } from "lucide-react";
 
 const TYPES = [
   { value: "PUISI", label: "Puisi", icon: PenLine, desc: "Ekspresikan perasaanmu dalam bait-bait indah" },
@@ -29,8 +29,53 @@ export default function TulisKaryaPage() {
   const [type, setType] = useState("PUISI");
   const [content, setContent] = useState("");
   const [coverImage, setCoverImage] = useState("");
+  const [photos, setPhotos] = useState<string[]>([]);
+  const [uploading, setUploading] = useState(false);
+  const [uploadingPhotos, setUploadingPhotos] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
+  const fileRef = useRef<HTMLInputElement>(null);
+  const photosRef = useRef<HTMLInputElement>(null);
+
+  const uploadOne = async (file: File) => {
+    const fd = new FormData();
+    fd.set("file", file);
+    fd.set("folder", "karya");
+    const res = await fetch("/api/upload/file", { method: "POST", body: fd });
+    const data = await res.json();
+    if (!res.ok || !data.url) throw new Error(data.error || "Gagal mengunggah foto");
+    return data.url as string;
+  };
+
+  const handleUploadCover = async (file: File) => {
+    setUploading(true);
+    setError("");
+    try {
+      setCoverImage(await uploadOne(file));
+    } catch (e: any) {
+      setError(e.message);
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const handleUploadPhotos = async (files: FileList) => {
+    setUploadingPhotos(true);
+    setError("");
+    try {
+      const slots = Math.max(0, 6 - photos.length);
+      for (const file of Array.from(files).slice(0, slots)) {
+        const url = await uploadOne(file);
+        setPhotos(prev => [...prev, url]);
+      }
+    } catch (e: any) {
+      setError(e.message);
+    } finally {
+      setUploadingPhotos(false);
+    }
+  };
+
+  const removePhoto = (url: string) => setPhotos(prev => prev.filter(p => p !== url));
 
   const handleSubmit = async () => {
     if (!title.trim()) { setError("Judul harus diisi"); return; }
@@ -42,7 +87,7 @@ export default function TulisKaryaPage() {
       const res = await fetch("/api/siswa/karya", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title: title.trim(), content: content.trim(), type, coverImage: coverImage || undefined }),
+        body: JSON.stringify({ title: title.trim(), content: content.trim(), type, coverImage: coverImage || undefined, photos }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Gagal menyimpan");
@@ -105,13 +150,80 @@ export default function TulisKaryaPage() {
         />
       </div>
 
-      {/* Cover Image URL (optional) */}
+      {/* Cover Image Upload (optional) */}
       <div className="mb-6">
         <input
-          value={coverImage} onChange={e => setCoverImage(e.target.value)}
-          placeholder="URL gambar sampul (opsional)..."
-          className="w-full px-4 py-3 bg-white rounded-xl border border-gray-200 text-sm text-gray-600 placeholder:text-gray-300 focus:outline-none focus:ring-2 focus:ring-violet-200 focus:border-violet-400 transition-all"
+          ref={fileRef}
+          type="file"
+          accept="image/jpeg,image/png,image/webp"
+          hidden
+          onChange={e => { const f = e.target.files?.[0]; if (f) handleUploadCover(f); e.target.value = ""; }}
         />
+        {coverImage ? (
+          <div className="relative rounded-xl overflow-hidden border border-gray-200 max-w-xs">
+            <img src={coverImage} alt="Foto sampul" className="w-full aspect-video object-cover" />
+            <button
+              type="button"
+              onClick={() => setCoverImage("")}
+              className="absolute top-2 right-2 w-7 h-7 rounded-full bg-black/60 text-white flex items-center justify-center hover:bg-black/80 transition-colors"
+            >
+              <X size={14} />
+            </button>
+          </div>
+        ) : (
+          <button
+            type="button"
+            onClick={() => fileRef.current?.click()}
+            disabled={uploading}
+            className="w-full flex items-center justify-center gap-2 py-3 rounded-xl border-2 border-dashed border-gray-200 text-gray-500 hover:border-violet-300 hover:text-violet-600 transition-colors disabled:opacity-50"
+          >
+            {uploading ? <Loader2 size={16} className="animate-spin" /> : <Upload size={16} />}
+            {uploading ? "Mengunggah foto..." : "Unggah Foto Sampul (opsional)"}
+          </button>
+        )}
+      </div>
+
+      {/* Foto Pendukung (mis. foto wawancara, opsional, maks 6) */}
+      <div className="mb-6">
+        <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
+          Foto Pendukung (opsional)
+        </p>
+        <input
+          ref={photosRef}
+          type="file"
+          accept="image/jpeg,image/png,image/webp"
+          multiple
+          hidden
+          onChange={e => { if (e.target.files?.length) handleUploadPhotos(e.target.files); e.target.value = ""; }}
+        />
+        {photos.length > 0 && (
+          <div className="grid grid-cols-3 gap-2 mb-2">
+            {photos.map(url => (
+              <div key={url} className="relative aspect-square rounded-lg overflow-hidden border border-gray-200 group">
+                <img src={url} alt="Foto pendukung" className="w-full h-full object-cover" />
+                <button
+                  type="button"
+                  onClick={() => removePhoto(url)}
+                  className="absolute top-1 right-1 w-6 h-6 rounded-full bg-black/60 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                >
+                  <X size={13} />
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+        {photos.length < 6 && (
+          <button
+            type="button"
+            onClick={() => photosRef.current?.click()}
+            disabled={uploadingPhotos}
+            className="w-full flex items-center justify-center gap-2 py-3 rounded-xl border-2 border-dashed border-gray-200 text-gray-500 hover:border-violet-300 hover:text-violet-600 transition-colors disabled:opacity-50"
+          >
+            {uploadingPhotos ? <Loader2 size={16} className="animate-spin" /> : <Upload size={16} />}
+            {uploadingPhotos ? "Mengunggah foto..." : `Tambah Foto (${photos.length}/6)`}
+          </button>
+        )}
+        <p className="text-xs text-gray-400 mt-2">Misalnya foto dari wawancara untuk artikelmu.</p>
       </div>
 
       {/* Error */}
@@ -124,7 +236,7 @@ export default function TulisKaryaPage() {
       {/* Submit */}
       <button
         onClick={handleSubmit}
-        disabled={submitting}
+        disabled={submitting || uploading || uploadingPhotos}
         className={`w-full flex items-center justify-center gap-2 py-3.5 bg-gradient-to-r ${TYPE_STYLES[type]?.gradient || TYPE_STYLES.OPINI.gradient} text-white rounded-2xl font-semibold text-sm hover:opacity-90 transition-all shadow-lg disabled:opacity-50`}
       >
         {submitting ? <div className="animate-spin w-5 h-5 border-2 border-white border-t-transparent rounded-full" /> : <Send size={18} />}

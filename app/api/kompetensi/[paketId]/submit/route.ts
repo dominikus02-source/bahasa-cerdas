@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 import { rateLimitRoute } from "@/lib/rate-limit";
 import { calcLevel, calcLeagueFromXP } from "@/lib/xp";
+import { awardXp } from "@/lib/award-xp";
 import { ok, err } from "@/lib/api/response";
 import { ERR } from "@/lib/api/errors";
 import type { AttemptSnapshot, AttemptAnswerDetails, UserAnswerRecord } from "@/lib/types/snapshot";
@@ -506,12 +507,12 @@ export async function POST(
     }
 
     // ── XP Update ──
-    const xpGain = isUKBI ? Math.round(rawScore / 10) : Math.round(rawScore);
-    const newXp = dbUser.xp + xpGain;
-    await db.user.update({
-      where: { id: dbUser.id },
-      data: { xp: newXp, level: calcLevel(newXp), league: calcLeagueFromXP(newXp) },
-    });
+    const baseXpGain = isUKBI ? Math.round(rawScore / 10) : Math.round(rawScore);
+    // Lewat pintu tunggal: batas per submit, kuota harian, boost, jejak ledger,
+    // dan pembaruan xp/level/liga sekaligus.
+    const hasilXp = await awardXp(dbUser.id, "KOMPETENSI", baseXpGain, paketId);
+    const xpGain = hasilXp.xpDiberikan;
+    const xpBoosted = hasilXp.boosted;
 
     const totalMs = Date.now() - t0;
     perfLog("SUBMIT_OK", { paketId, answersCount: answerRows.length, scoringMs, writeMs, totalMs });
@@ -526,6 +527,8 @@ export async function POST(
       rawScore,
       seksiScores: buildSectionScores(sectionScores),
       passed: finalScore >= passingThreshold,
+      xpEarned: xpGain,
+      xpBoosted,
     };
 
     if (!isUKBI) {

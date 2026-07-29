@@ -12,7 +12,7 @@
  *   GROQ_API_KEY            — Groq (fallback)
  *   GEMINI_API_KEY          — Gemini (second fallback)
  *   AI_DEFAULT_MODEL        — Default model for agents (default: deepseek-chat)
- *   AI_FAST_MODEL           — Fast model for quick responses (default: llama-3.3-70b-versatile)
+ *   AI_FAST_MODEL           — Fast model for quick responses (default: openai/gpt-oss-120b)
  *   AI_REASONING_MODEL      — Reasoning model for complex tasks (default: deepseek-chat)
  *   AI_PROVIDER_PRIORITY    — Comma-separated priority override (default: deepseek,groq,gemini)
  */
@@ -84,8 +84,17 @@ function loadPriority(): ProviderName[] {
 
 const MODEL_MAP: Record<string, ProviderName> = {
   "deepseek-chat": "deepseek",
+  // openai/gpt-oss-* — pengganti resmi Groq untuk llama-3.3-70b-versatile /
+  // llama-3.1-8b-instant, keduanya dihentikan 16 Agustus 2026. Nama lama
+  // dibiarkan terpetakan supaya kalau ada referensi lama yang belum ter-audit
+  // masih jatuh ke provider yang benar (bukan error "model tidak dikenal"),
+  // sampai tanggal itu.
+  "openai/gpt-oss-120b": "groq",
+  "openai/gpt-oss-20b": "groq",
   "llama-3.3-70b-versatile": "groq",
   "llama-3.1-8b-instant": "groq",
+  // gemini-2.0-flash sudah dimatikan Google 1 Juni 2026.
+  "gemini-2.5-flash": "gemini",
   "gemini-2.0-flash": "gemini",
   "gemini-1.5-pro": "gemini",
 };
@@ -99,7 +108,7 @@ export function getDefaultModel(): string {
 }
 
 export function getFastModel(): string {
-  return process.env.AI_FAST_MODEL || "llama-3.3-70b-versatile";
+  return process.env.AI_FAST_MODEL || "openai/gpt-oss-120b";
 }
 
 export function getReasoningModel(): string {
@@ -635,8 +644,10 @@ export async function streamProviderText(
  * Map a generic model to a provider-specific model.
  */
 function getModelForProvider(provider: string, requestedModel: string): string {
-  if (provider === "groq" && requestedModel.includes("deepseek")) return "llama-3.3-70b-versatile";
-  if (provider === "gemini" && requestedModel.includes("deepseek")) return "gemini-2.0-flash";
+  // llama-3.3-70b-versatile dihentikan Groq 16 Agustus 2026; gemini-2.0-flash
+  // sudah dimatikan Google 1 Juni 2026 — dua-duanya diganti model aktif.
+  if (provider === "groq" && requestedModel.includes("deepseek")) return "openai/gpt-oss-120b";
+  if (provider === "gemini" && requestedModel.includes("deepseek")) return "gemini-2.5-flash";
   return requestedModel;
 }
 

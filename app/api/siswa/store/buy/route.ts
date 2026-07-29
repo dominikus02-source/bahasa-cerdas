@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getUser } from "@/lib/supabase/server";
 import { spendCoins } from "@/lib/coins";
 import { db } from "@/lib/db";
+import { hitungExpiresAtBoost } from "@/lib/xp-boost";
 
 export async function POST(req: NextRequest) {
   try {
@@ -22,10 +23,23 @@ export async function POST(req: NextRequest) {
       where: { userId_itemId: { userId: user.id, itemId } },
     });
 
+    // Durasi boost diambil dari barangnya sendiri — dulu SEMUA XP_BOOST diberi
+    // 24 jam, sehingga "Double XP 15 Menit" (75 koin) diam-diam berlaku 96x
+    // lebih lama daripada yang dijanjikan namanya.
+    const isXpBoost = item.type === "XP_BOOST";
+
     if (existing) {
       await db.userItem.update({
         where: { id: existing.id },
-        data: { quantity: { increment: 1 } },
+        data: {
+          quantity: { increment: 1 },
+          // Baris UserItem unik per (userId, itemId), jadi pembelian ulang hanya
+          // menambah quantity. Tanpa memperpanjang masa aktif, boost kedua yang
+          // dibeli murid tidak akan pernah berlaku.
+          ...(isXpBoost
+            ? { expiresAt: hitungExpiresAtBoost(item, existing.expiresAt) }
+            : {}),
+        },
       });
     } else {
       await db.userItem.create({
@@ -33,9 +47,7 @@ export async function POST(req: NextRequest) {
           userId: user.id,
           itemId,
           quantity: 1,
-          expiresAt: item.type === "XP_BOOST"
-            ? new Date(Date.now() + 86400000)
-            : undefined,
+          expiresAt: isXpBoost ? hitungExpiresAtBoost(item) : undefined,
         },
       });
     }

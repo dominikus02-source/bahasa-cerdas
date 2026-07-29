@@ -3,7 +3,9 @@ import { getUser } from "@/lib/supabase/server";
 import { rateLimitRoute } from "@/lib/rate-limit";
 
 const AI_TIMEOUT = 15000;
-const GROQ_API_KEY = process.env.GROQ_API_KEY || "";
+// Kunci khusus AI Cerdik, jatah 30 req/menit tier gratis Groq tidak dibagi
+// dengan EYD/Feedback/Grading/Soal yang memakai GROQ_API_KEY bersama.
+const GROQ_API_KEY = process.env.GROQ_API_KEY_CHAT || process.env.GROQ_API_KEY || "";
 const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY || "";
 
 const SYSTEM_PROMPT = `Kamu adalah **AI BC**, Asisten Bahasa Indonesia yang ramah, sabar, cerdas, dan antusias. Kamu adalah kakak guru Bahasa Indonesia yang asyik, teliti, dan selalu mendukung siswa serta guru.
@@ -18,7 +20,7 @@ const SYSTEM_PROMPT = `Kamu adalah **AI BC**, Asisten Bahasa Indonesia yang rama
 **Pengetahuan Inti (Selalu prioritaskan):**
 - PUEBI / EYD terbaru
 - KBBI
-- Kurikulum Merdeka (ATP, RPP, HOTS, proyek, diferensiasi)
+- Kurikulum Nasional (ATP, Rencana Pembelajaran, HOTS, proyek, diferensiasi)
 - Sastra Indonesia (puisi, prosa, drama, sejarah sastra)
 - Tata bahasa Indonesia yang benar
 - UKBI dan persiapan kompetensi
@@ -32,7 +34,7 @@ const SYSTEM_PROMPT = `Kamu adalah **AI BC**, Asisten Bahasa Indonesia yang rama
    - Kata baku / tidak baku
    - Penjelasan sederhana + aturan PUEBI jika relevan
 3. Jika user minta contoh soal → berikan 1-2 contoh saja, lalu arahkan ke dashboard untuk soal lengkap: "Buat soal lebih banyak dan sesuai level langsung di halaman Bank Soal ya! Klik **Buat Soal** di dashboard guru."
-4. Jika user minta RPP/modul/materi ajar → jangan generate di chat. Arahkan: "Semua fitur generate RPP, modul, dan materi ajar sudah tersedia di dashboard. Yuk, daftar/login dan buka halaman **RPP & Modul** atau **Materi Ajar** untuk mulai membuat!"
+4. Jika user minta RPP/modul/materi ajar → jangan generate di chat. Arahkan: "Semua fitur generate Rencana Pembelajaran dan materi ajar sudah tersedia di dashboard. Yuk, daftar/login dan buka halaman **Rencana Pembelajaran** atau **Materi Ajar** untuk mulai membuat!"
 5. Selalu tanyakan klarifikasi jika pertanyaan kurang jelas.
 6. Jika user salah → koreksi dengan lembut dan jelaskan kenapa.
 
@@ -42,7 +44,7 @@ const SYSTEM_PROMPT = `Kamu adalah **AI BC**, Asisten Bahasa Indonesia yang rama
 - Berikan contoh konkret.
 - Akhiri dengan pertanyaan lanjutan untuk melanjutkan percakapan (kecuali user minta tidak).
 
-Kamu adalah asisten ringan di BahasaCerdas.site — kamu ahli menjelaskan konsep, arti kata, tata bahasa, dan sastra Indonesia. Untuk fitur lanjutan seperti generate RPP, bank soal, materi ajar, dan UKBI, arahkan user ke dashboard masing-masing setelah daftar/login. Jangan generate konten panjang di chat.`;
+Kamu adalah asisten ringan di BahasaCerdas.site — kamu ahli menjelaskan konsep, arti kata, tata bahasa, dan sastra Indonesia. Untuk fitur lanjutan seperti generate Rencana Pembelajaran, bank soal, materi ajar, dan UKBI, arahkan user ke dashboard masing-masing setelah daftar/login. Jangan generate konten panjang di chat.`;
 
 export async function POST(req: NextRequest) {
   try {
@@ -64,7 +66,7 @@ export async function POST(req: NextRequest) {
     }
 
     const modeInstruction = mode === "guru"
-      ? "User ini adalah GURU. Berikan penjelasan mendalam, istilah teknis, contoh soal HOTS, dan tawarkan fitur generate RPP/modul/soal."
+      ? "User ini adalah GURU. Berikan penjelasan mendalam, istilah teknis, contoh soal HOTS, dan tawarkan fitur generate Rencana Pembelajaran/soal."
       : "User ini adalah MURID. Gunakan bahasa yang ringan, menyenangkan, dan mudah dipahami. Berikan analogi sederhana. Jangan gunakan istilah yang terlalu rumit.";
 
     const chatMessages = [
@@ -114,7 +116,9 @@ export async function POST(req: NextRequest) {
           Authorization: `Bearer ${GROQ_API_KEY}`,
         },
         body: JSON.stringify({
-          model: "llama-3.3-70b-versatile",
+          // llama-3.3-70b-versatile dihentikan Groq 16 Agustus 2026 —
+          // openai/gpt-oss-120b pengganti resmi yang mereka rekomendasikan.
+          model: "openai/gpt-oss-120b",
           messages: chatMessages,
           temperature: 0.7,
           max_tokens: 4096,

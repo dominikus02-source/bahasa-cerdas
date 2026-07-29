@@ -2,9 +2,11 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, Heart, Star, Trophy, Zap, Lightbulb, Check, X, RefreshCw, Crown, Sparkles } from "lucide-react";
-import GameBackground from "@/components/game/GameBackground";
-import { sfx, haptic, startBGM, stopBGM } from "@/lib/game/sound";
+import {
+  X, Heart, Star, Trophy, Zap, Lightbulb, Check, RotateCcw, Lock,
+  ChevronRight, Play, Volume2, VolumeX, Loader2, Sparkles,
+} from "lucide-react";
+import { sfx, haptic, isSoundOn, toggleSound, startBGM, stopBGM } from "@/lib/game/sound";
 
 const WORDS_DB = [
   { word: "BUDAYA", clues: ["Kebiasaan turun-temurun", "Warisan leluhur", "Identitas bangsa"], category: "Sosial" },
@@ -115,7 +117,7 @@ const WORDS_DB = [
   { word: "SUDUT PANDANG", clues: ["Cara pengarang menceritakan", "Point of view", "Perspektif tokoh"], category: "Sastra" },
   { word: "MAJAS", clues: ["Gaya bahasa kiasan", "Bahasa figuratif", "Metafora, simile, personifikasi"], category: "Sastra" },
   { word: "RIMA", clues: ["Persamaan bunyi dalam puisi", "Bunyi vokal akhir yang sama", "Akhiran yang berirama"], category: "Sastra" },
-  { word: "Irama", clues: ["Alunan suara teratur", "Rentak dalam puisi", "Tinggi rendah panjang pendek bunyi"], category: "Sastra" },
+  { word: "IRAMA", clues: ["Alunan suara teratur", "Rentak dalam puisi", "Tinggi rendah panjang pendek bunyi"], category: "Sastra" },
   { word: "LAFAL", clues: ["Cara mengucapkan kata", "Pengucapan bunyi bahasa", "Artikulasi dalam berbicara"], category: "Bahasa" },
   { word: "INTONASI", clues: ["Naik turunnya suara", "Tekanan dalam berbicara", "Melodi kalimat"], category: "Bahasa" },
   { word: "JEDA", clues: ["Henti sebentar dalam bicara", "Pemisah antar frasa", "Waktu berhenti saat membaca"], category: "Bahasa" },
@@ -263,121 +265,160 @@ const WORDS_DB = [
   { word: "TRANSLITERASI", clues: ["Alih aksara antar sistem tulisan", "Dari huruf Arab ke Latin misalnya", "Menjaga bunyi tetap sama"], category: "Bahasa" },
 ];
 
-const LEVEL_THRESHOLDS = [0, 100, 250, 500, 800, 1200, 1700, 2300, 3000, 3800, 4700, 5700, 6800, 8000, 9300, 10700, 12200, 13800, 15500, 17300, 19200, 21200, 23300, 25500, 27800, 30200, 32700, 35300, 38000, 40800, 43700, 46700, 49800, 53000, 56300, 59700, 63200, 66800, 70500, 74300, 78200, 82200, 86300, 90500, 94800, 99200, 103700, 108300, 113000, 117800];
+type Word = (typeof WORDS_DB)[number];
+type Screen = "start" | "levels" | "playing" | "result";
 
-function getLevel(xp: number) {
-  for (let i = LEVEL_THRESHOLDS.length - 1; i >= 0; i--) {
-    if (xp >= LEVEL_THRESHOLDS[i]) return i + 1;
-  }
-  return 1;
+type Level = { id: number; name: string; rounds: number; min: number; max: number; color: string };
+const LEVELS: Level[] = [
+  { id: 1, name: "Pemula", rounds: 6, min: 4, max: 6, color: "#FF6B6B" },
+  { id: 2, name: "Siaga", rounds: 7, min: 5, max: 7, color: "#F59E0B" },
+  { id: 3, name: "Petarung", rounds: 8, min: 6, max: 8, color: "#10B981" },
+  { id: 4, name: "Jawara", rounds: 9, min: 6, max: 9, color: "#38BDF8" },
+  { id: 5, name: "Pahlawan", rounds: 10, min: 7, max: 10, color: "#8B5CF6" },
+  { id: 6, name: "Legenda", rounds: 11, min: 7, max: 11, color: "#EC4899" },
+  { id: 7, name: "Dewa", rounds: 12, min: 8, max: 12, color: "#F43F5E" },
+  { id: 8, name: "Naga", rounds: 13, min: 8, max: 13, color: "#14B8A6" },
+  { id: 9, name: "Maha Guru", rounds: 15, min: 6, max: 99, color: "#6366F1" },
+];
+
+type Saved = { unlocked: number[]; best: Record<number, number>; stars: Record<number, number> };
+function loadSaved(): Saved {
+  try {
+    const raw = localStorage.getItem("tebak-kata-progress");
+    if (raw) {
+      const d = JSON.parse(raw);
+      if (Array.isArray(d.unlocked)) return { unlocked: d.unlocked, best: d.best || {}, stars: d.stars || {} };
+    }
+  } catch { /* abaikan */ }
+  return { unlocked: [1], best: {}, stars: {} };
+}
+function saveSaved(s: Saved) {
+  try { localStorage.setItem("tebak-kata-progress", JSON.stringify(s)); } catch { /* abaikan */ }
 }
 
-function getLevelProgress(xp: number) {
-  const level = getLevel(xp);
-  const current = LEVEL_THRESHOLDS[level - 1] || 0;
-  const next = LEVEL_THRESHOLDS[level] || LEVEL_THRESHOLDS[LEVEL_THRESHOLDS.length - 1] + 10000;
-  return { level, progress: ((xp - current) / (next - current)) * 100, current, next };
+// Kata yang baru saja muncul diprioritaskan untuk dihindari di sesi
+// berikutnya, supaya replay level yang sama tidak terasa mengulang kata yang
+// sama persis — bank kata tetap sama, tapi urutan yang muncul terasa lebih segar.
+const RECENT_WORDS_KEY = "tebak-kata-recent";
+const RECENT_WORDS_LIMIT = 60;
+function loadRecentWords(): string[] {
+  try { const raw = localStorage.getItem(RECENT_WORDS_KEY); return raw ? JSON.parse(raw) : []; } catch { return []; }
+}
+function rememberWords(used: string[]) {
+  try {
+    const prev = loadRecentWords();
+    const next = [...used, ...prev].slice(0, RECENT_WORDS_LIMIT);
+    localStorage.setItem(RECENT_WORDS_KEY, JSON.stringify(next));
+  } catch { /* abaikan */ }
+}
+/** Utamakan kandidat yang belum baru-baru ini muncul; jika tersisa terlalu sedikit, pakai semua kandidat. */
+function preferFresh(candidates: Word[], recent: string[], need: number): Word[] {
+  const fresh = candidates.filter((w) => !recent.includes(w.word));
+  return fresh.length >= need ? fresh : candidates;
+}
+function starsFor(score: number, rounds: number): number {
+  const perRound = rounds > 0 ? score / rounds : 0;
+  if (perRound >= 160) return 3;
+  if (perRound >= 100) return 2;
+  if (perRound >= 40) return 1;
+  return 0;
 }
 
-// Panjang kata naik mengikuti level pemain — level rendah dapat kata pendek
-// yang akrab, makin tinggi level makin panjang dan makin jarang katanya.
-function wordBandForLevel(level: number) {
-  if (level <= 4) return { min: 0, max: 6 };
-  if (level <= 9) return { min: 5, max: 8 };
-  if (level <= 19) return { min: 6, max: 10 };
-  return { min: 8, max: 99 };
-}
-
-export default function TebakKataGame({ hideBackButton }: { hideBackButton?: boolean }) {
-  const [gameState, setGameState] = useState<"menu" | "playing" | "result">("menu");
-  useEffect(() => { if (gameState === "playing") startBGM(); else stopBGM(); return () => stopBGM(); }, [gameState]);
-  const [xp, setXp] = useState(0);
-  const [lives, setLives] = useState(3);
-  const [currentWord, setCurrentWord] = useState<any>(null);
+export default function TebakKataGame({ hideBackButton, backHref = "/arena/game" }: { hideBackButton?: boolean; backHref?: string }) {
+  const [screen, setScreen] = useState<Screen>("start");
+  const [saved, setSaved] = useState<Saved>({ unlocked: [1], best: {}, stars: {} });
+  const [soundOn, setSoundOn] = useState(true);
+  const [levelId, setLevelId] = useState(1);
+  const [pool, setPool] = useState<Word[]>([]);
+  const [round, setRound] = useState(0);
+  const [currentWord, setCurrentWord] = useState<Word | null>(null);
   const [currentClue, setCurrentClue] = useState(0);
   const [guess, setGuess] = useState("");
   const [score, setScore] = useState(0);
+  const [lives, setLives] = useState(3);
   const [streak, setStreak] = useState(0);
   const [bestStreak, setBestStreak] = useState(0);
-  const [round, setRound] = useState(0);
-  const [totalRounds, setTotalRounds] = useState(10);
   const [feedback, setFeedback] = useState<{ correct: boolean; message: string } | null>(null);
   const [hintUsed, setHintUsed] = useState(false);
   const [shakeInput, setShakeInput] = useState(false);
-  const [usedWords, setUsedWords] = useState<Set<string>>(new Set());
-  const [xpSaved, setXpSaved] = useState(false);
+  const [result, setResult] = useState<null | { score: number; stars: number; bestStreak: number; xpEarned: number; gameOver: boolean }>(null);
+  const xpSentRef = useRef(false);
+  const supabaseIdRef = useRef("");
 
   useEffect(() => {
-    const saved = localStorage.getItem("tebak-kata-progress");
-    if (saved) {
-      try {
-        const data = JSON.parse(saved);
-        setXp(data.xp || 0);
-        setBestStreak(data.bestStreak || 0);
-      } catch {}
-    }
+    setSaved(loadSaved());
+    try { setSoundOn(isSoundOn()); } catch { /* abaikan */ }
+    const stored = localStorage.getItem("bc-user");
+    if (stored) { try { supabaseIdRef.current = JSON.parse(stored).state?.supabaseId || ""; } catch { /* abaikan */ } }
+  }, []);
+  useEffect(() => () => stopBGM(), []);
+
+  const level = LEVELS.find((l) => l.id === levelId) || LEVELS[0];
+
+  const nextWord = useCallback((currentPool: Word[], usedCount: number) => {
+    if (usedCount >= currentPool.length) return null;
+    return currentPool[usedCount];
   }, []);
 
-  const supabaseIdRef = useRef("")
-  useEffect(() => {
-    const stored = localStorage.getItem("bc-user")
-    if (stored) {
-      try { supabaseIdRef.current = JSON.parse(stored).state?.supabaseId || "" } catch {}
-    }
-  }, [])
+  const startLevel = (id: number) => {
+    sfx.start(); setSoundOn(isSoundOn()); startBGM();
+    const lv = LEVELS.find((l) => l.id === id) || LEVELS[0];
+    let candidates = WORDS_DB.filter((w) => w.word.length >= lv.min && w.word.length <= lv.max);
+    if (candidates.length < lv.rounds) candidates = WORDS_DB;
+    candidates = preferFresh(candidates, loadRecentWords(), lv.rounds);
+    const shuffled = [...candidates].sort(() => Math.random() - 0.5).slice(0, lv.rounds);
+    rememberWords(shuffled.map((w) => w.word));
 
-  useEffect(() => {
-    if (gameState !== "result" || xpSaved || score <= 0) return
-    setXpSaved(true)
-    fetch("/api/game/xp", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ score, correct: 0, wrong: 0, maxStreak: bestStreak, xpEarned: score, gameType: "TEBAK_KATA", supabaseId: supabaseIdRef.current }),
-    }).catch(() => {})
-  }, [gameState, xpSaved, score, bestStreak])
-
-  const saveProgress = useCallback((newXp: number, newBestStreak: number) => {
-    localStorage.setItem("tebak-kata-progress", JSON.stringify({ xp: newXp, bestStreak: newBestStreak }));
-  }, []);
-
-  const startGame = () => {
-    sfx.start();
-    setGameState("playing");
-    setLives(3);
-    setScore(0);
-    setStreak(0);
+    setLevelId(id);
+    setPool(shuffled);
     setRound(0);
-    setUsedWords(new Set());
+    setScore(0);
+    setLives(3);
+    setStreak(0);
+    setBestStreak(0);
+    setResult(null);
     setHintUsed(false);
-    nextWord(new Set());
+    setFeedback(null);
+    setGuess("");
+    setCurrentClue(0);
+    xpSentRef.current = false;
+    setCurrentWord(shuffled[0] || null);
+    setScreen("playing");
   };
 
-  const nextWord = (used: Set<string>) => {
-    const band = wordBandForLevel(getLevel(xp));
-    let available = WORDS_DB.filter(
-      (w) => !used.has(w.word) && w.word.length >= band.min && w.word.length <= band.max
-    );
-    // Band kehabisan kata → buka seluruh bank agar permainan tetap jalan.
-    if (available.length === 0) available = WORDS_DB.filter((w) => !used.has(w.word));
-    if (available.length === 0) {
-      setUsedWords(new Set());
-      const pool = [...WORDS_DB];
-      const word = pool[Math.floor(Math.random() * pool.length)];
-      setCurrentWord(word);
-      setUsedWords(new Set([word.word]));
-    } else {
-      const word = available[Math.floor(Math.random() * available.length)];
-      setCurrentWord(word);
-      setUsedWords(new Set([...used, word.word]));
+  const finish = useCallback((finalScore: number, finalBestStreak: number, gameOver: boolean) => {
+    stopBGM();
+    const stars = starsFor(finalScore, level.rounds);
+    const xpEarned = Math.min(Math.floor(finalScore / 40), 60);
+    if (!gameOver && finalScore > 0) { sfx.win(); haptic([40, 40, 80]); } else if (gameOver) { sfx.gameover(); haptic(120); }
+
+    setResult({ score: finalScore, stars, bestStreak: finalBestStreak, xpEarned, gameOver });
+    setScreen("result");
+
+    setSaved((prev) => {
+      const next: Saved = { unlocked: [...prev.unlocked], best: { ...prev.best }, stars: { ...prev.stars } };
+      if (!gameOver) {
+        if (!next.best[levelId] || finalScore > next.best[levelId]) next.best[levelId] = finalScore;
+        if (!next.stars[levelId] || stars > next.stars[levelId]) next.stars[levelId] = stars;
+        const nid = levelId + 1;
+        if (nid <= LEVELS.length && !next.unlocked.includes(nid)) next.unlocked.push(nid);
+      }
+      saveSaved(next);
+      return next;
+    });
+
+    if (!xpSentRef.current && finalScore > 0) {
+      xpSentRef.current = true;
+      fetch("/api/game/xp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ score: finalScore, correct: 0, wrong: 0, maxStreak: finalBestStreak, xpEarned, gameType: "TEBAK_KATA", supabaseId: supabaseIdRef.current }),
+      }).catch(() => { /* abaikan */ });
     }
-    setCurrentClue(0);
-    setGuess("");
-    setFeedback(null);
-    setHintUsed(false);
-  };
+  }, [level.rounds, levelId]);
 
   const checkAnswer = () => {
-    if (!currentWord || !guess.trim()) return;
+    if (!currentWord || !guess.trim() || feedback) return;
     const isCorrect = guess.trim().toUpperCase() === currentWord.word;
     if (isCorrect) { sfx.correct(); haptic(25); } else { sfx.wrong(); haptic([60, 40, 60]); }
 
@@ -387,25 +428,26 @@ export default function TebakKataGame({ hideBackButton }: { hideBackButton?: boo
       const streakBonus = streak * 10;
       const totalPoints = basePoints + clueBonus + streakBonus;
       const newStreak = streak + 1;
-      const newBestStreak = Math.max(bestStreak, newStreak);
-      const newXp = xp + totalPoints;
-
-      setScore((s) => s + totalPoints);
+      const newScore = score + totalPoints;
+      const newBest = Math.max(bestStreak, newStreak);
+      setScore(newScore);
       setStreak(newStreak);
-      setBestStreak(newBestStreak);
-      setXp(newXp);
+      setBestStreak(newBest);
       setFeedback({ correct: true, message: `+${totalPoints}` });
-      saveProgress(newXp, newBestStreak);
 
       setTimeout(() => {
-        const newRound = round + 1;
-        setRound(newRound);
-        if (newRound >= totalRounds) {
-          setGameState("result");
+        const nextRound = round + 1;
+        setRound(nextRound);
+        if (nextRound >= pool.length) {
+          finish(newScore, newBest, false);
         } else {
-          nextWord(usedWords);
+          setCurrentWord(pool[nextRound]);
+          setCurrentClue(0);
+          setGuess("");
+          setFeedback(null);
+          setHintUsed(false);
         }
-      }, 1200);
+      }, 1100);
     } else {
       const newLives = lives - 1;
       setLives(newLives);
@@ -415,13 +457,12 @@ export default function TebakKataGame({ hideBackButton }: { hideBackButton?: boo
 
       if (newLives <= 0) {
         setFeedback({ correct: false, message: currentWord.word });
-        setTimeout(() => setGameState("result"), 2000);
+        setTimeout(() => finish(score, bestStreak, true), 1600);
       } else {
         setFeedback({ correct: false, message: `${newLives} nyawa tersisa` });
-        if (currentClue < currentWord.clues.length - 1) {
-          setCurrentClue((c) => c + 1);
-        }
+        if (currentClue < currentWord.clues.length - 1) setCurrentClue((c) => c + 1);
         setGuess("");
+        setTimeout(() => setFeedback(null), 900);
       }
     }
   };
@@ -429,204 +470,290 @@ export default function TebakKataGame({ hideBackButton }: { hideBackButton?: boo
   const useHint = () => {
     if (!currentWord || hintUsed) return;
     setHintUsed(true);
-    const masked = currentWord.word.split("").map((l: string, i: number) => (i === 0 || i === currentWord.word.length - 1 ? l : "_")).join(" ");
-    setGuess(masked.replace(/ /g, ""));
+    const masked = currentWord.word.split("").map((l, i) => (i === 0 || i === currentWord.word.length - 1 ? l : "_")).join("");
+    setGuess(masked.replace(/_/g, ""));
   };
 
-  const levelInfo = getLevelProgress(xp);
+  const chunky = "border-4 border-[#161B3A] shadow-[6px_6px_0_#161B3A]";
+  const btnBase = `inline-flex items-center justify-center gap-2 font-extrabold rounded-2xl ${chunky} transition-transform active:translate-x-1.5 active:translate-y-1.5 active:shadow-none hover:-translate-x-0.5 hover:-translate-y-0.5`;
 
-  return (
-    <div className="relative isolate min-h-screen bg-[#F2F2F7] flex flex-col">
-      <GameBackground theme="violet" light lightAccent="violet" />
-      {/* iOS-style Header */}
-      <div className="bg-white/80 backdrop-blur-xl border-b border-gray-200/50 px-4 py-3 sticky top-0 z-50">
-        <div className="max-w-lg mx-auto flex items-center justify-between">
-          {!hideBackButton && (
-            <button onClick={() => setGameState("menu")} className="text-blue-500 font-medium text-sm flex items-center gap-0.5">
-              <ArrowLeft size={20} /> Menu
-            </button>
-          )}
-          {hideBackButton && <div />}
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-1 bg-amber-50 px-2.5 py-1 rounded-full">
-              <Star size={14} className="text-amber-500 fill-amber-500" />
-              <span className="text-amber-700 font-bold text-sm">{score}</span>
+  /* ---------- START ---------- */
+  if (screen === "start") {
+    return (
+      <div className="fixed inset-0 z-[60] overflow-y-auto bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] text-[#161B3A]">
+        <style>{`@keyframes tk-float1{0%,100%{transform:translate(0,0) rotate(6deg)}50%{transform:translate(16px,-22px) rotate(18deg)}}
+        @keyframes tk-float2{0%,100%{transform:translate(0,0) rotate(0)}50%{transform:translate(-18px,16px) rotate(-12deg)}}
+        @keyframes tk-fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+        @keyframes tk-pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+        .tk-screen{animation:tk-fade .35s ease}
+        .tk-logo{animation:tk-pulse 1.4s ease-in-out infinite}`}</style>
+        <div className="pointer-events-none fixed top-[8%] left-[3%] w-16 h-16 bg-[#8B5CF6] border-4 border-[#161B3A] rounded-3xl" style={{ animation: "tk-float1 9s ease-in-out infinite" }} />
+        <div className="pointer-events-none fixed top-[16%] right-[5%] w-12 h-12 bg-[#38BDF8] border-4 border-[#161B3A] rounded-full" style={{ animation: "tk-float2 10s ease-in-out infinite" }} />
+        <div className="pointer-events-none fixed bottom-[14%] left-[2%] w-14 h-14 bg-[#FBBF24] border-4 border-[#161B3A] rounded-2xl" style={{ animation: "tk-float1 11s ease-in-out infinite" }} />
+        <div className="pointer-events-none fixed bottom-[10%] right-[4%] w-11 h-11 bg-[#4ADE80] border-4 border-[#161B3A] rounded-[30%_70%_70%_30%]" style={{ animation: "tk-float2 8s ease-in-out infinite" }} />
+
+        <div className="relative max-w-xl mx-auto px-4 py-5 min-h-full flex flex-col">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2.5">
+              <div className={`tk-logo w-11 h-11 bg-[#8B5CF6] rounded-2xl ${chunky} !shadow-[4px_4px_0_#161B3A] flex items-center justify-center`}>
+                <Lightbulb className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <div className="font-extrabold text-xl leading-none">Tebak Kata</div>
+                <div className="text-[11px] font-semibold opacity-60 mt-0.5">Tebak dari petunjuk bertahap</div>
+              </div>
             </div>
-            <div className="flex items-center gap-0.5">
-              {[...Array(3)].map((_, i) => (
-                <motion.div key={i} animate={i >= lives ? { scale: [1, 0.8, 1] } : {}}>
-                  <Heart size={18} className={i < lives ? "text-red-500 fill-red-500" : "text-gray-300"} />
-                </motion.div>
-              ))}
+            <button onClick={() => setSoundOn((m) => { toggleSound(); return !m; })} className={`${btnBase} w-11 h-11 bg-white`} aria-label={soundOn ? "Matikan suara" : "Nyalakan suara"}>
+              {soundOn ? <Volume2 className="w-5 h-5" /> : <VolumeX className="w-5 h-5" />}
+            </button>
+          </div>
+
+          <div className="tk-screen bg-white rounded-3xl p-6 text-center flex-1 flex flex-col items-center justify-center">
+            <span className="inline-block px-4 py-1.5 bg-[#FBBF24] border-[3px] border-[#161B3A] rounded-full font-extrabold text-xs shadow-[3px_3px_0_#161B3A] mb-4">9 Level • 3 Nyawa</span>
+            <h1 className="font-extrabold text-4xl mb-2">Tebak <span className="text-[#8B5CF6]">Kata!</span></h1>
+            <p className="opacity-70 text-sm max-w-sm mb-1">Baca petunjuknya, tebak katanya. Makin cepat menjawab — sebelum petunjuk berikutnya terbuka — makin besar bonusnya!</p>
+            <p className="text-xs opacity-50 mb-6">Salah 3 kali, permainan berakhir.</p>
+
+            <div className="grid grid-cols-3 gap-2.5 mb-6 w-full max-w-xs">
+              <div className="bg-[#4ADE80] border-[3px] border-[#161B3A] rounded-xl p-2 shadow-[3px_3px_0_#161B3A]">
+                <div className="text-[10px] font-extrabold uppercase opacity-70">Petunjuk 1</div>
+                <div className="font-extrabold text-lg">+150</div>
+              </div>
+              <div className="bg-[#FBBF24] border-[3px] border-[#161B3A] rounded-xl p-2 shadow-[3px_3px_0_#161B3A]">
+                <div className="text-[10px] font-extrabold uppercase opacity-70">Combo</div>
+                <div className="font-extrabold text-lg">Bonus</div>
+              </div>
+              <div className="bg-[#FF6B6B] text-white border-[3px] border-[#161B3A] rounded-xl p-2 shadow-[3px_3px_0_#161B3A]">
+                <div className="text-[10px] font-extrabold uppercase opacity-70">Salah</div>
+                <div className="font-extrabold text-lg">-1 ❤️</div>
+              </div>
+            </div>
+
+            <div className="flex flex-wrap justify-center gap-3 mb-2">
+              <button className={`${btnBase} px-6 py-3.5 bg-[#8B5CF6] text-white text-lg`} onClick={() => setScreen("levels")}>
+                <Play className="w-5 h-5" /> Pilih Level
+              </button>
+              <button className={`${btnBase} px-5 py-3.5 bg-white`} onClick={() => startLevel(1)}>
+                Langsung Level 1
+              </button>
+            </div>
+          </div>
+          <p className="text-center text-[11px] opacity-50 mt-4 pb-4">Kumpulkan ⭐ di setiap level untuk buka level berikutnya!</p>
+        </div>
+      </div>
+    );
+  }
+
+  /* ---------- LEVELS ---------- */
+  if (screen === "levels") {
+    return (
+      <div className="fixed inset-0 z-[60] overflow-y-auto bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] text-[#161B3A]">
+        <style>{`.tk-screen{animation:tk-fade .35s ease}@keyframes tk-fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}`}</style>
+        <div className="relative max-w-xl mx-auto px-4 py-5 min-h-full flex flex-col">
+          <div className="flex items-center justify-between mb-4">
+            <button className={`${btnBase} w-11 h-11 bg-white`} onClick={() => setScreen("start")} aria-label="Kembali">
+              <X className="w-5 h-5" />
+            </button>
+            <h2 className="font-extrabold text-2xl">Pilih Level</h2>
+            <div className="w-11" />
+          </div>
+          <div className="tk-screen bg-white rounded-3xl p-5 shadow-[6px_6px_0_#161B3A] border-4 border-[#161B3A]">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+              {LEVELS.map((lv) => {
+                const unlocked = saved.unlocked.includes(lv.id);
+                const best = saved.best[lv.id] || 0;
+                const st = saved.stars[lv.id] || 0;
+                return (
+                  <button
+                    key={lv.id}
+                    disabled={!unlocked}
+                    onClick={() => unlocked && startLevel(lv.id)}
+                    className={`text-left rounded-2xl border-4 border-[#161B3A] p-3.5 transition-transform ${
+                      unlocked ? "shadow-[5px_5px_0_#161B3A] hover:-translate-x-0.5 hover:-translate-y-0.5 cursor-pointer" : "bg-gray-200 text-gray-400 cursor-not-allowed shadow-[5px_5px_0_#9CA3AF]"
+                    }`}
+                    style={unlocked ? { background: lv.color, color: ["#FBBF24", "#F59E0B", "#4ADE80", "#38BDF8"].includes(lv.color) ? "#161B3A" : "#fff" } : undefined}
+                  >
+                    <div className="flex items-start justify-between mb-1.5">
+                      <span className="font-extrabold text-2xl leading-none">#{lv.id}</span>
+                      {unlocked ? <span className="text-[9px] font-extrabold uppercase px-1.5 py-0.5 rounded bg-black/15">{lv.max - lv.min <= 3 ? "Pendek" : lv.min >= 8 ? "Panjang" : "Sedang"}</span> : <Lock className="w-4 h-4" />}
+                    </div>
+                    <div className="font-extrabold text-sm leading-tight mb-0.5">{lv.name}</div>
+                    <div className="text-[10px] font-semibold opacity-75 mb-1.5">{lv.rounds} kata</div>
+                    {unlocked ? (
+                      <div className="flex items-center gap-0.5">
+                        {[1, 2, 3].map((i) => (
+                          <Star key={i} className="w-4 h-4" fill={i <= st ? "currentColor" : "none"} style={{ opacity: i <= st ? 1 : 0.35 }} />
+                        ))}
+                        {best > 0 && <span className="text-[10px] font-extrabold ml-1.5 opacity-80">{best}</span>}
+                      </div>
+                    ) : (
+                      <div className="text-[10px] font-bold">Selesaikan level sebelumnya</div>
+                    )}
+                  </button>
+                );
+              })}
             </div>
           </div>
         </div>
       </div>
+    );
+  }
 
-      {/* Menu */}
-      {gameState === "menu" && (
-        <div className="flex-1 flex items-center justify-center px-6">
-          <motion.div initial={{ y: 30, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="text-center max-w-sm w-full">
-            <motion.div animate={{ rotate: [0, -5, 5, -5, 0] }} transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }} className="w-28 h-28 rounded-[2rem] bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center mx-auto mb-6 shadow-xl shadow-violet-500/30">
-              <Lightbulb size={52} className="text-white" />
-            </motion.div>
-            <h1 className="text-4xl font-extrabold text-gray-900 mb-2 tracking-tight">Tebak Kata</h1>
-            <p className="text-gray-500 mb-8 text-base">Tebak kata Bahasa Indonesia dari petunjuk</p>
-
-            {/* Stats Card */}
-            <div className="bg-white rounded-2xl p-5 mb-8 shadow-sm border border-gray-100">
-              <div className="grid grid-cols-3 gap-4">
-                <div className="text-center">
-                  <div className="flex items-center justify-center gap-1 mb-1">
-                    <Crown size={16} className="text-amber-500" />
-                  </div>
-                  <p className="text-2xl font-bold text-gray-900">{levelInfo.level}</p>
-                  <p className="text-xs text-gray-400">Level</p>
-                </div>
-                <div className="text-center border-x border-gray-100">
-                  <div className="flex items-center justify-center gap-1 mb-1">
-                    <Zap size={16} className="text-violet-500" />
-                  </div>
-                  <p className="text-2xl font-bold text-gray-900">{Math.floor(xp)}</p>
-                  <p className="text-xs text-gray-400">XP</p>
-                </div>
-                <div className="text-center">
-                  <div className="flex items-center justify-center gap-1 mb-1">
-                    <Sparkles size={16} className="text-orange-500" />
-                  </div>
-                  <p className="text-2xl font-bold text-gray-900">{bestStreak}</p>
-                  <p className="text-xs text-gray-400">Streak</p>
-                </div>
+  /* ---------- PLAYING ---------- */
+  if (screen === "playing" && currentWord) {
+    return (
+      <div className="fixed inset-0 z-[60] overflow-y-auto bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] text-[#161B3A]">
+        <style>{`@keyframes tk-shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}`}</style>
+        <div className="relative max-w-lg mx-auto px-5 pt-4 pb-8 min-h-full flex flex-col">
+          <div className="flex items-center justify-between mb-4">
+            <button className={`${btnBase} w-10 h-10 bg-white`} onClick={() => { stopBGM(); setScreen("levels"); }} aria-label="Keluar">
+              <X className="w-4 h-4" />
+            </button>
+            <div className="flex items-center gap-2">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border-2 border-[#161B3A]">
+                <Star className="w-4 h-4 text-amber-500 fill-amber-500" />
+                <span className="text-sm font-bold">{score}</span>
               </div>
-              {/* XP Progress */}
-              <div className="mt-4">
-                <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-                  <motion.div className="h-full bg-gradient-to-r from-violet-500 to-purple-500 rounded-full" initial={{ width: 0 }} animate={{ width: `${levelInfo.progress}%` }} transition={{ duration: 0.8 }} />
-                </div>
-                <p className="text-xs text-gray-400 mt-1.5 text-center">{Math.floor(xp)} / {levelInfo.next} XP</p>
+              <div className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-white border-2 border-[#161B3A]">
+                {[...Array(3)].map((_, i) => (
+                  <Heart key={i} className={`w-4 h-4 ${i < lives ? "text-rose-500 fill-rose-500" : "text-gray-300"}`} />
+                ))}
               </div>
             </div>
+          </div>
 
-            <button onClick={startGame} className="w-full bg-gradient-to-r from-violet-500 to-purple-600 text-white font-bold py-4 rounded-2xl text-lg shadow-lg shadow-violet-500/25 active:scale-[0.98] transition-transform flex items-center justify-center gap-2">
-              <Zap size={20} /> Mulai Bermain
-            </button>
-          </motion.div>
-        </div>
-      )}
-
-      {/* Playing */}
-      {gameState === "playing" && currentWord && (
-        <div className="flex-1 flex flex-col px-6 py-6 max-w-lg mx-auto w-full">
-          {/* Round & Streak */}
-          <div className="flex items-center justify-between mb-6">
-            <span className="text-sm font-medium text-gray-400">{round + 1} / {totalRounds}</span>
+          <div className="flex items-center justify-between mb-4">
+            <span className="text-xs font-bold opacity-50">{round + 1} / {pool.length}</span>
             {streak > 0 && (
-              <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="flex items-center gap-1 bg-orange-50 px-3 py-1.5 rounded-full">
-                <Zap size={14} className="text-orange-500 fill-orange-500" />
-                <span className="text-orange-700 font-bold text-sm">{streak}</span>
-              </motion.div>
+              <div className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-orange-100 border border-orange-300">
+                <Zap className="w-3.5 h-3.5 text-orange-500 fill-orange-500" />
+                <span className="text-orange-700 font-bold text-xs">{streak}</span>
+              </div>
             )}
           </div>
 
-          {/* Category Badge */}
-          <div className="flex justify-center mb-6">
-            <span className="bg-violet-100 text-violet-700 text-xs font-semibold px-4 py-1.5 rounded-full">{currentWord.category}</span>
+          <div className="flex justify-center mb-5">
+            <span className="px-4 py-1.5 rounded-full font-extrabold text-xs border-[3px] border-[#161B3A] shadow-[3px_3px_0_#161B3A]" style={{ background: level.color, color: ["#FBBF24", "#F59E0B", "#4ADE80", "#38BDF8"].includes(level.color) ? "#161B3A" : "#fff" }}>
+              {currentWord.category}
+            </span>
           </div>
 
-          {/* Word Length */}
-          <div className="flex items-center justify-center gap-1.5 mb-8">
-            {currentWord.word.split("").map((_: string, i: number) => (
-              <div key={i} className="w-9 h-11 rounded-xl bg-white border-2 border-gray-200 flex items-center justify-center shadow-sm">
-                <span className="text-gray-300 text-sm font-medium">{i + 1}</span>
+          <div className="flex items-center justify-center gap-1.5 mb-6 flex-wrap">
+            {currentWord.word.split("").map((_, i) => (
+              <div key={i} className="w-9 h-11 rounded-xl bg-white border-[3px] border-[#161B3A] shadow-[2px_2px_0_#161B3A] flex items-center justify-center">
+                <span className="text-[#161B3A]/25 text-sm font-extrabold">{i + 1}</span>
               </div>
             ))}
           </div>
 
-          {/* Clues Card */}
-          <div className="bg-white rounded-2xl p-5 mb-6 shadow-sm border border-gray-100">
-            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Petunjuk</p>
+          <div className="bg-white rounded-2xl p-5 mb-5 border-4 border-[#161B3A] shadow-[5px_5px_0_#161B3A]">
+            <p className="text-xs font-extrabold uppercase tracking-wider opacity-50 mb-3">Petunjuk</p>
             <AnimatePresence mode="wait">
-              <motion.div key={currentClue} initial={{ x: 20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: -20, opacity: 0 }} className="space-y-2.5">
-                {currentWord.clues.slice(0, currentClue + 1).map((clue: string, i: number) => (
-                  <motion.p key={i} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }} className={`text-sm leading-relaxed ${i === currentClue ? "text-gray-800 font-medium" : "text-gray-400"}`}>
-                    <span className="mr-2">{i === currentClue ? "💡" : "✓"}</span>{clue}
-                  </motion.p>
+              <motion.div key={currentClue} initial={{ x: 16, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: -16, opacity: 0 }} className="space-y-2.5">
+                {currentWord.clues.slice(0, currentClue + 1).map((clue, i) => (
+                  <p key={i} className={`text-sm leading-relaxed flex items-start gap-2 ${i === currentClue ? "font-bold" : "opacity-40"}`}>
+                    {i === currentClue ? <Sparkles className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" /> : <Check className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />}
+                    {clue}
+                  </p>
                 ))}
               </motion.div>
             </AnimatePresence>
           </div>
 
-          {/* Input */}
-          <div className="mb-4">
+          <motion.div animate={shakeInput ? { x: [0, -10, 10, -7, 7, 0] } : {}} transition={{ duration: 0.4 }} className="mb-4">
             <input
               value={guess}
-              onChange={(e) => setGuess(e.target.value.toUpperCase().replace(/[^A-Z]/g, ""))}
+              onChange={(e) => setGuess(e.target.value.toUpperCase().replace(/[^A-Z ]/g, ""))}
               onKeyDown={(e) => e.key === "Enter" && checkAnswer()}
               placeholder="Ketik jawaban..."
-              className={`w-full bg-white border-2 ${shakeInput ? "border-red-400" : "border-gray-200 focus:border-violet-500"} rounded-2xl px-5 py-4 text-center text-xl font-bold tracking-widest placeholder-gray-300 focus:outline-none transition-all shadow-sm`}
+              className="w-full bg-white border-4 border-[#161B3A] rounded-2xl px-5 py-4 text-center text-xl font-extrabold tracking-widest placeholder-[#161B3A]/25 focus:outline-none shadow-[4px_4px_0_#161B3A]"
               maxLength={currentWord.word.length + 5}
               autoFocus
             />
+          </motion.div>
+
+          <div className="flex gap-3 mb-5">
+            <button onClick={useHint} disabled={hintUsed} className={`${btnBase} flex-1 py-3.5 bg-white disabled:opacity-30`}>
+              <Lightbulb className="w-4 h-4" /> Petunjuk
+            </button>
+            <button onClick={checkAnswer} disabled={!guess.trim()} className={`${btnBase} flex-1 py-3.5 bg-[#8B5CF6] text-white disabled:opacity-40`}>
+              <Check className="w-4 h-4" /> Tebak
+            </button>
           </div>
 
-          {/* Buttons */}
-          <div className="flex gap-3 mb-6">
-            <button onClick={useHint} disabled={hintUsed} className="flex-1 bg-white border border-gray-200 text-gray-700 font-semibold py-3.5 rounded-2xl active:scale-[0.98] transition-transform disabled:opacity-30 flex items-center justify-center gap-2 shadow-sm">
-              <Lightbulb size={18} /> Petunjuk
-            </button>
-            <button onClick={checkAnswer} disabled={!guess.trim()} className="flex-1 bg-gradient-to-r from-violet-500 to-purple-600 text-white font-bold py-3.5 rounded-2xl shadow-lg shadow-violet-500/25 active:scale-[0.98] transition-transform disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2">
-              <Check size={18} /> Tebak
-            </button>
-          </div>
-
-          {/* Feedback */}
           <AnimatePresence>
             {feedback && (
-              <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: -20, opacity: 0 }} className={`p-4 rounded-2xl text-center ${feedback.correct ? "bg-green-50 border border-green-200" : "bg-red-50 border border-red-200"}`}>
-                <p className={`text-lg font-bold ${feedback.correct ? "text-green-700" : "text-red-700"}`}>{feedback.message}</p>
+              <motion.div initial={{ y: 16, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: -16, opacity: 0 }} className={`p-4 rounded-2xl text-center border-[3px] border-[#161B3A] shadow-[3px_3px_0_#161B3A] ${feedback.correct ? "bg-emerald-100" : "bg-rose-100"}`}>
+                <p className={`text-lg font-extrabold ${feedback.correct ? "text-emerald-700" : "text-rose-700"}`}>{feedback.message}</p>
               </motion.div>
             )}
           </AnimatePresence>
         </div>
-      )}
+      </div>
+    );
+  }
 
-      {/* Result */}
-      {gameState === "result" && (
-        <div className="flex-1 flex items-center justify-center px-6">
-          <motion.div initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="text-center max-w-sm w-full">
-            <motion.div animate={{ rotate: [0, -10, 10, -10, 0] }} transition={{ duration: 1 }} className="w-28 h-28 rounded-[2rem] bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center mx-auto mb-6 shadow-xl shadow-amber-500/30">
-              <Trophy size={52} className="text-white" />
-            </motion.div>
-            <h2 className="text-3xl font-extrabold text-gray-900 mb-1">Selesai!</h2>
-            <p className="text-gray-500 mb-6">Skor kamu</p>
-            <p className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-violet-500 to-purple-600 mb-8">{score}</p>
-
-            <div className="bg-white rounded-2xl p-5 mb-8 shadow-sm border border-gray-100 space-y-3">
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-500">XP Didapat</span>
-                <span className="font-bold text-green-600">+{score}</span>
-              </div>
-              <div className="h-px bg-gray-100" />
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-500">Best Streak</span>
-                <span className="font-bold text-orange-600">{bestStreak}</span>
-              </div>
-              <div className="h-px bg-gray-100" />
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-500">Level</span>
-                <span className="font-bold text-violet-600">{levelInfo.level}</span>
-              </div>
-            </div>
-
-            <button onClick={startGame} className="w-full bg-gradient-to-r from-violet-500 to-purple-600 text-white font-bold py-4 rounded-2xl shadow-lg shadow-violet-500/25 active:scale-[0.98] transition-transform flex items-center justify-center gap-2">
-              <RefreshCw size={20} /> Main Lagi
-            </button>
-            <button onClick={() => setGameState("menu")} className="w-full mt-3 bg-white border border-gray-200 text-gray-700 font-semibold py-4 rounded-2xl active:scale-[0.98] transition-transform shadow-sm">
-              Kembali ke Menu
-            </button>
+  /* ---------- RESULT ---------- */
+  if (screen === "result" && result) {
+    return (
+      <div className="fixed inset-0 z-[60] overflow-y-auto bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] text-[#161B3A]">
+        <style>{`@keyframes tk-pop{0%{transform:scale(0) rotate(-30deg)}60%{transform:scale(1.3) rotate(8deg)}100%{transform:scale(1) rotate(0)}}.tk-star{animation:tk-pop .5s ease}`}</style>
+        <div className="relative max-w-xl mx-auto px-4 py-5 min-h-full flex flex-col items-center justify-center text-center">
+          <motion.div initial={{ scale: 0, rotate: -20 }} animate={{ scale: 1, rotate: 0 }} transition={{ type: "spring", stiffness: 180 }} className={`w-24 h-24 rounded-[28px] bg-gradient-to-br ${result.gameOver ? "from-rose-400 to-red-600" : result.stars >= 2 ? "from-violet-400 to-purple-600" : "from-amber-400 to-orange-600"} flex items-center justify-center shadow-2xl mb-5`}>
+            {result.gameOver ? <X className="w-12 h-12 text-white" /> : <Trophy className="w-12 h-12 text-white" />}
           </motion.div>
+          <h1 className="text-2xl font-extrabold mb-1">{result.gameOver ? "Nyawa Habis!" : result.stars === 3 ? "Sempurna!" : "Level Selesai!"}</h1>
+          <p className="text-sm opacity-60 mb-6">{result.gameOver ? "Jangan menyerah, coba lagi!" : "Kerja bagus! Kejar skor lebih tinggi?"}</p>
+
+          <div className="flex justify-center gap-1.5 mb-4">
+            {[1, 2, 3].map((i) => (
+              <Star key={i} className={`w-12 h-12 ${i <= result.stars ? "tk-star" : ""}`} style={{ animationDelay: `${i * 0.15}s` }} fill={i <= result.stars ? "#FBBF24" : "none"} stroke={i <= result.stars ? "#F59E0B" : "#D1D5DB"} strokeWidth={2} />
+            ))}
+          </div>
+
+          <div className="inline-block bg-[#161B3A] text-white rounded-2xl px-7 py-3 mb-4 shadow-[5px_5px_0_#8B5CF6]">
+            <div className="text-[10px] font-extrabold uppercase tracking-wider opacity-70">Skor Akhir</div>
+            <div className="font-extrabold text-4xl leading-none">{result.score}</div>
+          </div>
+
+          <div className="flex justify-center gap-3 mb-5 text-sm">
+            <div className="bg-white border-[3px] border-[#161B3A] rounded-xl px-3 py-1.5 shadow-[2px_2px_0_#161B3A]">
+              <Zap className="w-4 h-4 inline mr-1 text-amber-500" /> Combo maks <b>{result.bestStreak}</b>
+            </div>
+          </div>
+
+          {result.xpEarned > 0 && (
+            <div className="mb-5 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-400/20 text-amber-700 text-xs font-bold">
+              <Sparkles className="w-3.5 h-3.5" /> +{result.xpEarned} XP
+            </div>
+          )}
+
+          <div className="w-full max-w-xs flex flex-col gap-2.5">
+            <button onClick={() => startLevel(levelId)} className={`${btnBase} w-full py-3.5 bg-gradient-to-r from-violet-500 to-purple-600 text-white`}>
+              <RotateCcw className="w-4 h-4" /> Ulangi Level
+            </button>
+            {!result.gameOver && levelId < LEVELS.length && (
+              <button onClick={() => startLevel(levelId + 1)} className={`${btnBase} w-full py-3.5 bg-[#FF6B6B] text-white`}>
+                Level Berikutnya <ChevronRight className="w-4 h-4" />
+              </button>
+            )}
+            <button onClick={() => setScreen("levels")} className={`${btnBase} w-full py-3.5 bg-[#FBBF24]`}>
+              Pilih Level
+            </button>
+            {!hideBackButton && (
+              <a href={backHref} className={`${btnBase} w-full py-3.5 bg-white/80 text-center`}>
+                Kembali ke Arena
+              </a>
+            )}
+          </div>
         </div>
-      )}
+      </div>
+    );
+  }
+
+  return (
+    <div className="fixed inset-0 z-[60] flex items-center justify-center bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] text-[#161B3A]">
+      <Loader2 className="w-10 h-10 animate-spin" />
     </div>
   );
 }

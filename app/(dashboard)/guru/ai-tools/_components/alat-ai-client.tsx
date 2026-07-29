@@ -37,7 +37,7 @@ interface AgentConfig {
 
 const AGENTS: AgentConfig[] = [
   // Buat Materi
-  { id: "rpp", name: "RPP / Modul Ajar", description: "Buat RPP dan modul ajar Bahasa Indonesia siap pakai sesuai kurikulum.", useCase: "Guru yang ingin menyusun RPP cepat", icon: <FileText className="w-5 h-5" />, category: "buat-materi" },
+  { id: "rpp", name: "Rencana Pembelajaran", description: "Buat Rencana Pembelajaran Bahasa Indonesia siap pakai sesuai kurikulum.", useCase: "Guru yang ingin menyusun Rencana Pembelajaran cepat", icon: <FileText className="w-5 h-5" />, category: "buat-materi" },
   { id: "soal", name: "Buat Soal", description: "Hasilkan soal PG, essay, AKM, PISA dengan kunci jawaban dan pembahasan.", useCase: "Guru yang perlu bank soal variatif", icon: <PenTool className="w-5 h-5" />, category: "buat-materi" },
   { id: "ppt", name: "Buat PPT", description: "Rancang slide presentasi mengajar dengan narasi dan aktivitas interaktif.", useCase: "Guru yang butuh presentasi siap pakai", icon: <Monitor className="w-5 h-5" />, category: "buat-materi" },
   // Evaluasi & Review
@@ -65,8 +65,7 @@ function generateTitle(agentId: string, input: Record<string, unknown>, resultTe
   const text = (input.text as string) || "";
   switch (agentId) {
     case "rpp": {
-      const curriculum = (input.curriculum as string) || "";
-      const docType = /k13|2013/i.test(curriculum) ? "RPP" : "Modul Ajar";
+      const docType = "Rencana Pembelajaran";
       return topic ? `${docType} ${subject} — ${topic}` : `${docType} ${subject}`;
     }
     case "soal":
@@ -92,9 +91,8 @@ function generateTitle(agentId: string, input: Record<string, unknown>, resultTe
 
 const VALID_AGENT_IDS = new Set(AGENTS.map((a) => a.id));
 
-// Agent yang disembunyikan dari menu (belum diperlukan). Tetap terdaftar di
-// AGENTS agar mudah diaktifkan lagi — cukup hapus id-nya dari set ini.
-const HIDDEN_AGENT_IDS = new Set<AgentId>(["soal", "ppt"]);
+// Tidak ada agent yang disembunyikan — semua agent ditampilkan.
+const HIDDEN_AGENT_IDS = new Set<AgentId>([]);
 
 export function AlatAiClient({ agentParam }: { agentParam?: string }) {
   const initialAgent = agentParam && VALID_AGENT_IDS.has(agentParam as AgentId) && !HIDDEN_AGENT_IDS.has(agentParam as AgentId) ? (agentParam as AgentId) : "rpp";

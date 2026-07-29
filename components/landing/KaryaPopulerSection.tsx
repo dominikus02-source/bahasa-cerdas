@@ -39,8 +39,8 @@ export default async function KaryaPopulerSection() {
               Karya <span className="text-primary">Terpopuler</span> dari Guru
             </h2>
             <p className="text-zinc-500 leading-relaxed">
-              Ribuan RPP, modul, dan soal siap pakai dari guru-guru terbaik
-              Bahasa Indonesia se-Indonesia.
+              Rencana Pembelajaran, modul, dan soal siap pakai dari guru Bahasa Indonesia
+              yang telah membagikan karyanya.
             </p>
           </div>
           <Link

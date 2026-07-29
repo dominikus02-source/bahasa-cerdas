@@ -147,7 +147,7 @@ export default function GuruArtikelPage() {
                     value={form.tags}
                     onChange={(e) => setForm({ ...form, tags: e.target.value })}
                     className="w-full rounded-xl border-2 border-gray-200 px-4 py-3 text-sm focus:border-emerald-500 focus:outline-none transition-colors"
-                    placeholder="RPP, Kurikulum Merdeka, Tips Mengajar"
+                    placeholder="Rencana Pembelajaran, Kurikulum Nasional, Tips Mengajar"
                   />
                   <p className="text-xs text-gray-400 mt-1">Pisahkan dengan koma</p>
                 </div>

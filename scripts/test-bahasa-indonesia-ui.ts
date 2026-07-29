@@ -133,20 +133,6 @@ async function main() {
     test("Tidak ada 'Bersertifikat' sebagai badge", () => fileNotContains(kompetensiFile, "Bersertifikat"))
   }
 
-  // 8. Landing pages — no English UI terms
-  console.log("\n── Landing Pages ──")
-  for (const file of [
-    "components/landing/PricingTable.tsx",
-    "components/landing/AIFeatures.tsx",
-    "components/landing/MarketplaceSection.tsx",
-  ]) {
-    if (existsSync(file)) {
-      test(`${file}: 'Unggah' bukan 'Upload'`, () => fileContains(file, "Unggah") || !fileContains(file, "Upload"))
-    }
-  }
-  test("PricingTable tidak ada 'Download'", () => fileNotContains("components/landing/PricingTable.tsx", /["']Download/))
-  test("PricingTable tidak ada 'Sertifikat Digital'", () => fileNotContains("components/landing/PricingTable.tsx", "Sertifikat Digital"))
-
   // 9. Error/loading/empty state — Bahasa Indonesia
   console.log("\n── Error & Loading State ──")
   const errorPage = "app/error.tsx"

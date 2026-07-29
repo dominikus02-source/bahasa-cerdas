@@ -18,7 +18,7 @@ export default function BuatTKAPage() {
   const [creating, setCreating] = useState(false);
 
   useEffect(() => {
-    fetch("/api/soal").then(r => r.json()).then(d => setSoal(d.data || d.soal || [])).catch(() => {});
+    fetch("/api/bank-soal/tka?limit=500").then(r => r.json()).then(d => setSoal(d.soal || [])).catch(() => {});
     fetch("/api/group").then(r => r.json()).then(d => setGroups(d.groups || [])).catch(() => {});
   }, []);
 
@@ -79,24 +79,28 @@ export default function BuatTKAPage() {
             </Button>
           </div>
           <div className="space-y-2 max-h-[500px] overflow-y-auto">
-            {soal.map((s: any, i: number) => (
-              <button key={s.id || i} onClick={() => toggleSoal(s.id || String(i))}
-                className={`w-full text-left rounded-xl p-4 border-2 transition-all ${selected.includes(s.id || String(i)) ? "border-emerald-500 bg-emerald-50" : "border-slate-100 hover:border-slate-200 bg-white"}`}>
-                <div className="flex items-start gap-3">
-                  <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center shrink-0 mt-0.5 ${selected.includes(s.id || String(i)) ? "border-emerald-500 bg-emerald-500" : "border-slate-300"}`}>
-                    {selected.includes(s.id || String(i)) && <Check size={14} className="text-white" />}
-                  </div>
-                  <div className="flex-1">
-                    <p className="text-sm font-medium text-slate-800">{s.text || s.title}</p>
-                    <div className="flex items-center gap-2 mt-1">
-                      <Badge variant="secondary" className="text-[10px]">{s.type || "PG"}</Badge>
-                      <Badge variant={s.difficulty === "HARD" ? "destructive" : "warning"} className="text-[10px]">{s.difficulty}</Badge>
-                      {s.kelas && <span className="text-[10px] text-slate-400">Kelas {s.kelas}</span>}
+              {soal.length === 0 ? (
+                <p className="text-center text-slate-400 py-8">Belum ada soal TKA. Buat soal dulu di Bank Soal TKA.</p>
+              ) : (
+                soal.map((s: any, i: number) => (
+                  <button key={s.id || i} onClick={() => toggleSoal(s.id || String(i))}
+                    className={`w-full text-left rounded-xl p-4 border-2 transition-all ${selected.includes(s.id || String(i)) ? "border-emerald-500 bg-emerald-50" : "border-slate-100 hover:border-slate-200 bg-white"}`}>
+                    <div className="flex items-start gap-3">
+                      <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center shrink-0 mt-0.5 ${selected.includes(s.id || String(i)) ? "border-emerald-500 bg-emerald-500" : "border-slate-300"}`}>
+                        {selected.includes(s.id || String(i)) && <Check size={14} className="text-white" />}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-slate-800 line-clamp-2">{s.text}</p>
+                        <div className="flex items-center gap-2 mt-1 flex-wrap">
+                          <Badge variant="secondary" className="text-[10px]">{s.kompetensi}</Badge>
+                          {s.subKompetensi && <Badge variant="outline" className="text-[10px]">{s.subKompetensi}</Badge>}
+                          <Badge variant={s.difficulty === "HARD" ? "destructive" : s.difficulty === "EASY" ? "secondary" : "warning"} className="text-[10px]">{s.difficulty}</Badge>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                </div>
-              </button>
-            ))}
+                  </button>
+                ))
+              )}
           </div>
         </div>
       )}

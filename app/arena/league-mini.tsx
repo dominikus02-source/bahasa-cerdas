@@ -6,6 +6,7 @@ import { useState } from "react"
 export interface MiniRow {
   id: string
   fullName: string
+  displayName?: string
   xp: number
 }
 
@@ -19,17 +20,6 @@ function initials(name: string) {
   return name?.charAt(0)?.toUpperCase() || "?"
 }
 
-/**
- * Mini league board on the Arena home.
- *
- * The two labels used to be plain <Link>s that navigated away, so "Harian"
- * never actually showed daily standings here — the widget always rendered the
- * weekly list. They are real tabs now, switching in place.
- *
- * The daily board ranks coins earned today, matching /arena/league. It reads
- * "koin" rather than "XP" because those are different things in this app: XP
- * comes only from learning, coins from everyday activity.
- */
 export default function LeagueMini({
   userId,
   harian,
@@ -83,17 +73,18 @@ export default function LeagueMini({
           {rows.map((u, i) => {
             const isMe = u.id === userId
             const rankClass = i === 0 ? "text-amber-500" : i === 1 ? "text-gray-400" : "text-orange-700"
+            const displayName = u.displayName || u.fullName
             return (
               <div key={u.id} className={`flex items-center gap-2.5 px-4 py-2 ${isMe ? "bg-purple-50" : ""}`}>
                 <span className={`font-extrabold text-sm w-5 text-center shrink-0 ${rankClass}`}>{i + 1}</span>
                 <div
                   className={`w-8 h-8 rounded-xl bg-gradient-to-br ${INITIALS_COLORS[i] ?? INITIALS_COLORS[2]} flex items-center justify-center text-white text-sm font-bold shrink-0`}
                 >
-                  {initials(u.fullName)}
+                  {initials(displayName)}
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-xs font-semibold text-[#1A1033] truncate">
-                    {isMe ? "Kamu" : u.fullName}
+                    {isMe ? "Kamu" : displayName}
                   </p>
                 </div>
                 <span className="font-extrabold text-sm text-purple-600 shrink-0">

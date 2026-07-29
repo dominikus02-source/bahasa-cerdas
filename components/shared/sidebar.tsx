@@ -26,7 +26,7 @@ import {
 const guruNavItems = [
   { href: "/guru/beranda", label: "Beranda", icon: LayoutDashboard },
   { href: "/guru/bank-soal", label: "Bank Soal", icon: BookOpen },
-  { href: "/guru/rpp-modul", label: "RPP & Modul", icon: FileText },
+  { href: "/guru/rpp-modul", label: "Rencana Pembelajaran", icon: FileText },
   { href: "/guru/kuis-game", label: "Kuis Game", icon: Gamepad2 },
   { href: "/guru/toko-karya", label: "Toko Karya", icon: ShoppingBag },
   { href: "/guru/data-siswa", label: "Data Siswa", icon: Users },

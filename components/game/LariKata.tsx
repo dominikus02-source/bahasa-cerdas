@@ -1,322 +1,338 @@
-"use client"
+"use client";
 
-import { useState, useEffect, useRef, useCallback } from "react"
-import { useRouter } from "next/navigation"
-import { Zap, Clock, Star, Flame, Trophy, ArrowLeft, RefreshCw, Home, Sparkles } from "lucide-react"
-import GameBackground from "@/components/game/GameBackground"
-import ComboFlash from "@/components/game/ComboFlash"
-import { sfx, haptic, startBGM, stopBGM } from "@/lib/game/sound"
+import { useState, useEffect, useRef, useCallback } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  Zap, Timer, Star, Flame, Trophy, X, RotateCcw, Sparkles,
+  Volume2, VolumeX, Loader2, Play, Check,
+} from "lucide-react";
+import { sfx, haptic, isSoundOn, toggleSound, startBGM, stopBGM } from "@/lib/game/sound";
 
 interface Question {
-  text: string
-  options: string[]
-  correct: number
-  type: string
+  text: string;
+  options: string[];
+  correct: number;
+  type: string;
 }
 
-interface LariKataGameProps {
-  hideBackButton?: boolean
-}
+const TYPE_LABEL: Record<string, string> = {
+  sinonim: "Sinonim", antonim: "Antonim", kata_baku: "Kata Baku", imbuhan: "Imbuhan",
+  kalimat: "Melengkapi Kalimat", ejaan: "Ejaan", peribahasa: "Peribahasa", majas: "Majas",
+  sastra: "Sastra", HOTS: "HOTS", kalimat_efektif: "Kalimat Efektif", tata_bahasa: "Tata Bahasa",
+  kosakata: "Kosakata", teks: "Teks",
+};
 
-export default function LariKataGame({ hideBackButton }: LariKataGameProps) {
-  const router = useRouter()
-  const [phase, setPhase] = useState<"start" | "playing" | "result">("start")
-  const [questions, setQuestions] = useState<Question[]>([])
-  const [currentQ, setCurrentQ] = useState(0)
-  const [score, setScore] = useState(0)
-  const [correct, setCorrect] = useState(0)
-  const [wrong, setWrong] = useState(0)
-  const [streak, setStreak] = useState(0)
-  const [maxStreak, setMaxStreak] = useState(0)
-  const [timeLeft, setTimeLeft] = useState(60)
-  const [selected, setSelected] = useState<number | null>(null)
-  const [feedback, setFeedback] = useState<"correct" | "wrong" | null>(null)
-  const [submitting, setSubmitting] = useState(false)
-  const [result, setResult] = useState<any>(null)
-  const timerRef = useRef<NodeJS.Timeout | null>(null)
-  const feedbackTimer = useRef<NodeJS.Timeout | null>(null)
-  const supabaseIdRef = useRef("")
+export default function LariKataGame({ hideBackButton, backHref = "/arena/game" }: { hideBackButton?: boolean; backHref?: string }) {
+  const [screen, setScreen] = useState<"start" | "playing" | "result">("start");
+  const [soundOn, setSoundOn] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [questions, setQuestions] = useState<Question[]>([]);
+  const [currentQ, setCurrentQ] = useState(0);
+  const [score, setScore] = useState(0);
+  const [correct, setCorrect] = useState(0);
+  const [wrong, setWrong] = useState(0);
+  const [streak, setStreak] = useState(0);
+  const [maxStreak, setMaxStreak] = useState(0);
+  const [timeLeft, setTimeLeft] = useState(60);
+  const [selected, setSelected] = useState<number | null>(null);
+  const [feedback, setFeedback] = useState<"correct" | "wrong" | null>(null);
+  const [submitting, setSubmitting] = useState(false);
+  const [result, setResult] = useState<any>(null);
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const feedbackTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const supabaseIdRef = useRef("");
+  const scoreRef = useRef(0);
+  const correctRef = useRef(0);
+  const wrongRef = useRef(0);
+  const maxStreakRef = useRef(0);
+  useEffect(() => { scoreRef.current = score; }, [score]);
+  useEffect(() => { correctRef.current = correct; }, [correct]);
+  useEffect(() => { wrongRef.current = wrong; }, [wrong]);
+  useEffect(() => { maxStreakRef.current = maxStreak; }, [maxStreak]);
 
   useEffect(() => {
-    const stored = localStorage.getItem("bc-user")
-    if (stored) {
-      try { supabaseIdRef.current = JSON.parse(stored).state?.supabaseId || "" } catch {}
-    }
-  }, [])
-
-  useEffect(() => () => stopBGM(), [])
+    const stored = localStorage.getItem("bc-user");
+    if (stored) { try { supabaseIdRef.current = JSON.parse(stored).state?.supabaseId || ""; } catch { /* abaikan */ } }
+    try { setSoundOn(isSoundOn()); } catch { /* abaikan */ }
+  }, []);
+  useEffect(() => () => stopBGM(), []);
 
   const startGame = useCallback(async () => {
-    sfx.start(); startBGM()
-    const res = await fetch("/api/katastra/questions?count=20")
-    const data = await res.json()
-    setQuestions(data.questions || [])
-    setPhase("playing")
-    setCurrentQ(0)
-    setScore(0)
-    setCorrect(0)
-    setWrong(0)
-    setStreak(0)
-    setMaxStreak(0)
-    setTimeLeft(60)
-    setSelected(null)
-    setFeedback(null)
-    setResult(null)
-  }, [])
-
-  useEffect(() => {
-    if (phase === "playing") {
-      timerRef.current = setInterval(() => {
-        setTimeLeft((t) => {
-          if (t <= 1) {
-            clearInterval(timerRef.current!)
-            endGame()
-            return 0
-          }
-          return t - 1
-        })
-      }, 1000)
+    sfx.start(); setSoundOn(isSoundOn()); startBGM();
+    setLoading(true);
+    try {
+      const res = await fetch("/api/katastra/questions?count=20");
+      const data = await res.json();
+      setQuestions(data.questions || []);
+      setScreen("playing");
+      setCurrentQ(0);
+      setScore(0);
+      setCorrect(0);
+      setWrong(0);
+      setStreak(0);
+      setMaxStreak(0);
+      setTimeLeft(60);
+      setSelected(null);
+      setFeedback(null);
+      setResult(null);
+    } finally {
+      setLoading(false);
     }
-    return () => { if (timerRef.current) clearInterval(timerRef.current) }
-  }, [phase])
+  }, []);
 
-  const endGame = async () => {
-    if (timerRef.current) clearInterval(timerRef.current)
-    stopBGM()
-    if (correct > 0) { sfx.win(); haptic([40, 40, 80]) } else { sfx.gameover() }
-    setPhase("result")
-    setSubmitting(true)
+  const endGame = useCallback(async () => {
+    if (timerRef.current) clearInterval(timerRef.current);
+    stopBGM();
+    if (correctRef.current > 0) { sfx.win(); haptic([40, 40, 80]); } else { sfx.gameover(); }
+    setScreen("result");
+    setSubmitting(true);
     try {
       const res = await fetch("/api/katastra/submit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ score, correct, wrong, maxStreak, mode: "dash", supabaseId: supabaseIdRef.current }),
-      })
-      const data = await res.json()
-      setResult(data)
-    } catch {} finally {
-      setSubmitting(false)
+        body: JSON.stringify({ score: scoreRef.current, correct: correctRef.current, wrong: wrongRef.current, maxStreak: maxStreakRef.current, mode: "dash", supabaseId: supabaseIdRef.current }),
+      });
+      const data = await res.json();
+      setResult(data);
+    } catch { /* abaikan */ } finally {
+      setSubmitting(false);
     }
-  }
+  }, []);
+
+  useEffect(() => {
+    if (screen !== "playing") return;
+    timerRef.current = setInterval(() => {
+      setTimeLeft((t) => {
+        if (t <= 6 && t > 0) sfx.tick();
+        if (t <= 1) { clearInterval(timerRef.current!); endGame(); return 0; }
+        return t - 1;
+      });
+    }, 1000);
+    return () => { if (timerRef.current) clearInterval(timerRef.current); };
+  }, [screen, endGame]);
 
   const handleAnswer = (idx: number) => {
-    if (selected !== null || feedback !== null) return
-    const q = questions[currentQ]
-    const isCorrect = idx === q.correct
-    setSelected(idx)
-    setFeedback(isCorrect ? "correct" : "wrong")
-    if (isCorrect) { sfx.climb(streak + 1); haptic(25) } else { sfx.wrong(); haptic([60, 40, 60]) }
+    if (selected !== null || feedback !== null) return;
+    const q = questions[currentQ];
+    const isCorrect = idx === q.correct;
+    setSelected(idx);
+    setFeedback(isCorrect ? "correct" : "wrong");
+    if (isCorrect) { sfx.climb(streak + 1); haptic(25); } else { sfx.wrong(); haptic([60, 40, 60]); }
 
     if (isCorrect) {
-      const timeBonus = Math.floor(timeLeft / 6)
-      const streakBonus = Math.min(streak, 10) * 10
-      const points = 100 + timeBonus + streakBonus
-      setScore((s) => s + points)
-      setCorrect((c) => c + 1)
-      setStreak((s) => {
-        const newStreak = s + 1
-        setMaxStreak((m) => Math.max(m, newStreak))
-        return newStreak
-      })
+      const timeBonus = Math.floor(timeLeft / 6);
+      const streakBonus = Math.min(streak, 10) * 10;
+      const points = 100 + timeBonus + streakBonus;
+      setScore((s) => s + points);
+      setCorrect((c) => c + 1);
+      setStreak((s) => { const ns = s + 1; setMaxStreak((m) => Math.max(m, ns)); return ns; });
     } else {
-      setWrong((w) => w + 1)
-      setStreak(0)
+      setWrong((w) => w + 1);
+      setStreak(0);
     }
 
     feedbackTimer.current = setTimeout(() => {
-      setSelected(null)
-      setFeedback(null)
-      if (currentQ < questions.length - 1) {
-        setCurrentQ((q) => q + 1)
-      } else {
-        endGame()
-      }
-    }, 800)
-  }
+      setSelected(null);
+      setFeedback(null);
+      if (currentQ < questions.length - 1) setCurrentQ((c) => c + 1);
+      else endGame();
+    }, 750);
+  };
 
-  const progress = questions.length > 0 ? ((currentQ + 1) / questions.length) * 100 : 0
-  const q = questions[currentQ]
+  const chunky = "border-4 border-[#161B3A] shadow-[6px_6px_0_#161B3A]";
+  const btnBase = `inline-flex items-center justify-center gap-2 font-extrabold rounded-2xl ${chunky} transition-transform active:translate-x-1.5 active:translate-y-1.5 active:shadow-none hover:-translate-x-0.5 hover:-translate-y-0.5`;
+  const q = questions[currentQ];
+  const timePct = (timeLeft / 60) * 100;
 
-  if (phase === "start") {
+  /* ---------- START ---------- */
+  if (screen === "start") {
     return (
-      <div className="relative isolate min-h-screen text-white flex items-center justify-center p-4">
-        <GameBackground theme="violet" />
-        <div className="relative z-10 max-w-sm w-full text-center">
-          <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center mx-auto mb-6 shadow-2xl">
-            <Zap size={40} className="text-white" />
+      <div className="fixed inset-0 z-[60] overflow-y-auto bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] text-[#161B3A]">
+        <style>{`@keyframes lk-float1{0%,100%{transform:translate(0,0) rotate(6deg)}50%{transform:translate(16px,-22px) rotate(18deg)}}
+        @keyframes lk-float2{0%,100%{transform:translate(0,0) rotate(0)}50%{transform:translate(-18px,16px) rotate(-12deg)}}
+        @keyframes lk-fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+        @keyframes lk-pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+        .lk-screen{animation:lk-fade .35s ease}
+        .lk-logo{animation:lk-pulse 1.4s ease-in-out infinite}`}</style>
+        <div className="pointer-events-none fixed top-[8%] left-[3%] w-16 h-16 bg-[#F59E0B] border-4 border-[#161B3A] rounded-3xl" style={{ animation: "lk-float1 9s ease-in-out infinite" }} />
+        <div className="pointer-events-none fixed top-[16%] right-[5%] w-12 h-12 bg-[#FF6B6B] border-4 border-[#161B3A] rounded-full" style={{ animation: "lk-float2 10s ease-in-out infinite" }} />
+        <div className="pointer-events-none fixed bottom-[14%] left-[2%] w-14 h-14 bg-[#38BDF8] border-4 border-[#161B3A] rounded-2xl" style={{ animation: "lk-float1 11s ease-in-out infinite" }} />
+        <div className="pointer-events-none fixed bottom-[10%] right-[4%] w-11 h-11 bg-[#4ADE80] border-4 border-[#161B3A] rounded-[30%_70%_70%_30%]" style={{ animation: "lk-float2 8s ease-in-out infinite" }} />
+
+        <div className="relative max-w-xl mx-auto px-4 py-5 min-h-full flex flex-col">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2.5">
+              <div className={`lk-logo w-11 h-11 bg-[#F59E0B] rounded-2xl ${chunky} !shadow-[4px_4px_0_#161B3A] flex items-center justify-center`}>
+                <Zap className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <div className="font-extrabold text-xl leading-none">Lari Kata</div>
+                <div className="text-[11px] font-semibold opacity-60 mt-0.5">Sprint 60 detik, kejar skor tertinggi</div>
+              </div>
+            </div>
+            <button onClick={() => setSoundOn((m) => { toggleSound(); return !m; })} className={`${btnBase} w-11 h-11 bg-white`} aria-label={soundOn ? "Matikan suara" : "Nyalakan suara"}>
+              {soundOn ? <Volume2 className="w-5 h-5" /> : <VolumeX className="w-5 h-5" />}
+            </button>
           </div>
-          <h1 className="text-2xl font-extrabold mb-2">Lari Kata</h1>
-          <p className="text-sm text-violet-200/70 mb-6">
-            Jawab 20 soal secepat mungkin dalam 60 detik!<br />
-            Makin cepat + rentetan makin tinggi = makin banyak PP!
-          </p>
-          <div className="bg-white/5 border border-white/10 rounded-xl p-4 mb-6 text-left text-sm space-y-2">
-            <div className="flex items-center gap-2 text-violet-200">
-              <Clock size={14} className="text-violet-400" /> 60 detik — kejar waktu!
+
+          <div className="lk-screen bg-white rounded-3xl p-6 text-center flex-1 flex flex-col items-center justify-center">
+            <span className="inline-block px-4 py-1.5 bg-[#FBBF24] border-[3px] border-[#161B3A] rounded-full font-extrabold text-xs shadow-[3px_3px_0_#161B3A] mb-4">20 Soal • 60 Detik</span>
+            <h1 className="font-extrabold text-4xl mb-2">Lari <span className="text-[#F59E0B]">Kata!</span></h1>
+            <p className="opacity-70 text-sm max-w-sm mb-1">Jawab soal secepat mungkin dalam 60 detik. Soal makin menantang seiring tingkatmu naik!</p>
+            <p className="text-xs opacity-50 mb-6">Bonus waktu + rentetan bikin skormu melesat.</p>
+
+            <div className="grid grid-cols-3 gap-2.5 mb-6 w-full max-w-xs">
+              <div className="bg-[#4ADE80] border-[3px] border-[#161B3A] rounded-xl p-2 shadow-[3px_3px_0_#161B3A]">
+                <div className="text-[10px] font-extrabold uppercase opacity-70">Benar</div>
+                <div className="font-extrabold text-lg">+100</div>
+              </div>
+              <div className="bg-[#FBBF24] border-[3px] border-[#161B3A] rounded-xl p-2 shadow-[3px_3px_0_#161B3A]">
+                <div className="text-[10px] font-extrabold uppercase opacity-70">Rentetan</div>
+                <div className="font-extrabold text-lg">Bonus</div>
+              </div>
+              <div className="bg-[#FF6B6B] text-white border-[3px] border-[#161B3A] rounded-xl p-2 shadow-[3px_3px_0_#161B3A]">
+                <div className="text-[10px] font-extrabold uppercase opacity-70">Sisa Waktu</div>
+                <div className="font-extrabold text-lg">Bonus</div>
+              </div>
             </div>
-            <div className="flex items-center gap-2 text-violet-200">
-              <Star size={14} className="text-yellow-400" /> Bonus waktu + rentetan
-            </div>
-            <div className="flex items-center gap-2 text-violet-200">
-              <Flame size={14} className="text-orange-400" /> Jawab benar berturut-turut = rentetan!
-            </div>
+
+            <button onClick={startGame} disabled={loading} className={`${btnBase} px-8 py-3.5 bg-[#F59E0B] text-white text-lg disabled:opacity-70`}>
+              {loading ? <><Loader2 className="w-5 h-5 animate-spin" /> Menyiapkan…</> : <><Play className="w-5 h-5" /> Mulai!</>}
+            </button>
           </div>
-          <button onClick={startGame}
-            className="w-full py-4 bg-gradient-to-r from-violet-600 to-purple-600 text-white font-bold text-lg rounded-2xl hover:shadow-xl hover:scale-105 transition-all active:scale-95 shadow-lg">
-            <Zap size={20} className="inline mr-2" /> Mulai!
-          </button>
         </div>
       </div>
-    )
+    );
   }
 
-  if (phase === "result") {
+  /* ---------- PLAYING ---------- */
+  if (screen === "playing" && q) {
     return (
-      <div className="relative isolate min-h-screen text-white flex items-center justify-center p-4">
-        <GameBackground theme="violet" />
-        <div className="relative z-10 max-w-sm w-full text-center">
-          <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center mx-auto mb-4 shadow-2xl animate-bounce">
-            <Trophy size={40} className="text-white" />
-          </div>
-          <h1 className="text-2xl font-extrabold mb-1">Pertandingan Selesai!</h1>
-          <p className="text-sm text-violet-200/60 mb-6">Bagus! Terus tingkatkan!</p>
-
-          <div className="bg-white/5 border border-white/10 rounded-2xl p-5 mb-4">
-            <div className="grid grid-cols-3 gap-3 mb-4">
-              <div className="text-center">
-                <p className="text-2xl font-bold text-violet-400">{correct}</p>
-                <p className="text-[10px] text-violet-200/50">Benar</p>
-              </div>
-              <div className="text-center">
-                <p className="text-2xl font-bold text-red-400">{wrong}</p>
-                <p className="text-[10px] text-violet-200/50">Salah</p>
-              </div>
-              <div className="text-center">
-                <p className="text-2xl font-bold text-orange-400">{maxStreak}</p>
-                <p className="text-[10px] text-violet-200/50">Rentetan</p>
-              </div>
-            </div>
-            <div className="text-center mb-3">
-              <p className="text-xs text-violet-200/50">Skor Akhir</p>
-              <p className="text-3xl font-extrabold text-white">{score.toLocaleString()}</p>
-            </div>
-          </div>
-
-          {result && (
-            <div className="bg-green-500/10 border border-green-500/20 rounded-2xl p-4 mb-4">
-              <div className="flex items-center gap-2 justify-center mb-2">
-                <Sparkles size={18} className="text-green-400" />
-                <span className="font-bold text-green-400">+{result.xpEarned} PP</span>
-              </div>
-              {result.levelUp && (
-                <div className="bg-yellow-500/20 text-yellow-300 px-3 py-1 rounded-full text-sm font-bold animate-pulse inline-flex items-center gap-1.5">
-                  <Sparkles size={14} /> Naik Tingkat! Tingkat {result.newLevel}!
+      <div className="fixed inset-0 z-[60] overflow-y-auto bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] text-[#161B3A]">
+        <div className="relative max-w-lg mx-auto px-5 pt-4 pb-8 min-h-full flex flex-col">
+          <div className="flex items-center justify-between mb-3">
+            {!hideBackButton && (
+              <button className={`${btnBase} w-10 h-10 bg-white`} onClick={() => { stopBGM(); setScreen("start"); }} aria-label="Keluar">
+                <X className="w-4 h-4" />
+              </button>
+            )}
+            <div className={`flex items-center gap-2 ${hideBackButton ? "ml-auto" : ""}`}>
+              {streak > 0 && (
+                <div className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-orange-100 border border-orange-300">
+                  <Flame className="w-3.5 h-3.5 text-orange-500 fill-orange-500" />
+                  <span className="text-orange-700 font-bold text-xs">{streak}</span>
                 </div>
               )}
-              <div className="flex justify-center gap-4 mt-2 text-xs text-violet-200/60">
-                <span>Rentetan: {result.streak}<Flame size={12} className="inline ml-0.5 text-orange-400" /></span>
-                <span>{result.league}</span>
+              <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border-2 border-[#161B3A]">
+                <Star className="w-4 h-4 text-amber-500 fill-amber-500" />
+                <span className="text-sm font-bold">{score.toLocaleString()}</span>
               </div>
             </div>
-          )}
+          </div>
 
-          <div className="flex gap-3">
-            <button onClick={startGame}
-              className="flex-1 py-3 bg-gradient-to-r from-violet-600 to-purple-600 text-white font-bold rounded-xl hover:shadow-lg transition-all flex items-center justify-center gap-2">
-              <RefreshCw size={16} /> Main Lagi
-            </button>
-            <button onClick={() => router.push(hideBackButton ? "/arena/game" : "/murid/katastra")}
-              className="flex-1 py-3 bg-white/10 border border-white/20 text-white font-bold rounded-xl hover:bg-white/20 transition-all flex items-center justify-center gap-2">
-              <Home size={16} /> Menu
-            </button>
+          <div className="flex items-center justify-between mb-1">
+            <span className="text-xs font-bold opacity-50">{currentQ + 1} / {questions.length}</span>
+            <div className="flex items-center gap-1.5">
+              <Timer className={`w-3.5 h-3.5 ${timeLeft <= 10 ? "text-rose-500" : "opacity-50"}`} />
+              <span className={`text-xs font-bold tabular-nums ${timeLeft <= 10 ? "text-rose-600" : "opacity-70"}`}>{timeLeft}dtk</span>
+            </div>
+          </div>
+          <div className="h-2.5 rounded-full bg-white border-2 border-[#161B3A] overflow-hidden mb-5">
+            <motion.div className={`h-full rounded-full ${timeLeft <= 10 ? "bg-rose-500" : "bg-gradient-to-r from-amber-400 to-orange-500"}`} animate={{ width: `${timePct}%` }} transition={{ ease: "linear", duration: 1 }} />
+          </div>
+
+          <AnimatePresence mode="wait">
+            <motion.div key={currentQ} initial={{ opacity: 0, x: 16 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -16 }} transition={{ duration: 0.18 }}
+              className="bg-white rounded-2xl p-5 mb-5 border-4 border-[#161B3A] shadow-[5px_5px_0_#161B3A]">
+              <span className="text-[10px] font-extrabold uppercase tracking-wider text-[#F59E0B] mb-2 block">{TYPE_LABEL[q.type] || "Soal"}</span>
+              <p className="text-lg font-bold leading-relaxed">{q.text}</p>
+            </motion.div>
+          </AnimatePresence>
+
+          <div className="space-y-2.5 flex-1">
+            {q.options.map((opt, i) => {
+              const isSelected = selected === i;
+              const isCorrectOpt = i === q.correct;
+              let style = "bg-white text-[#161B3A]";
+              if (feedback) {
+                if (isCorrectOpt) style = "bg-emerald-100 text-emerald-800";
+                else if (isSelected) style = "bg-rose-100 text-rose-800";
+                else style = "bg-white/50 text-[#161B3A]/30";
+              }
+              return (
+                <button key={i} onClick={() => handleAnswer(i)} disabled={feedback !== null}
+                  className={`w-full text-left px-4 py-3.5 rounded-2xl border-[3px] border-[#161B3A] font-semibold transition-all active:scale-[0.98] shadow-[3px_3px_0_#161B3A] flex items-center justify-between ${style}`}>
+                  <span>{opt}</span>
+                  {feedback && isCorrectOpt && <Check className="w-4 h-4 shrink-0" />}
+                  {feedback && isSelected && !isCorrectOpt && <X className="w-4 h-4 shrink-0" />}
+                </button>
+              );
+            })}
           </div>
         </div>
       </div>
-    )
+    );
   }
 
-  if (!q) return null
-
+  /* ---------- RESULT ---------- */
   return (
-    <div className="relative isolate min-h-screen text-white flex flex-col">
-      <GameBackground theme="violet" />
-      <ComboFlash combo={streak} />
-      <div className="relative z-10 px-4 pt-4 pb-2">
-        <div className="flex items-center justify-between mb-2">
+    <div className="fixed inset-0 z-[60] overflow-y-auto bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] text-[#161B3A]">
+      <div className="relative max-w-xl mx-auto px-4 py-5 min-h-full flex flex-col items-center justify-center text-center">
+        <motion.div initial={{ scale: 0, rotate: -20 }} animate={{ scale: 1, rotate: 0 }} transition={{ type: "spring", stiffness: 180 }}
+          className="w-24 h-24 rounded-[28px] bg-gradient-to-br from-amber-400 to-orange-600 flex items-center justify-center shadow-2xl mb-5 border-4 border-[#161B3A]">
+          <Trophy className="w-12 h-12 text-white" />
+        </motion.div>
+        <h1 className="text-2xl font-extrabold mb-1">Sprint Selesai!</h1>
+        <p className="text-sm opacity-60 mb-6">Bagus! Terus tingkatkan kecepatanmu!</p>
+
+        <div className="bg-white rounded-2xl p-5 mb-4 border-4 border-[#161B3A] shadow-[5px_5px_0_#161B3A] w-full max-w-sm">
+          <div className="grid grid-cols-3 gap-3 mb-4">
+            <div className="bg-[#4ADE80] border-[3px] border-[#161B3A] rounded-xl p-2 shadow-[2px_2px_0_#161B3A]">
+              <div className="text-[9px] font-extrabold uppercase opacity-70">Benar</div>
+              <div className="font-extrabold text-lg">{correct}</div>
+            </div>
+            <div className="bg-[#FF6B6B] text-white border-[3px] border-[#161B3A] rounded-xl p-2 shadow-[2px_2px_0_#161B3A]">
+              <div className="text-[9px] font-extrabold uppercase opacity-70">Salah</div>
+              <div className="font-extrabold text-lg">{wrong}</div>
+            </div>
+            <div className="bg-[#FBBF24] border-[3px] border-[#161B3A] rounded-xl p-2 shadow-[2px_2px_0_#161B3A]">
+              <div className="text-[9px] font-extrabold uppercase opacity-70">Rentetan</div>
+              <div className="font-extrabold text-lg">{maxStreak}</div>
+            </div>
+          </div>
+          <div className="text-center">
+            <p className="text-[10px] font-extrabold uppercase opacity-50">Skor Akhir</p>
+            <p className="text-4xl font-extrabold">{score.toLocaleString()}</p>
+          </div>
+        </div>
+
+        {submitting ? (
+          <div className="mb-4 flex items-center gap-2 text-sm opacity-60"><Loader2 className="w-4 h-4 animate-spin" /> Menyimpan hasil…</div>
+        ) : result && result.xpEarned != null && (
+          <div className="bg-emerald-100 border-4 border-[#161B3A] rounded-2xl p-4 mb-4 shadow-[4px_4px_0_#161B3A] w-full max-w-sm">
+            <div className="flex items-center gap-2 justify-center mb-1">
+              <Sparkles className="w-4 h-4 text-emerald-600" />
+              <span className="font-extrabold text-emerald-700">+{result.xpEarned} XP</span>
+            </div>
+            {result.levelUp && (
+              <div className="bg-amber-300 text-amber-900 px-3 py-1 rounded-full text-xs font-extrabold inline-flex items-center gap-1 mt-1">
+                <Sparkles className="w-3.5 h-3.5" /> Naik Level!
+              </div>
+            )}
+          </div>
+        )}
+
+        <div className="flex gap-3 w-full max-w-sm">
+          <button onClick={startGame} className={`${btnBase} flex-1 py-3.5 bg-[#F59E0B] text-white`}>
+            <RotateCcw className="w-4 h-4" /> Main Lagi
+          </button>
           {!hideBackButton && (
-            <button onClick={() => router.push("/murid/katastra")} className="p-2 hover:bg-white/10 rounded-xl transition-colors">
-              <ArrowLeft size={20} />
-            </button>
+            <a href={backHref} className={`${btnBase} flex-1 py-3.5 bg-white text-center`}>
+              Menu
+            </a>
           )}
-          <div className={`flex items-center gap-4 ${hideBackButton ? "ml-auto" : ""}`}>
-            <div className="flex items-center gap-1.5">
-              <Flame size={16} className={streak > 0 ? "text-orange-400" : "text-white/30"} />
-              <span className="font-bold text-sm">{streak}</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <Star size={16} className="text-yellow-400" />
-              <span className="font-bold text-sm">{score.toLocaleString()}</span>
-            </div>
-          </div>
-        </div>
-
-        <div className="h-2.5 bg-white/10 rounded-full overflow-hidden">
-          <div
-            className={`h-full rounded-full transition-all duration-1000 ${
-              timeLeft > 30 ? "bg-gradient-to-r from-violet-500 to-purple-500"
-                : timeLeft > 15 ? "bg-gradient-to-r from-yellow-500 to-orange-500"
-                : "bg-gradient-to-r from-red-500 to-pink-500"
-            }`}
-            style={{ width: `${(timeLeft / 60) * 100}%` }}
-          />
-        </div>
-        <div className="flex justify-between text-[10px] text-violet-200/50 mt-1">
-          <span>{currentQ + 1}/{questions.length}</span>
-          <div className="flex items-center gap-1">
-            <Clock size={10} /> {timeLeft}dtk
-          </div>
-        </div>
-      </div>
-
-      <div className="flex-1 px-4 pt-4 flex flex-col">
-        <div className="bg-white/5 border border-white/10 rounded-2xl p-5 mb-4">
-          <span className="text-[10px] uppercase tracking-wider text-violet-400 font-semibold mb-2 block">
-            {q.type === "sinonim" ? "Sinonim" : q.type === "antonim" ? "Antonim" : q.type === "kata_baku" ? "Kata Baku"
-              : q.type === "imbuhan" ? "Imbuhan" : q.type === "kalimat" ? "Melengkapi Kalimat"
-              : q.type === "ejaan" ? "Ejaan" : q.type === "peribahasa" ? "Peribahasa"
-              : q.type === "majas" ? "Majas" : q.type === "sastra" ? "Sastra"
-              : q.type === "HOTS" ? "HOTS" : q.type === "kalimat_efektif" ? "Kalimat Efektif"
-              : q.type === "tata_bahasa" ? "Tata Bahasa" : q.type === "kosakata" ? "Kosakata"
-              : "Soal"}
-          </span>
-          <p className="text-lg font-bold leading-relaxed">{q.text}</p>
-        </div>
-
-        <div className="space-y-2.5 flex-1">
-          {q.options.map((opt, i) => {
-            const isSelected = selected === i
-            const isCorrectOpt = i === q.correct
-            let btnClass = "bg-white/5 border border-white/10 hover:bg-white/10 hover:border-violet-400/50"
-
-            if (feedback) {
-              if (isCorrectOpt) btnClass = "bg-green-500/20 border-green-500 text-green-300"
-              else if (isSelected) btnClass = "bg-red-500/20 border-red-500 text-red-300"
-              else btnClass = "bg-white/5 border-white/10 opacity-40"
-            }
-
-            return (
-              <button
-                key={i}
-                onClick={() => handleAnswer(i)}
-                disabled={feedback !== null}
-                className={`w-full text-left p-4 rounded-xl border transition-all ${btnClass}`}
-              >
-                <span className="text-sm font-medium">{opt}</span>
-              </button>
-            )
-          })}
         </div>
       </div>
     </div>
-  )
+  );
 }

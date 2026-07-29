@@ -12,6 +12,8 @@ import { getUser } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 import { calcLevel, calcLeagueFromXP } from "@/lib/xp";
 import { harvestJalurQuestions, pickRampedQuestions } from "@/lib/game/harvest";
+import { awardXp } from "@/lib/award-xp";
+import { rateLimitRoute } from "@/lib/rate-limit";
 
 export const dynamic = "force-dynamic";
 
@@ -32,29 +34,38 @@ export async function POST(req: NextRequest) {
   const user = await getUser();
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
+  // Nilai per ronde sudah dijepit di bawah, tapi tanpa jeda sebuah skrip masih
+  // bisa mengulang ronde ratusan kali per menit.
+  const limited = await rateLimitRoute(req, {
+    maxRequests: 20,
+    windowSeconds: 60,
+    identifier: "game-menara",
+  });
+  if (limited) return limited;
+
   const body = await req.json().catch(() => ({}));
   const total = Math.min(Math.max(Number(body.total) || 0, 0), 20);
   const correct = Math.min(Math.max(Number(body.correct) || 0, 0), total);
 
   // Server-capped reward — prevents inflated client claims / XP farming.
-  const xpEarned = correct * 5; // max 100 XP per run
+  const baseXp = correct * 5; // max 100 XP per run
 
-  const dbUser = await db.user.findUnique({ where: { id: user.id }, select: { xp: true, level: true } });
-  if (!dbUser) return NextResponse.json({ error: "User not found" }, { status: 404 });
-
-  const newXp = dbUser.xp + xpEarned;
-  const newLevel = calcLevel(newXp);
-  const newLeague = calcLeagueFromXP(newXp);
-
-  await db.user.update({
-    where: { id: user.id },
-    data: { xp: newXp, level: newLevel, league: newLeague, lastActiveAt: new Date() },
-  });
+  // Lewat pintu tunggal: batas per submit, kuota harian, boost, jejak ledger,
+  // dan pembaruan xp/level/liga sekaligus.
+  const hasil = await awardXp(user.id, "MENARA", baseXp);
+  const xpEarned = hasil.xpDiberikan;
+  const boosted = hasil.boosted;
+  const newXp = hasil.totalXp;
+  const newLevel = hasil.levelBaru;
+  const newLeague = hasil.liga;
 
   return NextResponse.json({
     xpEarned,
+    baseXp,
+    boosted,
     newXp,
     newLevel,
-    leveledUp: newLevel > dbUser.level,
+    kuotaHarianHabis: hasil.kuotaHabis,
+    leveledUp: hasil.naikLevel,
   });
 }

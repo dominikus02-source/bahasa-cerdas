@@ -3,8 +3,9 @@
 import Link from "next/link";
 import { Users, MessageCircle, Calendar, ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
-import BatikDecor from "@/components/landing/batik-decor";
 import { fadeInUp, staggerContainer } from "@/lib/motion";
+import KomunitasMgmpCard from "@/components/landing/KomunitasMgmpCard";
+import type { MgmpMedia } from "@/lib/site-settings";
 
 const features = [
   {
@@ -16,7 +17,7 @@ const features = [
   {
     icon: Calendar,
     title: "Webinar & Workshop",
-    description: "Ikuti webinar dan workshop gratis dari praktisi pendidikan terkemuka di Indonesia.",
+    description: "Webinar dan workshop gratis seputar pengajaran Bahasa Indonesia, terjadwal berkala.",
     color: "bg-amber-50 text-amber-600",
   },
   {
@@ -27,7 +28,7 @@ const features = [
   },
 ];
 
-export default function KomunitasSection() {
+export default function KomunitasSection({ mgmpMedia }: { mgmpMedia: MgmpMedia }) {
   return (
     <section className="relative py-20 lg:py-28 bg-zinc-50 overflow-hidden">
       {/* Non-blocking batik decor */}
@@ -63,8 +64,8 @@ export default function KomunitasSection() {
               Bahasa Indonesia
             </h2>
             <p className="text-base lg:text-lg text-zinc-500 leading-relaxed mb-8 max-w-xl">
-Komunitas guru Bahasa Indonesia terdepan di Indonesia. Tempat
-berbagi, belajar, dan tumbuh bersama.
+Ruang bagi guru Bahasa Indonesia untuk berbagi, belajar, dan
+berkembang bersama sesama pengajar.
             </p>
 
             {/* Feature List */}
@@ -105,7 +106,7 @@ berbagi, belajar, dan tumbuh bersama.
             </Link>
           </motion.div>
 
-          {/* Right - Stats Card */}
+          {/* Right - MGMP Media Card */}
           <motion.div
             className="lg:col-span-2"
             initial={{ opacity: 0, y: 20 }}
@@ -113,53 +114,7 @@ berbagi, belajar, dan tumbuh bersama.
             viewport={{ once: true }}
             transition={{ duration: 0.5, ease: "easeOut", delay: 0.2 }}
           >
-            <div className="bg-white rounded-2xl border border-zinc-200 p-6 shadow-sm">
-              {/* Stat utama */}
-              <div className="text-center border-b border-zinc-100 pb-5 mb-5">
-                <div className="text-5xl font-display font-bold text-zinc-900 leading-none">
-                  Aktif
-                </div>
-                <div className="text-sm text-zinc-500 mt-2">
-                  Forum diskusi sudah live di platform
-                </div>
-                <div className="inline-flex items-center gap-1.5 mt-3 bg-green-50 text-green-700 text-xs font-semibold px-3 py-1 rounded-full border border-green-100">
-                  <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
-                  Live sekarang
-                </div>
-              </div>
-
-              {/* Grid 4 stats kecil */}
-              <div className="grid grid-cols-2 gap-px bg-zinc-100 rounded-xl overflow-hidden">
-                <div className="bg-white px-4 py-4 text-center">
-                    <div className="text-2xl font-display font-bold text-zinc-900">Tangsel</div>
-                    <div className="text-xs text-zinc-500 mt-1 leading-snug">
-                      Pusat jaringan MGMP aktif
-                    </div>
-                  </div>
-                  <div className="bg-white px-4 py-4 text-center">
-                    <div className="text-2xl font-display font-bold text-zinc-900">5+ Kota</div>
-                    <div className="text-xs text-zinc-500 mt-1 leading-snug">
-                      Jaringan guru tersambung
-                    </div>
-                  </div>
-                  <div className="bg-white px-4 py-4 text-center">
-                    <div className="text-2xl font-display font-bold text-zinc-900">Q3 2026</div>
-                    <div className="text-xs text-zinc-500 mt-1 leading-snug">
-                      Webinar perdana direncanakan
-                    </div>
-                  </div>
-                  <div className="bg-white px-4 py-4 text-center">
-                    <div className="text-2xl font-display font-bold text-zinc-900">350K+</div>
-                    <div className="text-xs text-zinc-500 mt-1 leading-snug">
-                      Guru BI se-Indonesia (target)
-                  </div>
-                </div>
-              </div>
-
-              <p className="text-center text-xs text-zinc-400 mt-4">
-                Angka mencerminkan jaringan aktual, bukan proyeksi
-              </p>
-            </div>
+            <KomunitasMgmpCard media={mgmpMedia} />
           </motion.div>
         </div>
       </div>

@@ -111,8 +111,8 @@ function validateRPPOutput(parsed: Record<string, unknown>): string | null {
     issues.push("editableText harus minimal 1.200 karakter — pastikan konten print-ready lengkap");
   } else {
     // Print-ready content checks
-    if (!editable.includes("MODUL AJAR") && !editable.includes("RENCANA PELAKSANAAN PEMBELAJARAN") && !editable.includes("RPP")) {
-      issues.push("editableText belum memuat judul MODUL AJAR / RPP");
+    if (!editable.includes("RENCANA PEMBELAJARAN") && !editable.includes("MODUL AJAR") && !editable.includes("RENCANA PELAKSANAAN PEMBELAJARAN") && !editable.includes("RPP")) {
+      issues.push("editableText belum memuat judul RENCANA PEMBELAJARAN");
     }
     if (!editable.includes("Identitas") && !editable.includes("A. Identitas")) {
       issues.push("editableText belum memuat bagian A. Identitas Dokumen");
@@ -228,7 +228,7 @@ export function getCorrectionMessage(
     case "ppt":
       return `${safeMessage}\nKesalahan: ${validationError}\nPastikan jumlah slide tepat, setiap slide punya title/bullets/speakerNotes/visualSuggestion.`;
     case "rpp":
-      return `${safeMessage}\nKesalahan: ${validationError}\nPastikan semua field RPP terisi lengkap dan editableText tidak kosong.`;
+      return `${safeMessage}\nKesalahan: ${validationError}\nPastikan semua field Rencana Pembelajaran terisi lengkap dan editableText tidak kosong.`;
     default:
       return `${safeMessage}\nKesalahan: ${validationError}`;
   }

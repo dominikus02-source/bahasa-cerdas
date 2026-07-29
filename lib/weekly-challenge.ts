@@ -13,13 +13,23 @@ const CHALLENGES = [
   { type: "OPINI", theme: "Opini Sosial", prompt: "Pandanganmu tentang budaya gotong royong!" },
 ]
 
+/** Koin bonus untuk karya pertama yang menjawab tantangan minggu berjalan. */
+export const CHALLENGE_BONUS_COINS = 25
+
 export function getWeeklyChallenge() {
   const now = new Date()
   const startOfYear = new Date(now.getFullYear(), 0, 1)
   const weekNumber = Math.floor((now.getTime() - startOfYear.getTime()) / (7 * 24 * 60 * 60 * 1000))
   const challenge = CHALLENGES[weekNumber % CHALLENGES.length]
   const weekLabel = `Minggu ke-${(weekNumber % CHALLENGES.length) + 1}`
-  return { ...challenge, weekLabel }
+  // Dipakai sebagai `reference` di CoinTransaction supaya bonus tantangan hanya
+  // bisa cair sekali per periode — tanpa ini murid bisa menulis 10 pantun dan
+  // memanen bonusnya 10 kali.
+  const id = `${now.getFullYear()}-W${weekNumber}`
+  // Awal periode tantangan ini — dipakai untuk menghitung karya yang benar-benar
+  // masuk minggu ini, bukan seluruh karya sejenis sepanjang masa.
+  const startsAt = new Date(startOfYear.getTime() + weekNumber * 7 * 24 * 60 * 60 * 1000)
+  return { ...challenge, weekLabel, id, startsAt, bonusCoins: CHALLENGE_BONUS_COINS }
 }
 
 export function getAllChallengeTypes() {

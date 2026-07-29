@@ -63,7 +63,7 @@ KONTEKS:
 - Judul: ${title}
 - Topik: ${topik}
 - Kelas: ${grade}
-- Kurikulum: ${kurikulum} (Kurikulum Merdeka)
+- Kurikulum: ${kurikulum} (Kurikulum Nasional)
 - Jumlah Slide: ${jumlahSlide}
 - Mapel: Bahasa Indonesia
 
@@ -75,7 +75,7 @@ KONTEKS:
 
 3. **Konteks Indonesia**: Berikan contoh konkret yang relevan dengan budaya dan kehidupan sehari-hari siswa Indonesia (bukan contoh Western). Gunakan nama tokoh, tempat, dan situasi yang familiar bagi siswa Indonesia.
 
-4. **Strategi Penyajian**: Gunakan pendekatan saintifik (5M: Mengamati, Menanya, Mengumpulkan Informasi, Mengasosiasi, Mengkomunikasikan) sesuai Kurikulum Merdeka.
+4. **Strategi Penyajian**: Gunakan pendekatan saintifik (5M: Mengamati, Menanya, Mengumpulkan Informasi, Mengasosiasi, Mengkomunikasikan) sesuai Kurikulum Nasional.
 
 ## STRUKTUR SLIDE WAJIB
 
@@ -199,7 +199,7 @@ HARUS JSON VALID. Tidak ada teks lain di luar JSON. Semua teks dalam BAHASA INDO
           method: "POST",
           headers: { "Content-Type": "application/json", "Authorization": `Bearer ${GROQ_API_KEY}` },
           body: JSON.stringify({
-            model: "llama-3.3-70b-versatile",
+            model: "openai/gpt-oss-120b",
             messages: [
               { role: "system", content: "You are a JSON-only API. Always respond with valid JSON. Never include explanations, markdown, or text outside the JSON object." },
               { role: "user", content: prompt }

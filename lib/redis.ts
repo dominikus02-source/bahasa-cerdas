@@ -45,6 +45,15 @@ const cache = {
     }
   },
 
+  async incr(key: string): Promise<number> {
+    if (!redis) return 0
+    try {
+      return await redis.incr(key)
+    } catch {
+      return 0
+    }
+  },
+
   async getOrSet<T>(
     key: string,
     fetch: () => Promise<T>,

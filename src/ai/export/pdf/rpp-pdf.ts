@@ -74,7 +74,7 @@ export async function generateRPppdf(input: RPPInput): Promise<Buffer> {
 
   // === Cover / Header ===
   doc.font(FONT_BOLD).fontSize(18).fillColor(COLORS.PRIMARY_DARK);
-  doc.text("RPP / Modul Ajar", { align: "center", width: CONTENT_WIDTH });
+  doc.text("Rencana Pembelajaran", { align: "center", width: CONTENT_WIDTH });
   doc.moveDown(0.3);
   doc.font(FONT).fontSize(14).fillColor(COLORS.DARK);
   doc.text(input.title, { align: "center", width: CONTENT_WIDTH });
@@ -95,7 +95,7 @@ export async function generateRPppdf(input: RPPInput): Promise<Buffer> {
   infoLine(doc, "Mata Pelajaran", getStr(identity, "subject", "Bahasa Indonesia"));
   infoLine(doc, "Kelas / Fase", getStr(identity, "grade", "—"));
   infoLine(doc, "Semester", getStr(identity, "semester", "1 (Ganjil)"));
-  infoLine(doc, "Kurikulum", getStr(identity, "curriculum", "Kurikulum Merdeka"));
+  infoLine(doc, "Kurikulum", getStr(identity, "curriculum", "Kurikulum Nasional"));
   infoLine(doc, "Topik", getStr(identity, "topic", "—"));
   infoLine(doc, "Durasi", getStr(identity, "duration", "—"));
   infoLine(doc, "Jumlah Pertemuan", getStr(identity, "meetingCount", "1"));
@@ -304,15 +304,17 @@ export function getRPPMetadata(output: Record<string, unknown>): { title: string
   return { title, filename };
 }
 
-/** Detect whether the document is a K13 "RPP" or a Merdeka "Modul Ajar". */
-function detectDocType(output: Record<string, unknown>): "RPP" | "Modul Ajar" {
+/** Detect the document label. Both K13-style and Merdeka-style documents are
+ * labelled "Rencana Pembelajaran" — the curriculum-specific signals below are
+ * only kept to recognize legacy saved documents, not to change the label. */
+function detectDocType(output: Record<string, unknown>): "Rencana Pembelajaran" {
   const editable = (typeof output.editableText === "string" ? output.editableText : "")
     || (typeof output.text === "string" ? output.text : "");
-  if (/MODUL AJAR/i.test(editable)) return "Modul Ajar";
-  if (/RENCANA PELAKSANAAN PEMBELAJARAN/i.test(editable)) return "RPP";
+  if (/MODUL AJAR/i.test(editable)) return "Rencana Pembelajaran";
+  if (/RENCANA PELAKSANAAN PEMBELAJARAN/i.test(editable)) return "Rencana Pembelajaran";
   const identity = (output.identity as Record<string, unknown>) ?? {};
   const cur = getStr(identity, "curriculum");
-  if (/k13|2013/i.test(cur)) return "RPP";
-  if (/merdeka/i.test(cur)) return "Modul Ajar";
-  return "RPP";
+  if (/k13|2013/i.test(cur)) return "Rencana Pembelajaran";
+  if (/merdeka/i.test(cur)) return "Rencana Pembelajaran";
+  return "Rencana Pembelajaran";
 }

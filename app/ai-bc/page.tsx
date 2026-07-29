@@ -29,10 +29,10 @@ const MURID_SUGGESTIONS = [
 ];
 
 const GURU_SUGGESTIONS = [
-  "Buatkan RPP 1 lembar materi puisi kelas 10 Kurikulum Merdeka",
+  "Buatkan Rencana Pembelajaran 1 lembar materi puisi kelas 10 Kurikulum Nasional",
   "Buat 5 soal HOTS tentang teks argumentasi",
   "Jelaskan perbedaan pendekatan saintifik dan discovery learning",
-  "Buat modul ajar materi pantun untuk kelas 7",
+  "Buat Rencana Pembelajaran materi pantun untuk kelas 7",
   "Koreksi tata bahasa paragraf ini: [tempel teks]",
   "Bagaimana cara mengajar materi imbuhan yang menyenangkan?",
   "Buat kisi-kisi soal UKBI untuk guru SMA",
@@ -305,7 +305,7 @@ export default function AIChatPage() {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder={mode === "guru" ? "Contoh: Buatkan RPP materi puisi kelas 10..." : "Contoh: Apa arti kata 'budaya'?"}
+              placeholder={mode === "guru" ? "Contoh: Buatkan Rencana Pembelajaran materi puisi kelas 10..." : "Contoh: Apa arti kata 'budaya'?"}
               className="flex-1 rounded-2xl border-2 border-red-100 px-4 py-3 text-sm text-slate-700 placeholder-slate-400 focus:outline-none focus:border-red-500 focus:ring-2 focus:ring-red-200 transition-all bg-white shadow-sm"
             />
             <button onClick={handleSend} disabled={!input.trim() || loading}

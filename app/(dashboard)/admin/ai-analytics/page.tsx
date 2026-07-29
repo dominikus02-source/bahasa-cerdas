@@ -96,7 +96,7 @@ interface AnalyticsData {
 }
 
 const AGENT_LABELS: Record<string, string> = {
-  rpp: "RPP",
+  rpp: "Rencana Pembelajaran",
   soal: "Soal",
   ppt: "PPT",
   review: "Review",

@@ -7,11 +7,12 @@ import PageNavbar from "@/components/public/PageNavbar";
 import PageFooter from "@/components/public/PageFooter";
 import HeroSection from "@/components/landing/HeroSection";
 import TrustBar from "@/components/landing/TrustBar";
+import PromoVideoSection from "@/components/landing/PromoVideoSection";
 import MengapaSection from "@/components/landing/MengapaSection";
 import AIToolsSection from "@/components/landing/AIToolsSection";
 import KaryaPopulerSection from "@/components/landing/KaryaPopulerSection";
-import TestimoniSection from "@/components/landing/TestimoniSection";
 import KomunitasSection from "@/components/landing/KomunitasSection";
+import { getMgmpMedia } from "@/lib/site-settings";
 import FAQSection from "@/components/landing/FAQSection";
 import FinalCTA from "@/components/landing/FinalCTA";
 import AnswerBlock from "@/components/aeo/AnswerBlock";
@@ -23,7 +24,7 @@ export const revalidate = 300;
 export const metadata: Metadata = {
   title: "BahasaCerdas — Platform Edukasi Bahasa Indonesia untuk Guru & Siswa",
   description:
-    "Platform edukasi Bahasa Indonesia lengkap: AI generator RPP Kurikulum Merdeka, bank soal HOTS, kuis multiplayer, toko karya, dan komunitas MGMP aktif. Gratis untuk memulai.",
+    "Platform edukasi Bahasa Indonesia lengkap: AI generator Rencana Pembelajaran Kurikulum Nasional, bank soal HOTS, kuis multiplayer, toko karya, dan komunitas MGMP aktif. Gratis untuk memulai.",
   openGraph: {
     title: "BahasaCerdas — Platform Edukasi Bahasa Indonesia",
     description:
@@ -87,15 +88,16 @@ async function getLatestVideos() {
 }
 
 export default async function HomePage() {
-  const [artikel, videos] = await Promise.all([
+  const [artikel, videos, mgmpMedia] = await Promise.all([
     getLatestArtikel(),
     getLatestVideos(),
+    getMgmpMedia(),
   ]);
 
   const faqs = [
-    { q: "Apa itu BahasaCerdas?", a: "BahasaCerdas adalah platform edukasi Bahasa Indonesia yang menyediakan AI generator RPP, bank soal HOTS, kuis multiplayer, toko karya guru, dan komunitas MGMP dalam satu platform. Dibangun oleh guru, untuk guru." },
+    { q: "Apa itu BahasaCerdas?", a: "BahasaCerdas adalah platform edukasi Bahasa Indonesia yang menyediakan AI generator Rencana Pembelajaran, bank soal HOTS, kuis multiplayer, toko karya guru, dan komunitas MGMP dalam satu platform. Dibangun oleh guru, untuk guru." },
     { q: "Apakah BahasaCerdas gratis?", a: "Ya, BahasaCerdas gratis untuk memulai. Guru bisa mencoba Guru Pro selama 30 hari tanpa komitmen. Setelah itu tersedia paket berbayar mulai Rp 49.000/bulan." },
-    { q: "Fitur AI apa saja yang tersedia?", a: "BahasaCerdas memiliki AI generator RPP, generator soal HOTS, koreksi EYD otomatis, analisis teks, feedback karangan, dan asisten pembelajaran — semuanya untuk membantu guru Bahasa Indonesia." },
+    { q: "Fitur AI apa saja yang tersedia?", a: "BahasaCerdas memiliki AI generator Rencana Pembelajaran, generator soal HOTS, koreksi EYD otomatis, analisis teks, feedback karangan, dan asisten pembelajaran — semuanya untuk membantu guru Bahasa Indonesia." },
     { q: "Siapa yang bisa menggunakan BahasaCerdas?", a: "BahasaCerdas untuk guru Bahasa Indonesia di semua jenjang (SMP, SMA, SMK, MA) dan siswa yang ingin belajar Bahasa Indonesia secara interaktif." },
   ];
 
@@ -118,6 +120,7 @@ export default async function HomePage() {
       <main id="main-content" className="min-h-screen">
         <HeroSection />
         <TrustBar />
+        <PromoVideoSection />
         <MengapaSection />
 
         {/* Jawaban Singkat — AEO-optimized Q&A block */}
@@ -150,13 +153,13 @@ export default async function HomePage() {
 
               <AnswerBlock question="Fitur apa saja yang tersedia di BahasaCerdas?">
                 <ul className="list-disc pl-5 space-y-1.5">
-                  <li><strong>AI Generator RPP</strong> — Buat RPP Kurikulum Merdeka dalam 30 detik</li>
+                  <li><strong>AI Generator Rencana Pembelajaran</strong> — Buat Rencana Pembelajaran Kurikulum Nasional dalam 30 detik</li>
                   <li><strong>Generator Soal HOTS</strong> — Soal berbasis level kognitif C4-C6</li>
                   <li><strong>Koreksi EYD Otomatis</strong> — Periksa ejaan dan tata bahasa otomatis</li>
                   <li><strong>Kuis Multiplayer</strong> — Game edukasi interaktif untuk siswa</li>
                   <li><strong>Toko Karya Guru</strong> — Jual dan beli perangkat ajar</li>
                   <li><strong>Komunitas MGMP</strong> — Forum diskusi, webinar, dan kolaborasi guru</li>
-                  <li><strong>Bank Soal</strong> — Ribuan soal siap pakai untuk asesmen</li>
+                  <li><strong>Bank Soal</strong> — Soal siap pakai untuk asesmen</li>
                 </ul>
               </AnswerBlock>
 
@@ -180,7 +183,6 @@ export default async function HomePage() {
         </section>
         <AIToolsSection />
         <KaryaPopulerSection />
-        <TestimoniSection />
 
         <section className="relative py-20 lg:py-28 bg-white" id="artikel" aria-labelledby="media-heading">
           <div className="section-container">
@@ -334,7 +336,7 @@ export default async function HomePage() {
           </div>
         </section>
 
-        <KomunitasSection />
+        <KomunitasSection mgmpMedia={mgmpMedia} />
         <FAQSection />
         <FinalCTA />
       </main>

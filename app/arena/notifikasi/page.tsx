@@ -11,6 +11,7 @@ interface Notif {
   type: string
   isRead: boolean
   createdAt: string
+  data?: { link?: string }
 }
 
 const ICON_MAP: Record<string, any> = {
@@ -101,13 +102,9 @@ export default function NotifikasiPage() {
           {filtered.map((n) => {
             const meta = ICON_MAP[n.type] || { icon: Bell, color: "text-gray-500", bg: "bg-gray-50" }
             const Icon = meta.icon
-            return (
-              <div
-                key={n.id}
-                className={`flex items-start gap-3 p-3.5 rounded-2xl border transition-colors ${
-                  n.isRead ? "bg-white border-gray-100" : "bg-purple-50 border-purple-100"
-                }`}
-              >
+            const target = n.data?.link
+            const content = (
+              <>
                 <div className={`w-9 h-9 rounded-xl ${meta.bg} flex items-center justify-center shrink-0 ${meta.color}`}>
                   <Icon size={18} />
                 </div>
@@ -116,9 +113,26 @@ export default function NotifikasiPage() {
                   <p className="text-xs text-[#5A5278] mt-0.5">{n.body}</p>
                   <p className="text-[10px] text-[#9B93B8] mt-1">{waktuLalu(n.createdAt)}</p>
                 </div>
-                <button onClick={() => hapusNotif(n.id)} className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors shrink-0">
+                <button onClick={(e) => { e.stopPropagation(); hapusNotif(n.id); }} className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors shrink-0">
                   <Trash2 size={14} className="text-gray-400" />
                 </button>
+              </>
+            )
+            return target ? (
+              <Link key={n.id} href={target}
+                className={`flex items-start gap-3 p-3.5 rounded-2xl border transition-colors cursor-pointer hover:bg-purple-50/80 ${
+                  n.isRead ? "bg-white border-gray-100" : "bg-purple-50 border-purple-100"
+                }`}
+              >
+                {content}
+              </Link>
+            ) : (
+              <div key={n.id}
+                className={`flex items-start gap-3 p-3.5 rounded-2xl border transition-colors ${
+                  n.isRead ? "bg-white border-gray-100" : "bg-purple-50 border-purple-100"
+                }`}
+              >
+                {content}
               </div>
             )
           })}

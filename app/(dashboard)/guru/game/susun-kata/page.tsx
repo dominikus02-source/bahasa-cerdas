@@ -1,46 +1,21 @@
 "use client";
 
-import { useState, useCallback } from "react";
-import { ArrowLeft, Maximize, Minimize } from "lucide-react";
 import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 import SusunKataGame from "@/components/game/SusunKata";
 
+// SusunKataGame renders as a fixed full-screen overlay (chunky redesign) —
+// the old inline p-8 header pattern would sit underneath it, unreachable.
 export default function GuruSusunKataPage() {
-  const [fullscreen, setFullscreen] = useState(false);
-
-  const toggleFullscreen = useCallback(() => {
-    if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen();
-      setFullscreen(true);
-    } else {
-      document.exitFullscreen();
-      setFullscreen(false);
-    }
-  }, []);
-
   return (
-    <div className={`min-h-screen bg-gradient-to-br from-slate-50 via-white to-emerald-50 ${fullscreen ? "p-0" : "p-8"}`}>
-      {!fullscreen && (
-        <div className="max-w-5xl mx-auto mb-6">
-          <Link href="/guru/game" className="text-emerald-600 hover:underline text-sm flex items-center gap-1 mb-4">
-            ← Kembali ke Menu Gim
-          </Link>
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900">Susun Kata</h1>
-              <p className="text-gray-500 text-sm mt-1">Huruf-huruf acak! Susun menjadi kata yang benar. Uji kosakatamu!</p>
-            </div>
-            <button
-              onClick={toggleFullscreen}
-              className="flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-xl font-medium hover:bg-emerald-700 transition-colors"
-            >
-              {fullscreen ? <Minimize size={16} /> : <Maximize size={16} />}
-              {fullscreen ? "Exit Fullscreen" : "Fullscreen"}
-            </button>
-          </div>
-        </div>
-      )}
-      <SusunKataGame />
+    <div className="fixed inset-0 z-[60] bg-[#FFF6E0]">
+      <Link
+        href="/guru/game"
+        className="fixed top-3 left-3 z-[80] w-9 h-9 rounded-xl bg-[#161B3A]/10 backdrop-blur-md border border-[#161B3A]/20 shadow-md flex items-center justify-center text-[#161B3A] hover:bg-[#161B3A]/20 active:scale-95 transition-all"
+      >
+        <ArrowLeft className="w-5 h-5" />
+      </Link>
+      <SusunKataGame hideBackButton backHref="/guru/game" />
     </div>
   );
 }

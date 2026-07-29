@@ -17,14 +17,14 @@ import {
 } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Fitur Lengkap BahasaCerdas — AI RPP, Soal HOTS, Kuis & Toko Karya",
-  description: "Jelajahi semua fitur BahasaCerdas: AI generator RPP Kurikulum Merdeka, bank soal HOTS, kuis multiplayer interaktif, toko karya guru, dan komunitas MGMP.",
+  title: "Fitur Lengkap BahasaCerdas — AI Rencana Pembelajaran, Soal HOTS, Kuis & Toko Karya",
+  description: "Jelajahi semua fitur BahasaCerdas: AI generator Rencana Pembelajaran Kurikulum Nasional, bank soal HOTS, kuis multiplayer interaktif, toko karya guru, dan komunitas MGMP.",
   alternates: {
     canonical: "https://www.bahasacerdas.com/fitur",
   },
   openGraph: {
     title: "Fitur Lengkap | BahasaCerdas",
-    description: "AI RPP, soal HOTS, kuis multiplayer, toko karya, dan komunitas MGMP dalam satu platform.",
+    description: "AI Rencana Pembelajaran, soal HOTS, kuis multiplayer, toko karya, dan komunitas MGMP dalam satu platform.",
     url: "https://www.bahasacerdas.com/fitur",
   },
 };
@@ -32,8 +32,8 @@ export const metadata: Metadata = {
 const features = [
   {
     icon: Sparkles,
-    title: "AI Generator RPP",
-    desc: "Hasilkan RPP lengkap dengan tujuan pembelajaran, kegiatan inti, asesmen, dan lampiran sesuai Kurikulum Merdeka dalam 30 detik.",
+    title: "AI Generator Rencana Pembelajaran",
+    desc: "Hasilkan Rencana Pembelajaran lengkap dengan tujuan pembelajaran, kegiatan inti, asesmen, dan lampiran sesuai Kurikulum Nasional dalam 30 detik.",
     color: "bg-red-50 text-primary",
     href: "/guru/ai-tools",
   },
@@ -54,7 +54,7 @@ const features = [
   {
     icon: ShoppingBag,
     title: "Toko Karya Guru",
-    desc: "Jual RPP, modul, PPT, soal, dan video pembelajaran. Dapatkan 80% komisi dari setiap penjualan.",
+    desc: "Jual Rencana Pembelajaran, modul, PPT, soal, dan video pembelajaran. Dapatkan 80% komisi dari setiap penjualan.",
     color: "bg-violet-50 text-violet-600",
     href: "/marketplace",
   },

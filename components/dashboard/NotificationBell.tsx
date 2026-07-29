@@ -41,25 +41,53 @@ export function NotificationBell() {
 
   useEffect(() => {
     fetchNotifications();
-    // Polling fallback every 30s
-    const interval = setInterval(fetchNotifications, 30000);
-    return () => clearInterval(interval);
+
+    // Cadangan saja — notifikasi sungguhan datang lewat langganan realtime di
+    // bawah. Dulu 30 detik: komponen ini terpasang di layout murid dan mobile
+    // nav, jadi SETIAP murid memanggil /api/notifikasi 120x/jam, dan tiap
+    // panggilan itu memvalidasi sesi ke server Auth Supabase. Dengan ~200 murid
+    // aktif itu saja sudah ~24.000 panggilan auth per jam — penyebab utama
+    // limit auth kena dan murid tidak bisa login.
+    const interval = setInterval(() => {
+      // Tab di latar belakang tidak perlu disegarkan; saat murid kembali,
+      // listener visibilitas di bawah yang menyegarkan sekali.
+      if (document.visibilityState !== "visible") return;
+      fetchNotifications();
+    }, 180000);
+
+    const onVisible = () => {
+      if (document.visibilityState === "visible") fetchNotifications();
+    };
+    document.addEventListener("visibilitychange", onVisible);
+
+    return () => {
+      clearInterval(interval);
+      document.removeEventListener("visibilitychange", onVisible);
+    };
   }, [fetchNotifications]);
 
   useEffect(() => {
     let unsub: (() => void) | undefined;
-    // Get userId from /api/user/me first
-    fetch("/api/user/me").then(r => r.json()).then(d => {
-      const uid = d?.user?.id || d?.id;
-      if (uid) {
-        userIdRef.current = uid;
-        unsub = subscribeNotifications(uid, (notif) => {
-          setNotifications(prev => [notif as Notification, ...prev]);
-          setUnreadCount(c => c + 1);
-        });
-      }
-    });
-    return () => unsub?.();
+    let cancelled = false;
+
+    // userId diambil dari respons /api/notifikasi yang memang sudah dipanggil di
+    // atas — sebelumnya ada fetch("/api/user/me") terpisah hanya untuk ini,
+    // yaitu satu panggilan API (dan satu validasi auth) ekstra per murid.
+    const tunggu = setInterval(() => {
+      const uid = userIdRef.current;
+      if (!uid || cancelled) return;
+      clearInterval(tunggu);
+      unsub = subscribeNotifications(uid, (notif) => {
+        setNotifications(prev => [notif as Notification, ...prev]);
+        setUnreadCount(c => c + 1);
+      });
+    }, 500);
+
+    return () => {
+      cancelled = true;
+      clearInterval(tunggu);
+      unsub?.();
+    };
   }, []);
 
   useEffect(() => {

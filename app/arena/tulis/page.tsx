@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
-import { PenLine, Send, Image, Sparkles, BookOpen, FileText, Smile, Music, MessageSquare } from "lucide-react"
+import { PenLine, Send, Image, Sparkles, BookOpen, FileText, Smile, Music, MessageSquare, Trophy, CheckCircle2 } from "lucide-react"
 import { getWeeklyChallenge } from "@/lib/weekly-challenge"
 
 const karyaTypes = [
@@ -47,12 +47,25 @@ export default function ArenaTulisPage() {
           type,
           title: title.trim(),
           content: content.trim(),
-          coverUrl: coverUrl || undefined,
+          // Server memvalidasi field ini sebagai `coverImage`; dikirim sebagai
+          // `coverUrl` gambar sampulnya diam-diam dibuang dan tidak pernah tersimpan.
+          coverImage: coverUrl || undefined,
         }),
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || "Gagal menyimpan")
-      router.push(`/arena/feed/${data.id}`)
+
+      if (data.challengeBonus > 0) {
+        sessionStorage.setItem(
+          "karya-reward",
+          `Karyamu masuk tantangan "${data.challengeTheme}" — dapat ${data.coins + data.challengeBonus} koin!`
+        )
+      }
+
+      // Respons memakai bentuk { karya, id, ... }. Dulu di sini membaca data.id
+      // saat server hanya mengirim { karya }, jadi murid selalu dilempar ke
+      // /arena/feed/undefined dan memantul balik ke feed tanpa melihat karyanya.
+      router.push(`/arena/feed/${data.id ?? data.karya?.id}`)
       router.refresh()
     } catch (err: any) {
       setError(err.message)
@@ -92,16 +105,51 @@ export default function ArenaTulisPage() {
           </div>
         </div>
 
-        {/* Challenge banner */}
-        {isChallengeType && (
-          <div className="flex items-center gap-3 p-3 rounded-xl bg-gradient-to-r from-violet-600 to-purple-600 text-white">
-            <Sparkles size={20} className="text-yellow-300 shrink-0" />
-            <div className="flex-1">
-              <p className="text-sm font-extrabold">Tantangan Minggu Ini</p>
-              <p className="text-[11px] text-white/80">{challenge.prompt}</p>
+        {/* Tantangan Minggu Ini — selalu tampil. Dulu hanya muncul kalau jenis
+            karyanya kebetulan sudah cocok, jadi murid tidak pernah tahu ada
+            tantangannya sampai tidak sengaja memilih jenis yang tepat. */}
+        <button
+          type="button"
+          onClick={() => setType(challenge.type)}
+          className={`w-full text-left rounded-2xl p-4 transition-all ${
+            isChallengeType
+              ? "bg-gradient-to-br from-violet-600 via-purple-600 to-fuchsia-600 text-white shadow-lg shadow-violet-500/25"
+              : "bg-white border-2 border-dashed border-violet-300 text-gray-800 hover:border-violet-400 active:scale-[0.99]"
+          }`}
+        >
+          <div className="flex items-start gap-3">
+            <div className={`w-11 h-11 rounded-xl flex items-center justify-center shrink-0 ${
+              isChallengeType ? "bg-white/20" : "bg-violet-100"
+            }`}>
+              <Sparkles size={22} className={isChallengeType ? "text-yellow-300" : "text-violet-600"} />
+            </div>
+            <div className="flex-1 min-w-0">
+              <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${
+                isChallengeType ? "bg-white/20" : "bg-violet-100 text-violet-700"
+              }`}>
+                Tantangan Minggu Ini
+              </span>
+              <p className="text-base font-extrabold mt-1.5 leading-tight">{challenge.theme}</p>
+              <p className={`text-xs mt-0.5 leading-snug ${isChallengeType ? "text-white/80" : "text-gray-500"}`}>
+                {challenge.prompt}
+              </p>
+              <div className="flex items-center gap-2 mt-2.5">
+                <span className="inline-flex items-center gap-1.5 bg-yellow-400 text-yellow-950 text-[11px] font-extrabold px-2.5 py-1 rounded-full">
+                  <Trophy size={12} /> +{challenge.bonusCoins} koin
+                </span>
+                {isChallengeType ? (
+                  <span className="inline-flex items-center gap-1 text-[11px] font-bold text-white/90">
+                    <CheckCircle2 size={13} /> Karyamu ikut tantangan ini
+                  </span>
+                ) : (
+                  <span className="text-[11px] font-bold text-violet-600">
+                    Ketuk untuk ikut &rarr;
+                  </span>
+                )}
+              </div>
             </div>
           </div>
-        )}
+        </button>
 
         {/* Title */}
         <div>

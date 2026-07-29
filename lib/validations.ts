@@ -35,6 +35,7 @@ export const karyaSchema = z.object({
   jenis: z.enum(["PUISI", "CERPEN", "ARTIKEL", "ANEKDOT", "PANTUN", "OPINI"]),
   konten: z.string().min(1, "Konten harus diisi").trim(),
   coverImage: z.string().url("URL cover tidak valid").nullable().optional(),
+  photos: z.array(z.string().url("URL foto tidak valid")).max(6, "Maksimal 6 foto").optional(),
 });
 
 export const commentSchema = z.object({

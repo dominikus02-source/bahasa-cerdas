@@ -7,6 +7,17 @@ interface PenugasanRow {
   id: string; judul: string; jenis: string; unitTitle: string; groupName: string;
   totalMurid: number; selesai: number; praktikMasuk: number; praktikBelumDinilai: number;
 }
+
+const JENIS_LABEL: Record<string, string> = { KUIS: "ULANGAN", LATIHAN: "LATIHAN", PRAKTIK: "PRAKTIK", MATERI: "TUGAS" };
+const JENIS_COLOR: Record<string, string> = {
+  KUIS: "bg-violet-100 text-violet-700",
+  LATIHAN: "bg-blue-100 text-blue-700",
+  PRAKTIK: "bg-amber-100 text-amber-700",
+  MATERI: "bg-emerald-100 text-emerald-700",
+};
+const JENIS_DESC: Record<string, string> = {
+  KUIS: "Ulangan Harian", LATIHAN: "Latihan", PRAKTIK: "Praktik", MATERI: "Tugas Materi",
+};
 interface MuridRow {
   userId: string; fullName: string; avatar: string | null; status: string; score: number | null;
   praktikUrl: string | null; praktikNilai: number | null; praktikCatatan: string | null; praktikDinilai: boolean;
@@ -61,7 +72,7 @@ export default function TugasMuridPage() {
       <div className="p-4 sm:p-6 max-w-3xl mx-auto">
         <button onClick={() => setActive(null)} className="flex items-center gap-1 text-sm text-slate-500 mb-4"><ArrowLeft className="w-4 h-4" /> Kembali</button>
         <h1 className="text-lg font-bold text-slate-900">{active.judul}</h1>
-        <p className="text-xs text-slate-500 mb-5">{active.groupName} · {active.jenis === "KUIS" ? "Ulangan Harian" : "Tugas Materi"}</p>
+        <p className="text-xs text-slate-500 mb-5">{active.groupName} · {JENIS_DESC[active.jenis] || "Tugas Materi"}</p>
 
         {detailLoading ? (
           <div className="py-16 text-center"><Loader2 className="w-6 h-6 animate-spin text-emerald-500 mx-auto" /></div>
@@ -84,8 +95,8 @@ export default function TugasMuridPage() {
                     : <Clock className="w-5 h-5 text-slate-300" />}
                 </div>
 
-                {/* Praktik review (only for Tugas Materi) */}
-                {active.jenis !== "KUIS" && (
+                {/* Praktik review (hanya untuk jenis yang benar-benar punya praktik) */}
+                {(active.jenis === "MATERI" || active.jenis === "PRAKTIK") && (
                   <div className="mt-2 pt-3 border-t border-slate-50">
                     <p className="text-[11px] font-semibold text-slate-500 uppercase mb-2 flex items-center gap-1"><Award size={12} /> Praktik</p>
                     {m.praktikUrl ? (
@@ -148,14 +159,14 @@ export default function TugasMuridPage() {
             <button key={p.id} onClick={() => openDetail(p)} className="w-full text-left bg-white rounded-2xl border border-slate-100 p-4 hover:border-emerald-200 transition-colors">
               <div className="flex items-start justify-between mb-1.5">
                 <h3 className="font-bold text-sm text-slate-900 flex-1 min-w-0 truncate mr-2">{p.judul}</h3>
-                <span className={`text-[9px] font-semibold px-2 py-0.5 rounded-full shrink-0 ${p.jenis === "KUIS" ? "bg-violet-100 text-violet-700" : "bg-emerald-100 text-emerald-700"}`}>
-                  {p.jenis === "KUIS" ? "ULANGAN" : "TUGAS"}
+                <span className={`text-[9px] font-semibold px-2 py-0.5 rounded-full shrink-0 ${JENIS_COLOR[p.jenis] || JENIS_COLOR.MATERI}`}>
+                  {JENIS_LABEL[p.jenis] || "TUGAS"}
                 </span>
               </div>
               <p className="text-xs text-slate-500 mb-2">{p.groupName}</p>
               <div className="flex items-center gap-3 text-[11px] text-slate-400">
                 <span className="flex items-center gap-1"><CheckCircle size={12} /> {p.selesai}/{p.totalMurid} selesai</span>
-                {p.jenis !== "KUIS" && p.praktikMasuk > 0 && (
+                {(p.jenis === "MATERI" || p.jenis === "PRAKTIK") && p.praktikMasuk > 0 && (
                   <span className={`flex items-center gap-1 ${p.praktikBelumDinilai > 0 ? "text-amber-600 font-semibold" : ""}`}>
                     <FileText size={12} /> {p.praktikBelumDinilai > 0 ? `${p.praktikBelumDinilai} praktik perlu dinilai` : "praktik dinilai"}
                   </span>

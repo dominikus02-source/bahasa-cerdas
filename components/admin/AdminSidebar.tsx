@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState, useEffect, useCallback } from "react";
-import { LayoutDashboard, ShoppingBag, Film, FileText, Users, LogOut, Settings, ChevronRight, BarChart3, Briefcase, MessageCircle, Presentation, Bell, BellRing, X, Coins, DollarSign, Database, Activity } from "lucide-react";
+import { LayoutDashboard, ShoppingBag, Film, FileText, Users, LogOut, Settings, ChevronRight, BarChart3, Briefcase, MessageCircle, Presentation, Bell, BellRing, X, Coins, DollarSign, Database, Activity, Wallet } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 
 interface Props {
@@ -24,6 +24,8 @@ const NAV = [
   { label: "Kuota AI", href: "/admin/ai-quota", icon: Coins },
   { label: "Pusat Data", href: "/admin/data-center", icon: Database },
   { label: "Pembayaran", href: "/admin/payments", icon: DollarSign },
+  { label: "Penarikan Saldo", href: "/admin/withdrawals", icon: Wallet },
+  { label: "Pengaturan", href: "/admin/pengaturan", icon: Settings },
   { type: "divider" as const },
   { label: "Dasbor Guru", href: "/guru/beranda", icon: ChevronRight },
   { label: "Dasbor Murid", href: "/murid/beranda", icon: ChevronRight },
@@ -46,7 +48,15 @@ export function AdminSidebar({ user }: Props) {
     } catch {}
   }, []);
 
-  useEffect(() => { fetchNotifs(); const t = setInterval(fetchNotifs, 30000); return () => clearInterval(t); }, [fetchNotifs]);
+  // 3 menit, dan berhenti saat tab ditinggalkan (dulu 30 detik tanpa henti).
+  useEffect(() => {
+    fetchNotifs();
+    const t = setInterval(() => {
+      if (document.visibilityState !== "visible") return;
+      fetchNotifs();
+    }, 180000);
+    return () => clearInterval(t);
+  }, [fetchNotifs]);
 
   const markRead = async (id: string) => {
     await fetch("/api/admin/notifications", {

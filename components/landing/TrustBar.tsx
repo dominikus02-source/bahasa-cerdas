@@ -1,69 +1,34 @@
-"use client";
+import { ScrollText, FileText, GraduationCap, Users } from "lucide-react";
 
-import { motion } from "framer-motion";
-import { fadeInUp, staggerContainer } from "@/lib/motion";
-
-const stats = [
-  {
-    value: "Live",
-    color: "text-primary",
-    label: "Platform aktif dalam beta terbatas",
-    sub: "Sejak 2026 · Versi Beta",
-  },
-  {
-    value: "57K+",
-    color: "text-primary",
-    label: "Baris kode produksi yang sudah berjalan",
-    sub: "52+ Database Models",
-  },
-  {
-    value: "21.600+",
-    color: "text-primary",
-    label: "Item konten berkualitas siap diakses",
-    sub: "Materi Kelas VII–XII",
-  },
-  {
-    value: "350K+",
-    color: "text-amber-500",
-    label: "Guru Bahasa Indonesia yang bisa kami jangkau",
-    sub: "Target Pasar Nasional",
-  },
+// Sengaja tanpa angka spesifik (jumlah soal, jumlah pengguna, dst) — angka
+// itu terus berubah dan akhirnya butuh dijelaskan/diperbarui terus-menerus.
+// Ini hanya menunjukkan apa yang tersedia, bukan seberapa banyak.
+const coverage = [
+  { icon: ScrollText, label: "Bank Soal", sub: "Terus bertambah" },
+  { icon: FileText, label: "Materi Ajar", sub: "Siap diunduh" },
+  { icon: GraduationCap, label: "Kelas 1–12", sub: "SD, SMP, SMA/SMK" },
+  { icon: Users, label: "Komunitas Guru", sub: "MGMP digital" },
 ];
 
 export default function TrustBar() {
   return (
-    <section className="relative py-12 lg:py-16 bg-white border-y border-zinc-100" aria-label="Statistik platform">
+    <section className="relative py-12 lg:py-16 bg-white border-y border-zinc-100" aria-label="Yang tersedia di BahasaCerdas">
       <div className="section-container">
-        <motion.div
-          className="grid grid-cols-2 lg:grid-cols-4 gap-px bg-zinc-200 rounded-2xl overflow-hidden border border-zinc-200"
-          variants={staggerContainer}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-        >
-          {stats.map((stat) => (
-            <motion.div
-              key={stat.value}
-              variants={fadeInUp}
-              transition={{ duration: 0.5, ease: "easeOut" }}
-              className="bg-white px-6 py-7 text-center"
-            >
-              <div className={`font-display text-4xl font-normal leading-none mb-2 ${stat.color}`}>
-                {stat.value}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-px bg-zinc-200 rounded-2xl overflow-hidden border border-zinc-200">
+          {coverage.map((c) => (
+            <div key={c.label} className="bg-white px-6 py-7 text-center flex flex-col items-center">
+              <div className="w-11 h-11 rounded-xl bg-primary-light flex items-center justify-center mb-3">
+                <c.icon size={20} className="text-primary" aria-hidden="true" />
               </div>
-              <div className="text-zinc-500 text-sm leading-snug mb-2">
-                {stat.label}
+              <div className="text-zinc-900 font-semibold text-base leading-snug mb-1">
+                {c.label}
               </div>
-              <div className={`text-xs font-bold tracking-wider uppercase ${stat.color} opacity-70`}>
-                {stat.sub}
+              <div className="text-xs font-bold tracking-wider uppercase text-primary/70">
+                {c.sub}
               </div>
-            </motion.div>
+            </div>
           ))}
-        </motion.div>
-
-        <p className="text-center text-zinc-400 text-xs mt-4">
-          * Platform dalam fase beta terbatas. Angka mencerminkan infrastruktur teknis aktual, bukan jumlah pengguna.
-        </p>
+        </div>
       </div>
     </section>
   );

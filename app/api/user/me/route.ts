@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { getGravatarUrl } from "@/lib/avatar";
+import { transformImageUrl } from "@/lib/image-transform";
 import cache from "@/lib/redis";
 import { err } from "@/lib/api/response";
 import { ERR } from "@/lib/api/errors";
@@ -8,6 +9,13 @@ import { ERR } from "@/lib/api/errors";
 const FOUNDER_EMAILS = ["hdsastra47@gmail.com", "dominikus.02@gmail.com", "alexsurya1968@gmail.com"];
 const PROMO_PREMIUM_UNTIL = new Date();
 PROMO_PREMIUM_UNTIL.setMonth(PROMO_PREMIUM_UNTIL.getMonth() + 2);
+
+const userSessionFields = {
+  id: true, supabaseId: true, email: true, fullName: true, nickname: true, nicknameUpdatedAt: true,
+  avatar: true, role: true, isFounder: true, isPremium: true, premiumPlan: true, premiumUntil: true,
+  xp: true, level: true, streak: true, league: true, coins: true, totalLikes: true, totalViews: true,
+  createdAt: true,
+} as const;
 
 async function findOrCreateUser(opts: {
   supabaseId: string;
@@ -18,8 +26,8 @@ async function findOrCreateUser(opts: {
   const { supabaseId, email, fullName, role } = opts;
   const lowerEmail = email.toLowerCase();
 
-  let user = await db.user.findUnique({ where: { supabaseId } });
-  if (!user) user = await db.user.findFirst({ where: { email: lowerEmail } });
+  let user = await db.user.findUnique({ where: { supabaseId }, select: userSessionFields });
+  if (!user) user = await db.user.findFirst({ where: { email: lowerEmail }, select: userSessionFields });
 
   if (user) {
     const updates: Record<string, unknown> = {};
@@ -39,7 +47,7 @@ async function findOrCreateUser(opts: {
       await db.user.update({ where: { id: user.id }, data: updates });
     }
     return Object.keys(updates).length > 0
-      ? db.user.findUnique({ where: { id: user.id } })
+      ? db.user.findUnique({ where: { id: user.id }, select: userSessionFields })
       : user;
   }
 
@@ -80,7 +88,8 @@ export async function GET() {
       );
     }
 
-    let found = await db.user.findFirst({ where: { email } });
+    const existing = await db.user.findFirst({ where: { email }, select: userSessionFields });
+    let found: any = existing;
     if (!found) {
       found = await findOrCreateUser({
         supabaseId: user.id,
@@ -103,7 +112,12 @@ export async function GET() {
     }
 
     const profile = await db.profile.findUnique({ where: { userId: found.id } });
-    const result = { ...found, ...profile, ...updates };
+    const result = {
+      ...found,
+      ...profile,
+      ...updates,
+      avatar: transformImageUrl(found.avatar, { width: 160, height: 160, quality: 85 }),
+    };
 
     // Cache for 30s — short enough to stay fresh, long enough to absorb bursts
     cache.set(cacheKey, result, 30);

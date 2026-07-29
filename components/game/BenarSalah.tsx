@@ -3,7 +3,10 @@
 import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence, useAnimationControls } from "framer-motion";
-import { Check, X, Zap, Flame, Trophy, Timer, RotateCcw, Loader2, Sparkles, Volume2, VolumeX } from "lucide-react";
+import {
+  Check, X, Zap, Flame, Trophy, Timer, RotateCcw, Loader2,
+  Sparkles, Volume2, VolumeX, Lock, Star, ChevronRight, Play, Heart
+} from "lucide-react";
 import Burst from "@/components/game/Burst";
 import ComboFlash from "@/components/game/ComboFlash";
 import { sfx, haptic, isSoundOn, toggleSound, startBGM, stopBGM } from "@/lib/game/sound";
@@ -16,28 +19,97 @@ interface Q {
   penjelasan: string;
 }
 
-type Phase = "start" | "loading" | "playing" | "gameover";
-const ROUND_SECONDS = 60;
+type Screen = "start" | "levels" | "playing" | "result";
 
+/* ---------- LEVELS ---------- */
+type Level = {
+  id: number;
+  name: string;
+  count: number;
+  time: number;
+  color: string;
+  topic: string;
+};
+
+const LEVELS: Level[] = [
+  { id: 1, name: "Pemula", count: 8, time: 60, color: "#FF6B6B", topic: "Dasar" },
+  { id: 2, name: "Siaga", count: 10, time: 55, color: "#F59E0B", topic: "Dasar" },
+  { id: 3, name: "Petarung", count: 12, time: 55, color: "#10B981", topic: "Menengah" },
+  { id: 4, name: "Jawara", count: 14, time: 50, color: "#38BDF8", topic: "Menengah" },
+  { id: 5, name: "Pahlawan", count: 15, time: 50, color: "#8B5CF6", topic: "Sulit" },
+  { id: 6, name: "Legenda", count: 18, time: 45, color: "#EC4899", topic: "Sulit" },
+  { id: 7, name: "Dewa", count: 20, time: 45, color: "#F43F5E", topic: "Expert" },
+  { id: 8, name: "Naga", count: 22, time: 40, color: "#14B8A6", topic: "Expert" },
+  { id: 9, name: "Maha Guru", count: 25, time: 40, color: "#6366F1", topic: "Master" },
+];
+
+/* ---------- SAVE SYSTEM ---------- */
+type Saved = {
+  unlocked: number[];
+  best: Record<number, number>;
+  stars: Record<number, number>;
+};
+
+function loadSaved(): Saved {
+  try {
+    const raw = localStorage.getItem("benar-salah-progress");
+    if (raw) {
+      const d = JSON.parse(raw);
+      return {
+        unlocked: d.unlocked || [1],
+        best: d.best || {},
+        stars: d.stars || {},
+      };
+    }
+  } catch { /* abaikan */ }
+  return { unlocked: [1], best: {}, stars: {} };
+}
+
+function saveSaved(s: Saved) {
+  try {
+    localStorage.setItem("benar-salah-progress", JSON.stringify(s));
+  } catch { /* abaikan */ }
+}
+
+function starsFor(acc: number, gameOver: boolean): number {
+  if (gameOver) return 0;
+  if (acc >= 90) return 3;
+  if (acc >= 70) return 2;
+  if (acc >= 40) return 1;
+  return 0;
+}
+
+/* ---------- COMPONENT ---------- */
 export default function BenarSalah({ backHref = "/arena/game" }: { backHref?: string }) {
-  const [phase, setPhase] = useState<Phase>("start");
+  const [screen, setScreen] = useState<Screen>("start");
+  const [saved, setSaved] = useState<Saved>({ unlocked: [1], best: {}, stars: {} });
+  const [levelId, setLevelId] = useState(1);
   const [questions, setQuestions] = useState<Q[]>([]);
   const [idx, setIdx] = useState(0);
   const [score, setScore] = useState(0);
   const [combo, setCombo] = useState(0);
-  const [best, setBest] = useState(0);
-  const [answered, setAnswered] = useState(0);
-  const [timeLeft, setTimeLeft] = useState(ROUND_SECONDS);
+  const [bestCombo, setBestCombo] = useState(0);
+  const [correctCount, setCorrectCount] = useState(0);
+  const [wrongCount, setWrongCount] = useState(0);
+  const [timeLeft, setTimeLeft] = useState(60);
+  const [lives, setLives] = useState(3);
   const [flash, setFlash] = useState<null | "ok" | "no">(null);
-  const [xpResult, setXpResult] = useState<{ xpEarned: number; leveledUp: boolean } | null>(null);
+  const [result, setResult] = useState<null | {
+    score: number; correct: number; wrong: number;
+    accuracy: number; stars: number; maxCombo: number;
+    gameOver: boolean; xpEarned: number;
+  }>(null);
   const [burst, setBurst] = useState(0);
   const [soundOn, setSoundOn] = useState(true);
+  const [loading, setLoading] = useState(false);
+
   const controls = useAnimationControls();
   const lockRef = useRef(false);
+  const xpSentRef = useRef(false);
 
+  const level = LEVELS.find((l) => l.id === levelId) || LEVELS[0];
   const current = questions[idx];
 
-  // The candidate answer shown: 50% the correct option, 50% a wrong one.
   const candidateIdx = useMemo(() => {
     if (!current) return 0;
     if (Math.random() < 0.5) return current.jawaban;
@@ -45,266 +117,486 @@ export default function BenarSalah({ backHref = "/arena/game" }: { backHref?: st
     return wrong[Math.floor(Math.random() * wrong.length)] ?? current.jawaban;
   }, [idx, current]);
 
-  const start = useCallback(async () => {
-    sfx.start(); setSoundOn(isSoundOn()); startBGM();
-    setPhase("loading");
-    setIdx(0); setScore(0); setCombo(0); setBest(0); setAnswered(0);
-    setTimeLeft(ROUND_SECONDS); setFlash(null); setXpResult(null); lockRef.current = false;
+  /* Init */
+  useEffect(() => {
+    setSaved(loadSaved());
+    try { setSoundOn(isSoundOn()); } catch { /* abaikan */ }
+  }, []);
+
+  /* Reset on unmount */
+  useEffect(() => () => stopBGM(), []);
+
+  /* Timer */
+  useEffect(() => {
+    if (screen !== "playing") return;
+    if (timeLeft <= 0) {
+      finish(score, correctCount, wrongCount, bestCombo, false, true);
+      return;
+    }
+    if (timeLeft <= 5) sfx.tick?.();
+    const t = setTimeout(() => setTimeLeft((s) => s - 1), 1000);
+    return () => clearTimeout(t);
+  }, [screen, timeLeft]);
+
+  /* Keyboard */
+  useEffect(() => {
+    if (screen !== "playing") return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "ArrowLeft") answer(true);
+      if (e.key === "ArrowRight") answer(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [screen, idx, questions, candidateIdx, score, combo, correctCount, wrongCount, lives, bestCombo]);
+
+  const startLevel = useCallback(async (id: number) => {
+    sfx.start();
+    setSoundOn(isSoundOn());
+    startBGM();
+    setLoading(true);
+    setLevelId(id);
+    setIdx(0);
+    setScore(0);
+    setCombo(0);
+    setBestCombo(0);
+    setCorrectCount(0);
+    setWrongCount(0);
+    setLives(3);
+    setFlash(null);
+    setResult(null);
+    xpSentRef.current = false;
+    lockRef.current = false;
+
+    const lv = LEVELS.find((l) => l.id === id) || LEVELS[0];
     try {
-      const res = await fetch("/api/game/menara?count=20", { cache: "no-store" });
+      const res = await fetch(`/api/game/menara?count=${lv.count}`, { cache: "no-store" });
       const data = await res.json();
       if (!res.ok || !Array.isArray(data.questions) || data.questions.length === 0) {
-        setPhase("start");
+        setLoading(false);
         return;
       }
       setQuestions(data.questions);
-      setPhase("playing");
+      setTimeLeft(lv.time);
+      setScreen("playing");
     } catch {
-      setPhase("start");
+      setLoading(false);
+    } finally {
+      setLoading(false);
     }
   }, []);
 
-  const finish = useCallback(async (finalScore: number, finalAnswered: number) => {
+  const finish = useCallback((
+    finalScore: number, finalCorrect: number, finalWrong: number,
+    finalMaxCombo: number, gameOver: boolean, timeUp: boolean
+  ) => {
     stopBGM();
-    if (finalScore > 0) { sfx.win(); haptic([40, 40, 80]); setBurst((b) => b + 1); }
-    else { sfx.gameover(); haptic(120); }
-    setPhase("gameover");
-    try {
-      const res = await fetch("/api/game/menara", {
+    const total = finalCorrect + finalWrong;
+    const accuracy = total === 0 ? 0 : Math.round((finalCorrect / total) * 100);
+    const stars = starsFor(accuracy, gameOver);
+    const xpEarned = Math.min(Math.floor(finalScore / 40), 60);
+
+    if (!gameOver && finalScore > 0) {
+      sfx.win();
+      haptic([40, 40, 80]);
+      setBurst((b) => b + 1);
+    } else if (gameOver) {
+      sfx.gameover?.();
+      haptic(120);
+    }
+
+    setResult({ score: finalScore, correct: finalCorrect, wrong: finalWrong, accuracy, stars, maxCombo: finalMaxCombo, gameOver, xpEarned });
+    setScreen("result");
+
+    /* Save progress */
+    setSaved((prev) => {
+      const next = { ...prev, best: { ...prev.best }, stars: { ...prev.stars }, unlocked: [...prev.unlocked] };
+      if (!gameOver) {
+        if (!next.best[levelId] || finalScore > next.best[levelId]) next.best[levelId] = finalScore;
+        if (!next.stars[levelId] || stars > next.stars[levelId]) next.stars[levelId] = stars;
+        const nid = levelId + 1;
+        if (nid <= LEVELS.length && !next.unlocked.includes(nid)) next.unlocked.push(nid);
+      }
+      saveSaved(next);
+      return next;
+    });
+
+    /* XP */
+    if (!xpSentRef.current && finalScore > 0) {
+      xpSentRef.current = true;
+      let supabaseId = "";
+      try {
+        supabaseId = JSON.parse(localStorage.getItem("bc-user") || "{}").state?.supabaseId || "";
+      } catch { /* abaikan */ }
+      fetch("/api/game/xp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ correct: finalScore, total: finalAnswered }),
-      });
-      const data = await res.json();
-      if (res.ok) setXpResult({ xpEarned: data.xpEarned ?? 0, leveledUp: !!data.leveledUp });
-    } catch {
-      /* keep local result */
+        body: JSON.stringify({
+          score: finalScore,
+          correct: finalCorrect,
+          wrong: finalWrong,
+          maxStreak: finalMaxCombo,
+          xpEarned,
+          gameType: "BENAR_SALAH",
+          supabaseId,
+        }),
+      }).catch(() => { /* abaikan */ });
     }
-  }, []);
-
-  useEffect(() => () => stopBGM(), []);
-
-  // Countdown timer
-  useEffect(() => {
-    if (phase !== "playing") return;
-    if (timeLeft <= 0) {
-      finish(score, answered);
-      return;
-    }
-    if (timeLeft <= 5) sfx.tick();
-    const t = setTimeout(() => setTimeLeft((s) => s - 1), 1000);
-    return () => clearTimeout(t);
-  }, [phase, timeLeft, score, answered, finish]);
+  }, [levelId]);
 
   const answer = (saidBenar: boolean) => {
-    if (lockRef.current || phase !== "playing") return;
+    if (lockRef.current || screen !== "playing") return;
     lockRef.current = true;
 
-    const correct = (candidateIdx === current.jawaban) === saidBenar;
-    setAnswered((a) => a + 1);
-    if (correct) {
-      setScore((s) => s + 1);
-      setCombo((c) => { const nc = c + 1; setBest((b) => Math.max(b, nc)); if (nc >= 3) sfx.combo(nc); else sfx.correct(); return nc; });
-      setFlash("ok"); haptic(25); setBurst((b) => b + 1);
+    const isCorrect = (candidateIdx === current.jawaban) === saidBenar;
+    const newCorrect = isCorrect ? correctCount + 1 : correctCount;
+    const newWrong = isCorrect ? wrongCount : wrongCount + 1;
+    const newLives = isCorrect ? lives : lives - 1;
+
+    if (isCorrect) {
+      const newScore = score + 1;
+      const newCombo = combo + 1;
+      setScore(newScore);
+      setCombo(newCombo);
+      setBestCombo((b) => Math.max(b, newCombo));
+      setCorrectCount(newCorrect);
+      if (newCombo >= 3) sfx.combo?.(newCombo);
+      else sfx.correct?.();
+      haptic(25);
+      setBurst((b) => b + 1);
+      setFlash("ok");
     } else {
       setCombo(0);
-      setFlash("no"); sfx.wrong(); haptic([60, 40, 60]);
+      setWrongCount(newWrong);
+      setLives(newLives);
+      sfx.wrong?.();
+      haptic([60, 40, 60]);
+      setFlash("no");
       controls.start({ x: [0, -10, 10, -7, 7, 0], transition: { duration: 0.4 } });
     }
 
+    const delay = isCorrect ? 320 : 620;
     setTimeout(() => {
       setFlash(null);
       lockRef.current = false;
-      setIdx((i) => {
-        const next = i + 1;
-        if (next >= questions.length) {
-          // Out of questions before time — end the round.
-          finish(correct ? score + 1 : score, answered + 1);
-          return i;
-        }
-        return next;
-      });
-    }, correct ? 320 : 620);
+
+      if (newLives <= 0) {
+        finish(score + (isCorrect ? 1 : 0), newCorrect, newWrong, bestCombo, true, false);
+        return;
+      }
+
+      const next = idx + 1;
+      if (next >= questions.length) {
+        finish(score + (isCorrect ? 1 : 0), newCorrect, newWrong, Math.max(bestCombo, isCorrect ? combo + 1 : 0), false, false);
+        return;
+      }
+
+      setIdx(next);
+    }, delay);
   };
 
-  // ---------- START ----------
-  if (phase === "start" || phase === "loading") {
-    return (
-      <Shell>
-        <div className="flex-1 flex flex-col items-center justify-center text-center px-6">
-          <motion.div initial={{ scale: 0.6, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ type: "spring", stiffness: 200 }}
-            className="w-24 h-24 rounded-[28px] bg-gradient-to-br from-emerald-400 via-teal-500 to-cyan-600 flex items-center justify-center shadow-2xl shadow-teal-500/40 mb-6">
-            <Zap className="w-12 h-12 text-white" />
-          </motion.div>
-          <h1 className="text-3xl font-extrabold text-white mb-2">Benar atau Salah</h1>
-          <p className="text-sm text-white/60 max-w-xs mb-1">Baca soal + jawaban yang muncul, lalu tentukan: benar atau salah?</p>
-          <p className="text-xs text-white/40 max-w-xs mb-8">60 detik. Jawab sebanyak & secepat mungkin. Combo beruntun = skor melejit!</p>
+  /* ---------- RENDER HELPERS ---------- */
+  const timePct = (timeLeft / level.time) * 100;
+  const chunky = "border-4 border-[#161B3A] shadow-[6px_6px_0_#161B3A]";
+  const btnBase = `inline-flex items-center justify-center gap-2 font-extrabold rounded-2xl ${chunky} transition-transform active:translate-x-1.5 active:translate-y-1.5 active:shadow-none hover:-translate-x-0.5 hover:-translate-y-0.5`;
 
-          <div className="flex items-center gap-3 mb-8">
-            <Badge icon={<Timer className="w-4 h-4 text-cyan-300" />} label="60 detik" />
-            <Badge icon={<Flame className="w-4 h-4 text-orange-400" />} label="Combo" />
-            <Badge icon={<Zap className="w-4 h-4 text-amber-400" />} label="+XP" />
+  /* ---------- START SCREEN ---------- */
+  if (screen === "start") {
+    return (
+      <div className="fixed inset-0 z-[60] overflow-y-auto bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] text-[#161B3A]">
+        <style>{`@keyframes bs-float1{0%,100%{transform:translate(0,0) rotate(6deg)}50%{transform:translate(16px,-22px) rotate(18deg)}}
+        @keyframes bs-float2{0%,100%{transform:translate(0,0) rotate(0)}50%{transform:translate(-18px,16px) rotate(-12deg)}}
+        @keyframes bs-pop{0%{transform:scale(0) rotate(-30deg)}60%{transform:scale(1.3) rotate(8deg)}100%{transform:scale(1) rotate(0)}}
+        @keyframes bs-fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+        @keyframes bs-pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+        .bs-screen{animation:bs-fade .35s ease}
+        .bs-star{animation:bs-pop .5s ease}
+        .bs-logo{animation:bs-pulse 1.4s ease-in-out infinite}`}</style>
+        {/* Dekorasi Melayang */}
+        <div className="pointer-events-none fixed top-[8%] left-[3%] w-16 h-16 bg-[#FF6B6B] border-4 border-[#161B3A] rounded-3xl" style={{ animation: "bs-float1 9s ease-in-out infinite" }} />
+        <div className="pointer-events-none fixed top-[16%] right-[5%] w-12 h-12 bg-[#38BDF8] border-4 border-[#161B3A] rounded-full" style={{ animation: "bs-float2 10s ease-in-out infinite" }} />
+        <div className="pointer-events-none fixed bottom-[14%] left-[2%] w-14 h-14 bg-[#FBBF24] border-4 border-[#161B3A] rounded-2xl" style={{ animation: "bs-float1 11s ease-in-out infinite" }} />
+        <div className="pointer-events-none fixed bottom-[10%] right-[4%] w-11 h-11 bg-[#4ADE80] border-4 border-[#161B3A] rounded-[30%_70%_70%_30%]" style={{ animation: "bs-float2 8s ease-in-out infinite" }} />
+
+        <div className="relative max-w-xl mx-auto px-4 py-5 min-h-full flex flex-col">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2.5">
+              <div className={`bs-logo w-11 h-11 bg-[#10B981] rounded-2xl ${chunky} !shadow-[4px_4px_0_#161B3A] flex items-center justify-center`}>
+                <Zap className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <div className="font-extrabold text-xl leading-none">Benar Salah</div>
+                <div className="text-[11px] font-semibold opacity-60 mt-0.5">Tes kecepatan & ketepatan</div>
+              </div>
+            </div>
+            <button onClick={() => setSoundOn((m) => { toggleSound(); return !m; })} className={`${btnBase} w-11 h-11 bg-white`} aria-label={soundOn ? "Matikan suara" : "Nyalakan suara"}>
+              {soundOn ? <Volume2 className="w-5 h-5" /> : <VolumeX className="w-5 h-5" />}
+            </button>
           </div>
 
-          <button onClick={start} disabled={phase === "loading"}
-            className="w-full max-w-xs py-4 rounded-2xl bg-gradient-to-r from-emerald-400 to-teal-600 text-white font-bold text-lg shadow-xl shadow-teal-600/40 active:scale-95 transition-all disabled:opacity-70 flex items-center justify-center gap-2">
-            {phase === "loading" ? <><Loader2 className="w-5 h-5 animate-spin" /> Menyiapkan…</> : <><Zap className="w-5 h-5" /> Mulai</>}
-          </button>
+          <div className="bs-screen bg-white rounded-3xl p-6 text-center flex-1 flex flex-col items-center justify-center">
+            <span className="inline-block px-4 py-1.5 bg-[#FBBF24] border-[3px] border-[#161B3A] rounded-full font-extrabold text-xs shadow-[3px_3px_0_#161B3A] mb-4">9 Level • 3 Nyawa</span>
+            <h1 className="font-extrabold text-4xl mb-2">Benar atau <span className="text-[#FF6B6B]">Salah?</span></h1>
+            <p className="opacity-70 text-sm max-w-sm mb-1">Baca soal dan jawaban yang muncul. Tentukan: jawaban itu <b>benar</b> atau <b>salah</b>?</p>
+            <p className="text-xs opacity-50 mb-6">Semakin cepat & tepat, combo makin tinggi!</p>
+
+            <div className="grid grid-cols-3 gap-2.5 mb-6 w-full max-w-xs">
+              <div className="bg-[#4ADE80] border-[3px] border-[#161B3A] rounded-xl p-2 shadow-[3px_3px_0_#161B3A]">
+                <div className="text-[10px] font-extrabold uppercase opacity-70">Benar</div>
+                <div className="font-extrabold text-lg">+1</div>
+              </div>
+              <div className="bg-[#FBBF24] border-[3px] border-[#161B3A] rounded-xl p-2 shadow-[3px_3px_0_#161B3A]">
+                <div className="text-[10px] font-extrabold uppercase opacity-70">Combo</div>
+                <div className="font-extrabold text-lg">Bonus</div>
+              </div>
+              <div className="bg-[#FF6B6B] text-white border-[3px] border-[#161B3A] rounded-xl p-2 shadow-[3px_3px_0_#161B3A]">
+                <div className="text-[10px] font-extrabold uppercase opacity-70">Salah</div>
+                <div className="font-extrabold text-lg">-1 ❤️</div>
+              </div>
+            </div>
+
+            <div className="flex flex-wrap justify-center gap-3 mb-2">
+              <button className={`${btnBase} px-6 py-3.5 bg-[#FF6B6B] text-white text-lg`} onClick={() => setScreen("levels")}>
+                <Play className="w-5 h-5" /> Pilih Level
+              </button>
+              <button className={`${btnBase} px-5 py-3.5 bg-white`} onClick={() => startLevel(1)}>
+                Langsung Level 1
+              </button>
+            </div>
+          </div>
+          <p className="text-center text-[11px] opacity-50 mt-4 pb-4">Kumpulkan ⭐ di setiap level untuk buka level berikutnya!</p>
         </div>
-      </Shell>
+      </div>
     );
   }
 
-  // ---------- GAME OVER ----------
-  if (phase === "gameover") {
-    const accuracy = answered ? Math.round((score / answered) * 100) : 0;
+  /* ---------- LEVELS SCREEN ---------- */
+  if (screen === "levels") {
     return (
-      <Shell>
-        <Burst trigger={burst} x={50} y={38} count={28} />
-        <div className="flex-1 flex flex-col items-center justify-center text-center px-6">
-          <motion.div initial={{ scale: 0, rotate: -20 }} animate={{ scale: 1, rotate: 0 }} transition={{ type: "spring", stiffness: 180 }}
-            className="w-24 h-24 rounded-[28px] bg-gradient-to-br from-emerald-400 to-teal-600 flex items-center justify-center shadow-2xl shadow-teal-500/40 mb-5">
-            <Trophy className="w-12 h-12 text-white" />
-          </motion.div>
-          <h1 className="text-2xl font-extrabold text-white mb-1">Waktu Habis! ⏱️</h1>
-          <p className="text-sm text-white/60 mb-6"><span className="text-white font-bold">{score}</span> jawaban benar dari {answered}</p>
+      <div className="fixed inset-0 z-[60] overflow-y-auto bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] text-[#161B3A]">
+        <style>{`.bs-screen{animation:bs-fade .35s ease}`}</style>
+        {loading && (
+          <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/20 backdrop-blur-sm">
+            <div className="bg-white border-4 border-[#161B3A] rounded-2xl p-6 shadow-[6px_6px_0_#161B3A]">
+              <Loader2 className="w-8 h-8 animate-spin text-[#161B3A] mx-auto mb-2" />
+              <div className="font-bold text-sm">Memuat soal...</div>
+            </div>
+          </div>
+        )}
+        <div className="relative max-w-xl mx-auto px-4 py-5 min-h-full flex flex-col">
+          <div className="flex items-center justify-between mb-4">
+            <button className={`${btnBase} w-11 h-11 bg-white`} onClick={() => setScreen("start")} aria-label="Kembali">
+              <X className="w-5 h-5" />
+            </button>
+            <h2 className="font-extrabold text-2xl">Pilih Level</h2>
+            <div className="w-11" />
+          </div>
+          <div className="bs-screen bg-white rounded-3xl p-5 shadow-[6px_6px_0_#161B3A] border-4 border-[#161B3A]">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+              {LEVELS.map((lv) => {
+                const unlocked = saved.unlocked.includes(lv.id);
+                const best = saved.best[lv.id] || 0;
+                const st = saved.stars[lv.id] || 0;
+                return (
+                  <button
+                    key={lv.id}
+                    disabled={!unlocked || loading}
+                    onClick={() => unlocked && !loading && startLevel(lv.id)}
+                    className={`text-left rounded-2xl border-4 border-[#161B3A] p-3.5 transition-transform ${
+                      unlocked ? "shadow-[5px_5px_0_#161B3A] hover:-translate-x-0.5 hover:-translate-y-0.5 cursor-pointer" : "bg-gray-200 text-gray-400 cursor-not-allowed shadow-[5px_5px_0_#9CA3AF]"
+                    }`}
+                    style={unlocked ? { background: lv.color, color: ["#FBBF24", "#F59E0B", "#4ADE80", "#38BDF8"].includes(lv.color) ? "#161B3A" : "#fff" } : undefined}
+                  >
+                    <div className="flex items-start justify-between mb-1.5">
+                      <span className="font-extrabold text-2xl leading-none">#{lv.id}</span>
+                      {unlocked ? <span className="text-[9px] font-extrabold uppercase px-1.5 py-0.5 rounded bg-black/15">{lv.topic}</span> : <Lock className="w-4 h-4" />}
+                    </div>
+                    <div className="font-extrabold text-sm leading-tight mb-0.5">{lv.name}</div>
+                    <div className="text-[10px] font-semibold opacity-75 mb-1.5">{lv.count} soal • {lv.time} dtk</div>
+                    {unlocked ? (
+                      <div className="flex items-center gap-0.5">
+                        {[1, 2, 3].map((i) => (
+                          <Star key={i} className="w-4 h-4" fill={i <= st ? "currentColor" : "none"} style={{ opacity: i <= st ? 1 : 0.35 }} />
+                        ))}
+                        {best > 0 && <span className="text-[10px] font-extrabold ml-1.5 opacity-80">{best}</span>}
+                      </div>
+                    ) : (
+                      <div className="text-[10px] font-bold">Selesaikan level sebelumnya</div>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
-          <div className="w-full max-w-xs grid grid-cols-3 gap-2 mb-6">
-            <Stat big={`${score}`} label="Benar" tone="emerald" />
-            <Stat big={`${best}🔥`} label="Combo" tone="orange" />
-            <Stat big={`${accuracy}%`} label="Akurasi" tone="cyan" />
+  /* ---------- PLAYING SCREEN ---------- */
+  if (screen === "playing") {
+    return (
+      <div className="fixed inset-0 z-[60] overflow-hidden bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] text-[#161B3A]">
+        <style>{`@keyframes bs-shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}`}</style>
+        <AnimatePresence>
+          {flash && (
+            <motion.div key={flash} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="absolute inset-0 z-30 flex items-center justify-center pointer-events-none">
+              <div className={`w-28 h-28 rounded-full border-[6px] flex items-center justify-center backdrop-blur-sm ${flash === "ok" ? "border-emerald-400 text-emerald-300 bg-emerald-500/10" : "border-rose-400 text-rose-300 bg-rose-500/10"}`}>
+                {flash === "ok" ? <Check className="w-16 h-16" strokeWidth={3} /> : <X className="w-16 h-16" strokeWidth={3} />}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        <Burst trigger={burst} x={50} y={38} count={28} />
+        <ComboFlash combo={combo} />
+
+        <motion.div animate={controls} className="relative z-10 flex flex-col h-full max-w-md mx-auto px-5 pt-4 pb-6">
+          {/* HUD */}
+          <div className="flex items-center justify-between gap-2 mb-3">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/80 border-2 border-[#161B3A]">
+              <Check className="w-4 h-4 text-emerald-500" />
+              <span className="text-sm font-bold">{score}</span>
+            </div>
+            <AnimatePresence>
+              {combo >= 2 && (
+                <motion.div key={combo} initial={{ scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ opacity: 0 }} className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-orange-500/20 text-orange-600 text-sm font-extrabold border border-orange-500/30">
+                  <Flame className="w-4 h-4 fill-orange-500 text-orange-500" /> {combo}x
+                </motion.div>
+              )}
+            </AnimatePresence>
+            <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/80 border-2 border-[#161B3A]">
+              <Heart className="w-4 h-4 text-rose-500" fill="currentColor" />
+              <span className="text-sm font-bold">{lives}</span>
+            </div>
+            <div className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border-2 ${timeLeft <= 10 ? "bg-rose-500/25 text-rose-700 border-rose-400" : "bg-white/80 border-[#161B3A]"}`}>
+              <Timer className="w-4 h-4" />
+              <span className="text-sm font-bold tabular-nums">{timeLeft}s</span>
+            </div>
+            <button onClick={() => { const on = toggleSound(); setSoundOn(on); }} className="w-9 h-9 rounded-xl bg-white/80 border-2 border-[#161B3A] flex items-center justify-center text-[#161B3A]/70 active:scale-90 transition-all" aria-label={soundOn ? "Matikan suara" : "Nyalakan suara"}>
+              {soundOn ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
+            </button>
           </div>
 
-          {xpResult && (
-            <div className="mb-5 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-400/20 text-amber-300 text-xs font-bold">
-              <Sparkles className="w-3.5 h-3.5" /> +{xpResult.xpEarned} XP{xpResult.leveledUp ? " · Naik Level!" : ""}
+          {/* Timer bar */}
+          <div className="mb-5">
+            <div className="h-2.5 rounded-full bg-white/60 border-2 border-[#161B3A] overflow-hidden">
+              <motion.div className={`h-full rounded-full ${timeLeft <= 10 ? "bg-rose-500" : "bg-gradient-to-r from-emerald-400 to-teal-500"}`} animate={{ width: `${timePct}%` }} transition={{ ease: "linear", duration: 1 }} />
+            </div>
+          </div>
+
+          {/* Question */}
+          <div className="flex-1 flex flex-col justify-center pb-6">
+            <AnimatePresence mode="wait">
+              <motion.div key={idx} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} transition={{ duration: 0.18 }} className="rounded-3xl bg-white/[0.07] border border-white/10 p-6 text-center mb-6">
+                <p className="text-xs font-bold uppercase tracking-wider text-[#161B3A]/60 mb-3">Soal {idx + 1} / {questions.length}</p>
+                <h2 className="text-lg font-bold text-[#161B3A] leading-snug mb-5">{current?.soal}</h2>
+                <div className="inline-block px-5 py-3 rounded-2xl bg-white/10 border border-white/15">
+                  <span className="text-[11px] text-[#161B3A]/50 block mb-0.5">Jawabannya:</span>
+                  <span className="text-xl font-extrabold text-[#161B3A]">{current?.opsi[candidateIdx]}</span>
+                </div>
+              </motion.div>
+            </AnimatePresence>
+
+            <div className="grid grid-cols-2 gap-3">
+              <button onClick={() => answer(true)} className={`py-5 rounded-3xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white font-extrabold text-lg shadow-lg shadow-emerald-600/30 active:scale-95 transition-all flex flex-col items-center gap-1 border-4 border-[#161B3A]`}>
+                <Check className="w-7 h-7" /> BENAR
+              </button>
+              <button onClick={() => answer(false)} className={`py-5 rounded-3xl bg-gradient-to-br from-rose-500 to-red-600 text-white font-extrabold text-lg shadow-lg shadow-rose-600/30 active:scale-95 transition-all flex flex-col items-center gap-1 border-4 border-[#161B3A]`}>
+                <X className="w-7 h-7" /> SALAH
+              </button>
+            </div>
+          </div>
+
+          <div className="flex items-center justify-between">
+            <button className={`${btnBase} w-11 h-11 bg-white`} onClick={() => { stopBGM(); setScreen("levels"); }} aria-label="Keluar">
+              <X className="w-5 h-5" />
+            </button>
+            <div className="hidden md:block text-xs font-semibold opacity-60">Tombol keyboard: ← Benar • → Salah</div>
+            <div className="w-11" />
+          </div>
+        </motion.div>
+      </div>
+    );
+  }
+
+  /* ---------- RESULT SCREEN ---------- */
+  if (screen === "result" && result) {
+    return (
+      <div className="fixed inset-0 z-[60] overflow-y-auto bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] text-[#161B3A]">
+        <style>{`.bs-screen{animation:bs-fade .35s ease}`}</style>
+        <Burst trigger={burst} x={50} y={38} count={28} />
+        <div className="relative max-w-xl mx-auto px-4 py-5 min-h-full flex flex-col items-center justify-center text-center">
+          <motion.div initial={{ scale: 0, rotate: -20 }} animate={{ scale: 1, rotate: 0 }} transition={{ type: "spring", stiffness: 180 }} className={`w-24 h-24 rounded-[28px] bg-gradient-to-br ${result.gameOver ? "from-rose-400 to-red-600" : result.stars >= 2 ? "from-emerald-400 to-teal-600" : "from-amber-400 to-orange-600"} flex items-center justify-center shadow-2xl shadow-teal-500/40 mb-5`}>
+            {result.gameOver ? <X className="w-12 h-12 text-white" /> : <Trophy className="w-12 h-12 text-white" />}
+          </motion.div>
+          <h1 className="text-2xl font-extrabold mb-1">
+            {result.gameOver ? "Nyawa Habis! 😢" : result.stars === 3 ? "Sempurna! 🎉" : "Level Selesai!"}
+          </h1>
+          <p className="text-sm opacity-60 mb-6">
+            {result.gameOver ? "Jangan menyerah, coba lagi!" : `Kamu menjawab ${result.correct} soal dengan benar!`}
+          </p>
+
+          <div className="flex justify-center gap-1.5 mb-4">
+            {[1, 2, 3].map((i) => (
+              <Star key={i} className={`w-12 h-12 ${i <= result.stars ? "bs-star" : ""}`} style={{ animationDelay: `${i * 0.15}s` }} fill={i <= result.stars ? "#FBBF24" : "none"} stroke={i <= result.stars ? "#F59E0B" : "#D1D5DB"} strokeWidth={2} />
+            ))}
+          </div>
+
+          <div className="inline-block bg-[#161B3A] text-white rounded-2xl px-7 py-3 mb-4 shadow-[5px_5px_0_#FF6B6B]">
+            <div className="text-[10px] font-extrabold uppercase tracking-wider opacity-70">Skor Akhir</div>
+            <div className="font-extrabold text-4xl leading-none">{result.score}</div>
+          </div>
+
+          <div className="grid grid-cols-4 gap-2 max-w-sm mx-auto mb-6 text-center">
+            <div className="bg-[#4ADE80] border-[3px] border-[#161B3A] rounded-xl p-2 shadow-[2px_2px_0_#161B3A]">
+              <div className="text-[9px] font-extrabold uppercase opacity-70">Benar</div>
+              <div className="font-extrabold text-lg">{result.correct}</div>
+            </div>
+            <div className="bg-[#FBBF24] border-[3px] border-[#161B3A] rounded-xl p-2 shadow-[2px_2px_0_#161B3A]">
+              <div className="text-[9px] font-extrabold uppercase opacity-70">Salah</div>
+              <div className="font-extrabold text-lg">{result.wrong}</div>
+            </div>
+            <div className="bg-[#FF6B6B] text-white border-[3px] border-[#161B3A] rounded-xl p-2 shadow-[2px_2px_0_#161B3A]">
+              <div className="text-[9px] font-extrabold uppercase opacity-70">Akurasi</div>
+              <div className="font-extrabold text-lg">{result.accuracy}%</div>
+            </div>
+            <div className="bg-white border-[3px] border-[#161B3A] rounded-xl p-2 shadow-[2px_2px_0_#161B3A]">
+              <div className="text-[9px] font-extrabold uppercase opacity-70">Combo</div>
+              <div className="font-extrabold text-lg">{result.maxCombo}</div>
+            </div>
+          </div>
+
+          {result.xpEarned > 0 && (
+            <div className="mb-5 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-400/20 text-amber-700 text-xs font-bold">
+              <Sparkles className="w-3.5 h-3.5" /> +{result.xpEarned} XP
             </div>
           )}
 
           <div className="w-full max-w-xs flex flex-col gap-2.5">
-            <button onClick={start} className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-emerald-400 to-teal-600 text-white font-bold shadow-lg shadow-teal-600/30 active:scale-95 transition-all flex items-center justify-center gap-2">
-              <RotateCcw className="w-4 h-4" /> Main Lagi
+            <button onClick={() => startLevel(levelId)} className={`${btnBase} w-full py-3.5 bg-gradient-to-r from-emerald-400 to-teal-600 text-white font-bold shadow-lg shadow-teal-600/30`}>
+              <RotateCcw className="w-4 h-4" /> Ulangi Level
             </button>
-            <Link href={backHref} className="w-full py-3.5 rounded-2xl bg-white/10 text-white/80 font-semibold active:scale-95 transition-all text-center">
+            {!result.gameOver && levelId < LEVELS.length && (
+              <button onClick={() => startLevel(levelId + 1)} className={`${btnBase} w-full py-3.5 bg-[#FF6B6B] text-white font-bold`}>
+                Level Berikutnya <ChevronRight className="w-4 h-4" />
+              </button>
+            )}
+            <button onClick={() => setScreen("levels")} className={`${btnBase} w-full py-3.5 bg-[#FBBF24] font-bold`}>
+              Pilih Level
+            </button>
+            <Link href={backHref} className={`${btnBase} w-full py-3.5 bg-white/80 text-[#161B3A]/80 font-semibold text-center`}>
               Kembali ke Arena
             </Link>
           </div>
         </div>
-      </Shell>
+      </div>
     );
   }
 
-  // ---------- PLAYING ----------
-  const timePct = (timeLeft / ROUND_SECONDS) * 100;
+  /* Fallback / Loading */
   return (
-    <Shell flash={flash} controls={controls}>
-      <Burst trigger={burst} x={50} y={42} />
-      <ComboFlash combo={combo} />
-      {/* judgment stamp — thematic decoration */}
-      <AnimatePresence>
-        {flash && (
-          <motion.div key={`${flash}-${idx}`} initial={{ scale: 2.2, opacity: 0, rotate: -28 }} animate={{ scale: 1, opacity: 1, rotate: -12 }} exit={{ opacity: 0, scale: 0.7 }} transition={{ type: "spring", stiffness: 320, damping: 15 }}
-            className="pointer-events-none absolute inset-0 z-30 flex items-center justify-center">
-            <div className={`w-28 h-28 rounded-full border-[6px] flex items-center justify-center backdrop-blur-sm ${flash === "ok" ? "border-emerald-400 text-emerald-300 bg-emerald-500/10" : "border-rose-400 text-rose-300 bg-rose-500/10"}`}>
-              {flash === "ok" ? <Check className="w-16 h-16" strokeWidth={3} /> : <X className="w-16 h-16" strokeWidth={3} />}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* HUD */}
-      <div className="px-5 pt-4 pb-2 flex items-center justify-between">
-        <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10">
-          <Check className="w-4 h-4 text-emerald-300" />
-          <span className="text-sm font-bold text-white">{score}</span>
-        </div>
-        <AnimatePresence>
-          {combo >= 2 && (
-            <motion.div key={combo} initial={{ scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ opacity: 0 }}
-              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-orange-500/20 text-orange-300 text-sm font-extrabold">
-              <Flame className="w-4 h-4 fill-orange-400 text-orange-400" /> {combo}x
-            </motion.div>
-          )}
-        </AnimatePresence>
-        <div className="flex items-center gap-2">
-          <div className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full ${timeLeft <= 10 ? "bg-rose-500/25 text-rose-200" : "bg-white/10 text-white"}`}>
-            <Timer className="w-4 h-4" />
-            <span className="text-sm font-bold tabular-nums">{timeLeft}s</span>
-          </div>
-          <MuteButton on={soundOn} onToggle={() => setSoundOn(toggleSound())} />
-        </div>
-      </div>
-
-      {/* timer bar */}
-      <div className="px-5 mb-5">
-        <div className="h-2 rounded-full bg-white/10 overflow-hidden">
-          <motion.div className={`h-full rounded-full ${timeLeft <= 10 ? "bg-rose-500" : "bg-gradient-to-r from-emerald-400 to-teal-500"}`} animate={{ width: `${timePct}%` }} transition={{ ease: "linear", duration: 1 }} />
-        </div>
-      </div>
-
-      {/* prompt */}
-      <div className="flex-1 flex flex-col justify-center px-5 pb-6">
-        <AnimatePresence mode="wait">
-          <motion.div key={idx} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} transition={{ duration: 0.18 }}
-            className="rounded-3xl bg-white/[0.07] border border-white/10 p-6 text-center mb-6">
-            <p className="text-xs font-bold uppercase tracking-wider text-emerald-300/80 mb-3">Soal</p>
-            <h2 className="text-lg font-bold text-white leading-snug mb-5">{current?.soal}</h2>
-            <div className="inline-block px-5 py-3 rounded-2xl bg-white/10 border border-white/15">
-              <span className="text-[11px] text-white/50 block mb-0.5">Jawabannya:</span>
-              <span className="text-xl font-extrabold text-white">{current?.opsi[candidateIdx]}</span>
-            </div>
-          </motion.div>
-        </AnimatePresence>
-
-        <div className="grid grid-cols-2 gap-3">
-          <button onClick={() => answer(true)}
-            className="py-5 rounded-3xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white font-extrabold text-lg shadow-lg shadow-emerald-600/30 active:scale-95 transition-all flex flex-col items-center gap-1">
-            <Check className="w-7 h-7" /> BENAR
-          </button>
-          <button onClick={() => answer(false)}
-            className="py-5 rounded-3xl bg-gradient-to-br from-rose-500 to-red-600 text-white font-extrabold text-lg shadow-lg shadow-rose-600/30 active:scale-95 transition-all flex flex-col items-center gap-1">
-            <X className="w-7 h-7" /> SALAH
-          </button>
-        </div>
-      </div>
-    </Shell>
-  );
-}
-
-function Shell({ children, flash, controls }: { children: React.ReactNode; flash?: null | "ok" | "no"; controls?: ReturnType<typeof useAnimationControls> }) {
-  return (
-    <div className="fixed inset-0 z-[60] flex flex-col overflow-hidden transition-colors duration-200"
-      style={{ background: flash === "ok" ? "radial-gradient(120% 80% at 50% 0%, #064E3B 0%, #06251C 60%, #04120E 100%)"
-        : flash === "no" ? "radial-gradient(120% 80% at 50% 0%, #4C0519 0%, #2A0410 60%, #150207 100%)"
-        : "radial-gradient(120% 80% at 50% 0%, #0F3D3A 0%, #0A2320 45%, #05100F 100%)" }}>
-      <motion.div animate={controls} className="relative z-10 flex-1 flex flex-col max-w-md w-full mx-auto">{children}</motion.div>
-    </div>
-  );
-}
-
-function MuteButton({ on, onToggle }: { on: boolean; onToggle: () => void }) {
-  return (
-    <button onClick={onToggle} aria-label={on ? "Matikan suara" : "Nyalakan suara"}
-      className="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center text-white/70 active:scale-90 transition-all">
-      {on ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
-    </button>
-  );
-}
-
-function Badge({ icon, label }: { icon: React.ReactNode; label: string }) {
-  return (
-    <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/[0.07] border border-white/10">
-      {icon}<span className="text-xs font-semibold text-white/80">{label}</span>
-    </div>
-  );
-}
-
-function Stat({ big, label, tone }: { big: string; label: string; tone: "emerald" | "orange" | "cyan" }) {
-  const tones = { emerald: "text-emerald-300", orange: "text-orange-300", cyan: "text-cyan-300" };
-  return (
-    <div className="rounded-2xl bg-white/[0.06] border border-white/10 py-3 px-1 text-center">
-      <p className={`text-xl font-extrabold ${tones[tone]}`}>{big}</p>
-      <p className="text-[10px] font-semibold uppercase tracking-wide text-white/40 mt-0.5">{label}</p>
+    <div className="fixed inset-0 z-[60] flex items-center justify-center bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] text-[#161B3A]">
+      <Loader2 className="w-10 h-10 animate-spin text-[#161B3A]" />
     </div>
   );
 }

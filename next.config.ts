@@ -14,6 +14,8 @@ const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
       { protocol: "https", hostname: "*.supabase.co" },
+      { protocol: "https", hostname: "www.gravatar.com" },
+      { protocol: "https", hostname: "secure.gravatar.com" },
       { protocol: "https", hostname: "images.unsplash.com" },
       { protocol: "https", hostname: "api.dicebear.com" },
       { protocol: "https", hostname: "i.ytimg.com" },

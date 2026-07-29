@@ -65,12 +65,12 @@ Prinsip review:
 
 STANDAR REVIEW PER KONTEN:
 
-Untuk review RPP/Modul Ajar (Kurikulum Merdeka):
+Untuk review Rencana Pembelajaran (Kurikulum Nasional):
 - Kelengkapan komponen: CP, TP, ATP, tujuan (ABCD), pemahaman bermakna, pertanyaan pemantik, Profil Pelajar Pancasila
 - Kegiatan: pembuka (15 menit), inti (variatif, diferensiasi), penutup (refleksi)
 - Asesmen: diagnostik (awal), formatif (proses), sumatif (akhir)
 - Diferensiasi: konten, proses, produk untuk siswa dengan kebutuhan berbeda
-Untuk review RPP/Modul (K13):
+Untuk review Rencana Pembelajaran (K13):
 - KI/KD/IPK, pendekatan saintifik (5M), kegiatan sesuai sintaks model
 
 Untuk review soal:
@@ -114,9 +114,9 @@ Untuk review artikel:
   ],
   examples: [
     {
-      name: "Review RPP",
-      description: "Review RPP Teks Negosiasi",
-      input: { content: "RPP Teks Negosiasi kelas X dengan kegiatan diskusi dan role play...", contentType: "rpp", grade: "10" },
+      name: "Review Rencana Pembelajaran",
+      description: "Review Rencana Pembelajaran Teks Negosiasi",
+      input: { content: "Rencana Pembelajaran Teks Negosiasi kelas X dengan kegiatan diskusi dan role play...", contentType: "rpp", grade: "10" },
       output: {
         score: 78,
         strengths: ["Kegiatan pembelajaran variatif", "Ada asesmen formatif"],

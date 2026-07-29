@@ -228,7 +228,7 @@ export async function runAgent(opts: RunAgentOptions): Promise<AgentRunResult> {
           // RPP fallback template when provider returns empty
           try {
             salvagedText = generateRPPFallback(input as any);
-            warn.push("RPP dibuat dengan template cadangan karena AI tidak menghasilkan output. Silakan lengkapi kembali sebelum digunakan.");
+            warn.push("Rencana Pembelajaran dibuat dengan template cadangan karena AI tidak menghasilkan output. Silakan lengkapi kembali sebelum digunakan.");
           } catch {
             finalError = OUTPUT_VALIDATION_FAILED;
           }
@@ -249,7 +249,7 @@ export async function runAgent(opts: RunAgentOptions): Promise<AgentRunResult> {
       } else {
         try {
           salvagedText = generateRPPFallback(input as never);
-          warn.push("Generator AI utama gagal, sistem menampilkan template RPP fallback yang dapat diedit guru.");
+          warn.push("Generator AI utama gagal, sistem menampilkan template Rencana Pembelajaran fallback yang dapat diedit guru.");
         } catch {
           // biarkan apa adanya
         }
@@ -339,7 +339,7 @@ export async function runAgent(opts: RunAgentOptions): Promise<AgentRunResult> {
     if (agent.id === "rpp" && (error instanceof ProviderChainFailedError)) {
       try {
         const fallbackText = generateRPPFallback(input as never);
-        warn.push("Generator AI utama gagal, sistem menampilkan template RPP fallback yang dapat diedit guru.");
+        warn.push("Generator AI utama gagal, sistem menampilkan template Rencana Pembelajaran fallback yang dapat diedit guru.");
         const fallbackOutput = {
           text: fallbackText,
           editableText: fallbackText,

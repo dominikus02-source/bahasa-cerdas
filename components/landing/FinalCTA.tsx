@@ -35,14 +35,13 @@ export default function FinalCTA() {
           </div>
 
           <h2 id="cta-heading" className="heading-lg text-white mb-6">
-            Siap Merevolusi Cara{" "}
-            <span className="text-amber-400">Anda Mengajar</span>?
+            Siap Membuat Mengajar{" "}
+            <span className="text-amber-400">Lebih Ringan</span>?
           </h2>
 
           <p className="text-base lg:text-lg text-zinc-400 leading-relaxed mb-10 max-w-xl mx-auto">
-            Jadilah bagian dari gerakan literasi digital untuk 350.000+ guru
-            Bahasa Indonesia. Hemat waktu persiapan, tingkatkan kualitas
-            pembelajaran.
+            Coba BahasaCerdas untuk persiapan mengajar yang lebih cepat dan
+            pembelajaran Bahasa Indonesia yang lebih interaktif.
           </p>
 
           <div className="flex flex-wrap justify-center gap-4 mb-10">

@@ -120,3 +120,17 @@ export function getTKAPredikat(percentage: number): string {
   if (percentage >= 55) return "C (Cukup)";
   return "D (Kurang)";
 }
+
+const GELAR_BANDS: { min: number; label: string }[] = [
+  { min: 16, label: "Legenda BahasaCerdas" },
+  { min: 13, label: "Pujangga Muda" },
+  { min: 10, label: "Maestro Kata" },
+  { min: 7, label: "Juru Bahasa" },
+  { min: 5, label: "Pencerita Andal" },
+  { min: 3, label: "Perangkai Kata" },
+  { min: 1, label: "Penulis Pemula" },
+];
+
+export function getGelarFromLevel(level: number): string {
+  return (GELAR_BANDS.find((b) => level >= b.min) || GELAR_BANDS[GELAR_BANDS.length - 1]).label;
+}

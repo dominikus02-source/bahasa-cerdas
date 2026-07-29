@@ -1,52 +1,24 @@
 import { NextResponse } from "next/server";
+import cache from "@/lib/redis";
 
-const rateMap = new Map<string, { count: number; resetAt: number }>();
+export type RateLimitScope = "auth" | "api" | "ai" | "ipBurst";
 
-// IMPORTANT: a whole class shares ONE public IP (school NAT). Limits keyed on IP
-// alone therefore divide by the number of students in the room — the old
-// `api: 120` meant ~6 requests/minute each for 20 students, which a single page
-// load exceeds. So:
-//   - `api` is keyed per SESSION (see getClientKey) and sized for one student.
-//   - `auth` must stay IP-keyed (no session cookie exists before login yet), so
-//     it is sized for a whole class signing in at the same time.
-//   - `ipBurst` is the only true per-IP limit: an abuse backstop, deliberately
-//     far above what a full classroom generates.
-const LIMITS = {
-  // IP-keyed: no session cookie exists yet at login time, so this must fit a
-  // whole school signing in at once (200-student events are a real workload).
-  // Supabase Auth enforces its own limits, which are the actual defence against
-  // credential stuffing — this only stops something pathological.
+// Dedicated Redis key prefix — can be shared-nothing with other cache data
+const RATE_LIMIT_PREFIX = "rl:";
+
+const LIMITS: Record<RateLimitScope, { window: number; max: number }> = {
   auth: { window: 60_000, max: 1000 },
-  // Session-keyed, sized for ONE student. Only applied to identified traffic —
-  // anonymous requests have no session to key on, so applying this to them would
-  // recreate the very bug it exists to fix (see getClientKey / isIdentified).
   api: { window: 60_000, max: 300 },
   ai: { window: 60_000, max: 30 },
-  // The only true per-IP limit, and the sole limit anonymous traffic hits. Sized
-  // above what a full school generates while browsing; anything past it is not a
-  // classroom.
   ipBurst: { window: 60_000, max: 20_000 },
-} as const;
+};
 
-export type RateLimitScope = keyof typeof LIMITS;
-
-// Cheap non-cryptographic hash (djb2). This only picks a counter bucket — it is
-// not a security boundary — so it needs no crypto and works in any runtime.
 function hashToBucket(value: string): string {
   let h = 5381;
   for (let i = 0; i < value.length; i++) h = ((h << 5) + h + value.charCodeAt(i)) | 0;
   return (h >>> 0).toString(36);
 }
 
-// Identifies the individual client, not the network they sit behind. Falls back
-// to the raw IP for anonymous traffic (pre-login), which is why `auth` is sized
-// for a classroom rather than a person.
-// Reads the raw Cookie header rather than a framework cookie jar so this works
-// for both NextRequest (middleware) and a plain Request (route handlers).
-// `identified` is returned explicitly rather than inferred from the key's shape.
-// An earlier version sniffed for a ":" separator, which silently misread every
-// IPv6 address (they are full of colons) as a logged-in session — including
-// ::1 in local testing and real IPv6 mobile clients in production.
 export function getClientIdentity(request: { headers: Headers }): { key: string; identified: boolean } {
   const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim()
     || request.headers.get("x-real-ip")
@@ -67,27 +39,49 @@ export function getClientKey(request: { headers: Headers }): string {
   return getClientIdentity(request).key;
 }
 
-export function checkRateLimit(
+// Rate limit via Redis (Upstash). Falls back to unlimited if Redis is unavailable.
+// Returns { allowed, remaining, resetAt }.
+export async function checkRateLimit(
   identifier: string,
   scope: RateLimitScope = "api"
-): { allowed: boolean; remaining: number; resetAt: number } {
-  const now = Date.now();
+): Promise<{ allowed: boolean; remaining: number; resetAt: number }> {
   const config = LIMITS[scope];
-  const key = `${scope}:${identifier}`;
+  const key = `${RATE_LIMIT_PREFIX}${scope}:${identifier}`;
+  const now = Date.now();
 
-  const entry = rateMap.get(key);
-
-  if (!entry || now > entry.resetAt) {
-    rateMap.set(key, { count: 1, resetAt: now + config.window });
-    return { allowed: true, remaining: config.max - 1, resetAt: now + config.window };
+  if (!cache) {
+    return { allowed: true, remaining: config.max, resetAt: now + config.window };
   }
 
-  if (entry.count >= config.max) {
-    return { allowed: false, remaining: 0, resetAt: entry.resetAt };
+  try {
+    const current = await cache.get<number>(key);
+    if (current === null) {
+      await cache.set(key, 1, Math.ceil(config.window / 1000));
+      return { allowed: true, remaining: config.max - 1, resetAt: now + config.window };
+    }
+    if (current >= config.max) {
+      return { allowed: false, remaining: 0, resetAt: now + config.window };
+    }
+    // INCR is atomic — safe against concurrent requests
+    const ttl = await cache.get<number>(key);
+    // If ttl expired between get and set, start fresh
+    if (ttl === null) {
+      await cache.set(key, 1, Math.ceil(config.window / 1000));
+      return { allowed: true, remaining: config.max - 1, resetAt: now + config.window };
+    }
+    // Use Redis INCR for atomic increment
+    const count = await cache.incr(key);
+    if (count === 1) {
+      // First increment after expiry — set TTL
+      await cache.set(key, count, Math.ceil(config.window / 1000));
+    }
+    if (count > config.max) {
+      return { allowed: false, remaining: 0, resetAt: now + config.window };
+    }
+    return { allowed: true, remaining: config.max - count, resetAt: now + config.window };
+  } catch {
+    return { allowed: true, remaining: config.max, resetAt: now + config.window };
   }
-
-  entry.count++;
-  return { allowed: true, remaining: config.max - entry.count, resetAt: entry.resetAt };
 }
 
 export function rateLimitResponse(scope: RateLimitScope = "auth"): NextResponse {
@@ -96,14 +90,6 @@ export function rateLimitResponse(scope: RateLimitScope = "auth"): NextResponse 
     { status: 429 }
   );
 }
-
-const CLEANUP_INTERVAL = 300_000;
-setInterval(() => {
-  const now = Date.now();
-  for (const [key, entry] of rateMap.entries()) {
-    if (now > entry.resetAt) rateMap.delete(key);
-  }
-}, CLEANUP_INTERVAL);
 
 const SENSITIVE_ANSWER_FIELDS = [
   "correctAnswer",

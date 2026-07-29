@@ -50,7 +50,7 @@ export default function CartPage() {
   const hasPaidItem = items.some(i => i.price > 0);
 
   const TYPES: Record<string, string> = {
-    RPP: "RPP", MODUL: "Modul", PPT: "PPT", SOAL: "Soal",
+    RPP: "Rencana Pembelajaran", MODUL: "Rencana Pembelajaran (Modul)", PPT: "PPT", SOAL: "Soal",
     VIDEO: "Video", EBOOK: "Ebook", ADMINISTRASI: "Administrasi", LAINNYA: "Lainnya"
   };
 

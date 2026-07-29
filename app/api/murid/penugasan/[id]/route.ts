@@ -50,16 +50,30 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
       return NextResponse.json({ data: { ...base, kuis: toStudentQuestions(buildKuis(content)) } });
     }
 
-    // MATERI: Belajar + Latihan (no keys) + Praktik. Kuis & Panduan Guru excluded.
     const rp = content?.readingPractice;
+    const reading = rp && (rp.stimulusText || rp.stimulusTitle)
+      ? { title: rp.stimulusTitle || rp.title || "Bacaan", text: rp.stimulusText || "" }
+      : null;
+
+    // LATIHAN saja: hanya soal latihan (tanpa kunci).
+    if (penugasan.jenis === "LATIHAN") {
+      return NextResponse.json({
+        data: { ...base, latihan: toStudentQuestions(buildLatihan(content)), reading },
+      });
+    }
+
+    // PRAKTIK saja: hanya petunjuk praktik, murid unggah hasil untuk dinilai guru.
+    if (penugasan.jenis === "PRAKTIK") {
+      return NextResponse.json({ data: { ...base, praktik: resolvePraktik(content) } });
+    }
+
+    // MATERI: Belajar + Latihan (no keys) + Praktik. Kuis & Panduan Guru excluded.
     return NextResponse.json({
       data: {
         ...base,
         belajar: resolveBelajar(content),
         latihan: toStudentQuestions(buildLatihan(content)),
-        reading: rp && (rp.stimulusText || rp.stimulusTitle)
-          ? { title: rp.stimulusTitle || rp.title || "Bacaan", text: rp.stimulusText || "" }
-          : null,
+        reading,
         praktik: resolvePraktik(content),
       },
     });

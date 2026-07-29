@@ -17,9 +17,9 @@ import { fadeInUp, staggerContainer, sectionProps, itemProps } from "@/lib/motio
 const tools = [
   {
     icon: FileText,
-    title: "Generator RPP",
+    title: "Generator Rencana Pembelajaran",
     description:
-      "Hasilkan RPP lengkap dengan tujuan pembelajaran, kegiatan, dan asesmen sesuai Kurikulum Merdeka dalam 30 detik.",
+      "Hasilkan Rencana Pembelajaran lengkap dengan tujuan pembelajaran, kegiatan, dan asesmen sesuai Kurikulum Nasional dalam 30 detik.",
     color: "bg-red-50 text-primary",
     href: "/guru/ai-tools",
   },
@@ -89,8 +89,8 @@ export default function AIToolsSection() {
             <span className="text-primary">Mempermudah Mengajar</span>
           </h2>
           <p className="text-base lg:text-lg text-zinc-500 leading-relaxed">
-            Hemat waktu hingga 10x lipat dengan 6 alat AI yang dirancang khusus
-            untuk guru Bahasa Indonesia.
+            6 alat AI yang dirancang khusus untuk guru Bahasa Indonesia — dari
+            Rencana Pembelajaran, soal, hingga koreksi tulisan.
           </p>
         </motion.div>
 

@@ -9,7 +9,7 @@ export async function GET(req: NextRequest) {
     if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const dbUser = await db.user.findUnique({ where: { supabaseId: user.id } });
-    if (!dbUser || dbUser.role !== "GURU") {
+    if (!dbUser || (dbUser.role !== "GURU" && !dbUser.isFounder && dbUser.role !== "ADMIN")) {
       return NextResponse.json({ error: "Hanya guru yang bisa mengakses" }, { status: 403 });
     }
 
@@ -53,7 +53,7 @@ export async function POST(req: NextRequest) {
     if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const dbUser = await db.user.findUnique({ where: { supabaseId: user.id } });
-    if (!dbUser || dbUser.role !== "GURU") {
+    if (!dbUser || (dbUser.role !== "GURU" && !dbUser.isFounder && dbUser.role !== "ADMIN")) {
       return NextResponse.json({ error: "Hanya guru yang bisa mengakses" }, { status: 403 });
     }
 

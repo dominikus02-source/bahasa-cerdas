@@ -1,22 +1,35 @@
 import { NextRequest, NextResponse } from "next/server"
 import { db } from "@/lib/db"
 import { invalidateLeagueCache } from "@/lib/ai-queue"
-import { calcLevel, calcLeagueFromXP } from "@/lib/xp"
+import { getUser } from "@/lib/supabase/server"
+import { rateLimitRoute } from "@/lib/rate-limit"
+import { awardXp } from "@/lib/award-xp"
 
 export async function POST(req: NextRequest) {
   try {
-    const { score, correct, wrong, maxStreak, xpEarned, gameType, roomCode, supabaseId } = await req.json()
-    if (!supabaseId) return NextResponse.json({ error: "supabaseId required" }, { status: 400 })
+    const dbUser = await getUser()
+    if (!dbUser) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
-    const dbUser = await db.user.findUnique({ where: { supabaseId } })
-    if (!dbUser) return NextResponse.json({ error: "User not found" }, { status: 404 })
+    // Lapisan 1: jeda antar-submit. Permainan jujur butuh puluhan detik per
+    // ronde, jadi 20/menit sangat longgar untuk pemain sungguhan.
+    // Catatan: ini gagal-terbuka kalau Redis mati, jadi TIDAK boleh jadi
+    // satu-satunya pertahanan — awardXp() memasang lapisan sisanya.
+    const limited = await rateLimitRoute(req, {
+      maxRequests: 20,
+      windowSeconds: 60,
+      identifier: "game-xp",
+    })
+    if (limited) return limited
 
-    const earnedXp = xpEarned ?? Math.floor((score || 0) / 10)
+    const { score, correct, wrong, maxStreak, gameType, roomCode } = await req.json()
 
-    const oldLevel = dbUser.level
-    const newXp = dbUser.xp + earnedXp
-    const newLevel = calcLevel(newXp)
-    const newLeague = calcLeagueFromXP(newXp)
+    // XP dihitung server dari skor, bukan diambil dari badan permintaan.
+    //
+    // Dulu di sini ada `xpEarned ?? ...` yang memakai angka kiriman klien apa
+    // adanya — siapa pun bisa POST xpEarned sebesar apa pun. Tiga murid memakai
+    // itu untuk mencapai Level 751 (~375.000 XP).
+    const skor = Number.isFinite(score) && score > 0 ? Math.floor(score) : 0
+    const hasil = await awardXp(dbUser.id, "GAME", Math.floor(skor / 10), gameType || undefined)
 
     let roomId = roomCode
     if (roomCode) {
@@ -24,40 +37,32 @@ export async function POST(req: NextRequest) {
       if (existing) roomId = existing.id
     }
 
-    await db.$transaction(async (tx) => {
-      await tx.gameResult.create({
-        data: {
-          roomId: roomId || "solo",
-          userId: dbUser.id,
-          sessionId: `solo-${Date.now()}`,
-          finalScore: (score as number) || 0,
-          correct: (correct as number) || 0,
-          wrong: (wrong as number) || 0,
-          maxStreak: (maxStreak as number) || 0,
-          xpEarned: earnedXp,
-          rank: 1,
-        },
-      } as any)
-
-      await tx.user.update({
-        where: { id: dbUser.id },
-        data: {
-          xp: newXp,
-          level: newLevel,
-          lastActiveAt: new Date(),
-          league: newLeague as any,
-        },
-      })
-    })
+    await db.gameResult.create({
+      data: {
+        roomId: roomId || "solo",
+        userId: dbUser.id,
+        sessionId: `solo-${Date.now()}`,
+        finalScore: skor,
+        correct: (correct as number) || 0,
+        wrong: (wrong as number) || 0,
+        maxStreak: (maxStreak as number) || 0,
+        xpEarned: hasil.xpDiberikan,
+        rank: 1,
+      },
+    } as any)
 
     await invalidateLeagueCache(dbUser.id)
 
     return NextResponse.json({
-      xpEarned: earnedXp,
-      totalXp: newXp,
-      oldLevel,
-      newLevel,
-      levelUp: newLevel > oldLevel,
+      xpEarned: hasil.xpDiberikan,
+      boosted: hasil.boosted,
+      // Diberi tahu supaya UI bisa menjelaskan kenapa XP-nya berhenti bertambah,
+      // alih-alih terasa seperti bug.
+      kuotaHarianHabis: hasil.kuotaHabis,
+      totalXp: hasil.totalXp,
+      oldLevel: hasil.levelLama,
+      newLevel: hasil.levelBaru,
+      levelUp: hasil.naikLevel,
     })
   } catch (error) {
     console.error("Game XP error:", error)

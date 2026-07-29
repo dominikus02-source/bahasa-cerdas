@@ -145,6 +145,16 @@ async function getStats() {
   }
 }
 
+// "Rp0rb" terbaca janggal, dan `.toFixed(0)` tidak pernah menyesuaikan satuan —
+// Rp5.000.000 pun tetap tertulis "Rp5000rb". Dipakai untuk semua kartu revenue
+// di halaman ini supaya formatnya konsisten.
+function formatRupiahRingkas(v: number): string {
+  if (v <= 0) return "Rp0";
+  if (v >= 1_000_000) return `Rp${(v / 1_000_000).toFixed(1).replace(/\.0$/, "")}jt`;
+  if (v >= 1_000) return `Rp${Math.round(v / 1_000)}rb`;
+  return `Rp${v}`;
+}
+
 function PieChart({ data }: { data: { label: string; value: number; color: string }[] }) {
   const total = data.reduce((s, d) => s + d.value, 0);
   if (total === 0) return <p className="text-sm text-slate-400 text-center py-8">Belum ada data</p>;
@@ -193,14 +203,27 @@ export default async function AdminPage() {
     { label: "Video Publik", value: s.totals.video, icon: Film, color: "from-emerald-500 to-emerald-600", href: "/admin/video", trend: s.trends.video.pct },
     { label: "Artikel", value: s.totals.artikel, icon: FileText, color: "from-red-500 to-red-600", href: "/admin/artikel", trend: s.trends.artikel.pct },
     { label: "Transaksi", value: s.totals.pembelian, icon: ShoppingBag, color: "from-amber-500 to-amber-600", href: "/admin", trend: s.trends.revenue.pct },
-    { label: "Pendapatan", value: `Rp${(s.totals.revenue / 1000).toFixed(0)}rb`, icon: DollarSign, color: "from-green-500 to-green-600", href: "/admin" },
+    // Sebelumnya cuma penjualan marketplace (s.totals.revenue) — kartu paling
+    // menonjol di dashboard ini bisa menampilkan "Rp0rb" walau ada pengguna
+    // Premium yang sungguhan membayar lewat langganan (s.payments.revenue).
+    // Founder yang sekilas melihat kartu ini bisa salah simpul platform tidak
+    // menghasilkan apa-apa. Sekarang keduanya digabung jadi satu total nyata.
+    { label: "Pendapatan", value: formatRupiahRingkas(s.totals.revenue + s.payments.revenue), icon: DollarSign, color: "from-green-500 to-green-600", href: "/admin/payments" },
   ];
 
+  // Murid/Guru/Admin itu peran yang saling lepas (satu pengguna cuma satu
+  // peran), jadi jumlahnya otomatis sama dengan Total Pengguna. Premium
+  // sebelumnya ikut dimasukkan sebagai "irisan" keempat padahal dia status
+  // yang menempel di Murid atau Guru yang sama — itu sebabnya donatnya dulu
+  // menunjukkan "1059 Total" padahal Total Pengguna sebenarnya 1024: murid
+  // premium kehitung dua kali (sekali di "Murid", sekali lagi di "Premium").
+  const totalAdmin = s.totals.users - s.totals.murid - s.totals.guru;
   const pieData = [
     { label: "Murid", value: s.totals.murid, color: "#8b5cf6" },
     { label: "Guru", value: s.totals.guru, color: "#10b981" },
-    { label: "Premium", value: s.totals.premium, color: "#f59e0b" },
+    ...(totalAdmin > 0 ? [{ label: "Admin", value: totalAdmin, color: "#64748b" }] : []),
   ];
+  const premiumPct = s.totals.users > 0 ? Math.round((s.totals.premium / s.totals.users) * 100) : 0;
 
   return (
     <div className="space-y-6">
@@ -254,6 +277,15 @@ export default async function AdminPage() {
             <BarChart3 size={16} className="text-emerald-500" /> Statistik Pengguna
           </h2>
           <PieChart data={pieData} />
+          {/* Premium bukan irisan donat di atas — dia status yang menempel di
+              Murid/Guru yang sama, jadi ditampilkan terpisah sebagai persentase
+              dari total, bukan seolah kategori keempat yang saling lepas. */}
+          <div className="flex items-center justify-between mt-3 pt-3 border-t border-slate-100 text-xs">
+            <span className="flex items-center gap-1.5 text-slate-500">
+              <div className="w-2.5 h-2.5 rounded-full shrink-0 bg-amber-500" /> Pengguna Premium
+            </span>
+            <span className="font-semibold text-slate-900">{s.totals.premium} ({premiumPct}%)</span>
+          </div>
         </div>
       </div>
 
@@ -271,10 +303,12 @@ export default async function AdminPage() {
               <span className="text-xs text-blue-800">Lowongan</span>
               <span className="text-sm font-bold text-blue-900">{s.pending.loker}</span>
             </Link>
-            <div className="flex items-center justify-between p-2.5 rounded-lg bg-slate-50">
-              <span className="text-xs text-slate-600">Withdrawal</span>
-              <span className="text-sm font-bold text-slate-900">{s.pending.withdrawals}</span>
-            </div>
+            {/* Dulu <div> mati — angkanya tampil tapi tidak ada cara membuka
+                daftarnya, dan memang belum ada halamannya sama sekali. */}
+            <Link href="/admin/withdrawals" className="flex items-center justify-between p-2.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 transition-colors">
+              <span className="text-xs text-emerald-800">Penarikan Saldo</span>
+              <span className="text-sm font-bold text-emerald-900">{s.pending.withdrawals}</span>
+            </Link>
           </div>
         </div>
 
@@ -320,12 +354,17 @@ export default async function AdminPage() {
 
         <div className="bg-white rounded-2xl border border-slate-200 p-5">
           <h3 className="font-semibold text-slate-900 mb-3 flex items-center gap-2 text-sm">
-            <DollarSign size={14} className="text-green-500" /> Pendapatan
+            {/* Diberi label eksplisit "Marketplace" — kartu "Ringkasan
+                Pembayaran Pro" di bawah menunjukkan revenue langganan
+                Premium, angka yang sama sekali berbeda. Dua kartu bernama
+                sama "Pendapatan" tanpa penjelasan ruang lingkup gampang
+                dibaca sebagai angka yang sama, padahal bukan. */}
+            <DollarSign size={14} className="text-green-500" /> Pendapatan Marketplace
           </h3>
           <div className="space-y-2">
             <div className="flex items-center justify-between p-2.5 rounded-lg bg-green-50">
               <span className="text-xs text-green-800">Total revenue</span>
-              <span className="text-sm font-bold text-green-900">Rp{(s.totals.revenue / 1000).toFixed(0)}rb</span>
+              <span className="text-sm font-bold text-green-900">{formatRupiahRingkas(s.totals.revenue)}</span>
             </div>
             <div className="flex items-center justify-between p-2.5 rounded-lg bg-blue-50">
               <span className="text-xs text-blue-800">Minggu ini</span>
@@ -333,7 +372,7 @@ export default async function AdminPage() {
             </div>
             <div className="flex items-center justify-between p-2.5 rounded-lg bg-amber-50">
               <span className="text-xs text-amber-800">Withdrawal pending</span>
-              <span className="text-sm font-bold text-amber-900">Rp{(s.totals.withdrawalPending / 1000).toFixed(0)}rb</span>
+              <span className="text-sm font-bold text-amber-900">{formatRupiahRingkas(s.totals.withdrawalPending)}</span>
             </div>
           </div>
         </div>
@@ -390,8 +429,8 @@ export default async function AdminPage() {
             <p className="text-[10px] text-slate-500">Sukses Total</p>
           </div>
           <div>
-            <p className="text-xl font-bold text-amber-700">Rp {(s.payments.revenue / 1000).toFixed(0)}RB</p>
-            <p className="text-[10px] text-slate-500">Pendapatan</p>
+            <p className="text-xl font-bold text-amber-700">{formatRupiahRingkas(s.payments.revenue)}</p>
+            <p className="text-[10px] text-slate-500">Pendapatan Premium</p>
           </div>
         </div>
       </Link>

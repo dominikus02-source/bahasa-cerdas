@@ -68,3 +68,4 @@ tests/load/.tokens.cloud.json
 # Audio generation artifacts (regeneratable via generate-audio.py)
 audio-out/
 .venv-tts/
+.env*

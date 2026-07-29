@@ -9,7 +9,7 @@ export default function MenaraCerdasPage() {
     <div className="fixed inset-0 z-[60]">
       <Link
         href="/arena/game"
-        className="fixed top-3 left-3 z-[80] w-9 h-9 rounded-xl bg-white/10 backdrop-blur-md border border-white/20 shadow-md flex items-center justify-center text-white hover:bg-white/20 active:scale-95 transition-all arena-btn"
+        className="fixed top-3 left-3 z-[80] w-9 h-9 rounded-xl bg-[#161B3A]/10 backdrop-blur-md border border-[#161B3A]/20 shadow-md flex items-center justify-center text-[#161B3A] hover:bg-[#161B3A]/20 active:scale-95 transition-all arena-btn"
       >
         <ArrowLeft className="w-5 h-5" />
       </Link>

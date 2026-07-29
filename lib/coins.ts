@@ -2,6 +2,7 @@ import { db } from "./db";
 
 const COIN_REWARDS = {
   MENULIS_KARYA: 10,
+  TANTANGAN_MINGGUAN: 25,
   MENDAPAT_LIKE: 2,
   MEMBERI_KOMENTAR: 1,
   DAILY_LOGIN: 5,
@@ -10,6 +11,9 @@ const COIN_REWARDS = {
   STREAK_30: 150,
   STREAK_100: 1000,
 } as const;
+
+/** Koin dasar untuk setiap karya yang diterbitkan (dipakai UI untuk umpan balik). */
+export const COIN_MENULIS_KARYA = COIN_REWARDS.MENULIS_KARYA;
 
 // Every type in this pool MUST have a tracker call somewhere, or the quest can
 // appear on a student's list and be permanently uncompletable. MAIN_GAME and
@@ -63,6 +67,45 @@ export async function awardCoins(
   ]);
 
   return { coins: amount, transaction: tx };
+}
+
+/**
+ * Bonus koin untuk karya yang menjawab tantangan minggu berjalan.
+ *
+ * Hanya cair sekali per periode tantangan. Sama seperti claimQuestReward,
+ * ledger CoinTransaction sendiri yang jadi catatannya (reason + reference),
+ * jadi tidak perlu kolom baru: satu transaksi per challengeId per murid.
+ *
+ * Mengembalikan jumlah koin yang benar-benar diberikan (0 kalau sudah pernah).
+ */
+export async function awardChallengeBonus(
+  userId: string,
+  challengeId: string,
+  karyaId: string
+): Promise<number> {
+  const amount = COIN_REWARDS.TANTANGAN_MINGGUAN;
+
+  try {
+    return await db.$transaction(async (tx) => {
+      const already = await tx.coinTransaction.findFirst({
+        where: { userId, reason: "TANTANGAN_MINGGUAN", reference: challengeId },
+        select: { id: true },
+      });
+      if (already) return 0;
+
+      await tx.coinTransaction.create({
+        data: { userId, amount, reason: "TANTANGAN_MINGGUAN", reference: challengeId },
+      });
+      await tx.user.update({
+        where: { id: userId },
+        data: { coins: { increment: amount } },
+      });
+      return amount;
+    });
+  } catch {
+    // Bonus gagal tidak boleh menggagalkan penyimpanan karyanya.
+    return 0;
+  }
 }
 
 export async function spendCoins(
@@ -205,6 +248,24 @@ export async function claimQuestReward(userId: string, questId: string) {
   });
 }
 
+/**
+ * Misi mana saja yang hadiahnya sudah benar-benar cair.
+ *
+ * DailyQuest.completed hanya menyatakan targetnya tercapai, bukan hadiahnya
+ * sudah diambil — jadi halaman misi tidak punya cara tahu mana yang sudah
+ * diklaim, dan tombol "Klaim" muncul lagi setiap halaman dimuat ulang.
+ * Ledger CoinTransaction adalah satu-satunya catatan pembayaran (lihat
+ * claimQuestReward), jadi dari situ pula status klaimnya dibaca.
+ */
+export async function getClaimedQuestIds(userId: string, questIds: string[]): Promise<Set<string>> {
+  if (questIds.length === 0) return new Set();
+  const rows = await db.coinTransaction.findMany({
+    where: { userId, reason: "QUEST_COMPLETE", reference: { in: questIds } },
+    select: { reference: true },
+  });
+  return new Set(rows.map((r) => r.reference).filter((r): r is string => !!r));
+}
+
 export async function trackDailyStreak(userId: string) {
   await db.$transaction(async (tx) => {
     const user = await tx.user.findUnique({
@@ -225,7 +286,34 @@ export async function trackDailyStreak(userId: string) {
       ? (today.getTime() - last.getTime()) === 86400000
       : false;
 
-    const newStreak = isConsecutive ? (user.streak || 0) + 1 : 1;
+    // Streak Freeze — dijual di toko koin seharga 50 koin sejak lama, tapi
+    // sampai sekarang tidak ada satu pun kode yang memakainya: streak murid
+    // tetap putus walau sudah beli. Di sinilah item itu akhirnya dipakai.
+    // Satu freeze menutup satu hari bolong; kalau bolongnya lebih banyak
+    // daripada freeze yang dimiliki, streak tetap direset.
+    let streakFrozen = false;
+    if (last && !isConsecutive) {
+      const daysMissed = Math.round((today.getTime() - last.getTime()) / 86400000) - 1;
+
+      if (daysMissed > 0) {
+        const freeze = await tx.userItem.findFirst({
+          where: { userId, item: { type: "STREAK_FREEZE" }, quantity: { gt: 0 } },
+          select: { id: true, quantity: true },
+        });
+
+        if (freeze && freeze.quantity >= daysMissed) {
+          const sisa = freeze.quantity - daysMissed;
+          if (sisa > 0) {
+            await tx.userItem.update({ where: { id: freeze.id }, data: { quantity: sisa } });
+          } else {
+            await tx.userItem.delete({ where: { id: freeze.id } });
+          }
+          streakFrozen = true;
+        }
+      }
+    }
+
+    const newStreak = isConsecutive || streakFrozen ? (user.streak || 0) + 1 : 1;
 
     await tx.user.update({
       where: { id: userId },

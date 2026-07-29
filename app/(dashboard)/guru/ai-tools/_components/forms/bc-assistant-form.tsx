@@ -40,7 +40,7 @@ export function BCAssistantForm({ onSubmit, loading }: BCAssistantFormProps) {
         <Textarea
           value={message}
           onChange={(e) => setMessage(e.target.value)}
-          placeholder="Tanyakan tentang materi, RPP, soal, atau apa pun seputar Bahasa Indonesia..."
+          placeholder="Tanyakan tentang materi, Rencana Pembelajaran, soal, atau apa pun seputar Bahasa Indonesia..."
           className="min-h-[120px] resize-none"
         />
       </div>

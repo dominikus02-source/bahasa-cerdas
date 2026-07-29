@@ -63,6 +63,11 @@ export async function middleware(request: NextRequest) {
 
   const response = await updateSession(request, nonce);
 
+  // CSP hanya untuk HTML — API JSON responses tidak perlu
+  if (pathname.startsWith("/api/")) {
+    return response;
+  }
+
   response.headers.set("Content-Security-Policy", buildCsp(nonce));
 
   return response;

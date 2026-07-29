@@ -2,12 +2,16 @@
 
 import { useState, useEffect } from "react"
 import Link from "next/link"
-import { ShoppingBag, Zap, Shield, Sparkles, Moon, Sticker, ArrowLeft, Coins, Loader2 } from "lucide-react"
+import { ShoppingBag, Zap, Shield, Sparkles, Moon, Sticker, ArrowLeft, Coins, Loader2, Check } from "lucide-react"
+import CosmeticPreview from "@/components/arena/CosmeticPreview"
+import { isCosmeticType, isEquippableIcon } from "@/lib/cosmetics"
 
 interface StoreItem {
   id: string; name: string; description: string; type: string;
   price: number; icon: string; isActive: boolean;
 }
+
+type EquippedMap = Record<string, string | null>
 
 const TYPE_ICONS: Record<string, any> = {
   STREAK_FREEZE: Shield, XP_BOOST: Zap, AVATAR_FRAME: Sparkles,
@@ -27,18 +31,48 @@ export default function ArenaTokoKoinPage() {
   const [user, setUser] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const [buying, setBuying] = useState<string | null>(null)
+  const [equipping, setEquipping] = useState<string | null>(null)
+  const [owned, setOwned] = useState<Set<string>>(new Set())
+  const [equipped, setEquipped] = useState<EquippedMap>({})
   const [message, setMessage] = useState<{ type: string; text: string } | null>(null)
 
   useEffect(() => {
     Promise.all([
       fetch("/api/user/me").then(r => r.json()),
       fetch("/api/siswa/store").then(r => r.json()),
-    ]).then(([u, d]) => {
+      fetch("/api/siswa/store/equip").then(r => r.ok ? r.json() : null).catch(() => null),
+    ]).then(([u, d, inv]) => {
       setUser(u.user)
       setItems(d.items || [])
+      if (inv) {
+        setOwned(new Set<string>(inv.ownedItemIds || []))
+        setEquipped(inv.equipped || {})
+      }
       setLoading(false)
     })
   }, [])
+
+  // Kosmetik yang bisa dipakai (punya tampilan nyata di aplikasi)
+  const isWearable = (item: StoreItem) => isCosmeticType(item.type) && isEquippableIcon(item.type, item.icon)
+
+  const handleEquip = async (item: StoreItem, equip: boolean) => {
+    setEquipping(item.id)
+    try {
+      const res = await fetch("/api/siswa/store/equip", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ itemId: item.id, equip }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error)
+      setEquipped(prev => ({ ...prev, [item.type]: data.icon }))
+      setMessage({ type: "success", text: equip ? `${item.name} sekarang dipakai!` : `${item.name} dilepas.` })
+    } catch (e: any) {
+      setMessage({ type: "error", text: e.message || "Gagal menyimpan" })
+    } finally {
+      setEquipping(null)
+    }
+  }
 
   const handleBuy = async (item: StoreItem) => {
     if ((user?.coins || 0) < item.price) {
@@ -55,7 +89,13 @@ export default function ArenaTokoKoinPage() {
       const data = await res.json()
       if (!res.ok) throw new Error(data.error)
       setUser((prev: any) => ({ ...prev, coins: (prev?.coins || 0) - item.price }))
-      setMessage({ type: "success", text: `Berhasil membeli ${item.name}!` })
+      setOwned(prev => new Set(prev).add(item.id))
+      setMessage({
+        type: "success",
+        text: isWearable(item)
+          ? `Berhasil membeli ${item.name}! Tekan "Pakai" untuk memakainya.`
+          : `Berhasil membeli ${item.name}!`,
+      })
     } catch (e: any) {
       setMessage({ type: "error", text: e.message })
     } finally {
@@ -100,31 +140,52 @@ export default function ArenaTokoKoinPage() {
           const Icon = TYPE_ICONS[item.type] || ShoppingBag
           const color = TYPE_COLORS[item.type] || "from-gray-500 to-gray-600"
           const canAfford = (user?.coins || 0) >= item.price
+          const wearable = isWearable(item)
+          const isOwned = owned.has(item.id)
+          const isWorn = wearable && equipped[item.type] === item.icon
 
           return (
-            <div key={item.id} className="bg-white rounded-2xl border border-gray-100 p-5 hover:shadow-lg transition-all">
+            <div key={item.id} className={`bg-white rounded-2xl border p-5 hover:shadow-lg transition-all ${isWorn ? "border-violet-300 ring-1 ring-violet-200" : "border-gray-100"}`}>
               <div className="flex items-start gap-4">
-                <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${color} flex items-center justify-center text-white shadow-lg shrink-0`}>
-                  <Icon size={28} />
-                </div>
+                <CosmeticPreview type={item.type} icon={item.icon}>
+                  <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${color} flex items-center justify-center text-white shadow-lg shrink-0`}>
+                    <Icon size={28} />
+                  </div>
+                </CosmeticPreview>
                 <div className="flex-1 min-w-0">
                   <h3 className="font-bold text-gray-900">{item.name}</h3>
                   <p className="text-sm text-gray-500 mt-1">{item.description}</p>
-                  <div className="flex items-center justify-between mt-4">
+                  <div className="flex items-center justify-between gap-2 mt-4">
                     <span className="flex items-center gap-1 text-sm font-semibold text-amber-600">
                       <Coins size={14} className="text-amber-500" /> {item.price}
                     </span>
-                    <button
-                      onClick={() => handleBuy(item)}
-                      disabled={buying === item.id || !canAfford}
-                      className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all ${
-                        canAfford
-                          ? "bg-violet-600 text-white hover:bg-violet-700 shadow-lg shadow-violet-200"
-                          : "bg-gray-100 text-gray-400 cursor-not-allowed"
-                      } disabled:opacity-50`}
-                    >
-                      {buying === item.id ? <Loader2 size={16} className="animate-spin" /> : canAfford ? "Beli" : "Kurang Koin"}
-                    </button>
+                    {wearable && isOwned ? (
+                      <button
+                        onClick={() => handleEquip(item, !isWorn)}
+                        disabled={equipping === item.id}
+                        className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all flex items-center gap-1.5 disabled:opacity-50 ${
+                          isWorn
+                            ? "bg-emerald-50 text-emerald-600 border border-emerald-200"
+                            : "bg-violet-600 text-white hover:bg-violet-700 shadow-lg shadow-violet-200"
+                        }`}
+                      >
+                        {equipping === item.id
+                          ? <Loader2 size={16} className="animate-spin" />
+                          : isWorn ? <><Check size={14} /> Dipakai</> : "Pakai"}
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => handleBuy(item)}
+                        disabled={buying === item.id || !canAfford}
+                        className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all ${
+                          canAfford
+                            ? "bg-violet-600 text-white hover:bg-violet-700 shadow-lg shadow-violet-200"
+                            : "bg-gray-100 text-gray-400 cursor-not-allowed"
+                        } disabled:opacity-50`}
+                      >
+                        {buying === item.id ? <Loader2 size={16} className="animate-spin" /> : canAfford ? "Beli" : "Kurang Koin"}
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>

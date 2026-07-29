@@ -171,6 +171,8 @@ model User {
   supabaseId           String                  @unique
   email                String                  @unique
   fullName             String
+  nickname             String?
+  nicknameUpdatedAt    DateTime?
   avatar               String?
   emailConfirmed       Boolean                 @default(false)
   onboarded            Boolean                 @default(false)
@@ -192,6 +194,12 @@ model User {
   saldo                Int                     @default(0)
   totalEarned          Int                     @default(0)
   coins                Int                     @default(0)
+  // Kosmetik yang sedang dipakai. Isinya `icon` dari StoreItem yang dimiliki
+  // (mis. "frame-gold", "color-purple"), null artinya tidak memakai apa pun.
+  equippedFrame        String?
+  equippedNameColor    String?
+  equippedBadge        String?
+  equippedEffect       String?
   totalLikes           Int                     @default(0)
   totalViews           Int                     @default(0)
   createdAt            DateTime                @default(now())
@@ -245,6 +253,7 @@ model User {
   videos               Video[]
   withdrawals          Withdrawal[]
   coinTransactions     CoinTransaction[]
+  xpLedger             XpLedger[]
   dailyQuests          DailyQuest[]
   userItems            UserItem[]
   chatMessages         ChatMessage[]
@@ -253,6 +262,8 @@ model User {
   penugasanSubmissions PenugasanSubmission[]
   nilais               Nilai[]
   subscriptions        Subscription[]
+  nicknameHistory      NicknameHistory[]
+  materiKirims         MateriKirim[]
 
   // Admin quota audit logs where this user was the acting admin
   adminQuotaActions    AdminQuotaAuditLog[]   @relation("AdminActions")
@@ -294,6 +305,19 @@ model Profile {
   bankHolder String?
   bankNumber String?
   user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model NicknameHistory {
+  id          String   @id @default(cuid())
+  userId      String
+  oldNickname String?
+  newNickname String?
+  changedAt   DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([changedAt])
 }
 
 model UKBIQuestion {
@@ -497,6 +521,7 @@ model Materi {
   updatedAt       DateTime         @updatedAt
   uploader        User             @relation(fields: [uploaderId], references: [id], onDelete: Cascade)
   downloadRecords MateriDownload[]
+  kirims          MateriKirim[]
 
   @@index([uploaderId])
   @@index([isPublished])
@@ -514,6 +539,25 @@ model MateriDownload {
   @@unique([userId, materiId])
   @@index([userId])
   @@index([materiId])
+}
+
+// Guru mengirim satu Materi (file) ke satu kelas — riwayat kirim + sumber
+// daftar "Materi dari Guru" di sisi murid.
+model MateriKirim {
+  id        String   @id @default(cuid())
+  materiId  String
+  groupId   String
+  teacherId String
+  createdAt DateTime @default(now())
+
+  materi  Materi @relation(fields: [materiId], references: [id], onDelete: Cascade)
+  group   Group  @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  teacher User   @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+
+  @@unique([materiId, groupId])
+  @@index([groupId])
+  @@index([materiId])
+  @@index([teacherId])
 }
 
 model BankSoal {
@@ -770,6 +814,7 @@ model StudentKarya {
   excerpt    String?
   type       StudentKaryaType
   coverImage String?
+  photos     String[]         @default([])
   likesCount Int              @default(0)
   viewsCount Int              @default(0)
   isFeatured Boolean          @default(false)
@@ -806,13 +851,17 @@ model StudentKaryaComment {
   karyaId   String
   userId    String
   content   String
+  parentId  String?
   createdAt DateTime @default(now())
 
-  karya StudentKarya @relation(fields: [karyaId], references: [id], onDelete: Cascade)
-  user  User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  karya   StudentKarya          @relation(fields: [karyaId], references: [id], onDelete: Cascade)
+  user    User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  parent  StudentKaryaComment?  @relation("CommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
+  replies StudentKaryaComment[] @relation("CommentReplies")
 
   @@index([karyaId])
   @@index([karyaId, createdAt])
+  @@index([parentId])
 }
 
 enum StudentKaryaType {
@@ -822,6 +871,26 @@ enum StudentKaryaType {
   ANEKDOT
   PANTUN
   OPINI
+}
+
+/// Jejak setiap pemberian XP. Dipakai untuk menegakkan kuota harian di SEMUA
+/// jalur (sebelumnya kuota hanya bisa dihitung dari GameResult, sehingga
+/// KataStra tidak terpantau sama sekali) sekaligus jadi bahan audit kalau ada
+/// lonjakan XP mencurigakan lagi.
+model XpLedger {
+  id        String   @id @default(cuid())
+  userId    String
+  amount    Int
+  /// Sumber XP: GAME, KATASTRA, MENARA, TANTANG, JALUR_CERDAS, KOMPETENSI, PENUGASAN, KOTAK_HARIAN
+  source    String
+  /// Penanda opsional (sessionId / unitId / paketId) untuk penelusuran.
+  reference String?
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@index([createdAt])
 }
 
 model CoinTransaction {
@@ -1054,6 +1123,17 @@ model Loker {
   @@index([createdAt])
 }
 
+// Key-value store untuk konten yang admin ingin ubah tanpa deploy kode —
+// mis. link video promosi landing page yang diganti sesuai event. Dibuat
+// generik (bukan tabel khusus video) supaya bisa dipakai ulang untuk
+// pengaturan serupa di masa depan.
+model SiteSetting {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     String?
+  updatedAt DateTime @updatedAt
+}
+
 model AiCreditLedger {
   id              String   @id @default(cuid())
   userId          String
@@ -1150,6 +1230,7 @@ model Group {
   penugasans      Penugasan[]
   nilaiKategoris  NilaiKategori[]
   nilais          Nilai[]
+  materiKirims    MateriKirim[]
 
   @@index([teacherId])
   @@index([accessCode])

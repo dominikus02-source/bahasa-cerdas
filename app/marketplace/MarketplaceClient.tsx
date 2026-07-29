@@ -6,8 +6,8 @@ import { Search, ShoppingBag, Download, ChevronRight } from "lucide-react";
 
 const TYPES = [
   { value: "", label: "Semua" },
-  { value: "RPP", label: "RPP" },
-  { value: "MODUL", label: "Modul Ajar" },
+  { value: "RPP", label: "Rencana Pembelajaran" },
+  { value: "MODUL", label: "Rencana Pembelajaran (Modul)" },
   { value: "PPT", label: "PPT" },
   { value: "SOAL", label: "Bank Soal" },
   { value: "VIDEO", label: "Video" },

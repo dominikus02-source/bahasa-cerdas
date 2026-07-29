@@ -9,8 +9,8 @@ import { Badge } from "@/components/ui/badge";
 import { Upload, Plus, Eye, Trash2, Crown, Check, FileText, Download, Loader2, X, Edit2 } from "lucide-react";
 
 const KARYA_TYPES = [
-  { value: "RPP", label: "RPP" },
-  { value: "MODUL", label: "Modul Ajar" },
+  { value: "RPP", label: "Rencana Pembelajaran" },
+  { value: "MODUL", label: "Rencana Pembelajaran (Modul)" },
   { value: "PPT", label: "PPT Presentasi" },
   { value: "SOAL", label: "Bank Soal" },
   { value: "VIDEO", label: "Video Belajar" },
@@ -186,7 +186,7 @@ export default function TokoKaryaPage() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Toko Karya</h1>
-          <p className="mt-1 text-sm text-gray-600">Upload & jual RPP, modul, soal, dan karya lainnya</p>
+          <p className="mt-1 text-sm text-gray-600">Upload & jual Rencana Pembelajaran, modul, soal, dan karya lainnya</p>
         </div>
         <Button onClick={openTambah}><Plus size={16} /> Upload Karya</Button>
       </div>
@@ -219,7 +219,7 @@ export default function TokoKaryaPage() {
             <div>
               <label className="block text-sm font-semibold mb-1">Judul Karya</label>
               <input value={formData.title} onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                className="w-full rounded-xl border-2 border-gray-200 px-4 py-2.5 text-sm focus:border-emerald-500 focus:outline-none" placeholder="RPP Bahasa Indonesia Kelas X Kurikulum Merdeka" />
+                className="w-full rounded-xl border-2 border-gray-200 px-4 py-2.5 text-sm focus:border-emerald-500 focus:outline-none" placeholder="Rencana Pembelajaran Bahasa Indonesia Kelas X Kurikulum Nasional" />
             </div>
             <div>
               <label className="block text-sm font-semibold mb-1">Deskripsi</label>

@@ -191,7 +191,7 @@ export async function runAgentStream(
         // fallback yang tetap layak diedit guru.
         try {
           const fallbackText = generateRPPFallback(input as never);
-          warn.push("Generator AI utama gagal, sistem menampilkan template RPP fallback yang dapat diedit guru.");
+          warn.push("Generator AI utama gagal, sistem menampilkan template Rencana Pembelajaran fallback yang dapat diedit guru.");
           emitFinal(fallbackText, { fallbackUsed: true });
           return;
         } catch {
@@ -217,7 +217,7 @@ export async function runAgentStream(
       if (agentId === "rpp") {
         try {
           const fallbackText = generateRPPFallback(input as never);
-          warn.push("Generator AI utama gagal, sistem menampilkan template RPP fallback yang dapat diedit guru.");
+          warn.push("Generator AI utama gagal, sistem menampilkan template Rencana Pembelajaran fallback yang dapat diedit guru.");
           emitFinal(fallbackText, { fallbackUsed: true });
           return;
         } catch {
@@ -319,7 +319,7 @@ export async function runAgentStream(
       } else {
         try {
           resultText = generateRPPFallback(input as never);
-          warn.push("Generator AI utama gagal, sistem menampilkan template RPP fallback yang dapat diedit guru.");
+          warn.push("Generator AI utama gagal, sistem menampilkan template Rencana Pembelajaran fallback yang dapat diedit guru.");
         } catch {
           resultText = fullText;
         }

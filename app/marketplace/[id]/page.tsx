@@ -53,7 +53,7 @@ export default function MarketplaceDetailPage() {
 
   if (!karya) return <div className="min-h-screen flex items-center justify-center text-slate-500">Karya tidak ditemukan</div>;
 
-  const TYPES: Record<string, string> = { RPP: "RPP", MODUL: "Modul Ajar", PPT: "PPT", SOAL: "Bank Soal", VIDEO: "Video", EBOOK: "Ebook", ADMINISTRASI: "Administrasi", LAINNYA: "Lainnya" };
+  const TYPES: Record<string, string> = { RPP: "Rencana Pembelajaran", MODUL: "Rencana Pembelajaran (Modul)", PPT: "PPT", SOAL: "Bank Soal", VIDEO: "Video", EBOOK: "Ebook", ADMINISTRASI: "Administrasi", LAINNYA: "Lainnya" };
   const TYPE_ICONS: Record<string, any> = { RPP: BookOpen, MODUL: FileText, PPT: Presentation, SOAL: ClipboardList, VIDEO: Video, EBOOK: BookOpen, ADMINISTRASI: File, LAINNYA: File };
 
   return (
