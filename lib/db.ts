@@ -29,7 +29,7 @@ function buildConnectionUrl(baseUrl: string): string {
     if (!u.searchParams.has("connection_limit"))
       u.searchParams.set("connection_limit", process.env.DB_CONNECTION_LIMIT || "5");
     if (!u.searchParams.has("pool_timeout"))
-      u.searchParams.set("pool_timeout", process.env.DB_POOL_TIMEOUT || "20");
+      u.searchParams.set("pool_timeout", process.env.DB_POOL_TIMEOUT || "3");
   } else {
     // Direct connection (local dev / migrations) — a small pool is plenty.
     if (!u.searchParams.has("connection_limit"))

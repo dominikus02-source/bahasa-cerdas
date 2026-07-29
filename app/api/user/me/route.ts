@@ -9,6 +9,13 @@ const FOUNDER_EMAILS = ["hdsastra47@gmail.com", "dominikus.02@gmail.com", "alexs
 const PROMO_PREMIUM_UNTIL = new Date();
 PROMO_PREMIUM_UNTIL.setMonth(PROMO_PREMIUM_UNTIL.getMonth() + 2);
 
+const userSessionFields = {
+  id: true, supabaseId: true, email: true, fullName: true, nickname: true, nicknameUpdatedAt: true,
+  avatar: true, role: true, isFounder: true, isPremium: true, premiumPlan: true, premiumUntil: true,
+  xp: true, level: true, streak: true, league: true, coins: true, totalLikes: true, totalViews: true,
+  createdAt: true, school: true, city: true, province: true, grade: true, bio: true,
+} as const;
+
 async function findOrCreateUser(opts: {
   supabaseId: string;
   email: string;
@@ -18,8 +25,8 @@ async function findOrCreateUser(opts: {
   const { supabaseId, email, fullName, role } = opts;
   const lowerEmail = email.toLowerCase();
 
-  let user = await db.user.findUnique({ where: { supabaseId } });
-  if (!user) user = await db.user.findFirst({ where: { email: lowerEmail } });
+  let user = await db.user.findUnique({ where: { supabaseId }, select: userSessionFields });
+  if (!user) user = await db.user.findFirst({ where: { email: lowerEmail }, select: userSessionFields });
 
   if (user) {
     const updates: Record<string, unknown> = {};
@@ -39,7 +46,7 @@ async function findOrCreateUser(opts: {
       await db.user.update({ where: { id: user.id }, data: updates });
     }
     return Object.keys(updates).length > 0
-      ? db.user.findUnique({ where: { id: user.id } })
+      ? db.user.findUnique({ where: { id: user.id }, select: userSessionFields })
       : user;
   }
 
@@ -80,7 +87,8 @@ export async function GET() {
       );
     }
 
-    let found = await db.user.findFirst({ where: { email } });
+    const existing = await db.user.findFirst({ where: { email }, select: userSessionFields });
+    let found: any = existing;
     if (!found) {
       found = await findOrCreateUser({
         supabaseId: user.id,

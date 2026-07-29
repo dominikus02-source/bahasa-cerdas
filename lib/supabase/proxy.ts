@@ -41,7 +41,7 @@ export async function updateSession(request: NextRequest, nonce?: string) {
   const isAuthPath = pathname.startsWith("/api/auth/");
   const scope: RateLimitScope = isAuthPath ? "auth" : "api";
 
-  const burst = checkRateLimit(ip, "ipBurst");
+  const burst = await checkRateLimit(ip, "ipBurst");
   if (!burst.allowed) return rateLimitResponse("ipBurst");
 
   // Anonymous traffic (every student sitting on the login screen) has no session
@@ -50,8 +50,8 @@ export async function updateSession(request: NextRequest, nonce?: string) {
   // bare IP and split one budget across the whole room — the original bug.
   const identity = getClientIdentity(request);
   let limit = { allowed: true, remaining: burst.remaining, resetAt: burst.resetAt };
-  if (isAuthPath) limit = checkRateLimit(ip, "auth");
-  else if (identity.identified) limit = checkRateLimit(identity.key, "api");
+  if (isAuthPath) limit = await checkRateLimit(ip, "auth");
+  else if (identity.identified) limit = await checkRateLimit(identity.key, "api");
   if (!limit.allowed) return rateLimitResponse(scope);
 
   const isPublic = publicPaths.some((p) => pathname === p || pathname.startsWith(p + "/"));

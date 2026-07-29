@@ -303,10 +303,12 @@ export default async function AdminPage() {
               <span className="text-xs text-blue-800">Lowongan</span>
               <span className="text-sm font-bold text-blue-900">{s.pending.loker}</span>
             </Link>
-            <div className="flex items-center justify-between p-2.5 rounded-lg bg-slate-50">
-              <span className="text-xs text-slate-600">Withdrawal</span>
-              <span className="text-sm font-bold text-slate-900">{s.pending.withdrawals}</span>
-            </div>
+            {/* Dulu <div> mati — angkanya tampil tapi tidak ada cara membuka
+                daftarnya, dan memang belum ada halamannya sama sekali. */}
+            <Link href="/admin/withdrawals" className="flex items-center justify-between p-2.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 transition-colors">
+              <span className="text-xs text-emerald-800">Penarikan Saldo</span>
+              <span className="text-sm font-bold text-emerald-900">{s.pending.withdrawals}</span>
+            </Link>
           </div>
         </div>
 

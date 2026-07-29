@@ -90,13 +90,31 @@ export async function GET(req: NextRequest) {
       const where: any = {};
       if (type) where.type = type;
 
-      const karya = await db.studentKarya.findMany({
-        where,
-        include: karyaInclude,
-        orderBy: { createdAt: "desc" },
-        take: limit + 1,
-        ...(cursor ? { skip: 1, cursor: { id: cursor } } : {}),
-      });
+      // Cache first page (no cursor) for 30s — absorbs feed bursts from a whole class
+      const cacheKey = cursor ? null : `feed:${type || "all"}:${limit}`;
+      let karya: any[];
+      if (cacheKey) {
+        const cached = await cache.get<any[]>(cacheKey);
+        if (cached) {
+          karya = cached;
+        } else {
+          karya = await db.studentKarya.findMany({
+            where,
+            include: karyaInclude,
+            orderBy: { createdAt: "desc" },
+            take: limit + 1,
+          });
+          cache.set(cacheKey, karya, 30).catch(() => {});
+        }
+      } else {
+        karya = await db.studentKarya.findMany({
+          where,
+          include: karyaInclude,
+          orderBy: { createdAt: "desc" },
+          take: limit + 1,
+          ...(cursor ? { skip: 1, cursor: { id: cursor } } : {}),
+        });
+      }
       hasMore = karya.length > limit;
       items = hasMore ? karya.slice(0, limit) : karya;
     }
@@ -169,6 +187,7 @@ export async function POST(req: NextRequest) {
       ? await awardChallengeBonus(user.id, challenge.id, karya.id)
       : 0;
 
+    cache.delPattern("feed:*").catch(() => {});
     invalidateKaryaCache().catch(() => {});
 
     return NextResponse.json({
