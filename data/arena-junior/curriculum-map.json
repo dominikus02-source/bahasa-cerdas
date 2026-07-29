@@ -1,0 +1,2132 @@
+{
+  "stages": [
+    {
+      "order": 1,
+      "title": "Pra-Baca / TK",
+      "gradeBand": "TK",
+      "themeColor": "0xFF58CC02",
+      "icon": "🍎",
+      "units": [
+        {
+          "order": 1,
+          "title": "Mengenal Huruf",
+          "lessons": [
+            {
+              "id": "stage_01_unit_01_lesson_01",
+              "title": "Mengenal A",
+              "subtitle": "Kenali huruf A dan bunyinya",
+              "order": 1,
+              "estimatedMinutes": 5,
+              "xpReward": 50,
+              "requiredCompletedLessons": 0,
+              "isReview": false,
+              "lessonType": "letterRecognition",
+              "questionCount": 5,
+              "characterHint": "zelby",
+              "assetPath": "assets/lessons/stage_01/unit_01/lesson_001.json"
+            },
+            {
+              "id": "stage_01_unit_01_lesson_02",
+              "title": "Huruf B dan C",
+              "subtitle": "Belajar huruf B dan C",
+              "order": 2,
+              "estimatedMinutes": 5,
+              "xpReward": 50,
+              "requiredCompletedLessons": 1,
+              "isReview": false,
+              "lessonType": "soundRecognition",
+              "questionCount": 5,
+              "characterHint": "lily",
+              "assetPath": "assets/lessons/stage_01/unit_01/lesson_002.json"
+            },
+            {
+              "id": "stage_01_unit_01_lesson_03",
+              "title": "Pilih Huruf yang Sama",
+              "subtitle": "Temukan huruf yang sama dari pilihan",
+              "order": 3,
+              "estimatedMinutes": 5,
+              "xpReward": 50,
+              "requiredCompletedLessons": 2,
+              "isReview": false,
+              "lessonType": "imageMatch",
+              "questionCount": 5,
+              "characterHint": "budi",
+              "assetPath": "assets/lessons/stage_01/unit_01/lesson_003.json"
+            }
+          ],
+          "id": "stage_01_unit_01"
+        },
+        {
+          "order": 2,
+          "title": "Bunyi Awal",
+          "lessons": [
+            {
+              "id": "stage_01_unit_02_lesson_01",
+              "title": "Suara Awal Kata",
+              "subtitle": "Dengarkan bunyi pertama dari kata",
+              "order": 1,
+              "estimatedMinutes": 5,
+              "xpReward": 50,
+              "requiredCompletedLessons": 0,
+              "isReview": false,
+              "lessonType": "soundRecognition",
+              "questionCount": 5,
+              "characterHint": "lily",
+              "assetPath": "assets/lessons/stage_01/unit_02/lesson_001.json"
+            },
+            {
+              "id": "stage_01_unit_02_lesson_02",
+              "title": "Cocokkan Bunyi",
+              "subtitle": "Cocokkan bunyi awal yang sama",
+              "order": 2,
+              "estimatedMinutes": 5,
+              "xpReward": 50,
+              "requiredCompletedLessons": 1,
+              "isReview": false,
+              "lessonType": "imageMatch",
+              "questionCount": 5,
+              "characterHint": "budi",
+              "assetPath": "assets/lessons/stage_01/unit_02/lesson_002.json"
+            },
+            {
+              "id": "stage_01_unit_02_lesson_03",
+              "title": "Bunyi Benda",
+              "subtitle": "Kenali bunyi dari benda sekitar",
+              "order": 3,
+              "estimatedMinutes": 5,
+              "xpReward": 50,
+              "requiredCompletedLessons": 2,
+              "isReview": false,
+              "lessonType": "wordChoice",
+              "questionCount": 5,
+              "characterHint": "zelby",
+              "assetPath": "assets/lessons/stage_01/unit_02/lesson_003.json"
+            }
+          ],
+          "id": "stage_01_unit_02"
+        },
+        {
+          "order": 3,
+          "title": "Kata Benda",
+          "lessons": [
+            {
+              "id": "stage_01_unit_03_lesson_01",
+              "title": "Benda di Rumah",
+              "subtitle": "Mengenal nama benda di rumah",
+              "order": 1,
+              "estimatedMinutes": 5,
+              "xpReward": 50,
+              "requiredCompletedLessons": 0,
+              "isReview": false,
+              "lessonType": "imageMatch",
+              "questionCount": 5,
+              "characterHint": "budi",
+              "assetPath": "assets/lessons/stage_01/unit_03/lesson_001.json"
+            },
+            {
+              "id": "stage_01_unit_03_lesson_02",
+              "title": "Benda di Sekolah",
+              "subtitle": "Mengenal nama benda di sekolah",
+              "order": 2,
+              "estimatedMinutes": 5,
+              "xpReward": 50,
+              "requiredCompletedLessons": 1,
+              "isReview": false,
+              "lessonType": "wordChoice",
+              "questionCount": 5,
+              "characterHint": "zelby",
+              "assetPath": "assets/lessons/stage_01/unit_03/lesson_002.json"
+            },
+            {
+              "id": "stage_01_unit_03_lesson_03",
+              "title": "Benda di Sekitar",
+              "subtitle": "Mengenal benda di lingkungan sekitar",
+              "order": 3,
+              "estimatedMinutes": 5,
+              "xpReward": 50,
+              "requiredCompletedLessons": 2,
+              "isReview": false,
+              "lessonType": "syllableMatch",
+              "questionCount": 5,
+              "characterHint": "lily",
+              "assetPath": "assets/lessons/stage_01/unit_03/lesson_003.json"
+            }
+          ],
+          "id": "stage_01_unit_03"
+        },
+        {
+          "order": 4,
+          "title": "Warna & Bentuk",
+          "lessons": [
+            {
+              "id": "stage_01_unit_04_lesson_01",
+              "title": "Mengenal Warna",
+              "subtitle": "Belajar nama-nama warna dasar",
+              "order": 1,
+              "estimatedMinutes": 5,
+              "xpReward": 50,
+              "requiredCompletedLessons": 0,
+              "isReview": false,
+              "lessonType": "wordChoice",
+              "questionCount": 5,
+              "characterHint": "zelby",
+              "assetPath": "assets/lessons/stage_01/unit_04/lesson_001.json"
+            },
+            {
+              "id": "stage_01_unit_04_lesson_02",
+              "title": "Mengenal Bentuk",
+              "subtitle": "Belajar bentuk lingkaran, segitiga, kotak",
+              "order": 2,
+              "estimatedMinutes": 5,
+              "xpReward": 50,
+              "requiredCompletedLessons": 1,
+              "isReview": false,
+              "lessonType": "syllableMatch",
+              "questionCount": 5,
+              "characterHint": "lily",
+              "assetPath": "assets/lessons/stage_01/unit_04/lesson_002.json"
+            },
+            {
+              "id": "stage_01_unit_04_lesson_03",
+              "title": "Warna dan Bentuk",
+              "subtitle": "Gabungkan warna dan bentuk",
+              "order": 3,
+              "estimatedMinutes": 5,
+              "xpReward": 50,
+              "requiredCompletedLessons": 2,
+              "isReview": false,
+              "lessonType": "sentenceBuild",
+              "questionCount": 5,
+              "characterHint": "budi",
+              "assetPath": "assets/lessons/stage_01/unit_04/lesson_003.json"
+            }
+          ],
+          "id": "stage_01_unit_04"
+        },
+        {
+          "order": 5,
+          "title": "Keluarga & Tubuh",
+          "lessons": [
+            {
+              "id": "stage_01_unit_05_lesson_01",
+              "title": "Anggota Keluarga",
+              "subtitle": "Kenali nama anggota keluarga",
+              "order": 1,
+              "estimatedMinutes": 5,
+              "xpReward": 50,
+              "requiredCompletedLessons": 0,
+              "isReview": false,
+              "lessonType": "syllableMatch",
+              "questionCount": 5,
+              "characterHint": "lily",
+              "assetPath": "assets/lessons/stage_01/unit_05/lesson_001.json"
+            },
+            {
+              "id": "stage_01_unit_05_lesson_02",
+              "title": "Bagian Tubuh",
+              "subtitle": "Belajar bagian tubuh manusia",
+              "order": 2,
+              "estimatedMinutes": 5,
+              "xpReward": 50,
+              "requiredCompletedLessons": 1,
+              "isReview": false,
+              "lessonType": "sentenceBuild",
+              "questionCount": 5,
+              "characterHint": "budi",
+              "assetPath": "assets/lessons/stage_01/unit_05/lesson_002.json"
+            },
+            {
+              "id": "stage_01_unit_05_lesson_03",
+              "title": "Tubuh dan Keluarga",
+              "subtitle": "Cerita tentang tubuh dan keluarga",
+              "order": 3,
+              "estimatedMinutes": 5,
+              "xpReward": 50,
+              "requiredCompletedLessons": 2,
+              "isReview": false,
+              "lessonType": "comprehension",
+              "questionCount": 5,
+              "characterHint": "zelby",
+              "assetPath": "assets/lessons/stage_01/unit_05/lesson_003.json"
+            }
+          ],
+          "id": "stage_01_unit_05"
+        },
+        {
+          "order": 6,
+          "title": "Hewan & Alam",
+          "lessons": [
+            {
+              "id": "stage_01_unit_06_lesson_01",
+              "title": "Hewan di Sekitar",
+              "subtitle": "Mengenal hewan di lingkungan kita",
+              "order": 1,
+              "estimatedMinutes": 5,
+              "xpReward": 50,
+              "requiredCompletedLessons": 0,
+              "isReview": false,
+              "lessonType": "sentenceBuild",
+              "questionCount": 5,
+              "characterHint": "budi",
+              "assetPath": "assets/lessons/stage_01/unit_06/lesson_001.json"
+            },
+            {
+              "id": "stage_01_unit_06_lesson_02",
+              "title": "Tumbuhan",
+              "subtitle": "Mengenal tumbuhan dan bagiannya",
+              "order": 2,
+              "estimatedMinutes": 5,
+              "xpReward": 50,
+              "requiredCompletedLessons": 1,
+              "isReview": false,
+              "lessonType": "comprehension",
+              "questionCount": 5,
+              "characterHint": "zelby",
+              "assetPath": "assets/lessons/stage_01/unit_06/lesson_002.json"
+            },
+            {
+              "id": "stage_01_unit_06_lesson_03",
+              "title": "Alam Sekitar",
+              "subtitle": "Menjelajahi alam sekitar",
+              "order": 3,
+              "estimatedMinutes": 5,
+              "xpReward": 50,
+              "requiredCompletedLessons": 2,
+              "isReview": false,
+              "lessonType": "reading",
+              "questionCount": 5,
+              "characterHint": "lily",
+              "assetPath": "assets/lessons/stage_01/unit_06/lesson_003.json"
+            }
+          ],
+          "id": "stage_01_unit_06"
+        }
+      ],
+      "id": "stage_01"
+    },
+    {
+      "order": 2,
+      "title": "Kelas 1",
+      "gradeBand": "Kelas 1",
+      "themeColor": "0xFF1CB0F6",
+      "icon": "📖",
+      "units": [
+        {
+          "order": 1,
+          "title": "Huruf & Suku Kata",
+          "lessons": [
+            {
+              "id": "stage_02_unit_01_lesson_01",
+              "title": "Gabung Huruf",
+              "subtitle": "Gabungkan huruf menjadi suku kata",
+              "order": 1,
+              "estimatedMinutes": 5,
+              "xpReward": 60,
+              "requiredCompletedLessons": 0,
+              "isReview": false,
+              "lessonType": "soundRecognition",
+              "questionCount": 5,
+              "characterHint": "lily",
+              "assetPath": "assets/lessons/stage_02/unit_01/lesson_001.json"
+            },
+            {
+              "id": "stage_02_unit_01_lesson_02",
+              "title": "Suku Kata Terbuka",
+              "subtitle": "Suku kata dengan akhiran vokal",
+              "order": 2,
+              "estimatedMinutes": 5,
+              "xpReward": 60,
+              "requiredCompletedLessons": 1,
+              "isReview": false,
+              "lessonType": "imageMatch",
+              "questionCount": 5,
+              "characterHint": "budi",
+              "assetPath": "assets/lessons/stage_02/unit_01/lesson_002.json"
+            },
+            {
+              "id": "stage_02_unit_01_lesson_03",
+              "title": "Suku Kata Tertutup",
+              "subtitle": "Suku kata dengan akhiran konsonan",
+              "order": 3,
+              "estimatedMinutes": 5,
+              "xpReward": 60,
+              "requiredCompletedLessons": 2,
+              "isReview": false,
+              "lessonType": "wordChoice",
+              "questionCount": 5,
+              "characterHint": "zelby",
+              "assetPath": "assets/lessons/stage_02/unit_01/lesson_003.json"
+            }
+          ],
+          "id": "stage_02_unit_01"
+        },
+        {
+          "order": 2,
+          "title": "Kata Sehari-hari",
+          "lessons": [
+            {
+              "id": "stage_02_unit_02_lesson_01",
+              "title": "Kata di Rumah",
+              "subtitle": "Kata yang sering digunakan di rumah",
+              "order": 1,
+              "estimatedMinutes": 5,
+              "xpReward": 60,
+              "requiredCompletedLessons": 0,
+              "isReview": false,
+              "lessonType": "imageMatch",
+              "questionCount": 5,
+              "characterHint": "budi",
+              "assetPath": "assets/lessons/stage_02/unit_02/lesson_001.json"
+            },
+            {
+              "id": "stage_02_unit_02_lesson_02",
+              "title": "Kata di Sekolah",
+              "subtitle": "Kata yang sering digunakan di sekolah",
+              "order": 2,
+              "estimatedMinutes": 5,
+              "xpReward": 60,
+              "requiredCompletedLessons": 1,
+              "isReview": false,
+              "lessonType": "wordChoice",
+              "questionCount": 5,
+              "characterHint": "zelby",
+              "assetPath": "assets/lessons/stage_02/unit_02/lesson_002.json"
+            },
+            {
+              "id": "stage_02_unit_02_lesson_03",
+              "title": "Kata di Pasar",
+              "subtitle": "Kata yang sering digunakan di pasar",
+              "order": 3,
+              "estimatedMinutes": 5,
+              "xpReward": 60,
+              "requiredCompletedLessons": 2,
+              "isReview": false,
+              "lessonType": "syllableMatch",
+              "questionCount": 5,
+              "characterHint": "lily",
+              "assetPath": "assets/lessons/stage_02/unit_02/lesson_003.json"
+            }
+          ],
+          "id": "stage_02_unit_02"
+        },
+        {
+          "order": 3,
+          "title": "Kalimat Pendek",
+          "lessons": [
+            {
+              "id": "stage_02_unit_03_lesson_01",
+              "title": "Kalimat Satu Kata",
+              "subtitle": "Kalimat yang terdiri dari satu kata",
+              "order": 1,
+              "estimatedMinutes": 5,
+              "xpReward": 60,
+              "requiredCompletedLessons": 0,
+              "isReview": false,
+              "lessonType": "wordChoice",
+              "questionCount": 5,
+              "characterHint": "zelby",
+              "assetPath": "assets/lessons/stage_02/unit_03/lesson_001.json"
+            },
+            {
+              "id": "stage_02_unit_03_lesson_02",
+              "title": "Kalimat Dua Kata",
+              "subtitle": "Kalimat yang terdiri dari dua kata",
+              "order": 2,
+              "estimatedMinutes": 5,
+              "xpReward": 60,
+              "requiredCompletedLessons": 1,
+              "isReview": false,
+              "lessonType": "syllableMatch",
+              "questionCount": 5,
+              "characterHint": "lily",
+              "assetPath": "assets/lessons/stage_02/unit_03/lesson_002.json"
+            },
+            {
+              "id": "stage_02_unit_03_lesson_03",
+              "title": "Kalimat Sederhana",
+              "subtitle": "Membaca kalimat sederhana",
+              "order": 3,
+              "estimatedMinutes": 5,
+              "xpReward": 60,
+              "requiredCompletedLessons": 2,
+              "isReview": false,
+              "lessonType": "sentenceBuild",
+              "questionCount": 5,
+              "characterHint": "budi",
+              "assetPath": "assets/lessons/stage_02/unit_03/lesson_003.json"
+            }
+          ],
+          "id": "stage_02_unit_03"
+        },
+        {
+          "order": 4,
+          "title": "Cerita Mini",
+          "lessons": [
+            {
+              "id": "stage_02_unit_04_lesson_01",
+              "title": "Cerita Keluarga",
+              "subtitle": "Membaca cerita pendek tentang keluarga",
+              "order": 1,
+              "estimatedMinutes": 5,
+              "xpReward": 60,
+              "requiredCompletedLessons": 0,
+              "isReview": false,
+              "lessonType": "syllableMatch",
+              "questionCount": 5,
+              "characterHint": "lily",
+              "assetPath": "assets/lessons/stage_02/unit_04/lesson_001.json"
+            },
+            {
+              "id": "stage_02_unit_04_lesson_02",
+              "title": "Cerita Hewan",
+              "subtitle": "Membaca cerita pendek tentang hewan",
+              "order": 2,
+              "estimatedMinutes": 5,
+              "xpReward": 60,
+              "requiredCompletedLessons": 1,
+              "isReview": false,
+              "lessonType": "sentenceBuild",
+              "questionCount": 5,
+              "characterHint": "budi",
+              "assetPath": "assets/lessons/stage_02/unit_04/lesson_002.json"
+            },
+            {
+              "id": "stage_02_unit_04_lesson_03",
+              "title": "Cerita Alam",
+              "subtitle": "Membaca cerita pendek tentang alam",
+              "order": 3,
+              "estimatedMinutes": 5,
+              "xpReward": 60,
+              "requiredCompletedLessons": 2,
+              "isReview": false,
+              "lessonType": "comprehension",
+              "questionCount": 5,
+              "characterHint": "zelby",
+              "assetPath": "assets/lessons/stage_02/unit_04/lesson_003.json"
+            }
+          ],
+          "id": "stage_02_unit_04"
+        },
+        {
+          "order": 5,
+          "title": "Dengarkan & Pilih",
+          "lessons": [
+            {
+              "id": "stage_02_unit_05_lesson_01",
+              "title": "Dengar Kata",
+              "subtitle": "Dengarkan kata lalu pilih yang benar",
+              "order": 1,
+              "estimatedMinutes": 5,
+              "xpReward": 60,
+              "requiredCompletedLessons": 0,
+              "isReview": false,
+              "lessonType": "sentenceBuild",
+              "questionCount": 5,
+              "characterHint": "budi",
+              "assetPath": "assets/lessons/stage_02/unit_05/lesson_001.json"
+            },
+            {
+              "id": "stage_02_unit_05_lesson_02",
+              "title": "Dengar Kalimat",
+              "subtitle": "Dengarkan kalimat lalu pilih jawaban",
+              "order": 2,
+              "estimatedMinutes": 5,
+              "xpReward": 60,
+              "requiredCompletedLessons": 1,
+              "isReview": false,
+              "lessonType": "comprehension",
+              "questionCount": 5,
+              "characterHint": "zelby",
+              "assetPath": "assets/lessons/stage_02/unit_05/lesson_002.json"
+            },
+            {
+              "id": "stage_02_unit_05_lesson_03",
+              "title": "Pilih Gambar",
+              "subtitle": "Pilih gambar yang sesuai dengan bacaan",
+              "order": 3,
+              "estimatedMinutes": 5,
+              "xpReward": 60,
+              "requiredCompletedLessons": 2,
+              "isReview": false,
+              "lessonType": "reading",
+              "questionCount": 5,
+              "characterHint": "lily",
+              "assetPath": "assets/lessons/stage_02/unit_05/lesson_003.json"
+            }
+          ],
+          "id": "stage_02_unit_05"
+        },
+        {
+          "order": 6,
+          "title": "Susun Kata",
+          "lessons": [
+            {
+              "id": "stage_02_unit_06_lesson_01",
+              "title": "Urutkan Huruf",
+              "subtitle": "Urutkan huruf menjadi kata yang benar",
+              "order": 1,
+              "estimatedMinutes": 5,
+              "xpReward": 60,
+              "requiredCompletedLessons": 0,
+              "isReview": false,
+              "lessonType": "comprehension",
+              "questionCount": 5,
+              "characterHint": "zelby",
+              "assetPath": "assets/lessons/stage_02/unit_06/lesson_001.json"
+            },
+            {
+              "id": "stage_02_unit_06_lesson_02",
+              "title": "Susun Suku Kata",
+              "subtitle": "Susun suku kata menjadi kata",
+              "order": 2,
+              "estimatedMinutes": 5,
+              "xpReward": 60,
+              "requiredCompletedLessons": 1,
+              "isReview": false,
+              "lessonType": "reading",
+              "questionCount": 5,
+              "characterHint": "lily",
+              "assetPath": "assets/lessons/stage_02/unit_06/lesson_002.json"
+            },
+            {
+              "id": "stage_02_unit_06_lesson_03",
+              "title": "Susun Kata",
+              "subtitle": "Susun kata menjadi kalimat",
+              "order": 3,
+              "estimatedMinutes": 5,
+              "xpReward": 60,
+              "requiredCompletedLessons": 2,
+              "isReview": false,
+              "lessonType": "listening",
+              "questionCount": 5,
+              "characterHint": "budi",
+              "assetPath": "assets/lessons/stage_02/unit_06/lesson_003.json"
+            }
+          ],
+          "id": "stage_02_unit_06"
+        }
+      ],
+      "id": "stage_02"
+    },
+    {
+      "order": 3,
+      "title": "Kelas 2",
+      "gradeBand": "Kelas 2",
+      "themeColor": "0xFFFF6B6B",
+      "icon": "✏️",
+      "units": [
+        {
+          "order": 1,
+          "title": "Kata Kerja",
+          "lessons": [
+            {
+              "id": "stage_03_unit_01_lesson_01",
+              "title": "Kata Tindakan",
+              "subtitle": "Belajar kata kerja sehari-hari",
+              "order": 1,
+              "estimatedMinutes": 5,
+              "xpReward": 70,
+              "requiredCompletedLessons": 0,
+              "isReview": false,
+              "lessonType": "imageMatch",
+              "questionCount": 5,
+              "characterHint": "budi",
+              "assetPath": "assets/lessons/stage_03/unit_01/lesson_001.json"
+            },
+            {
+              "id": "stage_03_unit_01_lesson_02",
+              "title": "Kegiatan Sehari-hari",
+              "subtitle": "Kata kerja dalam rutinitas harian",
+              "order": 2,
+              "estimatedMinutes": 5,
+              "xpReward": 70,
+              "requiredCompletedLessons": 1,
+              "isReview": false,
+              "lessonType": "wordChoice",
+              "questionCount": 5,
+              "characterHint": "zelby",
+              "assetPath": "assets/lessons/stage_03/unit_01/lesson_002.json"
+            },
+            {
+              "id": "stage_03_unit_01_lesson_03",
+              "title": "Aktivitas di Rumah",
+              "subtitle": "Kata kerja untuk aktivitas rumah",
+              "order": 3,
+              "estimatedMinutes": 5,
+              "xpReward": 70,
+              "requiredCompletedLessons": 2,
+              "isReview": false,
+              "lessonType": "syllableMatch",
+              "questionCount": 5,
+              "characterHint": "lily",
+              "assetPath": "assets/lessons/stage_03/unit_01/lesson_003.json"
+            }
+          ],
+          "id": "stage_03_unit_01"
+        },
+        {
+          "order": 2,
+          "title": "Tempat di Sekitar",
+          "lessons": [
+            {
+              "id": "stage_03_unit_02_lesson_01",
+              "title": "Rumah dan Bagiannya",
+              "subtitle": "Mengenal bagian-bagian rumah",
+              "order": 1,
+              "estimatedMinutes": 5,
+              "xpReward": 70,
+              "requiredCompletedLessons": 0,
+              "isReview": false,
+              "lessonType": "wordChoice",
+              "questionCount": 5,
+              "characterHint": "zelby",
+              "assetPath": "assets/lessons/stage_03/unit_02/lesson_001.json"
+            },
+            {
+              "id": "stage_03_unit_02_lesson_02",
+              "title": "Tempat Umum",
+              "subtitle": "Mengenal tempat-tempat umum",
+              "order": 2,
+              "estimatedMinutes": 5,
+              "xpReward": 70,
+              "requiredCompletedLessons": 1,
+              "isReview": false,
+              "lessonType": "syllableMatch",
+              "questionCount": 5,
+              "characterHint": "lily",
+              "assetPath": "assets/lessons/stage_03/unit_02/lesson_002.json"
+            },
+            {
+              "id": "stage_03_unit_02_lesson_03",
+              "title": "Lingkungan Sekolah",
+              "subtitle": "Mengenal lingkungan sekolah",
+              "order": 3,
+              "estimatedMinutes": 5,
+              "xpReward": 70,
+              "requiredCompletedLessons": 2,
+              "isReview": false,
+              "lessonType": "sentenceBuild",
+              "questionCount": 5,
+              "characterHint": "budi",
+              "assetPath": "assets/lessons/stage_03/unit_02/lesson_003.json"
+            }
+          ],
+          "id": "stage_03_unit_02"
+        },
+        {
+          "order": 3,
+          "title": "Kalimat Tanya",
+          "lessons": [
+            {
+              "id": "stage_03_unit_03_lesson_01",
+              "title": "Apa dan Siapa",
+              "subtitle": "Kata tanya apa dan siapa",
+              "order": 1,
+              "estimatedMinutes": 5,
+              "xpReward": 70,
+              "requiredCompletedLessons": 0,
+              "isReview": false,
+              "lessonType": "syllableMatch",
+              "questionCount": 5,
+              "characterHint": "lily",
+              "assetPath": "assets/lessons/stage_03/unit_03/lesson_001.json"
+            },
+            {
+              "id": "stage_03_unit_03_lesson_02",
+              "title": "Di Mana dan Kapan",
+              "subtitle": "Kata tanya di mana dan kapan",
+              "order": 2,
+              "estimatedMinutes": 5,
+              "xpReward": 70,
+              "requiredCompletedLessons": 1,
+              "isReview": false,
+              "lessonType": "sentenceBuild",
+              "questionCount": 5,
+              "characterHint": "budi",
+              "assetPath": "assets/lessons/stage_03/unit_03/lesson_002.json"
+            },
+            {
+              "id": "stage_03_unit_03_lesson_03",
+              "title": "Mengapa dan Bagaimana",
+              "subtitle": "Kata tanya mengapa dan bagaimana",
+              "order": 3,
+              "estimatedMinutes": 5,
+              "xpReward": 70,
+              "requiredCompletedLessons": 2,
+              "isReview": false,
+              "lessonType": "comprehension",
+              "questionCount": 5,
+              "characterHint": "zelby",
+              "assetPath": "assets/lessons/stage_03/unit_03/lesson_003.json"
+            }
+          ],
+          "id": "stage_03_unit_03"
+        },
+        {
+          "order": 4,
+          "title": "Cerita Pendek",
+          "lessons": [
+            {
+              "id": "stage_03_unit_04_lesson_01",
+              "title": "Petualangan Kecil",
+              "subtitle": "Membaca cerita petualangan kecil",
+              "order": 1,
+              "estimatedMinutes": 5,
+              "xpReward": 70,
+              "requiredCompletedLessons": 0,
+              "isReview": false,
+              "lessonType": "sentenceBuild",
+              "questionCount": 5,
+              "characterHint": "budi",
+              "assetPath": "assets/lessons/stage_03/unit_04/lesson_001.json"
+            },
+            {
+              "id": "stage_03_unit_04_lesson_02",
+              "title": "Cerita Teman",
+              "subtitle": "Membaca cerita tentang teman",
+              "order": 2,
+              "estimatedMinutes": 5,
+              "xpReward": 70,
+              "requiredCompletedLessons": 1,
+              "isReview": false,
+              "lessonType": "comprehension",
+              "questionCount": 5,
+              "characterHint": "zelby",
+              "assetPath": "assets/lessons/stage_03/unit_04/lesson_002.json"
+            },
+            {
+              "id": "stage_03_unit_04_lesson_03",
+              "title": "Cerita Keluarga",
+              "subtitle": "Membaca cerita tentang keluarga",
+              "order": 3,
+              "estimatedMinutes": 5,
+              "xpReward": 70,
+              "requiredCompletedLessons": 2,
+              "isReview": false,
+              "lessonType": "reading",
+              "questionCount": 5,
+              "characterHint": "lily",
+              "assetPath": "assets/lessons/stage_03/unit_04/lesson_003.json"
+            }
+          ],
+          "id": "stage_03_unit_04"
+        },
+        {
+          "order": 5,
+          "title": "Urutan Peristiwa",
+          "lessons": [
+            {
+              "id": "stage_03_unit_05_lesson_01",
+              "title": "Urutan Hari",
+              "subtitle": "Mengurutkan kegiatan dalam sehari",
+              "order": 1,
+              "estimatedMinutes": 5,
+              "xpReward": 70,
+              "requiredCompletedLessons": 0,
+              "isReview": false,
+              "lessonType": "comprehension",
+              "questionCount": 5,
+              "characterHint": "zelby",
+              "assetPath": "assets/lessons/stage_03/unit_05/lesson_001.json"
+            },
+            {
+              "id": "stage_03_unit_05_lesson_02",
+              "title": "Cerita Berseri",
+              "subtitle": "Membaca cerita berseri bergambar",
+              "order": 2,
+              "estimatedMinutes": 5,
+              "xpReward": 70,
+              "requiredCompletedLessons": 1,
+              "isReview": false,
+              "lessonType": "reading",
+              "questionCount": 5,
+              "characterHint": "lily",
+              "assetPath": "assets/lessons/stage_03/unit_05/lesson_002.json"
+            },
+            {
+              "id": "stage_03_unit_05_lesson_03",
+              "title": "Setelah dan Sebelum",
+              "subtitle": "Memahami urutan waktu kejadian",
+              "order": 3,
+              "estimatedMinutes": 5,
+              "xpReward": 70,
+              "requiredCompletedLessons": 2,
+              "isReview": false,
+              "lessonType": "listening",
+              "questionCount": 5,
+              "characterHint": "budi",
+              "assetPath": "assets/lessons/stage_03/unit_05/lesson_003.json"
+            }
+          ],
+          "id": "stage_03_unit_05"
+        },
+        {
+          "order": 6,
+          "title": "Makna Kata",
+          "lessons": [
+            {
+              "id": "stage_03_unit_06_lesson_01",
+              "title": "Kata yang Sama",
+              "subtitle": "Mencari kata yang memiliki makna sama",
+              "order": 1,
+              "estimatedMinutes": 5,
+              "xpReward": 70,
+              "requiredCompletedLessons": 0,
+              "isReview": false,
+              "lessonType": "reading",
+              "questionCount": 5,
+              "characterHint": "lily",
+              "assetPath": "assets/lessons/stage_03/unit_06/lesson_001.json"
+            },
+            {
+              "id": "stage_03_unit_06_lesson_02",
+              "title": "Lawan Kata",
+              "subtitle": "Mencari kata yang berlawanan makna",
+              "order": 2,
+              "estimatedMinutes": 5,
+              "xpReward": 70,
+              "requiredCompletedLessons": 1,
+              "isReview": false,
+              "lessonType": "listening",
+              "questionCount": 5,
+              "characterHint": "budi",
+              "assetPath": "assets/lessons/stage_03/unit_06/lesson_002.json"
+            },
+            {
+              "id": "stage_03_unit_06_lesson_03",
+              "title": "Arti Kata",
+              "subtitle": "Memahami arti kata dalam konteks",
+              "order": 3,
+              "estimatedMinutes": 5,
+              "xpReward": 70,
+              "requiredCompletedLessons": 2,
+              "isReview": false,
+              "lessonType": "storyOrder",
+              "questionCount": 5,
+              "characterHint": "zelby",
+              "assetPath": "assets/lessons/stage_03/unit_06/lesson_003.json"
+            }
+          ],
+          "id": "stage_03_unit_06"
+        }
+      ],
+      "id": "stage_03"
+    },
+    {
+      "order": 4,
+      "title": "Kelas 3",
+      "gradeBand": "Kelas 3",
+      "themeColor": "0xFFCE82FF",
+      "icon": "📝",
+      "units": [
+        {
+          "order": 1,
+          "title": "Paragraf Pendek",
+          "lessons": [
+            {
+              "id": "stage_04_unit_01_lesson_01",
+              "title": "Membaca Paragraf",
+              "subtitle": "Membaca paragraf pendek dengan lancar",
+              "order": 1,
+              "estimatedMinutes": 5,
+              "xpReward": 80,
+              "requiredCompletedLessons": 0,
+              "isReview": false,
+              "lessonType": "wordChoice",
+              "questionCount": 5,
+              "characterHint": "zelby",
+              "assetPath": "assets/lessons/stage_04/unit_01/lesson_001.json"
+            },
+            {
+              "id": "stage_04_unit_01_lesson_02",
+              "title": "Gagasan Paragraf",
+              "subtitle": "Menemukan gagasan dalam paragraf",
+              "order": 2,
+              "estimatedMinutes": 5,
+              "xpReward": 80,
+              "requiredCompletedLessons": 1,
+              "isReview": false,
+              "lessonType": "syllableMatch",
+              "questionCount": 5,
+              "characterHint": "lily",
+              "assetPath": "assets/lessons/stage_04/unit_01/lesson_002.json"
+            },
+            {
+              "id": "stage_04_unit_01_lesson_03",
+              "title": "Menjawab Bacaan",
+              "subtitle": "Menjawab pertanyaan dari bacaan",
+              "order": 3,
+              "estimatedMinutes": 5,
+              "xpReward": 80,
+              "requiredCompletedLessons": 2,
+              "isReview": false,
+              "lessonType": "sentenceBuild",
+              "questionCount": 5,
+              "characterHint": "budi",
+              "assetPath": "assets/lessons/stage_04/unit_01/lesson_003.json"
+            }
+          ],
+          "id": "stage_04_unit_01"
+        },
+        {
+          "order": 2,
+          "title": "Ide Pokok",
+          "lessons": [
+            {
+              "id": "stage_04_unit_02_lesson_01",
+              "title": "Ide Utama",
+              "subtitle": "Menemukan ide utama bacaan",
+              "order": 1,
+              "estimatedMinutes": 5,
+              "xpReward": 80,
+              "requiredCompletedLessons": 0,
+              "isReview": false,
+              "lessonType": "syllableMatch",
+              "questionCount": 5,
+              "characterHint": "lily",
+              "assetPath": "assets/lessons/stage_04/unit_02/lesson_001.json"
+            },
+            {
+              "id": "stage_04_unit_02_lesson_02",
+              "title": "Detail Pendukung",
+              "subtitle": "Mengenali detail yang mendukung ide utama",
+              "order": 2,
+              "estimatedMinutes": 5,
+              "xpReward": 80,
+              "requiredCompletedLessons": 1,
+              "isReview": false,
+              "lessonType": "sentenceBuild",
+              "questionCount": 5,
+              "characterHint": "budi",
+              "assetPath": "assets/lessons/stage_04/unit_02/lesson_002.json"
+            },
+            {
+              "id": "stage_04_unit_02_lesson_03",
+              "title": "Menyimpulkan",
+              "subtitle": "Menyimpulkan isi bacaan pendek",
+              "order": 3,
+              "estimatedMinutes": 5,
+              "xpReward": 80,
+              "requiredCompletedLessons": 2,
+              "isReview": false,
+              "lessonType": "comprehension",
+              "questionCount": 5,
+              "characterHint": "zelby",
+              "assetPath": "assets/lessons/stage_04/unit_02/lesson_003.json"
+            }
+          ],
+          "id": "stage_04_unit_02"
+        },
+        {
+          "order": 3,
+          "title": "Deskripsi",
+          "lessons": [
+            {
+              "id": "stage_04_unit_03_lesson_01",
+              "title": "Deskripsi Benda",
+              "subtitle": "Mendeskripsikan benda dengan kata-kata",
+              "order": 1,
+              "estimatedMinutes": 5,
+              "xpReward": 80,
+              "requiredCompletedLessons": 0,
+              "isReview": false,
+              "lessonType": "sentenceBuild",
+              "questionCount": 5,
+              "characterHint": "budi",
+              "assetPath": "assets/lessons/stage_04/unit_03/lesson_001.json"
+            },
+            {
+              "id": "stage_04_unit_03_lesson_02",
+              "title": "Deskripsi Tempat",
+              "subtitle": "Mendeskripsikan tempat dengan rinci",
+              "order": 2,
+              "estimatedMinutes": 5,
+              "xpReward": 80,
+              "requiredCompletedLessons": 1,
+              "isReview": false,
+              "lessonType": "comprehension",
+              "questionCount": 5,
+              "characterHint": "zelby",
+              "assetPath": "assets/lessons/stage_04/unit_03/lesson_002.json"
+            },
+            {
+              "id": "stage_04_unit_03_lesson_03",
+              "title": "Deskripsi Orang",
+              "subtitle": "Mendeskripsikan ciri-ciri orang",
+              "order": 3,
+              "estimatedMinutes": 5,
+              "xpReward": 80,
+              "requiredCompletedLessons": 2,
+              "isReview": false,
+              "lessonType": "reading",
+              "questionCount": 5,
+              "characterHint": "lily",
+              "assetPath": "assets/lessons/stage_04/unit_03/lesson_003.json"
+            }
+          ],
+          "id": "stage_04_unit_03"
+        },
+        {
+          "order": 4,
+          "title": "Sinonim Antonim",
+          "lessons": [
+            {
+              "id": "stage_04_unit_04_lesson_01",
+              "title": "Kata Bersinonim",
+              "subtitle": "Mencari padanan kata yang tepat",
+              "order": 1,
+              "estimatedMinutes": 5,
+              "xpReward": 80,
+              "requiredCompletedLessons": 0,
+              "isReview": false,
+              "lessonType": "comprehension",
+              "questionCount": 5,
+              "characterHint": "zelby",
+              "assetPath": "assets/lessons/stage_04/unit_04/lesson_001.json"
+            },
+            {
+              "id": "stage_04_unit_04_lesson_02",
+              "title": "Kata Antonim",
+              "subtitle": "Mencari lawan kata yang tepat",
+              "order": 2,
+              "estimatedMinutes": 5,
+              "xpReward": 80,
+              "requiredCompletedLessons": 1,
+              "isReview": false,
+              "lessonType": "reading",
+              "questionCount": 5,
+              "characterHint": "lily",
+              "assetPath": "assets/lessons/stage_04/unit_04/lesson_002.json"
+            },
+            {
+              "id": "stage_04_unit_04_lesson_03",
+              "title": "Padanan Kata",
+              "subtitle": "Memilih padanan kata dalam kalimat",
+              "order": 3,
+              "estimatedMinutes": 5,
+              "xpReward": 80,
+              "requiredCompletedLessons": 2,
+              "isReview": false,
+              "lessonType": "listening",
+              "questionCount": 5,
+              "characterHint": "budi",
+              "assetPath": "assets/lessons/stage_04/unit_04/lesson_003.json"
+            }
+          ],
+          "id": "stage_04_unit_04"
+        },
+        {
+          "order": 5,
+          "title": "Cerita Rakyat Mini",
+          "lessons": [
+            {
+              "id": "stage_04_unit_05_lesson_01",
+              "title": "Legenda Daerah",
+              "subtitle": "Membaca legenda dari berbagai daerah",
+              "order": 1,
+              "estimatedMinutes": 5,
+              "xpReward": 80,
+              "requiredCompletedLessons": 0,
+              "isReview": false,
+              "lessonType": "reading",
+              "questionCount": 5,
+              "characterHint": "lily",
+              "assetPath": "assets/lessons/stage_04/unit_05/lesson_001.json"
+            },
+            {
+              "id": "stage_04_unit_05_lesson_02",
+              "title": "Fabel",
+              "subtitle": "Membaca cerita fabel yang mengajarkan nilai",
+              "order": 2,
+              "estimatedMinutes": 5,
+              "xpReward": 80,
+              "requiredCompletedLessons": 1,
+              "isReview": false,
+              "lessonType": "listening",
+              "questionCount": 5,
+              "characterHint": "budi",
+              "assetPath": "assets/lessons/stage_04/unit_05/lesson_002.json"
+            },
+            {
+              "id": "stage_04_unit_05_lesson_03",
+              "title": "Cerita Rakyat Nusantara",
+              "subtitle": "Mengenal cerita rakyat Indonesia",
+              "order": 3,
+              "estimatedMinutes": 5,
+              "xpReward": 80,
+              "requiredCompletedLessons": 2,
+              "isReview": false,
+              "lessonType": "storyOrder",
+              "questionCount": 5,
+              "characterHint": "zelby",
+              "assetPath": "assets/lessons/stage_04/unit_05/lesson_003.json"
+            }
+          ],
+          "id": "stage_04_unit_05"
+        },
+        {
+          "order": 6,
+          "title": "Menulis Kalimat",
+          "lessons": [
+            {
+              "id": "stage_04_unit_06_lesson_01",
+              "title": "Struktur Kalimat",
+              "subtitle": "Belajar struktur kalimat yang benar",
+              "order": 1,
+              "estimatedMinutes": 5,
+              "xpReward": 80,
+              "requiredCompletedLessons": 0,
+              "isReview": false,
+              "lessonType": "listening",
+              "questionCount": 5,
+              "characterHint": "budi",
+              "assetPath": "assets/lessons/stage_04/unit_06/lesson_001.json"
+            },
+            {
+              "id": "stage_04_unit_06_lesson_02",
+              "title": "Kalimat Efektif",
+              "subtitle": "Menulis kalimat yang efektif dan jelas",
+              "order": 2,
+              "estimatedMinutes": 5,
+              "xpReward": 80,
+              "requiredCompletedLessons": 1,
+              "isReview": false,
+              "lessonType": "storyOrder",
+              "questionCount": 5,
+              "characterHint": "zelby",
+              "assetPath": "assets/lessons/stage_04/unit_06/lesson_002.json"
+            },
+            {
+              "id": "stage_04_unit_06_lesson_03",
+              "title": "Paragraf Pertama",
+              "subtitle": "Menulis paragraf pertama sendiri",
+              "order": 3,
+              "estimatedMinutes": 5,
+              "xpReward": 80,
+              "requiredCompletedLessons": 2,
+              "isReview": false,
+              "lessonType": "writing",
+              "questionCount": 5,
+              "characterHint": "lily",
+              "assetPath": "assets/lessons/stage_04/unit_06/lesson_003.json"
+            }
+          ],
+          "id": "stage_04_unit_06"
+        }
+      ],
+      "id": "stage_04"
+    },
+    {
+      "order": 5,
+      "title": "Kelas 4",
+      "gradeBand": "Kelas 4",
+      "themeColor": "0xFFFF9600",
+      "icon": "📚",
+      "units": [
+        {
+          "order": 1,
+          "title": "Teks Informasi",
+          "lessons": [
+            {
+              "id": "stage_05_unit_01_lesson_01",
+              "title": "Baca Informasi",
+              "subtitle": "Membaca teks informasi pendek",
+              "order": 1,
+              "estimatedMinutes": 5,
+              "xpReward": 90,
+              "requiredCompletedLessons": 0,
+              "isReview": false,
+              "lessonType": "syllableMatch",
+              "questionCount": 5,
+              "characterHint": "lily",
+              "assetPath": "assets/lessons/stage_05/unit_01/lesson_001.json"
+            },
+            {
+              "id": "stage_05_unit_01_lesson_02",
+              "title": "Fakta Penting",
+              "subtitle": "Menemukan fakta penting dalam bacaan",
+              "order": 2,
+              "estimatedMinutes": 5,
+              "xpReward": 90,
+              "requiredCompletedLessons": 1,
+              "isReview": false,
+              "lessonType": "sentenceBuild",
+              "questionCount": 5,
+              "characterHint": "budi",
+              "assetPath": "assets/lessons/stage_05/unit_01/lesson_002.json"
+            },
+            {
+              "id": "stage_05_unit_01_lesson_03",
+              "title": "Menjawab Informasi",
+              "subtitle": "Menjawab pertanyaan dari teks informasi",
+              "order": 3,
+              "estimatedMinutes": 5,
+              "xpReward": 90,
+              "requiredCompletedLessons": 2,
+              "isReview": false,
+              "lessonType": "comprehension",
+              "questionCount": 5,
+              "characterHint": "zelby",
+              "assetPath": "assets/lessons/stage_05/unit_01/lesson_003.json"
+            }
+          ],
+          "id": "stage_05_unit_01"
+        },
+        {
+          "order": 2,
+          "title": "Petunjuk & Instruksi",
+          "lessons": [
+            {
+              "id": "stage_05_unit_02_lesson_01",
+              "title": "Petunjuk Sederhana",
+              "subtitle": "Membaca petunjuk sederhana",
+              "order": 1,
+              "estimatedMinutes": 5,
+              "xpReward": 90,
+              "requiredCompletedLessons": 0,
+              "isReview": false,
+              "lessonType": "sentenceBuild",
+              "questionCount": 5,
+              "characterHint": "budi",
+              "assetPath": "assets/lessons/stage_05/unit_02/lesson_001.json"
+            },
+            {
+              "id": "stage_05_unit_02_lesson_02",
+              "title": "Langkah-langkah",
+              "subtitle": "Memahami langkah-langkah dalam instruksi",
+              "order": 2,
+              "estimatedMinutes": 5,
+              "xpReward": 90,
+              "requiredCompletedLessons": 1,
+              "isReview": false,
+              "lessonType": "comprehension",
+              "questionCount": 5,
+              "characterHint": "zelby",
+              "assetPath": "assets/lessons/stage_05/unit_02/lesson_002.json"
+            },
+            {
+              "id": "stage_05_unit_02_lesson_03",
+              "title": "Aturan Permainan",
+              "subtitle": "Membaca aturan permainan",
+              "order": 3,
+              "estimatedMinutes": 5,
+              "xpReward": 90,
+              "requiredCompletedLessons": 2,
+              "isReview": false,
+              "lessonType": "reading",
+              "questionCount": 5,
+              "characterHint": "lily",
+              "assetPath": "assets/lessons/stage_05/unit_02/lesson_003.json"
+            }
+          ],
+          "id": "stage_05_unit_02"
+        },
+        {
+          "order": 3,
+          "title": "Tokoh dan Watak",
+          "lessons": [
+            {
+              "id": "stage_05_unit_03_lesson_01",
+              "title": "Mengenal Tokoh",
+              "subtitle": "Mengenal tokoh dalam cerita",
+              "order": 1,
+              "estimatedMinutes": 5,
+              "xpReward": 90,
+              "requiredCompletedLessons": 0,
+              "isReview": false,
+              "lessonType": "comprehension",
+              "questionCount": 5,
+              "characterHint": "zelby",
+              "assetPath": "assets/lessons/stage_05/unit_03/lesson_001.json"
+            },
+            {
+              "id": "stage_05_unit_03_lesson_02",
+              "title": "Sifat Tokoh",
+              "subtitle": "Menentukan sifat tokoh cerita",
+              "order": 2,
+              "estimatedMinutes": 5,
+              "xpReward": 90,
+              "requiredCompletedLessons": 1,
+              "isReview": false,
+              "lessonType": "reading",
+              "questionCount": 5,
+              "characterHint": "lily",
+              "assetPath": "assets/lessons/stage_05/unit_03/lesson_002.json"
+            },
+            {
+              "id": "stage_05_unit_03_lesson_03",
+              "title": "Perubahan Tokoh",
+              "subtitle": "Mengamati perubahan sifat tokoh",
+              "order": 3,
+              "estimatedMinutes": 5,
+              "xpReward": 90,
+              "requiredCompletedLessons": 2,
+              "isReview": false,
+              "lessonType": "listening",
+              "questionCount": 5,
+              "characterHint": "budi",
+              "assetPath": "assets/lessons/stage_05/unit_03/lesson_003.json"
+            }
+          ],
+          "id": "stage_05_unit_03"
+        },
+        {
+          "order": 4,
+          "title": "Fakta dan Opini",
+          "lessons": [
+            {
+              "id": "stage_05_unit_04_lesson_01",
+              "title": "Membedakan Fakta",
+              "subtitle": "Mengenali pernyataan fakta",
+              "order": 1,
+              "estimatedMinutes": 5,
+              "xpReward": 90,
+              "requiredCompletedLessons": 0,
+              "isReview": false,
+              "lessonType": "reading",
+              "questionCount": 5,
+              "characterHint": "lily",
+              "assetPath": "assets/lessons/stage_05/unit_04/lesson_001.json"
+            },
+            {
+              "id": "stage_05_unit_04_lesson_02",
+              "title": "Mengenal Opini",
+              "subtitle": "Mengenali pernyataan opini",
+              "order": 2,
+              "estimatedMinutes": 5,
+              "xpReward": 90,
+              "requiredCompletedLessons": 1,
+              "isReview": false,
+              "lessonType": "listening",
+              "questionCount": 5,
+              "characterHint": "budi",
+              "assetPath": "assets/lessons/stage_05/unit_04/lesson_002.json"
+            },
+            {
+              "id": "stage_05_unit_04_lesson_03",
+              "title": "Fakta atau Opini",
+              "subtitle": "Membedakan fakta dan opini",
+              "order": 3,
+              "estimatedMinutes": 5,
+              "xpReward": 90,
+              "requiredCompletedLessons": 2,
+              "isReview": false,
+              "lessonType": "storyOrder",
+              "questionCount": 5,
+              "characterHint": "zelby",
+              "assetPath": "assets/lessons/stage_05/unit_04/lesson_003.json"
+            }
+          ],
+          "id": "stage_05_unit_04"
+        },
+        {
+          "order": 5,
+          "title": "Ringkasan Pendek",
+          "lessons": [
+            {
+              "id": "stage_05_unit_05_lesson_01",
+              "title": "Meringkas Bacaan",
+              "subtitle": "Meringkas bacaan pendek",
+              "order": 1,
+              "estimatedMinutes": 5,
+              "xpReward": 90,
+              "requiredCompletedLessons": 0,
+              "isReview": false,
+              "lessonType": "listening",
+              "questionCount": 5,
+              "characterHint": "budi",
+              "assetPath": "assets/lessons/stage_05/unit_05/lesson_001.json"
+            },
+            {
+              "id": "stage_05_unit_05_lesson_02",
+              "title": "Inti Cerita",
+              "subtitle": "Menemukan inti dari sebuah cerita",
+              "order": 2,
+              "estimatedMinutes": 5,
+              "xpReward": 90,
+              "requiredCompletedLessons": 1,
+              "isReview": false,
+              "lessonType": "storyOrder",
+              "questionCount": 5,
+              "characterHint": "zelby",
+              "assetPath": "assets/lessons/stage_05/unit_05/lesson_002.json"
+            },
+            {
+              "id": "stage_05_unit_05_lesson_03",
+              "title": "Poin Penting",
+              "subtitle": "Mengidentifikasi poin penting bacaan",
+              "order": 3,
+              "estimatedMinutes": 5,
+              "xpReward": 90,
+              "requiredCompletedLessons": 2,
+              "isReview": false,
+              "lessonType": "writing",
+              "questionCount": 5,
+              "characterHint": "lily",
+              "assetPath": "assets/lessons/stage_05/unit_05/lesson_003.json"
+            }
+          ],
+          "id": "stage_05_unit_05"
+        },
+        {
+          "order": 6,
+          "title": "Kosakata Akademik Dasar",
+          "lessons": [
+            {
+              "id": "stage_05_unit_06_lesson_01",
+              "title": "Kata Baku",
+              "subtitle": "Mengenal kata baku dalam bahasa Indonesia",
+              "order": 1,
+              "estimatedMinutes": 5,
+              "xpReward": 90,
+              "requiredCompletedLessons": 0,
+              "isReview": false,
+              "lessonType": "storyOrder",
+              "questionCount": 5,
+              "characterHint": "zelby",
+              "assetPath": "assets/lessons/stage_05/unit_06/lesson_001.json"
+            },
+            {
+              "id": "stage_05_unit_06_lesson_02",
+              "title": "Kata Serapan",
+              "subtitle": "Mengenal kata serapan dari bahasa asing",
+              "order": 2,
+              "estimatedMinutes": 5,
+              "xpReward": 90,
+              "requiredCompletedLessons": 1,
+              "isReview": false,
+              "lessonType": "writing",
+              "questionCount": 5,
+              "characterHint": "lily",
+              "assetPath": "assets/lessons/stage_05/unit_06/lesson_002.json"
+            },
+            {
+              "id": "stage_05_unit_06_lesson_03",
+              "title": "Istilah Akademik",
+              "subtitle": "Mengenal istilah akademik dasar",
+              "order": 3,
+              "estimatedMinutes": 5,
+              "xpReward": 90,
+              "requiredCompletedLessons": 2,
+              "isReview": false,
+              "lessonType": "vocabulary",
+              "questionCount": 5,
+              "characterHint": "budi",
+              "assetPath": "assets/lessons/stage_05/unit_06/lesson_003.json"
+            }
+          ],
+          "id": "stage_05_unit_06"
+        }
+      ],
+      "id": "stage_05"
+    },
+    {
+      "order": 6,
+      "title": "Kelas 5",
+      "gradeBand": "Kelas 5",
+      "themeColor": "0xFF24C96B",
+      "icon": "🎯",
+      "units": [
+        {
+          "order": 1,
+          "title": "Gagasan Utama",
+          "lessons": [
+            {
+              "id": "stage_06_unit_01_lesson_01",
+              "title": "Topik Bacaan",
+              "subtitle": "Menentukan topik dari bacaan",
+              "order": 1,
+              "estimatedMinutes": 5,
+              "xpReward": 100,
+              "requiredCompletedLessons": 0,
+              "isReview": false,
+              "lessonType": "sentenceBuild",
+              "questionCount": 5,
+              "characterHint": "budi",
+              "assetPath": "assets/lessons/stage_06/unit_01/lesson_001.json"
+            },
+            {
+              "id": "stage_06_unit_01_lesson_02",
+              "title": "Gagasan Pokok",
+              "subtitle": "Menemukan gagasan pokok paragraf",
+              "order": 2,
+              "estimatedMinutes": 5,
+              "xpReward": 100,
+              "requiredCompletedLessons": 1,
+              "isReview": false,
+              "lessonType": "comprehension",
+              "questionCount": 5,
+              "characterHint": "zelby",
+              "assetPath": "assets/lessons/stage_06/unit_01/lesson_002.json"
+            },
+            {
+              "id": "stage_06_unit_01_lesson_03",
+              "title": "Kesimpulan",
+              "subtitle": "Menyimpulkan gagasan dari bacaan",
+              "order": 3,
+              "estimatedMinutes": 5,
+              "xpReward": 100,
+              "requiredCompletedLessons": 2,
+              "isReview": false,
+              "lessonType": "reading",
+              "questionCount": 5,
+              "characterHint": "lily",
+              "assetPath": "assets/lessons/stage_06/unit_01/lesson_003.json"
+            }
+          ],
+          "id": "stage_06_unit_01"
+        },
+        {
+          "order": 2,
+          "title": "Inferensi",
+          "lessons": [
+            {
+              "id": "stage_06_unit_02_lesson_01",
+              "title": "Membaca Tersirat",
+              "subtitle": "Memahami makna tersirat dalam bacaan",
+              "order": 1,
+              "estimatedMinutes": 5,
+              "xpReward": 100,
+              "requiredCompletedLessons": 0,
+              "isReview": false,
+              "lessonType": "comprehension",
+              "questionCount": 5,
+              "characterHint": "zelby",
+              "assetPath": "assets/lessons/stage_06/unit_02/lesson_001.json"
+            },
+            {
+              "id": "stage_06_unit_02_lesson_02",
+              "title": "Menarik Kesimpulan",
+              "subtitle": "Menarik kesimpulan dari informasi",
+              "order": 2,
+              "estimatedMinutes": 5,
+              "xpReward": 100,
+              "requiredCompletedLessons": 1,
+              "isReview": false,
+              "lessonType": "reading",
+              "questionCount": 5,
+              "characterHint": "lily",
+              "assetPath": "assets/lessons/stage_06/unit_02/lesson_002.json"
+            },
+            {
+              "id": "stage_06_unit_02_lesson_03",
+              "title": "Prediksi Cerita",
+              "subtitle": "Memprediksi kelanjutan cerita",
+              "order": 3,
+              "estimatedMinutes": 5,
+              "xpReward": 100,
+              "requiredCompletedLessons": 2,
+              "isReview": false,
+              "lessonType": "listening",
+              "questionCount": 5,
+              "characterHint": "budi",
+              "assetPath": "assets/lessons/stage_06/unit_02/lesson_003.json"
+            }
+          ],
+          "id": "stage_06_unit_02"
+        },
+        {
+          "order": 3,
+          "title": "Teks Narasi",
+          "lessons": [
+            {
+              "id": "stage_06_unit_03_lesson_01",
+              "title": "Alur Cerita",
+              "subtitle": "Mengikuti alur cerita narasi",
+              "order": 1,
+              "estimatedMinutes": 5,
+              "xpReward": 100,
+              "requiredCompletedLessons": 0,
+              "isReview": false,
+              "lessonType": "reading",
+              "questionCount": 5,
+              "characterHint": "lily",
+              "assetPath": "assets/lessons/stage_06/unit_03/lesson_001.json"
+            },
+            {
+              "id": "stage_06_unit_03_lesson_02",
+              "title": "Latar Cerita",
+              "subtitle": "Menentukan latar tempat dan waktu",
+              "order": 2,
+              "estimatedMinutes": 5,
+              "xpReward": 100,
+              "requiredCompletedLessons": 1,
+              "isReview": false,
+              "lessonType": "listening",
+              "questionCount": 5,
+              "characterHint": "budi",
+              "assetPath": "assets/lessons/stage_06/unit_03/lesson_002.json"
+            },
+            {
+              "id": "stage_06_unit_03_lesson_03",
+              "title": "Konflik dan Resolusi",
+              "subtitle": "Mengenali konflik dan penyelesaiannya",
+              "order": 3,
+              "estimatedMinutes": 5,
+              "xpReward": 100,
+              "requiredCompletedLessons": 2,
+              "isReview": false,
+              "lessonType": "storyOrder",
+              "questionCount": 5,
+              "characterHint": "zelby",
+              "assetPath": "assets/lessons/stage_06/unit_03/lesson_003.json"
+            }
+          ],
+          "id": "stage_06_unit_03"
+        },
+        {
+          "order": 4,
+          "title": "Teks Eksplanasi",
+          "lessons": [
+            {
+              "id": "stage_06_unit_04_lesson_01",
+              "title": "Sebab Akibat",
+              "subtitle": "Memahami hubungan sebab akibat",
+              "order": 1,
+              "estimatedMinutes": 5,
+              "xpReward": 100,
+              "requiredCompletedLessons": 0,
+              "isReview": false,
+              "lessonType": "listening",
+              "questionCount": 5,
+              "characterHint": "budi",
+              "assetPath": "assets/lessons/stage_06/unit_04/lesson_001.json"
+            },
+            {
+              "id": "stage_06_unit_04_lesson_02",
+              "title": "Proses Terjadinya",
+              "subtitle": "Memahami proses terjadinya sesuatu",
+              "order": 2,
+              "estimatedMinutes": 5,
+              "xpReward": 100,
+              "requiredCompletedLessons": 1,
+              "isReview": false,
+              "lessonType": "storyOrder",
+              "questionCount": 5,
+              "characterHint": "zelby",
+              "assetPath": "assets/lessons/stage_06/unit_04/lesson_002.json"
+            },
+            {
+              "id": "stage_06_unit_04_lesson_03",
+              "title": "Penjelasan Ilmiah",
+              "subtitle": "Membaca penjelasan ilmiah sederhana",
+              "order": 3,
+              "estimatedMinutes": 5,
+              "xpReward": 100,
+              "requiredCompletedLessons": 2,
+              "isReview": false,
+              "lessonType": "writing",
+              "questionCount": 5,
+              "characterHint": "lily",
+              "assetPath": "assets/lessons/stage_06/unit_04/lesson_003.json"
+            }
+          ],
+          "id": "stage_06_unit_04"
+        },
+        {
+          "order": 5,
+          "title": "Perbandingan Informasi",
+          "lessons": [
+            {
+              "id": "stage_06_unit_05_lesson_01",
+              "title": "Membandingkan Teks",
+              "subtitle": "Membandingkan dua teks berbeda",
+              "order": 1,
+              "estimatedMinutes": 5,
+              "xpReward": 100,
+              "requiredCompletedLessons": 0,
+              "isReview": false,
+              "lessonType": "storyOrder",
+              "questionCount": 5,
+              "characterHint": "zelby",
+              "assetPath": "assets/lessons/stage_06/unit_05/lesson_001.json"
+            },
+            {
+              "id": "stage_06_unit_05_lesson_02",
+              "title": "Perbedaan dan Persamaan",
+              "subtitle": "Mencari perbedaan dan persamaan",
+              "order": 2,
+              "estimatedMinutes": 5,
+              "xpReward": 100,
+              "requiredCompletedLessons": 1,
+              "isReview": false,
+              "lessonType": "writing",
+              "questionCount": 5,
+              "characterHint": "lily",
+              "assetPath": "assets/lessons/stage_06/unit_05/lesson_002.json"
+            },
+            {
+              "id": "stage_06_unit_05_lesson_03",
+              "title": "Informasi Ganda",
+              "subtitle": "Membandingkan informasi dari dua sumber",
+              "order": 3,
+              "estimatedMinutes": 5,
+              "xpReward": 100,
+              "requiredCompletedLessons": 2,
+              "isReview": false,
+              "lessonType": "vocabulary",
+              "questionCount": 5,
+              "characterHint": "budi",
+              "assetPath": "assets/lessons/stage_06/unit_05/lesson_003.json"
+            }
+          ],
+          "id": "stage_06_unit_05"
+        },
+        {
+          "order": 6,
+          "title": "Menulis Paragraf",
+          "lessons": [
+            {
+              "id": "stage_06_unit_06_lesson_01",
+              "title": "Kerangka Paragraf",
+              "subtitle": "Membuat kerangka paragraf",
+              "order": 1,
+              "estimatedMinutes": 5,
+              "xpReward": 100,
+              "requiredCompletedLessons": 0,
+              "isReview": false,
+              "lessonType": "writing",
+              "questionCount": 5,
+              "characterHint": "lily",
+              "assetPath": "assets/lessons/stage_06/unit_06/lesson_001.json"
+            },
+            {
+              "id": "stage_06_unit_06_lesson_02",
+              "title": "Paragraf Argumentasi",
+              "subtitle": "Menulis paragraf argumentasi",
+              "order": 2,
+              "estimatedMinutes": 5,
+              "xpReward": 100,
+              "requiredCompletedLessons": 1,
+              "isReview": false,
+              "lessonType": "vocabulary",
+              "questionCount": 5,
+              "characterHint": "budi",
+              "assetPath": "assets/lessons/stage_06/unit_06/lesson_002.json"
+            },
+            {
+              "id": "stage_06_unit_06_lesson_03",
+              "title": "Paragraf Narasi",
+              "subtitle": "Menulis paragraf narasi",
+              "order": 3,
+              "estimatedMinutes": 5,
+              "xpReward": 100,
+              "requiredCompletedLessons": 2,
+              "isReview": false,
+              "lessonType": "analysis",
+              "questionCount": 5,
+              "characterHint": "zelby",
+              "assetPath": "assets/lessons/stage_06/unit_06/lesson_003.json"
+            }
+          ],
+          "id": "stage_06_unit_06"
+        }
+      ],
+      "id": "stage_06"
+    },
+    {
+      "order": 7,
+      "title": "Kelas 6",
+      "gradeBand": "Kelas 6",
+      "themeColor": "0xFF8B4DFF",
+      "icon": "🏆",
+      "units": [
+        {
+          "order": 1,
+          "title": "Pemahaman Bacaan",
+          "lessons": [
+            {
+              "id": "stage_07_unit_01_lesson_01",
+              "title": "Bacaan Kompleks",
+              "subtitle": "Membaca bacaan yang lebih kompleks",
+              "order": 1,
+              "estimatedMinutes": 5,
+              "xpReward": 110,
+              "requiredCompletedLessons": 0,
+              "isReview": false,
+              "lessonType": "comprehension",
+              "questionCount": 5,
+              "characterHint": "zelby",
+              "assetPath": "assets/lessons/stage_07/unit_01/lesson_001.json"
+            },
+            {
+              "id": "stage_07_unit_01_lesson_02",
+              "title": "Analisis Teks",
+              "subtitle": "Menganalisis struktur teks bacaan",
+              "order": 2,
+              "estimatedMinutes": 5,
+              "xpReward": 110,
+              "requiredCompletedLessons": 1,
+              "isReview": false,
+              "lessonType": "reading",
+              "questionCount": 5,
+              "characterHint": "lily",
+              "assetPath": "assets/lessons/stage_07/unit_01/lesson_002.json"
+            },
+            {
+              "id": "stage_07_unit_01_lesson_03",
+              "title": "Evaluasi Bacaan",
+              "subtitle": "Mengevaluasi isi bacaan secara kritis",
+              "order": 3,
+              "estimatedMinutes": 5,
+              "xpReward": 110,
+              "requiredCompletedLessons": 2,
+              "isReview": false,
+              "lessonType": "listening",
+              "questionCount": 5,
+              "characterHint": "budi",
+              "assetPath": "assets/lessons/stage_07/unit_01/lesson_003.json"
+            }
+          ],
+          "id": "stage_07_unit_01"
+        },
+        {
+          "order": 2,
+          "title": "Analisis Tokoh",
+          "lessons": [
+            {
+              "id": "stage_07_unit_02_lesson_01",
+              "title": "Motivasi Tokoh",
+              "subtitle": "Memahami motivasi tokoh cerita",
+              "order": 1,
+              "estimatedMinutes": 5,
+              "xpReward": 110,
+              "requiredCompletedLessons": 0,
+              "isReview": false,
+              "lessonType": "reading",
+              "questionCount": 5,
+              "characterHint": "lily",
+              "assetPath": "assets/lessons/stage_07/unit_02/lesson_001.json"
+            },
+            {
+              "id": "stage_07_unit_02_lesson_02",
+              "title": "Konflik Batin",
+              "subtitle": "Mengenali konflik batin tokoh",
+              "order": 2,
+              "estimatedMinutes": 5,
+              "xpReward": 110,
+              "requiredCompletedLessons": 1,
+              "isReview": false,
+              "lessonType": "listening",
+              "questionCount": 5,
+              "characterHint": "budi",
+              "assetPath": "assets/lessons/stage_07/unit_02/lesson_002.json"
+            },
+            {
+              "id": "stage_07_unit_02_lesson_03",
+              "title": "Perkembangan Karakter",
+              "subtitle": "Mengamati perkembangan karakter tokoh",
+              "order": 3,
+              "estimatedMinutes": 5,
+              "xpReward": 110,
+              "requiredCompletedLessons": 2,
+              "isReview": false,
+              "lessonType": "storyOrder",
+              "questionCount": 5,
+              "characterHint": "zelby",
+              "assetPath": "assets/lessons/stage_07/unit_02/lesson_003.json"
+            }
+          ],
+          "id": "stage_07_unit_02"
+        },
+        {
+          "order": 3,
+          "title": "Makna Tersirat",
+          "lessons": [
+            {
+              "id": "stage_07_unit_03_lesson_01",
+              "title": "Majas Sederhana",
+              "subtitle": "Mengenal majas sederhana dalam bacaan",
+              "order": 1,
+              "estimatedMinutes": 5,
+              "xpReward": 110,
+              "requiredCompletedLessons": 0,
+              "isReview": false,
+              "lessonType": "listening",
+              "questionCount": 5,
+              "characterHint": "budi",
+              "assetPath": "assets/lessons/stage_07/unit_03/lesson_001.json"
+            },
+            {
+              "id": "stage_07_unit_03_lesson_02",
+              "title": "Makna Kiasan",
+              "subtitle": "Memahami makna kiasan dalam kalimat",
+              "order": 2,
+              "estimatedMinutes": 5,
+              "xpReward": 110,
+              "requiredCompletedLessons": 1,
+              "isReview": false,
+              "lessonType": "storyOrder",
+              "questionCount": 5,
+              "characterHint": "zelby",
+              "assetPath": "assets/lessons/stage_07/unit_03/lesson_002.json"
+            },
+            {
+              "id": "stage_07_unit_03_lesson_03",
+              "title": "Amanat Cerita",
+              "subtitle": "Menemukan amanat dalam cerita",
+              "order": 3,
+              "estimatedMinutes": 5,
+              "xpReward": 110,
+              "requiredCompletedLessons": 2,
+              "isReview": false,
+              "lessonType": "writing",
+              "questionCount": 5,
+              "characterHint": "lily",
+              "assetPath": "assets/lessons/stage_07/unit_03/lesson_003.json"
+            }
+          ],
+          "id": "stage_07_unit_03"
+        },
+        {
+          "order": 4,
+          "title": "Teks Argumentasi Ringan",
+          "lessons": [
+            {
+              "id": "stage_07_unit_04_lesson_01",
+              "title": "Pendapat dan Alasan",
+              "subtitle": "Mengemukakan pendapat dan alasan",
+              "order": 1,
+              "estimatedMinutes": 5,
+              "xpReward": 110,
+              "requiredCompletedLessons": 0,
+              "isReview": false,
+              "lessonType": "storyOrder",
+              "questionCount": 5,
+              "characterHint": "zelby",
+              "assetPath": "assets/lessons/stage_07/unit_04/lesson_001.json"
+            },
+            {
+              "id": "stage_07_unit_04_lesson_02",
+              "title": "Meyakinkan Pembaca",
+              "subtitle": "Menulis argumen yang meyakinkan",
+              "order": 2,
+              "estimatedMinutes": 5,
+              "xpReward": 110,
+              "requiredCompletedLessons": 1,
+              "isReview": false,
+              "lessonType": "writing",
+              "questionCount": 5,
+              "characterHint": "lily",
+              "assetPath": "assets/lessons/stage_07/unit_04/lesson_002.json"
+            },
+            {
+              "id": "stage_07_unit_04_lesson_03",
+              "title": "Debat Sederhana",
+              "subtitle": "Berlatih debat sederhana",
+              "order": 3,
+              "estimatedMinutes": 5,
+              "xpReward": 110,
+              "requiredCompletedLessons": 2,
+              "isReview": false,
+              "lessonType": "vocabulary",
+              "questionCount": 5,
+              "characterHint": "budi",
+              "assetPath": "assets/lessons/stage_07/unit_04/lesson_003.json"
+            }
+          ],
+          "id": "stage_07_unit_04"
+        },
+        {
+          "order": 5,
+          "title": "Ringkasan",
+          "lessons": [
+            {
+              "id": "stage_07_unit_05_lesson_01",
+              "title": "Meringkas Esai",
+              "subtitle": "Meringkas esai pendek",
+              "order": 1,
+              "estimatedMinutes": 5,
+              "xpReward": 110,
+              "requiredCompletedLessons": 0,
+              "isReview": false,
+              "lessonType": "writing",
+              "questionCount": 5,
+              "characterHint": "lily",
+              "assetPath": "assets/lessons/stage_07/unit_05/lesson_001.json"
+            },
+            {
+              "id": "stage_07_unit_05_lesson_02",
+              "title": "Sintesis Bacaan",
+              "subtitle": "Mensintesis informasi dari bacaan",
+              "order": 2,
+              "estimatedMinutes": 5,
+              "xpReward": 110,
+              "requiredCompletedLessons": 1,
+              "isReview": false,
+              "lessonType": "vocabulary",
+              "questionCount": 5,
+              "characterHint": "budi",
+              "assetPath": "assets/lessons/stage_07/unit_05/lesson_002.json"
+            },
+            {
+              "id": "stage_07_unit_05_lesson_03",
+              "title": "Laporan Singkat",
+              "subtitle": "Menulis laporan singkat",
+              "order": 3,
+              "estimatedMinutes": 5,
+              "xpReward": 110,
+              "requiredCompletedLessons": 2,
+              "isReview": false,
+              "lessonType": "analysis",
+              "questionCount": 5,
+              "characterHint": "zelby",
+              "assetPath": "assets/lessons/stage_07/unit_05/lesson_003.json"
+            }
+          ],
+          "id": "stage_07_unit_05"
+        },
+        {
+          "order": 6,
+          "title": "Latihan Literasi Akhir",
+          "lessons": [
+            {
+              "id": "stage_07_unit_06_lesson_01",
+              "title": "Literasi Fiksi",
+              "subtitle": "Latihan literasi teks fiksi",
+              "order": 1,
+              "estimatedMinutes": 5,
+              "xpReward": 110,
+              "requiredCompletedLessons": 0,
+              "isReview": false,
+              "lessonType": "vocabulary",
+              "questionCount": 5,
+              "characterHint": "budi",
+              "assetPath": "assets/lessons/stage_07/unit_06/lesson_001.json"
+            },
+            {
+              "id": "stage_07_unit_06_lesson_02",
+              "title": "Literasi Nonfiksi",
+              "subtitle": "Latihan literasi teks nonfiksi",
+              "order": 2,
+              "estimatedMinutes": 5,
+              "xpReward": 110,
+              "requiredCompletedLessons": 1,
+              "isReview": false,
+              "lessonType": "analysis",
+              "questionCount": 5,
+              "characterHint": "zelby",
+              "assetPath": "assets/lessons/stage_07/unit_06/lesson_002.json"
+            },
+            {
+              "id": "stage_07_unit_06_lesson_03",
+              "title": "Literasi Digital",
+              "subtitle": "Latihan literasi digital dasar",
+              "order": 3,
+              "estimatedMinutes": 5,
+              "xpReward": 110,
+              "requiredCompletedLessons": 2,
+              "isReview": false,
+              "lessonType": "evaluation",
+              "questionCount": 5,
+              "characterHint": "lily",
+              "assetPath": "assets/lessons/stage_07/unit_06/lesson_003.json"
+            }
+          ],
+          "id": "stage_07_unit_06"
+        }
+      ],
+      "id": "stage_07"
+    }
+  ]
+}

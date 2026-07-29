@@ -11,6 +11,7 @@ import {
   MessageCircle, Users, Clock, Swords, Crown, GraduationCap,
 } from "lucide-react"
 import { trackDailyStreak, getOrCreateDailyQuests } from "@/lib/coins"
+import { jenjangMurid } from "@/lib/arena-junior/kurikulum"
 import { calcLevelProgress, calcLevel, calcLeagueFromXP } from "@/lib/xp"
 import { TugasCard } from "./tugas-card"
 import BattleCard from "@/components/arena/BattleCard"
@@ -32,6 +33,14 @@ const INITIALS_COLORS = [
 export default async function BerandaPage() {
   const user = await getUser()
   if (!user) redirect("/auth/arena-login")
+
+  // Murid TK–SD punya dasbor sendiri (Arena Junior). Login mengarahkan semua
+  // murid ke sini, jadi pembelokan dilakukan di beranda saja — BUKAN di layout,
+  // supaya tidak menambah query database pada setiap navigasi di dalam Arena.
+  if (user.role === "MURID") {
+    const jenjang = await jenjangMurid(user.id)
+    if (jenjang) redirect("/arena-junior")
+  }
 
   // Guru boleh mengintip dasbor murid (mode pratinjau) tanpa berubah peran.
   // Founder tetap mendapat pengalaman murid penuh seperti sebelumnya.
