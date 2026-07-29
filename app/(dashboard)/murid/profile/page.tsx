@@ -143,6 +143,8 @@ export default function MuridProfilePage() {
   const [avatarSrc, setAvatarSrc] = useState<string | null>(null);
   const [savingSettings, setSavingSettings] = useState(false);
   const [settingsMessage, setSettingsMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
+  const avatarFileRef = useRef<HTMLInputElement>(null);
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
 
   const openSettings = () => {
     if (!user) return;
@@ -181,6 +183,24 @@ export default function MuridProfilePage() {
   };
 
   const [nicknameDraft, setNicknameDraft] = useState("");
+
+  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploadingAvatar(true);
+    try {
+      const fileExt = file.name.split(".").pop();
+      const fileName = `avatar-${Date.now()}.${fileExt}`;
+      const { error } = await supabase.storage.from("avatars").upload(fileName, file);
+      if (error) throw error;
+      const { data } = supabase.storage.from("avatars").getPublicUrl(fileName);
+      setAvatarSrc(data.publicUrl);
+    } catch (error: any) {
+      setSettingsMessage({ type: "error", text: error.message || "Gagal upload foto" });
+    } finally {
+      setUploadingAvatar(false);
+    }
+  };
 
   const handleSaveNickname = async () => {
     const raw = nicknameDraft.trim();
@@ -505,6 +525,35 @@ export default function MuridProfilePage() {
 
               {/* Avatar */}
               <AvatarPicker value={avatarSrc} onChange={setAvatarSrc} />
+
+              <div className="flex items-center gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => avatarFileRef.current?.click()}
+                  disabled={uploadingAvatar}
+                  className="flex items-center gap-2 px-4 py-2.5 rounded-xl border-2 border-dashed border-violet-200 text-violet-700 hover:border-violet-400 hover:bg-violet-50 transition-all text-sm font-medium disabled:opacity-50"
+                >
+                  {uploadingAvatar ? <Loader2 size={16} className="animate-spin" /> : <Camera size={16} />}
+                  {uploadingAvatar ? "Mengupload..." : "Upload Foto Sendiri"}
+                </button>
+                <input
+                  ref={avatarFileRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleAvatarUpload}
+                  className="hidden"
+                />
+                {avatarSrc && !avatarSrc.includes("dicebear") && (
+                  <button
+                    type="button"
+                    onClick={() => setAvatarSrc(null)}
+                    className="text-xs text-red-500 hover:text-red-700"
+                  >
+                    Hapus
+                  </button>
+                )}
+              </div>
+              <p className="text-xs text-gray-400 -mt-1">Klik untuk upload dari galeri HP atau file laptop</p>
 
               <div className="bg-violet-50/60 border border-violet-100 rounded-xl p-3.5">
                 <label className="text-sm font-medium text-gray-700 mb-1 flex items-center gap-1.5">
