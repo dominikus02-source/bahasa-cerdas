@@ -14,7 +14,7 @@ const userSessionFields = {
   id: true, supabaseId: true, email: true, fullName: true, nickname: true, nicknameUpdatedAt: true,
   avatar: true, role: true, isFounder: true, isPremium: true, premiumPlan: true, premiumUntil: true,
   xp: true, level: true, streak: true, league: true, coins: true, totalLikes: true, totalViews: true,
-  createdAt: true, school: true, city: true, province: true, grade: true, bio: true,
+  createdAt: true,
 } as const;
 
 async function findOrCreateUser(opts: {

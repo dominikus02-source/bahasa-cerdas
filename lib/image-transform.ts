@@ -1,6 +1,11 @@
-const SUPABASE_PROJECT = process.env.NEXT_PUBLIC_SUPABASE_URL
-  ? new URL(process.env.NEXT_PUBLIC_SUPABASE_URL).hostname
-  : null;
+let SUPABASE_PROJECT: string | null = null;
+try {
+  SUPABASE_PROJECT = process.env.NEXT_PUBLIC_SUPABASE_URL
+    ? new URL(process.env.NEXT_PUBLIC_SUPABASE_URL).hostname
+    : null;
+} catch {
+  // env var not set or invalid URL
+}
 
 const TRANSFORM_ENABLED = !!SUPABASE_PROJECT;
 
