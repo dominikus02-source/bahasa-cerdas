@@ -308,7 +308,7 @@ export default function LariKataGame({ hideBackButton, backHref = "/arena/game" 
 
         {submitting ? (
           <div className="mb-4 flex items-center gap-2 text-sm opacity-60"><Loader2 className="w-4 h-4 animate-spin" /> Menyimpan hasil…</div>
-        ) : result && (
+        ) : result && result.xpEarned != null && (
           <div className="bg-emerald-100 border-4 border-[#161B3A] rounded-2xl p-4 mb-4 shadow-[4px_4px_0_#161B3A] w-full max-w-sm">
             <div className="flex items-center gap-2 justify-center mb-1">
               <Sparkles className="w-4 h-4 text-emerald-600" />

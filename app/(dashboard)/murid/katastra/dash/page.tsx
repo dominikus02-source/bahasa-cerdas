@@ -29,6 +29,15 @@ export default function WordDashPage() {
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const feedbackTimer = useRef<NodeJS.Timeout | null>(null);
   const supabaseIdRef = useRef("");
+  const scoreRef = useRef(0);
+  const correctRef = useRef(0);
+  const wrongRef = useRef(0);
+  const maxStreakRef = useRef(0);
+
+  useEffect(() => { scoreRef.current = score; }, [score]);
+  useEffect(() => { correctRef.current = correct; }, [correct]);
+  useEffect(() => { wrongRef.current = wrong; }, [wrong]);
+  useEffect(() => { maxStreakRef.current = maxStreak; }, [maxStreak]);
 
   useEffect(() => {
     const stored = localStorage.getItem("bc-user");
@@ -54,23 +63,7 @@ export default function WordDashPage() {
     setResult(null);
   }, []);
 
-  useEffect(() => {
-    if (phase === "playing") {
-      timerRef.current = setInterval(() => {
-        setTimeLeft((t) => {
-          if (t <= 1) {
-            clearInterval(timerRef.current!);
-            endGame();
-            return 0;
-          }
-          return t - 1;
-        });
-      }, 1000);
-    }
-    return () => { if (timerRef.current) clearInterval(timerRef.current); };
-  }, [phase]);
-
-  const endGame = async () => {
+  const endGame = useCallback(async () => {
     if (timerRef.current) clearInterval(timerRef.current);
     setPhase("result");
     setSubmitting(true);
@@ -78,14 +71,29 @@ export default function WordDashPage() {
       const res = await fetch("/api/katastra/submit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ score, correct, wrong, maxStreak, mode: "dash", supabaseId: supabaseIdRef.current }),
+        body: JSON.stringify({ score: scoreRef.current, correct: correctRef.current, wrong: wrongRef.current, maxStreak: maxStreakRef.current, mode: "dash", supabaseId: supabaseIdRef.current }),
       });
       const data = await res.json();
       setResult(data);
     } catch {} finally {
       setSubmitting(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    if (phase !== "playing") return;
+    timerRef.current = setInterval(() => {
+      setTimeLeft((t) => {
+        if (t <= 1) {
+          clearInterval(timerRef.current!);
+          endGame();
+          return 0;
+        }
+        return t - 1;
+      });
+    }, 1000);
+    return () => { if (timerRef.current) clearInterval(timerRef.current); };
+  }, [phase, endGame]);
 
   const handleAnswer = (idx: number) => {
     if (selected !== null || feedback !== null) return;
@@ -187,7 +195,7 @@ export default function WordDashPage() {
             </div>
           </div>
 
-          {result && (
+          {result && result.xpEarned != null && (
             <div className="bg-green-500/10 border border-green-500/20 rounded-2xl p-4 mb-4">
               <div className="flex items-center gap-2 justify-center mb-2">
                 <Sparkles size={18} className="text-green-400" />
