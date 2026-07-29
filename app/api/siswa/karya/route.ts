@@ -33,6 +33,7 @@ export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url);
     const type = searchParams.get("type");
     const q = searchParams.get("q")?.trim();
+    const groupId = searchParams.get("groupId")?.trim();
     const limit = Math.min(parseInt(searchParams.get("limit") || "10"), 50);
     const cursor = searchParams.get("cursor");
     const featured = searchParams.get("featured") === "true";
@@ -98,10 +99,28 @@ export async function GET(req: NextRequest) {
           { user: { fullName: { contains: q, mode: "insensitive" } } },
         ];
       }
+      if (groupId) {
+        const group = await db.group.findUnique({
+          where: { id: groupId },
+          select: { teacherId: true },
+        });
+        if (!group) {
+          return NextResponse.json({ error: "Kelas tidak ditemukan" }, { status: 404 });
+        }
+        if (user && user.role === "GURU" && group.teacherId !== user.id) {
+          return NextResponse.json({ error: "Anda tidak berhak mengakses kelas ini" }, { status: 403 });
+        }
+        const members = await db.groupMember.findMany({
+          where: { groupId, role: "member" },
+          select: { userId: true },
+        });
+        const memberIds = members.map((m) => m.userId);
+        where.userId = { in: memberIds };
+      }
 
       // Cache first page (no cursor) for 30s — absorbs feed bursts from a whole class
       // Skip cache when searching so results are always fresh
-      const cacheKey = cursor || q ? null : `feed:${type || "all"}:${limit}`;
+      const cacheKey = cursor || q || groupId ? null : `feed:${type || "all"}:${limit}`;
       let karya: any[];
       if (cacheKey) {
         const cached = await cache.get<any[]>(cacheKey);

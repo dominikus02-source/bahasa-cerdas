@@ -36,7 +36,7 @@ export default function MateriDariGuruPage() {
     fetch("/api/murid/materi")
       .then(r => r.ok ? r.json() : Promise.reject())
       .then(d => setItems(d.data || []))
-      .catch(() => {})
+      .catch((e) => console.error("Gagal memuat materi:", e))
       .finally(() => setLoading(false))
   }, [])
 

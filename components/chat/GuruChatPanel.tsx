@@ -84,7 +84,16 @@ export default function GuruChatPanel({ userId }: { userId: string }) {
   }, []);
 
   useEffect(() => {
-    messagesEnd.current?.scrollIntoView({ behavior: "smooth" });
+    const el = messagesEnd.current;
+    if (!el) return;
+    const container = el.parentElement;
+    if (!container) return;
+    // Hanya auto-scroll jika user sudah di dekat bawah (belum scroll ke atas
+    // untuk baca history). Kalau user sengaja scroll ke atas, jangan ganggu.
+    const nearBottom = container.scrollHeight - container.scrollTop - container.clientHeight < 120;
+    if (nearBottom) {
+      container.scrollTo({ top: container.scrollHeight, behavior: "smooth" });
+    }
   }, [messages]);
 
   const sendMessage = async () => {

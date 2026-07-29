@@ -6,6 +6,9 @@
  * Upsert-only by slug. No delete/truncate/drop.
  */
 
+import { config } from "dotenv";
+config({ path: ".env" });
+
 import { PrismaClient } from "@prisma/client";
 
 const db = new PrismaClient();
@@ -40,7 +43,9 @@ const FOUNDER_EMAILS = [
 
 async function main() {
   const isExecute = process.argv.includes("--execute");
-  const articles: ArticleItem[] = require("../data/articles/founder-archive-2026-05-06.json");
+  const articlesV1: ArticleItem[] = require("../data/articles/founder-archive-2026-05-06.json");
+  const articlesV2: ArticleItem[] = require("../data/articles/founder-archive-v2-2026-07.json");
+  const articles = [...articlesV1, ...articlesV2];
 
   console.log("=== SEED FOUNDER ARTICLES ===\n");
   console.log(`Mode: ${isExecute ? "EXECUTE" : "DRY-RUN"}`);

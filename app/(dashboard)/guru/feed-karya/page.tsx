@@ -46,6 +46,7 @@ export default function GuruFeedKaryaPage() {
   const loadingMoreRef = useRef(false);
   const pageRef = useRef(1);
   const totalPagesRef = useRef(1);
+  const abortRef = useRef<AbortController | null>(null);
 
   // Modal state
   const [modalKarya, setModalKarya] = useState<Karya | null>(null);
@@ -68,10 +69,14 @@ export default function GuruFeedKaryaPage() {
   // hit on school wifi. The finally block always clears them.
   const fetchKarya = useCallback(async (pageNum: number, type: string, append: boolean) => {
     try {
+      abortRef.current?.abort();
+      const controller = new AbortController();
+      abortRef.current = controller;
+
       const params = new URLSearchParams({ page: String(pageNum), limit: "10" });
       if (type) params.set("type", type);
       if (selectedGroupId) params.set("groupId", selectedGroupId);
-      const res = await fetch(`/api/siswa/karya?${params}`);
+      const res = await fetch(`/api/siswa/karya?${params}`, { signal: controller.signal });
       if (!res.ok) throw new Error("Gagal memuat karya");
       const data = await res.json();
       const items = Array.isArray(data?.karya) ? data.karya : [];

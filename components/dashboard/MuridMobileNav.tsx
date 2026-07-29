@@ -1,12 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { LogoutButton } from "@/components/dashboard/LogoutButton";
-import { NotificationBell } from "@/components/dashboard/NotificationBell";
 import {
-  Home, BarChart3, Menu as MenuIcon, X,
+  Home, BarChart3, Menu as MenuIcon, X, Bell,
   GraduationCap, Coins, ClipboardCheck,
   FileText, Award, ExternalLink, Trophy, Calendar, User,
 } from "lucide-react";
@@ -50,6 +49,19 @@ const GROUPS: { title: string; items: { href: string; label: string; icon: any }
 export default function MuridMobileNav({ fullName }: { fullName: string }) {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  useEffect(() => {
+    const fetchUnread = () => {
+      fetch("/api/notifikasi?unread=true")
+        .then(r => r.ok ? r.json() : null)
+        .then(d => { if (d?.unreadCount) setUnreadCount(d.unreadCount); })
+        .catch(() => {});
+    };
+    fetchUnread();
+    const interval = setInterval(fetchUnread, 60000);
+    return () => clearInterval(interval);
+  }, []);
 
   const isActive = (href: string) => pathname === href || pathname?.startsWith(href + "/");
 
@@ -67,6 +79,17 @@ export default function MuridMobileNav({ fullName }: { fullName: string }) {
               </Link>
             );
           })}
+          <Link href="/arena/notifikasi" className="relative flex flex-col items-center gap-0.5 py-1 px-2 text-gray-500 hover:text-gray-700">
+            <div className="relative">
+              <Bell size={20} />
+              {unreadCount > 0 && (
+                <span className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-red-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center shadow">
+                  {unreadCount > 9 ? "9+" : unreadCount}
+                </span>
+              )}
+            </div>
+            <span className="text-[10px] font-semibold">Notif</span>
+          </Link>
           <button onClick={() => setMenuOpen(true)} className="flex flex-col items-center gap-0.5 py-1 px-3 text-gray-500 hover:text-gray-700">
             <MenuIcon size={20} />
             <span className="text-[10px] font-semibold">Menu</span>

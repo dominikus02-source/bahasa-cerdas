@@ -31,6 +31,7 @@ const NAV: NavItem[] = [
   { label: "Materi Ajar", href: "/guru/materi-ajar", icon: <Presentation size={18} /> },
   { label: "Buku Ajar", href: "/guru/panduan-guru", icon: <BookOpen size={18} /> },
   { label: "Bank Soal", href: "/guru/bank-soal", icon: <Database size={18} /> },
+  { label: "Karya Siswa", href: "/guru/feed-karya", icon: <Star size={18} /> },
   {
     label: "Simulasi",
     icon: <BarChart3 size={18} />,
