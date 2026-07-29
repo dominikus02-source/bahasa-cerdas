@@ -11,6 +11,7 @@ import {
   MessageCircle, Users, Clock, Swords, Crown, GraduationCap,
 } from "lucide-react"
 import { trackDailyStreak, getOrCreateDailyQuests } from "@/lib/coins"
+import { jenjangMurid } from "@/lib/arena-junior/kurikulum"
 import { getQuestMeta, questProgressText } from "@/lib/quest-meta"
 import { calcLevelProgress, calcLevel, calcLeagueFromXP } from "@/lib/xp"
 import { getDisplayName } from "@/lib/nickname"
@@ -34,6 +35,14 @@ const INITIALS_COLORS = [
 export default async function BerandaPage() {
   const user = await getUser()
   if (!user) redirect("/auth/arena-login")
+
+  // Murid TK–SD punya dasbor sendiri (Arena Junior). Login mengarahkan semua
+  // murid ke sini, jadi pembelokan dilakukan di beranda saja — BUKAN di layout,
+  // supaya tidak menambah query database pada setiap navigasi di dalam Arena.
+  if (user.role === "MURID") {
+    const jenjang = await jenjangMurid(user.id)
+    if (jenjang) redirect("/arena-junior")
+  }
 
   const isGuruPreview = user.role !== "MURID" && !user.isFounder
   const nameOf = (u: { fullName: string; nickname?: string | null }) =>

@@ -1,0 +1,194 @@
+import Link from "next/link"
+import Image from "next/image"
+import { redirect } from "next/navigation"
+import { Flame, Gem, Sparkles } from "lucide-react"
+import { getUser } from "@/lib/supabase/server"
+import { ambilKurikulum, jenjangMurid, LABEL_JENJANG } from "@/lib/arena-junior/kurikulum"
+import { gambarKarakter, PROFIL, normalkanKarakter } from "@/lib/arena-junior/karakter"
+import { JalurBelajar } from "./_components/jalur-belajar"
+
+export const dynamic = "force-dynamic"
+
+function BilahAtas({
+  nama,
+  jenjang,
+  streak,
+  koin,
+}: {
+  nama: string
+  jenjang: string
+  streak: number
+  koin: number
+}) {
+  return (
+    <nav className="sticky top-0 z-40 rounded-b-3xl bg-white px-4 py-3 shadow-md">
+      <div className="mx-auto flex max-w-5xl items-center justify-between gap-3">
+        <div className="flex min-w-0 items-center gap-2">
+          <Image
+            src={gambarKarakter("zelby", "happy")}
+            alt=""
+            width={96}
+            height={96}
+            className="h-11 w-11 shrink-0 rounded-full bg-[#FFF1D2] object-contain"
+            priority
+          />
+          <div className="min-w-0">
+            <p className="truncate text-sm font-bold text-slate-800">Halo, {nama}!</p>
+            <p className="text-xs text-slate-500">{jenjang}</p>
+          </div>
+        </div>
+
+        <div className="flex shrink-0 items-center gap-3 sm:gap-4">
+          <span className="flex items-center gap-1 text-lg font-extrabold text-[#FF8C42]">
+            <Flame className="h-5 w-5" aria-hidden />
+            <span aria-label={`${streak} hari berturut-turut`}>{streak}</span>
+          </span>
+          <span className="flex items-center gap-1 text-lg font-extrabold text-[#A78BFA]">
+            <Gem className="h-5 w-5" aria-hidden />
+            <span aria-label={`${koin} koin`}>{koin}</span>
+          </span>
+        </div>
+      </div>
+    </nav>
+  )
+}
+
+function KartuZelby({ pesan, karakter }: { pesan: string; karakter: string }) {
+  const profil = PROFIL[normalkanKarakter(karakter)]
+  return (
+    <div className="flex items-start gap-3 rounded-3xl bg-gradient-to-br from-[#4ECDC4] to-[#3BAFA8] p-5 text-white shadow-lg">
+      <Image
+        src={gambarKarakter(karakter, "wave")}
+        alt=""
+        width={128}
+        height={128}
+        className="h-16 w-16 shrink-0 object-contain drop-shadow"
+      />
+      <div>
+        <h2 className="text-lg font-extrabold">{profil.nama} berkata:</h2>
+        <p className="text-sm font-medium opacity-95">{pesan}</p>
+      </div>
+    </div>
+  )
+}
+
+function MisiHarian({ selesai, target }: { selesai: number; target: number }) {
+  const persen = Math.min(100, Math.round((selesai / target) * 100))
+  const tuntas = selesai >= target
+  return (
+    <div className="rounded-3xl bg-white p-5 shadow-sm">
+      <h2 className="mb-3 flex items-center gap-2 text-lg font-extrabold text-slate-800">
+        <Sparkles className="h-5 w-5 text-[#FFD54A]" aria-hidden />
+        Misi Hari Ini
+      </h2>
+      <p className="mb-1 text-sm font-semibold text-slate-600">
+        Selesaikan {target} pelajaran
+      </p>
+      <div
+        className="h-3 w-full overflow-hidden rounded-full bg-slate-100"
+        role="progressbar"
+        aria-valuenow={selesai}
+        aria-valuemin={0}
+        aria-valuemax={target}
+      >
+        <div
+          className={`h-3 rounded-full transition-all ${tuntas ? "bg-[#4ECDC4]" : "bg-[#A78BFA]"}`}
+          style={{ width: `${persen}%` }}
+        />
+      </div>
+      <p className="mt-1 text-xs text-slate-400">
+        {tuntas ? "Selesai! Hebat sekali 🎉" : `${selesai} dari ${target} selesai`}
+      </p>
+    </div>
+  )
+}
+
+function BelumPunyaKelas({ nama }: { nama: string }) {
+  return (
+    <main className="mx-auto flex min-h-screen max-w-md flex-col items-center justify-center gap-5 px-6 text-center">
+      <Image
+        src={gambarKarakter("zelby", "thinking")}
+        alt=""
+        width={256}
+        height={256}
+        className="h-40 w-40 object-contain"
+        priority
+      />
+      <h1 className="text-2xl font-extrabold text-slate-800">Halo, {nama}!</h1>
+      <p className="text-slate-600">
+        Kamu belum tergabung di kelas TK atau SD. Minta <strong>kode kelas</strong> ke gurumu,
+        lalu masukkan di sini supaya petualanganmu bisa dimulai.
+      </p>
+      <Link
+        href="/murid/gabung-kelas"
+        className="rounded-2xl bg-[#FF8C42] px-8 py-4 text-lg font-extrabold text-white shadow-lg transition active:translate-y-0.5"
+      >
+        Masukkan Kode Kelas
+      </Link>
+    </main>
+  )
+}
+
+export default async function ArenaJuniorPage() {
+  const user = await getUser()
+  if (!user) redirect("/auth/arena-login")
+
+  const namaDepan = user.fullName?.trim().split(/\s+/)[0] || "Teman"
+
+  const grade = await jenjangMurid(user.id)
+  if (!grade) return <BelumPunyaKelas nama={namaDepan} />
+
+  const { stages, ringkasan } = await ambilKurikulum(user.id, grade)
+
+  const pesanZelby = ringkasan.judulBerikutnya
+    ? `Ayo lanjut ke "${ringkasan.judulBerikutnya}". Baca dengan nyaring supaya makin lancar!`
+    : ringkasan.totalPelajaran > 0
+      ? "Semua pelajaran di kelasmu sudah selesai. Kamu luar biasa!"
+      : "Pelajaran untuk kelasmu sedang disiapkan. Sampai jumpa sebentar lagi!"
+
+  const persenJenjang =
+    ringkasan.totalPelajaran > 0
+      ? Math.round((ringkasan.selesai / ringkasan.totalPelajaran) * 100)
+      : 0
+
+  return (
+    <>
+      <BilahAtas
+        nama={namaDepan}
+        jenjang={LABEL_JENJANG[grade]}
+        streak={user.streak}
+        koin={user.coins}
+      />
+
+      <main className="mx-auto max-w-5xl px-4 py-6">
+        <div className="grid gap-6 lg:grid-cols-3">
+          <div className="space-y-4 lg:order-2">
+            <KartuZelby pesan={pesanZelby} karakter={ringkasan.karakterBerikutnya} />
+            <MisiHarian selesai={ringkasan.selesaiHariIni} target={ringkasan.targetHarian} />
+
+            <div className="rounded-3xl bg-white p-5 shadow-sm">
+              <h2 className="mb-2 text-lg font-extrabold text-slate-800">Kemajuanmu</h2>
+              <div className="h-3 w-full overflow-hidden rounded-full bg-slate-100">
+                <div
+                  className="h-3 rounded-full bg-[#FFD54A] transition-all"
+                  style={{ width: `${persenJenjang}%` }}
+                />
+              </div>
+              <p className="mt-2 text-sm text-slate-500">
+                {ringkasan.selesai} dari {ringkasan.totalPelajaran} pelajaran{" "}
+                {LABEL_JENJANG[grade]}
+              </p>
+              {ringkasan.xpTerkumpul > 0 && (
+                <p className="text-xs text-slate-400">{ringkasan.xpTerkumpul} XP terkumpul</p>
+              )}
+            </div>
+          </div>
+
+          <div className="lg:order-1 lg:col-span-2">
+            <JalurBelajar stages={stages} idAktif={ringkasan.pelajaranBerikutnya} />
+          </div>
+        </div>
+      </main>
+    </>
+  )
+}

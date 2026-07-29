@@ -5,7 +5,7 @@
 // pair with them — SD teachers could not generate a modul ajar, soal, or PPT
 // at all. Anything that needs a grade dropdown should import from here.
 
-export type Jenjang = "SD" | "SMP" | "SMA";
+export type Jenjang = "TK" | "SD" | "SMP" | "SMA";
 
 export interface GradeOption {
   /** Roman numeral as written on Indonesian school documents. */
@@ -18,6 +18,7 @@ export interface GradeOption {
 }
 
 export const GRADE_OPTIONS: GradeOption[] = [
+  { value: "TK", label: "TK/PAUD", jenjang: "TK", phase: "Fondasi" },
   { value: "I", label: "I (SD)", jenjang: "SD", phase: "A" },
   { value: "II", label: "II (SD)", jenjang: "SD", phase: "A" },
   { value: "III", label: "III (SD)", jenjang: "SD", phase: "B" },
@@ -33,6 +34,7 @@ export const GRADE_OPTIONS: GradeOption[] = [
 ];
 
 export const PHASE_OPTIONS = [
+  { value: "Fondasi", label: "Fondasi (TK/PAUD)" },
   { value: "A", label: "A (SD Kelas I-II)" },
   { value: "B", label: "B (SD Kelas III-IV)" },
   { value: "C", label: "C (SD Kelas V-VI)" },
@@ -56,3 +58,27 @@ export function jenjangForGrade(grade: string): Jenjang {
 
 /** Plain list of roman numerals, for forms that have no phase selector. */
 export const GRADE_VALUES = GRADE_OPTIONS.map((g) => g.value);
+
+// ── Arena Junior (dasbor murid TK–SD) ────────────────────────────────────────
+// Group.grade adalah teks bebas berisi angka Romawi ("I".."XII") atau "TK".
+// Arena Junior memakai enum sendiri (TK, K1..K6), jadi pemetaannya dipusatkan
+// di sini supaya tidak ada route yang menebak-nebak formatnya.
+
+const ARENA_JUNIOR_BY_GRADE: Record<string, "TK" | "K1" | "K2" | "K3" | "K4" | "K5" | "K6"> = {
+  TK: "TK",
+  I: "K1",
+  II: "K2",
+  III: "K3",
+  IV: "K4",
+  V: "K5",
+  VI: "K6",
+};
+
+/**
+ * Jenjang Arena Junior untuk sebuah `Group.grade`, atau null bila kelas itu
+ * bukan TK/SD (VII ke atas, "SMA", "Lainnya", dst).
+ */
+export function arenaJuniorGradeFor(grade: string | null | undefined) {
+  if (!grade) return null;
+  return ARENA_JUNIOR_BY_GRADE[grade.trim().toUpperCase()] ?? null;
+}

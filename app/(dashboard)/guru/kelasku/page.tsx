@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { GRADE_OPTIONS as KURIKULUM_GRADES } from "@/lib/kurikulum/jenjang";
 
 interface MemberProgress {
   id: string;
@@ -185,8 +186,13 @@ export default function KelasKuPage() {
     navigator.clipboard.writeText(text);
     setToast("Kode tersalin! Tempel di pengumuman beranda");
   };
-
-  const GRADE_OPTIONS = ["VII", "VIII", "IX", "X", "XI", "XII", "SMA", "SMK", "Lainnya"];
+  // Daftar kelas diambil dari sumber tunggal di lib/kurikulum/jenjang.ts.
+  // Sebelumnya di-hardcode VII–XII saja, sehingga guru TK/SD tidak bisa membuat
+  // kelas sama sekali — dan tanpa kelas TK/SD, Arena Junior tidak punya jenjang.
+  const GRADE_OPTIONS = [
+    ...KURIKULUM_GRADES.map((g) => ({ value: g.value, label: g.label })),
+    { value: "Lainnya", label: "Lainnya" },
+  ];
 
   return (
     <div className="p-6 max-w-6xl mx-auto">
@@ -325,7 +331,7 @@ export default function KelasKuPage() {
                     className="w-full h-11 px-4 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-500"
                   >
                     {GRADE_OPTIONS.map((g) => (
-                      <option key={g} value={g}>{g}</option>
+                      <option key={g.value} value={g.value}>{g.label}</option>
                     ))}
                   </select>
                 </div>
