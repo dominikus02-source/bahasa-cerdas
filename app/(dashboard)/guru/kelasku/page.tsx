@@ -1,11 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import {
   Users, Plus, Copy, ChevronLeft, Trash2, Edit3,
   CheckCircle, Clock, BookOpen, Gamepad2, GraduationCap,
-  MoreVertical, X, Eye, EyeOff, RefreshCw, Search, Crown, AlertCircle
+  MoreVertical, X, Eye, EyeOff, RefreshCw, Search, Crown, AlertCircle,
+  Share2, MessageCircle, Send
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -47,6 +48,8 @@ export default function KelasKuPage() {
   const [confirmDelete, setConfirmDelete] = useState<Group | null>(null);
   const [deleting, setDeleting] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
+  const [newGroupCode, setNewGroupCode] = useState<{ code: string; name: string; id: string } | null>(null);
+  const pollingRef = useRef<NodeJS.Timeout | null>(null);
 
   const fetchGroups = async () => {
     setLoading(true);
@@ -71,6 +74,29 @@ export default function KelasKuPage() {
     return () => clearTimeout(t);
   }, [toast]);
 
+  // Live poll: refresh group detail setiap 5 detik saat modal terbuka
+  useEffect(() => {
+    if (!showGroup) {
+      if (pollingRef.current) { clearInterval(pollingRef.current); pollingRef.current = null; }
+      return;
+    }
+    pollingRef.current = setInterval(() => {
+      fetch(`/api/group/${showGroup}`)
+        .then(r => r.ok ? r.json() : null)
+        .then(data => {
+          if (data?.group) {
+            setGroups(prev => prev.map(g => g.id === showGroup ? {
+              ...g,
+              memberCount: data.group.members?.length || 0,
+              members: data.group.members || [],
+            } : g));
+          }
+        })
+        .catch(() => {});
+    }, 5000);
+    return () => { if (pollingRef.current) clearInterval(pollingRef.current); };
+  }, [showGroup]);
+
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
@@ -90,6 +116,7 @@ export default function KelasKuPage() {
         setShowCreate(false);
         setCreateForm({ name: "", description: "", grade: "X", tahunAjaran: "" });
         setError("");
+        setNewGroupCode({ code: data.group.accessCode, name: data.group.name, id: data.group.id });
         fetchGroups();
       }
     } catch (e) {
@@ -145,6 +172,19 @@ export default function KelasKuPage() {
   );
 
   const selectedGroup = groups.find((g) => g.id === showGroup);
+
+  const shareToWA = (code: string, name: string) => {
+    const text = encodeURIComponent(
+      `Gabung kelas ${name} di BahasaCerdas!\n\nKode kelas: ${code}\n\nCara gabung:\n1. Buka https://www.bahasacerdas.com/gabung-kelas\n2. Masukkan kode: ${code}\n3. Klik Gabung`
+    );
+    window.open(`https://wa.me/?text=${text}`, "_blank");
+  };
+
+  const shareToBeranda = (code: string, name: string) => {
+    const text = `Kode kelas ${name}: ${code}`;
+    navigator.clipboard.writeText(text);
+    setToast("Kode tersalin! Tempel di pengumuman beranda");
+  };
 
   const GRADE_OPTIONS = ["VII", "VIII", "IX", "X", "XI", "XII", "SMA", "SMK", "Lainnya"];
 
@@ -328,6 +368,79 @@ export default function KelasKuPage() {
         </div>
       )}
 
+      {newGroupCode && (
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-3xl p-8 max-w-sm w-full shadow-2xl text-center relative animate-in fade-in zoom-in">
+            <button
+              onClick={() => setNewGroupCode(null)}
+              className="absolute top-4 right-4 p-2 hover:bg-slate-100 rounded-full transition-colors"
+            >
+              <X className="w-5 h-5 text-slate-400" />
+            </button>
+
+            <div className="w-16 h-16 rounded-2xl bg-emerald-100 flex items-center justify-center mx-auto mb-4">
+              <Users className="w-8 h-8 text-emerald-600" />
+            </div>
+            <h2 className="text-xl font-bold text-slate-900 mb-1">Kelas Berhasil Dibuat!</h2>
+            <p className="text-sm text-slate-500 mb-6">
+              Bagikan kode ini ke muridmu untuk bergabung
+            </p>
+
+            <div className="bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl p-6 mb-6 text-white">
+              <p className="text-xs font-medium text-emerald-100 mb-2 uppercase tracking-wider">Kode Kelas</p>
+              <p className="text-5xl font-bold font-mono tracking-widest mb-3 select-all">
+                {newGroupCode.code}
+              </p>
+              <div className="w-12 h-0.5 bg-emerald-400/50 mx-auto mb-3" />
+              <p className="text-sm font-medium text-emerald-100">
+                {newGroupCode.name}
+              </p>
+            </div>
+
+            <div className="space-y-3">
+              <button
+                onClick={() => {
+                  navigator.clipboard.writeText(newGroupCode.code);
+                  setCopied(newGroupCode.code);
+                  setTimeout(() => setCopied(""), 2000);
+                }}
+                className="w-full py-3 px-4 rounded-xl bg-emerald-600 text-white font-semibold hover:bg-emerald-700 transition-all flex items-center justify-center gap-2"
+              >
+                {copied === newGroupCode.code ? (
+                  <><CheckCircle className="w-4 h-4" /> Tersalin!</>
+                ) : (
+                  <><Copy className="w-4 h-4" /> Salin Kode</>
+                )}
+              </button>
+
+              <div className="grid grid-cols-2 gap-3">
+                <button
+                  onClick={() => shareToWA(newGroupCode.code, newGroupCode.name)}
+                  className="py-3 px-4 rounded-xl border-2 border-green-500 text-green-700 font-semibold hover:bg-green-50 transition-all flex items-center justify-center gap-2"
+                >
+                  <MessageCircle className="w-4 h-4" />
+                  Bagikan WA
+                </button>
+                <button
+                  onClick={() => shareToBeranda(newGroupCode.code, newGroupCode.name)}
+                  className="py-3 px-4 rounded-xl border-2 border-slate-200 text-slate-700 font-semibold hover:bg-slate-50 transition-all flex items-center justify-center gap-2"
+                >
+                  <Send className="w-4 h-4" />
+                  Ke Beranda
+                </button>
+              </div>
+
+              <button
+                onClick={() => setNewGroupCode(null)}
+                className="w-full py-2 text-sm text-slate-400 hover:text-slate-600 transition-colors"
+              >
+                Tutup
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {selectedGroup && (
         <div className="fixed inset-0 bg-black/50 flex items-start justify-center z-50 p-4 overflow-y-auto" onClick={() => setShowGroup(null)}>
           <div className="bg-white rounded-2xl p-6 max-w-3xl w-full my-8" onClick={(e) => e.stopPropagation()}>
@@ -335,7 +448,13 @@ export default function KelasKuPage() {
               <div>
                 <h2 className="text-lg font-bold text-slate-900">{selectedGroup.name}</h2>
                 <p className="text-sm text-slate-500">
-                  Kelas {selectedGroup.grade} · {selectedGroup.members?.length || 0} murid
+                  Kelas {selectedGroup.grade} · <span className="font-semibold text-emerald-600">{selectedGroup.members?.length || 0}</span> murid
+                  {selectedGroup.members && selectedGroup.members.length > 0 && (
+                    <span className="inline-flex items-center gap-1 ml-2 text-[10px] text-emerald-500 bg-emerald-50 px-1.5 py-0.5 rounded-full">
+                      <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
+                      LIVE
+                    </span>
+                  )}
                 </p>
               </div>
               <div className="flex items-center gap-2">
