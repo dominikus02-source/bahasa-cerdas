@@ -91,9 +91,8 @@ function generateTitle(agentId: string, input: Record<string, unknown>, resultTe
 
 const VALID_AGENT_IDS = new Set(AGENTS.map((a) => a.id));
 
-// Agent yang disembunyikan dari menu (belum diperlukan). Tetap terdaftar di
-// AGENTS agar mudah diaktifkan lagi — cukup hapus id-nya dari set ini.
-const HIDDEN_AGENT_IDS = new Set<AgentId>(["soal", "ppt"]);
+// Tidak ada agent yang disembunyikan — semua agent ditampilkan.
+const HIDDEN_AGENT_IDS = new Set<AgentId>([]);
 
 export function AlatAiClient({ agentParam }: { agentParam?: string }) {
   const initialAgent = agentParam && VALID_AGENT_IDS.has(agentParam as AgentId) && !HIDDEN_AGENT_IDS.has(agentParam as AgentId) ? (agentParam as AgentId) : "rpp";

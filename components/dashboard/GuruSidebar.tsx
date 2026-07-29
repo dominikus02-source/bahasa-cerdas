@@ -31,13 +31,14 @@ const NAV: NavItem[] = [
   { label: "Materi Ajar", href: "/guru/materi-ajar", icon: <Presentation size={18} /> },
   { label: "Buku Ajar", href: "/guru/panduan-guru", icon: <BookOpen size={18} /> },
   { label: "Bank Soal", href: "/guru/bank-soal", icon: <Database size={18} /> },
-  { label: "Semua Soal", href: "/guru/soal", icon: <BookOpen size={18} /> },
   {
     label: "Simulasi",
     icon: <BarChart3 size={18} />,
     children: [
       { label: "Simulasi UKBI", href: "/guru/simulasi/ukbi", icon: <BookOpen size={16} /> },
       { label: "Simulasi TKA", href: "/guru/simulasi/tka", icon: <GraduationCap size={16} /> },
+      { label: "Bank Soal UKBI", href: "/guru/bank-soal-ukbi", icon: <Database size={16} /> },
+      { label: "Bank Soal TKA", href: "/guru/bank-soal-tka", icon: <Database size={16} /> },
     ],
   },
   { label: "Hasil Murid", href: "/guru/hasil-simulasi", icon: <TrendingUp size={18} /> },

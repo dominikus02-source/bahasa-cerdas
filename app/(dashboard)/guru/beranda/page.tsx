@@ -6,7 +6,7 @@ import {
   BookOpen, ShoppingBag, Users, Gamepad2, Wand2, ClipboardCheck,
   TrendingUp, ChevronRight, Star,
   FileText, Video, Presentation, Database,
-  Crown, Zap, Flame, FileUp, Upload
+  Crown, Zap, Flame, FileUp, Upload, GraduationCap, BarChart3, Brain
 } from "lucide-react"
 import { useUserStore } from "@/store"
 import { Badge } from "@/components/ui/badge"
@@ -108,11 +108,11 @@ export default function GuruBerandaPage() {
           <Link href="/guru/ai-tools?tool=rpp-modul" className="flex items-center gap-1.5 px-4 py-2.5 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white rounded-xl text-sm font-semibold hover:from-emerald-600 hover:to-emerald-700 transition-all shadow-lg shadow-emerald-500/20">
             <Wand2 size={16} /> Buat Rencana Pembelajaran
           </Link>
-          <Link href="/guru/toko-karya" className="flex items-center gap-1.5 px-4 py-2.5 bg-white border-2 border-gray-200 text-gray-700 rounded-xl text-sm font-semibold hover:bg-gray-50 transition-all">
-            <ShoppingBag size={16} /> Upload Karya
+          <Link href="/guru/kelasku" className="flex items-center gap-1.5 px-4 py-2.5 bg-white border-2 border-emerald-200 text-emerald-700 rounded-xl text-sm font-semibold hover:bg-emerald-50 transition-all">
+            <Users size={16} /> KelasKu
           </Link>
           <Link href="/arena" className="flex items-center gap-1.5 px-4 py-2.5 bg-white border-2 border-violet-200 text-violet-700 rounded-xl text-sm font-semibold hover:bg-violet-50 transition-all">
-            <Users size={16} /> Dasbor Murid
+            <Gamepad2 size={16} /> Arena Murid
           </Link>
         </div>
       </div>
@@ -135,32 +135,6 @@ export default function GuruBerandaPage() {
         </div>
       ) : (
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-          <div className="bg-gradient-to-br from-emerald-50 to-teal-50 rounded-2xl border border-emerald-100 p-5 hover:shadow-lg transition-all">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center shadow-md">
-                <ShoppingBag size={22} className="text-white" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold text-gray-900">{stats.totalKarya}</p>
-                <p className="text-sm text-gray-500">Total Karya</p>
-              </div>
-            </div>
-            <div className="mt-3 text-xs text-emerald-600 font-medium">+{stats.terjualBulanIni} terjual bulan ini</div>
-          </div>
-
-          <div className="bg-gradient-to-br from-violet-50 to-purple-50 rounded-2xl border border-violet-100 p-5 hover:shadow-lg transition-all">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-violet-400 to-purple-600 flex items-center justify-center shadow-md">
-                <Gamepad2 size={22} className="text-white" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold text-gray-900">{stats.totalKuis}</p>
-                <p className="text-sm text-gray-500">Kuis Aktif</p>
-              </div>
-            </div>
-            <div className="mt-3 text-xs text-violet-600 font-medium">Game multiplayer</div>
-          </div>
-
           <div className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-2xl border border-blue-100 p-5 hover:shadow-lg transition-all">
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-400 to-cyan-600 flex items-center justify-center shadow-md">
@@ -174,50 +148,64 @@ export default function GuruBerandaPage() {
             <div className="mt-3 text-xs text-blue-600 font-medium">Terdaftar di kelas</div>
           </div>
 
+          <div className="bg-gradient-to-br from-violet-50 to-purple-50 rounded-2xl border border-violet-100 p-5 hover:shadow-lg transition-all">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-violet-400 to-purple-600 flex items-center justify-center shadow-md">
+                <Gamepad2 size={22} className="text-white" />
+              </div>
+              <div>
+                <p className="text-2xl font-bold text-gray-900">{stats.totalKuis}</p>
+                <p className="text-sm text-gray-500">Kuis & Tugas</p>
+              </div>
+            </div>
+            <div className="mt-3 text-xs text-violet-600 font-medium">Aktif</div>
+          </div>
+
+          <div className="bg-gradient-to-br from-emerald-50 to-teal-50 rounded-2xl border border-emerald-100 p-5 hover:shadow-lg transition-all">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center shadow-md">
+                <BarChart3 size={22} className="text-white" />
+              </div>
+              <div>
+                <p className="text-2xl font-bold text-gray-900">{nilaiStats.length > 0 ? Math.round(nilaiStats.reduce((a: number, ns: any) => {
+                  const vals = Object.values(ns.rataKategoris || {}) as number[];
+                  const avg = vals.length > 0 ? vals.reduce((s: number, v: number) => s + v, 0) / vals.length : 0;
+                  return a + avg;
+                }, 0) / nilaiStats.length) : "—"}</p>
+                <p className="text-sm text-gray-500">Rata-rata Kelas</p>
+              </div>
+            </div>
+            <div className="mt-3 text-xs text-emerald-600 font-medium">{nilaiStats.length} kelas aktif</div>
+          </div>
+
           <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-2xl border border-amber-100 p-5 hover:shadow-lg transition-all">
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-400 to-orange-600 flex items-center justify-center shadow-md">
-                <TrendingUp size={22} className="text-white" />
+                <Zap size={22} className="text-white" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-gray-900">{formatRp(stats.saldo)}</p>
-                <p className="text-sm text-gray-500">Saldo</p>
+                <p className="text-2xl font-bold text-gray-900">{stats.aiUsage?.rpp || 0 + stats.aiUsage?.soal || 0}</p>
+                <p className="text-sm text-gray-500">Kredit AI</p>
               </div>
             </div>
-            <div className="mt-3 text-xs text-amber-600 font-medium">Dari penjualan karya</div>
+            <div className="mt-3 text-xs text-amber-600 font-medium">Bulan ini</div>
           </div>
         </div>
       )}
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="font-semibold text-gray-900 flex items-center gap-2">
-              <Zap size={18} className="text-violet-500" /> Kuota AI
+        <Link href="/guru/pengaturan/premium" className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm hover:shadow-md transition-all group">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="font-semibold text-gray-900 flex items-center gap-2 group-hover:text-emerald-700">
+              <Zap size={16} className="text-amber-500" /> Kredit AI
             </h3>
-            {!user.isPremium && !user.isFounder && (
-              <Link href="/guru/pengaturan/premium" className="text-xs text-emerald-600 font-semibold hover:underline">
-                Upgrade
-              </Link>
-            )}
+            <ChevronRight size={16} className="text-gray-300 group-hover:text-emerald-500" />
           </div>
-
           <AiCreditBalance />
-
-          <div className="mt-3 text-xs text-gray-400 space-y-1">
-            <p>Setiap generasi AI menggunakan kredit berdasarkan agent.</p>
-            <p>Rencana Pembelajaran = 5 kredit, Soal = 3 kredit, PPT = 5 kredit, dll.</p>
-          </div>
-
           {!user.isPremium && !user.isFounder && (
-            <Link
-              href="/guru/pengaturan/premium"
-              className="mt-4 flex items-center justify-center gap-1.5 w-full py-2.5 bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-xs font-semibold rounded-xl hover:opacity-90 transition-opacity"
-            >
-              <Crown size={14} /> Upgrade ke PRO — 500 kredit/bulan
-            </Link>
+            <p className="mt-2 text-xs text-amber-600 font-medium">Upgrade ke PRO untuk kuota lebih →</p>
           )}
-        </div>
+        </Link>
 
         {!loading && nilaiStats.length > 0 && (
           <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm">
@@ -264,8 +252,8 @@ export default function GuruBerandaPage() {
                 <Wand2 size={18} className="text-white" />
               </div>
               <div>
-                <p className="text-sm font-semibold text-gray-900 group-hover:text-emerald-700">Generator Rencana Pembelajaran</p>
-                <p className="text-xs text-gray-500">AI powered</p>
+                <p className="text-sm font-semibold text-gray-900 group-hover:text-emerald-700">Buat Rencana Pembelajaran</p>
+                <p className="text-xs text-gray-500">Dengan AI</p>
               </div>
             </Link>
 
@@ -275,17 +263,17 @@ export default function GuruBerandaPage() {
               </div>
               <div>
                 <p className="text-sm font-semibold text-gray-900 group-hover:text-violet-700">Bank Soal</p>
-                <p className="text-xs text-gray-500">Upload and HOTS</p>
+                <p className="text-xs text-gray-500">Buat & kelola soal</p>
               </div>
             </Link>
 
-            <Link href="/guru/kuis-game" className="flex items-center gap-3 p-4 rounded-xl bg-blue-50 hover:bg-blue-100 transition-colors group">
-              <div className="w-10 h-10 rounded-xl bg-blue-500 flex items-center justify-center">
-                <Gamepad2 size={18} className="text-white" />
+            <Link href="/guru/penilaian" className="flex items-center gap-3 p-4 rounded-xl bg-green-50 hover:bg-green-100 transition-colors group">
+              <div className="w-10 h-10 rounded-xl bg-green-500 flex items-center justify-center">
+                <ClipboardCheck size={18} className="text-white" />
               </div>
               <div>
-                <p className="text-sm font-semibold text-gray-900 group-hover:text-blue-700">Kuis Game</p>
-                <p className="text-xs text-gray-500">Multiplayer</p>
+                <p className="text-sm font-semibold text-gray-900 group-hover:text-green-700">Penilaian</p>
+                <p className="text-xs text-gray-500">Nilai & gradebook</p>
               </div>
             </Link>
 
@@ -299,23 +287,23 @@ export default function GuruBerandaPage() {
               </div>
             </Link>
 
-            <Link href="/guru/ai-tools?tool=rpp-modul" className="flex items-center gap-3 p-4 rounded-xl bg-teal-50 hover:bg-teal-100 transition-colors group">
-              <div className="w-10 h-10 rounded-xl bg-teal-500 flex items-center justify-center">
-                <FileUp size={18} className="text-white" />
+            <Link href="/guru/kelasku" className="flex items-center gap-3 p-4 rounded-xl bg-blue-50 hover:bg-blue-100 transition-colors group">
+              <div className="w-10 h-10 rounded-xl bg-blue-500 flex items-center justify-center">
+                <GraduationCap size={18} className="text-white" />
               </div>
               <div>
-                <p className="text-sm font-semibold text-gray-900 group-hover:text-teal-700">Upload Rencana Pembelajaran</p>
-                <p className="text-xs text-gray-500">DOCX or PDF</p>
+                <p className="text-sm font-semibold text-gray-900 group-hover:text-blue-700">KelasKu</p>
+                <p className="text-xs text-gray-500">Manajemen kelas</p>
               </div>
             </Link>
 
-            <Link href="/guru/toko-karya" className="flex items-center gap-3 p-4 rounded-xl bg-pink-50 hover:bg-pink-100 transition-colors group">
-              <div className="w-10 h-10 rounded-xl bg-pink-500 flex items-center justify-center">
-                <Upload size={18} className="text-white" />
+            <Link href="/guru/ai-tools" className="flex items-center gap-3 p-4 rounded-xl bg-purple-50 hover:bg-purple-100 transition-colors group">
+              <div className="w-10 h-10 rounded-xl bg-purple-500 flex items-center justify-center">
+                <Brain size={18} className="text-white" />
               </div>
               <div>
-                <p className="text-sm font-semibold text-gray-900 group-hover:text-pink-700">Upload Karya</p>
-                <p className="text-xs text-gray-500">Jual di toko</p>
+                <p className="text-sm font-semibold text-gray-900 group-hover:text-purple-700">Alat AI</p>
+                <p className="text-xs text-gray-500">Soal, PPT, EYD, dll.</p>
               </div>
             </Link>
           </div>
@@ -326,68 +314,36 @@ export default function GuruBerandaPage() {
         <>
           <div className="mt-6 bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="font-semibold text-gray-900">Karya Ditayangkan</h3>
-              <Link href="/guru/toko-karya" className="text-xs text-emerald-600 font-semibold hover:underline flex items-center gap-1">
-                Lihat Semua <ChevronRight size={12} />
-              </Link>
-            </div>
-            {stats.karyaList && stats.karyaList.length > 0 ? (
-              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                {stats.karyaList.map((karya: any) => (
-                  <div key={karya.id} className="rounded-xl border border-gray-100 p-4 hover:shadow-md transition-shadow">
-                    <div className="flex items-center gap-2 mb-2">
-                      <Badge variant="secondary" className="text-[10px]">{karya.type}</Badge>
-                      <Badge variant={karya.price > 0 ? "warning" : "success"} className="text-[10px]">
-                        {karya.price > 0 ? `Rp ${Number(karya.price).toLocaleString("id")}` : "Gratis"}
-                      </Badge>
-                    </div>
-                    <h4 className="font-semibold text-sm text-gray-900 truncate">{karya.title}</h4>
-                    {karya.grade && <p className="text-[10px] text-gray-400 mt-1">Kelas {karya.grade}</p>}
-                    <p className="text-[10px] text-gray-400 mt-1">{new Date(karya.createdAt).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" })}</p>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="text-center py-8">
-                <FileText size={32} className="mx-auto text-gray-200 mb-2" />
-                <p className="text-sm text-gray-500">Belum ada karya ditayangkan</p>
-                <Link href="/guru/toko-karya" className="text-xs text-emerald-600 font-semibold hover:underline mt-1 inline-block">
-                  Upload karya pertamamu
-                </Link>
-              </div>
-            )}
-          </div>
-
-          <div className="mt-6 bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="font-semibold text-gray-900">Tips</h3>
+              <h3 className="font-semibold text-gray-900 flex items-center gap-2">
+                <Star size={16} className="text-emerald-500" /> Tips Mengajar
+              </h3>
             </div>
             <div className="space-y-3">
               <div className="flex items-start gap-3 p-3 rounded-xl bg-gradient-to-r from-emerald-50 to-teal-50">
                 <div className="w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center flex-shrink-0">
-                  <Star size={16} className="text-emerald-600" />
+                  <Wand2 size={16} className="text-emerald-600" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-900">Gunakan AI untuk generate soal HOTS</p>
-                  <p className="text-xs text-gray-500 mt-0.5">Agar pembelajaran lebih menarik dan tantangan.</p>
-                </div>
-              </div>
-              <div className="flex items-start gap-3 p-3 rounded-xl bg-gradient-to-r from-amber-50 to-orange-50">
-                <div className="w-8 h-8 rounded-lg bg-amber-100 flex items-center justify-center flex-shrink-0">
-                  <TrendingUp size={16} className="text-amber-600" />
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-gray-900">Publikasikan karya di Toko</p>
-                  <p className="text-xs text-gray-500 mt-0.5">Dapat income tambahan dari profesi pendidik.</p>
+                  <p className="text-sm font-medium text-gray-900">Gunakan AI untuk menyusun Rencana Pembelajaran</p>
+                  <p className="text-xs text-gray-500 mt-0.5">Hemat waktu dengan generator RPP otomatis.</p>
                 </div>
               </div>
               <div className="flex items-start gap-3 p-3 rounded-xl bg-gradient-to-r from-violet-50 to-purple-50">
                 <div className="w-8 h-8 rounded-lg bg-violet-100 flex items-center justify-center flex-shrink-0">
-                  <Gamepad2 size={16} className="text-violet-600" />
+                  <ClipboardCheck size={16} className="text-violet-600" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-900">Ajak siswa bermain kuis multiplayer</p>
-                  <p className="text-xs text-gray-500 mt-0.5">Agar belajar jadi lebih seru dan interaktif!</p>
+                  <p className="text-sm font-medium text-gray-900">Pantau nilai siswa secara real-time</p>
+                  <p className="text-xs text-gray-500 mt-0.5">Lihat progres kelas di menu Penilaian & Gradebook.</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3 p-3 rounded-xl bg-gradient-to-r from-blue-50 to-cyan-50">
+                <div className="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center flex-shrink-0">
+                  <Gamepad2 size={16} className="text-blue-600" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-gray-900">Buat kuis interaktif untuk siswa</p>
+                  <p className="text-xs text-gray-500 mt-0.5">Belajar jadi lebih seru dengan kuis multiplayer!</p>
                 </div>
               </div>
             </div>
