@@ -1,5 +1,6 @@
 import Image from "next/image"
-import { getFrameStyle } from "@/lib/cosmetics";
+import { getFrameStyle } from "@/lib/cosmetics"
+import { transformImageUrl } from "@/lib/image-transform"
 
 interface UserAvatarProps {
   /** Nama yang dipakai untuk inisial bila avatar kosong. */
@@ -88,7 +89,7 @@ export default function UserAvatar({
         className={`relative z-[1] w-full h-full rounded-full overflow-hidden flex items-center justify-center bg-gradient-to-br ${gradient} text-white font-bold ${textClassName} ${className}`}
       >
         {avatar ? (
-          <Image src={avatar} alt="" fill className="object-cover" sizes="96px" />
+          <Image src={transformImageUrl(avatar, { width: size * 2, height: size * 2, quality: 85 })} alt="" fill className="object-cover" sizes="96px" />
         ) : (
           label
         )}

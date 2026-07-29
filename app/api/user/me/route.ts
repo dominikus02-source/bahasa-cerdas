@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { getGravatarUrl } from "@/lib/avatar";
+import { transformImageUrl } from "@/lib/image-transform";
 import cache from "@/lib/redis";
 import { err } from "@/lib/api/response";
 import { ERR } from "@/lib/api/errors";
@@ -111,7 +112,12 @@ export async function GET() {
     }
 
     const profile = await db.profile.findUnique({ where: { userId: found.id } });
-    const result = { ...found, ...profile, ...updates };
+    const result = {
+      ...found,
+      ...profile,
+      ...updates,
+      avatar: transformImageUrl(found.avatar, { width: 160, height: 160, quality: 85 }),
+    };
 
     // Cache for 30s — short enough to stay fresh, long enough to absorb bursts
     cache.set(cacheKey, result, 30);
