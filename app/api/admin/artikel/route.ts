@@ -64,12 +64,24 @@ export async function POST(req: NextRequest) {
     const dbUser = await db.user.findUnique({ where: { supabaseId: authUser.id } });
     if (!dbUser || !dbUser.isFounder) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
-    const { action } = await req.json().catch(() => ({ action: null }));
+    const body = await req.json().catch(() => ({}));
+    const { action } = body;
 
-    // Unpublish all articles
     if (action === "unpublish") {
       const result = await db.artikel.updateMany({ data: { isPublished: false } });
       return NextResponse.json({ success: true, unpublished: result.count });
+    }
+
+    if (action === "publishAll") {
+      const result = await db.artikel.updateMany({ data: { isPublished: true } });
+      return NextResponse.json({ success: true, published: result.count });
+    }
+
+    if (action === "unpublishLast") {
+      const count = body.count || 15;
+      const last = await db.artikel.findMany({ orderBy: { createdAt: "desc" }, take: count, select: { id: true } });
+      await db.artikel.updateMany({ where: { id: { in: last.map(a => a.id) } }, data: { isPublished: false } });
+      return NextResponse.json({ success: true, unpublished: last.length });
     }
 
     // Seed articles from JSON
