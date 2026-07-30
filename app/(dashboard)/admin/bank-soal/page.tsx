@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Search, Database, BookOpen, BarChart3, TrendingUp, Users, Loader2 } from "lucide-react";
+import { Search, Database, BookOpen, BarChart3, TrendingUp, Users, Loader2, Upload } from "lucide-react";
 
 interface AdminSoal {
   id: string;
@@ -38,6 +38,26 @@ export default function AdminBankSoalPage() {
   const [filterKelas, setFilterKelas] = useState("");
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [seeding, setSeeding] = useState(false);
+  const [seedResult, setSeedResult] = useState<string | null>(null);
+
+  const handleSeed = async () => {
+    setSeeding(true);
+    setSeedResult(null);
+    try {
+      const res = await fetch("/api/admin/bank-soal/seed", { method: "POST" });
+      const data = await res.json();
+      if (data.success) {
+        setSeedResult(`✅ ${data.total} soal (${data.files} file)`);
+        fetchData();
+      } else {
+        setSeedResult(`❌ ${data.error || "Gagal"}`);
+      }
+    } catch {
+      setSeedResult("❌ Gagal menghubungi server");
+    }
+    setSeeding(false);
+  };
 
   const fetchData = () => {
     setLoading(true);
@@ -80,6 +100,19 @@ export default function AdminBankSoalPage() {
       <div>
         <h1 className="text-2xl font-bold text-gray-900">Master Bank Soal</h1>
         <p className="mt-1 text-sm text-gray-500">Kelola bank soal Bahasa Indonesia untuk seluruh tema</p>
+      </div>
+
+      {/* Seed Button */}
+      <div className="flex items-center gap-3">
+        {seedResult && (
+          <span className={`text-sm font-medium ${seedResult.includes("✅") ? "text-emerald-600" : "text-red-600"}`}>
+            {seedResult}
+          </span>
+        )}
+        <Button onClick={handleSeed} disabled={seeding} variant="outline" className="ml-auto">
+          {seeding ? <Loader2 className="h-4 w-4 animate-spin mr-1" /> : <Upload size={16} className="mr-1" />}
+          {seeding ? "Seeding..." : "Seed dari JSON"}
+        </Button>
       </div>
 
       {/* Stats */}
