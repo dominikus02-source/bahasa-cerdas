@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import Link from "next/link"
 import {
   BookOpen, Clock, CheckCircle, FileText, ChevronRight, AlertCircle,
-  GraduationCap, Library,
+  ArrowLeft, Library,
 } from "lucide-react"
 
 interface Submission {
@@ -89,71 +89,21 @@ export default function TugasPage() {
   return (
     <div className="arena-page px-4 py-4">
 
-      {/* ════════════════════════════════════════ */}
-      {/* RUANG PEMBELAJARAN — Hero Card           */}
-      {/* ════════════════════════════════════════ */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-emerald-600 via-emerald-700 to-teal-800 p-5 mb-5 shadow-lg shadow-emerald-500/25">
-        {/* Decorative blobs */}
-        <div className="absolute -top-6 -right-6 w-28 h-28 rounded-full bg-white/5" />
-        <div className="absolute -bottom-4 -left-4 w-20 h-20 rounded-full bg-white/5" />
-        <div className="absolute top-2 right-12 w-10 h-10 rounded-full bg-emerald-400/10" />
-
-        <div className="relative z-10">
-          <div className="flex items-center gap-3 mb-3">
-            <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center backdrop-blur-sm">
-              <GraduationCap className="w-6 h-6 text-white" />
-            </div>
-            <div>
-              <h1 className="text-lg font-extrabold text-white">Ruang Pembelajaran</h1>
-              <p className="text-xs text-emerald-200">Fokus belajar & selesaikan tugasmu di sini!</p>
-            </div>
-          </div>
-
-          {/* 2 Sub-card */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
-            {/* ── Ruang Tugas ── */}
-            <Link
-              href="/arena/tugas"
-              onClick={() => setTab("available")}
-              className="group flex items-start gap-3 bg-white/95 rounded-xl p-4 hover:bg-white hover:shadow-lg hover:shadow-emerald-900/20 active:scale-[0.98] transition-all"
-            >
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center shrink-0 shadow-sm">
-                <BookOpen className="w-5 h-5 text-white" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2">
-                  <h3 className="text-sm font-bold text-gray-900">Ruang Tugas</h3>
-                  {totalTersedia > 0 && (
-                    <span className="px-1.5 py-0.5 rounded-full bg-emerald-100 text-emerald-700 text-[9px] font-bold">
-                      {totalTersedia}
-                    </span>
-                  )}
-                </div>
-                <p className="text-xs text-gray-500 mt-0.5">Tugas & latihan dari Buku Panduan Guru</p>
-                <div className="flex items-center gap-1.5 mt-2 text-[11px] font-semibold text-emerald-600 group-hover:gap-2 transition-all">
-                  {totalTersedia > 0 ? `${totalTersedia} tugas tersedia` : "Lihat semua tugas"} <ChevronRight size={14} />
-                </div>
-              </div>
-            </Link>
-
-            {/* ── Ruang Materi ── */}
-            <Link
-              href="/arena/materi"
-              className="group flex items-start gap-3 bg-white/95 rounded-xl p-4 hover:bg-white hover:shadow-lg hover:shadow-emerald-900/20 active:scale-[0.98] transition-all"
-            >
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center shrink-0 shadow-sm">
-                <Library className="w-5 h-5 text-white" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <h3 className="text-sm font-bold text-gray-900">Ruang Materi</h3>
-                <p className="text-xs text-gray-500 mt-0.5">Modul, PPT, PDF, dan video dari guru</p>
-                <div className="flex items-center gap-1.5 mt-2 text-[11px] font-semibold text-violet-600 group-hover:gap-2 transition-all">
-                  Lihat Materi <ChevronRight size={14} />
-                </div>
-              </div>
-            </Link>
-          </div>
+      <div className="flex items-center gap-3 mb-5">
+        <Link href="/arena" className="text-gray-400 hover:text-gray-700"><ArrowLeft className="w-5 h-5" /></Link>
+        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center shadow shrink-0">
+          <BookOpen className="w-5 h-5 text-white" />
         </div>
+        <div className="flex-1 min-w-0">
+          <h1 className="text-lg font-bold text-gray-900">Ruang Tugas</h1>
+          <p className="text-xs text-gray-500">Tugas & latihan dari Buku Panduan Guru</p>
+        </div>
+        <Link
+          href="/arena/materi"
+          className="flex items-center gap-1 text-xs font-semibold text-violet-600 hover:text-violet-700 shrink-0"
+        >
+          <Library className="w-3.5 h-3.5" /> Materi
+        </Link>
       </div>
 
       <div className="flex gap-1 bg-gray-100 rounded-xl p-1 mb-4">
