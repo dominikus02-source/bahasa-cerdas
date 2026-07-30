@@ -181,12 +181,13 @@ export default function GuruChatPanel({ userId }: { userId: string }) {
               : "Tidak ada yg online"}
           </span>
           {classOnlineUsers.slice(0, 6).map(u => (
-            <div key={u.id} className="relative shrink-0">
-              <div className="w-6 h-6 rounded-full bg-gradient-to-br from-emerald-400 to-green-500 flex items-center justify-center text-white text-[8px] font-bold">
-                {u.avatar ? <img src={u.avatar} alt="" className="w-full h-full rounded-full object-cover" /> : u.fullName.charAt(0)}
+              <div key={u.id} className="relative shrink-0">
+                <div className="relative w-6 h-6 rounded-full bg-gradient-to-br from-emerald-400 to-green-500 flex items-center justify-center text-white text-[8px] font-bold overflow-hidden">
+                  <span className="relative z-0">{u.fullName.charAt(0)}</span>
+                  {u.avatar && <img src={u.avatar} alt="" className="absolute inset-0 z-10 w-full h-full rounded-full object-cover" onError={e => (e.currentTarget.style.display = "none")} loading="lazy" />}
+                </div>
+                <span className="absolute -bottom-0.5 -right-0.5 w-2 h-2 bg-emerald-400 rounded-full border border-white" />
               </div>
-              <span className="absolute -bottom-0.5 -right-0.5 w-2 h-2 bg-emerald-400 rounded-full border border-white" />
-            </div>
           ))}
         </div>
       </div>
@@ -202,10 +203,11 @@ export default function GuruChatPanel({ userId }: { userId: string }) {
             const isMe = m.user.id === userId;
             return (
               <div key={m.id} className={`flex gap-2 ${isMe ? "flex-row-reverse" : ""}`}>
-                <div className={`w-6 h-6 rounded-full flex items-center justify-center text-white text-[8px] font-bold shrink-0 ${
+                <div className={`relative w-6 h-6 rounded-full flex items-center justify-center text-white text-[8px] font-bold shrink-0 overflow-hidden ${
                   isMe ? "bg-emerald-500" : "bg-gradient-to-br from-emerald-300 to-green-400"
                 }`}>
-                  {m.user.avatar ? <img src={m.user.avatar} alt="" className="w-full h-full rounded-full object-cover" /> : m.user.fullName.charAt(0)}
+                  <span className="relative z-0">{m.user.fullName.charAt(0)}</span>
+                  {m.user.avatar && <img src={m.user.avatar} alt="" className="absolute inset-0 z-10 w-full h-full rounded-full object-cover" onError={e => (e.currentTarget.style.display = "none")} loading="lazy" />}
                 </div>
                 <div className={`max-w-[75%] rounded-xl px-3 py-2 text-xs leading-relaxed ${
                   isMe ? "bg-emerald-600 text-white rounded-tr-sm" : "bg-gray-100 text-gray-700 rounded-tl-sm"

@@ -1,6 +1,4 @@
-import Image from "next/image"
 import { getFrameStyle } from "@/lib/cosmetics"
-import { transformImageUrl } from "@/lib/image-transform"
 
 interface UserAvatarProps {
   /** Nama yang dipakai untuk inisial bila avatar kosong. */
@@ -88,10 +86,15 @@ export default function UserAvatar({
       <span
         className={`relative z-[1] w-full h-full rounded-full overflow-hidden flex items-center justify-center bg-gradient-to-br ${gradient} text-white font-bold ${textClassName} ${className}`}
       >
-        {avatar ? (
-          <Image src={transformImageUrl(avatar, { width: size * 2, height: size * 2, quality: 85 })} alt="" fill className="object-cover" sizes="96px" />
-        ) : (
-          label
+        <span className="relative z-0">{label}</span>
+        {avatar && (
+          <img
+            src={avatar}
+            alt=""
+            className="absolute inset-0 z-10 w-full h-full rounded-full object-cover"
+            onError={e => (e.currentTarget.style.display = "none")}
+            loading="lazy"
+          />
         )}
       </span>
     </span>

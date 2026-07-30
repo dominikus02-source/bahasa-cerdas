@@ -177,11 +177,10 @@ export default function CommunityDetailPage({ params }: { params: Promise<{ id: 
             Kembali ke Komunitas
           </Link>
           <div className="flex items-start gap-4">
-            <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center text-white font-bold text-2xl">
-              {community.avatarUrl ? (
-                <img src={community.avatarUrl} alt={community.name} className="w-full h-full rounded-2xl object-cover" />
-              ) : (
-                community.name.charAt(0)
+            <div className="relative w-20 h-20 rounded-2xl bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center text-white font-bold text-2xl overflow-hidden">
+              <span className="relative z-0">{community.name.charAt(0)}</span>
+              {community.avatarUrl && (
+                <img src={community.avatarUrl} alt={community.name} className="absolute inset-0 z-10 w-full h-full rounded-2xl object-cover" onError={e => (e.currentTarget.style.display = "none")} loading="lazy" />
               )}
             </div>
             <div className="flex-1">

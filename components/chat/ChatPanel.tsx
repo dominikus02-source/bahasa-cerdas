@@ -198,8 +198,9 @@ export default function ChatPanel({ userId }: { userId: string }) {
                   className="flex flex-col items-center gap-0.5 shrink-0 group"
                 >
                   <div className="relative">
-                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-violet-400 to-purple-500 flex items-center justify-center text-white text-[10px] font-bold">
-                      {u.avatar ? <img src={u.avatar} alt="" className="w-full h-full rounded-full object-cover" /> : u.fullName?.charAt(0)}
+                    <div className="relative w-8 h-8 rounded-full bg-gradient-to-br from-violet-400 to-purple-500 flex items-center justify-center text-white text-[10px] font-bold overflow-hidden">
+                      <span className="relative z-0">{u.fullName?.charAt(0)}</span>
+                      {u.avatar && <img src={u.avatar} alt="" className="absolute inset-0 z-10 w-full h-full rounded-full object-cover" onError={e => (e.currentTarget.style.display = "none")} loading="lazy" />}
                     </div>
                     <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-500 border-2 border-white" />
                   </div>
@@ -222,8 +223,9 @@ export default function ChatPanel({ userId }: { userId: string }) {
               return (
                 <div key={msg.id} className={`flex gap-2 ${isMe ? "flex-row-reverse" : ""}`}>
                   {!isMe && (
-                    <div className="w-6 h-6 rounded-full bg-gradient-to-br from-violet-400 to-purple-500 flex items-center justify-center text-white text-[8px] font-bold shrink-0 mt-0.5">
-                      {msg.user.avatar ? <img src={msg.user.avatar} alt="" className="w-full h-full rounded-full object-cover" /> : msg.user.fullName?.charAt(0)}
+                    <div className="relative w-6 h-6 rounded-full bg-gradient-to-br from-violet-400 to-purple-500 flex items-center justify-center text-white text-[8px] font-bold shrink-0 mt-0.5 overflow-hidden">
+                      <span className="relative z-0">{msg.user.fullName?.charAt(0)}</span>
+                      {msg.user.avatar && <img src={msg.user.avatar} alt="" className="absolute inset-0 z-10 w-full h-full rounded-full object-cover" onError={e => (e.currentTarget.style.display = "none")} loading="lazy" />}
                     </div>
                   )}
                   <div className={`max-w-[80%] ${isMe ? "items-end" : ""}`}>

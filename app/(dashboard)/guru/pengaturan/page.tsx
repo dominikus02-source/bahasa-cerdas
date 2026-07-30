@@ -210,13 +210,12 @@ export default function GuruPengaturanPage() {
     <form onSubmit={handleProfileSave} className="space-y-6">
       <div className="flex items-center gap-6">
         <div className="relative shrink-0">
-          <div className="w-24 h-24 rounded-full bg-slate-200 overflow-hidden border-4 border-white shadow-md">
-            {profile.avatarUrl ? (
-              <img src={profile.avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
-            ) : (
-              <div className="w-full h-full flex items-center justify-center text-slate-400">
-                <User className="w-10 h-10" />
-              </div>
+          <div className="relative w-24 h-24 rounded-full bg-slate-200 overflow-hidden border-4 border-white shadow-md flex items-center justify-center">
+            <div className="relative z-0 w-full h-full flex items-center justify-center text-slate-400">
+              <User className="w-10 h-10" />
+            </div>
+            {profile.avatarUrl && (
+              <img src={profile.avatarUrl} alt="Avatar" className="absolute inset-0 z-10 w-full h-full object-cover" onError={e => (e.currentTarget.style.display = "none")} loading="lazy" />
             )}
           </div>
           <button
