@@ -54,6 +54,7 @@ export default function GuruFeedKaryaPage() {
   const [submittingComment, setSubmittingComment] = useState(false);
   const [modalLoading, setModalLoading] = useState(false);
   const [deletingCommentId, setDeletingCommentId] = useState<string | null>(null);
+  const [brokenAvatars, setBrokenAvatars] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     fetch("/api/user/me").then(r => r.ok ? r.json() : null).then(d => setUser(d?.user || null));
@@ -414,7 +415,9 @@ export default function GuruFeedKaryaPage() {
                 </p>
                 <div className="flex items-center gap-3">
                   <div className="w-7 h-7 rounded-full bg-gradient-to-br from-emerald-400 to-green-500 flex items-center justify-center text-white text-[10px] font-bold shrink-0">
-                    {karya.user.avatar ? <img src={karya.user.avatar} alt="" className="w-full h-full rounded-full object-cover" /> : karya.user.fullName.charAt(0)}
+                    {karya.user.avatar && !brokenAvatars.has(`a-${karya.id}`)
+                      ? <img src={karya.user.avatar} alt="" onError={() => setBrokenAvatars(prev => new Set(prev).add(`a-${karya.id}`))} className="w-full h-full rounded-full object-cover" />
+                      : <span>{karya.user.fullName.charAt(0)}</span>}
                   </div>
                   <div className="flex-1 min-w-0 text-xs">
                     <span className="font-semibold text-gray-800">{karya.user.fullName}</span>
@@ -473,7 +476,9 @@ export default function GuruFeedKaryaPage() {
               {/* Author row */}
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-9 h-9 rounded-full bg-gradient-to-br from-emerald-400 to-green-500 flex items-center justify-center text-white text-xs font-bold shrink-0">
-                  {modalKarya.user.avatar ? <img src={modalKarya.user.avatar} alt="" className="w-full h-full rounded-full object-cover" /> : modalKarya.user.fullName.charAt(0)}
+                  {modalKarya.user.avatar && !brokenAvatars.has(`a-${modalKarya.id}`)
+                    ? <img src={modalKarya.user.avatar} alt="" onError={() => setBrokenAvatars(prev => new Set(prev).add(`a-${modalKarya.id}`))} className="w-full h-full rounded-full object-cover" />
+                    : <span>{modalKarya.user.fullName.charAt(0)}</span>}
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-semibold text-gray-900">{modalKarya.user.fullName}</p>
@@ -562,11 +567,15 @@ export default function GuruFeedKaryaPage() {
                     <div key={c.id} className="flex gap-3">
                       {c.user.id && !c.id.startsWith("temp-") ? (
                         <Link href={`/profile/${c.user.id}`} className="w-7 h-7 rounded-full bg-gradient-to-br from-emerald-300 to-green-400 flex items-center justify-center text-white text-[10px] font-bold shrink-0 hover:ring-2 hover:ring-emerald-300 transition-all">
-                          {c.user.avatar ? <img src={c.user.avatar} alt="" className="w-full h-full rounded-full object-cover" /> : c.user.fullName.charAt(0)}
+                          {c.user.avatar && !brokenAvatars.has(`c-${c.id}`)
+                            ? <img src={c.user.avatar} alt="" onError={() => setBrokenAvatars(prev => new Set(prev).add(`c-${c.id}`))} className="w-full h-full rounded-full object-cover" />
+                            : <span>{c.user.fullName.charAt(0)}</span>}
                         </Link>
                       ) : (
                         <div className="w-7 h-7 rounded-full bg-gradient-to-br from-emerald-300 to-green-400 flex items-center justify-center text-white text-[10px] font-bold shrink-0">
-                          {c.user.avatar ? <img src={c.user.avatar} alt="" className="w-full h-full rounded-full object-cover" /> : c.user.fullName.charAt(0)}
+                          {c.user.avatar && !brokenAvatars.has(`c-${c.id}`)
+                            ? <img src={c.user.avatar} alt="" onError={() => setBrokenAvatars(prev => new Set(prev).add(`c-${c.id}`))} className="w-full h-full rounded-full object-cover" />
+                            : <span>{c.user.fullName.charAt(0)}</span>}
                         </div>
                       )}
                       <div className="flex-1 bg-emerald-50 rounded-xl p-3">
