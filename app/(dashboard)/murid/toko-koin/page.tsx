@@ -1,7 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { ShoppingBag, Zap, Shield, Sparkles, Moon, Sticker, Check } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import {
+  ShoppingBag, Zap, Shield, Sparkles, Moon, Sticker, Check,
+  Clock, Plus, Minus, AlertTriangle,
+} from "lucide-react";
 import { IconCoin, IconCheck } from "@/lib/icons";
 import CosmeticPreview from "@/components/arena/CosmeticPreview";
 import { isCosmeticType, isEquippableIcon } from "@/lib/cosmetics";
@@ -12,6 +15,13 @@ interface StoreItem {
 }
 
 type EquippedMap = Record<string, string | null>;
+
+const CONSUMABLE_TYPES = new Set(["HINT_TOKEN", "TIME_EXTENSION"]);
+const AUTO_TYPES = new Set(["STREAK_FREEZE", "HEART_REFILL", "EXTRA_TRYOUT"]);
+
+function isConsumable(type: string) { return CONSUMABLE_TYPES.has(type); }
+function isAutoItem(type: string) { return AUTO_TYPES.has(type); }
+function isBoostType(type: string) { return type === "XP_BOOST"; }
 
 const TYPE_ICONS: Record<string, any> = {
   STREAK_FREEZE: Shield, XP_BOOST: Zap, AVATAR_FRAME: Sparkles,
@@ -31,27 +41,60 @@ export default function TokoKoinPage() {
   const [loading, setLoading] = useState(true);
   const [buying, setBuying] = useState<string | null>(null);
   const [equipping, setEquipping] = useState<string | null>(null);
+  const [consuming, setConsuming] = useState<string | null>(null);
   const [owned, setOwned] = useState<Set<string>>(new Set());
+  const [quantities, setQuantities] = useState<Record<string, number>>({});
   const [equipped, setEquipped] = useState<EquippedMap>({});
   const [message, setMessage] = useState<{ type: string; text: string } | null>(null);
+  const [boostActive, setBoostActive] = useState(false);
+  const [boostRemainingMs, setBoostRemainingMs] = useState(0);
+  const [boostItemName, setBoostItemName] = useState("");
+  const boostInterval = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
     Promise.all([
       fetch("/api/user/me").then(r => r.json()),
       fetch("/api/siswa/store").then(r => r.json()),
       fetch("/api/siswa/store/equip").then(r => r.ok ? r.json() : null).catch(() => null),
-    ]).then(([u, d, inv]) => {
+      fetch("/api/siswa/store/boost-status").then(r => r.json()).catch(() => ({})),
+    ]).then(([u, d, inv, boost]) => {
       setUser(u.user);
       setItems(d.items || []);
       if (inv) {
         setOwned(new Set<string>(inv.ownedItemIds || []));
+        setQuantities(
+          (inv.owned || []).reduce((acc: Record<string, number>, o: any) => {
+            acc[o.itemId] = (acc[o.itemId] || 0) + (o.quantity || 0);
+            return acc;
+          }, {}),
+        );
         setEquipped(inv.equipped || {});
+      }
+      if (boost.active) {
+        setBoostActive(true);
+        setBoostRemainingMs(boost.remainingMs);
+        setBoostItemName(boost.itemName || "XP Boost");
       }
       setLoading(false);
     });
   }, []);
 
-  // Kosmetik yang bisa dipakai (punya tampilan nyata di aplikasi)
+  useEffect(() => {
+    if (!boostActive) return;
+    boostInterval.current = setInterval(() => {
+      setBoostRemainingMs((prev) => {
+        if (prev <= 1000) {
+          setBoostActive(false);
+          return 0;
+        }
+        return prev - 1000;
+      });
+    }, 1000);
+    return () => {
+      if (boostInterval.current) clearInterval(boostInterval.current);
+    };
+  }, [boostActive]);
+
   const isWearable = (item: StoreItem) => isCosmeticType(item.type) && isEquippableIcon(item.type, item.icon);
 
   const handleEquip = async (item: StoreItem, equip: boolean) => {
@@ -73,6 +116,28 @@ export default function TokoKoinPage() {
     }
   };
 
+  const handleConsume = async (item: StoreItem) => {
+    setConsuming(item.id);
+    try {
+      const res = await fetch("/api/siswa/store/consume", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ type: item.type }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+      setQuantities(prev => ({ ...prev, [item.id]: Math.max(0, (prev[item.id] || 1) - 1) }));
+      setMessage({ type: "success", text: `${item.name} berhasil dipakai!` });
+      if ((quantities[item.id] || 1) <= 1) {
+        setOwned(prev => { const n = new Set(prev); n.delete(item.id); return n; });
+      }
+    } catch (e: any) {
+      setMessage({ type: "error", text: e.message || "Gagal memakai item" });
+    } finally {
+      setConsuming(null);
+    }
+  };
+
   const handleBuy = async (item: StoreItem) => {
     if ((user?.coins || 0) < item.price) {
       setMessage({ type: "error", text: "Koin tidak mencukupi!" });
@@ -89,6 +154,12 @@ export default function TokoKoinPage() {
       if (!res.ok) throw new Error(data.error);
       setUser((prev: any) => ({ ...prev, coins: (prev?.coins || 0) - item.price }));
       setOwned(prev => new Set(prev).add(item.id));
+      setQuantities(prev => ({ ...prev, [item.id]: (prev[item.id] || 0) + 1 }));
+      if (isBoostType(item.type)) {
+        setBoostActive(true);
+        setBoostRemainingMs(data.remainingMs || (24 * 3600 * 1000));
+        setBoostItemName(item.name);
+      }
       setMessage({
         type: "success",
         text: isWearable(item)
@@ -101,6 +172,16 @@ export default function TokoKoinPage() {
       setBuying(null);
     }
   };
+
+  function formatWaktu(ms: number) {
+    const totalDetik = Math.floor(ms / 1000);
+    const jam = Math.floor(totalDetik / 3600);
+    const menit = Math.floor((totalDetik % 3600) / 60);
+    const detik = totalDetik % 60;
+    if (jam > 0) return `${jam}j ${menit}m ${detik}d`;
+    if (menit > 0) return `${menit}m ${detik}d`;
+    return `${detik}d`;
+  }
 
   if (loading) return <div className="flex justify-center py-20"><div className="animate-spin w-8 h-8 border-4 border-violet-500 border-t-transparent rounded-full" /></div>;
 
@@ -117,6 +198,26 @@ export default function TokoKoinPage() {
         </div>
       </div>
 
+      {boostActive && (
+        <div className="mb-5 bg-gradient-to-r from-amber-500 to-orange-600 rounded-2xl p-4 text-white shadow-lg">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center">
+                <Zap size={20} className="text-amber-200" />
+              </div>
+              <div>
+                <p className="font-bold text-sm">{boostItemName} Aktif</p>
+                <p className="text-amber-100 text-xs">2x XP dari semua permainan</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <Clock size={14} className="text-amber-200" />
+              <span className="font-mono font-bold tabular-nums">{formatWaktu(boostRemainingMs)}</span>
+            </div>
+          </div>
+        </div>
+      )}
+
       {message && (
         <div className={`mb-4 px-4 py-3 rounded-xl text-sm font-medium ${
           message.type === "success" ? "bg-emerald-50 text-emerald-600 border border-emerald-200" : "bg-red-50 text-red-600 border border-red-200"
@@ -132,28 +233,58 @@ export default function TokoKoinPage() {
           const canAfford = (user?.coins || 0) >= item.price;
           const wearable = isWearable(item);
           const isOwned = owned.has(item.id);
+          const qty = quantities[item.id] || 0;
           const isWorn = wearable && equipped[item.type] === item.icon;
 
           return (
-            <div key={item.id} className={`bg-white rounded-2xl border p-5 hover:shadow-lg transition-all ${isWorn ? "border-violet-300 ring-1 ring-violet-200" : "border-gray-100"}`}>
+            <div key={item.id} className={`bg-white rounded-2xl border p-5 hover:shadow-lg transition-all ${
+              isWorn ? "border-violet-300 ring-1 ring-violet-200" : 
+              boostActive && isBoostType(item.type) ? "border-amber-200 ring-1 ring-amber-100" :
+              "border-gray-100"
+            }`}>
               <div className="flex items-start gap-4">
                 <CosmeticPreview type={item.type} icon={item.icon}>
-                  <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${color} flex items-center justify-center text-white shadow-lg shrink-0`}>
+                  <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${color} flex items-center justify-center text-white shadow-lg shrink-0 relative`}>
                     <Icon size={28} />
+                    {isBoostType(item.type) && boostActive && (
+                      <span className="absolute -top-1 -right-1 w-4 h-4 bg-amber-400 rounded-full animate-ping opacity-75" />
+                    )}
                   </div>
                 </CosmeticPreview>
-                <div className="flex-1">
-                  <h3 className="font-bold text-gray-900">{item.name}</h3>
-                  <p className="text-sm text-gray-500 mt-1">{item.description}</p>
-                  <div className="flex items-center justify-between gap-2 mt-4">
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-bold text-gray-900 truncate">{item.name}</h3>
+                  <p className="text-sm text-gray-500 mt-1 leading-snug">{item.description}</p>
+
+                  {/* Badge baris status */}
+                  {isBoostType(item.type) && boostActive && (
+                    <div className="flex items-center gap-1.5 mt-2 text-xs font-semibold text-amber-600 bg-amber-50 px-2.5 py-1 rounded-full w-fit border border-amber-200">
+                      <Zap size={12} />
+                      <span>Aktif — sisa {formatWaktu(boostRemainingMs)}</span>
+                    </div>
+                  )}
+                  {isConsumable(item.type) && isOwned && qty > 0 && (
+                    <div className="flex items-center gap-1.5 mt-2 text-xs font-semibold text-violet-600 bg-violet-50 px-2.5 py-1 rounded-full w-fit border border-violet-200">
+                      <span>Dimiliki {qty}x</span>
+                    </div>
+                  )}
+                  {isAutoItem(item.type) && isOwned && qty > 0 && (
+                    <div className="flex items-center gap-1.5 mt-2 text-xs font-semibold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full w-fit border border-emerald-200">
+                      <Check size={12} />
+                      <span>Dimiliki {qty}x</span>
+                    </div>
+                  )}
+
+                  <div className="flex items-center justify-between gap-2 mt-3">
                     <span className="flex items-center gap-1 text-sm font-semibold text-amber-600">
                       <IconCoin size={14} className="text-amber-500" /> {item.price}
                     </span>
+
+                    {/* Wearable: Pakai / Dipakai */}
                     {wearable && isOwned ? (
                       <button
                         onClick={() => handleEquip(item, !isWorn)}
                         disabled={equipping === item.id}
-                        className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all flex items-center gap-1.5 disabled:opacity-50 ${
+                        className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all flex items-center gap-1.5 disabled:opacity-50 shrink-0 ${
                           isWorn
                             ? "bg-emerald-50 text-emerald-600 border border-emerald-200"
                             : "bg-violet-600 text-white hover:bg-violet-700 shadow-lg shadow-violet-200"
@@ -161,11 +292,31 @@ export default function TokoKoinPage() {
                       >
                         {equipping === item.id ? "..." : isWorn ? <><Check size={14} /> Dipakai</> : "Pakai"}
                       </button>
+                    ) : isConsumable(item.type) && isOwned && qty > 0 ? (
+                      <button
+                        onClick={() => handleConsume(item)}
+                        disabled={consuming === item.id}
+                        className="px-4 py-2 rounded-xl text-sm font-semibold transition-all flex items-center gap-1.5 disabled:opacity-50 shrink-0 bg-violet-600 text-white hover:bg-violet-700 shadow-lg shadow-violet-200"
+                      >
+                        {consuming === item.id ? "..." : "Pakai"}
+                      </button>
+                    ) : isBoostType(item.type) && isOwned && boostActive ? (
+                      <button
+                        onClick={() => handleBuy(item)}
+                        disabled={buying === item.id || !canAfford}
+                        className="px-4 py-2 rounded-xl text-sm font-semibold transition-all shrink-0 bg-amber-500 text-white hover:bg-amber-600 shadow-lg shadow-amber-200 disabled:opacity-50"
+                      >
+                        {buying === item.id ? "..." : "Perpanjang"}
+                      </button>
+                    ) : isAutoItem(item.type) && isOwned && qty > 0 ? (
+                      <span className="px-4 py-2 rounded-xl text-sm font-semibold text-emerald-600 bg-emerald-50 border border-emerald-200 shrink-0">
+                        Dimiliki
+                      </span>
                     ) : (
                       <button
                         onClick={() => handleBuy(item)}
                         disabled={buying === item.id || !canAfford}
-                        className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all ${
+                        className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all shrink-0 ${
                           canAfford
                             ? "bg-violet-600 text-white hover:bg-violet-700 shadow-lg shadow-violet-200"
                             : "bg-gray-100 text-gray-400 cursor-not-allowed"

@@ -20,6 +20,7 @@ export default function AduCepatPage() {
   const [isHost, setIsHost] = useState(false)
   const [results, setResults] = useState<any[]>([])
   const [xpEarned, setXpEarned] = useState(0)
+  const [xpBoosted, setXpBoosted] = useState(false)
   const [xpSaved, setXpSaved] = useState(false)
   const [userData, setUserData] = useState<any>(null)
   const [queueMsg, setQueueMsg] = useState("Mencari lawan sepadan...")
@@ -129,6 +130,8 @@ export default function AduCepatPage() {
         roomCode,
         supabaseId: userData?.supabaseId,
       }),
+    }).then(r => r.json()).then(d => {
+      if (d.boosted) setXpBoosted(true);
     }).catch(() => {})
   }, [phase, xpSaved, xpEarned, myResult, roomCode])
 
@@ -312,7 +315,14 @@ export default function AduCepatPage() {
                   </div>
                   <div className="text-left">
                     <p className="text-xs text-amber-200/70">XP Didapatkan</p>
-                    <p className="text-xl font-extrabold text-yellow-400">+{xpEarned} XP</p>
+                     <div className="flex items-center gap-2">
+                       <p className="text-xl font-extrabold text-yellow-400">+{xpEarned} XP</p>
+                       {xpBoosted && (
+                         <span className="text-[10px] font-bold bg-amber-500/30 text-amber-300 px-1.5 py-0.5 rounded border border-amber-400/30">
+                           2x
+                         </span>
+                       )}
+                     </div>
                   </div>
                 </div>
               </div>

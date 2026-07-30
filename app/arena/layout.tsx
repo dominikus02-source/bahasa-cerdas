@@ -8,6 +8,7 @@ import { ArenaClientWrapper } from "./arena-client"
 import { BottomNav } from "./bottom-nav"
 import { HeaderActions } from "@/components/arena/HeaderActions"
 import LogoutButton from "@/components/arena/LogoutButton"
+import { ActiveBoostBanner } from "@/components/arena/ActiveBoostBanner"
 
 const navItems = [
   { href: "/arena", label: "Beranda", icon: Compass },
@@ -77,6 +78,8 @@ export default async function ArenaLayout({ children }: { children: React.ReactN
           <LogoutButton variant="icon" />
         </div>
       </div>
+
+      <ActiveBoostBanner />
 
       <main className="mx-auto max-w-lg md:max-w-4xl px-0 md:px-6 py-0 md:py-6">
         <ArenaClientWrapper>
