@@ -1392,3 +1392,61 @@ Create a complete `guides-vi.ts` for Kelas VI SD Fase C with 10 full chapters ma
 | `npx tsc --noEmit data/buku-panduan/guides-vi.ts` | ✅ 0 errors |
 | `npx tsc --noEmit data/buku-panduan/index.ts` | ✅ 0 errors |
 
+---
+
+## Phase LATIHAN HARIAN — Bank Soal Guru (July 30, 2026)
+
+### Goal
+Transform `/guru/bank-soal` from UKBI/TKA-oriented into a **Bank Soal Latihan Harian** where teachers create themed practice questions (max 30 per set), assign to classes, and view analytics — while preserving existing UKBI/TKA functionality.
+
+### What was built
+
+#### API Routes
+- `POST /api/guru/latihan` — AI-generated 5-30 soal based on theme + kelas + difficulty. Falls back through DeepSeek → Groq → Gemini. Saves to `Soal` table, creates `Quiz` with `type: "LATIHAN"`, links via `QuizQuestion`. Rate-limited (20 req/min).
+- `GET /api/guru/latihan` — Lists all teacher's latihan (Quiz type=LATIHAN) with enriched stats (total assignments, submissions, avg score). Supports `search`, `kelas`, `tema` filters.
+- `GET /api/guru/latihan/[id]` — Per-latihan analytics: question-by-question stats (correct rate, option distribution), top-3 tersulit/termudah questions, per-class breakdown with student ranking.
+- `DELETE /api/guru/latihan/[id]` — Cascading delete (answers → submissions → assignments → questions → quiz).
+
+#### Frontend
+- `/guru/bank-soal/page.tsx` — Complete rewrite (~430 lines, down from 933):
+  - **Header** with 4 stat cards (Total Latihan, Total Soal, Dikirim, Dikerjakan)
+  - **Filter bar**: search by title, filter by kelas/tema
+  - **Latihan cards grid**: gradient header with emoji, tags (kelas, difficulty, soal count), stats (assignments, submissions, avg score), action buttons (Kirim, Analitik, Hapus)
+  - **Wizard modal** (4 steps): Pilih Tema → Konfigurasi (kelas, jumlah, difficulty) → AI Generate → Review & Simpan
+  - **UKBI/TKA pools** preserved at bottom with same compact iOS-style list + Kirim ke Murid + Pertandingkan actions
+  - **Assign modal**: multi-select kelas with due date
+  - **Delete confirmation dialog**
+  - **Assessment modal** (UKBI/TKA): unchanged from original
+
+- `/guru/bank-soal/[id]/page.tsx` — Analytics detail page:
+  - Back navigation, header with quiz info
+  - 4 summary cards (Kelas Dikirimi, Murid Selesai, Rata-rata, Persentase Benar)
+  - Soal Tersulit / Termudah cards (top 3)
+  - Per-kelas breakdown with expandable ranking tables
+  - Per-question breakdown with correct rate bars + option distribution
+
+#### Key Design Decisions
+1. **Reused existing models**: `Quiz` (with `type: "LATIHAN"`), `QuizQuestion` (linking to `Soal`), `QuizAssignment`, `QuizSubmission`, `QuizAnswer` — zero new Prisma models
+2. **AI fallback chain**: DeepSeek → Groq → Gemini (all configured via env vars)
+3. **30 tema latihan**: SPOK, Kalimat Efektif, Cerpen, Puisi, Pantun, etc. with emoji each
+4. **Multi-provider AI**: Each provider tried in sequence until one succeeds; if all fail, returns error
+5. **Safe deletion**: Cascading delete through all dependent records
+6. **No correctAnswer leakage**: API only exposes stats, never raw answer key
+
+### Files Created
+| File | Purpose |
+|------|---------|
+| `app/api/guru/latihan/route.ts` | GET list + POST AI generate |
+| `app/api/guru/latihan/[id]/route.ts` | GET analytics + DELETE |
+| `app/(dashboard)/guru/bank-soal/[id]/page.tsx` | Analytics detail page |
+
+### Files Modified
+| File | Change |
+|------|--------|
+| `app/(dashboard)/guru/bank-soal/page.tsx` | Complete rewrite from 933→430 lines |
+
+### Next Steps (after this)
+1. Enrich TKA UTBK/Guru from 30 to 150 soal per track
+2. Game server revival
+3. UKBI Guru constructed response (menulis 8 + berbicara 7)
+
