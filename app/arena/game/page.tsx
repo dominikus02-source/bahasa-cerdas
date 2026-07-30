@@ -3,7 +3,7 @@ import { db } from "@/lib/db"
 import cache from "@/lib/redis"
 import { redirect } from "next/navigation"
 import Link from "next/link"
-import { Zap, Swords, Puzzle, Type, Flame, BookOpen, Users, Clock, Crown, Mountain, ThumbsUp } from "lucide-react"
+import { Zap, Swords, Puzzle, Type, Flame, BookOpen, Users, Clock, Crown, Mountain, ThumbsUp, TreePine } from "lucide-react"
 import BattleCard from "@/components/arena/BattleCard"
 import GameHubLeagueTabs from "./league-tabs"
 import { MULTIPLAYER_ENABLED } from "@/lib/features"
@@ -19,6 +19,7 @@ const GAMES: Game[] = [
   { title: "Menara Cerdas", desc: "Panjat menara dengan soal dari pelajaranmu! Makin tinggi, makin seru.", icon: Mountain, href: "/arena/game/menara", accentColor: "#8B5CF6", iconGradient: "from-violet-500 to-fuchsia-600", featured: true, badge: { text: "Baru", type: "new" }, xp: "+60 XP", players: "Solo", time: "~3 mnt" },
   { title: "Irama Kata", desc: "Kata jatuh di 4 jalur — ketuk hanya yang sesuai aturan! Ritme + refleks bahasa.", icon: Clock, href: "/arena/game/irama-kata", accentColor: "#F97316", iconGradient: "from-orange-500 to-rose-500", badge: { text: "Baru", type: "new" }, xp: "+60 XP", players: "Solo", time: "~1 mnt" },
   { title: "Benar atau Salah", desc: "Kuis kilat 60 detik! Tentukan jawaban yang muncul benar atau salah.", icon: ThumbsUp, href: "/arena/game/benar-salah", accentColor: "#14B8A6", iconGradient: "from-emerald-400 to-teal-600", badge: { text: "Baru", type: "new" }, xp: "+50 XP", players: "Solo", time: "~1 mnt" },
+  { title: "Petualangan Kata", desc: "Bantu Zelby si monyet menangkap kata yang benar di hutan! Seru, cepat, dan bikin jago Bahasa!", icon: TreePine, href: "/arena/game/petualangan-kata", accentColor: "#10B981", iconGradient: "from-emerald-500 to-green-600", featured: true, badge: { text: "Baru", type: "new" }, xp: "+90 XP", players: "Solo", time: "~1,5 mnt" },
   { title: "KataPlay", desc: "Belajar membaca dari nol! 4 tingkat, puluhan soal seru!", icon: BookOpen, href: "/arena/game/kata-play", accentColor: "#7C3AED", iconGradient: "from-violet-500 to-purple-600", badge: { text: "Baru", type: "new" }, xp: "+50 XP", players: "Solo", time: "~3 mnt" },
   { title: "Tebak Kata", desc: "Tebak dari petunjuk. Seru bareng teman!", icon: Type, href: "/arena/game/tebak-kata", accentColor: "#06B6D4", iconGradient: "from-cyan-500 to-cyan-600", xp: "+60 XP", players: "Solo", time: "~3 mnt" },
   { title: "Susun Kata", desc: "Acak huruf jadi kata benar dalam waktu limit!", icon: Puzzle, href: "/arena/game/susun-kata", accentColor: "#10B981", iconGradient: "from-emerald-500 to-emerald-600", xp: "+50 XP", players: "Solo", time: "~3 mnt" },
@@ -116,6 +117,47 @@ export default async function ArenaGimPage() {
         <div className="mb-4">
           <BattleCard onlineCount={onlineCount} recentBattles={recentBattles} recentPlayers={recentPlayers} />
         </div>
+
+        {/* Petualangan Kata — Announcement Banner */}
+        <Link
+          href="/arena/game/petualangan-kata"
+          className="block relative overflow-hidden rounded-[20px] mb-4 active:scale-[0.98] transition-transform group"
+          style={{ background: "linear-gradient(120deg, #065F46, #059669 50%, #10B981)", boxShadow: "0 8px 28px rgba(5,150,105,0.25)" }}
+        >
+          <div className="absolute inset-0 pointer-events-none opacity-20" style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.15'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+          }} />
+          <div className="absolute top-[-20px] right-[5px] w-[180px] h-[180px] rounded-full pointer-events-none" style={{ background: "radial-gradient(circle, rgba(255,255,255,0.2), transparent 70%)" }} />
+          <div className="relative z-10 p-[18px] flex items-center gap-4">
+            <div className="w-16 h-16 rounded-2xl bg-white/15 backdrop-blur flex items-center justify-center shrink-0 border border-white/20 group-hover:scale-110 transition-transform">
+              <TreePine size={30} className="text-white" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="inline-flex items-center gap-1 bg-emerald-400/30 backdrop-blur px-2 py-0.5 rounded-full text-[10px] font-extrabold text-emerald-100 tracking-wider mb-1.5">
+                <Zap size={10} /> GIM BARU!
+              </div>
+              <h3 className="font-extrabold text-lg text-white leading-tight">
+                Petualangan Kata bareng Zelby si Monyet!
+              </h3>
+              <p className="text-xs mt-0.5" style={{ color: "rgba(255,255,255,0.85)" }}>
+                Ayo bantu Zelby menangkap kata BENDA, KERJA, atau SIFAT yang benar di hutan ajaib.
+                Seru banget — poin combo, frenzy mode, dan skor tinggi! &#x1F435;&#x1F34C;
+              </p>
+              <div className="flex items-center gap-2 mt-2">
+                <span className="text-[10px] font-bold bg-white/20 px-2 py-0.5 rounded-md text-white">
+                  &#x1F3AE; Gerakan jari
+                </span>
+                <span className="text-[10px] font-bold bg-amber-400/30 px-2 py-0.5 rounded-md text-amber-200">
+                  +90 XP
+                </span>
+                <span className="text-[10px]" style={{ color: "rgba(255,255,255,0.5)" }}>~1,5 menit</span>
+              </div>
+            </div>
+            <div className="shrink-0 w-9 h-9 rounded-full bg-white/15 flex items-center justify-center text-white group-hover:bg-white/25 transition-colors">
+              &rarr;
+            </div>
+          </div>
+        </Link>
 
         {/* Tantang Teman — promo card khusus, biar murid ngeh ini fitur duel yang beneran jalan */}
         <Link
