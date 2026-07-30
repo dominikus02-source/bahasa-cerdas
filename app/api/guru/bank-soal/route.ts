@@ -1,159 +1,41 @@
-import { NextRequest, NextResponse } from "next/server";
-import { getUser } from "@/lib/supabase/server";
+import { NextResponse } from "next/server";
+import { createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
-import { createClient } from "@supabase/supabase-js";
-import mammoth from "mammoth";
 
-async function extractPdfText(buffer: Buffer): Promise<string> {
+export async function GET() {
   try {
-    const pdfParse = (await import("pdf-parse")).default;
-    const data = await pdfParse(buffer);
-    return data.text;
-  } catch {
-    return "";
-  }
-}
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-export async function POST(req: NextRequest) {
-  try {
-    const user = await getUser();
-    if (!user || user.role !== "GURU") return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const dbUser = await db.user.findUnique({ where: { supabaseId: user.id } });
+    if (!dbUser || dbUser.role?.toUpperCase() !== "GURU") return NextResponse.json({ error: "Guru only" }, { status: 403 });
 
-    const formData = await req.formData();
-    const file = formData.get("file") as File;
-    const kelas = formData.get("kelas") as string || "";
-    const kd = formData.get("kd") as string || "";
-    const subject = formData.get("subject") as string || "Bahasa Indonesia";
-
-    if (!file) return NextResponse.json({ error: "File diperlukan" }, { status: 400 });
-
-    const ext = file.name.split(".").pop()?.toLowerCase() || "pdf";
-    const allowedExts = ["pdf", "docx"];
-    if (!allowedExts.includes(ext)) {
-      return NextResponse.json({ error: "Format file tidak didukung. Gunakan PDF atau DOCX." }, { status: 400 });
-    }
-
-    // Extract text content from file
-    let fileText = "";
-    const buffer = Buffer.from(await file.arrayBuffer());
-
-    try {
-      if (ext === "pdf") {
-        fileText = await extractPdfText(buffer);
-      } else if (ext === "docx") {
-        const result = await mammoth.extractRawText({ buffer });
-        fileText = result.value;
-      }
-    } catch (extractError) {
-      console.error("File extraction error:", extractError);
-      fileText = "";
-    }
-
-    // Upload file to storage
-    const fileName = `banksoal/${user.id}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
-    const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
-    const { error: uploadError } = await supabase.storage.from("documents").upload(fileName, file, { upsert: true, contentType: file.type });
-    if (uploadError) return NextResponse.json({ error: "Upload file gagal" }, { status: 500 });
-
-    const { data: urlData } = supabase.storage.from("documents").getPublicUrl(fileName);
-
-    // Save as bank soal entry (the file record)
-    const bankSoal = await db.bankSoal.create({
-      data: {
-        title: file.name.replace(/\.[^/.]+$/, ""),
-        type: "UPLOAD",
-        difficulty: "MEDIUM",
-        kelas,
-        fileUrl: urlData.publicUrl,
-        fileKey: fileName,
-        fileType: ext === "pdf" ? "PDF" : "DOCX" as any,
-        isPublished: true,
-        subject,
-        uploaderId: user.id,
-      },
+    // Get all Master Bank questions grouped by topik and kelas
+    const soals = await db.soal.findMany({
+      where: { source: "MASTER_BANK" },
+      select: { topik: true, kelas: true, id: true, difficulty: true },
     });
 
-    // Try to extract questions using Gemini AI with actual file content
-    let extractedQuestions: any[] = [];
-    if (fileText && fileText.length > 50) {
-      try {
-        const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-        if (GEMINI_API_KEY) {
-          const prompt = `Ekstrak soal-soal dari teks berikut. Buatkan output JSON array dengan format:
-[{
-  "text": "pertanyaan",
-  "options": ["A. opsi1", "B. opsi2", "C. opsi3", "D. opsi4"],
-  "correctAnswer": "0",
-  "explanation": "penjelasan jawaban",
-  "difficulty": "MEDIUM",
-  "isHOTS": false
-}]
-
-Aturan:
-- correctAnswer adalah index (0=A, 1=B, 2=C, 3=D)
-- Hanya output JSON array, tanpa markdown atau teks lain
-- Jika tidak ada opsi, biarkan options kosong dan type jadi "ESSAY"
-
-TEKS FILE:
-${fileText.slice(0, 8000)}`;
-
-          const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json", "X-goog-api-key": GEMINI_API_KEY },
-            body: JSON.stringify({
-              contents: [{ parts: [{ text: prompt }] }],
-              generationConfig: { temperature: 0.3, maxOutputTokens: 4000 },
-            }),
-          });
-          const json = await res.json();
-          const text = json?.candidates?.[0]?.content?.parts?.[0]?.text || "";
-          const match = text.match(/\[[\s\S]*\]/);
-          if (match) {
-            extractedQuestions = JSON.parse(match[0]);
-          }
-        }
-      } catch (aiError) {
-        console.error("AI extraction error:", aiError);
+    // Group by topik
+    const themes: Record<string, { name: string; total: number; kelas: string[]; difficulties: Record<string, number> }> = {};
+    for (const s of soals) {
+      if (!s.topik) continue;
+      if (!themes[s.topik]) {
+        themes[s.topik] = { name: s.topik, total: 0, kelas: [], difficulties: {} };
       }
-    }
-
-    // Save extracted questions to DB - link to existing BankSoal record
-    let savedCount = 0;
-    for (const q of extractedQuestions) {
-      try {
-        await db.soal.create({
-          data: {
-            bankSoalId: bankSoal.id,
-            text: q.text || "",
-            type: q.options?.length ? "PILIHAN_GANDA" : "ESSAY",
-            options: q.options || [],
-            correctAnswer: String(q.correctAnswer || ""),
-            explanation: q.explanation || "",
-            difficulty: q.difficulty || "MEDIUM",
-            uploaderId: user.id,
-            kelas,
-            isHOTS: q.isHOTS || false,
-          },
-        });
-        savedCount++;
-      } catch (err) {
-        console.error("Failed to save question:", err);
-      }
+      themes[s.topik].total++;
+      if (!themes[s.topik].kelas.includes(s.kelas)) themes[s.topik].kelas.push(s.kelas);
+      themes[s.topik].difficulties[s.difficulty] = (themes[s.topik].difficulties[s.difficulty] || 0) + 1;
     }
 
     return NextResponse.json({
       success: true,
-      file: { url: urlData.publicUrl, name: file.name },
-      soalTerdeteksi: savedCount,
-      extractedQuestions: extractedQuestions,
-      pesan: savedCount > 0
-        ? `${savedCount} soal berhasil diekstrak dan disimpan`
-        : fileText
-          ? "File tersimpan. AI tidak bisa mengekstrak soal otomatis. Silakan tambahkan manual."
-          : "File tersimpan. Tidak bisa membaca konten file.",
+      themes: Object.values(themes).sort((a, b) => b.total - a.total),
+      total: soals.length,
     });
   } catch (error) {
-    console.error("Bank soal upload error:", error);
-    return NextResponse.json({ error: "Gagal memproses file" }, { status: 500 });
+    console.error("GET /api/guru/bank-soal error:", error);
+    return NextResponse.json({ error: "Internal error" }, { status: 500 });
   }
 }
