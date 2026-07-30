@@ -3,7 +3,13 @@ import { db } from "@/lib/db"
 import { getUser } from "@/lib/supabase/server"
 import { rateLimitRoute } from "@/lib/rate-limit"
 import { GRADES, jenjangMurid } from "@/lib/arena-junior/kurikulum"
-import { bacaIsiPelajaran, nilaiJawaban } from "@/lib/arena-junior/soal"
+import {
+  acakOpsi,
+  bacaIsiPelajaran,
+  benihPercobaan,
+  bintangDari,
+  nilaiJawaban,
+} from "@/lib/arena-junior/soal"
 
 /**
  * Menerima jawaban murid, menilainya DI SERVER, lalu menyimpan hasilnya.
@@ -27,7 +33,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
 
   const { id: lessonId } = await params
 
-  let body: { jawaban?: unknown }
+  let body: { jawaban?: unknown; percobaan?: unknown }
   try {
     body = await req.json()
   } catch {
@@ -61,27 +67,46 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     return NextResponse.json({ error: "Soal pelajaran ini belum tersedia" }, { status: 409 })
   }
 
+  const sebelumnya = await db.arenaJuniorProgress.findUnique({
+    where: { userId_lessonId: { userId: user.id, lessonId } },
+    select: { completed: true, bestScore: true, attempts: true },
+  })
+
+  // Urutan opsi diacak per percobaan. Nilai `percobaan` yang dipakai halaman
+  // harus sama dengan yang berlaku sekarang, kalau tidak permutasinya berbeda
+  // dan penilaian akan salah. Ini juga yang menutup celah "jawab asal → baca
+  // kunci di pembahasan → ulangi dengan contekan": kunci percobaan lalu tidak
+  // cocok lagi dengan urutan percobaan berikutnya.
+  const percobaanSekarang = (sebelumnya?.attempts ?? 0) + 1
+  const percobaanKlien = Number(body.percobaan)
+  if (!Number.isInteger(percobaanKlien) || percobaanKlien !== percobaanSekarang) {
+    return NextResponse.json(
+      {
+        error: "Soalnya sudah diperbarui. Muat ulang halaman lalu coba lagi ya.",
+        percobaanSekarang,
+      },
+      { status: 409 }
+    )
+  }
+
+  const soalPercobaan = acakOpsi(isi.soal, benihPercobaan(user.id, lessonId, percobaanSekarang))
+
   // Semua soal wajib dijawab. Tanpa syarat ini, mengirim `{}` akan
   // mengembalikan seluruh kunci jawaban (dipakai untuk pembahasan) tanpa murid
   // mengerjakan apa pun — lalu tinggal diulang untuk memanen XP.
-  const belumDijawab = isi.soal.filter((s) => typeof jawabanMurid[s.id] !== "string")
+  const belumDijawab = soalPercobaan.filter((s) => typeof jawabanMurid[s.id] !== "string")
   if (belumDijawab.length > 0) {
     return NextResponse.json(
       {
         error: "Semua soal harus dijawab dulu",
         belumDijawab: belumDijawab.length,
-        total: isi.soal.length,
+        total: soalPercobaan.length,
       },
       { status: 400 }
     )
   }
 
-  const hasil = nilaiJawaban(isi.soal, jawabanMurid)
-
-  const sebelumnya = await db.arenaJuniorProgress.findUnique({
-    where: { userId_lessonId: { userId: user.id, lessonId } },
-    select: { completed: true, bestScore: true },
-  })
+  const hasil = nilaiJawaban(soalPercobaan, jawabanMurid)
 
   const sudahPernahLulus = sebelumnya?.completed ?? false
   const xpBaru = hasil.lulus && !sudahPernahLulus ? pelajaran.xpReward : 0
@@ -104,7 +129,9 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
       completed: sudahPernahLulus || hasil.lulus,
       score: hasil.nilai,
       bestScore,
-      stars: Math.max(hasil.bintang, sebelumnya ? 0 : hasil.bintang),
+      // Bintang mengikuti nilai TERBAIK, jadi mengulang dengan nilai lebih
+      // jelek tidak menurunkan bintang yang sudah didapat.
+      stars: bintangDari(bestScore),
       xpEarned: { increment: xpBaru },
       attempts: { increment: 1 },
       ...(hasil.lulus && !sudahPernahLulus ? { completedAt: new Date() } : {}),

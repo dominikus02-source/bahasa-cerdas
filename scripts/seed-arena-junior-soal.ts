@@ -18,45 +18,13 @@
 import { createScriptPrisma } from "./script-prisma"
 import { SOAL_TK } from "../data/arena-junior/soal-tk"
 import { SOAL_K1 } from "../data/arena-junior/soal-k1"
-import { bacaIsiPelajaran, type Soal } from "../lib/arena-junior/soal"
+import { acakOpsi, bacaIsiPelajaran, type Soal } from "../lib/arena-junior/soal"
 
 const prisma = createScriptPrisma()
 const EXECUTE = process.argv.includes("--execute")
 
 const BANK: Record<string, Record<string, Soal[]>> = { TK: SOAL_TK, K1: SOAL_K1 }
 const SOAL_PER_PELAJARAN = 5
-
-/** PRNG deterministik sederhana (mulberry32) dengan benih dari teks. */
-function benih(teks: string) {
-  let h = 1779033703 ^ teks.length
-  for (let i = 0; i < teks.length; i++) {
-    h = Math.imul(h ^ teks.charCodeAt(i), 3432918353)
-    h = (h << 13) | (h >>> 19)
-  }
-  let a = h >>> 0
-  return () => {
-    a += 0x6d2b79f5
-    let t = a
-    t = Math.imul(t ^ (t >>> 15), t | 1)
-    t ^= t + Math.imul(t ^ (t >>> 7), t | 61)
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296
-  }
-}
-
-const HURUF = ["a", "b", "c", "d", "e"]
-
-function acakOpsi(soal: Soal): Soal {
-  const rng = benih(soal.id)
-  const opsi = [...soal.opsi]
-  for (let i = opsi.length - 1; i > 0; i--) {
-    const j = Math.floor(rng() * (i + 1))
-    ;[opsi[i], opsi[j]] = [opsi[j], opsi[i]]
-  }
-  const idLama = soal.jawaban
-  const posisiBenar = opsi.findIndex((o) => o.id === idLama)
-  const opsiBaru = opsi.map((o, i) => ({ ...o, id: HURUF[i] }))
-  return { ...soal, opsi: opsiBaru, jawaban: HURUF[posisiBenar] }
-}
 
 async function main() {
   const pelajaran = await prisma.arenaJuniorLesson.findMany({
@@ -83,7 +51,7 @@ async function main() {
     rencana.push({ id: p.id, judul: `${p.grade} · ${p.title}`, jumlah: potongan.length })
 
     if (EXECUTE) {
-      const isi = { versi: 1 as const, soal: potongan.map(acakOpsi) }
+      const isi = { versi: 1 as const, soal: acakOpsi(potongan, `seed:${p.id}`) }
       if (!bacaIsiPelajaran(isi)) {
         throw new Error(`Isi pelajaran tidak valid untuk ${p.title}`)
       }

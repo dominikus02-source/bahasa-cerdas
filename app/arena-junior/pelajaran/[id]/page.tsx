@@ -6,7 +6,7 @@ import { db } from "@/lib/db"
 import { getUser } from "@/lib/supabase/server"
 import { jenjangMurid, GRADES, LABEL_JENJANG } from "@/lib/arena-junior/kurikulum"
 import { gambarKarakter, PROFIL, normalkanKarakter } from "@/lib/arena-junior/karakter"
-import { bacaIsiPelajaran, sanitasiSoal } from "@/lib/arena-junior/soal"
+import { acakOpsi, bacaIsiPelajaran, benihPercobaan, sanitasiSoal } from "@/lib/arena-junior/soal"
 import { Pemutar } from "./pemutar"
 
 export const dynamic = "force-dynamic"
@@ -53,12 +53,23 @@ export default async function PelajaranPage({ params }: { params: Promise<{ id: 
   // Soal sudah ada → langsung mainkan. Kunci jawaban disaring di server dulu;
   // yang menyeberang ke browser hanya `SoalAman`.
   if (isi) {
+    // Nomor percobaan yang akan dikerjakan sekarang. Urutan opsi diacak dari
+    // nomor ini, jadi kunci yang terlihat di pembahasan percobaan sebelumnya
+    // tidak berlaku lagi di percobaan berikutnya.
+    const progres = await db.arenaJuniorProgress.findUnique({
+      where: { userId_lessonId: { userId: user.id, lessonId: pelajaran.id } },
+      select: { attempts: true },
+    })
+    const percobaan = (progres?.attempts ?? 0) + 1
+    const diacak = acakOpsi(isi.soal, benihPercobaan(user.id, pelajaran.id, percobaan))
+
     return (
       <Pemutar
         pelajaranId={pelajaran.id}
         judul={pelajaran.title}
         karakter={pelajaran.characterHint}
-        soal={sanitasiSoal(isi.soal)}
+        percobaan={percobaan}
+        soal={sanitasiSoal(diacak)}
       />
     )
   }

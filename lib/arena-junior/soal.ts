@@ -56,6 +56,57 @@ export function sanitasiSoal(soal: Soal[]): SoalAman[] {
   return soal.map(({ jawaban: _jawaban, pembahasan: _pembahasan, ...aman }) => aman)
 }
 
+/** PRNG deterministik (mulberry32) dengan benih dari teks. */
+function prng(benih: string) {
+  let h = 1779033703 ^ benih.length
+  for (let i = 0; i < benih.length; i++) {
+    h = Math.imul(h ^ benih.charCodeAt(i), 3432918353)
+    h = (h << 13) | (h >>> 19)
+  }
+  let a = h >>> 0
+  return () => {
+    a += 0x6d2b79f5
+    let t = a
+    t = Math.imul(t ^ (t >>> 15), t | 1)
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61)
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296
+  }
+}
+
+const HURUF_OPSI = ["a", "b", "c", "d", "e"]
+
+/**
+ * Mengacak urutan opsi DAN menomori ulang id-nya, deterministik dari `benih`.
+ *
+ * Dipakai dua kali dengan tujuan berbeda:
+ *  1. Saat seed — supaya kunci tidak selalu opsi pertama di database.
+ *  2. Saat menyajikan soal ke murid, dengan benih yang memuat nomor percobaan —
+ *     supaya kunci yang terlihat pada percobaan ke-N tidak berlaku lagi di
+ *     percobaan ke-N+1. Tanpa ini, murid bisa menjawab asal, membaca kunci dari
+ *     pembahasan, lalu mengulang dengan jawaban contekan.
+ */
+export function acakOpsi(soal: Soal[], benih: string): Soal[] {
+  return soal.map((s, indeks) => {
+    const rng = prng(`${benih}:${s.id}:${indeks}`)
+    const opsi = [...s.opsi]
+    for (let i = opsi.length - 1; i > 0; i--) {
+      const j = Math.floor(rng() * (i + 1))
+      ;[opsi[i], opsi[j]] = [opsi[j], opsi[i]]
+    }
+    const posisiBenar = opsi.findIndex((o) => o.id === s.jawaban)
+    return {
+      ...s,
+      opsi: opsi.map((o, i) => ({ ...o, id: HURUF_OPSI[i] })),
+      jawaban: HURUF_OPSI[posisiBenar],
+    }
+  })
+}
+
+/** Benih pengacakan untuk satu percobaan milik satu murid. */
+export function benihPercobaan(userId: string, lessonId: string, percobaan: number) {
+  return `${userId}|${lessonId}|${percobaan}`
+}
+
 export const NILAI_LULUS = 70
 
 export function bintangDari(nilai: number) {
