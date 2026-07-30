@@ -154,7 +154,7 @@ function FeedContent() {
     const el = document.getElementById("feed-sentinel");
     if (el) io.observe(el);
     return () => io.disconnect();
-  }, [filter, searchQuery]); // recreates observer only when filter/search changes
+  }, [filter, searchQuery, loading]); // loading = sentinel siap di-DOM
 
   const handleLike = async (id: string) => {
     if (likePending[id]) return;
