@@ -64,17 +64,21 @@ export async function POST(req: NextRequest) {
         questionIds.push(...section.questionIds);
       } else if (section.count && section.count > 0) {
         const isUKBI = paket.type.includes("UKBI");
-        const where: any = { isActive: true };
-        if (section.seksi) where.seksi = section.seksi;
-        if (section.kompetensi) where.kompetensi = section.kompetensi;
-        if (paket.type.includes("SMP") || paket.type.includes("LATIHAN_SMP")) where.tingkat = "SMP";
-        else if (paket.type.includes("SMA") || paket.type.includes("LATIHAN_SMA")) where.tingkat = "SMA";
-        else if (paket.type.includes("SD") || paket.type.includes("LATIHAN_SD")) where.tingkat = "SD";
 
         if (isUKBI) {
+          const where: any = { isActive: true };
+          if (section.seksi) where.seksi = section.seksi;
+          if (paket.type.includes("SMP") || paket.type.includes("LATIHAN_SMP")) where.tingkat = "SMP";
+          else if (paket.type.includes("SMA") || paket.type.includes("LATIHAN_SMA")) where.tingkat = "SMA";
+          else if (paket.type.includes("SD") || paket.type.includes("LATIHAN_SD")) where.tingkat = "SD";
           const qs = await db.uKBIQuestion.findMany({ where, take: section.count, select: { id: true } });
           questionIds.push(...qs.map(q => q.id));
         } else {
+          const where: any = { isActive: true };
+          if (section.kompetensi) where.kompetensi = section.kompetensi;
+          if (paket.type.includes("SMP") || paket.type.includes("LATIHAN_SMP")) where.tingkat = "SMP";
+          else if (paket.type.includes("SMA") || paket.type.includes("LATIHAN_SMA")) where.tingkat = "SMA";
+          else if (paket.type.includes("SD") || paket.type.includes("LATIHAN_SD")) where.tingkat = "SD";
           const qs = await db.tKAQuestion.findMany({ where, take: section.count, select: { id: true } });
           questionIds.push(...qs.map(q => q.id));
         }
