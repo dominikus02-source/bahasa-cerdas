@@ -68,7 +68,7 @@ export default function GuruFeedKaryaPage() {
       const controller = new AbortController();
       abortRef.current = controller;
 
-      const params = new URLSearchParams({ limit: "10" });
+      const params = new URLSearchParams({ limit: "30" });
       if (type) params.set("type", type);
       if (selectedGroupId) params.set("groupId", selectedGroupId);
       if (cursorVal) params.set("cursor", cursorVal);
