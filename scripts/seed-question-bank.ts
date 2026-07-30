@@ -11,11 +11,12 @@
  *   npx tsx scripts/seed-question-bank.ts --force       # update existing
  */
 
+import "./load-env"
 import { PrismaClient } from "@prisma/client";
 import * as fs from "fs";
 import * as path from "path";
 
-const prisma = new PrismaClient();
+const prisma = new PrismaClient({ datasources: { db: { url: process.env.DATABASE_URL } } });
 const DATA_DIR = path.resolve(__dirname, "..", "data", "question-bank", "master");
 
 const args = process.argv.slice(2);

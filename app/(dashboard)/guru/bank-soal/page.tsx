@@ -6,26 +6,19 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
-  Loader2, Search, Send, Users, BookOpen, GraduationCap, X, Check, ChevronDown
+  Loader2, Search, Send, Users, BookOpen, GraduationCap, X, Check, ChevronDown,
+  FileText, Sparkles, Quote, PenLine, ScrollText, Newspaper, MessageSquare,
+  BookMarked, Library, PenTool, Globe, Megaphone, Star,
 } from "lucide-react";
 
 const KELAS = ["1","2","3","4","5","6","7","8","9","10","11","12"];
 
-const THEME_EMOJI: Record<string, string> = {
-  "SPOK": "🔤", "Kalimat Efektif": "✏️", "Cerpen": "📖", "Puisi": "📝",
-  "Pantun": "🎵", "Teks Deskripsi": "🏔️", "Teks Prosedur": "📋",
-  "Teks Eksplanasi": "🔬", "Teks Persuasi": "💬", "Teks Argumentasi": "⚖️",
-  "Teks Eksposisi": "📰", "Teks Berita": "📺", "Fabel": "🦊", "Legenda": "🏯",
-  "Hikayat": "👑", "Drama": "🎭", "Surat Dinas": "📄", "Surat Pribadi": "💌",
-  "Iklan": "📢", "Poster": "🖼️", "Resensi": "📚", "Novel": "📕", "Majas": "🎨",
-  "EYD/PUEBI": "✅", "Imbuhan": "🔗", "Sinonim": "🔄", "Antonim": "⚡",
-  "Paragraf": "📑", "Ide Pokok": "💡", "Makna Kata": "📖",
-  "Kalimat": "📝", "Gagasan Utama": "🎯", "Simpulan": "🔍",
-  "Kata Baku": "📗", "Kata Tidak Baku": "📕", "Tanda Baca": "❗",
-  "Ejaan": "✍️", "Syair": "🎶", "Gurindam": "🎼", "Anekdot": "😄",
-  "Artikel": "📰", "Editorial": "🗞️", "Cerita Inspiratif": "🌟",
-  "Mitos": "🏛️", "Teks Narasi": "📖", "Teks Ulasan": "📋",
-  "Proposal": "📑", "Pidato": "🎤", "Slogan": "🏷️",
+const CAT_COLORS: Record<string, { from: string; to: string; text: string; light: string; ring: string }> = {
+  "Tata Bahasa":   { from: "from-emerald-500", to: "to-emerald-600",  text: "text-emerald-600", light: "bg-emerald-50",  ring: "ring-emerald-200" },
+  "Sastra":        { from: "from-violet-500",  to: "to-violet-600",   text: "text-violet-600",  light: "bg-violet-50",   ring: "ring-violet-200"  },
+  "Jenis Teks":    { from: "from-blue-500",    to: "to-blue-600",     text: "text-blue-600",    light: "bg-blue-50",     ring: "ring-blue-200"    },
+  "Fungsional":    { from: "from-amber-500",   to: "to-amber-600",    text: "text-amber-600",   light: "bg-amber-50",    ring: "ring-amber-200"   },
+  "Lainnya":       { from: "from-slate-500",   to: "to-slate-600",    text: "text-slate-600",   light: "bg-slate-50",    ring: "ring-slate-200"   },
 };
 
 interface ThemeData {
@@ -145,6 +138,18 @@ export default function BankSoalPage() {
 
   const totalQuestions = themes.reduce((s, t) => s + t.total, 0);
 
+  const getInitials = (name: string) => {
+    const parts = name.split(/[\s/]+/);
+    return parts.length > 1 ? parts[0][0] + parts[1][0] : name.slice(0, 2);
+  };
+
+  const getCategoryKey = (name: string) => {
+    for (const c of CATEGORIES) {
+      if (c.pattern.test(name)) return c.name;
+    }
+    return "Lainnya";
+  };
+
   return (
     <div className="space-y-6">
       {success && (
@@ -207,22 +212,28 @@ export default function BankSoalPage() {
             <div key={cat.name}>
               <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wider mb-3">{cat.name}</h2>
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
-                {cat.themes.map(t => (
-                  <button
-                    key={t.name}
-                    onClick={() => handleOpenSend(t)}
-                    className="group text-left p-3 rounded-xl border border-gray-100 bg-white hover:border-emerald-300 hover:shadow-md hover:-translate-y-0.5 transition-all"
-                  >
-                    <div className="text-2xl mb-1.5">{THEME_EMOJI[t.name] || "📚"}</div>
-                    <p className="text-sm font-semibold text-gray-900 leading-tight">{t.name}</p>
-                    <div className="flex items-center gap-2 mt-1.5">
-                      <Badge className="text-[10px] px-1.5 py-0 bg-emerald-100 text-emerald-700">{t.total} soal</Badge>
-                      {t.kelas.length > 0 && (
-                        <span className="text-[10px] text-gray-400">Kls {t.kelas.sort((a,b) => Number(a)-Number(b)).join(",")}</span>
-                      )}
-                    </div>
-                  </button>
-                ))}
+                {cat.themes.map(t => {
+                  const cc = CAT_COLORS[getCategoryKey(t.name)] || CAT_COLORS["Lainnya"];
+                  const initials = getInitials(t.name);
+                  return (
+                    <button
+                      key={t.name}
+                      onClick={() => handleOpenSend(t)}
+                      className={`group text-left p-3 rounded-xl border bg-white hover:shadow-md hover:-translate-y-0.5 transition-all ${cc.ring} hover:border-current border-gray-100`}
+                    >
+                      <div className={`w-9 h-9 rounded-lg bg-gradient-to-br ${cc.from} ${cc.to} flex items-center justify-center mb-2 shadow-sm`}>
+                        <span className="text-white text-xs font-bold tracking-wider uppercase">{initials}</span>
+                      </div>
+                      <p className="text-sm font-semibold text-gray-900 leading-tight">{t.name}</p>
+                      <div className="flex items-center gap-2 mt-1.5">
+                        <Badge className={`text-[10px] px-1.5 py-0 ${cc.light} ${cc.text}`}>{t.total} soal</Badge>
+                        {t.kelas.length > 0 && (
+                          <span className="text-[10px] text-gray-400">Kls {t.kelas.sort((a,b) => Number(a)-Number(b)).join(",")}</span>
+                        )}
+                      </div>
+                    </button>
+                  );
+                })}
               </div>
             </div>
           ))}
@@ -231,12 +242,19 @@ export default function BankSoalPage() {
 
       {/* Send Modal */}
       <Modal isOpen={!!selectedTheme} onClose={() => setSelectedTheme(null)} title="Kirim Latihan ke Kelas" className="max-w-md">
-        {selectedTheme && (
+        {selectedTheme && (() => {
+          const catKey = getCategoryKey(selectedTheme.name);
+          const cc = CAT_COLORS[catKey] || CAT_COLORS["Lainnya"];
+          return (
           <div className="space-y-4">
-            <div className="p-3 bg-gradient-to-br from-emerald-500 to-green-600 rounded-xl text-white">
-              <span className="text-2xl">{THEME_EMOJI[selectedTheme.name] || "📚"}</span>
-              <p className="text-sm font-bold mt-1">{selectedTheme.name}</p>
-              <p className="text-[10px] opacity-80">{selectedTheme.total} soal tersedia</p>
+            <div className={`p-3 bg-gradient-to-br ${cc.from} ${cc.to} rounded-xl text-white flex items-center gap-3`}>
+              <div className="w-10 h-10 rounded-lg bg-white/20 flex items-center justify-center backdrop-blur">
+                <span className="text-white text-sm font-bold tracking-wider uppercase">{getInitials(selectedTheme.name)}</span>
+              </div>
+              <div>
+                <p className="text-sm font-bold">{selectedTheme.name}</p>
+                <p className="text-[10px] opacity-80">{selectedTheme.total} soal tersedia</p>
+              </div>
             </div>
 
             <div>
@@ -319,8 +337,8 @@ export default function BankSoalPage() {
                 {sending ? "Mengirim..." : `Kirim ke ${selectedGroups.length} Kelas`}
               </Button>
             </div>
-          </div>
-        )}
+          </div>);
+        })()}
       </Modal>
     </div>
   );
