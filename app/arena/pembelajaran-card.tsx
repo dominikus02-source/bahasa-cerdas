@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { BookOpen, FileText, ChevronRight } from "lucide-react"
+import { BookOpen, ChevronRight, GraduationCap, Library } from "lucide-react"
 
 export function PembelajaranCard({
   tugasCount = 0,
@@ -11,61 +11,62 @@ export function PembelajaranCard({
   materiCount?: number
 }) {
   return (
-    <div className="bg-gradient-to-br from-emerald-600 via-emerald-500 to-teal-600 rounded-3xl p-5 md:p-6 text-white shadow-lg">
-      <div className="flex items-start gap-3 mb-4">
-        <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center shrink-0">
-          <BookOpen className="w-5 h-5" />
-        </div>
-        <div>
-          <h2 className="text-lg font-bold">Ruang Pembelajaran</h2>
-          <p className="text-sm text-emerald-100">Fokus belajar dari tugas dan materi guru</p>
-        </div>
-      </div>
+    <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-emerald-600 via-emerald-700 to-teal-800 p-5 mb-5 shadow-lg shadow-emerald-500/25">
+      <div className="absolute -top-6 -right-6 w-28 h-28 rounded-full bg-white/5" />
+      <div className="absolute -bottom-4 -left-4 w-20 h-20 rounded-full bg-white/5" />
+      <div className="absolute top-2 right-12 w-10 h-10 rounded-full bg-emerald-400/10" />
 
-      <div className="grid grid-cols-2 gap-3">
-        <Link
-          href="/arena/tugas"
-          className="bg-white/10 backdrop-blur rounded-2xl p-4 hover:bg-white/20 transition-all active:scale-[0.97] flex flex-col"
-        >
-          <div className="flex items-center gap-2 mb-2">
-            <FileText className="w-4 h-4 text-emerald-200" />
-            <span className="text-sm font-semibold">Ruang Tugas</span>
+      <div className="relative z-10">
+        <div className="flex items-center gap-3 mb-3">
+          <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center backdrop-blur-sm">
+            <GraduationCap className="w-6 h-6 text-white" />
           </div>
-          <p className="text-[11px] text-emerald-100 leading-tight mb-3">
-            Tugas, kuis & latihan dari guru
-          </p>
-          <div className="flex items-center justify-between mt-auto">
-            {tugasCount > 0 ? (
-              <span className="px-2.5 py-1 rounded-lg bg-white/20 text-white text-xs font-bold">
-                {tugasCount} tertunda
-              </span>
-            ) : (
-              <span className="text-[11px] text-emerald-200">Tidak ada tugas baru</span>
-            )}
-            <ChevronRight className="w-4 h-4 text-white/60" />
+          <div>
+            <h1 className="text-lg font-extrabold text-white">Ruang Pembelajaran</h1>
+            <p className="text-xs text-emerald-200">Fokus belajar & selesaikan tugasmu di sini!</p>
           </div>
-        </Link>
+        </div>
 
-        <Link
-          href="/arena/materi"
-          className="bg-white/10 backdrop-blur rounded-2xl p-4 hover:bg-white/20 transition-all active:scale-[0.97] flex flex-col"
-        >
-          <div className="flex items-center gap-2 mb-2">
-            <BookOpen className="w-4 h-4 text-emerald-200" />
-            <span className="text-sm font-semibold">Ruang Materi</span>
-          </div>
-          <p className="text-[11px] text-emerald-100 leading-tight mb-3">
-            Modul, bahan ajar & materi belajar
-          </p>
-          <div className="flex items-center justify-between mt-auto">
-            {materiCount > 0 ? (
-              <span className="text-[11px] text-emerald-200">{materiCount} materi tersedia</span>
-            ) : (
-              <span className="text-[11px] text-emerald-200">Jelajahi materi</span>
-            )}
-            <ChevronRight className="w-4 h-4 text-white/60" />
-          </div>
-        </Link>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
+          <Link
+            href="/arena/tugas"
+            className="group flex items-start gap-3 bg-white/95 rounded-xl p-4 hover:bg-white hover:shadow-lg hover:shadow-emerald-900/20 active:scale-[0.98] transition-all"
+          >
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center shrink-0 shadow-sm">
+              <BookOpen className="w-5 h-5 text-white" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2">
+                <h3 className="text-sm font-bold text-gray-900">Ruang Tugas</h3>
+                {tugasCount > 0 && (
+                  <span className="px-1.5 py-0.5 rounded-full bg-emerald-100 text-emerald-700 text-[9px] font-bold">
+                    {tugasCount}
+                  </span>
+                )}
+              </div>
+              <p className="text-xs text-gray-500 mt-0.5">Tugas & latihan dari Buku Panduan Guru</p>
+              <div className="flex items-center gap-1.5 mt-2 text-[11px] font-semibold text-emerald-600 group-hover:gap-2 transition-all">
+                {tugasCount > 0 ? `${tugasCount} tugas tersedia` : "Lihat semua tugas"} <ChevronRight size={14} />
+              </div>
+            </div>
+          </Link>
+
+          <Link
+            href="/arena/materi"
+            className="group flex items-start gap-3 bg-white/95 rounded-xl p-4 hover:bg-white hover:shadow-lg hover:shadow-emerald-900/20 active:scale-[0.98] transition-all"
+          >
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center shrink-0 shadow-sm">
+              <Library className="w-5 h-5 text-white" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <h3 className="text-sm font-bold text-gray-900">Ruang Materi</h3>
+              <p className="text-xs text-gray-500 mt-0.5">Modul, PPT, PDF, dan video dari guru</p>
+              <div className="flex items-center gap-1.5 mt-2 text-[11px] font-semibold text-violet-600 group-hover:gap-2 transition-all">
+                Lihat Materi <ChevronRight size={14} />
+              </div>
+            </div>
+          </Link>
+        </div>
       </div>
     </div>
   )
