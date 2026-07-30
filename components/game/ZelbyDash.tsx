@@ -551,7 +551,7 @@ export default function ZelbyDash() {
             </div>
             <h1 className="font-extrabold text-3xl mb-2">Petualangan Hutan Kata</h1>
             <p className="opacity-70 text-sm mb-1">
-              Bantu Zelby si Tarsius menangkap <strong>kata yang benar</strong> dan hindari yang salah!
+              Bantu si cerdik Zelby menangkap <strong>kata yang benar</strong> dan hindari yang salah!
             </p>
             <p className="opacity-60 text-xs mb-6">
               <Clock className="w-3 h-3 inline mr-1" />90 detik &middot; <Heart className="w-3 h-3 inline mx-1" />3 nyawa &middot; <Zap className="w-3 h-3 inline mx-1" />combo untuk skor tinggi
