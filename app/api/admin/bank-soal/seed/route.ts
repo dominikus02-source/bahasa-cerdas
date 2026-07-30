@@ -4,8 +4,6 @@ import { db } from "@/lib/db";
 import fs from "fs";
 import path from "path";
 
-export const maxDuration = 60;
-
 export async function POST() {
   try {
     const supabase = await createClient();
@@ -18,14 +16,14 @@ export async function POST() {
     }
 
     const dir = path.join(process.cwd(), "data/question-bank/master");
-    const files = fs.readdirSync(dir).filter(f => f.endsWith(".json") && f !== "types.ts");
+    const files = fs.readdirSync(dir).filter((f: string) => f.endsWith(".json") && f !== "types.ts");
 
     const allSoals: any[] = [];
-    const errors: string[] = [];
+    const fileErrors: string[] = [];
 
     for (const file of files) {
       try {
-        const content = JSON.parse(fs.readFileSync(path.join(dir, file), "utf-8"));
+        const content = JSON.parse(fs.readFileSync(path.join(dir, file), "utf-8") as string);
         const soals = Array.isArray(content) ? content : [];
         for (const s of soals) {
           if (!s.kodeSoal || !s.text) continue;
@@ -53,7 +51,7 @@ export async function POST() {
           });
         }
       } catch (e: any) {
-        errors.push(`${file}: ${e?.message || "unknown"}`);
+        fileErrors.push(`${file}: ${e?.message || "unknown"}`);
       }
     }
 
@@ -62,35 +60,53 @@ export async function POST() {
         success: true,
         total: 0,
         created: 0,
-        skipped: 0,
-        errors: errors.length > 0 ? errors.slice(0, 10) : [],
+        message: "Tidak ada soal valid ditemukan",
+        fileErrors: fileErrors.slice(0, 5),
         files: files.length,
-        message: "Tidak ada soal valid ditemukan di file JSON",
       });
     }
 
-    // Count existing before batch insert
-    const existingCount = await db.soal.count({
-      where: { kodeSoal: { in: allSoals.map(s => s.kodeSoal) } },
-    });
+    // Insert in chunks of 100 to avoid timeout/memory issues
+    const CHUNK_SIZE = 100;
+    let totalCreated = 0;
+    const dbErrors: string[] = [];
 
-    // Batch insert — skip duplicates by kodeSoal
-    const result = await db.soal.createMany({
-      data: allSoals,
-      skipDuplicates: true,
-    });
+    for (let i = 0; i < allSoals.length; i += CHUNK_SIZE) {
+      const chunk = allSoals.slice(i, i + CHUNK_SIZE);
+      try {
+        const result = await db.soal.createMany({
+          data: chunk,
+          skipDuplicates: true,
+        });
+        totalCreated += result.count;
+      } catch (e: any) {
+        dbErrors.push(`Chunk ${i / CHUNK_SIZE + 1}: ${e?.message || "unknown"}`);
+        // Try one-by-one for this chunk if batch fails
+        for (const soal of chunk) {
+          try {
+            await db.soal.create({ data: soal });
+            totalCreated++;
+          } catch (innerErr: any) {
+            dbErrors.push(`${soal.kodeSoal}: ${innerErr?.message || "unknown"}`);
+          }
+        }
+      }
+    }
 
     return NextResponse.json({
       success: true,
       total: allSoals.length,
-      created: result.count,
-      skipped: allSoals.length - result.count,
-      existingBefore: existingCount,
-      errors: errors.length > 0 ? errors.slice(0, 10) : [],
+      created: totalCreated,
+      skipped: allSoals.length - totalCreated,
+      fileErrors: fileErrors.length > 0 ? fileErrors.slice(0, 5) : [],
+      dbErrors: dbErrors.length > 0 ? dbErrors.slice(0, 10) : [],
       files: files.length,
     });
-  } catch (error) {
-    console.error("POST /api/admin/bank-soal/seed error:", error);
-    return NextResponse.json({ error: "Internal error" }, { status: 500 });
+  } catch (error: any) {
+    console.error("POST /api/admin/bank-soal/seed error:", error?.message, error?.stack);
+    return NextResponse.json({
+      error: "Internal error",
+      detail: error?.message || "unknown",
+    }, { status: 500 });
   }
 }
