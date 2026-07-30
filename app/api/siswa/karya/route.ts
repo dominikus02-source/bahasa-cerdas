@@ -116,11 +116,35 @@ export async function GET(req: NextRequest) {
         });
         const memberIds = members.map((m) => m.userId);
         where.userId = { in: memberIds };
+      } else if (user && user.role === "GURU") {
+        // Tanpa filter kelas, guru lihat karya semua murid mereka
+        const myGroups = await db.group.findMany({
+          where: { teacherId: user.id },
+          select: { id: true },
+        });
+        if (myGroups.length > 0) {
+          const members = await db.groupMember.findMany({
+            where: { groupId: { in: myGroups.map(g => g.id) }, role: "member" },
+            select: { userId: true },
+          });
+          const memberIds = [...new Set(members.map(m => m.userId))];
+          if (memberIds.length > 0) {
+            where.userId = { in: memberIds };
+          } else {
+            return NextResponse.json({ karya: [], nextCursor: null });
+          }
+        } else {
+          return NextResponse.json({ karya: [], nextCursor: null });
+        }
       }
 
       // Cache first page (no cursor) for 30s — absorbs feed bursts from a whole class
       // Skip cache when searching so results are always fresh
-      const cacheKey = cursor || q || groupId ? null : `feed:${type || "all"}:${limit}`;
+      const cacheKey = cursor || q || groupId
+        ? null
+        : user && user.role === "GURU"
+          ? `feed:guru:${user.id}:${type || "all"}:${limit}`
+          : `feed:${type || "all"}:${limit}`;
       let karya: any[];
       if (cacheKey) {
         const cached = await cache.get<any[]>(cacheKey);
