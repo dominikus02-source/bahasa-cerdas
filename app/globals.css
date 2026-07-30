@@ -146,7 +146,22 @@
   @apply text-red-600 hover:underline;
 }
 .artikel-content blockquote {
-  @apply border-l-4 border-red-200 pl-4 italic text-slate-500 my-4;
+  @apply border-l-4 border-emerald-400 bg-emerald-50/50 pl-5 pr-4 py-4 text-slate-700 my-6 rounded-r-lg;
+}
+.artikel-content blockquote p {
+  @apply mb-0;
+}
+.artikel-content blockquote strong:first-child {
+  @apply text-emerald-700;
+}
+.artikel-content table {
+  @apply w-full border-collapse my-6 text-sm;
+}
+.artikel-content th {
+  @apply bg-emerald-50 text-left font-semibold text-slate-700 px-4 py-2 border border-slate-200;
+}
+.artikel-content td {
+  @apply px-4 py-2 border border-slate-200 text-slate-600;
 }
 .artikel-content img {
   @apply rounded-xl my-6 max-w-full;

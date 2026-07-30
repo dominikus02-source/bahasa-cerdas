@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
+import homepageContent from "@/prisma/seed-data/homepage-content.json";
 
 export async function GET(req: NextRequest) {
   try {
@@ -49,6 +50,53 @@ export async function GET(req: NextRequest) {
   } catch (err: any) {
     console.error("Admin artikel GET error:", err.message, err.stack);
     return NextResponse.json({ error: `Internal error: ${err.message}` }, { status: 500 });
+  }
+}
+
+const EDITOR_EMAIL = "guru@demo.com";
+
+export async function POST(req: NextRequest) {
+  try {
+    const supabase = await createClient();
+    const { data: { user: authUser } } = await supabase.auth.getUser();
+    if (!authUser) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+    const dbUser = await db.user.findUnique({ where: { supabaseId: authUser.id } });
+    if (!dbUser || !dbUser.isFounder) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+
+    const editor = await db.user.findFirst({ where: { email: EDITOR_EMAIL } });
+    if (!editor) return NextResponse.json({ error: "Editor user not found" }, { status: 500 });
+
+    const items = (homepageContent as any).artikel || [];
+    let created = 0, updated = 0;
+
+    for (const a of items) {
+      const existing = await db.artikel.findUnique({ where: { slug: a.slug } });
+      const data = {
+        title: a.title,
+        excerpt: a.excerpt,
+        content: a.content,
+        coverImage: a.coverImage,
+        tags: a.tags,
+        readCount: a.readCount || 0,
+        createdAt: new Date(a.publishedAt),
+        isPublished: true,
+        authorId: editor.id,
+      };
+
+      if (existing) {
+        await db.artikel.update({ where: { slug: a.slug }, data });
+        updated++;
+      } else {
+        await db.artikel.create({ data: { ...data, slug: a.slug } });
+        created++;
+      }
+    }
+
+    return NextResponse.json({ success: true, created, updated, total: items.length });
+  } catch (err: any) {
+    console.error("Seed artikel error:", err.message);
+    return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }
 

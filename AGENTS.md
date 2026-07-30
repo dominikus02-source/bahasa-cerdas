@@ -1450,3 +1450,55 @@ Transform `/guru/bank-soal` from UKBI/TKA-oriented into a **Bank Soal Latihan Ha
 2. Game server revival
 3. UKBI Guru constructed response (menulis 8 + berbicara 7)
 
+---
+
+## Phase ARTIKEL FORMATTING — Clean Markdown for All Articles (July 30, 2026)
+
+### Goal
+Fix paragraph layout and formatting of 9 system-created articles on `bahasacerdas.com/artikel/` that had unprofessional layout.
+
+### Problems Fixed
+| Issue | Fix |
+|-------|-----|
+| `**bold**` used for section headers instead of `## heading` | Converted to proper `##` markdown headings |
+| Inline `PENTING:`, `Tips`, `BENAR:`/`SALAH:` as plain text | Converted to `> **PENTING:**` blockquotes with green callout box |
+| Raw `✓` / `✗` bullet characters | Converted to proper `-` list items with bold labels |
+| Manual `•` bullet characters | Removed, used proper markdown `-` list syntax |
+| Nested indented "Strategi:" lines | Converted to blockquotes under each list item |
+| Long flat paragraphs with no section breaks | Added proper paragraph spacing and section headings |
+| Score list as plain bullet list | Converted to markdown table |
+
+### Files Modified
+| File | Changes |
+|------|---------|
+| `prisma/seed-data/homepage-content.json` | Rewrote all 9 article `content` fields with proper markdown |
+| `app/globals.css` | Updated `.artikel-content blockquote` from plain italic to green callout box (bg-emerald-50/50, rounded corners, bold first-strong). Added table styling. |
+
+### Before vs After Examples
+- **Before**: `PENTING: Jangan paksakan buku tebal.` → **After**: `> **PENTING:** Jangan paksakan buku tebal.` (renders as green callout box)
+- **Before**: `✓ Mendengarkan — Kemampuan memahami...` → **After**: `- **Mendengarkan** — Kemampuan memahami...` (renders as proper bullet list)
+- **Before**: `Tahap 1: Menulis Bebas (Free Writing)\nIsi...` → **After**: `## Tahap 1: Menulis Bebas (Free Writing)\n\nIsi...` (renders as heading with red left border)
+
+### CSS Additions
+```css
+.artikel-content blockquote {
+  @apply border-l-4 border-emerald-400 bg-emerald-50/50 pl-5 pr-4 py-4 my-6 rounded-r-lg;
+}
+.artikel-content blockquote strong:first-child {
+  @apply text-emerald-700;
+}
+.artikel-content table {
+  @apply w-full border-collapse my-6 text-sm;
+}
+.artikel-content th, .artikel-content td {
+  @apply px-4 py-2 border border-slate-200;
+}
+```
+
+### Verification
+| Check | Result |
+|-------|--------|
+| JSON valid | ✅ 9 articles, valid schema |
+| `npx tsc --noEmit` | ✅ 0 errors |
+| `npm run build` | ✅ 310 pages, 0 errors |
+
