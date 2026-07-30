@@ -64,6 +64,15 @@ export async function POST(req: NextRequest) {
     const dbUser = await db.user.findUnique({ where: { supabaseId: authUser.id } });
     if (!dbUser || !dbUser.isFounder) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
+    const { action } = await req.json().catch(() => ({ action: null }));
+
+    // Unpublish all articles
+    if (action === "unpublish") {
+      const result = await db.artikel.updateMany({ data: { isPublished: false } });
+      return NextResponse.json({ success: true, unpublished: result.count });
+    }
+
+    // Seed articles from JSON
     const editor = await db.user.findFirst({ where: { email: EDITOR_EMAIL } });
     if (!editor) return NextResponse.json({ error: "Editor user not found" }, { status: 500 });
 
@@ -95,7 +104,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ success: true, created, updated, total: items.length });
   } catch (err: any) {
-    console.error("Seed artikel error:", err.message);
+    console.error("Seed/unpublish artikel error:", err.message);
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }
