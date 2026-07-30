@@ -17,7 +17,19 @@ import fs from "node:fs"
 import path from "node:path"
 import { PrismaClient } from "@prisma/client"
 
-/** Muat `.env.local` ke process.env untuk key yang belum terisi. */
+/**
+ * Muat `.env.local` ke process.env untuk key yang belum terisi.
+ *
+ * Dipanggil sebagai EFEK SAMPING saat modul ini diimpor, bukan hanya di dalam
+ * createScriptPrisma(). Alasannya: script yang mengimpor kode runtime (mis.
+ * lib/arena-junior/kurikulum.ts) ikut menarik `lib/db`, dan modul itu membuat
+ * PrismaClient pada saat evaluasi impor. Kalau DATABASE_URL belum ada saat itu,
+ * client tersebut dibuat tanpa `pgbouncer=true` dan langsung gagal dengan
+ * 'prepared statement "sN" does not exist' di pooler.
+ *
+ * Karena impor dievaluasi berurutan, cukup impor modul ini LEBIH DULU daripada
+ * modul yang menyentuh `lib/db`.
+ */
 export function loadEnvLocal() {
   const envFile = path.join(process.cwd(), ".env.local")
   if (!fs.existsSync(envFile)) return
@@ -27,6 +39,9 @@ export function loadEnvLocal() {
     if (!process.env[m[1]]) process.env[m[1]] = m[2].replace(/^["']|["']$/g, "")
   }
 }
+
+// Dijalankan saat modul diimpor — lihat penjelasan di atas.
+loadEnvLocal()
 
 /**
  * Script biasanya berjalan sekuensial dan hanya sebentar, jadi satu koneksi
