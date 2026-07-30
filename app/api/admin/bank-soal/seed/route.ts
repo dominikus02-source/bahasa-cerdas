@@ -4,6 +4,8 @@ import { db } from "@/lib/db";
 import fs from "fs";
 import path from "path";
 
+export const maxDuration = 60;
+
 export async function POST() {
   try {
     const supabase = await createClient();
@@ -18,69 +20,72 @@ export async function POST() {
     const dir = path.join(process.cwd(), "data/question-bank/master");
     const files = fs.readdirSync(dir).filter(f => f.endsWith(".json") && f !== "types.ts");
 
-    let totalCreated = 0;
-    let totalUpdated = 0;
+    const allSoals: any[] = [];
     const errors: string[] = [];
 
     for (const file of files) {
       try {
         const content = JSON.parse(fs.readFileSync(path.join(dir, file), "utf-8"));
         const soals = Array.isArray(content) ? content : [];
-
         for (const s of soals) {
           if (!s.kodeSoal || !s.text) continue;
-              try {
-                await db.soal.upsert({
-                  where: { kodeSoal: s.kodeSoal },
-                  create: {
-                    kodeSoal: s.kodeSoal,
-                    judul: s.judul || null,
-                    text: s.text,
-                    type: s.type || "PILIHAN_GANDA",
-                    difficulty: s.difficulty || "MEDIUM",
-                    options: s.options || [],
-                    correctAnswer: String(s.correctAnswer ?? "0"),
-                    explanation: s.explanation || null,
-                    isHOTS: s.isHOTS || false,
-                    kelas: s.kelas || "7",
-                    topik: s.tema || s.topik || "",
-                    subject: "Bahasa Indonesia",
-                    source: "MASTER_BANK",
-                    uploaderId: dbUser.id,
-                    semester: s.semester || null,
-                    kompetensi: s.kompetensi || null,
-                    indikator: s.indikator || null,
-                    kataKunci: s.kataKunci ? JSON.stringify(s.kataKunci) : null,
-                    estimasiWaktu: s.estimasiWaktu || null,
-                  },
-                  update: {
-                    text: s.text,
-                    type: s.type || "PILIHAN_GANDA",
-                    difficulty: s.difficulty || "MEDIUM",
-                    options: s.options || [],
-                    correctAnswer: String(s.correctAnswer ?? "0"),
-                    explanation: s.explanation || null,
-                    isHOTS: s.isHOTS || false,
-                    kelas: s.kelas || "7",
-                    topik: s.tema || s.topik || "",
-                    uploaderId: dbUser.id,
-                  },
-                });
-            totalCreated++;
-          } catch (e: any) {
-            errors.push(`${s.kodeSoal}: ${e?.message || "unknown"}`);
-          }
+          allSoals.push({
+            kodeSoal: s.kodeSoal,
+            judul: s.judul || null,
+            text: s.text,
+            type: s.type || "PILIHAN_GANDA",
+            difficulty: s.difficulty || "MEDIUM",
+            options: s.options || [],
+            correctAnswer: String(s.correctAnswer ?? "0"),
+            explanation: s.explanation || null,
+            isHOTS: s.isHOTS || false,
+            kelas: s.kelas || "7",
+            topik: s.tema || s.topik || "",
+            subject: "Bahasa Indonesia",
+            source: "MASTER_BANK",
+            uploaderId: dbUser.id,
+            semester: s.semester || null,
+            kompetensi: s.kompetensi || null,
+            indikator: s.indikator || null,
+            kataKunci: s.kataKunci ? JSON.stringify(s.kataKunci) : null,
+            estimasiWaktu: s.estimasiWaktu || null,
+            levelBerpikir: s.levelBerpikir || null,
+          });
         }
       } catch (e: any) {
         errors.push(`${file}: ${e?.message || "unknown"}`);
       }
     }
 
+    if (allSoals.length === 0) {
+      return NextResponse.json({
+        success: true,
+        total: 0,
+        created: 0,
+        skipped: 0,
+        errors: errors.length > 0 ? errors.slice(0, 10) : [],
+        files: files.length,
+        message: "Tidak ada soal valid ditemukan di file JSON",
+      });
+    }
+
+    // Count existing before batch insert
+    const existingCount = await db.soal.count({
+      where: { kodeSoal: { in: allSoals.map(s => s.kodeSoal) } },
+    });
+
+    // Batch insert — skip duplicates by kodeSoal
+    const result = await db.soal.createMany({
+      data: allSoals,
+      skipDuplicates: true,
+    });
+
     return NextResponse.json({
       success: true,
-      total: totalCreated + totalUpdated,
-      created: totalCreated,
-      updated: totalUpdated,
+      total: allSoals.length,
+      created: result.count,
+      skipped: allSoals.length - result.count,
+      existingBefore: existingCount,
       errors: errors.length > 0 ? errors.slice(0, 10) : [],
       files: files.length,
     });
