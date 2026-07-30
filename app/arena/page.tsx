@@ -15,7 +15,7 @@ import { jenjangMurid } from "@/lib/arena-junior/kurikulum"
 import { getQuestMeta, questProgressText } from "@/lib/quest-meta"
 import { calcLevelProgress, calcLevel, calcLeagueFromXP } from "@/lib/xp"
 import { getDisplayName } from "@/lib/nickname"
-import { TugasCard } from "./tugas-card"
+import { PembelajaranCard } from "./pembelajaran-card"
 import BattleCard from "@/components/arena/BattleCard"
 import LeagueMini from "./league-mini"
 import { UnitIcon } from "@/components/arena/UnitIcon"
@@ -78,7 +78,7 @@ export default async function BerandaPage() {
   })
   const koinHariIni = todayCoinAgg._sum.amount || 0
 
-  const [aktivitas, juaraBaru, tugasCount, jalurStats, myKaryaCount] = await Promise.all([
+  const [aktivitas, juaraBaru, tugasCount, jalurStats, myKaryaCount, materiCount] = await Promise.all([
     cache.getOrSet("arena:aktivitas", () =>
       db.gameResult.findMany({
         where: { rank: 1 },
@@ -127,6 +127,13 @@ export default async function BerandaPage() {
       _sum: { xpEarned: true },
     }),
     db.studentKarya.count({ where: { userId: user.id } }),
+    (async () => {
+      try {
+        const ids = (await db.groupMember.findMany({ where: { userId: user.id }, select: { groupId: true } })).map(m => m.groupId)
+        if (ids.length === 0) return 0
+        return await db.materiKirim.count({ where: { groupId: { in: ids } } })
+      } catch { return 0 }
+    })(),
   ])
 
   const leagueRows = await cache.getOrSet("arena:league-mini:top5", async () =>
@@ -231,7 +238,7 @@ export default async function BerandaPage() {
       <div className="grid lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-6">
           {/* Tugas Card */}
-          <TugasCard pendingCount={tugasCount} />
+          <PembelajaranCard tugasCount={tugasCount} materiCount={materiCount} />
 
           {/* Quick Actions */}
           <div>
