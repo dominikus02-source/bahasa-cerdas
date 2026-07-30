@@ -78,7 +78,7 @@ export default async function BerandaPage() {
   })
   const koinHariIni = todayCoinAgg._sum.amount || 0
 
-  const [aktivitas, juaraBaru, tugasCount, jalurStats, myKaryaCount, materiCount] = await Promise.all([
+  const [aktivitas, juaraBaru, tugasCount, jalurStats, myKaryaCount, materiCount, jalurProgress] = await Promise.all([
     cache.getOrSet("arena:aktivitas", () =>
       db.gameResult.findMany({
         where: { rank: 1 },
@@ -133,6 +133,14 @@ export default async function BerandaPage() {
         if (ids.length === 0) return 0
         return await db.materiKirim.count({ where: { groupId: { in: ids } } })
       } catch { return 0 }
+    })(),
+    (async () => {
+      try {
+        const completed = await db.userUnitProgress.count({ where: { userId: user.id, completed: true } });
+        const jalurLevels = await db.learningLevel.findMany({ where: { type: "JALUR" }, select: { id: true } });
+        const total = await db.learningUnit.count({ where: { levelId: { in: jalurLevels.map(l => l.id) }, isActive: true } });
+        return { completed, total };
+      } catch { return { completed: 0, total: 72 } }
     })(),
   ])
 
@@ -239,6 +247,49 @@ export default async function BerandaPage() {
         <div className="lg:col-span-2 space-y-6">
           {/* Tugas Card */}
           <PembelajaranCard tugasCount={tugasCount} materiCount={materiCount} />
+
+          {/* Jalur Cerdas Card */}
+          <Link href="/arena/jalur-cerdas" className="block group">
+            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-violet-600 via-purple-600 to-indigo-700 p-5 shadow-lg shadow-violet-500/25 hover:shadow-xl hover:shadow-violet-500/30 transition-all">
+              <div className="absolute -top-6 -right-6 w-28 h-28 rounded-full bg-white/5" />
+              <div className="absolute -bottom-4 -left-4 w-20 h-20 rounded-full bg-white/5" />
+              <div className="relative z-10">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center backdrop-blur-sm">
+                    <BookOpen className="w-6 h-6 text-white" />
+                  </div>
+                  <div className="flex-1">
+                    <h2 className="text-lg font-extrabold text-white">Jalur Cerdas</h2>
+                    <p className="text-xs text-violet-200">Latihan Bahasa Indonesia dari nol sampai mahir</p>
+                  </div>
+                  <ChevronRight className="w-5 h-5 text-white/60 group-hover:text-white group-hover:translate-x-0.5 transition-all" />
+                </div>
+                <div className="grid grid-cols-3 gap-3 mt-4">
+                  <div className="bg-white/10 backdrop-blur rounded-xl p-3 text-center">
+                    <p className="text-lg font-extrabold text-white">{displayLevel}</p>
+                    <p className="text-[10px] text-violet-200 mt-0.5">Level</p>
+                  </div>
+                  <div className="bg-white/10 backdrop-blur rounded-xl p-3 text-center">
+                    <p className="text-lg font-extrabold text-white">{jalurProgress.completed}</p>
+                    <p className="text-[10px] text-violet-200 mt-0.5">Unit Selesai</p>
+                  </div>
+                  <div className="bg-white/10 backdrop-blur rounded-xl p-3 text-center">
+                    <p className="text-lg font-extrabold text-white">{totalXp.toLocaleString()}</p>
+                    <p className="text-[10px] text-violet-200 mt-0.5">Total XP</p>
+                  </div>
+                </div>
+                <div className="mt-3 bg-white/10 backdrop-blur rounded-xl p-3">
+                  <div className="flex justify-between text-xs text-violet-200 mb-1.5">
+                    <span>Progress Jalur Cerdas</span>
+                    <span>{Math.round((jalurProgress.completed / Math.max(jalurProgress.total, 1)) * 100)}%</span>
+                  </div>
+                  <div className="w-full h-2 bg-white/20 rounded-full overflow-hidden">
+                    <div className="h-full bg-gradient-to-r from-amber-400 to-yellow-400 rounded-full transition-all" style={{ width: `${(jalurProgress.completed / Math.max(jalurProgress.total, 1)) * 100}%` }} />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </Link>
 
           {/* Quick Actions */}
           <div>
