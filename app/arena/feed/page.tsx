@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState, useCallback, Suspense } from "react"
+import { useEffect, useState, useRef, Suspense } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import Link from "next/link"
 import {
@@ -80,81 +80,81 @@ function FeedContent() {
   const challenge = getWeeklyChallenge()
   const router = useRouter()
 
-  const loadKarya = useCallback(async (cursorVal: string | null, append: boolean, q?: string) => {
+  // Refs untuk observer — biar observer gak perlu di-recreate tiap state change
+  const loadingMoreRef = useRef(false)
+  const cursorRef = useRef<string | null>(null)
+  const hasMoreRef = useRef(true)
+  const filterRef = useRef(filter)
+  const searchQueryRef = useRef(searchQuery)
+  useEffect(() => { loadingMoreRef.current = loadingMore }, [loadingMore])
+  useEffect(() => { cursorRef.current = cursor }, [cursor])
+  useEffect(() => { hasMoreRef.current = hasMore }, [hasMore])
+  useEffect(() => { filterRef.current = filter }, [filter])
+  useEffect(() => { searchQueryRef.current = searchQuery }, [searchQuery])
+
+  // Single source of truth untuk fetch data — dipanggil oleh init dan loadMore
+  const fetchKarya = async (cursorVal: string | null, append: boolean, q?: string) => {
     const params = new URLSearchParams({ limit: "20" });
     if (cursorVal) params.set("cursor", cursorVal);
+    if (filterRef.current !== "SEMUA") params.set("type", filterRef.current);
     if (q) params.set("q", q);
     const res = await fetch(`/api/siswa/karya?${params}`);
     const data = await res.json();
     const items: KaryaItem[] = data.karya || [];
-    setKaryaList(prev => append ? [...prev, ...items] : items);
-    setLikedSet(prev => {
-      const n = append ? new Set(prev) : new Set<string>();
-      for (const k of items) if (k.likedByCurrentUser) n.add(k.id);
-      return n;
-    });
-    setLikeCounts(prev => {
-      const n = append ? { ...prev } : {} as Record<string, number>;
-      for (const k of items) n[k.id] = k._count?.likes ?? k.likesCount ?? 0;
-      return n;
-    });
+    if (append) {
+      setKaryaList(prev => [...prev, ...items]);
+    } else {
+      setKaryaList(items);
+      setLikedSet(new Set(items.filter(k => k.likedByCurrentUser).map(k => k.id)));
+      setLikeCounts(Object.fromEntries(items.map(k => [k.id, k._count?.likes ?? k.likesCount ?? 0])));
+    }
     setHasMore(!!data.nextCursor);
     setCursor(data.nextCursor);
-  }, []);
+  };
 
+  // Single effect: fetch data saat filter/search berubah (termasuk mount)
   useEffect(() => {
-    async function init() {
-      await loadKarya(null, false, searchQuery || undefined);
-      const [uData, chCount] = await Promise.all([
-        fetch("/api/user/me").then(r => r.ok ? r.json() : null),
-        fetch(`/api/siswa/karya/count?type=${challenge.type}`).then(r => r.json()).catch(() => ({ count: 0 })),
-      ]);
+    setLoading(true);
+    fetchKarya(null, false, searchQuery || undefined).finally(() => {
+      setLoading(false);
+    });
+    // fetch user info + challenge count (side quest, ga blok loading)
+    Promise.all([
+      fetch("/api/user/me").then(r => r.ok ? r.json() : null),
+      fetch(`/api/siswa/karya/count?type=${challenge.type}`).then(r => r.json()).catch(() => ({ count: 0 })),
+    ]).then(([uData, chCount]) => {
       if (uData) {
         setCurrentUserId(uData.user?.id || uData.id);
         setIsGuruViewer(uData.user?.role === "GURU" || uData.role === "GURU" || false);
       }
       setChallengeCount(chCount.count || 0);
-    }
-    init();
-  }, [loadKarya, challenge.type, searchQuery]);
+    });
+  }, [filter, searchQuery]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  useEffect(() => {
-    setLoading(true);
-    const params = new URLSearchParams({ limit: "20" });
-    if (filter !== "SEMUA") params.set("type", filter);
-    if (searchQuery) params.set("q", searchQuery);
-    fetch(`/api/siswa/karya?${params}`)
-      .then(r => r.json())
-      .then(data => {
-        setKaryaList(data.karya || []);
-        setCursor(data.nextCursor);
-        setHasMore(!!data.nextCursor);
-        setLoading(false);
-      });
-  }, [filter, searchQuery]);
-
-  const loadMore = useCallback(async () => {
-    if (loadingMore || !cursor) return;
+  const loadMore = async () => {
+    if (loadingMoreRef.current || !cursorRef.current) return;
+    loadingMoreRef.current = true;
     setLoadingMore(true);
-    const params = new URLSearchParams({ limit: "20", cursor });
-    if (filter !== "SEMUA") params.set("type", filter);
-    if (searchQuery) params.set("q", searchQuery);
-    const res = await fetch(`/api/siswa/karya?${params}`);
-    const data = await res.json();
-    setKaryaList(prev => [...prev, ...(data.karya || [])]);
-    setCursor(data.nextCursor);
-    setHasMore(!!data.nextCursor);
-    setLoadingMore(false);
-  }, [cursor, loadingMore, filter, searchQuery]);
+    try {
+      await fetchKarya(cursorRef.current, true, searchQueryRef.current || undefined);
+    } finally {
+      setLoadingMore(false);
+      loadingMoreRef.current = false;
+    }
+  };
 
+  // Observer sekali (gak depend on loadMore/hasMore/loadingMore — pakai refs)
   useEffect(() => {
     const io = new IntersectionObserver(entries => {
-      if (entries[0].isIntersecting && hasMore && !loadingMore) loadMore();
+      if (!entries[0].isIntersecting) return;
+      if (loadingMoreRef.current) return;
+      if (!hasMoreRef.current) return;
+      loadMore();
     }, { rootMargin: "300px" });
     const el = document.getElementById("feed-sentinel");
     if (el) io.observe(el);
     return () => io.disconnect();
-  }, [loadMore, hasMore, loadingMore]);
+  }, [filter, searchQuery]); // recreates observer only when filter/search changes
 
   const handleLike = async (id: string) => {
     if (likePending[id]) return;
@@ -230,8 +230,8 @@ function FeedContent() {
       {/* Header */}
       <div className="flex items-center justify-between mb-5">
         <div>
-          <h1 className="text-xl font-extrabold text-gray-900">Feed Karya</h1>
-          <p className="text-sm text-gray-500">Karya terbaru dari siswa</p>
+          <h1 className="text-xl font-extrabold text-gray-900">Jelajah Karya</h1>
+          <p className="text-sm text-gray-500">Jelajahi karya siswa dari seluruh Indonesia</p>
         </div>
         <Link href="/arena/tulis" className="flex items-center gap-1.5 px-4 py-2.5 bg-violet-600 text-white rounded-xl text-sm font-bold hover:bg-violet-700 transition-all shadow-sm">
           <PenLine size={16} /> Tulis
@@ -372,7 +372,7 @@ function FeedContent() {
               </div>
             )
           })}
-          <div id="feed-sentinel" className="h-4" />
+          {hasMore && <div id="feed-sentinel" className="h-4" />}
           {loadingMore && <div className="flex justify-center py-4"><Loader2 size={24} className="animate-spin text-violet-400" /></div>}
         </div>
       )}
