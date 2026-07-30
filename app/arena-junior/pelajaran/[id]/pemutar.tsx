@@ -22,11 +22,14 @@ export function Pemutar({
   pelajaranId,
   judul,
   karakter,
+  percobaan,
   soal,
 }: {
   pelajaranId: string
   judul: string
   karakter: string
+  /** Nomor percobaan yang menentukan urutan opsi; dikirim balik saat submit. */
+  percobaan: number
   soal: SoalAman[]
 }) {
   const router = useRouter()
@@ -47,7 +50,7 @@ export function Pemutar({
       const res = await fetch(`/api/arena-junior/pelajaran/${pelajaranId}/submit`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ jawaban: semua }),
+        body: JSON.stringify({ jawaban: semua, percobaan }),
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data?.error ?? "Gagal mengirim jawaban")

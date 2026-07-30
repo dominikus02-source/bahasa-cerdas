@@ -7,7 +7,7 @@ import {
   Home, ShoppingBag, Video, Gamepad2, FileText, Database,
   Users, Settings, ChevronDown, ChevronRight,
   BookOpen, Trophy, Calendar, GraduationCap, Brain, Star, Award,
-  LogOut, Crown, Zap, Flame, TrendingUp, Bell, Presentation, Sparkles, ExternalLink, BarChart3, PenLine
+  LogOut, Crown, Zap, Flame, TrendingUp, Bell, Presentation, Sparkles, ExternalLink, BarChart3, PenLine, Baby
 } from "lucide-react"
 import { createClient } from "@/lib/supabase/client"
 import { useRouter } from "next/navigation"
@@ -57,6 +57,9 @@ const NAV: NavItem[] = [
   },
   { label: "Komunitas", href: "/guru/komunitas", icon: <Users size={18} /> },
   { label: "KelasKu", href: "/guru/kelasku", icon: <GraduationCap size={18} /> },
+  // Arena Junior = dasbor murid TK–SD. Guru bukan anggota kelas, jadi tautan ini
+  // membuka mode pratinjau (lihat lib/arena-junior/kurikulum.ts).
+  { label: "Arena Junior (TK–SD)", href: "/arena-junior", icon: <Baby size={18} /> },
   { label: "Artikel", href: "/guru/artikel", icon: <FileText size={18} /> },
   { label: "Pengaturan", href: "/guru/pengaturan", icon: <Settings size={18} /> },
 ]

@@ -13,6 +13,7 @@ import fs from "node:fs"
 import path from "node:path"
 import { createScriptPrisma } from "./script-prisma"
 import { arenaJuniorGradeFor, GRADE_OPTIONS } from "../lib/kurikulum/jenjang"
+import { aksesArenaJunior } from "../lib/arena-junior/kurikulum"
 import { KARAKTER, gambarKarakter } from "../lib/arena-junior/karakter"
 import { BANK_GAMBAR, gambarSoal, TOTAL_GAMBAR, kataMudah } from "../lib/arena-junior/gambar-soal"
 import { bacaIsiPelajaran, sanitasiSoal } from "../lib/arena-junior/soal"
@@ -113,6 +114,53 @@ async function main() {
       }
     }
   }
+
+  // Aturan akses: siapa boleh melihat jenjang apa.
+  console.log("\nAturan akses (pratinjau vs murid)")
+  const muridTanpaKelas = { id: "tidak-ada-user", role: "MURID" as const, isFounder: false }
+  const aksesMurid = await aksesArenaJunior(muridTanpaKelas, "K6")
+  cek(
+    "murid tanpa kelas → butuh-kelas (parameter jenjang diabaikan)",
+    aksesMurid.mode === "butuh-kelas",
+    aksesMurid.mode
+  )
+
+  const muridAsli = await prisma.groupMember.findFirst({
+    where: { user: { role: "MURID" } },
+    select: { user: { select: { id: true, role: true, isFounder: true } } },
+  })
+  if (muridAsli?.user) {
+    const a = await aksesArenaJunior(muridAsli.user, "K6")
+    cek(
+      "murid tidak bisa memalsukan jenjang lewat URL",
+      a.mode !== "pratinjau" && !(a.mode === "murid" && a.grade === "K6"),
+      `mode ${a.mode}${a.mode === "murid" ? `, jenjang ${a.grade} (dari kelasnya)` : ""}`
+    )
+  }
+
+  for (const peran of ["GURU", "ADMIN"] as const) {
+    const akses = await aksesArenaJunior(
+      { id: "x", role: peran, isFounder: false },
+      "K3"
+    )
+    cek(
+      `${peran} → mode pratinjau, jenjang bisa dipilih`,
+      akses.mode === "pratinjau" && akses.grade === "K3",
+      `${akses.mode}${akses.mode !== "butuh-kelas" ? ` / ${akses.grade}` : ""}`
+    )
+  }
+  const bawaan = await aksesArenaJunior({ id: "x", role: "ADMIN", isFounder: true }, null)
+  cek(
+    "peninjau tanpa parameter → mulai dari TK",
+    bawaan.mode === "pratinjau" && bawaan.grade === "TK",
+    bawaan.mode !== "butuh-kelas" ? bawaan.grade : bawaan.mode
+  )
+  const ngawur = await aksesArenaJunior({ id: "x", role: "ADMIN", isFounder: true }, "K99")
+  cek(
+    "jenjang tidak valid ditolak, jatuh ke TK",
+    ngawur.mode === "pratinjau" && ngawur.grade === "TK",
+    ngawur.mode !== "butuh-kelas" ? ngawur.grade : ngawur.mode
+  )
 
   // Bank soal yang sudah masuk database.
   console.log("\nBank soal di database")

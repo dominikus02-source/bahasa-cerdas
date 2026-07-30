@@ -277,6 +277,8 @@ model User {
   backupManifests      BackupManifest[]       @relation("UserBackupManifests")
   // Arena Junior (TK-SD) lesson progress
   arenaJuniorProgress  ArenaJuniorProgress[]
+  arenaJuniorAkun      ArenaJuniorAkun?
+  arenaJuniorDidaftar  ArenaJuniorAkun[]      @relation("ArenaJuniorPendaftar")
 
   @@index([role, lastActiveAt])
   @@index([xp])
@@ -2038,4 +2040,41 @@ model ArenaJuniorProgress {
   @@unique([userId, lessonId])
   @@index([userId])
   @@index([lessonId])
+}
+
+// ─── ARENA JUNIOR: AKUN MURID TK–SD ────────────────────────────
+// Anak TK–SD tidak bisa mengetik email dan tidak bisa mengingat kata sandi.
+// Karena itu gurunya yang mendaftarkan, dan anak masuk dengan cara: pilih
+// kelas → ketuk namanya → PIN 4 angka.
+//
+// Di balik layar tetap memakai Supabase Auth: setiap anak punya email sintetis
+// yang tidak pernah dilihatnya, dan kata sandi Supabase-nya diturunkan dari PIN
+// (PIN 4 angka sendiri di bawah batas minimum Supabase).
+//
+// PIN 4 angka = 10.000 kemungkinan, jadi penguncian setelah beberapa kali salah
+// WAJIB ada. Penghitungnya disimpan di sini, BUKAN di Redis — limiter berbasis
+// Redis di repo ini mati bila env UPSTASH_*/KV_* tidak diset, dan kalau itu
+// terjadi PIN jadi tanpa pengaman sama sekali.
+model ArenaJuniorAkun {
+  id     String @id @default(cuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  /// Email sintetis untuk Supabase Auth. Anak tidak pernah melihat ini.
+  emailSintetis String @unique
+
+  /// Berapa kali PIN salah berturut-turut. Direset saat berhasil masuk.
+  gagalPin       Int       @default(0)
+  /// Selama waktu ini belum lewat, percobaan PIN ditolak tanpa diperiksa.
+  terkunciSampai DateTime?
+  terakhirMasuk  DateTime?
+
+  /// Guru yang mendaftarkan anak ini.
+  dibuatOlehId String
+  dibuatOleh   User   @relation("ArenaJuniorPendaftar", fields: [dibuatOlehId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([dibuatOlehId])
 }

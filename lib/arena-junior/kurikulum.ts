@@ -1,6 +1,6 @@
 import { db } from "@/lib/db"
 import { arenaJuniorGradeFor } from "@/lib/kurikulum/jenjang"
-import type { ArenaJuniorGrade } from "@prisma/client"
+import type { ArenaJuniorGrade, Role } from "@prisma/client"
 
 export const GRADES = ["TK", "K1", "K2", "K3", "K4", "K5", "K6"] as const
 
@@ -32,6 +32,41 @@ export async function jenjangMurid(userId: string): Promise<ArenaJuniorGrade | n
       .map((m) => arenaJuniorGradeFor(m.group?.grade))
       .find((g): g is ArenaJuniorGrade => g !== null) ?? null
   )
+}
+
+export function jenjangValid(v: string | null | undefined): ArenaJuniorGrade | null {
+  return v && (GRADES as readonly string[]).includes(v) ? (v as ArenaJuniorGrade) : null
+}
+
+export type AksesArenaJunior =
+  /** Murid sungguhan: jenjang dari kelas yang diikutinya. */
+  | { mode: "murid"; grade: ArenaJuniorGrade }
+  /** Guru/admin/founder sedang meninjau tampilan. Tidak ada data yang ditulis. */
+  | { mode: "pratinjau"; grade: ArenaJuniorGrade }
+  /** Murid belum tergabung di kelas TK/SD mana pun. */
+  | { mode: "butuh-kelas" }
+
+/**
+ * Menentukan siapa boleh melihat apa.
+ *
+ * MURID: jenjang SELALU diturunkan dari kelas yang diikuti — parameter dari
+ * klien diabaikan, supaya murid tidak bisa membuka jenjang lain lewat URL.
+ *
+ * GURU / ADMIN / founder: boleh memilih jenjang lewat parameter `jenjang`
+ * untuk memeriksa tampilan. Mereka bukan anggota kelas (guru *memiliki* kelas,
+ * bukan menjadi anggotanya), jadi tanpa jalur ini mereka akan selamanya
+ * mentok di layar "belum punya kelas".
+ */
+export async function aksesArenaJunior(
+  user: { id: string; role: Role; isFounder: boolean },
+  jenjangDiminta?: string | null
+): Promise<AksesArenaJunior> {
+  if (user.role === "MURID") {
+    const grade = await jenjangMurid(user.id)
+    return grade ? { mode: "murid", grade } : { mode: "butuh-kelas" }
+  }
+  // Peninjau: pakai jenjang yang diminta, kalau tidak ada mulai dari TK.
+  return { mode: "pratinjau", grade: jenjangValid(jenjangDiminta) ?? "TK" }
 }
 
 export type PelajaranJalur = Awaited<ReturnType<typeof ambilKurikulum>>["stages"][number]["units"][number]["lessons"][number]

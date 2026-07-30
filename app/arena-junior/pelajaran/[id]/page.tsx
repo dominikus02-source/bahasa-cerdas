@@ -4,9 +4,9 @@ import { notFound, redirect } from "next/navigation"
 import { ArrowLeft, Clock, Sparkles } from "lucide-react"
 import { db } from "@/lib/db"
 import { getUser } from "@/lib/supabase/server"
-import { jenjangMurid, GRADES, LABEL_JENJANG } from "@/lib/arena-junior/kurikulum"
+import { aksesArenaJunior, GRADES, LABEL_JENJANG } from "@/lib/arena-junior/kurikulum"
 import { gambarKarakter, PROFIL, normalkanKarakter } from "@/lib/arena-junior/karakter"
-import { bacaIsiPelajaran, sanitasiSoal } from "@/lib/arena-junior/soal"
+import { acakOpsi, bacaIsiPelajaran, benihPercobaan, sanitasiSoal } from "@/lib/arena-junior/soal"
 import { Pemutar } from "./pemutar"
 
 export const dynamic = "force-dynamic"
@@ -17,8 +17,7 @@ export default async function PelajaranPage({ params }: { params: Promise<{ id: 
 
   const { id } = await params
 
-  const [pelajaran, grade] = await Promise.all([
-    db.arenaJuniorLesson.findUnique({
+  const pelajaran = await db.arenaJuniorLesson.findUnique({
       where: { id },
       select: {
         id: true,
@@ -36,16 +35,22 @@ export default async function PelajaranPage({ params }: { params: Promise<{ id: 
         // (termasuk kunci jawaban) tidak pernah dikirim ke klien.
         content: true,
       },
-    }),
-    jenjangMurid(user.id),
-  ])
+  })
 
   if (!pelajaran || !pelajaran.isActive) notFound()
-  if (!grade) redirect("/arena-junior")
 
-  // Murid hanya boleh membuka pelajaran di jenjangnya sendiri atau di bawahnya.
-  const batas = GRADES.indexOf(grade)
-  if (GRADES.indexOf(pelajaran.grade) > batas) redirect("/arena-junior")
+  // Peninjau (guru/admin/founder) boleh membuka jenjang mana pun — jenjang
+  // pelajaran itu sendiri yang dipakai. Murid dibatasi jenjangnya sendiri
+  // atau di bawahnya.
+  const akses = await aksesArenaJunior(user, pelajaran.grade)
+  if (akses.mode === "butuh-kelas") redirect("/arena-junior")
+  if (
+    akses.mode === "murid" &&
+    GRADES.indexOf(pelajaran.grade) > GRADES.indexOf(akses.grade)
+  ) {
+    redirect("/arena-junior")
+  }
+  const pratinjau = akses.mode === "pratinjau"
 
   const profil = PROFIL[normalkanKarakter(pelajaran.characterHint)]
   const isi = bacaIsiPelajaran(pelajaran.content)
@@ -53,12 +58,26 @@ export default async function PelajaranPage({ params }: { params: Promise<{ id: 
   // Soal sudah ada → langsung mainkan. Kunci jawaban disaring di server dulu;
   // yang menyeberang ke browser hanya `SoalAman`.
   if (isi) {
+    // Nomor percobaan yang akan dikerjakan sekarang. Urutan opsi diacak dari
+    // nomor ini, jadi kunci yang terlihat di pembahasan percobaan sebelumnya
+    // tidak berlaku lagi di percobaan berikutnya.
+    // Pratinjau tidak menyimpan progres, jadi selalu percobaan pertama.
+    const progres = pratinjau
+      ? null
+      : await db.arenaJuniorProgress.findUnique({
+          where: { userId_lessonId: { userId: user.id, lessonId: pelajaran.id } },
+          select: { attempts: true },
+        })
+    const percobaan = (progres?.attempts ?? 0) + 1
+    const diacak = acakOpsi(isi.soal, benihPercobaan(user.id, pelajaran.id, percobaan))
+
     return (
       <Pemutar
         pelajaranId={pelajaran.id}
         judul={pelajaran.title}
         karakter={pelajaran.characterHint}
-        soal={sanitasiSoal(isi.soal)}
+        percobaan={percobaan}
+        soal={sanitasiSoal(diacak)}
       />
     )
   }

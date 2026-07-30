@@ -1,9 +1,14 @@
 import Link from "next/link"
 import Image from "next/image"
 import { redirect } from "next/navigation"
-import { Flame, Gem, Sparkles } from "lucide-react"
+import { Eye, Flame, Gem, Sparkles } from "lucide-react"
 import { getUser } from "@/lib/supabase/server"
-import { ambilKurikulum, jenjangMurid, LABEL_JENJANG } from "@/lib/arena-junior/kurikulum"
+import {
+  aksesArenaJunior,
+  ambilKurikulum,
+  GRADES,
+  LABEL_JENJANG,
+} from "@/lib/arena-junior/kurikulum"
 import { gambarKarakter, PROFIL, normalkanKarakter } from "@/lib/arena-junior/karakter"
 import { JalurBelajar } from "./_components/jalur-belajar"
 
@@ -129,14 +134,55 @@ function BelumPunyaKelas({ nama }: { nama: string }) {
   )
 }
 
-export default async function ArenaJuniorPage() {
+/**
+ * Bilah untuk guru/admin/founder yang sedang memeriksa tampilan. Dibuat jelas
+ * berbeda dari tampilan anak supaya tidak pernah tertukar dengan data murid
+ * sungguhan, dan menyatakan terang-terangan bahwa progres tidak disimpan.
+ */
+function BilahPratinjau({ grade }: { grade: string }) {
+  return (
+    <div className="bg-slate-900 px-4 py-2 text-white">
+      <div className="mx-auto flex max-w-5xl flex-wrap items-center gap-x-3 gap-y-2 text-sm">
+        <span className="flex items-center gap-1.5 font-bold">
+          <Eye className="h-4 w-4" aria-hidden />
+          Mode pratinjau
+        </span>
+        <span className="text-white/60">Progres tidak disimpan.</span>
+        <nav className="ml-auto flex flex-wrap items-center gap-1" aria-label="Pilih jenjang">
+          {GRADES.map((g) => (
+            <Link
+              key={g}
+              href={`/arena-junior?jenjang=${g}`}
+              className={`rounded-full px-2.5 py-1 text-xs font-bold transition ${
+                g === grade ? "bg-[#FFD54A] text-slate-900" : "bg-white/10 hover:bg-white/20"
+              }`}
+              aria-current={g === grade ? "page" : undefined}
+            >
+              {LABEL_JENJANG[g]}
+            </Link>
+          ))}
+        </nav>
+      </div>
+    </div>
+  )
+}
+
+export default async function ArenaJuniorPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ jenjang?: string }>
+}) {
   const user = await getUser()
   if (!user) redirect("/auth/arena-login")
 
   const namaDepan = user.fullName?.trim().split(/\s+/)[0] || "Teman"
 
-  const grade = await jenjangMurid(user.id)
-  if (!grade) return <BelumPunyaKelas nama={namaDepan} />
+  const { jenjang: jenjangDiminta } = await searchParams
+  const akses = await aksesArenaJunior(user, jenjangDiminta)
+  if (akses.mode === "butuh-kelas") return <BelumPunyaKelas nama={namaDepan} />
+
+  const grade = akses.grade
+  const pratinjau = akses.mode === "pratinjau"
 
   const { stages, ringkasan } = await ambilKurikulum(user.id, grade)
 
@@ -153,6 +199,7 @@ export default async function ArenaJuniorPage() {
 
   return (
     <>
+      {pratinjau && <BilahPratinjau grade={grade} />}
       <BilahAtas
         nama={namaDepan}
         jenjang={LABEL_JENJANG[grade]}
