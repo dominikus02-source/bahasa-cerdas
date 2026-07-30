@@ -15,8 +15,36 @@ export async function POST() {
       return NextResponse.json({ error: "Admin only" }, { status: 403 });
     }
 
+    // Auto-migrate: add missing columns (idempotent)
+    const addColumnsSQL = `
+      ALTER TABLE "Soal" ADD COLUMN IF NOT EXISTS "kodeSoal" TEXT;
+      ALTER TABLE "Soal" ADD COLUMN IF NOT EXISTS "judul" TEXT;
+      ALTER TABLE "Soal" ADD COLUMN IF NOT EXISTS "semester" INTEGER;
+      ALTER TABLE "Soal" ADD COLUMN IF NOT EXISTS "kompetensi" TEXT;
+      ALTER TABLE "Soal" ADD COLUMN IF NOT EXISTS "indikator" TEXT;
+      ALTER TABLE "Soal" ADD COLUMN IF NOT EXISTS "levelBerpikir" INTEGER;
+      ALTER TABLE "Soal" ADD COLUMN IF NOT EXISTS "kataKunci" TEXT;
+      ALTER TABLE "Soal" ADD COLUMN IF NOT EXISTS "estimasiWaktu" INTEGER;
+      ALTER TABLE "Soal" ADD COLUMN IF NOT EXISTS "usedCount" INTEGER NOT NULL DEFAULT 0;
+      ALTER TABLE "Soal" ADD COLUMN IF NOT EXISTS "correctCount" INTEGER NOT NULL DEFAULT 0;
+      ALTER TABLE "Soal" ADD COLUMN IF NOT EXISTS "wrongCount" INTEGER NOT NULL DEFAULT 0;
+      ALTER TABLE "Soal" ADD COLUMN IF NOT EXISTS "totalTimeSpent" INTEGER NOT NULL DEFAULT 0;
+      CREATE UNIQUE INDEX IF NOT EXISTS "Soal_kodeSoal_key" ON "Soal"("kodeSoal");
+    `;
+
+    try {
+      await db.$executeRawUnsafe(addColumnsSQL);
+    } catch (migrateErr: any) {
+      console.error("Migration error:", migrateErr?.message);
+    }
+
     const dir = path.join(process.cwd(), "data/question-bank/master");
-    const files = fs.readdirSync(dir).filter((f: string) => f.endsWith(".json") && f !== "types.ts");
+    let files: string[] = [];
+    try {
+      files = fs.readdirSync(dir).filter((f: string) => f.endsWith(".json") && f !== "types.ts");
+    } catch (e: any) {
+      return NextResponse.json({ error: `Gagal baca folder data: ${e?.message}` }, { status: 500 });
+    }
 
     const allSoals: any[] = [];
     const fileErrors: string[] = [];
@@ -60,13 +88,12 @@ export async function POST() {
         success: true,
         total: 0,
         created: 0,
-        message: "Tidak ada soal valid ditemukan",
+        message: `Tidak ada soal valid. File: ${files.length}, errors: ${fileErrors.length}`,
         fileErrors: fileErrors.slice(0, 5),
         files: files.length,
       });
     }
 
-    // Insert in chunks of 100 to avoid timeout/memory issues
     const CHUNK_SIZE = 100;
     let totalCreated = 0;
     const dbErrors: string[] = [];
@@ -80,8 +107,7 @@ export async function POST() {
         });
         totalCreated += result.count;
       } catch (e: any) {
-        dbErrors.push(`Chunk ${i / CHUNK_SIZE + 1}: ${e?.message || "unknown"}`);
-        // Try one-by-one for this chunk if batch fails
+        dbErrors.push(`Chunk ${Math.floor(i / CHUNK_SIZE) + 1}: ${e?.message || "unknown"}`);
         for (const soal of chunk) {
           try {
             await db.soal.create({ data: soal });
@@ -105,7 +131,8 @@ export async function POST() {
   } catch (error: any) {
     console.error("POST /api/admin/bank-soal/seed error:", error?.message, error?.stack);
     return NextResponse.json({
-      error: "Internal error",
+      success: false,
+      error: error?.message || "Internal error",
       detail: error?.message || "unknown",
     }, { status: 500 });
   }

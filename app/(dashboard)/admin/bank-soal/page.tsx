@@ -48,10 +48,10 @@ export default function AdminBankSoalPage() {
       const res = await fetch("/api/admin/bank-soal/seed", { method: "POST" });
       const data = await res.json();
       if (data.success) {
-        setSeedResult(`✅ ${data.total} soal (${data.files} file)`);
+        setSeedResult(`✅ ${data.created} baru, ${data.skipped} sudah ada (${data.files} file)`);
         fetchData();
       } else {
-        setSeedResult(`❌ ${data.error || "Gagal"}`);
+        setSeedResult(`❌ ${data.error || "Gagal"}${data.detail ? ": " + data.detail : ""}`);
       }
     } catch {
       setSeedResult("❌ Gagal menghubungi server");
