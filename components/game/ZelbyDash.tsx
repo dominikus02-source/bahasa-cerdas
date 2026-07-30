@@ -1,12 +1,12 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
-import { Play, Pause, X, Volume2, VolumeX, Heart, Trophy, Zap, RotateCcw, Clock } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import { Play, Pause, X, Volume2, VolumeX, Heart, Trophy, Zap, RotateCcw, Clock, Star } from "lucide-react";
 
 /* ---------- Bank Kata ---------- */
-const KATA_BENDA = ["meja", "buku", "kursi", "sepeda", "pensil", "pohon", "burung", "rumah", "topi", "roti", "sepatu", "jemari"];
-const KATA_KERJA = ["makan", "minum", "lari", "tidur", "tulis", "baca", "lompat", "duduk", "masak", "cuci", "main", "tanam"];
-const KATA_SIFAT = ["besar", "kecil", "tinggi", "rendah", "cantik", "rajin", "cepat", "panas", "dingin", "manis", "bersih", "kuat"];
+const KATA_BENDA = ["meja", "buku", "kursi", "sepeda", "pensil", "pohon", "burung", "rumah", "topi", "roti", "sepatu", "jemari", "kunci", "lampu", "piring", "gelas", "pintu"];
+const KATA_KERJA = ["makan", "minum", "lari", "tidur", "tulis", "baca", "lompat", "duduk", "masak", "cuci", "main", "tanam", "gambar", "nyanyi", "renang", "lukis"];
+const KATA_SIFAT = ["besar", "kecil", "tinggi", "rendah", "cantik", "rajin", "cepat", "panas", "dingin", "manis", "bersih", "kuat", "cerah", "lembut", "ringan", "berani"];
 
 type RuleKey = "BENDA" | "KERJA" | "SIFAT";
 const RULES: Record<RuleKey, { label: string; valid: string[]; invalid: string[] }> = {
@@ -16,13 +16,13 @@ const RULES: Record<RuleKey, { label: string; valid: string[]; invalid: string[]
 };
 
 const W = 480, H = 720;
-const DURASI_GAME = 90; // detik
+const DURASI_GAME = 90;
 
 /* ---------- Audio ---------- */
 let audioCtx: AudioContext | null = null;
 function ensureAudio() {
   if (!audioCtx) {
-    try { audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)(); } catch { /* no audio */ }
+    try { audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)(); } catch { }
   }
   if (audioCtx?.state === "suspended") audioCtx.resume();
   return audioCtx;
@@ -57,19 +57,36 @@ export default function ZelbyDash() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const engineRef = useRef<Engine | null>(null);
   const mutedRef = useRef(false);
+  const zelbyImgRef = useRef<HTMLImageElement | null>(null);
+  const zelbyCelebrateImgRef = useRef<HTMLImageElement | null>(null);
+  const imagesLoaded = useRef(false);
 
   useEffect(() => { mutedRef.current = muted; }, [muted]);
+
   useEffect(() => {
     try {
       const saved = localStorage.getItem("zelby-highscore");
       if (saved) setHighScore(parseInt(saved, 10));
-    } catch { /* localStorage not available */ }
+    } catch { }
   }, []);
 
   useEffect(() => {
     if (screen !== "start") return;
-    try { localStorage.setItem("zelby-highscore", String(highScore)); } catch { /* noop */ }
+    try { localStorage.setItem("zelby-highscore", String(highScore)); } catch { }
   }, [highScore, screen]);
+
+  useEffect(() => {
+    const idle = new Image();
+    idle.src = "/arena-junior/karakter/zelby_idle.webp";
+    const cele = new Image();
+    cele.src = "/arena-junior/karakter/zelby_celebrate.webp";
+    let loaded = 0;
+    const onload = () => { loaded++; if (loaded >= 2) imagesLoaded.current = true; };
+    idle.onload = onload;
+    cele.onload = onload;
+    zelbyImgRef.current = idle;
+    zelbyCelebrateImgRef.current = cele;
+  }, []);
 
   class Engine {
     rule: RuleKey;
@@ -142,14 +159,7 @@ export default function ZelbyDash() {
       for (let i = 0; i < count; i++) {
         const ang = Math.random() * Math.PI * 2;
         const sp = 2 + Math.random() * 5;
-        this.particles.push({
-          x, y,
-          vx: Math.cos(ang) * sp,
-          vy: Math.sin(ang) * sp - 2,
-          color,
-          life: 30 + Math.random() * 20,
-          size: 4 + Math.random() * 6,
-        });
+        this.particles.push({ x, y, vx: Math.cos(ang) * sp, vy: Math.sin(ang) * sp - 2, color, life: 30 + Math.random() * 20, size: 4 + Math.random() * 6 });
       }
     }
 
@@ -159,17 +169,12 @@ export default function ZelbyDash() {
       this.lastFrame = now;
 
       if (!this.paused) {
-        /* ---- Timer ---- */
         if (now - this.lastTimerTick >= 1000) {
           this.waktuSisa--;
           this.lastTimerTick = now;
-          if (this.waktuSisa <= 0) {
-            this.gameOver();
-            return;
-          }
+          if (this.waktuSisa <= 0) { this.gameOver(); return; }
         }
 
-        /* ---- Spawn ---- */
         this.spawnTimer += dt;
         if (this.spawnTimer > this.spawnRate) {
           this.spawn();
@@ -178,10 +183,8 @@ export default function ZelbyDash() {
           this.baseSpeed += 0.002;
         }
 
-        /* ---- Zelby smooth movement ---- */
         this.zelbyX += (this.targetX - this.zelbyX) * 0.2;
 
-        /* ---- Frenzy ---- */
         if (this.frenzy > 0) {
           this.frenzy -= dt;
           this.bgHue = (this.bgHue + 2) % 360;
@@ -189,11 +192,9 @@ export default function ZelbyDash() {
           this.bgHue = 140;
         }
 
-        /* ---- Items ---- */
         for (let i = this.items.length - 1; i >= 0; i--) {
           const it = this.items[i];
           if (it.caught || it.missed) continue;
-
           it.y += it.speed * (dt / 16);
           const zelbyY = H - 100;
 
@@ -234,7 +235,6 @@ export default function ZelbyDash() {
           }
         }
 
-        /* ---- Particles ---- */
         for (let i = this.particles.length - 1; i >= 0; i--) {
           const p = this.particles[i];
           p.x += p.vx; p.y += p.vy; p.vy += 0.3; p.life--;
@@ -266,23 +266,20 @@ export default function ZelbyDash() {
 
       c.save();
       if (this.shake > 0.5) {
-        c.translate(
-          (Math.random() - 0.5) * this.shake,
-          (Math.random() - 0.5) * this.shake
-        );
+        c.translate((Math.random() - 0.5) * this.shake, (Math.random() - 0.5) * this.shake);
       }
 
       /* Background */
       c.fillStyle = "#1E1840";
       c.fillRect(0, 0, W, H);
 
-      /* Jungle vines */
+      /* Grid lines */
       c.strokeStyle = "#2A2350";
-      c.lineWidth = 8;
-      for (let i = 0; i < 4; i++) {
+      c.lineWidth = 1;
+      for (let i = 0; i < 6; i++) {
         c.beginPath();
-        c.moveTo(i * 120, 0);
-        c.lineTo(i * 120 + 20, H);
+        c.moveTo(i * 96, 0);
+        c.lineTo(i * 96 + 10, H);
         c.stroke();
       }
 
@@ -297,60 +294,101 @@ export default function ZelbyDash() {
       c.textAlign = "center";
       c.fillText(`TANGKAP: ${RULES[this.rule].label}`, W / 2, 52);
 
-      /* Items (bananas) */
+      /* Items — kartu lebih besar dengan teks terbaca */
       for (const it of this.items) {
         if (it.caught || it.missed) continue;
         c.save();
         c.translate(it.x, it.y);
         c.rotate(it.y * 0.02);
 
-        c.fillStyle = it.valid ? "#FBBF24" : "#3a3f5c";
+        const bw = 90, bh = 50;
+        const hw = bw / 2, hh = bh / 2;
+
+        if (it.valid) {
+          /* Pisang emas dengan efek glossy */
+          c.fillStyle = "#FBBF24";
+          c.beginPath();
+          c.moveTo(-hw + 8, -hh);
+          c.quadraticCurveTo(0, -hh - 14, hw - 8, -hh);
+          c.quadraticCurveTo(hw + 4, -hh + 10, hw - 4, hh);
+          c.quadraticCurveTo(0, hh + 6, -hw + 4, hh);
+          c.quadraticCurveTo(-hw - 4, -hh + 10, -hw + 8, -hh);
+          c.fill();
+          c.strokeStyle = "#161B3A";
+          c.lineWidth = 3;
+          c.stroke();
+
+          /* Gloss */
+          c.fillStyle = "rgba(255,255,255,0.25)";
+          c.beginPath();
+          c.ellipse(-8, -hh + 10, 14, 6, -0.3, 0, Math.PI * 2);
+          c.fill();
+        } else {
+          /* Kartu gelap untuk kata salah */
+          c.fillStyle = "#3a3f5c";
+          c.beginPath();
+          if (c.roundRect) c.roundRect(-hw, -hh, bw, bh, 12);
+          else c.rect(-hw, -hh, bw, bh);
+          c.fill();
+          c.strokeStyle = "#2A2350";
+          c.lineWidth = 3;
+          c.stroke();
+        }
+
+        /* White pill background untuk teks */
+        c.fillStyle = it.valid ? "rgba(255,255,255,0.85)" : "rgba(255,255,255,0.15)";
         c.beginPath();
-        c.moveTo(-20, 0);
-        c.quadraticCurveTo(0, -25, 20, 0);
-        c.quadraticCurveTo(0, 25, -20, 0);
+        if (c.roundRect) c.roundRect(-30, -10, 60, 22, 11);
+        else c.rect(-30, -10, 60, 22);
         c.fill();
-        c.strokeStyle = "#161B3A";
-        c.lineWidth = 3;
-        c.stroke();
 
         c.rotate(-it.y * 0.02);
         c.fillStyle = it.valid ? "#161B3A" : "#FFF";
-        c.font = "800 14px system-ui, sans-serif";
+        c.font = "800 16px system-ui, sans-serif";
         c.textAlign = "center";
-        c.fillText(it.word, 0, 5);
+        c.textBaseline = "middle";
+        c.fillText(it.word, 0, 1);
         c.restore();
       }
 
-      /* Zelby (monkey) */
-      const zX = this.zelbyX, zY = H - 90;
+      /* Zelby (Tarsius) dari gambar */
+      const zX = this.zelbyX, zY = H - 85;
       const zScale = this.frenzy > 0 ? 1.3 : 1;
+      const img = this.frenzy > 0 ? zelbyCelebrateImgRef.current : zelbyImgRef.current;
 
-      c.save();
-      c.translate(zX, zY);
-      c.scale(zScale, zScale);
+      if (img && imagesLoaded.current) {
+        c.save();
+        c.translate(zX, zY);
+        c.scale(zScale, zScale);
+        const iw = 80, ih = 80;
+        c.drawImage(img, -iw / 2, -ih / 2, iw, ih);
 
-      c.fillStyle = "#8B5CF6";
-      c.beginPath(); c.arc(0, 20, 25, 0, Math.PI * 2); c.fill();
-      c.strokeStyle = "#161B3A"; c.lineWidth = 4; c.stroke();
-
-      c.fillStyle = "#D4A373";
-      c.beginPath(); c.arc(0, -10, 22, 0, Math.PI * 2); c.fill();
-      c.stroke();
-
-      c.beginPath(); c.arc(-22, -15, 8, 0, Math.PI * 2); c.fill(); c.stroke();
-      c.beginPath(); c.arc(22, -15, 8, 0, Math.PI * 2); c.fill(); c.stroke();
-
-      c.fillStyle = "#E9C46A";
-      c.beginPath(); c.ellipse(0, -5, 15, 12, 0, 0, Math.PI * 2); c.fill();
-
-      c.fillStyle = "#161B3A";
-      c.beginPath(); c.arc(-7, -12, 3, 0, Math.PI * 2); c.fill();
-      c.beginPath(); c.arc(7, -12, 3, 0, Math.PI * 2); c.fill();
-
-      c.strokeStyle = "#161B3A"; c.lineWidth = 2;
-      c.beginPath(); c.arc(0, -2, 6, 0, Math.PI); c.stroke();
-      c.restore();
+        /* Cahaya saat frenzy */
+        if (this.frenzy > 0) {
+          c.shadowColor = "#FF6B6B";
+          c.shadowBlur = 20;
+          c.strokeStyle = "rgba(255,107,107,0.5)";
+          c.lineWidth = 3;
+          c.beginPath(); c.arc(0, 0, 44, 0, Math.PI * 2); c.stroke();
+          c.shadowBlur = 0;
+        }
+        c.restore();
+      } else {
+        /* Fallback: lingkaran */
+        c.save();
+        c.translate(zX, zY);
+        c.scale(zScale, zScale);
+        c.fillStyle = "#8B5CF6";
+        c.beginPath(); c.arc(0, 0, 28, 0, Math.PI * 2); c.fill();
+        c.fillStyle = "#E9C46A";
+        c.beginPath(); c.arc(0, -2, 18, 0, Math.PI * 2); c.fill();
+        c.fillStyle = "#161B3A";
+        c.beginPath(); c.arc(-6, -6, 4, 0, Math.PI * 2); c.fill();
+        c.beginPath(); c.arc(6, -6, 4, 0, Math.PI * 2); c.fill();
+        c.strokeStyle = "#161B3A"; c.lineWidth = 2;
+        c.beginPath(); c.arc(0, 4, 5, 0, Math.PI); c.stroke();
+        c.restore();
+      }
 
       /* Particles */
       for (const p of this.particles) {
@@ -360,7 +398,6 @@ export default function ZelbyDash() {
       }
       c.globalAlpha = 1;
 
-      /* Frenzy text */
       if (this.frenzy > 0) {
         c.font = "900 32px system-ui, sans-serif";
         c.fillStyle = "#FF6B6B";
@@ -368,7 +405,6 @@ export default function ZelbyDash() {
         c.fillText("FRENZY MODE! 2X SKOR!", W / 2, H - 150);
       }
 
-      /* Combo text */
       if (this.combo >= 3) {
         c.font = "900 24px system-ui, sans-serif";
         c.fillStyle = "#4ADE80";
@@ -384,11 +420,9 @@ export default function ZelbyDash() {
     ensureAudio();
     setScreen("game");
     setHud({ score: 0, lives: 3, combo: 0, waktu: DURASI_GAME });
-
     engineRef.current?.stop();
     const eng = new Engine(rule);
     engineRef.current = eng;
-
     requestAnimationFrame(() => eng.start());
   };
 
@@ -423,10 +457,16 @@ export default function ZelbyDash() {
       `}</style>
 
       <div className="relative max-w-xl mx-auto px-4 py-5 min-h-full flex flex-col items-center">
-        {/* Header */}
+        {/* Header dengan Zelby asli */}
         <div className="w-full flex items-center justify-between mb-4">
           <div className="flex items-center gap-2.5">
-            <div className={`text-4xl ik-pop`} role="img" aria-label="Monyet">&#x1F435;</div>
+            <div className="w-11 h-11 rounded-2xl overflow-hidden border-4 border-[#161B3A] shadow-[4px_4px_0_#161B3A] shrink-0 bg-white ik-pop">
+              <img
+                src="/arena-junior/karakter/zelby_happy.webp"
+                alt="Zelby"
+                className="w-full h-full object-cover"
+              />
+            </div>
             <div>
               <div className="font-extrabold text-xl leading-none">Petualangan Kata</div>
               <div className="text-[11px] font-semibold opacity-60 mt-0.5">Tangkap kata yang benar!</div>
@@ -437,33 +477,39 @@ export default function ZelbyDash() {
           </button>
         </div>
 
-        {/* START */}
+        {/* START — tanpa emoji */}
         {screen === "start" && (
           <div className={`ik-screen bg-white rounded-3xl ${chunky} p-6 text-center w-full max-w-md`}>
-            <div className="text-6xl mb-2">&#x1F435;</div>
+            <div className="w-24 h-24 mx-auto mb-3 rounded-3xl overflow-hidden border-4 border-[#161B3A] shadow-[6px_6px_0_#161B3A]">
+              <img
+                src="/arena-junior/karakter/zelby_wave.webp"
+                alt="Zelby si Tarsius"
+                className="w-full h-full object-cover"
+              />
+            </div>
             <h1 className="font-extrabold text-3xl mb-2">Petualangan Hutan Kata</h1>
             <p className="opacity-70 text-sm mb-1">
-              Bantu Zelby si monyet menangkap <strong>kata yang benar</strong> dan hindari yang salah!
+              Bantu Zelby si Tarsius menangkap <strong>kata yang benar</strong> dan hindari yang salah!
             </p>
             <p className="opacity-60 text-xs mb-6">
-              &#x23F1; 90 detik &middot; 3 nyawa &middot; combo untuk skor tinggi
+              <Clock className="w-3 h-3 inline mr-1" />90 detik &middot; <Heart className="w-3 h-3 inline mx-1" />3 nyawa &middot; <Zap className="w-3 h-3 inline mx-1" />combo untuk skor tinggi
             </p>
 
             {highScore > 0 && (
-              <div className="mb-4 px-4 py-2 bg-amber-50 border-2 border-amber-200 rounded-xl text-sm font-bold text-amber-700">
-                &#x1F3C6; Skor Tertinggi: {highScore}
+              <div className="mb-4 px-4 py-2 bg-amber-50 border-2 border-amber-200 rounded-xl text-sm font-bold text-amber-700 flex items-center justify-center gap-1.5">
+                <Trophy className="w-4 h-4" /> Skor Tertinggi: {highScore}
               </div>
             )}
 
             <div className="space-y-3">
               <button onClick={() => startGame("BENDA")} className={`${btn} w-full px-5 py-4 bg-sky-400 text-white text-lg`}>
-                &#x1F4E6; Kata Benda
+                <Zap className="w-5 h-5" /> Kata Benda
               </button>
               <button onClick={() => startGame("KERJA")} className={`${btn} w-full px-5 py-4 bg-emerald-400 text-lg`}>
-                &#x1F3C3; Kata Kerja
+                <Zap className="w-5 h-5" /> Kata Kerja
               </button>
               <button onClick={() => startGame("SIFAT")} className={`${btn} w-full px-5 py-4 bg-red-400 text-white text-lg`}>
-                &#x2728; Kata Sifat
+                <Star className="w-5 h-5" /> Kata Sifat
               </button>
             </div>
           </div>
@@ -472,7 +518,6 @@ export default function ZelbyDash() {
         {/* GAME */}
         {screen === "game" && (
           <div className="ik-screen w-full flex flex-col items-center">
-            {/* HUD */}
             <div className="w-full max-w-[480px] grid grid-cols-4 gap-2 mb-3">
               <div className="rounded-xl bg-[#161B3A] text-white px-2 py-2 shadow-[3px_3px_0_#161B3A] border-[3px] border-[#161B3A]">
                 <div className="text-[8px] font-extrabold uppercase opacity-70">Skor</div>
@@ -507,7 +552,12 @@ export default function ZelbyDash() {
               <button onClick={quit} className={`${btn} w-12 h-12 bg-white`} aria-label="Keluar">
                 <X className="w-5 h-5" />
               </button>
-              <p className="text-xs font-bold opacity-60 self-center">&#x1F447; Gerakkan jari untuk mengendalikan Zelby</p>
+              <p className="text-xs font-bold opacity-60 self-center flex items-center gap-1">
+                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 5v14" /><path d="M5 12h14" />
+                </svg>
+                Gerakkan jari untuk mengendalikan Zelby
+              </p>
               <button onClick={togglePause} className={`${btn} w-12 h-12 bg-white`} aria-label={engineRef.current?.paused ? "Lanjutkan" : "Jeda"}>
                 {engineRef.current?.paused ? <Play className="w-5 h-5" /> : <Pause className="w-5 h-5" />}
               </button>
@@ -515,10 +565,16 @@ export default function ZelbyDash() {
           </div>
         )}
 
-        {/* GAME OVER */}
+        {/* GAME OVER — tanpa emoji */}
         {screen === "over" && (
           <div className={`ik-screen bg-white rounded-3xl ${chunky} p-6 text-center w-full max-w-md`}>
-            <div className="text-6xl mb-2">&#x1F34C;</div>
+            <div className="w-24 h-24 mx-auto mb-3 rounded-3xl overflow-hidden border-4 border-[#161B3A] shadow-[6px_6px_0_#161B3A]">
+              <img
+                src="/arena-junior/karakter/zelby_celebrate.webp"
+                alt="Zelby"
+                className="w-full h-full object-cover"
+              />
+            </div>
             <h2 className="font-extrabold text-3xl mb-1">Permainan Selesai!</h2>
             <p className="opacity-70 text-sm mb-6">Zelby sangat senang belajar bareng kamu hari ini!</p>
 
@@ -528,8 +584,8 @@ export default function ZelbyDash() {
             </div>
 
             {finalScore > 0 && finalScore >= highScore && (
-              <div className="mb-4 text-sm font-extrabold text-amber-600 bg-amber-50 border-2 border-amber-300 rounded-xl px-4 py-2 ik-pop">
-                &#x1F3C6; Skor Tertinggi Baru!
+              <div className="mb-4 text-sm font-extrabold text-amber-600 bg-amber-50 border-2 border-amber-300 rounded-xl px-4 py-2 ik-pop flex items-center justify-center gap-1.5">
+                <Trophy className="w-4 h-4" /> Skor Tertinggi Baru!
               </div>
             )}
 
