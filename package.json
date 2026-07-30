@@ -48,6 +48,7 @@
     "seed:jalur-cerdas:dry-run": "npx tsx scripts/seed-jalur-cerdas-core.ts",
     "seed:jalur-cerdas": "npx tsx scripts/seed-jalur-cerdas-core.ts --execute",
     "validate:arena-junior": "npx tsx scripts/validate-arena-junior.ts",
+    "test:arena-junior-akun": "npx tsx scripts/test-arena-junior-akun.ts",
     "test:arena-junior-soal": "npx tsx scripts/test-arena-junior-soal.ts",
     "seed:arena-junior-soal:dry-run": "npx tsx scripts/seed-arena-junior-soal.ts",
     "seed:arena-junior-soal": "npx tsx scripts/seed-arena-junior-soal.ts --execute",
