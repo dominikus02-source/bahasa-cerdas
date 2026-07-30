@@ -1,0 +1,761 @@
+[
+  {
+    "kodeSoal": "BC-ARTIKEL-0001",
+    "judul": "Artikel #1",
+    "tema": "Artikel",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.2",
+    "indikator": "Memahami konsep Artikel (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Artikel adalah...",
+    "options": [
+      "Artikel",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Artikel adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "artikel"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-ARTIKEL-0002",
+    "judul": "Artikel #2",
+    "tema": "Artikel",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.2",
+    "indikator": "Memahami konsep Artikel (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Artikel adalah...",
+    "options": [
+      "Artikel",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Artikel adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "artikel"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-ARTIKEL-0003",
+    "judul": "Artikel #3",
+    "tema": "Artikel",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.2",
+    "indikator": "Memahami konsep Artikel (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Artikel adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Artikel memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "artikel"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-ARTIKEL-0004",
+    "judul": "Artikel #4",
+    "tema": "Artikel",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.2",
+    "indikator": "Memahami konsep Artikel (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Artikel adalah...",
+    "options": [
+      "Artikel",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Artikel adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "artikel"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-ARTIKEL-0005",
+    "judul": "Artikel #5",
+    "tema": "Artikel",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.2",
+    "indikator": "Memahami konsep Artikel (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "ISIAN_SINGKAT",
+    "text": "Jelaskan pengertian Artikel menurut pemahaman Anda.",
+    "options": [
+      "artikel"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Artikel adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+    "kataKunci": [
+      "artikel"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-ARTIKEL-0006",
+    "judul": "Artikel #6",
+    "tema": "Artikel",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.2",
+    "indikator": "Memahami konsep Artikel (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Artikel adalah...",
+    "options": [
+      "Artikel",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Artikel adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "artikel"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-ARTIKEL-0007",
+    "judul": "Artikel #7",
+    "tema": "Artikel",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.2",
+    "indikator": "Memahami konsep Artikel (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Artikel adalah...",
+    "options": [
+      "Artikel",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Artikel adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "artikel"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-ARTIKEL-0008",
+    "judul": "Artikel #8",
+    "tema": "Artikel",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.2",
+    "indikator": "Memahami konsep Artikel (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Artikel adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Artikel memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "artikel"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-ARTIKEL-0009",
+    "judul": "Artikel #9",
+    "tema": "Artikel",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.2",
+    "indikator": "Memahami konsep Artikel (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Artikel adalah...",
+    "options": [
+      "Artikel",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Artikel adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "artikel"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-ARTIKEL-0010",
+    "judul": "Artikel #10",
+    "tema": "Artikel",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.2",
+    "indikator": "Memahami konsep Artikel (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Artikel adalah...",
+    "options": [
+      "Artikel",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Artikel adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "artikel"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-ARTIKEL-0011",
+    "judul": "Artikel #11",
+    "tema": "Artikel",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.2",
+    "indikator": "Memahami konsep Artikel (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Artikel adalah...",
+    "options": [
+      "Artikel",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Artikel adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "artikel"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-ARTIKEL-0012",
+    "judul": "Artikel #12",
+    "tema": "Artikel",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.2",
+    "indikator": "Memahami konsep Artikel (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Artikel adalah...",
+    "options": [
+      "Artikel",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Artikel adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "artikel"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-ARTIKEL-0013",
+    "judul": "Artikel #13",
+    "tema": "Artikel",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.2",
+    "indikator": "Memahami konsep Artikel (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 2,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Artikel adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Artikel memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "artikel"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-ARTIKEL-0014",
+    "judul": "Artikel #14",
+    "tema": "Artikel",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.2",
+    "indikator": "Memahami konsep Artikel (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Artikel adalah...",
+    "options": [
+      "Artikel",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Artikel adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "artikel"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-ARTIKEL-0015",
+    "judul": "Artikel #15",
+    "tema": "Artikel",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.2",
+    "indikator": "Memahami konsep Artikel (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 2,
+    "type": "ISIAN_SINGKAT",
+    "text": "Jelaskan pengertian Artikel menurut pemahaman Anda.",
+    "options": [
+      "artikel"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Artikel adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+    "kataKunci": [
+      "artikel"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-ARTIKEL-0016",
+    "judul": "Artikel #16",
+    "tema": "Artikel",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.2",
+    "indikator": "Memahami konsep Artikel (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Artikel adalah...",
+    "options": [
+      "Artikel",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Artikel adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "artikel"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-ARTIKEL-0017",
+    "judul": "Artikel #17",
+    "tema": "Artikel",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.2",
+    "indikator": "Memahami konsep Artikel (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Artikel adalah...",
+    "options": [
+      "Artikel",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Artikel adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "artikel"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-ARTIKEL-0018",
+    "judul": "Artikel #18",
+    "tema": "Artikel",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.2",
+    "indikator": "Memahami konsep Artikel (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Artikel adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Artikel memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "artikel"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-ARTIKEL-0019",
+    "judul": "Artikel #19",
+    "tema": "Artikel",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.2",
+    "indikator": "Memahami konsep Artikel (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Artikel adalah...",
+    "options": [
+      "Artikel",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Artikel adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "artikel"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-ARTIKEL-0020",
+    "judul": "Artikel #20",
+    "tema": "Artikel",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.2",
+    "indikator": "Memahami konsep Artikel (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Artikel adalah...",
+    "options": [
+      "Artikel",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Artikel adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "artikel"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-ARTIKEL-0021",
+    "judul": "Artikel #21",
+    "tema": "Artikel",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.2",
+    "indikator": "Memahami konsep Artikel (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Artikel adalah...",
+    "options": [
+      "Artikel",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Artikel adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "artikel"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-ARTIKEL-0022",
+    "judul": "Artikel #22",
+    "tema": "Artikel",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.2",
+    "indikator": "Memahami konsep Artikel (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Artikel adalah...",
+    "options": [
+      "Artikel",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Artikel adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "artikel"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-ARTIKEL-0023",
+    "judul": "Artikel #23",
+    "tema": "Artikel",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.2",
+    "indikator": "Memahami konsep Artikel (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Artikel adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Artikel memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "artikel"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-ARTIKEL-0024",
+    "judul": "Artikel #24",
+    "tema": "Artikel",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.2",
+    "indikator": "Memahami konsep Artikel (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Artikel adalah...",
+    "options": [
+      "Artikel",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Artikel adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "artikel"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-ARTIKEL-0025",
+    "judul": "Artikel #25",
+    "tema": "Artikel",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.2",
+    "indikator": "Memahami konsep Artikel (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 4,
+    "type": "ISIAN_SINGKAT",
+    "text": "Jelaskan pengertian Artikel menurut pemahaman Anda.",
+    "options": [
+      "artikel"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Artikel adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+    "kataKunci": [
+      "artikel"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-ARTIKEL-0026",
+    "judul": "Artikel #26",
+    "tema": "Artikel",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.2",
+    "indikator": "Memahami konsep Artikel (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Artikel adalah...",
+    "options": [
+      "Artikel",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Artikel adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "artikel"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-ARTIKEL-0027",
+    "judul": "Artikel #27",
+    "tema": "Artikel",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.2",
+    "indikator": "Memahami konsep Artikel (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Artikel adalah...",
+    "options": [
+      "Artikel",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Artikel adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "artikel"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-ARTIKEL-0028",
+    "judul": "Artikel #28",
+    "tema": "Artikel",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.2",
+    "indikator": "Memahami konsep Artikel (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Artikel adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Artikel memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "artikel"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-ARTIKEL-0029",
+    "judul": "Artikel #29",
+    "tema": "Artikel",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.2",
+    "indikator": "Memahami konsep Artikel (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Artikel adalah...",
+    "options": [
+      "Artikel",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Artikel adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "artikel"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-ARTIKEL-0030",
+    "judul": "Artikel #30",
+    "tema": "Artikel",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.2",
+    "indikator": "Memahami konsep Artikel (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Artikel adalah...",
+    "options": [
+      "Artikel",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Artikel adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "artikel"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  }
+]

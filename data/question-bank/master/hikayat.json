@@ -1,0 +1,791 @@
+[
+  {
+    "kodeSoal": "BC-HIKAYAT-0001",
+    "judul": "Hikayat #1",
+    "tema": "Hikayat",
+    "kelas": "10",
+    "semester": 1,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Hikayat (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Hikayat adalah...",
+    "options": [
+      "Hikayat",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Hikayat adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "hikayat",
+      "sastra Melayu"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-HIKAYAT-0002",
+    "judul": "Hikayat #2",
+    "tema": "Hikayat",
+    "kelas": "10",
+    "semester": 1,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Hikayat (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Hikayat adalah...",
+    "options": [
+      "Hikayat",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Hikayat adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "hikayat",
+      "sastra Melayu"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-HIKAYAT-0003",
+    "judul": "Hikayat #3",
+    "tema": "Hikayat",
+    "kelas": "10",
+    "semester": 1,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Hikayat (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Hikayat adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Hikayat memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "hikayat",
+      "sastra Melayu"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-HIKAYAT-0004",
+    "judul": "Hikayat #4",
+    "tema": "Hikayat",
+    "kelas": "10",
+    "semester": 1,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Hikayat (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Hikayat adalah...",
+    "options": [
+      "Hikayat",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Hikayat adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "hikayat",
+      "sastra Melayu"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-HIKAYAT-0005",
+    "judul": "Hikayat #5",
+    "tema": "Hikayat",
+    "kelas": "10",
+    "semester": 1,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Hikayat (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "ISIAN_SINGKAT",
+    "text": "Jelaskan pengertian Hikayat menurut pemahaman Anda.",
+    "options": [
+      "hikayat"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Hikayat adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+    "kataKunci": [
+      "hikayat",
+      "sastra Melayu"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-HIKAYAT-0006",
+    "judul": "Hikayat #6",
+    "tema": "Hikayat",
+    "kelas": "10",
+    "semester": 1,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Hikayat (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Hikayat adalah...",
+    "options": [
+      "Hikayat",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Hikayat adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "hikayat",
+      "sastra Melayu"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-HIKAYAT-0007",
+    "judul": "Hikayat #7",
+    "tema": "Hikayat",
+    "kelas": "10",
+    "semester": 1,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Hikayat (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Hikayat adalah...",
+    "options": [
+      "Hikayat",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Hikayat adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "hikayat",
+      "sastra Melayu"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-HIKAYAT-0008",
+    "judul": "Hikayat #8",
+    "tema": "Hikayat",
+    "kelas": "10",
+    "semester": 1,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Hikayat (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Hikayat adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Hikayat memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "hikayat",
+      "sastra Melayu"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-HIKAYAT-0009",
+    "judul": "Hikayat #9",
+    "tema": "Hikayat",
+    "kelas": "10",
+    "semester": 1,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Hikayat (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Hikayat adalah...",
+    "options": [
+      "Hikayat",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Hikayat adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "hikayat",
+      "sastra Melayu"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-HIKAYAT-0010",
+    "judul": "Hikayat #10",
+    "tema": "Hikayat",
+    "kelas": "10",
+    "semester": 1,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Hikayat (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Hikayat adalah...",
+    "options": [
+      "Hikayat",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Hikayat adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "hikayat",
+      "sastra Melayu"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-HIKAYAT-0011",
+    "judul": "Hikayat #11",
+    "tema": "Hikayat",
+    "kelas": "10",
+    "semester": 1,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Hikayat (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Hikayat adalah...",
+    "options": [
+      "Hikayat",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Hikayat adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "hikayat",
+      "sastra Melayu"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-HIKAYAT-0012",
+    "judul": "Hikayat #12",
+    "tema": "Hikayat",
+    "kelas": "10",
+    "semester": 1,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Hikayat (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Hikayat adalah...",
+    "options": [
+      "Hikayat",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Hikayat adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "hikayat",
+      "sastra Melayu"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-HIKAYAT-0013",
+    "judul": "Hikayat #13",
+    "tema": "Hikayat",
+    "kelas": "10",
+    "semester": 1,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Hikayat (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 2,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Hikayat adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Hikayat memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "hikayat",
+      "sastra Melayu"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-HIKAYAT-0014",
+    "judul": "Hikayat #14",
+    "tema": "Hikayat",
+    "kelas": "10",
+    "semester": 1,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Hikayat (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Hikayat adalah...",
+    "options": [
+      "Hikayat",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Hikayat adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "hikayat",
+      "sastra Melayu"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-HIKAYAT-0015",
+    "judul": "Hikayat #15",
+    "tema": "Hikayat",
+    "kelas": "10",
+    "semester": 1,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Hikayat (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 2,
+    "type": "ISIAN_SINGKAT",
+    "text": "Jelaskan pengertian Hikayat menurut pemahaman Anda.",
+    "options": [
+      "hikayat"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Hikayat adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+    "kataKunci": [
+      "hikayat",
+      "sastra Melayu"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-HIKAYAT-0016",
+    "judul": "Hikayat #16",
+    "tema": "Hikayat",
+    "kelas": "10",
+    "semester": 1,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Hikayat (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Hikayat adalah...",
+    "options": [
+      "Hikayat",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Hikayat adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "hikayat",
+      "sastra Melayu"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-HIKAYAT-0017",
+    "judul": "Hikayat #17",
+    "tema": "Hikayat",
+    "kelas": "10",
+    "semester": 1,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Hikayat (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Hikayat adalah...",
+    "options": [
+      "Hikayat",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Hikayat adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "hikayat",
+      "sastra Melayu"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-HIKAYAT-0018",
+    "judul": "Hikayat #18",
+    "tema": "Hikayat",
+    "kelas": "10",
+    "semester": 1,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Hikayat (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Hikayat adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Hikayat memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "hikayat",
+      "sastra Melayu"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-HIKAYAT-0019",
+    "judul": "Hikayat #19",
+    "tema": "Hikayat",
+    "kelas": "10",
+    "semester": 1,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Hikayat (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Hikayat adalah...",
+    "options": [
+      "Hikayat",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Hikayat adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "hikayat",
+      "sastra Melayu"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-HIKAYAT-0020",
+    "judul": "Hikayat #20",
+    "tema": "Hikayat",
+    "kelas": "10",
+    "semester": 1,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Hikayat (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Hikayat adalah...",
+    "options": [
+      "Hikayat",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Hikayat adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "hikayat",
+      "sastra Melayu"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-HIKAYAT-0021",
+    "judul": "Hikayat #21",
+    "tema": "Hikayat",
+    "kelas": "10",
+    "semester": 1,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Hikayat (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Hikayat adalah...",
+    "options": [
+      "Hikayat",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Hikayat adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "hikayat",
+      "sastra Melayu"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-HIKAYAT-0022",
+    "judul": "Hikayat #22",
+    "tema": "Hikayat",
+    "kelas": "10",
+    "semester": 1,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Hikayat (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Hikayat adalah...",
+    "options": [
+      "Hikayat",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Hikayat adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "hikayat",
+      "sastra Melayu"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-HIKAYAT-0023",
+    "judul": "Hikayat #23",
+    "tema": "Hikayat",
+    "kelas": "10",
+    "semester": 1,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Hikayat (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Hikayat adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Hikayat memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "hikayat",
+      "sastra Melayu"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-HIKAYAT-0024",
+    "judul": "Hikayat #24",
+    "tema": "Hikayat",
+    "kelas": "10",
+    "semester": 1,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Hikayat (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Hikayat adalah...",
+    "options": [
+      "Hikayat",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Hikayat adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "hikayat",
+      "sastra Melayu"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-HIKAYAT-0025",
+    "judul": "Hikayat #25",
+    "tema": "Hikayat",
+    "kelas": "10",
+    "semester": 1,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Hikayat (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 4,
+    "type": "ISIAN_SINGKAT",
+    "text": "Jelaskan pengertian Hikayat menurut pemahaman Anda.",
+    "options": [
+      "hikayat"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Hikayat adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+    "kataKunci": [
+      "hikayat",
+      "sastra Melayu"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-HIKAYAT-0026",
+    "judul": "Hikayat #26",
+    "tema": "Hikayat",
+    "kelas": "10",
+    "semester": 1,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Hikayat (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Hikayat adalah...",
+    "options": [
+      "Hikayat",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Hikayat adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "hikayat",
+      "sastra Melayu"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-HIKAYAT-0027",
+    "judul": "Hikayat #27",
+    "tema": "Hikayat",
+    "kelas": "10",
+    "semester": 1,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Hikayat (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Hikayat adalah...",
+    "options": [
+      "Hikayat",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Hikayat adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "hikayat",
+      "sastra Melayu"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-HIKAYAT-0028",
+    "judul": "Hikayat #28",
+    "tema": "Hikayat",
+    "kelas": "10",
+    "semester": 1,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Hikayat (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Hikayat adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Hikayat memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "hikayat",
+      "sastra Melayu"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-HIKAYAT-0029",
+    "judul": "Hikayat #29",
+    "tema": "Hikayat",
+    "kelas": "10",
+    "semester": 1,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Hikayat (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Hikayat adalah...",
+    "options": [
+      "Hikayat",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Hikayat adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "hikayat",
+      "sastra Melayu"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-HIKAYAT-0030",
+    "judul": "Hikayat #30",
+    "tema": "Hikayat",
+    "kelas": "10",
+    "semester": 1,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Hikayat (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Hikayat adalah...",
+    "options": [
+      "Hikayat",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Hikayat adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "hikayat",
+      "sastra Melayu"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  }
+]

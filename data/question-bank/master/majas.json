@@ -1,0 +1,793 @@
+[
+  {
+    "kodeSoal": "BC-MAJAS-0001",
+    "judul": "Majas #1",
+    "tema": "Majas",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.7",
+    "indikator": "Memahami konsep Majas (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "'Angin berbisik di malam hari' mengandung majas...",
+    "options": [
+      "Hiperbola",
+      "Personifikasi",
+      "Metafora",
+      "Litotes"
+    ],
+    "correctAnswer": "1",
+    "explanation": "Personifikasi: benda mati (angin) diberi sifat manusia (berbisik).",
+    "kataKunci": [
+      "majas",
+      "gaya bahasa"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-MAJAS-0002",
+    "judul": "Majas #2",
+    "tema": "Majas",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.7",
+    "indikator": "Memahami konsep Majas (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "'Keringatnya mengalir seperti air sungai' mengandung majas...",
+    "options": [
+      "Metafora",
+      "Personifikasi",
+      "Hiperbola",
+      "Simile"
+    ],
+    "correctAnswer": "3",
+    "explanation": "Simile/Perbandingan: menggunakan kata 'seperti' atau 'bagai'.",
+    "kataKunci": [
+      "majas",
+      "gaya bahasa"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-MAJAS-0003",
+    "judul": "Majas #3",
+    "tema": "Majas",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.7",
+    "indikator": "Memahami konsep Majas (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "BENAR_SALAH",
+    "text": "'Dia adalah bintang kelas' mengandung majas...",
+    "options": [
+      "Personifikasi",
+      "Metafora",
+      "Hiperbola",
+      "Ironi"
+    ],
+    "correctAnswer": "1",
+    "explanation": "Metafora: perbandingan tanpa kata pembanding. 'Bintang kelas' = siswa terbaik.",
+    "kataKunci": [
+      "majas",
+      "gaya bahasa"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-MAJAS-0004",
+    "judul": "Majas #4",
+    "tema": "Majas",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.7",
+    "indikator": "Memahami konsep Majas (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Majas adalah...",
+    "options": [
+      "Majas",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Majas adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "majas",
+      "gaya bahasa"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-MAJAS-0005",
+    "judul": "Majas #5",
+    "tema": "Majas",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.7",
+    "indikator": "Memahami konsep Majas (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "ISIAN_SINGKAT",
+    "text": "Jelaskan pengertian Majas menurut pemahaman Anda.",
+    "options": [
+      "majas"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Majas adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+    "kataKunci": [
+      "majas",
+      "gaya bahasa"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-MAJAS-0006",
+    "judul": "Majas #6",
+    "tema": "Majas",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.7",
+    "indikator": "Memahami konsep Majas (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Majas adalah...",
+    "options": [
+      "Majas",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Majas adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "majas",
+      "gaya bahasa"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-MAJAS-0007",
+    "judul": "Majas #7",
+    "tema": "Majas",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.7",
+    "indikator": "Memahami konsep Majas (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Majas adalah...",
+    "options": [
+      "Majas",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Majas adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "majas",
+      "gaya bahasa"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-MAJAS-0008",
+    "judul": "Majas #8",
+    "tema": "Majas",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.7",
+    "indikator": "Memahami konsep Majas (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Majas adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Majas memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "majas",
+      "gaya bahasa"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-MAJAS-0009",
+    "judul": "Majas #9",
+    "tema": "Majas",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.7",
+    "indikator": "Memahami konsep Majas (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Majas adalah...",
+    "options": [
+      "Majas",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Majas adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "majas",
+      "gaya bahasa"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-MAJAS-0010",
+    "judul": "Majas #10",
+    "tema": "Majas",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.7",
+    "indikator": "Memahami konsep Majas (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Majas adalah...",
+    "options": [
+      "Majas",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Majas adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "majas",
+      "gaya bahasa"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-MAJAS-0011",
+    "judul": "Majas #11",
+    "tema": "Majas",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.7",
+    "indikator": "Memahami konsep Majas (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Majas adalah...",
+    "options": [
+      "Majas",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Majas adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "majas",
+      "gaya bahasa"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-MAJAS-0012",
+    "judul": "Majas #12",
+    "tema": "Majas",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.7",
+    "indikator": "Memahami konsep Majas (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Majas adalah...",
+    "options": [
+      "Majas",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Majas adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "majas",
+      "gaya bahasa"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-MAJAS-0013",
+    "judul": "Majas #13",
+    "tema": "Majas",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.7",
+    "indikator": "Memahami konsep Majas (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 2,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Majas adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Majas memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "majas",
+      "gaya bahasa"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-MAJAS-0014",
+    "judul": "Majas #14",
+    "tema": "Majas",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.7",
+    "indikator": "Memahami konsep Majas (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Majas adalah...",
+    "options": [
+      "Majas",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Majas adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "majas",
+      "gaya bahasa"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-MAJAS-0015",
+    "judul": "Majas #15",
+    "tema": "Majas",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.7",
+    "indikator": "Memahami konsep Majas (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 2,
+    "type": "ISIAN_SINGKAT",
+    "text": "Jelaskan pengertian Majas menurut pemahaman Anda.",
+    "options": [
+      "majas"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Majas adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+    "kataKunci": [
+      "majas",
+      "gaya bahasa"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-MAJAS-0016",
+    "judul": "Majas #16",
+    "tema": "Majas",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.7",
+    "indikator": "Memahami konsep Majas (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Majas adalah...",
+    "options": [
+      "Majas",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Majas adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "majas",
+      "gaya bahasa"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-MAJAS-0017",
+    "judul": "Majas #17",
+    "tema": "Majas",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.7",
+    "indikator": "Memahami konsep Majas (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Majas adalah...",
+    "options": [
+      "Majas",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Majas adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "majas",
+      "gaya bahasa"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-MAJAS-0018",
+    "judul": "Majas #18",
+    "tema": "Majas",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.7",
+    "indikator": "Memahami konsep Majas (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Majas adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Majas memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "majas",
+      "gaya bahasa"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-MAJAS-0019",
+    "judul": "Majas #19",
+    "tema": "Majas",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.7",
+    "indikator": "Memahami konsep Majas (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Majas adalah...",
+    "options": [
+      "Majas",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Majas adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "majas",
+      "gaya bahasa"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-MAJAS-0020",
+    "judul": "Majas #20",
+    "tema": "Majas",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.7",
+    "indikator": "Memahami konsep Majas (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Majas adalah...",
+    "options": [
+      "Majas",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Majas adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "majas",
+      "gaya bahasa"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-MAJAS-0021",
+    "judul": "Majas #21",
+    "tema": "Majas",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.7",
+    "indikator": "Memahami konsep Majas (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Majas adalah...",
+    "options": [
+      "Majas",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Majas adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "majas",
+      "gaya bahasa"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-MAJAS-0022",
+    "judul": "Majas #22",
+    "tema": "Majas",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.7",
+    "indikator": "Memahami konsep Majas (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Majas adalah...",
+    "options": [
+      "Majas",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Majas adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "majas",
+      "gaya bahasa"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-MAJAS-0023",
+    "judul": "Majas #23",
+    "tema": "Majas",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.7",
+    "indikator": "Memahami konsep Majas (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Majas adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Majas memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "majas",
+      "gaya bahasa"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-MAJAS-0024",
+    "judul": "Majas #24",
+    "tema": "Majas",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.7",
+    "indikator": "Memahami konsep Majas (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Majas adalah...",
+    "options": [
+      "Majas",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Majas adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "majas",
+      "gaya bahasa"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-MAJAS-0025",
+    "judul": "Majas #25",
+    "tema": "Majas",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.7",
+    "indikator": "Memahami konsep Majas (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 4,
+    "type": "ISIAN_SINGKAT",
+    "text": "Jelaskan pengertian Majas menurut pemahaman Anda.",
+    "options": [
+      "majas"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Majas adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+    "kataKunci": [
+      "majas",
+      "gaya bahasa"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-MAJAS-0026",
+    "judul": "Majas #26",
+    "tema": "Majas",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.7",
+    "indikator": "Memahami konsep Majas (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Majas adalah...",
+    "options": [
+      "Majas",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Majas adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "majas",
+      "gaya bahasa"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-MAJAS-0027",
+    "judul": "Majas #27",
+    "tema": "Majas",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.7",
+    "indikator": "Memahami konsep Majas (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Majas adalah...",
+    "options": [
+      "Majas",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Majas adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "majas",
+      "gaya bahasa"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-MAJAS-0028",
+    "judul": "Majas #28",
+    "tema": "Majas",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.7",
+    "indikator": "Memahami konsep Majas (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Majas adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Majas memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "majas",
+      "gaya bahasa"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-MAJAS-0029",
+    "judul": "Majas #29",
+    "tema": "Majas",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.7",
+    "indikator": "Memahami konsep Majas (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Majas adalah...",
+    "options": [
+      "Majas",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Majas adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "majas",
+      "gaya bahasa"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-MAJAS-0030",
+    "judul": "Majas #30",
+    "tema": "Majas",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.7",
+    "indikator": "Memahami konsep Majas (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Majas adalah...",
+    "options": [
+      "Majas",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Majas adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "majas",
+      "gaya bahasa"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  }
+]

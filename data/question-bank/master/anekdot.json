@@ -1,0 +1,761 @@
+[
+  {
+    "kodeSoal": "BC-ANEKDOT-0001",
+    "judul": "Anekdot #1",
+    "tema": "Anekdot",
+    "kelas": "8",
+    "semester": 1,
+    "kompetensi": "3.7",
+    "indikator": "Memahami konsep Anekdot (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Anekdot adalah...",
+    "options": [
+      "Anekdot",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Anekdot adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "anekdot"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-ANEKDOT-0002",
+    "judul": "Anekdot #2",
+    "tema": "Anekdot",
+    "kelas": "8",
+    "semester": 1,
+    "kompetensi": "3.7",
+    "indikator": "Memahami konsep Anekdot (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Anekdot adalah...",
+    "options": [
+      "Anekdot",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Anekdot adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "anekdot"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-ANEKDOT-0003",
+    "judul": "Anekdot #3",
+    "tema": "Anekdot",
+    "kelas": "8",
+    "semester": 1,
+    "kompetensi": "3.7",
+    "indikator": "Memahami konsep Anekdot (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Anekdot adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Anekdot memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "anekdot"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-ANEKDOT-0004",
+    "judul": "Anekdot #4",
+    "tema": "Anekdot",
+    "kelas": "8",
+    "semester": 1,
+    "kompetensi": "3.7",
+    "indikator": "Memahami konsep Anekdot (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Anekdot adalah...",
+    "options": [
+      "Anekdot",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Anekdot adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "anekdot"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-ANEKDOT-0005",
+    "judul": "Anekdot #5",
+    "tema": "Anekdot",
+    "kelas": "8",
+    "semester": 1,
+    "kompetensi": "3.7",
+    "indikator": "Memahami konsep Anekdot (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "ISIAN_SINGKAT",
+    "text": "Jelaskan pengertian Anekdot menurut pemahaman Anda.",
+    "options": [
+      "anekdot"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Anekdot adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+    "kataKunci": [
+      "anekdot"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-ANEKDOT-0006",
+    "judul": "Anekdot #6",
+    "tema": "Anekdot",
+    "kelas": "8",
+    "semester": 1,
+    "kompetensi": "3.7",
+    "indikator": "Memahami konsep Anekdot (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Anekdot adalah...",
+    "options": [
+      "Anekdot",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Anekdot adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "anekdot"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-ANEKDOT-0007",
+    "judul": "Anekdot #7",
+    "tema": "Anekdot",
+    "kelas": "8",
+    "semester": 1,
+    "kompetensi": "3.7",
+    "indikator": "Memahami konsep Anekdot (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Anekdot adalah...",
+    "options": [
+      "Anekdot",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Anekdot adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "anekdot"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-ANEKDOT-0008",
+    "judul": "Anekdot #8",
+    "tema": "Anekdot",
+    "kelas": "8",
+    "semester": 1,
+    "kompetensi": "3.7",
+    "indikator": "Memahami konsep Anekdot (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Anekdot adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Anekdot memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "anekdot"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-ANEKDOT-0009",
+    "judul": "Anekdot #9",
+    "tema": "Anekdot",
+    "kelas": "8",
+    "semester": 1,
+    "kompetensi": "3.7",
+    "indikator": "Memahami konsep Anekdot (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Anekdot adalah...",
+    "options": [
+      "Anekdot",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Anekdot adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "anekdot"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-ANEKDOT-0010",
+    "judul": "Anekdot #10",
+    "tema": "Anekdot",
+    "kelas": "8",
+    "semester": 1,
+    "kompetensi": "3.7",
+    "indikator": "Memahami konsep Anekdot (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Anekdot adalah...",
+    "options": [
+      "Anekdot",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Anekdot adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "anekdot"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-ANEKDOT-0011",
+    "judul": "Anekdot #11",
+    "tema": "Anekdot",
+    "kelas": "8",
+    "semester": 1,
+    "kompetensi": "3.7",
+    "indikator": "Memahami konsep Anekdot (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Anekdot adalah...",
+    "options": [
+      "Anekdot",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Anekdot adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "anekdot"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-ANEKDOT-0012",
+    "judul": "Anekdot #12",
+    "tema": "Anekdot",
+    "kelas": "8",
+    "semester": 1,
+    "kompetensi": "3.7",
+    "indikator": "Memahami konsep Anekdot (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Anekdot adalah...",
+    "options": [
+      "Anekdot",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Anekdot adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "anekdot"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-ANEKDOT-0013",
+    "judul": "Anekdot #13",
+    "tema": "Anekdot",
+    "kelas": "8",
+    "semester": 1,
+    "kompetensi": "3.7",
+    "indikator": "Memahami konsep Anekdot (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 2,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Anekdot adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Anekdot memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "anekdot"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-ANEKDOT-0014",
+    "judul": "Anekdot #14",
+    "tema": "Anekdot",
+    "kelas": "8",
+    "semester": 1,
+    "kompetensi": "3.7",
+    "indikator": "Memahami konsep Anekdot (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Anekdot adalah...",
+    "options": [
+      "Anekdot",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Anekdot adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "anekdot"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-ANEKDOT-0015",
+    "judul": "Anekdot #15",
+    "tema": "Anekdot",
+    "kelas": "8",
+    "semester": 1,
+    "kompetensi": "3.7",
+    "indikator": "Memahami konsep Anekdot (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 2,
+    "type": "ISIAN_SINGKAT",
+    "text": "Jelaskan pengertian Anekdot menurut pemahaman Anda.",
+    "options": [
+      "anekdot"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Anekdot adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+    "kataKunci": [
+      "anekdot"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-ANEKDOT-0016",
+    "judul": "Anekdot #16",
+    "tema": "Anekdot",
+    "kelas": "8",
+    "semester": 1,
+    "kompetensi": "3.7",
+    "indikator": "Memahami konsep Anekdot (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Anekdot adalah...",
+    "options": [
+      "Anekdot",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Anekdot adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "anekdot"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-ANEKDOT-0017",
+    "judul": "Anekdot #17",
+    "tema": "Anekdot",
+    "kelas": "8",
+    "semester": 1,
+    "kompetensi": "3.7",
+    "indikator": "Memahami konsep Anekdot (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Anekdot adalah...",
+    "options": [
+      "Anekdot",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Anekdot adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "anekdot"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-ANEKDOT-0018",
+    "judul": "Anekdot #18",
+    "tema": "Anekdot",
+    "kelas": "8",
+    "semester": 1,
+    "kompetensi": "3.7",
+    "indikator": "Memahami konsep Anekdot (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Anekdot adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Anekdot memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "anekdot"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-ANEKDOT-0019",
+    "judul": "Anekdot #19",
+    "tema": "Anekdot",
+    "kelas": "8",
+    "semester": 1,
+    "kompetensi": "3.7",
+    "indikator": "Memahami konsep Anekdot (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Anekdot adalah...",
+    "options": [
+      "Anekdot",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Anekdot adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "anekdot"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-ANEKDOT-0020",
+    "judul": "Anekdot #20",
+    "tema": "Anekdot",
+    "kelas": "8",
+    "semester": 1,
+    "kompetensi": "3.7",
+    "indikator": "Memahami konsep Anekdot (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Anekdot adalah...",
+    "options": [
+      "Anekdot",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Anekdot adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "anekdot"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-ANEKDOT-0021",
+    "judul": "Anekdot #21",
+    "tema": "Anekdot",
+    "kelas": "8",
+    "semester": 1,
+    "kompetensi": "3.7",
+    "indikator": "Memahami konsep Anekdot (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Anekdot adalah...",
+    "options": [
+      "Anekdot",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Anekdot adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "anekdot"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-ANEKDOT-0022",
+    "judul": "Anekdot #22",
+    "tema": "Anekdot",
+    "kelas": "8",
+    "semester": 1,
+    "kompetensi": "3.7",
+    "indikator": "Memahami konsep Anekdot (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Anekdot adalah...",
+    "options": [
+      "Anekdot",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Anekdot adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "anekdot"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-ANEKDOT-0023",
+    "judul": "Anekdot #23",
+    "tema": "Anekdot",
+    "kelas": "8",
+    "semester": 1,
+    "kompetensi": "3.7",
+    "indikator": "Memahami konsep Anekdot (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Anekdot adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Anekdot memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "anekdot"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-ANEKDOT-0024",
+    "judul": "Anekdot #24",
+    "tema": "Anekdot",
+    "kelas": "8",
+    "semester": 1,
+    "kompetensi": "3.7",
+    "indikator": "Memahami konsep Anekdot (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Anekdot adalah...",
+    "options": [
+      "Anekdot",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Anekdot adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "anekdot"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-ANEKDOT-0025",
+    "judul": "Anekdot #25",
+    "tema": "Anekdot",
+    "kelas": "8",
+    "semester": 1,
+    "kompetensi": "3.7",
+    "indikator": "Memahami konsep Anekdot (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 4,
+    "type": "ISIAN_SINGKAT",
+    "text": "Jelaskan pengertian Anekdot menurut pemahaman Anda.",
+    "options": [
+      "anekdot"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Anekdot adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+    "kataKunci": [
+      "anekdot"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-ANEKDOT-0026",
+    "judul": "Anekdot #26",
+    "tema": "Anekdot",
+    "kelas": "8",
+    "semester": 1,
+    "kompetensi": "3.7",
+    "indikator": "Memahami konsep Anekdot (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Anekdot adalah...",
+    "options": [
+      "Anekdot",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Anekdot adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "anekdot"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-ANEKDOT-0027",
+    "judul": "Anekdot #27",
+    "tema": "Anekdot",
+    "kelas": "8",
+    "semester": 1,
+    "kompetensi": "3.7",
+    "indikator": "Memahami konsep Anekdot (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Anekdot adalah...",
+    "options": [
+      "Anekdot",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Anekdot adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "anekdot"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-ANEKDOT-0028",
+    "judul": "Anekdot #28",
+    "tema": "Anekdot",
+    "kelas": "8",
+    "semester": 1,
+    "kompetensi": "3.7",
+    "indikator": "Memahami konsep Anekdot (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Anekdot adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Anekdot memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "anekdot"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-ANEKDOT-0029",
+    "judul": "Anekdot #29",
+    "tema": "Anekdot",
+    "kelas": "8",
+    "semester": 1,
+    "kompetensi": "3.7",
+    "indikator": "Memahami konsep Anekdot (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Anekdot adalah...",
+    "options": [
+      "Anekdot",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Anekdot adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "anekdot"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-ANEKDOT-0030",
+    "judul": "Anekdot #30",
+    "tema": "Anekdot",
+    "kelas": "8",
+    "semester": 1,
+    "kompetensi": "3.7",
+    "indikator": "Memahami konsep Anekdot (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Anekdot adalah...",
+    "options": [
+      "Anekdot",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Anekdot adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "anekdot"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  }
+]

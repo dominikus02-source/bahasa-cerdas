@@ -1,0 +1,761 @@
+[
+  {
+    "kodeSoal": "BC-SURAT-DINAS-0001",
+    "judul": "Surat Dinas #1",
+    "tema": "Surat Dinas",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Surat Dinas (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Surat Dinas adalah...",
+    "options": [
+      "Surat Dinas",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Surat Dinas adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "surat dinas"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SURAT-DINAS-0002",
+    "judul": "Surat Dinas #2",
+    "tema": "Surat Dinas",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Surat Dinas (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Surat Dinas adalah...",
+    "options": [
+      "Surat Dinas",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Surat Dinas adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "surat dinas"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SURAT-DINAS-0003",
+    "judul": "Surat Dinas #3",
+    "tema": "Surat Dinas",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Surat Dinas (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Surat Dinas adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Surat Dinas memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "surat dinas"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SURAT-DINAS-0004",
+    "judul": "Surat Dinas #4",
+    "tema": "Surat Dinas",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Surat Dinas (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Surat Dinas adalah...",
+    "options": [
+      "Surat Dinas",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Surat Dinas adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "surat dinas"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SURAT-DINAS-0005",
+    "judul": "Surat Dinas #5",
+    "tema": "Surat Dinas",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Surat Dinas (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "ISIAN_SINGKAT",
+    "text": "Jelaskan pengertian Surat Dinas menurut pemahaman Anda.",
+    "options": [
+      "surat dinas"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Surat Dinas adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+    "kataKunci": [
+      "surat dinas"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SURAT-DINAS-0006",
+    "judul": "Surat Dinas #6",
+    "tema": "Surat Dinas",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Surat Dinas (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Surat Dinas adalah...",
+    "options": [
+      "Surat Dinas",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Surat Dinas adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "surat dinas"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SURAT-DINAS-0007",
+    "judul": "Surat Dinas #7",
+    "tema": "Surat Dinas",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Surat Dinas (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Surat Dinas adalah...",
+    "options": [
+      "Surat Dinas",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Surat Dinas adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "surat dinas"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SURAT-DINAS-0008",
+    "judul": "Surat Dinas #8",
+    "tema": "Surat Dinas",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Surat Dinas (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Surat Dinas adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Surat Dinas memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "surat dinas"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SURAT-DINAS-0009",
+    "judul": "Surat Dinas #9",
+    "tema": "Surat Dinas",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Surat Dinas (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Surat Dinas adalah...",
+    "options": [
+      "Surat Dinas",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Surat Dinas adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "surat dinas"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SURAT-DINAS-0010",
+    "judul": "Surat Dinas #10",
+    "tema": "Surat Dinas",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Surat Dinas (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Surat Dinas adalah...",
+    "options": [
+      "Surat Dinas",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Surat Dinas adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "surat dinas"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SURAT-DINAS-0011",
+    "judul": "Surat Dinas #11",
+    "tema": "Surat Dinas",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Surat Dinas (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Surat Dinas adalah...",
+    "options": [
+      "Surat Dinas",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Surat Dinas adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "surat dinas"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SURAT-DINAS-0012",
+    "judul": "Surat Dinas #12",
+    "tema": "Surat Dinas",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Surat Dinas (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Surat Dinas adalah...",
+    "options": [
+      "Surat Dinas",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Surat Dinas adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "surat dinas"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SURAT-DINAS-0013",
+    "judul": "Surat Dinas #13",
+    "tema": "Surat Dinas",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Surat Dinas (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 2,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Surat Dinas adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Surat Dinas memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "surat dinas"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SURAT-DINAS-0014",
+    "judul": "Surat Dinas #14",
+    "tema": "Surat Dinas",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Surat Dinas (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Surat Dinas adalah...",
+    "options": [
+      "Surat Dinas",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Surat Dinas adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "surat dinas"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SURAT-DINAS-0015",
+    "judul": "Surat Dinas #15",
+    "tema": "Surat Dinas",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Surat Dinas (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 2,
+    "type": "ISIAN_SINGKAT",
+    "text": "Jelaskan pengertian Surat Dinas menurut pemahaman Anda.",
+    "options": [
+      "surat dinas"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Surat Dinas adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+    "kataKunci": [
+      "surat dinas"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SURAT-DINAS-0016",
+    "judul": "Surat Dinas #16",
+    "tema": "Surat Dinas",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Surat Dinas (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Surat Dinas adalah...",
+    "options": [
+      "Surat Dinas",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Surat Dinas adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "surat dinas"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SURAT-DINAS-0017",
+    "judul": "Surat Dinas #17",
+    "tema": "Surat Dinas",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Surat Dinas (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Surat Dinas adalah...",
+    "options": [
+      "Surat Dinas",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Surat Dinas adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "surat dinas"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SURAT-DINAS-0018",
+    "judul": "Surat Dinas #18",
+    "tema": "Surat Dinas",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Surat Dinas (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Surat Dinas adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Surat Dinas memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "surat dinas"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SURAT-DINAS-0019",
+    "judul": "Surat Dinas #19",
+    "tema": "Surat Dinas",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Surat Dinas (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Surat Dinas adalah...",
+    "options": [
+      "Surat Dinas",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Surat Dinas adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "surat dinas"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SURAT-DINAS-0020",
+    "judul": "Surat Dinas #20",
+    "tema": "Surat Dinas",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Surat Dinas (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Surat Dinas adalah...",
+    "options": [
+      "Surat Dinas",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Surat Dinas adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "surat dinas"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SURAT-DINAS-0021",
+    "judul": "Surat Dinas #21",
+    "tema": "Surat Dinas",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Surat Dinas (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Surat Dinas adalah...",
+    "options": [
+      "Surat Dinas",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Surat Dinas adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "surat dinas"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SURAT-DINAS-0022",
+    "judul": "Surat Dinas #22",
+    "tema": "Surat Dinas",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Surat Dinas (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Surat Dinas adalah...",
+    "options": [
+      "Surat Dinas",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Surat Dinas adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "surat dinas"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SURAT-DINAS-0023",
+    "judul": "Surat Dinas #23",
+    "tema": "Surat Dinas",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Surat Dinas (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Surat Dinas adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Surat Dinas memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "surat dinas"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SURAT-DINAS-0024",
+    "judul": "Surat Dinas #24",
+    "tema": "Surat Dinas",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Surat Dinas (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Surat Dinas adalah...",
+    "options": [
+      "Surat Dinas",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Surat Dinas adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "surat dinas"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SURAT-DINAS-0025",
+    "judul": "Surat Dinas #25",
+    "tema": "Surat Dinas",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Surat Dinas (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 4,
+    "type": "ISIAN_SINGKAT",
+    "text": "Jelaskan pengertian Surat Dinas menurut pemahaman Anda.",
+    "options": [
+      "surat dinas"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Surat Dinas adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+    "kataKunci": [
+      "surat dinas"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-SURAT-DINAS-0026",
+    "judul": "Surat Dinas #26",
+    "tema": "Surat Dinas",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Surat Dinas (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Surat Dinas adalah...",
+    "options": [
+      "Surat Dinas",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Surat Dinas adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "surat dinas"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-SURAT-DINAS-0027",
+    "judul": "Surat Dinas #27",
+    "tema": "Surat Dinas",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Surat Dinas (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Surat Dinas adalah...",
+    "options": [
+      "Surat Dinas",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Surat Dinas adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "surat dinas"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-SURAT-DINAS-0028",
+    "judul": "Surat Dinas #28",
+    "tema": "Surat Dinas",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Surat Dinas (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Surat Dinas adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Surat Dinas memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "surat dinas"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-SURAT-DINAS-0029",
+    "judul": "Surat Dinas #29",
+    "tema": "Surat Dinas",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Surat Dinas (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Surat Dinas adalah...",
+    "options": [
+      "Surat Dinas",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Surat Dinas adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "surat dinas"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-SURAT-DINAS-0030",
+    "judul": "Surat Dinas #30",
+    "tema": "Surat Dinas",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Surat Dinas (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Surat Dinas adalah...",
+    "options": [
+      "Surat Dinas",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Surat Dinas adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "surat dinas"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  }
+]

@@ -1,0 +1,761 @@
+[
+  {
+    "kodeSoal": "BC-POSTER-0001",
+    "judul": "Poster #1",
+    "tema": "Poster",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Poster (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Poster adalah...",
+    "options": [
+      "Poster",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Poster adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "poster"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-POSTER-0002",
+    "judul": "Poster #2",
+    "tema": "Poster",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Poster (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Poster adalah...",
+    "options": [
+      "Poster",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Poster adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "poster"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-POSTER-0003",
+    "judul": "Poster #3",
+    "tema": "Poster",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Poster (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Poster adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Poster memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "poster"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-POSTER-0004",
+    "judul": "Poster #4",
+    "tema": "Poster",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Poster (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Poster adalah...",
+    "options": [
+      "Poster",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Poster adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "poster"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-POSTER-0005",
+    "judul": "Poster #5",
+    "tema": "Poster",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Poster (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "ISIAN_SINGKAT",
+    "text": "Jelaskan pengertian Poster menurut pemahaman Anda.",
+    "options": [
+      "poster"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Poster adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+    "kataKunci": [
+      "poster"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-POSTER-0006",
+    "judul": "Poster #6",
+    "tema": "Poster",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Poster (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Poster adalah...",
+    "options": [
+      "Poster",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Poster adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "poster"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-POSTER-0007",
+    "judul": "Poster #7",
+    "tema": "Poster",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Poster (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Poster adalah...",
+    "options": [
+      "Poster",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Poster adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "poster"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-POSTER-0008",
+    "judul": "Poster #8",
+    "tema": "Poster",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Poster (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Poster adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Poster memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "poster"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-POSTER-0009",
+    "judul": "Poster #9",
+    "tema": "Poster",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Poster (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Poster adalah...",
+    "options": [
+      "Poster",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Poster adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "poster"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-POSTER-0010",
+    "judul": "Poster #10",
+    "tema": "Poster",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Poster (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Poster adalah...",
+    "options": [
+      "Poster",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Poster adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "poster"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-POSTER-0011",
+    "judul": "Poster #11",
+    "tema": "Poster",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Poster (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Poster adalah...",
+    "options": [
+      "Poster",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Poster adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "poster"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-POSTER-0012",
+    "judul": "Poster #12",
+    "tema": "Poster",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Poster (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Poster adalah...",
+    "options": [
+      "Poster",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Poster adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "poster"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-POSTER-0013",
+    "judul": "Poster #13",
+    "tema": "Poster",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Poster (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 2,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Poster adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Poster memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "poster"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-POSTER-0014",
+    "judul": "Poster #14",
+    "tema": "Poster",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Poster (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Poster adalah...",
+    "options": [
+      "Poster",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Poster adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "poster"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-POSTER-0015",
+    "judul": "Poster #15",
+    "tema": "Poster",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Poster (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 2,
+    "type": "ISIAN_SINGKAT",
+    "text": "Jelaskan pengertian Poster menurut pemahaman Anda.",
+    "options": [
+      "poster"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Poster adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+    "kataKunci": [
+      "poster"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-POSTER-0016",
+    "judul": "Poster #16",
+    "tema": "Poster",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Poster (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Poster adalah...",
+    "options": [
+      "Poster",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Poster adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "poster"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-POSTER-0017",
+    "judul": "Poster #17",
+    "tema": "Poster",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Poster (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Poster adalah...",
+    "options": [
+      "Poster",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Poster adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "poster"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-POSTER-0018",
+    "judul": "Poster #18",
+    "tema": "Poster",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Poster (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Poster adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Poster memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "poster"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-POSTER-0019",
+    "judul": "Poster #19",
+    "tema": "Poster",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Poster (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Poster adalah...",
+    "options": [
+      "Poster",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Poster adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "poster"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-POSTER-0020",
+    "judul": "Poster #20",
+    "tema": "Poster",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Poster (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Poster adalah...",
+    "options": [
+      "Poster",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Poster adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "poster"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-POSTER-0021",
+    "judul": "Poster #21",
+    "tema": "Poster",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Poster (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Poster adalah...",
+    "options": [
+      "Poster",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Poster adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "poster"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-POSTER-0022",
+    "judul": "Poster #22",
+    "tema": "Poster",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Poster (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Poster adalah...",
+    "options": [
+      "Poster",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Poster adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "poster"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-POSTER-0023",
+    "judul": "Poster #23",
+    "tema": "Poster",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Poster (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Poster adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Poster memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "poster"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-POSTER-0024",
+    "judul": "Poster #24",
+    "tema": "Poster",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Poster (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Poster adalah...",
+    "options": [
+      "Poster",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Poster adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "poster"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-POSTER-0025",
+    "judul": "Poster #25",
+    "tema": "Poster",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Poster (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 4,
+    "type": "ISIAN_SINGKAT",
+    "text": "Jelaskan pengertian Poster menurut pemahaman Anda.",
+    "options": [
+      "poster"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Poster adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+    "kataKunci": [
+      "poster"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-POSTER-0026",
+    "judul": "Poster #26",
+    "tema": "Poster",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Poster (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Poster adalah...",
+    "options": [
+      "Poster",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Poster adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "poster"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-POSTER-0027",
+    "judul": "Poster #27",
+    "tema": "Poster",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Poster (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Poster adalah...",
+    "options": [
+      "Poster",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Poster adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "poster"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-POSTER-0028",
+    "judul": "Poster #28",
+    "tema": "Poster",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Poster (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Poster adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Poster memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "poster"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-POSTER-0029",
+    "judul": "Poster #29",
+    "tema": "Poster",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Poster (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Poster adalah...",
+    "options": [
+      "Poster",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Poster adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "poster"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-POSTER-0030",
+    "judul": "Poster #30",
+    "tema": "Poster",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Poster (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Poster adalah...",
+    "options": [
+      "Poster",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Poster adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "poster"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  }
+]

@@ -1,0 +1,791 @@
+[
+  {
+    "kodeSoal": "BC-DRAMA-0001",
+    "judul": "Drama #1",
+    "tema": "Drama",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.10",
+    "indikator": "Memahami konsep Drama (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Drama adalah...",
+    "options": [
+      "Drama",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Drama adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "drama",
+      "dialog"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-DRAMA-0002",
+    "judul": "Drama #2",
+    "tema": "Drama",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.10",
+    "indikator": "Memahami konsep Drama (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Drama adalah...",
+    "options": [
+      "Drama",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Drama adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "drama",
+      "dialog"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-DRAMA-0003",
+    "judul": "Drama #3",
+    "tema": "Drama",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.10",
+    "indikator": "Memahami konsep Drama (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Drama adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Drama memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "drama",
+      "dialog"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-DRAMA-0004",
+    "judul": "Drama #4",
+    "tema": "Drama",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.10",
+    "indikator": "Memahami konsep Drama (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Drama adalah...",
+    "options": [
+      "Drama",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Drama adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "drama",
+      "dialog"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-DRAMA-0005",
+    "judul": "Drama #5",
+    "tema": "Drama",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.10",
+    "indikator": "Memahami konsep Drama (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "ISIAN_SINGKAT",
+    "text": "Jelaskan pengertian Drama menurut pemahaman Anda.",
+    "options": [
+      "drama"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Drama adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+    "kataKunci": [
+      "drama",
+      "dialog"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-DRAMA-0006",
+    "judul": "Drama #6",
+    "tema": "Drama",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.10",
+    "indikator": "Memahami konsep Drama (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Drama adalah...",
+    "options": [
+      "Drama",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Drama adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "drama",
+      "dialog"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-DRAMA-0007",
+    "judul": "Drama #7",
+    "tema": "Drama",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.10",
+    "indikator": "Memahami konsep Drama (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Drama adalah...",
+    "options": [
+      "Drama",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Drama adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "drama",
+      "dialog"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-DRAMA-0008",
+    "judul": "Drama #8",
+    "tema": "Drama",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.10",
+    "indikator": "Memahami konsep Drama (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Drama adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Drama memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "drama",
+      "dialog"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-DRAMA-0009",
+    "judul": "Drama #9",
+    "tema": "Drama",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.10",
+    "indikator": "Memahami konsep Drama (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Drama adalah...",
+    "options": [
+      "Drama",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Drama adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "drama",
+      "dialog"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-DRAMA-0010",
+    "judul": "Drama #10",
+    "tema": "Drama",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.10",
+    "indikator": "Memahami konsep Drama (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Drama adalah...",
+    "options": [
+      "Drama",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Drama adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "drama",
+      "dialog"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-DRAMA-0011",
+    "judul": "Drama #11",
+    "tema": "Drama",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.10",
+    "indikator": "Memahami konsep Drama (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Drama adalah...",
+    "options": [
+      "Drama",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Drama adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "drama",
+      "dialog"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-DRAMA-0012",
+    "judul": "Drama #12",
+    "tema": "Drama",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.10",
+    "indikator": "Memahami konsep Drama (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Drama adalah...",
+    "options": [
+      "Drama",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Drama adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "drama",
+      "dialog"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-DRAMA-0013",
+    "judul": "Drama #13",
+    "tema": "Drama",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.10",
+    "indikator": "Memahami konsep Drama (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 2,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Drama adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Drama memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "drama",
+      "dialog"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-DRAMA-0014",
+    "judul": "Drama #14",
+    "tema": "Drama",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.10",
+    "indikator": "Memahami konsep Drama (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Drama adalah...",
+    "options": [
+      "Drama",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Drama adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "drama",
+      "dialog"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-DRAMA-0015",
+    "judul": "Drama #15",
+    "tema": "Drama",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.10",
+    "indikator": "Memahami konsep Drama (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 2,
+    "type": "ISIAN_SINGKAT",
+    "text": "Jelaskan pengertian Drama menurut pemahaman Anda.",
+    "options": [
+      "drama"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Drama adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+    "kataKunci": [
+      "drama",
+      "dialog"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-DRAMA-0016",
+    "judul": "Drama #16",
+    "tema": "Drama",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.10",
+    "indikator": "Memahami konsep Drama (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Drama adalah...",
+    "options": [
+      "Drama",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Drama adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "drama",
+      "dialog"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-DRAMA-0017",
+    "judul": "Drama #17",
+    "tema": "Drama",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.10",
+    "indikator": "Memahami konsep Drama (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Drama adalah...",
+    "options": [
+      "Drama",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Drama adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "drama",
+      "dialog"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-DRAMA-0018",
+    "judul": "Drama #18",
+    "tema": "Drama",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.10",
+    "indikator": "Memahami konsep Drama (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Drama adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Drama memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "drama",
+      "dialog"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-DRAMA-0019",
+    "judul": "Drama #19",
+    "tema": "Drama",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.10",
+    "indikator": "Memahami konsep Drama (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Drama adalah...",
+    "options": [
+      "Drama",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Drama adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "drama",
+      "dialog"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-DRAMA-0020",
+    "judul": "Drama #20",
+    "tema": "Drama",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.10",
+    "indikator": "Memahami konsep Drama (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Drama adalah...",
+    "options": [
+      "Drama",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Drama adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "drama",
+      "dialog"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-DRAMA-0021",
+    "judul": "Drama #21",
+    "tema": "Drama",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.10",
+    "indikator": "Memahami konsep Drama (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Drama adalah...",
+    "options": [
+      "Drama",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Drama adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "drama",
+      "dialog"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-DRAMA-0022",
+    "judul": "Drama #22",
+    "tema": "Drama",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.10",
+    "indikator": "Memahami konsep Drama (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Drama adalah...",
+    "options": [
+      "Drama",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Drama adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "drama",
+      "dialog"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-DRAMA-0023",
+    "judul": "Drama #23",
+    "tema": "Drama",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.10",
+    "indikator": "Memahami konsep Drama (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Drama adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Drama memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "drama",
+      "dialog"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-DRAMA-0024",
+    "judul": "Drama #24",
+    "tema": "Drama",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.10",
+    "indikator": "Memahami konsep Drama (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Drama adalah...",
+    "options": [
+      "Drama",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Drama adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "drama",
+      "dialog"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-DRAMA-0025",
+    "judul": "Drama #25",
+    "tema": "Drama",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.10",
+    "indikator": "Memahami konsep Drama (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 4,
+    "type": "ISIAN_SINGKAT",
+    "text": "Jelaskan pengertian Drama menurut pemahaman Anda.",
+    "options": [
+      "drama"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Drama adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+    "kataKunci": [
+      "drama",
+      "dialog"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-DRAMA-0026",
+    "judul": "Drama #26",
+    "tema": "Drama",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.10",
+    "indikator": "Memahami konsep Drama (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Drama adalah...",
+    "options": [
+      "Drama",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Drama adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "drama",
+      "dialog"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-DRAMA-0027",
+    "judul": "Drama #27",
+    "tema": "Drama",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.10",
+    "indikator": "Memahami konsep Drama (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Drama adalah...",
+    "options": [
+      "Drama",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Drama adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "drama",
+      "dialog"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-DRAMA-0028",
+    "judul": "Drama #28",
+    "tema": "Drama",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.10",
+    "indikator": "Memahami konsep Drama (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Drama adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Drama memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "drama",
+      "dialog"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-DRAMA-0029",
+    "judul": "Drama #29",
+    "tema": "Drama",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.10",
+    "indikator": "Memahami konsep Drama (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Drama adalah...",
+    "options": [
+      "Drama",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Drama adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "drama",
+      "dialog"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-DRAMA-0030",
+    "judul": "Drama #30",
+    "tema": "Drama",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.10",
+    "indikator": "Memahami konsep Drama (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Drama adalah...",
+    "options": [
+      "Drama",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Drama adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "drama",
+      "dialog"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  }
+]

@@ -1,0 +1,761 @@
+[
+  {
+    "kodeSoal": "BC-RESENSI-0001",
+    "judul": "Resensi #1",
+    "tema": "Resensi",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.5",
+    "indikator": "Memahami konsep Resensi (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Resensi adalah...",
+    "options": [
+      "Resensi",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Resensi adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "resensi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-RESENSI-0002",
+    "judul": "Resensi #2",
+    "tema": "Resensi",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.5",
+    "indikator": "Memahami konsep Resensi (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Resensi adalah...",
+    "options": [
+      "Resensi",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Resensi adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "resensi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-RESENSI-0003",
+    "judul": "Resensi #3",
+    "tema": "Resensi",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.5",
+    "indikator": "Memahami konsep Resensi (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Resensi adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Resensi memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "resensi"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-RESENSI-0004",
+    "judul": "Resensi #4",
+    "tema": "Resensi",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.5",
+    "indikator": "Memahami konsep Resensi (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Resensi adalah...",
+    "options": [
+      "Resensi",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Resensi adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "resensi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-RESENSI-0005",
+    "judul": "Resensi #5",
+    "tema": "Resensi",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.5",
+    "indikator": "Memahami konsep Resensi (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "ISIAN_SINGKAT",
+    "text": "Jelaskan pengertian Resensi menurut pemahaman Anda.",
+    "options": [
+      "resensi"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Resensi adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+    "kataKunci": [
+      "resensi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-RESENSI-0006",
+    "judul": "Resensi #6",
+    "tema": "Resensi",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.5",
+    "indikator": "Memahami konsep Resensi (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Resensi adalah...",
+    "options": [
+      "Resensi",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Resensi adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "resensi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-RESENSI-0007",
+    "judul": "Resensi #7",
+    "tema": "Resensi",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.5",
+    "indikator": "Memahami konsep Resensi (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Resensi adalah...",
+    "options": [
+      "Resensi",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Resensi adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "resensi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-RESENSI-0008",
+    "judul": "Resensi #8",
+    "tema": "Resensi",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.5",
+    "indikator": "Memahami konsep Resensi (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Resensi adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Resensi memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "resensi"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-RESENSI-0009",
+    "judul": "Resensi #9",
+    "tema": "Resensi",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.5",
+    "indikator": "Memahami konsep Resensi (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Resensi adalah...",
+    "options": [
+      "Resensi",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Resensi adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "resensi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-RESENSI-0010",
+    "judul": "Resensi #10",
+    "tema": "Resensi",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.5",
+    "indikator": "Memahami konsep Resensi (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Resensi adalah...",
+    "options": [
+      "Resensi",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Resensi adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "resensi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-RESENSI-0011",
+    "judul": "Resensi #11",
+    "tema": "Resensi",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.5",
+    "indikator": "Memahami konsep Resensi (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Resensi adalah...",
+    "options": [
+      "Resensi",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Resensi adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "resensi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-RESENSI-0012",
+    "judul": "Resensi #12",
+    "tema": "Resensi",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.5",
+    "indikator": "Memahami konsep Resensi (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Resensi adalah...",
+    "options": [
+      "Resensi",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Resensi adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "resensi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-RESENSI-0013",
+    "judul": "Resensi #13",
+    "tema": "Resensi",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.5",
+    "indikator": "Memahami konsep Resensi (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 2,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Resensi adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Resensi memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "resensi"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-RESENSI-0014",
+    "judul": "Resensi #14",
+    "tema": "Resensi",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.5",
+    "indikator": "Memahami konsep Resensi (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Resensi adalah...",
+    "options": [
+      "Resensi",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Resensi adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "resensi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-RESENSI-0015",
+    "judul": "Resensi #15",
+    "tema": "Resensi",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.5",
+    "indikator": "Memahami konsep Resensi (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 2,
+    "type": "ISIAN_SINGKAT",
+    "text": "Jelaskan pengertian Resensi menurut pemahaman Anda.",
+    "options": [
+      "resensi"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Resensi adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+    "kataKunci": [
+      "resensi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-RESENSI-0016",
+    "judul": "Resensi #16",
+    "tema": "Resensi",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.5",
+    "indikator": "Memahami konsep Resensi (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Resensi adalah...",
+    "options": [
+      "Resensi",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Resensi adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "resensi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-RESENSI-0017",
+    "judul": "Resensi #17",
+    "tema": "Resensi",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.5",
+    "indikator": "Memahami konsep Resensi (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Resensi adalah...",
+    "options": [
+      "Resensi",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Resensi adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "resensi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-RESENSI-0018",
+    "judul": "Resensi #18",
+    "tema": "Resensi",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.5",
+    "indikator": "Memahami konsep Resensi (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Resensi adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Resensi memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "resensi"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-RESENSI-0019",
+    "judul": "Resensi #19",
+    "tema": "Resensi",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.5",
+    "indikator": "Memahami konsep Resensi (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Resensi adalah...",
+    "options": [
+      "Resensi",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Resensi adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "resensi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-RESENSI-0020",
+    "judul": "Resensi #20",
+    "tema": "Resensi",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.5",
+    "indikator": "Memahami konsep Resensi (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Resensi adalah...",
+    "options": [
+      "Resensi",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Resensi adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "resensi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-RESENSI-0021",
+    "judul": "Resensi #21",
+    "tema": "Resensi",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.5",
+    "indikator": "Memahami konsep Resensi (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Resensi adalah...",
+    "options": [
+      "Resensi",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Resensi adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "resensi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-RESENSI-0022",
+    "judul": "Resensi #22",
+    "tema": "Resensi",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.5",
+    "indikator": "Memahami konsep Resensi (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Resensi adalah...",
+    "options": [
+      "Resensi",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Resensi adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "resensi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-RESENSI-0023",
+    "judul": "Resensi #23",
+    "tema": "Resensi",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.5",
+    "indikator": "Memahami konsep Resensi (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Resensi adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Resensi memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "resensi"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-RESENSI-0024",
+    "judul": "Resensi #24",
+    "tema": "Resensi",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.5",
+    "indikator": "Memahami konsep Resensi (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Resensi adalah...",
+    "options": [
+      "Resensi",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Resensi adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "resensi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-RESENSI-0025",
+    "judul": "Resensi #25",
+    "tema": "Resensi",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.5",
+    "indikator": "Memahami konsep Resensi (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 4,
+    "type": "ISIAN_SINGKAT",
+    "text": "Jelaskan pengertian Resensi menurut pemahaman Anda.",
+    "options": [
+      "resensi"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Resensi adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+    "kataKunci": [
+      "resensi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-RESENSI-0026",
+    "judul": "Resensi #26",
+    "tema": "Resensi",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.5",
+    "indikator": "Memahami konsep Resensi (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Resensi adalah...",
+    "options": [
+      "Resensi",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Resensi adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "resensi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-RESENSI-0027",
+    "judul": "Resensi #27",
+    "tema": "Resensi",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.5",
+    "indikator": "Memahami konsep Resensi (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Resensi adalah...",
+    "options": [
+      "Resensi",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Resensi adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "resensi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-RESENSI-0028",
+    "judul": "Resensi #28",
+    "tema": "Resensi",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.5",
+    "indikator": "Memahami konsep Resensi (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Resensi adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Resensi memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "resensi"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-RESENSI-0029",
+    "judul": "Resensi #29",
+    "tema": "Resensi",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.5",
+    "indikator": "Memahami konsep Resensi (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Resensi adalah...",
+    "options": [
+      "Resensi",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Resensi adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "resensi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-RESENSI-0030",
+    "judul": "Resensi #30",
+    "tema": "Resensi",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.5",
+    "indikator": "Memahami konsep Resensi (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Resensi adalah...",
+    "options": [
+      "Resensi",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Resensi adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "resensi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  }
+]

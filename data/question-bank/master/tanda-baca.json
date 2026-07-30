@@ -1,0 +1,761 @@
+[
+  {
+    "kodeSoal": "BC-TANDA-BACA-0001",
+    "judul": "Tanda Baca #1",
+    "tema": "Tanda Baca",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Tanda Baca (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Tanda Baca adalah...",
+    "options": [
+      "Tanda Baca",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Tanda Baca adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "tanda baca"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TANDA-BACA-0002",
+    "judul": "Tanda Baca #2",
+    "tema": "Tanda Baca",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Tanda Baca (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Tanda Baca adalah...",
+    "options": [
+      "Tanda Baca",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Tanda Baca adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "tanda baca"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TANDA-BACA-0003",
+    "judul": "Tanda Baca #3",
+    "tema": "Tanda Baca",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Tanda Baca (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Tanda Baca adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Tanda Baca memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "tanda baca"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TANDA-BACA-0004",
+    "judul": "Tanda Baca #4",
+    "tema": "Tanda Baca",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Tanda Baca (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Tanda Baca adalah...",
+    "options": [
+      "Tanda Baca",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Tanda Baca adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "tanda baca"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TANDA-BACA-0005",
+    "judul": "Tanda Baca #5",
+    "tema": "Tanda Baca",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Tanda Baca (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "ISIAN_SINGKAT",
+    "text": "Jelaskan pengertian Tanda Baca menurut pemahaman Anda.",
+    "options": [
+      "tanda baca"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Tanda Baca adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+    "kataKunci": [
+      "tanda baca"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TANDA-BACA-0006",
+    "judul": "Tanda Baca #6",
+    "tema": "Tanda Baca",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Tanda Baca (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Tanda Baca adalah...",
+    "options": [
+      "Tanda Baca",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Tanda Baca adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "tanda baca"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TANDA-BACA-0007",
+    "judul": "Tanda Baca #7",
+    "tema": "Tanda Baca",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Tanda Baca (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Tanda Baca adalah...",
+    "options": [
+      "Tanda Baca",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Tanda Baca adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "tanda baca"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TANDA-BACA-0008",
+    "judul": "Tanda Baca #8",
+    "tema": "Tanda Baca",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Tanda Baca (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Tanda Baca adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Tanda Baca memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "tanda baca"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TANDA-BACA-0009",
+    "judul": "Tanda Baca #9",
+    "tema": "Tanda Baca",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Tanda Baca (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Tanda Baca adalah...",
+    "options": [
+      "Tanda Baca",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Tanda Baca adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "tanda baca"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TANDA-BACA-0010",
+    "judul": "Tanda Baca #10",
+    "tema": "Tanda Baca",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Tanda Baca (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Tanda Baca adalah...",
+    "options": [
+      "Tanda Baca",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Tanda Baca adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "tanda baca"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TANDA-BACA-0011",
+    "judul": "Tanda Baca #11",
+    "tema": "Tanda Baca",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Tanda Baca (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Tanda Baca adalah...",
+    "options": [
+      "Tanda Baca",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Tanda Baca adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "tanda baca"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TANDA-BACA-0012",
+    "judul": "Tanda Baca #12",
+    "tema": "Tanda Baca",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Tanda Baca (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Tanda Baca adalah...",
+    "options": [
+      "Tanda Baca",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Tanda Baca adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "tanda baca"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TANDA-BACA-0013",
+    "judul": "Tanda Baca #13",
+    "tema": "Tanda Baca",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Tanda Baca (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 2,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Tanda Baca adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Tanda Baca memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "tanda baca"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TANDA-BACA-0014",
+    "judul": "Tanda Baca #14",
+    "tema": "Tanda Baca",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Tanda Baca (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Tanda Baca adalah...",
+    "options": [
+      "Tanda Baca",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Tanda Baca adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "tanda baca"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TANDA-BACA-0015",
+    "judul": "Tanda Baca #15",
+    "tema": "Tanda Baca",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Tanda Baca (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 2,
+    "type": "ISIAN_SINGKAT",
+    "text": "Jelaskan pengertian Tanda Baca menurut pemahaman Anda.",
+    "options": [
+      "tanda baca"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Tanda Baca adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+    "kataKunci": [
+      "tanda baca"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TANDA-BACA-0016",
+    "judul": "Tanda Baca #16",
+    "tema": "Tanda Baca",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Tanda Baca (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Tanda Baca adalah...",
+    "options": [
+      "Tanda Baca",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Tanda Baca adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "tanda baca"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TANDA-BACA-0017",
+    "judul": "Tanda Baca #17",
+    "tema": "Tanda Baca",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Tanda Baca (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Tanda Baca adalah...",
+    "options": [
+      "Tanda Baca",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Tanda Baca adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "tanda baca"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TANDA-BACA-0018",
+    "judul": "Tanda Baca #18",
+    "tema": "Tanda Baca",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Tanda Baca (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Tanda Baca adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Tanda Baca memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "tanda baca"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TANDA-BACA-0019",
+    "judul": "Tanda Baca #19",
+    "tema": "Tanda Baca",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Tanda Baca (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Tanda Baca adalah...",
+    "options": [
+      "Tanda Baca",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Tanda Baca adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "tanda baca"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TANDA-BACA-0020",
+    "judul": "Tanda Baca #20",
+    "tema": "Tanda Baca",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Tanda Baca (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Tanda Baca adalah...",
+    "options": [
+      "Tanda Baca",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Tanda Baca adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "tanda baca"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TANDA-BACA-0021",
+    "judul": "Tanda Baca #21",
+    "tema": "Tanda Baca",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Tanda Baca (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Tanda Baca adalah...",
+    "options": [
+      "Tanda Baca",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Tanda Baca adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "tanda baca"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TANDA-BACA-0022",
+    "judul": "Tanda Baca #22",
+    "tema": "Tanda Baca",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Tanda Baca (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Tanda Baca adalah...",
+    "options": [
+      "Tanda Baca",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Tanda Baca adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "tanda baca"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TANDA-BACA-0023",
+    "judul": "Tanda Baca #23",
+    "tema": "Tanda Baca",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Tanda Baca (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Tanda Baca adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Tanda Baca memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "tanda baca"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TANDA-BACA-0024",
+    "judul": "Tanda Baca #24",
+    "tema": "Tanda Baca",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Tanda Baca (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Tanda Baca adalah...",
+    "options": [
+      "Tanda Baca",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Tanda Baca adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "tanda baca"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TANDA-BACA-0025",
+    "judul": "Tanda Baca #25",
+    "tema": "Tanda Baca",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Tanda Baca (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 4,
+    "type": "ISIAN_SINGKAT",
+    "text": "Jelaskan pengertian Tanda Baca menurut pemahaman Anda.",
+    "options": [
+      "tanda baca"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Tanda Baca adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+    "kataKunci": [
+      "tanda baca"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-TANDA-BACA-0026",
+    "judul": "Tanda Baca #26",
+    "tema": "Tanda Baca",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Tanda Baca (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Tanda Baca adalah...",
+    "options": [
+      "Tanda Baca",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Tanda Baca adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "tanda baca"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-TANDA-BACA-0027",
+    "judul": "Tanda Baca #27",
+    "tema": "Tanda Baca",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Tanda Baca (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Tanda Baca adalah...",
+    "options": [
+      "Tanda Baca",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Tanda Baca adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "tanda baca"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-TANDA-BACA-0028",
+    "judul": "Tanda Baca #28",
+    "tema": "Tanda Baca",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Tanda Baca (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Tanda Baca adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Tanda Baca memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "tanda baca"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-TANDA-BACA-0029",
+    "judul": "Tanda Baca #29",
+    "tema": "Tanda Baca",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Tanda Baca (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Tanda Baca adalah...",
+    "options": [
+      "Tanda Baca",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Tanda Baca adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "tanda baca"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-TANDA-BACA-0030",
+    "judul": "Tanda Baca #30",
+    "tema": "Tanda Baca",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Tanda Baca (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Tanda Baca adalah...",
+    "options": [
+      "Tanda Baca",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Tanda Baca adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "tanda baca"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  }
+]

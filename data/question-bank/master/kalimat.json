@@ -1,0 +1,793 @@
+[
+  {
+    "kodeSoal": "BC-KALIMAT-0001",
+    "judul": "Kalimat #1",
+    "tema": "Kalimat",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep Kalimat (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Kalimat yang menyatakan ajakan disebut kalimat...",
+    "options": [
+      "Deklaratif",
+      "Interogatif",
+      "Imperatif",
+      "Eksklamatif"
+    ],
+    "correctAnswer": "2",
+    "explanation": "Kalimat imperatif menyatakan perintah atau ajakan.",
+    "kataKunci": [
+      "kalimat",
+      "jenis kalimat"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-KALIMAT-0002",
+    "judul": "Kalimat #2",
+    "tema": "Kalimat",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep Kalimat (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Kalimat 'Siapa namamu?' termasuk jenis kalimat...",
+    "options": [
+      "Deklaratif",
+      "Interogatif",
+      "Imperatif",
+      "Eksklamatif"
+    ],
+    "correctAnswer": "1",
+    "explanation": "Kalimat interogatif adalah kalimat tanya.",
+    "kataKunci": [
+      "kalimat",
+      "jenis kalimat"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-KALIMAT-0003",
+    "judul": "Kalimat #3",
+    "tema": "Kalimat",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep Kalimat (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "BENAR_SALAH",
+    "text": "Kalimat 'Alangkah indahnya pemandangan ini!' termasuk...",
+    "options": [
+      "Deklaratif",
+      "Interogatif",
+      "Imperatif",
+      "Eksklamatif"
+    ],
+    "correctAnswer": "3",
+    "explanation": "Kalimat eksklamatif menyatakan seruan/kekaguman.",
+    "kataKunci": [
+      "kalimat",
+      "jenis kalimat"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-KALIMAT-0004",
+    "judul": "Kalimat #4",
+    "tema": "Kalimat",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep Kalimat (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Kalimat adalah...",
+    "options": [
+      "Kalimat",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Kalimat adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "kalimat",
+      "jenis kalimat"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-KALIMAT-0005",
+    "judul": "Kalimat #5",
+    "tema": "Kalimat",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep Kalimat (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "ISIAN_SINGKAT",
+    "text": "Jelaskan pengertian Kalimat menurut pemahaman Anda.",
+    "options": [
+      "kalimat"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Kalimat adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+    "kataKunci": [
+      "kalimat",
+      "jenis kalimat"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-KALIMAT-0006",
+    "judul": "Kalimat #6",
+    "tema": "Kalimat",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep Kalimat (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Kalimat adalah...",
+    "options": [
+      "Kalimat",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Kalimat adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "kalimat",
+      "jenis kalimat"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-KALIMAT-0007",
+    "judul": "Kalimat #7",
+    "tema": "Kalimat",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep Kalimat (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Kalimat adalah...",
+    "options": [
+      "Kalimat",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Kalimat adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "kalimat",
+      "jenis kalimat"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-KALIMAT-0008",
+    "judul": "Kalimat #8",
+    "tema": "Kalimat",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep Kalimat (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Kalimat adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Kalimat memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "kalimat",
+      "jenis kalimat"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-KALIMAT-0009",
+    "judul": "Kalimat #9",
+    "tema": "Kalimat",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep Kalimat (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Kalimat adalah...",
+    "options": [
+      "Kalimat",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Kalimat adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "kalimat",
+      "jenis kalimat"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-KALIMAT-0010",
+    "judul": "Kalimat #10",
+    "tema": "Kalimat",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep Kalimat (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Kalimat adalah...",
+    "options": [
+      "Kalimat",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Kalimat adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "kalimat",
+      "jenis kalimat"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-KALIMAT-0011",
+    "judul": "Kalimat #11",
+    "tema": "Kalimat",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep Kalimat (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Kalimat adalah...",
+    "options": [
+      "Kalimat",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Kalimat adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "kalimat",
+      "jenis kalimat"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-KALIMAT-0012",
+    "judul": "Kalimat #12",
+    "tema": "Kalimat",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep Kalimat (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Kalimat adalah...",
+    "options": [
+      "Kalimat",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Kalimat adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "kalimat",
+      "jenis kalimat"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-KALIMAT-0013",
+    "judul": "Kalimat #13",
+    "tema": "Kalimat",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep Kalimat (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 2,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Kalimat adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Kalimat memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "kalimat",
+      "jenis kalimat"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-KALIMAT-0014",
+    "judul": "Kalimat #14",
+    "tema": "Kalimat",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep Kalimat (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Kalimat adalah...",
+    "options": [
+      "Kalimat",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Kalimat adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "kalimat",
+      "jenis kalimat"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-KALIMAT-0015",
+    "judul": "Kalimat #15",
+    "tema": "Kalimat",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep Kalimat (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 2,
+    "type": "ISIAN_SINGKAT",
+    "text": "Jelaskan pengertian Kalimat menurut pemahaman Anda.",
+    "options": [
+      "kalimat"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Kalimat adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+    "kataKunci": [
+      "kalimat",
+      "jenis kalimat"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-KALIMAT-0016",
+    "judul": "Kalimat #16",
+    "tema": "Kalimat",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep Kalimat (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Kalimat adalah...",
+    "options": [
+      "Kalimat",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Kalimat adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "kalimat",
+      "jenis kalimat"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-KALIMAT-0017",
+    "judul": "Kalimat #17",
+    "tema": "Kalimat",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep Kalimat (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Kalimat adalah...",
+    "options": [
+      "Kalimat",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Kalimat adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "kalimat",
+      "jenis kalimat"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-KALIMAT-0018",
+    "judul": "Kalimat #18",
+    "tema": "Kalimat",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep Kalimat (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Kalimat adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Kalimat memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "kalimat",
+      "jenis kalimat"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-KALIMAT-0019",
+    "judul": "Kalimat #19",
+    "tema": "Kalimat",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep Kalimat (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Kalimat adalah...",
+    "options": [
+      "Kalimat",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Kalimat adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "kalimat",
+      "jenis kalimat"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-KALIMAT-0020",
+    "judul": "Kalimat #20",
+    "tema": "Kalimat",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep Kalimat (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Kalimat adalah...",
+    "options": [
+      "Kalimat",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Kalimat adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "kalimat",
+      "jenis kalimat"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-KALIMAT-0021",
+    "judul": "Kalimat #21",
+    "tema": "Kalimat",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep Kalimat (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Kalimat adalah...",
+    "options": [
+      "Kalimat",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Kalimat adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "kalimat",
+      "jenis kalimat"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-KALIMAT-0022",
+    "judul": "Kalimat #22",
+    "tema": "Kalimat",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep Kalimat (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Kalimat adalah...",
+    "options": [
+      "Kalimat",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Kalimat adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "kalimat",
+      "jenis kalimat"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-KALIMAT-0023",
+    "judul": "Kalimat #23",
+    "tema": "Kalimat",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep Kalimat (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Kalimat adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Kalimat memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "kalimat",
+      "jenis kalimat"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-KALIMAT-0024",
+    "judul": "Kalimat #24",
+    "tema": "Kalimat",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep Kalimat (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Kalimat adalah...",
+    "options": [
+      "Kalimat",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Kalimat adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "kalimat",
+      "jenis kalimat"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-KALIMAT-0025",
+    "judul": "Kalimat #25",
+    "tema": "Kalimat",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep Kalimat (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 4,
+    "type": "ISIAN_SINGKAT",
+    "text": "Jelaskan pengertian Kalimat menurut pemahaman Anda.",
+    "options": [
+      "kalimat"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Kalimat adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+    "kataKunci": [
+      "kalimat",
+      "jenis kalimat"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-KALIMAT-0026",
+    "judul": "Kalimat #26",
+    "tema": "Kalimat",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep Kalimat (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Kalimat adalah...",
+    "options": [
+      "Kalimat",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Kalimat adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "kalimat",
+      "jenis kalimat"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-KALIMAT-0027",
+    "judul": "Kalimat #27",
+    "tema": "Kalimat",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep Kalimat (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Kalimat adalah...",
+    "options": [
+      "Kalimat",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Kalimat adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "kalimat",
+      "jenis kalimat"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-KALIMAT-0028",
+    "judul": "Kalimat #28",
+    "tema": "Kalimat",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep Kalimat (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Kalimat adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Kalimat memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "kalimat",
+      "jenis kalimat"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-KALIMAT-0029",
+    "judul": "Kalimat #29",
+    "tema": "Kalimat",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep Kalimat (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Kalimat adalah...",
+    "options": [
+      "Kalimat",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Kalimat adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "kalimat",
+      "jenis kalimat"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-KALIMAT-0030",
+    "judul": "Kalimat #30",
+    "tema": "Kalimat",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep Kalimat (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Kalimat adalah...",
+    "options": [
+      "Kalimat",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Kalimat adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "kalimat",
+      "jenis kalimat"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  }
+]

@@ -1,0 +1,761 @@
+[
+  {
+    "kodeSoal": "BC-TEKS-DESKRIPSI-0001",
+    "judul": "Teks Deskripsi #1",
+    "tema": "Teks Deskripsi",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep Teks Deskripsi (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Teks Deskripsi adalah...",
+    "options": [
+      "Teks Deskripsi",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Deskripsi adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "teks deskripsi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-DESKRIPSI-0002",
+    "judul": "Teks Deskripsi #2",
+    "tema": "Teks Deskripsi",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep Teks Deskripsi (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Teks Deskripsi adalah...",
+    "options": [
+      "Teks Deskripsi",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Deskripsi adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "teks deskripsi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-DESKRIPSI-0003",
+    "judul": "Teks Deskripsi #3",
+    "tema": "Teks Deskripsi",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep Teks Deskripsi (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Teks Deskripsi adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Deskripsi memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "teks deskripsi"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-DESKRIPSI-0004",
+    "judul": "Teks Deskripsi #4",
+    "tema": "Teks Deskripsi",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep Teks Deskripsi (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Teks Deskripsi adalah...",
+    "options": [
+      "Teks Deskripsi",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Deskripsi adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "teks deskripsi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-DESKRIPSI-0005",
+    "judul": "Teks Deskripsi #5",
+    "tema": "Teks Deskripsi",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep Teks Deskripsi (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "ISIAN_SINGKAT",
+    "text": "Jelaskan pengertian Teks Deskripsi menurut pemahaman Anda.",
+    "options": [
+      "teks deskripsi"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Deskripsi adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+    "kataKunci": [
+      "teks deskripsi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-DESKRIPSI-0006",
+    "judul": "Teks Deskripsi #6",
+    "tema": "Teks Deskripsi",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep Teks Deskripsi (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Teks Deskripsi adalah...",
+    "options": [
+      "Teks Deskripsi",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Deskripsi adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "teks deskripsi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-DESKRIPSI-0007",
+    "judul": "Teks Deskripsi #7",
+    "tema": "Teks Deskripsi",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep Teks Deskripsi (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Teks Deskripsi adalah...",
+    "options": [
+      "Teks Deskripsi",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Deskripsi adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "teks deskripsi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-DESKRIPSI-0008",
+    "judul": "Teks Deskripsi #8",
+    "tema": "Teks Deskripsi",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep Teks Deskripsi (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Teks Deskripsi adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Deskripsi memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "teks deskripsi"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-DESKRIPSI-0009",
+    "judul": "Teks Deskripsi #9",
+    "tema": "Teks Deskripsi",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep Teks Deskripsi (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Teks Deskripsi adalah...",
+    "options": [
+      "Teks Deskripsi",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Deskripsi adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "teks deskripsi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-DESKRIPSI-0010",
+    "judul": "Teks Deskripsi #10",
+    "tema": "Teks Deskripsi",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep Teks Deskripsi (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Teks Deskripsi adalah...",
+    "options": [
+      "Teks Deskripsi",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Deskripsi adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "teks deskripsi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-DESKRIPSI-0011",
+    "judul": "Teks Deskripsi #11",
+    "tema": "Teks Deskripsi",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep Teks Deskripsi (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Teks Deskripsi adalah...",
+    "options": [
+      "Teks Deskripsi",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Deskripsi adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "teks deskripsi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-DESKRIPSI-0012",
+    "judul": "Teks Deskripsi #12",
+    "tema": "Teks Deskripsi",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep Teks Deskripsi (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Teks Deskripsi adalah...",
+    "options": [
+      "Teks Deskripsi",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Deskripsi adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "teks deskripsi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-DESKRIPSI-0013",
+    "judul": "Teks Deskripsi #13",
+    "tema": "Teks Deskripsi",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep Teks Deskripsi (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 2,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Teks Deskripsi adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Deskripsi memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "teks deskripsi"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-DESKRIPSI-0014",
+    "judul": "Teks Deskripsi #14",
+    "tema": "Teks Deskripsi",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep Teks Deskripsi (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Teks Deskripsi adalah...",
+    "options": [
+      "Teks Deskripsi",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Deskripsi adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "teks deskripsi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-DESKRIPSI-0015",
+    "judul": "Teks Deskripsi #15",
+    "tema": "Teks Deskripsi",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep Teks Deskripsi (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 2,
+    "type": "ISIAN_SINGKAT",
+    "text": "Jelaskan pengertian Teks Deskripsi menurut pemahaman Anda.",
+    "options": [
+      "teks deskripsi"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Deskripsi adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+    "kataKunci": [
+      "teks deskripsi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-DESKRIPSI-0016",
+    "judul": "Teks Deskripsi #16",
+    "tema": "Teks Deskripsi",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep Teks Deskripsi (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Teks Deskripsi adalah...",
+    "options": [
+      "Teks Deskripsi",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Deskripsi adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "teks deskripsi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-DESKRIPSI-0017",
+    "judul": "Teks Deskripsi #17",
+    "tema": "Teks Deskripsi",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep Teks Deskripsi (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Teks Deskripsi adalah...",
+    "options": [
+      "Teks Deskripsi",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Deskripsi adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "teks deskripsi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-DESKRIPSI-0018",
+    "judul": "Teks Deskripsi #18",
+    "tema": "Teks Deskripsi",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep Teks Deskripsi (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Teks Deskripsi adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Deskripsi memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "teks deskripsi"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-DESKRIPSI-0019",
+    "judul": "Teks Deskripsi #19",
+    "tema": "Teks Deskripsi",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep Teks Deskripsi (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Teks Deskripsi adalah...",
+    "options": [
+      "Teks Deskripsi",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Deskripsi adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "teks deskripsi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-DESKRIPSI-0020",
+    "judul": "Teks Deskripsi #20",
+    "tema": "Teks Deskripsi",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep Teks Deskripsi (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Teks Deskripsi adalah...",
+    "options": [
+      "Teks Deskripsi",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Deskripsi adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "teks deskripsi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-DESKRIPSI-0021",
+    "judul": "Teks Deskripsi #21",
+    "tema": "Teks Deskripsi",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep Teks Deskripsi (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Teks Deskripsi adalah...",
+    "options": [
+      "Teks Deskripsi",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Deskripsi adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "teks deskripsi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-DESKRIPSI-0022",
+    "judul": "Teks Deskripsi #22",
+    "tema": "Teks Deskripsi",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep Teks Deskripsi (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Teks Deskripsi adalah...",
+    "options": [
+      "Teks Deskripsi",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Deskripsi adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "teks deskripsi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-DESKRIPSI-0023",
+    "judul": "Teks Deskripsi #23",
+    "tema": "Teks Deskripsi",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep Teks Deskripsi (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Teks Deskripsi adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Deskripsi memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "teks deskripsi"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-DESKRIPSI-0024",
+    "judul": "Teks Deskripsi #24",
+    "tema": "Teks Deskripsi",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep Teks Deskripsi (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Teks Deskripsi adalah...",
+    "options": [
+      "Teks Deskripsi",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Deskripsi adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "teks deskripsi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-DESKRIPSI-0025",
+    "judul": "Teks Deskripsi #25",
+    "tema": "Teks Deskripsi",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep Teks Deskripsi (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 4,
+    "type": "ISIAN_SINGKAT",
+    "text": "Jelaskan pengertian Teks Deskripsi menurut pemahaman Anda.",
+    "options": [
+      "teks deskripsi"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Deskripsi adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+    "kataKunci": [
+      "teks deskripsi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-TEKS-DESKRIPSI-0026",
+    "judul": "Teks Deskripsi #26",
+    "tema": "Teks Deskripsi",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep Teks Deskripsi (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Teks Deskripsi adalah...",
+    "options": [
+      "Teks Deskripsi",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Deskripsi adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "teks deskripsi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-TEKS-DESKRIPSI-0027",
+    "judul": "Teks Deskripsi #27",
+    "tema": "Teks Deskripsi",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep Teks Deskripsi (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Teks Deskripsi adalah...",
+    "options": [
+      "Teks Deskripsi",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Deskripsi adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "teks deskripsi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-TEKS-DESKRIPSI-0028",
+    "judul": "Teks Deskripsi #28",
+    "tema": "Teks Deskripsi",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep Teks Deskripsi (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Teks Deskripsi adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Deskripsi memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "teks deskripsi"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-TEKS-DESKRIPSI-0029",
+    "judul": "Teks Deskripsi #29",
+    "tema": "Teks Deskripsi",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep Teks Deskripsi (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Teks Deskripsi adalah...",
+    "options": [
+      "Teks Deskripsi",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Deskripsi adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "teks deskripsi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-TEKS-DESKRIPSI-0030",
+    "judul": "Teks Deskripsi #30",
+    "tema": "Teks Deskripsi",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep Teks Deskripsi (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Teks Deskripsi adalah...",
+    "options": [
+      "Teks Deskripsi",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Deskripsi adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "teks deskripsi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  }
+]

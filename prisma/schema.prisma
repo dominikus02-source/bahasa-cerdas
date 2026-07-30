@@ -592,6 +592,8 @@ model BankSoal {
 
 model Soal {
   id            String    @id @default(cuid())
+  kodeSoal      String?   @unique
+  judul         String?
   text          String
   type          String    @default("PILIHAN_GANDA")
   difficulty    String    @default("MEDIUM")
@@ -600,13 +602,23 @@ model Soal {
   explanation   String?
   isHOTS        Boolean   @default(false)
   kelas         String
+  semester      Int?
   topik         String?
+  kompetensi    String?
+  indikator     String?
+  levelBerpikir Int?
+  kataKunci     String?
+  estimasiWaktu Int?
   KD            String?
   subject       String    @default("Bahasa Indonesia")
   source        String    @default("MANUAL")
   bankSoalId    String?
   soalSetId     String?
   uploaderId    String
+  usedCount     Int       @default(0)
+  correctCount  Int       @default(0)
+  wrongCount    Int       @default(0)
+  totalTimeSpent Int      @default(0)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   bankSoal      BankSoal? @relation(fields: [bankSoalId], references: [id])
@@ -617,6 +629,7 @@ model Soal {
   @@index([kelas])
   @@index([topik])
   @@index([source])
+  @@index([kodeSoal])
   @@index([soalSetId])
 }
 

@@ -1,0 +1,793 @@
+[
+  {
+    "kodeSoal": "BC-SINONIM-0001",
+    "judul": "Sinonim #1",
+    "tema": "Sinonim",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.4",
+    "indikator": "Memahami konsep Sinonim (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Sinonim dari kata 'bahagia' adalah...",
+    "options": [
+      "Sedih",
+      "Senang",
+      "Marah",
+      "Kecewa"
+    ],
+    "correctAnswer": "1",
+    "explanation": "Sinonim adalah persamaan kata. 'Senang' memiliki makna yang sama dengan 'bahagia'.",
+    "kataKunci": [
+      "sinonim",
+      "persamaan kata"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SINONIM-0002",
+    "judul": "Sinonim #2",
+    "tema": "Sinonim",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.4",
+    "indikator": "Memahami konsep Sinonim (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Sinonim dari kata 'cerdas' adalah...",
+    "options": [
+      "Bodoh",
+      "Pintar",
+      "Malas",
+      "Lemah"
+    ],
+    "correctAnswer": "1",
+    "explanation": "'Pintar' adalah sinonim dari 'cerdas'.",
+    "kataKunci": [
+      "sinonim",
+      "persamaan kata"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SINONIM-0003",
+    "judul": "Sinonim #3",
+    "tema": "Sinonim",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.4",
+    "indikator": "Memahami konsep Sinonim (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "BENAR_SALAH",
+    "text": "Sinonim dari kata 'berani' adalah...",
+    "options": [
+      "Takut",
+      "Pengecut",
+      "Berani",
+      "Gagah"
+    ],
+    "correctAnswer": "2",
+    "explanation": "Hati-hati: 'berani' sinonimnya 'berani' juga, atau 'gagah berani'.",
+    "kataKunci": [
+      "sinonim",
+      "persamaan kata"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SINONIM-0004",
+    "judul": "Sinonim #4",
+    "tema": "Sinonim",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.4",
+    "indikator": "Memahami konsep Sinonim (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Sinonim adalah...",
+    "options": [
+      "Sinonim",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Sinonim adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "sinonim",
+      "persamaan kata"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SINONIM-0005",
+    "judul": "Sinonim #5",
+    "tema": "Sinonim",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.4",
+    "indikator": "Memahami konsep Sinonim (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "ISIAN_SINGKAT",
+    "text": "Jelaskan pengertian Sinonim menurut pemahaman Anda.",
+    "options": [
+      "sinonim"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Sinonim adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+    "kataKunci": [
+      "sinonim",
+      "persamaan kata"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SINONIM-0006",
+    "judul": "Sinonim #6",
+    "tema": "Sinonim",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.4",
+    "indikator": "Memahami konsep Sinonim (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Sinonim adalah...",
+    "options": [
+      "Sinonim",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Sinonim adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "sinonim",
+      "persamaan kata"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SINONIM-0007",
+    "judul": "Sinonim #7",
+    "tema": "Sinonim",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.4",
+    "indikator": "Memahami konsep Sinonim (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Sinonim adalah...",
+    "options": [
+      "Sinonim",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Sinonim adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "sinonim",
+      "persamaan kata"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SINONIM-0008",
+    "judul": "Sinonim #8",
+    "tema": "Sinonim",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.4",
+    "indikator": "Memahami konsep Sinonim (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Sinonim adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Sinonim memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "sinonim",
+      "persamaan kata"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SINONIM-0009",
+    "judul": "Sinonim #9",
+    "tema": "Sinonim",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.4",
+    "indikator": "Memahami konsep Sinonim (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Sinonim adalah...",
+    "options": [
+      "Sinonim",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Sinonim adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "sinonim",
+      "persamaan kata"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SINONIM-0010",
+    "judul": "Sinonim #10",
+    "tema": "Sinonim",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.4",
+    "indikator": "Memahami konsep Sinonim (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Sinonim adalah...",
+    "options": [
+      "Sinonim",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Sinonim adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "sinonim",
+      "persamaan kata"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SINONIM-0011",
+    "judul": "Sinonim #11",
+    "tema": "Sinonim",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.4",
+    "indikator": "Memahami konsep Sinonim (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Sinonim adalah...",
+    "options": [
+      "Sinonim",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Sinonim adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "sinonim",
+      "persamaan kata"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SINONIM-0012",
+    "judul": "Sinonim #12",
+    "tema": "Sinonim",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.4",
+    "indikator": "Memahami konsep Sinonim (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Sinonim adalah...",
+    "options": [
+      "Sinonim",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Sinonim adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "sinonim",
+      "persamaan kata"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SINONIM-0013",
+    "judul": "Sinonim #13",
+    "tema": "Sinonim",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.4",
+    "indikator": "Memahami konsep Sinonim (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 2,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Sinonim adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Sinonim memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "sinonim",
+      "persamaan kata"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SINONIM-0014",
+    "judul": "Sinonim #14",
+    "tema": "Sinonim",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.4",
+    "indikator": "Memahami konsep Sinonim (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Sinonim adalah...",
+    "options": [
+      "Sinonim",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Sinonim adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "sinonim",
+      "persamaan kata"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SINONIM-0015",
+    "judul": "Sinonim #15",
+    "tema": "Sinonim",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.4",
+    "indikator": "Memahami konsep Sinonim (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 2,
+    "type": "ISIAN_SINGKAT",
+    "text": "Jelaskan pengertian Sinonim menurut pemahaman Anda.",
+    "options": [
+      "sinonim"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Sinonim adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+    "kataKunci": [
+      "sinonim",
+      "persamaan kata"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SINONIM-0016",
+    "judul": "Sinonim #16",
+    "tema": "Sinonim",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.4",
+    "indikator": "Memahami konsep Sinonim (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Sinonim adalah...",
+    "options": [
+      "Sinonim",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Sinonim adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "sinonim",
+      "persamaan kata"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SINONIM-0017",
+    "judul": "Sinonim #17",
+    "tema": "Sinonim",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.4",
+    "indikator": "Memahami konsep Sinonim (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Sinonim adalah...",
+    "options": [
+      "Sinonim",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Sinonim adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "sinonim",
+      "persamaan kata"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SINONIM-0018",
+    "judul": "Sinonim #18",
+    "tema": "Sinonim",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.4",
+    "indikator": "Memahami konsep Sinonim (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Sinonim adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Sinonim memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "sinonim",
+      "persamaan kata"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SINONIM-0019",
+    "judul": "Sinonim #19",
+    "tema": "Sinonim",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.4",
+    "indikator": "Memahami konsep Sinonim (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Sinonim adalah...",
+    "options": [
+      "Sinonim",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Sinonim adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "sinonim",
+      "persamaan kata"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SINONIM-0020",
+    "judul": "Sinonim #20",
+    "tema": "Sinonim",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.4",
+    "indikator": "Memahami konsep Sinonim (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Sinonim adalah...",
+    "options": [
+      "Sinonim",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Sinonim adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "sinonim",
+      "persamaan kata"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SINONIM-0021",
+    "judul": "Sinonim #21",
+    "tema": "Sinonim",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.4",
+    "indikator": "Memahami konsep Sinonim (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Sinonim adalah...",
+    "options": [
+      "Sinonim",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Sinonim adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "sinonim",
+      "persamaan kata"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SINONIM-0022",
+    "judul": "Sinonim #22",
+    "tema": "Sinonim",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.4",
+    "indikator": "Memahami konsep Sinonim (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Sinonim adalah...",
+    "options": [
+      "Sinonim",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Sinonim adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "sinonim",
+      "persamaan kata"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SINONIM-0023",
+    "judul": "Sinonim #23",
+    "tema": "Sinonim",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.4",
+    "indikator": "Memahami konsep Sinonim (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Sinonim adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Sinonim memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "sinonim",
+      "persamaan kata"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SINONIM-0024",
+    "judul": "Sinonim #24",
+    "tema": "Sinonim",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.4",
+    "indikator": "Memahami konsep Sinonim (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Sinonim adalah...",
+    "options": [
+      "Sinonim",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Sinonim adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "sinonim",
+      "persamaan kata"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SINONIM-0025",
+    "judul": "Sinonim #25",
+    "tema": "Sinonim",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.4",
+    "indikator": "Memahami konsep Sinonim (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 4,
+    "type": "ISIAN_SINGKAT",
+    "text": "Jelaskan pengertian Sinonim menurut pemahaman Anda.",
+    "options": [
+      "sinonim"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Sinonim adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+    "kataKunci": [
+      "sinonim",
+      "persamaan kata"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-SINONIM-0026",
+    "judul": "Sinonim #26",
+    "tema": "Sinonim",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.4",
+    "indikator": "Memahami konsep Sinonim (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Sinonim adalah...",
+    "options": [
+      "Sinonim",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Sinonim adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "sinonim",
+      "persamaan kata"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-SINONIM-0027",
+    "judul": "Sinonim #27",
+    "tema": "Sinonim",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.4",
+    "indikator": "Memahami konsep Sinonim (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Sinonim adalah...",
+    "options": [
+      "Sinonim",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Sinonim adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "sinonim",
+      "persamaan kata"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-SINONIM-0028",
+    "judul": "Sinonim #28",
+    "tema": "Sinonim",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.4",
+    "indikator": "Memahami konsep Sinonim (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Sinonim adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Sinonim memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "sinonim",
+      "persamaan kata"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-SINONIM-0029",
+    "judul": "Sinonim #29",
+    "tema": "Sinonim",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.4",
+    "indikator": "Memahami konsep Sinonim (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Sinonim adalah...",
+    "options": [
+      "Sinonim",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Sinonim adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "sinonim",
+      "persamaan kata"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-SINONIM-0030",
+    "judul": "Sinonim #30",
+    "tema": "Sinonim",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.4",
+    "indikator": "Memahami konsep Sinonim (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Sinonim adalah...",
+    "options": [
+      "Sinonim",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Sinonim adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "sinonim",
+      "persamaan kata"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  }
+]

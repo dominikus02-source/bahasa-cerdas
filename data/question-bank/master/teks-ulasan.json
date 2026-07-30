@@ -1,0 +1,761 @@
+[
+  {
+    "kodeSoal": "BC-TEKS-ULASAN-0001",
+    "judul": "Teks Ulasan #1",
+    "tema": "Teks Ulasan",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.5",
+    "indikator": "Memahami konsep Teks Ulasan (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Teks Ulasan adalah...",
+    "options": [
+      "Teks Ulasan",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Ulasan adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "teks ulasan"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-ULASAN-0002",
+    "judul": "Teks Ulasan #2",
+    "tema": "Teks Ulasan",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.5",
+    "indikator": "Memahami konsep Teks Ulasan (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Teks Ulasan adalah...",
+    "options": [
+      "Teks Ulasan",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Ulasan adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "teks ulasan"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-ULASAN-0003",
+    "judul": "Teks Ulasan #3",
+    "tema": "Teks Ulasan",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.5",
+    "indikator": "Memahami konsep Teks Ulasan (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Teks Ulasan adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Ulasan memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "teks ulasan"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-ULASAN-0004",
+    "judul": "Teks Ulasan #4",
+    "tema": "Teks Ulasan",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.5",
+    "indikator": "Memahami konsep Teks Ulasan (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Teks Ulasan adalah...",
+    "options": [
+      "Teks Ulasan",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Ulasan adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "teks ulasan"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-ULASAN-0005",
+    "judul": "Teks Ulasan #5",
+    "tema": "Teks Ulasan",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.5",
+    "indikator": "Memahami konsep Teks Ulasan (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "ISIAN_SINGKAT",
+    "text": "Jelaskan pengertian Teks Ulasan menurut pemahaman Anda.",
+    "options": [
+      "teks ulasan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Ulasan adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+    "kataKunci": [
+      "teks ulasan"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-ULASAN-0006",
+    "judul": "Teks Ulasan #6",
+    "tema": "Teks Ulasan",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.5",
+    "indikator": "Memahami konsep Teks Ulasan (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Teks Ulasan adalah...",
+    "options": [
+      "Teks Ulasan",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Ulasan adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "teks ulasan"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-ULASAN-0007",
+    "judul": "Teks Ulasan #7",
+    "tema": "Teks Ulasan",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.5",
+    "indikator": "Memahami konsep Teks Ulasan (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Teks Ulasan adalah...",
+    "options": [
+      "Teks Ulasan",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Ulasan adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "teks ulasan"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-ULASAN-0008",
+    "judul": "Teks Ulasan #8",
+    "tema": "Teks Ulasan",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.5",
+    "indikator": "Memahami konsep Teks Ulasan (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Teks Ulasan adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Ulasan memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "teks ulasan"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-ULASAN-0009",
+    "judul": "Teks Ulasan #9",
+    "tema": "Teks Ulasan",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.5",
+    "indikator": "Memahami konsep Teks Ulasan (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Teks Ulasan adalah...",
+    "options": [
+      "Teks Ulasan",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Ulasan adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "teks ulasan"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-ULASAN-0010",
+    "judul": "Teks Ulasan #10",
+    "tema": "Teks Ulasan",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.5",
+    "indikator": "Memahami konsep Teks Ulasan (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Teks Ulasan adalah...",
+    "options": [
+      "Teks Ulasan",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Ulasan adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "teks ulasan"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-ULASAN-0011",
+    "judul": "Teks Ulasan #11",
+    "tema": "Teks Ulasan",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.5",
+    "indikator": "Memahami konsep Teks Ulasan (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Teks Ulasan adalah...",
+    "options": [
+      "Teks Ulasan",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Ulasan adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "teks ulasan"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-ULASAN-0012",
+    "judul": "Teks Ulasan #12",
+    "tema": "Teks Ulasan",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.5",
+    "indikator": "Memahami konsep Teks Ulasan (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Teks Ulasan adalah...",
+    "options": [
+      "Teks Ulasan",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Ulasan adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "teks ulasan"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-ULASAN-0013",
+    "judul": "Teks Ulasan #13",
+    "tema": "Teks Ulasan",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.5",
+    "indikator": "Memahami konsep Teks Ulasan (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 2,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Teks Ulasan adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Ulasan memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "teks ulasan"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-ULASAN-0014",
+    "judul": "Teks Ulasan #14",
+    "tema": "Teks Ulasan",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.5",
+    "indikator": "Memahami konsep Teks Ulasan (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Teks Ulasan adalah...",
+    "options": [
+      "Teks Ulasan",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Ulasan adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "teks ulasan"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-ULASAN-0015",
+    "judul": "Teks Ulasan #15",
+    "tema": "Teks Ulasan",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.5",
+    "indikator": "Memahami konsep Teks Ulasan (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 2,
+    "type": "ISIAN_SINGKAT",
+    "text": "Jelaskan pengertian Teks Ulasan menurut pemahaman Anda.",
+    "options": [
+      "teks ulasan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Ulasan adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+    "kataKunci": [
+      "teks ulasan"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-ULASAN-0016",
+    "judul": "Teks Ulasan #16",
+    "tema": "Teks Ulasan",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.5",
+    "indikator": "Memahami konsep Teks Ulasan (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Teks Ulasan adalah...",
+    "options": [
+      "Teks Ulasan",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Ulasan adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "teks ulasan"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-ULASAN-0017",
+    "judul": "Teks Ulasan #17",
+    "tema": "Teks Ulasan",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.5",
+    "indikator": "Memahami konsep Teks Ulasan (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Teks Ulasan adalah...",
+    "options": [
+      "Teks Ulasan",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Ulasan adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "teks ulasan"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-ULASAN-0018",
+    "judul": "Teks Ulasan #18",
+    "tema": "Teks Ulasan",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.5",
+    "indikator": "Memahami konsep Teks Ulasan (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Teks Ulasan adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Ulasan memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "teks ulasan"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-ULASAN-0019",
+    "judul": "Teks Ulasan #19",
+    "tema": "Teks Ulasan",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.5",
+    "indikator": "Memahami konsep Teks Ulasan (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Teks Ulasan adalah...",
+    "options": [
+      "Teks Ulasan",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Ulasan adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "teks ulasan"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-ULASAN-0020",
+    "judul": "Teks Ulasan #20",
+    "tema": "Teks Ulasan",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.5",
+    "indikator": "Memahami konsep Teks Ulasan (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Teks Ulasan adalah...",
+    "options": [
+      "Teks Ulasan",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Ulasan adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "teks ulasan"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-ULASAN-0021",
+    "judul": "Teks Ulasan #21",
+    "tema": "Teks Ulasan",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.5",
+    "indikator": "Memahami konsep Teks Ulasan (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Teks Ulasan adalah...",
+    "options": [
+      "Teks Ulasan",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Ulasan adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "teks ulasan"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-ULASAN-0022",
+    "judul": "Teks Ulasan #22",
+    "tema": "Teks Ulasan",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.5",
+    "indikator": "Memahami konsep Teks Ulasan (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Teks Ulasan adalah...",
+    "options": [
+      "Teks Ulasan",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Ulasan adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "teks ulasan"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-ULASAN-0023",
+    "judul": "Teks Ulasan #23",
+    "tema": "Teks Ulasan",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.5",
+    "indikator": "Memahami konsep Teks Ulasan (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Teks Ulasan adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Ulasan memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "teks ulasan"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-ULASAN-0024",
+    "judul": "Teks Ulasan #24",
+    "tema": "Teks Ulasan",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.5",
+    "indikator": "Memahami konsep Teks Ulasan (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Teks Ulasan adalah...",
+    "options": [
+      "Teks Ulasan",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Ulasan adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "teks ulasan"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-ULASAN-0025",
+    "judul": "Teks Ulasan #25",
+    "tema": "Teks Ulasan",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.5",
+    "indikator": "Memahami konsep Teks Ulasan (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 4,
+    "type": "ISIAN_SINGKAT",
+    "text": "Jelaskan pengertian Teks Ulasan menurut pemahaman Anda.",
+    "options": [
+      "teks ulasan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Ulasan adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+    "kataKunci": [
+      "teks ulasan"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-TEKS-ULASAN-0026",
+    "judul": "Teks Ulasan #26",
+    "tema": "Teks Ulasan",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.5",
+    "indikator": "Memahami konsep Teks Ulasan (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Teks Ulasan adalah...",
+    "options": [
+      "Teks Ulasan",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Ulasan adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "teks ulasan"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-TEKS-ULASAN-0027",
+    "judul": "Teks Ulasan #27",
+    "tema": "Teks Ulasan",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.5",
+    "indikator": "Memahami konsep Teks Ulasan (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Teks Ulasan adalah...",
+    "options": [
+      "Teks Ulasan",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Ulasan adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "teks ulasan"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-TEKS-ULASAN-0028",
+    "judul": "Teks Ulasan #28",
+    "tema": "Teks Ulasan",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.5",
+    "indikator": "Memahami konsep Teks Ulasan (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Teks Ulasan adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Ulasan memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "teks ulasan"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-TEKS-ULASAN-0029",
+    "judul": "Teks Ulasan #29",
+    "tema": "Teks Ulasan",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.5",
+    "indikator": "Memahami konsep Teks Ulasan (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Teks Ulasan adalah...",
+    "options": [
+      "Teks Ulasan",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Ulasan adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "teks ulasan"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-TEKS-ULASAN-0030",
+    "judul": "Teks Ulasan #30",
+    "tema": "Teks Ulasan",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.5",
+    "indikator": "Memahami konsep Teks Ulasan (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Teks Ulasan adalah...",
+    "options": [
+      "Teks Ulasan",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Ulasan adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "teks ulasan"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  }
+]

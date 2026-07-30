@@ -1,0 +1,761 @@
+[
+  {
+    "kodeSoal": "BC-PROPOSAL-0001",
+    "judul": "Proposal #1",
+    "tema": "Proposal",
+    "kelas": "10",
+    "semester": 1,
+    "kompetensi": "3.7",
+    "indikator": "Memahami konsep Proposal (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Proposal adalah...",
+    "options": [
+      "Proposal",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Proposal adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "proposal"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-PROPOSAL-0002",
+    "judul": "Proposal #2",
+    "tema": "Proposal",
+    "kelas": "10",
+    "semester": 1,
+    "kompetensi": "3.7",
+    "indikator": "Memahami konsep Proposal (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Proposal adalah...",
+    "options": [
+      "Proposal",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Proposal adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "proposal"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-PROPOSAL-0003",
+    "judul": "Proposal #3",
+    "tema": "Proposal",
+    "kelas": "10",
+    "semester": 1,
+    "kompetensi": "3.7",
+    "indikator": "Memahami konsep Proposal (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Proposal adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Proposal memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "proposal"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-PROPOSAL-0004",
+    "judul": "Proposal #4",
+    "tema": "Proposal",
+    "kelas": "10",
+    "semester": 1,
+    "kompetensi": "3.7",
+    "indikator": "Memahami konsep Proposal (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Proposal adalah...",
+    "options": [
+      "Proposal",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Proposal adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "proposal"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-PROPOSAL-0005",
+    "judul": "Proposal #5",
+    "tema": "Proposal",
+    "kelas": "10",
+    "semester": 1,
+    "kompetensi": "3.7",
+    "indikator": "Memahami konsep Proposal (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "ISIAN_SINGKAT",
+    "text": "Jelaskan pengertian Proposal menurut pemahaman Anda.",
+    "options": [
+      "proposal"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Proposal adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+    "kataKunci": [
+      "proposal"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-PROPOSAL-0006",
+    "judul": "Proposal #6",
+    "tema": "Proposal",
+    "kelas": "10",
+    "semester": 1,
+    "kompetensi": "3.7",
+    "indikator": "Memahami konsep Proposal (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Proposal adalah...",
+    "options": [
+      "Proposal",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Proposal adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "proposal"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-PROPOSAL-0007",
+    "judul": "Proposal #7",
+    "tema": "Proposal",
+    "kelas": "10",
+    "semester": 1,
+    "kompetensi": "3.7",
+    "indikator": "Memahami konsep Proposal (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Proposal adalah...",
+    "options": [
+      "Proposal",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Proposal adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "proposal"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-PROPOSAL-0008",
+    "judul": "Proposal #8",
+    "tema": "Proposal",
+    "kelas": "10",
+    "semester": 1,
+    "kompetensi": "3.7",
+    "indikator": "Memahami konsep Proposal (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Proposal adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Proposal memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "proposal"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-PROPOSAL-0009",
+    "judul": "Proposal #9",
+    "tema": "Proposal",
+    "kelas": "10",
+    "semester": 1,
+    "kompetensi": "3.7",
+    "indikator": "Memahami konsep Proposal (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Proposal adalah...",
+    "options": [
+      "Proposal",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Proposal adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "proposal"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-PROPOSAL-0010",
+    "judul": "Proposal #10",
+    "tema": "Proposal",
+    "kelas": "10",
+    "semester": 1,
+    "kompetensi": "3.7",
+    "indikator": "Memahami konsep Proposal (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Proposal adalah...",
+    "options": [
+      "Proposal",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Proposal adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "proposal"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-PROPOSAL-0011",
+    "judul": "Proposal #11",
+    "tema": "Proposal",
+    "kelas": "10",
+    "semester": 1,
+    "kompetensi": "3.7",
+    "indikator": "Memahami konsep Proposal (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Proposal adalah...",
+    "options": [
+      "Proposal",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Proposal adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "proposal"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-PROPOSAL-0012",
+    "judul": "Proposal #12",
+    "tema": "Proposal",
+    "kelas": "10",
+    "semester": 1,
+    "kompetensi": "3.7",
+    "indikator": "Memahami konsep Proposal (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Proposal adalah...",
+    "options": [
+      "Proposal",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Proposal adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "proposal"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-PROPOSAL-0013",
+    "judul": "Proposal #13",
+    "tema": "Proposal",
+    "kelas": "10",
+    "semester": 1,
+    "kompetensi": "3.7",
+    "indikator": "Memahami konsep Proposal (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 2,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Proposal adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Proposal memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "proposal"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-PROPOSAL-0014",
+    "judul": "Proposal #14",
+    "tema": "Proposal",
+    "kelas": "10",
+    "semester": 1,
+    "kompetensi": "3.7",
+    "indikator": "Memahami konsep Proposal (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Proposal adalah...",
+    "options": [
+      "Proposal",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Proposal adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "proposal"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-PROPOSAL-0015",
+    "judul": "Proposal #15",
+    "tema": "Proposal",
+    "kelas": "10",
+    "semester": 1,
+    "kompetensi": "3.7",
+    "indikator": "Memahami konsep Proposal (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 2,
+    "type": "ISIAN_SINGKAT",
+    "text": "Jelaskan pengertian Proposal menurut pemahaman Anda.",
+    "options": [
+      "proposal"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Proposal adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+    "kataKunci": [
+      "proposal"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-PROPOSAL-0016",
+    "judul": "Proposal #16",
+    "tema": "Proposal",
+    "kelas": "10",
+    "semester": 1,
+    "kompetensi": "3.7",
+    "indikator": "Memahami konsep Proposal (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Proposal adalah...",
+    "options": [
+      "Proposal",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Proposal adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "proposal"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-PROPOSAL-0017",
+    "judul": "Proposal #17",
+    "tema": "Proposal",
+    "kelas": "10",
+    "semester": 1,
+    "kompetensi": "3.7",
+    "indikator": "Memahami konsep Proposal (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Proposal adalah...",
+    "options": [
+      "Proposal",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Proposal adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "proposal"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-PROPOSAL-0018",
+    "judul": "Proposal #18",
+    "tema": "Proposal",
+    "kelas": "10",
+    "semester": 1,
+    "kompetensi": "3.7",
+    "indikator": "Memahami konsep Proposal (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Proposal adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Proposal memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "proposal"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-PROPOSAL-0019",
+    "judul": "Proposal #19",
+    "tema": "Proposal",
+    "kelas": "10",
+    "semester": 1,
+    "kompetensi": "3.7",
+    "indikator": "Memahami konsep Proposal (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Proposal adalah...",
+    "options": [
+      "Proposal",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Proposal adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "proposal"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-PROPOSAL-0020",
+    "judul": "Proposal #20",
+    "tema": "Proposal",
+    "kelas": "10",
+    "semester": 1,
+    "kompetensi": "3.7",
+    "indikator": "Memahami konsep Proposal (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Proposal adalah...",
+    "options": [
+      "Proposal",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Proposal adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "proposal"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-PROPOSAL-0021",
+    "judul": "Proposal #21",
+    "tema": "Proposal",
+    "kelas": "10",
+    "semester": 1,
+    "kompetensi": "3.7",
+    "indikator": "Memahami konsep Proposal (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Proposal adalah...",
+    "options": [
+      "Proposal",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Proposal adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "proposal"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-PROPOSAL-0022",
+    "judul": "Proposal #22",
+    "tema": "Proposal",
+    "kelas": "10",
+    "semester": 1,
+    "kompetensi": "3.7",
+    "indikator": "Memahami konsep Proposal (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Proposal adalah...",
+    "options": [
+      "Proposal",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Proposal adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "proposal"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-PROPOSAL-0023",
+    "judul": "Proposal #23",
+    "tema": "Proposal",
+    "kelas": "10",
+    "semester": 1,
+    "kompetensi": "3.7",
+    "indikator": "Memahami konsep Proposal (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Proposal adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Proposal memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "proposal"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-PROPOSAL-0024",
+    "judul": "Proposal #24",
+    "tema": "Proposal",
+    "kelas": "10",
+    "semester": 1,
+    "kompetensi": "3.7",
+    "indikator": "Memahami konsep Proposal (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Proposal adalah...",
+    "options": [
+      "Proposal",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Proposal adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "proposal"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-PROPOSAL-0025",
+    "judul": "Proposal #25",
+    "tema": "Proposal",
+    "kelas": "10",
+    "semester": 1,
+    "kompetensi": "3.7",
+    "indikator": "Memahami konsep Proposal (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 4,
+    "type": "ISIAN_SINGKAT",
+    "text": "Jelaskan pengertian Proposal menurut pemahaman Anda.",
+    "options": [
+      "proposal"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Proposal adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+    "kataKunci": [
+      "proposal"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-PROPOSAL-0026",
+    "judul": "Proposal #26",
+    "tema": "Proposal",
+    "kelas": "10",
+    "semester": 1,
+    "kompetensi": "3.7",
+    "indikator": "Memahami konsep Proposal (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Proposal adalah...",
+    "options": [
+      "Proposal",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Proposal adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "proposal"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-PROPOSAL-0027",
+    "judul": "Proposal #27",
+    "tema": "Proposal",
+    "kelas": "10",
+    "semester": 1,
+    "kompetensi": "3.7",
+    "indikator": "Memahami konsep Proposal (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Proposal adalah...",
+    "options": [
+      "Proposal",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Proposal adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "proposal"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-PROPOSAL-0028",
+    "judul": "Proposal #28",
+    "tema": "Proposal",
+    "kelas": "10",
+    "semester": 1,
+    "kompetensi": "3.7",
+    "indikator": "Memahami konsep Proposal (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Proposal adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Proposal memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "proposal"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-PROPOSAL-0029",
+    "judul": "Proposal #29",
+    "tema": "Proposal",
+    "kelas": "10",
+    "semester": 1,
+    "kompetensi": "3.7",
+    "indikator": "Memahami konsep Proposal (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Proposal adalah...",
+    "options": [
+      "Proposal",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Proposal adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "proposal"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-PROPOSAL-0030",
+    "judul": "Proposal #30",
+    "tema": "Proposal",
+    "kelas": "10",
+    "semester": 1,
+    "kompetensi": "3.7",
+    "indikator": "Memahami konsep Proposal (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Proposal adalah...",
+    "options": [
+      "Proposal",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Proposal adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "proposal"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  }
+]

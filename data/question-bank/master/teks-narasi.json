@@ -1,0 +1,791 @@
+[
+  {
+    "kodeSoal": "BC-TEKS-NARASI-0001",
+    "judul": "Teks Narasi #1",
+    "tema": "Teks Narasi",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep Teks Narasi (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Teks Narasi adalah...",
+    "options": [
+      "Teks Narasi",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Narasi adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "teks narasi",
+      "alur"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-NARASI-0002",
+    "judul": "Teks Narasi #2",
+    "tema": "Teks Narasi",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep Teks Narasi (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Teks Narasi adalah...",
+    "options": [
+      "Teks Narasi",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Narasi adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "teks narasi",
+      "alur"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-NARASI-0003",
+    "judul": "Teks Narasi #3",
+    "tema": "Teks Narasi",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep Teks Narasi (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Teks Narasi adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Narasi memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "teks narasi",
+      "alur"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-NARASI-0004",
+    "judul": "Teks Narasi #4",
+    "tema": "Teks Narasi",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep Teks Narasi (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Teks Narasi adalah...",
+    "options": [
+      "Teks Narasi",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Narasi adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "teks narasi",
+      "alur"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-NARASI-0005",
+    "judul": "Teks Narasi #5",
+    "tema": "Teks Narasi",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep Teks Narasi (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "ISIAN_SINGKAT",
+    "text": "Jelaskan pengertian Teks Narasi menurut pemahaman Anda.",
+    "options": [
+      "teks narasi"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Narasi adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+    "kataKunci": [
+      "teks narasi",
+      "alur"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-NARASI-0006",
+    "judul": "Teks Narasi #6",
+    "tema": "Teks Narasi",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep Teks Narasi (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Teks Narasi adalah...",
+    "options": [
+      "Teks Narasi",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Narasi adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "teks narasi",
+      "alur"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-NARASI-0007",
+    "judul": "Teks Narasi #7",
+    "tema": "Teks Narasi",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep Teks Narasi (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Teks Narasi adalah...",
+    "options": [
+      "Teks Narasi",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Narasi adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "teks narasi",
+      "alur"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-NARASI-0008",
+    "judul": "Teks Narasi #8",
+    "tema": "Teks Narasi",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep Teks Narasi (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Teks Narasi adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Narasi memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "teks narasi",
+      "alur"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-NARASI-0009",
+    "judul": "Teks Narasi #9",
+    "tema": "Teks Narasi",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep Teks Narasi (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Teks Narasi adalah...",
+    "options": [
+      "Teks Narasi",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Narasi adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "teks narasi",
+      "alur"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-NARASI-0010",
+    "judul": "Teks Narasi #10",
+    "tema": "Teks Narasi",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep Teks Narasi (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Teks Narasi adalah...",
+    "options": [
+      "Teks Narasi",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Narasi adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "teks narasi",
+      "alur"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-NARASI-0011",
+    "judul": "Teks Narasi #11",
+    "tema": "Teks Narasi",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep Teks Narasi (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Teks Narasi adalah...",
+    "options": [
+      "Teks Narasi",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Narasi adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "teks narasi",
+      "alur"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-NARASI-0012",
+    "judul": "Teks Narasi #12",
+    "tema": "Teks Narasi",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep Teks Narasi (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Teks Narasi adalah...",
+    "options": [
+      "Teks Narasi",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Narasi adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "teks narasi",
+      "alur"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-NARASI-0013",
+    "judul": "Teks Narasi #13",
+    "tema": "Teks Narasi",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep Teks Narasi (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 2,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Teks Narasi adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Narasi memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "teks narasi",
+      "alur"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-NARASI-0014",
+    "judul": "Teks Narasi #14",
+    "tema": "Teks Narasi",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep Teks Narasi (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Teks Narasi adalah...",
+    "options": [
+      "Teks Narasi",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Narasi adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "teks narasi",
+      "alur"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-NARASI-0015",
+    "judul": "Teks Narasi #15",
+    "tema": "Teks Narasi",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep Teks Narasi (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 2,
+    "type": "ISIAN_SINGKAT",
+    "text": "Jelaskan pengertian Teks Narasi menurut pemahaman Anda.",
+    "options": [
+      "teks narasi"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Narasi adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+    "kataKunci": [
+      "teks narasi",
+      "alur"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-NARASI-0016",
+    "judul": "Teks Narasi #16",
+    "tema": "Teks Narasi",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep Teks Narasi (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Teks Narasi adalah...",
+    "options": [
+      "Teks Narasi",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Narasi adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "teks narasi",
+      "alur"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-NARASI-0017",
+    "judul": "Teks Narasi #17",
+    "tema": "Teks Narasi",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep Teks Narasi (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Teks Narasi adalah...",
+    "options": [
+      "Teks Narasi",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Narasi adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "teks narasi",
+      "alur"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-NARASI-0018",
+    "judul": "Teks Narasi #18",
+    "tema": "Teks Narasi",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep Teks Narasi (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Teks Narasi adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Narasi memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "teks narasi",
+      "alur"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-NARASI-0019",
+    "judul": "Teks Narasi #19",
+    "tema": "Teks Narasi",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep Teks Narasi (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Teks Narasi adalah...",
+    "options": [
+      "Teks Narasi",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Narasi adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "teks narasi",
+      "alur"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-NARASI-0020",
+    "judul": "Teks Narasi #20",
+    "tema": "Teks Narasi",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep Teks Narasi (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Teks Narasi adalah...",
+    "options": [
+      "Teks Narasi",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Narasi adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "teks narasi",
+      "alur"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-NARASI-0021",
+    "judul": "Teks Narasi #21",
+    "tema": "Teks Narasi",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep Teks Narasi (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Teks Narasi adalah...",
+    "options": [
+      "Teks Narasi",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Narasi adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "teks narasi",
+      "alur"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-NARASI-0022",
+    "judul": "Teks Narasi #22",
+    "tema": "Teks Narasi",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep Teks Narasi (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Teks Narasi adalah...",
+    "options": [
+      "Teks Narasi",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Narasi adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "teks narasi",
+      "alur"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-NARASI-0023",
+    "judul": "Teks Narasi #23",
+    "tema": "Teks Narasi",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep Teks Narasi (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Teks Narasi adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Narasi memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "teks narasi",
+      "alur"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-NARASI-0024",
+    "judul": "Teks Narasi #24",
+    "tema": "Teks Narasi",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep Teks Narasi (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Teks Narasi adalah...",
+    "options": [
+      "Teks Narasi",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Narasi adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "teks narasi",
+      "alur"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-NARASI-0025",
+    "judul": "Teks Narasi #25",
+    "tema": "Teks Narasi",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep Teks Narasi (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 4,
+    "type": "ISIAN_SINGKAT",
+    "text": "Jelaskan pengertian Teks Narasi menurut pemahaman Anda.",
+    "options": [
+      "teks narasi"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Narasi adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+    "kataKunci": [
+      "teks narasi",
+      "alur"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-TEKS-NARASI-0026",
+    "judul": "Teks Narasi #26",
+    "tema": "Teks Narasi",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep Teks Narasi (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Teks Narasi adalah...",
+    "options": [
+      "Teks Narasi",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Narasi adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "teks narasi",
+      "alur"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-TEKS-NARASI-0027",
+    "judul": "Teks Narasi #27",
+    "tema": "Teks Narasi",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep Teks Narasi (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Teks Narasi adalah...",
+    "options": [
+      "Teks Narasi",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Narasi adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "teks narasi",
+      "alur"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-TEKS-NARASI-0028",
+    "judul": "Teks Narasi #28",
+    "tema": "Teks Narasi",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep Teks Narasi (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Teks Narasi adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Narasi memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "teks narasi",
+      "alur"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-TEKS-NARASI-0029",
+    "judul": "Teks Narasi #29",
+    "tema": "Teks Narasi",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep Teks Narasi (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Teks Narasi adalah...",
+    "options": [
+      "Teks Narasi",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Narasi adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "teks narasi",
+      "alur"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-TEKS-NARASI-0030",
+    "judul": "Teks Narasi #30",
+    "tema": "Teks Narasi",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep Teks Narasi (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Teks Narasi adalah...",
+    "options": [
+      "Teks Narasi",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Narasi adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "teks narasi",
+      "alur"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  }
+]

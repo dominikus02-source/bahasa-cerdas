@@ -1,0 +1,793 @@
+[
+  {
+    "kodeSoal": "BC-ANTONIM-0001",
+    "judul": "Antonim #1",
+    "tema": "Antonim",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.4",
+    "indikator": "Memahami konsep Antonim (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Antonim dari kata 'panas' adalah...",
+    "options": [
+      "Hangat",
+      "Sejuk",
+      "Dingin",
+      "Segar"
+    ],
+    "correctAnswer": "2",
+    "explanation": "Antonim adalah lawan kata. Lawan dari 'panas' adalah 'dingin'.",
+    "kataKunci": [
+      "antonim",
+      "lawan kata"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-ANTONIM-0002",
+    "judul": "Antonim #2",
+    "tema": "Antonim",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.4",
+    "indikator": "Memahami konsep Antonim (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Antonim dari kata 'tinggi' adalah...",
+    "options": [
+      "Besar",
+      "Rendah",
+      "Panjang",
+      "Lebar"
+    ],
+    "correctAnswer": "1",
+    "explanation": "Lawan dari 'tinggi' adalah 'rendah'.",
+    "kataKunci": [
+      "antonim",
+      "lawan kata"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-ANTONIM-0003",
+    "judul": "Antonim #3",
+    "tema": "Antonim",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.4",
+    "indikator": "Memahami konsep Antonim (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "BENAR_SALAH",
+    "text": "Antonim dari 'maju' adalah...",
+    "options": [
+      "Mundur",
+      "Cepat",
+      "Naik",
+      "Sulit"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Lawan dari 'maju' adalah 'mundur'.",
+    "kataKunci": [
+      "antonim",
+      "lawan kata"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-ANTONIM-0004",
+    "judul": "Antonim #4",
+    "tema": "Antonim",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.4",
+    "indikator": "Memahami konsep Antonim (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Antonim adalah...",
+    "options": [
+      "Antonim",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Antonim adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "antonim",
+      "lawan kata"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-ANTONIM-0005",
+    "judul": "Antonim #5",
+    "tema": "Antonim",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.4",
+    "indikator": "Memahami konsep Antonim (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "ISIAN_SINGKAT",
+    "text": "Jelaskan pengertian Antonim menurut pemahaman Anda.",
+    "options": [
+      "antonim"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Antonim adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+    "kataKunci": [
+      "antonim",
+      "lawan kata"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-ANTONIM-0006",
+    "judul": "Antonim #6",
+    "tema": "Antonim",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.4",
+    "indikator": "Memahami konsep Antonim (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Antonim adalah...",
+    "options": [
+      "Antonim",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Antonim adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "antonim",
+      "lawan kata"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-ANTONIM-0007",
+    "judul": "Antonim #7",
+    "tema": "Antonim",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.4",
+    "indikator": "Memahami konsep Antonim (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Antonim adalah...",
+    "options": [
+      "Antonim",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Antonim adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "antonim",
+      "lawan kata"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-ANTONIM-0008",
+    "judul": "Antonim #8",
+    "tema": "Antonim",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.4",
+    "indikator": "Memahami konsep Antonim (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Antonim adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Antonim memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "antonim",
+      "lawan kata"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-ANTONIM-0009",
+    "judul": "Antonim #9",
+    "tema": "Antonim",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.4",
+    "indikator": "Memahami konsep Antonim (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Antonim adalah...",
+    "options": [
+      "Antonim",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Antonim adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "antonim",
+      "lawan kata"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-ANTONIM-0010",
+    "judul": "Antonim #10",
+    "tema": "Antonim",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.4",
+    "indikator": "Memahami konsep Antonim (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Antonim adalah...",
+    "options": [
+      "Antonim",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Antonim adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "antonim",
+      "lawan kata"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-ANTONIM-0011",
+    "judul": "Antonim #11",
+    "tema": "Antonim",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.4",
+    "indikator": "Memahami konsep Antonim (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Antonim adalah...",
+    "options": [
+      "Antonim",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Antonim adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "antonim",
+      "lawan kata"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-ANTONIM-0012",
+    "judul": "Antonim #12",
+    "tema": "Antonim",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.4",
+    "indikator": "Memahami konsep Antonim (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Antonim adalah...",
+    "options": [
+      "Antonim",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Antonim adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "antonim",
+      "lawan kata"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-ANTONIM-0013",
+    "judul": "Antonim #13",
+    "tema": "Antonim",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.4",
+    "indikator": "Memahami konsep Antonim (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 2,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Antonim adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Antonim memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "antonim",
+      "lawan kata"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-ANTONIM-0014",
+    "judul": "Antonim #14",
+    "tema": "Antonim",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.4",
+    "indikator": "Memahami konsep Antonim (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Antonim adalah...",
+    "options": [
+      "Antonim",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Antonim adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "antonim",
+      "lawan kata"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-ANTONIM-0015",
+    "judul": "Antonim #15",
+    "tema": "Antonim",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.4",
+    "indikator": "Memahami konsep Antonim (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 2,
+    "type": "ISIAN_SINGKAT",
+    "text": "Jelaskan pengertian Antonim menurut pemahaman Anda.",
+    "options": [
+      "antonim"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Antonim adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+    "kataKunci": [
+      "antonim",
+      "lawan kata"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-ANTONIM-0016",
+    "judul": "Antonim #16",
+    "tema": "Antonim",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.4",
+    "indikator": "Memahami konsep Antonim (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Antonim adalah...",
+    "options": [
+      "Antonim",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Antonim adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "antonim",
+      "lawan kata"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-ANTONIM-0017",
+    "judul": "Antonim #17",
+    "tema": "Antonim",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.4",
+    "indikator": "Memahami konsep Antonim (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Antonim adalah...",
+    "options": [
+      "Antonim",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Antonim adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "antonim",
+      "lawan kata"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-ANTONIM-0018",
+    "judul": "Antonim #18",
+    "tema": "Antonim",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.4",
+    "indikator": "Memahami konsep Antonim (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Antonim adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Antonim memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "antonim",
+      "lawan kata"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-ANTONIM-0019",
+    "judul": "Antonim #19",
+    "tema": "Antonim",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.4",
+    "indikator": "Memahami konsep Antonim (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Antonim adalah...",
+    "options": [
+      "Antonim",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Antonim adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "antonim",
+      "lawan kata"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-ANTONIM-0020",
+    "judul": "Antonim #20",
+    "tema": "Antonim",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.4",
+    "indikator": "Memahami konsep Antonim (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Antonim adalah...",
+    "options": [
+      "Antonim",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Antonim adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "antonim",
+      "lawan kata"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-ANTONIM-0021",
+    "judul": "Antonim #21",
+    "tema": "Antonim",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.4",
+    "indikator": "Memahami konsep Antonim (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Antonim adalah...",
+    "options": [
+      "Antonim",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Antonim adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "antonim",
+      "lawan kata"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-ANTONIM-0022",
+    "judul": "Antonim #22",
+    "tema": "Antonim",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.4",
+    "indikator": "Memahami konsep Antonim (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Antonim adalah...",
+    "options": [
+      "Antonim",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Antonim adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "antonim",
+      "lawan kata"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-ANTONIM-0023",
+    "judul": "Antonim #23",
+    "tema": "Antonim",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.4",
+    "indikator": "Memahami konsep Antonim (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Antonim adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Antonim memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "antonim",
+      "lawan kata"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-ANTONIM-0024",
+    "judul": "Antonim #24",
+    "tema": "Antonim",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.4",
+    "indikator": "Memahami konsep Antonim (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Antonim adalah...",
+    "options": [
+      "Antonim",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Antonim adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "antonim",
+      "lawan kata"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-ANTONIM-0025",
+    "judul": "Antonim #25",
+    "tema": "Antonim",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.4",
+    "indikator": "Memahami konsep Antonim (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 4,
+    "type": "ISIAN_SINGKAT",
+    "text": "Jelaskan pengertian Antonim menurut pemahaman Anda.",
+    "options": [
+      "antonim"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Antonim adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+    "kataKunci": [
+      "antonim",
+      "lawan kata"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-ANTONIM-0026",
+    "judul": "Antonim #26",
+    "tema": "Antonim",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.4",
+    "indikator": "Memahami konsep Antonim (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Antonim adalah...",
+    "options": [
+      "Antonim",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Antonim adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "antonim",
+      "lawan kata"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-ANTONIM-0027",
+    "judul": "Antonim #27",
+    "tema": "Antonim",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.4",
+    "indikator": "Memahami konsep Antonim (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Antonim adalah...",
+    "options": [
+      "Antonim",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Antonim adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "antonim",
+      "lawan kata"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-ANTONIM-0028",
+    "judul": "Antonim #28",
+    "tema": "Antonim",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.4",
+    "indikator": "Memahami konsep Antonim (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Antonim adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Antonim memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "antonim",
+      "lawan kata"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-ANTONIM-0029",
+    "judul": "Antonim #29",
+    "tema": "Antonim",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.4",
+    "indikator": "Memahami konsep Antonim (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Antonim adalah...",
+    "options": [
+      "Antonim",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Antonim adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "antonim",
+      "lawan kata"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-ANTONIM-0030",
+    "judul": "Antonim #30",
+    "tema": "Antonim",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.4",
+    "indikator": "Memahami konsep Antonim (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Antonim adalah...",
+    "options": [
+      "Antonim",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Antonim adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "antonim",
+      "lawan kata"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  }
+]

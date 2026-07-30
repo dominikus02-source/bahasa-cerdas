@@ -1,0 +1,791 @@
+[
+  {
+    "kodeSoal": "BC-TEKS-BERITA-0001",
+    "judul": "Teks Berita #1",
+    "tema": "Teks Berita",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.2",
+    "indikator": "Memahami konsep Teks Berita (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Teks Berita adalah...",
+    "options": [
+      "Teks Berita",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Berita adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "teks berita",
+      "5W1H"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-BERITA-0002",
+    "judul": "Teks Berita #2",
+    "tema": "Teks Berita",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.2",
+    "indikator": "Memahami konsep Teks Berita (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Teks Berita adalah...",
+    "options": [
+      "Teks Berita",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Berita adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "teks berita",
+      "5W1H"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-BERITA-0003",
+    "judul": "Teks Berita #3",
+    "tema": "Teks Berita",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.2",
+    "indikator": "Memahami konsep Teks Berita (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Teks Berita adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Berita memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "teks berita",
+      "5W1H"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-BERITA-0004",
+    "judul": "Teks Berita #4",
+    "tema": "Teks Berita",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.2",
+    "indikator": "Memahami konsep Teks Berita (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Teks Berita adalah...",
+    "options": [
+      "Teks Berita",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Berita adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "teks berita",
+      "5W1H"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-BERITA-0005",
+    "judul": "Teks Berita #5",
+    "tema": "Teks Berita",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.2",
+    "indikator": "Memahami konsep Teks Berita (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "ISIAN_SINGKAT",
+    "text": "Jelaskan pengertian Teks Berita menurut pemahaman Anda.",
+    "options": [
+      "teks berita"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Berita adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+    "kataKunci": [
+      "teks berita",
+      "5W1H"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-BERITA-0006",
+    "judul": "Teks Berita #6",
+    "tema": "Teks Berita",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.2",
+    "indikator": "Memahami konsep Teks Berita (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Teks Berita adalah...",
+    "options": [
+      "Teks Berita",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Berita adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "teks berita",
+      "5W1H"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-BERITA-0007",
+    "judul": "Teks Berita #7",
+    "tema": "Teks Berita",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.2",
+    "indikator": "Memahami konsep Teks Berita (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Teks Berita adalah...",
+    "options": [
+      "Teks Berita",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Berita adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "teks berita",
+      "5W1H"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-BERITA-0008",
+    "judul": "Teks Berita #8",
+    "tema": "Teks Berita",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.2",
+    "indikator": "Memahami konsep Teks Berita (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Teks Berita adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Berita memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "teks berita",
+      "5W1H"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-BERITA-0009",
+    "judul": "Teks Berita #9",
+    "tema": "Teks Berita",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.2",
+    "indikator": "Memahami konsep Teks Berita (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Teks Berita adalah...",
+    "options": [
+      "Teks Berita",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Berita adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "teks berita",
+      "5W1H"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-BERITA-0010",
+    "judul": "Teks Berita #10",
+    "tema": "Teks Berita",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.2",
+    "indikator": "Memahami konsep Teks Berita (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Teks Berita adalah...",
+    "options": [
+      "Teks Berita",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Berita adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "teks berita",
+      "5W1H"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-BERITA-0011",
+    "judul": "Teks Berita #11",
+    "tema": "Teks Berita",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.2",
+    "indikator": "Memahami konsep Teks Berita (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Teks Berita adalah...",
+    "options": [
+      "Teks Berita",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Berita adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "teks berita",
+      "5W1H"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-BERITA-0012",
+    "judul": "Teks Berita #12",
+    "tema": "Teks Berita",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.2",
+    "indikator": "Memahami konsep Teks Berita (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Teks Berita adalah...",
+    "options": [
+      "Teks Berita",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Berita adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "teks berita",
+      "5W1H"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-BERITA-0013",
+    "judul": "Teks Berita #13",
+    "tema": "Teks Berita",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.2",
+    "indikator": "Memahami konsep Teks Berita (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 2,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Teks Berita adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Berita memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "teks berita",
+      "5W1H"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-BERITA-0014",
+    "judul": "Teks Berita #14",
+    "tema": "Teks Berita",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.2",
+    "indikator": "Memahami konsep Teks Berita (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Teks Berita adalah...",
+    "options": [
+      "Teks Berita",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Berita adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "teks berita",
+      "5W1H"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-BERITA-0015",
+    "judul": "Teks Berita #15",
+    "tema": "Teks Berita",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.2",
+    "indikator": "Memahami konsep Teks Berita (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 2,
+    "type": "ISIAN_SINGKAT",
+    "text": "Jelaskan pengertian Teks Berita menurut pemahaman Anda.",
+    "options": [
+      "teks berita"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Berita adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+    "kataKunci": [
+      "teks berita",
+      "5W1H"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-BERITA-0016",
+    "judul": "Teks Berita #16",
+    "tema": "Teks Berita",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.2",
+    "indikator": "Memahami konsep Teks Berita (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Teks Berita adalah...",
+    "options": [
+      "Teks Berita",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Berita adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "teks berita",
+      "5W1H"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-BERITA-0017",
+    "judul": "Teks Berita #17",
+    "tema": "Teks Berita",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.2",
+    "indikator": "Memahami konsep Teks Berita (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Teks Berita adalah...",
+    "options": [
+      "Teks Berita",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Berita adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "teks berita",
+      "5W1H"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-BERITA-0018",
+    "judul": "Teks Berita #18",
+    "tema": "Teks Berita",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.2",
+    "indikator": "Memahami konsep Teks Berita (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Teks Berita adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Berita memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "teks berita",
+      "5W1H"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-BERITA-0019",
+    "judul": "Teks Berita #19",
+    "tema": "Teks Berita",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.2",
+    "indikator": "Memahami konsep Teks Berita (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Teks Berita adalah...",
+    "options": [
+      "Teks Berita",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Berita adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "teks berita",
+      "5W1H"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-BERITA-0020",
+    "judul": "Teks Berita #20",
+    "tema": "Teks Berita",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.2",
+    "indikator": "Memahami konsep Teks Berita (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Teks Berita adalah...",
+    "options": [
+      "Teks Berita",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Berita adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "teks berita",
+      "5W1H"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-BERITA-0021",
+    "judul": "Teks Berita #21",
+    "tema": "Teks Berita",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.2",
+    "indikator": "Memahami konsep Teks Berita (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Teks Berita adalah...",
+    "options": [
+      "Teks Berita",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Berita adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "teks berita",
+      "5W1H"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-BERITA-0022",
+    "judul": "Teks Berita #22",
+    "tema": "Teks Berita",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.2",
+    "indikator": "Memahami konsep Teks Berita (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Teks Berita adalah...",
+    "options": [
+      "Teks Berita",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Berita adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "teks berita",
+      "5W1H"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-BERITA-0023",
+    "judul": "Teks Berita #23",
+    "tema": "Teks Berita",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.2",
+    "indikator": "Memahami konsep Teks Berita (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Teks Berita adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Berita memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "teks berita",
+      "5W1H"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-BERITA-0024",
+    "judul": "Teks Berita #24",
+    "tema": "Teks Berita",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.2",
+    "indikator": "Memahami konsep Teks Berita (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Teks Berita adalah...",
+    "options": [
+      "Teks Berita",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Berita adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "teks berita",
+      "5W1H"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-BERITA-0025",
+    "judul": "Teks Berita #25",
+    "tema": "Teks Berita",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.2",
+    "indikator": "Memahami konsep Teks Berita (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 4,
+    "type": "ISIAN_SINGKAT",
+    "text": "Jelaskan pengertian Teks Berita menurut pemahaman Anda.",
+    "options": [
+      "teks berita"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Berita adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+    "kataKunci": [
+      "teks berita",
+      "5W1H"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-TEKS-BERITA-0026",
+    "judul": "Teks Berita #26",
+    "tema": "Teks Berita",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.2",
+    "indikator": "Memahami konsep Teks Berita (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Teks Berita adalah...",
+    "options": [
+      "Teks Berita",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Berita adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "teks berita",
+      "5W1H"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-TEKS-BERITA-0027",
+    "judul": "Teks Berita #27",
+    "tema": "Teks Berita",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.2",
+    "indikator": "Memahami konsep Teks Berita (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Teks Berita adalah...",
+    "options": [
+      "Teks Berita",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Berita adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "teks berita",
+      "5W1H"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-TEKS-BERITA-0028",
+    "judul": "Teks Berita #28",
+    "tema": "Teks Berita",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.2",
+    "indikator": "Memahami konsep Teks Berita (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Teks Berita adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Berita memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "teks berita",
+      "5W1H"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-TEKS-BERITA-0029",
+    "judul": "Teks Berita #29",
+    "tema": "Teks Berita",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.2",
+    "indikator": "Memahami konsep Teks Berita (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Teks Berita adalah...",
+    "options": [
+      "Teks Berita",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Berita adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "teks berita",
+      "5W1H"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-TEKS-BERITA-0030",
+    "judul": "Teks Berita #30",
+    "tema": "Teks Berita",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.2",
+    "indikator": "Memahami konsep Teks Berita (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Teks Berita adalah...",
+    "options": [
+      "Teks Berita",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Berita adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "teks berita",
+      "5W1H"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  }
+]

@@ -13,6 +13,7 @@ interface Props {
 const NAV = [
   { label: "Ringkasan", href: "/admin", icon: LayoutDashboard },
   { label: "Materi Ajar", href: "/admin/materi/generate-ppt", icon: Presentation },
+  { label: "Bank Soal", href: "/admin/bank-soal", icon: FileText },
   { label: "Toko Karya", href: "/admin/karya", icon: ShoppingBag },
   { label: "Video", href: "/admin/video", icon: Film },
   { label: "Artikel", href: "/admin/artikel", icon: FileText },

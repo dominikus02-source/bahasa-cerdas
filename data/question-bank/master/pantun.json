@@ -1,0 +1,821 @@
+[
+  {
+    "kodeSoal": "BC-PANTUN-0001",
+    "judul": "Pantun #1",
+    "tema": "Pantun",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Pantun (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Pantun adalah...",
+    "options": [
+      "Pantun",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Pantun adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "pantun",
+      "sampiran",
+      "isi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-PANTUN-0002",
+    "judul": "Pantun #2",
+    "tema": "Pantun",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Pantun (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Pantun adalah...",
+    "options": [
+      "Pantun",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Pantun adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "pantun",
+      "sampiran",
+      "isi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-PANTUN-0003",
+    "judul": "Pantun #3",
+    "tema": "Pantun",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Pantun (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Pantun adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Pantun memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "pantun",
+      "sampiran",
+      "isi"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-PANTUN-0004",
+    "judul": "Pantun #4",
+    "tema": "Pantun",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Pantun (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Pantun adalah...",
+    "options": [
+      "Pantun",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Pantun adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "pantun",
+      "sampiran",
+      "isi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-PANTUN-0005",
+    "judul": "Pantun #5",
+    "tema": "Pantun",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Pantun (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "ISIAN_SINGKAT",
+    "text": "Jelaskan pengertian Pantun menurut pemahaman Anda.",
+    "options": [
+      "pantun"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Pantun adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+    "kataKunci": [
+      "pantun",
+      "sampiran",
+      "isi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-PANTUN-0006",
+    "judul": "Pantun #6",
+    "tema": "Pantun",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Pantun (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Pantun adalah...",
+    "options": [
+      "Pantun",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Pantun adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "pantun",
+      "sampiran",
+      "isi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-PANTUN-0007",
+    "judul": "Pantun #7",
+    "tema": "Pantun",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Pantun (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Pantun adalah...",
+    "options": [
+      "Pantun",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Pantun adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "pantun",
+      "sampiran",
+      "isi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-PANTUN-0008",
+    "judul": "Pantun #8",
+    "tema": "Pantun",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Pantun (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Pantun adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Pantun memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "pantun",
+      "sampiran",
+      "isi"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-PANTUN-0009",
+    "judul": "Pantun #9",
+    "tema": "Pantun",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Pantun (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Pantun adalah...",
+    "options": [
+      "Pantun",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Pantun adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "pantun",
+      "sampiran",
+      "isi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-PANTUN-0010",
+    "judul": "Pantun #10",
+    "tema": "Pantun",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Pantun (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Pantun adalah...",
+    "options": [
+      "Pantun",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Pantun adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "pantun",
+      "sampiran",
+      "isi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-PANTUN-0011",
+    "judul": "Pantun #11",
+    "tema": "Pantun",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Pantun (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Pantun adalah...",
+    "options": [
+      "Pantun",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Pantun adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "pantun",
+      "sampiran",
+      "isi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-PANTUN-0012",
+    "judul": "Pantun #12",
+    "tema": "Pantun",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Pantun (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Pantun adalah...",
+    "options": [
+      "Pantun",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Pantun adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "pantun",
+      "sampiran",
+      "isi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-PANTUN-0013",
+    "judul": "Pantun #13",
+    "tema": "Pantun",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Pantun (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 2,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Pantun adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Pantun memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "pantun",
+      "sampiran",
+      "isi"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-PANTUN-0014",
+    "judul": "Pantun #14",
+    "tema": "Pantun",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Pantun (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Pantun adalah...",
+    "options": [
+      "Pantun",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Pantun adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "pantun",
+      "sampiran",
+      "isi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-PANTUN-0015",
+    "judul": "Pantun #15",
+    "tema": "Pantun",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Pantun (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 2,
+    "type": "ISIAN_SINGKAT",
+    "text": "Jelaskan pengertian Pantun menurut pemahaman Anda.",
+    "options": [
+      "pantun"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Pantun adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+    "kataKunci": [
+      "pantun",
+      "sampiran",
+      "isi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-PANTUN-0016",
+    "judul": "Pantun #16",
+    "tema": "Pantun",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Pantun (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Pantun adalah...",
+    "options": [
+      "Pantun",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Pantun adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "pantun",
+      "sampiran",
+      "isi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-PANTUN-0017",
+    "judul": "Pantun #17",
+    "tema": "Pantun",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Pantun (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Pantun adalah...",
+    "options": [
+      "Pantun",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Pantun adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "pantun",
+      "sampiran",
+      "isi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-PANTUN-0018",
+    "judul": "Pantun #18",
+    "tema": "Pantun",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Pantun (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Pantun adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Pantun memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "pantun",
+      "sampiran",
+      "isi"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-PANTUN-0019",
+    "judul": "Pantun #19",
+    "tema": "Pantun",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Pantun (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Pantun adalah...",
+    "options": [
+      "Pantun",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Pantun adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "pantun",
+      "sampiran",
+      "isi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-PANTUN-0020",
+    "judul": "Pantun #20",
+    "tema": "Pantun",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Pantun (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Pantun adalah...",
+    "options": [
+      "Pantun",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Pantun adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "pantun",
+      "sampiran",
+      "isi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-PANTUN-0021",
+    "judul": "Pantun #21",
+    "tema": "Pantun",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Pantun (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Pantun adalah...",
+    "options": [
+      "Pantun",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Pantun adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "pantun",
+      "sampiran",
+      "isi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-PANTUN-0022",
+    "judul": "Pantun #22",
+    "tema": "Pantun",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Pantun (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Pantun adalah...",
+    "options": [
+      "Pantun",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Pantun adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "pantun",
+      "sampiran",
+      "isi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-PANTUN-0023",
+    "judul": "Pantun #23",
+    "tema": "Pantun",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Pantun (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Pantun adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Pantun memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "pantun",
+      "sampiran",
+      "isi"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-PANTUN-0024",
+    "judul": "Pantun #24",
+    "tema": "Pantun",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Pantun (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Pantun adalah...",
+    "options": [
+      "Pantun",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Pantun adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "pantun",
+      "sampiran",
+      "isi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-PANTUN-0025",
+    "judul": "Pantun #25",
+    "tema": "Pantun",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Pantun (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 4,
+    "type": "ISIAN_SINGKAT",
+    "text": "Jelaskan pengertian Pantun menurut pemahaman Anda.",
+    "options": [
+      "pantun"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Pantun adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+    "kataKunci": [
+      "pantun",
+      "sampiran",
+      "isi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-PANTUN-0026",
+    "judul": "Pantun #26",
+    "tema": "Pantun",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Pantun (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Pantun adalah...",
+    "options": [
+      "Pantun",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Pantun adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "pantun",
+      "sampiran",
+      "isi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-PANTUN-0027",
+    "judul": "Pantun #27",
+    "tema": "Pantun",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Pantun (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Pantun adalah...",
+    "options": [
+      "Pantun",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Pantun adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "pantun",
+      "sampiran",
+      "isi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-PANTUN-0028",
+    "judul": "Pantun #28",
+    "tema": "Pantun",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Pantun (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Pantun adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Pantun memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "pantun",
+      "sampiran",
+      "isi"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-PANTUN-0029",
+    "judul": "Pantun #29",
+    "tema": "Pantun",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Pantun (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Pantun adalah...",
+    "options": [
+      "Pantun",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Pantun adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "pantun",
+      "sampiran",
+      "isi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-PANTUN-0030",
+    "judul": "Pantun #30",
+    "tema": "Pantun",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Pantun (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Pantun adalah...",
+    "options": [
+      "Pantun",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Pantun adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "pantun",
+      "sampiran",
+      "isi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  }
+]

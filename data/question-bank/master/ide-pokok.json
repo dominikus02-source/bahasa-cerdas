@@ -1,0 +1,791 @@
+[
+  {
+    "kodeSoal": "BC-IDE-POKOK-0001",
+    "judul": "Ide Pokok #1",
+    "tema": "Ide Pokok",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Ide Pokok (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Ide Pokok adalah...",
+    "options": [
+      "Ide Pokok",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Ide Pokok adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "ide pokok",
+      "gagasan utama"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-IDE-POKOK-0002",
+    "judul": "Ide Pokok #2",
+    "tema": "Ide Pokok",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Ide Pokok (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Ide Pokok adalah...",
+    "options": [
+      "Ide Pokok",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Ide Pokok adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "ide pokok",
+      "gagasan utama"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-IDE-POKOK-0003",
+    "judul": "Ide Pokok #3",
+    "tema": "Ide Pokok",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Ide Pokok (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Ide Pokok adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Ide Pokok memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "ide pokok",
+      "gagasan utama"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-IDE-POKOK-0004",
+    "judul": "Ide Pokok #4",
+    "tema": "Ide Pokok",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Ide Pokok (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Ide Pokok adalah...",
+    "options": [
+      "Ide Pokok",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Ide Pokok adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "ide pokok",
+      "gagasan utama"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-IDE-POKOK-0005",
+    "judul": "Ide Pokok #5",
+    "tema": "Ide Pokok",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Ide Pokok (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "ISIAN_SINGKAT",
+    "text": "Jelaskan pengertian Ide Pokok menurut pemahaman Anda.",
+    "options": [
+      "ide pokok"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Ide Pokok adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+    "kataKunci": [
+      "ide pokok",
+      "gagasan utama"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-IDE-POKOK-0006",
+    "judul": "Ide Pokok #6",
+    "tema": "Ide Pokok",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Ide Pokok (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Ide Pokok adalah...",
+    "options": [
+      "Ide Pokok",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Ide Pokok adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "ide pokok",
+      "gagasan utama"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-IDE-POKOK-0007",
+    "judul": "Ide Pokok #7",
+    "tema": "Ide Pokok",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Ide Pokok (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Ide Pokok adalah...",
+    "options": [
+      "Ide Pokok",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Ide Pokok adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "ide pokok",
+      "gagasan utama"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-IDE-POKOK-0008",
+    "judul": "Ide Pokok #8",
+    "tema": "Ide Pokok",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Ide Pokok (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Ide Pokok adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Ide Pokok memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "ide pokok",
+      "gagasan utama"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-IDE-POKOK-0009",
+    "judul": "Ide Pokok #9",
+    "tema": "Ide Pokok",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Ide Pokok (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Ide Pokok adalah...",
+    "options": [
+      "Ide Pokok",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Ide Pokok adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "ide pokok",
+      "gagasan utama"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-IDE-POKOK-0010",
+    "judul": "Ide Pokok #10",
+    "tema": "Ide Pokok",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Ide Pokok (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Ide Pokok adalah...",
+    "options": [
+      "Ide Pokok",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Ide Pokok adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "ide pokok",
+      "gagasan utama"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-IDE-POKOK-0011",
+    "judul": "Ide Pokok #11",
+    "tema": "Ide Pokok",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Ide Pokok (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Ide Pokok adalah...",
+    "options": [
+      "Ide Pokok",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Ide Pokok adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "ide pokok",
+      "gagasan utama"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-IDE-POKOK-0012",
+    "judul": "Ide Pokok #12",
+    "tema": "Ide Pokok",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Ide Pokok (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Ide Pokok adalah...",
+    "options": [
+      "Ide Pokok",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Ide Pokok adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "ide pokok",
+      "gagasan utama"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-IDE-POKOK-0013",
+    "judul": "Ide Pokok #13",
+    "tema": "Ide Pokok",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Ide Pokok (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 2,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Ide Pokok adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Ide Pokok memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "ide pokok",
+      "gagasan utama"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-IDE-POKOK-0014",
+    "judul": "Ide Pokok #14",
+    "tema": "Ide Pokok",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Ide Pokok (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Ide Pokok adalah...",
+    "options": [
+      "Ide Pokok",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Ide Pokok adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "ide pokok",
+      "gagasan utama"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-IDE-POKOK-0015",
+    "judul": "Ide Pokok #15",
+    "tema": "Ide Pokok",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Ide Pokok (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 2,
+    "type": "ISIAN_SINGKAT",
+    "text": "Jelaskan pengertian Ide Pokok menurut pemahaman Anda.",
+    "options": [
+      "ide pokok"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Ide Pokok adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+    "kataKunci": [
+      "ide pokok",
+      "gagasan utama"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-IDE-POKOK-0016",
+    "judul": "Ide Pokok #16",
+    "tema": "Ide Pokok",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Ide Pokok (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Ide Pokok adalah...",
+    "options": [
+      "Ide Pokok",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Ide Pokok adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "ide pokok",
+      "gagasan utama"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-IDE-POKOK-0017",
+    "judul": "Ide Pokok #17",
+    "tema": "Ide Pokok",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Ide Pokok (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Ide Pokok adalah...",
+    "options": [
+      "Ide Pokok",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Ide Pokok adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "ide pokok",
+      "gagasan utama"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-IDE-POKOK-0018",
+    "judul": "Ide Pokok #18",
+    "tema": "Ide Pokok",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Ide Pokok (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Ide Pokok adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Ide Pokok memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "ide pokok",
+      "gagasan utama"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-IDE-POKOK-0019",
+    "judul": "Ide Pokok #19",
+    "tema": "Ide Pokok",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Ide Pokok (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Ide Pokok adalah...",
+    "options": [
+      "Ide Pokok",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Ide Pokok adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "ide pokok",
+      "gagasan utama"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-IDE-POKOK-0020",
+    "judul": "Ide Pokok #20",
+    "tema": "Ide Pokok",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Ide Pokok (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Ide Pokok adalah...",
+    "options": [
+      "Ide Pokok",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Ide Pokok adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "ide pokok",
+      "gagasan utama"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-IDE-POKOK-0021",
+    "judul": "Ide Pokok #21",
+    "tema": "Ide Pokok",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Ide Pokok (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Ide Pokok adalah...",
+    "options": [
+      "Ide Pokok",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Ide Pokok adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "ide pokok",
+      "gagasan utama"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-IDE-POKOK-0022",
+    "judul": "Ide Pokok #22",
+    "tema": "Ide Pokok",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Ide Pokok (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Ide Pokok adalah...",
+    "options": [
+      "Ide Pokok",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Ide Pokok adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "ide pokok",
+      "gagasan utama"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-IDE-POKOK-0023",
+    "judul": "Ide Pokok #23",
+    "tema": "Ide Pokok",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Ide Pokok (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Ide Pokok adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Ide Pokok memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "ide pokok",
+      "gagasan utama"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-IDE-POKOK-0024",
+    "judul": "Ide Pokok #24",
+    "tema": "Ide Pokok",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Ide Pokok (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Ide Pokok adalah...",
+    "options": [
+      "Ide Pokok",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Ide Pokok adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "ide pokok",
+      "gagasan utama"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-IDE-POKOK-0025",
+    "judul": "Ide Pokok #25",
+    "tema": "Ide Pokok",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Ide Pokok (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 4,
+    "type": "ISIAN_SINGKAT",
+    "text": "Jelaskan pengertian Ide Pokok menurut pemahaman Anda.",
+    "options": [
+      "ide pokok"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Ide Pokok adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+    "kataKunci": [
+      "ide pokok",
+      "gagasan utama"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-IDE-POKOK-0026",
+    "judul": "Ide Pokok #26",
+    "tema": "Ide Pokok",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Ide Pokok (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Ide Pokok adalah...",
+    "options": [
+      "Ide Pokok",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Ide Pokok adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "ide pokok",
+      "gagasan utama"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-IDE-POKOK-0027",
+    "judul": "Ide Pokok #27",
+    "tema": "Ide Pokok",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Ide Pokok (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Ide Pokok adalah...",
+    "options": [
+      "Ide Pokok",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Ide Pokok adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "ide pokok",
+      "gagasan utama"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-IDE-POKOK-0028",
+    "judul": "Ide Pokok #28",
+    "tema": "Ide Pokok",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Ide Pokok (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Ide Pokok adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Ide Pokok memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "ide pokok",
+      "gagasan utama"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-IDE-POKOK-0029",
+    "judul": "Ide Pokok #29",
+    "tema": "Ide Pokok",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Ide Pokok (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Ide Pokok adalah...",
+    "options": [
+      "Ide Pokok",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Ide Pokok adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "ide pokok",
+      "gagasan utama"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-IDE-POKOK-0030",
+    "judul": "Ide Pokok #30",
+    "tema": "Ide Pokok",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Ide Pokok (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Ide Pokok adalah...",
+    "options": [
+      "Ide Pokok",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Ide Pokok adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "ide pokok",
+      "gagasan utama"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  }
+]

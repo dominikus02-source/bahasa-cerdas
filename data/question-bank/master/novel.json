@@ -1,0 +1,791 @@
+[
+  {
+    "kodeSoal": "BC-NOVEL-0001",
+    "judul": "Novel #1",
+    "tema": "Novel",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Novel (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Novel adalah...",
+    "options": [
+      "Novel",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Novel adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "novel",
+      "penokohan"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-NOVEL-0002",
+    "judul": "Novel #2",
+    "tema": "Novel",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Novel (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Novel adalah...",
+    "options": [
+      "Novel",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Novel adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "novel",
+      "penokohan"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-NOVEL-0003",
+    "judul": "Novel #3",
+    "tema": "Novel",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Novel (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Novel adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Novel memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "novel",
+      "penokohan"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-NOVEL-0004",
+    "judul": "Novel #4",
+    "tema": "Novel",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Novel (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Novel adalah...",
+    "options": [
+      "Novel",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Novel adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "novel",
+      "penokohan"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-NOVEL-0005",
+    "judul": "Novel #5",
+    "tema": "Novel",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Novel (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "ISIAN_SINGKAT",
+    "text": "Jelaskan pengertian Novel menurut pemahaman Anda.",
+    "options": [
+      "novel"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Novel adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+    "kataKunci": [
+      "novel",
+      "penokohan"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-NOVEL-0006",
+    "judul": "Novel #6",
+    "tema": "Novel",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Novel (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Novel adalah...",
+    "options": [
+      "Novel",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Novel adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "novel",
+      "penokohan"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-NOVEL-0007",
+    "judul": "Novel #7",
+    "tema": "Novel",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Novel (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Novel adalah...",
+    "options": [
+      "Novel",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Novel adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "novel",
+      "penokohan"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-NOVEL-0008",
+    "judul": "Novel #8",
+    "tema": "Novel",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Novel (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Novel adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Novel memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "novel",
+      "penokohan"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-NOVEL-0009",
+    "judul": "Novel #9",
+    "tema": "Novel",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Novel (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Novel adalah...",
+    "options": [
+      "Novel",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Novel adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "novel",
+      "penokohan"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-NOVEL-0010",
+    "judul": "Novel #10",
+    "tema": "Novel",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Novel (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Novel adalah...",
+    "options": [
+      "Novel",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Novel adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "novel",
+      "penokohan"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-NOVEL-0011",
+    "judul": "Novel #11",
+    "tema": "Novel",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Novel (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Novel adalah...",
+    "options": [
+      "Novel",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Novel adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "novel",
+      "penokohan"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-NOVEL-0012",
+    "judul": "Novel #12",
+    "tema": "Novel",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Novel (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Novel adalah...",
+    "options": [
+      "Novel",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Novel adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "novel",
+      "penokohan"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-NOVEL-0013",
+    "judul": "Novel #13",
+    "tema": "Novel",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Novel (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 2,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Novel adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Novel memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "novel",
+      "penokohan"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-NOVEL-0014",
+    "judul": "Novel #14",
+    "tema": "Novel",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Novel (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Novel adalah...",
+    "options": [
+      "Novel",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Novel adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "novel",
+      "penokohan"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-NOVEL-0015",
+    "judul": "Novel #15",
+    "tema": "Novel",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Novel (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 2,
+    "type": "ISIAN_SINGKAT",
+    "text": "Jelaskan pengertian Novel menurut pemahaman Anda.",
+    "options": [
+      "novel"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Novel adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+    "kataKunci": [
+      "novel",
+      "penokohan"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-NOVEL-0016",
+    "judul": "Novel #16",
+    "tema": "Novel",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Novel (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Novel adalah...",
+    "options": [
+      "Novel",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Novel adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "novel",
+      "penokohan"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-NOVEL-0017",
+    "judul": "Novel #17",
+    "tema": "Novel",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Novel (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Novel adalah...",
+    "options": [
+      "Novel",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Novel adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "novel",
+      "penokohan"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-NOVEL-0018",
+    "judul": "Novel #18",
+    "tema": "Novel",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Novel (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Novel adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Novel memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "novel",
+      "penokohan"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-NOVEL-0019",
+    "judul": "Novel #19",
+    "tema": "Novel",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Novel (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Novel adalah...",
+    "options": [
+      "Novel",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Novel adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "novel",
+      "penokohan"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-NOVEL-0020",
+    "judul": "Novel #20",
+    "tema": "Novel",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Novel (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Novel adalah...",
+    "options": [
+      "Novel",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Novel adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "novel",
+      "penokohan"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-NOVEL-0021",
+    "judul": "Novel #21",
+    "tema": "Novel",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Novel (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Novel adalah...",
+    "options": [
+      "Novel",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Novel adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "novel",
+      "penokohan"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-NOVEL-0022",
+    "judul": "Novel #22",
+    "tema": "Novel",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Novel (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Novel adalah...",
+    "options": [
+      "Novel",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Novel adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "novel",
+      "penokohan"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-NOVEL-0023",
+    "judul": "Novel #23",
+    "tema": "Novel",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Novel (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Novel adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Novel memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "novel",
+      "penokohan"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-NOVEL-0024",
+    "judul": "Novel #24",
+    "tema": "Novel",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Novel (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Novel adalah...",
+    "options": [
+      "Novel",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Novel adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "novel",
+      "penokohan"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-NOVEL-0025",
+    "judul": "Novel #25",
+    "tema": "Novel",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Novel (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 4,
+    "type": "ISIAN_SINGKAT",
+    "text": "Jelaskan pengertian Novel menurut pemahaman Anda.",
+    "options": [
+      "novel"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Novel adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+    "kataKunci": [
+      "novel",
+      "penokohan"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-NOVEL-0026",
+    "judul": "Novel #26",
+    "tema": "Novel",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Novel (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Novel adalah...",
+    "options": [
+      "Novel",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Novel adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "novel",
+      "penokohan"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-NOVEL-0027",
+    "judul": "Novel #27",
+    "tema": "Novel",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Novel (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Novel adalah...",
+    "options": [
+      "Novel",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Novel adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "novel",
+      "penokohan"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-NOVEL-0028",
+    "judul": "Novel #28",
+    "tema": "Novel",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Novel (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Novel adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Novel memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "novel",
+      "penokohan"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-NOVEL-0029",
+    "judul": "Novel #29",
+    "tema": "Novel",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Novel (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Novel adalah...",
+    "options": [
+      "Novel",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Novel adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "novel",
+      "penokohan"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-NOVEL-0030",
+    "judul": "Novel #30",
+    "tema": "Novel",
+    "kelas": "9",
+    "semester": 2,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Novel (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Novel adalah...",
+    "options": [
+      "Novel",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Novel adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "novel",
+      "penokohan"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  }
+]

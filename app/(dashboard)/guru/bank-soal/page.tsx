@@ -76,6 +76,7 @@ export default function BankSoalPage() {
   const [showWizard, setShowWizard] = useState(false);
   const [wizardStep, setWizardStep] = useState(1);
   const [wizardForm, setWizardForm] = useState({
+    sumber: "AI" as "AI" | "BANK",
     tema: "",
     kelas: "",
     jumlah: 10,
@@ -92,6 +93,7 @@ export default function BankSoalPage() {
   const [selectedGroups, setSelectedGroups] = useState<string[]>([]);
   const [assignDue, setAssignDue] = useState("");
   const [assignLoading, setAssignLoading] = useState(false);
+  const [assignSuccess, setAssignSuccess] = useState<string | null>(null);
 
   // Delete confirm
   const [showDelete, setShowDelete] = useState<string | null>(null);
@@ -149,20 +151,60 @@ export default function BankSoalPage() {
     setCreateLoading(true);
     setError("");
     try {
-      const res = await fetch("/api/guru/latihan", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(wizardForm),
-      });
-      const data = await res.json();
-      if (data.success) {
-        setGeneratedSoal(data.soal || []);
-        setGeneratedQuiz(data.quiz);
-        setWizardStep(4);
-      } else if (data.error === "QUOTA_EXCEEDED") {
-        setError(`Batas harian AI terpakai: ${data.used}/${data.limit}. Upgrade untuk limit lebih besar.`);
+      if (wizardForm.sumber === "BANK") {
+        const res = await fetch("/api/guru/latihan/pick", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            tema: wizardForm.tema,
+            kelas: wizardForm.kelas,
+            jumlah: wizardForm.jumlah,
+            difficulty: wizardForm.difficulty,
+          }),
+        });
+        const data = await res.json();
+        if (data.success) {
+          // Save picked soal as a Quiz (reuse existing POST /api/guru/latihan)
+          const saveRes = await fetch("/api/guru/latihan", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              tema: wizardForm.tema,
+              kelas: wizardForm.kelas,
+              jumlah: data.soals.length,
+              difficulty: wizardForm.difficulty,
+              judul: wizardForm.judul || `Latihan: ${wizardForm.tema} (Bank Soal)`,
+              _skipAI: true,
+              _pickedSoals: data.soals,
+            }),
+          });
+          const saveData = await saveRes.json();
+          if (saveData.success) {
+            setGeneratedSoal(saveData.soal || []);
+            setGeneratedQuiz(saveData.quiz);
+            setWizardStep(4);
+          } else {
+            setError(saveData.error || "Gagal menyimpan soal");
+          }
+        } else {
+          setError(data.error || "Gagal mengambil soal dari bank");
+        }
       } else {
-        setError(data.error || "Gagal generate soal");
+        const res = await fetch("/api/guru/latihan", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(wizardForm),
+        });
+        const data = await res.json();
+        if (data.success) {
+          setGeneratedSoal(data.soal || []);
+          setGeneratedQuiz(data.quiz);
+          setWizardStep(4);
+        } else if (data.error === "QUOTA_EXCEEDED") {
+          setError(`Batas harian AI terpakai: ${data.used}/${data.limit}. Upgrade untuk limit lebih besar.`);
+        } else {
+          setError(data.error || "Gagal generate soal");
+        }
       }
     } catch {
       setError("Gagal menghubungi server");
@@ -174,7 +216,7 @@ export default function BankSoalPage() {
   const resetWizard = () => {
     setShowWizard(false);
     setWizardStep(1);
-    setWizardForm({ tema: "", kelas: "", jumlah: 10, difficulty: "MEDIUM", judul: "" });
+    setWizardForm({ sumber: "AI", tema: "", kelas: "", jumlah: 10, difficulty: "MEDIUM", judul: "" });
     setGeneratedSoal([]);
     setGeneratedQuiz(null);
     setError("");
@@ -206,10 +248,20 @@ export default function BankSoalPage() {
         }),
       });
       if (res.ok) {
+        const data = await res.json();
         setShowAssign(false);
+        setAssignSuccess(`✅ Latihan berhasil dikirim ke ${data.groupCount || selectedGroups.length} kelas`);
+        setTimeout(() => setAssignSuccess(null), 4000);
         fetchLatihans();
+      } else {
+        const data = await res.json();
+        setAssignSuccess(`❌ ${data.error || "Gagal mengirim latihan"}`);
+        setTimeout(() => setAssignSuccess(null), 4000);
       }
-    } catch {}
+    } catch {
+      setAssignSuccess("❌ Gagal menghubungi server");
+      setTimeout(() => setAssignSuccess(null), 4000);
+    }
     setAssignLoading(false);
   };
 
@@ -271,6 +323,14 @@ export default function BankSoalPage() {
 
   return (
     <div className="space-y-6">
+      {/* Success toast */}
+      {assignSuccess && (
+        <div className={`fixed top-4 right-4 z-50 px-4 py-3 rounded-xl shadow-lg text-sm font-medium transition-all duration-300 ${
+          assignSuccess.includes("✅") ? "bg-emerald-50 text-emerald-800 border border-emerald-200" : "bg-red-50 text-red-800 border border-red-200"
+        }`}>
+          {assignSuccess}
+        </div>
+      )}
       {/* Header */}
       <div className="flex items-start justify-between">
         <div>
@@ -603,6 +663,36 @@ export default function BankSoalPage() {
           <div>
             <h3 className="font-semibold text-gray-900 mb-1">Konfigurasi Latihan</h3>
             <p className="text-sm text-gray-500 mb-4">Atur kelas, jumlah soal, dan tingkat kesulitan</p>
+            {/* Source picker */}
+            <div className="mb-4 p-3 rounded-xl bg-gray-50 border border-gray-200">
+              <label className="block text-sm font-medium mb-2">Sumber Soal</label>
+              <div className="flex gap-2">
+                {[
+                  { value: "BANK" as const, label: "Bank Soal BahasaCerdas", desc: "Ambil dari bank soal yang sudah tersedia" },
+                  { value: "AI" as const, label: "AI Generate Baru", desc: "Buat soal baru dengan kecerdasan buatan" },
+                ].map(s => (
+                  <button
+                    key={s.value}
+                    onClick={() => setWizardForm(f => ({ ...f, sumber: s.value }))}
+                    className={`flex-1 p-3 rounded-xl border-2 text-left transition-all ${
+                      wizardForm.sumber === s.value
+                        ? "border-emerald-500 bg-emerald-50"
+                        : "border-gray-200 bg-white hover:border-gray-300"
+                    }`}
+                  >
+                    <div className="flex items-center gap-2">
+                      <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
+                        wizardForm.sumber === s.value ? "border-emerald-500" : "border-gray-300"
+                      }`}>
+                        {wizardForm.sumber === s.value && <div className="w-2 h-2 rounded-full bg-emerald-500" />}
+                      </div>
+                      <span className="text-sm font-medium text-gray-900">{s.label}</span>
+                    </div>
+                    <p className="text-xs text-gray-400 mt-1 ml-6">{s.desc}</p>
+                  </button>
+                ))}
+              </div>
+            </div>
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>

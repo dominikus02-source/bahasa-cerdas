@@ -1,0 +1,761 @@
+[
+  {
+    "kodeSoal": "BC-SYAIR-0001",
+    "judul": "Syair #1",
+    "tema": "Syair",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Syair (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Syair adalah...",
+    "options": [
+      "Syair",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Syair adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "syair"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SYAIR-0002",
+    "judul": "Syair #2",
+    "tema": "Syair",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Syair (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Syair adalah...",
+    "options": [
+      "Syair",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Syair adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "syair"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SYAIR-0003",
+    "judul": "Syair #3",
+    "tema": "Syair",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Syair (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Syair adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Syair memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "syair"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SYAIR-0004",
+    "judul": "Syair #4",
+    "tema": "Syair",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Syair (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Syair adalah...",
+    "options": [
+      "Syair",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Syair adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "syair"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SYAIR-0005",
+    "judul": "Syair #5",
+    "tema": "Syair",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Syair (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "ISIAN_SINGKAT",
+    "text": "Jelaskan pengertian Syair menurut pemahaman Anda.",
+    "options": [
+      "syair"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Syair adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+    "kataKunci": [
+      "syair"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SYAIR-0006",
+    "judul": "Syair #6",
+    "tema": "Syair",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Syair (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Syair adalah...",
+    "options": [
+      "Syair",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Syair adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "syair"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SYAIR-0007",
+    "judul": "Syair #7",
+    "tema": "Syair",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Syair (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Syair adalah...",
+    "options": [
+      "Syair",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Syair adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "syair"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SYAIR-0008",
+    "judul": "Syair #8",
+    "tema": "Syair",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Syair (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Syair adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Syair memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "syair"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SYAIR-0009",
+    "judul": "Syair #9",
+    "tema": "Syair",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Syair (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Syair adalah...",
+    "options": [
+      "Syair",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Syair adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "syair"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SYAIR-0010",
+    "judul": "Syair #10",
+    "tema": "Syair",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Syair (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Syair adalah...",
+    "options": [
+      "Syair",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Syair adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "syair"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SYAIR-0011",
+    "judul": "Syair #11",
+    "tema": "Syair",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Syair (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Syair adalah...",
+    "options": [
+      "Syair",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Syair adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "syair"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SYAIR-0012",
+    "judul": "Syair #12",
+    "tema": "Syair",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Syair (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Syair adalah...",
+    "options": [
+      "Syair",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Syair adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "syair"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SYAIR-0013",
+    "judul": "Syair #13",
+    "tema": "Syair",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Syair (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 2,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Syair adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Syair memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "syair"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SYAIR-0014",
+    "judul": "Syair #14",
+    "tema": "Syair",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Syair (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Syair adalah...",
+    "options": [
+      "Syair",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Syair adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "syair"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SYAIR-0015",
+    "judul": "Syair #15",
+    "tema": "Syair",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Syair (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 2,
+    "type": "ISIAN_SINGKAT",
+    "text": "Jelaskan pengertian Syair menurut pemahaman Anda.",
+    "options": [
+      "syair"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Syair adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+    "kataKunci": [
+      "syair"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SYAIR-0016",
+    "judul": "Syair #16",
+    "tema": "Syair",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Syair (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Syair adalah...",
+    "options": [
+      "Syair",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Syair adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "syair"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SYAIR-0017",
+    "judul": "Syair #17",
+    "tema": "Syair",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Syair (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Syair adalah...",
+    "options": [
+      "Syair",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Syair adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "syair"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SYAIR-0018",
+    "judul": "Syair #18",
+    "tema": "Syair",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Syair (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Syair adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Syair memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "syair"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SYAIR-0019",
+    "judul": "Syair #19",
+    "tema": "Syair",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Syair (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Syair adalah...",
+    "options": [
+      "Syair",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Syair adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "syair"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SYAIR-0020",
+    "judul": "Syair #20",
+    "tema": "Syair",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Syair (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Syair adalah...",
+    "options": [
+      "Syair",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Syair adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "syair"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SYAIR-0021",
+    "judul": "Syair #21",
+    "tema": "Syair",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Syair (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Syair adalah...",
+    "options": [
+      "Syair",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Syair adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "syair"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SYAIR-0022",
+    "judul": "Syair #22",
+    "tema": "Syair",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Syair (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Syair adalah...",
+    "options": [
+      "Syair",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Syair adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "syair"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SYAIR-0023",
+    "judul": "Syair #23",
+    "tema": "Syair",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Syair (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Syair adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Syair memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "syair"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SYAIR-0024",
+    "judul": "Syair #24",
+    "tema": "Syair",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Syair (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Syair adalah...",
+    "options": [
+      "Syair",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Syair adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "syair"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SYAIR-0025",
+    "judul": "Syair #25",
+    "tema": "Syair",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Syair (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 4,
+    "type": "ISIAN_SINGKAT",
+    "text": "Jelaskan pengertian Syair menurut pemahaman Anda.",
+    "options": [
+      "syair"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Syair adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+    "kataKunci": [
+      "syair"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-SYAIR-0026",
+    "judul": "Syair #26",
+    "tema": "Syair",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Syair (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Syair adalah...",
+    "options": [
+      "Syair",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Syair adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "syair"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-SYAIR-0027",
+    "judul": "Syair #27",
+    "tema": "Syair",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Syair (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Syair adalah...",
+    "options": [
+      "Syair",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Syair adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "syair"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-SYAIR-0028",
+    "judul": "Syair #28",
+    "tema": "Syair",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Syair (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Syair adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Syair memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "syair"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-SYAIR-0029",
+    "judul": "Syair #29",
+    "tema": "Syair",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Syair (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Syair adalah...",
+    "options": [
+      "Syair",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Syair adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "syair"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-SYAIR-0030",
+    "judul": "Syair #30",
+    "tema": "Syair",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Syair (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Syair adalah...",
+    "options": [
+      "Syair",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Syair adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "syair"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  }
+]

@@ -1,0 +1,761 @@
+[
+  {
+    "kodeSoal": "BC-PIDATO-0001",
+    "judul": "Pidato #1",
+    "tema": "Pidato",
+    "kelas": "9",
+    "semester": 1,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Pidato (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Pidato adalah...",
+    "options": [
+      "Pidato",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Pidato adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "pidato"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-PIDATO-0002",
+    "judul": "Pidato #2",
+    "tema": "Pidato",
+    "kelas": "9",
+    "semester": 1,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Pidato (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Pidato adalah...",
+    "options": [
+      "Pidato",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Pidato adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "pidato"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-PIDATO-0003",
+    "judul": "Pidato #3",
+    "tema": "Pidato",
+    "kelas": "9",
+    "semester": 1,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Pidato (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Pidato adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Pidato memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "pidato"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-PIDATO-0004",
+    "judul": "Pidato #4",
+    "tema": "Pidato",
+    "kelas": "9",
+    "semester": 1,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Pidato (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Pidato adalah...",
+    "options": [
+      "Pidato",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Pidato adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "pidato"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-PIDATO-0005",
+    "judul": "Pidato #5",
+    "tema": "Pidato",
+    "kelas": "9",
+    "semester": 1,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Pidato (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "ISIAN_SINGKAT",
+    "text": "Jelaskan pengertian Pidato menurut pemahaman Anda.",
+    "options": [
+      "pidato"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Pidato adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+    "kataKunci": [
+      "pidato"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-PIDATO-0006",
+    "judul": "Pidato #6",
+    "tema": "Pidato",
+    "kelas": "9",
+    "semester": 1,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Pidato (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Pidato adalah...",
+    "options": [
+      "Pidato",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Pidato adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "pidato"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-PIDATO-0007",
+    "judul": "Pidato #7",
+    "tema": "Pidato",
+    "kelas": "9",
+    "semester": 1,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Pidato (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Pidato adalah...",
+    "options": [
+      "Pidato",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Pidato adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "pidato"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-PIDATO-0008",
+    "judul": "Pidato #8",
+    "tema": "Pidato",
+    "kelas": "9",
+    "semester": 1,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Pidato (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Pidato adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Pidato memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "pidato"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-PIDATO-0009",
+    "judul": "Pidato #9",
+    "tema": "Pidato",
+    "kelas": "9",
+    "semester": 1,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Pidato (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Pidato adalah...",
+    "options": [
+      "Pidato",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Pidato adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "pidato"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-PIDATO-0010",
+    "judul": "Pidato #10",
+    "tema": "Pidato",
+    "kelas": "9",
+    "semester": 1,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Pidato (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Pidato adalah...",
+    "options": [
+      "Pidato",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Pidato adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "pidato"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-PIDATO-0011",
+    "judul": "Pidato #11",
+    "tema": "Pidato",
+    "kelas": "9",
+    "semester": 1,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Pidato (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Pidato adalah...",
+    "options": [
+      "Pidato",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Pidato adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "pidato"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-PIDATO-0012",
+    "judul": "Pidato #12",
+    "tema": "Pidato",
+    "kelas": "9",
+    "semester": 1,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Pidato (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Pidato adalah...",
+    "options": [
+      "Pidato",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Pidato adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "pidato"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-PIDATO-0013",
+    "judul": "Pidato #13",
+    "tema": "Pidato",
+    "kelas": "9",
+    "semester": 1,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Pidato (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 2,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Pidato adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Pidato memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "pidato"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-PIDATO-0014",
+    "judul": "Pidato #14",
+    "tema": "Pidato",
+    "kelas": "9",
+    "semester": 1,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Pidato (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Pidato adalah...",
+    "options": [
+      "Pidato",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Pidato adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "pidato"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-PIDATO-0015",
+    "judul": "Pidato #15",
+    "tema": "Pidato",
+    "kelas": "9",
+    "semester": 1,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Pidato (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 2,
+    "type": "ISIAN_SINGKAT",
+    "text": "Jelaskan pengertian Pidato menurut pemahaman Anda.",
+    "options": [
+      "pidato"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Pidato adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+    "kataKunci": [
+      "pidato"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-PIDATO-0016",
+    "judul": "Pidato #16",
+    "tema": "Pidato",
+    "kelas": "9",
+    "semester": 1,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Pidato (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Pidato adalah...",
+    "options": [
+      "Pidato",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Pidato adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "pidato"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-PIDATO-0017",
+    "judul": "Pidato #17",
+    "tema": "Pidato",
+    "kelas": "9",
+    "semester": 1,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Pidato (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Pidato adalah...",
+    "options": [
+      "Pidato",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Pidato adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "pidato"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-PIDATO-0018",
+    "judul": "Pidato #18",
+    "tema": "Pidato",
+    "kelas": "9",
+    "semester": 1,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Pidato (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Pidato adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Pidato memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "pidato"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-PIDATO-0019",
+    "judul": "Pidato #19",
+    "tema": "Pidato",
+    "kelas": "9",
+    "semester": 1,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Pidato (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Pidato adalah...",
+    "options": [
+      "Pidato",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Pidato adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "pidato"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-PIDATO-0020",
+    "judul": "Pidato #20",
+    "tema": "Pidato",
+    "kelas": "9",
+    "semester": 1,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Pidato (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Pidato adalah...",
+    "options": [
+      "Pidato",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Pidato adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "pidato"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-PIDATO-0021",
+    "judul": "Pidato #21",
+    "tema": "Pidato",
+    "kelas": "9",
+    "semester": 1,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Pidato (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Pidato adalah...",
+    "options": [
+      "Pidato",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Pidato adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "pidato"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-PIDATO-0022",
+    "judul": "Pidato #22",
+    "tema": "Pidato",
+    "kelas": "9",
+    "semester": 1,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Pidato (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Pidato adalah...",
+    "options": [
+      "Pidato",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Pidato adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "pidato"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-PIDATO-0023",
+    "judul": "Pidato #23",
+    "tema": "Pidato",
+    "kelas": "9",
+    "semester": 1,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Pidato (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Pidato adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Pidato memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "pidato"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-PIDATO-0024",
+    "judul": "Pidato #24",
+    "tema": "Pidato",
+    "kelas": "9",
+    "semester": 1,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Pidato (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Pidato adalah...",
+    "options": [
+      "Pidato",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Pidato adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "pidato"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-PIDATO-0025",
+    "judul": "Pidato #25",
+    "tema": "Pidato",
+    "kelas": "9",
+    "semester": 1,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Pidato (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 4,
+    "type": "ISIAN_SINGKAT",
+    "text": "Jelaskan pengertian Pidato menurut pemahaman Anda.",
+    "options": [
+      "pidato"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Pidato adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+    "kataKunci": [
+      "pidato"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-PIDATO-0026",
+    "judul": "Pidato #26",
+    "tema": "Pidato",
+    "kelas": "9",
+    "semester": 1,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Pidato (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Pidato adalah...",
+    "options": [
+      "Pidato",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Pidato adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "pidato"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-PIDATO-0027",
+    "judul": "Pidato #27",
+    "tema": "Pidato",
+    "kelas": "9",
+    "semester": 1,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Pidato (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Pidato adalah...",
+    "options": [
+      "Pidato",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Pidato adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "pidato"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-PIDATO-0028",
+    "judul": "Pidato #28",
+    "tema": "Pidato",
+    "kelas": "9",
+    "semester": 1,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Pidato (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Pidato adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Pidato memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "pidato"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-PIDATO-0029",
+    "judul": "Pidato #29",
+    "tema": "Pidato",
+    "kelas": "9",
+    "semester": 1,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Pidato (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Pidato adalah...",
+    "options": [
+      "Pidato",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Pidato adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "pidato"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-PIDATO-0030",
+    "judul": "Pidato #30",
+    "tema": "Pidato",
+    "kelas": "9",
+    "semester": 1,
+    "kompetensi": "3.8",
+    "indikator": "Memahami konsep Pidato (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Pidato adalah...",
+    "options": [
+      "Pidato",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Pidato adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "pidato"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  }
+]

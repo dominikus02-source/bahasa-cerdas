@@ -1,0 +1,761 @@
+[
+  {
+    "kodeSoal": "BC-LEGENDA-0001",
+    "judul": "Legenda #1",
+    "tema": "Legenda",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Legenda (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Legenda adalah...",
+    "options": [
+      "Legenda",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Legenda adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "legenda"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-LEGENDA-0002",
+    "judul": "Legenda #2",
+    "tema": "Legenda",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Legenda (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Legenda adalah...",
+    "options": [
+      "Legenda",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Legenda adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "legenda"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-LEGENDA-0003",
+    "judul": "Legenda #3",
+    "tema": "Legenda",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Legenda (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Legenda adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Legenda memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "legenda"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-LEGENDA-0004",
+    "judul": "Legenda #4",
+    "tema": "Legenda",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Legenda (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Legenda adalah...",
+    "options": [
+      "Legenda",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Legenda adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "legenda"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-LEGENDA-0005",
+    "judul": "Legenda #5",
+    "tema": "Legenda",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Legenda (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "ISIAN_SINGKAT",
+    "text": "Jelaskan pengertian Legenda menurut pemahaman Anda.",
+    "options": [
+      "legenda"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Legenda adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+    "kataKunci": [
+      "legenda"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-LEGENDA-0006",
+    "judul": "Legenda #6",
+    "tema": "Legenda",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Legenda (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Legenda adalah...",
+    "options": [
+      "Legenda",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Legenda adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "legenda"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-LEGENDA-0007",
+    "judul": "Legenda #7",
+    "tema": "Legenda",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Legenda (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Legenda adalah...",
+    "options": [
+      "Legenda",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Legenda adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "legenda"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-LEGENDA-0008",
+    "judul": "Legenda #8",
+    "tema": "Legenda",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Legenda (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Legenda adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Legenda memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "legenda"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-LEGENDA-0009",
+    "judul": "Legenda #9",
+    "tema": "Legenda",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Legenda (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Legenda adalah...",
+    "options": [
+      "Legenda",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Legenda adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "legenda"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-LEGENDA-0010",
+    "judul": "Legenda #10",
+    "tema": "Legenda",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Legenda (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Legenda adalah...",
+    "options": [
+      "Legenda",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Legenda adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "legenda"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-LEGENDA-0011",
+    "judul": "Legenda #11",
+    "tema": "Legenda",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Legenda (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Legenda adalah...",
+    "options": [
+      "Legenda",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Legenda adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "legenda"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-LEGENDA-0012",
+    "judul": "Legenda #12",
+    "tema": "Legenda",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Legenda (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Legenda adalah...",
+    "options": [
+      "Legenda",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Legenda adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "legenda"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-LEGENDA-0013",
+    "judul": "Legenda #13",
+    "tema": "Legenda",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Legenda (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 2,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Legenda adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Legenda memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "legenda"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-LEGENDA-0014",
+    "judul": "Legenda #14",
+    "tema": "Legenda",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Legenda (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Legenda adalah...",
+    "options": [
+      "Legenda",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Legenda adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "legenda"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-LEGENDA-0015",
+    "judul": "Legenda #15",
+    "tema": "Legenda",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Legenda (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 2,
+    "type": "ISIAN_SINGKAT",
+    "text": "Jelaskan pengertian Legenda menurut pemahaman Anda.",
+    "options": [
+      "legenda"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Legenda adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+    "kataKunci": [
+      "legenda"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-LEGENDA-0016",
+    "judul": "Legenda #16",
+    "tema": "Legenda",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Legenda (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Legenda adalah...",
+    "options": [
+      "Legenda",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Legenda adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "legenda"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-LEGENDA-0017",
+    "judul": "Legenda #17",
+    "tema": "Legenda",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Legenda (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Legenda adalah...",
+    "options": [
+      "Legenda",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Legenda adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "legenda"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-LEGENDA-0018",
+    "judul": "Legenda #18",
+    "tema": "Legenda",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Legenda (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Legenda adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Legenda memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "legenda"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-LEGENDA-0019",
+    "judul": "Legenda #19",
+    "tema": "Legenda",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Legenda (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Legenda adalah...",
+    "options": [
+      "Legenda",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Legenda adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "legenda"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-LEGENDA-0020",
+    "judul": "Legenda #20",
+    "tema": "Legenda",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Legenda (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Legenda adalah...",
+    "options": [
+      "Legenda",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Legenda adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "legenda"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-LEGENDA-0021",
+    "judul": "Legenda #21",
+    "tema": "Legenda",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Legenda (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Legenda adalah...",
+    "options": [
+      "Legenda",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Legenda adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "legenda"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-LEGENDA-0022",
+    "judul": "Legenda #22",
+    "tema": "Legenda",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Legenda (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Legenda adalah...",
+    "options": [
+      "Legenda",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Legenda adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "legenda"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-LEGENDA-0023",
+    "judul": "Legenda #23",
+    "tema": "Legenda",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Legenda (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Legenda adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Legenda memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "legenda"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-LEGENDA-0024",
+    "judul": "Legenda #24",
+    "tema": "Legenda",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Legenda (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Legenda adalah...",
+    "options": [
+      "Legenda",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Legenda adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "legenda"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-LEGENDA-0025",
+    "judul": "Legenda #25",
+    "tema": "Legenda",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Legenda (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 4,
+    "type": "ISIAN_SINGKAT",
+    "text": "Jelaskan pengertian Legenda menurut pemahaman Anda.",
+    "options": [
+      "legenda"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Legenda adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+    "kataKunci": [
+      "legenda"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-LEGENDA-0026",
+    "judul": "Legenda #26",
+    "tema": "Legenda",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Legenda (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Legenda adalah...",
+    "options": [
+      "Legenda",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Legenda adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "legenda"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-LEGENDA-0027",
+    "judul": "Legenda #27",
+    "tema": "Legenda",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Legenda (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Legenda adalah...",
+    "options": [
+      "Legenda",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Legenda adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "legenda"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-LEGENDA-0028",
+    "judul": "Legenda #28",
+    "tema": "Legenda",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Legenda (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Legenda adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Legenda memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "legenda"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-LEGENDA-0029",
+    "judul": "Legenda #29",
+    "tema": "Legenda",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Legenda (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Legenda adalah...",
+    "options": [
+      "Legenda",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Legenda adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "legenda"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-LEGENDA-0030",
+    "judul": "Legenda #30",
+    "tema": "Legenda",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Legenda (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Legenda adalah...",
+    "options": [
+      "Legenda",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Legenda adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "legenda"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  }
+]

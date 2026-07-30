@@ -1,0 +1,791 @@
+[
+  {
+    "kodeSoal": "BC-EJAAN-0001",
+    "judul": "Ejaan #1",
+    "tema": "Ejaan",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Ejaan (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Ejaan adalah...",
+    "options": [
+      "Ejaan",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Ejaan adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "ejaan",
+      "EYD"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-EJAAN-0002",
+    "judul": "Ejaan #2",
+    "tema": "Ejaan",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Ejaan (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Ejaan adalah...",
+    "options": [
+      "Ejaan",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Ejaan adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "ejaan",
+      "EYD"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-EJAAN-0003",
+    "judul": "Ejaan #3",
+    "tema": "Ejaan",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Ejaan (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Ejaan adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Ejaan memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "ejaan",
+      "EYD"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-EJAAN-0004",
+    "judul": "Ejaan #4",
+    "tema": "Ejaan",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Ejaan (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Ejaan adalah...",
+    "options": [
+      "Ejaan",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Ejaan adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "ejaan",
+      "EYD"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-EJAAN-0005",
+    "judul": "Ejaan #5",
+    "tema": "Ejaan",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Ejaan (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "ISIAN_SINGKAT",
+    "text": "Jelaskan pengertian Ejaan menurut pemahaman Anda.",
+    "options": [
+      "ejaan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Ejaan adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+    "kataKunci": [
+      "ejaan",
+      "EYD"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-EJAAN-0006",
+    "judul": "Ejaan #6",
+    "tema": "Ejaan",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Ejaan (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Ejaan adalah...",
+    "options": [
+      "Ejaan",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Ejaan adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "ejaan",
+      "EYD"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-EJAAN-0007",
+    "judul": "Ejaan #7",
+    "tema": "Ejaan",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Ejaan (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Ejaan adalah...",
+    "options": [
+      "Ejaan",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Ejaan adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "ejaan",
+      "EYD"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-EJAAN-0008",
+    "judul": "Ejaan #8",
+    "tema": "Ejaan",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Ejaan (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Ejaan adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Ejaan memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "ejaan",
+      "EYD"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-EJAAN-0009",
+    "judul": "Ejaan #9",
+    "tema": "Ejaan",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Ejaan (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Ejaan adalah...",
+    "options": [
+      "Ejaan",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Ejaan adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "ejaan",
+      "EYD"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-EJAAN-0010",
+    "judul": "Ejaan #10",
+    "tema": "Ejaan",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Ejaan (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Ejaan adalah...",
+    "options": [
+      "Ejaan",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Ejaan adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "ejaan",
+      "EYD"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-EJAAN-0011",
+    "judul": "Ejaan #11",
+    "tema": "Ejaan",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Ejaan (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Ejaan adalah...",
+    "options": [
+      "Ejaan",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Ejaan adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "ejaan",
+      "EYD"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-EJAAN-0012",
+    "judul": "Ejaan #12",
+    "tema": "Ejaan",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Ejaan (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Ejaan adalah...",
+    "options": [
+      "Ejaan",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Ejaan adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "ejaan",
+      "EYD"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-EJAAN-0013",
+    "judul": "Ejaan #13",
+    "tema": "Ejaan",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Ejaan (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 2,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Ejaan adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Ejaan memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "ejaan",
+      "EYD"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-EJAAN-0014",
+    "judul": "Ejaan #14",
+    "tema": "Ejaan",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Ejaan (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Ejaan adalah...",
+    "options": [
+      "Ejaan",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Ejaan adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "ejaan",
+      "EYD"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-EJAAN-0015",
+    "judul": "Ejaan #15",
+    "tema": "Ejaan",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Ejaan (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 2,
+    "type": "ISIAN_SINGKAT",
+    "text": "Jelaskan pengertian Ejaan menurut pemahaman Anda.",
+    "options": [
+      "ejaan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Ejaan adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+    "kataKunci": [
+      "ejaan",
+      "EYD"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-EJAAN-0016",
+    "judul": "Ejaan #16",
+    "tema": "Ejaan",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Ejaan (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Ejaan adalah...",
+    "options": [
+      "Ejaan",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Ejaan adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "ejaan",
+      "EYD"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-EJAAN-0017",
+    "judul": "Ejaan #17",
+    "tema": "Ejaan",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Ejaan (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Ejaan adalah...",
+    "options": [
+      "Ejaan",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Ejaan adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "ejaan",
+      "EYD"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-EJAAN-0018",
+    "judul": "Ejaan #18",
+    "tema": "Ejaan",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Ejaan (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Ejaan adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Ejaan memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "ejaan",
+      "EYD"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-EJAAN-0019",
+    "judul": "Ejaan #19",
+    "tema": "Ejaan",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Ejaan (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Ejaan adalah...",
+    "options": [
+      "Ejaan",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Ejaan adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "ejaan",
+      "EYD"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-EJAAN-0020",
+    "judul": "Ejaan #20",
+    "tema": "Ejaan",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Ejaan (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Ejaan adalah...",
+    "options": [
+      "Ejaan",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Ejaan adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "ejaan",
+      "EYD"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-EJAAN-0021",
+    "judul": "Ejaan #21",
+    "tema": "Ejaan",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Ejaan (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Ejaan adalah...",
+    "options": [
+      "Ejaan",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Ejaan adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "ejaan",
+      "EYD"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-EJAAN-0022",
+    "judul": "Ejaan #22",
+    "tema": "Ejaan",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Ejaan (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Ejaan adalah...",
+    "options": [
+      "Ejaan",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Ejaan adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "ejaan",
+      "EYD"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-EJAAN-0023",
+    "judul": "Ejaan #23",
+    "tema": "Ejaan",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Ejaan (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Ejaan adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Ejaan memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "ejaan",
+      "EYD"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-EJAAN-0024",
+    "judul": "Ejaan #24",
+    "tema": "Ejaan",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Ejaan (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Ejaan adalah...",
+    "options": [
+      "Ejaan",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Ejaan adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "ejaan",
+      "EYD"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-EJAAN-0025",
+    "judul": "Ejaan #25",
+    "tema": "Ejaan",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Ejaan (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 4,
+    "type": "ISIAN_SINGKAT",
+    "text": "Jelaskan pengertian Ejaan menurut pemahaman Anda.",
+    "options": [
+      "ejaan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Ejaan adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+    "kataKunci": [
+      "ejaan",
+      "EYD"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-EJAAN-0026",
+    "judul": "Ejaan #26",
+    "tema": "Ejaan",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Ejaan (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Ejaan adalah...",
+    "options": [
+      "Ejaan",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Ejaan adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "ejaan",
+      "EYD"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-EJAAN-0027",
+    "judul": "Ejaan #27",
+    "tema": "Ejaan",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Ejaan (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Ejaan adalah...",
+    "options": [
+      "Ejaan",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Ejaan adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "ejaan",
+      "EYD"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-EJAAN-0028",
+    "judul": "Ejaan #28",
+    "tema": "Ejaan",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Ejaan (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Ejaan adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Ejaan memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "ejaan",
+      "EYD"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-EJAAN-0029",
+    "judul": "Ejaan #29",
+    "tema": "Ejaan",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Ejaan (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Ejaan adalah...",
+    "options": [
+      "Ejaan",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Ejaan adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "ejaan",
+      "EYD"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-EJAAN-0030",
+    "judul": "Ejaan #30",
+    "tema": "Ejaan",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Ejaan (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Ejaan adalah...",
+    "options": [
+      "Ejaan",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Ejaan adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "ejaan",
+      "EYD"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  }
+]

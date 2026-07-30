@@ -1,0 +1,761 @@
+[
+  {
+    "kodeSoal": "BC-GAGASAN-UTAMA-0001",
+    "judul": "Gagasan Utama #1",
+    "tema": "Gagasan Utama",
+    "kelas": "8",
+    "semester": 1,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Gagasan Utama (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Gagasan Utama adalah...",
+    "options": [
+      "Gagasan Utama",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Gagasan Utama adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "gagasan utama"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-GAGASAN-UTAMA-0002",
+    "judul": "Gagasan Utama #2",
+    "tema": "Gagasan Utama",
+    "kelas": "8",
+    "semester": 1,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Gagasan Utama (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Gagasan Utama adalah...",
+    "options": [
+      "Gagasan Utama",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Gagasan Utama adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "gagasan utama"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-GAGASAN-UTAMA-0003",
+    "judul": "Gagasan Utama #3",
+    "tema": "Gagasan Utama",
+    "kelas": "8",
+    "semester": 1,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Gagasan Utama (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Gagasan Utama adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Gagasan Utama memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "gagasan utama"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-GAGASAN-UTAMA-0004",
+    "judul": "Gagasan Utama #4",
+    "tema": "Gagasan Utama",
+    "kelas": "8",
+    "semester": 1,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Gagasan Utama (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Gagasan Utama adalah...",
+    "options": [
+      "Gagasan Utama",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Gagasan Utama adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "gagasan utama"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-GAGASAN-UTAMA-0005",
+    "judul": "Gagasan Utama #5",
+    "tema": "Gagasan Utama",
+    "kelas": "8",
+    "semester": 1,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Gagasan Utama (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "ISIAN_SINGKAT",
+    "text": "Jelaskan pengertian Gagasan Utama menurut pemahaman Anda.",
+    "options": [
+      "gagasan utama"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Gagasan Utama adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+    "kataKunci": [
+      "gagasan utama"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-GAGASAN-UTAMA-0006",
+    "judul": "Gagasan Utama #6",
+    "tema": "Gagasan Utama",
+    "kelas": "8",
+    "semester": 1,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Gagasan Utama (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Gagasan Utama adalah...",
+    "options": [
+      "Gagasan Utama",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Gagasan Utama adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "gagasan utama"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-GAGASAN-UTAMA-0007",
+    "judul": "Gagasan Utama #7",
+    "tema": "Gagasan Utama",
+    "kelas": "8",
+    "semester": 1,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Gagasan Utama (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Gagasan Utama adalah...",
+    "options": [
+      "Gagasan Utama",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Gagasan Utama adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "gagasan utama"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-GAGASAN-UTAMA-0008",
+    "judul": "Gagasan Utama #8",
+    "tema": "Gagasan Utama",
+    "kelas": "8",
+    "semester": 1,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Gagasan Utama (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Gagasan Utama adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Gagasan Utama memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "gagasan utama"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-GAGASAN-UTAMA-0009",
+    "judul": "Gagasan Utama #9",
+    "tema": "Gagasan Utama",
+    "kelas": "8",
+    "semester": 1,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Gagasan Utama (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Gagasan Utama adalah...",
+    "options": [
+      "Gagasan Utama",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Gagasan Utama adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "gagasan utama"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-GAGASAN-UTAMA-0010",
+    "judul": "Gagasan Utama #10",
+    "tema": "Gagasan Utama",
+    "kelas": "8",
+    "semester": 1,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Gagasan Utama (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Gagasan Utama adalah...",
+    "options": [
+      "Gagasan Utama",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Gagasan Utama adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "gagasan utama"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-GAGASAN-UTAMA-0011",
+    "judul": "Gagasan Utama #11",
+    "tema": "Gagasan Utama",
+    "kelas": "8",
+    "semester": 1,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Gagasan Utama (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Gagasan Utama adalah...",
+    "options": [
+      "Gagasan Utama",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Gagasan Utama adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "gagasan utama"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-GAGASAN-UTAMA-0012",
+    "judul": "Gagasan Utama #12",
+    "tema": "Gagasan Utama",
+    "kelas": "8",
+    "semester": 1,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Gagasan Utama (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Gagasan Utama adalah...",
+    "options": [
+      "Gagasan Utama",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Gagasan Utama adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "gagasan utama"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-GAGASAN-UTAMA-0013",
+    "judul": "Gagasan Utama #13",
+    "tema": "Gagasan Utama",
+    "kelas": "8",
+    "semester": 1,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Gagasan Utama (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 2,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Gagasan Utama adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Gagasan Utama memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "gagasan utama"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-GAGASAN-UTAMA-0014",
+    "judul": "Gagasan Utama #14",
+    "tema": "Gagasan Utama",
+    "kelas": "8",
+    "semester": 1,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Gagasan Utama (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Gagasan Utama adalah...",
+    "options": [
+      "Gagasan Utama",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Gagasan Utama adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "gagasan utama"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-GAGASAN-UTAMA-0015",
+    "judul": "Gagasan Utama #15",
+    "tema": "Gagasan Utama",
+    "kelas": "8",
+    "semester": 1,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Gagasan Utama (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 2,
+    "type": "ISIAN_SINGKAT",
+    "text": "Jelaskan pengertian Gagasan Utama menurut pemahaman Anda.",
+    "options": [
+      "gagasan utama"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Gagasan Utama adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+    "kataKunci": [
+      "gagasan utama"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-GAGASAN-UTAMA-0016",
+    "judul": "Gagasan Utama #16",
+    "tema": "Gagasan Utama",
+    "kelas": "8",
+    "semester": 1,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Gagasan Utama (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Gagasan Utama adalah...",
+    "options": [
+      "Gagasan Utama",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Gagasan Utama adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "gagasan utama"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-GAGASAN-UTAMA-0017",
+    "judul": "Gagasan Utama #17",
+    "tema": "Gagasan Utama",
+    "kelas": "8",
+    "semester": 1,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Gagasan Utama (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Gagasan Utama adalah...",
+    "options": [
+      "Gagasan Utama",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Gagasan Utama adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "gagasan utama"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-GAGASAN-UTAMA-0018",
+    "judul": "Gagasan Utama #18",
+    "tema": "Gagasan Utama",
+    "kelas": "8",
+    "semester": 1,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Gagasan Utama (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Gagasan Utama adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Gagasan Utama memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "gagasan utama"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-GAGASAN-UTAMA-0019",
+    "judul": "Gagasan Utama #19",
+    "tema": "Gagasan Utama",
+    "kelas": "8",
+    "semester": 1,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Gagasan Utama (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Gagasan Utama adalah...",
+    "options": [
+      "Gagasan Utama",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Gagasan Utama adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "gagasan utama"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-GAGASAN-UTAMA-0020",
+    "judul": "Gagasan Utama #20",
+    "tema": "Gagasan Utama",
+    "kelas": "8",
+    "semester": 1,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Gagasan Utama (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Gagasan Utama adalah...",
+    "options": [
+      "Gagasan Utama",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Gagasan Utama adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "gagasan utama"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-GAGASAN-UTAMA-0021",
+    "judul": "Gagasan Utama #21",
+    "tema": "Gagasan Utama",
+    "kelas": "8",
+    "semester": 1,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Gagasan Utama (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Gagasan Utama adalah...",
+    "options": [
+      "Gagasan Utama",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Gagasan Utama adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "gagasan utama"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-GAGASAN-UTAMA-0022",
+    "judul": "Gagasan Utama #22",
+    "tema": "Gagasan Utama",
+    "kelas": "8",
+    "semester": 1,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Gagasan Utama (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Gagasan Utama adalah...",
+    "options": [
+      "Gagasan Utama",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Gagasan Utama adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "gagasan utama"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-GAGASAN-UTAMA-0023",
+    "judul": "Gagasan Utama #23",
+    "tema": "Gagasan Utama",
+    "kelas": "8",
+    "semester": 1,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Gagasan Utama (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Gagasan Utama adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Gagasan Utama memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "gagasan utama"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-GAGASAN-UTAMA-0024",
+    "judul": "Gagasan Utama #24",
+    "tema": "Gagasan Utama",
+    "kelas": "8",
+    "semester": 1,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Gagasan Utama (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Gagasan Utama adalah...",
+    "options": [
+      "Gagasan Utama",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Gagasan Utama adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "gagasan utama"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-GAGASAN-UTAMA-0025",
+    "judul": "Gagasan Utama #25",
+    "tema": "Gagasan Utama",
+    "kelas": "8",
+    "semester": 1,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Gagasan Utama (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 4,
+    "type": "ISIAN_SINGKAT",
+    "text": "Jelaskan pengertian Gagasan Utama menurut pemahaman Anda.",
+    "options": [
+      "gagasan utama"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Gagasan Utama adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+    "kataKunci": [
+      "gagasan utama"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-GAGASAN-UTAMA-0026",
+    "judul": "Gagasan Utama #26",
+    "tema": "Gagasan Utama",
+    "kelas": "8",
+    "semester": 1,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Gagasan Utama (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Gagasan Utama adalah...",
+    "options": [
+      "Gagasan Utama",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Gagasan Utama adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "gagasan utama"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-GAGASAN-UTAMA-0027",
+    "judul": "Gagasan Utama #27",
+    "tema": "Gagasan Utama",
+    "kelas": "8",
+    "semester": 1,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Gagasan Utama (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Gagasan Utama adalah...",
+    "options": [
+      "Gagasan Utama",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Gagasan Utama adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "gagasan utama"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-GAGASAN-UTAMA-0028",
+    "judul": "Gagasan Utama #28",
+    "tema": "Gagasan Utama",
+    "kelas": "8",
+    "semester": 1,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Gagasan Utama (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Gagasan Utama adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Gagasan Utama memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "gagasan utama"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-GAGASAN-UTAMA-0029",
+    "judul": "Gagasan Utama #29",
+    "tema": "Gagasan Utama",
+    "kelas": "8",
+    "semester": 1,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Gagasan Utama (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Gagasan Utama adalah...",
+    "options": [
+      "Gagasan Utama",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Gagasan Utama adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "gagasan utama"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-GAGASAN-UTAMA-0030",
+    "judul": "Gagasan Utama #30",
+    "tema": "Gagasan Utama",
+    "kelas": "8",
+    "semester": 1,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Gagasan Utama (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Gagasan Utama adalah...",
+    "options": [
+      "Gagasan Utama",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Gagasan Utama adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "gagasan utama"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  }
+]

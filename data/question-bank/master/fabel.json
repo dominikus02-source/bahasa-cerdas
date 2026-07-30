@@ -1,0 +1,791 @@
+[
+  {
+    "kodeSoal": "BC-FABEL-0001",
+    "judul": "Fabel #1",
+    "tema": "Fabel",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Fabel (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Fabel adalah...",
+    "options": [
+      "Fabel",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Fabel adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "fabel",
+      "pesan moral"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-FABEL-0002",
+    "judul": "Fabel #2",
+    "tema": "Fabel",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Fabel (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Fabel adalah...",
+    "options": [
+      "Fabel",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Fabel adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "fabel",
+      "pesan moral"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-FABEL-0003",
+    "judul": "Fabel #3",
+    "tema": "Fabel",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Fabel (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Fabel adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Fabel memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "fabel",
+      "pesan moral"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-FABEL-0004",
+    "judul": "Fabel #4",
+    "tema": "Fabel",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Fabel (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Fabel adalah...",
+    "options": [
+      "Fabel",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Fabel adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "fabel",
+      "pesan moral"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-FABEL-0005",
+    "judul": "Fabel #5",
+    "tema": "Fabel",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Fabel (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "ISIAN_SINGKAT",
+    "text": "Jelaskan pengertian Fabel menurut pemahaman Anda.",
+    "options": [
+      "fabel"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Fabel adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+    "kataKunci": [
+      "fabel",
+      "pesan moral"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-FABEL-0006",
+    "judul": "Fabel #6",
+    "tema": "Fabel",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Fabel (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Fabel adalah...",
+    "options": [
+      "Fabel",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Fabel adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "fabel",
+      "pesan moral"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-FABEL-0007",
+    "judul": "Fabel #7",
+    "tema": "Fabel",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Fabel (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Fabel adalah...",
+    "options": [
+      "Fabel",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Fabel adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "fabel",
+      "pesan moral"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-FABEL-0008",
+    "judul": "Fabel #8",
+    "tema": "Fabel",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Fabel (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Fabel adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Fabel memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "fabel",
+      "pesan moral"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-FABEL-0009",
+    "judul": "Fabel #9",
+    "tema": "Fabel",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Fabel (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Fabel adalah...",
+    "options": [
+      "Fabel",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Fabel adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "fabel",
+      "pesan moral"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-FABEL-0010",
+    "judul": "Fabel #10",
+    "tema": "Fabel",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Fabel (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Fabel adalah...",
+    "options": [
+      "Fabel",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Fabel adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "fabel",
+      "pesan moral"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-FABEL-0011",
+    "judul": "Fabel #11",
+    "tema": "Fabel",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Fabel (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Fabel adalah...",
+    "options": [
+      "Fabel",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Fabel adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "fabel",
+      "pesan moral"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-FABEL-0012",
+    "judul": "Fabel #12",
+    "tema": "Fabel",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Fabel (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Fabel adalah...",
+    "options": [
+      "Fabel",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Fabel adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "fabel",
+      "pesan moral"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-FABEL-0013",
+    "judul": "Fabel #13",
+    "tema": "Fabel",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Fabel (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 2,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Fabel adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Fabel memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "fabel",
+      "pesan moral"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-FABEL-0014",
+    "judul": "Fabel #14",
+    "tema": "Fabel",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Fabel (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Fabel adalah...",
+    "options": [
+      "Fabel",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Fabel adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "fabel",
+      "pesan moral"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-FABEL-0015",
+    "judul": "Fabel #15",
+    "tema": "Fabel",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Fabel (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 2,
+    "type": "ISIAN_SINGKAT",
+    "text": "Jelaskan pengertian Fabel menurut pemahaman Anda.",
+    "options": [
+      "fabel"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Fabel adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+    "kataKunci": [
+      "fabel",
+      "pesan moral"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-FABEL-0016",
+    "judul": "Fabel #16",
+    "tema": "Fabel",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Fabel (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Fabel adalah...",
+    "options": [
+      "Fabel",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Fabel adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "fabel",
+      "pesan moral"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-FABEL-0017",
+    "judul": "Fabel #17",
+    "tema": "Fabel",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Fabel (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Fabel adalah...",
+    "options": [
+      "Fabel",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Fabel adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "fabel",
+      "pesan moral"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-FABEL-0018",
+    "judul": "Fabel #18",
+    "tema": "Fabel",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Fabel (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Fabel adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Fabel memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "fabel",
+      "pesan moral"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-FABEL-0019",
+    "judul": "Fabel #19",
+    "tema": "Fabel",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Fabel (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Fabel adalah...",
+    "options": [
+      "Fabel",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Fabel adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "fabel",
+      "pesan moral"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-FABEL-0020",
+    "judul": "Fabel #20",
+    "tema": "Fabel",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Fabel (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Fabel adalah...",
+    "options": [
+      "Fabel",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Fabel adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "fabel",
+      "pesan moral"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-FABEL-0021",
+    "judul": "Fabel #21",
+    "tema": "Fabel",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Fabel (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Fabel adalah...",
+    "options": [
+      "Fabel",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Fabel adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "fabel",
+      "pesan moral"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-FABEL-0022",
+    "judul": "Fabel #22",
+    "tema": "Fabel",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Fabel (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Fabel adalah...",
+    "options": [
+      "Fabel",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Fabel adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "fabel",
+      "pesan moral"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-FABEL-0023",
+    "judul": "Fabel #23",
+    "tema": "Fabel",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Fabel (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Fabel adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Fabel memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "fabel",
+      "pesan moral"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-FABEL-0024",
+    "judul": "Fabel #24",
+    "tema": "Fabel",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Fabel (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Fabel adalah...",
+    "options": [
+      "Fabel",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Fabel adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "fabel",
+      "pesan moral"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-FABEL-0025",
+    "judul": "Fabel #25",
+    "tema": "Fabel",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Fabel (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 4,
+    "type": "ISIAN_SINGKAT",
+    "text": "Jelaskan pengertian Fabel menurut pemahaman Anda.",
+    "options": [
+      "fabel"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Fabel adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+    "kataKunci": [
+      "fabel",
+      "pesan moral"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-FABEL-0026",
+    "judul": "Fabel #26",
+    "tema": "Fabel",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Fabel (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Fabel adalah...",
+    "options": [
+      "Fabel",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Fabel adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "fabel",
+      "pesan moral"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-FABEL-0027",
+    "judul": "Fabel #27",
+    "tema": "Fabel",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Fabel (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Fabel adalah...",
+    "options": [
+      "Fabel",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Fabel adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "fabel",
+      "pesan moral"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-FABEL-0028",
+    "judul": "Fabel #28",
+    "tema": "Fabel",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Fabel (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Fabel adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Fabel memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "fabel",
+      "pesan moral"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-FABEL-0029",
+    "judul": "Fabel #29",
+    "tema": "Fabel",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Fabel (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Fabel adalah...",
+    "options": [
+      "Fabel",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Fabel adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "fabel",
+      "pesan moral"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-FABEL-0030",
+    "judul": "Fabel #30",
+    "tema": "Fabel",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Fabel (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Fabel adalah...",
+    "options": [
+      "Fabel",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Fabel adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "fabel",
+      "pesan moral"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  }
+]

@@ -1,0 +1,821 @@
+[
+  {
+    "kodeSoal": "BC-MAKNA-KATA-0001",
+    "judul": "Makna Kata #1",
+    "tema": "Makna Kata",
+    "kelas": "9",
+    "semester": 1,
+    "kompetensi": "3.4",
+    "indikator": "Memahami konsep Makna Kata (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Makna Kata adalah...",
+    "options": [
+      "Makna Kata",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Makna Kata adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "makna kata",
+      "denotasi",
+      "konotasi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-MAKNA-KATA-0002",
+    "judul": "Makna Kata #2",
+    "tema": "Makna Kata",
+    "kelas": "9",
+    "semester": 1,
+    "kompetensi": "3.4",
+    "indikator": "Memahami konsep Makna Kata (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Makna Kata adalah...",
+    "options": [
+      "Makna Kata",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Makna Kata adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "makna kata",
+      "denotasi",
+      "konotasi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-MAKNA-KATA-0003",
+    "judul": "Makna Kata #3",
+    "tema": "Makna Kata",
+    "kelas": "9",
+    "semester": 1,
+    "kompetensi": "3.4",
+    "indikator": "Memahami konsep Makna Kata (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Makna Kata adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Makna Kata memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "makna kata",
+      "denotasi",
+      "konotasi"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-MAKNA-KATA-0004",
+    "judul": "Makna Kata #4",
+    "tema": "Makna Kata",
+    "kelas": "9",
+    "semester": 1,
+    "kompetensi": "3.4",
+    "indikator": "Memahami konsep Makna Kata (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Makna Kata adalah...",
+    "options": [
+      "Makna Kata",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Makna Kata adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "makna kata",
+      "denotasi",
+      "konotasi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-MAKNA-KATA-0005",
+    "judul": "Makna Kata #5",
+    "tema": "Makna Kata",
+    "kelas": "9",
+    "semester": 1,
+    "kompetensi": "3.4",
+    "indikator": "Memahami konsep Makna Kata (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "ISIAN_SINGKAT",
+    "text": "Jelaskan pengertian Makna Kata menurut pemahaman Anda.",
+    "options": [
+      "makna kata"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Makna Kata adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+    "kataKunci": [
+      "makna kata",
+      "denotasi",
+      "konotasi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-MAKNA-KATA-0006",
+    "judul": "Makna Kata #6",
+    "tema": "Makna Kata",
+    "kelas": "9",
+    "semester": 1,
+    "kompetensi": "3.4",
+    "indikator": "Memahami konsep Makna Kata (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Makna Kata adalah...",
+    "options": [
+      "Makna Kata",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Makna Kata adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "makna kata",
+      "denotasi",
+      "konotasi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-MAKNA-KATA-0007",
+    "judul": "Makna Kata #7",
+    "tema": "Makna Kata",
+    "kelas": "9",
+    "semester": 1,
+    "kompetensi": "3.4",
+    "indikator": "Memahami konsep Makna Kata (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Makna Kata adalah...",
+    "options": [
+      "Makna Kata",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Makna Kata adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "makna kata",
+      "denotasi",
+      "konotasi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-MAKNA-KATA-0008",
+    "judul": "Makna Kata #8",
+    "tema": "Makna Kata",
+    "kelas": "9",
+    "semester": 1,
+    "kompetensi": "3.4",
+    "indikator": "Memahami konsep Makna Kata (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Makna Kata adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Makna Kata memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "makna kata",
+      "denotasi",
+      "konotasi"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-MAKNA-KATA-0009",
+    "judul": "Makna Kata #9",
+    "tema": "Makna Kata",
+    "kelas": "9",
+    "semester": 1,
+    "kompetensi": "3.4",
+    "indikator": "Memahami konsep Makna Kata (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Makna Kata adalah...",
+    "options": [
+      "Makna Kata",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Makna Kata adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "makna kata",
+      "denotasi",
+      "konotasi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-MAKNA-KATA-0010",
+    "judul": "Makna Kata #10",
+    "tema": "Makna Kata",
+    "kelas": "9",
+    "semester": 1,
+    "kompetensi": "3.4",
+    "indikator": "Memahami konsep Makna Kata (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Makna Kata adalah...",
+    "options": [
+      "Makna Kata",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Makna Kata adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "makna kata",
+      "denotasi",
+      "konotasi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-MAKNA-KATA-0011",
+    "judul": "Makna Kata #11",
+    "tema": "Makna Kata",
+    "kelas": "9",
+    "semester": 1,
+    "kompetensi": "3.4",
+    "indikator": "Memahami konsep Makna Kata (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Makna Kata adalah...",
+    "options": [
+      "Makna Kata",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Makna Kata adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "makna kata",
+      "denotasi",
+      "konotasi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-MAKNA-KATA-0012",
+    "judul": "Makna Kata #12",
+    "tema": "Makna Kata",
+    "kelas": "9",
+    "semester": 1,
+    "kompetensi": "3.4",
+    "indikator": "Memahami konsep Makna Kata (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Makna Kata adalah...",
+    "options": [
+      "Makna Kata",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Makna Kata adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "makna kata",
+      "denotasi",
+      "konotasi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-MAKNA-KATA-0013",
+    "judul": "Makna Kata #13",
+    "tema": "Makna Kata",
+    "kelas": "9",
+    "semester": 1,
+    "kompetensi": "3.4",
+    "indikator": "Memahami konsep Makna Kata (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 2,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Makna Kata adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Makna Kata memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "makna kata",
+      "denotasi",
+      "konotasi"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-MAKNA-KATA-0014",
+    "judul": "Makna Kata #14",
+    "tema": "Makna Kata",
+    "kelas": "9",
+    "semester": 1,
+    "kompetensi": "3.4",
+    "indikator": "Memahami konsep Makna Kata (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Makna Kata adalah...",
+    "options": [
+      "Makna Kata",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Makna Kata adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "makna kata",
+      "denotasi",
+      "konotasi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-MAKNA-KATA-0015",
+    "judul": "Makna Kata #15",
+    "tema": "Makna Kata",
+    "kelas": "9",
+    "semester": 1,
+    "kompetensi": "3.4",
+    "indikator": "Memahami konsep Makna Kata (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 2,
+    "type": "ISIAN_SINGKAT",
+    "text": "Jelaskan pengertian Makna Kata menurut pemahaman Anda.",
+    "options": [
+      "makna kata"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Makna Kata adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+    "kataKunci": [
+      "makna kata",
+      "denotasi",
+      "konotasi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-MAKNA-KATA-0016",
+    "judul": "Makna Kata #16",
+    "tema": "Makna Kata",
+    "kelas": "9",
+    "semester": 1,
+    "kompetensi": "3.4",
+    "indikator": "Memahami konsep Makna Kata (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Makna Kata adalah...",
+    "options": [
+      "Makna Kata",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Makna Kata adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "makna kata",
+      "denotasi",
+      "konotasi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-MAKNA-KATA-0017",
+    "judul": "Makna Kata #17",
+    "tema": "Makna Kata",
+    "kelas": "9",
+    "semester": 1,
+    "kompetensi": "3.4",
+    "indikator": "Memahami konsep Makna Kata (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Makna Kata adalah...",
+    "options": [
+      "Makna Kata",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Makna Kata adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "makna kata",
+      "denotasi",
+      "konotasi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-MAKNA-KATA-0018",
+    "judul": "Makna Kata #18",
+    "tema": "Makna Kata",
+    "kelas": "9",
+    "semester": 1,
+    "kompetensi": "3.4",
+    "indikator": "Memahami konsep Makna Kata (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Makna Kata adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Makna Kata memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "makna kata",
+      "denotasi",
+      "konotasi"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-MAKNA-KATA-0019",
+    "judul": "Makna Kata #19",
+    "tema": "Makna Kata",
+    "kelas": "9",
+    "semester": 1,
+    "kompetensi": "3.4",
+    "indikator": "Memahami konsep Makna Kata (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Makna Kata adalah...",
+    "options": [
+      "Makna Kata",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Makna Kata adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "makna kata",
+      "denotasi",
+      "konotasi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-MAKNA-KATA-0020",
+    "judul": "Makna Kata #20",
+    "tema": "Makna Kata",
+    "kelas": "9",
+    "semester": 1,
+    "kompetensi": "3.4",
+    "indikator": "Memahami konsep Makna Kata (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Makna Kata adalah...",
+    "options": [
+      "Makna Kata",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Makna Kata adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "makna kata",
+      "denotasi",
+      "konotasi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-MAKNA-KATA-0021",
+    "judul": "Makna Kata #21",
+    "tema": "Makna Kata",
+    "kelas": "9",
+    "semester": 1,
+    "kompetensi": "3.4",
+    "indikator": "Memahami konsep Makna Kata (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Makna Kata adalah...",
+    "options": [
+      "Makna Kata",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Makna Kata adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "makna kata",
+      "denotasi",
+      "konotasi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-MAKNA-KATA-0022",
+    "judul": "Makna Kata #22",
+    "tema": "Makna Kata",
+    "kelas": "9",
+    "semester": 1,
+    "kompetensi": "3.4",
+    "indikator": "Memahami konsep Makna Kata (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Makna Kata adalah...",
+    "options": [
+      "Makna Kata",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Makna Kata adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "makna kata",
+      "denotasi",
+      "konotasi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-MAKNA-KATA-0023",
+    "judul": "Makna Kata #23",
+    "tema": "Makna Kata",
+    "kelas": "9",
+    "semester": 1,
+    "kompetensi": "3.4",
+    "indikator": "Memahami konsep Makna Kata (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Makna Kata adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Makna Kata memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "makna kata",
+      "denotasi",
+      "konotasi"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-MAKNA-KATA-0024",
+    "judul": "Makna Kata #24",
+    "tema": "Makna Kata",
+    "kelas": "9",
+    "semester": 1,
+    "kompetensi": "3.4",
+    "indikator": "Memahami konsep Makna Kata (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Makna Kata adalah...",
+    "options": [
+      "Makna Kata",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Makna Kata adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "makna kata",
+      "denotasi",
+      "konotasi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-MAKNA-KATA-0025",
+    "judul": "Makna Kata #25",
+    "tema": "Makna Kata",
+    "kelas": "9",
+    "semester": 1,
+    "kompetensi": "3.4",
+    "indikator": "Memahami konsep Makna Kata (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 4,
+    "type": "ISIAN_SINGKAT",
+    "text": "Jelaskan pengertian Makna Kata menurut pemahaman Anda.",
+    "options": [
+      "makna kata"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Makna Kata adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+    "kataKunci": [
+      "makna kata",
+      "denotasi",
+      "konotasi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-MAKNA-KATA-0026",
+    "judul": "Makna Kata #26",
+    "tema": "Makna Kata",
+    "kelas": "9",
+    "semester": 1,
+    "kompetensi": "3.4",
+    "indikator": "Memahami konsep Makna Kata (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Makna Kata adalah...",
+    "options": [
+      "Makna Kata",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Makna Kata adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "makna kata",
+      "denotasi",
+      "konotasi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-MAKNA-KATA-0027",
+    "judul": "Makna Kata #27",
+    "tema": "Makna Kata",
+    "kelas": "9",
+    "semester": 1,
+    "kompetensi": "3.4",
+    "indikator": "Memahami konsep Makna Kata (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Makna Kata adalah...",
+    "options": [
+      "Makna Kata",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Makna Kata adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "makna kata",
+      "denotasi",
+      "konotasi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-MAKNA-KATA-0028",
+    "judul": "Makna Kata #28",
+    "tema": "Makna Kata",
+    "kelas": "9",
+    "semester": 1,
+    "kompetensi": "3.4",
+    "indikator": "Memahami konsep Makna Kata (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Makna Kata adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Makna Kata memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "makna kata",
+      "denotasi",
+      "konotasi"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-MAKNA-KATA-0029",
+    "judul": "Makna Kata #29",
+    "tema": "Makna Kata",
+    "kelas": "9",
+    "semester": 1,
+    "kompetensi": "3.4",
+    "indikator": "Memahami konsep Makna Kata (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Makna Kata adalah...",
+    "options": [
+      "Makna Kata",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Makna Kata adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "makna kata",
+      "denotasi",
+      "konotasi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-MAKNA-KATA-0030",
+    "judul": "Makna Kata #30",
+    "tema": "Makna Kata",
+    "kelas": "9",
+    "semester": 1,
+    "kompetensi": "3.4",
+    "indikator": "Memahami konsep Makna Kata (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Makna Kata adalah...",
+    "options": [
+      "Makna Kata",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Makna Kata adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "makna kata",
+      "denotasi",
+      "konotasi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  }
+]

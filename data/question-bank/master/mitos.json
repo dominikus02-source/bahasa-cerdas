@@ -1,0 +1,761 @@
+[
+  {
+    "kodeSoal": "BC-MITOS-0001",
+    "judul": "Mitos #1",
+    "tema": "Mitos",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Mitos (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Mitos adalah...",
+    "options": [
+      "Mitos",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Mitos adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "mitos"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-MITOS-0002",
+    "judul": "Mitos #2",
+    "tema": "Mitos",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Mitos (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Mitos adalah...",
+    "options": [
+      "Mitos",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Mitos adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "mitos"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-MITOS-0003",
+    "judul": "Mitos #3",
+    "tema": "Mitos",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Mitos (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Mitos adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Mitos memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "mitos"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-MITOS-0004",
+    "judul": "Mitos #4",
+    "tema": "Mitos",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Mitos (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Mitos adalah...",
+    "options": [
+      "Mitos",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Mitos adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "mitos"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-MITOS-0005",
+    "judul": "Mitos #5",
+    "tema": "Mitos",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Mitos (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "ISIAN_SINGKAT",
+    "text": "Jelaskan pengertian Mitos menurut pemahaman Anda.",
+    "options": [
+      "mitos"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Mitos adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+    "kataKunci": [
+      "mitos"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-MITOS-0006",
+    "judul": "Mitos #6",
+    "tema": "Mitos",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Mitos (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Mitos adalah...",
+    "options": [
+      "Mitos",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Mitos adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "mitos"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-MITOS-0007",
+    "judul": "Mitos #7",
+    "tema": "Mitos",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Mitos (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Mitos adalah...",
+    "options": [
+      "Mitos",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Mitos adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "mitos"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-MITOS-0008",
+    "judul": "Mitos #8",
+    "tema": "Mitos",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Mitos (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Mitos adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Mitos memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "mitos"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-MITOS-0009",
+    "judul": "Mitos #9",
+    "tema": "Mitos",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Mitos (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Mitos adalah...",
+    "options": [
+      "Mitos",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Mitos adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "mitos"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-MITOS-0010",
+    "judul": "Mitos #10",
+    "tema": "Mitos",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Mitos (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Mitos adalah...",
+    "options": [
+      "Mitos",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Mitos adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "mitos"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-MITOS-0011",
+    "judul": "Mitos #11",
+    "tema": "Mitos",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Mitos (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Mitos adalah...",
+    "options": [
+      "Mitos",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Mitos adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "mitos"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-MITOS-0012",
+    "judul": "Mitos #12",
+    "tema": "Mitos",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Mitos (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Mitos adalah...",
+    "options": [
+      "Mitos",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Mitos adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "mitos"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-MITOS-0013",
+    "judul": "Mitos #13",
+    "tema": "Mitos",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Mitos (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 2,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Mitos adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Mitos memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "mitos"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-MITOS-0014",
+    "judul": "Mitos #14",
+    "tema": "Mitos",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Mitos (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Mitos adalah...",
+    "options": [
+      "Mitos",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Mitos adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "mitos"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-MITOS-0015",
+    "judul": "Mitos #15",
+    "tema": "Mitos",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Mitos (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 2,
+    "type": "ISIAN_SINGKAT",
+    "text": "Jelaskan pengertian Mitos menurut pemahaman Anda.",
+    "options": [
+      "mitos"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Mitos adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+    "kataKunci": [
+      "mitos"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-MITOS-0016",
+    "judul": "Mitos #16",
+    "tema": "Mitos",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Mitos (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Mitos adalah...",
+    "options": [
+      "Mitos",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Mitos adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "mitos"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-MITOS-0017",
+    "judul": "Mitos #17",
+    "tema": "Mitos",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Mitos (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Mitos adalah...",
+    "options": [
+      "Mitos",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Mitos adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "mitos"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-MITOS-0018",
+    "judul": "Mitos #18",
+    "tema": "Mitos",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Mitos (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Mitos adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Mitos memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "mitos"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-MITOS-0019",
+    "judul": "Mitos #19",
+    "tema": "Mitos",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Mitos (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Mitos adalah...",
+    "options": [
+      "Mitos",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Mitos adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "mitos"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-MITOS-0020",
+    "judul": "Mitos #20",
+    "tema": "Mitos",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Mitos (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Mitos adalah...",
+    "options": [
+      "Mitos",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Mitos adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "mitos"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-MITOS-0021",
+    "judul": "Mitos #21",
+    "tema": "Mitos",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Mitos (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Mitos adalah...",
+    "options": [
+      "Mitos",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Mitos adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "mitos"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-MITOS-0022",
+    "judul": "Mitos #22",
+    "tema": "Mitos",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Mitos (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Mitos adalah...",
+    "options": [
+      "Mitos",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Mitos adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "mitos"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-MITOS-0023",
+    "judul": "Mitos #23",
+    "tema": "Mitos",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Mitos (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Mitos adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Mitos memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "mitos"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-MITOS-0024",
+    "judul": "Mitos #24",
+    "tema": "Mitos",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Mitos (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Mitos adalah...",
+    "options": [
+      "Mitos",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Mitos adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "mitos"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-MITOS-0025",
+    "judul": "Mitos #25",
+    "tema": "Mitos",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Mitos (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 4,
+    "type": "ISIAN_SINGKAT",
+    "text": "Jelaskan pengertian Mitos menurut pemahaman Anda.",
+    "options": [
+      "mitos"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Mitos adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+    "kataKunci": [
+      "mitos"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-MITOS-0026",
+    "judul": "Mitos #26",
+    "tema": "Mitos",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Mitos (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Mitos adalah...",
+    "options": [
+      "Mitos",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Mitos adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "mitos"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-MITOS-0027",
+    "judul": "Mitos #27",
+    "tema": "Mitos",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Mitos (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Mitos adalah...",
+    "options": [
+      "Mitos",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Mitos adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "mitos"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-MITOS-0028",
+    "judul": "Mitos #28",
+    "tema": "Mitos",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Mitos (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Mitos adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Mitos memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "mitos"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-MITOS-0029",
+    "judul": "Mitos #29",
+    "tema": "Mitos",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Mitos (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Mitos adalah...",
+    "options": [
+      "Mitos",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Mitos adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "mitos"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-MITOS-0030",
+    "judul": "Mitos #30",
+    "tema": "Mitos",
+    "kelas": "7",
+    "semester": 2,
+    "kompetensi": "3.9",
+    "indikator": "Memahami konsep Mitos (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Mitos adalah...",
+    "options": [
+      "Mitos",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Mitos adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "mitos"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  }
+]

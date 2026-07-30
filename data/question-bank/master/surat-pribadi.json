@@ -1,0 +1,761 @@
+[
+  {
+    "kodeSoal": "BC-SURAT-PRIBADI-0001",
+    "judul": "Surat Pribadi #1",
+    "tema": "Surat Pribadi",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Surat Pribadi (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Surat Pribadi adalah...",
+    "options": [
+      "Surat Pribadi",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Surat Pribadi adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "surat pribadi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SURAT-PRIBADI-0002",
+    "judul": "Surat Pribadi #2",
+    "tema": "Surat Pribadi",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Surat Pribadi (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Surat Pribadi adalah...",
+    "options": [
+      "Surat Pribadi",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Surat Pribadi adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "surat pribadi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SURAT-PRIBADI-0003",
+    "judul": "Surat Pribadi #3",
+    "tema": "Surat Pribadi",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Surat Pribadi (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Surat Pribadi adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Surat Pribadi memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "surat pribadi"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SURAT-PRIBADI-0004",
+    "judul": "Surat Pribadi #4",
+    "tema": "Surat Pribadi",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Surat Pribadi (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Surat Pribadi adalah...",
+    "options": [
+      "Surat Pribadi",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Surat Pribadi adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "surat pribadi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SURAT-PRIBADI-0005",
+    "judul": "Surat Pribadi #5",
+    "tema": "Surat Pribadi",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Surat Pribadi (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "ISIAN_SINGKAT",
+    "text": "Jelaskan pengertian Surat Pribadi menurut pemahaman Anda.",
+    "options": [
+      "surat pribadi"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Surat Pribadi adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+    "kataKunci": [
+      "surat pribadi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SURAT-PRIBADI-0006",
+    "judul": "Surat Pribadi #6",
+    "tema": "Surat Pribadi",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Surat Pribadi (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Surat Pribadi adalah...",
+    "options": [
+      "Surat Pribadi",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Surat Pribadi adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "surat pribadi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SURAT-PRIBADI-0007",
+    "judul": "Surat Pribadi #7",
+    "tema": "Surat Pribadi",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Surat Pribadi (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Surat Pribadi adalah...",
+    "options": [
+      "Surat Pribadi",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Surat Pribadi adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "surat pribadi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SURAT-PRIBADI-0008",
+    "judul": "Surat Pribadi #8",
+    "tema": "Surat Pribadi",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Surat Pribadi (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Surat Pribadi adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Surat Pribadi memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "surat pribadi"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SURAT-PRIBADI-0009",
+    "judul": "Surat Pribadi #9",
+    "tema": "Surat Pribadi",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Surat Pribadi (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Surat Pribadi adalah...",
+    "options": [
+      "Surat Pribadi",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Surat Pribadi adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "surat pribadi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SURAT-PRIBADI-0010",
+    "judul": "Surat Pribadi #10",
+    "tema": "Surat Pribadi",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Surat Pribadi (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Surat Pribadi adalah...",
+    "options": [
+      "Surat Pribadi",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Surat Pribadi adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "surat pribadi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SURAT-PRIBADI-0011",
+    "judul": "Surat Pribadi #11",
+    "tema": "Surat Pribadi",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Surat Pribadi (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Surat Pribadi adalah...",
+    "options": [
+      "Surat Pribadi",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Surat Pribadi adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "surat pribadi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SURAT-PRIBADI-0012",
+    "judul": "Surat Pribadi #12",
+    "tema": "Surat Pribadi",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Surat Pribadi (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Surat Pribadi adalah...",
+    "options": [
+      "Surat Pribadi",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Surat Pribadi adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "surat pribadi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SURAT-PRIBADI-0013",
+    "judul": "Surat Pribadi #13",
+    "tema": "Surat Pribadi",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Surat Pribadi (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 2,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Surat Pribadi adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Surat Pribadi memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "surat pribadi"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SURAT-PRIBADI-0014",
+    "judul": "Surat Pribadi #14",
+    "tema": "Surat Pribadi",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Surat Pribadi (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Surat Pribadi adalah...",
+    "options": [
+      "Surat Pribadi",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Surat Pribadi adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "surat pribadi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SURAT-PRIBADI-0015",
+    "judul": "Surat Pribadi #15",
+    "tema": "Surat Pribadi",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Surat Pribadi (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 2,
+    "type": "ISIAN_SINGKAT",
+    "text": "Jelaskan pengertian Surat Pribadi menurut pemahaman Anda.",
+    "options": [
+      "surat pribadi"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Surat Pribadi adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+    "kataKunci": [
+      "surat pribadi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SURAT-PRIBADI-0016",
+    "judul": "Surat Pribadi #16",
+    "tema": "Surat Pribadi",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Surat Pribadi (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Surat Pribadi adalah...",
+    "options": [
+      "Surat Pribadi",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Surat Pribadi adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "surat pribadi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SURAT-PRIBADI-0017",
+    "judul": "Surat Pribadi #17",
+    "tema": "Surat Pribadi",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Surat Pribadi (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Surat Pribadi adalah...",
+    "options": [
+      "Surat Pribadi",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Surat Pribadi adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "surat pribadi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SURAT-PRIBADI-0018",
+    "judul": "Surat Pribadi #18",
+    "tema": "Surat Pribadi",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Surat Pribadi (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Surat Pribadi adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Surat Pribadi memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "surat pribadi"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SURAT-PRIBADI-0019",
+    "judul": "Surat Pribadi #19",
+    "tema": "Surat Pribadi",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Surat Pribadi (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Surat Pribadi adalah...",
+    "options": [
+      "Surat Pribadi",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Surat Pribadi adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "surat pribadi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SURAT-PRIBADI-0020",
+    "judul": "Surat Pribadi #20",
+    "tema": "Surat Pribadi",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Surat Pribadi (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Surat Pribadi adalah...",
+    "options": [
+      "Surat Pribadi",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Surat Pribadi adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "surat pribadi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SURAT-PRIBADI-0021",
+    "judul": "Surat Pribadi #21",
+    "tema": "Surat Pribadi",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Surat Pribadi (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Surat Pribadi adalah...",
+    "options": [
+      "Surat Pribadi",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Surat Pribadi adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "surat pribadi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SURAT-PRIBADI-0022",
+    "judul": "Surat Pribadi #22",
+    "tema": "Surat Pribadi",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Surat Pribadi (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Surat Pribadi adalah...",
+    "options": [
+      "Surat Pribadi",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Surat Pribadi adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "surat pribadi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SURAT-PRIBADI-0023",
+    "judul": "Surat Pribadi #23",
+    "tema": "Surat Pribadi",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Surat Pribadi (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Surat Pribadi adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Surat Pribadi memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "surat pribadi"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SURAT-PRIBADI-0024",
+    "judul": "Surat Pribadi #24",
+    "tema": "Surat Pribadi",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Surat Pribadi (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Surat Pribadi adalah...",
+    "options": [
+      "Surat Pribadi",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Surat Pribadi adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "surat pribadi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SURAT-PRIBADI-0025",
+    "judul": "Surat Pribadi #25",
+    "tema": "Surat Pribadi",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Surat Pribadi (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 4,
+    "type": "ISIAN_SINGKAT",
+    "text": "Jelaskan pengertian Surat Pribadi menurut pemahaman Anda.",
+    "options": [
+      "surat pribadi"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Surat Pribadi adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+    "kataKunci": [
+      "surat pribadi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-SURAT-PRIBADI-0026",
+    "judul": "Surat Pribadi #26",
+    "tema": "Surat Pribadi",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Surat Pribadi (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Surat Pribadi adalah...",
+    "options": [
+      "Surat Pribadi",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Surat Pribadi adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "surat pribadi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-SURAT-PRIBADI-0027",
+    "judul": "Surat Pribadi #27",
+    "tema": "Surat Pribadi",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Surat Pribadi (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Surat Pribadi adalah...",
+    "options": [
+      "Surat Pribadi",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Surat Pribadi adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "surat pribadi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-SURAT-PRIBADI-0028",
+    "judul": "Surat Pribadi #28",
+    "tema": "Surat Pribadi",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Surat Pribadi (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Surat Pribadi adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Surat Pribadi memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "surat pribadi"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-SURAT-PRIBADI-0029",
+    "judul": "Surat Pribadi #29",
+    "tema": "Surat Pribadi",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Surat Pribadi (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Surat Pribadi adalah...",
+    "options": [
+      "Surat Pribadi",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Surat Pribadi adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "surat pribadi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-SURAT-PRIBADI-0030",
+    "judul": "Surat Pribadi #30",
+    "tema": "Surat Pribadi",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.6",
+    "indikator": "Memahami konsep Surat Pribadi (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Surat Pribadi adalah...",
+    "options": [
+      "Surat Pribadi",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Surat Pribadi adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "surat pribadi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  }
+]

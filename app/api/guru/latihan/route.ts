@@ -132,6 +132,67 @@ export async function GET(req: NextRequest) {
   }
 }
 
+async function savePickedSoals(
+  dbUser: { id: string },
+  tema: string,
+  kelas: string,
+  judul: string | undefined,
+  pickedSoals: any[]
+) {
+  try {
+    const count = pickedSoals.length;
+    const soalIds = pickedSoals.map((s: any) => s.id).filter(Boolean);
+
+    // Update usedCount for analytics
+    await db.soal.updateMany({
+      where: { id: { in: soalIds } },
+      data: { usedCount: { increment: 1 } },
+    });
+
+    const quiz = await db.quiz.create({
+      data: {
+        title: judul || `Latihan: ${tema}`,
+        description: `Latihan ${tema} kelas ${kelas} — ${count} soal (dari Bank Soal)`,
+        type: "LATIHAN",
+        status: "PUBLISHED",
+        kelas,
+        subject: "Bahasa Indonesia",
+        topik: tema,
+        shuffleQuestions: true,
+        shuffleOptions: true,
+        showResults: true,
+        showCorrectAnswer: true,
+        maxAttempts: 0,
+        creatorId: dbUser.id,
+        questions: {
+          create: pickedSoals.map((s, idx) => ({
+            sourceType: "SOAL",
+            sourceId: s.id,
+            orderIndex: idx,
+            points: 1,
+          })),
+        },
+      },
+      include: { _count: { select: { questions: true } } },
+    });
+
+    return NextResponse.json({
+      success: true,
+      quiz: { id: quiz.id, title: quiz.title, topik: quiz.topik, kelas: quiz.kelas, totalSoal: quiz._count.questions },
+      soal: pickedSoals.map((s: any) => ({
+        id: s.id,
+        text: s.text,
+        options: s.options,
+        correctAnswer: s.correctAnswer,
+        explanation: s.explanation,
+      })),
+    }, { status: 201 });
+  } catch (error) {
+    console.error("savePickedSoals error:", error);
+    return NextResponse.json({ error: "Gagal menyimpan soal dari bank" }, { status: 500 });
+  }
+}
+
 export async function POST(req: NextRequest) {
   try {
     const rl = await rateLimitRoute(req, { maxRequests: 20, windowSeconds: 60, identifier: "latihan-create" });
@@ -144,15 +205,19 @@ export async function POST(req: NextRequest) {
     const dbUser = await db.user.findUnique({ where: { supabaseId: user.id } });
     if (!dbUser || dbUser.role !== "GURU") return NextResponse.json({ error: "Guru only" }, { status: 403 });
 
-    const quota = await checkAIQuota(dbUser, "soal");
-    if (!quota.allowed) {
-      return NextResponse.json({ error: "QUOTA_EXCEEDED", used: quota.used, limit: quota.limit }, { status: 429 });
-    }
-
-    const { tema, kelas, jumlahSoal = 10, difficulty = "MEDIUM", judul } = await req.json();
+    const { tema, kelas, jumlahSoal = 10, difficulty = "MEDIUM", judul, _skipAI, _pickedSoals } = await req.json();
 
     if (!tema || !kelas) {
       return NextResponse.json({ error: "Tema dan kelas wajib diisi" }, { status: 400 });
+    }
+
+    if (_skipAI && Array.isArray(_pickedSoals) && _pickedSoals.length > 0) {
+      return await savePickedSoals(dbUser, tema, kelas, judul, _pickedSoals);
+    }
+
+    const quota = await checkAIQuota(dbUser, "soal");
+    if (!quota.allowed) {
+      return NextResponse.json({ error: "QUOTA_EXCEEDED", used: quota.used, limit: quota.limit }, { status: 429 });
     }
 
     const count = Math.min(Math.max(jumlahSoal, 5), 30);

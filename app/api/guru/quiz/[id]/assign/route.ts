@@ -13,7 +13,7 @@ export async function POST(
     if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const dbUser = await db.user.findUnique({ where: { supabaseId: user.id } });
-    if (!dbUser || dbUser.role !== "GURU") return NextResponse.json({ error: "Guru only" }, { status: 403 });
+    if (!dbUser || dbUser.role?.toUpperCase() !== "GURU") return NextResponse.json({ error: "Guru only" }, { status: 403 });
 
     const quiz = await db.quiz.findUnique({ where: { id } });
     if (!quiz || quiz.creatorId !== dbUser.id) {
@@ -66,7 +66,23 @@ export async function POST(
       })
     );
 
-    return NextResponse.json({ assignments });
+    // Notifikasi khusus guru
+    const groupNames = groups.map((g) => g.name).join(", ");
+    try {
+      await db.notifikasi.create({
+        data: {
+          userId: dbUser.id,
+          title: "✅ Latihan Terkirim",
+          body: `"${quiz.title}" berhasil dikirim ke ${groups.length} kelas (${groupNames})`,
+          type: "LATIHAN_KIRIM",
+          data: { quizId: id, link: "/guru/bank-soal" },
+        },
+      });
+    } catch (notifErr) {
+      console.error("Gagal buat notifikasi:", notifErr);
+    }
+
+    return NextResponse.json({ assignments, success: true, groupCount: groups.length });
   } catch (error) {
     console.error("POST /api/guru/quiz/[id]/assign error:", error);
     return NextResponse.json({ error: "Internal error" }, { status: 500 });

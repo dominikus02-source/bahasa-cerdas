@@ -1,0 +1,821 @@
+[
+  {
+    "kodeSoal": "BC-PARAGRAF-0001",
+    "judul": "Paragraf #1",
+    "tema": "Paragraf",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Paragraf (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Paragraf adalah...",
+    "options": [
+      "Paragraf",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Paragraf adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "paragraf",
+      "deduktif",
+      "induktif"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-PARAGRAF-0002",
+    "judul": "Paragraf #2",
+    "tema": "Paragraf",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Paragraf (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Paragraf adalah...",
+    "options": [
+      "Paragraf",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Paragraf adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "paragraf",
+      "deduktif",
+      "induktif"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-PARAGRAF-0003",
+    "judul": "Paragraf #3",
+    "tema": "Paragraf",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Paragraf (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Paragraf adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Paragraf memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "paragraf",
+      "deduktif",
+      "induktif"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-PARAGRAF-0004",
+    "judul": "Paragraf #4",
+    "tema": "Paragraf",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Paragraf (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Paragraf adalah...",
+    "options": [
+      "Paragraf",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Paragraf adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "paragraf",
+      "deduktif",
+      "induktif"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-PARAGRAF-0005",
+    "judul": "Paragraf #5",
+    "tema": "Paragraf",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Paragraf (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "ISIAN_SINGKAT",
+    "text": "Jelaskan pengertian Paragraf menurut pemahaman Anda.",
+    "options": [
+      "paragraf"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Paragraf adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+    "kataKunci": [
+      "paragraf",
+      "deduktif",
+      "induktif"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-PARAGRAF-0006",
+    "judul": "Paragraf #6",
+    "tema": "Paragraf",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Paragraf (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Paragraf adalah...",
+    "options": [
+      "Paragraf",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Paragraf adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "paragraf",
+      "deduktif",
+      "induktif"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-PARAGRAF-0007",
+    "judul": "Paragraf #7",
+    "tema": "Paragraf",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Paragraf (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Paragraf adalah...",
+    "options": [
+      "Paragraf",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Paragraf adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "paragraf",
+      "deduktif",
+      "induktif"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-PARAGRAF-0008",
+    "judul": "Paragraf #8",
+    "tema": "Paragraf",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Paragraf (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Paragraf adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Paragraf memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "paragraf",
+      "deduktif",
+      "induktif"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-PARAGRAF-0009",
+    "judul": "Paragraf #9",
+    "tema": "Paragraf",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Paragraf (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Paragraf adalah...",
+    "options": [
+      "Paragraf",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Paragraf adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "paragraf",
+      "deduktif",
+      "induktif"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-PARAGRAF-0010",
+    "judul": "Paragraf #10",
+    "tema": "Paragraf",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Paragraf (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Paragraf adalah...",
+    "options": [
+      "Paragraf",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Paragraf adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "paragraf",
+      "deduktif",
+      "induktif"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-PARAGRAF-0011",
+    "judul": "Paragraf #11",
+    "tema": "Paragraf",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Paragraf (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Paragraf adalah...",
+    "options": [
+      "Paragraf",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Paragraf adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "paragraf",
+      "deduktif",
+      "induktif"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-PARAGRAF-0012",
+    "judul": "Paragraf #12",
+    "tema": "Paragraf",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Paragraf (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Paragraf adalah...",
+    "options": [
+      "Paragraf",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Paragraf adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "paragraf",
+      "deduktif",
+      "induktif"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-PARAGRAF-0013",
+    "judul": "Paragraf #13",
+    "tema": "Paragraf",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Paragraf (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 2,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Paragraf adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Paragraf memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "paragraf",
+      "deduktif",
+      "induktif"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-PARAGRAF-0014",
+    "judul": "Paragraf #14",
+    "tema": "Paragraf",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Paragraf (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Paragraf adalah...",
+    "options": [
+      "Paragraf",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Paragraf adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "paragraf",
+      "deduktif",
+      "induktif"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-PARAGRAF-0015",
+    "judul": "Paragraf #15",
+    "tema": "Paragraf",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Paragraf (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 2,
+    "type": "ISIAN_SINGKAT",
+    "text": "Jelaskan pengertian Paragraf menurut pemahaman Anda.",
+    "options": [
+      "paragraf"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Paragraf adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+    "kataKunci": [
+      "paragraf",
+      "deduktif",
+      "induktif"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-PARAGRAF-0016",
+    "judul": "Paragraf #16",
+    "tema": "Paragraf",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Paragraf (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Paragraf adalah...",
+    "options": [
+      "Paragraf",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Paragraf adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "paragraf",
+      "deduktif",
+      "induktif"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-PARAGRAF-0017",
+    "judul": "Paragraf #17",
+    "tema": "Paragraf",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Paragraf (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Paragraf adalah...",
+    "options": [
+      "Paragraf",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Paragraf adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "paragraf",
+      "deduktif",
+      "induktif"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-PARAGRAF-0018",
+    "judul": "Paragraf #18",
+    "tema": "Paragraf",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Paragraf (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Paragraf adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Paragraf memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "paragraf",
+      "deduktif",
+      "induktif"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-PARAGRAF-0019",
+    "judul": "Paragraf #19",
+    "tema": "Paragraf",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Paragraf (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Paragraf adalah...",
+    "options": [
+      "Paragraf",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Paragraf adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "paragraf",
+      "deduktif",
+      "induktif"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-PARAGRAF-0020",
+    "judul": "Paragraf #20",
+    "tema": "Paragraf",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Paragraf (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Paragraf adalah...",
+    "options": [
+      "Paragraf",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Paragraf adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "paragraf",
+      "deduktif",
+      "induktif"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-PARAGRAF-0021",
+    "judul": "Paragraf #21",
+    "tema": "Paragraf",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Paragraf (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Paragraf adalah...",
+    "options": [
+      "Paragraf",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Paragraf adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "paragraf",
+      "deduktif",
+      "induktif"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-PARAGRAF-0022",
+    "judul": "Paragraf #22",
+    "tema": "Paragraf",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Paragraf (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Paragraf adalah...",
+    "options": [
+      "Paragraf",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Paragraf adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "paragraf",
+      "deduktif",
+      "induktif"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-PARAGRAF-0023",
+    "judul": "Paragraf #23",
+    "tema": "Paragraf",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Paragraf (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Paragraf adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Paragraf memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "paragraf",
+      "deduktif",
+      "induktif"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-PARAGRAF-0024",
+    "judul": "Paragraf #24",
+    "tema": "Paragraf",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Paragraf (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Paragraf adalah...",
+    "options": [
+      "Paragraf",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Paragraf adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "paragraf",
+      "deduktif",
+      "induktif"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-PARAGRAF-0025",
+    "judul": "Paragraf #25",
+    "tema": "Paragraf",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Paragraf (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 4,
+    "type": "ISIAN_SINGKAT",
+    "text": "Jelaskan pengertian Paragraf menurut pemahaman Anda.",
+    "options": [
+      "paragraf"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Paragraf adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+    "kataKunci": [
+      "paragraf",
+      "deduktif",
+      "induktif"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-PARAGRAF-0026",
+    "judul": "Paragraf #26",
+    "tema": "Paragraf",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Paragraf (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Paragraf adalah...",
+    "options": [
+      "Paragraf",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Paragraf adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "paragraf",
+      "deduktif",
+      "induktif"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-PARAGRAF-0027",
+    "judul": "Paragraf #27",
+    "tema": "Paragraf",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Paragraf (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Paragraf adalah...",
+    "options": [
+      "Paragraf",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Paragraf adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "paragraf",
+      "deduktif",
+      "induktif"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-PARAGRAF-0028",
+    "judul": "Paragraf #28",
+    "tema": "Paragraf",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Paragraf (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Paragraf adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Paragraf memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "paragraf",
+      "deduktif",
+      "induktif"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-PARAGRAF-0029",
+    "judul": "Paragraf #29",
+    "tema": "Paragraf",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Paragraf (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Paragraf adalah...",
+    "options": [
+      "Paragraf",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Paragraf adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "paragraf",
+      "deduktif",
+      "induktif"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-PARAGRAF-0030",
+    "judul": "Paragraf #30",
+    "tema": "Paragraf",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Paragraf (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Paragraf adalah...",
+    "options": [
+      "Paragraf",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Paragraf adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "paragraf",
+      "deduktif",
+      "induktif"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  }
+]

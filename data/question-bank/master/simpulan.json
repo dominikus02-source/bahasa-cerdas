@@ -1,0 +1,761 @@
+[
+  {
+    "kodeSoal": "BC-SIMPULAN-0001",
+    "judul": "Simpulan #1",
+    "tema": "Simpulan",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Simpulan (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Simpulan adalah...",
+    "options": [
+      "Simpulan",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Simpulan adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "simpulan"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SIMPULAN-0002",
+    "judul": "Simpulan #2",
+    "tema": "Simpulan",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Simpulan (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Simpulan adalah...",
+    "options": [
+      "Simpulan",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Simpulan adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "simpulan"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SIMPULAN-0003",
+    "judul": "Simpulan #3",
+    "tema": "Simpulan",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Simpulan (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Simpulan adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Simpulan memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "simpulan"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SIMPULAN-0004",
+    "judul": "Simpulan #4",
+    "tema": "Simpulan",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Simpulan (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Simpulan adalah...",
+    "options": [
+      "Simpulan",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Simpulan adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "simpulan"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SIMPULAN-0005",
+    "judul": "Simpulan #5",
+    "tema": "Simpulan",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Simpulan (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "ISIAN_SINGKAT",
+    "text": "Jelaskan pengertian Simpulan menurut pemahaman Anda.",
+    "options": [
+      "simpulan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Simpulan adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+    "kataKunci": [
+      "simpulan"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SIMPULAN-0006",
+    "judul": "Simpulan #6",
+    "tema": "Simpulan",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Simpulan (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Simpulan adalah...",
+    "options": [
+      "Simpulan",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Simpulan adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "simpulan"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SIMPULAN-0007",
+    "judul": "Simpulan #7",
+    "tema": "Simpulan",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Simpulan (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Simpulan adalah...",
+    "options": [
+      "Simpulan",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Simpulan adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "simpulan"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SIMPULAN-0008",
+    "judul": "Simpulan #8",
+    "tema": "Simpulan",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Simpulan (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Simpulan adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Simpulan memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "simpulan"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SIMPULAN-0009",
+    "judul": "Simpulan #9",
+    "tema": "Simpulan",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Simpulan (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Simpulan adalah...",
+    "options": [
+      "Simpulan",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Simpulan adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "simpulan"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SIMPULAN-0010",
+    "judul": "Simpulan #10",
+    "tema": "Simpulan",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Simpulan (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Simpulan adalah...",
+    "options": [
+      "Simpulan",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Simpulan adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "simpulan"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SIMPULAN-0011",
+    "judul": "Simpulan #11",
+    "tema": "Simpulan",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Simpulan (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Simpulan adalah...",
+    "options": [
+      "Simpulan",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Simpulan adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "simpulan"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SIMPULAN-0012",
+    "judul": "Simpulan #12",
+    "tema": "Simpulan",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Simpulan (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Simpulan adalah...",
+    "options": [
+      "Simpulan",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Simpulan adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "simpulan"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SIMPULAN-0013",
+    "judul": "Simpulan #13",
+    "tema": "Simpulan",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Simpulan (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 2,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Simpulan adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Simpulan memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "simpulan"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SIMPULAN-0014",
+    "judul": "Simpulan #14",
+    "tema": "Simpulan",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Simpulan (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Simpulan adalah...",
+    "options": [
+      "Simpulan",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Simpulan adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "simpulan"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SIMPULAN-0015",
+    "judul": "Simpulan #15",
+    "tema": "Simpulan",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Simpulan (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 2,
+    "type": "ISIAN_SINGKAT",
+    "text": "Jelaskan pengertian Simpulan menurut pemahaman Anda.",
+    "options": [
+      "simpulan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Simpulan adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+    "kataKunci": [
+      "simpulan"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SIMPULAN-0016",
+    "judul": "Simpulan #16",
+    "tema": "Simpulan",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Simpulan (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Simpulan adalah...",
+    "options": [
+      "Simpulan",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Simpulan adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "simpulan"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SIMPULAN-0017",
+    "judul": "Simpulan #17",
+    "tema": "Simpulan",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Simpulan (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Simpulan adalah...",
+    "options": [
+      "Simpulan",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Simpulan adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "simpulan"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SIMPULAN-0018",
+    "judul": "Simpulan #18",
+    "tema": "Simpulan",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Simpulan (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Simpulan adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Simpulan memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "simpulan"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SIMPULAN-0019",
+    "judul": "Simpulan #19",
+    "tema": "Simpulan",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Simpulan (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Simpulan adalah...",
+    "options": [
+      "Simpulan",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Simpulan adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "simpulan"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SIMPULAN-0020",
+    "judul": "Simpulan #20",
+    "tema": "Simpulan",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Simpulan (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Simpulan adalah...",
+    "options": [
+      "Simpulan",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Simpulan adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "simpulan"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SIMPULAN-0021",
+    "judul": "Simpulan #21",
+    "tema": "Simpulan",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Simpulan (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Simpulan adalah...",
+    "options": [
+      "Simpulan",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Simpulan adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "simpulan"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SIMPULAN-0022",
+    "judul": "Simpulan #22",
+    "tema": "Simpulan",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Simpulan (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Simpulan adalah...",
+    "options": [
+      "Simpulan",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Simpulan adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "simpulan"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SIMPULAN-0023",
+    "judul": "Simpulan #23",
+    "tema": "Simpulan",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Simpulan (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Simpulan adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Simpulan memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "simpulan"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SIMPULAN-0024",
+    "judul": "Simpulan #24",
+    "tema": "Simpulan",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Simpulan (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Simpulan adalah...",
+    "options": [
+      "Simpulan",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Simpulan adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "simpulan"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SIMPULAN-0025",
+    "judul": "Simpulan #25",
+    "tema": "Simpulan",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Simpulan (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 4,
+    "type": "ISIAN_SINGKAT",
+    "text": "Jelaskan pengertian Simpulan menurut pemahaman Anda.",
+    "options": [
+      "simpulan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Simpulan adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+    "kataKunci": [
+      "simpulan"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-SIMPULAN-0026",
+    "judul": "Simpulan #26",
+    "tema": "Simpulan",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Simpulan (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Simpulan adalah...",
+    "options": [
+      "Simpulan",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Simpulan adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "simpulan"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-SIMPULAN-0027",
+    "judul": "Simpulan #27",
+    "tema": "Simpulan",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Simpulan (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Simpulan adalah...",
+    "options": [
+      "Simpulan",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Simpulan adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "simpulan"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-SIMPULAN-0028",
+    "judul": "Simpulan #28",
+    "tema": "Simpulan",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Simpulan (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Simpulan adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Simpulan memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "simpulan"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-SIMPULAN-0029",
+    "judul": "Simpulan #29",
+    "tema": "Simpulan",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Simpulan (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Simpulan adalah...",
+    "options": [
+      "Simpulan",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Simpulan adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "simpulan"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-SIMPULAN-0030",
+    "judul": "Simpulan #30",
+    "tema": "Simpulan",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Simpulan (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Simpulan adalah...",
+    "options": [
+      "Simpulan",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Simpulan adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "simpulan"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  }
+]

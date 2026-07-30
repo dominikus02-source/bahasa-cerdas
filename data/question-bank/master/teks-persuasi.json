@@ -1,0 +1,761 @@
+[
+  {
+    "kodeSoal": "BC-TEKS-PERSUASI-0001",
+    "judul": "Teks Persuasi #1",
+    "tema": "Teks Persuasi",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Teks Persuasi (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Teks Persuasi adalah...",
+    "options": [
+      "Teks Persuasi",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Persuasi adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "teks persuasi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-PERSUASI-0002",
+    "judul": "Teks Persuasi #2",
+    "tema": "Teks Persuasi",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Teks Persuasi (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Teks Persuasi adalah...",
+    "options": [
+      "Teks Persuasi",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Persuasi adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "teks persuasi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-PERSUASI-0003",
+    "judul": "Teks Persuasi #3",
+    "tema": "Teks Persuasi",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Teks Persuasi (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Teks Persuasi adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Persuasi memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "teks persuasi"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-PERSUASI-0004",
+    "judul": "Teks Persuasi #4",
+    "tema": "Teks Persuasi",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Teks Persuasi (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Teks Persuasi adalah...",
+    "options": [
+      "Teks Persuasi",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Persuasi adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "teks persuasi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-PERSUASI-0005",
+    "judul": "Teks Persuasi #5",
+    "tema": "Teks Persuasi",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Teks Persuasi (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "ISIAN_SINGKAT",
+    "text": "Jelaskan pengertian Teks Persuasi menurut pemahaman Anda.",
+    "options": [
+      "teks persuasi"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Persuasi adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+    "kataKunci": [
+      "teks persuasi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-PERSUASI-0006",
+    "judul": "Teks Persuasi #6",
+    "tema": "Teks Persuasi",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Teks Persuasi (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Teks Persuasi adalah...",
+    "options": [
+      "Teks Persuasi",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Persuasi adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "teks persuasi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-PERSUASI-0007",
+    "judul": "Teks Persuasi #7",
+    "tema": "Teks Persuasi",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Teks Persuasi (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Teks Persuasi adalah...",
+    "options": [
+      "Teks Persuasi",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Persuasi adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "teks persuasi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-PERSUASI-0008",
+    "judul": "Teks Persuasi #8",
+    "tema": "Teks Persuasi",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Teks Persuasi (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Teks Persuasi adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Persuasi memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "teks persuasi"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-PERSUASI-0009",
+    "judul": "Teks Persuasi #9",
+    "tema": "Teks Persuasi",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Teks Persuasi (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Teks Persuasi adalah...",
+    "options": [
+      "Teks Persuasi",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Persuasi adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "teks persuasi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-PERSUASI-0010",
+    "judul": "Teks Persuasi #10",
+    "tema": "Teks Persuasi",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Teks Persuasi (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Teks Persuasi adalah...",
+    "options": [
+      "Teks Persuasi",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Persuasi adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "teks persuasi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-PERSUASI-0011",
+    "judul": "Teks Persuasi #11",
+    "tema": "Teks Persuasi",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Teks Persuasi (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Teks Persuasi adalah...",
+    "options": [
+      "Teks Persuasi",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Persuasi adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "teks persuasi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-PERSUASI-0012",
+    "judul": "Teks Persuasi #12",
+    "tema": "Teks Persuasi",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Teks Persuasi (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Teks Persuasi adalah...",
+    "options": [
+      "Teks Persuasi",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Persuasi adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "teks persuasi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-PERSUASI-0013",
+    "judul": "Teks Persuasi #13",
+    "tema": "Teks Persuasi",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Teks Persuasi (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 2,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Teks Persuasi adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Persuasi memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "teks persuasi"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-PERSUASI-0014",
+    "judul": "Teks Persuasi #14",
+    "tema": "Teks Persuasi",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Teks Persuasi (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Teks Persuasi adalah...",
+    "options": [
+      "Teks Persuasi",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Persuasi adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "teks persuasi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-PERSUASI-0015",
+    "judul": "Teks Persuasi #15",
+    "tema": "Teks Persuasi",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Teks Persuasi (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 2,
+    "type": "ISIAN_SINGKAT",
+    "text": "Jelaskan pengertian Teks Persuasi menurut pemahaman Anda.",
+    "options": [
+      "teks persuasi"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Persuasi adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+    "kataKunci": [
+      "teks persuasi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-PERSUASI-0016",
+    "judul": "Teks Persuasi #16",
+    "tema": "Teks Persuasi",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Teks Persuasi (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Teks Persuasi adalah...",
+    "options": [
+      "Teks Persuasi",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Persuasi adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "teks persuasi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-PERSUASI-0017",
+    "judul": "Teks Persuasi #17",
+    "tema": "Teks Persuasi",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Teks Persuasi (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Teks Persuasi adalah...",
+    "options": [
+      "Teks Persuasi",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Persuasi adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "teks persuasi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-PERSUASI-0018",
+    "judul": "Teks Persuasi #18",
+    "tema": "Teks Persuasi",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Teks Persuasi (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Teks Persuasi adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Persuasi memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "teks persuasi"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-PERSUASI-0019",
+    "judul": "Teks Persuasi #19",
+    "tema": "Teks Persuasi",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Teks Persuasi (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Teks Persuasi adalah...",
+    "options": [
+      "Teks Persuasi",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Persuasi adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "teks persuasi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-PERSUASI-0020",
+    "judul": "Teks Persuasi #20",
+    "tema": "Teks Persuasi",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Teks Persuasi (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Teks Persuasi adalah...",
+    "options": [
+      "Teks Persuasi",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Persuasi adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "teks persuasi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-PERSUASI-0021",
+    "judul": "Teks Persuasi #21",
+    "tema": "Teks Persuasi",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Teks Persuasi (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Teks Persuasi adalah...",
+    "options": [
+      "Teks Persuasi",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Persuasi adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "teks persuasi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-PERSUASI-0022",
+    "judul": "Teks Persuasi #22",
+    "tema": "Teks Persuasi",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Teks Persuasi (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Teks Persuasi adalah...",
+    "options": [
+      "Teks Persuasi",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Persuasi adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "teks persuasi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-PERSUASI-0023",
+    "judul": "Teks Persuasi #23",
+    "tema": "Teks Persuasi",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Teks Persuasi (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Teks Persuasi adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Persuasi memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "teks persuasi"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-PERSUASI-0024",
+    "judul": "Teks Persuasi #24",
+    "tema": "Teks Persuasi",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Teks Persuasi (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Teks Persuasi adalah...",
+    "options": [
+      "Teks Persuasi",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Persuasi adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "teks persuasi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-TEKS-PERSUASI-0025",
+    "judul": "Teks Persuasi #25",
+    "tema": "Teks Persuasi",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Teks Persuasi (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 4,
+    "type": "ISIAN_SINGKAT",
+    "text": "Jelaskan pengertian Teks Persuasi menurut pemahaman Anda.",
+    "options": [
+      "teks persuasi"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Persuasi adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+    "kataKunci": [
+      "teks persuasi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-TEKS-PERSUASI-0026",
+    "judul": "Teks Persuasi #26",
+    "tema": "Teks Persuasi",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Teks Persuasi (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Teks Persuasi adalah...",
+    "options": [
+      "Teks Persuasi",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Persuasi adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "teks persuasi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-TEKS-PERSUASI-0027",
+    "judul": "Teks Persuasi #27",
+    "tema": "Teks Persuasi",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Teks Persuasi (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Teks Persuasi adalah...",
+    "options": [
+      "Teks Persuasi",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Persuasi adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "teks persuasi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-TEKS-PERSUASI-0028",
+    "judul": "Teks Persuasi #28",
+    "tema": "Teks Persuasi",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Teks Persuasi (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: Teks Persuasi adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Persuasi memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "teks persuasi"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-TEKS-PERSUASI-0029",
+    "judul": "Teks Persuasi #29",
+    "tema": "Teks Persuasi",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Teks Persuasi (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Teks Persuasi adalah...",
+    "options": [
+      "Teks Persuasi",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Persuasi adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "teks persuasi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-TEKS-PERSUASI-0030",
+    "judul": "Teks Persuasi #30",
+    "tema": "Teks Persuasi",
+    "kelas": "8",
+    "semester": 2,
+    "kompetensi": "3.3",
+    "indikator": "Memahami konsep Teks Persuasi (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh Teks Persuasi adalah...",
+    "options": [
+      "Teks Persuasi",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Teks Persuasi adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "teks persuasi"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  }
+]

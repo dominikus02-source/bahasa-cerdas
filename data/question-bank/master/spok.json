@@ -1,0 +1,858 @@
+[
+  {
+    "kodeSoal": "BC-SPOK-0001",
+    "judul": "SPOK #1",
+    "tema": "SPOK",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep SPOK (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Ani membaca buku di perpustakaan. Subjek dalam kalimat tersebut adalah...",
+    "options": [
+      "Ani",
+      "membaca",
+      "buku",
+      "perpustakaan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Subjek adalah pelaku tindakan. 'Ani' sebagai pelaku membaca.",
+    "kataKunci": [
+      "subjek",
+      "predikat",
+      "objek",
+      "keterangan"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SPOK-0002",
+    "judul": "SPOK #2",
+    "tema": "SPOK",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep SPOK (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Ayah sedang mencuci mobil. Predikat dalam kalimat tersebut adalah...",
+    "options": [
+      "Ayah",
+      "sedang mencuci",
+      "mobil",
+      "tidak ada"
+    ],
+    "correctAnswer": "1",
+    "explanation": "Predikat adalah kata kerja yang menunjukkan tindakan.",
+    "kataKunci": [
+      "subjek",
+      "predikat",
+      "objek",
+      "keterangan"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SPOK-0003",
+    "judul": "SPOK #3",
+    "tema": "SPOK",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep SPOK (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "BENAR_SALAH",
+    "text": "Ibu membeli sayur di pasar. Objek dalam kalimat tersebut adalah...",
+    "options": [
+      "Ibu",
+      "membeli",
+      "sayur",
+      "pasar"
+    ],
+    "correctAnswer": "2",
+    "explanation": "Objek adalah sesuatu yang dikenai tindakan.",
+    "kataKunci": [
+      "subjek",
+      "predikat",
+      "objek",
+      "keterangan"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SPOK-0004",
+    "judul": "SPOK #4",
+    "tema": "SPOK",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep SPOK (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Dia belajar dengan tekun. Keterangan dalam kalimat tersebut adalah...",
+    "options": [
+      "Dia",
+      "belajar",
+      "dengan tekun",
+      "tidak ada"
+    ],
+    "correctAnswer": "2",
+    "explanation": "Keterangan menjelaskan bagaimana tindakan dilakukan.",
+    "kataKunci": [
+      "subjek",
+      "predikat",
+      "objek",
+      "keterangan"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SPOK-0005",
+    "judul": "SPOK #5",
+    "tema": "SPOK",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep SPOK (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "ISIAN_SINGKAT",
+    "text": "Kalimat 'Kucing itu tidur di sofa' — unsur subjeknya adalah...",
+    "options": [
+      "Kucing itu",
+      "tidur",
+      "di sofa",
+      "kucing"
+    ],
+    "correctAnswer": "0",
+    "explanation": "'Kucing itu' adalah pelaku yang melakukan tindakan tidur.",
+    "kataKunci": [
+      "subjek",
+      "predikat",
+      "objek",
+      "keterangan"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SPOK-0006",
+    "judul": "SPOK #6",
+    "tema": "SPOK",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep SPOK (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 1,
+    "type": "PILIHAN_GANDA",
+    "text": "Mana yang merupakan pola S-P-O?",
+    "options": [
+      "Adik menangis",
+      "Mereka berlari",
+      "Rina membeli buku",
+      "Bunga itu indah"
+    ],
+    "correctAnswer": "2",
+    "explanation": "'Rina' (S), 'membeli' (P), 'buku' (O).",
+    "kataKunci": [
+      "subjek",
+      "predikat",
+      "objek",
+      "keterangan"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SPOK-0007",
+    "judul": "SPOK #7",
+    "tema": "SPOK",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep SPOK (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Unsur inti yang wajib ada dalam setiap kalimat adalah...",
+    "options": [
+      "Subjek dan Predikat",
+      "Objek saja",
+      "Keterangan saja",
+      "Semua unsur"
+    ],
+    "correctAnswer": "0",
+    "explanation": "Subjek dan predikat adalah unsur inti wajib.",
+    "kataKunci": [
+      "subjek",
+      "predikat",
+      "objek",
+      "keterangan"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SPOK-0008",
+    "judul": "SPOK #8",
+    "tema": "SPOK",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep SPOK (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "BENAR_SALAH",
+    "text": "Dalam kalimat 'Pak Guru mengajar matematika', objeknya adalah...",
+    "options": [
+      "Pak Guru",
+      "mengajar",
+      "matematika",
+      "tidak ada"
+    ],
+    "correctAnswer": "2",
+    "explanation": "'Matematika' adalah hal yang diajarkan = objek.",
+    "kataKunci": [
+      "subjek",
+      "predikat",
+      "objek",
+      "keterangan"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SPOK-0009",
+    "judul": "SPOK #9",
+    "tema": "SPOK",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep SPOK (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh SPOK adalah...",
+    "options": [
+      "SPOK",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "SPOK adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "subjek",
+      "predikat",
+      "objek",
+      "keterangan"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SPOK-0010",
+    "judul": "SPOK #10",
+    "tema": "SPOK",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep SPOK (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh SPOK adalah...",
+    "options": [
+      "SPOK",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "SPOK adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "subjek",
+      "predikat",
+      "objek",
+      "keterangan"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SPOK-0011",
+    "judul": "SPOK #11",
+    "tema": "SPOK",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep SPOK (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh SPOK adalah...",
+    "options": [
+      "SPOK",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "SPOK adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "subjek",
+      "predikat",
+      "objek",
+      "keterangan"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SPOK-0012",
+    "judul": "SPOK #12",
+    "tema": "SPOK",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep SPOK (MUDAH)",
+    "difficulty": "MUDAH",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh SPOK adalah...",
+    "options": [
+      "SPOK",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "SPOK adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "subjek",
+      "predikat",
+      "objek",
+      "keterangan"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SPOK-0013",
+    "judul": "SPOK #13",
+    "tema": "SPOK",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep SPOK (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 2,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: SPOK adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "SPOK memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "subjek",
+      "predikat",
+      "objek",
+      "keterangan"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SPOK-0014",
+    "judul": "SPOK #14",
+    "tema": "SPOK",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep SPOK (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 2,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh SPOK adalah...",
+    "options": [
+      "SPOK",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "SPOK adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "subjek",
+      "predikat",
+      "objek",
+      "keterangan"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SPOK-0015",
+    "judul": "SPOK #15",
+    "tema": "SPOK",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep SPOK (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 2,
+    "type": "ISIAN_SINGKAT",
+    "text": "Jelaskan pengertian SPOK menurut pemahaman Anda.",
+    "options": [
+      "spok"
+    ],
+    "correctAnswer": "0",
+    "explanation": "SPOK adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+    "kataKunci": [
+      "subjek",
+      "predikat",
+      "objek",
+      "keterangan"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SPOK-0016",
+    "judul": "SPOK #16",
+    "tema": "SPOK",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep SPOK (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh SPOK adalah...",
+    "options": [
+      "SPOK",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "SPOK adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "subjek",
+      "predikat",
+      "objek",
+      "keterangan"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SPOK-0017",
+    "judul": "SPOK #17",
+    "tema": "SPOK",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep SPOK (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh SPOK adalah...",
+    "options": [
+      "SPOK",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "SPOK adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "subjek",
+      "predikat",
+      "objek",
+      "keterangan"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SPOK-0018",
+    "judul": "SPOK #18",
+    "tema": "SPOK",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep SPOK (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: SPOK adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "SPOK memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "subjek",
+      "predikat",
+      "objek",
+      "keterangan"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SPOK-0019",
+    "judul": "SPOK #19",
+    "tema": "SPOK",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep SPOK (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh SPOK adalah...",
+    "options": [
+      "SPOK",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "SPOK adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "subjek",
+      "predikat",
+      "objek",
+      "keterangan"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SPOK-0020",
+    "judul": "SPOK #20",
+    "tema": "SPOK",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep SPOK (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 3,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh SPOK adalah...",
+    "options": [
+      "SPOK",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "SPOK adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "subjek",
+      "predikat",
+      "objek",
+      "keterangan"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SPOK-0021",
+    "judul": "SPOK #21",
+    "tema": "SPOK",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep SPOK (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh SPOK adalah...",
+    "options": [
+      "SPOK",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "SPOK adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "subjek",
+      "predikat",
+      "objek",
+      "keterangan"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SPOK-0022",
+    "judul": "SPOK #22",
+    "tema": "SPOK",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep SPOK (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh SPOK adalah...",
+    "options": [
+      "SPOK",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "SPOK adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "subjek",
+      "predikat",
+      "objek",
+      "keterangan"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SPOK-0023",
+    "judul": "SPOK #23",
+    "tema": "SPOK",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep SPOK (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: SPOK adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "SPOK memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "subjek",
+      "predikat",
+      "objek",
+      "keterangan"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SPOK-0024",
+    "judul": "SPOK #24",
+    "tema": "SPOK",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep SPOK (SEDANG)",
+    "difficulty": "SEDANG",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh SPOK adalah...",
+    "options": [
+      "SPOK",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "SPOK adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "subjek",
+      "predikat",
+      "objek",
+      "keterangan"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": false
+  },
+  {
+    "kodeSoal": "BC-SPOK-0025",
+    "judul": "SPOK #25",
+    "tema": "SPOK",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep SPOK (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 4,
+    "type": "ISIAN_SINGKAT",
+    "text": "Jelaskan pengertian SPOK menurut pemahaman Anda.",
+    "options": [
+      "spok"
+    ],
+    "correctAnswer": "0",
+    "explanation": "SPOK adalah konsep penting dalam Bahasa Indonesia yang perlu dipahami dengan baik.",
+    "kataKunci": [
+      "subjek",
+      "predikat",
+      "objek",
+      "keterangan"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-SPOK-0026",
+    "judul": "SPOK #26",
+    "tema": "SPOK",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep SPOK (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 4,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh SPOK adalah...",
+    "options": [
+      "SPOK",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "SPOK adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "subjek",
+      "predikat",
+      "objek",
+      "keterangan"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-SPOK-0027",
+    "judul": "SPOK #27",
+    "tema": "SPOK",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep SPOK (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh SPOK adalah...",
+    "options": [
+      "SPOK",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "SPOK adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "subjek",
+      "predikat",
+      "objek",
+      "keterangan"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-SPOK-0028",
+    "judul": "SPOK #28",
+    "tema": "SPOK",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep SPOK (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "BENAR_SALAH",
+    "text": "Pernyataan: SPOK adalah bagian dari materi Bahasa Indonesia.",
+    "options": [
+      "Benar",
+      "Salah"
+    ],
+    "correctAnswer": "0",
+    "explanation": "SPOK memang merupakan materi dalam pembelajaran Bahasa Indonesia.",
+    "kataKunci": [
+      "subjek",
+      "predikat",
+      "objek",
+      "keterangan"
+    ],
+    "estimasiWaktu": 20,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-SPOK-0029",
+    "judul": "SPOK #29",
+    "tema": "SPOK",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep SPOK (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh SPOK adalah...",
+    "options": [
+      "SPOK",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "SPOK adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "subjek",
+      "predikat",
+      "objek",
+      "keterangan"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  },
+  {
+    "kodeSoal": "BC-SPOK-0030",
+    "judul": "SPOK #30",
+    "tema": "SPOK",
+    "kelas": "7",
+    "semester": 1,
+    "kompetensi": "3.1",
+    "indikator": "Memahami konsep SPOK (SULIT)",
+    "difficulty": "SULIT",
+    "levelBerpikir": 5,
+    "type": "PILIHAN_GANDA",
+    "text": "Berikut ini yang termasuk contoh SPOK adalah...",
+    "options": [
+      "SPOK",
+      "Menulis cerita pendek",
+      "Membaca puisi",
+      "Menyusun laporan"
+    ],
+    "correctAnswer": "0",
+    "explanation": "SPOK adalah jawaban yang tepat karena sesuai dengan konsep yang dimaksud.",
+    "kataKunci": [
+      "subjek",
+      "predikat",
+      "objek",
+      "keterangan"
+    ],
+    "estimasiWaktu": 30,
+    "isHOTS": true
+  }
+]
