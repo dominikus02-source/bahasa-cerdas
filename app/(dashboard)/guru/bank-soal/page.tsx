@@ -311,7 +311,7 @@ export default function BankSoalPage() {
     setShowAssessment(true);
     setOpenMenuPoolId(null);
     try {
-      const res = await fetch("/api/guru/buat-assessment");
+      const res = await fetch("/api/group");
       const data = await res.json();
       if (data.groups) setGroups(data.groups);
     } catch (e) {
