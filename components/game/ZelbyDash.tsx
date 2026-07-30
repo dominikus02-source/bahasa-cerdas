@@ -270,18 +270,80 @@ export default function ZelbyDash() {
       }
 
       /* Background */
-      c.fillStyle = "#1E1840";
+      const grad = c.createLinearGradient(0, 0, 0, H);
+      grad.addColorStop(0, "#1E1840");
+      grad.addColorStop(0.5, "#1A2A3E");
+      grad.addColorStop(1, "#162318");
+      c.fillStyle = grad;
       c.fillRect(0, 0, W, H);
 
-      /* Grid lines */
-      c.strokeStyle = "#2A2350";
-      c.lineWidth = 1;
-      for (let i = 0; i < 6; i++) {
-        c.beginPath();
-        c.moveTo(i * 96, 0);
-        c.lineTo(i * 96 + 10, H);
-        c.stroke();
+      /* Hutan dekorasi — pepohonan di kiri & kanan */
+      c.save();
+      // Pohon kiri
+      c.fillStyle = "#0D1F12";
+      const treeW = 50;
+      for (let ty = 0; ty < H; ty += 90) {
+        const sway = Math.sin(ty * 0.003 + performance.now() * 0.0005) * 4;
+        c.fillRect(sway, ty, treeW + sway * 0.3, 90);
       }
+      // Pohon kanan
+      for (let ty = 0; ty < H; ty += 90) {
+        const sway = Math.sin(ty * 0.003 + performance.now() * 0.0005 + 1) * 4;
+        c.fillRect(W - treeW + sway, ty, treeW - sway * 0.3, 90);
+      }
+      // Daun-daun di batang
+      c.fillStyle = "#1A3A22";
+      for (let ty = 20; ty < H; ty += 90) {
+        for (let side = 0; side < 2; side++) {
+          const bx = side === 0 ? 30 : W - 30;
+          const offset = Math.sin(ty * 0.05 + performance.now() * 0.002) * 8;
+          c.beginPath();
+          c.ellipse(bx + (side === 0 ? -1 : 1) * (16 + offset), ty + offset * 0.5, 18, 12, side === 0 ? -0.3 : 0.3, 0, Math.PI * 2);
+          c.fill();
+        }
+      }
+      c.restore();
+
+      /* Lebat/ranting di bawah — semak */
+      c.save();
+      const groundY = H - 40;
+      const leafColors = ["#0D2818", "#1A3A2A", "#2D5A3E", "#1F4D2E"];
+      for (let gx = 0; gx <= W; gx += 24) {
+        const h = 30 + Math.sin(gx * 0.15) * 18 + Math.sin(gx * 0.07) * 10;
+        c.fillStyle = leafColors[Math.floor(gx / 48) % leafColors.length];
+        c.beginPath();
+        c.ellipse(gx, groundY + 10 - h * 0.5, 22, h * 0.6, 0, 0, Math.PI * 2);
+        c.fill();
+      }
+      // Lapisan semak depan
+      c.fillStyle = "#0A1F10";
+      c.beginPath();
+      c.moveTo(0, H);
+      for (let gx = 0; gx <= W; gx += 10) {
+        c.lineTo(gx, H - 20 - Math.sin(gx * 0.12) * 14 - Math.sin(gx * 0.04) * 8);
+      }
+      c.lineTo(W, H);
+      c.closePath();
+      c.fill();
+      c.restore();
+
+      /* Sulur gantung dari atas */
+      c.save();
+      c.strokeStyle = "#1A3A22";
+      c.lineWidth = 2;
+      for (let vx = 40; vx < W - 40; vx += 80) {
+        c.beginPath();
+        c.moveTo(vx, 0);
+        const len = 40 + Math.sin(vx * 0.1) * 25;
+        c.quadraticCurveTo(vx + 20 * Math.sin(vx * 0.05), len * 0.5, vx + 4 * Math.sin(vx * 0.08), len);
+        c.stroke();
+        // Daun kecil di ujung sulur
+        c.fillStyle = "#2D5A3E";
+        c.beginPath();
+        c.ellipse(vx + 4 * Math.sin(vx * 0.08), len, 6, 4, 0.5, 0, Math.PI * 2);
+        c.fill();
+      }
+      c.restore();
 
       /* Rule banner */
       c.fillStyle = "rgba(22, 27, 58, 0.9)";
