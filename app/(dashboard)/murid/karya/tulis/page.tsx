@@ -3,7 +3,7 @@
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Send, PenLine, BookOpen, Newspaper, MessageCircle, Music, Lightbulb, Upload, X, Loader2 } from "lucide-react";
+import { ArrowLeft, Send, PenLine, BookOpen, Newspaper, MessageCircle, Music, Lightbulb, Upload, X, Loader2, Link2 } from "lucide-react";
 
 const TYPES = [
   { value: "PUISI", label: "Puisi", icon: PenLine, desc: "Ekspresikan perasaanmu dalam bait-bait indah" },
@@ -36,6 +36,10 @@ export default function TulisKaryaPage() {
   const [error, setError] = useState("");
   const fileRef = useRef<HTMLInputElement>(null);
   const photosRef = useRef<HTMLInputElement>(null);
+  const [coverMode, setCoverMode] = useState<"upload" | "link">("upload");
+  const [coverLinkUrl, setCoverLinkUrl] = useState("");
+  const [photoMode, setPhotoMode] = useState<"upload" | "link">("upload");
+  const [photoLinkUrl, setPhotoLinkUrl] = useState("");
 
   const uploadOne = async (file: File) => {
     const fd = new FormData();
@@ -76,6 +80,21 @@ export default function TulisKaryaPage() {
   };
 
   const removePhoto = (url: string) => setPhotos(prev => prev.filter(p => p !== url));
+
+  const addPhotoLink = () => {
+    const url = photoLinkUrl.trim();
+    if (!url) return;
+    if (photos.length >= 6) { setError("Maksimal 6 foto"); return; }
+    setPhotos(prev => [...prev, url]);
+    setPhotoLinkUrl("");
+  };
+
+  const setCoverFromLink = () => {
+    const url = coverLinkUrl.trim();
+    if (!url) return;
+    setCoverImage(url);
+    setCoverLinkUrl("");
+  };
 
   const handleSubmit = async () => {
     if (!title.trim()) { setError("Judul harus diisi"); return; }
@@ -150,7 +169,7 @@ export default function TulisKaryaPage() {
         />
       </div>
 
-      {/* Cover Image Upload (optional) */}
+      {/* Cover Image Upload / Link (optional) */}
       <div className="mb-6">
         <input
           ref={fileRef}
@@ -171,15 +190,44 @@ export default function TulisKaryaPage() {
             </button>
           </div>
         ) : (
-          <button
-            type="button"
-            onClick={() => fileRef.current?.click()}
-            disabled={uploading}
-            className="w-full flex items-center justify-center gap-2 py-3 rounded-xl border-2 border-dashed border-gray-200 text-gray-500 hover:border-violet-300 hover:text-violet-600 transition-colors disabled:opacity-50"
-          >
-            {uploading ? <Loader2 size={16} className="animate-spin" /> : <Upload size={16} />}
-            {uploading ? "Mengunggah foto..." : "Unggah Foto Sampul (opsional)"}
-          </button>
+          <>
+            <div className="flex gap-2 mb-2">
+              <button type="button" onClick={() => setCoverMode("upload")}
+                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                  coverMode === "upload" ? "bg-violet-600 text-white" : "bg-gray-100 text-gray-500 hover:bg-gray-200"
+                }`}
+              ><Upload size={12} className="inline mr-1" />Upload</button>
+              <button type="button" onClick={() => setCoverMode("link")}
+                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                  coverMode === "link" ? "bg-violet-600 text-white" : "bg-gray-100 text-gray-500 hover:bg-gray-200"
+                }`}
+              ><Link2 size={12} className="inline mr-1" />Link</button>
+            </div>
+            {coverMode === "upload" ? (
+              <button
+                type="button"
+                onClick={() => fileRef.current?.click()}
+                disabled={uploading}
+                className="w-full flex items-center justify-center gap-2 py-3 rounded-xl border-2 border-dashed border-gray-200 text-gray-500 hover:border-violet-300 hover:text-violet-600 transition-colors disabled:opacity-50"
+              >
+                {uploading ? <Loader2 size={16} className="animate-spin" /> : <Upload size={16} />}
+                {uploading ? "Mengunggah foto..." : "Unggah Foto Sampul (opsional)"}
+              </button>
+            ) : (
+              <div className="flex gap-2">
+                <input
+                  value={coverLinkUrl}
+                  onChange={e => setCoverLinkUrl(e.target.value)}
+                  placeholder="https://example.com/gambar.jpg"
+                  className="flex-1 px-4 py-2.5 bg-white rounded-xl border border-gray-200 text-sm text-gray-700 placeholder:text-gray-300 focus:outline-none focus:ring-2 focus:ring-violet-200 focus:border-violet-400 transition-all"
+                  onKeyDown={e => { if (e.key === "Enter") { e.preventDefault(); setCoverFromLink(); } }}
+                />
+                <button type="button" onClick={setCoverFromLink} disabled={!coverLinkUrl.trim()}
+                  className="px-4 py-2.5 bg-violet-600 text-white rounded-xl text-sm font-semibold hover:bg-violet-700 disabled:opacity-50 transition-all"
+                >Pakai</button>
+              </div>
+            )}
+          </>
         )}
       </div>
 
@@ -213,17 +261,46 @@ export default function TulisKaryaPage() {
           </div>
         )}
         {photos.length < 6 && (
-          <button
-            type="button"
-            onClick={() => photosRef.current?.click()}
-            disabled={uploadingPhotos}
-            className="w-full flex items-center justify-center gap-2 py-3 rounded-xl border-2 border-dashed border-gray-200 text-gray-500 hover:border-violet-300 hover:text-violet-600 transition-colors disabled:opacity-50"
-          >
-            {uploadingPhotos ? <Loader2 size={16} className="animate-spin" /> : <Upload size={16} />}
-            {uploadingPhotos ? "Mengunggah foto..." : `Tambah Foto (${photos.length}/6)`}
-          </button>
+          <>
+            <div className="flex gap-2 mb-2">
+              <button type="button" onClick={() => setPhotoMode("upload")}
+                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                  photoMode === "upload" ? "bg-violet-600 text-white" : "bg-gray-100 text-gray-500 hover:bg-gray-200"
+                }`}
+              ><Upload size={12} className="inline mr-1" />Upload</button>
+              <button type="button" onClick={() => setPhotoMode("link")}
+                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                  photoMode === "link" ? "bg-violet-600 text-white" : "bg-gray-100 text-gray-500 hover:bg-gray-200"
+                }`}
+              ><Link2 size={12} className="inline mr-1" />Link</button>
+            </div>
+            {photoMode === "upload" ? (
+              <button
+                type="button"
+                onClick={() => photosRef.current?.click()}
+                disabled={uploadingPhotos}
+                className="w-full flex items-center justify-center gap-2 py-3 rounded-xl border-2 border-dashed border-gray-200 text-gray-500 hover:border-violet-300 hover:text-violet-600 transition-colors disabled:opacity-50"
+              >
+                {uploadingPhotos ? <Loader2 size={16} className="animate-spin" /> : <Upload size={16} />}
+                {uploadingPhotos ? "Mengunggah foto..." : `Tambah Foto (${photos.length}/6)`}
+              </button>
+            ) : (
+              <div className="flex gap-2">
+                <input
+                  value={photoLinkUrl}
+                  onChange={e => setPhotoLinkUrl(e.target.value)}
+                  placeholder="https://example.com/gambar.jpg"
+                  className="flex-1 px-4 py-2.5 bg-white rounded-xl border border-gray-200 text-sm text-gray-700 placeholder:text-gray-300 focus:outline-none focus:ring-2 focus:ring-violet-200 focus:border-violet-400 transition-all"
+                  onKeyDown={e => { if (e.key === "Enter") { e.preventDefault(); addPhotoLink(); } }}
+                />
+                <button type="button" onClick={addPhotoLink} disabled={!photoLinkUrl.trim() || photos.length >= 6}
+                  className="px-4 py-2.5 bg-violet-600 text-white rounded-xl text-sm font-semibold hover:bg-violet-700 disabled:opacity-50 transition-all"
+                >Tambah</button>
+              </div>
+            )}
+          </>
         )}
-        <p className="text-xs text-gray-400 mt-2">Misalnya foto dari wawancara untuk artikelmu.</p>
+        <p className="text-xs text-gray-400 mt-2">Upload atau tempel link gambar (mis. dari wawancara untuk artikelmu).</p>
       </div>
 
       {/* Error */}
