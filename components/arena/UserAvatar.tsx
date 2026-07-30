@@ -1,3 +1,4 @@
+"use client"
 import { getFrameStyle } from "@/lib/cosmetics"
 
 interface UserAvatarProps {
