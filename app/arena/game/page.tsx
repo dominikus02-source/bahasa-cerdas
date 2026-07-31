@@ -104,7 +104,7 @@ export default async function ArenaGimPage() {
       <div className="relative z-10 px-5 pb-6">
         <div className="pt-5 pb-5 flex items-center justify-between">
           <div>
-            <h1 className="text-[28px] font-extrabold text-white">Arena Gim</h1>
+            <h1 className="text-[28px] font-extrabold text-white font-game-display">Arena Gim</h1>
             <p className="text-sm text-[#7C7A9E] mt-0.5">Buktikan kemampuan Bahasa Indonesia-mu!</p>
           </div>
           <div className="glow-pulse flex items-center gap-1.5 px-3.5 py-2 rounded-full" style={{ background: "rgba(245,158,11,0.1)", border: "1px solid rgba(245,158,11,0.3)" }}>

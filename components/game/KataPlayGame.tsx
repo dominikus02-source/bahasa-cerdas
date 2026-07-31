@@ -327,7 +327,7 @@ export default function KataPlayGame({ hideBackButton }: { hideBackButton?: bool
           >
             <BookOpen size={52} className="text-white" />
           </motion.div>
-          <h1 className="text-4xl font-extrabold text-white mb-2">KataPlay</h1>
+          <h1 className="text-4xl font-extrabold text-white mb-2 font-game-display">KataPlay</h1>
           <p className="text-violet-200/70 text-base">Belajar membaca jadi seru!</p>
           <motion.div
             initial={{ width: 0 }}

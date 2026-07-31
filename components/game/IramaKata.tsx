@@ -650,7 +650,7 @@ export default function IramaKata() {
               <Music4 className="w-6 h-6 text-white" />
             </div>
             <div>
-              <div className="font-extrabold text-xl leading-none">Irama Kata</div>
+              <div className="font-extrabold text-xl leading-none font-game-display">Irama Kata</div>
               <div className="text-[11px] font-semibold opacity-60 mt-0.5">Ritme + ketangkasan bahasa</div>
             </div>
           </div>

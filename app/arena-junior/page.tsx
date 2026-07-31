@@ -101,7 +101,7 @@ function KartuZelby({ pesan, karakter }: { pesan: string; karakter: string }) {
           className="h-16 w-16 shrink-0 object-contain drop-shadow"
         />
         <div className="flex-1">
-          <h3 className="mb-1 font-extrabold leading-tight drop-shadow-sm">
+          <h3 className="mb-1 font-extrabold leading-tight drop-shadow-sm font-junior-heading">
             {profil.nama} Berkata:
           </h3>
           <p className="text-sm font-medium opacity-95 leading-snug">
@@ -118,7 +118,7 @@ function MisiHarian({ selesai, target }: { selesai: number; target: number }) {
   const tuntas = selesai >= target
   return (
     <div className="rounded-3xl bg-white p-5 shadow-sm">
-      <h2 className="mb-4 flex items-center gap-2 text-xl font-extrabold text-slate-800">
+      <h2 className="mb-4 flex items-center gap-2 text-xl font-extrabold text-slate-800 font-junior-heading">
         <Sparkles className="h-5 w-5 text-[#FFD54A]" aria-hidden />
         Misi Harian
       </h2>
@@ -167,7 +167,7 @@ function TamanBermain() {
   ]
   return (
     <div className="rounded-3xl bg-white p-5 shadow-sm">
-      <h2 className="mb-4 flex items-center gap-2 text-xl font-extrabold text-slate-800">
+      <h2 className="mb-4 flex items-center gap-2 text-xl font-extrabold text-slate-800 font-junior-heading">
         <Gamepad2 className="h-5 w-5 text-[#FF8C42]" aria-hidden />
         Taman Bermain
       </h2>
@@ -197,7 +197,7 @@ function BannerPremium() {
         <Crown className="h-7 w-7 text-[#FFD93D]" />
       </div>
       <div className="flex-1">
-        <h3 className="font-extrabold leading-tight drop-shadow-sm">Super BahasaCerdas</h3>
+        <h3 className="font-extrabold leading-tight drop-shadow-sm font-junior-heading">Super BahasaCerdas</h3>
         <p className="mb-2 text-xs opacity-80">Buka kostum Zelby & tanpa iklan!</p>
         <span className="inline-block rounded-full bg-[#FFD93D] px-4 py-1 text-xs font-extrabold text-purple-800 shadow">
           Minta Ortu
@@ -220,7 +220,7 @@ function BelumPunyaKelas({ nama }: { nama: string }) {
           priority
         />
       </div>
-      <h1 className="text-2xl font-extrabold text-slate-800">Halo, {nama}!</h1>
+      <h1 className="text-2xl font-extrabold text-slate-800 font-junior-heading">Halo, {nama}!</h1>
       <p className="max-w-sm text-slate-600">
         Kamu belum tergabung di kelas TK atau SD. Minta <strong>kode kelas</strong> ke gurumu,
         lalu masukkan di sini supaya petualanganmu bisa dimulai.
@@ -324,7 +324,7 @@ export default async function ArenaJuniorPage({
             <div className="rounded-3xl bg-white p-6 shadow-sm">
               <div className="mb-6 flex items-center justify-between">
                 <div>
-                  <h2 className="text-2xl font-extrabold text-slate-800">Petualangan Hari Ini</h2>
+                  <h2 className="text-2xl font-extrabold text-slate-800 font-junior-heading">Petualangan Hari Ini</h2>
                   <p className="text-sm text-slate-500">Bantu Zelby menjelajah hutan kata!</p>
                 </div>
                 <span className="flex items-center gap-1.5 rounded-full bg-slate-100 px-4 py-2 text-sm font-bold text-slate-600 transition hover:bg-slate-200 cursor-default">

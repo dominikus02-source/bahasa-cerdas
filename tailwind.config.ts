@@ -13,6 +13,9 @@ const config: Config = {
       fontFamily: {
         sans: ["Inter", "ui-sans-serif", "system-ui", "-apple-system", "BlinkMacSystemFont", "\"Segoe UI\"", "sans-serif"],
         display: ["Georgia", "Cambria", "\"Times New Roman\"", "serif"],
+        "junior-heading": ["Super Bouncer", "sans-serif"],
+        "junior-body": ["Gocake", "sans-serif"],
+        "game-display": ["Newscrash", "sans-serif"],
       },
       colors: {
         border: "hsl(var(--border))",

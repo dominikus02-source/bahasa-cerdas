@@ -549,7 +549,7 @@ export default function ZelbyDash() {
                 className="w-full h-full object-cover"
               />
             </div>
-            <h1 className="font-extrabold text-3xl mb-2">Petualangan Hutan Kata</h1>
+            <h1 className="font-extrabold text-3xl mb-2 font-game-display">Petualangan Hutan Kata</h1>
             <p className="opacity-70 text-sm mb-1">
               Bantu si cerdik Zelby menangkap <strong>kata yang benar</strong> dan hindari yang salah!
             </p>
@@ -637,7 +637,7 @@ export default function ZelbyDash() {
                 className="w-full h-full object-cover"
               />
             </div>
-            <h2 className="font-extrabold text-3xl mb-1">Permainan Selesai!</h2>
+            <h2 className="font-extrabold text-3xl mb-1 font-game-display">Permainan Selesai!</h2>
             <p className="opacity-70 text-sm mb-6">Zelby sangat senang belajar bareng kamu hari ini!</p>
 
             <div className="bg-[#161B3A] text-white rounded-2xl px-6 py-4 mb-4 shadow-[5px_5px_0_#FBBF24]">

@@ -2,8 +2,35 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ── Font Arena Junior (TK–SD) ──────────────────────── */
+@font-face {
+  font-family: "Super Bouncer";
+  src: url("/fonts/Super Bouncer.ttf") format("truetype");
+  font-display: swap;
+}
+@font-face {
+  font-family: "Gocake";
+  src: url("/fonts/Gocake.ttf") format("truetype");
+  font-display: swap;
+}
+@font-face {
+  font-family: "Matcha Mint";
+  src: url("/fonts/Matcha Mint.ttf") format("truetype");
+  font-display: swap;
+}
+
+/* ── Font Arena / Game ─────────────────────────────── */
+@font-face {
+  font-family: "Newscrash";
+  src: url("/fonts/Newscrash.otf") format("opentype");
+  font-display: swap;
+}
+
 @layer base {
   :root {
+    --font-junior-heading: "Super Bouncer", sans-serif;
+    --font-junior-body: "Gocake", sans-serif;
+    --font-game-display: "Newscrash", sans-serif;
     --background: 0 0% 100%;
     --foreground: 0 0% 11%;
     --card: 0 0% 100%;

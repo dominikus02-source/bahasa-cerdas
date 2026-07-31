@@ -17,5 +17,5 @@ export default async function ArenaJuniorLayout({ children }: { children: React.
   // Guru boleh mengintip dasbor murid (mode pratinjau), sama seperti di Arena.
   if (user.role !== "MURID" && user.role !== "GURU" && !user.isFounder) redirect("/guru/beranda")
 
-  return <div className="min-h-screen bg-[#FFF8E6] text-slate-800">{children}</div>
+  return <div className="min-h-screen bg-[#FFF8E6] text-slate-800 font-junior-body">{children}</div>
 }
