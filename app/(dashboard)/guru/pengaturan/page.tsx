@@ -395,7 +395,7 @@ export default function GuruPengaturanPage() {
             <div>
               <h3 className="font-bold text-lg text-slate-900 flex items-center gap-2">
                 {isFounder ? "Founder" : isPremium ? "Guru Pro" : "Guru Free"}
-                {isPremium && <span className="px-2 py-0.5 bg-green-100 text-green-700 text-xs font-bold rounded-full border border-green-200">Aktif</span>}
+                {isPremium && <span className="px-2 py-0.5 bg-amber-100 text-amber-700 text-xs font-bold rounded-full border border-amber-300">Aktif</span>}
               </h3>
               <p className="text-sm text-slate-500">
                 {isPremium ? `Berlaku sampai ${premiumUntil}` : "Upgrade untuk 500 kredit AI, jual karya, & fitur Pro"}

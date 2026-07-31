@@ -42,6 +42,13 @@ interface UserInfo {
   premiumUntil: string | null;
 }
 
+interface PlanInfo {
+  plan: string;
+  isTrial: boolean;
+  trialEndsAt: string | null;
+  daysRemaining: number;
+}
+
 const ERROR_MESSAGES: Record<string, string> = {
   MIDTRANS_UNAUTHORIZED: "Kredensial pembayaran belum sesuai. Silakan hubungi admin.",
   MIDTRANS_CONFIG_MISSING: "Konfigurasi pembayaran belum lengkap. Silakan hubungi admin.",
@@ -54,6 +61,60 @@ const ERROR_MESSAGES: Record<string, string> = {
   CHECKOUT_DB_FAILED: "Gagal menyimpan pesanan. Silakan coba lagi.",
 };
 
+function ComparisonTable() {
+  return (
+    <Card className="p-6">
+      <h3 className="font-bold text-gray-900 mb-6 text-center">Bandingkan Fitur</h3>
+      <div className="overflow-x-auto"><table className="w-full text-sm">
+        <thead><tr className="border-b border-gray-100">
+          <th className="text-left py-3 font-semibold text-gray-600">Fitur</th>
+          <th className="text-center py-3 font-semibold text-gray-600 w-28">Gratis</th>
+          <th className="text-center py-3 font-semibold text-amber-600 w-28">PRO</th>
+        </tr></thead>
+        <tbody>
+          {PLAN_FEATURES.map((f) => (
+            <tr key={f.label} className="border-b border-gray-50">
+              <td className="py-3 text-gray-700">{f.label}</td>
+              <td className="text-center py-3">
+                <span className={`inline-flex items-center justify-center gap-1 ${f.freeOk ? "text-emerald-600" : "text-gray-300"}`}>
+                  {f.freeOk ? <Check className="w-4 h-4" /> : <X className="w-4 h-4" />}
+                  {f.free}
+                </span>
+              </td>
+              <td className="text-center py-3">
+                <span className="inline-flex items-center justify-center gap-1 text-emerald-600">
+                  <Check className="w-4 h-4" /> {f.pro}
+                </span>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table></div>
+    </Card>
+  );
+}
+
+function ProBenefits() {
+  return (
+    <Card className="p-6 border border-amber-200 bg-gradient-to-br from-amber-50/40 to-orange-50/40">
+      <h3 className="font-bold text-gray-900 mb-6 text-center flex items-center justify-center gap-2">
+        <Crown className="w-5 h-5 text-amber-500" /> Apa yang Kamu Dapat dengan Pro
+      </h3>
+      <div className="grid sm:grid-cols-2 gap-4">
+        {PRO_BENEFITS.map((b) => (
+          <div key={b.title} className="flex items-start gap-3 p-4 rounded-xl bg-white/70 border border-amber-100">
+            <div className="text-2xl shrink-0">{b.icon}</div>
+            <div>
+              <p className="font-semibold text-gray-900 text-sm">{b.title}</p>
+              <p className="text-xs text-gray-600 mt-0.5">{b.desc}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </Card>
+  );
+}
+
 export default function BerlanggananPage() {
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState<"default" | "success" | "failed" | "pending">("default");
@@ -62,6 +123,7 @@ export default function BerlanggananPage() {
   const [selectedPlan, setSelectedPlan] = useState<"GURU_PRO_MONTHLY" | "GURU_PRO_YEARLY">("GURU_PRO_YEARLY");
   const [coupon, setCoupon] = useState<AppliedCoupon | null>(null);
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
+  const [planInfo, setPlanInfo] = useState<PlanInfo | null>(null);
   const [userLoading, setUserLoading] = useState(true);
   const snapLoaded = useRef(false);
 
@@ -87,6 +149,22 @@ export default function BerlanggananPage() {
       })
       .catch(() => {})
       .finally(() => setUserLoading(false));
+  }, []);
+
+  useEffect(() => {
+    fetch("/api/ai/quota/status")
+      .then((r) => r.json())
+      .then((d) => {
+        if (d && d.plan) {
+          setPlanInfo({
+            plan: d.plan,
+            isTrial: !!d.isTrial,
+            trialEndsAt: d.trialEndsAt || null,
+            daysRemaining: d.daysRemaining || 0,
+          });
+        }
+      })
+      .catch(() => {});
   }, []);
 
   useEffect(() => {
@@ -193,12 +271,12 @@ export default function BerlanggananPage() {
   if (status === "success" && isPremium) {
     return (
       <div className="max-w-2xl mx-auto space-y-6">
-        <div className="rounded-2xl bg-gradient-to-br from-emerald-500 to-green-600 p-8 text-white text-center shadow-xl">
+        <div className="rounded-2xl bg-gradient-to-br from-amber-500 via-amber-500 to-yellow-500 p-8 text-white text-center shadow-xl">
           <div className="h-16 w-16 rounded-full bg-white/20 backdrop-blur flex items-center justify-center mx-auto mb-4">
             <Crown className="h-8 w-8 text-white" />
           </div>
           <h1 className="text-2xl font-bold">Kamu PRO Aktif!</h1>
-          <p className="mt-2 text-emerald-100">Berlaku hingga {premiumSince}</p>
+          <p className="mt-2 text-amber-100">Berlaku hingga {premiumSince}</p>
         </div>
 
         {isExpiring && (
@@ -230,8 +308,13 @@ export default function BerlanggananPage() {
           </Card>
         )}
 
-        <Card className="p-6">
-          <h3 className="font-bold text-gray-900 mb-4">Perpanjang PRO</h3>
+        <Card className="p-6 border-2 border-amber-300 bg-gradient-to-b from-amber-50/40 to-white">
+          <div className="flex items-center justify-between flex-wrap gap-2 mb-4">
+            <h3 className="font-bold text-gray-900">Perpanjang PRO</h3>
+            <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-gradient-to-r from-amber-400 to-yellow-500 text-white text-xs font-bold shadow">
+              <Crown className="w-3.5 h-3.5" /> Guru Pro Aktif
+            </span>
+          </div>
           <div className="flex items-center justify-center gap-2 bg-gray-100 rounded-xl p-1 w-fit mx-auto mb-6">
             <button onClick={() => { setSelectedPlan("GURU_PRO_MONTHLY"); setCoupon(null); }}
               className={`px-5 py-2 rounded-lg text-sm font-medium ${selectedPlan === "GURU_PRO_MONTHLY" ? "bg-white text-gray-900 shadow-sm" : "text-gray-500"}`}>
@@ -257,6 +340,11 @@ export default function BerlanggananPage() {
             {loading ? "Memproses..." : coupon ? `Perpanjang PRO — ${formatCurrency(coupon.hargaDiskon)}` : "Perpanjang PRO"}
           </Button>
         </Card>
+
+        <div className="space-y-8">
+          <ComparisonTable />
+          <ProBenefits />
+        </div>
 
         <Card className="p-4 bg-blue-50 border-blue-200">
           <div className="flex items-start gap-3">
@@ -329,6 +417,24 @@ export default function BerlanggananPage() {
         <p className="mt-3 text-gray-500 max-w-md mx-auto">
           Coba gratis 30 hari, lalu lanjutkan dengan Pro: 500 kredit AI, unduh 10 dokumen/hari, dan jual karya di Marketplace.
         </p>
+      </div>
+
+      <div className="max-w-lg mx-auto">
+        {planInfo?.isTrial ? (
+          <div className="flex items-center justify-center gap-2 rounded-xl border border-violet-200 bg-violet-50 py-2.5 px-4 text-sm text-violet-700">
+            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-violet-100 text-violet-700 text-xs font-semibold">
+              <Sparkles className="w-3 h-3" /> Guru Pro Trial
+            </span>
+            Kamu sedang di masa trial ({planInfo.daysRemaining} hari lagi) — setelah habis, lanjutkan dengan Pro.
+          </div>
+        ) : (
+          <div className="flex items-center justify-center gap-2 rounded-xl border border-gray-200 bg-white py-2.5 px-4 text-sm text-gray-600">
+            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-gray-100 text-gray-600 text-xs font-semibold">
+              <Zap className="w-3 h-3" /> Guru Free
+            </span>
+            Kamu sedang memakai paket Gratis (30 kredit AI/bulan, 1 unduhan/hari).
+          </div>
+        )}
       </div>
 
       <div className="max-w-2xl mx-auto">
@@ -475,51 +581,9 @@ export default function BerlanggananPage() {
         </div>
       </div>
 
-      <Card className="p-6">
-        <h3 className="font-bold text-gray-900 mb-6 text-center">Bandingkan Fitur</h3>
-        <div className="overflow-x-auto"><table className="w-full text-sm">
-          <thead><tr className="border-b border-gray-100">
-            <th className="text-left py-3 font-semibold text-gray-600">Fitur</th>
-            <th className="text-center py-3 font-semibold text-gray-600 w-28">Gratis</th>
-            <th className="text-center py-3 font-semibold text-amber-600 w-28">PRO</th>
-          </tr></thead>
-          <tbody>
-            {PLAN_FEATURES.map((f) => (
-              <tr key={f.label} className="border-b border-gray-50">
-                <td className="py-3 text-gray-700">{f.label}</td>
-                <td className="text-center py-3">
-                  <span className={`inline-flex items-center justify-center gap-1 ${f.freeOk ? "text-emerald-600" : "text-gray-300"}`}>
-                    {f.freeOk ? <Check className="w-4 h-4" /> : <X className="w-4 h-4" />}
-                    {f.free}
-                  </span>
-                </td>
-                <td className="text-center py-3">
-                  <span className="inline-flex items-center justify-center gap-1 text-emerald-600">
-                    <Check className="w-4 h-4" /> {f.pro}
-                  </span>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table></div>
-      </Card>
+      <ComparisonTable />
 
-      <Card className="p-6 border border-amber-200 bg-gradient-to-br from-amber-50/40 to-orange-50/40">
-        <h3 className="font-bold text-gray-900 mb-6 text-center flex items-center justify-center gap-2">
-          <Crown className="w-5 h-5 text-amber-500" /> Apa yang Kamu Dapat dengan Pro
-        </h3>
-        <div className="grid sm:grid-cols-2 gap-4">
-          {PRO_BENEFITS.map((b) => (
-            <div key={b.title} className="flex items-start gap-3 p-4 rounded-xl bg-white/70 border border-amber-100">
-              <div className="text-2xl shrink-0">{b.icon}</div>
-              <div>
-                <p className="font-semibold text-gray-900 text-sm">{b.title}</p>
-                <p className="text-xs text-gray-600 mt-0.5">{b.desc}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </Card>
+      <ProBenefits />
 
       <Card className="p-6 bg-blue-50 border-blue-200">
         <div className="flex items-start gap-3">

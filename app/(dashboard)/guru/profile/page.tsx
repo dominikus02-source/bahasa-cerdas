@@ -106,7 +106,7 @@ export default function GuruProfilePage() {
           </span>
         )}
         {user?.isPremium && !user?.isFounder && (
-          <span className="inline-flex items-center gap-1 mt-2 px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-medium">
+          <span className="inline-flex items-center gap-1 mt-2 px-3 py-1 bg-gradient-to-r from-amber-100 to-yellow-100 text-amber-700 rounded-full text-xs font-medium border border-amber-200">
             <Star size={12} /> Pro
           </span>
         )}

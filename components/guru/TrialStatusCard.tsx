@@ -74,22 +74,25 @@ export function TrialStatusCard() {
   // Active premium
   if (status.plan === "GURU_PRO") {
     return (
-      <div className="bg-gradient-to-br from-emerald-50 to-teal-50 rounded-2xl border border-emerald-200 p-5 hover:shadow-lg transition-all">
+      <div className="bg-gradient-to-br from-amber-50 to-yellow-50 rounded-2xl border border-amber-200 p-5 hover:shadow-lg transition-all">
         <div className="flex items-start gap-4">
-          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-600 flex items-center justify-center shadow-md shrink-0">
+          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-400 to-yellow-500 flex items-center justify-center shadow-md shrink-0">
             <Crown size={22} className="text-white" />
           </div>
           <div className="flex-1">
             <h3 className="font-semibold text-gray-900 flex items-center gap-2">
               Guru Pro Aktif
+              <span className="inline-flex items-center gap-1 text-[10px] px-2 py-0.5 bg-amber-100 text-amber-700 rounded-full font-medium">
+                <Crown size={10} /> Pro
+              </span>
             </h3>
             <p className="text-sm text-gray-500 mt-0.5">
               {status.trialEndsAt
-                ? `Akses premium aktif sampai ${new Date(status.trialEndsAt).toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" })}`
-                : "Akses premium aktif"}
+                ? `Akses Pro aktif sampai ${new Date(status.trialEndsAt).toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" })}`
+                : "Akses Pro aktif"}
             </p>
             <div className="flex items-center gap-4 mt-3">
-              <div className="flex items-center gap-1 text-xs text-emerald-600 font-medium">
+              <div className="flex items-center gap-1 text-xs text-amber-600 font-medium">
                 <Zap size={12} />
                 {status.remainingCredits}/{status.creditsTotal} credit
               </div>

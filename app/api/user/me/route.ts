@@ -7,8 +7,6 @@ import { err } from "@/lib/api/response";
 import { ERR } from "@/lib/api/errors";
 
 const FOUNDER_EMAILS = ["hdsastra47@gmail.com", "dominikus.02@gmail.com", "alexsurya1968@gmail.com"];
-const PROMO_PREMIUM_UNTIL = new Date();
-PROMO_PREMIUM_UNTIL.setMonth(PROMO_PREMIUM_UNTIL.getMonth() + 2);
 
 const userSessionFields = {
   id: true, supabaseId: true, email: true, fullName: true, nickname: true, nicknameUpdatedAt: true,
@@ -37,12 +35,6 @@ async function findOrCreateUser(opts: {
       updates.isPremium = true;
       updates.premiumPlan = "PRO";
     }
-    // Promo 2 bulan: upgrade GURU ke PRO
-    if (role === "GURU" && !user.isFounder && (!user.isPremium || !user.premiumUntil || user.premiumUntil < new Date())) {
-      updates.isPremium = true;
-      updates.premiumPlan = "PRO";
-      updates.premiumUntil = PROMO_PREMIUM_UNTIL;
-    }
     if (Object.keys(updates).length > 0) {
       await db.user.update({ where: { id: user.id }, data: updates });
     }
@@ -61,9 +53,8 @@ async function findOrCreateUser(opts: {
       avatar: getGravatarUrl(lowerEmail),
       role: isGuru ? "GURU" : "MURID",
       isFounder,
-      isPremium: isFounder || isGuru,
-      premiumPlan: isFounder || isGuru ? "PRO" : "FREE",
-      premiumUntil: isGuru && !isFounder ? PROMO_PREMIUM_UNTIL : undefined,
+      isPremium: isFounder,
+      premiumPlan: isFounder ? "PRO" : "FREE",
     },
   });
 
