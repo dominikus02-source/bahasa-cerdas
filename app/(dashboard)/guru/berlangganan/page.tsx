@@ -28,14 +28,6 @@ const PLAN_FEATURES: PlanFeature[] = [
   { label: "Dukungan prioritas", free: "Tidak", freeOk: false, pro: "Ya", proOk: true },
 ];
 
-const PRO_BENEFITS = [
-  { icon: "📄", title: "Unduh 10 dokumen per hari", desc: "Ekspor Rencana Pembelajaran & Soal ke PDF/DOCX, PPT ke PPTX. Gratis hanya 1×/hari." },
-  { icon: "⚡", title: "500 kredit AI per bulan", desc: "Buat RPP, soal, PPT, koreksi, feedback — 16× kuota akun gratis (30 kredit)." },
-  { icon: "💰", title: "Jual karya berbayar", desc: "Upload & jual RPP, modul, PPT di Marketplace dengan komisi 85% untukmu." },
-  { icon: "🗂️", title: "Simpan hasil AI tanpa batas", desc: "Riwayat hasil AI tersimpan selamanya. Akun gratis hanya 50 hasil." },
-  { icon: "🚀", title: "Prioritas kecepatan", desc: "Batas pakai harian 200× (vs 20×) + dukungan prioritas dari tim." },
-];
-
 interface UserInfo {
   isPremium: boolean;
   premiumPlan: string;
@@ -90,27 +82,6 @@ function ComparisonTable() {
           ))}
         </tbody>
       </table></div>
-    </Card>
-  );
-}
-
-function ProBenefits() {
-  return (
-    <Card className="p-6 border border-amber-200 bg-gradient-to-br from-amber-50/40 to-orange-50/40">
-      <h3 className="font-bold text-gray-900 mb-6 text-center flex items-center justify-center gap-2">
-        <Crown className="w-5 h-5 text-amber-500" /> Apa yang Kamu Dapat dengan Pro
-      </h3>
-      <div className="grid sm:grid-cols-2 gap-4">
-        {PRO_BENEFITS.map((b) => (
-          <div key={b.title} className="flex items-start gap-3 p-4 rounded-xl bg-white/70 border border-amber-100">
-            <div className="text-2xl shrink-0">{b.icon}</div>
-            <div>
-              <p className="font-semibold text-gray-900 text-sm">{b.title}</p>
-              <p className="text-xs text-gray-600 mt-0.5">{b.desc}</p>
-            </div>
-          </div>
-        ))}
-      </div>
     </Card>
   );
 }
@@ -343,7 +314,6 @@ export default function BerlanggananPage() {
 
         <div className="space-y-8">
           <ComparisonTable />
-          <ProBenefits />
         </div>
 
         <Card className="p-4 bg-blue-50 border-blue-200">
@@ -582,8 +552,6 @@ export default function BerlanggananPage() {
       </div>
 
       <ComparisonTable />
-
-      <ProBenefits />
 
       <Card className="p-6 bg-blue-50 border-blue-200">
         <div className="flex items-start gap-3">
