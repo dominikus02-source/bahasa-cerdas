@@ -4,18 +4,8 @@
 
 /* ── Font Arena Junior (TK–SD) ──────────────────────── */
 @font-face {
-  font-family: "Super Bouncer";
-  src: url("/fonts/Super Bouncer.ttf") format("truetype");
-  font-display: swap;
-}
-@font-face {
-  font-family: "Gocake";
-  src: url("/fonts/Gocake.ttf") format("truetype");
-  font-display: swap;
-}
-@font-face {
-  font-family: "Matcha Mint";
-  src: url("/fonts/Matcha Mint.ttf") format("truetype");
+  font-family: "Elegant Bloom";
+  src: url("/fonts/Elegant Bloom.otf") format("opentype");
   font-display: swap;
 }
 
@@ -28,8 +18,8 @@
 
 @layer base {
   :root {
-    --font-junior-heading: "Super Bouncer", sans-serif;
-    --font-junior-body: "Gocake", sans-serif;
+    --font-junior-heading: "Elegant Bloom", sans-serif;
+    --font-junior-body: "Elegant Bloom", sans-serif;
     --font-game-display: "Newscrash", sans-serif;
     --background: 0 0% 100%;
     --foreground: 0 0% 11%;
