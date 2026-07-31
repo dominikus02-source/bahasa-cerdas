@@ -53,38 +53,6 @@ const ERROR_MESSAGES: Record<string, string> = {
   CHECKOUT_DB_FAILED: "Gagal menyimpan pesanan. Silakan coba lagi.",
 };
 
-function ComparisonTable() {
-  return (
-    <Card className="p-6">
-      <div className="overflow-x-auto"><table className="w-full text-sm">
-        <thead><tr className="border-b border-gray-100">
-          <th className="text-left py-3 font-semibold text-gray-600">Fitur</th>
-          <th className="text-center py-3 font-semibold text-gray-600 w-28">Gratis</th>
-          <th className="text-center py-3 font-semibold text-amber-600 w-28">PRO</th>
-        </tr></thead>
-        <tbody>
-          {PLAN_FEATURES.map((f) => (
-            <tr key={f.label} className="border-b border-gray-50">
-              <td className="py-3 text-gray-700">{f.label}</td>
-              <td className="text-center py-3">
-                <span className={`inline-flex items-center justify-center gap-1 ${f.freeOk ? "text-emerald-600" : "text-gray-300"}`}>
-                  {f.freeOk ? <Check className="w-4 h-4" /> : <X className="w-4 h-4" />}
-                  {f.free}
-                </span>
-              </td>
-              <td className="text-center py-3">
-                <span className="inline-flex items-center justify-center gap-1 text-emerald-600">
-                  <Check className="w-4 h-4" /> {f.pro}
-                </span>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table></div>
-    </Card>
-  );
-}
-
 export default function BerlanggananPage() {
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState<"default" | "success" | "failed" | "pending">("default");
@@ -310,10 +278,6 @@ export default function BerlanggananPage() {
             {loading ? "Memproses..." : coupon ? `Perpanjang PRO — ${formatCurrency(coupon.hargaDiskon)}` : "Perpanjang PRO"}
           </Button>
         </Card>
-
-        <div className="space-y-8">
-          <ComparisonTable />
-        </div>
 
         <Card className="p-4 bg-blue-50 border-blue-200">
           <div className="flex items-start gap-3">
@@ -549,8 +513,6 @@ export default function BerlanggananPage() {
           <span className="flex items-center gap-1"><Smartphone className="w-3.5 h-3.5" /> e-Wallet</span>
         </div>
       </div>
-
-      <ComparisonTable />
 
       <Card className="p-6 bg-blue-50 border-blue-200">
         <div className="flex items-start gap-3">
