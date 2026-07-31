@@ -198,6 +198,7 @@ export async function ambilKurikulum(userId: string, grade: ArenaJuniorGrade) {
       totalPelajaranTersedia: withState.length,
       selesaiSemua: withState.filter((l) => l.completed).length,
       xpTerkumpul: progressRows.reduce((sum, p) => sum + p.xpEarned, 0),
+      totalXP: milikJenjang.reduce((sum, l) => sum + l.xpReward, 0),
       selesaiHariIni,
       targetHarian: 2,
       pelajaranBerikutnya: berikutnya?.id ?? null,
