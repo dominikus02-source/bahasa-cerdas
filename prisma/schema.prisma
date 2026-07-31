@@ -266,6 +266,7 @@ model User {
   materiKirims         MateriKirim[]
   pengumumanDibuat     Pengumuman[]             @relation("PengumumanTeacher")
   pengumumanSubmissions PengumumanSubmission[]
+  kuponDipakai         KuponPemakaian[]
 
   // Admin quota audit logs where this user was the acting admin
   adminQuotaActions    AdminQuotaAuditLog[]   @relation("AdminActions")
@@ -1211,6 +1212,47 @@ model Transaksi {
   @@index([userId])
   @@index([orderId])
   @@index([status])
+}
+
+// Kupon diskon — dipakai "Program Guru Cerdas" (Rp 1.000/bulan untuk jadi Pro).
+model Kupon {
+  id             String    @id @default(cuid())
+  kode           String    @unique // selalu disimpan UPPERCASE
+  nama           String?
+  deskripsi      String?
+  hargaFixed     Int? // harga akhir tetap (mis. Rp 1.000 untuk Program Guru Cerdas)
+  diskonPersen   Int? // alternatif: persen potongan dari harga asli
+  hargaMinimal   Int? // floor harga akhir saat memakai diskonPersen (~Rp 1.000 Midtrans)
+  planId         String? // batasan paket (null = berlaku untuk semua paket)
+  untukRole      String    @default("GURU") // "*" = semua role
+  mulaiBerlaku   DateTime?
+  berakhirPada   DateTime?
+  batasPemakaian Int? // null = tanpa batas
+  jumlahTerpakai Int       @default(0)
+  aktif          Boolean   @default(true)
+  dibuatOleh     String?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  pemakaian KuponPemakaian[]
+
+  @@index([kode])
+}
+
+model KuponPemakaian {
+  id          String   @id @default(cuid())
+  kuponId     String
+  userId      String
+  transaksiId String?
+  hargaAsli   Int
+  hargaDiskon Int
+  createdAt   DateTime @default(now())
+
+  kupon Kupon @relation(fields: [kuponId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([kuponId])
+  @@index([userId])
 }
 
 model Notifikasi {

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getUser } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 import { getPlan } from "@/lib/billing/plans";
+import { validasiKupon } from "@/lib/billing/kupon";
 import { withTimeout } from "@/lib/db-timeout";
 import {
   createMidtransSnapTransaction,
@@ -14,6 +15,7 @@ type ErrorCode =
   | "CHECKOUT_AUTH_REQUIRED"
   | "CHECKOUT_FORBIDDEN_ROLE"
   | "CHECKOUT_INVALID_PLAN"
+  | "CHECKOUT_INVALID_COUPON"
   | "MIDTRANS_CONFIG_MISSING"
   | "MIDTRANS_MODE_MISMATCH"
   | "MIDTRANS_UNAUTHORIZED"
@@ -63,10 +65,24 @@ export async function POST(req: NextRequest) {
       return err("CHECKOUT_INVALID_PLAN", "Pilih paket terlebih dahulu.", 400);
     }
 
-    const { planId } = body;
+    const { planId, couponCode } = body;
     const plan = getPlan(planId);
     if (!plan) {
       return err("CHECKOUT_INVALID_PLAN", "Paket tidak tersedia.", 400);
+    }
+
+    // Step 2b — Validasi kupon (opsional). Harga yang ditagih = harga diskon.
+    let kuponInfo: { id: string; kode: string } | null = null;
+    let hargaAsli = plan.price;
+    let hargaDiskon = plan.price;
+    if (couponCode && typeof couponCode === "string" && couponCode.trim()) {
+      try {
+        const valid = await validasiKupon(couponCode, user, { planId: plan.planId, price: plan.price });
+        kuponInfo = { id: valid.kupon.id, kode: valid.kupon.kode };
+        hargaDiskon = valid.hargaDiskon;
+      } catch (e: any) {
+        return err("CHECKOUT_INVALID_COUPON", e.message || "Kupon tidak valid.", 400);
+      }
     }
 
     // Step 3 — Validate Midtrans config before doing anything
@@ -127,14 +143,14 @@ export async function POST(req: NextRequest) {
     try {
       snapResult = await createMidtransSnapTransaction({
         orderId,
-        amount: plan.price,
+        amount: hargaDiskon,
         fullName: user.fullName || user.email,
         email: user.email,
         items: [
           {
             id: plan.planId,
-            name: plan.label,
-            price: plan.price,
+            name: kuponInfo ? `${plan.label} (Kupon ${kuponInfo.kode})` : plan.label,
+            price: hargaDiskon,
             quantity: 1,
             category: "PREMIUM",
           },
@@ -161,7 +177,7 @@ export async function POST(req: NextRequest) {
           data: {
             userId: user.id,
             type: "PREMIUM_UPGRADE",
-            amount: plan.price,
+            amount: hargaDiskon,
             status: "PENDING",
             reference: planId,
             orderId,
@@ -170,6 +186,9 @@ export async function POST(req: NextRequest) {
               durationDays: plan.durationDays,
               aiCreditsMonthly: plan.aiCreditsMonthly,
               requestId,
+              ...(kuponInfo
+                ? { kuponId: kuponInfo.id, kuponKode: kuponInfo.kode, hargaAsli, hargaDiskon }
+                : {}),
             },
           },
           select: { id: true },
@@ -178,6 +197,29 @@ export async function POST(req: NextRequest) {
       transaksiId = created.id;
     } catch {
       console.warn(`[Checkout:${requestId}] DB write failed, continuing`);
+    }
+
+    // Step 7b — Catat pemakaian kupon (best-effort, setelah Transaksi dibuat)
+    if (kuponInfo && transaksiId) {
+      try {
+        await db.$transaction([
+          db.kuponPemakaian.create({
+            data: {
+              kuponId: kuponInfo.id,
+              userId: user.id,
+              transaksiId,
+              hargaAsli,
+              hargaDiskon,
+            },
+          }),
+          db.kupon.update({
+            where: { id: kuponInfo.id },
+            data: { jumlahTerpakai: { increment: 1 } },
+          }),
+        ]);
+      } catch {
+        console.warn(`[Checkout:${requestId}] Kupon usage write failed, continuing`);
+      }
     }
 
     return ok({
@@ -189,8 +231,10 @@ export async function POST(req: NextRequest) {
         planId: plan.planId,
         label: plan.label,
         price: plan.price,
+        hargaDiskon,
         durationDays: plan.durationDays,
       },
+      ...(kuponInfo ? { kupon: { kode: kuponInfo.kode, hargaAsli, hargaDiskon } } : {}),
     });
   } catch (error: any) {
     console.error(`[Checkout:${requestId}] Unhandled crash`, {

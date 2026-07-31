@@ -13,6 +13,7 @@ import { Badge } from "@/components/ui/badge"
 import { TrialStatusCard } from "@/components/guru/TrialStatusCard"
 import { AiCreditBalance } from "@/components/guru/AiCreditBalance"
 import { GuruMissionCard } from "@/components/guru/misi/GuruMissionCard"
+import BannerProgramGuruCerdas from "@/components/public/BannerProgramGuruCerdas"
 
 function jakartaHour(): number {
   // Same instant, same zone, on both server and client — no drift to hydrate over.
@@ -124,6 +125,10 @@ export default function GuruBerandaPage() {
 
       <div className="mb-6">
         <TrialStatusCard />
+      </div>
+
+      <div className="mb-8">
+        <BannerProgramGuruCerdas />
       </div>
 
       {error ? (

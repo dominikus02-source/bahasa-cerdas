@@ -6,6 +6,7 @@ import { withQueryTimeout as queryWithTimeout } from "@/lib/db/with-query-timeou
 import PageNavbar from "@/components/public/PageNavbar";
 import PageFooter from "@/components/public/PageFooter";
 import HeroSection from "@/components/landing/HeroSection";
+import BannerProgramGuruCerdas from "@/components/public/BannerProgramGuruCerdas";
 import TrustBar from "@/components/landing/TrustBar";
 import PromoVideoSection from "@/components/landing/PromoVideoSection";
 import MengapaSection from "@/components/landing/MengapaSection";
@@ -119,6 +120,7 @@ export default async function HomePage() {
 
       <main id="main-content" className="min-h-screen">
         <HeroSection />
+        <BannerProgramGuruCerdas />
         <TrustBar />
         <PromoVideoSection />
         <MengapaSection />

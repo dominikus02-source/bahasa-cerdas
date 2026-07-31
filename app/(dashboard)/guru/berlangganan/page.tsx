@@ -4,8 +4,10 @@ import { useEffect, useState, useCallback, useRef } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Check, Crown, Zap, AlertCircle, Loader2, X, Shield, CreditCard, Calendar, Clock, Info, Landmark, Smartphone } from "lucide-react";
+import { Check, Crown, Zap, AlertCircle, Loader2, X, Shield, CreditCard, Calendar, Clock, Info, Landmark, Smartphone, Gift, Sparkles } from "lucide-react";
 import { loadMidtransSnap } from "@/lib/midtrans-client";
+import CouponInput, { AppliedCoupon } from "@/components/billing/CouponInput";
+import { formatCurrency } from "@/lib/premium";
 
 const FEATURES = [
   { free: true, pro: true, label: "AI Tools (Buat Rencana Pembelajaran, Soal, PPT, dll)" },
@@ -32,6 +34,7 @@ const ERROR_MESSAGES: Record<string, string> = {
   CHECKOUT_AUTH_REQUIRED: "Silakan login terlebih dahulu.",
   CHECKOUT_FORBIDDEN_ROLE: "Hanya guru yang dapat membeli paket Guru Pro.",
   CHECKOUT_INVALID_PLAN: "Paket tidak tersedia.",
+  CHECKOUT_INVALID_COUPON: "Kode kupon tidak valid.",
   CHECKOUT_DB_FAILED: "Gagal menyimpan pesanan. Silakan coba lagi.",
 };
 
@@ -41,6 +44,7 @@ export default function BerlanggananPage() {
   const [errorMsg, setErrorMsg] = useState("");
   const [diagnosticCode, setDiagnosticCode] = useState("");
   const [selectedPlan, setSelectedPlan] = useState<"GURU_PRO_MONTHLY" | "GURU_PRO_YEARLY">("GURU_PRO_YEARLY");
+  const [coupon, setCoupon] = useState<AppliedCoupon | null>(null);
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
   const [userLoading, setUserLoading] = useState(true);
   const snapLoaded = useRef(false);
@@ -84,7 +88,10 @@ export default function BerlanggananPage() {
       const res = await fetch("/api/billing/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ planId: selectedPlan }),
+        body: JSON.stringify({
+          planId: selectedPlan,
+          ...(coupon ? { couponCode: coupon.kode } : {}),
+        }),
       });
 
       const result = await res.json();
@@ -148,7 +155,7 @@ export default function BerlanggananPage() {
       setErrorMsg("Tidak bisa menghubungi server pembayaran. Periksa koneksi internet Anda.");
       setLoading(false);
     }
-  }, [selectedPlan]);
+  }, [selectedPlan, coupon]);
 
   if (userLoading) {
     return (
@@ -210,20 +217,28 @@ export default function BerlanggananPage() {
         <Card className="p-6">
           <h3 className="font-bold text-gray-900 mb-4">Perpanjang PRO</h3>
           <div className="flex items-center justify-center gap-2 bg-gray-100 rounded-xl p-1 w-fit mx-auto mb-6">
-            <button onClick={() => setSelectedPlan("GURU_PRO_MONTHLY")}
+            <button onClick={() => { setSelectedPlan("GURU_PRO_MONTHLY"); setCoupon(null); }}
               className={`px-5 py-2 rounded-lg text-sm font-medium ${selectedPlan === "GURU_PRO_MONTHLY" ? "bg-white text-gray-900 shadow-sm" : "text-gray-500"}`}>
-              Bulanan — Rp 49.000
+              Bulanan — {coupon && selectedPlan === "GURU_PRO_MONTHLY" ? formatCurrency(coupon.hargaDiskon) : "Rp 49.000"}
             </button>
-            <button onClick={() => setSelectedPlan("GURU_PRO_YEARLY")}
+            <button onClick={() => { setSelectedPlan("GURU_PRO_YEARLY"); setCoupon(null); }}
               className={`px-5 py-2 rounded-lg text-sm font-medium ${selectedPlan === "GURU_PRO_YEARLY" ? "bg-white text-gray-900 shadow-sm" : "text-gray-500"}`}>
-              Tahunan — Rp 399.000
+              Tahunan — {coupon && selectedPlan === "GURU_PRO_YEARLY" ? formatCurrency(coupon.hargaDiskon) : "Rp 399.000"}
               <Badge variant="warning" className="ml-1.5 text-[10px] py-0">HEMAT</Badge>
             </button>
+          </div>
+          <div className="max-w-md mx-auto mb-6">
+            <CouponInput
+              planId={selectedPlan}
+              price={selectedPlan === "GURU_PRO_YEARLY" ? 399000 : 49000}
+              value={coupon}
+              onChange={setCoupon}
+            />
           </div>
           <Button onClick={handleUpgrade} disabled={loading}
             className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 text-white">
             {loading ? <Loader2 className="w-4 h-4 animate-spin mr-1.5" /> : <Zap className="w-4 h-4 mr-1.5" />}
-            {loading ? "Memproses..." : "Perpanjang PRO"}
+            {loading ? "Memproses..." : coupon ? `Perpanjang PRO — ${formatCurrency(coupon.hargaDiskon)}` : "Perpanjang PRO"}
           </Button>
         </Card>
 
@@ -300,6 +315,30 @@ export default function BerlanggananPage() {
         </p>
       </div>
 
+      <div className="max-w-2xl mx-auto">
+        <div className="rounded-2xl bg-gradient-to-r from-emerald-600 via-emerald-500 to-green-500 p-5 text-white shadow-lg relative overflow-hidden">
+          <div className="absolute -right-6 -top-6 h-28 w-28 rounded-full bg-white/10" />
+          <div className="absolute right-10 -bottom-10 h-20 w-20 rounded-full bg-white/10" />
+          <div className="flex items-start gap-4 relative">
+            <div className="h-12 w-12 rounded-xl bg-white/20 backdrop-blur flex items-center justify-center shrink-0">
+              <Gift className="w-6 h-6 text-white" />
+            </div>
+            <div className="flex-1">
+              <div className="flex items-center gap-2 flex-wrap">
+                <h2 className="text-lg font-bold">Program Guru Cerdas</h2>
+                <Badge className="bg-white/20 text-white text-[10px] py-0 border-white/30">PROMO</Badge>
+              </div>
+              <p className="text-sm text-emerald-50 mt-1">
+                Guru terverifikasi bisa menjadi <strong>Guru Pro</strong> hanya dengan <strong>Rp 1.000/bulan</strong>.
+              </p>
+              <p className="text-xs text-emerald-100 mt-1.5">
+                Masukkan kode <span className="font-mono font-semibold bg-white/20 px-1.5 py-0.5 rounded">BCGURUCERDAS</span> saat memilih paket <strong>Bulanan</strong> untuk mendapat harga khusus.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {errorMsg && (
         <div className="max-w-lg mx-auto rounded-xl bg-red-50 border border-red-200 p-4 text-sm text-red-700">
           <div className="flex items-center gap-2 mb-1">
@@ -315,15 +354,27 @@ export default function BerlanggananPage() {
       )}
 
       <div className="flex items-center justify-center gap-2 bg-gray-100 rounded-xl p-1 w-fit mx-auto">
-        <button onClick={() => setSelectedPlan("GURU_PRO_MONTHLY")}
+        <button onClick={() => { setSelectedPlan("GURU_PRO_MONTHLY"); setCoupon(null); }}
           className={`px-5 py-2 rounded-lg text-sm font-medium transition-all ${selectedPlan === "GURU_PRO_MONTHLY" ? "bg-white text-gray-900 shadow-sm" : "text-gray-500 hover:text-gray-700"}`}>
           Bulanan
         </button>
-        <button onClick={() => setSelectedPlan("GURU_PRO_YEARLY")}
+        <button onClick={() => { setSelectedPlan("GURU_PRO_YEARLY"); setCoupon(null); }}
           className={`px-5 py-2 rounded-lg text-sm font-medium transition-all ${selectedPlan === "GURU_PRO_YEARLY" ? "bg-white text-gray-900 shadow-sm" : "text-gray-500 hover:text-gray-700"}`}>
           Tahunan
           <Badge variant="warning" className="ml-2 text-[10px] py-0">HEMAT Rp 189K</Badge>
         </button>
+      </div>
+
+      <div className="max-w-lg mx-auto">
+        <CouponInput
+          planId={selectedPlan}
+          price={selectedPlan === "GURU_PRO_YEARLY" ? 399000 : 49000}
+          value={coupon}
+          onChange={setCoupon}
+        />
+        <p className="text-[11px] text-gray-400 mt-1.5 text-center">
+          Kupon berlaku otomatis saat checkout — Anda tetap membayar lewat Midtrans.
+        </p>
       </div>
 
       <div className="grid md:grid-cols-2 gap-6">
@@ -347,7 +398,20 @@ export default function BerlanggananPage() {
             <div className="flex items-center gap-2 mb-1"><h2 className="text-xl font-bold text-gray-900">PRO</h2><Crown className="w-5 h-5 text-amber-500" /></div>
             <p className="text-sm text-gray-500 mt-1">Untuk guru profesional</p>
           </div>
-          {selectedPlan === "GURU_PRO_YEARLY" ? (
+          {coupon ? (
+            <div className="mb-6">
+              <div className="flex items-center gap-2 flex-wrap">
+                <p className="text-3xl font-bold text-emerald-600">{formatCurrency(coupon.hargaDiskon)}</p>
+                <p className="text-lg text-gray-400 line-through">{formatCurrency(coupon.hargaAsli)}</p>
+              </div>
+              <p className="text-sm text-gray-500">
+                {selectedPlan === "GURU_PRO_YEARLY" ? "per tahun" : "per bulan"} · harga khusus kupon
+              </p>
+              <p className="text-xs text-emerald-600 font-medium mt-1">
+                {coupon.kode} — hemat {formatCurrency(coupon.hemat)}
+              </p>
+            </div>
+          ) : selectedPlan === "GURU_PRO_YEARLY" ? (
             <div className="mb-6">
               <p className="text-3xl font-bold text-gray-900">Rp 399.000</p>
               <p className="text-sm text-gray-500">per tahun (Rp 33.250/bln)</p>
