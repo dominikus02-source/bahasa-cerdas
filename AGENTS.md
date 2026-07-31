@@ -1591,13 +1591,15 @@ AND NOT EXISTS (
 | Guru premium tersisa | ✅ Hanya `kusum4w4@gmail.com` (punya `PREMIUM_UPGRADE` status `SUCCESS` → Pro sah, `paid_count=1`) |
 | Setelah reset | ✅ Guru lain otomatis dapat Guru Pro Trial 30 hari di login berikutnya (`startGuruTrialIfEligible` di `/guru/layout`) |
 
-### Risks (Baru)
-1. **⚠️ Env Vercel placeholder**: `vercel env pull` mengunduh `DATABASE_URL`/`DIRECT_URL` bernilai literal `[SENSITIVE]` (bukan URL). Production masih jalan karena deployment terakhir memakai snapshot env lama, tapi **deploy berikutnya akan putus koneksi DB**. Harus dicek di Vercel dashboard → Settings → Environment Variables; kalau benar placeholder, set ulang dari Supabase → Project Settings → Database (pooler port 6543 untuk `DATABASE_URL`, direct port 5432 untuk `DIRECT_URL`).
-2. **Local `.env.local` placeholder**: file lokal berisi `[SENSITIVE]` untuk secret. Perlu `vercel env pull` yang benar (setelah Risk #1 dibereskan) untuk memulihkan.
+### Env Vercel Restored (Aug 1, 2026)
+- **Temuan**: host koneksi Supabase yang benar = `aws-1-ap-southeast-1.pooler.supabase.com` (bukan `db.<ref>.supabase.co` yang tidak resolve DNS, bukan `aws-0-ap-southeast-1`). Username pooler = `postgres.<project-ref>`. Project ref = `ibtlhoocaoopgtcsnvzr`.
+- **DATABASE_URL** (port 6543, transaction pooler) dan **DIRECT_URL** (port 5432) di-set ulang di Vercel (Production + Preview) via `vercel env add`.
+- **Tipe variabel = Sensitive (write-only)**: `vercel env pull` SELALU menulis `[SENSITIVE]` untuk var Sensitive — itu perilaku Vercel (nilai tidak bisa didekripsi/dibaca balik), BUKAN error. Nilai asli hanya perlu di-set sekali.
+- **Redeploy production berhasil** (Agustus 2026): build OK, `/api/kompetensi` mengembalikan data DB asli → env baru terpakai dan koneksi DB sehat.
+- **`.env.local` lokal** tetap berisi `[SENSITIVE]` untuk var Sensitive — normal. Untuk kerja lokal yang butuh DB (script cleanup, seed), set nilai asli manual di `.env.local` atau pakai SQL langsung di Supabase SQL Editor.
 
 ### Remaining
-1. **Pulihkan env Vercel** (Risk #1) sebelum deploy berikutnya
-2. UKBI Guru → 150 (menulis 8 + berbicara 7 constructed response)
-3. TKA UTBK/Guru enrichment 30 → 150
-4. Game server revival (VPS mati)
-5. GameRoom migration SQL via Supabase dashboard
+1. UKBI Guru → 150 (menulis 8 + berbicara 7 constructed response)
+2. TKA UTBK/Guru enrichment 30 → 150
+3. Game server revival (VPS mati)
+4. GameRoom migration SQL via Supabase dashboard
