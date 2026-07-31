@@ -1551,3 +1551,53 @@ Build lokal butuh dummy env inline karena environment opencode me-mask nilai sec
 2. TKA UTBK/Guru enrichment 30 → 150
 3. Game server revival (VPS mati)
 4. GameRoom migration SQL via Supabase dashboard
+
+---
+
+## Phase PRO PLAN CLEANUP — Fake Premium Reset (July 31, 2026)
+
+### What
+Menghapus status "PRO aktif" palsu di banyak guru yang berasal dari promo 2 bulan lama di `/api/user/me` (sudah dihapus dari kode), lalu men-reset database dan memverifikasi hanya Pro yang sah yang tersisa.
+
+### Root Cause
+`app/api/user/me/route.ts` dulu punya `PROMO_PREMIUM_UNTIL = now + 2 bulan`; setiap guru login di-set `isPremium=true, premiumPlan="PRO", premiumUntil=+2 bulan` → label "PRO aktif Berlaku hingga 19 September 2026" palsu di sidebar/berlangganan. Trial-service (`lib/ai-gateway/trial-service.ts`) sudah diverifikasi benar — tidak pernah set `isPremium` dan tidak auto-renew; semua kenaikan `isPremium` palsu murni dari promo itu.
+
+### Files Changed
+| File | Perubahan |
+|------|-----------|
+| `app/api/user/me/route.ts` | Hapus `PROMO_PREMIUM_UNTIL` + blok promo 2 bulan. User baru `isPremium: isFounder` saja. (commit `a3fa374` + `6a3a36a` + `6d8b966`) |
+| `scripts/cleanup-promo-premium.ts` | Script reset PRO promo-only (dry-run default, `--execute` untuk apply; load `.env.local` via dotenv, trim spasi/quotes URL, fallback DIRECT_URL). |
+| `package.json` | `cleanup:promo-premium` / `cleanup:promo-premium:execute` |
+| `components/guru/SidebarPremiumBadge.tsx`, `components/guru/TrialStatusCard.tsx`, `app/(dashboard)/guru/profile/page.tsx`, `app/(dashboard)/guru/pengaturan/page.tsx` | Indikator paket berwarna: Pro = emas (amber), Trial = ungu (violet), Free = abu (slate). |
+| `app/(dashboard)/guru/berlangganan/page.tsx` | `ComparisonTable` + `ProBenefits` dirender di cabang premium & non-premium; indikator paket dari `/api/ai/quota/status`. |
+
+### Cleanup Execution (manual via Supabase SQL Editor)
+Script lokal TIDAK bisa jalan karena `.env.local` berisi placeholder `[SENSITIVE]` (env opencode me-mask; `vercel env pull` juga mengunduh nilai placeholder — lihat Risk #1). Reset dieksekusi langsung via SQL:
+
+```sql
+UPDATE "User" u
+SET "isPremium" = false, "premiumPlan" = 'FREE', "premiumUntil" = NULL
+WHERE u.role = 'GURU' AND u."isFounder" = false AND u."isPremium" = true
+AND NOT EXISTS (
+  SELECT 1 FROM "Transaksi" t
+  WHERE t."userId" = u.id AND t.type = 'PREMIUM_UPGRADE' AND t.status = 'SUCCESS'
+);
+```
+
+### Verification
+| Check | Hasil |
+|-------|--------|
+| Reset di Supabase SQL Editor | ✅ Berhasil |
+| Guru premium tersisa | ✅ Hanya `kusum4w4@gmail.com` (punya `PREMIUM_UPGRADE` status `SUCCESS` → Pro sah, `paid_count=1`) |
+| Setelah reset | ✅ Guru lain otomatis dapat Guru Pro Trial 30 hari di login berikutnya (`startGuruTrialIfEligible` di `/guru/layout`) |
+
+### Risks (Baru)
+1. **⚠️ Env Vercel placeholder**: `vercel env pull` mengunduh `DATABASE_URL`/`DIRECT_URL` bernilai literal `[SENSITIVE]` (bukan URL). Production masih jalan karena deployment terakhir memakai snapshot env lama, tapi **deploy berikutnya akan putus koneksi DB**. Harus dicek di Vercel dashboard → Settings → Environment Variables; kalau benar placeholder, set ulang dari Supabase → Project Settings → Database (pooler port 6543 untuk `DATABASE_URL`, direct port 5432 untuk `DIRECT_URL`).
+2. **Local `.env.local` placeholder**: file lokal berisi `[SENSITIVE]` untuk secret. Perlu `vercel env pull` yang benar (setelah Risk #1 dibereskan) untuk memulihkan.
+
+### Remaining
+1. **Pulihkan env Vercel** (Risk #1) sebelum deploy berikutnya
+2. UKBI Guru → 150 (menulis 8 + berbicara 7 constructed response)
+3. TKA UTBK/Guru enrichment 30 → 150
+4. Game server revival (VPS mati)
+5. GameRoom migration SQL via Supabase dashboard
