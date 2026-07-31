@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { IconBolt, IconFlame, IconCoin, IconTarget, IconPen, IconChat, IconHeart, IconEye, IconClock } from "@/lib/icons";
-import ChatPanel from "@/components/chat/ChatPanel";
 
 type KaryaType = "PUISI" | "CERPEN" | "ARTIKEL" | "ANEKDOT" | "PANTUN" | "OPINI";
 

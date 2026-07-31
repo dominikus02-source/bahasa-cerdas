@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useState, useEffect, useRef, useCallback } from "react";
 import { X, Send, Star, Check, Trash2 } from "lucide-react";
 import { IconBolt, IconFlame, IconTarget, IconPen, IconChat, IconHeart, IconEye, IconClock, IconSchool, IconLocation } from "@/lib/icons";
-import GuruChatPanel from "@/components/chat/GuruChatPanel";
+import GuruPengumumanPanel from "@/components/pengumuman/GuruPengumumanPanel";
 
 type KaryaType = "PUISI" | "CERPEN" | "ARTIKEL" | "ANEKDOT" | "PANTUN" | "OPINI";
 
@@ -653,9 +653,9 @@ export default function GuruFeedKaryaPage() {
         </div>
       )}
 
-      {/* Right Panel — Chat Kelas */}
+      {/* Right Panel — Papan Pengumuman */}
       <div className="xl:sticky xl:top-5 min-w-0">
-        {user && <GuruChatPanel userId={user.id || user.userId} />}
+        {user && <GuruPengumumanPanel userId={user.id || user.userId} />}
       </div>
     </div>
   );

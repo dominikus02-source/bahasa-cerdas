@@ -264,6 +264,8 @@ model User {
   subscriptions        Subscription[]
   nicknameHistory      NicknameHistory[]
   materiKirims         MateriKirim[]
+  pengumumanDibuat     Pengumuman[]             @relation("PengumumanTeacher")
+  pengumumanSubmissions PengumumanSubmission[]
 
   // Admin quota audit logs where this user was the acting admin
   adminQuotaActions    AdminQuotaAuditLog[]   @relation("AdminActions")
@@ -1246,6 +1248,7 @@ model Group {
   nilaiKategoris  NilaiKategori[]
   nilais          Nilai[]
   materiKirims    MateriKirim[]
+  pengumumans     Pengumuman[]
 
   @@index([teacherId])
   @@index([accessCode])
@@ -1849,6 +1852,45 @@ model PenugasanSubmission {
   @@unique([penugasanId, userId])
   @@index([userId])
   @@index([status])
+}
+
+// Papan Pengumuman (one-way notice board, Google Classroom style): guru
+// memposting tugas/instruksi ke kelas (bisa dengan lampiran file referensi
+// PDF/DOCX dan tenggat), murid mengumpulkan tautan karya mereka sebagai hasil.
+model Pengumuman {
+  id            String   @id @default(cuid())
+  groupId       String
+  teacherId     String
+  judul         String
+  deskripsi     String?
+  tenggat       DateTime?
+  lampiran      String? // URL file referensi (PDF/DOCX) di Supabase Storage
+  lampiranNama  String? // nama file asli untuk ditampilkan
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  group       Group                   @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  teacher     User                    @relation("PengumumanTeacher", fields: [teacherId], references: [id], onDelete: Cascade)
+  submissions PengumumanSubmission[]
+
+  @@index([groupId])
+  @@index([teacherId])
+}
+
+model PengumumanSubmission {
+  id           String   @id @default(cuid())
+  pengumumanId String
+  userId       String
+  karyaUrl     String
+  catatan      String?
+  submittedAt  DateTime @default(now())
+
+  pengumuman Pengumuman @relation(fields: [pengumumanId], references: [id], onDelete: Cascade)
+  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([pengumumanId, userId])
+  @@index([userId])
+  @@index([pengumumanId])
 }
 
 enum SubscriptionPlan {

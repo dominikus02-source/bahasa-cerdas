@@ -7,7 +7,7 @@ import { LogoutButton } from "@/components/dashboard/LogoutButton";
 import {
   Home, BarChart3, Menu as MenuIcon, X, Bell,
   GraduationCap, Coins, ClipboardCheck,
-  FileText, Award, ExternalLink, Trophy, Calendar, User,
+  FileText, Award, ExternalLink, Trophy, Calendar, User, Megaphone,
 } from "lucide-react";
 
 const PRIMARY = [
@@ -25,6 +25,7 @@ const GROUPS: { title: string; items: { href: string; label: string; icon: any }
       { href: "/murid/profile", label: "Profil", icon: User },
       { href: "/arena", label: "Arena", icon: GraduationCap },
       { href: "/murid/toko-koin", label: "Toko Koin", icon: Coins },
+      { href: "/murid/pengumuman", label: "Papan Pengumuman", icon: Megaphone },
     ],
   },
   {
