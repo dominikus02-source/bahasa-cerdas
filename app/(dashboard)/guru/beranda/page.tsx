@@ -12,6 +12,7 @@ import { useUserStore } from "@/store"
 import { Badge } from "@/components/ui/badge"
 import { TrialStatusCard } from "@/components/guru/TrialStatusCard"
 import { AiCreditBalance } from "@/components/guru/AiCreditBalance"
+import { GuruMissionCard } from "@/components/guru/misi/GuruMissionCard"
 
 function jakartaHour(): number {
   // Same instant, same zone, on both server and client — no drift to hydrate over.
@@ -115,6 +116,10 @@ export default function GuruBerandaPage() {
             <Gamepad2 size={16} /> Arena Murid
           </Link>
         </div>
+      </div>
+
+      <div className="mb-6">
+        <GuruMissionCard />
       </div>
 
       <div className="mb-6">
