@@ -1502,3 +1502,52 @@ Fix paragraph layout and formatting of 9 system-created articles on `bahasacerda
 | `npx tsc --noEmit` | ✅ 0 errors |
 | `npm run build` | ✅ 310 pages, 0 errors |
 
+
+---
+
+## Phase PRO PLAN — Trial Tanpa Auto-Renew, Kupon Bulanan-Only, Batas Unduh Harian, Seragamkan Istilah Pro (July 31, 2026)
+
+### Goal
+1. Trial habis JANGAN lanjut ke berbayar otomatis (hanya trial yang berlaku).
+2. Kupon Pro Rp 1.000 khusus paket Bulanan (tidak berlaku Tahunan).
+3. Benefit Pro transparan di halaman pilih plan (beda Pro vs Free jelas).
+4. Seragamkan istilah: **"Pro"** (bukan "Premium").
+
+### Audit Trial — Tidak Perlu Fix
+- `shouldStartGuruTrial()`/`startGuruTrialIfEligible()` (lib/ai-gateway/trial-service.ts) SUDAH benar: trial 30 hari sekali (`trialEndsAt`), TIDAK pernah set `isPremium`, tidak restart (`if trialStartedAt !== null return false`). Trial habis → `resolveUserAiPlan()` → `GURU_FREE`. **Tidak ada auto-renew yang perlu dihapus.**
+- Paket: Bulanan Rp 49.000/30 hari/500 kredit (`GURU_PRO_MONTHLY`), Tahunan Rp 399.000/365 hari (`GURU_PRO_YEARLY`).
+- Kupon yearly sudah dicegah server-side (`validasiKupon` memaksa `planId='GURU_PRO_MONTHLY'`) — hanya UI yang belum memberi tahu → hint ditambahkan.
+
+### Batas Unduh Harian (BARU)
+- `lib/billing/limits.ts`: `DAILY_EXPORT_LIMITS` — FOUNDER/MURID ∞, GURU_PRO 10, GURU_PRO_TRIAL 10, GURU_FREE 1, SCHOOL 10. `startOfTodayWIB()` (UTC+7), `getDailyExportCount()`, `checkDailyExportLimit()` via `resolveUserAiPlan`.
+- Source of truth: tabel `AIUsage` (feature `ai_export_docx/pdf/pptx`, createdAt). Redis optional. Reset 00:00 WIB.
+- Wire di 3 route export: `app/api/ai/agents/export/{docx,pdf,pptx}/route.ts` — blokir `429 DAILY_EXPORT_LIMIT` setelah `checkExportQuota`.
+
+### Benefit Pro Transparan
+- `app/(dashboard)/guru/berlangganan/page.tsx`: `PLAN_FEATURES` 8 baris komparasi (kredit 500 vs 30/bulan, RPP/Soal/PPT, unduh/hari 1 vs 10, simpan hasil 50 vs ∞, kecepatan 200 vs 20/hari, jual karya Pro-only, komisi 85%, support prioritas) + `PRO_BENEFITS` 5 kartu.
+- Hint kupon: pilih Tahunan → "Kupon Program Guru Cerdas (Rp 1.000) hanya berlaku untuk paket Bulanan." (amber). Hero + FAQ menyebut trial 30 hari tidak otomatis lanjut, kupon bulanan-only, setelah Pro habis kembali ke Guru Free.
+
+### Seragamkan Istilah Premium → Pro
+| File | Perubahan |
+|------|-----------|
+| `app/(dashboard)/guru/toko-karya/page.tsx` | "Akun Premium" → "Akun Pro", "Upgrade ke Premium" → "Upgrade ke Pro" |
+| `app/(dashboard)/guru/profile/page.tsx` | Badge "Premium" → "Pro" |
+| `app/(dashboard)/guru/pengaturan/page.tsx` | "Premium Plan"/"Free Plan"/"Founder Premium" → "Guru Pro"/"Guru Free"/"Founder"; benefit list diperbaiki agar akurat (500 kredit, unduh 10/hari, jual karya, prioritas) |
+| `components/guru/TrialStatusCard.tsx` | "fitur premium" → "fitur Pro" |
+| `components/shared/upgrade-modal.tsx` | "unlimited" → "tanpa batas", "fitur premium" → "fitur Pro", + info kupon Rp 1.000 link ke Berlangganan |
+
+### Verification
+| Check | Hasil |
+|-------|-------|
+| `npx tsc --noEmit` | ✅ 0 errors |
+| `npm run build` (dummy env) | ✅ 318 pages, 0 errors |
+| Commit | ✅ `e5832f3` pushed ke main |
+
+### Catatan Build Lokal
+Build lokal butuh dummy env inline karena environment opencode me-mask nilai secret dari `.env.local` (semua URL jadi `[SENSITIVE]` → `TypeError: Invalid URL` saat data collection). Gunakan: `DATABASE_URL='postgresql://postgres:postgres@localhost:6543/postgres' DIRECT_URL='...5432...' NEXT_PUBLIC_SUPABASE_URL='https://dummy.supabase.co' NEXT_PUBLIC_SUPABASE_ANON_KEY='eyJ...dummy' SUPABASE_SERVICE_ROLE_KEY='eyJ...service.dummy' KV_REST_API_URL='https://dummy.kv.com' KV_REST_API_TOKEN='dummy' NEXT_PUBLIC_SITE_URL='https://bahasacerdas.com' REDIS_URL='rediss://default:dummy@localhost:6379' NEXT_PUBLIC_GAME_SERVER_URL='https://game.bahasacerdas.com' npm run build`
+
+### Remaining
+1. UKBI Guru → 150 (menulis 8 + berbicara 7 constructed response)
+2. TKA UTBK/Guru enrichment 30 → 150
+3. Game server revival (VPS mati)
+4. GameRoom migration SQL via Supabase dashboard
