@@ -16,7 +16,10 @@
  *      npx tsx scripts/cleanup-promo-premium.ts --execute
  */
 
+import { config as loadEnv } from "dotenv";
 import { PrismaClient } from "@prisma/client";
+
+loadEnv({ path: ".env.local" });
 
 const db = new PrismaClient();
 const isExecute = process.argv.includes("--execute");
