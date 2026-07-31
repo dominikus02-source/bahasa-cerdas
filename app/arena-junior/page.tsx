@@ -244,7 +244,7 @@ function BilahPratinjau({ grade }: { grade: string }) {
           Mode pratinjau
         </span>
         <span className="text-white/60">Progres tidak disimpan.</span>
-        <nav className="ml-auto flex flex-wrap items-center gap-1" aria-label="Pilih jenjang">
+        <nav className="flex flex-wrap items-center gap-1" aria-label="Pilih jenjang">
           {GRADES.map((g) => (
             <Link
               key={g}
@@ -258,6 +258,12 @@ function BilahPratinjau({ grade }: { grade: string }) {
             </Link>
           ))}
         </nav>
+        <Link
+          href="/admin"
+          className="ml-auto rounded-full bg-white/10 px-3 py-1 text-xs font-bold transition hover:bg-white/20"
+        >
+          Kembali ke Panel Admin
+        </Link>
       </div>
     </div>
   )
