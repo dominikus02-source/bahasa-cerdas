@@ -11,21 +11,21 @@ import { RewardCard } from "@/components/guru/misi/RewardCard";
 
 function Skeleton() {
   return (
-    <div className="rounded-3xl bg-gradient-to-br from-emerald-600 via-emerald-700 to-teal-800 p-5 sm:p-6 text-white shadow-xl shadow-emerald-600/20 border border-emerald-500/30 animate-pulse">
+    <div className="rounded-3xl bg-white border border-emerald-100 p-5 sm:p-6 shadow-lg shadow-emerald-100/50 animate-pulse">
       <div className="flex items-center gap-3 mb-5">
-        <div className="w-12 h-12 rounded-2xl bg-white/20" />
+        <div className="w-12 h-12 rounded-2xl bg-emerald-100" />
         <div className="space-y-2">
-          <div className="h-5 bg-white/20 rounded w-48" />
-          <div className="h-3.5 bg-white/15 rounded w-64" />
+          <div className="h-5 bg-emerald-100 rounded w-48" />
+          <div className="h-3.5 bg-emerald-50 rounded w-64" />
         </div>
       </div>
       <div className="grid grid-cols-2 gap-3 mb-5">
-        <div className="h-20 rounded-2xl bg-white/10" />
-        <div className="h-20 rounded-2xl bg-white/10" />
+        <div className="h-20 rounded-2xl bg-emerald-50" />
+        <div className="h-20 rounded-2xl bg-emerald-50" />
       </div>
       <div className="space-y-3">
         {[0, 1, 2, 3, 4, 5, 6].map((i) => (
-          <div key={i} className="h-16 rounded-2xl bg-white/10" />
+          <div key={i} className="h-16 rounded-2xl bg-emerald-50" />
         ))}
       </div>
     </div>
@@ -55,23 +55,23 @@ export function GuruMissionCard() {
   if (!status) return <Skeleton />;
 
   return (
-    <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-emerald-600 via-emerald-700 to-teal-800 p-5 sm:p-6 text-white shadow-xl shadow-emerald-600/20 border border-emerald-500/30">
-      <div className="pointer-events-none absolute -top-16 -right-16 w-56 h-56 rounded-full bg-white/5" />
-      <div className="pointer-events-none absolute -bottom-24 -left-10 w-64 h-64 rounded-full bg-white/5" />
+    <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-emerald-50 via-white to-teal-50 p-5 sm:p-6 shadow-lg shadow-emerald-100/50 ring-1 ring-emerald-100">
+      <div className="pointer-events-none absolute -top-20 -right-20 w-56 h-56 rounded-full bg-emerald-100/40" />
+      <div className="pointer-events-none absolute -bottom-24 -left-10 w-64 h-64 rounded-full bg-teal-100/30" />
 
       <div className="relative">
         <div className="flex items-center gap-3 mb-4">
-          <div className="w-12 h-12 rounded-2xl bg-white/15 backdrop-blur flex items-center justify-center shadow-lg">
-            <Sparkles size={24} className="text-amber-300" />
+          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center shadow-md shadow-emerald-200">
+            <Sparkles size={24} className="text-white" />
           </div>
           <div>
-            <h2 className="text-lg sm:text-xl font-bold flex items-center gap-2">
+            <h2 className="text-lg sm:text-xl font-bold text-emerald-900 flex items-center gap-2">
               Misi Guru Cerdas
-              <span className="hidden sm:inline-flex items-center gap-1 text-[10px] px-2 py-0.5 bg-amber-400/20 text-amber-200 rounded-full font-semibold uppercase tracking-wide">
+              <span className="hidden sm:inline-flex items-center gap-1 text-[10px] px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded-full font-semibold uppercase tracking-wide">
                 Mingguan
               </span>
             </h2>
-            <p className="text-emerald-100/90 text-xs sm:text-sm">
+            <p className="text-gray-500 text-xs sm:text-sm">
               Selesaikan misi minggu ini dan kumpulkan XP
             </p>
           </div>
