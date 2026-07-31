@@ -9,15 +9,13 @@ function verifyMidtransNotification(
   grossAmount: string,
   signatureKey: string
 ): boolean {
-  // Penting: pakai server key yang SAMA dengan yang dipakai checkout (getMidtransConfig
-  // melakukan .trim()). Sebelumnya memakai process.env.MIDTRANS_SERVER_KEY mentah —
-  // kalau di Vercel kunci ke-paste dengan newline/space di akhir, checkout tetap sukses
-  // (karena di-trim) tapi verifikasi webhook gagal → 401 dan Midtrans tidak bisa
-  // menyampaikan notifikasi.
+  // Formula resmi Midtrans: SHA512(order_id + status_code + gross_amount + ServerKey).
+  // ServerKey HARUS di posisi terakhir. Bug sebelumnya menaruh serverKey di awal
+  // sehingga hash tidak pernah cocok → 401 dan semua notifikasi gagal tersampaikan.
   const serverKey = getMidtransConfig().serverKey;
   const signature = crypto
     .createHash("sha512")
-    .update(serverKey + orderId + statusCode + grossAmount)
+    .update(orderId + statusCode + grossAmount + serverKey)
     .digest("hex");
   return signature === signatureKey;
 }
@@ -162,7 +160,7 @@ export async function POST(req: NextRequest) {
       const cfg = getMidtransConfig();
       const probe = crypto
         .createHash("sha512")
-        .update(cfg.serverKey + order_id + status_code + gross_amount)
+        .update(order_id + status_code + gross_amount + cfg.serverKey)
         .digest("hex");
       console.error("[Webhook] Signature mismatch", {
         order_id,
