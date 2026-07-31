@@ -65,7 +65,7 @@ ALTER TABLE "KuponPemakaian" ENABLE ROW LEVEL SECURITY;
 INSERT INTO "Kupon" ("id", "kode", "nama", "deskripsi", "hargaFixed", "planId", "untukRole", "aktif", "createdAt", "updatedAt")
 VALUES (
     'kupon-gurucerdas1000',
-    'BCGURUCERDAS',
+    'BCGURUCERDAS1000',
     'Program Guru Cerdas',
     'Bayar Rp 1.000 untuk menjadi Guru Pro selama 30 hari (kredit AI 500/bulan).',
     1000,
