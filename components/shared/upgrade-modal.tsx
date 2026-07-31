@@ -87,7 +87,7 @@ export function UpgradeModal({ isOpen, onClose, feature, used, limit }: UpgradeM
         {feature && (
           <p className="mt-2 text-sm text-muted-foreground">
             Kamu sudah menggunakan {used}/{limit} {feature} gratis bulan ini.
-            <br />Upgrade untuk akses unlimited!
+            <br />Upgrade untuk akses tanpa batas!
           </p>
         )}
       </div>
@@ -142,7 +142,7 @@ export function UpgradeModal({ isOpen, onClose, feature, used, limit }: UpgradeM
             "Jual karya di toko (bisa dapat income)",
             "Ekspor laporan PDF",
             "Data siswa lengkap",
-            "Akses semua fitur premium",
+            "Akses semua fitur Pro",
           ].map((benefit, i) => (
             <li key={i} className="flex items-center gap-2">
               <Check className="h-3.5 w-3.5 text-emerald-500" />
@@ -151,6 +151,12 @@ export function UpgradeModal({ isOpen, onClose, feature, used, limit }: UpgradeM
           ))}
         </ul>
       </div>
+
+      <p className="mt-4 text-center text-[11px] text-muted-foreground">
+        Guru terverifikasi bisa jadi Pro hanya <strong>Rp 1.000/bulan</strong> — pakai kode{" "}
+        <span className="font-mono font-semibold">bcgurucerdas1000</span> di halaman{" "}
+        <a href="/guru/berlangganan" className="text-emerald-600 hover:underline">Berlangganan</a>.
+      </p>
     </Modal>
   );
 }

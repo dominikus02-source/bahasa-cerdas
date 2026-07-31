@@ -4,6 +4,7 @@ import { db as prisma } from "@/lib/db";
 import { logExportEvent } from "@/src/ai/core/usage-logger";
 import { z } from "zod";
 import { checkExportQuota, ensureMonthlyLedger } from "@/lib/ai-gateway/quota-checker";
+import { checkDailyExportLimit } from "@/lib/billing/limits";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
@@ -39,6 +40,16 @@ export async function POST(req: NextRequest) {
           remainingCredits: quotaCheck.creditsRemaining,
         },
       }, { status: 402 });
+    }
+
+    // Batas unduh harian: Pro 10×/hari, Free 1×/hari
+    const limitCheck = await checkDailyExportLimit(user);
+    if (!limitCheck.allowed) {
+      return NextResponse.json({
+        error: "DAILY_EXPORT_LIMIT",
+        message: `Batas unduh hari ini tercapai (${limitCheck.used}/${limitCheck.limit}). Upgrade ke Pro untuk 10 unduhan per hari.`,
+        limit: { used: limitCheck.used, limit: limitCheck.limit },
+      }, { status: 429 });
     }
 
     const body = await req.json();

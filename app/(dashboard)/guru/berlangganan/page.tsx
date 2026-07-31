@@ -9,15 +9,31 @@ import { loadMidtransSnap } from "@/lib/midtrans-client";
 import CouponInput, { AppliedCoupon } from "@/components/billing/CouponInput";
 import { formatCurrency } from "@/lib/premium";
 
-const FEATURES = [
-  { free: true, pro: true, label: "AI Tools (Buat Rencana Pembelajaran, Soal, PPT, dll)" },
-  { free: true, pro: true, label: "Bank Soal & Kuis" },
-  { free: true, pro: true, label: "KelasKu & Buku Ajar" },
-  { free: true, pro: true, label: "Buku Nilai & Rapor" },
-  { free: false, pro: true, label: "500 Kredit AI per bulan (Free: 30)" },
-  { free: false, pro: true, label: "Ekspor PDF, DOCX, PPTX" },
-  { free: false, pro: true, label: "Jual Karya di Marketplace" },
-  { free: false, pro: true, label: "Prioritas support" },
+interface PlanFeature {
+  label: string;
+  free: string;
+  freeOk: boolean;
+  pro: string;
+  proOk: boolean;
+}
+
+const PLAN_FEATURES: PlanFeature[] = [
+  { label: "Kredit AI per bulan", free: "30", freeOk: true, pro: "500", proOk: true },
+  { label: "Buat RPP, Soal & PPT dengan AI", free: "Ya", freeOk: true, pro: "Ya", proOk: true },
+  { label: "Unduh dokumen per hari (PDF/DOCX/PPTX)", free: "1×/hari", freeOk: true, pro: "10×/hari", proOk: true },
+  { label: "Simpan hasil AI (riwayat)", free: "50 hasil", freeOk: true, pro: "Tak terbatas", proOk: true },
+  { label: "Kecepatan pakai AI per hari", free: "20×", freeOk: true, pro: "200×", proOk: true },
+  { label: "Jual karya berbayar di Marketplace", free: "Tidak", freeOk: false, pro: "Ya", proOk: true },
+  { label: "Komisi penjualan 85% untukmu", free: "Tidak", freeOk: false, pro: "Ya", proOk: true },
+  { label: "Dukungan prioritas", free: "Tidak", freeOk: false, pro: "Ya", proOk: true },
+];
+
+const PRO_BENEFITS = [
+  { icon: "📄", title: "Unduh 10 dokumen per hari", desc: "Ekspor Rencana Pembelajaran & Soal ke PDF/DOCX, PPT ke PPTX. Gratis hanya 1×/hari." },
+  { icon: "⚡", title: "500 kredit AI per bulan", desc: "Buat RPP, soal, PPT, koreksi, feedback — 16× kuota akun gratis (30 kredit)." },
+  { icon: "💰", title: "Jual karya berbayar", desc: "Upload & jual RPP, modul, PPT di Marketplace dengan komisi 85% untukmu." },
+  { icon: "🗂️", title: "Simpan hasil AI tanpa batas", desc: "Riwayat hasil AI tersimpan selamanya. Akun gratis hanya 50 hasil." },
+  { icon: "🚀", title: "Prioritas kecepatan", desc: "Batas pakai harian 200× (vs 20×) + dukungan prioritas dari tim." },
 ];
 
 interface UserInfo {
@@ -311,7 +327,7 @@ export default function BerlanggananPage() {
         </div>
         <h1 className="text-3xl font-bold text-gray-900">Pilih Paketmu</h1>
         <p className="mt-3 text-gray-500 max-w-md mx-auto">
-          Dapatkan akses penuh ke AI Tools, export dokumen, dan 500 kredit AI setiap bulan.
+          Coba gratis 30 hari, lalu lanjutkan dengan Pro: 500 kredit AI, unduh 10 dokumen/hari, dan jual karya di Marketplace.
         </p>
       </div>
 
@@ -372,9 +388,15 @@ export default function BerlanggananPage() {
           value={coupon}
           onChange={setCoupon}
         />
-        <p className="text-[11px] text-gray-400 mt-1.5 text-center">
-          Kupon berlaku otomatis saat checkout — Anda tetap membayar lewat Midtrans.
-        </p>
+        {selectedPlan === "GURU_PRO_YEARLY" ? (
+          <p className="text-[11px] text-amber-600 mt-1.5 text-center font-medium">
+            Kupon Program Guru Cerdas (Rp 1.000) hanya berlaku untuk paket Bulanan.
+          </p>
+        ) : (
+          <p className="text-[11px] text-gray-400 mt-1.5 text-center">
+            Kupon berlaku otomatis saat checkout — Anda tetap membayar lewat Midtrans.
+          </p>
+        )}
       </div>
 
       <div className="grid md:grid-cols-2 gap-6">
@@ -382,10 +404,12 @@ export default function BerlanggananPage() {
           <div className="mb-6"><h2 className="text-xl font-bold text-gray-900">Gratis</h2><p className="text-sm text-gray-500 mt-1">Untuk memulai</p></div>
           <p className="text-3xl font-bold text-gray-900 mb-6">Rp 0</p>
           <ul className="space-y-3 mb-8">
-            {FEATURES.map((f) => (
+            {PLAN_FEATURES.map((f) => (
               <li key={f.label} className="flex items-start gap-2 text-sm">
-                {f.free ? <Check className="w-4 h-4 text-emerald-500 mt-0.5 shrink-0" /> : <X className="w-4 h-4 text-gray-300 mt-0.5 shrink-0" />}
-                <span className={f.free ? "text-gray-700" : "text-gray-400"}>{f.label}</span>
+                {f.freeOk ? <Check className="w-4 h-4 text-emerald-500 mt-0.5 shrink-0" /> : <X className="w-4 h-4 text-gray-300 mt-0.5 shrink-0" />}
+                <span className={f.freeOk ? "text-gray-700" : "text-gray-400"}>
+                  <span className="font-medium">{f.label}:</span> {f.free}
+                </span>
               </li>
             ))}
           </ul>
@@ -424,8 +448,13 @@ export default function BerlanggananPage() {
             </div>
           )}
           <ul className="space-y-3 mb-8">
-            {FEATURES.map((f) => (
-              <li key={f.label} className="flex items-start gap-2 text-sm"><Check className="w-4 h-4 text-emerald-500 mt-0.5 shrink-0" /><span className="text-gray-700">{f.label}</span></li>
+            {PLAN_FEATURES.map((f) => (
+              <li key={f.label} className="flex items-start gap-2 text-sm">
+                <Check className="w-4 h-4 text-emerald-500 mt-0.5 shrink-0" />
+                <span className="text-gray-700">
+                  <span className="font-medium">{f.label}:</span> {f.pro}
+                </span>
+              </li>
             ))}
           </ul>
           <Button onClick={handleUpgrade} disabled={loading}
@@ -451,19 +480,45 @@ export default function BerlanggananPage() {
         <div className="overflow-x-auto"><table className="w-full text-sm">
           <thead><tr className="border-b border-gray-100">
             <th className="text-left py-3 font-semibold text-gray-600">Fitur</th>
-            <th className="text-center py-3 font-semibold text-gray-600 w-20">Gratis</th>
-            <th className="text-center py-3 font-semibold text-amber-600 w-20">PRO</th>
+            <th className="text-center py-3 font-semibold text-gray-600 w-28">Gratis</th>
+            <th className="text-center py-3 font-semibold text-amber-600 w-28">PRO</th>
           </tr></thead>
           <tbody>
-            {FEATURES.map((f) => (
+            {PLAN_FEATURES.map((f) => (
               <tr key={f.label} className="border-b border-gray-50">
                 <td className="py-3 text-gray-700">{f.label}</td>
-                <td className="text-center py-3">{f.free ? <Check className="w-4 h-4 text-emerald-500 mx-auto" /> : <X className="w-4 h-4 text-gray-300 mx-auto" />}</td>
-                <td className="text-center py-3"><Check className="w-4 h-4 text-emerald-500 mx-auto" /></td>
+                <td className="text-center py-3">
+                  <span className={`inline-flex items-center justify-center gap-1 ${f.freeOk ? "text-emerald-600" : "text-gray-300"}`}>
+                    {f.freeOk ? <Check className="w-4 h-4" /> : <X className="w-4 h-4" />}
+                    {f.free}
+                  </span>
+                </td>
+                <td className="text-center py-3">
+                  <span className="inline-flex items-center justify-center gap-1 text-emerald-600">
+                    <Check className="w-4 h-4" /> {f.pro}
+                  </span>
+                </td>
               </tr>
             ))}
           </tbody>
         </table></div>
+      </Card>
+
+      <Card className="p-6 border border-amber-200 bg-gradient-to-br from-amber-50/40 to-orange-50/40">
+        <h3 className="font-bold text-gray-900 mb-6 text-center flex items-center justify-center gap-2">
+          <Crown className="w-5 h-5 text-amber-500" /> Apa yang Kamu Dapat dengan Pro
+        </h3>
+        <div className="grid sm:grid-cols-2 gap-4">
+          {PRO_BENEFITS.map((b) => (
+            <div key={b.title} className="flex items-start gap-3 p-4 rounded-xl bg-white/70 border border-amber-100">
+              <div className="text-2xl shrink-0">{b.icon}</div>
+              <div>
+                <p className="font-semibold text-gray-900 text-sm">{b.title}</p>
+                <p className="text-xs text-gray-600 mt-0.5">{b.desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
       </Card>
 
       <Card className="p-6 bg-blue-50 border-blue-200">
@@ -487,7 +542,9 @@ export default function BerlanggananPage() {
           <p>• Paket <strong>Tahunan</strong> berlaku <strong>365 hari</strong> sejak pembayaran berhasil.</p>
           <p>• Pembayaran bersifat <strong>sekali bayar</strong> dan tidak diperpanjang otomatis.</p>
           <p>• Jika PRO masih aktif, pembelian baru akan <strong>memperpanjang</strong> masa aktif Anda.</p>
-          <p>• Setelah masa PRO habis, akun kembali ke <strong>Guru Free</strong> (30 kredit AI/bulan).</p>
+          <p>• Guru baru otomatis mendapat <strong>Guru Pro Trial 30 hari</strong> (200 kredit). Trial <strong>tidak diperpanjang otomatis</strong> — setelah habis, lanjutkan dengan berlangganan Pro.</p>
+          <p>• Kupon Program Guru Cerdas (Rp 1.000/bulan) <strong>hanya berlaku untuk paket Bulanan</strong>.</p>
+          <p>• Setelah masa PRO habis, akun kembali ke <strong>Guru Free</strong> (30 kredit AI/bulan, 1 unduhan/hari).</p>
           <p>• Kredit AI mengikuti paket yang aktif — PRO: 500/bulan, Free: 30/bulan.</p>
           <p>• Jika pembayaran berhasil tetapi PRO belum aktif dalam 5 menit, <a href="/guru/bantuan/pembayaran" className="text-blue-600 hover:underline">hubungi bantuan</a>.</p>
         </div>

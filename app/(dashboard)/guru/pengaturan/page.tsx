@@ -394,11 +394,11 @@ export default function GuruPengaturanPage() {
             </div>
             <div>
               <h3 className="font-bold text-lg text-slate-900 flex items-center gap-2">
-                {isFounder ? "Founder Premium" : isPremium ? "Premium Plan" : "Free Plan"}
+                {isFounder ? "Founder" : isPremium ? "Guru Pro" : "Guru Free"}
                 {isPremium && <span className="px-2 py-0.5 bg-green-100 text-green-700 text-xs font-bold rounded-full border border-green-200">Aktif</span>}
               </h3>
               <p className="text-sm text-slate-500">
-                {isPremium ? `Berlaku sampai ${premiumUntil}` : "Upgrade untuk akses AI, unlimited video, & fitur premium"}
+                {isPremium ? `Berlaku sampai ${premiumUntil}` : "Upgrade untuk 500 kredit AI, jual karya, & fitur Pro"}
               </p>
             </div>
           </div>
@@ -408,10 +408,10 @@ export default function GuruPengaturanPage() {
         </div>
         {isPremium && (
           <div className="px-5 py-3 bg-slate-50 border-t border-slate-100 flex flex-wrap gap-x-6 gap-y-2 text-xs text-slate-600">
-            <span className="flex items-center gap-1.5"><Sparkles className="w-3.5 h-3.5 text-amber-600" /> AI Generator</span>
-            <span className="flex items-center gap-1.5"><Video className="w-3.5 h-3.5 text-amber-600" /> Unlimited Video</span>
-            <span className="flex items-center gap-1.5"><GraduationCap className="w-3.5 h-3.5 text-amber-600" /> UKBI Full</span>
-            <span className="flex items-center gap-1.5"><Zap className="w-3.5 h-3.5 text-amber-600" /> Priority Support</span>
+            <span className="flex items-center gap-1.5"><Sparkles className="w-3.5 h-3.5 text-amber-600" /> 500 kredit AI/bulan</span>
+            <span className="flex items-center gap-1.5"><Video className="w-3.5 h-3.5 text-amber-600" /> Unduh 10 dokumen/hari</span>
+            <span className="flex items-center gap-1.5"><GraduationCap className="w-3.5 h-3.5 text-amber-600" /> Jual karya berbayar</span>
+            <span className="flex items-center gap-1.5"><Zap className="w-3.5 h-3.5 text-amber-600" /> Prioritas kecepatan</span>
           </div>
         )}
       </Card>

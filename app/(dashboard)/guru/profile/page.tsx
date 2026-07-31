@@ -107,7 +107,7 @@ export default function GuruProfilePage() {
         )}
         {user?.isPremium && !user?.isFounder && (
           <span className="inline-flex items-center gap-1 mt-2 px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-medium">
-            <Star size={12} /> Premium
+            <Star size={12} /> Pro
           </span>
         )}
         

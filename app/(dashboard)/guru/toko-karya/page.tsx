@@ -196,7 +196,7 @@ export default function TokoKaryaPage() {
           <div className="flex items-center gap-3">
             <Crown className="h-6 w-6 text-white" />
             <div>
-              <p className="font-bold text-white">Akun Premium — Fitur Jual Terbuka</p>
+              <p className="font-bold text-white">Akun Pro — Fitur Jual Terbuka</p>
               <p className="text-sm text-white/80">Kamu bisa menjual karya berbayar. Komisi 85% untukmu!</p>
             </div>
           </div>
@@ -205,7 +205,7 @@ export default function TokoKaryaPage() {
       ) : (
         <div className="mb-6 rounded-xl border-2 border-dashed border-amber-300 bg-amber-50 p-4 text-center">
           <Crown className="mx-auto h-8 w-8 text-amber-400 mb-2" />
-          <p className="font-medium text-amber-800">Upgrade ke Premium untuk menjual karya berbayar</p>
+          <p className="font-medium text-amber-800">Upgrade ke Pro untuk menjual karya berbayar</p>
           <p className="text-sm text-amber-600 mb-3">Dapatkan 85% komisi dari setiap penjualan</p>
           <Button onClick={() => setShowUpgrade(true)} className="bg-amber-600 hover:bg-amber-700">Upgrade Sekarang</Button>
         </div>
