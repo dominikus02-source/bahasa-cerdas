@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import crypto from "crypto";
+import { getMidtransConfig } from "@/lib/payments/midtrans-server";
 
 function verifyMidtransNotification(
   orderId: string,
@@ -8,9 +9,15 @@ function verifyMidtransNotification(
   grossAmount: string,
   signatureKey: string
 ): boolean {
+  // Penting: pakai server key yang SAMA dengan yang dipakai checkout (getMidtransConfig
+  // melakukan .trim()). Sebelumnya memakai process.env.MIDTRANS_SERVER_KEY mentah —
+  // kalau di Vercel kunci ke-paste dengan newline/space di akhir, checkout tetap sukses
+  // (karena di-trim) tapi verifikasi webhook gagal → 401 dan Midtrans tidak bisa
+  // menyampaikan notifikasi.
+  const serverKey = getMidtransConfig().serverKey;
   const signature = crypto
     .createHash("sha512")
-    .update(process.env.MIDTRANS_SERVER_KEY! + orderId + statusCode + grossAmount)
+    .update(serverKey + orderId + statusCode + grossAmount)
     .digest("hex");
   return signature === signatureKey;
 }
@@ -151,6 +158,22 @@ export async function POST(req: NextRequest) {
     // Verify signature
     const isValid = verifyMidtransNotification(order_id, status_code, gross_amount, signature_key);
     if (!isValid) {
+      // Log detail agar mudah didiagnosis jika tetap gagal setelah deploy
+      const cfg = getMidtransConfig();
+      const probe = crypto
+        .createHash("sha512")
+        .update(cfg.serverKey + order_id + status_code + gross_amount)
+        .digest("hex");
+      console.error("[Webhook] Signature mismatch", {
+        order_id,
+        status_code,
+        gross_amount,
+        mode: cfg.isProduction ? "production" : "sandbox",
+        serverKeySet: Boolean(cfg.serverKey),
+        serverKeyLength: cfg.serverKey.length,
+        expected: signature_key?.slice(0, 16),
+        computed: probe.slice(0, 16),
+      });
       return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
     }
 
