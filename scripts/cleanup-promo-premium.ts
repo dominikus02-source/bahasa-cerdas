@@ -21,6 +21,23 @@ import { PrismaClient } from "@prisma/client";
 
 loadEnv({ path: ".env.local" });
 
+function cleanUrl(v: string | undefined): string | undefined {
+  if (!v) return undefined;
+  return v.trim().replace(/^["']|["']$/g, "");
+}
+
+const DATABASE_URL = cleanUrl(process.env.DATABASE_URL) ?? cleanUrl(process.env.DIRECT_URL);
+
+if (!DATABASE_URL || !/^postgres(ql)?:\/\//.test(DATABASE_URL)) {
+  console.error(
+    "DATABASE_URL di .env.local tidak valid. Pastikan nilainya diawali postgresql:// dan tidak ada spasi di awal.\n" +
+      "Contoh: DATABASE_URL=postgresql://postgres.xxx:password@host:6543/postgres"
+  );
+  process.exit(1);
+}
+
+process.env.DATABASE_URL = DATABASE_URL;
+
 const db = new PrismaClient();
 const isExecute = process.argv.includes("--execute");
 
