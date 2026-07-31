@@ -56,7 +56,6 @@ const ERROR_MESSAGES: Record<string, string> = {
 function ComparisonTable() {
   return (
     <Card className="p-6">
-      <h3 className="font-bold text-gray-900 mb-6 text-center">Bandingkan Fitur</h3>
       <div className="overflow-x-auto"><table className="w-full text-sm">
         <thead><tr className="border-b border-gray-100">
           <th className="text-left py-3 font-semibold text-gray-600">Fitur</th>
