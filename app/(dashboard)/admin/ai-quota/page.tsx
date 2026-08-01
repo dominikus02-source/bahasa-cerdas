@@ -421,8 +421,8 @@ export default function AdminAiQuotaPage() {
               <p className="text-2xl font-bold text-sky-900 mt-1">{users.filter(u => u.trialEndsAt && new Date(u.trialEndsAt) > new Date()).length}</p>
             </div>
             <div className="bg-white p-4 rounded-2xl border border-emerald-200">
-              <p className="text-xs text-emerald-600">Premium</p>
-              <p className="text-2xl font-bold text-emerald-900 mt-1">{users.filter(u => u.isPremium).length}</p>
+              <p className="text-xs text-emerald-600">Pro Aktif</p>
+              <p className="text-2xl font-bold text-emerald-900 mt-1">{users.filter(u => u.isPremium && !u.isFounder && u.premiumUntil && new Date(u.premiumUntil) > new Date()).length}</p>
             </div>
             <div className="bg-white p-4 rounded-2xl border border-red-200">
               <p className="text-xs text-red-600">Kredit Habis</p>

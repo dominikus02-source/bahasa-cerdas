@@ -59,7 +59,7 @@ export async function GET(req: NextRequest) {
           updatedAt: true,
           midtransId: true,
           user: {
-            select: { id: true, fullName: true, email: true, isPremium: true, premiumPlan: true, premiumUntil: true },
+            select: { id: true, fullName: true, email: true, isPremium: true, premiumPlan: true, premiumUntil: true, trialEndsAt: true, isFounder: true },
           },
         },
       }),
@@ -99,8 +99,10 @@ export async function GET(req: NextRequest) {
         isPremium: t.user.isPremium,
         premiumPlan: t.user.premiumPlan,
         premiumUntil: t.user.premiumUntil,
+        trialEndsAt: t.user.trialEndsAt,
+        isFounder: t.user.isFounder,
       },
-      premiumActivated: t.user.isPremium && t.status === "SUCCESS",
+      premiumActivated: t.status === "SUCCESS" && !!t.user.premiumUntil && t.user.premiumUntil > new Date(),
     }));
 
     return NextResponse.json({

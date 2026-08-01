@@ -23,9 +23,13 @@ export async function GET(req: NextRequest) {
       ];
     }
     if (role && ["MURID", "GURU"].includes(role)) where.role = role;
-    if (status === "premium") where.isPremium = true;
+    if (status === "premium") { where.isPremium = true; where.isFounder = false; where.premiumUntil = { gt: new Date() }; }
     if (status === "founder") where.isFounder = true;
-    if (status === "free") { where.isPremium = false; where.isFounder = false; }
+    if (status === "trial") { where.role = "GURU"; where.trialEndsAt = { gt: new Date() }; }
+    if (status === "free") {
+      where.isPremium = false; where.isFounder = false;
+      where.trialEndsAt = { not: { gt: new Date() } };
+    }
 
     const [users, total] = await Promise.all([
       db.user.findMany({
@@ -35,7 +39,8 @@ export async function GET(req: NextRequest) {
         take: limit,
         select: {
           id: true, fullName: true, email: true, role: true, isPremium: true,
-          isFounder: true, xp: true, level: true, createdAt: true, lastActiveAt: true,
+          isFounder: true, premiumUntil: true, trialEndsAt: true,
+          xp: true, level: true, createdAt: true, lastActiveAt: true,
         },
       }),
       db.user.count({ where }),

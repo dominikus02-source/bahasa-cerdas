@@ -1603,3 +1603,55 @@ AND NOT EXISTS (
 2. TKA UTBK/Guru enrichment 30 → 150
 3. Game server revival (VPS mati)
 4. GameRoom migration SQL via Supabase dashboard
+
+---
+
+## Phase ADMIN PREMIUM DATA FIX — Statistik Pro Konsisten (Aug 1, 2026)
+
+### Goal
+Perbaiki panel admin (`/admin`) yang tidak membaca pengguna premium dengan benar — grafik "Statistik Pengguna" menunjukkan "Pengguna Premium: 5 (0%)" padahal pengguna Pro berbayar + 172 guru trial aktif tidak terbaca.
+
+### Root Cause
+Semua statistik premium di admin memakai flag mentah `user.isPremium` yang tidak konsisten dengan `resolveUserAiPlan()` (`lib/ai-gateway/plan-resolver.ts`):
+- `isPremium` tidak cek `premiumUntil > now` (termasuk Pro kadaluarsa)
+- Termasuk 3 founder-ADMIN (bukan pelanggan berbayar)
+- Tidak mengenali `GURU_PRO_TRIAL` (172 guru trial aktif tak terlihat)
+
+### Data Riil (Supabase produksi)
+| Metrik | Nilai |
+|--------|-------|
+| Total user | 1533 (1340 MURID, 190 GURU, 3 ADMIN) |
+| `isPremium=true` (mentah) | 5 — menyesatkan |
+| Pro aktif (`isPremium && premiumUntil > now`) | 3 |
+| Guru trial aktif (`trialEndsAt > now`) | 172 |
+| Founder | 3 |
+| Transaksi `PREMIUM_UPGRADE` SUCCESS | 1 (Rp399.000, `kusum4w4@gmail.com`) |
+
+### Perubahan
+| File | Perubahan |
+|------|-----------|
+| `app/(dashboard)/admin/page.tsx` | Query premium → `isPremium && premiumUntil > now`; tambah `trialActive` (GURU, trialEndsAt > now) & `founderCount`; kartu "Pengguna Premium" jadi 3 baris: **Pro Berbayar / Guru Trial Aktif / Founder (Admin)**; badge pengguna terbaru: FOUNDER/PRO/TRIAL berbasis tanggal |
+| `app/api/admin/users/route.ts` | Select + `premiumUntil`/`trialEndsAt`; filter `premium` = Pro aktif non-founder; filter `trial` baru (GURU trial aktif); filter `free` = tanpa Pro/trial/founder (`trialEndsAt: { not: { gt: now } }`) |
+| `app/(dashboard)/admin/users/page.tsx` | `statusBadge`: Founder → Pro → Pro (kadaluarsa) → Trial → Free; opsi filter + "Trial" |
+| `app/api/admin/payments/route.ts` | Select + `trialEndsAt`/`isFounder`; `premiumActivated` = `status SUCCESS && premiumUntil > now` (cek expiry) |
+| `app/(dashboard)/admin/payments/page.tsx` | Detail modal: "Pro Aktif Sekarang?" cek `premiumUntil > now` (bukan `isPremium` mentah) |
+| `app/(dashboard)/admin/ai-quota/page.tsx` | Stat card "Premium" → "Pro Aktif" (`isPremium && !isFounder && premiumUntil > now`) |
+| `app/api/admin/ai-quota/route.ts` | Filter `premium` = Pro aktif non-founder; filter `free` tambah `!isFounder` |
+
+### Verification
+| Check | Hasil |
+|-------|--------|
+| `npx tsc --noEmit` | ✅ 0 errors |
+| `npm run build` | ✅ Sukses (dummy env) |
+
+### Konvensi Baru (wajib diikuti)
+- **"Pro berbayar aktif"** = `isPremium === true && premiumUntil > now` (dan `isFounder === false` untuk angka pelanggan)
+- **"Trial aktif"** = `role === "GURU" && trialEndsAt > now`
+- **Founder** = `isFounder === true` (bukan "premium")
+- Source of truth definisi plan: `lib/ai-gateway/plan-resolver.ts` (`resolveUserAiPlan`) — jangan pakai flag mentah di dashboard/statistik admin.
+
+### Remaining
+1. UKBI Guru → 150 (menulis 8 + berbicara 7 constructed response)
+2. TKA UTBK/Guru enrichment 30 → 150
+3. Game server revival (VPS mati)
+4. GameRoom migration SQL via Supabase dashboard

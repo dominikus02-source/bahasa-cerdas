@@ -123,9 +123,9 @@ export async function GET(req: NextRequest) {
     if (planFilter === "trial") {
       filtered = result.filter((u) => u.trialEndsAt && new Date(u.trialEndsAt) > new Date());
     } else if (planFilter === "premium") {
-      filtered = result.filter((u) => u.isPremium);
+      filtered = result.filter((u) => u.isPremium && !u.isFounder && u.premiumUntil && new Date(u.premiumUntil) > new Date());
     } else if (planFilter === "free") {
-      filtered = result.filter((u) => !u.isPremium && (!u.trialEndsAt || new Date(u.trialEndsAt) <= new Date()) && u.role === "GURU");
+      filtered = result.filter((u) => !u.isPremium && !u.isFounder && (!u.trialEndsAt || new Date(u.trialEndsAt) <= new Date()) && u.role === "GURU");
     } else if (planFilter === "exhausted") {
       filtered = result.filter((u) => u.remainingCredits <= 0 && !(u.role === "MURID" || u.role === "ADMIN" || u.isFounder));
     }

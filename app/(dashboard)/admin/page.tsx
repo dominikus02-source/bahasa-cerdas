@@ -13,7 +13,7 @@ async function getStats() {
     const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
 
     const [
-      totalUsers, premiumUsers, muridUsers, guruUsers,
+      totalUsers, proActive, trialActive, founderCount, muridUsers, guruUsers,
       totalKarya, totalVideo, totalArtikel, totalPembelian,
       userThisWeek, userLastWeek,
       karyaThisWeek, karyaLastWeek,
@@ -34,7 +34,9 @@ async function getStats() {
       aiSavedToday,
     ] = await Promise.all([
       db.user.count(),
-      db.user.count({ where: { isPremium: true } }),
+      db.user.count({ where: { isPremium: true, premiumUntil: { gt: now } } }),
+      db.user.count({ where: { role: "GURU", trialEndsAt: { gt: now } } }),
+      db.user.count({ where: { isFounder: true } }),
       db.user.count({ where: { role: "MURID" } }),
       db.user.count({ where: { role: "GURU" } }),
 
@@ -74,7 +76,7 @@ async function getStats() {
 
       db.video.count({ where: { isPublished: false } }),
 
-      db.user.findMany({ take: 5, orderBy: { createdAt: "desc" }, select: { id: true, fullName: true, email: true, role: true, isPremium: true, createdAt: true } }),
+      db.user.findMany({ take: 5, orderBy: { createdAt: "desc" }, select: { id: true, fullName: true, email: true, role: true, isPremium: true, premiumUntil: true, trialEndsAt: true, isFounder: true, createdAt: true } }),
 
       db.aIUsage.count({ where: { createdAt: { gte: new Date(now.getTime() - 24 * 60 * 60 * 1000) } } }),
       db.aIUsage.count({ where: { createdAt: { gte: weekAgo } } }),
@@ -115,7 +117,7 @@ async function getStats() {
     const karyaTrend = weekRanges.map((w, i) => ({ week: w.label, count: karyaTrendCounts[i] }));
 
     return {
-      totals: { users: totalUsers, premium: premiumUsers, murid: muridUsers, guru: guruUsers, karya: totalKarya, video: totalVideo, artikel: totalArtikel, pembelian: totalPembelian, revenue: totalRevenue._sum.amount || 0, withdrawalPending: totalWithdrawalPending },
+      totals: { users: totalUsers, premium: proActive, trial: trialActive, founder: founderCount, murid: muridUsers, guru: guruUsers, karya: totalKarya, video: totalVideo, artikel: totalArtikel, pembelian: totalPembelian, revenue: totalRevenue._sum.amount || 0, withdrawalPending: totalWithdrawalPending },
       trends: {
         user: { thisWeek: userThisWeek, lastWeek: userLastWeek, pct: pct(userThisWeek, userLastWeek), weekly: userTrend },
         karya: { thisWeek: karyaThisWeek, lastWeek: karyaLastWeek, pct: pct(karyaThisWeek, karyaLastWeek), weekly: karyaTrend },
@@ -133,7 +135,7 @@ async function getStats() {
   } catch (e) {
     console.error("Stats error:", e);
     return {
-      totals: { users: 0, premium: 0, murid: 0, guru: 0, karya: 0, video: 0, artikel: 0, pembelian: 0, revenue: 0, withdrawalPending: 0 },
+      totals: { users: 0, premium: 0, trial: 0, founder: 0, murid: 0, guru: 0, karya: 0, video: 0, artikel: 0, pembelian: 0, revenue: 0, withdrawalPending: 0 },
       trends: { user: { thisWeek: 0, lastWeek: 0, pct: 0, weekly: [] }, karya: { thisWeek: 0, lastWeek: 0, pct: 0, weekly: [] }, video: { thisWeek: 0, lastWeek: 0, pct: 0 }, artikel: { thisWeek: 0, lastWeek: 0, pct: 0 }, revenue: { thisWeek: 0, lastWeek: 0, pct: 0 } },
       pending: { komunitas: 0, loker: 0, withdrawals: 0 },
       content: { draftKarya: 0, publishedKarya: 0, draftVideo: 0 },
@@ -279,12 +281,26 @@ export default async function AdminPage() {
           <PieChart data={pieData} />
           {/* Premium bukan irisan donat di atas — dia status yang menempel di
               Murid/Guru yang sama, jadi ditampilkan terpisah sebagai persentase
-              dari total, bukan seolah kategori keempat yang saling lepas. */}
+              dari total, bukan seolah kategori keempat yang saling lepas.
+              Dihitung dari plan aktif (bukan flag isPremium mentah): Pro = berbayar
+              & masih berlaku, Trial = guru dalam masa trial, Founder = admin. */}
           <div className="flex items-center justify-between mt-3 pt-3 border-t border-slate-100 text-xs">
             <span className="flex items-center gap-1.5 text-slate-500">
-              <div className="w-2.5 h-2.5 rounded-full shrink-0 bg-amber-500" /> Pengguna Premium
+              <div className="w-2.5 h-2.5 rounded-full shrink-0 bg-amber-500" /> Pro Berbayar
             </span>
             <span className="font-semibold text-slate-900">{s.totals.premium} ({premiumPct}%)</span>
+          </div>
+          <div className="flex items-center justify-between mt-1.5 text-xs">
+            <span className="flex items-center gap-1.5 text-slate-500">
+              <div className="w-2.5 h-2.5 rounded-full shrink-0 bg-sky-500" /> Guru Trial Aktif
+            </span>
+            <span className="font-semibold text-slate-900">{s.totals.trial}</span>
+          </div>
+          <div className="flex items-center justify-between mt-1.5 text-xs">
+            <span className="flex items-center gap-1.5 text-slate-500">
+              <div className="w-2.5 h-2.5 rounded-full shrink-0 bg-slate-400" /> Founder (Admin)
+            </span>
+            <span className="font-semibold text-slate-900">{s.totals.founder}</span>
           </div>
         </div>
       </div>
@@ -454,7 +470,10 @@ export default async function AdminPage() {
                     <p className="text-[10px] text-slate-400 truncate">{u.email}</p>
                   </div>
                   <div className="flex items-center gap-1.5 shrink-0">
-                    {u.isPremium && <span className="text-[9px] px-1.5 py-0.5 bg-amber-100 text-amber-700 rounded-full font-medium">PRO</span>}
+                    {u.isFounder ? <span className="text-[9px] px-1.5 py-0.5 bg-slate-200 text-slate-700 rounded-full font-medium">FOUNDER</span>
+                      : u.isPremium && u.premiumUntil && new Date(u.premiumUntil) > new Date() ? <span className="text-[9px] px-1.5 py-0.5 bg-amber-100 text-amber-700 rounded-full font-medium">PRO</span>
+                      : u.trialEndsAt && new Date(u.trialEndsAt) > new Date() ? <span className="text-[9px] px-1.5 py-0.5 bg-sky-100 text-sky-700 rounded-full font-medium">TRIAL</span>
+                      : null}
                     <span className={`text-[9px] px-1.5 py-0.5 rounded-full font-medium ${u.role === "MURID" ? "bg-violet-100 text-violet-700" : "bg-emerald-100 text-emerald-700"}`}>
                       {u.role === "MURID" ? "Murid" : "Guru"}
                     </span>

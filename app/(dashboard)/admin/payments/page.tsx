@@ -311,10 +311,10 @@ export default function AdminPaymentsPage() {
               </div>
               <div className="flex justify-between"><span className="text-slate-500">User</span><span className="font-medium">{detail.user.fullName}</span></div>
               <div className="flex justify-between"><span className="text-slate-500">Email</span><span className="text-xs">{detail.user.email}</span></div>
-              <div className="flex justify-between"><span className="text-slate-500">Premium Aktif?</span>
-                {detail.user.isPremium ? <CheckCircle2 className="w-4 h-4 text-emerald-500" /> : <XCircle className="w-4 h-4 text-gray-300" />}
+              <div className="flex justify-between"><span className="text-slate-500">Pro Aktif Sekarang?</span>
+                {detail.user.premiumUntil && new Date(detail.user.premiumUntil) > new Date() ? <CheckCircle2 className="w-4 h-4 text-emerald-500" /> : <XCircle className="w-4 h-4 text-gray-300" />}
               </div>
-              {detail.user.premiumUntil && <div className="flex justify-between"><span className="text-slate-500">Premium Sampai</span><span>{formatDate(detail.user.premiumUntil)}</span></div>}
+              {detail.user.premiumUntil && <div className="flex justify-between"><span className="text-slate-500">Pro Sampai</span><span>{formatDate(detail.user.premiumUntil)}</span></div>}
               <div className="flex justify-between"><span className="text-slate-500">Dibuat</span><span className="text-xs">{formatDate(detail.createdAt)}</span></div>
               <div className="flex justify-between"><span className="text-slate-500">Diperbarui</span><span className="text-xs">{formatDate(detail.updatedAt)}</span></div>
               {detail.midtransId && <div className="flex justify-between"><span className="text-slate-500">Midtrans ID</span><span className="font-mono text-xs">{detail.midtransId}</span></div>}

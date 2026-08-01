@@ -64,7 +64,9 @@ export default function AdminUsersPage() {
 
   const statusBadge = (u: any) => {
     if (u.isFounder) return { label: "Founder", color: "text-amber-600 bg-amber-50" };
-    if (u.isPremium) return { label: "Premium", color: "text-blue-600 bg-blue-50" };
+    if (u.isPremium && u.premiumUntil && new Date(u.premiumUntil) > new Date()) return { label: "Pro", color: "text-blue-600 bg-blue-50" };
+    if (u.isPremium) return { label: "Pro (kadaluarsa)", color: "text-slate-400 bg-slate-50" };
+    if (u.role === "GURU" && u.trialEndsAt && new Date(u.trialEndsAt) > new Date()) return { label: "Trial", color: "text-sky-600 bg-sky-50" };
     return { label: "Free", color: "text-slate-400 bg-slate-50" };
   };
 
@@ -97,7 +99,8 @@ export default function AdminUsersPage() {
               className="px-3 py-2 text-sm rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-violet-500/20">
               <option value="">Semua Status</option>
               <option value="free">Free</option>
-              <option value="premium">Premium</option>
+              <option value="premium">Pro</option>
+              <option value="trial">Trial</option>
               <option value="founder">Founder</option>
             </select>
 
