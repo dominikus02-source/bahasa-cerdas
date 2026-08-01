@@ -2,7 +2,8 @@
 
 import { use, useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
-import { CheckCircle2, XCircle, ArrowLeft, Zap, Trophy, ArrowRight, Loader2, Sparkles, BookOpen, Lightbulb, Star } from "lucide-react"
+import { CheckCircle2, XCircle, ArrowLeft, Zap, Trophy, ArrowRight, Loader2, Sparkles, BookOpen, Lightbulb, Star, Coins } from "lucide-react"
+import { UnitIcon } from "@/components/arena/UnitIcon"
 
 interface Lesson {
   title: string
@@ -185,13 +186,20 @@ export default function LessonPage({ params }: { params: Promise<{ unitId: strin
       <div className="min-h-screen flex flex-col bg-gradient-to-br from-violet-500 to-purple-700 px-6">
         <div className="flex-1 flex flex-col items-center justify-center text-center">
           <div className={`${isDasar ? "w-24 h-24" : "w-20 h-20"} bg-white/20 rounded-3xl flex items-center justify-center mb-6`}>
-            <BookOpen className={`${isDasar ? "w-12 h-12" : "w-10 h-10"} text-white`} />
+            <UnitIcon emoji={unit.emoji} className={`${isDasar ? "w-12 h-12" : "w-10 h-10"} text-white`} />
           </div>
           <h1 className={`${isDasar ? "text-3xl" : "text-2xl"} font-extrabold text-white mb-2`}>{unit.title}</h1>
           {unit.subtitle && <p className={`text-white/80 ${isDasar ? "text-base" : "text-sm"} mb-6`}>{unit.subtitle}</p>}
-          <div className="flex items-center gap-2 text-amber-300 text-sm font-semibold mb-8">
-            <Zap className="w-4 h-4" />
-            {unit.xpReward || 50} XP
+          <div className="flex items-center gap-3 text-amber-300 text-sm font-semibold mb-8">
+            <span className="flex items-center gap-1.5">
+              <Zap className="w-4 h-4" />
+              {unit.xpReward || 50} XP
+            </span>
+            <span className="text-white/40">|</span>
+            <span className="flex items-center gap-1.5">
+              <Coins className="w-4 h-4" />
+              {unit.coinReward || 10} Koin
+            </span>
           </div>
           <button
             onClick={() => setPhase("lesson")}
@@ -321,6 +329,13 @@ export default function LessonPage({ params }: { params: Promise<{ unitId: strin
             <div className="mt-4 flex items-center gap-2 bg-white/20 px-4 py-2 rounded-xl">
               <Zap className="w-5 h-5 text-yellow-300" />
               <span className="text-white font-bold">+{earnedXp} XP</span>
+              {unit.coinReward ? (
+                <>
+                  <span className="text-white/40">&middot;</span>
+                  <Coins className="w-5 h-5 text-yellow-300" />
+                  <span className="text-white font-bold">+{unit.coinReward} Koin</span>
+                </>
+              ) : null}
             </div>
           )}
           <div className="flex gap-3 mt-8">

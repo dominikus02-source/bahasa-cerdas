@@ -2,7 +2,8 @@ import { db } from "@/lib/db"
 import { getUser } from "@/lib/supabase/server"
 import { redirect } from "next/navigation"
 import Link from "next/link"
-import { ArrowLeft, CheckCircle2, Lock, Zap, Trophy, BookOpen, ArrowRight, Sparkles } from "lucide-react"
+import { ArrowLeft, CheckCircle2, Lock, Zap, Trophy, BookOpen, ArrowRight, Sparkles, Coins, ListChecks } from "lucide-react"
+import { UnitIcon } from "@/components/arena/UnitIcon"
 
 export default async function UnitDetailPage({ params }: { params: Promise<{ unitId: string }> }) {
   const user = await getUser()
@@ -88,8 +89,8 @@ export default async function UnitDetailPage({ params }: { params: Promise<{ uni
       </Link>
 
       <div className="flex items-center gap-3 mb-6">
-        <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${unit.level?.color ?? "from-violet-500 to-purple-600"} flex items-center justify-center shadow-lg text-2xl`}>
-          {unit.emoji || <BookOpen className="w-7 h-7 text-white" />}
+        <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${unit.level?.color ?? "from-violet-500 to-purple-600"} flex items-center justify-center shadow-lg`}>
+          <UnitIcon emoji={unit.emoji} className="w-7 h-7 text-white" />
         </div>
         <div>
           {unit.level && <p className="text-xs text-violet-600 font-semibold">{unit.level.title}</p>}
@@ -119,7 +120,10 @@ export default async function UnitDetailPage({ params }: { params: Promise<{ uni
           />
         </div>
         {questionCount > 0 && (
-          <p className="text-sm text-gray-500">{questionCount} soal latihan</p>
+          <div className="flex items-center gap-2 text-sm text-gray-500">
+            <ListChecks className="w-4 h-4 text-violet-400" />
+            {questionCount} soal latihan
+          </div>
         )}
       </div>
 
@@ -165,7 +169,7 @@ export default async function UnitDetailPage({ params }: { params: Promise<{ uni
         <p className="text-sm text-amber-700">
           <Zap className="w-4 h-4 inline mr-0.5" />+{unit.xpReward || 50} XP
           <span className="mx-1">&middot;</span>
-          +{unit.coinReward || 10} Koin Cerdas
+          <Coins className="w-4 h-4 inline mr-0.5" />+{unit.coinReward || 10} Koin Cerdas
         </p>
       </div>
     </div>

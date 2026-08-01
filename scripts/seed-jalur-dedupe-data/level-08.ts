@@ -1,0 +1,51 @@
+import type { UnitSoal } from "./types";
+
+const BS: ["Benar", "Salah"] = ["Benar", "Salah"];
+
+const level08: UnitSoal[] = [
+  // ═══════════════ LEVEL 8 — Paragraf ═══════════════
+  { level: 8, title: "Kalimat Utama", soal: [
+    { id: "u43f", tipe: "pilihan_ganda", soal: "Perhatikan paragraf: 'Lomba itu sangat meriah. Ribuan penonton memadati tribun. Para atlet berbaris rapi membawa bendera. Musik pengiring mengalun semarak.' Kalimat utamanya adalah ...", opsi: ["Ribuan penonton memadati tribun.", "Para atlet berbaris rapi membawa bendera.", "Lomba itu sangat meriah.", "Musik pengiring mengalun semarak."], jawaban: 2, penjelasan: "Kalimat pertama memayungi semua rincian kemeriahan." },
+    { id: "u43g", tipe: "pilihan_ganda", soal: "Perhatikan paragraf: 'Rumah-rumah warga rusak berat. Pohon-pohon tumbang menutupi jalan. Satu desa terputus aksesnya. Badai semalam menimbulkan kerusakan besar.' Kalimat utamanya adalah ...", opsi: ["Rumah-rumah warga rusak berat.", "Badai semalam menimbulkan kerusakan besar.", "Pohon-pohon tumbang menutupi jalan.", "Satu desa terputus aksesnya."], jawaban: 1, penjelasan: "Kalimat terakhir merangkum semua kerusakan — kalimat utama di akhir." },
+    { id: "u43h", tipe: "pilihan_ganda", soal: "Kalimat utama pada sebuah paragraf biasanya ...", opsi: ["membantah gagasan yang lain", "memayungi gagasan-gagasan lain", "bertentangan dengan isi paragraf", "tidak berhubungan dengan kalimat lain"], jawaban: 1, penjelasan: "Kalimat utama menjadi payung bagi kalimat-kalimat penjelas." },
+    { id: "u43i", tipe: "benar_salah", soal: "Kalimat utama tidak selalu terletak di awal paragraf.", opsi: BS, jawaban: "Benar", penjelasan: "Kalimat utama bisa di awal, di akhir, atau campuran." },
+    { id: "u43j", tipe: "isi_blank", soal: "Kalimat yang memuat gagasan pokok paragraf disebut kalimat ...", jawaban: "utama", penjelasan: "Kalimat utama berisi gagasan pokok." },
+  ]},
+  { level: 8, title: "Gagasan Utama", soal: [
+    { id: "u44f", tipe: "pilihan_ganda", soal: "Perhatikan paragraf: 'Buku adalah jendela dunia. Dengan membaca, kita mengenal banyak hal baru. Pengetahuan kita semakin luas. Daya imajinasi pun terasah.' Gagasan utamanya adalah ...", opsi: ["membaca memperluas pengetahuan dan imajinasi", "buku harganya mahal", "banyak orang malas membaca", "cara merapikan perpustakaan"], jawaban: 0, penjelasan: "Semua kalimat membahas manfaat membaca bagi pengetahuan dan imajinasi." },
+    { id: "u44g", tipe: "pilihan_ganda", soal: "Perhatikan paragraf: 'Gotong royong mempererat persatuan. Pekerjaan berat menjadi ringan. Warga saling mengenal lebih dekat.' Gagasan utamanya adalah ...", opsi: ["manfaat gotong royong bagi warga", "jenis-jenis pekerjaan berat", "cara membangun rumah", "sejarah terbentuknya desa"], jawaban: 0, penjelasan: "Semua kalimat menunjuk manfaat gotong royong." },
+    { id: "u44h", tipe: "pilihan_ganda", soal: "Perbedaan gagasan utama dan kalimat utama yang tepat adalah ...", opsi: ["gagasan utama inti isi yang dibicarakan; kalimat utama kalimat yang memuat inti itu", "gagasan utama adalah judul; kalimat utama adalah subjudul", "gagasan utama adalah contoh; kalimat utama adalah data", "gagasan utama kata pertama; kalimat utama kata terakhir"], jawaban: 0, penjelasan: "Gagasan utama adalah makna inti; kalimat utama wadah kalimatnya." },
+    { id: "u44i", tipe: "benar_salah", soal: "Satu paragraf boleh memiliki dua gagasan utama yang berbeda.", opsi: BS, jawaban: "Salah", penjelasan: "Satu paragraf sebaiknya hanya memiliki satu gagasan utama." },
+    { id: "u44j", tipe: "isi_blank", soal: "'Setiap paragraf sebaiknya memiliki satu gagasan ...' Jawaban: ...", jawaban: "utama", penjelasan: "Frasa bakunya 'satu gagasan utama'." },
+  ]},
+  { level: 8, title: "Gagasan Pendukung", soal: [
+    { id: "u45f", tipe: "pilihan_ganda", soal: "Perhatikan paragraf: 'Kebersihan sangat penting. Lingkungan yang bersih membuat tubuh sehat. Rumah yang bersih terasa nyaman.' Kalimat yang menjadi gagasan PENDUKUNG adalah ...", opsi: ["Kebersihan sangat penting.", "Lingkungan yang bersih membuat tubuh sehat.", "Kebersihan itu mahal.", "Semua kalimat sama-sama pendukung."], jawaban: 1, penjelasan: "'Lingkungan yang bersih membuat tubuh sehat' merinci alasan mengapa kebersihan penting." },
+    { id: "u45g", tipe: "pilihan_ganda", soal: "Jumlah gagasan pendukung dalam sebuah paragraf biasanya ...", opsi: ["lebih banyak daripada gagasan utama", "sama persis dengan gagasan utama", "lebih sedikit daripada gagasan utama", "tidak pernah ada"], jawaban: 0, penjelasan: "Satu gagasan utama dapat didukung banyak kalimat penjelas." },
+    { id: "u45h", tipe: "pilihan_ganda", soal: "Pada paragraf 'Sekolah kami mengadakan lomba kebersihan. Setiap kelas membersihkan ruangannya. Tanaman di taman dirawat kembali.', kalimat 'Setiap kelas membersihkan ruangannya' adalah kalimat ...", opsi: ["utama", "penjelas", "judul", "sampiran"], jawaban: 1, penjelasan: "Kalimat itu merinci pelaksanaan lomba kebersihan." },
+    { id: "u45i", tipe: "benar_salah", soal: "Kalimat penjelas bertugas memperkuat dan merinci kalimat utama.", opsi: BS, jawaban: "Benar", penjelasan: "Kalimat penjelas mendukung kalimat utama." },
+    { id: "u45j", tipe: "isi_blank", soal: "'Gagasan pendukung berfungsi mendukung gagasan ...' Jawaban: ...", jawaban: "utama", penjelasan: "Pendukung selalu menopang gagasan utama." },
+  ]},
+  { level: 8, title: "Urutan Paragraf", soal: [
+    { id: "u46f", tipe: "pilihan_ganda", soal: "Urutan yang benar menjadi paragraf padu: (1) Akhirnya kami tiba di pantai. (2) Pagi itu kami berangkat menuju pantai. (3) Kami segera bermain air di tepi pantai.", opsi: ["2-3-1", "2-1-3", "1-2-3", "3-2-1"], jawaban: 1, penjelasan: "Berangkat → tiba → bermain; urutan 2-1-3." },
+    { id: "u46g", tipe: "pilihan_ganda", soal: "Kalimat yang TIDAK padu jika disisipkan dalam paragraf tentang cara membuat jus adalah ...", opsi: ["Kupas buah dan buang bijinya.", "Masukkan buah ke blender.", "Harga mangga di pasar naik.", "Tambahkan air dan es batu."], jawaban: 2, penjelasan: "Harga mangga tidak berkaitan dengan cara membuat jus." },
+    { id: "u46h", tipe: "pilihan_ganda", soal: "Urutan yang benar untuk menanam pohon: (1) Gali lubang (2) Siram bibit (3) Masukkan bibit (4) Timbun tanah", opsi: ["3-1-4-2", "1-3-4-2", "2-1-3-4", "1-4-3-2"], jawaban: 1, penjelasan: "Gali lubang → masukkan bibit → timbun tanah → siram; urutan 1-3-4-2." },
+    { id: "u46i", tipe: "benar_salah", soal: "Paragraf yang kalimat-kalimatnya tidak saling berhubungan terasa kacau dan sulit dipahami.", opsi: BS, jawaban: "Benar", penjelasan: "Tanpa keterkaitan antarkalimat, paragraf kehilangan kepaduan." },
+    { id: "u46j", tipe: "isi_blank", soal: "'Susunan kalimat yang logis dan berkesinambungan disebut urutan yang ...' Jawaban: ...", jawaban: "runtut", penjelasan: "Urutan yang runtut tersusun logis dan berkesinambungan." },
+  ]},
+  { level: 8, title: "Menyusun Paragraf Pendek", soal: [
+    { id: "u47f", tipe: "pilihan_ganda", soal: "Kalimat penjelas yang paling tepat untuk melengkapi paragraf yang diawali 'Membaca buku memiliki banyak manfaat.' adalah ...", opsi: ["Salah satunya menambah kosakata.", "Buku di perpustakaan sangat tebal.", "Kakak suka membaca.", "Buku dijual di banyak toko."], jawaban: 0, penjelasan: "'Menambah kosakata' merinci manfaat membaca." },
+    { id: "u47g", tipe: "pilihan_ganda", soal: "Urutan kalimat terbaik untuk paragraf tentang menabung: (1) Uang yang terkumpul bisa untuk keperluan mendadak. (2) Menabung mengajarkan hidup hemat. (3) Tabungan juga berguna untuk masa depan.", opsi: ["2-1-3", "1-3-2", "3-2-1", "2-3-1"], jawaban: 0, penjelasan: "Kalimat utama (2) di awal, lalu rincian (1) dan (3)." },
+    { id: "u47h", tipe: "pilihan_ganda", soal: "Topik yang paling tepat untuk paragraf berisi: 'Kucing membutuhkan makanan sehat. Kandangnya harus selalu bersih. Ia juga perlu diajak bermain setiap hari.' adalah ...", opsi: ["Cara merawat kucing", "Harga makanan kucing", "Kucing liar di jalan", "Cara melukis kucing"], jawaban: 0, penjelasan: "Semua kalimat membahas perawatan kucing." },
+    { id: "u47i", tipe: "benar_salah", soal: "Menentukan gagasan utama lebih dahulu membantu tulisan kita tetap fokus.", opsi: BS, jawaban: "Benar", penjelasan: "Gagasan utama menjadi penuntun arah paragraf." },
+    { id: "u47j", tipe: "isi_blank", soal: "'Satu paragraf minimal terdiri atas kalimat utama dan kalimat ...' Jawaban: ...", jawaban: "penjelas", penjelasan: "Kalimat penjelas melengkapi kalimat utama." },
+  ]},
+  { level: 8, title: "Latihan Cepat Level 8", soal: [
+    { id: "u48f", tipe: "pilihan_ganda", soal: "Perhatikan paragraf: 'Hutan bakau melindungi pantai dari abrasi. Akar-akarnya menahan ombak. Hewan laut pun berkembang biak di sana.' Gagasan utamanya adalah ...", opsi: ["manfaat hutan bakau bagi pantai dan makhluk hidup", "cara menebang pohon bakau", "jenis-jenis ikan laut", "tempat wisata pantai"], jawaban: 0, penjelasan: "Semua kalimat membahas manfaat hutan bakau." },
+    { id: "u48g", tipe: "pilihan_ganda", soal: "Perhatikan paragraf: 'Sampah plastik sulit terurai. Butuh ratusan tahun untuk hancur. Plastik juga mencemari laut.' Kalimat yang termasuk gagasan PENDUKUNG adalah ...", opsi: ["Sampah plastik sulit terurai.", "Plastik juga mencemari laut.", "Plastik sangat berguna bagi manusia.", "Sampah plastik mudah didaur ulang."], jawaban: 1, penjelasan: "'Plastik juga mencemari laut' merinci bahaya plastik — kalimat penjelas." },
+    { id: "u48h", tipe: "pilihan_ganda", soal: "Urutan paling logis untuk pengumuman singkat: (1) Acara dimulai pukul delapan pagi. (2) Semua siswa diharapkan hadir. (3) Besok diadakan upacara bendera.", opsi: ["3-1-2", "2-3-1", "1-2-3", "3-2-1"], jawaban: 0, penjelasan: "Peristiwa → waktu → harapan; urutan 3-1-2." },
+    { id: "u48i", tipe: "benar_salah", soal: "Kalimat penjelas dalam sebuah paragraf harus mendukung gagasan utama.", opsi: BS, jawaban: "Benar", penjelasan: "Kalimat penjelas yang menyimpang membuat paragraf tidak padu." },
+    { id: "u48j", tipe: "isi_blank", soal: "'Paragraf yang kalimat-kalimatnya tersusun padu dan berkesinambungan disebut ...' Jawaban: ...", jawaban: "koheren", penjelasan: "Paragraf yang koheren berarti kalimat-kalimatnya padu." },
+  ]},
+];
+
+export default level08;

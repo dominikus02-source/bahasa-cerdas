@@ -1,0 +1,50 @@
+import type { UnitSoal } from "./types";
+
+const BS: ["Benar", "Salah"] = ["Benar", "Salah"];
+
+const level09: UnitSoal[] = [
+  { level: 9, title: "Informasi Tersurat", soal: [
+    { id: "u49f", tipe: "pilihan_ganda", soal: "'Kegiatan penghijauan sekolah diadakan pada Sabtu, 12 Oktober, pukul 07.00 di halaman belakang.' Informasi tersurat dari teks itu adalah ...", opsi: ["penghijauan diadakan pukul 07.00", "kegiatan itu diundur", "semua siswa wajib hadir", "halaman belakang rusak"], jawaban: 0, penjelasan: "Waktu kegiatan tertulis langsung pada kalimat; pilihan lain tidak terdapat dalam teks." },
+    { id: "u49g", tipe: "pilihan_ganda", soal: "'Komodo adalah hewan endemik yang hidup di Pulau Komodo dan sekitarnya.' Yang tersurat dalam teks itu adalah ...", opsi: ["komodo hidup di Pulau Komodo dan sekitarnya", "komodo adalah hewan pemakan daging", "komodo termasuk hewan langka", "komodo dapat terbang"], jawaban: 0, penjelasan: "Tempat hidup komodo dituliskan langsung; pilihan lain tidak ada dalam teks." },
+    { id: "u49h", tipe: "pilihan_ganda", soal: "'Koperasi sekolah menjual alat tulis, seragam, dan buku bacaan.' Menurut teks, yang dijual koperasi sekolah adalah ...", opsi: ["alat tulis, seragam, dan buku bacaan", "mainan dan makanan ringan", "sepeda dan motor", "sayur dan buah-buahan"], jawaban: 0, penjelasan: "Ketiga barang itu disebutkan langsung dalam kalimat." },
+    { id: "u49i", tipe: "benar_salah", soal: "'Lomba pidato diadakan pada 20 Agustus.' Menurut kalimat itu, lomba pidato diadakan pada bulan Agustus.", opsi: BS, jawaban: "Benar", penjelasan: "Tanggal 20 Agustus berarti berada di bulan Agustus — tertulis langsung." },
+    { id: "u49j", tipe: "isi_blank", soal: "'Bus kota berangkat dari terminal pukul 07.00.' Waktu berangkat bus kota adalah pukul ...", jawaban: "07.00", penjelasan: "Waktu berangkat tertulis langsung pada kalimat." },
+  ]},
+  { level: 9, title: "Informasi Tersirat", soal: [
+    { id: "u50f", tipe: "pilihan_ganda", soal: "'Lampu kamar Dina menyala hingga larut malam dan sering terlihat ia membawa buku ke tempat tidur.' Tersirat bahwa Dina ...", opsi: ["suka membaca sebelum tidur", "takut gelap sekali", "sedang berlibur", "lupa mematikan lampu saja"], jawaban: 0, penjelasan: "Petunjuk buku dan lampu yang menyala larut malam mengarah pada kebiasaan membaca sebelum tidur." },
+    { id: "u50g", tipe: "pilihan_ganda", soal: "'Sepatu Raka basah kuyup dan jejak lumpur terlihat di lantai rumah.' Tersirat bahwa ...", opsi: ["di luar rumah sedang hujan", "Raka baru saja berenang", "lantai rumah baru dipel", "Raka jatuh dari sepeda"], jawaban: 0, penjelasan: "Sepatu basah kuyup dan lumpur menandakan cuaca hujan." },
+    { id: "u50h", tipe: "pilihan_ganda", soal: "'Kulkas kosong. Rak-rak di dapur sudah bersih. Kotak-kotak kardus menumpuk di depan pintu.' Tersirat bahwa keluarga itu ...", opsi: ["sedang bersiap pindah rumah", "baru saja berbelanja besar", "sedang merayakan ulang tahun", "menyimpan banyak makanan"], jawaban: 0, penjelasan: "Kulkas kosong, rak bersih, dan kardus menumpuk mengisyaratkan rencana pindah rumah." },
+    { id: "u50i", tipe: "benar_salah", soal: "'Rina menutup semua jendela lalu mengambil selimut tebal.' Kalimat itu menyiratkan udara sedang dingin.", opsi: BS, jawaban: "Benar", penjelasan: "Menutup jendela dan mengambil selimut tebal menunjukkan cuaca dingin." },
+    { id: "u50j", tipe: "isi_blank", soal: "'Pohon-pohon bergoyang keras dan daun-daun beterbangan.' Angin bertiup sangat ...", jawaban: "kencang", penjelasan: "Goyangan keras dan daun beterbangan menunjukkan angin kencang." },
+  ]},
+  { level: 9, title: "Menjawab Pertanyaan Teks", soal: [
+    { id: "u51f", tipe: "pilihan_ganda", soal: "'Sepeda Rani hilang kemarin sore saat ia bermain di lapangan.' Pertanyaan 'Di mana sepeda Rani terakhir terlihat?' jawabannya: ...", opsi: ["di lapangan", "di rumah", "di sekolah", "di pasar"], jawaban: 0, penjelasan: "Teks menyebutkan sepeda hilang saat Rani bermain di lapangan." },
+    { id: "u51g", tipe: "pilihan_ganda", soal: "'Setiap pagi sebelum berangkat sekolah, Andi menyiram tanaman di halaman.' Kapan Andi menyiram tanaman?", opsi: ["setiap pagi", "siang hari", "malam hari", "akhir pekan saja"], jawaban: 0, penjelasan: "Teks menuliskan waktu menyiram secara langsung, yaitu setiap pagi." },
+    { id: "u51h", tipe: "pilihan_ganda", soal: "'Banjir di kota itu terjadi karena selokan tersumbat sampah.' Mengapa banjir terjadi?", opsi: ["selokan tersumbat sampah", "hujan tidak turun", "jembatan putus", "lampu padam"], jawaban: 0, penjelasan: "Teks langsung menyebutkan sebab banjir, yaitu selokan tersumbat sampah." },
+    { id: "u51i", tipe: "benar_salah", soal: "Pertanyaan 'berapa' biasanya dijawab dengan angka atau jumlah.", opsi: BS, jawaban: "Benar", penjelasan: "Kata tanya 'berapa' menanyakan jumlah yang dinyatakan dengan angka." },
+    { id: "u51j", tipe: "isi_blank", soal: "Kata tanya yang digunakan untuk menanyakan jumlah atau banyaknya benda adalah ...", jawaban: "berapa", penjelasan: "'Berapa' digunakan untuk menanyakan jumlah atau banyaknya sesuatu." },
+  ]},
+  { level: 9, title: "Menemukan Tujuan Teks", soal: [
+    { id: "u52f", tipe: "pilihan_ganda", soal: "'Dahulu kala, di sebuah hutan, hiduplah seekor kancil yang cerdik...' Jenis teks seperti itu bertujuan untuk ...", opsi: ["menghibur dan memberi pesan moral", "menjual sebuah produk", "memberi langkah-langkah memasak", "mencatat data penjualan"], jawaban: 0, penjelasan: "Dongeng bertujuan menghibur sekaligus menyampaikan amanat." },
+    { id: "u52g", tipe: "pilihan_ganda", soal: "'Pengumuman: Jadwal ujian akhir disusun bagian kurikulum dan akan ditempel di papan informasi.' Tujuan pengumuman itu adalah ...", opsi: ["menginformasikan jadwal ujian", "menghibur para siswa", "menjual buku pelajaran", "mengajak siswa berlibur"], jawaban: 0, penjelasan: "Pengumuman bertujuan menyampaikan informasi kepada pembaca." },
+    { id: "u52h", tipe: "pilihan_ganda", soal: "'Mulai bulan depan, seluruh siswa wajib membawa tempat minum sendiri.' Tujuan kalimat itu adalah ...", opsi: ["menetapkan aturan baru", "menanyakan pendapat siswa", "menghibur pembaca", "memuji para siswa"], jawaban: 0, penjelasan: "Kata 'wajib' menetapkan ketentuan yang harus dipatuhi." },
+    { id: "u52i", tipe: "benar_salah", soal: "Teks eksposisi yang memaparkan pendapat disertai alasan bertujuan meyakinkan pembaca.", opsi: BS, jawaban: "Benar", penjelasan: "Eksposisi argumentatif berusaha meyakinkan pembaca dengan alasan." },
+    { id: "u52j", tipe: "isi_blank", soal: "Teks yang bertujuan menceritakan suatu kisah disebut teks ...", jawaban: "narasi", penjelasan: "Teks narasi adalah cerita yang mengisahkan peristiwa." },
+  ]},
+  { level: 9, title: "Menyimpulkan Isi Teks", soal: [
+    { id: "u53f", tipe: "pilihan_ganda", soal: "'Halaman rumah penuh genangan air. Selokan tersumbat sampah. Sampah berserakan di sana-sini.' Simpulan paling tepat: ...", opsi: ["halaman rumah kotor dan tidak terawat", "halaman rumah sangat bersih", "rumah baru saja dicat", "semua tanaman di sana subur"], jawaban: 0, penjelasan: "Genangan air, selokan tersumbat, dan sampah menunjukkan halaman kotor dan tak terawat." },
+    { id: "u53g", tipe: "pilihan_ganda", soal: "'Sari gemar membaca buku sains, menonton acara pengetahuan alam, dan mengoleksi fosil tiruan.' Simpulan yang tepat: Sari ...", opsi: ["tertarik pada ilmu pengetahuan alam", "suka berolahraga", "ingin menjadi atlet", "jarang berada di rumah"], jawaban: 0, penjelasan: "Semua kegemaran Sari berkaitan dengan sains dan pengetahuan alam." },
+    { id: "u53h", tipe: "pilihan_ganda", soal: "'Selama pekan ini penjualan koperasi sekolah naik setiap hari dan barang yang tersisa tinggal sedikit.' Simpulan paling tepat: ...", opsi: ["dagangan koperasi sekolah sedang laris", "koperasi sekolah akan ditutup", "koperasi sekolah mengalami kerugian", "tidak ada siswa yang membeli"], jawaban: 0, penjelasan: "Penjualan naik dan barang hampir habis menunjukkan dagangan sedang laris." },
+    { id: "u53i", tipe: "benar_salah", soal: "Simpulan yang tepat harus didukung oleh isi teks.", opsi: BS, jawaban: "Benar", penjelasan: "Simpulan yang baik selalu bersandar pada isi teks." },
+    { id: "u53j", tipe: "isi_blank", soal: "'Semua orang di rumah memakai topi dan kacamata hitam.' Simpulan yang tepat: saat itu cuaca ...", jawaban: "panas", penjelasan: "Topi dan kacamata hitam digunakan saat cuaca panas atau terik." },
+  ]},
+  { level: 9, title: "Latihan Cepat Level 9", soal: [
+    { id: "u54f", tipe: "pilihan_ganda", soal: "'Kunjungan ke museum dimulai pukul 08.00 dan berakhir pukul 11.30.' Kunjungan itu berakhir pukul ...", opsi: ["08.00", "09.00", "11.30", "12.00"], jawaban: 2, penjelasan: "Waktu berakhir tertulis langsung pada teks, yaitu pukul 11.30." },
+    { id: "u54g", tipe: "pilihan_ganda", soal: "'Ponsel Riko bergetar berkali-kali dan ia terus menoleh ke ponsel saat belajar.' Tersirat bahwa Riko ...", opsi: ["sedang menunggu pesan penting", "sedang mengerjakan tugas", "mendengarkan penjelasan guru", "sedang tidur"], jawaban: 0, penjelasan: "Ponsel bergetar dan perhatian terus tertuju ke ponsel menyiratkan ia menunggu pesan penting." },
+    { id: "u54h", tipe: "pilihan_ganda", soal: "'Pilih biji kacang hijau yang utuh dan tidak keriput, lalu rendam semalaman.' Teks semacam ini bertujuan untuk ...", opsi: ["memberi petunjuk melakukan sesuatu", "menghibur pembaca", "menjual barang", "melaporkan sebuah kejadian"], jawaban: 0, penjelasan: "Kalimat perintah dan langkah kerja menandakan teks prosedur yang memberi petunjuk." },
+    { id: "u54i", tipe: "benar_salah", soal: "Untuk menjawab pertanyaan 'berapa biaya', kita cukup mencari angka harga di dalam teks.", opsi: BS, jawaban: "Benar", penjelasan: "Pertanyaan 'berapa' dijawab oleh angka yang tersurat di teks." },
+    { id: "u54j", tipe: "isi_blank", soal: "Setelah membaca seluruh isi teks dengan cermat, kita dapat menarik ...", jawaban: "simpulan", penjelasan: "Menarik simpulan berarti merangkum inti isi bacaan." },
+  ]},
+];
+
+export default level09;

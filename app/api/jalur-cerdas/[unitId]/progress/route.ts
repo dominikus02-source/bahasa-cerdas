@@ -17,6 +17,11 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ un
       score = body.score
     } catch {}
 
+    const unit = await db.learningUnit.findUnique({
+      where: { id: unitId },
+      select: { coinReward: true, xpReward: true },
+    })
+
     const existing = await db.userUnitProgress.findUnique({
       where: { userId_unitId: { userId: user.id, unitId } },
     })
@@ -36,8 +41,8 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ un
       return NextResponse.json({ progress, isComplete: false, earnedXp: 0 })
     }
 
-    const BASE_XP_REWARD = 50
-    const COIN_REWARD = 10
+    const BASE_XP_REWARD = unit?.xpReward ?? 50
+    const COIN_REWARD = unit?.coinReward ?? 10
     // XP Boost dari toko koin. Angka akhir juga yang dicatat di UserUnitProgress,
     // supaya rekap XP belajar tetap sama dengan XP yang masuk ke User.xp.
     // Lewat pintu tunggal: batas per submit, kuota harian, boost, jejak ledger,

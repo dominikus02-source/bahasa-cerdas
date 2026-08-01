@@ -1701,3 +1701,47 @@ Panel admin baru untuk melihat fitur paling dipakai user setiap hari: distinct u
 2. TKA UTBK/Guru enrichment 30 → 150
 3. Game server revival (VPS mati)
 4. GameRoom migration SQL via Supabase dashboard
+
+---
+
+## Phase JALUR CERDAS DEDUPE 1 — 720 Soal Unik + Polish UI (Aug 1, 2026)
+
+### Goal
+Hapus soal duplikat di Jalur Cerdas: tiap unit punya 5 soal unik lama + ~5-6 soal "shared pool" yang diulang di 6 unit satu level (murid menjawab soal sama berulang-ulang, sebagian off-topic). Target: 72 unit × 10 soal unik = **720 soal, 0 qid/soal berulang** di seluruh jalur.
+
+### Perubahan
+1. **360 soal baru ditulis** (12 file `scripts/seed-jalur-dedupe-data/level-01.ts` … `level-12.ts`, 72 unit × 5: id `uXXf`–`uXXj`). Komposisi per unit: 3× pilihan_ganda → 1× benar_salah (`opsi: ["Benar","Salah"]`) → 1× isi_blank (`...` penanda blank, jawaban string pendek lowercase).
+2. **Runner `scripts/seed-jalur-dedupe.ts`**: dry-run default, `--execute` untuk apply. Per unit: keep `uXXa-e`, buang id shared pool (`fon*`/`ej*` dkk.), append `uXXf-j`. Hasil: `unit cocok=72, tak ketemu=0, 750 → 720 soal`.
+3. **Validator `scripts/validate-jalur-dedupe-data.ts`**: 72 unit × 5 id `fghij`, unik antar bank.
+4. **Fix bug quest harian** (`app/api/jalur-cerdas/[unitId]/submit/route.ts`): `trackQuestProgress(MENJAWAB_KUIS)` sebelumnya dipanggil di cabang *error* (missing questionId/answer) — pindah ke jalur jawaban valid.
+5. **Reward sesuai unit** (`app/api/jalur-cerdas/[unitId]/progress/route.ts`): `BASE_XP_REWARD`/`COIN_REWARD` sebelumnya hardcoded 50/10; sekarang dibaca dari `unit.xpReward`/`unit.coinReward` (10–50 koin, "Latihan Cepat Level N" = 100 XP/20+ koin) supaya angka UI = angka yang dicairkan.
+6. **Polish UI**:
+   - `components/arena/UnitIcon.tsx`: map emoji→lucide diperluas 16 → ~75 entri (semua 50 emoji unit + 12 emoji level: 🅰️, 🧱, ⚙️, 🧩, 🧠, 🎧, 🔎, 💭 dll.); fallback `BookOpen`.
+   - `/arena/jalur-cerdas`: badge jumlah soal per unit ("10 soal") dari `content.questions`.
+   - Unit detail `[unitId]`: badge gradient pakai `UnitIcon` (bukan emoji mentah), baris "N soal latihan" (`ListChecks`), reward pakai `Coins`.
+   - Lesson `[unitId]/lesson`: intro pakai `UnitIcon` unit + tampilkan Koin + XP; complete screen tampilkan `+N Koin` saat reward cair.
+
+### Verifikasi
+| Check | Hasil |
+|-------|--------|
+| DB total qids | ✅ 720 (72 unit × 10), `dup_qids=0`, `dup_questions=0`, `units_not_10=0` |
+| `validate:jalur-dedupe-data` | ✅ 360 id baru valid |
+| `validate:jalur-questions` | ✅ 720 soal (432 PG/144 BS/144 isi_blank), 0 isu |
+| `test:jalur-leakage` | ✅ 0 jawaban bocor |
+| `validate:jalur-lessons` | ✅ 72/72 (micro-lessons tetap utuh) |
+| `npx tsc --noEmit` | ✅ 0 errors |
+| `npm run build` (dummy env) | ✅ 321 pages, 0 errors |
+
+### Package Scripts
+- `seed:jalur-dedupe` / `seed:jalur-dedupe:dry-run` — seed soal dedupe
+- `validate:jalur-dedupe-data` — validasi data baru
+
+### Catatan
+- Micro-lessons (`content.lesson`) tidak disentuh; proses dedupe hanya mengganti array `content.questions`.
+- Jalankan kembali `scripts/seed-jalur-micro-lessons.ts --execute` setelah re-seed apa pun agar `lesson` ikut di-merge (tidak menghapus soal).
+
+### Remaining
+1. UKBI Guru → 150 (menulis 8 + berbicara 7 constructed response)
+2. TKA UTBK/Guru enrichment 30 → 150
+3. Game server revival (VPS mati)
+4. GameRoom migration SQL via Supabase dashboard

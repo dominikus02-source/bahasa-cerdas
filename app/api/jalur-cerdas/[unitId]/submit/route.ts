@@ -12,13 +12,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ uni
     const { questionId, answer } = await req.json()
 
     if (!questionId || answer === undefined || answer === null) {
-      // Daily quest: every answered question advances the quiz mission. After the
-    // response and best-effort — this is the hottest path in the lesson engine.
-    after(async () => {
-      try { await trackQuestProgress(user.id, "MENJAWAB_KUIS"); } catch { /* best-effort */ }
-    });
-
-    return NextResponse.json({ error: "Missing questionId or answer" }, { status: 400 })
+      return NextResponse.json({ error: "Missing questionId or answer" }, { status: 400 })
     }
 
     const unit = await db.learningUnit.findUnique({
@@ -46,6 +40,12 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ uni
 
     const correct = String(answer).toLowerCase() === String(question.jawaban).toLowerCase()
     const correctIndex = typeof question.jawaban === "number" ? question.jawaban : null
+
+    // Daily quest: every answered question advances the quiz mission. After the
+    // response and best-effort — this is the hottest path in the lesson engine.
+    after(async () => {
+      try { await trackQuestProgress(user.id, "MENJAWAB_KUIS"); } catch { /* best-effort */ }
+    });
 
     return NextResponse.json({
       correct,

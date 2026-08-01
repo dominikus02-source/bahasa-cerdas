@@ -29,9 +29,21 @@ export default async function JalurCerdasPage() {
   const completedMap = new Map(progress.filter(p => p.completed).map(p => [p.unitId, p]))
   const hasProgress = (unitId: string) => progress.some(p => p.unitId === unitId)
 
-    const totalUnits = levels.reduce((s, l) => s + l.units.length, 0)
+  const totalUnits = levels.reduce((s, l) => s + l.units.length, 0)
   const totalDone = levels.reduce((s, l) => s + l.units.filter(u => completedMap.has(u.id)).length, 0)
   const allDone = totalUnits > 0 && totalDone === totalUnits
+
+  const questionCounts = new Map<string, number>()
+  for (const level of levels) {
+    for (const unit of level.units) {
+      let n = 0
+      try {
+        const konten = unit.content ? JSON.parse(unit.content) : null
+        n = Array.isArray(konten?.questions) ? konten.questions.length : 0
+      } catch {}
+      questionCounts.set(unit.id, n)
+    }
+  }
 
   return (
     <div className="px-4 py-6 arena-page">
@@ -131,19 +143,30 @@ export default async function JalurCerdasPage() {
                         )}
                       </div>
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <p className={`font-semibold text-sm truncate ${unitCompleted ? "text-emerald-700" : "text-gray-900"}`}>
-                        {unit.title}
-                        {unitCompleted && <CheckCircle2 className="inline-block ml-1.5 w-4 h-4 text-emerald-500 align-text-bottom" />}
-                      </p>
-                      {unit.subtitle && <p className="text-xs truncate text-gray-400">{unit.subtitle}</p>}
-                      {hasProgress(unit.id) && !unitCompleted && (
-                        <p className="text-[10px] text-violet-500 font-medium mt-0.5">Sedang dipelajari</p>
-                      )}
-                    </div>
-                    {!unitCompleted && <ChevronRight className="w-4 h-4 text-gray-300 shrink-0" />}
-                    {unitCompleted && <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />}
-                  </Link>
+              <div className="flex-1 min-w-0">
+                <p className={`font-semibold text-sm truncate ${unitCompleted ? "text-emerald-700" : "text-gray-900"}`}>
+                  {unit.title}
+                  {unitCompleted && <CheckCircle2 className="inline-block ml-1.5 w-4 h-4 text-emerald-500 align-text-bottom" />}
+                </p>
+                <div className="flex items-center gap-2 mt-0.5">
+                  {unit.subtitle ? (
+                    <span className="text-xs truncate text-gray-400">{unit.subtitle}</span>
+                  ) : (
+                    <span className="text-xs text-gray-400">Unit latihan</span>
+                  )}
+                  {questionCounts.get(unit.id) ? (
+                    <span className="text-[10px] font-semibold text-violet-500 bg-violet-50 px-1.5 py-0.5 rounded-full shrink-0">
+                      {questionCounts.get(unit.id)} soal
+                    </span>
+                  ) : null}
+                </div>
+                {hasProgress(unit.id) && !unitCompleted && (
+                  <p className="text-[10px] text-violet-500 font-medium mt-0.5">Sedang dipelajari</p>
+                )}
+              </div>
+              {!unitCompleted && <ChevronRight className="w-4 h-4 text-gray-300 shrink-0" />}
+              {unitCompleted && <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />}
+            </Link>
                 )
               })}
             </div>
