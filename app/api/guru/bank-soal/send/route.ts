@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
+import { rateLimitRoute } from "@/lib/rate-limit";
 
 const DIFFICULTY_MAP: Record<string, string> = {
   MUDAH: "EASY",
@@ -10,6 +11,9 @@ const DIFFICULTY_MAP: Record<string, string> = {
 
 export async function POST(req: NextRequest) {
   try {
+    const rl = await rateLimitRoute(req, { maxRequests: 20, windowSeconds: 60, identifier: "bank-soal-send" });
+    if (rl) return rl;
+
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -21,6 +25,17 @@ export async function POST(req: NextRequest) {
 
     if (!tema || !kelas || !groupIds || !Array.isArray(groupIds) || groupIds.length === 0) {
       return NextResponse.json({ error: "Tema, kelas, dan groupIds wajib diisi" }, { status: 400 });
+    }
+
+    let parsedDueDate: Date | null = null;
+    if (dueDate) {
+      parsedDueDate = new Date(dueDate);
+      if (Number.isNaN(parsedDueDate.getTime())) {
+        return NextResponse.json({ error: "Tanggal tenggat tidak valid" }, { status: 400 });
+      }
+      if (parsedDueDate.getTime() < Date.now()) {
+        return NextResponse.json({ error: "Tanggal tenggat tidak boleh di masa lalu" }, { status: 400 });
+      }
     }
 
     const groups = await db.group.findMany({
@@ -98,7 +113,7 @@ export async function POST(req: NextRequest) {
           data: {
             quizId: quiz.id,
             groupId: group.id,
-            dueDate: dueDate ? new Date(dueDate) : null,
+            dueDate: parsedDueDate,
             isPublished: true,
           },
         })

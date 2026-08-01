@@ -11,11 +11,6 @@ export async function GET() {
     const dbUser = await db.user.findUnique({ where: { supabaseId: user.id } });
     if (!dbUser || (dbUser.role?.toUpperCase() !== "GURU" && dbUser.role?.toUpperCase() !== "ADMIN" && !dbUser.isFounder)) return NextResponse.json({ error: "Guru only" }, { status: 403 });
 
-    // Debug: count all soals
-    const totalAllSoals = await db.soal.count();
-    const totalMasterBank = await db.soal.count({ where: { source: "MASTER_BANK" } });
-    const sampleSoal = await db.soal.findFirst({ where: { source: "MASTER_BANK" }, select: { id: true, kodeSoal: true, topik: true, source: true } });
-
     // Get all Master Bank questions grouped by topik and kelas
     const soals = await db.soal.findMany({
       where: { source: "MASTER_BANK" },
@@ -38,7 +33,6 @@ export async function GET() {
       success: true,
       themes: Object.values(themes).sort((a, b) => b.total - a.total),
       total: soals.length,
-      debug: { totalAllSoals, totalMasterBank, sampleSoal },
     });
   } catch (error) {
     console.error("GET /api/guru/bank-soal error:", error);

@@ -49,6 +49,10 @@ export async function POST(req: NextRequest) {
     const paket = await db.paketKompetensi.findUnique({ where: { id: paketId } });
     if (!paket) return NextResponse.json({ error: "Paket tidak ditemukan" }, { status: 404 });
 
+    const paketType = paket.type?.toUpperCase() ?? "";
+    if (!paketType) return NextResponse.json({ error: "Paket tidak memiliki tipe valid" }, { status: 400 });
+    const isUKBI = paketType.includes("UKBI");
+
     // Ambil group
     const group = await db.group.findUnique({ where: { id: groupId } });
     if (!group || group.teacherId !== dbUser.id) {
@@ -63,22 +67,20 @@ export async function POST(req: NextRequest) {
       if (section.questionIds && section.questionIds.length > 0) {
         questionIds.push(...section.questionIds);
       } else if (section.count && section.count > 0) {
-        const isUKBI = paket.type.includes("UKBI");
-
         if (isUKBI) {
           const where: any = { isActive: true };
           if (section.seksi) where.seksi = section.seksi;
-          if (paket.type.includes("SMP") || paket.type.includes("LATIHAN_SMP")) where.tingkat = "SMP";
-          else if (paket.type.includes("SMA") || paket.type.includes("LATIHAN_SMA")) where.tingkat = "SMA";
-          else if (paket.type.includes("SD") || paket.type.includes("LATIHAN_SD")) where.tingkat = "SD";
+          if (paketType.includes("SMP") || paketType.includes("LATIHAN_SMP")) where.tingkat = "SMP";
+          else if (paketType.includes("SMA") || paketType.includes("LATIHAN_SMA")) where.tingkat = "SMA";
+          else if (paketType.includes("SD") || paketType.includes("LATIHAN_SD")) where.tingkat = "SD";
           const qs = await db.uKBIQuestion.findMany({ where, take: section.count, select: { id: true } });
           questionIds.push(...qs.map(q => q.id));
         } else {
           const where: any = { isActive: true };
           if (section.kompetensi) where.kompetensi = section.kompetensi;
-          if (paket.type.includes("SMP") || paket.type.includes("LATIHAN_SMP")) where.tingkat = "SMP";
-          else if (paket.type.includes("SMA") || paket.type.includes("LATIHAN_SMA")) where.tingkat = "SMA";
-          else if (paket.type.includes("SD") || paket.type.includes("LATIHAN_SD")) where.tingkat = "SD";
+          if (paketType.includes("SMP") || paketType.includes("LATIHAN_SMP")) where.tingkat = "SMP";
+          else if (paketType.includes("SMA") || paketType.includes("LATIHAN_SMA")) where.tingkat = "SMA";
+          else if (paketType.includes("SD") || paketType.includes("LATIHAN_SD")) where.tingkat = "SD";
           const qs = await db.tKAQuestion.findMany({ where, take: section.count, select: { id: true } });
           questionIds.push(...qs.map(q => q.id));
         }
@@ -109,7 +111,7 @@ export async function POST(req: NextRequest) {
         creatorId: dbUser.id,
         questions: {
           create: questionIds.map((qId, idx) => ({
-            sourceType: paket.type.includes("UKBI") ? "UKBIQuestion" : "TKAQuestion",
+            sourceType: isUKBI ? "UKBIQuestion" : "TKAQuestion",
             sourceId: qId,
             orderIndex: idx,
             points: 1,

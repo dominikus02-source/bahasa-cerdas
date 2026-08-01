@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import Link from "next/link";
 import { Modal } from "@/components/ui/modal";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -34,6 +35,20 @@ interface GroupItem {
   _count?: { members: number };
 }
 
+interface LatihanItem {
+  id: string;
+  title: string;
+  topik: string | null;
+  kelas: string | null;
+  difficulty: string | null;
+  totalSoal: number;
+  totalAssignments: number;
+  totalSubmitted: number;
+  avgScore: number | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export default function BankSoalPage() {
   const [themes, setThemes] = useState<ThemeData[]>([]);
   const [loading, setLoading] = useState(true);
@@ -46,6 +61,17 @@ export default function BankSoalPage() {
   const [sendDifficulty, setSendDifficulty] = useState("");
   const [sending, setSending] = useState(false);
   const [success, setSuccess] = useState<string | null>(null);
+  const [latihans, setLatihans] = useState<LatihanItem[]>([]);
+  const [latihanLoading, setLatihanLoading] = useState(true);
+
+  const fetchLatihans = useCallback(async () => {
+    try {
+      const res = await fetch("/api/guru/latihan");
+      const data = await res.json();
+      if (data.latihans) setLatihans(data.latihans);
+    } catch {}
+    setLatihanLoading(false);
+  }, []);
 
   const fetchThemes = useCallback(async () => {
     setLoading(true);
@@ -66,6 +92,7 @@ export default function BankSoalPage() {
   }, []);
 
   useEffect(() => { fetchThemes(); }, [fetchThemes]);
+  useEffect(() => { fetchLatihans(); }, [fetchLatihans]);
 
   const handleOpenSend = (theme: ThemeData) => {
     setSelectedTheme(theme);
@@ -239,6 +266,53 @@ export default function BankSoalPage() {
           ))}
         </div>
       )}
+
+      {/* Latihan Saya */}
+      <div className="pt-2">
+        <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wider mb-3">Latihan Saya</h2>
+        {latihanLoading ? (
+          <div className="flex justify-center py-8"><Loader2 className="h-6 w-6 animate-spin text-emerald-600" /></div>
+        ) : latihans.length === 0 ? (
+          <p className="text-sm text-gray-400 italic">
+            Belum ada latihan. Pilih tema di atas untuk mengirim latihan ke kelas.
+          </p>
+        ) : (
+          <div className="space-y-2">
+            {latihans.map(l => (
+              <Link
+                key={l.id}
+                href={`/guru/bank-soal/${l.id}`}
+                className="flex items-center gap-3 p-3 rounded-xl border border-gray-100 bg-white hover:shadow-md hover:-translate-y-0.5 transition-all"
+              >
+                <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white shrink-0">
+                  <FileText size={16} />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-semibold text-gray-900 truncate">{l.title}</p>
+                  <p className="text-xs text-gray-400">
+                    {l.kelas && `Kelas ${l.kelas}`}{l.topik && ` · ${l.topik}`} · {l.totalSoal} soal
+                  </p>
+                </div>
+                <div className="flex items-center gap-4 shrink-0">
+                  <div className="text-right hidden sm:block">
+                    <p className="text-sm font-bold text-gray-900">
+                      {l.avgScore !== null ? `${l.avgScore}%` : "—"}
+                    </p>
+                    <p className="text-[10px] text-gray-400">rata-rata</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-sm font-semibold text-gray-900">{l.totalSubmitted}</p>
+                    <p className="text-[10px] text-gray-400">dikerjakan</p>
+                  </div>
+                  <span className="text-xs font-medium text-emerald-600 bg-emerald-50 px-2 py-1 rounded-lg">
+                    Analitik →
+                  </span>
+                </div>
+              </Link>
+            ))}
+          </div>
+        )}
+      </div>
 
       {/* Send Modal */}
       <Modal isOpen={!!selectedTheme} onClose={() => setSelectedTheme(null)} title="Kirim Latihan ke Kelas" className="max-w-md">

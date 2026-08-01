@@ -18,18 +18,23 @@ export async function POST(req: NextRequest) {
     const paket = await db.paketKompetensi.findUnique({ where: { id: paketId }, select: { title: true } });
     if (!paket) return NextResponse.json({ error: "Paket tidak ditemukan" }, { status: 404 });
 
-    // Create GroupQuiz assignment
-    const quiz = await db.groupQuiz.create({
-      data: { groupId, quizId: paketId, title: paket.title },
-    });
+    // Prevent duplicate assignment to the same group
+    const existing = await db.groupQuiz.findFirst({ where: { groupId, quizId: paketId }, select: { id: true } });
+    if (existing) return NextResponse.json({ error: "Paket ini sudah ditugaskan ke kelas tersebut" }, { status: 409 });
 
-    // Create GroupQuizResult for each student
+    // Create GroupQuiz assignment + results for each student (atomic)
     const members = await db.groupMember.findMany({ where: { groupId }, select: { userId: true } });
-    for (const m of members) {
-      await db.groupQuizResult.create({
-        data: { groupQuizId: quiz.id, userId: m.userId, status: "ASSIGNED" },
-      }).catch(() => {});
-    }
+    const { quiz } = await db.$transaction(async (tx) => {
+      const created = await tx.groupQuiz.create({
+        data: { groupId, quizId: paketId, title: paket.title },
+      });
+      if (members.length > 0) {
+        await tx.groupQuizResult.createMany({
+          data: members.map(m => ({ groupQuizId: created.id, userId: m.userId, status: "ASSIGNED" })),
+        });
+      }
+      return { quiz: created };
+    });
 
     return NextResponse.json({ success: true, assignedTo: members.length, quizId: quiz.id });
   } catch { return NextResponse.json({ error: "Gagal assign" }, { status: 500 }); }
