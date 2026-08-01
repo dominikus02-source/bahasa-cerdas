@@ -64,8 +64,8 @@ export default function AdminUsersPage() {
 
   const statusBadge = (u: any) => {
     if (u.isFounder) return { label: "Founder", color: "text-amber-600 bg-amber-50" };
-    if (u.isPremium && u.premiumUntil && new Date(u.premiumUntil) > new Date()) return { label: "Pro", color: "text-blue-600 bg-blue-50" };
-    if (u.isPremium) return { label: "Pro (kadaluarsa)", color: "text-slate-400 bg-slate-50" };
+    if (u.role === "GURU" && u.isPremium && u.premiumUntil && new Date(u.premiumUntil) > new Date()) return { label: "Pro", color: "text-blue-600 bg-blue-50" };
+    if (u.role === "GURU" && u.isPremium) return { label: "Pro (kadaluarsa)", color: "text-slate-400 bg-slate-50" };
     if (u.role === "GURU" && u.trialEndsAt && new Date(u.trialEndsAt) > new Date()) return { label: "Trial", color: "text-sky-600 bg-sky-50" };
     return { label: "Free", color: "text-slate-400 bg-slate-50" };
   };

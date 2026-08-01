@@ -34,7 +34,7 @@ async function getStats() {
       aiSavedToday,
     ] = await Promise.all([
       db.user.count(),
-      db.user.count({ where: { isPremium: true, premiumUntil: { gt: now } } }),
+      db.user.count({ where: { role: "GURU", isFounder: false, isPremium: true, premiumUntil: { gt: now } } }),
       db.user.count({ where: { role: "GURU", trialEndsAt: { gt: now } } }),
       db.user.count({ where: { isFounder: true } }),
       db.user.count({ where: { role: "MURID" } }),

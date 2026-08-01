@@ -422,7 +422,7 @@ export default function AdminAiQuotaPage() {
             </div>
             <div className="bg-white p-4 rounded-2xl border border-emerald-200">
               <p className="text-xs text-emerald-600">Pro Aktif</p>
-              <p className="text-2xl font-bold text-emerald-900 mt-1">{users.filter(u => u.isPremium && !u.isFounder && u.premiumUntil && new Date(u.premiumUntil) > new Date()).length}</p>
+              <p className="text-2xl font-bold text-emerald-900 mt-1">{users.filter(u => u.role === "GURU" && u.isPremium && !u.isFounder && u.premiumUntil && new Date(u.premiumUntil) > new Date()).length}</p>
             </div>
             <div className="bg-white p-4 rounded-2xl border border-red-200">
               <p className="text-xs text-red-600">Kredit Habis</p>

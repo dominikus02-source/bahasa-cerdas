@@ -23,7 +23,7 @@ export async function GET(req: NextRequest) {
       ];
     }
     if (role && ["MURID", "GURU"].includes(role)) where.role = role;
-    if (status === "premium") { where.isPremium = true; where.isFounder = false; where.premiumUntil = { gt: new Date() }; }
+    if (status === "premium") { where.role = "GURU"; where.isPremium = true; where.isFounder = false; where.premiumUntil = { gt: new Date() }; }
     if (status === "founder") where.isFounder = true;
     if (status === "trial") { where.role = "GURU"; where.trialEndsAt = { gt: new Date() }; }
     if (status === "free") {
