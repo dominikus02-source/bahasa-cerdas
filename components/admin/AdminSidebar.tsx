@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState, useEffect, useCallback } from "react";
-import { LayoutDashboard, ShoppingBag, Film, FileText, Users, LogOut, Settings, ChevronRight, BarChart3, Briefcase, MessageCircle, Presentation, Bell, BellRing, X, Coins, DollarSign, Database, Activity, Wallet, Baby } from "lucide-react";
+import { LayoutDashboard, ShoppingBag, Film, FileText, Users, LogOut, Settings, ChevronRight, BarChart3, Briefcase, MessageCircle, Presentation, Bell, BellRing, X, Coins, DollarSign, Database, Activity, Wallet, Baby, TrendingUp } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 
 interface Props {
@@ -23,6 +23,7 @@ const NAV = [
   // Pratinjau dasbor murid TK–SD untuk memeriksa tampilan; progres tidak disimpan.
   { label: "Arena Junior (TK–SD)", href: "/arena-junior", icon: Baby },
   { label: "Analitik AI", href: "/admin/ai-analytics", icon: BarChart3 },
+  { label: "Pemakaian Fitur", href: "/admin/feature-usage", icon: TrendingUp },
   { label: "Monitoring Beban", href: "/admin/monitoring", icon: Activity },
   { label: "Kuota AI", href: "/admin/ai-quota", icon: Coins },
   { label: "Pusat Data", href: "/admin/data-center", icon: Database },

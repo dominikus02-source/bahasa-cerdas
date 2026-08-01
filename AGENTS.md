@@ -1655,3 +1655,49 @@ Semua statistik premium di admin memakai flag mentah `user.isPremium` yang tidak
 2. TKA UTBK/Guru enrichment 30 → 150
 3. Game server revival (VPS mati)
 4. GameRoom migration SQL via Supabase dashboard
+
+---
+
+## Phase ADMIN PEMAKAIAN FITUR — Dashboard "Pemakaian Fitur" (Aug 1, 2026)
+
+### Goal
+Panel admin baru untuk melihat fitur paling dipakai user setiap hari: distinct user + jumlah aksi per fitur, zona WIB, range 7/14/30 hari.
+
+### Sumber Data (8 fitur)
+| Fitur | Tabel | Kolom waktu |
+|-------|-------|-------------|
+| Game (Kuis Battle dll.) | `GameResult` | `createdAt` |
+| Karya Siswa | `StudentKarya` | `createdAt` |
+| Artikel | `Artikel` | `createdAt` |
+| Jalur Cerdas | `UserUnitProgress` JOIN `LearningUnit` JOIN `LearningLevel` WHERE `type='JALUR'` | `createdAt` |
+| Buku Panduan (Belajar) | `UserUnitProgress` JOIN (sama) WHERE `type='PANDUAN'` | `createdAt` |
+| Penugasan Materi | `PenugasanSubmission` | `COALESCE(startedAt, completedAt)` |
+| Simulasi UKBI/TKA | `ProgresKompetensi` | `startedAt` |
+| Alat AI Guru | `AIUsage` | `createdAt` |
+
+### Files Created
+- `app/api/admin/feature-usage/route.ts` — founder-only; raw SQL group-by hari WIB (`DATE(ts AT TIME ZONE 'Asia/Jakarta')`), hitung `events` (COUNT) + `users` (COUNT DISTINCT userId) per hari per fitur; sort fitur paling banyak dipakai di atas.
+- `app/(dashboard)/admin/feature-usage/page.tsx` — halaman client: range toggle 7/14/30 hari, kartu ranking fitur (badge "TERPALING DIPAKAI"), stacked bar chart harian (distinct user), legend warna per fitur, tabel detail per hari.
+
+### Files Modified
+- `components/admin/AdminSidebar.tsx` — nav "Pemakaian Fitur" (`/admin/feature-usage`, icon `TrendingUp`) di bawah "Analitik AI".
+
+### Keputusan Desain
+1. **WIB sebagai zona agregasi**: `AT TIME ZONE 'Asia/Jakarta'` dipakai langsung di SQL sehingga hari dimulai 00:00 WIB.
+2. **count = aksi, users = distinct user**: dua metrik dikembalikan; UI memakai `users` untuk chart/ranking (lebih bermakna untuk "pemakaian").
+3. **Jalur Cerdas vs Buku Panduan dipisah** via `LearningLevel.type` (bukan kolom baru) — kedua fitur berbagi tabel `UserUnitProgress`.
+4. **Prisma.sql template + fungsi `(since)`**: setiap fitur adalah fungsi yang menyuntik timestamp parameter (bukan string concatenation).
+5. **Founder-only**: `getUser().isFounder` guard, 403 selain founder.
+
+### Verification
+| Check | Hasil |
+|-------|--------|
+| SQL group-by WIB (psql) | ✅ GameResult & UserUnitProgress valid |
+| `npx tsc --noEmit` | ✅ 0 errors |
+| `npm run build` (dummy env) | ✅ 0 errors |
+
+### Remaining
+1. UKBI Guru → 150 (menulis 8 + berbicara 7 constructed response)
+2. TKA UTBK/Guru enrichment 30 → 150
+3. Game server revival (VPS mati)
+4. GameRoom migration SQL via Supabase dashboard
