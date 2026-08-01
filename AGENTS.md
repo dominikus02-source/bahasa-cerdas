@@ -1645,7 +1645,7 @@ Semua statistik premium di admin memakai flag mentah `user.isPremium` yang tidak
 | `npm run build` | ✅ Sukses (dummy env) |
 
 ### Konvensi Baru (wajib diikuti)
-- **"Pro berbayar aktif"** = `isPremium === true && premiumUntil > now` (dan `isFounder === false` untuk angka pelanggan)
+- **"Pro berbayar aktif"** = `role === "GURU" && isPremium === true && isFounder === false && premiumUntil > now` (MURID premium dan ADMIN-founder TIDAK dihitung — plan mereka `MURID_FREE`/`FOUNDER` menurut `resolveUserAiPlan`)
 - **"Trial aktif"** = `role === "GURU" && trialEndsAt > now`
 - **Founder** = `isFounder === true` (bukan "premium")
 - Source of truth definisi plan: `lib/ai-gateway/plan-resolver.ts` (`resolveUserAiPlan`) — jangan pakai flag mentah di dashboard/statistik admin.
