@@ -23,6 +23,8 @@ export type BadgeConditionType =
   | "SEASON_XP"
   | "COIN_BALANCE"
   | "TOTAL_KARYA"
+  | "TOTAL_WORDS"
+  | "FEATURED_KARYA"
   | "XP_SOURCE_TOTAL";
 
 export interface BadgeCondition {
@@ -40,6 +42,10 @@ export interface BadgeStats {
   seasonXp: number;
   coinBalance: number;
   totalKarya: number;
+  /** Perkiraan jumlah kata dari seluruh karya (dipakai lencana "Perangkai Kata" dst). */
+  totalWords: number;
+  /** Karya yang ditandai pilihan guru / terpopuler. */
+  featuredKarya: number;
   xpBySource: Record<string, number>;
 }
 
@@ -52,23 +58,39 @@ const RARITY_ORDER: BadgeRarity[] = ["BRONZE", "SILVER", "GOLD", "LEGENDARY"];
 
 /** Kumpulkan semua statistik yang dibutuhkan evaluasi badge. */
 export async function collectBadgeStats(userId: string): Promise<BadgeStats> {
-  const base = await getGamificationStats(userId);
-  const xpRows = await db.xPTransaction.groupBy({
-    by: ["source"],
-    where: { userId },
-    _sum: { amount: true },
-  });
+  const [base, user, featuredKarya, wordRow, xpRows] = await Promise.all([
+    getGamificationStats(userId),
+    // XP & streak juga dibaca dari User: sebelum penyatuan, lencana memakai
+    // User.* sedangkan badge memakai PlayerProfile.*. Backfill membuat profil
+    // dengan streak 0, jadi membaca PlayerProfile saja akan MENGHAPUS lencana
+    // streak yang sudah dimiliki murid. Diambil yang tertinggi supaya tidak ada
+    // yang mundur, apa pun sumber yang lebih dulu terisi.
+    db.user.findUnique({ where: { id: userId }, select: { xp: true, streak: true } }),
+    db.studentKarya.count({ where: { userId, isFeatured: true } }),
+    db.$queryRaw<{ totalchars: bigint | null }[]>`
+      SELECT SUM(LENGTH(content))::bigint as totalchars FROM "StudentKarya" WHERE "userId" = ${userId}
+    `,
+    db.xPTransaction.groupBy({
+      by: ["source"],
+      where: { userId },
+      _sum: { amount: true },
+    }),
+  ]);
   const xpBySource: Record<string, number> = {};
   for (const r of xpRows) xpBySource[r.source] = r._sum.amount ?? 0;
 
   return {
-    totalXp: base.totalXp,
+    totalXp: Math.max(base.totalXp, user?.xp ?? 0),
     level: base.level,
-    streak: base.streak,
+    streak: Math.max(base.streak, user?.streak ?? 0),
     weeklyXp: base.weeklyXp,
     seasonXp: base.seasonXp,
     coinBalance: base.coinBalance,
     totalKarya: base.totalKarya,
+    // Perkiraan kata memakai rumus yang sama persis dengan lencana lama
+    // (jumlah karakter dibagi 6) supaya tidak ada murid yang progresnya mundur.
+    totalWords: Math.round(Number(wordRow[0]?.totalchars ?? 0) / 6),
+    featuredKarya,
     xpBySource,
   };
 }
@@ -98,6 +120,12 @@ export function checkCondition(condition: BadgeCondition, stats: BadgeStats): { 
       break;
     case "TOTAL_KARYA":
       progress = stats.totalKarya;
+      break;
+    case "TOTAL_WORDS":
+      progress = stats.totalWords;
+      break;
+    case "FEATURED_KARYA":
+      progress = stats.featuredKarya;
       break;
     case "XP_SOURCE_TOTAL":
       progress = condition.source ? stats.xpBySource[condition.source] ?? 0 : 0;

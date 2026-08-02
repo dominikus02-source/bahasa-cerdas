@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { getUser } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 import { getGelarFromLevel } from "@/lib/premium";
-import { computeLencana } from "@/lib/lencana";
+import { listUserBadges } from "@/lib/gamification/badge-engine";
 import { nicknameRateLimitDaysLeft } from "@/lib/nickname";
 
 const KEBUN_DAYS = 91;
@@ -26,7 +26,7 @@ export async function GET() {
       WHERE "userId" = ${user.id} AND "createdAt" >= ${kebunCutoff}
       GROUP BY DATE("createdAt")
     `,
-    computeLencana(user.id),
+    listUserBadges(user.id),
   ]);
 
   const wordCount = Math.round(Number(totalWordsRow[0]?.totalchars ?? 0) / 6);
@@ -59,7 +59,18 @@ export async function GET() {
       coins: user.coins || 0,
     },
     kebunKata,
-    lencana,
+    // Satu sumber badge untuk /murid/profile DAN /arena/player. Sebelumnya
+    // halaman ini memakai lib/lencana.ts (dihitung terpisah) sehingga murid
+    // melihat dua koleksi berbeda di dua halaman.
+    lencana: lencana.map((b) => ({
+      id: b.code,
+      icon: b.icon,
+      name: b.name,
+      unlocked: b.unlocked,
+      progress: b.progress,
+      target: (b.condition as { target?: number })?.target ?? 1,
+      rarityLabel: b.rarity,
+    })),
     nickname: {
       value: user.nickname,
       updatedAt: user.nicknameUpdatedAt,

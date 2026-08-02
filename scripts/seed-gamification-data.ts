@@ -67,6 +67,35 @@ const BADGES: BadgeSeed[] = [
   { code: "sumber-jalur-500", name: "Penjelajah Jalur", icon: "/badges/sumber-jalur-500.webp", description: "Kumpulkan 500 XP dari Jalur Cerdas", condition: { type: "XP_SOURCE_TOTAL", target: 500, source: "JALUR_CERDAS" }, rarity: "SILVER" },
   { code: "sumber-ukbi-500", name: "Kampiun UKBI", icon: "/badges/sumber-ukbi-500.webp", description: "Kumpulkan 500 XP dari UKBI", condition: { type: "XP_SOURCE_TOTAL", target: 500, source: "UKBI" }, rarity: "GOLD" },
   { code: "sumber-tka-500", name: "Ahli TKA", icon: "/badges/sumber-tka-500.webp", description: "Kumpulkan 500 XP dari TKA", condition: { type: "XP_SOURCE_TOTAL", target: 500, source: "TKA" }, rarity: "GOLD" },
+
+  // ── Lencana lama (dipindah dari lib/lencana.ts) ──────────────────────────
+  // Dulu lencana dihitung terpisah di klien dan hanya tampil di /murid/profile,
+  // sementara badge DB hanya tampil di /arena/player — murid melihat dua
+  // koleksi berbeda. Kriteria di bawah SAMA PERSIS dengan definisi lama supaya
+  // tidak ada lencana yang mundur atau hilang saat disatukan.
+  { code: "len-penulis-perdana", name: "Penulis Perdana", icon: "/badges/karya-1.webp", description: "Terbitkan 1 karya", condition: { type: "TOTAL_KARYA", target: 1 }, rarity: "BRONZE" },
+  { code: "len-penulis-aktif", name: "Penulis Aktif", icon: "/badges/karya-10.webp", description: "Terbitkan 5 karya", condition: { type: "TOTAL_KARYA", target: 5 }, rarity: "BRONZE" },
+  { code: "len-rajin-menulis", name: "Rajin Menulis", icon: "/badges/karya-50.webp", description: "Terbitkan 10 karya", condition: { type: "TOTAL_KARYA", target: 10 }, rarity: "SILVER" },
+  { code: "len-karya-50", name: "Kolektor Kata", icon: "/badges/xp-5000.webp", description: "Terbitkan 50 karya", condition: { type: "TOTAL_KARYA", target: 50 }, rarity: "GOLD" },
+  { code: "len-karya-100", name: "Pustakawan Cilik", icon: "/badges/xp-25000.webp", description: "Terbitkan 100 karya", condition: { type: "TOTAL_KARYA", target: 100 }, rarity: "LEGENDARY" },
+
+  { code: "len-featured-1", name: "Layak Pilih", icon: "/badges/season-1000.webp", description: "Punya 1 karya pilihan", condition: { type: "FEATURED_KARYA", target: 1 }, rarity: "SILVER" },
+  { code: "len-featured-10", name: "Suka Dipilih", icon: "/badges/sumber-ukbi-500.webp", description: "Punya 10 karya pilihan", condition: { type: "FEATURED_KARYA", target: 10 }, rarity: "GOLD" },
+  { code: "len-featured-50", name: "Bintang Sekolah", icon: "/badges/lvl-100.webp", description: "Punya 50 karya pilihan", condition: { type: "FEATURED_KARYA", target: 50 }, rarity: "LEGENDARY" },
+
+  { code: "len-kata-1000", name: "Perangkai Kata", icon: "/badges/xp-100.webp", description: "Tulis 1.000 kata", condition: { type: "TOTAL_WORDS", target: 1000 }, rarity: "BRONZE" },
+  { code: "len-kata-10000", name: "Pujangga Muda", icon: "/badges/sumber-tka-500.webp", description: "Tulis 10.000 kata", condition: { type: "TOTAL_WORDS", target: 10000 }, rarity: "SILVER" },
+  { code: "len-kata-50000", name: "Maestro Kata", icon: "/badges/lvl-50.webp", description: "Tulis 50.000 kata", condition: { type: "TOTAL_WORDS", target: 50000 }, rarity: "GOLD" },
+  { code: "len-kata-100000", name: "Legenda Kata", icon: "/badges/season-5000.webp", description: "Tulis 100.000 kata", condition: { type: "TOTAL_WORDS", target: 100000 }, rarity: "LEGENDARY" },
+
+  { code: "len-streak-3", name: "Mulai Panas", icon: "/badges/streak-3.webp", description: "Aktif 3 hari berturut-turut", condition: { type: "STREAK", target: 3 }, rarity: "BRONZE" },
+  { code: "len-streak-7", name: "Semangat 7 Hari", icon: "/badges/streak-7.webp", description: "Aktif 7 hari berturut-turut", condition: { type: "STREAK", target: 7 }, rarity: "SILVER" },
+  { code: "len-streak-30", name: "Konsisten Sebulan", icon: "/badges/streak-30.webp", description: "Aktif 30 hari berturut-turut", condition: { type: "STREAK", target: 30 }, rarity: "GOLD" },
+  { code: "len-streak-100", name: "Legenda Konsisten", icon: "/badges/streak-100.webp", description: "Aktif 100 hari berturut-turut", condition: { type: "STREAK", target: 100 }, rarity: "LEGENDARY" },
+
+  { code: "len-xp-5000", name: "Pengumpul XP", icon: "/badges/coin-2000.webp", description: "Kumpulkan 5.000 XP", condition: { type: "TOTAL_XP", target: 5000 }, rarity: "SILVER" },
+  { code: "len-xp-25000", name: "Ksatria XP", icon: "/badges/xp-10000.webp", description: "Kumpulkan 25.000 XP", condition: { type: "TOTAL_XP", target: 25000 }, rarity: "GOLD" },
+  { code: "len-xp-100000", name: "Grandmaster XP", icon: "/badges/hall-of-fame.webp", description: "Kumpulkan 100.000 XP", condition: { type: "TOTAL_XP", target: 100000 }, rarity: "LEGENDARY" },
 ];
 
 interface AchievementSeed {
