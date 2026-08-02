@@ -4,6 +4,10 @@ import { trackQuestProgress } from "@/lib/coins"
 import { getUser } from "@/lib/supabase/server"
 import { calcLevel, calcLeagueFromXP } from "@/lib/xp"
 import { awardXp } from "@/lib/award-xp"
+import { recordActivity } from "@/lib/learning-loop/activity"
+import { detectUnitSkill } from "@/lib/learning-loop/skills"
+import { generateRecommendations } from "@/lib/learning-loop/recommend"
+import { refreshNextAction } from "@/lib/learning-loop/next-action"
 
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ unitId: string }> }) {
   try {
@@ -19,7 +23,14 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ un
 
     const unit = await db.learningUnit.findUnique({
       where: { id: unitId },
-      select: { coinReward: true, xpReward: true },
+      select: {
+        title: true,
+        order: true,
+        levelId: true,
+        coinReward: true,
+        xpReward: true,
+        level: { select: { level: true } },
+      },
     })
 
     const existing = await db.userUnitProgress.findUnique({
@@ -101,12 +112,69 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ un
       data: { level: jcLevel, league: jcLeague },
     })
 
+    // Learning Loop: catat aktivitas + skill, bangun rekomendasi, dan refresh
+    // aksi berikutnya. Hanya berjalan pada penyelesaian pertama (existing yang
+    // sudah completed sudah di-return di atas). Best-effort — jangan pernah
+    // gagalkan respon progress.
+    try {
+      const skill = unit?.title ? detectUnitSkill(unit.title) : "READING"
+      await recordActivity({
+        userId: user.id,
+        type: "JALUR_CERDAS",
+        subtype: "LESSON_COMPLETE",
+        skill,
+        skillDelta: 8,
+        xp: XP_REWARD,
+        coin: COIN_REWARD,
+        meta: { unitId },
+        reference: `jalur-unit-${unitId}-complete`,
+        journey: {
+          title: "Selesai: " + (unit?.title ?? "Unit"),
+          description: "Unit Jalur Cerdas selesai",
+          icon: "zap",
+        },
+      })
+    } catch { /* best-effort */ }
+
+    try { await generateRecommendations(user.id) } catch { /* best-effort */ }
+    try { await refreshNextAction(user.id) } catch { /* best-effort */ }
+
+    // Unit berikutnya: dalam level yang sama, atau level JALUR berikutnya.
+    let nextUnitId: string | null = null
+    try {
+      if (unit) {
+        const nextInLevel = await db.learningUnit.findFirst({
+          where: { levelId: unit.levelId, order: { gt: unit.order }, isActive: true },
+          orderBy: { order: "asc" },
+          select: { id: true },
+        })
+        if (nextInLevel) {
+          nextUnitId = nextInLevel.id
+        } else if (unit.level) {
+          const nextLevel = await db.learningLevel.findFirst({
+            where: { type: "JALUR", level: { gt: unit.level.level } },
+            orderBy: { level: "asc" },
+            select: { id: true },
+          })
+          if (nextLevel) {
+            const firstUnit = await db.learningUnit.findFirst({
+              where: { levelId: nextLevel.id, isActive: true },
+              orderBy: { order: "asc" },
+              select: { id: true },
+            })
+            nextUnitId = firstUnit?.id ?? null
+          }
+        }
+      }
+    } catch { /* best-effort */ }
+
     return NextResponse.json({
       progress,
       isComplete: true,
       earnedXp: XP_REWARD,
       baseXp: BASE_XP_REWARD,
       boosted,
+      nextUnitId,
     })
   } catch (error) {
     console.error("Progress error:", error)

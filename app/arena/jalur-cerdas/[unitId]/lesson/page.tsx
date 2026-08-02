@@ -66,6 +66,7 @@ export default function LessonPage({ params }: { params: Promise<{ unitId: strin
   const [loading, setLoading] = useState(true)
   const [submitting, setSubmitting] = useState(false)
   const [earnedXp, setEarnedXp] = useState(0)
+  const [nextUnitId, setNextUnitId] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
 
   const isDasar = lesson?.levelBand === "dasar"
@@ -141,6 +142,9 @@ export default function LessonPage({ params }: { params: Promise<{ unitId: strin
       if (res.ok) {
         const data = await res.json()
         setEarnedXp(data.earnedXp || 0)
+        if (typeof data.nextUnitId === "string" && data.nextUnitId) {
+          setNextUnitId(data.nextUnitId)
+        }
       }
     } catch {}
   }
@@ -338,7 +342,19 @@ export default function LessonPage({ params }: { params: Promise<{ unitId: strin
               ) : null}
             </div>
           )}
-          <div className="flex gap-3 mt-8">
+          {nextUnitId && (
+            <p className="text-white/85 text-sm mt-8">Tantangan berikutnya sudah menunggu!</p>
+          )}
+          <div className="flex flex-wrap justify-center gap-3 mt-4">
+            {nextUnitId && (
+              <button
+                onClick={() => router.push(`/arena/jalur-cerdas/${nextUnitId}`)}
+                className="flex items-center justify-center gap-2 bg-white text-emerald-700 font-bold text-lg px-7 py-3.5 rounded-2xl shadow-xl hover:scale-105 transition-transform"
+              >
+                Lanjut ke unit berikutnya
+                <ArrowRight className="w-5 h-5" />
+              </button>
+            )}
             <button
               onClick={() => router.push("/arena/jalur-cerdas")}
               className="bg-white/20 text-white font-semibold px-5 py-3 rounded-xl hover:bg-white/30 transition-colors"

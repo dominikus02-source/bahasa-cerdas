@@ -159,6 +159,28 @@ export default function MuridQuizResultPage() {
         )}
       </Card>
 
+      {/* Lanjutkan Belajar */}
+      <Card className="p-6 mb-6 border-2 border-violet-200 bg-violet-50/50">
+        <div className="text-center mb-4">
+          <p className="font-bold text-slate-900">Lanjutkan Belajar</p>
+          <p className="text-sm text-slate-500 mt-1">Terus berlatih supaya makin hebat!</p>
+        </div>
+        <div className="flex flex-col sm:flex-row gap-3">
+          <Link
+            href="/arena/jalur-cerdas"
+            className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-violet-600 text-white font-bold rounded-xl hover:bg-violet-700 transition-colors text-sm"
+          >
+            Latihan di Jalur Cerdas
+          </Link>
+          <Link
+            href="/arena/tulis"
+            className="flex-1 flex items-center justify-center gap-2 px-4 py-3 border-2 border-violet-300 text-violet-700 font-bold rounded-xl hover:bg-violet-50 transition-colors text-sm"
+          >
+            Tulis Karya
+          </Link>
+        </div>
+      </Card>
+
       {/* Question Review */}
       <div className="space-y-3">
         <h3 className="font-semibold text-slate-900 mb-3">Review Jawaban</h3>

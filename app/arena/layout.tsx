@@ -1,8 +1,9 @@
 import "./arena.css"
+import "./player-theme.css"
 import { getUser } from "@/lib/supabase/server"
 import { redirect } from "next/navigation"
 import Link from "next/link"
-import { Compass, Flame, Gamepad2, MessageCircle, Trophy, LogOut, LayoutDashboard } from "lucide-react"
+import { Compass, Flame, Gamepad2, MessageCircle, Trophy, LogOut, LayoutDashboard, UserCircle } from "lucide-react"
 import { SwRegister } from "@/components/SwRegister"
 import { ArenaClientWrapper } from "./arena-client"
 import { BottomNav } from "./bottom-nav"
@@ -16,6 +17,7 @@ const navItems = [
   { href: "/arena/game", label: "Gim", icon: Gamepad2 },
   { href: "/arena/league", label: "Liga", icon: Trophy },
   { href: "/arena/chat", label: "Chat", icon: MessageCircle },
+  { href: "/arena/player", label: "Pemain", icon: UserCircle },
 ]
 
 export default async function ArenaLayout({ children }: { children: React.ReactNode }) {

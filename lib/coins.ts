@@ -30,6 +30,9 @@ const QUEST_POOL = [
   { type: "BACA_MATERI", target: 2, rewardCoins: 15 },
 ] as const;
 
+/** Tipe quest yang dikenal QUEST_POOL — dipakai untuk menjaga konsistensi picker. */
+export type QuestType = (typeof QUEST_POOL)[number]["type"];
+
 // One learning quest is guaranteed every day. The quests used to be whatever a
 // hash happened to pick, and on 2026-07-22 all three were social — the daily
 // missions were pushing students toward like-farming on the very day learning
@@ -37,15 +40,59 @@ const QUEST_POOL = [
 // missions and the leaderboard point the same way.
 const LEARNING_TYPES = ["BACA_MATERI", "MENJAWAB_KUIS"] as const;
 
-function pickDailyQuests(seed: number) {
+/**
+ * Preferensi personalisasi misi harian, dihitung dari aktivitas murid 7 hari
+ * terakhir (lihat getRecentQuestActivity). Semua field opsional — kalau tidak
+ * ada, picker kembali ke pemilihan berbasis seed seperti dulu.
+ */
+type QuestPrefs = {
+  wantsWriting?: boolean;
+  wantsQuiz?: boolean;
+  wantsReading?: boolean;
+};
+
+function pickDailyQuests(seed: number, prefs?: QuestPrefs) {
   const learning = QUEST_POOL.filter(q => (LEARNING_TYPES as readonly string[]).includes(q.type));
   const social = QUEST_POOL.filter(q => !(LEARNING_TYPES as readonly string[]).includes(q.type));
-  const picks = [
-    learning[seed % learning.length],
-    social[seed % social.length],
-    social[(seed + 1) % social.length],
-  ];
-  return picks.map(q => ({ type: q.type, target: q.target, rewardCoins: q.rewardCoins }));
+
+  // Satu quest belajar dijamin setiap hari. Personalisasi belajar lebih penting
+  // daripada sosial: murid yang belum membaca mendapat BACA_MATERI, yang belum
+  // menjawab kuis mendapat MENJAWAB_KUIS, sisanya dikocok dengan seed.
+  let learningPick = learning[seed % learning.length];
+  if (prefs?.wantsReading) {
+    learningPick = learning.find(q => q.type === "BACA_MATERI") ?? learningPick;
+  } else if (prefs?.wantsQuiz) {
+    learningPick = learning.find(q => q.type === "MENJAWAB_KUIS") ?? learningPick;
+  }
+
+  const toQuest = (q: (typeof QUEST_POOL)[number]) => ({ type: q.type, target: q.target, rewardCoins: q.rewardCoins });
+  const picks = [toQuest(learningPick)];
+  const pickedTypes = new Set<QuestType>([learningPick.type]);
+  const remainingSocial = [...social];
+
+  // Murid yang belum menulis karya minggu ini dipaksa dapat MENULIS sebagai
+  // salah satu slot sosial — sisanya tetap diisi dari pool sosial dengan seed.
+  if (prefs?.wantsWriting) {
+    const writingIdx = remainingSocial.findIndex(q => q.type === "MENULIS");
+    if (writingIdx !== -1) {
+      picks.push(toQuest(remainingSocial[writingIdx]));
+      pickedTypes.add(remainingSocial[writingIdx].type);
+      remainingSocial.splice(writingIdx, 1);
+    }
+  }
+
+  // Isi sisa slot sosial dengan seed, selalu menghindari duplikat tipe.
+  let offset = 1;
+  while (picks.length < 3) {
+    const available = remainingSocial.filter(q => !pickedTypes.has(q.type));
+    if (available.length === 0) break;
+    const next = available[(seed + offset) % available.length];
+    picks.push(toQuest(next));
+    pickedTypes.add(next.type);
+    offset += 1;
+  }
+
+  return picks;
 }
 
 export async function awardCoins(
@@ -150,12 +197,62 @@ export async function getTransactions(userId: string, limit = 20) {
   });
 }
 
+/**
+ * Aktivitas terakhir murid dari tabel PlayerActivity, dipakai untuk
+ * mempersonalisasi misi harian.
+ *
+ * Mengembalikan kumpulan tipe aktivitas yang muncul dalam jendela `days`
+ * hari terakhir, berapa hari lalu terakhir kali menulis karya (null kalau
+ * tidak ada sama sekali dalam jendela), dan apakah sudah menulis karya
+ * minggu ini. "Minggu ini" diukur sebagai jendela 7 hari, bukan awal pekan.
+ */
+export async function getRecentQuestActivity(
+  userId: string,
+  days = 7
+): Promise<{ activityTypes: Set<string>; lastKaryaDaysAgo: number | null; wroteKaryaThisWeek: boolean }> {
+  const since = new Date(Date.now() - days * 86400000);
+  const rows = await db.playerActivity.findMany({
+    where: { userId, createdAt: { gte: since } },
+    select: { type: true, createdAt: true },
+  });
+
+  const activityTypes = new Set<string>();
+  let lastKaryaDaysAgo: number | null = null;
+  let wroteKaryaThisWeek = false;
+
+  for (const row of rows) {
+    activityTypes.add(row.type);
+    if (row.type === "KARYA") {
+      wroteKaryaThisWeek = true;
+      const daysAgo = Math.floor((Date.now() - row.createdAt.getTime()) / 86400000);
+      if (lastKaryaDaysAgo === null || daysAgo < lastKaryaDaysAgo) {
+        lastKaryaDaysAgo = daysAgo;
+      }
+    }
+  }
+
+  return { activityTypes, lastKaryaDaysAgo, wroteKaryaThisWeek };
+}
+
 export async function getOrCreateDailyQuests(userId: string) {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
   const daySeed = today.getFullYear() * 10000 + (today.getMonth() + 1) * 100 + today.getDate()
-  const todaysQuests = pickDailyQuests(daySeed)
+
+  // Misi harian dipersonalisasi dari aktivitas 7 hari terakhir: murid yang
+  // belum membaca materi / jalur cerdas dapat quest membaca, yang belum
+  // menjawab kuis dapat quest kuis, dan yang belum menulis karya minggu ini
+  // tetap didorong menulis lewat slot sosial. Prioritas: dorongan membaca
+  // menang lebih dulu, dorongan menulis hanya memengaruhi slot sosial.
+  const recent = await getRecentQuestActivity(userId);
+  const prefs = {
+    wantsReading: !recent.activityTypes.has("BACA_MATERI") && !recent.activityTypes.has("JALUR_CERDAS"),
+    wantsQuiz: !recent.activityTypes.has("QUIZ") && !recent.activityTypes.has("MENJAWAB_KUIS"),
+    wantsWriting: !recent.wroteKaryaThisWeek && !recent.activityTypes.has("KARYA"),
+  };
+
+  const todaysQuests = pickDailyQuests(daySeed, prefs)
 
   await db.dailyQuest.createMany({
     data: todaysQuests.map((q) => ({

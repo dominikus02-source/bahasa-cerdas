@@ -115,34 +115,34 @@ export default async function MisiHarianPage() {
           <Zap className="w-5 h-5" /> Cara Dapat Koin
         </h3>
         <div className="space-y-3">
-          <div className="flex items-center gap-3">
+          <Link href="/arena/tulis" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
             <div className="w-9 h-9 rounded-xl bg-amber-100 flex items-center justify-center"><PenLine className="w-5 h-5 text-amber-600" /></div>
             <div className="flex-1">
               <p className="text-sm font-semibold text-gray-800">Tulis Karya</p>
               <p className="text-xs text-gray-500">+10 koin setiap karya baru</p>
             </div>
-          </div>
-          <div className="flex items-center gap-3">
+          </Link>
+          <Link href="/arena/feed" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
             <div className="w-9 h-9 rounded-xl bg-rose-100 flex items-center justify-center"><Heart className="w-5 h-5 text-rose-600" /></div>
             <div className="flex-1">
               <p className="text-sm font-semibold text-gray-800">Dapat Suka</p>
               <p className="text-xs text-gray-500">+2 koin setiap suka dari orang lain</p>
             </div>
-          </div>
-          <div className="flex items-center gap-3">
+          </Link>
+          <Link href="/arena/feed" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
             <div className="w-9 h-9 rounded-xl bg-blue-100 flex items-center justify-center"><MessageCircle className="w-5 h-5 text-blue-600" /></div>
             <div className="flex-1">
               <p className="text-sm font-semibold text-gray-800">Beri Komentar</p>
               <p className="text-xs text-gray-500">+1 koin setiap komentar</p>
             </div>
-          </div>
-          <div className="flex items-center gap-3">
+          </Link>
+          <Link href="/arena/jalur-cerdas" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
             <div className="w-9 h-9 rounded-xl bg-orange-100 flex items-center justify-center"><Flame className="w-5 h-5 text-orange-600" /></div>
             <div className="flex-1">
               <p className="text-sm font-semibold text-gray-800">Streak Harian</p>
               <p className="text-xs text-gray-500">+5 koin setiap login berturut-turut</p>
             </div>
-          </div>
+          </Link>
         </div>
       </div>
     </div>

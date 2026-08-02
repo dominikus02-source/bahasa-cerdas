@@ -5,6 +5,7 @@ import { Send, Trash2, AlertTriangle, CornerDownRight, X } from "lucide-react"
 import Link from "next/link"
 import UserAvatar from "@/components/arena/UserAvatar"
 import UserName from "@/components/arena/UserName"
+import { RankChip } from "@/components/gamification/RankChip"
 
 interface CommentUser {
   id: string
@@ -14,6 +15,7 @@ interface CommentUser {
   equippedFrame?: string | null
   equippedNameColor?: string | null
   equippedBadge?: string | null
+  rank?: string
 }
 
 interface CommentData {
@@ -155,6 +157,7 @@ export default function CommentSection({ karyaId, initialComments, initialCount,
                 className="text-xs font-bold text-gray-900 hover:text-violet-600"
                 badgeSize={13}
               />
+              {c.user.rank && <RankChip rank={c.user.rank} size={13} showTitle={false} compact />}
               <span className="text-[10px] text-gray-400">{waktuLalu(c.createdAt)}</span>
               {isOwner && (
                 <button onClick={() => handleDelete(c.id)} className="ml-auto text-gray-300 hover:text-red-500 transition-colors">

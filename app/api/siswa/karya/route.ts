@@ -8,6 +8,10 @@ import { transformImageUrl } from "@/lib/image-transform";
 import cache from "@/lib/redis";
 import { invalidateKaryaCache } from "@/lib/ai-queue";
 import { getDisplayName } from "@/lib/nickname";
+import { recordActivity } from "@/lib/learning-loop/activity";
+import { refreshNextAction } from "@/lib/learning-loop/next-action";
+import { RANK_META } from "@/lib/gamification/ranks";
+import type { PlayerRank } from "@prisma/client";
 
 function withDisplayName<T extends { user: { fullName: string; nickname?: string | null } }>(item: T) {
   return { ...item, user: { ...item.user, displayName: getDisplayName(item.user, "peer") } };
@@ -44,6 +48,7 @@ export async function GET(req: NextRequest) {
           id: true, fullName: true, nickname: true, avatar: true,
           // Kosmetik toko koin — dipakai untuk bingkai avatar, warna nama, badge
           equippedFrame: true, equippedNameColor: true, equippedBadge: true,
+          playerProfile: { select: { currentRank: true } },
           profile: { select: { school: true, city: true } },
         },
       },
@@ -172,11 +177,23 @@ export async function GET(req: NextRequest) {
       items = hasMore ? karya.slice(0, limit) : karya;
     }
 
-      const withDisplay = items.map((k) => ({
-        ...k,
-        createdAt: typeof k.createdAt === "string" ? k.createdAt : k.createdAt.toISOString(),
-        user: { ...k.user, avatar: transformImageUrl(k.user.avatar, { width: 80, height: 80, quality: 85 }), displayName: getDisplayName(k.user, "peer") },
-      }));
+      const withDisplay = items.map((k) => {
+        const rank = k.user.playerProfile?.currentRank ?? "BRONZE";
+        const meta = RANK_META[rank as PlayerRank];
+        return {
+          ...k,
+          createdAt: typeof k.createdAt === "string" ? k.createdAt : k.createdAt.toISOString(),
+          user: {
+            ...k.user,
+            avatar: transformImageUrl(k.user.avatar, { width: 80, height: 80, quality: 85 }),
+            displayName: getDisplayName(k.user, "peer"),
+            rank,
+            rankLabel: meta?.label ?? rank,
+            rankTitle: meta?.title ?? rank,
+            rankColor: meta?.color ?? "#64748b",
+          },
+        };
+      });
 
     const withLikes = await attachLikedStatus(withDisplay, userId);
 
@@ -232,6 +249,22 @@ export async function POST(req: NextRequest) {
     // Karya" daily quest could never actually be completed by writing one.
     trackQuestProgress(user.id, "MENULIS").catch(() => {});
     if (!user.isFounder) trackDailyStreak(user.id).catch(() => {});
+
+    // Learning Loop: catat aktivitas + skill + segarkan CTA (best-effort).
+    const literary = karya.type === "PUISI" || karya.type === "CERPEN" || karya.type === "PANTUN";
+    recordActivity({
+      userId: user.id,
+      type: "KARYA",
+      subtype: karya.type,
+      skill: "WRITING",
+      skillDelta: literary ? 12 : 8,
+      xp: 20,
+      coin: COIN_MENULIS_KARYA,
+      meta: { karyaId: karya.id, jenis: karya.type },
+      reference: `karya-${karya.id}`,
+      journey: { title: `Menerbitkan karya: ${karya.title}`, description: `Jenis ${karya.type}`, icon: "pen" },
+    }).catch(() => {});
+    refreshNextAction(user.id).catch(() => {});
 
     // Bonus tantangan mingguan — awaited (bukan fire-and-forget) supaya jumlah
     // koinnya bisa ikut dikembalikan dan langsung ditampilkan ke murid.

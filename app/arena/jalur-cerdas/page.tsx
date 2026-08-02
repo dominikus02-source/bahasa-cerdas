@@ -179,6 +179,21 @@ export default async function JalurCerdasPage() {
           <Crown className="w-12 h-12 text-amber-500 mx-auto mb-3" />
           <p className="text-lg font-extrabold text-amber-800">Luar Biasa!</p>
           <p className="text-sm text-amber-600 mt-1">Kamu sudah menyelesaikan semua level. Siap untuk UKBI!</p>
+          <div className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-3">
+            <Link
+              href="/murid/simulasi/ukbi"
+              className="inline-flex items-center gap-2 bg-gradient-to-r from-amber-500 to-emerald-500 text-white font-bold px-6 py-3 rounded-xl hover:opacity-90 transition-opacity"
+            >
+              <Target className="w-5 h-5" />
+              Coba Simulasi UKBI
+            </Link>
+            <Link
+              href="/arena/player"
+              className="inline-flex items-center gap-2 bg-white text-violet-700 font-semibold px-6 py-3 rounded-xl border border-violet-200 hover:bg-violet-50 transition-colors"
+            >
+              Lihat Profil Pemain
+            </Link>
+          </div>
         </div>
       )}
     </div>

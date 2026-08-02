@@ -38,6 +38,13 @@ function computeBackHref(role: string, isFounder: boolean, paketType?: string): 
   return isGuru ? `/guru/simulasi/${kind}` : `/murid/simulasi/${kind}`;
 }
 
+// The "Dokumen Hasil Latihan" button lives in the guru dashboard shell too,
+// so route there for gurus instead of the murid page.
+function computeCertHref(role: string, isFounder: boolean): string {
+  const isGuru = role === "GURU" && !isFounder;
+  return isGuru ? "/guru/dokumen-latihan" : "/murid/dokumen-latihan";
+}
+
 export default function HasilPage({ params }: { params: Promise<{ paketId: string }> }) {
   const router = useRouter();
   const [result, setResult] = useState<Result | null>(null);
@@ -45,6 +52,7 @@ export default function HasilPage({ params }: { params: Promise<{ paketId: strin
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [backHref, setBackHref] = useState("/kompetisi/latihan");
+  const [certHref, setCertHref] = useState("/murid/dokumen-latihan");
 
   useEffect(() => {
     params.then((p) => setPaketId(p.paketId));
@@ -60,6 +68,7 @@ export default function HasilPage({ params }: { params: Promise<{ paketId: strin
         const u = d?.user;
         const type = result?.paket?.type || result?.paketTitle;
         setBackHref(computeBackHref(u?.role || "MURID", !!u?.isFounder, type));
+        setCertHref(computeCertHref(u?.role || "MURID", !!u?.isFounder));
       })
       .catch(() => {});
     return () => {
@@ -131,5 +140,5 @@ export default function HasilPage({ params }: { params: Promise<{ paketId: strin
     );
   }
 
-  return <TestResultPanel result={result} paketId={paketId} backHref={backHref} />;
+  return <TestResultPanel result={result} paketId={paketId} backHref={backHref} certHref={certHref} />;
 }

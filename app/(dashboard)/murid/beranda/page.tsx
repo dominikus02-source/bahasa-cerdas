@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { IconBolt, IconFlame, IconCoin, IconTarget, IconPen, IconChat, IconHeart, IconEye, IconClock } from "@/lib/icons";
+import { RankChip } from "@/components/gamification/RankChip";
 
 type KaryaType = "PUISI" | "CERPEN" | "ARTIKEL" | "ANEKDOT" | "PANTUN" | "OPINI";
 
@@ -11,7 +12,7 @@ interface Karya {
   id: string; title: string; content: string; excerpt: string;
   type: KaryaType; coverImage?: string; isFeatured: boolean;
   likesCount: number; viewsCount: number; createdAt: string;
-  user: { id: string; fullName: string; displayName?: string; avatar?: string; profile?: { school?: string; city?: string } };
+  user: { id: string; fullName: string; displayName?: string; avatar?: string; profile?: { school?: string; city?: string }; rank?: string };
   _count?: { likes: number; comments: number };
 }
 
@@ -221,7 +222,10 @@ export default function HomeFeedPage() {
                         <div className="flex items-center gap-3 text-xs text-gray-400">
                           <span className="flex items-center gap-1"><IconHeart size={12} className="text-red-400" />{k._count?.likes ?? k.likesCount ?? 0}</span>
                           <span className="flex items-center gap-1"><IconEye size={12} />{k.viewsCount || 0}</span>
-                          <span className="flex items-center gap-1 ml-auto">{nameOf(k.user)}</span>
+                          <span className="flex items-center gap-1 ml-auto">
+                            {nameOf(k.user)}
+                            {k.user.rank && <RankChip rank={k.user.rank} size={16} showTitle={false} compact className="ml-1" />}
+                          </span>
                         </div>
                       </Link>
                     );

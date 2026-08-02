@@ -271,7 +271,10 @@ export default function KerjakanTugasPage() {
             {!isKuis && hasPraktik && !data.submission?.praktikDinilai && (
               <p className="text-xs text-amber-600 mt-2">Praktikmu menunggu penilaian guru.</p>
             )}
-            <Link href="/arena/tugas" className="inline-block mt-6 px-6 py-3 bg-violet-600 text-white rounded-xl text-sm font-bold">Kembali ke Tugas</Link>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mt-6">
+              <Link href="/arena/tugas" className="inline-flex items-center justify-center px-6 py-3 bg-violet-600 text-white rounded-xl text-sm font-bold">Kembali ke Tugas</Link>
+              <Link href="/arena/jalur-cerdas" className="inline-flex items-center justify-center px-6 py-3 border-2 border-violet-300 text-violet-700 rounded-xl text-sm font-bold hover:bg-violet-50 transition-colors">Lanjutkan Belajar</Link>
+            </div>
           </div>
         )}
 

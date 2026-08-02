@@ -19,6 +19,9 @@ import { PembelajaranCard } from "./pembelajaran-card"
 import BattleCard from "@/components/arena/BattleCard"
 import LeagueMini from "./league-mini"
 import { UnitIcon } from "@/components/arena/UnitIcon"
+import NextActionCard from "@/components/arena/player/NextActionCard"
+import MentorCard from "@/components/arena/player/MentorCard"
+import SkillRadar from "@/components/arena/player/SkillRadar"
 
 function initials(name: string) {
   return name?.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2) || "?"
@@ -240,6 +243,15 @@ export default async function BerandaPage() {
                 <div className="h-full bg-gradient-to-r from-amber-400 to-yellow-400 rounded-full transition-all duration-500" style={{ width: `${progress.pct}%` }} />
               </div>
           </div>
+        </div>
+      </div>
+
+      {/* Sprint 5 — Learning Loop: rekomendasi aksi berikutnya */}
+      <div className="space-y-3 mb-5">
+        <NextActionCard className="mb-3" />
+        <div className="grid sm:grid-cols-2 gap-3">
+          <MentorCard />
+          <SkillRadar />
         </div>
       </div>
 

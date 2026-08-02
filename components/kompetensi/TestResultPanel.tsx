@@ -39,9 +39,11 @@ interface TestResultPanelProps {
   paketId: string;
   /** Where "Kembali ke Latihan" / "Paket Lainnya" go — the list the user came from. */
   backHref?: string;
+  /** Where the "Dokumen Hasil Latihan" button goes — respects guru vs murid role. */
+  certHref?: string;
 }
 
-export default function TestResultPanel({ result, paketId, backHref = "/kompetisi/latihan" }: TestResultPanelProps) {
+export default function TestResultPanel({ result, paketId, backHref = "/kompetisi/latihan", certHref = "/murid/dokumen-latihan" }: TestResultPanelProps) {
   const style = PREDIKAT_STYLES[result.predikat] || { bg: "bg-slate-50", border: "border-slate-300", text: "text-slate-700", icon: "📋" };
   const passed = result.status === "COMPLETED";
   const title = result.paket?.title || result.paketTitle || "Hasil Latihan";
@@ -52,6 +54,23 @@ export default function TestResultPanel({ result, paketId, backHref = "/kompetis
     if (m === 0) return `${s} detik`;
     return `${m} menit ${s} detik`;
   };
+
+  // Weakest scored section → targeted "continue learning" recommendation.
+  // Skips constructed sections (Menulis/Berbicara) and any still pending review.
+  const lowestSection = result.sectionScores
+    ? Object.entries(result.sectionScores)
+        .filter(
+          ([, s]: [string, any]) =>
+            !s.constructed &&
+            (s.pendingReview ?? 0) <= 0 &&
+            (s.total ?? 0) > 0
+        )
+        .map(([name, s]: [string, any]) => ({
+          name,
+          pct: Math.round(((s.benar ?? 0) / s.total) * 100),
+        }))
+        .sort((a, b) => a.pct - b.pct)[0]
+    : undefined;
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100/50">
@@ -222,6 +241,20 @@ export default function TestResultPanel({ result, paketId, backHref = "/kompetis
               ? "Teruslah berlatih! Identifikasi bagian yang masih lemah dan pelajari kembali materinya."
               : "Jangan menyerah! Ulangi latihan dan pelajari materi dengan lebih saksama."}
           </p>
+          {lowestSection && (
+            <div className="mt-4 rounded-xl bg-violet-50 border border-violet-100 p-3 sm:p-4">
+              <p className="text-xs sm:text-sm text-violet-800 font-medium">
+                Fokus tingkatkan bagian {lowestSection.name}. Buka Jalur Cerdas untuk latihan bertahap.
+              </p>
+              <a
+                href="/arena/jalur-cerdas"
+                className="inline-flex items-center gap-1.5 mt-2 px-4 py-2 bg-violet-600 text-white text-xs sm:text-sm font-bold rounded-lg hover:bg-violet-700 transition-colors"
+              >
+                <BarChart3 className="w-3.5 h-3.5" />
+                Latihan di Jalur Cerdas
+              </a>
+            </div>
+          )}
         </div>
 
         {/* Certificate info */}
@@ -255,7 +288,7 @@ export default function TestResultPanel({ result, paketId, backHref = "/kompetis
             Paket Lainnya
           </Link>
           <Link
-            href="/murid/dokumen-latihan"
+            href={certHref}
             className="flex items-center justify-center gap-2 py-2.5 sm:py-3 border-2 border-slate-200 text-slate-600 font-bold rounded-xl hover:bg-slate-50 transition-colors text-sm sm:text-base"
           >
             <Award className="w-4 h-4" />

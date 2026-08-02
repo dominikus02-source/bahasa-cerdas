@@ -2,6 +2,22 @@ import { NextRequest, NextResponse } from "next/server";
 import { getUser } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 import { getDisplayName } from "@/lib/nickname";
+import { RANK_META } from "@/lib/gamification/ranks";
+import type { PlayerRank } from "@prisma/client";
+
+const USER_RANK_SELECT = { playerProfile: { select: { currentRank: true } } } as const;
+
+function withRank<T extends { playerProfile?: { currentRank?: string } | null }>(user: T) {
+  const rank = user.playerProfile?.currentRank ?? "BRONZE";
+  const meta = RANK_META[rank as PlayerRank];
+  return {
+    ...user,
+    rank,
+    rankLabel: meta?.label ?? rank,
+    rankTitle: meta?.title ?? rank,
+    rankColor: meta?.color ?? "#64748b",
+  };
+}
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -14,6 +30,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
           select: {
             id: true, fullName: true, nickname: true, avatar: true,
             equippedFrame: true, equippedNameColor: true, equippedBadge: true,
+            playerProfile: { select: { currentRank: true } },
             profile: { select: { school: true, city: true } },
           },
         },
@@ -23,6 +40,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
               select: {
                 id: true, fullName: true, nickname: true, avatar: true,
                 equippedFrame: true, equippedNameColor: true, equippedBadge: true,
+                playerProfile: { select: { currentRank: true } },
               },
             },
           },
@@ -42,8 +60,8 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
 
     const withDisplay = {
       ...karya,
-      user: { ...karya.user, displayName: getDisplayName(karya.user, "peer") },
-      comments: karya.comments.map((c) => ({ ...c, user: { ...c.user, displayName: getDisplayName(c.user, "peer") } })),
+      user: { ...withRank(karya.user), displayName: getDisplayName(karya.user, "peer") },
+      comments: karya.comments.map((c) => ({ ...c, user: { ...withRank(c.user), displayName: getDisplayName(c.user, "peer") } })),
     };
 
     return NextResponse.json({ karya: withDisplay });

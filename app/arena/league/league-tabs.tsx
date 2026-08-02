@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import Link from "next/link"
-import { Medal, Crown, Diamond } from "lucide-react"
+import { Medal, Crown, Diamond, Gamepad2, BookOpen } from "lucide-react"
 import { calcLevel, calcLeagueFromXP } from "@/lib/xp"
 
 export interface LeagueRow {
@@ -122,6 +122,17 @@ export default function LeagueTabs({ weekly, daily, userId, userXP, initialTab =
             )
           })
         )}
+      </div>
+
+      {/* Footer CTA */}
+      <div className="flex items-center justify-center gap-4 px-4 py-4 border-t border-gray-100 bg-gray-50/50">
+        <span className="text-xs font-bold text-gray-600">Naikkan peringkatmu!</span>
+        <Link href="/arena/game" className="inline-flex items-center gap-1 text-xs font-semibold text-violet-600 hover:text-violet-800 transition-colors">
+          <Gamepad2 className="w-3.5 h-3.5" /> Main Game
+        </Link>
+        <Link href="/arena/jalur-cerdas" className="inline-flex items-center gap-1 text-xs font-semibold text-violet-600 hover:text-violet-800 transition-colors">
+          <BookOpen className="w-3.5 h-3.5" /> Latihan Jalur Cerdas
+        </Link>
       </div>
     </div>
   )

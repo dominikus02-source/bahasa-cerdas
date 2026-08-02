@@ -8,6 +8,7 @@ import SafeMediaImage from "@/components/shared/safe-media-image";
 import CommentSection from "@/components/arena/CommentSection";
 import UserAvatar from "@/components/arena/UserAvatar";
 import UserName from "@/components/arena/UserName";
+import { RankChip } from "@/components/gamification/RankChip";
 
 interface CosmeticFields {
   equippedFrame?: string | null;
@@ -19,8 +20,8 @@ interface KaryaDetail {
   id: string; title: string; content: string; excerpt?: string;
   type: string; coverImage?: string; photos?: string[]; likesCount: number; viewsCount: number;
   createdAt: string;
-  user: { id: string; fullName: string; displayName?: string; avatar?: string; profile?: { school?: string; city?: string } } & CosmeticFields;
-  comments: { id: string; content: string; createdAt: string; parentId: string | null; user: { id: string; fullName: string; displayName?: string; avatar: string | null } & CosmeticFields }[];
+  user: { id: string; fullName: string; displayName?: string; avatar?: string; profile?: { school?: string; city?: string }; rank?: string } & CosmeticFields;
+  comments: { id: string; content: string; createdAt: string; parentId: string | null; user: { id: string; fullName: string; displayName?: string; avatar: string | null; rank?: string } & CosmeticFields }[];
 }
 
 const nameOf = (u: { fullName: string; displayName?: string }) => u.displayName || u.fullName;
@@ -106,6 +107,7 @@ export default function DetailKaryaPage() {
             className="text-sm font-semibold text-gray-900 hover:text-violet-600"
             badgeSize={15}
           />
+          {karya.user.rank && <RankChip rank={karya.user.rank} size={16} showTitle={false} compact className="mt-1" />}
           <p className="text-xs text-gray-400">
             {karya.user.profile?.school && `${karya.user.profile.school}${karya.user.profile.city ? ` · ${karya.user.profile.city}` : ""}`}
           </p>
