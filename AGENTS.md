@@ -1745,3 +1745,312 @@ Hapus soal duplikat di Jalur Cerdas: tiap unit punya 5 soal unik lama + ~5-6 soa
 2. TKA UTBK/Guru enrichment 30 → 150
 3. Game server revival (VPS mati)
 4. GameRoom migration SQL via Supabase dashboard
+
+---
+
+## Phase BC ARENA CORE ENGINE — Universal Gamification (Aug 1, 2026)
+
+### Goal
+Satu fondasi gamifikasi universal (PlayerProfile, XP/Level/Rank/Koin/Badge/Achievement engine, leaderboard, weekly season, `/player/*` API, dashboard admin) agar SEMUA fitur BahasaCerdas (Jalur Cerdas, Arena, Karya, UKBI/TKA, Penugasan, AI, dll.) memakai satu pipeline XP/koin.
+
+### Prinsip Kunci
+1. **Additive-only** — tabel lama (`User.xp`, `User.coins`, `AwardXp`, `lib/xp.ts`) TIDAK disentuh. Semua baru di tabel PlayerProfile + XPTransaction + CoinTransaction (prefix `BCA_`).
+2. **XP selalu lewat `addXp()`** — tercatat 1:1 di XPTransaction, idempotent via `(userId, source, reference)` unik, level/rank computed dari totalXP, weeklyXP lazy-reset tiap Senin 00:00 WIB tanpa cron.
+3. **Server tidak pernah percaya angka klien** — `/api/player/xp` memakai `lib/xp-guard.ts` (`batasiXpSubmit`) + rate limit. `addXp` sendiri dipanggil server-side oleh fitur.
+4. **Badge & Achievement otomatis** — kondisi JSON; badge auto-award, achievement progress realtime + reward diklaim (idempotent).
+5. **Rank computed** — 9 rank (BRONZE→LEGEND), tiap rank 10 level, DIHITUNG dari level, tidak pernah di-hardcode per user.
+
+### Models Baru (Prisma, 7)
+- `PlayerProfile` — `level, totalXP, currentRank, coin, weeklyXP, weeklyXPWeekKey, seasonXP, seasonPeriodKey, streak, lastActiveAt, avatar, frame, title`
+- `XPTransaction` — ledger audit penuh, `@@unique([userId, source, reference])`
+- `Badge`/`UserBadge` — definisi + kepemilikan (condition JSON)
+- `Achievement`/`UserAchievement` — target + progress + claimed
+- `WeeklySeason` — periode season 4 mingguan
+- Enums: `PlayerRank`, `BadgeRarity`
+
+### File Engine (lib/gamification/)
+| File | Fungsi |
+|------|--------|
+| `levels.ts` | Kurva level 1-100 (progresif), `levelFromXp`, `getLevelProgress`, `levelAfterXp` |
+| `ranks.ts` | 9 rank computed + `RANK_META` (label/color) |
+| `season.ts` | `weekKey()` ("2026-W31"), `seasonPeriodKey()` ("2026-S1"), WIB offset |
+| `xp-engine.ts` | `addXp()` — pintu XP universal (idempotent, atomic, level-up reward koin) |
+| `coin-engine.ts` | `addCoin()`/`deductCoin()` — saldo PlayerProfile.coin + audit CoinTransaction |
+| `player.ts` | `getPlayerProfile()`, `bumpDailyStreak()`, `getGamificationStats()` |
+| `badge-engine.ts` | `evaluateBadges()`, `listUserBadges()` — auto-award kondisi JSON |
+| `achievement-engine.ts` | `trackAchievement()`, `claimAchievement()`, `listAchievements()` |
+| `leaderboard.ts` | `getLeaderboard()` — scope GLOBAL/SCHOOL/CLASS/FRIENDS/PROVINCE × periode ALL_TIME/WEEKLY/SEASON, Redis cache |
+
+### API `/player/*`
+- `GET /player/profile` — profil + ringkasan badge/achievement + periode berjalan
+- `GET /player/leaderboard?scope=&period=&limit=&groupId=&province=`
+- `POST /player/xp` — `{ source, amount, reference? }` (dibatasi `batasiXpSubmit` + rate limit)
+- `POST /player/coin` — `{ action: "add"|"deduct", amount, reason, reference? }`
+- `GET /player/badges` — daftar badge + status unlock
+- `GET /player/achievements` / `POST /player/achievements { code }` — klaim reward
+- `GET /player/quests` / `POST /player/quests { questId }` — misi harian (reuse lib/coins.ts)
+
+### Admin
+- `/admin/arena` — dashboard gamifikasi (total pemain/XP/koin, distribusi rank, top player, streak, XP per sumber, badge/achievement stats)
+
+### Seed & Test
+- `seed:gamification` / `seed:gamification:dry-run` — `scripts/seed-gamification-data.ts` (27 badge + 12 achievement, upsert-only)
+- `test:gamification-engine` — `scripts/test-gamification-engine.ts` (logika murni + keamanan statis, tanpa DB)
+
+### Integrasi ke Fitur Baru (panduan singkat)
+1. Memberi XP: `await addXp({ userId, source: "JALUR_CERDAS", amount, reference: "unit-<id>-selesai" })` — Wajib `reference` unik agar retry tidak menggandakan.
+2. Menambah koin: `await addCoin(userId, 10, "KARYA", "karya-<id>")`.
+3. Badge: cukup definisikan di seed; `evaluateBadges(userId)` setelah addXp auto-memberi badge yang lolos.
+4. Achievement: panggil `trackAchievement(userId, "ach-belajar-1", 1)` tiap aksi; murid klaim via `/player/achievements`.
+5. Leaderboard: `getLeaderboard({ scope: "GLOBAL", period: "WEEKLY", userId })`.
+
+### Verification
+| Check | Hasil |
+|-------|-------|
+| `npx prisma validate` | ✅ Valid |
+| Migration SQL (manual psql) | ✅ 7 tabel + 2 enum |
+| `seed:gamification --execute` | ✅ 27 badge + 12 achievement |
+| `test:gamification-engine` | ✅ SEMUA LULUS |
+| `npx tsc --noEmit` | ✅ 0 errors |
+| `npm run build` (dummy env) | ✅ 328 pages, 0 errors |
+| DB | ✅ Badge 27, Achievement 12, PlayerProfile/WeeklySeason kosong (menunggu aktivitas) |
+
+### Remaining
+1. UKBI Guru → 150 (menulis 8 + berbicara 7 constructed response)
+2. TKA UTBK/Guru enrichment 30 → 150
+3. Game server revival (VPS mati)
+4. GameRoom migration SQL via Supabase dashboard
+
+---
+
+## Phase BC ARENA PLAYER EXPERIENCE 2 — Player Experience Layer (Aug 1, 2026)
+
+### Goal
+Bangun lapisan UX pemain di atas engine Phase 1 (BC Arena Core Engine): dashboard pemain premium dengan desain Royal Blue / Gold / Dark Navy, animasi Framer Motion, level-up modal, reward popup queue, quest harian, badge/achievement collection, leaderboard podium, riwayat XP/koin, notifikasi, dan feedback belajar — tanpa menyentuh engine Phase 1 (hanya konsumsi).
+
+### API Baru (3)
+| Route | Fungsi |
+|-------|--------|
+| `GET /api/player/xp/history?cursor=&limit=` | Riwayat XP (XPTransaction), cursor pagination, infinite scroll |
+| `GET /api/player/coin/history?cursor=&type=in\|out&search=` | Riwayat koin (CoinTransaction), filter masuk/keluar + pencarian + summary |
+| `GET /api/player/notifications` | Agregasi event: XP, koin, badge, achievement, quest, level-up (50 terbaru) |
+
+### Komponen Baru (23 file di `components/arena/player/`)
+| Modul | File |
+|-------|------|
+| State global | `player-context.tsx` (polling 20s + focus, deteksi level-up, queue reward popup) |
+| Overlay global | `player-overlay.tsx`, `level-up-modal.tsx` (confetti), `reward-popup.tsx` (queue), `confetti.tsx` |
+| Header & XP | `player-header.tsx`, `xp-progress-bar.tsx` (animasi + shimmer) |
+| Kartu status | `rank-card.tsx`, `streak-card.tsx`, `weekly-champion-card.tsx`, `learning-feedback.tsx` |
+| Misi | `daily-quest-card.tsx` (klaim via `/player/quests`, reuse `lib/quest-meta.tsx`) |
+| Koleksi | `badge-grid.tsx`, `achievement-grid.tsx` (klaim via `/player/achievements`) |
+| Peringkat & riwayat | `leaderboard-panel.tsx` (podium top-3), `xp-history-timeline.tsx`, `coin-history-timeline.tsx` (infinite scroll) |
+| Notifikasi | `notification-center.tsx` |
+| Halaman | `player-dashboard.tsx`, `page-shell.tsx`, `profile-tabs.tsx`, `history-tabs.tsx`, `player-theme.tsx` |
+| Primitif | `ui.tsx` (GlassCard, RankIcon, formatId, useRelativeTime, InitialAvatar) |
+
+### Halaman Baru (7, di `/arena/player/`)
+| Route | Isi |
+|-------|-----|
+| `/arena/player` | Dashboard utama pemain (header, stat chips, rank, streak, misi, tantangan, badge, pencapaian, leaderboard, notifikasi, riwayat) |
+| `/arena/player/profile` | Profil dengan tab Ringkasan/Badge/Pencapaian |
+| `/arena/player/badges` | Koleksi badge penuh |
+| `/arena/player/achievements` | Pencapaian penuh + klaim |
+| `/arena/player/leaderboard` | Papan peringkat penuh |
+| `/arena/player/history?tab=xp\|koin` | Riwayat XP/koin |
+| `/arena/player/notifications` | Pusat notifikasi pemain |
+
+### Integrasi
+- `app/arena/arena-client.tsx` — bungkus `<PlayerProvider>` + `<PlayerOverlay>` (level-up modal & reward popup muncul di SEMUA halaman Arena)
+- `app/arena/layout.tsx` — import `player-theme.css`; tambah nav "Pemain" (desktop: `/arena/player`, UserCircle)
+- `app/arena/bottom-nav.tsx` — tambah item "Pemain" (5 tab)
+
+### Tema Desain (`app/arena/player-theme.css`)
+- Warna: Royal Blue (`#2b4bff`), Gold (`#ffd24a`), Dark Navy (`#0b132b`)
+- Glass morphism cards, gradient gold text, shimmer XP bar, podium, confetti CSS
+- Mobile-first, animasi Framer Motion, `line-clamp`, safe-area aware
+
+### Shared Libs
+- `lib/gamification/client-types.ts` — tipe client + `RARITY_META` (BRONZE/SILVER/GOLD/LEGENDARY) + re-export `RANK_META`
+- `lib/gamification/source-labels.ts` — `XP_SOURCE_LABELS` + `XP_SOURCE_ICONS` (Bahasa Indonesia)
+
+### Keamanan
+- Semua API role-gated (`getUser()`), tidak ada input klien yang dipercaya (history & notifications read-only server-side)
+- Klaim quest/achievement tetap via endpoint rate-limited existing (`/player/quests`, `/player/achievements`)
+- Engine Phase 1 TIDAK disentuh (additive-only, konsisten dengan prinsip BC Arena)
+
+### Verification
+| Check | Hasil |
+|-------|-------|
+| `npx tsc --noEmit` | ✅ 0 errors |
+| `npm run test:gamification-engine` | ✅ SEMUA LULUS |
+| `npm run build` (dummy env) | ✅ 331 pages, 0 errors |
+| eslint player/app | ✅ 0 errors (3 warnings `<img>` — konsisten konvensi arena) |
+
+### Remaining
+1. UKBI Guru → 150 (menulis 8 + berbicara 7 constructed response)
+2. TKA UTBK/Guru enrichment 30 → 150
+3. Game server revival (VPS mati)
+4. GameRoom migration SQL via Supabase dashboard
+
+---
+
+## Phase LEARNING LOOP ENGINE — Sprint 5 (Aug 1, 2026)
+
+### Goal
+Hubungkan semua fitur ke satu putaran belajar yang tidak putus (Belajar →
+Berlatih → Berkarya → Berinteraksi → Berkompetisi → Umpan Balik → Belajar
+Lagi). Setiap aktivitas selesai, user selalu tahu langkah berikutnya. Deliverable:
+`LEARNING_LOOP_AUDIT.md` + `LEARNING_LOOP_REPORT.md`.
+
+### Prinsip
+1. **Additive-only** — 6 tabel baru + 3 enum. Tabel lama TIDAK diubah.
+2. Gamification Engine Phase 1–2 (XP/koin/badge/achievement/leaderboard) hanya dikonsumsi, TIDAK disentuh.
+3. Server-side recording (`recordActivity` di route feature); endpoint publik read-only.
+4. Best-effort — logging gagal tidak menggagalkan aksi utama.
+5. Rule-based (tanpa LLM) untuk rekomendasi & mentor → gratis, tanpa quota.
+
+### Schema Baru (prisma/schema.prisma)
+| Model | Fungsi |
+|-------|--------|
+| `LearningSkill` | Level 1–100 per skill (READING/WRITING/LISTENING/SPEAKING/GRAMMAR/VOCABULARY/LITERATURE), computed dari skill XP. |
+| `PlayerActivity` | Log granular aktivitas (type/subtype/skill/skillDelta/xp/coin/meta/reference). |
+| `LearningJourney` | Timeline belajar per hari (dayKey WIB). |
+| `LearningRecommendation` | Rekomendasi aktif (maks 3, TTL 7 hari). |
+| `PlayerCTA` | Satu "Aksi Berikutnya" per user (di-upsert). |
+| `LearningInsight` | Insight mentor harian (cache userId+dayKey). |
+
+Enum baru: `LearningSkillType`, `ActivityType` (17 nilai), `RecommendationType`.
+Migration: `prisma/migrations/manual/2026-08-01_learning_loop.sql` (idempoten — **jalankan di Supabase SQL Editor**, PRODUCTION dulu).
+
+### Engine (`lib/learning-loop/`)
+| File | API |
+|------|-----|
+| `skills.ts` | `SKILL_LABELS`, `SKILL_ICONS`, `skillLevelFromXp`, `detectUnitSkill(title)`, `applySkillGains`, `getSkillProfile` |
+| `activity.ts` | `recordActivity(input)` (tx: PlayerActivity + LearningSkill + LearningJourney → segarkan CTA), `getRecentActivity` |
+| `journey.ts` | `dayKeyWIB`, `addJourneyEntry`, `getJourney` |
+| `recommend.ts` | `SKILL_ACTION_MAP` (7 skill → aksi), `generateRecommendations`, `getActiveRecommendations` |
+| `next-action.ts` | `refreshNextAction` (Jalur Cerdas berjalan → skill terlemah → fallback tulis karya), `getNextAction` |
+| `session.ts` | `generateDailyInsights` (rule-based mentor), `getSessionSummary` |
+
+### API Baru
+| Route | Fungsi |
+|-------|--------|
+| `POST /api/learning-loop/activity` | Pencatatan aktivitas (role-gated, validasi enum). |
+| `GET /api/player/next-action` | CTA terbaik saat ini. |
+| `GET /api/player/skills` | Profil 7 skill. |
+| `GET /api/player/journey` | Timeline belajar. |
+| `GET /api/player/session` | Ringkasan sesi (mentor + statistik hari ini). |
+
+### UI Baru (`components/arena/player/`)
+- `NextActionCard` — CTA "Berikutnya" (mengarah ke aksi terbaik).
+- `MentorCard` — sapa mentor BC + insight harian + statistik.
+- `SkillRadar` — baris 7 skill, skill terlemah disorot.
+- Dipasang di beranda Arena (`app/arena/page.tsx`).
+
+### Wire ke Flow (dead end ditutup)
+| Flow | Perubahan |
+|------|-----------|
+| Jalur Cerdas lesson selesai | `progress` route catat aktivitas+skill+rekomendasi+CTA, kembalikan `nextUnitId`; layar complete tampil tombol "Lanjut ke unit berikutnya". |
+| Jalur Cerdas 100% | Kotak "Siap untuk UKBI!" → tombol "Coba Simulasi UKBI" + "Lihat Profil Pemain". |
+| Publikasi Karya | `POST /api/siswa/karya` catat aktivitas KARYA + skill WRITING + segarkan CTA. |
+| Hasil UKBI/TKA | Bug path dokumen hasil untuk guru diperbaiki (`certHref`); rekomendasi tunjuk bagian terlemah + tautan Jalur Cerdas. |
+| Hasil kuis murid | Kartu "Lanjutkan Belajar" (Jalur Cerdas + Tulis Karya). |
+| Tugas selesai | Tombol "Lanjutkan Belajar". |
+| Misi Harian | Cara dapat koin kini menaut ke fitur terkait. |
+| League | Footer CTA "Naikkan peringkatmu!". |
+| Misi harian dinamis | `lib/coins.ts` personalisasi quest dari `PlayerActivity` 7 hari. |
+
+### Verifikasi
+| Check | Hasil |
+|-------|-------|
+| `npx prisma validate` | ✅ Valid |
+| `npx tsc --noEmit` | ✅ 0 errors |
+| `npm run test:gamification-engine` | ✅ SEMUA LULUS |
+| `npm run build` (dummy env) | ✅ 336 routes, 0 errors (naik dari 331) |
+
+### Cara Pakai di Fitur Baru
+```ts
+import { recordActivity } from "@/lib/learning-loop/activity";
+import { refreshNextAction } from "@/lib/learning-loop/next-action";
+// best-effort setelah aksi sukses:
+recordActivity({ userId, type: "LESSON", subtype: "KUIS_SELESAI",
+  skill: "GRAMMAR", skillDelta: 5, xp: 20, coin: 5,
+  meta: { quizId }, reference: "quiz-<id>-selesai",
+  journey: { title: "Kuis selesai", icon: "zap" } }).catch(() => {});
+refreshNextAction(userId).catch(() => {});
+```
+
+### Catatan
+- **DB migration BELUM diterapkan** ke Supabase — jalankan
+  `prisma/migrations/manual/2026-08-01_learning_loop.sql` di SQL Editor agar
+  tabel LearningSkill/PlayerActivity/LearningJourney/LearningRecommendation/
+  PlayerCTA/LearningInsight ada. Sebelum itu, semua API learning-loop
+  melempar error "relation does not exist" (aman, try/catch best-effort).
+- Game server mati → layar game end belum dipasang CTA lintas fitur (kerangka PlayerCTA siap).
+
+### Remaining
+1. UKBI Guru → 150 (menulis 8 + berbicara 7 constructed response)
+2. TKA UTBK/Guru enrichment 30 → 150
+3. Game server revival (VPS mati)
+4. GameRoom migration SQL via Supabase dashboard
+
+---
+
+## Phase OFFICIAL RANK & LEVEL SYSTEM — Sprint 6 (Aug 2, 2026)
+
+### Goal
+Implementasi sistem Rank & Level resmi BahasaCerdas sesuai desain founder (Sumber Kebenaran): 9 rank dengan band level resmi, kurva XP resmi, icon rank resmi (`public/Rank BC/`), reward rank-up, modal naik rank, dan pemasangan rank di seluruh permukaan UI. **Engine gamification (XP/Coin/Badge/Achievement/Leaderboard) TIDAK dimodifikasi — hanya dikonsumsi (additive-only).**
+
+### Keputusan Desain (resmi, jangan diubah)
+- **9 rank → band level**: BRONZE·Pemula·1–9, SILVER·Pelajar·10–19, GOLD·Cendekia·20–29, EMERALD·Akademisi·30–39, RUBY·Ahli Bahasa·40–49, SAPPHIRE·Guru Bahasa·50–59, DIAMOND·Master Bahasa·60–69, MASTER·Grand Master·70–79, LEGEND·Legend Bahasa·80–100. Nama rank TIDAK BOLEH diubah.
+- **Kurva XP resmi** (`lib/gamification/levels.ts`): 250/450/675/900/1200/1500/1800/2250/3000 XP per level per band (band 1–9 s.d. 80–100). Level 100 = 153.000 XP kumulatif.
+- **15 sumber XP** terpusat di `lib/gamification/xp-config.ts` (ARENA, JALUR_CERDAS, UPLOAD_KARYA, LIKE, KOMENTAR, ARTIKEL, PENUGASAN_GURU, UKBI, TKA, DAILY_QUEST, WEEKLY_QUEST, ACHIEVEMENT, BADGE, CHALLENGE, EVENT).
+- **Asset resmi** `public/Rank BC/{bronze,silver,gold,emerald,ruby,sapphire,diamond,master,legend}.webp` (512×512, alpha utuh, emblem saja tanpa teks label). Path hanya via registry `lib/gamification/rank-assets.ts` (`getRankAsset`), DILARANG hardcode path di komponen — ganti path/format cukup di registry.
+  - Sumber asli 1000×1000 PNG (masih ber-teks label) diarsipkan di luar repo: `BC-Bahasa Cerdas Master/Rank BC sumber/png-1000-asli`. Teks label sengaja dipotong karena RankChip merender labelnya sendiri, dan pada ukuran 13–16px teks bawaan jadi noda tak terbaca.
+  - 512px dipilih dari render terbesar di UI (140px `RankUpModal`) × headroom retina. Total aset 316 KB (dari 4,9 MB PNG).
+- **Reward rank-up** (`lib/gamification/rank-rewards.ts`): koin, badge rank, title, frame avatar, border profile, mystery box. Pencairan idempotent via `lib/gamification/rank-up.ts` (`grantRankUpRewards`) — retroaktif, `addCoin("RANK_UP","rank-up-<RANK>")` unik, badge `skipDuplicates`, title/frame hanya di-set bila kosong.
+- Rank dihitung dari level (`rankFromLevel`), `PlayerProfile.currentRank` hanya denormalisasi.
+
+### File Engine (Sumber Kebenaran)
+- `lib/gamification/rank-assets.ts` (baru) — RankAssets, getRankAsset, RANK_ORDER, rankIndex, RANK_ICON_NATIVE_SIZE=1000
+- `lib/gamification/ranks.ts` (rewrite) — RANK_BANDS, RANK_META (label/material/title/color/minLevel/maxLevel), rankFromLevel, minLevelForRank, nextRankOf
+- `lib/gamification/levels.ts` (rewrite) — XP_BANDS kurva resmi; signature fungsi lama tidak berubah
+- `lib/gamification/xp-config.ts` (baru) — XP_CONFIG 15 sumber
+- `lib/gamification/rank-rewards.ts` (baru) — RANK_REWARDS per rank
+- `lib/gamification/rank-up.ts` (baru) — grantRankUpRewards idempotent
+- `lib/gamification/player.ts` / `leaderboard.ts` — PlayerProfileView + LeaderboardEntry ditambah `rankTitle`, `rankAsset`
+
+### Komponen Baru
+- `components/gamification/RankIcon.tsx` — icon resmi via next/image + getRankAsset (lazy, glow opsional)
+- `components/gamification/RankChip.tsx` — chip ringkas icon+label+title
+- `components/gamification/PlayerCard.tsx` — kartu pemain lengkap (avatar, rank, title, level, XP bar, koin, badge, achievement)
+- `components/gamification/RankUpModal.tsx` — modal fullscreen: glow warna rank, confetti, icon 140px, reward satu per satu
+- `components/gamification/use-rank-sound.ts` — hook suara placeholder (WebAudio arpeggio; siap diganti aset resmi)
+- `app/api/player/rank-up/redeem/route.ts` — POST redeem reward rank-up (role-gated, idempotent)
+
+### Wiring
+- `player-context.tsx` — deteksi rank-up saat polling (banding `rank`), set `rankUp` event, auto-redeem reward, tipe popup `RANK_UP`
+- `player-overlay.tsx` — mount `RankUpModal`
+- `reward-popup.tsx` — meta `RANK_UP` (gold)
+- `components/arena/player/ui.tsx` — `RankIcon` lama kini mendelegasikan ke icon resmi (parameter sama: rank, size, ring→glow)
+- `rank-card.tsx` / `player-header.tsx` — tampilkan `rankTitle` resmi
+- `app/api/siswa/karya/route.ts` + `app/api/siswa/karya/[id]/route.ts` — payload user/komentar ditambah `rank/rankLabel/rankTitle/rankColor` (join playerProfile)
+- Feed `/murid/beranda`, detail karya `/murid/karya/[id]`, `components/arena/CommentSection.tsx` — `RankChip` di samping nama penulis/komentar
+
+### Verifikasi
+| Check | Hasil |
+|-------|-------|
+| `npx tsc --noEmit` | ✅ 0 errors |
+| `npm run test:gamification-engine` | ✅ SEMUA LULUS (kurva resmi, 9 rank band, 9 asset PNG ada, rank-rewards, rank-up idempotent, XP_CONFIG 15 sumber, RankIcon registry) |
+| `npm run build` | ✅ 337 routes, 0 errors (naik dari 336) |
+| ESLint file baru/diubah | ✅ 0 errors |
+| `OFFICIAL_RANK_SYSTEM_REPORT.md` | ✅ Ditulis (7 seksi: rank→level, XP→level, halaman, komponen, reward, screenshot, rekomendasi) |
+
+### Remaining
+1. UKBI Guru → 150 (menulis 8 + berbicara 7 constructed response)
+2. TKA UTBK/Guru enrichment 30 → 150
+3. Game server revival (VPS mati)
+4. GameRoom migration SQL via Supabase dashboard
+5. Aset audio resmi rank-up (placeholder WebAudio siap diganti)
+6. Render frame/border rank di UI avatar/profil
