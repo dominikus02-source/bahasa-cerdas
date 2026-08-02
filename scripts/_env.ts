@@ -39,18 +39,21 @@ export function requireDatabaseUrl(): string {
   console.error(
     "\nDATABASE_URL tidak bisa dipakai.\n" +
       (placeholder
-        ? "\nNilainya masih '[SENSITIVE]'. Itu BUKAN kesalahanmu: `vercel env pull` memang\n" +
-          "selalu menulis placeholder untuk variabel bertanda Sensitive (write-only),\n" +
-          "jadi menempel nilai asli ke .env.local akan tertimpa pull berikutnya.\n"
+        ? "\nNilainya tulisan '[SENSITIVE]', bukan URL.\n" +
+          "\nJANGAN buang waktu dengan `vercel env pull` — dari environment MANA PUN\n" +
+          "(development/preview/production) hasilnya tetap '[SENSITIVE]'. Variabel yang\n" +
+          "ditandai Sensitive di Vercel bersifat write-only: nilainya dipakai saat build\n" +
+          "dan runtime, tapi tidak pernah dikirim balik ke mesin lokal. Itu memang tujuan\n" +
+          "penandaannya, dan tidak perlu dilepas.\n"
         : "\nNilainya tidak diawali postgresql://.\n") +
-      "\nPerbaikan sekali jalan — simpan di berkas yang tidak disentuh vercel:\n" +
-      "\n  1. Supabase → Project Settings → Database → Connection string (URI)\n" +
+      "\nSatu-satunya jalan — ambil dari Supabase, sekali saja:\n" +
+      "\n  1. Supabase → Project Settings → Database → Connection string → URI\n" +
       "     Pakai yang port 6543 (pooler). Ganti [YOUR-PASSWORD] dengan password DB.\n" +
       "     Lupa password? Settings → Database → Reset database password.\n" +
-      "\n  2. Buat berkas .env.db.local di root proyek, isi satu baris:\n" +
-      "     DATABASE_URL=postgresql://postgres:PASSWORD@db.xxx.supabase.co:6543/postgres\n" +
-      "\n  3. Jalankan ulang perintahnya.\n" +
-      "\n.env.db.local sudah tercakup .gitignore dan tidak akan ditimpa vercel env pull.\n"
+      "\n  2. Buka .env.db.local, ganti baris DATABASE_URL menjadi URI tadi.\n" +
+      "\n  3. Ulangi perintahnya.\n" +
+      "\nBerkas .env.db.local hanya dibaca skrip CLI (bukan Next.js), dimuat lebih dulu\n" +
+      "sehingga menang atas .env.local, dan tercakup pola .env* di .gitignore.\n"
   );
   process.exit(1);
 }
