@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getUser } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
+import { shuffleKatastraQuestion } from "@/lib/game/shuffle-options";
 
 const QUESTIONS = {
   SD: [
@@ -96,6 +97,7 @@ const QUESTIONS = {
     { text: "Penulisan nama orang yang benar adalah...", options: ["budi santoso", "Budi Santoso", "BUDI santoso", "budi Santoso"], correct: 1, type: "ejaan" },
     { text: "Kalimat tanya diakhiri dengan tanda...", options: ["Titik (.)", "Koma (,)", "Tanya (?)", "Seru (!)"], correct: 2, type: "ejaan" },
     { text: "Penulisan nama hari yang benar: 'Kami libur pada hari ___.'", options: ["senin", "Senin", "SENIN", "sEnin"], correct: 1, type: "ejaan" },
+    { text: "Antonim 'pagi' adalah...", options: ["Siang", "Sore", "Malam", "Subuh"], correct: 2, type: "antonim" },
   ],
   SMP: [
     { text: "Kalimat efektif: 'Dia adalah siswa yang pandai sekali.' Perbaikannya...", options: ["Dia siswa pandai", "Dia adalah siswa pandai", "Dia siswa yang pandai", "Ia adalah pandai"], correct: 2, type: "kalimat_efektif" },
@@ -177,6 +179,7 @@ const QUESTIONS = {
     { text: "Imbuhan 'ke-an' pada kata 'keindahan' membentuk kata...", options: ["Benda", "Kerja", "Sifat", "Keterangan"], correct: 0, type: "imbuhan" },
     { text: "Imbuhan 'me-kan' pada 'membacakan' berarti melakukan...", options: ["Untuk orang lain", "Sendiri", "Berulang-ulang", "Tanpa sengaja"], correct: 0, type: "imbuhan" },
     { text: "Imbuhan 'pe-an' pada kata 'pendidikan' menyatakan...", options: ["Proses atau hal", "Pelaku", "Alat", "Tempat"], correct: 0, type: "imbuhan" },
+    { text: "Kata baku dari 'silakan' adalah...", options: ["Silahkan", "Silakan", "Sillakan", "Silaken"], correct: 1, type: "kata_baku" },
   ],
   SMA: [
     { text: "Bacalah: 'Polusi udara di kota besar semakin mengkhawatirkan. Partikel PM2.5 melampaui ambang batas.' Ide pokok paragraf tersebut adalah...", options: ["Polusi udara mengkhawatirkan", "Partikel PM2.5 berbahaya", "Kota besar tercemar", "Ambang batas polusi"], correct: 0, type: "HOTS" },
@@ -306,7 +309,9 @@ function buildMixedQuestions(level: number, count: number) {
     picked.push(...rest.slice(0, count - picked.length));
   }
 
-  return shuffleArray(picked).slice(0, count);
+  return shuffleArray(picked)
+    .slice(0, count)
+    .map((q) => shuffleKatastraQuestion(q));
 }
 
 export async function GET(req: NextRequest) {
@@ -324,11 +329,13 @@ export async function GET(req: NextRequest) {
       if (dbUser?.level) level = dbUser.level;
     }
 
-    if (explicitGrade && QUESTIONS[explicitGrade]) {
-      const pool = QUESTIONS[explicitGrade];
-      const selected = shuffleArray([...pool]).slice(0, Math.min(count, pool.length));
-      return NextResponse.json({ questions: selected, grade: explicitGrade, playerLevel: level, totalPool: pool.length });
-    }
+  if (explicitGrade && QUESTIONS[explicitGrade]) {
+    const pool = QUESTIONS[explicitGrade];
+    const selected = shuffleArray([...pool])
+      .slice(0, Math.min(count, pool.length))
+      .map((q) => shuffleKatastraQuestion(q));
+    return NextResponse.json({ questions: selected, grade: explicitGrade, playerLevel: level, totalPool: pool.length });
+  }
 
     const questions = buildMixedQuestions(level, count);
     const mix = getTierMix(level);

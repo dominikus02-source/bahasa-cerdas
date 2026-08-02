@@ -11,6 +11,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getUser } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 import { harvestJalurQuestions, pickRampedQuestions } from "@/lib/game/harvest";
+import { shuffleOptions } from "@/lib/game/shuffle-options";
 import { awardXp } from "@/lib/award-xp";
 import { rateLimitRoute } from "@/lib/rate-limit";
 
@@ -25,7 +26,10 @@ export async function GET(req: NextRequest) {
   // Panen semua unit + bank kurasi (dedupe + quality gate), lalu stratified
   // pick dengan ramp kesulitan: lantai awal mudah, makin tinggi makin sulit.
   const clean = await harvestJalurQuestions();
-  const questions = pickRampedQuestions(clean, count).map(({ lvl: _lvl, ...q }) => q);
+  const questions = pickRampedQuestions(clean, count).map(({ lvl: _lvl, opsi, jawaban, ...q }) => ({
+    ...q,
+    ...shuffleOptions(opsi, jawaban),
+  }));
   return NextResponse.json({ questions });
 }
 

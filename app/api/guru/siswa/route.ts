@@ -22,6 +22,7 @@ export async function GET() {
               select: {
                 id: true, fullName: true, avatar: true, email: true,
                 xp: true, level: true, streak: true, league: true, lastActiveAt: true,
+                profile: { select: { noAbsen: true, nisn: true } },
               },
             },
           },

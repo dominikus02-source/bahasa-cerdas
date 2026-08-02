@@ -2054,3 +2054,64 @@ Implementasi sistem Rank & Level resmi BahasaCerdas sesuai desain founder (Sumbe
 4. GameRoom migration SQL via Supabase dashboard
 5. Aset audio resmi rank-up (placeholder WebAudio siap diganti)
 6. Render frame/border rank di UI avatar/profil
+
+---
+
+## Phase SPRINT 7 — 4 Permintaan Founder: Shuffle Soal, No. Absensi, Hapus Kiriman, Preview Bank Soal (Aug 2, 2026)
+
+### Goal
+Empat permintaan founder: (1) acak posisi jawaban benar soal game + tambah soal baru variatif (idealnya semua game); (2) field No. Absensi untuk siswa; (3) guru bisa hapus materi/soal yang sudah dikirim ke kelas; (4) guru bisa preview bank soal sebelum kirim.
+
+### 1 — Shuffle Jawaban + Soal Baru (Game)
+- **`lib/game/shuffle-options.ts`** (baru): `shuffleOptions(opsi, jawaban)` → `{ opsi, jawaban }` remap (Fisher-Yates + index remap jawaban), alias `shuffleKatastraQuestion<T>` untuk bentuk katastra.
+- **Dipasang server-side** (klien menerima `jawaban` — harus shuffle di server, bukan client):
+  - `app/api/game/menara/route.ts` — semua game solo (BenarSalah, IramaKata, LariKata, TebakKata, SusunKata, KataPlayGame, MenaraCerdas) fetch endpoint ini; map `pickRampedQuestions(...)`, strip `lvl`, shuffle.
+  - `app/api/game/tantang/route.ts` — shuffle di dalam snapshot `gameQuestion.createMany` sebelum `correctAnswer: String(jawaban)`.
+  - `app/api/katastra/questions/route.ts` — kedua jalur (grade eksplisit + `buildMixedQuestions`) di-map dengan `shuffleKatastraQuestion`.
+- **Soal baru**: +50 soal di `lib/game/question-bank.ts` (bank = **142 soal**, seksi `// BANK VARIASI 2026`); +18 SD/+12 SMP/+10 SMA di QUESTIONS katastra (setelah dedupe bank katastra = **255 unik**).
+- **QA keseimbangan bank**: `scripts/rebalance-bank-options.ts` (one-shot, sudah dijalankan) — normalisasi opsi duplikat lowercase (`(salah)`), dedupe teks soal (`(variasi N)`), rotasi posisi jawaban agar tidak ada posisi >35%. Distribusi akhir: index0=27%, index1=35%, index2=20%, index3=19%.
+- **QA dedupe katastra**: `scripts/dedupe-katastra-bank.ts` (one-shot, sudah dijalankan) — hapus 35 baris duplikat (tambahan baru bertabrakan dengan soal lama), 290 → 255 unik.
+- **Test**: `scripts/test-game-question-shuffle.ts` + package `"test:game-question-shuffle"` — **24/24 lulus** (jawaban valid, 0 opsi duplikat, tidak ada posisi >50%, 0 soal duplikat).
+
+### 2 — No. Absensi
+- `prisma/schema.prisma` `model Profile` + `noAbsen String?` (setelah `nisn`).
+- Migration idempotent: `prisma/migrations/manual/2026-08-02_no_absen.sql` (`ADD COLUMN IF NOT EXISTS "noAbsen" TEXT`) — **BELUM diterapkan ke Supabase, jalankan di SQL Editor**.
+- `app/api/user/profile/route.ts` PATCH — destructure + tulis `noAbsen`; `/api/user/me` auto-spread profile.
+- `app/(dashboard)/murid/profile/page.tsx` — field "No. Absensi" (cth: 17) di grid berdampingan Provinsi.
+- `app/api/guru/siswa/[id]/route.ts` (baru) PATCH — guru-only, target MURID, cek `groupMemberships` ∩ kelas guru, upsert profile `noAbsen`/`nisn`.
+- `app/api/guru/siswa/route.ts` — select + `noAbsen`/`nisn`.
+- `app/(dashboard)/guru/data-siswa/page.tsx` — badge `# noAbsen` + input inline + Simpan (PATCH `/api/guru/siswa/{id}`).
+
+### 3 — Hapus Materi/Soal yang Sudah Dikirim
+- `app/api/guru/penugasan/[id]/route.ts` + DELETE — role GURU/founder + owner check, `db.penugasan.delete` (cascade submission).
+- `app/api/guru/latihan/[id]/assignment/[assignId]/route.ts` (baru) DELETE — hapus QuizAnswer → QuizSubmission → QuizAssignment (guru pemilik quiz).
+- `app/api/guru/latihan/[id]/route.ts` GET — payload ClassStat + `assignId`.
+- UI: `app/(dashboard)/guru/tugas-murid/page.tsx` — tombol trash hover + konfirmasi; `app/(dashboard)/guru/bank-soal/[id]/page.tsx` — trash per baris kelas + konfirmasi.
+
+### 4 — Preview Bank Soal
+- `app/api/guru/bank-soal/preview/route.ts` (baru) GET — guru/admin/founder; param `tema`,`kelas`,`jumlah`,`difficulty`; read-only (tanpa bump `usedCount`, tanpa buat assignment); `DIFFICULTY_MAP MUDAH/SEDANG/SULIT`.
+- `app/(dashboard)/guru/bank-soal/page.tsx` — tombol "Lihat Soal" di modal kirim (antara Batal dan Kirim) → Preview Modal (`max-w-2xl`, daftar soal bernomor, opsi benar disorot emerald + Check, `Pembahasan:`, tombol "Tutup" / "Kirim Sekarang").
+
+### Verifikasi
+| Check | Hasil |
+|-------|-------|
+| `npm run test:game-question-shuffle` | ✅ 24/24 |
+| `npm run test:gamification-engine` | ✅ SEMUA LULUS |
+| `npx tsc --noEmit` | ✅ 0 errors (setelah `npx prisma generate`) |
+| ESLint (12 file API + 5 file UI) | ✅ 0 errors |
+| `npm run build` (dummy env) | ✅ 338 pages, 0 errors |
+| Bank distribusi | ✅ index 27/35/20/19% (≤35%, tidak dominan) |
+| Katastra | ✅ 255 unik, 0 duplikat |
+
+### Catatan
+- Fix JSX: `murid/profile/page.tsx` sempat dobel field Kelas + stray div (TS1005) — sudah dibetulkan jadi grid "No. Absensi | Provinsi".
+- Prisma client harus di-`generate` setelah ubah schema (error `noAbsen` di select/`members` itu stale client).
+- `(variasi N)` di beberapa stem soal adalah hasil dedupe rebalance — fungsi benar, bisa dipoles manual bila mau.
+- `scripts/rebalance-bank-options.ts` & `scripts/dedupe-katastra-bank.ts` sengaja dipertahankan (one-shot, berguna bila bank ditambah lagi).
+
+### Remaining
+1. **Apply `2026-08-02_no_absen.sql` di Supabase SQL Editor** (PRODUCTION + PREVIEW) — satu-satunya langkah DB yang belum.
+2. UKBI Guru → 150 (menulis 8 + berbicara 7 constructed response)
+3. TKA UTBK/Guru enrichment 30 → 150
+4. Game server revival (VPS mati)
+5. GameRoom migration SQL via Supabase dashboard

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ClipboardList, ArrowLeft, FileText, CheckCircle, Clock, Loader2, Award } from "lucide-react";
+import { ClipboardList, ArrowLeft, FileText, CheckCircle, Clock, Loader2, Award, Trash2 } from "lucide-react";
 
 interface PenugasanRow {
   id: string; judul: string; jenis: string; unitTitle: string; groupName: string;
@@ -30,6 +30,18 @@ export default function TugasMuridPage() {
   const [murid, setMurid] = useState<MuridRow[]>([]);
   const [detailLoading, setDetailLoading] = useState(false);
   const [grade, setGrade] = useState<Record<string, { nilai: string; catatan: string; saving?: boolean; done?: boolean }>>({});
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+
+  const hapusTugas = async (p: PenugasanRow) => {
+    if (!window.confirm(`Hapus "${p.judul}" dari kelas ${p.groupName}? Pengerjaan murid yang sudah masuk akan ikut terhapus.`)) return;
+    setDeletingId(p.id);
+    try {
+      const res = await fetch(`/api/guru/penugasan/${p.id}`, { method: "DELETE" });
+      if (res.ok) setList(prev => prev.filter(x => x.id !== p.id));
+    } finally {
+      setDeletingId(null);
+    }
+  };
 
   useEffect(() => {
     fetch("/api/guru/penugasan").then(r => r.json()).then(d => setList(d.data || [])).catch(() => {}).finally(() => setLoading(false));
@@ -156,23 +168,33 @@ export default function TugasMuridPage() {
       ) : (
         <div className="space-y-3">
           {list.map(p => (
-            <button key={p.id} onClick={() => openDetail(p)} className="w-full text-left bg-white rounded-2xl border border-slate-100 p-4 hover:border-emerald-200 transition-colors">
-              <div className="flex items-start justify-between mb-1.5">
-                <h3 className="font-bold text-sm text-slate-900 flex-1 min-w-0 truncate mr-2">{p.judul}</h3>
-                <span className={`text-[9px] font-semibold px-2 py-0.5 rounded-full shrink-0 ${JENIS_COLOR[p.jenis] || JENIS_COLOR.MATERI}`}>
-                  {JENIS_LABEL[p.jenis] || "TUGAS"}
-                </span>
-              </div>
-              <p className="text-xs text-slate-500 mb-2">{p.groupName}</p>
-              <div className="flex items-center gap-3 text-[11px] text-slate-400">
-                <span className="flex items-center gap-1"><CheckCircle size={12} /> {p.selesai}/{p.totalMurid} selesai</span>
-                {(p.jenis === "MATERI" || p.jenis === "PRAKTIK") && p.praktikMasuk > 0 && (
-                  <span className={`flex items-center gap-1 ${p.praktikBelumDinilai > 0 ? "text-amber-600 font-semibold" : ""}`}>
-                    <FileText size={12} /> {p.praktikBelumDinilai > 0 ? `${p.praktikBelumDinilai} praktik perlu dinilai` : "praktik dinilai"}
+            <div key={p.id} className="group relative">
+              <button onClick={() => openDetail(p)} className="w-full text-left bg-white rounded-2xl border border-slate-100 p-4 hover:border-emerald-200 transition-colors">
+                <div className="flex items-start justify-between mb-1.5">
+                  <h3 className="font-bold text-sm text-slate-900 flex-1 min-w-0 truncate mr-2">{p.judul}</h3>
+                  <span className={`text-[9px] font-semibold px-2 py-0.5 rounded-full shrink-0 ${JENIS_COLOR[p.jenis] || JENIS_COLOR.MATERI}`}>
+                    {JENIS_LABEL[p.jenis] || "TUGAS"}
                   </span>
-                )}
-              </div>
-            </button>
+                </div>
+                <p className="text-xs text-slate-500 mb-2">{p.groupName}</p>
+                <div className="flex items-center gap-3 text-[11px] text-slate-400">
+                  <span className="flex items-center gap-1"><CheckCircle size={12} /> {p.selesai}/{p.totalMurid} selesai</span>
+                  {(p.jenis === "MATERI" || p.jenis === "PRAKTIK") && p.praktikMasuk > 0 && (
+                    <span className={`flex items-center gap-1 ${p.praktikBelumDinilai > 0 ? "text-amber-600 font-semibold" : ""}`}>
+                      <FileText size={12} /> {p.praktikBelumDinilai > 0 ? `${p.praktikBelumDinilai} praktik perlu dinilai` : "praktik dinilai"}
+                    </span>
+                  )}
+                </div>
+              </button>
+              <button
+                onClick={() => hapusTugas(p)}
+                disabled={deletingId === p.id}
+                title="Hapus tugas terkirim"
+                className="absolute top-3 right-3 w-8 h-8 rounded-lg flex items-center justify-center text-slate-300 hover:text-red-600 hover:bg-red-50 transition-colors opacity-0 group-hover:opacity-100 disabled:opacity-40"
+              >
+                {deletingId === p.id ? <Loader2 size={14} className="animate-spin" /> : <Trash2 size={14} />}
+              </button>
+            </div>
           ))}
         </div>
       )}

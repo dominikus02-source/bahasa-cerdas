@@ -154,6 +154,7 @@
     "test:no-emoji-icons": "tsx scripts/test-no-emoji-icons.ts",
     "test:avatar-unlock": "tsx scripts/test-avatar-unlock.ts",
     "test:game-question-quality": "tsx scripts/test-game-question-quality.ts",
+    "test:game-question-shuffle": "npx tsx scripts/test-game-question-shuffle.ts",
     "seed:gamification:dry-run": "npx tsx scripts/seed-gamification-data.ts",
     "seed:gamification": "npx tsx scripts/seed-gamification-data.ts --execute",
     "test:gamification-engine": "npx tsx scripts/test-gamification-engine.ts",

@@ -107,6 +107,7 @@ export async function GET(
 
       return {
         groupId: a.groupId,
+        assignId: a.id,
         groupName: group?.name || "Unknown",
         totalSiswa,
         avgScore,

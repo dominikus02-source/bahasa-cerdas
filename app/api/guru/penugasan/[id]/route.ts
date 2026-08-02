@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { getUser } from "@/lib/supabase/server";
-
 // One assignment + every enrolled student's submission (for the teacher's review).
 export async function GET(_req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -62,6 +61,34 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
     });
   } catch (error) {
     console.error("GET /api/guru/penugasan/[id] error:", error);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  }
+}
+
+// Hapus tugas materi/latihan/kuis/praktik yang sudah dikirim ke kelas.
+// Hanya guru pemilik tugas (atau founder) yang boleh — murid yang sudah
+// mengerjakan ikut terhapus (submission cascade lewat relasi DB).
+export async function DELETE(_req: Request, { params }: { params: Promise<{ id: string }> }) {
+  try {
+    const user = await getUser();
+    if (!user || (user.role !== "GURU" && !user.isFounder)) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    const { id } = await params;
+
+    const penugasan = await db.penugasan.findUnique({
+      where: { id },
+      select: { id: true, group: { select: { teacherId: true } } },
+    });
+    if (!penugasan) return NextResponse.json({ error: "Tugas tidak ditemukan" }, { status: 404 });
+    if (penugasan.group.teacherId !== user.id && user.role !== "ADMIN" && !user.isFounder) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+
+    await db.penugasan.delete({ where: { id } });
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error("DELETE /api/guru/penugasan/[id] error:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

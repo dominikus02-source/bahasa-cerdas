@@ -63,6 +63,33 @@ export default function BankSoalPage() {
   const [success, setSuccess] = useState<string | null>(null);
   const [latihans, setLatihans] = useState<LatihanItem[]>([]);
   const [latihanLoading, setLatihanLoading] = useState(true);
+  const [preview, setPreview] = useState<{
+    tema: string;
+    kelas: string;
+    totalAvailable: number;
+    soal: { id: string; nomor: number; text: string; options: string[]; correctAnswer: string | null; explanation: string | null; difficulty: string | null }[];
+  } | null>(null);
+  const [previewLoading, setPreviewLoading] = useState(false);
+
+  const handlePreview = async () => {
+    if (!selectedTheme || !sendKelas) return;
+    setPreviewLoading(true);
+    try {
+      const params = new URLSearchParams({
+        tema: selectedTheme.name,
+        kelas: sendKelas,
+        jumlah: String(sendJumlah),
+      });
+      if (sendDifficulty) params.set("difficulty", sendDifficulty);
+      const res = await fetch(`/api/guru/bank-soal/preview?${params.toString()}`);
+      const data = await res.json();
+      if (data.success) setPreview(data);
+      else setSuccess(`❌ ${data.error || "Gagal memuat preview"}`);
+    } catch {
+      setSuccess("❌ Gagal menghubungi server");
+    }
+    setPreviewLoading(false);
+  };
 
   const fetchLatihans = useCallback(async () => {
     try {
@@ -403,6 +430,15 @@ export default function BankSoalPage() {
             <div className="flex gap-2 pt-2">
               <Button variant="outline" onClick={() => setSelectedTheme(null)} className="flex-1">Batal</Button>
               <Button
+                variant="outline"
+                onClick={handlePreview}
+                disabled={previewLoading || !sendKelas}
+                className="flex-1"
+              >
+                {previewLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <BookOpen size={16} className="mr-1" />}
+                Lihat Soal
+              </Button>
+              <Button
                 onClick={handleSend}
                 disabled={sending || !sendKelas || selectedGroups.length === 0}
                 className="flex-1 bg-emerald-600"
@@ -413,6 +449,68 @@ export default function BankSoalPage() {
             </div>
           </div>);
         })()}
+      </Modal>
+
+      {/* Preview Modal */}
+      <Modal isOpen={!!preview} onClose={() => setPreview(null)} title="Lihat Soal" className="max-w-2xl">
+        {preview && (
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <p className="text-sm font-semibold text-gray-900">
+                {preview.tema} · Kelas {preview.kelas}
+              </p>
+              <Badge className="bg-emerald-50 text-emerald-700 border border-emerald-100">
+                {preview.soal.length} soal dari {preview.totalAvailable} tersedia
+              </Badge>
+            </div>
+            <div className="max-h-[50vh] overflow-y-auto pr-1 space-y-3">
+              {preview.soal.map(s => (
+                <div key={s.id} className="p-3 rounded-xl border border-gray-100">
+                  <p className="text-sm font-medium text-gray-900">
+                    <span className="text-gray-400 mr-1.5">{s.nomor}.</span>
+                    {s.text}
+                    {s.difficulty && (
+                      <span className="ml-2 text-[10px] font-semibold text-gray-400 uppercase">{s.difficulty}</span>
+                    )}
+                  </p>
+                  <div className="mt-2 space-y-1">
+                    {s.options.map((opt, oi) => {
+                      const isCorrect = String(s.correctAnswer) === String(oi);
+                      return (
+                        <div
+                          key={oi}
+                          className={`flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-xs ${
+                            isCorrect ? "bg-emerald-50 text-emerald-800 font-semibold" : "bg-gray-50 text-gray-600"
+                          }`}
+                        >
+                          {isCorrect ? <Check size={12} className="text-emerald-600 shrink-0" /> : <span className="w-3 shrink-0" />}
+                          <span className="truncate">{opt}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                  {s.explanation && (
+                    <p className="mt-2 text-[11px] text-gray-500 border-t border-gray-50 pt-1.5">
+                      <span className="font-semibold text-gray-600">Pembahasan:</span> {s.explanation}
+                    </p>
+                  )}
+                </div>
+              ))}
+            </div>
+            <div className="flex gap-2 pt-1">
+              <Button variant="outline" onClick={() => setPreview(null)} className="flex-1">
+                Tutup
+              </Button>
+              <Button
+                onClick={() => { setPreview(null); setSelectedTheme(null); }}
+                disabled={!sendKelas || selectedGroups.length === 0}
+                className="flex-1 bg-emerald-600"
+              >
+                <Send size={16} className="mr-1" /> Kirim Sekarang
+              </Button>
+            </div>
+          </div>
+        )}
       </Modal>
     </div>
   );

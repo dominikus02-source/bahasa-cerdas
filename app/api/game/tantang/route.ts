@@ -18,6 +18,7 @@ import { randomUUID } from "crypto";
 import { getUser } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 import { harvestJalurQuestions, pickRampedQuestions } from "@/lib/game/harvest";
+import { shuffleOptions } from "@/lib/game/shuffle-options";
 
 export const dynamic = "force-dynamic";
 
@@ -172,14 +173,17 @@ export async function POST(req: NextRequest) {
         select: { id: true },
       }),
       db.gameQuestion.createMany({
-        data: soal.map((q, i) => ({
-          gameRoomId: roomId,
-          text: q.soal,
-          options: q.opsi,
-          correctAnswer: String(q.jawaban),
-          explanation: q.penjelasan || null,
-          orderIndex: i,
-        })),
+        data: soal.map((q, i) => {
+          const acak = shuffleOptions(q.opsi, q.jawaban);
+          return {
+            gameRoomId: roomId,
+            text: q.soal,
+            options: acak.opsi,
+            correctAnswer: String(acak.jawaban),
+            explanation: q.penjelasan || null,
+            orderIndex: i,
+          };
+        }),
       }),
       db.gameSession.createMany({
         data: [

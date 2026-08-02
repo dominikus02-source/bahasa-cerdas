@@ -317,6 +317,7 @@ model Profile {
   nip        String?
   nuptk      String?
   nisn       String?
+  noAbsen    String?
   school     String?
   city       String?
   province   String?

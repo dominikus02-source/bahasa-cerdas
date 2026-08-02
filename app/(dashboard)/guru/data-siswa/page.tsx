@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { Search, Users, ChevronRight } from "lucide-react";
+import { Search, Users, ChevronRight, Hash } from "lucide-react";
 import { levelFromXp } from "@/lib/gamification/levels";
 import { rankFromLevel } from "@/lib/gamification/ranks";
 import { RankChip } from "@/components/gamification/RankChip";
@@ -20,6 +20,8 @@ export default function DataSiswaPage() {
   const [siswa, setSiswa] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const [absenDraft, setAbsenDraft] = useState<Record<string, string>>({});
+  const [savingAbsen, setSavingAbsen] = useState<string | null>(null);
 
   useEffect(() => {
     fetch("/api/guru/siswa")
@@ -28,6 +30,24 @@ export default function DataSiswaPage() {
       .catch(() => {})
       .finally(() => setLoading(false));
   }, []);
+
+  const saveAbsen = async (s: any) => {
+    const value = (absenDraft[s.id] ?? s.profile?.noAbsen ?? "").trim();
+    setSavingAbsen(s.id);
+    try {
+      const res = await fetch(`/api/guru/siswa/${s.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ noAbsen: value }),
+      });
+      if (!res.ok) return;
+      setSiswa((prev) =>
+        prev.map((x) => (x.id === s.id ? { ...x, profile: { ...x.profile, noAbsen: value } } : x))
+      );
+    } finally {
+      setSavingAbsen(null);
+    }
+  };
 
   const filtered = siswa.filter((s) =>
     s.fullName.toLowerCase().includes(search.toLowerCase())
@@ -72,11 +92,31 @@ export default function DataSiswaPage() {
                   <div className="flex items-center gap-2">
                     <p className="font-semibold">{s.fullName}</p>
                     <RankChip rank={rankFromLevel(levelFromXp(s.xp || 0))} size={12} showTitle={false} compact />
+                    {s.profile?.noAbsen && (
+                      <span className="inline-flex items-center gap-0.5 text-[11px] font-semibold text-violet-700 bg-violet-50 border border-violet-100 rounded-full px-2 py-0.5">
+                        <Hash size={10} /> {s.profile.noAbsen}
+                      </span>
+                    )}
                   </div>
                   <div className="flex items-center gap-4 mt-1 text-xs text-gray-500">
                     <span>Level {s.level || 1}</span>
                     <span>🔥 {s.streak || 0} streak</span>
                     <span>Terakhir: {s.lastActiveAt ? new Date(s.lastActiveAt).toLocaleDateString("id") : "-"}</span>
+                  </div>
+                  <div className="flex items-center gap-2 mt-2">
+                    <input
+                      value={absenDraft[s.id] ?? s.profile?.noAbsen ?? ""}
+                      onChange={(e) => setAbsenDraft((d) => ({ ...d, [s.id]: e.target.value }))}
+                      placeholder="No. absen"
+                      className="w-24 rounded-md border border-gray-200 px-2 py-1 text-xs focus:outline-none focus:ring-2 focus:ring-violet-500"
+                    />
+                    <button
+                      onClick={() => saveAbsen(s)}
+                      disabled={savingAbsen === s.id}
+                      className="text-xs font-medium text-violet-600 hover:text-violet-700 disabled:opacity-50"
+                    >
+                      {savingAbsen === s.id ? "Simpan..." : "Simpan"}
+                    </button>
                   </div>
                 </div>
                 <div className="text-right">

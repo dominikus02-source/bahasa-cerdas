@@ -25,7 +25,7 @@ import UserName from "@/components/arena/UserName";
 interface UserData {
   id: string; fullName: string; nickname?: string | null; xp: number; level: number; streak: number;
   league: string; avatar?: string; coins: number; totalLikes: number; totalViews: number;
-  school?: string; city?: string; province?: string; grade?: string; bio?: string; email?: string;
+  school?: string; city?: string; province?: string; grade?: string; noAbsen?: string; bio?: string; email?: string;
   equippedFrame?: string | null; equippedNameColor?: string | null; equippedBadge?: string | null;
 }
 
@@ -137,7 +137,7 @@ export default function MuridProfilePage() {
     load();
   }, []);
 
-  const [settingsForm, setSettingsForm] = useState({ fullName: "", school: "", city: "", province: "", grade: "", bio: "" });
+  const [settingsForm, setSettingsForm] = useState({ fullName: "", school: "", city: "", province: "", grade: "", noAbsen: "", bio: "" });
   const [avatarSrc, setAvatarSrc] = useState<string | null>(null);
   const [savingSettings, setSavingSettings] = useState(false);
   const [settingsMessage, setSettingsMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
@@ -146,7 +146,7 @@ export default function MuridProfilePage() {
 
   const openSettings = () => {
     if (!user) return;
-    setSettingsForm({ fullName: user.fullName, school: user.school || "", city: user.city || "", province: user.province || "", grade: user.grade || "", bio: user.bio || "" });
+    setSettingsForm({ fullName: user.fullName, school: user.school || "", city: user.city || "", province: user.province || "", grade: user.grade || "", noAbsen: user.noAbsen || "", bio: user.bio || "" });
     setAvatarSrc(user.avatar || null);
     setSettingsMessage(null);
     // Selalu isi ulang dari nickname yang tersimpan — draft ini sebelumnya
@@ -601,8 +601,8 @@ export default function MuridProfilePage() {
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Kota</label>
-                  <Input value={settingsForm.city} onChange={e => setSettingsForm(p => ({ ...p, city: e.target.value }))} className="h-11 rounded-xl" />
+                  <label className="block text-sm font-medium text-gray-700 mb-1">No. Absensi</label>
+                  <Input value={settingsForm.noAbsen} onChange={e => setSettingsForm(p => ({ ...p, noAbsen: e.target.value }))} placeholder="cth: 17" className="h-11 rounded-xl" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Provinsi</label>

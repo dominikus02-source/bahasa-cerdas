@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import {
   ArrowLeft, Loader2, TrendingUp, Users, Send,
   BookOpen, Check, X, BarChart3, Target,
-  Trophy, ChevronDown, ChevronUp,
+  Trophy, ChevronDown, ChevronUp, Trash2,
 } from "lucide-react";
 
 type QuestionStat = {
@@ -27,6 +27,7 @@ type QuestionStat = {
 
 type ClassStat = {
   groupId: string;
+  assignId: string;
   groupName: string;
   totalSiswa: number;
   avgScore: number;
@@ -61,6 +62,18 @@ export default function LatihanDetailPage() {
   const [termudah, setTermudah] = useState<QuestionStat[]>([]);
   const [classStats, setClassStats] = useState<ClassStat[]>([]);
   const [expandedClass, setExpandedClass] = useState<string | null>(null);
+  const [deletingAssign, setDeletingAssign] = useState<string | null>(null);
+
+  const hapusKiriman = async (cs: ClassStat) => {
+    if (!window.confirm(`Hapus kiriman latihan dari kelas ${cs.groupName}? Pengerjaan murid yang sudah masuk akan ikut terhapus.`)) return;
+    setDeletingAssign(cs.assignId);
+    try {
+      const res = await fetch(`/api/guru/latihan/${id}/assignment/${cs.assignId}`, { method: "DELETE" });
+      if (res.ok) setClassStats(prev => prev.filter(x => x.assignId !== cs.assignId));
+    } finally {
+      setDeletingAssign(null);
+    }
+  };
 
   useEffect(() => {
     fetch(`/api/guru/latihan/${id}`)
@@ -251,6 +264,14 @@ export default function LatihanDetailPage() {
                       }`}>
                         {cs.tingkatKelulusan}% lulus
                       </Badge>
+                      <button
+                        onClick={(e) => { e.stopPropagation(); hapusKiriman(cs); }}
+                        disabled={deletingAssign === cs.assignId}
+                        title="Hapus kiriman dari kelas ini"
+                        className="w-8 h-8 rounded-lg flex items-center justify-center text-gray-300 hover:text-red-600 hover:bg-red-50 transition-colors disabled:opacity-40"
+                      >
+                        {deletingAssign === cs.assignId ? <Loader2 size={14} className="animate-spin" /> : <Trash2 size={14} />}
+                      </button>
                       {isExpanded ? <ChevronUp size={16} className="text-gray-400" /> : <ChevronDown size={16} className="text-gray-400" />}
                     </div>
                   </button>
