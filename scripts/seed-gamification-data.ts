@@ -8,8 +8,10 @@
  * Achievement: target aksi, reward XP + koin saat diklaim.
  */
 import { PrismaClient } from "@prisma/client";
+import { loadScriptEnv, requireDatabaseUrl } from "./_env";
 
-const db = new PrismaClient();
+loadScriptEnv();
+const db = new PrismaClient({ datasources: { db: { url: requireDatabaseUrl() } } });
 
 interface BadgeSeed {
   code: string;
