@@ -268,6 +268,20 @@ model User {
   pengumumanSubmissions PengumumanSubmission[]
   kuponDipakai         KuponPemakaian[]
 
+  // BC Arena Core Engine (universal gamification — PlayerProfile terpisah dari User)
+  playerProfile        PlayerProfile?
+  xpTransactions       XPTransaction[]
+  userBadges           UserBadge[]
+  userAchievements     UserAchievement[]
+
+  // Learning Loop Engine (Sprint 5 — aktivitas, skill, journey, rekomendasi, CTA, insight)
+  learningSkills        LearningSkill[]
+  playerActivities      PlayerActivity[]
+  learningJourney       LearningJourney[]
+  learningRecommendations LearningRecommendation[]
+  playerCTA             PlayerCTA?
+  learningInsights      LearningInsight[]
+
   // Admin quota audit logs where this user was the acting admin
   adminQuotaActions    AdminQuotaAuditLog[]   @relation("AdminActions")
   // Admin quota audit logs where this user was the target
@@ -1585,6 +1599,69 @@ enum LeagueType {
   DIAMOND
 }
 
+/// Rank universal BC Arena (setiap rank = 10 level, dihitung otomatis dari level).
+enum PlayerRank {
+  BRONZE
+  SILVER
+  GOLD
+  EMERALD
+  RUBY
+  SAPPHIRE
+  DIAMOND
+  MASTER
+  LEGEND
+}
+
+enum BadgeRarity {
+  BRONZE
+  SILVER
+  GOLD
+  LEGENDARY
+}
+
+/// Skill bahasa yang dilacak per user oleh Learning Loop Engine.
+enum LearningSkillType {
+  READING
+  WRITING
+  LISTENING
+  SPEAKING
+  GRAMMAR
+  VOCABULARY
+  LITERATURE
+}
+
+/// Jenis aktivitas yang direkam Learning Loop Engine.
+enum ActivityType {
+  LOGIN
+  JALUR_CERDAS
+  LESSON
+  KARYA
+  LIKE
+  COMMENT
+  QUIZ
+  SIMULASI_UKBI
+  SIMULASI_TKA
+  PENUGASAN
+  GAME
+  QUEST
+  ARTICLE
+  SHOP
+  LEAGUE
+  SOCIAL
+  AI
+}
+
+/// Jenis rekomendasi yang dibuat Learning Loop Engine.
+enum RecommendationType {
+  CONTINUE_UNIT
+  IMPROVE_SKILL
+  SOCIAL_SHARE
+  WRITE_KARYA
+  PRACTICE_QUIZ
+  TRY_ARENA
+  READ_ARTICLE
+}
+
 enum KompetensiType {
   UKBI
   UKBI_SIMULASI
@@ -2161,4 +2238,287 @@ model ArenaJuniorAkun {
   updatedAt DateTime @updatedAt
 
   @@index([dibuatOlehId])
+}
+
+// ════════════════════════════════════════════════════════════════════
+// BC ARENA CORE ENGINE — GAMIFICATION UNIVERSAL
+// ────────────────────────────────────────────────────────────────────
+// Fondasi sistem gamification yang dipakai seluruh fitur BahasaCerdas
+// (Jalur Cerdas, Arena, Karya, UKBI/TKA, Penugasan, AI, dll).
+//
+// SEMUA tabel di bawah ini baru (additive-only) — tidak menyentuh model
+// yang sudah ada, sehingga zero breaking changes terhadap fitur yang
+// sudah berjalan. Data XP/koin lama (User.xp, User.coins, XpLedger,
+// CoinTransaction) tetap dipakai fitur eksisting.
+//
+// Prinsip:
+//   - PlayerProfile adalah "kartu pemain" universal, terpisah dari User.
+//   - XP dicatat 1:1 ke XPTransaction (audit lengkap, idempotent).
+//   - Level/Rank dihitung otomatis dari totalXP (tidak pernah hardcode).
+//   - Badge & Achievement otomatis diberikan/dilacak lewat kondisi JSON.
+//   - Weekly season reset weeklyXP; rank/level/coin/badge tidak terpengaruh.
+// ════════════════════════════════════════════════════════════════════
+
+/// Profil pemain universal (terpisah dari User agar eksisting tidak berubah).
+model PlayerProfile {
+  id        String @id @default(cuid())
+  userId    String @unique
+
+  level     Int       @default(1)
+  totalXP   Int       @default(0)
+  currentRank PlayerRank @default(BRONZE)
+  coin      Int       @default(0)
+
+  /// XP terkumpul di minggu berjalan (direset tiap Senin 00:00 WIB).
+  weeklyXP  Int       @default(0)
+  /// Penanda minggu saat weeklyXP terakhir direset (format "2026-W31").
+  weeklyXPWeekKey String @default("")
+
+  /// XP terkumpul di season berjalan (season = periode kompetisi 4 mingguan).
+  seasonXP  Int       @default(0)
+  seasonId  String?
+  /// Periode season aktif ("2026-S1", "2026-S2", ...).
+  seasonPeriodKey String @default("")
+
+  /// Streak harian (login / aktivitas berturut-turut).
+  streak    Int       @default(0)
+  lastActiveAt DateTime?
+
+  avatar    String?
+  frame     String?
+  title     String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user             User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  xpTransactions   XPTransaction[]
+
+  @@index([totalXP])
+  @@index([weeklyXP])
+  @@index([seasonXP])
+  @@index([currentRank])
+}
+
+/// Ledger XP universal — SETIAP pemberian XP dicatat di sini (audit penuh).
+model XPTransaction {
+  id        String  @id @default(cuid())
+  userId    String
+  profileId String
+
+  /// Sumber XP: JALUR_CERDAS, ARENA, KARYA_SISWA, ARTIKEL, UKBI, TKA,
+  /// PENUGASAN, AI, GAME, DAILY_QUEST, BADGE, ACHIEVEMENT, SYSTEM.
+  source    String
+  amount    Int
+  /// Metadata tambahan (JSON bebas: { unitId, paketId, karyaId, ... }).
+  metadata  Json?
+  /// Referensi idempotency — kombinasi (userId, source, reference) unik,
+  /// sehingga XP tidak bisa digandakan oleh retry/klik ganda.
+  reference String?
+  createdAt DateTime @default(now())
+
+  user    User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  profile PlayerProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, source, reference])
+  @@index([userId, createdAt])
+  @@index([profileId, createdAt])
+  @@index([source])
+}
+
+/// Definisi badge (diseed, kondisi dalam JSON).
+model Badge {
+  id          String      @id @default(cuid())
+  code        String      @unique
+  name        String
+  icon        String
+  description String
+  /// JSON kondisi: { type: "TOTAL_XP"|"LEVEL"|"STREAK"|"WEEKLY_XP"|"SEASON_XP"|"COIN_BALANCE"|"TOTAL_KARYA"|"DAYS_ACTIVE"|"XP_SOURCE_TOTAL", target: N, source? }
+  condition   Json
+  rarity      BadgeRarity @default(BRONZE)
+  isActive    Boolean     @default(true)
+  createdAt   DateTime    @default(now())
+
+  users UserBadge[]
+
+  @@index([isActive])
+}
+
+/// Badge yang sudah diraih user.
+model UserBadge {
+  id        String   @id @default(cuid())
+  userId    String
+  badgeId   String
+  awardedAt DateTime @default(now())
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  badge Badge @relation(fields: [badgeId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, badgeId])
+  @@index([badgeId])
+}
+
+/// Definisi achievement (diseed).
+model Achievement {
+  id          String   @id @default(cuid())
+  code        String   @unique
+  name        String
+  icon        String
+  description String
+  target      Int
+  /// Reward saat achievement selesai & diklaim.
+  rewardXP    Int      @default(0)
+  rewardCoins Int      @default(0)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+
+  users UserAchievement[]
+
+  @@index([isActive])
+}
+
+/// Progress achievement per user (realtime, bisa diklaim).
+model UserAchievement {
+  id            String   @id @default(cuid())
+  userId        String
+  achievementId String
+  progress      Int      @default(0)
+  completed     Boolean  @default(false)
+  claimed       Boolean  @default(false)
+  claimedAt     DateTime?
+  updatedAt     DateTime @updatedAt
+
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  achievement Achievement @relation(fields: [achievementId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, achievementId])
+  @@index([achievementId])
+}
+
+/// Season mingguan untuk leaderboard weekly.
+model WeeklySeason {
+  id        String   @id @default(cuid())
+  weekKey   String   @unique // "2026-W31"
+  label     String
+  startsAt  DateTime
+  endsAt    DateTime
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+
+  @@index([isActive])
+}
+
+/// Skill bahasa per user (level 1-100, computed dari skill xp).
+/// Dipakai Learning Loop Engine untuk rekomendasi & CTA.
+model LearningSkill {
+  id        String            @id @default(cuid())
+  userId    String
+  skill     LearningSkillType
+  /// Level 1-100 (computed dari `xp` via skillLevelFromXp).
+  level     Int               @default(1)
+  /// Akumulasi XP skill.
+  xp        Int               @default(0)
+  updatedAt DateTime          @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, skill])
+  @@index([userId])
+}
+
+/// Log granular aktivitas belajar user — sumber Learning Journey, skill
+/// gain, personalisasi quest, dan insight mentor.
+model PlayerActivity {
+  id         String            @id @default(cuid())
+  userId     String
+  type       ActivityType
+  subtype    String?
+  skill      LearningSkillType?
+  skillDelta Int?
+  xp         Int               @default(0)
+  coin       Int               @default(0)
+  /// Metadata bebas (unitId, paketId, karyaId, ...).
+  meta       Json?
+  /// Referensi idempotency opsional (mis. "unit-<id>-selesai").
+  reference  String?
+  createdAt  DateTime          @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@index([userId, type])
+  @@index([type, createdAt])
+}
+
+/// Timeline belajar per hari (diagregasi untuk tampilan "Perjalanan Belajar").
+model LearningJourney {
+  id          String       @id @default(cuid())
+  userId      String
+  /// "2026-08-01" (WIB).
+  dayKey      String
+  type        ActivityType
+  title       String
+  description String?
+  icon        String?
+  meta        Json?
+  createdAt   DateTime     @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, dayKey])
+  @@index([userId, createdAt])
+}
+
+/// Rekomendasi belajar per user (aktif maksimal 3, kedaluwarsa per periode).
+model LearningRecommendation {
+  id          String             @id @default(cuid())
+  userId      String
+  type        RecommendationType
+  skill       LearningSkillType?
+  priority    Int                @default(50)
+  title       String
+  description String
+  ctaLabel    String
+  ctaHref     String
+  reason      String?
+  isActive    Boolean            @default(true)
+  expiresAt   DateTime?
+  createdAt   DateTime           @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, isActive])
+  @@index([userId, createdAt])
+}
+
+/// CTA "Aksi Berikutnya" — satu baris terbaik yang ditampilkan di semua
+/// layar completion supaya tidak ada dead end.
+model PlayerCTA {
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  ctaType     String
+  title       String
+  description String
+  ctaLabel    String
+  ctaHref     String
+  priority    Int      @default(50)
+  meta        Json?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+/// Insight harian berbasis aturan ("mentor") — cache agar tidak dihitung ulang.
+model LearningInsight {
+  id        String   @id @default(cuid())
+  userId    String
+  /// "2026-08-01" (WIB).
+  dayKey    String
+  insights  Json
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, dayKey])
 }
