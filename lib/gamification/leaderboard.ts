@@ -1,3 +1,4 @@
+import type { PlayerRank } from "@prisma/client";
 import { db } from "@/lib/db";
 import cache from "@/lib/redis";
 import { weekKey, seasonPeriodKey } from "@/lib/gamification/season";
@@ -19,12 +20,15 @@ export type LeaderboardScope = "GLOBAL" | "SCHOOL" | "CLASS" | "FRIENDS" | "PROV
 export type LeaderboardPeriod = "ALL_TIME" | "WEEKLY" | "SEASON";
 
 export interface LeaderboardEntry {
+  /** Posisi di papan (1, 2, 3, ...) — BUKAN rank pemain. */
   rank: number;
   userId: string;
   name: string;
   nickname: string | null;
   avatar: string | null;
   level: number;
+  /** Rank resmi pemain (BRONZE..LEGEND) — dipakai RankIcon/RankChip. */
+  playerRank: PlayerRank;
   rankLabel: string;
   rankTitle: string;
   rankColor: string;
@@ -35,6 +39,11 @@ export interface LeaderboardEntry {
 }
 
 const CACHE_TTL = 60; // detik
+
+// Dinaikkan setiap kali bentuk LeaderboardEntry berubah. Tanpa ini, entri lama
+// di Redis (tanpa field baru) masih disajikan sampai TTL habis — mis. RankIcon
+// jatuh ke fallback BRONZE untuk semua orang selama semenit setelah deploy.
+const CACHE_VERSION = "v2";
 
 function scoreField(period: LeaderboardPeriod): "totalXP" | "weeklyXP" | "seasonXP" {
   if (period === "WEEKLY") return "weeklyXP";
@@ -108,7 +117,7 @@ async function resolveScopeUserIds(params: LeaderboardParams): Promise<string[] 
 export async function getLeaderboard(params: LeaderboardParams): Promise<LeaderboardEntry[]> {
   const limit = Math.min(100, Math.max(1, params.limit ?? 20));
   const field = scoreField(params.period);
-  const cacheKey = `bca:lb:${params.scope}:${params.period}:${params.userId ?? "x"}:${params.groupId ?? "x"}:${params.province ?? "x"}`;
+  const cacheKey = `bca:lb:${CACHE_VERSION}:${params.scope}:${params.period}:${params.userId ?? "x"}:${params.groupId ?? "x"}:${params.province ?? "x"}`;
 
   const cached = await cache.get<LeaderboardEntry[]>(cacheKey);
   if (cached) return cached;
@@ -135,6 +144,7 @@ export async function getLeaderboard(params: LeaderboardParams): Promise<Leaderb
         nickname: p.user.nickname,
         avatar: p.user.avatar,
         level: p.level,
+        playerRank: p.currentRank,
         rankLabel: meta?.label ?? p.currentRank,
         rankTitle: meta?.title ?? p.currentRank,
         rankColor: meta?.color ?? "#64748b",
@@ -161,6 +171,7 @@ export async function getLeaderboard(params: LeaderboardParams): Promise<Leaderb
         nickname: me.user.nickname,
         avatar: me.user.avatar,
         level: me.level,
+        playerRank: me.currentRank,
         rankLabel: meta?.label ?? me.currentRank,
         rankTitle: meta?.title ?? me.currentRank,
         rankColor: meta?.color ?? "#64748b",

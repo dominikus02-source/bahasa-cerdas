@@ -2,15 +2,16 @@
 
 import { useState } from "react";
 import { Award, Target, Trophy } from "lucide-react";
-import { RankCard } from "./rank-card";
 import { BadgeGrid } from "./badge-grid";
 import { AchievementGrid } from "./achievement-grid";
-import { usePlayerProfile } from "./player-context";
+import { usePlayer } from "./player-context";
+import { PlayerCard } from "@/components/gamification/PlayerCard";
 
 type Tab = "ringkasan" | "badge" | "pencapaian";
 
 export function ProfileTabs() {
-  const profile = usePlayerProfile();
+  const { profile: response } = usePlayer();
+  const profile = response?.profile ?? null;
   const [tab, setTab] = useState<Tab>("ringkasan");
 
   return (
@@ -23,7 +24,13 @@ export function ProfileTabs() {
 
       {tab === "ringkasan" && (
         <div className="space-y-4">
-          {profile && <RankCard profile={profile} />}
+          {profile && (
+            <PlayerCard
+              profile={profile}
+              badges={response?.summary.badges}
+              achievements={response?.summary.achievements}
+            />
+          )}
           <BadgeGrid limit={9} />
           <AchievementGrid limit={5} />
         </div>

@@ -35,13 +35,17 @@ export interface PlayerProfileResponse {
 }
 
 export interface LeaderboardEntryView {
+  /** Posisi di papan (1, 2, 3, ...) — BUKAN rank pemain. */
   rank: number;
   userId: string;
   name: string;
   nickname: string | null;
   avatar: string | null;
   level: number;
+  /** Rank resmi pemain (BRONZE..LEGEND) — dipakai RankIcon/RankChip. */
+  playerRank: string;
   rankLabel: string;
+  rankTitle: string;
   rankColor: string;
   score: number;
   weeklyXp: number;

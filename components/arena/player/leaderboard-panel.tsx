@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Trophy } from "lucide-react";
 import { GlassCard, InitialAvatar, formatId } from "./ui";
+import { RankIcon } from "@/components/gamification/RankIcon";
 import type { LeaderboardEntryView } from "@/lib/gamification/client-types";
 
 type Period = "ALL_TIME" | "WEEKLY" | "SEASON";
@@ -105,10 +106,20 @@ export function LeaderboardPanel({ compact = false }: { compact?: boolean }) {
                 transition={{ delay: i * 0.1 }}
                 className="flex w-24 flex-col items-center"
               >
-                <div className={`mb-1 flex h-9 w-9 items-center justify-center rounded-full text-sm font-black ${e.isMe ? "ring-2 ring-[var(--px-gold)]" : ""}`}>
+                <div className={`relative mb-1 flex h-9 w-9 items-center justify-center rounded-full text-sm font-black ${e.isMe ? "ring-2 ring-[var(--px-gold)]" : ""}`}>
                   {e.avatar ? <img src={e.avatar} alt={e.name} className="h-9 w-9 rounded-full object-cover" /> : <InitialAvatar name={e.name} size={36} />}
+                  {e.playerRank && (
+                    <span className="absolute -bottom-1 -right-1.5">
+                      <RankIcon rank={e.playerRank} size={18} glow={pos === 1} />
+                    </span>
+                  )}
                 </div>
                 <p className="mb-1 w-full truncate text-center text-[10px] font-bold text-[var(--px-text)]">{e.name.split(" ")[0]}</p>
+                {e.rankTitle && (
+                  <p className="mb-1 w-full truncate text-center text-[8px] font-bold" style={{ color: e.rankColor }}>
+                    {e.rankTitle}
+                  </p>
+                )}
                 <div className={`flex w-full flex-col items-center rounded-t-xl pt-2 ${pos === 1 ? "px-podium-1" : pos === 2 ? "px-podium-2" : "px-podium-3"}`} style={{ height: heights[i] }}>
                   <span className="text-xl font-black leading-none">{pos}</span>
                   <span className="mt-1 text-[9px] font-bold opacity-80">{formatId(e.score)}</span>
@@ -129,9 +140,13 @@ export function LeaderboardPanel({ compact = false }: { compact?: boolean }) {
               ) : (
                 <InitialAvatar name={e.name} size={28} />
               )}
+              {e.playerRank && <RankIcon rank={e.playerRank} size={20} />}
               <span className="min-w-0 flex-1 truncate text-sm font-semibold text-[var(--px-text)]">
                 {e.name}
                 {e.isMe && <span className="ml-1.5 text-[10px] font-bold text-[var(--px-gold)]">Kamu</span>}
+                <span className="ml-1.5 text-[10px] font-bold" style={{ color: e.rankColor }}>
+                  Lv {e.level}
+                </span>
               </span>
               <span className="text-xs font-extrabold text-[var(--px-gold)]">{formatId(e.score)}</span>
             </div>
