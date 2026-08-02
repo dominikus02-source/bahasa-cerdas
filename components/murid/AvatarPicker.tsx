@@ -30,6 +30,11 @@ export function AvatarPicker({
   const done = completedUnits ?? 0;
   const next = nextLockedAvatar(done);
 
+  // Foto unggahan sendiri tidak ada di katalog, jadi tanpa ubin khusus ini
+  // murid tidak melihat bukti apa pun bahwa fotonya berhasil masuk — tidak ada
+  // preset yang tampak terpilih, dan foto barunya tidak muncul di mana-mana.
+  const fotoSendiri = value && !AVATARS.some((a) => a.src === value) ? value : null;
+
   return (
     <div>
       <div className="flex items-baseline justify-between mb-3">
@@ -38,6 +43,25 @@ export function AvatarPicker({
           <p className="text-xs text-gray-500">{done} materi selesai</p>
         )}
       </div>
+
+      {fotoSendiri && (
+        <div className="mb-3 flex items-center gap-3 rounded-2xl border border-violet-200 bg-violet-50/60 p-3">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={fotoSendiri}
+            alt="Foto profil kamu"
+            className="h-16 w-16 shrink-0 rounded-2xl border-2 border-violet-600 object-cover ring-2 ring-violet-200"
+          />
+          <div className="min-w-0">
+            <p className="flex items-center gap-1.5 text-sm font-semibold text-violet-900">
+              <Check className="h-4 w-4 text-violet-600" /> Foto kamu sedang dipakai
+            </p>
+            <p className="mt-0.5 text-xs text-gray-500">
+              Pilih salah satu avatar di bawah kalau mau menggantinya.
+            </p>
+          </div>
+        </div>
+      )}
 
       <div className="grid grid-cols-4 sm:grid-cols-5 gap-3">
         {AVATARS.map((a) => {

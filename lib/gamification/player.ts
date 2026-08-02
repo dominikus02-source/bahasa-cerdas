@@ -37,11 +37,13 @@ export interface PlayerProfileView {
 
 /** Ambil profil pemain; buat kalau belum ada; reset weekly/season secara lazy. */
 export async function getPlayerProfile(userId: string): Promise<PlayerProfileView> {
-  const profile = await db.playerProfile.upsert({
-    where: { userId },
-    update: {},
-    create: { userId },
-  });
+  const [profile, user] = await Promise.all([
+    db.playerProfile.upsert({ where: { userId }, update: {}, create: { userId } }),
+    // Foto asli murid ada di User.avatar. PlayerProfile.avatar hanya penimpa
+    // KOSMETIK (dari toko koin) dan tidak pernah diisi saat profil dibuat —
+    // membacanya sendirian membuat semua orang kehilangan fotonya.
+    db.user.findUnique({ where: { id: userId }, select: { avatar: true } }),
+  ]);
 
   const wk = weekKey();
   const sp = seasonPeriodKey();
@@ -86,7 +88,7 @@ export async function getPlayerProfile(userId: string): Promise<PlayerProfileVie
     seasonXp: final.seasonXP,
     seasonLabel: seasonLabel(sp),
     streak: final.streak,
-    avatar: final.avatar,
+    avatar: final.avatar ?? user?.avatar ?? null,
     frame: final.frame,
     title: final.title,
     levelProgress,
