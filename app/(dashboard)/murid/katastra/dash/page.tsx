@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { Zap, Clock, Star, Flame, Trophy, ArrowLeft, RefreshCw, Home, Sparkles } from "lucide-react";
+import { RankChip } from "@/components/gamification/RankChip";
 
 interface Question {
   text: string;
@@ -208,7 +209,7 @@ export default function WordDashPage() {
               )}
               <div className="flex justify-center gap-4 mt-2 text-xs text-violet-200/60">
                 <span>Rentetan: {result.streak}</span>
-                <span>{result.league}</span>
+                {result.rank && <RankChip rank={result.rank} size={14} showTitle={false} compact />}
               </div>
             </div>
           )}

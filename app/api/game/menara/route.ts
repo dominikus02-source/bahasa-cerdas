@@ -10,7 +10,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getUser } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
-import { calcLevel, calcLeagueFromXP } from "@/lib/xp";
 import { harvestJalurQuestions, pickRampedQuestions } from "@/lib/game/harvest";
 import { awardXp } from "@/lib/award-xp";
 import { rateLimitRoute } from "@/lib/rate-limit";
@@ -57,7 +56,6 @@ export async function POST(req: NextRequest) {
   const boosted = hasil.boosted;
   const newXp = hasil.totalXp;
   const newLevel = hasil.levelBaru;
-  const newLeague = hasil.liga;
 
   return NextResponse.json({
     xpEarned,

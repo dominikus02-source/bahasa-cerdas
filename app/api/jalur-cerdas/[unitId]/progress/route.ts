@@ -2,7 +2,6 @@ import { NextRequest, NextResponse, after } from "next/server"
 import { db } from "@/lib/db"
 import { trackQuestProgress } from "@/lib/coins"
 import { getUser } from "@/lib/supabase/server"
-import { calcLevel, calcLeagueFromXP } from "@/lib/xp"
 import { awardXp } from "@/lib/award-xp"
 import { recordActivity } from "@/lib/learning-loop/activity"
 import { detectUnitSkill } from "@/lib/learning-loop/skills"
@@ -103,14 +102,9 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ un
         data: { userId: user.id, amount: COIN_REWARD, reason: "SELESAI_BELAJAR", reference: unitId },
       })
     } catch { /* progress and coins already saved */ }
-    const updatedUser = await db.user.findUnique({ where: { id: user.id }, select: { xp: true } })
-    const finalXp = updatedUser?.xp ?? user.xp + XP_REWARD
-    const jcLevel = calcLevel(finalXp)
-    const jcLeague = calcLeagueFromXP(finalXp)
-    await db.user.update({
-      where: { id: user.id },
-      data: { level: jcLevel, league: jcLeague },
-    })
+    // Level & rank TIDAK dihitung ulang di sini. awardXp() sudah menuliskannya
+    // dari kurva resmi di transaksi yang sama; blok lama di sini menghitung
+    // ulang dengan rumus usang (xp/500) dan menimpa hasil yang benar.
 
     // Learning Loop: catat aktivitas + skill, bangun rekomendasi, dan refresh
     // aksi berikutnya. Hanya berjalan pada penyelesaian pertama (existing yang

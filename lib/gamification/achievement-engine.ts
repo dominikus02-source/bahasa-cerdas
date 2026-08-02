@@ -1,5 +1,5 @@
 import { db } from "@/lib/db";
-import { addXp } from "@/lib/gamification/xp-engine";
+import { awardXp } from "@/lib/award-xp";
 import { addCoin } from "@/lib/gamification/coin-engine";
 import type { Achievement } from "@prisma/client";
 
@@ -82,13 +82,8 @@ export async function claimAchievement(
   let rewardXp = 0;
   let rewardCoins = 0;
   if (achievement.rewardXP > 0) {
-    const res = await addXp({
-      userId,
-      source: "ACHIEVEMENT",
-      amount: achievement.rewardXP,
-      reference: `achievement-${code}`,
-    });
-    rewardXp = res.xpAdded;
+    const res = await awardXp(userId, "ACHIEVEMENT", achievement.rewardXP, `achievement-${code}`);
+    rewardXp = res.xpDiberikan;
   }
   if (achievement.rewardCoins > 0) {
     const res = await addCoin(userId, achievement.rewardCoins, "ACHIEVEMENT", `achievement-${code}`);

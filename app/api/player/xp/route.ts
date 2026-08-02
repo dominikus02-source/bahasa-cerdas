@@ -1,17 +1,20 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getUser } from "@/lib/supabase/server";
 import { rateLimitRoute } from "@/lib/rate-limit";
-import { addXp, XP_SOURCES, type XpSource } from "@/lib/gamification/xp-engine";
+import { XP_SOURCES } from "@/lib/gamification/xp-engine";
 import { evaluateBadges } from "@/lib/gamification/badge-engine";
-import { batasiXpSubmit } from "@/lib/xp-guard";
+import { awardXp } from "@/lib/award-xp";
 
 /**
- * POST /player/xp — tambah XP lewat engine universal.
+ * POST /player/xp — tambah XP lewat pintu tunggal `awardXp`.
  *
  * Keamanan: angka XP TIDAK diambil mentah dari klien. `amount` hanyalah usulan
- * maksimum; server memangkasnya dengan batas per-submit per sumber (lihat
- * lib/xp-guard.ts) + rate limit per sesi. `reference` menjadikan panggilan
- * idempotent (kombinasi userId+source+reference unik di DB).
+ * maksimum; `awardXp` memangkasnya dengan batas per-submit per sumber, menegakkan
+ * kuota harian, dan menerapkan XP Boost (lihat lib/award-xp.ts) + rate limit per
+ * sesi di sini. `reference` menjadikan panggilan idempotent.
+ *
+ * Rute ini dulu memanggil `addXp` langsung — melewati kuota harian dan boost,
+ * jadi pintu kedua yang lebih lemah. Jangan kembalikan.
  */
 export async function POST(req: NextRequest) {
   const user = await getUser();
@@ -34,16 +37,8 @@ export async function POST(req: NextRequest) {
 
   const requested = Number.isFinite(body.amount) ? Math.max(1, Math.floor(body.amount ?? 0)) : 1;
 
-  // Server decides real XP: cap per-submit per source.
-  const capped = batasiXpSubmit(source, requested);
-
-  const result = await addXp({
-    userId: user.id,
-    source: source as XpSource,
-    amount: capped,
-    reference: body.reference,
-    metadata: body.metadata,
-  });
+  // Pemangkasan, kuota harian, boost, dan pencatatan ledger dikerjakan di dalam.
+  const result = await awardXp(user.id, source, requested, body.reference);
 
   // Evaluasi badge setelah XP bertambah (best-effort).
   let badges: { total: number; unlocked: number } | undefined;

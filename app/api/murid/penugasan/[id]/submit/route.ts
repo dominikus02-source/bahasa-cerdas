@@ -3,7 +3,6 @@ import { db } from "@/lib/db";
 import { getUser } from "@/lib/supabase/server";
 import { buildLatihan, buildKuis, gradeLatihan } from "@/lib/penugasan-content";
 import { upsertNilaiOtomatis } from "@/lib/penilaian/upsert-nilai";
-import { calcLevel, calcLeagueFromXP } from "@/lib/xp";
 import { awardXp } from "@/lib/award-xp";
 
 // Submit a Penugasan: grade the Latihan server-side, store the score, and push

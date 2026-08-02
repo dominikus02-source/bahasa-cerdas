@@ -2,8 +2,10 @@
 
 import { useState } from "react"
 import Link from "next/link"
-import { Medal, Crown, Diamond, Gamepad2, BookOpen } from "lucide-react"
-import { calcLevel, calcLeagueFromXP } from "@/lib/xp"
+import { Gamepad2, BookOpen } from "lucide-react"
+import { levelFromXp } from "@/lib/gamification/levels"
+import { rankFromLevel, RANK_META } from "@/lib/gamification/ranks"
+import { RankIcon } from "@/components/gamification/RankIcon"
 
 export interface LeagueRow {
   id: string
@@ -31,24 +33,18 @@ interface Props {
   initialTab?: "harian" | "mingguan"
 }
 
-const TIER_ICON: Record<string, React.ReactNode> = {
-  BRONZE: <Medal className="w-8 h-8 text-amber-700" />,
-  SILVER: <Medal className="w-8 h-8 text-slate-400" />,
-  GOLD: <Crown className="w-8 h-8 text-yellow-500" />,
-  DIAMOND: <Diamond className="w-8 h-8 text-cyan-400" />,
-}
-const TIER_COLOR: Record<string, string> = {
-  BRONZE: "from-amber-700 to-amber-600", SILVER: "from-slate-400 to-slate-300",
-  GOLD: "from-yellow-500 to-amber-500", DIAMOND: "from-cyan-400 to-blue-500",
-}
-const TIER_LABEL: Record<string, string> = { BRONZE: "Perunggu", SILVER: "Perak", GOLD: "Emas", DIAMOND: "Berlian" }
+// Liga 4 tingkat (Perunggu/Perak/Emas/Berlian) DIHAPUS: ambangnya berbeda dari
+// 9 rank resmi, sehingga murid bisa tampil "Emas" di sini dan "Silver" di dasbor
+// Pemain. Sumber tunggalnya sekarang rankFromLevel(levelFromXp(xp)).
 
 export default function LeagueTabs({ weekly, daily, userId, userXP, initialTab = "mingguan" }: Props) {
   const [tab, setTab] = useState<"harian" | "mingguan">(initialTab)
   const isHarian = tab === "harian"
   const board = isHarian ? daily : weekly
 
-  const userTier = calcLeagueFromXP(userXP)
+  const userLevel = levelFromXp(userXP)
+  const userRank = rankFromLevel(userLevel)
+  const userMeta = RANK_META[userRank]
 
   const initials = (name: string) => name?.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2) || "?"
   const nameOf = (r: LeagueRow) => r.displayName || r.nickname || r.fullName
@@ -72,7 +68,7 @@ export default function LeagueTabs({ weekly, daily, userId, userXP, initialTab =
         </div>
         <div className="flex-1">
           <p className="font-bold text-sm">{isHarian ? "Kamu" : "Kamu"}</p>
-          <p className="text-xs text-violet-200">Peringkat #{isHarian ? daily.myRank : weekly.myRank} • {TIER_LABEL[userTier]}</p>
+          <p className="text-xs text-violet-200">Peringkat #{isHarian ? daily.myRank : weekly.myRank} • {userMeta.title}</p>
         </div>
         <div className="text-right">
           <p className="font-bold">{isHarian ? daily.myXP.toLocaleString() : weekly.myXP.toLocaleString()}</p>
@@ -82,11 +78,11 @@ export default function LeagueTabs({ weekly, daily, userId, userXP, initialTab =
 
       {/* Tier Indicator */}
       <div className="flex items-center gap-3 mx-4 mt-4 p-3 bg-gray-50 rounded-xl">
-        {TIER_ICON[userTier]}
+        <RankIcon rank={userRank} size={36} glow />
         <div>
-          <p className="text-sm font-bold text-gray-900">{TIER_LABEL[userTier]}</p>
+          <p className="text-sm font-bold text-gray-900">{userMeta.label} · {userMeta.title}</p>
           <p className="text-xs text-gray-500">
-            {userTier === "DIAMOND" ? "Peringkat tertinggi!" : userTier === "GOLD" ? "Luar biasa!" : userTier === "SILVER" ? "Terus tingkatkan!" : "Ayo tingkatkan!"}
+            {userRank === "LEGEND" ? "Peringkat tertinggi!" : `Level ${userLevel} · terus tingkatkan!`}
           </p>
         </div>
       </div>
@@ -101,7 +97,8 @@ export default function LeagueTabs({ weekly, daily, userId, userXP, initialTab =
           board.rows.map((r, i) => {
             const rank = i + 1
             const isMe = r.id === userId
-            const tier = calcLeagueFromXP(r.xp)
+            const rowLevel = levelFromXp(r.xp)
+            const rowRank = rankFromLevel(rowLevel)
             return (
               <div key={r.id} className={`flex items-center gap-3 px-4 py-3 ${isMe ? "bg-violet-50 border-l-2 border-violet-500" : "hover:bg-gray-50"} transition-colors`}>
                 <span className={`w-7 text-center font-extrabold text-sm ${rank === 1 ? "text-amber-500" : rank === 2 ? "text-gray-400" : rank === 3 ? "text-orange-700" : "text-gray-300"}`}>
@@ -112,7 +109,10 @@ export default function LeagueTabs({ weekly, daily, userId, userXP, initialTab =
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-semibold text-gray-900 truncate">{isMe ? "Kamu" : nameOf(r)}</p>
-                  <p className="text-xs text-gray-400">Level {r.level} • {TIER_LABEL[tier]}</p>
+                  <p className="flex items-center gap-1 text-xs text-gray-400">
+                    <RankIcon rank={rowRank} size={14} />
+                    Level {rowLevel} • {RANK_META[rowRank].label}
+                  </p>
                 </div>
                 <div className="text-right">
                   <p className="font-bold text-sm text-gray-900">{r.xp.toLocaleString()}</p>

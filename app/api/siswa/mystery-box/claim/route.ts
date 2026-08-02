@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { getUser } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
-import { calcLevel, calcLeagueFromXP } from "@/lib/xp";
+import { awardXp } from "@/lib/award-xp";
 import {
   KOTAK_HARIAN_REASON,
   getJakartaDateKey,
@@ -60,19 +60,10 @@ export async function POST() {
           data: { coins: { increment: reward.jumlah } },
         });
       } else if (reward.jenis === "XP") {
-        const current = await tx.user.findUnique({
-          where: { id: user.id },
-          select: { xp: true },
-        });
-        const newXp = (current?.xp || 0) + reward.jumlah;
-        await tx.user.update({
-          where: { id: user.id },
-          data: {
-            xp: newXp,
-            level: calcLevel(newXp),
-            league: calcLeagueFromXP(newXp),
-          },
-        });
+        // XP TIDAK ditulis di sini. Dulu blok ini meng-update User.xp/level/league
+        // langsung — menerobos pintu tunggal, jadi tanpa ledger, tanpa kuota
+        // harian, dan tanpa sinkronisasi PlayerProfile. Pemberiannya dilakukan
+        // lewat awardXp() sesudah transaksi ini commit (lihat di bawah).
       } else {
         // Streak Freeze masuk ke inventaris sebagai UserItem, jadi barangnya
         // sama persis dengan yang dijual di toko koin dan ikut dikonsumsi
@@ -117,6 +108,13 @@ export async function POST() {
         { error: "Kotak hari ini sudah dibuka. Kembali lagi besok!" },
         { status: 409 }
       );
+    }
+
+    // Hadiah XP lewat pintu tunggal, sesudah transaksi commit (awardXp membuka
+    // transaksinya sendiri, jadi tidak boleh dipanggil dari dalam tx di atas).
+    // `reference` per hari siklus membuat klaim ulang tidak menggandakan XP.
+    if (result.reward.jenis === "XP") {
+      await awardXp(user.id, "SYSTEM", result.reward.jumlah, `mystery-box-${result.cycleDay}-${todayKey}`);
     }
 
     return NextResponse.json({

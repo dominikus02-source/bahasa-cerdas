@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 import { rateLimitRoute } from "@/lib/rate-limit";
-import { calcLevel, calcLeagueFromXP } from "@/lib/xp";
 import { awardXp } from "@/lib/award-xp";
 import { ok, err } from "@/lib/api/response";
 import { ERR } from "@/lib/api/errors";

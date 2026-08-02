@@ -13,7 +13,9 @@ import {
 import { trackDailyStreak, getOrCreateDailyQuests } from "@/lib/coins"
 import { jenjangMurid } from "@/lib/arena-junior/kurikulum"
 import { getQuestMeta, questProgressText } from "@/lib/quest-meta"
-import { calcLevelProgress, calcLevel, calcLeagueFromXP } from "@/lib/xp"
+import { getLevelProgress, levelFromXp } from "@/lib/gamification/levels"
+import { rankFromLevel } from "@/lib/gamification/ranks"
+import { RankChip } from "@/components/gamification/RankChip"
 import { getDisplayName } from "@/lib/nickname"
 import { PembelajaranCard } from "./pembelajaran-card"
 import BattleCard from "@/components/arena/BattleCard"
@@ -69,9 +71,9 @@ export default async function BerandaPage() {
   const computedTotalXp = (jalurXpAgg._sum.xpEarned || 0) + (gameXpAgg._sum.xpEarned || 0)
   const totalXp = Math.max(user.xp || 0, computedTotalXp)
 
-  const displayLevel = calcLevel(totalXp)
-  const displayLeague = calcLeagueFromXP(totalXp)
-  const progress = calcLevelProgress(totalXp, displayLevel)
+  const displayLevel = levelFromXp(totalXp)
+  const displayRank = rankFromLevel(displayLevel)
+  const progress = getLevelProgress(totalXp)
 
   const todayStart = new Date()
   todayStart.setHours(0, 0, 0, 0)
@@ -176,8 +178,6 @@ export default async function BerandaPage() {
     })
   }, 120)
 
-  const levelStats = jalurStats._sum.xpEarned || 0
-  const levelInfo = calcLevelProgress(levelStats, calcLevel(levelStats))
 
   return (
     <div className="arena-page max-w-5xl mx-auto p-4 md:p-6">
@@ -194,7 +194,7 @@ export default async function BerandaPage() {
               <p className="text-sm text-violet-200 font-medium">Arena BahasaCerdas</p>
               <h2 className="text-xl md:text-2xl font-extrabold truncate mt-0.5">{nameOf(user)}</h2>
               <div className="flex items-center gap-2 mt-2">
-                <span className="bg-white/20 backdrop-blur rounded-full px-3 py-1 text-xs font-semibold">{displayLeague}</span>
+                <RankChip rank={displayRank} size={16} className="bg-white/20 backdrop-blur" />
                 <span className="bg-white/15 backdrop-blur rounded-full px-3 py-1 text-xs">Level {displayLevel}</span>
               </div>
             </div>
@@ -240,7 +240,7 @@ export default async function BerandaPage() {
               <span className="text-violet-200">{progress.current} / {progress.needed} XP</span>
             </div>
               <div className="w-full h-3 bg-white/20 rounded-full overflow-hidden">
-                <div className="h-full bg-gradient-to-r from-amber-400 to-yellow-400 rounded-full transition-all duration-500" style={{ width: `${progress.pct}%` }} />
+                <div className="h-full bg-gradient-to-r from-amber-400 to-yellow-400 rounded-full transition-all duration-500" style={{ width: `${progress.pct * 100}%` }} />
               </div>
           </div>
         </div>

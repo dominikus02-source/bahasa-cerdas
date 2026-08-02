@@ -16,7 +16,9 @@ import { Input } from "@/components/ui/input";
 import { AvatarPicker } from "@/components/murid/AvatarPicker";
 import { createClient } from "@/lib/supabase/client";
 import { validateNicknameFormat, defaultNicknameFromFullName, NICKNAME_MAX_LENGTH } from "@/lib/nickname";
-import { calcLevelProgress } from "@/lib/xp";
+import { getLevelProgress, levelFromXp } from "@/lib/gamification/levels";
+import { rankFromLevel } from "@/lib/gamification/ranks";
+import { RankChip } from "@/components/gamification/RankChip";
 import UserAvatar from "@/components/arena/UserAvatar";
 import UserName from "@/components/arena/UserName";
 
@@ -58,12 +60,8 @@ const TYPE_META: Record<string, { label: string; badge: string }> = {
   OPINI: { label: "Opini", badge: "bg-violet-100 text-violet-600" },
 };
 
-const LEAGUE_META: Record<string, { label: string; gradient: string; ring: string; glow: string }> = {
-  BRONZE: { label: "Perunggu", gradient: "from-amber-500 to-orange-600", ring: "ring-amber-400", glow: "shadow-amber-200" },
-  SILVER: { label: "Perak", gradient: "from-slate-400 to-slate-600", ring: "ring-slate-300", glow: "shadow-slate-200" },
-  GOLD: { label: "Emas", gradient: "from-yellow-400 to-amber-500", ring: "ring-yellow-400", glow: "shadow-yellow-200" },
-  DIAMOND: { label: "Berlian", gradient: "from-cyan-400 to-blue-500", ring: "ring-cyan-400", glow: "shadow-cyan-200" },
-};
+// Liga 4 tingkat dihapus — identitas memakai 9 rank resmi (RANK_META).
+// Cincin avatar mengikuti warna rank supaya tidak perlu tabel warna kedua.
 
 function initials(name: string) {
   return name?.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2) || "M";
@@ -259,9 +257,10 @@ export default function MuridProfilePage() {
     return <div className="text-center py-20 text-gray-500">Gagal memuat profil. Silakan refresh.</div>;
   }
 
-  const league = LEAGUE_META[user.league] || LEAGUE_META.BRONZE;
+  const playerLevel = levelFromXp(user.xp || 0);
+  const playerRank = rankFromLevel(playerLevel);
   const displayNickname = user.nickname || user.fullName;
-  const levelProgress = calcLevelProgress(user.xp || 0, user.level || 1);
+  const levelProgress = getLevelProgress(user.xp || 0);
   const streakLive = isStreakLive(meta?.kebunKata);
 
   // Lencana paling dekat dibuka (progress tertinggi di antara yang belum
@@ -305,7 +304,7 @@ export default function MuridProfilePage() {
                 gradient=""
                 textClassName="text-3xl"
                 wrapperClassName="profile-avatar-ring rounded-full"
-                className={`bg-white/10 backdrop-blur border-4 border-white/20 shadow-lg ${user.equippedFrame ? "" : `ring-4 ${league.ring}`}`}
+                className={`bg-white/10 backdrop-blur border-4 border-white/20 shadow-lg ${user.equippedFrame ? "" : "ring-4"}`}
               />
               <div>
                 <h1 className="text-2xl font-bold">
@@ -320,7 +319,7 @@ export default function MuridProfilePage() {
                 {user.nickname && <p className="text-sm text-white/60">{user.fullName}</p>}
                 {meta?.gelar && <p className="text-sm text-amber-300 font-semibold mt-1">{meta.gelar}</p>}
                 <div className="flex flex-wrap gap-2 mt-2">
-                  <span className={`bg-gradient-to-r ${league.gradient} rounded-full px-3 py-1 text-xs font-bold shadow-sm`}>{league.label}</span>
+                  <RankChip rank={playerRank} size={16} />
                 </div>
               </div>
             </div>
@@ -333,12 +332,12 @@ export default function MuridProfilePage() {
           <div className="mt-5">
             <div className="flex items-center justify-between text-xs font-semibold mb-1.5">
               <span className="bg-white/10 backdrop-blur rounded-full px-2.5 py-0.5 border border-white/10">Level {user.level}</span>
-              <span className="text-white/60">{levelProgress.current} / {levelProgress.needed} XP menuju Level {(user.level || 1) + 1}</span>
+              <span className="text-white/60">{levelProgress.current} / {levelProgress.needed} XP menuju Level {playerLevel + 1}</span>
             </div>
             <div className="h-3 bg-black/20 rounded-full overflow-hidden">
               <div
                 className="h-full bg-gradient-to-r from-amber-300 to-amber-500 rounded-full transition-all duration-700 ease-out"
-                style={{ width: `${levelProgress.pct}%` }}
+                style={{ width: `${levelProgress.pct * 100}%` }}
               />
             </div>
           </div>

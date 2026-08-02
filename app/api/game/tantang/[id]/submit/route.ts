@@ -12,7 +12,6 @@ import { NextRequest, NextResponse } from "next/server";
 import type { Prisma } from "@prisma/client";
 import { getUser } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
-import { calcLevel, calcLeagueFromXP } from "@/lib/xp";
 import { awardXp } from "@/lib/award-xp";
 
 export const dynamic = "force-dynamic";

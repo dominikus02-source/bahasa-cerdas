@@ -12,11 +12,35 @@
  *   2. tegakkan kuota harian dari XpLedger (bukan Redis — lihat catatan di
  *      lib/xp-guard.ts soal pembatas laju yang gagal-terbuka),
  *   3. kalikan XP Boost hanya atas XP yang sudah lolos batas,
- *   4. catat satu baris ledger, dan
- *   5. perbarui xp/level/liga murid.
+ *   4. catat ledger, dan
+ *   5. perbarui progresi murid: User.xp + PlayerProfile, dengan level & rank
+ *      dari kurva RESMI.
+ *
+ * ── Satu sistem progresi ──────────────────────────────────────────────────
+ * `User.xp` adalah SATU-SATUNYA total XP. `PlayerProfile.totalXP` adalah
+ * cerminnya, ditulis di transaksi yang sama supaya tidak pernah bisa
+ * berbeda. Level & rank SELALU dihitung dari total itu memakai
+ * `lib/gamification/levels.ts` + `ranks.ts` — tidak ada rumus kedua.
+ *
+ * Sampai Sprint 6 ada dua tumpukan paralel: `lib/xp.ts` (level = xp/500,
+ * liga 4 tingkat) menulis User, sementara `lib/gamification/` menulis
+ * PlayerProfile. Akibatnya murid dengan 8.000 XP tampil "Level 17 Berlian" di
+ * beranda Arena dan "Level 21 Gold" di dasbor Pemain. `lib/xp.ts` sudah dihapus;
+ * jangan hidupkan lagi.
+ *
+ * `User.league` sengaja TIDAK ditulis lagi: enum `LeagueType` hanya memuat 4
+ * nilai dan tidak akan pernah bisa menampung 9 rank resmi. Rank pemain hidup di
+ * `PlayerProfile.currentRank`.
+ *
+ * Dua tabel catatan yang tetap ada, dengan peran berbeda (bukan sistem ganda):
+ *   - `XpLedger`     → penghitung anti-penyalahgunaan (kuota harian).
+ *   - `XPTransaction`→ riwayat XP yang dilihat murid + sumber untuk badge.
  */
 import { db } from "@/lib/db";
-import { calcLevel, calcLeagueFromXP } from "@/lib/xp";
+import { levelFromXp } from "@/lib/gamification/levels";
+import { rankFromLevel } from "@/lib/gamification/ranks";
+import { weekKey, seasonPeriodKey } from "@/lib/gamification/season";
+import { LEVEL_UP_COIN_REWARD, MILESTONE_COIN_REWARD } from "@/lib/gamification/xp-engine";
 import { getXpMultiplier } from "@/lib/xp-boost";
 import { batasiXpSubmit, terapkanKuotaHarian, awalHariWIB } from "@/lib/xp-guard";
 
@@ -32,7 +56,10 @@ export type HasilPemberianXp = {
   levelLama: number;
   levelBaru: number;
   naikLevel: boolean;
-  liga: string;
+  /** Rank resmi (BRONZE..LEGEND) sesudah pemberian ini. */
+  rank: string;
+  /** Koin bonus naik level / milestone yang ikut diberikan. */
+  koinDidapat: number;
 };
 
 /**
@@ -54,6 +81,23 @@ export async function awardXp(
   const multiplier = await getXpMultiplier(userId);
 
   return db.$transaction(async (tx) => {
+    // Idempotensi: (userId, source, reference) unik di XPTransaction. Retry,
+    // double-submit, dan replay attempt basi tidak menambah XP dua kali.
+    if (reference) {
+      const sudahAda = await tx.xPTransaction.findUnique({
+        where: { userId_source_reference: { userId, source: sumber, reference } },
+      });
+      if (sudahAda) {
+        const prof = await tx.user.findUnique({ where: { id: userId }, select: { xp: true } });
+        const lv = levelFromXp(prof?.xp ?? 0);
+        return {
+          xpDiberikan: 0, boosted: false, kuotaHabis: false,
+          totalXp: prof?.xp ?? 0, levelLama: lv, levelBaru: lv,
+          naikLevel: false, rank: rankFromLevel(lv), koinDidapat: 0,
+        };
+      }
+    }
+
     const user = await tx.user.findUnique({
       where: { id: userId },
       select: { xp: true, level: true },
@@ -61,7 +105,8 @@ export async function awardXp(
     if (!user) {
       return {
         xpDiberikan: 0, boosted: false, kuotaHabis: false,
-        totalXp: 0, levelLama: 1, levelBaru: 1, naikLevel: false, liga: "BRONZE",
+        totalXp: 0, levelLama: 1, levelBaru: 1, naikLevel: false,
+        rank: "BRONZE", koinDidapat: 0,
       };
     }
 
@@ -75,41 +120,104 @@ export async function awardXp(
 
     const xpDiberikan = Math.round(kuota.xp * multiplier);
 
+    // Level lama dihitung ulang dari total, bukan dibaca dari User.level —
+    // baris lama masih menyimpan level hasil rumus usang (xp/500).
+    const levelLama = levelFromXp(user.xp);
+
     if (xpDiberikan <= 0) {
       return {
         xpDiberikan: 0,
         boosted: multiplier > 1,
         kuotaHabis: kuota.terpotong,
         totalXp: user.xp,
-        levelLama: user.level,
-        levelBaru: user.level,
+        levelLama,
+        levelBaru: levelLama,
         naikLevel: false,
-        liga: calcLeagueFromXP(user.xp),
+        rank: rankFromLevel(levelLama),
+        koinDidapat: 0,
       };
     }
 
     const totalXp = user.xp + xpDiberikan;
-    const levelBaru = calcLevel(totalXp);
-    const liga = calcLeagueFromXP(totalXp);
+    const levelBaru = levelFromXp(totalXp);
+    const rank = rankFromLevel(levelBaru);
+    const naikLevel = levelBaru > levelLama;
 
+    // ── Catatan anti-penyalahgunaan (kuota harian) ──────────────────────
     await tx.xpLedger.create({
       data: { userId, amount: xpDiberikan, source: sumber, reference },
     });
 
     await tx.user.update({
       where: { id: userId },
-      data: { xp: totalXp, level: levelBaru, league: liga as any, lastActiveAt: new Date() },
+      // league sengaja tidak ditulis — lihat catatan di kepala berkas.
+      data: { xp: totalXp, level: levelBaru, lastActiveAt: new Date() },
     });
+
+    // ── Sinkronkan PlayerProfile di transaksi yang SAMA ─────────────────
+    const profile = await tx.playerProfile.upsert({
+      where: { userId },
+      update: {},
+      create: { userId },
+    });
+
+    const wk = weekKey();
+    const sp = seasonPeriodKey();
+    // Lazy reset: kalau kunci minggu/season sudah bergeser, mulai dari 0.
+    const weeklyBase = profile.weeklyXPWeekKey === wk ? profile.weeklyXP : 0;
+    const seasonBase = profile.seasonPeriodKey === sp ? profile.seasonXP : 0;
+
+    const koinNaikLevel = naikLevel ? LEVEL_UP_COIN_REWARD : 0;
+    const koinMilestone = naikLevel && levelBaru % 10 === 0 ? MILESTONE_COIN_REWARD : 0;
+    const koinDidapat = koinNaikLevel + koinMilestone;
+
+    await tx.playerProfile.update({
+      where: { id: profile.id },
+      data: {
+        totalXP: totalXp, // cermin User.xp — tidak pernah dihitung terpisah
+        level: levelBaru,
+        currentRank: rank,
+        weeklyXP: weeklyBase + xpDiberikan,
+        weeklyXPWeekKey: wk,
+        seasonXP: seasonBase + xpDiberikan,
+        seasonPeriodKey: sp,
+        lastActiveAt: new Date(),
+        coin: { increment: koinDidapat },
+      },
+    });
+
+    // ── Riwayat XP yang dilihat murid ──────────────────────────────────
+    await tx.xPTransaction.create({
+      data: {
+        userId,
+        profileId: profile.id,
+        source: sumber,
+        amount: xpDiberikan,
+        reference,
+      },
+    });
+
+    if (koinDidapat > 0) {
+      await tx.coinTransaction.create({
+        data: {
+          userId,
+          amount: koinDidapat,
+          reason: "LEVEL_UP",
+          reference: `level-${levelBaru}-${wk}`,
+        },
+      });
+    }
 
     return {
       xpDiberikan,
       boosted: multiplier > 1,
       kuotaHabis: kuota.terpotong,
       totalXp,
-      levelLama: user.level,
+      levelLama,
       levelBaru,
-      naikLevel: levelBaru > user.level,
-      liga,
+      naikLevel,
+      rank,
+      koinDidapat,
     };
   });
 }

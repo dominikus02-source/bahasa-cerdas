@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { calcLevel, calcLeagueFromXP, calcXpForNextLevel } from "@/lib/xp";
+import { xpNeededForNextLevel } from "@/lib/gamification/xp-engine";
 import { getUser } from "@/lib/supabase/server";
 import { rateLimitRoute } from "@/lib/rate-limit";
 import { awardXp } from "@/lib/award-xp";
@@ -62,7 +62,7 @@ export async function POST(req: NextRequest) {
     const newXp = hasil.totalXp;
     const newLevel = hasil.levelBaru;
     const levelUp = hasil.naikLevel;
-    const newLeague = hasil.liga;
+    const newRank = hasil.rank;
 
     await db.user.update({
       where: { id: dbUser.id },
@@ -79,8 +79,8 @@ export async function POST(req: NextRequest) {
       newLevel,
       levelUp,
       streak: newStreak,
-      league: newLeague,
-      xpForNextLevel: calcXpForNextLevel(newLevel),
+      rank: newRank,
+      xpForNextLevel: xpNeededForNextLevel(newLevel),
       currentXp: newXp,
     });
   } catch (error) {

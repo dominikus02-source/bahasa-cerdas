@@ -7,7 +7,7 @@
 //     tidak ada XP mentah dari klien, cap server, dsb.
 //
 // Tidak butuh koneksi DB. Jalan di CI bersama suite lain.
-import { readFileSync } from "fs";
+import { readFileSync, readdirSync } from "fs";
 import { join } from "path";
 import { levelFromXp, levelAfterXp, cumulativeXpForLevel } from "@/lib/gamification/levels";
 import { rankFromLevel, RANKS } from "@/lib/gamification/ranks";
@@ -52,19 +52,23 @@ const sp = seasonPeriodKey();
 ok(`seasonPeriodKey format "YYYY-Sn": ${sp}`, /^\d{4}-S\d+$/.test(sp));
 ok("startOfWeekWIB valid Date", startOfWeekWIB() instanceof Date && !Number.isNaN(startOfWeekWIB().getTime()));
 
-// ── 4. Static: XP engine ──────────────────────────────────────────────────
-const xpEngine = readFileSync(join(process.cwd(), "lib/gamification/xp-engine.ts"), "utf8");
-ok("addXp memakai transaksi DB", /db\.\$transaction/.test(xpEngine));
+// ── 4. Static: pintu XP tunggal (lib/award-xp.ts) ─────────────────────────
+// Assertion di bawah dulu menguji addXp() di xp-engine. Pintu itu dihapus saat
+// penyatuan sistem progresi; sekarang semua XP lewat awardXp().
+const awardXpFile = readFileSync(join(process.cwd(), "lib/award-xp.ts"), "utf8");
+ok("awardXp memakai transaksi DB", /db\.\$transaction/.test(awardXpFile));
 ok("idempotency guard (userId+source+reference unik)", /@@unique\(\[userId, source, reference\]\)/.test(readFileSync(join(process.cwd(), "prisma/schema.prisma"), "utf8")));
-ok("addXp menolak duplikat (duplicate: true)", /duplicate:\s*true/.test(xpEngine));
-ok("level & rank dihitung dari totalXP", /levelFromXp\(totalXp\)/.test(xpEngine) && /rankFromLevel\(level\)/.test(xpEngine));
-ok("lazy weekly reset ada", /weeklyXPWeekKey\s*===\s*wk/.test(xpEngine));
-ok("reward koin saat naik level diaudit", /coinTransaction\.create[\s\S]*LEVEL_UP/.test(xpEngine));
+ok("awardXp menolak duplikat lewat XPTransaction", /xPTransaction\.findUnique/.test(awardXpFile));
+ok("level & rank dihitung dari total XP", /levelFromXp\(totalXp\)/.test(awardXpFile) && /rankFromLevel\(levelBaru\)/.test(awardXpFile));
+ok("lazy weekly reset ada", /weeklyXPWeekKey\s*===\s*wk/.test(awardXpFile));
+ok("reward koin saat naik level diaudit", /coinTransaction\.create[\s\S]*LEVEL_UP/.test(awardXpFile));
+ok("kuota harian ditegakkan di dalam transaksi", /terapkanKuotaHarian/.test(awardXpFile));
+ok("XP Boost diterapkan sesudah batas", /getXpMultiplier/.test(awardXpFile));
 
 // ── 5. Static: guard XP per submit ────────────────────────────────────────
 const xpGuard = readFileSync(join(process.cwd(), "lib/xp-guard.ts"), "utf8");
 const playerXpRoute = readFileSync(join(process.cwd(), "app/api/player/xp/route.ts"), "utf8");
-ok("endpoint /player/xp memakai batasiXpSubmit", /batasiXpSubmit\(source, requested\)/.test(playerXpRoute));
+ok("endpoint /player/xp lewat pintu tunggal awardXp", /awardXp\(user\.id, source, requested/.test(playerXpRoute));
 ok("endpoint /player/xp memakai rate limit", /rateLimitRoute/.test(playerXpRoute));
 ok("server tidak mempercayai amount mentah (cap ada)", /batasiXpSubmit/.test(xpGuard) && /Math\.min\(Math\.floor\(xpDiminta\), batas\)/.test(xpGuard));
 
@@ -79,7 +83,7 @@ const badgeEngine = readFileSync(join(process.cwd(), "lib/gamification/badge-eng
 const achEngine = readFileSync(join(process.cwd(), "lib/gamification/achievement-engine.ts"), "utf8");
 ok("badge auto-award skipDuplicates", /skipDuplicates:\s*true/.test(badgeEngine));
 ok("achievement progress diskalakan ke target", /Math\.min\(row\.progress \+ increment, achievement\.target\)/.test(achEngine));
-ok("klaim achievement lewat engine idempotent", /addXp[\s\S]*reference: `achievement-\$\{code\}`/.test(achEngine));
+ok("klaim achievement lewat pintu tunggal & idempotent", /awardXp\(userId, "ACHIEVEMENT"[\s\S]*achievement-\$\{code\}/.test(achEngine));
 
 // ── 8. Static: leaderboard ────────────────────────────────────────────────
 const lb = readFileSync(join(process.cwd(), "lib/gamification/leaderboard.ts"), "utf8");
@@ -160,6 +164,55 @@ const hardcoded = (() => {
   }
 })();
 ok("tidak ada path /Rank BC/ hardcoded di komponen", hardcoded === 0);
+
+// ── 14. Satu sistem progresi (pagar regresi) ──────────────────────────────
+// BC pernah punya dua tumpukan progresi sekaligus: lib/xp.ts (level = xp/500,
+// liga 4 tingkat) dan lib/gamification/ (kurva resmi, 9 rank). Murid dengan
+// 8.000 XP tampil "Level 17 Berlian" di beranda Arena tapi "Level 21 Gold" di
+// dasbor Pemain. Pemeriksaan di bawah menjaga agar tidak kembali.
+const adaLibXp = (() => {
+  try {
+    readFileSync(join(process.cwd(), "lib/xp.ts"));
+    return true;
+  } catch {
+    return false;
+  }
+})();
+ok("lib/xp.ts (rumus level/liga lama) sudah tidak ada", !adaLibXp);
+
+const pengimporLibXp: string[] = [];
+(function pindai(dir: string) {
+  for (const entry of readdirSync(dir, { withFileTypes: true })) {
+    if (entry.name === "node_modules" || entry.name.startsWith(".")) continue;
+    const full = join(dir, entry.name);
+    if (entry.isDirectory()) pindai(full);
+    else if (/\.tsx?$/.test(entry.name)) {
+      if (/from\s+["']@\/lib\/xp["']/.test(readFileSync(full, "utf8"))) pengimporLibXp.push(full);
+    }
+  }
+})(process.cwd() + "/app");
+for (const d of ["components", "lib", "scripts"]) {
+  (function pindai(dir: string) {
+    for (const entry of readdirSync(dir, { withFileTypes: true })) {
+      if (entry.name === "node_modules" || entry.name.startsWith(".")) continue;
+      const full = join(dir, entry.name);
+      if (entry.isDirectory()) pindai(full);
+      else if (/\.tsx?$/.test(entry.name)) {
+        if (/from\s+["']@\/lib\/xp["']/.test(readFileSync(full, "utf8"))) pengimporLibXp.push(full);
+      }
+    }
+  })(join(process.cwd(), d));
+}
+ok(`tidak ada berkas yang mengimpor @/lib/xp${pengimporLibXp.length ? " → " + pengimporLibXp.join(", ") : ""}`, pengimporLibXp.length === 0);
+
+const awardXpSrc = readFileSync(join(process.cwd(), "lib/award-xp.ts"), "utf8");
+ok("awardXp memakai kurva resmi (levelFromXp)", /levelFromXp\(/.test(awardXpSrc));
+ok("awardXp memakai rank resmi (rankFromLevel)", /rankFromLevel\(/.test(awardXpSrc));
+ok("awardXp menyinkronkan PlayerProfile di transaksi yang sama", /tx\.playerProfile\.update/.test(awardXpSrc));
+ok("awardXp tidak menulis User.league lagi", !/league:/.test(awardXpSrc));
+
+const xpEngineSrc = readFileSync(join(process.cwd(), "lib/gamification/xp-engine.ts"), "utf8");
+ok("addXp (pintu XP kedua) sudah dihapus", !/export async function addXp/.test(xpEngineSrc));
 
 console.log(`\n${fail === 0 ? "SEMUA LULUS ✅" : `${fail} GAGAL ❌`}`);
 process.exit(fail === 0 ? 0 : 1);
