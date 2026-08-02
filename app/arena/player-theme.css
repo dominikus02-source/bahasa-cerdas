@@ -1,0 +1,205 @@
+/* Player Experience Theme — Royal Blue / Gold / Dark Navy premium game UI
+   Layer UI BC Arena yang berdiri di atas arena.css. Mobile-first, glassy,
+   animasi framer-motion. */
+
+.px-theme {
+  --px-navy: #0b132b;
+  --px-navy-2: #111c3a;
+  --px-navy-3: #1a2a55;
+  --px-royal: #2b4bff;
+  --px-royal-2: #0f7bff;
+  --px-gold: #ffd24a;
+  --px-gold-2: #f5a623;
+  --px-gold-3: #ffb020;
+  --px-mint: #34e0b8;
+  --px-glass: rgba(255, 255, 255, 0.08);
+  --px-glass-strong: rgba(255, 255, 255, 0.14);
+  --px-border: rgba(255, 255, 255, 0.14);
+  --px-text: #f3f7ff;
+  --px-text-dim: #a9b6d9;
+  --px-text-faint: #7483ad;
+}
+
+.px-theme {
+  background:
+    radial-gradient(1200px 600px at 15% -10%, rgba(47, 75, 255, 0.35), transparent 60%),
+    radial-gradient(900px 500px at 100% 0%, rgba(245, 166, 35, 0.18), transparent 55%),
+    linear-gradient(180deg, var(--px-navy) 0%, var(--px-navy-2) 45%, var(--px-navy-3) 100%);
+  color: var(--px-text);
+  min-height: 100vh;
+}
+
+.px-theme * {
+  border-color: var(--px-border);
+}
+
+/* ---- Glass card ---- */
+.px-card {
+  background: linear-gradient(160deg, var(--px-glass-strong), var(--px-glass) 55%, rgba(255,255,255,0.04));
+  border: 1px solid var(--px-border);
+  border-radius: 1.25rem;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: 0 10px 30px -12px rgba(0, 0, 0, 0.5);
+}
+
+.px-card-press {
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.px-card-press:active { transform: scale(0.97); }
+
+/* ---- Gold gradient text ---- */
+.px-gold-text {
+  background: linear-gradient(120deg, #fff3c4 0%, var(--px-gold) 45%, var(--px-gold-2) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+/* ---- Buttons ---- */
+.px-btn-gold {
+  background: linear-gradient(120deg, var(--px-gold-2), var(--px-gold-3));
+  color: #1b1205;
+  font-weight: 800;
+  border-radius: 9999px;
+  box-shadow: 0 8px 20px -6px rgba(245, 166, 35, 0.5);
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+.px-btn-gold:active { transform: scale(0.96); box-shadow: 0 4px 12px -4px rgba(245,166,35,0.4); }
+.px-btn-gold:disabled { opacity: 0.5; }
+
+.px-btn-royal {
+  background: linear-gradient(120deg, var(--px-royal), var(--px-royal-2));
+  color: #fff;
+  font-weight: 700;
+  border-radius: 9999px;
+  box-shadow: 0 8px 20px -6px rgba(43, 75, 255, 0.5);
+  transition: transform 0.12s ease;
+}
+.px-btn-royal:active { transform: scale(0.96); }
+
+.px-btn-ghost {
+  background: var(--px-glass);
+  border: 1px solid var(--px-border);
+  color: var(--px-text);
+  border-radius: 9999px;
+  transition: background 0.15s ease;
+}
+.px-btn-ghost:hover { background: var(--px-glass-strong); }
+
+/* ---- Progress bar (XP) ---- */
+.px-xp-track {
+  height: 12px;
+  background: rgba(0, 0, 0, 0.35);
+  border-radius: 9999px;
+  overflow: hidden;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+.px-xp-fill {
+  height: 100%;
+  border-radius: 9999px;
+  background: linear-gradient(90deg, var(--px-royal-2), var(--px-royal), var(--px-gold));
+  box-shadow: 0 0 12px rgba(43, 75, 255, 0.7), 0 0 4px rgba(255, 210, 74, 0.6);
+  position: relative;
+  overflow: hidden;
+}
+.px-xp-fill::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.35), transparent);
+  animation: px-shimmer 2.2s linear infinite;
+}
+@keyframes px-shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+/* ---- Streak flame pulse ---- */
+.px-flame {
+  animation: px-flame 1.4s ease-in-out infinite;
+  display: inline-block;
+}
+@keyframes px-flame {
+  0%, 100% { transform: scale(1) rotate(0deg); }
+  30% { transform: scale(1.12) rotate(-3deg); }
+  60% { transform: scale(1.05) rotate(2deg); }
+}
+
+/* ---- Rank glow ring ---- */
+.px-rank-ring {
+  box-shadow: 0 0 0 2px var(--px-border), 0 0 22px -2px currentColor;
+}
+
+/* ---- Podium ---- */
+.px-podium-1 {
+  background: linear-gradient(180deg, rgba(255, 210, 74, 0.95), rgba(245, 166, 35, 0.85));
+  color: #231a06;
+  box-shadow: 0 12px 30px -8px rgba(255, 210, 74, 0.45);
+}
+.px-podium-2 {
+  background: linear-gradient(180deg, rgba(226, 232, 240, 0.95), rgba(148, 163, 184, 0.9));
+  color: #1e293b;
+  box-shadow: 0 12px 30px -8px rgba(226, 232, 240, 0.35);
+}
+.px-podium-3 {
+  background: linear-gradient(180deg, rgba(218, 151, 96, 0.95), rgba(180, 120, 70, 0.9));
+  color: #2a1607;
+  box-shadow: 0 12px 30px -8px rgba(218, 151, 96, 0.35);
+}
+
+/* ---- Scrollbar hidden ---- */
+.px-scrollbar-hide::-webkit-scrollbar { display: none; }
+.px-scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* ---- Confetti pieces ---- */
+.px-confetti-piece {
+  position: absolute;
+  top: -20px;
+  width: 10px;
+  height: 16px;
+  border-radius: 3px;
+  will-change: transform;
+}
+
+/* ---- Shake (reward popup) ---- */
+@keyframes px-pop {
+  0% { transform: translateY(24px) scale(0.9); opacity: 0; }
+  60% { transform: translateY(-4px) scale(1.02); opacity: 1; }
+  100% { transform: translateY(0) scale(1); opacity: 1; }
+}
+.px-pop { animation: px-pop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+
+/* ---- Level up glow backdrop ---- */
+.px-levelup-bg {
+  background:
+    radial-gradient(600px 400px at 50% 20%, rgba(255, 210, 74, 0.25), transparent 65%),
+    radial-gradient(800px 500px at 50% 100%, rgba(43, 75, 255, 0.35), transparent 70%),
+    rgba(4, 8, 24, 0.88);
+}
+
+/* ---- Number badge (koin/XP) ---- */
+.px-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid var(--px-border);
+  border-radius: 9999px;
+  padding: 0.25rem 0.65rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--px-text);
+}
+
+/* ---- Skeleton shimmer ---- */
+.px-skeleton {
+  background: linear-gradient(100deg, rgba(255,255,255,0.06) 40%, rgba(255,255,255,0.14) 50%, rgba(255,255,255,0.06) 60%);
+  background-size: 200% 100%;
+  animation: px-skel 1.4s infinite;
+}
+@keyframes px-skel {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
