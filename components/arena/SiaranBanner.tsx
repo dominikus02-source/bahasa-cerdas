@@ -1,0 +1,144 @@
+"use client";
+
+import { useEffect, useState, useCallback } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import { Megaphone, Sparkles, CalendarDays, AlertTriangle, X, ChevronRight } from "lucide-react";
+
+type Kategori = "INFO" | "PEMBARUAN" | "ACARA" | "PENTING";
+
+interface Siaran {
+  id: string;
+  judul: string;
+  isi: string;
+  kategori: Kategori;
+  gambar: string | null;
+  tautan: string | null;
+  tautanLabel: string | null;
+  pinned: boolean;
+}
+
+const META: Record<Kategori, { label: string; warna: string; bg: string; Icon: typeof Megaphone }> = {
+  INFO:      { label: "Info",      warna: "#38bdf8", bg: "from-sky-500/20 to-sky-500/5",       Icon: Megaphone },
+  PEMBARUAN: { label: "Pembaruan", warna: "#a78bfa", bg: "from-violet-500/20 to-violet-500/5", Icon: Sparkles },
+  ACARA:     { label: "Acara",     warna: "#fbbf24", bg: "from-amber-500/20 to-amber-500/5",   Icon: CalendarDays },
+  PENTING:   { label: "Penting",   warna: "#fb7185", bg: "from-rose-500/20 to-rose-500/5",     Icon: AlertTriangle },
+};
+
+/** Siaran yang sudah ditutup murid, disimpan lokal agar tidak menagih terus. */
+const KUNCI = "bc:siaran-ditutup";
+
+function bacaDitutup(): string[] {
+  try {
+    return JSON.parse(localStorage.getItem(KUNCI) || "[]");
+  } catch {
+    return [];
+  }
+}
+
+/**
+ * Banner siaran di beranda Arena.
+ *
+ * Siaran PENTING dan yang disematkan tidak bisa ditutup — kabar seperti "XP
+ * mingguan direset tiap Senin" harus terbaca, bukan hilang karena sekali
+ * terpencet. Sisanya bisa ditutup dan ingatannya disimpan di localStorage
+ * (bukan DB) supaya tidak perlu tabel kedua hanya untuk status "sudah dibaca".
+ */
+export function SiaranBanner() {
+  const [siaran, setSiaran] = useState<Siaran[] | null>(null);
+  const [ditutup, setDitutup] = useState<string[]>([]);
+
+  useEffect(() => {
+    setDitutup(bacaDitutup());
+    fetch("/api/siaran", { cache: "no-store" })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => setSiaran(d?.siaran ?? []))
+      .catch(() => setSiaran([]));
+  }, []);
+
+  const tutup = useCallback((id: string) => {
+    setDitutup((prev) => {
+      const baru = [...new Set([...prev, id])].slice(-50);
+      try {
+        localStorage.setItem(KUNCI, JSON.stringify(baru));
+      } catch {
+        /* mode privat — cukup sembunyikan untuk sesi ini */
+      }
+      return baru;
+    });
+  }, []);
+
+  if (!siaran || siaran.length === 0) return null;
+
+  const tampil = siaran.filter((s) => s.pinned || s.kategori === "PENTING" || !ditutup.includes(s.id));
+  if (tampil.length === 0) return null;
+
+  return (
+    <div className="mb-5 space-y-3">
+      {tampil.map((s) => {
+        const meta = META[s.kategori] ?? META.INFO;
+        const bisaDitutup = !s.pinned && s.kategori !== "PENTING";
+
+        return (
+          <div
+            key={s.id}
+            className={`relative overflow-hidden rounded-2xl border bg-gradient-to-br ${meta.bg}`}
+            style={{ borderColor: `${meta.warna}44` }}
+          >
+            {s.gambar && (
+              <div className="relative h-32 w-full sm:h-40">
+                <Image
+                  src={s.gambar}
+                  alt=""
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 640px) 100vw, 720px"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0b1330] via-[#0b1330]/40 to-transparent" />
+              </div>
+            )}
+
+            <div className={`relative p-4 ${s.gambar ? "-mt-10" : ""}`}>
+              <div className="mb-1.5 flex items-center gap-2">
+                <span
+                  className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-black uppercase tracking-wider"
+                  style={{ background: `${meta.warna}22`, color: meta.warna }}
+                >
+                  <meta.Icon size={11} />
+                  {meta.label}
+                </span>
+                {s.pinned && (
+                  <span className="text-[10px] font-bold text-white/40">Disematkan</span>
+                )}
+              </div>
+
+              <p className="pr-6 text-sm font-black text-white">{s.judul}</p>
+              <p className="mt-1 whitespace-pre-line text-xs leading-relaxed text-white/70">{s.isi}</p>
+
+              {s.tautan && (
+                <Link
+                  href={s.tautan}
+                  className="mt-3 inline-flex items-center gap-1 rounded-xl px-3 py-1.5 text-xs font-bold transition hover:brightness-110"
+                  style={{ background: `${meta.warna}22`, color: meta.warna }}
+                >
+                  {s.tautanLabel || "Lihat"}
+                  <ChevronRight size={13} />
+                </Link>
+              )}
+
+              {bisaDitutup && (
+                <button
+                  onClick={() => tutup(s.id)}
+                  className="absolute right-3 top-3 rounded-full bg-black/30 p-1 text-white/50 transition hover:text-white"
+                  aria-label="Tutup pengumuman"
+                >
+                  <X size={13} />
+                </button>
+              )}
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}

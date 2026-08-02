@@ -16,6 +16,7 @@ import { getQuestMeta, questProgressText } from "@/lib/quest-meta"
 import { getLevelProgress, levelFromXp } from "@/lib/gamification/levels"
 import { rankFromLevel } from "@/lib/gamification/ranks"
 import { RankChip } from "@/components/gamification/RankChip"
+import { SiaranBanner } from "@/components/arena/SiaranBanner"
 import { getDisplayName } from "@/lib/nickname"
 import { PembelajaranCard } from "./pembelajaran-card"
 import BattleCard from "@/components/arena/BattleCard"
@@ -181,6 +182,8 @@ export default async function BerandaPage() {
 
   return (
     <div className="arena-page max-w-5xl mx-auto p-4 md:p-6">
+      {/* Siaran platform — kabar sistem & acara untuk semua murid. */}
+      <SiaranBanner />
       {/* Hero Card */}
       <div className="arena-hero bg-gradient-to-br from-violet-600 via-purple-600 to-indigo-700 rounded-[24px] p-5 md:p-6 mb-6 text-white relative overflow-hidden shadow-xl">
         <div className="absolute top-0 right-0 w-72 h-72 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2 pointer-events-none" />

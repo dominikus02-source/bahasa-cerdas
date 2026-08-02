@@ -270,6 +270,7 @@ model User {
   nicknameHistory      NicknameHistory[]
   materiKirims         MateriKirim[]
   pengumumanDibuat     Pengumuman[]             @relation("PengumumanTeacher")
+  siaranDibuat         Siaran[]                 @relation("SiaranAuthor")
   pengumumanSubmissions PengumumanSubmission[]
   kuponDipakai         KuponPemakaian[]
 
@@ -1982,6 +1983,46 @@ model PenugasanSubmission {
 // Papan Pengumuman (one-way notice board, Google Classroom style): guru
 // memposting tugas/instruksi ke kelas (bisa dengan lampiran file referensi
 // PDF/DOCX dan tenggat), murid mengumpulkan tautan karya mereka sebagai hasil.
+/// Kategori siaran — menentukan warna & ikon di kartu murid.
+enum SiaranKategori {
+  INFO
+  PEMBARUAN
+  ACARA
+  PENTING
+}
+
+/// Siaran platform: pengumuman dari founder/admin ke SELURUH murid.
+///
+/// Berbeda dari `Pengumuman` (papan tugas per kelas, butuh groupId dan murid
+/// mengumpulkan karya). Siaran tidak terikat kelas, tidak dikumpulkan, dan
+/// dipakai untuk kabar sistem — mis. "XP mingguan direset tiap Senin".
+model Siaran {
+  id        String         @id @default(cuid())
+  judul     String
+  isi       String
+  kategori  SiaranKategori @default(INFO)
+  /// URL gambar banner (Supabase Storage). Kosong = kartu teks biasa.
+  gambar    String?
+  /// Tautan tujuan saat banner diketuk, mis. /arena/jalur-cerdas.
+  tautan    String?
+  /// Label tombol ajakan. Hanya tampil bila `tautan` diisi.
+  tautanLabel String?
+  /// Disematkan di atas siaran lain.
+  pinned    Boolean        @default(false)
+  aktif     Boolean        @default(true)
+  /// Rentang tayang. `sampai` null = tayang terus selama aktif.
+  mulai     DateTime       @default(now())
+  sampai    DateTime?
+  authorId  String
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+
+  author User @relation("SiaranAuthor", fields: [authorId], references: [id], onDelete: Cascade)
+
+  @@index([aktif, mulai])
+  @@index([authorId])
+}
+
 model Pengumuman {
   id            String   @id @default(cuid())
   groupId       String
