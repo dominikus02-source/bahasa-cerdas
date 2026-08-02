@@ -60,7 +60,6 @@ function loadBank(): UnitSoal[] {
   const bank: UnitSoal[] = [];
   for (let lvl = 1; lvl <= 12; lvl++) {
     const file = join(process.cwd(), "scripts/seed-jalur-dedupe-data", `level-${String(lvl).padStart(2, "0")}.ts`);
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
     const mod = require(file);
     const data = (mod.default ?? []) as UnitSoal[];
     bank.push(...data);

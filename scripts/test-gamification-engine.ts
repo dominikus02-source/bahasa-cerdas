@@ -220,3 +220,10 @@ ok("addXp (pintu XP kedua) sudah dihapus", !/export async function addXp/.test(x
 
 console.log(`\n${fail === 0 ? "SEMUA LULUS ✅" : `${fail} GAGAL ❌`}`);
 process.exit(fail === 0 ? 0 : 1);
+
+// ── 14. Badge yang sudah diraih tidak boleh hilang saat periode reset ──────
+const badgeEngineSrc = readFileSync(join(process.cwd(), "lib/gamification/badge-engine.ts"), "utf8");
+ok("badge yang sudah dimiliki tetap terbuka (tahan reset weekly/season)", /unlocked: met \|\| sudahDimiliki/.test(badgeEngineSrc));
+ok("badge engine punya kondisi TOTAL_WORDS", /TOTAL_WORDS/.test(badgeEngineSrc));
+ok("badge engine punya kondisi FEATURED_KARYA", /FEATURED_KARYA/.test(badgeEngineSrc));
+ok("xp & streak diambil nilai tertinggi User vs PlayerProfile", /Math\.max\(base\.streak/.test(badgeEngineSrc));

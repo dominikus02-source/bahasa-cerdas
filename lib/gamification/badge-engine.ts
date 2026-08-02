@@ -12,7 +12,7 @@ import type { Badge, BadgeRarity } from "@prisma/client";
  *   source: (khusus XP_SOURCE_TOTAL) sumber XP, mis. "JALUR_CERDAS"
  *
  * Badge diberikan OTOMATIS saat kondisi terpenuhi (evaluateBadges). Panggil
- * setelah addXp() / aktivitas yang mengubah statistik pemain.
+ * setelah awardXp() / aktivitas yang mengubah statistik pemain.
  */
 
 export type BadgeConditionType =
@@ -152,7 +152,17 @@ export async function evaluateBadges(userId: string): Promise<BadgeView[]> {
   for (const badge of badges) {
     const condition = (badge.condition ?? {}) as unknown as BadgeCondition;
     const { progress, met } = checkCondition(condition, stats);
-    results.push({ ...badge, progress: Math.min(progress, condition.target ?? 1), unlocked: met });
+    // Sekali diraih, selamanya tampil terbuka. Tanpa `sudahDimiliki`, badge
+    // yang bergantung pada penghitung yang di-reset (weeklyXP tiap minggu,
+    // seasonXP tiap 4 minggu) akan terkunci lagi saat periodenya berganti —
+    // murid kehilangan bukti kerja kerasnya walau baris UserBadge-nya ada.
+    const sudahDimiliki = ownedIds.has(badge.id);
+    const target = condition.target ?? 1;
+    results.push({
+      ...badge,
+      progress: sudahDimiliki ? target : Math.min(progress, target),
+      unlocked: met || sudahDimiliki,
+    });
 
     if (met && !ownedIds.has(badge.id)) {
       toAward.push({ badgeId: badge.id });
