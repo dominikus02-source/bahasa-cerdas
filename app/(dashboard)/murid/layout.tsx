@@ -10,6 +10,7 @@ import { NotificationBell } from "@/components/dashboard/NotificationBell";
 import MuridMobileNav from "@/components/dashboard/MuridMobileNav";
 import { InstallBanner } from "@/components/InstallBanner";
 import { IconFlame, IconBolt, IconTarget } from "@/lib/icons";
+import UserAvatar from "@/components/arena/UserAvatar";
 
 const MenuIcon = ({ path, label, href }: { path: string; label: string; href: string }) => (
   <Link href={href} className="group flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm mb-1 transition-all duration-200 text-gray-600 hover:bg-gradient-to-r hover:from-violet-50 hover:to-purple-50 hover:text-violet-700">
@@ -55,9 +56,16 @@ export default async function MuridLayout({ children }: { children: React.ReactN
 
         <div className="px-4 py-5 border-b border-gray-100/50 bg-gradient-to-br from-violet-50/50 to-purple-50/50">
           <div className="flex items-center gap-4">
-            <div className="w-14 h-14 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center text-white font-bold text-lg shadow-lg shrink-0">
-              {user.fullName?.charAt(0).toUpperCase() || "M"}
-            </div>
+            {/* Sidebar ini dulu selalu menampilkan inisial — foto murid tidak
+                pernah dirender sama sekali, bukan gagal dimuat. */}
+            <UserAvatar
+              size={56}
+              avatar={user.avatar}
+              initials={user.fullName?.charAt(0).toUpperCase() || "M"}
+              gradient="from-violet-500 to-purple-600"
+              textClassName="text-lg"
+              className="shadow-lg"
+            />
             <div className="flex-1 min-w-0">
               <p className="text-base font-bold text-gray-900 truncate">{user.fullName}</p>
               <div className="flex items-center gap-1.5 mt-1">

@@ -3,7 +3,7 @@ import { getUser, createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 import { awardCoins, trackQuestProgress, trackDailyStreak, awardChallengeBonus, COIN_MENULIS_KARYA } from "@/lib/coins";
 import { getWeeklyChallenge } from "@/lib/weekly-challenge";
-import { karyaSchema, sanitize } from "@/lib/validations";
+import { karyaSchema, sanitizeTeks } from "@/lib/validations";
 import { transformImageUrl } from "@/lib/image-transform";
 import cache from "@/lib/redis";
 import { invalidateKaryaCache } from "@/lib/ai-queue";
@@ -228,7 +228,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const sanitizedContent = sanitize(parsed.data.konten);
+    const sanitizedContent = sanitizeTeks(parsed.data.konten);
     const excerpt = sanitizedContent.replace(/<[^>]*>/g, "").replace(/\s+/g, " ").trim().slice(0, 200);
 
     const karya = await db.studentKarya.create({

@@ -68,6 +68,43 @@ export const komunitasPostSchema = z.object({
   konten: z.string().min(1).max(10000).trim(),
 });
 
+/**
+ * Bersihkan teks karangan murid — TANPA meng-escape HTML.
+ *
+ * Konten karya ditampilkan sebagai teks React biasa (`{karya.content}`), dan
+ * React sudah meng-escape sendiri saat merender. Meng-escape lagi saat menyimpan
+ * membuat entitasnya ikut tersimpan, lalu tampil apa adanya di layar: murid
+ * melihat `&quot;Sayapmu Nak!&quot;` alih-alih tanda kutip. Paling terasa saat
+ * menempel dari Word, yang penuh tanda kutip, apostrof, dan garis miring.
+ *
+ * Escaping ganda juga menumpuk tiap kali karya disimpan ulang (`&` → `&amp;`),
+ * jadi karya yang sering diedit makin rusak.
+ *
+ * Yang tetap dibersihkan: karakter kontrol tak terlihat dan BOM yang sering
+ * ikut terbawa dari Word/Google Docs, serta normalisasi Unicode agar huruf
+ * beraksen tidak terpecah jadi dua karakter.
+ */
+export function sanitizeTeks(input: string): string {
+  return input
+    .normalize("NFC")
+    // Hapus BOM + zero-width + karakter kontrol C0/C1, kecuali \n \r \t.
+    .replace(/[\uFEFF\u200B-\u200D\u2060]/g, "")
+    // eslint-disable-next-line no-control-regex
+    .replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F-\u009F]/g, "")
+    .trim();
+}
+
+/** Decode entitas HTML yang terlanjur tersimpan (pemulihan data lama). */
+export function decodeEntitasHtml(input: string): string {
+  return input
+    .replace(/&#x2F;/gi, "/")
+    .replace(/&#x27;/gi, "'")
+    .replace(/&quot;/gi, '"')
+    .replace(/&gt;/gi, ">")
+    .replace(/&lt;/gi, "<")
+    .replace(/&amp;/gi, "&"); // terakhir, supaya &amp;quot; tidak jadi " prematur
+}
+
 export function sanitize(input: string): string {
   return input
     .replace(/&/g, "&amp;")

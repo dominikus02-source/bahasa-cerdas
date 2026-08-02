@@ -158,6 +158,7 @@
     "seed:gamification:dry-run": "npx tsx scripts/seed-gamification-data.ts",
     "seed:gamification": "npx tsx scripts/seed-gamification-data.ts --execute",
     "test:gamification-engine": "npx tsx scripts/test-gamification-engine.ts",
+    "perbaiki:karya": "npx tsx scripts/perbaiki-karya-terescape.ts",
     "backfill:progresi": "npx tsx scripts/backfill-progresi-resmi.ts"
   },
   "dependencies": {
