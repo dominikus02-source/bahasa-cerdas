@@ -6,6 +6,7 @@ import { Check, Gift, Lock } from "lucide-react";
 import { GlassCard, formatId } from "./ui";
 import type { AchievementView } from "@/lib/gamification/client-types";
 import { usePlayer } from "./player-context";
+import { BadgeIcon } from "@/components/gamification/BadgeIcon";
 
 /** Grid achievement — progress realtime + klaim reward. */
 export function AchievementGrid({ limit }: { limit?: number }) {
@@ -90,7 +91,7 @@ export function AchievementGrid({ limit }: { limit?: number }) {
               className="flex items-center gap-3 rounded-2xl border border-[var(--px-border)] bg-white/[0.05] p-3"
             >
               <div className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-xl ${done ? "bg-gradient-to-br from-amber-500/40 to-orange-600/30" : "bg-white/5 opacity-60"}`}>
-                {done ? a.icon : <Lock size={16} />}
+                {done ? <BadgeIcon icon={a.icon} size={34} alt={a.name} /> : <Lock size={16} />}
               </div>
 
               <div className="min-w-0 flex-1">

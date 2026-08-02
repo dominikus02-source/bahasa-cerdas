@@ -22,45 +22,49 @@ interface BadgeSeed {
 
 const BADGES: BadgeSeed[] = [
   // ── Total XP ──
-  { code: "xp-100", name: "Perintis XP", icon: "⚡", description: "Kumpulkan 100 XP total", condition: { type: "TOTAL_XP", target: 100 }, rarity: "BRONZE" },
-  { code: "xp-1000", name: "Pemburu XP", icon: "🔥", description: "Kumpulkan 1.000 XP total", condition: { type: "TOTAL_XP", target: 1000 }, rarity: "BRONZE" },
-  { code: "xp-5000", name: "Kolektor XP", icon: "💎", description: "Kumpulkan 5.000 XP total", condition: { type: "TOTAL_XP", target: 5000 }, rarity: "SILVER" },
-  { code: "xp-10000", name: "Master XP", icon: "🏆", description: "Kumpulkan 10.000 XP total", condition: { type: "TOTAL_XP", target: 10000 }, rarity: "GOLD" },
-  { code: "xp-25000", name: "Legenda XP", icon: "👑", description: "Kumpulkan 25.000 XP total", condition: { type: "TOTAL_XP", target: 25000 }, rarity: "LEGENDARY" },
+  { code: "xp-100", name: "Perintis XP", icon: "/badges/xp-100.webp", description: "Kumpulkan 100 XP total", condition: { type: "TOTAL_XP", target: 100 }, rarity: "BRONZE" },
+  { code: "xp-1000", name: "Pemburu XP", icon: "/badges/xp-1000.webp", description: "Kumpulkan 1.000 XP total", condition: { type: "TOTAL_XP", target: 1000 }, rarity: "BRONZE" },
+  { code: "xp-5000", name: "Kolektor XP", icon: "/badges/xp-5000.webp", description: "Kumpulkan 5.000 XP total", condition: { type: "TOTAL_XP", target: 5000 }, rarity: "SILVER" },
+  { code: "xp-10000", name: "Master XP", icon: "/badges/xp-10000.webp", description: "Kumpulkan 10.000 XP total", condition: { type: "TOTAL_XP", target: 10000 }, rarity: "GOLD" },
+  { code: "xp-25000", name: "Legenda XP", icon: "/badges/xp-25000.webp", description: "Kumpulkan 25.000 XP total", condition: { type: "TOTAL_XP", target: 25000 }, rarity: "LEGENDARY" },
+  // USULAN: aset "hall-of-fame" ikut disediakan di sheet badge tapi belum punya
+  // kode. Ambangnya dipilih di atas Legenda XP supaya jadi badge pamungkas —
+  // ganti angkanya kalau desainmu berbeda.
+  { code: "hall-of-fame", name: "Hall of Fame", icon: "/badges/hall-of-fame.webp", description: "Kumpulkan 50.000 XP total", condition: { type: "TOTAL_XP", target: 50000 }, rarity: "LEGENDARY" },
 
   // ── Level ──
-  { code: "lvl-5", name: "Naik Kelas", icon: "📗", description: "Capai level 5", condition: { type: "LEVEL", target: 5 }, rarity: "BRONZE" },
-  { code: "lvl-10", name: "Bintang 10", icon: "📘", description: "Capai level 10", condition: { type: "LEVEL", target: 10 }, rarity: "SILVER" },
-  { code: "lvl-25", name: "Sarjana Cerdas", icon: "🎓", description: "Capai level 25", condition: { type: "LEVEL", target: 25 }, rarity: "GOLD" },
-  { code: "lvl-50", name: "Guru Arena", icon: "🧠", description: "Capai level 50", condition: { type: "LEVEL", target: 50 }, rarity: "GOLD" },
-  { code: "lvl-100", name: "Legenda BC", icon: "🏅", description: "Capai level 100", condition: { type: "LEVEL", target: 100 }, rarity: "LEGENDARY" },
+  { code: "lvl-5", name: "Naik Kelas", icon: "/badges/lvl-5.webp", description: "Capai level 5", condition: { type: "LEVEL", target: 5 }, rarity: "BRONZE" },
+  { code: "lvl-10", name: "Bintang 10", icon: "/badges/lvl-10.webp", description: "Capai level 10", condition: { type: "LEVEL", target: 10 }, rarity: "SILVER" },
+  { code: "lvl-25", name: "Sarjana Cerdas", icon: "/badges/lvl-25.webp", description: "Capai level 25", condition: { type: "LEVEL", target: 25 }, rarity: "GOLD" },
+  { code: "lvl-50", name: "Guru Arena", icon: "/badges/lvl-50.webp", description: "Capai level 50", condition: { type: "LEVEL", target: 50 }, rarity: "GOLD" },
+  { code: "lvl-100", name: "Legenda BC", icon: "/badges/lvl-100.webp", description: "Capai level 100", condition: { type: "LEVEL", target: 100 }, rarity: "LEGENDARY" },
 
   // ── Streak ──
-  { code: "streak-3", name: "Rajin 3 Hari", icon: "🌱", description: "Aktif 3 hari berturut-turut", condition: { type: "STREAK", target: 3 }, rarity: "BRONZE" },
-  { code: "streak-7", name: "Seminggu Penuh", icon: "🌿", description: "Aktif 7 hari berturut-turut", condition: { type: "STREAK", target: 7 }, rarity: "SILVER" },
-  { code: "streak-30", name: "Bulan Tanpa Putus", icon: "🔥", description: "Aktif 30 hari berturut-turut", condition: { type: "STREAK", target: 30 }, rarity: "GOLD" },
-  { code: "streak-100", name: "Raksasa Konsisten", icon: "🗿", description: "Aktif 100 hari berturut-turut", condition: { type: "STREAK", target: 100 }, rarity: "LEGENDARY" },
+  { code: "streak-3", name: "Rajin 3 Hari", icon: "/badges/streak-3.webp", description: "Aktif 3 hari berturut-turut", condition: { type: "STREAK", target: 3 }, rarity: "BRONZE" },
+  { code: "streak-7", name: "Seminggu Penuh", icon: "/badges/streak-7.webp", description: "Aktif 7 hari berturut-turut", condition: { type: "STREAK", target: 7 }, rarity: "SILVER" },
+  { code: "streak-30", name: "Bulan Tanpa Putus", icon: "/badges/streak-30.webp", description: "Aktif 30 hari berturut-turut", condition: { type: "STREAK", target: 30 }, rarity: "GOLD" },
+  { code: "streak-100", name: "Raksasa Konsisten", icon: "/badges/streak-100.webp", description: "Aktif 100 hari berturut-turut", condition: { type: "STREAK", target: 100 }, rarity: "LEGENDARY" },
 
   // ── Weekly / Season XP ──
-  { code: "weekly-200", name: "Top Minggu Ini", icon: "📅", description: "Kumpulkan 200 XP dalam satu minggu", condition: { type: "WEEKLY_XP", target: 200 }, rarity: "SILVER" },
-  { code: "weekly-1000", name: "Penguasa Minggu", icon: "🥇", description: "Kumpulkan 1.000 XP dalam satu minggu", condition: { type: "WEEKLY_XP", target: 1000 }, rarity: "GOLD" },
-  { code: "season-1000", name: "Kontributor Season", icon: "🗓️", description: "Kumpulkan 1.000 XP dalam satu season", condition: { type: "SEASON_XP", target: 1000 }, rarity: "SILVER" },
-  { code: "season-5000", name: "Juara Season", icon: "🎖️", description: "Kumpulkan 5.000 XP dalam satu season", condition: { type: "SEASON_XP", target: 5000 }, rarity: "LEGENDARY" },
+  { code: "weekly-200", name: "Top Minggu Ini", icon: "/badges/weekly-200.webp", description: "Kumpulkan 200 XP dalam satu minggu", condition: { type: "WEEKLY_XP", target: 200 }, rarity: "SILVER" },
+  { code: "weekly-1000", name: "Penguasa Minggu", icon: "/badges/weekly-1000.webp", description: "Kumpulkan 1.000 XP dalam satu minggu", condition: { type: "WEEKLY_XP", target: 1000 }, rarity: "GOLD" },
+  { code: "season-1000", name: "Kontributor Season", icon: "/badges/season-1000.webp", description: "Kumpulkan 1.000 XP dalam satu season", condition: { type: "SEASON_XP", target: 1000 }, rarity: "SILVER" },
+  { code: "season-5000", name: "Juara Season", icon: "/badges/season-5000.webp", description: "Kumpulkan 5.000 XP dalam satu season", condition: { type: "SEASON_XP", target: 5000 }, rarity: "LEGENDARY" },
 
   // ── Koin ──
-  { code: "coin-500", name: "Menabung Koin", icon: "🪙", description: "Punya 500 koin saldo", condition: { type: "COIN_BALANCE", target: 500 }, rarity: "BRONZE" },
-  { code: "coin-2000", name: "Juragan Koin", icon: "💰", description: "Punya 2.000 koin saldo", condition: { type: "COIN_BALANCE", target: 2000 }, rarity: "SILVER" },
-  { code: "coin-10000", name: "Konglomerat Cerdas", icon: "💸", description: "Punya 10.000 koin saldo", condition: { type: "COIN_BALANCE", target: 10000 }, rarity: "GOLD" },
+  { code: "coin-500", name: "Menabung Koin", icon: "/badges/coin-500.webp", description: "Punya 500 koin saldo", condition: { type: "COIN_BALANCE", target: 500 }, rarity: "BRONZE" },
+  { code: "coin-2000", name: "Juragan Koin", icon: "/badges/coin-2000.webp", description: "Punya 2.000 koin saldo", condition: { type: "COIN_BALANCE", target: 2000 }, rarity: "SILVER" },
+  { code: "coin-10000", name: "Konglomerat Cerdas", icon: "/badges/coin-10000.webp", description: "Punya 10.000 koin saldo", condition: { type: "COIN_BALANCE", target: 10000 }, rarity: "GOLD" },
 
   // ── Karya ──
-  { code: "karya-1", name: "Pertama Menulis", icon: "✍️", description: "Buat 1 karya", condition: { type: "TOTAL_KARYA", target: 1 }, rarity: "BRONZE" },
-  { code: "karya-10", name: "Penulis Aktif", icon: "📝", description: "Buat 10 karya", condition: { type: "TOTAL_KARYA", target: 10 }, rarity: "SILVER" },
-  { code: "karya-50", name: "Sastrawan Cerdas", icon: "🖋️", description: "Buat 50 karya", condition: { type: "TOTAL_KARYA", target: 50 }, rarity: "GOLD" },
+  { code: "karya-1", name: "Pertama Menulis", icon: "/badges/karya-1.webp", description: "Buat 1 karya", condition: { type: "TOTAL_KARYA", target: 1 }, rarity: "BRONZE" },
+  { code: "karya-10", name: "Penulis Aktif", icon: "/badges/karya-10.webp", description: "Buat 10 karya", condition: { type: "TOTAL_KARYA", target: 10 }, rarity: "SILVER" },
+  { code: "karya-50", name: "Sastrawan Cerdas", icon: "/badges/karya-50.webp", description: "Buat 50 karya", condition: { type: "TOTAL_KARYA", target: 50 }, rarity: "GOLD" },
 
   // ── Per sumber ──
-  { code: "sumber-jalur-500", name: "Penjelajah Jalur", icon: "🗺️", description: "Kumpulkan 500 XP dari Jalur Cerdas", condition: { type: "XP_SOURCE_TOTAL", target: 500, source: "JALUR_CERDAS" }, rarity: "SILVER" },
-  { code: "sumber-ukbi-500", name: "Kampiun UKBI", icon: "🎙️", description: "Kumpulkan 500 XP dari UKBI", condition: { type: "XP_SOURCE_TOTAL", target: 500, source: "UKBI" }, rarity: "GOLD" },
-  { code: "sumber-tka-500", name: "Ahli TKA", icon: "🧮", description: "Kumpulkan 500 XP dari TKA", condition: { type: "XP_SOURCE_TOTAL", target: 500, source: "TKA" }, rarity: "GOLD" },
+  { code: "sumber-jalur-500", name: "Penjelajah Jalur", icon: "/badges/sumber-jalur-500.webp", description: "Kumpulkan 500 XP dari Jalur Cerdas", condition: { type: "XP_SOURCE_TOTAL", target: 500, source: "JALUR_CERDAS" }, rarity: "SILVER" },
+  { code: "sumber-ukbi-500", name: "Kampiun UKBI", icon: "/badges/sumber-ukbi-500.webp", description: "Kumpulkan 500 XP dari UKBI", condition: { type: "XP_SOURCE_TOTAL", target: 500, source: "UKBI" }, rarity: "GOLD" },
+  { code: "sumber-tka-500", name: "Ahli TKA", icon: "/badges/sumber-tka-500.webp", description: "Kumpulkan 500 XP dari TKA", condition: { type: "XP_SOURCE_TOTAL", target: 500, source: "TKA" }, rarity: "GOLD" },
 ];
 
 interface AchievementSeed {

@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { Bell } from "lucide-react";
 import { GlassCard, useRelativeTime } from "./ui";
 import type { PlayerNotificationView } from "@/lib/gamification/client-types";
+import { BadgeIcon } from "@/components/gamification/BadgeIcon";
 
 /** Pusat notifikasi pemain — agregasi event reward terbaru. */
 export function NotificationCenter({ compact = false }: { compact?: boolean }) {
@@ -75,7 +76,7 @@ function NotificationRow({ n }: { n: PlayerNotificationView }) {
   const time = useRelativeTime(n.createdAt);
   return (
     <div className="flex items-start gap-3 rounded-xl border border-[var(--px-border)] bg-white/[0.04] px-3 py-2.5">
-      <span className="mt-0.5 text-lg">{n.icon}</span>
+      <span className="mt-0.5"><BadgeIcon icon={n.icon} size={22} /></span>
       <div className="min-w-0 flex-1">
         <p className="text-sm font-bold text-[var(--px-text)]">{n.title}</p>
         <p className="line-clamp-2 text-xs text-[var(--px-text-dim)]">{n.body}</p>

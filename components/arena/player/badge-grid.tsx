@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Lock } from "lucide-react";
+import { BadgeIcon } from "@/components/gamification/BadgeIcon";
 import { RARITY_META, type BadgeView } from "@/lib/gamification/client-types";
 
 /** Grid badge — koleksi badge + status unlock. */
@@ -67,7 +68,7 @@ export function BadgeGrid({ limit }: { limit?: number }) {
                 className={`flex h-12 w-12 items-center justify-center rounded-2xl text-2xl ${b.unlocked ? "" : "grayscale opacity-40"}`}
                 style={{ boxShadow: b.unlocked ? `0 0 18px -2px ${rarity.color}66` : undefined }}
               >
-                {b.unlocked ? b.icon : <Lock size={18} />}
+                {b.unlocked ? <BadgeIcon icon={b.icon} size={44} alt={b.name} /> : <Lock size={18} />}
               </div>
               <p className="line-clamp-1 w-full text-[10px] font-bold leading-tight" style={{ color: b.unlocked ? rarity.color : undefined }}>
                 {b.name}

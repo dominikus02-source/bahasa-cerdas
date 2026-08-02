@@ -2,6 +2,7 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import { usePlayer } from "./player-context";
+import { BadgeIcon } from "@/components/gamification/BadgeIcon";
 
 const TYPE_META = {
   XP: { label: "XP", icon: "⚡", tint: "border-sky-400/50 bg-sky-500/10 text-sky-300" },
@@ -30,7 +31,7 @@ export function RewardPopupQueue() {
             transition={{ type: "spring", stiffness: 320, damping: 22 }}
           >
             <div className={`flex items-center gap-3 rounded-2xl border px-4 py-3 backdrop-blur-md ${TYPE_META[current.type]?.tint ?? "bg-white/10"} bg-[#0e1735]/85`}>
-              <span className="text-2xl">{current.icon}</span>
+              <BadgeIcon icon={current.icon ?? "🏅"} size={34} />
               <div className="min-w-0 flex-1">
                 <p className="text-sm font-extrabold text-white">{current.title}</p>
                 {current.body && <p className="truncate text-xs text-[var(--px-text-dim)]">{current.body}</p>}
