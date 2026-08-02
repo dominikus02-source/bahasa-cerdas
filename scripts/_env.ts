@@ -20,6 +20,26 @@ function cleanUrl(v: string | undefined): string | undefined {
   return t.length ? t : undefined;
 }
 
+/**
+ * Sesuaikan URL untuk pooler Supabase (mode transaksi, port 6543).
+ *
+ * Pooler mode transaksi memindahkan koneksi antar transaksi, sehingga prepared
+ * statement milik Prisma hilang di tengah jalan dan muncul
+ * `prepared statement "s1" does not exist` (kode 26000). Gejalanya menipu:
+ * query berurutan sering lolos, yang paralel langsung gagal.
+ *
+ * `pgbouncer=true` menyuruh Prisma berhenti memakai prepared statement.
+ * `connection_limit=1` menjaga skrip CLI tidak memakan slot pooler yang
+ * dipakai aplikasi produksi.
+ */
+function siapkanPooler(url: string): string {
+  if (!/pooler\.supabase\.com|:6543/.test(url)) return url; // koneksi langsung
+  const u = new URL(url);
+  if (!u.searchParams.has("pgbouncer")) u.searchParams.set("pgbouncer", "true");
+  if (!u.searchParams.has("connection_limit")) u.searchParams.set("connection_limit", "1");
+  return u.toString();
+}
+
 /** Muat env skrip. Panggil SEBELUM membuat PrismaClient. */
 export function loadScriptEnv(): void {
   loadEnv({ path: ".env.db.local" }); // nilai asli — menang karena dimuat dulu
@@ -33,7 +53,7 @@ export function loadScriptEnv(): void {
 export function requireDatabaseUrl(): string {
   const url = cleanUrl(process.env.DATABASE_URL) ?? cleanUrl(process.env.DIRECT_URL);
 
-  if (url && /^postgres(ql)?:\/\//.test(url)) return url;
+  if (url && /^postgres(ql)?:\/\//.test(url)) return siapkanPooler(url);
 
   const placeholder = url === "[SENSITIVE]";
   console.error(

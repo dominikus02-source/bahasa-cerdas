@@ -107,6 +107,42 @@ async function main() {
   console.log(`Achievement: ${ACHIEVEMENTS.length} definisi\n`);
 
   if (!execute) {
+    // Dry-run TETAP membaca DB (read-only) supaya angkanya bisa dipercaya.
+    // Sebelumnya blok ini langsung return, sehingga dry-run "berhasil" tanpa
+    // pernah menyentuh DB — koneksi yang rusak baru ketahuan saat --execute,
+    // dan tidak ada gambaran apa pun soal apa yang akan berubah.
+    const kodeBadge = BADGES.map((b) => b.code);
+    const kodeAch = ACHIEVEMENTS.map((a) => a.code);
+
+    const [badgeAda, achAda] = await Promise.all([
+      db.badge.findMany({ where: { code: { in: kodeBadge } }, select: { code: true, icon: true } }),
+      db.achievement.findMany({ where: { code: { in: kodeAch } }, select: { code: true, icon: true } }),
+    ]);
+
+    const petaBadge = new Map(badgeAda.map((b) => [b.code, b.icon]));
+    const badgeBaru = BADGES.filter((b) => !petaBadge.has(b.code));
+    const ikonBerubah = BADGES.filter((b) => petaBadge.has(b.code) && petaBadge.get(b.code) !== b.icon);
+
+    const petaAch = new Map(achAda.map((a) => [a.code, a.icon]));
+    const achBaru = ACHIEVEMENTS.filter((a) => !petaAch.has(a.code));
+
+    console.log(`Badge di DB saat ini  : ${badgeAda.length}`);
+    console.log(`  akan dibuat         : ${badgeBaru.length}${badgeBaru.length ? "  (" + badgeBaru.map((b) => b.code).join(", ") + ")" : ""}`);
+    console.log(`  ikon akan berubah   : ${ikonBerubah.length}`);
+    console.log(`Achievement di DB     : ${achAda.length}`);
+    console.log(`  akan dibuat         : ${achBaru.length}${achBaru.length ? "  (" + achBaru.map((a) => a.code).join(", ") + ")" : ""}`);
+
+    if (ikonBerubah.length) {
+      console.log("\nContoh perubahan ikon (emoji → aset resmi):");
+      ikonBerubah.slice(0, 5).forEach((b) => {
+        console.log(`  ${b.code.padEnd(18)} ${String(petaBadge.get(b.code)).padEnd(4)} → ${b.icon}`);
+      });
+    }
+
+    const totalUserBadge = await db.userBadge.count();
+    console.log(`\nBadge yang sudah dimiliki murid: ${totalUserBadge} baris (tidak disentuh — hanya definisinya yang diperbarui)`);
+
+    console.log("\n(dry-run — tidak ada yang ditulis)");
     await db.$disconnect();
     return;
   }
