@@ -3,17 +3,27 @@
  * desain resmi founder, lihat OFFICIAL_RANK_SYSTEM_REPORT.md).
  *
  *   Level      XP / level        Total XP kumulatif
- *   1–9        250               0–2.250
- *   10–19      450               2.250–6.750
- *   20–29      675               6.750–13.500
- *   30–39      900               13.500–22.500
- *   40–49      1.200             22.500–34.500
- *   50–59      1.500             34.500–49.500
- *   60–69      1.800             49.500–67.500
- *   70–79      2.250             67.500–90.000
- *   80–100     3.000             90.000–150.000+
+ *   1–9          250              0–2.250
+ *   10–19        500              2.250–7.250
+ *   20–29        900              7.250–16.250
+ *   30–39      1.500              16.250–31.250
+ *   40–49      2.400              31.250–55.250
+ *   50–59      3.600              55.250–91.250
+ *   60–69      5.400              91.250–145.250
+ *   70–79      8.000              145.250–225.250
+ *   80–100    12.000              225.250–465.250
  *
  * Semua angka level dihitung dari totalXP — tidak pernah hardcode level user.
+ *
+ * ── Kenapa band atas dicuramkan ───────────────────────────────────────────
+ * Kurva sebelumnya menaruh level 100 di 153.000 XP. Dengan batas harian 5.000
+ * XP (BATAS_XP_HARIAN di lib/xp-guard.ts), murid yang menghabiskan kuota tiap
+ * hari mencapai LEGEND dalam 31 hari — seluruh tangga 9 rank tuntas sebelum
+ * satu semester. Sekarang 465.250 XP: 93 hari dengan grinding sempurna, dan
+ * bertahun-tahun untuk ritme belajar normal.
+ *
+ * Band bawah sengaja TIDAK diubah banyak: murid baru harus tetap merasa cepat
+ * maju di minggu-minggu pertama. Yang dicuramkan hanya wilayah prestise.
  */
 
 const MAX_LEVEL = 100;
@@ -21,14 +31,14 @@ const MAX_LEVEL = 100;
 /** Band XP per level (XP untuk naik dari level → level+1). */
 const XP_BANDS: { from: number; to: number; xp: number }[] = [
   { from: 1, to: 9, xp: 250 },
-  { from: 10, to: 19, xp: 450 },
-  { from: 20, to: 29, xp: 675 },
-  { from: 30, to: 39, xp: 900 },
-  { from: 40, to: 49, xp: 1200 },
-  { from: 50, to: 59, xp: 1500 },
-  { from: 60, to: 69, xp: 1800 },
-  { from: 70, to: 79, xp: 2250 },
-  { from: 80, to: 100, xp: 3000 },
+  { from: 10, to: 19, xp: 500 },
+  { from: 20, to: 29, xp: 900 },
+  { from: 30, to: 39, xp: 1500 },
+  { from: 40, to: 49, xp: 2400 },
+  { from: 50, to: 59, xp: 3600 },
+  { from: 60, to: 69, xp: 5400 },
+  { from: 70, to: 79, xp: 8000 },
+  { from: 80, to: 100, xp: 12000 },
 ];
 
 /** XP yang dibutuhkan untuk naik dari level → level+1 (kurva resmi). */

@@ -22,7 +22,11 @@ const ok = (label: string, cond: boolean) => {
 
 // ── 1. Level curve ────────────────────────────────────────────────────────
 const c100 = cumulativeXpForLevel(100);
-ok("XP untuk level 100 sesuai kurva resmi (120000–180000)", c100 >= 120000 && c100 <= 180000);
+// Level 100 harus TIDAK terjangkau dalam sebulan. Batas harian 5.000 XP
+// (BATAS_XP_HARIAN), jadi kurva di bawah 150.000 berarti Legend bisa diraih
+// dalam 30 hari grinding — pagar ini mencegah kurvanya dilonggarkan diam-diam.
+ok("XP level 100 = 465.250 (kurva resmi)", c100 === 465250);
+ok("Legend butuh >90 hari grinding maksimum (5.000 XP/hari)", c100 / 5000 > 90);
 ok("levelFromXp(0) = 1", levelFromXp(0) === 1);
 ok("level monotonik naik", levelFromXp(5000) >= levelFromXp(1000));
 ok("levelAfterXp(1, 1000) = level(1000)", levelAfterXp(1, 1000) === levelFromXp(cumulativeXpForLevel(1) + 1000) || levelAfterXp(1, 1000) > 1);
