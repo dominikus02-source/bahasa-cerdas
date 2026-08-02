@@ -7,7 +7,9 @@ import { GlassCard, formatId } from "./ui";
 export function StreakCard({ streak }: { streak: number }) {
   const days = Math.min(7, streak);
   const full = Array.from({ length: days }, (_, i) => i + 1);
-  const empty = Array.from({ length: 7 - days }, (_, i) => i + 1);
+  // Penomoran DILANJUTKAN dari hari yang sudah terisi. Sebelumnya dimulai dari
+  // 1 lagi, sehingga "1" muncul dua kali dan hari ke-7 tidak pernah tampil.
+  const empty = Array.from({ length: 7 - days }, (_, i) => days + i + 1);
 
   return (
     <GlassCard className="p-4">
