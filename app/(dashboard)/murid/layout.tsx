@@ -1,4 +1,7 @@
 import { getUser } from "@/lib/supabase/server";
+import { levelFromXp } from "@/lib/gamification/levels"
+import { rankFromLevel, RANK_META } from "@/lib/gamification/ranks"
+import { RankChip } from "@/components/gamification/RankChip"
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import AIFloatingButton from "@/components/shared/AIFloatingButton";
@@ -32,7 +35,8 @@ export default async function MuridLayout({ children }: { children: React.ReactN
     redirect("/onboarding");
   }
 
-  const leagueLabel = { BRONZE: "Perunggu", SILVER: "Perak", GOLD: "Emas", DIAMOND: "Berlian" }[user.league || "BRONZE"] || "Perunggu"
+  // Rank resmi diturunkan dari XP — User.league sudah tidak ditulis lagi.
+  const rank = rankFromLevel(levelFromXp(user.xp || 0))
 
   return (
     <div className="flex min-h-screen bg-gradient-to-br from-slate-50 via-white to-violet-50">
@@ -58,7 +62,7 @@ export default async function MuridLayout({ children }: { children: React.ReactN
               <p className="text-base font-bold text-gray-900 truncate">{user.fullName}</p>
               <div className="flex items-center gap-1.5 mt-1">
                 <IconTarget size={16} className="text-violet-500" />
-                <span className="text-xs text-gray-500 font-medium">{leagueLabel}</span>
+                <RankChip rank={rank} size={14} showTitle={false} compact />
                 <span className="text-xs text-gray-400">•</span>
                 <span className="text-xs text-violet-600 font-semibold">Tkt {user.level}</span>
               </div>

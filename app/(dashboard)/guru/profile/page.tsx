@@ -4,6 +4,9 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Camera, Settings, Award, BookOpen, Trophy, Star, MessageCircle, Heart, Image as ImageIcon, MapPin, Calendar, GraduationCap, Mail, ShoppingBag, DollarSign, Users, FileText, Crown } from "lucide-react";
+import { levelFromXp } from "@/lib/gamification/levels";
+import { rankFromLevel } from "@/lib/gamification/ranks";
+import { RankChip } from "@/components/gamification/RankChip";
 
 interface UserData {
   id: string;
@@ -42,8 +45,8 @@ export default function GuruProfilePage() {
     .finally(() => setLoading(false));
   }, []);
 
-  const leagueEmoji = { BRONZE: "🥉", SILVER: "🥈", GOLD: "🥇", DIAMOND: "💎" }[user?.league || "BRONZE"] || "🥉"
-  const leagueLabel = { BRONZE: "Perunggu", SILVER: "Perak", GOLD: "Emas", DIAMOND: "Berlian" }[user?.league || "BRONZE"] || "Perunggu"
+  // Rank resmi dari XP — User.league sudah tidak ditulis.
+  const rank = rankFromLevel(levelFromXp(user?.xp || 0))
   const leagueColors = { BRONZE: "from-amber-500 to-orange-600", SILVER: "from-gray-300 to-gray-500", GOLD: "from-yellow-400 to-amber-500", DIAMOND: "from-cyan-400 to-blue-500" }
 
   if (loading) {
@@ -69,7 +72,7 @@ export default function GuruProfilePage() {
         {/* Avatar */}
         <div className="absolute -bottom-16 left-1/2 -translate-x-1/2">
           <div className="relative">
-            <div className={`w-28 h-28 rounded-full bg-gradient-to-br ${leagueColors[user?.league as keyof typeof leagueColors] || "from-emerald-500 to-green-600"} p-1 shadow-xl`}>
+            <div className={`w-28 h-28 rounded-full bg-gradient-to-br from-emerald-500 to-green-600 p-1 shadow-xl`}>
               <div className="w-full h-full rounded-full bg-white flex items-center justify-center overflow-hidden">
                 {user?.avatar ? (
                   <img src={user.avatar} alt="" className="w-full h-full object-cover" />
@@ -94,8 +97,7 @@ export default function GuruProfilePage() {
       <div className="pt-20 px-4 text-center">
         <h1 className="text-2xl font-bold text-gray-900">{user?.fullName || "Guru"}</h1>
         <div className="flex items-center justify-center gap-2 mt-2">
-          <span className="text-lg">{leagueEmoji}</span>
-          <span className="text-sm font-medium text-gray-600">{leagueLabel}</span>
+          <RankChip rank={rank} size={18} />
           <span className="text-xs text-gray-400">•</span>
           <span className="text-sm font-semibold text-emerald-600">Level {user?.level || 1}</span>
         </div>

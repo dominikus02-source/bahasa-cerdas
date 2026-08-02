@@ -190,6 +190,11 @@ model User {
   level                Int                     @default(1)
   streak               Int                     @default(0)
   lastActiveAt         DateTime?
+  /// USANG — jangan dibaca/ditulis. Liga 4 tingkat digantikan 9 rank resmi.
+  /// Enum LeagueType tidak akan pernah bisa menampung PlayerRank (9 nilai).
+  /// Rank pemain ada di PlayerProfile.currentRank, atau turunkan langsung:
+  /// rankFromLevel(levelFromXp(User.xp)). Kolom dibiarkan agar baris lama tidak
+  /// perlu migrasi destruktif; nilainya beku dan tidak dipakai di mana pun.
   league               LeagueType              @default(BRONZE)
   saldo                Int                     @default(0)
   totalEarned          Int                     @default(0)

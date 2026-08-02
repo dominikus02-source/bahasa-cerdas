@@ -22,9 +22,37 @@
  *   npm run backfill:progresi            # dry-run, tidak menulis apa pun
  *   npm run backfill:progresi -- --execute
  */
-import { db } from "@/lib/db";
+import { config as loadEnv } from "dotenv";
+import { PrismaClient } from "@prisma/client";
 import { levelFromXp } from "@/lib/gamification/levels";
 import { rankFromLevel } from "@/lib/gamification/ranks";
+
+// Env dimuat sebelum PrismaClient dibuat. Tidak boleh memakai `@/lib/db`:
+// impornya di-hoist sehingga client terlanjur dibuat sebelum loadEnv jalan,
+// dan Prisma gagal dengan "Environment variable not found: DATABASE_URL".
+loadEnv({ path: ".env.local" });
+
+function cleanUrl(v: string | undefined): string | undefined {
+  if (!v) return undefined;
+  return v.trim().replace(/^["']|["']$/g, "");
+}
+
+const DATABASE_URL = cleanUrl(process.env.DATABASE_URL) ?? cleanUrl(process.env.DIRECT_URL);
+
+if (!DATABASE_URL || !/^postgres(ql)?:\/\//.test(DATABASE_URL)) {
+  console.error(
+    "DATABASE_URL di .env.local tidak valid.\n" +
+      (DATABASE_URL === "[SENSITIVE]"
+        ? "Nilainya masih placeholder '[SENSITIVE]' — itu hasil `vercel env pull` untuk variabel\n" +
+          "yang ditandai Sensitive (write-only), jadi nilainya tidak ikut terunduh.\n" +
+          "Ambil connection string dari Supabase → Project Settings → Database, lalu tempel\n" +
+          "ke .env.local. Jangan tempel ke chat.\n"
+        : "Pastikan nilainya diawali postgresql:// dan tidak ada spasi/kutip di awal.\n")
+  );
+  process.exit(1);
+}
+
+const db = new PrismaClient({ datasources: { db: { url: DATABASE_URL } } });
 
 const EXECUTE = process.argv.includes("--execute");
 const BATCH = 200;

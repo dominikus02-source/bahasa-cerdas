@@ -22,6 +22,9 @@ import {
   Calendar,
   Award,
 } from "lucide-react";
+import { levelFromXp } from "@/lib/gamification/levels";
+import { rankFromLevel, RANK_META } from "@/lib/gamification/ranks";
+import { RankIcon } from "@/components/gamification/RankIcon";
 
 const guruNavItems = [
   { href: "/guru/beranda", label: "Beranda", icon: LayoutDashboard },
@@ -68,12 +71,9 @@ export function Sidebar() {
   const user = useUserStore();
   const navItems = user.role === "guru" ? guruNavItems : muridNavItems;
 
-  const leagueColors = {
-    BRONZE: "from-amber-600 to-amber-800",
-    SILVER: "from-gray-300 to-gray-500",
-    GOLD: "from-yellow-400 to-amber-500",
-    DIAMOND: "from-cyan-400 to-blue-500",
-  };
+  // Liga 4 tingkat dihapus — rank resmi diturunkan dari XP.
+  const rank = rankFromLevel(levelFromXp(user.xp || 0));
+  const level = levelFromXp(user.xp || 0);
 
   return (
     <aside className="fixed left-0 top-0 z-40 h-screen w-64 border-r bg-white/95 backdrop-blur-sm">
@@ -97,14 +97,14 @@ export function Sidebar() {
         {user.role === "murid" && (
           <div className="border-b p-4">
             <div className="flex items-center gap-3">
-              <div className={`h-10 w-10 rounded-full bg-gradient-to-br ${leagueColors[user.league as keyof typeof leagueColors] || leagueColors.BRONZE} flex items-center justify-center`}>
-                <Star className="h-5 w-5 text-white" />
+              <div className="flex h-10 w-10 items-center justify-center">
+                <RankIcon rank={rank} size={40} glow />
               </div>
               <div className="flex-1 min-w-0">
                 <p className="truncate text-sm font-semibold">{user.fullName || "Murid"}</p>
                 <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                  <span className="capitalize">{user.league?.toLowerCase()}</span>
-                  <span>Lv.{user.level}</span>
+                  <span>{RANK_META[rank].label}</span>
+                  <span>Lv.{level}</span>
                 </div>
               </div>
               <div className="text-right">

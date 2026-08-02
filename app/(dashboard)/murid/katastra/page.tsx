@@ -4,13 +4,11 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Flame, Zap, Trophy, Swords, Puzzle, Star, Shield, ChevronRight, Play, Users, TrendingUp, Sparkles, Medal, Gem, Check } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
+import { getLevelProgress } from "@/lib/gamification/levels";
+import { rankFromLevel, RANK_META } from "@/lib/gamification/ranks";
+import { RankChip } from "@/components/gamification/RankChip";
 
-const LEAGUE_META: Record<string, { label: string; color: string; bg: string; icon: LucideIcon }> = {
-  BRONZE: { label: "Perunggu", color: "text-amber-700", bg: "bg-amber-100", icon: Medal },
-  SILVER: { label: "Perak", color: "text-slate-600", bg: "bg-slate-100", icon: Medal },
-  GOLD: { label: "Emas", color: "text-yellow-600", bg: "bg-yellow-100", icon: Trophy },
-  DIAMOND: { label: "Berlian", color: "text-cyan-600", bg: "bg-cyan-100", icon: Gem },
-};
+// Liga 4 tingkat dihapus — memakai 9 rank resmi (RANK_META).
 
 const MODES = [
   {
@@ -69,13 +67,16 @@ export default function KataStraPage() {
       .finally(() => setLoading(false));
   }, []);
 
-  const league = data?.league || "BRONZE";
-  const meta = LEAGUE_META[league];
   const streak = data?.streak || 0;
-  const level = data?.level || 1;
   const xp = data?.xp || 0;
-  const xpNext = level * level * 100;
-  const xpProgress = Math.min((xp / xpNext) * 100, 100);
+  // Level, rank, dan kurva XP dari sumber resmi. Halaman ini dulu memakai
+  // kurva ketiga sendiri (level*level*100) yang tidak cocok dengan mana pun.
+  const progress = getLevelProgress(xp);
+  const level = progress.level;
+  const rank = rankFromLevel(level);
+  const meta = RANK_META[rank];
+  const xpNext = progress.needed;
+  const xpProgress = progress.pct * 100;
   const playedToday = data?.playedToday || false;
 
   return (
@@ -111,9 +112,7 @@ export default function KataStraPage() {
                 <div>
                   <p className="font-bold text-sm">Tingkat {level}</p>
                   <div className="flex items-center gap-1.5 mt-0.5">
-                    <span className={`inline-flex items-center gap-1 text-[10px] font-semibold px-1.5 py-0.5 rounded-full ${meta.bg} ${meta.color}`}>
-                      <meta.icon className="w-3 h-3" /> {meta.label}
-                    </span>
+                    <RankChip rank={rank} size={12} showTitle={false} compact />
                   </div>
                 </div>
               </div>

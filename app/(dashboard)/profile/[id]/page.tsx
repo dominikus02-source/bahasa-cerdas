@@ -12,6 +12,9 @@ import Link from "next/link";
 import type { LucideIcon } from "lucide-react";
 import UserAvatar from "@/components/arena/UserAvatar";
 import UserName from "@/components/arena/UserName";
+import { levelFromXp } from "@/lib/gamification/levels";
+import { rankFromLevel } from "@/lib/gamification/ranks";
+import { RankChip } from "@/components/gamification/RankChip";
 
 interface ProfileUser {
   id: string;
@@ -47,12 +50,7 @@ interface ProfileUser {
   };
 }
 
-const LEAGUE_META: Record<string, { label: string; gradient: string; icon: LucideIcon }> = {
-  BRONZE: { label: "Perunggu", gradient: "from-amber-500 to-orange-600", icon: Medal },
-  SILVER: { label: "Perak", gradient: "from-slate-400 to-slate-600", icon: Medal },
-  GOLD: { label: "Emas", gradient: "from-yellow-400 to-amber-500", icon: Award },
-  DIAMOND: { label: "Berlian", gradient: "from-cyan-400 to-blue-500", icon: Gem },
-};
+// Liga 4 tingkat dihapus — identitas publik memakai 9 rank resmi via RankChip.
 
 const KARYA_LABELS: Record<string, string> = {
   PUISI: "Puisi", CERPEN: "Cerpen", ARTIKEL: "Artikel",
@@ -126,8 +124,7 @@ export default function ProfilePage() {
 
   const initials = user.fullName.slice(0, 2).toUpperCase();
   const isGuru = user.role === "GURU";
-  const league = LEAGUE_META[user.league] || LEAGUE_META.BRONZE;
-  const LeagueIcon = league.icon;
+  const rank = rankFromLevel(levelFromXp(user.xp || 0));
 
   // Gradasi hero tetap dalam (bukan pastel) apapun ligan­ya, senada dengan
   // hero profil sendiri — supaya kontras teks putih selalu tinggi.
@@ -196,9 +193,7 @@ export default function ProfilePage() {
                   <GraduationCap size={11} /> {isGuru ? "Guru" : "Murid"}
                 </span>
                 {!isGuru && (
-                  <span className={`bg-gradient-to-r ${league.gradient} rounded-full px-2.5 py-1 text-[11px] font-bold flex items-center gap-1 shadow-sm`}>
-                    <LeagueIcon size={11} /> {league.label}
-                  </span>
+                  <RankChip rank={rank} size={14} />
                 )}
                 {user.isFounder && (
                   <span className="text-[11px] px-2.5 py-1 rounded-full font-bold bg-amber-400/90 text-amber-950 flex items-center gap-1">
