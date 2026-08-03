@@ -95,8 +95,11 @@ export function LeaderboardPanel({ compact = false }: { compact?: boolean }) {
 
       {podium.length > 0 && (
         <div className="mb-4 flex items-end justify-center gap-2">
-          {podium.map((e, i) => {
-            const pos = i + 1;
+          {/* Podium standar: juara 2 di kiri, juara 1 di TENGAH, juara 3 di kanan. */}
+          {[1, 0, 2].map((idx, i) => {
+            const e = podium[idx];
+            if (!e) return null;
+            const pos = idx + 1;
             const heights = [72, 96, 58]; // 2nd, 1st, 3rd
             return (
               <motion.div
