@@ -58,9 +58,11 @@ export function JalurPeta({
   // Tiap warna punya pasangan gelap untuk bibir bawah tombol (kesan timbul).
   // Tokoh yang menemani di sisi jalur. Ditaruh berselang jauh (tiap 4 simpul)
   // supaya terasa seperti bertemu teman di perjalanan, bukan ramai berdesakan.
+  // Zelby dikeluarkan dari peta atas keputusan founder: posenya terasa monoton
+  // di sepanjang jalur. Hazel dan Alby punya variasi pose yang lebih hidup.
   const TOKOH = [
-    "zelby_wave", "hazel_reading_sitting", "alby_jumping",
-    "zelby_happy", "hazel_explaining", "alby_laughing",
+    "hazel_reading_sitting", "alby_jumping", "hazel_explaining",
+    "alby_laughing", "hazel_encouraging", "alby_running",
   ];
 
   const PALET = [
