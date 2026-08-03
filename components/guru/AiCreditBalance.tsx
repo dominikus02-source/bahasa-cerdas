@@ -28,7 +28,7 @@ export function AiCreditBalance() {
 
   const label = (() => {
     switch (status.plan) {
-      case "FOUNDER": return { icon: <Crown size={14} className="text-amber-600" />, text: "Founder Access", sub: "Tak terbatas" };
+      case "FOUNDER": return { icon: <Crown size={14} className="text-amber-600" />, text: "Akses Founder", sub: "Tak terbatas" };
       case "MURID_FREE": return null;
       case "GURU_PRO": return { icon: <Crown size={14} className="text-emerald-600" />, text: "Guru Pro", sub: `${status.remainingCredits}/${status.creditsTotal} credit/bulan` };
       case "GURU_PRO_TRIAL": return {

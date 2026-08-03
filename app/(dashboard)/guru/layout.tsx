@@ -10,6 +10,7 @@ import { startGuruTrialIfEligible, shouldStartGuruTrial, getTrialStatus } from "
 import { resolveUserAiPlan } from "@/lib/ai-gateway/plan-resolver";
 import { getRemainingCredits } from "@/lib/ai-gateway/quota-checker";
 import { SidebarPremiumBadge } from "@/components/guru/SidebarPremiumBadge";
+import UserAvatar from "@/components/arena/UserAvatar";
 
 const MenuIcon = ({ path, label, href }: { path: string; label: string; href: string }) => (
   <Link href={href} className="group flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm mb-1 transition-all duration-200 text-gray-600 hover:bg-gradient-to-r hover:from-emerald-50 hover:to-green-50 hover:text-emerald-700">
@@ -107,9 +108,16 @@ export default async function GuruLayout({ children }: { children: React.ReactNo
 
         <div className="px-4 py-4 border-b border-gray-100/50 bg-gradient-to-br from-emerald-50/50 to-green-50/50">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-500 to-green-600 flex items-center justify-center text-white font-semibold text-sm shadow-lg">
-              {user.fullName?.charAt(0).toUpperCase() || "G"}
-            </div>
+            {/* Sama seperti sidebar murid: foto guru tidak pernah dirender,
+                inisialnya di-hardcode tanpa memeriksa user.avatar. */}
+            <UserAvatar
+              size={40}
+              avatar={user.avatar}
+              initials={user.fullName?.charAt(0).toUpperCase() || "G"}
+              gradient="from-emerald-500 to-green-600"
+              textClassName="text-sm"
+              className="shadow-lg"
+            />
             <div className="flex-1 min-w-0">
               <p className="text-sm font-semibold text-gray-900 truncate">{user.fullName}</p>
               <div className="flex items-center gap-1.5 mt-0.5">

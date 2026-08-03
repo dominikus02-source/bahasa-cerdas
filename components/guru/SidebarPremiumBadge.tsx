@@ -27,7 +27,7 @@ export function SidebarPremiumBadge({
         <Link href="/guru/ai-tools" className="flex items-center gap-2 px-3 py-2 rounded-lg bg-amber-50 border border-amber-200/60 hover:bg-amber-100 transition-all">
           <Crown size={14} className="text-amber-600 shrink-0" />
           <div className="min-w-0">
-            <p className="text-[11px] font-semibold text-amber-700">Founder Access</p>
+            <p className="text-[11px] font-semibold text-amber-700">Akses Founder</p>
             <p className="text-[9px] text-amber-500">500 kredit AI/bulan</p>
           </div>
         </Link>
