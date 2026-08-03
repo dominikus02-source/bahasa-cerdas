@@ -5,8 +5,13 @@ import { rateLimitRoute } from "@/lib/rate-limit";
 const AI_TIMEOUT = 15000;
 // Kunci khusus AI Cerdik, jatah 30 req/menit tier gratis Groq tidak dibagi
 // dengan EYD/Feedback/Grading/Soal yang memakai GROQ_API_KEY bersama.
-const GROQ_API_KEY = process.env.GROQ_API_KEY_CHAT || process.env.GROQ_API_KEY || "";
-const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY || "";
+// Multi-key: env bisa berisi beberapa key dipisah koma (contoh "k1,k2").
+// Bearer tidak boleh menyertakan nilai mentah — tiap key dicoba bergantian
+// sampai satu berhasil, seperti core provider src/ai/core/provider.ts.
+const GROQ_KEYS = (process.env.GROQ_API_KEY_CHAT || process.env.GROQ_API_KEY || "")
+  .split(",").map((k) => k.trim()).filter(Boolean);
+const DEEPSEEK_KEYS = (process.env.DEEPSEEK_API_KEY || "")
+  .split(",").map((k) => k.trim()).filter(Boolean);
 
 const SYSTEM_PROMPT = `Kamu adalah **AI BC**, Asisten Bahasa Indonesia yang ramah, sabar, cerdas, dan antusias. Kamu adalah kakak guru Bahasa Indonesia yang asyik, teliti, dan selalu mendukung siswa serta guru.
 
@@ -91,62 +96,55 @@ export async function POST(req: NextRequest) {
     const sebabGagal: string[] = [];
     let usedProvider = "none";
 
-    if (DEEPSEEK_API_KEY) {
-      try {
-        const res = await fetch("https://api.deepseek.com/v1/chat/completions", {
-          method: "POST",
-          headers: { "Content-Type": "application/json", Authorization: `Bearer ${DEEPSEEK_API_KEY}` },
-          body: JSON.stringify({
-            model: "deepseek-chat",
-            messages: chatMessages,
-            temperature: 0.7,
-            max_tokens: 4096,
-          }),
-          signal: AbortSignal.timeout(AI_TIMEOUT),
-        });
-        if (res.ok) {
-          const json = await res.json();
-          answer = json?.choices?.[0]?.message?.content || "";
-          if (answer) usedProvider = "deepseek";
-        } else {
+    // Prioritas: Groq dulu (AI_PROVIDER_PRIORITY=groq, key terverifikasi),
+    // DeepSeek sebagai cadangan. Setiap key multi-env dicoba bergantian.
+    const providers = [
+      {
+        name: "groq",
+        base: "https://api.groq.com/openai/v1/chat/completions",
+        keys: GROQ_KEYS,
+        model: "openai/gpt-oss-120b", // llama-3.3-70b-versatile dihentikan — gpt-oss-120b pengganti resmi
+        extra: { top_p: 0.95 },
+      },
+      {
+        name: "deepseek",
+        base: "https://api.deepseek.com/v1/chat/completions",
+        keys: DEEPSEEK_KEYS,
+        model: "deepseek-chat",
+        extra: {},
+      },
+    ];
+
+    for (const provider of providers) {
+      if (answer || provider.keys.length === 0) continue;
+      for (const key of provider.keys) {
+        try {
+          const res = await fetch(provider.base, {
+            method: "POST",
+            headers: { "Content-Type": "application/json", Authorization: `Bearer ${key}` },
+            body: JSON.stringify({
+              model: provider.model,
+              messages: chatMessages,
+              temperature: 0.7,
+              max_tokens: 4096,
+              ...provider.extra,
+            }),
+            signal: AbortSignal.timeout(AI_TIMEOUT),
+          });
+          if (res.ok) {
+            const json = await res.json();
+            answer = json?.choices?.[0]?.message?.content || "";
+            if (answer) usedProvider = provider.name;
+            break;
+          }
           // Kuota habis / kunci mati datang sebagai balasan non-OK, BUKAN
           // sebagai error yang dilempar — tanpa cabang ini penyebab paling
           // umum justru yang paling tidak terlihat.
-          sebabGagal.push(`DeepSeek ${res.status}: ${(await res.text()).slice(0, 200)}`);
+          sebabGagal.push(`${provider.name} ${res.status}: ${(await res.text()).slice(0, 200)}`);
+        } catch (e) {
+          sebabGagal.push(`${provider.name}: ${e instanceof Error ? e.message : String(e)}`);
+          console.error(`${provider.name} error:`, e);
         }
-      } catch (e) {
-        sebabGagal.push(`DeepSeek: ${e instanceof Error ? e.message : String(e)}`);
-        console.error("DeepSeek error:", e);
-      }
-    }
-
-    if (!answer && GROQ_API_KEY) {
-      const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${GROQ_API_KEY}`,
-        },
-        body: JSON.stringify({
-          // llama-3.3-70b-versatile dihentikan Groq 16 Agustus 2026 —
-          // openai/gpt-oss-120b pengganti resmi yang mereka rekomendasikan.
-          model: "openai/gpt-oss-120b",
-          messages: chatMessages,
-          temperature: 0.7,
-          max_tokens: 4096,
-          top_p: 0.95,
-        }),
-        signal: AbortSignal.timeout(AI_TIMEOUT),
-      });
-
-      if (res.ok) {
-        const json = await res.json();
-        answer = json?.choices?.[0]?.message?.content || "";
-        if (answer) usedProvider = "groq";
-      } else {
-        const err = await res.text();
-        sebabGagal.push(`Groq ${res.status}: ${err.slice(0, 200)}`);
-        console.error("Groq error:", err);
       }
     }
 
