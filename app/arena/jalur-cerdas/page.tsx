@@ -97,7 +97,10 @@ export default async function JalurCerdasPage() {
         return (
           <div key={level.id} className={`mb-8 ${!unlocked ? "opacity-50" : ""}`}>
             <div className="flex items-center gap-3 mb-4">
-              <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${level.color} flex items-center justify-center text-white shadow-lg`}>
+              {/* Cadangan warna: level tanpa `color` (atau berwarna sangat muda)
+                  membuat ikon putih tak terlihat di kotak putih — persis yang
+                  terjadi pada "Mahir Berbahasa". */}
+              <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${level.color || "from-violet-500 to-purple-600"} flex items-center justify-center text-white shadow-lg`}>
                 {levelDone ? <Trophy className="w-6 h-6" /> : unlocked ? <UnitIcon emoji={level.emoji} className="w-6 h-6" /> : <Lock className="w-5 h-5" />}
               </div>
               <div className="flex-1">
