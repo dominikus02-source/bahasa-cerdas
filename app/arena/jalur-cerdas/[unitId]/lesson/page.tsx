@@ -383,8 +383,20 @@ export default function LessonPage({ params }: { params: Promise<{ unitId: strin
 
   const isResult = phase === "result"
 
+  // Tema berputar per soal. Sepuluh soal dengan latar dan warna tombol yang
+  // sama persis terasa seperti mengisi formulir; warna yang berganti membuat
+  // tiap soal terasa "tempat baru" dan menahan perhatian anak lebih lama.
+  const TEMA = [
+    { latar: "from-violet-50 to-purple-100", garis: "#8b5cf6", lembut: "#f5f3ff", tepi: "#ddd6fe" },
+    { latar: "from-sky-50 to-cyan-100",      garis: "#0891b2", lembut: "#ecfeff", tepi: "#a5f3fc" },
+    { latar: "from-amber-50 to-orange-100",  garis: "#ea580c", lembut: "#fff7ed", tepi: "#fed7aa" },
+    { latar: "from-pink-50 to-rose-100",     garis: "#e11d48", lembut: "#fff1f2", tepi: "#fecdd3" },
+    { latar: "from-emerald-50 to-green-100", garis: "#16a34a", lembut: "#f0fdf4", tepi: "#bbf7d0" },
+  ]
+  const tema = TEMA[currentIdx % TEMA.length]
+
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-br from-violet-50 to-purple-100">
+    <div className={`min-h-screen flex flex-col bg-gradient-to-br ${tema.latar} transition-colors duration-500`}>
       {/* Progress bar */}
       <div className="sticky top-0 z-10 bg-white/80 backdrop-blur-sm">
         <div className="flex items-center gap-3 px-4 py-3">
@@ -393,8 +405,8 @@ export default function LessonPage({ params }: { params: Promise<{ unitId: strin
           </button>
           <div className="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
             <div
-              className="h-full bg-violet-500 rounded-full transition-all duration-500"
-              style={{ width: `${progressPct}%` }}
+              className="h-full rounded-full transition-all duration-500"
+              style={{ width: `${progressPct}%`, background: tema.garis }}
             />
           </div>
           <span className="text-xs font-semibold text-gray-500 shrink-0">
@@ -414,7 +426,7 @@ export default function LessonPage({ params }: { params: Promise<{ unitId: strin
 
           {/* Question card */}
           <div className={`bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-4 ${isDasar ? "text-lg" : "text-base"}`}>
-            <p className={`font-medium text-violet-500 mb-2 ${isDasar ? "text-base" : "text-sm"}`}>
+            <p className={`font-bold mb-2 ${isDasar ? "text-base" : "text-sm"}`} style={{ color: tema.garis }}>
               {q.tipe === "pilihan_ganda" ? "Pilih jawaban yang tepat" :
                q.tipe === "benar_salah" ? "Benar atau salah?" :
                "Isilah titik-titik"}
@@ -449,16 +461,24 @@ export default function LessonPage({ params }: { params: Promise<{ unitId: strin
                   key={i}
                   onClick={() => handleAnswer(i)}
                   disabled={submitting}
-                  className={`w-full flex items-center gap-3 text-left p-4 rounded-2xl border-2 font-medium transition-all
-                    ${selectedAnswer === i ? "border-violet-500 bg-violet-50" : "border-gray-200 bg-white hover:border-violet-300 hover:bg-violet-50/50"}
+                  className={`w-full flex items-center gap-3 text-left p-4 rounded-2xl border-2 font-semibold transition-all duration-100 active:translate-y-1
                     ${submitting ? "opacity-50 cursor-not-allowed" : ""}
                     ${isDasar ? "text-lg p-5" : "text-base"}
                   `}
+                  style={{
+                    background: selectedAnswer === i ? tema.lembut : "#fff",
+                    borderColor: selectedAnswer === i ? tema.garis : tema.tepi,
+                    // Bibir bawah = tombol yang benar-benar terasa dipencet.
+                    boxShadow: `0 4px 0 0 ${selectedAnswer === i ? tema.garis : tema.tepi}`,
+                  }}
                 >
-                  <span className={`inline-flex items-center justify-center w-7 h-7 rounded-lg bg-gray-100 font-bold text-gray-500 shrink-0 ${isDasar ? "w-8 h-8" : ""}`}>
+                  <span
+                    className={`inline-flex items-center justify-center w-7 h-7 rounded-lg font-black shrink-0 ${isDasar ? "w-8 h-8" : ""}`}
+                    style={{ background: tema.lembut, color: tema.garis }}
+                  >
                     {String.fromCharCode(65 + i)}
                   </span>
-                  <span className="flex-1">{opt}</span>
+                  <span className="flex-1 text-gray-800">{opt}</span>
                 </button>
               ))}
               {q.tipe === "benar_salah" && (
