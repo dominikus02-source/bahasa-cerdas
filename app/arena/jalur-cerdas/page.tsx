@@ -2,7 +2,8 @@ import { db } from "@/lib/db"
 import { getUser } from "@/lib/supabase/server"
 import Link from "next/link"
 import { redirect } from "next/navigation"
-import { CheckCircle2, ChevronRight, Sprout, PenLine, BookOpen, Image, Clipboard, BarChart3, Sparkles, Music, Trophy, Dumbbell, Mic, Target, MessageCircle, Crown, Lock } from "lucide-react"
+import { JalurPeta } from "@/components/arena/JalurPeta"
+import { Sprout, PenLine, BookOpen, Image, Clipboard, BarChart3, Sparkles, Music, Trophy, Dumbbell, Mic, Target, MessageCircle, Crown, Lock } from "lucide-react"
 import type { ReactNode } from "react"
 import { UnitIcon } from "@/components/arena/UnitIcon"
 
@@ -118,61 +119,12 @@ export default async function JalurCerdasPage() {
               </div>
             </div>
 
-            <div className="space-y-2">
-              {unitsInLevel === 0 && (
-                <p className="text-sm text-gray-400 italic ml-2">Segera hadir...</p>
-              )}
-              {level.units.map((unit, idx) => {
-                const unitCompleted = completedMap.has(unit.id)
-                const unitUnlocked = true // all units unlocked
-                return (
-                  <Link
-                    key={unit.id}
-                    href={`/arena/jalur-cerdas/${unit.id}`}
-                    className={`flex items-center gap-3 p-3.5 rounded-xl bg-white border transition-all ${
-                      unitCompleted
-                        ? "border-emerald-200 bg-emerald-50/50"
-                        : "border-gray-100 hover:border-violet-200 hover:shadow-md"
-                    }`}
-                  >
-                    <div className="relative shrink-0">
-                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
-                        unitCompleted ? "bg-emerald-100" : "bg-violet-50"
-                      }`}>
-                        {unitCompleted ? (
-                          <CheckCircle2 className="w-6 h-6 text-emerald-500" />
-                        ) : (
-                          <div className="text-violet-600">{<UnitIcon emoji={unit.emoji} className="w-5 h-5" />}</div>
-                        )}
-                      </div>
-                    </div>
-              <div className="flex-1 min-w-0">
-                <p className={`font-semibold text-sm truncate ${unitCompleted ? "text-emerald-700" : "text-gray-900"}`}>
-                  {unit.title}
-                </p>
-                <div className="flex items-center gap-2 mt-0.5">
-                  {unit.subtitle ? (
-                    <span className="text-xs truncate text-gray-400">{unit.subtitle}</span>
-                  ) : (
-                    <span className="text-xs text-gray-400">Unit latihan</span>
-                  )}
-                  {questionCounts.get(unit.id) ? (
-                    <span className="text-[10px] font-semibold text-violet-500 bg-violet-50 px-1.5 py-0.5 rounded-full shrink-0">
-                      {questionCounts.get(unit.id)} soal
-                    </span>
-                  ) : null}
-                </div>
-                {hasProgress(unit.id) && !unitCompleted && (
-                  <p className="text-[10px] text-violet-500 font-medium mt-0.5">Sedang dipelajari</p>
-                )}
-              </div>
-              {/* Satu penanda selesai saja: lingkaran hijau di kiri. Dulu ada
-                  TIGA centang untuk satu unit (kiri, samping judul, kanan). */}
-              {!unitCompleted && <ChevronRight className="w-4 h-4 text-gray-300 shrink-0" />}
-            </Link>
-                )
-              })}
-            </div>
+            <JalurPeta
+              units={level.units}
+              completedIds={new Set(completedMap.keys())}
+              questionCounts={questionCounts}
+              sedangDipelajari={hasProgress}
+            />
           </div>
         )
       })}
