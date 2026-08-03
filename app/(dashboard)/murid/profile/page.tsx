@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import {
   Plus, Settings, X, Camera, Save, CheckCircle2, AlertCircle, LogOut, Loader2, Crown,
   Bell, User as UserIcon, Award, History, Share2, Pencil,
@@ -19,6 +18,7 @@ import { validateNicknameFormat, defaultNicknameFromFullName, NICKNAME_MAX_LENGT
 import { getLevelProgress, levelFromXp } from "@/lib/gamification/levels";
 import { rankFromLevel } from "@/lib/gamification/ranks";
 import { RankChip } from "@/components/gamification/RankChip";
+import { BadgeIcon } from "@/components/gamification/BadgeIcon";
 import UserAvatar from "@/components/arena/UserAvatar";
 import UserName from "@/components/arena/UserName";
 
@@ -387,12 +387,11 @@ export default function MuridProfilePage() {
                         : "bg-gray-50"
                     }`}
                   >
-                    <Image
-                      src={l.icon}
+                    <BadgeIcon
+                      icon={l.icon}
                       alt={l.name}
-                      width={40}
-                      height={40}
-                      className={`w-10 h-10 object-contain ${l.unlocked ? "" : "grayscale opacity-30"}`}
+                      size={40}
+                      className={`object-contain ${l.unlocked ? "" : "grayscale opacity-30"}`}
                     />
                     <span className={`text-[10px] font-semibold leading-tight ${l.unlocked ? "text-amber-700" : "text-gray-400"}`}>{l.name}</span>
                     {!l.unlocked && (
