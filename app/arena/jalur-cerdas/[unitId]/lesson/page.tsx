@@ -4,6 +4,7 @@ import { use, useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { CheckCircle2, XCircle, ArrowLeft, Zap, Trophy, ArrowRight, Loader2, Sparkles, BookOpen, Lightbulb, Star, Coins } from "lucide-react"
 import { UnitIcon } from "@/components/arena/UnitIcon"
+import { PendampingBelajar } from "@/components/arena/PendampingBelajar"
 
 interface Lesson {
   title: string
@@ -402,8 +403,15 @@ export default function LessonPage({ params }: { params: Promise<{ unitId: strin
         </div>
       </div>
 
-      <div className="flex-1 flex flex-col px-5 pt-6 pb-8">
+      <div className="flex-1 flex flex-col px-5 pt-4 pb-8">
         <div className="flex-1 flex flex-col">
+          {/* Pendamping — tokoh menemani anak dan bereaksi atas jawabannya. */}
+          <PendampingBelajar
+            nomorSoal={currentIdx}
+            keadaan={!result ? "menunggu" : result.correct ? "benar" : "salah"}
+            className="mb-1 self-start"
+          />
+
           {/* Question card */}
           <div className={`bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-4 ${isDasar ? "text-lg" : "text-base"}`}>
             <p className={`font-medium text-violet-500 mb-2 ${isDasar ? "text-base" : "text-sm"}`}>
