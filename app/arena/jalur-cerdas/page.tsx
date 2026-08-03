@@ -47,7 +47,19 @@ export default async function JalurCerdasPage() {
   }
 
   return (
-    <div className="px-4 py-6 arena-page">
+    // Latar krem hangat + titik samar sebagai "permukaan peta". Di atas putih
+    // polos, simpul warna-warni terlihat mengambang dan halaman terasa seperti
+    // formulir; krem membuat kartu putih justru menonjol sebagai pijakan.
+    <div
+      className="arena-page min-h-screen px-4 py-6"
+      style={{
+        background: "#fdf6e9",
+        backgroundImage:
+          "radial-gradient(#e8dcc4 1.5px, transparent 1.5px), radial-gradient(#f2e7d0 1.5px, transparent 1.5px)",
+        backgroundSize: "28px 28px, 28px 28px",
+        backgroundPosition: "0 0, 14px 14px",
+      }}
+    >
       <div className="text-center mb-6">
         <h1 className="text-2xl font-extrabold text-gray-900">Jalur Cerdas</h1>
         <p className="text-sm text-gray-500 mt-1">Latihan Bahasa Indonesia dari nol sampai mahir</p>
