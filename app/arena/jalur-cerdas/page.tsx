@@ -146,7 +146,6 @@ export default async function JalurCerdasPage() {
               <div className="flex-1 min-w-0">
                 <p className={`font-semibold text-sm truncate ${unitCompleted ? "text-emerald-700" : "text-gray-900"}`}>
                   {unit.title}
-                  {unitCompleted && <CheckCircle2 className="inline-block ml-1.5 w-4 h-4 text-emerald-500 align-text-bottom" />}
                 </p>
                 <div className="flex items-center gap-2 mt-0.5">
                   {unit.subtitle ? (
@@ -164,8 +163,9 @@ export default async function JalurCerdasPage() {
                   <p className="text-[10px] text-violet-500 font-medium mt-0.5">Sedang dipelajari</p>
                 )}
               </div>
+              {/* Satu penanda selesai saja: lingkaran hijau di kiri. Dulu ada
+                  TIGA centang untuk satu unit (kiri, samping judul, kanan). */}
               {!unitCompleted && <ChevronRight className="w-4 h-4 text-gray-300 shrink-0" />}
-              {unitCompleted && <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />}
             </Link>
                 )
               })}
