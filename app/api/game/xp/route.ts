@@ -29,7 +29,17 @@ export async function POST(req: NextRequest) {
     // adanya — siapa pun bisa POST xpEarned sebesar apa pun. Tiga murid memakai
     // itu untuk mencapai Level 751 (~375.000 XP).
     const skor = Number.isFinite(score) && score > 0 ? Math.floor(score) : 0
-    const hasil = await awardXp(dbUser.id, "GAME", Math.floor(skor / 10), gameType || undefined)
+    // Reference UNIK per permainan (bukan gameType yang konstan) — idempotensi
+    // (userId, source, reference) di XPTransaction tidak boleh menelan XP semua
+    // permainan berikutnya. Dulu reference = gameType: XP cair sekali seumur
+    // hidup per jenis game. UUID per submit menjaga retry tak menggandakan XP
+    // (dilindungi juga rate limit 20/menit + batas 120/submit + kuota harian).
+    const hasil = await awardXp(
+      dbUser.id,
+      "GAME",
+      Math.floor(skor / 10),
+      `${gameType || "game"}-${crypto.randomUUID()}`
+    )
 
     let roomId = roomCode
     if (roomCode) {

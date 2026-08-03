@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
     });
     if (limited) return limited;
 
-    const { score, correct, wrong, maxStreak, mode } = await req.json();
+    const { score, correct, wrong, maxStreak } = await req.json();
     if (score == null) return NextResponse.json({ error: "Score required" }, { status: 400 });
 
     // `correct`, `wrong`, dan `maxStreak` semuanya berasal dari klien, jadi
@@ -36,7 +36,15 @@ export async function POST(req: NextRequest) {
 
     // Lewat pintu tunggal: batas per submit, kuota harian dari XpLedger, boost,
     // pencatatan jejak, dan pembaruan xp/level/liga sekaligus.
-    const hasil = await awardXp(dbUser.id, "KATASTRA", rawXp, mode || undefined);
+    // Reference UNIK per ronde — dulu reference = mode ("sd"/"smp"/...), jadi
+    // XP KATASTRA hanya cair sekali per mode selamanya. UUID per submit menjaga
+    // idempotensi retry tanpa menelan XP ronde-ronde berikutnya.
+    const hasil = await awardXp(
+      dbUser.id,
+      "KATASTRA",
+      rawXp,
+      `katastra-${crypto.randomUUID()}`
+    );
     const totalXp = hasil.xpDiberikan;
     const boosted = hasil.boosted;
 

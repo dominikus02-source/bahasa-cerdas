@@ -2115,3 +2115,53 @@ Empat permintaan founder: (1) acak posisi jawaban benar soal game + tambah soal 
 3. TKA UTBK/Guru enrichment 30 → 150
 4. Game server revival (VPS mati)
 5. GameRoom migration SQL via Supabase dashboard
+
+---
+
+## Phase GAME XP FIX — Reference Idempotensi Menelan XP (Aug 3, 2026)
+
+### Gejala
+Murid "susah dapat XP" di game: game pertama kasih XP, game berikutnya selalu 0 XP.
+
+### Akar Masalah
+`awardXp()` (lib/award-xp.ts) punya idempotensi `@@unique([userId, source, reference])` di XPTransaction — retry/double-submit tidak menambah XP dua kali. Tapi dua route game memakai **reference yang konstan** (bukan unik per permainan):
+
+| Route | Reference (salah) | Akibat |
+|-------|-------------------|--------|
+| `/api/game/xp/route.ts` | `gameType` ("TEBAK_KATA", "KATAPLAY", "IRAMA_KATA", "SUSUN_KATA", "BENAR_SALAH") | XP `GAME` cair SEKALI seumur hidup per jenis game |
+| `/api/katastra/submit/route.ts` | `mode` ("sd"/"smp"/"sma") | XP `KATASTRA` cair SEKALI per mode selamanya |
+
+Setelah submit pertama (userId + source + reference tercatat di XPTransaction), semua submit berikutnya ketemu `sudahAda` → `xpDiberikan: 0`. UI tetap menampilkan "+XP" hasil hitungan klien (`Math.min(score/40, 60)`), jadi murid lihat XP di layar tapi saldo tidak bertambah — terasa seperti bug.
+
+### Yang Aman (tidak bermasalah)
+- `MENARA` (tanpa reference — selalu cair, dijaga cap 120/submit + kuota 5000/hari + rate limit)
+- `TANTANG` (room.id — unik per room), `game/result` (session.id — unik per sesi)
+- `JALUR_CERDAS` (unitId — sekali per unit, memang disengaja), `KOMPETENSI` (paketId — sekali per paket), `PENUGASAN` (penugasan.id)
+- `ACHIEVEMENT` (kode unik), `mystery-box` (per hari), `/player/xp` (tidak dipakai klien)
+
+### Fix
+Reference di-generate unik per submit dengan `crypto.randomUUID()`:
+- `/api/game/xp/route.ts` → `\`${gameType || "game"}-${crypto.randomUUID()}\``
+- `/api/katastra/submit/route.ts` → `katastra-${crypto.randomUUID()}` (hapus destructure `mode`)
+
+Anti-farming tetap utuh: rate limit 20/menit + `BATAS_XP_PER_SUBMIT` (GAME 120, KATASTRA 400) + kuota harian 5000 dari XpLedger — konsisten dengan `MENARA` yang sejak awal tanpa reference.
+
+### Regression Test
+`scripts/test-gamification-engine.ts` + 4 assertions baru (section 15):
+- game/xp TIDAK memakai `gameType || undefined` sebagai reference
+- game/xp punya `crypto.randomUUID()`
+- katastra/submit TIDAK memakai `mode || undefined`
+- katastra/submit pakai `katastra-${crypto.randomUUID()}`
+
+### Verifikasi
+| Check | Hasil |
+|-------|-------|
+| `npm run test:gamification-engine` | ✅ SEMUA LULUS (termasuk 4 tes baru) |
+| `npm run test:game-question-shuffle` | ✅ 24/24 |
+| `npx tsc --noEmit` | ✅ 0 errors |
+| ESLint (2 route + 1 test) | ✅ 0 violations |
+| `npm run build` (dummy env) | ✅ 339 pages, 0 errors |
+
+### Catatan
+- Murid yang "terlanjur" kena bug tidak perlu reset — begitu fix live, setiap permainan baru langsung dapat XP normal (transaksi lama tetap di riwayat).
+- Tampilan "+XP" di layar hasil solo game masih hitungan klien; server memberi skor/10 (lebih besar). Kosmetik, tidak memblokir XP.

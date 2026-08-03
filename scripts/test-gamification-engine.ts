@@ -218,6 +218,18 @@ ok("awardXp tidak menulis User.league lagi", !/league:/.test(awardXpSrc));
 const xpEngineSrc = readFileSync(join(process.cwd(), "lib/gamification/xp-engine.ts"), "utf8");
 ok("addXp (pintu XP kedua) sudah dihapus", !/export async function addXp/.test(xpEngineSrc));
 
+// ── 15. Reference idempotensi game UNIK per submit (pagar regresi) ────────
+// Dulu /api/game/xp memakai reference = gameType ("TEBAK_KATA") dan
+// /api/katastra/submit memakai reference = mode ("sd"/"smp"). Idempotensi
+// (userId, source, reference) membuat XP cair HANYA SEKALI seumur hidup per
+// jenis game / mode — murid mengira game rusak. Reference harus unik per ronde.
+const gameXpRoute = readFileSync(join(process.cwd(), "app/api/game/xp/route.ts"), "utf8");
+ok("game/xp tidak lagi memakai reference gameType konstan", !/awardXp\([\s\S]*gameType \|\| undefined\)/.test(gameXpRoute));
+ok("game/xp reference unik per submit (crypto.randomUUID)", /crypto\.randomUUID\(\)/.test(gameXpRoute));
+const katastraSubmit = readFileSync(join(process.cwd(), "app/api/katastra/submit/route.ts"), "utf8");
+ok("katastra/submit tidak lagi memakai reference mode konstan", !/mode \|\| undefined\)/.test(katastraSubmit));
+ok("katastra/submit reference unik per ronde", /katastra-\$\{crypto\.randomUUID\(\)\}/.test(katastraSubmit));
+
 console.log(`\n${fail === 0 ? "SEMUA LULUS ✅" : `${fail} GAGAL ❌`}`);
 process.exit(fail === 0 ? 0 : 1);
 
