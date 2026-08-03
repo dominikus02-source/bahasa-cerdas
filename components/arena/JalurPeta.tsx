@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Check, Lock, Gift, Play } from "lucide-react";
 import { UnitIcon } from "@/components/arena/UnitIcon";
 
@@ -53,6 +54,13 @@ export function JalurPeta({
   // seluruh jalur membuat peta terasa seperti formulir; anak membaca warna
   // sebagai "tempat yang berbeda", dan itu yang membuatnya ingin maju.
   // Tiap warna punya pasangan gelap untuk bibir bawah tombol (kesan timbul).
+  // Tokoh yang menemani di sisi jalur. Ditaruh berselang jauh (tiap 4 simpul)
+  // supaya terasa seperti bertemu teman di perjalanan, bukan ramai berdesakan.
+  const TOKOH = [
+    "zelby_wave", "hazel_reading_sitting", "alby_jumping",
+    "zelby_happy", "hazel_explaining", "alby_laughing",
+  ];
+
   const PALET = [
     { atas: "#8b5cf6", bawah: "#6d28d9" }, // ungu
     { atas: "#06b6d4", bawah: "#0e7490" }, // toska
@@ -80,9 +88,25 @@ export function JalurPeta({
           .slice(Math.max(0, idx - 4), idx + 1)
           .every((u) => completedIds.has(u.id));
 
+        // Tokoh muncul tiap 4 simpul, DI SISI BERLAWANAN dari lekukan simpul
+        // supaya tidak pernah menutupi tombolnya.
+        const adaTokoh = idx % 4 === 2;
+        const tokoh = TOKOH[Math.floor(idx / 4) % TOKOH.length];
+        const tokohDiKiri = x >= 0;
+
         return (
           <div key={unit.id}>
-            <div className="flex flex-col items-center" style={{ transform: `translateX(${x}px)` }}>
+            <div className="relative flex flex-col items-center" style={{ transform: `translateX(${x}px)` }}>
+              {adaTokoh && (
+                <Image
+                  src={`/arena-junior/karakter/${tokoh}.webp`}
+                  alt=""
+                  width={512}
+                  height={512}
+                  className="pointer-events-none absolute bottom-0 h-24 w-24 object-contain drop-shadow-md sm:h-28 sm:w-28"
+                  style={tokohDiKiri ? { left: -120 } : { right: -120 }}
+                />
+              )}
               <Link
                 href={`/arena/jalur-cerdas/${unit.id}`}
                 aria-label={unit.title}
