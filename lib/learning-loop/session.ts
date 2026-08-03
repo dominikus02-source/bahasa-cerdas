@@ -55,18 +55,22 @@ export async function generateDailyInsights(userId: string, userName: string): P
   const count = todayActivities.length;
   const insights: string[] = [];
 
-  // (a) Sapaan + jumlah aktivitas hari ini.
-  insights.push(`Halo ${userName}! Hari ini kamu sudah ${count} aktivitas belajar. Keren!`);
-
-  // (b) Nudge konsistensi bila hari ini kosong.
+  // (a) Sapaan menyesuaikan keadaan. Versi lama selalu memuji ("Keren!")
+  // walau jumlahnya 0, sehingga murid yang belum mulai justru dipuji karena
+  // tidak melakukan apa-apa.
   if (count === 0) {
-    insights.push("Mulai dengan satu aktivitas kecil — misalnya selesaikan 1 unit Jalur Cerdas.");
+    insights.push(`Halo ${userName}! Hari ini kamu belum mulai belajar.`);
+    insights.push("Mulai dengan satu langkah kecil — selesaikan 1 unit Jalur Cerdas.");
+  } else if (count === 1) {
+    insights.push(`Halo ${userName}! Kamu sudah menyelesaikan 1 aktivitas hari ini. Lanjutkan!`);
+  } else {
+    insights.push(`Halo ${userName}! Hari ini kamu sudah ${count} aktivitas belajar. Keren!`);
   }
 
   // (c) Skill terlemah.
   const weakest = skillProfile[0];
   if (weakest) {
-    insights.push(`Skill ${SKILL_LABELS[weakest.skill]} kamu paling butuh perhatian (${weakest.level}/100).`);
+    insights.push(`Keterampilan ${SKILL_LABELS[weakest.skill]} kamu paling butuh perhatian (${weakest.level}/100).`);
   }
 
   // (d) Nudge variasi bila 7 hari terakhir hanya Jalur Cerdas/Lesson.

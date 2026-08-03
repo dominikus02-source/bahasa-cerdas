@@ -161,6 +161,7 @@
     "hapus:badge-duplikat": "npx tsx scripts/hapus-badge-duplikat.ts",
     "hapus:badge-yatim": "npx tsx scripts/hapus-badge-yatim.ts",
     "perbaiki:karya": "npx tsx scripts/perbaiki-karya-terescape.ts",
+    "backfill:keterampilan": "npx tsx scripts/backfill-keterampilan.ts",
     "backfill:progresi": "npx tsx scripts/backfill-progresi-resmi.ts"
   },
   "dependencies": {
