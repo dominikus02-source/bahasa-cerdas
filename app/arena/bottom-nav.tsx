@@ -8,7 +8,7 @@ const items = [
   { href: "/arena", label: "Beranda", icon: Compass },
   { href: "/arena/feed", label: "Karya", icon: Flame },
   { href: "/arena/game", label: "Gim", icon: Gamepad2 },
-  { href: "/arena/chat", label: "Chat", icon: MessageCircle },
+  { href: "/arena/chat", label: "Obrolan", icon: MessageCircle },
   { href: "/arena/player", label: "Pemain", icon: UserCircle },
 ]
 

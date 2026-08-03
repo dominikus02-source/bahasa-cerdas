@@ -263,7 +263,7 @@ export function ChatClient({ userId, groups }: { userId: string; groups: Group[]
       {/* HEADER */}
       <div className="chat-header">
           <div className="mb-3">
-            <h1 className="text-xl font-extrabold text-white">Chat</h1>
+            <h1 className="text-xl font-extrabold text-white">Obrolan</h1>
             <p className="text-sm text-white/65 mt-0.5">Ngobrol bareng teman sekelas</p>
           </div>
         {/* Search bar */}

@@ -16,7 +16,7 @@ const navItems = [
   { href: "/arena/feed", label: "Karya", icon: Flame },
   { href: "/arena/game", label: "Gim", icon: Gamepad2 },
   { href: "/arena/league", label: "Liga", icon: Trophy },
-  { href: "/arena/chat", label: "Chat", icon: MessageCircle },
+  { href: "/arena/chat", label: "Obrolan", icon: MessageCircle },
   { href: "/arena/player", label: "Pemain", icon: UserCircle },
 ]
 
