@@ -85,6 +85,10 @@ export async function POST(req: NextRequest) {
     ];
 
     let answer = "";
+    // Sebab kegagalan tiap penyedia dikumpulkan, bukan cuma di-log. Tanpa ini
+    // kegagalan AI selalu tampil sebagai "aku lagi sibuk" dan tidak ada yang
+    // tahu apakah penyebabnya kuota habis, kunci mati, atau model dihentikan.
+    const sebabGagal: string[] = [];
     let usedProvider = "none";
 
     if (DEEPSEEK_API_KEY) {
@@ -104,8 +108,16 @@ export async function POST(req: NextRequest) {
           const json = await res.json();
           answer = json?.choices?.[0]?.message?.content || "";
           if (answer) usedProvider = "deepseek";
+        } else {
+          // Kuota habis / kunci mati datang sebagai balasan non-OK, BUKAN
+          // sebagai error yang dilempar — tanpa cabang ini penyebab paling
+          // umum justru yang paling tidak terlihat.
+          sebabGagal.push(`DeepSeek ${res.status}: ${(await res.text()).slice(0, 200)}`);
         }
-      } catch (e) { console.error("DeepSeek error:", e); }
+      } catch (e) {
+        sebabGagal.push(`DeepSeek: ${e instanceof Error ? e.message : String(e)}`);
+        console.error("DeepSeek error:", e);
+      }
     }
 
     if (!answer && GROQ_API_KEY) {
@@ -133,12 +145,21 @@ export async function POST(req: NextRequest) {
         if (answer) usedProvider = "groq";
       } else {
         const err = await res.text();
+        sebabGagal.push(`Groq ${res.status}: ${err.slice(0, 200)}`);
         console.error("Groq error:", err);
       }
     }
 
     if (!answer) {
-      return NextResponse.json({ reply: "Maaf, aku lagi sibuk. Coba tanya lagi ya! 😊" });
+      const bolehLihatSebab = user?.isFounder || user?.role === "ADMIN";
+      if (sebabGagal.length === 0) sebabGagal.push("Tidak ada penyedia AI yang aktif (kunci API kosong?)");
+      console.error("AI chat gagal total:", sebabGagal.join(" | "));
+      return NextResponse.json({
+        reply: "Maaf, aku lagi sibuk. Coba tanya lagi ya! 😊",
+        // Hanya founder/admin yang melihat sebabnya — murid tetap dapat kalimat
+        // yang ramah dan tidak menakutkan.
+        ...(bolehLihatSebab ? { diagnosa: sebabGagal } : {}),
+      });
     }
 
     return NextResponse.json({ reply: answer });
