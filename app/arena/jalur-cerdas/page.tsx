@@ -51,8 +51,14 @@ export default async function JalurCerdasPage() {
     // mengambang dan halaman terasa seperti formulir; krem membuat kartu putih
     // justru menonjol sebagai pijakan.
     <div
-      className="arena-page min-h-screen px-4 py-6"
-      style={{ background: "#fdf6e9" }}
+      className="arena-page min-h-screen px-3 pb-10 pt-4 sm:px-4"
+      style={{
+        background: "#fdf6e9",
+        // Krem dipaksa penuh ke tepi layar: pembungkus induk punya lebar
+        // maksimum, sehingga tanpa ini sisi kanan menyisakan pita putih di HP.
+        boxShadow: "0 0 0 100vmax #fdf6e9",
+        clipPath: "inset(0 -100vmax)",
+      }}
     >
       <div className="text-center mb-6">
         <h1 className="text-2xl font-extrabold text-gray-900">Jalur Cerdas</h1>

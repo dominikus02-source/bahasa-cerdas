@@ -48,7 +48,9 @@ export function JalurPeta({
 
   // Pergeseran berkelok. Pola 8 langkah supaya lekukannya terasa alami dan
   // tidak berulang terlalu cepat seperti zig-zag dua posisi.
-  const geser = [0, 56, 84, 56, 0, -56, -84, -56];
+  // Lekukan dibuat rapat: di layar 360px, geseran 84px membuat simpul nyaris
+  // menyentuh tepi dan tokoh di sisinya terdorong keluar layar.
+  const geser = [0, 34, 52, 34, 0, -34, -52, -34];
 
   // Palet berputar — tiap simpul punya warnanya sendiri. Satu warna untuk
   // seluruh jalur membuat peta terasa seperti formulir; anak membaca warna
@@ -71,7 +73,7 @@ export function JalurPeta({
   ];
 
   return (
-    <div className="relative py-2">
+    <div className="relative overflow-hidden py-1">
       {units.map((unit, idx) => {
         const selesai = completedIds.has(unit.id);
         const aktif = idx === indeksAktif;
@@ -103,8 +105,8 @@ export function JalurPeta({
                   alt=""
                   width={512}
                   height={512}
-                  className="pointer-events-none absolute bottom-0 h-24 w-24 object-contain drop-shadow-md sm:h-28 sm:w-28"
-                  style={tokohDiKiri ? { left: -120 } : { right: -120 }}
+                  className="pointer-events-none absolute bottom-0 h-16 w-16 object-contain drop-shadow-md sm:h-24 sm:w-24"
+                  style={tokohDiKiri ? { left: -86 } : { right: -86 }}
                 />
               )}
               <Link
@@ -174,7 +176,7 @@ export function JalurPeta({
 
             {/* Penghubung antar simpul. */}
             {idx !== units.length - 1 && !adaPeti && (
-              <div className="flex justify-center gap-1.5 py-2.5">
+              <div className="flex justify-center gap-1.5 py-1.5">
                 {[0, 1, 2].map((d) => (
                   <span
                     key={d}
