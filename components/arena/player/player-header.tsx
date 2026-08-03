@@ -48,7 +48,7 @@ export function PlayerHeader({
             )}
           </div>
           <p className="text-xs font-semibold" style={{ color: profile.rankColor }}>
-            {profile.rankLabel} · {profile.rankTitle} · Level {profile.level}
+            {profile.rankLabel} · {profile.rankTitle} · Tingkat {profile.level}
           </p>
 
           <div className="mt-2 flex items-center gap-2">

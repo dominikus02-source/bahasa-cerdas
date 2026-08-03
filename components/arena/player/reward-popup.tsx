@@ -9,7 +9,7 @@ const TYPE_META = {
   COIN: { label: "Koin", icon: "🪙", tint: "border-[var(--px-gold)]/50 bg-[var(--px-gold)]/10 text-[var(--px-gold)]" },
   BADGE: { label: "Lencana", icon: "🏅", tint: "border-amber-400/50 bg-amber-500/10 text-amber-300" },
   ACHIEVEMENT: { label: "Pencapaian", icon: "🏆", tint: "border-violet-400/50 bg-violet-500/10 text-violet-300" },
-  LEVEL_UP: { label: "Level Up", icon: "🎉", tint: "border-emerald-400/50 bg-emerald-500/10 text-emerald-300" },
+  LEVEL_UP: { label: "Naik Tingkat", icon: "🎉", tint: "border-emerald-400/50 bg-emerald-500/10 text-emerald-300" },
   RANK_UP: { label: "Rank Baru", icon: "🏆", tint: "border-[var(--px-gold)]/60 bg-[var(--px-gold)]/15 text-[var(--px-gold)]" },
 } as const;
 

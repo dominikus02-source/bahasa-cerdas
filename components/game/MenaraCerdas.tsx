@@ -228,7 +228,7 @@ export default function MenaraCerdas({ backHref = "/arena/game" }: { backHref?: 
 
           {xpResult?.leveledUp && (
             <div className="mb-5 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-400/20 text-amber-700 text-xs font-bold">
-              <Sparkles className="w-3.5 h-3.5" /> Naik Level!
+              <Sparkles className="w-3.5 h-3.5" /> Naik Tingkat!
             </div>
           )}
 

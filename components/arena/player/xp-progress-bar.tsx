@@ -19,7 +19,7 @@ export function XpProgressBar({
       {!compact && (
         <div className="mb-1.5 flex items-center justify-between text-[11px] font-semibold">
           <span className="text-[var(--px-text-dim)]">
-            Level {profile.level}
+            Tingkat {profile.level}
             <span className="ml-1.5 text-[var(--px-text-faint)]">{profile.rankLabel}</span>
           </span>
           <span className="text-[var(--px-text-dim)]">
@@ -41,7 +41,7 @@ export function XpProgressBar({
 
       {!compact && (
         <div className="mt-1.5 text-[10px] font-medium text-[var(--px-text-faint)]">
-          Sisa {formatId(profile.xpToNextLevel)} XP untuk naik level
+          Sisa {formatId(profile.xpToNextLevel)} XP untuk naik tingkat
         </div>
       )}
     </div>

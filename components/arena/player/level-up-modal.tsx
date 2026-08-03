@@ -79,7 +79,7 @@ export function LevelUpModal() {
               </motion.div>
 
               <p className="text-[11px] font-black uppercase tracking-[0.2em] text-[#ffd24a]">
-                Naik Level
+                Naik Tingkat
               </p>
 
               <h2 className="mt-1 text-5xl font-black leading-none text-white drop-shadow-[0_2px_10px_rgba(255,210,74,0.35)]">

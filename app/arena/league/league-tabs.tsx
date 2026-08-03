@@ -82,7 +82,7 @@ export default function LeagueTabs({ weekly, daily, userId, userXP, initialTab =
         <div>
           <p className="text-sm font-bold text-gray-900">{userMeta.label} · {userMeta.title}</p>
           <p className="text-xs text-gray-500">
-            {userRank === "LEGEND" ? "Peringkat tertinggi!" : `Level ${userLevel} · terus tingkatkan!`}
+            {userRank === "LEGEND" ? "Peringkat tertinggi!" : `Tingkat ${userLevel} · terus tingkatkan!`}
           </p>
         </div>
       </div>
@@ -111,7 +111,7 @@ export default function LeagueTabs({ weekly, daily, userId, userXP, initialTab =
                   <p className="text-sm font-semibold text-gray-900 truncate">{isMe ? "Kamu" : nameOf(r)}</p>
                   <p className="flex items-center gap-1 text-xs text-gray-400">
                     <RankIcon rank={rowRank} size={14} />
-                    Level {rowLevel} • {RANK_META[rowRank].label}
+                    Tingkat {rowLevel} • {RANK_META[rowRank].label}
                   </p>
                 </div>
                 <div className="text-right">

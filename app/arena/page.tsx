@@ -198,7 +198,7 @@ export default async function BerandaPage() {
               <h2 className="text-xl md:text-2xl font-extrabold truncate mt-0.5">{nameOf(user)}</h2>
               <div className="flex items-center gap-2 mt-2">
                 <RankChip rank={displayRank} size={16} className="bg-white/20 backdrop-blur" />
-                <span className="bg-white/15 backdrop-blur rounded-full px-3 py-1 text-xs">Level {displayLevel}</span>
+                <span className="bg-white/15 backdrop-blur rounded-full px-3 py-1 text-xs">Tingkat {displayLevel}</span>
               </div>
             </div>
             <Link href="/arena/misi" className="shrink-0 bg-white/20 backdrop-blur hover:bg-white/30 rounded-2xl p-2 transition-all">
@@ -239,7 +239,7 @@ export default async function BerandaPage() {
 
           <div className="mt-5 bg-white/10 backdrop-blur rounded-2xl p-4">
             <div className="flex justify-between text-sm mb-2">
-              <span className="font-semibold">Progress Level {displayLevel}</span>
+              <span className="font-semibold">Kemajuan Tingkat {displayLevel}</span>
               <span className="text-violet-200">{progress.current} / {progress.needed} XP</span>
             </div>
               <div className="w-full h-3 bg-white/20 rounded-full overflow-hidden">
@@ -282,7 +282,7 @@ export default async function BerandaPage() {
                 <div className="grid grid-cols-3 gap-3 mt-4">
                   <div className="bg-white/10 backdrop-blur rounded-xl p-3 text-center">
                     <p className="text-lg font-extrabold text-white">{displayLevel}</p>
-                    <p className="text-[10px] text-violet-200 mt-0.5">Level</p>
+                    <p className="text-[10px] text-violet-200 mt-0.5">Tingkat</p>
                   </div>
                   <div className="bg-white/10 backdrop-blur rounded-xl p-3 text-center">
                     <p className="text-lg font-extrabold text-white">{jalurProgress.completed}</p>
@@ -433,7 +433,7 @@ export default async function BerandaPage() {
             <div className="divide-y divide-white/10">
               {[
                 { icon: PenLine, label: "Total Karya", value: myKaryaCount, color: "text-pink-300" },
-                { icon: Star, label: "Level", value: displayLevel, color: "text-amber-300" },
+                { icon: Star, label: "Tingkat", value: displayLevel, color: "text-amber-300" },
                 { icon: Flame, label: "Rentetan", value: `${user.streak || 0} hari`, color: "text-orange-300" },
                 { icon: Coins, label: "Koin Terkumpul", value: user.coins || 0, color: "text-amber-300" },
               ].map((s) => (

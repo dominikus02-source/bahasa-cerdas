@@ -316,7 +316,7 @@ export default function LariKataGame({ hideBackButton, backHref = "/arena/game" 
             </div>
             {result.levelUp && (
               <div className="bg-amber-300 text-amber-900 px-3 py-1 rounded-full text-xs font-extrabold inline-flex items-center gap-1 mt-1">
-                <Sparkles className="w-3.5 h-3.5" /> Naik Level!
+                <Sparkles className="w-3.5 h-3.5" /> Naik Tingkat!
               </div>
             )}
           </div>

@@ -145,7 +145,7 @@ export function LeaderboardPanel({ compact = false }: { compact?: boolean }) {
                 {e.name}
                 {e.isMe && <span className="ml-1.5 text-[10px] font-bold text-[var(--px-gold)]">Kamu</span>}
                 <span className="ml-1.5 text-[10px] font-bold" style={{ color: e.rankColor }}>
-                  Lv {e.level}
+                  Tkt {e.level}
                 </span>
               </span>
               <span className="text-xs font-extrabold text-[var(--px-gold)]">{formatId(e.score)}</span>

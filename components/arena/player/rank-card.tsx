@@ -20,7 +20,7 @@ export function RankCard({ profile }: { profile: PlayerProfileView }) {
             {profile.rankLabel}
           </p>
           <p className="text-[11px] font-semibold text-[var(--px-text-dim)]">
-            {profile.rankTitle} · Level {profile.level} · {formatId(profile.totalXp)} total XP
+            {profile.rankTitle} · Tingkat {profile.level} · {formatId(profile.totalXp)} XP total
           </p>
         </div>
         <ChevronRight size={18} className="shrink-0 text-[var(--px-text-faint)]" />
@@ -30,7 +30,7 @@ export function RankCard({ profile }: { profile: PlayerProfileView }) {
         <span>
           Rank berikutnya: <span className="text-[var(--px-text)]">{nextRank}</span>
         </span>
-        <span>Level {nextLevel}</span>
+        <span>Tingkat {nextLevel}</span>
       </div>
       <div className="px-xp-track mt-1.5 h-2">
         <motion.div

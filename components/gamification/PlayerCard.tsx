@@ -55,9 +55,9 @@ export function PlayerCard({
           </p>
           <p className="truncate text-xl font-black text-white">
             {meta.title}
-            <span className="ml-1.5 text-sm font-bold text-white/50">Level {profile.level}</span>
+            <span className="ml-1.5 text-sm font-bold text-white/50">Tingkat {profile.level}</span>
           </p>
-          <p className="mt-0.5 text-xs font-semibold text-white/60">{formatId(profile.totalXp)} total XP</p>
+          <p className="mt-0.5 text-xs font-semibold text-white/60">{formatId(profile.totalXp)} XP total</p>
         </div>
 
         {/* Koin */}
@@ -74,7 +74,7 @@ export function PlayerCard({
             <Sparkles size={11} className="text-[var(--px-gold)]" />
             {formatId(profile.levelProgress.current)} / {formatId(profile.levelProgress.needed)} XP
           </span>
-          <span>{formatId(profile.levelProgress.remaining)} XP menuju Level {profile.level + 1}</span>
+          <span>{formatId(profile.levelProgress.remaining)} XP menuju Tingkat {profile.level + 1}</span>
         </div>
         <div className="h-2.5 overflow-hidden rounded-full bg-white/10">
           <motion.div

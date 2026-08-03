@@ -59,7 +59,7 @@ function buildFeedback(profile: PlayerProfileView): { headline: string; detail: 
   if (profile.level >= 30) {
     return {
       headline: "Luar biasa! Kamu sudah veteran Bahasa.",
-      detail: `Level ${profile.level} dengan pangkat ${profile.rankLabel} — terus pertahankan konsistensi belajar harianmu.`,
+      detail: `Tingkat ${profile.level} dengan pangkat ${profile.rankLabel} — terus pertahankan konsistensi belajar harianmu.`,
       tips: [
         "Ajak temanmu untuk bertanding di leaderboard mingguan.",
         "Bantu rekanmu belajar lewat karya-karya terbaikmu.",
