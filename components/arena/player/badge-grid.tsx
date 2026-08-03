@@ -43,7 +43,7 @@ export function BadgeGrid({ limit }: { limit?: number }) {
     <div>
       <div className="mb-3 flex items-center justify-between">
         <p className="text-xs font-bold uppercase tracking-wide text-[var(--px-text-dim)]">
-          {unlocked.length}/{badges.length} badge terbuka
+          {unlocked.length}/{badges.length} lencana terbuka
         </p>
         {limit && badges.length > limit && (
           <p className="text-xs font-semibold text-[var(--px-text-faint)]">Lihat semua</p>

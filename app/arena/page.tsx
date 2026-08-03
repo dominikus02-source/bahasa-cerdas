@@ -210,7 +210,7 @@ export default async function BerandaPage() {
             <div className="bg-white/10 backdrop-blur rounded-2xl p-3 md:p-4">
               <div className="flex items-center gap-2 text-amber-300 mb-1">
                 <Flame size={18} />
-                <span className="text-xs font-semibold uppercase tracking-wide">Streak</span>
+                <span className="text-xs font-semibold uppercase tracking-wide">Rentetan</span>
               </div>
               <p className="text-xl md:text-2xl font-extrabold">{user.streak || 0} <span className="text-sm font-normal text-violet-200">hari</span></p>
             </div>
@@ -290,7 +290,7 @@ export default async function BerandaPage() {
                   </div>
                   <div className="bg-white/10 backdrop-blur rounded-xl p-3 text-center">
                     <p className="text-lg font-extrabold text-white">{totalXp.toLocaleString()}</p>
-                    <p className="text-[10px] text-violet-200 mt-0.5">Total XP</p>
+                    <p className="text-[10px] text-violet-200 mt-0.5">XP Total</p>
                   </div>
                 </div>
                 <div className="mt-3 bg-white/10 backdrop-blur rounded-xl p-3">
@@ -434,7 +434,7 @@ export default async function BerandaPage() {
               {[
                 { icon: PenLine, label: "Total Karya", value: myKaryaCount, color: "text-pink-300" },
                 { icon: Star, label: "Level", value: displayLevel, color: "text-amber-300" },
-                { icon: Flame, label: "Streak", value: `${user.streak || 0} hari`, color: "text-orange-300" },
+                { icon: Flame, label: "Rentetan", value: `${user.streak || 0} hari`, color: "text-orange-300" },
                 { icon: Coins, label: "Koin Terkumpul", value: user.coins || 0, color: "text-amber-300" },
               ].map((s) => (
                 <div key={s.label} className="flex items-center gap-3 py-2.5 first:pt-0 last:pb-0">

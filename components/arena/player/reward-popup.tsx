@@ -7,7 +7,7 @@ import { BadgeIcon } from "@/components/gamification/BadgeIcon";
 const TYPE_META = {
   XP: { label: "XP", icon: "⚡", tint: "border-sky-400/50 bg-sky-500/10 text-sky-300" },
   COIN: { label: "Koin", icon: "🪙", tint: "border-[var(--px-gold)]/50 bg-[var(--px-gold)]/10 text-[var(--px-gold)]" },
-  BADGE: { label: "Badge", icon: "🏅", tint: "border-amber-400/50 bg-amber-500/10 text-amber-300" },
+  BADGE: { label: "Lencana", icon: "🏅", tint: "border-amber-400/50 bg-amber-500/10 text-amber-300" },
   ACHIEVEMENT: { label: "Pencapaian", icon: "🏆", tint: "border-violet-400/50 bg-violet-500/10 text-violet-300" },
   LEVEL_UP: { label: "Level Up", icon: "🎉", tint: "border-emerald-400/50 bg-emerald-500/10 text-emerald-300" },
   RANK_UP: { label: "Rank Baru", icon: "🏆", tint: "border-[var(--px-gold)]/60 bg-[var(--px-gold)]/15 text-[var(--px-gold)]" },

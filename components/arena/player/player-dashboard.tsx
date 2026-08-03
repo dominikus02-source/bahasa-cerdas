@@ -68,7 +68,7 @@ export function PlayerDashboard({ name }: { name: string; avatar?: string | null
             <div className="mb-3 flex items-center justify-between">
               <h3 className="flex items-center gap-2 text-base font-extrabold text-[var(--px-text)]">
                 <Award size={16} className="text-[var(--px-gold)]" />
-                Badge
+                Lencana
               </h3>
               <Link href="/arena/player/badges" className="text-xs font-bold text-[var(--px-royal-2)] hover:underline">
                 Lihat semua

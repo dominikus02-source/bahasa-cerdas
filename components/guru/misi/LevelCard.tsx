@@ -35,7 +35,7 @@ export function LevelCard({ level, xpLevel, xpPerLevel, streak }: LevelCardProps
         <div className="flex items-center gap-2">
           <Flame size={18} className="text-orange-400" />
           <span className="text-[10px] font-semibold uppercase tracking-wide text-gray-400">
-            Streak Harian
+            Rentetan Harian
           </span>
         </div>
         <div className="mt-1 flex items-end gap-1.5">

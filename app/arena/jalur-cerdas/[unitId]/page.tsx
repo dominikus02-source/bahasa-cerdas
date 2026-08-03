@@ -108,7 +108,7 @@ export default async function UnitDetailPage({ params }: { params: Promise<{ uni
 
       <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-4">
         <div className="flex items-center justify-between mb-4">
-          <span className="text-sm font-semibold text-gray-500">Progress</span>
+          <span className="text-sm font-semibold text-gray-500">Kemajuan</span>
           <span className="text-sm font-bold text-violet-600">
             {isCompleted ? "100%" : "0%"}
           </span>
@@ -164,7 +164,7 @@ export default async function UnitDetailPage({ params }: { params: Promise<{ uni
       <div className="mt-6 p-4 rounded-xl bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200">
         <div className="flex items-center gap-2 mb-1">
           <Trophy className="w-4 h-4 text-amber-600" />
-          <p className="text-sm font-semibold text-amber-800">Reward</p>
+          <p className="text-sm font-semibold text-amber-800">Hadiah</p>
         </div>
         <p className="text-sm text-amber-700">
           <Zap className="w-4 h-4 inline mr-0.5" />+{unit.xpReward || 50} XP

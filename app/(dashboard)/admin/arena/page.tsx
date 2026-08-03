@@ -176,7 +176,7 @@ export default async function AdminArenaPage() {
       {/* Badge & Achievement */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-          <h2 className="text-lg font-semibold text-slate-900">Badge</h2>
+          <h2 className="text-lg font-semibold text-slate-900">Lencana</h2>
           <div className="mt-2 space-y-2">
             <p className="text-sm text-slate-500"><span className="font-semibold text-slate-800">{badgeCount}</span> definisi badge</p>
             <p className="text-sm text-slate-500"><span className="font-semibold text-slate-800">{badgeAwardCount}</span> badge diberikan ke pemain</p>

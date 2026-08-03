@@ -250,7 +250,7 @@ export default async function ArenaGimPage() {
             <div className="w-px h-10" style={{ background: "rgba(255,255,255,0.07)" }} />
             <div className="flex-1 text-center">
               <p className="text-2xl font-extrabold" style={{ color: "#10B981" }}>{totalXp.toLocaleString()}</p>
-              <p className="text-[10px] font-semibold uppercase" style={{ color: "#7C7A9E" }}>Total XP</p>
+              <p className="text-[10px] font-semibold uppercase" style={{ color: "#7C7A9E" }}>XP Total</p>
             </div>
           </div>
         </div>

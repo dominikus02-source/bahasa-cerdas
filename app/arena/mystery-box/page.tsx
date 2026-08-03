@@ -158,7 +158,7 @@ export default function MysteryBoxPage() {
             <span className="font-bold">{hadiah.label}</span>
           </div>
           {hadiah.jenis === "FREEZE" && (
-            <p className="text-xs text-gray-500 mt-2">Streak-mu aman satu hari kalau kamu absen.</p>
+            <p className="text-xs text-gray-500 mt-2">Rentetanmu aman satu hari kalau kamu absen.</p>
           )}
         </div>
       )}

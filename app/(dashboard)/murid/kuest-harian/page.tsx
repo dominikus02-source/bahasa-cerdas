@@ -70,7 +70,7 @@ export default function KuestHarianPage() {
             <div className="flex items-center gap-2">
               <IconFlame size={28} className="text-orange-200" />
               <div>
-                <p className="text-sm text-orange-100">Streak Harian</p>
+                <p className="text-sm text-orange-100">Rentetan Harian</p>
                 <p className="text-3xl font-bold mt-1">{user.streak || 0} hari</p>
               </div>
             </div>

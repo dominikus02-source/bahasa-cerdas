@@ -93,7 +93,7 @@ export function RankUpModal() {
               <RankIcon rank={rankUp.rankAfter} size={140} glow />
             </motion.div>
 
-            <p className="text-xs font-bold uppercase tracking-widest text-[var(--px-gold)]">Rank Baru!</p>
+            <p className="text-xs font-bold uppercase tracking-widest text-[var(--px-gold)]">Pangkat Baru!</p>
             <h2 className="mt-1 text-3xl font-black" style={{ color: rankUp.rankColor }}>
               {rankUp.rankLabel}
             </h2>

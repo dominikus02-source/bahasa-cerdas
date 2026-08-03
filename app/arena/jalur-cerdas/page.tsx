@@ -74,7 +74,7 @@ export default async function JalurCerdasPage() {
                 </>
               ) : (
                 <>
-                  <p className="text-lg font-bold text-white">Progress Belajar</p>
+                  <p className="text-lg font-bold text-white">Kemajuan Belajar</p>
                   <p className="text-sm text-violet-200">{totalDone}/{totalUnits} materi selesai</p>
                 </>
               )}

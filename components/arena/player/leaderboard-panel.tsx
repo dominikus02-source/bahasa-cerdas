@@ -13,7 +13,7 @@ type Scope = "GLOBAL" | "SCHOOL" | "CLASS";
 const PERIOD_LABELS: Record<Period, string> = {
   ALL_TIME: "Semua Waktu",
   WEEKLY: "Mingguan",
-  SEASON: "Season",
+  SEASON: "Musim",
 };
 
 /** Podium + daftar papan peringkat, data dari /player/leaderboard. */
