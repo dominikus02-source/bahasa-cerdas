@@ -191,10 +191,7 @@ export default function PanduanGuruPage() {
       ) : (
         <div className="space-y-4">
           {GRADES.map(grade => {
-            const hasAny = [1, 2].some(sem => {
-              const lvl = getLevel(grade, sem)
-              return lvl && (filteredUnits(grade, sem).length > 0 || !search)
-            })
+            const hasAny = [1, 2].some(sem => filteredUnits(grade, sem).length > 0)
             if (!hasAny) return null
             const isExpanded = expandedGrade === grade
 
@@ -217,8 +214,9 @@ export default function PanduanGuruPage() {
                 {isExpanded && (
                   <div className="border-t border-slate-100">
                     {SEMESTERS.map(sem => {
-                      const lvl = getLevel(grade, sem)
                       const units = filteredUnits(grade, sem)
+                      // Judul level dipakai tombol "Kirim" saat menugaskan bab ke kelas.
+                      const lvl = getLevel(grade, sem)
                       const isSemExpanded = expandedSem === sem
 
                       return (
@@ -229,7 +227,10 @@ export default function PanduanGuruPage() {
                           >
                             <GraduationCap className="w-4 h-4 text-slate-400" />
                             <span className="font-medium text-slate-700">Semester {sem}</span>
-                            <Badge variant="secondary" className="ml-auto text-xs">{lvl ? lvl.units.length : 0} bab</Badge>
+                            {/* Hitung dari daftar yang benar-benar ditampilkan. Memakai lvl.units.length
+                                menghitung SELURUH level — untuk SD satu level memuat kedua
+                                semester, sehingga keduanya sama-sama tertulis 10 bab. */}
+                            <Badge variant="secondary" className="ml-auto text-xs">{units.length} bab</Badge>
                             {isSemExpanded ? <ChevronDown className="w-4 h-4 text-slate-400" /> : <ChevronRight className="w-4 h-4 text-slate-400" />}
                           </button>
 
