@@ -11,6 +11,16 @@
       ],
       "destination": "https://www.bahasacerdas.com/$1",
       "permanent": true
+    },
+    {
+      "source": "/arena-junior",
+      "destination": "/junior",
+      "permanent": true
+    },
+    {
+      "source": "/arena-junior/(.*)",
+      "destination": "/junior/$1",
+      "permanent": true
     }
   ]
 }
