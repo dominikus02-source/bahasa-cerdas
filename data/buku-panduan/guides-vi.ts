@@ -29,7 +29,7 @@ export const kelasVI: GradeData = {
             "Menulis artikel pendek tentang topik lingkungan sekolah atau kegiatan kelas",
           ],
           keywords: ["laporan","artikel","fakta","opini","data","informasi","pernyataan umum","deskripsi bagian","simpulan","objektif"],
-          suggestedDuration: "10 JP x 35 menit",
+          suggestedDuration: "20 JP x 35 menit",
           teachingContent: {
             textNature: {
               definition: "Teks laporan adalah teks yang menyajikan informasi tentang suatu objek atau peristiwa berdasarkan hasil pengamatan, penelitian, atau pengalaman secara sistematis dan objektif. Artikel pendek adalah tulisan singkat yang dimuat di media massa, bersifat informatif atau opini, dengan gaya bahasa yang komunikatif dan mudah dipahami pembaca awam.",
@@ -244,7 +244,7 @@ export const kelasVI: GradeData = {
             "Memberi tanggapan terhadap pidato teman secara santun dan membangun",
           ],
           keywords: ["pidato","pembukaan","isi","penutup","intonasi","gestur","kontak mata","percaya diri","pembicara","audiens"],
-          suggestedDuration: "10 JP x 35 menit",
+          suggestedDuration: "20 JP x 35 menit",
           teachingContent: {
             textNature: {
               definition: "Pidato adalah pengungkapan pikiran dalam bentuk kata-kata yang ditujukan kepada orang banyak secara lisan. Teks pidato adalah naskah tertulis yang menjadi panduan pembicara dalam menyampaikan gagasannya secara terstruktur.",
@@ -447,7 +447,7 @@ export const kelasVI: GradeData = {
             "Menulis teks argumentasi sederhana tentang topik relevan",
           ],
           keywords: ["argumentasi","argumen","pendapat","alasan","data","bukti","fakta","opini","logis","persuasi"],
-          suggestedDuration: "10 JP x 35 menit",
+          suggestedDuration: "20 JP x 35 menit",
           teachingContent: {
             textNature: {
               definition: "Teks argumentasi adalah teks berisi pendapat penulis yang disertai alasan, bukti, dan data logis untuk meyakinkan pembaca. Tujuannya memengaruhi sikap pembaca agar setuju dengan pendapat penulis.",
@@ -636,7 +636,7 @@ export const kelasVI: GradeData = {
             "Mempublikasikan cerpen di media kelas atau majalah dinding",
           ],
           keywords: ["cerpen","cerita pendek","unsur intrinsik","tema","tokoh","alur","latar","sudut pandang","amanat","konflik"],
-          suggestedDuration: "10 JP x 35 menit",
+          suggestedDuration: "18 JP x 35 menit",
           teachingContent: {
             textNature: {
               definition: "Cerita pendek anak adalah karya fiksi singkat yang menceritakan satu peristiwa atau konflik sederhana dengan jumlah tokoh terbatas, ditujukan untuk pembaca anak. Cerpen anak memiliki alur yang jelas, bahasa yang komunikatif, dan pesan moral yang sesuai usia.",
@@ -848,7 +848,7 @@ export const kelasVI: GradeData = {
             "Merespons teks informatif secara kritis dalam bentuk tanggapan tertulis",
           ],
           keywords: ["membaca kritis","fakta","opini","tujuan penulis","kredibilitas","informasi implisit","hoaks","sumber","evaluasi","tanggapan"],
-          suggestedDuration: "10 JP x 35 menit",
+          suggestedDuration: "18 JP x 35 menit",
           teachingContent: {
             textNature: {
               definition: "Membaca kritis adalah kemampuan membaca yang tidak hanya memahami informasi literal tetapi juga menganalisis, mengevaluasi, dan menilai teks secara mendalam. Pembaca kritis mempertanyakan tujuan penulis, keakuratan informasi, sudut pandang yang disajikan, dan informasi yang sengaja dihilangkan.",
@@ -1060,7 +1060,7 @@ export const kelasVI: GradeData = {
             "Menulis teks diskusi sederhana dengan struktur lengkap",
           ],
           keywords: ["diskusi","pro","kontra","argumen","isu","musyawarah","kesepakatan","santun","tanggapan","saran"],
-          suggestedDuration: "10 JP x 35 menit",
+          suggestedDuration: "18 JP x 35 menit",
           teachingContent: {
             textNature: {
               definition: "Teks diskusi adalah teks yang menyajikan dua sudut pandang (pro dan kontra) tentang suatu isu atau permasalahan. Tujuannya bukan memenangkan salah satu sisi, tetapi memberikan gambaran seimbang sehingga pembaca dapat mengambil kesimpulan sendiri.",
@@ -1239,7 +1239,7 @@ export const kelasVI: GradeData = {
             "Mempublikasikan karya di media kelas atau sekolah",
           ],
           keywords: ["publikasi","karya tulis","artikel","mading","buletin","menulis","menyunting","media","pembaca"],
-          suggestedDuration: "10 JP x 35 menit",
+          suggestedDuration: "18 JP x 35 menit",
           teachingContent: {
             textNature: {
               definition: "Publikasi karya adalah proses menyebarluaskan hasil karya tulis kepada pembaca melalui media tertentu. Karya yang dipublikasikan telah melalui proses penulisan, penyuntingan, dan pemformatan agar layak dibaca khalayak.",
@@ -1407,7 +1407,7 @@ export const kelasVI: GradeData = {
             "Menggunakan teknik literasi informasi dasar (mencari, mengevaluasi, menggunakan informasi)",
           ],
           keywords: ["literasi","SMP","transisi","membaca","menulis akademik","presentasi","ringkasan","catatan","esai","penelitian"],
-          suggestedDuration: "12 JP x 35 menit",
+          suggestedDuration: "16 JP x 35 menit",
           teachingContent: {
             textNature: {
               definition: "Persiapan literasi menuju SMP adalah penguatan keterampilan membaca, menulis, berbicara, dan literasi informasi yang dibutuhkan siswa untuk sukses di jenjang pendidikan lanjutan. Fokus pada kemampuan menangani teks lebih panjang dan tugas lebih kompleks.",
@@ -1581,7 +1581,7 @@ export const kelasVI: GradeData = {
             "Mempublikasikan karya yang sudah disunting di media yang sesuai",
           ],
           keywords: ["menyunting","mengedit","revisi","ejaan","publikasi","editor","masukan","perbaikan","karya"],
-          suggestedDuration: "8 JP x 35 menit",
+          suggestedDuration: "16 JP x 35 menit",
           teachingContent: {
             textNature: {
               definition: "Menyunting adalah kegiatan memeriksa dan memperbaiki naskah sebelum dipublikasikan. Penyuntingan mencakup aspek isi (kebenaran, kelengkapan), struktur (keruntutan, organisasi), bahasa (diksi, kalimat, gaya), dan mekanik (ejaan, tanda baca, format). Tujuannya menghasilkan karya yang layak baca.",
@@ -1758,7 +1758,7 @@ export const kelasVI: GradeData = {
             "Memerankan tokoh dalam drama sederhana",
           ],
           keywords: ["sastra","apresiasi","puisi","pantun","drama","deklamasi","unsur keindahan","pesan moral","nilai budaya","pertunjukan"],
-          suggestedDuration: "10 JP x 35 menit",
+          suggestedDuration: "12 JP x 35 menit",
           teachingContent: {
             textNature: {
               definition: "Sastra anak adalah karya sastra yang ditulis untuk anak-anak, dengan bahasa, tema, dan nilai yang sesuai dengan perkembangan usia anak. Sastra anak mencakup puisi, cerpen, pantun, fabel, legenda, dan drama. Tujuannya menghibur sekaligus mendidik.",
