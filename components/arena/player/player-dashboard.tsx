@@ -14,6 +14,7 @@ import {
   Zap,
 } from "lucide-react";
 import { usePlayerProfile } from "./player-context";
+import LogoutButton from "@/components/arena/LogoutButton";
 import { PlayerHeader } from "./player-header";
 import { RankCard } from "./rank-card";
 import { StreakCard } from "./streak-card";
@@ -132,6 +133,11 @@ export function PlayerDashboard({ name }: { name: string; avatar?: string | null
               </span>
               <ChevronRight size={16} className="text-[var(--px-text-faint)]" />
             </Link>
+            {/* In the APK the top bar has no logout icon, so this row is the only
+                way out. It lives here rather than in the header for the same
+                reason Duolingo buries account actions in the profile: a phone
+                shared with children should not put "sign out" next to the bell. */}
+            <LogoutButton variant="row" />
           </div>
         </GlassCard>
       </div>

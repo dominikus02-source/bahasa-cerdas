@@ -5,7 +5,7 @@ import { LogOut } from "lucide-react"
 import { createClient } from "@/lib/supabase/client"
 import { useRouter } from "next/navigation"
 
-export default function LogoutButton({ variant = "link" }: { variant?: "link" | "icon" }) {
+export default function LogoutButton({ variant = "link" }: { variant?: "link" | "icon" | "row" }) {
   const [loading, setLoading] = useState(false)
   const router = useRouter()
 
@@ -13,7 +13,26 @@ export default function LogoutButton({ variant = "link" }: { variant?: "link" | 
     setLoading(true)
     const supabase = createClient()
     await supabase.auth.signOut()
-    router.push("/auth/arena-login")
+    // /arena/login, not /auth/arena-login: the latter sits outside the APK's
+    // /arena scope, so signing out would have dumped the student into a browser
+    // tab instead of back to Arena's own login screen.
+    router.push("/arena/login")
+  }
+
+  // Row inside the Pemain tab's settings list. In the APK this is the ONLY way
+  // out — the top bar drops its logout icon there, so this must stay reachable.
+  if (variant === "row") {
+    return (
+      <button
+        onClick={handleLogout}
+        disabled={loading}
+        className="flex w-full items-center justify-between rounded-xl border border-[var(--px-border)] bg-white/[0.04] p-3 hover:bg-white/[0.08] disabled:opacity-60"
+      >
+        <span className="flex items-center gap-2 text-sm font-bold text-[var(--px-text)]">
+          <LogOut size={15} className="text-rose-300" /> {loading ? "Keluar..." : "Keluar"}
+        </span>
+      </button>
+    )
   }
 
   if (variant === "icon") {
