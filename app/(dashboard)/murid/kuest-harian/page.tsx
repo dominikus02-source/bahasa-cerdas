@@ -13,8 +13,8 @@ const QUEST_LABELS: Record<string, string> = {
   MENULIS: "Menulis Karya",
   MENGOMENTARI: "Mengomentari Karya",
   MEMBERI_LIKE: "Memberi Like",
-  BACA_MATERI: "Selesaikan Materi",
-  MENJAWAB_KUIS: "Jawab Soal Kuis",
+  BACA_MATERI: "Belajar Jalur Cerdas",
+  MENJAWAB_KUIS: "Jawab Soal Jalur Cerdas",
 };
 
 function QuestTypeIcon({ type, completed }: { type: string; completed: boolean }) {

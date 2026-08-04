@@ -7,7 +7,7 @@ import Link from "next/link"
 export const dynamic = "force-dynamic"
 import {
   Flame, Zap, Coins, Target, Bot, PenLine, Rocket, Star, Gift,
-  Trophy, BookOpen, ChevronRight, Award, Gamepad2, Heart,
+  Trophy, BookOpen, ChevronRight, Award,
   MessageCircle, Users, Clock, Swords, Crown, GraduationCap,
   Globe, FileCheck2,
 } from "lucide-react"
@@ -328,12 +328,9 @@ export default async function BerandaPage() {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               {[
                 { href: "/arena/tulis", label: "Tulis Karya", icon: PenLine, warna: "from-violet-500 to-purple-600" },
-                { href: "/arena/jalur-cerdas", label: "Jalur Cerdas", icon: BookOpen, warna: "from-emerald-500 to-teal-600" },
-                { href: "/arena/game", label: "Gim", icon: Gamepad2, warna: "from-pink-500 to-rose-600" },
                 { href: "/arena/ai", label: "AI Cerdik", icon: Bot, warna: "from-blue-500 to-indigo-600" },
                 { href: "/arena/mystery-box", label: "Kotak Misterius", icon: Gift, warna: "from-amber-500 to-yellow-600" },
                 { href: "/murid/gabung-kelas", label: "Gabung Kelas", icon: Users, warna: "from-teal-500 to-cyan-600" },
-                { href: "/arena/feed", label: "Jelajah Karya", icon: Heart, warna: "from-cyan-500 to-blue-600" },
               ].map((a) => (
                 <Link key={a.href} href={a.href} className="flex flex-col items-center gap-2 bg-white rounded-2xl p-4 border border-gray-100 hover:border-violet-200 hover:shadow-md transition-all text-center">
                   <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${a.warna} flex items-center justify-center`}>

@@ -9,8 +9,8 @@ export const QUEST_META: Record<string, { Icon: LucideIcon; label: string; warna
   MENULIS: { Icon: PenLine, label: "Tulis 1 Karya", warna: "from-amber-500 to-orange-600" },
   MENGOMENTARI: { Icon: MessageCircle, label: "Beri Komentar", warna: "from-blue-500 to-cyan-600" },
   MEMBERI_LIKE: { Icon: Heart, label: "Beri Suka ke Karya", warna: "from-rose-500 to-pink-600" },
-  BACA_MATERI: { Icon: BookOpen, label: "Selesaikan Materi", warna: "from-violet-500 to-purple-600" },
-  MENJAWAB_KUIS: { Icon: Brain, label: "Jawab Soal Kuis", warna: "from-cyan-500 to-blue-600" },
+  BACA_MATERI: { Icon: BookOpen, label: "Belajar Jalur Cerdas", warna: "from-violet-500 to-purple-600" },
+  MENJAWAB_KUIS: { Icon: Brain, label: "Jawab Soal Jalur Cerdas", warna: "from-cyan-500 to-blue-600" },
 };
 
 export function getQuestMeta(questType: string) {
