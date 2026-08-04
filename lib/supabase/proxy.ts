@@ -1,6 +1,10 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
-import { checkRateLimit, getClientIdentity, rateLimitResponse, type RateLimitScope } from "@/lib/security";
+import { checkRateLimit, getClientIdentity, rateLimitResponse, getForwardedIp, type RateLimitScope } from "@/lib/security";
+
+// Secret key untuk IP Address Forwarding (lihat lib/supabase/server.ts).
+const SUPABASE_SECRET_KEY =
+  process.env.SUPABASE_SECRET_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
 
 // Routes that NEVER need getUser() in middleware — public pages or SSG
 const publicPaths = [
@@ -87,8 +91,14 @@ export async function updateSession(request: NextRequest, nonce?: string) {
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    SUPABASE_SECRET_KEY,
     {
+      global: {
+        headers: (() => {
+          const ip = getForwardedIp(request.headers);
+          return ip ? { "sb-forwarded-for": ip } : {};
+        })(),
+      },
       cookies: {
         getAll() {
           return request.cookies.getAll();

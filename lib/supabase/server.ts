@@ -1,17 +1,37 @@
 import { createServerClient, type CookieOptions } from "@supabase/ssr";
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { db } from "@/lib/db";
 import { NextResponse } from "next/server";
 import { Role } from "@prisma/client";
 import { cache } from "react";
+import { getForwardedIp } from "@/lib/security";
+
+// IP Address Forwarding (Authentication → Rate Limits): biar rate limit
+// Supabase dihitung per IP murid, bukan per IP egress Vercel yang dibagi
+// semua pengguna. Syarat dari dokumentasi Supabase:
+//   1. Toggle IP Address Forwarding AKTIF di dashboard.
+//   2. Header `Sb-Forwarded-For` berisi IP klien asli.
+//   3. Panggilan memakai SECRET API key (sb_secret_...) — anon/service_role
+//      legacy tidak didukung.
+// Jika SUPABASE_SECRET_KEY belum diset, jatuh ke anon (perilaku lama, header
+// diabaikan Supabase) supaya tidak ada yang rusak di environment lain.
+const SUPABASE_SECRET_KEY =
+  process.env.SUPABASE_SECRET_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
+
+async function buildAuthHeaders(): Promise<Record<string, string>> {
+  const h = await headers();
+  const ip = getForwardedIp(h);
+  return ip ? { "sb-forwarded-for": ip } : {};
+}
 
 export async function createClient() {
   const cookieStore = await cookies();
 
   return createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    SUPABASE_SECRET_KEY,
     {
+      global: { headers: await buildAuthHeaders() },
       cookies: {
         getAll() {
           return cookieStore.getAll();

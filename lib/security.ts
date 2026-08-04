@@ -22,9 +22,7 @@ function hashToBucket(value: string): string {
 export function getClientIdentity(request: { headers: Headers }): { key: string; identified: boolean } {
   const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim()
     || request.headers.get("x-real-ip")
-    || "unknown";
-
-  const authCookie = (request.headers.get("cookie") || "")
+    || "unknown";  const authCookie = (request.headers.get("cookie") || "")
     .split(";")
     .map((c) => c.trim())
     .filter((c) => c.startsWith("sb-") && c.slice(0, c.indexOf("=")).includes("auth-token"))
@@ -33,6 +31,17 @@ export function getClientIdentity(request: { headers: Headers }): { key: string;
   return authCookie
     ? { key: `sess|${hashToBucket(authCookie)}`, identified: true }
     : { key: `ip|${ip}`, identified: false };
+}
+
+// IP asli pengguna untuk diteruskan ke Supabase Auth via header
+// `Sb-Forwarded-For` (IP Address Forwarding). Vercel menetapkan
+// x-forwarded-for sendiri — IP paling kiri adalah IP klien sebenarnya.
+export function getForwardedIp(headers: Headers): string {
+  return (
+    headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+    headers.get("x-real-ip")?.trim() ||
+    ""
+  );
 }
 
 export function getClientKey(request: { headers: Headers }): string {
