@@ -13,7 +13,7 @@ const publicPaths = [
 ];
 
 // Routes that handle their own auth — skip middleware getUser() to avoid rate limit
-const selfAuthPaths = ["/api/", "/arena/", "/guru/", "/admin/", "/murid/", "/game/", "/auth/", "/kompetisi/"];
+const selfAuthPaths = ["/api/", "/arena/", "/guru/", "/admin/", "/murid/", "/game/", "/auth/", "/kompetisi/", "/arena-junior/"];
 
 // Dashboard routes that require onboarding
 const dashboardPaths = ["/guru/", "/admin/", "/murid/"];

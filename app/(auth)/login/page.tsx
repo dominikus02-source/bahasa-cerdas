@@ -48,10 +48,23 @@ export default function LoginPage() {
     try {
       const supabase = createClient();
 
-      const { data, error: authError } = await supabase.auth.signInWithPassword({
-        email: email.toLowerCase(),
-        password,
-      });
+      // Retry otomatis saat Supabase 429 (rate limit per-IP, kapasitas bucket
+      // 30). Murid sekelas berbagi satu IP sekolah — yang lolos 30 pertama,
+      // sisanya menunggu refill ~1,7/detik lalu dicoba lagi otomatis.
+      let result: Awaited<ReturnType<typeof supabase.auth.signInWithPassword>> | null = null;
+      for (let attempt = 1; attempt <= 3; attempt++) {
+        const res = await supabase.auth.signInWithPassword({
+          email: email.toLowerCase(),
+          password,
+        });
+        if (!res.error || res.error.status !== 429 || attempt === 3) {
+          result = res;
+          break;
+        }
+        await new Promise((r) => setTimeout(r, 4000 * attempt));
+      }
+      const authError = result?.error;
+      const user = result?.data?.user;
 
       if (authError) {
         setError(
@@ -60,14 +73,14 @@ export default function LoginPage() {
             : authError.message === "Email not confirmed"
             ? "Email belum dikonfirmasi. Cek inbox/spam kamu."
             : authError.status === 429
-            ? "Terlalu banyak murid login dari jaringan sekolah ini secara bersamaan. Tunggu sekitar 5 menit, lalu coba lagi — akunmu tidak bermasalah."
+            ? "Sementara ini banyak murid login dari jaringan sekolah ini secara bersamaan. Tunggu sebentar lalu coba lagi — akunmu tidak bermasalah."
             : authError.message
         );
         setLoading(false);
         return;
       }
 
-      if (!data.user) {
+      if (!user) {
         setError("Gagal masuk. Silakan coba lagi.");
         setLoading(false);
         return;
@@ -79,10 +92,10 @@ export default function LoginPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          supabaseId: data.user.id,
-          email: data.user.email,
-          fullName: data.user.user_metadata?.full_name,
-          role: data.user.user_metadata?.role || "MURID",
+          supabaseId: user.id,
+          email: user.email,
+          fullName: user.user_metadata?.full_name,
+          role: user.user_metadata?.role || "MURID",
         }),
       });
       const createData = await createRes.json().catch(() => ({}));
@@ -94,10 +107,10 @@ export default function LoginPage() {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({
-                supabaseId: data.user.id,
-                email: data.user.email,
-                fullName: data.user.user_metadata?.full_name || data.user.email?.split("@")[0] || "User",
-                role: data.user.user_metadata?.role || "MURID",
+                supabaseId: user.id,
+                email: user.email,
+                fullName: user.user_metadata?.full_name || user.email?.split("@")[0] || "User",
+                role: user.user_metadata?.role || "MURID",
               }),
             });
               if (retryRes.ok) {

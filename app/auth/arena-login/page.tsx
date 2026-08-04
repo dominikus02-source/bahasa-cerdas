@@ -31,10 +31,22 @@ export default function ArenaLoginPage() {
     setError("")
 
     const supabase = createClient()
-    const { data, error: authError } = await supabase.auth.signInWithPassword({
-      email: email.toLowerCase(),
-      password,
-    })
+    // Retry otomatis saat Supabase 429 (rate limit per-IP sekolah berbagi
+    // satu NAT; bucket 30 lalu refill ~1,7/detik).
+    let result: Awaited<ReturnType<typeof supabase.auth.signInWithPassword>> | null = null
+    for (let attempt = 1; attempt <= 3; attempt++) {
+      const res = await supabase.auth.signInWithPassword({
+        email: email.toLowerCase(),
+        password,
+      })
+      if (!res.error || res.error.status !== 429 || attempt === 3) {
+        result = res
+        break
+      }
+      await new Promise((r) => setTimeout(r, 4000 * attempt))
+    }
+    const authError = result?.error
+    const user = result?.data?.user
 
     if (authError) {
       setError(
@@ -42,22 +54,24 @@ export default function ArenaLoginPage() {
           ? "Email atau password salah"
           : authError.message === "Email not confirmed"
           ? "Email belum dikonfirmasi. Cek inbox/spam kamu."
+          : authError.status === 429
+          ? "Sementara ini banyak murid login dari jaringan sekolah ini secara bersamaan. Tunggu sebentar lalu coba lagi — akunmu tidak bermasalah."
           : authError.message
       )
       setLoading(false)
       return
     }
 
-    if (!data.user) { setError("Gagal masuk"); setLoading(false); return }
+    if (!user) { setError("Gagal masuk"); setLoading(false); return }
 
     const createRes = await fetch("/api/user/me", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        supabaseId: data.user.id,
-        email: data.user.email,
-        fullName: data.user.user_metadata?.full_name,
-        role: data.user.user_metadata?.role || "MURID",
+        supabaseId: user.id,
+        email: user.email,
+        fullName: user.user_metadata?.full_name,
+        role: user.user_metadata?.role || "MURID",
       }),
     })
     if (!createRes.ok) {
