@@ -41,9 +41,15 @@ interface TestResultPanelProps {
   backHref?: string;
   /** Where the "Dokumen Hasil Latihan" button goes — respects guru vs murid role. */
   certHref?: string;
+  /**
+   * Base of the exam flow, so "Ulangi" restarts in the tree the run came from.
+   * Arena mounts this whole flow under /arena/kompetisi; hardcoding /kompetisi
+   * sent APK students out of scope into a browser tab on the result screen.
+   */
+  kompetisiHref?: string;
 }
 
-export default function TestResultPanel({ result, paketId, backHref = "/kompetisi/latihan", certHref = "/murid/dokumen-latihan" }: TestResultPanelProps) {
+export default function TestResultPanel({ result, paketId, backHref = "/kompetisi/latihan", certHref = "/murid/dokumen-latihan", kompetisiHref = "/kompetisi" }: TestResultPanelProps) {
   const style = PREDIKAT_STYLES[result.predikat] || { bg: "bg-slate-50", border: "border-slate-300", text: "text-slate-700", icon: "📋" };
   const passed = result.status === "COMPLETED";
   const title = result.paket?.title || result.paketTitle || "Hasil Latihan";
@@ -274,7 +280,7 @@ export default function TestResultPanel({ result, paketId, backHref = "/kompetis
         {/* Actions */}
         <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
           <Link
-            href={`/kompetisi/${paketId}?retry=1`}
+            href={`${kompetisiHref}/${paketId}?retry=1`}
             className="flex-1 flex items-center justify-center gap-2 py-2.5 sm:py-3 bg-emerald-600 text-white font-bold rounded-xl hover:bg-emerald-700 transition-colors text-sm sm:text-base"
           >
             <RefreshCw className="w-4 h-4" />

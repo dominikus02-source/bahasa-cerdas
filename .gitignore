@@ -74,3 +74,20 @@ audio-out/
 twa/android.keystore
 twa/passwords.json
 twa/keys/*
+
+# Generated Android project and build output. `bubblewrap build` recreates all of
+# it from twa-manifest.json, and the APK/AAB are multi-megabyte binaries. The
+# branded splash is NOT lost by ignoring these: twa/splash/generate-splash.mjs is
+# its source of truth and rewrites the drawables after each build.
+twa/app/
+twa/.gradle/
+twa/gradle/
+twa/gradlew
+twa/gradlew.bat
+twa/build.gradle
+twa/settings.gradle
+twa/gradle.properties
+twa/store_icon.png
+twa/*.apk
+twa/*.aab
+twa/*.idsig

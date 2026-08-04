@@ -147,5 +147,5 @@ export default function HasilPage({ params }: { params: Promise<{ paketId: strin
     );
   }
 
-  return <TestResultPanel result={result} paketId={paketId} backHref={backHref} certHref={certHref} />;
+  return <TestResultPanel result={result} paketId={paketId} backHref={backHref} certHref={certHref} kompetisiHref={kompetisiHref} />;
 }
