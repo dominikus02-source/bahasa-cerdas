@@ -101,7 +101,7 @@ function Node({
 
   return (
     <Link
-      href={`/arena-junior/pelajaran/${pelajaran.id}`}
+      href={`/junior/pelajaran/${pelajaran.id}`}
       className="rounded-3xl focus:outline-none focus-visible:ring-4 focus-visible:ring-[#FF6B9D]/40"
       aria-label={`${title} — ${pelajaran.estimatedMinutes} menit, ${pelajaran.xpReward} XP`}
     >

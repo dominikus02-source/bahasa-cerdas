@@ -1,7 +1,7 @@
 // Karakter Arena Junior — sumber tunggal untuk maskot & posenya.
 //
 // Aset resmi ada tiga karakter: Zelby, Hazel, Alby (lihat
-// public/arena-junior/karakter/). Kurikulum asal KataPlay memakai nama lain
+// public/junior/karakter/). Kurikulum asal KataPlay memakai nama lain
 // ("lily", "budi") yang TIDAK punya gambar sama sekali, jadi nama itu
 // dinormalkan di sini — bukan di komponen, supaya tidak ada tempat lain yang
 // perlu tahu soal nama lama.
@@ -58,7 +58,7 @@ export function gambarKarakter(hint: string | null | undefined, pose: Pose = "id
     : tersedia.includes("happy")
       ? "happy"
       : "idle"
-  return `/arena-junior/karakter/${karakter}_${dipakai}.webp`
+  return `/junior/karakter/${karakter}_${dipakai}.webp`
 }
 
 /** Palet resmi dari lembar desain Zelby V2. */

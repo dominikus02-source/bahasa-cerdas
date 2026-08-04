@@ -19,7 +19,7 @@ type Keadaan = "menunggu" | "benar" | "salah";
 const TOKOH = ["zelby", "hazel", "alby"] as const;
 
 // Tiap tokoh punya pose berbeda untuk tiap keadaan. Nama berkas mengikuti
-// aset di public/arena-junior/karakter/.
+// aset di public/junior/karakter/.
 const POSE: Record<(typeof TOKOH)[number], Record<Keadaan, string>> = {
   zelby: { menunggu: "zelby_thinking", benar: "zelby_celebrate", salah: "zelby_idle" },
   hazel: { menunggu: "hazel_thinking", benar: "hazel_celebrate", salah: "hazel_encouraging" },
@@ -55,7 +55,7 @@ export function PendampingBelajar({
   return (
     <div className={`flex items-end gap-2 ${className}`}>
       <Image
-        src={`/arena-junior/karakter/${pose}.webp`}
+        src={`/junior/karakter/${pose}.webp`}
         alt=""
         width={512}
         height={512}

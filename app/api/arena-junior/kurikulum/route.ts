@@ -6,7 +6,7 @@ import { ambilKurikulum, jenjangMurid, GRADES } from "@/lib/arena-junior/kurikul
  * Kurikulum Arena Junior untuk murid yang sedang login.
  *
  * Logikanya ada di lib/arena-junior/kurikulum.ts supaya halaman server
- * (/arena-junior) memakai sumber yang sama tanpa lewat HTTP. Route ini
+ * (/junior) memakai sumber yang sama tanpa lewat HTTP. Route ini
  * dipertahankan untuk aplikasi tablet/HP yang menyusul.
  */
 export async function GET(_req: Request) {

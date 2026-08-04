@@ -69,3 +69,8 @@ tests/load/.tokens.cloud.json
 audio-out/
 .venv-tts/
 .env*
+
+# TWA signing keys — NEVER commit (losing = cannot update app)
+twa/android.keystore
+twa/passwords.json
+twa/keys/*

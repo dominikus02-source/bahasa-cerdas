@@ -21,7 +21,7 @@ const NAV = [
   { label: "Komunitas", href: "/admin/komunitas", icon: MessageCircle },
   { label: "Pengguna", href: "/admin/users", icon: Users },
   // Pratinjau dasbor murid TK–SD untuk memeriksa tampilan; progres tidak disimpan.
-  { label: "Arena Junior (TK–SD)", href: "/arena-junior", icon: Baby },
+  { label: "Arena Junior (TK–SD)", href: "/junior", icon: Baby },
   { label: "Analitik AI", href: "/admin/ai-analytics", icon: BarChart3 },
   { label: "Arena BC", href: "/admin/arena", icon: Trophy },
   { label: "Pemakaian Fitur", href: "/admin/feature-usage", icon: TrendingUp },

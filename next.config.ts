@@ -26,14 +26,19 @@ const nextConfig: NextConfig = {
     // Type errors must fail the build. Run `npm run typecheck` locally / in CI.
     ignoreBuildErrors: false,
   },
-  async redirects() {
+  // NOTE: redirects live in vercel.json, NOT here. When vercel.json declares a
+  // `redirects` key it REPLACES this file's redirects wholesale in deployment —
+  // rules added here would work under `next dev` and then silently vanish in
+  // production. That mismatch already cost us one debugging round. Same trap
+  // applies to `headers`, `rewrites`, `cleanUrls` and `trailingSlash`.
+  //
+  // The rewrite below survives only because vercel.json declares no `rewrites`
+  // key. If one is ever added there, move this rule across with it.
+  async rewrites() {
     return [
-      {
-        source: "/:path*",
-        has: [{ type: "host", value: "bahasacerdas.com" }],
-        destination: "https://www.bahasacerdas.com/:path*",
-        permanent: true,
-      },
+      // Digital Asset Links must live at this exact path for Chrome to find it,
+      // but the payload is env-driven — see app/api/assetlinks/route.ts.
+      { source: "/.well-known/assetlinks.json", destination: "/api/assetlinks" },
     ];
   },
   async headers() {
