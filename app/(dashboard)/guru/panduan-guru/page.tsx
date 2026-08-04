@@ -77,22 +77,56 @@ export default function PanduanGuruPage() {
     setExpandedSem(1)
   }, [])
 
-  const getLevel = useCallback((grade: string, semester: number) => {
-    if (levels.length === 0) return undefined
+  /**
+   * Ambil unit satu kelas+semester.
+   *
+   * Ada DUA bentuk data yang masuk ke halaman ini:
+   *   - SD  : satu LearningLevel per kelas, memuat kedua semester sekaligus
+   *           (disintesis dari data/buku-panduan di /api/guru/panduan)
+   *   - SMP/SMA: satu level PER SEMESTER, diambil dari database
+   *
+   * Versi lama hanya menangani bentuk kedua — ia mencari level `base + semester - 1`
+   * lalu mengembalikan SELURUH unitnya tanpa menyaring. Untuk SD, level kedua
+   * tidak pernah ada, sehingga semua 10 bab menumpuk di Semester 1 dan
+   * Semester 2 selalu kosong.
+   *
+   * Sekarang unit dari kedua level dikumpulkan lalu disaring dengan medan
+   * `semester` milik unit itu sendiri — benar untuk kedua bentuk. Bila seluruh
+   * unit tidak punya `semester` (data lama), pembagian per level dipakai lagi
+   * sebagai cadangan agar tidak ada bab yang hilang.
+   */
+  const unitKelas = useCallback((grade: string) => {
     const base = GRADE_OFFSET[grade as keyof typeof GRADE_OFFSET]
-    if (!base) return undefined
-    const levelNum = base + (semester - 1)
-    return levels.find(l => l.level === levelNum)
+    if (!base || levels.length === 0) return { a: undefined, b: undefined }
+    return {
+      a: levels.find(l => l.level === base),
+      b: levels.find(l => l.level === base + 1),
+    }
   }, [levels])
 
+  const getLevel = useCallback((grade: string, semester: number) => {
+    const { a, b } = unitKelas(grade)
+    return semester === 1 ? a : (b ?? a)
+  }, [unitKelas])
+
+  const unitSemester = useCallback((grade: string, semester: number) => {
+    const { a, b } = unitKelas(grade)
+    const semua = [...(a?.units ?? []), ...(b?.units ?? [])]
+    if (semua.length === 0) return []
+
+    const adaPenandaSemester = semua.some(u => u.semester === 1 || u.semester === 2)
+    if (adaPenandaSemester) return semua.filter(u => u.semester === semester)
+
+    // Cadangan untuk data lama tanpa medan semester.
+    return semester === 1 ? (a?.units ?? []) : (b?.units ?? [])
+  }, [unitKelas])
+
   const filteredUnits = useCallback((grade: string, semester: number) => {
-    const lvl = getLevel(grade, semester)
-    if (!lvl) return []
-    const units = lvl.units
+    const units = unitSemester(grade, semester)
     if (!search) return units
     const q = search.toLowerCase()
     return units.filter(u => u.title.toLowerCase().includes(q))
-  }, [levels, search])
+  }, [unitSemester, search])
 
   const handleAssign = async () => {
     if (!assignUnit || selectedGroups.length === 0) return
@@ -175,7 +209,7 @@ export default function PanduanGuruPage() {
                   </div>
                     <div className="flex-1">
                       <h3 className="font-bold text-slate-900">Kelas {grade}</h3>
-                      <p className="text-xs text-slate-500">2 semester &middot; {[1, 2].reduce((sum, s) => sum + (getLevel(grade, s)?.units.length || 0), 0)} bab</p>
+                      <p className="text-xs text-slate-500">2 semester &middot; {[1, 2].reduce((sum, s) => sum + unitSemester(grade, s).length, 0)} bab</p>
                     </div>
                   {isExpanded ? <ChevronDown className="w-5 h-5 text-slate-400" /> : <ChevronRight className="w-5 h-5 text-slate-400" />}
                 </button>
@@ -215,7 +249,7 @@ export default function PanduanGuruPage() {
                                       </div>
                                       <div className="flex-1 min-w-0">
                                         <p className="text-sm font-medium text-slate-800 truncate">{unit.title}</p>
-                                        <p className="text-xs text-slate-400">KD {unit.kd || "-"}</p>
+                                        <p className="text-xs text-slate-400 truncate">CP: {unit.kd || "-"}</p>
                                       </div>
                                       <div className="flex items-center gap-1 shrink-0">
                                         <span className="text-xs text-slate-400"><Eye className="w-3.5 h-3.5" /></span>

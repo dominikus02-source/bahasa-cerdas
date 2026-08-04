@@ -44,8 +44,11 @@ export async function GET() {
       isActive: true,
       createdAt: new Date(),
       updatedAt: new Date(),
-      units: grade.semesters.flatMap((sem, si) =>
-        sem.chapters.map((ch, ci) => ({
+      // Nomor urut mengikuti chapterNumber supaya angka di lingkaran sama dengan
+      // "Bab N" pada judul. Rumus lama (si * 10 + ci + 1) membuat semester 2
+      // tampil 11-15 padahal judulnya Bab 6-10.
+      units: grade.semesters.flatMap((sem) =>
+        sem.chapters.map((ch) => ({
           id: ch.id,
           title: ch.title,
           subtitle: null,
@@ -53,7 +56,7 @@ export async function GET() {
           grade: grade.grade,
           semester: sem.semester,
           kd: ch.kd,
-          order: (si * 10) + ci + 1,
+          order: ch.chapterNumber,
           isActive: true,
         }))
       ),

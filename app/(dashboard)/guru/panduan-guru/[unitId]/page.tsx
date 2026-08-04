@@ -291,7 +291,11 @@ export default function UnitPreviewPage() {
         <div className="flex-1">
           <div className="flex items-center gap-2 mb-1">
             <Badge variant="outline" className="text-emerald-600 border-emerald-200 text-[10px]">{data.grade} — Semester {data.semester}</Badge>
-            <Badge variant="secondary" className="text-[10px]">KD {data.kd || "-"}</Badge>
+            {/* Elemen Capaian Pembelajaran (Kurikulum Merdeka). Dulu tertulis "KD" —
+                notasi Kompetensi Dasar dari Kurikulum 2013 yang sudah tidak berlaku. */}
+            <Badge variant="secondary" className="text-[10px] whitespace-normal text-left leading-snug">
+              CP: {data.kd || "-"}
+            </Badge>
           </div>
           <h1 className="text-2xl font-bold text-slate-900">{data.title}</h1>
           <p className="text-sm text-slate-500 mt-1">{data.level?.title}</p>
