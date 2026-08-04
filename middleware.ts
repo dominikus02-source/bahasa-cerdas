@@ -63,6 +63,22 @@ export async function middleware(request: NextRequest) {
 
   const response = await updateSession(request, nonce);
 
+  // The Arena APK (TWA) launches at /arena?src=apk. Promote that one-off marker to
+  // a cookie so every later navigation still knows it runs inside the app shell —
+  // the query param is gone after the first click. Literal rather than an import
+  // because middleware cannot pull in `next/headers`; keep in sync with
+  // APK_COOKIE in lib/apk.ts.
+  // Not httpOnly on purpose: client components branch on it too, and it carries no
+  // secret — only "this session is running inside the APK".
+  if (request.nextUrl.searchParams.get("src") === "apk") {
+    response.cookies.set("bc_apk", "1", {
+      maxAge: 60 * 60 * 24 * 400,
+      sameSite: "lax",
+      path: "/",
+      httpOnly: false,
+    });
+  }
+
   // CSP hanya untuk HTML — API JSON responses tidak perlu
   if (pathname.startsWith("/api/")) {
     return response;

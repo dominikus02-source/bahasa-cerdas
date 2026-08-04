@@ -36,6 +36,13 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+  async rewrites() {
+    return [
+      // Digital Asset Links must live at this exact path for Chrome to find it,
+      // but the payload is env-driven — see app/api/assetlinks/route.ts.
+      { source: "/.well-known/assetlinks.json", destination: "/api/assetlinks" },
+    ];
+  },
   async headers() {
     return [
       {
