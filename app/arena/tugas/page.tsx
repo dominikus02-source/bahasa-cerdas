@@ -8,6 +8,7 @@ import {
 } from "lucide-react"
 
 interface Submission {
+  id: string
   status: string
   score: number | null
   attemptNumber: number
@@ -199,7 +200,11 @@ export default function TugasPage() {
           {data[tab].map(a => (
             <Link
               key={a.id}
-              href={tab === "completed" ? `/murid/tugasku/${a.id}/result` : `/murid/tugasku/${a.id}/take`}
+              // Stays inside /arena: the Android APK scopes itself to that prefix, so
+              // /murid/tugasku would open a browser tab instead of a screen.
+              // The two routes take DIFFERENT ids — /take wants the assignment,
+              // /result wants the submission that /api/murid/quiz/submission looks up.
+              href={tab === "completed" ? `/arena/tugas/${a.submission?.id}/result` : `/arena/tugas/${a.id}/take`}
               className="block bg-white rounded-2xl border border-gray-100 p-4 active:scale-[0.98] transition-all"
             >
               <div className="flex items-start justify-between mb-2">

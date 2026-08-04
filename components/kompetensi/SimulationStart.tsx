@@ -2,6 +2,7 @@
 
 import { useMemo } from "react";
 import { useRouter } from "next/navigation";
+import { useKompetisiHref } from "@/lib/arena-scope";
 import { Headphones, FileText, Mic, Volume2, Loader2, ArrowRight } from "lucide-react";
 
 interface SectionLike {
@@ -20,6 +21,7 @@ interface SimulationStartProps {
 
 export default function SimulationStart({ paketId, title, sections, ready, onStart, onExit }: SimulationStartProps) {
   const router = useRouter();
+  const kompetisiHref = useKompetisiHref();
   const has = (name: string) => sections.some((s) => (s.seksi || "").toUpperCase() === name && (s.questions?.length || 0) > 0);
   const hasSpeaker = useMemo(() => has("MENDENGARKAN"), [sections]);
   const hasMic = useMemo(() => has("BERBICARA"), [sections]);
@@ -87,7 +89,7 @@ export default function SimulationStart({ paketId, title, sections, ready, onSta
                 . Membutuhkan {hasSpeaker && "speaker/headset"}{hasSpeaker && hasMic && " & "}{hasMic && "mikrofon"}.
               </p>
               <button
-                onClick={() => router.push(`/kompetisi/${paketId}/device-check`)}
+                onClick={() => router.push(`${kompetisiHref}/${paketId}/device-check`)}
                 disabled={!ready}
                 className={`flex w-full items-center justify-center gap-2 rounded-xl py-3.5 text-sm font-bold transition-all ${
                   ready ? "bg-emerald-600 text-white hover:bg-emerald-700 active:scale-[0.99]" : "cursor-wait bg-slate-200 text-slate-400"

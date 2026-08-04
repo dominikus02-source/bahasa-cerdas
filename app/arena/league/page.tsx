@@ -13,7 +13,7 @@ export default async function LeaguePage({
   searchParams: Promise<{ tab?: string }>
 }) {
   const user = await getUser()
-  if (!user) redirect("/auth/arena-login")
+  if (!user) redirect("/arena/login")
 
   const { tab } = await searchParams
   const initialTab: "harian" | "mingguan" = tab === "harian" ? "harian" : "mingguan"

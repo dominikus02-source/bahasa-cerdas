@@ -9,7 +9,7 @@ import { UnitIcon } from "@/components/arena/UnitIcon"
 
 export default async function JalurCerdasPage() {
   const user = await getUser()
-  if (!user) redirect("/auth/arena-login")
+  if (!user) redirect("/arena/login")
 
   const [levels, progress] = await Promise.all([
     db.learningLevel.findMany({
@@ -148,7 +148,7 @@ export default async function JalurCerdasPage() {
           <p className="text-sm text-amber-600 mt-1">Kamu sudah menyelesaikan semua level. Siap untuk UKBI!</p>
           <div className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-3">
             <Link
-              href="/murid/simulasi/ukbi"
+              href="/arena/simulasi/ukbi"
               className="inline-flex items-center gap-2 bg-gradient-to-r from-amber-500 to-emerald-500 text-white font-bold px-6 py-3 rounded-xl hover:opacity-90 transition-opacity"
             >
               <Target className="w-5 h-5" />

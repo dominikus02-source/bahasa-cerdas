@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic";
 
 export default async function HistoryPage({ searchParams }: { searchParams: Promise<{ tab?: string }> }) {
   const user = await getUser();
-  if (!user) redirect("/auth/arena-login");
+  if (!user) redirect("/arena/login");
   const { tab } = await searchParams;
 
   return (

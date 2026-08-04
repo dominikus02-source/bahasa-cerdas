@@ -9,7 +9,7 @@ import { getQuestMeta, questProgressText } from "@/lib/quest-meta"
 
 export default async function MisiHarianPage() {
   const user = await getUser()
-  if (!user) redirect("/auth/arena-login")
+  if (!user) redirect("/arena/login")
 
   await trackDailyStreak(user.id)
   const quests = await getOrCreateDailyQuests(user.id)

@@ -30,6 +30,10 @@ export async function updateSession(request: NextRequest, nonce?: string) {
   // applies it to its own scripts. Cloned so we don't mutate the original.
   const requestHeaders = new Headers(request.headers);
   if (nonce) requestHeaders.set("x-nonce", nonce);
+  // Server layouts cannot read the current path. app/arena/layout.tsx needs it to
+  // recognise its own login route and skip the auth gate there — without this the
+  // gate would redirect the login page to itself, forever.
+  requestHeaders.set("x-pathname", pathname);
   const nextWithNonce = () => NextResponse.next({ request: { headers: requestHeaders } });
 
   // Redirect non-primary domains to www.bahasacerdas.com for SEO consistency
@@ -62,7 +66,7 @@ export async function updateSession(request: NextRequest, nonce?: string) {
 
   // On login page, clear any stale Supabase cookies unconditionally
   // This ensures users with expired sessions from old VPS can log in fresh
-  if (pathname === "/login" || pathname === "/auth/arena-login") {
+  if (pathname === "/login" || pathname === "/auth/arena-login" || pathname === "/arena/login") {
     const response = nextWithNonce();
     request.cookies.getAll()
       .filter((c) => c.name.startsWith("sb-") || c.name.startsWith("supabase-"))
@@ -128,13 +132,19 @@ export async function updateSession(request: NextRequest, nonce?: string) {
   // JwtPayload tidak memuat field itu, sehingga memakai klaim di sini akan
   // membuat SETIAP pengguna dianggap belum memverifikasi email dan dilempar ke
   // /verify-email. Risikonya jauh lebih besar daripada hematnya.
+  // Arena is also shipped as an Android APK whose scope is /arena. Sending an
+  // unauthenticated visitor there to the shared /login would drop them out of the
+  // app into a browser tab on the very first launch, so arena traffic gets the
+  // arena-flavoured login instead. Same screen, reachable without leaving scope.
+  const loginPath = pathname.startsWith("/arena") ? "/arena/login" : "/login";
+
   let user: any = null;
   try {
     const result = await supabase.auth.getUser();
     user = result.data?.user ?? null;
   } catch (e) {
     console.warn("Auth getUser failed, redirecting to login:", e);
-    const response = NextResponse.redirect(new URL("/login", request.url));
+    const response = NextResponse.redirect(new URL(loginPath, request.url));
     request.cookies.getAll()
       .filter((c) => c.name.startsWith("sb-") || c.name.startsWith("supabase-"))
       .forEach((c) => response.cookies.set(c.name, "", { maxAge: 0, path: "/" }));
@@ -143,7 +153,7 @@ export async function updateSession(request: NextRequest, nonce?: string) {
 
   if (!user) {
     // Clear stale auth cookies to prevent refresh loop
-    const response = NextResponse.redirect(new URL("/login", request.url));
+    const response = NextResponse.redirect(new URL(loginPath, request.url));
     request.cookies.getAll().filter((c) =>
       c.name.startsWith("sb-") || c.name.startsWith("supabase-")
     ).forEach((c) => response.cookies.set(c.name, "", { maxAge: 0, path: "/" }));

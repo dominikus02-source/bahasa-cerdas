@@ -28,6 +28,7 @@ interface Assignment {
   };
   group: { id: string; name: string };
   submission: {
+    id: string;
     status: string;
     score: number | null;
     attemptNumber: number;
@@ -182,7 +183,7 @@ export default function MuridTugaskuPage() {
                     </Link>
                   )}
                   {activeTab === "completed" && (
-                    <Link href={`/murid/tugasku/${item.id}/result`}>
+                    <Link href={`/murid/tugasku/${item.submission?.id}/result`}>
                       <Button variant="outline" className="border-violet-200 text-violet-700 hover:bg-violet-50">
                         <BarChart3 className="w-4 h-4 mr-1" /> Lihat Hasil
                       </Button>

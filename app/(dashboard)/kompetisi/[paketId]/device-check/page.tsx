@@ -2,6 +2,7 @@
 
 import { useEffect, use, useCallback } from "react"
 import { useRouter } from "next/navigation"
+import { useKompetisiHref } from "@/lib/arena-scope"
 import dynamic from "next/dynamic"
 import { Loader2 } from "lucide-react"
 import { preloadCompetition } from "@/lib/competition-cache"
@@ -21,6 +22,7 @@ const DeviceCheck = dynamic(() => import("@/components/kompetensi/DeviceCheck"),
 export default function DeviceCheckPage({ params }: { params: Promise<{ paketId: string }> }) {
   const { paketId } = use(params)
   const router = useRouter()
+  const kompetisiHref = useKompetisiHref()
 
   // Pre-load soal di background saat user cek perangkat
   useEffect(() => {
@@ -31,7 +33,7 @@ export default function DeviceCheckPage({ params }: { params: Promise<{ paketId:
     const searchParams = new URLSearchParams()
     searchParams.set("mic", micOk ? "1" : "0")
     searchParams.set("speaker", speakerOk ? "1" : "0")
-    router.push(`/kompetisi/${paketId}?${searchParams.toString()}`)
+    router.push(`${kompetisiHref}/${paketId}?${searchParams.toString()}`)
   }, [paketId, router])
 
   return <DeviceCheck paketId={paketId} onComplete={handleComplete} />
