@@ -60,7 +60,7 @@ export default function LoginPage() {
             : authError.message === "Email not confirmed"
             ? "Email belum dikonfirmasi. Cek inbox/spam kamu."
             : authError.status === 429
-            ? "Terlalu banyak percobaan. Silakan coba lagi nanti."
+            ? "Terlalu banyak murid login dari jaringan sekolah ini secara bersamaan. Tunggu sekitar 5 menit, lalu coba lagi — akunmu tidak bermasalah."
             : authError.message
         );
         setLoading(false);
@@ -130,7 +130,7 @@ export default function LoginPage() {
       console.error("Login error:", err);
       setError(
         err?.status === 429
-          ? "Terlalu banyak percobaan. Silakan coba lagi nanti."
+          ? "Terlalu banyak murid login dari jaringan sekolah ini secara bersamaan. Tunggu sekitar 5 menit, lalu coba lagi — akunmu tidak bermasalah."
           : err?.message?.includes("Failed to fetch")
           ? "Koneksi terputus. Periksa koneksi internet kamu."
           : "Terjadi kesalahan. Silakan coba lagi."
