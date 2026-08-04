@@ -7,8 +7,9 @@ import Link from "next/link"
 export const dynamic = "force-dynamic"
 import {
   Flame, Zap, Coins, Target, Bot, PenLine, Rocket, Star, Gift,
-  Trophy, BookOpen, ChevronRight, Sparkles, Award, Gamepad2, Heart,
+  Trophy, BookOpen, ChevronRight, Award, Gamepad2, Heart,
   MessageCircle, Users, Clock, Swords, Crown, GraduationCap,
+  Globe, FileCheck2,
 } from "lucide-react"
 import { trackDailyStreak, getOrCreateDailyQuests } from "@/lib/coins"
 import { jenjangMurid } from "@/lib/arena-junior/kurikulum"
@@ -84,7 +85,7 @@ export default async function BerandaPage() {
   })
   const koinHariIni = todayCoinAgg._sum.amount || 0
 
-  const [aktivitas, juaraBaru, tugasCount, jalurStats, myKaryaCount, materiCount, jalurProgress] = await Promise.all([
+  const [aktivitas, tugasCount, jalurStats, myKaryaCount, materiCount, jalurProgress] = await Promise.all([
     cache.getOrSet("arena:aktivitas", () =>
       db.gameResult.findMany({
         where: { rank: 1 },
@@ -94,15 +95,6 @@ export default async function BerandaPage() {
         },
         orderBy: { createdAt: "desc" },
         take: 5,
-      }),
-      60
-    ),
-    cache.getOrSet("arena:juara-baru", () =>
-      db.studentKarya.findMany({
-        include: { user: { select: { id: true, fullName: true, nickname: true, avatar: true } } },
-        where: { userId: { not: user.id } },
-        orderBy: { createdAt: "desc" },
-        take: 3,
       }),
       60
     ),
@@ -306,6 +298,30 @@ export default async function BerandaPage() {
             </div>
           </Link>
 
+          {/* Simulasi dan Ujian — UKBI / TKA / BIGT / Hasil */}
+          <div>
+            <h3 className="text-base font-bold text-gray-900 mb-3 flex items-center gap-2">
+              <GraduationCap size={18} className="text-indigo-500" />
+              Simulasi dan Ujian
+            </h3>
+            <div className="grid grid-cols-2 gap-3">
+              {[
+                { href: "/arena/simulasi/ukbi", label: "Simulasi UKBI", desc: "Merespons kaidah, membaca, mendengarkan", icon: BookOpen, warna: "from-indigo-500 to-violet-600" },
+                { href: "/arena/simulasi/tka", label: "Simulasi TKA", desc: "Tes Kemampuan Akademik, SD s.d. UTBK", icon: BookOpen, warna: "from-emerald-500 to-teal-600" },
+                { href: "/arena/simulasi/bigt", label: "BIGT", desc: "BahasaCerdas International Global Test", icon: Globe, warna: "from-blue-500 to-indigo-600" },
+                { href: "/arena/simulasi/hasil", label: "Hasil Ujian", desc: "Skor, riwayat & dokumen latihan", icon: FileCheck2, warna: "from-amber-500 to-orange-600" },
+              ].map((s) => (
+                <Link key={s.href} href={s.href} className="block bg-white rounded-2xl border border-gray-100 p-4 hover:shadow-md hover:border-violet-200 transition-all">
+                  <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${s.warna} flex items-center justify-center mb-2`}>
+                    <s.icon size={20} className="text-white" />
+                  </div>
+                  <p className="text-sm font-bold text-gray-900">{s.label}</p>
+                  <p className="text-[11px] text-gray-400 mt-0.5 leading-snug">{s.desc}</p>
+                </Link>
+              ))}
+            </div>
+          </div>
+
           {/* Quick Actions */}
           <div>
             <h3 className="text-base font-bold text-gray-900 mb-3">Aksi Cepat</h3>
@@ -325,6 +341,64 @@ export default async function BerandaPage() {
                   </div>
                   <span className="text-xs font-semibold text-gray-700">{a.label}</span>
                 </Link>
+              ))}
+            </div>
+          </div>
+
+          {/* Aktivitas Terbaru */}
+          {aktivitas.length > 0 && (
+            <div>
+              <h3 className="text-base font-bold text-gray-900 mb-3 flex items-center gap-2">
+                <Crown size={18} className="text-amber-500" />
+                Pemenang Game
+              </h3>
+              <div className="bg-white rounded-2xl border border-gray-100 divide-y divide-gray-50">
+                {aktivitas.map((a: any) => (
+                  <div key={a.id} className="flex items-center gap-3 px-4 py-3">
+                    <div className="w-9 h-9 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center text-white text-xs font-bold shrink-0 overflow-hidden">
+                      {a.user?.avatar ? <img src={a.user.avatar} alt="" className="w-full h-full object-cover" /> : nameOf(a.user).charAt(0)}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-semibold text-gray-900 truncate">{nameOf(a.user)}</p>
+                      <p className="text-xs text-gray-400">Juara {a.room?.gameType?.replace(/_/g, " ") || "Game"}</p>
+                    </div>
+                    <span className="text-xs text-gray-400">
+                      {(() => { const d = new Date(a.createdAt); const now = new Date(); const diff = now.getTime() - d.getTime(); const jam = Math.floor(diff / 3600000); if (jam < 1) return "baru saja"; if (jam < 24) return `${jam}j`; return `${Math.floor(jam / 24)}h`; })()}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+        </div>
+
+        {/* Right Column */}
+        <div className="space-y-5">
+          {/* League Mini */}
+          <LeagueMini
+            userId={user.id}
+            harian={dailyCoinRows.map(u => ({ id: u.id, fullName: u.fullName, displayName: u.nickname || undefined, xp: u.xp }))}
+            mingguan={leagueRows.map(u => ({ id: u.id, fullName: u.fullName, displayName: u.nickname || undefined, xp: u.xp }))}
+          />
+
+          {/* Stats */}
+          <div className="bg-gradient-to-br from-violet-600 to-purple-700 rounded-2xl p-5 text-white">
+            <h4 className="font-bold text-sm mb-4 text-violet-200">Statistik Kamu</h4>
+            <div className="divide-y divide-white/10">
+              {[
+                { icon: PenLine, label: "Total Karya", value: myKaryaCount, color: "text-pink-300" },
+                { icon: Star, label: "Tingkat", value: displayLevel, color: "text-amber-300" },
+                { icon: Flame, label: "Rentetan", value: `${user.streak || 0} hari`, color: "text-orange-300" },
+                { icon: Coins, label: "Koin Terkumpul", value: user.coins || 0, color: "text-amber-300" },
+              ].map((s) => (
+                <div key={s.label} className="flex items-center gap-3 py-2.5 first:pt-0 last:pb-0">
+                  <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center shrink-0">
+                    <s.icon size={15} className={s.color} />
+                  </div>
+                  <span className="text-sm text-violet-100 flex-1">{s.label}</span>
+                  <span className="font-bold">{s.value}</span>
+                </div>
               ))}
             </div>
           </div>
@@ -370,81 +444,6 @@ export default async function BerandaPage() {
                   })}
                 </div>
               )}
-            </div>
-          </div>
-
-          {/* Aktivitas Terbaru */}
-          {aktivitas.length > 0 && (
-            <div>
-              <h3 className="text-base font-bold text-gray-900 mb-3 flex items-center gap-2">
-                <Crown size={18} className="text-amber-500" />
-                Pemenang Game
-              </h3>
-              <div className="bg-white rounded-2xl border border-gray-100 divide-y divide-gray-50">
-                {aktivitas.map((a: any) => (
-                  <div key={a.id} className="flex items-center gap-3 px-4 py-3">
-                    <div className="w-9 h-9 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center text-white text-xs font-bold shrink-0 overflow-hidden">
-                      {a.user?.avatar ? <img src={a.user.avatar} alt="" className="w-full h-full object-cover" /> : nameOf(a.user).charAt(0)}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-semibold text-gray-900 truncate">{nameOf(a.user)}</p>
-                      <p className="text-xs text-gray-400">Juara {a.room?.gameType?.replace(/_/g, " ") || "Game"}</p>
-                    </div>
-                    <span className="text-xs text-gray-400">
-                      {(() => { const d = new Date(a.createdAt); const now = new Date(); const diff = now.getTime() - d.getTime(); const jam = Math.floor(diff / 3600000); if (jam < 1) return "baru saja"; if (jam < 24) return `${jam}j`; return `${Math.floor(jam / 24)}h`; })()}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Karya Baru */}
-          {juaraBaru.length > 0 && (
-            <div>
-              <h3 className="text-base font-bold text-gray-900 mb-3 flex items-center gap-2">
-                <Sparkles size={18} className="text-violet-500" />
-                Karya Terbaru
-              </h3>
-              <div className="grid md:grid-cols-3 gap-3">
-                {juaraBaru.map((k: any) => (
-                  <Link key={k.id} href={`/arena/feed/${k.id}`} className="block bg-white rounded-2xl border border-gray-100 p-4 hover:shadow-md hover:border-violet-200 transition-all">
-                    <p className="text-sm font-bold text-gray-900 line-clamp-2 mb-2">{k.title}</p>
-                    <p className="text-xs text-gray-400 truncate">{nameOf(k.user)}</p>
-                  </Link>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* Right Column */}
-        <div className="space-y-5">
-          {/* League Mini */}
-          <LeagueMini
-            userId={user.id}
-            harian={dailyCoinRows.map(u => ({ id: u.id, fullName: u.fullName, displayName: u.nickname || undefined, xp: u.xp }))}
-            mingguan={leagueRows.map(u => ({ id: u.id, fullName: u.fullName, displayName: u.nickname || undefined, xp: u.xp }))}
-          />
-
-          {/* Stats */}
-          <div className="bg-gradient-to-br from-violet-600 to-purple-700 rounded-2xl p-5 text-white">
-            <h4 className="font-bold text-sm mb-4 text-violet-200">Statistik Kamu</h4>
-            <div className="divide-y divide-white/10">
-              {[
-                { icon: PenLine, label: "Total Karya", value: myKaryaCount, color: "text-pink-300" },
-                { icon: Star, label: "Tingkat", value: displayLevel, color: "text-amber-300" },
-                { icon: Flame, label: "Rentetan", value: `${user.streak || 0} hari`, color: "text-orange-300" },
-                { icon: Coins, label: "Koin Terkumpul", value: user.coins || 0, color: "text-amber-300" },
-              ].map((s) => (
-                <div key={s.label} className="flex items-center gap-3 py-2.5 first:pt-0 last:pb-0">
-                  <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center shrink-0">
-                    <s.icon size={15} className={s.color} />
-                  </div>
-                  <span className="text-sm text-violet-100 flex-1">{s.label}</span>
-                  <span className="font-bold">{s.value}</span>
-                </div>
-              ))}
             </div>
           </div>
         </div>
