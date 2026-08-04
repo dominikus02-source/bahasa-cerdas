@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef, use, Component } from "react";
 import { useRouter } from "next/navigation";
+import { useKompetisiHref } from "@/lib/arena-scope";
 import { ChevronLeft, ChevronRight, Flag, XCircle, MicOff, VolumeX } from "lucide-react";
 import { getCachedCompetition, clearCompetitionCache } from "@/lib/competition-cache";
 import TestShell from "@/components/kompetensi/TestShell";
@@ -45,6 +46,7 @@ interface PacketData {
 export default function KompetisiPage({ params, searchParams: sp }: { params: Promise<{ paketId: string }>; searchParams?: Promise<{ mic?: string; speaker?: string }> }) {
   const resolvedParams = use(params);
   const router = useRouter();
+  const kompetisiHref = useKompetisiHref();
   const [micAvailable, setMicAvailable] = useState(false);
   const [speakerAvailable, setSpeakerAvailable] = useState(false);
   const [deviceChecked, setDeviceChecked] = useState(false);
@@ -135,7 +137,7 @@ export default function KompetisiPage({ params, searchParams: sp }: { params: Pr
             continue;
           }
           if (canRetry) {
-            router.push(`/kompetisi/${resolvedParams.paketId}/hasil`);
+            router.push(`${kompetisiHref}/${resolvedParams.paketId}/hasil`);
             return;
           }
           setError(result.error || "Gagal memuat soal");
@@ -341,7 +343,7 @@ export default function KompetisiPage({ params, searchParams: sp }: { params: Pr
       const result = await res.json();
       if (result.success) {
         const sbody = result.data ?? result;
-        router.push(`/kompetisi/${resolvedParams.paketId}/hasil?attempt=${sbody.attemptNumber}`);
+        router.push(`${kompetisiHref}/${resolvedParams.paketId}/hasil?attempt=${sbody.attemptNumber}`);
       } else {
         setSubmitError(result.error || "Submit gagal. Jawaban Anda masih tersimpan — coba kirim lagi.");
         submittedRef.current = false;
@@ -548,7 +550,7 @@ export default function KompetisiPage({ params, searchParams: sp }: { params: Pr
                 <p className="text-sm font-bold text-red-700 mb-2">Waktu habis. Silakan kirim jawaban Anda.</p>
                 <div className="flex items-center justify-center gap-3">
                   <button
-                    onClick={() => router.push(`/kompetisi/${resolvedParams.paketId}?retry=1`)}
+                    onClick={() => router.push(`${kompetisiHref}/${resolvedParams.paketId}?retry=1`)}
                     className="px-4 py-2.5 border-2 border-red-300 text-red-700 rounded-xl font-bold hover:bg-red-100 transition-colors text-sm"
                   >
                     Mulai Ulang

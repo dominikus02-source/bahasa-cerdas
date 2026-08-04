@@ -7,7 +7,7 @@ import { UnitIcon } from "@/components/arena/UnitIcon"
 
 export default async function UnitDetailPage({ params }: { params: Promise<{ unitId: string }> }) {
   const user = await getUser()
-  if (!user) redirect("/auth/arena-login")
+  if (!user) redirect("/arena/login")
 
   const { unitId } = await params
 

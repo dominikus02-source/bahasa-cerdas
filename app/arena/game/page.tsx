@@ -32,7 +32,7 @@ const GAMES: Game[] = [
 
 export default async function ArenaGimPage() {
   const user = await getUser()
-  if (!user) redirect("/auth/arena-login")
+  if (!user) redirect("/arena/login")
 
   const limaMenitLalu = new Date(Date.now() - 5 * 60 * 1000)
   const sepuluhMenitLalu = new Date(Date.now() - 10 * 60 * 1000)

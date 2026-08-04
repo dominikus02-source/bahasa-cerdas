@@ -7,7 +7,7 @@ export const dynamic = "force-dynamic";
 
 export default async function PlayerPage() {
   const user = await getUser();
-  if (!user) redirect("/auth/arena-login");
+  if (!user) redirect("/arena/login");
 
   return (
     <PlayerTheme>

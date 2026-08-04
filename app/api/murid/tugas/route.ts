@@ -45,7 +45,10 @@ export async function GET(req: NextRequest) {
 
     const submissions = await db.quizSubmission.findMany({
       where: { userId: dbUser.id },
-      select: { assignmentId: true, status: true, score: true, attemptNumber: true, submittedAt: true },
+      // `id` is what the result screen needs: /api/murid/quiz/submission/[id] looks
+      // up a QuizSubmission, not an assignment. Omitting it here is why "Lihat Hasil"
+      // could never resolve a submission.
+      select: { id: true, assignmentId: true, status: true, score: true, attemptNumber: true, submittedAt: true },
       take: 50,
     });
     const submissionMap = new Map(submissions.map(s => [s.assignmentId, s]));

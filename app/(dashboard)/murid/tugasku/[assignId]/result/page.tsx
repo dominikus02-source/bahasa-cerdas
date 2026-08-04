@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
+import { useTugasHref } from "@/lib/arena-scope";
 import Link from "next/link";
 import { ChevronLeft, CheckCircle, XCircle, AlertCircle, Clock, Award } from "lucide-react";
 import { Card } from "@/components/ui/card";
@@ -44,7 +45,13 @@ interface SubmissionDetail {
 
 export default function MuridQuizResultPage() {
   const params = useParams();
-  const submissionId = params.id as string;
+  const tugasHref = useTugasHref();
+  // The route segment is named [assignId] for the sibling /take route, which does
+  // receive an assignment id. On /result it carries a QuizSubmission id instead —
+  // that is what /api/murid/quiz/submission/[id] looks up. Reading params.id here
+  // (the old code) always yielded undefined, so the fetch never ran and the page
+  // sat on its loading state forever.
+  const submissionId = params.assignId as string;
   const [submission, setSubmission] = useState<SubmissionDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [expandedQuestions, setExpandedQuestions] = useState<Set<number>>(new Set());
@@ -87,7 +94,7 @@ export default function MuridQuizResultPage() {
     return (
       <div className="p-6 text-center">
         <p className="text-slate-500">Data tidak ditemukan</p>
-        <Link href="/murid/tugasku" className="text-violet-600 hover:underline mt-2 inline-block">
+        <Link href={tugasHref} className="text-violet-600 hover:underline mt-2 inline-block">
           Kembali ke Tugasku
         </Link>
       </div>
@@ -101,7 +108,7 @@ export default function MuridQuizResultPage() {
   return (
     <div className="p-6 max-w-4xl mx-auto">
       <div className="flex items-center gap-3 mb-6">
-        <Link href="/murid/tugasku" className="p-2 hover:bg-slate-100 rounded-lg">
+        <Link href={tugasHref} className="p-2 hover:bg-slate-100 rounded-lg">
           <ChevronLeft className="w-5 h-5 text-slate-600" />
         </Link>
         <div>

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useKompetisiHref, useDiArena } from "@/lib/arena-scope";
 import { XCircle } from "lucide-react";
 import TestResultPanel from "@/components/kompetensi/TestResultPanel";
 
@@ -30,10 +31,14 @@ interface Result {
 
 // Return the user to the simulation list they actually came from — a UKBI/TKA
 // list inside their own dashboard shell — instead of the bare /kompetisi/latihan.
-function computeBackHref(role: string, isFounder: boolean, paketType?: string): string {
+function computeBackHref(role: string, isFounder: boolean, paketType: string | undefined, diArena: boolean): string {
   const type = (paketType || "").toUpperCase();
   const isTKA = type.startsWith("TKA");
   const kind = isTKA ? "tka" : "ukbi"; // default to UKBI when type is unknown
+  // Inside Arena the run must end where it began. /arena/simulasi/{ukbi,tka} exist,
+  // and sending an APK user to /murid/simulasi would bounce them out of the app on
+  // the last screen of an exam they just finished.
+  if (diArena) return `/arena/simulasi/${kind}`;
   const isGuru = role === "GURU" && !isFounder;
   return isGuru ? `/guru/simulasi/${kind}` : `/murid/simulasi/${kind}`;
 }
@@ -47,11 +52,13 @@ function computeCertHref(role: string, isFounder: boolean): string {
 
 export default function HasilPage({ params }: { params: Promise<{ paketId: string }> }) {
   const router = useRouter();
+  const kompetisiHref = useKompetisiHref();
+  const diArena = useDiArena();
   const [result, setResult] = useState<Result | null>(null);
   const [paketId, setPaketId] = useState<string>("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [backHref, setBackHref] = useState("/kompetisi/latihan");
+  const [backHref, setBackHref] = useState(diArena ? "/arena/simulasi" : "/kompetisi/latihan");
   const [certHref, setCertHref] = useState("/murid/dokumen-latihan");
 
   useEffect(() => {
@@ -67,14 +74,14 @@ export default function HasilPage({ params }: { params: Promise<{ paketId: strin
         if (!active) return;
         const u = d?.user;
         const type = result?.paket?.type || result?.paketTitle;
-        setBackHref(computeBackHref(u?.role || "MURID", !!u?.isFounder, type));
+        setBackHref(computeBackHref(u?.role || "MURID", !!u?.isFounder, type, diArena));
         setCertHref(computeCertHref(u?.role || "MURID", !!u?.isFounder));
       })
       .catch(() => {});
     return () => {
       active = false;
     };
-  }, [result?.paket?.type, result?.paketTitle]);
+  }, [result?.paket?.type, result?.paketTitle, diArena]);
 
   useEffect(() => {
     if (!paketId) return;
@@ -123,7 +130,7 @@ export default function HasilPage({ params }: { params: Promise<{ paketId: strin
           </p>
           <div className="flex flex-col gap-2">
             <button
-              onClick={() => router.push(`/kompetisi/${paketId}?retry=1`)}
+              onClick={() => router.push(`${kompetisiHref}/${paketId}?retry=1`)}
               className="px-6 py-2.5 bg-emerald-600 text-white rounded-xl font-bold hover:bg-emerald-700 transition-colors"
             >
               Mulai Ulang Latihan

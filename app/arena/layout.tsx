@@ -1,6 +1,7 @@
 import "./arena.css"
 import "./player-theme.css"
 import { getUser } from "@/lib/supabase/server"
+import { headers } from "next/headers"
 import { redirect } from "next/navigation"
 import Link from "next/link"
 import { Compass, Flame, Gamepad2, MessageCircle, Trophy, LogOut, LayoutDashboard, UserCircle } from "lucide-react"
@@ -20,9 +21,19 @@ const navItems = [
   { href: "/arena/player", label: "Pemain", icon: UserCircle },
 ]
 
+// The login screen lives under /arena so the Android APK can reach it without
+// leaving its scope (a link outside /arena opens a browser tab). That puts it
+// inside this layout, which gates on auth — so it has to be exempted here, or the
+// gate would redirect the login page to itself. It also renders bare: no nav
+// chrome around a screen you cannot navigate from yet.
+const RUTE_TANPA_GERBANG = "/arena/login"
+
 export default async function ArenaLayout({ children }: { children: React.ReactNode }) {
+  const pathname = (await headers()).get("x-pathname") ?? ""
+  if (pathname === RUTE_TANPA_GERBANG) return <>{children}</>
+
   const user = await getUser()
-  if (!user) redirect("/auth/arena-login")
+  if (!user) redirect(RUTE_TANPA_GERBANG)
   // Guru boleh mengintip Arena murid (mode pratinjau) — peran tetap Guru.
   // Selain Murid/Founder/Guru, arahkan ke dasbor guru.
   if (user.role !== "MURID" && user.role !== "GURU" && !user.isFounder) redirect("/guru/beranda")

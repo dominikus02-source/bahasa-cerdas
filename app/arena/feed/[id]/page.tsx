@@ -25,7 +25,7 @@ const typeLabel: Record<string, string> = {
 
 export default async function FeedDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const user = await getUser()
-  if (!user) redirect("/auth/arena-login")
+  if (!user) redirect("/arena/login")
 
   const { id } = await params
 

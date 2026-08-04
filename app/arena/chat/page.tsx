@@ -5,7 +5,7 @@ import { ChatClient } from "./chat-client"
 
 export default async function ChatPage() {
   const user = await getUser()
-  if (!user) redirect("/auth/arena-login")
+  if (!user) redirect("/arena/login")
 
   const groups = await db.groupMember.findMany({
     where: { userId: user.id },

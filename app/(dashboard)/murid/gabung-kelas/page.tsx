@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useBerandaHref } from "@/lib/arena-scope";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Users, Copy, CheckCircle, BookOpen, GraduationCap, ChevronRight, Clock, RefreshCw, Crown } from "lucide-react";
@@ -18,6 +19,7 @@ interface Group {
 }
 
 export default function GabungKelasPage() {
+  const berandaHref = useBerandaHref();
   const router = useRouter();
   const [code, setCode] = useState("");
   const [joining, setJoining] = useState(false);
@@ -59,7 +61,7 @@ export default function GabungKelasPage() {
       } else {
         setSuccess(data.group);
         setCode("");
-        setTimeout(() => router.push("/murid/beranda"), 3000);
+        setTimeout(() => router.push(berandaHref), 3000);
       }
     } catch (e) {
       setError("Terjadi kesalahan");
@@ -72,7 +74,7 @@ export default function GabungKelasPage() {
     <div className="min-h-screen bg-slate-50">
       <div className="bg-gradient-to-r from-violet-600 to-purple-600 text-white py-10 px-4">
         <div className="max-w-lg mx-auto">
-          <Link href="/murid/beranda" className="inline-flex items-center gap-2 text-white/70 hover:text-white mb-4 text-sm">
+          <Link href={berandaHref} className="inline-flex items-center gap-2 text-white/70 hover:text-white mb-4 text-sm">
             <ChevronRight className="w-4 h-4 rotate-180" /> Kembali
           </Link>
           <div className="flex items-center gap-3">

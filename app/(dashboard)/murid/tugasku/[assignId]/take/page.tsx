@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { useTugasHref } from "@/lib/arena-scope";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ChevronLeft, Clock, Flag, Check, ChevronRight, AlertTriangle, Loader2 } from "lucide-react";
@@ -15,6 +16,7 @@ interface QuizData {
 }
 
 export default function QuizTakePage({ params }: { params: Promise<{ assignId: string }> }) {
+  const tugasHref = useTugasHref();
   const router = useRouter();
   const [assignId, setAssignId] = useState<string>("");
   const [quizData, setQuizData] = useState<QuizData | null>(null);
@@ -147,7 +149,7 @@ export default function QuizTakePage({ params }: { params: Promise<{ assignId: s
       <div className="p-6 max-w-4xl mx-auto text-center py-20">
         <AlertTriangle className="w-16 h-16 text-red-300 mx-auto mb-4" />
         <h3 className="font-bold text-slate-600 mb-2">Kuis tidak ditemukan</h3>
-        <Link href="/murid/tugasku"><Button variant="outline">Kembali ke Tugasku</Button></Link>
+        <Link href={tugasHref}><Button variant="outline">Kembali ke Tugasku</Button></Link>
       </div>
     );
   }
@@ -180,7 +182,7 @@ export default function QuizTakePage({ params }: { params: Promise<{ assignId: s
               <Button className="bg-violet-600 hover:bg-violet-700 text-white w-full">Lihat Detail Jawaban</Button>
             </Link>
           )}
-          <Link href="/murid/tugasku" className="block mt-3 text-sm text-slate-500 hover:text-slate-700">
+          <Link href={tugasHref} className="block mt-3 text-sm text-slate-500 hover:text-slate-700">
             ← Kembali ke Tugasku
           </Link>
         </Card>
@@ -196,7 +198,7 @@ export default function QuizTakePage({ params }: { params: Promise<{ assignId: s
     <div className="p-6 max-w-4xl mx-auto">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
-        <Link href="/murid/tugasku" className="p-2 hover:bg-slate-100 rounded-lg">
+        <Link href={tugasHref} className="p-2 hover:bg-slate-100 rounded-lg">
           <ChevronLeft className="w-5 h-5 text-slate-600" />
         </Link>
         <div className="text-center">
