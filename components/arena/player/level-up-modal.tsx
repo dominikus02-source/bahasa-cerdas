@@ -69,7 +69,7 @@ export function LevelUpModal() {
                 transition={{ type: "spring", stiffness: 220, damping: 12, delay: 0.1 }}
               >
                 <Image
-                  src="/arena-junior/karakter/zelby_celebrate.webp"
+                  src="/junior/karakter/zelby_celebrate.webp"
                   alt=""
                   width={512}
                   height={512}

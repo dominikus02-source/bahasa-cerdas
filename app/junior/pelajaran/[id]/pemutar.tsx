@@ -87,7 +87,7 @@ export function Pemutar({
     <div className="mx-auto max-w-xl px-4 py-6">
       <div className="mb-6 flex items-center gap-3">
         <Link
-          href="/arena-junior"
+          href="/junior"
           aria-label="Keluar dari pelajaran"
           className="rounded-full bg-white p-2 text-slate-500 shadow-sm"
         >
@@ -257,7 +257,7 @@ function LayarHasil({
         )}
 
         <Link
-          href="/arena-junior"
+          href="/junior"
           className="mt-6 block rounded-2xl bg-[#FF8C42] px-8 py-4 text-lg font-extrabold text-white shadow-lg"
         >
           Kembali ke jalur

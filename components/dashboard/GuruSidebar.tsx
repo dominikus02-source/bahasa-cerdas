@@ -59,7 +59,7 @@ const NAV: NavItem[] = [
   { label: "KelasKu", href: "/guru/kelasku", icon: <GraduationCap size={18} /> },
   // Arena Junior = dasbor murid TK–SD. Guru bukan anggota kelas, jadi tautan ini
   // membuka mode pratinjau (lihat lib/arena-junior/kurikulum.ts).
-  { label: "Arena Junior (TK–SD)", href: "/arena-junior", icon: <Baby size={18} /> },
+  { label: "Arena Junior (TK–SD)", href: "/junior", icon: <Baby size={18} /> },
   { label: "Artikel", href: "/guru/artikel", icon: <FileText size={18} /> },
   { label: "Pengaturan", href: "/guru/pengaturan", icon: <Settings size={18} /> },
 ]

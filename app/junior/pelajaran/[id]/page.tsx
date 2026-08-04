@@ -43,12 +43,12 @@ export default async function PelajaranPage({ params }: { params: Promise<{ id: 
   // pelajaran itu sendiri yang dipakai. Murid dibatasi jenjangnya sendiri
   // atau di bawahnya.
   const akses = await aksesArenaJunior(user, pelajaran.grade)
-  if (akses.mode === "butuh-kelas") redirect("/arena-junior")
+  if (akses.mode === "butuh-kelas") redirect("/junior")
   if (
     akses.mode === "murid" &&
     GRADES.indexOf(pelajaran.grade) > GRADES.indexOf(akses.grade)
   ) {
-    redirect("/arena-junior")
+    redirect("/junior")
   }
   const pratinjau = akses.mode === "pratinjau"
 
@@ -85,7 +85,7 @@ export default async function PelajaranPage({ params }: { params: Promise<{ id: 
   return (
     <main className="mx-auto max-w-xl px-4 py-6">
       <Link
-        href="/arena-junior"
+        href="/junior"
         className="mb-6 inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-bold text-slate-600 shadow-sm"
       >
         <ArrowLeft className="h-4 w-4" aria-hidden />

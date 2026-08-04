@@ -77,9 +77,9 @@ export default function ZelbyDash() {
 
   useEffect(() => {
     const idle = new Image();
-    idle.src = "/arena-junior/karakter/zelby_idle.webp";
+    idle.src = "/junior/karakter/zelby_idle.webp";
     const cele = new Image();
-    cele.src = "/arena-junior/karakter/zelby_celebrate.webp";
+    cele.src = "/junior/karakter/zelby_celebrate.webp";
     let loaded = 0;
     const onload = () => { loaded++; if (loaded >= 2) imagesLoaded.current = true; };
     idle.onload = onload;
@@ -524,7 +524,7 @@ export default function ZelbyDash() {
           <div className="flex items-center gap-2.5">
             <div className="w-11 h-11 rounded-2xl overflow-hidden border-4 border-[#161B3A] shadow-[4px_4px_0_#161B3A] shrink-0 bg-white ik-pop">
               <img
-                src="/arena-junior/karakter/zelby_happy.webp"
+                src="/junior/karakter/zelby_happy.webp"
                 alt="Zelby"
                 className="w-full h-full object-cover"
               />
@@ -544,7 +544,7 @@ export default function ZelbyDash() {
           <div className={`ik-screen bg-white rounded-3xl ${chunky} p-6 text-center w-full max-w-md`}>
             <div className="w-24 h-24 mx-auto mb-3 rounded-3xl overflow-hidden border-4 border-[#161B3A] shadow-[6px_6px_0_#161B3A]">
               <img
-                src="/arena-junior/karakter/zelby_wave.webp"
+                src="/junior/karakter/zelby_wave.webp"
                 alt="Zelby si Tarsius"
                 className="w-full h-full object-cover"
               />
@@ -632,7 +632,7 @@ export default function ZelbyDash() {
           <div className={`ik-screen bg-white rounded-3xl ${chunky} p-6 text-center w-full max-w-md`}>
             <div className="w-24 h-24 mx-auto mb-3 rounded-3xl overflow-hidden border-4 border-[#161B3A] shadow-[6px_6px_0_#161B3A]">
               <img
-                src="/arena-junior/karakter/zelby_celebrate.webp"
+                src="/junior/karakter/zelby_celebrate.webp"
                 alt="Zelby"
                 className="w-full h-full object-cover"
               />

@@ -48,7 +48,7 @@ export default async function BerandaPage() {
   // supaya tidak menambah query database pada setiap navigasi di dalam Arena.
   if (user.role === "MURID") {
     const jenjang = await jenjangMurid(user.id)
-    if (jenjang) redirect("/arena-junior")
+    if (jenjang) redirect("/junior")
   }
 
   const isGuruPreview = user.role !== "MURID" && !user.isFounder

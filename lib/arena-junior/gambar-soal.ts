@@ -1,6 +1,6 @@
 // Bank gambar untuk soal Arena Junior.
 //
-// Berkas ada di public/arena-junior/soal/<kategori>/<kata>.webp — hasil
+// Berkas ada di public/junior/soal/<kategori>/<kata>.webp — hasil
 // pengecilan aset KataPlay (2250–3600px PNG, 74 MB) ke 512px WebP (1,2 MB).
 // Penulis soal memakai `gambarSoal("kucing")`, bukan menebak nama berkas.
 
@@ -80,7 +80,7 @@ const KATEGORI_PER_KATA = new Map<string, KategoriGambar>(
 export function gambarSoal(kata: string): string | null {
   const kunci = kata.trim().toLowerCase().replace(/\s+/g, "-")
   const kategori = KATEGORI_PER_KATA.get(kunci)
-  return kategori ? `/arena-junior/soal/${kategori}/${kunci}.webp` : null
+  return kategori ? `/junior/soal/${kategori}/${kunci}.webp` : null
 }
 
 /** Kata yang layak untuk jenjang awal (TK–Kelas 1). */

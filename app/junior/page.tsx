@@ -248,7 +248,7 @@ function BilahPratinjau({ grade }: { grade: string }) {
           {GRADES.map((g) => (
             <Link
               key={g}
-              href={`/arena-junior?jenjang=${g}`}
+              href={`/junior?jenjang=${g}`}
               className={`rounded-full px-2.5 py-1 text-xs font-bold transition ${
                 g === grade ? "bg-[#FFD54A] text-slate-900" : "bg-white/10 hover:bg-white/20"
               }`}
