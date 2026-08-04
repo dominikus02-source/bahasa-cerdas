@@ -4,10 +4,13 @@ import path from "node:path";
 
 // Generator ikon PWA Arena — dari 1 gambar sumber menghasilkan semua ukuran
 // yang dibutuhkan Android/iOS. Jalankan ulang setiap ganti desain:
-//   npx tsx scripts/generate-pwa-icons.ts [path-sumber.png]
+//   npx tsx scripts/generate-pwa-icons.ts [path-sumber.png] [prefix-file]
 // Sumber default: public/BC-logo.png
+// Prefix opsional: tulis ke public/<prefix>icon-192.png dst. (mis. "arena-"
+// untuk ikon aplikasi terinstal, terpisah dari ikon web umum).
 
 const SOURCE = process.argv[2] || "public/BC-logo.png";
+const PREFIX = process.argv[3] || "";
 const BRAND_BG = "#7c3aed"; // ungu violet — tema Arena
 const OUT: { file: string; size: number; mode: "any" | "maskable" | "apple" }[] = [
   { file: "public/icon-192.png", size: 192, mode: "any" },
@@ -55,8 +58,9 @@ async function main() {
     } else {
       img = img.resize(out.size, out.size, { fit: "contain" });
     }
-    await img.png().toFile(out.file);
-    console.log(`✓ ${out.file} (${out.size}x${out.size}, ${out.mode})`);
+    const target = out.file.replace("public/", `public/${PREFIX}`);
+    await img.png().toFile(target);
+    console.log(`✓ ${target} (${out.size}x${out.size}, ${out.mode})`);
   }
 
   console.log("\nSelesai. File ikon siap — jangan lupa: user iOS perlu hapus & add ulang shortcut homescreen.");
