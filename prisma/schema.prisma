@@ -167,126 +167,127 @@ model CommunityPost {
 }
 
 model User {
-  id                   String                  @id @default(cuid())
-  supabaseId           String                  @unique
-  email                String                  @unique
-  fullName             String
-  nickname             String?
-  nicknameUpdatedAt    DateTime?
-  avatar               String?
-  emailConfirmed       Boolean                 @default(false)
-  onboarded            Boolean                 @default(false)
-  role                 Role                    @default(MURID)
-  isFounder            Boolean                 @default(false)
-  premiumPlan          PremiumPlan             @default(FREE)
-  premiumUntil         DateTime?
-  isPremium            Boolean                 @default(false)
-  midtransCustomerId   String?
-  trialStartedAt       DateTime?
-  trialEndsAt          DateTime?
-  trialPlan            String? // "GURU_PRO_TRIAL" if trial is active
-  trialCreditsTotal    Int? // total credits allocated for trial
-  xp                   Int                     @default(0)
-  level                Int                     @default(1)
-  streak               Int                     @default(0)
-  lastActiveAt         DateTime?
+  id                    String                  @id @default(cuid())
+  supabaseId            String                  @unique
+  email                 String                  @unique
+  fullName              String
+  nickname              String?
+  nicknameUpdatedAt     DateTime?
+  avatar                String?
+  emailConfirmed        Boolean                 @default(false)
+  onboarded             Boolean                 @default(false)
+  role                  Role                    @default(MURID)
+  isFounder             Boolean                 @default(false)
+  premiumPlan           PremiumPlan             @default(FREE)
+  premiumUntil          DateTime?
+  isPremium             Boolean                 @default(false)
+  midtransCustomerId    String?
+  trialStartedAt        DateTime?
+  trialEndsAt           DateTime?
+  trialPlan             String? // "GURU_PRO_TRIAL" if trial is active
+  trialCreditsTotal     Int? // total credits allocated for trial
+  xp                    Int                     @default(0)
+  level                 Int                     @default(1)
+  streak                Int                     @default(0)
+  lastActiveAt          DateTime?
   /// USANG — jangan dibaca/ditulis. Liga 4 tingkat digantikan 9 rank resmi.
   /// Enum LeagueType tidak akan pernah bisa menampung PlayerRank (9 nilai).
   /// Rank pemain ada di PlayerProfile.currentRank, atau turunkan langsung:
   /// rankFromLevel(levelFromXp(User.xp)). Kolom dibiarkan agar baris lama tidak
   /// perlu migrasi destruktif; nilainya beku dan tidak dipakai di mana pun.
-  league               LeagueType              @default(BRONZE)
-  saldo                Int                     @default(0)
-  totalEarned          Int                     @default(0)
-  coins                Int                     @default(0)
+  league                LeagueType              @default(BRONZE)
+  saldo                 Int                     @default(0)
+  totalEarned           Int                     @default(0)
+  coins                 Int                     @default(0)
   // Kosmetik yang sedang dipakai. Isinya `icon` dari StoreItem yang dimiliki
   // (mis. "frame-gold", "color-purple"), null artinya tidak memakai apa pun.
-  equippedFrame        String?
-  equippedNameColor    String?
-  equippedBadge        String?
-  equippedEffect       String?
-  totalLikes           Int                     @default(0)
-  totalViews           Int                     @default(0)
-  createdAt            DateTime                @default(now())
-  updatedAt            DateTime                @updatedAt
-  aiUsage              AIUsage[]
-  aiCreditLedger       AiCreditLedger[]
-  artikel              Artikel[]
-  uploadedBankSoals    BankSoal[]
-  certificates         Certificate[]
-  createdCommunities   Community[]
-  komunitas            CommunityMember[]
-  communityPosts       CommunityPost[]
-  playlists            CoursePlaylist[]
-  gameQuestions        GameQuestion[]
-  gameResults          GameResult[]
-  gameSessions         GameSession[]
-  generatedRPPs        GeneratedRPP[]
-  aiJobs               AIJob[]
-  aiSavedResults       AiSavedResult[]
-  groups               Group[]
-  groupMemberships     GroupMember[]
-  groupQuizResults     GroupQuizResult[]
-  karya                Karya[]
-  studentKarya         StudentKarya[]
-  studentKaryaLikes    StudentKaryaLike[]
-  studentKaryaComments StudentKaryaComment[]
-  koleksiKata          KoleksiKata[]
-  competencyCerts      KompetensiCertificate[]
-  loker                Loker[]
-  lombaPeserta         LombaPeserta[]
-  uploadedMateris      Materi[]
-  materiDownloads      MateriDownload[]
-  notifications        Notifikasi[]
-  competencyPackets    PaketKompetensi[]
-  purchases            Pembelian[]
-  profile              Profile?
-  competencyResults    ProgresKompetensi[]
-  purchasesHistory     PurchaseHistory[]
-  quizzes              Quiz[]
-  quizSessions         QuizSession[]
-  quizSubmissions      QuizSubmission[]
-  uploadedRPPs         RPP[]
-  sellerEarnings       SellerEarning[]
-  soals                Soal[]
-  soalSets             SoalSet[]
-  tkaQuestions         TKAQuestion[]
-  testAnswers          TestAnswer[]
-  testSessions         TestSession[]
-  transaksi            Transaksi[]
-  ukbiQuestions        UKBIQuestion[]
-  videos               Video[]
-  withdrawals          Withdrawal[]
-  coinTransactions     CoinTransaction[]
-  xpLedger             XpLedger[]
-  dailyQuests          DailyQuest[]
-  userItems            UserItem[]
-  chatMessages         ChatMessage[]
-  unitProgress         UserUnitProgress[]
-  penugasans           Penugasan[]
-  penugasanSubmissions PenugasanSubmission[]
-  nilais               Nilai[]
-  subscriptions        Subscription[]
-  nicknameHistory      NicknameHistory[]
-  materiKirims         MateriKirim[]
-  pengumumanDibuat     Pengumuman[]             @relation("PengumumanTeacher")
-  siaranDibuat         Siaran[]                 @relation("SiaranAuthor")
+  equippedFrame         String?
+  equippedNameColor     String?
+  equippedBadge         String?
+  equippedEffect        String?
+  totalLikes            Int                     @default(0)
+  totalViews            Int                     @default(0)
+  createdAt             DateTime                @default(now())
+  updatedAt             DateTime                @updatedAt
+  aiUsage               AIUsage[]
+  aiCreditLedger        AiCreditLedger[]
+  artikel               Artikel[]
+  uploadedBankSoals     BankSoal[]
+  certificates          Certificate[]
+  createdCommunities    Community[]
+  komunitas             CommunityMember[]
+  communityPosts        CommunityPost[]
+  playlists             CoursePlaylist[]
+  gameQuestions         GameQuestion[]
+  gameResults           GameResult[]
+  gameSessions          GameSession[]
+  generatedRPPs         GeneratedRPP[]
+  aiJobs                AIJob[]
+  aiSavedResults        AiSavedResult[]
+  groups                Group[]
+  groupMemberships      GroupMember[]
+  groupQuizResults      GroupQuizResult[]
+  karya                 Karya[]
+  studentKarya          StudentKarya[]
+  studentKaryaLikes     StudentKaryaLike[]
+  studentKaryaComments  StudentKaryaComment[]
+  koleksiKata           KoleksiKata[]
+  competencyCerts       KompetensiCertificate[]
+  loker                 Loker[]
+  lombaPeserta          LombaPeserta[]
+  uploadedMateris       Materi[]
+  materiDownloads       MateriDownload[]
+  notifications         Notifikasi[]
+  competencyPackets     PaketKompetensi[]
+  purchases             Pembelian[]
+  profile               Profile?
+  competencyResults     ProgresKompetensi[]
+  purchasesHistory      PurchaseHistory[]
+  quizzes               Quiz[]
+  quizSessions          QuizSession[]
+  quizSubmissions       QuizSubmission[]
+  uploadedRPPs          RPP[]
+  sellerEarnings        SellerEarning[]
+  soals                 Soal[]
+  soalSets              SoalSet[]
+  tkaQuestions          TKAQuestion[]
+  testAnswers           TestAnswer[]
+  testSessions          TestSession[]
+  transaksi             Transaksi[]
+  ukbiQuestions         UKBIQuestion[]
+  videos                Video[]
+  withdrawals           Withdrawal[]
+  coinTransactions      CoinTransaction[]
+  xpLedger              XpLedger[]
+  dailyQuests           DailyQuest[]
+  userItems             UserItem[]
+  pushSubscriptions     PushSubscription[]
+  chatMessages          ChatMessage[]
+  unitProgress          UserUnitProgress[]
+  penugasans            Penugasan[]
+  penugasanSubmissions  PenugasanSubmission[]
+  nilais                Nilai[]
+  subscriptions         Subscription[]
+  nicknameHistory       NicknameHistory[]
+  materiKirims          MateriKirim[]
+  pengumumanDibuat      Pengumuman[]            @relation("PengumumanTeacher")
+  siaranDibuat          Siaran[]                @relation("SiaranAuthor")
   pengumumanSubmissions PengumumanSubmission[]
-  kuponDipakai         KuponPemakaian[]
+  kuponDipakai          KuponPemakaian[]
 
   // BC Arena Core Engine (universal gamification — PlayerProfile terpisah dari User)
-  playerProfile        PlayerProfile?
-  xpTransactions       XPTransaction[]
-  userBadges           UserBadge[]
-  userAchievements     UserAchievement[]
+  playerProfile    PlayerProfile?
+  xpTransactions   XPTransaction[]
+  userBadges       UserBadge[]
+  userAchievements UserAchievement[]
 
   // Learning Loop Engine (Sprint 5 — aktivitas, skill, journey, rekomendasi, CTA, insight)
-  learningSkills        LearningSkill[]
-  playerActivities      PlayerActivity[]
-  learningJourney       LearningJourney[]
+  learningSkills          LearningSkill[]
+  playerActivities        PlayerActivity[]
+  learningJourney         LearningJourney[]
   learningRecommendations LearningRecommendation[]
-  playerCTA             PlayerCTA?
-  learningInsights      LearningInsight[]
+  playerCTA               PlayerCTA?
+  learningInsights        LearningInsight[]
 
   // Admin quota audit logs where this user was the acting admin
   adminQuotaActions    AdminQuotaAuditLog[]   @relation("AdminActions")
@@ -617,39 +618,39 @@ model BankSoal {
 }
 
 model Soal {
-  id            String    @id @default(cuid())
-  kodeSoal      String?   @unique
-  judul         String?
-  text          String
-  type          String    @default("PILIHAN_GANDA")
-  difficulty    String    @default("MEDIUM")
-  options       String[]
-  correctAnswer String
-  explanation   String?
-  isHOTS        Boolean   @default(false)
-  kelas         String
-  semester      Int?
-  topik         String?
-  kompetensi    String?
-  indikator     String?
-  levelBerpikir Int?
-  kataKunci     String?
-  estimasiWaktu Int?
-  KD            String?
-  subject       String    @default("Bahasa Indonesia")
-  source        String    @default("MANUAL")
-  bankSoalId    String?
-  soalSetId     String?
-  uploaderId    String
-  usedCount     Int       @default(0)
-  correctCount  Int       @default(0)
-  wrongCount    Int       @default(0)
-  totalTimeSpent Int      @default(0)
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  bankSoal      BankSoal? @relation(fields: [bankSoalId], references: [id])
-  soalSet       SoalSet?  @relation(fields: [soalSetId], references: [id])
-  uploader      User      @relation(fields: [uploaderId], references: [id], onDelete: Cascade)
+  id             String    @id @default(cuid())
+  kodeSoal       String?   @unique
+  judul          String?
+  text           String
+  type           String    @default("PILIHAN_GANDA")
+  difficulty     String    @default("MEDIUM")
+  options        String[]
+  correctAnswer  String
+  explanation    String?
+  isHOTS         Boolean   @default(false)
+  kelas          String
+  semester       Int?
+  topik          String?
+  kompetensi     String?
+  indikator      String?
+  levelBerpikir  Int?
+  kataKunci      String?
+  estimasiWaktu  Int?
+  KD             String?
+  subject        String    @default("Bahasa Indonesia")
+  source         String    @default("MANUAL")
+  bankSoalId     String?
+  soalSetId      String?
+  uploaderId     String
+  usedCount      Int       @default(0)
+  correctCount   Int       @default(0)
+  wrongCount     Int       @default(0)
+  totalTimeSpent Int       @default(0)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  bankSoal       BankSoal? @relation(fields: [bankSoalId], references: [id])
+  soalSet        SoalSet?  @relation(fields: [soalSetId], references: [id])
+  uploader       User      @relation(fields: [uploaderId], references: [id], onDelete: Cascade)
 
   @@index([uploaderId])
   @@index([kelas])
@@ -1997,25 +1998,25 @@ enum SiaranKategori {
 /// mengumpulkan karya). Siaran tidak terikat kelas, tidak dikumpulkan, dan
 /// dipakai untuk kabar sistem — mis. "XP mingguan direset tiap Senin".
 model Siaran {
-  id        String         @id @default(cuid())
-  judul     String
-  isi       String
-  kategori  SiaranKategori @default(INFO)
+  id          String         @id @default(cuid())
+  judul       String
+  isi         String
+  kategori    SiaranKategori @default(INFO)
   /// URL gambar banner (Supabase Storage). Kosong = kartu teks biasa.
-  gambar    String?
+  gambar      String?
   /// Tautan tujuan saat banner diketuk, mis. /arena/jalur-cerdas.
-  tautan    String?
+  tautan      String?
   /// Label tombol ajakan. Hanya tampil bila `tautan` diisi.
   tautanLabel String?
   /// Disematkan di atas siaran lain.
-  pinned    Boolean        @default(false)
-  aktif     Boolean        @default(true)
+  pinned      Boolean        @default(false)
+  aktif       Boolean        @default(true)
   /// Rentang tayang. `sampai` null = tayang terus selama aktif.
-  mulai     DateTime       @default(now())
-  sampai    DateTime?
-  authorId  String
-  createdAt DateTime       @default(now())
-  updatedAt DateTime       @updatedAt
+  mulai       DateTime       @default(now())
+  sampai      DateTime?
+  authorId    String
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
 
   author User @relation("SiaranAuthor", fields: [authorId], references: [id], onDelete: Cascade)
 
@@ -2024,19 +2025,19 @@ model Siaran {
 }
 
 model Pengumuman {
-  id            String   @id @default(cuid())
-  groupId       String
-  teacherId     String
-  judul         String
-  deskripsi     String?
-  tenggat       DateTime?
-  lampiran      String? // URL file referensi (PDF/DOCX) di Supabase Storage
-  lampiranNama  String? // nama file asli untuk ditampilkan
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  id           String    @id @default(cuid())
+  groupId      String
+  teacherId    String
+  judul        String
+  deskripsi    String?
+  tenggat      DateTime?
+  lampiran     String? // URL file referensi (PDF/DOCX) di Supabase Storage
+  lampiranNama String? // nama file asli untuk ditampilkan
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
 
-  group       Group                   @relation(fields: [groupId], references: [id], onDelete: Cascade)
-  teacher     User                    @relation("PengumumanTeacher", fields: [teacherId], references: [id], onDelete: Cascade)
+  group       Group                  @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  teacher     User                   @relation("PengumumanTeacher", fields: [teacherId], references: [id], onDelete: Cascade)
   submissions PengumumanSubmission[]
 
   @@index([groupId])
@@ -2308,38 +2309,38 @@ model ArenaJuniorAkun {
 
 /// Profil pemain universal (terpisah dari User agar eksisting tidak berubah).
 model PlayerProfile {
-  id        String @id @default(cuid())
-  userId    String @unique
+  id     String @id @default(cuid())
+  userId String @unique
 
-  level     Int       @default(1)
-  totalXP   Int       @default(0)
+  level       Int        @default(1)
+  totalXP     Int        @default(0)
   currentRank PlayerRank @default(BRONZE)
-  coin      Int       @default(0)
+  coin        Int        @default(0)
 
   /// XP terkumpul di minggu berjalan (direset tiap Senin 00:00 WIB).
-  weeklyXP  Int       @default(0)
+  weeklyXP        Int    @default(0)
   /// Penanda minggu saat weeklyXP terakhir direset (format "2026-W31").
   weeklyXPWeekKey String @default("")
 
   /// XP terkumpul di season berjalan (season = periode kompetisi 4 mingguan).
-  seasonXP  Int       @default(0)
-  seasonId  String?
+  seasonXP        Int     @default(0)
+  seasonId        String?
   /// Periode season aktif ("2026-S1", "2026-S2", ...).
-  seasonPeriodKey String @default("")
+  seasonPeriodKey String  @default("")
 
   /// Streak harian (login / aktivitas berturut-turut).
-  streak    Int       @default(0)
+  streak       Int       @default(0)
   lastActiveAt DateTime?
 
-  avatar    String?
-  frame     String?
-  title     String?
+  avatar String?
+  frame  String?
+  title  String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  user             User               @relation(fields: [userId], references: [id], onDelete: Cascade)
-  xpTransactions   XPTransaction[]
+  user           User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  xpTransactions XPTransaction[]
 
   @@index([totalXP])
   @@index([weeklyXP])
@@ -2349,7 +2350,7 @@ model PlayerProfile {
 
 /// Ledger XP universal — SETIAP pemberian XP dicatat di sini (audit penuh).
 model XPTransaction {
-  id        String  @id @default(cuid())
+  id        String @id @default(cuid())
   userId    String
   profileId String
 
@@ -2364,7 +2365,7 @@ model XPTransaction {
   reference String?
   createdAt DateTime @default(now())
 
-  user    User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user    User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   profile PlayerProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
 
   @@unique([userId, source, reference])
@@ -2426,14 +2427,14 @@ model Achievement {
 
 /// Progress achievement per user (realtime, bisa diklaim).
 model UserAchievement {
-  id            String   @id @default(cuid())
+  id            String    @id @default(cuid())
   userId        String
   achievementId String
-  progress      Int      @default(0)
-  completed     Boolean  @default(false)
-  claimed       Boolean  @default(false)
+  progress      Int       @default(0)
+  completed     Boolean   @default(false)
+  claimed       Boolean   @default(false)
   claimedAt     DateTime?
-  updatedAt     DateTime @updatedAt
+  updatedAt     DateTime  @updatedAt
 
   user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
   achievement Achievement @relation(fields: [achievementId], references: [id], onDelete: Cascade)
@@ -2476,19 +2477,19 @@ model LearningSkill {
 /// Log granular aktivitas belajar user — sumber Learning Journey, skill
 /// gain, personalisasi quest, dan insight mentor.
 model PlayerActivity {
-  id         String            @id @default(cuid())
+  id         String             @id @default(cuid())
   userId     String
   type       ActivityType
   subtype    String?
   skill      LearningSkillType?
   skillDelta Int?
-  xp         Int               @default(0)
-  coin       Int               @default(0)
+  xp         Int                @default(0)
+  coin       Int                @default(0)
   /// Metadata bebas (unitId, paketId, karyaId, ...).
   meta       Json?
   /// Referensi idempotency opsional (mis. "unit-<id>-selesai").
   reference  String?
-  createdAt  DateTime          @default(now())
+  createdAt  DateTime           @default(now())
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -2568,4 +2569,25 @@ model LearningInsight {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, dayKey])
+}
+
+/// Langganan Web Push milik satu perangkat. Satu murid bisa punya beberapa:
+/// HP sendiri, tablet kelas, browser di rumah. Endpoint unik per perangkat dan
+/// itulah identitasnya — bukan userId.
+model PushSubscription {
+  id        String   @id @default(cuid())
+  userId    String
+  /// URL push service dari browser. Unik: browser memberi endpoint sama untuk
+  /// perangkat yang sama, jadi ini mencegah duplikat saat murid membuka ulang app.
+  endpoint  String   @unique
+  p256dh    String
+  auth      String
+  /// Dipakai untuk membersihkan langganan mati. Push service mengembalikan 404/410
+  /// kalau perangkat sudah mencabut izin; saat itu barisnya dihapus.
+  createdAt DateTime @default(now())
+  lastOkAt  DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }

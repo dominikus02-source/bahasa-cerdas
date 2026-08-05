@@ -13,6 +13,9 @@ const publicPaths = [
   "/marketplace", "/artikel", "/video-belajar", "/kamus", "/loker", "/komunitas", "/ai-bc", "/profile/",
   "/kebijakan-privasi", "/syarat-ketentuan",
   "/faq", "/cart", "/checkout", "/orders", "/payment/", "/reset-password",
+  // Parents install the APK before anyone has an account — gating this behind
+  // login would put the download on the far side of the thing it unlocks.
+  "/unduh",
   "/robots.txt", "/sitemap.xml", "/manifest.webmanifest", "/opengraph-image",
 ];
 

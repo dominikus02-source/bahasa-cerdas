@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
+import { after } from "next/server";
+import { kirimKeBanyakUser } from "@/lib/push";
 
 export async function POST(
   req: NextRequest,
@@ -81,6 +83,38 @@ export async function POST(
     } catch (notifErr) {
       console.error("Gagal buat notifikasi:", notifErr);
     }
+
+    // Notifikasi push ke murid di kelas yang ditugaskan. Ini pemicu yang paling
+    // berdampak: "tugas baru dari gurumu" jauh lebih berguna daripada ajakan
+    // belajar generik, dan tidak menjadi kebisingan karena hanya muncul saat guru
+    // benar-benar mengirim sesuatu.
+    //
+    // Dibungkus try/catch dan tidak di-await hasilnya sebagai syarat sukses:
+    // pengiriman notifikasi tidak boleh menggagalkan penugasan yang sudah
+    // tersimpan di database.
+    after(async () => {
+      try {
+        const anggota = await db.groupMember.findMany({
+          where: { groupId: { in: groups.map((g) => g.id) } },
+          select: { userId: true },
+        });
+        const muridIds = [...new Set(anggota.map((a) => a.userId))].filter((uid) => uid !== dbUser.id);
+        if (muridIds.length === 0) return;
+
+        await kirimKeBanyakUser(muridIds, {
+          title: "Tugas baru",
+          body: dueDate
+            ? `"${quiz.title}" — kerjakan sebelum ${new Date(dueDate).toLocaleDateString("id-ID", { day: "numeric", month: "long" })}`
+            : `"${quiz.title}" sudah bisa dikerjakan`,
+          url: "/arena/tugas",
+          // Satu tag per kuis: guru yang menugaskan ulang ke kelas lain menimpa
+          // notifikasi lama alih-alih menumpuk beberapa untuk kuis yang sama.
+          tag: `tugas-${id}`,
+        });
+      } catch (pushErr) {
+        console.error("Gagal kirim push tugas:", pushErr);
+      }
+    });
 
     return NextResponse.json({ assignments, success: true, groupCount: groups.length });
   } catch (error) {

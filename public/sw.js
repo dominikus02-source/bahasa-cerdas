@@ -63,3 +63,54 @@ self.addEventListener("fetch", (event) => {
 
   // Everything else (API, etc.): let the browser fetch from network normally.
 })
+
+// ---------------------------------------------------------------------------
+// Web Push
+//
+// In the Arena APK these surface as ordinary Android notifications — the TWA is
+// Chrome, so the same handlers serve web and app.
+// ---------------------------------------------------------------------------
+
+self.addEventListener("push", (event) => {
+  // A push with no payload is still worth showing: swallowing it silently would
+  // spend the user's permission and give nothing back.
+  let data = {}
+  try {
+    data = event.data ? event.data.json() : {}
+  } catch {
+    data = { body: event.data ? event.data.text() : "" }
+  }
+
+  const title = data.title || "Arena BC"
+  const options = {
+    body: data.body || "Ada yang baru untukmu.",
+    icon: "/arena-icon-192.png",
+    badge: "/arena-icon-192.png",
+    // Opening straight to the relevant screen is the whole point; without a URL
+    // the notification lands the student on the home screen to hunt for it.
+    data: { url: data.url || "/arena" },
+    // Same tag replaces an unread notification instead of stacking a second one.
+    tag: data.tag || "arena",
+    renotify: false,
+  }
+  event.waitUntil(self.registration.showNotification(title, options))
+})
+
+self.addEventListener("notificationclick", (event) => {
+  event.notification.close()
+  const target = (event.notification.data && event.notification.data.url) || "/arena"
+
+  // Reuse an open Arena window when there is one. Opening a second window each
+  // time would leave a trail of duplicates behind the app.
+  event.waitUntil(
+    self.clients.matchAll({ type: "window", includeUncontrolled: true }).then((list) => {
+      for (const client of list) {
+        if (client.url.includes("/arena") && "focus" in client) {
+          client.navigate(target)
+          return client.focus()
+        }
+      }
+      return self.clients.openWindow(target)
+    })
+  )
+})

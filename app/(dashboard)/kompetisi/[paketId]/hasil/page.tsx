@@ -59,7 +59,8 @@ export default function HasilPage({ params }: { params: Promise<{ paketId: strin
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [backHref, setBackHref] = useState(diArena ? "/arena/simulasi" : "/kompetisi/latihan");
-  const [certHref, setCertHref] = useState("/murid/dokumen-latihan");
+  // null di Arena: arsip dokumen hanya ada di pohon dasbor, di luar scope APK.
+  const [certHref, setCertHref] = useState<string | null>(diArena ? null : "/murid/dokumen-latihan");
 
   useEffect(() => {
     params.then((p) => setPaketId(p.paketId));
@@ -75,7 +76,7 @@ export default function HasilPage({ params }: { params: Promise<{ paketId: strin
         const u = d?.user;
         const type = result?.paket?.type || result?.paketTitle;
         setBackHref(computeBackHref(u?.role || "MURID", !!u?.isFounder, type, diArena));
-        setCertHref(computeCertHref(u?.role || "MURID", !!u?.isFounder));
+        setCertHref(diArena ? null : computeCertHref(u?.role || "MURID", !!u?.isFounder));
       })
       .catch(() => {});
     return () => {

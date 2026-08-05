@@ -39,8 +39,12 @@ interface TestResultPanelProps {
   paketId: string;
   /** Where "Kembali ke Latihan" / "Paket Lainnya" go — the list the user came from. */
   backHref?: string;
-  /** Where the "Dokumen Hasil Latihan" button goes — respects guru vs murid role. */
-  certHref?: string;
+  /**
+   * Where the "Dokumen Hasil Latihan" button goes — respects guru vs murid role.
+   * Pass null to drop the button entirely; Arena has no document archive of its
+   * own, and the dashboard one lies outside the APK's scope.
+   */
+  certHref?: string | null;
   /**
    * Base of the exam flow, so "Ulangi" restarts in the tree the run came from.
    * Arena mounts this whole flow under /arena/kompetisi; hardcoding /kompetisi
@@ -293,13 +297,19 @@ export default function TestResultPanel({ result, paketId, backHref = "/kompetis
             <FileText className="w-4 h-4" />
             Paket Lainnya
           </Link>
-          <Link
-            href={certHref}
-            className="flex items-center justify-center gap-2 py-2.5 sm:py-3 border-2 border-slate-200 text-slate-600 font-bold rounded-xl hover:bg-slate-50 transition-colors text-sm sm:text-base"
-          >
-            <Award className="w-4 h-4" />
-            Dokumen Hasil Latihan
-          </Link>
+          {/* Omitted inside Arena: the document archive only exists in the
+              dashboard tree, and linking there from the APK would push a student
+              out into a browser tab. Better to not offer the door than to offer
+              one that leads outside. */}
+          {certHref && (
+            <Link
+              href={certHref}
+              className="flex items-center justify-center gap-2 py-2.5 sm:py-3 border-2 border-slate-200 text-slate-600 font-bold rounded-xl hover:bg-slate-50 transition-colors text-sm sm:text-base"
+            >
+              <Award className="w-4 h-4" />
+              Dokumen Hasil Latihan
+            </Link>
+          )}
         </div>
 
         {/* Branded footer */}

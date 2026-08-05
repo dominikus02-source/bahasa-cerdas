@@ -1,0 +1,145 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { Bell, BellOff, Loader2 } from "lucide-react";
+
+// Baris "Notifikasi" di tab Pemain.
+//
+// Sengaja DIMINTA OLEH MURID, bukan muncul sendiri saat aplikasi dibuka. Izin
+// notifikasi yang ditolak bersifat permanen — tidak bisa diminta ulang lewat
+// aplikasi, hanya lewat setelan Android. Meminta di layar pertama, sebelum anak
+// tahu aplikasinya untuk apa, adalah cara tercepat kehilangan izin itu selamanya.
+
+// Kunci VAPID datang sebagai base64url; pushManager.subscribe() menuntut byte.
+// Buffer-nya dialokasikan eksplisit agar bertipe Uint8Array<ArrayBuffer>:
+// Uint8Array.from() menghasilkan Uint8Array<ArrayBufferLike>, yang bisa berupa
+// SharedArrayBuffer dan karena itu ditolak sebagai BufferSource.
+function urlBase64ToUint8Array(base64: string): Uint8Array<ArrayBuffer> {
+  const padding = "=".repeat((4 - (base64.length % 4)) % 4);
+  const b64 = (base64 + padding).replace(/-/g, "+").replace(/_/g, "/");
+  const raw = atob(b64);
+  const buffer = new ArrayBuffer(raw.length);
+  const bytes = new Uint8Array(buffer);
+  for (let i = 0; i < raw.length; i++) bytes[i] = raw.charCodeAt(i);
+  return bytes;
+}
+
+type Keadaan = "memuat" | "tak-didukung" | "mati" | "nyala" | "ditolak";
+
+export function AktifkanNotifikasi() {
+  const [keadaan, setKeadaan] = useState<Keadaan>("memuat");
+  const [sibuk, setSibuk] = useState(false);
+
+  useEffect(() => {
+    let batal = false;
+    (async () => {
+      if (typeof window === "undefined" || !("Notification" in window) || !("serviceWorker" in navigator)) {
+        if (!batal) setKeadaan("tak-didukung");
+        return;
+      }
+      if (Notification.permission === "denied") {
+        if (!batal) setKeadaan("ditolak");
+        return;
+      }
+      const reg = await navigator.serviceWorker.ready.catch(() => null);
+      const sub = reg ? await reg.pushManager.getSubscription().catch(() => null) : null;
+      if (!batal) setKeadaan(sub ? "nyala" : "mati");
+    })();
+    return () => {
+      batal = true;
+    };
+  }, []);
+
+  const nyalakan = async () => {
+    setSibuk(true);
+    try {
+      const izin = await Notification.requestPermission();
+      if (izin !== "granted") {
+        setKeadaan(izin === "denied" ? "ditolak" : "mati");
+        return;
+      }
+      const reg = await navigator.serviceWorker.ready;
+      const kunci = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
+      if (!kunci) {
+        setKeadaan("tak-didukung");
+        return;
+      }
+      const sub = await reg.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: urlBase64ToUint8Array(kunci),
+      });
+      const res = await fetch("/api/push/subscribe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(sub.toJSON()),
+      });
+      // Kalau server menolak, langganan browser dicabut lagi. Membiarkannya hidup
+      // berarti perangkat merasa berlangganan padahal server tak akan pernah
+      // mengirim apa pun ke sana.
+      if (!res.ok) {
+        await sub.unsubscribe().catch(() => {});
+        setKeadaan("mati");
+        return;
+      }
+      setKeadaan("nyala");
+    } catch {
+      setKeadaan("mati");
+    } finally {
+      setSibuk(false);
+    }
+  };
+
+  const matikan = async () => {
+    setSibuk(true);
+    try {
+      const reg = await navigator.serviceWorker.ready;
+      const sub = await reg.pushManager.getSubscription();
+      if (sub) {
+        await fetch("/api/push/subscribe", {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ endpoint: sub.endpoint }),
+        }).catch(() => {});
+        await sub.unsubscribe().catch(() => {});
+      }
+      setKeadaan("mati");
+    } finally {
+      setSibuk(false);
+    }
+  };
+
+  if (keadaan === "memuat" || keadaan === "tak-didukung") return null;
+
+  if (keadaan === "ditolak") {
+    return (
+      <div className="rounded-xl border border-[var(--px-border)] bg-white/[0.04] p-3">
+        <span className="flex items-center gap-2 text-sm font-bold text-[var(--px-text)]">
+          <BellOff size={15} className="text-[var(--px-text-faint)]" /> Notifikasi diblokir
+        </span>
+        <p className="mt-1 text-xs text-[var(--px-text-faint)]">
+          Izinnya dimatikan di setelan ponsel. Buka Setelan → Aplikasi → Arena BC → Notifikasi untuk
+          menyalakannya lagi.
+        </p>
+      </div>
+    );
+  }
+
+  const nyala = keadaan === "nyala";
+  return (
+    <button
+      onClick={nyala ? matikan : nyalakan}
+      disabled={sibuk}
+      className="flex w-full items-center justify-between rounded-xl border border-[var(--px-border)] bg-white/[0.04] p-3 hover:bg-white/[0.08] disabled:opacity-60"
+    >
+      <span className="flex items-center gap-2 text-sm font-bold text-[var(--px-text)]">
+        <Bell size={15} className={nyala ? "text-amber-300" : "text-[var(--px-text-faint)]"} />
+        {nyala ? "Pengingat tugas aktif" : "Nyalakan pengingat tugas"}
+      </span>
+      {sibuk ? (
+        <Loader2 size={15} className="animate-spin text-[var(--px-text-faint)]" />
+      ) : (
+        <span className="text-xs font-bold text-[var(--px-text-faint)]">{nyala ? "Matikan" : "Nyalakan"}</span>
+      )}
+    </button>
+  );
+}
