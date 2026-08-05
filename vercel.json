@@ -1,5 +1,11 @@
 {
   "regions": ["sin1"],
+  "crons": [
+    {
+      "path": "/api/cron/pengingat-tugas",
+      "schedule": "0 8 * * *"
+    }
+  ],
   "redirects": [
     {
       "source": "/(.*)",
