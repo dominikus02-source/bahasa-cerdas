@@ -11,6 +11,7 @@ import {
 import { getWeeklyChallenge } from "@/lib/weekly-challenge"
 import UserAvatar from "@/components/arena/UserAvatar"
 import UserName from "@/components/arena/UserName"
+import ShareKaryaButton from "@/components/arena/ShareKaryaButton"
 
 const typeColors: Record<string, { label: string; bg: string; text: string; border: string }> = {
   PUISI: { label: "Puisi", bg: "bg-fuchsia-100", text: "text-fuchsia-700", border: "border-fuchsia-200" },
@@ -360,6 +361,7 @@ function FeedContent() {
                   <Link href={`/arena/feed/${k.id}`} className="flex items-center gap-1.5 text-sm text-gray-400 hover:text-violet-500 transition-all">
                     <MessageCircle size={16} /> {k._count?.comments ?? 0}
                   </Link>
+                  <ShareKaryaButton karyaId={k.id} title={k.title} />
                   <span className="flex items-center gap-1.5 text-sm text-gray-400 ml-auto">
                     <Eye size={16} /> {k.viewsCount || 0}
                   </span>

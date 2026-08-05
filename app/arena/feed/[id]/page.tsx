@@ -4,6 +4,7 @@ import { redirect } from "next/navigation"
 import Link from "next/link"
 import { ArrowLeft, Heart, MessageCircle, Eye, Clock, Sparkles, BookOpen, FileText, Smile, Music, MessageSquare } from "lucide-react"
 import { ToggleLike } from "./toggle-like"
+import ShareKaryaButton from "@/components/arena/ShareKaryaButton"
 import CommentSection from "@/components/arena/CommentSection"
 import DeleteKaryaButton from "@/components/arena/DeleteKaryaButton"
 import KaryaRewardToast from "@/components/arena/KaryaRewardToast"
@@ -144,6 +145,7 @@ export default async function FeedDetailPage({ params }: { params: Promise<{ id:
             <MessageCircle className="w-5 h-5 text-violet-400" />
             {karya._count.comments}
           </span>
+          <ShareKaryaButton karyaId={karya.id} title={karya.title} className="ml-auto" />
           <span className="flex items-center gap-1.5 text-sm text-gray-500 ml-auto">
             <Eye className="w-5 h-5 text-gray-400" />
             {karya.viewsCount || 0}
