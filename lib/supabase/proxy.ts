@@ -69,7 +69,16 @@ export async function updateSession(request: NextRequest, nonce?: string) {
 
   // On login page, clear any stale Supabase cookies unconditionally
   // This ensures users with expired sessions from old VPS can log in fresh
-  if (pathname === "/login" || pathname === "/auth/arena-login" || pathname === "/arena/login") {
+  // /arena/login sengaja TIDAK ikut di sini.
+  //
+  // Dua rute lama di bawah adalah halaman login yang berdiri sendiri: pengguna
+  // sampai ke sana lalu masuk, jadi membuang cookie basi di situ aman.
+  // /arena/login berbeda — ia juga tujuan pantulan setiap kali pemeriksaan auth
+  // di /arena meleset. Membuang cookie di sana berarti sesi yang BARU SAJA
+  // didapat dari login ikut terhapus: murid berhasil masuk, didorong ke /arena,
+  // terpantul balik, dan sesinya dibatalkan oleh halaman pendaratannya sendiri.
+  // Tidak membuang di sini aman: login yang berhasil menimpa cookie lama.
+  if (pathname === "/login" || pathname === "/auth/arena-login") {
     const response = nextWithNonce();
     request.cookies.getAll()
       .filter((c) => c.name.startsWith("sb-") || c.name.startsWith("supabase-"))
