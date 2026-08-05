@@ -1,29 +1,41 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
+import { useRouter, usePathname } from "next/navigation"
 import { createClient } from "@/lib/supabase/client"
-import { Chrome, ArrowRight, Smartphone, BookOpen } from "lucide-react"
+import { Chrome, ArrowRight, Smartphone, BookOpen, Eye, EyeOff } from "lucide-react"
 import { SwRegister } from "@/components/SwRegister"
 import { InstallGuide } from "@/components/InstallGuide"
 
 export default function ArenaLoginPage() {
   const [guideOpen, setGuideOpen] = useState(false)
   const router = useRouter()
+  const pathname = usePathname()
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
   const [resetMode, setResetMode] = useState(false)
   const [resetSent, setResetSent] = useState(false)
+  const [lihatSandi, setLihatSandi] = useState(false)
 
+  // Layar ini dipasang di dua rute: /auth/arena-login (lama) dan /arena/login
+  // (dipakai APK). Path dibaca dari alamat sebenarnya, bukan ditulis tetap —
+  // versi lama selalu menulis "/auth/arena-login", sehingga membuka layar ini
+  // dengan ?error= di dalam APK memindahkan URL ke luar scope /arena.
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
     if (params.get("error")) {
       setError(params.get("error") || "")
-      window.history.replaceState({}, "", "/auth/arena-login")
+      window.history.replaceState({}, "", window.location.pathname)
     }
   }, [])
+
+  // Tautan daftar mengikuti pohon tempat layar ini dipasang, supaya murid di
+  // dalam APK tidak terlempar ke tab browser saat hendak membuat akun.
+  // usePathname(), bukan window.location: nilainya sama di server dan klien,
+  // sehingga tidak memicu ketidakcocokan hidrasi.
+  const daftarHref = pathname.startsWith("/arena") ? "/arena/register" : "/register"
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -124,7 +136,14 @@ export default function ArenaLoginPage() {
     if (error) setError(error.message)
   }
 
-  const isInstalled = typeof window !== "undefined" && window.matchMedia("(display-mode: standalone)").matches
+  // Dihitung setelah terpasang, bukan saat render. `typeof window` membuat server
+  // dan klien menghasilkan nilai berbeda, sehingga di dalam APK ajakan "Install
+  // Arena di HP-mu" sempat berkedip muncul lalu hilang — mengganggu, dan
+  // membingungkan karena aplikasinya memang sudah terpasang.
+  const [isInstalled, setIsInstalled] = useState(true)
+  useEffect(() => {
+    setIsInstalled(window.matchMedia("(display-mode: standalone)").matches)
+  }, [])
 
   return (
     <>
@@ -169,6 +188,13 @@ export default function ArenaLoginPage() {
             <p className="text-sm text-violet-200 text-center mb-1">Masukkan email untuk menerima link reset password</p>
             <input
               type="email"
+              name="email"
+              autoComplete="email"
+              inputMode="email"
+              autoCapitalize="none"
+              autoCorrect="off"
+              spellCheck={false}
+              enterKeyHint="send"
               placeholder="Surel"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -192,22 +218,56 @@ export default function ArenaLoginPage() {
           </form>
         ) : (
           <form onSubmit={handleLogin} className="w-full max-w-sm space-y-3">
+            {/* name + autoComplete ada supaya pengelola sandi Android/Chrome mau
+                menawarkan isi otomatis DAN menawarkan simpan setelah berhasil.
+                Tanpa keduanya murid mengetik ulang alamat surel panjang setiap
+                kali masuk — keluhan yang paling sering muncul di ponsel.
+                autoCapitalize/autoCorrect dimatikan karena papan ketik Android
+                mengapitalkan kata pertama secara bawaan, dan surel yang berubah
+                jadi "Budi@..." ditolak tanpa penjelasan yang bisa dimengerti. */}
             <input
               type="email"
+              name="email"
+              autoComplete="email"
+              inputMode="email"
+              autoCapitalize="none"
+              autoCorrect="off"
+              spellCheck={false}
+              enterKeyHint="next"
               placeholder="Surel"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="w-full px-4 py-3.5 rounded-xl bg-white/15 border border-white/20 text-white placeholder-violet-300/70 text-sm focus:outline-none focus:ring-2 focus:ring-white/40 focus:bg-white/20 transition-all"
               required
             />
-            <input
-              type="password"
-              placeholder="Kata Sandi"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-3.5 rounded-xl bg-white/15 border border-white/20 text-white placeholder-violet-300/70 text-sm focus:outline-none focus:ring-2 focus:ring-white/40 focus:bg-white/20 transition-all"
-              required
-            />
+
+            <div className="relative">
+              <input
+                type={lihatSandi ? "text" : "password"}
+                name="password"
+                autoComplete="current-password"
+                enterKeyHint="go"
+                placeholder="Kata Sandi"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full px-4 py-3.5 pr-12 rounded-xl bg-white/15 border border-white/20 text-white placeholder-violet-300/70 text-sm focus:outline-none focus:ring-2 focus:ring-white/40 focus:bg-white/20 transition-all"
+                required
+              />
+              {/* Tombol lihat sandi. Di ponsel, sandi yang tak terlihat adalah
+                  sumber kegagalan masuk yang paling sering pada anak — mereka
+                  tidak bisa membedakan salah ketik dari sandi yang keliru.
+                  Ukurannya 44px agar nyaman disentuh jempol. */}
+              <button
+                type="button"
+                onClick={() => setLihatSandi((v) => !v)}
+                aria-label={lihatSandi ? "Sembunyikan kata sandi" : "Lihat kata sandi"}
+                aria-pressed={lihatSandi}
+                className="absolute right-1 top-1/2 -translate-y-1/2 h-11 w-11 flex items-center justify-center rounded-lg text-violet-200 hover:text-white active:scale-95 transition-all"
+              >
+                {lihatSandi ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+              </button>
+            </div>
+
             <div className="flex justify-end -mt-1">
               <button
                 type="button"
@@ -242,12 +302,19 @@ export default function ArenaLoginPage() {
           Lanjut dengan Google
         </button>
 
-        <p className="text-xs text-violet-300/70 mt-6 text-center">
-          Belum punya akun?{" "}
-          <a href="/register" className="text-white font-semibold underline underline-offset-2">
-            Daftar
+        {/* Daftar dinaikkan jadi tombol utuh. Sebelumnya ia teks 12px berwarna
+            violet pudar di atas latar violet — nyaris tak terbaca di layar
+            ponsel, padahal ini satu-satunya jalan bagi murid yang belum punya
+            akun. Kalau jalan masuk itu tak terlihat, mereka berhenti di sini. */}
+        <div className="w-full max-w-sm mt-6 text-center">
+          <p className="text-sm text-violet-200 mb-2">Belum punya akun?</p>
+          <a
+            href={daftarHref}
+            className="block w-full py-3.5 rounded-xl border-2 border-white/40 text-white font-bold text-sm hover:bg-white/10 active:scale-[0.98] transition-all"
+          >
+            Daftar Akun Baru
           </a>
-        </p>
+        </div>
       </div>
 
       {!isInstalled && (
