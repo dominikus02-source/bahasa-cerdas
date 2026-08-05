@@ -150,11 +150,44 @@ export async function updateSession(request: NextRequest, nonce?: string) {
   // arena-flavoured login instead. Same screen, reachable without leaving scope.
   const loginPath = pathname.startsWith("/arena") ? "/arena/login" : "/login";
 
+  // `/arena` adalah URL yang dibuka APK saat diluncurkan — satu-satunya jalur
+  // Arena yang sampai ke pemeriksaan auth jaringan di bawah, karena semua
+  // `/arena/...` lainnya sudah tersaring sebagai selfAuth di atas.
+  //
+  // Cold start ponsel adalah saat jaringan paling belum siap, jadi justru di
+  // sinilah panggilan ke server Auth paling sering gagal. Perlakuan lama —
+  // buang cookie lalu lempar ke login — mengubah gangguan sedetik menjadi
+  // logout permanen: murid menutup APK, membukanya lagi, dan harus mengetik
+  // sandi dari awal.
+  //
+  // Untuk path ini saja, kegagalan MENGHUBUNGI Auth dibiarkan lewat tanpa
+  // menyentuh cookie. Itu aman karena app/arena/layout.tsx tetap menggerbangi
+  // halamannya, memakai getClaims() yang memverifikasi JWT secara LOKAL dan
+  // tidak butuh jaringan. Kalau sesinya memang sudah tidak sah, layout yang
+  // mengarahkannya ke /arena/login — tidak ada celah yang terbuka.
+  //
+  // Sengaja TIDAK diberlakukan untuk path lain: mereka tidak punya gerbang
+  // tingkat halaman, dan membiarkannya lewat berarti membuka halaman tanpa auth.
+  // Jawaban PASTI "tidak ada sesi" (cabang !user di bawah) tetap membuang cookie
+  // seperti semula — itu pemutus loop-nya, dan mencabutnya pernah mematikan
+  // login total (lihat riwayat c2cff46).
+  const gerbangDiLayout = pathname === "/arena";
+
   let user: any = null;
   try {
     const result = await supabase.auth.getUser();
     user = result.data?.user ?? null;
+    // supabase-js membalas { user: null, error } tanpa melempar untuk 429 dan
+    // gangguan jaringan — bentuk kegagalan yang sama, hanya jalurnya berbeda.
+    if (!user && result.error && gerbangDiLayout) {
+      console.warn("Auth tak terjangkau di /arena, sesi dipertahankan:", result.error.message);
+      return supabaseResponse;
+    }
   } catch (e) {
+    if (gerbangDiLayout) {
+      console.warn("Auth tak terjangkau di /arena, sesi dipertahankan:", e);
+      return supabaseResponse;
+    }
     console.warn("Auth getUser failed, redirecting to login:", e);
     const response = NextResponse.redirect(new URL(loginPath, request.url));
     request.cookies.getAll()
