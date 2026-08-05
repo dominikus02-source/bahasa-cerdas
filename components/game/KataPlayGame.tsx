@@ -80,6 +80,30 @@ function pickQuestions(level: KataPlayLevel, count: number): KataPlayQuestion[] 
   return shuffled.slice(0, Math.min(count, shuffled.length))
 }
 
+// Acak urutan opsi jawaban per ronde supaya kunci tidak selalu di posisi yang
+// sama. Kunci dipertahankan sebagai TEKS opsi (di-normalisasi bila ternyata
+// tertulis sebagai indeks) sehingga handleAnswer tidak perlu diubah.
+function shuffleKataPlayQuestion(q: KataPlayQuestion): KataPlayQuestion {
+  const asText = q.options.includes(q.correctAnswer)
+    ? q.correctAnswer
+    : (q.options[parseInt(q.correctAnswer)] ?? q.correctAnswer)
+  const idx = q.options.map((_, i) => i)
+  for (let i = idx.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[idx[i], idx[j]] = [idx[j], idx[i]]
+  }
+  return { ...q, correctAnswer: asText, options: idx.map((i) => q.options[i]) }
+}
+
+type XpServerResult = {
+  xpEarned: number
+  boosted: boolean
+  kuotaHabis: boolean
+  levelUp: boolean
+  newLevel: number
+  totalXp: number
+}
+
 export default function KataPlayGame({ hideBackButton }: { hideBackButton?: boolean }) {
   const [phase, setPhase] = useState<Phase>("splash")
   useEffect(() => { if (phase === "playing") startBGM(); else stopBGM(); return () => stopBGM() }, [phase])
@@ -98,6 +122,7 @@ export default function KataPlayGame({ hideBackButton }: { hideBackButton?: bool
   const [feedback, setFeedback] = useState<{ correct: boolean; message: string } | null>(null)
   const [shakeInput, setShakeInput] = useState(false)
   const [agentSummary, setAgentSummary] = useState<Record<string, string | number> | null>(null)
+  const [xpResult, setXpResult] = useState<XpServerResult | null>(null)
   const scoreRef = useRef(0)
   const correctRef = useRef(0)
   const wrongRef = useRef(0)
@@ -112,9 +137,9 @@ export default function KataPlayGame({ hideBackButton }: { hideBackButton?: bool
     }
   }, [])
 
-  async function saveXpToServer(earnedXp: number) {
+  async function saveXpToServer(earnedXp: number): Promise<XpServerResult | null> {
     try {
-      await fetch("/api/game/xp", {
+      const res = await fetch("/api/game/xp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -127,9 +152,23 @@ export default function KataPlayGame({ hideBackButton }: { hideBackButton?: bool
           supabaseId: supabaseIdRef.current,
         }),
       })
+      if (res.ok) {
+        const data = await res.json()
+        const hasil: XpServerResult = {
+          xpEarned: Number(data.xpEarned) || 0,
+          boosted: Boolean(data.boosted),
+          kuotaHabis: Boolean(data.kuotaHabis),
+          levelUp: Boolean(data.levelUp),
+          newLevel: Number(data.newLevel) || 0,
+          totalXp: Number(data.totalXp) || 0,
+        }
+        setXpResult(hasil)
+        return hasil
+      }
     } catch (e) {
       console.error("Failed to save KataPlay XP:", e)
     }
+    return null
   }
 
   useEffect(() => {
@@ -168,7 +207,7 @@ export default function KataPlayGame({ hideBackButton }: { hideBackButton?: bool
     const pool = lesson.questions
     const shuffled = [...pool].sort(() => Math.random() - 0.5)
     const selected = shuffled.slice(0, Math.min(TotalRounds, shuffled.length))
-    setQuestions(selected)
+    setQuestions(selected.map(shuffleKataPlayQuestion))
     setCurrentQ(0)
     setLives(engine.getContext().difficulty.livesGranted)
     setScore(0)
@@ -189,7 +228,7 @@ export default function KataPlayGame({ hideBackButton }: { hideBackButton?: bool
     const engine = getEngine()
     engine.startSession(level, null, true)
     const picked = pickQuestions(level, TotalRounds)
-    setQuestions(picked)
+    setQuestions(picked.map(shuffleKataPlayQuestion))
     setCurrentQ(0)
     setLives(engine.getContext().difficulty.livesGranted)
     setScore(0)
@@ -307,6 +346,7 @@ export default function KataPlayGame({ hideBackButton }: { hideBackButton?: bool
     setSelected(null)
     setFeedback(null)
     setAgentSummary(null)
+    setXpResult(null)
   }
 
   // ── Splash ──
@@ -517,7 +557,7 @@ export default function KataPlayGame({ hideBackButton }: { hideBackButton?: bool
                 </motion.div>
               )}
               <div className="flex items-center gap-1">
-                {[...Array(3)].map((_, i) => (
+                {[...Array(5)].map((_, i) => (
                   <motion.div
                     key={i}
                     initial={i === lives ? { scale: 1.4 } : { scale: 1 }}
@@ -720,8 +760,20 @@ export default function KataPlayGame({ hideBackButton }: { hideBackButton?: bool
               <Sparkles size={14} className="text-amber-400" />
               <span className="text-sm text-[#7C7A9E]">XP Didapat</span>
             </div>
-            <span className="font-bold text-amber-400">+{totalXp}</span>
+            <div className="flex items-center gap-2">
+              {xpResult?.levelUp && (
+                <span className="bg-amber-300 text-amber-900 px-2 py-0.5 rounded-full text-[10px] font-extrabold inline-flex items-center gap-1">
+                  <Sparkles size={10} /> Naik ke Level {xpResult.newLevel}!
+                </span>
+              )}
+              <span className="font-bold text-amber-400">
+                +{xpResult ? xpResult.xpEarned : totalXp}
+              </span>
+            </div>
           </div>
+          {xpResult?.kuotaHabis && (
+            <p className="text-[11px] text-amber-400/80">Kuota XP harian sudah habis, XP ditahan sampai besok.</p>
+          )}
           {agentSummary && (
             <>
               <div className="h-px" style={{ background: "rgba(255,255,255,0.04)" }} />

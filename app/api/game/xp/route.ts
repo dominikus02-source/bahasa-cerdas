@@ -5,6 +5,14 @@ import { getUser } from "@/lib/supabase/server"
 import { rateLimitRoute } from "@/lib/rate-limit"
 import { awardXp } from "@/lib/award-xp"
 
+// Skor wajar maksimum per jenis game — di atas ini klien berbohong.
+// KataPlay: 10 ronde × (50 + streak×10) = maks 1050. Jaring pengaman kedua
+// setelah batas 120 XP/submit (awardXp), supaya angka XP yang dicairkan
+// konsisten dengan hasil permainan jujur.
+const MAX_SCORE_PER_GAME: Record<string, number> = {
+  KATAPLAY: 1100,
+}
+
 export async function POST(req: NextRequest) {
   try {
     const dbUser = await getUser()
@@ -28,7 +36,11 @@ export async function POST(req: NextRequest) {
     // Dulu di sini ada `xpEarned ?? ...` yang memakai angka kiriman klien apa
     // adanya — siapa pun bisa POST xpEarned sebesar apa pun. Tiga murid memakai
     // itu untuk mencapai Level 751 (~375.000 XP).
-    const skor = Number.isFinite(score) && score > 0 ? Math.floor(score) : 0
+    let skor = Number.isFinite(score) && score > 0 ? Math.floor(score) : 0
+    // Pangkas skor ke nilai wajar untuk jenis game ini (KATAPLAY maks 1100).
+    // XP maksimum legal KataPlay = 1050 → 105 XP, di bawah batas 120/submit.
+    const batasSkor = MAX_SCORE_PER_GAME[gameType as string]
+    if (batasSkor && skor > batasSkor) skor = batasSkor
     // Reference UNIK per permainan (bukan gameType yang konstan) — idempotensi
     // (userId, source, reference) di XPTransaction tidak boleh menelan XP semua
     // permainan berikutnya. Dulu reference = gameType: XP cair sekali seumur
