@@ -2,9 +2,9 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { Bell } from "lucide-react";
-import { GlassCard, useRelativeTime } from "./ui";
+import { GlassCard } from "./ui";
 import type { PlayerNotificationView } from "@/lib/gamification/client-types";
-import { BadgeIcon } from "@/components/gamification/BadgeIcon";
+import { NotificationCard } from "@/components/notifikasi/NotificationCard";
 
 /** Pusat notifikasi pemain — agregasi event reward terbaru. */
 export function NotificationCenter({ compact = false }: { compact?: boolean }) {
@@ -61,7 +61,11 @@ export function NotificationCenter({ compact = false }: { compact?: boolean }) {
       ) : (
         <div className="space-y-2">
           {visible.map((n) => (
-            <NotificationRow key={n.id} n={n} />
+            <NotificationCard
+              key={n.id}
+              n={{ id: n.id, title: n.title, body: n.body, type: n.type, isRead: true, createdAt: n.createdAt }}
+              dense
+            />
           ))}
           {compact && notifications.length > 5 && (
             <p className="pt-1 text-center text-xs font-semibold text-[var(--px-text-faint)]">Lihat semua</p>
@@ -69,19 +73,5 @@ export function NotificationCenter({ compact = false }: { compact?: boolean }) {
         </div>
       )}
     </GlassCard>
-  );
-}
-
-function NotificationRow({ n }: { n: PlayerNotificationView }) {
-  const time = useRelativeTime(n.createdAt);
-  return (
-    <div className="flex items-start gap-3 rounded-xl border border-[var(--px-border)] bg-white/[0.04] px-3 py-2.5">
-      <span className="mt-0.5"><BadgeIcon icon={n.icon} size={22} /></span>
-      <div className="min-w-0 flex-1">
-        <p className="text-sm font-bold text-[var(--px-text)]">{n.title}</p>
-        <p className="line-clamp-2 text-xs text-[var(--px-text-dim)]">{n.body}</p>
-        <p className="mt-0.5 text-[10px] text-[var(--px-text-faint)]">{time}</p>
-      </div>
-    </div>
   );
 }

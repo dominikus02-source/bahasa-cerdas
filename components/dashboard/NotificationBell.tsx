@@ -1,18 +1,13 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
-import { Bell, Trash2, CheckCheck, ExternalLink, X } from "lucide-react";
+import { Bell, CheckCheck, ExternalLink } from "lucide-react";
 import Link from "next/link";
 import { subscribeNotifications } from "@/lib/supabase/realtime";
+import { NotificationCard, type NotifikasiItem } from "@/components/notifikasi/NotificationCard";
 
-interface Notification {
-  id: string;
-  title: string;
-  body: string;
-  type: string;
-  isRead: boolean;
+interface Notification extends NotifikasiItem {
   data: any;
-  createdAt: string;
 }
 
 export function NotificationBell() {
@@ -123,24 +118,6 @@ export function NotificationBell() {
     setUnreadCount(0);
   };
 
-  const getTypeColor = (type: string) => {
-    switch (type) {
-      case "success": return "bg-green-100 text-green-600";
-      case "warning": return "bg-amber-100 text-amber-600";
-      case "error": return "bg-red-100 text-red-600";
-      default: return "bg-blue-100 text-blue-600";
-    }
-  };
-
-  const getTypeIcon = (type: string) => {
-    switch (type) {
-      case "success": return "✓";
-      case "warning": return "⚠";
-      case "error": return "✕";
-      default: return "ℹ";
-    }
-  };
-
   return (
     <div className="relative" ref={ref}>
       <button
@@ -184,36 +161,11 @@ export function NotificationBell() {
                 <p className="text-sm text-slate-400">Tidak ada notifikasi</p>
               </div>
             ) : (
-              notifications.map((n) => (
-                <div
-                  key={n.id}
-                  className={`p-3 border-b border-slate-50 hover:bg-slate-50 transition-colors ${!n.isRead ? "bg-blue-50/50" : ""}`}
-                >
-                  <div className="flex items-start gap-2">
-                    <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs shrink-0 mt-0.5 ${getTypeColor(n.type)}`}>
-                      {getTypeIcon(n.type)}
-                    </span>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-slate-900">{n.title}</p>
-                      <p className="text-xs text-slate-500 mt-0.5">{n.body}</p>
-                      <p className="text-[10px] text-slate-400 mt-1">
-                        {new Date(n.createdAt).toLocaleDateString("id-ID", {
-                          day: "numeric",
-                          month: "short",
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        })}
-                      </p>
-                    </div>
-                    <button
-                      onClick={() => handleDelete(n.id)}
-                      className="p-1 hover:bg-red-100 rounded transition-colors shrink-0"
-                    >
-                      <X className="w-3.5 h-3.5 text-slate-400 hover:text-red-500" />
-                    </button>
-                  </div>
-                </div>
-              ))
+              <div className="max-h-80 overflow-y-auto p-2 space-y-1.5">
+                {notifications.map((n) => (
+                  <NotificationCard key={n.id} n={n} dense onDelete={handleDelete} />
+                ))}
+              </div>
             )}
           </div>
           {notifications.length > 0 && (
