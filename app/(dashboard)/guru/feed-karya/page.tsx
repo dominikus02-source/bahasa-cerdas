@@ -267,17 +267,24 @@ export default function GuruFeedKaryaPage() {
   const toggleFeatured = async (karya: Karya, e: React.MouseEvent) => {
     e.stopPropagation();
     setFeatureLoading(karya.id);
-    const res = await fetch(`/api/siswa/karya/${karya.id}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ isFeatured: !karya.isFeatured }),
-    });
-    if (res.ok) {
-      const data = await res.json();
-      setKaryaList(prev => prev.map(k =>
-        k.id === karya.id ? { ...k, isFeatured: data.karya.isFeatured } : k
-      ));
-      setModalKarya(prev => prev?.id === karya.id ? { ...prev, isFeatured: data.karya.isFeatured } : prev);
+    try {
+      const res = await fetch(`/api/siswa/karya/${karya.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ isFeatured: !karya.isFeatured }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setKaryaList(prev => prev.map(k =>
+          k.id === karya.id ? { ...k, isFeatured: data.karya.isFeatured } : k
+        ));
+        setModalKarya(prev => prev?.id === karya.id ? { ...prev, isFeatured: data.karya.isFeatured } : prev);
+      } else {
+        const data = await res.json().catch(() => ({}));
+        alert(data.error || "Gagal mengubah status pilihan");
+      }
+    } catch {
+      alert("Gagal mengubah status pilihan");
     }
     setFeatureLoading(null);
   };

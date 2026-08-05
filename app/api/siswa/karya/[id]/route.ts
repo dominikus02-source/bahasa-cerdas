@@ -71,6 +71,32 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
   }
 }
 
+export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  try {
+    const user = await getUser();
+    if (!user) return NextResponse.json({ error: "Silakan login" }, { status: 401 });
+    if (user.role !== "GURU" && !user.isFounder && user.role !== "ADMIN") {
+      return NextResponse.json({ error: "Hanya guru yang bisa memilih karya terbaik" }, { status: 403 });
+    }
+
+    const { id } = await params;
+    const body = await req.json().catch(() => ({}));
+    if (typeof body.isFeatured !== "boolean") {
+      return NextResponse.json({ error: "isFeatured wajib diisi boolean" }, { status: 400 });
+    }
+
+    const karya = await db.studentKarya.update({
+      where: { id },
+      data: { isFeatured: body.isFeatured },
+    });
+
+    return NextResponse.json({ karya });
+  } catch (error) {
+    console.error("Error toggling featured karya:", error);
+    return NextResponse.json({ error: "Gagal mengubah status pilihan" }, { status: 500 });
+  }
+}
+
 export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const user = await getUser();
