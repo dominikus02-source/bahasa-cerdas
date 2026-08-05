@@ -1,8 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
+import { getUser } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 
 // Menyimpan/mencabut langganan Web Push satu perangkat.
+//
+// Identitas diambil lewat getUser() dari lib/supabase/server — BUKAN
+// supabase.auth.getUser() langsung. Versi pertama route ini memakai panggilan
+// langsung dan selalu membalas 401 meski murid jelas sudah masuk: layout Arena
+// (yang memakai helper) merender normal pada detik yang sama. Helper itu
+// memverifikasi JWT secara lokal lewat getClaims(); panggilan langsung menembak
+// server Auth Supabase tiap kali, pola yang sudah dibuang dari repo ini setelah
+// menyebabkan 429 massal pada 28 Juli 2026.
 //
 // Endpoint dari browser adalah identitas perangkat, dan ia unik di tabel — jadi
 // upsert, bukan create: murid yang membuka ulang aplikasi mengirim endpoint yang
@@ -10,14 +18,8 @@ import { db } from "@/lib/db";
 
 export async function POST(req: NextRequest) {
   try {
-    const supabase = await createClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    const user = await getUser();
     if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-
-    const dbUser = await db.user.findUnique({ where: { supabaseId: user.id }, select: { id: true } });
-    if (!dbUser) return NextResponse.json({ error: "User tidak ditemukan" }, { status: 404 });
 
     const body = await req.json();
     const endpoint: string | undefined = body?.endpoint;
@@ -33,8 +35,8 @@ export async function POST(req: NextRequest) {
       // Endpoint bisa berpindah pemilik: satu HP dipakai bergantian dua murid
       // (lumrah di rumah). userId ikut diperbarui supaya notifikasi tidak
       // menyusul ke akun sebelumnya.
-      update: { userId: dbUser.id, p256dh, auth, lastOkAt: new Date() },
-      create: { userId: dbUser.id, endpoint, p256dh, auth },
+      update: { userId: user.id, p256dh, auth, lastOkAt: new Date() },
+      create: { userId: user.id, endpoint, p256dh, auth },
     });
 
     return NextResponse.json({ ok: true });
@@ -60,22 +62,16 @@ export async function POST(req: NextRequest) {
 
 export async function DELETE(req: NextRequest) {
   try {
-    const supabase = await createClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    const user = await getUser();
     if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const body = await req.json().catch(() => ({}));
     const endpoint: string | undefined = body?.endpoint;
     if (!endpoint) return NextResponse.json({ error: "endpoint wajib" }, { status: 400 });
 
-    const dbUser = await db.user.findUnique({ where: { supabaseId: user.id }, select: { id: true } });
-    if (!dbUser) return NextResponse.json({ error: "User tidak ditemukan" }, { status: 404 });
-
     // Dibatasi pada userId: tanpa itu siapa pun yang tahu sebuah endpoint bisa
     // mencabut notifikasi milik murid lain.
-    await db.pushSubscription.deleteMany({ where: { endpoint, userId: dbUser.id } });
+    await db.pushSubscription.deleteMany({ where: { endpoint, userId: user.id } });
 
     return NextResponse.json({ ok: true });
   } catch (e) {
