@@ -27,22 +27,13 @@ export default function AnnouncementSlider({ items }: { items: LandingAnnounceme
   if (items.length === 0) return null;
   const item = items[index];
 
-  const overlay = (b: LandingAnnouncement) => (
-    <div className="absolute inset-x-0 bottom-0 z-10 p-4 sm:p-5 bg-gradient-to-t from-black/80 via-black/45 to-transparent">
-      <div className="flex items-end justify-between gap-3">
-        <div className="min-w-0">
-          <h3 className="text-white font-bold text-base sm:text-lg leading-snug line-clamp-2">{b.title}</h3>
-          <p className="text-white/85 text-xs sm:text-sm mt-1 line-clamp-2 leading-relaxed">{b.subtitle}</p>
-        </div>
-        {b.buttonText && (
-          <span className="shrink-0 inline-flex items-center gap-1.5 bg-white text-zinc-900 font-semibold text-xs sm:text-sm px-3.5 py-2 rounded-lg shadow-lg group-hover:gap-2.5 transition-all">
-            {b.buttonText}
-            <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
-          </span>
-        )}
-      </div>
-    </div>
-  );
+  const overlay = (b: LandingAnnouncement) =>
+    b.buttonText ? (
+      <span className="absolute bottom-4 right-4 z-10 inline-flex items-center gap-1.5 bg-white text-zinc-900 font-semibold text-xs sm:text-sm px-3.5 py-2 rounded-lg shadow-lg group-hover:gap-2.5 transition-all">
+        {b.buttonText}
+        <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
+      </span>
+    ) : null;
 
   return (
     <div
