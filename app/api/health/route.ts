@@ -28,12 +28,26 @@ export async function GET() {
       tabelPush = false;
     }
 
+    // Jumlah perangkat yang benar-benar tersimpan. Tombol di tab Pemain membaca
+    // pushManager.getSubscription() — keadaan milik BROWSER — sehingga ia bisa
+    // tampak "aktif" padahal barisnya tak pernah sampai ke server, dan notifikasi
+    // tidak akan pernah terkirim. Hanya angka, tanpa data siapa pun.
+    let langgananPush = 0;
+    if (tabelPush) {
+      try {
+        langgananPush = await db.pushSubscription.count();
+      } catch {
+        langgananPush = -1;
+      }
+    }
+
     return NextResponse.json(
       {
         status: "ok",
         db: "up",
         push: {
           tabel: tabelPush,
+          langganan: langgananPush,
           vapidPublik: !!process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY,
           vapidPrivat: !!process.env.VAPID_PRIVATE_KEY,
         },
