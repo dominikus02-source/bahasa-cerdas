@@ -135,7 +135,7 @@ export default function CommentSection({ karyaId, initialComments, initialCount,
     const isOwner = c.user.id === currentUserId
     return (
       <div key={c.id} className={`flex gap-2.5 ${isReply ? "mt-2.5" : ""}`}>
-        <Link href={`/profile/${c.user.id}`} className="shrink-0">
+        <Link href={`/arena/profile/${c.user.id}`} className="shrink-0">
           <UserAvatar
             size={isReply ? 24 : 32}
             avatar={c.user.avatar}
@@ -151,7 +151,7 @@ export default function CommentSection({ karyaId, initialComments, initialCount,
             <div className="flex items-center gap-2 mb-0.5">
               <UserName
                 name={nameOf(c.user)}
-                href={`/profile/${c.user.id}`}
+                href={`/arena/profile/${c.user.id}`}
                 color={c.user.equippedNameColor}
                 badge={c.user.equippedBadge}
                 className="text-xs font-bold text-gray-900 hover:text-violet-600"
