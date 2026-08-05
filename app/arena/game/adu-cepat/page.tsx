@@ -24,6 +24,9 @@ export default function AduCepatPage() {
   const [xpSaved, setXpSaved] = useState(false)
   const [userData, setUserData] = useState<any>(null)
   const [queueMsg, setQueueMsg] = useState("Mencari lawan sepadan...")
+  // Server gim berjalan di VPS terpisah. Kalau ia mati, tanpa keadaan ini layar
+  // hanya menampilkan "mencari lawan" selamanya.
+  const [serverMati, setServerMati] = useState(false)
   const resultRef = useRef<any[]>([])
 
   useEffect(() => {
@@ -39,6 +42,8 @@ export default function AduCepatPage() {
   useEffect(() => {
     if (!userData?.supabaseId) return
     gameSocket.connect(userData.supabaseId, userData.fullName || "Pemain", userData.avatar || "")
+
+    const unsubGagal = gameSocket.onGagalSambung(() => setServerMati(true))
 
     const unsubFound = gameSocket.onMatchFound((data) => {
       setRoomCode(data.roomCode)
@@ -74,7 +79,7 @@ export default function AduCepatPage() {
     })
 
     return () => {
-      unsubFound(); unsubCount(); unsubQueue(); unsubTimeout(); unsubFinished()
+      unsubFound(); unsubCount(); unsubQueue(); unsubTimeout(); unsubFinished(); unsubGagal()
     }
   }, [userData])
 
@@ -146,6 +151,30 @@ export default function AduCepatPage() {
     gameSocket.disconnect()
     window.location.href = "/arena/game"
   }, [])
+
+  // Layar berhenti, bukan pesan kecil di pojok: tanpa server gim tidak ada satu
+  // pun yang bisa dilakukan di halaman ini, dan membiarkan animasi "mencari
+  // lawan" berputar di belakangnya hanya membuat murid menunggu sia-sia.
+  if (serverMati) {
+    return (
+      <div className="game-fullscreen min-h-screen bg-gradient-to-b from-slate-900 via-violet-950 to-slate-900 text-white flex items-center justify-center p-6">
+        <div className="max-w-sm text-center">
+          <div className="text-5xl mb-4">🔌</div>
+          <h1 className="text-xl font-extrabold mb-2">Server gim sedang tidak aktif</h1>
+          <p className="text-sm text-white/70 leading-relaxed">
+            Adu Cepat butuh sambungan ke server pertandingan, dan sekarang server itu tidak bisa
+            dihubungi. Gim lain di Arena tetap bisa dimainkan seperti biasa.
+          </p>
+          <button
+            onClick={handleBack}
+            className="mt-6 px-6 py-3 rounded-xl bg-white text-slate-900 font-bold active:scale-95 transition-transform"
+          >
+            Kembali ke daftar gim
+          </button>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="game-fullscreen min-h-screen bg-gradient-to-b from-slate-900 via-violet-950 to-slate-900 text-white">

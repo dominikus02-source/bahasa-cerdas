@@ -4,6 +4,12 @@ import { io, Socket } from 'socket.io-client';
 
 let socket: Socket | null = null;
 
+// Keadaan "server gim tak terjangkau", dipisah dari socket itu sendiri supaya
+// halaman yang dibuka SETELAH kegagalan terjadi tetap bisa menanyakannya —
+// bukan hanya yang kebetulan sedang mendengarkan saat peristiwanya lewat.
+let gagalSambung = false;
+const pendengarGagal = new Set<() => void>();
+
 export const gameSocket = {
   connect(userId?: string, userName?: string, avatarUrl?: string) {
     if (socket?.connected) return socket;
@@ -12,10 +18,27 @@ export const gameSocket = {
     socket = io(serverUrl, {
       transports: ['websocket', 'polling'],
       autoConnect: true,
+      // Batas eksplisit. Tanpa ini socket.io mencoba menyambung selamanya tanpa
+      // pernah memberi tahu siapa pun, sehingga layar gim menggantung di keadaan
+      // "menghubungkan" — murid membacanya sebagai gim yang tidak bisa dibuka.
+      // Lebih baik menyerah cepat lalu mengatakannya.
+      timeout: 8000,
+      reconnectionAttempts: 3,
+      reconnectionDelay: 1000,
     });
 
     socket.on('connect', () => {
+      gagalSambung = false;
       console.log('[Socket] Connected to game server');
+    });
+
+    // Kegagalan menyambung HARUS bisa dilihat UI. Server gim berjalan di VPS
+    // terpisah dari situs ini; kalau ia mati, dua gim yang memakainya (adu-cepat
+    // dan kuis-tempur) tidak punya cara lain memberitahu murid.
+    socket.on('connect_error', (err: Error) => {
+      gagalSambung = true;
+      console.warn('[Socket] Gagal menyambung ke server gim:', err?.message);
+      pendengarGagal.forEach((cb) => cb());
     });
 
     socket.on('disconnect', () => {
@@ -38,6 +61,22 @@ export const gameSocket = {
 
   getSocket() {
     return socket;
+  },
+
+  /** True kalau percobaan menyambung terakhir gagal (server gim mati/tak terjangkau). */
+  gagalMenyambung() {
+    return gagalSambung;
+  },
+
+  /** Berlangganan kabar gagal-sambung. Mengembalikan fungsi untuk berhenti. */
+  onGagalSambung(callback: () => void) {
+    pendengarGagal.add(callback);
+    // Dipanggil langsung kalau kegagalannya sudah terjadi sebelum komponen ini
+    // sempat berlangganan — kalau tidak, layar tetap menggantung diam.
+    if (gagalSambung) callback();
+    return () => {
+      pendengarGagal.delete(callback);
+    };
   },
 
   on(event: string, callback: (...args: any[]) => void) {

@@ -317,7 +317,7 @@ function FeedContent() {
               <div key={k.id} className="bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-md transition-all">
                 {/* Header */}
                 <div className="flex items-center gap-3 px-5 pt-4 pb-2">
-                  <Link href={`/profile/${k.user.id}`} className="shrink-0">
+                  <Link href={`/arena/profile/${k.user.id}`} className="shrink-0">
                     <UserAvatar
                       size={36}
                       avatar={k.user.avatar}
@@ -329,7 +329,7 @@ function FeedContent() {
                   <div className="flex-1 min-w-0">
                     <UserName
                       name={nameOf(k.user)}
-                      href={`/profile/${k.user.id}`}
+                      href={`/arena/profile/${k.user.id}`}
                       color={k.user.equippedNameColor}
                       badge={k.user.equippedBadge}
                       className="text-sm font-semibold text-gray-900 hover:text-violet-600"

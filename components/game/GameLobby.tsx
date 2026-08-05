@@ -104,14 +104,28 @@ export default function GameLobby({ isHost = false, roomCode: initialCode, onSta
   const [userName, setUserName] = useState("");
   const [userId, setUserId] = useState("");
   const [isFullscreen, setIsFullscreen] = useState(false);
+  // Server pertandingan berjalan di VPS terpisah. Tanpa keadaan ini, lobinya
+  // hanya menampilkan daftar pemain kosong selamanya saat server mati.
+  const [serverMati, setServerMati] = useState(false);
 
-  const toggleFullscreen = () => {
-    if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen();
-      setIsFullscreen(true);
-    } else {
-      document.exitFullscreen();
-      setIsFullscreen(false);
+  // requestFullscreen() mengembalikan Promise dan SERING ditolak — di dalam APK
+  // (TWA) layar penuh kerap tidak diizinkan sama sekali. Versi lama mengabaikan
+  // Promise itu lalu tetap menyetel isFullscreen(true), sehingga tombolnya
+  // berubah jadi "Keluar Layar Penuh" padahal layarnya tidak pernah penuh.
+  // Keadaan hanya diubah setelah browser benar-benar menyetujui.
+  const toggleFullscreen = async () => {
+    try {
+      if (!document.fullscreenElement) {
+        await document.documentElement.requestFullscreen();
+        setIsFullscreen(true);
+      } else {
+        await document.exitFullscreen();
+        setIsFullscreen(false);
+      }
+    } catch {
+      // Ditolak browser — biarkan tampilan apa adanya. Listener
+      // "fullscreenchange" di bawah tetap menjadi sumber kebenarannya.
+      setIsFullscreen(!!document.fullscreenElement);
     }
   };
 
@@ -166,6 +180,8 @@ export default function GameLobby({ isHost = false, roomCode: initialCode, onSta
     if (!userId) return;
     gameSocket.connect(userId, userName);
 
+    const unsubGagal = gameSocket.onGagalSambung(() => setServerMati(true));
+
     const unsub1 = gameSocket.onRoomCreated((data: any) => {
       setRoom(data);
       setCode(data.code);
@@ -180,7 +196,7 @@ export default function GameLobby({ isHost = false, roomCode: initialCode, onSta
       setPlayers(data);
     });
 
-    return () => { unsub1(); unsub2(); unsub3(); };
+    return () => { unsub1(); unsub2(); unsub3(); unsubGagal(); };
   }, [userId, userName]);
 
   const handleCreate = useCallback(() => {
@@ -221,6 +237,30 @@ export default function GameLobby({ isHost = false, roomCode: initialCode, onSta
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
+
+  // Layar berhenti, bukan lobi kosong: tanpa server pertandingan tidak ada satu
+  // pun tombol di halaman ini yang bisa bekerja, dan lobi yang menunggu pemain
+  // selamanya membuat murid mengira gimnya yang rusak.
+  if (serverMati && !room) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center p-6 text-white">
+        <div className="max-w-sm text-center">
+          <div className="text-5xl mb-4">🔌</div>
+          <h1 className="text-xl font-extrabold mb-2">Server gim sedang tidak aktif</h1>
+          <p className="text-sm text-white/70 leading-relaxed">
+            Gim ini butuh sambungan ke server pertandingan, dan sekarang server itu tidak bisa
+            dihubungi. Gim lain di Arena tetap bisa dimainkan seperti biasa.
+          </p>
+          <a
+            href="/arena/game"
+            className="mt-6 inline-block px-6 py-3 rounded-xl bg-white text-slate-900 font-bold active:scale-95 transition-transform"
+          >
+            Kembali ke daftar gim
+          </a>
+        </div>
+      </div>
+    );
+  }
 
   if (room) {
     const modeInfo = GAME_MODES.find((m) => m.id === (room.gameType || selectedMode));
