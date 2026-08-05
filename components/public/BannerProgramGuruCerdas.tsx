@@ -12,7 +12,7 @@ export default function BannerProgramGuruCerdas() {
   return (
     <Link
       href="/guru/berlangganan"
-      className="block relative w-full h-full min-h-44 lg:min-h-56 overflow-hidden rounded-2xl shadow-lg group"
+      className="block relative w-full overflow-hidden rounded-2xl shadow-lg group"
       aria-label="Program Guru Cerdas — jadi Guru Pro Rp 1.000/bulan"
     >
       {!broken ? (
@@ -20,11 +20,11 @@ export default function BannerProgramGuruCerdas() {
         <img
           src={BANNER_IMAGE}
           alt="Program Guru Cerdas — jadi Guru Pro Rp 1.000/bulan"
-          className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
+          className="w-full h-auto block transition-transform duration-300 group-hover:scale-[1.03]"
           onError={() => setBroken(true)}
         />
       ) : (
-        <div className="absolute inset-0 bg-gradient-to-r from-emerald-600 via-emerald-500 to-green-500 flex items-center px-6 sm:px-10">
+        <div className="relative w-full bg-gradient-to-r from-emerald-600 via-emerald-500 to-green-500 flex items-center px-6 py-10 sm:px-10 sm:py-14">
           <div className="absolute -right-6 -top-10 h-40 w-40 rounded-full bg-white/10" />
           <div className="absolute right-16 -bottom-12 h-32 w-32 rounded-full bg-white/10" />
           <div className="flex flex-col sm:flex-row sm:items-center gap-4 relative w-full">
