@@ -74,11 +74,40 @@ export function AktifkanNotifikasi() {
         applicationServerKey: urlBase64ToUint8Array(kunci),
       });
 
-      const res = await fetch("/api/push/subscribe", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(sub.toJSON()),
-      });
+      // Sekali ulang untuk kegagalan jaringan. "Failed to fetch" di ponsel paling
+      // sering berarti koneksi putus sesaat — persis saat pengguna baru menekan
+      // izin, jaringan seluler kerap sedang berpindah. Membuat mereka menekan
+      // tombolnya lagi justru berbahaya: penekanan berulang yang gagal adalah
+      // yang membuat browser memblokir izin secara permanen.
+      const kirim = () =>
+        fetch("/api/push/subscribe", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(sub.toJSON()),
+        });
+
+      let res: Response;
+      try {
+        res = await kirim();
+      } catch {
+        await new Promise((r) => setTimeout(r, 1200));
+        try {
+          res = await kirim();
+        } catch (e2: any) {
+          await sub.unsubscribe().catch(() => {});
+          // Origin ikut ditampilkan: kalau halaman termuat di apex
+          // (bahasacerdas.com) alih-alih www, permintaan kena redirect
+          // lintas-origin dan diblokir CSP — gejalanya sama persis dengan
+          // koneksi putus, tapi penyebab dan perbaikannya berbeda jauh.
+          setPesan(
+            `Tidak bisa menghubungi server dari perangkat ini (${e2?.name || "gagal jaringan"}). ` +
+              `Halaman ini terbuka di ${window.location.origin}. ` +
+              `Periksa koneksi lalu coba sekali lagi.`
+          );
+          setKeadaan("mati");
+          return;
+        }
+      }
 
       // Kalau server menolak, langganan browser dicabut lagi. Membiarkannya hidup
       // berarti perangkat merasa berlangganan padahal server tak akan pernah
