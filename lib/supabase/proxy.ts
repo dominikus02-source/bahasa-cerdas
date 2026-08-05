@@ -171,7 +171,16 @@ export async function updateSession(request: NextRequest, nonce?: string) {
   // Jawaban PASTI "tidak ada sesi" (cabang !user di bawah) tetap membuang cookie
   // seperti semula — itu pemutus loop-nya, dan mencabutnya pernah mematikan
   // login total (lihat riwayat c2cff46).
-  const gerbangDiLayout = pathname === "/arena";
+  // Syarat kedua WAJIB: hanya permintaan yang benar-benar MEMBAWA cookie sesi
+  // yang berhak diberi keringanan ini. Tanpa syarat itu, supabase-js membalas
+  // AuthSessionMissingError untuk pengunjung anonim — sebuah jawaban PASTI
+  // "tidak ada sesi" — dan kode ini akan salah membacanya sebagai "Auth tak
+  // terjangkau", lalu membiarkan siapa pun lewat tanpa login. Terpergok di
+  // preview: /arena membalas 200 untuk permintaan tanpa cookie, bukan 307.
+  const punyaCookieSesi = request.cookies
+    .getAll()
+    .some((c) => c.name.startsWith("sb-") || c.name.startsWith("supabase-"));
+  const gerbangDiLayout = pathname === "/arena" && punyaCookieSesi;
 
   let user: any = null;
   try {
