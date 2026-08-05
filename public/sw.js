@@ -6,6 +6,10 @@ const STATIC_CACHE = "bc-static-v3"
 const OFFLINE_URL = "/offline.html"
 const PRECACHE = ["/offline.html", "/manifest.json", "/icon-192.png"]
 
+// Terakhir kali halaman HTML gagal dimuat karena offline. Dipakai halaman
+// offline untuk mengembalikan pengguna ke tempat dia tadi, bukan ke beranda.
+self.__bc_pendingNav = null
+
 self.addEventListener("install", (event) => {
   event.waitUntil(
     caches.open(STATIC_CACHE)
@@ -25,6 +29,11 @@ self.addEventListener("activate", (event) => {
 
 self.addEventListener("message", (event) => {
   if (event.data === "SKIP_WAITING") self.skipWaiting()
+  // Halaman offline meminta URL yang gagal dimuat untuk dikembalikan pengguna
+  // ke sana setelah koneksi pulih.
+  if (event.data === "GET_PENDING_NAV" && event.source && event.source.postMessage) {
+    event.source.postMessage({ type: "PENDING_NAV", url: self.__bc_pendingNav || null })
+  }
 })
 
 self.addEventListener("fetch", (event) => {
@@ -57,7 +66,22 @@ self.addEventListener("fetch", (event) => {
 
   // HTML navigations: network-first, fall back to the offline page when offline.
   if (req.mode === "navigate") {
-    event.respondWith(fetch(req).catch(() => caches.match(OFFLINE_URL)))
+    event.respondWith(
+      fetch(req)
+        .then((res) => {
+          if (res.ok) self.__bc_pendingNav = null
+          return res
+        })
+        .catch(() => {
+          const url = new URL(req.url)
+          // Ingat ke mana pengguna sedang menuju supaya "Coba Lagi" mengembalikan
+          // ke halaman itu, bukan ke beranda. Jangan rekam halaman offline sendiri.
+          if (!url.pathname.includes("offline") && !url.pathname.startsWith("/_next/")) {
+            self.__bc_pendingNav = req.url
+          }
+          return caches.match(OFFLINE_URL)
+        })
+    )
     return
   }
 
@@ -81,7 +105,7 @@ self.addEventListener("push", (event) => {
     data = { body: event.data ? event.data.text() : "" }
   }
 
-  const title = data.title || "Arena BC"
+  const title = data.title || "BahasaCerdas"
   const options = {
     body: data.body || "Ada yang baru untukmu.",
     icon: "/arena-icon-192.png",

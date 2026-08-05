@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>Arena BC — Offline</title>
+  <title>BahasaCerdas — Offline</title>
   <style>
     * { box-sizing: border-box; margin: 0; }
     body {
@@ -11,30 +11,35 @@
       padding: 24px; text-align: center;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
       background: linear-gradient(160deg, #f5f3ff, #ede9fe);
-      color: #1e1b3a;
     }
     .card {
-      max-width: 340px; background: #fff; border-radius: 24px; padding: 32px 24px;
+      width: 100%; max-width: 360px; background: #fff; border-radius: 24px; padding: 34px 28px;
       box-shadow: 0 20px 45px -20px rgba(124, 58, 237, .45);
     }
     .logo {
-      width: 60px; height: 60px; margin: 0 auto 16px; border-radius: 18px;
+      width: 64px; height: 64px; margin: 0 auto 18px; border-radius: 18px;
       background: linear-gradient(135deg, #8b5cf6, #7c3aed);
       display: flex; align-items: center; justify-content: center;
-      color: #fff; font-weight: 800; font-size: 26px;
+      color: #fff; font-weight: 800; font-size: 28px; letter-spacing: -.5px;
     }
-    h1 { font-size: 20px; font-weight: 800; margin-bottom: 8px; }
-    p { font-size: 14px; color: #6b7280; line-height: 1.6; margin-bottom: 20px; }
+    h1 { font-size: 21px; font-weight: 800; color: inherit; margin-bottom: 8px; }
+    p.note { font-size: 14px; color: #6b7280; line-height: 1.65; margin-bottom: 22px; }
     button {
       width: 100%; padding: 14px; border: 0; border-radius: 14px; cursor: pointer;
       background: linear-gradient(135deg, #8b5cf6, #7c3aed); color: #fff;
-      font-size: 15px; font-weight: 700;
+      font-size: 15px; font-weight: 700; transition: opacity .15s, transform .1s;
     }
     button:active { transform: scale(.98); }
+    button:disabled { opacity: .7; cursor: default; }
+    p.status {
+      min-height: 18px; margin-top: 14px; font-size: 12.5px; color: #b45309; display: none;
+    }
+    p.status.show { display: block; }
     @media (prefers-color-scheme: dark) {
       body { background: linear-gradient(160deg, #1e1b3a, #14122b); color: #f5f3ff; }
       .card { background: #241f45; box-shadow: 0 20px 45px -20px rgba(0,0,0,.6); }
-      p { color: #b5aee0; }
+      p.note { color: #b5aee0; }
+      p.status { color: #fbbf24; }
     }
   </style>
 </head>
@@ -42,11 +47,61 @@
   <div class="card">
     <div class="logo">BC</div>
     <h1>Kamu sedang offline</h1>
-    <p>Sambungan internet terputus. Periksa koneksimu, lalu coba lagi untuk kembali belajar di Arena BC.</p>
-    <button onclick="location.reload()">Coba Lagi</button>
+    <p class="note">Sambungan internet terputus. Periksa koneksi internetmu, lalu coba lagi untuk kembali belajar di BahasaCerdas.</p>
+    <button id="retry" type="button">Coba Lagi</button>
+    <p id="status" class="status" role="status"></p>
   </div>
+
   <script>
-    window.addEventListener("online", function () { location.reload(); });
+    var pendingUrl = null;
+    var checking = false;
+    var done = false;
+    var btn = document.getElementById("retry");
+    var statusEl = document.getElementById("status");
+
+    // Minta URL yang gagal dimuat tadi dari service worker, supaya ketika
+    // koneksi pulih kita kembali ke halaman itu — bukan ke beranda.
+    if ("serviceWorker" in navigator && navigator.serviceWorker.controller) {
+      navigator.serviceWorker.controller.postMessage("GET_PENDING_NAV");
+      navigator.serviceWorker.addEventListener("message", function (e) {
+        if (e.data && e.data.type === "PENDING_NAV" && e.data.url) pendingUrl = e.data.url;
+      });
+    }
+
+    function checkNow() {
+      if (checking || done) return;
+      checking = true;
+      btn.disabled = true;
+      btn.textContent = "Memeriksa koneksi…";
+      statusEl.classList.remove("show");
+
+      var controller = typeof AbortController !== "undefined" ? new AbortController() : null;
+      var timer = setTimeout(function () { if (controller) controller.abort(); }, 8000);
+
+      fetch("/api/health", { cache: "no-store", signal: controller ? controller.signal : undefined })
+        .then(function (res) {
+          clearTimeout(timer);
+          if (!res.ok) throw new Error("not-ready");
+          done = true;
+          window.location.assign(pendingUrl || window.location.href);
+        })
+        .catch(function () {
+          clearTimeout(timer);
+          checking = false;
+          btn.disabled = false;
+          btn.textContent = "Coba Lagi";
+          statusEl.textContent = "Masih offline. Pastikan Wi-Fi/data seluler menyala, lalu coba lagi.";
+          statusEl.classList.add("show");
+        });
+    }
+
+    btn.addEventListener("click", checkNow);
+    window.addEventListener("online", checkNow);
+    document.addEventListener("visibilitychange", function () {
+      if (document.visibilityState === "visible") checkNow();
+    });
+    // Cadangan otomatis: cek berkala saat masih offline, berhenti setelah tersambung.
+    setInterval(checkNow, 10000);
   </script>
 </body>
 </html>
