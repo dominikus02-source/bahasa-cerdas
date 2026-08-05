@@ -119,16 +119,13 @@ export default function GuruBerandaPage() {
         </div>
       </div>
 
-      <div className="mb-6">
-        <GuruMissionCard />
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
+        <BannerProgramGuruCerdas />
+        <GuruMissionCard compact />
       </div>
 
       <div className="mb-6">
         <TrialStatusCard />
-      </div>
-
-      <div className="mb-8">
-        <BannerProgramGuruCerdas />
       </div>
 
       {error ? (

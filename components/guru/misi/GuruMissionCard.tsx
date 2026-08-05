@@ -32,7 +32,7 @@ function Skeleton() {
   );
 }
 
-export function GuruMissionCard() {
+export function GuruMissionCard({ compact = false }: { compact?: boolean }) {
   const [status, setStatus] = useState<MisiGuruStatus | null>(null);
   const [error, setError] = useState(false);
 
@@ -93,7 +93,7 @@ export function GuruMissionCard() {
           />
         </div>
 
-        <div className="mt-4 space-y-2.5">
+        <div className={`mt-4 ${compact ? "grid grid-cols-1 sm:grid-cols-2 gap-2.5" : "space-y-2.5"}`}>
           {MISI_GURU.map((m) => {
             const misi = status.misi.find((x) => x.id === m.id);
             return (

@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { Gift, ChevronRight } from "lucide-react";
 
-const BANNER_IMAGE = "/banners/bannerKupon_1000.png";
+const BANNER_IMAGE = "/landing/banner-1.webp";
 
 export default function BannerProgramGuruCerdas() {
   const [broken, setBroken] = useState(false);
@@ -12,7 +12,7 @@ export default function BannerProgramGuruCerdas() {
   return (
     <Link
       href="/guru/berlangganan"
-      className="block relative w-full overflow-hidden rounded-2xl shadow-lg group"
+      className="block relative w-full h-full min-h-44 lg:min-h-56 overflow-hidden rounded-2xl shadow-lg group"
       aria-label="Program Guru Cerdas — jadi Guru Pro Rp 1.000/bulan"
     >
       {!broken ? (
@@ -20,14 +20,14 @@ export default function BannerProgramGuruCerdas() {
         <img
           src={BANNER_IMAGE}
           alt="Program Guru Cerdas — jadi Guru Pro Rp 1.000/bulan"
-          className="w-full h-auto object-cover"
+          className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
           onError={() => setBroken(true)}
         />
       ) : (
-        <div className="relative w-full bg-gradient-to-r from-emerald-600 via-emerald-500 to-green-500 px-6 py-8 sm:px-10 sm:py-12">
+        <div className="absolute inset-0 bg-gradient-to-r from-emerald-600 via-emerald-500 to-green-500 flex items-center px-6 sm:px-10">
           <div className="absolute -right-6 -top-10 h-40 w-40 rounded-full bg-white/10" />
           <div className="absolute right-16 -bottom-12 h-32 w-32 rounded-full bg-white/10" />
-          <div className="flex flex-col sm:flex-row sm:items-center gap-4 relative">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-4 relative w-full">
             <div className="h-14 w-14 rounded-2xl bg-white/20 backdrop-blur flex items-center justify-center shrink-0">
               <Gift className="h-7 w-7 text-white" />
             </div>
