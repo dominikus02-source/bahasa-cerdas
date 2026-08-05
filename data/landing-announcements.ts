@@ -59,7 +59,7 @@ export const landingAnnouncements: LandingAnnouncement[] = [
     title: "Lomba Menulis Karya",
     subtitle: "Tulis puisi, cerpen, dan pantun — kumpulkan koin & naik peringkat league.",
     image: "/landing/banner-4.webp",
-    link: "/murid/karya/tulis",
+    link: "/arena/tulis",
     buttonText: "Mulai Menulis",
     backgroundColor: "linear-gradient(135deg, #f59e0b 0%, #e11d48 100%)",
     aspectRatio: "4 / 3",

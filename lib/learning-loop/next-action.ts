@@ -64,7 +64,7 @@ export async function refreshNextAction(userId: string): Promise<void> {
           title: "Bagikan Karyamu",
           description: "Mulai tulis puisi atau cerpen pertama kamu.",
           ctaLabel: "Tulis Karya",
-          ctaHref: "/murid/karya/tulis",
+          ctaHref: "/arena/tulis",
           priority: 70,
         };
       }

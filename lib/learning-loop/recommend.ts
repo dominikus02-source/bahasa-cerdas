@@ -42,7 +42,7 @@ export const SKILL_ACTION_MAP: Record<LearningSkillType, RecommendationDraft> = 
     title: "Tulis Karyamu",
     description: "Skill Menulismu butuh latihan. Tulis puisi/cerpen dan bagikan ke teman.",
     ctaLabel: "Tulis Karya",
-    ctaHref: "/murid/karya/tulis",
+    ctaHref: "/arena/tulis",
     reason: "Skill Menulis paling rendah",
   },
   LISTENING: {

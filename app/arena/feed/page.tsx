@@ -234,7 +234,7 @@ function FeedContent() {
           <h1 className="text-xl font-extrabold text-gray-900">Jelajah Karya</h1>
           <p className="text-sm text-gray-500">Jelajahi karya siswa dari seluruh Indonesia</p>
         </div>
-        <Link href="/murid/karya/tulis" className="flex items-center gap-1.5 px-4 py-2.5 bg-violet-600 text-white rounded-xl text-sm font-bold hover:bg-violet-700 transition-all shadow-sm">
+        <Link href="/arena/tulis" className="flex items-center gap-1.5 px-4 py-2.5 bg-violet-600 text-white rounded-xl text-sm font-bold hover:bg-violet-700 transition-all shadow-sm">
           <PenLine size={16} /> Tulis
         </Link>
       </div>
@@ -242,7 +242,7 @@ function FeedContent() {
       {/* Tantangan Minggu Ini — kartu besar, dulu sempat hilang saat dasbor
           murid dirombak (state & fetch-nya tertinggal jadi kode mati). */}
       <Link
-        href={`/murid/karya/tulis?type=${challenge.type}`}
+        href={`/arena/tulis?type=${challenge.type}`}
         className="block mb-5 rounded-2xl bg-gradient-to-br from-violet-600 via-purple-600 to-fuchsia-600 p-5 text-white shadow-lg shadow-violet-500/25 hover:shadow-xl hover:shadow-violet-500/30 active:scale-[0.99] transition-all"
       >
         <div className="flex items-start gap-4">

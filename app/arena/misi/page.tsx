@@ -115,7 +115,7 @@ export default async function MisiHarianPage() {
           <Zap className="w-5 h-5" /> Cara Dapat Koin
         </h3>
         <div className="space-y-3">
-          <Link href="/murid/karya/tulis" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
+          <Link href="/arena/tulis" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
             <div className="w-9 h-9 rounded-xl bg-amber-100 flex items-center justify-center"><PenLine className="w-5 h-5 text-amber-600" /></div>
             <div className="flex-1">
               <p className="text-sm font-semibold text-gray-800">Tulis Karya</p>
