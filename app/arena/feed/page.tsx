@@ -361,7 +361,7 @@ function FeedContent() {
                   <Link href={`/arena/feed/${k.id}`} className="flex items-center gap-1.5 text-sm text-gray-400 hover:text-violet-500 transition-all">
                     <MessageCircle size={16} /> {k._count?.comments ?? 0}
                   </Link>
-                  <ShareKaryaButton karyaId={k.id} title={k.title} />
+                  <ShareKaryaButton karyaId={k.id} title={k.title} className="text-gray-400 hover:text-violet-500" />
                   <span className="flex items-center gap-1.5 text-sm text-gray-400 ml-auto">
                     <Eye size={16} /> {k.viewsCount || 0}
                   </span>

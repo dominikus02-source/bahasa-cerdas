@@ -145,7 +145,7 @@ export default async function FeedDetailPage({ params }: { params: Promise<{ id:
             <MessageCircle className="w-5 h-5 text-violet-400" />
             {karya._count.comments}
           </span>
-          <ShareKaryaButton karyaId={karya.id} title={karya.title} className="ml-auto" />
+          <ShareKaryaButton karyaId={karya.id} title={karya.title} className="ml-auto text-gray-400 hover:text-violet-500" />
           <span className="flex items-center gap-1.5 text-sm text-gray-500 ml-auto">
             <Eye className="w-5 h-5 text-gray-400" />
             {karya.viewsCount || 0}

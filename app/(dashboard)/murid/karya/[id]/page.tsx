@@ -3,8 +3,9 @@
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Heart, Share2, Clock, Eye, PenLine, BookOpen, Newspaper, MessageCircle, Lightbulb, Music } from "lucide-react";
+import { ArrowLeft, Heart, Clock, Eye, PenLine, BookOpen, Newspaper, MessageCircle, Lightbulb, Music } from "lucide-react";
 import SafeMediaImage from "@/components/shared/safe-media-image";
+import ShareKaryaButton from "@/components/arena/ShareKaryaButton";
 import CommentSection from "@/components/arena/CommentSection";
 import UserAvatar from "@/components/arena/UserAvatar";
 import UserName from "@/components/arena/UserName";
@@ -164,9 +165,7 @@ export default function DetailKaryaPage() {
         <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gray-50 text-gray-500 text-sm">
           <Eye size={18} /> {karya.viewsCount} Dilihat
         </div>
-        <button className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gray-50 text-gray-500 hover:bg-blue-50 hover:text-blue-500 text-sm transition-all ml-auto">
-          <Share2 size={18} /> Bagikan
-        </button>
+        <ShareKaryaButton karyaId={karya.id} title={karya.title} className="gap-2 px-4 py-2 rounded-xl bg-gray-50 text-gray-500 hover:bg-blue-50 hover:text-blue-500 ml-auto" />
         {isOwner && (
           <button onClick={handleDelete} disabled={deleting}
             className="flex items-center gap-2 px-4 py-2 rounded-xl bg-red-50 text-red-500 hover:bg-red-100 text-sm font-medium transition-all disabled:opacity-50"

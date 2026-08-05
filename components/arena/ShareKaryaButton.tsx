@@ -150,7 +150,7 @@ export default function ShareKaryaButton({
         onClick={() => setOpen(true)}
         aria-label="Bagikan karya"
         title="Bagikan karya"
-        className={`flex items-center gap-1.5 text-sm transition-all hover:text-violet-500 ${copied ? "text-emerald-500" : "text-gray-400"} ${className}`}
+        className={`flex items-center gap-1.5 text-sm transition-all ${copied ? "text-emerald-500" : ""} ${className}`}
       >
         <Share2 size={16} />
       </button>
