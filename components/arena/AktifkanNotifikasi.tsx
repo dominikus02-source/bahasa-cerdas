@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Bell, BellOff, Loader2 } from "lucide-react";
+import { Bell, BellOff, Loader2, Send } from "lucide-react";
 
 // Baris "Notifikasi" di tab Pemain.
 //
@@ -141,6 +141,31 @@ export function AktifkanNotifikasi() {
     }
   };
 
+  const kirimUji = async () => {
+    setSibuk(true);
+    setPesan(null);
+    try {
+      const res = await fetch("/api/push/test", { method: "POST" });
+      const info = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        setPesan(info?.error || `Server menolak (${res.status}).`);
+        return;
+      }
+      // Sengaja TIDAK mengatakan "berhasil". Server hanya tahu push service
+      // menerima kirimannya; apakah notifikasinya benar-benar muncul di layar
+      // hanya bisa dilihat oleh pemilik perangkat.
+      setPesan(
+        info.terkirim > 0
+          ? `Terkirim ke ${info.terkirim} perangkat. Kalau notifikasinya tidak muncul dalam beberapa detik, izin notifikasi Arena BC di setelan Android kemungkinan belum aktif.`
+          : "Tidak ada perangkat yang bisa dijangkau. Coba matikan lalu nyalakan lagi pengingatnya."
+      );
+    } catch {
+      setPesan("Tidak bisa menghubungi server. Periksa koneksi.");
+    } finally {
+      setSibuk(false);
+    }
+  };
+
   const matikan = async () => {
     setSibuk(true);
     try {
@@ -194,6 +219,22 @@ export function AktifkanNotifikasi() {
           <span className="text-xs font-bold text-[var(--px-text-faint)]">{nyala ? "Matikan" : "Nyalakan"}</span>
         )}
       </button>
+
+      {/* Uji kirim ke perangkat ini. "Server berhasil mengirim" dan "notifikasi
+          muncul di layar" adalah dua hal berbeda, dan jaraknya tidak terlihat
+          dari sisi server. Tanpa tombol ini, memeriksanya berarti menunggu
+          jadwal pengingat berikutnya. */}
+      {nyala && (
+        <button
+          onClick={kirimUji}
+          disabled={sibuk}
+          className="flex w-full items-center justify-between rounded-xl border border-[var(--px-border)] bg-white/[0.02] p-3 hover:bg-white/[0.06] disabled:opacity-60"
+        >
+          <span className="flex items-center gap-2 text-xs font-bold text-[var(--px-text-faint)]">
+            <Send size={13} /> Kirim notifikasi uji ke HP ini
+          </span>
+        </button>
+      )}
 
       {/* Alasan kegagalan ditampilkan apa adanya. Tanpa ini murid tidak punya cara
           membedakan "server bermasalah" dari "aku salah menekan", lalu menekan
