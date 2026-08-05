@@ -180,7 +180,7 @@ export default function MuridQuizResultPage() {
             Latihan di Jalur Cerdas
           </Link>
           <Link
-            href="/arena/tulis"
+            href="/murid/karya/tulis"
             className="flex-1 flex items-center justify-center gap-2 px-4 py-3 border-2 border-violet-300 text-violet-700 font-bold rounded-xl hover:bg-violet-50 transition-colors text-sm"
           >
             Tulis Karya

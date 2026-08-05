@@ -1,7 +1,7 @@
 "use client";
 
-import { useRef, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRef, useState, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Send, PenLine, BookOpen, Newspaper, MessageCircle, Music, Lightbulb, Upload, X, Loader2, Link2 } from "lucide-react";
 
@@ -23,10 +23,14 @@ const TYPE_STYLES: Record<string, { border: string; bg: string; text: string; gr
   OPINI: { border: "border-violet-500", bg: "bg-violet-50", text: "text-violet-600", gradient: "from-violet-500 to-purple-600" },
 };
 
-export default function TulisKaryaPage() {
+function TulisKaryaForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const typeParam = searchParams.get("type");
   const [title, setTitle] = useState("");
-  const [type, setType] = useState("PUISI");
+  const [type, setType] = useState(() =>
+    typeParam && TYPES.some((t) => t.value === typeParam) ? typeParam : "PUISI"
+  );
   const [content, setContent] = useState("");
   const [coverImage, setCoverImage] = useState("");
   const [photos, setPhotos] = useState<string[]>([]);
@@ -324,5 +328,19 @@ export default function TulisKaryaPage() {
         Dengan menerbitkan, kamu setuju karyamu tampil di feed BahasaCerdas
       </p>
     </div>
+  );
+}
+
+export default function TulisKaryaPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="py-16 text-center text-gray-400 flex justify-center">
+          <Loader2 size={24} className="animate-spin" />
+        </div>
+      }
+    >
+      <TulisKaryaForm />
+    </Suspense>
   );
 }

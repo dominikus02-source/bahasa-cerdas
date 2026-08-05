@@ -327,7 +327,7 @@ export default async function BerandaPage() {
             <h3 className="text-base font-bold text-gray-900 mb-3">Aksi Cepat</h3>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               {[
-                { href: "/arena/tulis", label: "Tulis Karya", icon: PenLine, warna: "from-violet-500 to-purple-600" },
+                { href: "/murid/karya/tulis", label: "Tulis Karya", icon: PenLine, warna: "from-violet-500 to-purple-600" },
                 { href: "/arena/ai", label: "AI Cerdik", icon: Bot, warna: "from-blue-500 to-indigo-600" },
                 { href: "/arena/mystery-box", label: "Kotak Misterius", icon: Gift, warna: "from-amber-500 to-yellow-600" },
                 { href: "/arena/gabung-kelas", label: "Gabung Kelas", icon: Users, warna: "from-teal-500 to-cyan-600" },
