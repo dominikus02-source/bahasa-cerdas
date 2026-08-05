@@ -33,9 +33,26 @@ export async function GET() {
     // tampak "aktif" padahal barisnya tak pernah sampai ke server, dan notifikasi
     // tidak akan pernah terkirim. Hanya angka, tanpa data siapa pun.
     let langgananPush = 0;
+    // Berapa PENGGUNA berbeda, dan berapa di antaranya murid. Angka murid inilah
+    // yang menentukan apakah notifikasi "tugas baru" bisa terkirim sama sekali:
+    // jalur itu mengecualikan guru pengirimnya, jadi kalau semua langganan milik
+    // akun guru/founder, hasilnya selalu nol tanpa error apa pun.
+    let penggunaPush = 0;
+    let muridPush = 0;
     if (tabelPush) {
       try {
         langgananPush = await db.pushSubscription.count();
+        const pemilik = await db.pushSubscription.findMany({
+          select: { userId: true },
+          distinct: ["userId"],
+          take: 5000,
+        });
+        penggunaPush = pemilik.length;
+        if (penggunaPush > 0) {
+          muridPush = await db.user.count({
+            where: { id: { in: pemilik.map((p) => p.userId) }, role: "MURID" },
+          });
+        }
       } catch {
         langgananPush = -1;
       }
@@ -48,6 +65,8 @@ export async function GET() {
         push: {
           tabel: tabelPush,
           langganan: langgananPush,
+          pengguna: penggunaPush,
+          murid: muridPush,
           vapidPublik: !!process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY,
           vapidPrivat: !!process.env.VAPID_PRIVATE_KEY,
         },
