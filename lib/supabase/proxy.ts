@@ -88,13 +88,13 @@ export async function updateSession(request: NextRequest, nonce?: string) {
   //  - Auth API routes
   //  - Routes that handle their own auth (API, Arena, Guru dashboard)
   // This avoids redundant Supabase auth calls and reduces rate limit pressure
-  // `/arena` persis ikut di sini, bukan hanya `/arena/`. Itu URL yang dibuka APK
-  // saat diluncurkan, dan tanpa pengecualian ini setiap kali aplikasi dibuka
-  // middleware melakukan panggilan jaringan ke server Auth — tepat pada saat
-  // jaringan ponsel paling belum siap. Layout Arena tetap menggerbangi halaman
-  // ini, memakai verifikasi JWT lokal lewat getClaims(), jadi tidak ada celah
-  // keamanan yang terbuka — hanya satu panggilan rapuh yang hilang.
-  const isSelfAuth = pathname === "/arena" || selfAuthPaths.some((p) => pathname.startsWith(p));
+  // JANGAN tambahkan `/arena` persis ke sini. Sempat dicoba (5 Agu 2026) untuk
+  // menghindari panggilan auth jaringan saat APK diluncurkan, dan langsung
+  // MEMATIKAN LOGIN: `/arena` adalah satu-satunya jalur Arena yang melewati
+  // updateSession, dan di situlah @supabase/ssr menyegarkan lalu menulis ulang
+  // cookie sesi. Melewatinya membuat sesi hasil login tidak pernah terbaca di
+  // server, sehingga murid dilempar balik ke halaman login terus-menerus.
+  const isSelfAuth = selfAuthPaths.some((p) => pathname.startsWith(p));
   if (isPublic || isAuthPath || isSelfAuth) {
     const response = nextWithNonce();
     response.headers.set("X-RateLimit-Remaining", String(limit.remaining));

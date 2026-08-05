@@ -2,10 +2,10 @@
 
 import { useEffect, useRef } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { motion } from "framer-motion";
 import { Sparkles, ChevronRight } from "lucide-react";
 import BatikDecor from "@/components/landing/batik-decor";
+import HeroAnnouncement from "@/components/landing/HeroAnnouncement";
 import { fadeInUp, staggerContainer, sectionProps, itemProps } from "@/lib/motion";
 
 export default function HeroSection() {
@@ -113,44 +113,9 @@ export default function HeroSection() {
           <motion.div
             variants={fadeInUp}
             transition={{ duration: 0.5, ease: "easeOut", delay: 0.35 }}
-            className="relative hidden lg:block"
-            aria-hidden="true"
+            className="relative"
           >
-            <div className="relative">
-              <div className="relative rounded-2xl overflow-hidden shadow-2xl shadow-zinc-900/10 border border-zinc-200 bg-white">
-                <div className="aspect-[4/3] relative overflow-hidden bg-zinc-100">
-                  <Image
-                    src="/arena-fitur.png"
-                    alt=""
-                    fill
-                    sizes="(min-width: 1024px) 50vw, 100vw"
-                    className="object-contain object-left-top"
-                    priority
-                  />
-                </div>
-              </div>
-
-              <div className="absolute -bottom-4 -left-4 w-80 rounded-xl overflow-hidden shadow-lg shadow-zinc-900/10 border border-zinc-200 bg-white">
-                  <Image
-                    src="/dasbor-guru.png"
-                    alt=""
-                    width={320}
-                    height={173}
-                    className="w-full h-auto object-contain"
-                    priority
-                  />
-                <div className="px-3 py-2 bg-white">
-                  <p className="text-xs font-semibold text-zinc-700">Dasbor Guru</p>
-                </div>
-              </div>
-
-              <div className="absolute -top-3 -right-3 px-4 py-2 rounded-xl bg-white border border-zinc-100 shadow-lg shadow-zinc-900/5">
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full bg-emerald-500" aria-hidden="true" />
-                  <span className="text-xs font-semibold text-zinc-700">Platform aktif</span>
-                </div>
-              </div>
-            </div>
+            <HeroAnnouncement />
           </motion.div>
         </motion.div>
       </div>
