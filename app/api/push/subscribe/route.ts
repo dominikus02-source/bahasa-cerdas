@@ -38,9 +38,23 @@ export async function POST(req: NextRequest) {
     });
 
     return NextResponse.json({ ok: true });
-  } catch (e) {
+  } catch (e: any) {
     console.error("push/subscribe gagal:", e);
-    return NextResponse.json({ error: "Gagal menyimpan langganan" }, { status: 500 });
+    // P2021 = tabel tidak ada di database. Dibedakan karena penyebabnya spesifik
+    // dan hanya bisa diperbaiki dengan menjalankan
+    // prisma/migrations/manual/push-subscription.sql di Supabase — bukan sesuatu
+    // yang bisa diperbaiki murid dengan mencoba lagi. Tanpa pesan yang jelas,
+    // murid menekan tombolnya berulang kali sampai browser memblokir izinnya.
+    if (e?.code === "P2021") {
+      return NextResponse.json(
+        { error: "Tabel PushSubscription belum ada di database", kode: "TABEL_HILANG" },
+        { status: 503 }
+      );
+    }
+    return NextResponse.json(
+      { error: "Gagal menyimpan langganan di server", kode: "SERVER" },
+      { status: 500 }
+    );
   }
 }
 

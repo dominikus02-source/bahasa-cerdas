@@ -29,6 +29,7 @@ type Keadaan = "memuat" | "tak-didukung" | "mati" | "nyala" | "ditolak";
 export function AktifkanNotifikasi() {
   const [keadaan, setKeadaan] = useState<Keadaan>("memuat");
   const [sibuk, setSibuk] = useState(false);
+  const [pesan, setPesan] = useState<string | null>(null);
 
   useEffect(() => {
     let batal = false;
@@ -52,37 +53,59 @@ export function AktifkanNotifikasi() {
 
   const nyalakan = async () => {
     setSibuk(true);
+    setPesan(null);
     try {
       const izin = await Notification.requestPermission();
       if (izin !== "granted") {
         setKeadaan(izin === "denied" ? "ditolak" : "mati");
         return;
       }
-      const reg = await navigator.serviceWorker.ready;
+
       const kunci = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
       if (!kunci) {
-        setKeadaan("tak-didukung");
+        setPesan("Kunci notifikasi tidak ada di aplikasi ini. Hubungi pengelola — mencoba lagi tidak akan membantu.");
+        setKeadaan("mati");
         return;
       }
+
+      const reg = await navigator.serviceWorker.ready;
       const sub = await reg.pushManager.subscribe({
         userVisibleOnly: true,
         applicationServerKey: urlBase64ToUint8Array(kunci),
       });
+
       const res = await fetch("/api/push/subscribe", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(sub.toJSON()),
       });
+
       // Kalau server menolak, langganan browser dicabut lagi. Membiarkannya hidup
       // berarti perangkat merasa berlangganan padahal server tak akan pernah
       // mengirim apa pun ke sana.
       if (!res.ok) {
         await sub.unsubscribe().catch(() => {});
+        const info = await res.json().catch(() => ({}));
+        // Alasannya HARUS terlihat. Versi pertama fitur ini gagal diam-diam, dan
+        // murid menekan tombolnya berulang kali sampai browser memblokir izin
+        // notifikasi secara permanen — kegagalan yang tak terlihat berubah jadi
+        // kerusakan yang tak bisa dibatalkan dari dalam aplikasi.
+        setPesan(
+          info?.kode === "TABEL_HILANG"
+            ? "Server belum siap menerima langganan (tabel notifikasi belum dibuat). Ini bukan masalah di ponselmu — jangan coba berulang kali."
+            : `Server menolak (${res.status}). Coba lagi nanti, bukan sekarang.`
+        );
         setKeadaan("mati");
         return;
       }
+
       setKeadaan("nyala");
-    } catch {
+    } catch (e: any) {
+      setPesan(
+        e?.name === "NotAllowedError"
+          ? "Izin notifikasi ditolak browser."
+          : `Gagal berlangganan: ${e?.name || "kesalahan"}${e?.message ? ` — ${e.message}` : ""}`
+      );
       setKeadaan("mati");
     } finally {
       setSibuk(false);
@@ -126,20 +149,32 @@ export function AktifkanNotifikasi() {
 
   const nyala = keadaan === "nyala";
   return (
-    <button
-      onClick={nyala ? matikan : nyalakan}
-      disabled={sibuk}
-      className="flex w-full items-center justify-between rounded-xl border border-[var(--px-border)] bg-white/[0.04] p-3 hover:bg-white/[0.08] disabled:opacity-60"
-    >
-      <span className="flex items-center gap-2 text-sm font-bold text-[var(--px-text)]">
-        <Bell size={15} className={nyala ? "text-amber-300" : "text-[var(--px-text-faint)]"} />
-        {nyala ? "Pengingat tugas aktif" : "Nyalakan pengingat tugas"}
-      </span>
-      {sibuk ? (
-        <Loader2 size={15} className="animate-spin text-[var(--px-text-faint)]" />
-      ) : (
-        <span className="text-xs font-bold text-[var(--px-text-faint)]">{nyala ? "Matikan" : "Nyalakan"}</span>
+    <div className="space-y-2">
+      <button
+        onClick={nyala ? matikan : nyalakan}
+        disabled={sibuk}
+        className="flex w-full items-center justify-between rounded-xl border border-[var(--px-border)] bg-white/[0.04] p-3 hover:bg-white/[0.08] disabled:opacity-60"
+      >
+        <span className="flex items-center gap-2 text-sm font-bold text-[var(--px-text)]">
+          <Bell size={15} className={nyala ? "text-amber-300" : "text-[var(--px-text-faint)]"} />
+          {nyala ? "Pengingat tugas aktif" : "Nyalakan pengingat tugas"}
+        </span>
+        {sibuk ? (
+          <Loader2 size={15} className="animate-spin text-[var(--px-text-faint)]" />
+        ) : (
+          <span className="text-xs font-bold text-[var(--px-text-faint)]">{nyala ? "Matikan" : "Nyalakan"}</span>
+        )}
+      </button>
+
+      {/* Alasan kegagalan ditampilkan apa adanya. Tanpa ini murid tidak punya cara
+          membedakan "server bermasalah" dari "aku salah menekan", lalu menekan
+          berulang kali sampai browser memblokir izin — dan blokir itu tidak bisa
+          dicabut dari dalam aplikasi. */}
+      {pesan && (
+        <p className="rounded-xl border border-rose-400/30 bg-rose-500/10 p-3 text-xs leading-relaxed text-rose-200">
+          {pesan}
+        </p>
       )}
-    </button>
+    </div>
   );
 }
