@@ -145,22 +145,50 @@ export function AktifkanNotifikasi() {
     setSibuk(true);
     setPesan(null);
     try {
-      const res = await fetch("/api/push/test", { method: "POST" });
+      // Paksa pemeriksaan versi service worker lebih dulu. Handler `push` baru
+      // ditambahkan belakangan; kalau perangkat masih menjalankan versi lama,
+      // push tetap sampai tetapi tidak ada yang menampilkannya.
+      const reg = await navigator.serviceWorker.ready;
+      await reg.update().catch(() => {});
+
+      const punyaHandlerPush = "pushManager" in reg;
+      const sub = await reg.pushManager.getSubscription();
+
+      const res = await fetch("/api/push/test", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ endpoint: sub?.endpoint }),
+      });
       const info = await res.json().catch(() => ({}));
       if (!res.ok) {
         setPesan(info?.error || `Server menolak (${res.status}).`);
         return;
       }
+
+      // Pertanyaan paling menentukan dijawab lebih dulu: kalau langganan
+      // perangkat ini tidak ada di server, notifikasi selama ini memang dikirim
+      // ke perangkat lain — dan tidak ada yang rusak sama sekali.
+      if (info.perangkatIniTerdaftar === false) {
+        setPesan(
+          "Perangkat ini TIDAK terdaftar di server — notifikasi selama ini dikirim ke perangkat lain. " +
+            "Matikan lalu nyalakan lagi pengingatnya dari HP ini."
+        );
+        return;
+      }
+
       // Sengaja TIDAK mengatakan "berhasil". Server hanya tahu push service
-      // menerima kirimannya; apakah notifikasinya benar-benar muncul di layar
-      // hanya bisa dilihat oleh pemilik perangkat.
+      // menerima kirimannya; apakah notifikasinya muncul di layar hanya bisa
+      // dilihat oleh pemilik perangkat.
       setPesan(
         info.terkirim > 0
-          ? `Terkirim ke ${info.terkirim} perangkat. Kalau notifikasinya tidak muncul dalam beberapa detik, izin notifikasi Arena BC di setelan Android kemungkinan belum aktif.`
-          : "Tidak ada perangkat yang bisa dijangkau. Coba matikan lalu nyalakan lagi pengingatnya."
+          ? `Terkirim ke ${info.terkirim} dari ${info.perangkat} perangkat terdaftar` +
+            (info.perangkatIniTerdaftar ? ", termasuk HP ini" : "") +
+            `. SW aktif: ${punyaHandlerPush ? "ya" : "tidak"}. ` +
+            "Kalau tetap tidak muncul, tutup penuh aplikasi lalu buka lagi — service worker baru perlu sekali muat ulang."
+          : "Server tidak berhasil menjangkau satu perangkat pun. Matikan lalu nyalakan lagi pengingatnya."
       );
-    } catch {
-      setPesan("Tidak bisa menghubungi server. Periksa koneksi.");
+    } catch (e: any) {
+      setPesan(`Gagal mengirim uji: ${e?.name || "kesalahan"}`);
     } finally {
       setSibuk(false);
     }
