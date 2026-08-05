@@ -48,6 +48,15 @@ export default function QuizTakePage({ params }: { params: Promise<{ assignId: s
         }
         if (data.existingSubmission) {
           setStartTime(Date.now() - (data.existingSubmission.startedAt ? Date.now() - new Date(data.existingSubmission.startedAt).getTime() : 0));
+        } else {
+          // Belum ada submission aktif → mulai otomatis supaya jawaban &
+          // submit tersimpan ke server (tanpa ini action "answer"/"submit"
+          // menolak dengan "No active submission").
+          await fetch(`/api/murid/quiz/${assignId}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ action: "start" }),
+          });
         }
       }
     } catch (e) {

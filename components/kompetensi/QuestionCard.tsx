@@ -85,11 +85,16 @@ export default function QuestionCard({
 
           {/* Audio player Mendengarkan — kontrol terbatas (maks 1× putar, tanpa seek) */}
           {isListening && question.audioUrl && (
-            <ListeningAudioPlayer
-              src={question.audioUrl.includes("supabase.co") ? `/api/kompetensi/audio/${question.id}` : question.audioUrl}
-              maxPlays={1}
-              storageKey={question.id}
-            />
+            <div className="mb-4">
+              <p className="mb-2 rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs font-semibold text-emerald-700">
+                Simak audio berikut sebelum memilih jawaban.
+              </p>
+              <ListeningAudioPlayer
+                src={question.audioUrl.includes("supabase.co") ? `/api/kompetensi/audio/${question.id}` : question.audioUrl}
+                maxPlays={1}
+                storageKey={question.id}
+              />
+            </div>
           )}
 
           {/* Image */}

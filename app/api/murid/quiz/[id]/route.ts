@@ -105,6 +105,31 @@ export async function GET(
   }
 }
 
+// Auto-start: kembalikan submission IN_PROGRESS milik user untuk assignment
+// ini; buat yang baru bila belum ada (attempt berikutnya). Dipakai oleh aksi
+// "answer" dan "submit" agar murid tidak pernah terjebak tanpa submission.
+async function getActiveSubmission(assignmentId: string, userId: string) {
+  const existing = await db.quizSubmission.findFirst({
+    where: { assignmentId, userId, status: "IN_PROGRESS" },
+  });
+  if (existing) return existing;
+
+  const maxAttempt = await db.quizSubmission.aggregate({
+    where: { assignmentId, userId },
+    _max: { attemptNumber: true },
+  });
+
+  return db.quizSubmission.create({
+    data: {
+      assignmentId,
+      userId,
+      status: "IN_PROGRESS",
+      attemptNumber: (maxAttempt._max.attemptNumber || 0) + 1,
+      startedAt: new Date(),
+    },
+  });
+}
+
 export async function POST(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -157,10 +182,13 @@ export async function POST(
       const { quizQuestionId, answerIndex, answerText } = body;
       if (!quizQuestionId) return NextResponse.json({ error: "quizQuestionId required" }, { status: 400 });
 
-      const submission = await db.quizSubmission.findFirst({
-        where: { assignmentId: id, userId: dbUser.id, status: "IN_PROGRESS" },
-      });
-      if (!submission) return NextResponse.json({ error: "No active submission" }, { status: 400 });
+      // Auto-start bila belum ada submission aktif (mis. klien lupa memanggil
+      // action "start" atau panggilan start gagal). Tanpa ini jawaban murid
+      // tidak pernah tersimpan dan submit selalu gagal.
+      const submission = await getActiveSubmission(id, dbUser.id);
+      if (!submission) {
+        return NextResponse.json({ error: "No active submission" }, { status: 400 });
+      }
 
       const existingAnswer = await db.quizAnswer.findFirst({
         where: { submissionId: submission.id, quizQuestionId },
@@ -190,8 +218,11 @@ export async function POST(
     }
 
     if (action === "submit") {
-      const submission = await db.quizSubmission.findFirst({
-        where: { assignmentId: id, userId: dbUser.id, status: "IN_PROGRESS" },
+      const active = await getActiveSubmission(id, dbUser.id);
+      if (!active) return NextResponse.json({ error: "No active submission" }, { status: 400 });
+
+      const submission = await db.quizSubmission.findUnique({
+        where: { id: active.id },
         include: {
           answers: true,
           assignment: {

@@ -42,7 +42,9 @@ async function main() {
   const apiRouteContent = fs.readFileSync(
     __dirname + "/../app/api/kompetensi/[paketId]/route.ts", "utf-8"
   )
-  check("UKBI_SELECT does NOT include correctAnswer", !apiRouteContent.includes("UKBI_SELECT =") || apiRouteContent.match(/UKBI_SELECT[^}]*correctAnswer/) === null)
+  // Anchor ke deklarasi const (bukan komentar) agar komentar "tanpa
+  // correctAnswer" tidak menghasilkan false positive.
+  check("UKBI_SELECT does NOT include correctAnswer", !apiRouteContent.includes("UKBI_SELECT =") || /const UKBI_SELECT\s*=\s*\{[^}]*correctAnswer/.test(apiRouteContent) === false)
   check("UKBI_SELECT does NOT include audioScript field", !apiRouteContent.includes("audioScript"))
   check("UKBI_SELECT DOES include audioUrl", apiRouteContent.includes("audioUrl"))
   check("API filters MENDENGARKAN by audioUrl", apiRouteContent.includes('{ not: null }') && apiRouteContent.includes('audioUrl'))
