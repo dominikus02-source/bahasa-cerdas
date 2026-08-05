@@ -69,7 +69,12 @@ export async function updateSession(request: NextRequest, nonce?: string) {
 
   // On login page, clear any stale Supabase cookies unconditionally
   // This ensures users with expired sessions from old VPS can log in fresh
-  if (pathname === "/login" || pathname === "/auth/arena-login" || pathname === "/arena/login") {
+  //
+  // /arena/login is deliberately NOT in this list. It is where the APK lands on
+  // any auth hiccup, so wiping cookies here turned a momentary failure into a
+  // permanent logout: close the app, reopen, and the student had to type their
+  // password again. The legacy paths keep the old behaviour.
+  if (pathname === "/login" || pathname === "/auth/arena-login") {
     const response = nextWithNonce();
     request.cookies.getAll()
       .filter((c) => c.name.startsWith("sb-") || c.name.startsWith("supabase-"))
@@ -83,7 +88,13 @@ export async function updateSession(request: NextRequest, nonce?: string) {
   //  - Auth API routes
   //  - Routes that handle their own auth (API, Arena, Guru dashboard)
   // This avoids redundant Supabase auth calls and reduces rate limit pressure
-  const isSelfAuth = selfAuthPaths.some((p) => pathname.startsWith(p));
+  // `/arena` persis ikut di sini, bukan hanya `/arena/`. Itu URL yang dibuka APK
+  // saat diluncurkan, dan tanpa pengecualian ini setiap kali aplikasi dibuka
+  // middleware melakukan panggilan jaringan ke server Auth — tepat pada saat
+  // jaringan ponsel paling belum siap. Layout Arena tetap menggerbangi halaman
+  // ini, memakai verifikasi JWT lokal lewat getClaims(), jadi tidak ada celah
+  // keamanan yang terbuka — hanya satu panggilan rapuh yang hilang.
+  const isSelfAuth = pathname === "/arena" || selfAuthPaths.some((p) => pathname.startsWith(p));
   if (isPublic || isAuthPath || isSelfAuth) {
     const response = nextWithNonce();
     response.headers.set("X-RateLimit-Remaining", String(limit.remaining));
@@ -141,26 +152,44 @@ export async function updateSession(request: NextRequest, nonce?: string) {
   // arena-flavoured login instead. Same screen, reachable without leaving scope.
   const loginPath = pathname.startsWith("/arena") ? "/arena/login" : "/login";
 
-  let user: any = null;
-  try {
-    const result = await supabase.auth.getUser();
-    user = result.data?.user ?? null;
-  } catch (e) {
-    console.warn("Auth getUser failed, redirecting to login:", e);
-    const response = NextResponse.redirect(new URL(loginPath, request.url));
-    request.cookies.getAll()
+  // Membuang cookie sesi HANYA boleh terjadi kalau server Auth menjawab dengan
+  // pasti bahwa sesinya tidak ada. Kalau pemeriksaannya sendiri yang gagal —
+  // jaringan belum siap saat aplikasi baru dibuka, atau Auth membalas 429 —
+  // kita tidak tahu apa-apa tentang sesinya, dan menghapusnya mengubah gangguan
+  // sesaat menjadi logout permanen. Itulah yang membuat murid harus mengetik
+  // sandi lagi setiap kali menutup dan membuka APK.
+  const buangCookieSesi = (response: NextResponse) => {
+    request.cookies
+      .getAll()
       .filter((c) => c.name.startsWith("sb-") || c.name.startsWith("supabase-"))
       .forEach((c) => response.cookies.set(c.name, "", { maxAge: 0, path: "/" }));
     return response;
+  };
+
+  let user: any = null;
+  let gagalMemeriksa = false;
+  try {
+    const result = await supabase.auth.getUser();
+    user = result.data?.user ?? null;
+    // Error tanpa lemparan: supabase-js mengembalikan { data:{user:null}, error }
+    // untuk 429 dan gangguan jaringan. Tanpa memeriksa ini, kasus tersebut jatuh
+    // ke cabang !user di bawah dan ikut menghapus sesi yang sebenarnya sah.
+    if (!user && result.error) gagalMemeriksa = true;
+  } catch (e) {
+    console.warn("Auth getUser gagal (dianggap sementara, sesi dipertahankan):", e);
+    gagalMemeriksa = true;
+  }
+
+  if (gagalMemeriksa) {
+    // Diarahkan ke login tanpa membuang cookie: kalau sesinya masih sah, satu
+    // kali muat ulang sudah memulihkannya.
+    return NextResponse.redirect(new URL(loginPath, request.url));
   }
 
   if (!user) {
-    // Clear stale auth cookies to prevent refresh loop
-    const response = NextResponse.redirect(new URL(loginPath, request.url));
-    request.cookies.getAll().filter((c) =>
-      c.name.startsWith("sb-") || c.name.startsWith("supabase-")
-    ).forEach((c) => response.cookies.set(c.name, "", { maxAge: 0, path: "/" }));
-    return response;
+    // Auth menjawab pasti: tidak ada sesi. Baru di sini cookie basi dibuang,
+    // supaya tidak terjadi loop penyegaran.
+    return buangCookieSesi(NextResponse.redirect(new URL(loginPath, request.url)));
   }
 
   if (!user.email_confirmed_at && pathname !== "/verify-email") {
