@@ -1,6 +1,5 @@
 "use client";
 
-import { Megaphone } from "lucide-react";
 import AnnouncementSlider from "./AnnouncementSlider";
 import { getActiveAnnouncements } from "@/data/landing-announcements";
 
@@ -24,10 +23,6 @@ export default function HeroAnnouncement() {
       </div>
 
       <div className="rounded-xl border border-zinc-200/70 bg-white/70 backdrop-blur-xl shadow-2xl shadow-zinc-900/10 p-3 sm:p-4">
-        <div className="flex items-center gap-2 px-1 pb-3">
-          <Megaphone className="w-4 h-4 text-primary" aria-hidden="true" />
-          <p className="text-xs font-bold uppercase tracking-wider text-zinc-500">Pengumuman Resmi</p>
-        </div>
         <AnnouncementSlider items={items} />
       </div>
     </div>

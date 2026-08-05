@@ -66,7 +66,10 @@ export default function AnnouncementSlider({ items }: { items: LandingAnnounceme
       aria-live={paused ? "polite" : "off"}
       tabIndex={0}
     >
-      <div className="relative overflow-hidden rounded-xl border border-zinc-200/70 shadow-xl shadow-zinc-900/5 aspect-video sm:aspect-[4/3] bg-zinc-100">
+      <div
+        className="relative overflow-hidden rounded-xl border border-zinc-200/70 shadow-xl shadow-zinc-900/5 bg-zinc-100"
+        style={{ aspectRatio: item.aspectRatio || "16 / 9" }}
+      >
         <AnimatePresence mode="popLayout" initial={false}>
           <motion.div
             key={item.id}

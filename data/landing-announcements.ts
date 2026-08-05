@@ -2,9 +2,10 @@
 // Admin/developer cukup mengubah data di sini (atau mengganti gambar di
 // /public/landing/) tanpa menyentuh komponen slider.
 //
-// - image  : path gambar lokal di /public/landing/ (BUKAN URL eksternal)
-// - link   : tujuan saat banner diklik (kosongkan untuk non-klik)
-// - active : false = disembunyikan dari slider
+// - image          : path gambar lokal di /public/landing/ (BUKAN URL eksternal)
+// - link           : tujuan saat banner diklik (kosongkan untuk non-klik)
+// - aspectRatio    : rasio asli foto agar tidak terpotong (16/9, 3/2, 4/3, dst)
+// - active         : false = disembunyikan dari slider (tunggu foto siap)
 // Slider mendukung maksimal 5 banner aktif.
 
 export type LandingAnnouncement = {
@@ -15,6 +16,7 @@ export type LandingAnnouncement = {
   link?: string;
   buttonText?: string;
   backgroundColor: string;
+  aspectRatio?: string;
   active: boolean;
 };
 
@@ -27,6 +29,7 @@ export const landingAnnouncements: LandingAnnouncement[] = [
     link: "/guru/berlangganan",
     buttonText: "Cek Program",
     backgroundColor: "linear-gradient(135deg, #7c3aed 0%, #6366f1 100%)",
+    aspectRatio: "16 / 9",
     active: true,
   },
   {
@@ -37,6 +40,7 @@ export const landingAnnouncements: LandingAnnouncement[] = [
     link: "/arena",
     buttonText: "Buka Arena",
     backgroundColor: "linear-gradient(135deg, #4f46e5 0%, #9333ea 100%)",
+    aspectRatio: "3 / 2",
     active: true,
   },
   {
@@ -47,6 +51,7 @@ export const landingAnnouncements: LandingAnnouncement[] = [
     link: "/arena/simulasi",
     buttonText: "Coba Simulasi",
     backgroundColor: "linear-gradient(135deg, #059669 0%, #0d9488 100%)",
+    aspectRatio: "16 / 9",
     active: true,
   },
   {
@@ -57,7 +62,8 @@ export const landingAnnouncements: LandingAnnouncement[] = [
     link: "/arena/tulis",
     buttonText: "Mulai Menulis",
     backgroundColor: "linear-gradient(135deg, #f59e0b 0%, #e11d48 100%)",
-    active: true,
+    aspectRatio: "4 / 3",
+    active: false,
   },
   {
     id: "artikel",
@@ -67,7 +73,8 @@ export const landingAnnouncements: LandingAnnouncement[] = [
     link: "/artikel",
     buttonText: "Baca Artikel",
     backgroundColor: "linear-gradient(135deg, #0284c7 0%, #4f46e5 100%)",
-    active: true,
+    aspectRatio: "4 / 3",
+    active: false,
   },
 ];
 
