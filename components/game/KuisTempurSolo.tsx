@@ -6,7 +6,12 @@ import { ArrowLeft, Heart, Users, Trophy, Loader2 } from "lucide-react"
 import { QUESTION_BANK, type BankQuestion } from "@/lib/game/question-bank"
 import { gambarKarakter, KARAKTER, PROFIL, type Karakter } from "@/lib/arena-junior/karakter"
 
-// Rimba Kata — battle royale literasi, SATU PEMAIN melawan bot.
+// Kuis Tempur (mode solo) — battle royale literasi melawan bot.
+//
+// Dipakai saat MULTIPLAYER_ENABLED mati, menggantikan layar "Segera Hadir".
+// Nama dan slotnya sengaja sama dengan versi multiplayer: murid selalu mendapat
+// Kuis Tempur yang bisa dimainkan, dan ketika server pertandingan hidup lagi
+// flag itu mengembalikan versi lawan-teman tanpa perubahan kode.
 //
 // Sengaja TIDAK memakai server pertandingan. Dua gim Arena yang bergantung pada
 // VPS gim (adu-cepat, kuis-tempur) mati total ketika VPS-nya tidak menjawab, dan
@@ -50,7 +55,7 @@ function acak<T>(arr: T[]): T[] {
   return a
 }
 
-export default function RimbaKataPage() {
+export default function KuisTempurSolo() {
   const [fase, setFase] = useState<"pilih" | "main" | "selesai">("pilih")
   const [karakterku, setKarakterku] = useState<Karakter | "sendiri">("zelby")
   const [avatarku, setAvatarku] = useState<string | null>(null)

@@ -13,6 +13,12 @@ interface Game {
   accentColor: string; iconGradient: string
   featured?: boolean; badge?: { text: string; type: "hot" | "new" }
   xp: string; players: string; time: string; multiplayer?: boolean
+  /**
+   * Gim multiplayer yang punya mode solo melawan bot saat server pertandingan
+   * mati. Tanpa penanda ini ia ikut dilabeli "Segera Hadir" — memberi tahu murid
+   * bahwa gim yang sebenarnya BISA dimainkan sedang tidak tersedia.
+   */
+  soloSaatOffline?: { players: string; desc: string }
 }
 
 const GAMES: Game[] = [
@@ -27,7 +33,19 @@ const GAMES: Game[] = [
   // Multiplayer — butuh game server yang saat ini mati. Ditaruh terakhir di
   // array sebagai baseline; sort di bawah tetap menjaminnya di posisi
   // terbawah kalau game multiplayer lain ditambahkan tanpa urutan ini diingat.
-  { title: "Kuis Tempur", desc: "Lawan murid lain real-time! Siapa cepat dan benar dia menang.", icon: Swords, href: "/arena/game/kuis-tempur", accentColor: "#EF4444", iconGradient: "from-red-500 to-red-600", featured: true, badge: { text: "Terpopuler", type: "hot" }, xp: "+80 XP", players: "2-8 pemain", time: "~5 menit", multiplayer: true },
+  {
+    title: "Kuis Tempur", desc: "Lawan murid lain real-time! Siapa cepat dan benar dia menang.",
+    icon: Swords, href: "/arena/game/kuis-tempur", accentColor: "#EF4444",
+    iconGradient: "from-red-500 to-red-600", featured: true,
+    badge: { text: "Terpopuler", type: "hot" }, xp: "+80 XP", players: "2-8 pemain",
+    time: "~5 menit", multiplayer: true,
+    // Punya mode solo saat server mati, jadi ia TIDAK ikut dilabeli "Segera
+    // Hadir" maupun disingkirkan ke bawah — gimnya memang bisa dimainkan.
+    soloSaatOffline: {
+      players: "Solo vs bot",
+      desc: "Bertahan di rimba kata! Jawab benar untuk menyerang, salah kamu yang terluka.",
+    },
+  },
 ]
 
 export default async function ArenaGimPage() {
@@ -91,11 +109,18 @@ export default async function ArenaGimPage() {
   // "Segera Hadir" AND sink them below every playable game — a mislabeled
   // "Terpopuler" badge sitting mid-grid on a dead link is worse than the
   // label alone. Sort is stable, so playable games keep their authored order.
-  const games: Game[] = GAMES.map((g): Game =>
-    g.multiplayer && !MULTIPLAYER_ENABLED
-      ? { ...g, badge: { text: "Segera Hadir", type: "new" as const }, players: "Segera", desc: "Mode lawan real-time sedang kami siapkan. Segera hadir!" }
-      : g
-  ).sort((a, b) => Number(a.multiplayer && !MULTIPLAYER_ENABLED) - Number(b.multiplayer && !MULTIPLAYER_ENABLED))
+  // Gim multiplayer yang punya mode solo dikecualikan dari perlakuan itu: ia
+  // tetap bisa dimainkan, cuma lawannya bot. Melabelinya "Segera Hadir" akan
+  // menyuruh murid menjauh dari gim yang sebenarnya jalan.
+  const offline = (g: Game) => Boolean(g.multiplayer) && !MULTIPLAYER_ENABLED && !g.soloSaatOffline
+
+  const games: Game[] = GAMES.map((g): Game => {
+    if (!g.multiplayer || MULTIPLAYER_ENABLED) return g
+    if (g.soloSaatOffline) {
+      return { ...g, players: g.soloSaatOffline.players, desc: g.soloSaatOffline.desc }
+    }
+    return { ...g, badge: { text: "Segera Hadir", type: "new" as const }, players: "Segera", desc: "Mode lawan real-time sedang kami siapkan. Segera hadir!" }
+  }).sort((a, b) => Number(offline(a)) - Number(offline(b)))
 
   return (
     <div className="game-hub arena-page">
