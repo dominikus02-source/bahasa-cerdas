@@ -24,6 +24,29 @@ const HP_AWAL = 100
 const DMG_DASAR = 22
 const DMG_SALAH = 14
 const R = 24
+const KUNCI_LEVEL = "bc-kuis-tempur-level"
+
+// Kesulitan naik per level, dan level 1 sengaja SANGAT longgar.
+//
+// Gim ini menuntut tiga hal sekaligus: menghindar, membaca soal, memilih
+// jawaban. Untuk anak, yang paling mudah dikorbankan adalah memikirkan
+// bahasanya — mereka menekan asal supaya cepat kembali menghindar, dan gimnya
+// berhenti mengajar. Level awal karena itu nyaris tanpa tekanan: bot jarang
+// menembak dan pelurunya lambat, sehingga ada ruang untuk benar-benar membaca.
+// Tekanan baru ditambahkan setelah pemain terbiasa.
+function aturanLevel(level: number) {
+  const n = Math.min(level, 10)
+  return {
+    peluangTembak: 0.0012 + n * 0.0006, // level 1 ≈ sepertiga versi awal
+    lajuPeluru: 3.0 + n * 0.28,
+    dmgBot: 10 + n,
+    akurasi: 0.55 - n * 0.03, // makin kecil makin akurat
+    lajuZona: 0.09 + n * 0.02,
+    blok: Math.max(2, 6 - Math.floor(n / 2)), // makin tinggi level, makin sedikit tempat berlindung
+  }
+}
+
+type Blok = { x: number; y: number; w: number; h: number }
 
 type Pemain = {
   nama: string
@@ -61,6 +84,11 @@ export default function KuisTempurSolo() {
   const [hp, setHp] = useState(HP_AWAL)
   const [sisa, setSisa] = useState(JUMLAH)
   const [combo, setCombo] = useState(0)
+  const [level, setLevel] = useState(1)
+  // Jawaban yang dipilih, untuk memperlihatkan benar/salah sejenak sebelum soal
+  // berganti. Tanpa jeda ini murid tidak pernah tahu jawaban yang benar apa —
+  // gim jadi menghukum tanpa mengajari.
+  const [dipilih, setDipilih] = useState<number | null>(null)
   const [soal, setSoal] = useState<{ q: BankQuestion; opsi: { teks: string; benar: boolean }[] } | null>(null)
   const [kunci, setKunci] = useState(false)
   const [feed, setFeed] = useState<{ id: number; teks: string }[]>([])
@@ -84,9 +112,13 @@ export default function KuisTempurSolo() {
   // mengulang soal yang sama beberapa kali dalam satu ronde pendek — terasa
   // seperti gim yang kehabisan bahan, padahal banknya 143 soal.
   const kantongRef = useRef<BankQuestion[]>([])
+  const blokRef = useRef<Blok[]>([])
+  const aturanRef = useRef(aturanLevel(1))
 
   useEffect(() => {
     setSuara(isSoundOn())
+    const tersimpan = Number(localStorage.getItem(KUNCI_LEVEL) || "1")
+    if (Number.isFinite(tersimpan) && tersimpan >= 1) setLevel(Math.min(tersimpan, 99))
     fetch("/api/user/me")
       .then((r) => (r.ok ? r.json() : null))
       .then((d) => {
@@ -143,8 +175,16 @@ export default function KuisTempurSolo() {
     jalanRef.current = false
     cancelAnimationFrame(rafRef.current)
     stopBGM()
-    if (menang) sfx.win()
-    else sfx.gameover()
+    if (menang) {
+      sfx.win()
+      // Naik level hanya saat menang, dan tidak pernah turun. Anak yang kalah
+      // mengulang tingkat yang sama sampai terbiasa — bukan dilempar mundur.
+      setLevel((l) => {
+        const baru = Math.min(l + 1, 99)
+        try { localStorage.setItem(KUNCI_LEVEL, String(baru)) } catch {}
+        return baru
+      })
+    } else sfx.gameover()
     setFase("selesai")
     kirimXp(menang, peringkat)
   }, [kirimXp])
@@ -176,6 +216,27 @@ export default function KuisTempurSolo() {
       }
     })
 
+    const aturan = aturanLevel(level)
+    aturanRef.current = aturan
+
+    // Blok pelindung: peluru berhenti di sini. Inilah yang mengubah menghindar
+    // dari kerja terus-menerus menjadi SATU keputusan — berlindung dulu, lalu
+    // ada ruang untuk benar-benar membaca soalnya. Ditempatkan menjauh dari
+    // titik awal pemain supaya tidak langsung menghimpit.
+    const blok: Blok[] = []
+    for (let i = 0; i < aturan.blok; i++) {
+      const lebar = 46 + Math.random() * 54
+      const tinggi = 20 + Math.random() * 28
+      const a = Math.random() * Math.PI * 2
+      const r = Math.min(W, H) * (0.16 + Math.random() * 0.2)
+      blok.push({
+        x: W / 2 + Math.cos(a) * r - lebar / 2,
+        y: H / 2 + Math.sin(a) * r - tinggi / 2,
+        w: lebar, h: tinggi,
+      })
+    }
+    blokRef.current = blok
+
     bRef.current = []; partRef.current = []; angkaRef.current = []
     zonaRef.current = { x: W / 2, y: H / 2, r: Math.max(W, H) * 0.6 }
     benarRef.current = 0; salahRef.current = 0
@@ -183,12 +244,12 @@ export default function KuisTempurSolo() {
     kantongRef.current = kocok(QUESTION_BANK)
     jalanRef.current = true
 
-    setHp(HP_AWAL); setSisa(JUMLAH); setCombo(0); setFeed([]); setHasil(null)
+    setHp(HP_AWAL); setSisa(JUMLAH); setCombo(0); setFeed([]); setHasil(null); setDipilih(null)
     setFase("main")
     soalBaru()
     sfx.start()
     startBGM()
-  }, [karakterku, avatarku, namaku, soalBaru])
+  }, [karakterku, avatarku, namaku, soalBaru, level])
 
   useEffect(() => {
     const cv = cvRef.current
@@ -264,7 +325,7 @@ export default function KuisTempurSolo() {
       const W = cv.clientWidth, H = cv.clientHeight
       const z = zonaRef.current
       ctx.clearRect(0, 0, W, H)
-      if (z.r > Math.min(W, H) * 0.15) z.r -= 0.2
+      if (z.r > Math.min(W, H) * 0.15) z.r -= aturanRef.current.lajuZona
 
       // Luar zona digelapkan, dalam zona bersih — batasnya terbaca sekali lihat
       // tanpa perlu membaca teks apa pun.
@@ -276,6 +337,17 @@ export default function KuisTempurSolo() {
       ctx.restore()
       ctx.beginPath(); ctx.arc(z.x, z.y, z.r, 0, Math.PI * 2)
       ctx.strokeStyle = "rgba(196, 132, 252, 0.9)"; ctx.lineWidth = 3; ctx.stroke()
+
+      // Blok pelindung digambar sebelum pemain, jadi karakter tampak berdiri di
+      // depannya dan hubungan "aku terlindung" terbaca tanpa penjelasan.
+      blokRef.current.forEach((k) => {
+        ctx.fillStyle = "rgba(148, 163, 184, 0.22)"
+        ctx.strokeStyle = "rgba(226, 232, 240, 0.55)"
+        ctx.lineWidth = 2
+        ctx.beginPath()
+        ctx.roundRect(k.x, k.y, k.w, k.h, 8)
+        ctx.fill(); ctx.stroke()
+      })
 
       pRef.current.forEach((p, i) => {
         if (!p.hidup) return
@@ -295,12 +367,17 @@ export default function KuisTempurSolo() {
             const r = Math.random() * z.r * 0.72
             p.tx = z.x + Math.cos(a) * r; p.ty = z.y + Math.sin(a) * r
           }
-          if (Math.random() < 0.0038) {
+          const at = aturanRef.current
+          if (Math.random() < at.peluangTembak) {
             const t = pRef.current.findIndex((x, j) => j !== i && x.hidup)
             if (t !== -1) {
               const o = pRef.current[t]
-              const a = Math.atan2(o.y - p.y, o.x - p.x) + (Math.random() - 0.5) * 0.4
-              bRef.current.push({ x: p.x, y: p.y, vx: Math.cos(a) * 4.6, vy: Math.sin(a) * 4.6, dari: i, umur: 100, dmg: 16 })
+              const a = Math.atan2(o.y - p.y, o.x - p.x) + (Math.random() - 0.5) * at.akurasi
+              bRef.current.push({
+                x: p.x, y: p.y,
+                vx: Math.cos(a) * at.lajuPeluru, vy: Math.sin(a) * at.lajuPeluru,
+                dari: i, umur: 110, dmg: at.dmgBot,
+              })
             }
           }
         }
@@ -329,6 +406,21 @@ export default function KuisTempurSolo() {
       for (let i = bRef.current.length - 1; i >= 0; i--) {
         const b = bRef.current[i]
         b.x += b.vx; b.y += b.vy; b.umur--
+
+        // Blok menghentikan peluru — itulah yang membuatnya berguna sebagai
+        // tempat berlindung, bukan sekadar hiasan.
+        const tertahan = blokRef.current.some(
+          (k) => b.x > k.x && b.x < k.x + k.w && b.y > k.y && b.y < k.y + k.h
+        )
+        if (tertahan) {
+          for (let n = 0; n < 5; n++) {
+            const a = Math.random() * Math.PI * 2
+            partRef.current.push({ x: b.x, y: b.y, vx: Math.cos(a) * 1.6, vy: Math.sin(a) * 1.6, umur: 16, warna: "#CBD5E1" })
+          }
+          bRef.current.splice(i, 1)
+          continue
+        }
+
         let kena = false
         pRef.current.forEach((t, j) => {
           if (kena || j === b.dari || !t.hidup) return
@@ -376,9 +468,10 @@ export default function KuisTempurSolo() {
     return () => cancelAnimationFrame(rafRef.current)
   }, [fase, selesaikan, tulisFeed])
 
-  const jawab = (benar: boolean) => {
+  const jawab = (idx: number, benar: boolean) => {
     if (kunci || fase !== "main") return
     setKunci(true)
+    setDipilih(idx)
     const aku = pRef.current[0]
 
     if (benar) {
@@ -420,7 +513,7 @@ export default function KuisTempurSolo() {
         return
       }
     }
-    setTimeout(soalBaru, 420)
+    setTimeout(() => { setDipilih(null); soalBaru() }, 750)
   }
 
   const gantiSuara = () => {
@@ -440,7 +533,10 @@ export default function KuisTempurSolo() {
         <Link href="/arena/game" className="mb-5 inline-flex items-center gap-1.5 text-sm text-violet-300">
           <ArrowLeft className="h-4 w-4" /> Kembali
         </Link>
-        <h1 className="text-3xl font-extrabold tracking-tight">Kuis Tempur</h1>
+        <div className="flex items-center gap-2.5">
+          <h1 className="text-3xl font-extrabold tracking-tight">Kuis Tempur</h1>
+          <span className="rounded-full bg-violet-500/25 px-2.5 py-1 text-xs font-black text-violet-200">Level {level}</span>
+        </div>
         <p className="mt-1.5 text-sm leading-relaxed text-violet-300">
           Lima bertahan, satu juara. Jawab benar untuk menembak — salah, kamu yang terluka.
           Kabut terus menyempit, jadi jangan berdiam di tepi.
@@ -484,6 +580,9 @@ export default function KuisTempurSolo() {
         <h1 className="mt-4 text-2xl font-extrabold">
           {hasil?.menang ? "Juara Bertahan!" : `Peringkat #${hasil?.peringkat ?? "-"}`}
         </h1>
+        <p className="mt-1.5 text-sm font-bold text-violet-300">
+          {hasil?.menang ? `Naik ke Level ${level}` : `Level ${level} — coba lagi`}
+        </p>
         <div className="mt-4 flex gap-5 text-sm text-violet-300">
           <span><b className="text-white">{benarRef.current}</b> benar</span>
           <span><b className="text-white">{salahRef.current}</b> salah</span>
@@ -523,6 +622,7 @@ export default function KuisTempurSolo() {
             <Flame className="h-3.5 w-3.5" /> {combo}
           </span>
         )}
+        <span className="rounded-full bg-violet-500/25 px-2.5 py-1 text-xs font-bold text-violet-200">Lv {level}</span>
         <span className="flex items-center gap-1.5 rounded-full bg-rose-500/20 px-2.5 py-1 text-xs font-bold">
           <Users className="h-3.5 w-3.5" /> {sisa}
         </span>
@@ -539,21 +639,35 @@ export default function KuisTempurSolo() {
 
       <canvas ref={cvRef} className="w-full flex-1 touch-none" />
 
+      {/* Gaya kartu mengikuti gim lain (Menara Cerdas): putih, garis tebal
+          #161B3A, bayangan pejal. Sebelumnya blok ini gelap-transparan dan
+          terasa seperti gim yang berbeda menempel di dalam Arena. */}
       <div className="px-3 pb-4">
-        <div className="mb-2 rounded-xl border border-violet-500/40 bg-violet-500/10 px-4 py-2.5 text-center">
-          <p className="text-sm font-bold leading-snug">{soal?.q.soal}</p>
+        <div className="mb-2.5 rounded-2xl border-4 border-[#161B3A] bg-white px-4 py-3 text-center shadow-[4px_4px_0_#161B3A]">
+          <p className="text-[15px] font-bold leading-snug text-[#161B3A]">{soal?.q.soal}</p>
         </div>
-        <div className="grid grid-cols-2 gap-2">
-          {soal?.opsi.map((o, i) => (
-            <button
-              key={i}
-              onClick={() => jawab(o.benar)}
-              disabled={kunci}
-              className="rounded-xl border-2 border-white/15 bg-white/5 px-3 py-3.5 text-sm font-bold active:scale-95 disabled:opacity-40"
-            >
-              {o.teks}
-            </button>
-          ))}
+        <div className="grid grid-cols-2 gap-2.5">
+          {soal?.opsi.map((o, i) => {
+            const terbuka = dipilih !== null
+            const iniDipilih = dipilih === i
+            // Jawaban benar SELALU disorot saat terbuka, bukan hanya kalau
+            // ditebak benar — kalau tidak, murid yang salah tidak pernah tahu
+            // yang benar apa, dan gim cuma menghukum tanpa mengajari.
+            let gaya = "bg-white border-[#161B3A] text-[#161B3A]"
+            if (terbuka && o.benar) gaya = "bg-emerald-200 border-emerald-700 text-emerald-900"
+            else if (terbuka && iniDipilih) gaya = "bg-rose-200 border-rose-700 text-rose-900"
+            else if (terbuka) gaya = "bg-white/60 border-[#161B3A]/25 text-[#161B3A]/50"
+            return (
+              <button
+                key={i}
+                onClick={() => jawab(i, o.benar)}
+                disabled={kunci}
+                className={`rounded-2xl border-[3px] px-3 py-3.5 text-sm font-bold shadow-[3px_3px_0_#161B3A] transition-all active:scale-[0.97] ${gaya}`}
+              >
+                {o.teks}
+              </button>
+            )
+          })}
         </div>
       </div>
     </div>
