@@ -3,6 +3,7 @@ import { getUser } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 import { getDisplayName } from "@/lib/nickname";
 import { RANK_META } from "@/lib/gamification/ranks";
+import { awardGuruXp } from "@/lib/gamification/teacher-xp";
 import type { PlayerRank } from "@prisma/client";
 
 const USER_RANK_SELECT = { playerProfile: { select: { currentRank: true } } } as const;
@@ -89,6 +90,16 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
       where: { id },
       data: { isFeatured: body.isFeatured },
     });
+
+    // Guru XP: memilih karya murid (Editor Choice) = 25 XP, sekali per karya.
+    if (body.isFeatured) {
+      awardGuruXp({
+        guruId: user.id,
+        sumber: "GURU_FEATURED",
+        reference: `feature-${id}`,
+        metadata: { karyaId: id, muridId: karya.userId },
+      }).catch(() => {});
+    }
 
     return NextResponse.json({ karya });
   } catch (error) {

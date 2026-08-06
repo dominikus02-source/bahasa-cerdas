@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 import { rateLimitRoute } from "@/lib/rate-limit";
+import { awardGuruXp } from "@/lib/gamification/teacher-xp";
 
 const DIFFICULTY_MAP: Record<string, string> = {
   MUDAH: "EASY",
@@ -131,6 +132,16 @@ export async function POST(req: NextRequest) {
           type: "LATIHAN_KIRIM",
           data: { quizId: quiz.id, link: "/guru/bank-soal" },
         },
+      });
+    } catch {}
+
+    // Guru XP: mengirim latihan ke kelas (per quiz, idempotent per kiriman).
+    try {
+      await awardGuruXp({
+        guruId: dbUser.id,
+        sumber: "GURU_TUGAS",
+        reference: `quiz-assign-${quiz.id}`,
+        metadata: { quizId: quiz.id, groupIds: groups.map((g) => g.id) },
       });
     } catch {}
 

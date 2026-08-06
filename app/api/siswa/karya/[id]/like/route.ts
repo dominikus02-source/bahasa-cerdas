@@ -2,6 +2,10 @@ import { NextRequest, NextResponse, after } from "next/server";
 import { getUser } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 import { awardCoins, trackQuestProgress, trackDailyStreak } from "@/lib/coins";
+import { awardGuruXp, getMuridGuruIds, notifyGuruMurid } from "@/lib/gamification/teacher-xp";
+
+/** Milestone like yang memicu notifikasi "Karya Trending 🔥" ke guru. */
+const TRENDING_MILESTONES = [25, 50, 100, 250, 500, 1000];
 
 export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -64,6 +68,33 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
             ]
           : []),
       ]);
+
+      // Guru: karya muridnya dapat like → XP + notifikasi; plus "Trending"
+      // saat like menembus milestone (25/50/100/250/500/1000).
+      if (karya.userId !== user.id) {
+        try {
+          const guruIds = await getMuridGuruIds(karya.userId);
+          if (guruIds.length > 0) {
+            const trending = TRENDING_MILESTONES.includes(updated.likesCount);
+            await notifyGuruMurid(guruIds, {
+              title: trending ? "Karya Muridmu Trending 🔥" : "Karya Murid Disukai ❤️",
+              body: trending
+                ? `"${karya.title}" milik muridmu tembus ${updated.likesCount} like!`
+                : `"${karya.title}" milik muridmu disukai ${user.fullName}`,
+              type: trending ? "TRENDING" : "MURID_LIKE",
+              data: { link: "/guru/feed-karya", karyaId: id, likeCount: updated.likesCount },
+            });
+            for (const guruId of guruIds) {
+              await awardGuruXp({
+                guruId,
+                sumber: "MURID_LIKE",
+                reference: `like-${id}-${user.id}`,
+                metadata: { karyaId: id, muridId: karya.userId },
+              });
+            }
+          }
+        } catch {}
+      }
     });
 
     return NextResponse.json({ success: true, liked: true, likeCount: updated.likesCount });

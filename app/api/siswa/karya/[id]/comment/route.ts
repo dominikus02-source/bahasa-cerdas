@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 import { awardCoins, trackQuestProgress, trackDailyStreak } from "@/lib/coins";
 import { commentSchema, sanitize } from "@/lib/validations";
 import { getDisplayName } from "@/lib/nickname";
+import { awardGuruXp, getMuridGuruIds, notifyGuruMurid } from "@/lib/gamification/teacher-xp";
 
 export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -38,6 +39,14 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
       parentId = parent.parentId || parent.id;
     }
 
+    const karya = await db.studentKarya.findUnique({
+      where: { id },
+      select: { userId: true, title: true },
+    });
+    if (!karya) {
+      return NextResponse.json({ error: "Karya tidak ditemukan" }, { status: 404 });
+    }
+
     const comment = await db.studentKaryaComment.create({
       data: {
         karyaId: id,
@@ -65,6 +74,29 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
           trackDailyStreak(user.id),
         ]);
       } catch {}
+
+      // Guru: karya muridnya dikomentari → XP + notifikasi (best-effort).
+      if (karya.userId !== user.id) {
+        try {
+          const guruIds = await getMuridGuruIds(karya.userId);
+          if (guruIds.length > 0) {
+            await notifyGuruMurid(guruIds, {
+              title: "Karya Murid Dikomentari 💬",
+              body: `${user.fullName} berkomentar di "${karya.title}" milik muridmu`,
+              type: "MURID_KOMENTAR",
+              data: { link: "/guru/feed-karya", karyaId: id },
+            });
+            for (const guruId of guruIds) {
+              await awardGuruXp({
+                guruId,
+                sumber: "MURID_KOMENTAR",
+                reference: `komentar-${comment.id}`,
+                metadata: { karyaId: id, muridId: karya.userId },
+              });
+            }
+          }
+        } catch {}
+      }
     });
 
     return NextResponse.json({ comment: commentWithDisplay }, { status: 201 });

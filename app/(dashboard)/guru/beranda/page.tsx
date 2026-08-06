@@ -14,6 +14,8 @@ import { TrialStatusCard } from "@/components/guru/TrialStatusCard"
 import { AiCreditBalance } from "@/components/guru/AiCreditBalance"
 import { GuruMissionCard } from "@/components/guru/misi/GuruMissionCard"
 import BannerProgramGuruCerdas from "@/components/public/BannerProgramGuruCerdas"
+import AktivitasAnalytics from "@/components/guru/AktivitasAnalytics"
+import GuruBadgeGrid from "@/components/guru/GuruBadgeGrid"
 
 function jakartaHour(): number {
   // Same instant, same zone, on both server and client — no drift to hydrate over.
@@ -259,9 +261,13 @@ export default function GuruBerandaPage() {
         </div>
       )}
 
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        <AktivitasAnalytics />
+        <GuruBadgeGrid />
+      </div>
+
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <Link href="/guru/pengaturan/premium" className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm hover:shadow-md transition-all group">
-          <div className="flex items-center justify-between mb-3">
+        <Link href="/guru/pengaturan/premium" className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm hover:shadow-md transition-all group">          <div className="flex items-center justify-between mb-3">
             <h3 className="font-semibold text-gray-900 flex items-center gap-2 group-hover:text-emerald-700">
               <Zap size={16} className="text-amber-500" /> Kredit AI
             </h3>

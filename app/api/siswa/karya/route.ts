@@ -11,6 +11,7 @@ import { getDisplayName } from "@/lib/nickname";
 import { recordActivity } from "@/lib/learning-loop/activity";
 import { refreshNextAction } from "@/lib/learning-loop/next-action";
 import { RANK_META } from "@/lib/gamification/ranks";
+import { awardGuruXp, getMuridGuruIds, notifyGuruMurid } from "@/lib/gamification/teacher-xp";
 import type { PlayerRank } from "@prisma/client";
 
 function withDisplayName<T extends { user: { fullName: string; nickname?: string | null } }>(item: T) {
@@ -265,6 +266,28 @@ export async function POST(req: NextRequest) {
       journey: { title: `Menerbitkan karya: ${karya.title}`, description: `Jenis ${karya.type}`, icon: "pen" },
     }).catch(() => {});
     refreshNextAction(user.id).catch(() => {});
+
+    // Guru XP + notifikasi: setiap guru pengajar murid ini dapat kabar bahwa
+    // muridnya berkarya (best-effort, tidak pernah menggagalkan upload).
+    getMuridGuruIds(user.id)
+      .then((guruIds) => {
+        if (guruIds.length === 0) return;
+        notifyGuruMurid(guruIds, {
+          title: "Murid Berkarya ✍️",
+          body: `${user.fullName} menerbitkan karya baru "${karya.title}"`,
+          type: "MURID_KARYA",
+          data: { link: "/guru/feed-karya", karyaId: karya.id, muridId: user.id, jenis: karya.type },
+        }).catch(() => {});
+        for (const guruId of guruIds) {
+          awardGuruXp({
+            guruId,
+            sumber: "MURID_KARYA",
+            reference: `karya-${karya.id}`,
+            metadata: { muridId: user.id, karyaId: karya.id, jenis: karya.type },
+          }).catch(() => {});
+        }
+      })
+      .catch(() => {});
 
     // Bonus tantangan mingguan — awaited (bukan fire-and-forget) supaya jumlah
     // koinnya bisa ikut dikembalikan dan langsung ditampilkan ke murid.

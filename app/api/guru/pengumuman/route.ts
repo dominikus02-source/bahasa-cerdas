@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { getUser } from "@/lib/supabase/server";
+import { awardGuruXp } from "@/lib/gamification/teacher-xp";
 
 const isTeacher = (user: { role: string; isFounder?: boolean }) =>
   user.role === "GURU" || user.role === "ADMIN" || !!user.isFounder;
@@ -93,6 +94,14 @@ export async function POST(req: Request) {
         })),
       });
     }
+
+    // Guru XP: membuat pengumuman kelas (sekali per pengumuman).
+    awardGuruXp({
+      guruId: user.id,
+      sumber: "GURU_PENGUMUMAN",
+      reference: `pengumuman-${pengumuman.id}`,
+      metadata: { groupId, pengumumanId: pengumuman.id },
+    }).catch(() => {});
 
     return NextResponse.json({ success: true, pengumuman, murid: memberIds.length });
   } catch (error) {

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
 import { getUser } from "@/lib/supabase/server"
 import { buildLatihan, buildKuis, resolvePraktik } from "@/lib/penugasan-content"
+import { awardGuruXp } from "@/lib/gamification/teacher-xp"
 
 const JENIS_VALUES = ["MATERI", "LATIHAN", "PRAKTIK", "KUIS"]
 
@@ -108,6 +109,15 @@ export async function POST(req: Request) {
         })
       )
     )
+
+    // Guru XP: mengirim penugasan ke kelas (per batch, idempotent via UUID —
+    // retry yang sama tidak menggandakan karena referensi berbeda sekali kirim).
+    awardGuruXp({
+      guruId: user.id,
+      sumber: "GURU_TUGAS",
+      reference: `tugas-${crypto.randomUUID()}`,
+      metadata: { groupIds, unitId, judul },
+    }).catch(() => {})
 
     return NextResponse.json({ data: penugasans })
   } catch (error) {

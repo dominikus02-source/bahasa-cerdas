@@ -1,5 +1,6 @@
 import { db } from "@/lib/db";
 import { getGamificationStats } from "@/lib/gamification/player";
+import { Prisma } from "@prisma/client";
 import type { Badge, BadgeRarity } from "@prisma/client";
 
 /**
@@ -25,7 +26,13 @@ export type BadgeConditionType =
   | "TOTAL_KARYA"
   | "TOTAL_WORDS"
   | "FEATURED_KARYA"
-  | "XP_SOURCE_TOTAL";
+  | "XP_SOURCE_TOTAL"
+  // Kondisi guru (metrik murid-muridnya + aktivitas mengajar).
+  | "MURID_KARYA"
+  | "MURID_LIKE"
+  | "MURID_FEATURED"
+  | "TUGAS_DIKIRIM"
+  | "PENGUMUMAN_DIBUAT";
 
 export interface BadgeCondition {
   type: BadgeConditionType;
@@ -47,6 +54,19 @@ export interface BadgeStats {
   /** Karya yang ditandai pilihan guru / terpopuler. */
   featuredKarya: number;
   xpBySource: Record<string, number>;
+  // Metrik guru — 0 untuk murid (murid tidak punya kelas yang diampu).
+  guru?: {
+    /** Total karya yang diterbitkan seluruh murid guru ini. */
+    totalKaryaMurid: number;
+    /** Total like yang diterima seluruh karya muridnya. */
+    totalLikeMurid: number;
+    /** Total karya murid yang dipilih (Editor Choice). */
+    totalFeaturedMurid: number;
+    /** Total penugasan (quiz assignment + penugasan materi) yang dikirim. */
+    totalTugasDikirim: number;
+    /** Total pengumuman yang dibuat guru ini. */
+    totalPengumuman: number;
+  };
 }
 
 export interface BadgeView extends Badge {
@@ -92,6 +112,53 @@ export async function collectBadgeStats(userId: string): Promise<BadgeStats> {
     totalWords: Math.round(Number(wordRow[0]?.totalchars ?? 0) / 6),
     featuredKarya,
     xpBySource,
+    guru: await collectGuruMetrics(userId),
+  };
+}
+
+/**
+ * Metrik badge guru — dihitung hanya bila user mengampu minimal satu kelas.
+ * Untuk murid (tanpa kelas) hasilnya null → semua kondisi guru tetap 0,
+ * sehingga badge guru tidak bisa terbuka di akun murid.
+ */
+async function collectGuruMetrics(userId: string): Promise<BadgeStats["guru"]> {
+  const groups = await db.group.findMany({
+    where: { teacherId: userId },
+    select: { id: true },
+  });
+  if (groups.length === 0) return undefined;
+
+  const groupIds = groups.map((g) => g.id);
+  const [memberRows, karyaRows, likeRows, featuredRows, tugasQuiz, tugasMateri, pengumuman] =
+    await Promise.all([
+      db.groupMember.findMany({ where: { groupId: { in: groupIds } }, select: { userId: true } }),
+      db.$queryRaw<{ total: bigint | null }[]>`
+        SELECT COUNT(*)::bigint as total FROM "StudentKarya" k
+        WHERE k."userId" IN (SELECT "userId" FROM "GroupMember" WHERE "groupId" IN (${Prisma.join(groupIds)}))
+      `,
+      db.$queryRaw<{ total: bigint | null }[]>`
+        SELECT COALESCE(SUM(k."likesCount"), 0)::bigint as total FROM "StudentKarya" k
+        WHERE k."userId" IN (SELECT "userId" FROM "GroupMember" WHERE "groupId" IN (${Prisma.join(groupIds)}))
+      `,
+      db.studentKarya.count({
+        where: { isFeatured: true, user: { groupMemberships: { some: { groupId: { in: groupIds } } } } },
+      }),
+      db.quizAssignment.count({ where: { groupId: { in: groupIds } } }),
+      db.penugasan.count({ where: { groupId: { in: groupIds } } }),
+      db.pengumuman.count({ where: { groupId: { in: groupIds } } }),
+    ]);
+
+  const muridIds = [...new Set(memberRows.map((m) => m.userId))];
+  if (muridIds.length === 0) {
+    return { totalKaryaMurid: 0, totalLikeMurid: 0, totalFeaturedMurid: 0, totalTugasDikirim: 0, totalPengumuman: 0 };
+  }
+
+  return {
+    totalKaryaMurid: Number(karyaRows[0]?.total ?? 0),
+    totalLikeMurid: Number(likeRows[0]?.total ?? 0),
+    totalFeaturedMurid: featuredRows,
+    totalTugasDikirim: tugasQuiz + tugasMateri,
+    totalPengumuman: pengumuman,
   };
 }
 
@@ -129,6 +196,21 @@ export function checkCondition(condition: BadgeCondition, stats: BadgeStats): { 
       break;
     case "XP_SOURCE_TOTAL":
       progress = condition.source ? stats.xpBySource[condition.source] ?? 0 : 0;
+      break;
+    case "MURID_KARYA":
+      progress = stats.guru?.totalKaryaMurid ?? 0;
+      break;
+    case "MURID_LIKE":
+      progress = stats.guru?.totalLikeMurid ?? 0;
+      break;
+    case "MURID_FEATURED":
+      progress = stats.guru?.totalFeaturedMurid ?? 0;
+      break;
+    case "TUGAS_DIKIRIM":
+      progress = stats.guru?.totalTugasDikirim ?? 0;
+      break;
+    case "PENGUMUMAN_DIBUAT":
+      progress = stats.guru?.totalPengumuman ?? 0;
       break;
     default:
       break;

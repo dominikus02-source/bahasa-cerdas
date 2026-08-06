@@ -20,6 +20,14 @@ interface MuridAktif {
   id: string; displayName: string; avatar?: string; lastActiveAt: string;
 }
 
+interface RingkasanKelas {
+  tugas: { id: string; jenis: string; judul: string; tenggat?: string; link: string }[];
+  totalTugas: number;
+  pengumuman: { id: string; judul: string; guru: string; createdAt: string; link: string }[];
+  materi: { id: string; judul: string; deskripsi?: string; guru: string; link: string }[];
+  leaderboard: { posisiGlobal: number; totalPemain: number; posisiKelas: number | null } | null;
+}
+
 const nameOf = (u: { fullName: string; displayName?: string }) => u.displayName || u.fullName;
 
 const TYPE_META: Record<string, { label: string; badge: string }> = {
@@ -37,6 +45,7 @@ export default function HomeFeedPage() {
   const [karyaList, setKaryaList] = useState<Karya[]>([]);
   const [featured, setFeatured] = useState<Karya[]>([]);
   const [aktif, setAktif] = useState<{ count: number; users: MuridAktif[] }>({ count: 0, users: [] });
+  const [ringkasan, setRingkasan] = useState<RingkasanKelas | null>(null);
   const [cursor, setCursor] = useState<string | null>(null);
   const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(true);
@@ -84,6 +93,11 @@ export default function HomeFeedPage() {
     fetch("/api/siswa/aktif")
       .then(r => r.ok ? r.json() : Promise.reject())
       .then(d => setAktif({ count: d.count || 0, users: d.users || [] }))
+      .catch(() => {});
+
+    fetch("/api/murid/dashboard/summary")
+      .then(r => r.ok ? r.json() : Promise.reject())
+      .then(d => setRingkasan(d))
       .catch(() => {});
 
     fetch("/api/siswa/karya?limit=10")
@@ -187,6 +201,118 @@ export default function HomeFeedPage() {
                   </Link>
                 ))}
               </div>
+            </div>
+          )}
+
+          {/* Ringkasan Kelasku */}
+          {ringkasan && (ringkasan.totalTugas > 0 || ringkasan.pengumuman.length > 0 || ringkasan.materi.length > 0 || ringkasan.leaderboard) && (
+            <div className="mb-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {/* Tugas */}
+              <Link href="/murid/tugasku" className="group bg-white rounded-2xl border border-gray-100 p-4 hover:shadow-md hover:border-violet-200 transition-all">
+                <div className="flex items-center justify-between mb-2">
+                  <h2 className="text-sm font-bold text-gray-900 flex items-center gap-2">
+                    <span className="w-7 h-7 rounded-lg bg-violet-100 flex items-center justify-center">
+                      <IconClock size={14} className="text-violet-600" />
+                    </span>
+                    Tugasku
+                  </h2>
+                  <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${ringkasan.totalTugas > 0 ? "bg-rose-100 text-rose-600" : "bg-emerald-100 text-emerald-600"}`}>
+                    {ringkasan.totalTugas > 0 ? `${ringkasan.totalTugas} belum dikerjakan` : "Semua selesai"}
+                  </span>
+                </div>
+                {ringkasan.tugas.length > 0 ? (
+                  <div className="space-y-1.5">
+                    {ringkasan.tugas.slice(0, 2).map(t => (
+                      <div key={t.id} className="flex items-center justify-between text-xs">
+                        <span className="text-gray-600 truncate mr-2">{t.judul}</span>
+                        <span className="text-[10px] font-semibold text-violet-500 shrink-0">{t.jenis === "KUIS" ? "Kuis" : "Materi"}</span>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-xs text-gray-400">Tidak ada tugas tertunda 🎉</p>
+                )}
+              </Link>
+
+              {/* Pengumuman */}
+              <Link href="/murid/pengumuman" className="group bg-white rounded-2xl border border-gray-100 p-4 hover:shadow-md hover:border-amber-200 transition-all">
+                <div className="flex items-center justify-between mb-2">
+                  <h2 className="text-sm font-bold text-gray-900 flex items-center gap-2">
+                    <span className="w-7 h-7 rounded-lg bg-amber-100 flex items-center justify-center">
+                      <IconTarget size={14} className="text-amber-600" />
+                    </span>
+                    Pengumuman
+                  </h2>
+                  {ringkasan.pengumuman.length > 0 && (
+                    <span className="text-[10px] font-semibold text-amber-600">{ringkasan.pengumuman.length} terbaru</span>
+                  )}
+                </div>
+                {ringkasan.pengumuman.length > 0 ? (
+                  <div className="space-y-1.5">
+                    {ringkasan.pengumuman.slice(0, 2).map(p => (
+                      <div key={p.id} className="text-xs">
+                        <p className="text-gray-700 font-medium truncate">{p.judul}</p>
+                        <p className="text-[10px] text-gray-400">{p.guru} · {waktuLalu(p.createdAt)}</p>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-xs text-gray-400">Belum ada pengumuman dari guru.</p>
+                )}
+              </Link>
+
+              {/* Materi */}
+              <Link href="/arena" className="group bg-white rounded-2xl border border-gray-100 p-4 hover:shadow-md hover:border-emerald-200 transition-all">
+                <div className="flex items-center justify-between mb-2">
+                  <h2 className="text-sm font-bold text-gray-900 flex items-center gap-2">
+                    <span className="w-7 h-7 rounded-lg bg-emerald-100 flex items-center justify-center">
+                      <IconPen size={14} className="text-emerald-600" />
+                    </span>
+                    Materi dari Guru
+                  </h2>
+                  {ringkasan.materi.length > 0 && (
+                    <span className="text-[10px] font-semibold text-emerald-600">{ringkasan.materi.length} terbaru</span>
+                  )}
+                </div>
+                {ringkasan.materi.length > 0 ? (
+                  <div className="space-y-1.5">
+                    {ringkasan.materi.slice(0, 2).map(m => (
+                      <div key={m.id} className="text-xs">
+                        <p className="text-gray-700 font-medium truncate">{m.judul}</p>
+                        <p className="text-[10px] text-gray-400">{m.guru}</p>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-xs text-gray-400">Belum ada materi yang dibagikan.</p>
+                )}
+              </Link>
+
+              {/* Leaderboard */}
+              <Link href="/arena/player/leaderboard" className="group bg-white rounded-2xl border border-gray-100 p-4 hover:shadow-md hover:border-amber-200 transition-all bg-gradient-to-br from-amber-50/50 to-white">
+                <div className="flex items-center justify-between mb-2">
+                  <h2 className="text-sm font-bold text-gray-900 flex items-center gap-2">
+                    <span className="w-7 h-7 rounded-lg bg-amber-100 flex items-center justify-center">
+                      <IconFlame size={14} className="text-amber-600" />
+                    </span>
+                    Peringkat Mingguan
+                  </h2>
+                  <span className="text-xs font-semibold text-violet-600 group-hover:text-violet-700">Lihat semua →</span>
+                </div>
+                {ringkasan.leaderboard ? (
+                  <div className="space-y-1.5">
+                    <p className="text-lg font-bold text-gray-900">
+                      #{ringkasan.leaderboard.posisiGlobal}
+                      <span className="text-[11px] font-medium text-gray-400"> dari {ringkasan.leaderboard.totalPemain} pemain</span>
+                    </p>
+                    {ringkasan.leaderboard.posisiKelas && (
+                      <p className="text-[11px] text-gray-500">Peringkat kelas: #{ringkasan.leaderboard.posisiKelas}</p>
+                    )}
+                  </div>
+                ) : (
+                  <p className="text-xs text-gray-400">Belum ada data minggu ini.</p>
+                )}
+              </Link>
             </div>
           )}
 
