@@ -545,32 +545,42 @@ export default function AdminAnalyticsPage() {
             icon={<TrendingDown size={18} />}
           >
             <div className="space-y-4">
-              {data.dropoff.map((d) => (
-                <div key={`${d.from}-${d.to}`}>
-                  <div className="flex items-center justify-between mb-1.5">
-                    <span className="text-xs font-semibold text-slate-600">
-                      {d.from} → {d.to}
-                    </span>
-                    <span
-                      className={`text-xs font-extrabold ${
-                        d.drop >= 50 ? "text-red-600" : d.drop >= 30 ? "text-amber-600" : "text-emerald-600"
-                      }`}
-                    >
-                      drop {d.drop}%
-                    </span>
+              {data.dropoff.map((d) => {
+                const naik = d.drop < 0;
+                const stabil = d.drop === 0;
+                const pct = Math.min(100, Math.abs(d.drop));
+                const tone = naik || stabil ? "text-emerald-600" : d.drop >= 50 ? "text-red-600" : "text-amber-600";
+                const bar =
+                  naik || stabil
+                    ? "linear-gradient(90deg,#34d399,#10b981)"
+                    : d.drop >= 50
+                    ? "linear-gradient(90deg,#f87171,#dc2626)"
+                    : "linear-gradient(90deg,#fbbf24,#f59e0b)";
+                return (
+                  <div key={`${d.from}-${d.to}`}>
+                    <div className="flex items-center justify-between mb-1.5">
+                      <span className="text-xs font-semibold text-slate-600">
+                        {d.from} → {d.to}
+                      </span>
+                      <span className={`text-xs font-extrabold ${tone}`}>
+                        {naik
+                          ? `naik ${pct}%`
+                          : stabil
+                          ? "stabil"
+                          : `drop ${d.drop}%`}
+                      </span>
+                    </div>
+                    <div className="h-3 rounded-full bg-slate-100 overflow-hidden">
+                      {d.drop !== 0 && (
+                        <div
+                          className="h-full rounded-full transition-all"
+                          style={{ width: `${pct}%`, background: bar }}
+                        />
+                      )}
+                    </div>
                   </div>
-                  <div className="h-3 rounded-full bg-slate-100 overflow-hidden">
-                    <div
-                      className="h-full rounded-full transition-all"
-                      style={{
-                        width: `${d.drop}%`,
-                        background:
-                          d.drop >= 50 ? "linear-gradient(90deg,#f87171,#dc2626)" : d.drop >= 30 ? "linear-gradient(90deg,#fbbf24,#f59e0b)" : "linear-gradient(90deg,#34d399,#10b981)",
-                      }}
-                    />
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </SectionCard>
 
