@@ -6,7 +6,7 @@ import {
   Users, Plus, Copy, ChevronLeft, Trash2, Edit3,
   CheckCircle, Clock, BookOpen, Gamepad2, GraduationCap,
   MoreVertical, X, Eye, EyeOff, RefreshCw, Search, Crown, AlertCircle,
-  Share2, MessageCircle, Send
+  Share2, MessageCircle, Send, Megaphone, FileText, ClipboardList, Presentation, Trophy, TrendingUp, Sparkles
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -51,6 +51,31 @@ export default function KelasKuPage() {
   const [toast, setToast] = useState<string | null>(null);
   const [newGroupCode, setNewGroupCode] = useState<{ code: string; name: string; id: string } | null>(null);
   const pollingRef = useRef<NodeJS.Timeout | null>(null);
+  const [detailMap, setDetailMap] = useState<Record<string, any>>({});
+  const [detailTab, setDetailTab] = useState<"overview" | "tugas" | "nilai" | "pengumuman" | "materi">("overview");
+  const [fabOpen, setFabOpen] = useState(false);
+  const [showPengumuman, setShowPengumuman] = useState(false);
+  const [pengumumanForm, setPengumumanForm] = useState({ judul: "", deskripsi: "", tenggat: "" });
+  const [pengumumanGroupId, setPengumumanGroupId] = useState("");
+  const [sendingPengumuman, setSendingPengumuman] = useState(false);
+  const [pengumumanError, setPengumumanError] = useState("");
+
+  const loadDetail = async (groupId: string) => {
+    try {
+      const res = await fetch(`/api/guru/kelasku/${groupId}`);
+      if (!res.ok) return;
+      const data = await res.json();
+      setDetailMap(prev => ({ ...prev, [groupId]: data }));
+    } catch { /* gagal diam */ }
+  };
+
+  useEffect(() => {
+    groups.forEach(g => {
+      if (detailMap[g.id]) return;
+      loadDetail(g.id);
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [groups]);
 
   const fetchGroups = async () => {
     setLoading(true);
@@ -162,6 +187,36 @@ export default function KelasKuPage() {
       fetchGroups();
     } catch (e) {
       console.error(e);
+    }
+  };
+
+  const handleSendPengumuman = async () => {
+    if (!pengumumanGroupId || sendingPengumuman) return;
+    if (!pengumumanForm.judul.trim()) { setPengumumanError("Judul wajib diisi"); return; }
+    setPengumumanError("");
+    setSendingPengumuman(true);
+    try {
+      const res = await fetch("/api/guru/pengumuman", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          groupId: pengumumanGroupId,
+          judul: pengumumanForm.judul.trim(),
+          deskripsi: pengumumanForm.deskripsi.trim(),
+          tenggat: pengumumanForm.tenggat || null,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) { setPengumumanError(data.error || "Gagal mengirim pengumuman"); return; }
+      setShowPengumuman(false);
+      setPengumumanForm({ judul: "", deskripsi: "", tenggat: "" });
+      setPengumumanGroupId("");
+      setToast("Pengumuman terkirim ke murid kelas!");
+      if (pengumumanGroupId) loadDetail(pengumumanGroupId);
+    } catch {
+      setPengumumanError("Gagal mengirim pengumuman. Periksa koneksi Anda.");
+    } finally {
+      setSendingPengumuman(false);
     }
   };
 
@@ -279,6 +334,30 @@ export default function KelasKuPage() {
                       {group.members?.reduce((acc, m) => acc + (m.quizResults?.length || 0), 0)} Kuis
                     </span>
                   </div>
+                  {detailMap[group.id]?.stats && (
+                    <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 mt-3">
+                      <div className="rounded-xl bg-slate-50 px-3 py-2 text-center">
+                        <p className="text-sm font-bold text-slate-800">{detailMap[group.id].stats.totalMurid}</p>
+                        <p className="text-[10px] text-slate-400">Murid</p>
+                      </div>
+                      <div className="rounded-xl bg-emerald-50 px-3 py-2 text-center">
+                        <p className="text-sm font-bold text-emerald-700">{detailMap[group.id].stats.tugasAktif}</p>
+                        <p className="text-[10px] text-slate-400">Tugas Aktif</p>
+                      </div>
+                      <div className="rounded-xl bg-blue-50 px-3 py-2 text-center">
+                        <p className="text-sm font-bold text-blue-700">{detailMap[group.id].stats.pengumuman}</p>
+                        <p className="text-[10px] text-slate-400">Pengumuman</p>
+                      </div>
+                      <div className="rounded-xl bg-amber-50 px-3 py-2 text-center">
+                        <p className="text-sm font-bold text-amber-700">{detailMap[group.id].stats.nilaiRata ?? "—"}</p>
+                        <p className="text-[10px] text-slate-400">Nilai Rata²</p>
+                      </div>
+                      <div className="rounded-xl bg-violet-50 px-3 py-2 text-center">
+                        <p className="text-sm font-bold text-violet-700">{detailMap[group.id].stats.progressMurid}%</p>
+                        <p className="text-[10px] text-slate-400">Progress</p>
+                      </div>
+                    </div>
+                  )}
                 </div>
                 <div className="shrink-0">
                   <div className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 rounded-xl">
@@ -484,6 +563,17 @@ export default function KelasKuPage() {
               Bagikan kode di atas ke murid untuk bergabung. Kode tidak berubah kecuali di-reset.
             </p>
 
+            {/* ── Tab bar ── */}
+            <div className="flex gap-1 mb-4 overflow-x-auto pb-1">
+              {([["overview", "Overview", <Eye key="o" size={14} />], ["tugas", "Tugas", <ClipboardList key="t" size={14} />], ["nilai", "Nilai", <TrendingUp key="n" size={14} />], ["pengumuman", "Pengumuman", <Megaphone key="p" size={14} />], ["materi", "Materi", <Presentation key="m" size={14} />]] as const).map(([tab, label, icon]) => (
+                <button key={tab} onClick={() => setDetailTab(tab)}
+                  className={`flex items-center gap-1.5 whitespace-nowrap px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${detailTab === tab ? "bg-emerald-600 text-white" : "bg-slate-100 text-slate-500 hover:bg-slate-200"}`}>
+                  {icon} {label}
+                </button>
+              ))}
+            </div>
+
+            {detailTab === "overview" && (<>
             {(() => {
               const ketuaMember = selectedGroup.members?.find((m: any) => m.role === "ketua");
               return ketuaMember ? (
@@ -545,6 +635,138 @@ export default function KelasKuPage() {
                 ))}
               </div>
             )}
+            </>
+            )}
+
+            {detailTab === "tugas" && (() => {
+              const d = detailMap[selectedGroup.id];
+              const quizList = d?.tugasQuiz || [];
+              const penugasanList = d?.tugasPenugasan || [];
+              return (
+                <div className="space-y-3 max-h-[50vh] overflow-y-auto pr-1">
+                  <div className="flex items-center justify-between">
+                    <h3 className="font-bold text-sm text-slate-700">Tugas Kelas</h3>
+                    <Link href="/guru/bank-soal" className="text-xs font-semibold text-emerald-600 hover:text-emerald-700">Kirim tugas baru →</Link>
+                  </div>
+                  {quizList.length === 0 && penugasanList.length === 0 && (
+                    <p className="text-center py-10 text-slate-400 text-sm">Belum ada tugas untuk kelas ini</p>
+                  )}
+                  {quizList.map((t: any) => (
+                    <div key={t.id} className="flex items-center gap-3 p-3 bg-slate-50 rounded-xl">
+                      <div className="w-9 h-9 rounded-lg bg-emerald-100 flex items-center justify-center shrink-0">
+                        <ClipboardList className="w-4 h-4 text-emerald-600" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-semibold text-slate-900 truncate">{t.quiz.title}</p>
+                        <p className="text-[11px] text-slate-400">
+                          {t.isPublished ? "Dipublikasikan" : "Draf"} · {t._count.submissions} pengumpulan
+                          {t.dueDate ? ` · Tenggat ${new Date(t.dueDate).toLocaleDateString("id-ID", { day: "numeric", month: "short" })}` : ""}
+                        </p>
+                      </div>
+                      <Link href={`/guru/kuis/${t.quiz.id}/results`} className="text-xs font-semibold text-emerald-600 hover:underline shrink-0">Hasil</Link>
+                    </div>
+                  ))}
+                  {penugasanList.map((t: any) => (
+                    <div key={t.id} className="flex items-center gap-3 p-3 bg-slate-50 rounded-xl">
+                      <div className="w-9 h-9 rounded-lg bg-violet-100 flex items-center justify-center shrink-0">
+                        <BookOpen className="w-4 h-4 text-violet-600" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-semibold text-slate-900 truncate">{t.judul}</p>
+                        <p className="text-[11px] text-slate-400">
+                          {t.jenis} · {t._count.submissions} pengumpulan
+                          {t.tenggat ? ` · Tenggat ${new Date(t.tenggat).toLocaleDateString("id-ID", { day: "numeric", month: "short" })}` : ""}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              );
+            })()}
+
+            {detailTab === "nilai" && (() => {
+              const d = detailMap[selectedGroup.id];
+              const stats = d?.stats;
+              return (
+                <div className="space-y-3">
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="rounded-2xl bg-amber-50 p-4 text-center">
+                      <p className="text-xl font-bold text-amber-700">{stats?.nilaiRata ?? "—"}</p>
+                      <p className="text-[11px] text-slate-400 mt-0.5">Nilai Rata-rata</p>
+                    </div>
+                    <div className="rounded-2xl bg-violet-50 p-4 text-center">
+                      <p className="text-xl font-bold text-violet-700">{stats?.progressMurid ?? 0}%</p>
+                      <p className="text-[11px] text-slate-400 mt-0.5">Murid Aktif Belajar</p>
+                    </div>
+                  </div>
+                  <Link href={`/guru/penilaian?groupId=${selectedGroup.id}`} className="block w-full py-2.5 text-center rounded-xl bg-emerald-600 text-white text-sm font-semibold hover:bg-emerald-700 transition-all">
+                    Buka Penilaian Kelas
+                  </Link>
+                  <Link href={`/guru/gradebook?groupId=${selectedGroup.id}`} className="block w-full py-2.5 text-center rounded-xl border-2 border-emerald-200 text-emerald-700 text-sm font-semibold hover:bg-emerald-50 transition-all">
+                    Buka Buku Nilai
+                  </Link>
+                </div>
+              );
+            })()}
+
+            {detailTab === "pengumuman" && (
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <h3 className="font-bold text-sm text-slate-700">Pengumuman Kelas</h3>
+                  <button onClick={() => { setPengumumanError(""); setShowPengumuman(true); }}
+                    className="text-xs font-semibold text-emerald-600 hover:underline flex items-center gap-1">
+                    <Megaphone size={12} /> Buat Pengumuman
+                  </button>
+                </div>
+                {(() => {
+                  const pengList = detailMap[selectedGroup.id]?.pengumuman || [];
+                  if (pengList.length === 0) return <p className="text-center py-10 text-slate-400 text-sm">Belum ada pengumuman</p>;
+                  return (
+                    <div className="space-y-2 max-h-[50vh] overflow-y-auto pr-1">
+                      {pengList.map((p: any) => (
+                        <div key={p.id} className="p-3 bg-slate-50 rounded-xl">
+                          <p className="text-sm font-semibold text-slate-900">{p.judul}</p>
+                          <p className="text-[11px] text-slate-400 mt-0.5">
+                            {new Date(p.createdAt).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" })} · {p._count.submissions} murid merespons
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  );
+                })()}
+              </div>
+            )}
+
+            {detailTab === "materi" && (
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <h3 className="font-bold text-sm text-slate-700">Materi Kelas</h3>
+                  <Link href="/guru/materi-ajar" className="text-xs font-semibold text-emerald-600 hover:underline flex items-center gap-1">
+                    Tambah materi →
+                  </Link>
+                </div>
+                {(() => {
+                  const materiList = detailMap[selectedGroup.id]?.materis || [];
+                  if (materiList.length === 0) return <p className="text-center py-10 text-slate-400 text-sm">Belum ada materi dikirim</p>;
+                  return (
+                    <div className="space-y-2 max-h-[50vh] overflow-y-auto pr-1">
+                      {materiList.map((mt: any) => (
+                        <div key={mt.id} className="flex items-center gap-3 p-3 bg-slate-50 rounded-xl">
+                          <div className="w-9 h-9 rounded-lg bg-blue-100 flex items-center justify-center shrink-0">
+                            <Presentation className="w-4 h-4 text-blue-600" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-semibold text-slate-900 truncate">{mt.materi.title}</p>
+                            <p className="text-[11px] text-slate-400 truncate">{new Date(mt.createdAt).toLocaleDateString("id-ID", { day: "numeric", month: "short" })}</p>
+                          </div>
+                          <Link href={`/arena/materi/${mt.materi.id}`} className="text-xs font-semibold text-emerald-600 hover:underline shrink-0">Buka</Link>
+                        </div>
+                      ))}
+                    </div>
+                  );
+                })()}
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -576,6 +798,94 @@ export default function KelasKuPage() {
               >
                 {deleting ? "Menghapus..." : "Hapus Kelas"}
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── FAB: Apa yang ingin dibuat? ── */}
+      <div className="fixed bottom-6 right-6 z-[60] flex flex-col items-end gap-2">
+        {fabOpen && (
+          <div className="bg-white rounded-2xl shadow-2xl border border-slate-100 p-2 w-56 animate-in fade-in zoom-in">
+            <p className="text-[11px] font-bold text-slate-400 px-3 pt-2 pb-1 uppercase tracking-wider">Apa yang ingin dibuat?</p>
+            <button onClick={() => { setFabOpen(false); setShowGroup(null); setShowCreate(true); }}
+              className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-700 hover:bg-emerald-50 transition-colors text-left">
+              <GraduationCap size={16} className="text-emerald-600" /> Kelas Baru
+            </button>
+            <button onClick={() => { setFabOpen(false); setPengumumanGroupId(showGroup || ""); setShowPengumuman(true); }}
+              className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-700 hover:bg-emerald-50 transition-colors text-left">
+              <Megaphone size={16} className="text-emerald-600" /> Pengumuman
+            </button>
+            <Link href="/guru/bank-soal" onClick={() => setFabOpen(false)}
+              className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-700 hover:bg-emerald-50 transition-colors text-left">
+              <ClipboardList size={16} className="text-emerald-600" /> Tugas
+            </Link>
+            <Link href="/guru/bank-soal" onClick={() => setFabOpen(false)}
+              className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-700 hover:bg-emerald-50 transition-colors text-left">
+              <FileText size={16} className="text-emerald-600" /> Asesmen
+            </Link>
+            <Link href="/guru/materi-ajar" onClick={() => setFabOpen(false)}
+              className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-700 hover:bg-emerald-50 transition-colors text-left">
+              <Presentation size={16} className="text-emerald-600" /> Materi
+            </Link>
+          </div>
+        )}
+        <button onClick={() => setFabOpen(v => !v)}
+          className={`w-14 h-14 rounded-full shadow-xl flex items-center justify-center transition-all ${fabOpen ? "bg-slate-700 rotate-45" : "bg-emerald-600 hover:bg-emerald-700"}`}>
+          <Plus size={24} className="text-white" />
+        </button>
+      </div>
+
+      {/* ── Pengumuman modal ── */}
+      {showPengumuman && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[65] p-4" onClick={() => setShowPengumuman(false)}>
+          <div className="bg-white rounded-2xl p-6 max-w-md w-full" onClick={(e) => e.stopPropagation()}>
+            <h2 className="text-lg font-bold mb-1 flex items-center gap-2">
+              <Megaphone className="w-5 h-5 text-emerald-600" />
+              Buat Pengumuman
+            </h2>
+            <p className="text-sm text-slate-500 mb-4">
+              {pengumumanGroupId ? `Dikirim ke kelas: ${groups.find(g => g.id === pengumumanGroupId)?.name || ""}` : "Pilih kelas dulu dari daftar kelas."}
+            </p>
+            {!pengumumanGroupId && (
+              <select value={pengumumanGroupId} onChange={(e) => setPengumumanGroupId(e.target.value)}
+                className="w-full h-11 px-4 mb-4 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-500">
+                <option value="">Pilih kelas...</option>
+                {groups.map(g => <option key={g.id} value={g.id}>{g.name} ({g.grade})</option>)}
+              </select>
+            )}
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Judul</label>
+                <input value={pengumumanForm.judul} onChange={(e) => setPengumumanForm({ ...pengumumanForm, judul: e.target.value })}
+                  className="w-full h-11 px-4 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500" required />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Isi</label>
+                <textarea value={pengumumanForm.deskripsi} onChange={(e) => setPengumumanForm({ ...pengumumanForm, deskripsi: e.target.value })}
+                  rows={3} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 resize-none" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Tenggat (opsional)</label>
+                <input type="date" value={pengumumanForm.tenggat} onChange={(e) => setPengumumanForm({ ...pengumumanForm, tenggat: e.target.value })}
+                  className="w-full h-11 px-4 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-500" />
+              </div>
+              {pengumumanError && (
+                <div className="flex items-center gap-2 p-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm">
+                  <AlertCircle className="w-4 h-4 shrink-0" />
+                  <span>{pengumumanError}</span>
+                </div>
+              )}
+              <div className="flex gap-3">
+                <button onClick={() => setShowPengumuman(false)} className="flex-1 py-2.5 border-2 border-slate-200 text-slate-600 font-bold rounded-xl">
+                  Batal
+                </button>
+                <button onClick={handleSendPengumuman} disabled={sendingPengumuman || !pengumumanGroupId}
+                  className="flex-1 py-2.5 bg-emerald-600 text-white font-bold rounded-xl hover:bg-emerald-700 disabled:opacity-50 flex items-center justify-center gap-2">
+                  {sendingPengumuman ? <div className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full" /> : <Send size={14} />}
+                  Kirim
+                </button>
+              </div>
             </div>
           </div>
         </div>

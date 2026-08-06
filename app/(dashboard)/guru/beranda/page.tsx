@@ -60,16 +60,19 @@ export default function GuruBerandaPage() {
   const [nilaiStats, setNilaiStats] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [social, setSocial] = useState<any>(null)
 
   useEffect(() => {
     setLoading(true); setError(null);
     Promise.all([
       fetch("/api/guru/dashboard").then(r => r.ok ? r.json() : Promise.reject("Gagal memuat dashboard")),
       fetch("/api/guru/nilai/stats").then(r => r.ok ? r.json() : null),
+      fetch("/api/guru/dashboard/social").then(r => r.ok ? r.json() : null),
     ])
-      .then(([dashboardData, nilaiData]) => {
+      .then(([dashboardData, nilaiData, socialData]) => {
         if (dashboardData.totalKarya !== undefined) setStats(dashboardData)
         if (nilaiData?.stats) setNilaiStats(nilaiData.stats)
+        if (socialData) setSocial(socialData)
       })
       .catch(() => setError("Gagal memuat data dashboard"))
       .finally(() => setLoading(false));
@@ -196,6 +199,62 @@ export default function GuruBerandaPage() {
               </div>
             </div>
             <div className="mt-3 text-xs text-amber-600 font-medium">Bulan ini</div>
+          </div>
+        </div>
+      )}
+
+      {social && social.totalMurid > 0 && (
+        <div className="mb-6 rounded-2xl border border-emerald-100 bg-gradient-to-r from-emerald-50 via-teal-50 to-white p-5 shadow-sm">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="font-semibold text-gray-900 flex items-center gap-2">
+              <Flame size={16} className="text-orange-500" /> Aktivitas Hari Ini
+            </h3>
+            <Link href="/guru/feed-karya" className="text-xs font-semibold text-emerald-600 hover:text-emerald-700 flex items-center gap-1">
+              Lihat Hasil Karya <ChevronRight size={12} />
+            </Link>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-6 gap-3 text-center">
+            <div className="p-3 rounded-xl bg-emerald-50">
+              <p className="text-2xl font-bold text-emerald-700">{social.muridAktifHariIni}</p>
+              <p className="text-[11px] text-gray-500 mt-0.5 leading-tight">murid berkarya hari ini</p>
+            </div>
+            <div className="p-3 rounded-xl bg-rose-50">
+              <p className="text-2xl font-bold text-rose-600">{social.belumBerkarya}</p>
+              <p className="text-[11px] text-gray-500 mt-0.5 leading-tight">murid belum pernah berkarya</p>
+            </div>
+            <Link href="/guru/feed-karya" className="p-3 rounded-xl bg-amber-50 hover:bg-amber-100 transition-colors block">
+              <p className="text-2xl font-bold text-amber-600">{social.likeHariIni}</p>
+              <p className="text-[11px] text-gray-500 mt-0.5 leading-tight">like baru</p>
+            </Link>
+            <div className="p-3 rounded-xl bg-sky-50">
+              <p className="text-2xl font-bold text-sky-600">{social.komentarHariIni}</p>
+              <p className="text-[11px] text-gray-500 mt-0.5 leading-tight">komentar baru</p>
+            </div>
+            <div className="p-3 rounded-xl bg-violet-50">
+              <p className="text-2xl font-bold text-violet-600">{social.karyaHariIni}</p>
+              <p className="text-[11px] text-gray-500 mt-0.5 leading-tight">karya baru</p>
+            </div>
+            <div className="p-3 rounded-xl bg-orange-50">
+              <p className="text-2xl font-bold text-orange-600">{social.karyaTrending}</p>
+              <p className="text-[11px] text-gray-500 mt-0.5 leading-tight">karya trending</p>
+            </div>
+          </div>
+          <div className="mt-3 flex flex-wrap gap-2 text-[11px]">
+            {social.karyaLike100 > 0 && (
+              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-100 text-amber-700 font-semibold">
+                <Star size={10} /> {social.karyaLike100} karya melewati 100 like
+              </span>
+            )}
+            {social.tugasSelesaiHariIni > 0 && (
+              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-700 font-semibold">
+                <ClipboardCheck size={10} /> {social.tugasSelesaiHariIni} tugas selesai
+              </span>
+            )}
+            {social.belumBerkarya > 0 && (
+              <Link href="/guru/feed-karya" className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-rose-100 text-rose-600 font-semibold hover:bg-rose-200 transition-colors">
+                Ajak {social.belumBerkarya} murid mulai berkarya →
+              </Link>
+            )}
           </div>
         </div>
       )}
