@@ -20,22 +20,10 @@ function startOfTodayWIB(): Date {
   return new Date(d.getTime() - WIB_OFFSET_MS);
 }
 
-function startOfDayWIB(ms: number): Date {
-  const d = new Date(ms + WIB_OFFSET_MS);
-  d.setUTCHours(0, 0, 0, 0);
-  return new Date(d.getTime() - WIB_OFFSET_MS);
-}
-
 /** Fragmen SQL `"userId" = ANY(...)`; FALSE bila daftar kosong. */
 function idsSql(ids: string[]): Prisma.Sql {
   if (!ids.length) return Prisma.sql`FALSE`;
   return Prisma.sql`"userId" = ANY(${ids})`;
-}
-
-/** Fragment SQL userId untuk tabel lain (kolom bukan "userId", mis. authorId). */
-function colSql(col: string, ids: string[]): Prisma.Sql {
-  if (!ids.length) return Prisma.sql`FALSE`;
-  return Prisma.sql`${Prisma.raw(col)} = ANY(${ids})`;
 }
 
 /** UNION dari semua tabel aktivitas (WIB-aware). */
@@ -605,22 +593,31 @@ const GAME_LABELS: Record<string, string> = {
 
 async function computeTopGames(since: Date, until: Date, ids: string[]) {
   const rows = await db.$queryRaw<
-    { source: string; players: number; totalXp: number; txs: number; repeat: number }[]
+    { source: string; players: number; totalXp: number; txs: number }[]
   >(Prisma.sql`
     SELECT "source",
            COUNT(DISTINCT "userId")::int AS players,
            COALESCE(SUM("amount"), 0)::int AS "totalXp",
-           COUNT(*)::int AS txs,
-           COUNT(*) FILTER (WHERE "userId" IN (
-             SELECT "userId" FROM "XPTransaction" x2
-             WHERE x2."userId" = "XPTransaction"."userId" AND x2."source" = "XPTransaction"."source"
-             GROUP BY x2."userId" HAVING COUNT(*) > 1
-           ))::int AS repeat
+           COUNT(*)::int AS txs
     FROM "XPTransaction"
     WHERE "source" = ANY(${GAME_SOURCES}) AND "createdAt" >= ${since} AND "createdAt" < ${until}
       AND ${idsSql(ids)}
     GROUP BY "source"
   `);
+
+  // User yang bermain > 1 kali (berdasarkan jumlah transaksi per sumber).
+  const repeatRows = await db.$queryRaw<{ source: string; users: number }[]>(Prisma.sql`
+    SELECT "source", COUNT(*)::int AS users FROM (
+      SELECT "source", "userId"
+      FROM "XPTransaction"
+      WHERE "source" = ANY(${GAME_SOURCES}) AND "createdAt" >= ${since} AND "createdAt" < ${until}
+        AND ${idsSql(ids)}
+      GROUP BY "source", "userId"
+      HAVING COUNT(*) > 1
+    ) r
+    GROUP BY "source"
+  `);
+  const repeatMap = new Map(repeatRows.map((r) => [r.source, r.users]));
 
   return rows
     .map((r) => ({
@@ -629,7 +626,7 @@ async function computeTopGames(since: Date, until: Date, ids: string[]) {
       players: r.players,
       totalXp: r.totalXp,
       avgXp: r.players > 0 ? Math.round(r.totalXp / r.players) : 0,
-      repeatRate: r.players > 0 ? Math.round((r.repeat / r.players) * 100) : 0,
+      repeatRate: r.players > 0 ? Math.round(((repeatMap.get(r.source) ?? 0) / r.players) * 100) : 0,
     }))
     .sort((a, b) => b.players - a.players);
 }
