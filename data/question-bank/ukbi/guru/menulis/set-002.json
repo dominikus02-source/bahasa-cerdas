@@ -1,0 +1,153 @@
+{
+ "meta": {
+  "product": "UKBI_PRACTICE",
+  "track": "UKBI_GURU",
+  "section": "menulis",
+  "set": "set-002",
+  "totalItems": 3,
+  "source": "BC_UKBI_GURU_ORIGINAL"
+ },
+ "questions": [
+  {
+   "id": "BC-UKBI-GURU-MENULIS-SET002-Q001",
+   "product": "UKBI_PRACTICE",
+   "track": "UKBI_GURU",
+   "section": "menulis",
+   "band": "MADYA",
+   "type": "constructed",
+   "difficulty": 3,
+   "scoringMode": "rubric",
+   "prompt": "Anda diminta membuat surat dinas untuk menggantikan jam mengajar. Tulislah sebuah surat resmi yang ditujukan kepada Kepala Sekolah berisi: (1) permohonan izin mengikuti pelatihan sehingga tidak dapat mengajar pada hari tertentu, (2) penjelasan singkat bahwa materi yang ditinggalkan akan dijadwalkan ulang, dan (3) permohonan persetujuan atas jadwal pengganti. Tuliskan dengan format surat dinas yang benar, bahasa formal, dan santun.",
+   "wordLimit": {
+    "min": 100,
+    "max": 250
+   },
+   "rubric": [
+    {
+     "criteria": "Struktur surat dinas",
+     "weight": 30,
+     "description": "Terdapat identitas lembaga, tanggal, alamat penerima, salam pembuka, isi, salam penutup, dan tanda tangan"
+    },
+    {
+     "criteria": "Kesesuaian maksud dan isi",
+     "weight": 30,
+     "description": "Tujuan permohonan jelas, jadwal pengganti disebutkan secara konkret"
+    },
+    {
+     "criteria": "Ketepatan bahasa",
+     "weight": 25,
+     "description": "Menggunakan ejaan, pilihan kata, dan kalimat efektif ragam resmi"
+    },
+    {
+     "criteria": "Kesantunan berbahasa",
+     "weight": 15,
+     "description": "Bernada santun, hormat, dan tidak bertele-tele"
+    }
+   ],
+   "sampleExpectedResponse": "Hal: Permohonan Penggantian Jam Mengajar\n\nYth. Bapak Kepala Sekolah\nSMPN 3 Surabaya\nDi tempat\n\nDengan hormat,\n\nSaya yang bertanda tangan di bawah ini, nama Aurora Widhiastuti, S.Pd., guru Bahasa Indonesia SMPN 3 Surabaya, dengan ini mengajukan permohonan izin tidak mengajar pada hari Selasa, 12 Agustus 2026 karena mengikuti pelatihan guru tingkat kota.\n\nMateri yang seharusnya disampaikan pada hari tersebut akan dijadwalkan ulang pada hari Jumat, 15 Agustus 2026, sesuai jadwal yang telah dikoordinasikan bersama wali kelas.\n\nDemikian permohonan ini saya sampaikan. Atas persetujuan Bapak, saya mengucapkan terima kasih.\n\nSurabaya, 10 Agustus 2026\nYang mengajukan,\n\n(Jindah Widhiastuti, S.Pd.)",
+   "cognitive": "PENERAPAN",
+   "domain": "AKADEMIK",
+   "tags": [
+    "surat-dinas",
+    "administrasi",
+    "surat-resmi"
+   ],
+   "source": "BC_UKBI_GURU_ORIGINAL",
+   "status": "approved"
+  },
+  {
+   "id": "BC-UKBI-GURU-MENULIS-SET002-Q002",
+   "product": "UKBI_PRACTICE",
+   "track": "UKBI_GURU",
+   "section": "menulis",
+   "band": "UNGGUL",
+   "type": "constructed",
+   "difficulty": 3,
+   "scoringMode": "rubric",
+   "prompt": "Anda adalah guru kelas VII dan akan membagi siswa ke dalam kelompok diskusi cerita rakyat. Tulislah sebuah instruksi kerja kelompok yang berisi: (1) langkah-langkah membaca dan mengidentifikasi unsur intrinsik cerita, (2) pembagian peran dalam kelompok (moderator, pencatat, penyaji, dan anggota), (3) aturan berdiskusi yang sehat dan menghargai pendapat, serta (4) waktu dan laporan yang harus dikumpulkan. Gunakan kalimat perintah yang jelas dan tidak multitafsir.",
+   "wordLimit": {
+    "min": 120,
+    "max": 300
+   },
+   "rubric": [
+    {
+     "criteria": "Kelengkapan instruksi",
+     "weight": 30,
+     "description": "Memuat keempat komponen: langkah, peran, aturan diskusi, dan target laporan"
+    },
+    {
+     "criteria": "Kejelasan langkah kerja",
+     "weight": 30,
+     "description": "Urutan langkah logis, mudah diikuti, dan tidak multitafsir"
+    },
+    {
+     "criteria": "Penggunaan kalimat perintah efektif",
+     "weight": 25,
+     "description": "Kalimat perintah singkat, jelas, memakai kata kerja operasional"
+    },
+    {
+     "criteria": "Kebahasaan dan kerapian",
+     "weight": 15,
+     "description": "Ejaan benar, paragraf padu, dan mudah dibaca oleh siswa kelas VII"
+    }
+   ],
+   "sampleExpectedResponse": "INSTRUKSI KERJA KELOMPOK\nDiskusi Unsur Intrinsik Cerita Rakyat\n\nA. Langkah Kerja\n1. Bacalah cerita yang dibagikan guru secara berkelompok.\n2. Identifikasi latar, tokoh, alur, amanat, dan sudut pandang.\n3. Tuliskan hasilnya pada lembar kerja yang tersedia.\n\nB. Pembagian Peran\n1. Moderator memimpin jalannya diskusi.\n2. Pencatat menuliskan hasil kesepakatan kelompok.\n3. Penyaji mempresentasikan hasil di depan kelas.\n4. Semua anggota wajib memberikan pendapat.\n\nC. Aturan Diskusi\n1. Setiap anggota mendapat kesempatan berbicara.\n2. Gunakan bahasa yang santun; jangan menghakimi.\n3. Tidak memotong pembicaraan teman.\n\nD. Target dan Laporan\nDiskusi berlangsung 30 menit. Hasil dikumpulkan kepada guru paling lambat pada akhir pelajaran dalam bentuk lembar jawaban.",
+   "cognitive": "KREASI",
+   "domain": "AKADEMIK",
+   "tags": [
+    "instruksi-kerja",
+    "diskusi-kelompok",
+    "teks-prosedur"
+   ],
+   "source": "BC_UKBI_GURU_ORIGINAL",
+   "status": "approved"
+  },
+  {
+   "id": "BC-UKBI-GURU-MENULIS-SET002-Q003",
+   "product": "UKBI_PRACTICE",
+   "track": "UKBI_GURU",
+   "section": "menulis",
+   "band": "SANGAT_UNGGUL",
+   "type": "constructed",
+   "difficulty": 4,
+   "scoringMode": "rubric",
+   "prompt": "Tuliskan sebuah paragraf argumentasi sebagai pengantar makalah profesional Anda dengan topik: 'Peran Guru Bahasa Indonesia dalam Menumbuhkan Budaya Membaca di Era Digital'. Kemukakan tesis yang jelas, dukung dengan dua argumen yang runtut (mengenai dampak gawai terhadap literasi serta peran guru sebagai model baca), serta tutup dengan simpulan yang konsisten. Gunakan kalimat efektif, kosakata akademik, dan konjungsi yang tepat.",
+   "wordLimit": {
+    "min": 200,
+    "max": 400
+   },
+   "rubric": [
+    {
+     "criteria": "Kejelasan tesis dan konsistensi argumen",
+     "weight": 30,
+     "description": "Tesis jelas dan seluruh kalimat mendukung satu garis pemikiran"
+    },
+    {
+     "criteria": "Kualitas penalaran dan dukungan bukti",
+     "weight": 30,
+     "description": "Argumen masuk akal dan didukung contoh atau pendekatan yang relevan"
+    },
+    {
+     "criteria": "Kebahasaan akademik",
+     "weight": 25,
+     "description": "Kosakata baku, konjungsi sebab-akibat, dan kalimat efektif"
+    },
+    {
+     "criteria": "Organisasi penulisan",
+     "weight": 15,
+     "description": "Paragraf berstruktur lengkap: tesis, argumen, dan simpulan yang padu"
+    }
+   ],
+   "sampleExpectedResponse": "Di tengah banjir informasi digital, kemampuan membaca kritis siswa justru menghadapi tantangan yang besar. Kemudahan mengakses gawai sering kali mendorong remaja terbiasa mengonsumsi teks pendek dan instan tanpa memahami maksud di baliknya. Saya berpendapat bahwa guru bahasa Indonesia memegang posisi strategis dalam menumbuhkan budaya membaca yang sesungguhnya di era digital.\n\nPertama, guru dapat menjadikan gawai sebagai jembatan literasi, bukan musuh. Alih-alih melarang penggunaan layar, guru bisa mengarahkan siswa membandingkan dua berita dari sumber yang berbeda, atau menelusuri ciri-ciri berita hoaks. Pengalaman ini melatih siswa berpikir kritis sambil menikmati aktivitas membaca. Dengan cara ini, alat digital justru memperkuat, bukan melemahkan, kebiasaan membaca.\n\nKedua, guru menjadi model dan memberi ruang refleksi. Guru yang terang membaca di depan siswa, mengajak mendiskusikan isi buku, dan menanyakan 'mengapa penulis memilih sudut pandang itu' akan menumbuhkan literasi yang tidak hanya menyerap informasi, tetapi juga membangun pemahaman.\n\nDengan demikian, peran guru bukan sekadar mengajarkan teknik membaca, melainkan menanamkan kompetensi berpikir kritis yang dibutuhkan pada zaman digital. Budaya membaca yang baik berawal dari pembelajaran yang menuntun siswa menjadi pembaca yang cerdas, bukan sekadar pembaca yang cepat.",
+   "tags": [
+    "artikel-argumentatif",
+    "era-digital",
+    "budaya-literasi"
+   ],
+   "source": "BC_UKBI_GURU_ORIGINAL",
+   "status": "approved",
+   "cognitive": "KREASI",
+   "domain": "AKADEMIK"
+  }
+ ]
+}

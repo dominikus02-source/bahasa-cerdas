@@ -1,0 +1,100 @@
+{
+ "meta": {
+  "product": "UKBI_PRACTICE",
+  "track": "UKBI_GURU",
+  "section": "berbicara",
+  "set": "set-002",
+  "totalItems": 2,
+  "source": "BC_UKBI_GURU_ORIGINAL"
+ },
+ "questions": [
+  {
+   "id": "BC-UKBI-GURU-BERBICARA-SET002-Q001",
+   "product": "UKBI_PRACTICE",
+   "track": "UKBI_GURU",
+   "section": "berbicara",
+   "band": "UNGGUL",
+   "type": "constructed",
+   "difficulty": 4,
+   "scoringMode": "rubric",
+   "prompt": "Anda diminta menyampaikan pembinaan singkat kepada siswa yang akan mengikuti lomba menulis cerpen tingkat kota. Sampaikan: (1) semangat dan motivasi awal, (2) tiga strategi menulis cerpen yang efektif (menentukan ide, menyusun konflik, dan menyunting), (3) hal yang harus dihindari saat lomba, serta (4) pesan penutup yang menguatkan. Bicarakan dengan bahasa yang memotivasi, komunikatif, dan mudah dipahami siswa SMP.",
+   "speakingTask": "Pembinaan siswa lomba menulis cerpen (3-4 menit)",
+   "rubric": [
+    {
+     "criteria": "Struktur penyampaian",
+     "weight": 25,
+     "description": "Runtut: motivasi, strategi, larangan, pesan penutup"
+    },
+    {
+     "criteria": "Kualitas strategi yang disampaikan",
+     "weight": 30,
+     "description": "Strategi menulis konkret, aplikatif, dan benar secara konseptual"
+    },
+    {
+     "criteria": "Kemampuan memotivasi",
+     "weight": 25,
+     "description": "Membangkitkan semangat siswa dengan bahasa yang positif"
+    },
+    {
+     "criteria": "Intonasi, lafal, dan gaya bicara",
+     "weight": 20,
+     "description": "Intonasi antusias, lafal jelas, dan gaya bicara komunikatif"
+    }
+   ],
+   "sampleExpectedResponse": "Selamat pagi, anak-anak calon juara! Saya sangat bangga karena kalian bersedia mewakili sekolah di lomba menulis cerpen tingkat kota. Ingat, kalian menulis bukan hanya untuk menang, tetapi untuk menyampaikan cerita yang kalian miliki.\n\nAda tiga strategi yang akan membantu kalian. Pertama, temukan ide dari hal terdekat: pengalaman, keluarga, atau peristiwa yang kalian amati. Kedua, susun konflik yang kuat — cerpen tanpa konflik ibarat nasi tanpa lauk. Ketiga, sisihkan waktu lima menit terakhir untuk menyunting: periksa ejaan, pilihan kata, dan alur yang sudah kalian tulis.\n\nSebaliknya, hindari dua hal: menulis tema yang belum kalian kuasai, dan terlalu fokus mengejar banyak kata sehingga cerita menjadi bertele-tele. Kualitas, bukan kuantitas.\n\nTerakhir, percaya pada kemampuan kalian. Kalah atau menang, kalian sudah hebat karena berani mencoba. Selamat menulis, dan bawa pulang cerita terbaik kalian!",
+   "cognitive": "KREASI",
+   "domain": "AKADEMIK",
+   "tags": [
+    "pembinaan-lomba",
+    "menulis-cerpen",
+    "motivasi-siswa"
+   ],
+   "source": "BC_UKBI_GURU_ORIGINAL",
+   "status": "approved"
+  },
+  {
+   "id": "BC-UKBI-GURU-BERBICARA-SET002-Q002",
+   "product": "UKBI_PRACTICE",
+   "track": "UKBI_GURU",
+   "section": "berbicara",
+   "band": "SANGAT_UNGGUL",
+   "type": "constructed",
+   "difficulty": 4,
+   "scoringMode": "rubric",
+   "prompt": "Anda menjadi moderator pada forum Musyawarah Guru Mata Pelajaran (MGMP) Bahasa Indonesia yang membahas rancangan program 'Satu Bulan Satu Buku'. Sampaikan sesi pembukaan yang mencakup: (1) pembukaan dan sapaan kepada peserta, (2) pemaparan latar belakang serta tujuan program, (3) aturan diskusi yang akan dipakai, dan (4) ajakan partisipasi aktif seluruh guru. Sampaikan dengan bahasa yang formal, jelas, dan mampu membangun suasana kolaboratif.",
+   "speakingTask": "Moderator forum MGMP Bahasa Indonesia (2-3 menit)",
+   "rubric": [
+    {
+     "criteria": "Kemampuan membuka forum",
+     "weight": 25,
+     "description": "Sapaan, latar belakang, dan tujuan program disampaikan runtut dan jelas"
+    },
+    {
+     "criteria": "Pengelolaan aturan diskusi",
+     "weight": 30,
+     "description": "Aturan diskusi disampaikan konkret, demokratis, dan mudah dipatuhi"
+    },
+    {
+     "criteria": "Kesantunan dan profesionalisme",
+     "weight": 25,
+     "description": "Bahasa formal santun, menghargai peserta, membangun kolaborasi"
+    },
+    {
+     "criteria": "Kejelasan dan intonasi",
+     "weight": 20,
+     "description": "Artikulasi jelas, intonasi sesuai, dan alur bicara lancar"
+    }
+   ],
+   "sampleExpectedResponse": "Assalamualaikum warahmatullahi wabarakatuh. Salam sejahtera untuk kita semua. Yang saya hormati, Bapak Ibu guru Bahasa Indonesia yang hadir dalam forum MGMP kali ini.\n\nTerima kasih atas kehadiran Bapak Ibu. Forum hari ini bertujuan membahas rancangan program 'Satu Bulan Satu Buku', yaitu program membaca bersama satu buku setiap bulan untuk menumbuhkan kebiasaan membaca siswa. Kita akan mematangkan konsep, strategi pelaksanaan, dan pembagian peran.\n\nSebelum diskusi dimulai, saya sampaikan beberapa aturan. Pertama, setiap peserta diberi kesempatan berbicara maksimal lima menit. Kedua, masukan disampaikan secara santun, fokus pada substansi, dan tidak menyela pembicara. Ketiga, kesimpulan tiap sesi akan dirangkum oleh notulen dan disepakati bersama.\n\nBapak Ibu yang berbahagia, keberhasilan program ini sangat bergantung pada kontribusi kita semua. Saya mengundang Bapak Ibu untuk menyampaikan pandangan dan pengalaman, baik yang mendukung maupun yang perlu diperbaiki. Marilah kita mulai dari sesi pertama: pemaparan rancangan program. Dipersilakan.",
+   "cognitive": "EVALUASI",
+   "domain": "SOSIAL",
+   "tags": [
+    "moderator-mgmp",
+    "forum-guru",
+    "program-membaca"
+   ],
+   "source": "BC_UKBI_GURU_ORIGINAL",
+   "status": "approved"
+  }
+ ]
+}
