@@ -2165,3 +2165,67 @@ Anti-farming tetap utuh: rate limit 20/menit + `BATAS_XP_PER_SUBMIT` (GAME 120, 
 ### Catatan
 - Murid yang "terlanjur" kena bug tidak perlu reset — begitu fix live, setiap permainan baru langsung dapat XP normal (transaksi lama tetap di riwayat).
 - Tampilan "+XP" di layar hasil solo game masih hitungan klien; server memberi skor/10 (lebih besar). Kosmetik, tidak memblokir XP.
+
+---
+
+## Phase GURU LITERASI PHASE 1 — XP/Badge Guru, Notifikasi Guru, Grafik Tren, Dash Murid (Aug 6, 2026)
+
+### Goal
+Lanjutan Teacher Experience v2: (1) XP & badge khusus guru, (2) notifikasi guru saat murid berkarya/karya di-like/dikomentari/trending, (3) grafik analytics upload/like/komentar per minggu (WIB) di beranda guru, (4) dash murid "Ringkasan Kelasku" (tugas/pengumuman/materi/leaderboard).
+
+### Prinsip
+- **Additive-only**: `addXp` dihapus dulu — SEMUA XP tetap lewat `awardXp()` (lib/award-xp.ts). Badge engine ditambah (tidak diubah). API lama tidak disentuh.
+- XP guru idempotent via reference unik; `batasiXpSubmit` + kuota harian tetap aktif.
+- Semua wiring best-effort (`.catch(() => {})` / `after()`) — tidak pernah menggagalkan aksi utama murid.
+
+### 1 — XP & Badge Guru
+- **`lib/gamification/teacher-xp.ts`** (baru): `awardGuruXp()` (6 sumber: MURID_KARYA 10, MURID_LIKE 2, MURID_KOMENTAR 3, GURU_TUGAS 20, GURU_PENGUMUMAN 15, GURU_FEATURED 25; memanggil awardXp + evaluateBadges), `getGuruMuridIds()`, `getMuridGuruIds()`, `notifyGuruMurid()` (createMany batch).
+- **`lib/gamification/badge-engine.ts`**: +5 kondisi guru — `MURID_KARYA`, `MURID_LIKE`, `MURID_FEATURED`, `TUGAS_DIKIRIM`, `PENGUMUMAN_DIBUAT`. `collectGuruMetrics()` dihitung hanya bila guru punya kelas (murid → undefined → 0, badge guru tak bisa terbuka di akun murid). Query via `Prisma.join` + subquery GroupMember.
+- **10 badge guru** (seed `scripts/seed-guru-badges.ts` + SQL manual `prisma/migrations/manual/2026-08-06_guru_badges.sql`, upsert by code): guru-literasi (25 karya murid, BRONZE), guru-inspiratif (100, SILVER), guru-literasi-legend (500, GOLD), guru-kreatif (5 featured, SILVER), guru-kreatif-master (25, GOLD), guru-motivator (200 like, SILVER), guru-inspirator (2000, GOLD), guru-penggerak (50 tugas, SILVER), guru-mentor (200, GOLD), guru-dedikasi (20 pengumuman, BRONZE). **SQL SUDAH dijalankan user di Supabase SQL Editor.**
+
+### 2 — Notifikasi Guru (wiring)
+| Event | File | Efek ke guru murid tsb |
+|-------|------|-------------------------|
+| Murid upload karya | `app/api/siswa/karya/route.ts` | Notif "Murid Berkarya ✍️" + XP 10 (`karya-<id>`) |
+| Karya murid di-like | `app/api/siswa/karya/[id]/like/route.ts` | Notif "Karya Murid Disukai ❤️" + XP 2 (`like-<karya>-<user>`) |
+| Like tembus milestone 25/50/100/250/500/1000 | sama | Notif "Karya Muridmu Trending 🔥" (TRENDING) |
+| Karya murid dikomentari | `app/api/siswa/karya/[id]/comment/route.ts` | Notif "Karya Murid Dikomentari 💬" + XP 3 (`komentar-<id>`) |
+| Guru pilih karya (Editor Choice) | `app/api/siswa/karya/[id]/route.ts` PATCH | XP 25 (`feature-<karya>`) |
+| Guru buat pengumuman | `app/api/guru/pengumuman/route.ts` | XP 15 (`pengumuman-<id>`) |
+| Guru kirim penugasan | `app/api/guru/penugasan/route.ts` | XP 20 (`tugas-<uuid>`) |
+| Guru kirim latihan bank soal | `app/api/guru/bank-soal/send/route.ts` | XP 20 (`quiz-assign-<quiz>`) |
+
+Notif guru tampil di bell yang sudah ada (GuruSidebar → `/api/notifikasi`), link → `/guru/feed-karya`.
+
+### 3 — Grafik Tren Literasi (beranda guru)
+- **`app/api/guru/dashboard/analytics/route.ts`**: `?weeks=4|8|12` — per minggu (Senin 00:00 WIB, offset 7 jam): karya, like, komentar, muridBerkarya untuk murid di semua kelas guru; totals + totalMurid.
+- **`components/guru/AktivitasAnalytics.tsx`**: kartu "Tren Literasi Murid" — BarChart recharts (Karya violet / Like rose / Komentar sky), toggle 4/8/12 minggu, chips total, baris puncak minggu ini.
+- **`components/guru/GuruBadgeGrid.tsx`**: "Lencana Guru" — fetch `/api/player/badges`, filter kode `guru-*`, ikon/lock + progress bar (target dari `condition`), link `/arena/player/badges`.
+- Keduanya dipasang di `app/(dashboard)/guru/beranda/page.tsx` (grid 2 kolom, setelah widget Aktivitas Hari Ini).
+
+### 4 — Dash Murid Ringkasan Kelasku
+- **`app/api/murid/dashboard/summary/route.ts`**: guard MURID/founder. Output: `tugas` (QuizAssignment isPublished tanpa submission SUBMITTED/GRADED/LATE + Penugasan tanpa submission, top 5, sort tenggat), `pengumuman` (3 terbaru + nama guru), `materi` (3 MateriKirim terbaru + guru), `leaderboard` (posisi GLOBAL + posisi kelas pertama via `getLeaderboard` WEEKLY).
+- **`app/(dashboard)/murid/beranda/page.tsx`**: grid 4 kartu — Tugasku (badge "N belum dikerjakan"/"Semua selesai"), Pengumuman (judul + guru + waktu), Materi dari Guru, Peringkat Mingguan (#posisi dari total pemain). Semua klik → halaman tujuan.
+
+### Verifikasi
+| Check | Hasil |
+|-------|-------|
+| `npm run test:guru-phase` | ✅ SEMUA LULUS (30 tes: 6 sumber XP, 5 kondisi badge, 10 badge seed, analytics WIB, wiring 6 route, summary murid) |
+| `npm run test:gamification-engine` | ✅ SEMUA LULUS (regresi engine tidak berubah) |
+| `npx tsc --noEmit` | ✅ 0 errors |
+| ESLint (19 file) | ✅ 0 errors (3 warning `<img>` — konsisten konvensi arena) |
+| `npm run build` (dummy env) | ✅ 353 pages, exit 0 |
+| Seed badge guru | ✅ SQL dijalankan user di Supabase SQL Editor (10 badge) |
+| Deploy | ✅ `12e2b0d` push main → Vercel READY, alias bahasacerdas.com |
+| Live check | ✅ `/api/guru/dashboard/analytics` & `/api/murid/dashboard/summary` 401 tanpa auth; `/guru/beranda` 200 |
+
+### Catatan
+- Badge guru otomatis dievaluasi setelah XP guru cair (awardGuruXp → evaluateBadges). Guru yang sudah memenuhi syarat akan dapat badge pada aksi berikutnya.
+- Milestone trending memakai `likesCount` hasil like (bukan riwayat) — sekali per tepat mencapai angka milestone.
+- Cabang kerja sebelumnya `feat/gim-rimba-kata` (Kuis Tempur) TIDAK memiliki fase Teacher v2; pekerjaan fase ini dikerjakan di `main` (tempat dcc64cc berada).
+
+### Remaining
+1. UKBI Guru → 150 (menulis 8 + berbicara 7 constructed response)
+2. TKA UTBK/Guru enrichment 30 → 150
+3. Game server revival (VPS mati)
+4. GameRoom migration SQL via Supabase dashboard
