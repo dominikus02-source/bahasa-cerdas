@@ -2270,3 +2270,66 @@ Tutup gap UKBI Guru dari 135 → **150 soal** dengan constructed response Menuli
 1. TKA UTBK/Guru enrichment 30 → 150
 2. Game server revival (VPS mati)
 3. GameRoom migration SQL via Supabase dashboard
+
+---
+
+## Phase GURU EXPERIENCE REDESIGN V3 — Sidebar 12 Grup + CTA + GIM Guru (Aug 6, 2026)
+
+### Goal
+Redesign dashboard guru ala Google Classroom + Canva (fokus CTA, konten, karya murid). **ADDITIVE ONLY**: route/API/DB/komponen lama tidak dihapus, hanya alias/rename UI. Reward guru terpisah penuh dari reward murid (Teacher Gamification Separation).
+
+### Prinsip (wajib dipegang)
+- **Guru = Teacher XP Engine** (`awardGuruXp`), **Murid = Player XP Engine** (`awardXp`). Guru TIDAK pernah menerima Coin/Rank/Level/Quest Murid.
+- Engine game di-reuse (Question/Reward/Match/XP/Badge/Achievement/Leaderboard); route game tetap `/guru/game/*`; TIDAK redirect ke `/arena`; Host Room/Control Panel/Monitoring Match = ditunda.
+- Orphan page DIHIDUPKAN (Kuis `/guru/kuis`, Soal `/guru/soal`, Tinjau Simulasi `/guru/tinjau-simulasi`) — keputusan "biarkan orphan" di-override Final Execution Prompt.
+- `components/dashboard/GuruSidebar.tsx` tetap ada (hanya dibaca test scripts `test-bigt-menu`, `test-simulation-workflow`, `test-phase-simulation-workflow`) — jangan dihapus tanpa update test.
+
+### Sidebar Guru Baru (single source: `components/dashboard/GuruNav.tsx`)
+12 grup: 🏠 Beranda (CTA "+ Buat" dropdown: Pengumuman/Tugas/Asesmen/Materi/Event) · 🎭 Panggung Literasi (`/guru/feed-karya`, hero Trending/Top Creator/Top Sekolah already ada) · 🛒 Toko Karya (Jelajahi Buy Karya) · 🎮 GIM (Semua Permainan `/guru/game`, Tantangan Harian `#solo`, Peringkat Guru `/guru/game/leaderboard`, Lencana Guru `/guru/game/achievement`) · 👨🏫 Kelasku (Dashboard/Tugas/Penilaian sub/Buku Nilai/Data Siswa/Pengumuman) · 📚 Alat Ajar (+Kuis, +Soal) · 📝 Simulasi & Tes (UKBI/TKA/BIGT/Hasil/Tinjau/Dokumen) · 🤖 Alat AI (landing "Apa yang ingin Anda buat?") · 👥 Komunitas · 📅 Kalender · 👤 Akun Saya · ⚙️ Admin (founderOnly).
+
+### Pemisahan Reward Guru di Game (ADDENDUM 2)
+- `app/api/game/xp/route.ts`: `isGuru = role==="GURU" || isFounder` → `awardGuruXp({sumber:"GURU_GAME", reference uuid, metadata})` → return `{xpDiberikan:10, boosted:false, kuotaHabis, totalXp:0, levelLama:0, levelBaru:0, naikLevel:false}` (flat, tanpa player level/rank/coin). Murid tetap `awardXp("GAME", floor(skor/10))`. Reference = `${gameType}-${crypto.randomUUID()}` (tetap anti-farming, XP cair setiap permainan baru).
+- `lib/gamification/teacher-xp.ts`: +source `GURU_GAME` (10 XP, jadi 7 sumber) + `getTeacherLeaderboard({limit, selfUserId})` — groupBy `XPTransaction` filter source `GURU_*`, entries + myRank.
+- API baru `GET /api/guru/leaderboard` — role-gated GURU/founder → teacher leaderboard.
+
+### Halaman Baru
+- `app/(dashboard)/guru/game/leaderboard/page.tsx` — "Peringkat Guru" (fetch `/api/guru/leaderboard`, podium + streak 🔥, empty state → `/guru/game`).
+- `app/(dashboard)/guru/game/achievement/page.tsx` — "Lencana Guru" (fetch `/api/player/badges`, filter `code.startsWith("guru-")`, `BadgeIcon` + `RARITY_META`, counter terbuka/total).
+- `app/(dashboard)/guru/game/page.tsx` — hub GIM retitle + section baru "Gim Solo (Bermain Sendiri)" (`id="solo"`, 7 kartu game solo + quick cards Leiden/Achievement/Battle). Section "Menu Utama" lama DIPERTAHANKAN.
+
+### Mobile Nav (baru)
+`GuruMobileNav` di GuruNav.tsx — bottom nav 5 tab: Beranda/Panggung/Gim/Akun/Menu (+drawer kiri berisi GuruNavList). Dipasang di `layout.tsx` sebelum `AIFloatingButton`, `lg:hidden`. aside jadi `hidden lg:flex`, main `lg:ml-64 pb-24 lg:pb-8`.
+
+### Files
+| File | Aksi |
+|------|------|
+| `components/dashboard/GuruNav.tsx` | BARU — GURU_NAV (12 grup, ikon ludicke, founderOnly Admin), GuruNavList (accordion), GuruMobileNav (bottom nav) |
+| `app/(dashboard)/guru/layout.tsx` | navbar dibaca `GuruNavList`; mobile nav; responsive |
+| `lib/gamification/teacher-xp.ts` | +GURU_GAME, +getTeacherLeaderboard |
+| `app/api/guru/leaderboard/route.ts` | BARU — teacher leaderboard API |
+| `app/api/game/xp/route.ts` | rewards guru vs murid (GURU_GAME vs GAME) |
+| `app/(dashboard)/guru/game/page.tsx` | hub retitle + section solo baru |
+| `app/(dashboard)/guru/game/leaderboard/page.tsx` | BARU |
+| `app/(dashboard)/guru/game/achievement/page.tsx` | BARU |
+| `app/(dashboard)/guru/beranda/page.tsx` | +CTA "+ Buat" dropdown (Peng/Belajar/Asesmen/Materi/Event) |
+| `app/(dashboard)/guru/feed-karya/page.tsx` | retitle hero → "Panggung Literasi" |
+| `app/(dashboard)/guru/ai-tools/page.tsx` | headline "Apa yang ingin Anda buat?" |
+| `app/(dashboard)/guru/akun/page.tsx` | BARU — Ringkasan Akun (hub: identitas, plan, saldo, lencana, notifikasi, keluar) |
+| `scripts/test-guru-phase.ts` | 7 sumber XP guru (6→7, tambah GURU_GAME) |
+
+### Verifikasi
+| Check | Hasil |
+|-------|-------|
+| `npx tsc --noEmit` | ✅ 0 errors |
+| `npm run test:gamification-engine` | ✅ SEMUA LULUS |
+| `npm run test:guru-phase` | ✅ SEMUA LULUS (7 sumber XP, leaderboard, guru_game wiring) |
+| `npm run build` (dummy env) | ✅ 356 pages, 0 errors |
+| ESLint (11 file) | ✅ 0 errors (6 warning `https://` img — konsisten arena convention |
+
+### Remaining
+1. TKA UTBK/Guru enrichment 30 → 150
+2. Game server revival (VPS mati)
+3. GameRoom migration SQL via Supabase dashboard
+4. UI game solo: ganti `Attention/KATAPLAY/KATASTRA` badge-score client di layar hasil (kosmetik) — server sudah benar
+5. Halaman `/guru/akun` (Ringkasan Akun) — baru ditambahkan (lihat catatan di bawah)
+
