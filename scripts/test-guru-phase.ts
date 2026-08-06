@@ -13,7 +13,7 @@ const ok = (label: string, cond: boolean) => {
 const read = (p: string) => readFileSync(join(process.cwd(), p), "utf8");
 
 // ── 1. teacher-xp.ts ─────────────────────────────────────────────────────
-ok("6 sumber XP guru terdefinisi", Object.keys(GURU_XP_SOURCES).length === 6);
+ok("7 sumber XP guru terdefinisi (termasuk GURU_GAME)", Object.keys(GURU_XP_SOURCES).length === 7);
 for (const [k, v] of Object.entries(GURU_XP_NILAI)) {
   ok(`nilai XP guru ${k} > 0 (${v})`, v > 0);
 }

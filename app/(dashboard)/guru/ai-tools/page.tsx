@@ -38,7 +38,7 @@ export default async function AIToolsPage({
             <h1 className="text-2xl font-bold text-gray-900">Alat AI BahasaCerdas</h1>
           </div>
           <p className="text-sm text-gray-500 max-w-2xl">
-            Agent AI siap pakai: Buat Rencana Pembelajaran, Koreksi EYD, Feedback, Penilaian, Analisis Teks, Review Materi, dan AI Assistant.
+            Apa yang ingin Anda buat? Pilih dari kelompok Buat Materi, Evaluasi &amp; Review, atau Bahasa &amp; Asisten — agent AI siap membantu.
           </p>
           <p className="text-xs text-gray-400 mt-1">
             Kelompok: Buat Materi • Evaluasi & Review • Bahasa & Asisten

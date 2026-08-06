@@ -4,6 +4,7 @@ import { invalidateLeagueCache } from "@/lib/ai-queue"
 import { getUser } from "@/lib/supabase/server"
 import { rateLimitRoute } from "@/lib/rate-limit"
 import { awardXp } from "@/lib/award-xp"
+import { awardGuruXp } from "@/lib/gamification/teacher-xp"
 
 // Skor wajar maksimum per jenis game — di atas ini klien berbohong.
 // KataPlay: 10 ronde × (50 + streak×10) = maks 1050. Jaring pengaman kedua
@@ -46,12 +47,31 @@ export async function POST(req: NextRequest) {
     // permainan berikutnya. Dulu reference = gameType: XP cair sekali seumur
     // hidup per jenis game. UUID per submit menjaga retry tak menggandakan XP
     // (dilindungi juga rate limit 20/menit + batas 120/submit + kuota harian).
-    const hasil = await awardXp(
-      dbUser.id,
-      "GAME",
-      Math.floor(skor / 10),
-      `${gameType || "game"}-${crypto.randomUUID()}`
-    )
+    const reference = `${gameType || "game"}-${crypto.randomUUID()}`
+
+    // Teacher Gamification Separation (ADDENDUM 2):
+    // Reward engine dipisahkan per role. Gameplay tidak berubah — hanya sistem
+    // reward. Guru TIDAK pernah menerima Coin/Rank/Level/Quest Murid; guru
+    // menerima Teacher XP → teacher leaderboard + badge guru (GURU_GAME).
+    // Murid tetap memakai Player XP Engine (tidak disentuh).
+    const isGuru = dbUser.role === "GURU" || dbUser.isFounder
+
+    const hasil = isGuru
+      ? await awardGuruXp({
+          guruId: dbUser.id,
+          sumber: "GURU_GAME",
+          reference,
+          metadata: { gameType, skor },
+        }).then((t) => ({
+          xpDiberikan: t.xpDiberikan,
+          boosted: false,
+          kuotaHabis: t.xpDiberikan === 0,
+          totalXp: 0,
+          levelLama: 0,
+          levelBaru: 0,
+          naikLevel: false,
+        }))
+      : await awardXp(dbUser.id, "GAME", Math.floor(skor / 10), reference)
 
     let roomId = roomCode
     if (roomCode) {

@@ -35,8 +35,8 @@ export default function GuruGameHubPage() {
               <Swords className="w-6 h-6" />
             </div>
             <div>
-              <h1 className="text-2xl lg:text-3xl font-extrabold">Kuis Battle Guru</h1>
-              <p className="text-emerald-200 text-sm">Kelola gim interaktif untuk pembelajaran</p>
+              <h1 className="text-2xl lg:text-3xl font-extrabold">Gim Guru</h1>
+              <p className="text-emerald-200 text-sm">Arena Guru — bermain game BahasaCerdas seperti murid, dapatkan XP & badge guru</p>
             </div>
           </div>
           <div className="flex flex-wrap gap-3 mt-4">
@@ -53,7 +53,73 @@ export default function GuruGameHubPage() {
       </div>
 
       <div className="max-w-6xl mx-auto px-4 py-8">
-        {/* Menu Utama */}
+        {/* Main Menu — section lama (Battle/monitoring) dipindah bawah, fokus CTA bermain dulu */}
+        <div className="mb-10">
+          <div className="flex items-center gap-2 mb-6">
+            <div className="w-2 h-2 rounded-full bg-violet-500 animate-pulse" />
+            <h2 className="text-lg font-bold text-slate-800" id="solo">Gim Solo (Bermain Sendiri)</h2>
+          </div>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {[
+              { id: "lari-kata", title: "Lari Kata", desc: "Jawab 20 soal dalam 60 detik! Makin cepat + rentetan tinggi = makin banyak XP.", href: "/guru/game/lari-kata", gradient: "from-violet-500 via-purple-600 to-violet-800", icon: Zap },
+              { id: "benar-salah", title: "Benar atau Salah", desc: "Kuis kilat 60 detik! Tentukan jawaban yang muncul benar atau salah.", href: "/guru/game/benar-salah", gradient: "from-emerald-400 via-teal-500 to-cyan-600", icon: Star },
+              { id: "susun-kata", title: "Susun Kata", desc: "Huruf-huruf acak! Susun menjadi kata yang benar. Uji kosakatamu!", href: "/guru/game/susun-kata", gradient: "from-emerald-500 via-emerald-600 to-teal-700", icon: BookOpen },
+              { id: "tebak-kata", title: "Tebak Kata", desc: "Deskripsi muncul, tebak namanya! Semakin cepat, semakin tinggi skor.", href: "/guru/game/tebak-kata", gradient: "from-blue-500 via-blue-600 to-indigo-700", icon: Swords },
+              { id: "irama-kata", title: "Irama Kata", desc: "Kata jatuh di 4 jalur — ketuk hanya yang sesuai aturan level.", href: "/guru/game/irama-kata", gradient: "from-orange-500 via-rose-500 to-red-600", icon: Zap },
+              { id: "menara", title: "Menara Cerdas", desc: "Panjat menara dengan soal. Jawab benar untuk naik, jaga 3 nyawa.", href: "/guru/game/menara", gradient: "from-violet-500 via-purple-600 to-fuchsia-700", icon: Trophy },
+              { id: "kata-play", title: "KataPlay", desc: "Belajar membaca dari nol! 4 tingkat, cocok untuk kelas awal.", href: "/guru/game/kata-play", gradient: "from-violet-500 via-purple-600 to-fuchsia-700", icon: BookOpen },
+            ].map((game) => {
+              const Icon = game.icon;
+              return (
+                <Link key={game.id} href={game.href} className="group relative bg-white rounded-2xl border border-slate-100 overflow-hidden hover:shadow-2xl hover:-translate-y-1 transition-all duration-300">
+                  <div className={`h-24 bg-gradient-to-br ${game.gradient} relative overflow-hidden flex items-center justify-center`}>
+                    <Icon className="w-10 h-10 text-white/80" />
+                    <div className="absolute top-2 left-2 bg-violet-500 text-white text-[9px] font-bold px-2 py-0.5 rounded-full">SOLO</div>
+                  </div>
+                  <div className="p-4">
+                    <div className="flex items-start justify-between mb-1">
+                      <div>
+                        <h3 className="font-bold text-slate-900 text-sm">{game.title}</h3>
+                        <p className="text-[10px] text-slate-400 font-medium uppercase">Bermain Sendiri</p>
+                      </div>
+                      <span className="text-[9px] px-1.5 py-0.5 bg-violet-100 text-violet-700 rounded-full font-semibold">XP</span>
+                    </div>
+                    <p className="text-xs text-slate-500 mt-2 line-clamp-2">{game.desc}</p>
+                    <div className="flex items-center gap-3 mt-3 pt-3 border-t border-slate-50">
+                      <span className="text-[10px] text-slate-400">Solo</span>
+                      <span className="text-[10px] text-slate-400">Bisa buat XP guru</span>
+                    </div>
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+          <div className="mt-4 grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <Link href="/guru/game/leaderboard" className="group bg-white rounded-2xl border border-slate-100 p-4 flex items-center gap-3 hover:shadow-xl transition-all">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center"><Trophy className="w-5 h-5 text-white" /></div>
+              <div>
+                <p className="font-bold text-slate-900 text-sm">Leaderboard</p>
+                <p className="text-[10px] text-slate-400">Peringkat XP & badge</p>
+              </div>
+            </Link>
+            <Link href="/guru/game/achievement" className="group rounded-2xl border border-slate-100 bg-white p-4 flex items-center gap-3 hover:shadow-xl transition-all">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center"><Star className="w-5 h-5 text-white" /></div>
+              <div>
+                <p className="font-bold text-slate-900 text-sm">Achievement</p>
+                <p className="text-[10px] text-slate-400">Lencana & pencapaian</p>
+              </div>
+            </Link>
+            <Link href="/guru/game/lobby" className="group rounded-2xl border border-slate-200 bg-white p-4 flex items-center gap-3 hover:shadow-xl transition-all">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-400 to-indigo-500 flex items-center justify-center"><Users className="w-5 h-5 text-white" /></div>
+              <div>
+                <p className="font-bold text-slate-900 text-sm">Battle</p>
+                <p className="text-[10px] text-slate-400">Kuis Battle, buat ruang gim</p>
+              </div>
+            </Link>
+          </div>
+        </div>
+
+        {/* Main Menu actual (management/battlepad) — dipertahankan per ADDENDUM */}
         <div className="mb-10">
           <div className="flex items-center gap-2 mb-6">
             <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />

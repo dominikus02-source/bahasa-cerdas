@@ -409,7 +409,7 @@ export default function GuruFeedKaryaPage() {
         <div className="bg-gradient-to-br from-emerald-600 via-green-600 to-teal-700 rounded-2xl p-5 text-white mb-5">
           <div className="flex items-center justify-between">
             <div>
-              <p className="font-bold text-lg">Hasil Karya</p>
+              <p className="font-bold text-lg">Panggung Literasi</p>
               <p className="text-sm text-emerald-200 mt-0.5">Budaya literasi murid-muridmu — pantau, apresiasi, banggakan</p>
             </div>
             <div className="flex items-center gap-2">

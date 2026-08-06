@@ -20,6 +20,7 @@ export const GURU_XP_SOURCES = {
   GURU_TUGAS: "GURU_TUGAS", // guru mengirim penugasan ke kelas
   GURU_PENGUMUMAN: "GURU_PENGUMUMAN", // guru membuat pengumuman
   GURU_FEATURED: "GURU_FEATURED", // guru memilih karya murid (Editor Choice)
+  GURU_GAME: "GURU_GAME", // guru menyelesaikan game di GIM Guru (solo)
 } as const;
 
 /** Nilai XP per sumber guru. */
@@ -30,6 +31,7 @@ export const GURU_XP_NILAI: Record<keyof typeof GURU_XP_SOURCES, number> = {
   GURU_TUGAS: 20,
   GURU_PENGUMUMAN: 15,
   GURU_FEATURED: 25,
+  GURU_GAME: 10,
 };
 
 export interface AwardGuruXpParams {
@@ -105,4 +107,71 @@ export async function notifyGuruMurid(guruIds: string[], payload: { title: strin
     })),
     skipDuplicates: true,
   });
+}
+
+/**
+ * Teacher Leaderboard — peringkat guru berdasarkan TEACHER XP (sumber
+ * GURU_* di XPTransaction), BUKAN Player XP. Query langsung ke XPTransaction
+ * dengan filter source guru; dijumlahkan per guru, lalu diurutkan menurun.
+ */
+export interface TeacherLeaderboardEntry {
+  userId: string;
+  fullName: string | null;
+  avatar: string | null;
+  xp: number;
+  streak: number;
+  myRank?: number | null;
+}
+
+export async function getTeacherLeaderboard({
+  limit = 20,
+  selfUserId,
+}: {
+  limit?: number;
+  selfUserId?: string;
+}): Promise<{ entries: TeacherLeaderboardEntry[]; myRank: number | null }> {
+  const sources = Object.values(GURU_XP_SOURCES);
+
+  const grouped = await db.xPTransaction.groupBy({
+    by: ["userId"],
+    where: { source: { in: sources } },
+    _sum: { amount: true },
+  });
+
+  const sorted = grouped
+    .filter((g) => (g._sum.amount ?? 0) > 0)
+    .sort((a, b) => (b._sum.amount ?? 0) - (a._sum.amount ?? 0))
+    .slice(0, limit);
+
+  const userIds = sorted.map((g) => g.userId);
+  const users = userIds.length
+    ? await db.user.findMany({
+        where: { id: { in: userIds } },
+        select: { id: true, fullName: true, avatar: true, streak: true },
+      })
+    : [];
+
+  const userMap = new Map(users.map((u) => [u.id, u]));
+
+  const entries: TeacherLeaderboardEntry[] = sorted.map((g) => {
+    const u = userMap.get(g.userId);
+    return {
+      userId: g.userId,
+      fullName: u?.fullName ?? null,
+      avatar: u?.avatar ?? null,
+      xp: g._sum.amount ?? 0,
+      streak: u?.streak ?? 0,
+    };
+  });
+
+  let myRank: number | null = null;
+  if (selfUserId) {
+    const allSorted = grouped
+      .filter((g) => (g._sum.amount ?? 0) > 0)
+      .sort((a, b) => (b._sum.amount ?? 0) - (a._sum.amount ?? 0));
+    const idx = allSorted.findIndex((g) => g.userId === selfUserId);
+    if (idx >= 0) myRank = idx + 1;
+  }
+
+  return { entries, myRank };
 }

@@ -11,15 +11,7 @@ import { resolveUserAiPlan } from "@/lib/ai-gateway/plan-resolver";
 import { getRemainingCredits } from "@/lib/ai-gateway/quota-checker";
 import { SidebarPremiumBadge } from "@/components/guru/SidebarPremiumBadge";
 import UserAvatar from "@/components/arena/UserAvatar";
-
-const MenuIcon = ({ path, label, href }: { path: string; label: string; href: string }) => (
-  <Link href={href} className="group flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm mb-1 transition-all duration-200 text-gray-600 hover:bg-gradient-to-r hover:from-emerald-50 hover:to-green-50 hover:text-emerald-700">
-    <svg className="w-5 h-5 text-gray-400 group-hover:text-emerald-500 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
-      <path d={path} strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-    <span className="font-medium group-hover:text-emerald-700">{label}</span>
-  </Link>
-);
+import { GuruNavList, GuruMobileNav } from "@/components/dashboard/GuruNav";
 
 export default async function GuruLayout({ children }: { children: React.ReactNode }) {
   const user = await getUser();
@@ -93,7 +85,7 @@ export default async function GuruLayout({ children }: { children: React.ReactNo
 
   return (
     <div className="flex min-h-screen bg-gradient-to-br from-slate-50 via-white to-emerald-50">
-      <aside className="w-64 h-screen bg-white/80 backdrop-blur-xl border-r border-gray-100/50 flex flex-col fixed left-0 top-0 overflow-hidden shadow-xl shadow-gray-100/50">
+      <aside className="w-64 h-screen bg-white/80 backdrop-blur-xl border-r border-gray-100/50 hidden lg:flex flex-col fixed left-0 top-0 overflow-hidden shadow-xl shadow-gray-100/50">
         <div className="p-5 border-b border-gray-100/50 bg-gradient-to-r from-emerald-600 to-green-600">
           <Link href="/guru/beranda" className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-white/20 backdrop-blur flex items-center justify-center text-white font-bold text-sm border border-white/20 shadow-lg">
@@ -149,70 +141,17 @@ export default async function GuruLayout({ children }: { children: React.ReactNo
           />
         </div>
 
-        <nav className="py-4 px-3 flex-1 overflow-y-auto">
-          <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider px-3 mb-2">Menu Utama</div>
-          <MenuIcon path="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" label="Beranda" href="/guru/beranda" />
-          <MenuIcon path="M12 7.5h1.5m-1.5 3h1.5m-7.5 3h7.5m-7.5 3h7.5m3-9h3.375c.621 0 1.125.504 1.125 1.125V18a2.25 2.25 0 01-2.25 2.25M16.5 7.5V18a2.25 2.25 0 002.25 2.25M16.5 7.5V4.875c0-.621-.504-1.125-1.125-1.125H4.125C3.504 3.75 3 4.254 3 4.875V18a2.25 2.25 0 002.25 2.25h9.75M6 7.5h3v3H6v-3z" label="Karya Siswa" href="/guru/feed-karya" />
-          <MenuIcon path="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" label="KelasKu" href="/guru/kelasku" />
-          <MenuIcon path="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" label="Bank Soal" href="/guru/bank-soal" />
-          <MenuIcon path="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" label="Gim" href="/guru/game" />
-
-          <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider px-3 mt-5 mb-2">Belajar & Materi</div>
-          <MenuIcon path="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" label="Materi Ajar" href="/guru/materi-ajar" />
-          <MenuIcon path="M10 21l7-8-7-8v16z" label="Buku Ajar" href="/guru/panduan-guru" />
-          <MenuIcon path="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2M9 12l2 2 4-4" label="Tugas Murid" href="/guru/tugas-murid" />
-          <MenuIcon path="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" label="Buku Nilai" href="/guru/gradebook" />
-          <MenuIcon path="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" label="Penilaian" href="/guru/penilaian" />
-          <div className="ml-7 mb-1 flex flex-col gap-0.5">
-            <Link href="/guru/penilaian/input-massal" className="text-xs text-gray-400 hover:text-emerald-600 py-1 px-3 rounded-lg hover:bg-emerald-50 transition-all">Input Massal</Link>
-            <Link href="/guru/penilaian/kuis" className="text-xs text-gray-400 hover:text-emerald-600 py-1 px-3 rounded-lg hover:bg-emerald-50 transition-all">Nilai Kuis</Link>
-            <Link href="/guru/penilaian/rapor" className="text-xs text-gray-400 hover:text-emerald-600 py-1 px-3 rounded-lg hover:bg-emerald-50 transition-all">Rapor</Link>
-          </div>
-          <MenuIcon path="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" label="Video Pembelajaran" href="/guru/video-belajar" />
-          <MenuIcon path="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" label="Artikel" href="/guru/artikel" />
-
-          <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider px-3 mt-5 mb-2">Simulasi & Ujian</div>
-          <MenuIcon path="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" label="Simulasi UKBI" href="/guru/simulasi/ukbi" />
-          <MenuIcon path="M22 10v6M2 10l10-5 10 5-10 5zM6 12v5c3 3 9 3 12 0v-5" label="Simulasi TKA" href="/guru/simulasi/tka" />
-          <MenuIcon path="M3 20h18M3 20V4m18 16V8M3 12h4l2-6 4 10 4-6 2 4" label="Hasil Murid" href="/guru/hasil-simulasi" />
-          <MenuIcon path="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" label="Dokumen Latihan Murid" href="/guru/dokumen-latihan" />
-          <MenuIcon path="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3" label="BIGT" href="/guru/bigt" />
-
-          <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider px-3 mt-5 mb-2">Karya & Toko</div>
-          <MenuIcon path="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" label="Jual Karya" href="/guru/toko-karya" />
-          <MenuIcon path="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" label="Toko Karya" href="/marketplace" />
-          <MenuIcon path="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" label="Pendapatan" href="/guru/pengaturan/saldo" />
-
-          <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider px-3 mt-5 mb-2">Komunitas</div>
-          <MenuIcon path="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" label="Komunitas" href="/guru/komunitas" />
-
-          <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider px-3 mt-5 mb-2">Event & Lomba</div>
-          <MenuIcon path="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" label="Kalender Kegiatan" href="/guru/olimpiade" />
-
-          <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider px-3 mt-5 mb-2">Alat AI</div>
-          <MenuIcon path="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" label="Alat AI" href="/guru/ai-tools" />
-
-          {user.isFounder && (
-            <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider px-3 mt-5 mb-2">Admin</div>
-          )}
-          {user.isFounder && (
-            <MenuIcon path="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z M15 12a3 3 0 11-6 0 3 3 0 016 0z" label="Panel Admin" href="/admin" />
-          )}
-
-          <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider px-3 mt-5 mb-2">Lainnya</div>
-          <MenuIcon path="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" label="Profil" href="/guru/profile" />
-          <MenuIcon path="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z" label="Berlangganan" href="/guru/berlangganan" />
-          <MenuIcon path="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z M15 12a3 3 0 11-6 0 3 3 0 016 0z" label="Pengaturan" href="/guru/pengaturan" />
-        </nav>
+<GuruNavList isFounder={user.isFounder} />
 
         <div className="p-3 border-t border-gray-100/50 bg-gray-50/50">
           <LogoutButton />
         </div>
       </aside>
 
-      <main className="flex-1 ml-64 p-8 bg-transparent">
+      <main className="flex-1 lg:ml-64 p-4 sm:p-6 lg:p-8 pb-24 lg:pb-8 bg-transparent">
         {children}
       </main>
+      <GuruMobileNav isFounder={user.isFounder} />
       <AIFloatingButton />
     </div>
   );
