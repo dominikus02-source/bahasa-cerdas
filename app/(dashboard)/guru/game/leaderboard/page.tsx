@@ -48,7 +48,7 @@ export default function GuruGameLeaderboardPage() {
             </div>
             <div>
               <h1 className="text-2xl lg:text-3xl font-extrabold">Peringkat Guru</h1>
-              <p className="text-emerald-200 text-sm">Teacher Leaderboard — dihitung dari Teacher XP (bukan XP murid)</p>
+              <p className="text-emerald-200 text-sm">Papan peringkat guru — dihitung dari XP Guru (bukan XP murid)</p>
             </div>
           </div>
         </div>
@@ -120,7 +120,7 @@ export default function GuruGameLeaderboardPage() {
           <div className="bg-white rounded-2xl border border-slate-100 p-8 text-center">
             <Trophy className="w-12 h-12 text-slate-300 mx-auto mb-3" />
             <p className="text-slate-500 font-medium">Belum ada peringkat guru</p>
-            <p className="text-xs text-slate-400 mt-1">Mainkan game di Gim Guru untuk mulai mengumpulkan Teacher XP.</p>
+            <p className="text-xs text-slate-400 mt-1">Mainkan gim di Gim Guru untuk mulai mengumpulkan XP Guru.</p>
             <Link href="/guru/game" className="inline-flex items-center gap-1.5 mt-4 px-4 py-2 bg-emerald-600 text-white text-sm font-medium rounded-xl hover:bg-emerald-700 transition-colors">
               Buka Gim Guru
             </Link>

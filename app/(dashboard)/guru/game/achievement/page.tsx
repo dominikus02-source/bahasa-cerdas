@@ -54,7 +54,7 @@ export default function GuruGameAchievementPage() {
             </div>
             <div>
               <h1 className="text-2xl lg:text-3xl font-extrabold">Lencana Guru</h1>
-              <p className="text-emerald-200 text-sm">Badge guru dari aktivitas mengajar & bermain — bukan badge murid</p>
+              <p className="text-emerald-200 text-sm">Lencana guru dari aktivitas mengajar dan bermain — bukan lencana murid</p>
             </div>
           </div>
         </div>
