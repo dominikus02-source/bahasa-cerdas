@@ -2229,3 +2229,44 @@ Notif guru tampil di bell yang sudah ada (GuruSidebar → `/api/notifikasi`), li
 2. TKA UTBK/Guru enrichment 30 → 150
 3. Game server revival (VPS mati)
 4. GameRoom migration SQL via Supabase dashboard
+
+---
+
+## Phase UKBI GURU LENGKAP 150 — Menulis (8) + Berbicara (7) Constructed Response (Aug 6, 2026)
+
+### Goal
+Tutup gap UKBI Guru dari 135 → **150 soal** dengan constructed response Menulis (8) + Berbicara (7) sehingga semua target seksi terpenuhi (45/60/30/8/7).
+
+### Yang Dibuat
+- **5 soal baru** (3 Menulis + 2 Berbicara, `data/question-bank/ukbi/guru/{menulis,berbicara}/set-002.json`): surat dinas, instruksi kerja kelompok, paragraf argumentasi (era digital), pembinaan lomba cerpen, moderator MGMP. Semua `CONSTRUCTED`, rubric JSON (weight 100) + `sampleExpectedResponse` lengkap, cognitive/domain valid.
+- **SQL idempoten** `prisma/migrations/manual/2026-08-06_ukbi_guru_menulis_berbicara.sql` (39 KB):
+  - INSERT ... ON CONFLICT upsert **15 soal** (8 menulis + 7 berbicara, set-001 + set-002) — sekali run langsung penuh, aman diulang.
+  - UPDATE paket "Simulasi UKBI Guru Practice" → 5 seksi (Kaidah 10, Membaca 15, Mendengarkan 5, Menulis 2, Berbicara 2), totalQuestions 34, duration 90.
+  - 2 query verifikasi di akhir file.
+- **Kolom `options`** untuk soal konstruktif: `{instruction, constraints, rubric, scoringMode, sampleExpectedResponse}` — konsisten dengan seed-ukbi-lean-bank.ts (menulis: instruction null; berbicara: instruction = speakingTask).
+
+### Status Bank UKBI (per track)
+| Track | Total | Status target 150 |
+|-------|-------|-------------------|
+| SD | 250 | ✅ |
+| SMP | 275 | ✅ |
+| SMA | 245 | ✅ |
+| Guru | **255** | ✅ **Tercapai (sebelumnya 135 + 5+5 set-001; kini +3+2 set-002)** |
+
+### Verification
+| Check | Hasil |
+|-------|-------|
+| Struktur JSON baru (band, weight rubric=100, enum cognitive/domain, ID unik, sample ≥100 chars) | ✅ 5/5 |
+| `npm run test:gamification-engine` | ✅ SEMUA LULUS |
+| `npx tsc --noEmit` | ✅ 0 errors |
+| SQL dijalankan user di Supabase SQL Editor | ✅ MENULIS 8, BERBICARA 7, total guru 45/60/30/8/7 |
+| Commit | ✅ pushed ke main |
+
+### Catatan
+- Menulis/Berbicara adalah constructed response — dinilai AI otomatis (infra grading sudah ada), tidak masuk hitungan auto-scored pool 30 soal (MENDENGARKAN tetap perlu audioUrl; seksi itu skip 0 soal sampai audio diproduksi).
+- `seed-ukbi-lean-bank.ts` membaca semua file JSON otomatis — set-002 baru ikut ter-proses jika seed dijalankan lagi.
+
+### Remaining
+1. TKA UTBK/Guru enrichment 30 → 150
+2. Game server revival (VPS mati)
+3. GameRoom migration SQL via Supabase dashboard
