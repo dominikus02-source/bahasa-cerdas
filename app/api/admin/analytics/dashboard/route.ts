@@ -20,14 +20,19 @@ function startOfTodayWIB(): Date {
   return new Date(d.getTime() - WIB_OFFSET_MS);
 }
 
-/** Fragmen SQL `"userId" = ANY(...)`; FALSE bila daftar kosong. */
-function idsSql(ids: string[]): Prisma.Sql {
+/** Fragmen SQL pembatas user:
+ *  - null  → TRUE  (tanpa filter — semua user)
+ *  - []    → FALSE (filter diterapkan tapi tak ada yang cocok)
+ *  - [id]  → "userId" = ANY(...)
+ */
+function idsSql(ids: string[] | null): Prisma.Sql {
+  if (ids === null) return Prisma.sql`TRUE`;
   if (!ids.length) return Prisma.sql`FALSE`;
   return Prisma.sql`"userId" = ANY(${ids})`;
 }
 
-/** UNION dari semua tabel aktivitas (WIB-aware). */
-function activityUnion(since: Date, ids: string[]): Prisma.Sql {
+/** UNION dari semua tabel aktivitas (WIB-aware). ids null = semua user. */
+function activityUnion(since: Date, ids: string[] | null): Prisma.Sql {
   const idsWhere = idsSql(ids);
   return Prisma.sql`
     SELECT "userId", "createdAt" AS ts FROM "PlayerActivity" WHERE "createdAt" >= ${since} AND ${idsWhere}
@@ -75,7 +80,7 @@ function parseRange(searchParams: URLSearchParams): RangeParams {
   return { since, prevSince, until: now, days, label: `${days}d` };
 }
 
-async function filterUserIds(searchParams: URLSearchParams): Promise<string[]> {
+async function filterUserIds(searchParams: URLSearchParams): Promise<string[] | null> {
   const role = searchParams.get("role");
   const province = searchParams.get("province");
   const city = searchParams.get("city");
@@ -83,7 +88,8 @@ async function filterUserIds(searchParams: URLSearchParams): Promise<string[]> {
   const grade = searchParams.get("grade");
   const teacher = searchParams.get("teacher");
 
-  if (!role && !province && !city && !school && !grade && !teacher) return [];
+  // Tanpa filter → null (semua user). Filter yang tak cocok → [] (0 user).
+  if (!role && !province && !city && !school && !grade && !teacher) return null;
 
   const where: Prisma.UserWhereInput = {};
   if (role) where.role = role as Prisma.UserWhereInput["role"];
@@ -117,35 +123,39 @@ async function runStage(sql: Prisma.Sql): Promise<string[]> {
 }
 
 const STAGE_SQL = {
-  login: (since: Date, until: Date, ids: string[]) => Prisma.sql`
+  login: (since: Date, until: Date, ids: string[] | null) => Prisma.sql`
     SELECT "userId" FROM (${activityUnion(since, ids)}) a
     WHERE a.ts >= ${since} AND a.ts < ${until}
     GROUP BY "userId"
+    UNION
+    SELECT "id" AS "userId" FROM "User"
+    WHERE "lastActiveAt" >= ${since} AND "lastActiveAt" < ${until}
+      AND ${ids === null ? Prisma.sql`TRUE` : ids.length ? Prisma.sql`"id" = ANY(${ids})` : Prisma.sql`FALSE`}
   `,
-  arena: (since: Date, until: Date, ids: string[]) => Prisma.sql`
+  arena: (since: Date, until: Date, ids: string[] | null) => Prisma.sql`
     SELECT "userId" FROM "GameResult" WHERE "createdAt" >= ${since} AND "createdAt" < ${until} AND ${idsSql(ids)}
     UNION
     SELECT "userId" FROM "PlayerActivity" WHERE "createdAt" >= ${since} AND "createdAt" < ${until} AND "type" IN ('GAME','JALUR_CERDAS','LESSON','QUIZ') AND ${idsSql(ids)}
     UNION
     SELECT "userId" FROM "UserUnitProgress" WHERE "createdAt" >= ${since} AND "createdAt" < ${until} AND ${idsSql(ids)}
   `,
-  jalur: (since: Date, until: Date, ids: string[]) => Prisma.sql`
+  jalur: (since: Date, until: Date, ids: string[] | null) => Prisma.sql`
     SELECT DISTINCT p."userId" FROM "UserUnitProgress" p
     JOIN "LearningUnit" u ON u.id = p."unitId"
     JOIN "LearningLevel" l ON l.id = u."levelId"
     WHERE p."createdAt" >= ${since} AND p."createdAt" < ${until}
       AND l.type = 'JALUR' AND ${idsSql(ids)}
   `,
-  karya: (since: Date, until: Date, ids: string[]) => Prisma.sql`
+  karya: (since: Date, until: Date, ids: string[] | null) => Prisma.sql`
     SELECT "userId" FROM "StudentKarya" WHERE "createdAt" >= ${since} AND "createdAt" < ${until} AND ${idsSql(ids)}
   `,
-  ukbi: (since: Date, until: Date, ids: string[]) => Prisma.sql`
+  ukbi: (since: Date, until: Date, ids: string[] | null) => Prisma.sql`
     SELECT "userId" FROM "ProgresKompetensi" WHERE "startedAt" >= ${since} AND "startedAt" < ${until} AND ${idsSql(ids)}
   `,
-  rankUp: (since: Date, until: Date, ids: string[]) => Prisma.sql`
+  rankUp: (since: Date, until: Date, ids: string[] | null) => Prisma.sql`
     SELECT "userId" FROM "CoinTransaction" WHERE "reason" = 'RANK_UP' AND "createdAt" >= ${since} AND "createdAt" < ${until} AND ${idsSql(ids)}
   `,
-  kembali: (since: Date, until: Date, ids: string[]) => Prisma.sql`
+  kembali: (since: Date, until: Date, ids: string[] | null) => Prisma.sql`
     SELECT "userId" FROM (
       SELECT "userId", COUNT(DISTINCT DATE(ts AT TIME ZONE 'Asia/Jakarta')) AS d
       FROM (${activityUnion(since, ids)}) a
@@ -159,7 +169,7 @@ async function funnelStage(
   key: keyof typeof STAGE_SQL,
   since: Date,
   until: Date,
-  ids: string[]
+  ids: string[] | null
 ): Promise<string[]> {
   const sql = STAGE_SQL[key](since, until, ids);
   const rows = await db.$queryRaw<StageRow[]>(sql);
@@ -187,7 +197,7 @@ export async function GET(req: NextRequest) {
     if (cached) return NextResponse.json(cached);
 
     const { since, prevSince, until } = range;
-    const idsAll = ids.length ? ids : [];
+    const idsAll = ids;
 
     // ── FUNNEL (2 rentang: sekarang & periode sebelumnya) ─────────────
     const stageKeys = Object.keys(STAGE_SQL) as (keyof typeof STAGE_SQL)[];
@@ -297,7 +307,7 @@ export async function GET(req: NextRequest) {
       success: true,
       generatedAt: new Date().toISOString(),
       range: { days: range.days, since: since.toISOString(), until: until.toISOString() },
-      filterApplied: idsAll.length > 0,
+      filterApplied: !!idsAll && idsAll.length > 0,
       funnel,
       dropoff,
       retention,
@@ -324,7 +334,7 @@ export async function GET(req: NextRequest) {
 
 // ────────────────────────────────────────────────────────────────────
 
-async function computeRetention(since: Date, ids: string[]) {
+async function computeRetention(since: Date, ids: string[] | null) {
   const todayStart = startOfTodayWIB();
   const now = new Date();
   const window = new Date(now.getTime() - 90 * DAY_MS);
@@ -356,9 +366,9 @@ async function computeRetention(since: Date, ids: string[]) {
 
   // Login tambahan dari heartbeat (User.lastActiveAt) — di luar union.
   const [loginToday, login7, login30] = await Promise.all([
-    db.user.count({ where: { lastActiveAt: { gte: todayStart }, ...(ids.length ? { id: { in: ids } } : {}) } }),
-    db.user.count({ where: { lastActiveAt: { gte: wauDate }, ...(ids.length ? { id: { in: ids } } : {}) } }),
-    db.user.count({ where: { lastActiveAt: { gte: mauDate }, ...(ids.length ? { id: { in: ids } } : {}) } }),
+    db.user.count({ where: { lastActiveAt: { gte: todayStart }, ...(ids && ids.length ? { id: { in: ids } } : {}) } }),
+    db.user.count({ where: { lastActiveAt: { gte: wauDate }, ...(ids && ids.length ? { id: { in: ids } } : {}) } }),
+    db.user.count({ where: { lastActiveAt: { gte: mauDate }, ...(ids && ids.length ? { id: { in: ids } } : {}) } }),
   ]);
 
   dau = Math.max(dau, loginToday);
@@ -375,14 +385,14 @@ async function computeRetention(since: Date, ids: string[]) {
       COUNT(*) FILTER (WHERE "lastActiveAt" IS NOT NULL AND "lastActiveAt" >= "createdAt" + interval '7 days')::int AS d7,
       COUNT(*) FILTER (WHERE "lastActiveAt" IS NOT NULL AND "lastActiveAt" >= "createdAt" + interval '30 days')::int AS d30
     FROM "PlayerProfile"
-    WHERE "createdAt" >= ${since} ${ids.length ? Prisma.sql`AND "userId" = ANY(${ids})` : Prisma.sql``}
+    WHERE "createdAt" >= ${since} ${ids === null ? Prisma.sql`` : Prisma.sql`AND ${idsSql(ids)}`}
   `);
   const cohort0 = cohortRows[0] ?? { total: 0, d1: 0, d7: 0, d30: 0 };
 
   const streakRows = await db.$queryRaw<{ avg: number; max: number }[]>(Prisma.sql`
     SELECT COALESCE(AVG("streak"), 0)::int AS avg, COALESCE(MAX("streak"), 0)::int AS max
     FROM "PlayerProfile"
-    WHERE ${ids.length ? Prisma.sql`"userId" = ANY(${ids})` : Prisma.sql`TRUE`}
+    WHERE ${idsSql(ids)}
   `);
 
   const r1 = cohort0.total > 0 ? Math.round((cohort0.d1 / cohort0.total) * 100) : 0;
@@ -404,30 +414,30 @@ async function computeRetention(since: Date, ids: string[]) {
   };
 }
 
-async function computeEngagement(since: Date, until: Date, ids: string[]) {
+async function computeEngagement(since: Date, until: Date, ids: string[] | null) {
   const [xp, quest, badge, ach, rankUp, game, jalur, karya, ukbi, activity] =
     await Promise.all([
       db.xPTransaction.aggregate({
         _sum: { amount: true },
         _count: true,
-        where: { createdAt: { gte: since, lt: until }, ...(ids.length ? { userId: { in: ids } } : {}) },
+        where: { createdAt: { gte: since, lt: until }, ...(ids && ids.length ? { userId: { in: ids } } : {}) },
       }),
-      db.dailyQuest.count({ where: { completed: true, updatedAt: { gte: since, lt: until }, ...(ids.length ? { userId: { in: ids } } : {}) } }),
-      db.userBadge.count({ where: { awardedAt: { gte: since, lt: until }, ...(ids.length ? { userId: { in: ids } } : {}) } }),
-      db.userAchievement.count({ where: { completed: true, updatedAt: { gte: since, lt: until }, ...(ids.length ? { userId: { in: ids } } : {}) } }),
-      db.coinTransaction.count({ where: { reason: "RANK_UP", createdAt: { gte: since, lt: until }, ...(ids.length ? { userId: { in: ids } } : {}) } }),
-      db.gameResult.count({ where: { createdAt: { gte: since, lt: until }, ...(ids.length ? { userId: { in: ids } } : {}) } }),
-      db.userUnitProgress.count({ where: { completed: true, completedAt: { gte: since, lt: until }, ...(ids.length ? { userId: { in: ids } } : {}) } }),
-      db.studentKarya.count({ where: { createdAt: { gte: since, lt: until }, ...(ids.length ? { userId: { in: ids } } : {}) } }),
-      db.progresKompetensi.count({ where: { finishedAt: { gte: since, lt: until }, status: "COMPLETED", ...(ids.length ? { userId: { in: ids } } : {}) } }),
-      db.playerActivity.count({ where: { createdAt: { gte: since, lt: until }, ...(ids.length ? { userId: { in: ids } } : {}) } }),
+      db.dailyQuest.count({ where: { completed: true, updatedAt: { gte: since, lt: until }, ...(ids && ids.length ? { userId: { in: ids } } : {}) } }),
+      db.userBadge.count({ where: { awardedAt: { gte: since, lt: until }, ...(ids && ids.length ? { userId: { in: ids } } : {}) } }),
+      db.userAchievement.count({ where: { completed: true, updatedAt: { gte: since, lt: until }, ...(ids && ids.length ? { userId: { in: ids } } : {}) } }),
+      db.coinTransaction.count({ where: { reason: "RANK_UP", createdAt: { gte: since, lt: until }, ...(ids && ids.length ? { userId: { in: ids } } : {}) } }),
+      db.gameResult.count({ where: { createdAt: { gte: since, lt: until }, ...(ids && ids.length ? { userId: { in: ids } } : {}) } }),
+      db.userUnitProgress.count({ where: { completed: true, completedAt: { gte: since, lt: until }, ...(ids && ids.length ? { userId: { in: ids } } : {}) } }),
+      db.studentKarya.count({ where: { createdAt: { gte: since, lt: until }, ...(ids && ids.length ? { userId: { in: ids } } : {}) } }),
+      db.progresKompetensi.count({ where: { finishedAt: { gte: since, lt: until }, status: "COMPLETED", ...(ids && ids.length ? { userId: { in: ids } } : {}) } }),
+      db.playerActivity.count({ where: { createdAt: { gte: since, lt: until }, ...(ids && ids.length ? { userId: { in: ids } } : {}) } }),
     ]);
 
   const lvlUp = await db.userBadge.count({
     where: {
       awardedAt: { gte: since, lt: until },
       badge: { code: { startsWith: "lvl-" } },
-      ...(ids.length ? { userId: { in: ids } } : {}),
+      ...(ids && ids.length ? { userId: { in: ids } } : {}),
     },
   });
 
@@ -448,7 +458,7 @@ async function computeEngagement(since: Date, until: Date, ids: string[]) {
   };
 }
 
-async function computeHeatmap(since: Date, ids: string[]) {
+async function computeHeatmap(since: Date, ids: string[] | null) {
   const rows = await db.$queryRaw<
     { dow: number; hour: number; users: number }[]
   >(Prisma.sql`
@@ -462,7 +472,7 @@ async function computeHeatmap(since: Date, ids: string[]) {
   return rows;
 }
 
-async function computeCohort(ids: string[]) {
+async function computeCohort(ids: string[] | null) {
   const rows = await db.$queryRaw<
     { week: string; users: number; w1: number; w2: number; w3: number; w4: number }[]
   >(Prisma.sql`
@@ -473,7 +483,7 @@ async function computeCohort(ids: string[]) {
            COUNT(*) FILTER (WHERE "lastActiveAt" IS NOT NULL AND "lastActiveAt" >= "createdAt" + interval '21 days')::int AS w3,
            COUNT(*) FILTER (WHERE "lastActiveAt" IS NOT NULL AND "lastActiveAt" >= "createdAt" + interval '28 days')::int AS w4
     FROM "PlayerProfile"
-    WHERE ${ids.length ? Prisma.sql`"userId" = ANY(${ids})` : Prisma.sql`TRUE`}
+    WHERE ${idsSql(ids)}
     GROUP BY 1
     ORDER BY 1 DESC
     LIMIT 10
@@ -488,7 +498,7 @@ async function computeCohort(ids: string[]) {
   }));
 }
 
-async function computeXpDist(ids: string[]) {
+async function computeXpDist(ids: string[] | null) {
   const rows = await db.$queryRaw<{ bucket: string; users: number }[]>(Prisma.sql`
     SELECT CASE
         WHEN "totalXP" < 100 THEN '0-100'
@@ -499,7 +509,7 @@ async function computeXpDist(ids: string[]) {
       END AS bucket,
       COUNT(*)::int AS users
     FROM "PlayerProfile"
-    WHERE ${ids.length ? Prisma.sql`"userId" = ANY(${ids})` : Prisma.sql`TRUE`}
+    WHERE ${idsSql(ids)}
     GROUP BY 1
   `);
   const order = ["0-100", "100-500", "500-1000", "1000-5000", "5000+"];
@@ -509,11 +519,11 @@ async function computeXpDist(ids: string[]) {
   }));
 }
 
-async function computeRankDist(since: Date, ids: string[]) {
+async function computeRankDist(since: Date, ids: string[] | null) {
   const rows = await db.$queryRaw<{ rank: string; users: number }[]>(Prisma.sql`
     SELECT "currentRank" AS rank, COUNT(*)::int AS users
     FROM "PlayerProfile"
-    WHERE ${ids.length ? Prisma.sql`"userId" = ANY(${ids})` : Prisma.sql`TRUE`}
+    WHERE ${idsSql(ids)}
     GROUP BY 1
   `);
   const promoRows = await db.$queryRaw<{ reference: string; users: number }[]>(Prisma.sql`
@@ -535,18 +545,18 @@ async function computeRankDist(since: Date, ids: string[]) {
   }));
 }
 
-async function computeSkills(ids: string[]) {
+async function computeSkills(ids: string[] | null) {
   const rows = await db.$queryRaw<{ skill: string; avgLevel: number; users: number }[]>(Prisma.sql`
     SELECT "skill", COALESCE(AVG("level"), 0)::numeric(6,1) AS "avgLevel", COUNT(*)::int AS users
     FROM "LearningSkill"
-    WHERE ${ids.length ? Prisma.sql`"userId" = ANY(${ids})` : Prisma.sql`TRUE`}
+    WHERE ${idsSql(ids)}
     GROUP BY "skill"
   `);
   return rows;
 }
 
-async function computeContent(since: Date, until: Date, ids: string[]) {
-  const uIds = ids.length ? { userId: { in: ids } } : {};
+async function computeContent(since: Date, until: Date, ids: string[] | null) {
+  const uIds = ids && ids.length ? { userId: { in: ids } } : {};
   const todayStart = startOfTodayWIB();
   const weekStart = new Date(Date.now() - 7 * DAY_MS);
   const monthStart = new Date(Date.now() - 30 * DAY_MS);
@@ -591,7 +601,7 @@ const GAME_LABELS: Record<string, string> = {
   ARENA: "Arena",
 };
 
-async function computeTopGames(since: Date, until: Date, ids: string[]) {
+async function computeTopGames(since: Date, until: Date, ids: string[] | null) {
   const rows = await db.$queryRaw<
     { source: string; players: number; totalXp: number; txs: number }[]
   >(Prisma.sql`
@@ -631,7 +641,7 @@ async function computeTopGames(since: Date, until: Date, ids: string[]) {
     .sort((a, b) => b.players - a.players);
 }
 
-async function computeAiGuru(since: Date, until: Date, ids: string[]) {
+async function computeAiGuru(since: Date, until: Date, ids: string[] | null) {
   const rows = await db.$queryRaw<
     { feature: string; prompts: number; users: number; tokens: number }[]
   >(Prisma.sql`
@@ -681,7 +691,7 @@ async function computeAiGuru(since: Date, until: Date, ids: string[]) {
   };
 }
 
-async function computeTopJourneys(since: Date, until: Date, ids: string[]) {
+async function computeTopJourneys(since: Date, until: Date, ids: string[] | null) {
   const rows = await db.$queryRaw<
     { userId: string; ts: Date; typ: string }[]
   >(Prisma.sql`
