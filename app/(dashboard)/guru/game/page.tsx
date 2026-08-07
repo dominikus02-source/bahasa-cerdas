@@ -19,6 +19,7 @@ import {
   TrendingUp,
   Clock,
 } from "lucide-react";
+import { BadgeIcon } from "@/components/gamification/BadgeIcon";
 
 interface RoomLite {
   name: string | null;
@@ -56,7 +57,7 @@ interface GameHubData {
 interface BadgeLite {
   code: string;
   name: string;
-  icon: string;
+  icon: string | null;
   rarity: string;
   unlocked: boolean;
   description: string;
@@ -323,11 +324,15 @@ export default function GuruGameHubPage() {
                 <div className="text-xs text-slate-400 py-2">Memuat...</div>
               ) : guruBadges.length > 0 ? (
                 <div className="flex flex-wrap gap-2">
-                  {guruBadges.slice(0, 6).map((b) => (
-                    <span key={b.code} className={`flex items-center gap-1.5 text-[10px] px-2 py-1 rounded-lg font-semibold border ${b.unlocked ? "bg-violet-50 text-violet-700 border-violet-100" : "bg-slate-50 text-slate-400 border-slate-100"}`}>
-                      <span className="text-sm leading-none">{b.icon}</span> {b.name}
-                    </span>
-                  ))}
+                  {guruBadges.slice(0, 6).map((b) => {
+                    const badgeIcon = b.icon?.trim() || "⭐";
+                    return (
+                      <span key={b.code} className={`flex items-center gap-1.5 text-[10px] px-2 py-1 rounded-lg font-semibold border ${b.unlocked ? "bg-violet-50 text-violet-700 border-violet-100" : "bg-slate-50 text-slate-400 border-slate-100"}`}>
+                        <BadgeIcon icon={badgeIcon} size={16} alt={b.name} />
+                        <span>{b.name}</span>
+                      </span>
+                    );
+                  })}
                   {guruBadges.length > 6 && (
                     <span className="text-[10px] text-slate-400 self-center">+{guruBadges.length - 6} lainnya</span>
                   )}
