@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
 import { getUser } from "@/lib/supabase/server"
+import { isTeacherOrStudent } from "@/lib/teacher/students"
 import { buildLatihan, buildKuis, resolvePraktik } from "@/lib/penugasan-content"
 import { awardGuruXp } from "@/lib/gamification/teacher-xp"
 
@@ -10,7 +11,7 @@ const JENIS_VALUES = ["MATERI", "LATIHAN", "PRAKTIK", "KUIS"]
 export async function GET() {
   try {
     const user = await getUser()
-    if (!user || (user.role !== "GURU" && !user.isFounder)) {
+    if (!user || !isTeacherOrStudent(user)) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
@@ -54,7 +55,7 @@ export async function GET() {
 export async function POST(req: Request) {
   try {
     const user = await getUser()
-    if (!user || (user.role !== "GURU" && !user.isFounder)) {
+    if (!user || !isTeacherOrStudent(user)) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 

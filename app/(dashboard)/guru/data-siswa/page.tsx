@@ -19,15 +19,27 @@ const leagueColors: Record<string, string> = {
 export default function DataSiswaPage() {
   const [siswa, setSiswa] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [search, setSearch] = useState("");
   const [absenDraft, setAbsenDraft] = useState<Record<string, string>>({});
   const [savingAbsen, setSavingAbsen] = useState<string | null>(null);
 
   useEffect(() => {
     fetch("/api/guru/siswa")
-      .then((r) => r.json())
-      .then((data) => setSiswa(data.siswa || []))
-      .catch(() => {})
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        if (data?.siswa) {
+          setSiswa(data.siswa);
+          setLoadError(null);
+        } else {
+          setSiswa([]);
+          setLoadError("Gagal memuat data siswa. Muat ulang halaman atau coba lagi.");
+        }
+      })
+      .catch(() => {
+        setSiswa([]);
+        setLoadError("Gagal memuat data siswa. Periksa koneksi Anda.");
+      })
       .finally(() => setLoading(false));
   }, []);
 
@@ -74,6 +86,17 @@ export default function DataSiswaPage() {
 
       {loading ? (
         <div className="text-center py-16 text-gray-400">Memuat data siswa...</div>
+      ) : loadError ? (
+        <div className="text-center py-16">
+          <Users className="mx-auto h-12 w-12 text-amber-400" />
+          <p className="mt-4 text-gray-600 font-medium">{loadError}</p>
+          <button
+            onClick={() => { setLoading(true); setLoadError(null); location.reload(); }}
+            className="mt-3 text-sm font-semibold text-violet-600 hover:text-violet-700"
+          >
+            Muat ulang halaman
+          </button>
+        </div>
       ) : filtered.length === 0 ? (
         <div className="text-center py-16">
           <Users className="mx-auto h-12 w-12 text-gray-300" />

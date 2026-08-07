@@ -82,8 +82,14 @@ export default function KelasKuPage() {
     try {
       const res = await fetch("/api/group");
       const data = await res.json();
+      if (!res.ok) {
+        setError(data.error || "Gagal memuat kelas");
+        setGroups([]);
+        return;
+      }
       if (data.groups) setGroups(data.groups);
     } catch (e) {
+      setError("Gagal memuat kelas. Periksa koneksi Anda.");
       console.error(e);
     } finally {
       setLoading(false);

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
+import { isTeacherOrStudent, getTeacherGroups } from "@/lib/teacher/students";
 
 function generateCode() {
   const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
@@ -10,7 +11,7 @@ function generateCode() {
 }
 
 function isTeacherOrHigher(user: { role: string; isFounder: boolean }): boolean {
-  return user.role === "GURU" || user.role === "ADMIN" || user.isFounder === true;
+  return isTeacherOrStudent(user);
 }
 
 export async function GET(req: NextRequest) {
@@ -24,17 +25,7 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: "Hanya guru yang bisa mengakses" }, { status: 403 });
     }
 
-    const groups = await db.group.findMany({
-      where: { teacherId: dbUser.id, isActive: true },
-      include: {
-        members: {
-          include: { user: { select: { id: true, fullName: true, avatar: true } } },
-        },
-        _count: { select: { members: true } },
-      },
-      orderBy: { createdAt: "desc" },
-      take: 50,
-    });
+    const groups = await getTeacherGroups(dbUser.id);
 
     return NextResponse.json({ groups });
   } catch (error) {

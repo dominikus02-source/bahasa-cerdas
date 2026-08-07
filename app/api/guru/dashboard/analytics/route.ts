@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getUser } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
+import { isTeacherOrStudent, getTeacherStudentIds } from "@/lib/teacher/students";
 
 // Offset WIB (UTC+7) — minggu dimulai Senin 00:00 WIB.
 const WIB_MS = 7 * 60 * 60 * 1000;
@@ -26,28 +27,14 @@ function mondayWIB(d: Date): Date {
 export async function GET(req: Request) {
   try {
     const user = await getUser();
-    if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    if (user.role !== "GURU" && user.role !== "ADMIN" && !user.isFounder) {
+    if (!user || !isTeacherOrStudent(user)) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
     const { searchParams } = new URL(req.url);
     const weeks = Math.min(12, Math.max(4, Number(searchParams.get("weeks") || 8)));
 
-    const groups = await db.group.findMany({
-      where: { teacherId: user.id },
-      select: { id: true },
-    });
-    const groupIds = groups.map((g) => g.id);
-    if (groupIds.length === 0) {
-      return NextResponse.json({ success: true, weeks: [], muridIds: [] });
-    }
-
-    const members = await db.groupMember.findMany({
-      where: { groupId: { in: groupIds } },
-      select: { userId: true },
-    });
-    const muridIds = [...new Set(members.map((m) => m.userId))];
+    const muridIds = await getTeacherStudentIds(user.id);
     if (muridIds.length === 0) {
       return NextResponse.json({ success: true, weeks: [], muridIds: [] });
     }

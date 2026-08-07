@@ -46,7 +46,7 @@ const analyticsSrc = read("app/api/guru/dashboard/analytics/route.ts");
 ok("analytics memakai offset WIB 7 jam", /WIB_MS = 7 \* 60 \* 60 \* 1000/.test(analyticsSrc));
 ok("analytics minggu mulai Senin", /mondayWIB/.test(analyticsSrc));
 ok("analytics batasi 12 minggu maksimal", /Math\.max\(4, Number\(searchParams\.get\("weeks"\) \|\| 8\)\)/.test(analyticsSrc));
-ok("analytics murid-only via grup guru", /groupMember\.findMany\(\{[\s\S]*?where: \{ groupId: \{ in: groupIds \} \}/.test(analyticsSrc));
+ok("analytics murid-only via SSOT getTeacherStudentIds", /getTeacherStudentIds/.test(analyticsSrc));
 ok("analytics hitung karya/like/komentar per minggu", ["studentKarya.count", "studentKaryaLike.count", "studentKaryaComment.count"].every(x => analyticsSrc.includes(x)));
 
 // ── 5. notifikasi guru di route like/comment/karya ────────────────────────
@@ -76,6 +76,43 @@ ok("summary murid punya guard role MURID", /user\.role !== "MURID" && !user\.isF
 ok("summary murid memuat tugas/pengumuman/materi/leaderboard", ["tugas", "pengumuman", "materi", "leaderboard"].every(x => summarySrc.includes(x)));
 ok("summary murid pakai getLeaderboard mingguan", /getLeaderboard\(\{ scope: "GLOBAL", period: "WEEKLY"/.test(summarySrc));
 ok("summary murid tidak bocor jawaban", !/correctAnswer|answerKey|jawaban/.test(summarySrc));
+
+// ── 7. SSOT data siswa guru (lib/teacher/students.ts) ──────────────────────
+const teacherSvc = read("lib/teacher/students.ts");
+ok("SSOT guard isTeacherOrStudent (GURU | ADMIN | founder)", /user\.role === "GURU" \|\| user\.role === "ADMIN" \|\| user\.isFounder === true/.test(teacherSvc));
+ok("SSOT getTeacherStudents ada (daftar murid lengkap)", /getTeacherStudents\(/.test(teacherSvc));
+ok("SSOT getTeacherStudentIds ada (ID murid unik)", /getTeacherStudentIds\(/.test(teacherSvc));
+ok("SSOT hanya kelas aktif (isActive true)", /isActive: true/.test(teacherSvc));
+ok("SSOT dedupe murid lintas kelas (Set)", /new Set\(/.test(teacherSvc));
+ok("SSOT tidak filter role member (hitung semua anggota)", !/role:\s*"member"/.test(teacherSvc));
+
+const siswaApi = read("app/api/guru/siswa/route.ts");
+ok("/api/guru/siswa memakai guard SSOT (bukan role === GURU saja)", /isTeacherOrStudent/.test(siswaApi) && !/dbUser\.role !== "GURU"/.test(siswaApi));
+ok("/api/guru/siswa memakai getTeacherStudents", /getTeacherStudents/.test(siswaApi));
+
+const siswaPatch = read("app/api/guru/siswa/[id]/route.ts");
+ok("/api/guru/siswa/[id] PATCH memakai guard SSOT", /isTeacherOrStudent/.test(siswaPatch) && !/dbUser\.role !== "GURU"/.test(siswaPatch));
+
+const groupApi = read("app/api/group/route.ts");
+ok("/api/group GET memakai getTeacherGroups (SSOT)", /getTeacherGroups/.test(groupApi));
+
+const gameHub = read("app/api/guru/game-hub/route.ts");
+ok("game-hub memakai getTeacherStudentIds (SSOT)", /getTeacherStudentIds/.test(gameHub));
+ok("game-hub guard SSOT", /isTeacherOrStudent/.test(gameHub));
+
+const gradeSrc = read("app/api/guru/gradebook/route.ts");
+ok("gradebook guard SSOT", /isTeacherOrStudent/.test(gradeSrc));
+
+const penugasanDetail = read("app/api/guru/penugasan/[id]/route.ts");
+ok("penugasan/[id] guard SSOT", /isTeacherOrStudent/.test(penugasanDetail));
+ok("penugasan/[id] menghitung semua anggota (role filter dihapus)", !/role:\s*"member"/.test(penugasanDetail));
+
+const dataSiswaPage = read("app/(dashboard)/guru/data-siswa/page.tsx");
+ok("halaman data-siswa tidak menelan error fetch (cek res.ok)", /r\.ok \? r\.json\(\) : null/.test(dataSiswaPage));
+ok("halaman data-siswa menampilkan loadError", /loadError/.test(dataSiswaPage));
+
+const kelaskuPage = read("app/(dashboard)/guru/kelasku/page.tsx");
+ok("halaman kelasku cek res.ok di fetchGroups", /!res\.ok/.test(kelaskuPage));
 
 console.log(`\n${fail === 0 ? "SEMUA LULUS" : `${fail} GAGAL`}`);
 process.exit(fail === 0 ? 0 : 1);

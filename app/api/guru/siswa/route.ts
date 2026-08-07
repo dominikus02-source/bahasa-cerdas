@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
+import { isTeacherOrStudent, getTeacherStudents } from "@/lib/teacher/students";
 
 export async function GET() {
   try {
@@ -9,36 +10,11 @@ export async function GET() {
     if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const dbUser = await db.user.findUnique({ where: { supabaseId: user.id } });
-    if (!dbUser || dbUser.role !== "GURU") {
+    if (!dbUser || !isTeacherOrStudent(dbUser)) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
-    const groups = await db.group.findMany({
-      where: { teacherId: dbUser.id, isActive: true },
-      include: {
-        members: {
-          include: {
-            user: {
-              select: {
-                id: true, fullName: true, avatar: true, email: true,
-                xp: true, level: true, streak: true, league: true, lastActiveAt: true,
-                profile: { select: { noAbsen: true, nisn: true } },
-              },
-            },
-          },
-        },
-      },
-      orderBy: { createdAt: "desc" },
-      take: 50,
-    });
-
-    const siswa = groups.flatMap((group) =>
-      group.members.map((m) => ({
-        ...m.user,
-        groupId: group.id,
-        groupName: group.name,
-      }))
-    );
+    const siswa = await getTeacherStudents(dbUser.id);
 
     return NextResponse.json({ siswa });
   } catch {

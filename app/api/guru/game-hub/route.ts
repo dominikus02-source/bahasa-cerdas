@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getUser } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
+import { isTeacherOrStudent, getTeacherStudentIds } from "@/lib/teacher/students";
 
 // Optional filter params (additive; tanpa params = perilaku legacy):
 //   page, limit  → paginasi untuk halaman riwayat aktivitas
@@ -12,17 +13,12 @@ import { db } from "@/lib/db";
 export async function GET(request: Request) {
   try {
     const user = await getUser();
-    if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    if (user.role !== "GURU" && !user.isFounder && user.role !== "ADMIN") {
+    if (!user || !isTeacherOrStudent(user)) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
     const params = new URL(request.url).searchParams;
-    const studentIdsRes = await db.groupMember.findMany({
-      where: { group: { teacherId: user.id, isActive: true } },
-      select: { userId: true },
-    });
-    const studentIds = studentIdsRes.map((s) => s.userId);
+    const studentIds = await getTeacherStudentIds(user.id);
 
     const whereStudent: any = { userId: { in: studentIds } };
     const studentParam = params.get("murid");

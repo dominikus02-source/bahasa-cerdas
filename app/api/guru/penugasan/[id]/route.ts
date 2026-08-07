@@ -1,11 +1,12 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { getUser } from "@/lib/supabase/server";
+import { isTeacherOrStudent } from "@/lib/teacher/students";
 // One assignment + every enrolled student's submission (for the teacher's review).
 export async function GET(_req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const user = await getUser();
-    if (!user || (user.role !== "GURU" && !user.isFounder)) {
+    if (!user || !isTeacherOrStudent(user)) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
     const { id } = await params;
@@ -19,7 +20,8 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
             name: true,
             teacherId: true,
             members: {
-              where: { role: "member" },
+              // Semua anggota kelas (konsisten dengan hitungan `_count.members`
+              // di daftar penugasan dan daftar murid di Data Siswa / KelasKu).
               select: { user: { select: { id: true, fullName: true, avatar: true } } },
             },
           },
@@ -71,7 +73,7 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
 export async function DELETE(_req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const user = await getUser();
-    if (!user || (user.role !== "GURU" && !user.isFounder)) {
+    if (!user || !isTeacherOrStudent(user)) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
     const { id } = await params;

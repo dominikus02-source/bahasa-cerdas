@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
+import { isTeacherOrStudent } from "@/lib/teacher/students";
 
 // Guru memperbarui data siswa (no. absensi / NISN) — hanya untuk siswa yang
 // terdaftar di kelas milik guru tersebut.
@@ -15,7 +16,7 @@ export async function PATCH(
     if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const dbUser = await db.user.findUnique({ where: { supabaseId: user.id } });
-    if (!dbUser || dbUser.role !== "GURU") {
+    if (!dbUser || !isTeacherOrStudent(dbUser)) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
