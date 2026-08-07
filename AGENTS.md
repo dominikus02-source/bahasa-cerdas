@@ -2429,3 +2429,47 @@ Audit menyeluruh UI halaman `/guru/game` dan seluruh halaman turunannya + pencar
 - Setiap fitur baru di GIM Guru harus pakai Bahasa Indonesia langsung di label JSX.
 - JANGAN hardcode string Inggris untuk label pengguna di komponen game/goti biasa.
 - Istilah seragam: Lencana (bukan Badge), Papan Peringkat (Leaderboard), Hadiah (Reward), Perkembangan (Progress), Populer (Trending), Direkomendasikan (Recommended) — "Level" menjadi "Tingkat" di label gim.
+
+---
+
+## Phase GIM GURU V5 — FINAL POLISH UI (Aug 7, 2026)
+
+### Goal
+Final polish `/guru/game` agar terasa premium SaaS (Google Classroom + Duolingo + Canva): hero ringkas, statistik tanpa duplikasi, misi Duolingo-style, kartu gim kompak seragam, CTA natural, sidebar rapi, responsif. **UI/UX ONLY** — tidak ada perubahan API/route/DB/XP/Badge/Leaderboard engine (additive-only).
+
+### Perubahan (`app/(dashboard)/guru/game/page.tsx`)
+
+| Item | Sebelum | Sesudah |
+|------|---------|---------|
+| Hero | py-7, ring 24×24, 2 kolom besar, subtitle panjang | py-5, ring 16×16 dalam kartu XP glass (ring+XP+target digabung), subtitle ringkas, judul truncate |
+| Statistik duplikat | Hero chips (4) + section "STATISTIK" (4 kartu) menampilkan data sama (XP/Lencana/Murid) | Section STATISTIK DIHAPUS — hero chips jadi satu-satunya section statistik utama; chip "XP Guru Minggu Ini" diganti "Aktivitas Hari Ini" (karena XP sudah di kartu ring) |
+| Quick Action | p-4, icon 40px | p-3.5, icon 36px |
+| Misi Hari Ini | 3 kartu grid + kartu reward + gradient bg | Checklist Duolingo kompak: satu kartu putih, baris icon-circle (✓ hijau saat selesai / emoji saat belum), +20 XP per misi, progress bar tipis, "+50 XP Guru" footer |
+| Kartu gim | header h-20, icon 36px, p-4 | header h-16 (−20%), icon 28px, p-3, badge lebih kecil |
+| Badge warna gim | Populer=oranye, Baru=violet, Direkomendasikan=emerald | Tetap (sudah konsisten) |
+| Progress Guru | "X / 500 target mingguan" + "% tercapai" | Tambah "Sisa X XP menuju level berikutnya" (emerald, bold) di samping % |
+| Badge terkunci | Icon penuh warna | `grayscale opacity-60` + nama abu-abu saat terkunci |
+| Riwayat | 6 kolom (Siswa, Gim, Skor, Benar, Salah, Tanggal) | 4 kolom ringkas (Siswa, Gim, Skor, Tanggal) + klik baris → expand detail (benar/salah/rentetan maks/XP); tombol "Buka Riwayat" |
+| AI Insight | Hanya teks rekomendasi | Tambah CTA "Kirim Pengingat" (#aktivitas-murid) + "Lihat Ranking" |
+| CTA natural | "Kelola Data Siswa", "Lihat Papan" | "Kelola Murid", "Lihat Ranking" |
+| Heading | text-lg semua | text-base seragam, mb-4→mb-3 |
+| Sidebar (GuruNav) | grup mb-1, link gap-0.5 | grup mb-3, link gap-1, tombol py-2 |
+
+### File Diubah
+- `app/(dashboard)/guru/game/page.tsx` — semua polish V5 di atas; hapus komponen `Stat` (tidak terpakai) + import `BarChart3`, `CircleAlert` (unused); tambah `Fragment` import
+- `components/dashboard/GuruNav.tsx` — spacing grup nav lebih lega
+
+### Verifikasi
+| Check | Hasil |
+|-------|-------|
+| `npx tsc --noEmit` | ✅ 0 errors |
+| ESLint (2 file) | ✅ 0 violations |
+| `npm run test:guru-phase` | ✅ SEMUA LULUS |
+| `npm run test:gamification-engine` | ✅ SEMUA LULUS |
+| `npm run build` (dummy env) | ✅ 357 pages, 0 errors |
+
+### Remaining
+1. TKA UTBK/Guru enrichment 30 → 150
+2. Game server revival (VPS mati)
+3. GameRoom migration SQL via Supabase dashboard
+4. UI game solo: badge-score client vs server masih beda (kosmetik)

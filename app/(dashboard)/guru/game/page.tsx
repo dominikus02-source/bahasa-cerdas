@@ -1,12 +1,11 @@
 "use client";
 
-import { useEffect, useState, type ReactNode } from "react";
+import { Fragment, useEffect, useState, type ReactNode } from "react";
 import Link from "next/link";
 import {
   BookOpen,
   Users,
   Play,
-  BarChart3,
   Zap,
   Star,
   Swords,
@@ -20,7 +19,6 @@ import {
   ChevronRight,
   ArrowRight,
   CircleCheckBig,
-  CircleAlert,
   Gamepad2,
   BellRing,
 } from "lucide-react";
@@ -175,6 +173,7 @@ export default function GuruGameHubPage() {
   const [siswa, setSiswa] = useState<SiswaRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [showAllRiwayat, setShowAllRiwayat] = useState(false);
+  const [expandedRiwayat, setExpandedRiwayat] = useState<string | null>(null);
 
   useEffect(() => {
     Promise.all([
@@ -280,54 +279,54 @@ export default function GuruGameHubPage() {
       <div className="bg-gradient-to-br from-emerald-600 via-green-700 to-teal-900 text-white relative overflow-hidden">
         <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-400/20 rounded-full blur-[80px]" />
         <div className="absolute bottom-0 left-8 w-48 h-48 bg-teal-300/10 rounded-full blur-[60px]" />
-        <div className="relative z-10 max-w-6xl mx-auto px-4 py-7">
-          <div className="flex flex-col lg:flex-row lg:items-center gap-5">
-            <div className="flex-1">
-              <div className="flex items-center gap-3">
-                <div className="w-11 h-11 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/20">
-                  <Gamepad2 className="w-5 h-5" />
+        <div className="relative z-10 max-w-6xl mx-auto px-4 py-5">
+          <div className="flex flex-col lg:flex-row lg:items-center gap-4">
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2.5">
+                <div className="w-9 h-9 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/20 shrink-0">
+                  <Gamepad2 className="w-4 h-4" />
                 </div>
-                <div>
-                  <p className="text-[11px] text-emerald-200 uppercase tracking-wider font-semibold">Dasbor Aktivitas Guru</p>
-                  <h1 className="text-xl lg:text-2xl font-extrabold">
+                <div className="min-w-0">
+                  <p className="text-[10px] text-emerald-200 uppercase tracking-wider font-semibold">Dasbor Aktivitas Guru</p>
+                  <h1 className="text-lg lg:text-xl font-extrabold truncate">
                     Halo, {loading ? "Guru" : (user?.nickname || user?.fullName || "Guru")} 👋
                   </h1>
                 </div>
               </div>
-              <p className="mt-2 text-emerald-100/90 text-sm">
+              <p className="mt-1.5 text-emerald-100/90 text-xs leading-relaxed">
                 Ringkasan aktivitas gim kamu dan kelas — buka setiap hari untuk melihat perkembangan.
               </p>
             </div>
 
-            <div className="flex items-center gap-4">
-              <div className="relative w-24 h-24 shrink-0">
-                <svg viewBox="0 0 96 96" className="w-24 h-24 -rotate-90">
-                  <circle cx="48" cy="48" r="40" fill="none" stroke="rgba(255,255,255,0.18)" strokeWidth="9" />
+            <div className="flex items-center gap-3 shrink-0 rounded-xl bg-white/10 backdrop-blur-md border border-white/10 px-3.5 py-2">
+              <div className="relative w-16 h-16 shrink-0">
+                <svg viewBox="0 0 96 96" className="w-16 h-16 -rotate-90">
+                  <circle cx="48" cy="48" r="40" fill="none" stroke="rgba(255,255,255,0.18)" strokeWidth="10" />
                   <circle
-                    cx="48" cy="48" r="40" fill="none" stroke="#fff" strokeWidth="9"
+                    cx="48" cy="48" r="40" fill="none" stroke="#fff" strokeWidth="10"
                     strokeLinecap="round"
                     strokeDasharray={`${(xpTargetPct / 100) * 251.3} 251.3`}
                     className="transition-all duration-1000"
                   />
                 </svg>
                 <div className="absolute inset-0 flex flex-col items-center justify-center">
-                  <span className="text-xl font-extrabold">{xpTargetPct}%</span>
-                  <span className="text-[9px] text-emerald-100">Target Mingguan</span>
+                  <span className="text-base font-extrabold leading-none">{xpTargetPct}%</span>
+                  <span className="text-[7px] text-emerald-100 mt-0.5">Target</span>
                 </div>
               </div>
               <div className="shrink-0">
-                <p className="text-[11px] text-emerald-200 font-semibold uppercase tracking-wide">XP Minggu Ini</p>
-                <p className="text-2xl font-extrabold tabular-nums">+{weeklyXp.toLocaleString("id-ID")}</p>
-                <p className="text-[11px] text-emerald-200 mt-1">Target: {TARGET_MINGGUAN_XP.toLocaleString("id-ID")} XP Guru</p>
+                <p className="text-[9px] text-emerald-200 font-semibold uppercase tracking-wide">XP Minggu Ini</p>
+                <p className="text-xl font-extrabold tabular-nums leading-tight">+{weeklyXp.toLocaleString("id-ID")}</p>
+                <p className="text-[9px] text-emerald-200 mt-0.5">Target {TARGET_MINGGUAN_XP.toLocaleString("id-ID")} XP Guru</p>
               </div>
             </div>
           </div>
 
-          {/* Hero stat chips */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mt-5">
+          {/* Hero stat chips (satu-satunya section statistik utama) */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 mt-4">
             <HeroChip icon={<Medal className="w-4 h-4 text-purple-300" />} label="Lencana Terbuka" value={loading ? "..." : `${unlocked} dari ${totalGuruBadges}`} />
             <HeroChip icon={<Users className="w-4 h-4 text-sky-300" />} label="Murid Aktif Hari Ini" value={loading ? "..." : String(aktifHariIni)} />
-            <HeroChip icon={<TrendingUp className="w-4 h-4 text-green-300" />} label="XP Guru Minggu Ini" value={loading ? "..." : `+${weeklyXp.toLocaleString("id-ID")}`} />
+            <HeroChip icon={<TrendingUp className="w-4 h-4 text-green-300" />} label="Aktivitas Hari Ini" value={loading ? "..." : (studentResultsToday.length + playedMeToday).toString()} />
             <HeroChip icon={<Trophy className="w-4 h-4 text-amber-300" />} label="Peringkat Guru" value={loading ? "..." : lb?.myRank ? `#${lb.myRank}` : "—"} />
           </div>
         </div>
@@ -371,10 +370,10 @@ export default function GuruGameHubPage() {
         </section>
 
         {/* ── QUICK ACTION ──────────────────────────────────── */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-          <Link href={lastGame.href} className="group flex flex-col bg-white rounded-xl border border-slate-100 p-4 shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-8">
+          <Link href={lastGame.href} className="group flex flex-col bg-white rounded-xl border border-slate-100 p-3.5 shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all">
             <div className="flex items-center gap-2 mb-2">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-600 flex items-center justify-center shrink-0"><Play className="w-4 h-4 text-white" /></div>
+              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-600 flex items-center justify-center shrink-0"><Play className="w-4 h-4 text-white" /></div>
               <div className="min-w-0">
                 <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wide">▶ Main Sekarang</p>
                 <p className="font-bold text-slate-900 text-sm truncate">{lastGame.emoji} {lastGame.title}</p>
@@ -391,10 +390,10 @@ export default function GuruGameHubPage() {
           {/* Tantangan / Misi */}
           <a
             href="#misi-hari-ini"
-            className="group bg-white rounded-xl border border-slate-100 p-4 shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all flex flex-col"
+            className="group bg-white rounded-xl border border-slate-100 p-3.5 shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all flex flex-col"
           >
             <div className="flex items-center gap-2 mb-2">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-orange-600 flex items-center justify-center shrink-0"><Flame className="w-4 h-4 text-white" /></div>
+              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-amber-400 to-orange-600 flex items-center justify-center shrink-0"><Flame className="w-4 h-4 text-white" /></div>
               <div>
                 <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wide">🔥 Tantangan Hari Ini</p>
                 <p className="font-bold text-slate-900 text-sm">Misi harian &amp; reward</p>
@@ -407,9 +406,9 @@ export default function GuruGameHubPage() {
           </a>
 
           {/* Lencana Saya */}
-          <Link href="/guru/game/achievement" className="group bg-white rounded-xl border border-slate-100 p-4 shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all flex flex-col">
+          <Link href="/guru/game/achievement" className="group bg-white rounded-xl border border-slate-100 p-3.5 shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all flex flex-col">
             <div className="flex items-center gap-2 mb-2">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-400 to-purple-600 flex items-center justify-center shrink-0"><Medal className="w-4 h-4 text-white" /></div>
+              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-violet-400 to-purple-600 flex items-center justify-center shrink-0"><Medal className="w-4 h-4 text-white" /></div>
               <div>
                 <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wide">🏆 Lencana Saya</p>
                 <p className="font-bold text-slate-900 text-sm">{unlocked} dari {totalGuruBadges} Lencana</p>
@@ -428,49 +427,41 @@ export default function GuruGameHubPage() {
           </Link>
         </div>
 
-        {/* ── STATISTIK (hari/minggu ini) ────────────────────── */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-          <Stat icon={<Users className="w-4 h-4 text-sky-500" />} label="Murid Bermain Hari Ini" value={loading ? "..." : aktifHariIni.toString()} accent="border-sky-100 bg-sky-50/40" />
-          <Stat icon={<TrendingUp className="w-4 h-4 text-emerald-500" />} label="XP Guru Minggu Ini" value={loading ? "..." : `+${weeklyXp.toLocaleString("id-ID")}`} accent="border-emerald-100 bg-emerald-50/40" />
-          <Stat icon={<Medal className="w-4 h-4 text-violet-500" />} label="Lencana Terbuka" value={loading ? "..." : `${unlocked}/${totalGuruBadges}`} accent="border-violet-100 bg-violet-50/40" />
-          <Stat icon={<Sparkles className="w-4 h-4 text-orange-500" />} label="Aktivitas Hari Ini" value={loading ? "..." : (studentResultsToday.length + playedMeToday).toString()} accent="border-orange-100 bg-orange-50/40" />
-        </div>
-
         {/* ── MISI HARIAN ───────────────────────────────────── */}
         <section id="misi-hari-ini" className="scroll-mt-24 mb-8">
-          <div className="flex items-center gap-2 mb-4">
+          <div className="flex items-center gap-2 mb-3">
             <div className="w-2 h-2 rounded-full bg-orange-500 animate-pulse" />
-            <h2 className="text-lg font-bold text-slate-800">🎯 Misi Hari Ini</h2>
+            <h2 className="text-base font-bold text-slate-800">Misi Hari Ini</h2>
             <span className="ml-auto text-[10px] px-2 py-0.5 bg-orange-100 text-orange-700 rounded-full font-semibold">{missionsDone}/{dailyMissions.length}</span>
           </div>
-          <div className="bg-gradient-to-r from-orange-50 via-amber-50 to-orange-50 rounded-xl border border-orange-100 p-5 shadow-sm">
-            <div className="grid sm:grid-cols-3 gap-3 mb-4">
+          <div className="bg-white rounded-xl border border-orange-100 p-4 shadow-sm">
+            <ul className="divide-y divide-slate-100">
               {dailyMissions.map((m) => (
-                <div key={m.id} className={`flex items-center gap-3 rounded-xl border p-3 transition-colors ${m.done ? "bg-emerald-50 border-emerald-200" : "bg-white border-slate-100"}`}>
-                  <span className={`w-9 h-9 shrink-0 rounded-full flex items-center justify-center text-base ${m.done ? "bg-emerald-100" : "bg-slate-100"}`}>{m.icon}</span>
-                  <span className={`text-xs font-medium leading-tight ${m.done ? "text-emerald-700 line-through" : "text-slate-600"}`}>{m.label}</span>
-                  {m.done ? <CircleCheckBig className="w-4 h-4 text-emerald-500 ml-auto shrink-0" /> : <CircleAlert className="w-4 h-4 text-slate-300 ml-auto shrink-0" />}
-                </div>
+                <li key={m.id} className="flex items-center gap-3 py-2.5 first:pt-0 last:pb-0">
+                  <span
+                    className={`w-6 h-6 shrink-0 rounded-full flex items-center justify-center text-xs transition-colors ${
+                      m.done ? "bg-emerald-500 text-white" : "bg-slate-100 text-slate-400"
+                    }`}
+                  >
+                    {m.done ? <CircleCheckBig className="w-4 h-4" /> : m.icon}
+                  </span>
+                  <span className={`text-xs font-medium leading-tight ${m.done ? "text-emerald-600 line-through" : "text-slate-600"}`}>{m.label}</span>
+                  <span className="ml-auto text-[10px] font-bold text-amber-600 shrink-0">+20 XP</span>
+                </li>
               ))}
-              <div className="flex items-center gap-3 rounded-xl border border-amber-200 bg-white p-3">
-                <span className="w-9 h-9 shrink-0 rounded-full bg-amber-100 flex items-center justify-center font-bold text-amber-600 text-xs">+50</span>
-                <div className="leading-tight">
-                  <p className="text-xs font-bold text-slate-800">Hadiah Misi</p>
-                  <p className="text-[11px] text-slate-500">+50 XP Guru saat semua misi selesai</p>
-                </div>
-              </div>
-            </div>
-            <div className="h-2 bg-slate-200/60 rounded-full overflow-hidden">
+            </ul>
+            <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden mt-3">
               <div className="h-full bg-orange-500 rounded-full transition-all duration-700" style={{ width: `${(missionsDone / dailyMissions.length) * 100}%` }} />
             </div>
+            <p className="mt-2 text-[11px] text-slate-400">Selesaikan semua misi untuk <span className="font-bold text-amber-600">+50 XP Guru</span>.</p>
           </div>
         </section>
 
         {/* ── MAIN GAME ─────────────────────────────────────── */}
         <div className="mb-8">
-          <div className="flex items-center gap-2 mb-4">
+          <div className="flex items-center gap-2 mb-3">
             <div className="w-2 h-2 rounded-full bg-violet-500 animate-pulse" />
-            <h2 className="text-lg font-bold text-slate-800" id="mainkan">Mainkan Gim</h2>
+            <h2 className="text-base font-bold text-slate-800" id="mainkan">Mainkan Gim</h2>
             <span className="text-[10px] px-2 py-0.5 bg-violet-100 text-violet-700 rounded-full font-semibold">SOLO</span>
             <Link href="/guru/game/lobby" className="ml-auto inline-flex items-center gap-1 text-[11px] font-bold text-emerald-600 hover:text-emerald-700">
               Ruang Gim &amp; Tanding <ChevronRight size={12} />
@@ -494,13 +485,13 @@ export default function GuruGameHubPage() {
                   href={game.href}
                   className="group flex flex-col bg-white rounded-xl border border-slate-100 overflow-hidden shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300"
                 >
-                  <div className={`h-20 bg-gradient-to-br ${game.gradient} relative flex items-center justify-center shrink-0`}>
-                    <Icon className="w-9 h-9 text-white/80" />
+                  <div className={`h-16 bg-gradient-to-br ${game.gradient} relative flex items-center justify-center shrink-0`}>
+                    <Icon className="w-7 h-7 text-white/80" />
                     {badge && (
-                      <span className={`absolute top-2 left-2 ${badge.cls} text-white text-[9px] font-extrabold px-2 py-0.5 rounded-full shadow-sm`}>{badge.label}</span>
+                      <span className={`absolute top-1.5 left-1.5 ${badge.cls} text-white text-[9px] font-extrabold px-2 py-0.5 rounded-full shadow-sm`}>{badge.label}</span>
                     )}
                   </div>
-                  <div className="p-4 flex flex-col flex-1">
+                  <div className="p-3 flex flex-col flex-1">
                     <div className="flex items-start justify-between gap-2 mb-1">
                       <h3 className="font-bold text-slate-900 text-sm flex items-center gap-1.5"><span>{game.emoji}</span>{game.title}</h3>
                       <span className="text-[9px] px-2 py-0.5 bg-violet-100 text-violet-700 rounded-full font-semibold shrink-0">MULAI</span>
@@ -523,9 +514,9 @@ export default function GuruGameHubPage() {
 
         {/* ── GAME TERPOPULER (Top 5) ───────────────────────── */}
         <div className="mb-8">
-          <div className="flex items-center gap-2 mb-4">
+          <div className="flex items-center gap-2 mb-3">
             <div className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
-            <h2 className="text-lg font-bold text-slate-800">Permainan Terpopuler Minggu Ini</h2>
+            <h2 className="text-base font-bold text-slate-800">Permainan Terpopuler Minggu Ini</h2>
           </div>
           {popularity.length > 0 ? (
             <div className="bg-white rounded-xl border border-slate-100 p-5 shadow-sm">
@@ -569,12 +560,15 @@ export default function GuruGameHubPage() {
             <p className="text-xs text-slate-400 mb-2">XP Guru minggu ini</p>
             <div className="flex items-end gap-2">
               <span className="text-2xl font-extrabold text-slate-900 tabular-nums">{weeklyXp.toLocaleString("id-ID")}</span>
-              <span className="text-xs text-slate-400 mb-1">/ {TARGET_MINGGUAN_XP.toLocaleString("id-ID")} target mingguan</span>
+              <span className="text-xs text-slate-400 mb-1">/ {TARGET_MINGGUAN_XP.toLocaleString("id-ID")} target</span>
             </div>
             <div className="h-2.5 bg-slate-100 rounded-full overflow-hidden mt-2">
               <div className="h-full bg-gradient-to-r from-emerald-400 to-teal-500 rounded-full transition-all duration-1000" style={{ width: `${xpTargetPct}%` }} />
             </div>
-            <div className="mt-3 text-[11px] text-slate-400">{xpTargetPct}% tercapai</div>
+            <div className="mt-3 flex items-center justify-between text-[11px] text-slate-400">
+              <span>{xpTargetPct}% tercapai</span>
+              <span className="font-bold text-emerald-600">Sisa {(TARGET_MINGGUAN_XP - weeklyXp).toLocaleString("id-ID")} XP menuju level berikutnya</span>
+            </div>
           </div>
 
           <div className="bg-white rounded-xl border border-slate-100 p-5 shadow-sm">
@@ -593,11 +587,11 @@ export default function GuruGameHubPage() {
                   return (
                     <div key={b.code} className="flex items-center gap-3">
                       <div className={`w-9 h-9 shrink-0 rounded-xl flex items-center justify-center border ${b.unlocked ? meta.border : "border-slate-100"}`}>
-                        <BadgeIcon icon={badgeIcon} size={26} alt={b.name} />
+                        <div className={b.unlocked ? "" : "grayscale opacity-60"}><BadgeIcon icon={badgeIcon} size={26} alt={b.name} /></div>
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between">
-                          <p className="text-xs font-semibold text-slate-700 truncate">{b.name}</p>
+                          <p className={`text-xs font-semibold truncate ${b.unlocked ? "text-slate-700" : "text-slate-400"}`}>{b.name}</p>
                           <span className="text-[10px] font-bold text-slate-400 shrink-0 ml-2">{b.unlocked ? "TERBUKA" : `${pct}%`}</span>
                         </div>
                         <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden mt-1">
@@ -622,7 +616,7 @@ export default function GuruGameHubPage() {
               <span className="font-extrabold">Posisimu #{lb.myRank}</span> di peringkat guru nasional.
             </p>
             <Link href="/guru/game/leaderboard" className="inline-flex items-center gap-1 text-xs font-bold text-amber-700 hover:underline">
-              Lihat Papan <ArrowRight size={12} />
+              Lihat Ranking <ArrowRight size={12} />
             </Link>
           </div>
         )}
@@ -631,9 +625,9 @@ export default function GuruGameHubPage() {
         <section id="aktivitas-murid" className="scroll-mt-24 mb-8">
           <div className="flex items-center gap-2 mb-4">
             <div className="w-2 h-2 rounded-full bg-sky-500 animate-pulse" />
-            <h2 className="text-lg font-bold text-slate-800">Aktivitas Murid</h2>
+            <h2 className="text-base font-bold text-slate-800">Aktivitas Murid</h2>
             <Link href="/guru/data-siswa" className="ml-auto text-[11px] font-bold text-sky-600 hover:underline inline-flex items-center gap-1">
-              Kelola Data Siswa <ChevronRight size={12} />
+              Kelola Murid <ChevronRight size={12} />
             </Link>
           </div>
           {loading ? (
@@ -685,18 +679,18 @@ export default function GuruGameHubPage() {
           )}
         </section>
 
-        {/* ── RIWAYAT (5 + Lihat Semua) ─────────────────────── */}
+        {/* ── RIWAYAT (5 + Buka Riwayat) ─────────────────────── */}
         <div className="mb-8">
-          <div className="flex items-center gap-2 mb-4">
+          <div className="flex items-center gap-2 mb-3">
             <div className="w-2 h-2 rounded-full bg-slate-400 animate-pulse" />
-            <h2 className="text-lg font-bold text-slate-800">Riwayat Permainan</h2>
+            <h2 className="text-base font-bold text-slate-800">Riwayat Permainan</h2>
             {(hub?.studentResults?.length ?? 0) > 5 && (
               <button
                 type="button"
                 onClick={() => setShowAllRiwayat((v) => !v)}
                 className="ml-auto text-xs font-bold text-emerald-600 hover:underline"
               >
-                {showAllRiwayat ? "Ringkas" : "Lihat Semua"}
+                {showAllRiwayat ? "Ringkas" : "Buka Riwayat"}
               </button>
             )}
           </div>
@@ -706,33 +700,44 @@ export default function GuruGameHubPage() {
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="border-b border-slate-100 bg-slate-50">
-                      <th className="text-left px-4 py-3 font-semibold text-slate-600 text-xs">Siswa</th>
-                      <th className="text-left px-4 py-3 font-semibold text-slate-600 text-xs">Gim</th>
-                      <th className="text-center px-4 py-3 font-semibold text-slate-600 text-xs">Skor</th>
-                      <th className="text-center px-4 py-3 font-semibold text-slate-600 text-xs">Benar</th>
-                      <th className="text-center px-4 py-3 font-semibold text-slate-600 text-xs">Salah</th>
-                      <th className="text-right px-4 py-3 font-semibold text-slate-600 text-xs">Tanggal</th>
+                      <th className="text-left px-4 py-2.5 font-semibold text-slate-600 text-xs">Siswa</th>
+                      <th className="text-left px-4 py-2.5 font-semibold text-slate-600 text-xs">Gim</th>
+                      <th className="text-center px-4 py-2.5 font-semibold text-slate-600 text-xs">Skor</th>
+                      <th className="text-right px-4 py-2.5 font-semibold text-slate-600 text-xs">Tanggal</th>
                     </tr>
                   </thead>
                   <tbody>
                     {(hub?.studentResults ?? []).slice(0, showAllRiwayat ? undefined : 5).map((res) => (
-                      <tr key={res.id} className="border-b border-slate-50 hover:bg-slate-50 transition-colors">
-                        <td className="px-4 py-3">
-                          <div className="flex items-center gap-2">
-                            <div className="w-7 h-7 rounded-full bg-gradient-to-br from-violet-400 to-purple-600 flex items-center justify-center text-white text-[10px] font-bold shrink-0">
-                              {res.user?.fullName?.charAt(0) || "?"}
+                      <Fragment key={res.id}>
+                        <tr className="border-b border-slate-50 hover:bg-slate-50 transition-colors cursor-pointer" onClick={() => setExpandedRiwayat((cur) => (cur === res.id ? null : res.id))}>
+                          <td className="px-4 py-2.5">
+                            <div className="flex items-center gap-2">
+                              <div className="w-7 h-7 rounded-full bg-gradient-to-br from-violet-400 to-purple-600 flex items-center justify-center text-white text-[10px] font-bold shrink-0">
+                                {res.user?.fullName?.charAt(0) || "?"}
+                              </div>
+                              <span className="font-medium text-slate-700 text-xs">{res.user?.fullName || "Siswa"}</span>
                             </div>
-                            <span className="font-medium text-slate-700 text-xs">{res.user?.fullName || "Siswa"}</span>
-                          </div>
-                        </td>
-                        <td className="px-4 py-3 text-xs text-slate-500">{resultGameLabel(res)}</td>
-                        <td className="px-4 py-3 text-center"><span className="font-bold text-emerald-600">{res.finalScore}</span></td>
-                        <td className="px-4 py-3 text-center text-xs text-green-600">{res.correct}</td>
-                        <td className="px-4 py-3 text-center text-xs text-red-500">{res.wrong}</td>
-                        <td className="px-4 py-3 text-right text-xs text-slate-400">
-                          {new Date(res.createdAt).toLocaleDateString("id-ID", { day: "numeric", month: "short" })}
-                        </td>
-                      </tr>
+                          </td>
+                          <td className="px-4 py-2.5 text-xs text-slate-500">{resultGameLabel(res)}</td>
+                          <td className="px-4 py-2.5 text-center"><span className="font-bold text-emerald-600">{res.finalScore}</span></td>
+                          <td className="px-4 py-2.5 text-right text-xs text-slate-400">
+                            {new Date(res.createdAt).toLocaleDateString("id-ID", { day: "numeric", month: "short" })}
+                          </td>
+                        </tr>
+                        {expandedRiwayat === res.id && (
+                          <tr className="border-b border-slate-100 bg-slate-50/60">
+                            <td colSpan={4} className="px-4 py-2.5">
+                              <div className="flex flex-wrap items-center gap-x-5 gap-y-1 text-[11px] text-slate-500">
+                                <span><b className="text-green-600">{res.correct}</b> benar</span>
+                                <span><b className="text-red-500">{res.wrong}</b> salah</span>
+                                <span><b className="text-slate-700">{res.maxStreak}</b> rentetan maks</span>
+                                <span className="text-slate-400">·</span>
+                                <span><b className="text-emerald-600">+{res.xpEarned}</b> XP</span>
+                              </div>
+                            </td>
+                          </tr>
+                        )}
+                      </Fragment>
                     ))}
                   </tbody>
                 </table>
@@ -750,11 +755,11 @@ export default function GuruGameHubPage() {
           )}
         </div>
 
-        {/* ── AI INSIGHT (preview profesional) ─────────────── */}
+        {/* ── AI INSIGHT (kartu rekomendasi) ───────────────── */}
         <div className="mb-8">
-          <div className="flex items-center gap-2 mb-4">
+          <div className="flex items-center gap-2 mb-3">
             <div className="w-2 h-2 rounded-full bg-rose-500 animate-pulse" />
-            <h2 className="text-lg font-bold text-slate-800">Analisis AI</h2>
+            <h2 className="text-base font-bold text-slate-800">Analisis AI</h2>
             <span className="text-[10px] px-2 py-0.5 bg-rose-100 text-rose-600 rounded-full font-semibold">Pratinjau · Segera Hadir</span>
           </div>
           <div className="bg-gradient-to-r from-rose-50 via-white to-emerald-50 rounded-xl border border-rose-100 p-5 shadow-sm">
@@ -774,6 +779,17 @@ export default function GuruGameHubPage() {
                   </p>
                 )}
               </div>
+            </div>
+            <div className="mt-4 flex items-center gap-2">
+              <a
+                href="#aktivitas-murid"
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-rose-500 hover:bg-rose-600 text-white text-xs font-bold rounded-lg transition-colors"
+              >
+                <BellRing className="w-3.5 h-3.5" /> Kirim Pengingat
+              </a>
+              <Link href="/guru/game/leaderboard" className="inline-flex items-center gap-1 text-xs font-bold text-slate-500 hover:text-slate-700">
+                Lihat Ranking <ArrowRight size={12} />
+              </Link>
             </div>
           </div>
         </div>
@@ -803,15 +819,6 @@ function HeroChip({ icon, label, value }: { icon: ReactNode; label: string; valu
         <p className="text-emerald-100/80 truncate">{label}</p>
         <p className="font-bold text-sm">{value}</p>
       </div>
-    </div>
-  );
-}
-
-function Stat({ icon, label, value, accent }: { icon: ReactNode; label: string; value: string; accent: string }) {
-  return (
-    <div className={`bg-white rounded-xl border ${accent} p-4 shadow-sm`}>
-      <div className="flex items-center gap-2 text-[11px] font-semibold text-slate-400 uppercase tracking-wide">{icon}<span>{label}</span></div>
-      <p className="mt-1.5 text-xl font-extrabold text-slate-900 tabular-nums">{value}</p>
     </div>
   );
 }

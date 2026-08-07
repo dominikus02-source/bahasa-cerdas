@@ -165,11 +165,11 @@ function NavLinks({
   const active = group.links.some((l) => isActive(pathname, l.href));
 
   return (
-    <div className="mb-1">
+    <div className="mb-3">
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
-        className={`group flex w-full items-center gap-3 px-3 py-2.5 rounded-lg text-sm mb-1 transition-all duration-200 text-gray-600 hover:bg-gradient-to-r hover:from-emerald-50 hover:to-green-50 hover:text-emerald-700 ${
+        className={`group flex w-full items-center gap-3 px-3 py-2 rounded-lg text-sm mb-1 transition-all duration-200 text-gray-600 hover:bg-gradient-to-r hover:from-emerald-50 hover:to-green-50 hover:text-emerald-700 ${
           active && open ? "text-emerald-700" : ""
         }`}
       >
@@ -179,7 +179,7 @@ function NavLinks({
       </button>
 
       {open && (
-        <div className="ml-7 mb-2 flex flex-col gap-0.5 border-l border-emerald-100/70 pl-3">
+        <div className="ml-7 mb-1 flex flex-col gap-1 border-l border-emerald-100/70 pl-3">
           {group.links.map((link) => {
             const linkActive = isActive(pathname, link.href);
             return (
