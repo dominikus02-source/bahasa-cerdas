@@ -59,7 +59,7 @@ async function main() {
   const guruDoc = fs.readFileSync("app/(dashboard)/guru/dokumen-latihan/page.tsx", "utf-8")
 
   test("Murid page fetches from /api/user/sertifikat", () => muridDoc.includes("/api/user/sertifikat"))
-  test("Guru page fetches from /api/user/sertifikat", () => guruDoc.includes("/api/user/sertifikat"))
+  test("Guru page fetches from /api/guru/dokumen-siswa (repository API)", () => guruDoc.includes("/api/guru/dokumen-siswa"))
 
   // Check overview — makes sure the CertificatePreview is imported (not raw API render)
   console.log("\n── Component Check ──")
@@ -90,6 +90,16 @@ async function main() {
     test("API route uses sanitizer or select", () => apiRoute.includes("select") || apiRoute.includes("sanitize"))
   } catch {
     test("API route exists", () => false)
+  }
+
+  // Guru repository API (additive — repository dokumen guru)
+  try {
+    const repoRoute = fs.readFileSync("app/api/guru/dokumen-siswa/route.ts", "utf-8")
+    test("Guru repo API does not expose correctAnswer", () => !repoRoute.includes("correctAnswer"))
+    test("Guru repo API does not expose answerDetails", () => !repoRoute.includes("answerDetails"))
+    test("Guru repo API selects safe fields", () => repoRoute.includes("select") || repoRoute.includes("items"))
+  } catch {
+    test("Guru repo API exists", () => false)
   }
 
   // ── Summary ──

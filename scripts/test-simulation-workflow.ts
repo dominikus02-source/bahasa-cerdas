@@ -37,7 +37,7 @@ async function main() {
 
   // ── 1. MuridSidebar ──
   console.log("\n── MuridSidebar ──")
-  const muridSidebar = fs.readFileSync("components/dashboard/MuridSidebar.tsx", "utf-8")
+  const muridSidebar = fs.readFileSync("components/dashboard/MuridMobileNav.tsx", "utf-8")
 
   test("Menu Simulasi UKBI exists", () => hasLabel(muridSidebar, "Simulasi UKBI"))
   test("Menu Simulasi TKA exists", () => hasLabel(muridSidebar, "Simulasi TKA"))

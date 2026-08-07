@@ -506,20 +506,26 @@ model TestSession {
 }
 
 model TestAnswer {
-  id           String   @id @default(cuid())
-  userId       String
-  sessionId    String?
-  paketId      String?
-  questionId   String?
-  questionType String?
-  answer       String?
-  isCorrect    Boolean?
-  score        Float    @default(0)
-  timeSpent    Int      @default(0)
-  seksi        String?
-  sectionIndex Int      @default(0)
-  createdAt    DateTime @default(now())
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id            String    @id @default(cuid())
+  userId        String
+  sessionId     String?
+  paketId       String?
+  questionId    String?
+  questionType  String?
+  answer        String?
+  isCorrect     Boolean?
+  score         Float     @default(0)
+  timeSpent     Int       @default(0)
+  seksi         String?
+  sectionIndex  Int       @default(0)
+  aiFeedback    Json? // Analysis: {ringkasan, nilai, rubrik[], kelebihan[], kelemahan[], kesalahanTerbesar[], kompetensiBelum[], rekomendasi[], komentarGuru, komentarMurid, dimensi}
+  aiConfidence  Float? // 0-100 percaya diri AI
+  aiReviewedAt  DateTime?
+  reviewStatus  String? // PENDING / MENUNGGU_PERSETUJUAN / DISETUJUI / DIEDIT
+  reviewedBy    String?
+  reviewedAt    DateTime?
+  createdAt     DateTime @default(now())
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId, paketId])
   @@index([sessionId])

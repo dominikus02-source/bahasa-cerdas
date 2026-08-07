@@ -2543,3 +2543,42 @@ Hero → Quick Action → Misi → Gim → Progress Guru → **Ringkasan Aktivit
 2. Game server revival (VPS mati)
 3. GameRoom migration SQL via Supabase dashboard
 4. UI game solo: badge-score client vs server masih beda (kosmetik)
+
+## Phase PUSAT EVALUASI AI — AI Evaluation Center (Aug 7, 2026)
+
+### Goal
+Jadikan AI sebagai ASISTEN GURU untuk penilaian konstruktif (Menulis/Berbicara) UKBI: evaluasi otomatis + tinjauan guru + repository dokumen. **ADDITIVE-ONLY** — tidak hapus route/model/UI/test lama; backward compatible.
+
+### Prisma (kolom baru di TestAnswer)
+- `aiFeedback Json?` (hasil AI: dimensi/rubrik/kelebihan/kelemahan/rekomendasi/komentar guru+murid), `aiConfidence Float?` (0–100), `aiReviewedAt DateTime?`, `reviewStatus String?` (BELUM_DIKERJAKAN→SEDANG→MENUNGGU_PENILAIAN_AI→AI_SELESAI_MENILAI→MENUNGGU_PERSETUJUAN_GURU→SELESAI), `reviewedBy String?`, `reviewedAt DateTime?`.
+- **SQL manual**: `prisma/migrations/manual/2026-08-07_ai_evaluation_center.sql` — Wajib dijalankan di Supabase SQL Editor (idempotent). Jalankan `npx prisma generate` setelahnya.
+
+### SSOT Service (`lib/simulation/SimulationAnalyticsService.ts`)
+- `getSimulationRekap`, `getClassSummary` (cache 10 mnt), `getAIInsights` (cache 15 mnt), `getReviewQueue`, `aiReviewAnswer`, `approveAnswers` (batch), `saveManualScore`, `sendFeedbackToStudent`, `getRepositoryDocs`, `exportRekapCSV`/`exportRekapDocxHTML`.
+- Filter global: Kelas → Tanggal (WIB +7) → Jenis (SEMUA/UKBI/TKA) → Status → Cari Murid, semua server-side.
+
+### API Baru/Changed
+- `GET /api/guru/simulasi/rekap` — dashboard Pusat Evaluasi (rekap+summary+insight).
+- `PATCH /api/guru/tinjau-konstruktif` — actions: `score`, `ai`, `approve` (single/batch), `kirim`. Ownership: guru pemilik kelas (ADMIN/founder bypass).
+- `GET /api/guru/dokumen-siswa` — repository dokumen (legacy shape `{data}` tetap untuk backward-compat; `format=csv|docx` untuk ekspor).
+
+### Halaman Guru
+- `/guru/hasil-simulasi` — Pusat Evaluasi dashboard (filters, KPI, AI Insight, Ringkasan Kelas).
+- `/guru/tinjau-simulasi` — AI Review Center (queue, konfiden badge AI, dimensi, approve batch, feedback ke murid).
+- `/guru/dokumen-latihan` — Repository Pembelajaran (paket/kelas grouping, jumlah murid, rata-rata, preview certificate).
+
+### QA/Verifikasi
+- `npm run test:dokumen-latihan-sanitization` (13/13), `test:simulation-workflow` (65/65), `test:phase-simulation-workflow` (65/65), `test:bigt-menu` (23/23), `test:guru-phase`, `test:gamification-engine` — SEMUA PASS.
+- `npx tsc --noEmit` 0 error; ESLint 0 violation; build (dummy env) 358 routes, 0 error.
+- Note: Test `test-simulation-workflow.ts`/`test-bigt-menu.ts`/`test-phase-simulation-workflow.ts` diperbaiki merujuk `MuridSidebar` → `MuridMobileNav`/`GuruNav` (sidebar lama dihapus).
+
+### Catatan Penting
+- `getUser()` wajib role-gate di semua endpoint; gunakan Cache WIB untuk per-hari.
+- Jangan expose `correctAnswer`/`jawaban` di API guru (sudah dijaga test sanitization).
+- Halaman lama `/murid/sertifikat` & `/guru/sertifikat` masih ada sebagai redirect → dokumen-latihan.
+
+### Remaining
+1. TKA UTBK/Guru enrichment 30 → 150
+2. Game server revival (VPS mati)
+3. GameRoom migration SQL via Supabase dashboard
+4. UI game solo: badge-score client vs server masih beda (kosmetik)
