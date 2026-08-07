@@ -37,7 +37,17 @@ export async function GET() {
           take: 20,
           include: {
             room: { select: { name: true, gameType: true } },
-            user: { select: { id: true, fullName: true, avatar: true } },
+            user: {
+              select: {
+                id: true,
+                fullName: true,
+                avatar: true,
+                xp: true,
+                streak: true,
+                level: true,
+                profile: { select: { school: true } },
+              },
+            },
           },
         })
       : [];
