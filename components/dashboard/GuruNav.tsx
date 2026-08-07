@@ -57,10 +57,8 @@ export const GURU_NAV: NavGroup[] = [
     label: "Gim",
     icon: Gamepad2,
     links: [
-      { label: "Semua Permainan", href: "/guru/game" },
+      { label: "Arena Permainan", href: "/guru/game" },
       { label: "Tantangan Harian", href: "/guru/game#solo" },
-      { label: "Peringkat Guru", href: "/guru/game/leaderboard" },
-      { label: "Lencana Guru", href: "/guru/game/achievement" },
     ],
   },
   {
