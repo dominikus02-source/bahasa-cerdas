@@ -21,6 +21,8 @@ import {
   CircleCheckBig,
   Gamepad2,
   BellRing,
+  Clock,
+  BarChart3,
 } from "lucide-react";
 import { BadgeIcon } from "@/components/gamification/BadgeIcon";
 import { RARITY_META } from "@/lib/gamification/client-types";
@@ -28,6 +30,11 @@ import { RARITY_META } from "@/lib/gamification/client-types";
 interface RoomLite {
   name: string | null;
   gameType: string | null;
+}
+
+interface SessionLite {
+  joinedAt: string | null;
+  finishedAt: string | null;
 }
 
 interface ResultRow {
@@ -42,6 +49,7 @@ interface ResultRow {
 }
 
 interface StudentResult extends ResultRow {
+  session: SessionLite | null;
   user: {
     id: string;
     fullName: string | null;
@@ -58,6 +66,8 @@ interface GameHubData {
   myResults: ResultRow[];
   studentResults: StudentResult[];
   activeRooms: { id: string }[];
+  total?: number;
+  totalPages?: number;
 }
 
 interface BadgeLite {
@@ -147,21 +157,41 @@ const resultGameLabel = (r: { room: RoomLite | null }): string =>
 const resultGameEmoji = (r: { room: RoomLite | null }): string =>
   GAME_EMOJI[resultGameLabel(r)] ?? "🎮";
 
-const relativeDay = (iso: string): string => {
-  const start = startOfToday();
-  const t = new Date(iso).getTime();
-  const diff = Math.floor((start - t) / 86_400_000);
-  if (diff <= 0) return "Hari ini";
-  if (diff === 1) return "Kemarin";
-  if (diff === 2) return "2 hari lalu";
-  if (diff === 3) return "3 hari lalu";
-  return new Date(iso).toLocaleDateString("id-ID", { day: "numeric", month: "short" });
-};
-
 const startOfToday = () => {
   const d = new Date();
   d.setHours(0, 0, 0, 0);
   return d.getTime();
+};
+
+// Status waktu ringkas: Baru saja / Hari ini / Kemarin / tanggal
+const timeStatusLabel = (iso: string): string => {
+  const t = new Date(iso).getTime();
+  const now = Date.now();
+  const diffMs = now - t;
+  if (diffMs >= 0 && diffMs < 60 * 60 * 1000) return "Baru saja";
+  const start = startOfToday();
+  const dayDiff = Math.floor((start - t) / 86_400_000);
+  if (dayDiff <= 0) return "Hari ini";
+  if (dayDiff === 1) return "Kemarin";
+  return new Date(iso).toLocaleDateString("id-ID", { day: "numeric", month: "short" });
+};
+
+const timeStatusTone = (iso: string): string => {
+  const diffMs = Date.now() - new Date(iso).getTime();
+  if (diffMs >= 0 && diffMs < 60 * 60 * 1000) return "text-emerald-600 dark:text-emerald-400";
+  return "text-slate-400 dark:text-slate-500";
+};
+
+// Durasi bermain dari sesi gim (joinedAt → finishedAt)
+const formatDurasi = (s: SessionLite | null): string => {
+  if (!s?.joinedAt || !s?.finishedAt) return "—";
+  const ms = new Date(s.finishedAt).getTime() - new Date(s.joinedAt).getTime();
+  if (!Number.isFinite(ms) || ms < 0) return "—";
+  const totalSec = Math.round(ms / 1000);
+  const m = Math.floor(totalSec / 60);
+  const det = totalSec % 60;
+  if (m <= 0) return `${det} detik`;
+  return `${m}m ${det}d`;
 };
 
 export default function GuruGameHubPage() {
@@ -172,12 +202,11 @@ export default function GuruGameHubPage() {
   const [user, setUser] = useState<GuruUser | null>(null);
   const [siswa, setSiswa] = useState<SiswaRow[]>([]);
   const [loading, setLoading] = useState(true);
-  const [showAllRiwayat, setShowAllRiwayat] = useState(false);
-  const [expandedRiwayat, setExpandedRiwayat] = useState<string | null>(null);
+  const [expandedActivity, setExpandedActivity] = useState<string | null>(null);
 
   useEffect(() => {
     Promise.all([
-      fetch("/api/guru/game-hub").then((r) => (r.ok ? r.json() : null)),
+      fetch("/api/guru/game-hub?limit=100").then((r) => (r.ok ? r.json() : null)),
       fetch("/api/player/badges").then((r) => (r.ok ? r.json() : null)),
       fetch("/api/guru/leaderboard").then((r) => (r.ok ? r.json() : null)),
       fetch("/api/player/xp/history?limit=100").then((r) => (r.ok ? r.json() : { entries: [] })),
@@ -203,7 +232,8 @@ export default function GuruGameHubPage() {
 
   const dayStart = startOfToday();
   const myResultsToday = (hub?.myResults ?? []).filter((x) => new Date(x.createdAt).getTime() >= dayStart);
-  const studentResultsToday = (hub?.studentResults ?? []).filter((x) => new Date(x.createdAt).getTime() >= dayStart);
+  const studentResults = hub?.studentResults ?? [];
+  const studentResultsToday = studentResults.filter((x) => new Date(x.createdAt).getTime() >= dayStart);
   const aktifMuridIds = new Set(studentResultsToday.map((x) => x.user?.id).filter(Boolean));
   const aktifHariIni = aktifMuridIds.size;
   const totalMurid = siswa.length;
@@ -244,16 +274,27 @@ export default function GuruGameHubPage() {
   }
   lastGame = lastGame ?? { title: "Lari Kata", href: "/guru/game/lari-kata", emoji: "🏃" };
 
-  // Popularitas game (Top 5)
+  // Ringkasan Aktivitas Kelas
+  const avgScore =
+    studentResultsToday.length > 0
+      ? Math.round(studentResultsToday.reduce((s, r) => s + r.finalScore, 0) / studentResultsToday.length)
+      : 0;
+
+  // Game paling populer (semua hasil tersedia)
   const counts = new Map<string, number>();
-  for (const res of [...(hub?.studentResults ?? []), ...(hub?.myResults ?? [])]) {
+  for (const res of [...studentResults, ...(hub?.myResults ?? [])]) {
     const key = resultGameLabel(res);
     counts.set(key, (counts.get(key) || 0) + 1);
   }
-  const popularity = [...counts.entries()].sort((a, b) => b[1] - a[1]).slice(0, 5);
+  const popularity = [...counts.entries()].sort((a, b) => b[1] - a[1]);
   const maxCount = popularity[0]?.[1] ?? 1;
-  const totalPlays = popularity.reduce((a, [, n]) => a + n, 0) || 1;
-  const topGameName = popularity[0]?.[0];
+  const topGameName = popularity[0]?.[0] ?? null;
+
+  // Murid Teraktif Hari Ini (Top 5)
+  const topPerformers = [...studentResultsToday]
+    .sort((a, b) => b.finalScore - a.finalScore || b.xpEarned - a.xpEarned)
+    .filter((r, i, arr) => arr.findIndex((x) => x.user?.id === r.user?.id) === i)
+    .slice(0, 5);
 
   // Misi harian adaptif
   const dailyMissions = [
@@ -271,10 +312,12 @@ export default function GuruGameHubPage() {
       : 100;
 
   // AI Insight preview
-  const insight = insightFromResults(hub?.studentResults ?? []);
+  const insight = insightFromResults(studentResults);
+
+  const kelasPct = totalMurid > 0 ? Math.round((aktifHariIni / totalMurid) * 100) : 0;
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-emerald-50/40">
+    <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-emerald-50/40 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
       {/* ── HERO: dashboard ringkas ─────────────────────────── */}
       <div className="bg-gradient-to-br from-emerald-600 via-green-700 to-teal-900 text-white relative overflow-hidden">
         <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-400/20 rounded-full blur-[80px]" />
@@ -333,54 +376,18 @@ export default function GuruGameHubPage() {
       </div>
 
       <div className="max-w-6xl mx-auto px-4 py-6">
-        {/* ── FOKUS HARI INI (CTA utama) ────────────────────── */}
-        <section className="mb-8">
-          {loading ? (
-            <div className="bg-white rounded-xl border border-slate-100 p-6 text-sm text-slate-400 shadow-sm">Memuat fokus hari ini...</div>
-          ) : belumBermain > 0 ? (
-            <div className="bg-gradient-to-r from-orange-50 via-amber-50 to-orange-50 rounded-xl border border-orange-100 p-5 shadow-sm flex flex-col sm:flex-row sm:items-center gap-4">
-              <div className="flex-1">
-                <div className="flex items-center gap-2">
-                  <Target className="w-5 h-5 text-orange-500" />
-                  <p className="font-bold text-slate-800 text-base">Fokus Hari Ini</p>
-                </div>
-                <p className="text-sm text-slate-600 mt-1">
-                  <strong className="text-orange-600">{belumBermain} murid</strong> belum bermain hari ini. Ajak mereka bermain untuk memperoleh{" "}
-                  <strong className="text-emerald-600">+20 XP Guru</strong>.
-                </p>
-              </div>
-              <a
-                href="#aktivitas-murid"
-                className="inline-flex items-center gap-1.5 px-4 py-2.5 bg-orange-500 hover:bg-orange-600 text-white text-sm font-bold rounded-xl transition-all shadow-sm hover:shadow-md"
-              >
-                <BellRing className="w-4 h-4" /> Kirim Pengingat
-              </a>
-            </div>
-          ) : (
-            <div className="bg-gradient-to-r from-emerald-50 to-teal-50 rounded-xl border border-emerald-100 p-5 shadow-sm">
-              <div className="flex items-center gap-2">
-                <CircleCheckBig className="w-5 h-5 text-emerald-500" />
-                <p className="font-extrabold text-slate-800 text-base">Hebat!</p>
-              </div>
-              <p className="text-sm text-slate-600 mt-1">
-                Semua murid ({totalMurid || aktifHariIni}) telah aktif bermain hari ini. 🎉
-              </p>
-            </div>
-          )}
-        </section>
-
         {/* ── QUICK ACTION ──────────────────────────────────── */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-8">
-          <Link href={lastGame.href} className="group flex flex-col bg-white rounded-xl border border-slate-100 p-3.5 shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all">
+          <Link href={lastGame.href} className="group flex flex-col bg-white rounded-xl border border-slate-100 p-3.5 shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all dark:bg-slate-900 dark:border-slate-800">
             <div className="flex items-center gap-2 mb-2">
               <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-600 flex items-center justify-center shrink-0"><Play className="w-4 h-4 text-white" /></div>
               <div className="min-w-0">
-                <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wide">▶ Main Sekarang</p>
-                <p className="font-bold text-slate-900 text-sm truncate">{lastGame.emoji} {lastGame.title}</p>
+                <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wide dark:text-slate-500">▶ Main Sekarang</p>
+                <p className="font-bold text-slate-900 text-sm truncate dark:text-slate-100">{lastGame.emoji} {lastGame.title}</p>
               </div>
             </div>
-            <p className="text-xs text-slate-500 mt-auto">
-              <span className="font-semibold text-slate-700">Skor Terbaik</span> {bestScore.toLocaleString("id-ID")}
+            <p className="text-xs text-slate-500 mt-auto dark:text-slate-400">
+              <span className="font-semibold text-slate-700 dark:text-slate-300">Skor Terbaik</span> {bestScore.toLocaleString("id-ID")}
             </p>
             <span className="mt-2 inline-flex items-center gap-1 text-[11px] font-bold text-emerald-600 group-hover:gap-2 transition-all">
               Main Lagi <ArrowRight size={12} />
@@ -390,39 +397,39 @@ export default function GuruGameHubPage() {
           {/* Tantangan / Misi */}
           <a
             href="#misi-hari-ini"
-            className="group bg-white rounded-xl border border-slate-100 p-3.5 shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all flex flex-col"
+            className="group bg-white rounded-xl border border-slate-100 p-3.5 shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all flex flex-col dark:bg-slate-900 dark:border-slate-800"
           >
             <div className="flex items-center gap-2 mb-2">
               <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-amber-400 to-orange-600 flex items-center justify-center shrink-0"><Flame className="w-4 h-4 text-white" /></div>
               <div>
-                <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wide">🔥 Tantangan Hari Ini</p>
-                <p className="font-bold text-slate-900 text-sm">Misi harian &amp; reward</p>
+                <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wide dark:text-slate-500">🔥 Tantangan Hari Ini</p>
+                <p className="font-bold text-slate-900 text-sm dark:text-slate-100">Misi harian &amp; reward</p>
               </div>
             </div>
-            <p className="text-xs text-slate-500 mt-auto">{missionsDone}/3 misi selesai</p>
+            <p className="text-xs text-slate-500 mt-auto dark:text-slate-400">{missionsDone}/3 misi selesai</p>
             <span className="mt-2 inline-flex items-center gap-1 text-[11px] font-bold text-orange-600 group-hover:gap-2 transition-all">
               Ke Misi <ArrowRight size={12} />
             </span>
           </a>
 
           {/* Lencana Saya */}
-          <Link href="/guru/game/achievement" className="group bg-white rounded-xl border border-slate-100 p-3.5 shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all flex flex-col">
+          <Link href="/guru/game/achievement" className="group bg-white rounded-xl border border-slate-100 p-3.5 shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all flex flex-col dark:bg-slate-900 dark:border-slate-800">
             <div className="flex items-center gap-2 mb-2">
               <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-violet-400 to-purple-600 flex items-center justify-center shrink-0"><Medal className="w-4 h-4 text-white" /></div>
               <div>
-                <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wide">🏆 Lencana Saya</p>
-                <p className="font-bold text-slate-900 text-sm">{unlocked} dari {totalGuruBadges} Lencana</p>
+                <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wide dark:text-slate-500">🏆 Lencana Saya</p>
+                <p className="font-bold text-slate-900 text-sm dark:text-slate-100">{unlocked} dari {totalGuruBadges} Lencana</p>
               </div>
             </div>
             {nextBadge ? (
               <div className="mt-auto">
-                <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden dark:bg-slate-800">
                   <div className="h-full bg-violet-500 rounded-full transition-all duration-700" style={{ width: `${nextBadgePct}%` }} />
                 </div>
-                <p className="text-[10px] text-slate-400 mt-1">{nextBadgePct}% menuju {nextBadge.name}</p>
+                <p className="text-[10px] text-slate-400 mt-1 dark:text-slate-500">{nextBadgePct}% menuju {nextBadge.name}</p>
               </div>
             ) : (
-              <p className="text-xs text-slate-500 mt-auto">Semua lencana guru terbuka! 🎉</p>
+              <p className="text-xs text-slate-500 mt-auto dark:text-slate-400">Semua lencana guru terbuka! 🎉</p>
             )}
           </Link>
         </div>
@@ -431,151 +438,128 @@ export default function GuruGameHubPage() {
         <section id="misi-hari-ini" className="scroll-mt-24 mb-8">
           <div className="flex items-center gap-2 mb-3">
             <div className="w-2 h-2 rounded-full bg-orange-500 animate-pulse" />
-            <h2 className="text-base font-bold text-slate-800">Misi Hari Ini</h2>
-            <span className="ml-auto text-[10px] px-2 py-0.5 bg-orange-100 text-orange-700 rounded-full font-semibold">{missionsDone}/{dailyMissions.length}</span>
+            <h2 className="text-base font-bold text-slate-800 dark:text-slate-100">Misi Hari Ini</h2>
+            <span className="ml-auto text-[10px] px-2 py-0.5 bg-orange-100 text-orange-700 rounded-full font-semibold dark:bg-orange-900/40 dark:text-orange-300">{missionsDone}/{dailyMissions.length}</span>
           </div>
-          <div className="bg-white rounded-xl border border-orange-100 p-4 shadow-sm">
-            <ul className="divide-y divide-slate-100">
-              {dailyMissions.map((m) => (
-                <li key={m.id} className="flex items-center gap-3 py-2.5 first:pt-0 last:pb-0">
-                  <span
-                    className={`w-6 h-6 shrink-0 rounded-full flex items-center justify-center text-xs transition-colors ${
-                      m.done ? "bg-emerald-500 text-white" : "bg-slate-100 text-slate-400"
-                    }`}
-                  >
-                    {m.done ? <CircleCheckBig className="w-4 h-4" /> : m.icon}
-                  </span>
-                  <span className={`text-xs font-medium leading-tight ${m.done ? "text-emerald-600 line-through" : "text-slate-600"}`}>{m.label}</span>
-                  <span className="ml-auto text-[10px] font-bold text-amber-600 shrink-0">+20 XP</span>
-                </li>
-              ))}
-            </ul>
-            <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden mt-3">
-              <div className="h-full bg-orange-500 rounded-full transition-all duration-700" style={{ width: `${(missionsDone / dailyMissions.length) * 100}%` }} />
+          {loading ? (
+            <Skeleton className="h-48" />
+          ) : (
+            <div className="bg-white rounded-xl border border-orange-100 p-4 shadow-sm dark:bg-slate-900 dark:border-slate-800">
+              <ul className="divide-y divide-slate-100 dark:divide-slate-800">
+                {dailyMissions.map((m) => (
+                  <li key={m.id} className="flex items-center gap-3 py-2.5 first:pt-0 last:pb-0">
+                    <span
+                      className={`w-6 h-6 shrink-0 rounded-full flex items-center justify-center text-xs transition-colors ${
+                        m.done ? "bg-emerald-500 text-white" : "bg-slate-100 text-slate-400 dark:bg-slate-800"
+                      }`}
+                    >
+                      {m.done ? <CircleCheckBig className="w-4 h-4" /> : m.icon}
+                    </span>
+                    <span className={`text-xs font-medium leading-tight ${m.done ? "text-emerald-600 line-through dark:text-emerald-400" : "text-slate-600 dark:text-slate-300"}`}>{m.label}</span>
+                    <span className="ml-auto text-[10px] font-bold text-amber-600 shrink-0 dark:text-amber-400">+20 XP</span>
+                  </li>
+                ))}
+              </ul>
+              <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden mt-3 dark:bg-slate-800">
+                <div className="h-full bg-orange-500 rounded-full transition-all duration-700" style={{ width: `${(missionsDone / dailyMissions.length) * 100}%` }} />
+              </div>
+              <p className="mt-2 text-[11px] text-slate-400 dark:text-slate-500">Selesaikan semua misi untuk <span className="font-bold text-amber-600 dark:text-amber-400">+50 XP Guru</span>.</p>
             </div>
-            <p className="mt-2 text-[11px] text-slate-400">Selesaikan semua misi untuk <span className="font-bold text-amber-600">+50 XP Guru</span>.</p>
-          </div>
+          )}
         </section>
 
         {/* ── MAIN GAME ─────────────────────────────────────── */}
         <div className="mb-8">
           <div className="flex items-center gap-2 mb-3">
             <div className="w-2 h-2 rounded-full bg-violet-500 animate-pulse" />
-            <h2 className="text-base font-bold text-slate-800" id="mainkan">Mainkan Gim</h2>
-            <span className="text-[10px] px-2 py-0.5 bg-violet-100 text-violet-700 rounded-full font-semibold">SOLO</span>
+            <h2 className="text-base font-bold text-slate-800 dark:text-slate-100" id="mainkan">Mainkan Gim</h2>
+            <span className="text-[10px] px-2 py-0.5 bg-violet-100 text-violet-700 rounded-full font-semibold dark:bg-violet-900/40 dark:text-violet-300">SOLO</span>
             <Link href="/guru/game/lobby" className="ml-auto inline-flex items-center gap-1 text-[11px] font-bold text-emerald-600 hover:text-emerald-700">
               Ruang Gim &amp; Tanding <ChevronRight size={12} />
             </Link>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
-            {SOLO_GAMES.map((game) => {
-              const Icon = game.icon;
-              const playCount = counts.get(game.title) ?? 0;
-              const isTrending = topGameName === game.title && playCount > 0;
-              const badge = isTrending
-                ? { label: "🔥 Populer", cls: "bg-orange-500" }
-                : game.id === "kata-play"
-                  ? { label: "⭐ Baru", cls: "bg-violet-500" }
-                  : game.id === "benar-salah"
-                    ? { label: "🎯 Direkomendasikan", cls: "bg-emerald-500" }
-                    : null;
-              return (
-                <Link
-                  key={game.id}
-                  href={game.href}
-                  className="group flex flex-col bg-white rounded-xl border border-slate-100 overflow-hidden shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300"
-                >
-                  <div className={`h-16 bg-gradient-to-br ${game.gradient} relative flex items-center justify-center shrink-0`}>
-                    <Icon className="w-7 h-7 text-white/80" />
-                    {badge && (
-                      <span className={`absolute top-1.5 left-1.5 ${badge.cls} text-white text-[9px] font-extrabold px-2 py-0.5 rounded-full shadow-sm`}>{badge.label}</span>
-                    )}
-                  </div>
-                  <div className="p-3 flex flex-col flex-1">
-                    <div className="flex items-start justify-between gap-2 mb-1">
-                      <h3 className="font-bold text-slate-900 text-sm flex items-center gap-1.5"><span>{game.emoji}</span>{game.title}</h3>
-                      <span className="text-[9px] px-2 py-0.5 bg-violet-100 text-violet-700 rounded-full font-semibold shrink-0">MULAI</span>
-                    </div>
-                    <p className="text-xs text-slate-500 line-clamp-2">{game.desc}</p>
-                    {playCount > 0 && (
-                      <div className="mt-2">
-                        <div className="h-1 bg-slate-100 rounded-full overflow-hidden">
-                          <div className={`h-full rounded-full transition-all duration-700 ${topGameName === game.title ? "bg-amber-400" : "bg-slate-300"}`} style={{ width: `${Math.round((playCount / maxCount) * 100)}%` }} />
-                        </div>
-                        <p className="text-[9px] text-slate-400 mt-1">{playCount} kali dimainkan</p>
-                      </div>
-                    )}
-                  </div>
-                </Link>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* ── GAME TERPOPULER (Top 5) ───────────────────────── */}
-        <div className="mb-8">
-          <div className="flex items-center gap-2 mb-3">
-            <div className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
-            <h2 className="text-base font-bold text-slate-800">Permainan Terpopuler Minggu Ini</h2>
-          </div>
-          {popularity.length > 0 ? (
-            <div className="bg-white rounded-xl border border-slate-100 p-5 shadow-sm">
-              <ol className="space-y-3">
-                {popularity.map(([name, n], i) => {
-                  const pct = Math.round((n / totalPlays) * 100);
-                  return (
-                    <li key={name} className="flex items-center gap-3">
-                      <span className={`w-6 h-6 shrink-0 rounded-full flex items-center justify-center text-[11px] font-extrabold ${i === 0 ? "bg-amber-100 text-amber-700" : i === 1 ? "bg-slate-200 text-slate-600" : i === 2 ? "bg-amber-700/10 text-amber-800" : "bg-slate-100 text-slate-400"}`}>{i + 1}</span>
-                      <span className="text-sm font-semibold text-slate-700 w-32 truncate shrink-0">{name}</span>
-                      <div className="flex-1 h-3 bg-slate-100 rounded-full overflow-hidden">
-                        <div className={`h-full rounded-full transition-all duration-700 ${i === 0 ? "bg-amber-400" : "bg-emerald-400"}`} style={{ width: `${(n / maxCount) * 100}%` }} />
-                      </div>
-                      <span className="text-xs font-bold text-slate-500 tabular-nums w-12 text-right">{pct}%</span>
-                    </li>
-                  );
-                })}
-              </ol>
+          {loading ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+              {[1, 2, 3, 4].map((i) => <Skeleton key={i} className="h-40" />)}
             </div>
           ) : (
-            <div className="bg-white rounded-xl border border-dashed border-slate-200 p-6 text-center shadow-sm">
-              <TrendingUp className="w-8 h-8 text-slate-300 mx-auto mb-2" />
-              <p className="text-sm font-medium text-slate-500">Belum ada data minggu ini</p>
-              <p className="text-xs text-slate-400 mt-1">Setelah guru dan murid bermain gim, peringkat popularitas akan muncul di sini.</p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+              {SOLO_GAMES.map((game) => {
+                const Icon = game.icon;
+                const playCount = counts.get(game.title) ?? 0;
+                const isTrending = topGameName === game.title && playCount > 0;
+                const badge = isTrending
+                  ? { label: "🔥 Populer", cls: "bg-orange-500" }
+                  : game.id === "kata-play"
+                    ? { label: "⭐ Baru", cls: "bg-violet-500" }
+                    : game.id === "benar-salah"
+                      ? { label: "🎯 Direkomendasikan", cls: "bg-emerald-500" }
+                      : null;
+                return (
+                  <Link
+                    key={game.id}
+                    href={game.href}
+                    className="group flex flex-col bg-white rounded-xl border border-slate-100 overflow-hidden shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 dark:bg-slate-900 dark:border-slate-800"
+                  >
+                    <div className={`h-16 bg-gradient-to-br ${game.gradient} relative flex items-center justify-center shrink-0`}>
+                      <Icon className="w-7 h-7 text-white/80" />
+                      {badge && (
+                        <span className={`absolute top-1.5 left-1.5 ${badge.cls} text-white text-[9px] font-extrabold px-2 py-0.5 rounded-full shadow-sm`}>{badge.label}</span>
+                      )}
+                    </div>
+                    <div className="p-3 flex flex-col flex-1">
+                      <div className="flex items-start justify-between gap-2 mb-1">
+                        <h3 className="font-bold text-slate-900 text-sm flex items-center gap-1.5 dark:text-slate-100"><span>{game.emoji}</span>{game.title}</h3>
+                        <span className="text-[9px] px-2 py-0.5 bg-violet-100 text-violet-700 rounded-full font-semibold shrink-0 dark:bg-violet-900/40 dark:text-violet-300">MULAI</span>
+                      </div>
+                      <p className="text-xs text-slate-500 line-clamp-2 dark:text-slate-400">{game.desc}</p>
+                      {playCount > 0 && (
+                        <div className="mt-2">
+                          <div className="h-1 bg-slate-100 rounded-full overflow-hidden dark:bg-slate-800">
+                            <div className={`h-full rounded-full transition-all duration-700 ${topGameName === game.title ? "bg-amber-400" : "bg-slate-300 dark:bg-slate-600"}`} style={{ width: `${Math.round((playCount / maxCount) * 100)}%` }} />
+                          </div>
+                          <p className="text-[9px] text-slate-400 mt-1 dark:text-slate-500">{playCount} kali dimainkan</p>
+                        </div>
+                      )}
+                    </div>
+                  </Link>
+                );
+              })}
             </div>
           )}
         </div>
 
         {/* ── PROGRESS GURU (Level + Badge progress) ────────── */}
         <div className="grid lg:grid-cols-2 gap-4 mb-8">
-          <div className="bg-white rounded-xl border border-slate-100 p-5 shadow-sm">
+          <div className="bg-white rounded-xl border border-slate-100 p-5 shadow-sm dark:bg-slate-900 dark:border-slate-800">
             <div className="flex items-center gap-2 mb-1">
               <Medal className="w-4 h-4 text-violet-500" />
-              <p className="font-bold text-slate-900 text-sm">Level Guru</p>
+              <p className="font-bold text-slate-900 text-sm dark:text-slate-100">Level Guru</p>
               {lb?.myRank != null && (
-                <span className="ml-auto text-[10px] px-2 py-0.5 bg-amber-100 text-amber-700 rounded-full font-semibold flex items-center gap-1">
+                <span className="ml-auto text-[10px] px-2 py-0.5 bg-amber-100 text-amber-700 rounded-full font-semibold flex items-center gap-1 dark:bg-amber-900/40 dark:text-amber-300">
                   <Trophy className="w-3 h-3" /> #{lb.myRank}
                 </span>
               )}
             </div>
-            <p className="text-xs text-slate-400 mb-2">XP Guru minggu ini</p>
+            <p className="text-xs text-slate-400 mb-2 dark:text-slate-500">XP Guru minggu ini</p>
             <div className="flex items-end gap-2">
-              <span className="text-2xl font-extrabold text-slate-900 tabular-nums">{weeklyXp.toLocaleString("id-ID")}</span>
-              <span className="text-xs text-slate-400 mb-1">/ {TARGET_MINGGUAN_XP.toLocaleString("id-ID")} target</span>
+              <span className="text-2xl font-extrabold text-slate-900 tabular-nums dark:text-slate-100">{weeklyXp.toLocaleString("id-ID")}</span>
+              <span className="text-xs text-slate-400 mb-1 dark:text-slate-500">/ {TARGET_MINGGUAN_XP.toLocaleString("id-ID")} target</span>
             </div>
-            <div className="h-2.5 bg-slate-100 rounded-full overflow-hidden mt-2">
+            <div className="h-2.5 bg-slate-100 rounded-full overflow-hidden mt-2 dark:bg-slate-800">
               <div className="h-full bg-gradient-to-r from-emerald-400 to-teal-500 rounded-full transition-all duration-1000" style={{ width: `${xpTargetPct}%` }} />
             </div>
-            <div className="mt-3 flex items-center justify-between text-[11px] text-slate-400">
+            <div className="mt-3 flex items-center justify-between text-[11px] text-slate-400 dark:text-slate-500">
               <span>{xpTargetPct}% tercapai</span>
-              <span className="font-bold text-emerald-600">Sisa {(TARGET_MINGGUAN_XP - weeklyXp).toLocaleString("id-ID")} XP menuju level berikutnya</span>
+              <span className="font-bold text-emerald-600 dark:text-emerald-400">Sisa {(TARGET_MINGGUAN_XP - weeklyXp).toLocaleString("id-ID")} XP menuju level berikutnya</span>
             </div>
           </div>
 
-          <div className="bg-white rounded-xl border border-slate-100 p-5 shadow-sm">
+          <div className="bg-white rounded-xl border border-slate-100 p-5 shadow-sm dark:bg-slate-900 dark:border-slate-800">
             <div className="flex items-center gap-2 mb-3">
               <Medal className="w-4 h-4 text-violet-500" />
-              <p className="font-bold text-slate-900 text-sm">Perkembangan Lencana</p>
-              <span className="ml-auto text-[10px] px-2 py-0.5 bg-violet-100 text-violet-700 rounded-full font-semibold">{unlocked}/{totalGuruBadges}</span>
+              <p className="font-bold text-slate-900 text-sm dark:text-slate-100">Perkembangan Lencana</p>
+              <span className="ml-auto text-[10px] px-2 py-0.5 bg-violet-100 text-violet-700 rounded-full font-semibold dark:bg-violet-900/40 dark:text-violet-300">{unlocked}/{totalGuruBadges}</span>
             </div>
             {guruBadges.length > 0 ? (
               <div className="space-y-3">
@@ -586,16 +570,16 @@ export default function GuruGameHubPage() {
                   const badgeIcon = b.icon?.trim() || "⭐";
                   return (
                     <div key={b.code} className="flex items-center gap-3">
-                      <div className={`w-9 h-9 shrink-0 rounded-xl flex items-center justify-center border ${b.unlocked ? meta.border : "border-slate-100"}`}>
+                      <div className={`w-9 h-9 shrink-0 rounded-xl flex items-center justify-center border ${b.unlocked ? meta.border : "border-slate-100 dark:border-slate-800"}`}>
                         <div className={b.unlocked ? "" : "grayscale opacity-60"}><BadgeIcon icon={badgeIcon} size={26} alt={b.name} /></div>
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between">
-                          <p className={`text-xs font-semibold truncate ${b.unlocked ? "text-slate-700" : "text-slate-400"}`}>{b.name}</p>
-                          <span className="text-[10px] font-bold text-slate-400 shrink-0 ml-2">{b.unlocked ? "TERBUKA" : `${pct}%`}</span>
+                          <p className={`text-xs font-semibold truncate ${b.unlocked ? "text-slate-700 dark:text-slate-200" : "text-slate-400 dark:text-slate-500"}`}>{b.name}</p>
+                          <span className="text-[10px] font-bold text-slate-400 shrink-0 ml-2 dark:text-slate-500">{b.unlocked ? "TERBUKA" : `${pct}%`}</span>
                         </div>
-                        <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden mt-1">
-                          <div className={`h-full rounded-full transition-all duration-700 ${b.unlocked ? "bg-violet-400" : "bg-slate-300"}`} style={{ width: `${pct}%` }} />
+                        <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden mt-1 dark:bg-slate-800">
+                          <div className={`h-full rounded-full transition-all duration-700 ${b.unlocked ? "bg-violet-400" : "bg-slate-300 dark:bg-slate-600"}`} style={{ width: `${pct}%` }} />
                         </div>
                       </div>
                     </div>
@@ -603,179 +587,226 @@ export default function GuruGameHubPage() {
                 })}
               </div>
             ) : (
-              <p className="text-xs text-slate-400">Belum ada badge guru — mainkan gim dan aktivitas mengajar untuk membukanya.</p>
+              <p className="text-xs text-slate-400 dark:text-slate-500">Belum ada badge guru — mainkan gim dan aktivitas mengajar untuk membukanya.</p>
             )}
           </div>
         </div>
 
-        {/* ── LEADERBOARD (posisi) ─────────────────────────── */}
-        {lb && lb.myRank != null && (
-          <div className="bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl border border-amber-100 p-4 shadow-sm flex items-center gap-3 mb-8">
-            <Trophy className="w-5 h-5 text-amber-500 shrink-0" />
-            <p className="text-sm text-slate-700 flex-1">
-              <span className="font-extrabold">Posisimu #{lb.myRank}</span> di peringkat guru nasional.
-            </p>
-            <Link href="/guru/game/leaderboard" className="inline-flex items-center gap-1 text-xs font-bold text-amber-700 hover:underline">
-              Lihat Ranking <ArrowRight size={12} />
-            </Link>
-          </div>
-        )}
+        {/* ── RINGKASAN AKTIVITAS KELAS + MURID TERAKTIF ────── */}
+        <div className="grid lg:grid-cols-3 gap-4 mb-8">
+          {/* Ringkasan Aktivitas Kelas */}
+          <section className="lg:col-span-2 bg-white rounded-xl border border-slate-100 p-5 shadow-sm dark:bg-slate-900 dark:border-slate-800">
+            <div className="flex items-center gap-2 mb-4">
+              <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+              <h2 className="text-base font-bold text-slate-800 dark:text-slate-100">Ringkasan Aktivitas Kelas</h2>
+              {totalMurid > 0 && !loading && (
+                <span className="ml-auto text-[10px] px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded-full font-semibold dark:bg-emerald-900/40 dark:text-emerald-300">
+                  {aktifHariIni}/{totalMurid} aktif
+                </span>
+              )}
+            </div>
 
-        {/* ── AKTIVITAS MURID ───────────────────────────────── */}
-        <section id="aktivitas-murid" className="scroll-mt-24 mb-8">
-          <div className="flex items-center gap-2 mb-4">
-            <div className="w-2 h-2 rounded-full bg-sky-500 animate-pulse" />
-            <h2 className="text-base font-bold text-slate-800">Aktivitas Murid</h2>
-            <Link href="/guru/data-siswa" className="ml-auto text-[11px] font-bold text-sky-600 hover:underline inline-flex items-center gap-1">
-              Kelola Murid <ChevronRight size={12} />
-            </Link>
-          </div>
-          {loading ? (
-            <div className="bg-white rounded-xl border border-slate-100 p-8 text-center shadow-sm text-sm text-slate-400">Memuat aktivitas murid...</div>
-          ) : (hub?.studentResults?.length ?? 0) > 0 ? (
-            <div className="bg-white rounded-xl border border-slate-100 overflow-hidden shadow-sm">
-              <ul className="divide-y divide-slate-50">
-                {(hub?.studentResults ?? []).slice(0, 5).map((res) => (
-                  <li key={res.id} className="flex items-center gap-3 px-4 py-3 hover:bg-sky-50/40 transition-colors">
-                    <div className="w-9 h-9 rounded-full bg-gradient-to-br from-sky-400 to-blue-600 flex items-center justify-center text-white text-[11px] font-bold shrink-0">
+            {loading ? (
+              <Skeleton className="h-32" />
+            ) : totalMurid === 0 ? (
+              <div className="text-center py-6">
+                <Users className="w-8 h-8 text-slate-300 mx-auto mb-2 dark:text-slate-600" />
+                <p className="text-sm font-medium text-slate-600 dark:text-slate-300">Belum ada murid di kelas</p>
+                <p className="text-xs text-slate-400 mt-1 dark:text-slate-500">Tambahkan murid ke kelas agar aktivitas gim mereka tampil di sini.</p>
+                <Link href="/guru/data-siswa" className="inline-flex items-center gap-1.5 mt-4 px-4 py-2 bg-emerald-600 text-white text-sm font-medium rounded-xl hover:bg-emerald-700 transition-colors">
+                  Kelola Murid
+                </Link>
+              </div>
+            ) : (
+              <>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                  <MiniStat icon={<Users className="w-4 h-4 text-sky-500" />} label="Murid Aktif" value={`${aktifHariIni} dari ${totalMurid}`} />
+                  <MiniStat icon={<Clock className="w-4 h-4 text-orange-500" />} label="Belum Bermain" value={String(belumBermain)} />
+                  <MiniStat icon={<BarChart3 className="w-4 h-4 text-emerald-500" />} label="Rata-rata Skor" value={avgScore > 0 ? avgScore.toLocaleString("id-ID") : "—"} />
+                  <MiniStat icon={<Gamepad2 className="w-4 h-4 text-violet-500" />} label="Gim Terpopuler" value={topGameName ?? "—"} />
+                </div>
+
+                {/* Progress kelas */}
+                <div className="mt-4">
+                  <div className="flex items-center justify-between text-[11px] text-slate-500 mb-1.5 dark:text-slate-400">
+                    <span className="font-semibold">Keterlibatan kelas</span>
+                    <span className="font-bold text-emerald-600 dark:text-emerald-400">{kelasPct}%</span>
+                  </div>
+                  <div className="h-2.5 bg-slate-100 rounded-full overflow-hidden dark:bg-slate-800">
+                    <div className="h-full bg-gradient-to-r from-emerald-400 to-teal-500 rounded-full transition-all duration-1000" style={{ width: `${kelasPct}%` }} />
+                  </div>
+                  <p className="mt-1.5 text-[11px] text-slate-400 dark:text-slate-500">
+                    {aktifHariIni} dari {totalMurid} murid sudah bermain hari ini{belumBermain > 0 ? ` — ${belumBermain} belum bermain` : ""}.
+                  </p>
+                </div>
+
+                {belumBermain > 0 && (
+                  <div className="mt-4 flex items-center gap-2 flex-wrap">
+                    <a
+                      href="#aktivitas-murid"
+                      className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-orange-500 hover:bg-orange-600 text-white text-xs font-bold rounded-lg transition-colors"
+                    >
+                      <BellRing className="w-3.5 h-3.5" /> Kirim Pengingat
+                    </a>
+                    <Link href="/guru/game/history" className="inline-flex items-center gap-1 text-xs font-bold text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200">
+                      Lihat Semua Aktivitas <ArrowRight size={12} />
+                    </Link>
+                  </div>
+                )}
+              </>
+            )}
+          </section>
+
+          {/* Murid Teraktif Hari Ini */}
+          <section className="bg-white rounded-xl border border-slate-100 p-5 shadow-sm dark:bg-slate-900 dark:border-slate-800">
+            <div className="flex items-center gap-2 mb-4">
+              <Trophy className="w-4 h-4 text-amber-500" />
+              <h2 className="text-base font-bold text-slate-800 dark:text-slate-100">Murid Teraktif Hari Ini</h2>
+            </div>
+            {loading ? (
+              <Skeleton className="h-40" />
+            ) : topPerformers.length > 0 ? (
+              <ol className="space-y-2.5">
+                {topPerformers.map((res, i) => (
+                  <li key={res.id} className="flex items-center gap-3">
+                    <span
+                      className={`w-6 h-6 shrink-0 rounded-full flex items-center justify-center text-[11px] font-extrabold ${
+                        i === 0
+                          ? "bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300"
+                          : i === 1
+                            ? "bg-slate-200 text-slate-600 dark:bg-slate-700 dark:text-slate-300"
+                            : i === 2
+                              ? "bg-orange-100 text-orange-700 dark:bg-orange-900/40 dark:text-orange-300"
+                              : "bg-slate-100 text-slate-400 dark:bg-slate-800 dark:text-slate-500"
+                      }`}
+                    >
+                      {i + 1}
+                    </span>
+                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-amber-400 to-orange-600 flex items-center justify-center text-white text-[10px] font-bold shrink-0">
                       {res.user?.fullName?.charAt(0) || "?"}
                     </div>
                     <div className="min-w-0 flex-1">
-                      <p className="text-sm font-semibold text-slate-800 truncate">{res.user?.fullName || "Siswa"}</p>
-                      <p className="text-[11px] text-slate-400 truncate flex items-center gap-1">
-                        <span>{resultGameEmoji(res)}</span>
-                        <span>{resultGameLabel(res)}</span>
-                        <span className="text-slate-300">·</span>
-                        <span>{relativeDay(res.createdAt)}</span>
+                      <p className="text-xs font-semibold text-slate-700 truncate dark:text-slate-200">{res.user?.fullName || "Siswa"}</p>
+                      <p className="text-[10px] text-slate-400 truncate dark:text-slate-500">
+                        <span>{resultGameEmoji(res)}</span> {resultGameLabel(res)}
                       </p>
                     </div>
                     <div className="text-right shrink-0">
-                      <p className="text-xs font-bold text-slate-700">{res.finalScore} poin</p>
-                      <p className="text-[10px] text-slate-400">+{res.xpEarned} XP</p>
+                      <p className="text-xs font-bold text-slate-700 tabular-nums dark:text-slate-200">{res.finalScore}</p>
+                      <p className="text-[10px] text-emerald-600 dark:text-emerald-400">+{res.xpEarned} XP</p>
                     </div>
                   </li>
                 ))}
+              </ol>
+            ) : (
+              <div className="text-center py-6">
+                <Trophy className="w-8 h-8 text-slate-300 mx-auto mb-2 dark:text-slate-600" />
+                <p className="text-sm font-medium text-slate-600 dark:text-slate-300">Belum ada yang bermain hari ini</p>
+                <p className="text-xs text-slate-400 mt-1 dark:text-slate-500">Ajak murid bermain gim — skor terbaik hari ini akan tampil di sini.</p>
+              </div>
+            )}
+          </section>
+        </div>
+
+        {/* ── AKTIVITAS GIM MURID (preview + riwayat gabungan) ── */}
+        <section id="aktivitas-murid" className="scroll-mt-24 mb-8">
+          <div className="flex items-center gap-2 mb-4">
+            <div className="w-2 h-2 rounded-full bg-sky-500 animate-pulse" />
+            <h2 className="text-base font-bold text-slate-800 dark:text-slate-100">Aktivitas Gim Murid</h2>
+            <Link href="/guru/game/history" className="ml-auto inline-flex items-center gap-1 text-[11px] font-bold text-sky-600 hover:underline dark:text-sky-400">
+              Lihat Semua Aktivitas <ChevronRight size={12} />
+            </Link>
+          </div>
+          {loading ? (
+            <Skeleton className="h-64" />
+          ) : studentResults.length > 0 ? (
+            <div className="bg-white rounded-xl border border-slate-100 overflow-hidden shadow-sm dark:bg-slate-900 dark:border-slate-800">
+              <ul className="divide-y divide-slate-50 dark:divide-slate-800">
+                {studentResults.slice(0, 5).map((res) => (
+                  <Fragment key={res.id}>
+                    <li
+                      className="flex items-center gap-3 px-4 py-3 hover:bg-sky-50/40 transition-colors cursor-pointer dark:hover:bg-slate-800/60"
+                      onClick={() => setExpandedActivity((cur) => (cur === res.id ? null : res.id))}
+                    >
+                      <div className="w-9 h-9 rounded-full bg-gradient-to-br from-sky-400 to-blue-600 flex items-center justify-center text-white text-[11px] font-bold shrink-0">
+                        {res.user?.fullName?.charAt(0) || "?"}
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-sm font-semibold text-slate-800 truncate dark:text-slate-100">{res.user?.fullName || "Siswa"}</p>
+                        <p className="text-[11px] text-slate-400 truncate flex items-center gap-1 dark:text-slate-500">
+                          <span>{resultGameEmoji(res)}</span>
+                          <span>{resultGameLabel(res)}</span>
+                          <span className="text-slate-300 dark:text-slate-600">·</span>
+                          <span className={timeStatusTone(res.createdAt)}>{timeStatusLabel(res.createdAt)}</span>
+                        </p>
+                      </div>
+                      <div className="text-right shrink-0">
+                        <p className="text-xs font-bold text-slate-700 tabular-nums dark:text-slate-200">{res.finalScore} poin</p>
+                        <p className="text-[10px] text-emerald-600 dark:text-emerald-400">+{res.xpEarned} XP</p>
+                      </div>
+                    </li>
+                    {expandedActivity === res.id && (
+                      <li className="bg-sky-50/60 px-4 py-3 dark:bg-slate-800/60">
+                        <div className="flex flex-wrap items-center gap-x-5 gap-y-1.5 text-[11px] text-slate-500 dark:text-slate-400">
+                          <span><b className="text-green-600 dark:text-green-400">{res.correct}</b> benar</span>
+                          <span><b className="text-red-500 dark:text-red-400">{res.wrong}</b> salah</span>
+                          <span><b className="text-slate-700 dark:text-slate-200">{res.maxStreak}</b> rentetan maks</span>
+                          <span><b className="text-emerald-600 dark:text-emerald-400">+{res.xpEarned}</b> XP</span>
+                          <span className="inline-flex items-center gap-1"><Clock className="w-3 h-3" /><b className="text-slate-700 dark:text-slate-200">{formatDurasi(res.session)}</b> durasi</span>
+                          <span className="inline-flex items-center gap-1 text-slate-400">
+                            <History className="w-3 h-3" />
+                            {new Date(res.createdAt).toLocaleString("id-ID", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}
+                          </span>
+                        </div>
+                      </li>
+                    )}
+                  </Fragment>
+                ))}
               </ul>
-              <div className="px-4 py-3 border-t border-slate-50 flex items-center justify-between">
-                <span className="text-[11px] text-slate-400">{aktifHariIni} murid bermain hari ini</span>
-                {totalMurid > 0 && (
-                  <span className="text-[11px] font-semibold text-slate-500">{belumBermain} belum bermain</span>
-                )}
+              <div className="px-4 py-3 border-t border-slate-50 flex items-center justify-between dark:border-slate-800">
+                <span className="text-[11px] text-slate-400 dark:text-slate-500">{aktifHariIni} murid bermain hari ini</span>
+                <Link href="/guru/game/history" className="text-[11px] font-bold text-emerald-600 hover:underline dark:text-emerald-400">
+                  Semua Aktivitas →
+                </Link>
               </div>
             </div>
           ) : (
-            <div className="bg-white rounded-xl border border-slate-100 p-8 text-center shadow-sm">
-              <div className="w-12 h-12 rounded-2xl bg-sky-50 flex items-center justify-center mx-auto mb-3">
+            <div className="bg-white rounded-xl border border-slate-100 p-8 text-center shadow-sm dark:bg-slate-900 dark:border-slate-800">
+              <div className="w-12 h-12 rounded-2xl bg-sky-50 flex items-center justify-center mx-auto mb-3 dark:bg-slate-800">
                 <Users className="w-6 h-6 text-sky-400" />
               </div>
-              <p className="text-sm font-medium text-slate-600">Belum ada aktivitas gim murid</p>
-              <p className="text-xs text-slate-400 mt-1 max-w-md mx-auto">
+              <p className="text-sm font-medium text-slate-600 dark:text-slate-300">Belum ada aktivitas gim murid</p>
+              <p className="text-xs text-slate-400 mt-1 max-w-md mx-auto dark:text-slate-500">
                 Ajak murid bergabung ke kelas lalu bermain gim bersama — aktivitas, skor, dan XP mereka akan tampil di sini.
               </p>
-              <Link href="/guru/data-siswa" className="inline-flex items-center gap-1.5 mt-4 px-4 py-2 bg-sky-600 text-white text-sm font-medium rounded-xl hover:bg-sky-700 transition-colors">
-                Atur Kelas &amp; Murid
+              <Link href="/guru/game/lobby" className="inline-flex items-center gap-1.5 mt-4 px-4 py-2 bg-sky-600 text-white text-sm font-medium rounded-xl hover:bg-sky-700 transition-colors">
+                <Play size={14} /> Buat Ruang Baru
               </Link>
             </div>
           )}
         </section>
 
-        {/* ── RIWAYAT (5 + Buka Riwayat) ─────────────────────── */}
-        <div className="mb-8">
-          <div className="flex items-center gap-2 mb-3">
-            <div className="w-2 h-2 rounded-full bg-slate-400 animate-pulse" />
-            <h2 className="text-base font-bold text-slate-800">Riwayat Permainan</h2>
-            {(hub?.studentResults?.length ?? 0) > 5 && (
-              <button
-                type="button"
-                onClick={() => setShowAllRiwayat((v) => !v)}
-                className="ml-auto text-xs font-bold text-emerald-600 hover:underline"
-              >
-                {showAllRiwayat ? "Ringkas" : "Buka Riwayat"}
-              </button>
-            )}
-          </div>
-          {(hub?.studentResults?.length ?? 0) > 0 ? (
-            <div className="bg-white rounded-xl border border-slate-100 overflow-hidden shadow-sm">
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="border-b border-slate-100 bg-slate-50">
-                      <th className="text-left px-4 py-2.5 font-semibold text-slate-600 text-xs">Siswa</th>
-                      <th className="text-left px-4 py-2.5 font-semibold text-slate-600 text-xs">Gim</th>
-                      <th className="text-center px-4 py-2.5 font-semibold text-slate-600 text-xs">Skor</th>
-                      <th className="text-right px-4 py-2.5 font-semibold text-slate-600 text-xs">Tanggal</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {(hub?.studentResults ?? []).slice(0, showAllRiwayat ? undefined : 5).map((res) => (
-                      <Fragment key={res.id}>
-                        <tr className="border-b border-slate-50 hover:bg-slate-50 transition-colors cursor-pointer" onClick={() => setExpandedRiwayat((cur) => (cur === res.id ? null : res.id))}>
-                          <td className="px-4 py-2.5">
-                            <div className="flex items-center gap-2">
-                              <div className="w-7 h-7 rounded-full bg-gradient-to-br from-violet-400 to-purple-600 flex items-center justify-center text-white text-[10px] font-bold shrink-0">
-                                {res.user?.fullName?.charAt(0) || "?"}
-                              </div>
-                              <span className="font-medium text-slate-700 text-xs">{res.user?.fullName || "Siswa"}</span>
-                            </div>
-                          </td>
-                          <td className="px-4 py-2.5 text-xs text-slate-500">{resultGameLabel(res)}</td>
-                          <td className="px-4 py-2.5 text-center"><span className="font-bold text-emerald-600">{res.finalScore}</span></td>
-                          <td className="px-4 py-2.5 text-right text-xs text-slate-400">
-                            {new Date(res.createdAt).toLocaleDateString("id-ID", { day: "numeric", month: "short" })}
-                          </td>
-                        </tr>
-                        {expandedRiwayat === res.id && (
-                          <tr className="border-b border-slate-100 bg-slate-50/60">
-                            <td colSpan={4} className="px-4 py-2.5">
-                              <div className="flex flex-wrap items-center gap-x-5 gap-y-1 text-[11px] text-slate-500">
-                                <span><b className="text-green-600">{res.correct}</b> benar</span>
-                                <span><b className="text-red-500">{res.wrong}</b> salah</span>
-                                <span><b className="text-slate-700">{res.maxStreak}</b> rentetan maks</span>
-                                <span className="text-slate-400">·</span>
-                                <span><b className="text-emerald-600">+{res.xpEarned}</b> XP</span>
-                              </div>
-                            </td>
-                          </tr>
-                        )}
-                      </Fragment>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          ) : (
-            <div className="bg-white rounded-xl border border-slate-100 p-8 text-center shadow-sm">
-              <History className="w-10 h-10 text-slate-300 mx-auto mb-3" />
-              <p className="text-sm font-medium text-slate-600">Belum ada riwayat permainan</p>
-              <p className="text-xs text-slate-400 mt-1">Ajak murid bermain gim bersama untuk melihat hasilnya di sini.</p>
-              <Link href="/guru/game/lobby" className="inline-flex items-center gap-1.5 mt-4 px-4 py-2 bg-emerald-600 text-white text-sm font-medium rounded-xl hover:bg-emerald-700 transition-colors">
-                <Play size={14} /> Buat Ruang Baru
-              </Link>
-            </div>
-          )}
-        </div>
-
         {/* ── AI INSIGHT (kartu rekomendasi) ───────────────── */}
         <div className="mb-8">
           <div className="flex items-center gap-2 mb-3">
             <div className="w-2 h-2 rounded-full bg-rose-500 animate-pulse" />
-            <h2 className="text-base font-bold text-slate-800">Analisis AI</h2>
-            <span className="text-[10px] px-2 py-0.5 bg-rose-100 text-rose-600 rounded-full font-semibold">Pratinjau · Segera Hadir</span>
+            <h2 className="text-base font-bold text-slate-800 dark:text-slate-100">Analisis AI</h2>
+            <span className="text-[10px] px-2 py-0.5 bg-rose-100 text-rose-600 rounded-full font-semibold dark:bg-rose-900/40 dark:text-rose-300">Pratinjau · Segera Hadir</span>
           </div>
-          <div className="bg-gradient-to-r from-rose-50 via-white to-emerald-50 rounded-xl border border-rose-100 p-5 shadow-sm">
+          <div className="bg-gradient-to-r from-rose-50 via-white to-emerald-50 rounded-xl border border-rose-100 p-5 shadow-sm dark:from-slate-900 dark:via-slate-900 dark:to-slate-900 dark:border-slate-800">
             <div className="flex items-start gap-3">
               <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-rose-500 to-red-600 flex items-center justify-center shrink-0">
                 <Sparkles className="w-4 h-4 text-white" />
               </div>
               <div className="flex-1">
-                <p className="font-bold text-slate-800 text-sm">Rekomendasi Cerdas untuk Kelasmu</p>
+                <p className="font-bold text-slate-800 text-sm dark:text-slate-100">Rekomendasi Cerdas untuk Kelasmu</p>
                 {insight ? (
-                  <p className="text-xs text-slate-500 mt-1 leading-relaxed">{insight}</p>
+                  <p className="text-xs text-slate-500 mt-1 leading-relaxed dark:text-slate-400">{insight}</p>
                 ) : (
-                  <p className="text-xs text-slate-500 mt-1 leading-relaxed">
+                  <p className="text-xs text-slate-500 mt-1 leading-relaxed dark:text-slate-400">
                     Analisis AI akan menghadirkan rekomendasi berdasarkan performa kelas (kosakata, kecepatan membaca,
                     ketepatan) setelah cukup data permainan tersedia.{" "}
-                    <span className="font-semibold text-slate-600">Saran awal: minta murid bermain Susun Kata 3x minggu ini.</span>
+                    <span className="font-semibold text-slate-600 dark:text-slate-300">Saran awal: minta murid bermain Susun Kata 3x minggu ini.</span>
                   </p>
                 )}
               </div>
@@ -787,7 +818,7 @@ export default function GuruGameHubPage() {
               >
                 <BellRing className="w-3.5 h-3.5" /> Kirim Pengingat
               </a>
-              <Link href="/guru/game/leaderboard" className="inline-flex items-center gap-1 text-xs font-bold text-slate-500 hover:text-slate-700">
+              <Link href="/guru/game/leaderboard" className="inline-flex items-center gap-1 text-xs font-bold text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200">
                 Lihat Ranking <ArrowRight size={12} />
               </Link>
             </div>
@@ -821,6 +852,22 @@ function HeroChip({ icon, label, value }: { icon: ReactNode; label: string; valu
       </div>
     </div>
   );
+}
+
+function MiniStat({ icon, label, value }: { icon: ReactNode; label: string; value: string }) {
+  return (
+    <div className="rounded-xl bg-slate-50 border border-slate-100 p-3 dark:bg-slate-800/60 dark:border-slate-800">
+      <div className="flex items-center gap-1.5 text-[10px] text-slate-400 font-semibold uppercase tracking-wide dark:text-slate-500">
+        {icon}
+        <span className="truncate">{label}</span>
+      </div>
+      <p className="mt-1 text-sm font-extrabold text-slate-800 truncate dark:text-slate-100" title={value}>{value}</p>
+    </div>
+  );
+}
+
+function Skeleton({ className = "" }: { className?: string }) {
+  return <div className={`animate-pulse rounded-xl bg-slate-100 dark:bg-slate-800 ${className}`} />;
 }
 
 function insightFromResults(results: StudentResult[]): string | null {

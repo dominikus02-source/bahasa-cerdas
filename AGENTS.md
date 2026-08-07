@@ -2473,3 +2473,73 @@ Final polish `/guru/game` agar terasa premium SaaS (Google Classroom + Duolingo 
 2. Game server revival (VPS mati)
 3. GameRoom migration SQL via Supabase dashboard
 4. UI game solo: badge-score client vs server masih beda (kosmetik)
+
+---
+
+## Phase GIM GURU V6 — Dashboard Insight & Riwayat Terpisah (Aug 7, 2026)
+
+### Goal
+Refactor dashboard `/guru/game` jadi ringkas & berorientasi insight mengikuti urutan maksimal:
+Hero → Quick Action → Misi → Gim → Progress Guru → **Ringkasan Aktivitas Kelas** → **Aktivitas Gim Murid** → Analisis AI. Riwayat penuh dipindah ke halaman **`/guru/game/history`** dengan filter lengkap. **ADDITIVE ONLY** — API/DB/XP/Badge/Leaderboard engine tidak diubah; data reuse API existing.
+
+### Perubahan
+
+#### Semua Data Reuse 1 API: `GET /api/guru/game-hub` (extended additively)
+- Param filter BARU (semua optional, tanpa params = perilaku legacy): `page`, `limit` (maks 100, default 20), `search` (nama murid, case-insensitive), `murid` (userId), `gameType` (enum), `roomId`, `from`/`to` (YYYY-MM-DD, WIB +07:00).
+- Response BARU: `total`, `page`, `limit`, `totalPages`, `games` (distinct roomId + room name/gameType — sumber opsi filter Gim di halaman riwayat).
+- `studentResults` kini menyertakan `session.joinedAt/finishedAt` untuk menampilkan **Durasi** (format `Nm Nd`).
+- Dashboard panggil dengan `?limit=100` agar statistik (rata-rata skor, game populer, top performer) berdasarkan sampel lebih luas.
+
+#### Dashboard `/guru/game` (rewrite)
+| Section | Perubahan |
+|---------|-------|
+| Hero | Tetap (compact) |
+| Quick Action | Tetap 3 kartu (Main + Skor Terbaik / Misi / Lencana Saya + progress badge) |
+| Misi Hari Ini | Tetap checklist dengan skeleton |
+| Mainkan Gim | Tetap kartu gim + badge → sekarang dapat skeleton + dark mode |
+| Progress Guru | Tetap: Level Guru (XP mingguan + #rank) + Perkembangan Lencana (5 badge) |
+| **Ringkasan Aktivitas Kelas** (BARU) | 4 MiniStat: Murid Aktif (X dari Y), Belum Bermain, Rata-rata Skor, Gim Terpopuler; progress bar "Keterlibatan kelas X%"; CTA "Kirim Pengingat" (#aktivitas) + "Lihat Semua Aktivitas" |
+| **Murid Teraktif Hari Ini** (BARU) | Top 5 skor hari ini (podium: amber/slate/orange), Nama · Gim · Skor · +XP |
+| **Aktivitas Gim Murid** (di-gabung) | Pengganti "Aktivitas Murid" + "Riwayat Permainan" lama: preview 5, klik expand (benar/salah/rentetan/XP/durasi/waktu WIB), status waktu (Baru saja/Hari ini/Kemarin), tombol "Lihat Semua Aktivitas" |
+| Analisis AI | Tetap (Pratinjau · Segera Hadir) + CTA |
+
+#### Halaman Baru: `/guru/game/history`
+- Filter: search nama (Enter), dropdown murid (`/api/guru/siswa`), dropdown Gim (dibangun dari `games` distinct gameType, label `GAME_TYPE_LABEL`), range tanggal from/to (WIB).
+- Pagination (prev/next + "Halaman X dari Y", total catatan), skeleton loading baris, empty state (dengan reset filter bila ada filter).
+- Setiap baris klik → expand: benar/salah/rentetan maks/XP/durasi (dari session)/jenis gim.
+- Back arrow → `/guru/game`.
+
+#### JS/CSS
+- Dark mode: seluruh kartu dan teks dapat `dark:` variant (bg-slate-900/800, dark text) — konsisten dengan `darkMode: ["class"]` global (belum ada toggle; siap dipasang).
+- Skeleton pulsing di section utama (Quick/Misi/Gim/Progress/Ringkasan/Aktivitas).
+- Empty state dimana-mana (kelas kosong, belum bermain, hasil kosong, tidak ada filter match).
+- BarChart3, Clock lucide dipakai; `Fragment` untuk kumpulan baris.
+
+### Files
+| File | Tindakan |
+|------|----------|
+| `app/api/guru/game-hub/route.ts` | Tambah filter+pagination+session+games (additive, backward compatible) |
+| `app/(dashboard)/guru/game/page.tsx` | Rewrite V6 (order baru, section gabung, skeleton, dark, Ringkasan Kelas) |
+| `app/(dashboard)/guru/game/history/page.tsx` | BARU — halaman riwayat lengkap (filter/not pagination/expand) |
+| `components/dashboard/GuruNav.tsx` | Group "Gim" + item "Riwayat Aktivitas" (`/guru/game/history`) |
+
+### Verifikasi
+| Check | Hasil |
+|-------|-------|
+| `npx tsc --noEmit` | ✅ 0 errors |
+| ESLint (3 file + GuruNav) | ✅ 0 violations |
+| `npm run test:guru-phase` | ✅ SEMUA LULUS |
+| `npm run test:gamification-engine` | ✅ SEMUA LULUS |
+| `npm run build` (dummy env) | ✅ 358 routes (naik dari 357), 0 errors |
+
+### Hal penting
+- **GameResult hanya ada untuk mod battle room** (KUIS_BATTLE/Tantangan); gim solo tidak menulis GameResult → tidak tampil di Aktivitas (hanya XP via `/api/game/xp`). Ini konsisten sejak fase V4 — bukan regression.
+- Durasi dihitung dari `session.joinedAt/finishedAt`; fallback "—" bila tidak ada.
+- Filter `from`/`to` menggunakan offset WIB `+07:00`.
+- Build lokal wajib pakai dummy env (nilai `[SENSITIVE]` di-mask opencode).
+
+### Remaining
+1. TKA UTBK/Guru enrichment 30 → 150
+2. Game server revival (VPS mati)
+3. GameRoom migration SQL via Supabase dashboard
+4. UI game solo: badge-score client vs server masih beda (kosmetik)
