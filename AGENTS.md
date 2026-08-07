@@ -2333,3 +2333,32 @@ Redesign dashboard guru ala Google Classroom + Canva (fokus CTA, konten, karya m
 4. UI game solo: ganti `Attention/KATAPLAY/KATASTRA` badge-score client di layar hasil (kosmetik) — server sudah benar
 5. Halaman `/guru/akun` (Ringkasan Akun) — baru ditambahkan (lihat catatan di bawah)
 
+
+---
+
+## Phase GIM GURU V4 — Teacher Engagement Dashboard (Aug 7, 2026)
+
+### Goal
+Redesign halaman `/guru/game` menjadi dashboard engagement guru: alasan membuka BahasaCerdas setiap hari = melihat progres diri + kelas, bukan sekadar bermain. **ADDITIVE ONLY** — tidak ada route/API/DB/XP engine yang dihapus/diubah; semua perubahan hanya layout, grouping, CTA, visual hierarchy.
+
+### Perubahan
+| File | Perubahan |
+|------|-----------|
+| `app/(dashboard)/guru/game/page.tsx` | Rewrite penuh V4: Hero (circular progress target XP mingguan 500, chips badge/murid aktif/XP/rank) → Quick Action 3 kartu (Main Sekarang + best score, Tantangan → `#misi-hari-ini`, Badge Saya + progress next badge) → Fokus Hari Ini (belum bermain = totalMurid dari `/api/guru/siswa` − unik murid main hari ini dari game-hub; CTA "Kirim Pengingat" anchor `#aktivitas-murid`) → Misi Hari Ini (3 misi adaptif, reward +50 XP) → Statistik 4 kartu → Mainkan Gim (7 SOLO_GAMES + badge Trending/Baru/Recommended) → Game Terpopuler Top 5 → Progress Guru (XP mingguan + badge 5 pertama) → Leaderboard banner `#myRank` → Aktivitas Murid (5 terbaru + footer summary) → Riwayat (5 + Lihat Semua toggle) → AI Insight (preview rule-based, "Segera Hadir") |
+| `components/dashboard/GuruNav.tsx` | Hapus item submenu "Tantangan Harian" (`/guru/game#solo`) — fitur tetap ada sebagai section di halaman |
+
+### Data yang Dipakai (existing APIs, tanpa backend baru)
+- `GET /api/guru/game-hub` — myResults/studentResults/activeRooms
+- `GET /api/player/badges` — filter `code.startsWith("guru-")`
+- `GET /api/guru/leaderboard` — `myRank`
+- `GET /api/player/xp/history?limit=100` — XP mingguan dari sources `GURU_*`, metadata `{gameType, skor}` untuk last game + best score
+- `GET /api/user/me` — nickname/fullName
+- `GET /api/guru/siswa` — totalMurid untuk Fokus Hari Ini
+
+### Verifikasi
+| Check | Hasil |
+|-------|-------|
+| `npx tsc --noEmit` | ✅ 0 errors |
+| `npm run test:gamification-engine` | ✅ SEMUA LULUS |
+| `npm run test:guru-phase` | ✅ SEMUA LULUS |
+| `npm run build` (dummy env) | ✅ 357 pages, 0 errors |
