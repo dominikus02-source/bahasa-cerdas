@@ -2,9 +2,8 @@
 
 import Link from "next/link";
 import { useState, useEffect, useRef, useCallback } from "react";
-import { X, Send, Star, Check, Trash2, Share2, Bookmark, Flag, Trophy, Medal, School as SchoolIcon, BookmarkCheck } from "lucide-react";
+import { X, Send, Star, Check, Trash2, Share2, Bookmark, Flag, Trophy, Medal, School as SchoolIcon, BookmarkCheck, Search, Sparkles, Lightbulb, Users, Wand2, ArrowRight } from "lucide-react";
 import { IconBolt, IconFlame, IconTarget, IconPen, IconChat, IconHeart, IconEye, IconClock, IconSchool, IconLocation } from "@/lib/icons";
-import GuruPengumumanPanel from "@/components/pengumuman/GuruPengumumanPanel";
 
 type KaryaType = "PUISI" | "CERPEN" | "ARTIKEL" | "ANEKDOT" | "PANTUN" | "OPINI";
 
@@ -64,6 +63,12 @@ export default function GuruFeedKaryaPage() {
   const [reportSending, setReportSending] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
 
+  // ── PUSAT LITERASI state ──
+  const [search, setSearch] = useState("");
+  const [stats, setStats] = useState<any>(null);
+  const [statsLoading, setStatsLoading] = useState(true);
+  const [aiFeedback, setAiFeedback] = useState<{ open: boolean; loading: boolean; result: any; error: string }>({ open: false, loading: false, result: null, error: "" });
+
   useEffect(() => {
     if (!toast) return;
     const t = setTimeout(() => setToast(null), 3000);
@@ -84,6 +89,17 @@ export default function GuruFeedKaryaPage() {
   }, []);
 
   useEffect(() => {
+    setStatsLoading(true);
+    const params = new URLSearchParams();
+    if (selectedGroupId) params.set("groupId", selectedGroupId);
+    fetch(`/api/guru/literasi/stats?${params}`)
+      .then(r => r.ok ? r.json() : null)
+      .then(d => setStats(d))
+      .catch(() => setStats(null))
+      .finally(() => setStatsLoading(false));
+  }, [selectedGroupId]);
+
+  useEffect(() => {
     fetch(`/api/guru/hasil-karya/leaderboard?scope=${scope}`)
       .then(r => r.ok ? r.json() : null)
       .then(d => { if (d) setLeaderboard(d); })
@@ -99,6 +115,7 @@ export default function GuruFeedKaryaPage() {
       const params = new URLSearchParams({ limit: "30" });
       if (type) params.set("type", type);
       if (selectedGroupId) params.set("groupId", selectedGroupId);
+      if (search.trim()) params.set("q", search.trim());
       if (cursorVal) params.set("cursor", cursorVal);
       const res = await fetch(`/api/siswa/karya?${params}`, { signal: controller.signal });
       if (!res.ok) throw new Error("Gagal memuat karya");
@@ -125,7 +142,7 @@ export default function GuruFeedKaryaPage() {
       setLoadingMore(false);
       loadingMoreRef.current = false;
     }
-  }, [selectedGroupId]);
+  }, [selectedGroupId, search]);
 
   useEffect(() => {
     setLoading(true); setKaryaList([]); setCursor(null); setHasMore(true); hasMoreRef.current = true; cursorRef.current = null;
@@ -401,157 +418,94 @@ export default function GuruFeedKaryaPage() {
     }
   };
 
+  // ── Umpan balik AI untuk karya murid (reuse feedback-agent, tanpa menyimpan riwayat) ──
+  const handleAIFeedback = async (k: Karya) => {
+    if (aiFeedback.loading) return;
+    setAiFeedback({ open: true, loading: true, result: null, error: "" });
+    try {
+      const plain = (k.content || "").replace(/<[^>]*>/g, "").slice(0, 6000);
+      const res = await fetch("/api/ai/agents/run", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          agentId: "feedback",
+          input: { text: plain, tone: "ramah", includeRevisionTips: true },
+          saveToHistory: false,
+          outputFormat: "json",
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        setAiFeedback({ open: true, loading: false, result: null, error: data.error || "Gagal membuat umpan balik. Coba lagi." });
+        return;
+      }
+      setAiFeedback({ open: true, loading: false, result: data.output || data.text || null, error: "" });
+    } catch {
+      setAiFeedback({ open: true, loading: false, result: null, error: "Gagal membuat umpan balik. Coba lagi." });
+    }
+  };
+
   return (
-    <div className="grid grid-cols-1 xl:grid-cols-[1fr_360px] gap-5 items-start">
-      <div className="min-w-0 max-w-2xl w-full">
+    <div className="space-y-6 max-w-4xl">
       {/* ── Header ── */}
       {user && (
-        <div className="bg-gradient-to-br from-emerald-600 via-green-600 to-teal-700 rounded-2xl p-5 text-white mb-5">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="font-bold text-lg">Panggung Literasi</p>
-              <p className="text-sm text-emerald-200 mt-0.5">Budaya literasi murid-muridmu — pantau, apresiasi, banggakan</p>
+        <div className="bg-gradient-to-br from-emerald-600 via-green-600 to-teal-700 rounded-2xl p-5 text-white">
+          <div className="flex items-center justify-between gap-3">
+            <div className="min-w-0">
+              <p className="font-bold text-lg">Pusat Literasi</p>
+              <p className="text-sm text-emerald-200 mt-0.5">Pantau, apresiasi, dan banggakan karya literasi murid-muridmu</p>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 shrink-0">
               <IconPen size={18} />
             </div>
           </div>
-          <div className="flex gap-3 mt-3 text-xs">
+          <div className="flex flex-wrap gap-2 mt-3 text-xs">
             <span className="flex items-center gap-1 bg-white/15 px-2.5 py-1.5 rounded-full"><IconBolt size={14} />{user.xp?.toLocaleString() || 0} XP</span>
             <span className="flex items-center gap-1 bg-white/15 px-2.5 py-1.5 rounded-full"><IconFlame size={14} />{user.streak || 0} hr</span>
             <span className="flex items-center gap-1 bg-white/15 px-2.5 py-1.5 rounded-full"><IconTarget size={14} />Lv.{user.level || 1}</span>
+            {stats?.mingguIni && (
+              <span className="flex items-center gap-1 bg-white/15 px-2.5 py-1.5 rounded-full">
+                <IconPen size={14} />{stats.mingguIni.karya} karya minggu ini
+              </span>
+            )}
           </div>
         </div>
       )}
 
-      {/* ── Leaderboard Hasil Karya ── */}
-      {leaderboard && (
-        <div className="space-y-4 mb-5">
-          {/* Top Creator Minggu Ini + Sekolah Paling Aktif */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="md:col-span-2 bg-gradient-to-br from-amber-400 via-orange-400 to-rose-500 rounded-2xl p-5 text-white shadow-lg shadow-orange-200 relative overflow-hidden">
-              <div className="absolute -right-6 -top-6 opacity-15"><Trophy size={130} /></div>
-              {leaderboard.topCreator ? (
-                <div>
-                  <p className="text-[11px] font-bold uppercase tracking-wider text-amber-100 flex items-center gap-1.5"><Trophy size={13} /> Top Creator Minggu Ini</p>
-                  <div className="flex items-center gap-4 mt-3">
-                    <div className="relative w-14 h-14 rounded-full bg-white/20 ring-2 ring-white/60 flex items-center justify-center text-white font-bold text-lg shrink-0">
-                      <span className="relative z-0">{leaderboard.topCreator.user.fullName.charAt(0)}</span>
-                      {leaderboard.topCreator.user.avatar && (
-                        <img src={leaderboard.topCreator.user.avatar} alt="" className="absolute inset-0 z-10 w-full h-full rounded-full object-cover" onError={e => (e.currentTarget.style.display = "none")} />
-                      )}
-                    </div>
-                    <div className="min-w-0">
-                      <p className="font-bold text-lg leading-tight truncate">{leaderboard.topCreator.user.fullName}</p>
-                      <p className="text-xs text-amber-100 truncate">{leaderboard.topCreator.user.school || "Siswa BahasaCerdas"}</p>
-                      <p className="text-[11px] text-amber-50/90 mt-0.5 truncate">"{leaderboard.topCreator.karya.title}"</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-3 mt-3 text-xs">
-                    <span className="flex items-center gap-1 bg-white/20 px-2.5 py-1 rounded-full"><IconHeart size={12} /> {leaderboard.topCreator.likes} like</span>
-                    <span className="flex items-center gap-1 bg-white/20 px-2.5 py-1 rounded-full"><IconChat size={12} /> {leaderboard.topCreator.comments} komentar</span>
-                    <span className="flex items-center gap-1 bg-white/20 px-2.5 py-1 rounded-full"><Medal size={12} /> Lv.{leaderboard.topCreator.user.level}</span>
-                    <span className="flex items-center gap-1 bg-white/20 px-2.5 py-1 rounded-full"><Trophy size={12} /> {leaderboard.topCreator.user.rankTitle}</span>
-                  </div>
-                  <button
-                    onClick={(e) => { e.stopPropagation(); window.location.href = `/murid/karya/${leaderboard.topCreator.karya.id}`; }}
-                    className="mt-3 text-[11px] font-semibold bg-white/25 hover:bg-white/40 transition-colors px-3 py-1.5 rounded-full"
-                  >
-                    Buka karyanya →
-                  </button>
-                </div>
-              ) : (
-                <div>
-                  <p className="text-[11px] font-bold uppercase tracking-wider text-amber-100 flex items-center gap-1.5"><Trophy size={13} /> Top Creator Minggu Ini</p>
-                  <p className="text-sm mt-3 text-amber-50">Belum ada karya minggu ini. Ajak muridmu berkarya!</p>
-                </div>
-              )}
-            </div>
-
-            <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm">
-              <p className="font-bold text-sm text-gray-900 flex items-center gap-2 mb-3"><SchoolIcon size={15} className="text-emerald-600" /> Sekolah Paling Aktif</p>
-              {leaderboard.topSchools.length === 0 ? (
-                <p className="text-xs text-gray-400">Belum ada data minggu ini.</p>
-              ) : (
-                <div className="space-y-2.5">
-                  {leaderboard.topSchools.slice(0, 5).map((s: any) => (
-                    <div key={s.school} className="flex items-center gap-2.5">
-                      <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 ${s.rank === 1 ? "bg-amber-100 text-amber-700" : s.rank === 2 ? "bg-slate-200 text-slate-600" : s.rank === 3 ? "bg-orange-100 text-orange-700" : "bg-gray-100 text-gray-500"}`}>{s.rank}</span>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-xs font-semibold text-gray-800 truncate">{s.school}</p>
-                        <p className="text-[10px] text-gray-400">{s.karyaCount} karya · {s.likeCount} like · {s.commentCount} komentar</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
+      {/* ── Statistik ── */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        {[
+          { label: "Total Karya", value: stats?.total?.karya ?? "–", icon: <IconPen size={16} />, tint: "bg-emerald-100 text-emerald-600" },
+          { label: "Penulis", value: stats?.total?.penulis ?? "–", icon: <Users size={16} />, tint: "bg-violet-100 text-violet-600" },
+          { label: "Apresiasi", value: stats?.total?.likes ?? "–", icon: <IconHeart size={16} />, tint: "bg-rose-100 text-rose-500" },
+          { label: "Dibaca", value: stats?.total?.views ?? "–", icon: <IconEye size={16} />, tint: "bg-sky-100 text-sky-600" },
+        ].map((s, i) => (
+          <div key={i} className="bg-white rounded-2xl border border-gray-100 p-4 shadow-sm">
+            <div className={`w-8 h-8 rounded-xl flex items-center justify-center ${s.tint} mb-2`}>{s.icon}</div>
+            <p className="text-xl font-bold text-gray-900 leading-none">{typeof s.value === "number" ? s.value.toLocaleString("id-ID") : s.value}</p>
+            <p className="text-[11px] text-gray-400 mt-1">{s.label}</p>
           </div>
+        ))}
+      </div>
 
-          {/* Leaderboard creator (scope tabs) + Guru Penggerak Literasi */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="md:col-span-2 bg-white rounded-2xl border border-gray-100 p-5 shadow-sm">
-              <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
-                <p className="font-bold text-sm text-gray-900 flex items-center gap-2"><Trophy size={15} className="text-amber-500" /> Peringkat Creator</p>
-                <div className="flex gap-1 overflow-x-auto">
-                  {[["all", "Semua"], ["school", "Sekolah Saya"], ["city", "Kabupaten"], ["province", "Provinsi"], ["country", "Indonesia"]].map(([val, label]) => (
-                    <button key={val} onClick={() => setScope(val)}
-                      className={`whitespace-nowrap px-2.5 py-1 rounded-lg text-[10px] font-semibold transition-all ${scope === val ? "bg-emerald-600 text-white" : "bg-gray-100 text-gray-500 hover:bg-gray-200"}`}>
-                      {label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-              {leaderboard.leaderboard.length === 0 ? (
-                <p className="text-xs text-gray-400 py-4 text-center">Belum ada karya di lingkup ini minggu ini.</p>
-              ) : (
-                <div className="space-y-2">
-                  {leaderboard.leaderboard.slice(0, 8).map((c: any) => (
-                    <div key={c.user.id} className="flex items-center gap-3 p-2 rounded-xl hover:bg-gray-50 transition-colors">
-                      <span className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 ${c.rank === 1 ? "bg-amber-400 text-white" : c.rank === 2 ? "bg-slate-400 text-white" : c.rank === 3 ? "bg-orange-400 text-white" : "bg-gray-100 text-gray-500"}`}>{c.rank}</span>
-                      <div className="relative w-8 h-8 rounded-full bg-violet-100 flex items-center justify-center text-violet-700 text-[10px] font-bold shrink-0">
-                        <span className="relative z-0">{c.user.fullName.charAt(0)}</span>
-                        {c.user.avatar && <img src={c.user.avatar} alt="" className="absolute inset-0 z-10 w-full h-full rounded-full object-cover" onError={e => (e.currentTarget.style.display = "none")} />}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-xs font-semibold text-gray-800 truncate">{c.user.fullName}</p>
-                        <p className="text-[10px] text-gray-400 truncate">{c.user.school || "Siswa"} · "{c.karya.title}"</p>
-                      </div>
-                      <div className="flex items-center gap-2 text-[10px] text-gray-400 shrink-0">
-                        <span className="flex items-center gap-0.5"><IconHeart size={10} className="text-rose-400" />{c.likes}</span>
-                        <span className="flex items-center gap-0.5"><IconChat size={10} className="text-emerald-400" />{c.comments}</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm">
-              <p className="font-bold text-sm text-gray-900 flex items-center gap-2 mb-3"><Medal size={15} className="text-violet-500" /> Guru Penggerak Literasi</p>
-              {leaderboard.topTeachers.length === 0 ? (
-                <p className="text-xs text-gray-400">Belum ada karya dari kelasmu minggu ini.</p>
-              ) : (
-                <div className="space-y-2.5">
-                  {leaderboard.topTeachers.slice(0, 5).map((s: any) => (
-                    <div key={s.school} className="flex items-center gap-2.5">
-                      <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 ${s.rank === 1 ? "bg-violet-100 text-violet-700" : "bg-gray-100 text-gray-500"}`}>{s.rank}</span>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-xs font-semibold text-gray-800 truncate">{s.school}</p>
-                        <p className="text-[10px] text-gray-400">{s.muridKarya} karya murid · {s.likeCount} like · {s.commentCount} komentar</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
+      {/* ── Karya Terbaru ── */}
+      <section>
+        <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
+          <h2 className="font-bold text-gray-900 flex items-center gap-2"><Sparkles size={16} className="text-emerald-600" /> Karya Terbaru</h2>
+          <div className="relative">
+            <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+            <input
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              placeholder="Cari judul, isi, atau penulis..."
+              className="w-56 pl-9 pr-3 py-2 bg-white border border-gray-200 rounded-xl text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-emerald-200 focus:border-emerald-400 placeholder:text-gray-400"
+            />
           </div>
         </div>
-      )}
 
       {/* ── Filter Kelas ── */}
       {groups.length > 0 && (
-        <div className="mb-4">
+        <div className="mb-3">
           <select
             value={selectedGroupId}
             onChange={e => setSelectedGroupId(e.target.value)}
@@ -609,10 +563,10 @@ export default function GuruFeedKaryaPage() {
               <div className="p-5">
                 <div className="flex items-center gap-2 mb-3 flex-wrap">
                   <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${m.badge}`}>{m.label}</span>
-                  {karya.isFeatured && <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-yellow-100 text-yellow-700 flex items-center gap-0.5"><Star size={9} /> Editor Choice</span>}
-                  {karya.likesCount >= 20 && <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-orange-100 text-orange-700 flex items-center gap-0.5">🔥 Trending</span>}
+                  {karya.isFeatured && <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-yellow-100 text-yellow-700 flex items-center gap-0.5"><Star size={9} /> Pilihan Kelas</span>}
+                  {karya.likesCount >= 20 && <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-orange-100 text-orange-700 flex items-center gap-0.5">🔥 Sedang Ramai</span>}
                   {leaderboard?.topCreator && leaderboard.topCreator.user.id === karya.user.id && (
-                    <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-violet-100 text-violet-700 flex items-center gap-0.5"><Trophy size={9} /> Top Creator</span>
+                    <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-violet-100 text-violet-700 flex items-center gap-0.5"><Trophy size={9} /> Penulis Terbaik</span>
                   )}
                 </div>
                 <h2 className="font-bold text-gray-900 text-lg leading-snug group-hover:text-emerald-700 transition-colors mb-2">{karya.title}</h2>
@@ -672,6 +626,257 @@ export default function GuruFeedKaryaPage() {
             {loadingMore && <div className="animate-spin w-6 h-6 border-[3px] border-emerald-500 border-t-transparent rounded-full" />}
           </div>
         </div>
+      )}
+      </section>
+
+      {/* ── Pilihan AI ── */}
+      <section>
+        <h2 className="font-bold text-gray-900 flex items-center gap-2 mb-3"><Wand2 size={16} className="text-violet-600" /> Pilihan AI</h2>
+        {statsLoading ? (
+          <div className="flex justify-center py-10"><div className="animate-spin w-6 h-6 border-[3px] border-violet-500 border-t-transparent rounded-full" /></div>
+        ) : !stats?.pilihanAI?.length ? (
+          <p className="text-sm text-gray-400 py-6 text-center bg-white rounded-2xl border border-gray-100">Belum ada rekomendasi. Ajak muridmu berkarya dulu.</p>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {stats.pilihanAI.map((k: any) => (
+              <button key={k.id} onClick={() => { const mapped = karyaList.find(x => x.id === k.id); if (mapped) openModal(mapped); }}
+                className="text-left bg-white rounded-2xl border border-gray-100 hover:border-violet-200 hover:shadow-md transition-all p-4 group">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${(TYPE_META[k.type] || TYPE_META.OPINI).badge}`}>{TYPE_META[k.type]?.label || k.type}</span>
+                  {k.isFeatured && <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-yellow-100 text-yellow-700 flex items-center gap-0.5"><Star size={9} /> Pilihan Kelas</span>}
+                </div>
+                <p className="font-semibold text-gray-900 text-sm leading-snug group-hover:text-violet-700 line-clamp-2">{k.title}</p>
+                <p className="text-[11px] text-gray-400 mt-1 truncate">{k.user.fullName}{k.user.school ? ` · ${k.user.school}` : ""}</p>
+                <p className="text-[10px] text-gray-400 mt-1.5">{k.alasan}</p>
+              </button>
+            ))}
+          </div>
+        )}
+      </section>
+
+      {/* ── Paling Banyak Diapresiasi ── */}
+      <section>
+        <h2 className="font-bold text-gray-900 flex items-center gap-2 mb-3"><IconHeart size={16} className="text-rose-500" /> Paling Banyak Diapresiasi</h2>
+        {!stats?.palingPopuler?.length ? (
+          <p className="text-sm text-gray-400 py-6 text-center bg-white rounded-2xl border border-gray-100">Belum ada karya yang diapresiasi.</p>
+        ) : (
+          <div className="space-y-2">
+            {stats.palingPopuler.map((k: any, i: number) => (
+              <button key={k.id} onClick={() => { const mapped = karyaList.find(x => x.id === k.id); if (mapped) openModal(mapped); }}
+                className="w-full text-left flex items-center gap-3 p-3 bg-white rounded-xl border border-gray-100 hover:border-rose-200 hover:shadow-md transition-all">
+                <span className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 ${i === 0 ? "bg-amber-400 text-white" : i === 1 ? "bg-slate-300 text-white" : i === 2 ? "bg-orange-300 text-white" : "bg-gray-100 text-gray-500"}`}>{i + 1}</span>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-semibold text-gray-900 truncate">{k.title}</p>
+                  <p className="text-[11px] text-gray-400 truncate">{k.user.fullName} · {TYPE_META[k.type]?.label || k.type}</p>
+                </div>
+                <div className="flex items-center gap-3 text-[11px] text-gray-400 shrink-0">
+                  <span className="flex items-center gap-0.5"><IconHeart size={11} className="text-rose-400" />{k.likesCount}</span>
+                  <span className="flex items-center gap-0.5"><IconChat size={11} className="text-emerald-400" />{k.commentsCount}</span>
+                  <span className="flex items-center gap-0.5"><IconEye size={11} className="text-sky-400" />{k.viewsCount}</span>
+                </div>
+              </button>
+            ))}
+          </div>
+        )}
+      </section>
+
+      {/* ── Apresiasi Minggu Ini ── */}
+      {leaderboard && (
+        <section>
+          <h2 className="font-bold text-gray-900 flex items-center gap-2 mb-3"><Trophy size={16} className="text-amber-500" /> Apresiasi Minggu Ini</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="md:col-span-2 bg-gradient-to-br from-amber-400 via-orange-400 to-rose-500 rounded-2xl p-5 text-white shadow-lg shadow-orange-200 relative overflow-hidden">
+              <div className="absolute -right-6 -top-6 opacity-15"><Trophy size={130} /></div>
+              {leaderboard.topCreator ? (
+                <div>
+                  <p className="text-[11px] font-bold uppercase tracking-wider text-amber-100 flex items-center gap-1.5"><Trophy size={13} /> Penulis Terbaik Minggu Ini</p>
+                  <div className="flex items-center gap-4 mt-3">
+                    <div className="relative w-14 h-14 rounded-full bg-white/20 ring-2 ring-white/60 flex items-center justify-center text-white font-bold text-lg shrink-0">
+                      <span className="relative z-0">{leaderboard.topCreator.user.fullName.charAt(0)}</span>
+                      {leaderboard.topCreator.user.avatar && (
+                        <img src={leaderboard.topCreator.user.avatar} alt="" className="absolute inset-0 z-10 w-full h-full rounded-full object-cover" onError={e => (e.currentTarget.style.display = "none")} />
+                      )}
+                    </div>
+                    <div className="min-w-0">
+                      <p className="font-bold text-lg leading-tight truncate">{leaderboard.topCreator.user.fullName}</p>
+                      <p className="text-xs text-amber-100 truncate">{leaderboard.topCreator.user.school || "Siswa BahasaCerdas"}</p>
+                      <p className="text-[11px] text-amber-50/90 mt-0.5 truncate">"{leaderboard.topCreator.karya.title}"</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3 mt-3 text-xs">
+                    <span className="flex items-center gap-1 bg-white/20 px-2.5 py-1 rounded-full"><IconHeart size={12} /> {leaderboard.topCreator.likes} like</span>
+                    <span className="flex items-center gap-1 bg-white/20 px-2.5 py-1 rounded-full"><IconChat size={12} /> {leaderboard.topCreator.comments} komentar</span>
+                    <span className="flex items-center gap-1 bg-white/20 px-2.5 py-1 rounded-full"><Medal size={12} /> Lv.{leaderboard.topCreator.user.level}</span>
+                    <span className="flex items-center gap-1 bg-white/20 px-2.5 py-1 rounded-full"><Trophy size={12} /> {leaderboard.topCreator.user.rankTitle}</span>
+                  </div>
+                  <button
+                    onClick={(e) => { e.stopPropagation(); window.location.href = `/murid/karya/${leaderboard.topCreator.karya.id}`; }}
+                    className="mt-3 text-[11px] font-semibold bg-white/25 hover:bg-white/40 transition-colors px-3 py-1.5 rounded-full"
+                  >
+                    Buka karyanya →
+                  </button>
+                </div>
+              ) : (
+                <div>
+                  <p className="text-[11px] font-bold uppercase tracking-wider text-amber-100 flex items-center gap-1.5"><Trophy size={13} /> Penulis Terbaik Minggu Ini</p>
+                  <p className="text-sm mt-3 text-amber-50">Belum ada karya minggu ini. Ajak muridmu berkarya!</p>
+                </div>
+              )}
+            </div>
+
+            <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm">
+              <p className="font-bold text-sm text-gray-900 flex items-center gap-2 mb-3"><SchoolIcon size={15} className="text-emerald-600" /> Sekolah Paling Aktif</p>
+              {leaderboard.topSchools.length === 0 ? (
+                <p className="text-xs text-gray-400">Belum ada data minggu ini.</p>
+              ) : (
+                <div className="space-y-2.5">
+                  {leaderboard.topSchools.slice(0, 5).map((s: any) => (
+                    <div key={s.school} className="flex items-center gap-2.5">
+                      <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 ${s.rank === 1 ? "bg-amber-100 text-amber-700" : s.rank === 2 ? "bg-slate-200 text-slate-600" : s.rank === 3 ? "bg-orange-100 text-orange-700" : "bg-gray-100 text-gray-500"}`}>{s.rank}</span>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs font-semibold text-gray-800 truncate">{s.school}</p>
+                        <p className="text-[10px] text-gray-400">{s.karyaCount} karya · {s.likeCount} like · {s.commentCount} komentar</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+            <div className="md:col-span-2 bg-white rounded-2xl border border-gray-100 p-5 shadow-sm">
+              <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
+                <p className="font-bold text-sm text-gray-900 flex items-center gap-2"><Trophy size={15} className="text-amber-500" /> Peringkat Penulis</p>
+                <div className="flex gap-1 overflow-x-auto">
+                  {[["all", "Semua"], ["school", "Sekolah Saya"], ["city", "Kabupaten"], ["province", "Provinsi"], ["country", "Indonesia"]].map(([val, label]) => (
+                    <button key={val} onClick={() => setScope(val)}
+                      className={`whitespace-nowrap px-2.5 py-1 rounded-lg text-[10px] font-semibold transition-all ${scope === val ? "bg-emerald-600 text-white" : "bg-gray-100 text-gray-500 hover:bg-gray-200"}`}>
+                      {label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              {leaderboard.leaderboard.length === 0 ? (
+                <p className="text-xs text-gray-400 py-4 text-center">Belum ada karya di lingkup ini minggu ini.</p>
+              ) : (
+                <div className="space-y-2">
+                  {leaderboard.leaderboard.slice(0, 8).map((c: any) => (
+                    <div key={c.user.id} className="flex items-center gap-3 p-2 rounded-xl hover:bg-gray-50 transition-colors">
+                      <span className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 ${c.rank === 1 ? "bg-amber-400 text-white" : c.rank === 2 ? "bg-slate-400 text-white" : c.rank === 3 ? "bg-orange-400 text-white" : "bg-gray-100 text-gray-500"}`}>{c.rank}</span>
+                      <div className="relative w-8 h-8 rounded-full bg-violet-100 flex items-center justify-center text-violet-700 text-[10px] font-bold shrink-0">
+                        <span className="relative z-0">{c.user.fullName.charAt(0)}</span>
+                        {c.user.avatar && <img src={c.user.avatar} alt="" className="absolute inset-0 z-10 w-full h-full rounded-full object-cover" onError={e => (e.currentTarget.style.display = "none")} />}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs font-semibold text-gray-800 truncate">{c.user.fullName}</p>
+                        <p className="text-[10px] text-gray-400 truncate">{c.user.school || "Siswa"} · "{c.karya.title}"</p>
+                      </div>
+                      <div className="flex items-center gap-2 text-[10px] text-gray-400 shrink-0">
+                        <span className="flex items-center gap-0.5"><IconHeart size={10} className="text-rose-400" />{c.likes}</span>
+                        <span className="flex items-center gap-0.5"><IconChat size={10} className="text-emerald-400" />{c.comments}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm">
+              <p className="font-bold text-sm text-gray-900 flex items-center gap-2 mb-3"><Medal size={15} className="text-violet-500" /> Guru Penggerak Literasi</p>
+              {leaderboard.topTeachers.length === 0 ? (
+                <p className="text-xs text-gray-400">Belum ada karya dari kelasmu minggu ini.</p>
+              ) : (
+                <div className="space-y-2.5">
+                  {leaderboard.topTeachers.slice(0, 5).map((s: any) => (
+                    <div key={s.school} className="flex items-center gap-2.5">
+                      <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 ${s.rank === 1 ? "bg-violet-100 text-violet-700" : "bg-gray-100 text-gray-500"}`}>{s.rank}</span>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs font-semibold text-gray-800 truncate">{s.school}</p>
+                        <p className="text-[10px] text-gray-400">{s.muridKarya} karya murid · {s.likeCount} like · {s.commentCount} komentar</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ── Penulis Teraktif ── */}
+      <section>
+        <h2 className="font-bold text-gray-900 flex items-center gap-2 mb-3"><Users size={16} className="text-emerald-600" /> Penulis Teraktif</h2>
+        {!stats?.penulisTeraktif?.length ? (
+          <p className="text-sm text-gray-400 py-6 text-center bg-white rounded-2xl border border-gray-100">Belum ada penulis di kelasmu.</p>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            {stats.penulisTeraktif.map((p: any) => (
+              <div key={p.user.id} className="flex items-center gap-3 p-2.5 bg-white rounded-xl border border-gray-100 hover:border-emerald-200 transition-all">
+                <span className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 ${p.rank === 1 ? "bg-emerald-500 text-white" : p.rank === 2 ? "bg-slate-400 text-white" : p.rank === 3 ? "bg-orange-300 text-white" : "bg-gray-100 text-gray-500"}`}>{p.rank}</span>
+                <div className="relative w-8 h-8 rounded-full bg-violet-100 flex items-center justify-center text-violet-700 text-[10px] font-bold shrink-0">
+                  <span className="relative z-0">{p.user.fullName.charAt(0)}</span>
+                  {p.user.avatar && <img src={p.user.avatar} alt="" className="absolute inset-0 z-10 w-full h-full rounded-full object-cover" onError={e => (e.currentTarget.style.display = "none")} />}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs font-semibold text-gray-800 truncate">{p.user.fullName}</p>
+                  <p className="text-[10px] text-gray-400 truncate">{p.user.school || "Siswa"} · {p.user.rankTitle}</p>
+                </div>
+                <div className="flex items-center gap-2 text-[10px] text-gray-400 shrink-0">
+                  <span className="flex items-center gap-0.5"><IconPen size={10} className="text-emerald-500" />{p.karya}</span>
+                  <span className="flex items-center gap-0.5"><IconHeart size={10} className="text-rose-400" />{p.likes}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </section>
+
+      {/* ── Tantangan Literasi ── */}
+      {stats?.challenge && (
+        <section>
+          <div className="bg-gradient-to-br from-violet-600 via-purple-600 to-fuchsia-600 rounded-2xl p-5 text-white relative overflow-hidden">
+            <div className="absolute -right-4 -top-4 opacity-20"><Trophy size={100} /></div>
+            <p className="text-[11px] font-bold uppercase tracking-wider text-violet-200 flex items-center gap-1.5"><Trophy size={13} /> Tantangan Literasi · {stats.challenge.weekLabel}</p>
+            <h2 className="font-bold text-lg mt-1.5">{stats.challenge.theme}</h2>
+            <p className="text-sm text-violet-100 mt-1 max-w-md">{stats.challenge.prompt}</p>
+            <p className="text-xs text-violet-200 mt-3">Karya pertama pemenang tantangan mendapat koin bonus.</p>
+            <a href="/guru/kelasku" className="mt-3 inline-flex items-center gap-1.5 text-xs font-semibold bg-white/20 hover:bg-white/30 transition-colors px-3.5 py-2 rounded-full">
+              Ajak Kelas Ikut <ArrowRight size={12} />
+            </a>
+          </div>
+        </section>
+      )}
+
+      {/* ── Wawasan AI ── */}
+      {stats?.insight?.length > 0 && (
+        <section>
+          <h2 className="font-bold text-gray-900 flex items-center gap-2 mb-3"><Lightbulb size={16} className="text-amber-500" /> Wawasan AI</h2>
+          <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm space-y-2.5">
+            {stats.insight.map((t: string, i: number) => (
+              <p key={i} className="text-sm text-gray-700 flex items-start gap-2"><Sparkles size={14} className="text-amber-400 mt-0.5 shrink-0" />{t}</p>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* ── Rekomendasi ── */}
+      {stats?.rekomendasi?.length > 0 && (
+        <section>
+          <h2 className="font-bold text-gray-900 flex items-center gap-2 mb-3"><Wand2 size={16} className="text-emerald-600" /> Rekomendasi untuk Guru</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            {stats.rekomendasi.map((r: any, i: number) => (
+              <div key={i} className="bg-white rounded-2xl border border-gray-100 p-4 shadow-sm flex flex-col">
+                <div className="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center mb-2">
+                  {r.icon === "trophy" ? <Trophy size={16} /> : r.icon === "users" ? <Users size={16} /> : r.icon === "star" ? <Star size={16} /> : <IconPen size={16} />}
+                </div>
+                <p className="text-sm font-semibold text-gray-900 leading-snug">{r.judul}</p>
+                <p className="text-xs text-gray-500 mt-1 flex-1">{r.deskripsi}</p>
+                {r.href && <a href={r.href} className="mt-2.5 text-xs font-semibold text-emerald-600 hover:underline inline-flex items-center gap-1">Buka <ArrowRight size={11} /></a>}
+              </div>
+            ))}
+          </div>
+        </section>
       )}
 
       {/* ═══ MODAL ═══ */}
@@ -737,9 +942,15 @@ export default function GuruFeedKaryaPage() {
                 <span className="flex items-center gap-1.5 text-sm text-gray-400">
                   <IconEye size={18} />{modalKarya.viewsCount}
                 </span>
+                <button onClick={(e) => { e.stopPropagation(); handleAIFeedback(modalKarya); }}
+                  disabled={aiFeedback.loading}
+                  className={`ml-auto flex items-center gap-1.5 text-sm font-medium transition-all ${aiFeedback.loading ? "text-gray-300" : "text-violet-600 hover:text-violet-700"}`}>
+                  {aiFeedback.loading ? <div className="animate-spin w-4 h-4 border-2 border-violet-500 border-t-transparent rounded-full" /> : <Wand2 size={16} />}
+                  Umpan Balik AI
+                </button>
                 <button onClick={(e) => { e.stopPropagation(); toggleFeatured(modalKarya, e); }}
                   disabled={featureLoading === modalKarya.id}
-                  className={`ml-auto flex items-center gap-1.5 text-sm font-medium transition-all ${
+                  className={`flex items-center gap-1.5 text-sm font-medium transition-all ${
                     modalKarya.isFeatured ? "text-yellow-500" : "text-gray-400 hover:text-yellow-500"
                   }`}>
                   <Star size={18} fill={modalKarya.isFeatured ? "currentColor" : "none"} />
@@ -750,6 +961,57 @@ export default function GuruFeedKaryaPage() {
                   <Flag size={18} />
                 </button>
               </div>
+
+              {/* Umpan Balik AI */}
+              {aiFeedback.open && (
+                <div className="mb-5 p-4 rounded-xl border border-violet-200 bg-violet-50/60">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Wand2 size={15} className="text-violet-600" />
+                    <p className="text-sm font-bold text-violet-700">Umpan Balik AI</p>
+                    <button onClick={() => setAiFeedback({ open: false, loading: false, result: null, error: "" })}
+                      className="ml-auto text-gray-400 hover:text-gray-600"><X size={14} /></button>
+                  </div>
+                  {aiFeedback.loading ? (
+                    <div className="flex items-center gap-2 text-sm text-violet-600 py-2">
+                      <div className="animate-spin w-4 h-4 border-2 border-violet-500 border-t-transparent rounded-full" />
+                      Menganalisis karya murid...
+                    </div>
+                  ) : aiFeedback.error ? (
+                    <p className="text-sm text-red-600">{aiFeedback.error}</p>
+                  ) : aiFeedback.result ? (
+                    <div className="space-y-3 text-sm text-gray-700">
+                      {typeof aiFeedback.result === "object" && aiFeedback.result.overallFeedback && (
+                        <p className="font-medium text-gray-800">{aiFeedback.result.overallFeedback}</p>
+                      )}
+                      {typeof aiFeedback.result === "object" && Array.isArray(aiFeedback.result.strengths) && aiFeedback.result.strengths.length > 0 && (
+                        <div>
+                          <p className="text-xs font-bold text-emerald-700 mb-1">Kekuatan</p>
+                          <ul className="space-y-1 list-disc pl-4">
+                            {aiFeedback.result.strengths.map((s: string, i: number) => <li key={i}>{s}</li>)}
+                          </ul>
+                        </div>
+                      )}
+                      {typeof aiFeedback.result === "object" && Array.isArray(aiFeedback.result.areasToImprove) && aiFeedback.result.areasToImprove.length > 0 && (
+                        <div>
+                          <p className="text-xs font-bold text-amber-700 mb-1">Area yang Bisa Ditingkatkan</p>
+                          <ul className="space-y-1 list-disc pl-4">
+                            {aiFeedback.result.areasToImprove.map((s: string, i: number) => <li key={i}>{s}</li>)}
+                          </ul>
+                        </div>
+                      )}
+                      {typeof aiFeedback.result === "object" && Array.isArray(aiFeedback.result.revisionTips) && aiFeedback.result.revisionTips.length > 0 && (
+                        <div>
+                          <p className="text-xs font-bold text-violet-700 mb-1">Tips Perbaikan</p>
+                          <ul className="space-y-1 list-disc pl-4">
+                            {aiFeedback.result.revisionTips.map((s: string, i: number) => <li key={i}>{s}</li>)}
+                          </ul>
+                        </div>
+                      )}
+                      {typeof aiFeedback.result === "string" && <p className="whitespace-pre-wrap">{aiFeedback.result}</p>}
+                    </div>
+                  ) : null}
+                </div>
+              )}
 
               {/* Comment Input */}
               <div className="flex gap-3 mb-4">
@@ -829,7 +1091,6 @@ export default function GuruFeedKaryaPage() {
           </div>
         </div>
       )}
-    </div>
 
       {/* ═══ NILAI MODAL ═══ */}
       {nilaiModal && (
@@ -901,11 +1162,6 @@ export default function GuruFeedKaryaPage() {
           {toast}
         </div>
       )}
-
-      {/* Right Panel — Papan Pengumuman */}
-      <div className="xl:sticky xl:top-5 min-w-0">
-        {user && <GuruPengumumanPanel userId={user.id || user.userId} />}
-      </div>
     </div>
   );
 }

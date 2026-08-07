@@ -6,7 +6,7 @@ import {
   Users, Plus, Copy, ChevronLeft, Trash2, Edit3,
   CheckCircle, Clock, BookOpen, Gamepad2, GraduationCap,
   MoreVertical, X, Eye, EyeOff, RefreshCw, Search, Crown, AlertCircle,
-  Share2, MessageCircle, Send, Megaphone, FileText, ClipboardList, Presentation, Trophy, TrendingUp, Sparkles
+  Share2, MessageCircle, Send, Megaphone, FileText, ClipboardList, Presentation, Trophy, TrendingUp, Sparkles, Pin
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -57,6 +57,9 @@ export default function KelasKuPage() {
   const [showPengumuman, setShowPengumuman] = useState(false);
   const [pengumumanForm, setPengumumanForm] = useState({ judul: "", deskripsi: "", tenggat: "" });
   const [pengumumanGroupId, setPengumumanGroupId] = useState("");
+  const [editingPengumumanId, setEditingPengumumanId] = useState<string | null>(null);
+  const [pinningPengumumanId, setPinningPengumumanId] = useState<string | null>(null);
+  const [deletingPengumumanId, setDeletingPengumumanId] = useState<string | null>(null);
   const [sendingPengumuman, setSendingPengumuman] = useState(false);
   const [pengumumanError, setPengumumanError] = useState("");
 
@@ -201,28 +204,89 @@ export default function KelasKuPage() {
     if (!pengumumanForm.judul.trim()) { setPengumumanError("Judul wajib diisi"); return; }
     setPengumumanError("");
     setSendingPengumuman(true);
+    const url = editingPengumumanId
+      ? `/api/guru/pengumuman/${editingPengumumanId}`
+      : "/api/guru/pengumuman";
     try {
-      const res = await fetch("/api/guru/pengumuman", {
-        method: "POST",
+      const res = await fetch(url, {
+        method: editingPengumumanId ? "PATCH" : "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          groupId: pengumumanGroupId,
+          groupId: editingPengumumanId ? undefined : pengumumanGroupId,
           judul: pengumumanForm.judul.trim(),
           deskripsi: pengumumanForm.deskripsi.trim(),
           tenggat: pengumumanForm.tenggat || null,
         }),
       });
       const data = await res.json();
-      if (!res.ok) { setPengumumanError(data.error || "Gagal mengirim pengumuman"); return; }
+      if (!res.ok) { setPengumumanError(data.error || "Gagal menyimpan pengumuman"); return; }
       setShowPengumuman(false);
+      setEditingPengumumanId(null);
       setPengumumanForm({ judul: "", deskripsi: "", tenggat: "" });
       setPengumumanGroupId("");
-      setToast("Pengumuman terkirim ke murid kelas!");
+      setToast(editingPengumumanId ? "Pengumuman berhasil diperbarui." : "Pengumuman terkirim ke murid kelas!");
       if (pengumumanGroupId) loadDetail(pengumumanGroupId);
     } catch {
-      setPengumumanError("Gagal mengirim pengumuman. Periksa koneksi Anda.");
+      setPengumumanError("Gagal menyimpan pengumuman. Periksa koneksi Anda.");
     } finally {
       setSendingPengumuman(false);
+    }
+  };
+
+  const openEditPengumuman = (p: any) => {
+    setEditingPengumumanId(p.id);
+    setPengumumanGroupId(showGroup || p.groupId || "");
+    setPengumumanForm({
+      judul: p.judul || "",
+      deskripsi: p.deskripsi || "",
+      tenggat: p.tenggat ? new Date(p.tenggat).toISOString().slice(0, 16) : "",
+    });
+    setPengumumanError("");
+    setShowPengumuman(true);
+  };
+
+  const handleTogglePin = async (p: any, e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (pinningPengumumanId) return;
+    setPinningPengumumanId(p.id);
+    try {
+      const res = await fetch(`/api/guru/pengumuman/${p.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ pinned: !p.pinned }),
+      });
+      if (res.ok) {
+        setToast(p.pinned ? "Sematan dilepas." : "Pengumuman disematkan.");
+        if (showGroup) loadDetail(showGroup);
+      } else {
+        const d = await res.json().catch(() => ({}));
+        setToast(d.error || "Gagal mengubah sematan.");
+      }
+    } catch {
+      setToast("Gagal mengubah sematan. Coba lagi.");
+    } finally {
+      setPinningPengumumanId(null);
+    }
+  };
+
+  const handleDeletePengumuman = async (p: any, e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (deletingPengumumanId) return;
+    if (!confirm(`Hapus pengumuman "${p.judul}" beserta semua pengumpulannya?`)) return;
+    setDeletingPengumumanId(p.id);
+    try {
+      const res = await fetch(`/api/guru/pengumuman/${p.id}`, { method: "DELETE" });
+      if (res.ok) {
+        setToast("Pengumuman dihapus.");
+        if (showGroup) loadDetail(showGroup);
+      } else {
+        const d = await res.json().catch(() => ({}));
+        setToast(d.error || "Gagal menghapus pengumuman.");
+      }
+    } catch {
+      setToast("Gagal menghapus pengumuman. Coba lagi.");
+    } finally {
+      setDeletingPengumumanId(null);
     }
   };
 
@@ -719,7 +783,7 @@ export default function KelasKuPage() {
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <h3 className="font-bold text-sm text-slate-700">Pengumuman Kelas</h3>
-                  <button onClick={() => { setPengumumanError(""); setShowPengumuman(true); }}
+                  <button onClick={() => { setEditingPengumumanId(null); setPengumumanForm({ judul: "", deskripsi: "", tenggat: "" }); setPengumumanError(""); setShowPengumuman(true); }}
                     className="text-xs font-semibold text-emerald-600 hover:underline flex items-center gap-1">
                     <Megaphone size={12} /> Buat Pengumuman
                   </button>
@@ -730,11 +794,37 @@ export default function KelasKuPage() {
                   return (
                     <div className="space-y-2 max-h-[50vh] overflow-y-auto pr-1">
                       {pengList.map((p: any) => (
-                        <div key={p.id} className="p-3 bg-slate-50 rounded-xl">
-                          <p className="text-sm font-semibold text-slate-900">{p.judul}</p>
-                          <p className="text-[11px] text-slate-400 mt-0.5">
-                            {new Date(p.createdAt).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" })} · {p._count.submissions} murid merespons
-                          </p>
+                        <div key={p.id} className={`p-3 rounded-xl border ${p.pinned ? "bg-amber-50 border-amber-200" : "bg-slate-50 border-transparent"}`}>
+                          <div className="flex items-start gap-2">
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2">
+                                {p.pinned && (
+                                  <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-amber-700 bg-amber-100 px-1.5 py-0.5 rounded-full">
+                                    <Pin size={10} /> Disematkan
+                                  </span>
+                                )}
+                                <p className="text-sm font-semibold text-slate-900 truncate">{p.judul}</p>
+                              </div>
+                              {p.deskripsi && <p className="text-xs text-slate-500 mt-0.5 line-clamp-2 whitespace-pre-wrap">{p.deskripsi}</p>}
+                              <p className="text-[11px] text-slate-400 mt-0.5">
+                                {new Date(p.createdAt).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" })} · {p._count.submissions} murid merespons
+                              </p>
+                            </div>
+                            <div className="flex items-center gap-0.5 shrink-0">
+                              <button onClick={(e) => handleTogglePin(p, e)} disabled={pinningPengumumanId === p.id} title={p.pinned ? "Lepas sematan" : "Sematkan"}
+                                className={`p-1.5 rounded-lg transition-colors ${p.pinned ? "text-amber-600 hover:bg-amber-100" : "text-slate-400 hover:bg-slate-200"}`}>
+                                <Pin size={13} className={p.pinned ? "fill-current" : ""} />
+                              </button>
+                              <button onClick={() => openEditPengumuman(p)} title="Ubah"
+                                className="p-1.5 rounded-lg text-slate-400 hover:bg-slate-200 hover:text-slate-700 transition-colors">
+                                <Edit3 size={13} />
+                              </button>
+                              <button onClick={(e) => handleDeletePengumuman(p, e)} disabled={deletingPengumumanId === p.id} title="Hapus"
+                                className="p-1.5 rounded-lg text-slate-400 hover:bg-red-50 hover:text-red-500 transition-colors">
+                                <Trash2 size={13} />
+                              </button>
+                            </div>
+                          </div>
                         </div>
                       ))}
                     </div>
@@ -848,12 +938,16 @@ export default function KelasKuPage() {
           <div className="bg-white rounded-2xl p-6 max-w-md w-full" onClick={(e) => e.stopPropagation()}>
             <h2 className="text-lg font-bold mb-1 flex items-center gap-2">
               <Megaphone className="w-5 h-5 text-emerald-600" />
-              Buat Pengumuman
+              {editingPengumumanId ? "Ubah Pengumuman" : "Buat Pengumuman"}
             </h2>
             <p className="text-sm text-slate-500 mb-4">
-              {pengumumanGroupId ? `Dikirim ke kelas: ${groups.find(g => g.id === pengumumanGroupId)?.name || ""}` : "Pilih kelas dulu dari daftar kelas."}
+              {editingPengumumanId
+                ? `Mengubah pengumuman di kelas: ${groups.find(g => g.id === pengumumanGroupId)?.name || ""}`
+                : pengumumanGroupId
+                  ? `Dikirim ke kelas: ${groups.find(g => g.id === pengumumanGroupId)?.name || ""}`
+                  : "Pilih kelas dulu dari daftar kelas."}
             </p>
-            {!pengumumanGroupId && (
+            {!pengumumanGroupId && !editingPengumumanId && (
               <select value={pengumumanGroupId} onChange={(e) => setPengumumanGroupId(e.target.value)}
                 className="w-full h-11 px-4 mb-4 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-500">
                 <option value="">Pilih kelas...</option>
@@ -886,10 +980,10 @@ export default function KelasKuPage() {
                 <button onClick={() => setShowPengumuman(false)} className="flex-1 py-2.5 border-2 border-slate-200 text-slate-600 font-bold rounded-xl">
                   Batal
                 </button>
-                <button onClick={handleSendPengumuman} disabled={sendingPengumuman || !pengumumanGroupId}
+                <button onClick={handleSendPengumuman} disabled={sendingPengumuman || (!editingPengumumanId && !pengumumanGroupId)}
                   className="flex-1 py-2.5 bg-emerald-600 text-white font-bold rounded-xl hover:bg-emerald-700 disabled:opacity-50 flex items-center justify-center gap-2">
                   {sendingPengumuman ? <div className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full" /> : <Send size={14} />}
-                  Kirim
+                  {editingPengumumanId ? "Simpan Perubahan" : "Kirim"}
                 </button>
               </div>
             </div>

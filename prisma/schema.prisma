@@ -2039,6 +2039,7 @@ model Pengumuman {
   tenggat      DateTime?
   lampiran     String? // URL file referensi (PDF/DOCX) di Supabase Storage
   lampiranNama String? // nama file asli untuk ditampilkan
+  pinned       Boolean   @default(false) // pengumuman disematkan guru di papan kelas
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
 

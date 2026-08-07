@@ -26,7 +26,7 @@ export async function GET(req: Request) {
       include: {
         _count: { select: { members: true } },
         pengumumans: {
-          orderBy: { createdAt: "desc" },
+          orderBy: [{ pinned: "desc" }, { createdAt: "desc" }],
           include: { _count: { select: { submissions: true } } },
         },
       },

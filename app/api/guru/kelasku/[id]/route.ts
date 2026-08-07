@@ -50,8 +50,8 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
       }),
       db.pengumuman.findMany({
         where: { groupId: id },
-        select: { id: true, judul: true, createdAt: true, tenggat: true, _count: { select: { submissions: true } } },
-        orderBy: { createdAt: "desc" },
+        select: { id: true, judul: true, deskripsi: true, pinned: true, createdAt: true, tenggat: true, _count: { select: { submissions: true } } },
+        orderBy: [{ pinned: "desc" }, { createdAt: "desc" }],
         take: 50,
       }),
       db.materiKirim.findMany({

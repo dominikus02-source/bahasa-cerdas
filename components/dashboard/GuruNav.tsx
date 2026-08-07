@@ -38,9 +38,9 @@ export const GURU_NAV: NavGroup[] = [
   },
   {
     id: "panggung",
-    label: "Panggung Literasi",
+    label: "Pusat Literasi",
     icon: Sparkles,
-    links: [{ label: "Panggung Literasi", href: "/guru/feed-karya" }],
+    links: [{ label: "Pusat Literasi", href: "/guru/feed-karya" }],
   },
   {
     id: "toko",

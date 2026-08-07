@@ -2582,3 +2582,45 @@ Jadikan AI sebagai ASISTEN GURU untuk penilaian konstruktif (Menulis/Berbicara) 
 2. Game server revival (VPS mati)
 3. GameRoom migration SQL via Supabase dashboard
 4. UI game solo: badge-score client vs server masih beda (kosmetik)
+
+---
+
+## Phase PUSAT LITERASI — Transformasi Feed Karya + Pengumuman Pin (Aug 7, 2026)
+
+### Goal
+Ubah "Panggung Literasi" (`/guru/feed-karya`) dari social feed + papan pengumuman menjadi pusat aktivitas literasi guru (dashboard statistik + search + AI feedback + tantangan mingguan + rekomendasi rule-based); pindahkan pengumuman (CRUD + semat/pin) ke `/guru/kelasku`. **ADDITIVE ONLY** — tidak ada route/API/model dihapus.
+
+### Pengumuman → Kelasku (CRUD + Pin)
+- `prisma/schema.prisma` model `Pengumuman`: kolom `pinned Boolean @default(false)`.
+- Migration manual `prisma/migrations/manual/2026-08-07_pengumuman_pin.sql` (ALTER TABLE idempoten + index `Pengumuman_groupId_pinned_idx`) — **WAJIB dijalankan user di Supabase SQL Editor**.
+- `app/api/guru/pengumuman/[id]/route.ts`: `PATCH` baru (judul/deskripsi/tenggat/toggle pinned).
+- `app/api/guru/pengumuman/route.ts` + `app/api/guru/kelasku/[id]/route.ts`: `orderBy [{ pinned: "desc" }, { createdAt: "desc" }]`, select + `pinned`.
+- `app/(dashboard)/guru/kelasku/page.tsx`: tab pengumuman + pin badge + tombol edit/hapus + modal edit; icon `Pin` di import lucide.
+
+### API Literasi Baru (rule-based, tanpa LLM)
+- `app/api/guru/literasi/stats/route.ts` — GET `?groupId=` opsional. Output: `total` (karya/penulis/views/likes/komentar), `mingguIni` (WIB), `jenis` (sebaran), `penulisTeraktif` top10, `palingPopuler` top5, `pilihanAI` top4 (scoring rule-based: engagement*3 + recency*5 + featured*2 + views bonus), `insight`, `rekomendasi`, `challenge` (dari `getWeeklyChallenge`).
+
+### Feed Karya → Pusat Literasi
+- `app/(dashboard)/guru/feed-karya/page.tsx` — container `space-y-6 max-w-4xl`, header "Pusat Literasi", statistik 4 kartu, search realtime (`q` → `fetchKarya`), section: Karya Terbaru, Pilihan AI, Paling Banyak Diapresiasi, Apresiasi Minggu Ini (leaderboard), Penulis Teraktif, Tantangan Literasi, Wawasan AI, Rekomendasi. Panel `GuruPengumumanPanel` dihapus dari halaman. Label lokal: "Editor Choice"→"Pilihan Kelas", "Trending"→"Sedang Ramai", "Top Creator"→"Penulis Terbaik".
+- **AI Feedback di modal detail karya**: tombol "Umpan Balik AI" (`Wand2`) → `handleAIFeedback` memanggil `/api/ai/agents/run` dengan `agentId: "feedback"`, `saveToHistory: false`, `outputFormat: "json"` (sengaja tanpa riwayat agar tidak memakai kuota/history; guru premium/unlimited bypass). Hasil dirender: `overallFeedback`, `strengths` (emerald), `areasToImprove` (amber), `revisionTips` (violet), `exampleRevision`, fallback string.
+- `components/dashboard/GuruNav.tsx`: label "Panggung Literasi" → **"Pusat Literasi"** (2 tempat).
+
+### Verifikasi
+| Check | Hasil |
+|-------|-------|
+| `npx tsc --noEmit` | ✅ 0 errors |
+| ESLint (6 file) | ✅ 0 errors (8 warning `<img>` — konsisten konvensi arena) |
+| `npm run test:guru-phase` | ✅ SEMUA LULUS |
+| `npm run test:gamification-engine` | ✅ SEMUA LULUS |
+| `npm run build` (dummy env) | ✅ 358 routes, 0 errors |
+
+### Catatan
+- `db.group.findMany` dibuat dua cabang (dengan/tanpa groupId) untuk menghindari union type error strict.
+- AI Feedback memakai agent "feedback" yang sudah ada — tidak ada LLM baru (sesuai spec 17 langkah).
+- Migration `2026-08-07_pengumuman_pin.sql` **sudah dijalankan user di Supabase SQL Editor** (kolom `pinned` + index aktif).
+
+### Remaining
+1. TKA UTBK/Guru enrichment 30 → 150
+2. Game server revival (VPS mati)
+3. GameRoom migration SQL via Supabase dashboard
+4. UI game solo: badge-score client vs server masih beda (kosmetik)
