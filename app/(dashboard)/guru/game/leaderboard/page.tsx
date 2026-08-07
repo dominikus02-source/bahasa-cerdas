@@ -79,7 +79,7 @@ export default function GuruGameLeaderboardPage() {
                     <tr className="border-b border-slate-100 bg-slate-50">
                       <th className="text-left px-4 py-3 font-semibold text-slate-600 text-xs">#</th>
                       <th className="text-left px-4 py-3 font-semibold text-slate-600 text-xs">Guru</th>
-                      <th className="text-right px-4 py-3 font-semibold text-slate-600 text-xs">Teacher XP</th>
+                      <th className="text-right px-4 py-3 font-semibold text-slate-600 text-xs">Xp Guru</th>
                     </tr>
                   </thead>
                   <tbody>

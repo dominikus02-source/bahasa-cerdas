@@ -462,9 +462,9 @@ export default function IramaKata() {
         const g2 = c.createLinearGradient(0, -18, 0, 18);
         g2.addColorStop(0, "#FBBF24");
         g2.addColorStop(1, "#FF6B6B");
-        c.strokeText(this.combo + " COMBO", 0, 0);
+        c.strokeText(this.combo + " RENTETAN", 0, 0);
         c.fillStyle = g2;
-        c.fillText(this.combo + " COMBO", 0, 0);
+        c.fillText(this.combo + " RENTETAN", 0, 0);
         c.restore();
       }
 
@@ -681,7 +681,7 @@ export default function IramaKata() {
             </div>
             <h1 className="font-extrabold text-4xl mb-2">Ketuk Kata yang <span className="text-[#FF6B6B]">Tepat!</span></h1>
             <p className="opacity-70 text-sm max-w-sm mx-auto mb-5">
-              Kata-kata jatuh di 4 jalur. Ketuk hanya kata yang <b>sesuai aturan level</b> saat menyentuh garis — biarkan sisanya lewat. Salah ketuk, combo hangus!
+              Kata-kata jatuh di 4 jalur. Ketuk hanya kata yang <b>sesuai aturan tingkat</b> saat menyentuh garis — biarkan sisanya lewat. Salah ketuk, rentetan hangus!
             </p>
             <div className="flex justify-center gap-2 mb-1">
               {["D", "F", "J", "K"].map((k, i) => (
@@ -723,7 +723,7 @@ export default function IramaKata() {
               <button className={`${btn} w-11 h-11 bg-white`} onClick={() => setScreen("start")} aria-label="Kembali">
                 <X className="w-5 h-5" />
               </button>
-              <h2 className="font-extrabold text-2xl">Pilih Level</h2>
+              <h2 className="font-extrabold text-2xl">Pilih Tingkat</h2>
               <div className="w-11" />
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
@@ -757,7 +757,7 @@ export default function IramaKata() {
                         {best > 0 && <span className="text-[10px] font-extrabold ml-1.5 opacity-80">{best}</span>}
                       </div>
                     ) : (
-                      <div className="text-[10px] font-bold">Selesaikan level sebelumnya</div>
+                      <div className="text-[10px] font-bold">Selesaikan tingkat sebelumnya</div>
                     )}
                   </button>
                 );
@@ -776,7 +776,7 @@ export default function IramaKata() {
                 <span ref={(el) => { hudRef.current.score = el; }} className="font-extrabold text-lg leading-none">0</span>
               </div>
               <div className="rounded-xl border-[3px] border-[#161B3A] bg-[#FBBF24] px-3 py-1.5 shadow-[3px_3px_0_#161B3A]">
-                <div className="text-[9px] font-extrabold uppercase opacity-70">Combo</div>
+                <div className="text-[9px] font-extrabold uppercase opacity-70">Rentetan</div>
                 <span ref={(el) => { hudRef.current.combo = el; }} className="font-extrabold text-lg leading-none">0×</span>
               </div>
               <div className="rounded-xl border-[3px] border-[#161B3A] bg-[#FF6B6B] px-3 py-1.5 shadow-[3px_3px_0_#161B3A]">
@@ -877,7 +877,7 @@ export default function IramaKata() {
             <div className="flex justify-center gap-3 mb-5 text-sm">
               <div className="bg-white border-[3px] border-[#161B3A] rounded-xl px-3 py-1.5 shadow-[2px_2px_0_#161B3A]">
                 <Zap className="w-4 h-4 inline mr-1 text-amber-500" />
-                Combo maks <b>{result.maxCombo}×</b>
+                Rentetan maks <b>{result.maxCombo}×</b>
               </div>
               <div className="bg-white border-[3px] border-[#161B3A] rounded-xl px-3 py-1.5 shadow-[2px_2px_0_#161B3A]">
                 <Trophy className="w-4 h-4 inline mr-1 text-violet-500" />
@@ -895,7 +895,7 @@ export default function IramaKata() {
                 </button>
               )}
               <button className={`${btn} px-5 py-3 bg-[#FBBF24]`} onClick={() => setScreen("levels")}>
-                Pilih Level
+                Pilih Tingkat
               </button>
             </div>
           </div>

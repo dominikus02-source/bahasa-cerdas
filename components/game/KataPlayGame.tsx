@@ -780,7 +780,7 @@ export default function KataPlayGame({ hideBackButton }: { hideBackButton?: bool
               <div className="pt-1">
                 <div className="flex items-center gap-1.5 mb-2">
                   <BookOpen size={12} className="text-violet-400" />
-                  <span className="text-xs font-semibold text-violet-400">Analisis Agent</span>
+                  <span className="text-xs font-semibold text-violet-400">Analisis Agen</span>
                 </div>
                 {agentSummary.accuracy && (
                   <div className="flex items-center justify-between text-xs mb-1">
@@ -796,7 +796,7 @@ export default function KataPlayGame({ hideBackButton }: { hideBackButton?: bool
                 )}
                 {agentSummary.grade && (
                   <div className="flex items-center justify-between text-xs mb-1">
-                    <span className="text-[#7C7A9E]">Agent Says</span>
+                    <span className="text-[#7C7A9E]">Kata Agen</span>
                     <span className="font-semibold text-violet-300 text-right max-w-[160px]">{agentSummary.grade}</span>
                   </div>
                 )}

@@ -62,7 +62,7 @@ export default function ComboFlash({ combo }: { combo: number }) {
             className="relative text-center select-none"
           >
             <div className="text-5xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-b from-amber-200 to-orange-500 drop-shadow-[0_2px_12px_rgba(251,146,60,0.6)]">
-              COMBO
+              Rentetan
             </div>
             <div className="text-7xl font-black text-white leading-none -mt-1 drop-shadow-[0_2px_14px_rgba(255,255,255,0.35)]">
               ×{show}

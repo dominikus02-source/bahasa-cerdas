@@ -471,7 +471,7 @@ export default function ZelbyDash() {
         c.font = "900 24px system-ui, sans-serif";
         c.fillStyle = "#4ADE80";
         c.textAlign = "center";
-        c.fillText(`${this.combo} COMBO!`, W / 2, 100);
+        c.fillText(`${this.combo} RENTETAN!`, W / 2, 100);
       }
 
       c.restore();
@@ -554,7 +554,7 @@ export default function ZelbyDash() {
               Bantu si cerdik Zelby menangkap <strong>kata yang benar</strong> dan hindari yang salah!
             </p>
             <p className="opacity-60 text-xs mb-6">
-              <Clock className="w-3 h-3 inline mr-1" />90 detik &middot; <Heart className="w-3 h-3 inline mx-1" />3 nyawa &middot; <Zap className="w-3 h-3 inline mx-1" />combo untuk skor tinggi
+              <Clock className="w-3 h-3 inline mr-1" />90 detik &middot; <Heart className="w-3 h-3 inline mx-1" />3 nyawa &middot; <Zap className="w-3 h-3 inline mx-1" />rentetan untuk skor tinggi
             </p>
 
             {highScore > 0 && (
@@ -586,7 +586,7 @@ export default function ZelbyDash() {
                 <div className="font-extrabold text-lg leading-none">{hud.score}</div>
               </div>
               <div className="rounded-xl bg-[#FBBF24] px-2 py-2 shadow-[3px_3px_0_#161B3A] border-[3px] border-[#161B3A]">
-                <div className="text-[8px] font-extrabold uppercase opacity-70">Combo</div>
+                <div className="text-[8px] font-extrabold uppercase opacity-70">Rentetan</div>
                 <div className="font-extrabold text-lg leading-none">{hud.combo}x</div>
               </div>
               <div className="rounded-xl bg-[#FF6B6B] text-white px-2 py-2 shadow-[3px_3px_0_#161B3A] border-[3px] border-[#161B3A]">

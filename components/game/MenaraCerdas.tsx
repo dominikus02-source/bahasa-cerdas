@@ -179,7 +179,7 @@ export default function MenaraCerdas({ backHref = "/arena/game" }: { backHref?: 
                 <div className="font-extrabold text-lg">3 ❤️</div>
               </div>
               <div className="bg-[#FBBF24] border-[3px] border-[#161B3A] rounded-xl p-2 shadow-[3px_3px_0_#161B3A]">
-                <div className="text-[10px] font-extrabold uppercase opacity-70">Combo</div>
+                <div className="text-[10px] font-extrabold uppercase opacity-70">Rentetan</div>
                 <div className="font-extrabold text-lg">Bonus</div>
               </div>
               <div className="bg-[#4ADE80] border-[3px] border-[#161B3A] rounded-xl p-2 shadow-[3px_3px_0_#161B3A]">
@@ -217,7 +217,7 @@ export default function MenaraCerdas({ backHref = "/arena/game" }: { backHref?: 
               <div className="font-extrabold text-lg">{floor}</div>
             </div>
             <div className="bg-[#FBBF24] border-[3px] border-[#161B3A] rounded-xl p-2 shadow-[3px_3px_0_#161B3A]">
-              <div className="text-[9px] font-extrabold uppercase opacity-70">Combo</div>
+              <div className="text-[9px] font-extrabold uppercase opacity-70">Rentetan</div>
               <div className="font-extrabold text-lg">{best}🔥</div>
             </div>
             <div className="bg-[#4ADE80] border-[3px] border-[#161B3A] rounded-xl p-2 shadow-[3px_3px_0_#161B3A]">

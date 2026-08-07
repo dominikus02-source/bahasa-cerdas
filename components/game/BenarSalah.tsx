@@ -337,7 +337,7 @@ export default function BenarSalah({ backHref = "/arena/game" }: { backHref?: st
             <span className="inline-block px-4 py-1.5 bg-[#FBBF24] border-[3px] border-[#161B3A] rounded-full font-extrabold text-xs shadow-[3px_3px_0_#161B3A] mb-4">9 Level • 3 Nyawa</span>
             <h1 className="font-extrabold text-4xl mb-2">Benar atau <span className="text-[#FF6B6B]">Salah?</span></h1>
             <p className="opacity-70 text-sm max-w-sm mb-1">Baca soal dan jawaban yang muncul. Tentukan: jawaban itu <b>benar</b> atau <b>salah</b>?</p>
-            <p className="text-xs opacity-50 mb-6">Semakin cepat & tepat, combo makin tinggi!</p>
+            <p className="text-xs opacity-50 mb-6">Semakin cepat & tepat, rentetan makin tinggi!</p>
 
             <div className="grid grid-cols-3 gap-2.5 mb-6 w-full max-w-xs">
               <div className="bg-[#4ADE80] border-[3px] border-[#161B3A] rounded-xl p-2 shadow-[3px_3px_0_#161B3A]">
@@ -345,7 +345,7 @@ export default function BenarSalah({ backHref = "/arena/game" }: { backHref?: st
                 <div className="font-extrabold text-lg">+1</div>
               </div>
               <div className="bg-[#FBBF24] border-[3px] border-[#161B3A] rounded-xl p-2 shadow-[3px_3px_0_#161B3A]">
-                <div className="text-[10px] font-extrabold uppercase opacity-70">Combo</div>
+                <div className="text-[10px] font-extrabold uppercase opacity-70">Rentetan</div>
                 <div className="font-extrabold text-lg">Bonus</div>
               </div>
               <div className="bg-[#FF6B6B] text-white border-[3px] border-[#161B3A] rounded-xl p-2 shadow-[3px_3px_0_#161B3A]">
@@ -356,7 +356,7 @@ export default function BenarSalah({ backHref = "/arena/game" }: { backHref?: st
 
             <div className="flex flex-wrap justify-center gap-3 mb-2">
               <button className={`${btnBase} px-6 py-3.5 bg-[#FF6B6B] text-white text-lg`} onClick={() => setScreen("levels")}>
-                <Play className="w-5 h-5" /> Pilih Level
+                <Play className="w-5 h-5" /> Pilih Tingkat
               </button>
               <button className={`${btnBase} px-5 py-3.5 bg-white`} onClick={() => startLevel(1)}>
                 Langsung Level 1
@@ -387,7 +387,7 @@ export default function BenarSalah({ backHref = "/arena/game" }: { backHref?: st
             <button className={`${btnBase} w-11 h-11 bg-white`} onClick={() => setScreen("start")} aria-label="Kembali">
               <X className="w-5 h-5" />
             </button>
-            <h2 className="font-extrabold text-2xl">Pilih Level</h2>
+            <h2 className="font-extrabold text-2xl">Pilih Tingkat</h2>
             <div className="w-11" />
           </div>
           <div className="bs-screen bg-white rounded-3xl p-5 shadow-[6px_6px_0_#161B3A] border-4 border-[#161B3A]">
@@ -420,7 +420,7 @@ export default function BenarSalah({ backHref = "/arena/game" }: { backHref?: st
                         {best > 0 && <span className="text-[10px] font-extrabold ml-1.5 opacity-80">{best}</span>}
                       </div>
                     ) : (
-                      <div className="text-[10px] font-bold">Selesaikan level sebelumnya</div>
+                      <div className="text-[10px] font-bold">Selesaikan tingkat sebelumnya</div>
                     )}
                   </button>
                 );
@@ -561,7 +561,7 @@ export default function BenarSalah({ backHref = "/arena/game" }: { backHref?: st
               <div className="font-extrabold text-lg">{result.accuracy}%</div>
             </div>
             <div className="bg-white border-[3px] border-[#161B3A] rounded-xl p-2 shadow-[2px_2px_0_#161B3A]">
-              <div className="text-[9px] font-extrabold uppercase opacity-70">Combo</div>
+              <div className="text-[9px] font-extrabold uppercase opacity-70">Rentetan</div>
               <div className="font-extrabold text-lg">{result.maxCombo}</div>
             </div>
           </div>
@@ -582,7 +582,7 @@ export default function BenarSalah({ backHref = "/arena/game" }: { backHref?: st
               </button>
             )}
             <button onClick={() => setScreen("levels")} className={`${btnBase} w-full py-3.5 bg-[#FBBF24] font-bold`}>
-              Pilih Level
+              Pilih Tingkat
             </button>
             <Link href={backHref} className={`${btnBase} w-full py-3.5 bg-white/80 text-[#161B3A]/80 font-semibold text-center`}>
               Kembali ke Arena

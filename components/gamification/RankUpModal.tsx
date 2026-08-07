@@ -26,12 +26,12 @@ export function RankUpModal() {
     if (!rankUp) return [];
     const cfg = getRankReward(rank);
     const items: { icon: React.ReactNode; label: string; sub: string }[] = [
-      { icon: <Medal size={16} />, label: `Badge ${cfg.badgeName}`, sub: `Badge Rank ${rankUp.rankLabel}` },
+      { icon: <Medal size={16} />, label: `Lencana ${cfg.badgeName}`, sub: `Lencana ${rankUp.rankLabel}` },
     ];
-    if (cfg.coin > 0) items.push({ icon: <Coins size={16} />, label: `${cfg.coin} Koin`, sub: "Coin reward rank" });
-    items.push({ icon: <Type size={16} />, label: `Title "${cfg.title}"`, sub: "Title baru di profil" });
-    items.push({ icon: <ImageIcon size={16} />, label: "Frame Avatar", sub: `Frame ${rankUp.rankLabel}` });
-    if (cfg.mysteryBox) items.push({ icon: <Gift size={16} />, label: "Mystery Box", sub: `Bonus ${cfg.mysteryBoxCoins} Koin acak` });
+    if (cfg.coin > 0) items.push({ icon: <Coins size={16} />, label: `${cfg.coin} Koin`, sub: "Hadiah koin naik pangkat" });
+    items.push({ icon: <Type size={16} />, label: `Gelar "${cfg.title}"`, sub: "Gelar baru di profil" });
+    items.push({ icon: <ImageIcon size={16} />, label: "Bingkai Avatar", sub: `Bingkai ${rankUp.rankLabel}` });
+    if (cfg.mysteryBox) items.push({ icon: <Gift size={16} />, label: "Kotak Misteri", sub: `Bonus ${cfg.mysteryBoxCoins} Koin acak` });
     return items;
   }, [rankUp, rank]);
 

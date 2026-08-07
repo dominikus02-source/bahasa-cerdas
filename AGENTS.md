@@ -2362,3 +2362,70 @@ Redesign halaman `/guru/game` menjadi dashboard engagement guru: alasan membuka 
 | `npm run test:gamification-engine` | ✅ SEMUA LULUS |
 | `npm run test:guru-phase` | ✅ SEMUA LULUS |
 | `npm run build` (dummy env) | ✅ 357 pages, 0 errors |
+
+---
+
+## Phase GIM GURU UI LOCALE — Lokalisasi Penuh Bahasa Indonesia (Aug 7, 2026)
+
+### Goal
+Audit menyeluruh UI halaman `/guru/game` dan seluruh halaman turunannya + pencarian global di `app/(dashboard)/guru/game`, `components/game`, `components/gamification`, `components/dashboard` agar SEMUA teks yang tampil ke pengguna memakai Bahasa Indonesia yang baik, sederhana, dan konsisten. **HANYA teks UI** — logika/API/DB/route/var/interface/enum/type/file/endpoint/schema/function tidak diubah.
+
+### Perubahan Label (UI only)
+| Sebelum | Sesudah |
+|---------|---------|
+| `Teacher Engagement Dashboard` (hero subtitle) | `Dasbor Aktivitas Guru` |
+| `Target` (circular progress) | `Target Mingguan` |
+| `Badge Terbuka` (chip & stat) | `Lencana Terbuka` |
+| `Rank Guru` (chip) | `Peringkat Guru` |
+| `Best Score` | `Skor Terbaik` |
+| `Badge Saya` | `Lencana Saya` |
+| `3 / 10 Badge` | `3 dari 10 Lencana` |
+| `Reward Misi` | `Hadiah Misi` |
+| `🔥 Trending` | `🔥 Populer` |
+| `🎯 Recommended` | `🎯 Direkomendasikan` |
+| `Game Terpopuler Minggu Ini` | `Permainan Terpopuler Minggu Ini` |
+| `Badge Progress` | `Perkembangan Lencana` |
+| `AI Insight` | `Analisis AI` |
+| `Preview · Segera Hadir` | `Pratinjau · Segera Hadir` |
+| `Insight AI akan...` | `Analisis AI akan...` |
+| `Teacher XP` (kolom tabel leaderboard) | `XP Guru` |
+| `Kuis Battle Lobby` | `Lobi Gim Guru` |
+| `QR Code` (alt) | `Kode QR` |
+| `Combo`/`COMBO` label (Semua gim solo: ComboFlash, BenarSalah, SusunKata, MenCerdas, TebakKata, ZelbyDash, IramaKata) | `Rentetan`/`RENTETAN` |
+| `Combo maks` (hasil) | `Rentetan maks` |
+| `Pilih Level` | `Pilih Tingkat` |
+| `Selesaikan level sebelumnya` | `Selesaikan tingkat sebelumnya` |
+| `Analisis Agent` | `Analisis Agen` |
+| `Agent Says` | `Kata Agen` |
+| Mothership `Cardio kombinasi "combo untuk skor tinggi"`, `combo hangus` | `rentetan untuk skor tinggi`, `rentetan hangus` |
+| RankUpModal: `Badge ...` | `Lencana ...` |
+| RankUpModal: `Badge Rank X` | `Lencana X` |
+| RankUpModal: `Coin reward rank` | `Hadiah koin naik pangkat` |
+| RankUpModal: `Title "..."` / `Title baru di profil` | `Gelar "..."` / `Gelar baru di profil` |
+| RankUpModal: `Frame Avatar` / `Frame X` | `Bingkai Avatar` / `Bingkai X` |
+| RankUpModal: `Mystery Box` | `Kotak Misteri` |
+
+### File Diubah
+| File | Perubahan |
+|------|-----------|
+| `app/(dashboard)/guru/game/page.tsx` | Dasbor Aktivitas Guru, Lencana, Permainan Terpopuler, Perkembangan Lencana, Analisis AI, dll. |
+| `app/(dashboard)/guru/game/leaderboard/page.tsx` | Kolom "Teacher XP" → "XP Guru" |
+| `app/(dashboard)/guru/game/lobby/page.tsx` | H1 "Lobi Gim Guru", alt "Kode QR" |
+| `components/game/{BenarSalah,SusunKata,IramaKata,TebakKata,LariKata?}.tsx` | Pilih Tingkat, Rentetan, dsb. (hanya string label) |
+| `components/game/ComboFlash.tsx` / `ZelbyDash.tsx` / `MenaraCerdas.tsx` | HUD label Combo → Rentetan |
+| `components/game/KataPlayGame.tsx` | "Analisis Agen", "Kata Agen" |
+| `components/gamification/RankUpModal.tsx` | Label reward: Lencana/Gelar/Bingkai/Kotak Misteri/Hadiah koin |
+
+### Verifikasi
+| Check | Hasil |
+|-------|-------|
+| `npx tsc --noEmit` | ✅ 0 errors |
+| `npm run test:gamification-engine` | ✅ SEMUA LULUS |
+| `npm run test:guru-phase` | ✅ SEMUA LULUS |
+| `npm run build` (dummy env) | ✅ 357 pages, 0 errors |
+| Global search kata target (Badge/Leaderboard/Reward/Mission/Progress/Trending/Recommended/Best Score/Coming Soon/Preview/Insight) di 4 folder | ✅ Tidak ada tersisa di teks JSX |
+
+### Cara Menjaga
+- Setiap fitur baru di GIM Guru harus pakai Bahasa Indonesia langsung di label JSX.
+- JANGAN hardcode string Inggris untuk label pengguna di komponen game/goti biasa.
+- Istilah seragam: Lencana (bukan Badge), Papan Peringkat (Leaderboard), Hadiah (Reward), Perkembangan (Progress), Populer (Trending), Direkomendasikan (Recommended) — "Level" menjadi "Tingkat" di label gim.

@@ -52,7 +52,7 @@ export default function GuruGameLobbyPage() {
           <Link href="/guru/game" className="text-emerald-600 hover:underline text-sm flex items-center gap-1 mb-4">
             ← Kembali ke Menu Gim
           </Link>
-          <h1 className="text-2xl font-bold text-gray-900">Kuis Battle Lobby</h1>
+          <h1 className="text-2xl font-bold text-gray-900">Lobi Gim Guru</h1>
           <p className="text-gray-500 text-sm mt-1">Buat ruangan dan pilih mode gim untuk dimainkan bersama siswa</p>
         </div>
 
@@ -108,7 +108,7 @@ export default function GuruGameLobbyPage() {
                   <div className="bg-gray-50 rounded-xl p-4 text-center">
                     <p className="text-sm text-gray-600 mb-3 font-medium">Scan QR untuk Gabung</p>
                     <div className="inline-block bg-white p-3 rounded-xl shadow-sm border">
-                      <img src={qrCodeUrl} alt="QR Code" className="w-48 h-48" />
+                      <img src={qrCodeUrl} alt="Kode QR" className="w-48 h-48" />
                     </div>
                     <p className="text-xs text-gray-400 mt-2">Arahkan kamera HP ke QR code ini</p>
                   </div>

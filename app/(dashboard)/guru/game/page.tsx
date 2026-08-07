@@ -288,7 +288,7 @@ export default function GuruGameHubPage() {
                   <Gamepad2 className="w-5 h-5" />
                 </div>
                 <div>
-                  <p className="text-[11px] text-emerald-200 uppercase tracking-wider font-semibold">Teacher Engagement Dashboard</p>
+                  <p className="text-[11px] text-emerald-200 uppercase tracking-wider font-semibold">Dasbor Aktivitas Guru</p>
                   <h1 className="text-xl lg:text-2xl font-extrabold">
                     Halo, {loading ? "Guru" : (user?.nickname || user?.fullName || "Guru")} 👋
                   </h1>
@@ -312,7 +312,7 @@ export default function GuruGameHubPage() {
                 </svg>
                 <div className="absolute inset-0 flex flex-col items-center justify-center">
                   <span className="text-xl font-extrabold">{xpTargetPct}%</span>
-                  <span className="text-[9px] text-emerald-100">Target</span>
+                  <span className="text-[9px] text-emerald-100">Target Mingguan</span>
                 </div>
               </div>
               <div className="shrink-0">
@@ -325,10 +325,10 @@ export default function GuruGameHubPage() {
 
           {/* Hero stat chips */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mt-5">
-            <HeroChip icon={<Medal className="w-4 h-4 text-purple-300" />} label="Badge Terbuka" value={loading ? "..." : `${unlocked} / ${totalGuruBadges}`} />
+            <HeroChip icon={<Medal className="w-4 h-4 text-purple-300" />} label="Lencana Terbuka" value={loading ? "..." : `${unlocked} dari ${totalGuruBadges}`} />
             <HeroChip icon={<Users className="w-4 h-4 text-sky-300" />} label="Murid Aktif Hari Ini" value={loading ? "..." : String(aktifHariIni)} />
             <HeroChip icon={<TrendingUp className="w-4 h-4 text-green-300" />} label="XP Guru Minggu Ini" value={loading ? "..." : `+${weeklyXp.toLocaleString("id-ID")}`} />
-            <HeroChip icon={<Trophy className="w-4 h-4 text-amber-300" />} label="Rank Guru" value={loading ? "..." : lb?.myRank ? `#${lb.myRank}` : "—"} />
+            <HeroChip icon={<Trophy className="w-4 h-4 text-amber-300" />} label="Peringkat Guru" value={loading ? "..." : lb?.myRank ? `#${lb.myRank}` : "—"} />
           </div>
         </div>
       </div>
@@ -381,7 +381,7 @@ export default function GuruGameHubPage() {
               </div>
             </div>
             <p className="text-xs text-slate-500 mt-auto">
-              <span className="font-semibold text-slate-700">Best Score</span> {bestScore.toLocaleString("id-ID")}
+              <span className="font-semibold text-slate-700">Skor Terbaik</span> {bestScore.toLocaleString("id-ID")}
             </p>
             <span className="mt-2 inline-flex items-center gap-1 text-[11px] font-bold text-emerald-600 group-hover:gap-2 transition-all">
               Main Lagi <ArrowRight size={12} />
@@ -406,13 +406,13 @@ export default function GuruGameHubPage() {
             </span>
           </a>
 
-          {/* Badge Saya */}
+          {/* Lencana Saya */}
           <Link href="/guru/game/achievement" className="group bg-white rounded-xl border border-slate-100 p-4 shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all flex flex-col">
             <div className="flex items-center gap-2 mb-2">
               <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-400 to-purple-600 flex items-center justify-center shrink-0"><Medal className="w-4 h-4 text-white" /></div>
               <div>
-                <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wide">🏆 Badge Saya</p>
-                <p className="font-bold text-slate-900 text-sm">{unlocked} / {totalGuruBadges} Badge</p>
+                <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wide">🏆 Lencana Saya</p>
+                <p className="font-bold text-slate-900 text-sm">{unlocked} dari {totalGuruBadges} Lencana</p>
               </div>
             </div>
             {nextBadge ? (
@@ -423,7 +423,7 @@ export default function GuruGameHubPage() {
                 <p className="text-[10px] text-slate-400 mt-1">{nextBadgePct}% menuju {nextBadge.name}</p>
               </div>
             ) : (
-              <p className="text-xs text-slate-500 mt-auto">Semua badge guru terbuka! 🎉</p>
+              <p className="text-xs text-slate-500 mt-auto">Semua lencana guru terbuka! 🎉</p>
             )}
           </Link>
         </div>
@@ -432,7 +432,7 @@ export default function GuruGameHubPage() {
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           <Stat icon={<Users className="w-4 h-4 text-sky-500" />} label="Murid Bermain Hari Ini" value={loading ? "..." : aktifHariIni.toString()} accent="border-sky-100 bg-sky-50/40" />
           <Stat icon={<TrendingUp className="w-4 h-4 text-emerald-500" />} label="XP Guru Minggu Ini" value={loading ? "..." : `+${weeklyXp.toLocaleString("id-ID")}`} accent="border-emerald-100 bg-emerald-50/40" />
-          <Stat icon={<Medal className="w-4 h-4 text-violet-500" />} label="Badge Terbuka" value={loading ? "..." : `${unlocked}/${totalGuruBadges}`} accent="border-violet-100 bg-violet-50/40" />
+          <Stat icon={<Medal className="w-4 h-4 text-violet-500" />} label="Lencana Terbuka" value={loading ? "..." : `${unlocked}/${totalGuruBadges}`} accent="border-violet-100 bg-violet-50/40" />
           <Stat icon={<Sparkles className="w-4 h-4 text-orange-500" />} label="Aktivitas Hari Ini" value={loading ? "..." : (studentResultsToday.length + playedMeToday).toString()} accent="border-orange-100 bg-orange-50/40" />
         </div>
 
@@ -455,7 +455,7 @@ export default function GuruGameHubPage() {
               <div className="flex items-center gap-3 rounded-xl border border-amber-200 bg-white p-3">
                 <span className="w-9 h-9 shrink-0 rounded-full bg-amber-100 flex items-center justify-center font-bold text-amber-600 text-xs">+50</span>
                 <div className="leading-tight">
-                  <p className="text-xs font-bold text-slate-800">Reward Misi</p>
+                  <p className="text-xs font-bold text-slate-800">Hadiah Misi</p>
                   <p className="text-[11px] text-slate-500">+50 XP Guru saat semua misi selesai</p>
                 </div>
               </div>
@@ -482,11 +482,11 @@ export default function GuruGameHubPage() {
               const playCount = counts.get(game.title) ?? 0;
               const isTrending = topGameName === game.title && playCount > 0;
               const badge = isTrending
-                ? { label: "🔥 Trending", cls: "bg-orange-500" }
+                ? { label: "🔥 Populer", cls: "bg-orange-500" }
                 : game.id === "kata-play"
                   ? { label: "⭐ Baru", cls: "bg-violet-500" }
                   : game.id === "benar-salah"
-                    ? { label: "🎯 Recommended", cls: "bg-emerald-500" }
+                    ? { label: "🎯 Direkomendasikan", cls: "bg-emerald-500" }
                     : null;
               return (
                 <Link
@@ -525,7 +525,7 @@ export default function GuruGameHubPage() {
         <div className="mb-8">
           <div className="flex items-center gap-2 mb-4">
             <div className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
-            <h2 className="text-lg font-bold text-slate-800">Game Terpopuler Minggu Ini</h2>
+            <h2 className="text-lg font-bold text-slate-800">Permainan Terpopuler Minggu Ini</h2>
           </div>
           {popularity.length > 0 ? (
             <div className="bg-white rounded-xl border border-slate-100 p-5 shadow-sm">
@@ -580,7 +580,7 @@ export default function GuruGameHubPage() {
           <div className="bg-white rounded-xl border border-slate-100 p-5 shadow-sm">
             <div className="flex items-center gap-2 mb-3">
               <Medal className="w-4 h-4 text-violet-500" />
-              <p className="font-bold text-slate-900 text-sm">Badge Progress</p>
+              <p className="font-bold text-slate-900 text-sm">Perkembangan Lencana</p>
               <span className="ml-auto text-[10px] px-2 py-0.5 bg-violet-100 text-violet-700 rounded-full font-semibold">{unlocked}/{totalGuruBadges}</span>
             </div>
             {guruBadges.length > 0 ? (
@@ -754,8 +754,8 @@ export default function GuruGameHubPage() {
         <div className="mb-8">
           <div className="flex items-center gap-2 mb-4">
             <div className="w-2 h-2 rounded-full bg-rose-500 animate-pulse" />
-            <h2 className="text-lg font-bold text-slate-800">AI Insight</h2>
-            <span className="text-[10px] px-2 py-0.5 bg-rose-100 text-rose-600 rounded-full font-semibold">Preview · Segera Hadir</span>
+            <h2 className="text-lg font-bold text-slate-800">Analisis AI</h2>
+            <span className="text-[10px] px-2 py-0.5 bg-rose-100 text-rose-600 rounded-full font-semibold">Pratinjau · Segera Hadir</span>
           </div>
           <div className="bg-gradient-to-r from-rose-50 via-white to-emerald-50 rounded-xl border border-rose-100 p-5 shadow-sm">
             <div className="flex items-start gap-3">
@@ -768,7 +768,7 @@ export default function GuruGameHubPage() {
                   <p className="text-xs text-slate-500 mt-1 leading-relaxed">{insight}</p>
                 ) : (
                   <p className="text-xs text-slate-500 mt-1 leading-relaxed">
-                    Insight AI akan menghadirkan rekomendasi berdasarkan performa kelas (kosakata, kecepatan membaca,
+                    Analisis AI akan menghadirkan rekomendasi berdasarkan performa kelas (kosakata, kecepatan membaca,
                     ketepatan) setelah cukup data permainan tersedia.{" "}
                     <span className="font-semibold text-slate-600">Saran awal: minta murid bermain Susun Kata 3x minggu ini.</span>
                   </p>

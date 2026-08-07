@@ -520,7 +520,7 @@ export default function TebakKataGame({ hideBackButton, backHref = "/arena/game"
                 <div className="font-extrabold text-lg">+150</div>
               </div>
               <div className="bg-[#FBBF24] border-[3px] border-[#161B3A] rounded-xl p-2 shadow-[3px_3px_0_#161B3A]">
-                <div className="text-[10px] font-extrabold uppercase opacity-70">Combo</div>
+                <div className="text-[10px] font-extrabold uppercase opacity-70">Rentetan</div>
                 <div className="font-extrabold text-lg">Bonus</div>
               </div>
               <div className="bg-[#FF6B6B] text-white border-[3px] border-[#161B3A] rounded-xl p-2 shadow-[3px_3px_0_#161B3A]">
@@ -531,7 +531,7 @@ export default function TebakKataGame({ hideBackButton, backHref = "/arena/game"
 
             <div className="flex flex-wrap justify-center gap-3 mb-2">
               <button className={`${btnBase} px-6 py-3.5 bg-[#8B5CF6] text-white text-lg`} onClick={() => setScreen("levels")}>
-                <Play className="w-5 h-5" /> Pilih Level
+                <Play className="w-5 h-5" /> Pilih Tingkat
               </button>
               <button className={`${btnBase} px-5 py-3.5 bg-white`} onClick={() => startLevel(1)}>
                 Langsung Level 1
@@ -554,7 +554,7 @@ export default function TebakKataGame({ hideBackButton, backHref = "/arena/game"
             <button className={`${btnBase} w-11 h-11 bg-white`} onClick={() => setScreen("start")} aria-label="Kembali">
               <X className="w-5 h-5" />
             </button>
-            <h2 className="font-extrabold text-2xl">Pilih Level</h2>
+            <h2 className="font-extrabold text-2xl">Pilih Tingkat</h2>
             <div className="w-11" />
           </div>
           <div className="tk-screen bg-white rounded-3xl p-5 shadow-[6px_6px_0_#161B3A] border-4 border-[#161B3A]">
@@ -587,7 +587,7 @@ export default function TebakKataGame({ hideBackButton, backHref = "/arena/game"
                         {best > 0 && <span className="text-[10px] font-extrabold ml-1.5 opacity-80">{best}</span>}
                       </div>
                     ) : (
-                      <div className="text-[10px] font-bold">Selesaikan level sebelumnya</div>
+                      <div className="text-[10px] font-bold">Selesaikan tingkat sebelumnya</div>
                     )}
                   </button>
                 );
@@ -718,7 +718,7 @@ export default function TebakKataGame({ hideBackButton, backHref = "/arena/game"
 
           <div className="flex justify-center gap-3 mb-5 text-sm">
             <div className="bg-white border-[3px] border-[#161B3A] rounded-xl px-3 py-1.5 shadow-[2px_2px_0_#161B3A]">
-              <Zap className="w-4 h-4 inline mr-1 text-amber-500" /> Combo maks <b>{result.bestStreak}</b>
+              <Zap className="w-4 h-4 inline mr-1 text-amber-500" /> Rentetan maks <b>{result.bestStreak}</b>
             </div>
           </div>
 
@@ -738,7 +738,7 @@ export default function TebakKataGame({ hideBackButton, backHref = "/arena/game"
               </button>
             )}
             <button onClick={() => setScreen("levels")} className={`${btnBase} w-full py-3.5 bg-[#FBBF24]`}>
-              Pilih Level
+              Pilih Tingkat
             </button>
             {!hideBackButton && (
               <a href={backHref} className={`${btnBase} w-full py-3.5 bg-white/80 text-center`}>
