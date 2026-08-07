@@ -6,7 +6,7 @@ import {
   BookOpen, ShoppingBag, Users, Gamepad2, Wand2, ClipboardCheck,
   TrendingUp, ChevronRight, Star, Plus, Megaphone, BookOpenCheck, FileSpreadsheet, CalendarPlus,
   FileText, Video, Presentation, Database,
-  Crown, Zap, Flame, FileUp, Upload, GraduationCap, BarChart3, Brain
+  Crown, Zap, Flame, FileUp, Upload, GraduationCap, BarChart3, Brain, LayoutDashboard
 } from "lucide-react"
 import { useUserStore } from "@/store"
 import { Badge } from "@/components/ui/badge"
@@ -160,6 +160,9 @@ export default function GuruBerandaPage() {  const user = useUserStore()
           </Link>
           <Link href="/guru/kelasku" className="hidden sm:flex items-center gap-1.5 px-4 py-2.5 bg-white border-2 border-emerald-200 text-emerald-700 rounded-xl text-sm font-semibold hover:bg-emerald-50 transition-all">
             <Users size={16} /> KelasKu
+          </Link>
+          <Link href="/arena" className="hidden sm:flex items-center gap-1.5 px-4 py-2.5 bg-white border-2 border-violet-200 text-violet-700 rounded-xl text-sm font-semibold hover:bg-violet-50 transition-all">
+            <LayoutDashboard size={16} /> Dasbor Murid
           </Link>
         </div>
       </div>
