@@ -2677,3 +2677,75 @@ Catatan: `test:bahasa-ui` — 5 kegagalan **pra-eksis** di file luar changeset (
 2. Game server revival (VPS mati)
 3. GameRoom migration SQL via Supabase dashboard
 4. UI game solo: badge-score client vs server masih beda (kosmetik)
+
+---
+
+## Phase P1-C PHASE 3 — Controlled Backfill `Profile.schoolId` (Aug 8, 2026)
+
+### Goal
+Terapkan controlled backfill `Profile.schoolId` (nullable) dengan evidence kuat yang dapat diaudit — me-reuse pure matching engine Phase 2 (`lib/school/matching.ts`). Prioritas: data safety > false-positive prevention > auditability > coverage. **Berhenti total setelah report — tanpa commit/push/`--apply` otomatis.**
+
+### Kasus Keputusan (CASE A–F)
+| Case | Kondisi | Keputusan | Set? |
+|------|---------|-----------|------|
+| A | `Profile.school` cocok alias terverifikasi unik | `ALIAS_MATCH` HIGH | ✅ |
+| B | `normalizeSchoolName` cocok persis `School.normalizedName` unik | `NORMALIZED_EXACT` HIGH | ✅ |
+| C | school null + semua grup aktif konsisten → sekolah guru ter-resolve | `GROUP_EVIDENCE_BACKFILL` MEDIUM | ✅ |
+| D | Konflik/ambiguitas (grup beda, duplikat normalizedName, alias tabrakan) | `AMBIGUOUS_*` | ❌ NULL |
+| E | `schoolId` sudah terisi (atau konflik dengan evidence grup) | `ALREADY_CANONICAL` / `CONFLICTING_EVIDENCE` | ❌ tidak diubah |
+| F | Tanpa bukti / kontekstual L1 | `UNRESOLVED` / `NO_FALSE_INFERENCE` | ❌ NULL |
+
+Hanya CASE A/B/C `safeToApply=true`.
+
+### Engine (`lib/school/backfill.ts`) — PURE
+- Konsumsi (bukan duplikasi) `matchStudentSchool`, `resolveGroupEvidence`, `findPotentialDuplicateSchools`, `normalizeSchoolName`.
+- Per profil → `BackfillDecision` auditable: `{ profileId, previousSchoolId, proposedSchoolId, decision, confidence, case, source, evidenceLevel, safeToApply, conflicting, reason, candidateName, groupEvidenceQuality }`.
+- `summarizeBackfill` → agregat (alreadyCanonical/normalizedExact/aliasMatch/groupEvidence/ambiguous/conflicting/unresolved/safeToBackfill/requiresReview/remainingUnresolved/catalogConflicts) + breakdown per-School.
+- Tidak ada Prisma/create/update/upsert/delete di file ini.
+
+### CLI (`scripts/school-backfill.ts`)
+- **Default read-only** (`npm run dry-run:school-backfill`). Tanpa DB → `DATABASE READ-ONLY UNAVAILABLE` + exit 0 (tanpa angka dikarang).
+- **`--apply` eksplisit** (`npm run backfill:school`): HANYA `safeToApply`, update `updateMany({ where: { id, schoolId: null }, data: { schoolId } })` (concurrency-safe), batch 25, hitung affected rows, tanpa `updateMany({})`.
+
+### Keamanan
+- `Profile.school` (legacy) TIDAK pernah diubah. `schoolId` bukan authorization (SSOT `lib/teacher/students.ts`).
+- Tidak ada auto-create/merge School/SchoolAlias, fuzzy, AI/LLM.
+- Static `rg`: satu-satunya tulis = `db.profile.updateMany` (cabang `--apply`, predicate `schoolId: null`). NONE delete/upsert School / update Profile.school.
+
+### Verifikasi
+| Check | Hasil |
+|-------|-------|
+| `npm run test:school-backfill` | ✅ 93/93 (TEST 1–20 + extras) |
+| `npm run test:school-identity` | ✅ SEMUA LULUS |
+| `npm run test:school-matching` | ✅ 56/56 |
+| `npm run test:guru-phase` | ✅ SEMUA LULUS |
+| `npm run test:gamification-engine` | ✅ SEMUA LULUS |
+| `npm run test:simulation-workflow` | ✅ All passed |
+| `npx tsx scripts/test-phase-simulation-workflow.ts` | ✅ All passed |
+| `npx prisma validate` | ✅ Valid |
+| `npx tsc --noEmit` | ✅ 0 errors |
+| ESLint (backfill.ts, CLI, test) | ✅ 0 violations |
+| `npm run build` (dummy env) | ✅ exit 0 (359 routes) |
+| `npx tsx scripts/school-backfill.ts` | ✅ `DATABASE READ-ONLY UNAVAILABLE` (DB tidak tersedia) |
+
+### File Baru
+- `lib/school/backfill.ts` — engine keputusan backfill (murni)
+- `scripts/school-backfill.ts` — CLI dry-run/`--apply`
+- `scripts/test-school-backfill.ts` — 93 asersi tanpa DB
+- `docs/P1_C_SCHOOL_IDENTITY_PHASE3.md` — doc 20 seksi
+
+### Package Scripts
+- `test:school-backfill`, `dry-run:school-backfill`, `backfill:school` (`--apply`)
+
+### Status DB
+- `.env.local` = `[SENSITIVE]` → DB tidak dapat dibaca; dry-run = `DATABASE READ-ONLY UNAVAILABLE`. Tidak ada angka aktual yang dikarang.
+- `--apply` TIDAK dijalankan (menunggu approval founder atas policy CASE A/B/C). `DATABASE WRITES : 0`.
+- Tabel `School`/`SchoolAlias` kosong sampai migrasi `2026-08-08_school_identity.sql` dijalankan di Supabase SQL Editor.
+
+### Remaining
+1. Jalankan `prisma/migrations/manual/2026-08-08_school_identity.sql` di Supabase SQL Editor (PRODUCTION + PREVIEW) — syarat sebelum dry-run bermakna.
+2. Founder meninjau dry-run → setujui policy CASE A/B/C → `npm run backfill:school`.
+3. TKA UTBK/Guru enrichment 30 → 150
+4. Game server revival (VPS mati)
+5. GameRoom migration SQL via Supabase dashboard
+6. UI game solo: badge-score client vs server masih beda (kosmetik)

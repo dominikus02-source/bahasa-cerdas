@@ -321,6 +321,12 @@ model Profile {
   nisn       String?
   noAbsen    String?
   school     String?
+  // Identitas kanonik sekolah (P1-C). NULL = belum dipetakan; `school` tetap
+  // menyimpan nilai mentah user. DUAL IDENTITY disengaja:
+  //   school   = legacy/raw user-entered value (display, backward compat)
+  //   schoolId = canonical identity (School)
+  // schoolId TIDAK pernah menjadi dasar authorization — hanya identitas/agregasi.
+  schoolId    String?
   city       String?
   province   String?
   subject    String?
@@ -332,6 +338,46 @@ model Profile {
   bankHolder String?
   bankNumber String?
   user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  schoolRef  School?  @relation(fields: [schoolId], references: [id], onDelete: SetNull)
+
+  @@index([schoolId])
+}
+
+// Identitas kanonik sekolah (P1-C — OPTION B). canonicalName = nama resmi yang
+// ditampilkan; normalizedName = representasi deterministik untuk lookup/index.
+// School dibuat hanya lewat proses eksplisit yang dipercaya (bukan auto-create
+// dari DISTINCT Profile.school). `isActive=false` = nonaktif (bukan hapus).
+model School {
+  id             String        @id @default(cuid())
+  canonicalName  String
+  normalizedName String
+  province       String?
+  city           String?
+  isActive       Boolean       @default(true)
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  aliases        SchoolAlias[]
+  profiles       Profile[]
+
+  @@index([normalizedName])
+  @@index([city])
+  @@index([province])
+}
+
+// Alias eksplisit untuk satu School. normalizedAlias UNIK agar satu alias
+// normalisasi tidak pernah menunjuk ke >1 sekolah (aturan §6.2).
+// Alias tidak dibuat otomatis dari seluruh Profile.school tanpa keputusan.
+model SchoolAlias {
+  id              String   @id @default(cuid())
+  schoolId        String
+  alias           String
+  normalizedAlias String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  school          School   @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+
+  @@unique([normalizedAlias])
+  @@index([schoolId])
 }
 
 model NicknameHistory {
