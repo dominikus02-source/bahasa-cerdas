@@ -31,6 +31,13 @@ export default function GuruArtikelPage() {
 
   useEffect(() => { fetchArtikel(); }, []);
 
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("type")?.toLowerCase() === "puisi") {
+      setForm((f) => ({ ...f, articleType: "PUISI" }));
+    }
+  }, []);
+
   async function fetchArtikel() {
     const res = await fetch("/api/guru/artikel");
     const data = await res.json();

@@ -195,7 +195,7 @@ export default function GuruBerandaPage() {  const user = useUserStore()
       </div>
 
       <div className="mb-6">
-        <GuruBerkarya />
+        <GuruBerkarya misiStatus={misiStatus} />
       </div>
 
       <div className="mb-6">
