@@ -150,7 +150,7 @@ export default async function ArenaGimPage() {
           style={{ boxShadow: "0 8px 28px rgba(220,38,38,0.25)" }}
         >
           <img
-            src="/badges/bannergimkuistempur.png"
+            src="/banners/rank-bc-banner.webp"
             alt="Kuis Tempur — kini bisa main solo!"
             className="block w-full h-auto"
           />
