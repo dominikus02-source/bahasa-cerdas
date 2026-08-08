@@ -5,6 +5,7 @@ import { getUser } from "@/lib/supabase/server"
 import { rateLimitRoute } from "@/lib/rate-limit"
 import { awardXp } from "@/lib/award-xp"
 import { awardGuruXp } from "@/lib/gamification/teacher-xp"
+import { awardCoins, COIN_MAIN_GAME } from "@/lib/coins"
 
 // Skor wajar maksimum per jenis game — di atas ini klien berbohong.
 // KataPlay: 10 ronde × (50 + streak×10) = maks 1050. Jaring pengaman kedua
@@ -77,6 +78,23 @@ export async function POST(req: NextRequest) {
         }))
       : await awardXp(dbUser.id, "GAME", Math.floor(skor / 10), reference)
 
+    // Koin per permainan selesai — murid hanya. Dulu game TIDAK memberi koin
+    // sama sekali (koin hanya muncul saat naik level), jadi anak yang belum
+    // menyentuh ambang level main terus-menerus tanpa melihat saldonya
+    // bertambah. Satu permainan selesai = satu submit = 5 koin. Pemicu XP
+    // dibatasi oleh rate limit 20/menit yang sama, jadi jangan bikin koin
+    // lewat jalur lain (game sudah 1 submit per ronde).
+    let koinDidapat = 0
+    if (!isGuru) {
+      try {
+        const koin = await awardCoins(dbUser.id, "MAIN_GAME", `game-${reference}`)
+        koinDidapat = koin.coins
+      } catch (e) {
+        // Koin gagal tidak boleh menggagalkan pemberian XP / penyimpanan hasil.
+        console.error("Game coin error:", e)
+      }
+    }
+
     let roomId = roomCode
     if (roomCode) {
       const existing = await db.gameRoom.findFirst({ where: { code: roomCode } })
@@ -109,6 +127,7 @@ export async function POST(req: NextRequest) {
       oldLevel: hasil.levelLama,
       newLevel: hasil.levelBaru,
       levelUp: hasil.naikLevel,
+      koin: koinDidapat,
     })
   } catch (error) {
     console.error("Game XP error:", error)

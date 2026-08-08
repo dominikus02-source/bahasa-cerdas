@@ -14,7 +14,14 @@ import { kataPlayLevels, KataPlayLevel, KataPlayQuestion, KataPlayLesson } from 
 import { createGameEngine, KataPlayAgentRuntime } from "./agents"
 
 const TotalRounds = 10
-const XP_REWARD_BONUS = 10
+
+// Skor XP KataPlay dihitung dari jawaban benar, SAMA dengan gim solo lain
+// (mis. Kuis Tempur: benar × 10 + bonus combo). Dulu klien mengirim skor
+// akumulasi (+25 per benar) dan menampilkan "XP" yang jauh lebih besar dari
+// yang disetujui server — anak melihat levelnya "naik" padahal server hanya
+// mencairkan sebagian kecil. Skor = benar × 18 (≤ 600, di bawah cap 1100 di
+// server) supaya angka di layar hasil sesuai dengan XP yang benar-benar cair.
+const XP_PER_BENAR = 18
 let agentEngine: KataPlayAgentRuntime | null = null
 
 function getEngine(): KataPlayAgentRuntime {
@@ -137,17 +144,16 @@ export default function KataPlayGame({ hideBackButton }: { hideBackButton?: bool
     }
   }, [])
 
-  async function saveXpToServer(earnedXp: number): Promise<XpServerResult | null> {
+  async function saveXpToServer(): Promise<XpServerResult | null> {
     try {
       const res = await fetch("/api/game/xp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          score: scoreRef.current,
+          score: correctRef.current * XP_PER_BENAR,
           correct: correctRef.current,
           wrong: wrongRef.current,
           maxStreak: bestStreak,
-          xpEarned: earnedXp,
           gameType: "KATAPLAY",
           supabaseId: supabaseIdRef.current,
         }),
@@ -301,11 +307,11 @@ export default function KataPlayGame({ hideBackButton }: { hideBackButton?: bool
         engine.fireEvent({ ...gameEvent, type: "game_over" } as any)
         setFeedback({ correct: false, message: agentMsg || `Jawaban: ${q.correctAnswer}` })
         setTimeout(() => {
-          const earned = Math.floor(scoreRef.current / 2)
+          const earned = correctRef.current * XP_PER_BENAR
           const endResult = engine.endSession(earned)
           if (endResult.sessionSummary) setAgentSummary(endResult.sessionSummary)
           updateProgress(earned, currentLessonIdRef.current ?? undefined)
-          saveXpToServer(earned)
+          saveXpToServer()
           setPhase("result")
         }, 2000)
         return
@@ -321,11 +327,11 @@ export default function KataPlayGame({ hideBackButton }: { hideBackButton?: bool
       if (currentQ < questions.length - 1) {
         setCurrentQ((c) => c + 1)
       } else {
-        const earned = scoreRef.current + correctRef.current * 25
+        const earned = correctRef.current * XP_PER_BENAR
         const endResult = engine.endSession(earned)
         if (endResult.sessionSummary) setAgentSummary(endResult.sessionSummary)
         updateProgress(earned, currentLessonIdRef.current ?? undefined)
-        saveXpToServer(earned)
+        saveXpToServer()
         setPhase("result")
       }
     }, 1200)
@@ -706,7 +712,6 @@ export default function KataPlayGame({ hideBackButton }: { hideBackButton?: bool
   }
 
   // ── Result ──
-  const totalXp = score + correct * XP_REWARD_BONUS
   const staticGrade = correct >= 9 ? "Luar Biasa!" : correct >= 7 ? "Bagus!" : correct >= 5 ? "Cukup!" : "Ayo coba lagi!"
   const grade = (agentSummary?.grade as string) || (agentSummary?.recommendation as string) || staticGrade
   const gradeColors = ["from-amber-400 to-orange-500", "from-violet-400 to-purple-500", "from-blue-400 to-cyan-500", "from-gray-400 to-gray-500"]
@@ -767,7 +772,7 @@ export default function KataPlayGame({ hideBackButton }: { hideBackButton?: bool
                 </span>
               )}
               <span className="font-bold text-amber-400">
-                +{xpResult ? xpResult.xpEarned : totalXp}
+                +{xpResult ? xpResult.xpEarned : correct * XP_PER_BENAR}
               </span>
             </div>
           </div>

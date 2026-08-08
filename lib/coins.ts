@@ -10,10 +10,17 @@ const COIN_REWARDS = {
   STREAK_7: 30,
   STREAK_30: 150,
   STREAK_100: 1000,
+  MAIN_GAME: 5,
 } as const;
 
 /** Koin dasar untuk setiap karya yang diterbitkan (dipakai UI untuk umpan balik). */
 export const COIN_MENULIS_KARYA = COIN_REWARDS.MENULIS_KARYA;
+
+/**
+ * Koin per permainan solo yang selesai (dipakai /api/game/xp). Konsisten
+ * dengan quest belajar: 10 koin per 10 kuis dijawab, 5 koin per permainan.
+ */
+export const COIN_MAIN_GAME = COIN_REWARDS.MAIN_GAME;
 
 // Every type in this pool MUST have a tracker call somewhere, or the quest can
 // appear on a student's list and be permanently uncompletable. MAIN_GAME and
