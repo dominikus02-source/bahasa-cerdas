@@ -8,6 +8,10 @@
 //   • Feed membawa likeCount/commentCount/likedByCurrentUser riil tanpa N+1.
 //   • Feed TIDAK eager-fetch komentar (lazy saat panel dibuka), tanpa reload.
 //   • Regresi 2.0: karya sendiri tetap tampil ("✨ Karya Anda"), Share tetap ada.
+//   • ROOT CAUSE FIX: query dasar feed hanya menyentuh Artikel/User/Profile
+//     (tabel selalu ada) — enrichment sosial best-effort (try/catch) sehingga
+//     feed tetap tampil walau tabel ArtikelLike/ArtikelComment belum ada
+//     (migrasi manual belum di-apply). Error API ≠ empty feed (state error).
 // Tidak butuh koneksi DB (tes statis), additive-only.
 import { readFileSync } from "fs";
 import { join } from "path";
@@ -21,6 +25,7 @@ const ok = (label: string, cond: boolean) => {
 const read = (p: string) => readFileSync(join(process.cwd(), p), "utf8");
 
 const feedApi = read("app/api/guru/berkarya/route.ts");
+const artikelApi = read("app/api/guru/artikel/route.ts");
 const likeApi = read("app/api/guru/berkarya/[id]/like/route.ts");
 const commentsApi = read("app/api/guru/berkarya/[id]/comments/route.ts");
 const commentDeleteApi = read("app/api/guru/berkarya/[id]/comments/[commentId]/route.ts");
@@ -74,10 +79,10 @@ ok("TEST 29: Migrasi TIDAK menyentuh tabel sosial murid (StudentKarya*)", !/Stud
 ok("TEST 30: Like/komentar guru TIDAK memakai model sosial murid", !/studentKaryaLike|studentKaryaComment|studentKarya\./.test(likeApi) && !/studentKaryaLike|studentKaryaComment/.test(commentsApi));
 ok("TEST 31: Model ArtikelLike/ArtikelComment terdefinisi di schema + relasi Artikel", /model ArtikelLike \{/.test(schema) && /model ArtikelComment \{/.test(schema) && /likes\s+ArtikelLike\[\]/.test(schema) && /comments\s+ArtikelComment\[\]/.test(schema) && /artikelLikes\s+ArtikelLike\[\]/.test(schema) && /artikelComments\s+ArtikelComment\[\]/.test(schema));
 
-// ── 7. FEED: COUNTS RIIL TANPA N+1 ─────────────────────────────────────────
-ok("TEST 32: Feed memakai _count likes+comments (satu query, tanpa N+1)", /_count: \{/.test(feedApi) && /select: \{ likes: true, comments: true \}/.test(feedApi));
-ok("TEST 33: Feed status like per user (filtered relation, take 1)", /likes: \{\s*where: \{ userId: user\.id \},/.test(feedApi) && /take: 1/.test(feedApi));
-ok("TEST 34: Feed membungkus field stabil likeCount/commentCount/likedByCurrentUser", /likeCount: _count\.likes/.test(feedApi) && /commentCount: _count\.comments/.test(feedApi) && /likedByCurrentUser: likes\.length > 0/.test(feedApi));
+// ── 7. FEED: COUNTS RIIL TANPA N+1 (BEST-EFFORT) ────────────────────────────
+ok("TEST 32: Feed enrichment sosial memakai groupBy (tanpa N+1)", /db\.artikelLike\.groupBy/.test(feedApi) && /db\.artikelComment\.groupBy/.test(feedApi) && /_count: \{ _all: true \}/.test(feedApi));
+ok("TEST 33: Feed status like per user via findMany userId (bukan join yang bisa gagal)", /db\.artikelLike\.findMany\(\{ where: \{ artikelId: \{ in: ids \}, userId: user\.id \}/.test(feedApi));
+ok("TEST 34: Feed membungkus field stabil likeCount/commentCount/likedByCurrentUser", /likeCount: likeCountById\.get\(r\.id\) \?\? 0/.test(feedApi) && /commentCount: commentCountById\.get\(r\.id\) \?\? 0/.test(feedApi) && /likedByCurrentUser: likedByCurrentUserIds\.has\(r\.id\)/.test(feedApi));
 ok("TEST 35: Feed TIDAK eager-fetch isi komentar", !/comments: \{\s*(where|select|include)/.test(feedApi));
 
 // ── 8. UI: INTERAKSI SOSIAL ────────────────────────────────────────────────
@@ -96,6 +101,18 @@ ok("TEST 45: Regresi — ShareButton tetap ada di footer", /ShareButton/.test(be
 ok("TEST 46: Regresi — urutan feed tetap publishedAt DESC", /orderBy: \[\{ publishedAt: "desc" \}, \{ createdAt: "desc" \}\]/.test(feedApi));
 ok("TEST 47: Regresi — Feed dan editor guru TIDAK mengekspos jawaban/kunci apa pun", !/correctAnswer|jawaban/.test(feedApi) && !/correctAnswer|jawaban/.test(likeApi) && !/correctAnswer|jawaban/.test(commentsApi));
 
+// ── 10. ROOT CAUSE FIX — FEED RESILIENCY (ERROR ≠ EMPTY) ─────────────────────
+ok("TEST 48: Root cause — query DASAR feed tidak menyentuh tabel sosial", !/select: \{ likes: true/.test(feedApi) && !/_count: \{\s*likes/.test(feedApi));
+ok("TEST 49: Root cause — Artikel terbit guru lain tampil (author OR, tanpa authorId exclusion)", /isPublished: true/.test(feedApi) && /author: \{ OR: \[\{ role: "GURU" \}, \{ role: "ADMIN" \}, \{ isFounder: true \}\] \}/.test(feedApi) && !/authorId: \{ not/.test(feedApi));
+ok("TEST 50: Root cause — Puisi terbit guru lain tampil (tanpa filter articleType)", !/articleType: \{/.test(feedApi));
+ok("TEST 51: Root cause — draft/unpublished TIDAK tampil (feed isPublished + terbit set publishedAt)", /isPublished: true/.test(feedApi) && /publishedAt: terbit \? new Date\(\) : null/.test(artikelApi));
+ok("TEST 52: Root cause — karya lama tetap tampil (tanpa filter tanggal di feed)", !/gte:|lte:|Date\.now/.test(feedApi));
+ok("TEST 53: Root cause — badge BARU ≤24 jam hanya untuk karya terbaru", /Date\.now\(\) - t < 24 \* 60 \* 60 \* 1000/.test(berkaryaUi) && /\{isBaru && \(/.test(berkaryaUi));
+ok("TEST 54: Root cause — karya >24 jam tampil tanpa badge (waktuRelatif 'kemarin')", /if \(hari === 1\) return "kemarin"/.test(berkaryaUi) && /\{waktuRelatif\(a\.publishedAt \|\| a\.createdAt\)\}/.test(berkaryaUi));
+ok("TEST 55: Root cause — type PUISI dibaca dan ditampilkan (bukan ARTIKEL only)", /\(a\.articleType \|\| ""\)\.toUpperCase\(\) === "PUISI"/.test(berkaryaUi));
+ok("TEST 56: Root cause — enrichment sosial best-effort (try/catch) tidak menghapus item feed", /\} catch \{/.test(feedApi) && /Promise\.all\(\[/.test(feedApi) && /db\.artikelLike\.groupBy/.test(feedApi));
+ok("TEST 57: Root cause — error API ≠ empty feed (state error + tombol Muat Ulang)", /setError\(true\)/.test(berkaryaUi) && /Gagal memuat karya guru\./.test(berkaryaUi) && /Belum ada karya terbaru\./.test(berkaryaUi) && /setReloadKey\(\(k\) => k \+ 1\)/.test(berkaryaUi));
+
 // ── Ringkasan ──────────────────────────────────────────────────────────────
-console.log(`\n${fail === 0 ? "SEMUA LULUS" : `${fail} GAGAL`}  (total asersi: 47)`);
+console.log(`\n${fail === 0 ? "SEMUA LULUS" : `${fail} GAGAL`}  (total asersi: 57)`);
 process.exit(fail === 0 ? 0 : 1);

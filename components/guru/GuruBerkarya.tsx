@@ -113,11 +113,14 @@ export function GuruBerkarya({ misiStatus }: GuruBerkaryaProps) {
   const [meta, setMeta] = useState<GuruBerkaryaMeta>({ xpArtikel: 0, xpPuisi: 0 });
   const [likes, setLikes] = useState<Record<string, { likeCount: number; liked: boolean }>>({});
   const [activeCommentsId, setActiveCommentsId] = useState<string | null>(null);
+  const [error, setError] = useState(false);
+  const [reloadKey, setReloadKey] = useState(0);
 
   useEffect(() => {
     let aktif = true;
+    setError(false);
     fetch("/api/guru/berkarya?limit=6", { cache: "no-store" })
-      .then((r) => (r.ok ? r.json() : Promise.reject()))
+      .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`))))
       .then((res) => {
         if (!aktif) return;
         const data = Array.isArray(res?.data) ? res.data : [];
@@ -134,12 +137,12 @@ export function GuruBerkarya({ misiStatus }: GuruBerkaryaProps) {
         setLikes(map);
       })
       .catch(() => {
-        if (aktif) setItems([]);
+        if (aktif) setError(true);
       });
     return () => {
       aktif = false;
     };
-  }, []);
+  }, [reloadKey]);
 
   /** Like/unlike instan (optimistic) tanpa reload halaman. Tidak ada XP. */
   async function toggleLike(a: GuruKaryaItem) {
@@ -161,6 +164,36 @@ export function GuruBerkarya({ misiStatus }: GuruBerkaryaProps) {
 
   function updateCommentCount(artikelId: string, count: number) {
     setItems((prev) => (prev ? prev.map((a) => (a.id === artikelId ? { ...a, commentCount: count } : a)) : prev));
+  }
+
+  if (error) {
+    return (
+      <div className="rounded-3xl bg-white border border-violet-100 p-5 sm:p-6 shadow-lg shadow-violet-100/50">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-violet-400 to-purple-600 flex items-center justify-center shadow-md shadow-violet-200">
+            <Flame size={24} className="text-white" />
+          </div>
+          <div>
+            <h2 className="text-lg sm:text-xl font-bold text-violet-900">🔥 Guru Berkarya</h2>
+            <p className="text-gray-500 text-xs sm:text-sm">Karya terbaru dari para guru. Ikut menginspirasi?</p>
+          </div>
+        </div>
+        <div className="rounded-2xl border-2 border-dashed border-rose-200 bg-rose-50/50 px-5 py-8 text-center">
+          <div className="w-12 h-12 mx-auto rounded-2xl bg-white flex items-center justify-center shadow-sm">
+            <Flame size={22} className="text-rose-400" />
+          </div>
+          <p className="mt-3 text-sm font-semibold text-gray-800">Gagal memuat karya guru.</p>
+          <p className="mt-1 text-xs text-gray-500">Ada masalah saat mengambil data. Silakan coba lagi.</p>
+          <button
+            type="button"
+            onClick={() => setReloadKey((k) => k + 1)}
+            className="mt-4 inline-flex items-center gap-1.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white px-4 py-2 text-xs font-semibold shadow-sm transition-colors"
+          >
+            Muat Ulang
+          </button>
+        </div>
+      </div>
+    );
   }
 
   if (!items) return <Skeleton />;
