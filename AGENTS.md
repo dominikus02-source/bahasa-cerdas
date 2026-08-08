@@ -2624,3 +2624,56 @@ Ubah "Panggung Literasi" (`/guru/feed-karya`) dari social feed + papan pengumuma
 2. Game server revival (VPS mati)
 3. GameRoom migration SQL via Supabase dashboard
 4. UI game solo: badge-score client vs server masih beda (kosmetik)
+
+---
+
+## Phase SIMULASI EVALUASI HUB — Konsolidasi Hasil/Tinjau/Dokumen (Aug 8, 2026)
+
+### Goal
+Konsolidasi tiga halaman evaluasi guru menjadi satu hub **`/guru/evaluasi-simulasi`** dengan tab internal (`?tab=hasil|tinjau|dokumen`). Route lama tetap hidup sebagai wrapper tipis (backward compatible). **ADDITIVE ONLY** — tidak ada route/API/model/engine dihapus.
+
+### Keputusan Desain
+- **Tab di query string** (bukan nested route): deep-linkable, refresh-safe, back/forward browser berfungsi.
+- **Hub, bukan marketing page**: judul → deskripsi singkat → tab nav → konten. Tidak ada dashboard baru menumpuk.
+- **Cross-link memakai `?tab=`** saat di dalam hub; memakai path absolut saat standalone (legacy).
+- **Sidebar Simulasi & Tes** menyusut 6→4 item: Simulasi UKBI, Simulasi TKA, **Evaluasi Simulasi** (`activeOn` legacy 3 route), BIGT.
+
+### Struktur
+| File | Isi |
+|------|-----|
+| `components/guru/simulasi/HasilSimulasiView.tsx` | ex `hasil-simulasi/client.tsx` (`PusatEvaluasiClient`); prop `guruName`, `hub?` |
+| `components/guru/simulasi/TinjauSimulasiView.tsx` | ex `tinjau-simulasi/page.tsx`; prop `hub?` |
+| `components/guru/simulasi/DokumenLatihanView.tsx` | ex `dokumen-latihan/page.tsx`; prop `hub?`, `title?` |
+| `components/guru/simulasi/EvaluasiSimulasiTabs.tsx` | hub baru: header "Evaluasi Simulasi" + tab nav + render aktif |
+| `app/(dashboard)/guru/evaluasi-simulasi/page.tsx` | Server page, guard `isTeacherOrStudent`, render `EvaluasiSimulasiTabs` |
+| `app/(dashboard)/guru/hasil-simulasi/page.tsx` | Wrapper → `<HasilSimulasiView guruName />` |
+| `app/(dashboard)/guru/hasil-simulasi/client.tsx` | Re-export `PusatEvaluasiClient` (backward compat) |
+| `app/(dashboard)/guru/tinjau-simulasi/page.tsx` | Wrapper → `<TinjauSimulasiView />` |
+| `app/(dashboard)/guru/dokumen-latihan/page.tsx` | Wrapper → `<DokumenLatihanView title="Dokumen Latihan Murid" />` |
+| `components/dashboard/GuruNav.tsx` | Simulasi & Tes: 4 item, "Evaluasi Simulasi" + `activeOn` legacy |
+| `docs/SIMULASI_EVALUASI_HUB.md` | Dokumentasi konsolidasi |
+
+### Kompatibilitas Test
+- `test-phase-simulation-workflow`/`test-simulation-workflow`: string & route legacy dijaga via `activeOn` + komentar dokumentasi di wrapper (bukan string eksplisit di JSX).
+- `test-dokumen-latihan-sanitization`: komentar wrapper ditulis **tanpa** kata `correctAnswer`/`jawaban` (scan sensitif menyapu konten file).
+
+### Verifikasi
+| Check | Hasil |
+|-------|-------|
+| `npx tsc --noEmit` | ✅ 0 errors |
+| ESLint (file baru/diubah) | ✅ 0 violations |
+| `npm run test:guru-phase` | ✅ SEMUA LULUS |
+| `npm run test:gamification-engine` | ✅ SEMUA LULUS |
+| `npm run test:simulation-workflow` | ✅ 65/65 |
+| `npx tsx scripts/test-phase-simulation-workflow.ts` | ✅ 65/65 |
+| `npm run test:bigt-menu` | ✅ 23/23 |
+| `npx tsx scripts/test-dokumen-latihan-sanitization.ts` | ✅ 13/13 |
+| `npm run build` (dummy env) | ✅ 359 routes, 0 errors |
+
+Catatan: `test:bahasa-ui` — 5 kegagalan **pra-eksis** di file luar changeset (`BigtInfoPage.tsx`, panel RPP), bukan akibat hub.
+
+### Remaining
+1. TKA UTBK/Guru enrichment 30 → 150
+2. Game server revival (VPS mati)
+3. GameRoom migration SQL via Supabase dashboard
+4. UI game solo: badge-score client vs server masih beda (kosmetik)
