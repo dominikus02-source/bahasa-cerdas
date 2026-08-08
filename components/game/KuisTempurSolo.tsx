@@ -32,7 +32,7 @@ const KT_STYLE = `
 // mematikannya, seperti yang terjadi pada gim multiplayer lain.
 
 const GAME_TYPE = "RIMBA_KATA"
-const JUMLAH = 5
+const JUMLAH = 8
 const HP_AWAL = 100
 const DMG_TEMBAK = 34
 const DMG_SALAH = 10
@@ -144,6 +144,9 @@ export default function KuisTempurSolo({ backHref = "/arena/game" }: { backHref?
   // Berapa bot yang sudah dikalahkan (bot terus berdatangan sampai waktu habis).
   const dibunuhRef = useRef(0)
   const giliranBotRef = useRef(0)
+  // Mencegah soal yang sama dijawab/habis dua kali: diisi saat jawab atau waktu
+  // habis, dikosongkan lagi oleh soalBaru().
+  const teratasiRef = useRef(false)
   // Untuk membedakan ketukan (menembak) dari seretan (berjalan).
   const tekanRef = useRef<{ x: number; y: number; t: number } | null>(null)
 
@@ -174,6 +177,7 @@ export default function KuisTempurSolo({ backHref = "/arena/game" }: { backHref?
   }, [])
 
   const soalBaru = useCallback(() => {
+    teratasiRef.current = false
     if (kantongRef.current.length === 0) kantongRef.current = kocok(QUESTION_BANK)
     const q = kantongRef.current.pop()!
     // Dua pilihan, bukan empat. Di tengah permainan, membaca empat opsi di layar
@@ -282,7 +286,10 @@ export default function KuisTempurSolo({ backHref = "/arena/game" }: { backHref?
     }
     rintRef.current = rint
 
-    const botKar = kocok(KARAKTER.filter((k) => k !== karakterku)) as Karakter[]
+    // Semua karakter boleh jadi musuh — termasuk karakter yang dipakai pemain,
+    // supaya arena terasa penuh dan beragam. Kalau murid memakai foto profil,
+    // sebagian bot ikut berwajah foto itu.
+    const botKar = kocok([...KARAKTER]) as Karakter[]
     const botNama = kocok(NAMA_BOT).slice(0, JUMLAH - 1)
     const img = (src: string) => { const i = new Image(); i.src = src; return i }
     if (!batikRef.current) batikRef.current = img("/batik%20bg%20bc.png")
@@ -292,13 +299,16 @@ export default function KuisTempurSolo({ backHref = "/arena/game" }: { backHref?
       const jarak = Math.min(W, H) * 0.32
       const kamu = i === 0
       const kar = kamu ? karakterku : botKar[(i - 1) % botKar.length]
+      const pakaiAvatar = !kamu && avatarku && Math.random() < 0.2
       const src = kamu && karakterku === "sendiri" && avatarku
         ? avatarku
-        : gambarKarakter(kar === "sendiri" ? "zelby" : kar, "happy")
+        : pakaiAvatar
+          ? avatarku!
+          : gambarKarakter(kar === "sendiri" ? "zelby" : kar, "happy")
       const x = W / 2 + Math.cos(sudut) * jarak
       const y = H / 2 + Math.sin(sudut) * jarak
       return {
-        nama: kamu ? namaku : botNama[i - 1], gambar: img(src), warna: WARNA[i],
+        nama: kamu ? namaku : botNama[i - 1], gambar: img(src), warna: WARNA[i % WARNA.length],
         x, y, tx: x, ty: y, hp: HP_AWAL, hidup: true, kamu, kedip: 0, langkah: 0, hadap: 1,
       }
     })
@@ -451,9 +461,10 @@ export default function KuisTempurSolo({ backHref = "/arena/game" }: { backHref?
         x = kx; y = ky
         break
       }
-      const kar = kocok(KARAKTER.filter((k) => k !== karakterku))[0] ?? "zelby"
+      const kar = kocok([...KARAKTER])[0] ?? "zelby"
+      const pakaiAvatar = avatarku && Math.random() < 0.2
       const img = new Image()
-      img.src = gambarKarakter(kar, "happy")
+      img.src = pakaiAvatar ? avatarku! : gambarKarakter(kar, "happy")
       pRef.current.push({
         nama: NAMA_BOT[n % NAMA_BOT.length], gambar: img, warna: WARNA[n % WARNA.length],
         x, y, tx: x, ty: y, hp: HP_AWAL, hidup: true, kamu: false, kedip: 0, langkah: 0, hadap: 1,
@@ -625,10 +636,23 @@ export default function KuisTempurSolo({ backHref = "/arena/game" }: { backHref?
 
         if (!p.kamu) {
           if (jarak < 12) {
+            const aku = pRef.current[0]
             for (let c = 0; c < 12; c++) {
-              const a = Math.random() * Math.PI * 2
-              const rr = Math.random() * z.r * 0.75
-              const nx = z.x + Math.cos(a) * rr, ny = z.y + Math.sin(a) * rr
+              let nx: number, ny: number
+              // Bot mendekati pemain lebih sering supaya arena terasa hidup dan
+              // peluru pemain selalu punya sasaran terdekat.
+              if (aku?.hidup && Math.random() < 0.55) {
+                const a = Math.random() * Math.PI * 2
+                const d = 60 + Math.random() * 100
+                nx = aku.x + Math.cos(a) * d
+                ny = aku.y + Math.sin(a) * d
+              } else {
+                const a = Math.random() * Math.PI * 2
+                const rr = Math.random() * z.r * 0.75
+                nx = z.x + Math.cos(a) * rr
+                ny = z.y + Math.sin(a) * rr
+              }
+              if (nx < 24 || nx > W - 24 || ny < 56 || ny > H - 64) continue
               if (!rintRef.current.some((o) => kenaRintangan(nx, ny, o))) { p.tx = nx; p.ty = ny; break }
             }
           }
@@ -752,10 +776,11 @@ export default function KuisTempurSolo({ backHref = "/arena/game" }: { backHref?
     }
     rafRef.current = requestAnimationFrame(gelung)
     return () => cancelAnimationFrame(rafRef.current)
-  }, [fase, selesaikan, tulisFeed, karakterku])
+  }, [fase, selesaikan, tulisFeed, karakterku, avatarku])
 
   const jawab = (idx: number, benar: boolean) => {
-    if (kunci || fase !== "main") return
+    if (kunci || teratasiRef.current || fase !== "main") return
+    teratasiRef.current = true
     setKunci(true); setDipilih(idx)
     const aku = pRef.current[0]
 
@@ -790,9 +815,16 @@ export default function KuisTempurSolo({ backHref = "/arena/game" }: { backHref?
   // Hitung mundur waktu menjawab. Habis waktu = kehilangan combo dan tidak dapat
   // peluru, TETAPI tidak mengurangi HP: berlindung sambil berpikir tidak boleh
   // dihukum seperti menjawab salah. Yang dihukum adalah diam saja.
+  //
+  // Penting: efek ini TIDAK boleh berhenti karena kunci berubah menjadi true —
+  // dulu `kunci` ikut dalam dependency sehingga begitu waktu habis lalu setKunci
+  // memicu render ulang, cleanup membatalkan timeout yang seharusnya mengganti
+  // soal. Akibatnya soal membeku sampai sesi berakhir. Kini "sudah teratasi"
+  // dijaga lewat ref, jadi timeout penggantian soal selalu sempat berjalan.
   useEffect(() => {
-    if (fase !== "main" || kunci || !soal) return
+    if (fase !== "main" || teratasiRef.current || !soal) return
     if (waktu <= 0) {
+      teratasiRef.current = true
       setKunci(true)
       comboRef.current = 0
       setCombo(0)
@@ -804,7 +836,7 @@ export default function KuisTempurSolo({ backHref = "/arena/game" }: { backHref?
     }
     const t = setTimeout(() => setWaktu((w) => w - 1), 1000)
     return () => clearTimeout(t)
-  }, [waktu, fase, kunci, soal, soalBaru, tulisFeed])
+  }, [waktu, fase, soal, soalBaru, tulisFeed])
 
   // Timer 5 menit seluruh sesi. Bertahan sampai nol = menang. Dulu sesi
   // berakhir cepat karena cukup menyingkirkan 4 bot awal; sekarang selama
@@ -882,6 +914,7 @@ export default function KuisTempurSolo({ backHref = "/arena/game" }: { backHref?
               <p><b className="text-amber-900">2.</b> Jawab benar untuk mendapat <b>peluru</b>.</p>
               <p><b className="text-amber-900">3.</b> Ketuk musuh untuk menembaknya. Seret untuk berjalan.</p>
               <p><b className="text-amber-900">4.</b> Bertahan sampai <b>5 menit</b> habis — setiap bot yang kalah langsung diganti yang baru.</p>
+              <p><b className="text-amber-900">5.</b> Jawab sebelum <b>15 detik</b> — waktu habis, soal diganti otomatis.</p>
             </div>
 
             <h2 className="mb-2 text-left text-xs font-extrabold uppercase tracking-wider opacity-60">Pilih karaktermu</h2>
@@ -904,6 +937,8 @@ export default function KuisTempurSolo({ backHref = "/arena/game" }: { backHref?
               <span className="flex items-center gap-1"><Heart className="h-3.5 w-3.5 text-rose-500" /> Ronde {level}</span>
               <span>·</span>
               <span>⏱ 5 menit</span>
+              <span>·</span>
+              <span>{JUMLAH - 1} lawan</span>
               {profil && (
                 <span className="flex items-center gap-1" style={{ color: profil.warna }}>
                   <RankIcon rank={profil.rankKey} size={14} /> Lv {profil.levelXp}
@@ -980,11 +1015,11 @@ export default function KuisTempurSolo({ backHref = "/arena/game" }: { backHref?
   return (
     <div className="fixed inset-0 z-[60] overflow-y-auto bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] text-[#161B3A]">
       <style>{KT_STYLE}</style>
-      <div className="relative mx-auto flex min-h-full max-w-xl flex-col items-center px-4 py-3">
+      <div className="relative mx-auto flex min-h-full max-w-2xl flex-col items-center px-4 py-3">
         {Hdr}
 
         <div className="kt-screen flex w-full flex-col items-center">
-          <div className="mb-2 grid w-full max-w-[480px] grid-cols-5 gap-2">
+          <div className="mb-2 grid w-full max-w-[640px] grid-cols-5 gap-2">
             <div className="rounded-xl border-[3px] border-[#161B3A] bg-[#161B3A] px-2 py-2 text-white shadow-[3px_3px_0_#161B3A]">
               <div className="text-[8px] font-extrabold uppercase opacity-70">Nyawa</div>
               <div className="flex items-center gap-1 text-lg font-extrabold leading-none">
@@ -1010,7 +1045,7 @@ export default function KuisTempurSolo({ backHref = "/arena/game" }: { backHref?
           </div>
 
           {/* Sisa waktu bertahan. Bot terus berdatangan sampai angka ini nol. */}
-          <div className="mb-2 w-full max-w-[480px]">
+          <div className="mb-2 w-full max-w-[640px]">
             <div className={`mb-1 flex items-center justify-between text-[11px] font-extrabold ${sisaWaktu <= 60 ? "text-rose-600" : "text-[#161B3A]/70"}`}>
               <span>⏱ Bertahan</span>
               <span>{Math.floor(sisaWaktu / 60)}:{String(sisaWaktu % 60).padStart(2, "0")}</span>
@@ -1026,7 +1061,7 @@ export default function KuisTempurSolo({ backHref = "/arena/game" }: { backHref?
           {/* Baris rank & koin dari data murid yang sebenarnya. Kalau belum
               termuat, tidak menampilkan angka karangan sama sekali. */}
           {profil && (
-            <div className="mb-2 flex w-full max-w-[480px] items-center justify-between text-[11px] font-extrabold">
+            <div className="mb-2 flex w-full max-w-[640px] items-center justify-between text-[11px] font-extrabold">
               <span className="flex items-center gap-1.5" style={{ color: profil.warna }}>
                 <RankIcon rank={profil.rankKey} size={16} /> {profil.rank} · Lv {profil.levelXp}
               </span>
@@ -1042,10 +1077,10 @@ export default function KuisTempurSolo({ backHref = "/arena/game" }: { backHref?
                 <span key={f.id} className="rounded-lg bg-[#161B3A]/90 px-2 py-1 text-[10px] font-semibold text-white">{f.teks}</span>
               ))}
             </div>
-            <canvas ref={cvRef} className="h-[56dvh] max-h-[560px] min-h-[340px] w-full touch-none rounded-2xl border-4 border-[#161B3A] shadow-[6px_6px_0_#161B3A]" />
+            <canvas ref={cvRef} className="h-[60dvh] max-h-[620px] min-h-[380px] w-full touch-none rounded-2xl border-4 border-[#161B3A] shadow-[6px_6px_0_#161B3A]" />
           </div>
 
-          <div className="mt-2 w-full max-w-[480px]">
+          <div className="mt-2 w-full max-w-[640px]">
             <div className="mb-2 rounded-2xl border-4 border-[#161B3A] bg-white px-4 py-3 text-center shadow-[4px_4px_0_#161B3A]">
               <p className="text-[15px] font-bold leading-snug text-[#161B3A]">{soal?.q.soal}</p>
             </div>
@@ -1075,7 +1110,7 @@ export default function KuisTempurSolo({ backHref = "/arena/game" }: { backHref?
             {/* Sisa waktu. Bilah menipis lebih cepat terbaca daripada angka saat
                 mata sedang tertuju ke arena. */}
             <div className="mt-2.5 flex items-center gap-2">
-              <span className="text-[11px] font-bold text-[#161B3A]/60">⏱ {waktu} detik</span>
+              <span className="shrink-0 text-[11px] font-bold text-[#161B3A]/60">⏱ Waktu jawab {waktu} dtk</span>
               <span className="h-2 flex-1 overflow-hidden rounded-full border border-[#161B3A]/20 bg-[#161B3A]/10">
                 <span
                   className={`block h-full rounded-full transition-all duration-1000 ease-linear ${waktu <= 5 ? "bg-rose-500" : "bg-emerald-400"}`}
