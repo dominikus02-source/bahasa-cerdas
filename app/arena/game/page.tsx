@@ -143,6 +143,46 @@ export default async function ArenaGimPage() {
           <BattleCard onlineCount={onlineCount} recentBattles={recentBattles} recentPlayers={recentPlayers} />
         </div>
 
+        {/* Kuis Tempur — Announcement Banner */}
+        <Link
+          href="/arena/game/kuis-tempur"
+          className="block relative overflow-hidden rounded-[20px] mb-4 active:scale-[0.98] transition-transform group"
+          style={{ background: "linear-gradient(120deg, #7F1D1D, #DC2626 50%, #EF4444)", boxShadow: "0 8px 28px rgba(220,38,38,0.25)" }}
+        >
+          <div className="absolute inset-0 pointer-events-none opacity-20" style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.15'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+          }} />
+          <div className="absolute top-[-20px] right-[5px] w-[180px] h-[180px] rounded-full pointer-events-none" style={{ background: "radial-gradient(circle, rgba(255,255,255,0.2), transparent 70%)" }} />
+          <div className="relative z-10 p-[18px] flex items-center gap-4">
+            <div className="w-16 h-16 rounded-2xl bg-white/15 backdrop-blur flex items-center justify-center shrink-0 border border-white/20 group-hover:scale-110 transition-transform">
+              <Swords size={30} className="text-white" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="inline-flex items-center gap-1 bg-red-400/30 backdrop-blur px-2 py-0.5 rounded-full text-[10px] font-extrabold text-red-100 tracking-wider mb-1.5">
+                <Zap size={10} /> GIM BARU!
+              </div>
+              <h3 className="font-extrabold text-lg text-white leading-tight">
+                Kuis Tempur — kini bisa main solo!
+              </h3>
+              <p className="text-xs mt-0.5" style={{ color: "rgba(255,255,255,0.85)" }}>
+                Jawab cepat, tembak bot, bertahan di arena. Naik level dengan bertarung melawan lawan pintar!
+              </p>
+              <div className="flex items-center gap-2 mt-2">
+                <span className="text-[10px] font-bold bg-white/20 px-2 py-0.5 rounded-md text-white">
+                  &#x1F3AE; Solo vs bot
+                </span>
+                <span className="text-[10px] font-bold bg-amber-400/30 px-2 py-0.5 rounded-md text-amber-200">
+                  +80 XP
+                </span>
+                <span className="text-[10px]" style={{ color: "rgba(255,255,255,0.5)" }}>~5 menit</span>
+              </div>
+            </div>
+            <div className="shrink-0 w-9 h-9 rounded-full bg-white/15 flex items-center justify-center text-white group-hover:bg-white/25 transition-colors">
+              &rarr;
+            </div>
+          </div>
+        </Link>
+
         {/* Petualangan Kata — Announcement Banner */}
         <Link
           href="/arena/game/petualangan-kata"
