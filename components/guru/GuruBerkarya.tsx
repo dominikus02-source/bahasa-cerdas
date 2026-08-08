@@ -23,6 +23,21 @@ interface GuruKaryaItem {
   } | null;
 }
 
+function waktuRelatif(iso: string | null): string {
+  if (!iso) return "";
+  const t = new Date(iso).getTime();
+  if (Number.isNaN(t)) return "";
+  const detik = Math.max(0, Math.floor((Date.now() - t) / 1000));
+  if (detik < 60) return "baru saja";
+  const menit = Math.floor(detik / 60);
+  if (menit < 60) return `${menit} mnt lalu`;
+  const jam = Math.floor(menit / 60);
+  if (jam < 24) return `${jam} jam lalu`;
+  const hari = Math.floor(jam / 24);
+  if (hari < 7) return `${hari} hari lalu`;
+  return new Intl.DateTimeFormat("id-ID", { day: "numeric", month: "short" }).format(t);
+}
+
 function Skeleton() {
   return (
     <div className="rounded-3xl bg-white border border-violet-100 p-5 sm:p-6 shadow-lg shadow-violet-100/50 animate-pulse">
@@ -111,6 +126,9 @@ export function GuruBerkarya() {
                   </span>
                   <span className="flex items-center gap-1 text-[10px] text-gray-400">
                     <Eye size={10} /> {a.readCount}
+                  </span>
+                  <span className="text-[10px] text-gray-400 ml-auto shrink-0">
+                    {waktuRelatif(a.publishedAt || a.createdAt)}
                   </span>
                 </div>
                 <p className="text-sm font-semibold text-gray-900 leading-snug line-clamp-2 group-hover:text-violet-700 transition-colors">

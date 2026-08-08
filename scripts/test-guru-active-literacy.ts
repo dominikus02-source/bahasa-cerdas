@@ -51,10 +51,11 @@ ok("chip XP tetap tampil (+{xp} XP)", /\+\{xp\} XP/.test(missionSrc));
 
 // ── 4. Kartu posisi Kompetisi Guru ─────────────────────────────────────────
 const rankCard = read("components/guru/GuruLeaderboardCard.tsx");
-ok("GuruLeaderboardCard fetch WEEKLY", /period=WEEKLY/.test(rankCard));
-ok("GuruLeaderboardCard menampilkan posisi (#myRank)", /#\$\{data\.myRank/.test(rankCard));
+ok("GuruLeaderboardCard default periode WEEKLY", /useState<TeacherLeaderboardPeriod>\("WEEKLY"\)/.test(rankCard));
+ok("GuruLeaderboardCard fetch memakai ?period= dinamis", /\?period=\$\{period\}/.test(rankCard));
+ok("GuruLeaderboardCard menampilkan posisi (#myRank)", /#\{data\.myRank/.test(rankCard));
 ok("GuruLeaderboardCard menampilkan XP minggu ini", /XP Minggu Ini/.test(rankCard));
-ok("GuruLeaderboardCard menampilkan gap ke top 3", /gapTop3/.test(rankCard));
+ok("GuruLeaderboardCard menampilkan gap ke peringkat atas", /gapNext/.test(rankCard));
 ok("GuruLeaderboardCard menampilkan top 3", /top3\.map/.test(rankCard));
 
 // ── 5. Feed Guru Berkarya ──────────────────────────────────────────────────

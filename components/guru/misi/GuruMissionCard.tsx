@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Sparkles } from "lucide-react";
 import { MISI_GURU } from "@/lib/guru/misi-guru";
 import type { MisiGuruStatus } from "@/lib/guru/misi-guru-status";
+import { nextActionMisiId } from "@/lib/guru/next-action";
 import { MissionItem } from "@/components/guru/misi/MissionItem";
 import { MissionProgress } from "@/components/guru/misi/MissionProgress";
 import { LevelCard } from "@/components/guru/misi/LevelCard";
@@ -32,16 +33,26 @@ function Skeleton() {
   );
 }
 
-export function GuruMissionCard({ compact = false }: { compact?: boolean }) {
-  const [status, setStatus] = useState<MisiGuruStatus | null>(null);
+export function GuruMissionCard({
+  compact = false,
+  status: externalStatus = null,
+  external = false,
+}: {
+  compact?: boolean;
+  status?: MisiGuruStatus | null;
+  external?: boolean;
+}) {
+  const [internalStatus, setInternalStatus] = useState<MisiGuruStatus | null>(null);
   const [error, setError] = useState(false);
+  const status = external ? externalStatus : internalStatus;
 
   useEffect(() => {
+    if (external) return; // status dari induk — tanpa fetch duplikat
     let aktif = true;
     fetch("/api/guru/misi")
       .then((r) => (r.ok ? r.json() : Promise.reject()))
       .then((res) => {
-        if (aktif && res?.data) setStatus(res.data);
+        if (aktif && res?.data) setInternalStatus(res.data);
       })
       .catch(() => {
         if (aktif) setError(true);
@@ -49,10 +60,18 @@ export function GuruMissionCard({ compact = false }: { compact?: boolean }) {
     return () => {
       aktif = false;
     };
-  }, []);
+  }, [external]);
 
   if (error) return null;
   if (!status) return <Skeleton />;
+
+  const nextMisiId = nextActionMisiId(status);
+  const urutanMisi = [...MISI_GURU].sort((a, b) => {
+    const sa = status.misi.find((x) => x.id === a.id)?.selesai ?? false;
+    const sb = status.misi.find((x) => x.id === b.id)?.selesai ?? false;
+    if (sa !== sb) return sa ? 1 : -1; // misi belum selesai tampil lebih dulu
+    return 0;
+  });
 
   return (
     <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-emerald-50 via-white to-teal-50 p-5 sm:p-6 shadow-lg shadow-emerald-100/50 ring-1 ring-emerald-100">
@@ -94,7 +113,7 @@ export function GuruMissionCard({ compact = false }: { compact?: boolean }) {
         </div>
 
         <div className={`mt-4 ${compact ? "grid grid-cols-1 sm:grid-cols-2 gap-2.5" : "space-y-2.5"}`}>
-          {MISI_GURU.map((m) => {
+          {urutanMisi.map((m) => {
             const misi = status.misi.find((x) => x.id === m.id);
             return (
               <MissionItem
@@ -106,6 +125,7 @@ export function GuruMissionCard({ compact = false }: { compact?: boolean }) {
                 href={m.href}
                 icon={m.icon}
                 iconBg={m.iconBg}
+                highlight={nextMisiId === m.id}
               />
             );
           })}

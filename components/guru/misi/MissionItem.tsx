@@ -32,18 +32,22 @@ interface MissionItemProps {
   href: string;
   icon: string;
   iconBg: string;
+  highlight?: boolean;
 }
 
-export function MissionItem({ label, desc, xp, done, href, icon, iconBg }: MissionItemProps) {
+export function MissionItem({ label, desc, xp, done, href, icon, iconBg, highlight = false }: MissionItemProps) {
   const Icon = ICONS[icon] ?? Sparkles;
 
   return (
     <Link
       href={href}
+      aria-label={done ? `${label} — selesai` : highlight ? `${label} — lanjutkan` : label}
       className={`group flex items-center gap-3 rounded-2xl p-3 transition-all border ${
         done
           ? "bg-emerald-50 border-emerald-200"
-          : "bg-white border-gray-100 hover:bg-emerald-50/60 hover:border-emerald-100"
+          : highlight
+            ? "bg-emerald-50/70 border-emerald-300 ring-2 ring-emerald-200"
+            : "bg-white border-gray-100 hover:bg-emerald-50/60 hover:border-emerald-100"
       }`}
     >
       <div
@@ -67,6 +71,11 @@ export function MissionItem({ label, desc, xp, done, href, icon, iconBg }: Missi
         <span className="text-[11px] font-bold text-amber-600 bg-amber-50 border border-amber-100 px-2 py-1 rounded-full whitespace-nowrap">
           +{xp} XP
         </span>
+        {highlight && !done && (
+          <span className="text-[9px] font-bold uppercase tracking-wide text-emerald-600 bg-emerald-100 px-1.5 py-0.5 rounded-full">
+            Lanjutkan
+          </span>
+        )}
         {done ? (
           <span className="w-6 h-6 rounded-full bg-gradient-to-br from-amber-300 to-yellow-500 flex items-center justify-center shadow-md">
             <Check size={14} className="text-white" strokeWidth={3} />

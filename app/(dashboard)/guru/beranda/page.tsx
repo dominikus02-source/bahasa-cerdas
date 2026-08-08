@@ -13,8 +13,10 @@ import { Badge } from "@/components/ui/badge"
 import { TrialStatusCard } from "@/components/guru/TrialStatusCard"
 import { AiCreditBalance } from "@/components/guru/AiCreditBalance"
 import { GuruMissionCard } from "@/components/guru/misi/GuruMissionCard"
+import { NextActionGuru } from "@/components/guru/misi/NextActionGuru"
 import { GuruLeaderboardCard } from "@/components/guru/GuruLeaderboardCard"
 import { GuruBerkarya } from "@/components/guru/GuruBerkarya"
+import type { MisiGuruStatus } from "@/lib/guru/misi-guru-status"
 import BannerProgramGuruCerdas from "@/components/public/BannerProgramGuruCerdas"
 import AktivitasAnalytics from "@/components/guru/AktivitasAnalytics"
 import GuruBadgeGrid from "@/components/guru/GuruBadgeGrid"
@@ -107,6 +109,7 @@ export default function GuruBerandaPage() {  const user = useUserStore()
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [social, setSocial] = useState<any>(null)
+  const [misiStatus, setMisiStatus] = useState<MisiGuruStatus | null>(null)
 
   useEffect(() => {
     setLoading(true); setError(null);
@@ -122,6 +125,19 @@ export default function GuruBerandaPage() {  const user = useUserStore()
       })
       .catch(() => setError("Gagal memuat data dashboard"))
       .finally(() => setLoading(false));
+  }, [])
+
+  useEffect(() => {
+    let aktif = true;
+    fetch("/api/guru/misi")
+      .then((r) => (r.ok ? r.json() : Promise.reject()))
+      .then((res) => {
+        if (aktif && res?.data) setMisiStatus(res.data);
+      })
+      .catch(() => {});
+    return () => {
+      aktif = false;
+    };
   }, [])
 
   // Greeting must not be derived from the raw local clock during render.
@@ -170,8 +186,16 @@ export default function GuruBerandaPage() {  const user = useUserStore()
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
-        <GuruMissionCard compact />
-        <GuruLeaderboardCard />
+        <GuruLeaderboardCard misiStatus={misiStatus} />
+        <NextActionGuru status={misiStatus} />
+      </div>
+
+      <div className="mb-6">
+        <GuruMissionCard compact external status={misiStatus} />
+      </div>
+
+      <div className="mb-6">
+        <GuruBerkarya />
       </div>
 
       <div className="mb-6">
@@ -245,7 +269,7 @@ export default function GuruBerandaPage() {  const user = useUserStore()
                 <Zap size={22} className="text-white" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-gray-900">{stats.aiUsage?.rpp || 0 + stats.aiUsage?.soal || 0}</p>
+                <p className="text-2xl font-bold text-gray-900">{(stats.aiUsage?.rpp || 0) + (stats.aiUsage?.soal || 0)}</p>
                 <p className="text-sm text-gray-500">Kredit AI</p>
               </div>
             </div>
@@ -309,10 +333,6 @@ export default function GuruBerandaPage() {  const user = useUserStore()
           </div>
         </div>
       )}
-
-      <div className="mb-6">
-        <GuruBerkarya />
-      </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
         <AktivitasAnalytics />
