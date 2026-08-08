@@ -163,6 +163,8 @@
     "test:guru-active-literacy": "npx tsx scripts/test-guru-active-literacy.ts",
     "test:guru-engagement2-phase1": "npx tsx scripts/test-guru-engagement2-phase1.ts",
     "test:guru-engagement2-phase2": "npx tsx scripts/test-guru-engagement2-phase2.ts",
+    "test:guru-berkarya2-social-feed": "npx tsx scripts/test-guru-berkarya2-social-feed.ts",
+    "test:guru-berkarya-social": "npx tsx scripts/test-guru-berkarya-social.ts",
     "test:gamification-engine": "npx tsx scripts/test-gamification-engine.ts",
     "test:school-identity": "npx tsx scripts/test-school-identity.ts",
     "test:school-matching": "npx tsx scripts/test-school-matching.ts",

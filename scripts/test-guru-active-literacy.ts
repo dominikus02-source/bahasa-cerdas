@@ -63,7 +63,7 @@ const berkaryaRoute = read("app/api/guru/berkarya/route.ts");
 ok("route /api/guru/berkarya ada", berkaryaRoute.length > 0);
 ok("berkarya hanya karya terbit", /isPublished: true/.test(berkaryaRoute));
 ok("berkarya hanya dari guru/admin/founder", /role: "GURU"/.test(berkaryaRoute));
-ok("berkarya mengecualikan diri sendiri (default)", /excludeMe/.test(berkaryaRoute));
+ok("berkarya menyertakan karya sendiri (current user tampil, penanda Karya Anda)", !/excludeMe/.test(berkaryaRoute) && /currentUserId/.test(berkaryaRoute));
 ok("berkarya role-gated guru/founder", /isTeacherOrStudent\(/.test(berkaryaRoute));
 const berkaryaUi = read("components/guru/GuruBerkarya.tsx");
 ok("komponen GuruBerkarya memakai SafeMediaImage", /SafeMediaImage/.test(berkaryaUi));

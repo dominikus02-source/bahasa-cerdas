@@ -231,6 +231,8 @@ model User {
   studentKarya          StudentKarya[]
   studentKaryaLikes     StudentKaryaLike[]
   studentKaryaComments  StudentKaryaComment[]
+  artikelLikes          ArtikelLike[]
+  artikelComments       ArtikelComment[]
   koleksiKata           KoleksiKata[]
   competencyCerts       KompetensiCertificate[]
   loker                 Loker[]
@@ -1487,9 +1489,41 @@ model Artikel {
   source              String    @default("USER_CREATED")
   featured            Boolean   @default(false)
   author              User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  likes               ArtikelLike[]
+  comments            ArtikelComment[]
 
   @@index([isPublished, createdAt])
   @@index([authorId])
+}
+
+model ArtikelLike {
+  id        String   @id @default(cuid())
+  artikelId String
+  userId    String
+  createdAt DateTime @default(now())
+
+  artikel Artikel @relation(fields: [artikelId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([artikelId, userId])
+  @@index([artikelId])
+  @@index([userId])
+}
+
+model ArtikelComment {
+  id        String   @id @default(cuid())
+  artikelId String
+  userId    String
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  artikel Artikel @relation(fields: [artikelId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([artikelId])
+  @@index([artikelId, createdAt])
+  @@index([userId])
 }
 
 model KamusEntry {
