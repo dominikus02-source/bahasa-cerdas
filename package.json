@@ -160,6 +160,7 @@
     "seed:guru-badges:dry-run": "npx tsx scripts/seed-guru-badges.ts",
     "seed:guru-badges": "npx tsx scripts/seed-guru-badges.ts --execute",
     "test:guru-phase": "npx tsx scripts/test-guru-phase.ts",
+    "test:guru-active-literacy": "npx tsx scripts/test-guru-active-literacy.ts",
     "test:gamification-engine": "npx tsx scripts/test-gamification-engine.ts",
     "test:school-identity": "npx tsx scripts/test-school-identity.ts",
     "test:school-matching": "npx tsx scripts/test-school-matching.ts",

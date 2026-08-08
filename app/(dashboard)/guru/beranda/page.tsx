@@ -13,6 +13,8 @@ import { Badge } from "@/components/ui/badge"
 import { TrialStatusCard } from "@/components/guru/TrialStatusCard"
 import { AiCreditBalance } from "@/components/guru/AiCreditBalance"
 import { GuruMissionCard } from "@/components/guru/misi/GuruMissionCard"
+import { GuruLeaderboardCard } from "@/components/guru/GuruLeaderboardCard"
+import { GuruBerkarya } from "@/components/guru/GuruBerkarya"
 import BannerProgramGuruCerdas from "@/components/public/BannerProgramGuruCerdas"
 import AktivitasAnalytics from "@/components/guru/AktivitasAnalytics"
 import GuruBadgeGrid from "@/components/guru/GuruBadgeGrid"
@@ -169,6 +171,10 @@ export default function GuruBerandaPage() {  const user = useUserStore()
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
         <GuruMissionCard compact />
+        <GuruLeaderboardCard />
+      </div>
+
+      <div className="mb-6">
         <BannerProgramGuruCerdas />
       </div>
 
@@ -303,6 +309,10 @@ export default function GuruBerandaPage() {  const user = useUserStore()
           </div>
         </div>
       )}
+
+      <div className="mb-6">
+        <GuruBerkarya />
+      </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
         <AktivitasAnalytics />

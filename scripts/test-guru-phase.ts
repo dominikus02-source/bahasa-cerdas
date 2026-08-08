@@ -13,7 +13,7 @@ const ok = (label: string, cond: boolean) => {
 const read = (p: string) => readFileSync(join(process.cwd(), p), "utf8");
 
 // ── 1. teacher-xp.ts ─────────────────────────────────────────────────────
-ok("7 sumber XP guru terdefinisi (termasuk GURU_GAME)", Object.keys(GURU_XP_SOURCES).length === 7);
+ok("11 sumber XP guru terdefinisi (termasuk GURU_GAME, GURU_ARTIKEL, GURU_PUISI, GURU_MATERI, GURU_KELAS)", Object.keys(GURU_XP_SOURCES).length === 11);
 for (const [k, v] of Object.entries(GURU_XP_NILAI)) {
   ok(`nilai XP guru ${k} > 0 (${v})`, v > 0);
 }
@@ -113,6 +113,210 @@ ok("halaman data-siswa menampilkan loadError", /loadError/.test(dataSiswaPage));
 
 const kelaskuPage = read("app/(dashboard)/guru/kelasku/page.tsx");
 ok("halaman kelasku cek res.ok di fetchGroups", /!res\.ok/.test(kelaskuPage));
+
+// ── 8. Guard quiz/assign (P0: GURU | ADMIN | founder via SSOT) ──────────────
+const quizRoutes: Record<string, string> = {
+  "quiz": "app/api/guru/quiz/route.ts",
+  "quiz/[id]": "app/api/guru/quiz/[id]/route.ts",
+  "quiz/[id]/assign": "app/api/guru/quiz/[id]/assign/route.ts",
+  "quiz/[id]/publish": "app/api/guru/quiz/[id]/publish/route.ts",
+  "quiz/[id]/duplicate": "app/api/guru/quiz/[id]/duplicate/route.ts",
+  "quiz/[id]/results": "app/api/guru/quiz/[id]/results/route.ts",
+  "quiz/[id]/questions": "app/api/guru/quiz/[id]/questions/route.ts",
+  "quiz/[id]/questions/bulk": "app/api/guru/quiz/[id]/questions/bulk/route.ts",
+};
+for (const [name, path] of Object.entries(quizRoutes)) {
+  const src = read(path);
+  ok(`/api/guru/${name} guard SSOT (GURU | ADMIN | founder)`, /isTeacherOrStudent/.test(src) && !/dbUser\.role\s*!==\s*"GURU"|role\?\.toUpperCase\(\)\s*!==\s*"GURU"/.test(src));
+}
+
+const quizBase = read("app/api/guru/quiz/route.ts");
+ok("/api/guru/quiz GET/POST scope creatorId (ownership tetap terjaga)", /creatorId/.test(quizBase));
+
+const assignRoute = read("app/api/guru/quiz/[id]/assign/route.ts");
+ok("/api/guru/quiz/[id]/assign ownership quiz (creatorId)", /quiz\.creatorId !== dbUser\.id/.test(assignRoute));
+ok("/api/guru/quiz/[id]/assign class safety (teacherId)", /teacherId: dbUser\.id/.test(assignRoute));
+
+const quizDetail = read("app/api/guru/quiz/[id]/route.ts");
+ok("/api/guru/quiz/[id] PUT/DELETE ownership quiz (creatorId)", /existing\.creatorId !== dbUser\.id/.test(quizDetail));
+
+const editPage = read("app/(dashboard)/guru/kuis/[id]/edit/page.tsx");
+ok("halaman edit kuis ada (bukan 404) dan reuse editor existing", /redirect\(`\/guru\/kuis\/new\?edit=/.test(editPage));
+ok("halaman edit kuis tidak membuat editor kedua", !/useState|"use client"/.test(editPage));
+
+const builderSrc = read("app/(dashboard)/guru/kuis/new/page.tsx");
+ok("editor edit-mode tidak duplikat soal saat simpan (filter existingSourceIds)", /soalIdsToAdd = editId\s*\?\s*selectedSoalIds\.filter\(id => !existingSourceIds\.includes\(id\)\)/.test(builderSrc));
+
+// ── 9. P1-A SSOT — TEST 1–8 (audit §13) ────────────────────────────────────
+// TEST 1: Guru melihat hanya murid kelas miliknya — scoping getTeacherStudents.
+ok("[TEST 1] getTeacherStudents scope teacherId (hanya kelas milik guru)", /where: \{ teacherId, isActive: true \}/.test(teacherSvc));
+ok("[TEST 1] getTeacherGroups scope teacherId", /where: \{ teacherId, isActive: true \}/.test(teacherSvc));
+
+// TEST 2: Guru A tidak dapat melihat murid Guru B — ownership tetap di route.
+const sosialSrc = read("app/api/guru/dashboard/social/route.ts");
+const literasiSrc = read("app/api/guru/literasi/stats/route.ts");
+const leaderboardSrc = read("app/api/guru/hasil-karya/leaderboard/route.ts");
+ok("[TEST 2] dashboard/social population via SSOT getTeacherGroups(user.id, null)", /getTeacherGroups\(user\.id, null\)/.test(sosialSrc));
+ok("[TEST 2] literasi/stats population via SSOT (ownership terjaga)", /getTeacherGroups\(user\.id, null\)/.test(literasiSrc));
+ok("[TEST 2] hasil-karya/leaderboard population via SSOT (ownership terjaga)", /getTeacherGroups\(user\.id, null\)/.test(leaderboardSrc));
+
+// TEST 3: ADMIN/founder pakai Guru Experience tanpa false-403 — semua guard SSOT.
+const p1aRoutes: Record<string, string> = {
+  "assign-tka": "app/api/guru/assign-tka/route.ts",
+  "buat-assessment": "app/api/guru/buat-assessment/route.ts",
+  "latihan": "app/api/guru/latihan/route.ts",
+  "latihan/[id]": "app/api/guru/latihan/[id]/route.ts",
+  "latihan/[id]/assignment/[assignId]": "app/api/guru/latihan/[id]/assignment/[assignId]/route.ts",
+  "nilai-kategori": "app/api/guru/nilai-kategori/route.ts",
+  "nilai-kategori/[id]": "app/api/guru/nilai-kategori/[id]/route.ts",
+  "nilai/stats": "app/api/guru/nilai/stats/route.ts",
+  "hasil-tka": "app/api/guru/hasil-tka/route.ts",
+  "generated-rpp": "app/api/guru/generated-rpp/route.ts",
+  "rpp": "app/api/guru/rpp/route.ts",
+  "artikel": "app/api/guru/artikel/route.ts",
+  "earnings": "app/api/guru/earnings/route.ts",
+  "leaderboard": "app/api/guru/leaderboard/route.ts",
+  "siswa/[id]/nickname-history": "app/api/guru/siswa/[id]/nickname-history/route.ts",
+  "penugasan/[id]/nilai-praktik": "app/api/guru/penugasan/[id]/nilai-praktik/route.ts",
+  "kelasku/[id]": "app/api/guru/kelasku/[id]/route.ts",
+  "nilai": "app/api/guru/nilai/route.ts",
+  "nilai/bulk": "app/api/guru/nilai/bulk/route.ts",
+  "nilai/export": "app/api/guru/nilai/export/route.ts",
+  "nilai/auto-populate": "app/api/guru/nilai/auto-populate/route.ts",
+  "nilai/kuis-grade": "app/api/guru/nilai/kuis-grade/route.ts",
+  "pengumuman": "app/api/guru/pengumuman/route.ts",
+  "pengumuman/[id]": "app/api/guru/pengumuman/[id]/route.ts",
+  "siswa/[id]": "app/api/guru/siswa/[id]/route.ts",
+  "dashboard/social": "app/api/guru/dashboard/social/route.ts",
+  "literasi/stats": "app/api/guru/literasi/stats/route.ts",
+  "hasil-karya/leaderboard": "app/api/guru/hasil-karya/leaderboard/route.ts",
+};
+for (const [name, path] of Object.entries(p1aRoutes)) {
+  const src = read(path);
+  ok(`[TEST 3] /api/guru/${name} guard isTeacherOrStudent`, /isTeacherOrStudent/.test(src) && !/role\s*!==\s*"GURU"/.test(src));
+}
+
+// TEST 4: Kelas inactive tidak masuk population — getTeacherGroups isActive.
+ok("[TEST 4] SSOT hanya kelas isActive=true", /isActive: true/.test(teacherSvc));
+ok("[TEST 4] nilai/stats population via getTeacherGroups(dbUser.id, null) (kelas aktif saja)", /getTeacherGroups\(dbUser\.id, null\)/.test(read("app/api/guru/nilai/stats/route.ts")));
+
+// TEST 5: Duplicate student lintas kelas dihitung sekali — dedupe SSOT.
+ok("[TEST 5] getTeacherStudents dedupe via Set", /const seen = new Set<string>\(\)/.test(teacherSvc));
+ok("[TEST 5] getTeacherStudentIds dedupe via Set", /new Set\(ids\)/.test(teacherSvc));
+
+// TEST 6: Population analytics tidak terpotong take:50.
+ok("[TEST 6] SSOT getTeacherGroups menerima take null (population tak terpotong)", /take === undefined \? \{ take: 50 \} : take === null \? \{\} : \{ take \}/.test(teacherSvc));
+ok("[TEST 6] getTeacherGroups projection diperluas STUDENT_SELECT (noAbsen/nisn)", /profile: \{ select: \{ noAbsen: true, nisn: true \} \}/.test(teacherSvc));
+ok("[TEST 6] nilai/stats population kelas via getTeacherGroups (tanpa take:50)", /getTeacherGroups\(dbUser\.id, null\)/.test(read("app/api/guru/nilai/stats/route.ts")) && !/db\.group\.findMany/.test(read("app/api/guru/nilai/stats/route.ts")));
+ok("[TEST 6] buat-assessment population via getTeacherGroups(dbUser.id, null)", /getTeacherGroups\(dbUser\.id, null\)/.test(read("app/api/guru/buat-assessment/route.ts")));
+
+// TEST 7: role:"member" legit tidak rusak — SPECIAL CASE tetap.
+ok("[TEST 7] nilai/stats count role:member dipertahankan (SPECIAL CASE)", /role:\s*"member"/.test(read("app/api/guru/nilai/stats/route.ts")));
+ok("[TEST 7] nilai/export population role:member dipertahankan (SPECIAL CASE)", /role:\s*"member"/.test(read("app/api/guru/nilai/export/route.ts")));
+ok("[TEST 7] nilai/auto-populate population role:member dipertahankan (SPECIAL CASE)", /role:\s*"member"/.test(read("app/api/guru/nilai/auto-populate/route.ts")));
+ok("[TEST 7] dashboard/social role:member dipertahankan (SPECIAL CASE)", /m\.role === "member"/.test(sosialSrc));
+ok("[TEST 7] literasi/stats role:member dipertahankan (SPECIAL CASE)", /m\.role === "member"/.test(literasiSrc));
+ok("[TEST 7] hasil-karya/leaderboard role:member dipertahankan (SPECIAL CASE)", /m\.role === "member"/.test(leaderboardSrc));
+
+// TEST 8: Response contract kompatibel — struktur payload population tetap.
+ok("[TEST 8] buat-assessment memetakan kelas → {id,name,grade,description,memberCount}", /memberCount/.test(read("app/api/guru/buat-assessment/route.ts")));
+ok("[TEST 8] gradebook population via getTeacherGroups(user.id, null)", /getTeacherGroups\(user\.id, null\)/.test(gradeSrc));
+ok("[TEST 8] gradebook membership dari group.members (bukan query terpisah)", /group\.members/.test(gradeSrc));
+ok("[TEST 8] tinjau-konstruktif guruStudentIds via SSOT getTeacherStudentIds", /getTeacherStudentIds\(teacherId\)/.test(read("app/api/guru/tinjau-konstruktif/route.ts")));
+ok("[TEST 8] dokumen-siswa legacy docs via SSOT getTeacherStudentIds", /getTeacherStudentIds\(teacherId\)/.test(read("app/api/guru/dokumen-siswa/route.ts")));
+
+// ── P1-B Guru Authorization — TEST 9–18 (audit §14) ────────────────────────
+// Migrasi guard legacy → isTeacherOrStudent. Semua tes statis/sumber (tanpa DB
+// live) — konsisten pola existing fase guru.
+
+// TEST 9: GURU allowed — semua file MIGRATE memakai SSOT (yang menerima GURU).
+const p1bMigrate: Record<string, string> = {
+  "soal": "app/api/guru/soal/route.ts",
+  "soal-set": "app/api/guru/soal-set/route.ts",
+  "soal-set/[id]": "app/api/guru/soal-set/[id]/route.ts",
+  "soal-set/[id]/questions": "app/api/guru/soal-set/[id]/questions/route.ts",
+  "bank-soal": "app/api/guru/bank-soal/route.ts",
+  "bank-soal/send": "app/api/guru/bank-soal/send/route.ts",
+  "bank-soal/preview": "app/api/guru/bank-soal/preview/route.ts",
+  "materi": "app/api/guru/materi/route.ts",
+  "materi/[id]/kirim": "app/api/guru/materi/[id]/kirim/route.ts",
+  "buat-tka": "app/api/guru/buat-tka/route.ts",
+  "group/[id]": "app/api/group/[id]/route.ts",
+};
+for (const [name, path] of Object.entries(p1bMigrate)) {
+  const src = read(path);
+  ok(`[TEST 9] ${name} guard isTeacherOrStudent (GURU allowed)`, /isTeacherOrStudent/.test(src));
+  ok(`[TEST 9] ${name} tidak ada guard legacy role !== GURU`, !/dbUser\.role\s*!==\s*"GURU"|user\.role\s*!==\s*"GURU"|role\?\.toUpperCase\(\)\s*!==\s*"GURU"/.test(src));
+}
+// TEST 9 (policy files yang juga dimigrasi/ber-guard SSOT).
+const p1bPolicy: Record<string, string> = {
+  "panduan": "app/api/guru/panduan/route.ts",
+  "panduan/[unitId]": "app/api/guru/panduan/[unitId]/route.ts",
+  "latihan/pick": "app/api/guru/latihan/pick/route.ts",
+  "misi": "app/api/guru/misi/route.ts",
+  "soal-pool": "app/api/guru/soal-pool/route.ts",
+};
+for (const [name, path] of Object.entries(p1bPolicy)) {
+  const src = read(path);
+  ok(`[TEST 9] ${name} guard isTeacherOrStudent`, /isTeacherOrStudent/.test(src));
+  ok(`[TEST 9] ${name} tidak ada guard legacy`, !/dbUser\.role\s*!==\s*"GURU"|user\.role\s*!==\s*"GURU"|role\?\.toUpperCase\(\)\s*!==\s*"GURU"/.test(src));
+}
+
+// TEST 10: ADMIN allowed — SSOT menerima role "ADMIN".
+ok("[TEST 10] SSOT isTeacherOrStudent menerima ADMIN", /user\.role === "ADMIN"/.test(teacherSvc));
+ok("[TEST 10] file MIGRATE tidak lagi memblokir ADMIN (semua via SSOT)", Object.entries(p1bMigrate).every(([, p]) => /isTeacherOrStudent/.test(read(p))));
+
+// TEST 11: founder allowed — SSOT menerima isFounder.
+ok("[TEST 11] SSOT isTeacherOrStudent menerima founder", /user\.isFounder === true/.test(teacherSvc));
+ok("[TEST 11] panduan menerima ADMIN+founder via SSOT", /isTeacherOrStudent/.test(read("app/api/guru/panduan/route.ts")) && /isTeacherOrStudent/.test(read("app/api/guru/panduan/[unitId]/route.ts")));
+ok("[TEST 11] latihan/pick menerima ADMIN+founder via SSOT", /isTeacherOrStudent/.test(read("app/api/guru/latihan/pick/route.ts")));
+
+// TEST 12: MURID denied — guard SSOT menolak role selain GURU/ADMIN/founder.
+ok("[TEST 12] SSOT menolak MURID (guard gate eksplisit)", !/user\.role === "MURID"/.test(teacherSvc));
+ok("[TEST 12] misi/soal-pool kini role-gated (sebelumnya auth-only)", /isTeacherOrStudent/.test(read("app/api/guru/misi/route.ts")) && /isTeacherOrStudent/.test(read("app/api/guru/soal-pool/route.ts")));
+ok("[TEST 12] soal-set GET kini role-gated (sebelumnya auth-only)", /isTeacherOrStudent/.test(read("app/api/guru/soal-set/route.ts")));
+ok("[TEST 12] group/[id] GET kini role-gated (sebelumnya auth-only)", /isTeacherOrStudent/.test(read("app/api/group/[id]/route.ts")));
+
+// TEST 13: Guru A → resource Guru B ditolak — ownership tetap dipertahankan.
+const soalSrc = read("app/api/guru/soal/route.ts");
+ok("[TEST 13] soal PUT/DELETE ownership uploaderId", (soalSrc.match(/existing\.uploaderId !== dbUser\.id/g) || []).length === 2);
+const soalSetIdSrc = read("app/api/guru/soal-set/[id]/route.ts");
+ok("[TEST 13] soal-set/[id] GET/PUT/DELETE ownership creatorId", (soalSetIdSrc.match(/set\.creatorId !== dbUser\.id/g) || []).length === 3);
+const questionsSrc = read("app/api/guru/soal-set/[id]/questions/route.ts");
+ok("[TEST 13] soal-set/[id]/questions POST/DELETE ownership creatorId", (questionsSrc.match(/set\.creatorId !== dbUser\.id/g) || []).length === 2);
+const materiSrc = read("app/api/guru/materi/route.ts");
+ok("[TEST 13] materi PUT/DELETE ownership uploaderId", (materiSrc.match(/existing\.uploaderId !== dbUser\.id/g) || []).length === 2);
+ok("[TEST 13] materi/[id]/kirim ownership uploader + teacherId", /!materi\.isPublished && materi\.uploaderId !== user\.id/.test(read("app/api/guru/materi/[id]/kirim/route.ts")) && /teacherId: user\.id/.test(read("app/api/guru/materi/[id]/kirim/route.ts")));
+ok("[TEST 13] bank-soal/send kelas milik guru (teacherId)", /teacherId: dbUser\.id/.test(read("app/api/guru/bank-soal/send/route.ts")));
+ok("[TEST 13] group/[id] GET ownership teacherId", /group\.teacherId !== dbUser\.id/.test(read("app/api/group/[id]/route.ts")));
+
+// TEST 14: ADMIN TIDAK bisa bypass ownership — guard ownership mutlak (kecuali
+// isPrivileged legacy yang memang desain group PATCH/DELETE — dibiarkan KEEP).
+ok("[TEST 14] soal ownership tanpa bypass (tetap uploaderId mutlak)", !/isFounder.*uploaderId|uploaderId.*isFounder/.test(soalSrc));
+ok("[TEST 14] soal-set/[id] ownership tanpa bypass ADMIN", !/set\.creatorId !== dbUser\.id.*isPrivileged|isPrivileged.*set\.creatorId/.test(soalSetIdSrc));
+ok("[TEST 14] materi ownership tanpa bypass ADMIN", !/existing\.uploaderId !== dbUser\.id.*isFounder/.test(materiSrc));
+ok("[TEST 14] group/[id] GET ownership tanpa bypass (hanya PATCH/DELETE yang punya isPrivileged legacy)", /group\.teacherId !== dbUser\.id\s*\)/.test(read("app/api/group/[id]/route.ts")));
+
+// TEST 15: founder TIDAK bisa bypass ownership — resource milik guru lain 404.
+ok("[TEST 15] soal-set/[id]/use ownership creatorId (founder ikut kena 404)", /set\.creatorId !== dbUser\.id/.test(read("app/api/guru/soal-set/[id]/use/route.ts")));
+
+// TEST 16: soal-set/[id]/use — akses tidak sah TIDAK bisa increment useCount.
+const useSrc = read("app/api/guru/soal-set/[id]/use/route.ts");
+ok("[TEST 16] use route guard SSOT sebelum aksi", /isTeacherOrStudent\(dbUser\)/.test(useSrc));
+ok("[TEST 16] use route ownership SEBELUM increment (urutan file)", useSrc.indexOf("set.creatorId !== dbUser.id") < useSrc.indexOf("useCount: { increment: 1 }"));
+ok("[TEST 16] use route membaca questionIds hanya setelah ownership (urutan file)", useSrc.indexOf("set.creatorId !== dbUser.id") < useSrc.indexOf("set.questions.map"));
+ok("[TEST 16] use route tidak lagi polos (guard + ownership ada)", /if \(!isTeacherOrStudent\(dbUser\)\)/.test(useSrc));
+
+// TEST 17: withdraw — ADMIN tetap ditolak (SPECIAL CASE finansial).
+const withdrawSrc = read("app/api/guru/withdraw/route.ts");
+ok("[TEST 17] withdraw guard GURU/founder-only (ADMIN denied)", /user\.role !== "GURU" && !user\.isFounder/.test(withdrawSrc));
+ok("[TEST 17] withdraw tidak memakai isTeacherOrStudent (special case)", !/from "@\/lib\/teacher\/students"/.test(withdrawSrc));
+ok("[TEST 17] withdraw memuat penanda P1-B SPECIAL CASE", /P1-B SPECIAL CASE: Withdraw remains GURU\/founder-only by financial policy\. ADMIN is intentionally denied\. Do not replace this guard with isTeacherOrStudent\(\)\./.test(withdrawSrc));
+
+// TEST 18: withdraw — GURU/founder tetap boleh (guard lama dipertahankan).
+ok("[TEST 18] withdraw guard membiarkan GURU", /user\.role !== "GURU" && !user\.isFounder/.test(withdrawSrc) && !/role\?\.toUpperCase\(\)\s*!==\s*"GURU"/.test(withdrawSrc));
+ok("[TEST 18] withdraw atomicity saldo dipertahankan", /saldo: \{ gte: nominal \}/.test(withdrawSrc));
+ok("[TEST 18] withdraw MINIMAL_PENARIKAN dipertahankan", /MINIMAL_PENARIKAN = 50_000/.test(withdrawSrc));
 
 console.log(`\n${fail === 0 ? "SEMUA LULUS" : `${fail} GAGAL`}`);
 process.exit(fail === 0 ? 0 : 1);

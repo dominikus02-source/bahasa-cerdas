@@ -54,17 +54,17 @@ export function MissionItem({ label, desc, xp, done, href, icon, iconBg }: Missi
 
       <div className="flex-1 min-w-0">
         <p
-          className={`text-sm font-semibold truncate ${
+          className={`text-sm font-semibold leading-snug line-clamp-2 ${
             done ? "text-emerald-500 line-through decoration-emerald-300/60" : "text-gray-800"
           }`}
         >
           {label}
         </p>
-        <p className="text-[11px] text-gray-400 truncate">{desc}</p>
+        <p className="text-[11px] leading-snug text-gray-400 line-clamp-2">{desc}</p>
       </div>
 
       <div className="flex items-center gap-2 shrink-0">
-        <span className="text-[11px] font-bold text-amber-600 bg-amber-50 border border-amber-100 px-2 py-1 rounded-full">
+        <span className="text-[11px] font-bold text-amber-600 bg-amber-50 border border-amber-100 px-2 py-1 rounded-full whitespace-nowrap">
           +{xp} XP
         </span>
         {done ? (

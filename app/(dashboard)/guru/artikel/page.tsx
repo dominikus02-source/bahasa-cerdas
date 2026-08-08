@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { Plus, Edit2, Trash2, Eye, EyeOff, FileText, Image as ImageIcon, X, Bold, Italic, List, Link as LinkIcon, Heading } from "lucide-react";
+import { Plus, Edit2, Trash2, Eye, EyeOff, FileText, Feather, Image as ImageIcon, X, Bold, Italic, List, Link as LinkIcon, Heading } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -26,6 +26,7 @@ export default function GuruArtikelPage() {
     tags: "",
     isPublished: true,
     coverImage: "",
+    articleType: "ARTIKEL",
   });
 
   useEffect(() => { fetchArtikel(); }, []);
@@ -81,7 +82,7 @@ export default function GuruArtikelPage() {
     if (res.ok) {
       setShowForm(false);
       setEditId(null);
-      setForm({ title: "", content: "", tags: "", isPublished: false, coverImage: "" });
+      setForm({ title: "", content: "", tags: "", isPublished: false, coverImage: "", articleType: "ARTIKEL" });
       fetchArtikel();
     } else {
       const data = await res.json();
@@ -102,6 +103,7 @@ export default function GuruArtikelPage() {
       tags: (a.tags || []).join(", "),
       isPublished: a.isPublished,
       coverImage: a.coverImage || "",
+      articleType: a.articleType === "PUISI" ? "PUISI" : "ARTIKEL",
     });
     setEditId(a.id);
     setShowForm(true);
@@ -110,15 +112,15 @@ export default function GuruArtikelPage() {
   function resetForm() {
     setShowForm(false);
     setEditId(null);
-    setForm({ title: "", content: "", tags: "", isPublished: false, coverImage: "" });
+    setForm({ title: "", content: "", tags: "", isPublished: false, coverImage: "", articleType: "ARTIKEL" });
   }
 
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Artikel Saya</h1>
-          <p className="text-sm text-gray-500 mt-1">Tulis dan kelola artikel untuk dibaca publik</p>
+          <h1 className="text-2xl font-bold text-gray-900">Karya Saya</h1>
+          <p className="text-sm text-gray-500 mt-1">Tulis dan kelola artikel atau puisi untuk dibaca publik</p>
         </div>
         <Button onClick={() => showForm ? resetForm() : setShowForm(true)}>
           <Plus size={16} /> {showForm ? "Batal" : "Tulis Artikel"}
@@ -128,6 +130,23 @@ export default function GuruArtikelPage() {
       {showForm && (
         <Card className="p-6 mb-8 border-2 border-emerald-100 shadow-lg">
           <form onSubmit={handleSubmit} className="space-y-5">
+            <div className="flex items-center gap-1.5 bg-gray-50 border border-gray-200 rounded-xl p-1.5 w-fit">
+              <button
+                type="button"
+                onClick={() => setForm({ ...form, articleType: "ARTIKEL" })}
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-colors ${form.articleType === "ARTIKEL" ? "bg-sky-600 text-white shadow" : "text-gray-500 hover:bg-white"}`}
+              >
+                <FileText size={15} /> Artikel
+              </button>
+              <button
+                type="button"
+                onClick={() => setForm({ ...form, articleType: "PUISI" })}
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-colors ${form.articleType === "PUISI" ? "bg-purple-600 text-white shadow" : "text-gray-500 hover:bg-white"}`}
+              >
+                <Feather size={15} /> Puisi
+              </button>
+            </div>
+
             <div className="grid md:grid-cols-2 gap-5">
               <div className="space-y-4">
                 <div>
@@ -261,9 +280,9 @@ export default function GuruArtikelPage() {
       {loading ? <div className="text-center py-12 text-gray-400">Memuat...</div> : (
         artikel.length === 0 ? (
           <div className="text-center py-16">
-            <FileText size={48} className="mx-auto text-gray-200 mb-3" />
-            <p className="text-gray-500 font-medium">Belum ada artikel</p>
-            <p className="text-sm text-gray-400 mt-1">Tulis artikel pertamamu untuk dibaca publik</p>
+            <Feather size={48} className="mx-auto text-gray-200 mb-3" />
+            <p className="text-gray-500 font-medium">Belum ada karya</p>
+            <p className="text-sm text-gray-400 mt-1">Tulis artikel atau puisi pertamamu untuk dibaca publik</p>
           </div>
         ) : (
           <div className="space-y-3">
@@ -272,6 +291,9 @@ export default function GuruArtikelPage() {
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2">
                     <p className="font-semibold truncate">{a.title}</p>
+                    {a.articleType === "PUISI" ? (
+                      <Badge variant="secondary" className="text-[10px] flex items-center gap-1 bg-purple-50 text-purple-700"><Feather size={10} /> Puisi</Badge>
+                    ) : null}
                     {a.isPublished ? (
                       <Badge variant="success" className="text-[10px] flex items-center gap-1"><Eye size={10} /> Terbit</Badge>
                     ) : (

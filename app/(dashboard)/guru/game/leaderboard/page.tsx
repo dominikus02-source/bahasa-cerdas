@@ -3,23 +3,31 @@
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { ArrowLeft, Trophy, Crown, Loader2 } from "lucide-react";
-import type { TeacherLeaderboardEntry } from "@/lib/gamification/teacher-xp";
+import type { TeacherLeaderboardEntry, TeacherLeaderboardPeriod } from "@/lib/gamification/teacher-xp";
 
 interface Data {
   entries: TeacherLeaderboardEntry[];
   myRank: number | null;
+  period: TeacherLeaderboardPeriod;
 }
+
+const PERIOD_TABS: { value: TeacherLeaderboardPeriod; label: string }[] = [
+  { value: "ALL_TIME", label: "Semua Waktu" },
+  { value: "WEEKLY", label: "Minggu Ini" },
+  { value: "SEASON", label: "Season" },
+];
 
 export default function GuruGameLeaderboardPage() {
   const [data, setData] = useState<Data | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [period, setPeriod] = useState<TeacherLeaderboardPeriod>("ALL_TIME");
 
-  const load = useCallback(async () => {
+  const load = useCallback(async (p: TeacherLeaderboardPeriod) => {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch("/api/guru/leaderboard", { cache: "no-store" });
+      const res = await fetch(`/api/guru/leaderboard?period=${p}`, { cache: "no-store" });
       if (!res.ok) throw new Error("Gagal memuat peringkat guru");
       const d = await res.json();
       setData(d);
@@ -31,8 +39,8 @@ export default function GuruGameLeaderboardPage() {
   }, []);
 
   useEffect(() => {
-    load();
-  }, [load]);
+    load(period);
+  }, [load, period]);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-emerald-50">
@@ -55,6 +63,23 @@ export default function GuruGameLeaderboardPage() {
       </div>
 
       <div className="max-w-4xl mx-auto px-4 py-8">
+        <div className="flex items-center gap-1.5 bg-white border border-slate-200 rounded-2xl p-1.5 mb-6 w-fit">
+          {PERIOD_TABS.map((tab) => (
+            <button
+              key={tab.value}
+              type="button"
+              onClick={() => setPeriod(tab.value)}
+              className={`px-4 py-2 rounded-xl text-sm font-semibold transition-colors ${
+                period === tab.value
+                  ? "bg-emerald-600 text-white shadow"
+                  : "text-slate-500 hover:bg-slate-100"
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+
         {loading ? (
           <div className="flex items-center justify-center py-16 text-slate-400">
             <Loader2 className="w-6 h-6 animate-spin mr-2" /> Memuat peringkat...
@@ -120,7 +145,7 @@ export default function GuruGameLeaderboardPage() {
           <div className="bg-white rounded-2xl border border-slate-100 p-8 text-center">
             <Trophy className="w-12 h-12 text-slate-300 mx-auto mb-3" />
             <p className="text-slate-500 font-medium">Belum ada peringkat guru</p>
-            <p className="text-xs text-slate-400 mt-1">Mainkan gim di Gim Guru untuk mulai mengumpulkan XP Guru.</p>
+            <p className="text-xs text-slate-400 mt-1">Kumpulkan XP Guru lewat gim, mengirim tugas, membuat pengumuman, atau menerbitkan artikel & puisi.</p>
             <Link href="/guru/game" className="inline-flex items-center gap-1.5 mt-4 px-4 py-2 bg-emerald-600 text-white text-sm font-medium rounded-xl hover:bg-emerald-700 transition-colors">
               Buka Gim Guru
             </Link>

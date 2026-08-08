@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 import { uploadFileServer } from "@/lib/upload";
+import { isTeacherOrStudent } from "@/lib/teacher/students";
+import { awardGuruXp } from "@/lib/gamification/teacher-xp";
 
 // Folder guru: Modul Ajar / PPT / PDF — dikelompokkan dari fileType.
 const FOLDER_TYPES: Record<string, string[]> = {
@@ -41,7 +43,7 @@ export async function GET(req: NextRequest) {
       }
     }
 
-    if (!dbUser || (dbUser.role !== "GURU" && dbUser.role !== "ADMIN" && !dbUser.isFounder)) {
+    if (!dbUser || !isTeacherOrStudent(dbUser)) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -125,7 +127,7 @@ export async function POST(req: NextRequest) {
       const sid = formData.get("supabaseId") as string
       if (sid) dbUser = await db.user.findUnique({ where: { supabaseId: sid } })
     }
-    if (!dbUser || (dbUser.role !== "GURU" && dbUser.role !== "ADMIN" && !dbUser.isFounder)) {
+    if (!dbUser || !isTeacherOrStudent(dbUser)) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
     const file = formData.get("file") as File | null;
@@ -206,6 +208,20 @@ export async function POST(req: NextRequest) {
 
     console.log("Materi created successfully:", materi.id);
 
+    // XP Guru saat materi terbit (pertama kali) — best-effort, idempotent.
+    if (isPublished) {
+      try {
+        await awardGuruXp({
+          guruId: dbUser.id,
+          sumber: "GURU_MATERI",
+          reference: `materi-publish-${materi.id}`,
+          metadata: { materiId: materi.id, judul: title },
+        });
+      } catch (err) {
+        console.error("GURU_MATERI XP error:", err);
+      }
+    }
+
     // Notify admin users about new materi upload
     try {
       const admins = await db.user.findMany({
@@ -249,7 +265,7 @@ export async function PUT(req: NextRequest) {
       const sid = body.supabaseId as string | undefined
       if (sid) dbUser = await db.user.findUnique({ where: { supabaseId: sid } })
     }
-    if (!dbUser || (dbUser.role !== "GURU" && dbUser.role !== "ADMIN" && !dbUser.isFounder)) {
+    if (!dbUser || !isTeacherOrStudent(dbUser)) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -287,7 +303,7 @@ export async function DELETE(req: NextRequest) {
       const sid = searchParams.get("supabaseId")
       if (sid) dbUser = await db.user.findUnique({ where: { supabaseId: sid } })
     }
-    if (!dbUser || (dbUser.role !== "GURU" && dbUser.role !== "ADMIN" && !dbUser.isFounder)) {
+    if (!dbUser || !isTeacherOrStudent(dbUser)) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 

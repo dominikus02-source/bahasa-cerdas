@@ -11,6 +11,8 @@
 import { db } from "@/lib/db";
 import { awardXp } from "@/lib/award-xp";
 import { evaluateBadges } from "@/lib/gamification/badge-engine";
+import { startOfWeekWIB, weekKey } from "@/lib/gamification/season";
+import type { Prisma } from "@prisma/client";
 
 /** Sumber XP guru (bukan enum DB — kolom source adalah string bebas). */
 export const GURU_XP_SOURCES = {
@@ -21,6 +23,10 @@ export const GURU_XP_SOURCES = {
   GURU_PENGUMUMAN: "GURU_PENGUMUMAN", // guru membuat pengumuman
   GURU_FEATURED: "GURU_FEATURED", // guru memilih karya murid (Editor Choice)
   GURU_GAME: "GURU_GAME", // guru menyelesaikan game di GIM Guru (solo)
+  GURU_ARTIKEL: "GURU_ARTIKEL", // guru menerbitkan artikel (pertama kali)
+  GURU_PUISI: "GURU_PUISI", // guru menerbitkan puisi (pertama kali)
+  GURU_MATERI: "GURU_MATERI", // guru mengunggah materi ajar terbit
+  GURU_KELAS: "GURU_KELAS", // guru membuat kelas baru
 } as const;
 
 /** Nilai XP per sumber guru. */
@@ -32,6 +38,10 @@ export const GURU_XP_NILAI: Record<keyof typeof GURU_XP_SOURCES, number> = {
   GURU_PENGUMUMAN: 15,
   GURU_FEATURED: 25,
   GURU_GAME: 10,
+  GURU_ARTIKEL: 50,
+  GURU_PUISI: 50,
+  GURU_MATERI: 40,
+  GURU_KELAS: 20,
 };
 
 export interface AwardGuruXpParams {
@@ -123,18 +133,35 @@ export interface TeacherLeaderboardEntry {
   myRank?: number | null;
 }
 
+/** Periode Teacher Leaderboard. ALL_TIME = default (backward compatible). */
+export type TeacherLeaderboardPeriod = "ALL_TIME" | "WEEKLY" | "SEASON";
+
+/** Awal season (4 minggu) di zona WIB — Senin 00:00 WIB dari minggu ke-1 season. */
+export function seasonStartWIB(date: Date = new Date()): Date {
+  const start = startOfWeekWIB(date);
+  const weekNum = parseInt(weekKey(date).split("-W")[1], 10);
+  const idxInSeason = (weekNum - 1) % 4;
+  return new Date(start.getTime() - idxInSeason * 7 * 24 * 3600 * 1000);
+}
+
 export async function getTeacherLeaderboard({
   limit = 20,
   selfUserId,
+  period = "ALL_TIME",
 }: {
   limit?: number;
   selfUserId?: string;
-}): Promise<{ entries: TeacherLeaderboardEntry[]; myRank: number | null }> {
+  period?: TeacherLeaderboardPeriod;
+}): Promise<{ entries: TeacherLeaderboardEntry[]; myRank: number | null; myXp: number; participants: number }> {
   const sources = Object.values(GURU_XP_SOURCES);
+
+  const where: Prisma.XPTransactionWhereInput = { source: { in: sources } };
+  if (period === "WEEKLY") where.createdAt = { gte: startOfWeekWIB() };
+  else if (period === "SEASON") where.createdAt = { gte: seasonStartWIB() };
 
   const grouped = await db.xPTransaction.groupBy({
     by: ["userId"],
-    where: { source: { in: sources } },
+    where,
     _sum: { amount: true },
   });
 
@@ -142,6 +169,7 @@ export async function getTeacherLeaderboard({
     .filter((g) => (g._sum.amount ?? 0) > 0)
     .sort((a, b) => (b._sum.amount ?? 0) - (a._sum.amount ?? 0))
     .slice(0, limit);
+  const participants = grouped.filter((g) => (g._sum.amount ?? 0) > 0).length;
 
   const userIds = sorted.map((g) => g.userId);
   const users = userIds.length
@@ -165,13 +193,16 @@ export async function getTeacherLeaderboard({
   });
 
   let myRank: number | null = null;
+  let myXp = 0;
   if (selfUserId) {
     const allSorted = grouped
       .filter((g) => (g._sum.amount ?? 0) > 0)
       .sort((a, b) => (b._sum.amount ?? 0) - (a._sum.amount ?? 0));
     const idx = allSorted.findIndex((g) => g.userId === selfUserId);
     if (idx >= 0) myRank = idx + 1;
+    const selfGroup = grouped.find((g) => g.userId === selfUserId);
+    myXp = selfGroup?._sum.amount ?? 0;
   }
 
-  return { entries, myRank };
+  return { entries, myRank, myXp, participants };
 }

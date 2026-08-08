@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 import { isTeacherOrStudent, getTeacherGroups } from "@/lib/teacher/students";
+import { awardGuruXp } from "@/lib/gamification/teacher-xp";
 
 function generateCode() {
   const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
@@ -81,6 +82,18 @@ export async function POST(req: NextRequest) {
         teacherId: dbUser.id,
       },
     });
+
+    // XP Guru saat membuat kelas baru — best-effort, idempotent (referensi unik).
+    try {
+      await awardGuruXp({
+        guruId: dbUser.id,
+        sumber: "GURU_KELAS",
+        reference: `kelas-create-${group.id}`,
+        metadata: { groupId: group.id, nama: name },
+      });
+    } catch (err) {
+      console.error("GURU_KELAS XP error:", err);
+    }
 
     return NextResponse.json({ group, code: group.accessCode }, { status: 201 });
   } catch (error) {
