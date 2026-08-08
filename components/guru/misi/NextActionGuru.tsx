@@ -5,6 +5,7 @@ import {
   ArrowRight,
   Sparkles,
   PartyPopper,
+  Zap,
   Users,
   PenLine,
   FileUp,
@@ -51,46 +52,45 @@ export function NextActionGuru({ status }: { status: MisiGuruStatus | null }) {
       }`}
     >
       <div className="pointer-events-none absolute -top-16 -right-16 w-48 h-48 rounded-full bg-emerald-100/40" />
-      <div className="relative flex flex-col sm:flex-row items-start sm:items-center gap-4">
-        <div
-          className={`w-12 h-12 shrink-0 rounded-2xl flex items-center justify-center shadow-md ${aksi.iconBg}`}
-        >
-          <Icon size={24} className="text-white" />
-        </div>
-
-        <div className="flex-1 min-w-0">
-          <p className="text-[10px] font-semibold uppercase tracking-wide text-gray-400">
+      <div className="relative flex flex-col">
+        <div className="flex items-center gap-2 mb-3">
+          <span
+            className={`w-9 h-9 shrink-0 rounded-xl flex items-center justify-center shadow-md ${aksi.iconBg}`}
+          >
+            <Icon size={18} className="text-white" />
+          </span>
+          <p className="text-[11px] font-bold uppercase tracking-wider text-gray-500">
             {aksi.semuaSelesai ? (
               <span className="inline-flex items-center gap-1">
-                <PartyPopper size={11} className="text-amber-500" /> Semua misi minggu ini selesai
+                <PartyPopper size={12} className="text-amber-500" /> Semua misi minggu ini selesai
               </span>
             ) : (
               "Langkah Berikutnya"
             )}
           </p>
-          <h3 className="text-base sm:text-lg font-bold text-gray-900 truncate">{aksi.label}</h3>
-          <p className="text-xs text-gray-500 line-clamp-1 sm:line-clamp-2">{aksi.desc}</p>
         </div>
 
-        <div className="flex items-center gap-2 shrink-0">
-          {aksi.xp > 0 && (
-            <span className="text-xs font-bold text-amber-600 bg-amber-50 border border-amber-100 px-2.5 py-1 rounded-full whitespace-nowrap">
-              +{aksi.xp} XP
-            </span>
-          )}
-          <Link
-            href={aksi.href}
-            aria-label={`${aksi.label} — kerjakan sekarang`}
-            className={`inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-sm font-semibold text-white shadow-lg transition-all ${
-              aksi.semuaSelesai
-                ? "bg-gradient-to-r from-amber-500 to-yellow-600 shadow-amber-500/20 hover:from-amber-600 hover:to-yellow-700"
-                : "bg-gradient-to-r from-emerald-500 to-emerald-600 shadow-emerald-500/20 hover:from-emerald-600 hover:to-emerald-700"
-            }`}
-          >
-            {aksi.semuaSelesai ? "Lanjut Berkarya" : "Kerjakan Sekarang"}
-            <ArrowRight size={14} />
-          </Link>
-        </div>
+        <h3 className="text-lg sm:text-xl font-extrabold text-gray-900 leading-snug">{aksi.label}</h3>
+        <p className="text-sm text-gray-500 mt-1 leading-snug">{aksi.desc}</p>
+
+        {aksi.xp > 0 && (
+          <span className="inline-flex items-center gap-1.5 self-start mt-3 text-sm font-bold text-amber-600 bg-amber-50 border border-amber-100 px-3 py-1.5 rounded-full">
+            <Zap size={14} className="text-amber-500" /> +{aksi.xp} XP
+          </span>
+        )}
+
+        <Link
+          href={aksi.href}
+          aria-label={`${aksi.label} — kerjakan sekarang`}
+          className={`mt-4 w-full inline-flex items-center justify-center gap-1.5 px-4 py-3 rounded-xl text-sm font-bold text-white shadow-lg transition-all ${
+            aksi.semuaSelesai
+              ? "bg-gradient-to-r from-amber-500 to-yellow-600 shadow-amber-500/20 hover:from-amber-600 hover:to-yellow-700"
+              : "bg-gradient-to-r from-emerald-500 to-emerald-600 shadow-emerald-500/20 hover:from-emerald-600 hover:to-emerald-700"
+          }`}
+        >
+          {aksi.semuaSelesai ? "Lanjut Berkarya" : "Kerjakan Sekarang"}
+          <ArrowRight size={15} />
+        </Link>
       </div>
     </div>
   );

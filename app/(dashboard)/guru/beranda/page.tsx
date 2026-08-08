@@ -187,7 +187,10 @@ export default function GuruBerandaPage() {  const user = useUserStore()
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
         <GuruLeaderboardCard misiStatus={misiStatus} />
-        <NextActionGuru status={misiStatus} />
+        <div className="flex flex-col gap-4 min-w-0">
+          <BannerProgramGuruCerdas />
+          <NextActionGuru status={misiStatus} />
+        </div>
       </div>
 
       <div className="mb-6">
@@ -196,10 +199,6 @@ export default function GuruBerandaPage() {  const user = useUserStore()
 
       <div className="mb-6">
         <GuruBerkarya misiStatus={misiStatus} />
-      </div>
-
-      <div className="mb-6">
-        <BannerProgramGuruCerdas />
       </div>
 
       <div className="mb-6">
