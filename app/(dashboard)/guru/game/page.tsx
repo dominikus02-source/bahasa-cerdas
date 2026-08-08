@@ -124,6 +124,7 @@ interface SiswaRow {
 const TARGET_MINGGUAN_XP = 500;
 
 const SOLO_GAMES = [
+  { id: "kuis-tempur", title: "Kuis Tempur", desc: "Bertahan di arena melawan bot! Jawab benar untuk menyerang, salah kamu yang terluka.", href: "/guru/game/kuis-tempur", gradient: "from-red-500 via-rose-600 to-red-800", icon: Swords, emoji: "⚔️" },
   { id: "lari-kata", title: "Lari Kata", desc: "Jawab 20 soal dalam 60 detik! Makin cepat dan rentetan tinggi, makin banyak XP.", href: "/guru/game/lari-kata", gradient: "from-violet-500 via-purple-600 to-violet-800", icon: Zap, emoji: "🏃" },
   { id: "benar-salah", title: "Benar atau Salah", desc: "Kuis kilat 60 detik! Tentukan pernyataan yang muncul benar atau salah.", href: "/guru/game/benar-salah", gradient: "from-emerald-400 via-teal-500 to-cyan-600", icon: Star, emoji: "⚖️" },
   { id: "susun-kata", title: "Susun Kata", desc: "Huruf-huruf acak! Susun menjadi kata yang benar. Uji kosakata Anda!", href: "/guru/game/susun-kata", gradient: "from-emerald-500 via-emerald-600 to-teal-700", icon: BookOpen, emoji: "🧩" },
@@ -134,6 +135,7 @@ const SOLO_GAMES = [
 ];
 
 const GAME_TYPE_LABEL: Record<string, string> = {
+  RIMBA_KATA: "Kuis Tempur",
   TEBAK_KATA: "Tebak Kata",
   SUSUN_KATA: "Susun Kata",
   BENAR_SALAH: "Benar atau Salah",
@@ -142,6 +144,7 @@ const GAME_TYPE_LABEL: Record<string, string> = {
 };
 
 const GAME_EMOJI: Record<string, string> = {
+  "Kuis Tempur": "⚔️",
   "Lari Kata": "🏃",
   "Benar atau Salah": "⚖️",
   "Susun Kata": "🧩",
@@ -833,6 +836,7 @@ export default function GuruGameHubPage() {
 
 function slugToPage(slug: string): string {
   switch (slug) {
+    case "RIMBA_KATA": return "kuis-tempur";
     case "TEBAK_KATA": return "tebak-kata";
     case "SUSUN_KATA": return "susun-kata";
     case "BENAR_SALAH": return "benar-salah";

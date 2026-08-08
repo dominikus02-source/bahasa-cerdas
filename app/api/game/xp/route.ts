@@ -12,6 +12,10 @@ import { awardGuruXp } from "@/lib/gamification/teacher-xp"
 // konsisten dengan hasil permainan jujur.
 const MAX_SCORE_PER_GAME: Record<string, number> = {
   KATAPLAY: 1100,
+  // Kuis Tempur solo: 143 soal di bank, satu ronde realistis puluhan jawaban.
+  // 10 poin per jawaban benar + 40 bonus menang; 600 memberi ruang lega untuk
+  // permainan panjang yang jujur, tetapi menutup kiriman skor mengada-ada.
+  RIMBA_KATA: 600,
 }
 
 export async function POST(req: NextRequest) {
