@@ -1,9 +1,12 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import {
   Plus, Download, Pencil, Trash2, RefreshCw, X, FileText, FileSpreadsheet,
-  Check, BookOpen, Users as UsersIcon, Filter, ShieldCheck,
+  Check, BookOpen, Users as UsersIcon, Filter, ShieldCheck, BookOpenCheck,
+  ListChecks, FileBarChart2,
 } from "lucide-react";
 
 type Group = { id: string; name: string; grade: string; _count?: { members: number } };
@@ -35,6 +38,7 @@ function getColor(skor: number | undefined | null): string {
 }
 
 export default function PenilaianPage() {
+  const pathname = usePathname();
   const [groups, setGroups] = useState<Group[]>([]);
   const [selectedGroupId, setSelectedGroupId] = useState("");
   const [kategoris, setKategoris] = useState<Kategori[]>([]);
@@ -231,6 +235,33 @@ export default function PenilaianPage() {
           </div>
           <BookOpen size={24} />
         </div>
+      </div>
+
+      {/* Navigasi internal Nilai (bukan submenu sidebar) */}
+      <div className="flex gap-1.5 mb-5 bg-white border border-slate-100 rounded-2xl p-1.5 overflow-x-auto">
+        {[
+          { label: "Nilai", href: "/guru/penilaian", icon: BookOpenCheck },
+          { label: "Buku Nilai", href: "/guru/gradebook", icon: BookOpen },
+          { label: "Input Massal", href: "/guru/penilaian/input-massal", icon: ListChecks },
+          { label: "Nilai Kuis", href: "/guru/penilaian/kuis", icon: FileText },
+          { label: "Rapor", href: "/guru/penilaian/rapor", icon: FileBarChart2 },
+        ].map((item) => {
+          const active = pathname === item.href || pathname.startsWith(item.href + "/");
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={`flex items-center gap-1.5 whitespace-nowrap px-4 py-2 rounded-xl text-sm font-semibold transition-all ${
+                active
+                  ? "bg-emerald-600 text-white shadow-sm"
+                  : "text-slate-500 hover:bg-slate-50"
+              }`}
+            >
+              <item.icon className="w-4 h-4" />
+              {item.label}
+            </Link>
+          );
+        })}
       </div>
 
       {/* Class Selector */}

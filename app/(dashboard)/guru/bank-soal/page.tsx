@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Modal } from "@/components/ui/modal";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -9,7 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import {
   Loader2, Search, Send, Users, BookOpen, GraduationCap, X, Check, ChevronDown,
   FileText, Sparkles, Quote, PenLine, ScrollText, Newspaper, MessageSquare,
-  BookMarked, Library, PenTool, Globe, Megaphone, Star,
+  BookMarked, Library, PenTool, Globe, Megaphone, Star, ListChecks, FilePlus2,
 } from "lucide-react";
 
 const KELAS = ["1","2","3","4","5","6","7","8","9","10","11","12"];
@@ -50,6 +51,7 @@ interface LatihanItem {
 }
 
 export default function BankSoalPage() {
+  const pathname = usePathname();
   const [themes, setThemes] = useState<ThemeData[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
@@ -222,6 +224,34 @@ export default function BankSoalPage() {
             {loading ? "Memuat..." : `${totalQuestions} soal dari ${themes.length} tema — klik tema untuk kirim ke kelas`}
           </p>
         </div>
+      </div>
+
+      {/* Navigasi internal (bukan submenu sidebar) */}
+      <div className="flex gap-1.5 bg-white border border-slate-100 rounded-2xl p-1.5 w-fit overflow-x-auto max-w-full">
+        {[
+          { label: "Bank Soal", href: "/guru/bank-soal", icon: Library },
+          { label: "Latihan", href: "/guru/bank-soal", icon: ListChecks },
+          { label: "Kuis", href: "/guru/kuis", icon: FileText },
+          { label: "Soal", href: "/guru/soal", icon: FilePlus2 },
+        ].map((item) => {
+          const active = item.href === "/guru/bank-soal"
+            ? pathname === "/guru/bank-soal"
+            : pathname.startsWith(item.href);
+          return (
+            <Link
+              key={item.label}
+              href={item.href}
+              className={`flex items-center gap-1.5 whitespace-nowrap px-4 py-2 rounded-xl text-sm font-semibold transition-all ${
+                active
+                  ? "bg-emerald-600 text-white shadow-sm"
+                  : "text-slate-500 hover:bg-slate-50"
+              }`}
+            >
+              <item.icon className="w-4 h-4" />
+              {item.label}
+            </Link>
+          );
+        })}
       </div>
 
       {/* Stats */}

@@ -9,38 +9,89 @@ import {
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
+/**
+ * Guru Navigation V2 — Information Architecture sederhana.
+ *
+ * Aturan (TARGET IA):
+ * - Maksimal 1 level submenu (Parent → Child, tidak ada Grandchild).
+ * - Sidebar hanya menampilkan "tujuan utama guru", kompleksitas dipindah ke
+ *   dalam halaman (tabs / section / filter internal).
+ * - Grup dengan satu destination dirender sebagai link langsung (tanpa accordion).
+ * - Tidak ada menu alias / duplikat. Route lama tetap hidup dan bisa diakses
+ *   langsung, hanya tidak lagi tampil sebagai menu terpisah.
+ */
 interface NavLink {
   label: string;
   href: string;
-  sub?: { label: string; href: string }[];
+  /** Prefix tambahan yang ikut menandai link ini aktif (mis. /guru/gradebook
+   *  ikut menandai "Nilai" aktif meski destination utamanya /guru/penilaian). */
+  activeOn?: string[];
 }
 
 interface NavGroup {
   id: string;
   label: string;
   icon: LucideIcon;
-  links: NavLink[];
+  /** Destination tunggal — dirender sebagai link langsung. */
+  href?: string;
+  /** Children (depth 1). Tidak boleh mengandung `sub` (depth 2). */
+  links?: NavLink[];
   founderOnly?: boolean;
 }
 
 /**
- * Teacher Experience V3 — GIM GURU (Teacher Game Center).
- * Guru dan murid berbagi game engine yang sama, tetapi memiliki dashboard dan
- * perjalanan masing-masing. Submenu GIM memakai route /guru/game/* — tidak
- * pernah diarahkan ke /arena.
+ * Guru Navigation V2 — Teacher Center.
+ * IA target: Beranda → Pusat Literasi → Alat Ajar → Kelasku → Gim → Toko Karya
+ * → Simulasi & Tes → Alat AI → Komunitas → Kalender → Akun Saya → Admin.
+ * Semua route lama yang dihapus dari sidebar TETAP hidup dan bisa diakses
+ * langsung (no route deletion).
  */
 export const GURU_NAV: NavGroup[] = [
   {
     id: "beranda",
     label: "Beranda",
     icon: Home,
-    links: [{ label: "Beranda", href: "/guru/beranda" }],
+    href: "/guru/beranda",
   },
   {
     id: "panggung",
     label: "Pusat Literasi",
     icon: Sparkles,
-    links: [{ label: "Pusat Literasi", href: "/guru/feed-karya" }],
+    href: "/guru/feed-karya",
+  },
+  {
+    id: "alat-ajar",
+    label: "Alat Ajar",
+    icon: BookOpen,
+    links: [
+      { label: "Bank Soal", href: "/guru/bank-soal" },
+      { label: "Materi Ajar", href: "/guru/materi-ajar" },
+      { label: "Buku Ajar", href: "/guru/panduan-guru" },
+      // Media Pembelajaran = konsolidasi Video Pembelajaran + Artikel.
+      { label: "Media Pembelajaran", href: "/guru/media-pembelajaran" },
+    ],
+  },
+  {
+    id: "kelasku",
+    label: "Kelasku",
+    icon: Users,
+    links: [
+      { label: "Dashboard Kelas", href: "/guru/kelasku" },
+      { label: "Tugas", href: "/guru/tugas-murid" },
+      {
+        label: "Nilai",
+        href: "/guru/penilaian",
+        // Buku Nilai (gradebook) + subhalaman nilai tetap menandai "Nilai" aktif.
+        activeOn: ["/guru/penilaian", "/guru/gradebook"],
+      },
+      { label: "Data Siswa", href: "/guru/data-siswa" },
+    ],
+  },
+  {
+    id: "gim",
+    label: "Gim",
+    icon: Gamepad2,
+    href: "/guru/game",
   },
   {
     id: "toko",
@@ -53,51 +104,7 @@ export const GURU_NAV: NavGroup[] = [
     ],
   },
   {
-    id: "gim",
-    label: "Gim",
-    icon: Gamepad2,
-    links: [
-      { label: "Arena Permainan", href: "/guru/game" },
-      { label: "Riwayat Aktivitas", href: "/guru/game/history" },
-    ],
-  },
-  {
-    id: "kelasku",
-    label: "Kelasku",
-    icon: Users,
-    links: [
-      { label: "Dashboard Kelas", href: "/guru/kelasku" },
-      { label: "Tugas", href: "/guru/tugas-murid" },
-      { label: "Buku Nilai", href: "/guru/gradebook" },
-      {
-        label: "Penilaian",
-        href: "/guru/penilaian",
-        sub: [
-          { label: "Input Massal", href: "/guru/penilaian/input-massal" },
-          { label: "Nilai Kuis", href: "/guru/penilaian/kuis" },
-          { label: "Rapor", href: "/guru/penilaian/rapor" },
-        ],
-      },
-      { label: "Data Siswa", href: "/guru/data-siswa" },
-      { label: "Pengumuman", href: "/guru/kelasku" },
-    ],
-  },
-  {
-    id: "alat-ajar",
-    label: "Alat Ajar",
-    icon: BookOpen,
-    links: [
-      { label: "Bank Soal", href: "/guru/bank-soal" },
-      { label: "Materi Ajar", href: "/guru/materi-ajar" },
-      { label: "Buku Ajar", href: "/guru/panduan-guru" },
-      { label: "Video Pembelajaran", href: "/guru/video-belajar" },
-      { label: "Kuis", href: "/guru/kuis" },
-      { label: "Soal", href: "/guru/soal" },
-      { label: "Artikel", href: "/guru/artikel" },
-    ],
-  },
-  {
-    id: "ujian",
+    id: "simulasi",
     label: "Simulasi & Tes",
     icon: ClipboardCheck,
     links: [
@@ -113,30 +120,29 @@ export const GURU_NAV: NavGroup[] = [
     id: "ai",
     label: "Alat AI",
     icon: Bot,
-    links: [{ label: "Alat AI", href: "/guru/ai-tools" }],
+    href: "/guru/ai-tools",
   },
   {
     id: "komunitas",
     label: "Komunitas",
     icon: Users,
-    links: [{ label: "Komunitas", href: "/guru/komunitas" }],
+    href: "/guru/komunitas",
   },
   {
     id: "kalender",
     label: "Kalender",
     icon: CalendarDays,
-    links: [{ label: "Kalender Kegiatan", href: "/guru/olimpiade" }],
+    href: "/guru/olimpiade",
   },
   {
     id: "akun",
     label: "Akun Saya",
     icon: UserRound,
     links: [
+      // Ringkasan Akun = Account Center (memuat Profil, Berlangganan,
+      // Saldo, Lencana, Notifikasi, Pengaturan sebagai section/menu internal).
       { label: "Ringkasan Akun", href: "/guru/akun" },
       { label: "Profil", href: "/guru/profile" },
-      { label: "Berlangganan", href: "/guru/berlangganan" },
-      { label: "Notifikasi", href: "/guru/notifikasi" },
-      { label: "Pengaturan", href: "/guru/pengaturan" },
     ],
   },
   {
@@ -144,12 +150,13 @@ export const GURU_NAV: NavGroup[] = [
     label: "Admin",
     icon: Shield,
     founderOnly: true,
-    links: [{ label: "Panel Admin", href: "/admin" }],
+    href: "/admin",
   },
 ];
 
-function isActive(pathname: string, href: string): boolean {
-  if (href === "/guru/beranda" && pathname === "/guru/beranda") return true;
+function isActive(pathname: string, href: string, activeOn?: string[]): boolean {
+  if (href === "/guru/beranda") return pathname === href;
+  if (activeOn?.some((p) => pathname.startsWith(p))) return true;
   return pathname.startsWith(href);
 }
 
@@ -163,7 +170,29 @@ function NavLinks({
   onNavigate?: () => void;
 }) {
   const [open, setOpen] = useState(true);
-  const active = group.links.some((l) => isActive(pathname, l.href));
+
+  // Grup destination tunggal → link langsung, tanpa accordion.
+  if (group.href) {
+    const active = isActive(pathname, group.href);
+    return (
+      <div className="mb-1.5">
+        <Link
+          href={group.href}
+          onClick={onNavigate}
+          className={`group flex w-full items-center gap-3 px-3 py-2 rounded-lg text-sm mb-1 transition-all duration-200 ${
+            active
+              ? "bg-gradient-to-r from-emerald-50 to-green-50 text-emerald-700 font-semibold"
+              : "text-gray-600 hover:bg-gradient-to-r hover:from-emerald-50 hover:to-green-50 hover:text-emerald-700"
+          }`}
+        >
+          <group.icon className={`w-5 h-5 transition-colors ${active ? "text-emerald-500" : "text-gray-400 group-hover:text-emerald-500"}`} />
+          <span className="font-medium flex-1 text-left">{group.label}</span>
+        </Link>
+      </div>
+    );
+  }
+
+  const active = group.links?.some((l) => isActive(pathname, l.href, l.activeOn)) ?? false;
 
   return (
     <div className="mb-3">
@@ -181,36 +210,21 @@ function NavLinks({
 
       {open && (
         <div className="ml-7 mb-1 flex flex-col gap-1 border-l border-emerald-100/70 pl-3">
-          {group.links.map((link) => {
-            const linkActive = isActive(pathname, link.href);
+          {group.links?.map((link) => {
+            const linkActive = isActive(pathname, link.href, link.activeOn);
             return (
-              <div key={link.href}>
-                <Link
-                  href={link.href}
-                  onClick={onNavigate}
-                  className={`block rounded-lg py-1.5 px-3 text-xs transition-all ${
-                    linkActive
-                      ? "bg-emerald-50 text-emerald-700 font-semibold"
-                      : "text-gray-500 hover:text-emerald-600 hover:bg-emerald-50/50"
-                  }`}
-                >
-                  {link.label}
-                </Link>
-                {link.sub && (
-                  <div className="ml-3 flex flex-col gap-0.5 mt-0.5">
-                    {link.sub.map((s) => (
-                      <Link
-                        key={s.href}
-                        href={s.href}
-                        onClick={onNavigate}
-                        className="block rounded-lg py-1 px-3 text-[11px] text-gray-400 hover:text-emerald-600 hover:bg-emerald-50/50"
-                      >
-                        {s.label}
-                      </Link>
-                    ))}
-                  </div>
-                )}
-              </div>
+              <Link
+                key={link.href}
+                href={link.href}
+                onClick={onNavigate}
+                className={`block rounded-lg py-1.5 px-3 text-xs transition-all ${
+                  linkActive
+                    ? "bg-emerald-50 text-emerald-700 font-semibold"
+                    : "text-gray-500 hover:text-emerald-600 hover:bg-emerald-50/50"
+                }`}
+              >
+                {link.label}
+              </Link>
             );
           })}
         </div>
@@ -244,7 +258,7 @@ export function GuruMobileNav({ isFounder }: { isFounder: boolean }) {
 
   const tabs = [
     { label: "Beranda", href: "/guru/beranda", icon: Home },
-    { label: "Panggung", href: "/guru/feed-karya", icon: Sparkles },
+    { label: "Literasi", href: "/guru/feed-karya", icon: Sparkles },
     { label: "Gim", href: "/guru/game", icon: Gamepad2 },
     { label: "Akun", href: "/guru/akun", icon: UserRound },
   ];
@@ -302,7 +316,7 @@ export function GuruMobileNav({ isFounder }: { isFounder: boolean }) {
                 href="/guru/beranda"
                 className="text-[10px] text-gray-400 font-medium"
               >
-                v3 Teacher Center
+                Guru Navigation V2
               </Link>
               <Link
                 href="/guru/ai-tools"
