@@ -32,7 +32,6 @@ const KT_STYLE = `
 // mematikannya, seperti yang terjadi pada gim multiplayer lain.
 
 const GAME_TYPE = "RIMBA_KATA"
-const JUMLAH = 8
 const HP_AWAL = 100
 const DMG_TEMBAK = 34
 const DMG_SALAH = 10
@@ -46,6 +45,18 @@ const DETIK_SOAL = 15
 // tersingkir — terlalu cepat untuk sebuah "pertempuran". Sekarang bot terus
 // berdatangan dan pemenangnya adalah yang sanggup bertahan sampai waktu nol.
 const DURASI = 300
+
+// Wajah musuh berasal dari aset avatar bernomor di public/avatar/ (1–10).
+// Catatan: berkas 1.webp belum ada, jadi daftar ini memakai 2–10 yang ada.
+// Tambahkan 1.webp dan daftar di bawah untuk memakainya kembali.
+const AVATAR_BOT = ["2", "3", "4", "5", "6", "7", "8", "9", "10"].map((n) => `/avatar/${n}.webp`)
+
+// Jumlah musuh mengikuti ronde: level 1 = 3 lawan, naik tiap 2 level sampai
+// maksimal 7 lawan. Makin tinggi ronde, makin rame kampungnya.
+function lawanBot(level: number): number {
+  const l = Math.min(Math.max(level, 1), 99)
+  return Math.min(3 + Math.floor((l - 1) / 2), 7)
+}
 
 function aturanLevel(level: number) {
   const n = Math.min(level, 10)
@@ -100,8 +111,7 @@ function kenaRintangan(x: number, y: number, r: Rintangan): boolean {
 
 export default function KuisTempurSolo({ backHref = "/arena/game" }: { backHref?: string }) {
   const [fase, setFase] = useState<"pilih" | "main" | "selesai">("pilih")
-  const [karakterku, setKarakterku] = useState<Karakter | "sendiri">("zelby")
-  const [avatarku, setAvatarku] = useState<string | null>(null)
+  const [karakterku, setKarakterku] = useState<Karakter>("zelby")
   const [namaku, setNamaku] = useState("Kamu")
   const [suara, setSuara] = useState(true)
 
@@ -158,7 +168,6 @@ export default function KuisTempurSolo({ backHref = "/arena/game" }: { backHref?
       .then((r) => (r.ok ? r.json() : null))
       .then((d) => {
         const u = d?.user ?? d
-        if (u?.avatar) setAvatarku(u.avatar)
         if (u?.nickname || u?.fullName) setNamaku(String(u.nickname || u.fullName).split(" ")[0])
         if (typeof u?.xp === "number") {
           const lv = levelFromXp(u.xp)
@@ -286,25 +295,21 @@ export default function KuisTempurSolo({ backHref = "/arena/game" }: { backHref?
     }
     rintRef.current = rint
 
-    // Semua karakter boleh jadi musuh — termasuk karakter yang dipakai pemain,
-    // supaya arena terasa penuh dan beragam. Kalau murid memakai foto profil,
-    // sebagian bot ikut berwajah foto itu.
-    const botKar = kocok([...KARAKTER]) as Karakter[]
-    const botNama = kocok(NAMA_BOT).slice(0, JUMLAH - 1)
+    // Jumlah musuh mengikuti ronde. Wajah mereka memakai aset avatar bernomor
+    // (public/avatar/1–10) — bukan karakter pemain, supaya kawan vs lawan jelas.
+    const lawan = lawanBot(level)
+    const botWajah = kocok(AVATAR_BOT)
+    const botNama = kocok(NAMA_BOT).slice(0, lawan)
     const img = (src: string) => { const i = new Image(); i.src = src; return i }
     if (!batikRef.current) batikRef.current = img("/batik%20bg%20bc.png")
 
-    pRef.current = Array.from({ length: JUMLAH }, (_, i) => {
-      const sudut = ((Math.PI * 2) / JUMLAH) * i - Math.PI / 2
+    pRef.current = Array.from({ length: lawan + 1 }, (_, i) => {
+      const sudut = ((Math.PI * 2) / (lawan + 1)) * i - Math.PI / 2
       const jarak = Math.min(W, H) * 0.32
       const kamu = i === 0
-      const kar = kamu ? karakterku : botKar[(i - 1) % botKar.length]
-      const pakaiAvatar = !kamu && avatarku && Math.random() < 0.2
-      const src = kamu && karakterku === "sendiri" && avatarku
-        ? avatarku
-        : pakaiAvatar
-          ? avatarku!
-          : gambarKarakter(kar === "sendiri" ? "zelby" : kar, "happy")
+      const src = kamu
+        ? gambarKarakter(karakterku, "happy")
+        : botWajah[(i - 1) % botWajah.length]
       const x = W / 2 + Math.cos(sudut) * jarak
       const y = H / 2 + Math.sin(sudut) * jarak
       return {
@@ -328,7 +333,7 @@ export default function KuisTempurSolo({ backHref = "/arena/game" }: { backHref?
     soalBaru()
     sfx.start()
     startBGM()
-  }, [karakterku, avatarku, namaku, soalBaru, level])
+  }, [karakterku, namaku, soalBaru, level])
 
   useEffect(() => {
     const cv = cvRef.current
@@ -461,10 +466,9 @@ export default function KuisTempurSolo({ backHref = "/arena/game" }: { backHref?
         x = kx; y = ky
         break
       }
-      const kar = kocok([...KARAKTER])[0] ?? "zelby"
-      const pakaiAvatar = avatarku && Math.random() < 0.2
+      // Musuh baru lahir berwajah aset avatar bernomor, sama seperti awal ronde.
       const img = new Image()
-      img.src = pakaiAvatar ? avatarku! : gambarKarakter(kar, "happy")
+      img.src = AVATAR_BOT[n % AVATAR_BOT.length]
       pRef.current.push({
         nama: NAMA_BOT[n % NAMA_BOT.length], gambar: img, warna: WARNA[n % WARNA.length],
         x, y, tx: x, ty: y, hp: HP_AWAL, hidup: true, kamu: false, kedip: 0, langkah: 0, hadap: 1,
@@ -776,7 +780,7 @@ export default function KuisTempurSolo({ backHref = "/arena/game" }: { backHref?
     }
     rafRef.current = requestAnimationFrame(gelung)
     return () => cancelAnimationFrame(rafRef.current)
-  }, [fase, selesaikan, tulisFeed, karakterku, avatarku])
+  }, [fase, selesaikan, tulisFeed])
 
   const jawab = (idx: number, benar: boolean) => {
     if (kunci || teratasiRef.current || fase !== "main") return
@@ -861,8 +865,8 @@ export default function KuisTempurSolo({ backHref = "/arena/game" }: { backHref?
   // ── Rangka visual chunky cream yang sama dengan gim solo lain ─────────────
   const chunky = "border-4 border-[#161B3A] shadow-[6px_6px_0_#161B3A]"
   const btn = `inline-flex items-center justify-center gap-2 font-extrabold rounded-2xl ${chunky} transition-transform active:translate-x-1.5 active:translate-y-1.5 active:shadow-none`
-  const avatarHasil = karakterku === "sendiri" && avatarku ? avatarku : gambarKarakter(karakterku === "sendiri" ? "zelby" : karakterku, hasil?.menang ? "celebrate" : "idle")
-  const avatarHdr = karakterku === "sendiri" && avatarku ? avatarku : gambarKarakter(karakterku === "sendiri" ? "zelby" : karakterku, "happy")
+  const avatarHasil = gambarKarakter(karakterku, hasil?.menang ? "celebrate" : "idle")
+  const avatarHdr = gambarKarakter(karakterku, "happy")
 
   const Hdr = (
     <div className="mb-3 flex w-full items-center justify-between">
@@ -893,10 +897,7 @@ export default function KuisTempurSolo({ backHref = "/arena/game" }: { backHref?
   )
 
   if (fase === "pilih") {
-    const pilihan = [
-      ...(avatarku ? [{ id: "sendiri" as const, nama: namaku, src: avatarku }] : []),
-      ...KARAKTER.map((k) => ({ id: k, nama: PROFIL[k].nama, src: gambarKarakter(k, "happy") })),
-    ]
+    const pilihan = KARAKTER.map((k) => ({ id: k, nama: PROFIL[k].nama, src: gambarKarakter(k, "happy") }))
     return (
       <div className="fixed inset-0 z-[60] overflow-y-auto bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] text-[#161B3A]">
         <style>{KT_STYLE}</style>
@@ -938,7 +939,7 @@ export default function KuisTempurSolo({ backHref = "/arena/game" }: { backHref?
               <span>·</span>
               <span>⏱ 5 menit</span>
               <span>·</span>
-              <span>{JUMLAH - 1} lawan</span>
+              <span>{lawanBot(level)} lawan</span>
               {profil && (
                 <span className="flex items-center gap-1" style={{ color: profil.warna }}>
                   <RankIcon rank={profil.rankKey} size={14} /> Lv {profil.levelXp}
