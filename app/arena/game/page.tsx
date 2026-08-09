@@ -147,27 +147,27 @@ export default async function ArenaGimPage() {
           <BattleCard onlineCount={onlineCount} recentBattles={recentBattles} recentPlayers={recentPlayers} />
         </div>
 
-        {/* Banner Arena — 2 informasi bersebelahan (kiri: Kuis Tempur, kanan: Arena Gim) */}
+        {/* Banner Arena — 2 informasi bersebelahan (kiri: Rank BC → Pemain, kanan: Arena Gim → Kuis Tempur) */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
           <Link
-            href="/arena/game/kuis-tempur"
+            href="/arena/player"
             className="block relative overflow-hidden rounded-[20px] active:scale-[0.98] transition-transform group"
             style={{ boxShadow: "0 8px 28px rgba(220,38,38,0.25)" }}
           >
             <img
               src="/banners/rank-bc-banner.webp"
-              alt="Kuis Tempur — kini bisa main solo!"
+              alt="Profil Pemain — naikkan peringkatmu!"
               className="block w-full h-auto"
             />
           </Link>
           <Link
-            href="/arena/league"
+            href="/arena/game/kuis-tempur"
             className="block relative overflow-hidden rounded-[20px] active:scale-[0.98] transition-transform group"
             style={{ boxShadow: "0 8px 28px rgba(43,75,255,0.25)" }}
           >
             <img
               src="/Rank%20BC/banner%20arena%20gim.png"
-              alt="Kompetisi Arena Gim — naikkan peringkatmu!"
+              alt="Kuis Tempur — kini bisa main solo!"
               className="block w-full h-auto"
             />
           </Link>
