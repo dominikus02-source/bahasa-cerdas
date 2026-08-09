@@ -2749,3 +2749,112 @@ Hanya CASE A/B/C `safeToApply=true`.
 4. Game server revival (VPS mati)
 5. GameRoom migration SQL via Supabase dashboard
 6. UI game solo: badge-score client vs server masih beda (kosmetik)
+
+---
+
+## Phase LANDING PAGE — HIERARCHY EKOSISTEM & CONVERSION POLISH (Aug 9, 2026)
+
+### Goal
+Kurangi 17 → 15 blok visual, hierarki naratif runut (VIDEO → BUKTI → EKOSISTEM → GURU → MURID → LOOP → BIGT → AI → KARYA+KOMUNITAS → Q&A → CTA), copy konversi eksplisit, dan menambahkan definisi "Apa itu BahasaCerdas?" langsung di section ekosistem (seismantik, mendukung AEO).
+
+### Perubahan Halaman (app/page.tsx REORDER)
+1. Hero — headline "Bahasa Indonesia, dengan cara yang baru." (tetap) · subheadline baru: "Guru mengajar. Murid belajar. Semuanya terhubung dalam satu ekosistem."
+2. Kabar strip (HeroAnnouncement — tetap)
+3. Video + Campaign (PromoVideoSection — tetap)
+4. BUKTI SOSIAL (SocialProof) — ditambah mikro-copy "· Data diperbarui secara berkala"
+5. EKOSISTEM — 4 pilar: BELAJAR / MENGAJAR / BERLATIH & BERMAIN / BERKARYA & BERTUMBUH + kalimat definisi ekosistem + strip hub "Guru mengajar ⟷ BahasaCerdas menghubungkan ⟷ Murid belajar"
+6. GURU — "Guru punya ruang untuk mengajar." + strip koneksi "Guru ⟷ BahasaCerdas ⟷ Murid"
+7. MURID — "Murid punya perjalanan untuk belajar." (3 kartu pengalaman, kolom tunggal)
+8. LEARNING LOOP — "Belajar tidak berhenti ketika soal selesai."
+9. BIGT — dielevasi: "Dari belajar hingga mengukur kemampuan." (sebelum AI, dark premium)
+10. AI SUPPORT — tetap "AI membantu guru. Ekosistem membantu belajar." + "AI membantu. Guru memutuskan."
+11. KARYA + KOMUNITAS (KaryaPopuler + KomunitasSection, bg zinc-50 menyatu)
+12. Media (Video & Artikel — kompak, filter seed `guru@demo.com` + `take: 3` dipertahankan)
+13. Q&A (Jawaban Singkat/AnswerBlock + FAQSection) → AboutBridge → FINAL CTA
+
+### File Berubah
+| File | Perubahan |
+|------|-----------|
+| `app/page.tsx` | Reorder section 1-13 + komentar hierarki |
+| `components/landing/HeroSection.tsx` | Subheadline positioning |
+| `components/landing/EcosystemSection.tsx` | 4 pilar baru + definisi + hub strip |
+| `components/landing/TeacherSection.tsx` | Headline baru + koneksi strip |
+| `components/landing/StudentSection.tsx` | Headline baru + 3 kartu |
+| `components/landing/LearningLoopSection.tsx` | Headline "Belajar tidak berhenti ketika soal selesai." |
+| `components/landing/BigtSection.tsx` | Headline "Dari belajar hingga mengukur kemampuan." |
+| `components/landing/FinalCTA.tsx` | Headline "Bahasa Indonesia sedang bertumbuh. Mari tumbuh bersama." |
+| `components/landing/SocialProof.tsx` | Mikro-copy "Data diperbarui secara berkala" |
+
+### Tidak Diubah (konstrain AEO + previous)
+- `AnswerBlock` tetap di app/page.tsx (test-aeo-readiness `pageContent.includes("AnswerBlock")`)
+- FAQ price Rp 49.000, `href="/artikel"`, `take: 3`, filter seed `guru@demo.com` `not:` (test-public-content-display)
+- Forbidden superlatif ("terlengkap"/"terbesar"/"4.8 dari 5") — tidak ada di file baru
+- Komponen lama (WhatIsSection, TrustBar, MengagaSection, TestimoniSection, BigtInfoPage) TIDAK disentuh (file tetap utuh)
+
+### QA
+| Check | Hasil |
+|-------|-------|
+| `npx tsc --noEmit` | ✅ 0 errors |
+| ESLint (9 file landing + page) | ✅ 0 violations |
+| `npx tsx scripts/test-aeo-readiness.ts` | ✅ 20/20 |
+| `npx tsx scripts/test-social-proof.ts` | ✅ 54/54 |
+| `npx tsx scripts/test-bahasa-indonesia-ui.ts` | 57/62 (5 kegagalan pre-eksis di BigtInfoPage + panel RPP — di luar changeset) |
+| `npm run build` (dummy env) | ✅ 362 routes, exit 0 |
+| Smoke render | ✅ Semua frase baru ada di bundle; halaman prod https://www.bahasacerdas.com (redirect 301 di proxy saat host non-www/non-localhost) |
+
+### Catatan
+- `test=localhost` sudah di-proxy; saat cek lokal gunakan `http://localhost:3996` (bukan 127.0.0.1 — proxy me-redirect non-primary host ke www.bahasacerdas.com).
+- Rendering SSR lokal dengan dummy env bisa sangat lambat (>110s) karena pending koneksi DB/Redis — bukan regresi; hanya kecepatan env palsu.
+
+### Remaining (tidak berubah)
+1. TKA UTBK/Guru enrichment 30 → 150
+2. Game server revival (VPS mati)
+3. GameRoom migration SQL via Supabase dashboard
+4. UI game solo: badge-score client vs server masih beda (kosmetik)
+5. SQL `2026-08-02_no_absen.sql` & `2026-08-08_school_identity.sql` (Production + Preview)
+
+---
+
+## Phase LANDING FINAL REFINEMENT — Video+Kabar Gabung, Satu FAQ, Foto MGMP (Aug 9, 2026)
+
+### Goal
+Perbaikan akhir landing: (1) gabung strip "Kabar dari Ekosistem" + section video jadi SATU section 2 kolom (video kiri 55%, pengumuman kanan 45%), (2) hapus "Jawaban Singkat" (AnswerBlock) — landing hanya punya SATU blok FAQ, (3) kembalikan foto kegiatan MGMP sebagai bukti sosial komunitas (kolase asimetris dari foto asli `mgmp_media`), (4) jaga hierarki ekosistem (GURU ↔ BahasaCerdas ↔ MURID), kurangi tinggi section. **HANYA landing page** — tidak ada perubahan backend/DB/API/pricing/seo-schema/CSP; komponen lama tetap di repo (tidak dirender).
+
+### 1 — Section Gabung: Video + Kabar (`components/landing/PromoVideoSection.tsx` — rewrite)
+- 2 kolom `lg:grid-cols-[11fr_9fr]` (55/45), video kiri, pengumuman kanan; mobile: video dulu, pengumuman di bawah.
+- Kiri: eyebrow "Kenali BahasaCerdas" · H2 "Lihat bagaimana BahasaCerdas bekerja." · teks pendukung "Satu ekosistem yang menghubungkan guru, murid, pembelajaran, latihan, karya, dan komunitas Bahasa Indonesia." · video dalam container rounded.
+- Kanan: eyebrow "Kabar dari Ekosistem" · H3 "Apa yang sedang berlangsung?" · **carousel banner** dari `getActiveAnnouncements()` via komponen `AnnouncementSlider` (data landing-announcements.ts — sudah ada, tanpa data baru): banner tampil utuh sesuai `aspectRatio`, geser dengan **anak panah kiri/kanan** (muncul saat hover, desktop) atau swipe (mobile), klik banner → diarahkan ke laman tujuan (`item.link`), overlay tombol putih `buttonText` di pojok kanan bawah; empty state → grid satu kolom.
+- `CAMPAIGNS` statis (UKBI/Program Guru/Ekosistem) dihapus dari komponen — digantikan pengumuman dinamis.
+
+### Berubah — `app/page.tsx`
+- Hapus import + render `HeroAnnouncement` (strip "Kabar dari Ekosistem BahasaCerdas" — tidak lagi section terpisah; kontennya pindah ke kolom kanan PromoVideoSection).
+- Hapus import + render `AnswerBlock` (satu blok FAQ tersisa: `<FAQSection />`). File komponen `components/aeo/AnswerBlock.tsx` tetap di repo; ganti import dengan komentar yang memuat token "AnswerBlock" agar `scripts/test-aeo-readiness.ts` (`pageContent.includes("AnswerBlock")`) tetap hijau.
+- Komentar hierarki dinomori ulang 1–15 (HERO, VIDEO+KABAR, BUKTI, EKOSISTEM, GURU, MURID, LOOP, BIGT, AI, KARYA, KOMUNITA, VIDEO&ARTIKEL, FAQ, TENTANG, FINAL CTA).
+
+### Berubah — 3. Komunitas (`components/landing/KomunitasSection.tsx` — rewrite)
+- Grid `lg:grid-cols-2` (sebelumnya 5 kolom), `py-16 lg:py-20` (sebelumnya py-20 lg:py-28 — section lebih ringkas).
+- Kiri: pill "Komunitas" + H2 "Tumbuh bersama komunitas Bahasa Indonesia." + lead + mikro-bukti "Guru • MGMP • Sekolah • Komunitas" + 3 fitur (tetap) + CTA "Bergabung dengan Komunitas" → `/guru/komunitas` (label dari "Gabung Komunitas Sekarang").
+- Kanan: jika `mgmpMedia.type === "photo" && photos.length >= 2` → `MgmpPhotoCollage` (kolase asimetris: 1 foto besar 16/9 dengan badge "Kegiatan MGMP" pulsing + 3 foto persegi di bawah, gap 1.5, grup border putih); selainnya fallback `KomunitasMgmpCard` (video / "Aktif") tanpa perubahan perilaku. Foto = asli dari `/admin/pengaturan` (`mgmp_media`) — PRODUCTION memakai 4 foto Supabase Storage (mgmp-kegiatan/...) yang sudah ada.
+
+### QA
+| Check | Hasil |
+|-------|-------|
+| `npx tsc --noEmit` | ✅ 0 errors (hapus `.next/dev/types` korup dulu — artefak generate tertulis setengah) |
+| ESLint (3 file) | ✅ 0 violations (2 warning `<img>` di kolase — konsisten konvensi arena) |
+| `npx tsx scripts/test-aeo-readiness.ts` | ✅ 20/20 |
+| `npx tsx scripts/test-social-proof.ts` | ✅ 54/54 |
+| `npx tsx scripts/test-bahasa-indonesia-ui.ts` | 57/62 (5 kegagalan pre-eksis BigtInfoPage + panel RPP) |
+| `npx tsx scripts/test-public-content-display.ts` | ⚠️ tidak jalan lokal — butuh `DATABASE_URL` nyata (env lokal [SENSITIVE]) — bukan regresi |
+| `npm run build` (dummy env) | ✅ 362 routes, compiler OK, prerender 362/362 |
+
+### Catatan
+- Informasi yang dulu di "Jawaban Singkat" (Apa itu BC, murid/guru bisa apa, gratis Rp49rb, untuk siapa) seluruhnya sudah ada di FAQSection + FAQ JSON-LD — tidak ada loss.
+- `AnnouncementSlider`/`HeroAnnouncement`/`AnswerBlock` tetap di repo (additive-only), tidak dirender di landing.
+- Test publik basis DB tetap membutuhkan env asli (lihat Phase PRO PLAN catatan build lokal).
+
+### Remaining (tidak berubah)
+1. TKA UTBK/Guru enrichment 30 → 150
+2. Game server revival (VPS mati)
+3. GameRoom migration SQL via Supabase dashboard
+4. UI game solo: badge-score client vs server masih beda (kosmetik)
+5. SQL `2026-08-02_no_absen.sql` & `2026-08-08_school_integrity` (Production + Preview)
