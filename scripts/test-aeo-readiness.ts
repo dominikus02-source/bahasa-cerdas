@@ -91,6 +91,8 @@ async function main() {
   ];
 
   for (const file of filesToCheck) {
+    const fs = await import("fs");
+    if (!fs.existsSync(`${BASE_PATH}/${file}`)) continue;
     const content = await import("fs").then((fs) =>
       fs.readFileSync(`${BASE_PATH}/${file}`, "utf-8")
     );

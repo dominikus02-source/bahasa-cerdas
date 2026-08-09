@@ -67,7 +67,7 @@ const tools = [
 
 export default function AIToolsSection() {
   return (
-    <section className="relative py-20 lg:py-28 bg-white overflow-hidden" aria-labelledby="ai-heading">
+    <section className="relative py-14 lg:py-20 bg-white overflow-hidden" aria-labelledby="ai-heading">
       <BatikDecor position="left-bottom" variant="batik-header" />
 
       <div className="section-container relative z-10">
@@ -81,16 +81,16 @@ export default function AIToolsSection() {
         >
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary-light border border-primary/10 mb-5">
             <span className="text-xs font-semibold text-primary">
-              Alat AI Unggulan
+              AI dalam Ekosistem
             </span>
           </div>
           <h2 id="ai-heading" className="heading-lg text-zinc-900 mb-5">
-            Alat AI Canggih untuk{" "}
-            <span className="text-primary">Mempermudah Mengajar</span>
+            AI membantu guru.{" "}
+            <span className="text-primary">Ekosistem membantu belajar.</span>
           </h2>
           <p className="text-base lg:text-lg text-zinc-500 leading-relaxed">
-            6 alat AI yang dirancang khusus untuk guru Bahasa Indonesia — dari
-            Rencana Pembelajaran, soal, hingga koreksi tulisan.
+            Teknologi AI mengambil alih pekerjaan yang berulang, agar guru memiliki
+            lebih banyak waktu untuk hal yang benar-benar penting: membimbing murid.
           </p>
         </motion.div>
 
@@ -128,6 +128,21 @@ export default function AIToolsSection() {
               </motion.div>
             );
           })}
+        </motion.div>
+
+        <motion.div
+          className="mt-12 text-center"
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, ease: "easeOut" }}
+        >
+          <div className="inline-flex flex-wrap items-center justify-center gap-x-8 gap-y-3 rounded-2xl border border-zinc-100 bg-zinc-50/60 px-6 py-4">
+            <span className="text-sm font-semibold text-zinc-700">AI membantu.</span>
+            <span className="text-sm font-semibold text-zinc-700">Guru memutuskan.</span>
+            <span className="text-sm font-semibold text-zinc-700">Murid tetap belajar.</span>
+            <span className="text-sm font-semibold text-primary">Manusia tetap menjadi pusat.</span>
+          </div>
         </motion.div>
       </div>
     </section>

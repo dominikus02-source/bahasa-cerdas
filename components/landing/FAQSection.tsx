@@ -9,27 +9,27 @@ import { fadeInUp } from "@/lib/motion";
 const faqs = [
   {
     q: "Apa itu BahasaCerdas?",
-    a: "BahasaCerdas adalah platform lengkap untuk guru Bahasa Indonesia. Kami menyediakan AI generator Rencana Pembelajaran, bank soal, kuis multiplayer, toko karya, dan komunitas MGMP aktif di Indonesia. Semua dalam satu platform.",
+    a: "BahasaCerdas adalah ekosistem belajar Bahasa Indonesia yang menghubungkan guru, murid, kelas, materi, latihan, permainan, karya, komunitas, dan asesmen dalam satu platform. Bukan sekadar tempat belajar atau alat AI — melainkan ekosistem yang dirancang mengelilingi perjalanan belajar Bahasa Indonesia.",
   },
   {
     q: "Apakah BahasaCerdas gratis?",
-    a: "Ya! Anda bisa mencoba gratis selama 30 hari tanpa komitmen. Setelah itu, tersedia paket PRO dengan fitur lengkap mulai dari Rp 49.000/bulan. Guru juga bisa mendapat akses gratis dengan bergabung di komunitas aktif.",
+    a: "Ya. Guru dan murid dapat memulai tanpa biaya. Guru mendapat uji coba Guru Pro selama 30 hari tanpa komitmen, lalu tersedia paket Guru Pro mulai Rp 49.000/bulan bagi yang ingin mengakses AI tools dan kuota ekspor lebih besar.",
   },
   {
-    q: "Bagaimana cara AI Rencana Pembelajaran bekerja?",
-    a: "Cukup masukkan topik, kelas, dan durasi pembelajaran. AI kami akan menghasilkan Rencana Pembelajaran lengkap dengan tujuan pembelajaran, kegiatan inti, asesmen, dan lampiran — semuanya sesuai Kurikulum Nasional terbaru.",
+    q: "Apa yang bisa dilakukan murid di BahasaCerdas?",
+    a: "Murid bisa belajar di Jalur Cerdas, berlatih soal, bermain gim edukasi, menulis dan mempublikasikan karya (puisi, cerpen, pantun), mengumpulkan XP dan lencana, naik peringkat di liga mingguan, serta mengikuti simulasi UKBI/TKA.",
   },
   {
-    q: "Apakah saya bisa menjual karya di Toko Karya?",
-    a: "Tentu! Setiap guru bisa mengunggah dan menjual Rencana Pembelajaran, modul, PPT, soal, atau video pembelajaran. Anda mendapatkan 80% dari setiap penjualan. Pembayaran bisa dicairkan setiap bulan.",
+    q: "Apa yang bisa dilakukan guru?",
+    a: "Guru dapat mengelola kelas, menyiapkan materi ajar, membuat dan membagikan latihan, menilai karya dan tugas, memantau buku nilai, menyusun perangkat ajar dengan bantuan AI, serta menjual karya di Toko Karya BahasaCerdas.",
   },
   {
-    q: "Bagaimana cara bergabung dengan komunitas?",
-    a: "Setelah mendaftar, Anda langsung bisa mengakses forum diskusi dan grup MGMP digital untuk berbagi dan belajar dengan sesama guru Bahasa Indonesia.",
+    q: "Apa itu AI di BahasaCerdas?",
+    a: "AI di BahasaCerdas membantu pekerjaan berulang seperti menyusun perangkat ajar, membuat soal, mengoreksi EYD, dan menilai karangan — agar guru memiliki lebih banyak waktu untuk membimbing murid. AI membantu, guru yang memutuskan.",
   },
   {
     q: "Apakah tersedia untuk siswa?",
-    a: "Ya! Siswa bisa bergabung melalui kode kelas yang diberikan guru. Mereka bisa mengerjakan tugas, mengikuti kuis multiplayer, dan melihat progres belajar mereka.",
+    a: "Ya! Siswa bisa bergabung melalui kode kelas yang diberikan guru, atau langsung belajar melalui Arena — Jalur Cerdas, gim, karya, simulasi, dan liga tersedia untuk semua murid.",
   },
   {
     q: "Bagaimana keamanan data saya?",

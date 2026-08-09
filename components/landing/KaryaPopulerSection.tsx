@@ -25,31 +25,40 @@ export default async function KaryaPopulerSection() {
   const karya = await getPopularWorks();
 
   return (
-    <section className="relative py-20 lg:py-28 bg-zinc-50">
+    <section className="relative py-14 lg:py-20 bg-zinc-50">
       <div className="section-container">
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-12 lg:mb-16">
           <div className="max-w-xl">
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary-light border border-primary/10 mb-5">
               <ShoppingBag size={12} className="text-primary" />
               <span className="text-xs font-semibold text-primary">
-                Toko Karya Guru
+                Berkarya
               </span>
             </div>
             <h2 className="heading-lg text-zinc-900 mb-4">
-              Karya <span className="text-primary">Terpopuler</span> dari Guru
+              Ruang untuk <span className="text-primary">berkarya</span>
             </h2>
             <p className="text-zinc-500 leading-relaxed">
-              Rencana Pembelajaran, modul, dan soal siap pakai dari guru Bahasa Indonesia
-              yang telah membagikan karyanya.
+              Guru berbagi pengetahuan. Murid belajar menciptakan. Bahasa Indonesia
+              tumbuh melalui karya — dari perangkat ajar hingga karya tulis siswa.
             </p>
           </div>
-          <Link
-            href="/marketplace"
-            className="group inline-flex items-center gap-2 text-sm font-semibold text-primary hover:text-primary-dark transition-colors shrink-0"
-          >
-            Lihat Semua Karya
-            <ChevronRight size={16} className="transition-transform group-hover:translate-x-0.5" />
-          </Link>
+          <div className="flex flex-col items-start lg:items-end gap-2">
+            <Link
+              href="/marketplace"
+              className="group inline-flex items-center gap-2 text-sm font-semibold text-primary hover:text-primary-dark transition-colors shrink-0"
+            >
+              Lihat Semua Karya
+              <ChevronRight size={16} className="transition-transform group-hover:translate-x-0.5" />
+            </Link>
+            <Link
+              href="/arena/tulis"
+              className="group inline-flex items-center gap-2 text-sm font-semibold text-zinc-600 hover:text-primary transition-colors shrink-0"
+            >
+              Mulai menulis karyamu
+              <ChevronRight size={16} className="transition-transform group-hover:translate-x-0.5" />
+            </Link>
+          </div>
         </div>
 
         <div className="grid md:grid-cols-3 gap-6">

@@ -1,34 +1,43 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { db } from "@/lib/db";
-import { organizationLd, webSiteLd, faqPageLd, breadcrumbLd } from "@/lib/json-ld";
+import { faqPageLd, breadcrumbLd } from "@/lib/json-ld";
 import { withQueryTimeout as queryWithTimeout } from "@/lib/db/with-query-timeout";
 import PageNavbar from "@/components/public/PageNavbar";
 import PageFooter from "@/components/public/PageFooter";
 import HeroSection from "@/components/landing/HeroSection";
-import TrustBar from "@/components/landing/TrustBar";
+import SocialProof from "@/components/landing/SocialProof";
 import PromoVideoSection from "@/components/landing/PromoVideoSection";
-import MengapaSection from "@/components/landing/MengapaSection";
+import EcosystemSection from "@/components/landing/EcosystemSection";
+import LearningLoopSection from "@/components/landing/LearningLoopSection";
+import TeacherSection from "@/components/landing/TeacherSection";
+import StudentSection from "@/components/landing/StudentSection";
 import AIToolsSection from "@/components/landing/AIToolsSection";
 import KaryaPopulerSection from "@/components/landing/KaryaPopulerSection";
+import BigtSection from "@/components/landing/BigtSection";
 import KomunitasSection from "@/components/landing/KomunitasSection";
+import AboutBridge from "@/components/landing/AboutBridge";
 import { getMgmpMedia } from "@/lib/site-settings";
 import FAQSection from "@/components/landing/FAQSection";
 import FinalCTA from "@/components/landing/FinalCTA";
-import AnswerBlock from "@/components/aeo/AnswerBlock";
+import { getSocialProofSnapshot } from "@/lib/social-proof";
+// Jawaban Singkat (AnswerBlock) tidak lagi dirender di landing — jawaban
+// hanya tersedia lewat satu blok FAQ: FAQSection ("Pertanyaan yang Sering Diajukan").
 import JsonLd from "@/components/aeo/JsonLd";
 import SafeMediaImage from "@/components/shared/safe-media-image";
 
 export const revalidate = 300;
 
 export const metadata: Metadata = {
-  title: "BahasaCerdas — Platform Edukasi Bahasa Indonesia untuk Guru & Siswa",
+  title: "BahasaCerdas — Ekosistem Belajar Bahasa Indonesia",
   description:
-    "Platform edukasi Bahasa Indonesia lengkap: AI generator Rencana Pembelajaran Kurikulum Nasional, bank soal HOTS, kuis multiplayer, toko karya, dan komunitas MGMP aktif. Gratis untuk memulai.",
+    "BahasaCerdas adalah ekosistem pembelajaran Bahasa Indonesia untuk guru dan murid. Belajar, berlatih, bermain, berkarya, dan bertumbuh dalam satu platform.",
   openGraph: {
-    title: "BahasaCerdas — Platform Edukasi Bahasa Indonesia",
+    title: "BahasaCerdas — Ekosistem Belajar Bahasa Indonesia",
     description:
-      "MGMP + AI + Toko Karya dalam satu platform. Daftar gratis.",
+      "Belajar, berlatih, bermain, berkarya, dan bertumbuh dalam satu ekosistem Bahasa Indonesia.",
+    url: "https://www.bahasacerdas.com",
+    type: "website",
   },
   alternates: {
     canonical: "https://www.bahasacerdas.com",
@@ -88,26 +97,28 @@ async function getLatestVideos() {
 }
 
 export default async function HomePage() {
-  const [artikel, videos, mgmpMedia] = await Promise.all([
+  const [artikel, videos, mgmpMedia, socialProof] = await Promise.all([
     getLatestArtikel(),
     getLatestVideos(),
     getMgmpMedia(),
+    getSocialProofSnapshot(),
   ]);
 
   const faqs = [
-    { q: "Apa itu BahasaCerdas?", a: "BahasaCerdas adalah platform edukasi Bahasa Indonesia yang menyediakan AI generator Rencana Pembelajaran, bank soal HOTS, kuis multiplayer, toko karya guru, dan komunitas MGMP dalam satu platform. Dibangun oleh guru, untuk guru." },
-    { q: "Apakah BahasaCerdas gratis?", a: "Ya, BahasaCerdas gratis untuk memulai. Guru bisa mencoba Guru Pro selama 30 hari tanpa komitmen. Setelah itu tersedia paket berbayar mulai Rp 49.000/bulan." },
-    { q: "Fitur AI apa saja yang tersedia?", a: "BahasaCerdas memiliki AI generator Rencana Pembelajaran, generator soal HOTS, koreksi EYD otomatis, analisis teks, feedback karangan, dan asisten pembelajaran — semuanya untuk membantu guru Bahasa Indonesia." },
-    { q: "Siapa yang bisa menggunakan BahasaCerdas?", a: "BahasaCerdas untuk guru Bahasa Indonesia di semua jenjang (SMP, SMA, SMK, MA) dan siswa yang ingin belajar Bahasa Indonesia secara interaktif." },
+    { q: "Apa itu BahasaCerdas?", a: "BahasaCerdas adalah ekosistem belajar Bahasa Indonesia yang menghubungkan guru, murid, kelas, materi, latihan, permainan, karya, komunitas, dan asesmen dalam satu platform. Bukan sekadar tempat belajar atau alat AI — melainkan ekosistem yang dirancang mengelilingi perjalanan belajar Bahasa Indonesia." },
+    { q: "Apakah BahasaCerdas gratis?", a: "Ya, BahasaCerdas gratis untuk memulai. Guru dapat mencoba Guru Pro selama 30 hari tanpa komitmen. Setelah itu tersedia paket Guru Pro mulai Rp 49.000/bulan." },
+    { q: "Apa yang bisa dilakukan murid di BahasaCerdas?", a: "Murid bisa belajar di Jalur Cerdas, berlatih soal, bermain gim edukasi, menulis dan mempublikasikan karya, mengumpulkan XP dan lencana, naik peringkat di liga mingguan, serta mengikuti simulasi UKBI/TKA." },
+    { q: "Apa yang bisa dilakukan guru?", a: "Guru bisa mengelola kelas, menyiapkan materi ajar, membuat dan membagikan latihan, menilai karya dan tugas, memantau buku nilai, menyusun perangkat ajar dengan bantuan AI, serta menjual karya di Toko Karya BahasaCerdas." },
+    { q: "Bagaimana cara AI bekerja di BahasaCerdas?", a: "AI di BahasaCerdas membantu pekerjaan berulang — menyusun perangkat ajar, membuat soal, mengoreksi EYD, dan menilai karangan — agar guru memiliki lebih banyak waktu untuk membimbing murid. AI membantu, guru yang memutuskan." },
+    { q: "Apakah tersedia untuk siswa?", a: "Ya. Siswa bisa bergabung melalui kode kelas dari guru, atau langsung belajar melalui Arena: Jalur Cerdas, gim, karya, simulasi, dan liga tersedia untuk semua murid." },
   ];
 
   return (
     <>
       <JsonLd data={breadcrumbLd([
         { position: 1, name: "Beranda", item: "https://www.bahasacerdas.com" },
-        { position: 2, name: "Artikel", item: "https://www.bahasacerdas.com/artikel" },
-        { position: 3, name: "Marketplace", item: "https://www.bahasacerdas.com/marketplace" },
-        { position: 4, name: "Video Belajar", item: "https://www.bahasacerdas.com/video-belajar" },
+        { position: 2, name: "Arena", item: "https://www.bahasacerdas.com/arena" },
+        { position: 3, name: "Simulasi", item: "https://www.bahasacerdas.com/arena/simulasi" },
       ])} />
       <JsonLd data={faqPageLd(faqs)} />
 
@@ -118,226 +129,158 @@ export default async function HomePage() {
       <PageNavbar />
 
       <main id="main-content" className="min-h-screen">
+        {/* 1 · HERO — positioning: satu ekosistem untuk semua */}
         <HeroSection />
-        <TrustBar />
+
+        {/* 2 · VIDEO + KABAR — video kiri (55%), pengumuman kanan (45%) */}
         <PromoVideoSection />
-        <MengapaSection />
 
-        {/* Jawaban Singkat — AEO-optimized Q&A block */}
-        <section className="relative py-20 lg:py-28 bg-white" aria-labelledby="jawaban-singkat-heading">
-          <div className="section-container">
-            <div className="text-center max-w-2xl mx-auto mb-12">
-              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary-light border border-primary/10 mb-5">
-                <span className="text-xs font-semibold text-primary">Jawaban Singkat</span>
-              </div>
-              <h2 id="jawaban-singkat-heading" className="heading-lg text-zinc-900 mb-5">
-                Apa Itu{" "}
-                <span className="text-primary">BahasaCerdas</span>?
-              </h2>
-              <p className="text-base lg:text-lg text-zinc-500 leading-relaxed">
-                Temukan jawaban singkat tentang platform kami.
-              </p>
-            </div>
+        {/* 3 · BUKTI SOSIAL — angka riil dari database */}
+        <SocialProof initial={socialProof} />
 
-            <div className="max-w-3xl mx-auto">
-              <AnswerBlock question="Apa itu BahasaCerdas?">
-                <p>
-                  BahasaCerdas adalah platform edukasi Bahasa Indonesia yang menggabungkan kecerdasan buatan (AI), 
-                  bank soal interaktif, kuis multiplayer, toko karya guru, dan komunitas MGMP dalam satu ekosistem.
-                </p>
-                <p className="mt-2">
-                  Platform ini dirancang khusus untuk membantu guru Bahasa Indonesia di SMP, SMA, SMK, dan MA 
-                  dalam menyusun perangkat ajar, mengevaluasi pembelajaran, dan mengembangkan karir.
-                </p>
-              </AnswerBlock>
+        {/* 4 · EKOSISTEM — pilar BELAJAR/MENGAJAR/BERLATIH & BERMAIN/BERKARYA & BERTUMBUH */}
+        <EcosystemSection />
 
-              <AnswerBlock question="Fitur apa saja yang tersedia di BahasaCerdas?">
-                <ul className="list-disc pl-5 space-y-1.5">
-                  <li><strong>AI Generator Rencana Pembelajaran</strong> — Buat Rencana Pembelajaran Kurikulum Nasional dalam 30 detik</li>
-                  <li><strong>Generator Soal HOTS</strong> — Soal berbasis level kognitif C4-C6</li>
-                  <li><strong>Koreksi EYD Otomatis</strong> — Periksa ejaan dan tata bahasa otomatis</li>
-                  <li><strong>Kuis Multiplayer</strong> — Game edukasi interaktif untuk siswa</li>
-                  <li><strong>Toko Karya Guru</strong> — Jual dan beli perangkat ajar</li>
-                  <li><strong>Komunitas MGMP</strong> — Forum diskusi, webinar, dan kolaborasi guru</li>
-                  <li><strong>Bank Soal</strong> — Soal siap pakai untuk asesmen</li>
-                </ul>
-              </AnswerBlock>
+        {/* 5 · GURU — ruang untuk mengajar */}
+        <TeacherSection />
 
-              <AnswerBlock question="Apakah BahasaCerdas gratis?">
-                <p>
-                  Ya, BahasaCerdas gratis untuk memulai. Guru dapat mendaftar dan langsung menggunakan fitur dasar 
-                  tanpa biaya. Untuk akses penuh ke semua fitur AI dan premium, tersedia paket Guru Pro 
-                  dengan uji coba 30 hari.
-                </p>
-              </AnswerBlock>
+        {/* 6 · MURID — perjalanan untuk belajar */}
+        <StudentSection />
 
-              <AnswerBlock question="Untuk siapa BahasaCerdas dibuat?">
-                <p>
-                  BahasaCerdas dibuat untuk <strong>guru Bahasa Indonesia</strong> di semua jenjang pendidikan 
-                  dan <strong>siswa</strong> yang ingin belajar Bahasa Indonesia dengan cara yang lebih 
-                  interaktif dan menyenangkan.
-                </p>
-              </AnswerBlock>
-            </div>
-          </div>
-        </section>
+        {/* 7 · LEARNING LOOP — belajar tidak berhenti ketika soal selesai */}
+        <LearningLoopSection />
+
+        {/* 8 · BIGT — dari belajar hingga mengukur kemampuan */}
+        <BigtSection />
+
+        {/* 9 · AI SUPPORT — AI membantu, guru memutuskan */}
         <AIToolsSection />
+
+        {/* 10 · KARYA — belajar bersama, berkarya bersama */}
         <KaryaPopulerSection />
 
-        <section className="relative py-20 lg:py-28 bg-white" id="artikel" aria-labelledby="media-heading">
+        {/* 11 · KOMUNITAS — tumbuh bersama, dengan foto kegiatan MGMP */}
+        <KomunitasSection mgmpMedia={mgmpMedia} />
+
+        {/* 12 · VIDEO & ARTIKEL — belajar tidak berhenti di dalam kelas */}
+        <section className="relative py-14 lg:py-20 bg-white" id="artikel" aria-labelledby="media-heading">
           <div className="section-container">
-            <div className="text-center max-w-2xl mx-auto mb-16 lg:mb-20">
+            <div className="text-center max-w-2xl mx-auto mb-10 lg:mb-12">
               <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary-light border border-primary/10 mb-5">
                 <span className="text-xs font-semibold text-primary">
                   Video & Artikel
                 </span>
               </div>
-              <h2 id="media-heading" className="heading-lg text-zinc-900 mb-5">
-                Belajar dari{" "}
-                <span className="text-primary">Video & Artikel</span>
+              <h2 id="media-heading" className="heading-lg text-zinc-900 mb-4">
+                Belajar tidak berhenti{" "}
+                <span className="text-primary">di dalam kelas</span>
               </h2>
-              <p className="text-base lg:text-lg text-zinc-500 leading-relaxed">
-                Tips mengajar, video pembelajaran, dan wawasan pendidikan dari
-                para ahli.
-              </p>
-            </div>
-
-            <div className="mb-14">
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="text-lg font-bold text-zinc-900">
-                  Video Pembelajaran
-                </h3>
+              <div className="flex flex-wrap justify-center gap-3">
                 <Link
                   href="/video-belajar"
                   className="text-sm font-semibold text-primary hover:text-primary-dark transition-colors focus-ring rounded"
                 >
-                  Lihat Semua &rarr;
+                  Lihat Video Pembelajaran &rarr;
+                </Link>
+                <Link
+                  href="/artikel"
+                  className="text-sm font-semibold text-zinc-500 hover:text-primary transition-colors focus-ring rounded"
+                >
+                  Lihat Semua Artikel &rarr;
                 </Link>
               </div>
-              {videos.length > 0 ? (
-                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-                  {videos.map((v: any) => (
-                    <Link
-                      key={v.id}
-                      href="/video-belajar"
-                      className="group rounded-2xl overflow-hidden border border-zinc-100 bg-zinc-50/50 card-hover focus-ring"
-                      aria-label={`Video: ${v.title}`}
-                    >
-                      <div className="aspect-video bg-zinc-100 relative overflow-hidden">
-                        <SafeMediaImage
-                          src={v.thumbnailUrl}
-                          alt=""
-                          fallbackType="video"
-                          containerClassName="w-full h-full"
-                          className="group-hover:scale-105 transition-transform duration-500"
-                        />
-                        {v.isPremium && (
-                          <span className="absolute top-3 left-3 px-2.5 py-1 rounded-lg bg-amber-400 text-white text-[10px] font-bold">
-                            PREMIUM
-                          </span>
-                        )}
-                        {v.duration && (
-                          <span className="absolute bottom-3 right-3 px-2 py-0.5 rounded-md bg-black/60 text-white text-[10px] font-medium">
-                            {v.duration}
-                          </span>
-                        )}
-                      </div>
-                      <div className="p-5">
-                        <p className="text-xs text-zinc-500 mb-1.5 uppercase tracking-wider font-medium">
-                          {v.category || v.grade || "Video"}
-                        </p>
-                        <h4 className="font-semibold text-zinc-900 text-sm leading-snug line-clamp-1 group-hover:text-primary transition-colors">
-                          {v.title}
-                        </h4>
-                        <p className="text-xs text-zinc-400 mt-1.5">
-                          {v.views?.toLocaleString() || 0} ditonton
-                        </p>
-                      </div>
-                    </Link>
-                  ))}
-                </div>
+            </div>
+
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+              {artikel.length > 0 ? (
+                artikel.slice(0, 3).map((a: any) => (
+                  <Link
+                    key={a.id}
+                    href={`/artikel/${a.slug}`}
+                    className="group rounded-2xl overflow-hidden border border-zinc-100 bg-zinc-50/50 card-hover focus-ring"
+                    aria-label={`Artikel: ${a.title}`}
+                  >
+                    <div className="p-5">
+                      {a.tags?.length > 0 && (
+                        <div className="flex flex-wrap gap-1.5 mb-3">
+                          {a.tags.slice(0, 2).map((t: string) => (
+                            <span
+                              key={t}
+                              className="text-[10px] px-2.5 py-1 rounded-full bg-primary-light text-primary font-medium"
+                            >
+                              {t}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                      <h4 className="font-bold text-zinc-900 group-hover:text-primary transition-colors line-clamp-2 mb-2">
+                        {a.title}
+                      </h4>
+                      <p className="text-xs text-zinc-400 mt-3">
+                        {a.author?.fullName} &middot;{" "}
+                        {new Date(a.createdAt).toLocaleDateString("id-ID", {
+                          day: "numeric",
+                          month: "long",
+                          year: "numeric",
+                        })}
+                      </p>
+                    </div>
+                  </Link>
+                ))
               ) : (
-                <div className="text-center py-12 bg-zinc-50 rounded-2xl border border-dashed border-zinc-200">
+                <div className="col-span-full text-center py-8 bg-zinc-50 rounded-2xl border border-dashed border-zinc-200">
                   <p className="text-zinc-400">
-                    Video pembelajaran pilihan akan segera tersedia.
+                    Artikel belajar akan segera tersedia.
                   </p>
                 </div>
               )}
-            </div>
 
-            <div>
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="text-lg font-bold text-zinc-900">
-                  Artikel & Tips
-                </h3>
+              {videos.length > 0 && (
                 <Link
-                  href="/artikel"
-                  className="text-sm font-semibold text-primary hover:text-primary-dark transition-colors focus-ring rounded"
+                  href="/video-belajar"
+                  className="group rounded-2xl overflow-hidden border border-zinc-100 bg-zinc-900 card-hover focus-ring"
+                  aria-label={`Video pilihan: ${videos[0].title}`}
                 >
-                  Lihat Semua &rarr;
+                  <div className="relative">
+                    <div className="aspect-video relative">
+                      <SafeMediaImage
+                        src={videos[0].thumbnailUrl}
+                        alt=""
+                        fallbackType="video"
+                        containerClassName="w-full h-full"
+                        className="opacity-80 group-hover:opacity-100 transition-opacity duration-500"
+                      />
+                    </div>
+                    {videos[0].duration && (
+                      <span className="absolute bottom-3 right-3 px-2 py-0.5 rounded-md bg-black/60 text-white text-[10px] font-medium">
+                        {videos[0].duration}
+                      </span>
+                    )}
+                  </div>
+                  <div className="p-5">
+                    <p className="text-[11px] text-amber-400 font-semibold uppercase tracking-wider mb-1.5">
+                      Video Pembelajaran
+                    </p>
+                    <h4 className="font-semibold text-white text-sm leading-snug line-clamp-1">
+                      {videos[0].title}
+                    </h4>
+                    <p className="text-xs text-zinc-400 mt-1.5">
+                      {videos[0].views?.toLocaleString() || 0} ditonton &middot; Klik untuk menonton
+                    </p>
+                  </div>
                 </Link>
-              </div>
-              {artikel.length > 0 ? (
-                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-                  {artikel.map((a: any) => (
-                    <Link
-                      key={a.id}
-                      href={`/artikel/${a.slug}`}
-                      className="group rounded-2xl overflow-hidden border border-zinc-100 bg-zinc-50/50 card-hover focus-ring"
-                      aria-label={`Artikel: ${a.title}`}
-                    >
-                      <div className="p-6">
-                        {a.tags?.length > 0 && (
-                          <div className="flex flex-wrap gap-1.5 mb-3">
-                            {a.tags.slice(0, 2).map((t: string) => (
-                              <span
-                                key={t}
-                                className="text-[10px] px-2.5 py-1 rounded-full bg-primary-light text-primary font-medium"
-                              >
-                                {t}
-                              </span>
-                            ))}
-                          </div>
-                        )}
-                        <h4 className="font-bold text-zinc-900 group-hover:text-primary transition-colors line-clamp-2 mb-2">
-                          {a.title}
-                        </h4>
-                        {a.excerpt && (
-                          <p className="text-sm text-zinc-500 line-clamp-2 leading-relaxed">
-                            {a.excerpt}
-                          </p>
-                        )}
-                        <p className="text-xs text-zinc-400 mt-4">
-                          {a.author?.fullName} &middot;{" "}
-                          {new Date(a.createdAt).toLocaleDateString("id-ID", {
-                            day: "numeric",
-                            month: "long",
-                            year: "numeric",
-                          })}
-                        </p>
-                      </div>
-                    </Link>
-                  ))}
-                </div>
-              ) : (
-                <div className="text-center py-12 bg-zinc-50 rounded-2xl border border-dashed border-zinc-200">
-                  <p className="text-zinc-400">
-                    Belum ada artikel. Guru dapat menulis artikel setelah login.
-                  </p>
-                  <Link
-                    href="/login"
-                    className="mt-2 inline-block text-sm text-primary font-semibold hover:underline focus-ring rounded"
-                  >
-                    Login & Tulis Artikel &rarr;
-                  </Link>
-                </div>
               )}
             </div>
           </div>
         </section>
 
-        <KomunitasSection mgmpMedia={mgmpMedia} />
+{/* 13 · FAQ — SATU blok tanya jawab (jawaban singkat tidak lagi dirender terpisah) */}
         <FAQSection />
+
+        {/* 14 · TENTANG — bridge ke narasi produk */}
+        <AboutBridge />
+
+        {/* 15 · FINAL CTA — bahasa Indonesia sedang bertumbuh */}
         <FinalCTA />
       </main>
 

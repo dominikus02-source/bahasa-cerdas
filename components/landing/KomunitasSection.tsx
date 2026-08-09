@@ -28,9 +28,46 @@ const features = [
   },
 ];
 
-export default function KomunitasSection({ mgmpMedia }: { mgmpMedia: MgmpMedia }) {
+// Kolase foto kegiatan komunitas (MGMP) — memakai foto asli yang sudah
+// diunggah melalui /admin/pengaturan (mgmp_media), tanpa foto buatan.
+function MgmpPhotoCollage({ photos }: { photos: { url: string; key: string }[] }) {
+  const shown = photos.slice(0, 4);
+  if (shown.length === 0) return null;
+
   return (
-    <section className="relative py-20 lg:py-28 bg-zinc-50 overflow-hidden">
+    <div className="rounded-2xl overflow-hidden bg-white border border-zinc-200 shadow-lg shadow-zinc-900/5">
+      <div className="grid grid-cols-3 gap-1.5 p-1.5">
+        <div className="relative col-span-3 aspect-[16/9] overflow-hidden rounded-lg group">
+          <img
+            src={shown[0].url}
+            alt="Kegiatan MGMP BahasaCerdas"
+            className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-500"
+          />
+          <div className="absolute bottom-3 left-3 inline-flex items-center gap-1.5 bg-green-50/95 text-green-700 text-xs font-semibold px-3 py-1 rounded-full border border-green-100 backdrop-blur-sm">
+            <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+            Kegiatan MGMP
+          </div>
+        </div>
+        {shown.slice(1).map((p) => (
+          <div key={p.key} className="relative aspect-square rounded-xl overflow-hidden">
+            <img
+              src={p.url}
+              alt="Kegiatan MGMP BahasaCerdas"
+              loading="lazy"
+              className="w-full h-full object-cover hover:scale-[1.03] transition-transform duration-500"
+            />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export default function KomunitasSection({ mgmpMedia }: { mgmpMedia: MgmpMedia }) {
+  const showCollage = mgmpMedia.type === "photo" && mgmpMedia.photos.length >= 2;
+
+  return (
+    <section className="relative py-16 lg:py-20 bg-zinc-50 overflow-hidden">
       {/* Non-blocking batik decor */}
       <div
         className="absolute left-0 top-0 w-[500px] h-full opacity-[0.015] pointer-events-none select-none"
@@ -43,10 +80,9 @@ export default function KomunitasSection({ mgmpMedia }: { mgmpMedia: MgmpMedia }
       />
 
       <div className="section-container relative z-10">
-        <div className="grid lg:grid-cols-5 gap-12 lg:gap-16 items-center">
+        <div className="grid lg:grid-cols-2 gap-10 lg:gap-14 items-center">
           {/* Left Content */}
           <motion.div
-            className="lg:col-span-3"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -55,22 +91,29 @@ export default function KomunitasSection({ mgmpMedia }: { mgmpMedia: MgmpMedia }
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary-light border border-primary/10 mb-5">
               <Users size={12} className="text-primary" />
               <span className="text-xs font-semibold text-primary">
-                Komunitas MGMP
+                Komunitas
               </span>
             </div>
             <h2 className="heading-lg text-zinc-900 mb-5">
-              Bergabung dengan{" "}
-              <span className="text-primary">Sesama Guru</span>{" "}
+              Tumbuh bersama{" "}
+              <span className="text-primary">komunitas</span>{" "}
               Bahasa Indonesia
             </h2>
-            <p className="text-base lg:text-lg text-zinc-500 leading-relaxed mb-8 max-w-xl">
-Ruang bagi guru Bahasa Indonesia untuk berbagi, belajar, dan
-berkembang bersama sesama pengajar.
+            <p className="text-base lg:text-lg text-zinc-500 leading-relaxed mb-5 max-w-xl">
+              Berbagi pengalaman, pengetahuan, materi, dan karya bersama guru
+              Bahasa Indonesia dari berbagai sekolah.
             </p>
+
+            <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-zinc-400 mb-8">
+              <span>Guru</span><span className="text-zinc-300">•</span>
+              <span>MGMP</span><span className="text-zinc-300">•</span>
+              <span>Sekolah</span><span className="text-zinc-300">•</span>
+              <span>Komunitas</span>
+            </div>
 
             {/* Feature List */}
             <motion.div
-              className="space-y-5 mb-8"
+              className="space-y-4 mb-8"
               variants={staggerContainer}
               initial="hidden"
               whileInView="visible"
@@ -101,20 +144,23 @@ berkembang bersama sesama pengajar.
               href="/guru/komunitas"
               className="group inline-flex items-center gap-2 px-6 py-3 text-sm font-semibold text-white bg-primary hover:bg-primary-dark rounded-xl transition-all duration-200 shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30"
             >
-              Gabung Komunitas Sekarang
+              Bergabung dengan Komunitas
               <ArrowRight size={16} className="transition-transform group-hover:translate-x-0.5" />
             </Link>
           </motion.div>
 
-          {/* Right - MGMP Media Card */}
+          {/* Right — kolase foto kegiatan (atau kartu video/fallback) */}
           <motion.div
-            className="lg:col-span-2"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, ease: "easeOut", delay: 0.2 }}
           >
-            <KomunitasMgmpCard media={mgmpMedia} />
+            {showCollage ? (
+              <MgmpPhotoCollage photos={mgmpMedia.photos} />
+            ) : (
+              <KomunitasMgmpCard media={mgmpMedia} />
+            )}
           </motion.div>
         </div>
       </div>

@@ -7,10 +7,10 @@ import { usePathname } from "next/navigation";
 import { Menu, X, ShoppingCart, Package, User, LogOut } from "lucide-react";
 
 const navLinks = [
-  { href: "/fitur", label: "Fitur" },
-  { href: "/marketplace", label: "Toko Karya" },
-  { href: "/video-belajar", label: "Video" },
-  { href: "/artikel", label: "Artikel" },
+  { href: "/#untuk-murid", label: "Untuk Murid" },
+  { href: "/#untuk-guru", label: "Untuk Guru" },
+  { href: "/#ekosistem", label: "Ekosistem" },
+  { href: "/#bigt", label: "BIGT" },
   { href: "/tentang", label: "Tentang" },
   { href: "/faq", label: "FAQ" },
 ];
@@ -110,7 +110,7 @@ export default function PageNavbar() {
                 Bahasa<span className="text-primary">Cerdas</span>
               </span>
               <span className="text-[10px] lg:text-[11px] text-zinc-500 font-medium leading-tight -mt-0.5 hidden sm:block">
-                Platform edukasi Bahasa Indonesia
+                Ekosistem Belajar Bahasa Indonesia
               </span>
             </div>
           </Link>
@@ -179,7 +179,7 @@ export default function PageNavbar() {
                   href="/register"
                   className="relative px-6 py-2.5 text-sm font-semibold text-white bg-primary hover:bg-primary-dark rounded-xl transition-all duration-200 shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 hover:-translate-y-0.5 focus-ring"
                 >
-                  Daftar Gratis
+                  Mulai Gratis
                 </Link>
               </>
             )}
@@ -281,7 +281,7 @@ export default function PageNavbar() {
                     onClick={() => setMobileOpen(false)}
                     className="block w-full text-center px-4 py-3 text-sm font-semibold text-white bg-primary rounded-xl hover:bg-primary-dark transition-colors shadow-lg shadow-primary/25 focus-ring"
                   >
-                    Daftar Gratis
+                    Mulai Gratis
                   </Link>
                 </>
               )}

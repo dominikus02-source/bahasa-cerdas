@@ -66,7 +66,9 @@ function QuestionList({ questions, answers, setAnswers }: {
 }
 
 export default function KerjakanTugasPage() {
-  const { penugasanId } = useParams<{ penugasanId: string }>()
+  // Route segment is [assignId] (canonical in /arena/tugas); it carries the
+  // Penugasan id here — the kerjakan screen fetch /api/murid/penugasan/<id>.
+  const { assignId } = useParams<{ assignId: string }>()
   const [data, setData] = useState<Data | null>(null)
   const [loading, setLoading] = useState(true)
   const [phase, setPhase] = useState<Phase>("belajar")
@@ -79,7 +81,7 @@ export default function KerjakanTugasPage() {
   const fileRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
-    fetch(`/api/murid/penugasan/${penugasanId}`)
+    fetch(`/api/murid/penugasan/${assignId}`)
       .then(r => r.ok ? r.json() : Promise.reject())
       .then(d => {
         const dt: Data = d.data
@@ -89,7 +91,7 @@ export default function KerjakanTugasPage() {
       })
       .catch(() => setError("Gagal memuat tugas."))
       .finally(() => setLoading(false))
-  }, [penugasanId])
+  }, [assignId])
 
   const isKuis = data?.jenis === "KUIS"
   const hasLatihan = (data?.latihan?.length ?? 0) > 0
@@ -99,7 +101,7 @@ export default function KerjakanTugasPage() {
     if (submitting) return
     setSubmitting(true); setError("")
     try {
-      const res = await fetch(`/api/murid/penugasan/${penugasanId}/submit`, {
+      const res = await fetch(`/api/murid/penugasan/${assignId}/submit`, {
         method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ answers }),
       })
       if (!res.ok) throw new Error()
@@ -117,7 +119,7 @@ export default function KerjakanTugasPage() {
       const up = await fetch("/api/upload/file", { method: "POST", body: fd })
       const upd = await up.json()
       if (!up.ok || !upd.url) throw new Error(upd.error || "gagal")
-      const res = await fetch(`/api/murid/penugasan/${penugasanId}/praktik`, {
+      const res = await fetch(`/api/murid/penugasan/${assignId}/praktik`, {
         method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ url: upd.url }),
       })
       if (!res.ok) throw new Error()

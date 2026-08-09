@@ -5,7 +5,7 @@ export function organizationLd() {
     name: "BahasaCerdas",
     url: "https://www.bahasacerdas.com",
     description:
-      "Platform edukasi Bahasa Indonesia dengan AI generator Rencana Pembelajaran, bank soal HOTS, kuis multiplayer, toko karya, dan komunitas MGMP.",
+      "Ekosistem belajar Bahasa Indonesia untuk guru dan murid: belajar, berlatih, bermain, berkarya, dan bertumbuh dalam satu platform.",
     foundingDate: "2025",
     email: "halo@bahasacerdas.com",
     areaServed: { "@type": "Country", name: "ID" },
@@ -17,7 +17,7 @@ export function organizationLd() {
     brand: {
       "@type": "Brand",
       name: "BahasaCerdas",
-      description: "Platform edukasi Bahasa Indonesia untuk guru dan siswa.",
+      description: "Ekosistem Belajar Bahasa Indonesia.",
     },
   };
 }
@@ -77,7 +77,7 @@ export function webSiteLd() {
     name: "BahasaCerdas",
     url: "https://www.bahasacerdas.com",
     description:
-      "Platform edukasi Bahasa Indonesia dengan AI generator Rencana Pembelajaran, bank soal HOTS, kuis multiplayer, toko karya, dan komunitas MGMP.",
+      "Ekosistem belajar Bahasa Indonesia: belajar, berlatih, bermain, berkarya, dan bertumbuh dalam satu platform untuk guru dan murid.",
     potentialAction: {
       "@type": "SearchAction",
       target: {

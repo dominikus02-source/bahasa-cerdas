@@ -2,11 +2,11 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { ArrowRight, Sparkles, Shield, Clock } from "lucide-react";
+import { ArrowRight, Shield, Clock, Sparkles } from "lucide-react";
 
 export default function FinalCTA() {
   return (
-    <section className="relative py-20 lg:py-32 bg-zinc-900 overflow-hidden" aria-labelledby="cta-heading">
+    <section className="relative py-16 lg:py-24 bg-zinc-900 overflow-hidden" aria-labelledby="cta-heading">
       <div
         className="absolute inset-0 opacity-[0.03] pointer-events-none select-none"
         style={{
@@ -30,35 +30,38 @@ export default function FinalCTA() {
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 border border-white/10 mb-6">
             <Sparkles size={14} className="text-amber-400" aria-hidden="true" />
             <span className="text-xs font-semibold text-amber-400">
-              Gratis untuk Memulai — Tanpa Kartu Kredit
+              Gratis untuk Memulai
             </span>
           </div>
 
           <h2 id="cta-heading" className="heading-lg text-white mb-6">
-            Siap Membuat Mengajar{" "}
-            <span className="text-amber-400">Lebih Ringan</span>?
+            Bahasa Indonesia sedang bertumbuh.{" "}
+            <span className="text-amber-400">Mari tumbuh bersamanya.</span>
           </h2>
 
-          <p className="text-base lg:text-lg text-zinc-400 leading-relaxed mb-10 max-w-xl mx-auto">
-            Coba BahasaCerdas untuk persiapan mengajar yang lebih cepat dan
-            pembelajaran Bahasa Indonesia yang lebih interaktif.
+          <p className="text-base lg:text-lg text-zinc-400 leading-relaxed mb-10 max-w-2xl mx-auto">
+            Untuk guru yang ingin mengajar lebih mudah.
+            <br />
+            Untuk siswa yang ingin belajar lebih seru.
+            <br />
+            Untuk pembelajaran Indonesia yang terus berkembang.
           </p>
 
           <div className="flex flex-wrap justify-center gap-4 mb-10">
             <Link
               href="/register"
               className="group inline-flex items-center gap-2 px-8 py-3.5 text-base font-semibold text-zinc-900 bg-white hover:bg-zinc-100 rounded-xl transition-all duration-200 shadow-xl hover:shadow-2xl hover:-translate-y-0.5 focus-ring"
-              aria-label="Mulai gratis 30 hari, daftar sekarang"
+              aria-label="Mulai gratis, daftar sekarang"
             >
-              Mulai Gratis 30 Hari
+              Mulai Gratis
               <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" aria-hidden="true" />
             </Link>
             <Link
-              href="/login"
+              href="#ekosistem"
               className="group inline-flex items-center gap-2 px-8 py-3.5 text-base font-semibold text-white bg-white/10 hover:bg-white/20 border border-white/10 rounded-xl transition-all duration-200 focus-ring"
-              aria-label="Masuk ke akun BahasaCerdas"
+              aria-label="Jelajahi ekosistem BahasaCerdas"
             >
-              Masuk ke Akun Saya
+              Jelajahi BahasaCerdas
             </Link>
           </div>
 
@@ -69,11 +72,11 @@ export default function FinalCTA() {
             </div>
             <div className="flex items-center gap-1.5">
               <Clock size={14} className="text-emerald-400" aria-hidden="true" />
-              Batal Kapan Saja
+              Pembayaran Mudah & Aman
             </div>
             <div className="flex items-center gap-1.5">
               <Sparkles size={14} className="text-emerald-400" aria-hidden="true" />
-              Tanpa Kartu Kredit
+              AI Membantu, Guru Memutuskan
             </div>
           </div>
         </motion.div>
