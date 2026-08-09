@@ -27,7 +27,14 @@ import { Redis } from "@upstash/redis";
 // where the integration supplies the KV_ names — i.e. no backpressure at all.
 const url = process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL;
 const token = process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN;
-const redis = url && token ? new Redis({ url, token }) : null;
+
+// Defensif, sejalan dengan lib/redis.ts: URL placeholder lokal (mis. `[SENSITIVE]`)
+// tidak boleh diteruskan ke `new Redis` (Runtime UrlError saat evaluasi modul).
+// Konfigurasi tidak valid -> redis null -> acquire() fail-open (tidak memblokir AI).
+const isValidRedisUrl = (value: string | undefined): value is string =>
+  !!value && value.startsWith("https://");
+
+const redis = isValidRedisUrl(url) && token ? new Redis({ url, token }) : null;
 
 // Global cap on concurrent AI provider calls. Tune via env once you know the
 // providers' real rate limits; default is deliberately conservative.

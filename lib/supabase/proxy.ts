@@ -1,6 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import { checkRateLimit, getClientIdentity, rateLimitResponse, getForwardedIp, type RateLimitScope } from "@/lib/security";
+import { isValidSupabaseUrl } from "@/lib/supabase/url-guard";
 
 // Secret key untuk IP Address Forwarding (lihat lib/supabase/server.ts).
 const SUPABASE_SECRET_KEY =
@@ -104,6 +105,16 @@ export async function updateSession(request: NextRequest, nonce?: string) {
   }
 
   let supabaseResponse = nextWithNonce();
+
+  // Local dev runs with masked placeholder env (opencode secret masking writes
+  // literal `[SENSITIVE]` into .env.local). createServerClient throws
+  // synchronously on such values, which otherwise turns every non-public page
+  // into a 500. When the URL is unusable, skip the auth gate: no session can be
+  // verified, so pass the request through and let page-level guards redirect at
+  // the application layer instead.
+  if (!isValidSupabaseUrl(process.env.NEXT_PUBLIC_SUPABASE_URL)) {
+    return supabaseResponse;
+  }
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,

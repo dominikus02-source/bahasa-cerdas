@@ -114,9 +114,16 @@ export default async function RootLayout({
 }) {
   // CSP nonce (set by middleware) so our inline JSON-LD passes the strict policy.
   const nonce = (await headers()).get("x-nonce") ?? undefined;
-  const supabaseHost = process.env.NEXT_PUBLIC_SUPABASE_URL
-    ? new URL(process.env.NEXT_PUBLIC_SUPABASE_URL).hostname
-    : null;
+  // Defensif: placeholder lokal (mis. `[SENSITIVE]`) tidak boleh sampai ke
+  // `new URL()` — cukup lewati dns-prefetch/preconnect saja.
+  let supabaseHost: string | null = null;
+  try {
+    supabaseHost = process.env.NEXT_PUBLIC_SUPABASE_URL
+      ? new URL(process.env.NEXT_PUBLIC_SUPABASE_URL).hostname
+      : null;
+  } catch {
+    supabaseHost = null;
+  }
   return (
     <html lang="id">
       <head>

@@ -40,9 +40,24 @@ function buildConnectionUrl(baseUrl: string): string {
   return u.toString();
 }
 
+// Hanya terima URL PostgreSQL yang valid (protokol postgres/postgresql).
+// Konfigurasi lokal yang belum diisi (placeholder seperti `[SENSITIVE]`) tidak
+// boleh sampai ke `new URL()` di buildConnectionUrl — itu melempar di module
+// evaluation dan meruntuhkan halaman publik. Klien Prisma polos dipakai sebagai
+// fallback (perilaku sama seperti ketika DATABASE_URL tidak diset), dan koneksi
+// valid tetap lewat jalur tuned connection string.
+function isValidDatabaseUrl(value: string): boolean {
+  try {
+    const u = new URL(value);
+    return u.protocol === "postgres:" || u.protocol === "postgresql:";
+  } catch {
+    return false;
+  }
+}
+
 function createPrismaClient() {
   const baseUrl = process.env.DATABASE_URL_POOLED || process.env.DATABASE_URL;
-  if (!baseUrl) return new PrismaClient();
+  if (!baseUrl || !isValidDatabaseUrl(baseUrl)) return new PrismaClient();
 
   return new PrismaClient({
     datasources: { db: { url: buildConnectionUrl(baseUrl) } },

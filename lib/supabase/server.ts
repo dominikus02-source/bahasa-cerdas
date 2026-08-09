@@ -5,6 +5,7 @@ import { NextResponse } from "next/server";
 import { Role } from "@prisma/client";
 import { cache } from "react";
 import { getForwardedIp } from "@/lib/security";
+import { isValidSupabaseUrl } from "@/lib/supabase/url-guard";
 
 // IP Address Forwarding (Authentication → Rate Limits): biar rate limit
 // Supabase dihitung per IP murid, bukan per IP egress Vercel yang dibagi
@@ -25,11 +26,20 @@ async function buildAuthHeaders(): Promise<Record<string, string>> {
 }
 
 export async function createClient() {
+  // Same masking guard as lib/supabase/proxy.ts and lib/supabase/client.ts:
+  // with a literal `[SENSITIVE]` placeholder URL, createServerClient throws
+  // synchronously and every API route becomes a 500. Degrade to a local
+  // endpoint instead; auth calls then fail with a null session, which the
+  // existing anonymous paths already tolerate (getUser()/requireAuth()).
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const usable = isValidSupabaseUrl(url) ? url! : "http://localhost:3000";
+  const usableKey = SUPABASE_SECRET_KEY || "local-dev-anon-key";
+
   const cookieStore = await cookies();
 
   return createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    SUPABASE_SECRET_KEY,
+    usable,
+    usableKey,
     {
       global: { headers: await buildAuthHeaders() },
       cookies: {

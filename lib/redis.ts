@@ -5,7 +5,14 @@ import { Redis } from "@upstash/redis"
 const url = process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL
 const token = process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN
 
-const redis = url && token ? new Redis({ url, token }) : null
+// Defensif: Upstash REST hanya menerima URL https. Placeholder lokal seperti
+// `[SENSITIVE]` lolos cek `url && token` lalu melempar Runtime UrlError saat
+// modul di-evaluasi. Validasi ini membuat Redis null (no-cache fallback) saat
+// konfigurasi tidak valid, tanpa mengubah perilaku ketika URL/token valid.
+const isValidRedisUrl = (value: string | undefined): value is string =>
+  !!value && value.startsWith("https://")
+
+const redis = isValidRedisUrl(url) && token ? new Redis({ url, token }) : null
 
 const cache = {
   async get<T>(key: string): Promise<T | null> {
