@@ -1,7 +1,6 @@
 "use client";
 
 import { Fragment, useEffect, useState, type ReactNode } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import {
   BookOpen,
@@ -380,40 +379,6 @@ export default function GuruGameHubPage() {
       </div>
 
       <div className="max-w-6xl mx-auto px-4 py-6">
-        {/* ── BANNER ARENA (2 informasi bersebelahan) ───────── */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
-          <Link
-            href="/guru/game/lobby"
-            className="group relative block overflow-hidden rounded-2xl border border-slate-200 shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all dark:border-slate-700"
-          >
-            <div className="relative aspect-[3/2] w-full">
-              <Image
-                src="/Rank%20BC/banner%20arena%20gim.png"
-                alt="Banner Arena Gim"
-                fill
-                sizes="(min-width: 640px) 50vw, 100vw"
-                className="object-cover group-hover:scale-[1.02] transition-transform duration-300"
-                priority
-              />
-            </div>
-          </Link>
-          <Link
-            href="/guru/game/leaderboard"
-            className="group relative block overflow-hidden rounded-2xl border border-slate-200 shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all dark:border-slate-700"
-          >
-            <div className="relative aspect-[3/2] w-full">
-              <Image
-                src="/Rank%20BC/banner%20arena%20gim%201.png"
-                alt="Banner Arena Gim 1"
-                fill
-                sizes="(min-width: 640px) 50vw, 100vw"
-                className="object-cover group-hover:scale-[1.02] transition-transform duration-300"
-                priority
-              />
-            </div>
-          </Link>
-        </div>
-
         {/* ── QUICK ACTION ──────────────────────────────────── */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-8">
           <Link href={lastGame.href} className="group flex flex-col bg-white rounded-xl border border-slate-100 p-3.5 shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all dark:bg-slate-900 dark:border-slate-800">

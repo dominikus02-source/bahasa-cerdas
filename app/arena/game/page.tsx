@@ -147,18 +147,31 @@ export default async function ArenaGimPage() {
           <BattleCard onlineCount={onlineCount} recentBattles={recentBattles} recentPlayers={recentPlayers} />
         </div>
 
-        {/* Kuis Tempur — Announcement Banner */}
-        <Link
-          href="/arena/game/kuis-tempur"
-          className="block relative overflow-hidden rounded-[20px] mb-4 active:scale-[0.98] transition-transform group"
-          style={{ boxShadow: "0 8px 28px rgba(220,38,38,0.25)" }}
-        >
-          <img
-            src="/banners/rank-bc-banner.webp"
-            alt="Kuis Tempur — kini bisa main solo!"
-            className="block w-full h-auto"
-          />
-        </Link>
+        {/* Banner Arena — 2 informasi bersebelahan (kiri: Kuis Tempur, kanan: Arena Gim) */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+          <Link
+            href="/arena/game/kuis-tempur"
+            className="block relative overflow-hidden rounded-[20px] active:scale-[0.98] transition-transform group"
+            style={{ boxShadow: "0 8px 28px rgba(220,38,38,0.25)" }}
+          >
+            <img
+              src="/banners/rank-bc-banner.webp"
+              alt="Kuis Tempur — kini bisa main solo!"
+              className="block w-full h-auto"
+            />
+          </Link>
+          <Link
+            href="/arena/league"
+            className="block relative overflow-hidden rounded-[20px] active:scale-[0.98] transition-transform group"
+            style={{ boxShadow: "0 8px 28px rgba(43,75,255,0.25)" }}
+          >
+            <img
+              src="/Rank%20BC/banner%20arena%20gim.png"
+              alt="Kompetisi Arena Gim — naikkan peringkatmu!"
+              className="block w-full h-auto"
+            />
+          </Link>
+        </div>
 
         {/* Petualangan Kata — Announcement Banner */}
         <Link
