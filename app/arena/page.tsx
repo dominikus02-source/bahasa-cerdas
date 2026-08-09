@@ -16,9 +16,12 @@ import { jenjangMurid } from "@/lib/arena-junior/kurikulum"
 import { getQuestMeta, questProgressText } from "@/lib/quest-meta"
 import { getLevelProgress, levelFromXp } from "@/lib/gamification/levels"
 import { rankFromLevel } from "@/lib/gamification/ranks"
+import { weekKey } from "@/lib/gamification/season"
 import { RankChip } from "@/components/gamification/RankChip"
 import { SiaranBanner } from "@/components/arena/SiaranBanner"
 import { getDisplayName } from "@/lib/nickname"
+import { getWeeklyCompetition } from "@/lib/gamification/motivation"
+import WeeklyCountdown from "@/components/arena/player/WeeklyCountdown"
 import { PembelajaranCard } from "./pembelajaran-card"
 import BattleCard from "@/components/arena/BattleCard"
 import LeagueMini from "./league-mini"
@@ -142,13 +145,15 @@ export default async function BerandaPage() {
     })(),
   ])
 
-  const leagueRows = await cache.getOrSet("arena:league-mini:top5", async () =>
-    db.user.findMany({
-      where: { role: "MURID", xp: { gt: 0 } },
-      orderBy: { xp: "desc" },
+  const leagueRows = await cache.getOrSet(`arena:league-mini:weekly:${weekKey()}:v1`, async () =>
+    db.playerProfile.findMany({
+      where: { weeklyXP: { gt: 0 }, user: { role: "MURID" } },
+      orderBy: [{ weeklyXP: "desc" }, { totalXP: "desc" }],
       take: 5,
-      select: { id: true, fullName: true, nickname: true, xp: true },
-    }),
+      include: { user: { select: { id: true, fullName: true, nickname: true } } },
+    }).then(rows =>
+      rows.map(p => ({ id: p.userId, fullName: p.user.fullName, nickname: p.user.nickname, xp: p.weeklyXP })),
+    ),
     120
   )
 
@@ -170,6 +175,10 @@ export default async function BerandaPage() {
       return { id: e.userId, fullName: u?.fullName || "", nickname: u?.nickname, xp: (e._sum.amount || 0) }
     })
   }, 120)
+
+  const competition = await getWeeklyCompetition(user.id).catch(() => null)
+
+  const myWeeklyRank = competition?.my?.rank ?? null
 
 
   return (
@@ -298,6 +307,53 @@ export default async function BerandaPage() {
             </div>
           </Link>
 
+          {/* Kompetisi Minggu Ini */}
+          {competition && (
+            <Link href="/arena/league" className="block group">
+              <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-amber-500 via-orange-500 to-red-500 p-5 shadow-lg shadow-orange-500/25 hover:shadow-xl hover:shadow-orange-500/30 transition-all">
+                <div className="absolute -top-6 -right-6 w-28 h-28 rounded-full bg-white/5" />
+                <div className="relative z-10">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center backdrop-blur-sm">
+                      <Trophy className="w-6 h-6 text-white" />
+                    </div>
+                    <div className="flex-1">
+                      <h2 className="text-lg font-extrabold text-white">Kompetisi Minggu Ini</h2>
+                      <p className="text-xs text-amber-100">XP mingguanmu dihitung ulang setiap Senin</p>
+                    </div>
+                    <ChevronRight className="w-5 h-5 text-white/60 group-hover:text-white group-hover:translate-x-0.5 transition-all" />
+                  </div>
+                  <div className="grid grid-cols-3 gap-3 mt-4">
+                    <div className="bg-white/10 backdrop-blur rounded-xl p-3 text-center">
+                      <p className="text-lg font-extrabold text-white">{competition.my ? `#${competition.my.rank}` : "—"}</p>
+                      <p className="text-[10px] text-amber-100 mt-0.5">Peringkat</p>
+                    </div>
+                    <div className="bg-white/10 backdrop-blur rounded-xl p-3 text-center">
+                      <p className="text-lg font-extrabold text-white">{competition.my?.weeklyXp.toLocaleString() ?? 0}</p>
+                      <p className="text-[10px] text-amber-100 mt-0.5">XP Minggu Ini</p>
+                    </div>
+                    <div className="bg-white/10 backdrop-blur rounded-xl p-3 text-center">
+                      <p className="text-sm font-extrabold text-white">
+                        <WeeklyCountdown endsAt={competition.periodEndsAt} baseline={competition.now} />
+                      </p>
+                      <p className="text-[10px] text-amber-100 mt-0.5">Tersisa</p>
+                    </div>
+                  </div>
+                  {competition.above && competition.my && competition.my.rank > 1 && (
+                    <p className="mt-3 text-xs font-semibold text-amber-100 bg-white/10 rounded-lg px-3 py-2">
+                      Naik {competition.gapToNext.toLocaleString("id-ID")} XP untuk #{(competition.above.rank)}! 🚀
+                    </p>
+                  )}
+                  {competition.totalParticipants > 0 && (
+                    <p className="mt-2 text-[11px] text-amber-100/80">
+                      Bersaing dengan {competition.totalParticipants.toLocaleString("id-ID")} murid lainnya
+                    </p>
+                  )}
+                </div>
+              </div>
+            </Link>
+          )}
+
           {/* Simulasi dan Ujian — UKBI / TKA / BIGT / Hasil */}
           <div>
             <h3 className="text-base font-bold text-gray-900 mb-3 flex items-center gap-2">
@@ -377,6 +433,8 @@ export default async function BerandaPage() {
             userId={user.id}
             harian={dailyCoinRows.map(u => ({ id: u.id, fullName: u.fullName, displayName: u.nickname || undefined, xp: u.xp }))}
             mingguan={leagueRows.map(u => ({ id: u.id, fullName: u.fullName, displayName: u.nickname || undefined, xp: u.xp }))}
+            myWeeklyRank={myWeeklyRank}
+            countdown={competition ? { endsAt: competition.periodEndsAt, baseline: competition.now } : null}
           />
 
           {/* Stats */}

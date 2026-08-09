@@ -7,6 +7,7 @@ import { Zap, Swords, Puzzle, Type, Flame, BookOpen, Users, Clock, Crown, Mounta
 import BattleCard from "@/components/arena/BattleCard"
 import GameHubLeagueTabs from "./league-tabs"
 import { MULTIPLAYER_ENABLED } from "@/lib/features"
+import { weekKey } from "@/lib/gamification/season"
 
 interface Game {
   title: string; desc: string; icon: any; href: string
@@ -64,13 +65,16 @@ export default async function ArenaGimPage() {
       include: { room: { select: { code: true } } },
     }),
     // Same cache key as the Arena beranda's LeagueMini — shares the hit, one query for both pages.
-    cache.getOrSet("arena:league-mini:top5", async () =>
-      db.user.findMany({
-        where: { role: "MURID", xp: { gt: 0 } },
-        orderBy: { xp: "desc" },
+    // Weekly (reset tiap Senin 00:00 WIB): baca PlayerProfile.weeklyXP, bukan XP seumur hidup.
+    cache.getOrSet(`arena:league-mini:weekly:${weekKey()}:v1`, async () =>
+      db.playerProfile.findMany({
+        where: { weeklyXP: { gt: 0 }, user: { role: "MURID" } },
+        orderBy: [{ weeklyXP: "desc" }, { totalXP: "desc" }],
         take: 5,
-        select: { id: true, fullName: true, nickname: true, xp: true },
-      }),
+        include: { user: { select: { id: true, fullName: true, nickname: true } } },
+      }).then(rows =>
+        rows.map(p => ({ id: p.userId, fullName: p.user.fullName, nickname: p.user.nickname, xp: p.weeklyXP })),
+      ),
       120
     ),
     cache.getOrSet("arena:league-mini:daily:v2", async () => {

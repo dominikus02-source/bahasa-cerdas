@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getUser } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
+import { isTeacherOrStudent } from "@/lib/teacher/students";
 
 export async function GET(req: NextRequest) {
   try {
     const user = await getUser();
-    if (!user || user.role !== "GURU") return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    if (!user || !isTeacherOrStudent(user)) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
     const { searchParams } = new URL(req.url);
     const paketId = searchParams.get("paketId");

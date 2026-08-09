@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getUser } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
+import { isTeacherOrStudent } from "@/lib/teacher/students";
 
 export async function POST(req: NextRequest) {
   try {
     const user = await getUser();
-    if (!user || (user.role !== "GURU" && !user.isFounder && user.role !== "ADMIN")) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    if (!user || !isTeacherOrStudent(user)) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
     const { title, soalIds, duration, passingScore } = await req.json();
     if (!title || !soalIds?.length) return NextResponse.json({ error: "Judul dan soal diperlukan" }, { status: 400 });

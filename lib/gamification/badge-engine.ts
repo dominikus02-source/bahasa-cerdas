@@ -32,7 +32,11 @@ export type BadgeConditionType =
   | "MURID_LIKE"
   | "MURID_FEATURED"
   | "TUGAS_DIKIRIM"
-  | "PENGUMUMAN_DIBUAT";
+  | "PENGUMUMAN_DIBUAT"
+  // Badge Podium (weekly/season champion, runner-up, third). Sengaja TIDAK
+  // pernah auto-met di sini (progress selalu 0) — kepemilikan hanya diberikan
+  // langsung oleh settlement podium (lib/gamification/podium-rewards.ts).
+  | "PODIUM";
 
 export interface BadgeCondition {
   type: BadgeConditionType;
@@ -212,6 +216,11 @@ export function checkCondition(condition: BadgeCondition, stats: BadgeStats): { 
     case "PENGUMUMAN_DIBUAT":
       progress = stats.guru?.totalPengumuman ?? 0;
       break;
+    case "PODIUM":
+      // Badge podium tidak pernah terbuka lewat kondisi — hanya lewat
+      // settlement (grantBadgeByCode). Progress sengaja 0.
+      progress = 0;
+      break;
     default:
       break;
   }
@@ -268,4 +277,25 @@ export async function evaluateBadges(userId: string): Promise<BadgeView[]> {
 /** Ambil daftar badge user (evaluasi ulang — selalu konsisten dengan kondisi). */
 export async function listUserBadges(userId: string): Promise<BadgeView[]> {
   return evaluateBadges(userId);
+}
+
+/**
+ * Berikan badge tertentu langsung (khusus event/podium, bukan kondisi).
+ *
+ * Idempotent: kombinasi (userId, badgeId) unik di UserBadge — settlement yang
+ * dijalankan ulang tidak akan menggandakan kepemilikan. Mengembalikan `false`
+ * bila badge tidak ditemukan atau sudah dimiliki.
+ */
+export async function grantBadgeByCode(userId: string, code: string): Promise<boolean> {
+  const badge = await db.badge.findUnique({ where: { code } });
+  if (!badge || !badge.isActive) return false;
+
+  const existing = await db.userBadge.findUnique({
+    where: { userId_badgeId: { userId, badgeId: badge.id } },
+    select: { id: true },
+  });
+  if (existing) return false;
+
+  await db.userBadge.create({ data: { userId, badgeId: badge.id } });
+  return true;
 }

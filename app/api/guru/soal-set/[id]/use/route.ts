@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getUser } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
+import { isTeacherOrStudent } from "@/lib/teacher/students";
 
 export async function POST(
   req: NextRequest,
@@ -13,6 +14,11 @@ export async function POST(
 
     const dbUser = await db.user.findUnique({ where: { supabaseId: user.id } });
     if (!dbUser) return NextResponse.json({ error: "User not found" }, { status: 404 });
+
+    // P1-B: hanya GURU/ADMIN/founder yang boleh memakai set soal.
+    if (!isTeacherOrStudent(dbUser)) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
     const body = await req.json();
     const { useType } = body;
@@ -27,6 +33,11 @@ export async function POST(
     });
 
     if (!set) {
+      return NextResponse.json({ error: "Set not found" }, { status: 404 });
+    }
+
+    // P1-B: ownership — hanya pemilik set yang boleh memakai set ini.
+    if (set.creatorId !== dbUser.id) {
       return NextResponse.json({ error: "Set not found" }, { status: 404 });
     }
 

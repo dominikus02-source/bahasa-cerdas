@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { getUser } from "@/lib/supabase/server";
+import { isTeacherOrStudent, getTeacherGroups } from "@/lib/teacher/students";
 import { RANK_META } from "@/lib/gamification/ranks";
 
 // ════════════════════════════════════════════════════════════════════
@@ -38,13 +39,10 @@ interface CreatorRow {
   comments: number;
 }
 
-const isTeacher = (user: { role: string; isFounder?: boolean }) =>
-  user.role === "GURU" || user.role === "ADMIN" || !!user.isFounder;
-
 export async function GET(req: NextRequest) {
   try {
     const user = await getUser();
-    if (!user || !isTeacher(user)) {
+    if (!user || !isTeacherOrStudent(user)) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -166,15 +164,10 @@ export async function GET(req: NextRequest) {
       }));
 
     // 5) Top 10 Guru Penggerak Literasi (murid upload + like + komentar minggu ini)
-    const guruGroups = await db.group.findMany({
-      where: { teacherId: user.id },
-      select: {
-        id: true,
-        name: true,
-        members: { select: { userId: true }, where: { role: "member" } },
-      },
-    });
-    const memberSet = new Set(guruGroups.flatMap((g) => g.members.map((m) => m.userId)));
+    const guruGroups = await getTeacherGroups(user.id, null);
+    // Pertahankan semantik role:"member" (SPECIAL CASE, audit Phase 7) —
+    // SSOT menyediakan semua anggota; filter ketua/role lain tetap eksplisit.
+    const memberSet = new Set(guruGroups.flatMap((g) => g.members.filter((m) => m.role === "member").map((m) => m.userId)));
     const teacherStatMap = new Map<string, { muridKarya: number; likeCount: number; commentCount: number; school: string | null }>();
     for (const r of rows) {
       if (!memberSet.has(r.user.id)) continue;

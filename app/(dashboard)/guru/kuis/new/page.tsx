@@ -48,6 +48,7 @@ export default function QuizBuilderPage() {
   });
 
   const [selectedSoalIds, setSelectedSoalIds] = useState<string[]>([]);
+  const [existingSourceIds, setExistingSourceIds] = useState<string[]>([]);
   const [bankSoal, setBankSoal] = useState<Soal[]>([]);
   const [soalLoading, setSoalLoading] = useState(false);
   const [soalFilter, setSoalFilter] = useState({ kelas: "", topik: "" });
@@ -95,6 +96,7 @@ export default function QuizBuilderPage() {
         });
         const soalIds = q.questions?.filter((qq: any) => qq.sourceType === "SOAL").map((qq: any) => qq.sourceId) || [];
         setSelectedSoalIds(soalIds);
+        setExistingSourceIds(soalIds);
       }
     } catch (e) {
       console.error(e);
@@ -180,11 +182,17 @@ export default function QuizBuilderPage() {
       }
 
       if (quizId) {
-        await fetch(`/api/guru/quiz/${quizId}/questions/bulk`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ soalIds: selectedSoalIds }),
-        });
+        const soalIdsToAdd = editId
+          ? selectedSoalIds.filter(id => !existingSourceIds.includes(id))
+          : selectedSoalIds;
+
+        if (soalIdsToAdd.length > 0) {
+          await fetch(`/api/guru/quiz/${quizId}/questions/bulk`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ soalIds: soalIdsToAdd }),
+          });
+        }
 
         if (publish) {
           await fetch(`/api/guru/quiz/${quizId}/publish`, { method: "POST" });

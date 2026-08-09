@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
 import { getUser } from "@/lib/supabase/server"
-import { isTeacherOrStudent } from "@/lib/teacher/students"
+import { isTeacherOrStudent, getTeacherGroups } from "@/lib/teacher/students"
 
 export async function GET(req: Request) {
   try {
@@ -13,32 +13,20 @@ export async function GET(req: Request) {
   const { searchParams } = new URL(req.url)
   const groupId = searchParams.get("groupId")
 
-  const groups = await db.group.findMany({
-    where: { teacherId: user.id, isActive: true },
-    select: { id: true, name: true, grade: true },
-    orderBy: { createdAt: "desc" },
-  })
+  const allGroups = await getTeacherGroups(user.id, null)
+  const groups = allGroups.map(g => ({ id: g.id, name: g.name, grade: g.grade }))
 
   if (!groupId) {
     return NextResponse.json({ data: groups })
   }
 
-  // Verify teacher owns this group
-  const group = await db.group.findFirst({
-    where: { id: groupId, teacherId: user.id },
-  })
+  // Verify teacher owns this group (SSOT-scoped, isActive: true)
+  const group = allGroups.find(g => g.id === groupId)
   if (!group) {
     return NextResponse.json({ error: "Group not found" }, { status: 404 })
   }
 
-  const members = await db.groupMember.findMany({
-    where: { groupId },
-    include: {
-      user: {
-        select: { id: true, fullName: true, avatar: true, xp: true, level: true },
-      },
-    },
-  })
+  const members = group.members
 
   // Get categories for this group
   const kategoris = await db.nilaiKategori.findMany({

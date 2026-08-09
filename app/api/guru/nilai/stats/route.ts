@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
+import { isTeacherOrStudent, getTeacherGroups } from "@/lib/teacher/students";
 
 export async function GET(req: NextRequest) {
   try {
@@ -14,15 +15,15 @@ export async function GET(req: NextRequest) {
     // groups the caller actually teaches, so this widens who may ask, not what
     // they can see.
     const dbUser = await db.user.findUnique({ where: { supabaseId: user.id } });
-    if (!dbUser || (dbUser.role !== "GURU" && !dbUser.isFounder)) {
+    if (!dbUser || !isTeacherOrStudent(dbUser)) {
       return NextResponse.json({ error: "Hanya guru" }, { status: 403 });
     }
 
-    const groups = await db.group.findMany({
-      where: { teacherId: dbUser.id, isActive: true },
-      select: { id: true, name: true, grade: true },
-      take: 50,
-    });
+    const groups = (await getTeacherGroups(dbUser.id, null)).map((g) => ({
+      id: g.id,
+      name: g.name,
+      grade: g.grade,
+    }));
 
     const stats: any[] = [];
 

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getUser } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
+import { getTeacherStudentIds } from "@/lib/teacher/students";
 import {
   isTeacherOrStudent,
   getReviewQueue,
@@ -16,11 +17,7 @@ export const dynamic = "force-dynamic";
 
 // Guru meninjau & menilai jawaban konstruktif (Menulis/Berbicara) murid di kelasnya.
 async function guruStudentIds(teacherId: string): Promise<string[]> {
-  const members = await db.groupMember.findMany({
-    where: { group: { teacherId } },
-    select: { userId: true },
-  });
-  return Array.from(new Set(members.map((m) => m.userId)));
+  return getTeacherStudentIds(teacherId);
 }
 
 function parseStatus(raw: string | null): SimStatus | undefined {

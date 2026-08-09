@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getUser } from "@/lib/supabase/server";
 import { getLeaderboard, type LeaderboardPeriod, type LeaderboardScope } from "@/lib/gamification/leaderboard";
+import { weekKey, seasonPeriodKey, weekRange, seasonRange, weekLabel, seasonLabel } from "@/lib/gamification/season";
 
 const VALID_SCOPES = ["GLOBAL", "SCHOOL", "CLASS", "FRIENDS", "PROVINCE"] as const;
 const VALID_PERIODS = ["ALL_TIME", "WEEKLY", "SEASON"] as const;
@@ -22,5 +23,15 @@ export async function GET(req: NextRequest) {
 
   const entries = await getLeaderboard({ scope, period, userId: user.id, groupId, province, limit });
 
-  return NextResponse.json({ scope, period, entries, total: entries.length });
+  // Metadata periode (WIB) untuk countdown "Berakhir dalam ..." di UI.
+  const now = new Date();
+  const week = weekKey(now);
+  const season = seasonPeriodKey(now);
+  const periodMeta = {
+    now: now.toISOString(),
+    week: { key: week, label: weekLabel(week), startsAt: weekRange(week).startsAt.toISOString(), endsAt: weekRange(week).endsAt.toISOString() },
+    season: { key: season, label: seasonLabel(season), startsAt: seasonRange(season).startsAt.toISOString(), endsAt: seasonRange(season).endsAt.toISOString() },
+  };
+
+  return NextResponse.json({ scope, period, entries, total: entries.length, periodMeta });
 }

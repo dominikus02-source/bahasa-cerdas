@@ -25,6 +25,7 @@ const MINIMAL_PENARIKAN = 50_000;
 export async function POST(req: NextRequest) {
   try {
     const user = await getUser();
+    // P1-B SPECIAL CASE: Withdraw remains GURU/founder-only by financial policy. ADMIN is intentionally denied. Do not replace this guard with isTeacherOrStudent().
     if (!user || (user.role !== "GURU" && !user.isFounder)) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }

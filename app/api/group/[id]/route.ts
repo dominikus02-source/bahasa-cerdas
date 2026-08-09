@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
+import { isTeacherOrStudent } from "@/lib/teacher/students";
 
 export async function GET(
   req: NextRequest,
@@ -14,6 +15,7 @@ export async function GET(
 
     const dbUser = await db.user.findUnique({ where: { supabaseId: user.id } });
     if (!dbUser) return NextResponse.json({ error: "User not found" }, { status: 404 });
+    if (!isTeacherOrStudent(dbUser)) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
     const group = await db.group.findUnique({
       where: { id },
@@ -112,7 +114,7 @@ export async function PATCH(
 
     const dbUser = await db.user.findUnique({ where: { supabaseId: user.id } });
     const isPrivileged = dbUser?.role === "ADMIN" || dbUser?.isFounder;
-    if (!dbUser || (dbUser.role !== "GURU" && !isPrivileged)) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    if (!dbUser || !isTeacherOrStudent(dbUser)) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
     const group = await db.group.findUnique({ where: { id } });
     if (!group || (group.teacherId !== dbUser.id && !isPrivileged)) return NextResponse.json({ error: "Not found" }, { status: 404 });
@@ -150,7 +152,7 @@ export async function DELETE(
 
     const dbUser = await db.user.findUnique({ where: { supabaseId: user.id } });
     const isPrivileged = dbUser?.role === "ADMIN" || dbUser?.isFounder;
-    if (!dbUser || (dbUser.role !== "GURU" && !isPrivileged)) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    if (!dbUser || !isTeacherOrStudent(dbUser)) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
     const group = await db.group.findUnique({ where: { id } });
     if (!group || (group.teacherId !== dbUser.id && !isPrivileged)) {

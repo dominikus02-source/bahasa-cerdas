@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
-import { isTeacherOrStudent } from "@/lib/teacher/students";
+import { isTeacherOrStudent, getTeacherGroups } from "@/lib/teacher/students";
 
 // Guru memperbarui data siswa (no. absensi / NISN) — hanya untuk siswa yang
 // terdaftar di kelas milik guru tersebut.
@@ -28,10 +28,7 @@ export async function PATCH(
       return NextResponse.json({ error: "Siswa tidak ditemukan" }, { status: 404 });
     }
 
-    const ownedGroups = await db.group.findMany({
-      where: { teacherId: dbUser.id },
-      select: { id: true },
-    });
+    const ownedGroups = await getTeacherGroups(dbUser.id, null);
     const ownedIds = new Set(ownedGroups.map(g => g.id));
     const inOwnClass = target.groupMemberships.some(m => ownedIds.has(m.groupId));
     if (!inOwnClass) {

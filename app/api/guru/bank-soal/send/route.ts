@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 import { rateLimitRoute } from "@/lib/rate-limit";
 import { awardGuruXp } from "@/lib/gamification/teacher-xp";
+import { isTeacherOrStudent } from "@/lib/teacher/students";
 
 const DIFFICULTY_MAP: Record<string, string> = {
   MUDAH: "EASY",
@@ -20,7 +21,7 @@ export async function POST(req: NextRequest) {
     if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const dbUser = await db.user.findUnique({ where: { supabaseId: user.id } });
-    if (!dbUser || (dbUser.role?.toUpperCase() !== "GURU" && dbUser.role?.toUpperCase() !== "ADMIN" && !dbUser.isFounder)) return NextResponse.json({ error: "Guru only" }, { status: 403 });
+    if (!dbUser || !isTeacherOrStudent(dbUser)) return NextResponse.json({ error: "Guru only" }, { status: 403 });
 
     const { tema, kelas, groupIds, jumlah = 10, difficulty, dueDate } = await req.json();
 

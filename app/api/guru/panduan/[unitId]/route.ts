@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
 import { getUser } from "@/lib/supabase/server"
 import { getChapterById, allGrades } from "@/data/buku-panduan"
+import { isTeacherOrStudent } from "@/lib/teacher/students"
 
 function buildKontenFromGuide(chapter: NonNullable<ReturnType<typeof getChapterById>>, grade: string): string {
   const content = {
@@ -92,7 +93,7 @@ function buildKontenFromGuide(chapter: NonNullable<ReturnType<typeof getChapterB
 export async function GET(req: Request, { params }: { params: Promise<{ unitId: string }> }) {
   try {
     const user = await getUser()
-    if (!user || (user.role !== "GURU" && !user.isFounder)) {
+    if (!user || !isTeacherOrStudent(user)) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 

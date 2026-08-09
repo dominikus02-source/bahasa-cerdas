@@ -43,7 +43,18 @@ const CACHE_TTL = 60; // detik
 // Dinaikkan setiap kali bentuk LeaderboardEntry berubah. Tanpa ini, entri lama
 // di Redis (tanpa field baru) masih disajikan sampai TTL habis — mis. RankIcon
 // jatuh ke fallback BRONZE untuk semua orang selama semenit setelah deploy.
-const CACHE_VERSION = "v2";
+const CACHE_VERSION = "v3";
+
+// Kunci periode berjalan: kunci cache leaderboard WAJIB mengandung period key
+// (leaderboard:weekly:{weekKey}, leaderboard:season:{seasonKey}) supaya cache
+// minggu lama tidak bocor ke minggu baru meski TTL 60 detik masih aktif saat
+// reset Senin 00:00 WIB. Menambahkan key di sini mengubah seluruh kunci —
+// makanya CACHE_VERSION ikut dinaikkan.
+function periodKeyFor(period: LeaderboardPeriod): string {
+  if (period === "WEEKLY") return `weekly:${weekKey()}`;
+  if (period === "SEASON") return `season:${seasonPeriodKey()}`;
+  return "alltime";
+}
 
 function scoreField(period: LeaderboardPeriod): "totalXP" | "weeklyXP" | "seasonXP" {
   if (period === "WEEKLY") return "weeklyXP";
@@ -117,14 +128,19 @@ async function resolveScopeUserIds(params: LeaderboardParams): Promise<string[] 
 export async function getLeaderboard(params: LeaderboardParams): Promise<LeaderboardEntry[]> {
   const limit = Math.min(100, Math.max(1, params.limit ?? 20));
   const field = scoreField(params.period);
-  const cacheKey = `bca:lb:${CACHE_VERSION}:${params.scope}:${params.period}:${params.userId ?? "x"}:${params.groupId ?? "x"}:${params.province ?? "x"}`;
+  const cacheKey = `bca:lb:${CACHE_VERSION}:${params.scope}:${periodKeyFor(params.period)}:${params.userId ?? "x"}:${params.groupId ?? "x"}:${params.province ?? "x"}`;
 
   const cached = await cache.get<LeaderboardEntry[]>(cacheKey);
   if (cached) return cached;
 
   const scopeIds = await resolveScopeUserIds(params);
 
-  const where = scopeIds ? { userId: { in: scopeIds } } : {};
+  // Papan arena KHUSUS murid: guru punya jalur XP terpisah (lib/gamification/teacher-xp.ts)
+  // dan tidak boleh tampil di peringkat murid.
+  const where = {
+    user: { role: "MURID" as const },
+    ...(scopeIds ? { userId: { in: scopeIds } } : {}),
+  };
   const profiles = await db.playerProfile.findMany({
     where,
     orderBy: [{ [field]: "desc" }, { totalXP: "desc" }],
@@ -132,8 +148,19 @@ export async function getLeaderboard(params: LeaderboardParams): Promise<Leaderb
     include: { user: { select: { id: true, fullName: true, nickname: true, avatar: true } } },
   });
 
+  // Lazy reset: weeklyXP/seasonXP baru valid selama kunci periodenya masih
+  // berjalan (awardXp mereset saat menulis). Murid yang belum mengumpulkan XP
+  // minggu/season ini menyimpan nilai periode lalu — jangan dihitung.
+  const wk = weekKey();
+  const sk = seasonPeriodKey();
+  const inCurrentPeriod = (p: (typeof profiles)[number]) => {
+    if (field === "weeklyXP") return p.weeklyXPWeekKey === wk;
+    if (field === "seasonXP") return p.seasonPeriodKey === sk;
+    return true;
+  };
+
   const entries: LeaderboardEntry[] = profiles
-    .filter((p) => p[field] > 0 || field === "totalXP")
+    .filter((p) => inCurrentPeriod(p) && (p[field] > 0 || field === "totalXP"))
     .slice(0, limit)
     .map((p, i) => {
       const meta = RANK_META[p.currentRank];
@@ -155,13 +182,13 @@ export async function getLeaderboard(params: LeaderboardParams): Promise<Leaderb
       };
     });
 
-  // Pastikan user sendiri ikut muncul (kalau dalam scope & ada skor).
+  // Pastikan user sendiri ikut muncul (kalau murid, dalam scope & ada skor).
   if (params.userId && !entries.some((e) => e.isMe) && (!scopeIds || scopeIds.includes(params.userId))) {
     const me = await db.playerProfile.findUnique({
       where: { userId: params.userId },
-      include: { user: { select: { id: true, fullName: true, nickname: true, avatar: true } } },
+      include: { user: { select: { id: true, fullName: true, nickname: true, avatar: true, role: true } } },
     });
-    if (me && me[field] > 0) {
+    if (me && me.user.role === "MURID" && inCurrentPeriod(me) && me[field] > 0) {
       const above = entries.filter((e) => e.score > me[field]).length;
       const meta = RANK_META[me.currentRank];
       entries.push({

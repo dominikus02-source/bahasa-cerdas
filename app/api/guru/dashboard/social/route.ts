@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { getUser } from "@/lib/supabase/server";
+import { isTeacherOrStudent, getTeacherGroups } from "@/lib/teacher/students";
 
 // ════════════════════════════════════════════════════════════════════
 // GET /api/guru/dashboard/social — Motivasi Guru (Aktivitas Hari Ini)
@@ -28,25 +29,21 @@ function weekStartWIB(): Date {
   return new Date(monday.getTime() - WIB_MS);
 }
 
-const isTeacher = (user: { role: string; isFounder?: boolean }) =>
-  user.role === "GURU" || user.role === "ADMIN" || !!user.isFounder;
-
 export async function GET() {
   try {
     const user = await getUser();
-    if (!user || !isTeacher(user)) {
+    if (!user || !isTeacherOrStudent(user)) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const today = startOfTodayWIB();
     const week = weekStartWIB();
 
-    const groups = await db.group.findMany({
-      where: { teacherId: user.id },
-      select: { id: true, members: { select: { userId: true }, where: { role: "member" } } },
-    });
+    const groups = await getTeacherGroups(user.id, null);
     const groupIds = groups.map((g) => g.id);
-    const memberIds = [...new Set(groups.flatMap((g) => g.members.map((m) => m.userId)))];
+    // Pertahankan semantik role:"member" (SPECIAL CASE, audit Phase 7) —
+    // SSOT menyediakan semua anggota; filter ketua/role lain tetap eksplisit.
+    const memberIds = [...new Set(groups.flatMap((g) => g.members.filter((m) => m.role === "member").map((m) => m.userId)))];
 
     if (memberIds.length === 0) {
       return NextResponse.json({

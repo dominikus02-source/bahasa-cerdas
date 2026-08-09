@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
+import { isTeacherOrStudent } from "@/lib/teacher/students";
 
 export async function GET(req: NextRequest) {
   try {
@@ -16,7 +17,7 @@ export async function GET(req: NextRequest) {
       const sid = searchParams.get("supabaseId")
       if (sid) dbUser = await db.user.findUnique({ where: { supabaseId: sid } })
     }
-    if (!dbUser || dbUser.role !== "GURU") return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    if (!dbUser || !isTeacherOrStudent(dbUser)) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const kelas = searchParams.get("kelas");
     const topik = searchParams.get("topik");
@@ -69,7 +70,7 @@ export async function POST(req: NextRequest) {
       const sid = body.supabaseId as string | undefined
       if (sid) dbUser = await db.user.findUnique({ where: { supabaseId: sid } })
     }
-    if (!dbUser || dbUser.role !== "GURU") return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    if (!dbUser || !isTeacherOrStudent(dbUser)) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     const { text, type, difficulty, options, correctAnswer, explanation, isHOTS, kelas, topik, kd, subject, source } = body;
 
     if (!text || !kelas) {
@@ -115,7 +116,7 @@ export async function PUT(req: NextRequest) {
       const sid = body.supabaseId as string | undefined
       if (sid) dbUser = await db.user.findUnique({ where: { supabaseId: sid } })
     }
-    if (!dbUser || dbUser.role !== "GURU") return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    if (!dbUser || !isTeacherOrStudent(dbUser)) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const { id, ...data } = body;
     if (!id) return NextResponse.json({ error: "ID required" }, { status: 400 });
@@ -147,7 +148,7 @@ export async function DELETE(req: NextRequest) {
       const sid = searchParams.get("supabaseId")
       if (sid) dbUser = await db.user.findUnique({ where: { supabaseId: sid } })
     }
-    if (!dbUser || dbUser.role !== "GURU") return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    if (!dbUser || !isTeacherOrStudent(dbUser)) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const id = searchParams.get("id");
     if (!id) return NextResponse.json({ error: "ID required" }, { status: 400 });

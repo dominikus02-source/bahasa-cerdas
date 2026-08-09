@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getUser } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
+import { getTeacherStudentIds } from "@/lib/teacher/students";
 import {
   isTeacherOrStudent,
   getRepositoryDocs,
@@ -96,11 +97,7 @@ export async function GET(req: NextRequest) {
 }
 
 async function getLegacyDocs(teacherId: string) {
-  const groupMemberIds = await db.groupMember.findMany({
-    where: { group: { teacherId, isActive: true } },
-    select: { userId: true },
-  });
-  const studentIds = [...new Set(groupMemberIds.map((m) => m.userId))];
+  const studentIds = await getTeacherStudentIds(teacherId);
   if (studentIds.length === 0) return [];
 
   const [certs, progres] = await Promise.all([

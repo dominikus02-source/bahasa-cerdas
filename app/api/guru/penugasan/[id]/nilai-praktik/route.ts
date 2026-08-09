@@ -2,12 +2,13 @@ import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { getUser } from "@/lib/supabase/server";
 import { upsertNilaiOtomatis } from "@/lib/penilaian/upsert-nilai";
+import { isTeacherOrStudent } from "@/lib/teacher/students";
 
 // Teacher grades a student's Praktik submission manually, then it enters the rekap.
 export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const user = await getUser();
-    if (!user || (user.role !== "GURU" && !user.isFounder)) {
+    if (!user || !isTeacherOrStudent(user)) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
     const { id } = await params;

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
+import { isTeacherOrStudent, getTeacherGroups } from "@/lib/teacher/students";
 
 export async function GET(req: NextRequest) {
   try {
@@ -9,20 +10,15 @@ export async function GET(req: NextRequest) {
     if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const dbUser = await db.user.findUnique({ where: { supabaseId: user.id } });
-    if (!dbUser || dbUser.role !== "GURU") return NextResponse.json({ error: "Guru only" }, { status: 403 });
+    if (!dbUser || !isTeacherOrStudent(dbUser)) return NextResponse.json({ error: "Guru only" }, { status: 403 });
 
-    const groups = await db.group.findMany({
-      where: { teacherId: dbUser.id, isActive: true },
-      select: {
-        id: true,
-        name: true,
-        grade: true,
-        description: true,
-        _count: { select: { members: true } },
-      },
-      orderBy: { createdAt: "desc" },
-      take: 50,
-    });
+    const groups = (await getTeacherGroups(dbUser.id, null)).map((g) => ({
+      id: g.id,
+      name: g.name,
+      grade: g.grade,
+      description: g.description,
+      memberCount: g.memberCount,
+    }));
 
     return NextResponse.json({ groups });
   } catch (error) {
@@ -38,7 +34,7 @@ export async function POST(req: NextRequest) {
     if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const dbUser = await db.user.findUnique({ where: { supabaseId: user.id } });
-    if (!dbUser || dbUser.role !== "GURU") return NextResponse.json({ error: "Guru only" }, { status: 403 });
+    if (!dbUser || !isTeacherOrStudent(dbUser)) return NextResponse.json({ error: "Guru only" }, { status: 403 });
 
     const { paketId, groupId, dueDate, title } = await req.json();
     if (!paketId || !groupId) {

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
+import { isTeacherOrStudent } from "@/lib/teacher/students";
 import { after } from "next/server";
 import { kirimKeBanyakUser } from "@/lib/push";
 
@@ -15,7 +16,7 @@ export async function POST(
     if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const dbUser = await db.user.findUnique({ where: { supabaseId: user.id } });
-    if (!dbUser || dbUser.role?.toUpperCase() !== "GURU") return NextResponse.json({ error: "Guru only" }, { status: 403 });
+    if (!dbUser || !isTeacherOrStudent(dbUser)) return NextResponse.json({ error: "Guru only" }, { status: 403 });
 
     const quiz = await db.quiz.findUnique({ where: { id } });
     if (!quiz || quiz.creatorId !== dbUser.id) {

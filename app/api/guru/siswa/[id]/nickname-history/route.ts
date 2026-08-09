@@ -1,11 +1,12 @@
 import { NextResponse } from "next/server";
 import { getUser } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
+import { isTeacherOrStudent } from "@/lib/teacher/students";
 
 export async function GET(_req: Request, { params }: { params: Promise<{ id: string }> }) {
   const teacher = await getUser();
   if (!teacher) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  if (teacher.role !== "GURU" && !teacher.isFounder) {
+  if (!isTeacherOrStudent(teacher)) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 

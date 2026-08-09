@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { getUser } from "@/lib/supabase/server";
+import { isTeacherOrStudent, getTeacherGroups } from "@/lib/teacher/students";
 import { RANK_META } from "@/lib/gamification/ranks";
 import { getWeeklyChallenge } from "@/lib/weekly-challenge";
 
@@ -39,31 +40,26 @@ function weekStartWIB(): Date {
   return new Date(monday.getTime() - WIB_MS);
 }
 
-const isTeacher = (user: { role: string; isFounder?: boolean }) =>
-  user.role === "GURU" || user.role === "ADMIN" || !!user.isFounder;
-
 export async function GET(req: NextRequest) {
   try {
     const user = await getUser();
-    if (!user || !isTeacher(user)) {
+    if (!user || !isTeacherOrStudent(user)) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const groupId = req.nextUrl.searchParams.get("groupId") || "";
 
     // 1) Kumpulkan id murid dari semua kelas guru (atau satu kelas)
-    const groups = groupId
-      ? await db.group.findMany({ where: { id: groupId, teacherId: user.id }, select: { id: true } })
-      : await db.group.findMany({ where: { teacherId: user.id }, select: { id: true } });
-    const groupIds = groups.map((g) => g.id);
+    const groups = await getTeacherGroups(user.id, null);
+    const scoped = groupId ? groups.filter((g) => g.id === groupId) : groups;
+    const groupIds = scoped.map((g) => g.id);
 
+    // Pertahankan semantik role:"member" (SPECIAL CASE, audit Phase 7) —
+    // SSOT menyediakan semua anggota; filter ketua/role lain tetap eksplisit.
     const members = groupIds.length
-      ? await db.groupMember.findMany({
-          where: { groupId: { in: groupIds }, role: "member" },
-          select: { userId: true },
-        })
+      ? scoped.flatMap((g) => g.members.filter((m) => m.role === "member").map((m) => m.userId))
       : [];
-    const memberSet = new Set(members.map((m) => m.userId));
+    const memberSet = new Set(members);
 
     const whereKarya: any = memberSet.size ? { userId: { in: [...memberSet] } } : { userId: "__none__" };
 

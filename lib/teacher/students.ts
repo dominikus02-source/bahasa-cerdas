@@ -38,18 +38,22 @@ const STUDENT_SELECT = {
 /**
  * Semua kelas aktif milik guru + data ringkas muridnya (untuk halaman kelasku
  * dan dropdown pemilihan kelas). Murid diambil sekali per kelas.
+ *
+ * `take` opsional (default 50): konsumen analytics/population memanggil dengan
+ * `take: undefined` (atau angka besar) agar tidak terpotong; konsumen UI tetap
+ * memakai default untuk membatasi payload.
  */
-export async function getTeacherGroups(teacherId: string) {
+export async function getTeacherGroups(teacherId: string, take?: number | null) {
   const groups = await db.group.findMany({
     where: { teacherId, isActive: true },
     include: {
       members: {
-        include: { user: { select: { id: true, fullName: true, avatar: true, email: true } } },
+        include: { user: { select: STUDENT_SELECT } },
       },
       _count: { select: { members: true } },
     },
     orderBy: { createdAt: "desc" },
-    take: 50,
+    ...(take === undefined ? { take: 50 } : take === null ? {} : { take }),
   });
 
   return groups.map((g) => ({

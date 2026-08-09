@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getUser } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
+import { isTeacherOrStudent } from "@/lib/teacher/students";
 
 export async function POST(
   req: NextRequest,
@@ -19,7 +20,7 @@ export async function POST(
       const sid = body.supabaseId as string | undefined
       if (sid) dbUser = await db.user.findUnique({ where: { supabaseId: sid } })
     }
-    if (!dbUser || dbUser.role !== "GURU") return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    if (!dbUser || !isTeacherOrStudent(dbUser)) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const { questionIds } = body;
 
@@ -77,7 +78,7 @@ export async function DELETE(
       const sid = searchParams.get("supabaseId")
       if (sid) dbUser = await db.user.findUnique({ where: { supabaseId: sid } })
     }
-    if (!dbUser || dbUser.role !== "GURU") return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    if (!dbUser || !isTeacherOrStudent(dbUser)) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const questionIds = searchParams.getAll("questionId");
 

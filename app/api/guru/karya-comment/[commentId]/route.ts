@@ -4,6 +4,12 @@ import { db } from "@/lib/db";
 
 // Guru screening: hapus komentar tidak pantas pada karya murid di kelasnya.
 // Izin: ADMIN / Founder (bebas) ATAU GURU yang mengajar kelas si penulis karya.
+// P1-B SPECIAL CASE: bukan guard legacy yang diblokir — rute moderasi ini memang
+// permissive. ADMIN/founder bebas; GURU hanya bila penulis karya ada di kelasnya
+// (groupMember.findFirst). MURID selalu ditolak 403. Jangan diganti dengan
+// isTeacherOrStudent() karena itu akan menambah "ADMIN/founder bebas" (sudah
+// ditangani isAdmin) namun tetap mengharuskan GURU mengajar kelas — perilaku
+// sama, tapi memakai guard generic di sini mengaburkan niat moderasi ini.
 export async function DELETE(
   _req: NextRequest,
   { params }: { params: Promise<{ commentId: string }> }

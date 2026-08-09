@@ -156,6 +156,11 @@ export function LeaderboardPanel({ compact = false }: { compact?: boolean }) {
           ))}
         </div>
       )}
+
+      <p className="mt-3 rounded-lg px-3 py-2 text-[10px] leading-relaxed text-[var(--px-text-dim)]" style={{ background: "rgba(255,210,74,0.06)" }}>
+        Papan Mingguan mulai dari nol setiap Senin 00.00 WIB, dan Musim baru setiap 4 minggu.
+        Tenang — XP total, level, dan pangkatmu tidak pernah direset.
+      </p>
     </GlassCard>
   );
 }

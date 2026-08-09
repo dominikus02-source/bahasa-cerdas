@@ -1,29 +1,22 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { getUser } from "@/lib/supabase/server";
+import { isTeacherOrStudent, getTeacherGroupDetail } from "@/lib/teacher/students";
 
 // ════════════════════════════════════════════════════════════════════
 // GET /api/guru/kelasku/[id] — Detail kelas (tab Overview/Tugas/Nilai/
 // Pengumuman/Materi). Additive, read-only, guru-only.
 // ════════════════════════════════════════════════════════════════════
 
-const isTeacher = (user: { role: string; isFounder?: boolean }) =>
-  user.role === "GURU" || user.role === "ADMIN" || !!user.isFounder;
-
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const user = await getUser();
-    if (!user || !isTeacher(user)) {
+    if (!user || !isTeacherOrStudent(user)) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
     const { id } = await params;
 
-    const group = await db.group.findFirst({
-      where: { id, teacherId: user.id },
-      include: {
-        members: { include: { user: { select: { id: true, fullName: true, avatar: true } } } },
-      },
-    });
+    const group = await getTeacherGroupDetail(user.id, id);
     if (!group) return NextResponse.json({ error: "Kelas tidak ditemukan" }, { status: 404 });
 
     const memberIds = group.members.map((m) => m.userId);

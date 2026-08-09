@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 import { checkAIQuota, recordAIUsage } from "@/lib/premium";
 import { rateLimitRoute } from "@/lib/rate-limit";
+import { isTeacherOrStudent } from "@/lib/teacher/students";
 
 const THEMES = [
   "SPOK", "Kalimat Efektif", "Cerpen", "Puisi", "Pantun",
@@ -53,7 +54,7 @@ export async function GET(req: NextRequest) {
     if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const dbUser = await db.user.findUnique({ where: { supabaseId: user.id } });
-    if (!dbUser || dbUser.role !== "GURU") return NextResponse.json({ error: "Guru only" }, { status: 403 });
+    if (!dbUser || !isTeacherOrStudent(dbUser)) return NextResponse.json({ error: "Guru only" }, { status: 403 });
 
     const { searchParams } = new URL(req.url);
     const tema = searchParams.get("tema");
@@ -203,7 +204,7 @@ export async function POST(req: NextRequest) {
     if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const dbUser = await db.user.findUnique({ where: { supabaseId: user.id } });
-    if (!dbUser || dbUser.role !== "GURU") return NextResponse.json({ error: "Guru only" }, { status: 403 });
+    if (!dbUser || !isTeacherOrStudent(dbUser)) return NextResponse.json({ error: "Guru only" }, { status: 403 });
 
     const { tema, kelas, jumlahSoal = 10, difficulty = "MEDIUM", judul, _skipAI, _pickedSoals } = await req.json();
 

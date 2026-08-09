@@ -39,7 +39,7 @@ export default function GameHubLeagueTabs({
     <div className="rounded-[20px] border overflow-hidden mb-6" style={{ background: "#16122A", borderColor: "rgba(124,58,237,0.2)" }}>
       <div className="px-5 py-4 flex items-center justify-between border-b" style={{ borderColor: "rgba(255,255,255,0.05)" }}>
         <h3 className="font-bold text-white flex items-center gap-2">
-          <Crown size={16} className="text-amber-400" /> {isHarian ? "Paling Aktif Hari Ini" : "Liga Perunggu"}
+          <Crown size={16} className="text-amber-400" /> {isHarian ? "Paling Aktif Hari Ini" : "XP Mingguan"}
         </h3>
         <div className="flex gap-1 p-0.5 rounded-[10px]" style={{ background: "rgba(255,255,255,0.05)" }}>
           <button

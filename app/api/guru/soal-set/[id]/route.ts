@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getUser } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
+import { isTeacherOrStudent } from "@/lib/teacher/students";
 
 async function getDbUser(req: NextRequest) {
   let dbUser: any = null
@@ -23,6 +24,7 @@ export async function GET(
     const { id } = await params;
     const dbUser = await getDbUser(req);
     if (!dbUser) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    if (!isTeacherOrStudent(dbUser)) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const set = await db.soalSet.findUnique({
       where: { id },
@@ -52,7 +54,7 @@ export async function PUT(
   try {
     const { id } = await params;
     const dbUser = await getDbUser(req);
-    if (!dbUser || dbUser.role !== "GURU") return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    if (!dbUser || !isTeacherOrStudent(dbUser)) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const body = await req.json();
     const { title, description, coverColor, coverEmoji, kelas, topik, maxQuestions } = body;
@@ -89,7 +91,7 @@ export async function DELETE(
   try {
     const { id } = await params;
     const dbUser = await getDbUser(req);
-    if (!dbUser || dbUser.role !== "GURU") return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    if (!dbUser || !isTeacherOrStudent(dbUser)) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const set = await db.soalSet.findUnique({ where: { id } });
     if (!set || set.creatorId !== dbUser.id) {

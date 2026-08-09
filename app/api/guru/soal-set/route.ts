@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getUser } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
+import { isTeacherOrStudent } from "@/lib/teacher/students";
 
 const COVER_COLORS = [
   "from-violet-500 to-purple-600",
@@ -27,6 +28,7 @@ export async function GET(req: NextRequest) {
       if (sid) dbUser = await db.user.findUnique({ where: { supabaseId: sid } })
     }
     if (!dbUser) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    if (!isTeacherOrStudent(dbUser)) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     const kelas = searchParams.get("kelas");
     const topik = searchParams.get("topik");
     const search = searchParams.get("search");
@@ -70,7 +72,7 @@ export async function POST(req: NextRequest) {
       const sid = body.supabaseId as string | undefined
       if (sid) dbUser = await db.user.findUnique({ where: { supabaseId: sid } })
     }
-    if (!dbUser || dbUser.role !== "GURU") return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    if (!dbUser || !isTeacherOrStudent(dbUser)) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     const { title, description, kelas, topik, subject, maxQuestions, questionIds } = body;
 
     if (!title || !kelas) {

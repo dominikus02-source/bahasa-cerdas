@@ -2,6 +2,7 @@
 
 import Link from "next/link"
 import { useState } from "react"
+import WeeklyCountdown from "@/components/arena/player/WeeklyCountdown"
 
 export interface MiniRow {
   id: string
@@ -24,10 +25,14 @@ export default function LeagueMini({
   userId,
   harian,
   mingguan,
+  myWeeklyRank,
+  countdown,
 }: {
   userId: string
   harian: MiniRow[]
   mingguan: MiniRow[]
+  myWeeklyRank?: number | null
+  countdown?: { endsAt: string; baseline: string } | null
 }) {
   const [tab, setTab] = useState<"harian" | "mingguan">("mingguan")
   const rows = tab === "harian" ? harian : mingguan
@@ -51,13 +56,25 @@ export default function LeagueMini({
         </button>
       </div>
 
-      <div className="bg-gradient-to-r from-amber-500 to-orange-500 p-3 px-4 flex items-center justify-between">
+      <div className="bg-gradient-to-r from-amber-500 to-orange-500 p-3 px-4 flex items-center justify-between gap-2">
         <h4 className="font-extrabold text-sm text-white">
-          {isHarian ? "Paling Aktif Hari Ini" : "Papan Peringkat XP"}
+          {isHarian ? "Paling Aktif Hari Ini" : "XP Mingguan"}
         </h4>
-        <span className="bg-black/20 px-2.5 py-1 rounded-[10px] text-[11px] font-bold text-white">
-          {isHarian ? "Koin" : "Total XP"}
-        </span>
+        <div className="flex items-center gap-1.5">
+          {!isHarian && myWeeklyRank && myWeeklyRank > 0 && (
+            <span className="bg-black/20 px-2 py-1 rounded-[10px] text-[11px] font-bold text-white">
+              Peringkatmu #{myWeeklyRank}
+            </span>
+          )}
+          {!isHarian && countdown && (
+            <span className="bg-black/20 px-2 py-1 rounded-[10px] text-[11px] font-bold text-white">
+              Sisa <WeeklyCountdown endsAt={countdown.endsAt} baseline={countdown.baseline} />
+            </span>
+          )}
+          <span className="bg-black/20 px-2.5 py-1 rounded-[10px] text-[11px] font-bold text-white">
+            {isHarian ? "Koin" : "XP"}
+          </span>
+        </div>
       </div>
 
       {rows.length === 0 ? (

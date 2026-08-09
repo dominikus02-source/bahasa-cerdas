@@ -282,6 +282,8 @@ model User {
   xpTransactions   XPTransaction[]
   userBadges       UserBadge[]
   userAchievements UserAchievement[]
+  // Leaderboard Motivation Layer — hasil settlement podium (weekly/season) + Hall of Fame.
+  leaderboardPeriodResults LeaderboardPeriodResult[]
 
   // Learning Loop Engine (Sprint 5 — aktivitas, skill, journey, rekomendasi, CTA, insight)
   learningSkills          LearningSkill[]
@@ -2541,6 +2543,31 @@ model WeeklySeason {
   createdAt DateTime @default(now())
 
   @@index([isActive])
+}
+
+/// Hasil settlement podium kompetisi BC Arena (weekly/season) — sumber Hall of
+/// Fame. Baris dibuat SEKALI per (periodType, periodKey, userId) saat periode
+/// ditutup (lazy settle, tanpa cron). Reward XP podium sengaja TIDAK masuk
+/// weeklyXP/seasonXP agar tidak terjadi loop (no XP snowball antarminggu);
+/// ia hanya menambah XP total lewat ledger yang sama.
+model LeaderboardPeriodResult {
+  id         String   @id @default(cuid())
+  periodType String // "WEEKLY" | "SEASON"
+  periodKey  String // "2026-W31" | "2026-S1"
+  userId     String
+  rank       Int // 1..3
+  score      Int // XP yang menjadi dasar ranking (weeklyXP/seasonXP periode tsb)
+  rewardXp   Int
+  rewardCoins Int
+  badgeCode  String?
+  settledAt  DateTime @default(now())
+  createdAt  DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([periodType, periodKey, userId])
+  @@index([periodType, periodKey])
+  @@index([userId])
 }
 
 /// Skill bahasa per user (level 1-100, computed dari skill xp).

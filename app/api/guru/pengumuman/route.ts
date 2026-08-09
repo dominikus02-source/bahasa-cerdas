@@ -1,17 +1,15 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { getUser } from "@/lib/supabase/server";
+import { isTeacherOrStudent } from "@/lib/teacher/students";
 import { awardGuruXp } from "@/lib/gamification/teacher-xp";
-
-const isTeacher = (user: { role: string; isFounder?: boolean }) =>
-  user.role === "GURU" || user.role === "ADMIN" || !!user.isFounder;
 
 // GET /api/guru/pengumuman?groupId=xxx
 // Daftar pengumuman guru untuk satu kelas + jumlah murid & yang sudah kumpul.
 export async function GET(req: Request) {
   try {
     const user = await getUser();
-    if (!user || !isTeacher(user)) {
+    if (!user || !isTeacherOrStudent(user)) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -46,7 +44,7 @@ export async function GET(req: Request) {
 export async function POST(req: Request) {
   try {
     const user = await getUser();
-    if (!user || !isTeacher(user)) {
+    if (!user || !isTeacherOrStudent(user)) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 

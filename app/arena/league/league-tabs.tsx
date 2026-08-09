@@ -25,21 +25,36 @@ interface Board {
   myXP: number
 }
 
+export interface HallOfFameRow {
+  periodLabel: string
+  periodType: string
+  rank: number
+  name: string
+  score: number
+  badgeCode?: string | null
+  settledAt?: string | null
+}
+
+type TabKey = "harian" | "mingguan" | "hall-of-fame"
+
 interface Props {
   weekly: Board
   daily: Board
+  hallOfFame: HallOfFameRow[]
   userId: string
   userXP: number
-  initialTab?: "harian" | "mingguan"
+  initialTab?: TabKey
 }
 
 // Liga 4 tingkat (Perunggu/Perak/Emas/Berlian) DIHAPUS: ambangnya berbeda dari
 // 9 rank resmi, sehingga murid bisa tampil "Emas" di sini dan "Silver" di dasbor
 // Pemain. Sumber tunggalnya sekarang rankFromLevel(levelFromXp(xp)).
+const HOF_MEDALS = ["🥇", "🥈", "🥉"]
 
-export default function LeagueTabs({ weekly, daily, userId, userXP, initialTab = "mingguan" }: Props) {
-  const [tab, setTab] = useState<"harian" | "mingguan">(initialTab)
+export default function LeagueTabs({ weekly, daily, hallOfFame, userId, userXP, initialTab = "mingguan" }: Props) {
+  const [tab, setTab] = useState<TabKey>(initialTab)
   const isHarian = tab === "harian"
+  const isHof = tab === "hall-of-fame"
   const board = isHarian ? daily : weekly
 
   const userLevel = levelFromXp(userXP)
@@ -53,14 +68,51 @@ export default function LeagueTabs({ weekly, daily, userId, userXP, initialTab =
     <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
       {/* Tab Header */}
       <div className="flex border-b border-gray-100 bg-gradient-to-r from-violet-50 to-purple-50">
-        <button onClick={() => setTab("mingguan")} className={`flex-1 text-center py-3.5 text-sm font-bold transition-all border-b-2 ${!isHarian ? "text-violet-700 border-violet-600" : "text-gray-500 border-transparent hover:text-violet-600"}`}>
-          🏆 Peringkat XP
+        <button onClick={() => setTab("mingguan")} className={`flex-1 text-center py-3.5 text-sm font-bold transition-all border-b-2 ${!isHarian && !isHof ? "text-violet-700 border-violet-600" : "text-gray-500 border-transparent hover:text-violet-600"}`}>
+          🏆 XP Mingguan
         </button>
         <button onClick={() => setTab("harian")} className={`flex-1 text-center py-3.5 text-sm font-bold transition-all border-b-2 ${isHarian ? "text-violet-700 border-violet-600" : "text-gray-500 border-transparent hover:text-violet-600"}`}>
           🔥 Paling Aktif Hari Ini
         </button>
+        <button onClick={() => setTab("hall-of-fame")} className={`flex-1 text-center py-3.5 text-sm font-bold transition-all border-b-2 ${isHof ? "text-violet-700 border-violet-600" : "text-gray-500 border-transparent hover:text-violet-600"}`}>
+          🏅 Hall of Fame
+        </button>
       </div>
 
+      {/* Hall of Fame */}
+      {isHof ? (
+        <div>
+          <div className="mx-4 mt-4 rounded-xl bg-amber-50 border border-amber-100 p-4 text-xs text-amber-900">
+            <p className="font-bold text-sm mb-1">🏅 Hall of Fame</p>
+            <p>
+              Juara 1–3 dari setiap minggu dan season tiap musim. Penampil hebat dikenang selamanya —
+              tidak akan hilang saat musim baru dimulai.
+            </p>
+          </div>
+          {hallOfFame.length === 0 ? (
+            <div className="text-center py-10 text-gray-400 text-sm">Belum ada juara. Jadilah yang pertama!</div>
+          ) : (
+            <div className="mt-3 divide-y divide-gray-50">
+              {hallOfFame.map((h, i) => (
+                <div key={`${h.periodType}-${h.periodLabel}-${i}`} className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors">
+                  <span className="text-lg shrink-0">{HOF_MEDALS[h.rank - 1] ?? "🏅"}</span>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-bold text-gray-900 truncate">{h.name}</p>
+                    <p className="text-xs text-gray-500">{h.periodLabel}</p>
+                  </div>
+                  <div className="text-right shrink-0">
+                    <p className="font-bold text-sm text-amber-600">{h.score.toLocaleString()} XP</p>
+                    <p className="text-[10px] text-gray-400 uppercase tracking-wide">
+                      {h.periodType === "season" ? "Juara Season" : "Juara Mingguan"}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      ) : (
+        <>
       {/* User's own card */}
       <div className={`mx-4 mt-4 p-4 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 text-white flex items-center gap-4 ${!isHarian ? "shadow-lg shadow-violet-200" : "shadow-lg shadow-orange-200"}`}>
         <div className="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center text-lg font-bold border-2 border-white/30">
@@ -72,7 +124,7 @@ export default function LeagueTabs({ weekly, daily, userId, userXP, initialTab =
         </div>
         <div className="text-right">
           <p className="font-bold">{isHarian ? daily.myXP.toLocaleString() : weekly.myXP.toLocaleString()}</p>
-          <p className="text-xs text-violet-200">{isHarian ? "koin hari ini" : "total XP"}</p>
+          <p className="text-xs text-violet-200">{isHarian ? "koin hari ini" : "XP minggu ini"}</p>
         </div>
       </div>
 
@@ -97,7 +149,8 @@ export default function LeagueTabs({ weekly, daily, userId, userXP, initialTab =
           board.rows.map((r, i) => {
             const rank = i + 1
             const isMe = r.id === userId
-            const rowLevel = levelFromXp(r.xp)
+            // r.xp = skor periode (weekly/daily), sedangkan r.level = level total pemain.
+            const rowLevel = r.level > 0 ? r.level : levelFromXp(r.xp)
             const rowRank = rankFromLevel(rowLevel)
             return (
               <div key={r.id} className={`flex items-center gap-3 px-4 py-3 ${isMe ? "bg-violet-50 border-l-2 border-violet-500" : "hover:bg-gray-50"} transition-colors`}>
@@ -134,6 +187,8 @@ export default function LeagueTabs({ weekly, daily, userId, userXP, initialTab =
           <BookOpen className="w-3.5 h-3.5" /> Latihan Jalur Cerdas
         </Link>
       </div>
+        </>
+      )}
     </div>
   )
 }

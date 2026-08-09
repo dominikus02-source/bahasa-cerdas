@@ -1,13 +1,14 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { getUser } from "@/lib/supabase/server";
+import { isTeacherOrStudent } from "@/lib/teacher/students";
 
 // Daftar kelas yang sudah pernah menerima materi ini dari guru ini — dipakai
 // modal "Kirim ke Kelas" untuk menandai kelas yang sudah terkirim.
 export async function GET(_req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const user = await getUser();
-    if (!user || (user.role !== "GURU" && user.role !== "ADMIN" && !user.isFounder)) {
+    if (!user || !isTeacherOrStudent(user)) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
     const { id: materiId } = await params;
@@ -27,7 +28,7 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
 export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const user = await getUser();
-    if (!user || (user.role !== "GURU" && user.role !== "ADMIN" && !user.isFounder)) {
+    if (!user || !isTeacherOrStudent(user)) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 

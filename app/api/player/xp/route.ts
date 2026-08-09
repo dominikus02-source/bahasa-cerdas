@@ -13,12 +13,18 @@ import { awardXp } from "@/lib/award-xp";
  * kuota harian, dan menerapkan XP Boost (lihat lib/award-xp.ts) + rate limit per
  * sesi di sini. `reference` menjadikan panggilan idempotent.
  *
- * Rute ini dulu memanggil `addXp` langsung — melewati kuota harian dan boost,
- * jadi pintu kedua yang lebih lemah. Jangan kembalikan.
+ * AKSES: HANYA admin/founder. Endpoint ini dulu terbuka untuk semua role yang
+ * masuk — murid bisa menyuapi XP ke akunnya sendiri berulang kali sampai kuota
+ * harian (faucet XP publik). Tidak ada klien Arena yang memanggilnya; XP fitur
+ * selalu diberikan server-side oleh fitur itu sendiri (awardXp). Endpoint
+ * sekarang dikunci untuk tooling/administrasi.
  */
 export async function POST(req: NextRequest) {
   const user = await getUser();
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!user.isFounder && user.role !== "ADMIN") {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
 
   const limited = await rateLimitRoute(req, { maxRequests: 30, windowSeconds: 60, identifier: "bca-player-xp" });
   if (limited) return limited;
@@ -35,10 +41,17 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Sumber XP tidak valid" }, { status: 400 });
   }
 
+  // Reference wajib agar tiap panggilan idempotent (admin yang menambal data
+  // jarang; tanpa reference, retry bisa menggandakan XP).
+  const reference = body.reference?.trim();
+  if (!reference) {
+    return NextResponse.json({ error: "reference wajib diisi" }, { status: 400 });
+  }
+
   const requested = Number.isFinite(body.amount) ? Math.max(1, Math.floor(body.amount ?? 0)) : 1;
 
   // Pemangkasan, kuota harian, boost, dan pencatatan ledger dikerjakan di dalam.
-  const result = await awardXp(user.id, source, requested, body.reference);
+  const result = await awardXp(user.id, source, requested, reference);
 
   // Evaluasi badge setelah XP bertambah (best-effort).
   let badges: { total: number; unlocked: number } | undefined;

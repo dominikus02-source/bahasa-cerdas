@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 import { uploadFile, deleteFile } from "@/lib/upload";
+import { isTeacherOrStudent } from "@/lib/teacher/students";
 
 export async function GET(req: NextRequest) {
   try {
@@ -13,7 +14,7 @@ export async function GET(req: NextRequest) {
     }
 
     const dbUser = await db.user.findUnique({ where: { supabaseId: user.id } });
-    if (!dbUser || dbUser.role !== "GURU") {
+    if (!dbUser || !isTeacherOrStudent(dbUser)) {
       return NextResponse.json({ error: "Guru only" }, { status: 403 });
     }
 
@@ -48,7 +49,7 @@ export async function POST(req: NextRequest) {
     }
 
     const dbUser = await db.user.findUnique({ where: { supabaseId: user.id } });
-    if (!dbUser || dbUser.role !== "GURU") {
+    if (!dbUser || !isTeacherOrStudent(dbUser)) {
       return NextResponse.json({ error: "Guru only" }, { status: 403 });
     }
 
@@ -124,7 +125,7 @@ export async function PUT(req: NextRequest) {
     }
 
     const dbUser = await db.user.findUnique({ where: { supabaseId: user.id } });
-    if (!dbUser || dbUser.role !== "GURU") {
+    if (!dbUser || !isTeacherOrStudent(dbUser)) {
       return NextResponse.json({ error: "Guru only" }, { status: 403 });
     }
 
@@ -162,7 +163,7 @@ export async function DELETE(req: NextRequest) {
     }
 
     const dbUser = await db.user.findUnique({ where: { supabaseId: user.id } });
-    if (!dbUser || dbUser.role !== "GURU") {
+    if (!dbUser || !isTeacherOrStudent(dbUser)) {
       return NextResponse.json({ error: "Guru only" }, { status: 403 });
     }
 
