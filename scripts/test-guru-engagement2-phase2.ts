@@ -79,7 +79,7 @@ ok("Beranda memasang GuruBerkarya dengan misiStatus", /<GuruBerkarya misiStatus=
 ok("GuruBerkarya menerima prop misiStatus", /misiStatus\?: MisiGuruStatus \| null/.test(berkaryaUi));
 ok("Microcopy CTA membaca misi artikel (sudah/sedang berkarya)", /m\.id === "artikel"/.test(berkaryaUi));
 ok("CTA menampilkan XP riil dari GURU_XP_NILAI (via API meta, tanpa hardcode)", /\+{xp} XP/.test(berkaryaUi) && /meta\.xpArtikel/.test(berkaryaUi));
-ok("Tautan Lihat Semua Karya menuju /guru/artikel", /Lihat Semua Karya/.test(berkaryaUi));
+ok("Tautan Lihat Semua Karya menuju showcase /guru/karya", /Lihat Semua Karya/.test(berkaryaUi) && /href="\/guru\/karya"/.test(berkaryaUi));
 ok("Microcopy kosmetik tanpa angka diarang (mengikuti misiStatus)", !/myRank|#\d+/.test(berkaryaUi));
 
 if (fail > 0) {

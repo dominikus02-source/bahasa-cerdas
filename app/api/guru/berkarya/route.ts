@@ -10,9 +10,12 @@ import type { Prisma } from "@prisma/client";
  * (current user selalu tampil, ditandai "Karya Anda" di UI). Role-gated
  * guru/founder.
  * Urutan: publishedAt DESC (karya terbaru pertama) — bukan popularitas.
- * Query: ?limit=N (default 8, maks 20).
- * Response: { data, currentUserId, meta: { xpArtikel, xpPuisi } } — meta
- * berisi nilai XP riil dari GURU_XP_NILAI agar UI tidak hardcode angka. */
+ * Query: ?limit=N (default 8, maks 20), ?type=ARTIKEL|PUISI (opsional),
+ *        ?page=N (opsional — mengaktifkan pagination + total/totalPages).
+ *           Saat page dipakai, limit berfungsi sebagai ukuran halaman.
+ * Response: { data, currentUserId, meta: { xpArtikel, xpPuisi },
+ *            page?, totalPages?, total? } — meta berisi nilai XP riil dari
+ *            GURU_XP_NILAI agar UI tidak hardcode angka. */
 export async function GET(req: NextRequest) {
   try {
     const user = await getUser();
@@ -20,15 +23,20 @@ export async function GET(req: NextRequest) {
 
     const url = new URL(req.url);
     const limit = Math.min(parseInt(url.searchParams.get("limit") || "8", 10) || 8, 20);
+    const typeParam = (url.searchParams.get("type") || "").toUpperCase();
+    const pageParam = parseInt(url.searchParams.get("page") || "", 10);
 
     // Feed = karya TERBIT (isPublished) dari guru (GURU/ADMIN/founder).
     // Karya penulis yang sedang melihat selalu ikut tampil (badge "Karya Anda"
-    // di UI) — tanpa pengecualian karya sendiri. Tanpa filter tanggal, tanpa
-    // filter type — ARTIKEL & PUISI tampil, urut publishedAt DESC.
+    // di UI) — tanpa pengecualian karya sendiri. Tanpa filter tanggal —
+    // ARTIKEL & PUISI tampil, urut publishedAt DESC. ?type= membatasi jenis.
     const where: Prisma.ArtikelWhereInput = {
       isPublished: true,
       author: { OR: [{ role: "GURU" }, { role: "ADMIN" }, { isFounder: true }] },
+      ...(typeParam === "ARTIKEL" || typeParam === "PUISI" ? { articleType: typeParam } : {}),
     };
+
+    const page = Number.isNaN(pageParam) || pageParam < 1 ? undefined : Math.floor(pageParam);
 
     // 1) Query DASAR feed — hanya menyentuh Artikel/User/Profile, sehingga feed
     //    tetap tampil walau tabel sosial (ArtikelLike/ArtikelComment) belum ada
@@ -36,7 +44,7 @@ export async function GET(req: NextRequest) {
     const rows = await db.artikel.findMany({
       where,
       orderBy: [{ publishedAt: "desc" }, { createdAt: "desc" }],
-      take: limit,
+      ...(page ? { skip: (page - 1) * limit, take: limit } : { take: limit }),
       select: {
         id: true,
         title: true,
@@ -89,9 +97,19 @@ export async function GET(req: NextRequest) {
       likedByCurrentUser: likedByCurrentUserIds.has(r.id),
     }));
 
+    // Hitung total hanya saat pagination diminta (halaman showcase) —
+    // feed beranda (limit-only) tidak perlu count tambahan.
+    let total: number | null = null;
+    if (page) {
+      total = await db.artikel.count({ where });
+    }
+
     return NextResponse.json({
       data,
       currentUserId: user.id,
+      ...(page
+        ? { page, totalPages: Math.max(1, Math.ceil((total ?? 0) / limit)), total: total ?? 0 }
+        : {}),
       meta: {
         xpArtikel: GURU_XP_NILAI.GURU_ARTIKEL,
         xpPuisi: GURU_XP_NILAI.GURU_PUISI,

@@ -215,9 +215,17 @@ export function GuruBerkarya({ misiStatus }: GuruBerkaryaProps) {
             <p className="text-gray-500 text-xs sm:text-sm">Karya terbaru dari para guru. Ikut menginspirasi?</p>
           </div>
         </div>
-        <Link href="/guru/artikel" className="hidden sm:flex items-center gap-1 text-xs font-semibold text-violet-700 hover:text-violet-800 bg-violet-50 hover:bg-violet-100 border border-violet-100 rounded-xl px-3 py-2 transition-colors">
-          Lihat Semua Karya <ChevronRight size={12} />
-        </Link>
+        <div className="flex items-center gap-2">
+          <Link
+            href="/guru/artikel"
+            className="inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-violet-500 to-purple-600 text-white px-3 py-2 text-xs font-semibold shadow-sm transition-colors"
+          >
+            <PenLine size={13} /> Tulis Karya
+          </Link>
+          <Link href="/guru/karya" className="hidden sm:flex items-center gap-1 text-xs font-semibold text-violet-700 hover:text-violet-800 bg-violet-50 hover:bg-violet-100 border border-violet-100 rounded-xl px-3 py-2 transition-colors">
+            Lihat Semua Karya <ChevronRight size={12} />
+          </Link>
+        </div>
       </div>
 
       {items.length === 0 ? (
@@ -363,9 +371,17 @@ export function GuruBerkarya({ misiStatus }: GuruBerkaryaProps) {
             </div>
           </div>
 
-          <Link href="/guru/artikel" className="mt-4 flex sm:hidden items-center justify-center gap-1 text-xs font-semibold text-violet-700 hover:text-violet-800 bg-violet-50 hover:bg-violet-100 border border-violet-100 rounded-xl px-3 py-2.5 transition-colors">
-            Lihat Semua Karya <ChevronRight size={12} />
-          </Link>
+          <div className="mt-4 flex items-center justify-center gap-2 sm:hidden">
+            <Link
+              href="/guru/artikel"
+              className="inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-violet-500 to-purple-600 text-white px-3 py-2.5 text-xs font-semibold shadow-sm transition-colors"
+            >
+              <PenLine size={13} /> Tulis Karya
+            </Link>
+            <Link href="/guru/karya" className="flex items-center justify-center gap-1 text-xs font-semibold text-violet-700 hover:text-violet-800 bg-violet-50 hover:bg-violet-100 border border-violet-100 rounded-xl px-3 py-2.5 transition-colors">
+              Lihat Semua Karya <ChevronRight size={12} />
+            </Link>
+          </div>
         </>
       )}
 
