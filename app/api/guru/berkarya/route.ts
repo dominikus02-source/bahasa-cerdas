@@ -28,12 +28,28 @@ export async function GET(req: NextRequest) {
 
     // Feed = karya TERBIT (isPublished) dari guru (GURU/ADMIN/founder).
     // Karya penulis yang sedang melihat selalu ikut tampil (badge "Karya Anda"
-    // di UI) — tanpa pengecualian karya sendiri. Tanpa filter tanggal —
-    // ARTIKEL & PUISI tampil, urut publishedAt DESC. ?type= membatasi jenis.
+    // di UI) — tanpa pengecualian karya sendiri. Tanpa filter tanggal.
+    //
+    // SEMANTIK JENIS KARYA (single source of truth — konsisten dengan badge
+    // UI di GuruBerkarya/KaryaCard: `isPuisi = articleType.toUpperCase() ===
+    // "PUISI"`, selain itu dianggap ARTIKEL):
+    //   - PUISI   = articleType persis "PUISI" (ditulis normalizeJenis() di
+    //               /api/guru/artikel).
+    //   - ARTIKEL = SEMUA kecuali puisi: artikel lama (articleType kategori
+    //               topik dari founder-archive/seed) maupun articleType NULL
+    //               (seed homepage) tetap dianggap Artikel — setara dengan
+    //               perilaku rendering UI.
+    //   - SEMUA   = tanpa filter jenis (ARTIKEL + PUISI).
+    // Kesalahan umum yang DICEgah: exact match "ARTIKEL" akan mengosongkan
+    // tab Artikel karena data legacy memakai kategori topik / NULL.
     const where: Prisma.ArtikelWhereInput = {
       isPublished: true,
       author: { OR: [{ role: "GURU" }, { role: "ADMIN" }, { isFounder: true }] },
-      ...(typeParam === "ARTIKEL" || typeParam === "PUISI" ? { articleType: typeParam } : {}),
+      ...(typeParam === "PUISI"
+        ? { articleType: "PUISI" }
+        : typeParam === "ARTIKEL"
+          ? { OR: [{ articleType: null }, { articleType: { not: "PUISI" } }] }
+          : {}),
     };
 
     const page = Number.isNaN(pageParam) || pageParam < 1 ? undefined : Math.floor(pageParam);

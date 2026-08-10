@@ -104,7 +104,7 @@ ok("TEST 47: Regresi — Feed dan editor guru TIDAK mengekspos jawaban/kunci apa
 // ── 10. ROOT CAUSE FIX — FEED RESILIENCY (ERROR ≠ EMPTY) ─────────────────────
 ok("TEST 48: Root cause — query DASAR feed tidak menyentuh tabel sosial", !/select: \{ likes: true/.test(feedApi) && !/_count: \{\s*likes/.test(feedApi));
 ok("TEST 49: Root cause — Artikel terbit guru lain tampil (author OR, tanpa authorId exclusion)", /isPublished: true/.test(feedApi) && /author: \{ OR: \[\{ role: "GURU" \}, \{ role: "ADMIN" \}, \{ isFounder: true \}\] \}/.test(feedApi) && !/authorId: \{ not/.test(feedApi));
-ok("TEST 50: Root cause — Puisi terbit guru lain tampil (tanpa filter articleType)", !/articleType: \{/.test(feedApi));
+ok("TEST 50: Root cause — Semua (tanpa ?type) tampil tanpa filter articleType, puisi ikut", /\(typeParam === "PUISI"/.test(feedApi) && /: \{\}\)/s.test(feedApi) && !/articleType: typeParam/.test(feedApi));
 ok("TEST 51: Root cause — draft/unpublished TIDAK tampil (feed isPublished + terbit set publishedAt)", /isPublished: true/.test(feedApi) && /publishedAt: terbit \? new Date\(\) : null/.test(artikelApi));
 ok("TEST 52: Root cause — karya lama tetap tampil (tanpa filter tanggal di feed)", !/gte:|lte:|Date\.now/.test(feedApi));
 ok("TEST 53: Root cause — badge BARU ≤24 jam hanya untuk karya terbaru", /Date\.now\(\) - t < 24 \* 60 \* 60 \* 1000/.test(berkaryaUi) && /\{isBaru && \(/.test(berkaryaUi));

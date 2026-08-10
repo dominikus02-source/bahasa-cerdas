@@ -273,7 +273,13 @@ export default function PanggungKaryaGuruPage() {
             <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-white shadow-sm">
               <Flame size={22} className="text-violet-400" />
             </div>
-            <p className="mt-3 text-sm font-semibold text-gray-800">Belum ada karya yang ditampilkan.</p>
+            <p className="mt-3 text-sm font-semibold text-gray-800">
+              {filter === "PUISI"
+                ? "Belum ada puisi guru yang dipublikasikan."
+                : filter === "ARTIKEL"
+                  ? "Belum ada artikel guru yang dipublikasikan."
+                  : "Belum ada karya guru yang dipublikasikan."}
+            </p>
             <p className="mt-1 text-xs text-gray-500">
               Jadilah salah satu guru pertama yang berbagi karya di BahasaCerdas.
             </p>

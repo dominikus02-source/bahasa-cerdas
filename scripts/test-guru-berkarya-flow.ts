@@ -72,7 +72,8 @@ ok("C: CTA mobile menuju /guru/karya (sm:hidden)", /href="\/guru\/karya"/.test(b
 ok("D: Halaman showcase /guru/karya ada", /Panggung Karya Guru/.test(showcase));
 ok("D: Filter Semua/Artikel/Puisi hadir", /value: "SEMUA", label: "Semua"/.test(showcase) && /value: "ARTIKEL"/.test(showcase) && /value: "PUISI"/.test(showcase));
 ok("D: Filter diteruskan ke API (?type=)", /params\.set\("type", f\)/.test(showcase));
-ok("D: API mendukung filter type", /typeParam === "ARTIKEL" \|\| typeParam === "PUISI"/.test(api) && /articleType: typeParam/.test(api));
+ok("D: API mendukung filter type (PUISI exact + ARTIKEL non-PUISI)", /typeParam === "PUISI"/.test(api) && /articleType: null/.test(api) && /articleType: \{ not: "PUISI" \}/.test(api));
+ok("D: API root cause — filter ARTIKEL tidak exact-match 'ARTIKEL' (mengosongkan legacy)", !/articleType: typeParam/.test(api));
 
 // ── E. Klik karya → detail ─────────────────────────────────────────────────
 ok("E: Kartu showcase menuju detail /artikel/{slug}", /href=\{`\/artikel\/\$\{a\.slug\}`\}/.test(showcase));
@@ -94,6 +95,11 @@ ok("H: Deskripsi halaman satu kesatuan (artikel & puisi dalam satu editor)", /Tu
 // ── I. Draft tidak tampil ──────────────────────────────────────────────────
 ok("I: API hanya isPublished: true", /isPublished: true/.test(api) && !/isPublished: false/.test(api));
 ok("I: Feed tidak mengekspos konten penuh", !/content: true/.test(api));
+
+// ── K. Filter semantics (29-tes asli): Semua ⇒ ARTIKEL+PUISI ───────────────
+ok("K: SEMUA tanpa filter jenis ({} fallback)", /: \{\} \}/.test(api) || /typeParam === "PUISI"/.test(api));
+ok("K: PUISI filter exact 'PUISI'", /articleType: "PUISI"/.test(api));
+ok("K: ARTIKEL filter = null atau non-PUISI (mematikan bug exact-match)", /OR: \[\{ articleType: null \}, \{ articleType: \{ not: "PUISI" \} \}\]/.test(api));
 
 // ── J. Data existing utuh ──────────────────────────────────────────────────
 ok("J: API tidak menghapus/mengubah query existing (take: limit, orderBy publishedAt DESC)", /take: limit/.test(api) && /orderBy: \[\{ publishedAt: "desc" \}/.test(api));
