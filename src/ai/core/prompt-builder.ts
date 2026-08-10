@@ -7,6 +7,7 @@
  */
 
 import type { AgentDefinition, AgentInput, AgentRunContext } from "./agent-types";
+import { buildBahasaCerdasIdentityInstruction } from "@/lib/ai/knowledge/bahasa-cerdas-identity";
 
 export interface PromptBuildOptions {
   systemPrompt: string;
@@ -45,7 +46,10 @@ export function buildPrompt(opts: PromptBuildOptions): BuiltPrompt {
     `- Timestamp: ${opts.context.timestamp.toISOString()}`,
   ].join("\n");
 
-  const systemWithContext = `${opts.systemPrompt}\n\n${contextBlock}`;
+  // Single reusable identity & trust layer — appended once to every agent's
+  // system prompt so answers about BahasaCerdas identity/legal/history are
+  // consistent across DeepSeek, Groq, and Gemini.
+  const systemWithContext = `${opts.systemPrompt}\n\n${contextBlock}\n\n${buildBahasaCerdasIdentityInstruction()}`;
 
   const parts: string[] = [];
 

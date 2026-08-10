@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getUser } from "@/lib/supabase/server";
 import { rateLimitRoute } from "@/lib/rate-limit";
+import { buildBahasaCerdasIdentityInstruction } from "@/lib/ai/knowledge/bahasa-cerdas-identity";
 
 const AI_TIMEOUT = 15000;
 // Kunci khusus AI Cerdik, jatah 30 req/menit tier gratis Groq tidak dibagi
@@ -77,7 +78,7 @@ export async function POST(req: NextRequest) {
     const chatMessages = [
       {
         role: "system",
-        content: `${SYSTEM_PROMPT}\n\n${modeInstruction}`,
+        content: `${SYSTEM_PROMPT}\n\n${modeInstruction}\n\n${buildBahasaCerdasIdentityInstruction()}`,
       },
       {
         role: "assistant",
