@@ -295,8 +295,8 @@ model User {
 
   // Admin quota audit logs where this user was the acting admin
   adminQuotaActions    AdminQuotaAuditLog[]   @relation("AdminActions")
-  // Admin quota audit logs where this user was the target
-  targetOfQuotaActions AdminQuotaAuditLog[]   @relation("TargetActions")
+// Admin quota audit logs where this user was the target
+  targetOfQuotaActions AdminQuotaAuditLog[] @relation("TargetActions")
   // Admin payment audit logs where this user was the acting admin
   paymentAdminActions  AdminPaymentAuditLog[] @relation("PaymentAdminActions")
   // Admin payment audit logs where this user was the target
@@ -307,6 +307,13 @@ model User {
   arenaJuniorProgress  ArenaJuniorProgress[]
   arenaJuniorAkun      ArenaJuniorAkun?
   arenaJuniorDidaftar  ArenaJuniorAkun[]      @relation("ArenaJuniorPendaftar")
+
+  // Sosial profil (Player Identity — Phase profil murid premium)
+  // following = yang user ini ikuti, followers = yang mengikuti user ini.
+  following  Follow[]        @relation("Following")
+  followers  Follow[]        @relation("Followers")
+  profileLikesGiven  ProfileLike[] @relation("ProfileLikeLiker")
+  profileLikesReceived ProfileLike[] @relation("ProfileLikeTarget")
 
   @@index([role, lastActiveAt])
   @@index([xp])
@@ -947,7 +954,7 @@ model StudentKaryaComment {
   karyaId   String
   userId    String
   content   String
-  parentId  String?
+  parentId  String?  @map("parentId")
   createdAt DateTime @default(now())
 
   karya   StudentKarya          @relation(fields: [karyaId], references: [id], onDelete: Cascade)
@@ -967,6 +974,39 @@ enum StudentKaryaType {
   ANEKDOT
   PANTUN
   OPINI
+}
+
+// ── Sosial Profil (Player Identity — profil murid premium) ────────────────
+// Follow: relasi satu arah follower→following (idempoten via @@unique).
+// ProfileLike: "Suka profil" — terpisah dari like karya (StudentKaryaLike).
+// Migration: prisma/migrations/manual/2026-08-10_profile_follow.sql (idempoten).
+
+model Follow {
+  id          String   @id @default(cuid())
+  followerId  String
+  followingId String
+  createdAt   DateTime @default(now())
+
+  follower  User @relation("Following", fields: [followerId], references: [id], onDelete: Cascade)
+  following User @relation("Followers", fields: [followingId], references: [id], onDelete: Cascade)
+
+  @@unique([followerId, followingId])
+  @@index([followingId])
+  @@index([followerId])
+}
+
+model ProfileLike {
+  id        String   @id @default(cuid())
+  likerId   String
+  targetId  String
+  createdAt DateTime @default(now())
+
+  liker  User @relation("ProfileLikeLiker", fields: [likerId], references: [id], onDelete: Cascade)
+  target User @relation("ProfileLikeTarget", fields: [targetId], references: [id], onDelete: Cascade)
+
+  @@unique([likerId, targetId])
+  @@index([targetId])
+  @@index([likerId])
 }
 
 /// Jejak setiap pemberian XP. Dipakai untuk menegakkan kuota harian di SEMUA

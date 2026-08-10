@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import {
   Plus, Settings, X, Camera, Save, CheckCircle2, AlertCircle, LogOut, Loader2, Crown,
-  Bell, User as UserIcon, Award, History, Share2, Pencil,
+  Bell, User as UserIcon, Award, History, Share2, Pencil, Users,
 } from "lucide-react";
 import {
   IconBolt, IconFlame, IconCoin, IconTarget, IconSchool, IconLocation, IconPen, IconHeart, IconEye, IconClock,
@@ -17,6 +17,9 @@ import { createClient } from "@/lib/supabase/client";
 import { validateNicknameFormat, defaultNicknameFromFullName, NICKNAME_MAX_LENGTH } from "@/lib/nickname";
 import { getLevelProgress, levelFromXp } from "@/lib/gamification/levels";
 import { rankFromLevel } from "@/lib/gamification/ranks";
+import type { PlayerProfileView, XpHistoryEntryView } from "@/lib/gamification/client-types";
+import ProfileHero, { type HeroSocial } from "@/components/profile/ProfileHero";
+import SocialProofStrip from "@/components/profile/SocialProofStrip";
 import { RankChip } from "@/components/gamification/RankChip";
 import { BadgeIcon } from "@/components/gamification/BadgeIcon";
 import UserAvatar from "@/components/arena/UserAvatar";
@@ -106,6 +109,10 @@ export default function MuridProfilePage() {
   const [nicknameHistory, setNicknameHistory] = useState<NicknameHistoryRow[]>([]);
   const [savingNickname, setSavingNickname] = useState(false);
   const [nicknameError, setNicknameError] = useState<string | null>(null);
+  const [social, setSocial] = useState<HeroSocial | null>(null);
+  const [playerProfile, setPlayerProfile] = useState<PlayerProfileView | null>(null);
+  const [xpHistory, setXpHistory] = useState<XpHistoryEntryView[]>([]);
+  const [karyaFilter, setKaryaFilter] = useState("SEMUA");
   const supabase = createClient();
 
   useEffect(() => {
@@ -118,7 +125,14 @@ export default function MuridProfilePage() {
         ]);
         if (meRes.ok) {
           const meData = await meRes.json();
-          setUser(meData.user || meData);
+          const me = meData.user || meData;
+          setUser(me);
+          // Statistik sosial (pengikut/mengikuti) — best-effort; bila tabel
+          // Follow belum dimigrasi, respon 500 diabaikan dan UI tetap hidup.
+          try {
+            const socRes = await fetch(`/api/user/profile/${me.id}/social`);
+            if (socRes.ok) setSocial(await socRes.json());
+          } catch {}
         }
         if (karyaRes.ok) {
           const kData = await karyaRes.json();
@@ -135,6 +149,17 @@ export default function MuridProfilePage() {
       }
     }
     load();
+  }, []);
+
+  // Data pemain + aktivitas (sheet kiri/kanan) — dekoratif, best-effort.
+  useEffect(() => {
+    Promise.all([
+      fetch("/api/player/profile").then(r => r.ok ? r.json() : null),
+      fetch("/api/player/xp/history?limit=5").then(r => r.ok ? r.json() : null),
+    ]).then(([pp, xh]) => {
+      if (pp?.profile) setPlayerProfile(pp.profile);
+      if (xh?.entries) setXpHistory(xh.entries);
+    }).catch(() => {});
   }, []);
 
   const [settingsForm, setSettingsForm] = useState({ fullName: "", school: "", city: "", province: "", grade: "", noAbsen: "", bio: "" });
@@ -273,91 +298,54 @@ export default function MuridProfilePage() {
     <div className="max-w-3xl mx-auto">
       <style>{`
         @keyframes profile-flame{0%,100%{transform:scale(1) rotate(-2deg)}50%{transform:scale(1.12) rotate(2deg)}}
-        @keyframes profile-ring{0%,100%{box-shadow:0 0 0 0 rgba(255,255,255,.45)}50%{box-shadow:0 0 0 8px rgba(255,255,255,0)}}
-        @keyframes profile-shine{0%{transform:translateX(-120%) rotate(20deg)}100%{transform:translateX(220%) rotate(20deg)}}
         @keyframes profile-badge-pop{0%{transform:scale(0)}70%{transform:scale(1.15)}100%{transform:scale(1)}}
         .profile-flame-live{animation:profile-flame 1.1s ease-in-out infinite}
-        .profile-avatar-ring{animation:profile-ring 2.2s ease-in-out infinite}
         .profile-badge-unlocked{animation:profile-badge-pop .4s ease}
       `}</style>
 
-      {/* Hero — gradasi ungu tua tetap (bukan warna liga) supaya kontras teks
-          selalu tinggi; liga Perak dulu memakai abu-abu datar sebagai LATAR
-          PENUH, jadi tulisan putih nyaris tak kebaca. Warna liga sekarang
-          cuma aksen kecil (chip + ring avatar). */}
-      <div className="relative overflow-hidden rounded-[24px] p-6 md:p-8 text-white mb-6 shadow-2xl" style={{ background: "linear-gradient(135deg, #1B1035 0%, #3B1878 55%, #6D28D9 100%)" }}>
-        <div className="absolute top-0 right-0 w-72 h-72 rounded-full -translate-y-1/3 translate-x-1/3 pointer-events-none" style={{ background: "radial-gradient(circle, rgba(168,85,247,0.35), transparent 70%)" }} />
-        <div className="absolute bottom-0 left-0 w-56 h-56 rounded-full translate-y-1/3 -translate-x-1/3 pointer-events-none" style={{ background: "radial-gradient(circle, rgba(236,72,153,0.18), transparent 70%)" }} />
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-0 left-0 w-1/4 h-[250%] bg-white/10" style={{ animation: "profile-shine 3.5s ease-in-out infinite", transform: "skewX(-20deg)" }} />
-        </div>
-        <div className="relative z-10">
-          <div className="flex items-start justify-between">
-            <div className="flex items-center gap-4">
-              {/* Bingkai kosmetik menggantikan ring liga supaya keduanya tidak
-                  bertumpuk; tanpa bingkai, tampilannya persis seperti semula. */}
-              <UserAvatar
-                size={80}
-                avatar={user.avatar}
-                frame={user.equippedFrame}
-                initials={initials(displayNickname)}
-                gradient=""
-                textClassName="text-3xl"
-                wrapperClassName="profile-avatar-ring rounded-full"
-                className={`bg-white/10 backdrop-blur border-4 border-white/20 shadow-lg ${user.equippedFrame ? "" : "ring-4"}`}
-              />
-              <div>
-                <h1 className="text-2xl font-bold">
-                  <UserName
-                    name={displayNickname}
-                    color={user.equippedNameColor}
-                    badge={user.equippedBadge}
-                    onDark
-                    badgeSize={20}
-                  />
-                </h1>
-                {user.nickname && <p className="text-sm text-white/60">{user.fullName}</p>}
-                {meta?.gelar && <p className="text-sm text-amber-300 font-semibold mt-1">{meta.gelar}</p>}
-                <div className="flex flex-wrap gap-2 mt-2">
-                  <RankChip rank={playerRank} size={16} />
-                </div>
-              </div>
-            </div>
-            <button onClick={openSettings} className="bg-white/10 hover:bg-white/20 backdrop-blur rounded-xl p-2.5 transition-all border border-white/10">
-              <Settings size={20} />
-            </button>
-          </div>
+      {/* PLAYER CARD — hero premium: identitas (avatar + nama + gelar) di
+          kiri, rank crest BESAR di kanan, XP bar + aksi di bawah. */}
+      <ProfileHero
+        persona={{
+          id: user.id,
+          displayName: displayNickname,
+          fullName: user.fullName,
+          nickname: user.nickname,
+          avatar: user.avatar,
+          equippedFrame: user.equippedFrame,
+          equippedNameColor: user.equippedNameColor,
+          equippedBadge: user.equippedBadge,
+          bio: user.bio ?? null,
+          level: playerLevel,
+          xp: user.xp || 0,
+          levelProgress,
+          streak: user.streak ?? 0,
+          gelar: meta?.gelar ?? null,
+          memberNumber: meta?.memberNumber ?? null,
+        }}
+        rank={playerRank}
+        social={social}
+        isOwn
+        onEditProfile={openSettings}
+      />
 
-          {/* Level progress bar — jarak ke level berikutnya selalu terlihat */}
-          <div className="mt-5">
-            <div className="flex items-center justify-between text-xs font-semibold mb-1.5">
-              <span className="bg-white/10 backdrop-blur rounded-full px-2.5 py-0.5 border border-white/10">Level {user.level}</span>
-              <span className="text-white/60">{levelProgress.current} / {levelProgress.needed} XP menuju Level {playerLevel + 1}</span>
-            </div>
-            <div className="h-3 bg-black/20 rounded-full overflow-hidden">
-              <div
-                className="h-full bg-gradient-to-r from-amber-300 to-amber-500 rounded-full transition-all duration-700 ease-out"
-                style={{ width: `${levelProgress.pct * 100}%` }}
-              />
-            </div>
-          </div>
-
-          <div className="flex flex-wrap gap-3 mt-5">
-            <div className={`flex items-center gap-2 backdrop-blur rounded-2xl pl-2 pr-3.5 py-1.5 text-sm font-bold border border-white/10 ${streakLive ? "bg-orange-400/20" : "bg-white/5"}`}>
-              <span className={`w-6 h-6 rounded-lg bg-orange-400/20 flex items-center justify-center text-orange-300 ${streakLive ? "profile-flame-live" : ""}`}><IconFlame size={13} /></span> {user.streak || 0}
-            </div>
-            <div className="flex items-center gap-2 bg-white/5 backdrop-blur rounded-2xl pl-2 pr-3.5 py-1.5 text-sm font-bold border border-white/10">
-              <span className="w-6 h-6 rounded-lg bg-amber-400/20 flex items-center justify-center text-amber-300"><IconBolt size={13} /></span> {user.xp?.toLocaleString() || 0}
-            </div>
-            <div className="flex items-center gap-2 bg-white/5 backdrop-blur rounded-2xl pl-2 pr-3.5 py-1.5 text-sm font-bold border border-white/10">
-              <span className="w-6 h-6 rounded-lg bg-yellow-400/20 flex items-center justify-center text-yellow-300"><IconCoin size={13} /></span> {user.coins || 0}
-            </div>
-            <div className="flex items-center gap-2 bg-white/5 backdrop-blur rounded-2xl pl-2 pr-3.5 py-1.5 text-sm font-bold border border-white/10">
-              <span className="w-6 h-6 rounded-lg bg-rose-400/20 flex items-center justify-center text-rose-300"><IconHeart size={13} /></span> {user.totalLikes || 0}
-            </div>
-          </div>
-        </div>
-      </div>
+      {/* Social proof strip — statistik ringkas di atas konten */}
+      <section
+        className="mb-6 rounded-[24px] p-4 sm:p-5 shadow-lg"
+        style={{ background: "linear-gradient(140deg, #141230 0%, #231a52 60%, #34166e 100%)" }}
+      >
+        <SocialProofStrip
+          grid="grid-cols-3 md:grid-cols-6"
+          stats={[
+            { key: "level", label: "Level", value: playerLevel, icon: "trophy", href: "/arena/player" },
+            { key: "xp", label: "XP", value: user.xp || 0, icon: "sparkles", href: "/arena/player" },
+            { key: "koin", label: "Koin", value: user.coins || 0, icon: "sparkles", href: "/arena/player" },
+            { key: "streak", label: "Streak", value: user.streak || 0, icon: "flame", href: "/arena/player" },
+            { key: "karya", label: "Karya", value: meta?.stats.karyaCount ?? karyaList.length, icon: "book", href: "/murid/karya" },
+            { key: "apresiasi", label: "Apresiasi", value: user.totalLikes || 0, icon: "heart", href: "/murid/karya" },
+          ]}
+        />
+      </section>
 
       <div className="grid md:grid-cols-3 gap-6">
         {/* Left - Info + Badges */}
@@ -444,10 +432,110 @@ export default function MuridProfilePage() {
               </div>
             </div>
           )}
+
+          {/* Komunitas */}
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="text-sm font-bold text-gray-900 flex items-center gap-2">
+                <span className="w-6 h-6 rounded-lg bg-gradient-to-br from-sky-400 to-blue-600 flex items-center justify-center shadow-sm">
+                  <Users size={12} className="text-white" />
+                </span>
+                Komunitas
+              </h3>
+              <Link href="/arena/player/leaderboard" className="text-[11px] font-bold text-violet-600 hover:underline">
+                Papan Peringkat →
+              </Link>
+            </div>
+
+            {social ? (
+              <div className="space-y-3">
+                <div className="grid grid-cols-2 gap-2">
+                  <div className="rounded-xl bg-gray-50 border border-gray-100 p-3">
+                    <div className="flex -space-x-2 mb-1.5">
+                      {(social.followers ?? []).slice(0, 4).map(f => (
+                        <Link key={f.id} href={`/profile/${f.id}`} title={f.displayName}>
+                          <UserAvatar size={28} avatar={f.avatar} initials={f.displayName[0]} className="ring-2 ring-white" />
+                        </Link>
+                      ))}
+                      {social.followers?.length === 0 && <p className="text-[10px] text-gray-400">Belum ada</p>}
+                    </div>
+                    <p className="text-[11px] font-semibold text-gray-700">
+                      {social.followerCount} Pengikut
+                    </p>
+                  </div>
+                  <div className="rounded-xl bg-gray-50 border border-gray-100 p-3">
+                    <div className="flex -space-x-2 mb-1.5">
+                      {(social.following ?? []).slice(0, 4).map(f => (
+                        <Link key={f.id} href={`/profile/${f.id}`} title={f.displayName}>
+                          <UserAvatar size={28} avatar={f.avatar} initials={f.displayName[0]} className="ring-2 ring-white" />
+                        </Link>
+                      ))}
+                      {social.following?.length === 0 && <p className="text-[10px] text-gray-400">Belum ada</p>}
+                    </div>
+                    <p className="text-[11px] font-semibold text-gray-700">
+                      {social.followingCount} Mengikuti
+                    </p>
+                  </div>
+                </div>
+                {social.profileLikeCount > 0 && (
+                  <p className="text-[11px] text-rose-500 font-semibold flex items-center gap-1">
+                    <IconHeart size={11} /> Profilmu disukai {social.profileLikeCount} murid
+                  </p>
+                )}
+              </div>
+            ) : (
+              <p className="text-[11px] text-gray-400 leading-relaxed">
+                Ikuti murid lain dan temukan teman menulis. Fitur aktif setelah
+                migrasi tabel Follow dijalankan.
+              </p>
+            )}
+
+            {playerProfile && (
+              <div className="flex items-center justify-between mt-3 rounded-xl bg-violet-50 border border-violet-100 px-3 py-2">
+                <p className="text-[11px] font-semibold text-violet-700">
+                  {playerProfile.weeklyXp.toLocaleString("id-ID")} XP minggu ini
+                </p>
+                <span className="text-[10px] text-violet-400">{playerProfile.weeklyLabel}</span>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Right - Karya */}
         <div className="md:col-span-2 space-y-4">
+          {/* Aktivitas terbaru */}
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="text-sm font-bold text-gray-900 flex items-center gap-2">
+                <span className="w-6 h-6 rounded-lg bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center shadow-sm">
+                  <History size={12} className="text-white" />
+                </span>
+                Aktivitas
+              </h3>
+              <Link href="/arena/player/history?tab=xp" className="text-[11px] font-bold text-violet-600 hover:underline">
+                Riwayat XP →
+              </Link>
+            </div>
+
+            {xpHistory.length === 0 ? (
+              <p className="text-[11px] text-gray-400 text-center py-3">
+                Belum ada aktivitas. Ayo main jalur cerdas atau tulis karya!
+              </p>
+            ) : (
+              <div className="space-y-2">
+                {xpHistory.slice(0, 5).map(h => (
+                  <div key={h.id} className="flex items-center gap-2.5 text-xs">
+                    <span className="w-7 h-7 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center font-black shrink-0">
+                      +{h.amount}
+                    </span>
+                    <span className="text-gray-700 font-medium truncate">{h.sourceLabel}</span>
+                    <span className="ml-auto text-gray-400 shrink-0">{waktuLalu(h.createdAt)}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
               <span className="w-7 h-7 rounded-lg bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center shadow-sm">
@@ -461,6 +549,25 @@ export default function MuridProfilePage() {
             </Link>
           </div>
 
+          {/* Filter jenis karya */}
+          {karyaList.length > 0 && (
+            <div className="flex flex-wrap gap-1.5">
+              {["SEMUA", ...Array.from(new Set(karyaList.map(k => k.type)))].map(t => (
+                <button
+                  key={t}
+                  onClick={() => setKaryaFilter(t)}
+                  className={`px-3 py-1 rounded-full text-[11px] font-bold transition-all ${
+                    karyaFilter === t
+                      ? "bg-violet-600 text-white shadow-sm"
+                      : "bg-gray-100 text-gray-500 hover:bg-gray-200"
+                  }`}
+                >
+                  {t === "SEMUA" ? "Semua" : TYPE_META[t]?.label || t}
+                </button>
+              ))}
+            </div>
+          )}
+
           {karyaList.length === 0 ? (
             <div className="bg-gradient-to-br from-violet-50 to-purple-50 rounded-2xl p-8 text-center border border-violet-100">
               <IconPen size={32} className="mx-auto text-violet-300 mb-2" />
@@ -468,7 +575,7 @@ export default function MuridProfilePage() {
             </div>
           ) : (
             <div className="space-y-3">
-              {karyaList.map(k => {
+              {karyaList.filter(k => karyaFilter === "SEMUA" || k.type === karyaFilter).map(k => {
                 const meta = TYPE_META[k.type] || { label: k.type, badge: "bg-gray-100 text-gray-700" };
                 return (
                   <div key={k.id} className="bg-white rounded-2xl border border-gray-100 p-4 hover:shadow-sm transition-all">

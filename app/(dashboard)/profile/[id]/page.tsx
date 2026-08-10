@@ -12,14 +12,19 @@ import Link from "next/link";
 import type { LucideIcon } from "lucide-react";
 import UserAvatar from "@/components/arena/UserAvatar";
 import UserName from "@/components/arena/UserName";
-import { levelFromXp } from "@/lib/gamification/levels";
+import { levelFromXp, getLevelProgress } from "@/lib/gamification/levels";
 import { rankFromLevel } from "@/lib/gamification/ranks";
 import { RankChip } from "@/components/gamification/RankChip";
+import ProfileHero, { type HeroSocial } from "@/components/profile/ProfileHero";
+import SocialProofStrip from "@/components/profile/SocialProofStrip";
 
 interface ProfileUser {
   id: string;
   fullName: string;
+  nickname?: string | null;
+  displayName?: string | null;
   avatar: string | null;
+  bio?: string | null;
   equippedFrame?: string | null;
   equippedNameColor?: string | null;
   equippedBadge?: string | null;
@@ -47,6 +52,7 @@ interface ProfileUser {
     totalMateri: number;
     totalSold: number;
     totalDownloads: number;
+    totalLikes?: number;
   };
 }
 
@@ -63,6 +69,41 @@ export default function ProfilePage() {
   const [user, setUser] = useState<ProfileUser | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [social, setSocial] = useState<HeroSocial | null>(null);
+
+  useEffect(() => {
+    async function fetchSocial() {
+      try {
+        const res = await fetch(`/api/user/profile/${params.id}/social`);
+        if (res.ok) setSocial(await res.json());
+      } catch {}
+    }
+    fetchSocial();
+  }, [params.id]);
+
+  const toggleFollow = async () => {
+    try {
+      const res = await fetch(`/api/user/profile/${params.id}/follow`, { method: "POST" });
+      if (!res.ok) return null;
+      const data = await res.json();
+      setSocial(prev => prev ? { ...prev, isFollowing: data.following, followerCount: data.followerCount } : prev);
+      return { following: data.following };
+    } catch {
+      return null;
+    }
+  };
+
+  const toggleLike = async () => {
+    try {
+      const res = await fetch(`/api/user/profile/${params.id}/like`, { method: "POST" });
+      if (!res.ok) return null;
+      const data = await res.json();
+      setSocial(prev => prev ? { ...prev, isLiked: data.liked, profileLikeCount: data.profileLikeCount } : prev);
+      return { liked: data.liked };
+    } catch {
+      return null;
+    }
+  };
 
   useEffect(() => {
     async function fetchProfile() {
@@ -85,6 +126,7 @@ export default function ProfilePage() {
             totalMateri: data.stats?.totalMateri ?? 0,
             totalSold: data.stats?.totalSold ?? 0,
             totalDownloads: data.stats?.totalDownloads ?? 0,
+            totalLikes: data.stats?.totalLikes ?? 0,
           },
           works: data.works || [],
         });
@@ -124,21 +166,12 @@ export default function ProfilePage() {
 
   const initials = user.fullName.slice(0, 2).toUpperCase();
   const isGuru = user.role === "GURU";
-  const rank = rankFromLevel(levelFromXp(user.xp || 0));
-
-  // Gradasi hero tetap dalam (bukan pastel) apapun ligan­ya, senada dengan
-  // hero profil sendiri — supaya kontras teks putih selalu tinggi.
-  const heroGradient = isGuru
-    ? "linear-gradient(135deg, #042f2e 0%, #0f5c52 55%, #059669 100%)"
-    : "linear-gradient(135deg, #1B1035 0%, #3B1878 55%, #6D28D9 100%)";
-  const roleBadgeClass = isGuru ? "bg-emerald-500/90" : "bg-violet-500/90";
+  const playerLevel = levelFromXp(user.xp || 0);
+  const rank = rankFromLevel(playerLevel);
+  const levelProgress = getLevelProgress(user.xp || 0);
 
   return (
     <div className="max-w-3xl mx-auto">
-      <style>{`
-        @keyframes profile-shine{0%{transform:translateX(-120%) rotate(20deg)}100%{transform:translateX(220%) rotate(20deg)}}
-      `}</style>
-
       <button
         onClick={() => router.back()}
         className="w-9 h-9 rounded-xl bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-600 transition-colors mb-4"
@@ -146,113 +179,75 @@ export default function ProfilePage() {
         <ChevronLeft size={20} />
       </button>
 
-      {/* Hero — struktur & warna senada dengan halaman profil sendiri */}
-      <div className="relative overflow-hidden rounded-[24px] p-6 md:p-8 text-white mb-6 shadow-2xl" style={{ background: heroGradient }}>
-        <div className="absolute top-0 right-0 w-72 h-72 rounded-full -translate-y-1/3 translate-x-1/3 pointer-events-none" style={{ background: "radial-gradient(circle, rgba(255,255,255,0.18), transparent 70%)" }} />
-        <div className="absolute bottom-0 left-0 w-56 h-56 rounded-full translate-y-1/3 -translate-x-1/3 pointer-events-none" style={{ background: "radial-gradient(circle, rgba(255,255,255,0.1), transparent 70%)" }} />
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-0 left-0 w-1/4 h-[250%] bg-white/10" style={{ animation: "profile-shine 3.5s ease-in-out infinite", transform: "skewX(-20deg)" }} />
-        </div>
-
-        <div className="relative z-10">
-          <div className="flex items-center gap-4">
-            <div className="relative shrink-0">
-              <UserAvatar
-                size={80}
-                avatar={user.avatar}
-                frame={user.equippedFrame}
-                initials={initials}
-                gradient=""
-                textClassName="text-2xl"
-                className="bg-white/10 backdrop-blur border-4 border-white/20 shadow-lg"
-              />
-              {user.isFounder && (
-                <div className="absolute -top-1 -right-1 w-7 h-7 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-lg ring-2 ring-white/80">
-                  <Crown size={13} className="text-white" />
-                </div>
-              )}
-              {!user.isFounder && user.isPremium && (
-                <div className="absolute -top-1 -right-1 w-7 h-7 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center shadow-lg ring-2 ring-white/80">
-                  <Star size={13} className="text-white" />
-                </div>
-              )}
-            </div>
-
-            <div className="flex-1 min-w-0">
-              <h1 className="text-xl font-bold truncate">
-                <UserName
-                  name={user.fullName}
-                  color={user.equippedNameColor}
-                  badge={user.equippedBadge}
-                  onDark
-                  badgeSize={18}
-                />
-              </h1>
-              <div className="flex flex-wrap items-center gap-1.5 mt-1.5">
-                <span className={`${roleBadgeClass} backdrop-blur rounded-full px-2.5 py-1 text-[11px] font-bold flex items-center gap-1`}>
-                  <GraduationCap size={11} /> {isGuru ? "Guru" : "Murid"}
-                </span>
-                {!isGuru && (
-                  <RankChip rank={rank} size={14} />
-                )}
-                {user.isFounder && (
-                  <span className="text-[11px] px-2.5 py-1 rounded-full font-bold bg-amber-400/90 text-amber-950 flex items-center gap-1">
-                    <Crown size={11} /> Founder
-                  </span>
-                )}
-                {!user.isFounder && user.isPremium && (
-                  <span className="text-[11px] px-2.5 py-1 rounded-full font-bold bg-gradient-to-r from-blue-400 to-purple-400 flex items-center gap-1">
-                    <Star size={11} /> PRO
-                  </span>
-                )}
-                {!user.isFounder && !user.isPremium && (
-                  <span className="text-[11px] px-2.5 py-1 rounded-full font-bold bg-white/10 border border-white/10">
-                    Free
-                  </span>
-                )}
-              </div>
-            </div>
-          </div>
-
-          {user.profile?.bio && (
-            <p className="text-sm text-white/70 leading-relaxed mt-4">{user.profile.bio}</p>
-          )}
-
-          <div className="flex flex-wrap gap-2 mt-4">
+      {/* PLAYER CARD — hero publik (mode pengunjung): avatar kiri, rank crest
+          besar di kanan, tombol Ikuti / Suka, strip sosial. */}
+      <ProfileHero
+        persona={{
+          id: user.id,
+          displayName: user.displayName || user.fullName,
+          fullName: user.fullName,
+          nickname: user.nickname,
+          avatar: user.avatar,
+          equippedFrame: user.equippedFrame,
+          equippedNameColor: user.equippedNameColor,
+          equippedBadge: user.equippedBadge,
+          bio: user.bio || user.profile?.bio || null,
+          level: playerLevel,
+          xp: user.xp || 0,
+          levelProgress,
+          streak: user.streak ?? 0,
+        }}
+        rank={rank}
+        social={social}
+        isOwn={false}
+        extraChips={
+          <>
+            <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-bold ${isGuru ? "bg-emerald-500/25 text-emerald-200 border border-emerald-300/25" : "bg-violet-500/25 text-violet-200 border border-violet-300/25"}`}>
+              <GraduationCap size={11} /> {isGuru ? "Guru" : "Murid"}
+            </span>
+            {user.isFounder && (
+              <span className="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-bold bg-amber-400/90 text-amber-950">
+                <Crown size={11} /> Founder
+              </span>
+            )}
+            {!user.isFounder && user.isPremium && (
+              <span className="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-bold bg-gradient-to-r from-blue-400 to-purple-400 text-white">
+                <Star size={11} /> PRO
+              </span>
+            )}
+            {!user.isFounder && !user.isPremium && (
+              <span className="rounded-full px-2.5 py-1 text-[11px] font-bold bg-white/10 border border-white/15 text-white/70">
+                Free
+              </span>
+            )}
             {user.profile?.school && (
-              <div className="flex items-center gap-1.5 bg-white/5 backdrop-blur rounded-full px-3 py-1.5 text-xs border border-white/10">
-                <School size={12} className="text-white/50" /> {user.profile.school}
-              </div>
+              <span className="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-semibold bg-white/5 border border-white/10 text-white/60">
+                <School size={11} /> {user.profile.school}
+              </span>
             )}
-            {user.profile?.subject && (
-              <div className="flex items-center gap-1.5 bg-white/5 backdrop-blur rounded-full px-3 py-1.5 text-xs border border-white/10">
-                <BookOpen size={12} className="text-white/50" /> {user.profile.subject}
-              </div>
-            )}
-            <div className="flex items-center gap-1.5 bg-white/5 backdrop-blur rounded-full px-3 py-1.5 text-xs border border-white/10">
-              <Calendar size={12} className="text-white/50" />
-              {user.joinedAt
-                ? `Bergabung ${new Date(user.joinedAt).toLocaleDateString("id-ID", { month: "long", year: "numeric" })}`
-                : "Bergabung baru-baru ini"}
-            </div>
-          </div>
+          </>
+        }
+        onFollowToggle={toggleFollow}
+        onLikeToggle={toggleLike}
+      />
 
-          <div className="flex flex-wrap gap-3 mt-5">
-            <div className="flex items-center gap-2 bg-white/5 backdrop-blur rounded-2xl pl-2 pr-3.5 py-1.5 text-sm font-bold border border-white/10">
-              <span className="w-6 h-6 rounded-lg bg-amber-400/20 flex items-center justify-center text-amber-300"><Zap size={13} /></span>
-              {user.isFounder ? "∞" : user.xp.toLocaleString()}
-            </div>
-            <div className="flex items-center gap-2 bg-white/5 backdrop-blur rounded-2xl pl-2 pr-3.5 py-1.5 text-sm font-bold border border-white/10">
-              <span className="w-6 h-6 rounded-lg bg-violet-400/20 flex items-center justify-center text-violet-200"><TrendingUp size={13} /></span>
-              Level {user.isFounder ? "∞" : user.level}
-            </div>
-            <div className="flex items-center gap-2 bg-white/5 backdrop-blur rounded-2xl pl-2 pr-3.5 py-1.5 text-sm font-bold border border-white/10">
-              <span className="w-6 h-6 rounded-lg bg-orange-400/20 flex items-center justify-center text-orange-300"><Flame size={13} /></span>
-              {user.isFounder ? "∞" : user.streak}
-            </div>
-          </div>
-        </div>
-      </div>
+      {/* Social proof strip — statistik ringkas di atas konten */}
+      <section
+        className="mb-6 rounded-[24px] p-4 sm:p-5 shadow-lg"
+        style={{ background: "linear-gradient(140deg, #141230 0%, #231a52 60%, #34166e 100%)" }}
+      >
+        <SocialProofStrip
+          grid="grid-cols-3 md:grid-cols-6"
+          stats={[
+            { key: "level", label: "Level", value: playerLevel, icon: "trophy" },
+            { key: "xp", label: "XP", value: user.xp || 0, icon: "sparkles" },
+            { key: "streak", label: "Streak", value: user.streak || 0, icon: "flame" },
+            { key: "karya", label: "Karya", value: user.stats.totalKarya, icon: "book" },
+            { key: "apresiasi", label: "Apresiasi", value: user.stats.totalLikes ?? 0, icon: "heart" },
+            ...(social ? [{ key: "pengikut", label: "Pengikut", value: social.followerCount, icon: "users" as const }] : []),
+          ]}
+        />
+      </section>
 
       {/* Stats grid */}
       <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 mb-6">
@@ -283,7 +278,7 @@ export default function ProfilePage() {
           murid, guru and founder, unlike /murid/karya/[id] which bounces
           teachers. */}
       {user.role === "MURID" && (
-        <div className="mb-6">
+        <div className="mb-6" id="karya">
           <div className="flex items-center gap-2 mb-3">
             <span className="w-7 h-7 rounded-lg bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center shadow-sm">
               <PenLine size={15} className="text-white" />
