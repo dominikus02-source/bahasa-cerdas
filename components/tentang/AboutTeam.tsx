@@ -28,9 +28,9 @@ const founders = [
 const advisors = [
   {
     initial: "MG",
-    name: "Melany K. Gigir, S.Pd., M.S.",
+    name: "Melany Kusumawati Gigir, S.Pd., M.S.",
     role: "Dewan Penasihat",
-    desc: "Head of School — memberikan perspektif kepemimpinan sekolah terhadap arah dan praktik BahasaCerdas di lapangan.",
+    desc: "Praktisi Pendidikan — memberikan perspektif praktik pendidikan terhadap arah dan penggunaan BahasaCerdas di lapangan.",
   },
   {
     initial: "BW",
