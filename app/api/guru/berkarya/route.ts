@@ -59,7 +59,11 @@ export async function GET(req: NextRequest) {
     //    di DB (migrasi manual belum di-apply). Urutan publishedAt DESC.
     const rows = await db.artikel.findMany({
       where,
-      orderBy: [{ publishedAt: "desc" }, { createdAt: "desc" }],
+      // NULLS LAST penting: artikel seed tanpa publishedAt (isPublished=true,
+      // publishedAt=NULL) TIDAK boleh menduduki urutan teratas feed — di
+      // PostgreSQL DESC default menaruh NULL terlebih dahulu. Karya yang punya
+      // tanggal terbit (primera urut benar) tampil lebih dulu.
+      orderBy: [{ publishedAt: { sort: "desc", nulls: "last" } }, { createdAt: "desc" }],
       ...(page ? { skip: (page - 1) * limit, take: limit } : { take: limit }),
       select: {
         id: true,

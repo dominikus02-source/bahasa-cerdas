@@ -102,7 +102,7 @@ ok("K: PUISI filter exact 'PUISI'", /articleType: "PUISI"/.test(api));
 ok("K: ARTIKEL filter = null atau non-PUISI (mematikan bug exact-match)", /OR: \[\{ articleType: null \}, \{ articleType: \{ not: "PUISI" \} \}\]/.test(api));
 
 // ── J. Data existing utuh ──────────────────────────────────────────────────
-ok("J: API tidak menghapus/mengubah query existing (take: limit, orderBy publishedAt DESC)", /take: limit/.test(api) && /orderBy: \[\{ publishedAt: "desc" \}/.test(api));
+ok("J: API tidak menghapus/mengubah query existing (take: limit, orderBy publishedAt DESC NULLS LAST)", /take: limit/.test(api) && /publishedAt: \{ sort: "desc", nulls: "last" \}/.test(api));
 ok("J: Karya sendiri tetap tampil di feed (tanpa excludeMe)", !/excludeMe/.test(api) && !/authorId:\s*\{\s*not:\s*user\.id/.test(api));
 ok("J: API tetap role-gated", /isTeacherOrStudent\(user\)/.test(api));
 ok("J: XP meta tetap dari GURU_XP_NILAI", /GURU_XP_NILAI\.GURU_ARTIKEL/.test(api) && /GURU_XP_NILAI\.GURU_PUISI/.test(api));

@@ -31,7 +31,7 @@ ok("TEST 2: API mengembalikan currentUserId (untuk penanda Karya Anda)", /curren
 ok("TEST 3: Artikel milik current user tampil (authorId TIDAK di-not-kan)", !/authorId:\s*\{\s*not:\s*user\.id/.test(api));
 
 // ── 2. Urutan & batasan feed ───────────────────────────────────────────────
-ok("TEST 4: Urutan karya TERBARU dulu (publishedAt DESC)", /orderBy: \[\{ publishedAt: "desc" \}, \{ createdAt: "desc" \}\]/.test(api));
+ok("TEST 4: Urutan karya TERBARU dulu (publishedAt DESC, NULLS LAST — artikel tanpa tanggal terbit tidak menempel di atas)", /publishedAt: \{ sort: "desc", nulls: "last" \}/.test(api));
 ok("TEST 5: Popularitas TIDAK membatalkan kebaruan (tanpa orderBy readCount)", !/orderBy:\s*\[\{\s*readCount/.test(api) && !/orderBy:\s*\[\{\s*views/.test(api));
 ok("TEST 6: Feed dibatasi (take: limit) — bounded, tanpa N+1", /take: limit/.test(api));
 ok("TEST 7: Hanya karya terbit (isPublished: true)", /isPublished: true/.test(api));
@@ -86,7 +86,7 @@ const editorRoute = read("app/api/guru/artikel/route.ts");
 ok("RA-1: Publikasi guru menandai isPublished: true", /isPublished: true/.test(editorRoute));
 ok("RA-2: Publikasi menandai publishedAt (dasar urutan feed)", /publishedAt/.test(editorRoute));
 ok("RA-3: Feed tidak menyaring authorId = diri sendiri (karya Guru A masuk)", !/authorId:\s*\{\s*not:\s*user\.id/.test(api));
-ok("RA-4: Feed menaruh karya baru (publishedAt terbaru) di posisi teratas", /orderBy: \[\{ publishedAt: "desc" \}/.test(api));
+ok("RA-4: Feed menaruh karya baru (publishedAt terbaru) di posisi teratas (NULLS LAST)", /publishedAt: \{ sort: "desc", nulls: "last" \}/.test(api));
 ok("RA-5: UI menandai karya Guru A sebagai Karya Anda", /karyaAnda/.test(berkaryaUi) && /a\.author\.id === currentUserId/.test(berkaryaUi));
 ok("RA-6: Bounded feed — take 6 dari frontend, default 8 server", /take: limit/.test(api) && /limit=6/.test(berkaryaUi));
 

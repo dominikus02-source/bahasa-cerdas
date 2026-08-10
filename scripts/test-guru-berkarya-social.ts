@@ -98,7 +98,7 @@ ok("TEST 43: UI memvalidasi draft (trim + maxLength 1000) sebelum kirim", /maxLe
 // ── 9. REGRESI 2.0 (WAJIB TETAP) ───────────────────────────────────────────
 ok("TEST 44: Regresi — karya sendiri tetap tampil (tanpa excludeMe) + badge Karya Anda", !/excludeMe/.test(feedApi) && /karyaAnda/.test(berkaryaUi) && /✨ Karya Anda/.test(berkaryaUi));
 ok("TEST 45: Regresi — ShareButton tetap ada di footer", /ShareButton/.test(berkaryaUi) && /url=\{`\/artikel\/\$\{a\.slug\}`\}/.test(berkaryaUi));
-ok("TEST 46: Regresi — urutan feed tetap publishedAt DESC", /orderBy: \[\{ publishedAt: "desc" \}, \{ createdAt: "desc" \}\]/.test(feedApi));
+ok("TEST 46: Regresi — urutan feed tetap publishedAt DESC (NULLS LAST agar karya tanpa tanggal terbit tidak menduduki feed)", /publishedAt: \{ sort: "desc", nulls: "last" \}/.test(feedApi));
 ok("TEST 47: Regresi — Feed dan editor guru TIDAK mengekspos jawaban/kunci apa pun", !/correctAnswer|jawaban/.test(feedApi) && !/correctAnswer|jawaban/.test(likeApi) && !/correctAnswer|jawaban/.test(commentsApi));
 
 // ── 10. ROOT CAUSE FIX — FEED RESILIENCY (ERROR ≠ EMPTY) ─────────────────────

@@ -24,7 +24,7 @@ const leaderboardApi = read("app/api/guru/leaderboard/route.ts");
 const rankCard = read("components/guru/GuruLeaderboardCard.tsx");
 
 // ── 1. Urutan karya terbaru (publishedAt DESC) ──────────────────────────────
-ok("API mengurutkan karya publishedAt menurun", /orderBy: \[\{ publishedAt: "desc" \}, \{ createdAt: "desc" \}\]/.test(api));
+ok("API mengurutkan karya publishedAt menurun (NULLS LAST — tanpa inflasi NULL bertanggal NULL)", /publishedAt: \{ sort: "desc", nulls: "last" \}/.test(api));
 
 // ── 2. Draft tidak tampil (hanya karya terbit) ──────────────────────────────
 ok("API hanya menampilkan karya terbit (isPublished)", /isPublished: true/.test(api));
