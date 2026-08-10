@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Flame, Sparkles, Settings, Heart, UserPlus, UserCheck, PenLine,
 } from "lucide-react";
@@ -71,11 +71,21 @@ export default function ProfileHero({
 }) {
   const [following, setFollowing] = useState<boolean | null>(social?.isFollowing ?? null);
   const [liked, setLiked] = useState<boolean | null>(social?.isLiked ?? null);
+  const [likeCount, setLikeCount] = useState<number>(social?.profileLikeCount ?? 0);
   const [busyFollow, setBusyFollow] = useState(false);
   const [busyLike, setBusyLike] = useState(false);
+  const busyFollowRef = useRef(false);
+  const busyLikeRef = useRef(false);
 
-  // Bila sosial data datang belakangan (fetch async), sinkronkan state.
-  const socialFollowerCount = social?.followerCount ?? 0;
+  // Sinkronkan state saat data sosial datang belakangan (fetch async terpisah
+  // dari fetch profil). Hanya saat idle — toggle yang sedang berjalan (optimistic)
+  // tidak diganggu, supaya tidak memantulkan state lama ke UI.
+  useEffect(() => {
+    if (busyFollowRef.current || busyLikeRef.current) return;
+    setFollowing(social?.isFollowing ?? null);
+    setLiked(social?.isLiked ?? null);
+    setLikeCount(social?.profileLikeCount ?? 0);
+  }, [social]);
 
   const meta = RANK_META[rank];
   const rankColor = meta?.color ?? "#94a3b8";
@@ -85,6 +95,7 @@ export default function ProfileHero({
   const handleFollow = async () => {
     if (!onFollowToggle || busyFollow) return;
     setBusyFollow(true);
+    busyFollowRef.current = true;
     // Optimistic UI.
     const prev = following;
     setFollowing(!following);
@@ -95,21 +106,33 @@ export default function ProfileHero({
       setFollowing(prev);
     } finally {
       setBusyFollow(false);
+      busyFollowRef.current = false;
     }
   };
 
   const handleLike = async () => {
-    if (!onLikeToggle || busyLike) return;
+    if (!onLikeToggle || busyLike || liked === null) return;
     setBusyLike(true);
-    const prev = liked;
-    setLiked(!liked);
+    busyLikeRef.current = true;
+    const prevLiked = liked;
+    const prevCount = likeCount;
+    const nextLiked = !prevLiked;
+    setLiked(nextLiked);
+    setLikeCount(Math.max(0, prevCount + (nextLiked ? 1 : -1)));
     try {
       const res = await onLikeToggle();
-      if (res) setLiked(res.liked);
+      if (res) {
+        setLiked(res.liked);
+        const serverCount = (res as { profileLikeCount?: number }).profileLikeCount;
+        if (typeof serverCount === "number") setLikeCount(serverCount);
+        else setLikeCount(res.liked === nextLiked ? prevCount + (nextLiked ? 1 : -1) : prevCount);
+      }
     } catch {
-      setLiked(prev);
+      setLiked(prevLiked);
+      setLikeCount(prevCount);
     } finally {
       setBusyLike(false);
+      busyLikeRef.current = false;
     }
   };
 
@@ -292,7 +315,7 @@ export default function ProfileHero({
                 }`}
               >
                 <Heart size={16} className={liked ? "fill-rose-400 text-rose-400" : ""} />
-                {socialFollowerCount + (liked || social?.isLiked ? 0 : 0) >= 0 ? (liked ? "Disukai" : "Suka") : "Suka"}
+                {liked ? "Disukai" : "Suka"} · {likeCount.toLocaleString("id-ID")}
               </button>
             </>
           )}

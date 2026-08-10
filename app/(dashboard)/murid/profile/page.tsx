@@ -17,9 +17,10 @@ import { createClient } from "@/lib/supabase/client";
 import { validateNicknameFormat, defaultNicknameFromFullName, NICKNAME_MAX_LENGTH } from "@/lib/nickname";
 import { getLevelProgress, levelFromXp } from "@/lib/gamification/levels";
 import { rankFromLevel } from "@/lib/gamification/ranks";
-import type { PlayerProfileView, XpHistoryEntryView } from "@/lib/gamification/client-types";
+import type { PlayerProfileView, XpHistoryEntryView, BadgeView } from "@/lib/gamification/client-types";
 import ProfileHero, { type HeroSocial } from "@/components/profile/ProfileHero";
 import SocialProofStrip from "@/components/profile/SocialProofStrip";
+import AchievementShowcase from "@/components/profile/AchievementShowcase";
 import { RankChip } from "@/components/gamification/RankChip";
 import { BadgeIcon } from "@/components/gamification/BadgeIcon";
 import UserAvatar from "@/components/arena/UserAvatar";
@@ -112,6 +113,7 @@ export default function MuridProfilePage() {
   const [social, setSocial] = useState<HeroSocial | null>(null);
   const [playerProfile, setPlayerProfile] = useState<PlayerProfileView | null>(null);
   const [xpHistory, setXpHistory] = useState<XpHistoryEntryView[]>([]);
+  const [showcaseBadges, setShowcaseBadges] = useState<BadgeView[] | null>(null);
   const [karyaFilter, setKaryaFilter] = useState("SEMUA");
   const supabase = createClient();
 
@@ -151,14 +153,16 @@ export default function MuridProfilePage() {
     load();
   }, []);
 
-  // Data pemain + aktivitas (sheet kiri/kanan) — dekoratif, best-effort.
+  // Data pemain + aktivitas (sheet kiri/kanan) + lencana showcase — dekoratif, best-effort.
   useEffect(() => {
     Promise.all([
       fetch("/api/player/profile").then(r => r.ok ? r.json() : null),
       fetch("/api/player/xp/history?limit=5").then(r => r.ok ? r.json() : null),
-    ]).then(([pp, xh]) => {
+      fetch("/api/player/badges").then(r => r.ok ? r.json() : null),
+    ]).then(([pp, xh, bd]) => {
       if (pp?.profile) setPlayerProfile(pp.profile);
       if (xh?.entries) setXpHistory(xh.entries);
+      if (bd?.badges) setShowcaseBadges(bd.badges);
     }).catch(() => {});
   }, []);
 
@@ -346,6 +350,35 @@ export default function MuridProfilePage() {
           ]}
         />
       </section>
+
+      {/* Pencapaian — showcase lencana asli (dari /api/player/badges, best-effort).
+          Muncul hanya jika data berhasil dimuat; kosong = ajakan membuka lencana. */}
+      {showcaseBadges !== null && (
+        <section
+          className="mb-6 rounded-[24px] p-4 sm:p-5 shadow-lg"
+          style={{ background: "linear-gradient(140deg, #141230 0%, #231a52 60%, #34166e 100%)" }}
+        >
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-sm font-bold text-white flex items-center gap-2">
+              <span className="w-6 h-6 rounded-lg bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-sm">
+                <Award size={13} className="text-white" />
+              </span>
+              Pencapaian
+            </h3>
+            <Link href="/arena/player/badges" className="text-[11px] font-semibold text-white/60 hover:text-white transition-colors">
+              Lihat Semua →
+            </Link>
+          </div>
+          {showcaseBadges.some((b) => b.unlocked) ? (
+            <AchievementShowcase badges={showcaseBadges} max={9} />
+          ) : (
+            <p className="text-[13px] text-white/55 leading-relaxed">
+              Belum ada lencana. Selesaikan latihan di Jalur Cerdas, Ikuti tantangan di Arena,
+              dan kumpulkan karya untuk membuka lencana pertamamu.
+            </p>
+          )}
+        </section>
+      )}
 
       <div className="grid md:grid-cols-3 gap-6">
         {/* Left - Info + Badges */}
