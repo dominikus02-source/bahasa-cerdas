@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import {
-  Flame, Sparkles, Settings, Heart, UserPlus, UserCheck, PenLine,
+  Flame, Sparkles, Settings, Heart, UserPlus, UserCheck, PenLine, Files,
 } from "lucide-react";
 import type { PlayerRank } from "@prisma/client";
 import CosmicBackground from "@/components/profile/CosmicBackground";
@@ -42,12 +42,11 @@ export interface HeroSocial {
 }
 
 /**
- * ProfileHero — PLAYER CARD (identitas + rank).
- *
- * Komposisi: AVATAR kiri ⟷ RANK CREST besar di kanan (desktop), stack
- * teratur di mobile (rank → avatar+nama → level/XP → aksi → statistik).
- * Mode "self" = Edit Profil; mode "peer" = Ikuti / Suka (optimistic, toggle
- * idempoten via API). Support reducer-motion di CosmicBackground.
+ * ProfileHero — PLAYER CARD premium (identitas + rank crest sebagai objek
+ * visual utama). Komposisi: AVATAR + identitas di kiri, RANK CREST besar di
+ * kanan (desktop; 200px discale responsif 130/165/200px via .bc-crest-scale),
+ * XP bar ungu→emas, aksi sosial, dan kartu Total Like (redup) bila data ada.
+ * "self" = Edit Profil; "peer" = Ikuti / Suka (optimistic, idempoten).
  */
 export default function ProfileHero({
   persona,
@@ -58,6 +57,7 @@ export default function ProfileHero({
   onEditProfile,
   onFollowToggle,
   onLikeToggle,
+  likeSummary,
 }: {
   persona: HeroPersona;
   rank: PlayerRank;
@@ -68,6 +68,8 @@ export default function ProfileHero({
   onEditProfile?: () => void;
   onFollowToggle?: () => Promise<{ following: boolean } | null>;
   onLikeToggle?: () => Promise<{ liked: boolean } | null>;
+  /** Ringkasan like nyata (total + jumlah karya) untuk kartu Total Like. */
+  likeSummary?: { totalLikes: number; karyaCount: number } | null;
 }) {
   const [following, setFollowing] = useState<boolean | null>(social?.isFollowing ?? null);
   const [liked, setLiked] = useState<boolean | null>(social?.isLiked ?? null);
@@ -146,41 +148,60 @@ export default function ProfileHero({
   return (
     <section
       aria-label="Identitas pemain"
-      className="relative overflow-hidden rounded-[24px] text-white mb-6 shadow-2xl"
+      className="relative overflow-hidden rounded-[24px] text-white mb-6 shadow-2xl bc-profile-workspace"
       style={{
-        background: "linear-gradient(140deg, #0B1026 0%, #171241 45%, #2E1065 78%, #4C1D95 100%)",
+        background:
+          "linear-gradient(140deg, #0B1026 0%, #171241 40%, #2E1065 76%, #4C1D95 100%)",
       }}
     >
+      <style>{`
+        /* Crest rank responsif: dirender 200px, discale ke 130/165 di layar kecil */
+        .bc-crest-scale { transform: scale(.65); transform-origin: top center; }
+        @media (min-width: 640px) { .bc-crest-scale { transform: scale(.825); } }
+        @media (min-width: 1024px) { .bc-crest-scale { transform: scale(1); } }
+        @media (prefers-reduced-motion: reduce) { .bc-crest-scale { transition: none; } }
+      `}</style>
+
       <CosmicBackground />
 
-      {/* Cahaya di belakang rank (aura lembut) */}
+      {/* Cahaya di belakang crest (aura lembut) */}
       <div
         aria-hidden
         className="pointer-events-none absolute"
         style={{
           top: "50%",
-          right: "6%",
+          right: "5%",
           transform: "translateY(-50%)",
-          width: 260,
-          height: 260,
+          width: 300,
+          height: 300,
           borderRadius: "50%",
           background: `radial-gradient(circle, ${rankColor}33 0%, ${rankColor}14 45%, transparent 70%)`,
         }}
       />
 
-      <div className="relative z-10 p-6 md:p-8">
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+      <div className="relative z-10 p-6 md:p-8 lg:p-10">
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8 lg:gap-6">
           {/* KIRI: avatar + identitas */}
-          <div className="flex min-w-0 flex-1 items-center gap-4 md:gap-5">
+          <div className="flex min-w-0 flex-1 items-center gap-4 md:gap-6">
             <div className="relative shrink-0">
+              {/* Ring gradien di sekitar avatar */}
+              <div
+                aria-hidden
+                className="absolute -inset-1.5 rounded-full opacity-80"
+                style={{
+                  background:
+                    "conic-gradient(from 210deg, rgba(139,92,246,0.9), rgba(236,72,153,0.35), rgba(251,191,36,0.5), rgba(139,92,246,0.9))",
+                  filter: "blur(1px)",
+                }}
+              />
               <UserAvatar
-                size={96}
+                size={104}
                 avatar={persona.avatar}
                 frame={persona.equippedFrame}
                 initials={initials}
                 gradient=""
-                textClassName="text-3xl"
-                className="bg-white/10 backdrop-blur border-4 border-white/20 shadow-lg ring-4"
+                textClassName="text-4xl"
+                className="relative bg-white/10 backdrop-blur border-4 border-[#171241] shadow-lg ring-4 ring-white/15"
               />
               {/* Level badge di pojok avatar */}
               <span
@@ -193,9 +214,9 @@ export default function ProfileHero({
 
             <div className="min-w-0 flex-1">
               <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-white/40 mb-1">
-                Profil
+                Profil Pemain
               </p>
-              <h1 className="text-2xl md:text-[26px] font-extrabold leading-tight truncate">
+              <h1 className="text-2xl md:text-[28px] font-extrabold leading-tight truncate">
                 <UserName
                   name={persona.displayName}
                   color={persona.equippedNameColor}
@@ -207,7 +228,7 @@ export default function ProfileHero({
               {persona.nickname && persona.fullName && (
                 <p className="text-sm text-white/60 truncate">{persona.fullName}</p>
               )}
-              <div className="flex flex-wrap items-center gap-2 mt-2">
+              <div className="flex flex-wrap items-center gap-2 mt-2.5">
                 {extraChips}
                 <span className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-bold bg-white/10 border border-white/15 backdrop-blur">
                   <Sparkles size={11} className="text-amber-300" />
@@ -234,20 +255,24 @@ export default function ProfileHero({
             </div>
           </div>
 
-          {/* KANAN: rank crest BESAR (objek visual utama) */}
-          <div className="shrink-0 flex flex-col items-center gap-1 self-center md:self-auto">
-            <div
-              aria-label={`Rank ${meta?.label} — ${meta?.title}`}
-              role="img"
-              className="bc-cosmic-crest relative"
-              style={{ animation: "bc-cosmic-pulse 4s ease-in-out infinite" }}
-            >
-              <RankIcon rank={rank} size={168} glow className="drop-shadow-lg" priority />
+          {/* KANAN: rank crest BESAR — objek visual utama */}
+          <div className="shrink-0 flex flex-col items-center gap-1 self-start lg:self-center mx-auto lg:mx-0 pr-0 lg:pr-6">
+            <div className="bc-crest-scale h-[136px] w-[136px] sm:h-[174px] sm:w-[174px] lg:h-[210px] lg:w-[210px]">
+              <div
+                aria-label={`Rank ${meta?.label} — ${meta?.title}`}
+                role="img"
+                className="bc-cosmic-crest relative"
+                style={{ animation: "bc-cosmic-pulse 4s ease-in-out infinite" }}
+              >
+                <RankIcon rank={rank} size={210} glow className="drop-shadow-lg" priority />
+              </div>
             </div>
-            <p className="mt-1 text-lg font-black tracking-wide uppercase" style={{ color: rankColor }}>
+            <p className="mt-2 text-lg font-black tracking-wide uppercase" style={{ color: rankColor }}>
               {meta?.label}
             </p>
-            <p className="text-[11px] font-semibold text-white/70">Level {persona.level} · {meta?.title}</p>
+            <p className="text-[11px] font-semibold text-white/70">
+              Level {persona.level} · {meta?.title}
+            </p>
             {next && nextMeta && (
               <p className="text-[10px] text-white/40">
                 {nextMeta.label} di Level {Math.max(persona.level + 1, minLevelForRank(next))}
@@ -256,9 +281,9 @@ export default function ProfileHero({
           </div>
         </div>
 
-        {/* Level / XP progress */}
-        <div className="mt-6">
-          <div className="flex items-center justify-between text-xs font-semibold mb-1.5">
+        {/* Level / XP progress — ungu → emas */}
+        <div className="mt-8">
+          <div className="flex items-center justify-between text-xs font-semibold mb-2">
             <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 border border-white/10 px-2.5 py-1">
               <Sparkles size={11} className="text-amber-300" /> Level {persona.level}
             </span>
@@ -266,14 +291,28 @@ export default function ProfileHero({
               {persona.levelProgress.current.toLocaleString("id-ID")} / {persona.levelProgress.needed.toLocaleString("id-ID")} XP
             </span>
           </div>
-          <div className="h-3 bg-black/30 rounded-full overflow-hidden" role="progressbar" aria-valuenow={Math.round(persona.levelProgress.pct * 100)} aria-valuemin={0} aria-valuemax={100} aria-label={`Progres XP Level ${persona.level}`}>
+          <div
+            className="h-3.5 bg-black/40 rounded-full overflow-hidden ring-1 ring-white/10"
+            role="progressbar"
+            aria-valuenow={Math.round(persona.levelProgress.pct * 100)}
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-label={`Progres XP Level ${persona.level}`}
+          >
             <div
-              className="h-full bg-gradient-to-r from-amber-300 to-amber-500 rounded-full transition-all duration-700 ease-out"
-              style={{ width: `${Math.max(2, persona.levelProgress.pct * 100)}%` }}
+              className="h-full rounded-full transition-all duration-700 ease-out"
+              style={{
+                width: `${Math.max(2, persona.levelProgress.pct * 100)}%`,
+                background:
+                  "linear-gradient(90deg, #8B5CF6 0%, #D946EF 45%, #F0ABFC 68%, #FBBF24 100%)",
+                boxShadow: "0 0 14px rgba(217,70,239,0.55), 0 0 4px rgba(251,191,36,0.4)",
+              }}
             />
           </div>
-          <p className="text-[11px] text-white/45 mt-1.5">
+          <p className="text-[11px] text-white/45 mt-2">
             Tinggal {persona.levelProgress.remaining.toLocaleString("id-ID")} XP menuju Level {persona.level + 1}
+            <span className="mx-1.5 text-white/25">·</span>
+            <span className="text-white/60">{Math.round(persona.levelProgress.pct * 100)}%</span>
           </p>
         </div>
 
@@ -330,12 +369,38 @@ export default function ProfileHero({
           )}
         </div>
 
+        {/* Kartu Total Like (kaca) — hanya bila data seperti yang dikirim parent */}
+        {likeSummary && (
+          <div className="mt-5 inline-flex items-center gap-4 rounded-2xl bg-white/[0.07] border border-white/10 backdrop-blur px-5 py-3.5">
+            <span
+              className="flex h-10 w-10 items-center justify-center rounded-xl"
+              style={{ background: "radial-gradient(circle at 30% 30%, rgba(244,63,94,0.35), rgba(190,24,93,0.2))" }}
+            >
+              <Heart size={18} className="fill-rose-400 text-rose-300" />
+            </span>
+            <div>
+              <p className="text-xl font-black leading-none text-white">
+                {likeSummary.totalLikes.toLocaleString("id-ID")}
+              </p>
+              <p className="text-[11px] text-white/55 mt-1">
+                Total Like Diterima · dari {likeSummary.karyaCount.toLocaleString("id-ID")}{" "}
+                {likeSummary.karyaCount === 1 ? "karya" : "karya"}
+              </p>
+            </div>
+            {likeSummary.karyaCount > 0 && (
+              <span aria-hidden className="hidden sm:inline-flex items-center gap-1 text-[11px] text-white/45 ml-2">
+                <Files size={12} /> Karya
+              </span>
+            )}
+          </div>
+        )}
+
         {/* Bio / tagline */}
         {persona.bio ? (
-          <p className="mt-4 text-sm text-white/70 leading-relaxed max-w-2xl">{persona.bio}</p>
+          <p className="mt-5 text-sm text-white/70 leading-relaxed max-w-2xl">{persona.bio}</p>
         ) : (
           isOwn && (
-            <p className="mt-4 text-sm text-white/45 italic">
+            <p className="mt-5 text-sm text-white/45 italic">
               Tambahkan sedikit tentang dirimu.{" "}
               <button onClick={onEditProfile} className="underline text-white/70 hover:text-white">
                 Edit bio

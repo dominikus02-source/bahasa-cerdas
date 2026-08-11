@@ -75,7 +75,7 @@ check("W3: sinkron state saat social datang belakangan (idle-only)", /useEffect\
 // ---- W5: showcase lencana di /murid/profile ----
 check("W5: AchievementShowcase diimpor", /import AchievementShowcase from "@\/components\/profile\/AchievementShowcase"/.test(selfProfile));
 check("W5: badge dari /api/player/badges (data asli, bukan hardcode)", /fetch\("\/api\/player\/badges"\)/.test(selfProfile));
-check("W5: section Pencapaian dipasang setelah strip sosial", /Pencapaian/.test(selfProfile) && /AchievementShowcase badges=\{showcaseBadges\} max=\{9\}/.test(selfProfile));
+check("W5: section Pencapaian Terkini dipasang setelah HUD status", /Pencapaian Terkini/.test(selfProfile) && /AchievementShowcase badges=\{showcaseBadges\} max=\{6\}/.test(selfProfile));
 check("W5: empty state (bukan data palsu)", /showcaseBadges\.some\(\(b\) => b\.unlocked\)/.test(selfProfile));
 check("W5: komponen showcase dipertahankan", /b\.unlocked/.test(showcase) && /b\.rarity/.test(showcase));
 

@@ -3,34 +3,35 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import {
-  Plus, Settings, X, Camera, Save, CheckCircle2, AlertCircle, LogOut, Loader2, Crown,
-  Bell, User as UserIcon, Award, History, Share2, Pencil, Users,
+  Plus, Settings, X, Camera, Save, CheckCircle2, AlertCircle, LogOut, Loader2,
+  Award, History, Pencil,
 } from "lucide-react";
-import {
-  IconBolt, IconFlame, IconCoin, IconTarget, IconSchool, IconLocation, IconPen, IconHeart, IconEye, IconClock,
-} from "@/lib/icons";
-import { Modal } from "@/components/ui/modal";
+import { IconFlame, IconPen } from "@/lib/icons";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { AvatarPicker } from "@/components/murid/AvatarPicker";
 import { createClient } from "@/lib/supabase/client";
-import { validateNicknameFormat, defaultNicknameFromFullName, NICKNAME_MAX_LENGTH } from "@/lib/nickname";
+import { defaultNicknameFromFullName, NICKNAME_MAX_LENGTH } from "@/lib/nickname";
 import { getLevelProgress, levelFromXp } from "@/lib/gamification/levels";
 import { rankFromLevel } from "@/lib/gamification/ranks";
 import type { PlayerProfileView, XpHistoryEntryView, BadgeView } from "@/lib/gamification/client-types";
 import ProfileHero, { type HeroSocial } from "@/components/profile/ProfileHero";
-import SocialProofStrip from "@/components/profile/SocialProofStrip";
+import PlayerStatusBar from "@/components/profile/PlayerStatusBar";
+import ProfileMotto from "@/components/profile/ProfileMotto";
+import PlayerStatsGrid from "@/components/profile/PlayerStatsGrid";
+import ActivityFeed, { type FeedEvent } from "@/components/profile/ActivityFeed";
 import AchievementShowcase from "@/components/profile/AchievementShowcase";
-import { RankChip } from "@/components/gamification/RankChip";
+import FeaturedWorksGallery from "@/components/profile/FeaturedWorksGallery";
+import SocialConnections from "@/components/profile/SocialConnections";
+import ActivityChart, { type ChartDay } from "@/components/profile/ActivityChart";
 import { BadgeIcon } from "@/components/gamification/BadgeIcon";
-import UserAvatar from "@/components/arena/UserAvatar";
-import UserName from "@/components/arena/UserName";
 
 interface UserData {
   id: string; fullName: string; nickname?: string | null; xp: number; level: number; streak: number;
   league: string; avatar?: string; coins: number; totalLikes: number; totalViews: number;
   school?: string; city?: string; province?: string; grade?: string; noAbsen?: string; bio?: string; email?: string;
   equippedFrame?: string | null; equippedNameColor?: string | null; equippedBadge?: string | null;
+  createdAt?: string;
 }
 
 interface KaryaItem {
@@ -55,39 +56,18 @@ interface NicknameHistoryRow {
   id: string; oldNickname: string | null; newNickname: string | null; changedAt: string;
 }
 
-const TYPE_META: Record<string, { label: string; badge: string }> = {
-  PUISI: { label: "Puisi", badge: "bg-rose-100 text-rose-600" },
-  CERPEN: { label: "Cerpen", badge: "bg-blue-100 text-blue-600" },
-  ARTIKEL: { label: "Artikel", badge: "bg-amber-100 text-amber-600" },
-  ANEKDOT: { label: "Anekdot", badge: "bg-orange-100 text-orange-600" },
-  PANTUN: { label: "Pantun", badge: "bg-teal-100 text-teal-600" },
-  OPINI: { label: "Opini", badge: "bg-violet-100 text-violet-600" },
-};
-
-// Liga 4 tingkat dihapus — identitas memakai 9 rank resmi (RANK_META).
-// Cincin avatar mengikuti warna rank supaya tidak perlu tabel warna kedua.
-
-function initials(name: string) {
-  return name?.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2) || "M";
+interface JourneyEntry {
+  id: string;
+  dayKey: string;
+  createdAt: string;
+  title?: string | null;
 }
 
-function waktuLalu(d: string) {
-  const diff = Date.now() - new Date(d).getTime();
-  const m = Math.floor(diff / 60000);
-  if (m < 1) return "baru saja";
-  if (m < 60) return `${m}m`;
-  const h = Math.floor(m / 60);
-  if (h < 24) return `${h}j`;
-  return `${Math.floor(h / 24)}h`;
-}
+const WIB_OFFSET_MS = 7 * 3600 * 1000;
 
-const KEBUN_LEVELS = [
-  { level: 0, label: "Tidak menulis", color: "bg-gray-100" },
-  { level: 1, label: "1 kata", color: "bg-emerald-200" },
-  { level: 2, label: "2 kata", color: "bg-emerald-300" },
-  { level: 3, label: "3-4 kata", color: "bg-emerald-400" },
-  { level: 4, label: "5+ kata", color: "bg-emerald-500" },
-];
+function wibKey(d: Date): string {
+  return new Date(d.getTime() + WIB_OFFSET_MS).toISOString().slice(0, 10);
+}
 
 // Deret hari beruntun ("kebun" aktif hari ini + kemarin) — dipakai untuk
 // membuat flame di hero berdenyut saat streak sedang hidup.
@@ -98,6 +78,36 @@ function isStreakLive(kebunKata: { date: string; level: 0 | 1 | 2 | 3 | 4 }[] | 
   const today = new Date();
   const diffDays = Math.floor((today.setHours(0, 0, 0, 0) - lastDate.setHours(0, 0, 0, 0)) / 86400000);
   return last.level > 0 && diffDays <= 1;
+}
+
+const KEBUN_LEVELS = [
+  { level: 0, label: "Tidak menulis", color: "bg-emerald-100" },
+  { level: 1, label: "1 kata", color: "bg-emerald-200" },
+  { level: 2, label: "2 kata", color: "bg-emerald-300" },
+  { level: 3, label: "3-4 kata", color: "bg-emerald-500" },
+  { level: 4, label: "5+ kata", color: "bg-emerald-600" },
+];
+
+// 30 hari terakhir (zona WIB): preferensi aktivitas belajar (journey),
+// fallback karya per hari. Selalu berisi kunci nyata, tanpa angka karangan.
+function buildChartDays(journey: JourneyEntry[], karyaList: KaryaItem[]): { days: ChartDay[]; mode: "AKTIVITAS" | "KARYA" } {
+  const keys: string[] = [];
+  for (let i = 29; i >= 0; i--) keys.push(wibKey(new Date(Date.now() - i * 86400000)));
+  const days: ChartDay[] = keys.map((dayKey) => ({ dayKey, count: 0 }));
+
+  const usableJourney = journey.length > 0;
+  if (usableJourney) {
+    for (const e of journey) {
+      const hit = days.find((d) => d.dayKey === e.dayKey);
+      if (hit) hit.count += 1;
+    }
+  } else {
+    for (const k of karyaList) {
+      const hit = days.find((d) => d.dayKey === k.createdAt.slice(0, 10));
+      if (hit) hit.count += 1;
+    }
+  }
+  return { days, mode: usableJourney ? "AKTIVITAS" : "KARYA" };
 }
 
 export default function MuridProfilePage() {
@@ -114,6 +124,7 @@ export default function MuridProfilePage() {
   const [playerProfile, setPlayerProfile] = useState<PlayerProfileView | null>(null);
   const [xpHistory, setXpHistory] = useState<XpHistoryEntryView[]>([]);
   const [showcaseBadges, setShowcaseBadges] = useState<BadgeView[] | null>(null);
+  const [journey, setJourney] = useState<JourneyEntry[]>([]);
   const [karyaFilter, setKaryaFilter] = useState("SEMUA");
   const supabase = createClient();
 
@@ -153,16 +164,18 @@ export default function MuridProfilePage() {
     load();
   }, []);
 
-  // Data pemain + aktivitas (sheet kiri/kanan) + lencana showcase — dekoratif, best-effort.
+  // Data pemain + aktivitas + lencana showcase + perjalanan belajar — best-effort.
   useEffect(() => {
     Promise.all([
       fetch("/api/player/profile").then(r => r.ok ? r.json() : null),
       fetch("/api/player/xp/history?limit=5").then(r => r.ok ? r.json() : null),
       fetch("/api/player/badges").then(r => r.ok ? r.json() : null),
-    ]).then(([pp, xh, bd]) => {
+      fetch("/api/player/journey?limit=100").then(r => r.ok ? r.json() : null),
+    ]).then(([pp, xh, bd, jr]) => {
       if (pp?.profile) setPlayerProfile(pp.profile);
       if (xh?.entries) setXpHistory(xh.entries);
       if (bd?.badges) setShowcaseBadges(bd.badges);
+      if (jr?.entries) setJourney(jr.entries);
     }).catch(() => {});
   }, []);
 
@@ -172,16 +185,13 @@ export default function MuridProfilePage() {
   const [settingsMessage, setSettingsMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
   const avatarFileRef = useRef<HTMLInputElement>(null);
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
+  const [nicknameDraft, setNicknameDraft] = useState("");
 
   const openSettings = () => {
     if (!user) return;
     setSettingsForm({ fullName: user.fullName, school: user.school || "", city: user.city || "", province: user.province || "", grade: user.grade || "", noAbsen: user.noAbsen || "", bio: user.bio || "" });
     setAvatarSrc(user.avatar || null);
     setSettingsMessage(null);
-    // Selalu isi ulang dari nickname yang tersimpan — draft ini sebelumnya
-    // tidak pernah diisi sama sekali, jadi kotaknya selalu kosong meski
-    // murid sudah punya nama panggilan. Klik simpan tanpa mengetik apa-apa
-    // akan mengosongkan nickname mereka secara diam-diam.
     setNicknameDraft(user.nickname || "");
     setNicknameError(null);
     setShowSettings(true);
@@ -208,8 +218,6 @@ export default function MuridProfilePage() {
       setSavingSettings(false);
     }
   };
-
-  const [nicknameDraft, setNicknameDraft] = useState("");
 
   const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -292,14 +300,48 @@ export default function MuridProfilePage() {
   const levelProgress = getLevelProgress(user.xp || 0);
   const streakLive = isStreakLive(meta?.kebunKata);
 
-  // Lencana paling dekat dibuka (progress tertinggi di antara yang belum
-  // terbuka) — dipakai sebagai teaser "tinggal X lagi" ala Duolingo.
   const nextBadge = meta?.lencana
     .filter(l => !l.unlocked)
     .sort((a, b) => b.progress / b.target - a.progress / a.target)[0];
 
+  const unlockedBadges = (showcaseBadges ?? []).filter(b => b.unlocked);
+
+  const events: FeedEvent[] = [
+    ...xpHistory.map(h => ({
+      id: `xp-${h.id}`,
+      kind: "XP" as const,
+      title: h.sourceLabel,
+      amount: h.amount,
+      xp: true,
+      createdAt: h.createdAt,
+    })),
+    ...karyaList.slice(0, 3).map(k => ({
+      id: `karya-${k.id}`,
+      kind: "KARYA" as const,
+      title: "Menerbitkan karya baru",
+      detail: k.title,
+      createdAt: k.createdAt,
+    })),
+  ];
+
+  const { days: chartDays, mode: chartMode } = buildChartDays(journey, karyaList);
+  const totalKarya30 = karyaList.filter(k => {
+    const key = k.createdAt.slice(0, 10);
+    return chartDays.length > 0 && key >= chartDays[0].dayKey;
+  }).length;
+  const totalAktivitas30 = chartDays.reduce((sum, d) => sum + d.count, 0);
+
+  const sosialProps = social
+    ? {
+        followerCount: social.followerCount,
+        followingCount: social.followingCount,
+        followers: (social.followers ?? []).map(f => ({ id: f.id, displayName: f.displayName, avatar: f.avatar })),
+        following: (social.following ?? []).map(f => ({ id: f.id, displayName: f.displayName, avatar: f.avatar })),
+      }
+    : null;
+
   return (
-    <div className="max-w-3xl mx-auto">
+    <div className="max-w-4xl mx-auto">
       <style>{`
         @keyframes profile-flame{0%,100%{transform:scale(1) rotate(-2deg)}50%{transform:scale(1.12) rotate(2deg)}}
         @keyframes profile-badge-pop{0%{transform:scale(0)}70%{transform:scale(1.15)}100%{transform:scale(1)}}
@@ -307,8 +349,8 @@ export default function MuridProfilePage() {
         .profile-badge-unlocked{animation:profile-badge-pop .4s ease}
       `}</style>
 
-      {/* PLAYER CARD — hero premium: identitas (avatar + nama + gelar) di
-          kiri, rank crest BESAR di kanan, XP bar + aksi di bawah. */}
+      {/* PLAYER CARD — hero premium: identitas + rank crest + XP + aksi.
+          Kartu Total Like menyatu bila data tersedia. */}
       <ProfileHero
         persona={{
           id: user.id,
@@ -331,69 +373,96 @@ export default function MuridProfilePage() {
         social={social}
         isOwn
         onEditProfile={openSettings}
+        likeSummary={{
+          totalLikes: user.totalLikes || 0,
+          karyaCount: meta?.stats.karyaCount ?? karyaList.length,
+        }}
       />
 
-      {/* Social proof strip — statistik ringkas di atas konten */}
-      <section
-        className="mb-6 rounded-[24px] p-4 sm:p-5 shadow-lg"
-        style={{ background: "linear-gradient(140deg, #141230 0%, #231a52 60%, #34166e 100%)" }}
-      >
-        <SocialProofStrip
-          grid="grid-cols-3 md:grid-cols-6"
-          stats={[
-            { key: "level", label: "Level", value: playerLevel, icon: "trophy", href: "/arena/player" },
-            { key: "xp", label: "XP", value: user.xp || 0, icon: "sparkles", href: "/arena/player" },
-            { key: "koin", label: "Koin", value: user.coins || 0, icon: "sparkles", href: "/arena/player" },
-            { key: "streak", label: "Streak", value: user.streak || 0, icon: "flame", href: "/arena/player" },
-            { key: "karya", label: "Karya", value: meta?.stats.karyaCount ?? karyaList.length, icon: "book", href: "/murid/karya" },
-            { key: "apresiasi", label: "Apresiasi", value: user.totalLikes || 0, icon: "heart", href: "/murid/karya" },
-          ]}
-        />
-      </section>
+      {/* HUD status pemain — Level/XP/Koin/Streak/Rank + strip lencana */}
+      <PlayerStatusBar
+        level={playerLevel}
+        xp={user.xp || 0}
+        coins={user.coins || 0}
+        streak={user.streak ?? 0}
+        rank={playerRank}
+        badges={unlockedBadges}
+        totalUnlocked={unlockedBadges.length}
+        badgesHref="/arena/player/badges"
+      />
 
-      {/* Pencapaian — showcase lencana asli (dari /api/player/badges, best-effort).
-          Muncul hanya jika data berhasil dimuat; kosong = ajakan membuka lencana. */}
-      {showcaseBadges !== null && (
-        <section
-          className="mb-6 rounded-[24px] p-4 sm:p-5 shadow-lg"
-          style={{ background: "linear-gradient(140deg, #141230 0%, #231a52 60%, #34166e 100%)" }}
-        >
-          <div className="flex items-center justify-between mb-3">
-            <h3 className="text-sm font-bold text-white flex items-center gap-2">
-              <span className="w-6 h-6 rounded-lg bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-sm">
-                <Award size={13} className="text-white" />
-              </span>
-              Pencapaian
-            </h3>
-            <Link href="/arena/player/badges" className="text-[11px] font-semibold text-white/60 hover:text-white transition-colors">
-              Lihat Semua →
-            </Link>
-          </div>
-          {showcaseBadges.some((b) => b.unlocked) ? (
-            <AchievementShowcase badges={showcaseBadges} max={9} />
-          ) : (
-            <p className="text-[13px] text-white/55 leading-relaxed">
-              Belum ada lencana. Selesaikan latihan di Jalur Cerdas, Ikuti tantangan di Arena,
-              dan kumpulkan karya untuk membuka lencana pertamamu.
-            </p>
-          )}
-        </section>
-      )}
+      {/* Moto pribadi — bio asli + tanggal bergabung asli */}
+      <ProfileMotto
+        bio={user.bio ?? null}
+        joinedAt={user.createdAt ?? null}
+        isOwn
+        onEditProfile={openSettings}
+      />
 
-      <div className="grid md:grid-cols-3 gap-6">
-        {/* Left - Info + Badges */}
+      {/* Grid utama: statistik & kebun kata (kiri) + aktivitas (kanan) */}
+      <div className="grid md:grid-cols-3 gap-6 mb-6">
         <div className="space-y-4">
-          {/* Lencana */}
+          <PlayerStatsGrid
+            stats={[
+              { key: "karya", label: "Karya", value: meta?.stats.karyaCount ?? karyaList.length, icon: "book", href: "/murid/karya" },
+              { key: "like", label: "Like", value: user.totalLikes || 0, icon: "heart", href: "/murid/karya" },
+              { key: "follower", label: "Pengikut", value: social?.followerCount ?? 0, icon: "users" },
+              { key: "following", label: "Mengikuti", value: social?.followingCount ?? 0, icon: "user" },
+            ]}
+          />
+
+          {/* Kebun Kata */}
           {meta && (
-            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
+            <div
+              className="rounded-2xl p-4 text-white ring-1 ring-white/10"
+              style={{ background: "linear-gradient(135deg, #17163F 0%, #21174F 100%)" }}
+            >
               <div className="flex items-center justify-between mb-3">
-                <h3 className="text-sm font-bold text-gray-900 flex items-center gap-2">
+                <h3 className="text-sm font-bold text-white/90 flex items-center gap-2">
+                  <span className="w-6 h-6 rounded-lg bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center shadow-sm">
+                    <IconPen size={12} className="text-white" />
+                  </span>
+                  Kebun Kata
+                </h3>
+                {streakLive && user.streak > 0 && (
+                  <span className="text-[10px] font-bold text-orange-300 bg-orange-400/10 rounded-full px-2 py-0.5 flex items-center gap-1 ring-1 ring-orange-300/20">
+                    <IconFlame size={10} className="profile-flame-live" /> {user.streak} hari beruntun
+                  </span>
+                )}
+              </div>
+              <div className="grid grid-cols-10 gap-1">
+                {meta.kebunKata.slice(-30).map((d, i) => (
+                  <div
+                    key={i}
+                    className={`aspect-square rounded-[3px] ${KEBUN_LEVELS[d.level].color} opacity-80 hover:opacity-100 hover:ring-2 hover:ring-emerald-300 transition-all`}
+                    title={`${new Date(d.date).toLocaleDateString("id-ID", { day: "numeric", month: "short" })} — ${KEBUN_LEVELS[d.level].label}`}
+                  />
+                ))}
+              </div>
+              <div className="flex items-center gap-2 mt-3 text-[10px] text-white/40">
+                <span>Sedikit</span>
+                {KEBUN_LEVELS.map(k => (
+                  <span key={k.level} className={`w-2.5 h-2.5 rounded-[2px] ${k.color} inline-block`} />
+                ))}
+                <span>Banyak</span>
+              </div>
+            </div>
+          )}
+
+          {/* Lencana — progres nyata (dari profile-meta) + teaser lencana berikutnya */}
+          {meta && (
+            <div
+              className="rounded-2xl p-4 text-white ring-1 ring-white/10"
+              style={{ background: "linear-gradient(135deg, #17163F 0%, #21174F 100%)" }}
+            >
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="text-sm font-bold text-white/90 flex items-center gap-2">
                   <span className="w-6 h-6 rounded-lg bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-sm">
                     <Award size={13} className="text-white" />
                   </span>
-                  Lencana
+                  Perkembangan Lencana
                 </h3>
-                <span className="text-[11px] font-semibold text-gray-400">
+                <span className="text-[11px] font-semibold text-white/45">
                   {meta.lencana.filter(l => l.unlocked).length}/{meta.lencana.length}
                 </span>
               </div>
@@ -404,8 +473,8 @@ export default function MuridProfilePage() {
                     title={l.unlocked ? l.name : `${l.name} — ${l.progress}/${l.target}`}
                     className={`relative flex flex-col items-center gap-1 p-2.5 rounded-xl text-center transition-transform ${
                       l.unlocked
-                        ? "profile-badge-unlocked bg-gradient-to-b from-amber-50 to-amber-100 ring-1 ring-amber-200 hover:scale-105"
-                        : "bg-gray-50"
+                        ? "profile-badge-unlocked bg-gradient-to-b from-amber-400/15 to-amber-500/10 ring-1 ring-amber-300/25 hover:scale-105"
+                        : "bg-white/[0.04] ring-1 ring-white/5"
                     }`}
                   >
                     <BadgeIcon
@@ -414,9 +483,9 @@ export default function MuridProfilePage() {
                       size={40}
                       className={`object-contain ${l.unlocked ? "" : "grayscale opacity-30"}`}
                     />
-                    <span className={`text-[10px] font-semibold leading-tight ${l.unlocked ? "text-amber-700" : "text-gray-400"}`}>{l.name}</span>
+                    <span className={`text-[10px] font-semibold leading-tight ${l.unlocked ? "text-amber-200" : "text-white/40"}`}>{l.name}</span>
                     {!l.unlocked && (
-                      <div className="w-full h-1 bg-gray-200 rounded-full overflow-hidden mt-0.5">
+                      <div className="w-full h-1 bg-white/10 rounded-full overflow-hidden mt-0.5">
                         <div className="h-full bg-violet-400 rounded-full" style={{ width: `${Math.min(100, (l.progress / l.target) * 100)}%` }} />
                       </div>
                     )}
@@ -424,219 +493,102 @@ export default function MuridProfilePage() {
                 ))}
               </div>
               {nextBadge && (
-                <p className="text-[11px] text-violet-600 font-semibold mt-3 flex items-center gap-1 bg-violet-50 rounded-lg px-2.5 py-2">
+                <p className="text-[11px] text-violet-300 font-semibold mt-3 flex items-center gap-1 bg-violet-500/10 rounded-lg px-2.5 py-2 ring-1 ring-violet-400/20">
                   <Award size={12} /> {nextBadge.target - nextBadge.progress} lagi untuk buka &ldquo;{nextBadge.name}&rdquo;!
                 </p>
               )}
             </div>
           )}
+        </div>
 
-          {/* Kebun Kata */}
-          {meta && (
-            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
-              <div className="flex items-center justify-between mb-3">
-                <h3 className="text-sm font-bold text-gray-900 flex items-center gap-2">
-                  <span className="w-6 h-6 rounded-lg bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center shadow-sm">
-                    <IconPen size={12} className="text-white" />
-                  </span>
-                  Kebun Kata
-                </h3>
-                {streakLive && user.streak > 0 && (
-                  <span className="text-[10px] font-bold text-orange-600 bg-orange-50 rounded-full px-2 py-0.5 flex items-center gap-1">
-                    <IconFlame size={10} /> {user.streak} hari beruntun
-                  </span>
-                )}
-              </div>
-              <div className="grid grid-cols-10 gap-1">
-                {meta.kebunKata.slice(-30).map((d, i) => (
-                  <div
-                    key={i}
-                    className={`aspect-square rounded-[3px] ${KEBUN_LEVELS[d.level].color} hover:ring-2 hover:ring-emerald-300 transition-all`}
-                    title={`${new Date(d.date).toLocaleDateString("id-ID", { day: "numeric", month: "short" })} — ${KEBUN_LEVELS[d.level].label}`}
-                  />
-                ))}
-              </div>
-              <div className="flex items-center gap-2 mt-3 text-[10px] text-gray-400">
-                <span>Sedikit</span>
-                {KEBUN_LEVELS.map(k => (
-                  <span key={k.level} className={`w-2.5 h-2.5 rounded-[2px] ${k.color} inline-block`} />
-                ))}
-                <span>Banyak</span>
-              </div>
-            </div>
+        {/* Aktivitas terbaru (kanan — 2 kolom) */}
+        <div className="md:col-span-2">
+          <ActivityFeed
+            events={events}
+            allHref="/arena/player/history?tab=xp"
+            emptyText="Belum ada aktivitas. Ayo main Jalur Cerdas atau tulis karya!"
+          />
+        </div>
+      </div>
+
+      {/* Pencapaian terbaru — lencana asli (dari /api/player/badges, best-effort) */}
+      {showcaseBadges !== null && (
+        <section
+          className="mb-6 rounded-2xl p-5 text-white ring-1 ring-white/10"
+          style={{ background: "linear-gradient(135deg, #17163F 0%, #21174F 100%)" }}
+        >
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-sm font-bold text-white/90 flex items-center gap-2">
+              <span className="w-6 h-6 rounded-lg bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-sm">
+                <Award size={13} className="text-white" />
+              </span>
+              Pencapaian Terkini
+            </h3>
+            <Link href="/arena/player/badges" className="text-[11px] font-semibold text-white/55 hover:text-white transition-colors">
+              Lihat Semua →
+            </Link>
+          </div>
+          {showcaseBadges.some((b) => b.unlocked) ? (
+            <AchievementShowcase badges={showcaseBadges} max={6} />
+          ) : (
+            <p className="text-[13px] text-white/55 leading-relaxed">
+              Belum ada lencana. Selesaikan latihan di Jalur Cerdas, ikuti tantangan di Arena,
+              dan kumpulkan karya untuk membuka lencana pertamamu.
+            </p>
           )}
+        </section>
+      )}
 
-          {/* Komunitas */}
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
-            <div className="flex items-center justify-between mb-3">
-              <h3 className="text-sm font-bold text-gray-900 flex items-center gap-2">
-                <span className="w-6 h-6 rounded-lg bg-gradient-to-br from-sky-400 to-blue-600 flex items-center justify-center shadow-sm">
-                  <Users size={12} className="text-white" />
-                </span>
-                Komunitas
-              </h3>
-              <Link href="/arena/player/leaderboard" className="text-[11px] font-bold text-violet-600 hover:underline">
-                Papan Peringkat →
-              </Link>
-            </div>
+      {/* Galeri karya unggulan + komunitas */}
+      <div className="grid md:grid-cols-3 gap-6 mb-6">
+        <div className="md:col-span-2">
+          <FeaturedWorksGallery
+            karyaList={karyaList}
+            filter={karyaFilter}
+            onFilterChange={setKaryaFilter}
+            onDelete={handleDeleteKarya}
+            titleHref="/murid/karya"
+            tulisHref="/murid/karya/tulis"
+            emptyText="Belum ada karya. Mulai menulis!"
+          />
+        </div>
 
-            {social ? (
-              <div className="space-y-3">
-                <div className="grid grid-cols-2 gap-2">
-                  <div className="rounded-xl bg-gray-50 border border-gray-100 p-3">
-                    <div className="flex -space-x-2 mb-1.5">
-                      {(social.followers ?? []).slice(0, 4).map(f => (
-                        <Link key={f.id} href={`/profile/${f.id}`} title={f.displayName}>
-                          <UserAvatar size={28} avatar={f.avatar} initials={f.displayName[0]} className="ring-2 ring-white" />
-                        </Link>
-                      ))}
-                      {social.followers?.length === 0 && <p className="text-[10px] text-gray-400">Belum ada</p>}
-                    </div>
-                    <p className="text-[11px] font-semibold text-gray-700">
-                      {social.followerCount} Pengikut
-                    </p>
-                  </div>
-                  <div className="rounded-xl bg-gray-50 border border-gray-100 p-3">
-                    <div className="flex -space-x-2 mb-1.5">
-                      {(social.following ?? []).slice(0, 4).map(f => (
-                        <Link key={f.id} href={`/profile/${f.id}`} title={f.displayName}>
-                          <UserAvatar size={28} avatar={f.avatar} initials={f.displayName[0]} className="ring-2 ring-white" />
-                        </Link>
-                      ))}
-                      {social.following?.length === 0 && <p className="text-[10px] text-gray-400">Belum ada</p>}
-                    </div>
-                    <p className="text-[11px] font-semibold text-gray-700">
-                      {social.followingCount} Mengikuti
-                    </p>
-                  </div>
-                </div>
-                {social.profileLikeCount > 0 && (
-                  <p className="text-[11px] text-rose-500 font-semibold flex items-center gap-1">
-                    <IconHeart size={11} /> Profilmu disukai {social.profileLikeCount} murid
-                  </p>
-                )}
-              </div>
-            ) : (
-              <p className="text-[11px] text-gray-400 leading-relaxed">
+        <div>
+          {sosialProps ? (
+            <SocialConnections
+              {...sosialProps}
+              onView={(p) => { window.location.href = `/profile/${p.id}`; }}
+              weeklyXp={playerProfile?.weeklyXp ?? undefined}
+              weeklyLabel={playerProfile?.weeklyLabel}
+              leaderboardHref="/arena/player/leaderboard"
+              likeNote={
+                social && social.profileLikeCount > 0
+                  ? `Profilmu disukai ${social.profileLikeCount} murid`
+                  : null
+              }
+            />
+          ) : (
+            <div
+              className="rounded-2xl p-5 text-white ring-1 ring-white/10"
+              style={{ background: "linear-gradient(135deg, #17163F 0%, #21174F 100%)" }}
+            >
+              <h3 className="text-sm font-bold text-white/90 mb-1.5">Komunitas</h3>
+              <p className="text-xs text-white/45 leading-relaxed">
                 Ikuti murid lain dan temukan teman menulis. Fitur aktif setelah
                 migrasi tabel Follow dijalankan.
               </p>
-            )}
-
-            {playerProfile && (
-              <div className="flex items-center justify-between mt-3 rounded-xl bg-violet-50 border border-violet-100 px-3 py-2">
-                <p className="text-[11px] font-semibold text-violet-700">
-                  {playerProfile.weeklyXp.toLocaleString("id-ID")} XP minggu ini
-                </p>
-                <span className="text-[10px] text-violet-400">{playerProfile.weeklyLabel}</span>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Right - Karya */}
-        <div className="md:col-span-2 space-y-4">
-          {/* Aktivitas terbaru */}
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
-            <div className="flex items-center justify-between mb-3">
-              <h3 className="text-sm font-bold text-gray-900 flex items-center gap-2">
-                <span className="w-6 h-6 rounded-lg bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center shadow-sm">
-                  <History size={12} className="text-white" />
-                </span>
-                Aktivitas
-              </h3>
-              <Link href="/arena/player/history?tab=xp" className="text-[11px] font-bold text-violet-600 hover:underline">
-                Riwayat XP →
-              </Link>
-            </div>
-
-            {xpHistory.length === 0 ? (
-              <p className="text-[11px] text-gray-400 text-center py-3">
-                Belum ada aktivitas. Ayo main jalur cerdas atau tulis karya!
-              </p>
-            ) : (
-              <div className="space-y-2">
-                {xpHistory.slice(0, 5).map(h => (
-                  <div key={h.id} className="flex items-center gap-2.5 text-xs">
-                    <span className="w-7 h-7 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center font-black shrink-0">
-                      +{h.amount}
-                    </span>
-                    <span className="text-gray-700 font-medium truncate">{h.sourceLabel}</span>
-                    <span className="ml-auto text-gray-400 shrink-0">{waktuLalu(h.createdAt)}</span>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-
-          <div className="flex items-center justify-between">
-            <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
-              <span className="w-7 h-7 rounded-lg bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center shadow-sm">
-                <IconPen size={15} className="text-white" />
-              </span>
-              Karyaku
-              {meta && <span className="text-sm font-normal text-gray-400">({meta.stats.karyaCount})</span>}
-            </h2>
-            <Link href="/murid/karya/tulis" className="flex items-center gap-1.5 px-4 py-2 bg-violet-600 text-white rounded-full text-xs font-bold hover:bg-violet-700 transition-all shadow-sm">
-              <Plus size={14} /> Tulis
-            </Link>
-          </div>
-
-          {/* Filter jenis karya */}
-          {karyaList.length > 0 && (
-            <div className="flex flex-wrap gap-1.5">
-              {["SEMUA", ...Array.from(new Set(karyaList.map(k => k.type)))].map(t => (
-                <button
-                  key={t}
-                  onClick={() => setKaryaFilter(t)}
-                  className={`px-3 py-1 rounded-full text-[11px] font-bold transition-all ${
-                    karyaFilter === t
-                      ? "bg-violet-600 text-white shadow-sm"
-                      : "bg-gray-100 text-gray-500 hover:bg-gray-200"
-                  }`}
-                >
-                  {t === "SEMUA" ? "Semua" : TYPE_META[t]?.label || t}
-                </button>
-              ))}
-            </div>
-          )}
-
-          {karyaList.length === 0 ? (
-            <div className="bg-gradient-to-br from-violet-50 to-purple-50 rounded-2xl p-8 text-center border border-violet-100">
-              <IconPen size={32} className="mx-auto text-violet-300 mb-2" />
-              <p className="text-sm text-gray-500">Belum ada karya. Mulai menulis!</p>
-            </div>
-          ) : (
-            <div className="space-y-3">
-              {karyaList.filter(k => karyaFilter === "SEMUA" || k.type === karyaFilter).map(k => {
-                const meta = TYPE_META[k.type] || { label: k.type, badge: "bg-gray-100 text-gray-700" };
-                return (
-                  <div key={k.id} className="bg-white rounded-2xl border border-gray-100 p-4 hover:shadow-sm transition-all">
-                    <div className="flex items-start justify-between">
-                      <Link href={`/murid/karya/${k.id}`} className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-1">
-                          <span className={`px-2 py-0.5 rounded-full text-[10px] font-semibold ${meta.badge}`}>{meta.label}</span>
-                          {k.isFeatured && <span className="text-[10px] font-semibold text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded-full">Pilihan</span>}
-                        </div>
-                        <h3 className="font-semibold text-gray-900 text-sm">{k.title}</h3>
-                        <p className="text-xs text-gray-400 mt-1 line-clamp-1">{k.excerpt || k.content?.slice(0, 100)}</p>
-                      </Link>
-                      <button onClick={() => handleDeleteKarya(k.id)} className="text-gray-300 hover:text-red-500 p-1 transition-colors shrink-0">
-                        <X size={14} />
-                      </button>
-                    </div>
-                    <div className="flex items-center gap-3 mt-3 text-xs text-gray-400">
-                      <span className="flex items-center gap-1"><IconHeart size={11} className="text-red-400" /> {k.likesCount || 0}</span>
-                      <span className="flex items-center gap-1"><IconEye size={11} /> {k.viewsCount || 0}</span>
-                      <span className="ml-auto">{waktuLalu(k.createdAt)}</span>
-                    </div>
-                  </div>
-                );
-              })}
             </div>
           )}
         </div>
       </div>
+
+      {/* Aktivitas 30 hari — grafik nyata (journey / karya per hari) */}
+      <ActivityChart
+        days={chartDays}
+        mode={chartMode}
+        totalKarya30={totalKarya30}
+        totalAktivitas30={totalAktivitas30}
+      />
 
       {/* Settings Modal */}
       {showSettings && (
