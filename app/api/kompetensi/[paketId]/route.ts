@@ -7,6 +7,7 @@ import type { AttemptSnapshot, QuestionSnapshot } from "@/lib/types/snapshot";
 import { withQueryTimeout } from "@/lib/db/with-query-timeout";
 import { ok, err } from "@/lib/api/response";
 import { ERR } from "@/lib/api/errors";
+import { resolvePlan, getFeatureLimit, consumeUsageGuarded, FeatureLimitError } from "@/lib/premium-economy";
 import cache from "@/lib/redis";
 
 // TTL cache pool soal & paket (server-side, Upstash). Bump versi kunci saat
@@ -228,60 +229,134 @@ export async function GET(
     const sectionCount = (paket.sectionsData as any[])?.length || (paket.sections as any[])?.length || 0;
     console.log(`[kompetensi] OK user=${dbUser.id} role=${dbUser.role} paket=${paketId} type=${paket.type} sections=${sectionCount}`);
 
-    let session = await withQueryTimeout(
-      db.testSession.findUnique({
-        where: { userId_paketId: { userId: dbUser.id, paketId } },
-      }),
-      5000,
-      "Session lookup timeout"
-    );
+    // ── PREMIUM GATE + SESSION (satu transaksi) ──
+    // Kuota simulasi dikonsumsi HANYA saat attempt baru benar-benar dimulai
+    // (session dibuat / retry reset). Replay sesi IN_PROGRESS, autosave
+    // (PATCH), dan halaman hasil tidak pernah mengonsumsi.
+    // Konsumsi dilakukan DI DALAM transaksi yang sama dengan create/reset —
+    // bila kuota habis (FeatureLimitError), transaksi rollback dan session
+    // tidak ditinggalkan setengah jalan.
+    const { plan: simPlan } = await resolvePlan(dbUser.id);
+    const simLimit = await getFeatureLimit(simPlan, "SIMULATION_MONTHLY_LIMIT");
 
-    if (!session) {
-      const duration = paket.duration || 30;
-      const expiresAt = new Date();
-      expiresAt.setMinutes(expiresAt.getMinutes() + duration);
+    type AttemptStart =
+      | { mode: "replay"; session: Awaited<ReturnType<typeof db.testSession.findUnique>> }
+      | { mode: "completed"; session: Awaited<ReturnType<typeof db.testSession.findUnique>> }
+      | { mode: "attempt"; session: NonNullable<Awaited<ReturnType<typeof db.testSession.findUnique>>> };
 
-      session = await withQueryTimeout(
-        db.testSession.create({
-          data: {
+    let attempt: AttemptStart;
+    try {
+      attempt = await db.$transaction(async (tx) => {
+        const existing = await tx.testSession.findUnique({
+          where: { userId_paketId: { userId: dbUser.id, paketId } },
+        });
+        const now = new Date();
+        const isExpired =
+          existing?.status === "IN_PROGRESS" &&
+          existing.expiresAt &&
+          existing.expiresAt < now;
+
+        if (existing && existing.status === "IN_PROGRESS" && !isExpired) {
+          // Replay sesi berjalan — TANPA konsumsi kuota.
+          return { mode: "replay", session: existing };
+        }
+
+        if (existing && (existing.status === "COMPLETED" || isExpired)) {
+          if (!retry) {
+            return { mode: "completed", session: existing };
+          }
+          const expiresAt = new Date(now.getTime() + (paket.duration || 30) * 60000);
+          // updateMany dengan predikat status → hanya SATU request yang bisa
+          // me-reset (double-click tidak menggandakan konsumsi).
+          const reset = await tx.testSession.updateMany({
+            where: {
+              id: existing.id,
+              OR: [
+                { status: "COMPLETED" },
+                { status: "IN_PROGRESS", expiresAt: { lt: now } },
+              ],
+            },
+            // questionSnapshot is cleared so the retry builds a fresh one
+            // instead of being served the previous attempt's cached payload.
+            data: {
+              status: "IN_PROGRESS",
+              expiresAt,
+              startedAt: now,
+              answers: {},
+              flagged: [],
+              questionSnapshot: Prisma.DbNull,
+            },
+          });
+          const session = await tx.testSession.findUnique({
+            where: { userId_paketId: { userId: dbUser.id, paketId } },
+          });
+          if (!session) throw new Error("Session tidak ditemukan setelah retry reset");
+          if (reset.count === 1) {
+            await consumeUsageGuarded(tx, dbUser.id, "SIMULATION", { plan: simPlan, limit: simLimit });
+            return { mode: "attempt", session };
+          }
+          return { mode: "replay", session };
+        }
+
+        // Belum ada sesi → attempt baru. createMany + skipDuplicates membuat
+        // double-click aman: hanya satu request yang mendapat count 1.
+        const expiresAt = new Date(now.getTime() + (paket.duration || 30) * 60000);
+        const created = await tx.testSession.createMany({
+          data: [{
             userId: dbUser.id,
             paketId,
             status: "IN_PROGRESS",
             expiresAt,
-            startedAt: new Date(),
+            startedAt: now,
             answers: {},
             flagged: [],
-          },
-        }),
-        5000,
-        "Session create timeout"
-      );
-    } else {
-      const isExpired = session.status === "IN_PROGRESS" && session.expiresAt && new Date(session.expiresAt) < new Date();
-
-      if (session.status === "COMPLETED" || isExpired) {
-        if (retry) {
-          const expiresAt = new Date();
-          expiresAt.setMinutes(expiresAt.getMinutes() + paket.duration);
-          session = await withQueryTimeout(
-            db.testSession.update({
-              where: { id: session.id },
-              // questionSnapshot is cleared so the retry builds a fresh one
-              // instead of being served the previous attempt's cached payload.
-              data: { status: "IN_PROGRESS", expiresAt, startedAt: new Date(), answers: {}, flagged: [], questionSnapshot: Prisma.DbNull },
-            }),
-            5000,
-            "Session retry timeout"
-          );
-        } else {
-          return err(
-            isExpired ? "Sesi sebelumnya sudah kadaluarsa" : "Tes sudah selesai",
-            "VALIDATION",
-            400
-          );
+          }],
+          skipDuplicates: true,
+        });
+        const session = await tx.testSession.findUnique({
+          where: { userId_paketId: { userId: dbUser.id, paketId } },
+        });
+        if (!session) throw new Error("Session tidak terbuat setelah create");
+        if (created.count === 1) {
+          await consumeUsageGuarded(tx, dbUser.id, "SIMULATION", { plan: simPlan, limit: simLimit });
+          return { mode: "attempt", session };
         }
+        return { mode: "replay", session };
+      });
+    } catch (error: any) {
+      if (error instanceof FeatureLimitError) {
+        const g = error.gate;
+        console.log(`[kompetensi] FEATURE_LIMIT_REACHED user=${dbUser.id} paket=${paketId} plan=${g.plan} used=${g.used}/${g.limit}`);
+        return NextResponse.json(
+          {
+            code: "FEATURE_LIMIT_REACHED",
+            feature: "SIMULATION",
+            plan: g.plan,
+            used: g.used,
+            limit: g.limit,
+            upgradeAvailable: true,
+          },
+          { status: 403 }
+        );
       }
+      throw error;
     }
+
+    if (attempt.mode === "completed") {
+      const expired =
+        attempt.session?.status === "IN_PROGRESS" &&
+        attempt.session.expiresAt &&
+        attempt.session.expiresAt < new Date();
+      return err(
+        expired ? "Sesi sebelumnya sudah kadaluarsa" : "Tes sudah selesai",
+        "VALIDATION",
+        400
+      );
+    }
+
+    // Modes "attempt" and "replay" always carry a session (gate block throws
+    // otherwise); "completed" already returned above → non-null here.
+    const session = attempt.session!;
 
     // Shape of the payload the client renders. Identical whether it was just
     // built or replayed from the snapshot.

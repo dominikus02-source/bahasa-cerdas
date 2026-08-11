@@ -84,10 +84,13 @@ check("Regresi: self-action tetap 409", /me\.id === id/.test(follow) && /status:
 check("Regresi: respond tanpa unlock/non-PII di hero", !/correctAnswer|jawaban/.test(hero));
 
 // ---- Regresi DB: hardening TIDAK menambah migrasi baru ----
+// Pengecualian terdokumentasi: migrasi premium economy (fase P1, additive-only,
+// 2026-08-11) diizinkan; migrasi lain apa pun = gagal.
 import { execSync } from "node:child_process";
 try {
   const mig = execSync("git status --short prisma/migrations", { cwd: root, encoding: "utf8" }).trim();
-  check("Regresi: tanpa migrasi/schema baru", mig === "", mig || "ada perubahan di prisma/migrations");
+  const allowed = "?? prisma/migrations/manual/2026-08-11_premium_economy.sql";
+  check("Regresi: tanpa migrasi/schema baru", mig === "" || mig === allowed, mig || "ada perubahan di prisma/migrations");
 } catch {
   check("Regresi: tanpa migrasi/schema baru", false, "git status gagal");
 }

@@ -143,6 +143,7 @@ export default function AdminUsersPage() {
                     <th className="pb-3 pt-3 font-medium">Email</th>
                     <th className="pb-3 pt-3 font-medium">Role</th>
                     <th className="pb-3 pt-3 font-medium">Status</th>
+                    <th className="pb-3 pt-3 font-medium">Plan</th>
                     <th className="pb-3 pt-3 font-medium">XP</th>
                     <th className="pb-3 pt-3 font-medium">Level</th>
                     <th className="pb-3 pt-3 font-medium">Bergabung</th>
@@ -174,6 +175,22 @@ export default function AdminUsersPage() {
                         </td>
                         <td className="py-3">
                           <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${st.color}`}>{st.label}</span>
+                        </td>
+                        <td className="py-3">
+                          <div className="flex flex-col gap-0.5">
+                            <span className={`text-[10px] px-2 py-0.5 rounded-full font-semibold w-fit ${
+                              u.plan === "FOUNDER" ? "bg-amber-100 text-amber-700"
+                              : u.plan === "PRO" ? "bg-yellow-100 text-yellow-700"
+                              : "bg-slate-100 text-slate-500"
+                            }`}>
+                              {u.plan}
+                            </span>
+                            {u.simLimit > 0 && (
+                              <span className={`text-[10px] ${u.simUsage >= u.simLimit ? "text-red-500 font-semibold" : "text-slate-400"}`}>
+                                Simulasi {u.simUsage}/{u.simLimit}
+                              </span>
+                            )}
+                          </div>
                         </td>
                         <td className="py-3 text-slate-500 text-xs">{u.xp}</td>
                         <td className="py-3 text-slate-500 text-xs">{u.level || 0}</td>

@@ -282,6 +282,8 @@ model User {
   xpTransactions   XPTransaction[]
   userBadges       UserBadge[]
   userAchievements UserAchievement[]
+  // BC Premium Economy Foundation (fase P1)
+  premiumUsage     PremiumUsage[]
   // Leaderboard Motivation Layer — hasil settlement podium (weekly/season) + Hall of Fame.
   leaderboardPeriodResults LeaderboardPeriodResult[]
 
@@ -2199,6 +2201,63 @@ enum SubscriptionStatus {
   ACTIVE
   CANCELLED
   EXPIRED
+}
+
+// ── BC Premium Economy Foundation (fase P1) ────────────────────────────────
+// Tipe nilai entitlement:
+//   BOOLEAN   → value 0/1 (PREMIUM_PROFILE dsb.)
+//   LIMIT     → value N (kuota periodik: SIMULATION_MONTHLY_LIMIT = 3/10)
+//   UNLIMITED → value null (FOUNDER, atau fitur yang belum di-enforce engine)
+enum EntitlementType {
+  BOOLEAN
+  LIMIT
+  UNLIMITED
+}
+
+// Definisi plan premium (FREE / PRO / FOUNDER; masa depan: PRO_PLUS, SCHOOL,
+// INSTITUTION). Benefit TIDAK di-hardcode di route — selalu lewat engine.
+model Plan {
+  id           String        @id @default(cuid())
+  code         String        @unique
+  name         String
+  description  String?
+  active       Boolean       @default(true)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  entitlements Entitlement[]
+}
+
+// Satu baris = satu capability/limit per plan. Key konsisten dengan
+// lib/premium/features.ts (source of truth). value Int? sesuai tipe.
+model Entitlement {
+  id        String          @id @default(cuid())
+  planCode  String
+  key       String
+  type      EntitlementType
+  value     Int?
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+  plan      Plan            @relation(fields: [planCode], references: [code], onDelete: Cascade)
+
+  @@unique([planCode, key])
+  @@index([key])
+}
+
+// Konsumsi feature periodik (SIMULATION bulanan, AI_MENTOR harian, dsb.).
+// Satu baris per (user, feature, periode) — increment atomic, bukan row baru
+// per request. periodKey WIB: "YYYY-MM" (MONTH) / "YYYY-MM-DD" (DAY).
+model PremiumUsage {
+  id          String   @id @default(cuid())
+  userId      String
+  featureCode String
+  periodKey   String
+  used        Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, featureCode, periodKey])
+  @@index([featureCode, periodKey])
 }
 
 model Subscription {
