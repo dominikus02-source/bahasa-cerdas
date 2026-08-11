@@ -1,20 +1,21 @@
 import { getUser } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
-import { PlayerTheme } from "@/components/arena/player/player-theme";
-import { PlayerPageShell } from "@/components/arena/player/page-shell";
-import { ProfileTabs } from "@/components/arena/player/profile-tabs";
+import { isApk } from "@/lib/apk";
 
 export const dynamic = "force-dynamic";
 
+// Route ini adalah ringkasan profil pemain yang duplikat dengan canonical
+// /murid/profile (identity center) dan hub /arena/player. Tidak ada satu pun
+// tautan internal yang mengarah ke sini (hanya deep-link).
+//   - Web  : arahkan ke canonical /murid/profile
+//   - APK  : tetap in-scope /arena (ke hub /arena/player) agar tidak
+//            melempar murid ke tab browser (konstrain lib/arena-scope.ts)
 export default async function PlayerProfilePage() {
   const user = await getUser();
   if (!user) redirect("/arena/login");
 
-  return (
-    <PlayerTheme>
-      <PlayerPageShell title="Profil Pemain" subtitle="Ringkasan lengkap pencapaian dan koleksimu." name={user.fullName || user.nickname || "Pemain"}>
-        <ProfileTabs />
-      </PlayerPageShell>
-    </PlayerTheme>
-  );
+  if (await isApk()) {
+    redirect("/arena/player");
+  }
+  redirect("/murid/profile");
 }

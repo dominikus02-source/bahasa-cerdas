@@ -171,7 +171,7 @@ export function NotificationBell() {
           {notifications.length > 0 && (
             <div className="p-2 border-t border-slate-100">
               <Link
-                href="/guru/notifikasi"
+                href="/arena/notifikasi"
                 className="flex items-center justify-center gap-1.5 text-xs font-medium py-1"
                 style={{ color: '#059669' }}
                 onClick={() => setOpen(false)}

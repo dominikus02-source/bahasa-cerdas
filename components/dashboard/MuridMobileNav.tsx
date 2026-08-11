@@ -5,16 +5,16 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { LogoutButton } from "@/components/dashboard/LogoutButton";
 import {
-  Home, BarChart3, Menu as MenuIcon, X, Bell,
+  Home, Menu as MenuIcon, X, Bell,
   GraduationCap, Coins, ClipboardCheck,
-  FileText, Award, ExternalLink, Trophy, Calendar, User, Megaphone,
+  FileText, Award, ExternalLink, User, Megaphone, PenLine, MessageCircle, Settings,
 } from "lucide-react";
 
 const PRIMARY = [
   { href: "/murid/beranda", label: "Beranda", icon: Home },
   { href: "/arena", label: "Arena", icon: GraduationCap },
+  { href: "/arena/feed", label: "Karya", icon: PenLine },
   { href: "/murid/profile", label: "Profil", icon: User },
-  { href: "/murid/progresku", label: "Kemajuan", icon: BarChart3 },
 ];
 
 const GROUPS: { title: string; items: { href: string; label: string; icon: any }[] }[] = [
@@ -24,8 +24,9 @@ const GROUPS: { title: string; items: { href: string; label: string; icon: any }
       { href: "/murid/beranda", label: "Beranda", icon: Home },
       { href: "/murid/profile", label: "Profil", icon: User },
       { href: "/arena", label: "Arena", icon: GraduationCap },
-      { href: "/murid/toko-koin", label: "Toko Koin", icon: Coins },
-      { href: "/murid/pengumuman", label: "Papan Pengumuman", icon: Megaphone },
+      { href: "/arena/feed", label: "Karya", icon: PenLine },
+      { href: "/arena/chat", label: "Obrolan", icon: MessageCircle },
+      { href: "/murid/pengaturan", label: "Pengaturan", icon: Settings },
     ],
   },
   {
@@ -38,11 +39,15 @@ const GROUPS: { title: string; items: { href: string; label: string; icon: any }
     ],
   },
   {
-    title: "Event & Progress",
+    title: "Kelas",
     items: [
-      { href: "/murid/olimpiade/info", label: "Info Lomba", icon: Trophy },
-      { href: "/murid/olimpiade/kalender", label: "Kalender", icon: Calendar },
-      { href: "/murid/progresku", label: "Kemajuanku", icon: BarChart3 },
+      { href: "/murid/pengumuman", label: "Papan Pengumuman", icon: Megaphone },
+    ],
+  },
+  {
+    title: "Lainnya",
+    items: [
+      { href: "/arena/toko-koin", label: "Toko Koin", icon: Coins },
     ],
   },
 ];
