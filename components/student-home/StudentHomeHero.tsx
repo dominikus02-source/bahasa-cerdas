@@ -1,0 +1,127 @@
+"use client";
+
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import { Coins, Flame, Sparkles, Zap } from "lucide-react";
+import type { PlayerProfileResponse } from "@/lib/gamification/client-types";
+import { RankChip } from "@/components/gamification/RankChip";
+import UserAvatar from "@/components/arena/UserAvatar";
+import { XpProgressBar } from "@/components/arena/player/xp-progress-bar";
+
+interface MeUser {
+  displayName?: string;
+  fullName?: string;
+  avatar?: string;
+  school?: string;
+  city?: string;
+}
+
+export function StudentHomeHero() {
+  const [data, setData] = useState<PlayerProfileResponse | null>(null);
+  const [me, setMe] = useState<MeUser | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let alive = true;
+    Promise.all([
+      fetch("/api/player/profile").then((r) => (r.ok ? r.json() : Promise.reject())),
+      fetch("/api/user/me").then((r) => (r.ok ? r.json() : Promise.reject())),
+    ])
+      .then(([p, m]) => {
+        if (!alive) return;
+        setData(p);
+        setMe(m?.user || m?.data?.user || null);
+      })
+      .catch(() => alive && setError("Gagal memuat profil"));
+    return () => {
+      alive = false;
+    };
+  }, []);
+
+  if (error) {
+    return (
+      <div className="px-card px-5 py-5 text-center">
+        <p className="text-sm text-[var(--px-text-dim)]">{error}</p>
+      </div>
+    );
+  }
+
+  if (!data || !data.profile) {
+    return (
+      <div className="px-card px-5 py-5 space-y-3">
+        <div className="flex items-center gap-4">
+          <div className="px-skeleton rounded-full" style={{ width: 56, height: 56 }} />
+          <div className="flex-1 space-y-2">
+            <div className="px-skeleton rounded-lg" style={{ width: "45%", height: 16 }} />
+            <div className="px-skeleton rounded-lg" style={{ width: "60%", height: 10 }} />
+          </div>
+        </div>
+        <div className="px-skeleton rounded-lg" style={{ width: "100%", height: 12 }} />
+      </div>
+    );
+  }
+
+  const { profile } = data;
+  const name = me?.displayName || me?.fullName || "Murid";
+  const sub = me?.school || me?.city || "BahasaCerdas";
+
+  return (
+    <section aria-label="Profil saya" className="px-card px-5 py-5 md:p-6 relative overflow-hidden">
+      <div className="absolute -top-20 -right-20 w-56 h-56 rounded-full bg-[var(--px-royal)]/25 blur-3xl pointer-events-none" />
+
+      <div className="relative flex flex-col md:flex-row md:items-center gap-4 md:gap-6">
+        <div className="flex items-center gap-3.5 min-w-0">
+          <div className="relative shrink-0">
+            <UserAvatar
+              size={56}
+              avatar={profile.avatar || me?.avatar || undefined}
+              initials={name.charAt(0).toUpperCase()}
+              className="ring-2 ring-[var(--px-gold)]/60"
+            />
+            <span className="absolute -bottom-0.5 -right-0.5 w-4 h-4 rounded-full bg-emerald-400 border-2 border-[var(--px-navy)] flex items-center justify-center">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-600" />
+            </span>
+          </div>
+          <div className="min-w-0 flex-1">
+            <div className="flex items-center gap-2 flex-wrap">
+              <h1 className="text-lg md:text-xl font-extrabold text-[var(--px-text)] truncate">{name}</h1>
+              <RankChip rank={profile.rank} size={18} showTitle={false} compact />
+            </div>
+            <p className="text-xs text-[var(--px-text-dim)] truncate">{sub}</p>
+            <p className="text-[11px] text-[var(--px-text-faint)] mt-0.5">Halo! Siap belajar hari ini?</p>
+          </div>
+        </div>
+
+        <div className="md:ml-auto shrink-0 flex flex-col gap-3 md:items-end">
+          <div className="flex flex-wrap gap-2">
+            <span className="px-chip gap-1.5" title="Rentetan harian">
+              <Flame size={13} className="text-[var(--px-gold)]" />
+              <span className="font-bold">{profile.streak}</span>
+              <span className="text-[var(--px-text-faint)]">hari</span>
+            </span>
+            <span className="px-chip gap-1.5" title="Koin">
+              <Coins size={13} className="text-[var(--px-gold)]" />
+              <span className="font-bold">{profile.coin.toLocaleString("id-ID")}</span>
+            </span>
+            <span className="px-chip gap-1.5" title="XP minggu ini">
+              <Zap size={13} className="text-[var(--px-royal-2)]" />
+              <span className="font-bold">{profile.weeklyXp.toLocaleString("id-ID")}</span>
+              <span className="text-[var(--px-text-faint)]">XP</span>
+            </span>
+          </div>
+          <div className="w-full md:w-[320px]">
+            <XpProgressBar profile={profile} compact />
+          </div>
+          <Link
+            href="/murid/profile"
+            className="text-[11px] font-bold text-[var(--px-gold)] hover:underline self-start md:self-end"
+            aria-label="Lihat profil lengkap"
+          >
+            <Sparkles size={11} className="inline mr-1" />
+            Lihat Profil →
+          </Link>
+        </div>
+      </div>
+    </section>
+  );
+}

@@ -175,6 +175,7 @@
     "test:guru-berkarya-social": "npx tsx scripts/test-guru-berkarya-social.ts",
     "test:gamification-engine": "npx tsx scripts/test-gamification-engine.ts",
     "test:student-consolidation": "npx tsx scripts/test-student-consolidation.ts",
+    "test:student-home": "npx tsx scripts/test-student-home.ts",
     "seed:podium-badges:dry-run": "npx tsx scripts/seed-podium-badges.ts",
     "seed:podium-badges": "npx tsx scripts/seed-podium-badges.ts --execute",
     "test:leaderboard-motivation": "npx tsx scripts/test-leaderboard-motivation.ts",
