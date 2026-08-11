@@ -62,6 +62,9 @@ function FeedContent() {
 
   const [karyaList, setKaryaList] = useState<KaryaItem[]>([])
   const [filter, setFilter] = useState("SEMUA")
+  const [scope, setScope] = useState<"global" | "school" | "students">("global")
+  const scopeRef = useRef(scope)
+  useEffect(() => { scopeRef.current = scope }, [scope])
   const [likedSet, setLikedSet] = useState<Set<string>>(new Set())
   const [likeCounts, setLikeCounts] = useState<Record<string, number>>({})
   const [commentTexts, setCommentTexts] = useState<Record<string, string>>({})
@@ -98,6 +101,7 @@ function FeedContent() {
     const params = new URLSearchParams({ limit: "20" });
     if (cursorVal) params.set("cursor", cursorVal);
     if (filterRef.current !== "SEMUA") params.set("type", filterRef.current);
+    if (isGuruViewer) params.set("scope", scopeRef.current);
     if (q) params.set("q", q);
     const res = await fetch(`/api/siswa/karya?${params}`);
     const data = await res.json();
@@ -113,7 +117,7 @@ function FeedContent() {
     setCursor(data.nextCursor);
   };
 
-  // Single effect: fetch data saat filter/search berubah (termasuk mount)
+  // Single effect: fetch data saat filter/search/scope berubah (termasuk mount)
   useEffect(() => {
     setLoading(true);
     fetchKarya(null, false, searchQuery || undefined).finally(() => {
@@ -130,7 +134,7 @@ function FeedContent() {
       }
       setChallengeCount(chCount.count || 0);
     });
-  }, [filter, searchQuery]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [filter, searchQuery, scope, isGuruViewer]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const loadMore = async () => {
     if (loadingMoreRef.current || !cursorRef.current) return;
@@ -232,7 +236,7 @@ function FeedContent() {
       <div className="flex items-center justify-between mb-5">
         <div>
           <h1 className="text-xl font-extrabold text-gray-900">Jelajah Karya</h1>
-          <p className="text-sm text-gray-500">Jelajahi karya siswa dari seluruh Indonesia</p>
+          <p className="text-sm text-gray-500">Temukan karya murid dari seluruh Indonesia</p>
         </div>
         <Link href="/arena/tulis" className="flex items-center gap-1.5 px-4 py-2.5 bg-violet-600 text-white rounded-xl text-sm font-bold hover:bg-violet-700 transition-all shadow-sm">
           <PenLine size={16} /> Tulis
@@ -286,6 +290,26 @@ function FeedContent() {
         </div>
       )}
 
+      {/* Scope — GLOBAL DISCOVERY (guru): Semua Indonesia / Sekolahku / Muridku.
+          Murid tetap melihat feed nasional seperti sebelumnya (tanpa nav scope). */}
+      {isGuruViewer && (
+        <div className="flex gap-2 mb-4 overflow-x-auto pb-1 scrollbar-hide">
+          {([
+            { v: "global", label: "Semua Indonesia" },
+            { v: "school", label: "Sekolahku" },
+            { v: "students", label: "Muridku" },
+          ] as const).map(s => (
+            <button key={s.v} onClick={() => setScope(s.v)}
+              className={`px-4 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all ${
+                scope === s.v ? "bg-violet-600 text-white shadow-sm" : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+              }`}
+            >
+              {s.label}
+            </button>
+          ))}
+        </div>
+      )}
+
       {/* Filter Tabs */}
       <div className="flex gap-2 mb-5 overflow-x-auto pb-2 scrollbar-hide">
         {["SEMUA", "PUISI", "CERPEN", "ARTIKEL", "ANEKDOT", "PANTUN", "OPINI"].map(t => (
@@ -305,7 +329,25 @@ function FeedContent() {
       ) : karyaList.length === 0 ? (
         <div className="text-center py-16 text-gray-400">
           <FileText size={48} className="mx-auto mb-3 opacity-50" />
-          <p>Belum ada karya.</p>
+          {isGuruViewer && scope === "students" ? (
+            <>
+              <p>Belum ada karya dari muridmu.</p>
+              <p className="text-sm mt-1">Ajak muridmu berkarya lewat kelasmu.</p>
+              <Link href="/guru/kelasku" className="inline-block mt-3 px-4 py-2 bg-violet-600 text-white rounded-xl text-sm font-bold hover:bg-violet-700 transition-all">
+                Ajak Muridmu Berkarya →
+              </Link>
+            </>
+          ) : isGuruViewer && scope === "school" ? (
+            <>
+              <p>Belum ada karya dari sekolahmu.</p>
+              <p className="text-sm mt-1">Karya murid sekolahmu akan muncul di sini.</p>
+              <button onClick={() => setScope("global")} className="inline-block mt-3 px-4 py-2 bg-violet-600 text-white rounded-xl text-sm font-bold hover:bg-violet-700 transition-all">
+                Jelajahi Semua Indonesia →
+              </button>
+            </>
+          ) : (
+            <p>Belum ada karya.</p>
+          )}
         </div>
       ) : (
         <div className="space-y-5">

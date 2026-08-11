@@ -12,6 +12,7 @@ import { recordActivity } from "@/lib/learning-loop/activity";
 import { refreshNextAction } from "@/lib/learning-loop/next-action";
 import { RANK_META } from "@/lib/gamification/ranks";
 import { awardGuruXp, getMuridGuruIds, notifyGuruMurid } from "@/lib/gamification/teacher-xp";
+import { resolveKaryaFeedScope, buildKaryaScopeWhere } from "@/lib/karya/feed-scope";
 import type { PlayerRank } from "@prisma/client";
 
 function withDisplayName<T extends { user: { fullName: string; nickname?: string | null } }>(item: T) {
@@ -58,6 +59,9 @@ export async function GET(req: NextRequest) {
 
     const user = await getUser().catch(() => null);
     const userId = user?.id || null;
+    // Scope feed (global/school/students) — di-resolve di sini agar bisa dipakai
+    // oleh cache key. Detail semantik: lib/karya/feed-scope.ts.
+    const scope = resolveKaryaFeedScope(searchParams.get("scope"), user?.role);
 
     let items: any[];
     let hasMore = false;
@@ -96,7 +100,7 @@ export async function GET(req: NextRequest) {
       }
       items = [...pinned, ...auto];
     } else {
-      const where: any = {};
+      let where: any = {};
       if (type) where.type = type;
       if (q) {
         where.OR = [
@@ -122,26 +126,40 @@ export async function GET(req: NextRequest) {
         });
         const memberIds = members.map((m) => m.userId);
         where.userId = { in: memberIds };
-      } else if (user && user.role === "GURU") {
-        // Tanpa filter kelas, guru lihat karya semua murid mereka
-        const myGroups = await db.group.findMany({
-          where: { teacherId: user.id },
-          select: { id: true },
-        });
-        if (myGroups.length > 0) {
-          const members = await db.groupMember.findMany({
-            where: { groupId: { in: myGroups.map(g => g.id) }, role: "member" },
-            select: { userId: true },
+      } else if (user) {
+        // GLOBAL DISCOVERY vs MONITORING — scope memisahkan ketiganya:
+        //   global   → feed nasional (tanpa filter userId, berlaku semua role)
+        //   school   → karya murid sekolah yang sama dengan penonton
+        //   students → monitoring: hanya murid yang terhubung ke guru
+        // Default GURU = "students" (perilaku lama, backward-compatible);
+        // halaman /arena/feed & /guru/feed-karya mengirim scope eksplisit.
+        let memberIds: string[] = [];
+        if (scope === "students") {
+          const myGroups = await db.group.findMany({
+            where: { teacherId: user.id },
+            select: { id: true },
           });
-          const memberIds = [...new Set(members.map(m => m.userId))];
-          if (memberIds.length > 0) {
-            where.userId = { in: memberIds };
-          } else {
-            return NextResponse.json({ karya: [], nextCursor: null });
+          if (myGroups.length > 0) {
+            const members = await db.groupMember.findMany({
+              where: { groupId: { in: myGroups.map(g => g.id) }, role: "member" },
+              select: { userId: true },
+            });
+            memberIds = [...new Set(members.map(m => m.userId))];
           }
-        } else {
+        }
+        let viewerSchool: string | null = null;
+        if (scope === "school") {
+          const profile = await db.profile.findUnique({
+            where: { userId: user.id },
+            select: { school: true },
+          });
+          viewerSchool = profile?.school ?? null;
+        }
+        const scopeWhere = buildKaryaScopeWhere(scope, memberIds, viewerSchool);
+        if (scopeWhere === "EMPTY") {
           return NextResponse.json({ karya: [], nextCursor: null });
         }
+        if (scopeWhere) where = { ...where, ...scopeWhere };
       }
 
       // Cache first page (no cursor) for 30s — absorbs feed bursts from a whole class
@@ -149,8 +167,8 @@ export async function GET(req: NextRequest) {
       const cacheKey = cursor || q || groupId
         ? null
         : user && user.role === "GURU"
-          ? `feed:guru:${user.id}:${type || "all"}:${limit}`
-          : `feed:${type || "all"}:${limit}`;
+          ? `feed:guru:${user.id}:${scope}:${type || "all"}:${limit}`
+          : `feed:${scope}:${type || "all"}:${limit}`;
       let karya: any[];
       if (cacheKey) {
         const cached = await cache.get<any[]>(cacheKey);

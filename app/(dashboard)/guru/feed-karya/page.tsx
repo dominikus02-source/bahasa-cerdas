@@ -68,6 +68,9 @@ export default function GuruFeedKaryaPage() {
   const [stats, setStats] = useState<any>(null);
   const [statsLoading, setStatsLoading] = useState(true);
   const [aiFeedback, setAiFeedback] = useState<{ open: boolean; loading: boolean; result: any; error: string }>({ open: false, loading: false, result: null, error: "" });
+  // Scope feed: "students" = Karya Muridku (monitoring), "global" = Jelajah
+  // Indonesia (discovery nasional). Default students — monitoring dulu.
+  const [feedScope, setFeedScope] = useState<"students" | "global">("students");
 
   useEffect(() => {
     if (!toast) return;
@@ -114,7 +117,8 @@ export default function GuruFeedKaryaPage() {
 
       const params = new URLSearchParams({ limit: "30" });
       if (type) params.set("type", type);
-      if (selectedGroupId) params.set("groupId", selectedGroupId);
+      if (feedScope === "global") params.set("scope", "global");
+      else if (selectedGroupId) params.set("groupId", selectedGroupId);
       if (search.trim()) params.set("q", search.trim());
       if (cursorVal) params.set("cursor", cursorVal);
       const res = await fetch(`/api/siswa/karya?${params}`, { signal: controller.signal });
@@ -142,7 +146,7 @@ export default function GuruFeedKaryaPage() {
       setLoadingMore(false);
       loadingMoreRef.current = false;
     }
-  }, [selectedGroupId, search]);
+  }, [selectedGroupId, search, feedScope]);
 
   useEffect(() => {
     setLoading(true); setKaryaList([]); setCursor(null); setHasMore(true); hasMoreRef.current = true; cursorRef.current = null;
@@ -503,8 +507,32 @@ export default function GuruFeedKaryaPage() {
           </div>
         </div>
 
-      {/* ── Filter Kelas ── */}
-      {groups.length > 0 && (
+        {/* ── Scope Feed: Discovery Nasional vs Monitoring Murid ── */}
+        <div className="flex gap-2 mb-4">
+          <button
+            onClick={() => setFeedScope("students")}
+            className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all ${
+              feedScope === "students"
+                ? "bg-emerald-600 text-white shadow-lg shadow-emerald-200"
+                : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+            }`}
+          >
+            🏫 Karya Muridku
+          </button>
+          <button
+            onClick={() => setFeedScope("global")}
+            className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all ${
+              feedScope === "global"
+                ? "bg-emerald-600 text-white shadow-lg shadow-emerald-200"
+                : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+            }`}
+          >
+            🌎 Jelajah Indonesia
+          </button>
+        </div>
+
+      {/* ── Filter Kelas (hanya untuk Karya Muridku) ── */}
+      {feedScope === "students" && groups.length > 0 && (
         <div className="mb-3">
           <select
             value={selectedGroupId}
@@ -550,8 +578,31 @@ export default function GuruFeedKaryaPage() {
           <div className="w-16 h-16 rounded-full bg-emerald-100 flex items-center justify-center mx-auto mb-4">
             <IconPen size={24} className="text-emerald-500" />
           </div>
-          <p className="text-gray-500 font-medium">Belum ada karya</p>
-          <p className="text-gray-400 text-sm mt-1">Belum ada siswa yang menulis karya</p>
+          {feedScope === "students" ? (
+            <>
+              <p className="text-gray-500 font-medium">Belum ada karya dari muridmu.</p>
+              <p className="text-gray-400 text-sm mt-1">Ajak muridmu menulis, atau jelajahi karya murid Indonesia.</p>
+              <div className="flex flex-wrap items-center justify-center gap-3 mt-6">
+                <button
+                  onClick={() => setFeedScope("global")}
+                  className="inline-flex items-center gap-1.5 px-5 py-2.5 bg-emerald-600 text-white rounded-xl text-sm font-bold hover:bg-emerald-700 transition-all"
+                >
+                  Jelajahi karya murid Indonesia →
+                </button>
+                <Link
+                  href="/guru/kelasku"
+                  className="inline-flex items-center gap-1.5 px-5 py-2.5 bg-gray-100 text-gray-700 rounded-xl text-sm font-bold hover:bg-gray-200 transition-all"
+                >
+                  Ajak muridmu berkarya →
+                </Link>
+              </div>
+            </>
+          ) : (
+            <>
+              <p className="text-gray-500 font-medium">Belum ada karya dari murid Indonesia.</p>
+              <p className="text-gray-400 text-sm mt-1">Karya murid dari seluruh Indonesia akan muncul di sini.</p>
+            </>
+          )}
         </div>
       ) : (
         <div className="space-y-4">
