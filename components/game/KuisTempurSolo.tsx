@@ -5,10 +5,20 @@ import Link from "next/link"
 import { Heart, Volume2, VolumeX, Loader2, RotateCcw, ArrowLeft } from "lucide-react"
 import { QUESTION_BANK, type BankQuestion } from "@/lib/game/question-bank"
 import { gambarKarakter, KARAKTER, PROFIL, type Karakter } from "@/lib/arena-junior/karakter"
+import { bacaKarakter, simpanKarakter } from "@/lib/arena-junior/karakter-simpan"
 import { sfx, startBGM, stopBGM, isSoundOn, toggleSound, haptic } from "@/lib/game/sound"
 import { rankFromLevel, RANK_META } from "@/lib/gamification/ranks"
 import { RankIcon } from "@/components/gamification/RankIcon"
 import { levelFromXp } from "@/lib/gamification/xp-engine"
+import {
+  kurvaPemain,
+  lawanBot,
+  statDasarBot,
+  komposisiBot,
+  LABEL_TIPE,
+  WARNA_TIPE,
+  type StatBot,
+} from "@/lib/game/kuis-tempur-progression"
 
 // Gaya "chunky cream" yang dipakai seluruh ekosistem gim solo BahasaCerdas
 // (ZelbyDash, LariKata, BenarSalah, dll). Keyframes unik per gim supaya tidak
@@ -33,7 +43,6 @@ const KT_STYLE = `
 
 const GAME_TYPE = "RIMBA_KATA"
 const HP_AWAL = 100
-const DMG_TEMBAK = 34
 const DMG_SALAH = 10
 const R = 22
 const KUNCI_LEVEL = "bc-kuis-tempur-level"
@@ -51,24 +60,8 @@ const DURASI = 300
 // Tambahkan 1.webp dan daftar di bawah untuk memakainya kembali.
 const AVATAR_BOT = ["2", "3", "4", "5", "6", "7", "8", "9", "10"].map((n) => `/avatar/${n}.webp`)
 
-// Jumlah musuh mengikuti ronde: level 1 = 3 lawan, naik tiap 2 level sampai
-// maksimal 7 lawan. Makin tinggi ronde, makin rame kampungnya.
-function lawanBot(level: number): number {
-  const l = Math.min(Math.max(level, 1), 99)
-  return Math.min(3 + Math.floor((l - 1) / 2), 7)
-}
-
-function aturanLevel(level: number) {
-  const n = Math.min(level, 10)
-  return {
-    peluangTembak: 0.0010 + n * 0.0005,
-    lajuPeluru: 2.8 + n * 0.25,
-    dmgBot: 9 + n,
-    sebaran: 0.55 - n * 0.03,
-    lajuZona: n <= 2 ? 0 : 0.05 + n * 0.015, // dua level pertama tanpa kabut
-    lajuBot: 0.35 + n * 0.05,
-  }
-}
+// Jumlah musuh, statistik arena, kurva pemain, dan komposisi arketipe bot
+// dihitung di lib/game/kuis-tempur-progression.ts (murni & teruji).
 
 type Rintangan =
   | { jenis: "rumah"; x: number; y: number; w: number; h: number; warna: string }
@@ -81,18 +74,19 @@ type Pemain = {
   warna: string
   x: number; y: number; tx: number; ty: number
   hp: number
+  hpMax: number
   hidup: boolean
   kamu: boolean
   kedip: number
   langkah: number   // fase ayunan jalan
   hadap: number     // -1 kiri, 1 kanan
+  stat?: StatBot    // statistik arketipe bot (pemain tidak memakai ini)
 }
 type Peluru = { x: number; y: number; vx: number; vy: number; dari: number; umur: number; dmg: number }
 type Partikel = { x: number; y: number; vx: number; vy: number; umur: number; warna: string }
 type Angka = { x: number; y: number; teks: string; umur: number; warna: string }
 
 const NAMA_BOT = ["Raka", "Sari", "Bima", "Lia", "Dewi", "Andi", "Nisa", "Fajar", "Gilang", "Putri"]
-const WARNA = ["#34D399", "#F87171", "#FBBF24", "#60A5FA", "#C084FC"]
 const ATAP = ["#EF4444", "#F97316", "#0EA5E9", "#8B5CF6", "#14B8A6"]
 
 function kocok<T>(arr: T[]): T[] {
@@ -111,7 +105,9 @@ function kenaRintangan(x: number, y: number, r: Rintangan): boolean {
 
 export default function KuisTempurSolo({ backHref = "/arena/game" }: { backHref?: string }) {
   const [fase, setFase] = useState<"pilih" | "main" | "selesai">("pilih")
-  const [karakterku, setKarakterku] = useState<Karakter>("zelby")
+  // Karakter terpilih dibaca dari penyimpanan bersama (bc-karakter) supaya
+  // pilihan bertahan antar sesi dan dipakai konsisten di arena/junior.
+  const [karakterku, setKarakterku] = useState<Karakter>(() => bacaKarakter())
   const [namaku, setNamaku] = useState("Kamu")
   const [suara, setSuara] = useState(true)
 
@@ -150,7 +146,9 @@ export default function KuisTempurSolo({ backHref = "/arena/game" }: { backHref?
   const peluruRef = useRef(0)
   const feedIdRef = useRef(0)
   const kantongRef = useRef<BankQuestion[]>([])
-  const aturanRef = useRef(aturanLevel(1))
+  const aturanRef = useRef(statDasarBot(1))
+  // Statistik pemain ronde ini (nyawa maks & kerusakan peluru dari kurva).
+  const statkuRef = useRef(kurvaPemain(1))
   // Berapa bot yang sudah dikalahkan (bot terus berdatangan sampai waktu habis).
   const dibunuhRef = useRef(0)
   const giliranBotRef = useRef(0)
@@ -249,8 +247,10 @@ export default function KuisTempurSolo({ backHref = "/arena/game" }: { backHref?
     const cv = cvRef.current
     const W = cv?.clientWidth || window.innerWidth
     const H = cv?.clientHeight || window.innerHeight
-    const aturan = aturanLevel(level)
+    const aturan = statDasarBot(level)
     aturanRef.current = aturan
+    const statku = kurvaPemain(level)
+    statkuRef.current = statku
 
     // Peta kampung: rumah dan pohon tersebar, menyisakan jalur di antaranya.
     // Rintangan menahan peluru, jadi peta inilah yang memberi murid pilihan —
@@ -303,6 +303,11 @@ export default function KuisTempurSolo({ backHref = "/arena/game" }: { backHref?
     const img = (src: string) => { const i = new Image(); i.src = src; return i }
     if (!batikRef.current) batikRef.current = img("/batik%20bg%20bc.png")
 
+    // Tiap bot lahir dengan arketipe acak (ringan/sedang/berat/penembak) yang
+    // bobotnya mengikuti ronde — ronde tinggi berarti musuh lebih kuat & rajin
+    // menembak. Pemain memakai kurva ronde sendiri (nyawa & peluru).
+    const lahirStat = () => komposisiBot(level, giliranBotRef.current)
+
     pRef.current = Array.from({ length: lawan + 1 }, (_, i) => {
       const sudut = ((Math.PI * 2) / (lawan + 1)) * i - Math.PI / 2
       const jarak = Math.min(W, H) * 0.32
@@ -312,9 +317,14 @@ export default function KuisTempurSolo({ backHref = "/arena/game" }: { backHref?
         : botWajah[(i - 1) % botWajah.length]
       const x = W / 2 + Math.cos(sudut) * jarak
       const y = H / 2 + Math.sin(sudut) * jarak
+      const stat = kamu ? undefined : lahirStat()
       return {
-        nama: kamu ? namaku : botNama[i - 1], gambar: img(src), warna: WARNA[i % WARNA.length],
-        x, y, tx: x, ty: y, hp: HP_AWAL, hidup: true, kamu, kedip: 0, langkah: 0, hadap: 1,
+        nama: kamu ? namaku : botNama[i - 1], gambar: img(src),
+        warna: stat ? WARNA_TIPE[stat.tipe] : "#34D399",
+        x, y, tx: x, ty: y,
+        hp: stat?.hpMax ?? statku.hpMax,
+        hpMax: stat?.hpMax ?? statku.hpMax,
+        hidup: true, kamu, kedip: 0, langkah: 0, hadap: 1, stat,
       }
     })
 
@@ -326,7 +336,7 @@ export default function KuisTempurSolo({ backHref = "/arena/game" }: { backHref?
     kantongRef.current = kocok(QUESTION_BANK)
     jalanRef.current = true
 
-    setHp(HP_AWAL); setCombo(0); setPeluru(0)
+    setHp(statku.hpMax); setCombo(0); setPeluru(0)
     setSisaWaktu(DURASI); setKalahkan(0)
     setFeed([]); setHasil(null); setDipilih(null)
     setFase("main")
@@ -410,7 +420,7 @@ export default function KuisTempurSolo({ backHref = "/arena/game" }: { backHref?
       bRef.current.push({
         x: aku.x, y: aku.y,
         vx: Math.cos(a) * 10, vy: Math.sin(a) * 10,
-        dari: 0, umur: 110, dmg: DMG_TEMBAK,
+        dari: 0, umur: 110, dmg: statkuRef.current.dmgTembak,
       })
       sfx.tap(); haptic(15)
     }
@@ -466,12 +476,13 @@ export default function KuisTempurSolo({ backHref = "/arena/game" }: { backHref?
         x = kx; y = ky
         break
       }
-      // Musuh baru lahir berwajah aset avatar bernomor, sama seperti awal ronde.
+      // Musuh baru lahir dengan arketipe acak sesuai ronde — bukan satu cetakan.
+      const stat = komposisiBot(level, giliranBotRef.current)
       const img = new Image()
       img.src = AVATAR_BOT[n % AVATAR_BOT.length]
       pRef.current.push({
-        nama: NAMA_BOT[n % NAMA_BOT.length], gambar: img, warna: WARNA[n % WARNA.length],
-        x, y, tx: x, ty: y, hp: HP_AWAL, hidup: true, kamu: false, kedip: 0, langkah: 0, hadap: 1,
+        nama: NAMA_BOT[n % NAMA_BOT.length], gambar: img, warna: WARNA_TIPE[stat.tipe],
+        x, y, tx: x, ty: y, hp: stat.hpMax, hpMax: stat.hpMax, hidup: true, kamu: false, kedip: 0, langkah: 0, hadap: 1, stat,
       })
     }
 
@@ -480,7 +491,7 @@ export default function KuisTempurSolo({ backHref = "/arena/game" }: { backHref?
       if (!p.hidup) return
       p.hidup = false; p.hp = 0
       ledak(p.x, p.y, p.warna, 20)
-      tulisFeed(`${oleh} menumbangkan ${p.nama}`)
+      tulisFeed(`${oleh} menumbangkan ${p.nama} ${p.stat ? LABEL_TIPE[p.stat.tipe] : ""}`)
       const s = pRef.current.filter((x) => x.hidup).length
       if (p.kamu) selesaikan(false, s + 1)
       else {
@@ -621,7 +632,7 @@ export default function KuisTempurSolo({ backHref = "/arena/game" }: { backHref?
         const jarak = Math.hypot(dx, dy)
         const bergerak = jarak > 2
         if (bergerak) {
-          const laju = p.kamu ? 2.6 : at.lajuBot * 3
+          const laju = p.kamu ? 2.6 : (p.stat?.laju ?? at.lajuBot) * 3
           p.x += (dx / jarak) * Math.min(laju, jarak)
           p.y += (dy / jarak) * Math.min(laju, jarak)
           p.langkah += 0.28
@@ -660,14 +671,14 @@ export default function KuisTempurSolo({ backHref = "/arena/game" }: { backHref?
               if (!rintRef.current.some((o) => kenaRintangan(nx, ny, o))) { p.tx = nx; p.ty = ny; break }
             }
           }
-          if (Math.random() < at.peluangTembak) {
+          if (Math.random() < (p.stat?.peluangTembak ?? at.peluangTembak)) {
             const t = pRef.current.findIndex((x, j) => j !== i && x.hidup)
             if (t !== -1) {
               const o = pRef.current[t]
-              const a = Math.atan2(o.y - p.y, o.x - p.x) + (Math.random() - 0.5) * at.sebaran
+              const a = Math.atan2(o.y - p.y, o.x - p.x) + (Math.random() - 0.5) * (p.stat?.sebaran ?? at.sebaran)
               bRef.current.push({
                 x: p.x, y: p.y, vx: Math.cos(a) * at.lajuPeluru, vy: Math.sin(a) * at.lajuPeluru,
-                dari: i, umur: 120, dmg: at.dmgBot,
+                dari: i, umur: 120, dmg: p.stat?.dmg ?? at.dmgBot,
               })
             }
           }
@@ -718,7 +729,7 @@ export default function KuisTempurSolo({ backHref = "/arena/game" }: { backHref?
         ctx.fillText(p.nama, p.x, py - R - 13)
         ctx.fillStyle = "rgba(0,0,0,0.45)"; ctx.fillRect(p.x - 21, py - R - 9, 42, 4)
         ctx.fillStyle = p.hp > 35 ? "#34D399" : "#F87171"
-        ctx.fillRect(p.x - 21, py - R - 9, 42 * Math.max(0, p.hp / HP_AWAL), 4)
+        ctx.fillRect(p.x - 21, py - R - 9, 42 * Math.max(0, p.hp / Math.max(1, p.hpMax)), 4)
       })
 
       for (let i = bRef.current.length - 1; i >= 0; i--) {
@@ -780,7 +791,7 @@ export default function KuisTempurSolo({ backHref = "/arena/game" }: { backHref?
     }
     rafRef.current = requestAnimationFrame(gelung)
     return () => cancelAnimationFrame(rafRef.current)
-  }, [fase, selesaikan, tulisFeed])
+  }, [fase, selesaikan, tulisFeed, level])
 
   const jawab = (idx: number, benar: boolean) => {
     if (kunci || teratasiRef.current || fase !== "main") return
@@ -923,7 +934,7 @@ export default function KuisTempurSolo({ backHref = "/arena/game" }: { backHref?
               {pilihan.map((p) => (
                 <button
                   key={p.id}
-                  onClick={() => { setKarakterku(p.id); sfx.tap() }}
+                  onClick={() => { setKarakterku(p.id); simpanKarakter(p.id); sfx.tap() }}
                   className={`rounded-2xl border-[3px] p-3 text-center transition-all active:scale-95 ${
                     karakterku === p.id ? "border-emerald-600 bg-emerald-50" : "border-[#161B3A]/20 bg-white shadow-[4px_4px_0_#161B3A]"
                   }`}
@@ -1024,7 +1035,7 @@ export default function KuisTempurSolo({ backHref = "/arena/game" }: { backHref?
             <div className="rounded-xl border-[3px] border-[#161B3A] bg-[#161B3A] px-2 py-2 text-white shadow-[3px_3px_0_#161B3A]">
               <div className="text-[8px] font-extrabold uppercase opacity-70">Nyawa</div>
               <div className="flex items-center gap-1 text-lg font-extrabold leading-none">
-                <span className="text-rose-400">❤️</span> {hp}
+                <span className="text-rose-400">❤️</span> {hp}/{kurvaPemain(level).hpMax}
               </div>
             </div>
             <div className={`rounded-xl border-[3px] border-[#161B3A] px-2 py-2 shadow-[3px_3px_0_#161B3A] ${peluru > 0 ? "bg-amber-300" : "bg-white opacity-70"}`}>
