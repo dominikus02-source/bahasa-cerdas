@@ -140,12 +140,22 @@ export default function MuridProfilePage() {
           const meData = await meRes.json();
           const me = meData.user || meData;
           setUser(me);
-          // Statistik sosial (pengikut/mengikuti) — best-effort; bila tabel
-          // Follow belum dimigrasi, respon 500 diabaikan dan UI tetap hidup.
+          // Statistik sosial (pengikut/mengikuti/like profil) — best-effort,
+          // UI tetap hidup bila tabel belum migrasi, TAPI kegagalan tidak
+          // disamarkan sebagai data valid: di-log agar "0" yang tampil jelas
+          // berasal dari request gagal, bukan nol asli dari database.
           try {
             const socRes = await fetch(`/api/user/profile/${me.id}/social`);
-            if (socRes.ok) setSocial(await socRes.json());
-          } catch {}
+            if (socRes.ok) {
+              setSocial(await socRes.json());
+            } else {
+              console.warn(
+                `Statistik sosial gagal (HTTP ${socRes.status}) untuk profil ${me.id} — jalankan migrasi 2026-08-10_profile_follow.sql bila tabel Follow/ProfileLike belum ada`
+              );
+            }
+          } catch (e) {
+            console.error("Gagal memuat statistik sosial", e);
+          }
         }
         if (karyaRes.ok) {
           const kData = await karyaRes.json();
@@ -405,7 +415,12 @@ export default function MuridProfilePage() {
           <PlayerStatsGrid
             stats={[
               { key: "karya", label: "Karya", value: meta?.stats.karyaCount ?? karyaList.length, icon: "book", href: "/murid/karya" },
-              { key: "like", label: "Like", value: user.totalLikes || 0, icon: "heart", href: "/murid/karya" },
+              // LIKE = like PROFIL (ProfileLike targetId = user), konsisten
+              // dengan tombol Suka di profil publik & likeNote pada
+              // SocialConnections. Fallback legacy `user.totalLikes` (like
+              // karya) hanya dipakai saat request sosial gagal; kegagalan
+              // sudah di-log di load() sehingga tidak disamarkan sebagai 0.
+              { key: "like", label: "Like", value: social ? social.profileLikeCount : user.totalLikes || 0, icon: "heart", href: "/murid/karya" },
               { key: "follower", label: "Pengikut", value: social?.followerCount ?? 0, icon: "users" },
               { key: "following", label: "Mengikuti", value: social?.followingCount ?? 0, icon: "user" },
             ]}
