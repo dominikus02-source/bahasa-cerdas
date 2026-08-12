@@ -5,7 +5,7 @@ import { isApk } from "@/lib/apk"
 import { headers } from "next/headers"
 import { redirect } from "next/navigation"
 import Link from "next/link"
-import { Compass, Target, Trophy, Gamepad2, Medal, Award, LayoutDashboard } from "lucide-react"
+import { Compass, Target, Trophy, Gamepad2, Medal, Award, LayoutDashboard, MessageCircle } from "lucide-react"
 import { SwRegister } from "@/components/SwRegister"
 import { ArenaClientWrapper } from "./arena-client"
 import { BottomNav } from "./bottom-nav"
@@ -52,11 +52,35 @@ export default async function ArenaLayout({ children }: { children: React.ReactN
   // on a phone used by children.
   const apk = await isApk()
 
+  // OBROLAN 4.0 — produk Student Shell, bukan halaman Arena. Di WEB (bukan
+  // APK), /arena/chat* memakai chrome-nya sendiri: top bar "Obrolan" tanpa
+  // header/subnav Arena dan tanpa banner boost. APK tetap memakai chrome
+  // Arena + BottomNav (kompatibilitas TWA tidak berubah).
+  const isChatWeb = !apk && pathname.startsWith("/arena/chat")
+
   return (
     <div className="arena-theme min-h-screen bg-gray-50 pb-20 md:pb-0 dark:bg-slate-950">
       <SwRegister />
 
-      {/* Desktop Header */}
+      {/* Desktop Header — WEB Obrolan memakai top bar tersendiri (Student Shell) */}
+      {isChatWeb ? (
+        <header className="sticky top-0 z-40 flex items-center justify-between px-6 h-14 bg-white border-b border-gray-200 dark:bg-slate-900 dark:border-slate-800">
+          <Link href="/arena/chat" className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center text-white">
+              <MessageCircle className="w-4 h-4" />
+            </div>
+            <span className="font-bold text-gray-900 dark:text-slate-100">Obrolan</span>
+            <span className="hidden lg:block text-xs text-gray-400 dark:text-slate-500">Ruang komunikasi kelas</span>
+          </Link>
+          <div className="flex items-center gap-2">
+            <Link href={isGuruPreview ? "/guru/beranda" : "/murid/beranda"} className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold text-violet-700 bg-violet-50 hover:bg-violet-100 transition-colors dark:text-violet-300 dark:bg-violet-500/20 dark:hover:bg-violet-500/30">
+              <LayoutDashboard className="w-4 h-4" /> {isGuruPreview ? "Dasbor Guru" : "Dasbor Murid"}
+            </Link>
+            <HeaderActions />
+            <LogoutButton variant="icon" />
+          </div>
+        </header>
+      ) : (
       <header className="hidden md:flex items-center justify-between px-6 h-16 bg-white border-b border-gray-200 sticky top-0 z-40 dark:bg-slate-900 dark:border-slate-800">
         <Link href="/arena" className="flex items-center gap-2">
           <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center text-white font-bold text-xs">
@@ -97,14 +121,15 @@ export default async function ArenaLayout({ children }: { children: React.ReactN
           {!apk && <LogoutButton variant="icon" />}
         </div>
       </header>
+      )}
 
       {/* Mobile Top Bar */}
       <div className="md:hidden sticky top-0 z-40 flex items-center justify-between px-4 h-12 bg-white/95 backdrop-blur-xl border-b border-gray-100 dark:bg-slate-900/95 dark:border-slate-800">
-        <Link href="/arena" className="flex items-center gap-1.5">
+        <Link href={isChatWeb ? "/arena/chat" : "/arena"} className="flex items-center gap-1.5">
           <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center text-white font-bold text-[10px]">
-            A
+            {isChatWeb ? <MessageCircle className="w-3.5 h-3.5" /> : "A"}
           </div>
-          <span className="font-bold text-sm text-gray-900 dark:text-slate-100">Arena</span>
+          <span className="font-bold text-sm text-gray-900 dark:text-slate-100">{isChatWeb ? "Obrolan" : "Arena"}</span>
         </Link>
         <div className="flex items-center gap-1">
           {!apk && (
@@ -118,8 +143,9 @@ export default async function ArenaLayout({ children }: { children: React.ReactN
       </div>
 
       {/* Subnav Arena — mobile web (web ≠ APK: tanpa bottom navigation ala APK).
-          Pills horizontal scroll, touch target ≥44px, active state jelas. */}
-      {!apk && (
+          Pills horizontal scroll, touch target ≥44px, active state jelas.
+          TIDAK dirender di WEB Obrolan (produk Student Shell, bukan Arena). */}
+      {!apk && !isChatWeb && (
         <nav aria-label="Navigasi Arena" className="md:hidden sticky top-12 z-30 flex items-center gap-1.5 px-3 py-2 bg-white/95 backdrop-blur-xl border-b border-gray-100 overflow-x-auto scrollbar-hide dark:bg-slate-900/95 dark:border-slate-800">
           {navItems.map((item) => {
             const aktif = pathname === item.href || (item.href !== "/arena" && pathname.startsWith(item.href))
@@ -142,16 +168,17 @@ export default async function ArenaLayout({ children }: { children: React.ReactN
         </nav>
       )}
 
-      <ActiveBoostBanner />
+      {/* Banner boost tidak muncul di WEB Obrolan — workspace penuh viewport */}
+      {!isChatWeb && <ActiveBoostBanner />}
 
-      {/* Obrolan (Class Chat Workspace) memakai container selebar 1440px agar
-          pane sidebar + percakapan + konteks terlihat penuh di desktop.
-          Halaman arena lain tetap pakai kolom 4xl yang mobile-friendly. */}
+      {/* Obrolan (Class Chat Workspace) memakai container selebar 1440px tanpa
+          padding vertikal agar 3 pane memenuhi viewport. Halaman arena lain
+          tetap pakai kolom 4xl yang mobile-friendly. */}
       <main
-        className={`mx-auto px-0 py-0 md:py-6 ${
+        className={`mx-auto px-0 ${
           pathname.startsWith("/arena/chat")
-            ? "max-w-[1440px] md:px-8"
-            : "max-w-lg md:max-w-4xl md:px-6"
+            ? "max-w-[1440px] py-0 md:px-8"
+            : "max-w-lg md:max-w-4xl py-0 md:py-6 md:px-6"
         }`}
       >
         <ArenaClientWrapper>

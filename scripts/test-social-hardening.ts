@@ -85,12 +85,21 @@ check("Regresi: respond tanpa unlock/non-PII di hero", !/correctAnswer|jawaban/.
 
 // ---- Regresi DB: hardening TIDAK menambah migrasi baru ----
 // Pengecualian terdokumentasi: migrasi premium economy (fase P1, additive-only,
-// 2026-08-11) diizinkan; migrasi lain apa pun = gagal.
+// 2026-08-11) dan migrasi chat lock OBROLAN 4.0 (spesifikasi §S, additive-only,
+// 2026-08-12) diizinkan; migrasi lain apa pun = gagal.
 import { execSync } from "node:child_process";
 try {
   const mig = execSync("git status --short prisma/migrations", { cwd: root, encoding: "utf8" }).trim();
-  const allowed = "?? prisma/migrations/manual/2026-08-11_premium_economy.sql";
-  check("Regresi: tanpa migrasi/schema baru", mig === "" || mig === allowed, mig || "ada perubahan di prisma/migrations");
+  // Yang diizinkan: migrasi premium economy (fase P1, 2026-08-11 — sudah commit)
+  // dan migrasi chat lock OBROLAN 4.0 (spesifikasi §S, 2026-08-12). File yang
+  // sudah di-commit tidak muncul di status → cek subset.
+  const allowedSuffixes = [
+    "2026-08-11_premium_economy.sql",
+    "2026-08-12_obrolan4_chat_lock.sql",
+  ];
+  const files = mig.split("\n").filter(Boolean).map((l) => l.replace(/^\S+\s+/, ""));
+  const ok = mig === "" || files.every((f) => allowedSuffixes.some((a) => f.endsWith(a)));
+  check("Regresi: tanpa migrasi/schema baru", ok, mig || "ada perubahan di prisma/migrations");
 } catch {
   check("Regresi: tanpa migrasi/schema baru", false, "git status gagal");
 }

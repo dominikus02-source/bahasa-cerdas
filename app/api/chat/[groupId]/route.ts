@@ -14,11 +14,12 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ grou
     // boleh lagi dibuka chat-nya — integritas akses, bukan sekadar tampilan.
     const group = await db.group.findUnique({
       where: { id: groupId, isActive: true },
-      select: { teacherId: true },
+      select: { teacherId: true, chatLocked: true },
     });
     if (!group) return NextResponse.json({ error: "Kelas tidak ditemukan", code: "CLASS_NOT_FOUND" }, { status: 404 });
 
     let allowed = group.teacherId === user.id || user.role === "ADMIN" || user.isFounder;
+    const isTeacher = group.teacherId === user.id;
     if (!allowed) {
       const membership = await db.groupMember.findUnique({
         where: { groupId_userId: { groupId, userId: user.id } },
@@ -45,7 +46,11 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ grou
         orderBy: { createdAt: "asc" },
         take: limit,
       });
-      return NextResponse.json({ messages });
+      return NextResponse.json({
+        messages: sanitizeMessages(messages),
+        locked: group.chatLocked,
+        moderation: isTeacher ? await moderationStats(db, groupId) : undefined,
+      });
     }
 
     const messages = await db.chatMessage.findMany({
@@ -55,8 +60,34 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ grou
       take: limit,
     });
 
-    return NextResponse.json({ messages: messages.reverse() });
+    return NextResponse.json({
+      messages: sanitizeMessages(messages.reverse()),
+      locked: group.chatLocked,
+      moderation: isTeacher ? await moderationStats(db, groupId) : undefined,
+    });
   } catch (error) {
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
+}
+
+// Pesan yang di-soft-delete guru (moderasi) tidak pernah bocor isinya ke
+// klien — hanya placeholder. Konten asli tetap aman di database untuk audit.
+function sanitizeMessages(messages: any[]) {
+  return messages.map((m) =>
+    m.deletedAt
+      ? { id: m.id, deleted: true, content: null, createdAt: m.createdAt, user: null }
+      : { id: m.id, deleted: false, content: m.content, createdAt: m.createdAt, user: m.user }
+  );
+}
+
+// Statistik moderasi guru (hanya dikirim ke guru kelas): hitungan WIB hari ini.
+function moderationStats(db: any, groupId: string) {
+  const wibOffset = 7 * 60 * 60 * 1000;
+  const startWIB = new Date(Date.now() + wibOffset);
+  startWIB.setUTCHours(0, 0, 0, 0);
+  const startToday = new Date(startWIB.getTime() - wibOffset);
+  return Promise.all([
+    db.chatMessage.count({ where: { groupId, createdAt: { gte: startToday } } }),
+    db.chatMessage.count({ where: { groupId, deletedAt: { not: null } } }),
+  ]).then(([messagesToday, messagesDeleted]) => ({ messagesToday, messagesDeleted }));
 }

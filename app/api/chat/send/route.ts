@@ -21,11 +21,12 @@ export async function POST(req: NextRequest) {
     // pesan baru — integritas akses (history tetap aman di database).
     const group = await db.group.findUnique({
       where: { id: groupId, isActive: true },
-      select: { teacherId: true },
+      select: { teacherId: true, chatLocked: true },
     });
     if (!group) return NextResponse.json({ error: "Kelas tidak ditemukan", code: "CLASS_NOT_FOUND" }, { status: 404 });
 
     let allowed = group.teacherId === user.id || user.role === "ADMIN" || user.isFounder;
+    const isTeacher = group.teacherId === user.id || user.role === "ADMIN" || user.isFounder;
     if (!allowed) {
       const membership = await db.groupMember.findUnique({
         where: { groupId_userId: { groupId, userId: user.id } },
@@ -34,6 +35,15 @@ export async function POST(req: NextRequest) {
     }
     if (!allowed) {
       return NextResponse.json({ error: "Kamu tidak memiliki akses ke kelas ini.", code: "CLASS_MESSAGE_FORBIDDEN" }, { status: 403 });
+    }
+
+    // Chat lock server-enforced: hanya guru kelas (dan admin/founder) yang
+    // boleh tetap menulis saat obrolan dikunci. Murid ditolak 403.
+    if (group.chatLocked && !isTeacher) {
+      return NextResponse.json(
+        { error: "Obrolan sedang dikunci oleh guru.", code: "CLASS_CHAT_LOCKED" },
+        { status: 403 }
+      );
     }
 
     // Light sanitize: strip HTML tags but keep ordinary text (render is already

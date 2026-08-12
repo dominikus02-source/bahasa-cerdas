@@ -1398,6 +1398,7 @@ model Group {
   tahunAjaran     String?
   accessCode      String           @unique
   isActive        Boolean          @default(true)
+  chatLocked      Boolean          @default(false)
   teacherId       String
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
@@ -1480,11 +1481,15 @@ model GroupQuiz {
 }
 
 model ChatMessage {
-  id        String   @id @default(cuid())
+  id        String    @id @default(cuid())
   groupId   String
   userId    String
   content   String
-  createdAt DateTime @default(now())
+  // Soft-delete untuk moderasi guru (OBROLAN 4.0). Pesan tidak pernah dihapus
+  // dari database — audit tetap utuh; klien hanya melihat placeholder.
+  deletedAt DateTime?
+  deletedBy String?
+  createdAt DateTime  @default(now())
 
   group Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
   user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)

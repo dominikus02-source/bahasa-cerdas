@@ -4,9 +4,14 @@ import { useState, useEffect, useRef } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import {
-  MessageCircle, Send, ChevronLeft, Users, Search, Plus, X,
-  PanelRight, List, ChevronRight, Hash,
+  MessageCircle, MessageCircleOff, Send, ChevronLeft, Users, Search, Plus, X,
+  PanelRight, List, ChevronRight, Hash, MoreVertical, Trash2, Lock, LockOpen, GraduationCap,
 } from "lucide-react"
+
+// OBROLAN 4.0 — Class Chat Workspace.
+// Produk Student Shell: workspace komunikasi kelas (desktop-first), bukan
+// halaman Arena. Semua data real dari server — tidak ada avatar palsu, angka
+// online palsu, pesan palsu, atau guru palsu.
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
@@ -22,6 +27,10 @@ export interface Group {
   name: string
   accessCode: string | null
   grade: string
+  chatLocked: boolean
+  teacherId: string
+  teacher: { id: string; fullName: string; avatar: string | null } | null
+  isTeacher: boolean
   memberCount: number
   onlineCount: number
   lastMessage: {
@@ -35,13 +44,19 @@ export interface Group {
 
 interface Message {
   id: string
-  content: string
+  content: string | null
   userId: string
   createdAt: string
-  user: { id: string; fullName: string; avatar?: string | null }
+  deleted?: boolean
+  user: { id: string; fullName: string; avatar?: string | null } | null
 }
 
 type ConvState = "idle" | "loading" | "ok" | "unavailable" | "error"
+
+interface ModerationStats {
+  messagesToday: number
+  messagesDeleted: number
+}
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -87,7 +102,8 @@ function isOnline(lastActiveAt: string | null) {
 // APK (TWA) membedakan diri lewat cookie bc_apk (non-HttpOnly sengaja — lihat
 // middleware.ts). Client memakai ini untuk menjaga link tetap dalam scope
 // /arena/*: join kelas di APK memakai modal inline, di web menuju halaman
-// /murid/gabung-kelas.
+// /murid/gabung-kelas. Tinggi workspace juga mengikuti chrome APK
+// (top bar + BottomNav) vs chrome Web Obrolan (top bar sendiri).
 function useIsApkClient() {
   const [isApk, setIsApk] = useState(false)
   useEffect(() => {
@@ -137,8 +153,29 @@ export function ChatClient({ userId, groups }: { userId: string; groups: Group[]
   const [joinCode, setJoinCode] = useState("")
   const [joinError, setJoinError] = useState("")
   const [joinLoading, setJoinLoading] = useState(false)
+  const [menuFor, setMenuFor] = useState<string | null>(null)
+  const [lockBusy, setLockBusy] = useState(false)
+
+  // Lock state per kelas: inisialisasi dari server page (real), lalu disinkron
+  // dari respons GET/polling dan aksi lock/unlock guru.
+  const [lockedMap, setLockedMap] = useState<Record<string, boolean>>(() =>
+    Object.fromEntries(groups.map((g) => [g.id, g.chatLocked]))
+  )
+  const [moderation, setModeration] = useState<ModerationStats | null>(null)
+
   const endRef = useRef<HTMLDivElement>(null)
   const lastStampRef = useRef<string | null>(null)
+
+  const locked = selected ? !!lockedMap[selected.id] : false
+
+  // Chrome-aware workspace height: WEB Obrolan punya top bar sendiri (h-12
+  // mobile / h-14 desktop), APK memakai top bar Arena + BottomNav (4rem).
+  const shellHeight = isApk
+    ? "md:h-[calc(100dvh-7rem)]"
+    : "md:h-[calc(100dvh-3.5rem)]"
+  const listMinHeight = isApk
+    ? "min-h-[calc(100dvh-7rem)]"
+    : "min-h-[calc(100dvh-3rem)]"
 
   useEffect(() => { endRef.current?.scrollIntoView({ behavior: "smooth" }) }, [messages, convState])
 
@@ -154,6 +191,8 @@ export function ChatClient({ userId, groups }: { userId: string; groups: Group[]
     setConvState("idle")
     setMessages([])
     setSendError("")
+    setMenuFor(null)
+    setModeration(null)
     router.refresh()
   }
 
@@ -161,6 +200,8 @@ export function ChatClient({ userId, groups }: { userId: string; groups: Group[]
     setSelected(g)
     setMessages([])
     setSendError("")
+    setMenuFor(null)
+    setModeration(null)
     setConvState("loading")
     try {
       const res = await fetch(`/api/chat/${g.id}`)
@@ -168,14 +209,18 @@ export function ChatClient({ userId, groups }: { userId: string; groups: Group[]
       if (!res.ok) { setConvState("error"); return }
       const data = await res.json()
       setMessages(data.messages || [])
+      if (typeof data.locked === "boolean") setLockedMap((prev) => ({ ...prev, [g.id]: data.locked }))
+      if (data.moderation) setModeration(data.moderation)
       setConvState("ok")
     } catch {
       setConvState("error")
     }
   }
 
-  // Polling pesan baru — memakai mekanisme existing: `after` (timestamp terbaru
-  // yang sudah dimiliki), backoff 4s→15s, pause saat tab tersembunyi.
+  // Polling pesan baru — mekanisme existing dipertahankan: `after` (timestamp
+  // terbaru yang sudah dimiliki), backoff 4s→15s, pause saat tab tersembunyi.
+  // Update in-place (pesan yang dihapus guru ikut berubah menjadi placeholder),
+  // state lock & statistik moderasi disinkron dari server.
   useEffect(() => {
     if (!selected || convState === "unavailable") return
     let timer: ReturnType<typeof setTimeout> | null = null
@@ -198,12 +243,19 @@ export function ChatClient({ userId, groups }: { userId: string; groups: Group[]
         }
         if (res.ok) {
           const data = await res.json()
+          if (typeof data.locked === "boolean") setLockedMap((prev) => ({ ...prev, [selected.id]: data.locked }))
+          if (data.moderation) setModeration(data.moderation)
           const fresh: Message[] = data.messages || []
           if (fresh.length > 0) {
             setMessages((prev) => {
-              const known = new Set(prev.map((m) => m.id))
-              const added = fresh.filter((m) => !known.has(m.id))
-              return added.length > 0 ? [...prev, ...added] : prev
+              const byId = new Map(prev.map((m) => [m.id, m]))
+              let changed = false
+              for (const f of fresh) {
+                const old = byId.get(f.id)
+                if (!old) { byId.set(f.id, f); changed = true }
+                else if (old.content !== f.content || !!old.deleted !== !!f.deleted) { byId.set(f.id, f); changed = true }
+              }
+              return changed ? Array.from(byId.values()) : prev
             })
             delay = 4000
           } else {
@@ -238,6 +290,7 @@ export function ChatClient({ userId, groups }: { userId: string; groups: Group[]
 
   const kirim = async () => {
     if (!input.trim() || !selected || sending) return
+    if (locked && !selected.isTeacher) return
     setSending(true)
     setSendError("")
     const text = input.trim()
@@ -275,6 +328,39 @@ export function ChatClient({ userId, groups }: { userId: string; groups: Group[]
     setSending(false)
   }
 
+  // Hapus pesan: murid hanya pesannya sendiri; guru kelas semua pesan.
+  // Server yang memutuskan (DELETE /api/chat/message/[id]) — UI hanya
+  // menampilkan placeholder setelah server menyetujui.
+  const hapusPesan = async (m: Message) => {
+    if (!selected) return
+    const can = m.userId === userId || selected.isTeacher
+    if (!can || m.deleted) return
+    setMenuFor(null)
+    try {
+      const res = await fetch(`/api/chat/message/${m.id}`, { method: "DELETE" })
+      if (!res.ok) return
+      setMessages(prev => prev.map(pm => (pm.id === m.id ? { ...pm, deleted: true, content: null, user: null } : pm)))
+    } catch { /* gagal — pesan tetap tampil */ }
+  }
+
+  // Kunci/buka obrolan — guru kelas saja (server-authorized).
+  const toggleLock = async () => {
+    if (!selected || !selected.isTeacher || lockBusy) return
+    setLockBusy(true)
+    try {
+      const res = await fetch(`/api/chat/${selected.id}/lock`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ locked: !locked }),
+      })
+      if (res.ok) {
+        const d = await res.json()
+        setLockedMap(prev => ({ ...prev, [selected.id]: Boolean(d.locked) }))
+      }
+    } catch { /* gagal — state tidak berubah */ }
+    setLockBusy(false)
+  }
+
   const filteredGroups = searchQuery
     ? groups.filter(g => g.name.toLowerCase().includes(searchQuery.toLowerCase()))
     : groups
@@ -297,7 +383,7 @@ export function ChatClient({ userId, groups }: { userId: string; groups: Group[]
             </span>
           )}
         </div>
-        <p className="mt-0.5 text-xs text-gray-500 dark:text-slate-400">Tempat ngobrol dengan teman sekelas.</p>
+        <p className="mt-0.5 text-xs text-gray-500 dark:text-slate-400">Tempat ngobrol dengan guru dan teman sekelas.</p>
 
         {/* Search */}
         <div className="mt-3 flex items-center gap-2 rounded-xl border border-gray-200 bg-gray-50 px-3 py-2.5 focus-within:border-violet-400 focus-within:ring-2 focus-within:ring-violet-100 dark:border-slate-700 dark:bg-slate-800 dark:focus-within:ring-violet-500/20">
@@ -322,9 +408,9 @@ export function ChatClient({ userId, groups }: { userId: string; groups: Group[]
         {groups.length === 0 ? (
           <div className="flex flex-col items-center text-center px-6 py-14">
             <MessageCircle className="w-12 h-12 text-gray-200 dark:text-slate-700 mb-3" aria-hidden />
-            <p className="text-sm font-bold text-gray-700 dark:text-slate-200">Belum ada ruang obrolan</p>
+            <p className="text-sm font-bold text-gray-700 dark:text-slate-200">Belum ada kelas untuk diajak ngobrol.</p>
             <p className="mt-1 text-xs text-gray-400 dark:text-slate-500 leading-relaxed">
-              Gabung kelas untuk mulai ngobrol<br />dengan teman sekelasmu.
+              Gabung ke kelas untuk mulai berdiskusi<br />dengan guru dan teman sekelasmu.
             </p>
           </div>
         ) : filteredGroups.length === 0 ? (
@@ -334,6 +420,7 @@ export function ChatClient({ userId, groups }: { userId: string; groups: Group[]
         ) : (
           filteredGroups.map((g) => {
             const aktif = selected?.id === g.id
+            const gLocked = !!lockedMap[g.id]
             return (
               <button
                 key={g.id}
@@ -355,22 +442,27 @@ export function ChatClient({ userId, groups }: { userId: string; groups: Group[]
                     className={aktif ? "ring-2 ring-violet-300 dark:ring-violet-500/40" : ""}
                   />
                   <div className="min-w-0 flex-1">
-                    <p className={`text-sm font-bold truncate ${aktif ? "text-violet-900 dark:text-violet-200" : "text-gray-900 dark:text-slate-100"}`}>
-                      {g.name}
+                    <p className={`flex items-center gap-1.5 text-sm font-bold truncate ${aktif ? "text-violet-900 dark:text-violet-200" : "text-gray-900 dark:text-slate-100"}`}>
+                      <span className="truncate">{g.name}</span>
+                      {gLocked && <Lock size={11} className="shrink-0 text-amber-500" aria-label="Obrolan dikunci" />}
                     </p>
-                    <p className="text-[11px] text-gray-500 dark:text-slate-400">
-                      {g.memberCount} anggota
-                      {g.onlineCount > 0 && <span className="text-emerald-600 dark:text-emerald-400 font-semibold"> · ● {g.onlineCount} online</span>}
+                    <p className="text-[11px] text-gray-500 dark:text-slate-400 truncate">
+                      {g.teacher?.fullName || "Kelas"}
                     </p>
-                    {g.lastMessage && (
-                      <p className="mt-0.5 text-xs text-gray-400 dark:text-slate-500 truncate">
-                        <span className="font-semibold text-gray-500 dark:text-slate-400">{g.lastMessage.user?.fullName}:</span> {g.lastMessage.content}
-                      </p>
-                    )}
+                    <p className="mt-0.5 text-xs text-gray-400 dark:text-slate-500 truncate">
+                      {g.lastMessage
+                        ? <><span className="font-semibold text-gray-500 dark:text-slate-400">{g.lastMessage.user?.fullName}:</span> {g.lastMessage.content}</>
+                        : <span className="italic">Belum ada pesan</span>}
+                    </p>
                   </div>
-                  {g.lastMessage && (
-                    <span className="shrink-0 text-[10px] text-gray-400 dark:text-slate-500">{waktuLalu(g.lastMessage.createdAt)}</span>
-                  )}
+                  <div className="shrink-0 flex flex-col items-end gap-0.5">
+                    {g.lastMessage && (
+                      <span className="text-[10px] text-gray-400 dark:text-slate-500">{waktuLalu(g.lastMessage.createdAt)}</span>
+                    )}
+                    <span className="text-[10px] text-gray-400 dark:text-slate-500">
+                      {g.memberCount} anggota{g.onlineCount > 0 && <span className="text-emerald-600 dark:text-emerald-400 font-semibold"> · ● {g.onlineCount}</span>}
+                    </span>
+                  </div>
                 </div>
               </button>
             )
@@ -400,12 +492,12 @@ export function ChatClient({ userId, groups }: { userId: string; groups: Group[]
     </>
   )
 
-  // ── Konteks panel (inline ≥xl, drawer <xl) ──
+  // ── Konteks panel (inline ≥xl, drawer <xl) — semuanya data real ──
   const contextPanel = selected && (
     <div className="flex flex-col h-full">
-      {/* KELAS */}
+      {/* TENTANG KELAS */}
       <div className="p-4 border-b border-gray-100 dark:border-slate-800">
-        <h3 className="text-[11px] font-black uppercase tracking-wider text-gray-400 dark:text-slate-500 mb-3">Kelas</h3>
+        <h3 className="text-[11px] font-black uppercase tracking-wider text-gray-400 dark:text-slate-500 mb-3">Tentang Kelas</h3>
         <div className="flex items-center gap-3">
           <Avatar src={selected.members?.[0]?.avatar} name={selected.name} size="w-11 h-11" text="text-base" />
           <div className="min-w-0">
@@ -414,6 +506,10 @@ export function ChatClient({ userId, groups }: { userId: string; groups: Group[]
           </div>
         </div>
         <div className="mt-4 space-y-2.5 text-sm">
+          <div className="flex items-center gap-2 text-gray-500 dark:text-slate-400">
+            <GraduationCap className="w-4 h-4 text-gray-400 dark:text-slate-500 shrink-0" aria-hidden />
+            <span className="truncate">Guru: {selected.teacher?.fullName || "—"}</span>
+          </div>
           <div className="flex items-center justify-between">
             <span className="flex items-center gap-2 text-gray-500 dark:text-slate-400"><Users className="w-4 h-4 text-gray-400 dark:text-slate-500" aria-hidden /> Anggota</span>
             <span className="font-bold text-gray-900 dark:text-slate-100">{selected.memberCount}</span>
@@ -431,8 +527,45 @@ export function ChatClient({ userId, groups }: { userId: string; groups: Group[]
         </div>
       </div>
 
+      {/* ANGGOTA — preview asli (bukan data palsu) */}
+      <div className="flex-1 overflow-y-auto p-4">
+        <h3 className="text-[11px] font-black uppercase tracking-wider text-gray-400 dark:text-slate-500 mb-3">
+          Anggota <span className="font-bold text-emerald-600 dark:text-emerald-400 normal-case">· {selected.onlineCount} online</span>
+        </h3>
+        {selected.members.length === 0 ? (
+          <p className="text-xs text-gray-400 dark:text-slate-500">Belum ada anggota lain.</p>
+        ) : (
+          <>
+            {selected.onlineCount === 0 && (
+              <p className="mb-2 text-xs text-gray-400 dark:text-slate-500">Belum ada anggota lain yang online.</p>
+            )}
+            <ul className="space-y-1">
+              {selected.members.map((m) => (
+                <li key={m.id} className="flex items-center gap-2.5 rounded-lg px-2 py-1.5 hover:bg-gray-50 dark:hover:bg-slate-800/60">
+                  <Avatar src={m.avatar} name={m.fullName} size="w-8 h-8" text="text-xs" />
+                  <span className="flex-1 min-w-0 text-sm text-gray-700 dark:text-slate-200 truncate">{m.fullName}</span>
+                  {m.id === selected.teacherId && (
+                    <span className="shrink-0 text-[9px] font-bold text-violet-600 bg-violet-50 border border-violet-100 rounded-full px-1.5 py-0.5 dark:text-violet-300 dark:bg-violet-500/15 dark:border-violet-500/30">GURU</span>
+                  )}
+                  {isOnline(m.lastActiveAt) && (
+                    <span className="flex items-center gap-1 text-[10px] font-semibold text-emerald-600 dark:text-emerald-400">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" aria-hidden /> online
+                    </span>
+                  )}
+                </li>
+              ))}
+            </ul>
+            {selected.memberCount > selected.members.length && (
+              <p className="px-2 pt-2 text-[11px] text-gray-400 dark:text-slate-500">
+                +{selected.memberCount - selected.members.length} anggota lainnya
+              </p>
+            )}
+          </>
+        )}
+      </div>
+
       {/* KARYA KELAS */}
-      <div className="p-4 border-b border-gray-100 dark:border-slate-800">
+      <div className="p-4 border-t border-gray-100 dark:border-slate-800">
         <h3 className="text-[11px] font-black uppercase tracking-wider text-gray-400 dark:text-slate-500 mb-2.5">Karya Kelas</h3>
         <Link
           href="/arena/feed"
@@ -442,40 +575,48 @@ export function ChatClient({ userId, groups }: { userId: string; groups: Group[]
         </Link>
       </div>
 
-      {/* ANGGOTA — preview asli (bukan data palsu) */}
-      <div className="flex-1 overflow-y-auto p-4">
-        <h3 className="text-[11px] font-black uppercase tracking-wider text-gray-400 dark:text-slate-500 mb-3">Anggota</h3>
-        {selected.members.length === 0 ? (
-          <p className="text-xs text-gray-400 dark:text-slate-500">Belum ada anggota lain.</p>
-        ) : (
-          <ul className="space-y-1">
-            {selected.members.map((m) => (
-              <li key={m.id} className="flex items-center gap-2.5 rounded-lg px-2 py-1.5 hover:bg-gray-50 dark:hover:bg-slate-800/60">
-                <Avatar src={m.avatar} name={m.fullName} size="w-8 h-8" text="text-xs" />
-                <span className="flex-1 min-w-0 text-sm text-gray-700 dark:text-slate-200 truncate">{m.fullName}</span>
-                {isOnline(m.lastActiveAt) && (
-                  <span className="flex items-center gap-1 text-[10px] font-semibold text-emerald-600 dark:text-emerald-400">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" aria-hidden /> online
-                  </span>
-                )}
-              </li>
-            ))}
-            {selected.memberCount > selected.members.length && (
-              <li className="px-2 pt-1.5 text-[11px] text-gray-400 dark:text-slate-500">
-                +{selected.memberCount - selected.members.length} anggota lainnya
-              </li>
-            )}
-          </ul>
-        )}
-      </div>
+      {/* MODERASI — khusus guru kelas */}
+      {selected.isTeacher && (
+        <div className="p-4 border-t border-gray-100 dark:border-slate-800">
+          <h3 className="text-[11px] font-black uppercase tracking-wider text-gray-400 dark:text-slate-500 mb-3">Moderasi</h3>
+          <div className="space-y-2.5 text-sm">
+            <div className="flex items-center justify-between">
+              <span className="text-gray-500 dark:text-slate-400">Chat</span>
+              <span className={`flex items-center gap-1.5 font-bold ${locked ? "text-amber-600 dark:text-amber-400" : "text-emerald-600 dark:text-emerald-400"}`}>
+                {locked ? <Lock size={13} aria-hidden /> : <LockOpen size={13} aria-hidden />}
+                {locked ? "Terkunci" : "Aktif"}
+              </span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-gray-500 dark:text-slate-400">Pesan hari ini</span>
+              <span className="font-bold text-gray-900 dark:text-slate-100">{moderation ? moderation.messagesToday : "—"}</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-gray-500 dark:text-slate-400">Pesan dihapus</span>
+              <span className="font-bold text-gray-900 dark:text-slate-100">{moderation ? moderation.messagesDeleted : "—"}</span>
+            </div>
+            <button
+              onClick={toggleLock}
+              disabled={lockBusy}
+              className={`w-full mt-1 flex items-center justify-center gap-1.5 rounded-xl px-4 py-2.5 text-sm font-bold transition-all focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-violet-500 disabled:opacity-50 ${
+                locked
+                  ? "bg-emerald-50 text-emerald-700 hover:bg-emerald-100 dark:bg-emerald-500/15 dark:text-emerald-300 dark:hover:bg-emerald-500/25"
+                  : "bg-amber-50 text-amber-700 hover:bg-amber-100 dark:bg-amber-500/15 dark:text-amber-300 dark:hover:bg-amber-500/25"
+              }`}
+            >
+              {locked ? <><LockOpen size={15} aria-hidden /> Buka Kembali Obrolan</> : <><Lock size={15} aria-hidden /> Kunci Obrolan</>}
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   )
 
   return (
-    <div className="flex flex-col md:flex-row md:h-[calc(100dvh-7rem)] md:overflow-hidden">
+    <div className={`flex flex-col md:flex-row ${shellHeight} md:overflow-hidden`}>
       {/* ── MOBILE LIST SCREEN (<md) — tampil saat belum ada kelas dipilih ── */}
       {!selected && (
-        <div className="md:hidden flex-1 min-h-[calc(100dvh-7rem)] flex flex-col bg-white dark:bg-slate-900">
+        <div className={`md:hidden flex-1 ${listMinHeight} flex flex-col bg-white dark:bg-slate-900`}>
           {classList}
         </div>
       )}
@@ -511,7 +652,7 @@ export function ChatClient({ userId, groups }: { userId: string; groups: Group[]
               <MessageCircle className="w-8 h-8 text-rose-300 dark:text-rose-500/60" aria-hidden />
             </div>
             <p className="text-base font-extrabold text-gray-900 dark:text-slate-100">Obrolan tidak tersedia</p>
-            <p className="mt-1 text-sm text-gray-400 dark:text-slate-500">Kamu sudah tidak tergabung dalam kelas ini.</p>
+            <p className="mt-1 text-sm text-gray-400 dark:text-slate-500">Kelas ini sudah tidak aktif.</p>
             <button
               onClick={kembaliKeObrolan}
               className="mt-5 rounded-xl bg-violet-600 px-5 py-2.5 text-sm font-bold text-white transition-colors hover:bg-violet-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-500"
@@ -549,13 +690,15 @@ export function ChatClient({ userId, groups }: { userId: string; groups: Group[]
               >
                 <List className="w-5 h-5" aria-hidden />
               </button>
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center text-white shrink-0" aria-hidden>
-                <Users className="w-5 h-5" />
-              </div>
+              <Avatar src={selected.members?.[0]?.avatar} name={selected.name} size="w-10 h-10" text="text-sm" />
               <div className="flex-1 min-w-0">
-                <p className="font-bold text-sm text-gray-900 dark:text-slate-100 truncate">{selected.name}</p>
-                <p className="text-[11px] text-gray-400 dark:text-slate-500">
-                  {selected.memberCount} anggota{selected.onlineCount > 0 && <span className="text-emerald-600 dark:text-emerald-400 font-semibold"> · ● {selected.onlineCount} online</span>}
+                <p className="flex items-center gap-1.5 font-bold text-sm text-gray-900 dark:text-slate-100 truncate">
+                  <span className="truncate">{selected.name}</span>
+                  {locked && <Lock size={11} className="shrink-0 text-amber-500" aria-label="Obrolan dikunci" />}
+                </p>
+                <p className="text-[11px] text-gray-400 dark:text-slate-500 truncate">
+                  <span className="font-semibold text-violet-600 dark:text-violet-400">{selected.teacher?.fullName || "—"}</span>
+                  <span> · {selected.memberCount} anggota{selected.onlineCount > 0 && <span className="text-emerald-600 dark:text-emerald-400 font-semibold"> · ● {selected.onlineCount} online</span>}</span>
                 </p>
               </div>
               <button
@@ -572,28 +715,44 @@ export function ChatClient({ userId, groups }: { userId: string; groups: Group[]
               {messages.length === 0 && convState === "ok" && (
                 <div className="flex flex-col items-center justify-center h-full text-center px-8">
                   <MessageCircle className="w-12 h-12 text-gray-200 dark:text-slate-700 mb-3" aria-hidden />
-                  <p className="text-sm font-semibold text-gray-500 dark:text-slate-400">Belum ada pesan</p>
-                  <p className="text-xs text-gray-400 dark:text-slate-500 mt-1">Mulai diskusi dengan kelasmu!</p>
+                  <p className="text-sm font-semibold text-gray-500 dark:text-slate-400">Belum ada percakapan.</p>
+                  <p className="text-xs text-gray-400 dark:text-slate-500 mt-1">Jadilah yang pertama menyapa teman sekelasmu. 👋</p>
                 </div>
               )}
               <div className="space-y-1.5 max-w-3xl mx-auto">
                 {messages.map((m, i) => {
+                  if (m.deleted) {
+                    return (
+                      <div key={m.id} className="flex items-center gap-2 px-1 py-0.5 mt-2 first:mt-0">
+                        <MessageCircleOff size={13} className="text-gray-300 dark:text-slate-600 shrink-0" aria-hidden />
+                        <span className="text-xs italic text-gray-400 dark:text-slate-500">Pesan telah dihapus</span>
+                        <span className="text-[9px] text-gray-300 dark:text-slate-600">{waktuLalu(m.createdAt)}</span>
+                      </div>
+                    )
+                  }
                   const saya = m.userId === userId
                   const prev = messages[i - 1]
-                  const compact = prev && prev.userId === m.userId &&
+                  const compact = prev && !prev.deleted && prev.userId === m.userId &&
                     new Date(m.createdAt).getTime() - new Date(prev.createdAt).getTime() < GROUP_WINDOW_MS
+                  const isGuruMsg = !!m.user && m.userId === selected.teacherId
+                  const canDelete = m.userId === userId || selected.isTeacher
                   return (
-                    <div key={m.id} className={`flex gap-2.5 ${saya ? "flex-row-reverse" : ""} ${compact ? "mt-0.5" : "mt-2.5 first:mt-0"}`}>
+                    <div key={m.id} className={`flex gap-2.5 relative group/msg ${saya ? "flex-row-reverse" : ""} ${compact ? "mt-0.5" : "mt-2.5 first:mt-0"}`}>
                       {!saya && !compact && (
-                        <Avatar src={m.user?.avatar} name={m.user?.fullName} size="w-8 h-8" text="text-xs" className="mt-1" />
+                        <Avatar src={m.user?.avatar} name={m.user?.fullName || "?"} size="w-8 h-8" text="text-xs" className="mt-1" />
                       )}
                       <div className={`${saya ? "max-w-[85%] md:max-w-[70%]" : "max-w-[85%] md:max-w-[70%]"}`}>
-                        {!saya && !compact && (
-                          <p className="text-[10px] font-bold text-violet-600 dark:text-violet-400 mb-1 px-1">{m.user?.fullName}</p>
+                        {!compact && (
+                          <p className={`text-[10px] font-bold mb-1 px-1 flex items-center gap-1.5 ${saya ? "text-violet-600 dark:text-violet-400" : "text-gray-500 dark:text-slate-400"}`}>
+                            <span>{saya ? "Kamu" : (m.user?.fullName || "")}</span>
+                            {isGuruMsg && (
+                              <span className="text-[8px] font-black tracking-wide text-violet-600 bg-violet-50 border border-violet-100 rounded-full px-1.5 py-px dark:text-violet-300 dark:bg-violet-500/15 dark:border-violet-500/30">GURU</span>
+                            )}
+                          </p>
                         )}
                         <div
                           title={jamLengkap(m.createdAt)}
-                          className={`px-4 py-2.5 text-sm leading-relaxed break-words transition-colors group-hover:shadow-sm ${
+                          className={`px-4 py-2.5 text-sm leading-relaxed break-words ${
                             saya
                               ? "bg-violet-600 text-white rounded-2xl rounded-br-md"
                               : "bg-white border border-gray-100 text-gray-800 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-100 rounded-2xl rounded-bl-md shadow-sm"
@@ -603,6 +762,30 @@ export function ChatClient({ userId, groups }: { userId: string; groups: Group[]
                           <p className={`text-[9px] mt-1.5 ${saya ? "text-violet-300" : "text-gray-400 dark:text-slate-500"}`}>{waktuLalu(m.createdAt)}</p>
                         </div>
                       </div>
+                      {canDelete && (
+                        <button
+                          onClick={() => setMenuFor(menuFor === m.id ? null : m.id)}
+                          aria-label="Aksi pesan"
+                          aria-expanded={menuFor === m.id}
+                          className={`absolute top-1 ${saya ? "left-0" : "right-0"} w-7 h-7 rounded-lg bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700 shadow-sm flex items-center justify-center text-gray-400 dark:text-slate-500 hover:text-rose-500 dark:hover:text-rose-400 transition-all opacity-50 md:opacity-0 md:group-hover/msg:opacity-100 md:focus-visible:opacity-100 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-violet-500`}
+                        >
+                          <MoreVertical size={14} aria-hidden />
+                        </button>
+                      )}
+                      {canDelete && menuFor === m.id && (
+                        <>
+                          <div className="fixed inset-0 z-20" onClick={() => setMenuFor(null)} aria-hidden />
+                          <div className={`absolute top-8 ${saya ? "left-0" : "right-0"} z-30 w-44 rounded-xl bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700 shadow-lg py-1.5`} role="menu">
+                            <button
+                              role="menuitem"
+                              onClick={() => hapusPesan(m)}
+                              className="w-full flex items-center gap-2.5 px-3.5 py-2.5 text-sm font-semibold text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-500/10 transition-colors"
+                            >
+                              <Trash2 size={15} aria-hidden /> Hapus pesan
+                            </button>
+                          </div>
+                        </>
+                      )}
                     </div>
                   )
                 })}
@@ -610,26 +793,47 @@ export function ChatClient({ userId, groups }: { userId: string; groups: Group[]
               </div>
             </div>
 
-            {/* Composer */}
+            {/* Composer — lock server-enforced, guru tetap bisa menulis */}
             <div className="px-3 md:px-4 py-3 bg-white dark:bg-slate-900 border-t border-gray-100 dark:border-slate-800 shrink-0">
               {sendError && <p className="mb-2 text-xs text-rose-600 dark:text-rose-400 font-medium">{sendError}</p>}
-              <form onSubmit={(e) => { e.preventDefault(); kirim() }} className="flex items-center gap-2">
-                <input
-                  value={input}
-                  onChange={(e) => setInput(e.target.value)}
-                  placeholder="Tulis pesan..."
-                  aria-label="Tulis pesan"
-                  className="flex-1 px-4 py-3 rounded-xl bg-gray-50 dark:bg-slate-800 text-sm text-gray-900 dark:text-slate-100 placeholder:text-gray-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-violet-300 dark:focus:ring-violet-500/40 border border-gray-100 dark:border-slate-700"
-                />
-                <button
-                  type="submit"
-                  disabled={!input.trim() || sending}
-                  aria-label="Kirim pesan"
-                  className="w-11 h-11 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 text-white flex items-center justify-center disabled:opacity-40 hover:shadow-lg hover:brightness-105 active:scale-95 transition-all focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-violet-500"
-                >
-                  <Send className="w-5 h-5" aria-hidden />
-                </button>
-              </form>
+              {locked && selected.isTeacher && (
+                <div className="mb-2 flex items-center justify-between gap-3 rounded-xl bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/30 px-3.5 py-2.5">
+                  <p className="flex items-center gap-2 text-xs font-bold text-amber-700 dark:text-amber-300">
+                    <Lock size={13} aria-hidden /> Obrolan dikunci — murid tidak bisa menulis.
+                  </p>
+                  <button
+                    onClick={toggleLock}
+                    disabled={lockBusy}
+                    className="flex items-center gap-1 rounded-lg bg-amber-600 px-2.5 py-1.5 text-[11px] font-bold text-white hover:bg-amber-700 transition-colors disabled:opacity-50"
+                  >
+                    <LockOpen size={12} aria-hidden /> Buka Kembali
+                  </button>
+                </div>
+              )}
+              {locked && !selected.isTeacher ? (
+                <div className="flex items-center justify-center gap-2 rounded-xl bg-gray-50 dark:bg-slate-800 border border-gray-100 dark:border-slate-700 px-4 py-3.5">
+                  <Lock size={14} className="text-amber-500" aria-hidden />
+                  <p className="text-sm font-semibold text-gray-500 dark:text-slate-400">Obrolan sedang dikunci oleh guru.</p>
+                </div>
+              ) : (
+                <form onSubmit={(e) => { e.preventDefault(); kirim() }} className="flex items-center gap-2">
+                  <input
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    placeholder="Tulis pesan..."
+                    aria-label="Tulis pesan"
+                    className="flex-1 px-4 py-3 rounded-xl bg-gray-50 dark:bg-slate-800 text-sm text-gray-900 dark:text-slate-100 placeholder:text-gray-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-violet-300 dark:focus:ring-violet-500/40 border border-gray-100 dark:border-slate-700"
+                  />
+                  <button
+                    type="submit"
+                    disabled={!input.trim() || sending}
+                    aria-label="Kirim pesan"
+                    className="w-11 h-11 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 text-white flex items-center justify-center disabled:opacity-40 hover:shadow-lg hover:brightness-105 active:scale-95 transition-all focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-violet-500"
+                  >
+                    <Send className="w-5 h-5" aria-hidden />
+                  </button>
+                </form>
+              )}
             </div>
           </>
         )}

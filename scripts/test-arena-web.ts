@@ -118,12 +118,19 @@ function main() {
 
   // ── 7. ZONE TERPROTEKSI (tidak boleh tersentuh) ──
   console.log("\n── 7. Protected Zones ──");
+  // OBROLAN 4.0 (spesifikasi §S): prisma/ DIBUKA secara eksplisit untuk
+  // perubahan ADDITIVE chat lock + soft-delete — namun terbatas pada
+  // prisma/schema.prisma + migrasi manual 2026-08-12_obrolan4_chat_lock.sql.
+  // Zona lain tetap wajib 0 diff.
   try {
+    const prismaDiff = execSync(`git diff --name-only HEAD -- prisma/`, { encoding: "utf8", cwd: process.cwd() }).trim();
+    test("prisma/ hanya menyentuh schema.prisma (pengecualian chat lock additive)",
+      () => prismaDiff.split("\n").filter(Boolean).every((l) => l === "prisma/schema.prisma"));
     const diff = execSync(
-      `git diff --name-only HEAD -- prisma/ lib/gamification/ lib/learning-loop/ lib/award-xp.ts lib/xp.ts lib/coins.ts lib/apk.ts app/api/player/ app/arena/bottom-nav.tsx`,
+      `git diff --name-only HEAD -- lib/gamification/ lib/learning-loop/ lib/award-xp.ts lib/xp.ts lib/coins.ts lib/apk.ts app/api/player/ app/arena/bottom-nav.tsx`,
       { encoding: "utf8", cwd: process.cwd() }
     );
-    test("tidak ada perubahan di prisma/ lib/gamification/ lib/learning-loop/ lib/award-xp.ts lib/xp.ts lib/coins.ts lib/apk.ts app/api/player/ app/arena/bottom-nav.tsx",
+    test("tidak ada perubahan di lib/gamification/ lib/learning-loop/ lib/award-xp.ts lib/xp.ts lib/coins.ts lib/apk.ts app/api/player/ app/arena/bottom-nav.tsx",
       () => diff.trim().length === 0);
     if (diff.trim().length > 0) console.log(`  ⚠️  File berubah:\n${diff}`);
   } catch (e: any) {

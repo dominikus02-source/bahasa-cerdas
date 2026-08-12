@@ -174,8 +174,13 @@ function main() {
     // untuk access-integrity (kelas arsip/hapus tidak bisa dibuka lagi — client
     // polling API langsung, tidak bisa difilter di layer presentasi). Kontrak
     // respons (shape/error code) tidak berubah.
+    //
+    // OBROLAN 4.0 (spesifikasi §S): prisma/ DIBUKA secara eksplisit untuk
+    // perubahan ADDITIVE chat lock + soft-delete — terbatas pada
+    // prisma/schema.prisma + migrasi manual 2026-08-12_obrolan4_chat_lock.sql.
     const forbidden = diff.split("\n").filter(Boolean).filter(p =>
-      p.startsWith("prisma/") || p.startsWith("lib/gamification/") || p.startsWith("lib/learning-loop/") ||
+      (p.startsWith("prisma/") && p !== "prisma/schema.prisma") ||
+      p.startsWith("lib/gamification/") || p.startsWith("lib/learning-loop/") ||
       p.startsWith("engines/") || (p.startsWith("app/api/") && !p.startsWith("app/api/chat/")) || p === "lib/apk.ts" ||
       p === "app/arena/bottom-nav.tsx"
     );
