@@ -17,7 +17,12 @@ export async function POST(req: NextRequest) {
     }
 
     // Access: the class teacher (owner), an enrolled member, or admin/founder.
-    const group = await db.group.findUnique({ where: { id: groupId }, select: { teacherId: true } });
+    // `isActive` wajib: kelas yang sudah diarsipkan guru tidak boleh menerima
+    // pesan baru — integritas akses (history tetap aman di database).
+    const group = await db.group.findUnique({
+      where: { id: groupId, isActive: true },
+      select: { teacherId: true },
+    });
     if (!group) return NextResponse.json({ error: "Kelas tidak ditemukan", code: "CLASS_NOT_FOUND" }, { status: 404 });
 
     let allowed = group.teacherId === user.id || user.role === "ADMIN" || user.isFounder;

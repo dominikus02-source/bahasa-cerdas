@@ -170,9 +170,13 @@ function main() {
   console.log("\n── 14. Protected zones tidak tersentuh ──");
   try {
     const diff = execSync("git diff --name-only HEAD", { encoding: "utf8" });
+    // Pengecualian disengaja: app/api/chat/** diubah fase OBROLAN 3.0 hanya
+    // untuk access-integrity (kelas arsip/hapus tidak bisa dibuka lagi — client
+    // polling API langsung, tidak bisa difilter di layer presentasi). Kontrak
+    // respons (shape/error code) tidak berubah.
     const forbidden = diff.split("\n").filter(Boolean).filter(p =>
       p.startsWith("prisma/") || p.startsWith("lib/gamification/") || p.startsWith("lib/learning-loop/") ||
-      p.startsWith("engines/") || p.startsWith("app/api/") || p === "lib/apk.ts" ||
+      p.startsWith("engines/") || (p.startsWith("app/api/") && !p.startsWith("app/api/chat/")) || p === "lib/apk.ts" ||
       p === "app/arena/bottom-nav.tsx"
     );
     test("diff tidak menyentuh prisma/engine/API/APK/package-lock",

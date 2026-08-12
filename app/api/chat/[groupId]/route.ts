@@ -10,7 +10,12 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ grou
     const { groupId } = await params;
 
     // Access: the class teacher (owner), an enrolled member, or admin/founder.
-    const group = await db.group.findUnique({ where: { id: groupId }, select: { teacherId: true } });
+    // `isActive` wajib: kelas yang sudah diarsipkan guru (isActive=false) tidak
+    // boleh lagi dibuka chat-nya — integritas akses, bukan sekadar tampilan.
+    const group = await db.group.findUnique({
+      where: { id: groupId, isActive: true },
+      select: { teacherId: true },
+    });
     if (!group) return NextResponse.json({ error: "Kelas tidak ditemukan", code: "CLASS_NOT_FOUND" }, { status: 404 });
 
     let allowed = group.teacherId === user.id || user.role === "ADMIN" || user.isFounder;

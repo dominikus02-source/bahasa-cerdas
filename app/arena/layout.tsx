@@ -144,7 +144,16 @@ export default async function ArenaLayout({ children }: { children: React.ReactN
 
       <ActiveBoostBanner />
 
-      <main className="mx-auto max-w-lg md:max-w-4xl px-0 md:px-6 py-0 md:py-6">
+      {/* Obrolan (Class Chat Workspace) memakai container selebar 1440px agar
+          pane sidebar + percakapan + konteks terlihat penuh di desktop.
+          Halaman arena lain tetap pakai kolom 4xl yang mobile-friendly. */}
+      <main
+        className={`mx-auto px-0 py-0 md:py-6 ${
+          pathname.startsWith("/arena/chat")
+            ? "max-w-[1440px] md:px-8"
+            : "max-w-lg md:max-w-4xl md:px-6"
+        }`}
+      >
         <ArenaClientWrapper>
           {children}
         </ArenaClientWrapper>
