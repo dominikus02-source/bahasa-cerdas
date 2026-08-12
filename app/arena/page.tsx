@@ -7,7 +7,7 @@ import Link from "next/link"
 export const dynamic = "force-dynamic"
 import {
   Flame, Zap, Coins, Target, Bot, Trophy, Award, Gift,
-  ChevronRight, Gamepad2, CheckCircle2,
+  ChevronRight, Gamepad2, CheckCircle2, Medal, Compass,
 } from "lucide-react"
 import { trackDailyStreak, getOrCreateDailyQuests } from "@/lib/coins"
 import { jenjangMurid } from "@/lib/arena-junior/kurikulum"
@@ -15,6 +15,7 @@ import { getQuestMeta, questProgressText } from "@/lib/quest-meta"
 import { getLevelProgress, levelFromXp } from "@/lib/gamification/levels"
 import { rankFromLevel } from "@/lib/gamification/ranks"
 import { RankChip } from "@/components/gamification/RankChip"
+import { BadgeIcon } from "@/components/gamification/BadgeIcon"
 import { SiaranBanner } from "@/components/arena/SiaranBanner"
 import { getDisplayName } from "@/lib/nickname"
 import { getWeeklyCompetition } from "@/lib/gamification/motivation"
@@ -27,13 +28,6 @@ import { LeaderboardPanel } from "@/components/arena/player/leaderboard-panel"
 
 function initials(name: string) {
   return name?.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2) || "?"
-}
-
-const RARITY_STYLES: Record<string, string> = {
-  BRONZE: "from-amber-600 to-orange-800",
-  SILVER: "from-slate-400 to-slate-600",
-  GOLD: "from-yellow-400 to-amber-600",
-  LEGENDARY: "from-fuchsia-500 to-purple-700",
 }
 
 // Slot gim tambahan di section Gim. Cukup tambahkan objek di sini — kartu
@@ -105,13 +99,73 @@ export default async function BerandaPage() {
   const unlockedBadges = badges.filter((b) => b.unlocked).length
   const profileHref = isGuruPreview ? "/guru/akun" : "/murid/profile"
   const questPct = Math.round((doneQuest / Math.max(totalQuest, 1)) * 100)
+  const adaMisiAktif = totalQuest > 0 && doneQuest < totalQuest
+
+  // Gateway "Jelajahi Arena" — navigation gateway, bukan halaman baru.
+  // Setiap kartu hanya mengarah ke route canonical existing (tidak ada API baru).
+  const gatewayCards = [
+    {
+      href: "/arena/misi",
+      title: "Misi",
+      desc: "Selesaikan misi harianmu",
+      icon: Target,
+      iconBg: "bg-violet-100 text-violet-600 dark:bg-violet-500/15 dark:text-violet-300",
+      cta: "Lanjutkan Misi",
+      status: `${doneQuest}/${totalQuest} misi selesai`,
+    },
+    {
+      href: "/arena/league",
+      title: "Liga",
+      desc: "Bersaing di liga mingguan",
+      icon: Trophy,
+      iconBg: "bg-amber-100 text-amber-600 dark:bg-amber-500/15 dark:text-amber-300",
+      cta: "Kejar Peringkat",
+      status: competition?.my ? `#${competition.my.rank} minggu ini` : "Kompetisi mingguan",
+    },
+    {
+      href: "/arena/game",
+      title: "Gim",
+      desc: "Kuis Tempur dan gim solo",
+      icon: Gamepad2,
+      iconBg: "bg-indigo-100 text-indigo-600 dark:bg-indigo-500/15 dark:text-indigo-300",
+      cta: "Main Sekarang",
+      status: "Kuis Tempur",
+    },
+    {
+      href: "/arena/player/leaderboard",
+      title: "Peringkat",
+      desc: "Lihat posisi kamu",
+      icon: Medal,
+      iconBg: "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300",
+      cta: "Lihat Posisi",
+      status: null,
+    },
+    {
+      href: "/arena/player/badges",
+      title: "Koleksi",
+      desc: "Lencana dan pencapaian",
+      icon: Award,
+      iconBg: "bg-purple-100 text-purple-600 dark:bg-purple-500/15 dark:text-purple-300",
+      cta: "Buka Koleksi",
+      status: `${unlockedBadges}/${badges.length} terbuka`,
+    },
+    {
+      href: "/arena/toko-koin",
+      title: "Toko Koin",
+      desc: "Tukar koin dengan hadiah",
+      icon: Coins,
+      iconBg: "bg-amber-100 text-amber-600 dark:bg-amber-500/15 dark:text-amber-300",
+      cta: "Tukar Koin",
+      status: `${user.coins || 0} koin`,
+    },
+  ]
 
   return (
     <div className="arena-page max-w-6xl mx-auto p-4 md:p-6">
       {/* Siaran platform — kabar sistem & acara untuk semua murid. */}
       <SiaranBanner />
 
-      {/* A — Hero pemain (kompak, horizontal di desktop) */}
+      {/* ── 1. HERO PEMAIN — siapa saya, progress saya, langkah berikutnya ── */}
       <div className="arena-hero relative overflow-hidden rounded-[20px] bg-gradient-to-br from-violet-600 via-purple-600 to-indigo-700 text-white shadow-lg shadow-violet-500/20">
         <div className="pointer-events-none absolute -right-16 -top-16 h-56 w-56 rounded-full bg-white/5" />
         <div className="pointer-events-none absolute -bottom-14 -left-10 h-44 w-44 rounded-full bg-white/5" />
@@ -158,6 +212,11 @@ export default async function BerandaPage() {
                 <div className="h-full rounded-full bg-gradient-to-r from-amber-400 to-yellow-400 transition-all duration-500" style={{ width: `${progress.pct * 100}%` }} />
               </div>
             </div>
+            {adaMisiAktif && (
+              <Link href="/arena/misi" className="flex shrink-0 items-center gap-1 rounded-full bg-amber-400/90 px-3 py-2 text-xs font-extrabold text-amber-950 backdrop-blur transition-colors hover:bg-amber-300">
+                Lanjutkan Misi <ChevronRight className="h-3.5 w-3.5" />
+              </Link>
+            )}
             <Link href={profileHref} className="flex shrink-0 items-center gap-1 rounded-full bg-white/15 px-3 py-2 text-xs font-bold backdrop-blur transition-colors hover:bg-white/25">
               Lihat Profil <ChevronRight className="h-3.5 w-3.5" />
             </Link>
@@ -165,142 +224,190 @@ export default async function BerandaPage() {
         </div>
       </div>
 
-      {/* B — Aksi Berikutnya (CTA utama halaman) */}
+      {/* ── 2. AKSI BERIKUTNYA — CTA paling penting setelah hero ── */}
       <NextActionCard className="mt-5" />
 
-      {/* AI BC — companion, subtle tapi visible */}
+      {/* AI BC — companion strip, bukan bagian navigasi Arena */}
       <Link href="/arena/ai" className="group mt-4 flex items-center gap-3 rounded-2xl border border-violet-100 bg-violet-50/60 px-4 py-3 transition-colors hover:border-violet-200 dark:border-violet-500/20 dark:bg-violet-500/10 dark:hover:border-violet-500/40">
         <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600">
           <Bot className="h-5 w-5 text-white" />
         </div>
         <div className="min-w-0 flex-1">
           <p className="text-xs font-bold text-gray-900 dark:text-slate-100">
-            AI BC <span className="font-normal text-gray-500 dark:text-slate-400">· Teman belajarmu siap membantu.</span>
+            AI BC siap membantu
           </p>
+          <p className="text-[11px] text-gray-500 dark:text-slate-400">Bingung menentukan langkah berikutnya?</p>
         </div>
         <span className="flex shrink-0 items-center gap-1 text-xs font-bold text-violet-600 dark:text-violet-400">
           Tanya AI BC <ChevronRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
         </span>
       </Link>
 
-      {/* C + D — Misi Hari Ini | Liga */}
-      <div className="mt-6 grid gap-5 lg:grid-cols-2">
-        {/* Misi Hari Ini — checklist actionable */}
-        <div>
-          <div className="mb-3 flex items-center justify-between">
-            <h3 className="text-base font-bold text-gray-900 dark:text-slate-100 flex items-center gap-2">
-              <Target size={18} className="text-orange-500" />
-              Misi Hari Ini
-            </h3>
-            <span className="rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-bold text-emerald-600 dark:bg-emerald-500/15 dark:text-emerald-400">
-              {doneQuest}/{totalQuest} selesai
-            </span>
-          </div>
-          <div className="rounded-2xl border border-gray-100 bg-white p-4 dark:border-slate-700/60 dark:bg-slate-800/70">
-            {totalQuest > 0 && (
-              <div className="mb-3 h-1.5 overflow-hidden rounded-full bg-gray-100 dark:bg-slate-700">
-                <div className="h-full rounded-full bg-gradient-to-r from-emerald-400 to-emerald-500 transition-all" style={{ width: `${questPct}%` }} />
-              </div>
-            )}
-            {quests.length === 0 ? (
-              <p className="text-sm text-gray-400 dark:text-slate-400">Belum ada misi hari ini.</p>
-            ) : (
-              <div className="space-y-1">
-                {quests.slice(0, 3).map((q: any) => {
-                  const meta = getQuestMeta(q.questType)
-                  const pct = Math.min(100, (Math.min(q.progress, q.target) / Math.max(q.target, 1)) * 100)
-                  return (
-                    <div key={q.id} className="flex items-center gap-3 py-2">
-                      <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full ${q.completed ? "bg-emerald-100 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400" : `bg-gradient-to-br ${meta.warna} text-white`}`}>
-                        {q.completed ? <CheckCircle2 size={18} /> : <meta.Icon size={16} />}
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <p className={`text-sm font-semibold ${q.completed ? "text-gray-400 line-through dark:text-slate-500" : "text-gray-900 dark:text-slate-100"}`}>{meta.label}</p>
-                        {!q.completed && (
-                          <div className="mt-1 flex items-center gap-2">
-                            <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-gray-100 dark:bg-slate-700">
-                              <div className="h-full rounded-full bg-gradient-to-r from-orange-400 to-amber-500" style={{ width: `${pct}%` }} />
-                            </div>
-                            <span className="shrink-0 text-xs text-gray-400 dark:text-slate-400">{questProgressText(Math.min(q.progress, q.target), q.target, q.completed)}</span>
-                          </div>
-                        )}
-                      </div>
-                      {q.rewardCoins > 0 && (
-                        <span className="flex shrink-0 items-center gap-1 text-xs font-bold text-amber-600 dark:text-amber-400">
-                          <Coins size={12} />{q.rewardCoins}
-                        </span>
-                      )}
-                    </div>
-                  )
-                })}
-              </div>
-            )}
-            <Link href="/arena/misi" className="mt-3 flex items-center justify-center gap-1 rounded-xl py-2 text-xs font-semibold text-violet-600 transition-colors hover:bg-violet-50 dark:text-violet-400 dark:hover:bg-violet-500/10">
-              Lihat Semua Misi <ChevronRight className="h-3.5 w-3.5" />
-            </Link>
+      {/* ── 3. JELAJAHI ARENA — navigation gateway (6 kartu) ── */}
+      <div className="mt-8">
+        <div className="mb-3 flex items-center gap-2.5">
+          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-violet-100 text-violet-600 dark:bg-violet-500/15 dark:text-violet-300">
+            <Compass size={16} />
+          </span>
+          <div>
+            <h2 className="text-base font-extrabold text-gray-900 dark:text-white">Jelajahi Arena</h2>
+            <p className="text-xs text-gray-500 dark:text-slate-400">Ke mana kamu ingin pergi hari ini?</p>
           </div>
         </div>
-
-        {/* Liga — event competition mingguan */}
-        <div>
-          <div className="mb-3 flex items-center justify-between">
-            <h3 className="text-base font-bold text-gray-900 dark:text-slate-100 flex items-center gap-2">
-              <Trophy size={18} className="text-amber-500" />
-              Liga
-            </h3>
-            <Link href="/arena/league" className="text-xs font-semibold text-violet-600 hover:text-violet-700 dark:text-violet-400">
-              Lihat Liga
-            </Link>
-          </div>
-          {competition ? (
-            <Link href="/arena/league" className="group block">
-              <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-amber-500 via-orange-500 to-red-500 p-5 shadow-lg shadow-orange-500/20 transition-all group-hover:shadow-xl group-hover:shadow-orange-500/30">
-                <div className="pointer-events-none absolute -right-10 -top-10 h-36 w-36 rounded-full bg-white/5" />
-                <div className="relative z-10">
-                  <div className="flex items-center gap-2">
-                    <Trophy className="h-4 w-4 text-amber-200" />
-                    <span className="text-[10px] font-black uppercase tracking-widest text-amber-100">Liga Minggu Ini</span>
-                  </div>
-                  <div className="mt-3 flex items-end justify-between gap-3">
-                    <div>
-                      <p className="text-3xl font-black text-white">{competition.my ? `#${competition.my.rank}` : "—"}</p>
-                      <p className="mt-0.5 text-[11px] font-semibold text-amber-100">{competition.my?.weeklyXp.toLocaleString() ?? 0} XP minggu ini</p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-sm font-extrabold text-white"><WeeklyCountdown endsAt={competition.periodEndsAt} baseline={competition.now} /></p>
-                      <p className="text-[10px] font-medium text-amber-100/90">tersisa minggu ini</p>
-                    </div>
-                  </div>
-                  {competition.above && competition.my && competition.my.rank > 1 ? (
-                    <p className="mt-3 rounded-lg bg-white/10 px-3 py-2 text-xs font-semibold text-amber-50">
-                      Hanya <span className="font-black text-white">{competition.gapToNext.toLocaleString("id-ID")} XP</span> di depanmu — kejar #{competition.above.rank}!
-                    </p>
-                  ) : competition.totalParticipants > 0 ? (
-                    <p className="mt-3 rounded-lg bg-white/10 px-3 py-2 text-xs font-semibold text-amber-50">
-                      Bersaing dengan {competition.totalParticipants.toLocaleString("id-ID")} murid lain
-                    </p>
-                  ) : null}
-                  <div className="mt-3 flex items-center justify-between">
-                    <span className="text-[11px] text-amber-100/80">XP dihitung ulang tiap Senin</span>
-                    <span className="inline-flex items-center gap-1 rounded-full bg-white px-3 py-1.5 text-xs font-black text-orange-600 shadow-md transition-all group-hover:gap-2">
-                      {competition.above && competition.my && competition.my.rank > 1 ? "Kejar Mereka" : "Lihat Liga"} <ChevronRight className="h-3.5 w-3.5" />
-                    </span>
-                  </div>
-                </div>
+        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+          {gatewayCards.map((c) => (
+            <Link
+              key={c.href}
+              href={c.href}
+              className="group flex items-center gap-3 rounded-2xl border border-gray-100 bg-white p-4 transition-all hover:border-violet-200 hover:shadow-md hover:shadow-violet-500/[0.06] hover:-translate-y-0.5 dark:border-slate-700/60 dark:bg-slate-800/70 dark:hover:border-violet-500/30"
+            >
+              <span className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl ${c.iconBg}`}>
+                <c.icon size={20} />
+              </span>
+              <div className="min-w-0 flex-1">
+                <p className="text-sm font-extrabold text-gray-900 dark:text-slate-100">{c.title}</p>
+                <p className="truncate text-[11px] text-gray-400 dark:text-slate-400">{c.desc}</p>
+                {c.status && (
+                  <span className="mt-1 inline-block rounded-full bg-slate-50 px-2 py-0.5 text-[10px] font-bold text-gray-500 dark:bg-slate-800 dark:text-slate-400">
+                    {c.status}
+                  </span>
+                )}
               </div>
+              <span className="flex shrink-0 items-center gap-0.5 text-xs font-extrabold text-violet-600 transition-all group-hover:gap-1.5 dark:text-violet-400">
+                {c.cta} <ChevronRight className="h-4 w-4" />
+              </span>
             </Link>
-          ) : (
-            <div className="rounded-2xl border border-gray-100 bg-white p-5 text-sm text-gray-500 dark:border-slate-700/60 dark:bg-slate-800/70 dark:text-slate-400">
-              Kompetisi mingguan sedang disiapkan.
-            </div>
-          )}
+          ))}
         </div>
       </div>
 
-      {/* E + F — Gim | Papan Peringkat */}
-      <div className="mt-6 grid gap-5 lg:grid-cols-2">
-        {/* Gim — satu kartu utama (Kuis Tempur), slot tambahan expandable */}
-        <div>
+      {/* ── 4. AKTIVITAS ARENA — Misi | Liga, lalu Gim ── */}
+      <div className="mt-8">
+        <div className="mb-3 flex items-center gap-2.5">
+          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-indigo-100 text-indigo-600 dark:bg-indigo-500/15 dark:text-indigo-300">
+            <Zap size={16} />
+          </span>
+          <div>
+            <h2 className="text-base font-extrabold text-gray-900 dark:text-white">Aktivitas Arena</h2>
+            <p className="text-xs text-gray-500 dark:text-slate-400">Lanjutkan di mana kamu tinggalkan.</p>
+          </div>
+        </div>
+
+        <div className="grid gap-5 lg:grid-cols-2">
+          {/* Misi Hari Ini — checklist actionable (maks 3 preview) */}
+          <div>
+            <div className="mb-3 flex items-center justify-between">
+              <h3 className="text-base font-bold text-gray-900 dark:text-slate-100 flex items-center gap-2">
+                <Target size={18} className="text-orange-500" />
+                Misi Hari Ini
+              </h3>
+              <span className="rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-bold text-emerald-600 dark:bg-emerald-500/15 dark:text-emerald-400">
+                {doneQuest}/{totalQuest} selesai
+              </span>
+            </div>
+            <div className="rounded-2xl border border-gray-100 bg-white p-4 dark:border-slate-700/60 dark:bg-slate-800/70">
+              {totalQuest > 0 && (
+                <div className="mb-3 h-1.5 overflow-hidden rounded-full bg-gray-100 dark:bg-slate-700">
+                  <div className="h-full rounded-full bg-gradient-to-r from-emerald-400 to-emerald-500 transition-all" style={{ width: `${questPct}%` }} />
+                </div>
+              )}
+              {quests.length === 0 ? (
+                <p className="text-sm text-gray-400 dark:text-slate-400">Belum ada misi hari ini.</p>
+              ) : (
+                <div className="space-y-1">
+                  {quests.slice(0, 3).map((q: any) => {
+                    const meta = getQuestMeta(q.questType)
+                    const pct = Math.min(100, (Math.min(q.progress, q.target) / Math.max(q.target, 1)) * 100)
+                    return (
+                      <div key={q.id} className="flex items-center gap-3 py-2">
+                        <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full ${q.completed ? "bg-emerald-100 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400" : `bg-gradient-to-br ${meta.warna} text-white`}`}>
+                          {q.completed ? <CheckCircle2 size={18} /> : <meta.Icon size={16} />}
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <p className={`text-sm font-semibold ${q.completed ? "text-gray-400 line-through dark:text-slate-500" : "text-gray-900 dark:text-slate-100"}`}>{meta.label}</p>
+                          {!q.completed && (
+                            <div className="mt-1 flex items-center gap-2">
+                              <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-gray-100 dark:bg-slate-700">
+                                <div className="h-full rounded-full bg-gradient-to-r from-orange-400 to-amber-500" style={{ width: `${pct}%` }} />
+                              </div>
+                              <span className="shrink-0 text-xs text-gray-400 dark:text-slate-400">{questProgressText(Math.min(q.progress, q.target), q.target, q.completed)}</span>
+                            </div>
+                          )}
+                        </div>
+                        {q.rewardCoins > 0 && (
+                          <span className="flex shrink-0 items-center gap-1 text-xs font-bold text-amber-600 dark:text-amber-400">
+                            <Coins size={12} />{q.rewardCoins}
+                          </span>
+                        )}
+                      </div>
+                    )
+                  })}
+                </div>
+              )}
+              <Link href="/arena/misi" className="mt-3 flex items-center justify-center gap-1 rounded-xl py-2 text-xs font-semibold text-violet-600 transition-colors hover:bg-violet-50 dark:text-violet-400 dark:hover:bg-violet-500/10">
+                Lanjutkan Misi <ChevronRight className="h-3.5 w-3.5" />
+              </Link>
+            </div>
+          </div>
+
+          {/* Liga — event competition mingguan */}
+          <div>
+            <div className="mb-3 flex items-center justify-between">
+              <h3 className="text-base font-bold text-gray-900 dark:text-slate-100 flex items-center gap-2">
+                <Trophy size={18} className="text-amber-500" />
+                Liga
+              </h3>
+              <Link href="/arena/league" className="text-xs font-semibold text-violet-600 hover:text-violet-700 dark:text-violet-400">
+                Lihat Liga
+              </Link>
+            </div>
+            {competition ? (
+              <Link href="/arena/league" className="group block">
+                <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-amber-500 via-orange-500 to-red-500 p-5 shadow-lg shadow-orange-500/20 transition-all group-hover:shadow-xl group-hover:shadow-orange-500/30">
+                  <div className="pointer-events-none absolute -right-10 -top-10 h-36 w-36 rounded-full bg-white/5" />
+                  <div className="relative z-10">
+                    <div className="flex items-center gap-2">
+                      <Trophy className="h-4 w-4 text-amber-200" />
+                      <span className="text-[10px] font-black uppercase tracking-widest text-amber-100">Liga Minggu Ini</span>
+                    </div>
+                    <div className="mt-3 flex items-end justify-between gap-3">
+                      <div>
+                        <p className="text-3xl font-black text-white">{competition.my ? `#${competition.my.rank}` : "—"}</p>
+                        <p className="mt-0.5 text-[11px] font-semibold text-amber-100">{competition.my?.weeklyXp.toLocaleString() ?? 0} XP minggu ini</p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-sm font-extrabold text-white"><WeeklyCountdown endsAt={competition.periodEndsAt} baseline={competition.now} /></p>
+                        <p className="text-[10px] font-medium text-amber-100/90">tersisa minggu ini</p>
+                      </div>
+                    </div>
+                    {competition.above && competition.my && competition.my.rank > 1 ? (
+                      <p className="mt-3 rounded-lg bg-white/10 px-3 py-2 text-xs font-semibold text-amber-50">
+                        Hanya <span className="font-black text-white">{competition.gapToNext.toLocaleString("id-ID")} XP</span> di depanmu — kejar #{competition.above.rank}!
+                      </p>
+                    ) : competition.totalParticipants > 0 ? (
+                      <p className="mt-3 rounded-lg bg-white/10 px-3 py-2 text-xs font-semibold text-amber-50">
+                        Bersaing dengan {competition.totalParticipants.toLocaleString("id-ID")} murid lain
+                      </p>
+                    ) : null}
+                    <div className="mt-3 flex items-center justify-between">
+                      <span className="text-[11px] text-amber-100/80">XP dihitung ulang tiap Senin</span>
+                      <span className="inline-flex items-center gap-1 rounded-full bg-white px-3 py-1.5 text-xs font-black text-orange-600 shadow-md transition-all group-hover:gap-2">
+                        {competition.above && competition.my && competition.my.rank > 1 ? "Kejar Mereka" : "Kejar Peringkat"} <ChevronRight className="h-3.5 w-3.5" />
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </Link>
+            ) : (
+              <div className="rounded-2xl border border-gray-100 bg-white p-5 text-sm text-gray-500 dark:border-slate-700/60 dark:bg-slate-800/70 dark:text-slate-400">
+                Kompetisi mingguan sedang disiapkan.
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Gim — Kuis Tempur sebagai primary, slot tambahan expandable */}
+        <div className="mt-6">
           <div className="mb-3 flex items-center justify-between">
             <h3 className="text-base font-bold text-gray-900 dark:text-slate-100 flex items-center gap-2">
               <Gamepad2 size={18} className="text-violet-500" />
@@ -327,25 +434,11 @@ export default async function BerandaPage() {
             </div>
           )}
         </div>
-
-        {/* Papan Peringkat — social ranking */}
-        <div>
-          <div className="mb-3 flex items-center justify-between">
-            <h3 className="text-base font-bold text-gray-900 dark:text-slate-100 flex items-center gap-2">
-              <Award size={18} className="text-amber-500" />
-              Papan Peringkat
-            </h3>
-            <Link href="/arena/player/leaderboard" className="text-xs font-semibold text-violet-600 hover:text-violet-700 dark:text-violet-400">
-              Lihat Semua
-            </Link>
-          </div>
-          <LeaderboardPanel compact />
-        </div>
       </div>
 
-      {/* G + H — Pencapaian | Koleksi & Hadiah */}
-      <div className="mt-6 grid gap-5 lg:grid-cols-2">
-        {/* Pencapaian — preview lencana (maks 8, bukan wall of icons) */}
+      {/* ── 5. PROGRESS & ACHIEVEMENT — Pencapaian | Peringkat ── */}
+      <div className="mt-8 grid gap-5 lg:grid-cols-2">
+        {/* Pencapaian — preview lencana (maks 8) */}
         <div>
           <div className="mb-3 flex items-center justify-between">
             <h3 className="text-base font-bold text-gray-900 dark:text-slate-100 flex items-center gap-2">
@@ -366,8 +459,8 @@ export default async function BerandaPage() {
                   const pct = Math.min(100, (b.progress / Math.max(target, 1)) * 100)
                   return (
                     <div key={b.id} className={`flex flex-col items-center gap-1.5 ${!b.unlocked ? "opacity-60" : ""}`}>
-                      <div className={`flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br text-lg shadow-sm ${RARITY_STYLES[b.rarity] ?? "from-violet-500 to-purple-600"} ${!b.unlocked ? "grayscale" : ""} ${b.unlocked ? "ring-2 ring-amber-300/50" : ""}`}>
-                        {b.icon}
+                      <div className={`flex h-11 w-11 items-center justify-center rounded-xl shadow-sm ${b.unlocked ? "ring-2 ring-amber-300/50" : ""}`}>
+                        <BadgeIcon icon={b.icon} size={32} alt={b.name} className={b.unlocked ? "" : "grayscale opacity-70"} />
                       </div>
                       <p className="line-clamp-1 text-center text-[10px] font-semibold leading-tight text-gray-700 dark:text-slate-300">{b.name}</p>
                       <div className="h-1 w-full overflow-hidden rounded-full bg-gray-100 dark:bg-slate-700">
@@ -384,38 +477,64 @@ export default async function BerandaPage() {
           </div>
         </div>
 
-        {/* Koleksi & Hadiah — closing section */}
+        {/* Papan Peringkat — compact leaderboard preview */}
         <div>
           <div className="mb-3 flex items-center justify-between">
             <h3 className="text-base font-bold text-gray-900 dark:text-slate-100 flex items-center gap-2">
-              <Gift size={18} className="text-pink-500" />
-              Koleksi & Hadiah
+              <Medal size={18} className="text-amber-500" />
+              Papan Peringkat
             </h3>
-            <span className="flex items-center gap-1 rounded-full bg-amber-50 px-2.5 py-1 text-xs font-bold text-amber-600 dark:bg-amber-500/15 dark:text-amber-400">
-              <Coins size={14} />{user.coins || 0} koin
-            </span>
-          </div>
-          <div className="rounded-2xl border border-gray-100 bg-white p-4 dark:border-slate-700/60 dark:bg-slate-800/70">
-            <Link href="/arena/toko-koin" className="group flex items-center justify-between gap-3 rounded-xl border border-amber-100 bg-gradient-to-r from-amber-50 to-yellow-50 px-4 py-3 transition-all hover:border-amber-200 hover:shadow-md dark:border-amber-500/20 dark:from-amber-500/10 dark:to-yellow-500/10">
-              <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-amber-400 to-yellow-500 shadow-sm">
-                  <Coins className="h-5 w-5 text-white" />
-                </div>
-                <div>
-                  <p className="text-sm font-bold text-gray-900 dark:text-slate-100">Toko Koin</p>
-                  <p className="text-[11px] text-gray-500 dark:text-slate-400">Tukar koinmu dengan hadiah menarik</p>
-                </div>
-              </div>
-              <ChevronRight className="h-5 w-5 shrink-0 text-amber-500 transition-transform group-hover:translate-x-0.5" />
+            <Link href="/arena/player/leaderboard" className="text-xs font-semibold text-violet-600 hover:text-violet-700 dark:text-violet-400">
+              Lihat Semua
             </Link>
+          </div>
+          <LeaderboardPanel compact />
+        </div>
+      </div>
 
-            <div className="mt-4 space-y-1">
+      {/* ── 6. KOLEKSI & REWARD — closing section ── */}
+      <div className="mt-8">
+        <div className="mb-3 flex items-center gap-2.5">
+          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-amber-100 text-amber-600 dark:bg-amber-500/15 dark:text-amber-400">
+            <Gift size={16} />
+          </span>
+          <div>
+            <h2 className="text-base font-extrabold text-gray-900 dark:text-white">Koleksi & Reward</h2>
+            <p className="text-xs text-gray-500 dark:text-slate-400">Kumpulkan, tukar, dan klaim hadiahmu.</p>
+          </div>
+        </div>
+
+        <div className="grid gap-5 lg:grid-cols-2">
+          {/* Koin + Toko + CTAs */}
+          <div className="rounded-2xl border border-gray-100 bg-white p-5 dark:border-slate-700/60 dark:bg-slate-800/70">
+            <div className="flex items-center gap-3">
+              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-400 to-yellow-500 shadow-sm">
+                <Coins className="h-6 w-6 text-white" />
+              </span>
+              <div>
+                <p className="text-2xl font-black text-gray-900 dark:text-slate-100">{user.coins || 0}</p>
+                <p className="text-[11px] text-gray-500 dark:text-slate-400">koin kamu</p>
+              </div>
+            </div>
+            <div className="mt-4 space-y-2">
+              <Link href="/arena/toko-koin" className="flex items-center justify-center gap-1.5 rounded-xl bg-gradient-to-r from-amber-500 to-yellow-500 px-4 py-2.5 text-sm font-extrabold text-white shadow-sm transition-all hover:from-amber-400 hover:to-yellow-400">
+                Ke Toko Koin <ChevronRight className="h-4 w-4" />
+              </Link>
+              <Link href="/arena/player/badges" className="flex items-center justify-center gap-1.5 rounded-xl border border-gray-200 px-4 py-2.5 text-sm font-bold text-gray-700 transition-all hover:bg-gray-50 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800">
+                Buka Koleksi <ChevronRight className="h-4 w-4" />
+              </Link>
+            </div>
+          </div>
+
+          {/* Achievement preview */}
+          <div className="rounded-2xl border border-gray-100 bg-white p-4 dark:border-slate-700/60 dark:bg-slate-800/70">
+            <div className="space-y-1">
               {achievements.slice(0, 3).map((a) => {
                 const pct = Math.min(100, (a.progress / Math.max(a.target, 1)) * 100)
                 return (
                   <div key={a.id} className="flex items-center gap-3 py-2">
-                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-pink-500 to-rose-600 text-lg shadow-sm">
-                      {a.icon}
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-pink-500 to-rose-600 shadow-sm">
+                      <BadgeIcon icon={a.icon} size={22} alt={a.name} />
                     </div>
                     <div className="min-w-0 flex-1">
                       <p className="text-sm font-semibold text-gray-900 dark:text-slate-100">{a.name}</p>

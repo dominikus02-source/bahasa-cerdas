@@ -24,7 +24,7 @@ function read(rel: string): string {
 }
 
 function main() {
-  console.log("\n📋 ARENA WEB 2.0 TEST (STEP 4 — Web Student Gamification Hub)");
+  console.log("\n📋 ARENA WEB 3.0 TEST (STEP 5 — Arena Hub, Subnav Pills & Badge Fix)");
   console.log("=".repeat(60));
 
   // ── 1. LAYOUT — subnav arena (bukan duplikat navigasi global) ──
@@ -130,6 +130,62 @@ function main() {
     console.log("  ⚠️  git diff tidak dapat dijalankan (HEAD tidak tersedia?) — cek zona lindung dilewati");
     console.log(`      ${e.message?.split("\n")[0] || e}`);
   }
+
+  // ── 8. LAYOUT — ARENA 3.0 premium subnav pills ──
+  console.log("\n── 8. Layout — Premium Subnav Pills (ARENA 3.0) ──");
+  test("desktop nav pakai segmented pill container (rounded-full border)",
+    () => layout.includes('rounded-full border border-gray-200 bg-slate-50 p-1'));
+  test("pill aktif punya active state jelas (bg-violet-600 + aria-current)",
+    () => layout.includes('bg-violet-600 text-white shadow-sm shadow-violet-600/30') && layout.includes('aria-current={aktif ? "page" : undefined}'));
+  test("pill nonaktif punya hover state (hover:bg-white + hover:text-violet-700)",
+    () => layout.includes('hover:bg-white dark:text-slate-300'));
+  test("a11y: focus-visible outline violet pada pills (desktop + mobile)",
+    () => (layout.match(/focus-visible:outline-violet-500/g) || []).length >= 2);
+  test("mobile subnav: touch target min-h-[44px] + whitespace-nowrap + scrollbar-hide",
+    () => layout.includes('min-h-[44px]') && layout.includes('whitespace-nowrap') && layout.includes('scrollbar-hide'));
+  test("mobile subnav sticky di bawah top bar (sticky top-12)",
+    () => layout.includes('sticky top-12'));
+  test("dark mode: pill container & hover memakai dark: variant",
+    () => layout.includes('dark:bg-slate-800/60') && layout.includes('dark:hover:bg-slate-700'));
+  test("navItems tetap 6 item canonical (Arena/Misi/Liga/Gim/Peringkat/Koleksi)",
+    () => NAV.every(h => layout.includes(`href: "${h}"`)) && (layout.match(/href: "\/arena/g) || []).length >= 6);
+
+  // ── 9. HOME — Jelajahi Arena (6 gateway cards) ──
+  console.log("\n── 9. Home — Jelajahi Arena (6 Gateway) ──");
+  const GATEWAYS = ["/arena/misi", "/arena/league", "/arena/game", "/arena/player/leaderboard", "/arena/player/badges", "/arena/toko-koin"];
+  const CTAS = ["Lanjutkan Misi", "Kejar Peringkat", "Main Sekarang", "Lihat Posisi", "Buka Koleksi", "Tukar Koin"];
+  test("section header 'Jelajahi Arena' ada di home",
+    () => home.includes("Jelajahi Arena"));
+  test("6 gateway card href canonical ada (Misi/Liga/Gim/Peringkat/Koleksi/Toko Koin)",
+    () => GATEWAYS.every(h => home.includes(h)));
+  test("CTA tiap gateway sesuai peta spek (Lanjutkan Misi/Kejar Peringkat/Main Sekarang/Lihat Posisi/Buka Koleksi/Tukar Koin)",
+    () => CTAS.every(c => home.includes(c)));
+  test("status live gateway: misi selesai / #rank minggu ini / terbuka / koin",
+    () => home.includes("misi selesai") && home.includes("minggu ini") && home.includes("terbuka"));
+  test("gateway grid 3 kolom di desktop (sm:grid-cols-2 xl:grid-cols-3)",
+    () => home.includes('sm:grid-cols-2 xl:grid-cols-3'));
+  test("gateway card punya hover premium (translate + shadow violet)",
+    () => home.includes('hover:-translate-y-0.5') && home.includes('hover:shadow-violet-500/[0.06]'));
+
+  // ── 10. HOME — badge bug fix (path mentah tidak pernah render) ──
+  console.log("\n── 10. Badge Bug Fix — Tidak Ada Path Mentah ──");
+  const iconSrc = read("components/gamification/BadgeIcon.tsx");
+  test("home TIDAK render {b.icon}/{a.icon} mentah (path webp sebagai teks)",
+    () => !/(?<!icon=)\{b\.icon\}/.test(home) && !/(?<!icon=)\{a\.icon\}/.test(home));
+  test("home pakai <BadgeIcon> untuk lencana & pencapaian dengan alt",
+    () => home.includes('BadgeIcon icon={b.icon}') && home.includes('BadgeIcon icon={a.icon}'));
+  test("BadgeIcon punya fallback onError (Image onError → broken state)",
+    () => iconSrc.includes("onError={() => setBroken(true)}"));
+  test("BadgeIcon fallback visual Award — path mentah tidak pernah tampil sebagai teks",
+    () => iconSrc.includes("<Award") && iconSrc.includes('role={alt ? "img" : undefined}'));
+  test("BadgeIcon client component (useState untuk broken state)",
+    () => iconSrc.includes('"use client"') && iconSrc.includes("useState(false)"));
+
+  // ── 11. GURU BADGE GRID — konsistensi render badge ──
+  console.log("\n── 11. GuruBadgeGrid — Konsistensi BadgeIcon ──");
+  const guruGrid = read("components/guru/GuruBadgeGrid.tsx");
+  test("GuruBadgeGrid memakai <BadgeIcon> (bukan raw <img src={b.icon}>)",
+    () => guruGrid.includes("<BadgeIcon") && !guruGrid.includes('<img src={b.icon}'));
 
   // ── Summary ──
   console.log(`\n${"=".repeat(60)}`);

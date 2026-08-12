@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import { Award, Lock } from "lucide-react"
+import { BadgeIcon } from "@/components/gamification/BadgeIcon"
 
 type BadgeItem = {
   code: string
@@ -94,7 +95,7 @@ export default function GuruBadgeGrid() {
               >
                 <div className={`relative w-11 h-11 mx-auto mb-1.5 rounded-full flex items-center justify-center ${b.unlocked ? "bg-gradient-to-br from-amber-100 to-orange-100" : "bg-gray-200"}`}>
                   {b.unlocked ? (
-                    <img src={b.icon} alt={b.name} className="w-9 h-9 object-contain" loading="lazy" />
+                    <BadgeIcon icon={b.icon} alt={b.name} size={36} className="w-9 h-9" />
                   ) : (
                     <Lock size={14} className="text-gray-400" />
                   )}

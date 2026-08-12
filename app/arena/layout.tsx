@@ -65,17 +65,26 @@ export default async function ArenaLayout({ children }: { children: React.ReactN
           <span className="font-bold text-gray-900 dark:text-slate-100">Arena</span>
         </Link>
 
-        <nav className="flex items-center gap-1">
-          {navItems.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm text-gray-600 hover:text-violet-600 hover:bg-violet-50 transition-colors dark:text-slate-300 dark:hover:text-violet-300 dark:hover:bg-slate-800"
-            >
-              <item.icon className="w-4 h-4" />
-              <span className="font-medium">{item.label}</span>
-            </Link>
-          ))}
+        {/* Subnav Arena — segmented pills premium (ARENA 3.0) */}
+        <nav aria-label="Navigasi Arena" className="flex items-center gap-1 rounded-full border border-gray-200 bg-slate-50 p-1 dark:border-slate-700 dark:bg-slate-800/60">
+          {navItems.map((item) => {
+            const aktif = pathname === item.href || (item.href !== "/arena" && pathname.startsWith(item.href))
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                aria-current={aktif ? "page" : undefined}
+                className={`flex items-center gap-1.5 px-3.5 py-2 rounded-full text-sm font-semibold transition-all focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-500 ${
+                  aktif
+                    ? "bg-violet-600 text-white shadow-sm shadow-violet-600/30"
+                    : "text-gray-600 hover:text-violet-700 hover:bg-white dark:text-slate-300 dark:hover:text-violet-300 dark:hover:bg-slate-700"
+                }`}
+              >
+                <item.icon className={`w-4 h-4 ${aktif ? "" : "text-violet-500 dark:text-violet-400"}`} />
+                <span>{item.label}</span>
+              </Link>
+            )
+          })}
         </nav>
 
         <div className="flex items-center gap-2">
@@ -108,19 +117,28 @@ export default async function ArenaLayout({ children }: { children: React.ReactN
         </div>
       </div>
 
-      {/* Subnav Arena — mobile web (web ≠ APK: tanpa bottom navigation ala APK) */}
+      {/* Subnav Arena — mobile web (web ≠ APK: tanpa bottom navigation ala APK).
+          Pills horizontal scroll, touch target ≥44px, active state jelas. */}
       {!apk && (
-        <nav className="md:hidden sticky top-12 z-30 flex items-center gap-1 px-3 py-2 bg-white/95 backdrop-blur-xl border-b border-gray-100 overflow-x-auto scrollbar-hide dark:bg-slate-900/95 dark:border-slate-800">
-          {navItems.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-semibold text-gray-600 hover:text-violet-600 hover:bg-violet-50 whitespace-nowrap transition-colors dark:text-slate-300 dark:hover:text-violet-300 dark:hover:bg-slate-800"
-            >
-              <item.icon className="w-3.5 h-3.5" />
-              {item.label}
-            </Link>
-          ))}
+        <nav aria-label="Navigasi Arena" className="md:hidden sticky top-12 z-30 flex items-center gap-1.5 px-3 py-2 bg-white/95 backdrop-blur-xl border-b border-gray-100 overflow-x-auto scrollbar-hide dark:bg-slate-900/95 dark:border-slate-800">
+          {navItems.map((item) => {
+            const aktif = pathname === item.href || (item.href !== "/arena" && pathname.startsWith(item.href))
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                aria-current={aktif ? "page" : undefined}
+                className={`flex items-center gap-1.5 px-3.5 min-h-[44px] rounded-xl text-xs font-bold whitespace-nowrap transition-all focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-500 ${
+                  aktif
+                    ? "bg-violet-600 text-white shadow-sm shadow-violet-600/30"
+                    : "text-gray-600 hover:text-violet-600 hover:bg-violet-50 dark:text-slate-300 dark:hover:text-violet-300 dark:hover:bg-slate-800"
+                }`}
+              >
+                <item.icon className={`w-3.5 h-3.5 ${aktif ? "" : "text-violet-500 dark:text-violet-400"}`} />
+                {item.label}
+              </Link>
+            )
+          })}
         </nav>
       )}
 
