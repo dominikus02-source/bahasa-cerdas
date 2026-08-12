@@ -4,7 +4,7 @@ import MuridDokumenLatihanPage from "@/app/(dashboard)/murid/dokumen-latihan/pag
 
 export default function ArenaSimulasiHasilPage() {
   return (
-    <div className="max-w-3xl mx-auto px-4 py-6">
+    <div className="arena-page px-4 py-6 md:px-6">
       <Link
         href="/arena/simulasi"
         className="inline-flex items-center gap-1.5 text-sm font-semibold text-gray-500 hover:text-violet-600 transition-colors mb-4"

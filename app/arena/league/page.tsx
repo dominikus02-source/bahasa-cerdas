@@ -2,10 +2,12 @@ import { getUser } from "@/lib/supabase/server"
 import { db } from "@/lib/db"
 import { redirect } from "next/navigation"
 import cache from "@/lib/redis"
+import { Crown, Trophy, Zap, Clock } from "lucide-react"
 import LeagueTabs, { type LeagueRow, type HallOfFameRow } from "./league-tabs"
 import { getLeaderboard } from "@/lib/gamification/leaderboard"
 import { getWeeklyCompetition } from "@/lib/gamification/motivation"
 import CompetitionHero from "@/components/arena/player/CompetitionHero"
+import WeeklyCountdown from "@/components/arena/player/WeeklyCountdown"
 
 export const dynamic = "force-dynamic"
 
@@ -69,29 +71,62 @@ export default async function LeaguePage({
     settledAt: h.settledAt.toISOString(),
   }))
 
-  return (
-    <div className="arena-page max-w-3xl mx-auto p-4">
-      <div className="mb-6">
-        <h1 className="text-2xl font-extrabold text-gray-900">Papan Peringkat</h1>
-        <p className="text-sm text-gray-500 mt-1">Bersaing dengan siswa lain dan dapatkan hadiah</p>
-      </div>
+  // ARENA 4.2 — canvas desktop-first: root memakai canvas 1280px penuh dari
+  // layout (tanpa max-w-* legacy). Header kompetitif ringkas membuat peringkat
+  // sekarang langsung terlihat; CompetitionHero + LeagueTabs tetap full-width.
+  const myRank = meWeekly?.rank ?? weeklyRows.length + 1
+  const myWeeklyXP = meWeekly?.score ?? 0
 
+  return (
+    <div className="arena-page space-y-6 p-4 md:p-6">
+      {/* ARENA / LEAGUE HEADER — light premium, violet-tinted, ringkas */}
+      <section className="relative overflow-hidden rounded-2xl border border-violet-100 bg-gradient-to-r from-violet-50 via-white to-indigo-50 px-5 py-5 md:px-7 md:py-6">
+        <div className="pointer-events-none absolute -right-12 -top-12 h-52 w-52 rounded-full bg-violet-200/40 blur-3xl" />
+        <div className="pointer-events-none absolute -bottom-16 -left-10 h-40 w-40 rounded-full bg-amber-100/50 blur-3xl" />
+        <div className="relative">
+          <p className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-widest text-violet-600">
+            <Trophy className="h-3.5 w-3.5" /> Liga
+          </p>
+          <h1 className="mt-1 text-2xl font-extrabold tracking-tight text-gray-900 md:text-3xl">
+            Liga Minggu Ini
+          </h1>
+          <p className="mt-1 text-sm text-gray-500">Kompetisi mingguan untuk membuktikan kemampuanmu.</p>
+
+          {/* Status kilat — peringkat sekarang, XP minggu ini, countdown */}
+          <div className="mt-4 flex flex-wrap items-center gap-2 text-xs font-semibold">
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-200 bg-amber-50 px-3 py-1.5 text-amber-700">
+              <Crown className="h-3.5 w-3.5" /> Peringkatmu #{myRank}
+            </span>
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-violet-200 bg-violet-50 px-3 py-1.5 text-violet-700">
+              <Zap className="h-3.5 w-3.5" /> {myWeeklyXP.toLocaleString("id-ID")} XP minggu ini
+            </span>
+            {competition && (
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-gray-200 bg-gray-50 px-3 py-1.5 text-gray-600">
+                <Clock className="h-3.5 w-3.5" />
+                Berakhir <WeeklyCountdown endsAt={competition.periodEndsAt} baseline={competition.now} />
+              </span>
+            )}
+          </div>
+        </div>
+      </section>
+
+      {/* COMPETITION STATUS — status penuh + podium + gap + sumber XP */}
       {competition && <CompetitionHero payload={competition} />}
 
-      <div className="mt-4">
-        <LeagueTabs
-          weekly={{ rows: weeklyRows, myRank: meWeekly?.rank ?? weeklyRows.length + 1, myXP: meWeekly?.score ?? 0 }}
-          daily={{ rows: dailyRows, myRank: dailyRows.findIndex(r => r.id === user.id) + 1, myXP: user.coins || 0 }}
-          hallOfFame={hallOfFame}
-          userId={user.id}
-          userXP={user.xp || 0}
-          initialTab={initialTab}
-        />
-      </div>
+      {/* LEADERBOARD + YOUR POSITION — papan penuh canvas (tab Mingguan/Harian/HoF) */}
+      <LeagueTabs
+        weekly={{ rows: weeklyRows, myRank, myXP: myWeeklyXP }}
+        daily={{ rows: dailyRows, myRank: dailyRows.findIndex(r => r.id === user.id) + 1, myXP: user.coins || 0 }}
+        hallOfFame={hallOfFame}
+        userId={user.id}
+        userXP={user.xp || 0}
+        initialTab={initialTab}
+      />
 
-      <div className="mt-4 rounded-xl bg-violet-50 border border-violet-100 p-4 text-xs text-violet-800">
-        <p className="font-bold mb-1.5">Cara kerja XP</p>
-        <ul className="space-y-1 list-disc pl-4">
+      {/* HOW IT WORKS */}
+      <div className="rounded-xl border border-violet-100 bg-violet-50 p-4 text-xs text-violet-800 md:p-5">
+        <p className="mb-1.5 font-bold">Cara kerja XP</p>
+        <ul className="space-y-1 list-disc pl-4 md:columns-2 md:space-y-1.5">
           <li>Papan XP mingguan mulai dari nol setiap Senin pukul 00.00 WIB.</li>
           <li>Musim baru dimulai setiap 4 minggu — perebutan juara musim juga mulai dari nol.</li>
           <li>XP total, level, dan pangkatmu tidak pernah direset.</li>

@@ -14,7 +14,7 @@ export default async function ArenaSimulasiPage() {
   const tkaSoal = tkaAvailable.reduce((n, t) => n + (t.questionCount || 0), 0);
 
   return (
-    <div className="max-w-3xl mx-auto px-4 py-6">
+    <div className="arena-page px-4 py-6 md:px-6">
       {/* Hero */}
       <div className="bg-gradient-to-r from-indigo-600 via-violet-600 to-purple-600 rounded-3xl p-6 text-white mb-6">
         <div className="flex items-center gap-3 mb-2">

@@ -172,6 +172,34 @@ function main() {
   test("komponen bersama yang masih dipakai tidak dihapus (BattleCard untuk /arena/game, KataPlayGame)",
     () => fs.existsSync("components/arena/BattleCard.tsx") && fs.existsSync("components/game/KataPlayGame.tsx"));
 
+  // ── 10. ARENA 4.2 — SUB-ROUTE CANVAS DESKTOP-FIRST ──
+  console.log("\n── 10. Sub-route Canvas (ARENA 4.2) — Desktop-first, bukan kolom mobile ──");
+  const leaguePage = read("app/arena/league/page.tsx");
+  test("league menggunakan canvas penuh (tanpa wrapper legacy max-w-3xl / max-w-lg)",
+    () => !leaguePage.includes("max-w-3xl") && !leaguePage.includes("max-w-lg"));
+  test("league punya header kompetitif 'Liga Minggu Ini' + subtitle resmi",
+    () => leaguePage.includes("Liga Minggu Ini") && leaguePage.includes("Kompetisi mingguan untuk membuktikan kemampuanmu."));
+  test("league menampilkan status cepat asli (Peringkatmu + XP minggu ini + countdown real)",
+    () => leaguePage.includes("Peringkatmu") && leaguePage.includes("XP minggu ini") && leaguePage.includes("<WeeklyCountdown"));
+  test("league tetap memakai data & engine asli (getLeaderboard + getWeeklyCompetition + LeagueTabs)",
+    () => leaguePage.includes("getLeaderboard") && leaguePage.includes("getWeeklyCompetition") && leaguePage.includes("<LeagueTabs"));
+  test("5 halaman /arena/simulasi* memakai canvas penuh (tanpa max-w-3xl legacy)",
+    () => ["simulasi", "simulasi/ukbi", "simulasi/tka", "simulasi/hasil", "simulasi/bigt"]
+      .every((p) => !read(`app/arena/${p}/page.tsx`).includes("max-w-3xl")));
+  test("/arena/game hub memakai canvas penuh (game-hub, tanpa wrapper legacy sempit)",
+    () => read("app/arena/game/page.tsx").includes("game-hub") && !read("app/arena/game/page.tsx").includes("max-w-lg mx-auto"));
+  test("tantang (game 1v1) memakai canvas penuh (tanpa max-w-lg mx-auto legacy)",
+    () => !read("app/arena/game/tantang/page.tsx").includes("max-w-lg mx-auto"));
+  test("/arena/player web memakai canvas penuh (tanpa wrapper legacy sempit)",
+    () => !read("app/arena/player/page.tsx").includes("max-w-3xl") && !read("app/arena/player/page.tsx").includes("max-w-lg mx-auto"));
+  test("chat tetap 1440px exception (max-w-[1440px] di layout untuk /arena/chat)",
+    () => layout.includes("max-w-[1440px] py-0 md:px-8") && layout.includes('pathname.startsWith("/arena/chat")'));
+  test("tidak ada fixed min-width desktop (min-w-[1200px]/min-w-[1440px]) di seluruh route Arena",
+    () => {
+      const out = execSync(`rg -l 'min-w-\\[1200px\\]|min-w-\\[1440px\\]' app/arena --glob '*.tsx' || true`, { encoding: "utf8" });
+      return out.trim().length === 0;
+    });
+
   // ── Summary ──
   console.log(`\n${"=".repeat(60)}`);
   console.log(`📊 RESULT: ${passed} passed, ${failed} failed (${passed + failed} total)`);
