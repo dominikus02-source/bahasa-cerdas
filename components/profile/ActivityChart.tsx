@@ -75,7 +75,7 @@ export default function ActivityChart({
         </div>
       </div>
 
-      <div className="mt-4 grid grid-cols-2 gap-3 max-w-md">
+      <div className="mt-4 grid grid-cols-2 gap-3">
         <div className="rounded-xl bg-white/[0.05] ring-1 ring-white/10 px-3.5 py-3">
           <p className="inline-flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wider text-white/45">
             <Sparkles size={10} className="text-amber-300" /> Total Aktivitas

@@ -90,7 +90,9 @@ async function main() {
     test(`${label}: no Link wrapping button`, () => !/<Link[^>]*>[\s\S]*?<button/.test(content))
     test(`${label}: contains /guru/bigt or /murid/bigt href`, () => {
       const target = label.includes("Guru") ? "/guru/bigt" : "/murid/bigt"
-      return content.includes(target)
+      const expectPresent = label.includes("Guru")
+      // Student Experience Consolidation: /murid/bigt moved OUT of sidebar to home sections
+      return expectPresent ? content.includes(target) : !content.includes(target)
     })
   }
 
@@ -101,14 +103,14 @@ async function main() {
     test(`${file}: no "Sertifikat" label`, () => !content.includes("Sertifikat"))
   }
 
-  // 7. Simulasi UKBI/TKA links still present
+  // 7. Simulasi UKBI/TKA links — guru in sidebar, murid on home sections (STEP 4)
   console.log("\n── Simulation Links Present ──")
   const guruLayout = readFileSync("app/(dashboard)/guru/layout.tsx", "utf-8")
   test("Guru layout has Simulasi UKBI link", () => guruLayout.includes('/guru/simulasi/ukbi"'))
   test("Guru layout has Simulasi TKA link", () => guruLayout.includes('/guru/simulasi/tka"'))
-  const muridLayout = readFileSync("app/(dashboard)/murid/layout.tsx", "utf-8")
-  test("Murid layout has Simulasi UKBI link", () => muridLayout.includes('/murid/simulasi/ukbi"'))
-  test("Murid layout has Simulasi TKA link", () => muridLayout.includes('/murid/simulasi/tka"'))
+  const simulasiSection = readFileSync("components/student-home/SimulasiUjianSection.tsx", "utf-8")
+  test("Home SimulasiUjianSection has Simulasi UKBI link", () => simulasiSection.includes('/murid/simulasi/ukbi"'))
+  test("Home SimulasiUjianSection has Simulasi TKA link", () => simulasiSection.includes('/murid/simulasi/tka"'))
 
   // ── Summary ──
   console.log(`\n${"=".repeat(60)}`)

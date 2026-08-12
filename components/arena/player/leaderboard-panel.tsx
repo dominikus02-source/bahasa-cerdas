@@ -8,7 +8,7 @@ import { RankIcon } from "@/components/gamification/RankIcon";
 import type { LeaderboardEntryView } from "@/lib/gamification/client-types";
 
 type Period = "ALL_TIME" | "WEEKLY" | "SEASON";
-type Scope = "GLOBAL" | "SCHOOL" | "CLASS";
+type Scope = "GLOBAL" | "SCHOOL" | "CLASS" | "FRIENDS";
 
 const PERIOD_LABELS: Record<Period, string> = {
   ALL_TIME: "Semua Waktu",
@@ -68,13 +68,13 @@ export function LeaderboardPanel({ compact = false }: { compact?: boolean }) {
       </div>
 
       <div className="mb-3 flex gap-1">
-        {(["GLOBAL", "SCHOOL", "CLASS"] as Scope[]).map((s) => (
+        {(["GLOBAL", "SCHOOL", "CLASS", "FRIENDS"] as Scope[]).map((s) => (
           <button
             key={s}
             onClick={() => setScope(s)}
             className={`rounded-full px-3 py-1 text-[10px] font-bold transition ${scope === s ? "px-btn-royal" : "px-btn-ghost"}`}
           >
-            {s === "GLOBAL" ? "Global" : s === "SCHOOL" ? "Sekolah" : "Kelas"}
+            {s === "GLOBAL" ? "Global" : s === "SCHOOL" ? "Sekolah" : s === "CLASS" ? "Kelas" : "Teman"}
           </button>
         ))}
       </div>

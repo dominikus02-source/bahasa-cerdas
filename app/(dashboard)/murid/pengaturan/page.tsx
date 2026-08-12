@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getUser } from "@/lib/supabase/server";
 import { LogoutButton } from "@/components/dashboard/LogoutButton";
+import { ThemeSettingsCard } from "@/components/murid/ThemeSettingsCard";
 
 export const dynamic = "force-dynamic";
 
@@ -16,12 +17,12 @@ const SectionCard = ({
   desc?: string;
   children: React.ReactNode;
 }) => (
-  <section className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+  <section className="bg-card dark:bg-slate-900 rounded-2xl border border-border shadow-sm p-5">
     <div className="flex items-center gap-3 mb-1">
-      <div className="w-9 h-9 rounded-xl bg-violet-50 flex items-center justify-center text-violet-600">{icon}</div>
+      <div className="w-9 h-9 rounded-xl bg-violet-50 dark:bg-violet-500/15 flex items-center justify-center text-violet-600 dark:text-violet-400">{icon}</div>
       <div>
-        <h2 className="text-sm font-bold text-gray-900">{title}</h2>
-        {desc && <p className="text-xs text-gray-400">{desc}</p>}
+        <h2 className="text-sm font-bold text-foreground">{title}</h2>
+        {desc && <p className="text-xs text-muted-foreground">{desc}</p>}
       </div>
     </div>
     <div className="mt-4 space-y-2">{children}</div>
@@ -40,9 +41,9 @@ const Row = ({
   accent?: string;
 }) => {
   const inner = (
-    <div className="flex items-center justify-between gap-3 px-4 py-3 rounded-xl bg-gray-50/80 hover:bg-violet-50/50 transition-colors">
-      <span className="text-sm font-medium text-gray-700">{label}</span>
-      <span className={`text-xs font-semibold ${accent || "text-violet-600"}`}>
+    <div className="flex items-center justify-between gap-3 px-4 py-3 rounded-xl bg-surface-muted/80 dark:bg-slate-800/60 hover:bg-violet-50/50 dark:hover:bg-violet-500/10 transition-colors">
+      <span className="text-sm font-medium text-foreground">{label}</span>
+      <span className={`text-xs font-semibold ${accent || "text-violet-600 dark:text-violet-400"}`}>
         {value || "Buka"}
       </span>
     </div>
@@ -55,10 +56,10 @@ export default async function MuridPengaturanPage() {
   if (!user) redirect("/login");
 
   return (
-    <div className="max-w-2xl mx-auto space-y-5">
+    <div className="max-w-3xl mx-auto space-y-5">
       <header>
-        <h1 className="text-2xl font-bold text-gray-900">Pengaturan</h1>
-        <p className="text-sm text-gray-500 mt-1">
+        <h1 className="text-2xl font-bold text-foreground">Pengaturan</h1>
+        <p className="text-sm text-muted-foreground mt-1">
           Kelola akun, notifikasi, tampilan, dan keamanan akunmu dalam satu tempat.
         </p>
       </header>
@@ -91,22 +92,7 @@ export default async function MuridPengaturanPage() {
         <Row label="Pengumuman Kelas" href="/murid/pengumuman" />
       </SectionCard>
 
-      <SectionCard
-        title="Tampilan"
-        desc="Preferensi tema antarmuka"
-        icon={
-          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-          </svg>
-        }
-      >
-        <Row label="Mode Tampilan" value="Terang (saat ini)" accent="text-gray-500" />
-        <div className="px-4 py-3 rounded-xl bg-amber-50/70 border border-amber-100">
-          <p className="text-xs text-amber-700">
-            Mode Gelap sedang disiapkan dan akan segera hadir di pembaruan berikutnya.
-          </p>
-        </div>
-      </SectionCard>
+      <ThemeSettingsCard />
 
       <SectionCard
         title="Keamanan & Sesi"
@@ -122,7 +108,7 @@ export default async function MuridPengaturanPage() {
         </div>
       </SectionCard>
 
-      <p className="text-center text-[11px] text-gray-400 pb-4">
+      <p className="text-center text-[11px] text-muted-foreground pb-4">
         BahasaCerdas — Pengaturan akun murid
       </p>
     </div>

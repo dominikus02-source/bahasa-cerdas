@@ -122,10 +122,10 @@ export function NotificationBell() {
     <div className="relative" ref={ref}>
       <button
         onClick={handleOpen}
-        className="relative p-2 hover:bg-slate-100 rounded-lg transition-colors"
+        className="relative p-2 hover:bg-slate-100 rounded-lg transition-colors dark:hover:bg-slate-800"
         title="Notifikasi"
       >
-        <Bell className="w-5 h-5 text-slate-600" />
+        <Bell className="w-5 h-5 text-slate-600 dark:text-slate-400" />
         {unreadCount > 0 && (
           <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
             {unreadCount > 9 ? "9+" : unreadCount}
@@ -140,13 +140,13 @@ export function NotificationBell() {
           of the top bar, where opening leftward is correct. max-w keeps it
           inside the viewport at any width. */}
       {open && (
-        <div className="absolute right-0 md:right-auto md:left-0 top-full mt-2 w-80 max-w-[calc(100vw-1.5rem)] bg-white rounded-xl shadow-xl border border-slate-200 z-50 overflow-hidden">
-          <div className="p-3 border-b border-slate-100 flex items-center justify-between">
-            <h3 className="font-semibold text-sm text-slate-900">Notifikasi</h3>
+        <div className="absolute right-0 md:right-auto md:left-0 top-full mt-2 w-80 max-w-[calc(100vw-1.5rem)] bg-white rounded-xl shadow-xl border border-slate-200 z-50 overflow-hidden dark:bg-slate-900 dark:border-slate-800">
+          <div className="p-3 border-b border-slate-100 flex items-center justify-between dark:border-slate-800">
+            <h3 className="font-semibold text-sm text-slate-900 dark:text-slate-100">Notifikasi</h3>
             {notifications.length > 0 && (
               <button
                 onClick={handleDeleteAll}
-                className="text-xs text-red-500 hover:text-red-700 font-medium"
+                className="text-xs text-red-500 hover:text-red-700 font-medium dark:text-red-400 dark:hover:text-red-300"
               >
                 Hapus Semua
               </button>
@@ -154,11 +154,11 @@ export function NotificationBell() {
           </div>
           <div className="max-h-80 overflow-y-auto">
             {loading ? (
-              <div className="p-8 text-center text-sm text-slate-400">Memuat...</div>
+              <div className="p-8 text-center text-sm text-slate-400 dark:text-slate-500">Memuat...</div>
             ) : notifications.length === 0 ? (
               <div className="p-8 text-center">
-                <Bell className="w-8 h-8 text-slate-300 mx-auto mb-2" />
-                <p className="text-sm text-slate-400">Tidak ada notifikasi</p>
+                <Bell className="w-8 h-8 text-slate-300 mx-auto mb-2 dark:text-slate-600" />
+                <p className="text-sm text-slate-400 dark:text-slate-500">Tidak ada notifikasi</p>
               </div>
             ) : (
               <div className="max-h-80 overflow-y-auto p-2 space-y-1.5">
@@ -169,7 +169,7 @@ export function NotificationBell() {
             )}
           </div>
           {notifications.length > 0 && (
-            <div className="p-2 border-t border-slate-100">
+            <div className="p-2 border-t border-slate-100 dark:border-slate-800">
               <Link
                 href="/arena/notifikasi"
                 className="flex items-center justify-center gap-1.5 text-xs font-medium py-1"

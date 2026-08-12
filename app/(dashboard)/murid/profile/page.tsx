@@ -351,7 +351,7 @@ export default function MuridProfilePage() {
     : null;
 
   return (
-    <div className="max-w-4xl mx-auto">
+    <div className="mx-auto w-full max-w-[1400px] px-4 md:px-6 lg:px-8">
       <style>{`
         @keyframes profile-flame{0%,100%{transform:scale(1) rotate(-2deg)}50%{transform:scale(1.12) rotate(2deg)}}
         @keyframes profile-badge-pop{0%{transform:scale(0)}70%{transform:scale(1.15)}100%{transform:scale(1)}}
@@ -401,17 +401,12 @@ export default function MuridProfilePage() {
         badgesHref="/arena/player/badges"
       />
 
-      {/* Moto pribadi — bio asli + tanggal bergabung asli */}
-      <ProfileMotto
-        bio={user.bio ?? null}
-        joinedAt={user.createdAt ?? null}
-        isOwn
-        onEditProfile={openSettings}
-      />
+      {/* Moto pribadi — bio asli + tanggal bergabung asli (pindah ke sidebar, di bawah) */}
 
-      {/* Grid utama: statistik & kebun kata (kiri) + aktivitas (kanan) */}
-      <div className="grid md:grid-cols-3 gap-6 mb-6">
-        <div className="space-y-4">
+      {/* GRID DESKTOP 2 KOLOM — main konten + sidebar identitas (≥1024px) */}
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_360px] lg:items-start">
+        {/* MAIN — statistik, aktivitas, grafik, galeri karya */}
+        <div className="space-y-6 min-w-0 md:col-span-2 lg:col-span-1">
           <PlayerStatsGrid
             stats={[
               { key: "karya", label: "Karya", value: meta?.stats.karyaCount ?? karyaList.length, icon: "book", href: "/murid/karya" },
@@ -426,43 +421,41 @@ export default function MuridProfilePage() {
             ]}
           />
 
-          {/* Kebun Kata */}
-          {meta && (
-            <div
-              className="rounded-2xl p-4 text-white ring-1 ring-white/10"
-              style={{ background: "linear-gradient(135deg, #17163F 0%, #21174F 100%)" }}
-            >
-              <div className="flex items-center justify-between mb-3">
-                <h3 className="text-sm font-bold text-white/90 flex items-center gap-2">
-                  <span className="w-6 h-6 rounded-lg bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center shadow-sm">
-                    <IconPen size={12} className="text-white" />
-                  </span>
-                  Kebun Kata
-                </h3>
-                {streakLive && user.streak > 0 && (
-                  <span className="text-[10px] font-bold text-orange-300 bg-orange-400/10 rounded-full px-2 py-0.5 flex items-center gap-1 ring-1 ring-orange-300/20">
-                    <IconFlame size={10} className="profile-flame-live" /> {user.streak} hari beruntun
-                  </span>
-                )}
-              </div>
-              <div className="grid grid-cols-10 gap-1">
-                {meta.kebunKata.slice(-30).map((d, i) => (
-                  <div
-                    key={i}
-                    className={`aspect-square rounded-[3px] ${KEBUN_LEVELS[d.level].color} opacity-80 hover:opacity-100 hover:ring-2 hover:ring-emerald-300 transition-all`}
-                    title={`${new Date(d.date).toLocaleDateString("id-ID", { day: "numeric", month: "short" })} — ${KEBUN_LEVELS[d.level].label}`}
-                  />
-                ))}
-              </div>
-              <div className="flex items-center gap-2 mt-3 text-[10px] text-white/40">
-                <span>Sedikit</span>
-                {KEBUN_LEVELS.map(k => (
-                  <span key={k.level} className={`w-2.5 h-2.5 rounded-[2px] ${k.color} inline-block`} />
-                ))}
-                <span>Banyak</span>
-              </div>
-            </div>
-          )}
+          {/* Aktivitas terbaru (lebar penuh) */}
+          <ActivityFeed
+            events={events}
+            allHref="/arena/player/history?tab=xp"
+            emptyText="Belum ada aktivitas. Ayo main Jalur Cerdas atau tulis karya!"
+          />
+
+          {/* Aktivitas 30 hari — grafik nyata (journey / karya per hari) */}
+          <ActivityChart
+            days={chartDays}
+            mode={chartMode}
+            totalKarya30={totalKarya30}
+            totalAktivitas30={totalAktivitas30}
+          />
+
+          {/* Galeri karya unggulan */}
+          <FeaturedWorksGallery
+            karyaList={karyaList}
+            filter={karyaFilter}
+            onFilterChange={setKaryaFilter}
+            onDelete={handleDeleteKarya}
+            titleHref="/murid/karya"
+            tulisHref="/murid/karya/tulis"
+            emptyText="Belum ada karya. Mulai menulis!"
+          />
+        </div>
+
+        {/* SIDEBAR — moto, lencana, kebun kata, komunitas (sticky di desktop) */}
+        <div className="space-y-6 min-w-0 md:col-span-2 lg:col-span-1 lg:sticky lg:top-6">
+          <ProfileMotto
+            bio={user.bio ?? null}
+            joinedAt={user.createdAt ?? null}
+            isOwn
+            onEditProfile={openSettings}
+          />
 
           {/* Lencana — progres nyata (dari profile-meta) + teaser lencana berikutnya */}
           {meta && (
@@ -514,61 +507,46 @@ export default function MuridProfilePage() {
               )}
             </div>
           )}
-        </div>
 
-        {/* Aktivitas terbaru (kanan — 2 kolom) */}
-        <div className="md:col-span-2">
-          <ActivityFeed
-            events={events}
-            allHref="/arena/player/history?tab=xp"
-            emptyText="Belum ada aktivitas. Ayo main Jalur Cerdas atau tulis karya!"
-          />
-        </div>
-      </div>
-
-      {/* Pencapaian terbaru — lencana asli (dari /api/player/badges, best-effort) */}
-      {showcaseBadges !== null && (
-        <section
-          className="mb-6 rounded-2xl p-5 text-white ring-1 ring-white/10"
-          style={{ background: "linear-gradient(135deg, #17163F 0%, #21174F 100%)" }}
-        >
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-sm font-bold text-white/90 flex items-center gap-2">
-              <span className="w-6 h-6 rounded-lg bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-sm">
-                <Award size={13} className="text-white" />
-              </span>
-              Pencapaian Terkini
-            </h3>
-            <Link href="/arena/player/badges" className="text-[11px] font-semibold text-white/55 hover:text-white transition-colors">
-              Lihat Semua →
-            </Link>
-          </div>
-          {showcaseBadges.some((b) => b.unlocked) ? (
-            <AchievementShowcase badges={showcaseBadges} max={6} />
-          ) : (
-            <p className="text-[13px] text-white/55 leading-relaxed">
-              Belum ada lencana. Selesaikan latihan di Jalur Cerdas, ikuti tantangan di Arena,
-              dan kumpulkan karya untuk membuka lencana pertamamu.
-            </p>
+          {/* Kebun Kata */}
+          {meta && (
+            <div
+              className="rounded-2xl p-4 text-white ring-1 ring-white/10"
+              style={{ background: "linear-gradient(135deg, #17163F 0%, #21174F 100%)" }}
+            >
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="text-sm font-bold text-white/90 flex items-center gap-2">
+                  <span className="w-6 h-6 rounded-lg bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center shadow-sm">
+                    <IconPen size={12} className="text-white" />
+                  </span>
+                  Kebun Kata
+                </h3>
+                {streakLive && user.streak > 0 && (
+                  <span className="text-[10px] font-bold text-orange-300 bg-orange-400/10 rounded-full px-2 py-0.5 flex items-center gap-1 ring-1 ring-orange-300/20">
+                    <IconFlame size={10} className="profile-flame-live" /> {user.streak} hari beruntun
+                  </span>
+                )}
+              </div>
+              <div className="grid grid-cols-10 gap-1">
+                {meta.kebunKata.slice(-30).map((d, i) => (
+                  <div
+                    key={i}
+                    className={`aspect-square rounded-[3px] ${KEBUN_LEVELS[d.level].color} opacity-80 hover:opacity-100 hover:ring-2 hover:ring-emerald-300 transition-all`}
+                    title={`${new Date(d.date).toLocaleDateString("id-ID", { day: "numeric", month: "short" })} — ${KEBUN_LEVELS[d.level].label}`}
+                  />
+                ))}
+              </div>
+              <div className="flex items-center gap-2 mt-3 text-[10px] text-white/40">
+                <span>Sedikit</span>
+                {KEBUN_LEVELS.map(k => (
+                  <span key={k.level} className={`w-2.5 h-2.5 rounded-[2px] ${k.color} inline-block`} />
+                ))}
+                <span>Banyak</span>
+              </div>
+            </div>
           )}
-        </section>
-      )}
 
-      {/* Galeri karya unggulan + komunitas */}
-      <div className="grid md:grid-cols-3 gap-6 mb-6">
-        <div className="md:col-span-2">
-          <FeaturedWorksGallery
-            karyaList={karyaList}
-            filter={karyaFilter}
-            onFilterChange={setKaryaFilter}
-            onDelete={handleDeleteKarya}
-            titleHref="/murid/karya"
-            tulisHref="/murid/karya/tulis"
-            emptyText="Belum ada karya. Mulai menulis!"
-          />
-        </div>
-
-        <div>
+          {/* Komunitas — pengikut & yang diikuti + XP mingguan */}
           {sosialProps ? (
             <SocialConnections
               {...sosialProps}
@@ -597,13 +575,33 @@ export default function MuridProfilePage() {
         </div>
       </div>
 
-      {/* Aktivitas 30 hari — grafik nyata (journey / karya per hari) */}
-      <ActivityChart
-        days={chartDays}
-        mode={chartMode}
-        totalKarya30={totalKarya30}
-        totalAktivitas30={totalAktivitas30}
-      />
+      {/* Pencapaian terbaru — lencana asli (dari /api/player/badges, best-effort) */}
+      {showcaseBadges !== null && (
+        <section
+          className="my-6 rounded-2xl p-5 text-white ring-1 ring-white/10"
+          style={{ background: "linear-gradient(135deg, #17163F 0%, #21174F 100%)" }}
+        >
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-sm font-bold text-white/90 flex items-center gap-2">
+              <span className="w-6 h-6 rounded-lg bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-sm">
+                <Award size={13} className="text-white" />
+              </span>
+              Pencapaian Terkini
+            </h3>
+            <Link href="/arena/player/badges" className="text-[11px] font-semibold text-white/55 hover:text-white transition-colors">
+              Lihat Semua →
+            </Link>
+          </div>
+          {showcaseBadges.some((b) => b.unlocked) ? (
+            <AchievementShowcase badges={showcaseBadges} max={6} />
+          ) : (
+            <p className="text-[13px] text-white/55 leading-relaxed">
+              Belum ada lencana. Selesaikan latihan di Jalur Cerdas, ikuti tantangan di Arena,
+              dan kumpulkan karya untuk membuka lencana pertamamu.
+            </p>
+          )}
+        </section>
+      )}
 
       {/* Settings Modal */}
       {showSettings && (

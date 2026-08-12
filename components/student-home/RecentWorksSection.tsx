@@ -60,7 +60,7 @@ export function RecentWorksSection() {
           <p className="text-xs text-[var(--px-text-faint)]">Puisi, cerpen, artikel, dan lainnya</p>
         </div>
         <Link
-          href="/arena/feed"
+          href="/murid/karya"
           className="px-btn-ghost flex items-center gap-1.5 text-xs font-semibold px-4 py-2"
           aria-label="Lihat semua karya"
         >
@@ -72,12 +72,12 @@ export function RecentWorksSection() {
       {karya.length === 0 ? (
         <div className="px-card px-5 py-8 text-center">
           <p className="text-sm text-[var(--px-text-faint)]">Belum ada karya. Jadilah yang pertama menulis!</p>
-          <Link href="/arena/feed" className="inline-block mt-3 text-xs font-bold text-[var(--px-gold)] hover:underline">
+          <Link href="/murid/karya/tulis" className="inline-block mt-3 text-xs font-bold text-[var(--px-gold)] hover:underline">
             Tulis Karya Sekarang →
           </Link>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3">
           {karya.map((k) => {
             const meta = TYPE_META[k.type] || { label: k.type, badge: "bg-white/10 text-[var(--px-text-dim)]" };
             return (

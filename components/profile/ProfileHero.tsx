@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import {
   Flame, Sparkles, Settings, Heart, UserPlus, UserCheck, PenLine, Files,
+  Users, UserRound,
 } from "lucide-react";
 import type { PlayerRank } from "@prisma/client";
 import CosmicBackground from "@/components/profile/CosmicBackground";
@@ -315,6 +316,27 @@ export default function ProfileHero({
             <span className="text-white/60">{Math.round(persona.levelProgress.pct * 100)}%</span>
           </p>
         </div>
+
+        {/* Sosial — angka nyata pengikut / mengikuti (bila request sosial sukses) */}
+        {social && (social.followerCount > 0 || social.followingCount > 0) && (
+          <div className="mt-5 flex flex-wrap items-center gap-x-6 gap-y-2">
+            <span className="inline-flex items-center gap-2">
+              <Users size={14} className="text-white/40" aria-hidden />
+              <span className="text-base font-black text-white tabular-nums leading-none">
+                {social.followerCount.toLocaleString("id-ID")}
+              </span>
+              <span className="text-xs text-white/55">Pengikut</span>
+            </span>
+            <span aria-hidden className="h-4 w-px bg-white/15" />
+            <span className="inline-flex items-center gap-2">
+              <UserRound size={14} className="text-white/40" aria-hidden />
+              <span className="text-base font-black text-white tabular-nums leading-none">
+                {social.followingCount.toLocaleString("id-ID")}
+              </span>
+              <span className="text-xs text-white/55">Mengikuti</span>
+            </span>
+          </div>
+        )}
 
         {/* AKSI */}
         <div className="flex flex-wrap items-center gap-2.5 mt-5">

@@ -135,7 +135,7 @@ check("Journey → /arena/jalur-cerdas", journey.includes("/arena/jalur-cerdas")
 check("Journey pakai /api/player/journey", journey.includes('"/api/player/journey?limit=3"'));
 const works = read("components/student-home/RecentWorksSection.tsx");
 check("Karya → /api/siswa/karya?limit=4", works.includes('"/api/siswa/karya?limit=4"'));
-check("Karya → CTA /arena/feed", works.includes('href="/arena/feed"'));
+check("Karya → CTA /murid/karya", works.includes('href="/murid/karya"') && works.includes('href="/murid/karya/tulis"'));
 
 console.log(`\nHasil: ${pass} lulus, ${fail} gagal`);
 if (fail > 0) process.exit(1);

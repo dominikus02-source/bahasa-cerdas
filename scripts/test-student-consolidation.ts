@@ -19,7 +19,7 @@ function test(name: string, fn: () => boolean) {
 }
 
 function main() {
-  console.log("\n📋 STUDENT CONSOLIDATION TEST (STEP 2A)");
+  console.log("\n📋 STUDENT CONSOLIDATION TEST (STEP 4 — Sidebar 6 Item, Sim Menu di Home)");
   console.log("=".repeat(60));
 
   const layout = fs.readFileSync("app/(dashboard)/murid/layout.tsx", "utf-8");
@@ -41,25 +41,33 @@ function main() {
   // 2. Sidebar Menu Utama (6 item) di layout murid
   console.log("\n── 2. Sidebar Menu Utama ──");
   test("layout punya 6 item Menu Utama (Beranda/Profil/Arena/Karya/Obrolan/Pengaturan)",
-    () => ["/murid/beranda", "/murid/profile", "/arena", "/arena/feed", "/arena/chat", "/murid/pengaturan"].every(h => layout.includes(`href="${h}"`)));
+    () => ["/murid/beranda", "/murid/profile", "/arena", "/murid/karya", "/arena/chat", "/murid/pengaturan"].every(h => layout.includes(`href="${h}"`)));
   test("'Dasbor Murid' header dipertahankan", () => layout.includes("Dasbor Murid"));
-  test("Toko Koin memakai /arena/toko-koin di nav murid",
-    () => layout.includes('href="/arena/toko-koin"') && mobileNav.includes('href: "/arena/toko-koin"') && !layout.includes('href="/murid/toko-koin"') && !mobileNav.includes('href: "/murid/toko-koin"'));
+  test("Toko Koin TIDAK lagi di nav murid (dipindah keluar sidebar)",
+    () => !layout.includes('/arena/toko-koin"') && !layout.includes('href="/murid/toko-koin"') &&
+           !mobileNav.includes('href: "/arena/toko-koin"') && !mobileNav.includes('href: "/murid/toko-koin"'));
+  // Catatan: /arena/toko-koin TIDAK ditautkan dari beranda/student-home — hanya
+  // dari /murid/pengaturan (Row "Toko Koin"). Absensi sidebar sudah cukup diverifikasi.
 
-  // 3. Simulasi & Ujian dipertahankan literal (sensitif terhadap test lama)
-  console.log("\n── 3. Simulasi & Ujian (test-compat) ──");
-  const simulasiLabels = ["Simulasi UKBI", "Simulasi TKA", "Dokumen Hasil Latihan", "BIGT"];
-  test("4 label Simulasi & Ujian tetap di layout (literal)",
-    () => simulasiLabels.every(l => layout.includes(`"${l}"`)));
-  test("4 label Simulasi & Ujian tetap di MuridMobileNav + format double-quote href",
-    () => simulasiLabels.every(l => mobileNav.includes(`label: "${l}"`)) && mobileNav.includes('href: "/murid/simulasi/ukbi"'));
+  // 3. Simulasi & Ujian dipindah ke home (Student Experience Consolidation STEP 4)
+  console.log("\n── 3. Simulasi & Ujian (di home, bukan sidebar) ──");
+  const simulasiLabels = ["Simulasi UKBI", "Simulasi TKA", "Hasil Latihan", "BIGT"];
+  test("4 label Simulasi & Ujian TIDAK di layout (literal)",
+    () => simulasiLabels.every(l => !layout.includes(`"${l}"`)));
+  test("4 label Simulasi & Ujian TIDAK di MuridMobileNav",
+    () => simulasiLabels.every(l => !mobileNav.includes(`label: "${l}"`)));
+  const simulasiUjian = fs.readFileSync("components/student-home/SimulasiUjianSection.tsx", "utf-8");
+  test("4 label Simulasi & Ujian ada di SimulasiUjianSection (home)",
+    () => simulasiLabels.every(l => simulasiUjian.includes(`"${l}"`)));
+  test("SimulasiUjianSection menautkan /murid/simulasi/ukbi & /murid/simulasi/tka",
+    () => simulasiUjian.includes('href: "/murid/simulasi/ukbi"') && simulasiUjian.includes('href: "/murid/simulasi/tka"'));
 
   // 4. Grup Event & Lomba / Kemajuan dihapus dari nav
   console.log("\n── 4. Grup Stub Dihapus ──");
   test("tidak ada lagi /murid/olimpiade di nav murid",
     () => !layout.includes("/murid/olimpiade") && !mobileNav.includes("/murid/olimpiade"));
   test("tidak ada lagi /murid/progresku di nav murid (PRIMARY baru = Karya)",
-    () => !layout.includes("/murid/progresku") && !mobileNav.includes("/murid/progresku") && mobileNav.includes('href: "/arena/feed", label: "Karya"'));
+    () => !layout.includes("/murid/progresku") && !mobileNav.includes("/murid/progresku") && mobileNav.includes('href: "/murid/karya", label: "Karya"'));
 
   // 5. AI BC: /murid/ai redirect ke canonical /arena/ai
   console.log("\n── 5. AI BC ──");

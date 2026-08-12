@@ -35,19 +35,32 @@ async function main() {
   console.log("\n📋 SIMULATION WORKFLOW TEST")
   console.log("=".repeat(60))
 
-  // ── 1. MuridSidebar ──
+  // ── 1. MuridSidebar (mobile nav) — sim menu moved to home (STEP 4) ──
   console.log("\n── MuridSidebar ──")
   const muridSidebar = fs.readFileSync("components/dashboard/MuridMobileNav.tsx", "utf-8")
 
-  test("Menu Simulasi UKBI exists", () => hasLabel(muridSidebar, "Simulasi UKBI"))
-  test("Menu Simulasi TKA exists", () => hasLabel(muridSidebar, "Simulasi TKA"))
-  test("Menu Dokumen Hasil Latihan exists", () => hasLabel(muridSidebar, "Dokumen Hasil Latihan"))
-  test("Menu BIGT exists", () => hasLabel(muridSidebar, "BIGT"))
-  test("Route /murid/simulasi/ukbi exists", () => hasHref(muridSidebar, "/murid/simulasi/ukbi"))
-  test("Route /murid/simulasi/tka exists", () => hasHref(muridSidebar, "/murid/simulasi/tka"))
-  test("Route /murid/dokumen-latihan exists (not /sertifikat)", () => hasHref(muridSidebar, "/murid/dokumen-latihan"))
-  test("Route /murid/bigt exists", () => hasHref(muridSidebar, "/murid/bigt"))
+  test("Menu Simulasi UKBI NOT in sidebar", () => !hasLabel(muridSidebar, "Simulasi UKBI"))
+  test("Menu Simulasi TKA NOT in sidebar", () => !hasLabel(muridSidebar, "Simulasi TKA"))
+  test("Menu Dokumen Hasil Latihan NOT in sidebar", () => !hasLabel(muridSidebar, "Dokumen Hasil Latihan"))
+  test("Menu BIGT NOT in sidebar", () => !hasLabel(muridSidebar, "BIGT"))
+  test("No route /murid/simulasi/ukbi in sidebar", () => !hasRoute(muridSidebar, "/murid/simulasi/ukbi"))
+  test("No route /murid/simulasi/tka in sidebar", () => !hasRoute(muridSidebar, "/murid/simulasi/tka"))
+  test("No route /murid/dokumen-latihan in sidebar", () => !hasRoute(muridSidebar, "/murid/dokumen-latihan"))
+  test("No route /murid/bigt in sidebar", () => !hasRoute(muridSidebar, "/murid/bigt"))
   test("No route /murid/sertifikat in sidebar", () => !hasHref(muridSidebar, "/murid/sertifikat"))
+
+  // Home page sections keep the menu reachable (Student Experience Consolidation STEP 4)
+  console.log("\n── Murid Home Sections ──")
+  const simulasiUjian = fs.readFileSync("components/student-home/SimulasiUjianSection.tsx", "utf-8")
+
+  test("Menu Simulasi UKBI exists on home", () => hasLabel(simulasiUjian, "Simulasi UKBI"))
+  test("Menu Simulasi TKA exists on home", () => hasLabel(simulasiUjian, "Simulasi TKA"))
+  test("Menu Hasil Latihan exists on home", () => hasLabel(simulasiUjian, "Hasil Latihan"))
+  test("Menu BIGT exists on home", () => hasLabel(simulasiUjian, "BIGT"))
+  test("Route /murid/simulasi/ukbi exists on home", () => hasHref(simulasiUjian, "/murid/simulasi/ukbi"))
+  test("Route /murid/simulasi/tka exists on home", () => hasHref(simulasiUjian, "/murid/simulasi/tka"))
+  test("Route /murid/dokumen-latihan exists on home", () => hasHref(simulasiUjian, "/murid/dokumen-latihan"))
+  test("Route /murid/bigt exists on home", () => hasHref(simulasiUjian, "/murid/bigt"))
 
   // ── 2. GuruSidebar ──
   console.log("\n── GuruSidebar ──")

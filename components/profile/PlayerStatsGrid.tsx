@@ -25,7 +25,7 @@ export default function PlayerStatsGrid({ stats }: { stats: PlayerStatCard[] }) 
   if (stats.length === 0) return null;
 
   return (
-    <div className="grid grid-cols-2 gap-3">
+    <div className="grid grid-cols-2 xl:grid-cols-4 gap-3">
       {stats.map((s) => {
         const Icon = ICONS[s.icon ?? "book"];
         const inner = (

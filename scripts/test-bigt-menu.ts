@@ -27,14 +27,22 @@ async function main() {
   test("/murid/bigt page exists", () => fs.existsSync("app/(dashboard)/murid/bigt/page.tsx"))
   test("/guru/bigt page exists", () => fs.existsSync("app/(dashboard)/guru/bigt/page.tsx"))
 
-  // Murid sidebar — check BOTH production layout and standalone nav component
+  // Murid sidebar — sim menu moved to home sections (Student Experience Consolidation STEP 4)
   console.log("\n── Murid Sidebar BIGT ──")
   const muridLayout = fs.readFileSync("app/(dashboard)/murid/layout.tsx", "utf-8")
-  const muridSidebar = fs.readFileSync("components/dashboard/MuridMobileNav.tsx", "utf-8")
-  test("BIGT label in MuridLayout (production)", () => muridLayout.includes('"BIGT"'))
-  test("BIGT href /murid/bigt in MuridLayout", () => muridLayout.includes('/murid/bigt"'))
-  test("BIGT label in MuridNav (standalone)", () => muridSidebar.includes('"BIGT"'))
-  test("BIGT href /murid/bigt in MuridNav", () => muridSidebar.includes('"/murid/bigt"') || muridSidebar.includes("'/murid/bigt'"))
+  const muridNav = fs.readFileSync("components/dashboard/MuridMobileNav.tsx", "utf-8")
+  test("BIGT label NOT in MuridLayout (moved to home)", () => !muridLayout.includes('"BIGT"'))
+  test("BIGT href /murid/bigt NOT in MuridLayout", () => !muridLayout.includes('/murid/bigt"'))
+  test("BIGT label NOT in MuridMobileNav", () => !muridNav.includes('"BIGT"'))
+  test("BIGT href /murid/bigt NOT in MuridMobileNav", () => !muridNav.includes('"/murid/bigt"') && !muridNav.includes("'/murid/bigt'"))
+
+  // Murid home section — BIGT reachable from /murid/beranda
+  console.log("\n── Murid Home Sections BIGT ──")
+  const simulasiUjian = fs.readFileSync("components/student-home/SimulasiUjianSection.tsx", "utf-8")
+  test("BIGT label in SimulasiUjianSection (home)", () => simulasiUjian.includes('"BIGT"'))
+  test("BIGT href /murid/bigt in SimulasiUjianSection", () => simulasiUjian.includes('/murid/bigt"'))
+  test("Beranda imports SimulasiUjianSection", () =>
+    fs.readFileSync("app/(dashboard)/murid/beranda/page.tsx", "utf-8").includes("SimulasiUjianSection"))
 
   // Guru sidebar — check both production layout delegates to GuruNav and standalone sidebar
   console.log("\n── Guru Sidebar BIGT ──")

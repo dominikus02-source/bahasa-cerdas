@@ -175,6 +175,7 @@
     "test:guru-berkarya-social": "npx tsx scripts/test-guru-berkarya-social.ts",
     "test:gamification-engine": "npx tsx scripts/test-gamification-engine.ts",
     "test:student-consolidation": "npx tsx scripts/test-student-consolidation.ts",
+    "test:student-shell": "npx tsx scripts/test-student-shell.ts",
     "test:student-home": "npx tsx scripts/test-student-home.ts",
     "seed:podium-badges:dry-run": "npx tsx scripts/seed-podium-badges.ts",
     "seed:podium-badges": "npx tsx scripts/seed-podium-badges.ts --execute",
@@ -191,7 +192,9 @@
     "backfill:keterampilan": "npx tsx scripts/backfill-keterampilan.ts",
     "backfill:progresi": "npx tsx scripts/backfill-progresi-resmi.ts",
     "test:bahasa-cerdas-identity": "npx tsx scripts/test-bahasa-cerdas-identity.ts",
-    "test:guru-berkarya-flow": "npx tsx scripts/test-guru-berkarya-flow.ts"
+    "test:guru-berkarya-flow": "npx tsx scripts/test-guru-berkarya-flow.ts",
+    "test:arena-web": "npx tsx scripts/test-arena-web.ts",
+    "test:karya-consolidation": "npx tsx scripts/test-karya-consolidation.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.39.0",
@@ -212,6 +215,7 @@
     "mammoth": "^1.12.0",
     "midtrans-client": "^1.4.3",
     "next": "^16.2.6",
+    "next-themes": "^0.4.6",
     "pdf-parse": "^1.1.1",
     "pdfkit": "^0.19.1",
     "pptxgenjs": "^4.0.1",

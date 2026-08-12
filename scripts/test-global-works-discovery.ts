@@ -120,7 +120,11 @@ for (const [label, p] of Object.entries({ route: ROUTE, arenaFeed: ARENA_FEED, g
 }
 
 const route = readFileSync(ROUTE, "utf8");
-const arenaFeed = readFileSync(ARENA_FEED, "utf8");
+// Implementasi feed TUNGGAL kini di komponen bersama; mirror /arena/feed hanya
+// mem-parameter kan tautan. Asersi 2.6–2.8 membaca komponen tsb.
+const KARYA_FEED_IMPL = join(root, "components/student-karya/KaryaFeed.tsx");
+if (!existsSync(KARYA_FEED_IMPL)) { check("file ada: karyaFeedImpl", false, `${KARYA_FEED_IMPL} tidak ditemukan`); process.exit(1); }
+const arenaFeed = readFileSync(KARYA_FEED_IMPL, "utf8");
 const guruFeed = readFileSync(GURU_FEED, "utf8");
 const schema = readFileSync(SCHEMA, "utf8");
 

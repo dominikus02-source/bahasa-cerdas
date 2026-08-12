@@ -6,6 +6,8 @@ import { StudentHomeHero } from "@/components/student-home/StudentHomeHero";
 import { ContinueLearningCard } from "@/components/student-home/ContinueLearningCard";
 import { AIBCHomeCard } from "@/components/student-home/AIBCHomeCard";
 import { LearningJourneySection } from "@/components/student-home/LearningJourneySection";
+import { RuangBelajarSection } from "@/components/student-home/RuangBelajarSection";
+import { SimulasiUjianSection } from "@/components/student-home/SimulasiUjianSection";
 import { RecentWorksSection } from "@/components/student-home/RecentWorksSection";
 import { ArenaHomeSection } from "@/components/student-home/ArenaHomeSection";
 import { SecondaryLearningInfo } from "@/components/student-home/SecondaryLearningInfo";
@@ -39,6 +41,10 @@ export default function HomeFeedPage() {
           <AIBCHomeCard />
           <LearningJourneySection />
         </div>
+
+        <RuangBelajarSection />
+
+        <SimulasiUjianSection />
 
         <RecentWorksSection />
 

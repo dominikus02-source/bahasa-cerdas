@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import html2canvas from "html2canvas";
 import { Download, Award, Calendar, BookOpen, User } from "lucide-react";
 
@@ -38,6 +38,18 @@ const PREDIKAT_STYLES: Record<string, { bg: string; border: string; text: string
 
 export function CertificatePreview({ certificate }: CertificateProps) {
   const certificateRef = useRef<HTMLDivElement>(null);
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const [scale, setScale] = useState(1);
+
+  useEffect(() => {
+    const el = wrapRef.current;
+    if (!el) return;
+    const update = () => setScale(Math.min(1, el.clientWidth / 800));
+    update();
+    const ro = new ResizeObserver(update);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
 
   const predikatStyle = PREDIKAT_STYLES[certificate.predikat] || PREDIKAT_STYLES["Madya"];
   const isUKBI = certificate.paket?.type?.includes("UKBI");
@@ -56,6 +68,10 @@ export function CertificatePreview({ certificate }: CertificateProps) {
     try {
       const canvas = await html2canvas(certificateRef.current, {
         scale: 2,
+        width: 800,
+        height: 620,
+        windowWidth: 800,
+        windowHeight: 620,
         backgroundColor: "#ffffff",
         logging: false,
       });
@@ -81,11 +97,13 @@ export function CertificatePreview({ certificate }: CertificateProps) {
         </button>
       </div>
 
-      <div 
-        ref={certificateRef}
-        className="bg-white rounded-3xl overflow-hidden shadow-2xl"
-        style={{ width: "800px", height: "620px", position: "relative" }}
-      >
+      <div ref={wrapRef} className="w-full" style={{ height: Math.round(620 * scale) }}>
+        <div style={{ width: 800, transform: `scale(${scale})`, transformOrigin: "top center" }}>
+          <div
+            ref={certificateRef}
+            className="bg-white rounded-3xl overflow-hidden shadow-2xl"
+            style={{ width: "800px", height: "620px", position: "relative" }}
+          >
         <div className="absolute inset-0 bg-gradient-to-br from-violet-50 via-white to-purple-50" />
         
         <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-violet-200/30 to-purple-200/30 rounded-full blur-3xl" />
@@ -168,10 +186,12 @@ export function CertificatePreview({ certificate }: CertificateProps) {
           </div>
         </div>
       </div>
+      </div>
+      </div>
 
       {/* Disclaimer */}
-      <div className="bg-amber-50 border border-amber-200 rounded-xl p-3">
-        <p className="text-xs text-amber-700 text-center font-medium">
+      <div className="bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-900 rounded-xl p-3">
+        <p className="text-xs text-amber-700 dark:text-amber-300 text-center font-medium">
           Dokumen ini adalah hasil latihan/simulasi di BahasaCerdas dan bukan sertifikat resmi UKBI/TKA dari lembaga pemerintah.
         </p>
       </div>

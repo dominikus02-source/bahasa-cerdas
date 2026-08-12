@@ -22,10 +22,10 @@ interface Siaran {
 // judul harus gelap. Versi pertama memakai text-white dan hasilnya tidak
 // terbaca sama sekali di atas kartu berlatar muda.
 const META: Record<Kategori, { label: string; warna: string; bg: string; Icon: typeof Megaphone }> = {
-  INFO:      { label: "Info",      warna: "#0284c7", bg: "from-sky-50 to-white",       Icon: Megaphone },
-  PEMBARUAN: { label: "Pembaruan", warna: "#7c3aed", bg: "from-violet-50 to-white",    Icon: Sparkles },
-  ACARA:     { label: "Acara",     warna: "#b45309", bg: "from-amber-50 to-white",     Icon: CalendarDays },
-  PENTING:   { label: "Penting",   warna: "#e11d48", bg: "from-rose-50 to-white",      Icon: AlertTriangle },
+  INFO:      { label: "Info",      warna: "#0284c7", bg: "from-sky-50 to-white dark:from-sky-500/10 dark:to-slate-800/60",       Icon: Megaphone },
+  PEMBARUAN: { label: "Pembaruan", warna: "#7c3aed", bg: "from-violet-50 to-white dark:from-violet-500/10 dark:to-slate-800/60",    Icon: Sparkles },
+  ACARA:     { label: "Acara",     warna: "#b45309", bg: "from-amber-50 to-white dark:from-amber-500/10 dark:to-slate-800/60",     Icon: CalendarDays },
+  PENTING:   { label: "Penting",   warna: "#e11d48", bg: "from-rose-50 to-white dark:from-rose-500/10 dark:to-slate-800/60",      Icon: AlertTriangle },
 };
 
 /** Siaran yang sudah ditutup murid, disimpan lokal agar tidak menagih terus. */
@@ -111,16 +111,16 @@ export function SiaranBanner() {
                   {meta.label}
                 </span>
                 {s.pinned && (
-                  <span className={`text-[10px] font-bold ${s.gambar ? "text-white/60" : "text-gray-400"}`}>
+                  <span className={`text-[10px] font-bold ${s.gambar ? "text-white/60" : "text-gray-400 dark:text-slate-500"}`}>
                     Disematkan
                   </span>
                 )}
               </div>
 
-              <p className={`pr-6 text-sm font-black ${s.gambar ? "text-white" : "text-gray-900"}`}>
+              <p className={`pr-6 text-sm font-black ${s.gambar ? "text-white" : "text-gray-900 dark:text-slate-100"}`}>
                 {s.judul}
               </p>
-              <p className={`mt-1 whitespace-pre-line text-xs leading-relaxed ${s.gambar ? "text-white/80" : "text-gray-600"}`}>
+              <p className={`mt-1 whitespace-pre-line text-xs leading-relaxed ${s.gambar ? "text-white/80" : "text-gray-600 dark:text-slate-400"}`}>
                 {s.isi}
               </p>
 

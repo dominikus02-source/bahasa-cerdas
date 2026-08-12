@@ -2,7 +2,10 @@
  * Phase Simulation Workflow 1 — QA Tests
  *
  * Tests:
- * 1. MuridSidebar has menu items: Simulasi UKBI, Simulasi TKA, Dokumen Hasil Latihan, BIGT
+ * 1. Murid sidebar (layout + mobile nav) is the 6-item shell; Simulasi/UKBI/TKA/BIGT/Dokumen
+ *    moved OUT of sidebar into home sections (Student Experience Consolidation STEP 4):
+ *    SimulasiUjianSection (Simulasi UKBI, Simulasi TKA, BIGT, Hasil Latihan) +
+ *    RuangBelajarSection (gabung-kelas, tugasku)
  * 2. GuruSidebar has menu items: Simulasi UKBI, Simulasi TKA, Hasil Murid, Dokumen Latihan Murid, BIGT
  * 3. BIGT page has external link to https://www.bahasacerdas.site with target blank + noopener noreferrer
  * 4. Certificate has disclaimer (not official UKBI/TKA)
@@ -52,28 +55,55 @@ function assertNotContains(filePath: string, pattern: string, label: string) {
 async function main() {
   console.log(`\n${YELLOW}=== Phase Simulation Workflow 1 — QA Tests ===${RESET}\n`)
 
-  // 1. Read MuridLayout (production sidebar)
+  // 1. Read MuridLayout (production sidebar) — Student Experience Consolidation STEP 4
   console.log(`\n${YELLOW}--- Murid Layout (Production Sidebar) ---${RESET}`)
-  assertContains("app/(dashboard)/murid/layout.tsx", "Simulasi UKBI", "MuridLayout contains 'Simulasi UKBI'")
-  assertContains("app/(dashboard)/murid/layout.tsx", "Simulasi TKA", "MuridLayout contains 'Simulasi TKA'")
-  assertContains("app/(dashboard)/murid/layout.tsx", "Dokumen Hasil Latihan", "MuridLayout contains 'Dokumen Hasil Latihan'")
-  assertContains("app/(dashboard)/murid/layout.tsx", "BIGT", "MuridLayout contains 'BIGT'")
-  assertContains("app/(dashboard)/murid/layout.tsx", "/murid/simulasi/ukbi", "MuridLayout links to /murid/simulasi/ukbi")
-  assertContains("app/(dashboard)/murid/layout.tsx", "/murid/simulasi/tka", "MuridLayout links to /murid/simulasi/tka")
-  assertContains("app/(dashboard)/murid/layout.tsx", "/murid/dokumen-latihan", "MuridLayout links to /murid/dokumen-latihan")
-  assertContains("app/(dashboard)/murid/layout.tsx", "/murid/bigt", "MuridLayout links to /murid/bigt")
+  assertNotContains("app/(dashboard)/murid/layout.tsx", "Simulasi UKBI", "MuridLayout no 'Simulasi UKBI'")
+  assertNotContains("app/(dashboard)/murid/layout.tsx", "Simulasi TKA", "MuridLayout no 'Simulasi TKA'")
+  assertNotContains("app/(dashboard)/murid/layout.tsx", "Dokumen Hasil Latihan", "MuridLayout no 'Dokumen Hasil Latihan'")
+  assertNotContains("app/(dashboard)/murid/layout.tsx", "BIGT", "MuridLayout no 'BIGT'")
+  assertNotContains("app/(dashboard)/murid/layout.tsx", "/murid/simulasi/ukbi", "MuridLayout no /murid/simulasi/ukbi")
+  assertNotContains("app/(dashboard)/murid/layout.tsx", "/murid/simulasi/tka", "MuridLayout no /murid/simulasi/tka")
+  assertNotContains("app/(dashboard)/murid/layout.tsx", "/murid/dokumen-latihan", "MuridLayout no /murid/dokumen-latihan")
+  assertNotContains("app/(dashboard)/murid/layout.tsx", "/murid/bigt", "MuridLayout no /murid/bigt")
+  assertNotContains("app/(dashboard)/murid/layout.tsx", "/murid/gabung-kelas", "MuridLayout no /murid/gabung-kelas")
+  assertNotContains("app/(dashboard)/murid/layout.tsx", "/arena/toko-koin", "MuridLayout no /arena/toko-koin")
+  assertContains("app/(dashboard)/murid/layout.tsx", 'href="/murid/beranda"', "MuridLayout links to /murid/beranda")
+  assertContains("app/(dashboard)/murid/layout.tsx", 'href="/murid/profile"', "MuridLayout links to /murid/profile")
+  assertContains("app/(dashboard)/murid/layout.tsx", 'href="/arena"', "MuridLayout links to /arena")
+  assertContains("app/(dashboard)/murid/layout.tsx", 'href="/murid/karya"', "MuridLayout links to /murid/karya")
+  assertContains("app/(dashboard)/murid/layout.tsx", 'href="/arena/chat"', "MuridLayout links to /arena/chat")
+  assertContains("app/(dashboard)/murid/layout.tsx", 'href="/murid/pengaturan"', "MuridLayout links to /murid/pengaturan")
   assertNotContains("app/(dashboard)/murid/layout.tsx", 'label="Sertifikat"', "MuridLayout no 'Sertifikat' label")
 
-  // Also check standalone MuridSidebar component
+  // Also check standalone MuridSidebar component (mobile nav drawer)
   console.log(`\n${YELLOW}--- MuridSidebar (Standalone) ---${RESET}`)
-  assertContains("components/dashboard/MuridMobileNav.tsx", "Simulasi UKBI", "MuridSidebar contains 'Simulasi UKBI'")
-  assertContains("components/dashboard/MuridMobileNav.tsx", "Simulasi TKA", "MuridSidebar contains 'Simulasi TKA'")
-  assertContains("components/dashboard/MuridMobileNav.tsx", "Dokumen Hasil Latihan", "MuridSidebar contains 'Dokumen Hasil Latihan'")
-  assertContains("components/dashboard/MuridMobileNav.tsx", "BIGT", "MuridSidebar contains 'BIGT'")
-  assertContains("components/dashboard/MuridMobileNav.tsx", "/murid/simulasi/ukbi", "MuridSidebar links to /murid/simulasi/ukbi")
-  assertContains("components/dashboard/MuridMobileNav.tsx", "/murid/simulasi/tka", "MuridSidebar links to /murid/simulasi/tka")
-  assertContains("components/dashboard/MuridMobileNav.tsx", "/murid/dokumen-latihan", "MuridSidebar links to /murid/dokumen-latihan")
-  assertContains("components/dashboard/MuridMobileNav.tsx", "/murid/bigt", "MuridSidebar links to /murid/bigt")
+  assertNotContains("components/dashboard/MuridMobileNav.tsx", "Simulasi UKBI", "MuridNav no 'Simulasi UKBI'")
+  assertNotContains("components/dashboard/MuridMobileNav.tsx", "Simulasi TKA", "MuridNav no 'Simulasi TKA'")
+  assertNotContains("components/dashboard/MuridMobileNav.tsx", "Dokumen Hasil Latihan", "MuridNav no 'Dokumen Hasil Latihan'")
+  assertNotContains("components/dashboard/MuridMobileNav.tsx", "BIGT", "MuridNav no 'BIGT'")
+  assertNotContains("components/dashboard/MuridMobileNav.tsx", "/murid/simulasi/ukbi", "MuridNav no /murid/simulasi/ukbi")
+  assertNotContains("components/dashboard/MuridMobileNav.tsx", "/murid/simulasi/tka", "MuridNav no /murid/simulasi/tka")
+  assertNotContains("components/dashboard/MuridMobileNav.tsx", "/murid/dokumen-latihan", "MuridNav no /murid/dokumen-latihan")
+  assertNotContains("components/dashboard/MuridMobileNav.tsx", "/murid/bigt", "MuridNav no /murid/bigt")
+  assertContains("components/dashboard/MuridMobileNav.tsx", 'href: "/murid/beranda"', "MuridNav links to /murid/beranda")
+  assertContains("components/dashboard/MuridMobileNav.tsx", 'href: "/murid/profile"', "MuridNav links to /murid/profile")
+  assertContains("components/dashboard/MuridMobileNav.tsx", 'href: "/arena"', "MuridNav links to /arena")
+  assertContains("components/dashboard/MuridMobileNav.tsx", 'href: "/murid/karya"', "MuridNav links to /murid/karya")
+  assertContains("components/dashboard/MuridMobileNav.tsx", 'href: "/arena/chat"', "MuridNav links to /arena/chat")
+  assertContains("components/dashboard/MuridMobileNav.tsx", 'href: "/murid/pengaturan"', "MuridNav links to /murid/pengaturan")
+
+  // Simulation menu now lives on the home page (Student Experience Consolidation STEP 4)
+  console.log(`\n${YELLOW}--- Murid Home Sections (Simulasi & Ruang Belajar) ---${RESET}`)
+  assertContains("components/student-home/SimulasiUjianSection.tsx", "Simulasi UKBI", "SimulasiUjianSection has 'Simulasi UKBI'")
+  assertContains("components/student-home/SimulasiUjianSection.tsx", "Simulasi TKA", "SimulasiUjianSection has 'Simulasi TKA'")
+  assertContains("components/student-home/SimulasiUjianSection.tsx", "BIGT", "SimulasiUjianSection has 'BIGT'")
+  assertContains("components/student-home/SimulasiUjianSection.tsx", "Hasil Latihan", "SimulasiUjianSection has 'Hasil Latihan'")
+  assertContains("components/student-home/SimulasiUjianSection.tsx", "/murid/simulasi/ukbi", "SimulasiUjianSection links to /murid/simulasi/ukbi")
+  assertContains("components/student-home/SimulasiUjianSection.tsx", "/murid/simulasi/tka", "SimulasiUjianSection links to /murid/simulasi/tka")
+  assertContains("components/student-home/SimulasiUjianSection.tsx", "/murid/bigt", "SimulasiUjianSection links to /murid/bigt")
+  assertContains("components/student-home/SimulasiUjianSection.tsx", "/murid/dokumen-latihan", "SimulasiUjianSection links to /murid/dokumen-latihan")
+  assertContains("components/student-home/RuangBelajarSection.tsx", "/murid/gabung-kelas", "RuangBelajarSection links to /murid/gabung-kelas")
+  assertContains("components/student-home/RuangBelajarSection.tsx", "/murid/tugasku", "RuangBelajarSection links to /murid/tugasku")
 
   // 2. Read GuruLayout (production sidebar)
   console.log(`\n${YELLOW}--- Guru Layout (Production Sidebar) ---${RESET}`)

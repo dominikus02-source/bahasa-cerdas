@@ -34,10 +34,10 @@ export function UKBISimulationClient({ tracks }: Props) {
       </div>
 
       {/* Disclaimer */}
-      <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6">
+      <div className="bg-amber-50 dark:bg-amber-950/50 border border-amber-200 dark:border-amber-900 rounded-xl p-4 mb-6">
         <div className="flex items-start gap-2">
-          <AlertTriangle size={16} className="text-amber-600 mt-0.5 shrink-0" />
-          <p className="text-xs text-amber-700 font-medium">
+          <AlertTriangle size={16} className="text-amber-600 dark:text-amber-400 mt-0.5 shrink-0" />
+          <p className="text-xs text-amber-700 dark:text-amber-300 font-medium">
             Skor ini adalah skor latihan/simulasi BahasaCerdas, bukan skor resmi UKBI dari Badan Bahasa.
           </p>
         </div>
@@ -45,20 +45,20 @@ export function UKBISimulationClient({ tracks }: Props) {
 
       {/* Tracks */}
       {tracks.length === 0 ? (
-        <div className="text-center py-16 bg-white rounded-xl border border-gray-100">
-          <BookOpen size={48} className="mx-auto text-gray-200 mb-3" />
-          <p className="text-gray-500 font-medium">Paket simulasi belum tersedia</p>
-          <p className="text-sm text-gray-400 mt-1">Segera tersedia</p>
+        <div className="text-center py-16 bg-card dark:bg-slate-900 rounded-xl border border-border">
+          <BookOpen size={48} className="mx-auto text-gray-200 dark:text-slate-700 mb-3" />
+          <p className="text-muted-foreground font-medium">Paket simulasi belum tersedia</p>
+          <p className="text-sm text-muted-foreground mt-1">Segera tersedia</p>
         </div>
       ) : (
-        <div className="grid gap-4 md:grid-cols-2">
+        <div className="grid gap-4 lg:grid-cols-2">
           {tracks.map((track) => {
             const isAvailable = track.available && track.paketId
             return (
               <div
                 key={track.id}
-                className={`bg-white rounded-xl border border-gray-100 p-5 transition-all ${
-                  isAvailable ? "hover:shadow-md hover:border-violet-200" : "opacity-60"
+                className={`bg-card dark:bg-slate-900 rounded-xl border border-border p-5 transition-all ${
+                  isAvailable ? "hover:shadow-md hover:border-violet-200 dark:hover:border-violet-500/60" : "opacity-60"
                 }`}
               >
                 <div className="flex items-start gap-4">
@@ -66,16 +66,16 @@ export function UKBISimulationClient({ tracks }: Props) {
                     <TrackIcon name={track.icon} className="w-6 h-6 text-white" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h3 className="font-bold text-gray-900 text-sm">{track.label}</h3>
-                    <p className="text-xs text-gray-500 mt-0.5">{track.description}</p>
-                    <p className="text-[11px] text-gray-400 mt-1">{track.target}</p>
+                    <h3 className="font-bold text-foreground text-sm">{track.label}</h3>
+                    <p className="text-xs text-muted-foreground mt-0.5">{track.description}</p>
+                    <p className="text-[11px] text-muted-foreground/80 mt-1">{track.target}</p>
                     {isAvailable ? (
-                      <div className="flex items-center gap-3 mt-2 text-xs text-gray-400">
+                      <div className="flex items-center gap-3 mt-2 text-xs text-muted-foreground">
                         <span className="flex items-center gap-1"><BookOpen size={12} /> {track.questionCount} soal</span>
                         <span className="flex items-center gap-1"><Clock size={12} /> {track.duration} menit</span>
                       </div>
                     ) : (
-                      <p className="text-xs text-amber-600 font-medium mt-2">Segera tersedia</p>
+                      <p className="text-xs text-amber-600 dark:text-amber-400 font-medium mt-2">Segera tersedia</p>
                     )}
                   </div>
                 </div>

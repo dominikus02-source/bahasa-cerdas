@@ -6,50 +6,23 @@ import { usePathname } from "next/navigation";
 import { LogoutButton } from "@/components/dashboard/LogoutButton";
 import {
   Home, Menu as MenuIcon, X, Bell,
-  GraduationCap, Coins, ClipboardCheck,
-  FileText, Award, ExternalLink, User, Megaphone, PenLine, MessageCircle, Settings,
+  GraduationCap, User, PenLine, MessageCircle, Settings,
 } from "lucide-react";
 
 const PRIMARY = [
   { href: "/murid/beranda", label: "Beranda", icon: Home },
   { href: "/arena", label: "Arena", icon: GraduationCap },
-  { href: "/arena/feed", label: "Karya", icon: PenLine },
+  { href: "/murid/karya", label: "Karya", icon: PenLine },
   { href: "/murid/profile", label: "Profil", icon: User },
 ];
 
-const GROUPS: { title: string; items: { href: string; label: string; icon: any }[] }[] = [
-  {
-    title: "Menu Utama",
-    items: [
-      { href: "/murid/beranda", label: "Beranda", icon: Home },
-      { href: "/murid/profile", label: "Profil", icon: User },
-      { href: "/arena", label: "Arena", icon: GraduationCap },
-      { href: "/arena/feed", label: "Karya", icon: PenLine },
-      { href: "/arena/chat", label: "Obrolan", icon: MessageCircle },
-      { href: "/murid/pengaturan", label: "Pengaturan", icon: Settings },
-    ],
-  },
-  {
-    title: "Simulasi & Ujian",
-    items: [
-      { href: "/murid/simulasi/ukbi", label: "Simulasi UKBI", icon: ClipboardCheck },
-      { href: "/murid/simulasi/tka", label: "Simulasi TKA", icon: FileText },
-      { href: "/murid/dokumen-latihan", label: "Dokumen Hasil Latihan", icon: Award },
-      { href: "/murid/bigt", label: "BIGT", icon: ExternalLink },
-    ],
-  },
-  {
-    title: "Kelas",
-    items: [
-      { href: "/murid/pengumuman", label: "Papan Pengumuman", icon: Megaphone },
-    ],
-  },
-  {
-    title: "Lainnya",
-    items: [
-      { href: "/arena/toko-koin", label: "Toko Koin", icon: Coins },
-    ],
-  },
+const DRAWER_ITEMS: { href: string; label: string; icon: any }[] = [
+  { href: "/murid/beranda", label: "Beranda", icon: Home },
+  { href: "/murid/profile", label: "Profil", icon: User },
+  { href: "/arena", label: "Arena", icon: GraduationCap },
+  { href: "/murid/karya", label: "Karya", icon: PenLine },
+  { href: "/arena/chat", label: "Obrolan", icon: MessageCircle },
+  { href: "/murid/pengaturan", label: "Pengaturan", icon: Settings },
 ];
 
 export default function MuridMobileNav({ fullName }: { fullName: string }) {
@@ -74,18 +47,18 @@ export default function MuridMobileNav({ fullName }: { fullName: string }) {
   return (
     <>
       {/* Bottom Nav */}
-      <nav className="md:hidden fixed bottom-0 inset-x-0 z-40 bg-white/90 backdrop-blur-xl border-t border-gray-100/80 safe-area-bottom">
+      <nav className="md:hidden fixed bottom-0 inset-x-0 z-40 bg-white/90 backdrop-blur-xl border-t border-gray-100/80 safe-area-bottom dark:bg-slate-900/90 dark:border-slate-800">
         <div className="flex items-center justify-around py-2">
           {PRIMARY.map(({ href, label, icon: Icon }) => {
             const active = isActive(href);
             return (
-              <Link key={href} href={href} className={`flex flex-col items-center gap-0.5 py-1 px-3 rounded-xl transition-colors ${active ? "text-violet-600" : "text-gray-500 hover:text-gray-700"}`}>
+              <Link key={href} href={href} className={`flex flex-col items-center gap-0.5 py-1 px-3 rounded-xl transition-colors ${active ? "text-violet-600 dark:text-violet-300" : "text-gray-500 hover:text-gray-700 dark:text-slate-400 dark:hover:text-slate-200"}`}>
                 <Icon size={20} />
                 <span className="text-[10px] font-semibold">{label}</span>
               </Link>
             );
           })}
-          <Link href="/arena/notifikasi" className="relative flex flex-col items-center gap-0.5 py-1 px-2 text-gray-500 hover:text-gray-700">
+          <Link href="/arena/notifikasi" className="relative flex flex-col items-center gap-0.5 py-1 px-2 text-gray-500 hover:text-gray-700 dark:text-slate-400 dark:hover:text-slate-200">
             <div className="relative">
               <Bell size={20} />
               {unreadCount > 0 && (
@@ -96,7 +69,7 @@ export default function MuridMobileNav({ fullName }: { fullName: string }) {
             </div>
             <span className="text-[10px] font-semibold">Notif</span>
           </Link>
-          <button onClick={() => setMenuOpen(true)} className="flex flex-col items-center gap-0.5 py-1 px-3 text-gray-500 hover:text-gray-700">
+          <button onClick={() => setMenuOpen(true)} className="flex flex-col items-center gap-0.5 py-1 px-3 text-gray-500 hover:text-gray-700 dark:text-slate-400 dark:hover:text-slate-200">
             <MenuIcon size={20} />
             <span className="text-[10px] font-semibold">Menu</span>
           </button>
@@ -107,41 +80,36 @@ export default function MuridMobileNav({ fullName }: { fullName: string }) {
       {menuOpen && (
         <div className="fixed inset-0 z-50 md:hidden">
           <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setMenuOpen(false)} />
-          <div className="absolute bottom-0 inset-x-0 bg-white rounded-t-[24px] max-h-[85vh] overflow-y-auto shadow-2xl pb-20">
-            <div className="sticky top-0 bg-white z-10 flex items-center justify-between px-5 pt-4 pb-3 border-b border-gray-100">
+          <div className="absolute bottom-0 inset-x-0 bg-white rounded-t-[24px] max-h-[85vh] overflow-y-auto shadow-2xl pb-20 dark:bg-slate-900">
+            <div className="sticky top-0 bg-white z-10 flex items-center justify-between px-5 pt-4 pb-3 border-b border-gray-100 dark:bg-slate-900 dark:border-slate-800">
               <div className="flex items-center gap-3">
                 <div className="w-9 h-9 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center text-white text-sm font-bold">
                   {fullName?.charAt(0)?.toUpperCase() || "M"}
                 </div>
-                <span className="font-bold text-gray-900">{fullName}</span>
+                <span className="font-bold text-gray-900 dark:text-slate-100">{fullName}</span>
               </div>
-              <button onClick={() => setMenuOpen(false)} className="p-2 hover:bg-gray-100 rounded-xl transition-colors">
-                <X size={20} className="text-gray-500" />
+              <button onClick={() => setMenuOpen(false)} className="p-2 hover:bg-gray-100 rounded-xl transition-colors dark:hover:bg-slate-800">
+                <X size={20} className="text-gray-500 dark:text-slate-400" />
               </button>
             </div>
 
-            <div className="px-4 py-3 space-y-5">
-              {GROUPS.map(group => (
-                <div key={group.title}>
-                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2 px-2">{group.title}</p>
-                  {group.items.map(({ href, label, icon: Icon }) => {
-                    const active = isActive(href);
-                    return (
-                      <Link key={href} href={href} onClick={() => setMenuOpen(false)}
-                        className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${
-                          active ? "bg-violet-50 text-violet-700" : "text-gray-600 hover:bg-gray-50"
-                        }`}
-                      >
-                        <Icon size={18} className={active ? "text-violet-500" : "text-gray-400"} />
-                        {label}
-                      </Link>
-                    );
-                  })}
-                </div>
-              ))}
+            <div className="px-4 py-3 space-y-1">
+              {DRAWER_ITEMS.map(({ href, label, icon: Icon }) => {
+                const active = isActive(href);
+                return (
+                  <Link key={href} href={href} onClick={() => setMenuOpen(false)}
+                    className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${
+                      active ? "bg-violet-50 text-violet-700 dark:bg-violet-500/20 dark:text-violet-200" : "text-gray-600 hover:bg-gray-50 dark:text-slate-300 dark:hover:bg-slate-800"
+                    }`}
+                  >
+                    <Icon size={18} className={active ? "text-violet-500 dark:text-violet-300" : "text-gray-400 dark:text-slate-500"} />
+                    {label}
+                  </Link>
+                );
+              })}
             </div>
 
-            <div className="px-4 pt-3 pb-6 border-t border-gray-100">
+            <div className="px-4 pt-3 pb-6 border-t border-gray-100 dark:border-slate-800">
               <LogoutButton />
             </div>
           </div>
