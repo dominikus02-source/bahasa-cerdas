@@ -51,16 +51,14 @@ function main() {
     () => layout.includes("!apk && pathname.startsWith(\"/arena/chat\")"));
   test("web chat memakai top bar 'Obrolan' tersendiri (h-14, MessageCircle, tagline 'Ruang komunikasi kelas')",
     () => layout.includes("isChatWeb ? (") && layout.includes("Ruang komunikasi kelas") && layout.includes("h-14"));
-  test("subnav Arena pills desktop tidak dirender di web chat (branch isChatWeb sebelum header Arena)",
-    () => layout.includes("isChatWeb ? (") && layout.includes("hidden md:flex") && layout.includes("navItems.map"));
-  test("subnav mobile web tidak dirender di web chat ({!apk && !isChatWeb && (…pills…))",
-    () => layout.includes("!apk && !isChatWeb && (") && layout.includes("aria-label=\"Navigasi Arena\""));
+  test("web chat memakai header Obrolan tersendiri (branch isChatWeb) — TANPA navbar/subnav Arena",
+    () => layout.includes("isChatWeb ? (") && !layout.includes("navItems") && !layout.includes("aria-label=\"Navigasi Arena\"") && !layout.includes("rounded-full border border-gray-200 bg-slate-50 p-1"));
   test("ActiveBoostBanner tidak tampil di web chat ({!isChatWeb && <ActiveBoostBanner />})",
     () => layout.includes("!isChatWeb && <ActiveBoostBanner />"));
   test("mobile top bar chat: logo MessageCircle + label 'Obrolan' + href /arena/chat",
     () => layout.includes("isChatWeb ? \"/arena/chat\" : \"/arena\"") && layout.includes("isChatWeb ? \"Obrolan\" : \"Arena\""));
-  test("navItems 6 item canonical tetap (Arena/Misi/Liga/Gim/Peringkat/Koleksi — chat TIDAK jadi item)",
-    () => !layout.includes('href: "/arena/chat"') && !layout.includes('label: "Obrolan"'));
+  test("navbar Arena dihapus total (Misi/Liga/Badges dll. bukan item layout — chat & arena lain menuju via Student Shell)",
+    () => !layout.includes('href: "/arena/misi"') && !layout.includes('href: "/arena/league"') && !layout.includes('href: "/arena/player/badges"') && !layout.includes('label: "Obrolan"'));
 
   // ── T.3 — APK Compat Tetap ──
   console.log("\n── T.3 — APK Compat (TWA) ──");
@@ -201,8 +199,8 @@ function main() {
     () => client.includes("md:hidden") && client.includes('aria-label="Kembali ke daftar kelas"'));
   test("konteks drawer <1280: role=dialog w-80 max-w-[85vw] + backdrop bg-black/40",
     () => client.includes('role="dialog"') && client.includes("w-80 max-w-[85vw]") && client.includes("bg-black/40"));
-  test("shell workspace 1440px: max-w-[1440px] hanya untuk route chat (arena lain max-w-lg md:max-w-4xl)",
-    () => layout.includes("max-w-[1440px]") && layout.includes("pathname.startsWith(\"/arena/chat\")") && layout.includes("max-w-lg md:max-w-4xl"));
+  test("shell workspace: chat 1440px (3 pane) vs halaman Arena lain 1280px desktop-first (tanpa max-w-lg md:max-w-4xl legacy)",
+    () => layout.includes("max-w-[1440px]") && layout.includes("pathname.startsWith(\"/arena/chat\")") && layout.includes("max-w-[1280px]") && !layout.includes("max-w-lg md:max-w-4xl"));
   test("tinggi shell APK-aware: APK md:h-[calc(100dvh-7rem)] vs web md:h-[calc(100dvh-3.5rem)] (top bar sendiri)",
     () => client.includes("md:h-[calc(100dvh-7rem)]") && client.includes("md:h-[calc(100dvh-3.5rem)]"));
 

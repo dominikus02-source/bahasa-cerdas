@@ -5,7 +5,7 @@ import { isApk } from "@/lib/apk"
 import { headers } from "next/headers"
 import { redirect } from "next/navigation"
 import Link from "next/link"
-import { Compass, Target, Trophy, Gamepad2, Medal, Award, LayoutDashboard, MessageCircle } from "lucide-react"
+import { LayoutDashboard, MessageCircle } from "lucide-react"
 import { SwRegister } from "@/components/SwRegister"
 import { ArenaClientWrapper } from "./arena-client"
 import { BottomNav } from "./bottom-nav"
@@ -13,17 +13,12 @@ import { HeaderActions } from "@/components/arena/HeaderActions"
 import LogoutButton from "@/components/arena/LogoutButton"
 import { ActiveBoostBanner } from "@/components/arena/ActiveBoostBanner"
 
-// Subnav khusus Arena (Web 2.0). Beranda/Karya/Obrolan/Pemain sudah ada di
-// navigasi global murid (sidebar/bottom nav global) — tidak boleh diduplikasi
-// di sini. APK tetap bernavigasi lewat BottomNav di bawah.
-const navItems = [
-  { href: "/arena", label: "Arena", icon: Compass },
-  { href: "/arena/misi", label: "Misi", icon: Target },
-  { href: "/arena/league", label: "Liga", icon: Trophy },
-  { href: "/arena/game", label: "Gim", icon: Gamepad2 },
-  { href: "/arena/player/leaderboard", label: "Peringkat", icon: Medal },
-  { href: "/arena/player/badges", label: "Koleksi", icon: Award },
-]
+// ARENA FINAL CONSOLIDATION — Arena adalah produk Student Shell, BUKAN
+// aplikasi kedua: tidak ada navbar/subnav Arena sendiri di web. Navigasi
+// menuju route Arena dilakukan lewat Student Shell, CTA kontekstual, dan
+// gateway sections (Arena home). APK tetap bernavigasi lewat BottomNav.
+// Route tetap ada: /arena, /arena/misi, /arena/league, /arena/game,
+// /arena/player/leaderboard, /arena/player/badges, /arena/chat, dst.
 
 // The login screen lives under /arena so the Android APK can reach it without
 // leaving its scope (a link outside /arena opens a browser tab). That puts it
@@ -89,28 +84,6 @@ export default async function ArenaLayout({ children }: { children: React.ReactN
           <span className="font-bold text-gray-900 dark:text-slate-100">Arena</span>
         </Link>
 
-        {/* Subnav Arena — segmented pills premium (ARENA 3.0) */}
-        <nav aria-label="Navigasi Arena" className="flex items-center gap-1 rounded-full border border-gray-200 bg-slate-50 p-1 dark:border-slate-700 dark:bg-slate-800/60">
-          {navItems.map((item) => {
-            const aktif = pathname === item.href || (item.href !== "/arena" && pathname.startsWith(item.href))
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                aria-current={aktif ? "page" : undefined}
-                className={`flex items-center gap-1.5 px-3.5 py-2 rounded-full text-sm font-semibold transition-all focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-500 ${
-                  aktif
-                    ? "bg-violet-600 text-white shadow-sm shadow-violet-600/30"
-                    : "text-gray-600 hover:text-violet-700 hover:bg-white dark:text-slate-300 dark:hover:text-violet-300 dark:hover:bg-slate-700"
-                }`}
-              >
-                <item.icon className={`w-4 h-4 ${aktif ? "" : "text-violet-500 dark:text-violet-400"}`} />
-                <span>{item.label}</span>
-              </Link>
-            )
-          })}
-        </nav>
-
         <div className="flex items-center gap-2">
           {!apk && (
             <Link href={isGuruPreview ? "/guru/beranda" : "/murid/beranda"} className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold text-violet-700 bg-violet-50 hover:bg-violet-100 transition-colors dark:text-violet-300 dark:bg-violet-500/20 dark:hover:bg-violet-500/30">
@@ -142,43 +115,18 @@ export default async function ArenaLayout({ children }: { children: React.ReactN
         </div>
       </div>
 
-      {/* Subnav Arena — mobile web (web ≠ APK: tanpa bottom navigation ala APK).
-          Pills horizontal scroll, touch target ≥44px, active state jelas.
-          TIDAK dirender di WEB Obrolan (produk Student Shell, bukan Arena). */}
-      {!apk && !isChatWeb && (
-        <nav aria-label="Navigasi Arena" className="md:hidden sticky top-12 z-30 flex items-center gap-1.5 px-3 py-2 bg-white/95 backdrop-blur-xl border-b border-gray-100 overflow-x-auto scrollbar-hide dark:bg-slate-900/95 dark:border-slate-800">
-          {navItems.map((item) => {
-            const aktif = pathname === item.href || (item.href !== "/arena" && pathname.startsWith(item.href))
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                aria-current={aktif ? "page" : undefined}
-                className={`flex items-center gap-1.5 px-3.5 min-h-[44px] rounded-xl text-xs font-bold whitespace-nowrap transition-all focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-500 ${
-                  aktif
-                    ? "bg-violet-600 text-white shadow-sm shadow-violet-600/30"
-                    : "text-gray-600 hover:text-violet-600 hover:bg-violet-50 dark:text-slate-300 dark:hover:text-violet-300 dark:hover:bg-slate-800"
-                }`}
-              >
-                <item.icon className={`w-3.5 h-3.5 ${aktif ? "" : "text-violet-500 dark:text-violet-400"}`} />
-                {item.label}
-              </Link>
-            )
-          })}
-        </nav>
-      )}
-
       {/* Banner boost tidak muncul di WEB Obrolan — workspace penuh viewport */}
       {!isChatWeb && <ActiveBoostBanner />}
 
       {/* Obrolan (Class Chat Workspace) memakai container selebar 1440px tanpa
-          padding vertikal agar 3 pane memenuhi viewport. Halaman arena lain
-          tetap pakai kolom 4xl yang mobile-friendly. */}
+          padding vertikal agar 3 pane memenuhi viewport. Halaman Arena lain
+          memakai canvas Student Shell desktop-first (~1280px usable) — desktop
+          adalah primary, bukan kolom mobile 4xl. */}
       <main
         className={`mx-auto px-0 ${
           pathname.startsWith("/arena/chat")
             ? "max-w-[1440px] py-0 md:px-8"
-            : "max-w-lg md:max-w-4xl py-0 md:py-6 md:px-6"
+            : "max-w-[1280px] py-0 md:py-6 md:px-6"
         }`}
       >
         <ArenaClientWrapper>
