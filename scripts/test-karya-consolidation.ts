@@ -81,8 +81,8 @@ function main() {
   console.log("\n── 6. Route kanonik /murid/karya ──");
   test("halaman kanonik ada & merender KaryaFeed",
     () => canonical.includes('KaryaFeed') && canonical.includes('Buat Karya'));
-  test("header produk: 'Karya' + subtitle + CTA tulis",
-    () => canonical.includes('>Karya</h1>') && canonical.includes('href="/murid/karya/tulis"'));
+  test("hero Panggung Karya: title + CTA tulis",
+    () => canonical.includes("Panggung Karya") && canonical.includes('href="/murid/karya/tulis"'));
 
   // ── 7. SATU IMPLEMENTASI FEED (tidak ada duplikat) ──
   console.log("\n── 7. Satu implementasi feed ──");
@@ -129,8 +129,42 @@ function main() {
 
   // ── 13. RESPONSIVE ──
   console.log("\n── 13. Responsive ──");
-  test("header kanonik flex dengan gap (mobile-first)",
-    () => canonical.includes('flex items-center justify-between gap-3'));
+  test("hero CTA mobile-first (flex wrap)",
+    () => canonical.includes('flex flex-wrap items-center gap-3'));
+
+  // ── 15. KARYA 3.0 — PANGGUNG KARYA ──
+  console.log("\n── 15. KARYA 3.0 — Panggung Karya ──");
+  const karyaSaya = read("components/student-karya/KaryaSayaCard.tsx");
+  const featured = read("components/student-karya/FeaturedWorks.tsx");
+
+  test("hero PANGGUNG KARYA: eyebrow + title + subtitle",
+    () => canonical.includes("Panggung Karya") && canonical.includes("Ide yang kamu buat layak untuk dilihat."));
+  test("CTA hero: 'Buat Karya' (tulis) + 'Karya Saya' (#karya-saya)",
+    () => canonical.includes('href="/murid/karya/tulis"') && canonical.includes('href="#karya-saya"'));
+  test("section Karya Saya pakai /api/siswa/user/karya (tanpa mock)",
+    () => karyaSaya.includes('fetch("/api/siswa/user/karya")') && !karyaSaya.includes('mockKarya'));
+  test("Karya Saya punya anchor #karya-saya",
+    () => karyaSaya.includes('id="karya-saya"'));
+  test("Karya Unggulan pakai /api/siswa/karya?featured=true&limit=2 (tanpa mock)",
+    () => featured.includes('fetch("/api/siswa/karya?featured=true&limit=2")') && !featured.includes('mockFeatured'));
+  test("Karya Unggulan disembunyikan saat 0 item",
+    () => featured.includes('items.length === 0'));
+  test("feed stage: grid 3/2/1 + sentinel col-span-full",
+    () => feedImpl.includes('md:grid-cols-2 xl:grid-cols-3') && feedImpl.includes('col-span-full'));
+  test("control bar stage: search + filter pills",
+    () => feedImpl.includes('role="search"') && feedImpl.includes('role="tablist"'));
+  test("AI BC helper mengarah ke /arena/ai",
+    () => feedImpl.includes('href="/arena/ai"'));
+  test("empty state stage: 'Panggungmu masih kosong.'",
+    () => feedImpl.includes("Panggungmu masih kosong."));
+  test("dark mode: kartu stage, Karya Saya, featured punya dark: variant",
+    () => karyaSaya.includes('dark:') && feedImpl.includes('dark:bg-slate-900') && featured.includes('dark:'));
+  test("mirror /arena/feed tetap compact (tanpa stage)",
+    () => !arenaFeed.includes('variant="stage"'));
+  test("KaryaFeed default variant compact (backward compatible)",
+    () => feedImpl.includes('variant = "compact"'));
+  test("typeColors di-export dari KaryaFeed (satu sumber label)",
+    () => feedImpl.includes('export const typeColors'));
 
   // ── 14. PROTECTED ZONES ──
   console.log("\n── 14. Protected zones tidak tersentuh ──");
