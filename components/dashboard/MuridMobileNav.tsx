@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { LogoutButton } from "@/components/dashboard/LogoutButton";
+import { BackButton } from "@/components/shared/BackButton";
 import {
   Home, Menu as MenuIcon, X, Bell,
   GraduationCap, User, PenLine, MessageCircle, Settings,
@@ -81,12 +82,13 @@ export default function MuridMobileNav({ fullName }: { fullName: string }) {
         <div className="fixed inset-0 z-50 md:hidden">
           <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setMenuOpen(false)} />
           <div className="absolute bottom-0 inset-x-0 bg-white rounded-t-[24px] max-h-[85vh] overflow-y-auto shadow-2xl pb-20 dark:bg-slate-900">
-            <div className="sticky top-0 bg-white z-10 flex items-center justify-between px-5 pt-4 pb-3 border-b border-gray-100 dark:bg-slate-900 dark:border-slate-800">
-              <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center text-white text-sm font-bold">
+            <div className="sticky top-0 bg-white z-10 flex items-center gap-2 px-4 pt-4 pb-3 border-b border-gray-100 dark:bg-slate-900 dark:border-slate-800">
+              <BackButton fallback="/murid/beranda" iconOnly className="shrink-0 -ml-1" />
+              <div className="flex items-center gap-3 flex-1 min-w-0">
+                <div className="w-9 h-9 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center text-white text-sm font-bold shrink-0">
                   {fullName?.charAt(0)?.toUpperCase() || "M"}
                 </div>
-                <span className="font-bold text-gray-900 dark:text-slate-100">{fullName}</span>
+                <span className="font-bold text-gray-900 dark:text-slate-100 truncate">{fullName}</span>
               </div>
               <button onClick={() => setMenuOpen(false)} className="p-2 hover:bg-gray-100 rounded-xl transition-colors dark:hover:bg-slate-800">
                 <X size={20} className="text-gray-500 dark:text-slate-400" />

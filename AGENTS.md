@@ -2858,3 +2858,59 @@ Perbaikan akhir landing: (1) gabung strip "Kabar dari Ekosistem" + section video
 3. GameRoom migration SQL via Supabase dashboard
 4. UI game solo: badge-score client vs server masih beda (kosmetik)
 5. SQL `2026-08-02_no_absen.sql` & `2026-08-08_school_integrity` (Production + Preview)
+
+---
+
+## Phase ARENA 4.2.1 — NAVIGASI + THEME CONTROL Student Shell (Aug 12, 2026)
+
+### Goal
+1. Back button konsisten di seluruh Student Shell & Arena web (guard anti keluar aplikasi / mendarat di login), 2. light/dark toggle di sidebar murid, 3. role-based "Dashboard Guru" button (GURU/FOUNDER), 4. sidebar collapse (desktop).
+
+### Keputusan Desain
+- **Back button**: `components/shared/BackButton.tsx` (client) — `router.back()` dengan guard `window.history.length > 1 && !document.referrer.includes("/login")`; fallback `router.replace(fallback)` saat deep-link. Dipasang di: sidebar murid (atas, fallback `/murid/beranda`), 3 header Arena (desktop `/arena`, chat web `/arena/chat`, mobile top bar icon-only), drawer MuridMobileNav (icon-only).
+- **Theme toggle sidebar**: `components/theme/theme-segmented.tsx` (client) — segmented ☀ Terang / 🌙 Gelap, `useTheme` dari `next-themes` yang SUDAH ADA (`app/providers.tsx` → `components/theme/theme-provider.tsx`), violet aktif / netral inaktif (TANPA amber), persist otomatis via next-themes. Tidak ada provider kedua.
+- **Theme toggle arena header**: `ThemeToggle` existing (`components/theme/theme-toggle.tsx`) ditambahkan ke `components/arena/HeaderActions.tsx` — kini semua header Arena punya kontrol tema; dark: classes sudah merata di layout.
+- **Role-based Dashboard Guru**: `isGuruLike = role === "GURU" || user.isFounder` di arena layout → link Dasbor = `/guru/beranda` untuk guru DAN founder (sebelumnya founder tetap "Dasbor Murid"); murid murni → `/murid/beranda`. Guard Student Shell diubah: `role !== "MURID" && role !== "GURU" && !isFounder` (guru boleh preview sisi murid); onboarding hanya `role === "MURID"`. CTA "Dashboard Guru" (GraduationCap) render ONLY untuk `role === "GURU" && !isFounder` di bawah separator "Mode Guru" — founder tetap punya blok "Akses Founder".
+- **Sidebar collapse**: `components/dashboard/ShellSidebarToggle.tsx` (client, ChevronLeft/Right di header gradient) — set `data-shell-collapsed="1"` di `<html>`, persist `localStorage "bc.shell.collapsed"`; CSS di `app/globals.css`: `@media (min-width: 768px)` → `.shell-aside` w-4rem, `.shell-main` margin-left 4rem, label/user-card/appearance di-hidden, `.shell-link` ikon terpusat. Class markers: `shell-aside`, `shell-main`, `shell-label`, `shell-user`, `shell-appearance`, `shell-link`.
+
+### Files
+| File | Perubahan |
+|------|-----------|
+| `components/shared/BackButton.tsx` | BARU — back button reusable dengan guard |
+| `components/theme/theme-segmented.tsx` | BARU — toggle Terang/Gelap sidebar |
+| `components/dashboard/ShellSidebarToggle.tsx` | BARU — collapse sidebar + localStorage |
+| `app/(dashboard)/murid/layout.tsx` | BackButton atas, ShellSidebarToggle header, guard GURU preview, CTA Dashboard Guru (GURU non-founder), ThemeSegmented footer, kelas shell-* |
+| `app/arena/layout.tsx` | BackButton 3 header, `isGuruLike` (founder → Dasbor Guru), chat header pakai BackButton |
+| `components/arena/HeaderActions.tsx` | Tambah `ThemeToggle` |
+| `components/dashboard/MuridMobileNav.tsx` | BackButton icon-only di header drawer |
+| `app/globals.css` | CSS collapse (desktop md+) |
+| `scripts/test-arena-nav-theme.ts` | BARU — 27 assertions (back guard, role server-side, tema, collapse, arena tanpa navbar kedua) |
+| `scripts/test-arena-chat.ts` | Assertion "file tidak dirty" diganti invariant konten (drawer 6 item, Obrolan tetap) — file kini sah diubah 4.2.1 |
+| `package.json` | `test:arena-nav-theme` |
+
+### Verifikasi
+| Check | Hasil |
+|-------|-------|
+| `npm run test:arena-nav-theme` | ✅ 27/27 |
+| `npm run test:student-shell` | ✅ 33/33 (6 MenuIcon & href tetap) |
+| `npm run test:arena-web` | ✅ 56/56 |
+| `npm run test:arena-chat` | ✅ 94/94 (T.28 diturunkan jadi invariant konten) |
+| `npm run test:student-consolidation` / `student-home` / `gamification-engine` / `guru-phase` | ✅ SEMUA LULUS |
+| `npx tsc --noEmit` | ✅ 0 errors |
+| ESLint (9 file diubah/baru) | ✅ 0 violations |
+| `npm run build` (dummy env) | ✅ 364 routes, prerender 364/364, exit 0 |
+| `git diff --check` | ✅ bersih |
+| Protected zones | ✅ 0 diff (prisma/ app/api/ lib/gamification/ engines/ dll.) |
+
+### Catatan
+- Test exact-count MenuIcon (6) tetap hijau — tidak ada item menu baru; CTA Dashboard Guru & toggle collapse berada di luar nav.
+- `ThemeSettingsCard` (`/murid/pengaturan`) tidak disentuh — toggle sidebar adalah saluran tambahan, bukan pengganti.
+- Mobile tetap memakai bottom nav 5 tab + drawer; collapse hanya berlaku desktop md+ (drawer & bottom nav tidak terpengaruh).
+- Belum di-commit/push (menunggu instruksi founder, mengikuti pola 4.2).
+
+### Remaining (tidak berubah)
+1. TKA UTBK/Guru enrichment 30 → 150
+2. Game server revival (VPS mati)
+3. GameRoom migration SQL via Supabase dashboard
+4. UI game solo: badge-score client vs server masih beda (kosmetik)
+5. SQL `2026-08-02_no_absen.sql` & `2026-08-08_school_identity.sql` (Production + Preview)

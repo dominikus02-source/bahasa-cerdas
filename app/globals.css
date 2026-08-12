@@ -287,3 +287,20 @@
   .cosmetic-frame-neon,
   .cosmetic-frame-shimmer { animation: none; }
 }
+
+/* ============================================================
+   ARENA 4.2.1 — STUDENT SHELL SIDEBAR COLLAPSE (desktop md+)
+   State dipersist via localStorage (data-shell-collapsed di <html>).
+   Label user-facing disembunyikan saat ciut; ikon tetap terpusat.
+   ============================================================ */
+.shell-aside { transition: width 0.2s ease; }
+.shell-main { transition: margin-left 0.2s ease; }
+
+@media (min-width: 768px) {
+  [data-shell-collapsed="1"] .shell-aside { width: 4rem; }
+  [data-shell-collapsed="1"] .shell-main { margin-left: 4rem; }
+  [data-shell-collapsed="1"] .shell-label { display: none; }
+  [data-shell-collapsed="1"] .shell-user { display: none; }
+  [data-shell-collapsed="1"] .shell-appearance { display: none; }
+  [data-shell-collapsed="1"] .shell-link { justify-content: center; gap: 0; padding-left: 0.25rem; padding-right: 0.25rem; }
+}

@@ -243,11 +243,18 @@ function main() {
       ).trim();
       return diff.length === 0;
     });
-  test("MuridMobileNav & murid layout tetap (global nav /arena/chat tidak berubah)",
+  test("MuridMobileNav & murid layout: global nav /arena/chat tidak berubah",
     () => {
-      const out = execSync(`git status --porcelain`, { encoding: "utf8", cwd: process.cwd() });
-      const dirty = out.split("\n").map((l) => l.slice(3)).filter(Boolean);
-      return !dirty.some((f) => f === "components/dashboard/MuridMobileNav.tsx" || f === "app/(dashboard)/murid/layout.tsx");
+      // 4.2.1 menambah BackButton/toggle tema di kedua file — yang wajib
+      // dipertahankan adalah invariant navigasi: item drawer & MenuIcon
+      // tetap 6, Obrolan tetap menuju /arena/chat (bukan tab Arena baru).
+      const mobileNav = fs.readFileSync("components/dashboard/MuridMobileNav.tsx", "utf8");
+      const layout = fs.readFileSync("app/(dashboard)/murid/layout.tsx", "utf8");
+      const drawerHrefs = ["/murid/beranda", "/murid/profile", "/arena", "/murid/karya", "/arena/chat", "/murid/pengaturan"];
+      const okDrawer = drawerHrefs.every((h) => mobileNav.includes(`href: "${h}"`) || mobileNav.includes(`href="${h}"`));
+      const okMenu = (layout.match(/<MenuIcon /g) || []).length === 6;
+      const okChat = mobileNav.includes("/arena/chat") && layout.includes('href="/arena/chat"');
+      return okDrawer && okMenu && okChat;
     });
 
   // ── T.28 — Moderation Stats API ──

@@ -9,6 +9,7 @@ import { LayoutDashboard, MessageCircle } from "lucide-react"
 import { SwRegister } from "@/components/SwRegister"
 import { ArenaClientWrapper } from "./arena-client"
 import { BottomNav } from "./bottom-nav"
+import { BackButton } from "@/components/shared/BackButton"
 import { HeaderActions } from "@/components/arena/HeaderActions"
 import LogoutButton from "@/components/arena/LogoutButton"
 import { ActiveBoostBanner } from "@/components/arena/ActiveBoostBanner"
@@ -37,7 +38,9 @@ export default async function ArenaLayout({ children }: { children: React.ReactN
   // Selain Murid/Founder/Guru, arahkan ke dasbor guru.
   if (user.role !== "MURID" && user.role !== "GURU" && !user.isFounder) redirect("/guru/beranda")
 
-  const isGuruPreview = user.role === "GURU" && !user.isFounder
+  // 4.2.1 — Guru (pratinjau) DAN Founder mendapat pintu "Dasbor Guru".
+  // Hanya akun murni Murid yang dipulangkan ke Dasbor Murid.
+  const isGuruLike = user.role === "GURU" || user.isFounder
 
   // Inside the Android APK the top bar drops its two escape hatches. "Dasbor"
   // points outside the /arena scope, so tapping it would throw the student into a
@@ -60,16 +63,19 @@ export default async function ArenaLayout({ children }: { children: React.ReactN
       {/* Desktop Header — WEB Obrolan memakai top bar tersendiri (Student Shell) */}
       {isChatWeb ? (
         <header className="sticky top-0 z-40 flex items-center justify-between px-6 h-14 bg-white border-b border-gray-200 dark:bg-slate-900 dark:border-slate-800">
-          <Link href="/arena/chat" className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center text-white">
-              <MessageCircle className="w-4 h-4" />
-            </div>
-            <span className="font-bold text-gray-900 dark:text-slate-100">Obrolan</span>
-            <span className="hidden lg:block text-xs text-gray-400 dark:text-slate-500">Ruang komunikasi kelas</span>
-          </Link>
+          <div className="flex items-center gap-2.5 min-w-0">
+            <BackButton fallback="/arena" />
+            <Link href="/arena/chat" className="flex items-center gap-2.5 min-w-0">
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center text-white">
+                <MessageCircle className="w-4 h-4" />
+              </div>
+              <span className="font-bold text-gray-900 dark:text-slate-100">Obrolan</span>
+              <span className="hidden lg:block text-xs text-gray-400 dark:text-slate-500">Ruang komunikasi kelas</span>
+            </Link>
+          </div>
           <div className="flex items-center gap-2">
-            <Link href={isGuruPreview ? "/guru/beranda" : "/murid/beranda"} className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold text-violet-700 bg-violet-50 hover:bg-violet-100 transition-colors dark:text-violet-300 dark:bg-violet-500/20 dark:hover:bg-violet-500/30">
-              <LayoutDashboard className="w-4 h-4" /> {isGuruPreview ? "Dasbor Guru" : "Dasbor Murid"}
+            <Link href={isGuruLike ? "/guru/beranda" : "/murid/beranda"} className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold text-violet-700 bg-violet-50 hover:bg-violet-100 transition-colors dark:text-violet-300 dark:bg-violet-500/20 dark:hover:bg-violet-500/30">
+              <LayoutDashboard className="w-4 h-4" /> {isGuruLike ? "Dasbor Guru" : "Dasbor Murid"}
             </Link>
             <HeaderActions />
             <LogoutButton variant="icon" />
@@ -77,17 +83,20 @@ export default async function ArenaLayout({ children }: { children: React.ReactN
         </header>
       ) : (
       <header className="hidden md:flex items-center justify-between px-6 h-16 bg-white border-b border-gray-200 sticky top-0 z-40 dark:bg-slate-900 dark:border-slate-800">
-        <Link href="/arena" className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center text-white font-bold text-xs">
-            A
-          </div>
-          <span className="font-bold text-gray-900 dark:text-slate-100">Arena</span>
-        </Link>
+        <div className="flex items-center gap-2 min-w-0">
+          <BackButton fallback="/arena" />
+          <Link href="/arena" className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center text-white font-bold text-xs">
+              A
+            </div>
+            <span className="font-bold text-gray-900 dark:text-slate-100">Arena</span>
+          </Link>
+        </div>
 
         <div className="flex items-center gap-2">
           {!apk && (
-            <Link href={isGuruPreview ? "/guru/beranda" : "/murid/beranda"} className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold text-violet-700 bg-violet-50 hover:bg-violet-100 transition-colors dark:text-violet-300 dark:bg-violet-500/20 dark:hover:bg-violet-500/30">
-              <LayoutDashboard className="w-4 h-4" /> {isGuruPreview ? "Dasbor Guru" : "Dasbor Murid"}
+            <Link href={isGuruLike ? "/guru/beranda" : "/murid/beranda"} className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold text-violet-700 bg-violet-50 hover:bg-violet-100 transition-colors dark:text-violet-300 dark:bg-violet-500/20 dark:hover:bg-violet-500/30">
+              <LayoutDashboard className="w-4 h-4" /> {isGuruLike ? "Dasbor Guru" : "Dasbor Murid"}
             </Link>
           )}
           <HeaderActions />
@@ -98,15 +107,18 @@ export default async function ArenaLayout({ children }: { children: React.ReactN
 
       {/* Mobile Top Bar */}
       <div className="md:hidden sticky top-0 z-40 flex items-center justify-between px-4 h-12 bg-white/95 backdrop-blur-xl border-b border-gray-100 dark:bg-slate-900/95 dark:border-slate-800">
-        <Link href={isChatWeb ? "/arena/chat" : "/arena"} className="flex items-center gap-1.5">
-          <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center text-white font-bold text-[10px]">
-            {isChatWeb ? <MessageCircle className="w-3.5 h-3.5" /> : "A"}
-          </div>
-          <span className="font-bold text-sm text-gray-900 dark:text-slate-100">{isChatWeb ? "Obrolan" : "Arena"}</span>
-        </Link>
+        <div className="flex items-center gap-1 min-w-0">
+          <BackButton fallback="/arena" iconOnly className="-ml-1" />
+          <Link href={isChatWeb ? "/arena/chat" : "/arena"} className="flex items-center gap-1.5">
+            <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center text-white font-bold text-[10px]">
+              {isChatWeb ? <MessageCircle className="w-3.5 h-3.5" /> : "A"}
+            </div>
+            <span className="font-bold text-sm text-gray-900 dark:text-slate-100">{isChatWeb ? "Obrolan" : "Arena"}</span>
+          </Link>
+        </div>
         <div className="flex items-center gap-1">
           {!apk && (
-            <Link href={isGuruPreview ? "/guru/beranda" : "/murid/beranda"} aria-label={isGuruPreview ? "Kembali ke Dasbor Guru" : "Kembali ke Dasbor Murid"} className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-semibold text-violet-700 bg-violet-50 active:scale-95 transition-all dark:text-violet-300 dark:bg-violet-500/20">
+            <Link href={isGuruLike ? "/guru/beranda" : "/murid/beranda"} aria-label={isGuruLike ? "Kembali ke Dasbor Guru" : "Kembali ke Dasbor Murid"} className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-semibold text-violet-700 bg-violet-50 active:scale-95 transition-all dark:text-violet-300 dark:bg-violet-500/20">
               <LayoutDashboard className="w-3.5 h-3.5" /> Dasbor
             </Link>
           )}

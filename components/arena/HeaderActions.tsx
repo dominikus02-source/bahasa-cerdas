@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import { Bell, Search, X, ArrowRight } from "lucide-react"
+import { ThemeToggle } from "@/components/theme/theme-toggle"
 
 export function HeaderActions() {
   const [unreadCount, setUnreadCount] = useState(0)
@@ -19,6 +20,8 @@ export function HeaderActions() {
   return (
     <>
       <div className="flex items-center gap-2">
+        <ThemeToggle />
+
         <button
           onClick={() => setShowSearch(true)}
           className="w-9 h-9 rounded-xl bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors"
