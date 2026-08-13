@@ -5,7 +5,6 @@ import { isApk } from "@/lib/apk"
 import { headers } from "next/headers"
 import { redirect } from "next/navigation"
 import Link from "next/link"
-import { Zap, MessageCircle, LayoutDashboard } from "lucide-react"
 import { levelFromXp } from "@/lib/gamification/levels"
 import { rankFromLevel } from "@/lib/gamification/ranks"
 import { RankChip } from "@/components/gamification/RankChip"
@@ -14,8 +13,9 @@ import { SwRegister } from "@/components/SwRegister"
 import { ArenaClientWrapper } from "./arena-client"
 import { BottomNav } from "./bottom-nav"
 import { BackHome } from "@/components/shared/BackHome"
-import { HeaderActions } from "@/components/arena/HeaderActions"
-import LogoutButton from "@/components/arena/LogoutButton"
+import UserAvatar from "@/components/arena/UserAvatar"
+import { NotificationBell } from "@/components/dashboard/NotificationBell"
+import { ThemeToggle } from "@/components/theme/theme-toggle"
 import { ActiveBoostBanner } from "@/components/arena/ActiveBoostBanner"
 import { ShellLayout } from "@/components/shell/ShellLayout"
 import { ShellNavList } from "@/components/shell/ShellNavList"
@@ -31,9 +31,11 @@ import { ShellSidebarFooter } from "@/components/shell/ShellSidebarFooter"
 
 // UNIFIED APP SHELL — Arena & Obrolan berbagi SATU shell global (Student
 // Shell): sidebar (brand → user → ShellNavList → role sections → footer)
-// dan header sticky tunggal (BackHome → brand produk → HeaderActions →
-// logout). Arena = konten; shell = sidebar global. Sidebar hanya untuk web
-// (APK memakai chrome penuh + BottomNav, konsisten dengan perilaku lama).
+// DAN header global yang sama persis dengan halaman Student lainnya:
+// [← Beranda] ......... [Avatar] [Bell] [Theme]. Identitas produk (Arena/
+// Obrolan) hidup di KONTEN halaman, bukan di header global — header tidak
+// boleh membawa navigasi produk kedua. Sidebar hanya untuk web (APK memakai
+// chrome penuh + BottomNav, konsisten dengan perilaku lama).
 
 // The login screen lives under /arena so the Android APK can reach it without
 // leaving its scope (a link outside /arena opens a browser tab). That puts it
@@ -52,11 +54,11 @@ export default async function ArenaLayout({ children }: { children: React.ReactN
   // Selain Murid/Founder/Guru, arahkan ke dasbor guru.
   if (user.role !== "MURID" && user.role !== "GURU" && !user.isFounder) redirect("/guru/beranda")
 
-  // 4.2.2 — Dashboard Guru adalah ROLE-BASED DESTINATION (bukan tombol
-  // back). GURU & Founder berhak; murid murni tidak melihat tombol ini.
-  const hasGuruAccess = user.role === "GURU" || user.isFounder
+  // 4.2.2 — Akses Guru/Founder ke dasbor guru adalah ROLE-BASED DESTINATION
+  // lewat RoleSections di sidebar (Mode Guru / Akses Founder). Tidak ada CTA
+  // "Dashboard Guru" di header global — header kanonik netral untuk semua role.
 
-  // Inside the Android APK the top bar drops its two escape hatches. "Dasbor"
+  // Inside the Android APK the top bar drops its one escape hatch. "Beranda"
   // points outside the /arena scope, so tapping it would throw the student into a
   // browser tab — the one thing the APK exists to avoid. Logout moves to the
   // Pemain tab (Duolingo keeps account actions in the profile too): a destructive
@@ -64,10 +66,12 @@ export default async function ArenaLayout({ children }: { children: React.ReactN
   // on a phone used by children.
   const apk = await isApk()
 
-  // OBROLAN 4.0 — produk Student Shell, bukan halaman Arena. Di WEB (bukan
-  // APK), /arena/chat* memakai chrome-nya sendiri: top bar "Obrolan" tanpa
-  // header/subnav Arena dan tanpa banner boost. APK tetap memakai chrome
-  // Arena + BottomNav (kompatibilitas TWA tidak berubah).
+  // OBROLAN 4.0 — produk Student Shell, bukan halaman Arena. Obrolan memakai
+  // shell + header GLOBAL yang sama (tanpa chrome/identitas produk sendiri di
+  // layout); workspace chat (3-pane) merawat toolbar INTERNAL-nya sendiri di
+  // dalam konten. isChatWeb hanya mengatur container (full-width) + banner
+  // boost (tidak tampil agar workspace penuh viewport). APK tetap memakai
+  // chrome penuh + BottomNav (kompatibilitas TWA tidak berubah).
   const isChatWeb = !apk && pathname.startsWith("/arena/chat")
 
   // Rank resmi diturunkan dari XP — sama dengan pola Student Shell.
@@ -86,7 +90,7 @@ export default async function ArenaLayout({ children }: { children: React.ReactN
                 </div>
                 <div className="min-w-0">
                   <span className="shell-label font-bold text-white text-sm block truncate">BahasaCerdas</span>
-                  <p className="shell-label text-[10px] text-violet-200">{isChatWeb ? "Obrolan" : "Arena"}</p>
+                  <p className="shell-label text-[10px] text-violet-200">Dasbor Murid</p>
                 </div>
               </Link>
             </div>
@@ -112,44 +116,25 @@ export default async function ArenaLayout({ children }: { children: React.ReactN
       header={
         <>
           <SwRegister />
+          {/* HEADER GLOBAL KANONIK — sama persis dengan halaman Student lain
+              (/murid/*): [← Beranda] .... [Avatar] [Bell] [Theme]. TIDAK ada
+              identitas produk (Arena/Obrolan), CTA dasbor guru, search, atau
+              logout di header — navigasi tetap via sidebar global; akses
+              guru/founder via RoleSections; logout via sidebar footer dan
+              Pemain tab. APK menurunkan BackHome (escape hatch keluar scope). */}
           <header className="shrink-0 sticky top-0 z-30 flex items-center justify-between gap-2 px-4 md:px-6 h-14 bg-white/80 backdrop-blur-xl border-b border-gray-100/50 dark:bg-slate-900/80 dark:border-slate-800">
-            <div className="flex items-center gap-1 md:gap-2 min-w-0">
-              {!apk && (
-                <span className="hidden md:inline-flex">
-                  <BackHome />
-                </span>
-              )}
-              {!apk && (
-                <span className="md:hidden">
-                  <BackHome iconOnly className="-ml-1" />
-                </span>
-              )}
-              <Link href={isChatWeb ? "/arena/chat" : "/arena"} className="flex items-center gap-2 min-w-0">
-                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center text-white shrink-0">
-                  {isChatWeb ? <MessageCircle className="w-4 h-4" /> : <Zap className="w-4 h-4" />}
-                </div>
-                <div className="min-w-0">
-                  <span className="block font-bold text-sm md:text-base text-gray-900 truncate dark:text-slate-100">
-                    {isChatWeb ? "Obrolan" : "Arena"}
-                  </span>
-                  {isChatWeb ? (
-                    <span className="hidden lg:block text-xs text-gray-400 leading-tight dark:text-slate-500">Ruang komunikasi kelas</span>
-                  ) : (
-                    <span className="hidden lg:block text-xs text-gray-400 leading-tight dark:text-slate-500">Pusat kompetisi &amp; belajar</span>
-                  )}
-                </div>
-              </Link>
-            </div>
-
-            <div className="flex items-center gap-1.5 md:gap-2 shrink-0">
-              {!apk && hasGuruAccess && (
-                <Link href="/guru/beranda" aria-label="Dashboard Guru" title="Dashboard Guru" className="flex items-center gap-1 px-2.5 py-1.5 md:px-3 rounded-lg text-xs md:text-sm font-semibold text-violet-700 bg-violet-50 hover:bg-violet-100 transition-colors dark:text-violet-300 dark:bg-violet-500/20 dark:hover:bg-violet-500/30">
-                  <LayoutDashboard className="w-4 h-4" />
-                  <span className="hidden md:inline">Dashboard Guru</span>
-                </Link>
-              )}
-              <HeaderActions />
-              {!apk && <LogoutButton variant="icon" />}
+            {!apk && <BackHome />}
+            <div className="flex items-center gap-1 md:gap-2">
+              <UserAvatar
+                size={36}
+                avatar={user.avatar}
+                initials={user.fullName?.charAt(0).toUpperCase() || "M"}
+                gradient="from-violet-500 to-purple-600"
+                textClassName="text-sm"
+                className="hidden md:flex shadow-md"
+              />
+              <NotificationBell />
+              <ThemeToggle />
             </div>
           </header>
 

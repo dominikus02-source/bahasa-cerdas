@@ -72,10 +72,8 @@ function main() {
     () => muridLayout.includes("<BackHome />"));
   test("arena desktop header memakai <BackHome />",
     () => arenaLayout.includes("<BackHome />"));
-  test("arena chat header memakai <BackHome />",
-    () => (arenaLayout.match(/<BackHome /g) || []).length >= 2);
-  test("arena mobile top bar memakai <BackHome iconOnly />",
-    () => arenaLayout.includes('<BackHome iconOnly'));
+  test("arena & chat berbagi SATU BackHome kanonik di header global (tanpa varian iconOnly terpisah)",
+    () => (arenaLayout.match(/<BackHome /g) || []).length >= 1 && !arenaLayout.includes("<BackHome iconOnly"));
   test("drawer mobile memakai <BackHome iconOnly",
     () => mobileNav.includes("<BackHome iconOnly"));
 
@@ -95,10 +93,8 @@ function main() {
     () => roleSections.includes('className="shell-label') );
   test("Akses Founder (Dasbor Guru + Panel Admin) untuk founder saja",
     () => roleSections.includes("Akses Founder") && roleSections.includes("Panel Admin") && roleSections.includes('href="/admin"'));
-  test("arena: hasGuruAccess = GURU || founder",
-    () => arenaLayout.includes('user.role === "GURU" || user.isFounder') && arenaLayout.includes("hasGuruAccess"));
-  test("arena CTA Dashboard Guru hanya saat bukan apk & hasGuruAccess",
-    () => arenaLayout.includes("!apk && hasGuruAccess") && arenaLayout.includes('href="/guru/beranda"'));
+  test("TIDAK ada CTA 'Dashboard Guru' di header arena (akses role via RoleSections sidebar, bukan header)",
+    () => !arenaLayout.includes("hasGuruAccess") && !arenaLayout.includes("<LayoutDashboard") && !arenaLayout.includes('href="/guru/beranda"') && arenaLayout.includes("<RoleSections"));
   test("query string role tidak dipakai",
     () => !arenaLayout.includes("?role="));
 
@@ -113,8 +109,8 @@ function main() {
     () => muridLayout.includes("<ThemeToggle />"));
   test("drawer mobile memakai <ThemeToggle />",
     () => mobileNav.includes("<ThemeToggle />"));
-  test("HeaderActions arena memakai <ThemeToggle />",
-    () => read("components/arena/HeaderActions.tsx").includes("<ThemeToggle />"));
+  test("arena header memakai <ThemeToggle /> langsung (kanonik, HeaderActions dihapus)",
+    () => arenaLayout.includes("<ThemeToggle />") && !exists("components/arena/HeaderActions.tsx"));
   test("ThemeSegmented DIHAPUS (tidak ada toggle duplikat)",
     () => !exists("components/theme/theme-segmented.tsx") && !muridLayout.includes("<ThemeSegmented") && !mobileNav.includes("ThemeSegmented"));
 

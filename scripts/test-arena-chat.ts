@@ -46,17 +46,17 @@ function main() {
     () => fs.existsSync("app/api/chat/message/[messageId]/route.ts") && fs.existsSync("app/api/chat/[groupId]/lock/route.ts"));
 
   // ── T.2 — Web Chat Tanpa Navigasi Arena (Student Shell) ──
-  console.log("\n── T.2 — Web Chat: Tanpa Header/Subnav Arena ──");
+  console.log("\n── T.2 — Web Chat: Header Global Kanonik (bukan header produk) ──");
   test("isChatWeb = !apk && pathname.startsWith('/arena/chat') (Web saja, APK tidak)",
     () => layout.includes("!apk && pathname.startsWith(\"/arena/chat\")"));
-  test("web chat memakai top bar 'Obrolan' tersendiri (h-14, MessageCircle, tagline 'Ruang komunikasi kelas')",
-    () => layout.includes("isChatWeb ? (") && layout.includes("Ruang komunikasi kelas") && layout.includes("h-14"));
-  test("web chat memakai header Obrolan tersendiri (branch isChatWeb) — TANPA navbar/subnav Arena",
-    () => layout.includes("isChatWeb ? (") && !layout.includes("navItems") && !layout.includes("aria-label=\"Navigasi Arena\"") && !layout.includes("rounded-full border border-gray-200 bg-slate-50 p-1"));
+  test("web chat memakai header GLOBAL kanonik (BackHome + Bell + Theme) — TIDAK ada top bar 'Obrolan' tersendiri",
+    () => layout.includes("<BackHome") && layout.includes("<NotificationBell />") && layout.includes("<ThemeToggle />") && !layout.includes("Ruang komunikasi kelas"));
+  test("TIDAK ada identitas/header produk di layout untuk chat (tanpa navbar/subnav Arena, tanpa MessageCircle header)",
+    () => !layout.includes("<MessageCircle") && !layout.includes("isChatWeb ? (") && !layout.includes("navItems") && !layout.includes("aria-label=\"Navigasi Arena\"") && !layout.includes("rounded-full border border-gray-200 bg-slate-50 p-1"));
   test("ActiveBoostBanner tidak tampil di web chat ({!isChatWeb && <ActiveBoostBanner />})",
     () => layout.includes("!isChatWeb && <ActiveBoostBanner />"));
-  test("mobile top bar chat: logo MessageCircle + label 'Obrolan' + href /arena/chat",
-    () => layout.includes("isChatWeb ? \"/arena/chat\" : \"/arena\"") && layout.includes("isChatWeb ? \"Obrolan\" : \"Arena\""));
+  test("toolbar INTERNAL workspace chat tetap ada di chat-client (judul 'Obrolan' di pane class list — konten, bukan header global)",
+    () => read("app/arena/chat/chat-client.tsx").includes(">Obrolan</h2>") && read("app/arena/chat/chat-client.tsx").includes("Kelas Aktif"));
   test("navbar Arena dihapus total (Misi/Liga/Badges dll. bukan item layout — chat & arena lain menuju via Student Shell)",
     () => !layout.includes('href: "/arena/misi"') && !layout.includes('href: "/arena/league"') && !layout.includes('href: "/arena/player/badges"') && !layout.includes('label: "Obrolan"'));
 

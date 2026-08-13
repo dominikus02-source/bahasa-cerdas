@@ -137,9 +137,11 @@ function main() {
   const logoutDashboard = read("components/dashboard/LogoutButton.tsx");
   test("LogoutButton dashboard memakai lucide LogOut (bukan svg inline 1.5)",
     () => logoutDashboard.includes("LogOut") && !logoutDashboard.includes('strokeWidth="1.5"'));
-  const headerActions = read("components/arena/HeaderActions.tsx");
-  test("HeaderActions Search/Bell size 20 (token 18–20)",
-    () => headerActions.includes("<Search size={20}") && headerActions.includes("<Bell size={20}"));
+  const notificationBell = read("components/dashboard/NotificationBell.tsx");
+  test("NotificationBell kanonik memakai Bell w-5 h-5 (20px, token header)",
+    () => notificationBell.includes("w-5 h-5 text-slate-600 dark:text-slate-400"));
+  test("HeaderActions arena DIHAPUS — search arena-specific bukan global header",
+    () => !exists("components/arena/HeaderActions.tsx"));
   const logoutArena = read("components/arena/LogoutButton.tsx");
   test("LogoutButton arena icon/link variant memakai size 18",
     () => logoutArena.includes("<LogOut size={18}"));

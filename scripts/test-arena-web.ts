@@ -44,8 +44,8 @@ function main() {
     () => !layout.includes("md:hidden sticky top-12") && !layout.includes("overflow-x-auto"));
   test("href subnav canonical (Misi/Liga/Gim/Peringkat/Koleksi) TIDAK jadi item nav layout",
     () => ["/arena/misi", "/arena/league", "/arena/game", "/arena/player/leaderboard", "/arena/player/badges"].every((h) => !layout.includes(`href: "${h}"`)));
-  test("navigasi Arena TIDAK diduplikasi di layout (hanya logo Arena + Dasbor + aksi header)",
-    () => (layout.match(/Link href="/g) || []).length <= 5);
+  test("header GLOBAL KANONIK: TIDAK ada identitas produk Arena (ikon/title/subtitle) di header",
+    () => !layout.includes("Pusat kompetisi") && !layout.includes("<Zap") && (layout.match(/Link href="/g) || []).length <= 3);
   test("container non-chat = canvas desktop-first max-w-[1280px] (bukan max-w-lg md:max-w-4xl)",
     () => layout.includes("max-w-[1280px] py-0 md:py-6 md:px-6") && !layout.includes("max-w-lg md:max-w-4xl"));
   test("container chat FULL-WIDTH (3-pane workspace tanpa cap max-w, melebar sampai 1920+)",
@@ -57,12 +57,12 @@ function main() {
     () => layout.includes('RUTE_TANPA_GERBANG = "/arena/login"'));
   test("auth gate getUser + redirect login tetap ada",
     () => layout.includes("await getUser()") && layout.includes("redirect(RUTE_TANPA_GERBANG)"));
-  test("isApk() tetap dipakai untuk perilaku APK (escape hatch Dasbor/Logout)",
+  test("isApk() tetap dipakai untuk perilaku APK (escape hatch BackHome keluar scope)",
     () => layout.includes("await isApk()") && layout.includes("!apk &&"));
   test("BottomNav hanya untuk APK (web tanpa bottom navigation ala APK)",
     () => layout.includes("{apk && <BottomNav />}"));
-  test("tombol Dasbor (web-only) + LogoutButton (web-only) tetap ada",
-    () => layout.includes("<LayoutDashboard") && layout.includes("<LogoutButton variant=\"icon\" />"));
+  test("TIDAK ada tombol Dasbor/Logout di header arena (akses guru via RoleSections sidebar; logout via footer/Pemain)",
+    () => !layout.includes("<LayoutDashboard") && !layout.includes("LogoutButton") && layout.includes("RoleSections"));
   test("banner boost tidak dimatikan di halaman Arena non-chat ({!isChatWeb && <ActiveBoostBanner />})",
     () => layout.includes("!isChatWeb && <ActiveBoostBanner />"));
 

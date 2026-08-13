@@ -168,8 +168,8 @@ export function ChatClient({ userId, groups }: { userId: string; groups: Group[]
 
   const locked = selected ? !!lockedMap[selected.id] : false
 
-  // Chrome-aware workspace height: WEB Obrolan punya top bar sendiri (h-12
-  // mobile / h-14 desktop), APK memakai top bar Arena + BottomNav (4rem).
+  // Chrome-aware workspace height: WEB memakai header GLOBAL h-14 Student
+  // Shell (dipersembahkan layout), APK memakai chrome penuh + BottomNav (4rem).
   const shellHeight = isApk
     ? "md:h-[calc(100dvh-7rem)]"
     : "md:h-[calc(100dvh-3.5rem)]"

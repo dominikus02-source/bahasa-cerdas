@@ -59,8 +59,10 @@ function main() {
     () => arenaLayout.includes("ShellNavList") && arenaLayout.includes("RoleSections") && arenaLayout.includes("ShellSidebarFooter"));
   test("arena memakai BackHome (deterministik)",
     () => arenaLayout.includes("<BackHome"));
-  test("arena memakai ThemeToggle (via HeaderActions)",
-    () => arenaLayout.includes("HeaderActions") && read("components/arena/HeaderActions.tsx").includes("<ThemeToggle />"));
+  test("arena header GLOBAL kanonik = ThemeToggle + NotificationBell + UserAvatar langsung (tanpa HeaderActions)",
+    () => arenaLayout.includes("<ThemeToggle />") && arenaLayout.includes("<NotificationBell />") && arenaLayout.includes("UserAvatar") && !arenaLayout.includes("HeaderActions"));
+  test("HeaderActions DIHAPUS (search/bell/tema arena-specific bukan global header)",
+    () => !exists("components/arena/HeaderActions.tsx"));
   test("TIDAK ada navbar Arena kedua",
     () => !arenaLayout.includes("navItems") && !arenaLayout.includes('aria-label="Navigasi Arena"'));
   test("RUTE_TANPA_GERBANG = /arena/login (heritage)", 
@@ -127,7 +129,7 @@ function main() {
     () => read("app/providers.tsx").includes("ThemeProvider") && read("components/theme/theme-provider.tsx").includes("NextThemesProvider"));
   test("ThemeToggle reusable dipakai di murid + arena + guru + admin",
     () => read("app/(dashboard)/murid/layout.tsx").includes("<ThemeToggle />") &&
-         read("components/arena/HeaderActions.tsx").includes("<ThemeToggle />") &&
+         arenaLayout.includes("<ThemeToggle />") &&
          guruLayout.includes("<ThemeToggle />") && adminLayout.includes("<ThemeToggle />"));
   test("theme toggle tidak ada duplikat (ThemeSegmented tidak ada)",
     () => !exists("components/theme/theme-segmented.tsx"));
