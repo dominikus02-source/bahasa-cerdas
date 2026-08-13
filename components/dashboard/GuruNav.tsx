@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   Home, Sparkles, Store, Gamepad2, Users, BookOpen, ClipboardCheck,
-  Bot, UserRound, CalendarDays, Shield, ChevronDown, Menu, X, LogOut,
+  Bot, UserRound, CalendarDays, ChevronDown, Menu, X, LogOut,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
@@ -42,7 +42,9 @@ interface NavGroup {
 /**
  * Guru Navigation V2 — Teacher Center.
  * IA target: Beranda → Pusat Literasi → Alat Ajar → Kelasku → Gim → Toko Karya
- * → Simulasi & Tes → Alat AI → Komunitas → Kalender → Akun Saya → Admin.
+ * → Simulasi & Tes → Alat AI → Komunitas → Kalender → Akun Saya.
+ * Akses Panel Admin untuk founder via RoleSections ("Akses Founder"), bukan
+ * entry nav terpisah di sidebar guru.
  * Semua route lama yang dihapus dari sidebar TETAP hidup dan bisa diakses
  * langsung (no route deletion).
  */
@@ -151,13 +153,6 @@ export const GURU_NAV: NavGroup[] = [
       { label: "Ringkasan Akun", href: "/guru/akun" },
       { label: "Profil", href: "/guru/profile" },
     ],
-  },
-  {
-    id: "admin",
-    label: "Admin",
-    icon: Shield,
-    founderOnly: true,
-    href: "/admin",
   },
 ];
 

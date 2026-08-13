@@ -1,5 +1,4 @@
 import { redirect } from "next/navigation";
-import Link from "next/link";
 import { ShieldCheck } from "lucide-react";
 import { getUser } from "@/lib/supabase/server";
 import { AdminSidebar } from "@/components/admin/AdminSidebar";
@@ -18,15 +17,6 @@ export default async function AdminLayout({ children }: { children: React.ReactN
       mainClassName="flex-1 px-6 py-6 mx-auto max-w-[1440px] w-full"
       sidebar={
         <>
-          <div className="p-5 border-b border-slate-100 dark:border-slate-800">
-            <Link href="/admin" className="flex items-center gap-2 min-w-0">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-red-500 to-red-700 flex items-center justify-center text-white font-bold text-sm shrink-0">BC</div>
-              <div className="min-w-0">
-                <p className="shell-label font-bold text-slate-900 text-sm truncate dark:text-white">Panel Admin</p>
-                <p className="shell-label text-[10px] text-slate-400">Founder</p>
-              </div>
-            </Link>
-          </div>
           <AdminSidebar user={{ fullName: user.fullName, avatar: user.avatar }} />
           <div className="p-3 border-t border-slate-100 dark:border-slate-800 flex justify-end">
             <ShellSidebarToggle />

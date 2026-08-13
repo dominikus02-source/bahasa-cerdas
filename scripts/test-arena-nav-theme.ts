@@ -143,8 +143,8 @@ function main() {
     () => !arenaLayout.includes("navItems") && !arenaLayout.includes('aria-label="Navigasi Arena"'));
   test("mobile nav tetap 6 item (tanpa tab arena baru)",
     () => !mobileNav.includes("/arena/league") && !mobileNav.includes("/arena/game") && !mobileNav.includes("/arena/player"));
-  test("chat web tetap exception 1440px (layout konsolidasi tidak diubah)",
-    () => arenaLayout.includes("max-w-[1440px]"));
+  test("chat web full-width workspace (w-full, tanpa cap 1440px di layout)",
+    () => arenaLayout.includes('pathname.startsWith("/arena/chat")') && arenaLayout.includes('? "w-full py-0 md:px-6"') && !arenaLayout.includes("max-w-[1440px]"));
 
   // ── Summary ──
   console.log(`\n${"=".repeat(60)}`);

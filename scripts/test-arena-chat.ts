@@ -191,16 +191,16 @@ function main() {
 
   // ── T.23 — Responsive ──
   console.log("\n── T.23 — Responsive (Mobile-First) ──");
-  test("3 pane desktop ≥1280: sidebar w-72 lg:w-80, percakapan flex-1, konteks hidden xl:flex w-[300px]",
-    () => client.includes('aria-label="Daftar kelas"') && client.includes("md:w-72 lg:w-80") && client.includes("flex-1 min-w-0") && client.includes("hidden xl:flex w-[300px]"));
+  test("3 pane desktop ≥1280: sidebar clamp(300px,25vw,360px), percakapan flex-1 min-w-0, konteks hidden xl:flex w-[300px]",
+    () => client.includes('aria-label="Daftar kelas"') && client.includes("md:w-[clamp(300px,25vw,360px)]") && client.includes("flex-1 min-w-0") && client.includes("hidden xl:flex w-[300px]"));
   test("768–1023: sidebar toggleable (listToggle + tombol List, md:flex, lg:flex)",
     () => client.includes("listToggle") && client.includes('aria-label={listToggle ? "Sembunyikan daftar kelas"'));
   test("mobile <768: daftar kelas jadi layar penuh + back chevron 'Kembali ke daftar kelas'",
     () => client.includes("md:hidden") && client.includes('aria-label="Kembali ke daftar kelas"'));
   test("konteks drawer <1280: role=dialog w-80 max-w-[85vw] + backdrop bg-black/40",
     () => client.includes('role="dialog"') && client.includes("w-80 max-w-[85vw]") && client.includes("bg-black/40"));
-  test("shell workspace: chat 1440px (3 pane) vs halaman Arena lain 1280px desktop-first (tanpa max-w-lg md:max-w-4xl legacy)",
-    () => layout.includes("max-w-[1440px]") && layout.includes("pathname.startsWith(\"/arena/chat\")") && layout.includes("max-w-[1280px]") && !layout.includes("max-w-lg md:max-w-4xl"));
+  test("shell workspace: chat FULL-WIDTH w-full (3 pane, tanpa cap 1440px) vs halaman Arena lain 1280px desktop-first (tanpa max-w-lg md:max-w-4xl legacy)",
+    () => layout.includes('pathname.startsWith("/arena/chat")') && layout.includes('? "w-full py-0 md:px-6"') && layout.includes("max-w-[1280px] py-0 md:py-6 md:px-6") && !layout.includes("max-w-lg md:max-w-4xl"));
   test("tinggi shell APK-aware: APK md:h-[calc(100dvh-7rem)] vs web md:h-[calc(100dvh-3.5rem)] (top bar sendiri)",
     () => client.includes("md:h-[calc(100dvh-7rem)]") && client.includes("md:h-[calc(100dvh-3.5rem)]"));
 

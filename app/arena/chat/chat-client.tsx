@@ -623,7 +623,7 @@ export function ChatClient({ userId, groups }: { userId: string; groups: Group[]
 
       {/* ── SIDEBAR KELAS (md+) — toggleable di 768–1023, selalu tampil ≥1024 ── */}
       <aside
-        className={`hidden ${listToggle ? "md:flex" : "md:hidden"} lg:flex w-full md:w-72 lg:w-80 shrink-0 flex-col bg-white dark:bg-slate-900 border-b md:border-b-0 md:border-r border-gray-200 dark:border-slate-800`}
+        className={`hidden ${listToggle ? "md:flex" : "md:hidden"} lg:flex w-full md:w-[clamp(300px,25vw,360px)] shrink-0 flex-col bg-white dark:bg-slate-900 border-b md:border-b-0 md:border-r border-gray-200 dark:border-slate-800`}
         aria-label="Daftar kelas"
       >
         {classList}
@@ -719,7 +719,7 @@ export function ChatClient({ userId, groups }: { userId: string; groups: Group[]
                   <p className="text-xs text-gray-400 dark:text-slate-500 mt-1">Jadilah yang pertama menyapa teman sekelasmu. 👋</p>
                 </div>
               )}
-              <div className="space-y-1.5 max-w-3xl mx-auto">
+              <div className="space-y-1.5 w-full">
                 {messages.map((m, i) => {
                   if (m.deleted) {
                     return (

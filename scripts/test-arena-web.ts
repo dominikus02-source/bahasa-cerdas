@@ -48,8 +48,8 @@ function main() {
     () => (layout.match(/Link href="/g) || []).length <= 5);
   test("container non-chat = canvas desktop-first max-w-[1280px] (bukan max-w-lg md:max-w-4xl)",
     () => layout.includes("max-w-[1280px] py-0 md:py-6 md:px-6") && !layout.includes("max-w-lg md:max-w-4xl"));
-  test("container chat tetap max-w-[1440px] (3-pane workspace dipertahankan)",
-    () => layout.includes("max-w-[1440px] py-0 md:px-8") && layout.includes('pathname.startsWith("/arena/chat")'));
+  test("container chat FULL-WIDTH (3-pane workspace tanpa cap max-w, melebar sampai 1920+)",
+    () => layout.includes('pathname.startsWith("/arena/chat")') && layout.includes('? "w-full py-0 md:px-6"') && layout.includes("max-w-[1280px] py-0 md:py-6 md:px-6"));
 
   // ── 2. LAYOUT — proteksi APK & auth ──
   console.log("\n── 2. Layout — Proteksi APK & Auth ──");
@@ -192,8 +192,8 @@ function main() {
     () => !read("app/arena/game/tantang/page.tsx").includes("max-w-lg mx-auto"));
   test("/arena/player web memakai canvas penuh (tanpa wrapper legacy sempit)",
     () => !read("app/arena/player/page.tsx").includes("max-w-3xl") && !read("app/arena/player/page.tsx").includes("max-w-lg mx-auto"));
-  test("chat tetap 1440px exception (max-w-[1440px] di layout untuk /arena/chat)",
-    () => layout.includes("max-w-[1440px] py-0 md:px-8") && layout.includes('pathname.startsWith("/arena/chat")'));
+  test("chat full-width workspace (w-full, tanpa max-w-[1440px] legacy)",
+    () => layout.includes('pathname.startsWith("/arena/chat")') && layout.includes('? "w-full py-0 md:px-6"') && !layout.includes("max-w-[1440px]"));
   test("tidak ada fixed min-width desktop (min-w-[1200px]/min-w-[1440px]) di seluruh route Arena",
     () => {
       const out = execSync(`rg -l 'min-w-\\[1200px\\]|min-w-\\[1440px\\]' app/arena --glob '*.tsx' || true`, { encoding: "utf8" });

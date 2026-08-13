@@ -159,7 +159,7 @@ export default async function ArenaLayout({ children }: { children: React.ReactN
       }
       mainClassName={`mx-auto px-0 ${
         pathname.startsWith("/arena/chat")
-          ? "max-w-[1440px] py-0 md:px-8"
+          ? "w-full py-0 md:px-6"
           : "max-w-[1280px] py-0 md:py-6 md:px-6"
       }`}
       bottomNav={<>{apk && <BottomNav />}</>}

@@ -3030,3 +3030,63 @@ SATU sistem application shell/navigation untuk SELURUH produk web: Murid, Arena,
 3. GameRoom migration SQL via Supabase dashboard
 4. UI game solo: badge-score client vs server masih beda (kosmetik)
 5. SQL `2026-08-02_no_absen.sql` & `2026-08-08_school_identity.sql` (Production + Preview)
+
+---
+
+## Phase UNIFIED SHELL 5.0.1 — VISUAL HARDENING: Admin Identity, Guru Nav, Chat Full-Width (Aug 13, 2026)
+
+### Goal
+Patch visual/UX di atas Unified Shell 5.0: (1) hilangkan duplikasi identitas "Panel Admin" di Admin, (2) hilangkan grup "Admin" redundant di sidebar guru (founder sudah punya Akses Founder), (3) Obrolan jadi **full-width workspace** (hilangkan cap 1440px; conversation pane melebar sampai 1920+). **UI/UX only, additive-only — tidak commit/push (menunggu Founder Review, pola 5.0).**
+
+### Root Cause (audit)
+1. **Admin duplicate identity**: `admin/layout.tsx` sidebar slot inject brand block layout (Link "Panel Admin"/"Founder") DI LUAR `AdminSidebar`, padahal `AdminSidebar` sendiri sudah render brand + user card + bell → identitas 2× dalam sidebar + header context = 3.
+2. **Guru redundant Admin**: `GuruNav.tsx` GURU_NAV punya grup `label: "Admin"` (founderOnly) — duplikat tujuan dari blok "Akses Founder" (RoleSections: Dasbor Guru + Panel Admin) yang sudah dirender guru layout.
+3. **Chat sempit 3 tempat**: `arena/layout.tsx` branch chat `max-w-[1440px] py-0 md:px-8` (cap 1440); `chat-client.tsx` message list `max-w-3xl mx-auto` (768px centered → ruang kiri/kanan kosong); class list `md:w-72 lg:w-80` (288/320px di bawah spesifikasi).
+
+### Perubahan
+| File | Perubahan |
+|------|-----------|
+| `app/(dashboard)/admin/layout.tsx` | Hapus brand block duplikat dari sidebar slot (div.p-5.border-b + import Link). Sidebar slot = `<AdminSidebar />` + `<ShellSidebarToggle />`. Header TETAP [BackHome→/admin][ShieldCheck Panel Admin][ThemeToggle] — 1× viewport (sidebar 1 + header context 1, pola Guru). Guard server-side utuh. |
+| `components/admin/AdminSidebar.tsx` | TIDAK diubah — brand block + user card + bell + logout jadi SATU identity (test mengunci "/admin/payments" + DollarSign + label Bahasa Indonesia). |
+| `components/dashboard/GuruNav.tsx` | Hapus grup `label: "Admin"` dari GURU_NAV + import `Shield` yang membusuk. Grup lain/string/href/`founderOnly` filter/GuruNavList/GuruMobileNav TIDAK diubah. Akses founder tetap via RoleSections (Dasbor Guru + Panel Admin). |
+| `app/arena/layout.tsx` | Branch chat `max-w-[1440px] py-0 md:px-8` → `w-full py-0 md:px-6` (FULL WIDTH); non-chat TETAP `max-w-[1280px] py-0 md:py-6 md:px-6`. Ternary `isChatWeb`/`pathname.startsWith("/arena/chat")` dipertahankan. |
+| `app/arena/chat/chat-client.tsx` | (1) Class list `w-full md:w-72 lg:w-80` → `w-full md:w-[clamp(300px,25vw,360px)]` (shrink-0 tetap; drawer mobile/toggle 768–1023 tidak disentuh); (2) message list `space-y-1.5 max-w-3xl mx-auto` → `space-y-1.5 w-full`. Bubble per-pesan `max-w-[85%] md:max-w-[70%]`, context drawer `w-80 max-w-[85vw]`, modal — TIDAK diubah. |
+| `scripts/test-arena-chat.ts` | 2 assertion lama di-update ke UX baru: 3-pane ≥1280 = `md:w-[clamp(300px,25vw,360px)]`; shell workspace = chat `w-full` (tanpa 1440px) vs 1280px lainnya. |
+| `scripts/test-arena-web.ts` | 2 assertion "chat max-w-[1440px]" → "chat full-width (w-full, tanpa max-w-[1440px] legacy)" + non-chat 1280. |
+| `scripts/test-arena-nav-theme.ts` | 1 assertion "chat exception 1440px" → "chat web full-width w-full, tanpa cap 1440px". |
+| `scripts/test-unified-shell.ts` | +15 assertion seksi 9 Visual Hardening 5.0.1 (identity 1×/file admin, sidebar slot AdminSidebar+Toggle, GURU_NAV tanpa label "Admin", RoleSections founder, chat full-width split-tokens, hanya 1280 non-chat, no max-w-[1440px] tersisa, message list w-full, clamp class list, flex-1 min-w-0, bubble tetap, APK utuh). |
+
+### Responsive Chat (verifikasi kode)
+- ≤390: drawer class list (`md:hidden`), conversation full; 768–1023: toggle `md:flex`, clamp=300px; ≥1024: clamp maks 360px; 1440/1920: conversation melebar terus (0 cap). Collapsed sidebar otomatis memperluas workspace (flex-based, bukan hard-coded width).
+
+### Protected Zones
+0 diff: prisma/, app/api/, lib/gamification/, lib/learning-loop/, engines/, lib/apk.ts, app/arena/bottom-nav.tsx, authorization/auth (guard server-side utuh).
+
+### Verification
+| Check | Hasil |
+|-------|-------|
+| `npm run test:unified-shell` (60, +15 baru) | ✅ 60/60 |
+| `npm run test:arena-web` | ✅ 56/56 |
+| `npm run test:arena-chat` | ✅ 94/94 |
+| `npm run test:arena-nav-theme` | ✅ 35/35 |
+| `test:student-shell` / `student-home` / `student-consolidation` | ✅ 33/33 · ✅ 51/51 · ✅ 40/40 |
+| `test:karya-consolidation` / `global-works-discovery` / `premium-economy` / `social-hardening` | ✅ 40/40 · ✅ 31/31 · ✅ 63/63 · ✅ 27/27 |
+| `test:gamification-engine` / `guru-phase` | ✅ SEMUA LULUS |
+| `test:simulation-workflow` / `bigt-menu` / `phase9g-admin-payments` | ✅ All passed · ✅ 26/26 · ✅ 28/28 |
+| `npx tsc --noEmit` | ✅ 0 errors |
+| ESLint (9 file) | ✅ 0 errors (1 warning `<img>` chat-client — konvensi arena, pre-existing) |
+| `npm run build` (dummy env) | ✅ 364/364 routes, prerender 10.4s, exit 0 |
+| `git diff --check` | ✅ bersih |
+| `git status` | ✅ 9 file (5 app/component + 4 script), 0 protected zone |
+
+### Catatan
+- Assertion chat di 3 test script di-update KARENA UX-nya berubah (full-width menggantikan cap 1440px) — assertion lain tidak dilemahkan; larangan `min-w-[1200px]/min-w-[1440px]` tetap.
+- Konvensi viewport identity: brand sidebar (1) + context header (1) — max 2, tidak pernah 3.
+- **Belum di-commit/push — menunggu Founder Review** (pola 4.2.x / Unified Shell 5.0).
+
+### Remaining (tidak berubah)
+1. TKA UTBK/Guru enrichment 30 → 150
+2. Game server revival (VPS mati)
+3. GameRoom migration SQL via Supabase dashboard
+4. UI game solo: badge-score client vs server masih beda (kosmetik)
+5. SQL `2026-08-02_no_absen.sql` & `2026-08-08_school_identity.sql` (Production + Preview)

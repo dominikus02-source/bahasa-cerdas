@@ -155,6 +155,42 @@ function main() {
   test("lib/learning-loop tidak tersentuh",
     () => exists("lib/learning-loop/activity.ts") && exists("lib/learning-loop/next-action.ts"));
 
+  // ── 9. VISUAL HARDENING 5.0.1 ──
+  console.log("\n── 9. Visual Hardening 5.0.1 (Admin identity / Guru nav / Chat full-width) ──");
+  const guruNav = read("components/dashboard/GuruNav.tsx");
+  const chatClient = read("app/arena/chat/chat-client.tsx");
+  const adminSidebar = read("components/admin/AdminSidebar.tsx");
+  test("ADMIN: identitas 'Panel Admin' tepat 1× per file — layout = header context, AdminSidebar = brand block (TIDAK duplikat)",
+    () => (adminLayout.match(/Panel Admin/g) || []).length === 1 && (adminSidebar.match(/Panel Admin/g) || []).length === 1);
+  test("ADMIN: sidebar slot = AdminSidebar + ShellSidebarToggle (satu identity, satu user card, satu bell)",
+    () => adminLayout.includes("<AdminSidebar") && adminLayout.includes("ShellSidebarToggle"));
+  test("ADMIN: header context 'Panel Admin' tetap (1× viewport — sidebar 1 + header context 1)",
+    () => adminLayout.includes("Panel Admin"));
+  test("ADMIN: user/identity AdminSidebar utuh (Bell + logout + nav intact)",
+    () => adminSidebar.includes("Bell") && adminSidebar.includes("/admin/payments"));
+  test("GURU: GURU_NAV TIDAK punya grup 'Admin' redundant (founder akses via RoleSections)",
+    () => !guruNav.includes('label: "Admin"'));
+  test("GURU: founder tetap dapat 'Dasbor Guru' + 'Panel Admin' via RoleSections di guru layout",
+    () => guruLayout.includes("RoleSections") && read("components/shell/RoleSections.tsx").includes("Panel Admin") && read("components/shell/RoleSections.tsx").includes("Dasbor Guru"));
+  test("GURU: item nav lain / GuruMobileNav utuh (12 grup tidak wajib, string menu tidak berubah)",
+    () => guruNav.includes("GuruMobileNav") && guruNav.includes("Beranda"));
+  test("CHAT: arena layout chat = full-width w-full (tanpa cap 1440px)",
+    () => arenaLayout.includes('pathname.startsWith("/arena/chat")') && arenaLayout.includes('? "w-full py-0 md:px-6"'));
+  test("CHAT: non-chat tetap 1280px (Arena Home desktop-first)",
+    () => arenaLayout.includes("max-w-[1280px] py-0 md:py-6 md:px-6"));
+  test("CHAT: TIDAK ada max-w-[1440px] tersisa di arena layout",
+    () => !arenaLayout.includes("max-w-[1440px]"));
+  test("CHAT: message list full-width (tanpa max-w-3xl mx-auto sempit)",
+    () => chatClient.includes("space-y-1.5 w-full") && !chatClient.includes("max-w-3xl mx-auto"));
+  test("CHAT: class list clamp(300px,25vw,360px) shrink-0 (bukan fixed w-72/lg:w-80)",
+    () => chatClient.includes("md:w-[clamp(300px,25vw,360px)]") && !chatClient.includes("md:w-72 lg:w-80"));
+  test("CHAT: conversation pane flex-1 min-w-0 (melebar otomatis + collapsed sidebar)",
+    () => chatClient.includes("flex-1 min-w-0"));
+  test("CHAT: bubble pesan tetap max-w-[85%] md:max-w-[70%] (batas per-bubble, bukan container)",
+    () => chatClient.includes("max-w-[85%] md:max-w-[70%]"));
+  test("CHAT: APK behavior utuh (useIsApkClient + drawer mobile)",
+    () => chatClient.includes("useIsApkClient") && chatClient.includes("md:hidden"));
+
   // ── Summary ──
   console.log(`\n${"=".repeat(64)}`);
   console.log(`📊 RESULT: ${passed} passed, ${failed} failed (${passed + failed} total)`);
