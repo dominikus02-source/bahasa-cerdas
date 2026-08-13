@@ -230,6 +230,70 @@ test("E8. aria-label 'Tanya AI BC' tetap ada (hanya hilang saat tidak dirender)"
   fab.includes('aria-label="Tanya AI BC"'));
 test("E9. guard tanpa logika duplikat (satu set path, tanpa provider/nav baru)", () =>
   fab.includes("AI_BC_WORKSPACE_PATHS") && !fab.includes("ThemeProvider") && !fab.includes("<nav"));
+test("E10. hooks dipanggil sebelum early return (rules-of-hooks)", () => {
+  const stateIdx = fab.indexOf("useState");
+  const effectIdx = fab.indexOf("useEffect");
+  const guardIdx = fab.indexOf("AI_BC_WORKSPACE_PATHS.has(pathname)");
+  return stateIdx > -1 && effectIdx > -1 && guardIdx > stateIdx && guardIdx > effectIdx;
+});
+
+/* ------------------------------------------------------------------ */
+/* F. MURID SURFACE (AI BC 2.1 — Teman Belajar)                        */
+/* ------------------------------------------------------------------ */
+
+console.log("\nF. Murid surface (/arena/ai)");
+const arenaPage = read("app/arena/ai/page.tsx");
+const studentPrompts =
+  arenaWs.match(/export const ARENA_AI_SUGGESTED_PROMPTS[\s\S]*?\];/)?.[0] ?? "";
+test("F1. murid: fullscreen workspace (w-full + viewport-anchored + 900px, tanpa kartu sempit)", () =>
+  arenaWs.includes("flex w-full") &&
+  arenaWs.includes("h-[calc(100dvh-3.5rem)]") &&
+  arenaWs.includes("max-w-[900px]") &&
+  !arenaWs.includes("max-w-lg") &&
+  !arenaWs.includes("max-w-2xl") &&
+  !arenaWs.includes("max-w-4xl"));
+test("F2. murid: composer initial state (tanpa gerbang landing/chat)", () =>
+  !arenaWs.includes('"landing"') && !arenaWs.includes('"chat"') &&
+  arenaWs.includes("placeholder={PLACEHOLDER}"));
+test("F3. murid: welcome 'Mau tanya apa?' + placeholder pelajaran", () =>
+  arenaWs.includes("Mau tanya apa?") &&
+  arenaWs.includes("Tanyakan sesuatu tentang pelajaranmu..."));
+test("F4. murid: persona Teman Belajar (STUDENT_PERSONA dari sesi, bukan TEACHER)", () =>
+  arenaPage.includes("STUDENT_PERSONA") && !arenaPage.includes("TEACHER_PERSONA") &&
+  personas.includes('title: "Teman Belajarmu"'));
+test("F5. murid: workspace tanpa CTA RPP", () => !arenaWs.includes("RPP") && !/buat(kan)? rpp/i.test(arenaWs));
+test("F6. murid: workspace tanpa istilah guru (rencana pembelajaran/asesmen/modul ajar)", () =>
+  !arenaWs.includes("rencana pembelajaran") &&
+  !arenaWs.includes("asesmen") &&
+  !arenaWs.includes("modul ajar") &&
+  !arenaWs.includes("kisi-kisi"));
+test("F7. murid: page tanpa CTA guru (tanpa persona/route guru)", () =>
+  !arenaPage.includes("TEACHER_PERSONA") && !arenaPage.includes('"/guru/ai-bc"'));
+test("F8. murid: saran prompt student-safe (tanpa alur kerja guru)", () =>
+  !/rpp|rencana pembelajaran|asesmen|modul ajar|kisi-kisi|buat soal/i.test(studentPrompts) &&
+  (studentPrompts.match(/^  "/gm) || []).length >= 6);
+test("F9. murid: Zelby reading/thinking via registry resmi", () =>
+  arenaWs.includes('<AICompanionCharacter state="idle"') &&
+  arenaWs.includes('<AICompanionCharacter state="thinking"'));
+
+/* ------------------------------------------------------------------ */
+/* G. LANGUAGE AUDIT (user-facing copy)                                */
+/* ------------------------------------------------------------------ */
+
+console.log("\nG. Language audit (no English default copy)");
+const surfaces = [ws, arenaWs, guruPage, arenaPage];
+for (const banned of ["Chatbot", "Start Chat", "New Chat", "Teacher AI", "Ask anything", "How can I help?"]) {
+  const hit = surfaces.some((s) => s.includes(banned));
+  test(`G. tanpa "${banned}" di semua surface AI BC`, () => !hit);
+}
+test("G. 'Assistant' tidak dipakai sebagai label user-facing guru/murid", () =>
+  !ws.includes("Assistant") && !arenaWs.includes("Assistant") &&
+  !guruPage.includes("Assistant") && !arenaPage.includes("Assistant"));
+test("G. 'Retry'/'Submit' tidak muncul sebagai teks UI (hanya identifier internal)", () =>
+  !ws.includes(">Retry") && !ws.includes('"Retry"') && !arenaWs.includes(">Retry") && !arenaWs.includes('"Retry"') &&
+  !ws.includes(">Submit") && !arenaWs.includes(">Submit"));
+test("G. guru memakai 'Teman Guru', murid 'Teman Belajarmu' (bukan chatbot/assistant)", () =>
+  ws.includes("personaTitle") && arenaWs.includes("personaTitle"));
 
 /* ------------------------------------------------------------------ */
 /* SUMMARY                                                             */
