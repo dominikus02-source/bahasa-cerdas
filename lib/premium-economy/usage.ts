@@ -89,10 +89,58 @@ function isUniqueViolation(error: unknown): boolean {
 }
 
 /**
+ * Infra usage belum tersedia di runtime: tabel/kolom `PremiumUsage` belum ada
+ * (P2021 relation not found / P2022 column not found) — migration manual
+ * 2026-08-11_premium_economy.sql belum dijalankan di PRODUCTION.
+ * Ini kondisi deterministik (bukan error data/logika), maka ditangani graceful
+ * seperti getUsageRow/getEntitlement yang fallback — attempt tetap jalan,
+ * kuota tidak tercatat. Error lain tetap di-rethrow (tidak ada yang disembunyikan).
+ */
+function isUsageInfraUnavailable(error: unknown): boolean {
+  if (typeof error !== "object" || error === null) return false;
+  const code = (error as { code?: string }).code;
+  return code === "P2021" || code === "P2022";
+}
+
+/**
  * Konsumsi atomic 1 usage (dengan client transaksi — dipanggil di dalam
  * $transaction route simulasi agar rollback ikut membatalkan session).
+ *
+ * Infra degrade: bila tabel/kolom PremiumUsage tidak tersedia di runtime
+ * (P2021/P2022 — migration manual belum dijalankan), konsumsi dilewati
+ * secara graceful dan hasil `{ allowed: true, used: 0, … }` dikembalikan
+ * agar attempt simulasi tidak gagal. Sekali migration dijalankan, path ini
+ * tidak pernah terpakai dan perilaku kembali identik dengan desain asli
+ * (kuota dicatat, limit ditegakkan, FEATURE_LIMIT_REACHED terpicu).
  */
 export async function consumeUsageTx(
+  tx: Prisma.TransactionClient,
+  userId: string,
+  featureCode: UsageFeatureCode,
+  opts: { plan: PlanCode; limit: number },
+  date: Date = new Date()
+): Promise<UsageResult> {
+  try {
+    return await consumeUsageTxInner(tx, userId, featureCode, opts, date);
+  } catch (error) {
+    if (isUsageInfraUnavailable(error)) {
+      // Logging sekali per kejadian agar operator tahu migration belum jalan.
+      console.warn(
+        `[premium-economy] PremiumUsage tidak tersedia (${(error as { code?: string }).code}) — kuota simulasi ditangguhkan untuk user=${userId} feature=${featureCode}. Jalankan prisma/migrations/manual/2026-08-11_premium_economy.sql di Supabase SQL Editor.`
+      );
+      return {
+        allowed: true,
+        used: 0,
+        limit: opts.limit,
+        plan: opts.plan,
+        periodKey: getPeriodKey(USAGE_PERIOD[featureCode], date),
+      };
+    }
+    throw error;
+  }
+}
+
+async function consumeUsageTxInner(
   tx: Prisma.TransactionClient,
   userId: string,
   featureCode: UsageFeatureCode,

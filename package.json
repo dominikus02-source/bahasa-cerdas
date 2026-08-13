@@ -168,6 +168,7 @@
     "seed:premium-plans:dry-run": "npx tsx scripts/seed-premium-plans.ts",
     "seed:premium-plans": "npx tsx scripts/seed-premium-plans.ts --execute",
     "test:premium-economy": "npx tsx scripts/test-premium-economy.ts",
+    "test:tka-simulation-fix": "npx tsx scripts/test-tka-simulation-fix.ts",
     "test:guru-active-literacy": "npx tsx scripts/test-guru-active-literacy.ts",
     "test:guru-engagement2-phase1": "npx tsx scripts/test-guru-engagement2-phase1.ts",
     "test:guru-engagement2-phase2": "npx tsx scripts/test-guru-engagement2-phase2.ts",
