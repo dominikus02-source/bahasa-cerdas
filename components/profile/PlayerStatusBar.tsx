@@ -101,7 +101,7 @@ export default function PlayerStatusBar({
 
         <Link
           href={badgesHref}
-          className={`${cell} col-span-2 lg:col-span-1 items-center hover:bg-white dark:bg-slate-800/90/[0.06] transition-colors`}
+          className={`${cell} col-span-2 lg:col-span-1 items-center hover:bg-white/[0.06] transition-colors`}
           aria-label={`Lencana terbuka ${totalUnlocked}`}
         >
           <Trophy size={17} className="text-emerald-300 shrink-0" />
@@ -120,7 +120,7 @@ export default function PlayerStatusBar({
               {extra > 0 && (
                 <span
                   aria-hidden
-                  className="rounded-full bg-white bg-white/10 dark:bg-slate-900/10 border border-white/10 px-1.5 py-0.5 text-[9px] font-bold text-white/70 tabular-nums"
+                  className="rounded-full bg-white/10 dark:bg-slate-900/10 border border-white/10 px-1.5 py-0.5 text-[9px] font-bold text-white/70 tabular-nums"
                 >
                   +{extra}
                 </span>

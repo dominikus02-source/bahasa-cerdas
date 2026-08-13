@@ -482,7 +482,7 @@ export default function MuridProfilePage() {
                     className={`relative flex flex-col items-center gap-1 p-2.5 rounded-xl text-center transition-transform ${
                       l.unlocked
                         ? "profile-badge-unlocked bg-gradient-to-b from-amber-400/15 to-amber-500/10 ring-1 ring-amber-300/25 hover:scale-105"
-                        : "bg-white dark:bg-slate-800/90/[0.04] ring-1 ring-white/5"
+                        : "bg-white/[0.04] ring-1 ring-white/5"
                     }`}
                   >
                     <BadgeIcon
@@ -493,7 +493,7 @@ export default function MuridProfilePage() {
                     />
                     <span className={`text-[10px] font-semibold leading-tight ${l.unlocked ? "text-amber-200" : "text-white/40"}`}>{l.name}</span>
                     {!l.unlocked && (
-                      <div className="w-full h-1 bg-white bg-white/10 dark:bg-slate-900/10 rounded-full overflow-hidden mt-0.5">
+                      <div className="w-full h-1 bg-white/10 dark:bg-slate-900/10 rounded-full overflow-hidden mt-0.5">
                         <div className="h-full bg-violet-400 rounded-full" style={{ width: `${Math.min(100, (l.progress / l.target) * 100)}%` }} />
                       </div>
                     )}

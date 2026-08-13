@@ -32,7 +32,7 @@ export default function AchievementShowcase({
             key={b.id}
             href={koleksiUrl}
             title={`${b.name} — ${b.description}`}
- className="group flex flex-col items-center gap-1.5 rounded-2xl border border-white/10 bg-white bg-white/5 dark:bg-slate-900/5 p-3 transition-all hover:border-white/25 hover:bg-white bg-white/10 "
+ className="group flex flex-col items-center gap-1.5 rounded-2xl border border-white/10 bg-white/5 dark:bg-slate-900/5 p-3 transition-all hover:border-white/25 hover:bg-white/10 "
           >
             <span
               className="flex h-11 w-11 items-center justify-center rounded-xl text-white shadow-md transition-transform group-hover:scale-110"
@@ -48,9 +48,9 @@ export default function AchievementShowcase({
       {Array.from({ length: Math.max(0, max - shown.length) }).map((_, i) => (
         <div
           key={`lock-${i}`}
-          className="flex flex-col items-center gap-1.5 rounded-2xl border border-dashed border-white/10 bg-white bg-white/5 dark:bg-slate-900/5 p-3 opacity-55"
+          className="flex flex-col items-center gap-1.5 rounded-2xl border border-dashed border-white/10 bg-white/5 dark:bg-slate-900/5 p-3 opacity-55"
         >
-          <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-white bg-white/5 dark:bg-slate-900/5 text-white/35">
+          <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-white/5 dark:bg-slate-900/5 text-white/35">
             <Lock size={18} />
           </span>
           <span className="text-[11px] text-white/35">Terkunci</span>

@@ -298,12 +298,12 @@ function FeedContent({
       className="block mb-5 rounded-2xl bg-gradient-to-br from-violet-600 via-purple-600 to-fuchsia-600 p-5 text-white shadow-lg shadow-violet-500/25 hover:shadow-xl hover:shadow-violet-500/30 active:scale-[0.99] transition-all"
     >
       <div className="flex items-start gap-4">
-        <div className="w-12 h-12 rounded-2xl bg-white bg-white/20 dark:bg-slate-900/20 flex items-center justify-center shrink-0">
+        <div className="w-12 h-12 rounded-2xl bg-white/20 dark:bg-slate-900/20 flex items-center justify-center shrink-0">
           <Sparkles size={24} className="text-yellow-300" />
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1">
-            <span className="text-[10px] font-bold uppercase tracking-wider bg-white bg-white/20 dark:bg-slate-900/20 px-2 py-0.5 rounded-full">
+            <span className="text-[10px] font-bold uppercase tracking-wider bg-white/20 dark:bg-slate-900/20 px-2 py-0.5 rounded-full">
               Tantangan Minggu Ini
             </span>
           </div>
@@ -314,7 +314,7 @@ function FeedContent({
             <span className="inline-flex items-center gap-1.5 bg-yellow-400 text-yellow-950 text-xs font-extrabold px-3 py-1.5 rounded-full">
               <Trophy size={13} /> +{challenge.bonusCoins} koin
             </span>
-            <span className="inline-flex items-center gap-1.5 bg-white bg-white/15 dark:bg-slate-900/15 text-white text-xs font-semibold px-3 py-1.5 rounded-full">
+            <span className="inline-flex items-center gap-1.5 bg-white/15 dark:bg-slate-900/15 text-white text-xs font-semibold px-3 py-1.5 rounded-full">
               {challengeCount} karya masuk
             </span>
             <span className="ml-auto inline-flex items-center gap-1.5 bg-white dark:bg-slate-800/90 text-violet-700 dark:text-violet-300 text-sm font-extrabold px-4 py-2 rounded-xl">

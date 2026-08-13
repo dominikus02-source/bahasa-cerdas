@@ -217,7 +217,7 @@ export function AktifkanNotifikasi() {
 
   if (keadaan === "ditolak") {
     return (
-      <div className="rounded-xl border border-[var(--px-border)] bg-white dark:bg-slate-800/90/[0.04] p-3">
+      <div className="rounded-xl border border-[var(--px-border)] bg-white/[0.04] p-3">
         <span className="flex items-center gap-2 text-sm font-bold text-[var(--px-text)]">
           <BellOff size={15} className="text-[var(--px-text-faint)]" /> Notifikasi diblokir
         </span>
@@ -235,7 +235,7 @@ export function AktifkanNotifikasi() {
       <button
         onClick={nyala ? matikan : nyalakan}
         disabled={sibuk}
- className="flex w-full items-center justify-between rounded-xl border border-[var(--px-border)] bg-white /[0.04] p-3 hover:bg-white dark:bg-slate-800/90/[0.08] disabled:opacity-60"
+ className="flex w-full items-center justify-between rounded-xl border border-[var(--px-border)] bg-white/[0.04] p-3 hover:bg-white/[0.08] disabled:opacity-60"
       >
         <span className="flex items-center gap-2 text-sm font-bold text-[var(--px-text)]">
           <Bell size={15} className={nyala ? "text-amber-300" : "text-[var(--px-text-faint)]"} />
@@ -256,7 +256,7 @@ export function AktifkanNotifikasi() {
         <button
           onClick={kirimUji}
           disabled={sibuk}
- className="flex w-full items-center justify-between rounded-xl border border-[var(--px-border)] bg-white /[0.02] p-3 hover:bg-white dark:bg-slate-800/90/[0.06] disabled:opacity-60"
+ className="flex w-full items-center justify-between rounded-xl border border-[var(--px-border)] bg-white/[0.02] p-3 hover:bg-white/[0.06] disabled:opacity-60"
         >
           <span className="flex items-center gap-2 text-xs font-bold text-[var(--px-text-faint)]">
             <Send size={13} /> Kirim notifikasi uji ke HP ini

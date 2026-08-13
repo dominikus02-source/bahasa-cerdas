@@ -241,7 +241,7 @@ export default function MuridQuizResultPage() {
                         }`}
                       >
                         <div className="flex items-center gap-2">
-                          <span className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold bg-white bg-white/60 dark:bg-slate-900/60">
+                          <span className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold bg-white/60 dark:bg-slate-900/60">
                             {String.fromCharCode(65 + optIdx)}
                           </span>
                           <span>{opt.text}</span>

@@ -61,7 +61,7 @@ export default function SocialConnections({
               frame={null}
               initials={(p.displayName || "?").slice(0, 1).toUpperCase()}
               gradient=""
-              className="bg-white bg-white/8 dark:bg-slate-900/8"
+              className="bg-white/8 dark:bg-slate-900/8"
             />
           </button>
         ))}
@@ -86,7 +86,7 @@ export default function SocialConnections({
         <button
           type="button"
           onClick={leaderboardHref ? () => (window.location.href = leaderboardHref) : undefined}
- className="mb-4 flex w-full items-center gap-2.5 rounded-xl bg-white /[0.06] ring-1 ring-white/10 px-3.5 py-3 text-left hover:bg-white dark:bg-slate-800/90/[0.09] transition-colors"
+ className="mb-4 flex w-full items-center gap-2.5 rounded-xl bg-white/[0.06] ring-1 ring-white/10 px-3.5 py-3 text-left hover:bg-white/[0.09] transition-colors"
         >
           <Trophy size={16} className="text-amber-300 shrink-0" />
           <span className="min-w-0 flex-1">

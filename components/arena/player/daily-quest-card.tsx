@@ -95,7 +95,7 @@ export function DailyQuestCard({ compact = false }: { compact?: boolean }) {
           const isClaimed = q.claimed;
 
           return (
- <div key={q.id} className={`flex items-center gap-3 rounded-xl border p-3 ${isClaimed ? "border-white/5 bg-white /[0.03]" : "border-[var(--px-border)] bg-white dark:bg-slate-800/90/[0.05]"}`}>
+ <div key={q.id} className={`flex items-center gap-3 rounded-xl border p-3 ${isClaimed ? "border-white/5 bg-white/[0.03]" : "border-[var(--px-border)] bg-white/[0.03]"}`}>
               <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br ${meta.warna}`}>
                 {isClaimed ? <Check size={20} className="text-white" /> : <Icon size={18} className="text-white" />}
               </div>

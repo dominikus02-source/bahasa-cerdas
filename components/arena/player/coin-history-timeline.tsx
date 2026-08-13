@@ -167,7 +167,7 @@ function CoinHistoryRow({ entry }: { entry: CoinHistoryEntryView }) {
   const isIn = entry.amount > 0;
 
   return (
-    <div className="flex items-center gap-3 rounded-xl border border-[var(--px-border)] bg-white dark:bg-slate-800/90/[0.04] px-3 py-2.5">
+    <div className="flex items-center gap-3 rounded-xl border border-[var(--px-border)] bg-white/[0.04] px-3 py-2.5">
       <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-lg ${isIn ? "bg-[var(--px-gold)]/10" : "bg-rose-500/10"}`}>
         {isIn ? "🪙" : "💸"}
       </span>

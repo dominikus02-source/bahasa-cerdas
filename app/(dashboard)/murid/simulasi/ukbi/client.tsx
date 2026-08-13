@@ -98,7 +98,7 @@ export function UKBISimulationClient({ tracks }: Props) {
         <h2 className="font-bold text-sm mb-3">Tingkat Predikat UKBI</h2>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
           {UKBI_GRADES.map(g => (
-            <div key={g.level} className="bg-white bg-white/10 dark:bg-slate-900/10 rounded-xl p-2 text-center">
+            <div key={g.level} className="bg-white/10 dark:bg-slate-900/10 rounded-xl p-2 text-center">
               <p className="text-xs font-bold">{g.level}</p>
               <p className="text-[10px] text-white/70">{g.range}</p>
             </div>

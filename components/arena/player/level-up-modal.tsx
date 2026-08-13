@@ -56,7 +56,7 @@ export function LevelUpModal() {
 
               <button
                 onClick={dismissLevelUp}
- className="absolute right-4 top-4 z-10 rounded-full bg-white bg-white/10 dark:bg-slate-900/10 p-1.5 text-white/70 transition hover:bg-white bg-white/20 hover:text-white"
+ className="absolute right-4 top-4 z-10 rounded-full bg-white/10 dark:bg-slate-900/10 p-1.5 text-white/70 transition hover:bg-white/20 hover:text-white"
                 aria-label="Tutup"
               >
                 <X size={16} />
@@ -100,7 +100,7 @@ export function LevelUpModal() {
               </p>
 
               {/* Pangkat — ikon rank resmi, bukan sekadar teks. */}
-              <div className="mt-5 flex items-center gap-3 rounded-2xl border border-white/10 bg-white dark:bg-slate-800/90/[0.07] p-3 text-left">
+              <div className="mt-5 flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.07] p-3 text-left">
                 <RankIcon rank={rank} size={44} glow />
                 <div className="min-w-0 flex-1">
                   <p className="text-[10px] font-bold uppercase tracking-widest text-white/50">

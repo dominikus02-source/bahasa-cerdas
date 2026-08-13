@@ -184,7 +184,7 @@ export default function TantangTemanPage() {
           : hasil.hasil === "SERI" ? "bg-gradient-to-br from-amber-500 to-orange-600"
           : "bg-gradient-to-br from-violet-500 to-purple-600"
         }`}>
-          <div className="w-16 h-16 rounded-full bg-white bg-white/20 dark:bg-slate-900/20 flex items-center justify-center mx-auto mb-3">
+          <div className="w-16 h-16 rounded-full bg-white/20 dark:bg-slate-900/20 flex items-center justify-center mx-auto mb-3">
             {hasil.hasil === "MENANG" ? <Trophy className="w-9 h-9" /> : hasil.hasil ? <Medal className="w-9 h-9" /> : <Hourglass className="w-9 h-9" />}
           </div>
           <h1 className="text-2xl font-extrabold">

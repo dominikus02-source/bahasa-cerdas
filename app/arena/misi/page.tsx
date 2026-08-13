@@ -35,7 +35,7 @@ export default async function MisiHarianPage() {
       {/* Streak card */}
       <div className="bg-gradient-to-br from-orange-500 to-amber-600 rounded-2xl p-5 mb-5 shadow-lg shadow-orange-200/50">
         <div className="flex items-center gap-4">
-          <div className="w-14 h-14 rounded-full bg-white bg-white/20 dark:bg-slate-900/20 backdrop-blur flex items-center justify-center text-3xl">
+          <div className="w-14 h-14 rounded-full bg-white/20 dark:bg-slate-900/20 backdrop-blur flex items-center justify-center text-3xl">
             <Flame className="w-8 h-8 text-white" />
           </div>
           <div className="flex-1">
@@ -47,7 +47,7 @@ export default async function MisiHarianPage() {
             <p className="text-orange-100 text-xs">Misi Selesai</p>
           </div>
         </div>
-        <div className="w-full h-2 bg-white bg-white/20 dark:bg-slate-900/20 rounded-full mt-4 overflow-hidden">
+        <div className="w-full h-2 bg-white/20 dark:bg-slate-900/20 rounded-full mt-4 overflow-hidden">
           <div
             className="h-full bg-white dark:bg-slate-800/90 rounded-full transition-all duration-700"
             style={{ width: `${totalQuests > 0 ? (completedQuests / totalQuests) * 100 : 0}%` }}
@@ -101,7 +101,7 @@ export default async function MisiHarianPage() {
       {/* Semua selesai */}
       {semuaSelesai && (
         <div className="bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl p-5 text-center shadow-lg mb-6">
-          <div className="w-16 h-16 rounded-full bg-white bg-white/20 dark:bg-slate-900/20 flex items-center justify-center mx-auto mb-3">
+          <div className="w-16 h-16 rounded-full bg-white/20 dark:bg-slate-900/20 flex items-center justify-center mx-auto mb-3">
             <Sparkles className="w-9 h-9 text-white" />
           </div>
           <p className="text-white font-bold text-lg">Semua misi selesai!</p>

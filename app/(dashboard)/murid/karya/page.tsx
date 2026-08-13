@@ -17,9 +17,9 @@ export default function MuridKaryaPage() {
     <div className="arena-page">
       {/* HERO — PANGGUNG KARYA */}
       <section className="relative mb-6 overflow-hidden rounded-3xl bg-gradient-to-br from-violet-600 via-purple-600 to-fuchsia-600 px-5 py-8 text-white shadow-lg shadow-violet-500/20 md:px-8 md:py-12">
-        <div className="pointer-events-none absolute -right-16 -top-16 h-56 w-56 rounded-full bg-white bg-white/10 dark:bg-slate-900/10 blur-2xl" aria-hidden />
+        <div className="pointer-events-none absolute -right-16 -top-16 h-56 w-56 rounded-full bg-white/10 dark:bg-slate-900/10 blur-2xl" aria-hidden />
         <div className="pointer-events-none absolute -bottom-24 -left-12 h-64 w-64 rounded-full bg-fuchsia-400/25 blur-3xl" aria-hidden />
-        <div className="pointer-events-none absolute right-8 top-6 h-10 w-10 rotate-12 rounded-xl bg-white bg-white/10 dark:bg-slate-900/10" aria-hidden />
+        <div className="pointer-events-none absolute right-8 top-6 h-10 w-10 rotate-12 rounded-xl bg-white/10 dark:bg-slate-900/10" aria-hidden />
         <div className="relative">
           <p className="inline-flex items-center gap-1.5 text-[10px] font-extrabold uppercase tracking-[0.22em] text-white/85 md:text-[11px]">
             <Sparkles size={12} /> Panggung Karya
@@ -40,7 +40,7 @@ export default function MuridKaryaPage() {
             </Link>
             <a
               href="#karya-saya"
- className="inline-flex items-center gap-2 rounded-xl border border-white/20 bg-white bg-white/15 dark:bg-slate-900/15 px-5 py-2.5 text-sm font-bold text-white transition-all hover:bg-white bg-white/25 "
+ className="inline-flex items-center gap-2 rounded-xl border border-white/20 bg-white/15 dark:bg-slate-900/15 px-5 py-2.5 text-sm font-bold text-white transition-all hover:bg-white/25 "
             >
               Karya Saya
             </a>

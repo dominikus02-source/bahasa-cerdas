@@ -54,11 +54,11 @@ export default function MentorCard({ className = "" }: { className?: string }) {
     <div
       className={`relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#2b4bff] via-indigo-600 to-violet-600 p-5 text-white shadow-lg shadow-blue-500/25 ${className}`}
     >
-      <div className="pointer-events-none absolute -right-6 -top-6 h-24 w-24 rounded-full bg-white bg-white/5 dark:bg-slate-900/5" />
-      <div className="pointer-events-none absolute -bottom-6 -left-4 h-20 w-20 rounded-full bg-white bg-white/5 dark:bg-slate-900/5" />
+      <div className="pointer-events-none absolute -right-6 -top-6 h-24 w-24 rounded-full bg-white/5 dark:bg-slate-900/5" />
+      <div className="pointer-events-none absolute -bottom-6 -left-4 h-20 w-20 rounded-full bg-white/5 dark:bg-slate-900/5" />
       <div className="relative z-10">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white bg-white/20 dark:bg-slate-900/20 backdrop-blur-sm">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/20 dark:bg-slate-900/20 backdrop-blur-sm">
             <Bot size={20} />
           </div>
           <div className="min-w-0">

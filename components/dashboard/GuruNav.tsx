@@ -284,7 +284,7 @@ export function GuruMobileNav({ isFounder }: { isFounder: boolean }) {
 
   return (
     <>
- <div className="fixed bottom-0 inset-x-0 z-40 lg:hidden bg-white bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border-t border-gray-100 dark:border-slate-800 shadow-[0_-4px_20px_rgba(0,0,0,0.06)] pb-[env(safe-area-inset-bottom)]">
+ <div className="fixed bottom-0 inset-x-0 z-40 lg:hidden bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border-t border-gray-100 dark:border-slate-800 shadow-[0_-4px_20px_rgba(0,0,0,0.06)] pb-[env(safe-area-inset-bottom)]">
         <div className="grid grid-cols-5">
           {tabs.map((tab) => {
             const active = pathname.startsWith(tab.href);
@@ -324,7 +324,7 @@ export function GuruMobileNav({ isFounder }: { isFounder: boolean }) {
               <button
                 type="button"
                 onClick={() => setDrawer(false)}
-                className="w-8 h-8 rounded-lg bg-white bg-white/20 dark:bg-slate-900/20 flex items-center justify-center text-white"
+                className="w-8 h-8 rounded-lg bg-white/20 dark:bg-slate-900/20 flex items-center justify-center text-white"
               >
                 <X className="w-4 h-4" />
               </button>

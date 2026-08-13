@@ -218,10 +218,10 @@ export default async function BerandaPage() {
               <span className="flex items-center gap-1.5 rounded-full bg-amber-400/90 px-3 py-1.5 text-[11px] font-extrabold text-amber-950">
                 <Zap size={12} /> +80 XP
               </span>
-              <span className="flex items-center gap-1.5 rounded-full bg-white bg-white/10 dark:bg-slate-900/10 px-3 py-1.5 text-[11px] font-bold text-slate-200 backdrop-blur">
+              <span className="flex items-center gap-1.5 rounded-full bg-white/10 dark:bg-slate-900/10 px-3 py-1.5 text-[11px] font-bold text-slate-200 backdrop-blur">
                 <Clock size={12} /> ±5 menit
               </span>
-              <span className="flex items-center gap-1.5 rounded-full bg-white bg-white/10 dark:bg-slate-900/10 px-3 py-1.5 text-[11px] font-bold text-slate-200 backdrop-blur">
+              <span className="flex items-center gap-1.5 rounded-full bg-white/10 dark:bg-slate-900/10 px-3 py-1.5 text-[11px] font-bold text-slate-200 backdrop-blur">
                 <Users size={12} /> 2–8 pemain
               </span>
             </div>

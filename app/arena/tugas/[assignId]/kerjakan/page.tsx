@@ -146,7 +146,7 @@ export default function KerjakanTugasPage() {
 
   return (
     <div className="owns-bottom-bar min-h-screen bg-[#F7F6FF] pb-28">
-      <div className="sticky top-0 z-10 bg-white bg-white/90 dark:bg-slate-900/90 backdrop-blur border-b border-gray-100 dark:border-slate-800 px-4 py-3 flex items-center gap-3">
+      <div className="sticky top-0 z-10 bg-white/90 dark:bg-slate-900/90 backdrop-blur border-b border-gray-100 dark:border-slate-800 px-4 py-3 flex items-center gap-3">
         <Link href="/arena/tugas" className="text-gray-400 hover:text-gray-700 dark:text-slate-300"><ArrowLeft className="w-5 h-5" /></Link>
         <div className="min-w-0">
           <p className="text-[11px] text-violet-500 dark:text-violet-400 font-semibold truncate">{isKuis ? "Ulangan Harian" : "Tugas"} · {data.unitTitle}</p>
@@ -285,7 +285,7 @@ export default function KerjakanTugasPage() {
 
       {/* Bottom action */}
       {phase !== "done" && (
-        <div className="fixed bottom-0 left-0 right-0 z-20 bg-white bg-white/95 dark:bg-slate-900/95 backdrop-blur border-t border-gray-100 dark:border-slate-800 px-4 py-3 safe-area-bottom">
+        <div className="fixed bottom-0 left-0 right-0 z-20 bg-white/95 dark:bg-slate-900/95 backdrop-blur border-t border-gray-100 dark:border-slate-800 px-4 py-3 safe-area-bottom">
           <div className="max-w-2xl mx-auto">
             <button
               onClick={() => { if (nextPhase) setPhase(nextPhase); else submit() }}

@@ -30,7 +30,7 @@ export default function LogoutButton({
       <button
         onClick={handleLogout}
         disabled={loading}
- className="flex w-full items-center justify-between rounded-xl border border-[var(--px-border)] bg-white /[0.04] p-3 hover:bg-white dark:bg-slate-800/90/[0.08] disabled:opacity-60"
+ className="flex w-full items-center justify-between rounded-xl border border-[var(--px-border)] bg-white/[0.04] p-3 hover:bg-white/[0.08] disabled:opacity-60"
       >
         <span className="flex items-center gap-2 text-sm font-bold text-[var(--px-text)]">
           <LogOut size={15} className="text-rose-300" /> {loading ? "Keluar..." : "Keluar"}

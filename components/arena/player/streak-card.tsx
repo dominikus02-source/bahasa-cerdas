@@ -30,7 +30,7 @@ export function StreakCard({ streak }: { streak: number }) {
           </div>
         ))}
         {empty.map((d) => (
-          <div key={`e${d}`} className="flex h-8 flex-1 items-center justify-center rounded-lg bg-white bg-white/5 dark:bg-slate-900/5 text-xs font-bold text-[var(--px-text-faint)]">
+          <div key={`e${d}`} className="flex h-8 flex-1 items-center justify-center rounded-lg bg-white/5 dark:bg-slate-900/5 text-xs font-bold text-[var(--px-text-faint)]">
             {d}
           </div>
         ))}

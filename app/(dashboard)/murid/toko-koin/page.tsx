@@ -202,7 +202,7 @@ export default function TokoKoinPage() {
         <div className="mb-5 bg-gradient-to-r from-amber-500 to-orange-600 rounded-2xl p-4 text-white shadow-lg">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-white bg-white/20 dark:bg-slate-900/20 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-xl bg-white/20 dark:bg-slate-900/20 flex items-center justify-center">
                 <Zap size={20} className="text-amber-200" />
               </div>
               <div>

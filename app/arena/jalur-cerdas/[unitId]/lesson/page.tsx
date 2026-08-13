@@ -190,7 +190,7 @@ export default function LessonPage({ params }: { params: Promise<{ unitId: strin
     return (
       <div className="min-h-screen flex flex-col bg-gradient-to-br from-violet-500 to-purple-700 px-6">
         <div className="flex-1 flex flex-col items-center justify-center text-center">
-          <div className={`${isDasar ? "w-24 h-24" : "w-20 h-20"} bg-white bg-white/20 dark:bg-slate-900/20 rounded-3xl flex items-center justify-center mb-6`}>
+          <div className={`${isDasar ? "w-24 h-24" : "w-20 h-20"} bg-white/20 dark:bg-slate-900/20 rounded-3xl flex items-center justify-center mb-6`}>
             <UnitIcon emoji={unit.emoji} className={`${isDasar ? "w-12 h-12" : "w-10 h-10"} text-white`} />
           </div>
           <h1 className={`${isDasar ? "text-3xl" : "text-2xl"} font-extrabold text-white mb-2`}>{unit.title}</h1>
@@ -221,7 +221,7 @@ export default function LessonPage({ params }: { params: Promise<{ unitId: strin
   if (phase === "lesson" && lesson) {
     return (
       <div className="min-h-screen flex flex-col bg-gradient-to-br from-violet-50 to-purple-100">
- <div className="sticky top-0 z-10 bg-white bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm px-4 py-3 flex items-center gap-3">
+ <div className="sticky top-0 z-10 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm px-4 py-3 flex items-center gap-3">
           <button onClick={() => router.push(`/arena/jalur-cerdas/${unitId}`)} className="text-gray-500 hover:text-gray-700 dark:text-slate-300">
             <ArrowLeft className="w-5 h-5" />
           </button>
@@ -306,7 +306,7 @@ export default function LessonPage({ params }: { params: Promise<{ unitId: strin
     return (
       <div className="min-h-screen flex flex-col bg-gradient-to-br from-emerald-500 to-teal-700 px-6">
         <div className="flex-1 flex flex-col items-center justify-center text-center">
-          <div className="w-24 h-24 bg-white bg-white/20 dark:bg-slate-900/20 rounded-full flex items-center justify-center mb-6">
+          <div className="w-24 h-24 bg-white/20 dark:bg-slate-900/20 rounded-full flex items-center justify-center mb-6">
             {passed ? (
               <Trophy className="w-12 h-12 text-yellow-300" />
             ) : (
@@ -321,7 +321,7 @@ export default function LessonPage({ params }: { params: Promise<{ unitId: strin
               ? `Kamu menjawab ${correctCount} dari ${questions.length} soal dengan benar`
               : "Coba lagi untuk nilai yang lebih baik"}
           </p>
-          <div className="w-48 h-2 bg-white bg-white/20 dark:bg-slate-900/20 rounded-full mb-4">
+          <div className="w-48 h-2 bg-white/20 dark:bg-slate-900/20 rounded-full mb-4">
             <div
               className="h-full bg-white dark:bg-slate-800/90 rounded-full transition-all"
               style={{ width: `${pct}%` }}
@@ -331,7 +331,7 @@ export default function LessonPage({ params }: { params: Promise<{ unitId: strin
             {pct}%
           </p>
           {earnedXp > 0 && (
-            <div className="mt-4 flex items-center gap-2 bg-white bg-white/20 dark:bg-slate-900/20 px-4 py-2 rounded-xl">
+            <div className="mt-4 flex items-center gap-2 bg-white/20 dark:bg-slate-900/20 px-4 py-2 rounded-xl">
               <Zap className="w-5 h-5 text-yellow-300" />
               <span className="text-white font-bold">+{earnedXp} XP</span>
               {unit.coinReward ? (
@@ -358,7 +358,7 @@ export default function LessonPage({ params }: { params: Promise<{ unitId: strin
             )}
             <button
               onClick={() => router.push("/arena/jalur-cerdas")}
- className="bg-white bg-white/20 dark:bg-slate-900/20 text-white font-semibold px-5 py-3 rounded-xl hover:bg-white bg-white/30 transition-colors"
+ className="bg-white/20 dark:bg-slate-900/20 text-white font-semibold px-5 py-3 rounded-xl hover:bg-white/30 transition-colors"
             >
               Kembali
             </button>
@@ -398,7 +398,7 @@ export default function LessonPage({ params }: { params: Promise<{ unitId: strin
   return (
     <div className={`min-h-screen flex flex-col bg-gradient-to-br ${tema.latar} transition-colors duration-500`}>
       {/* Progress bar */}
- <div className="sticky top-0 z-10 bg-white bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm">
+ <div className="sticky top-0 z-10 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm">
         <div className="flex items-center gap-3 px-4 py-3">
           <button onClick={() => router.push(`/arena/jalur-cerdas/${unitId}`)} className="text-gray-500 hover:text-gray-700 dark:text-slate-300">
             <ArrowLeft className="w-5 h-5" />

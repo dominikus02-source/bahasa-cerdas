@@ -76,7 +76,7 @@ export function Sidebar() {
   const level = levelFromXp(user.xp || 0);
 
   return (
-    <aside className="fixed left-0 top-0 z-40 h-screen w-64 border-r bg-white bg-white/95 dark:bg-slate-900/95 backdrop-blur-sm">
+    <aside className="fixed left-0 top-0 z-40 h-screen w-64 border-r bg-white/95 dark:bg-slate-900/95 backdrop-blur-sm">
       <div className="flex h-full flex-col">
         <div className="border-b p-4">
           <Link href="/" className="flex items-center gap-2">

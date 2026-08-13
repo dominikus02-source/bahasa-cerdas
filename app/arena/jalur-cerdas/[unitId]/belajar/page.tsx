@@ -111,7 +111,7 @@ function ContentLine({ line, index, ilustrasiUrl }: { line: string; index: numbe
             <Loader2 className="w-6 h-6 text-violet-400 animate-spin" />
           </div>
         )}
- <div className="flex items-center gap-2 px-4 py-2.5 bg-white bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm">
+ <div className="flex items-center gap-2 px-4 py-2.5 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm">
           <ImageIcon className="w-4 h-4 text-violet-500 dark:text-violet-400 shrink-0" />
           <p className="text-xs text-violet-700 dark:text-violet-300 italic">{p.text}</p>
         </div>
@@ -218,7 +218,7 @@ export default function BelajarPage() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-white via-violet-50/30 to-white">
       {/* Top Progress Bar */}
- <div className="sticky top-0 z-10 bg-white bg-white/80 dark:bg-slate-900/80 backdrop-blur-lg border-b border-gray-100 dark:border-slate-800">
+ <div className="sticky top-0 z-10 bg-white/80 dark:bg-slate-900/80 backdrop-blur-lg border-b border-gray-100 dark:border-slate-800">
         <div className="px-4 py-3">
           <div className="flex items-center gap-3 mb-2">
             <button onClick={() => router.back()} className="w-9 h-9 rounded-xl bg-gray-100 dark:bg-slate-800/80 flex items-center justify-center shrink-0 hover:bg-gray-200 transition-colors">

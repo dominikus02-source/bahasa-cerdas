@@ -84,7 +84,7 @@ export default function MuridKelaskuDetailPage({ params }: { params: Promise<{ i
             <ChevronLeft className="w-4 h-4" /> Kembali ke Kelas Saya
           </Link>
           <div className="flex items-start gap-4">
-            <div className="w-16 h-16 rounded-2xl bg-white bg-white/20 dark:bg-slate-900/20 flex items-center justify-center text-white font-bold text-2xl">
+            <div className="w-16 h-16 rounded-2xl bg-white/20 dark:bg-slate-900/20 flex items-center justify-center text-white font-bold text-2xl">
               {group.name.charAt(0)}
             </div>
             <div className="flex-1">
@@ -111,7 +111,7 @@ export default function MuridKelaskuDetailPage({ params }: { params: Promise<{ i
           </div>
 
           {ketua ? (
-            <div className="flex items-center gap-3 mt-4 bg-white bg-white/10 dark:bg-slate-900/10 rounded-xl px-4 py-2.5">
+            <div className="flex items-center gap-3 mt-4 bg-white/10 dark:bg-slate-900/10 rounded-xl px-4 py-2.5">
               <Crown className="w-5 h-5 text-amber-300" />
               <span className="text-sm text-white/90">
                 <strong className="text-white">{ketua.user.fullName}</strong> — Ketua Kelas
@@ -125,7 +125,7 @@ export default function MuridKelaskuDetailPage({ params }: { params: Promise<{ i
               <button
                 onClick={handleClaim}
                 disabled={claiming}
- className="flex items-center gap-2 text-sm bg-white bg-white/15 dark:bg-slate-900/15 hover:bg-white bg-white/25 text-white px-4 py-2 rounded-xl transition-colors disabled:opacity-50"
+ className="flex items-center gap-2 text-sm bg-white/15 dark:bg-slate-900/15 hover:bg-white/25 text-white px-4 py-2 rounded-xl transition-colors disabled:opacity-50"
               >
                 <Crown className="w-4 h-4" />
                 {claiming ? "Mengklaim..." : "Klaim sebagai Ketua Kelas"}

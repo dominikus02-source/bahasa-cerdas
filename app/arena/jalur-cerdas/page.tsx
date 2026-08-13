@@ -75,7 +75,7 @@ export default async function JalurCerdasPage() {
                 <Crown className="w-8 h-8 text-yellow-900" />
               </div>
             ) : (
-              <div className="w-14 h-14 rounded-full bg-white bg-white/20 dark:bg-slate-900/20 backdrop-blur flex items-center justify-center">
+              <div className="w-14 h-14 rounded-full bg-white/20 dark:bg-slate-900/20 backdrop-blur flex items-center justify-center">
                 <Trophy className="w-8 h-8 text-white" />
               </div>
             )}
@@ -94,7 +94,7 @@ export default async function JalurCerdasPage() {
             </div>
             <span className="text-2xl font-extrabold text-white">{Math.round((totalDone / totalUnits) * 100)}%</span>
           </div>
-          <div className="w-full h-2.5 bg-white bg-white/20 dark:bg-slate-900/20 rounded-full mt-3 overflow-hidden">
+          <div className="w-full h-2.5 bg-white/20 dark:bg-slate-900/20 rounded-full mt-3 overflow-hidden">
             <div className="h-full bg-white dark:bg-slate-800/90 rounded-full transition-all duration-700" style={{ width: `${totalUnits > 0 ? (totalDone / totalUnits) * 100 : 0}%` }} />
           </div>
         </div>

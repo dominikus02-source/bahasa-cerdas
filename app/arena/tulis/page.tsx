@@ -173,13 +173,13 @@ export default function ArenaTulisPage() {
         >
           <div className="flex items-start gap-3">
             <div className={`w-11 h-11 rounded-xl flex items-center justify-center shrink-0 ${
-              isChallengeType ? "bg-white bg-white/20 dark:bg-slate-900/20" : "bg-violet-100"
+              isChallengeType ? "bg-white/20 dark:bg-slate-900/20" : "bg-violet-100"
             }`}>
               <Sparkles size={22} className={isChallengeType ? "text-yellow-300" : "text-violet-600 dark:text-violet-400"} />
             </div>
             <div className="flex-1 min-w-0">
               <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${
-                isChallengeType ? "bg-white bg-white/20 dark:bg-slate-900/20" : "bg-violet-100 text-violet-700 dark:text-violet-300"
+                isChallengeType ? "bg-white/20 dark:bg-slate-900/20" : "bg-violet-100 text-violet-700 dark:text-violet-300"
               }`}>
                 Tantangan Minggu Ini
               </span>

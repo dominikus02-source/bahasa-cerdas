@@ -78,7 +78,7 @@ export function RankUpModal() {
                 playClick();
                 dismissRankUp();
               }}
-              className="absolute right-4 top-4 rounded-full bg-white bg-white/10 dark:bg-slate-900/10 p-1.5 text-[var(--px-text-dim)] hover:text-white"
+              className="absolute right-4 top-4 rounded-full bg-white/10 dark:bg-slate-900/10 p-1.5 text-[var(--px-text-dim)] hover:text-white"
               aria-label="Tutup"
             >
               <X size={16} />

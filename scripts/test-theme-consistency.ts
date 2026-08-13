@@ -118,7 +118,7 @@ function scanLightOnly(re: RegExp): { total: number; samples: string[] } {
 }
 
 console.log("\n2. No light-only surface without dark variant");
-const surfaces = scanLightOnly(/\bbg-white\b|\bbg-gray-50\b|\bbg-gray-100\b|\bbg-slate-50\b|\bbg-slate-100\b/);
+const surfaces = scanLightOnly(/\bbg-white(?![/\w-])\b|\bbg-gray-50\b|\bbg-gray-100\b|\bbg-slate-50\b|\bbg-slate-100\b/);
 test(`0 light-only surface tanpa dark: (ditemukan ${surfaces.total})`, () => surfaces.total === 0);
 
 console.log("\n3. No dark typography without dark variant");
@@ -134,6 +134,55 @@ const tint = scanLightOnly(
   /\bbg-(amber|green|red|blue|violet|emerald|yellow|orange|sky|purple)-50\b|\bborder-(amber|green|red|blue|violet|emerald|yellow|orange|sky|purple)-(100|200|300)\b|\btext-(amber|green|red|blue|violet|emerald|yellow|orange|sky|purple)-(500|600|700)\b/
 );
 test(`0 light-only tint tanpa dark: (ditemukan ${tint.total})`, () => tint.total === 0);
+
+/* ------------------------------------------------------------------ */
+/* 4c. Interaction states (hover/active/focus/selected)                */
+/* ------------------------------------------------------------------ */
+
+console.log("\n4c. Interaction states have dark/translucent handling");
+function scanInteraction(re: RegExp, label: string): { total: number } {
+  let total = 0;
+  for (const f of studentFiles) {
+    if (f.includes("app/arena/bottom-nav.tsx") || f.includes("/game/")) continue;
+    readFileSync(f, "utf8")
+      .split("\n")
+      .forEach((line) => {
+        if (isComment(line)) return;
+        if (line.includes("dark:")) return;
+        if (re.test(line)) total++;
+      });
+  }
+  return { total };
+}
+const bareHoverWhite = scanInteraction(/\bhover:bg-white(?![/\w])\b|\bactive:bg-white(?![/\w])\b|\bfocus:bg-white(?![/\w])\b/, "bare hover/active/focus bg-white");
+test(`0 hover/active/focus:bg-white tanpa dark/translucent: (ditemukan ${bareHoverWhite.total})`, () => bareHoverWhite.total === 0);
+const invalidDup = scanInteraction(/\bbg-white bg-white\//, "stray duplicate bg-white");
+test(`0 duplikat stray 'bg-white bg-white/N' (ditemukan ${invalidDup.total})`, () => invalidDup.total === 0);
+const brokenArb = scanInteraction(/ \/\[[0-9.]+\]/, "broken arbitrary class `/[0.NN]`");
+test(`0 kelas rusak 'bg-white /[0.NN]' (ditemukan ${brokenArb.total})`, () => brokenArb.total === 0);
+const hoverGray = scanInteraction(/\bhover:bg-gray-(50|100)\b|\bactive:bg-gray-(50|100|200)\b/, "hover/active gray");
+test(`0 hover/active:bg-gray-50/100/200 tanpa dark: (ditemukan ${hoverGray.total})`, () => hoverGray.total === 0);
+test("league tabs (Harian/Mingguan) punya dark handling (selected + inactive + hover)", () => {
+  const lt = read("app/arena/league/league-tabs.tsx");
+  return lt.includes("dark:text-violet-300") &&
+    lt.includes("dark:text-slate-400") &&
+    lt.includes("dark:hover:text-violet-300") &&
+    lt.includes("dark:from-slate-800/80");
+});
+test("leaderboard row memakai zone glass (bukan bg-white solid)", () => {
+  const lb = read("components/arena/player/leaderboard-panel.tsx");
+  return lb.includes("bg-[var(--px-glass)] hover:bg-[var(--px-glass-strong)]");
+});
+test("profil interactive (follow/like) glass hover translusen", () => {
+  const ph = read("components/profile/ProfileHero.tsx");
+  return !ph.includes("hover:bg-white\"") && !ph.includes("hover:bg-white ");
+});
+test("beranda cards (student-home) hover tidak solid white", () => {
+  const src = ["AIBCHomeCard", "RecentWorksSection", "RuangBelajarSection", "SimulasiUjianSection", "LearningJourneySection"]
+    .map((n) => read(`components/student-home/${n}.tsx`))
+    .join("\n");
+  return !src.includes("hover:bg-white dark:bg-slate-800/90") && !src.includes("hover:bg-white\"");
+});
 
 /* ------------------------------------------------------------------ */
 /* 5. Interactive components have theme handling                       */
@@ -221,13 +270,21 @@ console.log("\n9. Arena & gamification theme handling");
 const arenaFiles = [
   "app/arena/page.tsx",
   "app/arena/league/league-tabs.tsx",
+];
+for (const f of arenaFiles) {
+  test(`${f} punya dark variant`, () => read(f).includes("dark:"));
+}
+// Zona player memakai sistem --px-* (theme-agnostic navy premium) — bukan dark: class.
+const zoneFiles = [
   "components/arena/player/player-dashboard.tsx",
   "components/arena/player/leaderboard-panel.tsx",
   "components/arena/player/badge-grid.tsx",
   "components/arena/player/xp-history-timeline.tsx",
+  "components/arena/player/leaderboard-panel.tsx",
 ];
-for (const f of arenaFiles) {
-  test(`${f} punya dark variant`, () => read(f).includes("dark:"));
+for (const f of zoneFiles) {
+  test(`${f} memakai token zone --px (bukan bg-white solid)`, () =>
+    !read(f).includes("bg-white ") && !read(f).includes("bg-white\"" ) && read(f).includes("--px-"));
 }
 test("player-theme tidak pure black (navy premium)", () => {
   const css = read("app/arena/player-theme.css");

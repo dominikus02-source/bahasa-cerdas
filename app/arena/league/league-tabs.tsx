@@ -67,14 +67,14 @@ export default function LeagueTabs({ weekly, daily, hallOfFame, userId, userXP, 
   return (
     <div className="bg-white dark:bg-slate-800/90 rounded-2xl border border-gray-100 dark:border-slate-800 overflow-hidden">
       {/* Tab Header */}
-      <div className="flex border-b border-gray-100 dark:border-slate-800 bg-gradient-to-r from-violet-50 to-purple-50">
-        <button onClick={() => setTab("mingguan")} className={`flex-1 text-center py-3.5 text-sm font-bold transition-all border-b-2 ${!isHarian && !isHof ? "text-violet-700 dark:text-violet-300 border-violet-600" : "text-gray-500 border-transparent hover:text-violet-600"}`}>
+      <div className="flex border-b border-gray-100 dark:border-slate-800 bg-gradient-to-r from-violet-50 to-purple-50 dark:from-slate-800/80 dark:to-slate-800/60">
+        <button onClick={() => setTab("mingguan")} className={`flex-1 text-center py-3.5 text-sm font-bold transition-all border-b-2 ${!isHarian && !isHof ? "text-violet-700 dark:text-violet-300 border-violet-600" : "text-gray-500 dark:text-slate-400 border-transparent hover:text-violet-600 dark:hover:text-violet-300"}`}>
           🏆 XP Mingguan
         </button>
-        <button onClick={() => setTab("harian")} className={`flex-1 text-center py-3.5 text-sm font-bold transition-all border-b-2 ${isHarian ? "text-violet-700 dark:text-violet-300 border-violet-600" : "text-gray-500 border-transparent hover:text-violet-600"}`}>
+        <button onClick={() => setTab("harian")} className={`flex-1 text-center py-3.5 text-sm font-bold transition-all border-b-2 ${isHarian ? "text-violet-700 dark:text-violet-300 border-violet-600" : "text-gray-500 dark:text-slate-400 border-transparent hover:text-violet-600 dark:hover:text-violet-300"}`}>
           🔥 Paling Aktif Hari Ini
         </button>
-        <button onClick={() => setTab("hall-of-fame")} className={`flex-1 text-center py-3.5 text-sm font-bold transition-all border-b-2 ${isHof ? "text-violet-700 dark:text-violet-300 border-violet-600" : "text-gray-500 border-transparent hover:text-violet-600"}`}>
+        <button onClick={() => setTab("hall-of-fame")} className={`flex-1 text-center py-3.5 text-sm font-bold transition-all border-b-2 ${isHof ? "text-violet-700 dark:text-violet-300 border-violet-600" : "text-gray-500 dark:text-slate-400 border-transparent hover:text-violet-600 dark:hover:text-violet-300"}`}>
           🏅 Hall of Fame
         </button>
       </div>
@@ -115,7 +115,7 @@ export default function LeagueTabs({ weekly, daily, hallOfFame, userId, userXP, 
         <>
       {/* User's own card */}
       <div className={`mx-4 mt-4 p-4 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 text-white flex items-center gap-4 ${!isHarian ? "shadow-lg shadow-violet-200" : "shadow-lg shadow-orange-200"}`}>
-        <div className="w-12 h-12 rounded-full bg-white bg-white/20 dark:bg-slate-900/20 flex items-center justify-center text-lg font-bold border-2 border-white/30">
+        <div className="w-12 h-12 rounded-full bg-white/20 dark:bg-slate-900/20 flex items-center justify-center text-lg font-bold border-2 border-white/30">
           {initials(nameOf({ id: userId, fullName: "Kamu", displayName: "Kamu", avatar: null, xp: userXP, level: 0, streak: 0 }))}
         </div>
         <div className="flex-1">

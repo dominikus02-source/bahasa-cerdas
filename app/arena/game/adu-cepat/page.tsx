@@ -180,7 +180,7 @@ export default function AduCepatPage() {
     <div className="game-fullscreen min-h-screen bg-gradient-to-b from-slate-900 via-violet-950 to-slate-900 text-white">
       <button
         onClick={handleBack}
- className="fixed top-3 left-3 z-[70] w-9 h-9 rounded-xl bg-white bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border border-gray-200 dark:border-slate-700 shadow-md flex items-center justify-center text-gray-700 dark:text-slate-300 hover:bg-white dark:bg-slate-800/90 active:scale-95 transition-all arena-btn"
+ className="fixed top-3 left-3 z-[70] w-9 h-9 rounded-xl bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border border-gray-200 dark:border-slate-700 shadow-md flex items-center justify-center text-gray-700 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-800/90 active:scale-95 transition-all arena-btn"
       >
         <ArrowLeft className="w-5 h-5" />
       </button>
@@ -211,7 +211,7 @@ export default function AduCepatPage() {
                 </button>
                 <Link
                   href="/arena/game/kuis-tempur"
- className="block w-full py-3.5 rounded-2xl bg-white bg-white/10 dark:bg-slate-900/10 border border-white/20 text-white/80 font-semibold text-sm text-center hover:bg-white bg-white/20 transition-all"
+ className="block w-full py-3.5 rounded-2xl bg-white/10 dark:bg-slate-900/10 border border-white/20 text-white/80 font-semibold text-sm text-center hover:bg-white/20 transition-all"
                 >
                   Buat Ruangan Manual
                 </Link>
@@ -242,7 +242,7 @@ export default function AduCepatPage() {
               </div>
               <button
                 onClick={handleCancel}
- className="px-6 py-2.5 rounded-xl bg-white bg-white/10 dark:bg-slate-900/10 border border-white/20 text-white/70 text-sm font-medium hover:bg-white bg-white/20 transition-all"
+ className="px-6 py-2.5 rounded-xl bg-white/10 dark:bg-slate-900/10 border border-white/20 text-white/70 text-sm font-medium hover:bg-white/20 transition-all"
               >
                 Batalkan
               </button>
@@ -309,7 +309,7 @@ export default function AduCepatPage() {
                 {didWin ? "Selamat! Kamu berhasil mengalahkan lawanmu!" : "Jangan menyerah, coba lagi!"}
               </p>
 
-              <div className="bg-white bg-white/10 dark:bg-slate-900/10 backdrop-blur-md border border-white/10 rounded-2xl p-4 mb-4">
+              <div className="bg-white/10 dark:bg-slate-900/10 backdrop-blur-md border border-white/10 rounded-2xl p-4 mb-4">
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-2">
                     <div className="w-8 h-8 rounded-lg bg-violet-500/30 flex items-center justify-center">
@@ -366,7 +366,7 @@ export default function AduCepatPage() {
                 </button>
                 <button
                   onClick={handleBack}
- className="flex-1 py-3.5 rounded-2xl bg-white bg-white/10 dark:bg-slate-900/10 border border-white/20 text-white/80 font-semibold text-sm text-center hover:bg-white bg-white/20 transition-all"
+ className="flex-1 py-3.5 rounded-2xl bg-white/10 dark:bg-slate-900/10 border border-white/20 text-white/80 font-semibold text-sm text-center hover:bg-white/20 transition-all"
                 >
                   Ke Menu Gim
                 </button>

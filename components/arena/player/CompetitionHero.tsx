@@ -52,7 +52,7 @@ export default function CompetitionHero({ payload }: { payload: WeeklyCompetitio
 
       {/* My standing */}
       <div className="mx-4 mt-4 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 text-white p-4 flex items-center gap-4">
-        <div className="w-12 h-12 rounded-full bg-white bg-white/20 dark:bg-slate-900/20 flex items-center justify-center text-lg font-extrabold border-2 border-white/30 shrink-0">
+        <div className="w-12 h-12 rounded-full bg-white/20 dark:bg-slate-900/20 flex items-center justify-center text-lg font-extrabold border-2 border-white/30 shrink-0">
           {my ? `#${my.rank}` : "—"}
         </div>
         <div className="flex-1 min-w-0">

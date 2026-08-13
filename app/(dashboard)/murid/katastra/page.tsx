@@ -103,7 +103,7 @@ export default function KataStraPage() {
           </div>
 
           {/* Level & XP Card */}
-          <div className="bg-white bg-white/10 dark:bg-slate-900/10 backdrop-blur-md border border-white/10 rounded-2xl p-4 mb-3">
+          <div className="bg-white/10 dark:bg-slate-900/10 backdrop-blur-md border border-white/10 rounded-2xl p-4 mb-3">
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center gap-3">
                 <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center text-lg font-bold shadow-lg">
@@ -121,7 +121,7 @@ export default function KataStraPage() {
                 <span className={`font-bold text-lg ${streak > 0 ? "text-orange-400" : "text-white/50"}`}>{streak}</span>
               </div>
             </div>
-            <div className="h-2.5 bg-white bg-white/10 dark:bg-slate-900/10 rounded-full overflow-hidden">
+            <div className="h-2.5 bg-white/10 dark:bg-slate-900/10 rounded-full overflow-hidden">
               <div
                 className="h-full bg-gradient-to-r from-violet-400 to-pink-500 rounded-full transition-all duration-500"
                 style={{ width: `${xpProgress}%` }}
@@ -134,7 +134,7 @@ export default function KataStraPage() {
           </div>
 
           {/* Daily Streak */}
-          <div className="bg-white bg-white/10 dark:bg-slate-900/10 backdrop-blur-md border border-white/10 rounded-2xl p-4">
+          <div className="bg-white/10 dark:bg-slate-900/10 backdrop-blur-md border border-white/10 rounded-2xl p-4">
             <div className="flex items-center justify-between mb-3">
               <p className="text-xs font-semibold text-violet-200 flex items-center gap-1">
                 <Flame size={14} className="text-orange-400" /> Rentetan Harian
@@ -150,7 +150,7 @@ export default function KataStraPage() {
                 <div key={i} className="flex-1 flex flex-col items-center gap-1">
                   <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all ${
                     i < streak ? "bg-yellow-400 text-yellow-900 shadow-md" : i === streak && !playedToday
-                      ? "bg-violet-400 text-white ring-2 ring-violet-300 animate-pulse" : "bg-white bg-white/10 dark:bg-slate-900/10 text-white/30"
+                      ? "bg-violet-400 text-white ring-2 ring-violet-300 animate-pulse" : "bg-white/10 dark:bg-slate-900/10 text-white/30"
                   }`}>
                     {i + 1}
                   </div>
@@ -186,7 +186,7 @@ export default function KataStraPage() {
           <Link
             key={mode.id}
             href={mode.comingSoon ? "#" : mode.href}
- className={`block bg-white bg-white/5 dark:bg-slate-900/5 backdrop-blur-md border border-white/10 rounded-2xl p-4 hover:bg-white bg-white/10 transition-all ${
+ className={`block bg-white/5 dark:bg-slate-900/5 backdrop-blur-md border border-white/10 rounded-2xl p-4 hover:bg-white/10 transition-all ${
               mode.comingSoon ? "opacity-60 cursor-not-allowed" : ""
             }`}
           >
@@ -216,12 +216,12 @@ export default function KataStraPage() {
 
         {/* Stats Quick View */}
         <div className="grid grid-cols-2 gap-3 pt-2">
-          <div className="bg-white bg-white/5 dark:bg-slate-900/5 border border-white/10 rounded-xl p-3">
+          <div className="bg-white/5 dark:bg-slate-900/5 border border-white/10 rounded-xl p-3">
             <TrendingUp size={16} className="text-violet-400 mb-1" />
             <p className="text-xs text-violet-200/60">Poin Pengalaman Hari Ini</p>
             <p className="text-lg font-bold">{loading ? "..." : xp}</p>
           </div>
-          <div className="bg-white bg-white/5 dark:bg-slate-900/5 border border-white/10 rounded-xl p-3">
+          <div className="bg-white/5 dark:bg-slate-900/5 border border-white/10 rounded-xl p-3">
             <Trophy size={16} className="text-yellow-400 mb-1" />
             <p className="text-xs text-violet-200/60">Peringkat</p>
             <p className="text-lg font-bold">{meta.label}</p>

@@ -12,13 +12,13 @@ export function PembelajaranCard({
 }) {
   return (
     <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-emerald-600 via-emerald-700 to-teal-800 p-5 mb-5 shadow-lg shadow-emerald-500/25">
-      <div className="absolute -top-6 -right-6 w-28 h-28 rounded-full bg-white bg-white/5 dark:bg-slate-900/5" />
-      <div className="absolute -bottom-4 -left-4 w-20 h-20 rounded-full bg-white bg-white/5 dark:bg-slate-900/5" />
+      <div className="absolute -top-6 -right-6 w-28 h-28 rounded-full bg-white/5 dark:bg-slate-900/5" />
+      <div className="absolute -bottom-4 -left-4 w-20 h-20 rounded-full bg-white/5 dark:bg-slate-900/5" />
       <div className="absolute top-2 right-12 w-10 h-10 rounded-full bg-emerald-400/10" />
 
       <div className="relative z-10">
         <div className="flex items-center gap-3 mb-3">
-          <div className="w-10 h-10 rounded-xl bg-white bg-white/20 dark:bg-slate-900/20 flex items-center justify-center backdrop-blur-sm">
+          <div className="w-10 h-10 rounded-xl bg-white/20 dark:bg-slate-900/20 flex items-center justify-center backdrop-blur-sm">
             <GraduationCap className="w-6 h-6 text-white" />
           </div>
           <div>
@@ -30,7 +30,7 @@ export function PembelajaranCard({
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
           <Link
             href="/arena/tugas"
-            className="group flex items-start gap-3 bg-white bg-white/95 dark:bg-slate-900/95 rounded-xl p-4 hover:bg-white dark:bg-slate-800/90 hover:shadow-lg hover:shadow-emerald-900/20 active:scale-[0.98] transition-all"
+            className="group flex items-start gap-3 bg-white/95 dark:bg-slate-900/95 rounded-xl p-4 hover:bg-white dark:hover:bg-slate-800/90 hover:shadow-lg hover:shadow-emerald-900/20 active:scale-[0.98] transition-all"
           >
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center shrink-0 shadow-sm">
               <BookOpen className="w-5 h-5 text-white" />
@@ -53,7 +53,7 @@ export function PembelajaranCard({
 
           <Link
             href="/arena/materi"
-            className="group flex items-start gap-3 bg-white bg-white/95 dark:bg-slate-900/95 rounded-xl p-4 hover:bg-white dark:bg-slate-800/90 hover:shadow-lg hover:shadow-emerald-900/20 active:scale-[0.98] transition-all"
+            className="group flex items-start gap-3 bg-white/95 dark:bg-slate-900/95 rounded-xl p-4 hover:bg-white dark:hover:bg-slate-800/90 hover:shadow-lg hover:shadow-emerald-900/20 active:scale-[0.98] transition-all"
           >
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center shrink-0 shadow-sm">
               <Library className="w-5 h-5 text-white" />
