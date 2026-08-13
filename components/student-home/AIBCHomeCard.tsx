@@ -1,7 +1,8 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
-import { MessageCircle } from "lucide-react";
+import { gambarKarakter } from "@/lib/arena-junior/karakter";
 
 const QUICK_TOPICS = ["Arti kata", "Tata bahasa", "Sinonim", "Latihan UKBI"];
 
@@ -12,10 +13,14 @@ export function AIBCHomeCard() {
       <div className="absolute -top-16 -right-16 w-52 h-52 rounded-full bg-emerald-400/15 blur-3xl pointer-events-none" />
       <div className="relative">
         <div className="flex items-center gap-4">
-          <div className="shrink-0">
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-400 to-teal-600 flex items-center justify-center shadow-lg shadow-emerald-500/30">
-              <MessageCircle size={24} className="text-white" />
-            </div>
+          <div className="shrink-0 w-14 h-14" aria-hidden="true">
+            <Image
+              src={gambarKarakter("zelby", "reading")}
+              alt=""
+              width={56}
+              height={56}
+              className="h-full w-full object-contain drop-shadow"
+            />
           </div>
           <div className="min-w-0">
             <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-emerald-300">AI BC</p>

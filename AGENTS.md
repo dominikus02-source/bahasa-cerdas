@@ -3277,3 +3277,59 @@ Role-switch destination yang menunjuk ke konteks produk SAAT INI disembunyikan: 
 3. GameRoom migration SQL via Supabase dashboard
 4. UI game solo: badge-score client vs server masih beda (kosmetik)
 5. SQL `2026-08-02_no_absen.sql` & `2026-08-08_school_identity.sql` (Production + Preview)
+
+---
+
+## Phase AI BC 2.0 — Contextual Learning & Teaching Companion (Aug 13, 2026)
+
+### Goal
+Upgrade AI BC dari chatbot generik menjadi companion kontekstual per-peran (Murid = "Teman Belajarmu", Guru = "Teman Guru") di atas shell terpadu 5.x, dengan route chat SSE baru yang memakai ulang inti provider AI. **NOT COMMITTED — menunggu Founder Review (pola 5.0/5.2.1).**
+
+### Keputusan Arsitektur
+1. **Route baru, bukan upgrade agent-stream**: `POST /api/ai/bc/chat` (SSE) reuse `streamProviderText` (DeepSeek→Groq→Gemini, rotasi multi-key), `checkInput` (warn-only), `checkAgentRateLimit` (30/menit, premium ×2), `logUsage` (fire-and-forget, feature `ai-bc-chat`). **Tanpa potongan kredit** — konsisten legacy `/api/ai/chat` (gratis); hanya generator (RPP/Soal/PPT) yang memakai kuota.
+2. **Peran hanya dari sesi**: payload klien hanya `{ messages }` — tanpa mode/role dari klien; `getPersonaForRole(user.role)` server-side.
+3. **Persona tunggal** "AI BC — Teman cerdas untuk belajar dan mengajar Bahasa Indonesia." tanpa klise "Sebagai AI," / nama vendor (Gemini/Google) / domain mati `bahasacerdas.site` / emoji di sapaan.
+4. **Konteks aman**: `gatherBcContext` best-effort per-sumber (try/catch — gagal tidak menggagalkan chat), read-only (`db.profile`, `db.playerProfile.findUnique`, `getSkillProfile` — TANPA upsert/tulis), tanpa dump mentah; cap 6 item/1200 char/90 char per nilai.
+5. **Additive-only**: legacy `/api/ai/chat`, `/murid/ai` redirect, 9 agent, shell 5.x tidak disentuh; Prisma untouched (tanpa persistensi percakapan — state client-only).
+
+### Entry Point (satu pengalaman per peran)
+| Route | Pengalaman |
+|-------|-----------|
+| `/arena/ai` | Murid — server component, persona Teman Belajarmu, tema violet, aksi cepat Belajar/Latihan/Jelaskan/Tantang Aku |
+| `/guru/ai-bc` | Guru (GURU/founder; non-guru redirect `/arena/ai`) — persona Teman Guru, tema emerald, aksi cepat Buat Materi/Buat Soal/Rancang Pembelajaran/Cari Ide |
+| `/ai-bc` | Publik — landing 4 kartu fitur; signed-in redirect by role (`isTeacher = role GURU\|ADMIN \|\| isFounder` → `/guru/ai-bc`, lain → `/arena/ai`); tanpa "Generate" |
+
+### File
+- BARU: `src/ai/bc/personas.ts` (BcPersonaKey/BcIntentMode/classifyIntent/buildChatHistory/buildSystemPrompt), `lib/ai-bc/context.ts` (gatherBcContext/buildContextText/getBcHints — buildContextText sendiri men-condense nilai), `app/api/ai/bc/chat/route.ts` (SSE, maxDuration 60, 401 tanpa sesi), `components/ai-bc/{ai-bc-types,ai-bc-stream,AiBcLanding,AiBcChatView,AiBcModule}.tsx` (parseSseData di-export untuk test; a11y role=status/aria-live; Salin/Tersalin/Tanya ulang/Mulai baru), `app/(dashboard)/guru/ai-bc/page.tsx`, `scripts/test-ai-bc-{architecture,personas,context,navigation,theme,ui}.ts`
+- DIUBAH: `app/arena/ai/page.tsx` (server component role-driven), `app/ai-bc/page.tsx` + `layout.tsx`, `components/dashboard/GuruNav.tsx` (nav item "AI BC" Sparkles setelah Alat AI), `package.json` (6 script `test:ai-bc-*`)
+- Report: `docs/BC_AI_2_0_REPORT.md`
+
+### Catatan Perbaikan (penting untuk fase berikut)
+- **Enum Role tanpa "FOUNDER"**: `Role` Prisma = MURID/GURU/ADMIN saja; founder = `user.isFounder` boolean. Jangan pernah menulis `role === "FOUNDER"` (TS2367) — pakai `isFounder`.
+- **Anti-klise "Sebagai AI"**: test memakai pola `"sebagai ai,"` (komma) agar frasa sah "perkenalkan dirimu sebagai AI BC" tidak kena false positive.
+- **BuildContextText harus menormalkan sendiri** nilai (collapse `\s+`, cap 90 + `…`, cap total 1200) — jangan bergantung pada `pushItem`.
+
+### Verifikasi
+| Check | Hasil |
+|-------|-------|
+| `test:ai-bc-architecture` / `personas` / `context` / `navigation` / `theme` / `ui` | ✅ 28 · ✅ 42 · ✅ 19 · ✅ 23 · ✅ 21 · ✅ 37 |
+| `test:gamification-engine` / `guru-phase` | ✅ SEMUA LULUS |
+| `test:unified-shell` / `arena-nav-theme` / `icon-system` / `navigation-context` | ✅ ALL PASS |
+| `test:student-shell` / `student-home` / `student-consolidation` / `karya-consolidation` | ✅ ALL PASS |
+| `test:global-works-discovery` / `premium-economy` / `social-hardening` | ✅ ALL PASS |
+| `test:arena-web` / `arena-chat` / `unified-header` | ✅ ALL PASS |
+| `test:simulation-workflow` / `phase-simulation-workflow` (tsx) | ✅ All passed |
+| `test:bigt-menu` / `phase9g-admin-payments` (tsx) / `game-question-shuffle` | ✅ 26 · ✅ 28 · ✅ 24 |
+| `test:bahasa-indonesia-ui` | 57/62 (5 gagal pre-eksis: BigtInfoPage + panel RPP) |
+| `npx tsc --noEmit` | ✅ 0 errors |
+| ESLint (17 file) | ✅ 0 violations |
+| `npm run build` (dummy env) | ✅ Compiled successfully, exit 0 |
+| `git diff --check` | ✅ bersih |
+| Protected zones | ✅ 0 diff (prisma/ app/api/ai/chat lib/gamification/ lib/learning-loop/ lib/coins.ts lib/award-xp.ts) |
+
+### Remaining (tidak berubah)
+1. TKA UTBK/Guru enrichment 30 → 150
+2. Game server revival (VPS mati)
+3. GameRoom migration SQL via Supabase dashboard
+4. UI game solo: badge-score client vs server masih beda (kosmetik)
+5. SQL `2026-08-02_no_absen.sql` & `2026-08-08_school_identity.sql` (Production + Preview)

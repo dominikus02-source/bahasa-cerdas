@@ -142,6 +142,12 @@ export const GURU_NAV: NavGroup[] = [
     href: "/guru/ai-tools",
   },
   {
+    id: "ai-bc",
+    label: "AI BC",
+    icon: Sparkles,
+    href: "/guru/ai-bc",
+  },
+  {
     id: "komunitas",
     label: "Komunitas",
     icon: Users,

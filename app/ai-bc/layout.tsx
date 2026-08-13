@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "AI BC — Asisten AI Guru Bahasa Indonesia — BahasaCerdas",
-  description: "Asisten AI untuk guru Bahasa Indonesia. Buat Rencana Pembelajaran, bank soal HOTS, materi ajar, dan kisi-kisi otomatis dengan kecerdasan buatan.",
+  title: "AI BC — Teman cerdas untuk belajar dan mengajar Bahasa Indonesia — BahasaCerdas",
+  description:
+    "AI BC adalah teman belajar Bahasa Indonesia untuk murid dan teman mengajar untuk guru: arti kata, tata bahasa, PUEBI, latihan soal, sampai bantuan menyusun RPP dan asesmen.",
   openGraph: {
-    title: "AI BC — Asisten AI Guru | BahasaCerdas",
-    description: "Buat Rencana Pembelajaran, soal HOTS, dan materi ajar Bahasa Indonesia dengan AI. Gratis untuk guru.",
+    title: "AI BC — Teman cerdas untuk belajar dan mengajar Bahasa Indonesia",
+    description:
+      "Belajar dan mengajar Bahasa Indonesia dengan AI BC: kosakata, tata bahasa, latihan UKBI, RPP, dan asesmen.",
   },
 };
 

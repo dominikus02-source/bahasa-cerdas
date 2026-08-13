@@ -200,7 +200,13 @@
     "test:unified-shell": "npx tsx scripts/test-unified-shell.ts",
     "test:unified-header": "npx tsx scripts/test-unified-header.ts",
     "test:icon-system": "npx tsx scripts/test-icon-system.ts",
-    "test:navigation-context": "npx tsx scripts/test-navigation-context.ts"
+    "test:navigation-context": "npx tsx scripts/test-navigation-context.ts",
+    "test:ai-bc-architecture": "npx tsx scripts/test-ai-bc-architecture.ts",
+    "test:ai-bc-personas": "npx tsx scripts/test-ai-bc-personas.ts",
+    "test:ai-bc-context": "npx tsx scripts/test-ai-bc-context.ts",
+    "test:ai-bc-navigation": "npx tsx scripts/test-ai-bc-navigation.ts",
+    "test:ai-bc-theme": "npx tsx scripts/test-ai-bc-theme.ts",
+    "test:ai-bc-ui": "npx tsx scripts/test-ai-bc-ui.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.39.0",
