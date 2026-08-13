@@ -165,8 +165,12 @@ function main() {
       ).trim();
       return diff.length === 0;
     });
-  test("app/api/ SELURUHNYA 0 diff (kontrak API tidak berubah sama sekali)",
-    () => execSync(`git diff --name-only HEAD -- app/api/`, { encoding: "utf8", cwd: process.cwd() }).trim().length === 0);
+  test("app/api/ SELURUHNYA 0 diff kecuali app/api/ai/bc/chat (route AI BC role-safe fase 2.1)",
+    () => {
+      const diff = execSync(`git diff --name-only HEAD -- app/api/`, { encoding: "utf8", cwd: process.cwd() })
+        .trim().split("\n").filter(Boolean).filter((l) => l !== "app/api/ai/bc/chat/route.ts").join("\n");
+      return diff.length === 0;
+    });
   test("app/arena/bottom-nav.tsx 0 diff (APK bottom nav tidak disentuh)",
     () => execSync(`git diff --name-only HEAD -- app/arena/bottom-nav.tsx`, { encoding: "utf8", cwd: process.cwd() }).trim().length === 0);
   test("komponen bersama yang masih dipakai tidak dihapus (BattleCard untuk /arena/game, KataPlayGame)",

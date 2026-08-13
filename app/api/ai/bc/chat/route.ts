@@ -1,14 +1,20 @@
 /**
- * POST /api/ai/bc/chat — AI BC 2.0 Chat (SSE streaming)
+ * POST /api/ai/bc/chat — AI BC 2.1 Chat (SSE streaming)
  *
  * AI BC — Teman cerdas untuk belajar dan mengajar Bahasa Indonesia.
  *
- * Desain (Phase 5.3):
+ * Desain (Phase 5.3 + 2.1 role-safe):
  * - Peran pengguna DITENTUKAN DARI SESI (server-side) — payload klien
  *   TIDAK pernah membawa peran/mode. Tidak ada mode switch manual.
- * - Persona: murid → "Teman Belajarmu", guru → "Teman Guru"
- *   (src/ai/bc/personas.ts, pure).
- * - Konteks ringkas best-effort per pengguna (lib/ai-bc/context.ts).
+ * - Pemetaan role-safe (getPersonaForUser): MURID → Teman Belajarmu,
+ *   GURU → Teman Guru, FOUNDER (isFounder) → Assistant Profesional,
+ *   ADMIN → Assistant Profesional, unknown → netral. getPersonaForRole
+ *   (legacy) dipertahankan untuk kompatibilitas API & pengujian.
+ * - Prompt-builder guard (buildPersonaPrompt): peran MURID TIDAK pernah
+ *   menerima kapabilitas guru — kebocoran melempar error (fail-loud).
+ * - Pengetahuan resmi (buildBcKnowledgeBlock): identitas SSOT + peta produk.
+ * - Konteks ringkas best-effort per pengguna (lib/ai-bc/context.ts),
+ *   terisolasi per peran: murid hanya data belajar, guru hanya data kelas.
  * - Provider chain yang sama dengan agent lain (deepseek → groq → gemini,
  *   multi-key, fallback) via streamProviderText.
  * - Guardrails input (PII/profanitas) + rate limit 30/menit (bc-assistant).
@@ -27,10 +33,11 @@ import { streamProviderText } from "@/src/ai/core/provider";
 import { logUsage } from "@/src/ai/core/usage-logger";
 import {
   buildChatHistory,
-  buildSystemPrompt,
+  buildPersonaPrompt,
   classifyIntent,
-  getPersonaForRole,
+  getPersonaForUser,
 } from "@/src/ai/bc/personas";
+import { buildBcKnowledgeBlock } from "@/src/ai/bc/knowledge";
 import { buildContextText, gatherBcContext } from "@/lib/ai-bc/context";
 
 export const maxDuration = 60;
@@ -62,7 +69,11 @@ export async function POST(req: NextRequest) {
     }
 
     // Peran murni dari sesi — payload klien tidak dipercaya untuk ini.
-    const persona = getPersonaForRole(user.role);
+    // getPersonaForUser (role-safe): MURID→student, GURU→teacher,
+    // isFounder→founder, ADMIN→admin, unknown→neutral. getPersonaForRole
+    // (legacy) dipertahankan untuk kompatibilitas API/pengujian.
+    const persona = getPersonaForUser({ role: user.role, isFounder: user.isFounder });
+    const roleKey = persona.key as "student" | "teacher" | "founder" | "admin" | "neutral";
 
     // Guardrails: catat peringatan, tidak memblokir (konsisten dengan core).
     const lastUserMsg = [...history].reverse().find((m) => m.role === "user");
@@ -78,11 +89,15 @@ export async function POST(req: NextRequest) {
     if (rl) return rl;
 
     // Konteks best-effort — tidak pernah menggagalkan chat.
-    const context = await gatherBcContext(user).catch(() => ({ role: persona.key as "student" | "teacher", items: [] }));
+    const context = await gatherBcContext(user).catch(() => ({ role: roleKey, items: [] }));
     const contextText = buildContextText(context);
 
     const intentMode = classifyIntent(lastUserMsg?.content ?? "");
-    const systemPrompt = buildSystemPrompt({ persona, contextText, intentMode });
+    // Pengetahuan resmi BC (identitas SSOT + peta produk per peran).
+    const knowledgeBlock = buildBcKnowledgeBlock(roleKey);
+    // Prompt role-safe + guard fail-loud: murid tidak pernah diberi
+    // kapabilitas guru (buildPersonaPrompt menjalankan assertRoleSafePrompt).
+    const systemPrompt = buildPersonaPrompt({ role: user.role, isFounder: user.isFounder, contextText, intentMode, knowledgeBlock });
 
     const model = process.env.AI_DEFAULT_MODEL || "deepseek-chat";
     const encoder = new TextEncoder();

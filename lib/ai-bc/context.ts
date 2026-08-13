@@ -10,9 +10,16 @@
 
 import { db } from "@/lib/db";
 import { getSkillProfile } from "@/lib/learning-loop/skills";
-import type { User } from "@prisma/client";
+import { getRecentActivity } from "@/lib/learning-loop/activity";
+import type { ActivityType, User } from "@prisma/client";
 
-export type BcRole = "student" | "teacher";
+/**
+ * Peran konteks — diselaraskan dengan BcPersonaKey (personas.ts).
+ * gatherBcContext hanya menghasilkan dua jalur data: student (data belajar
+ * murid) dan teacher (data kelas guru). Founder/ADMIN memakai jalur guru.
+ */
+export type BcRole = "student" | "teacher" | "founder" | "admin" | "neutral";
+export type BcHintRole = "student" | "teacher";
 
 export interface BcContextItem {
   key: string;
@@ -23,6 +30,31 @@ export interface BcContextItem {
 export interface BcContext {
   role: BcRole;
   items: BcContextItem[];
+}
+
+/** Label Indonesia untuk aktivitas belajar (ActivityType → teks ringkas). */
+const ACTIVITY_LABELS: Partial<Record<ActivityType, string>> = {
+  LOGIN: "Masuk",
+  JALUR_CERDAS: "Latihan Jalur Cerdas",
+  LESSON: "Belajar materi",
+  KARYA: "Menulis karya",
+  LIKE: "Menyukai karya",
+  COMMENT: "Mengomentari",
+  QUIZ: "Mengerjakan kuis",
+  SIMULASI_UKBI: "Simulasi UKBI",
+  SIMULASI_TKA: "Simulasi TKA",
+  PENUGASAN: "Mengerjakan tugas",
+  GAME: "Bermain gim",
+  QUEST: "Menyelesaikan misi",
+  ARTICLE: "Membaca artikel",
+  SHOP: "Berbelanja koin",
+  LEAGUE: "Liga mingguan",
+  SOCIAL: "Aktivitas sosial",
+  AI: "Belajar dengan AI",
+};
+
+function activityLabel(type: string): string {
+  return ACTIVITY_LABELS[type as ActivityType] ?? "Aktivitas belajar";
 }
 
 export const BC_CONTEXT_MAX_CHARS = 1200;
@@ -80,6 +112,11 @@ export async function gatherBcContext(user: User): Promise<BcContext> {
       const weakest = [...skills].sort((a, b) => a.level - b.level || a.xp - b.xp)[0];
       pushItem(items, "skill", "Fokus belajar", weakest ? `${weakest.skill} (tingkat ${weakest.level})` : null);
     }
+
+    // Aktivitas belajar terakhir (7 hari) — hanya data murid, best-effort.
+    const activity = await getRecentActivity(user.id, 7).catch(() => []);
+    const lastActivity = Array.isArray(activity) && activity.length > 0 ? activity[0] : null;
+    pushItem(items, "aktivitas", "Aktivitas terakhir", lastActivity ? activityLabel(String(lastActivity.type)) : null);
   } else {
     const groups = await db.group
       .count({ where: { teacherId: user.id } })
@@ -95,6 +132,11 @@ export async function gatherBcContext(user: User): Promise<BcContext> {
       .count({ where: { user: { groupMemberships: { some: { group: { teacherId: user.id } } } } } })
       .catch(() => 0);
     pushItem(items, "karya", "Karya murid", karya > 0 ? `${karya} karya` : null);
+
+    const penugasan = await db.penugasan
+      .count({ where: { group: { teacherId: user.id } } })
+      .catch(() => 0);
+    pushItem(items, "penugasan", "Penugasan", penugasan > 0 ? `${penugasan} penugasan` : null);
   }
 
   return { role, items };
@@ -125,7 +167,7 @@ export interface BcHint {
   prompt: string;
 }
 
-const STATIC_HINTS: Record<BcRole, BcHint[]> = {
+const STATIC_HINTS: Record<BcHintRole, BcHint[]> = {
   student: [
     { label: "Arti kata", prompt: "Jelaskan arti kata 'apresiasi' beserta contoh kalimatnya." },
     { label: "Tata bahasa", prompt: "Apa perbedaan 'di mana' dan 'dimana'?" },
@@ -139,9 +181,13 @@ const STATIC_HINTS: Record<BcRole, BcHint[]> = {
 /**
  * Dua saran percakapan awal per peran. Best-effort: bila konteks belajar
  * tersedia untuk murid, saran menyesuaikan skill terlemah.
+ *
+ * `roleOverride` opsional — dipakai permukaan yang perannya DIPAKSA dari sisi
+ * server (mis. /arena/ai selalu permukaan murid, rule 6), sehingga guru yang
+ * singgah pun tidak melihat saran guru.
  */
-export async function getBcHints(user: User): Promise<BcHint[]> {
-  const role = roleOf(user);
+export async function getBcHints(user: User, roleOverride?: BcHintRole): Promise<BcHint[]> {
+  const role: BcHintRole = roleOverride ?? (roleOf(user) === "teacher" ? "teacher" : "student");
   const hints = STATIC_HINTS[role].slice(0, 2);
 
   if (role === "student") {

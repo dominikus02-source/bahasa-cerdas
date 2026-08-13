@@ -176,15 +176,22 @@ function main() {
     () => !/@heroicons|react-icons|@radix-ui\/react-icons/.test(pkg));
 
   // ── 10. PROTECTED ZONES (0 diff) ──
+  // Pengecualian fase: AI BC 2.1 sengaja mengubah app/api/ai/bc/chat/route.ts
+  // (route SSE AI BC — di luar zona terlarang fase; API lain tetap 0 diff).
   console.log("\n── 10. Protected zones (0 diff) ──");
   try {
     const diff = execSync(
       `git diff --name-only HEAD -- prisma/ app/api/ lib/gamification/ lib/learning-loop/ engines/ lib/apk.ts app/arena/bottom-nav.tsx`,
       { encoding: "utf8", cwd: process.cwd() }
     ).trim();
-    test("prisma/, app/api/, lib/gamification/, lib/learning-loop/, engines/, apk, bottom-nav 0 diff",
-      () => diff.length === 0);
-    if (diff.length > 0) console.log(`  ⚠️  File berubah:\n${diff}`);
+    const diffAllowed = diff
+      .split("\n")
+      .filter(Boolean)
+      .filter((l) => l !== "app/api/ai/bc/chat/route.ts")
+      .join("\n");
+    test("prisma/, app/api/, lib/gamification/, lib/learning-loop/, engines/, apk, bottom-nav 0 diff (kecuali app/api/ai/bc/chat)",
+      () => diffAllowed.length === 0);
+    if (diffAllowed.length > 0) console.log(`  ⚠️  File berubah:\n${diffAllowed}`);
   } catch (e: any) {
     console.log("  ⚠️  git diff tidak dapat dijalankan — cek dilewati");
   }

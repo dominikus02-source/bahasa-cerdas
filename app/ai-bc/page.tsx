@@ -25,8 +25,8 @@ const FEATURES = [
   },
   {
     icon: Lightbulb,
-    title: "Untuk guru",
-    desc: "RPP, soal asesmen, dan strategi mengajar Bahasa Indonesia.",
+    title: "Menulis & berkarya",
+    desc: "Menyusun cerita, puisi, dan pantun dengan panduan langkah demi langkah.",
   },
 ];
 
@@ -34,7 +34,7 @@ const EXAMPLES = [
   "Apa arti kata 'apresiasi'?",
   "Perbaiki kalimat ini agar efektif.",
   "Buatkan 3 soal kata baku.",
-  "Rancang satu pertemuan materi puisi.",
+  "Jelaskan perbedaan puisi dan pantun.",
 ];
 
 /**
@@ -76,7 +76,7 @@ export default async function AiBcPage() {
         </p>
         <p className="mx-auto mt-3 max-w-xl text-sm leading-relaxed text-slate-500">
           Teman Belajarmu untuk murid — Teman Guru untuk pengajar. Tanya arti kata,
-          pahami tata bahasa, latihan soal, sampai menyusun pembelajaran.
+          pahami tata bahasa, dan berlatih soal Bahasa Indonesia.
         </p>
 
         <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">

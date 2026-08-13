@@ -52,11 +52,11 @@ test("personas.ts mengekspor classifyIntent", () => personas.includes("export fu
 test("personas.ts mengekspor buildChatHistory", () => personas.includes("export function buildChatHistory"));
 
 // 2. Peran dari sesi — payload klien tidak membawa peran/mode.
-test("route memakai getUser() dari sesi", () => route.includes('getUser()') && route.includes('getPersonaForRole(user.role)'));
+test("route memakai getUser() dari sesi", () => route.includes('getUser()') && route.includes('getPersonaForUser({ role: user.role, isFounder: user.isFounder })'));
 test("route TIDAK menerima parameter mode", () => !route.includes('body.mode') && !route.includes('mode:'));
 test("module tidak punya toggle murid/guru", () => !moduleC.includes('setMode("murid")') && !moduleC.includes('setMode("guru")'));
-test("arena/ai menurunkan peran dari sesi", () =>
-  arenaAi.includes("getUser()") && arenaAi.includes('user.role === "GURU"'));
+test("arena/ai selalu persona murid dari sesi (rule 6)", () =>
+  arenaAi.includes("getUser()") && arenaAi.includes('role="student"'));
 test("guru/ai-bc khusus GURU/founder dari sesi", () => guruAiBc.includes('user.role !== "GURU"'));
 test("guru/ai-bc redirect ke /arena/ai untuk non-guru", () => guruAiBc.includes('redirect("/arena/ai")'));
 
