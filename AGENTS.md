@@ -2914,3 +2914,64 @@ Perbaikan akhir landing: (1) gabung strip "Kabar dari Ekosistem" + section video
 3. GameRoom migration SQL via Supabase dashboard
 4. UI game solo: badge-score client vs server masih beda (kosmetik)
 5. SQL `2026-08-02_no_absen.sql` & `2026-08-08_school_identity.sql` (Production + Preview)
+
+---
+
+## Phase ARENA 4.2.2 — Navigation + Sidebar + Theme UX Fix (Aug 12, 2026)
+
+### Goal
+Patch 4.2.1 setelah feedback founder: (1) Back = **deterministik** `← Beranda` ke `/murid/beranda` (bukan `router.back()`) di seluruh Student Shell & Arena web, (2) theme toggle pindah ke top shell header dekat avatar+bell, (3) Dashboard Guru = role-based **destination** (GURU/FOUNDER), (4) sidebar collapse reversibel di footer dengan tombol expand selalu visible. **JANGAN commit/push — menunggu Founder Review.**
+
+### Keputusan Desain
+- **BackHome** (`components/shared/BackHome.tsx`, BARU): `<Link href="/murid/beranda">` murni, `aria-label="Kembali ke Beranda"`, label "Beranda" `hidden md:inline` (mobile icon-only). TIDAK ada `router.back()` di produksi (`BackButton.tsx` DIHAPUS).
+- **ShellSidebarToggle** (rewrite): pindah ke footer di samping LogoutButton (netral gray, bukan header gradient), ChevronLeft=collapse / ChevronRight=expand **selalu visible**, `aria-label` "Perkecil/Perbesar sidebar" sesuai state, persist `localStorage bc.shell.collapsed` (reload konsisten).
+- **Theme**: `ThemeToggle` EXISTING (`components/theme/theme-toggle.tsx`, next-themes) di top shell header murid `[BackHome][UserAvatar][NotificationBell][ThemeToggle]` + header drawer mobile; `ThemeSegmented` DIHAPUS (no duplicate toggle).
+- **Role/Admin links**: blok `Mode Guru` (`role === "GURU" && !isFounder` → Dashboard Guru) & `Akses Founder` (Dasbor Guru + Panel Admin) memakai span `shell-label` + `aria-label`/`title` (icon-only saat collapsed, no text overflow). Arena: `hasGuruAccess = role === "GURU" || isFounder`, CTA hanya `!apk && hasGuruAccess`. Authorization/route TIDAK diubah.
+- **Collapse CSS** (globals.css): `[data-shell-collapsed="1"]` → `.shell-aside` 4rem, `.shell-main` margin-left 4rem, `.shell-label/.shell-user/.shell-appearance` display none, `.shell-link` terpusat.
+
+### Files
+| File | Perubahan |
+|------|-----------|
+| `components/shared/BackHome.tsx` | BARU — deterministik `← Beranda` |
+| `components/dashboard/ShellSidebarToggle.tsx` | REWRITE — footer, reversibel, aria |
+| `app/(dashboard)/murid/layout.tsx` | REWRITE — top shell header (ThemeToggle), role/Admin blocks shell-label+aria, footer LogoutButton+Toggle, `div.shell-main` sticky header, guard server-side tetap |
+| `app/arena/layout.tsx` | REWRITE — `hasGuruAccess`, BackHome di 3 header, LogoutButton `variant="icon"` |
+| `components/dashboard/MuridMobileNav.tsx` | REWRITE — props `role`/`isFounder`, drawer: BackHome + ThemeToggle + seksi Mode Guru/Akses Founder |
+| `components/dashboard/LogoutButton.tsx` | span "Keluar" + `shell-label` |
+| DIHAPUS | `components/shared/BackButton.tsx`, `components/theme/theme-segmented.tsx` |
+| `scripts/test-arena-nav-theme.ts` | REWRITE 4.2.2 — 35 assertions (BackHome deterministik, no router.back, collapse footer, theme top shell, role destination) |
+| `scripts/test-bahasa-indonesia-ui.ts` | line 47 di-scope — "Dashboard" hanya dikecualikan untuk CTA peran "Dashboard Guru" |
+
+### Verification
+| Check | Hasil |
+|-------|-------|
+| `npm run test:arena-nav-theme` | ✅ 35/35 (rewrite 4.2.2) |
+| `npm run test:arena-web` | ✅ 56/56 |
+| `npm run test:arena-chat` | ✅ SEMUA LULUS |
+| `npm run test:student-shell` | ✅ 33/33 |
+| `npm run test:student-home` | ✅ 51/51 |
+| `npm run test:student-consolidation` | ✅ 40/40 |
+| `npm run test:karya-consolidation` | ✅ 40/40 |
+| `npm run test:global-works-discovery` | ✅ 31/31 |
+| `npm run test:premium-economy` | ✅ 63/63 |
+| `npm run test:social-hardening` | ✅ 27/27 |
+| `npm run test:gamification-engine` | ✅ SEMUA LULUS |
+| `npm run test:bahasa-indonesia-ui` | 57/62 (5 gagal pre-eksis luar changeset: BigtInfoPage + RPP panel) |
+| `npx tsc --noEmit` | ✅ 0 errors |
+| ESLint (8 file diubah/baru) | ✅ 0 violations |
+| `npm run build` (dummy env) | ✅ 364 routes, prerender 364/364, exit 0 |
+| `git diff --check` | ✅ bersih |
+| Protected zones | ✅ 0 diff (prisma/ app/api/ lib/gamification/ engines/ dll.) |
+
+### Catatan
+- Test exact-count MenuIcon (6) tetap hijau; CTA Dashboard Guru & toggle collapse di luar nav.
+- `ThemeSettingsCard` (`/murid/pengaturan`) tidak disentuh.
+- `test-bahasa-indonesia-ui` 5 kegagalan pra-eksis di file luar changeset (BigtInfoPage + panel RPP) — bukan akibat 4.2.2.
+- **Belum di-commit/push — menunggu Founder Review** (pola 4.2/4.2.1).
+
+### Remaining (tidak berubah)
+1. TKA UTBK/Guru enrichment 30 → 150
+2. Game server revival (VPS mati)
+3. GameRoom migration SQL via Supabase dashboard
+4. UI game solo: badge-score client vs server masih beda (kosmetik)
+5. SQL `2026-08-02_no_absen.sql` & `2026-08-08_school_identity.sql` (Production + Preview)

@@ -11,8 +11,10 @@ function apply(collapsed: boolean) {
 
 /**
  * Tombol ciutkan/bentangkan sidebar Student Shell (desktop md+).
- * State dipersist ke localStorage — tahan reload & navigasi.
- * Mobile tidak terpengaruh (sidebar desktop disembunyikan, drawer dipakai).
+ * SELALU terlihat (dipasang di footer sidebar, bukan bergantung hover):
+ * expanded → ChevronLeft; collapsed → ChevronRight.
+ * State dipersist di localStorage "bc.shell.collapsed" (reload tetap
+ * collapsed/expanded sesuai state). Mobile tidak terpengaruh.
  */
 export function ShellSidebarToggle() {
   const [collapsed, setCollapsed] = useState(false);
@@ -41,9 +43,9 @@ export function ShellSidebarToggle() {
     <button
       type="button"
       onClick={toggle}
-      aria-label={collapsed ? "Bentangkan sidebar" : "Ciutkan sidebar"}
-      title={collapsed ? "Bentangkan sidebar" : "Ciutkan sidebar"}
-      className="w-7 h-7 rounded-lg bg-white/10 hover:bg-white/25 text-white flex items-center justify-center transition-colors shrink-0"
+      aria-label={collapsed ? "Perbesar sidebar" : "Perkecil sidebar"}
+      title={collapsed ? "Perbesar sidebar" : "Perkecil sidebar"}
+      className="w-8 h-8 shrink-0 rounded-lg bg-gray-200/80 hover:bg-gray-300 text-gray-600 flex items-center justify-center transition-colors dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-slate-300"
     >
       {collapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
     </button>

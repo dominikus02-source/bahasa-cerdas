@@ -4,10 +4,11 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { LogoutButton } from "@/components/dashboard/LogoutButton";
-import { BackButton } from "@/components/shared/BackButton";
+import { BackHome } from "@/components/shared/BackHome";
+import { ThemeToggle } from "@/components/theme/theme-toggle";
 import {
   Home, Menu as MenuIcon, X, Bell,
-  GraduationCap, User, PenLine, MessageCircle, Settings,
+  GraduationCap, User, PenLine, MessageCircle, Settings, Shield,
 } from "lucide-react";
 
 const PRIMARY = [
@@ -26,7 +27,7 @@ const DRAWER_ITEMS: { href: string; label: string; icon: any }[] = [
   { href: "/murid/pengaturan", label: "Pengaturan", icon: Settings },
 ];
 
-export default function MuridMobileNav({ fullName }: { fullName: string }) {
+export default function MuridMobileNav({ fullName, role, isFounder }: { fullName: string; role: string; isFounder: boolean }) {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
@@ -44,6 +45,7 @@ export default function MuridMobileNav({ fullName }: { fullName: string }) {
   }, []);
 
   const isActive = (href: string) => pathname === href || pathname?.startsWith(href + "/");
+  const close = () => setMenuOpen(false);
 
   return (
     <>
@@ -80,17 +82,18 @@ export default function MuridMobileNav({ fullName }: { fullName: string }) {
       {/* Full Menu Overlay */}
       {menuOpen && (
         <div className="fixed inset-0 z-50 md:hidden">
-          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setMenuOpen(false)} />
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={close} />
           <div className="absolute bottom-0 inset-x-0 bg-white rounded-t-[24px] max-h-[85vh] overflow-y-auto shadow-2xl pb-20 dark:bg-slate-900">
             <div className="sticky top-0 bg-white z-10 flex items-center gap-2 px-4 pt-4 pb-3 border-b border-gray-100 dark:bg-slate-900 dark:border-slate-800">
-              <BackButton fallback="/murid/beranda" iconOnly className="shrink-0 -ml-1" />
+              <BackHome iconOnly className="shrink-0 -ml-1" />
               <div className="flex items-center gap-3 flex-1 min-w-0">
                 <div className="w-9 h-9 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center text-white text-sm font-bold shrink-0">
                   {fullName?.charAt(0)?.toUpperCase() || "M"}
                 </div>
                 <span className="font-bold text-gray-900 dark:text-slate-100 truncate">{fullName}</span>
               </div>
-              <button onClick={() => setMenuOpen(false)} className="p-2 hover:bg-gray-100 rounded-xl transition-colors dark:hover:bg-slate-800">
+              <ThemeToggle />
+              <button onClick={close} className="p-2 hover:bg-gray-100 rounded-xl transition-colors dark:hover:bg-slate-800">
                 <X size={20} className="text-gray-500 dark:text-slate-400" />
               </button>
             </div>
@@ -99,7 +102,7 @@ export default function MuridMobileNav({ fullName }: { fullName: string }) {
               {DRAWER_ITEMS.map(({ href, label, icon: Icon }) => {
                 const active = isActive(href);
                 return (
-                  <Link key={href} href={href} onClick={() => setMenuOpen(false)}
+                  <Link key={href} href={href} onClick={close}
                     className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${
                       active ? "bg-violet-50 text-violet-700 dark:bg-violet-500/20 dark:text-violet-200" : "text-gray-600 hover:bg-gray-50 dark:text-slate-300 dark:hover:bg-slate-800"
                     }`}
@@ -110,6 +113,33 @@ export default function MuridMobileNav({ fullName }: { fullName: string }) {
                 );
               })}
             </div>
+
+            {role === "GURU" && !isFounder && (
+              <div className="px-4 pt-2 mt-2 border-t border-gray-100 dark:border-slate-800">
+                <p className="px-3 pb-1 text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-slate-500">Mode Guru</p>
+                <Link href="/guru/beranda" aria-label="Dashboard Guru" onClick={close}
+                  className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-50 dark:text-slate-300 dark:hover:bg-slate-800">
+                  <GraduationCap size={18} className="text-gray-400 dark:text-slate-500" />
+                  Dashboard Guru
+                </Link>
+              </div>
+            )}
+
+            {isFounder && (
+              <div className="px-4 pt-2 mt-2 border-t border-gray-100 dark:border-slate-800">
+                <p className="px-3 pb-1 text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-slate-500">Akses Founder</p>
+                <Link href="/guru/beranda" aria-label="Dashboard Guru" onClick={close}
+                  className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-50 dark:text-slate-300 dark:hover:bg-slate-800">
+                  <GraduationCap size={18} className="text-gray-400 dark:text-slate-500" />
+                  Dasbor Guru
+                </Link>
+                <Link href="/admin" aria-label="Admin Panel" onClick={close}
+                  className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-50 dark:text-slate-300 dark:hover:bg-slate-800">
+                  <Shield size={18} className="text-gray-400 dark:text-slate-500" />
+                  Admin Panel
+                </Link>
+              </div>
+            )}
 
             <div className="px-4 pt-3 pb-6 border-t border-gray-100 dark:border-slate-800">
               <LogoutButton />

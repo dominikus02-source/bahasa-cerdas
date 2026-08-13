@@ -22,79 +22,123 @@ function read(rel: string): string {
   return fs.readFileSync(rel, "utf-8");
 }
 
+function exists(rel: string): boolean {
+  return fs.existsSync(rel);
+}
+
+function countOccurrences(content: string, needle: string): number {
+  return content.split(needle).length - 1;
+}
+
+function stripComments(content: string): string {
+  return content
+    .split("\n")
+    .filter(l => !l.trim().startsWith("//") && !l.trim().startsWith("*"))
+    .join("\n");
+}
+
 function main() {
-  console.log("\n📋 ARENA 4.2.1 TEST — Navigation + Theme Control (Student Shell)");
+  console.log("\n📋 ARENA 4.2.2 TEST — Navigation + Sidebar + Theme UX Fix (Student Shell)");
   console.log("=".repeat(60));
 
-  // ── 1. BACK BUTTON ──
-  console.log("\n── 1. Tombol Kembali konsisten ──");
-  const backBtn = read("components/shared/BackButton.tsx");
-  test("BackButton.tsx ada & memakai router.back()",
-    () => fs.existsSync("components/shared/BackButton.tsx") && backBtn.includes("router.back()"));
-  test("guard: tidak keluar aplikasi bila history kosong (deep-link)",
-    () => backBtn.includes("window.history.length > 1") && backBtn.includes("router.replace(fallback)"));
-  test("guard: tidak mendarat di /login",
-    () => backBtn.includes("/login")) ;
+  // ── 1. KEMBALI DETERMINISTIK (BackHome) ──
+  console.log("\n── 1. Kembali deterministik (← Beranda) ──");
+  const backHome = exists("components/shared/BackHome.tsx") ? read("components/shared/BackHome.tsx") : "";
+  test("BackHome.tsx ada & memakai next/link Link (bukan router)",
+    () => exists("components/shared/BackHome.tsx") && backHome.includes("next/link") && backHome.includes("Link"));
+  test("target selalu /murid/beranda (canonical student home)",
+    () => backHome.includes('href="/murid/beranda"'));
+  test("aria-label 'Kembali ke Beranda'",
+    () => backHome.includes('aria-label="Kembali ke Beranda"'));
+  test("TIDAK memakai router.back()",
+    () => !stripComments(backHome).includes("router.back"));
+  test("BackButton.tsx lama TIDAK ada (digantikan BackHome)",
+    () => !exists("components/shared/BackButton.tsx"));
+  test("tidak ada router.back() di app/ atau components/ (produksi)",
+    () => {
+      const files = [
+        "app/arena/layout.tsx",
+        "app/(dashboard)/murid/layout.tsx",
+        "components/dashboard/MuridMobileNav.tsx",
+        "components/shared/BackHome.tsx",
+      ];
+      return files.every(f => !stripComments(read(f)).includes("router.back"));
+    });
   const muridLayout = read("app/(dashboard)/murid/layout.tsx");
   const arenaLayout = read("app/arena/layout.tsx");
   const mobileNav = read("components/dashboard/MuridMobileNav.tsx");
-  test("sidebar murid memakai BackButton (fallback /murid/beranda)",
-    () => muridLayout.includes("<BackButton fallback=\"/murid/beranda\"") );
-  test("arena desktop header memakai BackButton (fallback /arena)",
-    () => arenaLayout.includes("<BackButton fallback=\"/arena\"") );
-  test("arena chat header memakai BackButton",
-    () => (arenaLayout.match(/<BackButton /g) || []).length >= 2);
-  test("drawer mobile memakai BackButton",
-    () => mobileNav.includes("BackButton") && mobileNav.includes('fallback="/murid/beranda"'));
+  test("sidebar murid memakai <BackHome /> di top shell header",
+    () => muridLayout.includes("<BackHome />"));
+  test("arena desktop header memakai <BackHome />",
+    () => arenaLayout.includes("<BackHome />"));
+  test("arena chat header memakai <BackHome />",
+    () => (arenaLayout.match(/<BackHome /g) || []).length >= 2);
+  test("arena mobile top bar memakai <BackHome iconOnly />",
+    () => arenaLayout.includes('<BackHome iconOnly'));
+  test("drawer mobile memakai <BackHome iconOnly",
+    () => mobileNav.includes("<BackHome iconOnly"));
 
   // ── 2. ROLE-BASED DASHBOARD GURU ──
-  console.log("\n── 2. Akses dasbor berbasis peran (server-side) ──");
+  console.log("\n── 2. Dasbor peran (server-side, bakal tujuan bukan back) ──");
   test("role dibaca server-side via getUser (layout server component)",
     () => muridLayout.includes("await getUser()") && !muridLayout.includes('"use client"'));
-  test("guard mengizinkan GURU (mode pratinjau) + Murid + Founder",
+  test("guard mengizinkan MURID + GURU (pratinjau) + Founder",
     () => muridLayout.includes('user.role !== "MURID" && user.role !== "GURU" && !user.isFounder'));
   test("onboarding hanya untuk MURID",
-    () => muridLayout.includes('user.role === "MURID" && !user.onboarded'));
-  test("CTA Dashboard Guru render hanya untuk GURU non-founder",
+    () => muridLayout.includes('user.role === "MURID"') && muridLayout.includes("onboarded"));
+  test("CTA Dashboard Guru di sidebar hanya GURU non-founder",
     () => muridLayout.includes('user.role === "GURU" && !user.isFounder') && muridLayout.includes('href="/guru/beranda"'));
-  test("CTA label 'Dashboard Guru' hadir di sidebar",
-    () => muridLayout.includes("Dashboard Guru"));
-  test("founder tetap punya Akses Founder (Dasbor Guru + Panel Admin)",
-    () => muridLayout.includes("Akses Founder") && muridLayout.includes("Panel Admin"));
-  test("arena header: GURU DAN founder menuju /guru/beranda",
-    () => arenaLayout.includes('user.role === "GURU" || user.isFounder') && arenaLayout.includes('isGuruLike ? "/guru/beranda" : "/murid/beranda"'));
-  test("arena mobile juga role-based (query string tidak dipakai)",
+  test("CTA memakai aria-label + title (icon-only saat collapsed)",
+    () => muridLayout.includes('aria-label="Dashboard Guru"') && muridLayout.includes('title="Dashboard Guru"'));
+  test("setiap CTA role memakai span kelas shell-label (sembunyi saat collapsed)",
+    () => muridLayout.includes('span className="shell-label') );
+  test("Akses Founder (Dasbor Guru + Panel Admin) untuk founder saja",
+    () => muridLayout.includes("Akses Founder") && muridLayout.includes("Panel Admin") && muridLayout.includes('href="/admin"'));
+  test("arena: hasGuruAccess = GURU || founder",
+    () => arenaLayout.includes('user.role === "GURU" || user.isFounder') && arenaLayout.includes("hasGuruAccess"));
+  test("arena CTA Dashboard Guru hanya saat bukan apk & hasGuruAccess",
+    () => arenaLayout.includes("!apk && hasGuruAccess") && arenaLayout.includes('href="/guru/beranda"'));
+  test("query string role tidak dipakai",
     () => !arenaLayout.includes("?role="));
 
-  // ── 3. THEME CONTROL ──
-  console.log("\n── 3. Toggle tema sidebar + header ──");
-  const themeSeg = read("components/theme/theme-segmented.tsx");
-  test("ThemeSegmented.tsx ada & memakai useTheme (next-themes, tanpa provider baru)",
-    () => fs.existsSync("components/theme/theme-segmented.tsx") && themeSeg.includes("useTheme") && themeSeg.includes("next-themes"));
-  test("pilihan Terang / Gelap",
-    () => themeSeg.includes('"light"') && themeSeg.includes('"dark"') && themeSeg.includes("Terang") && themeSeg.includes("Gelap"));
-  test("aktif = violet (bukan amber)",
-    () => themeSeg.includes("bg-violet-600") && !themeSeg.includes("bg-amber"));
-  test("sidebar murid memakai ThemeSegmented di footer",
-    () => muridLayout.includes("<ThemeSegmented />"));
-  const headerActions = read("components/arena/HeaderActions.tsx");
-  test("HeaderActions menyediakan ThemeToggle (arena header)",
-    () => headerActions.includes("ThemeToggle") && headerActions.includes("<ThemeToggle />"));
-  test("ThemeToggle memakai next-themes + toggle terang/gelap",
-    () => read("components/theme/theme-toggle.tsx").includes("useTheme") && read("components/theme/theme-toggle.tsx").includes("setTheme"));
+  // ── 3. THEME CONTROL (ThemeToggle, tanpa duplikat) ──
+  console.log("\n── 3. Toggle tema top shell + drawer ──");
+  const themeToggle = read("components/theme/theme-toggle.tsx");
+  test("ThemeToggle.tsx memakai useTheme (next-themes)",
+    () => themeToggle.includes("useTheme") && themeToggle.includes("next-themes"));
+  test("ThemeToggle punya setTheme terang/gelap",
+    () => themeToggle.includes("setTheme"));
+  test("top shell header murid memakai <ThemeToggle />",
+    () => muridLayout.includes("<ThemeToggle />"));
+  test("drawer mobile memakai <ThemeToggle />",
+    () => mobileNav.includes("<ThemeToggle />"));
+  test("HeaderActions arena memakai <ThemeToggle />",
+    () => read("components/arena/HeaderActions.tsx").includes("<ThemeToggle />"));
+  test("ThemeSegmented DIHAPUS (tidak ada toggle duplikat)",
+    () => !exists("components/theme/theme-segmented.tsx") && !muridLayout.includes("<ThemeSegmented") && !mobileNav.includes("ThemeSegmented"));
 
-  // ── 4. SIDEBAR COLLAPSE ──
-  console.log("\n── 4. Ciutkan sidebar (desktop md+) ──");
+  // ── 4. SIDEBAR COLLAPSE (footer, reversibel) ──
+  console.log("\n── 4. Ciutkan sidebar (desktop md+, footer) ──");
   const toggle = read("components/dashboard/ShellSidebarToggle.tsx");
-  test("ShellSidebarToggle.tsx ada & persist localStorage",
-    () => fs.existsSync("components/dashboard/ShellSidebarToggle.tsx") && toggle.includes("localStorage") && toggle.includes("data-shell-collapsed"));
-  test("toggle dipasang di header sidebar murid",
-    () => muridLayout.includes("<ShellSidebarToggle />"));
-  test("CSS collapse ada di globals.css (4rem + label disembunyikan md+)",
-    () => read("app/globals.css").includes("data-shell-collapsed=\"1\"] .shell-aside") && read("app/globals.css").includes("shell-user { display: none; }"));
+  test("ShellSidebarToggle.tsx persist localStorage bc.shell.collapsed",
+    () => exists("components/dashboard/ShellSidebarToggle.tsx") && toggle.includes("bc.shell.collapsed") && toggle.includes("data-shell-collapsed"));
+  test("aria-label Perkecil/Perbesar sidebar sesuai state",
+    () => toggle.includes('aria-label={collapsed ? "Perbesar sidebar" : "Perkecil sidebar"}'));
+  test("ikon ChevronLeft (expanded) / ChevronRight (collapsed)",
+    () => toggle.includes("ChevronLeft") && toggle.includes("ChevronRight"));
+  test("dipasang di footer sidebar murid (di samping LogoutButton)",
+    () => muridLayout.includes("<ShellSidebarToggle />") && muridLayout.includes("<LogoutButton />"));
+  test("CSS collapse di globals.css (4rem, label ter-hidden, link terpusat)",
+    () => {
+      const css = read("app/globals.css");
+      return css.includes('[data-shell-collapsed="1"] .shell-aside') &&
+        css.includes('[data-shell-collapsed="1"] .shell-label { display: none; }') &&
+        css.includes('[data-shell-collapsed="1"] .shell-link') &&
+        css.includes("shell-main");
+    });
 
   // ── 5. NAVIGASI ARENA (tidak ada navbar kedua) ──
-  console.log("\n── 5. Arena tidak menambah navbar sendiri ──");
+  console.log("\n── 5. Arena tanpa navbar kedua ──");
   test("arena layout tidak punya navItems / navbar Arena sendiri",
     () => !arenaLayout.includes("navItems") && !arenaLayout.includes('aria-label="Navigasi Arena"'));
   test("mobile nav tetap 6 item (tanpa tab arena baru)",
@@ -106,7 +150,7 @@ function main() {
   console.log(`\n${"=".repeat(60)}`);
   console.log(`📊 RESULT: ${passed} passed, ${failed} failed (${passed + failed} total)`);
   if (failed > 0) process.exit(1);
-  console.log("✅ ALL ARENA 4.2.1 TESTS PASSED\n");
+  console.log("✅ ALL ARENA 4.2.2 TESTS PASSED\n");
 }
 
 main();

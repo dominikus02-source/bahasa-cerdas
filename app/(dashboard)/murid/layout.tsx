@@ -6,11 +6,11 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { GraduationCap } from "lucide-react";
 import AIFloatingButton from "@/components/shared/AIFloatingButton";
-import { BackButton } from "@/components/shared/BackButton";
+import { BackHome } from "@/components/shared/BackHome";
 import { LogoutButton } from "@/components/dashboard/LogoutButton";
 import { NotificationBell } from "@/components/dashboard/NotificationBell";
 import { ShellSidebarToggle } from "@/components/dashboard/ShellSidebarToggle";
-import { ThemeSegmented } from "@/components/theme/theme-segmented";
+import { ThemeToggle } from "@/components/theme/theme-toggle";
 import MuridMobileNav from "@/components/dashboard/MuridMobileNav";
 import { InstallBanner } from "@/components/InstallBanner";
 import { IconTarget } from "@/lib/icons";
@@ -32,7 +32,7 @@ export default async function MuridLayout({ children }: { children: React.ReactN
     redirect("/login");
   }
 
-  // 4.2.1 — Guru boleh mengintip Student Shell sebagai mode pratinjau
+  // 4.2.2 — Guru boleh mengintip Student Shell sebagai mode pratinjau
   // (role tetap GURU). Hanya selain Murid/Guru/Founder yang dipindahkan.
   if (user.role !== "MURID" && user.role !== "GURU" && !user.isFounder) {
     redirect("/guru/beranda");
@@ -48,37 +48,20 @@ export default async function MuridLayout({ children }: { children: React.ReactN
   return (
     <div className="flex min-h-screen bg-gradient-to-br from-slate-50 via-white to-violet-50 dark:from-slate-950 dark:via-[#0b1220] dark:to-[#1e1b4b]">
       <aside className="shell-aside w-64 h-screen bg-white/80 backdrop-blur-xl border-r border-gray-100/50 hidden md:flex md:flex-col fixed left-0 top-0 shadow-xl shadow-gray-100/50 dark:bg-slate-900/80 dark:border-slate-800 dark:shadow-none">
-        <div className="px-3 pt-3 pb-1 flex items-center justify-between">
-          <BackButton fallback="/murid/beranda" />
-        </div>
-
-        <div className="p-5 pt-3 border-b border-gray-100/50 bg-gradient-to-r from-violet-600 to-purple-600">
-          <div className="flex items-center justify-between gap-2">
-            <Link href="/murid/beranda" className="flex items-center gap-3 min-w-0">
-              <div className="w-10 h-10 rounded-xl bg-white/20 backdrop-blur flex items-center justify-center text-white font-bold text-sm border border-white/20 shadow-lg shrink-0">
-                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M12.395 2.553a1 1 0 00-1.45-.385c-.345.23-.614.558-.822.88-.214.33-.403.713-.57 1.116-.334.804-.614 1.768-.84 2.734a31.365 31.365 0 00-.613 3.58 2.64 2.64 0 01-.945-1.067c-.328-.68-.398-1.534-.398-2.654A1 1 0 005.05 6.05 6.981 6.981 0 003 11a7 7 0 1011.95-4.95c-.592-.591-.98-.985-1.348-1.467-.363-.476-.724-1.063-1.207-2.03zM12.12 15.12A3 3 0 017 13s.879.5 2.5.5c0-1 .5-4 1.25-4.5.5 1 .786 1.293 1.371 1.879A2.99 2.99 0 0113 13a2.99 2.99 0 01-.879 2.121z"/></svg>
-              </div>
-              <div className="min-w-0">
-                <span className="shell-label font-bold text-white text-sm block truncate">BahasaCerdas</span>
-                <p className="shell-label text-[10px] text-violet-200">Dasbor Murid</p>
-              </div>
-            </Link>
-            <ShellSidebarToggle />
-          </div>
+        <div className="p-5 border-b border-gray-100/50 bg-gradient-to-r from-violet-600 to-purple-600">
+          <Link href="/murid/beranda" className="flex items-center gap-3 min-w-0">
+            <div className="w-10 h-10 rounded-xl bg-white/20 backdrop-blur flex items-center justify-center text-white font-bold text-sm border border-white/20 shadow-lg shrink-0">
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M12.395 2.553a1 1 0 00-1.45-.385c-.345.23-.614.558-.822.88-.214.33-.403.713-.57 1.116-.334.804-.614 1.768-.84 2.734a31.365 31.365 0 00-.613 3.58 2.64 2.64 0 01-.945-1.067c-.328-.68-.398-1.534-.398-2.654A1 1 0 005.05 6.05 6.981 6.981 0 003 11a7 7 0 1011.95-4.95c-.592-.591-.98-.985-1.348-1.467-.363-.476-.724-1.063-1.207-2.03zM12.12 15.12A3 3 0 017 13s.879.5 2.5.5c0-1 .5-4 1.25-4.5.5 1 .786 1.293 1.371 1.879A2.99 2.99 0 0113 13a2.99 2.99 0 01-.879 2.121z"/></svg>
+            </div>
+            <div className="min-w-0">
+              <span className="shell-label font-bold text-white text-sm block truncate">BahasaCerdas</span>
+              <p className="shell-label text-[10px] text-violet-200">Dasbor Murid</p>
+            </div>
+          </Link>
         </div>
 
         <div className="shell-user px-4 py-4 border-b border-gray-100/50 bg-gradient-to-br from-violet-50/50 to-purple-50/50 dark:border-slate-800 dark:from-slate-800/60 dark:to-slate-800/40">
           <div className="flex items-center gap-3">
-            {/* Sidebar ini dulu selalu menampilkan inisial — foto murid tidak
-                pernah dirender sama sekali, bukan gagal dimuat. */}
-            <UserAvatar
-              size={48}
-              avatar={user.avatar}
-              initials={user.fullName?.charAt(0).toUpperCase() || "M"}
-              gradient="from-violet-500 to-purple-600"
-              textClassName="text-lg"
-              className="shadow-lg shrink-0"
-            />
             <div className="flex-1 min-w-0">
               <p className="shell-label text-sm font-bold text-gray-900 truncate dark:text-slate-200">{user.fullName}</p>
               <div className="flex items-center gap-1.5 mt-0.5">
@@ -86,7 +69,6 @@ export default async function MuridLayout({ children }: { children: React.ReactN
                 <RankChip rank={rank} size={14} showTitle={false} compact />
               </div>
             </div>
-            <NotificationBell />
           </div>
         </div>
 
@@ -103,8 +85,8 @@ export default async function MuridLayout({ children }: { children: React.ReactN
         {user.role === "GURU" && !user.isFounder && (
           <div className="px-3 mb-2">
             <div className="h-px bg-gray-100 mx-3 mb-2 dark:bg-slate-800" />
-            <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider px-3 mb-2 dark:text-slate-500">Mode Guru</div>
-            <Link href="/guru/beranda" prefetch={false} className="shell-link group flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm mb-1 transition-all duration-200 text-gray-600 hover:bg-gradient-to-r hover:from-violet-50 hover:to-purple-50 hover:text-violet-700 dark:text-slate-300 dark:hover:from-slate-800 dark:hover:to-slate-800 dark:hover:text-white">
+            <div className="shell-label text-[10px] font-semibold text-gray-400 uppercase tracking-wider px-3 mb-2 dark:text-slate-500">Mode Guru</div>
+            <Link href="/guru/beranda" prefetch={false} aria-label="Dashboard Guru" title="Dashboard Guru" className="shell-link group flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm mb-1 transition-all duration-200 text-gray-600 hover:bg-gradient-to-r hover:from-violet-50 hover:to-purple-50 hover:text-violet-700 dark:text-slate-300 dark:hover:from-slate-800 dark:hover:to-slate-800 dark:hover:text-white">
               <GraduationCap className="w-5 h-5 text-gray-400 group-hover:text-violet-500 transition-colors dark:text-slate-500 dark:group-hover:text-violet-400" />
               <span className="shell-label font-medium group-hover:text-violet-700 dark:group-hover:text-white">Dashboard Guru</span>
             </Link>
@@ -114,34 +96,53 @@ export default async function MuridLayout({ children }: { children: React.ReactN
         {user.isFounder && (
           <div className="px-3 mb-2">
             <div className="h-px bg-gray-100 mx-3 mb-2 dark:bg-slate-800" />
-            <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider px-3 mb-2 dark:text-slate-500">Akses Founder</div>
-            <Link href="/guru/beranda" prefetch={false} className="group flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm mb-1 transition-all duration-200 text-gray-600 hover:bg-gradient-to-r hover:from-emerald-50 hover:to-green-50 hover:text-emerald-700 dark:text-slate-300 dark:hover:from-slate-800 dark:hover:to-slate-800 dark:hover:text-white">
+            <div className="shell-label text-[10px] font-semibold text-gray-400 uppercase tracking-wider px-3 mb-2 dark:text-slate-500">Akses Founder</div>
+            <Link href="/guru/beranda" prefetch={false} aria-label="Dashboard Guru" title="Dashboard Guru" className="shell-link group flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm mb-1 transition-all duration-200 text-gray-600 hover:bg-gradient-to-r hover:from-emerald-50 hover:to-green-50 hover:text-emerald-700 dark:text-slate-300 dark:hover:from-slate-800 dark:hover:to-slate-800 dark:hover:text-white">
               <svg className="w-5 h-5 text-gray-400 group-hover:text-emerald-500 transition-colors dark:text-slate-500 dark:group-hover:text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
                 <path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z M15 12a3 3 0 11-6 0 3 3 0 016 0z" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
-              <span className="font-medium group-hover:text-emerald-700 dark:group-hover:text-white">Dasbor Guru</span>
+              <span className="shell-label font-medium group-hover:text-emerald-700 dark:group-hover:text-white">Dasbor Guru</span>
             </Link>
-            <Link href="/admin" prefetch={false} className="group flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm mb-1 transition-all duration-200 text-gray-600 hover:bg-gradient-to-r hover:from-red-50 hover:to-orange-50 hover:text-red-700 dark:text-slate-300 dark:hover:from-slate-800 dark:hover:to-slate-800 dark:hover:text-white">
+            <Link href="/admin" prefetch={false} aria-label="Admin Panel" title="Admin Panel" className="shell-link group flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm mb-1 transition-all duration-200 text-gray-600 hover:bg-gradient-to-r hover:from-red-50 hover:to-orange-50 hover:text-red-700 dark:text-slate-300 dark:hover:from-slate-800 dark:hover:to-slate-800 dark:hover:text-white">
               <svg className="w-5 h-5 text-gray-400 group-hover:text-red-500 transition-colors dark:text-slate-500 dark:group-hover:text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
                 <path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
-              <span className="font-medium group-hover:text-red-700 dark:group-hover:text-white">Panel Admin</span>
+              <span className="shell-label font-medium group-hover:text-red-700 dark:group-hover:text-white">Panel Admin</span>
             </Link>
           </div>
         )}
 
-        <div className="p-3 border-t border-gray-100/50 bg-gray-50/50 dark:border-slate-800 dark:bg-slate-900/70 space-y-2">
-          <ThemeSegmented />
-          <LogoutButton />
+        <div className="p-3 border-t border-gray-100/50 bg-gray-50/50 dark:border-slate-800 dark:bg-slate-900/70 flex items-center gap-2">
+          <div className="flex-1 min-w-0">
+            <LogoutButton />
+          </div>
+          <ShellSidebarToggle />
         </div>
       </aside>
 
-      <MuridMobileNav fullName={user.fullName} />
-      <InstallBanner />
+      <div className="shell-main flex-1 min-w-0 md:ml-64 flex flex-col">
+        <header className="shrink-0 sticky top-0 z-30 flex items-center justify-between gap-2 px-4 md:px-6 h-14 bg-white/80 backdrop-blur-xl border-b border-gray-100/50 dark:bg-slate-900/80 dark:border-slate-800">
+          <BackHome />
+          <div className="flex items-center gap-1 md:gap-2">
+            <UserAvatar
+              size={36}
+              avatar={user.avatar}
+              initials={user.fullName?.charAt(0).toUpperCase() || "M"}
+              gradient="from-violet-500 to-purple-600"
+              textClassName="text-sm"
+              className="hidden md:flex shadow-md"
+            />
+            <NotificationBell />
+            <ThemeToggle />
+          </div>
+        </header>
+        <main className="flex-1 p-4 md:p-8 pb-24 md:pb-8 bg-transparent">
+          {children}
+        </main>
+      </div>
 
-      <main className="shell-main flex-1 min-w-0 md:ml-64 p-4 md:p-8 pb-24 md:pb-8 bg-transparent">
-        {children}
-      </main>
+      <MuridMobileNav fullName={user.fullName} role={user.role} isFounder={user.isFounder} />
+      <InstallBanner />
       <AIFloatingButton />
     </div>
   );

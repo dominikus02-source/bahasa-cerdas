@@ -44,7 +44,10 @@ async function main() {
   // 2. Sidebar Murid — no English labels
   console.log("\n── Sidebar Murid ──")
   const muridLayout = "app/(dashboard)/murid/layout.tsx"
-  test("Tidak ada 'Dashboard'", () => fileNotContains(muridLayout, "Dashboard"))
+  test("Tidak ada 'Dashboard' selain CTA peran 'Dashboard Guru'", () => {
+    const content = readFileSync(muridLayout, "utf-8")
+    return !content.replace(/Dashboard Guru/g, "").includes("Dashboard")
+  })
   test("Ada 'Dasbor Murid'", () => fileContains(muridLayout, "Dasbor Murid"))
 
   // 3. Sidebar Admin — no English labels
