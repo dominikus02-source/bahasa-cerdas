@@ -47,7 +47,7 @@ function main() {
   test("BackHome.tsx ada & memakai next/link Link (bukan router)",
     () => exists("components/shared/BackHome.tsx") && backHome.includes("next/link") && backHome.includes("Link"));
   test("target selalu /murid/beranda (canonical student home)",
-    () => backHome.includes('href="/murid/beranda"'));
+    () => backHome.includes('href="/murid/beranda"') || backHome.includes('href = "/murid/beranda"'));
   test("aria-label 'Kembali ke Beranda'",
     () => backHome.includes('aria-label="Kembali ke Beranda"'));
   test("TIDAK memakai router.back()",

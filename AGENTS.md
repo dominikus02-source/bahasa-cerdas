@@ -2975,3 +2975,58 @@ Patch 4.2.1 setelah feedback founder: (1) Back = **deterministik** `← Beranda`
 3. GameRoom migration SQL via Supabase dashboard
 4. UI game solo: badge-score client vs server masih beda (kosmetik)
 5. SQL `2026-08-02_no_absen.sql` & `2026-08-08_school_identity.sql` (Production + Preview)
+
+---
+
+## Phase UNIFIED APP SHELL — SATU Shell untuk Murid/Arena/Obrolan/Guru/Admin (Aug 13, 2026)
+
+### Goal
+SATU sistem application shell/navigation untuk SELURUH produk web: Murid, Arena, Obrolan, Guru, Admin/Founder. Prinsip: "SATU BAHASA CERDAS, SATU SHELL, BANYAK PRODUK." Arena & Obrolan tidak boleh punya shell/sidebar sendiri lagi — sidebar global (collapsible 256↔64px, ThemeToggle, BackHome deterministik) kini muncul di /arena/*, /arena/chat/*, guru, dan admin. **Not committed — menunggu Founder Review.**
+
+### Arsitektur
+- **`components/shell/`** (BARU): `ShellLayout.tsx` (kerangka: aside.shell-aside + div.shell-main + <main> + slot bottomNav/drawer; .game-fullscreen CSS tetap bekerja karena memakai <main>), `nav-config.ts` (STUDENT_NAV 6 item canonical: Beranda/Profil/Arena/Karya/Obrolan/Pengaturan + isNavActive), `ShellNavList.tsx` (nav universal student, active via usePathname), `ShellSidebarFooter.tsx` (LogoutButton + ShellSidebarToggle), `RoleSections.tsx` (Mode Guru / Akses Founder — icon-only via shell-label; authorization tetap server-side).
+- **Reuse existing** (tidak diduplikasi): BackHome (kini prop `href` opsional, default /murid/beranda), ThemeToggle, ShellSidebarToggle (localStorage `bc.shell.collapsed`), LogoutButton, NotificationBell, RankChip.
+- **Arena** (`app/arena/layout.tsx` rewrite): ShellLayout + ShellNavList + RoleSections + ShellSidebarFooter; header sticky tunggal [BackHome][brand Arena/Obrolan][HeaderActions (Search+Bell+ThemeToggle)][Logout icon]; BottomNav APK-only; chat tetap 1440px exception, sisanya 1280px; isChatWeb/RUTE_TANPA_GERBANG/await isApk()/ArenaClientWrapper dipertahankan; tanpa drawer web mobile (perilaku lama); chat-client.tsx & workspace 3-pane TIDAK diubah.
+- **Guru** (`guru/layout.tsx` rewrite): ShellLayout + GuruNavList kanonik (GuruNav.tsx hanya +class shell-link/shell-label/shell-accordion, string/menu utuh) + RoleSections (founder) + ShellSidebarFooter; header sticky BARU [BackHome→/guru/beranda][brand Guru][NotificationBell][ThemeToggle][logout icon]; GuruMobileNav & AIFloatingButton tetap; side-effects trial/plan/credits tetap; main canvas max-w-[1440px].
+- **Admin** (`admin/layout.tsx` rewrite): ShellLayout + AdminSidebar (root div flex-1 tanpa fixed w-64, item +shell-link/shell-label, bell+logout tetap, dark variants) + ShellSidebarToggle; header BARU [BackHome→/admin][Panel Admin][ThemeToggle]; guard server-side identik; canvas max-w-[1440px].
+- **Murid**: TIDAK diubah (sudah canonical, jadi template/referensi).
+- **CSS**: globals.css +1 aturan `[data-shell-collapsed="1"] .shell-accordion { display:none }` (accordion guru icon-only saat collapsed). `.shell-appearance` legacy (tidak dipakai) dipertahankan.
+- **LogoutButton arena**: +prop opsional `to` (default /arena/login; guru pakai /login) — backward compatible.
+
+### Verification (Semua lulus)
+| Check | Hasil |
+|-------|-------|
+| `test:unified-shell` (BARU, 45 assertions) | ✅ 45/45 |
+| `test:arena-nav-theme` (1 assertion BackHome href di-loose) | ✅ 35/35 |
+| `test:arena-web` / `arena-chat` | ✅ 56/56 · ✅ 94/94 |
+| `test:student-shell` / `student-home` / `student-consolidation` | ✅ 33/33 · ✅ 51/51 · ✅ 40/40 |
+| `test:karya-consolidation` / `global-works-discovery` | ✅ 40/40 · ✅ 31/31 |
+| `test:premium-economy` / `social-hardening` | ✅ 63/63 · ✅ 27/27 |
+| `test:gamification-engine` / `guru-phase` | ✅ SEMUA LULUS |
+| `test:simulation-workflow` / `phase-simulation-workflow` | ✅ SEMUA LULUS |
+| `test:bigt-menu` / `test:phase9g-admin-payments` | ✅ 26/26 · ✅ 28/28 |
+| `test:bahasa-indonesia-ui` | 57/62 (5 gagal pre-eksis luar changeset: BigtInfoPage + RPP panel) |
+| `npx tsc --noEmit` | ✅ 0 errors |
+| ESLint (14 file diubah/baru) | ✅ 0 violations |
+| `npm run build` (dummy env) | ✅ 364 routes, prerender 364/364, exit 0 |
+| `git diff --check` | ✅ bersih |
+| Protected zones | ✅ 0 ubah di prisma/ app/api/ lib/apk.ts bottom-nav.tsx lib/gamification/ lib/learning-loop/ engines/ |
+
+### Files
+- BARU: `components/shell/{ShellLayout,ShellNavList,ShellSidebarFooter,RoleSections}.tsx`, `components/shell/nav-config.ts`, `scripts/test-unified-shell.ts`
+- DIUBAH: `app/arena/layout.tsx`, `app/(dashboard)/guru/layout.tsx`, `app/(dashboard)/admin/layout.tsx`, `components/dashboard/GuruNav.tsx` (classes only), `components/admin/AdminSidebar.tsx` (root + classes + dark), `components/arena/LogoutButton.tsx` (+to), `components/shared/BackHome.tsx` (+href), `app/globals.css` (+shell-accordion rule), `scripts/test-arena-nav-theme.ts`
+- MURID TIDAK diubah (canonical template).
+
+### Known Gaps
+1. **Guru/Admin dark partial**: shell (aside/header/main wrapper) sudah dark, tapi isi 77 halaman guru & 21 halaman admin mayoritas light-only — migrasi dark penuh adalah fase terpisah.
+2. **router.back() sub-detail masih ada** (karya/[id], kompetisi/[paketId], panduan-guru/[unitId], jalur-cerdas belajar/latihan/kuis/praktik) — itu "PRODUCT PARENT" nav (Karya→Detail→Karya) yang boleh; globak BackHome tetap deterministik.
+3. **test-bigt-page-runtime 44/47** & **test-bahasa-indonesia-ui 57/62**: kegagalan pra-eksis (menu literals di GuruNav.tsx bukan layout; BigtInfoPage/RPP panel) — di luar changeset.
+4. **AdminSidebar kehilangan border-r sendiri** (kini dari aside shell) — kosmetik.
+5. **Guru collapsed 768–1024px**: aside md+ tampil bersamaan GuruMobileNav lg:hidden — overlap kosmetik (pola sama murid).
+
+### Remaining (tidak berubah)
+1. TKA UTBK/Guru enrichment 30 → 150
+2. Game server revival (VPS mati)
+3. GameRoom migration SQL via Supabase dashboard
+4. UI game solo: badge-score client vs server masih beda (kosmetik)
+5. SQL `2026-08-02_no_absen.sql` & `2026-08-08_school_identity.sql` (Production + Preview)

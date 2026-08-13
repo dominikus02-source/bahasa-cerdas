@@ -79,27 +79,27 @@ export function AdminSidebar({ user }: Props) {
   };
 
   return (
-    <aside className="w-64 h-screen bg-white border-r border-slate-200 flex flex-col fixed left-0 top-0 z-50">
-      <div className="p-5 border-b border-slate-100">
-        <Link href="/admin" className="flex items-center gap-2">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-red-500 to-red-700 flex items-center justify-center text-white font-bold text-sm">BC</div>
-          <div>
-            <p className="font-bold text-slate-900 text-sm">Panel Admin</p>
-            <p className="text-[10px] text-slate-400">Founder</p>
+    <div className="min-h-0 flex-1 flex flex-col bg-white dark:bg-slate-900/80">
+      <div className="p-5 border-b border-slate-100 dark:border-slate-800">
+        <Link href="/admin" className="flex items-center gap-2 min-w-0">
+          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-red-500 to-red-700 flex items-center justify-center text-white font-bold text-sm shrink-0">BC</div>
+          <div className="min-w-0">
+            <p className="shell-label font-bold text-slate-900 text-sm truncate dark:text-white">Panel Admin</p>
+            <p className="shell-label text-[10px] text-slate-400">Founder</p>
           </div>
         </Link>
       </div>
 
-      <div className="px-4 py-3 border-b border-slate-100 bg-slate-50">
+      <div className="shell-user px-4 py-3 border-b border-slate-100 bg-slate-50 dark:border-slate-800 dark:bg-slate-800/60">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-full bg-gradient-to-br from-red-400 to-red-600 flex items-center justify-center text-white font-bold text-sm">
+            <div className="w-9 h-9 rounded-full bg-gradient-to-br from-red-400 to-red-600 flex items-center justify-center text-white font-bold text-sm shrink-0">
               {user.fullName.slice(0, 2).toUpperCase()}
             </div>
-            <p className="text-sm font-semibold text-slate-900 truncate">{user.fullName}</p>
+            <p className="shell-label text-sm font-semibold text-slate-900 truncate dark:text-slate-100">{user.fullName}</p>
           </div>
           <div className="relative">
-            <button onClick={() => setShowNotifs(!showNotifs)} className="relative p-2 rounded-lg hover:bg-slate-200 transition-colors">
+            <button onClick={() => setShowNotifs(!showNotifs)} className="relative p-2 rounded-lg hover:bg-slate-200 transition-colors dark:hover:bg-slate-700">
               {unread > 0 ? <BellRing size={16} className="text-amber-500" /> : <Bell size={16} className="text-slate-400" />}
               {unread > 0 && (
                 <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-red-500 text-white text-[8px] font-bold rounded-full flex items-center justify-center">
@@ -111,9 +111,9 @@ export function AdminSidebar({ user }: Props) {
             {showNotifs && (
               <>
                 <div className="fixed inset-0 z-40" onClick={() => setShowNotifs(false)} />
-                <div className="absolute left-0 top-full mt-2 w-72 max-w-[calc(100vw-2rem)] bg-white rounded-xl border border-slate-200 shadow-xl z-50 max-h-96 overflow-y-auto">
-                  <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100">
-                    <span className="text-sm font-semibold text-slate-900">Notifikasi</span>
+                <div className="absolute left-0 top-full mt-2 w-72 max-w-[calc(100vw-2rem)] bg-white rounded-xl border border-slate-200 shadow-xl z-50 max-h-96 overflow-y-auto dark:bg-slate-900 dark:border-slate-700">
+                  <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100 dark:border-slate-800">
+                    <span className="text-sm font-semibold text-slate-900 dark:text-slate-100">Notifikasi</span>
                     {unread > 0 && (
                       <button onClick={() => markRead("all")} className="text-[10px] text-violet-600 hover:text-violet-800 font-medium">
                         Tandai semua dibaca
@@ -124,10 +124,10 @@ export function AdminSidebar({ user }: Props) {
                     <div className="text-center py-8 text-slate-400 text-xs">Tidak ada notifikasi</div>
                   ) : (
                     notifs.map((n) => (
-                      <div key={n.id} className="px-4 py-3 hover:bg-slate-50 border-b border-slate-50 last:border-0">
+                      <div key={n.id} className="px-4 py-3 hover:bg-slate-50 border-b border-slate-50 last:border-0 dark:hover:bg-slate-800/60 dark:border-slate-800/60">
                         <div className="flex items-start justify-between gap-2">
                           <div className="flex-1 min-w-0">
-                            <p className="text-xs font-medium text-slate-900">{n.title}</p>
+                            <p className="text-xs font-medium text-slate-900 dark:text-slate-100">{n.title}</p>
                             <p className="text-[10px] text-slate-500 mt-0.5">{n.body}</p>
                             <p className="text-[9px] text-slate-400 mt-1">{new Date(n.createdAt).toLocaleDateString("id-ID", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}</p>
                           </div>
@@ -149,29 +149,29 @@ export function AdminSidebar({ user }: Props) {
 
       <nav className="flex-1 overflow-y-auto py-3 px-2">
         {NAV.map((item: any, i) => {
-          if (item.type === "divider") return <div key={i} className="h-px bg-slate-100 my-3 mx-3" />;
+          if (item.type === "divider") return <div key={i} className="h-px bg-slate-100 my-3 mx-3 dark:bg-slate-800" />;
           const Icon = item.icon;
           const isActive = pathname === item.href;
           return (
-            <Link key={item.href} href={item.href}
-              className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm transition-all mb-0.5 ${
-                isActive ? "text-red-700 bg-red-50 font-semibold" : "text-slate-500 hover:bg-slate-50 hover:text-slate-800"
+            <Link key={item.href} href={item.href} aria-label={item.label} title={item.label}
+              className={`shell-link group flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm transition-all mb-0.5 ${
+                isActive ? "text-red-700 bg-red-50 font-semibold dark:text-red-400 dark:bg-red-500/10" : "text-slate-500 hover:bg-slate-50 hover:text-slate-800 dark:text-slate-400 dark:hover:bg-slate-800/60 dark:hover:text-slate-100"
               }`}>
-              <Icon size={18} className={isActive ? "text-red-500" : "text-slate-400"} />
-              {item.label}
+              <Icon size={18} className={`shrink-0 ${isActive ? "text-red-500" : "text-slate-400 dark:text-slate-500"}`} />
+              <span className="shell-label">{item.label}</span>
             </Link>
           );
         })}
       </nav>
 
-      <div className="p-3 border-t border-slate-100">
-        <Link href="/" className="flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm text-slate-500 hover:text-slate-800 hover:bg-slate-50 transition-colors mb-1">
-          <ChevronRight size={16} /> Ke Website
+      <div className="p-3 border-t border-slate-100 dark:border-slate-800">
+        <Link href="/" className="shell-link flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm text-slate-500 hover:text-slate-800 hover:bg-slate-50 transition-colors mb-1 dark:text-slate-400 dark:hover:text-slate-100 dark:hover:bg-slate-800/60">
+          <ChevronRight size={16} className="shrink-0" /> <span className="shell-label">Ke Website</span>
         </Link>
-        <button onClick={handleLogout} className="w-full flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm text-slate-500 hover:text-red-600 hover:bg-red-50 transition-colors">
-          <LogOut size={16} /> Keluar
+        <button onClick={handleLogout} className="w-full flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm text-slate-500 hover:text-red-600 hover:bg-red-50 transition-colors dark:text-slate-400 dark:hover:text-red-400 dark:hover:bg-red-500/10">
+          <LogOut size={16} className="shrink-0" /> <span className="shell-label">Keluar</span>
         </button>
       </div>
-    </aside>
+    </div>
   );
 }

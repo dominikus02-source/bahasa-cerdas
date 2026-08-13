@@ -5,7 +5,14 @@ import { LogOut } from "lucide-react"
 import { createClient } from "@/lib/supabase/client"
 import { useRouter } from "next/navigation"
 
-export default function LogoutButton({ variant = "link" }: { variant?: "link" | "icon" | "row" }) {
+export default function LogoutButton({
+  variant = "link",
+  to = "/arena/login",
+}: {
+  variant?: "link" | "icon" | "row";
+  /** Tujuan setelah signOut — default Arena; shell Guru memakai /login. */
+  to?: string;
+}) {
   const [loading, setLoading] = useState(false)
   const router = useRouter()
 
@@ -13,10 +20,7 @@ export default function LogoutButton({ variant = "link" }: { variant?: "link" | 
     setLoading(true)
     const supabase = createClient()
     await supabase.auth.signOut()
-    // /arena/login, not /auth/arena-login: the latter sits outside the APK's
-    // /arena scope, so signing out would have dumped the student into a browser
-    // tab instead of back to Arena's own login screen.
-    router.push("/arena/login")
+    router.push(to)
   }
 
   // Row inside the Pemain tab's settings list. In the APK this is the ONLY way

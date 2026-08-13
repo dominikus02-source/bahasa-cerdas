@@ -303,4 +303,7 @@
   [data-shell-collapsed="1"] .shell-user { display: none; }
   [data-shell-collapsed="1"] .shell-appearance { display: none; }
   [data-shell-collapsed="1"] .shell-link { justify-content: center; gap: 0; padding-left: 0.25rem; padding-right: 0.25rem; }
+  /* Grup accordion (mis. GuruNav): children disembunyikan utuh saat ciut —
+     item anak tidak punya ikon, jadi teks saja yang ditampilkan. */
+  [data-shell-collapsed="1"] .shell-accordion { display: none; }
 }

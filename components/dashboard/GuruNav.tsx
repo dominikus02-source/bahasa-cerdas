@@ -186,14 +186,16 @@ function NavLinks({
         <Link
           href={group.href}
           onClick={onNavigate}
-          className={`group flex w-full items-center gap-3 px-3 py-2 rounded-lg text-sm mb-1 transition-all duration-200 ${
+          aria-label={group.label}
+          title={group.label}
+          className={`shell-link group flex w-full items-center gap-3 px-3 py-2 rounded-lg text-sm mb-1 transition-all duration-200 ${
             active
               ? "bg-gradient-to-r from-emerald-50 to-green-50 text-emerald-700 font-semibold"
               : "text-gray-600 hover:bg-gradient-to-r hover:from-emerald-50 hover:to-green-50 hover:text-emerald-700"
           }`}
         >
-          <group.icon className={`w-5 h-5 transition-colors ${active ? "text-emerald-500" : "text-gray-400 group-hover:text-emerald-500"}`} />
-          <span className="font-medium flex-1 text-left">{group.label}</span>
+          <group.icon className={`w-5 h-5 shrink-0 transition-colors ${active ? "text-emerald-500" : "text-gray-400 group-hover:text-emerald-500"}`} />
+          <span className="shell-label font-medium flex-1 text-left">{group.label}</span>
         </Link>
       </div>
     );
@@ -206,17 +208,19 @@ function NavLinks({
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
-        className={`group flex w-full items-center gap-3 px-3 py-2 rounded-lg text-sm mb-1 transition-all duration-200 text-gray-600 hover:bg-gradient-to-r hover:from-emerald-50 hover:to-green-50 hover:text-emerald-700 ${
+        aria-label={group.label}
+        title={group.label}
+        className={`shell-link group flex w-full items-center gap-3 px-3 py-2 rounded-lg text-sm mb-1 transition-all duration-200 text-gray-600 hover:bg-gradient-to-r hover:from-emerald-50 hover:to-green-50 hover:text-emerald-700 ${
           active && open ? "text-emerald-700" : ""
         }`}
       >
-        <group.icon className="w-5 h-5 text-gray-400 group-hover:text-emerald-500 transition-colors" />
-        <span className="font-medium flex-1 text-left">{group.label}</span>
-        <ChevronDown className={`w-4 h-4 text-gray-300 transition-transform duration-200 ${open ? "rotate-180" : ""}`} />
+        <group.icon className="w-5 h-5 shrink-0 text-gray-400 group-hover:text-emerald-500 transition-colors" />
+        <span className="shell-label font-medium flex-1 text-left">{group.label}</span>
+        <ChevronDown className={`shell-label w-4 h-4 text-gray-300 transition-transform duration-200 ${open ? "rotate-180" : ""}`} />
       </button>
 
       {open && (
-        <div className="ml-7 mb-1 flex flex-col gap-1 border-l border-emerald-100/70 pl-3">
+        <div className="shell-accordion ml-7 mb-1 flex flex-col gap-1 border-l border-emerald-100/70 pl-3">
           {group.links?.map((link) => {
             const linkActive = isActive(pathname, link.href, link.activeOn);
             return (
