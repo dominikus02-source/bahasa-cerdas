@@ -3333,3 +3333,34 @@ Upgrade AI BC dari chatbot generik menjadi companion kontekstual per-peran (Muri
 3. GameRoom migration SQL via Supabase dashboard
 4. UI game solo: badge-score client vs server masih beda (kosmetik)
 5. SQL `2026-08-02_no_absen.sql` & `2026-08-08_school_identity.sql` (Production + Preview)
+
+---
+
+## Phase AI BC KNOWLEDGE 2.0 — Phase 1 AUDIT + PROPOSAL (Aug 13, 2026)
+
+### Status
+**AUDIT + PROPOSAL ONLY — 0 perubahan kode, 0 commit/push. Menunggu Founder Review.**
+Laporan lengkap: `docs/BC_AI_KNOWLEDGE_2_0.md` (8 seksi sesuai direktif).
+
+### Temuan Audit (ringkas)
+1. **AI BC 2.0 tidak punya pengetahuan produk** — route `/api/ai/bc/chat` hanya memakai persona + konteks pengguna (`lib/ai-bc/context.ts`); pertanyaan "Apa itu Jalur Cerdas?", harga Guru Pro, XP, rank, UKBI/BIGT dijawab dari tebakan model.
+2. **Gap kritis**: `buildBahasaCerdasIdentityInstruction()` (`lib/ai/knowledge/bahasa-cerdas-identity.ts`, SSOT identitas) HANYA dipakai di legacy `/api/ai/chat` + `prompt-builder` agent tools — TIDAK di AI BC 2.0 → pertanyaan "Siapa founder?" pun tidak terverifikasi.
+3. **Tidak ada RAG/embedding/vector** di repo. Legacy `bc-assistant-agent` punya `workflowSteps "retrieve-context"` tapi basis pengetahuan tidak pernah ada.
+4. **Aset yang ADA**: identity lib + registry (SSOT), `public/llms.txt`, FAQ publik (`app/faq`, `components/landing/FAQSection`), `app/tentang`, `lib/billing/plans.ts` (Rp 49.000/30 hari/500 kredit; Tahunan Rp 399.000), `lib/gamification/*` (15 sumber XP, 9 rank, kurva level, reward).
+
+### Arsitektur yang Diusulkan
+- `src/ai/bc/knowledge/` (pure, static): `types.ts`, `registry.ts` (VERSION), `retrieval.ts` (classifyKnowledgeIntent + scoring alias/keyword, tanpa LLM/embedding), `prompt.ts` (buildKnowledgeBlock cap ~2.000 char + anti-halusinasi), `domains/*.ts` (10 domain A–J; `identity.ts` = wrapper ke SSOT K1, bukan duplikat).
+- Wiring additive: `buildSystemPrompt` + param opsional `knowledgeBlock`; route panggil retrieval HANYA untuk intent BC. Engine AI/agent/shell TIDAK disentuh.
+- Fakta wajib mencerminkan realita: game server mati, audio MENDENGARKAN 0, TKA UTBK/Guru 30 soal, istilah "Pro", trial 30 hari tanpa auto-renew, founder = `isFounder` (role enum tanpa FOUNDER).
+- Conflict sumber → lapor Founder, jangan menebak.
+
+### Keputusan yang ditunggu Founder (4 butir, lihat dokumen §Keputusan)
+1. Setujui struktur §5 · 2. Cakupan entri awal §5.4 · 3. Fakta realita §4 · 4. Frasa gap publik.
+
+### Remaining (tidak berubah)
+1. Implementasi BC Brain setelah review (belum dimulai)
+2. TKA UTBK/Guru enrichment 30 → 150
+3. Game server revival (VPS mati)
+4. GameRoom migration SQL via Supabase dashboard
+5. UI game solo: badge-score client vs server masih beda (kosmetik)
+6. SQL `2026-08-02_no_absen.sql` & `2026-08-08_school_identity.sql` (Production + Preview)
