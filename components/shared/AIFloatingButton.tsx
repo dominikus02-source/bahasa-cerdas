@@ -3,9 +3,22 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
 import { gambarKarakter } from "@/lib/arena-junior/karakter";
 
+/**
+ * AI BC — floating secondary entry point.
+ *
+ * UX rule: AI BC workspace adalah destination utama; floating button adalah
+ * secondary entry point → disembunyikan ketika user sudah berada di
+ * destination (AI BC 2.2 final polish). Guard tunggal di sini (bukan di
+ * layout) supaya tidak ada logika route yang terduplikasi; `return null`
+ * total — tanpa empty container/overlay/aria-label tersisa.
+ */
+const AI_BC_WORKSPACE_PATHS = new Set(["/arena/ai", "/guru/ai-bc"]);
+
 export default function AIFloatingButton() {
+  const pathname = usePathname();
   const [showBubble, setShowBubble] = useState(true);
 
   // The bubble used to toggle on and off every 5 seconds for as long as the page
@@ -17,6 +30,11 @@ export default function AIFloatingButton() {
     const timer = setTimeout(() => setShowBubble(false), 6000);
     return () => clearTimeout(timer);
   }, []);
+
+  // AI BC workspace = destination utama → secondary entry point disembunyikan.
+  if (pathname && AI_BC_WORKSPACE_PATHS.has(pathname)) {
+    return null;
+  }
 
   return (
     <div className="fixed bottom-20 md:bottom-6 right-6 z-50 flex items-center gap-3">

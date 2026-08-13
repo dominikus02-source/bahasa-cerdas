@@ -54,8 +54,8 @@ export const TEACHER_QUICK_ACTIONS: BcQuickAction[] = [
   {
     key: "buat-materi",
     label: "Buat Materi",
-    sub: "RPP & modul ajar",
-    prompt: "Buatkan Rencana Pembelajaran 1 lembar untuk materi Bahasa Indonesia sesuai Kurikulum Nasional.",
+    sub: "Rencana pembelajaran & modul ajar",
+    prompt: "Bantu saya menyusun rencana pembelajaran 1 lembar untuk materi Bahasa Indonesia sesuai Kurikulum Nasional.",
   },
   {
     key: "buat-soal",

@@ -204,7 +204,7 @@ excludes(studentLower, "sebagai ai,", "D25 anti-klise 'sebagai ai,' tidak ada di
 /* ------------------------------------------------------------------ */
 
 console.log("E. Guru teacher surface");
-includes(guru, '"teacher"', "E1 /guru/ai-bc persona teacher");
+includes(guru, "TEACHER_PERSONA", "E1 /guru/ai-bc persona teacher (workspace 2.2 via TEACHER_PERSONA dari sesi)");
 includes(guru, "GURU", "E2 guard peran guru ada");
 includes(guru, "redirect", "E3 non-guru redirect");
 includes(guru, '"/arena/ai"', "E4 redirect murid → /arena/ai");

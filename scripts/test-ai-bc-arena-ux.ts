@@ -72,8 +72,8 @@ test("page: sapaan persona dikirim dari STUDENT_PERSONA.greeting", () =>
   page.includes("greeting={STUDENT_PERSONA.greeting}"));
 test("page: hints murid dipaksa (roleOverride student)", () =>
   page.includes('getBcHints(user, "student")'));
-test("page: tidak lagi memakai AiBcModule (tetap untuk permukaan guru)", () =>
-  !page.includes("AiBcModule") && guruPage.includes("AiBcModule"));
+test("page: tidak lagi memakai AiBcModule (guru kini workspace penuh 2.2)", () =>
+  !page.includes("AiBcModule") && guruPage.includes("AiBcGuruWorkspace"));
 test("page: tanpa header/sidebar sendiri", () =>
   !page.includes("<header") && !page.includes("<aside") && !page.includes("BackHome"));
 test("page: tanpa router.back()", () => !page.includes("router.back()"));
@@ -174,8 +174,8 @@ test("route SSE /api/ai/bc/chat TIDAK berubah (git diff HEAD kosong)", () =>
   gitDiffNames("app/api/ai/bc/chat/route.ts") === "");
 test("prisma + engine + koin/xp/apk: 0 diff (git diff HEAD kosong)", () =>
   gitDiffNames("prisma lib/gamification lib/learning-loop engines lib/apk.ts lib/xp.ts lib/coins.ts lib/award-xp.ts") === "");
-test("modul lama AiBcModule tetap utuh untuk /guru/ai-bc", () =>
-  moduleFile.includes('"landing"') && moduleFile.includes('"chat"') && guruPage.includes("AiBcModule"));
+test("modul lama AiBcModule tetap utuh di repo (guru pindah ke workspace 2.2)", () =>
+  moduleFile.includes('"landing"') && moduleFile.includes('"chat"') && guruPage.includes("AiBcGuruWorkspace"));
 
 /* ------------------------------------------------------------------ */
 /* SUMMARY                                                             */
