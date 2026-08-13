@@ -16,6 +16,7 @@ import {
   NAV_ICON_ACTIVE,
   NAV_ICON_INACTIVE,
 } from "@/components/shell/icon-tokens";
+import { getRoleNavItems, type RoleNavItem } from "@/components/shell/navigation-context";
 
 const PRIMARY = [
   { href: "/murid/beranda", label: "Beranda", icon: Home },
@@ -52,6 +53,13 @@ export default function MuridMobileNav({ fullName, role, isFounder }: { fullName
 
   const isActive = (href: string) => pathname === href || pathname?.startsWith(href + "/");
   const close = () => setMenuOpen(false);
+  const roleItems = getRoleNavItems({ role, isFounder, pathname: pathname ?? "" });
+  const roleGroups: { section: RoleNavItem["section"]; items: RoleNavItem[] }[] = [];
+  for (const item of roleItems) {
+    const group = roleGroups.find((g) => g.section === item.section);
+    if (group) group.items.push(item);
+    else roleGroups.push({ section: item.section, items: [item] });
+  }
 
   return (
     <>
@@ -120,32 +128,23 @@ export default function MuridMobileNav({ fullName, role, isFounder }: { fullName
               })}
             </div>
 
-            {role === "GURU" && !isFounder && (
-              <div className="px-4 pt-2 mt-2 border-t border-gray-100 dark:border-slate-800">
-                <p className="px-3 pb-1 text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-slate-500">Mode Guru</p>
-                <Link href="/guru/beranda" aria-label="Dashboard Guru" onClick={close}
-                  className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-50 dark:text-slate-300 dark:hover:bg-slate-800">
-                  <GraduationCap className={`${NAV_ICON_CLASS} ${NAV_ICON_INACTIVE}`} strokeWidth={NAV_ICON_STROKE} />
-                  Dashboard Guru
-                </Link>
+            {roleGroups.map(({ section, items }) => (
+              <div key={section} className="px-4 pt-2 mt-2 border-t border-gray-100 dark:border-slate-800">
+                <p className="px-3 pb-1 text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-slate-500">
+                  {section === "guru" ? "Mode Guru" : "Akses Founder"}
+                </p>
+                {items.map((item) => {
+                  const Icon = item.id === "dashboard-guru" ? GraduationCap : Shield;
+                  return (
+                    <Link key={item.id} href={item.href} aria-label={item.ariaLabel} title={item.title} onClick={close}
+                      className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-50 dark:text-slate-300 dark:hover:bg-slate-800">
+                      <Icon className={`${NAV_ICON_CLASS} ${NAV_ICON_INACTIVE}`} strokeWidth={NAV_ICON_STROKE} />
+                      {item.label}
+                    </Link>
+                  );
+                })}
               </div>
-            )}
-
-            {isFounder && (
-              <div className="px-4 pt-2 mt-2 border-t border-gray-100 dark:border-slate-800">
-                <p className="px-3 pb-1 text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-slate-500">Akses Founder</p>
-                <Link href="/guru/beranda" aria-label="Dashboard Guru" onClick={close}
-                  className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-50 dark:text-slate-300 dark:hover:bg-slate-800">
-                  <GraduationCap className={`${NAV_ICON_CLASS} ${NAV_ICON_INACTIVE}`} strokeWidth={NAV_ICON_STROKE} />
-                  Dasbor Guru
-                </Link>
-                <Link href="/admin" aria-label="Admin Panel" onClick={close}
-                  className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-50 dark:text-slate-300 dark:hover:bg-slate-800">
-                  <Shield className={`${NAV_ICON_CLASS} ${NAV_ICON_INACTIVE}`} strokeWidth={NAV_ICON_STROKE} />
-                  Admin Panel
-                </Link>
-              </div>
-            )}
+            ))}
 
             <div className="px-4 pt-3 pb-6 border-t border-gray-100 dark:border-slate-800">
               <LogoutButton />

@@ -68,6 +68,7 @@ function main() {
   const arenaLayout = read("app/arena/layout.tsx");
   const mobileNav = read("components/dashboard/MuridMobileNav.tsx");
   const roleSections = read("components/shell/RoleSections.tsx");
+  const navCtx = read("components/shell/navigation-context.ts");
   test("sidebar murid memakai <BackHome /> di top shell header",
     () => muridLayout.includes("<BackHome />"));
   test("arena desktop header memakai <BackHome />",
@@ -85,14 +86,14 @@ function main() {
     () => muridLayout.includes('user.role !== "MURID" && user.role !== "GURU" && !user.isFounder'));
   test("onboarding hanya untuk MURID",
     () => muridLayout.includes('user.role === "MURID"') && muridLayout.includes("onboarded"));
-  test("RoleSections (shared, 5.1): Mode Guru hanya GURU non-founder; murid layout memakai <RoleSections />",
-    () => muridLayout.includes("<RoleSections") && roleSections.includes('role === "GURU" && !isFounder') && roleSections.includes('href="/guru/beranda"'));
-  test("CTA memakai aria-label + title (icon-only saat collapsed)",
-    () => roleSections.includes('aria-label="Dashboard Guru"') && roleSections.includes('title="Dashboard Guru"'));
+  test("RoleSections (5.2.1): aturan role-switch tunggal di navigation-context; murid layout memakai <RoleSections />",
+    () => muridLayout.includes("<RoleSections") && roleSections.includes("getRoleNavItems") && navCtx.includes('role === "GURU" || isFounder') && navCtx.includes('href: "/guru/beranda"'));
+  test("CTA aria-label + title canonical di navigation-context (icon-only saat collapsed)",
+    () => navCtx.includes('ariaLabel: "Dashboard Guru"') && navCtx.includes('title: "Dashboard Guru"'));
   test("setiap CTA role memakai span kelas shell-label (sembunyi saat collapsed)",
     () => roleSections.includes('className="shell-label') );
-  test("Akses Founder (Dasbor Guru + Panel Admin) untuk founder saja",
-    () => roleSections.includes("Akses Founder") && roleSections.includes("Panel Admin") && roleSections.includes('href="/admin"'));
+  test("Akses Founder (Dasbor Guru + Panel Admin) untuk founder saja; goal disembunyikan di konteks saat ini",
+    () => roleSections.includes("Akses Founder") && navCtx.includes('label: "Panel Admin"') && navCtx.includes('href: "/admin"') && navCtx.includes('context !== "admin"'));
   test("TIDAK ada CTA 'Dashboard Guru' di header arena (akses role via RoleSections sidebar, bukan header)",
     () => !arenaLayout.includes("hasGuruAccess") && !arenaLayout.includes("<LayoutDashboard") && !arenaLayout.includes('href="/guru/beranda"') && arenaLayout.includes("<RoleSections"));
   test("query string role tidak dipakai",

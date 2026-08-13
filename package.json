@@ -199,7 +199,8 @@
     "test:karya-consolidation": "npx tsx scripts/test-karya-consolidation.ts",
     "test:unified-shell": "npx tsx scripts/test-unified-shell.ts",
     "test:unified-header": "npx tsx scripts/test-unified-header.ts",
-    "test:icon-system": "npx tsx scripts/test-icon-system.ts"
+    "test:icon-system": "npx tsx scripts/test-icon-system.ts",
+    "test:navigation-context": "npx tsx scripts/test-navigation-context.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.39.0",

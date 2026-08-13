@@ -172,8 +172,8 @@ function main() {
     () => adminSidebar.includes("Bell") && adminSidebar.includes("/admin/payments"));
   test("GURU: GURU_NAV TIDAK punya grup 'Admin' redundant (founder akses via RoleSections)",
     () => !guruNav.includes('label: "Admin"'));
-  test("GURU: founder tetap dapat 'Dasbor Guru' + 'Panel Admin' via RoleSections di guru layout",
-    () => guruLayout.includes("RoleSections") && read("components/shell/RoleSections.tsx").includes("Panel Admin") && read("components/shell/RoleSections.tsx").includes("Dasbor Guru"));
+  test("GURU: founder tetap dapat 'Dasbor Guru' + 'Panel Admin' via navigation-context (RoleSections di guru layout)",
+    () => guruLayout.includes("RoleSections") && read("components/shell/RoleSections.tsx").includes("getRoleNavItems") && read("components/shell/navigation-context.ts").includes("Panel Admin") && read("components/shell/navigation-context.ts").includes("Dasbor Guru"));
   test("GURU: item nav lain / GuruMobileNav utuh (12 grup tidak wajib, string menu tidak berubah)",
     () => guruNav.includes("GuruMobileNav") && guruNav.includes("Beranda"));
   test("CHAT: arena layout chat = full-width w-full (tanpa cap 1440px)",

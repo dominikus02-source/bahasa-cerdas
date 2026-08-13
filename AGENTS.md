@@ -3165,3 +3165,115 @@ SATU sistem icon untuk SEMUA navigation/shell (Murid/Arena/Obrolan/Guru/Admin): 
 3. GameRoom migration SQL via Supabase dashboard
 4. UI game solo: badge-score client vs server masih beda (kosmetik)
 5. SQL `2026-08-02_no_absen.sql` & `2026-08-08_school_identity.sql` (Production + Preview)
+
+---
+
+## Phase UNIFIED STUDENT HEADER 5.2 — SATU Header Global Student Shell (Aug 13, 2026)
+
+### Goal
+SATU header global yang identik untuk murid/arena/obrolan: `[← Beranda] ⌛ [UserAvatar] [Bell] [Theme]` — tanpa identitas produk, tanpa CTA role, tanpa Search/Logout di header. Header global RESTORASI `⌛` = breadcrumb nav (per-header local: Arena/Obrolan + menu). **Sudah di-commit & di-push ke main (`a7315cd`).**
+
+### Keputusan Desain
+- **Header arena/obrolan = header global student**: setelah 5.0, arena masih punya identitas produk sendiri (Zap/MessageCircle + "Arena"/"Obrolan" + subtitle + CTA Dashboard Guru + Search + Logout) → itu produk-pembeda, bukan aplikasi header → dihapus semua.
+- **Sumber kebenaran**: `app/arena/layout.tsx` kini render header global identik murid: `[BackHome] [breadcrumb ⌛] [UserAvatar link] [NotificationBell] [ThemeToggle]`. `HeaderActions.tsx` (komponen arena) DIHAPUS.
+- **Breadcrumb**: komponen lokal di `app/arena/layout.tsx` — `route.startsWith("/arena/chat") ? "Obrolan" : "Arena"` (label konteks lokal, bukan identitas produk global).
+- **Dashboard Guru tidak ada di header**: akses role via RoleSections sidebar (Mode Guru / Akses Founder) — konsisten 4.2.2/5.0.1.
+- **Logout tidak ada di header**: logout via sidebar footer + `LogoutButton` drawer.
+- **Chat**: `chat-client.tsx` tooltip/komentar `h-[calc(100dvh-64px)]` = anti-infinite-layout-jump (dokumentasi saja — tidak ada header kedua; toolbar internal 3-pane TIDAK diubah).
+- Authorization: guard server-side (MURID/GURU/founder) TIDAK diubah; mobile tetap Apk+MuridMobileNav.
+
+### File
+| File | Perubahan |
+|------|-----------|
+| `app/arena/layout.tsx` | Header arena → global kanonik `[BackHome] [breadcrumb ⌛] [UserAvatar] [NotificationBell] [ThemeToggle]`; hapus identitas produk (Zap/MessageCircle + "Arena"/"Obrolan" + "Pusat kompetisi & belajar"/"Ruang komunikasi kelas"), CTA Dashboard Guru (`hasGuruAccess`/`LayoutDashboard`), Search, Logout; brand sidebar subtitle "Dasbor Murid" |
+| `components/arena/HeaderActions.tsx` | DIHAPUS (logika Search/Bell pindah ke header global layouts) |
+| `app/arena/chat/chat-client.tsx` | Hanya komentar dokumentasi `h-[calc(100dvh-64px)]` (toolbar internal 3-pane tetap) |
+| `scripts/test-unified-header.ts` | BARU — 48 assertions (header global 5.2, no product identity, no CTA role, ≤3 Link header+apps, breadcrumb ⌛, Search/Logout absen, chat tanpa header kedua) |
+| `scripts/test-arena-web.ts` | Header assertions update (kanonik; tanpa Dasbor/Logout; ≤3 Link) |
+| `scripts/test-arena-chat.ts` | Assertion tanpa branch `isChatWeb ? (`; toolbar internal di chat-client |
+| `scripts/test-arena-nav-theme.ts` | Assertion header update (satu BackHome; tanpa iconOnly). |
+| `scripts/test-icon-system.ts` | NotificationBell w-5 h-5; HeaderActions dihapus |
+| `scripts/test-phase-simulation-workflow.ts` | Assertions nav pindah ke `nav-config.ts` + `<ShellNavList />` |
+| `package.json` | + `test:unified-header` |
+
+### Verification
+| Check | Hasil |
+|-------|-------|
+| `npm run test:unified-header` | ✅ 48/48 |
+| `test:unified-shell` | ✅ 61/61 |
+| `test:arena-nav-theme` | ✅ 33/33 |
+| `test:arena-web` / `arena-chat` | ✅ 56/56 · ✅ 94/94 |
+| `test:student-shell` / `student-home` / `student-consolidation` | ✅ 34/34 · ✅ 51/51 · ✅ 19/19 |
+| `test:karya-consolidation` / `global-works-discovery` | ✅ 40/40 · ✅ 31/31 |
+| `test:premium-economy` / `social-hardening` | ✅ 63/63 · ✅ 27/27 |
+| `test:gamification-engine` / `guru-phase` | ✅ SEMUA LULUS |
+| `test:bigt-menu` / `phase9g-admin-payments` | ✅ 26/26 · ✅ 28/28 |
+| `test:simulation-workflow` | ✅ All passed |
+| `npx tsc --noEmit` | ✅ 0 errors |
+| ESLint (file diubah) | ✅ 0 violations |
+| `npm run build` (dummy env) | ✅ 364 routes, exit 0 |
+| `git diff --check` | ✅ bersih |
+| Protected zones | ✅ 0 diff |
+| Commit/push | ✅ `a7315cd` pushed ke main (`6d01509..a7315cd`) |
+
+---
+
+## Phase NAVIGATION CONTEXT 5.2.1 — Role-Switch Context-Aware (Aug 13, 2026)
+
+### Goal
+Role-switch destination yang menunjuk ke konteks produk SAAT INI disembunyikan: GURU di `/guru/*` TIDAK melihat "Mode Guru → Dashboard Guru", founder di `/admin/*` TIDAK melihat "Panel Admin" — cross-context tetap tampil. **NOT COMMITTED — menunggu Founder Review (pola 5.0/5.0.1/5.1).**
+
+### Root Cause
+`RoleSections.tsx` (sidebar desktop) dan `MuridMobileNav.tsx` (drawer mobile) merender blok role berdasarkan `role === "GURU" && !isFounder` / `isFounder` TANPA cek pathname — padahal GURU yang sedang di dasbord guru tetap melihat "Dashboard Guru" (redundant self-link), founder di admin melihat "Panel Admin" (redundan).
+
+### Keputusan Desain
+- **Satu canonical helper**: `components/shell/navigation-context.ts` (baru):
+  - `getNavigationContext(pathname)` → `"student" | "guru" | "admin"` (student = `/murid/*`, `/arena/*`, `/arena/chat/*`).
+  - `getRoleNavItems({ role, isFounder, pathname })` → item role-switch yang valid: Dashboard Guru (section "guru" untuk GURU non-founder; section "founder" untuk founder, label "Dasbor Guru") + Panel Admin (founder only). Aturan: `context !== "guru"` untuk Dasbor Guru, `context !== "admin"` untuk Panel Admin; MURID selalu `[]`.
+- **Aturan inti**: CURRENT CONTEXT sebagai role-switch → hidden; `ROLE ≠ NAVIGATION CONTEXT` (bukan sekadar `role === "GURU"`). GURU di `/arena` atau `/arena/chat` = student experience → Dashboard Guru tetap tampil.
+- **Satu aturan untuk semua**: RoleSections (desktop) & MuridMobileNav (drawer mobile) MENGONSUMSI helper yang sama — desktop = mobile, tidak ada logika duplikat.
+- `getRoleNavItems` juga menyatukan label: "Panel Admin" kini dipakai di sidebar DAN drawer (sebelumnya drawer "Admin Panel" — inconsistency yang di-flag `audit-bahasa-indonesia-ui`).
+- Label per-role dipertahankan: GURU non-founder "Dashboard Guru", founder "Dasbor Guru" (label diperoleh dari helper, bukan hardcode di komponen).
+- Authorization TETAP server-side; icon tetap dipetakan di komponen (GraduationCap/ShieldCheck untuk sidebar, GraduationCap/Shield untuk drawer) — helper murni logika (tanpa lucide).
+
+### Files
+| File | Perubahan |
+|------|-----------|
+| `components/shell/navigation-context.ts` | BARU — `getNavigationContext()` + `getRoleNavItems()` (pure logic, tanpa JSX) |
+| `components/shell/RoleSections.tsx` | REWRITE → `"use client"` + `usePathname` + konsumsi `getRoleNavItems`; render null bila `items.length === 0`; header grup Mode Guru/Akses Founder; shell-label tetap |
+| `components/dashboard/MuridMobileNav.tsx` | Blok Mode Guru/Akses Founder inline → render dari `getRoleNavItems(pathname)` (grup identik, ikon GraduationCap/Shield, label "Panel Admin" seragam) |
+| `scripts/test-navigation-context.ts` | BARU — 30 assertions: 4 konteks, 12+ CASE role (GURU/FOUNDER/MURID × route), konsumsi UI (no inline logic), label canonical, collapse intact, protected files |
+| `scripts/test-arena-nav-theme.ts` | Literal RoleSections → dibaca dari `navigation-context.ts` (`role === "GURU" || isFounder`, `href: "/guru/beranda"`, `ariaLabel: "Dashboard Guru"`, `context !== "admin"`) |
+| `scripts/test-unified-shell.ts` | Literal "Panel Admin"/"Dasbor Guru" → dibaca dari `navigation-context.ts` |
+| `scripts/test-unified-header.ts` | Idem — roleSections `getRoleNavItems` + util literal |
+| `package.json` | + `test:navigation-context` |
+
+### Verifikasi
+| Check | Hasil |
+|-------|-------|
+| `npm run test:navigation-context` | ✅ 30/30 (BARU) |
+| `test:unified-header` / `test:unified-shell` | ✅ 48/48 · ✅ 61/61 |
+| `test:arena-nav-theme` | ✅ 33/33 |
+| `test:icon-system` / `arena-web` / `arena-chat` | ✅ ALL · ✅ 56/56 · ✅ 94/94 |
+| `test:student-shell` / `student-home` / `student-consolidation` / `karya-consolidation` | ✅ 34/34 · ✅ 51/51 · ✅ 19/19 · ✅ 40/40 |
+| `test:global-works-discovery` / `premium-economy` / `social-hardening` | ✅ 31/31 · ✅ 63/63 · ✅ 27/27 |
+| `test:gamification-engine` / `guru-phase` | ✅ SEMUA LULUS |
+| `test:simulation-workflow` / `bigt-menu` | ✅ All passed · ✅ 26/26 |
+| `test:phase9g-admin-payments` (tsx langsung) | ✅ 28/28 |
+| `npx tsc --noEmit` | ✅ 0 errors |
+| ESLint (7 file diubah/baru) | ✅ 0 violations |
+| `npm run build` (dummy env) | ✅ 364 routes, Compiled 25.3s, exit 0 |
+| `git diff --check` | ✅ bersih |
+| Protected zones | ✅ 0 diff (prisma/ app/api/ lib/gamification/ lib/learning-loop/ engines/ lib/apk.ts bottom-nav) |
+| `git status` | ✅ 8 file (3 komponen + 1 util + 3 test + package.json) |
+
+### Catatan
+- `test:bahasa-ui` pre-existing 57/62 (BigtInfoPage + panel RPP) — di luar changeset.
+- **Belum di-commit/push — menunggu Founder Review** (pola 5.0/5.0.1/5.1/5.2). Setelah review: `git add` 8 file + commit `feat:` + push.
+
+### Remaining (tidak berubah)
+1. TKA UTBK/Guru enrichment 30 → 150
+2. Game server revival (VPS mati)
+3. GameRoom migration SQL via Supabase dashboard
+4. UI game solo: badge-score client vs server masih beda (kosmetik)
+5. SQL `2026-08-02_no_absen.sql` & `2026-08-08_school_identity.sql` (Production + Preview)

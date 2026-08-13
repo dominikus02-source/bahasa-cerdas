@@ -120,9 +120,9 @@ function main() {
   test("tidak ada CTA 'Dashboard Guru' di header arena (LayoutDashboard absen)",
     () => !arenaLayout.includes("LayoutDashboard") && !arenaLayout.includes("hasGuruAccess"));
   test("akses guru/founder tetap via RoleSections di sidebar (Mode Guru / Akses Founder)",
-    () => arenaLayout.includes("<RoleSections") && roleSections.includes('href="/guru/beranda"') && roleSections.includes("Panel Admin"));
-  test("RoleSections memakai aria-label + title (icon-only saat collapsed)",
-    () => roleSections.includes('aria-label="Dashboard Guru"') && roleSections.includes('title="Dashboard Guru"'));
+    () => arenaLayout.includes("<RoleSections") && roleSections.includes("getRoleNavItems") && read("components/shell/navigation-context.ts").includes('href: "/guru/beranda"') && read("components/shell/navigation-context.ts").includes("Panel Admin"));
+  test("RoleSections memakai aria-label + title canonical (icon-only saat collapsed)",
+    () => roleSections.includes("getRoleNavItems") && read("components/shell/navigation-context.ts").includes('ariaLabel: "Dashboard Guru"') && read("components/shell/navigation-context.ts").includes('title: "Dashboard Guru"'));
 
   // ── 9. SIDEBAR STUDENT KANONIK ──
   console.log("\n── 9. Sidebar student canonical (konstan di semua route) ──");
