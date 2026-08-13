@@ -201,7 +201,7 @@ function ChangeBadge({ value }: { value: number | null }) {
   return (
     <span
       className={`inline-flex items-center gap-0.5 text-[11px] font-bold px-1.5 py-0.5 rounded-md ${
-        up ? "bg-emerald-50 text-emerald-600" : "bg-red-50 text-red-600"
+        up ? "bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400" : "bg-red-50 dark:bg-red-950/40 text-red-600 dark:text-red-400"
       }`}
     >
       {up ? <ArrowUp size={11} /> : <ArrowDown size={11} />}
@@ -246,13 +246,13 @@ function SectionCard({
   children: React.ReactNode;
 }) {
   return (
-    <section id={id} className="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
-      <div className="px-5 pt-5 pb-4 border-b border-slate-100 flex items-start gap-3">
+    <section id={id} className="bg-white dark:bg-slate-800/90 rounded-2xl border border-slate-200 dark:border-slate-700/80 shadow-sm overflow-hidden">
+      <div className="px-5 pt-5 pb-4 border-b border-slate-100 dark:border-slate-800 flex items-start gap-3">
         <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-violet-600 to-purple-600 text-white flex items-center justify-center shrink-0">
           {icon}
         </div>
         <div>
-          <h2 className="font-bold text-slate-900 text-base leading-tight">{title}</h2>
+          <h2 className="font-bold text-slate-900 dark:text-slate-100 text-base leading-tight">{title}</h2>
           {subtitle && <p className="text-xs text-slate-400 mt-0.5">{subtitle}</p>}
         </div>
       </div>
@@ -265,7 +265,7 @@ function StatCard({
   label,
   value,
   sub,
-  color = "text-slate-900",
+  color = "text-slate-900 dark:text-slate-100",
   icon,
 }: {
   label: string;
@@ -275,7 +275,7 @@ function StatCard({
   icon?: React.ReactNode;
 }) {
   return (
-    <div className="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-4">
+    <div className="bg-white dark:bg-slate-800/90 rounded-2xl border border-slate-200 dark:border-slate-700/80 shadow-sm p-4">
       <div className="flex items-center justify-between">
         <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400">{label}</p>
         {icon && <span className="text-slate-300">{icon}</span>}
@@ -381,13 +381,13 @@ export default function AdminAnalyticsPage() {
       {/* HEADER */}
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-extrabold text-slate-900 flex items-center gap-2.5">
+          <h1 className="text-2xl font-extrabold text-slate-900 dark:text-slate-100 flex items-center gap-2.5">
             <span className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-600 to-purple-600 text-white flex items-center justify-center">
               <BarChart3 size={20} />
             </span>
             Learning Analytics
           </h1>
-          <p className="text-sm text-slate-500 mt-1.5">
+          <p className="text-sm text-slate-500 dark:text-slate-400 mt-1.5">
             Perjalanan murid: Login → Bermain → Belajar → Berkarya → UKBI → Retensi.
             {data && (
               <span className="text-slate-400">
@@ -408,7 +408,7 @@ export default function AdminAnalyticsPage() {
       </div>
 
       {/* FILTER BAR */}
-      <div className="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-4 space-y-3">
+      <div className="bg-white dark:bg-slate-800/90 rounded-2xl border border-slate-200 dark:border-slate-700/80 shadow-sm p-4 space-y-3">
         <div className="flex flex-wrap items-center gap-2">
           <span className="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5 mr-1">
             <CalendarDays size={13} /> Rentang
@@ -418,7 +418,7 @@ export default function AdminAnalyticsPage() {
               key={p.value}
               onClick={() => setRange(p.value)}
               className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-                range === p.value ? "bg-violet-600 text-white shadow-sm" : "bg-slate-100 text-slate-500 hover:bg-slate-200"
+                range === p.value ? "bg-violet-600 text-white shadow-sm" : "bg-slate-100 dark:bg-slate-800/70 text-slate-500 dark:text-slate-400 hover:bg-slate-200"
               }`}
             >
               {p.label}
@@ -430,20 +430,20 @@ export default function AdminAnalyticsPage() {
                 type="date"
                 value={customStart}
                 onChange={(e) => setCustomStart(e.target.value)}
-                className="px-2.5 py-1.5 rounded-lg border border-slate-200 text-xs"
+                className="px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 text-xs"
               />
               <span className="text-xs text-slate-400">s.d.</span>
               <input
                 type="date"
                 value={customEnd}
                 onChange={(e) => setCustomEnd(e.target.value)}
-                className="px-2.5 py-1.5 rounded-lg border border-slate-200 text-xs"
+                className="px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 text-xs"
               />
             </div>
           )}
           <button
             onClick={load}
-            className="ml-auto inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold bg-violet-50 text-violet-700 hover:bg-violet-100 transition-all"
+            className="ml-auto inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold bg-violet-50 dark:bg-violet-950/40 text-violet-700 dark:text-violet-300 hover:bg-violet-100 transition-all"
           >
             <Filter size={13} /> Terapkan
           </button>
@@ -451,7 +451,7 @@ export default function AdminAnalyticsPage() {
 
         <button
           onClick={() => setFiltersOpen(!filtersOpen)}
-          className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 hover:text-slate-800 transition-colors"
+          className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:text-slate-200 transition-colors"
         >
           <Filter size={13} />
           Filter lanjutan: Sekolah / Provinsi / Kabupaten / Kelas / Guru / Role
@@ -459,7 +459,7 @@ export default function AdminAnalyticsPage() {
         </button>
 
         {filtersOpen && (
-          <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-2.5 pt-2 border-t border-slate-100">
+          <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-2.5 pt-2 border-t border-slate-100 dark:border-slate-800">
             <FilterInput label="Role" value={role} onChange={setRole} placeholder="MURID / GURU" />
             <FilterInput label="Provinsi" value={province} onChange={setProvince} placeholder="mis. Jawa Timur" />
             <FilterInput label="Kabupaten/Kota" value={city} onChange={setCity} placeholder="mis. Surabaya" />
@@ -469,14 +469,14 @@ export default function AdminAnalyticsPage() {
           </div>
         )}
         {data?.filterApplied && (
-          <p className="text-[11px] text-amber-600 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2">
+          <p className="text-[11px] text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 rounded-lg px-3 py-2">
             Filter aktif diterapkan pada semua angka.
           </p>
         )}
       </div>
 
       {error && (
-        <div className="p-4 rounded-2xl bg-red-50 border border-red-200 text-sm text-red-600 flex items-center gap-2">
+        <div className="p-4 rounded-2xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800 text-sm text-red-600 dark:text-red-400 flex items-center gap-2">
           <AlertTriangle size={16} /> {error}
         </div>
       )}
@@ -484,7 +484,7 @@ export default function AdminAnalyticsPage() {
       {loading && !data && (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 animate-pulse">
           {Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className="h-36 bg-slate-100 rounded-2xl" />
+            <div key={i} className="h-36 bg-slate-100 dark:bg-slate-800/70 rounded-2xl" />
           ))}
         </div>
       )}
@@ -502,11 +502,11 @@ export default function AdminAnalyticsPage() {
               {data.funnel.map((f, i) => (
                 <div key={f.stage}>
                   <div className="flex items-center gap-3 py-2.5">
-                    <div className="w-28 shrink-0 text-[11px] font-extrabold tracking-wide text-slate-500">
+                    <div className="w-28 shrink-0 text-[11px] font-extrabold tracking-wide text-slate-500 dark:text-slate-400">
                       {f.label}
                     </div>
                     <div className="flex-1">
-                      <div className="h-9 rounded-lg overflow-hidden bg-slate-50 flex items-center relative">
+                      <div className="h-9 rounded-lg overflow-hidden bg-slate-50 dark:bg-slate-800/50 flex items-center relative">
                         <div
                           className="h-full rounded-lg transition-all"
                           style={{
@@ -515,11 +515,11 @@ export default function AdminAnalyticsPage() {
                           }}
                         />
                         <div className="absolute inset-0 flex items-center justify-between px-3">
-                          <span className="text-sm font-extrabold text-slate-900">
+                          <span className="text-sm font-extrabold text-slate-900 dark:text-slate-100">
                             {fmt(f.users)} <span className="text-[10px] font-semibold text-slate-400">User</span>
                           </span>
                           <span className="flex items-center gap-2">
-                            <span className="text-[11px] font-bold text-slate-500">{f.conversion}%</span>
+                            <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400">{f.conversion}%</span>
                             <ChangeBadge value={f.change} />
                           </span>
                         </div>
@@ -549,7 +549,7 @@ export default function AdminAnalyticsPage() {
                 const naik = d.drop < 0;
                 const stabil = d.drop === 0;
                 const pct = Math.min(100, Math.abs(d.drop));
-                const tone = naik || stabil ? "text-emerald-600" : d.drop >= 50 ? "text-red-600" : "text-amber-600";
+                const tone = naik || stabil ? "text-emerald-600 dark:text-emerald-400" : d.drop >= 50 ? "text-red-600 dark:text-red-400" : "text-amber-600 dark:text-amber-400";
                 const bar =
                   naik || stabil
                     ? "linear-gradient(90deg,#34d399,#10b981)"
@@ -559,7 +559,7 @@ export default function AdminAnalyticsPage() {
                 return (
                   <div key={`${d.from}-${d.to}`}>
                     <div className="flex items-center justify-between mb-1.5">
-                      <span className="text-xs font-semibold text-slate-600">
+                      <span className="text-xs font-semibold text-slate-600 dark:text-slate-300">
                         {d.from} → {d.to}
                       </span>
                       <span className={`text-xs font-extrabold ${tone}`}>
@@ -570,7 +570,7 @@ export default function AdminAnalyticsPage() {
                           : `drop ${d.drop}%`}
                       </span>
                     </div>
-                    <div className="h-3 rounded-full bg-slate-100 overflow-hidden">
+                    <div className="h-3 rounded-full bg-slate-100 dark:bg-slate-800/70 overflow-hidden">
                       {d.drop !== 0 && (
                         <div
                           className="h-full rounded-full transition-all"
@@ -592,14 +592,14 @@ export default function AdminAnalyticsPage() {
             icon={<Users size={18} />}
           >
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <StatCard label="DAU" value={fmt(data.retention.dau)} sub="User aktif hari ini" color="text-violet-600" />
+              <StatCard label="DAU" value={fmt(data.retention.dau)} sub="User aktif hari ini" color="text-violet-600 dark:text-violet-400" />
               <StatCard label="WAU" value={fmt(data.retention.wau)} sub="7 hari terakhir" color="text-indigo-600" />
-              <StatCard label="MAU" value={fmt(data.retention.mau)} sub="30 hari terakhir" color="text-blue-600" />
+              <StatCard label="MAU" value={fmt(data.retention.mau)} sub="30 hari terakhir" color="text-blue-600 dark:text-blue-400" />
               <StatCard
                 label="Stickiness"
                 value={`${data.retention.stickiness}%`}
                 sub="DAU / MAU"
-                color={data.retention.stickiness >= 20 ? "text-emerald-600" : "text-amber-600"}
+                color={data.retention.stickiness >= 20 ? "text-emerald-600 dark:text-emerald-400" : "text-amber-600 dark:text-amber-400"}
               />
             </div>
             <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mt-4">
@@ -608,7 +608,7 @@ export default function AdminAnalyticsPage() {
                 label="Retensi D7"
                 value={`${data.retention.retentionD7}%`}
                 sub="Kembali hari ke-7"
-                color={data.retention.retentionD7 >= 20 ? "text-emerald-600" : "text-red-500"}
+                color={data.retention.retentionD7 >= 20 ? "text-emerald-600 dark:text-emerald-400" : "text-red-500 dark:text-red-400"}
               />
               <StatCard label="Retensi D30" value={`${data.retention.retentionD30}%`} sub="Bertahan 30 hari" />
               <StatCard label="Streak rata-rata" value={data.retention.avgStreak} sub={`Terbaik ${data.retention.maxStreak} hari`} />
@@ -680,15 +680,15 @@ export default function AdminAnalyticsPage() {
                 {data.topJourneys.map((j, i) => (
                   <div
                     key={i}
-                    className="flex items-center gap-3 p-3 rounded-xl bg-slate-50 border border-slate-100 hover:border-violet-200 transition-all"
+                    className="flex items-center gap-3 p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 hover:border-violet-200 dark:border-violet-800 transition-all"
                   >
-                    <span className="w-6 h-6 rounded-lg bg-violet-100 text-violet-700 text-[11px] font-extrabold flex items-center justify-center shrink-0">
+                    <span className="w-6 h-6 rounded-lg bg-violet-100 text-violet-700 dark:text-violet-300 text-[11px] font-extrabold flex items-center justify-center shrink-0">
                       {i + 1}
                     </span>
-                    <div className="flex-1 flex flex-wrap items-center gap-1 text-xs font-semibold text-slate-600">
+                    <div className="flex-1 flex flex-wrap items-center gap-1 text-xs font-semibold text-slate-600 dark:text-slate-300">
                       {j.journey.map((step, s) => (
                         <span key={s} className="inline-flex items-center gap-1">
-                          <span className="px-2 py-1 rounded-md bg-white border border-slate-200">{step}</span>
+                          <span className="px-2 py-1 rounded-md bg-white dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700">{step}</span>
                           {s < j.journey.length - 1 && <span className="text-slate-300">→</span>}
                         </span>
                       ))}
@@ -719,7 +719,7 @@ export default function AdminAnalyticsPage() {
                 </div>
                 {heatRows.map((row) => (
                   <div key={row.dow} className="flex items-center mt-1">
-                    <div className="w-10 shrink-0 text-[10px] font-bold text-slate-500">{DAY_LABELS[row.dow]}</div>
+                    <div className="w-10 shrink-0 text-[10px] font-bold text-slate-500 dark:text-slate-400">{DAY_LABELS[row.dow]}</div>
                     {row.hours.map((cell, h) => (
                       <div
                         key={h}
@@ -737,7 +737,7 @@ export default function AdminAnalyticsPage() {
                 ))}
                 <div className="flex items-center justify-end gap-2 mt-3">
                   <span className="text-[10px] text-slate-400">Sepi</span>
-                  <div className="w-4 h-3 rounded bg-slate-100" />
+                  <div className="w-4 h-3 rounded bg-slate-100 dark:bg-slate-800/70" />
                   <div className="w-4 h-3 rounded" style={{ backgroundColor: "rgba(139,92,246,0.3)" }} />
                   <div className="w-4 h-3 rounded" style={{ backgroundColor: "rgba(139,92,246,0.7)" }} />
                   <div className="w-4 h-3 rounded" style={{ backgroundColor: "rgba(139,92,246,1)" }} />
@@ -771,9 +771,9 @@ export default function AdminAnalyticsPage() {
                   </thead>
                   <tbody>
                     {data.cohort.map((c) => (
-                      <tr key={c.week} className="border-t border-slate-100">
-                        <td className="py-2 pr-4 font-semibold text-slate-700">{c.week}</td>
-                        <td className="py-2 px-3 font-bold text-slate-900">{c.users}</td>
+                      <tr key={c.week} className="border-t border-slate-100 dark:border-slate-800">
+                        <td className="py-2 pr-4 font-semibold text-slate-700 dark:text-slate-200">{c.week}</td>
+                        <td className="py-2 px-3 font-bold text-slate-900 dark:text-slate-100">{c.users}</td>
                         {[c.w1, c.w2, c.w3, c.w4].map((v, i) => (
                           <td key={i} className="py-2 px-3">
                             <div
@@ -834,15 +834,15 @@ export default function AdminAnalyticsPage() {
                 return (
                   <div
                     key={r.rank}
-                    className="rounded-2xl border border-slate-200/80 bg-gradient-to-b from-slate-50 to-white p-4 flex flex-col items-center text-center hover:shadow-md transition-all"
+                    className="rounded-2xl border border-slate-200 dark:border-slate-700/80 bg-gradient-to-b from-slate-50 to-white p-4 flex flex-col items-center text-center hover:shadow-md transition-all"
                   >
                     <RankIcon rank={r.rank} size={52} glow />
-                    <p className="mt-2 text-sm font-extrabold text-slate-900">{meta?.label ?? r.rank}</p>
+                    <p className="mt-2 text-sm font-extrabold text-slate-900 dark:text-slate-100">{meta?.label ?? r.rank}</p>
                     <p className="text-[10px] text-slate-400 -mt-0.5">{meta?.title ?? ""}</p>
-                    <p className="text-lg font-extrabold text-slate-900 mt-1">{fmt(r.users)}</p>
+                    <p className="text-lg font-extrabold text-slate-900 dark:text-slate-100 mt-1">{fmt(r.users)}</p>
                     <p className="text-[10px] text-slate-400">{pct}% pemain</p>
                     {r.promotedThisWeek > 0 ? (
-                      <span className="mt-1.5 inline-flex items-center gap-1 text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">
+                      <span className="mt-1.5 inline-flex items-center gap-1 text-[10px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 px-2 py-0.5 rounded-full">
                         <ArrowUp size={10} /> {r.promotedThisWeek} naik minggu ini
                       </span>
                     ) : (
@@ -897,7 +897,7 @@ export default function AdminAnalyticsPage() {
             <div className="mt-5">
               <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-2.5">
                 Tema paling populer {data.content.topTheme ? (
-                  <span className="text-violet-600 normal-case">— {data.content.topTheme}</span>
+                  <span className="text-violet-600 dark:text-violet-400 normal-case">— {data.content.topTheme}</span>
                 ) : null}
               </p>
               {data.content.themes.length === 0 ? (
@@ -908,14 +908,14 @@ export default function AdminAnalyticsPage() {
                     const max = data.content.themes[0]?.count ?? 1;
                     return (
                       <div key={t.type} className="flex items-center gap-3">
-                        <span className="w-24 shrink-0 text-xs font-semibold text-slate-600">{t.type}</span>
-                        <div className="flex-1 h-6 rounded-lg bg-slate-50 overflow-hidden">
+                        <span className="w-24 shrink-0 text-xs font-semibold text-slate-600 dark:text-slate-300">{t.type}</span>
+                        <div className="flex-1 h-6 rounded-lg bg-slate-50 dark:bg-slate-800/50 overflow-hidden">
                           <div
                             className="h-full rounded-lg bg-gradient-to-r from-pink-500 to-fuchsia-500"
                             style={{ width: `${Math.max(4, Math.round((t.count / max) * 100))}%` }}
                           />
                         </div>
-                        <span className="w-14 text-right text-xs font-bold text-slate-500">{t.count}</span>
+                        <span className="w-14 text-right text-xs font-bold text-slate-500 dark:text-slate-400">{t.count}</span>
                       </div>
                     );
                   })}
@@ -936,9 +936,9 @@ export default function AdminAnalyticsPage() {
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
                 {data.topGames.map((g, i) => (
-                  <div key={g.source} className="rounded-2xl border border-slate-200/80 p-4 hover:shadow-md transition-all">
+                  <div key={g.source} className="rounded-2xl border border-slate-200 dark:border-slate-700/80 p-4 hover:shadow-md transition-all">
                     <div className="flex items-center justify-between">
-                      <p className="text-sm font-extrabold text-slate-900 flex items-center gap-2">
+                      <p className="text-sm font-extrabold text-slate-900 dark:text-slate-100 flex items-center gap-2">
                         <span className={`w-7 h-7 rounded-lg text-white text-xs font-extrabold flex items-center justify-center ${
                           i === 0 ? "bg-gradient-to-br from-amber-400 to-orange-500" : "bg-slate-800"
                         }`}>
@@ -946,20 +946,20 @@ export default function AdminAnalyticsPage() {
                         </span>
                         {g.label}
                       </p>
-                      <span className="text-[10px] font-bold text-violet-600 bg-violet-50 px-2 py-0.5 rounded-full">{g.repeatRate}% main ulang</span>
+                      <span className="text-[10px] font-bold text-violet-600 dark:text-violet-400 bg-violet-50 dark:bg-violet-950/40 px-2 py-0.5 rounded-full">{g.repeatRate}% main ulang</span>
                     </div>
                     <div className="grid grid-cols-3 gap-2 mt-3">
                       <div>
                         <p className="text-[10px] text-slate-400 font-semibold">Pemain</p>
-                        <p className="text-base font-extrabold text-slate-900">{fmt(g.players)}</p>
+                        <p className="text-base font-extrabold text-slate-900 dark:text-slate-100">{fmt(g.players)}</p>
                       </div>
                       <div>
                         <p className="text-[10px] text-slate-400 font-semibold">Rata² XP</p>
-                        <p className="text-base font-extrabold text-slate-900">{fmt(g.avgXp)}</p>
+                        <p className="text-base font-extrabold text-slate-900 dark:text-slate-100">{fmt(g.avgXp)}</p>
                       </div>
                       <div>
                         <p className="text-[10px] text-slate-400 font-semibold">Total XP</p>
-                        <p className="text-base font-extrabold text-slate-900">{fmt(g.totalXp)}</p>
+                        <p className="text-base font-extrabold text-slate-900 dark:text-slate-100">{fmt(g.totalXp)}</p>
                       </div>
                     </div>
                   </div>
@@ -976,7 +976,7 @@ export default function AdminAnalyticsPage() {
             icon={<Brain size={18} />}
           >
             <div className="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-8 gap-4">
-              <StatCard label="Guru Aktif AI" value={fmt(data.aiGuru.activeGurus)} color="text-emerald-600" icon={<Users size={15} />} />
+              <StatCard label="Guru Aktif AI" value={fmt(data.aiGuru.activeGurus)} color="text-emerald-600 dark:text-emerald-400" icon={<Users size={15} />} />
               <StatCard label="Total Prompt" value={fmt(data.aiGuru.totalPrompts)} icon={<Zap size={15} />} />
               <StatCard label="Total Token" value={fmt(data.aiGuru.totalTokens)} icon={<Database size={15} />} />
               <StatCard label="RPP" value={fmt(data.aiGuru.rpp)} icon={<FileTextIcon />} />
@@ -1000,20 +1000,20 @@ export default function AdminAnalyticsPage() {
                   key={i}
                   className={`flex items-start gap-3 p-3.5 rounded-xl border ${
                     ins.tone === "good"
-                      ? "bg-emerald-50/60 border-emerald-200"
+                      ? "bg-emerald-50 dark:bg-emerald-950/40/60 border-emerald-200 dark:border-emerald-800"
                       : ins.tone === "bad"
-                      ? "bg-red-50/60 border-red-200"
-                      : "bg-slate-50 border-slate-200"
+                      ? "bg-red-50 dark:bg-red-950/40/60 border-red-200 dark:border-red-800"
+                      : "bg-slate-50 dark:bg-slate-800/50 border-slate-200 dark:border-slate-700"
                   }`}
                 >
                   {ins.tone === "good" ? (
-                    <TrendingUp size={16} className="text-emerald-600 shrink-0 mt-0.5" />
+                    <TrendingUp size={16} className="text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
                   ) : ins.tone === "bad" ? (
-                    <TrendingDown size={16} className="text-red-500 shrink-0 mt-0.5" />
+                    <TrendingDown size={16} className="text-red-500 dark:text-red-400 shrink-0 mt-0.5" />
                   ) : (
                     <Info size={16} className="text-slate-400 shrink-0 mt-0.5" />
                   )}
-                  <p className="text-sm text-slate-700">{ins.text}</p>
+                  <p className="text-sm text-slate-700 dark:text-slate-200">{ins.text}</p>
                 </div>
               ))}
             </div>
@@ -1042,7 +1042,7 @@ function FilterInput({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className="mt-1 w-full px-2.5 py-1.5 rounded-lg border border-slate-200 text-xs focus:outline-none focus:ring-2 focus:ring-violet-300"
+        className="mt-1 w-full px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 text-xs focus:outline-none focus:ring-2 focus:ring-violet-300"
       />
     </label>
   );

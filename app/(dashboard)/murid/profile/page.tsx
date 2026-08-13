@@ -23,8 +23,8 @@ import ActivityFeed, { type FeedEvent } from "@/components/profile/ActivityFeed"
 import AchievementShowcase from "@/components/profile/AchievementShowcase";
 import FeaturedWorksGallery from "@/components/profile/FeaturedWorksGallery";
 import SocialConnections from "@/components/profile/SocialConnections";
+import BadgeShowcasePanel from "@/components/profile/BadgeShowcasePanel";
 import ActivityChart, { type ChartDay } from "@/components/profile/ActivityChart";
-import { BadgeIcon } from "@/components/gamification/BadgeIcon";
 
 interface UserData {
   id: string; fullName: string; nickname?: string | null; xp: number; level: number; streak: number;
@@ -457,67 +457,16 @@ export default function MuridProfilePage() {
             onEditProfile={openSettings}
           />
 
-          {/* Lencana — progres nyata (dari profile-meta) + teaser lencana berikutnya */}
+          {/* Kebun Kata — naik ke atas sidebar (glance social widget) */}
           {meta && (
             <div
-              className="rounded-2xl p-4 text-white ring-1 ring-white/10"
-              style={{ background: "linear-gradient(135deg, #17163F 0%, #21174F 100%)" }}
-            >
-              <div className="flex items-center justify-between mb-3">
-                <h3 className="text-sm font-bold text-white/90 flex items-center gap-2">
-                  <span className="w-6 h-6 rounded-lg bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-sm">
-                    <Award size={13} className="text-white" />
-                  </span>
-                  Perkembangan Lencana
-                </h3>
-                <span className="text-[11px] font-semibold text-white/45">
-                  {meta.lencana.filter(l => l.unlocked).length}/{meta.lencana.length}
-                </span>
-              </div>
-              <div className="grid grid-cols-3 gap-2">
-                {meta.lencana.map(l => (
-                  <div
-                    key={l.id}
-                    title={l.unlocked ? l.name : `${l.name} — ${l.progress}/${l.target}`}
-                    className={`relative flex flex-col items-center gap-1 p-2.5 rounded-xl text-center transition-transform ${
-                      l.unlocked
-                        ? "profile-badge-unlocked bg-gradient-to-b from-amber-400/15 to-amber-500/10 ring-1 ring-amber-300/25 hover:scale-105"
-                        : "bg-white/[0.04] ring-1 ring-white/5"
-                    }`}
-                  >
-                    <BadgeIcon
-                      icon={l.icon}
-                      alt={l.name}
-                      size={40}
-                      className={`object-contain ${l.unlocked ? "" : "grayscale opacity-30"}`}
-                    />
-                    <span className={`text-[10px] font-semibold leading-tight ${l.unlocked ? "text-amber-200" : "text-white/40"}`}>{l.name}</span>
-                    {!l.unlocked && (
-                      <div className="w-full h-1 bg-white/10 dark:bg-slate-900/10 rounded-full overflow-hidden mt-0.5">
-                        <div className="h-full bg-violet-400 rounded-full" style={{ width: `${Math.min(100, (l.progress / l.target) * 100)}%` }} />
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-              {nextBadge && (
-                <p className="text-[11px] text-violet-300 font-semibold mt-3 flex items-center gap-1 bg-violet-500/10 rounded-lg px-2.5 py-2 ring-1 ring-violet-400/20">
-                  <Award size={12} /> {nextBadge.target - nextBadge.progress} lagi untuk buka &ldquo;{nextBadge.name}&rdquo;!
-                </p>
-              )}
-            </div>
-          )}
+              className="bc-card-premium rounded-2xl p-4 ring-1 ring-slate-900/10 dark:ring-white/10"
 
-          {/* Kebun Kata */}
-          {meta && (
-            <div
-              className="rounded-2xl p-4 text-white ring-1 ring-white/10"
-              style={{ background: "linear-gradient(135deg, #17163F 0%, #21174F 100%)" }}
             >
               <div className="flex items-center justify-between mb-3">
-                <h3 className="text-sm font-bold text-white/90 flex items-center gap-2">
+                <h3 className="text-sm font-bold text-slate-900 dark:text-white/90 flex items-center gap-2">
                   <span className="w-6 h-6 rounded-lg bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center shadow-sm">
-                    <IconPen size={12} className="text-white" />
+                    <IconPen size={12} className="text-slate-900 dark:text-white" />
                   </span>
                   Kebun Kata
                 </h3>
@@ -536,7 +485,7 @@ export default function MuridProfilePage() {
                   />
                 ))}
               </div>
-              <div className="flex items-center gap-2 mt-3 text-[10px] text-white/40">
+              <div className="flex items-center gap-2 mt-3 text-[10px] text-slate-900/40 dark:text-white/40">
                 <span>Sedikit</span>
                 {KEBUN_LEVELS.map(k => (
                   <span key={k.level} className={`w-2.5 h-2.5 rounded-[2px] ${k.color} inline-block`} />
@@ -562,14 +511,24 @@ export default function MuridProfilePage() {
             />
           ) : (
             <div
-              className="rounded-2xl p-5 text-white ring-1 ring-white/10"
-              style={{ background: "linear-gradient(135deg, #17163F 0%, #21174F 100%)" }}
+              className="bc-card-premium rounded-2xl p-5 ring-1 ring-slate-900/10 dark:ring-white/10"
+
             >
-              <h3 className="text-sm font-bold text-white/90 mb-1.5">Komunitas</h3>
-              <p className="text-xs text-white/45 leading-relaxed">
+              <h3 className="text-sm font-bold text-slate-900 dark:text-white/90 mb-1.5">Komunitas</h3>
+              <p className="text-xs text-slate-900/45 dark:text-white/45 leading-relaxed">
                 Ikuti murid lain dan temukan teman menulis. Fitur aktif setelah
                 migrasi tabel Follow dijalankan.
               </p>
+            </div>
+          )}
+
+          {/* Lencana — progres nyata (dari profile-meta), maks 9 tampil + perluas */}
+          {meta && (
+            <div
+              className="bc-card-premium rounded-2xl p-4 ring-1 ring-slate-900/10 dark:ring-white/10"
+
+            >
+              <BadgeShowcasePanel lencana={meta.lencana} nextBadge={nextBadge} />
             </div>
           )}
         </div>
@@ -578,24 +537,24 @@ export default function MuridProfilePage() {
       {/* Pencapaian terbaru — lencana asli (dari /api/player/badges, best-effort) */}
       {showcaseBadges !== null && (
         <section
-          className="my-6 rounded-2xl p-5 text-white ring-1 ring-white/10"
-          style={{ background: "linear-gradient(135deg, #17163F 0%, #21174F 100%)" }}
+          className="bc-card-premium my-6 rounded-2xl p-5 ring-1 ring-slate-900/10 dark:ring-white/10"
+
         >
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-sm font-bold text-white/90 flex items-center gap-2">
+            <h3 className="text-sm font-bold text-slate-900 dark:text-white/90 flex items-center gap-2">
               <span className="w-6 h-6 rounded-lg bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-sm">
-                <Award size={13} className="text-white" />
+                <Award size={13} className="text-slate-900 dark:text-white" />
               </span>
               Pencapaian Terkini
             </h3>
-            <Link href="/arena/player/badges" className="text-[11px] font-semibold text-white/55 hover:text-white transition-colors">
+            <Link href="/arena/player/badges" className="text-[11px] font-semibold text-slate-900/55 dark:text-white/55 hover:text-slate-900 dark:text-white transition-colors">
               Lihat Semua →
             </Link>
           </div>
           {showcaseBadges.some((b) => b.unlocked) ? (
             <AchievementShowcase badges={showcaseBadges} max={6} />
           ) : (
-            <p className="text-[13px] text-white/55 leading-relaxed">
+            <p className="text-[13px] text-slate-900/55 dark:text-white/55 leading-relaxed">
               Belum ada lencana. Selesaikan latihan di Jalur Cerdas, ikuti tantangan di Arena,
               dan kumpulkan karya untuk membuka lencana pertamamu.
             </p>

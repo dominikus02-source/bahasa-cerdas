@@ -35,12 +35,12 @@ export default function AchievementShowcase({
  className="group flex flex-col items-center gap-1.5 rounded-2xl border border-white/10 bg-white/5 dark:bg-slate-900/5 p-3 transition-all hover:border-white/25 hover:bg-white/10 "
           >
             <span
-              className="flex h-11 w-11 items-center justify-center rounded-xl text-white shadow-md transition-transform group-hover:scale-110"
+              className="flex h-11 w-11 items-center justify-center rounded-xl text-slate-900 dark:text-white shadow-md transition-transform group-hover:scale-110"
               style={{ background: `linear-gradient(135deg, ${rarity.color}, ${rarity.color}88)` }}
             >
               <BadgeIcon icon={b.icon} size={26} alt={b.name} />
             </span>
-            <span className="max-w-full truncate text-[11px] font-bold text-white/80">{b.name}</span>
+            <span className="max-w-full truncate text-[11px] font-bold text-slate-900/80 dark:text-white/80">{b.name}</span>
           </Link>
         );
       })}
@@ -50,10 +50,10 @@ export default function AchievementShowcase({
           key={`lock-${i}`}
           className="flex flex-col items-center gap-1.5 rounded-2xl border border-dashed border-white/10 bg-white/5 dark:bg-slate-900/5 p-3 opacity-55"
         >
-          <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-white/5 dark:bg-slate-900/5 text-white/35">
+          <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-slate-900/5 dark:bg-slate-900/5 text-slate-900/35 dark:text-white/35">
             <Lock size={18} />
           </span>
-          <span className="text-[11px] text-white/35">Terkunci</span>
+          <span className="text-[11px] text-slate-900/35 dark:text-white/35">Terkunci</span>
         </div>
       ))}
     </div>

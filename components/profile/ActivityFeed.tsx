@@ -70,16 +70,16 @@ export default function ActivityFeed({
           )}
         </span>
         <div className="min-w-0 flex-1">
-          <p className="text-sm font-semibold text-white/85 truncate">{e.title}</p>
-          {e.detail && <p className="text-xs text-white/45 truncate">{e.detail}</p>}
-          <p className="mt-0.5 text-[10px] text-white/35">{waktuLalu(e.createdAt)}</p>
+          <p className="text-sm font-semibold text-slate-900 dark:text-white/85 truncate">{e.title}</p>
+          {e.detail && <p className="text-xs text-slate-900/45 dark:text-white/45 truncate">{e.detail}</p>}
+          <p className="mt-0.5 text-[10px] text-slate-900/35 dark:text-white/35">{waktuLalu(e.createdAt)}</p>
         </div>
         {e.amount != null && (
           <span
             className={`shrink-0 rounded-full px-2 py-0.5 text-[11px] font-bold tabular-nums ${
               e.xp
                 ? "bg-amber-400/15 text-amber-200 ring-1 ring-amber-300/20"
-                : "bg-white/5 dark:bg-slate-900/5 text-white/60 ring-1 ring-white/10"
+                : "bg-slate-900/5 dark:bg-slate-900/5 text-slate-900/60 dark:text-white/60 ring-1 ring-slate-900/10 dark:ring-white/10"
             }`}
           >
             +{e.amount.toLocaleString("id-ID")}
@@ -91,11 +91,10 @@ export default function ActivityFeed({
 
   return (
     <div
-      className="rounded-2xl text-white ring-1 ring-white/10 overflow-hidden"
-      style={{ background: "linear-gradient(135deg, #17163F 0%, #21174F 100%)" }}
+      className="rounded-2xl text-slate-900 dark:text-white ring-1 ring-slate-900/10 dark:ring-white/10 overflow-hidden bc-card-premium"
     >
       <div className="flex items-center justify-between px-4 pt-4 pb-2">
-        <h3 className="inline-flex items-center gap-2 text-sm font-bold text-white/90">
+        <h3 className="inline-flex items-center gap-2 text-sm font-bold text-slate-900 dark:text-white/90">
           <Activity size={15} className="text-violet-300" /> Aktivitas Terbaru
         </h3>
         {allHref && sorted.length > 0 && (
@@ -105,7 +104,7 @@ export default function ActivityFeed({
         )}
       </div>
       {sorted.length === 0 ? (
-        <p className="px-4 pb-5 pt-1 text-sm text-white/40">{emptyText}</p>
+        <p className="px-4 pb-5 pt-1 text-sm text-slate-900/40 dark:text-white/40">{emptyText}</p>
       ) : (
         <ul className="divide-y divide-white/[0.06] pb-1">{sorted.map(row)}</ul>
       )}

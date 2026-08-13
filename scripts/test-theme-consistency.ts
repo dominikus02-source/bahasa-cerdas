@@ -75,6 +75,8 @@ const SCOPES = [
   "components/shell",
   "components/gamification",
   "components/ai-bc",
+  "app/(dashboard)/admin",
+  "components/admin",
 ];
 
 const studentFiles: string[] = [];
@@ -290,6 +292,74 @@ test("player-theme tidak pure black (navy premium)", () => {
   const css = read("app/arena/player-theme.css");
   return css.includes("#0b132b") || css.includes("0b132b");
 });
+
+/* ------------------------------------------------------------------ */
+/* 10. Light/Dark 2.2 — beranda & profile theme-aware                  */
+/* ------------------------------------------------------------------ */
+
+console.log("\n10. Light/Dark 2.2 — beranda & profile theme-aware");
+test("beranda wrapper memakai px-theme px-theme-app", () =>
+  read("app/(dashboard)/murid/beranda/page.tsx").includes("px-theme-app"));
+test("player-theme.css punya .px-theme-app (light) + .dark .px-theme-app (navy)", () => {
+  const css = read("app/arena/player-theme.css");
+  return css.includes(".px-theme-app") && css.includes(".dark .px-theme-app");
+});
+test("globals.css punya .bc-card-premium + .bc-hero-card + .dark .bc-card-premium", () => {
+  const g = read("app/globals.css");
+  return g.includes(".bc-card-premium") && g.includes(".bc-hero-card") && g.includes(".dark .bc-card-premium");
+});
+test("ProfileHero memakai bc-hero-card + useTheme", () => {
+  const ph = read("components/profile/ProfileHero.tsx");
+  return ph.includes("bc-hero-card") && ph.includes("useTheme");
+});
+
+// ContinueLearningCard & StudentHomeHero memakai token --px-* (px-card/
+// px-chip/var(--px-text)) yang di-flip oleh .dark .px-theme-app — theme-aware
+// tanpa dark: class (pola sama dengan zona player, seksi 9).
+const isPxTokenAware = (src: string) => /px-card|px-chip|px-skeleton|--px-/.test(src);
+const homeCards = [
+  "AIBCHomeCard",
+  "RecentWorksSection",
+  "RuangBelajarSection",
+  "SimulasiUjianSection",
+  "LearningJourneySection",
+  "ContinueLearningCard",
+  "ArenaHomeSection",
+  "SecondaryLearningInfo",
+  "StudentHomeHero",
+];
+for (const n of homeCards) {
+  test(`student-home ${n} theme-aware`, () => {
+    const src = read(`components/student-home/${n}.tsx`);
+    return src.includes("dark:") || isPxTokenAware(src);
+  });
+}
+
+const profileCards = [
+  "ProfileHero",
+  "PlayerStatusBar",
+  "ProfileMotto",
+  "PlayerStatsGrid",
+  "ActivityFeed",
+  "ActivityChart",
+  "FeaturedWorksGallery",
+  "SocialConnections",
+  "BadgeShowcasePanel",
+];
+for (const n of profileCards) {
+  test(`profile ${n} punya dark variant`, () => read(`components/profile/${n}.tsx`).includes("dark:"));
+}
+
+const adminPages = [
+  "app/(dashboard)/admin/page.tsx",
+  "app/(dashboard)/admin/payments/page.tsx",
+  "app/(dashboard)/admin/ai-quota/page.tsx",
+  "app/(dashboard)/admin/data-center/page.tsx",
+  "components/admin/AdminSidebar.tsx",
+];
+for (const f of adminPages) {
+  test(`${f} punya dark variant`, () => read(f).includes("dark:"));
+}
 
 /* ------------------------------------------------------------------ */
 /* Summary                                                             */

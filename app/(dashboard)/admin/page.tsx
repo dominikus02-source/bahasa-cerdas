@@ -183,8 +183,8 @@ function PieChart({ data }: { data: { label: string; value: number; color: strin
         {data.map((d, i) => (
           <div key={i} className="flex items-center gap-2 text-xs">
             <div className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: d.color }} />
-            <span className="text-slate-600 flex-1">{d.label}</span>
-            <span className="font-semibold text-slate-900">{d.value}</span>
+            <span className="text-slate-600 dark:text-slate-300 flex-1">{d.label}</span>
+            <span className="font-semibold text-slate-900 dark:text-slate-100">{d.value}</span>
             <span className="text-slate-400">({Math.round((d.value / total) * 100)}%)</span>
           </div>
         ))}
@@ -231,14 +231,14 @@ export default async function AdminPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">Admin Panel</h1>
-          <p className="text-slate-500 text-sm mt-1">Selamat datang, {user.fullName}</p>
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">Admin Panel</h1>
+          <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">Selamat datang, {user.fullName}</p>
         </div>
         <div className="flex items-center gap-3 text-sm">
-          <span className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 text-blue-700 rounded-lg">
+          <span className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 rounded-lg">
             <Activity size={14} /> {s.growth.today} baru hari ini
           </span>
-          <span className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 text-emerald-700 rounded-lg">
+          <span className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 rounded-lg">
             <Users size={14} /> {s.growth.active} aktif (30h)
           </span>
         </div>
@@ -249,12 +249,12 @@ export default async function AdminPage() {
           const Icon = card.icon;
           return (
             <Link key={card.label} href={card.href}
-              className="bg-white rounded-xl p-4 border border-slate-200 hover:shadow-md transition-shadow">
+              className="bg-white dark:bg-slate-800/90 rounded-xl p-4 border border-slate-200 dark:border-slate-700 hover:shadow-md transition-shadow">
               <div className={`w-9 h-9 rounded-lg bg-gradient-to-br ${card.color} flex items-center justify-center mb-2.5`}>
                 <Icon size={16} className="text-white" />
               </div>
-              <p className="text-lg font-bold text-slate-900">{card.value}</p>
-              <p className="text-[10px] text-slate-500 mt-0.5">{card.label}</p>
+              <p className="text-lg font-bold text-slate-900 dark:text-slate-100">{card.value}</p>
+              <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">{card.label}</p>
               {"trend" in card && card.trend !== undefined && (
                 <div className="mt-1"><TrendBadge value={card.trend} /></div>
               )}
@@ -264,19 +264,19 @@ export default async function AdminPage() {
       </div>
 
       <div className="grid lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 bg-white rounded-2xl border border-slate-200 p-5">
+        <div className="lg:col-span-2 bg-white dark:bg-slate-800/90 rounded-2xl border border-slate-200 dark:border-slate-700 p-5">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="font-semibold text-slate-900 flex items-center gap-2">
-              <TrendingUp size={16} className="text-violet-500" /> Pertumbuhan Pengguna
+            <h2 className="font-semibold text-slate-900 dark:text-slate-100 flex items-center gap-2">
+              <TrendingUp size={16} className="text-violet-500 dark:text-violet-400" /> Pertumbuhan Pengguna
             </h2>
             <span className="text-xs text-slate-400">12 minggu terakhir</span>
           </div>
           {s.trends.user.weekly.length > 0 ? <UserGrowthChart data={s.trends.user.weekly} /> : <p className="text-sm text-slate-400 text-center py-8">Belum ada data</p>}
         </div>
 
-        <div className="bg-white rounded-2xl border border-slate-200 p-5">
-          <h2 className="font-semibold text-slate-900 mb-4 flex items-center gap-2">
-            <BarChart3 size={16} className="text-emerald-500" /> Statistik Pengguna
+        <div className="bg-white dark:bg-slate-800/90 rounded-2xl border border-slate-200 dark:border-slate-700 p-5">
+          <h2 className="font-semibold text-slate-900 dark:text-slate-100 mb-4 flex items-center gap-2">
+            <BarChart3 size={16} className="text-emerald-500 dark:text-emerald-400" /> Statistik Pengguna
           </h2>
           <PieChart data={pieData} />
           {/* Premium bukan irisan donat di atas — dia status yang menempel di
@@ -284,109 +284,109 @@ export default async function AdminPage() {
               dari total, bukan seolah kategori keempat yang saling lepas.
               Dihitung dari plan aktif (bukan flag isPremium mentah): Pro = berbayar
               & masih berlaku, Trial = guru dalam masa trial, Founder = admin. */}
-          <div className="flex items-center justify-between mt-3 pt-3 border-t border-slate-100 text-xs">
-            <span className="flex items-center gap-1.5 text-slate-500">
+          <div className="flex items-center justify-between mt-3 pt-3 border-t border-slate-100 dark:border-slate-800 text-xs">
+            <span className="flex items-center gap-1.5 text-slate-500 dark:text-slate-400">
               <div className="w-2.5 h-2.5 rounded-full shrink-0 bg-amber-500" /> Pro Berbayar
             </span>
-            <span className="font-semibold text-slate-900">{s.totals.premium} ({premiumPct}%)</span>
+            <span className="font-semibold text-slate-900 dark:text-slate-100">{s.totals.premium} ({premiumPct}%)</span>
           </div>
           <div className="flex items-center justify-between mt-1.5 text-xs">
-            <span className="flex items-center gap-1.5 text-slate-500">
+            <span className="flex items-center gap-1.5 text-slate-500 dark:text-slate-400">
               <div className="w-2.5 h-2.5 rounded-full shrink-0 bg-sky-500" /> Guru Trial Aktif
             </span>
-            <span className="font-semibold text-slate-900">{s.totals.trial}</span>
+            <span className="font-semibold text-slate-900 dark:text-slate-100">{s.totals.trial}</span>
           </div>
           <div className="flex items-center justify-between mt-1.5 text-xs">
-            <span className="flex items-center gap-1.5 text-slate-500">
+            <span className="flex items-center gap-1.5 text-slate-500 dark:text-slate-400">
               <div className="w-2.5 h-2.5 rounded-full shrink-0 bg-slate-400" /> Founder (Admin)
             </span>
-            <span className="font-semibold text-slate-900">{s.totals.founder}</span>
+            <span className="font-semibold text-slate-900 dark:text-slate-100">{s.totals.founder}</span>
           </div>
         </div>
       </div>
 
       <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white rounded-2xl border border-slate-200 p-5">
-          <h3 className="font-semibold text-slate-900 mb-3 flex items-center gap-2 text-sm">
-            <AlertTriangle size={14} className="text-amber-500" /> Perlu Moderasi
+        <div className="bg-white dark:bg-slate-800/90 rounded-2xl border border-slate-200 dark:border-slate-700 p-5">
+          <h3 className="font-semibold text-slate-900 dark:text-slate-100 mb-3 flex items-center gap-2 text-sm">
+            <AlertTriangle size={14} className="text-amber-500 dark:text-amber-400" /> Perlu Moderasi
           </h3>
           <div className="space-y-2">
-            <Link href="/admin/komunitas" className="flex items-center justify-between p-2.5 rounded-lg bg-amber-50 hover:bg-amber-100 transition-colors">
+            <Link href="/admin/komunitas" className="flex items-center justify-between p-2.5 rounded-lg bg-amber-50 dark:bg-amber-950/40 hover:bg-amber-100 transition-colors">
               <span className="text-xs text-amber-800">Komunitas</span>
               <span className="text-sm font-bold text-amber-900">{s.pending.komunitas}</span>
             </Link>
-            <Link href="/admin/loker" className="flex items-center justify-between p-2.5 rounded-lg bg-blue-50 hover:bg-blue-100 transition-colors">
+            <Link href="/admin/loker" className="flex items-center justify-between p-2.5 rounded-lg bg-blue-50 dark:bg-blue-950/40 hover:bg-blue-100 transition-colors">
               <span className="text-xs text-blue-800">Lowongan</span>
               <span className="text-sm font-bold text-blue-900">{s.pending.loker}</span>
             </Link>
             {/* Dulu <div> mati — angkanya tampil tapi tidak ada cara membuka
                 daftarnya, dan memang belum ada halamannya sama sekali. */}
-            <Link href="/admin/withdrawals" className="flex items-center justify-between p-2.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 transition-colors">
+            <Link href="/admin/withdrawals" className="flex items-center justify-between p-2.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 hover:bg-emerald-100 transition-colors">
               <span className="text-xs text-emerald-800">Penarikan Saldo</span>
               <span className="text-sm font-bold text-emerald-900">{s.pending.withdrawals}</span>
             </Link>
           </div>
         </div>
 
-        <div className="bg-white rounded-2xl border border-slate-200 p-5">
-          <h3 className="font-semibold text-slate-900 mb-3 flex items-center gap-2 text-sm">
-            <BookOpen size={14} className="text-violet-500" /> Karya Siswa
+        <div className="bg-white dark:bg-slate-800/90 rounded-2xl border border-slate-200 dark:border-slate-700 p-5">
+          <h3 className="font-semibold text-slate-900 dark:text-slate-100 mb-3 flex items-center gap-2 text-sm">
+            <BookOpen size={14} className="text-violet-500 dark:text-violet-400" /> Karya Siswa
           </h3>
           <div className="space-y-2">
-            <div className="flex items-center justify-between p-2.5 rounded-lg bg-violet-50">
+            <div className="flex items-center justify-between p-2.5 rounded-lg bg-violet-50 dark:bg-violet-950/40">
               <span className="text-xs text-violet-800">Minggu ini</span>
               <span className="text-sm font-bold text-violet-900">+{s.trends.karya.thisWeek}</span>
             </div>
-            <div className="flex items-center justify-between p-2.5 rounded-lg bg-slate-50">
-              <span className="text-xs text-slate-600">Minggu lalu</span>
-              <span className="text-sm font-bold text-slate-900">{s.trends.karya.lastWeek}</span>
+            <div className="flex items-center justify-between p-2.5 rounded-lg bg-slate-50 dark:bg-slate-800/50">
+              <span className="text-xs text-slate-600 dark:text-slate-300">Minggu lalu</span>
+              <span className="text-sm font-bold text-slate-900 dark:text-slate-100">{s.trends.karya.lastWeek}</span>
             </div>
-            <div className="flex items-center justify-between p-2.5 rounded-lg bg-slate-50">
-              <span className="text-xs text-slate-600">Trend</span>
-              <span className="text-sm font-bold text-slate-900"><TrendBadge value={s.trends.karya.pct} /></span>
+            <div className="flex items-center justify-between p-2.5 rounded-lg bg-slate-50 dark:bg-slate-800/50">
+              <span className="text-xs text-slate-600 dark:text-slate-300">Trend</span>
+              <span className="text-sm font-bold text-slate-900 dark:text-slate-100"><TrendBadge value={s.trends.karya.pct} /></span>
             </div>
           </div>
         </div>
 
-        <div className="bg-white rounded-2xl border border-slate-200 p-5">
-          <h3 className="font-semibold text-slate-900 mb-3 flex items-center gap-2 text-sm">
-            <Clock size={14} className="text-orange-500" /> Draft vs Published
+        <div className="bg-white dark:bg-slate-800/90 rounded-2xl border border-slate-200 dark:border-slate-700 p-5">
+          <h3 className="font-semibold text-slate-900 dark:text-slate-100 mb-3 flex items-center gap-2 text-sm">
+            <Clock size={14} className="text-orange-500 dark:text-orange-400" /> Draft vs Published
           </h3>
           <div className="space-y-2">
-            <div className="flex items-center justify-between p-2.5 rounded-lg bg-orange-50">
+            <div className="flex items-center justify-between p-2.5 rounded-lg bg-orange-50 dark:bg-orange-950/40">
               <span className="text-xs text-orange-800">Karya Draft</span>
               <span className="text-sm font-bold text-orange-900">{s.content.draftKarya}</span>
             </div>
-            <div className="flex items-center justify-between p-2.5 rounded-lg bg-emerald-50">
+            <div className="flex items-center justify-between p-2.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/40">
               <span className="text-xs text-emerald-800">Karya Terbit</span>
               <span className="text-sm font-bold text-emerald-900">{s.content.publishedKarya}</span>
             </div>
-            <div className="flex items-center justify-between p-2.5 rounded-lg bg-slate-50">
-              <span className="text-xs text-slate-600">Video Draft</span>
-              <span className="text-sm font-bold text-slate-900">{s.content.draftVideo}</span>
+            <div className="flex items-center justify-between p-2.5 rounded-lg bg-slate-50 dark:bg-slate-800/50">
+              <span className="text-xs text-slate-600 dark:text-slate-300">Video Draft</span>
+              <span className="text-sm font-bold text-slate-900 dark:text-slate-100">{s.content.draftVideo}</span>
             </div>
           </div>
         </div>
 
-        <div className="bg-white rounded-2xl border border-slate-200 p-5">
-          <h3 className="font-semibold text-slate-900 mb-3 flex items-center gap-2 text-sm">
+        <div className="bg-white dark:bg-slate-800/90 rounded-2xl border border-slate-200 dark:border-slate-700 p-5">
+          <h3 className="font-semibold text-slate-900 dark:text-slate-100 mb-3 flex items-center gap-2 text-sm">
             {/* Diberi label eksplisit "Marketplace" — kartu "Ringkasan
                 Pembayaran Pro" di bawah menunjukkan revenue langganan
                 Premium, angka yang sama sekali berbeda. Dua kartu bernama
                 sama "Pendapatan" tanpa penjelasan ruang lingkup gampang
                 dibaca sebagai angka yang sama, padahal bukan. */}
-            <DollarSign size={14} className="text-green-500" /> Pendapatan Marketplace
+            <DollarSign size={14} className="text-green-500 dark:text-green-400" /> Pendapatan Marketplace
           </h3>
           <div className="space-y-2">
-            <div className="flex items-center justify-between p-2.5 rounded-lg bg-green-50">
+            <div className="flex items-center justify-between p-2.5 rounded-lg bg-green-50 dark:bg-green-950/40">
               <span className="text-xs text-green-800">Total revenue</span>
               <span className="text-sm font-bold text-green-900">{formatRupiahRingkas(s.totals.revenue)}</span>
             </div>
-            <div className="flex items-center justify-between p-2.5 rounded-lg bg-blue-50">
+            <div className="flex items-center justify-between p-2.5 rounded-lg bg-blue-50 dark:bg-blue-950/40">
               <span className="text-xs text-blue-800">Minggu ini</span>
               <span className="text-sm font-bold text-blue-900">+{s.trends.revenue.thisWeek}</span>
             </div>
-            <div className="flex items-center justify-between p-2.5 rounded-lg bg-amber-50">
+            <div className="flex items-center justify-between p-2.5 rounded-lg bg-amber-50 dark:bg-amber-950/40">
               <span className="text-xs text-amber-800">Withdrawal pending</span>
               <span className="text-sm font-bold text-amber-900">{formatRupiahRingkas(s.totals.withdrawalPending)}</span>
             </div>
@@ -396,85 +396,85 @@ export default async function AdminPage() {
 
       {/* AI Usage Widget */}
       <Link href="/admin/ai-analytics"
-        className="block bg-gradient-to-r from-red-50 via-white to-white rounded-2xl border border-slate-200 p-5 hover:shadow-md transition-shadow">
+        className="block bg-gradient-to-r from-red-50 via-white to-white rounded-2xl border border-slate-200 dark:border-slate-700 p-5 hover:shadow-md transition-shadow">
         <div className="flex items-center justify-between mb-3">
-          <h2 className="font-semibold text-slate-900 flex items-center gap-2">
-            <BrainCircuit size={16} className="text-red-500" /> Ringkasan AI Hari Ini
+          <h2 className="font-semibold text-slate-900 dark:text-slate-100 flex items-center gap-2">
+            <BrainCircuit size={16} className="text-red-500 dark:text-red-400" /> Ringkasan AI Hari Ini
           </h2>
-          <span className="text-[10px] text-red-600 font-medium flex items-center gap-1">
+          <span className="text-[10px] text-red-600 dark:text-red-400 font-medium flex items-center gap-1">
             <BarChart3 size={12} /> Lihat Detail
           </span>
         </div>
         <div className="grid grid-cols-3 gap-4">
           <div>
-            <p className="text-xl font-bold text-slate-900">{s.ai.today}</p>
-            <p className="text-[10px] text-slate-500">Request (hari ini)</p>
+            <p className="text-xl font-bold text-slate-900 dark:text-slate-100">{s.ai.today}</p>
+            <p className="text-[10px] text-slate-500 dark:text-slate-400">Request (hari ini)</p>
           </div>
           <div>
-            <p className="text-xl font-bold text-slate-900">{s.ai.week}</p>
-            <p className="text-[10px] text-slate-500">Request (7 hari)</p>
+            <p className="text-xl font-bold text-slate-900 dark:text-slate-100">{s.ai.week}</p>
+            <p className="text-[10px] text-slate-500 dark:text-slate-400">Request (7 hari)</p>
           </div>
           <div>
-            <p className="text-xl font-bold text-slate-900">{s.ai.savedToday}</p>
-            <p className="text-[10px] text-slate-500">Tersimpan (hari ini)</p>
+            <p className="text-xl font-bold text-slate-900 dark:text-slate-100">{s.ai.savedToday}</p>
+            <p className="text-[10px] text-slate-500 dark:text-slate-400">Tersimpan (hari ini)</p>
           </div>
         </div>
       </Link>
 
       <Link href="/admin/payments"
-        className="block bg-gradient-to-r from-amber-50 via-white to-white rounded-2xl border border-amber-200 p-5 hover:shadow-md transition-shadow">
+        className="block bg-gradient-to-r from-amber-50 via-white to-white rounded-2xl border border-amber-200 dark:border-amber-800 p-5 hover:shadow-md transition-shadow">
         <div className="flex items-center justify-between mb-3">
-          <h2 className="font-semibold text-slate-900 flex items-center gap-2">
-            <DollarSign size={16} className="text-amber-500" /> Ringkasan Pembayaran Pro
+          <h2 className="font-semibold text-slate-900 dark:text-slate-100 flex items-center gap-2">
+            <DollarSign size={16} className="text-amber-500 dark:text-amber-400" /> Ringkasan Pembayaran Pro
           </h2>
-          <span className="text-[10px] text-amber-600 font-medium flex items-center gap-1">
+          <span className="text-[10px] text-amber-600 dark:text-amber-400 font-medium flex items-center gap-1">
             <BarChart3 size={12} /> Lihat Detail
           </span>
         </div>
         <div className="grid grid-cols-4 gap-4">
           <div>
-            <p className="text-xl font-bold text-slate-900">{s.payments.today}</p>
-            <p className="text-[10px] text-slate-500">Hari Ini</p>
+            <p className="text-xl font-bold text-slate-900 dark:text-slate-100">{s.payments.today}</p>
+            <p className="text-[10px] text-slate-500 dark:text-slate-400">Hari Ini</p>
           </div>
           <div>
-            <p className="text-xl font-bold text-slate-900">{s.payments.pending}</p>
-            <p className="text-[10px] text-slate-500">Menunggu</p>
+            <p className="text-xl font-bold text-slate-900 dark:text-slate-100">{s.payments.pending}</p>
+            <p className="text-[10px] text-slate-500 dark:text-slate-400">Menunggu</p>
           </div>
           <div>
-            <p className="text-xl font-bold text-slate-900">{s.payments.success}</p>
-            <p className="text-[10px] text-slate-500">Sukses Total</p>
+            <p className="text-xl font-bold text-slate-900 dark:text-slate-100">{s.payments.success}</p>
+            <p className="text-[10px] text-slate-500 dark:text-slate-400">Sukses Total</p>
           </div>
           <div>
-            <p className="text-xl font-bold text-amber-700">{formatRupiahRingkas(s.payments.revenue)}</p>
-            <p className="text-[10px] text-slate-500">Pendapatan Premium</p>
+            <p className="text-xl font-bold text-amber-700 dark:text-amber-300">{formatRupiahRingkas(s.payments.revenue)}</p>
+            <p className="text-[10px] text-slate-500 dark:text-slate-400">Pendapatan Premium</p>
           </div>
         </div>
       </Link>
 
       <div className="grid md:grid-cols-2 gap-6">
-        <div className="bg-white rounded-2xl border border-slate-200 p-5">
-          <h2 className="font-semibold text-slate-900 mb-4 flex items-center gap-2">
-            <Activity size={16} className="text-blue-500" /> Pengguna Terbaru
+        <div className="bg-white dark:bg-slate-800/90 rounded-2xl border border-slate-200 dark:border-slate-700 p-5">
+          <h2 className="font-semibold text-slate-900 dark:text-slate-100 mb-4 flex items-center gap-2">
+            <Activity size={16} className="text-blue-500 dark:text-blue-400" /> Pengguna Terbaru
           </h2>
           {s.recentUsers.length === 0 ? (
             <p className="text-sm text-slate-400 text-center py-6">Belum ada pengguna</p>
           ) : (
             <div className="space-y-2">
               {s.recentUsers.map((u) => (
-                <div key={u.id} className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-slate-50 transition-colors">
+                <div key={u.id} className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-slate-50 dark:bg-slate-800/50 transition-colors">
                   <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white text-[10px] font-bold shrink-0 ${u.role === "MURID" ? "bg-violet-500" : "bg-emerald-500"}`}>
                     {u.fullName.slice(0, 2).toUpperCase()}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-slate-900 truncate">{u.fullName}</p>
+                    <p className="text-sm font-medium text-slate-900 dark:text-slate-100 truncate">{u.fullName}</p>
                     <p className="text-[10px] text-slate-400 truncate">{u.email}</p>
                   </div>
                   <div className="flex items-center gap-1.5 shrink-0">
-                    {u.isFounder ? <span className="text-[9px] px-1.5 py-0.5 bg-slate-200 text-slate-700 rounded-full font-medium">FOUNDER</span>
-                      : u.isPremium && u.premiumUntil && new Date(u.premiumUntil) > new Date() ? <span className="text-[9px] px-1.5 py-0.5 bg-amber-100 text-amber-700 rounded-full font-medium">PRO</span>
-                      : u.trialEndsAt && new Date(u.trialEndsAt) > new Date() ? <span className="text-[9px] px-1.5 py-0.5 bg-sky-100 text-sky-700 rounded-full font-medium">TRIAL</span>
+                    {u.isFounder ? <span className="text-[9px] px-1.5 py-0.5 bg-slate-200 text-slate-700 dark:text-slate-200 rounded-full font-medium">FOUNDER</span>
+                      : u.isPremium && u.premiumUntil && new Date(u.premiumUntil) > new Date() ? <span className="text-[9px] px-1.5 py-0.5 bg-amber-100 text-amber-700 dark:text-amber-300 rounded-full font-medium">PRO</span>
+                      : u.trialEndsAt && new Date(u.trialEndsAt) > new Date() ? <span className="text-[9px] px-1.5 py-0.5 bg-sky-100 text-sky-700 dark:text-sky-300 rounded-full font-medium">TRIAL</span>
                       : null}
-                    <span className={`text-[9px] px-1.5 py-0.5 rounded-full font-medium ${u.role === "MURID" ? "bg-violet-100 text-violet-700" : "bg-emerald-100 text-emerald-700"}`}>
+                    <span className={`text-[9px] px-1.5 py-0.5 rounded-full font-medium ${u.role === "MURID" ? "bg-violet-100 text-violet-700 dark:text-violet-300" : "bg-emerald-100 text-emerald-700 dark:text-emerald-300"}`}>
                       {u.role === "MURID" ? "Murid" : "Guru"}
                     </span>
                   </div>
@@ -484,9 +484,9 @@ export default async function AdminPage() {
           )}
         </div>
 
-        <div className="bg-white rounded-2xl border border-slate-200 p-5">
-          <h2 className="font-semibold text-slate-900 mb-4 flex items-center gap-2">
-            <BarChart3 size={16} className="text-violet-500" /> Tren Karya (12 minggu)
+        <div className="bg-white dark:bg-slate-800/90 rounded-2xl border border-slate-200 dark:border-slate-700 p-5">
+          <h2 className="font-semibold text-slate-900 dark:text-slate-100 mb-4 flex items-center gap-2">
+            <BarChart3 size={16} className="text-violet-500 dark:text-violet-400" /> Tren Karya (12 minggu)
           </h2>
           {s.trends.karya.weekly.length > 0 ? <MiniBarChart data={s.trends.karya.weekly} /> : <p className="text-sm text-slate-400 text-center py-8">Belum ada data</p>}
         </div>

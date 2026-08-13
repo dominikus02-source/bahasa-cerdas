@@ -15,8 +15,8 @@ export default function AdminPengaturanPage() {
   return (
     <div className="max-w-2xl space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-slate-900 mb-1">Pengaturan Landing Page</h1>
-        <p className="text-sm text-slate-500">Konten yang bisa diubah tanpa perlu deploy kode.</p>
+        <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-1">Pengaturan Landing Page</h1>
+        <p className="text-sm text-slate-500 dark:text-slate-400">Konten yang bisa diubah tanpa perlu deploy kode.</p>
       </div>
       <PromoVideoCard />
       <MgmpMediaCard />
@@ -64,9 +64,9 @@ function PromoVideoCard() {
     <Card className="p-6">
       <div className="flex items-center gap-2 mb-1">
         <Video size={18} className="text-primary" />
-        <h2 className="font-bold text-slate-900">Video Promosi</h2>
+        <h2 className="font-bold text-slate-900 dark:text-slate-100">Video Promosi</h2>
       </div>
-      <p className="text-sm text-slate-500 mb-4">
+      <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">
         Video yang tampil di bahasacerdas.com, tepat di bawah statistik hero. Ganti kapan saja sesuai event — tempel link YouTube apapun bentuknya (watch, youtu.be, atau embed), atau ID videonya saja.
       </p>
 
@@ -82,14 +82,14 @@ function PromoVideoCard() {
               className="flex-1"
             />
             {input && (
-              <button onClick={() => setInput("")} type="button" title="Kosongkan" className="px-3 rounded-xl border border-slate-200 text-slate-400 hover:text-red-500 hover:border-red-200 transition-colors">
+              <button onClick={() => setInput("")} type="button" title="Kosongkan" className="px-3 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-400 hover:text-red-500 dark:text-red-400 hover:border-red-200 dark:border-red-800 transition-colors">
                 <Trash2 size={16} />
               </button>
             )}
           </div>
 
           {message && (
-            <div className={`flex items-center gap-2 text-sm rounded-xl px-3 py-2 mb-3 ${message.type === "success" ? "bg-emerald-50 text-emerald-700" : "bg-red-50 text-red-700"}`}>
+            <div className={`flex items-center gap-2 text-sm rounded-xl px-3 py-2 mb-3 ${message.type === "success" ? "bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300" : "bg-red-50 dark:bg-red-950/40 text-red-700 dark:text-red-300"}`}>
               {message.type === "success" ? <CheckCircle2 size={15} /> : <AlertCircle size={15} />}
               {message.text}
             </div>
@@ -101,9 +101,9 @@ function PromoVideoCard() {
           </Button>
 
           {videoId && (
-            <div className="mt-6 pt-6 border-t border-slate-100">
-              <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-3">Pratinjau saat ini</p>
-              <div className="aspect-video rounded-xl overflow-hidden border border-slate-200 max-w-md">
+            <div className="mt-6 pt-6 border-t border-slate-100 dark:border-slate-800">
+              <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-3">Pratinjau saat ini</p>
+              <div className="aspect-video rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 max-w-md">
                 <img
                   src={`https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`}
                   alt="Pratinjau video promosi"
@@ -196,9 +196,9 @@ function MgmpMediaCard() {
     <Card className="p-6">
       <div className="flex items-center gap-2 mb-1">
         <Users size={18} className="text-primary" />
-        <h2 className="font-bold text-slate-900">Kegiatan MGMP</h2>
+        <h2 className="font-bold text-slate-900 dark:text-slate-100">Kegiatan MGMP</h2>
       </div>
-      <p className="text-sm text-slate-500 mb-4">
+      <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">
         Kartu "Aktif" pada bagian komunitas di bahasacerdas.com. Isi dengan foto atau video kegiatan MGMP, atau kosongkan untuk tampilan default.
       </p>
 
@@ -206,7 +206,7 @@ function MgmpMediaCard() {
         <div className="py-6 flex justify-center"><Loader2 className="w-5 h-5 animate-spin text-slate-400" /></div>
       ) : (
         <>
-          <div className="flex gap-1 p-1 bg-slate-100 rounded-xl mb-4 w-fit">
+          <div className="flex gap-1 p-1 bg-slate-100 dark:bg-slate-800/70 rounded-xl mb-4 w-fit">
             {[
               { key: "none" as const, label: "Default" },
               { key: "photo" as const, label: "Foto" },
@@ -217,7 +217,7 @@ function MgmpMediaCard() {
                 type="button"
                 onClick={() => setTab(t.key)}
                 className={`px-4 py-1.5 rounded-lg text-sm font-semibold transition-colors ${
-                  tab === t.key ? "bg-white text-primary shadow-sm" : "text-slate-500 hover:text-slate-700"
+                  tab === t.key ? "bg-white dark:bg-slate-800/90 text-primary shadow-sm" : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:text-slate-200"
                 }`}
               >
                 {t.label}
@@ -243,7 +243,7 @@ function MgmpMediaCard() {
                 type="button"
                 onClick={() => fileRef.current?.click()}
                 disabled={uploading}
-                className="w-full flex items-center justify-center gap-2 py-3 rounded-xl border-2 border-dashed border-slate-200 text-slate-500 hover:border-primary/40 hover:text-primary transition-colors disabled:opacity-50 mb-3"
+                className="w-full flex items-center justify-center gap-2 py-3 rounded-xl border-2 border-dashed border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:border-primary/40 hover:text-primary transition-colors disabled:opacity-50 mb-3"
               >
                 {uploading ? <Loader2 size={16} className="animate-spin" /> : <Upload size={16} />}
                 {uploading ? "Mengunggah..." : "Unggah Foto (bisa beberapa sekaligus)"}
@@ -252,7 +252,7 @@ function MgmpMediaCard() {
               {photos.length > 0 && (
                 <div className="grid grid-cols-3 gap-2">
                   {photos.map(p => (
-                    <div key={p.key} className="relative aspect-square rounded-lg overflow-hidden border border-slate-200 group">
+                    <div key={p.key} className="relative aspect-square rounded-lg overflow-hidden border border-slate-200 dark:border-slate-700 group">
                       <img src={p.url} alt="" className="w-full h-full object-cover" />
                       <button
                         type="button"
@@ -279,7 +279,7 @@ function MgmpMediaCard() {
           )}
 
           {message && (
-            <div className={`flex items-center gap-2 text-sm rounded-xl px-3 py-2 mb-3 ${message.type === "success" ? "bg-emerald-50 text-emerald-700" : "bg-red-50 text-red-700"}`}>
+            <div className={`flex items-center gap-2 text-sm rounded-xl px-3 py-2 mb-3 ${message.type === "success" ? "bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300" : "bg-red-50 dark:bg-red-950/40 text-red-700 dark:text-red-300"}`}>
               {message.type === "success" ? <CheckCircle2 size={15} /> : <AlertCircle size={15} />}
               {message.text}
             </div>

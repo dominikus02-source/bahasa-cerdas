@@ -31,7 +31,7 @@ export default function HomeFeedPage() {
   }, []);
 
   return (
-    <div className="px-theme min-h-screen">
+    <div className="px-theme px-theme-app min-h-screen">
       <main className="mx-auto max-w-[1200px] px-4 sm:px-6 py-8 space-y-8">
         <StudentHomeHero />
 

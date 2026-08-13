@@ -110,7 +110,7 @@ export function AdminSidebar({ user }: Props) {
           </div>
           <div className="relative">
             <button onClick={() => setShowNotifs(!showNotifs)} className="relative p-2 rounded-lg hover:bg-slate-200 transition-colors dark:hover:bg-slate-700" aria-label={unread > 0 ? `Notifikasi (${unread} belum dibaca)` : "Notifikasi"}>
-              {unread > 0 ? <BellRing className={`${ACTION_ICON_CLASS} text-amber-500`} /> : <Bell className={`${ACTION_ICON_CLASS} text-slate-400`} />}
+              {unread > 0 ? <BellRing className={`${ACTION_ICON_CLASS} text-amber-500 dark:text-amber-400`} /> : <Bell className={`${ACTION_ICON_CLASS} text-slate-400`} />}
               {unread > 0 && (
                 <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-red-500 text-white text-[8px] font-bold rounded-full flex items-center justify-center">
                   {unread > 9 ? "9+" : unread}
@@ -125,7 +125,7 @@ export function AdminSidebar({ user }: Props) {
                   <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100 dark:border-slate-800">
                     <span className="text-sm font-semibold text-slate-900 dark:text-slate-100">Notifikasi</span>
                     {unread > 0 && (
-                      <button onClick={() => markRead("all")} className="text-[10px] text-violet-600 hover:text-violet-800 font-medium">
+                      <button onClick={() => markRead("all")} className="text-[10px] text-violet-600 dark:text-violet-400 hover:text-violet-800 font-medium">
                         Tandai semua dibaca
                       </button>
                     )}
@@ -138,7 +138,7 @@ export function AdminSidebar({ user }: Props) {
                         <div className="flex items-start justify-between gap-2">
                           <div className="flex-1 min-w-0">
                             <p className="text-xs font-medium text-slate-900 dark:text-slate-100">{n.title}</p>
-                            <p className="text-[10px] text-slate-500 mt-0.5">{n.body}</p>
+                            <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">{n.body}</p>
                             <p className="text-[9px] text-slate-400 mt-1">{new Date(n.createdAt).toLocaleDateString("id-ID", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}</p>
                           </div>
                           {!n.isRead && (

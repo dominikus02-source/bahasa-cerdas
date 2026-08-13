@@ -67,7 +67,7 @@ export default function MonitoringPage() {
   }
 
   if (error) {
-    return <div className="m-6 rounded-lg bg-red-50 p-4 text-red-700">{error}</div>;
+    return <div className="m-6 rounded-lg bg-red-50 dark:bg-red-950/40 p-4 text-red-700 dark:text-red-300">{error}</div>;
   }
   if (!data) return null;
 
@@ -78,16 +78,16 @@ export default function MonitoringPage() {
     <div className="space-y-6 p-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="flex items-center gap-2 text-xl font-bold text-slate-800">
-            <Activity className="h-5 w-5 text-emerald-500" /> Monitoring Beban Real-time
+          <h1 className="flex items-center gap-2 text-xl font-bold text-slate-800 dark:text-slate-200">
+            <Activity className="h-5 w-5 text-emerald-500 dark:text-emerald-400" /> Monitoring Beban Real-time
           </h1>
-          <p className="text-sm text-slate-500">
+          <p className="text-sm text-slate-500 dark:text-slate-400">
             Diperbarui {new Date(data.generatedAt).toLocaleTimeString("id-ID")} · auto-refresh {POLL_MS / 1000}s
           </p>
         </div>
         <button
           onClick={load}
-          className="flex items-center gap-2 rounded-lg border px-3 py-2 text-sm text-slate-600 hover:bg-slate-50"
+          className="flex items-center gap-2 rounded-lg border px-3 py-2 text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:bg-slate-800/50"
         >
           <RefreshCw className="h-4 w-4" /> Refresh
         </button>
@@ -125,8 +125,8 @@ export default function MonitoringPage() {
       </div>
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
-        <div className="rounded-xl border bg-white p-4 lg:col-span-2">
-          <h2 className="mb-3 text-sm font-semibold text-slate-700">Request AI / menit (15 menit terakhir)</h2>
+        <div className="rounded-xl border bg-white dark:bg-slate-800/90 p-4 lg:col-span-2">
+          <h2 className="mb-3 text-sm font-semibold text-slate-700 dark:text-slate-200">Request AI / menit (15 menit terakhir)</h2>
           <div className="flex h-40 items-end gap-1">
             {data.throughput.length === 0 && <p className="text-sm text-slate-400">Belum ada aktivitas AI.</p>}
             {data.throughput.map((t) => (
@@ -140,8 +140,8 @@ export default function MonitoringPage() {
           </div>
         </div>
 
-        <div className="rounded-xl border bg-white p-4">
-          <h2 className="mb-3 flex items-center gap-2 text-sm font-semibold text-slate-700">
+        <div className="rounded-xl border bg-white dark:bg-slate-800/90 p-4">
+          <h2 className="mb-3 flex items-center gap-2 text-sm font-semibold text-slate-700 dark:text-slate-200">
             <ListChecks className="h-4 w-4" /> Antrean Job AI
           </h2>
           <div className="space-y-3">
@@ -171,17 +171,17 @@ function Stat({
   tone: "emerald" | "indigo" | "sky" | "red" | "slate";
 }) {
   const tones: Record<string, string> = {
-    emerald: "text-emerald-600 bg-emerald-50",
+    emerald: "text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40",
     indigo: "text-indigo-600 bg-indigo-50",
-    sky: "text-sky-600 bg-sky-50",
-    red: "text-red-600 bg-red-50",
-    slate: "text-slate-600 bg-slate-100",
+    sky: "text-sky-600 dark:text-sky-400 bg-sky-50 dark:bg-sky-950/40",
+    red: "text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/40",
+    slate: "text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800/70",
   };
   return (
-    <div className="rounded-xl border bg-white p-4">
+    <div className="rounded-xl border bg-white dark:bg-slate-800/90 p-4">
       <div className={`mb-2 inline-flex rounded-lg p-2 ${tones[tone]}`}>{icon}</div>
-      <p className="text-2xl font-bold text-slate-800">{value}</p>
-      <p className="text-sm text-slate-500">{label}</p>
+      <p className="text-2xl font-bold text-slate-800 dark:text-slate-200">{value}</p>
+      <p className="text-sm text-slate-500 dark:text-slate-400">{label}</p>
       {sub && <p className="mt-1 text-xs text-slate-400">{sub}</p>}
     </div>
   );
@@ -190,8 +190,8 @@ function Stat({
 function QueueRow({ label, value, warn }: { label: string; value: number; warn: boolean }) {
   return (
     <div className="flex items-center justify-between">
-      <span className="text-sm text-slate-600">{label}</span>
-      <span className={`rounded-md px-2 py-0.5 text-sm font-semibold ${warn ? "bg-amber-100 text-amber-700" : "bg-slate-100 text-slate-700"}`}>
+      <span className="text-sm text-slate-600 dark:text-slate-300">{label}</span>
+      <span className={`rounded-md px-2 py-0.5 text-sm font-semibold ${warn ? "bg-amber-100 text-amber-700 dark:text-amber-300" : "bg-slate-100 dark:bg-slate-800/70 text-slate-700 dark:text-slate-200"}`}>
         {value}
       </span>
     </div>

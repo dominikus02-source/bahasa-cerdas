@@ -10,7 +10,7 @@ export function ArenaHomeSection() {
         <div className="absolute -top-16 -right-16 w-48 h-48 rounded-full bg-[var(--px-royal)]/20 blur-3xl pointer-events-none" />
         <div className="relative flex items-center gap-4 min-w-0">
           <span className="shrink-0 w-12 h-12 rounded-2xl bg-gradient-to-br from-[var(--px-royal)] to-[var(--px-royal-2)] flex items-center justify-center shadow-lg shadow-[var(--px-royal)]/30">
-            <Swords size={22} className="text-white" />
+            <Swords size={22} className="text-slate-900 dark:text-white" />
           </span>
           <div className="min-w-0">
             <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--px-royal-2)]">Arena</p>

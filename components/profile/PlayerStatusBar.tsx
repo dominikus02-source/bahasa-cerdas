@@ -43,25 +43,22 @@ export default function PlayerStatusBar({
   return (
     <div
       aria-label="Status pemain"
-      className="mb-6 rounded-2xl text-white shadow-lg ring-1 ring-white/10 overflow-hidden"
-      style={{
-        background: "linear-gradient(120deg, #12143A 0%, #181A4A 55%, #1F1658 100%)",
-      }}
+      className="bc-card-premium mb-6 rounded-2xl shadow-lg ring-1 ring-slate-900/10 dark:ring-white/10 overflow-hidden"
     >
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 divide-x divide-y sm:divide-y-0 divide-white/[0.07]">
         <div className={cell}>
           <Shield size={17} className="text-violet-300 shrink-0" />
           <div className="min-w-0">
-            <p className="text-[10px] font-semibold uppercase tracking-wider text-white/45">Level</p>
-            <p className="text-base font-black text-white tabular-nums leading-tight">{level}</p>
+            <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-900/45 dark:text-white/45">Level</p>
+            <p className="text-base font-black text-slate-900 dark:text-white tabular-nums leading-tight">{level}</p>
           </div>
         </div>
 
         <div className={cell}>
           <Sparkles size={17} className="text-amber-300 shrink-0" />
           <div className="min-w-0">
-            <p className="text-[10px] font-semibold uppercase tracking-wider text-white/45">XP</p>
-            <p className="text-base font-black text-white tabular-nums leading-tight truncate">
+            <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-900/45 dark:text-white/45">XP</p>
+            <p className="text-base font-black text-slate-900 dark:text-white tabular-nums leading-tight truncate">
               {xp.toLocaleString("id-ID")}
             </p>
           </div>
@@ -70,18 +67,18 @@ export default function PlayerStatusBar({
         <div className={cell}>
           <Coins size={17} className="text-yellow-300 shrink-0" />
           <div className="min-w-0">
-            <p className="text-[10px] font-semibold uppercase tracking-wider text-white/45">Koin</p>
-            <p className="text-base font-black text-white tabular-nums leading-tight truncate">
+            <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-900/45 dark:text-white/45">Koin</p>
+            <p className="text-base font-black text-slate-900 dark:text-white tabular-nums leading-tight truncate">
               {coins.toLocaleString("id-ID")}
             </p>
           </div>
         </div>
 
         <div className={cell}>
-          <Flame size={17} className={streak ? "text-orange-400" : "text-white/30"} shrink-0 />
+          <Flame size={17} className={streak ? "text-orange-400" : "text-slate-900/30 dark:text-white/30"} shrink-0 />
           <div className="min-w-0">
-            <p className="text-[10px] font-semibold uppercase tracking-wider text-white/45">Streak</p>
-            <p className="text-base font-black text-white tabular-nums leading-tight">{streak ?? 0}</p>
+            <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-900/45 dark:text-white/45">Streak</p>
+            <p className="text-base font-black text-slate-900 dark:text-white tabular-nums leading-tight">{streak ?? 0}</p>
           </div>
         </div>
 
@@ -90,7 +87,7 @@ export default function PlayerStatusBar({
             <RankIcon rank={rank} size={26} />
           </div>
           <div className="min-w-0">
-            <p className="text-[10px] font-semibold uppercase tracking-wider text-white/45 truncate">
+            <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-900/45 dark:text-white/45 truncate">
               Rank
             </p>
             <p className="text-base font-black leading-tight truncate" style={{ color: meta?.color ?? "#fff" }}>
@@ -101,12 +98,12 @@ export default function PlayerStatusBar({
 
         <Link
           href={badgesHref}
-          className={`${cell} col-span-2 lg:col-span-1 items-center hover:bg-white/[0.06] transition-colors`}
+          className={`${cell} col-span-2 lg:col-span-1 items-center hover:bg-slate-900/[0.06] dark:bg-white/[0.06] transition-colors`}
           aria-label={`Lencana terbuka ${totalUnlocked}`}
         >
           <Trophy size={17} className="text-emerald-300 shrink-0" />
           <div className="min-w-0">
-            <p className="text-[10px] font-semibold uppercase tracking-wider text-white/45">Lencana</p>
+            <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-900/45 dark:text-white/45">Lencana</p>
             <div className="flex items-center gap-1.5">
               {mini.length > 0 ? (
                 mini.map((b) => (
@@ -115,12 +112,12 @@ export default function PlayerStatusBar({
                   </span>
                 ))
               ) : (
-                <span className="text-sm text-white/40">Belum ada</span>
+                <span className="text-sm text-slate-900/40 dark:text-white/40">Belum ada</span>
               )}
               {extra > 0 && (
                 <span
                   aria-hidden
-                  className="rounded-full bg-white/10 dark:bg-slate-900/10 border border-white/10 px-1.5 py-0.5 text-[9px] font-bold text-white/70 tabular-nums"
+                  className="rounded-full bg-slate-900/5 dark:bg-slate-900/10 border-slate-900/10 dark:border-white/10 px-1.5 py-0.5 text-[9px] font-bold text-slate-900/70 dark:text-white/70 tabular-nums"
                 >
                   +{extra}
                 </span>

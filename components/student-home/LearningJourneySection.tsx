@@ -97,13 +97,13 @@ export function LearningJourneySection() {
             <Link
               key={item.label}
               href={item.href}
-              className="group px-card px-4 py-4 flex items-center gap-3.5 hover:bg-white/[0.08] transition-colors"
+              className="group px-card px-4 py-4 flex items-center gap-3.5 hover:bg-slate-900/[0.08] dark:bg-white/[0.08] transition-colors"
             >
               <span className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${item.accent}`}>
                 <Icon size={19} />
               </span>
               <span className="min-w-0 flex-1">
-                <span className="block text-sm font-bold text-[var(--px-text)] group-hover:text-white transition-colors">
+                <span className="block text-sm font-bold text-[var(--px-text)] group-hover:text-slate-900 dark:text-white transition-colors">
                   {item.label}
                 </span>
                 <span className="block text-xs text-[var(--px-text-faint)] truncate">{subtitle}</span>

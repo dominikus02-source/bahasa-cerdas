@@ -17,10 +17,10 @@ type Penarikan = {
 };
 
 const STATUS_META: Record<string, { label: string; kelas: string; Icon: typeof Clock }> = {
-  PENDING: { label: "Menunggu", kelas: "bg-amber-50 text-amber-700 border-amber-200", Icon: Clock },
-  APPROVED: { label: "Disetujui", kelas: "bg-blue-50 text-blue-700 border-blue-200", Icon: CheckCircle2 },
-  TRANSFERRED: { label: "Ditransfer", kelas: "bg-emerald-50 text-emerald-700 border-emerald-200", Icon: CheckCircle2 },
-  REJECTED: { label: "Ditolak", kelas: "bg-red-50 text-red-700 border-red-200", Icon: XCircle },
+  PENDING: { label: "Menunggu", kelas: "bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800", Icon: Clock },
+  APPROVED: { label: "Disetujui", kelas: "bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800", Icon: CheckCircle2 },
+  TRANSFERRED: { label: "Ditransfer", kelas: "bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800", Icon: CheckCircle2 },
+  REJECTED: { label: "Ditolak", kelas: "bg-red-50 dark:bg-red-950/40 text-red-700 dark:text-red-300 border-red-200 dark:border-red-800", Icon: XCircle },
 };
 
 const TAB = ["PENDING", "APPROVED", "TRANSFERRED", "REJECTED", "SEMUA"] as const;
@@ -86,24 +86,24 @@ export default function AdminWithdrawalsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-slate-900">Penarikan Saldo</h1>
-        <p className="text-slate-500 text-sm mt-1">Tinjau dan proses pencairan saldo guru</p>
+        <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">Penarikan Saldo</h1>
+        <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">Tinjau dan proses pencairan saldo guru</p>
       </div>
 
       <div className="grid sm:grid-cols-2 gap-4">
-        <div className="bg-white rounded-2xl border border-slate-200 p-5">
-          <div className="flex items-center gap-2 text-amber-600 mb-1">
+        <div className="bg-white dark:bg-slate-800/90 rounded-2xl border border-slate-200 dark:border-slate-700 p-5">
+          <div className="flex items-center gap-2 text-amber-600 dark:text-amber-400 mb-1">
             <Clock size={16} />
             <span className="text-xs font-semibold uppercase tracking-wide">Menunggu diproses</span>
           </div>
-          <p className="text-2xl font-bold text-slate-900">{ringkasan.jumlahTertunda}</p>
+          <p className="text-2xl font-bold text-slate-900 dark:text-slate-100">{ringkasan.jumlahTertunda}</p>
         </div>
-        <div className="bg-white rounded-2xl border border-slate-200 p-5">
-          <div className="flex items-center gap-2 text-emerald-600 mb-1">
+        <div className="bg-white dark:bg-slate-800/90 rounded-2xl border border-slate-200 dark:border-slate-700 p-5">
+          <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 mb-1">
             <Wallet size={16} />
             <span className="text-xs font-semibold uppercase tracking-wide">Total nominal tertunda</span>
           </div>
-          <p className="text-2xl font-bold text-slate-900">{rupiah(ringkasan.nominalTertunda)}</p>
+          <p className="text-2xl font-bold text-slate-900 dark:text-slate-100">{rupiah(ringkasan.nominalTertunda)}</p>
         </div>
       </div>
 
@@ -113,7 +113,7 @@ export default function AdminWithdrawalsPage() {
             key={t}
             onClick={() => setTab(t)}
             className={`px-4 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all ${
-              tab === t ? "bg-slate-900 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+              tab === t ? "bg-slate-900 text-white" : "bg-slate-100 dark:bg-slate-800/70 text-slate-600 dark:text-slate-300 hover:bg-slate-200"
             }`}
           >
             {t === "SEMUA" ? "Semua" : STATUS_META[t]?.label || t}
@@ -122,7 +122,7 @@ export default function AdminWithdrawalsPage() {
       </div>
 
       {error && (
-        <div className="flex items-start gap-2 p-3 rounded-xl bg-red-50 border border-red-200 text-sm text-red-700">
+        <div className="flex items-start gap-2 p-3 rounded-xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800 text-sm text-red-700 dark:text-red-300">
           <AlertCircle className="w-4 h-4 mt-0.5 shrink-0" /> {error}
         </div>
       )}
@@ -130,7 +130,7 @@ export default function AdminWithdrawalsPage() {
       {memuat ? (
         <div className="flex justify-center py-16"><Loader2 className="w-7 h-7 animate-spin text-slate-300" /></div>
       ) : items.length === 0 ? (
-        <div className="text-center py-16 text-slate-400 bg-white rounded-2xl border border-slate-200">
+        <div className="text-center py-16 text-slate-400 bg-white dark:bg-slate-800/90 rounded-2xl border border-slate-200 dark:border-slate-700">
           <Wallet className="w-12 h-12 mx-auto mb-3 opacity-40" />
           <p>Tidak ada penarikan pada status ini.</p>
         </div>
@@ -140,17 +140,17 @@ export default function AdminWithdrawalsPage() {
             const meta = STATUS_META[w.status] || STATUS_META.PENDING;
             const sibuk = proses === w.id;
             return (
-              <div key={w.id} className="bg-white rounded-2xl border border-slate-200 p-5">
+              <div key={w.id} className="bg-white dark:bg-slate-800/90 rounded-2xl border border-slate-200 dark:border-slate-700 p-5">
                 <div className="flex items-start justify-between gap-4 flex-wrap">
                   <div className="min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <p className="font-bold text-slate-900">{w.user.fullName}</p>
+                      <p className="font-bold text-slate-900 dark:text-slate-100">{w.user.fullName}</p>
                       <span className={`inline-flex items-center gap-1 text-[11px] font-semibold px-2.5 py-0.5 rounded-full border ${meta.kelas}`}>
                         <meta.Icon size={11} /> {meta.label}
                       </span>
                     </div>
-                    <p className="text-xs text-slate-500 mt-0.5">{w.user.email}</p>
-                    <p className="text-sm text-slate-700 mt-2">
+                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{w.user.email}</p>
+                    <p className="text-sm text-slate-700 dark:text-slate-200 mt-2">
                       <span className="font-semibold">{w.bankName}</span> &middot; {w.accountNumber} &middot; a.n. {w.accountHolder}
                     </p>
                     <p className="text-xs text-slate-400 mt-1">
@@ -158,13 +158,13 @@ export default function AdminWithdrawalsPage() {
                       {w.processedAt && ` · diproses ${tanggal(w.processedAt)}`}
                       {` · sisa saldo guru ${rupiah(w.user.saldo)}`}
                     </p>
-                    {w.notes && <p className="text-xs text-slate-500 mt-1 italic">Catatan: {w.notes}</p>}
+                    {w.notes && <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 italic">Catatan: {w.notes}</p>}
                   </div>
-                  <p className="text-2xl font-bold text-emerald-600 shrink-0">{rupiah(w.amount)}</p>
+                  <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-400 shrink-0">{rupiah(w.amount)}</p>
                 </div>
 
                 {(w.status === "PENDING" || w.status === "APPROVED") && (
-                  <div className="flex gap-2 mt-4 pt-4 border-t border-slate-100 flex-wrap">
+                  <div className="flex gap-2 mt-4 pt-4 border-t border-slate-100 dark:border-slate-800 flex-wrap">
                     {w.status === "PENDING" && (
                       <button
                         onClick={() => ubahStatus(w.id, "APPROVED")}
@@ -186,7 +186,7 @@ export default function AdminWithdrawalsPage() {
                     <button
                       onClick={() => ubahStatus(w.id, "REJECTED", true)}
                       disabled={sibuk}
-                      className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-white border border-red-200 text-red-600 text-xs font-bold hover:bg-red-50 disabled:opacity-50"
+                      className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-white dark:bg-slate-800/90 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 text-xs font-bold hover:bg-red-50 dark:bg-red-950/40 disabled:opacity-50"
                     >
                       <XCircle size={13} /> Tolak &amp; Kembalikan Saldo
                     </button>

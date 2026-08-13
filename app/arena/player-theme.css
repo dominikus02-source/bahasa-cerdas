@@ -203,3 +203,45 @@
   0% { background-position: 200% 0; }
   100% { background-position: -200% 0; }
 }
+
+/* ---- DARK/LIGHT 2.2 — px-theme-app (beranda murid, theme-aware) ----
+   Zona player Arena (--px-*) TETAP navy premium di kedua mode. Variant ini
+   dipakai permukaan app (mis. /murid/beranda) yang memakai token px di luar
+   arena: light mode = light surface + teks gelap; dark mode = navy seperti
+   semula. Hanya menimpa variabel + background — komponen tidak berubah. */
+.px-theme-app {
+  background:
+    radial-gradient(1000px 500px at 10% -10%, rgba(139, 92, 246, 0.14), transparent 60%),
+    radial-gradient(800px 400px at 100% 0%, rgba(245, 166, 35, 0.12), transparent 55%),
+    linear-gradient(180deg, #ffffff 0%, #f8fafc 45%, #f5f3ff 100%);
+  color: #1e293b;
+  --px-text: #1e293b;
+  --px-text-dim: #475569;
+  --px-text-faint: #94a3b8;
+  --px-glass: rgba(15, 23, 42, 0.05);
+  --px-glass-strong: rgba(15, 23, 42, 0.1);
+  --px-border: rgba(15, 23, 42, 0.12);
+  --px-gold: #b45309;
+  --px-gold-2: #d97706;
+  --px-royal: #4f46e5;
+  --px-royal-2: #3b82f6;
+  --px-mint: #0d9488;
+}
+.dark .px-theme-app {
+  background:
+    radial-gradient(1200px 600px at 15% -10%, rgba(47, 75, 255, 0.35), transparent 60%),
+    radial-gradient(900px 500px at 100% 0%, rgba(245, 166, 35, 0.18), transparent 55%),
+    linear-gradient(180deg, var(--px-navy) 0%, var(--px-navy-2) 45%, var(--px-navy-3) 100%);
+  color: #f3f7ff;
+  --px-text: #f3f7ff;
+  --px-text-dim: #a9b6d9;
+  --px-text-faint: #7483ad;
+  --px-glass: rgba(255, 255, 255, 0.08);
+  --px-glass-strong: rgba(255, 255, 255, 0.14);
+  --px-border: rgba(255, 255, 255, 0.14);
+  --px-gold: #ffd24a;
+  --px-gold-2: #f5a623;
+  --px-royal: #2b4bff;
+  --px-royal-2: #0f7bff;
+  --px-mint: #34e0b8;
+}

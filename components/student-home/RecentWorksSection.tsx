@@ -84,12 +84,12 @@ export function RecentWorksSection() {
               <Link
                 key={k.id}
                 href={`/murid/karya/${k.id}`}
-                className="group px-card px-4 py-4 flex flex-col gap-2 hover:bg-white/[0.08] transition-colors"
+                className="group px-card px-4 py-4 flex flex-col gap-2 hover:bg-slate-900/[0.08] dark:bg-white/[0.08] transition-colors"
               >
                 <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full self-start ${meta.badge}`}>
                   {meta.label}
                 </span>
-                <p className="text-sm font-bold text-[var(--px-text)] line-clamp-2 group-hover:text-white transition-colors">
+                <p className="text-sm font-bold text-[var(--px-text)] line-clamp-2 group-hover:text-slate-900 dark:text-white transition-colors">
                   {k.title}
                 </p>
                 <p className="text-[11px] text-[var(--px-text-faint)] truncate">

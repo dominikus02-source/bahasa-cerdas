@@ -30,8 +30,7 @@ export default function PlayerStatsGrid({ stats }: { stats: PlayerStatCard[] }) 
         const Icon = ICONS[s.icon ?? "book"];
         const inner = (
           <div
-            className="h-full rounded-2xl px-4 py-4 text-white ring-1 ring-white/10 transition-colors hover:ring-violet-400/30"
-            style={{ background: "linear-gradient(135deg, #17163F 0%, #21174F 100%)" }}
+            className="h-full rounded-2xl px-4 py-4 text-slate-900 dark:text-white ring-1 ring-slate-900/10 dark:ring-white/10 transition-colors hover:ring-violet-400/30 bc-card-premium"
           >
             <span
               aria-hidden
@@ -39,10 +38,10 @@ export default function PlayerStatsGrid({ stats }: { stats: PlayerStatCard[] }) 
             >
               <Icon size={16} className="text-violet-300" />
             </span>
-            <p className="text-2xl font-black text-white leading-none tabular-nums">
+            <p className="text-2xl font-black text-slate-900 dark:text-white leading-none tabular-nums">
               {s.value.toLocaleString("id-ID")}
             </p>
-            <p className="mt-1.5 text-[11px] font-semibold uppercase tracking-wider text-white/45">
+            <p className="mt-1.5 text-[11px] font-semibold uppercase tracking-wider text-slate-900/45 dark:text-white/45">
               {s.label}
             </p>
           </div>

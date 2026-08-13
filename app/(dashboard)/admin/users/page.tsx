@@ -63,40 +63,40 @@ export default function AdminUsersPage() {
   };
 
   const statusBadge = (u: any) => {
-    if (u.isFounder) return { label: "Founder", color: "text-amber-600 bg-amber-50" };
-    if (u.role === "GURU" && u.isPremium && u.premiumUntil && new Date(u.premiumUntil) > new Date()) return { label: "Pro", color: "text-blue-600 bg-blue-50" };
-    if (u.role === "GURU" && u.isPremium) return { label: "Pro (kadaluarsa)", color: "text-slate-400 bg-slate-50" };
-    if (u.role === "GURU" && u.trialEndsAt && new Date(u.trialEndsAt) > new Date()) return { label: "Trial", color: "text-sky-600 bg-sky-50" };
-    return { label: "Free", color: "text-slate-400 bg-slate-50" };
+    if (u.isFounder) return { label: "Founder", color: "text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/40" };
+    if (u.role === "GURU" && u.isPremium && u.premiumUntil && new Date(u.premiumUntil) > new Date()) return { label: "Pro", color: "text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/40" };
+    if (u.role === "GURU" && u.isPremium) return { label: "Pro (kadaluarsa)", color: "text-slate-400 bg-slate-50 dark:bg-slate-800/50" };
+    if (u.role === "GURU" && u.trialEndsAt && new Date(u.trialEndsAt) > new Date()) return { label: "Trial", color: "text-sky-600 dark:text-sky-400 bg-sky-50 dark:bg-sky-950/40" };
+    return { label: "Free", color: "text-slate-400 bg-slate-50 dark:bg-slate-800/50" };
   };
 
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Pengguna</h1>
-          <p className="text-sm text-gray-500 mt-1">{total} total pengguna</p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-slate-100">Pengguna</h1>
+          <p className="text-sm text-gray-500 dark:text-slate-400 mt-1">{total} total pengguna</p>
         </div>
       </div>
 
-      <div className="bg-white rounded-2xl border border-slate-200">
-        <div className="p-4 border-b border-slate-100">
+      <div className="bg-white dark:bg-slate-800/90 rounded-2xl border border-slate-200 dark:border-slate-700">
+        <div className="p-4 border-b border-slate-100 dark:border-slate-800">
           <div className="flex flex-wrap items-center gap-3">
             <div className="relative flex-1 min-w-[200px]">
               <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
               <input type="text" placeholder="Cari nama atau email..." value={search} onChange={e => { setSearch(e.target.value); setPage(1); }}
-                className="w-full pl-9 pr-3 py-2 text-sm rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-400" />
+                className="w-full pl-9 pr-3 py-2 text-sm rounded-lg border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-400" />
             </div>
 
             <select value={roleFilter} onChange={e => { setRoleFilter(e.target.value); setPage(1); }}
-              className="px-3 py-2 text-sm rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-violet-500/20">
+              className="px-3 py-2 text-sm rounded-lg border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-violet-500/20">
               <option value="">Semua Role</option>
               <option value="MURID">Murid</option>
               <option value="GURU">Guru</option>
             </select>
 
             <select value={statusFilter} onChange={e => { setStatusFilter(e.target.value); setPage(1); }}
-              className="px-3 py-2 text-sm rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-violet-500/20">
+              className="px-3 py-2 text-sm rounded-lg border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-violet-500/20">
               <option value="">Semua Status</option>
               <option value="free">Free</option>
               <option value="premium">Pro</option>
@@ -106,14 +106,14 @@ export default function AdminUsersPage() {
 
             {selected.size > 0 && (
               <div className="flex items-center gap-2 ml-auto">
-                <span className="text-xs text-slate-500">{selected.size} dipilih</span>
+                <span className="text-xs text-slate-500 dark:text-slate-400">{selected.size} dipilih</span>
                 <button onClick={() => handleBulkAction("togglePremium")} disabled={acting}
-                  className="px-3 py-1.5 text-xs font-medium rounded-lg bg-violet-50 text-violet-700 hover:bg-violet-100 disabled:opacity-50 flex items-center gap-1">
+                  className="px-3 py-1.5 text-xs font-medium rounded-lg bg-violet-50 dark:bg-violet-950/40 text-violet-700 dark:text-violet-300 hover:bg-violet-100 disabled:opacity-50 flex items-center gap-1">
                   {acting ? <Loader2 size={12} className="animate-spin" /> : <ToggleRight size={12} />}
                   Toggle Premium
                 </button>
                 <button onClick={() => handleBulkAction("deactivate")} disabled={acting}
-                  className="px-3 py-1.5 text-xs font-medium rounded-lg bg-red-50 text-red-700 hover:bg-red-100 disabled:opacity-50 flex items-center gap-1">
+                  className="px-3 py-1.5 text-xs font-medium rounded-lg bg-red-50 dark:bg-red-950/40 text-red-700 dark:text-red-300 hover:bg-red-100 disabled:opacity-50 flex items-center gap-1">
                   {acting ? <Loader2 size={12} className="animate-spin" /> : <X size={12} />}
                   Nonaktifkan
                 </button>
@@ -127,17 +127,17 @@ export default function AdminUsersPage() {
         ) : users.length === 0 ? (
           <div className="text-center py-16">
             <Users size={48} className="mx-auto text-slate-200 mb-3" />
-            <p className="text-slate-500">Tidak ada pengguna</p>
+            <p className="text-slate-500 dark:text-slate-400">Tidak ada pengguna</p>
           </div>
         ) : (
           <>
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-slate-100 text-left text-slate-500">
+                  <tr className="border-b border-slate-100 dark:border-slate-800 text-left text-slate-500 dark:text-slate-400">
                     <th className="pb-3 pl-4 pt-3 w-10">
                       <input type="checkbox" checked={selected.size === users.length && users.length > 0} onChange={toggleSelectAll}
-                        className="rounded border-slate-300 text-violet-600 focus:ring-violet-500" />
+                        className="rounded border-slate-300 text-violet-600 dark:text-violet-400 focus:ring-violet-500" />
                     </th>
                     <th className="pb-3 pt-3 font-medium">Nama</th>
                     <th className="pb-3 pt-3 font-medium">Email</th>
@@ -153,23 +153,23 @@ export default function AdminUsersPage() {
                   {users.map((u: any) => {
                     const st = statusBadge(u);
                     return (
-                      <tr key={u.id} className={`border-b border-slate-50 hover:bg-slate-50 transition-colors ${selected.has(u.id) ? "bg-violet-50/50" : ""}`}>
+                      <tr key={u.id} className={`border-b border-slate-50 hover:bg-slate-50 dark:bg-slate-800/50 transition-colors ${selected.has(u.id) ? "bg-violet-50 dark:bg-violet-950/40/50" : ""}`}>
                         <td className="py-3 pl-4">
                           <input type="checkbox" checked={selected.has(u.id)} onChange={() => toggleSelect(u.id)}
-                            className="rounded border-slate-300 text-violet-600 focus:ring-violet-500" />
+                            className="rounded border-slate-300 text-violet-600 dark:text-violet-400 focus:ring-violet-500" />
                         </td>
                         <td className="py-3">
                           <div className="flex items-center gap-2">
                             <div className="w-7 h-7 rounded-full bg-gradient-to-br from-slate-300 to-slate-400 flex items-center justify-center text-white text-[10px] font-bold">
                               {(u.fullName || "?").slice(0, 2).toUpperCase()}
                             </div>
-                            <span className="font-medium text-slate-900">{u.fullName}</span>
-                            {u.isFounder && <Crown size={12} className="text-amber-500" />}
+                            <span className="font-medium text-slate-900 dark:text-slate-100">{u.fullName}</span>
+                            {u.isFounder && <Crown size={12} className="text-amber-500 dark:text-amber-400" />}
                           </div>
                         </td>
-                        <td className="py-3 text-slate-500 text-xs">{u.email}</td>
+                        <td className="py-3 text-slate-500 dark:text-slate-400 text-xs">{u.email}</td>
                         <td className="py-3">
-                          <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${u.role === "GURU" ? "bg-emerald-100 text-emerald-700" : "bg-violet-100 text-violet-700"}`}>
+                          <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${u.role === "GURU" ? "bg-emerald-100 text-emerald-700 dark:text-emerald-300" : "bg-violet-100 text-violet-700 dark:text-violet-300"}`}>
                             {u.role}
                           </span>
                         </td>
@@ -179,21 +179,21 @@ export default function AdminUsersPage() {
                         <td className="py-3">
                           <div className="flex flex-col gap-0.5">
                             <span className={`text-[10px] px-2 py-0.5 rounded-full font-semibold w-fit ${
-                              u.plan === "FOUNDER" ? "bg-amber-100 text-amber-700"
-                              : u.plan === "PRO" ? "bg-yellow-100 text-yellow-700"
-                              : "bg-slate-100 text-slate-500"
+                              u.plan === "FOUNDER" ? "bg-amber-100 text-amber-700 dark:text-amber-300"
+                              : u.plan === "PRO" ? "bg-yellow-100 text-yellow-700 dark:text-yellow-300"
+                              : "bg-slate-100 dark:bg-slate-800/70 text-slate-500 dark:text-slate-400"
                             }`}>
                               {u.plan}
                             </span>
                             {u.simLimit > 0 && (
-                              <span className={`text-[10px] ${u.simUsage >= u.simLimit ? "text-red-500 font-semibold" : "text-slate-400"}`}>
+                              <span className={`text-[10px] ${u.simUsage >= u.simLimit ? "text-red-500 dark:text-red-400 font-semibold" : "text-slate-400"}`}>
                                 Simulasi {u.simUsage}/{u.simLimit}
                               </span>
                             )}
                           </div>
                         </td>
-                        <td className="py-3 text-slate-500 text-xs">{u.xp}</td>
-                        <td className="py-3 text-slate-500 text-xs">{u.level || 0}</td>
+                        <td className="py-3 text-slate-500 dark:text-slate-400 text-xs">{u.xp}</td>
+                        <td className="py-3 text-slate-500 dark:text-slate-400 text-xs">{u.level || 0}</td>
                         <td className="py-3 text-slate-400 text-xs">{new Date(u.createdAt).toLocaleDateString("id-ID")}</td>
                       </tr>
                     );
@@ -203,13 +203,13 @@ export default function AdminUsersPage() {
             </div>
 
             {pages > 1 && (
-              <div className="flex items-center justify-between px-4 py-3 border-t border-slate-100">
+              <div className="flex items-center justify-between px-4 py-3 border-t border-slate-100 dark:border-slate-800">
                 <span className="text-xs text-slate-400">Halaman {page} dari {pages}</span>
                 <div className="flex gap-1">
                   <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}
-                    className="px-3 py-1.5 text-xs rounded-lg border border-slate-200 hover:bg-slate-50 disabled:opacity-50">Sebelumnya</button>
+                    className="px-3 py-1.5 text-xs rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:bg-slate-800/50 disabled:opacity-50">Sebelumnya</button>
                   <button onClick={() => setPage(p => Math.min(pages, p + 1))} disabled={page === pages}
-                    className="px-3 py-1.5 text-xs rounded-lg border border-slate-200 hover:bg-slate-50 disabled:opacity-50">Selanjutnya</button>
+                    className="px-3 py-1.5 text-xs rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:bg-slate-800/50 disabled:opacity-50">Selanjutnya</button>
                 </div>
               </div>
             )}

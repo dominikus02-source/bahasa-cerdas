@@ -52,12 +52,12 @@ interface Pagination {
 
 // ── Constants ──────────────────────────────────────────────
 const PLAN_BADGE: Record<string, { label: string; class: string }> = {
-  FOUNDER: { label: "Founder", class: "bg-amber-100 text-amber-800 border-amber-200" },
-  MURID_FREE: { label: "Murid", class: "bg-violet-100 text-violet-800 border-violet-200" },
-  GURU_PRO: { label: "Pro", class: "bg-emerald-100 text-emerald-800 border-emerald-200" },
-  GURU_PRO_TRIAL: { label: "Trial", class: "bg-sky-100 text-sky-800 border-sky-200" },
-  GURU_FREE: { label: "Free", class: "bg-slate-100 text-slate-700 border-slate-200" },
-  SCHOOL: { label: "Sekolah", class: "bg-blue-100 text-blue-800 border-blue-200" },
+  FOUNDER: { label: "Founder", class: "bg-amber-100 text-amber-800 border-amber-200 dark:border-amber-800" },
+  MURID_FREE: { label: "Murid", class: "bg-violet-100 text-violet-800 border-violet-200 dark:border-violet-800" },
+  GURU_PRO: { label: "Pro", class: "bg-emerald-100 text-emerald-800 border-emerald-200 dark:border-emerald-800" },
+  GURU_PRO_TRIAL: { label: "Trial", class: "bg-sky-100 text-sky-800 border-sky-200 dark:border-sky-800" },
+  GURU_FREE: { label: "Free", class: "bg-slate-100 dark:bg-slate-800/70 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700" },
+  SCHOOL: { label: "Sekolah", class: "bg-blue-100 text-blue-800 border-blue-200 dark:border-blue-800" },
 };
 
 const ACTION_LABELS: Record<string, string> = {
@@ -67,9 +67,9 @@ const ACTION_LABELS: Record<string, string> = {
 };
 
 const ACTION_COLORS: Record<string, string> = {
-  EXTEND_TRIAL: "text-sky-600 bg-sky-50 border-sky-200",
-  RESET_CREDITS: "text-amber-600 bg-amber-50 border-amber-200",
-  ALLOCATE_CREDITS: "text-emerald-600 bg-emerald-50 border-emerald-200",
+  EXTEND_TRIAL: "text-sky-600 dark:text-sky-400 bg-sky-50 dark:bg-sky-950/40 border-sky-200 dark:border-sky-800",
+  RESET_CREDITS: "text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/40 border-amber-200 dark:border-amber-800",
+  ALLOCATE_CREDITS: "text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 border-emerald-200 dark:border-emerald-800",
 };
 
 function formatDate(dateStr: string | null): string {
@@ -91,7 +91,7 @@ function creditBar(used: number, total: number) {
   const pct = Math.min(100, Math.round((used / total) * 100));
   const color = pct >= 90 ? "bg-red-500" : pct >= 70 ? "bg-amber-500" : pct >= 40 ? "bg-emerald-400" : "bg-emerald-500";
   return (
-    <div className="w-full bg-slate-100 rounded-full h-2 mt-1">
+    <div className="w-full bg-slate-100 dark:bg-slate-800/70 rounded-full h-2 mt-1">
       <div className={`${color} h-2 rounded-full transition-all`} style={{ width: `${pct}%` }} />
     </div>
   );
@@ -328,13 +328,13 @@ export default function AdminAiQuotaPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">AI Quota Management</h1>
-          <p className="text-sm text-slate-500 mt-1">Kelola kuota kredit AI, trial, dan akses pengguna</p>
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">AI Quota Management</h1>
+          <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Kelola kuota kredit AI, trial, dan akses pengguna</p>
         </div>
         <button
           onClick={() => tab === "users" ? fetchUsers(page) : fetchAuditLogs(auditPage)}
           disabled={loading || auditLoading}
-          className="flex items-center gap-1.5 px-3 py-2 text-sm bg-white border border-slate-200 rounded-xl hover:bg-slate-50 disabled:opacity-50"
+          className="flex items-center gap-1.5 px-3 py-2 text-sm bg-white dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700 rounded-xl hover:bg-slate-50 dark:bg-slate-800/50 disabled:opacity-50"
         >
           <RefreshCw size={14} className={(loading || auditLoading) ? "animate-spin" : ""} />
           Refresh
@@ -342,11 +342,11 @@ export default function AdminAiQuotaPage() {
       </div>
 
       {/* Tab switcher */}
-      <div className="flex gap-1 bg-slate-100 p-1 rounded-xl w-fit">
+      <div className="flex gap-1 bg-slate-100 dark:bg-slate-800/70 p-1 rounded-xl w-fit">
         <button
           onClick={() => setTab("users")}
           className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-            tab === "users" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-800"
+            tab === "users" ? "bg-white dark:bg-slate-800/90 text-slate-900 dark:text-slate-100 shadow-sm" : "text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:text-slate-200"
           }`}
         >
           <Users size={14} />
@@ -355,13 +355,13 @@ export default function AdminAiQuotaPage() {
         <button
           onClick={() => setTab("audit")}
           className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-            tab === "audit" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-800"
+            tab === "audit" ? "bg-white dark:bg-slate-800/90 text-slate-900 dark:text-slate-100 shadow-sm" : "text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:text-slate-200"
           }`}
         >
           <History size={14} />
           Riwayat Aksi
           {auditTotal > 0 && (
-            <span className="text-[10px] bg-slate-200 text-slate-600 px-1.5 py-0.5 rounded-full">{auditTotal}</span>
+            <span className="text-[10px] bg-slate-200 text-slate-600 dark:text-slate-300 px-1.5 py-0.5 rounded-full">{auditTotal}</span>
           )}
         </button>
       </div>
@@ -370,7 +370,7 @@ export default function AdminAiQuotaPage() {
       {tab === "users" && (
         <>
           {/* Filters */}
-          <div className="flex flex-wrap items-center gap-3 bg-white p-4 rounded-2xl border border-slate-200">
+          <div className="flex flex-wrap items-center gap-3 bg-white dark:bg-slate-800/90 p-4 rounded-2xl border border-slate-200 dark:border-slate-700">
             <div className="relative flex-1 min-w-[200px]">
               <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
               <input
@@ -378,13 +378,13 @@ export default function AdminAiQuotaPage() {
                 onChange={(e) => setSearchInput(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleSearch()}
                 placeholder="Cari nama atau email..."
-                className="w-full pl-9 pr-3 py-2 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-200"
+                className="w-full pl-9 pr-3 py-2 text-sm border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-200"
               />
             </div>
             <select
               value={roleFilter}
               onChange={(e) => { setRoleFilter(e.target.value); setPage(1); }}
-              className="px-3 py-2 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-200"
+              className="px-3 py-2 text-sm border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-200"
             >
               <option value="">Semua Role</option>
               <option value="GURU">Guru</option>
@@ -394,7 +394,7 @@ export default function AdminAiQuotaPage() {
             <select
               value={planFilter}
               onChange={(e) => { setPlanFilter(e.target.value); setPage(1); }}
-              className="px-3 py-2 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-200"
+              className="px-3 py-2 text-sm border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-200"
             >
               <option value="">Semua Status</option>
               <option value="trial">Trial Aktif</option>
@@ -412,51 +412,51 @@ export default function AdminAiQuotaPage() {
 
           {/* Stats bar */}
           <div className="grid grid-cols-4 gap-4">
-            <div className="bg-white p-4 rounded-2xl border border-slate-200">
-              <p className="text-xs text-slate-500">Total Pengguna</p>
-              <p className="text-2xl font-bold text-slate-900 mt-1">{total}</p>
+            <div className="bg-white dark:bg-slate-800/90 p-4 rounded-2xl border border-slate-200 dark:border-slate-700">
+              <p className="text-xs text-slate-500 dark:text-slate-400">Total Pengguna</p>
+              <p className="text-2xl font-bold text-slate-900 dark:text-slate-100 mt-1">{total}</p>
             </div>
-            <div className="bg-white p-4 rounded-2xl border border-sky-200">
-              <p className="text-xs text-sky-600">Trial Aktif</p>
+            <div className="bg-white dark:bg-slate-800/90 p-4 rounded-2xl border border-sky-200 dark:border-sky-800">
+              <p className="text-xs text-sky-600 dark:text-sky-400">Trial Aktif</p>
               <p className="text-2xl font-bold text-sky-900 mt-1">{users.filter(u => u.trialEndsAt && new Date(u.trialEndsAt) > new Date()).length}</p>
             </div>
-            <div className="bg-white p-4 rounded-2xl border border-emerald-200">
-              <p className="text-xs text-emerald-600">Pro Aktif</p>
+            <div className="bg-white dark:bg-slate-800/90 p-4 rounded-2xl border border-emerald-200 dark:border-emerald-800">
+              <p className="text-xs text-emerald-600 dark:text-emerald-400">Pro Aktif</p>
               <p className="text-2xl font-bold text-emerald-900 mt-1">{users.filter(u => u.role === "GURU" && u.isPremium && !u.isFounder && u.premiumUntil && new Date(u.premiumUntil) > new Date()).length}</p>
             </div>
-            <div className="bg-white p-4 rounded-2xl border border-red-200">
-              <p className="text-xs text-red-600">Kredit Habis</p>
+            <div className="bg-white dark:bg-slate-800/90 p-4 rounded-2xl border border-red-200 dark:border-red-800">
+              <p className="text-xs text-red-600 dark:text-red-400">Kredit Habis</p>
               <p className="text-2xl font-bold text-red-900 mt-1">{users.filter(u => u.remainingCredits <= 0 && u.role === "GURU" && !u.isFounder).length}</p>
             </div>
           </div>
 
           {/* User table */}
-          <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
+          <div className="bg-white dark:bg-slate-800/90 rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-slate-100 bg-slate-50">
-                    <th className="text-left px-4 py-3 font-semibold text-slate-600 cursor-pointer select-none" onClick={() => handleSort("name")}>
+                  <tr className="border-b border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50">
+                    <th className="text-left px-4 py-3 font-semibold text-slate-600 dark:text-slate-300 cursor-pointer select-none" onClick={() => handleSort("name")}>
                       Nama {sortIcon("name")}
                     </th>
-                    <th className="text-left px-4 py-3 font-semibold text-slate-600 cursor-pointer select-none" onClick={() => handleSort("role")}>
+                    <th className="text-left px-4 py-3 font-semibold text-slate-600 dark:text-slate-300 cursor-pointer select-none" onClick={() => handleSort("role")}>
                       Role {sortIcon("role")}
                     </th>
-                    <th className="text-left px-4 py-3 font-semibold text-slate-600">Plan</th>
-                    <th className="text-left px-4 py-3 font-semibold text-slate-600 cursor-pointer select-none" onClick={() => handleSort("trialEndsAt")}>
+                    <th className="text-left px-4 py-3 font-semibold text-slate-600 dark:text-slate-300">Plan</th>
+                    <th className="text-left px-4 py-3 font-semibold text-slate-600 dark:text-slate-300 cursor-pointer select-none" onClick={() => handleSort("trialEndsAt")}>
                       Trial Berakhir {sortIcon("trialEndsAt")}
                     </th>
-                    <th className="text-left px-4 py-3 font-semibold text-slate-600 cursor-pointer select-none" onClick={() => handleSort("creditsUsed")}>
+                    <th className="text-left px-4 py-3 font-semibold text-slate-600 dark:text-slate-300 cursor-pointer select-none" onClick={() => handleSort("creditsUsed")}>
                       Kredit {sortIcon("creditsUsed")}
                     </th>
-                    <th className="text-left px-4 py-3 font-semibold text-slate-600">Aksi</th>
+                    <th className="text-left px-4 py-3 font-semibold text-slate-600 dark:text-slate-300">Aksi</th>
                   </tr>
                 </thead>
                 <tbody>
                   {loading ? (
                     <tr><td colSpan={6} className="text-center py-12"><Loader2 size={20} className="animate-spin mx-auto text-slate-400" /></td></tr>
                   ) : error ? (
-                    <tr><td colSpan={6} className="text-center py-12 text-red-500">{error}</td></tr>
+                    <tr><td colSpan={6} className="text-center py-12 text-red-500 dark:text-red-400">{error}</td></tr>
                   ) : users.length === 0 ? (
                     <tr><td colSpan={6} className="text-center py-12 text-slate-400">Tidak ada data</td></tr>
                   ) : (
@@ -466,32 +466,32 @@ export default function AdminAiQuotaPage() {
                       const trialExpiring = isTrialActive && u.trialEndsAt && (new Date(u.trialEndsAt).getTime() - Date.now()) < 7 * 86400000;
 
                       return (
-                        <tr key={u.id} className="border-b border-slate-50 hover:bg-slate-50 transition-colors">
+                        <tr key={u.id} className="border-b border-slate-50 hover:bg-slate-50 dark:bg-slate-800/50 transition-colors">
                           <td className="px-4 py-3">
                             <div>
-                              <p className="font-medium text-slate-900">{u.fullName}</p>
+                              <p className="font-medium text-slate-900 dark:text-slate-100">{u.fullName}</p>
                               <p className="text-xs text-slate-400">{u.email}</p>
                             </div>
                           </td>
                           <td className="px-4 py-3">
                             <span className={`text-xs font-medium px-2 py-0.5 rounded-lg ${
-                              u.role === "GURU" ? "bg-emerald-50 text-emerald-700" :
-                              u.role === "MURID" ? "bg-violet-50 text-violet-700" :
-                              "bg-amber-50 text-amber-700"
+                              u.role === "GURU" ? "bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300" :
+                              u.role === "MURID" ? "bg-violet-50 dark:bg-violet-950/40 text-violet-700 dark:text-violet-300" :
+                              "bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300"
                             }`}>{u.role}</span>
                           </td>
                           <td className="px-4 py-3">
                             <div className="flex items-center gap-1.5 flex-wrap">
                               <span className={`text-xs font-medium px-2 py-0.5 rounded-lg border ${badge.class}`}>{badge.label}</span>
-                              {u.isFounder && <span className="text-xs font-medium px-2 py-0.5 rounded-lg bg-amber-100 text-amber-800 border border-amber-200">Founder</span>}
-                              {isTrialActive && trialExpiring && <span className="text-xs font-medium px-2 py-0.5 rounded-lg bg-red-50 text-red-600 border border-red-200">Segera Habis</span>}
+                              {u.isFounder && <span className="text-xs font-medium px-2 py-0.5 rounded-lg bg-amber-100 text-amber-800 border border-amber-200 dark:border-amber-800">Founder</span>}
+                              {isTrialActive && trialExpiring && <span className="text-xs font-medium px-2 py-0.5 rounded-lg bg-red-50 dark:bg-red-950/40 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-800">Segera Habis</span>}
                             </div>
                           </td>
                           <td className="px-4 py-3 text-sm">
                             {isTrialActive ? (
                               <div className="flex items-center gap-1.5">
-                                <Clock size={12} className={trialExpiring ? "text-red-500" : "text-sky-500"} />
-                                <span className={trialExpiring ? "text-red-600 font-medium" : ""}>{formatDate(u.trialEndsAt!)}</span>
+                                <Clock size={12} className={trialExpiring ? "text-red-500 dark:text-red-400" : "text-sky-500 dark:text-sky-400"} />
+                                <span className={trialExpiring ? "text-red-600 dark:text-red-400 font-medium" : ""}>{formatDate(u.trialEndsAt!)}</span>
                               </div>
                             ) : u.trialEndsAt ? (
                               <span className="text-slate-400">{formatDate(u.trialEndsAt)} (expired)</span>
@@ -499,15 +499,15 @@ export default function AdminAiQuotaPage() {
                           </td>
                           <td className="px-4 py-3">
                             {u.creditsTotal >= 999999 ? (
-                              <span className="text-sm text-slate-500">∞ tak terbatas</span>
+                              <span className="text-sm text-slate-500 dark:text-slate-400">∞ tak terbatas</span>
                             ) : (
                               <div>
                                 <div className="flex items-center gap-2">
-                                  <span className={`text-sm font-medium ${u.remainingCredits <= 0 ? "text-red-600" : u.remainingCredits < 10 ? "text-amber-600" : "text-emerald-600"}`}>
+                                  <span className={`text-sm font-medium ${u.remainingCredits <= 0 ? "text-red-600 dark:text-red-400" : u.remainingCredits < 10 ? "text-amber-600 dark:text-amber-400" : "text-emerald-600 dark:text-emerald-400"}`}>
                                     {u.remainingCredits}
                                   </span>
                                   <span className="text-xs text-slate-400">/ {u.creditsTotal}</span>
-                                  {u.remainingCredits <= 0 && <AlertTriangle size={12} className="text-red-500" />}
+                                  {u.remainingCredits <= 0 && <AlertTriangle size={12} className="text-red-500 dark:text-red-400" />}
                                 </div>
                                 {creditBar(u.creditsUsed, u.creditsTotal)}
                               </div>
@@ -517,9 +517,9 @@ export default function AdminAiQuotaPage() {
                             <div className="flex items-center gap-1">
                               {(u.role === "GURU" || u.role === "MURID") && !u.isFounder && (
                                 <>
-                                  <button onClick={() => openAction(u, "extend")} title="Perpanjang Trial" className="p-1.5 rounded-lg hover:bg-sky-50 text-sky-600 hover:text-sky-800"><Clock size={14} /></button>
-                                  <button onClick={() => openAction(u, "reset")} title="Reset Kredit" className="p-1.5 rounded-lg hover:bg-amber-50 text-amber-600 hover:text-amber-800"><RotateCcw size={14} /></button>
-                                  <button onClick={() => openAction(u, "allocate")} title="Tambah Kredit" className="p-1.5 rounded-lg hover:bg-emerald-50 text-emerald-600 hover:text-emerald-800"><PlusCircle size={14} /></button>
+                                  <button onClick={() => openAction(u, "extend")} title="Perpanjang Trial" className="p-1.5 rounded-lg hover:bg-sky-50 dark:bg-sky-950/40 text-sky-600 dark:text-sky-400 hover:text-sky-800"><Clock size={14} /></button>
+                                  <button onClick={() => openAction(u, "reset")} title="Reset Kredit" className="p-1.5 rounded-lg hover:bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 hover:text-amber-800"><RotateCcw size={14} /></button>
+                                  <button onClick={() => openAction(u, "allocate")} title="Tambah Kredit" className="p-1.5 rounded-lg hover:bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 hover:text-emerald-800"><PlusCircle size={14} /></button>
                                 </>
                               )}
                             </div>
@@ -533,17 +533,17 @@ export default function AdminAiQuotaPage() {
             </div>
 
             {totalPages > 1 && (
-              <div className="flex items-center justify-between px-4 py-3 border-t border-slate-100">
-                <p className="text-xs text-slate-500">Halaman {page} dari {totalPages} ({total} total)</p>
+              <div className="flex items-center justify-between px-4 py-3 border-t border-slate-100 dark:border-slate-800">
+                <p className="text-xs text-slate-500 dark:text-slate-400">Halaman {page} dari {totalPages} ({total} total)</p>
                 <div className="flex items-center gap-1">
-                  <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page <= 1} className="p-1.5 rounded-lg hover:bg-slate-100 disabled:opacity-30"><ChevronLeft size={16} /></button>
+                  <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page <= 1} className="p-1.5 rounded-lg hover:bg-slate-100 dark:bg-slate-800/70 disabled:opacity-30"><ChevronLeft size={16} /></button>
                   {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
                     const start = Math.max(1, Math.min(page - 2, totalPages - 4));
                     const n = start + i;
                     if (n > totalPages) return null;
-                    return <button key={n} onClick={() => setPage(n)} className={`w-8 h-8 rounded-lg text-xs font-medium ${n === page ? "bg-red-500 text-white" : "hover:bg-slate-100 text-slate-600"}`}>{n}</button>;
+                    return <button key={n} onClick={() => setPage(n)} className={`w-8 h-8 rounded-lg text-xs font-medium ${n === page ? "bg-red-500 text-white" : "hover:bg-slate-100 dark:bg-slate-800/70 text-slate-600 dark:text-slate-300"}`}>{n}</button>;
                   })}
-                  <button onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page >= totalPages} className="p-1.5 rounded-lg hover:bg-slate-100 disabled:opacity-30"><ChevronRight size={16} /></button>
+                  <button onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page >= totalPages} className="p-1.5 rounded-lg hover:bg-slate-100 dark:bg-slate-800/70 disabled:opacity-30"><ChevronRight size={16} /></button>
                 </div>
               </div>
             )}
@@ -555,7 +555,7 @@ export default function AdminAiQuotaPage() {
       {tab === "audit" && (
         <>
           {/* Audit filters */}
-          <div className="flex flex-wrap items-center gap-3 bg-white p-4 rounded-2xl border border-slate-200">
+          <div className="flex flex-wrap items-center gap-3 bg-white dark:bg-slate-800/90 p-4 rounded-2xl border border-slate-200 dark:border-slate-700">
             <div className="relative flex-1 min-w-[200px]">
               <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
               <input
@@ -563,13 +563,13 @@ export default function AdminAiQuotaPage() {
                 onChange={(e) => setAuditSearchInput(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleAuditSearch()}
                 placeholder="Cari admin atau target..."
-                className="w-full pl-9 pr-3 py-2 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-200"
+                className="w-full pl-9 pr-3 py-2 text-sm border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-200"
               />
             </div>
             <select
               value={auditActionFilter}
               onChange={(e) => { setAuditActionFilter(e.target.value); setAuditPage(1); }}
-              className="px-3 py-2 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-200"
+              className="px-3 py-2 text-sm border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-200"
             >
               <option value="">Semua Aksi</option>
               <option value="EXTEND_TRIAL">Perpanjang Trial</option>
@@ -580,18 +580,18 @@ export default function AdminAiQuotaPage() {
           </div>
 
           {/* Audit log table */}
-          <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
+          <div className="bg-white dark:bg-slate-800/90 rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-slate-100 bg-slate-50">
-                    <th className="text-left px-4 py-3 font-semibold text-slate-600">Waktu</th>
-                    <th className="text-left px-4 py-3 font-semibold text-slate-600">Admin</th>
-                    <th className="text-left px-4 py-3 font-semibold text-slate-600">Target</th>
-                    <th className="text-left px-4 py-3 font-semibold text-slate-600">Aksi</th>
-                    <th className="text-left px-4 py-3 font-semibold text-slate-600">Jumlah</th>
-                    <th className="text-left px-4 py-3 font-semibold text-slate-600">Sebelum → Sesudah</th>
-                    <th className="text-left px-4 py-3 font-semibold text-slate-600">Alasan</th>
+                  <tr className="border-b border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50">
+                    <th className="text-left px-4 py-3 font-semibold text-slate-600 dark:text-slate-300">Waktu</th>
+                    <th className="text-left px-4 py-3 font-semibold text-slate-600 dark:text-slate-300">Admin</th>
+                    <th className="text-left px-4 py-3 font-semibold text-slate-600 dark:text-slate-300">Target</th>
+                    <th className="text-left px-4 py-3 font-semibold text-slate-600 dark:text-slate-300">Aksi</th>
+                    <th className="text-left px-4 py-3 font-semibold text-slate-600 dark:text-slate-300">Jumlah</th>
+                    <th className="text-left px-4 py-3 font-semibold text-slate-600 dark:text-slate-300">Sebelum → Sesudah</th>
+                    <th className="text-left px-4 py-3 font-semibold text-slate-600 dark:text-slate-300">Alasan</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -601,22 +601,22 @@ export default function AdminAiQuotaPage() {
                     <tr><td colSpan={7} className="text-center py-12 text-slate-400">Belum ada riwayat aksi admin</td></tr>
                   ) : (
                     auditLogs.map((log) => (
-                      <tr key={log.id} className="border-b border-slate-50 hover:bg-slate-50 transition-colors">
-                        <td className="px-4 py-3 text-xs text-slate-500 whitespace-nowrap">{formatDateTime(log.createdAt)}</td>
+                      <tr key={log.id} className="border-b border-slate-50 hover:bg-slate-50 dark:bg-slate-800/50 transition-colors">
+                        <td className="px-4 py-3 text-xs text-slate-500 dark:text-slate-400 whitespace-nowrap">{formatDateTime(log.createdAt)}</td>
                         <td className="px-4 py-3">
-                          <p className="font-medium text-slate-900 text-sm">{log.admin.fullName}</p>
+                          <p className="font-medium text-slate-900 dark:text-slate-100 text-sm">{log.admin.fullName}</p>
                           <p className="text-xs text-slate-400">{log.admin.email}</p>
                         </td>
                         <td className="px-4 py-3">
-                          <p className="font-medium text-slate-900 text-sm">{log.target.fullName}</p>
+                          <p className="font-medium text-slate-900 dark:text-slate-100 text-sm">{log.target.fullName}</p>
                           <p className="text-xs text-slate-400">{log.target.email}</p>
                           <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded ${
-                            log.target.role === "GURU" ? "bg-emerald-50 text-emerald-700" :
-                            log.target.role === "MURID" ? "bg-violet-50 text-violet-700" : "bg-amber-50 text-amber-700"
+                            log.target.role === "GURU" ? "bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300" :
+                            log.target.role === "MURID" ? "bg-violet-50 dark:bg-violet-950/40 text-violet-700 dark:text-violet-300" : "bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300"
                           }`}>{log.target.role}</span>
                         </td>
                         <td className="px-4 py-3">
-                          <span className={`text-xs font-medium px-2 py-0.5 rounded-lg border ${ACTION_COLORS[log.action] || "bg-slate-100 text-slate-600"}`}>
+                          <span className={`text-xs font-medium px-2 py-0.5 rounded-lg border ${ACTION_COLORS[log.action] || "bg-slate-100 dark:bg-slate-800/70 text-slate-600 dark:text-slate-300"}`}>
                             {ACTION_LABELS[log.action] || log.action}
                           </span>
                         </td>
@@ -628,13 +628,13 @@ export default function AdminAiQuotaPage() {
                         <td className="px-4 py-3 text-sm">
                           {log.previousValue || log.newValue ? (
                             <span className="text-xs">
-                              <span className="text-slate-500">{log.previousValue ?? "—"}</span>
+                              <span className="text-slate-500 dark:text-slate-400">{log.previousValue ?? "—"}</span>
                               <span className="text-slate-300 mx-1">→</span>
-                              <span className="text-slate-900 font-medium">{log.newValue ?? "—"}</span>
+                              <span className="text-slate-900 dark:text-slate-100 font-medium">{log.newValue ?? "—"}</span>
                             </span>
                           ) : <span className="text-slate-300">—</span>}
                         </td>
-                        <td className="px-4 py-3 text-sm text-slate-600 max-w-[200px] truncate" title={log.reason ?? ""}>
+                        <td className="px-4 py-3 text-sm text-slate-600 dark:text-slate-300 max-w-[200px] truncate" title={log.reason ?? ""}>
                           {log.reason || <span className="text-slate-300">—</span>}
                         </td>
                       </tr>
@@ -645,17 +645,17 @@ export default function AdminAiQuotaPage() {
             </div>
 
             {auditTotalPages > 1 && (
-              <div className="flex items-center justify-between px-4 py-3 border-t border-slate-100">
-                <p className="text-xs text-slate-500">Halaman {auditPage} dari {auditTotalPages} ({auditTotal} total)</p>
+              <div className="flex items-center justify-between px-4 py-3 border-t border-slate-100 dark:border-slate-800">
+                <p className="text-xs text-slate-500 dark:text-slate-400">Halaman {auditPage} dari {auditTotalPages} ({auditTotal} total)</p>
                 <div className="flex items-center gap-1">
-                  <button onClick={() => setAuditPage(p => Math.max(1, p - 1))} disabled={auditPage <= 1} className="p-1.5 rounded-lg hover:bg-slate-100 disabled:opacity-30"><ChevronLeft size={16} /></button>
+                  <button onClick={() => setAuditPage(p => Math.max(1, p - 1))} disabled={auditPage <= 1} className="p-1.5 rounded-lg hover:bg-slate-100 dark:bg-slate-800/70 disabled:opacity-30"><ChevronLeft size={16} /></button>
                   {Array.from({ length: Math.min(5, auditTotalPages) }, (_, i) => {
                     const start = Math.max(1, Math.min(auditPage - 2, auditTotalPages - 4));
                     const n = start + i;
                     if (n > auditTotalPages) return null;
-                    return <button key={n} onClick={() => setAuditPage(n)} className={`w-8 h-8 rounded-lg text-xs font-medium ${n === auditPage ? "bg-red-500 text-white" : "hover:bg-slate-100 text-slate-600"}`}>{n}</button>;
+                    return <button key={n} onClick={() => setAuditPage(n)} className={`w-8 h-8 rounded-lg text-xs font-medium ${n === auditPage ? "bg-red-500 text-white" : "hover:bg-slate-100 dark:bg-slate-800/70 text-slate-600 dark:text-slate-300"}`}>{n}</button>;
                   })}
-                  <button onClick={() => setAuditPage(p => Math.min(auditTotalPages, p + 1))} disabled={auditPage >= auditTotalPages} className="p-1.5 rounded-lg hover:bg-slate-100 disabled:opacity-30"><ChevronRight size={16} /></button>
+                  <button onClick={() => setAuditPage(p => Math.min(auditTotalPages, p + 1))} disabled={auditPage >= auditTotalPages} className="p-1.5 rounded-lg hover:bg-slate-100 dark:bg-slate-800/70 disabled:opacity-30"><ChevronRight size={16} /></button>
                 </div>
               </div>
             )}
@@ -666,25 +666,25 @@ export default function AdminAiQuotaPage() {
       {/* ─── ACTION MODAL ────────────────────────────────── */}
       {actionUser && actionType && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30">
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-6 mx-4">
-            <h3 className="text-lg font-bold text-slate-900 mb-1">
+          <div className="bg-white dark:bg-slate-800/90 rounded-2xl shadow-xl w-full max-w-md p-6 mx-4">
+            <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100 mb-1">
               {actionType === "extend" ? "Perpanjang Trial" :
                actionType === "reset" ? "Reset Kredit" : "Tambah Kredit"}
             </h3>
-            <p className="text-sm text-slate-500 mb-4">
+            <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">
               {actionUser.fullName} ({actionUser.email})
             </p>
 
             <div className="space-y-3">
               {actionType === "extend" && (
                 <div>
-                  <label className="text-xs font-medium text-slate-600 block mb-1">Jumlah Hari (1-365)</label>
+                  <label className="text-xs font-medium text-slate-600 dark:text-slate-300 block mb-1">Jumlah Hari (1-365)</label>
                   <input
                     type="number" min={1} max={365}
                     value={actionValue}
                     onChange={(e) => setActionValue(e.target.value)}
                     placeholder="30"
-                    className="w-full px-3 py-2 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-200"
+                    className="w-full px-3 py-2 text-sm border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-200"
                   />
                   {actionUser.trialEndsAt && (
                     <p className="text-xs text-slate-400 mt-1">Saat ini: {formatDate(actionUser.trialEndsAt)}</p>
@@ -693,31 +693,31 @@ export default function AdminAiQuotaPage() {
               )}
 
               {actionType === "reset" && (
-                <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 text-xs text-amber-800">
+                <div className="bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 rounded-xl p-3 text-xs text-amber-800">
                   Ini akan mengatur ulang kredit terpakai menjadi 0 untuk bulan ini.
                 </div>
               )}
 
               {actionType === "allocate" && (
                 <div>
-                  <label className="text-xs font-medium text-slate-600 block mb-1">Jumlah Kredit (1-10000)</label>
+                  <label className="text-xs font-medium text-slate-600 dark:text-slate-300 block mb-1">Jumlah Kredit (1-10000)</label>
                   <input
                     type="number" min={1} max={10000}
                     value={actionValue}
                     onChange={(e) => setActionValue(e.target.value)}
                     placeholder="50"
-                    className="w-full px-3 py-2 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-200"
+                    className="w-full px-3 py-2 text-sm border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-200"
                   />
                 </div>
               )}
 
               {/* Reason field */}
               <div>
-                <label className="text-xs font-medium text-slate-600 block mb-1">
+                <label className="text-xs font-medium text-slate-600 dark:text-slate-300 block mb-1">
                   Alasan
-                  {actionType === "reset" && <span className="text-red-500 ml-0.5">*</span>}
-                  {actionType === "extend" && parseInt(actionValue || "0") > 30 && <span className="text-red-500 ml-0.5">* (wajib {">"} 30 hari)</span>}
-                  {actionType === "allocate" && parseInt(actionValue || "0") > 500 && <span className="text-red-500 ml-0.5">* (wajib {">"} 500 kredit)</span>}
+                  {actionType === "reset" && <span className="text-red-500 dark:text-red-400 ml-0.5">*</span>}
+                  {actionType === "extend" && parseInt(actionValue || "0") > 30 && <span className="text-red-500 dark:text-red-400 ml-0.5">* (wajib {">"} 30 hari)</span>}
+                  {actionType === "allocate" && parseInt(actionValue || "0") > 500 && <span className="text-red-500 dark:text-red-400 ml-0.5">* (wajib {">"} 500 kredit)</span>}
                   <span className="text-slate-400 font-normal ml-1">(maks. 300 karakter)</span>
                 </label>
                 <textarea
@@ -733,17 +733,17 @@ export default function AdminAiQuotaPage() {
                     actionType === "extend" ? "Alasan perpanjangan trial..." :
                     "Alasan tambahan kredit..."
                   }
-                  className="w-full px-3 py-2 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-200 resize-none"
+                  className="w-full px-3 py-2 text-sm border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-200 resize-none"
                 />
                 <p className="text-xs text-slate-400 mt-1 text-right">{actionReason.length}/300</p>
                 {actionReasonError && (
-                  <p className="text-xs text-red-500 mt-1">{actionReasonError}</p>
+                  <p className="text-xs text-red-500 dark:text-red-400 mt-1">{actionReasonError}</p>
                 )}
               </div>
 
               {actionResult && (
                 <div className={`flex items-center gap-2 text-sm p-3 rounded-xl ${
-                  actionResult.success ? "bg-emerald-50 text-emerald-700" : "bg-red-50 text-red-600"
+                  actionResult.success ? "bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300" : "bg-red-50 dark:bg-red-950/40 text-red-600 dark:text-red-400"
                 }`}>
                   {actionResult.success ? <CheckCircle2 size={14} /> : <AlertTriangle size={14} />}
                   {actionResult.message}
@@ -752,7 +752,7 @@ export default function AdminAiQuotaPage() {
             </div>
 
             <div className="flex justify-end gap-2 mt-6">
-              <button onClick={closeAction} className="px-4 py-2 text-sm border border-slate-200 rounded-xl hover:bg-slate-50">Batal</button>
+              <button onClick={closeAction} className="px-4 py-2 text-sm border border-slate-200 dark:border-slate-700 rounded-xl hover:bg-slate-50 dark:bg-slate-800/50">Batal</button>
               <button
                 onClick={executeAction}
                 disabled={actionLoading}

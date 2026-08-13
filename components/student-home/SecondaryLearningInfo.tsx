@@ -75,7 +75,7 @@ export function SecondaryLearningInfo() {
               {pengumuman.slice(0, 2).map((p) => (
                 <li key={p.id}>
                   <Link href={p.link} className="group block">
-                    <p className="text-xs font-semibold text-[var(--px-text)] group-hover:text-white transition-colors line-clamp-1">
+                    <p className="text-xs font-semibold text-[var(--px-text)] group-hover:text-slate-900 dark:text-white transition-colors line-clamp-1">
                       {p.judul}
                     </p>
                     <p className="text-[10px] text-[var(--px-text-faint)] mt-0.5">
@@ -102,7 +102,7 @@ export function SecondaryLearningInfo() {
               {materi.slice(0, 2).map((m) => (
                 <li key={m.id}>
                   <Link href={m.link} className="group block">
-                    <p className="text-xs font-semibold text-[var(--px-text)] group-hover:text-white transition-colors line-clamp-1">
+                    <p className="text-xs font-semibold text-[var(--px-text)] group-hover:text-slate-900 dark:text-white transition-colors line-clamp-1">
                       {m.judul}
                     </p>
                     <p className="text-[10px] text-[var(--px-text-faint)] mt-0.5 line-clamp-1">{m.guru}</p>
@@ -114,7 +114,7 @@ export function SecondaryLearningInfo() {
         </div>
       </div>
 
-      <div className="mt-4 pt-3 border-t border-white/10 flex items-start gap-2 text-[11px] text-[var(--px-text-faint)]">
+      <div className="mt-4 pt-3 border-t border-slate-900/10 dark:border-white/10 flex items-start gap-2 text-[11px] text-[var(--px-text-faint)]">
         <Bell size={13} className="shrink-0 mt-0.5" />
         <p>
           {summary && summary.totalTugas > 0

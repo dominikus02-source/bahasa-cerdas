@@ -60,11 +60,10 @@ export default function FeaturedWorksGallery({
 
   return (
     <div
-      className="rounded-2xl p-5 text-white ring-1 ring-white/10"
-      style={{ background: "linear-gradient(135deg, #0F1230 0%, #17163F 100%)" }}
+      className="rounded-2xl p-5 text-slate-900 dark:text-white ring-1 ring-slate-900/10 dark:ring-white/10 bc-card-premium"
     >
       <div className="flex items-center justify-between gap-3">
-        <h3 className="text-sm font-bold text-white/90">Galeri Karya Unggulan</h3>
+        <h3 className="text-sm font-bold text-slate-900 dark:text-white/90">Galeri Karya Unggulan</h3>
         <Link
           href={tulisHref}
           className="inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-violet-500 to-purple-600 px-3.5 py-2 text-[11px] font-bold text-white hover:shadow-lg transition-all"
@@ -82,7 +81,7 @@ export default function FeaturedWorksGallery({
               className={`px-3 py-1 rounded-full text-[11px] font-bold transition-all ring-1 ${
                 filter === t
                   ? "bg-violet-500 text-white ring-violet-400/40"
- : "bg-white/5 dark:bg-slate-900/5 text-white/55 ring-white/10 hover:bg-white/10 "
+ : "bg-slate-900/5 dark:bg-slate-900/5 text-slate-900/55 dark:text-white/55 ring-slate-900/10 dark:ring-white/10 hover:bg-slate-900/10 dark:hover:bg-white/10 "
               }`}
             >
               {t === "SEMUA" ? "Semua" : TYPE_BADGE[t]?.label ?? t}
@@ -92,17 +91,17 @@ export default function FeaturedWorksGallery({
       )}
 
       {filtered.length === 0 ? (
-        <div className="mt-5 rounded-xl border border-dashed border-white/10 px-4 py-8 text-center">
-          <p className="text-sm text-white/45">{emptyText}</p>
+        <div className="mt-5 rounded-xl border border-dashed border-slate-900/10 dark:border-white/10 px-4 py-8 text-center">
+          <p className="text-sm text-slate-900/45 dark:text-white/45">{emptyText}</p>
         </div>
       ) : (
         <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
           {filtered.map((k) => {
-            const meta = TYPE_BADGE[k.type] ?? { label: k.type, badge: "bg-white/5 dark:bg-slate-900/5 text-white/60 ring-white/10" };
+            const meta = TYPE_BADGE[k.type] ?? { label: k.type, badge: "bg-slate-900/5 dark:bg-slate-900/5 text-slate-900/60 dark:text-white/60 ring-slate-900/10 dark:ring-white/10" };
             return (
               <div
                 key={k.id}
- className="group flex flex-col rounded-xl bg-white/[0.05] ring-1 ring-white/10 p-4 transition-colors hover:bg-white/[0.08] hover:ring-violet-400/25"
+ className="group flex flex-col rounded-xl bg-slate-900/[0.05] dark:bg-white/[0.05] ring-1 ring-slate-900/10 dark:ring-white/10 p-4 transition-colors hover:bg-slate-900/[0.08] dark:bg-white/[0.08] hover:ring-violet-400/25"
               >
                 <div className="flex items-center gap-2 mb-1.5">
                   <span className={`px-2 py-0.5 rounded-full text-[10px] font-semibold ring-1 ${meta.badge}`}>
@@ -117,21 +116,21 @@ export default function FeaturedWorksGallery({
                     <button
                       onClick={() => onDelete(k.id)}
                       aria-label={`Hapus karya ${k.title}`}
-                      className="ml-auto text-white/25 hover:text-rose-400 p-1 transition-colors"
+                      className="ml-auto text-slate-900/25 dark:text-white/25 hover:text-rose-400 p-1 transition-colors"
                     >
                       <X size={14} />
                     </button>
                   )}
                 </div>
                 <Link href={`${titleHref}/${k.id}`} className="flex-1 min-w-0">
-                  <h4 className="font-semibold text-white text-sm leading-snug line-clamp-1 group-hover:text-violet-200 transition-colors">
+                  <h4 className="font-semibold text-slate-900 dark:text-white text-sm leading-snug line-clamp-1 group-hover:text-violet-200 transition-colors">
                     {k.title}
                   </h4>
-                  <p className="text-xs text-white/45 mt-1 line-clamp-2">
+                  <p className="text-xs text-slate-900/45 dark:text-white/45 mt-1 line-clamp-2">
                     {k.excerpt || k.content?.slice(0, 100)}
                   </p>
                 </Link>
-                <div className="flex items-center gap-3 mt-3 text-xs text-white/40">
+                <div className="flex items-center gap-3 mt-3 text-xs text-slate-900/40 dark:text-white/40">
                   <span className="flex items-center gap-1">
                     <Heart size={11} className="text-rose-400" /> {k.likesCount || 0}
                   </span>

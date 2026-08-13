@@ -7,8 +7,8 @@ import { TrendingUp, TrendingDown, Minus } from "lucide-react"
 
 export function TrendBadge({ value }: { value: number }) {
   if (value === 0) return <span className="flex items-center gap-0.5 text-xs text-slate-400"><Minus size={12} /> 0%</span>
-  if (value > 0) return <span className="flex items-center gap-0.5 text-xs text-emerald-600 font-medium"><TrendingUp size={12} /> +{value}%</span>
-  return <span className="flex items-center gap-0.5 text-xs text-red-500 font-medium"><TrendingDown size={12} /> {value}%</span>
+  if (value > 0) return <span className="flex items-center gap-0.5 text-xs text-emerald-600 dark:text-emerald-400 font-medium"><TrendingUp size={12} /> +{value}%</span>
+  return <span className="flex items-center gap-0.5 text-xs text-red-500 dark:text-red-400 font-medium"><TrendingDown size={12} /> {value}%</span>
 }
 
 export function UserGrowthChart({ data }: { data: { week: string; count: number }[] }) {

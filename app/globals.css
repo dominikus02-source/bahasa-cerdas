@@ -307,3 +307,27 @@
      item anak tidak punya ikon, jadi teks saja yang ditampilkan. */
   [data-shell-collapsed="1"] .shell-accordion { display: none; }
 }
+
+/* ---- DARK/LIGHT 2.2 — kartu premium profil (theme-aware) ----
+   Light: surface putih dengan tint violet/indigo + ring slate.
+   Dark: navy gradient semula. Dipakai ProfileHero (bc-hero-card) dan
+   kartu sidebar profil (bc-card-premium) agar light mode tidak terlihat
+   seperti "dark card di halaman terang". */
+.bc-card-premium {
+  background: linear-gradient(135deg, #ffffff 0%, #f5f3ff 100%);
+  color: #1e293b;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
+}
+.dark .bc-card-premium {
+  background: linear-gradient(135deg, #17163F 0%, #21174F 100%);
+  color: #f3f7ff;
+  box-shadow: none;
+}
+.bc-hero-card {
+  background: linear-gradient(140deg, #eef2ff 0%, #fdf4ff 40%, #fff7ed 100%);
+  color: #1e293b;
+}
+.dark .bc-hero-card {
+  background: linear-gradient(140deg, #0B1026 0%, #171241 40%, #2E1065 76%, #4C1D95 100%);
+  color: #f3f7ff;
+}

@@ -57,13 +57,13 @@ export function SimulasiUjianSection() {
           return (
             <div
               key={item.label}
-              className="group px-card px-5 py-5 relative overflow-hidden ring-1 ring-white/10 hover:bg-white/[0.08] transition-colors flex flex-col gap-3"
+              className="group px-card px-5 py-5 relative overflow-hidden ring-1 ring-slate-900/10 dark:ring-white/10 hover:bg-slate-900/[0.08] dark:bg-white/[0.08] transition-colors flex flex-col gap-3"
             >
               <div className="absolute -top-12 -right-12 w-36 h-36 rounded-full bg-white/5 dark:bg-slate-900/5 blur-2xl pointer-events-none" />
               <span
                 className={`relative w-11 h-11 rounded-2xl bg-gradient-to-br flex items-center justify-center shadow-lg ${item.accent}`}
               >
-                <Icon size={20} className="text-white" />
+                <Icon size={20} className="text-slate-900 dark:text-white" />
               </span>
               <div className="relative">
                 <h3 className="text-sm font-extrabold text-[var(--px-text)]">{item.label}</h3>

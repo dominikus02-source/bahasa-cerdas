@@ -62,11 +62,11 @@ export default async function AdminArenaPage() {
   const maxRankCount = Math.max(1, ...rankDistribution.map((r) => r.count));
 
   const card = (title: string, value: string, sub: string, icon: React.ReactNode, accent: string) => (
-    <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+    <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/90 p-5 shadow-sm">
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-sm font-medium text-slate-500">{title}</p>
-          <p className="mt-1 text-3xl font-bold text-slate-900">{value}</p>
+          <p className="text-sm font-medium text-slate-500 dark:text-slate-400">{title}</p>
+          <p className="mt-1 text-3xl font-bold text-slate-900 dark:text-slate-100">{value}</p>
           <p className="mt-1 text-xs text-slate-400">{sub}</p>
         </div>
         <div className={`flex h-12 w-12 items-center justify-center rounded-xl ${accent}`}>{icon}</div>
@@ -78,32 +78,32 @@ export default async function AdminArenaPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">Arena BC — Gamifikasi</h1>
-          <p className="mt-1 text-sm text-slate-500">Statistik PlayerProfile, XP, koin, badge & achievement universal.</p>
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">Arena BC — Gamifikasi</h1>
+          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">Statistik PlayerProfile, XP, koin, badge & achievement universal.</p>
         </div>
       </div>
 
       {/* Kartu ringkasan */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {card("Total Pemain", profileCount.toLocaleString("id-ID"), "PlayerProfile terdaftar", <Users className="h-6 w-6 text-emerald-600" />, "bg-emerald-50")}
-        {card("Total XP", totalXp.toLocaleString("id-ID"), `${xpToday.toLocaleString("id-ID")} transaksi hari ini`, <Zap className="h-6 w-6 text-amber-500" />, "bg-amber-50")}
-        {card("Total Koin", totalCoins.toLocaleString("id-ID"), "Saldo koin seluruh pemain", <Coins className="h-6 w-6 text-yellow-600" />, "bg-yellow-50")}
-        {card("Aktif 24 Jam", activeToday.toLocaleString("id-ID"), "Pemain lastActiveAt hari ini", <TrendingUp className="h-6 w-6 text-violet-600" />, "bg-violet-50")}
+        {card("Total Pemain", profileCount.toLocaleString("id-ID"), "PlayerProfile terdaftar", <Users className="h-6 w-6 text-emerald-600 dark:text-emerald-400" />, "bg-emerald-50 dark:bg-emerald-950/40")}
+        {card("Total XP", totalXp.toLocaleString("id-ID"), `${xpToday.toLocaleString("id-ID")} transaksi hari ini`, <Zap className="h-6 w-6 text-amber-500 dark:text-amber-400" />, "bg-amber-50 dark:bg-amber-950/40")}
+        {card("Total Koin", totalCoins.toLocaleString("id-ID"), "Saldo koin seluruh pemain", <Coins className="h-6 w-6 text-yellow-600 dark:text-yellow-400" />, "bg-yellow-50 dark:bg-yellow-950/40")}
+        {card("Aktif 24 Jam", activeToday.toLocaleString("id-ID"), "Pemain lastActiveAt hari ini", <TrendingUp className="h-6 w-6 text-violet-600 dark:text-violet-400" />, "bg-violet-50 dark:bg-violet-950/40")}
       </div>
 
       {/* Distribusi rank */}
-      <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-        <h2 className="text-lg font-semibold text-slate-900">Distribusi Peringkat</h2>
+      <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/90 p-6 shadow-sm">
+        <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">Distribusi Peringkat</h2>
         <div className="mt-4 space-y-3">
           {rankDistribution.map((r) => (
             <div key={r.rank} className="flex items-center gap-3">
-              <span className="w-28 text-sm font-medium text-slate-700" style={{ color: r.color }}>
+              <span className="w-28 text-sm font-medium text-slate-700 dark:text-slate-200" style={{ color: r.color }}>
                 {r.label}
               </span>
-              <div className="h-3 flex-1 overflow-hidden rounded-full bg-slate-100">
+              <div className="h-3 flex-1 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800/70">
                 <div className="h-full rounded-full" style={{ width: `${(r.count / maxRankCount) * 100}%`, backgroundColor: r.color }} />
               </div>
-              <span className="w-10 text-right text-sm font-semibold text-slate-600">{r.count}</span>
+              <span className="w-10 text-right text-sm font-semibold text-slate-600 dark:text-slate-300">{r.count}</span>
             </div>
           ))}
           {rankDistribution.length === 0 && <p className="text-sm text-slate-400">Belum ada pemain.</p>}
@@ -112,43 +112,43 @@ export default async function AdminArenaPage() {
 
       {/* Papan teratas + XP per sumber */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-          <h2 className="flex items-center gap-2 text-lg font-semibold text-slate-900">
-            <Trophy className="h-5 w-5 text-amber-500" /> Pemain Teratas (Total XP)
+        <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/90 p-6 shadow-sm">
+          <h2 className="flex items-center gap-2 text-lg font-semibold text-slate-900 dark:text-slate-100">
+            <Trophy className="h-5 w-5 text-amber-500 dark:text-amber-400" /> Pemain Teratas (Total XP)
           </h2>
           <div className="mt-4 divide-y divide-slate-100">
             {topXpUsers.map((p, i) => (
               <div key={p.id} className="flex items-center justify-between py-3">
                 <div className="flex items-center gap-3">
-                  <span className={`flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold ${i === 0 ? "bg-amber-100 text-amber-700" : "bg-slate-100 text-slate-600"}`}>
+                  <span className={`flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold ${i === 0 ? "bg-amber-100 text-amber-700 dark:text-amber-300" : "bg-slate-100 dark:bg-slate-800/70 text-slate-600 dark:text-slate-300"}`}>
                     {i + 1}
                   </span>
                   <div>
-                    <p className="text-sm font-medium text-slate-800">{p.user.fullName}</p>
+                    <p className="text-sm font-medium text-slate-800 dark:text-slate-200">{p.user.fullName}</p>
                     <p className="text-xs text-slate-400">Level {p.level} • {RANK_META[p.currentRank]?.label ?? p.currentRank}</p>
                   </div>
                 </div>
-                <span className="text-sm font-semibold text-slate-700">{p.totalXP.toLocaleString("id-ID")} XP</span>
+                <span className="text-sm font-semibold text-slate-700 dark:text-slate-200">{p.totalXP.toLocaleString("id-ID")} XP</span>
               </div>
             ))}
             {topXpUsers.length === 0 && <p className="py-3 text-sm text-slate-400">Belum ada data.</p>}
           </div>
         </div>
 
-        <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-          <h2 className="flex items-center gap-2 text-lg font-semibold text-slate-900">
-            <Medal className="h-5 w-5 text-violet-500" /> Streak Terpanjang
+        <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/90 p-6 shadow-sm">
+          <h2 className="flex items-center gap-2 text-lg font-semibold text-slate-900 dark:text-slate-100">
+            <Medal className="h-5 w-5 text-violet-500 dark:text-violet-400" /> Streak Terpanjang
           </h2>
           <div className="mt-4 divide-y divide-slate-100">
             {topStreakUsers.map((p, i) => (
               <div key={p.id} className="flex items-center justify-between py-3">
                 <div className="flex items-center gap-3">
-                  <span className={`flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold ${i === 0 ? "bg-orange-100 text-orange-700" : "bg-slate-100 text-slate-600"}`}>
+                  <span className={`flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold ${i === 0 ? "bg-orange-100 text-orange-700 dark:text-orange-300" : "bg-slate-100 dark:bg-slate-800/70 text-slate-600 dark:text-slate-300"}`}>
                     {i + 1}
                   </span>
-                  <p className="text-sm font-medium text-slate-800">{p.user.fullName}</p>
+                  <p className="text-sm font-medium text-slate-800 dark:text-slate-200">{p.user.fullName}</p>
                 </div>
-                <span className="flex items-center gap-1 text-sm font-semibold text-orange-600">
+                <span className="flex items-center gap-1 text-sm font-semibold text-orange-600 dark:text-orange-400">
                   🔥 {p.streak} hari
                 </span>
               </div>
@@ -159,13 +159,13 @@ export default async function AdminArenaPage() {
       </div>
 
       {/* XP per sumber */}
-      <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-        <h2 className="text-lg font-semibold text-slate-900">XP per Sumber</h2>
+      <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/90 p-6 shadow-sm">
+        <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">XP per Sumber</h2>
         <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
           {xpBySource.map((r) => (
-            <div key={r.source} className="rounded-xl border border-slate-100 bg-slate-50 p-4">
+            <div key={r.source} className="rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 p-4">
               <p className="text-xs font-medium uppercase tracking-wide text-slate-400">{r.source}</p>
-              <p className="mt-1 text-xl font-bold text-slate-800">{(r._sum.amount ?? 0).toLocaleString("id-ID")}</p>
+              <p className="mt-1 text-xl font-bold text-slate-800 dark:text-slate-200">{(r._sum.amount ?? 0).toLocaleString("id-ID")}</p>
               <p className="text-xs text-slate-400">XP</p>
             </div>
           ))}
@@ -175,19 +175,19 @@ export default async function AdminArenaPage() {
 
       {/* Badge & Achievement */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-          <h2 className="text-lg font-semibold text-slate-900">Lencana</h2>
+        <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/90 p-6 shadow-sm">
+          <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">Lencana</h2>
           <div className="mt-2 space-y-2">
-            <p className="text-sm text-slate-500"><span className="font-semibold text-slate-800">{badgeCount}</span> definisi badge</p>
-            <p className="text-sm text-slate-500"><span className="font-semibold text-slate-800">{badgeAwardCount}</span> badge diberikan ke pemain</p>
+            <p className="text-sm text-slate-500 dark:text-slate-400"><span className="font-semibold text-slate-800 dark:text-slate-200">{badgeCount}</span> definisi badge</p>
+            <p className="text-sm text-slate-500 dark:text-slate-400"><span className="font-semibold text-slate-800 dark:text-slate-200">{badgeAwardCount}</span> badge diberikan ke pemain</p>
           </div>
         </div>
-        <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-          <h2 className="text-lg font-semibold text-slate-900">Achievement</h2>
+        <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/90 p-6 shadow-sm">
+          <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">Achievement</h2>
           <div className="mt-2 space-y-2">
-            <p className="text-sm text-slate-500"><span className="font-semibold text-slate-800">{achCount}</span> definisi achievement</p>
-            <p className="text-sm text-slate-500"><span className="font-semibold text-slate-800">{achCompleted}</span> selesai oleh pemain</p>
-            <p className="text-sm text-slate-500"><span className="font-semibold text-slate-800">{achClaimed}</span> reward diklaim</p>
+            <p className="text-sm text-slate-500 dark:text-slate-400"><span className="font-semibold text-slate-800 dark:text-slate-200">{achCount}</span> definisi achievement</p>
+            <p className="text-sm text-slate-500 dark:text-slate-400"><span className="font-semibold text-slate-800 dark:text-slate-200">{achCompleted}</span> selesai oleh pemain</p>
+            <p className="text-sm text-slate-500 dark:text-slate-400"><span className="font-semibold text-slate-800 dark:text-slate-200">{achClaimed}</span> reward diklaim</p>
           </div>
         </div>
       </div>

@@ -89,23 +89,23 @@ export default function AdminBankSoalPage() {
   };
 
   const stats = [
-    { label: "Total Soal di Data", value: totalInDataFiles, icon: Database, color: "text-blue-600 bg-blue-50" },
-    { label: "Total Tema", value: themesMeta.length, icon: BookOpen, color: "text-emerald-600 bg-emerald-50" },
-    { label: "Total Soal di DB", value: total, icon: BarChart3, color: "text-violet-600 bg-violet-50" },
-    { label: "Rata-rata Akurasi", value: soals.length > 0 ? `${Math.round(soals.reduce((s, q) => s + (q.accuracy || 0), 0) / soals.length)}%` : "-", icon: TrendingUp, color: "text-amber-600 bg-amber-50" },
+    { label: "Total Soal di Data", value: totalInDataFiles, icon: Database, color: "text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/40" },
+    { label: "Total Tema", value: themesMeta.length, icon: BookOpen, color: "text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40" },
+    { label: "Total Soal di DB", value: total, icon: BarChart3, color: "text-violet-600 dark:text-violet-400 bg-violet-50 dark:bg-violet-950/40" },
+    { label: "Rata-rata Akurasi", value: soals.length > 0 ? `${Math.round(soals.reduce((s, q) => s + (q.accuracy || 0), 0) / soals.length)}%` : "-", icon: TrendingUp, color: "text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/40" },
   ];
 
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Master Bank Soal</h1>
-        <p className="mt-1 text-sm text-gray-500">Kelola bank soal Bahasa Indonesia untuk seluruh tema</p>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-slate-100">Master Bank Soal</h1>
+        <p className="mt-1 text-sm text-gray-500 dark:text-slate-400">Kelola bank soal Bahasa Indonesia untuk seluruh tema</p>
       </div>
 
       {/* Seed Button */}
       <div className="flex items-center gap-3">
         {seedResult && (
-          <span className={`text-sm font-medium ${seedResult.includes("✅") ? "text-emerald-600" : "text-red-600"}`}>
+          <span className={`text-sm font-medium ${seedResult.includes("✅") ? "text-emerald-600 dark:text-emerald-400" : "text-red-600 dark:text-red-400"}`}>
             {seedResult}
           </span>
         )}
@@ -123,8 +123,8 @@ export default function AdminBankSoalPage() {
               <s.icon size={20} />
             </div>
             <div>
-              <p className="text-2xl font-bold text-gray-900">{s.value}</p>
-              <p className="text-xs text-gray-500">{s.label}</p>
+              <p className="text-2xl font-bold text-gray-900 dark:text-slate-100">{s.value}</p>
+              <p className="text-xs text-gray-500 dark:text-slate-400">{s.label}</p>
             </div>
           </Card>
         ))}
@@ -132,12 +132,12 @@ export default function AdminBankSoalPage() {
 
       {/* Theme distribution */}
       <Card className="p-4">
-        <h3 className="font-semibold text-gray-900 mb-3">Distribusi Tema</h3>
+        <h3 className="font-semibold text-gray-900 dark:text-slate-100 mb-3">Distribusi Tema</h3>
         <div className="grid grid-cols-5 sm:grid-cols-8 md:grid-cols-10 gap-2">
           {themesMeta.map(t => (
-            <div key={t.id} className="p-2 rounded-lg bg-gray-50 border text-center">
-              <p className="text-xs font-medium text-gray-900 truncate">{t.id.replace(/-/g, " ")}</p>
-              <p className="text-lg font-bold text-emerald-600">{t.count}</p>
+            <div key={t.id} className="p-2 rounded-lg bg-gray-50 dark:bg-slate-800/60 border text-center">
+              <p className="text-xs font-medium text-gray-900 dark:text-slate-100 truncate">{t.id.replace(/-/g, " ")}</p>
+              <p className="text-lg font-bold text-emerald-600 dark:text-emerald-400">{t.count}</p>
             </div>
           ))}
         </div>
@@ -156,12 +156,12 @@ export default function AdminBankSoalPage() {
           />
         </div>
         <select value={filterTema} onChange={(e) => { setFilterTema(e.target.value); setPage(1); }}
-          className="h-10 px-3 rounded-xl border text-sm bg-white">
+          className="h-10 px-3 rounded-xl border text-sm bg-white dark:bg-slate-800/90">
           <option value="">Semua Tema</option>
           {temas.map(t => <option key={t} value={t}>{t}</option>)}
         </select>
         <select value={filterKelas} onChange={(e) => { setFilterKelas(e.target.value); setPage(1); }}
-          className="h-10 px-3 rounded-xl border text-sm bg-white">
+          className="h-10 px-3 rounded-xl border text-sm bg-white dark:bg-slate-800/90">
           <option value="">Semua Kelas</option>
           {KELAS_OPTIONS.map(k => <option key={k} value={k}>Kelas {k}</option>)}
         </select>
@@ -170,12 +170,12 @@ export default function AdminBankSoalPage() {
 
       {/* Soal list */}
       {loading ? (
-        <div className="flex justify-center py-12"><Loader2 className="h-8 w-8 animate-spin text-emerald-600" /></div>
+        <div className="flex justify-center py-12"><Loader2 className="h-8 w-8 animate-spin text-emerald-600 dark:text-emerald-400" /></div>
       ) : soals.length === 0 ? (
         <Card className="py-16 text-center">
           <Database className="mx-auto h-12 w-12 text-gray-300" />
-          <h3 className="mt-3 font-semibold text-gray-900">Belum ada soal di database</h3>
-          <p className="mt-1 text-sm text-gray-500">Jalankan seeder untuk mengisi data: npm run seed:question-bank</p>
+          <h3 className="mt-3 font-semibold text-gray-900 dark:text-slate-100">Belum ada soal di database</h3>
+          <p className="mt-1 text-sm text-gray-500 dark:text-slate-400">Jalankan seeder untuk mengisi data: npm run seed:question-bank</p>
         </Card>
       ) : (
         <>
@@ -188,22 +188,22 @@ export default function AdminBankSoalPage() {
                       {s.kodeSoal && (
                         <Badge className="text-[10px] px-1.5 py-0.5 bg-gray-800 text-white font-mono">{s.kodeSoal}</Badge>
                       )}
-                      <Badge className="text-[10px] px-1.5 py-0.5 bg-emerald-100 text-emerald-700">{s.topik || "Umum"}</Badge>
-                      <Badge className="text-[10px] px-1.5 py-0.5 bg-blue-100 text-blue-700">{s.type?.replace("_", " ")}</Badge>
+                      <Badge className="text-[10px] px-1.5 py-0.5 bg-emerald-100 text-emerald-700 dark:text-emerald-300">{s.topik || "Umum"}</Badge>
+                      <Badge className="text-[10px] px-1.5 py-0.5 bg-blue-100 text-blue-700 dark:text-blue-300">{s.type?.replace("_", " ")}</Badge>
                       <Badge className={`text-[10px] px-1.5 py-0.5 ${
-                        s.difficulty === "EASY" ? "bg-green-100 text-green-700" :
-                        s.difficulty === "MEDIUM" ? "bg-amber-100 text-amber-700" :
-                        "bg-red-100 text-red-700"
+                        s.difficulty === "EASY" ? "bg-green-100 text-green-700 dark:text-green-300" :
+                        s.difficulty === "MEDIUM" ? "bg-amber-100 text-amber-700 dark:text-amber-300" :
+                        "bg-red-100 text-red-700 dark:text-red-300"
                       }`}>{s.difficulty}</Badge>
-                      {s.kelas && <Badge className="text-[10px] px-1.5 py-0.5 bg-gray-100 text-gray-600">Kelas {s.kelas}</Badge>}
-                      {s.levelBerpikir && <Badge className="text-[10px] px-1.5 py-0.5 bg-purple-100 text-purple-700">Lvl {s.levelBerpikir}</Badge>}
+                      {s.kelas && <Badge className="text-[10px] px-1.5 py-0.5 bg-gray-100 dark:bg-slate-800/80 text-gray-600 dark:text-slate-300">Kelas {s.kelas}</Badge>}
+                      {s.levelBerpikir && <Badge className="text-[10px] px-1.5 py-0.5 bg-purple-100 text-purple-700 dark:text-purple-300">Lvl {s.levelBerpikir}</Badge>}
                     </div>
-                    {s.judul && <p className="text-sm font-semibold text-gray-900">{s.judul}</p>}
-                    <p className="text-sm text-gray-700 line-clamp-2 mt-0.5">{s.text}</p>
-                    <div className="flex items-center gap-4 mt-2 text-xs text-gray-500">
+                    {s.judul && <p className="text-sm font-semibold text-gray-900 dark:text-slate-100">{s.judul}</p>}
+                    <p className="text-sm text-gray-700 dark:text-slate-300 line-clamp-2 mt-0.5">{s.text}</p>
+                    <div className="flex items-center gap-4 mt-2 text-xs text-gray-500 dark:text-slate-400">
                       <span className="flex items-center gap-1"><Users size={12} /> {s.usedCount} dipakai</span>
                       {s.accuracy !== null && (
-                        <span className={`flex items-center gap-1 ${s.accuracy >= 70 ? "text-green-600" : "text-orange-600"}`}>
+                        <span className={`flex items-center gap-1 ${s.accuracy >= 70 ? "text-green-600 dark:text-green-400" : "text-orange-600 dark:text-orange-400"}`}>
                           <TrendingUp size={12} /> {s.accuracy}% benar
                         </span>
                       )}
@@ -220,7 +220,7 @@ export default function AdminBankSoalPage() {
               <Button variant="outline" size="sm" disabled={page <= 1} onClick={() => setPage(p => p - 1)}>
                 Sebelumnya
               </Button>
-              <span className="text-sm text-gray-500">Halaman {page} dari {totalPages}</span>
+              <span className="text-sm text-gray-500 dark:text-slate-400">Halaman {page} dari {totalPages}</span>
               <Button variant="outline" size="sm" disabled={page >= totalPages} onClick={() => setPage(p => p + 1)}>
                 Selanjutnya
               </Button>
