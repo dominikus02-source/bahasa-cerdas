@@ -74,6 +74,13 @@ export default async function ArenaLayout({ children }: { children: React.ReactN
   // chrome penuh + BottomNav (kompatibilitas TWA tidak berubah).
   const isChatWeb = !apk && pathname.startsWith("/arena/chat")
 
+  // AI BC 2.1 — /arena/ai adalah workspace percakapan layar-penuh (sama
+  // seperti Obrolan): container full-width + tanpa banner boost agar
+  // h-[calc(100dvh-*)] bekerja tanpa double scroll. Definisi isChatWeb
+  // TIDAK diubah (perilaku Obrolan web/APK identik dengan sebelumnya).
+  const isAiWorkspace = pathname.startsWith("/arena/ai")
+  const isChatWorkspace = isChatWeb || isAiWorkspace
+
   // Rank resmi diturunkan dari XP — sama dengan pola Student Shell.
   const rank = rankFromLevel(levelFromXp(user.xp || 0))
 
@@ -138,12 +145,13 @@ export default async function ArenaLayout({ children }: { children: React.ReactN
             </div>
           </header>
 
-          {/* Banner boost tidak muncul di WEB Obrolan — workspace penuh viewport */}
-          {!isChatWeb && <ActiveBoostBanner />}
+          {/* Banner boost tidak muncul di WEB Obrolan atau workspace AI BC —
+              keduanya workspace penuh viewport */}
+          {!isChatWeb && !isAiWorkspace && <ActiveBoostBanner />}
         </>
       }
       mainClassName={`mx-auto px-0 ${
-        pathname.startsWith("/arena/chat")
+        isChatWorkspace
           ? "w-full py-0 md:px-6"
           : "max-w-[1280px] py-0 md:py-6 md:px-6"
       }`}

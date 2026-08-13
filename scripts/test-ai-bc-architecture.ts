@@ -56,7 +56,7 @@ test("route memakai getUser() dari sesi", () => route.includes('getUser()') && r
 test("route TIDAK menerima parameter mode", () => !route.includes('body.mode') && !route.includes('mode:'));
 test("module tidak punya toggle murid/guru", () => !moduleC.includes('setMode("murid")') && !moduleC.includes('setMode("guru")'));
 test("arena/ai selalu persona murid dari sesi (rule 6)", () =>
-  arenaAi.includes("getUser()") && arenaAi.includes('role="student"'));
+  arenaAi.includes("getUser()") && arenaAi.includes("STUDENT_PERSONA") && !arenaAi.includes("TEACHER_PERSONA"));
 test("guru/ai-bc khusus GURU/founder dari sesi", () => guruAiBc.includes('user.role !== "GURU"'));
 test("guru/ai-bc redirect ke /arena/ai untuk non-guru", () => guruAiBc.includes('redirect("/arena/ai")'));
 

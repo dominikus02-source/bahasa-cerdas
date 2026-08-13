@@ -64,7 +64,7 @@ function main() {
   test("TIDAK ada tombol Dasbor/Logout di header arena (akses guru via RoleSections sidebar; logout via footer/Pemain)",
     () => !layout.includes("<LayoutDashboard") && !layout.includes("LogoutButton") && layout.includes("RoleSections"));
   test("banner boost tidak dimatikan di halaman Arena non-chat ({!isChatWeb && <ActiveBoostBanner />})",
-    () => layout.includes("!isChatWeb && <ActiveBoostBanner />"));
+    () => layout.includes("!isChatWeb && !isAiWorkspace && <ActiveBoostBanner />"));
 
   // ── 3. HOME — hierarki 8 seksi (Spec§5) ──
   console.log("\n── 3. Home (/arena/page.tsx) — Hierarki Kompetisi ──");

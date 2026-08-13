@@ -166,7 +166,7 @@ for (const kw of TEACHER_KEYWORDS) {
 /* ------------------------------------------------------------------ */
 
 console.log("D. Arena student surface");
-ok(/role="student"/.test(arena), "D1 /arena/ai selalu student");
+ok(/STUDENT_PERSONA/.test(arena), "D1 /arena/ai selalu persona murid (Teman Belajarmu)");
 excludes(arena, "teacher", "D2 /arena/ai tidak memilih persona teacher");
 includes(arena, 'getBcHints(user, "student")', "D3 hints murid dipaksa (roleOverride)");
 excludes(arena, "isTeacher", "D4 tidak ada CTA guru di arena");

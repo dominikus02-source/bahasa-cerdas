@@ -208,7 +208,8 @@
     "test:ai-bc-navigation": "npx tsx scripts/test-ai-bc-navigation.ts",
     "test:ai-bc-theme": "npx tsx scripts/test-ai-bc-theme.ts",
     "test:ai-bc-ui": "npx tsx scripts/test-ai-bc-ui.ts",
-    "test:ai-bc-role-safety": "npx tsx scripts/test-ai-bc-role-safety.ts"
+    "test:ai-bc-role-safety": "npx tsx scripts/test-ai-bc-role-safety.ts",
+    "test:ai-bc-arena-ux": "npx tsx scripts/test-ai-bc-arena-ux.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.39.0",

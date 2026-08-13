@@ -54,7 +54,7 @@ function main() {
   test("TIDAK ada identitas/header produk di layout untuk chat (tanpa navbar/subnav Arena, tanpa MessageCircle header)",
     () => !layout.includes("<MessageCircle") && !layout.includes("isChatWeb ? (") && !layout.includes("navItems") && !layout.includes("aria-label=\"Navigasi Arena\"") && !layout.includes("rounded-full border border-gray-200 bg-slate-50 p-1"));
   test("ActiveBoostBanner tidak tampil di web chat ({!isChatWeb && <ActiveBoostBanner />})",
-    () => layout.includes("!isChatWeb && <ActiveBoostBanner />"));
+    () => layout.includes("!isChatWeb && !isAiWorkspace && <ActiveBoostBanner />"));
   test("toolbar INTERNAL workspace chat tetap ada di chat-client (judul 'Obrolan' di pane class list — konten, bukan header global)",
     () => read("app/arena/chat/chat-client.tsx").includes(">Obrolan</h2>") && read("app/arena/chat/chat-client.tsx").includes("Kelas Aktif"));
   test("navbar Arena dihapus total (Misi/Liga/Badges dll. bukan item layout — chat & arena lain menuju via Student Shell)",

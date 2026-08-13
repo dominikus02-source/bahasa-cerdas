@@ -53,7 +53,8 @@ test("ai-bc/layout metadata baru (teman belajar & mengajar)", () =>
 
 // 2. /arena/ai memakai shell Arena (tanpa header/nav sendiri)
 test("arena/ai: server component (getUser)", () => arenaAi.includes("getUser"));
-test("arena/ai: memakai AiBcModule", () => arenaAi.includes("AiBcModule"));
+test("arena/ai: memakai AiBcArenaWorkspace (fullscreen student workspace)", () => arenaAi.includes("AiBcArenaWorkspace"));
+test("arena/ai: modul lama tetap untuk permukaan guru", () => guruAiBc.includes("AiBcModule"));
 test("arena/ai: tanpa header sendiri", () => !arenaAi.includes("<header") && !arenaAi.includes("BackHome"));
 test("arena/ai: tanpa sidebar sendiri", () => !arenaAi.includes("<aside"));
 test("arena/ai: tanpa router.back()", () => !arenaAi.includes("router.back()"));
