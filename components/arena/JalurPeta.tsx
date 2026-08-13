@@ -139,7 +139,7 @@ export function JalurPeta({
                     justru yang menarik anak membukanya besok. */}
                 <span
                   className={`mt-1.5 max-w-[150px] text-center text-xs font-bold leading-tight ${
-                    selesai ? "text-emerald-700" : jauh ? "text-gray-300" : "text-gray-800"
+                    selesai ? "text-emerald-700 dark:text-emerald-300" : jauh ? "text-gray-300" : "text-gray-800 dark:text-slate-200"
                   }`}
                 >
                   {jauh ? "???" : unit.title}
@@ -152,7 +152,7 @@ export function JalurPeta({
                 ) : null}
 
                 {dipelajari && (
-                  <span className="mt-0.5 text-[10px] font-bold text-violet-500">Sedang dipelajari</span>
+                  <span className="mt-0.5 text-[10px] font-bold text-violet-500 dark:text-violet-400">Sedang dipelajari</span>
                 )}
               </Link>
             </div>
@@ -177,14 +177,14 @@ export function JalurPeta({
                   className={`my-1 flex h-14 w-14 items-center justify-center rounded-2xl border-4 ${
                     petiTerbuka
                       ? "border-amber-500 bg-amber-400 text-amber-900 shadow-lg shadow-amber-400/40"
-                      : "border-gray-200 bg-gray-100 text-gray-300"
+                      : "border-gray-200 dark:border-slate-700 bg-gray-100 dark:bg-slate-800/80 text-gray-300"
                   }`}
                 >
                   <Gift className="h-7 w-7" />
                 </span>
                 <span
                   className={`text-[10px] font-black uppercase tracking-wide ${
-                    petiTerbuka ? "text-amber-600" : "text-gray-300"
+                    petiTerbuka ? "text-amber-600 dark:text-amber-400" : "text-gray-300"
                   }`}
                 >
                   {petiTerbuka ? "Peti terbuka!" : "Peti hadiah"}

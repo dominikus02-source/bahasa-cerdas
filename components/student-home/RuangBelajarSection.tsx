@@ -17,7 +17,7 @@ export function RuangBelajarSection() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="group px-card px-5 py-6 relative overflow-hidden ring-1 ring-white/10 hover:bg-white/[0.08] transition-colors flex flex-col gap-3">
+        <div className="group px-card px-5 py-6 relative overflow-hidden ring-1 ring-white/10 hover:bg-white dark:bg-slate-800/90/[0.08] transition-colors flex flex-col gap-3">
           <div className="absolute -top-14 -right-14 w-44 h-44 rounded-full bg-[var(--px-royal)]/20 blur-3xl pointer-events-none" />
           <div className="relative flex items-center gap-4">
             <span className="shrink-0 w-12 h-12 rounded-2xl bg-gradient-to-br from-[var(--px-royal)] to-[var(--px-royal-2)] flex items-center justify-center shadow-lg shadow-[var(--px-royal)]/30">
@@ -42,7 +42,7 @@ export function RuangBelajarSection() {
           </div>
         </div>
 
-        <div className="group px-card px-5 py-6 relative overflow-hidden ring-1 ring-white/10 hover:bg-white/[0.08] transition-colors flex flex-col gap-3">
+        <div className="group px-card px-5 py-6 relative overflow-hidden ring-1 ring-white/10 hover:bg-white dark:bg-slate-800/90/[0.08] transition-colors flex flex-col gap-3">
           <div className="absolute -top-14 -right-14 w-44 h-44 rounded-full bg-emerald-400/15 blur-3xl pointer-events-none" />
           <div className="relative flex items-center gap-4">
             <span className="shrink-0 w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-400 to-teal-600 flex items-center justify-center shadow-lg shadow-emerald-500/30">

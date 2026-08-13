@@ -41,13 +41,13 @@ export default function LeagueMini({
   const tabClass = (active: boolean) =>
     `flex-1 text-center py-2.5 text-xs transition-colors border-b-2 ${
       active
-        ? "font-bold text-purple-700 border-purple-600"
-        : "font-semibold text-gray-500 border-transparent hover:text-purple-600"
+        ? "font-bold text-purple-700 dark:text-purple-300 border-purple-600"
+        : "font-semibold text-gray-500 dark:text-slate-400 border-transparent hover:text-purple-600 dark:text-purple-400"
     }`
 
   return (
     <div className="liga-card">
-      <div className="flex border-b border-gray-200">
+      <div className="flex border-b border-gray-200 dark:border-slate-700">
         <button type="button" onClick={() => setTab("harian")} className={tabClass(isHarian)}>
           Harian
         </button>
@@ -79,7 +79,7 @@ export default function LeagueMini({
 
       {rows.length === 0 ? (
         <div className="px-4 py-6 text-center">
-          <p className="text-xs text-gray-500">
+          <p className="text-xs text-gray-500 dark:text-slate-400">
             {isHarian
               ? "Belum ada yang mengumpulkan koin hari ini."
               : "Belum ada peringkat."}
@@ -89,10 +89,10 @@ export default function LeagueMini({
         <div className="py-2">
           {rows.map((u, i) => {
             const isMe = u.id === userId
-            const rankClass = i === 0 ? "text-amber-500" : i === 1 ? "text-gray-400" : "text-orange-700"
+            const rankClass = i === 0 ? "text-amber-500 dark:text-amber-400" : i === 1 ? "text-gray-400" : "text-orange-700 dark:text-orange-300"
             const displayName = u.displayName || u.fullName
             return (
-              <div key={u.id} className={`flex items-center gap-2.5 px-4 py-2 ${isMe ? "bg-purple-50" : ""}`}>
+              <div key={u.id} className={`flex items-center gap-2.5 px-4 py-2 ${isMe ? "bg-purple-50 dark:bg-purple-950/40" : ""}`}>
                 <span className={`font-extrabold text-sm w-5 text-center shrink-0 ${rankClass}`}>{i + 1}</span>
                 <div
                   className={`w-8 h-8 rounded-xl bg-gradient-to-br ${INITIALS_COLORS[i] ?? INITIALS_COLORS[2]} flex items-center justify-center text-white text-sm font-bold shrink-0`}
@@ -104,7 +104,7 @@ export default function LeagueMini({
                     {isMe ? "Kamu" : displayName}
                   </p>
                 </div>
-                <span className="font-extrabold text-sm text-purple-600 shrink-0">
+                <span className="font-extrabold text-sm text-purple-600 dark:text-purple-400 shrink-0">
                   {u.xp.toLocaleString()}
                 </span>
               </div>
@@ -115,7 +115,7 @@ export default function LeagueMini({
 
       <Link
         href={isHarian ? "/arena/league?tab=harian" : "/arena/league"}
-        className="block text-center py-2.5 text-xs font-semibold text-purple-600 border-t border-gray-100 hover:bg-purple-50/50 transition-colors"
+        className="block text-center py-2.5 text-xs font-semibold text-purple-600 border-t border-gray-100 dark:border-slate-800 hover:bg-purple-50/50 transition-colors"
       >
         Lihat 50 besar
       </Link>

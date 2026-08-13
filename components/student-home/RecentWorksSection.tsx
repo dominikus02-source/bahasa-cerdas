@@ -79,12 +79,12 @@ export function RecentWorksSection() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3">
           {karya.map((k) => {
-            const meta = TYPE_META[k.type] || { label: k.type, badge: "bg-white/10 text-[var(--px-text-dim)]" };
+            const meta = TYPE_META[k.type] || { label: k.type, badge: "bg-white bg-white/10 dark:bg-slate-900/10 text-[var(--px-text-dim)]" };
             return (
               <Link
                 key={k.id}
                 href={`/murid/karya/${k.id}`}
-                className="group px-card px-4 py-4 flex flex-col gap-2 hover:bg-white/[0.08] transition-colors"
+                className="group px-card px-4 py-4 flex flex-col gap-2 hover:bg-white dark:bg-slate-800/90/[0.08] transition-colors"
               >
                 <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full self-start ${meta.badge}`}>
                   {meta.label}

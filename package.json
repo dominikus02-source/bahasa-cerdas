@@ -211,6 +211,7 @@
     "test:ai-bc-ui": "npx tsx scripts/test-ai-bc-ui.ts",
     "test:ai-bc-role-safety": "npx tsx scripts/test-ai-bc-role-safety.ts",
     "test:ai-bc-arena-ux": "npx tsx scripts/test-ai-bc-arena-ux.ts",
+    "test:theme-consistency": "npx tsx scripts/test-theme-consistency.ts",
     "test:ai-bc-guru-ux": "npx tsx scripts/test-ai-bc-guru-ux.ts"
   },
   "dependencies": {

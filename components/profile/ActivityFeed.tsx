@@ -79,7 +79,7 @@ export default function ActivityFeed({
             className={`shrink-0 rounded-full px-2 py-0.5 text-[11px] font-bold tabular-nums ${
               e.xp
                 ? "bg-amber-400/15 text-amber-200 ring-1 ring-amber-300/20"
-                : "bg-white/5 text-white/60 ring-1 ring-white/10"
+                : "bg-white bg-white/5 dark:bg-slate-900/5 text-white/60 ring-1 ring-white/10"
             }`}
           >
             +{e.amount.toLocaleString("id-ID")}

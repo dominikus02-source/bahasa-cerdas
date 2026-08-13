@@ -80,11 +80,11 @@ export default function DetailKaryaPage() {
   };
 
   if (loading) return <div className="flex justify-center py-20"><div className="animate-spin w-8 h-8 border-4 border-violet-500 border-t-transparent rounded-full" /></div>;
-  if (!karya) return <div className="text-center py-20 text-gray-500">Karya tidak ditemukan</div>;
+  if (!karya) return <div className="text-center py-20 text-gray-500 dark:text-slate-400">Karya tidak ditemukan</div>;
 
   return (
     <div className="max-w-2xl mx-auto">
-      <button onClick={() => router.back()} className="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-900 mb-4 transition-colors">
+      <button onClick={() => router.back()} className="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-900 dark:text-slate-100 mb-4 transition-colors">
         <ArrowLeft size={16} /> Kembali
       </button>
 
@@ -105,7 +105,7 @@ export default function DetailKaryaPage() {
             href={`/profile/${karya.user.id}`}
             color={karya.user.equippedNameColor}
             badge={karya.user.equippedBadge}
-            className="text-sm font-semibold text-gray-900 hover:text-violet-600"
+            className="text-sm font-semibold text-gray-900 dark:text-slate-100 hover:text-violet-600"
             badgeSize={15}
           />
           {karya.user.rank && <RankChip rank={karya.user.rank} size={16} showTitle={false} compact className="mt-1" />}
@@ -121,10 +121,10 @@ export default function DetailKaryaPage() {
 
       <div className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold mb-4 ${
         karya.type === "PUISI" ? "bg-rose-100 text-rose-600" :
-        karya.type === "CERPEN" ? "bg-blue-100 text-blue-600" :
-        karya.type === "ARTIKEL" ? "bg-amber-100 text-amber-700" :
-        karya.type === "ANEKDOT" ? "bg-orange-100 text-orange-600" :
-        karya.type === "PANTUN" ? "bg-teal-100 text-teal-600" : "bg-violet-100 text-violet-600"
+        karya.type === "CERPEN" ? "bg-blue-100 text-blue-600 dark:text-blue-400" :
+        karya.type === "ARTIKEL" ? "bg-amber-100 text-amber-700 dark:text-amber-300" :
+        karya.type === "ANEKDOT" ? "bg-orange-100 text-orange-600 dark:text-orange-400" :
+        karya.type === "PANTUN" ? "bg-teal-100 text-teal-600" : "bg-violet-100 text-violet-600 dark:text-violet-400"
       }`}>
           <TypeIcon type={karya.type} />
           <span>{TYPE_LABELS[karya.type]}</span>
@@ -141,34 +141,34 @@ export default function DetailKaryaPage() {
         </div>
       )}
 
-      <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-6 leading-snug">{karya.title}</h1>
+      <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-slate-100 mb-6 leading-snug">{karya.title}</h1>
 
-      <div className="prose prose-gray max-w-none mb-8 whitespace-pre-wrap leading-relaxed text-gray-700">
+      <div className="prose prose-gray max-w-none mb-8 whitespace-pre-wrap leading-relaxed text-gray-700 dark:text-slate-300">
         {karya.content}
       </div>
 
       {karya.photos && karya.photos.length > 0 && (
         <div className="grid grid-cols-2 gap-2 mb-8">
           {karya.photos.map((url) => (
-            <img key={url} src={url} alt={karya.title} className="w-full aspect-square rounded-xl border border-gray-100 object-cover" />
+            <img key={url} src={url} alt={karya.title} className="w-full aspect-square rounded-xl border border-gray-100 dark:border-slate-800 object-cover" />
           ))}
         </div>
       )}
 
-      <div className="flex items-center gap-4 mb-8 pb-8 border-b border-gray-100">
+      <div className="flex items-center gap-4 mb-8 pb-8 border-b border-gray-100 dark:border-slate-800">
         <button onClick={handleLike} className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all ${
-          liked ? "bg-red-50 text-red-500" : "bg-gray-50 text-gray-500 hover:bg-red-50 hover:text-red-500"
+          liked ? "bg-red-50 text-red-500" : "bg-gray-50 dark:bg-slate-800/60 text-gray-500 hover:bg-red-50 hover:text-red-500"
         }`}>
           <Heart size={18} fill={liked ? "currentColor" : "none"} />
           {karya.likesCount} Suka
         </button>
-        <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gray-50 text-gray-500 text-sm">
+        <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gray-50 dark:bg-slate-800/60 text-gray-500 text-sm">
           <Eye size={18} /> {karya.viewsCount} Dilihat
         </div>
-        <ShareKaryaButton karyaId={karya.id} title={karya.title} className="gap-2 px-4 py-2 rounded-xl bg-gray-50 text-gray-500 hover:bg-blue-50 hover:text-blue-500 ml-auto" />
+        <ShareKaryaButton karyaId={karya.id} title={karya.title} className="gap-2 px-4 py-2 rounded-xl bg-gray-50 dark:bg-slate-800/60 text-gray-500 hover:bg-blue-50 hover:text-blue-500 ml-auto" />
         {isOwner && (
           <button onClick={handleDelete} disabled={deleting}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-red-50 text-red-500 hover:bg-red-100 text-sm font-medium transition-all disabled:opacity-50"
+            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-red-50 dark:bg-red-950/40 text-red-500 dark:text-red-400 hover:bg-red-100 text-sm font-medium transition-all disabled:opacity-50"
           >
             {deleting ? (
               <div className="animate-spin w-4 h-4 border-2 border-red-500 border-t-transparent rounded-full" />

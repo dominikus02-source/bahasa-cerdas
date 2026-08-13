@@ -26,7 +26,7 @@ export default function DeleteKaryaButton({ karyaId, isOwner }: { karyaId: strin
     <button
       onClick={handleDelete}
       disabled={deleting}
-      className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold text-red-500 hover:bg-red-50 transition-all disabled:opacity-50"
+      className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold text-red-500 dark:text-red-400 hover:bg-red-50 dark:bg-red-950/40 transition-all disabled:opacity-50"
     >
       {deleting ? (
         <div className="animate-spin w-4 h-4 border-2 border-red-500 border-t-transparent rounded-full" />

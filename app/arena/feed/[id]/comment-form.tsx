@@ -28,12 +28,12 @@ export function CommentForm({ karyaId }: { karyaId: string }) {
   }
 
   return (
-    <form onSubmit={submit} className="flex items-center gap-3 px-4 py-3 border-t border-gray-100 bg-white sticky bottom-0">
+    <form onSubmit={submit} className="flex items-center gap-3 px-4 py-3 border-t border-gray-100 dark:border-slate-800 bg-white dark:bg-slate-800/90 sticky bottom-0">
       <input
         value={content}
         onChange={(e) => setContent(e.target.value)}
         placeholder="Tulis komentar..."
-        className="flex-1 rounded-xl bg-gray-100 px-4 py-2.5 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-300 border-none"
+        className="flex-1 rounded-xl bg-gray-100 dark:bg-slate-800/80 px-4 py-2.5 text-sm text-gray-900 dark:text-slate-100 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-300 border-none"
         maxLength={500}
         disabled={loading}
       />

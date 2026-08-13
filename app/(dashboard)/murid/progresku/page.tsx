@@ -31,17 +31,17 @@ export default function ProgresPage() {
   ];
 
   const stats = [
-    { label: "Total XP", value: "8,450", icon: Star, color: "text-yellow-600 bg-yellow-50" },
-    { label: "Soal Dijawab", value: "342", icon: Target, color: "text-blue-600 bg-blue-50" },
-    { label: "Akurasi", value: "87%", icon: TrendingUp, color: "text-emerald-600 bg-emerald-50" },
-    { label: "Rentetan", value: "—", icon: Flame, color: "text-orange-600 bg-orange-50" },
+    { label: "Total XP", value: "8,450", icon: Star, color: "text-yellow-600 dark:text-yellow-400 bg-yellow-50 dark:bg-yellow-950/40" },
+    { label: "Soal Dijawab", value: "342", icon: Target, color: "text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/40" },
+    { label: "Akurasi", value: "87%", icon: TrendingUp, color: "text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40" },
+    { label: "Rentetan", value: "—", icon: Flame, color: "text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-950/40" },
   ];
 
   return (
     <div>
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900">Progresku</h1>
-        <p className="mt-1 text-sm text-gray-600">Pantau perjalanan belajarmu</p>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-slate-100">Progresku</h1>
+        <p className="mt-1 text-sm text-gray-600 dark:text-slate-300">Pantau perjalanan belajarmu</p>
       </div>
 
       <div className="grid gap-4 md:grid-cols-4 mb-6">
@@ -53,7 +53,7 @@ export default function ProgresPage() {
               </div>
               <div>
                 <p className="text-xl font-bold">{stat.value}</p>
-                <p className="text-xs text-gray-500">{stat.label}</p>
+                <p className="text-xs text-gray-500 dark:text-slate-400">{stat.label}</p>
               </div>
             </div>
           </Card>
@@ -69,7 +69,7 @@ export default function ProgresPage() {
                 <button
                   key={p}
                   onClick={() => setPeriod(p)}
-                  className={`px-3 py-1 rounded-lg text-xs font-medium ${period === p ? "bg-blue-100 text-blue-700" : "text-gray-500 hover:bg-gray-100"}`}
+                  className={`px-3 py-1 rounded-lg text-xs font-medium ${period === p ? "bg-blue-100 text-blue-700" : "text-gray-500 hover:bg-gray-100 dark:bg-slate-800/80"}`}
                 >
                   {p === "week" ? "Minggu" : p === "month" ? "Bulan" : "Semua"}
                 </button>
@@ -80,7 +80,7 @@ export default function ProgresPage() {
             {weeklyData.map((d, i) => (
               <div key={i} className="flex-1 flex flex-col items-center gap-1">
                 <div className="w-full bg-blue-500 rounded-t-sm transition-all" style={{ height: `${(d.xp / maxXP) * 100}%`, minHeight: d.xp > 0 ? "4px" : "0" }} />
-                <span className="text-xs text-gray-500">{d.day}</span>
+                <span className="text-xs text-gray-500 dark:text-slate-400">{d.day}</span>
               </div>
             ))}
           </div>
@@ -92,11 +92,11 @@ export default function ProgresPage() {
             {achievements.map((a, i) => (
               <div
                 key={i}
-                className={`flex flex-col items-center rounded-xl p-3 text-center ${a.unlocked ? "bg-yellow-50" : "bg-gray-50 opacity-50"}`}
+                className={`flex flex-col items-center rounded-xl p-3 text-center ${a.unlocked ? "bg-yellow-50" : "bg-gray-50 dark:bg-slate-800/60 opacity-50"}`}
               >
                 <a.icon className="w-7 h-7 mb-1" />
                 <p className="text-xs font-medium">{a.title}</p>
-                <p className="text-[10px] text-gray-500">{a.desc}</p>
+                <p className="text-[10px] text-gray-500 dark:text-slate-400">{a.desc}</p>
               </div>
             ))}
           </div>

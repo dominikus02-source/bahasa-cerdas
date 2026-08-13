@@ -43,7 +43,7 @@ export default function NotifikasiPage() {
   return (
     <div className="px-4 py-5 arena-page min-h-screen bg-[#F4F2FF]">
       <div className="flex items-center gap-3 mb-6">
-        <Link href="/arena" className="w-9 h-9 rounded-xl bg-white border border-gray-200 flex items-center justify-center text-gray-600 hover:bg-gray-50 transition-all shrink-0">
+ <Link href="/arena" className="w-9 h-9 rounded-xl bg-white dark:bg-slate-800/90 border border-gray-200 dark:border-slate-700 flex items-center justify-center text-gray-600 hover:bg-gray-50 transition-all shrink-0">
           <ArrowLeft size={18} />
         </Link>
         <div>
@@ -51,7 +51,7 @@ export default function NotifikasiPage() {
           <p className="text-xs text-[#9B93B8]">{unreadCount} belum dibaca</p>
         </div>
         {unreadCount > 0 && (
-          <button onClick={markAllRead} className="ml-auto flex items-center gap-1 text-xs font-semibold text-purple-600 bg-purple-50 px-3 py-1.5 rounded-lg">
+          <button onClick={markAllRead} className="ml-auto flex items-center gap-1 text-xs font-semibold text-purple-600 dark:text-purple-400 bg-purple-50 dark:bg-purple-950/40 px-3 py-1.5 rounded-lg">
             <CheckCheck size={14} /> Tandai Dibaca
           </button>
         )}
@@ -63,7 +63,7 @@ export default function NotifikasiPage() {
             key={f}
             onClick={() => setFilter(f)}
             className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
-              filter === f ? "bg-purple-600 text-white" : "bg-white text-[#5A5278] border border-gray-200"
+ filter === f ? "bg-purple-600 text-white" : "bg-white dark:bg-slate-800/90 text-[#5A5278] border border-gray-200 dark:border-slate-700"
             }`}
           >
             {f === "semua" ? "Semua" : "Belum Dibaca"}

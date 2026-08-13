@@ -162,9 +162,9 @@ export default function GabungKelasPage() {
                         )}
                       </div>
                       {m.role === "ketua" ? (
-                        <Crown className="w-4 h-4 text-amber-500 shrink-0" />
+                        <Crown className="w-4 h-4 text-amber-500 dark:text-amber-400 shrink-0" />
                       ) : (
-                        <CheckCircle className="w-4 h-4 text-green-500 shrink-0" />
+                        <CheckCircle className="w-4 h-4 text-green-500 dark:text-green-400 shrink-0" />
                       )}
                     </div>
                   </Card>

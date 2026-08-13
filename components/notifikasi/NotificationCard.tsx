@@ -17,13 +17,13 @@ export interface NotifikasiItem {
 // latar SOLID (putih untuk dibaca, biru muda untuk belum dibaca), ikon jenis
 // berwarna, teks gelap kontras tinggi — tidak ada transparansi/glass.
 const TYPE_META: Record<string, { icon: typeof Bell; color: string; bg: string }> = {
-  success: { icon: CheckCircle2, color: "text-emerald-600", bg: "bg-emerald-100" },
-  purchase: { icon: Sparkles, color: "text-emerald-600", bg: "bg-emerald-100" },
-  premium: { icon: Award, color: "text-amber-600", bg: "bg-amber-100" },
-  warning: { icon: AlertTriangle, color: "text-amber-600", bg: "bg-amber-100" },
-  withdrawal: { icon: Info, color: "text-blue-600", bg: "bg-blue-100" },
-  error: { icon: XCircle, color: "text-red-600", bg: "bg-red-100" },
-  info: { icon: Info, color: "text-blue-600", bg: "bg-blue-100" },
+  success: { icon: CheckCircle2, color: "text-emerald-600 dark:text-emerald-400", bg: "bg-emerald-100" },
+  purchase: { icon: Sparkles, color: "text-emerald-600 dark:text-emerald-400", bg: "bg-emerald-100" },
+  premium: { icon: Award, color: "text-amber-600 dark:text-amber-400", bg: "bg-amber-100" },
+  warning: { icon: AlertTriangle, color: "text-amber-600 dark:text-amber-400", bg: "bg-amber-100" },
+  withdrawal: { icon: Info, color: "text-blue-600 dark:text-blue-400", bg: "bg-blue-100" },
+  error: { icon: XCircle, color: "text-red-600 dark:text-red-400", bg: "bg-red-100" },
+  info: { icon: Info, color: "text-blue-600 dark:text-blue-400", bg: "bg-blue-100" },
 };
 
 export function waktuLalu(tanggal: string) {
@@ -52,7 +52,7 @@ export function NotificationCard({
     <div
       className={`group flex items-start gap-3 rounded-2xl border shadow-sm transition-colors ${
         dense ? "p-2.5" : "p-3.5"
-      } ${n.isRead ? "border-slate-200 bg-white" : "border-blue-300 bg-blue-50"}`}
+      } ${n.isRead ? "border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/90" : "border-blue-300 bg-blue-50"}`}
     >
       <span
         className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${meta.bg} ${meta.color}`}
@@ -61,12 +61,12 @@ export function NotificationCard({
       </span>
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-2">
-          <p className={`truncate font-semibold text-slate-900 ${dense ? "text-[13px]" : "text-sm"}`}>
+          <p className={`truncate font-semibold text-slate-900 dark:text-slate-100 ${dense ? "text-[13px]" : "text-sm"}`}>
             {n.title}
           </p>
           {!n.isRead && <span className="h-2 w-2 shrink-0 rounded-full bg-blue-500" />}
         </div>
-        <p className="mt-0.5 line-clamp-2 text-xs leading-relaxed text-slate-600">{n.body}</p>
+        <p className="mt-0.5 line-clamp-2 text-xs leading-relaxed text-slate-600 dark:text-slate-300">{n.body}</p>
         <p className="mt-1 text-[10px] font-medium text-slate-400">{waktuLalu(n.createdAt)}</p>
       </div>
       {onDelete && (
@@ -76,7 +76,7 @@ export function NotificationCard({
             e.stopPropagation();
             onDelete(n.id);
           }}
-          className="shrink-0 rounded-lg p-1.5 text-slate-300 transition-colors hover:bg-red-50 hover:text-red-500"
+          className="shrink-0 rounded-lg p-1.5 text-slate-300 transition-colors hover:bg-red-50 dark:bg-red-950/40 hover:text-red-500 dark:text-red-400"
           aria-label="Hapus notifikasi"
         >
           <Trash2 size={15} />

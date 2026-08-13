@@ -83,7 +83,7 @@ export default async function UnitDetailPage({ params }: { params: Promise<{ uni
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-violet-50 to-purple-100 px-4 py-6">
-      <Link href="/arena/jalur-cerdas" className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-violet-600 mb-4">
+      <Link href="/arena/jalur-cerdas" className="inline-flex items-center gap-1 text-sm text-gray-500 dark:text-slate-400 hover:text-violet-600 dark:text-violet-400 mb-4">
         <ArrowLeft className="w-4 h-4" />
         Kembali
       </Link>
@@ -93,34 +93,34 @@ export default async function UnitDetailPage({ params }: { params: Promise<{ uni
           <UnitIcon emoji={unit.emoji} className="w-7 h-7 text-white" />
         </div>
         <div>
-          {unit.level && <p className="text-xs text-violet-600 font-semibold">{unit.level.title}</p>}
-          <h1 className="text-xl font-bold text-gray-900">{unit.title}</h1>
-          {unit.subtitle && <p className="text-sm text-gray-500">{unit.subtitle}</p>}
+          {unit.level && <p className="text-xs text-violet-600 dark:text-violet-400 font-semibold">{unit.level.title}</p>}
+          <h1 className="text-xl font-bold text-gray-900 dark:text-slate-100">{unit.title}</h1>
+          {unit.subtitle && <p className="text-sm text-gray-500 dark:text-slate-400">{unit.subtitle}</p>}
         </div>
       </div>
 
       {isCompleted && (
-        <div className="flex items-center gap-2 p-3 mb-6 rounded-xl bg-emerald-50 border border-emerald-200">
-          <CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0" />
-          <p className="text-sm font-medium text-emerald-700">Kamu sudah menyelesaikan unit ini!</p>
+        <div className="flex items-center gap-2 p-3 mb-6 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800">
+          <CheckCircle2 className="w-5 h-5 text-emerald-500 dark:text-emerald-400 shrink-0" />
+          <p className="text-sm font-medium text-emerald-700 dark:text-emerald-300">Kamu sudah menyelesaikan unit ini!</p>
         </div>
       )}
 
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-4">
+      <div className="bg-white dark:bg-slate-800/90 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800 p-6 mb-4">
         <div className="flex items-center justify-between mb-4">
-          <span className="text-sm font-semibold text-gray-500">Kemajuan</span>
-          <span className="text-sm font-bold text-violet-600">
+          <span className="text-sm font-semibold text-gray-500 dark:text-slate-400">Kemajuan</span>
+          <span className="text-sm font-bold text-violet-600 dark:text-violet-400">
             {isCompleted ? "100%" : "0%"}
           </span>
         </div>
-        <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden mb-4">
+        <div className="w-full h-2 bg-gray-100 dark:bg-slate-800/80 rounded-full overflow-hidden mb-4">
           <div
             className={`h-full rounded-full transition-all ${isCompleted ? "bg-emerald-500" : "bg-violet-200"}`}
             style={{ width: isCompleted ? "100%" : "0%" }}
           />
         </div>
         {questionCount > 0 && (
-          <div className="flex items-center gap-2 text-sm text-gray-500">
+          <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-slate-400">
             <ListChecks className="w-4 h-4 text-violet-400" />
             {questionCount} soal latihan
           </div>
@@ -161,12 +161,12 @@ export default async function UnitDetailPage({ params }: { params: Promise<{ uni
         </Link>
       )}
 
-      <div className="mt-6 p-4 rounded-xl bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200">
+      <div className="mt-6 p-4 rounded-xl bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200 dark:border-amber-800">
         <div className="flex items-center gap-2 mb-1">
-          <Trophy className="w-4 h-4 text-amber-600" />
+          <Trophy className="w-4 h-4 text-amber-600 dark:text-amber-400" />
           <p className="text-sm font-semibold text-amber-800">Hadiah</p>
         </div>
-        <p className="text-sm text-amber-700">
+        <p className="text-sm text-amber-700 dark:text-amber-300">
           <Zap className="w-4 h-4 inline mr-0.5" />+{unit.xpReward || 50} XP
           <span className="mx-1">&middot;</span>
           <Coins className="w-4 h-4 inline mr-0.5" />+{unit.coinReward || 10} Koin Cerdas

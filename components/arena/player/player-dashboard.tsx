@@ -110,25 +110,25 @@ export function PlayerDashboard({ name }: { name: string; avatar?: string | null
             </Link>
           </div>
           <div className="space-y-2">
-            <Link href="/arena/player/history?tab=xp" className="flex items-center justify-between rounded-xl border border-[var(--px-border)] bg-white/[0.04] p-3 hover:bg-white/[0.08]">
+ <Link href="/arena/player/history?tab=xp" className="flex items-center justify-between rounded-xl border border-[var(--px-border)] bg-white /[0.04] p-3 hover:bg-white dark:bg-slate-800/90/[0.08]">
               <span className="flex items-center gap-2 text-sm font-bold text-[var(--px-text)]">
                 <Zap size={15} className="text-sky-300" /> Riwayat XP
               </span>
               <ChevronRight size={16} className="text-[var(--px-text-faint)]" />
             </Link>
-            <Link href="/arena/player/history?tab=koin" className="flex items-center justify-between rounded-xl border border-[var(--px-border)] bg-white/[0.04] p-3 hover:bg-white/[0.08]">
+ <Link href="/arena/player/history?tab=koin" className="flex items-center justify-between rounded-xl border border-[var(--px-border)] bg-white /[0.04] p-3 hover:bg-white dark:bg-slate-800/90/[0.08]">
               <span className="flex items-center gap-2 text-sm font-bold text-[var(--px-text)]">
                 <Coins size={15} className="text-[var(--px-gold)]" /> Riwayat Koin
               </span>
               <ChevronRight size={16} className="text-[var(--px-text-faint)]" />
             </Link>
-            <Link href="/arena/player/notifications" className="flex items-center justify-between rounded-xl border border-[var(--px-border)] bg-white/[0.04] p-3 hover:bg-white/[0.08]">
+ <Link href="/arena/player/notifications" className="flex items-center justify-between rounded-xl border border-[var(--px-border)] bg-white /[0.04] p-3 hover:bg-white dark:bg-slate-800/90/[0.08]">
               <span className="flex items-center gap-2 text-sm font-bold text-[var(--px-text)]">
                 <Bell size={15} className="text-amber-300" /> Notifikasi
               </span>
               <ChevronRight size={16} className="text-[var(--px-text-faint)]" />
             </Link>
-            <Link href="/arena/player/leaderboard" className="flex items-center justify-between rounded-xl border border-[var(--px-border)] bg-white/[0.04] p-3 hover:bg-white/[0.08]">
+ <Link href="/arena/player/leaderboard" className="flex items-center justify-between rounded-xl border border-[var(--px-border)] bg-white /[0.04] p-3 hover:bg-white dark:bg-slate-800/90/[0.08]">
               <span className="flex items-center gap-2 text-sm font-bold text-[var(--px-text)]">
                 <Activity size={15} className="text-emerald-300" /> Papan Peringkat Penuh
               </span>

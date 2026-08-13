@@ -76,7 +76,7 @@ export function PlayerCard({
           </span>
           <span>{formatId(profile.levelProgress.remaining)} XP menuju Tingkat {profile.level + 1}</span>
         </div>
-        <div className="h-2.5 overflow-hidden rounded-full bg-white/10">
+        <div className="h-2.5 overflow-hidden rounded-full bg-white bg-white/10 dark:bg-slate-900/10">
           <motion.div
             className="h-full rounded-full"
             style={{ background: `linear-gradient(90deg, ${meta.color}, var(--px-gold))` }}
@@ -91,12 +91,12 @@ export function PlayerCard({
       {(badges || achievements) && (
         <div className="relative mt-4 flex items-center gap-2 text-[11px] font-bold text-white/70">
           {badges && (
-            <span className="rounded-full bg-white/5 px-2.5 py-1">
+            <span className="rounded-full bg-white bg-white/5 dark:bg-slate-900/5 px-2.5 py-1">
               🎖️ {badges.unlocked}/{badges.total} Badge
             </span>
           )}
           {achievements && (
-            <span className="rounded-full bg-white/5 px-2.5 py-1">
+            <span className="rounded-full bg-white bg-white/5 dark:bg-slate-900/5 px-2.5 py-1">
               🏆 {achievements.completed}/{achievements.total} Pencapaian
             </span>
           )}

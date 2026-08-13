@@ -66,13 +66,13 @@ export function PendampingBelajar({
       {/* Gelembung ucapan dengan ekor mengarah ke tokoh. */}
       <div className="relative mb-4 max-w-[150px]">
         <div
-          className="rounded-2xl border-2 bg-white px-3 py-2 text-center text-xs font-bold shadow-sm"
+          className="rounded-2xl border-2 bg-white dark:bg-slate-800/90 px-3 py-2 text-center text-xs font-bold shadow-sm"
           style={{ borderColor: `${warna}55`, color: warna }}
         >
           {ucapan}
         </div>
         <span
-          className="absolute -left-1.5 bottom-3 h-3 w-3 rotate-45 border-b-2 border-l-2 bg-white"
+          className="absolute -left-1.5 bottom-3 h-3 w-3 rotate-45 border-b-2 border-l-2 bg-white dark:bg-slate-800/90"
           style={{ borderColor: `${warna}55` }}
         />
       </div>

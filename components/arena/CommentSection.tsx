@@ -147,28 +147,28 @@ export default function CommentSection({ karyaId, initialComments, initialCount,
           />
         </Link>
         <div className="flex-1 min-w-0">
-          <div className="bg-white rounded-xl border border-gray-100 p-3">
+          <div className="bg-white dark:bg-slate-800/90 rounded-xl border border-gray-100 dark:border-slate-800 p-3">
             <div className="flex items-center gap-2 mb-0.5">
               <UserName
                 name={nameOf(c.user)}
                 href={`/arena/profile/${c.user.id}`}
                 color={c.user.equippedNameColor}
                 badge={c.user.equippedBadge}
-                className="text-xs font-bold text-gray-900 hover:text-violet-600"
+                className="text-xs font-bold text-gray-900 dark:text-slate-100 hover:text-violet-600"
                 badgeSize={13}
               />
               {c.user.rank && <RankChip rank={c.user.rank} size={13} showTitle={false} compact />}
               <span className="text-[10px] text-gray-400">{waktuLalu(c.createdAt)}</span>
               {isOwner && (
-                <button onClick={() => handleDelete(c.id)} className="ml-auto text-gray-300 hover:text-red-500 transition-colors">
+                <button onClick={() => handleDelete(c.id)} className="ml-auto text-gray-300 hover:text-red-500 dark:text-red-400 transition-colors">
                   <Trash2 size={12} />
                 </button>
               )}
             </div>
-            <p className="text-sm text-gray-700 whitespace-pre-wrap">{c.content}</p>
+            <p className="text-sm text-gray-700 dark:text-slate-300 whitespace-pre-wrap">{c.content}</p>
           </div>
           {!isReply && (
-            <button onClick={() => startReply(c)} className="flex items-center gap-1 text-[11px] font-semibold text-gray-400 hover:text-violet-600 mt-1 ml-1 transition-colors">
+            <button onClick={() => startReply(c)} className="flex items-center gap-1 text-[11px] font-semibold text-gray-400 hover:text-violet-600 dark:text-violet-400 mt-1 ml-1 transition-colors">
               <CornerDownRight size={11} /> Balas
             </button>
           )}
@@ -180,7 +180,7 @@ export default function CommentSection({ karyaId, initialComments, initialCount,
   return (
     <div>
       <div className="flex items-center justify-between mb-4">
-        <h3 className="font-bold text-gray-900 text-sm">Komentar ({count})</h3>
+        <h3 className="font-bold text-gray-900 dark:text-slate-100 text-sm">Komentar ({count})</h3>
       </div>
 
       {/* Input */}
@@ -188,7 +188,7 @@ export default function CommentSection({ karyaId, initialComments, initialCount,
         <input
           value={text} onChange={e => setText(e.target.value)}
           placeholder="Tulis komentar..."
-          className="flex-1 px-4 py-2.5 bg-white rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-violet-200"
+          className="flex-1 px-4 py-2.5 bg-white dark:bg-slate-800/90 rounded-xl border border-gray-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-violet-200"
           onKeyDown={e => { if (e.key === "Enter") handleSubmit() }}
         />
         <button onClick={handleSubmit} disabled={submitting || !text.trim()}
@@ -199,7 +199,7 @@ export default function CommentSection({ karyaId, initialComments, initialCount,
       </div>
 
       {error && (
-        <div className="flex items-center gap-2 text-sm text-red-600 mb-3 bg-red-50 px-3 py-2 rounded-xl">
+        <div className="flex items-center gap-2 text-sm text-red-600 dark:text-red-400 mb-3 bg-red-50 dark:bg-red-950/40 px-3 py-2 rounded-xl">
           <AlertTriangle size={14} /> {error}
         </div>
       )}
@@ -213,16 +213,16 @@ export default function CommentSection({ karyaId, initialComments, initialCount,
             <div key={c.id}>
               {renderComment(c, false)}
               {repliesOf(c.id).length > 0 && (
-                <div className="ml-[38px] pl-3 border-l-2 border-gray-100">
+                <div className="ml-[38px] pl-3 border-l-2 border-gray-100 dark:border-slate-800">
                   {repliesOf(c.id).map(r => renderComment(r, true))}
                 </div>
               )}
               {replyTo?.id === c.id && (
                 <div className="ml-[38px] mt-2.5 flex gap-2 items-start">
                   <div className="flex-1">
-                    <div className="flex items-center gap-1.5 mb-1.5 text-[11px] text-violet-600 font-semibold">
+                    <div className="flex items-center gap-1.5 mb-1.5 text-[11px] text-violet-600 dark:text-violet-400 font-semibold">
                       Membalas {replyTo.name}
-                      <button onClick={() => { setReplyTo(null); setReplyText("") }} className="text-gray-300 hover:text-gray-500">
+                      <button onClick={() => { setReplyTo(null); setReplyText("") }} className="text-gray-300 hover:text-gray-500 dark:text-slate-400">
                         <X size={12} />
                       </button>
                     </div>
@@ -231,7 +231,7 @@ export default function CommentSection({ karyaId, initialComments, initialCount,
                         autoFocus
                         value={replyText} onChange={e => setReplyText(e.target.value)}
                         placeholder={`Balas ${replyTo.name}...`}
-                        className="flex-1 px-3.5 py-2 bg-white rounded-xl border border-violet-200 text-sm focus:outline-none focus:ring-2 focus:ring-violet-200"
+                        className="flex-1 px-3.5 py-2 bg-white dark:bg-slate-800/90 rounded-xl border border-violet-200 text-sm focus:outline-none focus:ring-2 focus:ring-violet-200"
                         onKeyDown={e => { if (e.key === "Enter") handleSubmitReply() }}
                       />
                       <button onClick={handleSubmitReply} disabled={submittingReply || !replyText.trim()}

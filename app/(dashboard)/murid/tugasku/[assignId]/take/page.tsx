@@ -148,7 +148,7 @@ export default function QuizTakePage({ params }: { params: Promise<{ assignId: s
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <Loader2 className="w-8 h-8 animate-spin text-violet-600" />
+        <Loader2 className="w-8 h-8 animate-spin text-violet-600 dark:text-violet-400" />
       </div>
     );
   }
@@ -157,7 +157,7 @@ export default function QuizTakePage({ params }: { params: Promise<{ assignId: s
     return (
       <div className="p-6 max-w-4xl mx-auto text-center py-20">
         <AlertTriangle className="w-16 h-16 text-red-300 mx-auto mb-4" />
-        <h3 className="font-bold text-slate-600 mb-2">Kuis tidak ditemukan</h3>
+        <h3 className="font-bold text-slate-600 dark:text-slate-300 mb-2">Kuis tidak ditemukan</h3>
         <Link href={tugasHref}><Button variant="outline">Kembali ke Tugasku</Button></Link>
       </div>
     );
@@ -168,22 +168,22 @@ export default function QuizTakePage({ params }: { params: Promise<{ assignId: s
       <div className="p-6 max-w-2xl mx-auto">
         <Card className="p-8 text-center">
           <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-            <Check className="w-10 h-10 text-green-600" />
+            <Check className="w-10 h-10 text-green-600 dark:text-green-400" />
           </div>
-          <h2 className="text-2xl font-bold text-slate-900 mb-2">Kuis Selesai!</h2>
-          <p className="text-slate-500 mb-6">{quizData.quiz.title}</p>
+          <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-2">Kuis Selesai!</h2>
+          <p className="text-slate-500 dark:text-slate-400 mb-6">{quizData.quiz.title}</p>
           <div className="grid grid-cols-3 gap-4 mb-6">
-            <div className="bg-slate-50 rounded-xl p-4">
-              <p className="text-3xl font-bold text-emerald-600">{Math.round(result.score)}%</p>
-              <p className="text-xs text-slate-500">Nilai</p>
+            <div className="bg-slate-50 dark:bg-slate-800/50 rounded-xl p-4">
+              <p className="text-3xl font-bold text-emerald-600 dark:text-emerald-400">{Math.round(result.score)}%</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400">Nilai</p>
             </div>
-            <div className="bg-slate-50 rounded-xl p-4">
-              <p className="text-3xl font-bold text-green-600">{result.correctCount}</p>
-              <p className="text-xs text-slate-500">Benar</p>
+            <div className="bg-slate-50 dark:bg-slate-800/50 rounded-xl p-4">
+              <p className="text-3xl font-bold text-green-600 dark:text-green-400">{result.correctCount}</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400">Benar</p>
             </div>
-            <div className="bg-slate-50 rounded-xl p-4">
-              <p className="text-3xl font-bold text-red-600">{result.wrongCount}</p>
-              <p className="text-xs text-slate-500">Salah</p>
+            <div className="bg-slate-50 dark:bg-slate-800/50 rounded-xl p-4">
+              <p className="text-3xl font-bold text-red-600 dark:text-red-400">{result.wrongCount}</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400">Salah</p>
             </div>
           </div>
           {quizData.quiz.showResults && (
@@ -191,7 +191,7 @@ export default function QuizTakePage({ params }: { params: Promise<{ assignId: s
               <Button className="bg-violet-600 hover:bg-violet-700 text-white w-full">Lihat Detail Jawaban</Button>
             </Link>
           )}
-          <Link href={tugasHref} className="block mt-3 text-sm text-slate-500 hover:text-slate-700">
+          <Link href={tugasHref} className="block mt-3 text-sm text-slate-500 dark:text-slate-400 hover:text-slate-700">
             ← Kembali ke Tugasku
           </Link>
         </Card>
@@ -207,15 +207,15 @@ export default function QuizTakePage({ params }: { params: Promise<{ assignId: s
     <div className="p-6 max-w-4xl mx-auto">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
-        <Link href={tugasHref} className="p-2 hover:bg-slate-100 rounded-lg">
-          <ChevronLeft className="w-5 h-5 text-slate-600" />
+        <Link href={tugasHref} className="p-2 hover:bg-slate-100 dark:bg-slate-800/70 rounded-lg">
+          <ChevronLeft className="w-5 h-5 text-slate-600 dark:text-slate-300" />
         </Link>
         <div className="text-center">
-          <h1 className="font-bold text-slate-900">{quizData.quiz.title}</h1>
-          <p className="text-xs text-slate-500">{quizData.assignment.group.name}</p>
+          <h1 className="font-bold text-slate-900 dark:text-slate-100">{quizData.quiz.title}</h1>
+          <p className="text-xs text-slate-500 dark:text-slate-400">{quizData.assignment.group.name}</p>
         </div>
         {timeLeft !== null && (
-          <div className={`flex items-center gap-2 px-4 py-2 rounded-xl font-mono font-bold ${timeLeft < 60 ? "bg-red-100 text-red-700" : "bg-violet-100 text-violet-700"}`}>
+          <div className={`flex items-center gap-2 px-4 py-2 rounded-xl font-mono font-bold ${timeLeft < 60 ? "bg-red-100 text-red-700" : "bg-violet-100 text-violet-700 dark:text-violet-300"}`}>
             <Clock className="w-4 h-4" />
             {formatTime(timeLeft)}
           </div>
@@ -230,9 +230,9 @@ export default function QuizTakePage({ params }: { params: Promise<{ assignId: s
             onClick={() => setCurrentQ(i)}
             className={`w-10 h-10 rounded-lg text-sm font-medium transition-all ${
               i === currentQ ? "bg-violet-600 text-white" :
-              answers[q.id] !== undefined && answers[q.id] !== null ? "bg-green-100 text-green-700 border border-green-200" :
-              flagged.has(q.id) ? "bg-amber-100 text-amber-700 border border-amber-200" :
-              "bg-slate-100 text-slate-600 hover:bg-slate-200"
+              answers[q.id] !== undefined && answers[q.id] !== null ? "bg-green-100 text-green-700 dark:text-green-300 border border-green-200 dark:border-green-800" :
+              flagged.has(q.id) ? "bg-amber-100 text-amber-700 dark:text-amber-300 border border-amber-200" :
+              "bg-slate-100 dark:bg-slate-800/70 text-slate-600 hover:bg-slate-200"
             }`}
           >
             {i + 1}
@@ -245,15 +245,15 @@ export default function QuizTakePage({ params }: { params: Promise<{ assignId: s
       {question && (
         <Card className="p-6 mb-6">
           <div className="flex items-start justify-between mb-4">
-            <span className="text-sm text-slate-500">Soal {currentQ + 1} dari {quizData.questions.length}</span>
+            <span className="text-sm text-slate-500 dark:text-slate-400">Soal {currentQ + 1} dari {quizData.questions.length}</span>
             <button
               onClick={() => toggleFlag(question.id)}
-              className={`p-2 rounded-lg transition-colors ${flagged.has(question.id) ? "bg-amber-100 text-amber-600" : "hover:bg-slate-100 text-slate-400"}`}
+              className={`p-2 rounded-lg transition-colors ${flagged.has(question.id) ? "bg-amber-100 text-amber-600" : "hover:bg-slate-100 dark:bg-slate-800/70 text-slate-400"}`}
             >
               <Flag className="w-4 h-4" />
             </button>
           </div>
-          <p className="text-lg font-medium text-slate-900 mb-6">{soal?.text || question.customText}</p>
+          <p className="text-lg font-medium text-slate-900 dark:text-slate-100 mb-6">{soal?.text || question.customText}</p>
           {soal?.options && (
             <div className="space-y-3">
               {soal.options.map((opt: string, i: number) => (
@@ -262,13 +262,13 @@ export default function QuizTakePage({ params }: { params: Promise<{ assignId: s
                   onClick={() => selectAnswer(question.id, i)}
                   className={`w-full text-left p-4 rounded-xl border-2 transition-all ${
                     answers[question.id] === i
-                      ? "border-violet-500 bg-violet-50"
-                      : "border-slate-200 hover:border-slate-300 hover:bg-slate-50"
+                      ? "border-violet-500 bg-violet-50 dark:bg-violet-950/40"
+                      : "border-slate-200 dark:border-slate-700 hover:border-slate-300 hover:bg-slate-50 dark:bg-slate-800/50"
                   }`}
                 >
                   <div className="flex items-center gap-3">
                     <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold shrink-0 ${
-                      answers[question.id] === i ? "bg-violet-600 text-white" : "bg-slate-100 text-slate-600"
+                      answers[question.id] === i ? "bg-violet-600 text-white" : "bg-slate-100 dark:bg-slate-800/70 text-slate-600"
                     }`}>
                       {String.fromCharCode(65 + i)}
                     </div>
@@ -286,7 +286,7 @@ export default function QuizTakePage({ params }: { params: Promise<{ assignId: s
         <button
           onClick={() => setCurrentQ(Math.max(0, currentQ - 1))}
           disabled={currentQ === 0}
-          className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-100 disabled:opacity-50"
+          className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-100 dark:bg-slate-800/70 disabled:opacity-50"
         >
           <ChevronLeft className="w-4 h-4" /> Sebelumnya
         </button>
@@ -294,7 +294,7 @@ export default function QuizTakePage({ params }: { params: Promise<{ assignId: s
         {currentQ < quizData.questions.length - 1 ? (
           <button
             onClick={() => setCurrentQ(currentQ + 1)}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium text-violet-600 hover:bg-violet-50"
+            className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium text-violet-600 dark:text-violet-400 hover:bg-violet-50 dark:bg-violet-950/40"
           >
             Selanjutnya <ChevronRight className="w-4 h-4" />
           </button>
@@ -308,17 +308,17 @@ export default function QuizTakePage({ params }: { params: Promise<{ assignId: s
       {/* Confirm Submit Modal */}
       {showConfirm && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={() => setShowConfirm(false)}>
-          <div className="bg-white rounded-2xl p-6 max-w-sm w-full" onClick={e => e.stopPropagation()}>
+          <div className="bg-white dark:bg-slate-800/90 rounded-2xl p-6 max-w-sm w-full" onClick={e => e.stopPropagation()}>
             <div className="text-center mb-4">
-              <AlertTriangle className="w-12 h-12 text-amber-500 mx-auto mb-3" />
-              <h3 className="font-bold text-slate-900">Kumpulkan Jawaban?</h3>
-              <p className="text-sm text-slate-500 mt-2">
+              <AlertTriangle className="w-12 h-12 text-amber-500 dark:text-amber-400 mx-auto mb-3" />
+              <h3 className="font-bold text-slate-900 dark:text-slate-100">Kumpulkan Jawaban?</h3>
+              <p className="text-sm text-slate-500 dark:text-slate-400 mt-2">
                 {unanswered > 0 ? `Masih ada ${unanswered} soal belum dijawab. ` : ""}
                 Pastikan semua jawaban sudah benar.
               </p>
             </div>
             <div className="flex gap-3">
-              <button onClick={() => setShowConfirm(false)} className="flex-1 py-2.5 border-2 border-slate-200 text-slate-600 font-bold rounded-xl">
+              <button onClick={() => setShowConfirm(false)} className="flex-1 py-2.5 border-2 border-slate-200 dark:border-slate-700 text-slate-600 font-bold rounded-xl">
                 Periksa Lagi
               </button>
               <button onClick={handleSubmit} disabled={submitting} className="flex-1 py-2.5 bg-violet-600 text-white font-bold rounded-xl hover:bg-violet-700 disabled:opacity-50">

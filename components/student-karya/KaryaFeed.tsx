@@ -298,12 +298,12 @@ function FeedContent({
       className="block mb-5 rounded-2xl bg-gradient-to-br from-violet-600 via-purple-600 to-fuchsia-600 p-5 text-white shadow-lg shadow-violet-500/25 hover:shadow-xl hover:shadow-violet-500/30 active:scale-[0.99] transition-all"
     >
       <div className="flex items-start gap-4">
-        <div className="w-12 h-12 rounded-2xl bg-white/20 flex items-center justify-center shrink-0">
+        <div className="w-12 h-12 rounded-2xl bg-white bg-white/20 dark:bg-slate-900/20 flex items-center justify-center shrink-0">
           <Sparkles size={24} className="text-yellow-300" />
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1">
-            <span className="text-[10px] font-bold uppercase tracking-wider bg-white/20 px-2 py-0.5 rounded-full">
+            <span className="text-[10px] font-bold uppercase tracking-wider bg-white bg-white/20 dark:bg-slate-900/20 px-2 py-0.5 rounded-full">
               Tantangan Minggu Ini
             </span>
           </div>
@@ -314,10 +314,10 @@ function FeedContent({
             <span className="inline-flex items-center gap-1.5 bg-yellow-400 text-yellow-950 text-xs font-extrabold px-3 py-1.5 rounded-full">
               <Trophy size={13} /> +{challenge.bonusCoins} koin
             </span>
-            <span className="inline-flex items-center gap-1.5 bg-white/15 text-white text-xs font-semibold px-3 py-1.5 rounded-full">
+            <span className="inline-flex items-center gap-1.5 bg-white bg-white/15 dark:bg-slate-900/15 text-white text-xs font-semibold px-3 py-1.5 rounded-full">
               {challengeCount} karya masuk
             </span>
-            <span className="ml-auto inline-flex items-center gap-1.5 bg-white text-violet-700 text-sm font-extrabold px-4 py-2 rounded-xl">
+            <span className="ml-auto inline-flex items-center gap-1.5 bg-white dark:bg-slate-800/90 text-violet-700 dark:text-violet-300 text-sm font-extrabold px-4 py-2 rounded-xl">
               <PenLine size={14} /> Ikut Tantangan
             </span>
           </div>
@@ -536,7 +536,7 @@ function FeedContent({
 
         {/* Grid karya — 3 kolom ≥1280px, 2 kolom ≥768px, 1 kolom <768px */}
         {loading ? (
-          <div className="flex justify-center py-16"><Loader2 size={32} className="animate-spin text-violet-500" /></div>
+          <div className="flex justify-center py-16"><Loader2 size={32} className="animate-spin text-violet-500 dark:text-violet-400" /></div>
         ) : karyaList.length === 0 ? (
           stageEmpty
         ) : (
@@ -602,7 +602,7 @@ function FeedContent({
 
         {/* List */}
         {loading ? (
-          <div className="flex justify-center py-16"><Loader2 size={32} className="animate-spin text-violet-500" /></div>
+          <div className="flex justify-center py-16"><Loader2 size={32} className="animate-spin text-violet-500 dark:text-violet-400" /></div>
         ) : karyaList.length === 0 ? (
           <div className="text-center py-16 text-gray-400 dark:text-slate-500">
             <FileText size={48} className="mx-auto mb-3 opacity-50" />
@@ -661,7 +661,7 @@ export default function KaryaFeed({
   return (
     <Suspense fallback={
       <div className="arena-page max-w-3xl mx-auto p-4">
-        <div className="flex justify-center py-16"><Loader2 size={32} className="animate-spin text-violet-500" /></div>
+        <div className="flex justify-center py-16"><Loader2 size={32} className="animate-spin text-violet-500 dark:text-violet-400" /></div>
       </div>
     }>
       <FeedContent

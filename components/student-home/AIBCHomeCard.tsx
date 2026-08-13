@@ -48,7 +48,7 @@ export function AIBCHomeCard() {
               <Link
                 key={t}
                 href="/arena/ai"
-                className="text-[11px] font-medium text-[var(--px-text-dim)] hover:text-[var(--px-text)] bg-white/5 hover:bg-white/10 border border-white/10 rounded-full px-3 py-1 transition-colors"
+ className="text-[11px] font-medium text-[var(--px-text-dim)] hover:text-[var(--px-text)] bg-white bg-white/5 dark:bg-slate-900/5 hover:bg-white bg-white/10 border border-white/10 rounded-full px-3 py-1 transition-colors"
               >
                 {t}
               </Link>

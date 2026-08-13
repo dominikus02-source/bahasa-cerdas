@@ -47,23 +47,23 @@ export default function ShareButton({ url, title, text }: ShareButtonProps) {
   return (
     <div className="relative">
       <button onClick={handleShare}
-        className="flex items-center gap-1.5 text-sm text-slate-500 hover:text-blue-600 transition-colors">
+        className="flex items-center gap-1.5 text-sm text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:text-blue-400 transition-colors">
         <Share2 size={16} /> Bagikan
       </button>
 
       {showMenu && (
         <>
           <div className="fixed inset-0 z-40" onClick={() => setShowMenu(false)} />
-          <div className="absolute right-0 top-8 z-50 bg-white rounded-2xl border border-slate-200 shadow-xl p-2 min-w-[180px]">
-            <button onClick={copyLink} className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm text-slate-700 hover:bg-slate-50 transition-colors">
-              {copied ? <Check size={16} className="text-emerald-600" /> : <Share2 size={16} />}
+          <div className="absolute right-0 top-8 z-50 bg-white dark:bg-slate-800/90 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xl p-2 min-w-[180px]">
+            <button onClick={copyLink} className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm text-slate-700 hover:bg-slate-50 dark:bg-slate-800/50 transition-colors">
+              {copied ? <Check size={16} className="text-emerald-600 dark:text-emerald-400" /> : <Share2 size={16} />}
               {copied ? "Tersalin!" : "Salin Link"}
             </button>
-            <button onClick={shareWA} className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm text-slate-700 hover:bg-emerald-50 transition-colors">
-              <MessageCircle size={16} className="text-emerald-600" /> WhatsApp
+            <button onClick={shareWA} className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm text-slate-700 hover:bg-emerald-50 dark:bg-emerald-950/40 transition-colors">
+              <MessageCircle size={16} className="text-emerald-600 dark:text-emerald-400" /> WhatsApp
             </button>
-            <button onClick={shareEmail} className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm text-slate-700 hover:bg-blue-50 transition-colors">
-              <Mail size={16} className="text-blue-600" /> Email
+            <button onClick={shareEmail} className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm text-slate-700 hover:bg-blue-50 dark:bg-blue-950/40 transition-colors">
+              <Mail size={16} className="text-blue-600 dark:text-blue-400" /> Email
             </button>
           </div>
         </>

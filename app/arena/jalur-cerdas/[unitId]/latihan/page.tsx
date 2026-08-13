@@ -113,7 +113,7 @@ export default function LatihanPage() {
 
   if (loading) return (
     <div className="px-4 py-6 arena-page space-y-3 animate-pulse">
-      {[1,2,3,4,5].map(i => <div key={i} className="h-20 bg-gray-100 rounded-2xl" />)}
+      {[1,2,3,4,5].map(i => <div key={i} className="h-20 bg-gray-100 dark:bg-slate-800/80 rounded-2xl" />)}
     </div>
   )
 
@@ -135,10 +135,10 @@ export default function LatihanPage() {
       <div className="w-20 h-20 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center mx-auto mb-4 shadow-lg">
         <Award className="w-10 h-10 text-white" />
       </div>
-      <h2 className="text-2xl font-extrabold text-gray-900 mb-1">Latihan Selesai!</h2>
-      <p className="text-gray-500 mb-6">Kamu menjawab {benar} dari {total} soal</p>
-      <div className="w-32 h-32 rounded-full border-4 border-violet-200 flex items-center justify-center mx-auto mb-6">
-        <span className="text-3xl font-extrabold text-violet-600">{Math.round((benar / total) * 100)}%</span>
+      <h2 className="text-2xl font-extrabold text-gray-900 dark:text-slate-100 mb-1">Latihan Selesai!</h2>
+      <p className="text-gray-500 dark:text-slate-400 mb-6">Kamu menjawab {benar} dari {total} soal</p>
+      <div className="w-32 h-32 rounded-full border-4 border-violet-200 dark:border-violet-800 flex items-center justify-center mx-auto mb-6">
+        <span className="text-3xl font-extrabold text-violet-600 dark:text-violet-400">{Math.round((benar / total) * 100)}%</span>
       </div>
       <button onClick={() => router.push(`/arena/jalur-cerdas/${unitId}`)} className="px-6 py-3 bg-violet-600 text-white font-bold rounded-xl hover:bg-violet-700 transition-colors">
         Kembali ke Unit
@@ -149,8 +149,8 @@ export default function LatihanPage() {
   if (soalList.length === 0) return (
     <div className="px-4 py-6 arena-page text-center pt-20">
       <HelpCircle className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-      <p className="text-gray-500">Latihan belum tersedia</p>
-      <button onClick={() => router.back()} className="mt-4 text-violet-600 font-semibold text-sm">Kembali</button>
+      <p className="text-gray-500 dark:text-slate-400">Latihan belum tersedia</p>
+      <button onClick={() => router.back()} className="mt-4 text-violet-600 dark:text-violet-400 font-semibold text-sm">Kembali</button>
     </div>
   )
 
@@ -161,13 +161,13 @@ export default function LatihanPage() {
       {confettiAktif && <ConfettiBurst trigger={confettiTrigger} />}
       {/* Header */}
       <div className="flex items-center gap-3 mb-6">
-        <button onClick={() => router.back()} className="w-9 h-9 rounded-xl bg-gray-100 flex items-center justify-center shrink-0 hover:bg-gray-200 transition-colors">
-          <ArrowLeft className="w-5 h-5 text-gray-600" />
+        <button onClick={() => router.back()} className="w-9 h-9 rounded-xl bg-gray-100 dark:bg-slate-800/80 flex items-center justify-center shrink-0 hover:bg-gray-200 transition-colors">
+          <ArrowLeft className="w-5 h-5 text-gray-600 dark:text-slate-300" />
         </button>
         <div className="flex-1">
-          <p className="text-xs text-violet-600 font-semibold">Latihan — {tipeLabel}</p>
+          <p className="text-xs text-violet-600 dark:text-violet-400 font-semibold">Latihan — {tipeLabel}</p>
           <div className="flex items-center gap-2">
-            <p className="text-xs text-gray-500">Soal {current + 1} dari {total}</p>
+            <p className="text-xs text-gray-500 dark:text-slate-400">Soal {current + 1} dari {total}</p>
             <div className="flex-1 h-1.5 bg-gray-200 rounded-full max-w-[120px]">
               <div className="h-full bg-violet-500 rounded-full transition-all" style={{ width: `${((current + 1) / total) * 100}%` }} />
             </div>
@@ -179,12 +179,12 @@ export default function LatihanPage() {
       {(bolehPakaiHint || dicoret !== undefined) && (
         <div className="flex flex-wrap items-center gap-2 mb-3">
           {dicoret !== undefined ? (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-50 border border-amber-200 text-amber-700 text-xs font-semibold">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-50 border border-amber-200 text-amber-700 dark:text-amber-300 text-xs font-semibold">
               <Lightbulb className="w-3.5 h-3.5" /> Petunjuk terpakai di soal ini
             </span>
           ) : (
             <button onClick={pakaiHint} disabled={hintProses}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-100 border border-amber-300 text-amber-800 text-xs font-bold hover:bg-amber-200 disabled:opacity-60 transition-colors"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-100 border border-amber-300 dark:border-amber-700 text-amber-800 text-xs font-bold hover:bg-amber-200 disabled:opacity-60 transition-colors"
             >
               <Lightbulb className="w-3.5 h-3.5" />
               {hintProses ? "Memakai…" : `Coret 1 opsi salah (${hintCount})`}
@@ -194,18 +194,18 @@ export default function LatihanPage() {
       )}
 
       {powerUpError && (
-        <div className="mb-3 flex items-center justify-between gap-3 p-3 rounded-xl bg-red-50 border border-red-200">
-          <p className="text-xs text-red-700 font-medium">{powerUpError}</p>
-          <button onClick={clearError} className="text-red-500 shrink-0" aria-label="Tutup pesan">
+        <div className="mb-3 flex items-center justify-between gap-3 p-3 rounded-xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800">
+          <p className="text-xs text-red-700 dark:text-red-300 font-medium">{powerUpError}</p>
+          <button onClick={clearError} className="text-red-500 dark:text-red-400 shrink-0" aria-label="Tutup pesan">
             <X className="w-4 h-4" />
           </button>
         </div>
       )}
 
       {/* Soal */}
-      <div className="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm mb-4">
+      <div className="bg-white dark:bg-slate-800/90 border border-gray-100 dark:border-slate-800 rounded-2xl p-5 shadow-sm mb-4">
         <p className="text-sm font-medium text-gray-400 mb-1">Soal #{current + 1}</p>
-        <p className="text-base font-bold text-gray-900 leading-relaxed mb-5">{soal.soal}</p>
+        <p className="text-base font-bold text-gray-900 dark:text-slate-100 leading-relaxed mb-5">{soal.soal}</p>
 
         {tipe === "PG" && (
           <div className="space-y-2.5">
@@ -214,14 +214,14 @@ export default function LatihanPage() {
               const isSelected = picked === idx
               const isRight = idx === soal.jawaban
               const isDicoret = dicoret === idx
-              let btnClass = "border-gray-200 bg-white hover:border-violet-300 hover:bg-violet-50"
+              let btnClass = "border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800/90 hover:border-violet-300 hover:bg-violet-50"
 
-              if (isDicoret && !showResult) btnClass = "border-gray-100 bg-gray-50 opacity-50 line-through cursor-not-allowed"
+              if (isDicoret && !showResult) btnClass = "border-gray-100 dark:border-slate-800 bg-gray-50 dark:bg-slate-800/60 opacity-50 line-through cursor-not-allowed"
 
               if (showResult) {
-                if (isRight) btnClass = "border-emerald-400 bg-emerald-50"
-                else if (isSelected && !isRight) btnClass = "border-red-400 bg-red-50"
-                else btnClass = "border-gray-100 bg-gray-50 opacity-60"
+                if (isRight) btnClass = "border-emerald-400 bg-emerald-50 dark:bg-emerald-950/40"
+                else if (isSelected && !isRight) btnClass = "border-red-400 bg-red-50 dark:bg-red-950/40"
+                else btnClass = "border-gray-100 dark:border-slate-800 bg-gray-50 dark:bg-slate-800/60 opacity-60"
               }
 
               return (
@@ -231,7 +231,7 @@ export default function LatihanPage() {
                   <span className={`w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold shrink-0 ${
                     showResult && isRight ? "bg-emerald-500 text-white" :
                     showResult && isSelected && !isRight ? "bg-red-500 text-white" :
-                    isSelected ? "bg-violet-500 text-white" : "bg-gray-100 text-gray-500"
+                    isSelected ? "bg-violet-500 text-white" : "bg-gray-100 dark:bg-slate-800/80 text-gray-500"
                   }`}>
                     {showResult && isRight ? <CheckCircle2 className="w-4 h-4" /> :
                      showResult && isSelected && !isRight ? <XCircle className="w-4 h-4" /> :
@@ -239,9 +239,9 @@ export default function LatihanPage() {
                      letters[idx]}
                   </span>
                   <span className={`text-sm font-medium ${
-                    showResult && isRight ? "text-emerald-700" :
-                    showResult && isSelected && !isRight ? "text-red-700" :
-                    "text-gray-700"
+                    showResult && isRight ? "text-emerald-700 dark:text-emerald-300" :
+                    showResult && isSelected && !isRight ? "text-red-700 dark:text-red-300" :
+                    "text-gray-700 dark:text-slate-300"
                   }`}>{o}</span>
                 </button>
               )
@@ -254,19 +254,19 @@ export default function LatihanPage() {
             {["Benar", "Salah"].map((label, idx) => {
               const isSelected = picked === idx
               const isRight = idx === soal.jawaban
-              let btnClass = "flex-1 border-2 border-gray-200 bg-white hover:border-violet-300 hover:bg-violet-50"
+              let btnClass = "flex-1 border-2 border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800/90 hover:border-violet-300 hover:bg-violet-50"
 
               if (showResult) {
-                if (isRight) btnClass = "flex-1 border-2 border-emerald-400 bg-emerald-50"
-                else if (isSelected && !isRight) btnClass = "flex-1 border-2 border-red-400 bg-red-50"
-                else btnClass = "flex-1 border-2 border-gray-100 bg-gray-50 opacity-60"
+                if (isRight) btnClass = "flex-1 border-2 border-emerald-400 bg-emerald-50 dark:bg-emerald-950/40"
+                else if (isSelected && !isRight) btnClass = "flex-1 border-2 border-red-400 bg-red-50 dark:bg-red-950/40"
+                else btnClass = "flex-1 border-2 border-gray-100 dark:border-slate-800 bg-gray-50 dark:bg-slate-800/60 opacity-60"
               }
 
               return (
                 <button key={idx} onClick={() => pilihBS(idx)}
                   className={`${btnClass} py-4 rounded-xl text-center font-bold text-sm transition-all`}
                 >
-                  <span className={`flex justify-center mb-0.5 ${idx === 0 ? "text-emerald-600" : "text-red-600"}`}>
+                  <span className={`flex justify-center mb-0.5 ${idx === 0 ? "text-emerald-600 dark:text-emerald-400" : "text-red-600 dark:text-red-400"}`}>
                     {idx === 0 ? <Check className="w-5 h-5" /> : <X className="w-5 h-5" />}
                   </span>
                   {label}
@@ -284,7 +284,7 @@ export default function LatihanPage() {
               onKeyDown={e => e.key === "Enter" && submitIsian()}
               placeholder="Ketik jawabanmu..."
               disabled={showResult}
-              className="w-full px-4 py-3.5 rounded-xl border-2 border-gray-200 text-sm focus:outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-100 disabled:bg-gray-50 disabled:cursor-not-allowed"
+              className="w-full px-4 py-3.5 rounded-xl border-2 border-gray-200 dark:border-slate-700 text-sm focus:outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-100 disabled:bg-gray-50 dark:bg-slate-800/60 disabled:cursor-not-allowed"
             />
             {!showResult && (
               <button onClick={submitIsian} disabled={!inputIsian.trim()}
@@ -300,19 +300,19 @@ export default function LatihanPage() {
       {/* Penjelasan */}
       {showResult && (
         <div className={`p-4 rounded-xl border mb-4 animate-fade-in ${
-          isCorrect ? "bg-emerald-50 border-emerald-200" : "bg-red-50 border-red-200"
+          isCorrect ? "bg-emerald-50 dark:bg-emerald-950/40 border-emerald-200 dark:border-emerald-800" : "bg-red-50 dark:bg-red-950/40 border-red-200 dark:border-red-800"
         }`}>
           <div className="flex items-center gap-1.5 mb-1">
             {isCorrect ? (
-              <><CheckCircle2 className="w-4 h-4 text-emerald-600" /><span className="text-sm font-bold text-emerald-700">Benar!</span></>
+              <><CheckCircle2 className="w-4 h-4 text-emerald-600" /><span className="text-sm font-bold text-emerald-700 dark:text-emerald-300">Benar!</span></>
             ) : (
-              <><XCircle className="w-4 h-4 text-red-600" /><span className="text-sm font-bold text-red-700">Kurang tepat</span></>
+              <><XCircle className="w-4 h-4 text-red-600 dark:text-red-400" /><span className="text-sm font-bold text-red-700 dark:text-red-300">Kurang tepat</span></>
             )}
           </div>
           {!isCorrect && (
-            <p className="text-xs text-gray-500 mb-1">Jawaban benar: <strong className="text-gray-800">{getJawabanBenar(soal)}</strong></p>
+            <p className="text-xs text-gray-500 mb-1">Jawaban benar: <strong className="text-gray-800 dark:text-slate-200">{getJawabanBenar(soal)}</strong></p>
           )}
-          <p className="text-sm text-gray-600 mt-1">{soal.penjelasan}</p>
+          <p className="text-sm text-gray-600 dark:text-slate-300 mt-1">{soal.penjelasan}</p>
         </div>
       )}
 

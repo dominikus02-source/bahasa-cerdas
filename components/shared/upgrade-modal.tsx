@@ -81,7 +81,7 @@ export function UpgradeModal({ isOpen, onClose, feature, used, limit }: UpgradeM
     <Modal isOpen={isOpen} onClose={onClose} className="max-w-md">
       <div className="text-center">
         <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-r from-amber-400 to-orange-500 shadow-lg">
-          <Crown className="h-8 w-8 text-black" />
+          <Crown className="h-8 w-8 text-black dark:text-slate-100" />
         </div>
         <h2 className="text-2xl font-bold">Upgrade ke PRO</h2>
         {feature && (
@@ -93,13 +93,13 @@ export function UpgradeModal({ isOpen, onClose, feature, used, limit }: UpgradeM
       </div>
 
       {errorMsg && (
-        <div className="mt-4 rounded-xl bg-red-50 border border-red-200 p-3 text-sm text-red-700 flex items-center gap-2">
+        <div className="mt-4 rounded-xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800 p-3 text-sm text-red-700 dark:text-red-300 flex items-center gap-2">
           <AlertCircle size={16} className="shrink-0" /> {errorMsg}
         </div>
       )}
 
       <div className="mt-6 space-y-3">
-        <div className="rounded-xl border-2 border-blue-200 bg-blue-50 p-4">
+        <div className="rounded-xl border-2 border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-950/40 p-4">
           <div className="flex items-center justify-between">
             <div>
               <Badge variant="warning" className="mb-1">BEST VALUE</Badge>
@@ -107,7 +107,7 @@ export function UpgradeModal({ isOpen, onClose, feature, used, limit }: UpgradeM
               <p className="text-xs text-muted-foreground">Hemat Rp 189.000</p>
             </div>
             <div className="text-right">
-              <p className="text-2xl font-bold text-blue-700">Rp 399.000</p>
+              <p className="text-2xl font-bold text-blue-700 dark:text-blue-300">Rp 399.000</p>
               <p className="text-xs text-muted-foreground">/tahun</p>
             </div>
           </div>
@@ -133,7 +133,7 @@ export function UpgradeModal({ isOpen, onClose, feature, used, limit }: UpgradeM
         </div>
       </div>
 
-      <div className="mt-6 rounded-lg bg-gray-50 p-4">
+      <div className="mt-6 rounded-lg bg-gray-50 dark:bg-slate-800/60 p-4">
         <p className="mb-2 text-sm font-semibold">Benefit PRO:</p>
         <ul className="space-y-2 text-xs text-muted-foreground">
           {[
@@ -145,7 +145,7 @@ export function UpgradeModal({ isOpen, onClose, feature, used, limit }: UpgradeM
             "Akses semua fitur Pro",
           ].map((benefit, i) => (
             <li key={i} className="flex items-center gap-2">
-              <Check className="h-3.5 w-3.5 text-emerald-500" />
+              <Check className="h-3.5 w-3.5 text-emerald-500 dark:text-emerald-400" />
               {benefit}
             </li>
           ))}
@@ -155,7 +155,7 @@ export function UpgradeModal({ isOpen, onClose, feature, used, limit }: UpgradeM
       <p className="mt-4 text-center text-[11px] text-muted-foreground">
         Guru terverifikasi bisa jadi Pro hanya <strong>Rp 1.000/bulan</strong> — pakai kode{" "}
         <span className="font-mono font-semibold">bcgurucerdas1000</span> di halaman{" "}
-        <a href="/guru/berlangganan" className="text-emerald-600 hover:underline">Berlangganan</a>.
+        <a href="/guru/berlangganan" className="text-emerald-600 dark:text-emerald-400 hover:underline">Berlangganan</a>.
       </p>
     </Modal>
   );

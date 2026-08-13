@@ -153,7 +153,7 @@ export default function LessonPage({ params }: { params: Promise<{ unitId: strin
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-violet-50 to-purple-100">
-        <Loader2 className="w-8 h-8 text-violet-500 animate-spin" />
+        <Loader2 className="w-8 h-8 text-violet-500 dark:text-violet-400 animate-spin" />
       </div>
     )
   }
@@ -161,8 +161,8 @@ export default function LessonPage({ params }: { params: Promise<{ unitId: strin
   if (error || !unit) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center p-4">
-        <p className="text-red-500 mb-4">{error || "Unit tidak ditemukan"}</p>
-        <button onClick={() => router.push("/arena/jalur-cerdas")} className="text-violet-600 underline">
+        <p className="text-red-500 dark:text-red-400 mb-4">{error || "Unit tidak ditemukan"}</p>
+        <button onClick={() => router.push("/arena/jalur-cerdas")} className="text-violet-600 dark:text-violet-400 underline">
           Kembali
         </button>
       </div>
@@ -173,9 +173,9 @@ export default function LessonPage({ params }: { params: Promise<{ unitId: strin
     return (
       <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-gradient-to-br from-violet-50 to-purple-100">
         <BookOpen className="w-12 h-12 text-violet-300 mb-3" />
-        <p className="text-gray-600 font-medium text-lg">Belum ada soal</p>
+        <p className="text-gray-600 dark:text-slate-300 font-medium text-lg">Belum ada soal</p>
         <p className="text-gray-400 text-sm mt-1">Soal untuk unit ini sedang disiapkan</p>
-        <button onClick={() => router.push("/arena/jalur-cerdas")} className="mt-6 text-violet-600 underline text-sm">
+        <button onClick={() => router.push("/arena/jalur-cerdas")} className="mt-6 text-violet-600 dark:text-violet-400 underline text-sm">
           Kembali
         </button>
       </div>
@@ -190,7 +190,7 @@ export default function LessonPage({ params }: { params: Promise<{ unitId: strin
     return (
       <div className="min-h-screen flex flex-col bg-gradient-to-br from-violet-500 to-purple-700 px-6">
         <div className="flex-1 flex flex-col items-center justify-center text-center">
-          <div className={`${isDasar ? "w-24 h-24" : "w-20 h-20"} bg-white/20 rounded-3xl flex items-center justify-center mb-6`}>
+          <div className={`${isDasar ? "w-24 h-24" : "w-20 h-20"} bg-white bg-white/20 dark:bg-slate-900/20 rounded-3xl flex items-center justify-center mb-6`}>
             <UnitIcon emoji={unit.emoji} className={`${isDasar ? "w-12 h-12" : "w-10 h-10"} text-white`} />
           </div>
           <h1 className={`${isDasar ? "text-3xl" : "text-2xl"} font-extrabold text-white mb-2`}>{unit.title}</h1>
@@ -208,7 +208,7 @@ export default function LessonPage({ params }: { params: Promise<{ unitId: strin
           </div>
           <button
             onClick={() => setPhase("lesson")}
-            className={`bg-white text-violet-700 font-bold ${isDasar ? "text-xl px-12 py-5" : "text-lg px-10 py-4"} rounded-2xl shadow-xl hover:scale-105 transition-transform active:scale-95`}
+ className={`bg-white dark:bg-slate-800/90 text-violet-700 dark:text-violet-300 font-bold ${isDasar ? "text-xl px-12 py-5" : "text-lg px-10 py-4"} rounded-2xl shadow-xl hover:scale-105 transition-transform active:scale-95`}
           >
             {lesson ? "Mulai Belajar" : "Mulai latihan"}
           </button>
@@ -221,30 +221,30 @@ export default function LessonPage({ params }: { params: Promise<{ unitId: strin
   if (phase === "lesson" && lesson) {
     return (
       <div className="min-h-screen flex flex-col bg-gradient-to-br from-violet-50 to-purple-100">
-        <div className="sticky top-0 z-10 bg-white/80 backdrop-blur-sm px-4 py-3 flex items-center gap-3">
-          <button onClick={() => router.push(`/arena/jalur-cerdas/${unitId}`)} className="text-gray-500 hover:text-gray-700">
+ <div className="sticky top-0 z-10 bg-white bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm px-4 py-3 flex items-center gap-3">
+          <button onClick={() => router.push(`/arena/jalur-cerdas/${unitId}`)} className="text-gray-500 hover:text-gray-700 dark:text-slate-300">
             <ArrowLeft className="w-5 h-5" />
           </button>
-          <span className="text-sm font-semibold text-gray-500">Materi Belajar</span>
+          <span className="text-sm font-semibold text-gray-500 dark:text-slate-400">Materi Belajar</span>
         </div>
 
         <div className="flex-1 overflow-y-auto px-4 pb-8">
           {/* Summary Card */}
-          <div className={`bg-white rounded-2xl shadow-sm border border-violet-100 p-6 mb-4 mt-4 ${isDasar ? "text-lg" : isMenengah ? "text-base" : "text-sm"}`}>
+          <div className={`bg-white dark:bg-slate-800/90 rounded-2xl shadow-sm border border-violet-100 p-6 mb-4 mt-4 ${isDasar ? "text-lg" : isMenengah ? "text-base" : "text-sm"}`}>
             <div className="flex items-center gap-2 mb-3">
-              <Star className={`${isDasar ? "w-6 h-6" : "w-5 h-5"} text-violet-500`} />
+              <Star className={`${isDasar ? "w-6 h-6" : "w-5 h-5"} text-violet-500 dark:text-violet-400`} />
               <h2 className={`font-bold text-violet-900 ${isDasar ? "text-xl" : "text-lg"}`}>Ringkasan</h2>
             </div>
-            <p className={`text-gray-700 leading-relaxed ${isDasar ? "text-lg" : ""}`}>{lesson.summary}</p>
+            <p className={`text-gray-700 dark:text-slate-300 leading-relaxed ${isDasar ? "text-lg" : ""}`}>{lesson.summary}</p>
           </div>
 
           {/* Explanation Card */}
-          <div className="bg-white rounded-2xl shadow-sm border border-indigo-100 p-6 mb-4">
+          <div className="bg-white dark:bg-slate-800/90 rounded-2xl shadow-sm border border-indigo-100 p-6 mb-4">
             <div className="flex items-center gap-2 mb-3">
               <BookOpen className={`${isDasar ? "w-6 h-6" : "w-5 h-5"} text-indigo-500`} />
               <h2 className={`font-bold text-indigo-900 ${isDasar ? "text-xl" : "text-lg"}`}>Penjelasan</h2>
             </div>
-            <p className={`text-gray-700 leading-relaxed ${isDasar ? "text-lg" : isMenengah ? "text-base" : "text-sm"}`}>
+            <p className={`text-gray-700 dark:text-slate-300 leading-relaxed ${isDasar ? "text-lg" : isMenengah ? "text-base" : "text-sm"}`}>
               {lesson.explanation}
             </p>
           </div>
@@ -255,11 +255,11 @@ export default function LessonPage({ params }: { params: Promise<{ unitId: strin
               <h3 className="font-bold text-amber-800 text-base mb-3 px-1">Contoh</h3>
               <div className="space-y-3">
                 {lesson.examples.map((ex, i) => (
-                  <div key={i} className={`bg-amber-50 border border-amber-200 rounded-2xl p-4 ${isDasar ? "text-lg" : "text-sm"}`}>
+                  <div key={i} className={`bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 rounded-2xl p-4 ${isDasar ? "text-lg" : "text-sm"}`}>
                     <p className="font-semibold text-amber-900 mb-1">{ex.label}</p>
                     <p className={`text-amber-800 ${isDasar ? "text-lg" : ""}`}>{ex.text}</p>
                     {ex.note && (
-                      <p className={`mt-1 text-amber-600 italic ${isDasar ? "text-base" : "text-xs"}`}>{ex.note}</p>
+                      <p className={`mt-1 text-amber-600 dark:text-amber-400 italic ${isDasar ? "text-base" : "text-xs"}`}>{ex.note}</p>
                     )}
                   </div>
                 ))}
@@ -276,7 +276,7 @@ export default function LessonPage({ params }: { params: Promise<{ unitId: strin
               </div>
               <ul className="space-y-2">
                 {lesson.tips.map((tip, i) => (
-                  <li key={i} className={`flex items-start gap-2 text-gray-700 ${isDasar ? "text-lg" : "text-sm"}`}>
+                  <li key={i} className={`flex items-start gap-2 text-gray-700 dark:text-slate-300 ${isDasar ? "text-lg" : "text-sm"}`}>
                     <Sparkles className="w-4 h-4 text-cyan-500 mt-0.5 shrink-0" />
                     {tip}
                   </li>
@@ -306,7 +306,7 @@ export default function LessonPage({ params }: { params: Promise<{ unitId: strin
     return (
       <div className="min-h-screen flex flex-col bg-gradient-to-br from-emerald-500 to-teal-700 px-6">
         <div className="flex-1 flex flex-col items-center justify-center text-center">
-          <div className="w-24 h-24 bg-white/20 rounded-full flex items-center justify-center mb-6">
+          <div className="w-24 h-24 bg-white bg-white/20 dark:bg-slate-900/20 rounded-full flex items-center justify-center mb-6">
             {passed ? (
               <Trophy className="w-12 h-12 text-yellow-300" />
             ) : (
@@ -321,9 +321,9 @@ export default function LessonPage({ params }: { params: Promise<{ unitId: strin
               ? `Kamu menjawab ${correctCount} dari ${questions.length} soal dengan benar`
               : "Coba lagi untuk nilai yang lebih baik"}
           </p>
-          <div className="w-48 h-2 bg-white/20 rounded-full mb-4">
+          <div className="w-48 h-2 bg-white bg-white/20 dark:bg-slate-900/20 rounded-full mb-4">
             <div
-              className="h-full bg-white rounded-full transition-all"
+              className="h-full bg-white dark:bg-slate-800/90 rounded-full transition-all"
               style={{ width: `${pct}%` }}
             />
           </div>
@@ -331,7 +331,7 @@ export default function LessonPage({ params }: { params: Promise<{ unitId: strin
             {pct}%
           </p>
           {earnedXp > 0 && (
-            <div className="mt-4 flex items-center gap-2 bg-white/20 px-4 py-2 rounded-xl">
+            <div className="mt-4 flex items-center gap-2 bg-white bg-white/20 dark:bg-slate-900/20 px-4 py-2 rounded-xl">
               <Zap className="w-5 h-5 text-yellow-300" />
               <span className="text-white font-bold">+{earnedXp} XP</span>
               {unit.coinReward ? (
@@ -350,7 +350,7 @@ export default function LessonPage({ params }: { params: Promise<{ unitId: strin
             {nextUnitId && (
               <button
                 onClick={() => router.push(`/arena/jalur-cerdas/${nextUnitId}`)}
-                className="flex items-center justify-center gap-2 bg-white text-emerald-700 font-bold text-lg px-7 py-3.5 rounded-2xl shadow-xl hover:scale-105 transition-transform"
+ className="flex items-center justify-center gap-2 bg-white dark:bg-slate-800/90 text-emerald-700 dark:text-emerald-300 font-bold text-lg px-7 py-3.5 rounded-2xl shadow-xl hover:scale-105 transition-transform"
               >
                 Lanjut ke unit berikutnya
                 <ArrowRight className="w-5 h-5" />
@@ -358,7 +358,7 @@ export default function LessonPage({ params }: { params: Promise<{ unitId: strin
             )}
             <button
               onClick={() => router.push("/arena/jalur-cerdas")}
-              className="bg-white/20 text-white font-semibold px-5 py-3 rounded-xl hover:bg-white/30 transition-colors"
+ className="bg-white bg-white/20 dark:bg-slate-900/20 text-white font-semibold px-5 py-3 rounded-xl hover:bg-white bg-white/30 transition-colors"
             >
               Kembali
             </button>
@@ -371,7 +371,7 @@ export default function LessonPage({ params }: { params: Promise<{ unitId: strin
                 setEarnedXp(0)
                 setPhase("question")
               }}
-              className="bg-white text-violet-700 font-bold px-5 py-3 rounded-xl hover:scale-105 transition-transform"
+ className="bg-white dark:bg-slate-800/90 text-violet-700 dark:text-violet-300 font-bold px-5 py-3 rounded-xl hover:scale-105 transition-transform"
             >
               Ulangi
             </button>
@@ -398,9 +398,9 @@ export default function LessonPage({ params }: { params: Promise<{ unitId: strin
   return (
     <div className={`min-h-screen flex flex-col bg-gradient-to-br ${tema.latar} transition-colors duration-500`}>
       {/* Progress bar */}
-      <div className="sticky top-0 z-10 bg-white/80 backdrop-blur-sm">
+ <div className="sticky top-0 z-10 bg-white bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm">
         <div className="flex items-center gap-3 px-4 py-3">
-          <button onClick={() => router.push(`/arena/jalur-cerdas/${unitId}`)} className="text-gray-500 hover:text-gray-700">
+          <button onClick={() => router.push(`/arena/jalur-cerdas/${unitId}`)} className="text-gray-500 hover:text-gray-700 dark:text-slate-300">
             <ArrowLeft className="w-5 h-5" />
           </button>
           <div className="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
@@ -409,7 +409,7 @@ export default function LessonPage({ params }: { params: Promise<{ unitId: strin
               style={{ width: `${progressPct}%`, background: tema.garis }}
             />
           </div>
-          <span className="text-xs font-semibold text-gray-500 shrink-0">
+          <span className="text-xs font-semibold text-gray-500 dark:text-slate-400 shrink-0">
             {result ? currentIdx + 1 : currentIdx}/{questions.length}
           </span>
         </div>
@@ -425,30 +425,30 @@ export default function LessonPage({ params }: { params: Promise<{ unitId: strin
           />
 
           {/* Question card */}
-          <div className={`bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-4 ${isDasar ? "text-lg" : "text-base"}`}>
+ <div className={`bg-white dark:bg-slate-800/90 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800 p-6 mb-4 ${isDasar ? "text-lg" : "text-base"}`}>
             <p className={`font-bold mb-2 ${isDasar ? "text-base" : "text-sm"}`} style={{ color: tema.garis }}>
               {q.tipe === "pilihan_ganda" ? "Pilih jawaban yang tepat" :
                q.tipe === "benar_salah" ? "Benar atau salah?" :
                "Isilah titik-titik"}
             </p>
-            <p className={`font-semibold text-gray-900 leading-relaxed ${isDasar ? "text-xl" : "text-lg"}`}>{q.soal}</p>
+            <p className={`font-semibold text-gray-900 dark:text-slate-100 leading-relaxed ${isDasar ? "text-xl" : "text-lg"}`}>{q.soal}</p>
           </div>
 
           {/* Result feedback */}
           {isResult && result && (
-            <div className={`rounded-2xl p-5 mb-4 ${result.correct ? "bg-emerald-50 border border-emerald-200" : "bg-red-50 border border-red-200"}`}>
+            <div className={`rounded-2xl p-5 mb-4 ${result.correct ? "bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800" : "bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800"}`}>
               <div className="flex items-center gap-2 mb-2">
                 {result.correct ? (
-                  <CheckCircle2 className="w-6 h-6 text-emerald-500" />
+                  <CheckCircle2 className="w-6 h-6 text-emerald-500 dark:text-emerald-400" />
                 ) : (
-                  <XCircle className="w-6 h-6 text-red-500" />
+                  <XCircle className="w-6 h-6 text-red-500 dark:text-red-400" />
                 )}
-                <span className={`font-bold ${result.correct ? "text-emerald-700" : "text-red-700"}`}>
+                <span className={`font-bold ${result.correct ? "text-emerald-700 dark:text-emerald-300" : "text-red-700"}`}>
                   {result.correct ? "Benar!" : "Kurang tepat"}
                 </span>
               </div>
               {result.explanation && (
-                <p className="text-sm text-gray-600 ml-8">{result.explanation}</p>
+                <p className="text-sm text-gray-600 dark:text-slate-300 ml-8">{result.explanation}</p>
               )}
             </div>
           )}
@@ -478,7 +478,7 @@ export default function LessonPage({ params }: { params: Promise<{ unitId: strin
                   >
                     {String.fromCharCode(65 + i)}
                   </span>
-                  <span className="flex-1 text-gray-800">{opt}</span>
+                  <span className="flex-1 text-gray-800 dark:text-slate-200">{opt}</span>
                 </button>
               ))}
               {q.tipe === "benar_salah" && (
@@ -487,24 +487,24 @@ export default function LessonPage({ params }: { params: Promise<{ unitId: strin
                     onClick={() => handleAnswer("Benar")}
                     disabled={submitting}
                     className={`flex-1 p-4 rounded-2xl border-2 font-semibold transition-all
-                      ${selectedAnswer === "Benar" ? "border-emerald-500 bg-emerald-50" : "border-gray-200 bg-white hover:border-emerald-300 hover:bg-emerald-50/50"}
+ ${selectedAnswer === "Benar" ? "border-emerald-500 bg-emerald-50" : "border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800/90 hover:border-emerald-300 hover:bg-emerald-50/50"}
                       ${submitting ? "opacity-50 cursor-not-allowed" : ""}
                       ${isDasar ? "p-5 text-lg" : "text-base"}
                     `}
                   >
-                    <CheckCircle2 className={`text-emerald-500 inline mr-2 ${isDasar ? "w-6 h-6" : "w-5 h-5"}`} />
+                    <CheckCircle2 className={`text-emerald-500 dark:text-emerald-400 inline mr-2 ${isDasar ? "w-6 h-6" : "w-5 h-5"}`} />
                     Benar
                   </button>
                   <button
                     onClick={() => handleAnswer("Salah")}
                     disabled={submitting}
                     className={`flex-1 p-4 rounded-2xl border-2 font-semibold transition-all
-                      ${selectedAnswer === "Salah" ? "border-red-500 bg-red-50" : "border-gray-200 bg-white hover:border-red-300 hover:bg-red-50/50"}
+ ${selectedAnswer === "Salah" ? "border-red-500 bg-red-50" : "border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800/90 hover:border-red-300 hover:bg-red-50/50"}
                       ${submitting ? "opacity-50 cursor-not-allowed" : ""}
                       ${isDasar ? "p-5 text-lg" : "text-base"}
                     `}
                   >
-                    <XCircle className={`text-red-500 inline mr-2 ${isDasar ? "w-6 h-6" : "w-5 h-5"}`} />
+                    <XCircle className={`text-red-500 dark:text-red-400 inline mr-2 ${isDasar ? "w-6 h-6" : "w-5 h-5"}`} />
                     Salah
                   </button>
                 </div>
@@ -520,7 +520,7 @@ export default function LessonPage({ params }: { params: Promise<{ unitId: strin
                         handleAnswer((e.target as HTMLInputElement).value.trim())
                       }
                     }}
-                    className={`flex-1 rounded-2xl border-2 border-gray-200 bg-white font-medium focus:border-violet-500 focus:outline-none ${isDasar ? "p-5 text-lg" : "p-4 text-base"}`}
+ className={`flex-1 rounded-2xl border-2 border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800/90 font-medium focus:border-violet-500 focus:outline-none ${isDasar ? "p-5 text-lg" : "p-4 text-base"}`}
                     placeholder="Ketik jawaban..."
                   />
                   <button

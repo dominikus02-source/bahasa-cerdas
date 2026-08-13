@@ -118,7 +118,7 @@ export default async function BerandaPage() {
       {/* ── 1. ARENA RANK HERO — player identity (light premium canvas) ── */}
       <section
         aria-label="Identitas pemain"
-        className="relative overflow-hidden rounded-2xl border border-violet-100 bg-gradient-to-br from-violet-50 via-white to-indigo-50 shadow-sm dark:border-violet-500/20 dark:from-slate-900 dark:via-slate-900 dark:to-slate-900"
+ className="relative overflow-hidden rounded-2xl border border-violet-100 bg-gradient-to-br from-violet-50 via-white to-indigo-50 shadow-sm dark:border-violet-500/20 dark:from-slate-900 dark:via-slate-900 dark:to-slate-900"
       >
         <div className="pointer-events-none absolute -right-14 -top-14 h-52 w-52 rounded-full bg-violet-200/40 blur-3xl dark:bg-violet-500/10" />
         <div className="pointer-events-none absolute -bottom-16 -left-12 h-44 w-44 rounded-full bg-amber-100/60 blur-3xl dark:bg-amber-500/5" />
@@ -137,7 +137,7 @@ export default async function BerandaPage() {
                 <h1 className="truncate text-lg font-black text-gray-900 md:text-xl dark:text-white">{nameOf(user)}</h1>
                 <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
                   <RankChip rank={displayRank} size={16} />
-                  <span className="rounded-full bg-violet-100 px-2.5 py-0.5 text-[11px] font-bold text-violet-700 dark:bg-violet-500/15 dark:text-violet-300">
+ <span className="rounded-full bg-violet-100 px-2.5 py-0.5 text-[11px] font-bold text-violet-700 dark:bg-violet-500/15 dark:text-violet-300">
                     Tingkat {displayLevel}
                   </span>
                 </div>
@@ -146,16 +146,16 @@ export default async function BerandaPage() {
 
             {/* Stat ringkas — streak / XP / koin */}
             <div className="flex flex-wrap items-center gap-2">
-              <span title="Rentetan harian" className="flex items-center gap-1.5 rounded-full border border-gray-100 bg-white px-3 py-1.5 text-xs font-bold text-gray-900 shadow-sm dark:border-slate-700 dark:bg-slate-800/80 dark:text-slate-100">
-                <Flame className="h-3.5 w-3.5 text-orange-500" /> {user.streak || 0}
+ <span title="Rentetan harian" className="flex items-center gap-1.5 rounded-full border border-gray-100 bg-white px-3 py-1.5 text-xs font-bold text-gray-900 shadow-sm dark:border-slate-700 dark:bg-slate-800/80 dark:text-slate-100">
+                <Flame className="h-3.5 w-3.5 text-orange-500 dark:text-orange-400" /> {user.streak || 0}
                 <span className="font-medium text-gray-400 dark:text-slate-500">hari</span>
               </span>
-              <span title="Total XP" className="flex items-center gap-1.5 rounded-full border border-gray-100 bg-white px-3 py-1.5 text-xs font-bold text-gray-900 shadow-sm dark:border-slate-700 dark:bg-slate-800/80 dark:text-slate-100">
+ <span title="Total XP" className="flex items-center gap-1.5 rounded-full border border-gray-100 bg-white px-3 py-1.5 text-xs font-bold text-gray-900 shadow-sm dark:border-slate-700 dark:bg-slate-800/80 dark:text-slate-100">
                 <Zap className="h-3.5 w-3.5 text-violet-600 dark:text-violet-400" /> {totalXp.toLocaleString()}
                 <span className="font-medium text-gray-400 dark:text-slate-500">XP</span>
               </span>
-              <span title="Koin" className="flex items-center gap-1.5 rounded-full border border-gray-100 bg-white px-3 py-1.5 text-xs font-bold text-gray-900 shadow-sm dark:border-slate-700 dark:bg-slate-800/80 dark:text-slate-100">
-                <Coins className="h-3.5 w-3.5 text-amber-500" /> {user.coins || 0}
+ <span title="Koin" className="flex items-center gap-1.5 rounded-full border border-gray-100 bg-white px-3 py-1.5 text-xs font-bold text-gray-900 shadow-sm dark:border-slate-700 dark:bg-slate-800/80 dark:text-slate-100">
+                <Coins className="h-3.5 w-3.5 text-amber-500 dark:text-amber-400" /> {user.coins || 0}
               </span>
             </div>
           </div>
@@ -180,14 +180,14 @@ export default async function BerandaPage() {
               {adaMisiAktif && (
                 <Link
                   href="/arena/misi"
-                  className="flex shrink-0 items-center gap-1.5 rounded-xl bg-violet-600 px-4 py-2.5 text-sm font-extrabold text-white shadow-sm shadow-violet-600/30 transition-all hover:bg-violet-500 active:scale-[0.98] dark:bg-violet-500 dark:hover:bg-violet-400"
+ className="flex shrink-0 items-center gap-1.5 rounded-xl bg-violet-600 px-4 py-2.5 text-sm font-extrabold text-white shadow-sm shadow-violet-600/30 transition-all hover:bg-violet-500 active:scale-[0.98] dark:bg-violet-500 dark:hover:bg-violet-400"
                 >
                   Lanjutkan Misi <ChevronRight className="h-4 w-4" />
                 </Link>
               )}
               <Link
                 href={profileHref}
-                className="flex shrink-0 items-center gap-1.5 rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm font-bold text-gray-700 shadow-sm transition-all hover:border-violet-200 hover:text-violet-700 dark:border-slate-700 dark:bg-slate-800/80 dark:text-slate-200 dark:hover:border-violet-500/40 dark:hover:text-violet-300"
+ className="flex shrink-0 items-center gap-1.5 rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm font-bold text-gray-700 shadow-sm transition-all hover:border-violet-200 hover:text-violet-700 dark:border-slate-700 dark:bg-slate-800/80 dark:text-slate-200 :border-violet-500/40 dark:hover:text-violet-300"
               >
                 Lihat Profil <ChevronRight className="h-4 w-4" />
               </Link>
@@ -218,10 +218,10 @@ export default async function BerandaPage() {
               <span className="flex items-center gap-1.5 rounded-full bg-amber-400/90 px-3 py-1.5 text-[11px] font-extrabold text-amber-950">
                 <Zap size={12} /> +80 XP
               </span>
-              <span className="flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1.5 text-[11px] font-bold text-slate-200 backdrop-blur">
+              <span className="flex items-center gap-1.5 rounded-full bg-white bg-white/10 dark:bg-slate-900/10 px-3 py-1.5 text-[11px] font-bold text-slate-200 backdrop-blur">
                 <Clock size={12} /> ±5 menit
               </span>
-              <span className="flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1.5 text-[11px] font-bold text-slate-200 backdrop-blur">
+              <span className="flex items-center gap-1.5 rounded-full bg-white bg-white/10 dark:bg-slate-900/10 px-3 py-1.5 text-[11px] font-bold text-slate-200 backdrop-blur">
                 <Users size={12} /> 2–8 pemain
               </span>
             </div>
@@ -238,8 +238,8 @@ export default async function BerandaPage() {
       {/* ── 3. ARENA ACTIONS — 3 activity cards (MISI / LIGA / GIM) ── */}
       <section aria-label="Aksi Arena">
         <div className="grid gap-4 md:grid-cols-3">
-          <Link href="/arena/misi" className="group flex items-center gap-3.5 rounded-2xl border border-gray-100 bg-white p-4 shadow-sm transition-all hover:-translate-y-0.5 hover:border-violet-200 hover:shadow-md hover:shadow-violet-500/[0.06] dark:border-slate-700/60 dark:bg-slate-800/70 dark:hover:border-violet-500/30">
-            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-violet-100 text-violet-600 dark:bg-violet-500/15 dark:text-violet-300">
+ <Link href="/arena/misi" className="group flex items-center gap-3.5 rounded-2xl border border-gray-100 bg-white p-4 shadow-sm transition-all hover:-translate-y-0.5 hover:border-violet-200 hover:shadow-md hover:shadow-violet-500/[0.06] dark:border-slate-700/60 dark:bg-slate-800/70 dark:hover:border-violet-500/30">
+ <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-violet-100 text-violet-600 dark:bg-violet-500/15 dark:text-violet-300">
               <Target size={20} />
             </span>
             <div className="min-w-0 flex-1">
@@ -248,8 +248,8 @@ export default async function BerandaPage() {
               <span className="mt-1 inline-block text-[11px] font-bold text-violet-600 dark:text-violet-400">Lanjutkan Misi →</span>
             </div>
           </Link>
-          <Link href="/arena/league" className="group flex items-center gap-3.5 rounded-2xl border border-gray-100 bg-white p-4 shadow-sm transition-all hover:-translate-y-0.5 hover:border-amber-200 hover:shadow-md hover:shadow-amber-500/[0.06] dark:border-slate-700/60 dark:bg-slate-800/70 dark:hover:border-amber-500/30">
-            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-amber-100 text-amber-600 dark:bg-amber-500/15 dark:text-amber-300">
+ <Link href="/arena/league" className="group flex items-center gap-3.5 rounded-2xl border border-gray-100 bg-white p-4 shadow-sm transition-all hover:-translate-y-0.5 hover:border-amber-200 hover:shadow-md hover:shadow-amber-500/[0.06] dark:border-slate-700/60 dark:bg-slate-800/70 dark:hover:border-amber-500/30">
+ <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-amber-100 text-amber-600 dark:bg-amber-500/15 dark:text-amber-300">
               <Trophy size={20} />
             </span>
             <div className="min-w-0 flex-1">
@@ -260,8 +260,8 @@ export default async function BerandaPage() {
               <span className="mt-1 inline-block text-[11px] font-bold text-amber-600 dark:text-amber-400">Kejar Peringkat →</span>
             </div>
           </Link>
-          <Link href="/arena/game" className="group flex items-center gap-3.5 rounded-2xl border border-gray-100 bg-white p-4 shadow-sm transition-all hover:-translate-y-0.5 hover:border-indigo-200 hover:shadow-md hover:shadow-indigo-500/[0.06] dark:border-slate-700/60 dark:bg-slate-800/70 dark:hover:border-indigo-500/30">
-            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-indigo-100 text-indigo-600 dark:bg-indigo-500/15 dark:text-indigo-300">
+ <Link href="/arena/game" className="group flex items-center gap-3.5 rounded-2xl border border-gray-100 bg-white p-4 shadow-sm transition-all hover:-translate-y-0.5 hover:border-indigo-200 hover:shadow-md hover:shadow-indigo-500/[0.06] dark:border-slate-700/60 dark:bg-slate-800/70 dark:hover:border-indigo-500/30">
+ <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-indigo-100 text-indigo-600 dark:bg-indigo-500/15 dark:text-indigo-300">
               <Gamepad2 size={20} />
             </span>
             <div className="min-w-0 flex-1">
@@ -276,7 +276,7 @@ export default async function BerandaPage() {
       {/* ── 4. KOMPETISI MINGGU INI — jantung Arena (Misi + Liga) ── */}
       <section aria-label="Kompetisi Minggu Ini">
         <div className="mb-4 flex items-center gap-2.5">
-          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-violet-100 text-violet-600 dark:bg-violet-500/15 dark:text-violet-300">
+ <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-violet-100 text-violet-600 dark:bg-violet-500/15 dark:text-violet-300">
             <Medal size={18} />
           </span>
           <div>
@@ -287,12 +287,12 @@ export default async function BerandaPage() {
 
         <div className="grid gap-4 lg:grid-cols-2">
           {/* Misi Hari Ini */}
-          <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm dark:border-slate-700/60 dark:bg-slate-800/70">
+ <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm dark:border-slate-700/60 dark:bg-slate-800/70">
             <div className="mb-3.5 flex items-center justify-between">
               <h3 className="flex items-center gap-2 text-sm font-bold text-gray-900 dark:text-slate-100">
-                <Target size={16} className="text-violet-500" /> Misi Hari Ini
+                <Target size={16} className="text-violet-500 dark:text-violet-400" /> Misi Hari Ini
               </h3>
-              <span className="rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-bold text-emerald-600 dark:bg-emerald-500/15 dark:text-emerald-400">
+ <span className="rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-bold text-emerald-600 dark:bg-emerald-500/15 dark:text-emerald-400">
                 {doneQuest}/{totalQuest} selesai
               </span>
             </div>
@@ -310,11 +310,11 @@ export default async function BerandaPage() {
                   const pct = Math.min(100, (Math.min(q.progress, q.target) / Math.max(q.target, 1)) * 100)
                   return (
                     <div key={q.id} className="flex items-center gap-3 py-2">
-                      <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full ${q.completed ? "bg-emerald-100 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400" : `bg-gradient-to-br ${meta.warna} text-white`}`}>
+ <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full ${q.completed ? "bg-emerald-100 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400" : `bg-gradient-to-br ${meta.warna} text-white`}`}>
                         {q.completed ? <CheckCircle2 size={18} /> : <meta.Icon size={16} />}
                       </div>
                       <div className="min-w-0 flex-1">
-                        <p className={`text-sm font-semibold ${q.completed ? "text-gray-400 line-through dark:text-slate-500" : "text-gray-900 dark:text-slate-100"}`}>{meta.label}</p>
+ <p className={`text-sm font-semibold ${q.completed ? "text-gray-400 line-through dark:text-slate-500" : "text-gray-900 dark:text-slate-100"}`}>{meta.label}</p>
                         {!q.completed && (
                           <div className="mt-1 flex items-center gap-2">
                             <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-gray-100 dark:bg-slate-700">
@@ -334,16 +334,16 @@ export default async function BerandaPage() {
                 })}
               </div>
             )}
-            <Link href="/arena/misi" className="mt-3 flex items-center justify-center gap-1 rounded-xl bg-violet-50 py-2 text-xs font-bold text-violet-700 transition-colors hover:bg-violet-100 dark:bg-violet-500/10 dark:text-violet-300 dark:hover:bg-violet-500/20">
+ <Link href="/arena/misi" className="mt-3 flex items-center justify-center gap-1 rounded-xl bg-violet-50 py-2 text-xs font-bold text-violet-700 transition-colors hover:bg-violet-100 dark:bg-violet-500/10 dark:text-violet-300 dark:hover:bg-violet-500/20">
               Lanjutkan Misi <ChevronRight className="h-3.5 w-3.5" />
             </Link>
           </div>
 
           {/* Liga Minggu Ini */}
-          <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm dark:border-slate-700/60 dark:bg-slate-800/70">
+ <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm dark:border-slate-700/60 dark:bg-slate-800/70">
             <div className="mb-3.5 flex items-center justify-between">
               <h3 className="flex items-center gap-2 text-sm font-bold text-gray-900 dark:text-slate-100">
-                <Trophy size={16} className="text-amber-500" /> Liga Minggu Ini
+                <Trophy size={16} className="text-amber-500 dark:text-amber-400" /> Liga Minggu Ini
               </h3>
               <Link href="/arena/league" className="text-xs font-semibold text-violet-600 hover:text-violet-700 dark:text-violet-400">
                 Lihat Liga
@@ -362,11 +362,11 @@ export default async function BerandaPage() {
                   </div>
                 </div>
                 {competition.above && competition.my && competition.my.rank > 1 ? (
-                  <p className="rounded-lg bg-amber-50 px-3 py-2 text-xs font-semibold text-amber-800 dark:bg-amber-500/10 dark:text-amber-200">
+ <p className="rounded-lg bg-amber-50 px-3 py-2 text-xs font-semibold text-amber-800 dark:bg-amber-500/10 dark:text-amber-200">
                     Hanya <span className="font-black">{competition.gapToNext.toLocaleString("id-ID")} XP</span> di depanmu — kejar #{competition.above.rank}!
                   </p>
                 ) : competition.totalParticipants > 0 ? (
-                  <p className="rounded-lg bg-slate-50 px-3 py-2 text-xs font-semibold text-gray-600 dark:bg-slate-700/40 dark:text-slate-300">
+ <p className="rounded-lg bg-slate-50 px-3 py-2 text-xs font-semibold text-gray-600 dark:bg-slate-700/40 dark:text-slate-300">
                     Bersaing dengan {competition.totalParticipants.toLocaleString("id-ID")} murid lain
                   </p>
                 ) : null}
@@ -375,7 +375,7 @@ export default async function BerandaPage() {
                 </Link>
               </div>
             ) : (
-              <div className="rounded-xl bg-slate-50 p-4 text-sm text-gray-500 dark:bg-slate-700/40 dark:text-slate-400">
+ <div className="rounded-xl bg-slate-50 p-4 text-sm text-gray-500 dark:bg-slate-700/40 dark:text-slate-400">
                 Kompetisi mingguan sedang disiapkan.
               </div>
             )}
@@ -387,7 +387,7 @@ export default async function BerandaPage() {
       <section aria-label="Game Arena">
         <div className="mb-4 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-indigo-100 text-indigo-600 dark:bg-indigo-500/15 dark:text-indigo-300">
+ <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-indigo-100 text-indigo-600 dark:bg-indigo-500/15 dark:text-indigo-300">
               <Gamepad2 size={18} />
             </span>
             <div>
@@ -421,9 +421,9 @@ export default async function BerandaPage() {
 
           <div className="grid gap-3 sm:grid-cols-3 lg:grid-cols-1 xl:grid-cols-3">
             {GIM_SEKUNDER.map((g) => (
-              <Link key={g.href} href={g.href} className="group flex flex-col justify-between rounded-2xl border border-gray-100 bg-white p-4 shadow-sm transition-all hover:-translate-y-0.5 hover:border-violet-200 hover:shadow-md hover:shadow-violet-500/[0.06] dark:border-slate-700/60 dark:bg-slate-800/70 dark:hover:border-violet-500/30">
+ <Link key={g.href} href={g.href} className="group flex flex-col justify-between rounded-2xl border border-gray-100 bg-white p-4 shadow-sm transition-all hover:-translate-y-0.5 hover:border-violet-200 hover:shadow-md hover:shadow-violet-500/[0.06] dark:border-slate-700/60 dark:bg-slate-800/70 dark:hover:border-violet-500/30">
                 <div>
-                  <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-violet-100 text-violet-600 dark:bg-violet-500/15 dark:text-violet-300">
+ <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-violet-100 text-violet-600 dark:bg-violet-500/15 dark:text-violet-300">
                     <g.icon size={16} />
                   </span>
                   <p className="mt-2.5 text-sm font-bold text-gray-900 dark:text-slate-100">{g.title}</p>
@@ -443,7 +443,7 @@ export default async function BerandaPage() {
       <section aria-label="Papan Peringkat">
         <div className="mb-4 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-amber-100 text-amber-600 dark:bg-amber-500/15 dark:text-amber-300">
+ <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-amber-100 text-amber-600 dark:bg-amber-500/15 dark:text-amber-300">
               <Medal size={18} />
             </span>
             <div>
@@ -455,7 +455,7 @@ export default async function BerandaPage() {
             Lihat Semua
           </Link>
         </div>
-        <div className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm dark:border-slate-700/60 dark:bg-slate-800/70">
+ <div className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm dark:border-slate-700/60 dark:bg-slate-800/70">
           <LeaderboardPanel compact />
         </div>
       </section>
@@ -463,7 +463,7 @@ export default async function BerandaPage() {
       {/* ── 7. REWARD & PENCAPAIAN — setelah activity (PLAY → COMPETE → PROGRESS → REWARD) ── */}
       <section aria-label="Reward dan Pencapaian">
         <div className="mb-4 flex items-center gap-2.5">
-          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-amber-100 text-amber-600 dark:bg-amber-500/15 dark:text-amber-300">
+ <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-amber-100 text-amber-600 dark:bg-amber-500/15 dark:text-amber-300">
             <Gift size={18} />
           </span>
           <div>
@@ -472,10 +472,10 @@ export default async function BerandaPage() {
           </div>
         </div>
 
-        <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm dark:border-slate-700/60 dark:bg-slate-800/70">
+ <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm dark:border-slate-700/60 dark:bg-slate-800/70">
           <div className="grid gap-5 lg:grid-cols-2">
             {/* Koin + Toko */}
-            <div className="flex items-center justify-between gap-3 rounded-2xl bg-gradient-to-br from-amber-50 to-yellow-50 p-4 dark:from-amber-500/10 dark:to-yellow-500/10">
+ <div className="flex items-center justify-between gap-3 rounded-2xl bg-gradient-to-br from-amber-50 to-yellow-50 p-4 dark:from-amber-500/10 dark:to-yellow-500/10">
               <div className="flex items-center gap-3">
                 <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-400 to-yellow-500 shadow-sm">
                   <Coins className="h-6 w-6 text-white" />
@@ -504,7 +504,7 @@ export default async function BerandaPage() {
                   {badges.length === 0 && <span className="text-[11px] text-gray-400">Belum ada lencana</span>}
                 </div>
               </div>
-              <Link href="/arena/player/badges" className="flex shrink-0 items-center gap-1 rounded-xl border border-gray-200 px-3.5 py-2 text-xs font-bold text-gray-700 transition-all hover:bg-gray-50 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800">
+ <Link href="/arena/player/badges" className="flex shrink-0 items-center gap-1 rounded-xl border border-gray-200 px-3.5 py-2 text-xs font-bold text-gray-700 transition-all hover:bg-gray-50 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800">
                 Koleksi <ChevronRight className="h-3.5 w-3.5" />
               </Link>
             </div>
@@ -514,7 +514,7 @@ export default async function BerandaPage() {
           <div className="mt-5 border-t border-gray-100 pt-4 dark:border-slate-700/60">
             <div className="flex items-center justify-between">
               <p className="flex items-center gap-1.5 text-sm font-extrabold text-gray-900 dark:text-slate-100">
-                <Award size={15} className="text-violet-500" /> Pencapaian
+                <Award size={15} className="text-violet-500 dark:text-violet-400" /> Pencapaian
               </p>
               <Link href="/arena/player/achievements" className="text-xs font-semibold text-violet-600 hover:text-violet-700 dark:text-violet-400">
                 Lihat Semua
@@ -539,7 +539,7 @@ export default async function BerandaPage() {
                         </span>
                       </div>
                     </div>
-                    {a.completed && <CheckCircle2 size={16} className="shrink-0 text-emerald-500" />}
+                    {a.completed && <CheckCircle2 size={16} className="shrink-0 text-emerald-500 dark:text-emerald-400" />}
                   </div>
                 )
               })}

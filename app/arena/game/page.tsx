@@ -184,7 +184,7 @@ export default async function ArenaGimPage() {
           }} />
           <div className="absolute top-[-20px] right-[5px] w-[180px] h-[180px] rounded-full pointer-events-none" style={{ background: "radial-gradient(circle, rgba(255,255,255,0.2), transparent 70%)" }} />
           <div className="relative z-10 p-[18px] flex items-center gap-4">
-            <div className="w-16 h-16 rounded-2xl bg-white/15 backdrop-blur flex items-center justify-center shrink-0 border border-white/20 group-hover:scale-110 transition-transform">
+            <div className="w-16 h-16 rounded-2xl bg-white bg-white/15 dark:bg-slate-900/15 backdrop-blur flex items-center justify-center shrink-0 border border-white/20 group-hover:scale-110 transition-transform">
               <TreePine size={30} className="text-white" />
             </div>
             <div className="flex-1 min-w-0">
@@ -199,7 +199,7 @@ export default async function ArenaGimPage() {
                 Seru banget — poin combo, frenzy mode, dan skor tinggi!
               </p>
               <div className="flex items-center gap-2 mt-2">
-                <span className="text-[10px] font-bold bg-white/20 px-2 py-0.5 rounded-md text-white">
+                <span className="text-[10px] font-bold bg-white bg-white/20 dark:bg-slate-900/20 px-2 py-0.5 rounded-md text-white">
                   &#x1F3AE; Gerakan jari
                 </span>
                 <span className="text-[10px] font-bold bg-amber-400/30 px-2 py-0.5 rounded-md text-amber-200">
@@ -208,7 +208,7 @@ export default async function ArenaGimPage() {
                 <span className="text-[10px]" style={{ color: "rgba(255,255,255,0.5)" }}>~1,5 menit</span>
               </div>
             </div>
-            <div className="shrink-0 w-9 h-9 rounded-full bg-white/15 flex items-center justify-center text-white group-hover:bg-white/25 transition-colors">
+ <div className="shrink-0 w-9 h-9 rounded-full bg-white bg-white/15 dark:bg-slate-900/15 flex items-center justify-center text-white group-hover:bg-white bg-white/25 transition-colors">
               &rarr;
             </div>
           </div>
@@ -222,17 +222,17 @@ export default async function ArenaGimPage() {
         >
           <div className="absolute top-[-30px] right-[10px] w-[160px] h-[160px] rounded-full pointer-events-none" style={{ background: "radial-gradient(circle, rgba(255,255,255,0.18), transparent 70%)" }} />
           <div className="relative z-10 p-[18px] flex items-center gap-4">
-            <div className="w-16 h-16 rounded-2xl bg-white/15 backdrop-blur flex items-center justify-center shrink-0 border border-white/20 group-hover:scale-105 transition-transform">
+            <div className="w-16 h-16 rounded-2xl bg-white bg-white/15 dark:bg-slate-900/15 backdrop-blur flex items-center justify-center shrink-0 border border-white/20 group-hover:scale-105 transition-transform">
               <Users size={30} className="text-white" />
             </div>
             <div className="flex-1 min-w-0">
-              <div className="inline-flex items-center gap-1 bg-white/20 backdrop-blur px-2 py-0.5 rounded-full text-[10px] font-extrabold text-white tracking-wider mb-1.5">
+              <div className="inline-flex items-center gap-1 bg-white bg-white/20 dark:bg-slate-900/20 backdrop-blur px-2 py-0.5 rounded-full text-[10px] font-extrabold text-white tracking-wider mb-1.5">
                 <Swords size={10} /> DUEL 1 LAWAN 1
               </div>
               <h3 className="font-extrabold text-lg text-white leading-tight">Tantang Teman Sekelas!</h3>
               <p className="text-xs mt-0.5" style={{ color: "rgba(255,255,255,0.75)" }}>10 soal sama, siapa jawab lebih cepat & benar menang. Yuk buktikan!</p>
             </div>
-            <div className="shrink-0 w-9 h-9 rounded-full bg-white/15 flex items-center justify-center text-white group-hover:bg-white/25 transition-colors">
+ <div className="shrink-0 w-9 h-9 rounded-full bg-white bg-white/15 dark:bg-slate-900/15 flex items-center justify-center text-white group-hover:bg-white bg-white/25 transition-colors">
               &rarr;
             </div>
           </div>

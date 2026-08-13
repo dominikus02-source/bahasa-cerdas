@@ -57,9 +57,9 @@ export function SimulasiUjianSection() {
           return (
             <div
               key={item.label}
-              className="group px-card px-5 py-5 relative overflow-hidden ring-1 ring-white/10 hover:bg-white/[0.08] transition-colors flex flex-col gap-3"
+              className="group px-card px-5 py-5 relative overflow-hidden ring-1 ring-white/10 hover:bg-white dark:bg-slate-800/90/[0.08] transition-colors flex flex-col gap-3"
             >
-              <div className="absolute -top-12 -right-12 w-36 h-36 rounded-full bg-white/5 blur-2xl pointer-events-none" />
+              <div className="absolute -top-12 -right-12 w-36 h-36 rounded-full bg-white bg-white/5 dark:bg-slate-900/5 blur-2xl pointer-events-none" />
               <span
                 className={`relative w-11 h-11 rounded-2xl bg-gradient-to-br flex items-center justify-center shadow-lg ${item.accent}`}
               >

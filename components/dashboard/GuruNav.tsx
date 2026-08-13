@@ -238,8 +238,8 @@ function NavLinks({
                 onClick={onNavigate}
                 className={`block rounded-lg py-1.5 px-3 text-xs transition-all ${
                   linkActive
-                    ? "bg-violet-50 text-violet-700 font-semibold dark:bg-violet-500/15 dark:text-violet-300"
-                    : "text-slate-500 hover:text-violet-600 hover:bg-violet-50/60 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-200"
+ ? "bg-violet-50 text-violet-700 font-semibold dark:bg-violet-500/15 dark:text-violet-300"
+ : "text-slate-500 hover:text-violet-600 hover:bg-violet-50/60 dark:text-slate-400 :bg-slate-800 dark:hover:text-slate-200"
                 }`}
               >
                 {link.label}
@@ -284,7 +284,7 @@ export function GuruMobileNav({ isFounder }: { isFounder: boolean }) {
 
   return (
     <>
-      <div className="fixed bottom-0 inset-x-0 z-40 lg:hidden bg-white/95 backdrop-blur-xl border-t border-gray-100 shadow-[0_-4px_20px_rgba(0,0,0,0.06)] pb-[env(safe-area-inset-bottom)]">
+ <div className="fixed bottom-0 inset-x-0 z-40 lg:hidden bg-white bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border-t border-gray-100 dark:border-slate-800 shadow-[0_-4px_20px_rgba(0,0,0,0.06)] pb-[env(safe-area-inset-bottom)]">
         <div className="grid grid-cols-5">
           {tabs.map((tab) => {
             const active = pathname.startsWith(tab.href);
@@ -293,7 +293,7 @@ export function GuruMobileNav({ isFounder }: { isFounder: boolean }) {
                 key={tab.href}
                 href={tab.href}
                 className={`flex flex-col items-center gap-0.5 py-2.5 text-[10px] font-medium transition-colors ${
-                  active ? "text-violet-600" : "text-slate-500"
+                  active ? "text-violet-600 dark:text-violet-400" : "text-slate-500 dark:text-slate-400"
                 }`}
               >
                 <tab.icon className="w-5 h-5" />
@@ -304,7 +304,7 @@ export function GuruMobileNav({ isFounder }: { isFounder: boolean }) {
           <button
             type="button"
             onClick={() => setDrawer(true)}
-            className="flex flex-col items-center gap-0.5 py-2.5 text-[10px] font-medium text-slate-500"
+            className="flex flex-col items-center gap-0.5 py-2.5 text-[10px] font-medium text-slate-500 dark:text-slate-400"
           >
             <Menu className="w-5 h-5" />
             Menu
@@ -315,8 +315,8 @@ export function GuruMobileNav({ isFounder }: { isFounder: boolean }) {
       {drawer && (
         <div className="fixed inset-0 z-50 lg:hidden">
           <div className="absolute inset-0 bg-black/40" onClick={() => setDrawer(false)} />
-          <div className="absolute inset-y-0 left-0 w-[85%] max-w-sm bg-white shadow-2xl flex flex-col">
-            <div className="p-5 border-b border-gray-100 bg-gradient-to-r from-emerald-600 to-green-600 flex items-center justify-between">
+          <div className="absolute inset-y-0 left-0 w-[85%] max-w-sm bg-white dark:bg-slate-800/90 shadow-2xl flex flex-col">
+            <div className="p-5 border-b border-gray-100 dark:border-slate-800 bg-gradient-to-r from-emerald-600 to-green-600 flex items-center justify-between">
               <div>
                 <p className="font-bold text-white text-sm">Menu Guru</p>
                 <p className="text-[10px] text-emerald-200">BahasaCerdas</p>
@@ -324,13 +324,13 @@ export function GuruMobileNav({ isFounder }: { isFounder: boolean }) {
               <button
                 type="button"
                 onClick={() => setDrawer(false)}
-                className="w-8 h-8 rounded-lg bg-white/20 flex items-center justify-center text-white"
+                className="w-8 h-8 rounded-lg bg-white bg-white/20 dark:bg-slate-900/20 flex items-center justify-center text-white"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
             <GuruNavList isFounder={isFounder} onNavigate={() => setDrawer(false)} />
-            <div className="p-3 border-t border-gray-100 bg-gray-50/50 flex items-center justify-between gap-2">
+ <div className="p-3 border-t border-gray-100 dark:border-slate-800 bg-gray-50 bg-gray-50/50 dark:bg-slate-800/50 flex items-center justify-between gap-2">
               <Link
                 href="/guru/beranda"
                 className="text-[10px] text-gray-400 font-medium"
@@ -339,7 +339,7 @@ export function GuruMobileNav({ isFounder }: { isFounder: boolean }) {
               </Link>
               <Link
                 href="/guru/ai-tools"
-                className="text-[10px] text-emerald-600 font-semibold"
+                className="text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold"
               >
                 Buka Alat AI
               </Link>

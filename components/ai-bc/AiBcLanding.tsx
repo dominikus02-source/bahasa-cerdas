@@ -17,14 +17,14 @@ interface AiBcLandingProps {
 
 const TONES: Record<BcRole, { pill: string; card: string; chip: string }> = {
   student: {
-    pill: "bg-violet-50 text-violet-700 border-violet-100 dark:bg-violet-950/60 dark:text-violet-300 dark:border-violet-900",
-    card: "hover:border-violet-200 hover:bg-violet-50/60 dark:hover:bg-violet-950/40 dark:hover:border-violet-900",
-    chip: "border-slate-200 hover:border-violet-300 hover:bg-violet-50 dark:border-slate-700 dark:hover:bg-violet-950/50",
+ pill: "bg-violet-50 text-violet-700 border-violet-100 dark:bg-violet-950/60 dark:text-violet-300 dark:border-violet-900",
+ card: "hover:border-violet-200 hover:bg-violet-50/60 :bg-violet-950/40 dark:hover:border-violet-900",
+ chip: "border-slate-200 hover:border-violet-300 hover:bg-violet-50 dark:border-slate-700 dark:hover:bg-violet-950/50",
   },
   teacher: {
-    pill: "bg-emerald-50 text-emerald-700 border-emerald-100 dark:bg-emerald-950/60 dark:text-emerald-300 dark:border-emerald-900",
-    card: "hover:border-emerald-200 hover:bg-emerald-50/60 dark:hover:bg-emerald-950/40 dark:hover:border-emerald-900",
-    chip: "border-slate-200 hover:border-emerald-300 hover:bg-emerald-50 dark:border-slate-700 dark:hover:bg-emerald-950/50",
+ pill: "bg-emerald-50 text-emerald-700 border-emerald-100 dark:bg-emerald-950/60 dark:text-emerald-300 dark:border-emerald-900",
+ card: "hover:border-emerald-200 hover:bg-emerald-50/60 :bg-emerald-950/40 dark:hover:border-emerald-900",
+ chip: "border-slate-200 hover:border-emerald-300 hover:bg-emerald-50 dark:border-slate-700 dark:hover:bg-emerald-950/50",
   },
 };
 
@@ -37,11 +37,11 @@ export default function AiBcLanding({ role, userName, personaTitle, greeting, qu
       {/* Karakter AI BC + gelembung sapaan */}
       <div className="flex flex-col items-center gap-3 text-center">
         <AICompanionCharacter state={companion} size="lg" priority className="drop-shadow-xl" />
-        <div className="relative rounded-2xl rounded-bl-md border border-slate-200 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 shadow-sm dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200">
+ <div className="relative rounded-2xl rounded-bl-md border border-slate-200 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 shadow-sm dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200">
           {bubbles.idle}
           <span
             aria-hidden="true"
-            className="absolute -bottom-1 left-8 h-3 w-3 rotate-45 border-b border-r border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-900"
+ className="absolute -bottom-1 left-8 h-3 w-3 rotate-45 border-b border-r border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-900"
           />
         </div>
         <div>
@@ -66,7 +66,7 @@ export default function AiBcLanding({ role, userName, personaTitle, greeting, qu
             key={action.key}
             type="button"
             onClick={() => onPick(action.prompt)}
-            className={`flex flex-col items-start gap-1.5 rounded-2xl border border-slate-200 bg-white dark:bg-slate-900/70 dark:border-slate-700/70 p-4 text-left shadow-sm transition-all hover:shadow-md ${tone.card}`}
+ className={`flex flex-col items-start gap-1.5 rounded-2xl border border-slate-200 bg-white dark:bg-slate-900/70 dark:border-slate-700/70 p-4 text-left shadow-sm transition-all hover:shadow-md ${tone.card}`}
           >
             <span className="text-sm font-semibold text-slate-800 dark:text-slate-100">{action.label}</span>
             <span className="text-xs text-slate-500 dark:text-slate-400">{action.sub}</span>
@@ -86,7 +86,7 @@ export default function AiBcLanding({ role, userName, personaTitle, greeting, qu
                 key={hint.label}
                 type="button"
                 onClick={() => onPick(hint.prompt)}
-                className={`rounded-xl border bg-white dark:bg-slate-900/70 px-3 py-2 text-xs text-slate-600 dark:text-slate-300 transition-colors ${tone.chip}`}
+ className={`rounded-xl border bg-white dark:bg-slate-900/70 px-3 py-2 text-xs text-slate-600 dark:text-slate-300 transition-colors ${tone.chip}`}
               >
                 {hint.label}
               </button>

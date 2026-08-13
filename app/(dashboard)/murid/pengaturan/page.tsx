@@ -74,7 +74,7 @@ export default async function MuridPengaturanPage() {
         }
       >
         <Row label="Nama" value={user.fullName || user.nickname || "—"} />
-        <Row label="Peran" value={user.role === "MURID" ? "Murid" : "Founder"} accent="text-emerald-600" />
+        <Row label="Peran" value={user.role === "MURID" ? "Murid" : "Founder"} accent="text-emerald-600 dark:text-emerald-400" />
         <Row label="Edit Profil & Identitas" href="/murid/profile" />
         <Row label="Toko Koin" href="/arena/toko-koin" value="Koin saya" />
       </SectionCard>

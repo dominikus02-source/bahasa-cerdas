@@ -67,43 +67,43 @@ export default function ShareKaryaButton({
       label: "WhatsApp",
       icon: <WhatsAppIcon size={26} />,
       href: (text) => `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`,
-      bg: "bg-green-50 hover:bg-green-100",
+      bg: "bg-green-50 dark:bg-green-950/40 hover:bg-green-100",
     },
     {
       id: "telegram",
       label: "Telegram",
       icon: <TelegramIcon size={24} />,
       href: (text, url) => `https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`,
-      bg: "bg-sky-50 hover:bg-sky-100",
+      bg: "bg-sky-50 dark:bg-sky-950/40 hover:bg-sky-100",
     },
     {
       id: "facebook",
       label: "Facebook",
       icon: <FacebookIcon size={24} />,
       href: (_text, url) => `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`,
-      bg: "bg-blue-50 hover:bg-blue-100",
+      bg: "bg-blue-50 dark:bg-blue-950/40 hover:bg-blue-100",
     },
     {
       id: "x",
       label: "X",
       icon: <XIcon size={22} />,
       href: (text, url) => `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`,
-      bg: "bg-gray-100 hover:bg-gray-200",
+      bg: "bg-gray-100 dark:bg-slate-800/80 hover:bg-gray-200",
     },
     {
       id: "email",
       label: "Email",
-      icon: <Mail size={24} className="text-gray-600" />,
+      icon: <Mail size={24} className="text-gray-600 dark:text-slate-300" />,
       href: (text, url) =>
         `mailto:?subject=${encodeURIComponent(`Karya di BahasaCerdas: ${title}`)}&body=${encodeURIComponent(text)}`,
-      bg: "bg-gray-50 hover:bg-gray-100",
+ bg: "bg-gray-50 dark:bg-slate-800/60 hover:bg-gray-100 ",
     },
     {
       id: "salin",
       label: copied ? "Tersalin!" : "Salin Tautan",
-      icon: <Link2 size={24} className="text-violet-600" />,
+      icon: <Link2 size={24} className="text-violet-600 dark:text-violet-400" />,
       href: () => getUrl(),
-      bg: "bg-violet-50 hover:bg-violet-100",
+      bg: "bg-violet-50 dark:bg-violet-950/40 hover:bg-violet-100",
     },
   ]
 
@@ -150,7 +150,7 @@ export default function ShareKaryaButton({
         onClick={() => setOpen(true)}
         aria-label="Bagikan karya"
         title="Bagikan karya"
-        className={`flex items-center gap-1.5 text-sm transition-all ${copied ? "text-emerald-500" : ""} ${className}`}
+        className={`flex items-center gap-1.5 text-sm transition-all ${copied ? "text-emerald-500 dark:text-emerald-400" : ""} ${className}`}
       >
         <Share2 size={16} />
       </button>
@@ -171,10 +171,10 @@ export default function ShareKaryaButton({
               exit={{ y: "100%" }}
               transition={{ type: "spring", stiffness: 300, damping: 30 }}
               onClick={(e) => e.stopPropagation()}
-              className="absolute bottom-0 left-0 right-0 rounded-t-3xl bg-white p-5 pb-8"
+              className="absolute bottom-0 left-0 right-0 rounded-t-3xl bg-white dark:bg-slate-800/90 p-5 pb-8"
             >
               <div className="w-10 h-1 rounded-full bg-gray-200 mx-auto mb-4" />
-              <p className="text-base font-bold text-gray-900 mb-1">Bagikan Karya</p>
+              <p className="text-base font-bold text-gray-900 dark:text-slate-100 mb-1">Bagikan Karya</p>
               <p className="text-xs text-gray-400 mb-5 line-clamp-1">{title}</p>
 
               <div className="grid grid-cols-4 gap-2">
@@ -182,7 +182,7 @@ export default function ShareKaryaButton({
                   <button
                     key={t.id}
                     onClick={() => openUrl(t)}
-                    className={`flex flex-col items-center gap-2 py-4 rounded-2xl border border-gray-100 font-semibold text-xs text-gray-600 transition-all active:scale-[0.95] ${t.bg}`}
+                    className={`flex flex-col items-center gap-2 py-4 rounded-2xl border border-gray-100 dark:border-slate-800 font-semibold text-xs text-gray-600 transition-all active:scale-[0.95] ${t.bg}`}
                   >
                     {t.icon}
                     <span className="line-clamp-1 px-1">{t.label}</span>
@@ -194,9 +194,9 @@ export default function ShareKaryaButton({
                       setOpen(false)
                       shareNative()
                     }}
-                    className="flex flex-col items-center gap-2 py-4 rounded-2xl border border-gray-100 bg-emerald-50 hover:bg-emerald-100 font-semibold text-xs text-gray-600 transition-all active:scale-[0.95]"
+                    className="flex flex-col items-center gap-2 py-4 rounded-2xl border border-gray-100 dark:border-slate-800 bg-emerald-50 hover:bg-emerald-100 font-semibold text-xs text-gray-600 transition-all active:scale-[0.95]"
                   >
-                    <Send size={22} className="text-emerald-600" />
+                    <Send size={22} className="text-emerald-600 dark:text-emerald-400" />
                     <span className="line-clamp-1 px-1">Lainnya...</span>
                   </button>
                 )}
@@ -204,7 +204,7 @@ export default function ShareKaryaButton({
 
               <button
                 onClick={() => setOpen(false)}
-                className="mt-4 w-full py-3 rounded-2xl text-sm font-semibold text-gray-500 bg-gray-100 hover:bg-gray-200 transition-all"
+                className="mt-4 w-full py-3 rounded-2xl text-sm font-semibold text-gray-500 bg-gray-100 dark:bg-slate-800/80 hover:bg-gray-200 transition-all"
               >
                 Tutup
               </button>

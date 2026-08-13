@@ -21,7 +21,7 @@ export function BackHome({ iconOnly = false, className = "", href = "/murid/bera
       href={href}
       aria-label="Kembali ke Beranda"
       title="Kembali ke Beranda"
-      className={`inline-flex items-center gap-1.5 text-sm font-semibold text-gray-500 hover:text-violet-700 hover:bg-violet-50 rounded-lg transition-colors dark:text-slate-400 dark:hover:text-violet-300 dark:hover:bg-slate-800 ${
+ className={`inline-flex items-center gap-1.5 text-sm font-semibold text-gray-500 hover:text-violet-700 hover:bg-violet-50 rounded-lg transition-colors dark:text-slate-400 :text-violet-300 dark:hover:bg-slate-800 ${
         iconOnly ? "p-2" : "px-2.5 py-2"
       } ${className}`}
     >

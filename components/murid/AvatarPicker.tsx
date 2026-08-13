@@ -38,14 +38,14 @@ export function AvatarPicker({
   return (
     <div>
       <div className="flex items-baseline justify-between mb-3">
-        <p className="text-sm font-semibold text-gray-900">Pilih Avatar</p>
+        <p className="text-sm font-semibold text-gray-900 dark:text-slate-100">Pilih Avatar</p>
         {completedUnits !== null && (
-          <p className="text-xs text-gray-500">{done} materi selesai</p>
+          <p className="text-xs text-gray-500 dark:text-slate-400">{done} materi selesai</p>
         )}
       </div>
 
       {fotoSendiri && (
-        <div className="mb-3 flex items-center gap-3 rounded-2xl border border-violet-200 bg-violet-50/60 p-3">
+        <div className="mb-3 flex items-center gap-3 rounded-2xl border border-violet-200 dark:border-violet-800 bg-violet-50 dark:bg-violet-950/40/60 p-3">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={fotoSendiri}
@@ -54,9 +54,9 @@ export function AvatarPicker({
           />
           <div className="min-w-0">
             <p className="flex items-center gap-1.5 text-sm font-semibold text-violet-900">
-              <Check className="h-4 w-4 text-violet-600" /> Foto kamu sedang dipakai
+              <Check className="h-4 w-4 text-violet-600 dark:text-violet-400" /> Foto kamu sedang dipakai
             </p>
-            <p className="mt-0.5 text-xs text-gray-500">
+            <p className="mt-0.5 text-xs text-gray-500 dark:text-slate-400">
               Pilih salah satu avatar di bawah kalau mau menggantinya.
             </p>
           </div>
@@ -79,7 +79,7 @@ export function AvatarPicker({
                 selected
                   ? "border-violet-600 ring-2 ring-violet-200"
                   : unlocked
-                    ? "border-transparent hover:border-violet-300 active:scale-95"
+                    ? "border-transparent hover:border-violet-300 dark:border-violet-700 active:scale-95"
                     : "border-transparent cursor-not-allowed"
               }`}
             >
@@ -88,7 +88,7 @@ export function AvatarPicker({
                 src={a.src}
                 alt=""
                 loading="lazy"
-                className={`w-full h-full object-cover bg-slate-100 ${unlocked ? "" : "grayscale opacity-40"}`}
+                className={`w-full h-full object-cover bg-slate-100 dark:bg-slate-800/70 ${unlocked ? "" : "grayscale opacity-40"}`}
               />
 
               {selected && (
@@ -109,9 +109,9 @@ export function AvatarPicker({
       </div>
 
       {next && (
-        <p className="mt-3 text-xs text-gray-500">
+        <p className="mt-3 text-xs text-gray-500 dark:text-slate-400">
           Selesaikan {next.unlockUnits - done} materi lagi di Jalur Cerdas untuk membuka{" "}
-          <span className="font-semibold text-violet-600">{next.name}</span>.
+          <span className="font-semibold text-violet-600 dark:text-violet-400">{next.name}</span>.
         </p>
       )}
     </div>

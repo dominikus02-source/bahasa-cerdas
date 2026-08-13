@@ -136,7 +136,7 @@ export function LeaderboardPanel({ compact = false }: { compact?: boolean }) {
       {visibleRest.length > 0 && (
         <div className="space-y-1.5">
           {visibleRest.map((e) => (
-            <div key={e.userId} className={`flex items-center gap-3 rounded-xl px-3 py-2 ${e.isMe ? "border border-[var(--px-gold)]/40 bg-[var(--px-gold)]/10" : "bg-white/[0.04]"}`}>
+            <div key={e.userId} className={`flex items-center gap-3 rounded-xl px-3 py-2 ${e.isMe ? "border border-[var(--px-gold)]/40 bg-[var(--px-gold)]/10" : "bg-white dark:bg-slate-800/90/[0.04]"}`}>
               <span className="w-6 text-center text-xs font-black text-[var(--px-text-faint)]">{e.rank}</span>
               {e.avatar ? (
                 <img src={e.avatar} alt={e.name} className="h-7 w-7 rounded-full object-cover" />

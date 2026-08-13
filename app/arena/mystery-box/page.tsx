@@ -86,7 +86,7 @@ export default function MysteryBoxPage() {
   if (loading) {
     return (
       <div className="flex justify-center py-24">
-        <Loader2 className="w-7 h-7 animate-spin text-violet-500" />
+        <Loader2 className="w-7 h-7 animate-spin text-violet-500 dark:text-violet-400" />
       </div>
     )
   }
@@ -97,8 +97,8 @@ export default function MysteryBoxPage() {
   return (
     <div className="px-4 py-5 arena-page">
       <div className="text-center mb-6">
-        <h1 className="text-2xl font-extrabold text-gray-900">Kotak Harian</h1>
-        <p className="text-base text-gray-500 mt-1">Buka setiap hari — makin rajin, makin besar hadiahnya!</p>
+        <h1 className="text-2xl font-extrabold text-gray-900 dark:text-slate-100">Kotak Harian</h1>
+        <p className="text-base text-gray-500 dark:text-slate-400 mt-1">Buka setiap hari — makin rajin, makin besar hadiahnya!</p>
       </div>
 
       {/* Kotak utama */}
@@ -138,7 +138,7 @@ export default function MysteryBoxPage() {
           </div>
         </div>
 
-        <p className="text-base font-bold text-gray-700 mt-4">
+        <p className="text-base font-bold text-gray-700 dark:text-slate-300 mt-4">
           {phase === "idle" && (slotHariIni?.misteri ? "Kotak Misterius menantimu!" : "Ketuk untuk membuka")}
           {phase === "shaking" && "Bersiaplah..."}
           {phase === "opening" && "Membuka..."}
@@ -148,7 +148,7 @@ export default function MysteryBoxPage() {
           {sudahDiklaim ? "Kembali lagi besok untuk kotak berikutnya" : "Buka setiap hari untuk hadiah spesial"}
         </p>
 
-        {error && <p className="text-sm text-red-500 mt-3">{error}</p>}
+        {error && <p className="text-sm text-red-500 dark:text-red-400 mt-3">{error}</p>}
       </div>
 
       {phase === "revealed" && hadiah && (
@@ -158,7 +158,7 @@ export default function MysteryBoxPage() {
             <span className="font-bold">{hadiah.label}</span>
           </div>
           {hadiah.jenis === "FREEZE" && (
-            <p className="text-xs text-gray-500 mt-2">Rentetanmu aman satu hari kalau kamu absen.</p>
+            <p className="text-xs text-gray-500 dark:text-slate-400 mt-2">Rentetanmu aman satu hari kalau kamu absen.</p>
           )}
         </div>
       )}
@@ -177,10 +177,10 @@ export default function MysteryBoxPage() {
               key={box.hari}
               className={`flex-1 flex flex-col items-center gap-1 p-2.5 rounded-xl border transition-all ${
                 selesai
-                  ? "bg-gray-100 border-gray-200 opacity-50"
+                  ? "bg-gray-100 dark:bg-slate-800/80 border-gray-200 dark:border-slate-700 opacity-50"
                   : hariIni
-                    ? "bg-violet-50 border-violet-300 ring-2 ring-violet-200"
-                    : "bg-gray-50 border-gray-100"
+                    ? "bg-violet-50 dark:bg-violet-950/40 border-violet-300 dark:border-violet-700 ring-2 ring-violet-200"
+                    : "bg-gray-50 dark:bg-slate-800/60 border-gray-100 dark:border-slate-800"
               }`}
             >
               <div className={`w-8 h-8 rounded-lg bg-gradient-to-br flex items-center justify-center text-white ${
@@ -192,7 +192,7 @@ export default function MysteryBoxPage() {
               }`}>
                 {selesai ? <CheckCircle2 className="w-4 h-4" /> : <Icon className="w-4 h-4" />}
               </div>
-              <span className={`text-[10px] font-medium ${selesai ? "text-gray-400 line-through" : "text-gray-600"}`}>
+              <span className={`text-[10px] font-medium ${selesai ? "text-gray-400 line-through" : "text-gray-600 dark:text-slate-300"}`}>
                 Hr {box.hari}
               </span>
             </div>
@@ -201,20 +201,20 @@ export default function MysteryBoxPage() {
       </div>
 
       {/* Isi Kotak Misterius (hari ke-7) */}
-      <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-2xl border border-amber-200 p-5 mb-4">
+      <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-2xl border border-amber-200 dark:border-amber-800 p-5 mb-4">
         <h3 className="font-bold text-amber-800 text-base mb-1 flex items-center gap-1.5">
           <Gift className="w-5 h-5" />
           Isi Kotak Misterius
         </h3>
-        <p className="text-xs text-amber-700/70 mb-3">Diundi setiap hari ke-7</p>
+        <p className="text-xs text-amber-700 dark:text-amber-300/70 mb-3">Diundi setiap hari ke-7</p>
         <div className="space-y-3">
           {MYSTERY_POOL.map((p, i) => {
             const Icon = ICON_FOR[p.reward.jenis]
             return (
               <div key={i} className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <Icon className={`w-4 h-4 ${p.reward.jenis === "KOIN" ? "text-yellow-500" : p.reward.jenis === "FREEZE" ? "text-cyan-500" : "text-violet-500"}`} />
-                  <span className="text-sm font-medium text-gray-700">{p.reward.label}</span>
+                  <Icon className={`w-4 h-4 ${p.reward.jenis === "KOIN" ? "text-yellow-500 dark:text-yellow-400" : p.reward.jenis === "FREEZE" ? "text-cyan-500" : "text-violet-500 dark:text-violet-400"}`} />
+                  <span className="text-sm font-medium text-gray-700 dark:text-slate-300">{p.reward.label}</span>
                 </div>
                 <span className="text-xs text-gray-400 font-medium">{p.bobot}%</span>
               </div>
@@ -224,9 +224,9 @@ export default function MysteryBoxPage() {
       </div>
 
       {/* Hadiah harian */}
-      <div className="bg-white rounded-2xl border border-gray-100 p-5">
-        <h3 className="font-bold text-gray-800 text-base mb-3 flex items-center gap-1.5">
-          <Sparkles className="w-5 h-5 text-violet-500" />
+      <div className="bg-white dark:bg-slate-800/90 rounded-2xl border border-gray-100 dark:border-slate-800 p-5">
+        <h3 className="font-bold text-gray-800 dark:text-slate-200 text-base mb-3 flex items-center gap-1.5">
+          <Sparkles className="w-5 h-5 text-violet-500 dark:text-violet-400" />
           Hadiah Harian
         </h3>
         <div className="space-y-3">
@@ -235,10 +235,10 @@ export default function MysteryBoxPage() {
             return (
               <div key={r.hari} className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <Icon className={`w-4 h-4 ${r.misteri ? "text-amber-500" : r.reward!.jenis === "KOIN" ? "text-yellow-500" : r.reward!.jenis === "FREEZE" ? "text-cyan-500" : "text-violet-500"}`} />
-                  <span className="text-sm font-medium text-gray-700">Hari {r.hari}</span>
+                  <Icon className={`w-4 h-4 ${r.misteri ? "text-amber-500 dark:text-amber-400" : r.reward!.jenis === "KOIN" ? "text-yellow-500 dark:text-yellow-400" : r.reward!.jenis === "FREEZE" ? "text-cyan-500" : "text-violet-500 dark:text-violet-400"}`} />
+                  <span className="text-sm font-medium text-gray-700 dark:text-slate-300">Hari {r.hari}</span>
                 </div>
-                <span className="text-xs font-bold text-gray-500">{r.label}</span>
+                <span className="text-xs font-bold text-gray-500 dark:text-slate-400">{r.label}</span>
               </div>
             )
           })}

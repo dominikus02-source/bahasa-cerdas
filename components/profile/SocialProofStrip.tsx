@@ -41,7 +41,7 @@ export default function SocialProofStrip({
       {stats.map((s) => {
         const Icon = ICONS[s.icon ?? "sparkles"];
         const inner = (
-          <div className="flex flex-col items-center justify-center gap-0.5 rounded-2xl bg-white/10 border border-white/10 py-3 px-2 backdrop-blur transition-all hover:bg-white/20 group hover:border-white/20">
+ <div className="flex flex-col items-center justify-center gap-0.5 rounded-2xl bg-white bg-white/10 dark:bg-slate-900/10 border border-white/10 py-3 px-2 backdrop-blur transition-all hover:bg-white bg-white/20 group hover:border-white/20">
             <Icon size={15} className="text-amber-300/90" aria-hidden />
             <span className="text-lg font-black text-white tabular-nums">
               {s.value.toLocaleString("id-ID")}

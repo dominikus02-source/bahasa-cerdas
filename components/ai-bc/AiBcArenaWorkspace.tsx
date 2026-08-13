@@ -57,7 +57,7 @@ function useIsApkClient() {
 
 function MarkdownContent({ content }: { content: string }) {
   return (
-    <div className="prose prose-sm max-w-none prose-headings:text-slate-800 prose-a:text-violet-600 prose-strong:text-slate-800 prose-p:my-1 prose-ul:my-1 prose-ol:my-1 prose-li:my-0.5 prose-pre:bg-slate-900 prose-code:text-slate-800 dark:prose-headings:text-slate-100 dark:prose-a:text-violet-400 dark:prose-strong:text-slate-100 dark:prose-p:text-slate-300 dark:prose-li:text-slate-300 dark:prose-code:text-slate-100">
+ <div className="prose prose-sm max-w-none prose-headings:text-slate-800 prose-a:text-violet-600 prose-strong:text-slate-800 prose-p:my-1 prose-ul:my-1 prose-ol:my-1 prose-li:my-0.5 prose-pre:bg-slate-900 prose-code:text-slate-800 dark:prose-headings:text-slate-100 dark:prose-a:text-violet-400 dark:prose-strong:text-slate-100 dark:prose-p:text-slate-300 dark:prose-li:text-slate-300 dark:prose-code:text-slate-100">
       <ReactMarkdown remarkPlugins={[remarkGfm]}>{content}</ReactMarkdown>
     </div>
   );
@@ -210,7 +210,7 @@ export default function AiBcArenaWorkspace({ userName, personaTitle, greeting, h
     <div className={`ai-bc-workspace flex w-full flex-col ${workspaceHeight} min-h-[420px]`}>
       {/* Baris identitas produk dalam konten (BUKAN navigasi kedua — tidak ada
           link nav/sidebar; hanya judul + aksi percakapan). */}
-      <div className="shrink-0 border-b border-slate-200/70 bg-white/70 px-3 py-2 backdrop-blur dark:border-slate-800 dark:bg-slate-900/50">
+ <div className="shrink-0 border-b border-slate-200/70 bg-white/70 px-3 py-2 backdrop-blur dark:border-slate-800 dark:bg-slate-900/50">
         <div className="mx-auto flex w-full max-w-[900px] items-center justify-between gap-2">
           <div className="flex min-w-0 items-center gap-2.5">
             <AICompanionCharacter state="idle" size="sm" />
@@ -224,7 +224,7 @@ export default function AiBcArenaWorkspace({ userName, personaTitle, greeting, h
               type="button"
               onClick={handleReset}
               aria-label="Mulai percakapan baru"
-              className="flex shrink-0 items-center gap-1.5 rounded-xl border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-600 transition-colors hover:bg-slate-50 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
+ className="flex shrink-0 items-center gap-1.5 rounded-xl border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-600 transition-colors hover:bg-slate-50 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
             >
               <MessageSquarePlus size={14} /> Mulai baru
             </button>
@@ -240,7 +240,7 @@ export default function AiBcArenaWorkspace({ userName, personaTitle, greeting, h
             <div className="space-y-1.5">
               <div className="flex items-center justify-center gap-2">
                 <span className="text-lg font-extrabold text-slate-800 dark:text-slate-100">{AI_LABEL}</span>
-                <span className="rounded-full border border-violet-100 bg-violet-50 px-2 py-0.5 text-[11px] font-semibold text-violet-700 dark:border-violet-900 dark:bg-violet-950/60 dark:text-violet-300">
+ <span className="rounded-full border border-violet-100 bg-violet-50 px-2 py-0.5 text-[11px] font-semibold text-violet-700 dark:border-violet-900 dark:bg-violet-950/60 dark:text-violet-300">
                   {personaTitle}
                 </span>
               </div>
@@ -254,7 +254,7 @@ export default function AiBcArenaWorkspace({ userName, personaTitle, greeting, h
                   key={prompt}
                   type="button"
                   onClick={() => handleSuggested(prompt)}
-                  className="rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-left text-xs text-slate-600 shadow-sm transition-all hover:border-violet-300 hover:bg-violet-50 dark:border-slate-700 dark:bg-slate-900/70 dark:text-slate-300 dark:hover:border-violet-800 dark:hover:bg-violet-950/40"
+ className="rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-left text-xs text-slate-600 shadow-sm transition-all hover:border-violet-300 hover:bg-violet-50 dark:border-slate-700 dark:bg-slate-900/70 dark:text-slate-300 :border-violet-800 dark:hover:bg-violet-950/40"
                 >
                   {prompt}
                 </button>
@@ -272,7 +272,7 @@ export default function AiBcArenaWorkspace({ userName, personaTitle, greeting, h
                       key={hint.label}
                       type="button"
                       onClick={() => handleSuggested(hint.prompt)}
-                      className="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs text-slate-600 transition-colors hover:border-violet-300 hover:bg-violet-50 dark:border-slate-700 dark:bg-slate-900/70 dark:text-slate-300 dark:hover:bg-violet-950/50"
+ className="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs text-slate-600 transition-colors hover:border-violet-300 hover:bg-violet-50 dark:border-slate-700 dark:bg-slate-900/70 dark:text-slate-300 dark:hover:bg-violet-950/50"
                     >
                       {hint.label}
                     </button>
@@ -297,7 +297,7 @@ export default function AiBcArenaWorkspace({ userName, personaTitle, greeting, h
                   <AICompanionCharacter state="idle" size="sm" className="mt-0.5" />
                   <div
                     className={`max-w-[85%] rounded-2xl rounded-bl-md border bg-white p-3.5 shadow-sm sm:max-w-[78%] dark:bg-slate-900/80 ${
-                      msg.isError ? "border-rose-200 dark:border-rose-900" : "border-slate-200 dark:border-slate-700/70"
+ msg.isError ? "border-rose-200 dark:border-rose-900" : "border-slate-200 dark:border-slate-700/70"
                     }`}
                   >
                     <p className="mb-1 text-[10px] font-bold uppercase tracking-wide text-slate-400">{AI_LABEL}</p>
@@ -307,7 +307,7 @@ export default function AiBcArenaWorkspace({ userName, personaTitle, greeting, h
                         <button
                           type="button"
                           onClick={handleRetry}
-                          className="mt-3 inline-flex items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-600 transition-colors hover:bg-slate-50 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
+ className="mt-3 inline-flex items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-600 transition-colors hover:bg-slate-50 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
                         >
                           <RefreshCw size={13} /> Coba Lagi
                         </button>
@@ -345,7 +345,7 @@ export default function AiBcArenaWorkspace({ userName, personaTitle, greeting, h
             {streaming && (
               <div className="flex gap-3" role="status" aria-live="polite">
                 <AICompanionCharacter state="thinking" size="sm" className="mt-0.5" />
-                <div className="max-w-[85%] rounded-2xl rounded-bl-md border border-slate-200 bg-white p-3.5 shadow-sm sm:max-w-[78%] dark:border-slate-700/70 dark:bg-slate-900/80">
+ <div className="max-w-[85%] rounded-2xl rounded-bl-md border border-slate-200 bg-white p-3.5 shadow-sm sm:max-w-[78%] dark:border-slate-700/70 dark:bg-slate-900/80">
                   {draftText ? (
                     <>
                       <p className="mb-1 text-[10px] font-bold uppercase tracking-wide text-slate-400">{THINKING_LABEL}</p>
@@ -369,9 +369,9 @@ export default function AiBcArenaWorkspace({ userName, personaTitle, greeting, h
       )}
 
       {/* Komposer — SELALU tampil (tanpa gerbang), melekat di dasar workspace */}
-      <div className="ai-bc-composer shrink-0 border-t border-slate-200/70 bg-white/80 px-3 pb-2 pt-3 backdrop-blur dark:border-slate-800 dark:bg-slate-900/70 safe-area-bottom">
+ <div className="ai-bc-composer shrink-0 border-t border-slate-200/70 bg-white/80 px-3 pb-2 pt-3 backdrop-blur dark:border-slate-800 dark:bg-slate-900/70 safe-area-bottom">
         <div className="mx-auto w-full max-w-[900px]">
-          <div className="flex items-end gap-2 rounded-2xl border border-slate-200 bg-white px-3 py-2 shadow-sm transition-all focus-within:border-violet-400 focus-within:ring-2 focus-within:ring-violet-100 dark:border-slate-700 dark:bg-slate-900 dark:focus-within:ring-violet-500/20">
+ <div className="flex items-end gap-2 rounded-2xl border border-slate-200 bg-white px-3 py-2 shadow-sm transition-all focus-within:border-violet-400 focus-within:ring-2 focus-within:ring-violet-100 dark:border-slate-700 dark:bg-slate-900 dark:focus-within:ring-violet-500/20">
             <textarea
               ref={inputRef}
               value={input}
@@ -380,7 +380,7 @@ export default function AiBcArenaWorkspace({ userName, personaTitle, greeting, h
               rows={1}
               placeholder={PLACEHOLDER}
               aria-label="Pertanyaan untuk AI BC"
-              className="max-h-32 flex-1 resize-none bg-transparent py-2 text-sm text-slate-800 placeholder-slate-400 outline-none dark:text-slate-100 dark:placeholder-slate-500"
+ className="max-h-32 flex-1 resize-none bg-transparent py-2 text-sm text-slate-800 placeholder-slate-400 outline-none dark:text-slate-100 dark:placeholder-slate-500"
             />
             <button
               type="button"

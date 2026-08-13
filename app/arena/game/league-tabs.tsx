@@ -70,7 +70,7 @@ export default function GameHubLeagueTabs({
       ) : (
         rows.map((u, i) => {
           const isMe = u.id === userId
-          const rankColors = ["text-amber-400", "text-gray-400", "text-orange-700"]
+          const rankColors = ["text-amber-400", "text-gray-400", "text-orange-700 dark:text-orange-300"]
           const rankEmoji = i === 0 ? <Crown size={13} className="text-amber-400" /> : null
           const displayName = u.displayName || u.fullName
           return (

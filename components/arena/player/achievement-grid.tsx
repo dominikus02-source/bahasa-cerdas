@@ -88,9 +88,9 @@ export function AchievementGrid({ limit }: { limit?: number }) {
               initial={{ opacity: 0, x: -8 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: i * 0.03 }}
-              className="flex items-center gap-3 rounded-2xl border border-[var(--px-border)] bg-white/[0.05] p-3"
+              className="flex items-center gap-3 rounded-2xl border border-[var(--px-border)] bg-white dark:bg-slate-800/90/[0.05] p-3"
             >
-              <div className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-xl ${done ? "bg-gradient-to-br from-amber-500/40 to-orange-600/30" : "bg-white/5 opacity-60"}`}>
+              <div className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-xl ${done ? "bg-gradient-to-br from-amber-500/40 to-orange-600/30" : "bg-white bg-white/5 dark:bg-slate-900/5 opacity-60"}`}>
                 {done ? <BadgeIcon icon={a.icon} size={34} alt={a.name} /> : <Lock size={16} />}
               </div>
 

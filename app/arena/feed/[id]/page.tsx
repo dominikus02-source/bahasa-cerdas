@@ -75,11 +75,11 @@ export default async function FeedDetailPage({ params }: { params: Promise<{ id:
   return (
     <div className="arena-page">
       <KaryaRewardToast />
-      <div className="flex items-center gap-3 px-4 py-4 border-b border-gray-100 bg-white sticky top-0 z-10">
-        <Link href="/arena/feed" className="w-9 h-9 rounded-xl bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-gray-200 transition-all">
+      <div className="flex items-center gap-3 px-4 py-4 border-b border-gray-100 dark:border-slate-800 bg-white dark:bg-slate-800/90 sticky top-0 z-10">
+        <Link href="/arena/feed" className="w-9 h-9 rounded-xl bg-gray-100 dark:bg-slate-800/80 flex items-center justify-center text-gray-600 hover:bg-gray-200 transition-all">
           <ArrowLeft className="w-5 h-5" />
         </Link>
-        <p className="font-semibold text-gray-900 text-sm">Karya</p>
+        <p className="font-semibold text-gray-900 dark:text-slate-100 text-sm">Karya</p>
       </div>
 
       <div className="px-4 py-5">
@@ -98,18 +98,18 @@ export default async function FeedDetailPage({ params }: { params: Promise<{ id:
                   name={authorName}
                   color={karya.user.equippedNameColor}
                   badge={karya.user.equippedBadge}
-                  className="font-bold text-gray-900 text-base"
+                  className="font-bold text-gray-900 dark:text-slate-100 text-base"
                   badgeSize={16}
                 />
-                <p className="text-sm text-gray-500">
+                <p className="text-sm text-gray-500 dark:text-slate-400">
                   {typeLabel[karya.type] || karya.type}
                 </p>
               </div>
             </>
           ) : (
             <div>
-              <p className="font-bold text-gray-900 text-base">Pengguna</p>
-              <p className="text-sm text-gray-500">{typeLabel[karya.type] || karya.type}</p>
+              <p className="font-bold text-gray-900 dark:text-slate-100 text-base">Pengguna</p>
+              <p className="text-sm text-gray-500 dark:text-slate-400">{typeLabel[karya.type] || karya.type}</p>
             </div>
           )}
           <span className="ml-auto text-sm text-gray-400 flex items-center gap-1">
@@ -117,36 +117,36 @@ export default async function FeedDetailPage({ params }: { params: Promise<{ id:
           </span>
         </div>
 
-        <h1 className="text-xl font-extrabold text-gray-900 mb-4 arena-balance">{karya.title}</h1>
+        <h1 className="text-xl font-extrabold text-gray-900 dark:text-slate-100 mb-4 arena-balance">{karya.title}</h1>
 
         {karya.coverImage && (
           <img
             src={karya.coverImage}
             alt={karya.title}
-            className="w-full rounded-2xl border border-gray-100 mb-5 object-cover max-h-96"
+            className="w-full rounded-2xl border border-gray-100 dark:border-slate-800 mb-5 object-cover max-h-96"
           />
         )}
 
-        <div className="text-base text-gray-700 leading-relaxed whitespace-pre-wrap mb-6">
+        <div className="text-base text-gray-700 dark:text-slate-300 leading-relaxed whitespace-pre-wrap mb-6">
           {karya.content}
         </div>
 
         {karya.photos.length > 0 && (
           <div className="grid grid-cols-2 gap-2 mb-6">
             {karya.photos.map((url) => (
-              <img key={url} src={url} alt={karya.title} className="w-full aspect-square rounded-xl border border-gray-100 object-cover" />
+              <img key={url} src={url} alt={karya.title} className="w-full aspect-square rounded-xl border border-gray-100 dark:border-slate-800 object-cover" />
             ))}
           </div>
         )}
 
-        <div className="flex items-center gap-4 py-4 border-t border-gray-100">
+        <div className="flex items-center gap-4 py-4 border-t border-gray-100 dark:border-slate-800">
           <ToggleLike karyaId={karya.id} initialLiked={userLiked} initialCount={karya._count.likes} />
-          <span className="flex items-center gap-1.5 text-sm text-gray-500">
+          <span className="flex items-center gap-1.5 text-sm text-gray-500 dark:text-slate-400">
             <MessageCircle className="w-5 h-5 text-violet-400" />
             {karya._count.comments}
           </span>
-          <ShareKaryaButton karyaId={karya.id} title={karya.title} className="ml-auto text-gray-400 hover:text-violet-500" />
-          <span className="flex items-center gap-1.5 text-sm text-gray-500 ml-auto">
+          <ShareKaryaButton karyaId={karya.id} title={karya.title} className="ml-auto text-gray-400 hover:text-violet-500 dark:text-violet-400" />
+          <span className="flex items-center gap-1.5 text-sm text-gray-500 dark:text-slate-400 ml-auto">
             <Eye className="w-5 h-5 text-gray-400" />
             {karya.viewsCount || 0}
           </span>

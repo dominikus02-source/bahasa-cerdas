@@ -145,7 +145,7 @@ export default function WordDashPage() {
             Jawab 20 soal secepat mungkin dalam 60 detik!<br />
             Makin cepat + rentetan makin tinggi = makin banyak PP!
           </p>
-          <div className="bg-white/5 border border-white/10 rounded-xl p-4 mb-6 text-left text-sm space-y-2">
+          <div className="bg-white bg-white/5 dark:bg-slate-900/5 border border-white/10 rounded-xl p-4 mb-6 text-left text-sm space-y-2">
             <div className="flex items-center gap-2 text-violet-200">
               <Clock size={14} className="text-violet-400" /> 60 detik — kejar waktu!
             </div>
@@ -175,7 +175,7 @@ export default function WordDashPage() {
           <h1 className="text-2xl font-extrabold mb-1">Pertandingan Selesai!</h1>
           <p className="text-sm text-violet-200/60 mb-6">Bagus! Terus tingkatkan!</p>
 
-          <div className="bg-white/5 border border-white/10 rounded-2xl p-5 mb-4">
+          <div className="bg-white bg-white/5 dark:bg-slate-900/5 border border-white/10 rounded-2xl p-5 mb-4">
             <div className="grid grid-cols-3 gap-3 mb-4">
               <div className="text-center">
                 <p className="text-2xl font-bold text-violet-400">{correct}</p>
@@ -220,7 +220,7 @@ export default function WordDashPage() {
               <RefreshCw size={16} /> Main Lagi
             </button>
             <button onClick={() => router.push("/murid/katastra")}
-              className="flex-1 py-3 bg-white/10 border border-white/20 text-white font-bold rounded-xl hover:bg-white/20 transition-all flex items-center justify-center gap-2">
+ className="flex-1 py-3 bg-white bg-white/10 dark:bg-slate-900/10 border border-white/20 text-white font-bold rounded-xl hover:bg-white bg-white/20 transition-all flex items-center justify-center gap-2">
               <Home size={16} /> Menu
             </button>
           </div>
@@ -236,7 +236,7 @@ export default function WordDashPage() {
       {/* Top bar */}
       <div className="px-4 pt-4 pb-2">
         <div className="flex items-center justify-between mb-2">
-          <button onClick={() => router.push("/murid/katastra")} className="p-2 hover:bg-white/10 rounded-xl transition-colors">
+          <button onClick={() => router.push("/murid/katastra")} className="p-2 hover:bg-white bg-white/10 dark:bg-slate-900/10 rounded-xl transition-colors">
             <ArrowLeft size={20} />
           </button>
           <div className="flex items-center gap-4">
@@ -252,7 +252,7 @@ export default function WordDashPage() {
         </div>
 
         {/* Timer bar */}
-        <div className="h-2.5 bg-white/10 rounded-full overflow-hidden">
+        <div className="h-2.5 bg-white bg-white/10 dark:bg-slate-900/10 rounded-full overflow-hidden">
           <div
             className={`h-full rounded-full transition-all duration-1000 ${
               timeLeft > 30 ? "bg-gradient-to-r from-violet-500 to-purple-500"
@@ -272,7 +272,7 @@ export default function WordDashPage() {
 
       {/* Question */}
       <div className="flex-1 px-4 pt-4 flex flex-col">
-        <div className="bg-white/5 border border-white/10 rounded-2xl p-5 mb-4">
+        <div className="bg-white bg-white/5 dark:bg-slate-900/5 border border-white/10 rounded-2xl p-5 mb-4">
           <span className="text-[10px] uppercase tracking-wider text-violet-400 font-semibold mb-2 block">
             {q.type === "sinonim" ? "Sinonim" : q.type === "antonim" ? "Antonim" : q.type === "kata_baku" ? "Kata Baku"
               : q.type === "imbuhan" ? "Imbuhan" : q.type === "kalimat" ? "Melengkapi Kalimat"
@@ -290,12 +290,12 @@ export default function WordDashPage() {
           {q.options.map((opt, i) => {
             const isSelected = selected === i;
             const isCorrectOpt = i === q.correct;
-            let btnClass = "bg-white/5 border border-white/10 hover:bg-white/10 hover:border-violet-400/50";
+ let btnClass = "bg-white bg-white/5 dark:bg-slate-900/5 border border-white/10 hover:bg-white bg-white/10 hover:border-violet-400/50";
 
             if (feedback) {
               if (isCorrectOpt) btnClass = "bg-green-500/20 border-green-500 text-green-300";
               else if (isSelected) btnClass = "bg-red-500/20 border-red-500 text-red-300";
-              else btnClass = "bg-white/5 border-white/10 opacity-40";
+              else btnClass = "bg-white bg-white/5 dark:bg-slate-900/5 border-white/10 opacity-40";
             }
 
             return (

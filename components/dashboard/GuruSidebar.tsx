@@ -105,37 +105,37 @@ export function GuruSidebar({ user }: Props) {
   const isActive = (href: string) => pathname === href || pathname.startsWith(href + "/")
 
   return (
-    <aside className="w-64 h-screen bg-white border-r border-gray-100 flex flex-col fixed left-0 top-0">
-      <div className="p-5 border-b border-gray-100">
+    <aside className="w-64 h-screen bg-white dark:bg-slate-800/90 border-r border-gray-100 dark:border-slate-800 flex flex-col fixed left-0 top-0">
+      <div className="p-5 border-b border-gray-100 dark:border-slate-800">
         <Link href="/guru/beranda" className="flex items-center gap-2">
           <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center">
             <BookOpen size={18} className="text-white" />
           </div>
           <div>
-            <span className="font-bold text-gray-900 text-sm">BahasaCerdas</span>
+            <span className="font-bold text-gray-900 dark:text-slate-100 text-sm">BahasaCerdas</span>
             <p className="text-[10px] text-gray-400">Dashboard Guru</p>
           </div>
         </Link>
       </div>
 
-      <Link href={`/profile/${user.id}`} className="block px-4 py-3 border-b border-gray-100 bg-gradient-to-r from-emerald-50 to-teal-50 hover:from-emerald-100 hover:to-teal-100 transition-colors">
+      <Link href={`/profile/${user.id}`} className="block px-4 py-3 border-b border-gray-100 dark:border-slate-800 bg-gradient-to-r from-emerald-50 to-teal-50 hover:from-emerald-100 hover:to-teal-100 transition-colors">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center text-white font-bold text-sm shadow-md">
             {user.fullName.slice(0, 2).toUpperCase()}
           </div>
           <div className="min-w-0 flex-1">
-            <p className="text-sm font-semibold text-gray-900 truncate">{user.fullName}</p>
+            <p className="text-sm font-semibold text-gray-900 dark:text-slate-100 truncate">{user.fullName}</p>
             <div className="flex items-center gap-1.5 mt-0.5">
               {user.isFounder ? (
-                <span className="text-[10px] px-1.5 py-0.5 bg-amber-100 text-amber-700 rounded-full font-medium flex items-center gap-1">
+                <span className="text-[10px] px-1.5 py-0.5 bg-amber-100 text-amber-700 dark:text-amber-300 rounded-full font-medium flex items-center gap-1">
                   <Crown size={10} /> Founder
                 </span>
               ) : user.isPremium ? (
-                <span className="text-[10px] px-1.5 py-0.5 bg-blue-100 text-blue-700 rounded-full font-medium flex items-center gap-1">
+                <span className="text-[10px] px-1.5 py-0.5 bg-blue-100 text-blue-700 dark:text-blue-300 rounded-full font-medium flex items-center gap-1">
                   <Crown size={10} /> PRO
                 </span>
               ) : (
-                <span className="text-[10px] px-1.5 py-0.5 bg-gray-100 text-gray-600 rounded-full font-medium">
+                <span className="text-[10px] px-1.5 py-0.5 bg-gray-100 dark:bg-slate-800/80 text-gray-600 rounded-full font-medium">
                   Free
                 </span>
               )}
@@ -145,10 +145,10 @@ export function GuruSidebar({ user }: Props) {
         </div>
         {user.xp !== undefined && (
           <div className="flex items-center gap-3 mt-2 text-xs">
-            <span className="flex items-center gap-1 text-amber-600">
+            <span className="flex items-center gap-1 text-amber-600 dark:text-amber-400">
               <Flame size={12} /> {user.streak || 0}
             </span>
-            <span className="flex items-center gap-1 text-violet-600">
+            <span className="flex items-center gap-1 text-violet-600 dark:text-violet-400">
               <Zap size={12} /> {user.xp.toLocaleString()} XP
             </span>
           </div>
@@ -165,23 +165,23 @@ export function GuruSidebar({ user }: Props) {
                 <button
                   onClick={() => setExpanded(e => ({ ...e, [item.label]: !e[item.label] }))}
                   className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm transition-all mb-1 ${
-                    hasActive ? "text-emerald-700 bg-emerald-50" : "text-gray-500 hover:bg-gray-50 hover:text-gray-800"
+                    hasActive ? "text-emerald-700 dark:text-emerald-300 bg-emerald-50" : "text-gray-500 hover:bg-gray-50 dark:bg-slate-800/60 hover:text-gray-800 dark:text-slate-200"
                   }`}
                 >
-                  <span className={hasActive ? "text-emerald-500" : "text-gray-400"}>{item.icon}</span>
+                  <span className={hasActive ? "text-emerald-500 dark:text-emerald-400" : "text-gray-400"}>{item.icon}</span>
                   <span className="flex-1 font-medium">{item.label}</span>
                   {isOpen ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
                 </button>
                 {isOpen && (
-                  <div className="ml-6 pl-3 border-l-2 border-gray-100 mb-1">
+                  <div className="ml-6 pl-3 border-l-2 border-gray-100 dark:border-slate-800 mb-1">
                     {item.children.map(child => (
                       <Link
                         key={child.href}
                         href={child.href!}
                         className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm mb-0.5 transition-colors ${
                           child.href && isActive(child.href)
-                            ? "text-emerald-700 bg-emerald-50 font-medium"
-                            : "text-gray-500 hover:text-gray-800 hover:bg-gray-50"
+                            ? "text-emerald-700 dark:text-emerald-300 bg-emerald-50 font-medium"
+                            : "text-gray-500 hover:text-gray-800 dark:text-slate-200 hover:bg-gray-50 dark:bg-slate-800/60"
                         }`}
                       >
                         {child.icon} {child.label}
@@ -199,11 +199,11 @@ export function GuruSidebar({ user }: Props) {
               href={item.href!}
               className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm transition-all mb-1 ${
                 isActive(item.href!)
-                  ? "text-emerald-700 bg-emerald-50 font-semibold"
-                  : "text-gray-500 hover:bg-gray-50 hover:text-gray-800"
+                  ? "text-emerald-700 dark:text-emerald-300 bg-emerald-50 font-semibold"
+                  : "text-gray-500 hover:bg-gray-50 dark:bg-slate-800/60 hover:text-gray-800 dark:text-slate-200"
               }`}
             >
-              <span className={isActive(item.href!) ? "text-emerald-500" : "text-gray-400"}>{item.icon}</span>
+              <span className={isActive(item.href!) ? "text-emerald-500 dark:text-emerald-400" : "text-gray-400"}>{item.icon}</span>
               {item.label}
             </Link>
           )
@@ -212,17 +212,17 @@ export function GuruSidebar({ user }: Props) {
 
       {user.isFounder && (
         <div className="px-2 mb-1">
-          <div className="h-px bg-slate-100 mx-3 mb-2" />
-          <Link href="/admin" className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm text-red-600 hover:bg-red-50 font-semibold transition-colors">
+          <div className="h-px bg-slate-100 dark:bg-slate-800/70 mx-3 mb-2" />
+          <Link href="/admin" className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:bg-red-950/40 font-semibold transition-colors">
             <Settings size={18} /> Panel Admin
           </Link>
         </div>
       )}
 
       {!user.isPremium && !user.isFounder && (
-        <div className="mx-3 mb-3 p-3 bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl border border-amber-100">
+        <div className="mx-3 mb-3 p-3 bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl border border-amber-100 dark:border-amber-900">
           <p className="text-xs font-semibold text-amber-800 mb-1">Upgrade ke PRO</p>
-          <p className="text-[11px] text-amber-600 mb-2">500 kredit AI/bulan & jual karya berbayar</p>
+          <p className="text-[11px] text-amber-600 dark:text-amber-400 mb-2">500 kredit AI/bulan & jual karya berbayar</p>
           <Link
             href="/guru/pengaturan/premium"
             className="block text-center text-xs bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-lg py-2 font-semibold hover:opacity-90 transition-opacity"
@@ -232,10 +232,10 @@ export function GuruSidebar({ user }: Props) {
         </div>
       )}
 
-      <div className="p-3 border-t border-gray-100">
+      <div className="p-3 border-t border-gray-100 dark:border-slate-800">
         <button
           onClick={handleLogout}
-          className="w-full flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm text-gray-500 hover:text-red-600 hover:bg-red-50 transition-colors"
+          className="w-full flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm text-gray-500 dark:text-slate-400 hover:text-red-600 dark:text-red-400 hover:bg-red-50 dark:bg-red-950/40 transition-colors"
         >
           <LogOut size={16} />
           Keluar

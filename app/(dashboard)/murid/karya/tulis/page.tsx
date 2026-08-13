@@ -16,11 +16,11 @@ const TYPES = [
 
 const TYPE_STYLES: Record<string, { border: string; bg: string; text: string; gradient: string }> = {
   PUISI: { border: "border-rose-500", bg: "bg-rose-50", text: "text-rose-600", gradient: "from-rose-500 to-pink-600" },
-  CERPEN: { border: "border-blue-500", bg: "bg-blue-50", text: "text-blue-600", gradient: "from-blue-500 to-indigo-600" },
-  ARTIKEL: { border: "border-amber-500", bg: "bg-amber-50", text: "text-amber-600", gradient: "from-amber-500 to-orange-600" },
-  ANEKDOT: { border: "border-orange-500", bg: "bg-orange-50", text: "text-orange-600", gradient: "from-orange-500 to-red-600" },
+  CERPEN: { border: "border-blue-500", bg: "bg-blue-50 dark:bg-blue-950/40", text: "text-blue-600 dark:text-blue-400", gradient: "from-blue-500 to-indigo-600" },
+  ARTIKEL: { border: "border-amber-500", bg: "bg-amber-50 dark:bg-amber-950/40", text: "text-amber-600 dark:text-amber-400", gradient: "from-amber-500 to-orange-600" },
+  ANEKDOT: { border: "border-orange-500", bg: "bg-orange-50 dark:bg-orange-950/40", text: "text-orange-600 dark:text-orange-400", gradient: "from-orange-500 to-red-600" },
   PANTUN: { border: "border-teal-500", bg: "bg-teal-50", text: "text-teal-600", gradient: "from-teal-500 to-emerald-600" },
-  OPINI: { border: "border-violet-500", bg: "bg-violet-50", text: "text-violet-600", gradient: "from-violet-500 to-purple-600" },
+  OPINI: { border: "border-violet-500", bg: "bg-violet-50 dark:bg-violet-950/40", text: "text-violet-600 dark:text-violet-400", gradient: "from-violet-500 to-purple-600" },
 };
 
 function TulisKaryaForm() {
@@ -126,12 +126,12 @@ function TulisKaryaForm() {
     <div className="max-w-3xl mx-auto">
       {/* Header */}
       <div className="flex items-center gap-3 mb-6">
-        <Link href="/murid/beranda" className="p-2 hover:bg-gray-100 rounded-xl transition-colors">
-          <ArrowLeft size={20} className="text-gray-600" />
+        <Link href="/murid/beranda" className="p-2 hover:bg-gray-100 dark:bg-slate-800/80 rounded-xl transition-colors">
+          <ArrowLeft size={20} className="text-gray-600 dark:text-slate-300" />
         </Link>
         <div>
-          <h1 className="text-xl font-bold text-gray-900">Tulis Karya</h1>
-          <p className="text-sm text-gray-500">Bagikan karyamu dengan seluruh Indonesia</p>
+          <h1 className="text-xl font-bold text-gray-900 dark:text-slate-100">Tulis Karya</h1>
+          <p className="text-sm text-gray-500 dark:text-slate-400">Bagikan karyamu dengan seluruh Indonesia</p>
         </div>
       </div>
 
@@ -142,11 +142,11 @@ function TulisKaryaForm() {
           return (
             <button key={t.value} onClick={() => setType(t.value)}
               className={`p-3 rounded-xl text-center border-2 transition-all ${
-                type === t.value ? `${s.border} ${s.bg} shadow-sm` : "border-gray-100 hover:border-gray-200 bg-white"
+                type === t.value ? `${s.border} ${s.bg} shadow-sm` : "border-gray-100 dark:border-slate-800 hover:border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800/90"
               }`}
             >
               <t.icon size={24} className="mx-auto mb-1" />
-              <span className={`text-xs font-semibold ${type === t.value ? s.text : "text-gray-600"}`}>
+              <span className={`text-xs font-semibold ${type === t.value ? s.text : "text-gray-600 dark:text-slate-300"}`}>
                 {t.label}
               </span>
             </button>
@@ -159,7 +159,7 @@ function TulisKaryaForm() {
         <input
           value={title} onChange={e => setTitle(e.target.value)}
           placeholder="Judul karyamu..."
-          className="w-full px-5 py-4 bg-white rounded-2xl border border-gray-200 text-lg font-bold text-gray-900 placeholder:text-gray-300 focus:outline-none focus:ring-2 focus:ring-violet-200 focus:border-violet-400 transition-all"
+          className="w-full px-5 py-4 bg-white dark:bg-slate-800/90 rounded-2xl border border-gray-200 dark:border-slate-700 text-lg font-bold text-gray-900 dark:text-slate-100 placeholder:text-gray-300 focus:outline-none focus:ring-2 focus:ring-violet-200 focus:border-violet-400 transition-all"
         />
       </div>
 
@@ -169,7 +169,7 @@ function TulisKaryaForm() {
           value={content} onChange={e => setContent(e.target.value)}
           placeholder={type === "PUISI" ? "Tulis puisimu di sini...\n\nSetiap bait,\npenuh makna..." : type === "PANTUN" ? "Tulis pantunmu di sini...\n\nBaris 1: sampiran\nBaris 2: sampiran\nBaris 3: isi\nBaris 4: isi" : "Tulis karyamu di sini..."}
           rows={15}
-          className="w-full px-5 py-4 bg-white rounded-2xl border border-gray-200 text-gray-700 placeholder:text-gray-300 focus:outline-none focus:ring-2 focus:ring-violet-200 focus:border-violet-400 transition-all resize-y font-[inherit] leading-relaxed"
+          className="w-full px-5 py-4 bg-white dark:bg-slate-800/90 rounded-2xl border border-gray-200 dark:border-slate-700 text-gray-700 dark:text-slate-300 placeholder:text-gray-300 focus:outline-none focus:ring-2 focus:ring-violet-200 focus:border-violet-400 transition-all resize-y font-[inherit] leading-relaxed"
         />
       </div>
 
@@ -183,7 +183,7 @@ function TulisKaryaForm() {
           onChange={e => { const f = e.target.files?.[0]; if (f) handleUploadCover(f); e.target.value = ""; }}
         />
         {coverImage ? (
-          <div className="relative rounded-xl overflow-hidden border border-gray-200 max-w-xs">
+          <div className="relative rounded-xl overflow-hidden border border-gray-200 dark:border-slate-700 max-w-xs">
             <img src={coverImage} alt="Foto sampul" className="w-full aspect-video object-cover" />
             <button
               type="button"
@@ -198,12 +198,12 @@ function TulisKaryaForm() {
             <div className="flex gap-2 mb-2">
               <button type="button" onClick={() => setCoverMode("upload")}
                 className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-                  coverMode === "upload" ? "bg-violet-600 text-white" : "bg-gray-100 text-gray-500 hover:bg-gray-200"
+                  coverMode === "upload" ? "bg-violet-600 text-white" : "bg-gray-100 dark:bg-slate-800/80 text-gray-500 hover:bg-gray-200"
                 }`}
               ><Upload size={12} className="inline mr-1" />Upload</button>
               <button type="button" onClick={() => setCoverMode("link")}
                 className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-                  coverMode === "link" ? "bg-violet-600 text-white" : "bg-gray-100 text-gray-500 hover:bg-gray-200"
+                  coverMode === "link" ? "bg-violet-600 text-white" : "bg-gray-100 dark:bg-slate-800/80 text-gray-500 hover:bg-gray-200"
                 }`}
               ><Link2 size={12} className="inline mr-1" />Link</button>
             </div>
@@ -212,7 +212,7 @@ function TulisKaryaForm() {
                 type="button"
                 onClick={() => fileRef.current?.click()}
                 disabled={uploading}
-                className="w-full flex items-center justify-center gap-2 py-3 rounded-xl border-2 border-dashed border-gray-200 text-gray-500 hover:border-violet-300 hover:text-violet-600 transition-colors disabled:opacity-50"
+                className="w-full flex items-center justify-center gap-2 py-3 rounded-xl border-2 border-dashed border-gray-200 dark:border-slate-700 text-gray-500 hover:border-violet-300 hover:text-violet-600 transition-colors disabled:opacity-50"
               >
                 {uploading ? <Loader2 size={16} className="animate-spin" /> : <Upload size={16} />}
                 {uploading ? "Mengunggah foto..." : "Unggah Foto Sampul (opsional)"}
@@ -223,7 +223,7 @@ function TulisKaryaForm() {
                   value={coverLinkUrl}
                   onChange={e => setCoverLinkUrl(e.target.value)}
                   placeholder="https://example.com/gambar.jpg"
-                  className="flex-1 px-4 py-2.5 bg-white rounded-xl border border-gray-200 text-sm text-gray-700 placeholder:text-gray-300 focus:outline-none focus:ring-2 focus:ring-violet-200 focus:border-violet-400 transition-all"
+                  className="flex-1 px-4 py-2.5 bg-white dark:bg-slate-800/90 rounded-xl border border-gray-200 dark:border-slate-700 text-sm text-gray-700 dark:text-slate-300 placeholder:text-gray-300 focus:outline-none focus:ring-2 focus:ring-violet-200 focus:border-violet-400 transition-all"
                   onKeyDown={e => { if (e.key === "Enter") { e.preventDefault(); setCoverFromLink(); } }}
                 />
                 <button type="button" onClick={setCoverFromLink} disabled={!coverLinkUrl.trim()}
@@ -237,7 +237,7 @@ function TulisKaryaForm() {
 
       {/* Foto Pendukung (mis. foto wawancara, opsional, maks 6) */}
       <div className="mb-6">
-        <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
+        <p className="text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wide mb-2">
           Foto Pendukung (opsional)
         </p>
         <input
@@ -251,7 +251,7 @@ function TulisKaryaForm() {
         {photos.length > 0 && (
           <div className="grid grid-cols-3 gap-2 mb-2">
             {photos.map(url => (
-              <div key={url} className="relative aspect-square rounded-lg overflow-hidden border border-gray-200 group">
+              <div key={url} className="relative aspect-square rounded-lg overflow-hidden border border-gray-200 dark:border-slate-700 group">
                 <img src={url} alt="Foto pendukung" className="w-full h-full object-cover" />
                 <button
                   type="button"
@@ -269,12 +269,12 @@ function TulisKaryaForm() {
             <div className="flex gap-2 mb-2">
               <button type="button" onClick={() => setPhotoMode("upload")}
                 className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-                  photoMode === "upload" ? "bg-violet-600 text-white" : "bg-gray-100 text-gray-500 hover:bg-gray-200"
+                  photoMode === "upload" ? "bg-violet-600 text-white" : "bg-gray-100 dark:bg-slate-800/80 text-gray-500 hover:bg-gray-200"
                 }`}
               ><Upload size={12} className="inline mr-1" />Upload</button>
               <button type="button" onClick={() => setPhotoMode("link")}
                 className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-                  photoMode === "link" ? "bg-violet-600 text-white" : "bg-gray-100 text-gray-500 hover:bg-gray-200"
+                  photoMode === "link" ? "bg-violet-600 text-white" : "bg-gray-100 dark:bg-slate-800/80 text-gray-500 hover:bg-gray-200"
                 }`}
               ><Link2 size={12} className="inline mr-1" />Link</button>
             </div>
@@ -283,7 +283,7 @@ function TulisKaryaForm() {
                 type="button"
                 onClick={() => photosRef.current?.click()}
                 disabled={uploadingPhotos}
-                className="w-full flex items-center justify-center gap-2 py-3 rounded-xl border-2 border-dashed border-gray-200 text-gray-500 hover:border-violet-300 hover:text-violet-600 transition-colors disabled:opacity-50"
+                className="w-full flex items-center justify-center gap-2 py-3 rounded-xl border-2 border-dashed border-gray-200 dark:border-slate-700 text-gray-500 hover:border-violet-300 hover:text-violet-600 transition-colors disabled:opacity-50"
               >
                 {uploadingPhotos ? <Loader2 size={16} className="animate-spin" /> : <Upload size={16} />}
                 {uploadingPhotos ? "Mengunggah foto..." : `Tambah Foto (${photos.length}/6)`}
@@ -294,7 +294,7 @@ function TulisKaryaForm() {
                   value={photoLinkUrl}
                   onChange={e => setPhotoLinkUrl(e.target.value)}
                   placeholder="https://example.com/gambar.jpg"
-                  className="flex-1 px-4 py-2.5 bg-white rounded-xl border border-gray-200 text-sm text-gray-700 placeholder:text-gray-300 focus:outline-none focus:ring-2 focus:ring-violet-200 focus:border-violet-400 transition-all"
+                  className="flex-1 px-4 py-2.5 bg-white dark:bg-slate-800/90 rounded-xl border border-gray-200 dark:border-slate-700 text-sm text-gray-700 dark:text-slate-300 placeholder:text-gray-300 focus:outline-none focus:ring-2 focus:ring-violet-200 focus:border-violet-400 transition-all"
                   onKeyDown={e => { if (e.key === "Enter") { e.preventDefault(); addPhotoLink(); } }}
                 />
                 <button type="button" onClick={addPhotoLink} disabled={!photoLinkUrl.trim() || photos.length >= 6}
@@ -309,7 +309,7 @@ function TulisKaryaForm() {
 
       {/* Error */}
       {error && (
-        <div className="mb-4 px-4 py-3 bg-red-50 border border-red-200 rounded-xl text-sm text-red-600">
+        <div className="mb-4 px-4 py-3 bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800 rounded-xl text-sm text-red-600 dark:text-red-400">
           {error}
         </div>
       )}

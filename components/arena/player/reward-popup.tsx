@@ -30,14 +30,14 @@ export function RewardPopupQueue() {
             exit={{ opacity: 0, y: -12, scale: 0.95 }}
             transition={{ type: "spring", stiffness: 320, damping: 22 }}
           >
-            <div className={`flex items-center gap-3 rounded-2xl border px-4 py-3 backdrop-blur-md ${TYPE_META[current.type]?.tint ?? "bg-white/10"} bg-[#0e1735]/85`}>
+            <div className={`flex items-center gap-3 rounded-2xl border px-4 py-3 backdrop-blur-md ${TYPE_META[current.type]?.tint ?? "bg-white bg-white/10 dark:bg-slate-900/10"} bg-[#0e1735]/85`}>
               <BadgeIcon icon={current.icon ?? "🏅"} size={34} />
               <div className="min-w-0 flex-1">
                 <p className="text-sm font-extrabold text-white">{current.title}</p>
                 {current.body && <p className="truncate text-xs text-[var(--px-text-dim)]">{current.body}</p>}
               </div>
               <button
-                className="pointer-events-auto rounded-full bg-white/10 px-2 py-0.5 text-[10px] font-bold text-[var(--px-text-dim)] hover:text-white"
+                className="pointer-events-auto rounded-full bg-white bg-white/10 dark:bg-slate-900/10 px-2 py-0.5 text-[10px] font-bold text-[var(--px-text-dim)] hover:text-white"
                 onClick={() => dequeuePopup(current.id)}
                 aria-label="Tutup notifikasi reward"
               >

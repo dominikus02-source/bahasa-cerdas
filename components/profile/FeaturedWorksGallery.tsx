@@ -82,7 +82,7 @@ export default function FeaturedWorksGallery({
               className={`px-3 py-1 rounded-full text-[11px] font-bold transition-all ring-1 ${
                 filter === t
                   ? "bg-violet-500 text-white ring-violet-400/40"
-                  : "bg-white/5 text-white/55 ring-white/10 hover:bg-white/10"
+ : "bg-white bg-white/5 dark:bg-slate-900/5 text-white/55 ring-white/10 hover:bg-white bg-white/10 "
               }`}
             >
               {t === "SEMUA" ? "Semua" : TYPE_BADGE[t]?.label ?? t}
@@ -98,11 +98,11 @@ export default function FeaturedWorksGallery({
       ) : (
         <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
           {filtered.map((k) => {
-            const meta = TYPE_BADGE[k.type] ?? { label: k.type, badge: "bg-white/5 text-white/60 ring-white/10" };
+            const meta = TYPE_BADGE[k.type] ?? { label: k.type, badge: "bg-white bg-white/5 dark:bg-slate-900/5 text-white/60 ring-white/10" };
             return (
               <div
                 key={k.id}
-                className="group flex flex-col rounded-xl bg-white/[0.05] ring-1 ring-white/10 p-4 transition-colors hover:bg-white/[0.08] hover:ring-violet-400/25"
+ className="group flex flex-col rounded-xl bg-white /[0.05] ring-1 ring-white/10 p-4 transition-colors hover:bg-white dark:bg-slate-800/90/[0.08] hover:ring-violet-400/25"
               >
                 <div className="flex items-center gap-2 mb-1.5">
                   <span className={`px-2 py-0.5 rounded-full text-[10px] font-semibold ring-1 ${meta.badge}`}>

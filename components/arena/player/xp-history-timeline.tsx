@@ -99,7 +99,7 @@ function XpHistoryRow({ entry }: { entry: XpHistoryEntryView }) {
   const icon = XP_SOURCE_ICONS[entry.source] ?? "⚡";
 
   return (
-    <div className="flex items-center gap-3 rounded-xl border border-[var(--px-border)] bg-white/[0.04] px-3 py-2.5">
+    <div className="flex items-center gap-3 rounded-xl border border-[var(--px-border)] bg-white dark:bg-slate-800/90/[0.04] px-3 py-2.5">
       <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-sky-500/10 text-lg">{icon}</span>
       <div className="min-w-0 flex-1">
         <p className="truncate text-sm font-bold text-[var(--px-text)]">{entry.sourceLabel}</p>

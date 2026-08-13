@@ -194,7 +194,7 @@ export default function GameHubPage() {
         <div className="absolute bottom-0 left-0 w-64 h-64 bg-pink-500/20 rounded-full blur-[80px]" />
         <div className="relative z-10 max-w-6xl mx-auto px-4 py-10 lg:py-14">
           <div className="flex items-center gap-3 mb-3">
-            <div className="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/20">
+            <div className="w-12 h-12 rounded-2xl bg-white bg-white/20 dark:bg-slate-900/20 backdrop-blur-md flex items-center justify-center border border-white/20">
               <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
                 <path d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" />
               </svg>
@@ -205,11 +205,11 @@ export default function GameHubPage() {
             </div>
           </div>
           <div className="flex flex-wrap gap-3 mt-4">
-            <div className="flex items-center gap-1.5 px-3 py-1.5 bg-white/10 rounded-full border border-white/10 text-xs">
+            <div className="flex items-center gap-1.5 px-3 py-1.5 bg-white bg-white/10 dark:bg-slate-900/10 rounded-full border border-white/10 text-xs">
               <svg className="w-3 h-3 text-yellow-300" fill="currentColor" viewBox="0 0 20 20"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
               {liveGames.length} Gim Aktif
             </div>
-            <div className="flex items-center gap-1.5 px-3 py-1.5 bg-white/10 rounded-full border border-white/10 text-xs">
+            <div className="flex items-center gap-1.5 px-3 py-1.5 bg-white bg-white/10 dark:bg-slate-900/10 rounded-full border border-white/10 text-xs">
               <svg className="w-3 h-3 text-green-300" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0 4 4 0 011 8 1 1 0 10-2 0z"/></svg>
               {comingSoon.length} Segera Hadir
             </div>
@@ -222,14 +222,14 @@ export default function GameHubPage() {
         <div className="mb-10">
           <div className="flex items-center gap-2 mb-6">
             <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-            <h2 className="text-lg font-bold text-slate-800">Mainkan Sekarang</h2>
+            <h2 className="text-lg font-bold text-slate-800 dark:text-slate-200">Mainkan Sekarang</h2>
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {liveGames.map((game) => (
               <Link
                 key={game.id}
                 href={game.href}
-                className="group relative bg-white rounded-2xl border border-slate-100 overflow-hidden hover:shadow-2xl hover:-translate-y-1 transition-all duration-300"
+                className="group relative bg-white dark:bg-slate-800/90 rounded-2xl border border-slate-100 dark:border-slate-800 overflow-hidden hover:shadow-2xl hover:-translate-y-1 transition-all duration-300"
               >
                 <div className={`h-24 bg-gradient-to-br ${game.gradient} relative overflow-hidden`}>
                   <div className="absolute inset-0 flex items-center justify-center">
@@ -244,12 +244,12 @@ export default function GameHubPage() {
                 <div className="p-4">
                   <div className="flex items-start justify-between mb-1">
                     <div>
-                      <h3 className="font-bold text-slate-900 text-sm">{game.title}</h3>
+                      <h3 className="font-bold text-slate-900 dark:text-slate-100 text-sm">{game.title}</h3>
                       <p className="text-[10px] text-slate-400 font-medium uppercase">{game.subtitle}</p>
                     </div>
-                    <span className="text-[9px] px-1.5 py-0.5 bg-emerald-100 text-emerald-700 rounded-full font-semibold">LANGSUNG</span>
+                    <span className="text-[9px] px-1.5 py-0.5 bg-emerald-100 text-emerald-700 dark:text-emerald-300 rounded-full font-semibold">LANGSUNG</span>
                   </div>
-                  <p className="text-xs text-slate-500 mt-2 line-clamp-2">{game.desc}</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-2 line-clamp-2">{game.desc}</p>
                   <div className="flex items-center gap-3 mt-3 pt-3 border-t border-slate-50">
                     <span className="text-[10px] text-slate-400">{game.players}</span>
                     <span className="text-[10px] text-slate-400">{game.time}</span>
@@ -264,11 +264,11 @@ export default function GameHubPage() {
         <div>
           <div className="flex items-center gap-2 mb-6">
             <svg className="w-4 h-4 text-violet-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
-            <h2 className="text-lg font-bold text-slate-800">Segera Hadir</h2>
+            <h2 className="text-lg font-bold text-slate-800 dark:text-slate-200">Segera Hadir</h2>
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {comingSoon.map((game) => (
-              <div key={game.id} className="relative bg-white/50 rounded-2xl border border-slate-100 overflow-hidden opacity-70">
+              <div key={game.id} className="relative bg-white bg-white/50 dark:bg-slate-900/50 rounded-2xl border border-slate-100 dark:border-slate-800 overflow-hidden opacity-70">
                 <div className={`h-20 bg-gradient-to-br ${game.gradient} relative overflow-hidden flex items-center justify-center`}>
                   <game.Icon />
                   <div className="absolute inset-0 flex items-center justify-center bg-black/40">
@@ -278,7 +278,7 @@ export default function GameHubPage() {
                   </div>
                 </div>
                 <div className="p-4">
-                  <h3 className="font-bold text-slate-700 text-sm">{game.title}</h3>
+                  <h3 className="font-bold text-slate-700 dark:text-slate-200 text-sm">{game.title}</h3>
                   <p className="text-[10px] text-slate-400">{game.subtitle}</p>
                 </div>
               </div>

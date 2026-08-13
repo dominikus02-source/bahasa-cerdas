@@ -1,2 +1,2 @@
 import Link from "next/link";
-export default function Page() { return <div className="text-center py-20"><h1 className="text-xl font-bold">Info Lomba</h1><p className="text-sm text-gray-500 mt-2">Halaman dalam pengembangan.</p><Link href="/murid/beranda" className="mt-4 inline-block text-sm text-violet-600 font-semibold hover:underline">Kembali</Link></div>; }
+export default function Page() { return <div className="text-center py-20"><h1 className="text-xl font-bold">Info Lomba</h1><p className="text-sm text-gray-500 dark:text-slate-400 mt-2">Halaman dalam pengembangan.</p><Link href="/murid/beranda" className="mt-4 inline-block text-sm text-violet-600 dark:text-violet-400 font-semibold hover:underline">Kembali</Link></div>; }

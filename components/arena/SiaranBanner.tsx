@@ -139,7 +139,7 @@ export function SiaranBanner() {
                 <button
                   onClick={() => tutup(s.id)}
                   className={`absolute right-3 top-3 rounded-full p-1 transition ${
-                    s.gambar ? "bg-black/30 text-white/70 hover:text-white" : "bg-black/5 text-gray-400 hover:text-gray-700"
+                    s.gambar ? "bg-black/30 text-white/70 hover:text-white" : "bg-black/5 text-gray-400 hover:text-gray-700 dark:text-slate-300"
                   }`}
                   aria-label="Tutup pengumuman"
                 >

@@ -190,8 +190,8 @@ export default function KuisPage() {
   if (soalList.length === 0) return (
     <div className="px-4 py-6 arena-page text-center pt-20">
       <HelpCircle className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-      <p className="text-gray-500">Kuis belum tersedia</p>
-      <button onClick={() => router.back()} className="mt-4 text-violet-600 font-semibold text-sm">Kembali</button>
+      <p className="text-gray-500 dark:text-slate-400">Kuis belum tersedia</p>
+      <button onClick={() => router.back()} className="mt-4 text-violet-600 dark:text-violet-400 font-semibold text-sm">Kembali</button>
     </div>
   )
 
@@ -200,8 +200,8 @@ export default function KuisPage() {
       <div className="w-20 h-20 rounded-full bg-gradient-to-br from-rose-500 to-pink-600 flex items-center justify-center mx-auto mb-4 shadow-lg">
         <Zap className="w-10 h-10 text-white" />
       </div>
-      <h2 className="text-2xl font-extrabold text-gray-900 mb-1">Kuis</h2>
-      <p className="text-gray-500 mb-2">{total} soal • {minutes}:{seconds.toString().padStart(2, "0")} menit</p>
+      <h2 className="text-2xl font-extrabold text-gray-900 dark:text-slate-100 mb-1">Kuis</h2>
+      <p className="text-gray-500 dark:text-slate-400 mb-2">{total} soal • {minutes}:{seconds.toString().padStart(2, "0")} menit</p>
       <p className="text-sm text-gray-400 mb-6">Jawab secepat dan setepat mungkin!</p>
       <button onClick={mulai} className="px-8 py-3.5 bg-violet-600 text-white font-bold rounded-xl hover:bg-violet-700 transition-colors text-lg">
         Mulai Kuis
@@ -214,18 +214,18 @@ export default function KuisPage() {
       <div className="w-24 h-24 rounded-full bg-gradient-to-br from-rose-500 to-pink-600 flex items-center justify-center mx-auto mb-4 shadow-lg">
         <Award className="w-12 h-12 text-white" />
       </div>
-      <h2 className="text-2xl font-extrabold text-gray-900 mb-1">Kuis Selesai!</h2>
-      <p className="text-gray-500 mb-4">Skor: {benar}/{total}</p>
+      <h2 className="text-2xl font-extrabold text-gray-900 dark:text-slate-100 mb-1">Kuis Selesai!</h2>
+      <p className="text-gray-500 dark:text-slate-400 mb-4">Skor: {benar}/{total}</p>
       <div className="w-36 h-36 rounded-full border-4 border-rose-200 flex items-center justify-center mx-auto mb-4">
         <div>
           <span className="text-4xl font-extrabold text-rose-600 block">{skor}%</span>
           <span className="text-lg font-bold text-rose-500">Grade {grade}</span>
         </div>
       </div>
-      {grade === "A" && <p className="text-sm text-emerald-600 font-bold mb-6">Luar biasa! Pertahankan!</p>}
-      {grade === "B" && <p className="text-sm text-blue-600 font-bold mb-6">Bagus! Tingkatkan lagi!</p>}
-      {grade === "C" && <p className="text-sm text-amber-600 font-bold mb-6">Cukup. Ayo belajar lagi!</p>}
-      {grade === "D" && <p className="text-sm text-red-600 font-bold mb-6">Ayo ulang dan belajar lebih giat!</p>}
+      {grade === "A" && <p className="text-sm text-emerald-600 dark:text-emerald-400 font-bold mb-6">Luar biasa! Pertahankan!</p>}
+      {grade === "B" && <p className="text-sm text-blue-600 dark:text-blue-400 font-bold mb-6">Bagus! Tingkatkan lagi!</p>}
+      {grade === "C" && <p className="text-sm text-amber-600 dark:text-amber-400 font-bold mb-6">Cukup. Ayo belajar lagi!</p>}
+      {grade === "D" && <p className="text-sm text-red-600 dark:text-red-400 font-bold mb-6">Ayo ulang dan belajar lebih giat!</p>}
       <button onClick={() => router.push(`/arena/jalur-cerdas/${unitId}`)} className="px-6 py-3 bg-violet-600 text-white font-bold rounded-xl hover:bg-violet-700 transition-colors">
         Kembali ke Unit
       </button>
@@ -237,14 +237,14 @@ export default function KuisPage() {
       {confettiAktif && <ConfettiBurst trigger={confettiTrigger} />}
       {/* Header with timer */}
       <div className="flex items-center gap-3 mb-6">
-        <button onClick={() => router.back()} className="w-9 h-9 rounded-xl bg-gray-100 flex items-center justify-center shrink-0 hover:bg-gray-200 transition-colors">
-          <ArrowLeft className="w-5 h-5 text-gray-600" />
+        <button onClick={() => router.back()} className="w-9 h-9 rounded-xl bg-gray-100 dark:bg-slate-800/80 flex items-center justify-center shrink-0 hover:bg-gray-200 transition-colors">
+          <ArrowLeft className="w-5 h-5 text-gray-600 dark:text-slate-300" />
         </button>
         <div className="flex-1">
           <div className="flex items-center justify-between">
-            <p className="text-xs text-violet-600 font-semibold">Kuis • Soal {current + 1}/{total}</p>
+            <p className="text-xs text-violet-600 dark:text-violet-400 font-semibold">Kuis • Soal {current + 1}/{total}</p>
             <div className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-bold ${
-              timeLeft < 30 ? "bg-red-100 text-red-700 animate-pulse" : "bg-gray-100 text-gray-600"
+              timeLeft < 30 ? "bg-red-100 text-red-700 animate-pulse" : "bg-gray-100 dark:bg-slate-800/80 text-gray-600"
             }`}>
               <Timer className="w-3.5 h-3.5" />
               {minutes}:{seconds.toString().padStart(2, "0")}
@@ -260,13 +260,13 @@ export default function KuisPage() {
       {(bolehPakaiHint || dicoret !== undefined || timeCount > 0) && (
         <div className="flex flex-wrap items-center gap-2 mb-3">
           {tipe === "PG" && dicoret !== undefined && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-50 border border-amber-200 text-amber-700 text-xs font-semibold">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-50 border border-amber-200 text-amber-700 dark:text-amber-300 text-xs font-semibold">
               <Lightbulb className="w-3.5 h-3.5" /> Petunjuk terpakai di soal ini
             </span>
           )}
           {bolehPakaiHint && (
             <button onClick={pakaiHint} disabled={hintProses}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-100 border border-amber-300 text-amber-800 text-xs font-bold hover:bg-amber-200 disabled:opacity-60 transition-colors"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-100 border border-amber-300 dark:border-amber-700 text-amber-800 text-xs font-bold hover:bg-amber-200 disabled:opacity-60 transition-colors"
             >
               <Lightbulb className="w-3.5 h-3.5" />
               {hintProses ? "Memakai…" : `Coret 1 opsi salah (${hintCount})`}
@@ -274,7 +274,7 @@ export default function KuisPage() {
           )}
           {timeCount > 0 && (
             <button onClick={pakaiTambahWaktu} disabled={waktuProses || tambahWaktuDipakai >= MAKS_TAMBAH_WAKTU}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-sky-100 border border-sky-300 text-sky-800 text-xs font-bold hover:bg-sky-200 disabled:opacity-50 transition-colors"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-sky-100 border border-sky-300 dark:border-sky-700 text-sky-800 text-xs font-bold hover:bg-sky-200 disabled:opacity-50 transition-colors"
             >
               <TimerReset className="w-3.5 h-3.5" />
               {tambahWaktuDipakai >= MAKS_TAMBAH_WAKTU
@@ -286,17 +286,17 @@ export default function KuisPage() {
       )}
 
       {powerUpError && (
-        <div className="mb-3 flex items-center justify-between gap-3 p-3 rounded-xl bg-red-50 border border-red-200">
-          <p className="text-xs text-red-700 font-medium">{powerUpError}</p>
-          <button onClick={clearError} className="text-red-500 shrink-0" aria-label="Tutup pesan">
+        <div className="mb-3 flex items-center justify-between gap-3 p-3 rounded-xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800">
+          <p className="text-xs text-red-700 dark:text-red-300 font-medium">{powerUpError}</p>
+          <button onClick={clearError} className="text-red-500 dark:text-red-400 shrink-0" aria-label="Tutup pesan">
             <X className="w-4 h-4" />
           </button>
         </div>
       )}
 
       {/* Soal */}
-      <div className="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm mb-4 min-h-[200px]">
-        <p className="text-base font-bold text-gray-900 leading-relaxed mb-5">{soal.soal}</p>
+      <div className="bg-white dark:bg-slate-800/90 border border-gray-100 dark:border-slate-800 rounded-2xl p-5 shadow-sm mb-4 min-h-[200px]">
+        <p className="text-base font-bold text-gray-900 dark:text-slate-100 leading-relaxed mb-5">{soal.soal}</p>
 
         {tipe === "PG" && (
           <div className="space-y-2.5">
@@ -305,14 +305,14 @@ export default function KuisPage() {
               const isSelected = picked === idx
               const isRight = idx === soal.jawaban
               const isDicoret = dicoret === idx
-              let btnClass = "border-gray-200 bg-white hover:border-violet-300 hover:bg-violet-50"
+              let btnClass = "border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800/90 hover:border-violet-300 hover:bg-violet-50"
 
-              if (isDicoret && !showResult) btnClass = "border-gray-100 bg-gray-50 opacity-50 line-through cursor-not-allowed"
+              if (isDicoret && !showResult) btnClass = "border-gray-100 dark:border-slate-800 bg-gray-50 dark:bg-slate-800/60 opacity-50 line-through cursor-not-allowed"
 
               if (showResult) {
-                if (isRight) btnClass = "border-emerald-400 bg-emerald-50"
-                else if (isSelected && !isRight) btnClass = "border-red-400 bg-red-50"
-                else btnClass = "border-gray-100 bg-gray-50 opacity-60"
+                if (isRight) btnClass = "border-emerald-400 bg-emerald-50 dark:bg-emerald-950/40"
+                else if (isSelected && !isRight) btnClass = "border-red-400 bg-red-50 dark:bg-red-950/40"
+                else btnClass = "border-gray-100 dark:border-slate-800 bg-gray-50 dark:bg-slate-800/60 opacity-60"
               }
 
               return (
@@ -322,7 +322,7 @@ export default function KuisPage() {
                   <span className={`w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold shrink-0 ${
                     showResult && isRight ? "bg-emerald-500 text-white" :
                     showResult && isSelected && !isRight ? "bg-red-500 text-white" :
-                    isSelected ? "bg-violet-500 text-white" : "bg-gray-100 text-gray-500"
+                    isSelected ? "bg-violet-500 text-white" : "bg-gray-100 dark:bg-slate-800/80 text-gray-500"
                   }`}>
                     {showResult && isRight ? <CheckCircle2 className="w-4 h-4" /> :
                      showResult && isSelected && !isRight ? <XCircle className="w-4 h-4" /> :
@@ -330,9 +330,9 @@ export default function KuisPage() {
                      letters[idx]}
                   </span>
                   <span className={`text-sm font-medium ${
-                    showResult && isRight ? "text-emerald-700" :
-                    showResult && isSelected && !isRight ? "text-red-700" :
-                    "text-gray-700"
+                    showResult && isRight ? "text-emerald-700 dark:text-emerald-300" :
+                    showResult && isSelected && !isRight ? "text-red-700 dark:text-red-300" :
+                    "text-gray-700 dark:text-slate-300"
                   }`}>{o}</span>
                 </button>
               )
@@ -345,19 +345,19 @@ export default function KuisPage() {
             {["Benar", "Salah"].map((label, idx) => {
               const isSelected = picked === idx
               const isRight = idx === soal.jawaban
-              let btnClass = "flex-1 border-2 border-gray-200 bg-white hover:border-violet-300 hover:bg-violet-50"
+              let btnClass = "flex-1 border-2 border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800/90 hover:border-violet-300 hover:bg-violet-50"
 
               if (showResult) {
-                if (isRight) btnClass = "flex-1 border-2 border-emerald-400 bg-emerald-50"
-                else if (isSelected && !isRight) btnClass = "flex-1 border-2 border-red-400 bg-red-50"
-                else btnClass = "flex-1 border-2 border-gray-100 bg-gray-50 opacity-60"
+                if (isRight) btnClass = "flex-1 border-2 border-emerald-400 bg-emerald-50 dark:bg-emerald-950/40"
+                else if (isSelected && !isRight) btnClass = "flex-1 border-2 border-red-400 bg-red-50 dark:bg-red-950/40"
+                else btnClass = "flex-1 border-2 border-gray-100 dark:border-slate-800 bg-gray-50 dark:bg-slate-800/60 opacity-60"
               }
 
               return (
                 <button key={idx} onClick={() => pilihBS(idx)} disabled={showResult}
                   className={`${btnClass} py-4 rounded-xl text-center font-bold text-sm transition-all`}
                 >
-                  <span className={`flex justify-center mb-0.5 ${idx === 0 ? "text-emerald-600" : "text-red-600"}`}>
+                  <span className={`flex justify-center mb-0.5 ${idx === 0 ? "text-emerald-600 dark:text-emerald-400" : "text-red-600 dark:text-red-400"}`}>
                     {idx === 0 ? <Check className="w-5 h-5" /> : <X className="w-5 h-5" />}
                   </span>
                   {label}
@@ -375,7 +375,7 @@ export default function KuisPage() {
               onKeyDown={e => e.key === "Enter" && submitIsian()}
               placeholder="Ketik jawabanmu..."
               disabled={showResult}
-              className="w-full px-4 py-3.5 rounded-xl border-2 border-gray-200 text-sm focus:outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-100 disabled:bg-gray-50"
+              className="w-full px-4 py-3.5 rounded-xl border-2 border-gray-200 dark:border-slate-700 text-sm focus:outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-100 disabled:bg-gray-50 dark:bg-slate-800/60"
               autoFocus
             />
             {!showResult && (
@@ -391,17 +391,17 @@ export default function KuisPage() {
 
       {showingResult && (
         <div className={`p-4 rounded-xl border mb-4 animate-fade-in ${
-          isCorrect ? "bg-emerald-50 border-emerald-200" : "bg-red-50 border-red-200"
+          isCorrect ? "bg-emerald-50 dark:bg-emerald-950/40 border-emerald-200 dark:border-emerald-800" : "bg-red-50 dark:bg-red-950/40 border-red-200 dark:border-red-800"
         }`}>
           <div className="flex items-center gap-1.5">
             {isCorrect ? (
-              <><CheckCircle2 className="w-4 h-4 text-emerald-600" /><span className="text-sm font-bold text-emerald-700">Benar!</span></>
+              <><CheckCircle2 className="w-4 h-4 text-emerald-600" /><span className="text-sm font-bold text-emerald-700 dark:text-emerald-300">Benar!</span></>
             ) : (
-              <><XCircle className="w-4 h-4 text-red-600" /><span className="text-sm font-bold text-red-700">Kurang tepat</span></>
+              <><XCircle className="w-4 h-4 text-red-600 dark:text-red-400" /><span className="text-sm font-bold text-red-700 dark:text-red-300">Kurang tepat</span></>
             )}
           </div>
           {!isCorrect && (
-            <p className="text-xs text-gray-500 mt-1">Jawaban benar: <strong className="text-gray-800">{getJawabanBenar(soal)}</strong></p>
+            <p className="text-xs text-gray-500 mt-1">Jawaban benar: <strong className="text-gray-800 dark:text-slate-200">{getJawabanBenar(soal)}</strong></p>
           )}
         </div>
       )}

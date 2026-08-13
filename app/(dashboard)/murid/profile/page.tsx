@@ -301,7 +301,7 @@ export default function MuridProfilePage() {
   }
 
   if (!user) {
-    return <div className="text-center py-20 text-gray-500">Gagal memuat profil. Silakan refresh.</div>;
+    return <div className="text-center py-20 text-gray-500 dark:text-slate-400">Gagal memuat profil. Silakan refresh.</div>;
   }
 
   const playerLevel = levelFromXp(user.xp || 0);
@@ -482,7 +482,7 @@ export default function MuridProfilePage() {
                     className={`relative flex flex-col items-center gap-1 p-2.5 rounded-xl text-center transition-transform ${
                       l.unlocked
                         ? "profile-badge-unlocked bg-gradient-to-b from-amber-400/15 to-amber-500/10 ring-1 ring-amber-300/25 hover:scale-105"
-                        : "bg-white/[0.04] ring-1 ring-white/5"
+                        : "bg-white dark:bg-slate-800/90/[0.04] ring-1 ring-white/5"
                     }`}
                   >
                     <BadgeIcon
@@ -493,7 +493,7 @@ export default function MuridProfilePage() {
                     />
                     <span className={`text-[10px] font-semibold leading-tight ${l.unlocked ? "text-amber-200" : "text-white/40"}`}>{l.name}</span>
                     {!l.unlocked && (
-                      <div className="w-full h-1 bg-white/10 rounded-full overflow-hidden mt-0.5">
+                      <div className="w-full h-1 bg-white bg-white/10 dark:bg-slate-900/10 rounded-full overflow-hidden mt-0.5">
                         <div className="h-full bg-violet-400 rounded-full" style={{ width: `${Math.min(100, (l.progress / l.target) * 100)}%` }} />
                       </div>
                     )}
@@ -606,20 +606,20 @@ export default function MuridProfilePage() {
       {/* Settings Modal */}
       {showSettings && (
         <div className="fixed inset-0 z-50 bg-black/50 flex items-start justify-center pt-12 md:pt-20 px-4 overflow-y-auto" onClick={() => setShowSettings(false)}>
-          <div className="bg-white rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden" onClick={e => e.stopPropagation()}>
-            <div className="flex items-center justify-between p-5 border-b border-gray-100">
-              <h2 className="font-bold text-gray-900 flex items-center gap-2">
-                <Settings size={18} className="text-violet-600" />
+          <div className="bg-white dark:bg-slate-800/90 rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between p-5 border-b border-gray-100 dark:border-slate-800">
+              <h2 className="font-bold text-gray-900 dark:text-slate-100 flex items-center gap-2">
+                <Settings size={18} className="text-violet-600 dark:text-violet-400" />
                 Pengaturan Profil
               </h2>
-              <button onClick={() => setShowSettings(false)} className="text-gray-400 hover:text-gray-600 p-1">
+              <button onClick={() => setShowSettings(false)} className="text-gray-400 hover:text-gray-600 dark:text-slate-300 p-1">
                 <X size={20} />
               </button>
             </div>
             <div className="p-5 space-y-4">
               {settingsMessage && (
                 <div className={`flex items-center gap-2 p-3 rounded-xl text-sm ${
-                  settingsMessage.type === "success" ? "bg-green-50 text-green-700" : "bg-red-50 text-red-700"
+                  settingsMessage.type === "success" ? "bg-green-50 dark:bg-green-950/40 text-green-700 dark:text-green-300" : "bg-red-50 dark:bg-red-950/40 text-red-700 dark:text-red-300"
                 }`}>
                   {settingsMessage.type === "success" ? <CheckCircle2 size={16} /> : <AlertCircle size={16} />}
                   {settingsMessage.text}
@@ -634,7 +634,7 @@ export default function MuridProfilePage() {
                   type="button"
                   onClick={() => avatarFileRef.current?.click()}
                   disabled={uploadingAvatar}
-                  className="flex items-center gap-2 px-4 py-2.5 rounded-xl border-2 border-dashed border-violet-200 text-violet-700 hover:border-violet-400 hover:bg-violet-50 transition-all text-sm font-medium disabled:opacity-50"
+                  className="flex items-center gap-2 px-4 py-2.5 rounded-xl border-2 border-dashed border-violet-200 text-violet-700 dark:text-violet-300 hover:border-violet-400 hover:bg-violet-50 transition-all text-sm font-medium disabled:opacity-50"
                 >
                   {uploadingAvatar ? <Loader2 size={16} className="animate-spin" /> : <Camera size={16} />}
                   {uploadingAvatar ? "Mengupload..." : "Upload Foto Sendiri"}
@@ -650,7 +650,7 @@ export default function MuridProfilePage() {
                   <button
                     type="button"
                     onClick={() => setAvatarSrc(null)}
-                    className="text-xs text-red-500 hover:text-red-700"
+                    className="text-xs text-red-500 dark:text-red-400 hover:text-red-700 dark:text-red-300"
                   >
                     Hapus
                   </button>
@@ -658,9 +658,9 @@ export default function MuridProfilePage() {
               </div>
               <p className="text-xs text-gray-400 -mt-1">Klik untuk upload dari galeri HP atau file laptop</p>
 
-              <div className="bg-violet-50/60 border border-violet-100 rounded-xl p-3.5">
-                <label className="text-sm font-medium text-gray-700 mb-1 flex items-center gap-1.5">
-                  <Pencil size={14} className="text-violet-500" /> Nama Panggilan
+              <div className="bg-violet-50 dark:bg-violet-950/40/60 border border-violet-100 dark:border-violet-900 rounded-xl p-3.5">
+                <label className="text-sm font-medium text-gray-700 dark:text-slate-300 mb-1 flex items-center gap-1.5">
+                  <Pencil size={14} className="text-violet-500 dark:text-violet-400" /> Nama Panggilan
                 </label>
                 <div className="flex items-center gap-2 mt-1">
                   <Input
@@ -668,7 +668,7 @@ export default function MuridProfilePage() {
                     onChange={e => setNicknameDraft(e.target.value)}
                     placeholder={defaultNicknameFromFullName(user.fullName)}
                     maxLength={NICKNAME_MAX_LENGTH}
-                    className="h-10 text-sm rounded-xl bg-white"
+                    className="h-10 text-sm rounded-xl bg-white dark:bg-slate-800/90"
                   />
                   <button
                     onClick={handleSaveNickname}
@@ -678,52 +678,52 @@ export default function MuridProfilePage() {
                     {savingNickname ? <Loader2 size={14} className="animate-spin" /> : <Save size={14} />}
                   </button>
                 </div>
-                {nicknameError && <p className="text-xs text-red-500 mt-1">{nicknameError}</p>}
+                {nicknameError && <p className="text-xs text-red-500 dark:text-red-400 mt-1">{nicknameError}</p>}
                 {meta && meta.nickname.daysLeftForChange > 0 && (
                   <p className="text-xs text-gray-400 mt-1">Ganti lagi dalam {meta.nickname.daysLeftForChange} hari</p>
                 )}
                 {user.nickname && (
-                  <button onClick={loadNicknameHistory} className="text-xs text-violet-600 hover:text-violet-700 mt-2 flex items-center gap-1">
+                  <button onClick={loadNicknameHistory} className="text-xs text-violet-600 hover:text-violet-700 dark:text-violet-300 mt-2 flex items-center gap-1">
                     <History size={12} /> Riwayat perubahan
                   </button>
                 )}
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Nama Lengkap</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Nama Lengkap</label>
                 <Input value={settingsForm.fullName} onChange={e => setSettingsForm(p => ({ ...p, fullName: e.target.value }))} className="h-11 rounded-xl" />
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Sekolah</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Sekolah</label>
                   <Input value={settingsForm.school} onChange={e => setSettingsForm(p => ({ ...p, school: e.target.value }))} className="h-11 rounded-xl" />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Kelas</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Kelas</label>
                   <Input value={settingsForm.grade} onChange={e => setSettingsForm(p => ({ ...p, grade: e.target.value }))} className="h-11 rounded-xl" />
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">No. Absensi</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">No. Absensi</label>
                   <Input value={settingsForm.noAbsen} onChange={e => setSettingsForm(p => ({ ...p, noAbsen: e.target.value }))} placeholder="cth: 17" className="h-11 rounded-xl" />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Provinsi</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Provinsi</label>
                   <Input value={settingsForm.province} onChange={e => setSettingsForm(p => ({ ...p, province: e.target.value }))} className="h-11 rounded-xl" />
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Bio</label>
-                <textarea value={settingsForm.bio} onChange={e => setSettingsForm(p => ({ ...p, bio: e.target.value }))} rows={3} className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 resize-none" />
+                <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Bio</label>
+                <textarea value={settingsForm.bio} onChange={e => setSettingsForm(p => ({ ...p, bio: e.target.value }))} rows={3} className="w-full border border-gray-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 resize-none" />
               </div>
               <Button onClick={handleSettingsSave} disabled={savingSettings} className="w-full bg-violet-600 hover:bg-violet-700 text-white h-11 rounded-xl font-bold">
                 {savingSettings ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
                 Simpan Perubahan
               </Button>
             </div>
-            <div className="border-t border-gray-100 p-5 space-y-2">
-              <button onClick={handleLogout} className="flex items-center gap-2 text-sm text-red-600 hover:text-red-700 font-medium">
+            <div className="border-t border-gray-100 dark:border-slate-800 p-5 space-y-2">
+              <button onClick={handleLogout} className="flex items-center gap-2 text-sm text-red-600 dark:text-red-400 hover:text-red-700 dark:text-red-300 font-medium">
                 <LogOut size={16} /> Keluar
               </button>
             </div>
@@ -734,13 +734,13 @@ export default function MuridProfilePage() {
       {/* Nickname History Modal */}
       {showNicknameHistory && (
         <div className="fixed inset-0 z-50 bg-black/50 flex items-start justify-center pt-12 md:pt-20 px-4 overflow-y-auto" onClick={() => setShowNicknameHistory(false)}>
-          <div className="bg-white rounded-2xl w-full max-w-md shadow-2xl overflow-hidden" onClick={e => e.stopPropagation()}>
-            <div className="flex items-center justify-between p-5 border-b border-gray-100">
-              <h2 className="font-bold text-gray-900 flex items-center gap-2">
-                <History size={18} className="text-violet-600" />
+          <div className="bg-white dark:bg-slate-800/90 rounded-2xl w-full max-w-md shadow-2xl overflow-hidden" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between p-5 border-b border-gray-100 dark:border-slate-800">
+              <h2 className="font-bold text-gray-900 dark:text-slate-100 flex items-center gap-2">
+                <History size={18} className="text-violet-600 dark:text-violet-400" />
                 Riwayat Nama Panggilan
               </h2>
-              <button onClick={() => setShowNicknameHistory(false)} className="text-gray-400 hover:text-gray-600 p-1">
+              <button onClick={() => setShowNicknameHistory(false)} className="text-gray-400 hover:text-gray-600 dark:text-slate-300 p-1">
                 <X size={20} />
               </button>
             </div>
@@ -754,7 +754,7 @@ export default function MuridProfilePage() {
                       <div>
                         <span className="text-gray-400 line-through">{r.oldNickname || "(kosong)"}</span>
                         <span className="mx-2 text-gray-300">→</span>
-                        <span className="font-semibold text-gray-900">{r.newNickname || "(direset)"}</span>
+                        <span className="font-semibold text-gray-900 dark:text-slate-100">{r.newNickname || "(direset)"}</span>
                       </div>
                       <span className="text-xs text-gray-400">{new Date(r.changedAt).toLocaleDateString("id-ID")}</span>
                     </div>

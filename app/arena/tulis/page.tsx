@@ -130,8 +130,8 @@ export default function ArenaTulisPage() {
   return (
     <div className="px-4 py-5 arena-page">
       <div className="mb-6">
-        <h1 className="text-xl font-extrabold text-gray-900">Tulis Karya</h1>
-        <p className="text-sm text-gray-500 mt-1">Bagikan karyamu ke seluruh Indonesia!</p>
+        <h1 className="text-xl font-extrabold text-gray-900 dark:text-slate-100">Tulis Karya</h1>
+        <p className="text-sm text-gray-500 dark:text-slate-400 mt-1">Bagikan karyamu ke seluruh Indonesia!</p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">
@@ -147,7 +147,7 @@ export default function ArenaTulisPage() {
                 className={`flex flex-col items-center gap-1.5 p-3 rounded-xl border transition-all ${
                   type === t.value
                     ? `bg-gradient-to-br ${t.color} text-white border-transparent shadow-md`
-                    : "bg-white border-gray-200 text-gray-600 hover:border-gray-300"
+                    : "bg-white dark:bg-slate-800/90 border-gray-200 dark:border-slate-700 text-gray-600 hover:border-gray-300 dark:border-slate-600"
                 }`}
               >
                 <div className={type === t.value ? "text-white" : "text-gray-400"}>
@@ -168,23 +168,23 @@ export default function ArenaTulisPage() {
           className={`w-full text-left rounded-2xl p-4 transition-all ${
             isChallengeType
               ? "bg-gradient-to-br from-violet-600 via-purple-600 to-fuchsia-600 text-white shadow-lg shadow-violet-500/25"
-              : "bg-white border-2 border-dashed border-violet-300 text-gray-800 hover:border-violet-400 active:scale-[0.99]"
+              : "bg-white dark:bg-slate-800/90 border-2 border-dashed border-violet-300 text-gray-800 dark:text-slate-200 hover:border-violet-400 active:scale-[0.99]"
           }`}
         >
           <div className="flex items-start gap-3">
             <div className={`w-11 h-11 rounded-xl flex items-center justify-center shrink-0 ${
-              isChallengeType ? "bg-white/20" : "bg-violet-100"
+              isChallengeType ? "bg-white bg-white/20 dark:bg-slate-900/20" : "bg-violet-100"
             }`}>
-              <Sparkles size={22} className={isChallengeType ? "text-yellow-300" : "text-violet-600"} />
+              <Sparkles size={22} className={isChallengeType ? "text-yellow-300" : "text-violet-600 dark:text-violet-400"} />
             </div>
             <div className="flex-1 min-w-0">
               <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${
-                isChallengeType ? "bg-white/20" : "bg-violet-100 text-violet-700"
+                isChallengeType ? "bg-white bg-white/20 dark:bg-slate-900/20" : "bg-violet-100 text-violet-700 dark:text-violet-300"
               }`}>
                 Tantangan Minggu Ini
               </span>
               <p className="text-base font-extrabold mt-1.5 leading-tight">{challenge.theme}</p>
-              <p className={`text-xs mt-0.5 leading-snug ${isChallengeType ? "text-white/80" : "text-gray-500"}`}>
+              <p className={`text-xs mt-0.5 leading-snug ${isChallengeType ? "text-white/80" : "text-gray-500 dark:text-slate-400"}`}>
                 {challenge.prompt}
               </p>
               <div className="flex items-center gap-2 mt-2.5">
@@ -196,7 +196,7 @@ export default function ArenaTulisPage() {
                     <CheckCircle2 size={13} /> Karyamu ikut tantangan ini
                   </span>
                 ) : (
-                  <span className="text-[11px] font-bold text-violet-600">
+                  <span className="text-[11px] font-bold text-violet-600 dark:text-violet-400">
                     Ketuk untuk ikut &rarr;
                   </span>
                 )}
@@ -213,7 +213,7 @@ export default function ArenaTulisPage() {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder="Masukkan judul karyamu..."
-            className="w-full px-4 py-3.5 rounded-xl bg-white border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-violet-300 focus:border-violet-300"
+            className="w-full px-4 py-3.5 rounded-xl bg-white dark:bg-slate-800/90 border border-gray-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-violet-300 focus:border-violet-300"
             required
           />
         </div>
@@ -233,7 +233,7 @@ export default function ArenaTulisPage() {
                 type="button"
                 onClick={() => setCoverMode(mode)}
                 className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-                  coverMode === mode ? "bg-violet-600 text-white" : "bg-gray-100 text-gray-500 hover:bg-gray-200"
+                  coverMode === mode ? "bg-violet-600 text-white" : "bg-gray-100 dark:bg-slate-800/80 text-gray-500 hover:bg-gray-200"
                 }`}
               >
                 {mode === "upload" ? "Upload" : "Pakai Link"}
@@ -250,7 +250,7 @@ export default function ArenaTulisPage() {
                 onChange={(e) => e.target.files?.[0] && handleUploadCover(e.target.files[0])}
               />
               {coverImage ? (
-                <div className="relative rounded-xl overflow-hidden border border-gray-200">
+                <div className="relative rounded-xl overflow-hidden border border-gray-200 dark:border-slate-700">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={coverImage} alt="Sampul" className="w-full h-44 object-cover" />
                   <button
@@ -267,7 +267,7 @@ export default function ArenaTulisPage() {
                   type="button"
                   onClick={() => coverRef.current?.click()}
                   disabled={uploading}
-                  className="w-full py-3.5 rounded-xl border-2 border-dashed border-violet-300 text-sm font-semibold text-violet-600 hover:bg-violet-50 disabled:opacity-50 transition-all flex items-center justify-center gap-2"
+                  className="w-full py-3.5 rounded-xl border-2 border-dashed border-violet-300 dark:border-violet-700 text-sm font-semibold text-violet-600 dark:text-violet-400 hover:bg-violet-50 dark:bg-violet-950/40 disabled:opacity-50 transition-all flex items-center justify-center gap-2"
                 >
                   {uploading ? <Loader2 size={16} className="animate-spin" /> : <Upload size={16} />}
                   {uploading ? "Mengunggah..." : "Upload gambar sampul"}
@@ -280,7 +280,7 @@ export default function ArenaTulisPage() {
               value={coverImage}
               onChange={(e) => setCoverImage(e.target.value)}
               placeholder="https://example.com/gambar.jpg"
-              className="w-full px-4 py-3.5 rounded-xl bg-white border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-violet-300 focus:border-violet-300"
+              className="w-full px-4 py-3.5 rounded-xl bg-white dark:bg-slate-800/90 border border-gray-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-violet-300 focus:border-violet-300"
             />
           )}
         </div>
@@ -297,7 +297,7 @@ export default function ArenaTulisPage() {
           {photos.length > 0 && (
             <div className="grid grid-cols-3 gap-2 mb-2">
               {photos.map((url, i) => (
-                <div key={url} className="relative aspect-square rounded-xl overflow-hidden border border-gray-200">
+                <div key={url} className="relative aspect-square rounded-xl overflow-hidden border border-gray-200 dark:border-slate-700">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={url} alt={`Foto ${i + 1}`} className="w-full h-full object-cover" />
                   <button
@@ -322,7 +322,7 @@ export default function ArenaTulisPage() {
                     type="button"
                     onClick={() => setPhotoMode(mode)}
                     className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-                      photoMode === mode ? "bg-violet-600 text-white" : "bg-gray-100 text-gray-500 hover:bg-gray-200"
+                      photoMode === mode ? "bg-violet-600 text-white" : "bg-gray-100 dark:bg-slate-800/80 text-gray-500 hover:bg-gray-200"
                     }`}
                   >
                     {mode === "upload" ? "Upload" : "Pakai Link"}
@@ -343,7 +343,7 @@ export default function ArenaTulisPage() {
                     type="button"
                     onClick={() => photosRef.current?.click()}
                     disabled={uploadingPhotos}
-                    className="w-full py-3 rounded-xl border-2 border-dashed border-gray-300 text-sm font-semibold text-gray-500 hover:bg-gray-50 disabled:opacity-50 transition-all flex items-center justify-center gap-2"
+                    className="w-full py-3 rounded-xl border-2 border-dashed border-gray-300 dark:border-slate-600 text-sm font-semibold text-gray-500 hover:bg-gray-50 dark:bg-slate-800/60 disabled:opacity-50 transition-all flex items-center justify-center gap-2"
                   >
                     {uploadingPhotos ? <Loader2 size={16} className="animate-spin" /> : <Upload size={16} />}
                     {uploadingPhotos ? "Mengunggah..." : "Upload foto (bisa banyak)"}
@@ -356,7 +356,7 @@ export default function ArenaTulisPage() {
                     value={photoLinkUrl}
                     onChange={(e) => setPhotoLinkUrl(e.target.value)}
                     placeholder="https://example.com/foto.jpg"
-                    className="flex-1 px-4 py-3 rounded-xl bg-white border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-violet-300 focus:border-violet-300"
+                    className="flex-1 px-4 py-3 rounded-xl bg-white dark:bg-slate-800/90 border border-gray-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-violet-300 focus:border-violet-300"
                   />
                   <button
                     type="button"
@@ -379,14 +379,14 @@ export default function ArenaTulisPage() {
             onChange={(e) => setContent(e.target.value)}
             placeholder="Tulis karyamu di sini..."
             rows={12}
-            className="w-full px-4 py-3.5 rounded-xl bg-white border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-violet-300 focus:border-violet-300 resize-none"
+            className="w-full px-4 py-3.5 rounded-xl bg-white dark:bg-slate-800/90 border border-gray-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-violet-300 focus:border-violet-300 resize-none"
             required
           />
           <p className="text-[10px] text-gray-400 mt-1.5 text-right">{content.length} karakter</p>
         </div>
 
         {error && (
-          <div className="p-3 rounded-xl bg-red-50 border border-red-200 text-sm text-red-600">
+          <div className="p-3 rounded-xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800 text-sm text-red-600 dark:text-red-400">
             {error}
           </div>
         )}

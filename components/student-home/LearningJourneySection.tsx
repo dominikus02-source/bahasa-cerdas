@@ -97,7 +97,7 @@ export function LearningJourneySection() {
             <Link
               key={item.label}
               href={item.href}
-              className="group px-card px-4 py-4 flex items-center gap-3.5 hover:bg-white/[0.08] transition-colors"
+              className="group px-card px-4 py-4 flex items-center gap-3.5 hover:bg-white dark:bg-slate-800/90/[0.08] transition-colors"
             >
               <span className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${item.accent}`}>
                 <Icon size={19} />

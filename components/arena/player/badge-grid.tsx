@@ -61,7 +61,7 @@ export function BadgeGrid({ limit }: { limit?: number }) {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.03 }}
-              className="flex flex-col items-center gap-1.5 rounded-2xl border border-[var(--px-border)] bg-white/[0.05] p-3 text-center"
+              className="flex flex-col items-center gap-1.5 rounded-2xl border border-[var(--px-border)] bg-white dark:bg-slate-800/90/[0.05] p-3 text-center"
               title={b.description}
             >
               <div

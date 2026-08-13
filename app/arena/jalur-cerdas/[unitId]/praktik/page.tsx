@@ -58,8 +58,8 @@ export default function PraktikPage() {
   if (!praktik) return (
     <div className="px-4 py-6 arena-page text-center pt-20">
       <HelpCircle className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-      <p className="text-gray-500">Praktik belum tersedia</p>
-      <button onClick={() => router.back()} className="mt-4 text-violet-600 font-semibold text-sm">Kembali</button>
+      <p className="text-gray-500 dark:text-slate-400">Praktik belum tersedia</p>
+      <button onClick={() => router.back()} className="mt-4 text-violet-600 dark:text-violet-400 font-semibold text-sm">Kembali</button>
     </div>
   )
 
@@ -68,10 +68,10 @@ export default function PraktikPage() {
       <div className="w-20 h-20 rounded-full bg-gradient-to-br from-emerald-500 to-green-600 flex items-center justify-center mx-auto mb-4 shadow-lg">
         <CheckCircle2 className="w-10 h-10 text-white" />
       </div>
-      <h2 className="text-2xl font-extrabold text-gray-900 mb-1">Tugas Terkirim!</h2>
-      <p className="text-gray-500 mb-6">Karya kamu sudah dikirim ke feed Arena</p>
+      <h2 className="text-2xl font-extrabold text-gray-900 dark:text-slate-100 mb-1">Tugas Terkirim!</h2>
+      <p className="text-gray-500 dark:text-slate-400 mb-6">Karya kamu sudah dikirim ke feed Arena</p>
       <div className="flex gap-3 justify-center">
-        <button onClick={() => router.push(`/arena/jalur-cerdas/${unitId}`)} className="px-5 py-3 bg-gray-100 text-gray-700 font-bold rounded-xl hover:bg-gray-200 transition-colors">
+        <button onClick={() => router.push(`/arena/jalur-cerdas/${unitId}`)} className="px-5 py-3 bg-gray-100 dark:bg-slate-800/80 text-gray-700 dark:text-slate-300 font-bold rounded-xl hover:bg-gray-200 transition-colors">
           Kembali ke Unit
         </button>
         <button onClick={() => router.push("/arena/feed")} className="px-5 py-3 bg-violet-600 text-white font-bold rounded-xl hover:bg-violet-700 transition-colors">
@@ -84,28 +84,28 @@ export default function PraktikPage() {
   return (
     <div className="px-4 py-6 arena-page">
       <div className="flex items-center gap-3 mb-6">
-        <button onClick={() => router.back()} className="w-9 h-9 rounded-xl bg-gray-100 flex items-center justify-center shrink-0 hover:bg-gray-200 transition-colors">
-          <ArrowLeft className="w-5 h-5 text-gray-600" />
+        <button onClick={() => router.back()} className="w-9 h-9 rounded-xl bg-gray-100 dark:bg-slate-800/80 flex items-center justify-center shrink-0 hover:bg-gray-200 transition-colors">
+          <ArrowLeft className="w-5 h-5 text-gray-600 dark:text-slate-300" />
         </button>
         <div>
-          <p className="text-xs text-violet-600 font-semibold">Praktik</p>
-          <h1 className="text-lg font-bold text-gray-900">Tugas Menulis</h1>
+          <p className="text-xs text-violet-600 dark:text-violet-400 font-semibold">Praktik</p>
+          <h1 className="text-lg font-bold text-gray-900 dark:text-slate-100">Tugas Menulis</h1>
         </div>
       </div>
 
       {/* Petunjuk */}
-      <div className="bg-violet-50 border border-violet-200 rounded-2xl p-4 mb-5">
+      <div className="bg-violet-50 dark:bg-violet-950/40 border border-violet-200 dark:border-violet-800 rounded-2xl p-4 mb-5">
         <div className="flex items-center gap-2 mb-2">
-          <Lightbulb className="w-4 h-4 text-violet-600" />
-          <p className="text-xs font-bold text-violet-700 uppercase tracking-wider">Petunjuk</p>
+          <Lightbulb className="w-4 h-4 text-violet-600 dark:text-violet-400" />
+          <p className="text-xs font-bold text-violet-700 dark:text-violet-300 uppercase tracking-wider">Petunjuk</p>
         </div>
-        <p className="text-sm text-gray-700 leading-relaxed">{praktik.petunjuk}</p>
+        <p className="text-sm text-gray-700 dark:text-slate-300 leading-relaxed">{praktik.petunjuk}</p>
       </div>
 
       {/* Tips */}
       {praktik.tips.length > 0 && (
-        <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 mb-5">
-          <p className="text-xs font-bold text-amber-700 uppercase tracking-wider mb-2">Tips</p>
+        <div className="bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 rounded-2xl p-4 mb-5">
+          <p className="text-xs font-bold text-amber-700 dark:text-amber-300 uppercase tracking-wider mb-2">Tips</p>
           <ul className="space-y-1">
             {praktik.tips.map((t, i) => (
               <li key={i} className="flex items-start gap-2 text-sm text-amber-800">
@@ -119,31 +119,31 @@ export default function PraktikPage() {
 
       {/* Contoh */}
       {praktik.contoh && (
-        <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-4 mb-5">
-          <p className="text-xs font-bold text-emerald-700 uppercase tracking-wider mb-1">Contoh</p>
+        <div className="bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 rounded-2xl p-4 mb-5">
+          <p className="text-xs font-bold text-emerald-700 dark:text-emerald-300 uppercase tracking-wider mb-1">Contoh</p>
           <p className="text-sm text-emerald-800 whitespace-pre-line leading-relaxed">{praktik.contoh}</p>
         </div>
       )}
 
       {/* Form */}
-      <div className="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm">
+      <div className="bg-white dark:bg-slate-800/90 border border-gray-100 dark:border-slate-800 rounded-2xl p-5 shadow-sm">
         <div className="mb-4">
-          <label className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5 block">Judul</label>
+          <label className="text-xs font-bold text-gray-500 dark:text-slate-400 uppercase tracking-wider mb-1.5 block">Judul</label>
           <input
             value={judul}
             onChange={e => setJudul(e.target.value)}
             placeholder="Beri judul karyamu..."
-            className="w-full px-3.5 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-100"
+            className="w-full px-3.5 py-2.5 border border-gray-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-100"
           />
         </div>
         <div className="mb-4">
-          <label className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5 block">Tulisan</label>
+          <label className="text-xs font-bold text-gray-500 dark:text-slate-400 uppercase tracking-wider mb-1.5 block">Tulisan</label>
           <textarea
             value={isi}
             onChange={e => setIsi(e.target.value)}
             placeholder="Tulis karyamu di sini..."
             rows={8}
-            className="w-full px-3.5 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-100 resize-none"
+            className="w-full px-3.5 py-2.5 border border-gray-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-100 resize-none"
           />
         </div>
         <button

@@ -444,7 +444,7 @@ export function ChatClient({ userId, groups }: { userId: string; groups: Group[]
                   <div className="min-w-0 flex-1">
                     <p className={`flex items-center gap-1.5 text-sm font-bold truncate ${aktif ? "text-violet-900 dark:text-violet-200" : "text-gray-900 dark:text-slate-100"}`}>
                       <span className="truncate">{g.name}</span>
-                      {gLocked && <Lock size={11} className="shrink-0 text-amber-500" aria-label="Obrolan dikunci" />}
+                      {gLocked && <Lock size={11} className="shrink-0 text-amber-500 dark:text-amber-400" aria-label="Obrolan dikunci" />}
                     </p>
                     <p className="text-[11px] text-gray-500 dark:text-slate-400 truncate">
                       {g.teacher?.fullName || "Kelas"}
@@ -644,7 +644,7 @@ export function ChatClient({ userId, groups }: { userId: string; groups: Group[]
           </div>
         ) : convState === "loading" ? (
           <div className="flex-1 flex items-center justify-center">
-            <div className="w-6 h-6 rounded-full border-2 border-violet-200 border-t-violet-600 animate-spin" role="status" aria-label="Memuat obrolan" />
+            <div className="w-6 h-6 rounded-full border-2 border-violet-200 dark:border-violet-800 border-t-violet-600 animate-spin" role="status" aria-label="Memuat obrolan" />
           </div>
         ) : convState === "unavailable" ? (
           <div className="flex-1 flex flex-col items-center justify-center text-center px-8">
@@ -694,7 +694,7 @@ export function ChatClient({ userId, groups }: { userId: string; groups: Group[]
               <div className="flex-1 min-w-0">
                 <p className="flex items-center gap-1.5 font-bold text-sm text-gray-900 dark:text-slate-100 truncate">
                   <span className="truncate">{selected.name}</span>
-                  {locked && <Lock size={11} className="shrink-0 text-amber-500" aria-label="Obrolan dikunci" />}
+                  {locked && <Lock size={11} className="shrink-0 text-amber-500 dark:text-amber-400" aria-label="Obrolan dikunci" />}
                 </p>
                 <p className="text-[11px] text-gray-400 dark:text-slate-500 truncate">
                   <span className="font-semibold text-violet-600 dark:text-violet-400">{selected.teacher?.fullName || "—"}</span>
@@ -812,7 +812,7 @@ export function ChatClient({ userId, groups }: { userId: string; groups: Group[]
               )}
               {locked && !selected.isTeacher ? (
                 <div className="flex items-center justify-center gap-2 rounded-xl bg-gray-50 dark:bg-slate-800 border border-gray-100 dark:border-slate-700 px-4 py-3.5">
-                  <Lock size={14} className="text-amber-500" aria-hidden />
+                  <Lock size={14} className="text-amber-500 dark:text-amber-400" aria-hidden />
                   <p className="text-sm font-semibold text-gray-500 dark:text-slate-400">Obrolan sedang dikunci oleh guru.</p>
                 </div>
               ) : (
@@ -882,7 +882,7 @@ export function ChatClient({ userId, groups }: { userId: string; groups: Group[]
               maxLength={8}
               autoFocus
             />
-            {joinError && <p className="text-xs text-red-500 mb-3 text-center">{joinError}</p>}
+            {joinError && <p className="text-xs text-red-500 dark:text-red-400 mb-3 text-center">{joinError}</p>}
             <div className="flex gap-3">
               <button
                 onClick={() => { setShowJoinModal(false); setJoinCode(""); setJoinError("") }}

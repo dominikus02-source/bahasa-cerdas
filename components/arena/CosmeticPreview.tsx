@@ -18,7 +18,7 @@ export default function CosmeticPreview({
 }) {
   if (type === "AVATAR_FRAME" && icon && AVATAR_FRAMES[icon]) {
     return (
-      <div className="w-14 h-14 rounded-2xl bg-gray-50 border border-gray-100 flex items-center justify-center shrink-0">
+      <div className="w-14 h-14 rounded-2xl bg-gray-50 dark:bg-slate-800/60 border border-gray-100 dark:border-slate-800 flex items-center justify-center shrink-0">
         <UserAvatar size={32} frame={icon} initials="BC" textClassName="text-[10px]" />
       </div>
     );
@@ -26,7 +26,7 @@ export default function CosmeticPreview({
 
   if (type === "NAME_COLOR" && icon && NAME_COLORS[icon]) {
     return (
-      <div className="w-14 h-14 rounded-2xl bg-gray-50 border border-gray-100 flex items-center justify-center shrink-0">
+      <div className="w-14 h-14 rounded-2xl bg-gray-50 dark:bg-slate-800/60 border border-gray-100 dark:border-slate-800 flex items-center justify-center shrink-0">
         <span className="text-lg font-extrabold" style={NAME_COLORS[icon].light}>
           Nama
         </span>
@@ -36,7 +36,7 @@ export default function CosmeticPreview({
 
   if (type === "BADGE" && icon && COSMETIC_BADGES[icon]) {
     return (
-      <div className="w-14 h-14 rounded-2xl bg-gray-50 border border-gray-100 flex items-center justify-center shrink-0">
+      <div className="w-14 h-14 rounded-2xl bg-gray-50 dark:bg-slate-800/60 border border-gray-100 dark:border-slate-800 flex items-center justify-center shrink-0">
         <CosmeticBadge badge={icon} size={30} />
       </div>
     );

@@ -58,7 +58,7 @@ export default function ActivityChart({
             className={`rounded-full px-2 py-0.5 ring-1 ${
               mode === "AKTIVITAS"
                 ? "bg-violet-500/15 text-violet-200 ring-violet-400/25"
-                : "bg-white/5 text-white/45 ring-white/10"
+                : "bg-white bg-white/5 dark:bg-slate-900/5 text-white/45 ring-white/10"
             }`}
           >
             Aktivitas
@@ -67,7 +67,7 @@ export default function ActivityChart({
             className={`rounded-full px-2 py-0.5 ring-1 ${
               mode === "KARYA"
                 ? "bg-violet-500/15 text-violet-200 ring-violet-400/25"
-                : "bg-white/5 text-white/45 ring-white/10"
+                : "bg-white bg-white/5 dark:bg-slate-900/5 text-white/45 ring-white/10"
             }`}
           >
             Karya
@@ -76,7 +76,7 @@ export default function ActivityChart({
       </div>
 
       <div className="mt-4 grid grid-cols-2 gap-3">
-        <div className="rounded-xl bg-white/[0.05] ring-1 ring-white/10 px-3.5 py-3">
+        <div className="rounded-xl bg-white dark:bg-slate-800/90/[0.05] ring-1 ring-white/10 px-3.5 py-3">
           <p className="inline-flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wider text-white/45">
             <Sparkles size={10} className="text-amber-300" /> Total Aktivitas
           </p>
@@ -84,7 +84,7 @@ export default function ActivityChart({
             {totalAktivitas30.toLocaleString("id-ID")}
           </p>
         </div>
-        <div className="rounded-xl bg-white/[0.05] ring-1 ring-white/10 px-3.5 py-3">
+        <div className="rounded-xl bg-white dark:bg-slate-800/90/[0.05] ring-1 ring-white/10 px-3.5 py-3">
           <p className="inline-flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wider text-white/45">
             <BookOpen size={10} className="text-emerald-300" /> Karya Dibuat
           </p>

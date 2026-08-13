@@ -76,7 +76,7 @@ export function Sidebar() {
   const level = levelFromXp(user.xp || 0);
 
   return (
-    <aside className="fixed left-0 top-0 z-40 h-screen w-64 border-r bg-white/95 backdrop-blur-sm">
+    <aside className="fixed left-0 top-0 z-40 h-screen w-64 border-r bg-white bg-white/95 dark:bg-slate-900/95 backdrop-blur-sm">
       <div className="flex h-full flex-col">
         <div className="border-b p-4">
           <Link href="/" className="flex items-center gap-2">
@@ -84,9 +84,9 @@ export function Sidebar() {
               BC
             </div>
             <div>
-              <span className="font-bold text-gray-900">BahasaCerdas</span>
+              <span className="font-bold text-gray-900 dark:text-slate-100">BahasaCerdas</span>
               {user.isFounder && (
-                <span className="ml-1 inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-gold-400 to-gold-600 px-2 py-0.5 text-[10px] font-bold text-black">
+                <span className="ml-1 inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-gold-400 to-gold-600 px-2 py-0.5 text-[10px] font-bold text-black dark:text-slate-100">
                   FOUNDER
                 </span>
               )}
@@ -108,13 +108,13 @@ export function Sidebar() {
                 </div>
               </div>
               <div className="text-right">
-                <p className="text-sm font-bold text-blue-600">{user.xp.toLocaleString()}</p>
+                <p className="text-sm font-bold text-blue-600 dark:text-blue-400">{user.xp.toLocaleString()}</p>
                 <p className="text-[10px] text-muted-foreground">XP</p>
               </div>
             </div>
             {user.streak > 0 && (
-              <div className="mt-2 flex items-center gap-1 text-xs text-orange-500">
-                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-orange-100 text-orange-500">🔥</span>
+              <div className="mt-2 flex items-center gap-1 text-xs text-orange-500 dark:text-orange-400">
+                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-orange-100 text-orange-500 dark:text-orange-400">🔥</span>
                 {user.streak} day streak
               </div>
             )}
@@ -130,8 +130,8 @@ export function Sidebar() {
                   className={cn(
                     "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
                     pathname === item.href
-                      ? "bg-blue-50 text-blue-700"
-                      : "text-gray-600 hover:bg-gray-100"
+                      ? "bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300"
+                      : "text-gray-600 hover:bg-gray-100 dark:bg-slate-800/80"
                   )}
                 >
                   <item.icon className="h-5 w-5" />
@@ -146,8 +146,8 @@ export function Sidebar() {
                           className={cn(
                             "flex items-center gap-2 rounded-lg px-3 py-1.5 text-xs transition-colors",
                             pathname === sub.href
-                              ? "bg-blue-50 text-blue-700"
-                              : "text-gray-500 hover:bg-gray-50"
+                              ? "bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300"
+                              : "text-gray-500 hover:bg-gray-50 dark:bg-slate-800/60"
                           )}
 >
                           {sub.label}
@@ -165,7 +165,7 @@ export function Sidebar() {
           <div className="border-t p-4">
             <Link
               href="/guru/pengaturan/premium"
-              className="flex items-center gap-3 rounded-xl bg-gradient-to-r from-gold-400 to-gold-600 p-3 text-black shadow-lg"
+              className="flex items-center gap-3 rounded-xl bg-gradient-to-r from-gold-400 to-gold-600 p-3 text-black dark:text-slate-100 shadow-lg"
             >
               <Crown className="h-5 w-5" />
               <div>

@@ -80,28 +80,28 @@ export default async function LeaguePage({
   return (
     <div className="arena-page space-y-6 p-4 md:p-6">
       {/* ARENA / LEAGUE HEADER — light premium, violet-tinted, ringkas */}
-      <section className="relative overflow-hidden rounded-2xl border border-violet-100 bg-gradient-to-r from-violet-50 via-white to-indigo-50 px-5 py-5 md:px-7 md:py-6">
+      <section className="relative overflow-hidden rounded-2xl border border-violet-100 dark:border-violet-900 bg-gradient-to-r from-violet-50 via-white to-indigo-50 px-5 py-5 md:px-7 md:py-6">
         <div className="pointer-events-none absolute -right-12 -top-12 h-52 w-52 rounded-full bg-violet-200/40 blur-3xl" />
         <div className="pointer-events-none absolute -bottom-16 -left-10 h-40 w-40 rounded-full bg-amber-100/50 blur-3xl" />
         <div className="relative">
-          <p className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-widest text-violet-600">
+          <p className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-widest text-violet-600 dark:text-violet-400">
             <Trophy className="h-3.5 w-3.5" /> Liga
           </p>
-          <h1 className="mt-1 text-2xl font-extrabold tracking-tight text-gray-900 md:text-3xl">
+          <h1 className="mt-1 text-2xl font-extrabold tracking-tight text-gray-900 dark:text-slate-100 md:text-3xl">
             Liga Minggu Ini
           </h1>
-          <p className="mt-1 text-sm text-gray-500">Kompetisi mingguan untuk membuktikan kemampuanmu.</p>
+          <p className="mt-1 text-sm text-gray-500 dark:text-slate-400">Kompetisi mingguan untuk membuktikan kemampuanmu.</p>
 
           {/* Status kilat — peringkat sekarang, XP minggu ini, countdown */}
           <div className="mt-4 flex flex-wrap items-center gap-2 text-xs font-semibold">
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-200 bg-amber-50 px-3 py-1.5 text-amber-700">
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-200 bg-amber-50 px-3 py-1.5 text-amber-700 dark:text-amber-300">
               <Crown className="h-3.5 w-3.5" /> Peringkatmu #{myRank}
             </span>
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-violet-200 bg-violet-50 px-3 py-1.5 text-violet-700">
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-violet-200 bg-violet-50 px-3 py-1.5 text-violet-700 dark:text-violet-300">
               <Zap className="h-3.5 w-3.5" /> {myWeeklyXP.toLocaleString("id-ID")} XP minggu ini
             </span>
             {competition && (
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-gray-200 bg-gray-50 px-3 py-1.5 text-gray-600">
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800/60 px-3 py-1.5 text-gray-600">
                 <Clock className="h-3.5 w-3.5" />
                 Berakhir <WeeklyCountdown endsAt={competition.periodEndsAt} baseline={competition.now} />
               </span>
@@ -124,7 +124,7 @@ export default async function LeaguePage({
       />
 
       {/* HOW IT WORKS */}
-      <div className="rounded-xl border border-violet-100 bg-violet-50 p-4 text-xs text-violet-800 md:p-5">
+      <div className="rounded-xl border border-violet-100 dark:border-violet-900 bg-violet-50 dark:bg-violet-950/40 p-4 text-xs text-violet-800 md:p-5">
         <p className="mb-1.5 font-bold">Cara kerja XP</p>
         <ul className="space-y-1 list-disc pl-4 md:columns-2 md:space-y-1.5">
           <li>Papan XP mingguan mulai dari nol setiap Senin pukul 00.00 WIB.</li>

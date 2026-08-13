@@ -105,7 +105,7 @@ export default function ArenaTokoKoinPage() {
 
   if (loading) return (
     <div className="flex justify-center py-20">
-      <Loader2 className="animate-spin w-8 h-8 text-violet-500" />
+      <Loader2 className="animate-spin w-8 h-8 text-violet-500 dark:text-violet-400" />
     </div>
   )
 
@@ -113,23 +113,23 @@ export default function ArenaTokoKoinPage() {
     <div className="px-4 py-4">
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
-          <Link href="/arena" className="w-9 h-9 rounded-xl bg-gray-100 flex items-center justify-center text-gray-600 active:scale-90 transition-transform">
+          <Link href="/arena" className="w-9 h-9 rounded-xl bg-gray-100 dark:bg-slate-800/80 flex items-center justify-center text-gray-600 active:scale-90 transition-transform">
             <ArrowLeft size={18} />
           </Link>
           <div>
-            <h1 className="text-lg font-bold text-gray-900">Toko Koin</h1>
-            <p className="text-xs text-gray-500">Tukarkan koinmu dengan item spesial</p>
+            <h1 className="text-lg font-bold text-gray-900 dark:text-slate-100">Toko Koin</h1>
+            <p className="text-xs text-gray-500 dark:text-slate-400">Tukarkan koinmu dengan item spesial</p>
           </div>
         </div>
-        <div className="flex items-center gap-2 bg-amber-50 border border-amber-200 px-4 py-2 rounded-xl shrink-0">
-          <Coins size={18} className="text-amber-500" />
-          <span className="font-bold text-amber-600">{user?.coins || 0}</span>
+        <div className="flex items-center gap-2 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 px-4 py-2 rounded-xl shrink-0">
+          <Coins size={18} className="text-amber-500 dark:text-amber-400" />
+          <span className="font-bold text-amber-600 dark:text-amber-400">{user?.coins || 0}</span>
         </div>
       </div>
 
       {message && (
         <div className={`mb-4 px-4 py-3 rounded-xl text-sm font-medium ${
-          message.type === "success" ? "bg-emerald-50 text-emerald-600 border border-emerald-200" : "bg-red-50 text-red-600 border border-red-200"
+          message.type === "success" ? "bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800" : "bg-red-50 dark:bg-red-950/40 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-800"
         }`}>
           {message.text}
         </div>
@@ -145,7 +145,7 @@ export default function ArenaTokoKoinPage() {
           const isWorn = wearable && equipped[item.type] === item.icon
 
           return (
-            <div key={item.id} className={`bg-white rounded-2xl border p-5 hover:shadow-lg transition-all ${isWorn ? "border-violet-300 ring-1 ring-violet-200" : "border-gray-100"}`}>
+            <div key={item.id} className={`bg-white dark:bg-slate-800/90 rounded-2xl border p-5 hover:shadow-lg transition-all ${isWorn ? "border-violet-300 ring-1 ring-violet-200" : "border-gray-100 dark:border-slate-800"}`}>
               <div className="flex items-start gap-4">
                 <CosmeticPreview type={item.type} icon={item.icon}>
                   <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${color} flex items-center justify-center text-white shadow-lg shrink-0`}>
@@ -153,11 +153,11 @@ export default function ArenaTokoKoinPage() {
                   </div>
                 </CosmeticPreview>
                 <div className="flex-1 min-w-0">
-                  <h3 className="font-bold text-gray-900">{item.name}</h3>
-                  <p className="text-sm text-gray-500 mt-1">{item.description}</p>
+                  <h3 className="font-bold text-gray-900 dark:text-slate-100">{item.name}</h3>
+                  <p className="text-sm text-gray-500 dark:text-slate-400 mt-1">{item.description}</p>
                   <div className="flex items-center justify-between gap-2 mt-4">
-                    <span className="flex items-center gap-1 text-sm font-semibold text-amber-600">
-                      <Coins size={14} className="text-amber-500" /> {item.price}
+                    <span className="flex items-center gap-1 text-sm font-semibold text-amber-600 dark:text-amber-400">
+                      <Coins size={14} className="text-amber-500 dark:text-amber-400" /> {item.price}
                     </span>
                     {wearable && isOwned ? (
                       <button
@@ -165,7 +165,7 @@ export default function ArenaTokoKoinPage() {
                         disabled={equipping === item.id}
                         className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all flex items-center gap-1.5 disabled:opacity-50 ${
                           isWorn
-                            ? "bg-emerald-50 text-emerald-600 border border-emerald-200"
+                            ? "bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800"
                             : "bg-violet-600 text-white hover:bg-violet-700 shadow-lg shadow-violet-200"
                         }`}
                       >
@@ -180,7 +180,7 @@ export default function ArenaTokoKoinPage() {
                         className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all ${
                           canAfford
                             ? "bg-violet-600 text-white hover:bg-violet-700 shadow-lg shadow-violet-200"
-                            : "bg-gray-100 text-gray-400 cursor-not-allowed"
+                            : "bg-gray-100 dark:bg-slate-800/80 text-gray-400 cursor-not-allowed"
                         } disabled:opacity-50`}
                       >
                         {buying === item.id ? <Loader2 size={16} className="animate-spin" /> : canAfford ? "Beli" : "Kurang Koin"}
@@ -195,11 +195,11 @@ export default function ArenaTokoKoinPage() {
       </div>
 
       {items.length === 0 && (
-        <div className="text-center py-20 bg-white rounded-2xl border border-gray-100">
+        <div className="text-center py-20 bg-white dark:bg-slate-800/90 rounded-2xl border border-gray-100 dark:border-slate-800">
           <div className="w-16 h-16 rounded-full bg-violet-100 flex items-center justify-center mx-auto mb-4">
-            <ShoppingBag size={24} className="text-violet-500" />
+            <ShoppingBag size={24} className="text-violet-500 dark:text-violet-400" />
           </div>
-          <p className="text-gray-500">Belum ada item di toko</p>
+          <p className="text-gray-500 dark:text-slate-400">Belum ada item di toko</p>
         </div>
       )}
     </div>

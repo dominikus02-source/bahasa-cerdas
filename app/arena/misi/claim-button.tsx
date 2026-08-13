@@ -46,7 +46,7 @@ export function ClaimButton({ questId, alreadyClaimed }: { questId: string; alre
 
   if (claimed) {
     return (
-      <div className="flex items-center gap-1 text-emerald-600 text-xs font-semibold mt-1">
+      <div className="flex items-center gap-1 text-emerald-600 dark:text-emerald-400 text-xs font-semibold mt-1">
         <CheckCircle2 className="w-3.5 h-3.5" /> Diklaim
       </div>
     )
@@ -61,7 +61,7 @@ export function ClaimButton({ questId, alreadyClaimed }: { questId: string; alre
       >
         {loading ? "..." : "Klaim"}
       </button>
-      {error && <p className="text-[10px] text-red-500 mt-1">Gagal, coba lagi</p>}
+      {error && <p className="text-[10px] text-red-500 dark:text-red-400 mt-1">Gagal, coba lagi</p>}
     </>
   )
 }

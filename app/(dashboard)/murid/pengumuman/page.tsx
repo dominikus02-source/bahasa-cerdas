@@ -21,8 +21,8 @@ export default async function MuridPengumumanPage() {
             <Megaphone className="w-5 h-5 text-white" />
           </div>
           <div>
-            <h1 className="text-lg font-bold text-gray-900">Papan Pengumuman</h1>
-            <p className="text-xs text-gray-500">Tugas &amp; pengumuman dari gurumu</p>
+            <h1 className="text-lg font-bold text-gray-900 dark:text-slate-100">Papan Pengumuman</h1>
+            <p className="text-xs text-gray-500 dark:text-slate-400">Tugas &amp; pengumuman dari gurumu</p>
           </div>
         </div>
       </div>

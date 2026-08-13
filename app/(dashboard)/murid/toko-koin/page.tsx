@@ -189,12 +189,12 @@ export default function TokoKoinPage() {
     <div className="max-w-3xl mx-auto">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-xl font-bold text-gray-900">Toko Koin</h1>
-          <p className="text-sm text-gray-500">Tukarkan koinmu dengan item spesial</p>
+          <h1 className="text-xl font-bold text-gray-900 dark:text-slate-100">Toko Koin</h1>
+          <p className="text-sm text-gray-500 dark:text-slate-400">Tukarkan koinmu dengan item spesial</p>
         </div>
-        <div className="flex items-center gap-2 bg-amber-50 border border-amber-200 px-4 py-2 rounded-xl">
-          <IconCoin size={20} className="text-amber-500" />
-          <span className="font-bold text-amber-600">{user?.coins || 0}</span>
+        <div className="flex items-center gap-2 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 px-4 py-2 rounded-xl">
+          <IconCoin size={20} className="text-amber-500 dark:text-amber-400" />
+          <span className="font-bold text-amber-600 dark:text-amber-400">{user?.coins || 0}</span>
         </div>
       </div>
 
@@ -202,7 +202,7 @@ export default function TokoKoinPage() {
         <div className="mb-5 bg-gradient-to-r from-amber-500 to-orange-600 rounded-2xl p-4 text-white shadow-lg">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-xl bg-white bg-white/20 dark:bg-slate-900/20 flex items-center justify-center">
                 <Zap size={20} className="text-amber-200" />
               </div>
               <div>
@@ -220,7 +220,7 @@ export default function TokoKoinPage() {
 
       {message && (
         <div className={`mb-4 px-4 py-3 rounded-xl text-sm font-medium ${
-          message.type === "success" ? "bg-emerald-50 text-emerald-600 border border-emerald-200" : "bg-red-50 text-red-600 border border-red-200"
+          message.type === "success" ? "bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800" : "bg-red-50 dark:bg-red-950/40 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-800"
         }`}>
           {message.type === "success" ? <IconCheck size={16} className="inline mr-1" /> : null}{message.text}
         </div>
@@ -237,10 +237,10 @@ export default function TokoKoinPage() {
           const isWorn = wearable && equipped[item.type] === item.icon;
 
           return (
-            <div key={item.id} className={`bg-white rounded-2xl border p-5 hover:shadow-lg transition-all ${
-              isWorn ? "border-violet-300 ring-1 ring-violet-200" : 
-              boostActive && isBoostType(item.type) ? "border-amber-200 ring-1 ring-amber-100" :
-              "border-gray-100"
+            <div key={item.id} className={`bg-white dark:bg-slate-800/90 rounded-2xl border p-5 hover:shadow-lg transition-all ${
+              isWorn ? "border-violet-300 dark:border-violet-700 ring-1 ring-violet-200" :
+              boostActive && isBoostType(item.type) ? "border-amber-200 dark:border-amber-800 ring-1 ring-amber-100" :
+              "border-gray-100 dark:border-slate-800"
             }`}>
               <div className="flex items-start gap-4">
                 <CosmeticPreview type={item.type} icon={item.icon}>
@@ -252,31 +252,31 @@ export default function TokoKoinPage() {
                   </div>
                 </CosmeticPreview>
                 <div className="flex-1 min-w-0">
-                  <h3 className="font-bold text-gray-900 truncate">{item.name}</h3>
-                  <p className="text-sm text-gray-500 mt-1 leading-snug">{item.description}</p>
+                  <h3 className="font-bold text-gray-900 dark:text-slate-100 truncate">{item.name}</h3>
+                  <p className="text-sm text-gray-500 dark:text-slate-400 mt-1 leading-snug">{item.description}</p>
 
                   {/* Badge baris status */}
                   {isBoostType(item.type) && boostActive && (
-                    <div className="flex items-center gap-1.5 mt-2 text-xs font-semibold text-amber-600 bg-amber-50 px-2.5 py-1 rounded-full w-fit border border-amber-200">
+                    <div className="flex items-center gap-1.5 mt-2 text-xs font-semibold text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/40 px-2.5 py-1 rounded-full w-fit border border-amber-200 dark:border-amber-800">
                       <Zap size={12} />
                       <span>Aktif — sisa {formatWaktu(boostRemainingMs)}</span>
                     </div>
                   )}
                   {isConsumable(item.type) && isOwned && qty > 0 && (
-                    <div className="flex items-center gap-1.5 mt-2 text-xs font-semibold text-violet-600 bg-violet-50 px-2.5 py-1 rounded-full w-fit border border-violet-200">
+                    <div className="flex items-center gap-1.5 mt-2 text-xs font-semibold text-violet-600 dark:text-violet-400 bg-violet-50 dark:bg-violet-950/40 px-2.5 py-1 rounded-full w-fit border border-violet-200 dark:border-violet-800">
                       <span>Dimiliki {qty}x</span>
                     </div>
                   )}
                   {isAutoItem(item.type) && isOwned && qty > 0 && (
-                    <div className="flex items-center gap-1.5 mt-2 text-xs font-semibold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full w-fit border border-emerald-200">
+                    <div className="flex items-center gap-1.5 mt-2 text-xs font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 px-2.5 py-1 rounded-full w-fit border border-emerald-200 dark:border-emerald-800">
                       <Check size={12} />
                       <span>Dimiliki {qty}x</span>
                     </div>
                   )}
 
                   <div className="flex items-center justify-between gap-2 mt-3">
-                    <span className="flex items-center gap-1 text-sm font-semibold text-amber-600">
-                      <IconCoin size={14} className="text-amber-500" /> {item.price}
+                    <span className="flex items-center gap-1 text-sm font-semibold text-amber-600 dark:text-amber-400">
+                      <IconCoin size={14} className="text-amber-500 dark:text-amber-400" /> {item.price}
                     </span>
 
                     {/* Wearable: Pakai / Dipakai */}
@@ -286,7 +286,7 @@ export default function TokoKoinPage() {
                         disabled={equipping === item.id}
                         className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all flex items-center gap-1.5 disabled:opacity-50 shrink-0 ${
                           isWorn
-                            ? "bg-emerald-50 text-emerald-600 border border-emerald-200"
+                            ? "bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800"
                             : "bg-violet-600 text-white hover:bg-violet-700 shadow-lg shadow-violet-200"
                         }`}
                       >
@@ -309,7 +309,7 @@ export default function TokoKoinPage() {
                         {buying === item.id ? "..." : "Perpanjang"}
                       </button>
                     ) : isAutoItem(item.type) && isOwned && qty > 0 ? (
-                      <span className="px-4 py-2 rounded-xl text-sm font-semibold text-emerald-600 bg-emerald-50 border border-emerald-200 shrink-0">
+                      <span className="px-4 py-2 rounded-xl text-sm font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 shrink-0">
                         Dimiliki
                       </span>
                     ) : (
@@ -319,7 +319,7 @@ export default function TokoKoinPage() {
                         className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all shrink-0 ${
                           canAfford
                             ? "bg-violet-600 text-white hover:bg-violet-700 shadow-lg shadow-violet-200"
-                            : "bg-gray-100 text-gray-400 cursor-not-allowed"
+                            : "bg-gray-100 dark:bg-slate-800/80 text-gray-400 cursor-not-allowed"
                         } disabled:opacity-50`}
                       >
                         {buying === item.id ? "..." : canAfford ? "Beli" : "Kurang Koin"}
@@ -334,11 +334,11 @@ export default function TokoKoinPage() {
       </div>
 
       {items.length === 0 && (
-        <div className="text-center py-20 bg-white rounded-2xl border border-gray-100">
+        <div className="text-center py-20 bg-white dark:bg-slate-800/90 rounded-2xl border border-gray-100 dark:border-slate-800">
           <div className="w-16 h-16 rounded-full bg-violet-100 flex items-center justify-center mx-auto mb-4">
-            <ShoppingBag size={24} className="text-violet-500" />
+            <ShoppingBag size={24} className="text-violet-500 dark:text-violet-400" />
           </div>
-          <p className="text-gray-500">Belum ada item di toko</p>
+          <p className="text-gray-500 dark:text-slate-400">Belum ada item di toko</p>
         </div>
       )}
     </div>

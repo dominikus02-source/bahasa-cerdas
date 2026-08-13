@@ -163,7 +163,7 @@ export default function CosmicBackground() {
       {STARS.map((s, i) => (
         <span
           key={`star-${i}`}
-          className="bc-cosmic-star absolute rounded-full bg-white"
+          className="bc-cosmic-star absolute rounded-full bg-white dark:bg-slate-800/90"
           style={{
             left: s.left,
             top: s.top,
@@ -179,7 +179,7 @@ export default function CosmicBackground() {
       {DUST.map((d, i) => (
         <span
           key={`dust-${i}`}
-          className="bc-cosmic-dust absolute rounded-full bg-white"
+          className="bc-cosmic-dust absolute rounded-full bg-white dark:bg-slate-800/90"
           style={{
             left: d.left,
             top: d.top,

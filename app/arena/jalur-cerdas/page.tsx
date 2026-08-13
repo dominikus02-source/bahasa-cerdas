@@ -61,9 +61,9 @@ export default async function JalurCerdasPage() {
       }}
     >
       <div className="text-center mb-6">
-        <h1 className="text-2xl font-extrabold text-gray-900">Jalur Cerdas</h1>
-        <p className="text-sm text-gray-500 mt-1">Latihan Bahasa Indonesia dari nol sampai mahir</p>
-        <p className="text-xs text-violet-500 font-medium mt-0.5">Cocok untuk semua usia &middot; Mulai dari dasar</p>
+        <h1 className="text-2xl font-extrabold text-gray-900 dark:text-slate-100">Jalur Cerdas</h1>
+        <p className="text-sm text-gray-500 dark:text-slate-400 mt-1">Latihan Bahasa Indonesia dari nol sampai mahir</p>
+        <p className="text-xs text-violet-500 dark:text-violet-400 font-medium mt-0.5">Cocok untuk semua usia &middot; Mulai dari dasar</p>
       </div>
 
       {/* Overall progress */}
@@ -75,7 +75,7 @@ export default async function JalurCerdasPage() {
                 <Crown className="w-8 h-8 text-yellow-900" />
               </div>
             ) : (
-              <div className="w-14 h-14 rounded-full bg-white/20 backdrop-blur flex items-center justify-center">
+              <div className="w-14 h-14 rounded-full bg-white bg-white/20 dark:bg-slate-900/20 backdrop-blur flex items-center justify-center">
                 <Trophy className="w-8 h-8 text-white" />
               </div>
             )}
@@ -94,8 +94,8 @@ export default async function JalurCerdasPage() {
             </div>
             <span className="text-2xl font-extrabold text-white">{Math.round((totalDone / totalUnits) * 100)}%</span>
           </div>
-          <div className="w-full h-2.5 bg-white/20 rounded-full mt-3 overflow-hidden">
-            <div className="h-full bg-white rounded-full transition-all duration-700" style={{ width: `${totalUnits > 0 ? (totalDone / totalUnits) * 100 : 0}%` }} />
+          <div className="w-full h-2.5 bg-white bg-white/20 dark:bg-slate-900/20 rounded-full mt-3 overflow-hidden">
+            <div className="h-full bg-white dark:bg-slate-800/90 rounded-full transition-all duration-700" style={{ width: `${totalUnits > 0 ? (totalDone / totalUnits) * 100 : 0}%` }} />
           </div>
         </div>
       )}
@@ -118,14 +118,14 @@ export default async function JalurCerdasPage() {
               </div>
               <div className="flex-1">
                 <div className="flex items-center gap-2">
-                  <h2 className="font-bold text-lg text-gray-900">{level.title}</h2>
-                  {levelDone && <span className="text-[10px] font-bold text-emerald-600 bg-emerald-100 px-2 py-0.5 rounded-full">Selesai</span>}
+                  <h2 className="font-bold text-lg text-gray-900 dark:text-slate-100">{level.title}</h2>
+                  {levelDone && <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-100 px-2 py-0.5 rounded-full">Selesai</span>}
                 </div>
-                <p className="text-xs text-gray-500">{level.subtitle}</p>
+                <p className="text-xs text-gray-500 dark:text-slate-400">{level.subtitle}</p>
               </div>
               <div className="text-right">
-                <span className="text-sm font-bold text-gray-900">{completedInLevel}/{unitsInLevel}</span>
-                <div className="w-20 h-1.5 bg-gray-100 rounded-full mt-1 overflow-hidden">
+                <span className="text-sm font-bold text-gray-900 dark:text-slate-100">{completedInLevel}/{unitsInLevel}</span>
+                <div className="w-20 h-1.5 bg-gray-100 dark:bg-slate-800/80 rounded-full mt-1 overflow-hidden">
                   <div className="h-full rounded-full transition-all bg-violet-500" style={{ width: `${progressPercent}%` }} />
                 </div>
               </div>
@@ -142,10 +142,10 @@ export default async function JalurCerdasPage() {
       })}
 
       {allDone && (
-        <div className="text-center py-8 bg-gradient-to-br from-yellow-50 to-amber-50 rounded-2xl border border-amber-200 mb-4">
-          <Crown className="w-12 h-12 text-amber-500 mx-auto mb-3" />
+        <div className="text-center py-8 bg-gradient-to-br from-yellow-50 to-amber-50 rounded-2xl border border-amber-200 dark:border-amber-800 mb-4">
+          <Crown className="w-12 h-12 text-amber-500 dark:text-amber-400 mx-auto mb-3" />
           <p className="text-lg font-extrabold text-amber-800">Luar Biasa!</p>
-          <p className="text-sm text-amber-600 mt-1">Kamu sudah menyelesaikan semua level. Siap untuk UKBI!</p>
+          <p className="text-sm text-amber-600 dark:text-amber-400 mt-1">Kamu sudah menyelesaikan semua level. Siap untuk UKBI!</p>
           <div className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-3">
             <Link
               href="/arena/simulasi/ukbi"
@@ -156,7 +156,7 @@ export default async function JalurCerdasPage() {
             </Link>
             <Link
               href="/arena/player"
-              className="inline-flex items-center gap-2 bg-white text-violet-700 font-semibold px-6 py-3 rounded-xl border border-violet-200 hover:bg-violet-50 transition-colors"
+              className="inline-flex items-center gap-2 bg-white dark:bg-slate-800/90 text-violet-700 dark:text-violet-300 font-semibold px-6 py-3 rounded-xl border border-violet-200 hover:bg-violet-50 transition-colors"
             >
               Lihat Profil Pemain
             </Link>

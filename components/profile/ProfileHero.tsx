@@ -202,7 +202,7 @@ export default function ProfileHero({
                 initials={initials}
                 gradient=""
                 textClassName="text-4xl"
-                className="relative bg-white/10 backdrop-blur border-4 border-[#171241] shadow-lg ring-4 ring-white/15"
+                className="relative bg-white bg-white/10 dark:bg-slate-900/10 backdrop-blur border-4 border-[#171241] shadow-lg ring-4 ring-white/15"
               />
               {/* Level badge di pojok avatar */}
               <span
@@ -231,24 +231,24 @@ export default function ProfileHero({
               )}
               <div className="flex flex-wrap items-center gap-2 mt-2.5">
                 {extraChips}
-                <span className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-bold bg-white/10 border border-white/15 backdrop-blur">
+                <span className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-bold bg-white bg-white/10 dark:bg-slate-900/10 border border-white/15 backdrop-blur">
                   <Sparkles size={11} className="text-amber-300" />
                   {meta?.title ?? rank}
                   <span className="text-white/50">·</span>
                   {meta?.label ?? rank}
                 </span>
                 {persona.gelar && (
-                  <span className="rounded-full px-3 py-1 text-[11px] font-bold bg-amber-400/15 border border-amber-300/25 text-amber-200">
+                  <span className="rounded-full px-3 py-1 text-[11px] font-bold bg-amber-400/15 border border-amber-300 dark:border-amber-700/25 text-amber-200">
                     {persona.gelar}
                   </span>
                 )}
                 {persona.streak != null && persona.streak > 0 && (
-                  <span className="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-bold bg-orange-400/15 border border-orange-300/25 text-orange-200">
+                  <span className="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-bold bg-orange-400/15 border border-orange-300 dark:border-orange-700/25 text-orange-200">
                     <Flame size={11} /> {persona.streak}
                   </span>
                 )}
                 {persona.memberNumber && (
-                  <span className="rounded-full px-2.5 py-1 text-[10px] font-semibold bg-white/5 border border-white/10 text-white/45">
+                  <span className="rounded-full px-2.5 py-1 text-[10px] font-semibold bg-white bg-white/5 dark:bg-slate-900/5 border border-white/10 text-white/45">
                     #{persona.memberNumber}
                   </span>
                 )}
@@ -285,7 +285,7 @@ export default function ProfileHero({
         {/* Level / XP progress — ungu → emas */}
         <div className="mt-8">
           <div className="flex items-center justify-between text-xs font-semibold mb-2">
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 border border-white/10 px-2.5 py-1">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-white bg-white/10 dark:bg-slate-900/10 border border-white/10 px-2.5 py-1">
               <Sparkles size={11} className="text-amber-300" /> Level {persona.level}
             </span>
             <span className="text-white/60">
@@ -327,7 +327,7 @@ export default function ProfileHero({
               </span>
               <span className="text-xs text-white/55">Pengikut</span>
             </span>
-            <span aria-hidden className="h-4 w-px bg-white/15" />
+            <span aria-hidden className="h-4 w-px bg-white bg-white/15 dark:bg-slate-900/15" />
             <span className="inline-flex items-center gap-2">
               <UserRound size={14} className="text-white/40" aria-hidden />
               <span className="text-base font-black text-white tabular-nums leading-none">
@@ -343,7 +343,7 @@ export default function ProfileHero({
           {isOwn && (
             <button
               onClick={onEditProfile}
-              className="inline-flex h-11 items-center gap-2 rounded-xl px-5 text-sm font-bold bg-white text-violet-950 hover:bg-violet-50 transition-all shadow-lg hover:shadow-xl"
+              className="inline-flex h-11 items-center gap-2 rounded-xl px-5 text-sm font-bold bg-white dark:bg-slate-800/90 text-violet-950 hover:bg-violet-50 transition-all shadow-lg hover:shadow-xl"
             >
               <Settings size={16} /> Edit Profil
             </button>
@@ -357,7 +357,7 @@ export default function ProfileHero({
                 aria-pressed={!!following}
                 className={`inline-flex h-11 items-center gap-2 rounded-xl px-5 text-sm font-bold transition-all shadow-lg disabled:opacity-60 ${
                   following
-                    ? "bg-white/10 text-white border border-white/20 hover:bg-white/15"
+ ? "bg-white bg-white/10 dark:bg-slate-900/10 text-white border border-white/20 hover:bg-white bg-white/15 "
                     : "bg-gradient-to-r from-violet-500 to-purple-600 text-white hover:shadow-xl"
                 }`}
               >
@@ -372,7 +372,7 @@ export default function ProfileHero({
                 className={`inline-flex h-11 items-center gap-2 rounded-xl px-4 text-sm font-bold transition-all shadow-lg border disabled:opacity-60 ${
                   liked
                     ? "bg-rose-500/20 text-rose-200 border-rose-300/30"
-                    : "bg-white/10 text-white border-white/20 hover:bg-white/15"
+ : "bg-white bg-white/10 dark:bg-slate-900/10 text-white border-white/20 hover:bg-white bg-white/15 "
                 }`}
               >
                 <Heart size={16} className={liked ? "fill-rose-400 text-rose-400" : ""} />
@@ -384,7 +384,7 @@ export default function ProfileHero({
           {!isOwn && (
             <a
               href="#karya"
-              className="inline-flex h-11 items-center gap-2 rounded-xl px-4 text-sm font-bold bg-white/10 border border-white/15 hover:bg-white/15 transition-all"
+ className="inline-flex h-11 items-center gap-2 rounded-xl px-4 text-sm font-bold bg-white bg-white/10 dark:bg-slate-900/10 border border-white/15 hover:bg-white bg-white/15 transition-all"
             >
               <PenLine size={16} /> Karya
             </a>
@@ -393,7 +393,7 @@ export default function ProfileHero({
 
         {/* Kartu Total Like (kaca) — hanya bila data seperti yang dikirim parent */}
         {likeSummary && (
-          <div className="mt-5 inline-flex items-center gap-4 rounded-2xl bg-white/[0.07] border border-white/10 backdrop-blur px-5 py-3.5">
+          <div className="mt-5 inline-flex items-center gap-4 rounded-2xl bg-white dark:bg-slate-800/90/[0.07] border border-white/10 backdrop-blur px-5 py-3.5">
             <span
               className="flex h-10 w-10 items-center justify-center rounded-xl"
               style={{ background: "radial-gradient(circle at 30% 30%, rgba(244,63,94,0.35), rgba(190,24,93,0.2))" }}
