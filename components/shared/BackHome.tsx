@@ -25,7 +25,7 @@ export function BackHome({ iconOnly = false, className = "", href = "/murid/bera
         iconOnly ? "p-2" : "px-2.5 py-2"
       } ${className}`}
     >
-      <ArrowLeft className="w-4 h-4 shrink-0" />
+      <ArrowLeft className="w-5 h-5 shrink-0" />
       {!iconOnly && <span className="hidden md:inline">Beranda</span>}
     </Link>
   );

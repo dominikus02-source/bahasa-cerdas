@@ -28,6 +28,7 @@ function main() {
   const muridAi = fs.readFileSync("app/(dashboard)/murid/ai/page.tsx", "utf-8");
   const pengaturan = fs.readFileSync("app/(dashboard)/murid/pengaturan/page.tsx", "utf-8");
   const bell = fs.readFileSync("components/dashboard/NotificationBell.tsx", "utf-8");
+  const navConfig = fs.readFileSync("components/shell/nav-config.ts", "utf-8");
 
   // 1. Canonical profile: /murid/profile tetap satu-satunya identity center
   console.log("\n── 1. Canonical Profile ──");
@@ -40,8 +41,8 @@ function main() {
 
   // 2. Sidebar Menu Utama (6 item) di layout murid
   console.log("\n── 2. Sidebar Menu Utama ──");
-  test("layout punya 6 item Menu Utama (Beranda/Profil/Arena/Karya/Obrolan/Pengaturan)",
-    () => ["/murid/beranda", "/murid/profile", "/arena", "/murid/karya", "/arena/chat", "/murid/pengaturan"].every(h => layout.includes(`href="${h}"`)));
+  test("nav canonical 6 item via <ShellNavList /> (Beranda/Profil/Arena/Karya/Obrolan/Pengaturan)",
+    () => layout.includes("<ShellNavList />") && ["/murid/beranda", "/murid/profile", "/arena", "/murid/karya", "/arena/chat", "/murid/pengaturan"].every(h => navConfig.includes(`href: "${h}"`)));
   test("'Dasbor Murid' header dipertahankan", () => layout.includes("Dasbor Murid"));
   test("Toko Koin TIDAK lagi di nav murid (dipindah keluar sidebar)",
     () => !layout.includes('/arena/toko-koin"') && !layout.includes('href="/murid/toko-koin"') &&

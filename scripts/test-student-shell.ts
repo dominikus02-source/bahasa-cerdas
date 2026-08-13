@@ -30,19 +30,22 @@ function main() {
   // ── 1. SIDEBAR (desktop layout) ──
   console.log("\n── 1. Sidebar (app/(dashboard)/murid/layout.tsx) ──");
   const layout = read("app/(dashboard)/murid/layout.tsx");
+  const navConfig = read("components/shell/nav-config.ts");
   const PRIMARY = ["/murid/beranda", "/murid/profile", "/arena", "/murid/karya", "/arena/chat", "/murid/pengaturan"];
-  test("tepat 6 item MenuIcon di sidebar (Beranda/Profil/Arena/Karya/Obrolan/Pengaturan)",
-    () => (layout.match(/<MenuIcon /g) || []).length === 6);
-  test("6 href utama hadir di layout",
-    () => PRIMARY.every(h => layout.includes(`href="${h}"`)));
+  test("sidebar memakai <ShellNavList /> canonical (fase 5.1 — bukan render inline MenuIcon lagi)",
+    () => layout.includes("<ShellNavList />") && !layout.includes("<MenuIcon "));
+  test("6 item STUDENT_NAV canonical di nav-config (Beranda/Profil/Arena/Karya/Obrolan/Pengaturan)",
+    () => (navConfig.match(/label: "/g) || []).length === 6);
+  test("6 href utama hadir di STUDENT_NAV",
+    () => PRIMARY.every(h => navConfig.includes(`href: "${h}"`)));
   const ABSENT_LABELS = ["Simulasi UKBI", "Simulasi TKA", "Dokumen Hasil Latihan", "BIGT", "Gabung Kelas", "Toko Koin", "Papan Pengumuman"];
   const ABSENT_HREFS = ["/murid/simulasi/ukbi", "/murid/simulasi/tka", "/murid/dokumen-latihan", "/murid/bigt", "/murid/gabung-kelas", "/arena/toko-koin"];
   test("label lama (Simulasi/BIGT/Gabung Kelas/Toko Koin/Papan Pengumuman) TIDAK ada di layout",
     () => ABSENT_LABELS.every(l => !layout.includes(l)));
   test("href lama (simulasi/bigt/gabung-kelas/toko-koin) TIDAK ada di layout",
     () => ABSENT_HREFS.every(h => !layout.includes(h)));
-  test("ada separator + LogoutButton di sidebar",
-    () => layout.includes("LogoutButton") && layout.includes("border-t border-gray-100/50 my-2"));
+  test("ada blok user + footer LogoutButton & ShellSidebarToggle di sidebar",
+    () => layout.includes("LogoutButton") && layout.includes("<ShellSidebarToggle />") && layout.includes("shell-user"));
 
   // ── 2. MOBILE NAV (components/dashboard/MuridMobileNav.tsx) ──
   console.log("\n── 2. Mobile Nav (MuridMobileNav) ──");
@@ -88,12 +91,12 @@ function main() {
 
   // ── 4. PROFIL & ARENA (canonical) ──
   console.log("\n── 4. Profil & Arena ──");
-  test("sidebar menautkan /murid/profile (canonical profil)",
-    () => layout.includes('href="/murid/profile"'));
+  test("STUDENT_NAV menautkan /murid/profile (canonical profil)",
+    () => navConfig.includes('href: "/murid/profile"'));
   test("halaman canonical /murid/profile ada",
     () => fs.existsSync("app/(dashboard)/murid/profile/page.tsx"));
-  test("sidebar menautkan /arena (canonical arena)",
-    () => layout.includes('href="/arena"'));
+  test("STUDENT_NAV menautkan /arena (canonical arena)",
+    () => navConfig.includes('href: "/arena"'));
   test("halaman canonical /arena ada",
     () => fs.existsSync("app/arena/page.tsx"));
 

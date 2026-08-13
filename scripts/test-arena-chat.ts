@@ -246,15 +246,18 @@ function main() {
   test("MuridMobileNav & murid layout: global nav /arena/chat tidak berubah",
     () => {
       // 4.2.1 menambah BackButton/toggle tema di kedua file — yang wajib
-      // dipertahankan adalah invariant navigasi: item drawer & MenuIcon
-      // tetap 6, Obrolan tetap menuju /arena/chat (bukan tab Arena baru).
+      // dipertahankan adalah invariant navigasi: drawer tetap 6 item &
+      // Obrolan tetap menuju /arena/chat (bukan tab Arena baru).
+      // Fase 5.1: nav sidebar pindah ke canonical STUDENT_NAV (nav-config.ts)
+      // via <ShellNavList /> — 6 item & href diperiksa di config.
       const mobileNav = fs.readFileSync("components/dashboard/MuridMobileNav.tsx", "utf8");
       const layout = fs.readFileSync("app/(dashboard)/murid/layout.tsx", "utf8");
+      const navConfig = fs.readFileSync("components/shell/nav-config.ts", "utf8");
       const drawerHrefs = ["/murid/beranda", "/murid/profile", "/arena", "/murid/karya", "/arena/chat", "/murid/pengaturan"];
       const okDrawer = drawerHrefs.every((h) => mobileNav.includes(`href: "${h}"`) || mobileNav.includes(`href="${h}"`));
-      const okMenu = (layout.match(/<MenuIcon /g) || []).length === 6;
-      const okChat = mobileNav.includes("/arena/chat") && layout.includes('href="/arena/chat"');
-      return okDrawer && okMenu && okChat;
+      const okNav = layout.includes("<ShellNavList />") && (navConfig.match(/label: "/g) || []).length === 6;
+      const okChat = mobileNav.includes("/arena/chat") && navConfig.includes('href: "/arena/chat"');
+      return okDrawer && okNav && okChat;
     });
 
   // ── T.28 — Moderation Stats API ──

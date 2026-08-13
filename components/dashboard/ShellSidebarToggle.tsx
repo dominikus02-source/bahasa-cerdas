@@ -47,7 +47,7 @@ export function ShellSidebarToggle() {
       title={collapsed ? "Perbesar sidebar" : "Perkecil sidebar"}
       className="w-8 h-8 shrink-0 rounded-lg bg-gray-200/80 hover:bg-gray-300 text-gray-600 flex items-center justify-center transition-colors dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-slate-300"
     >
-      {collapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
+      {collapsed ? <ChevronRight className="w-[18px] h-[18px]" /> : <ChevronLeft className="w-[18px] h-[18px]" />}
     </button>
   );
 }

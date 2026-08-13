@@ -87,8 +87,8 @@ function main() {
     () => guruLayout.includes("BackHome") && (guruLayout.includes('href="/guru/beranda"') || guruLayout.includes('href = "/guru/beranda"')));
   test("guru memakai ThemeToggle + NotificationBell di header",
     () => guruLayout.includes("<ThemeToggle />") && guruLayout.includes("NotificationBell"));
-  test("guru sidebar collapsible (shell-label/shell-link di GuruNav)",
-    () => read("components/dashboard/GuruNav.tsx").includes("shell-label") && read("components/dashboard/GuruNav.tsx").includes("shell-link"));
+  test("guru sidebar collapsible (shell-label di GuruNav; shell-link via NAV_LINK_BASE token 5.1)",
+    () => read("components/dashboard/GuruNav.tsx").includes("shell-label") && read("components/shell/icon-tokens.ts").includes("shell-link group flex items-center gap-3"));
   test("guru layout tetap server-side guard + side-effects (getUser/redirect)",
     () => guruLayout.includes("getUser()") && guruLayout.includes("redirect"));
 

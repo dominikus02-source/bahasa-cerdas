@@ -1,5 +1,5 @@
 import type { LucideIcon } from "lucide-react";
-import { House, UserRound, Zap, PenLine, MessageCircle, Settings } from "lucide-react";
+import { Home, User, Zap, PenLine, MessageCircle, Settings } from "lucide-react";
 
 export interface ShellNavItem {
   label: string;
@@ -13,13 +13,13 @@ export const STUDENT_NAV: ShellNavItem[] = [
   {
     label: "Beranda",
     href: "/murid/beranda",
-    icon: House,
+    icon: Home,
     match: (p) => p === "/murid/beranda",
   },
   {
     label: "Profil",
     href: "/murid/profile",
-    icon: UserRound,
+    icon: User,
     match: (p) => p === "/murid/profile" || p.startsWith("/murid/profile/"),
   },
   {

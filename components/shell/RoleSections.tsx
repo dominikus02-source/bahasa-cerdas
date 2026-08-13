@@ -1,8 +1,16 @@
 import Link from "next/link";
 import { GraduationCap, ShieldCheck, LayoutDashboard } from "lucide-react";
+import {
+  NAV_ICON_CLASS,
+  NAV_ICON_STROKE,
+  NAV_ICON_INACTIVE,
+  NAV_LINK_BASE,
+  NAV_LINK_INACTIVE,
+} from "@/components/shell/icon-tokens";
 
 /** Blok peran di sidebar universal — sama persis pola Student Shell (Mode Guru / Akses Founder).
- *  Icon-only saat collapsed via .shell-label (CSS global). Authorization TETAP server-side. */
+ *  Icon-only saat collapsed via .shell-label (CSS global). Authorization TETAP server-side.
+ *  Ikon canonical 22px lucide; hover seragam (tanpa warna per-produk). */
 export function RoleSections({
   role,
   isFounder,
@@ -24,9 +32,9 @@ export function RoleSections({
             prefetch={false}
             aria-label="Dashboard Guru"
             title="Dashboard Guru"
-            className="shell-link group flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm mb-1 transition-all duration-200 text-gray-600 hover:bg-gradient-to-r hover:from-violet-50 hover:to-purple-50 hover:text-violet-700 dark:text-slate-300 dark:hover:from-slate-800 dark:hover:to-slate-800 dark:hover:text-white"
+            className={`${NAV_LINK_BASE} ${NAV_LINK_INACTIVE}`}
           >
-            <GraduationCap className="w-5 h-5 shrink-0" strokeWidth={1.8} />
+            <GraduationCap className={`${NAV_ICON_CLASS} ${NAV_ICON_INACTIVE}`} strokeWidth={NAV_ICON_STROKE} />
             <span className="shell-label font-medium group-hover:text-violet-700 dark:group-hover:text-white">
               Dashboard Guru
             </span>
@@ -44,10 +52,10 @@ export function RoleSections({
             prefetch={false}
             aria-label="Dashboard Guru"
             title="Dashboard Guru"
-            className="shell-link group flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm mb-1 transition-all duration-200 text-gray-600 hover:bg-gradient-to-r hover:from-emerald-50 hover:to-green-50 hover:text-emerald-700 dark:text-slate-300 dark:hover:from-slate-800 dark:hover:to-slate-800 dark:hover:text-white"
+            className={`${NAV_LINK_BASE} ${NAV_LINK_INACTIVE}`}
           >
-            <LayoutDashboard className="w-5 h-5 shrink-0" strokeWidth={1.8} />
-            <span className="shell-label font-medium group-hover:text-emerald-700 dark:group-hover:text-white">
+            <LayoutDashboard className={`${NAV_ICON_CLASS} ${NAV_ICON_INACTIVE}`} strokeWidth={NAV_ICON_STROKE} />
+            <span className="shell-label font-medium group-hover:text-violet-700 dark:group-hover:text-white">
               Dasbor Guru
             </span>
           </Link>
@@ -56,10 +64,10 @@ export function RoleSections({
             prefetch={false}
             aria-label="Panel Admin"
             title="Panel Admin"
-            className="shell-link group flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm mb-1 transition-all duration-200 text-gray-600 hover:bg-gradient-to-r hover:from-red-50 hover:to-orange-50 hover:text-red-700 dark:text-slate-300 dark:hover:from-slate-800 dark:hover:to-slate-800 dark:hover:text-white"
+            className={`${NAV_LINK_BASE} ${NAV_LINK_INACTIVE}`}
           >
-            <ShieldCheck className="w-5 h-5 shrink-0" strokeWidth={1.8} />
-            <span className="shell-label font-medium group-hover:text-red-700 dark:group-hover:text-white">
+            <ShieldCheck className={`${NAV_ICON_CLASS} ${NAV_ICON_INACTIVE}`} strokeWidth={NAV_ICON_STROKE} />
+            <span className="shell-label font-medium group-hover:text-violet-700 dark:group-hover:text-white">
               Panel Admin
             </span>
           </Link>

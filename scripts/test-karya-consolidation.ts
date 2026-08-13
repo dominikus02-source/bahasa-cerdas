@@ -29,6 +29,7 @@ function main() {
 
   const layout = read("app/(dashboard)/murid/layout.tsx");
   const mobileNav = read("components/dashboard/MuridMobileNav.tsx");
+  const navConfig = read("components/shell/nav-config.ts");
   const works = read("components/student-home/RecentWorksSection.tsx");
   const profile = read("app/(dashboard)/murid/profile/page.tsx");
   const feedImpl = read("components/student-karya/KaryaFeed.tsx");
@@ -40,10 +41,10 @@ function main() {
 
   // ── 1. SIDEBAR — Karya → [CANONICAL KARYA] ──
   console.log("\n── 1. Sidebar Karya → /murid/karya ──");
-  test("sidebar Karya menunjuk /murid/karya",
-    () => layout.includes('label="Karya" href="/murid/karya"'));
+  test("sidebar Karya menunjuk /murid/karya (canonical STUDENT_NAV via ShellNavList)",
+    () => layout.includes("<ShellNavList />") && navConfig.includes('label: "Karya"') && navConfig.includes('href: "/murid/karya"'));
   test("sidebar TIDAK lagi menunjuk /arena/feed",
-    () => !layout.includes('label="Karya" href="/arena/feed"'));
+    () => !layout.includes('href="/arena/feed"') && !navConfig.includes('href: "/arena/feed"'));
 
   // ── 2. MOBILE NAV — Karya → [CANONICAL KARYA] ──
   console.log("\n── 2. Mobile Nav Karya → /murid/karya ──");

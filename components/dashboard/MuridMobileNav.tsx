@@ -8,12 +8,18 @@ import { BackHome } from "@/components/shared/BackHome";
 import { ThemeToggle } from "@/components/theme/theme-toggle";
 import {
   Home, Menu as MenuIcon, X, Bell,
-  GraduationCap, User, PenLine, MessageCircle, Settings, Shield,
+  GraduationCap, User, PenLine, MessageCircle, Settings, Shield, Zap,
 } from "lucide-react";
+import {
+  NAV_ICON_CLASS,
+  NAV_ICON_STROKE,
+  NAV_ICON_ACTIVE,
+  NAV_ICON_INACTIVE,
+} from "@/components/shell/icon-tokens";
 
 const PRIMARY = [
   { href: "/murid/beranda", label: "Beranda", icon: Home },
-  { href: "/arena", label: "Arena", icon: GraduationCap },
+  { href: "/arena", label: "Arena", icon: Zap },
   { href: "/murid/karya", label: "Karya", icon: PenLine },
   { href: "/murid/profile", label: "Profil", icon: User },
 ];
@@ -21,7 +27,7 @@ const PRIMARY = [
 const DRAWER_ITEMS: { href: string; label: string; icon: any }[] = [
   { href: "/murid/beranda", label: "Beranda", icon: Home },
   { href: "/murid/profile", label: "Profil", icon: User },
-  { href: "/arena", label: "Arena", icon: GraduationCap },
+  { href: "/arena", label: "Arena", icon: Zap },
   { href: "/murid/karya", label: "Karya", icon: PenLine },
   { href: "/arena/chat", label: "Obrolan", icon: MessageCircle },
   { href: "/murid/pengaturan", label: "Pengaturan", icon: Settings },
@@ -55,13 +61,13 @@ export default function MuridMobileNav({ fullName, role, isFounder }: { fullName
           {PRIMARY.map(({ href, label, icon: Icon }) => {
             const active = isActive(href);
             return (
-              <Link key={href} href={href} className={`flex flex-col items-center gap-0.5 py-1 px-3 rounded-xl transition-colors ${active ? "text-violet-600 dark:text-violet-300" : "text-gray-500 hover:text-gray-700 dark:text-slate-400 dark:hover:text-slate-200"}`}>
+              <Link key={href} href={href} className={`flex flex-col items-center gap-0.5 py-1 px-3 rounded-xl transition-colors ${active ? "text-violet-600 dark:text-violet-300" : "text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"}`}>
                 <Icon size={20} />
                 <span className="text-[10px] font-semibold">{label}</span>
               </Link>
             );
           })}
-          <Link href="/arena/notifikasi" className="relative flex flex-col items-center gap-0.5 py-1 px-2 text-gray-500 hover:text-gray-700 dark:text-slate-400 dark:hover:text-slate-200">
+          <Link href="/arena/notifikasi" className="relative flex flex-col items-center gap-0.5 py-1 px-2 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200">
             <div className="relative">
               <Bell size={20} />
               {unreadCount > 0 && (
@@ -72,7 +78,7 @@ export default function MuridMobileNav({ fullName, role, isFounder }: { fullName
             </div>
             <span className="text-[10px] font-semibold">Notif</span>
           </Link>
-          <button onClick={() => setMenuOpen(true)} className="flex flex-col items-center gap-0.5 py-1 px-3 text-gray-500 hover:text-gray-700 dark:text-slate-400 dark:hover:text-slate-200">
+          <button onClick={() => setMenuOpen(true)} className="flex flex-col items-center gap-0.5 py-1 px-3 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200">
             <MenuIcon size={20} />
             <span className="text-[10px] font-semibold">Menu</span>
           </button>
@@ -107,7 +113,7 @@ export default function MuridMobileNav({ fullName, role, isFounder }: { fullName
                       active ? "bg-violet-50 text-violet-700 dark:bg-violet-500/20 dark:text-violet-200" : "text-gray-600 hover:bg-gray-50 dark:text-slate-300 dark:hover:bg-slate-800"
                     }`}
                   >
-                    <Icon size={18} className={active ? "text-violet-500 dark:text-violet-300" : "text-gray-400 dark:text-slate-500"} />
+                    <Icon className={`${NAV_ICON_CLASS} ${active ? NAV_ICON_ACTIVE : NAV_ICON_INACTIVE}`} strokeWidth={NAV_ICON_STROKE} />
                     {label}
                   </Link>
                 );
@@ -119,7 +125,7 @@ export default function MuridMobileNav({ fullName, role, isFounder }: { fullName
                 <p className="px-3 pb-1 text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-slate-500">Mode Guru</p>
                 <Link href="/guru/beranda" aria-label="Dashboard Guru" onClick={close}
                   className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-50 dark:text-slate-300 dark:hover:bg-slate-800">
-                  <GraduationCap size={18} className="text-gray-400 dark:text-slate-500" />
+                  <GraduationCap className={`${NAV_ICON_CLASS} ${NAV_ICON_INACTIVE}`} strokeWidth={NAV_ICON_STROKE} />
                   Dashboard Guru
                 </Link>
               </div>
@@ -130,12 +136,12 @@ export default function MuridMobileNav({ fullName, role, isFounder }: { fullName
                 <p className="px-3 pb-1 text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-slate-500">Akses Founder</p>
                 <Link href="/guru/beranda" aria-label="Dashboard Guru" onClick={close}
                   className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-50 dark:text-slate-300 dark:hover:bg-slate-800">
-                  <GraduationCap size={18} className="text-gray-400 dark:text-slate-500" />
+                  <GraduationCap className={`${NAV_ICON_CLASS} ${NAV_ICON_INACTIVE}`} strokeWidth={NAV_ICON_STROKE} />
                   Dasbor Guru
                 </Link>
                 <Link href="/admin" aria-label="Admin Panel" onClick={close}
                   className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-50 dark:text-slate-300 dark:hover:bg-slate-800">
-                  <Shield size={18} className="text-gray-400 dark:text-slate-500" />
+                  <Shield className={`${NAV_ICON_CLASS} ${NAV_ICON_INACTIVE}`} strokeWidth={NAV_ICON_STROKE} />
                   Admin Panel
                 </Link>
               </div>

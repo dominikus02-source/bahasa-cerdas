@@ -5,6 +5,16 @@ import { usePathname, useRouter } from "next/navigation";
 import { useState, useEffect, useCallback } from "react";
 import { LayoutDashboard, ShoppingBag, Film, FileText, Users, LogOut, Settings, ChevronRight, BarChart3, Briefcase, MessageCircle, Presentation, Bell, BellRing, X, Coins, DollarSign, Database, Activity, Wallet, Baby, TrendingUp, Trophy, LineChart } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
+import {
+  NAV_ICON_CLASS,
+  NAV_ICON_STROKE,
+  NAV_ICON_ACTIVE,
+  NAV_ICON_INACTIVE,
+  NAV_LINK_BASE,
+  NAV_LINK_ACTIVE,
+  NAV_LINK_INACTIVE,
+  ACTION_ICON_CLASS,
+} from "@/components/shell/icon-tokens";
 
 interface Props {
   user: { fullName: string; avatar?: string | null; id?: string };
@@ -99,8 +109,8 @@ export function AdminSidebar({ user }: Props) {
             <p className="shell-label text-sm font-semibold text-slate-900 truncate dark:text-slate-100">{user.fullName}</p>
           </div>
           <div className="relative">
-            <button onClick={() => setShowNotifs(!showNotifs)} className="relative p-2 rounded-lg hover:bg-slate-200 transition-colors dark:hover:bg-slate-700">
-              {unread > 0 ? <BellRing size={16} className="text-amber-500" /> : <Bell size={16} className="text-slate-400" />}
+            <button onClick={() => setShowNotifs(!showNotifs)} className="relative p-2 rounded-lg hover:bg-slate-200 transition-colors dark:hover:bg-slate-700" aria-label={unread > 0 ? `Notifikasi (${unread} belum dibaca)` : "Notifikasi"}>
+              {unread > 0 ? <BellRing className={`${ACTION_ICON_CLASS} text-amber-500`} /> : <Bell className={`${ACTION_ICON_CLASS} text-slate-400`} />}
               {unread > 0 && (
                 <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-red-500 text-white text-[8px] font-bold rounded-full flex items-center justify-center">
                   {unread > 9 ? "9+" : unread}
@@ -154,10 +164,8 @@ export function AdminSidebar({ user }: Props) {
           const isActive = pathname === item.href;
           return (
             <Link key={item.href} href={item.href} aria-label={item.label} title={item.label}
-              className={`shell-link group flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm transition-all mb-0.5 ${
-                isActive ? "text-red-700 bg-red-50 font-semibold dark:text-red-400 dark:bg-red-500/10" : "text-slate-500 hover:bg-slate-50 hover:text-slate-800 dark:text-slate-400 dark:hover:bg-slate-800/60 dark:hover:text-slate-100"
-              }`}>
-              <Icon size={18} className={`shrink-0 ${isActive ? "text-red-500" : "text-slate-400 dark:text-slate-500"}`} />
+              className={`${NAV_LINK_BASE} ${isActive ? NAV_LINK_ACTIVE : NAV_LINK_INACTIVE}`}>
+              <Icon className={`${NAV_ICON_CLASS} ${isActive ? NAV_ICON_ACTIVE : NAV_ICON_INACTIVE}`} strokeWidth={NAV_ICON_STROKE} />
               <span className="shell-label">{item.label}</span>
             </Link>
           );
@@ -166,10 +174,10 @@ export function AdminSidebar({ user }: Props) {
 
       <div className="p-3 border-t border-slate-100 dark:border-slate-800">
         <Link href="/" className="shell-link flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm text-slate-500 hover:text-slate-800 hover:bg-slate-50 transition-colors mb-1 dark:text-slate-400 dark:hover:text-slate-100 dark:hover:bg-slate-800/60">
-          <ChevronRight size={16} className="shrink-0" /> <span className="shell-label">Ke Website</span>
+          <ChevronRight className={`${ACTION_ICON_CLASS} shrink-0`} /> <span className="shell-label">Ke Website</span>
         </Link>
         <button onClick={handleLogout} className="w-full flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm text-slate-500 hover:text-red-600 hover:bg-red-50 transition-colors dark:text-slate-400 dark:hover:text-red-400 dark:hover:bg-red-500/10">
-          <LogOut size={16} className="shrink-0" /> <span className="shell-label">Keluar</span>
+          <LogOut className={`${ACTION_ICON_CLASS} shrink-0`} /> <span className="shell-label">Keluar</span>
         </button>
       </div>
     </div>

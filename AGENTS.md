@@ -3090,3 +3090,78 @@ Patch visual/UX di atas Unified Shell 5.0: (1) hilangkan duplikasi identitas "Pa
 3. GameRoom migration SQL via Supabase dashboard
 4. UI game solo: badge-score client vs server masih beda (kosmetik)
 5. SQL `2026-08-02_no_absen.sql` & `2026-08-08_school_identity.sql` (Production + Preview)
+
+---
+
+## Phase UNIFIED ICON SYSTEM 5.1 — Satu Sistem Ikon Navigasi (Aug 13, 2026)
+
+### Goal
+SATU sistem icon untuk SEMUA navigation/shell (Murid/Arena/Obrolan/Guru/Admin): lucide-react canonical, token seragam (nav 22px/stroke 2, header 18–20px), warna inactive slate-500 (#64748B), aktif violet-50 (semua role), hover seragam. **NOT COMMITTED — menunggu Founder Review (pola 5.0).**
+
+### Root Cause (audit, dari screenshot founder "sidebar Karya vs Arena beda design system")
+1. `murid/layout.tsx` punya komponen `MenuIcon` **inline SVG** sendiri (strokeWidth 1.5, text-gray-400, w-5 h-5) untuk 6 item — Karya/Fitur lain hom di sidebar murid memakai sistem ini, Arena memakai `ShellNavList` lucide → dua sistem ikon dalam satu produk.
+2. `nav-config.ts` memakai `House`/`UserRound` (glyph beda berat).
+3. `ShellNavList` render `strokeWidth={active ? 2.2 : 1.8}` (variasi stroke).
+4. `LogoutButton` dashboard = inline SVG stroke 1.5.
+5. Header icons 16px (BackHome/ThemeToggle/ShellSidebarToggle/HeaderActions).
+
+### Perubahan
+| File | Perubahan |
+|------|-----------|
+| `components/shell/icon-tokens.ts` | BARU — canonical tokens: `NAV_ICON_CLASS` (w-[22px] h-[22px] shrink-0), `NAV_ICON_STROKE=2`, `NAV_ICON_INACTIVE` (slate-500 → slate-700 hover, dark slate-400→200), `NAV_ICON_ACTIVE` (violet-600/300), `NAV_LINK_BASE` (termasuk shell-link), `NAV_LINK_ACTIVE` (violet-50 bg + semibold), `NAV_LINK_INACTIVE` (slate-600, hover slate-100/70), `ACTION_ICON_CLASS` (20px), `DISCLOSURE_ICON_CLASS` (18px) |
+| `components/shell/nav-config.ts` | `House`→`Home`, `UserRound`→`User` (mapping canonical seksi 8) |
+| `components/shell/ShellNavList.tsx` | Rewrite pakai tokens: ikon 22px stroke 2, active violet-50 (tanpa gradient), inactive slate; shrink-0; aria/title tetap |
+| `components/shell/RoleSections.tsx` | Ikon 22px lucide stroke 2; hover seragam saat collapsed—hapus hover emerald/red per-produk |
+| `app/(dashboard)/murid/layout.tsx` | Hapus `MenuIcon` inline SVG + 6 item + blok role inline → `<ShellNavList />` + `<RoleSections role isFounder />`; brand/user/footer/header utuh |
+| `components/dashboard/MuridMobileNav.tsx` | Arena `GraduationCap`→`Zap` (PRIMARY + DRAWER); drawer icons 22px token; bottom bar slate-500; Mode Guru/Akses Founder drawer pakai tokens |
+| `components/dashboard/GuruNav.tsx` | Semua icon group/sub pakai tokens; active violet (bukan emerald); chevron 18px; `UserRound`→`User`; accordion border violet-100 |
+| `components/admin/AdminSidebar.tsx` | Item NAV active violet (bukan red); icon 22px stroke 2; bell + footer (Ke Website/Keluar) 20px; label/href/menu utuh |
+| `components/shared/BackHome.tsx` | ArrowLeft 16→20px (w-5 h-5) |
+| `components/theme/theme-toggle.tsx` | Sun/Moon 16→20px |
+| `components/dashboard/ShellSidebarToggle.tsx` | Chevron 16→18px (aria Perkecil/Perbesar tetap) |
+| `components/dashboard/LogoutButton.tsx` | Inline SVG → lucide `LogOut` 20px |
+| `components/arena/LogoutButton.tsx` | icon/link variant size 15/14→18 |
+| `components/arena/HeaderActions.tsx` | Search/Bell size 16→20 + aria-label Notifikasi |
+
+### Test Updates (penyesuaian ke UX baru — tanpa melemahkan)
+- `test-student-shell.ts` (34/34): MenuIcon×6 → `<ShellNavList />` + 6 item STUDENT_NAV di nav-config; separator → footer LogoutButton/ShellSidebarToggle/shell-user; href profil/arena → nav-config
+- `test-arena-chat.ts` (94/94): okMenu → ShellNavList + 6 item config; okChat href → nav-config
+- `test-arena-nav-theme.ts` (35/35): role CTA/Dasbor Guru/shell-label/Akses Founder → dibaca dari RoleSections.tsx
+- `test-student-consolidation.ts` (19/19), `test-karya-consolidation.ts` (40/40): href canonical → nav-config
+- `test-unified-shell.ts` (60/60): shell-link via token NAV_LINK_BASE
+
+### Script Baru
+- `scripts/test-icon-system.ts` + `npm run test:icon-system` — **47 assertions**: tokens, mapping STUDENT_NAV (Home/User/Zap/PenLine/MessageCircle/Settings + urutan), ShellNavList no stroke 1.8/2.2, murid tak ada MenuIcon/svg 1.5, Arena=Zap, Guru/Admin violet (bukan emerald/red) + menu/href utuh, header 18–20px, aksesibilitas aria, dark: variant, no emoji, no library ikon kedua, protected zones 0 diff.
+
+### Verification
+| Check | Hasil |
+|-------|-------|
+| `npm run test:icon-system` | ✅ 47/47 (BARU) |
+| `test:unified-shell` | ✅ 60/60 |
+| `test:arena-nav-theme` | ✅ 35/35 |
+| `test:arena-web` / `arena-chat` | ✅ 56/56 · ✅ 94/94 |
+| `test:student-shell` / `student-home` / `student-consolidation` | ✅ 34/34 · ✅ 51/51 · ✅ 19/19 |
+| `test:karya-consolidation` / `global-works-discovery` | ✅ 40/40 · ✅ 31/31 |
+| `test:premium-economy` / `social-hardening` | ✅ 63/63 · ✅ 27/27 |
+| `test:gamification-engine` / `guru-phase` | ✅ SEMUA LULUS |
+| `test:bigt-menu` / `phase9g-admin-payments` | ✅ 26/26 · ✅ 28/28 |
+| `test:simulation-workflow` | ✅ All passed |
+| `test:bahasa-indonesia-ui` | 57/62 (5 kegagalan pre-eksis luar changeset: BigtInfoPage + panel RPP) |
+| `npx tsc --noEmit` | ✅ 0 errors |
+| ESLint (21 file diubah/baru) | ✅ 0 errors |
+| `npm run build` (dummy env) | ✅ 364 routes, Compiled successfully, exit 0 |
+| `git diff --check` | ✅ bersih |
+| Protected zones | ✅ 0 diff (prisma/ app/api/ lib/gamification/ lib/learning-loop/ engines/ lib/apk.ts bottom-nav) |
+
+### Catatan
+- `GuruSidebar.tsx` (legacy, tidak dirender — hanya dibaca test) TIDAK diubah; icon lucide-nya di luar scope render.
+- Brand exception dipatuhi: logo inline SVG murid, `IconTarget`, `RankChip`, avatar tetap.
+- Hover seragam (slate subtle) menggantikan warna per-produk (emerald/red) di nav — sesuai direktif §5/§6.
+- **Belum di-commit/push — menunggu Founder Review** (pola 4.2.x / Unified Shell 5.0 / 5.0.1).
+
+### Remaining (tidak berubah)
+1. TKA UTBK/Guru enrichment 30 → 150
+2. Game server revival (VPS mati)
+3. GameRoom migration SQL via Supabase dashboard
+4. UI game solo: badge-score client vs server masih beda (kosmetik)
+5. SQL `2026-08-02_no_absen.sql` & `2026-08-08_school_identity.sql` (Production + Preview)

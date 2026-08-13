@@ -5,9 +5,19 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   Home, Sparkles, Store, Gamepad2, Users, BookOpen, ClipboardCheck,
-  Bot, UserRound, CalendarDays, ChevronDown, Menu, X, LogOut,
+  Bot, User, CalendarDays, ChevronDown, Menu, X, LogOut,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
+import {
+  NAV_ICON_CLASS,
+  NAV_ICON_STROKE,
+  NAV_ICON_ACTIVE,
+  NAV_ICON_INACTIVE,
+  NAV_LINK_BASE,
+  NAV_LINK_ACTIVE,
+  NAV_LINK_INACTIVE,
+  DISCLOSURE_ICON_CLASS,
+} from "@/components/shell/icon-tokens";
 
 /**
  * Guru Navigation V2 — Information Architecture sederhana.
@@ -146,7 +156,7 @@ export const GURU_NAV: NavGroup[] = [
   {
     id: "akun",
     label: "Akun Saya",
-    icon: UserRound,
+    icon: User,
     links: [
       // Ringkasan Akun = Account Center (memuat Profil, Berlangganan,
       // Saldo, Lencana, Notifikasi, Pengaturan sebagai section/menu internal).
@@ -183,13 +193,12 @@ function NavLinks({
           onClick={onNavigate}
           aria-label={group.label}
           title={group.label}
-          className={`shell-link group flex w-full items-center gap-3 px-3 py-2 rounded-lg text-sm mb-1 transition-all duration-200 ${
-            active
-              ? "bg-gradient-to-r from-emerald-50 to-green-50 text-emerald-700 font-semibold"
-              : "text-gray-600 hover:bg-gradient-to-r hover:from-emerald-50 hover:to-green-50 hover:text-emerald-700"
-          }`}
+          className={`${NAV_LINK_BASE} ${active ? NAV_LINK_ACTIVE : NAV_LINK_INACTIVE}`}
         >
-          <group.icon className={`w-5 h-5 shrink-0 transition-colors ${active ? "text-emerald-500" : "text-gray-400 group-hover:text-emerald-500"}`} />
+          <group.icon
+            className={`${NAV_ICON_CLASS} ${active ? NAV_ICON_ACTIVE : NAV_ICON_INACTIVE}`}
+            strokeWidth={NAV_ICON_STROKE}
+          />
           <span className="shell-label font-medium flex-1 text-left">{group.label}</span>
         </Link>
       </div>
@@ -205,17 +214,15 @@ function NavLinks({
         onClick={() => setOpen((o) => !o)}
         aria-label={group.label}
         title={group.label}
-        className={`shell-link group flex w-full items-center gap-3 px-3 py-2 rounded-lg text-sm mb-1 transition-all duration-200 text-gray-600 hover:bg-gradient-to-r hover:from-emerald-50 hover:to-green-50 hover:text-emerald-700 ${
-          active && open ? "text-emerald-700" : ""
-        }`}
+        className={`${NAV_LINK_BASE} ${NAV_LINK_INACTIVE} ${active && open ? "text-violet-700 dark:text-violet-300" : ""}`}
       >
-        <group.icon className="w-5 h-5 shrink-0 text-gray-400 group-hover:text-emerald-500 transition-colors" />
+        <group.icon className={`${NAV_ICON_CLASS} ${active ? NAV_ICON_ACTIVE : NAV_ICON_INACTIVE}`} strokeWidth={NAV_ICON_STROKE} />
         <span className="shell-label font-medium flex-1 text-left">{group.label}</span>
-        <ChevronDown className={`shell-label w-4 h-4 text-gray-300 transition-transform duration-200 ${open ? "rotate-180" : ""}`} />
+        <ChevronDown className={`shell-label ${DISCLOSURE_ICON_CLASS} text-slate-400 dark:text-slate-500 transition-transform duration-200 ${open ? "rotate-180" : ""}`} />
       </button>
 
       {open && (
-        <div className="shell-accordion ml-7 mb-1 flex flex-col gap-1 border-l border-emerald-100/70 pl-3">
+        <div className="shell-accordion ml-7 mb-1 flex flex-col gap-1 border-l border-violet-100/70 dark:border-slate-700 pl-3">
           {group.links?.map((link) => {
             const linkActive = isActive(pathname, link.href, link.activeOn);
             return (
@@ -225,8 +232,8 @@ function NavLinks({
                 onClick={onNavigate}
                 className={`block rounded-lg py-1.5 px-3 text-xs transition-all ${
                   linkActive
-                    ? "bg-emerald-50 text-emerald-700 font-semibold"
-                    : "text-gray-500 hover:text-emerald-600 hover:bg-emerald-50/50"
+                    ? "bg-violet-50 text-violet-700 font-semibold dark:bg-violet-500/15 dark:text-violet-300"
+                    : "text-slate-500 hover:text-violet-600 hover:bg-violet-50/60 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-200"
                 }`}
               >
                 {link.label}
@@ -266,7 +273,7 @@ export function GuruMobileNav({ isFounder }: { isFounder: boolean }) {
     { label: "Beranda", href: "/guru/beranda", icon: Home },
     { label: "Literasi", href: "/guru/feed-karya", icon: Sparkles },
     { label: "Gim", href: "/guru/game", icon: Gamepad2 },
-    { label: "Akun", href: "/guru/akun", icon: UserRound },
+    { label: "Akun", href: "/guru/akun", icon: User },
   ];
 
   return (
@@ -280,7 +287,7 @@ export function GuruMobileNav({ isFounder }: { isFounder: boolean }) {
                 key={tab.href}
                 href={tab.href}
                 className={`flex flex-col items-center gap-0.5 py-2.5 text-[10px] font-medium transition-colors ${
-                  active ? "text-emerald-600" : "text-gray-400"
+                  active ? "text-violet-600" : "text-slate-500"
                 }`}
               >
                 <tab.icon className="w-5 h-5" />
@@ -291,7 +298,7 @@ export function GuruMobileNav({ isFounder }: { isFounder: boolean }) {
           <button
             type="button"
             onClick={() => setDrawer(true)}
-            className="flex flex-col items-center gap-0.5 py-2.5 text-[10px] font-medium text-gray-400"
+            className="flex flex-col items-center gap-0.5 py-2.5 text-[10px] font-medium text-slate-500"
           >
             <Menu className="w-5 h-5" />
             Menu

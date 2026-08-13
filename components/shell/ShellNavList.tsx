@@ -3,8 +3,18 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { isNavActive, STUDENT_NAV } from "@/components/shell/nav-config";
+import {
+  NAV_ICON_CLASS,
+  NAV_ICON_STROKE,
+  NAV_ICON_ACTIVE,
+  NAV_ICON_INACTIVE,
+  NAV_LINK_BASE,
+  NAV_LINK_ACTIVE,
+  NAV_LINK_INACTIVE,
+} from "@/components/shell/icon-tokens";
 
-/** Sidebar nav universal untuk produk student (Murid/Arena/Obrolan) — pola render identik dengan Student Shell. */
+/** Sidebar nav universal untuk produk student (Murid/Arena/Obrolan) — pola render identik dengan Student Shell.
+ *  Mengikuti canonical icon system (tokens di icon-tokens.ts): ikon 22px, stroke 2, aktif violet. */
 export function ShellNavList() {
   const pathname = usePathname();
 
@@ -19,13 +29,12 @@ export function ShellNavList() {
             href={item.href}
             aria-label={item.label}
             title={item.label}
-            className={`shell-link group flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm mb-1 transition-all duration-200 ${
-              active
-                ? "bg-gradient-to-r from-violet-50 to-purple-50 text-violet-700 font-semibold dark:from-violet-500/20 dark:to-purple-500/10 dark:text-violet-300"
-                : "text-gray-600 hover:bg-gradient-to-r hover:from-violet-50 hover:to-purple-50 hover:text-violet-700 dark:text-slate-300 dark:hover:from-slate-800 dark:hover:to-slate-800 dark:hover:text-white"
-            }`}
+            className={`${NAV_LINK_BASE} ${active ? NAV_LINK_ACTIVE : NAV_LINK_INACTIVE}`}
           >
-            <Icon className="w-5 h-5 shrink-0" strokeWidth={active ? 2.2 : 1.8} />
+            <Icon
+              className={`${NAV_ICON_CLASS} ${active ? NAV_ICON_ACTIVE : NAV_ICON_INACTIVE}`}
+              strokeWidth={NAV_ICON_STROKE}
+            />
             <span className="shell-label font-medium group-hover:text-violet-700 dark:group-hover:text-white">
               {item.label}
             </span>

@@ -196,7 +196,8 @@
     "test:arena-web": "npx tsx scripts/test-arena-web.ts",
     "test:arena-chat": "npx tsx scripts/test-arena-chat.ts",
     "test:arena-nav-theme": "npx tsx scripts/test-arena-nav-theme.ts",
-    "test:karya-consolidation": "npx tsx scripts/test-karya-consolidation.ts"
+    "test:karya-consolidation": "npx tsx scripts/test-karya-consolidation.ts",
+    "test:icon-system": "npx tsx scripts/test-icon-system.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.39.0",

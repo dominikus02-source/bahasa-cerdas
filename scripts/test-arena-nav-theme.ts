@@ -67,6 +67,7 @@ function main() {
   const muridLayout = read("app/(dashboard)/murid/layout.tsx");
   const arenaLayout = read("app/arena/layout.tsx");
   const mobileNav = read("components/dashboard/MuridMobileNav.tsx");
+  const roleSections = read("components/shell/RoleSections.tsx");
   test("sidebar murid memakai <BackHome /> di top shell header",
     () => muridLayout.includes("<BackHome />"));
   test("arena desktop header memakai <BackHome />",
@@ -86,14 +87,14 @@ function main() {
     () => muridLayout.includes('user.role !== "MURID" && user.role !== "GURU" && !user.isFounder'));
   test("onboarding hanya untuk MURID",
     () => muridLayout.includes('user.role === "MURID"') && muridLayout.includes("onboarded"));
-  test("CTA Dashboard Guru di sidebar hanya GURU non-founder",
-    () => muridLayout.includes('user.role === "GURU" && !user.isFounder') && muridLayout.includes('href="/guru/beranda"'));
+  test("RoleSections (shared, 5.1): Mode Guru hanya GURU non-founder; murid layout memakai <RoleSections />",
+    () => muridLayout.includes("<RoleSections") && roleSections.includes('role === "GURU" && !isFounder') && roleSections.includes('href="/guru/beranda"'));
   test("CTA memakai aria-label + title (icon-only saat collapsed)",
-    () => muridLayout.includes('aria-label="Dashboard Guru"') && muridLayout.includes('title="Dashboard Guru"'));
+    () => roleSections.includes('aria-label="Dashboard Guru"') && roleSections.includes('title="Dashboard Guru"'));
   test("setiap CTA role memakai span kelas shell-label (sembunyi saat collapsed)",
-    () => muridLayout.includes('span className="shell-label') );
+    () => roleSections.includes('className="shell-label') );
   test("Akses Founder (Dasbor Guru + Panel Admin) untuk founder saja",
-    () => muridLayout.includes("Akses Founder") && muridLayout.includes("Panel Admin") && muridLayout.includes('href="/admin"'));
+    () => roleSections.includes("Akses Founder") && roleSections.includes("Panel Admin") && roleSections.includes('href="/admin"'));
   test("arena: hasGuruAccess = GURU || founder",
     () => arenaLayout.includes('user.role === "GURU" || user.isFounder') && arenaLayout.includes("hasGuruAccess"));
   test("arena CTA Dashboard Guru hanya saat bukan apk & hasGuruAccess",
