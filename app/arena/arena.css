@@ -69,6 +69,17 @@
   margin: 0 !important;
 }
 
+/* FIX FIRST-PAINT: sejak container lebar pindah ke ArenaWorkspaceContainer
+   (components/arena/workspace-container.tsx), cap max-w-[1280px] halaman
+   non-chat kini ada di .arena-workspace-inner (di dalam main), bukan di
+   main. Aturan game-fullscreen lama di atas tidak lagi menjangkau cap itu,
+   jadi tambahkan padanan untuk wrapper — gim tetap melebar 100%. */
+.arena-theme:has(.game-fullscreen) .arena-workspace-inner {
+  max-width: 100% !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
 .arena-theme:has(.game-fullscreen) .safe-area-bottom {
   display: none;
 }

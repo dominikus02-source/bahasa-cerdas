@@ -21,7 +21,7 @@ export function RuangBelajarSection() {
           <div className="absolute -top-14 -right-14 w-44 h-44 rounded-full bg-[var(--px-royal)]/20 blur-3xl pointer-events-none" />
           <div className="relative flex items-center gap-4">
             <span className="shrink-0 w-12 h-12 rounded-2xl bg-gradient-to-br from-[var(--px-royal)] to-[var(--px-royal-2)] flex items-center justify-center shadow-lg shadow-[var(--px-royal)]/30">
-              <Users size={22} className="text-slate-900 dark:text-white" />
+              <Users size={22} className="text-white" />
             </span>
             <div className="min-w-0">
               <h3 className="text-base font-extrabold text-[var(--px-text)]">Kelas</h3>

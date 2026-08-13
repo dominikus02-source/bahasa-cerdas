@@ -1,4 +1,5 @@
 import { getUser } from "@/lib/supabase/server"
+import { isApk } from "@/lib/apk"
 import { db } from "@/lib/db"
 import { redirect } from "next/navigation"
 import { ChatClient } from "./chat-client"
@@ -107,5 +108,11 @@ export default async function ChatPage() {
     members: g.members.map((mm) => mm.user),
   }))
 
-  return <ChatClient userId={user.id} groups={enriched as any} />
+  // FIX FIRST-PAINT: apk dibaca server-side (cookie bc_apk via lib/apk.ts) dan
+  // dikirim sebagai prop — ChatClient tidak lagi membaca document.cookie lewat
+  // useEffect (useIsApkClient lama), sehingga kelas pertama yang dirender sama
+  // dengan kelas setelah refresh (tinggi workspace & CTA join tidak ber-flip).
+  const apk = await isApk()
+
+  return <ChatClient userId={user.id} groups={enriched as any} apk={apk} />
 }

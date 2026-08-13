@@ -30,6 +30,9 @@ function main() {
   // ── 1. LAYOUT — TANPA navbar/subnav Arena di web (Student Shell) ──
   console.log("\n── 1. Layout (app/arena/layout.tsx) — Tanpa Navbar Arena ──");
   const layout = read("app/arena/layout.tsx");
+  // FIX FIRST-PAINT: ternary container full-width/banner pindah ke client
+  // ArenaWorkspaceContainer (usePathname) — strings dibaca dari file baru.
+  const container = read("components/arena/workspace-container.tsx");
   const NAV_ROUTES = ["/arena/misi", "/arena/league", "/arena/game/kuis-tempur", "/arena/player/leaderboard", "/arena/player/badges", "/arena/toko-koin"];
   const ROUTES_AS_FILES = ["app/arena/page.tsx", "app/arena/misi/page.tsx", "app/arena/league/page.tsx", "app/arena/game/page.tsx", "app/arena/player/leaderboard/page.tsx", "app/arena/player/badges/page.tsx", "app/arena/chat/page.tsx"];
   test("route Arena tetap ada (7 route utama tidak dihapus)",
@@ -47,9 +50,9 @@ function main() {
   test("header GLOBAL KANONIK: TIDAK ada identitas produk Arena (ikon/title/subtitle) di header",
     () => !layout.includes("Pusat kompetisi") && !layout.includes("<Zap") && (layout.match(/Link href="/g) || []).length <= 3);
   test("container non-chat = canvas desktop-first max-w-[1280px] (bukan max-w-lg md:max-w-4xl)",
-    () => layout.includes("max-w-[1280px] py-0 md:py-6 md:px-6") && !layout.includes("max-w-lg md:max-w-4xl"));
+    () => container.includes("max-w-[1280px] py-0 md:py-6 md:px-6") && !layout.includes("max-w-lg md:max-w-4xl"));
   test("container chat FULL-WIDTH (3-pane workspace tanpa cap max-w, melebar sampai 1920+)",
-    () => layout.includes('pathname.startsWith("/arena/chat")') && layout.includes('? "w-full py-0 md:px-6"') && layout.includes("max-w-[1280px] py-0 md:py-6 md:px-6"));
+    () => container.includes('pathname.startsWith("/arena/chat")') && container.includes('? "w-full py-0 md:px-6"') && container.includes("max-w-[1280px] py-0 md:py-6 md:px-6"));
 
   // ── 2. LAYOUT — proteksi APK & auth ──
   console.log("\n── 2. Layout — Proteksi APK & Auth ──");
@@ -63,8 +66,8 @@ function main() {
     () => layout.includes("{apk && <BottomNav />}"));
   test("TIDAK ada tombol Dasbor/Logout di header arena (akses guru via RoleSections sidebar; logout via footer/Pemain)",
     () => !layout.includes("<LayoutDashboard") && !layout.includes("LogoutButton") && layout.includes("RoleSections"));
-  test("banner boost tidak dimatikan di halaman Arena non-chat ({!isChatWeb && <ActiveBoostBanner />})",
-    () => layout.includes("!isChatWeb && !isAiWorkspace && <ActiveBoostBanner />"));
+  test("banner boost tidak dimatikan di halaman Arena non-chat ({!isChatWeb && <ActiveBoostBanner />}) — kini dirender di ArenaWorkspaceContainer",
+    () => container.includes("!isChatWeb && !isAiWorkspace && <ActiveBoostBanner />"));
 
   // ── 3. HOME — hierarki 8 seksi (Spec§5) ──
   console.log("\n── 3. Home (/arena/page.tsx) — Hierarki Kompetisi ──");
@@ -199,8 +202,8 @@ function main() {
     () => !read("app/arena/game/tantang/page.tsx").includes("max-w-lg mx-auto"));
   test("/arena/player web memakai canvas penuh (tanpa wrapper legacy sempit)",
     () => !read("app/arena/player/page.tsx").includes("max-w-3xl") && !read("app/arena/player/page.tsx").includes("max-w-lg mx-auto"));
-  test("chat full-width workspace (w-full, tanpa max-w-[1440px] legacy)",
-    () => layout.includes('pathname.startsWith("/arena/chat")') && layout.includes('? "w-full py-0 md:px-6"') && !layout.includes("max-w-[1440px]"));
+  test("chat full-width workspace (w-full, tanpa max-w-[1440px] legacy) — kini di ArenaWorkspaceContainer",
+    () => container.includes('pathname.startsWith("/arena/chat")') && container.includes('? "w-full py-0 md:px-6"') && !layout.includes("max-w-[1440px]") && !container.includes("max-w-[1440px]"));
   test("tidak ada fixed min-width desktop (min-w-[1200px]/min-w-[1440px]) di seluruh route Arena",
     () => {
       const out = execSync(`rg -l 'min-w-\\[1200px\\]|min-w-\\[1440px\\]' app/arena --glob '*.tsx' || true`, { encoding: "utf8" });

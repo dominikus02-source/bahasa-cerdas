@@ -42,7 +42,7 @@ export default function BadgeShowcasePanel({ lencana, nextBadge }: BadgeShowcase
           </span>
           Perkembangan Lencana
         </h3>
-        <span className="text-[11px] font-semibold text-slate-900/45 dark:text-white/45">
+        <span className="text-[11px] font-semibold text-slate-900/60 dark:text-white/45">
           {totalUnlocked}/{lencana.length}
         </span>
       </div>
@@ -64,7 +64,7 @@ export default function BadgeShowcasePanel({ lencana, nextBadge }: BadgeShowcase
               size={40}
               className={`object-contain ${l.unlocked ? "" : "grayscale opacity-30"}`}
             />
-            <span className={`text-[10px] font-semibold leading-tight ${l.unlocked ? "text-amber-200" : "text-slate-900/40 dark:text-white/40"}`}>
+            <span className={`text-[10px] font-semibold leading-tight ${l.unlocked ? "text-amber-700 dark:text-amber-200" : "text-slate-900/55 dark:text-white/40"}`}>
               {l.name}
             </span>
             {!l.unlocked && (
@@ -96,7 +96,7 @@ export default function BadgeShowcasePanel({ lencana, nextBadge }: BadgeShowcase
       )}
 
       {nextBadge && (
-        <p className="text-[11px] text-violet-300 font-semibold mt-3 flex items-center gap-1 bg-violet-500/10 rounded-lg px-2.5 py-2 ring-1 ring-violet-400/20">
+        <p className="text-[11px] text-violet-700 dark:text-violet-300 font-semibold mt-3 flex items-center gap-1 bg-violet-500/10 rounded-lg px-2.5 py-2 ring-1 ring-violet-400/20">
           <Award size={12} /> {Math.max(0, nextBadge.target - nextBadge.progress)} lagi untuk buka &ldquo;{nextBadge.name}&rdquo;!
         </p>
       )}

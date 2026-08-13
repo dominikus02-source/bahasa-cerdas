@@ -471,7 +471,7 @@ export default function MuridProfilePage() {
                   Kebun Kata
                 </h3>
                 {streakLive && user.streak > 0 && (
-                  <span className="text-[10px] font-bold text-orange-300 bg-orange-400/10 rounded-full px-2 py-0.5 flex items-center gap-1 ring-1 ring-orange-300/20">
+                  <span className="text-[10px] font-bold text-orange-700 dark:text-orange-300 bg-orange-400/10 rounded-full px-2 py-0.5 flex items-center gap-1 ring-1 ring-orange-300/20">
                     <IconFlame size={10} className="profile-flame-live" /> {user.streak} hari beruntun
                   </span>
                 )}
@@ -485,7 +485,7 @@ export default function MuridProfilePage() {
                   />
                 ))}
               </div>
-              <div className="flex items-center gap-2 mt-3 text-[10px] text-slate-900/40 dark:text-white/40">
+              <div className="flex items-center gap-2 mt-3 text-[10px] text-slate-900/55 dark:text-white/40">
                 <span>Sedikit</span>
                 {KEBUN_LEVELS.map(k => (
                   <span key={k.level} className={`w-2.5 h-2.5 rounded-[2px] ${k.color} inline-block`} />
@@ -515,7 +515,7 @@ export default function MuridProfilePage() {
 
             >
               <h3 className="text-sm font-bold text-slate-900 dark:text-white/90 mb-1.5">Komunitas</h3>
-              <p className="text-xs text-slate-900/45 dark:text-white/45 leading-relaxed">
+              <p className="text-xs text-slate-900/60 dark:text-white/45 leading-relaxed">
                 Ikuti murid lain dan temukan teman menulis. Fitur aktif setelah
                 migrasi tabel Follow dijalankan.
               </p>
@@ -554,7 +554,7 @@ export default function MuridProfilePage() {
           {showcaseBadges.some((b) => b.unlocked) ? (
             <AchievementShowcase badges={showcaseBadges} max={6} />
           ) : (
-            <p className="text-[13px] text-slate-900/55 dark:text-white/55 leading-relaxed">
+            <p className="text-[13px] text-slate-900/60 dark:text-white/55 leading-relaxed">
               Belum ada lencana. Selesaikan latihan di Jalur Cerdas, ikuti tantangan di Arena,
               dan kumpulkan karya untuk membuka lencana pertamamu.
             </p>
@@ -615,9 +615,9 @@ export default function MuridProfilePage() {
                   </button>
                 )}
               </div>
-              <p className="text-xs text-gray-400 -mt-1">Klik untuk upload dari galeri HP atau file laptop</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400 -mt-1">Klik untuk upload dari galeri HP atau file laptop</p>
 
-              <div className="bg-violet-50 dark:bg-violet-950/40/60 border border-violet-100 dark:border-violet-900 rounded-xl p-3.5">
+              <div className="bg-violet-50 dark:bg-violet-950/60 border border-violet-100 dark:border-violet-900 rounded-xl p-3.5">
                 <label className="text-sm font-medium text-gray-700 dark:text-slate-300 mb-1 flex items-center gap-1.5">
                   <Pencil size={14} className="text-violet-500 dark:text-violet-400" /> Nama Panggilan
                 </label>
@@ -639,7 +639,7 @@ export default function MuridProfilePage() {
                 </div>
                 {nicknameError && <p className="text-xs text-red-500 dark:text-red-400 mt-1">{nicknameError}</p>}
                 {meta && meta.nickname.daysLeftForChange > 0 && (
-                  <p className="text-xs text-gray-400 mt-1">Ganti lagi dalam {meta.nickname.daysLeftForChange} hari</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Ganti lagi dalam {meta.nickname.daysLeftForChange} hari</p>
                 )}
                 {user.nickname && (
                   <button onClick={loadNicknameHistory} className="text-xs text-violet-600 hover:text-violet-700 dark:text-violet-300 mt-2 flex items-center gap-1">
@@ -705,17 +705,17 @@ export default function MuridProfilePage() {
             </div>
             <div className="p-5 max-h-80 overflow-y-auto">
               {nicknameHistory.length === 0 ? (
-                <p className="text-sm text-gray-400 text-center py-4">Belum ada riwayat perubahan.</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400 text-center py-4">Belum ada riwayat perubahan.</p>
               ) : (
                 <div className="space-y-3">
                   {nicknameHistory.map(r => (
                     <div key={r.id} className="flex items-center justify-between text-sm">
                       <div>
-                        <span className="text-gray-400 line-through">{r.oldNickname || "(kosong)"}</span>
+                        <span className="text-gray-500 dark:text-gray-400 line-through">{r.oldNickname || "(kosong)"}</span>
                         <span className="mx-2 text-gray-300">→</span>
                         <span className="font-semibold text-gray-900 dark:text-slate-100">{r.newNickname || "(direset)"}</span>
                       </div>
-                      <span className="text-xs text-gray-400">{new Date(r.changedAt).toLocaleDateString("id-ID")}</span>
+                      <span className="text-xs text-gray-500 dark:text-gray-400">{new Date(r.changedAt).toLocaleDateString("id-ID")}</span>
                     </div>
                   ))}
                 </div>

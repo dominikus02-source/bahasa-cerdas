@@ -36,12 +36,12 @@ export default function PlayerStatsGrid({ stats }: { stats: PlayerStatCard[] }) 
               aria-hidden
               className="mb-2.5 flex h-9 w-9 items-center justify-center rounded-xl bg-violet-500/15 ring-1 ring-violet-400/20"
             >
-              <Icon size={16} className="text-violet-300" />
+              <Icon size={16} className="text-violet-600 dark:text-violet-300" />
             </span>
             <p className="text-2xl font-black text-slate-900 dark:text-white leading-none tabular-nums">
               {s.value.toLocaleString("id-ID")}
             </p>
-            <p className="mt-1.5 text-[11px] font-semibold uppercase tracking-wider text-slate-900/45 dark:text-white/45">
+            <p className="mt-1.5 text-[11px] font-semibold uppercase tracking-wider text-slate-900/60 dark:text-white/45">
               {s.label}
             </p>
           </div>

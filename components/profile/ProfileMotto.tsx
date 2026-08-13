@@ -36,14 +36,14 @@ export default function ProfileMotto({
           aria-hidden
           className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-violet-500/15 ring-1 ring-violet-400/20"
         >
-          <Quote size={16} className="text-violet-300" />
+          <Quote size={16} className="text-violet-600 dark:text-violet-300" />
         </span>
         <div className="min-w-0">
           {bio ? (
             <p className="text-sm leading-relaxed text-slate-900/80 dark:text-white/80">{bio}</p>
           ) : (
             isOwn && (
-              <p className="text-sm text-slate-900/45 dark:text-white/45 italic">
+              <p className="text-sm text-slate-900/60 dark:text-white/45 italic">
                 Belum ada moto.{" "}
                 <button onClick={onEditProfile} className="underline text-slate-900/70 dark:text-white/70 hover:text-slate-900 dark:text-white">
                   Tulis moto singkat?
@@ -52,7 +52,7 @@ export default function ProfileMotto({
             )
           )}
           {joinedText && (
-            <p className="mt-1.5 inline-flex items-center gap-1.5 text-[11px] text-slate-900/40 dark:text-white/40">
+            <p className="mt-1.5 inline-flex items-center gap-1.5 text-[11px] text-slate-900/55 dark:text-white/40">
               <CalendarDays size={12} /> Bergabung sejak {joinedText}
             </p>
           )}

@@ -16,12 +16,12 @@ interface KaryaItem {
 }
 
 const TYPE_META: Record<string, { label: string; badge: string }> = {
-  PUISI: { label: "Puisi", badge: "bg-rose-500/15 text-rose-300" },
-  CERPEN: { label: "Cerpen", badge: "bg-blue-500/15 text-blue-300" },
-  ARTIKEL: { label: "Artikel", badge: "bg-amber-500/15 text-amber-300" },
-  ANEKDOT: { label: "Anekdot", badge: "bg-orange-500/15 text-orange-300" },
-  PANTUN: { label: "Pantun", badge: "bg-teal-500/15 text-teal-300" },
-  OPINI: { label: "Opini", badge: "bg-violet-500/15 text-violet-300" },
+  PUISI: { label: "Puisi", badge: "bg-rose-500/15 text-rose-600 dark:text-rose-300" },
+  CERPEN: { label: "Cerpen", badge: "bg-blue-500/15 text-blue-600 dark:text-blue-300" },
+  ARTIKEL: { label: "Artikel", badge: "bg-amber-500/15 text-amber-600 dark:text-amber-300" },
+  ANEKDOT: { label: "Anekdot", badge: "bg-orange-500/15 text-orange-600 dark:text-orange-300" },
+  PANTUN: { label: "Pantun", badge: "bg-teal-500/15 text-teal-600 dark:text-teal-300" },
+  OPINI: { label: "Opini", badge: "bg-violet-500/15 text-violet-600 dark:text-violet-300" },
 };
 
 function waktuLalu(iso: string): string {
@@ -79,7 +79,7 @@ export function RecentWorksSection() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3">
           {karya.map((k) => {
-            const meta = TYPE_META[k.type] || { label: k.type, badge: "bg-white/10 dark:bg-slate-900/10 text-[var(--px-text-dim)]" };
+            const meta = TYPE_META[k.type] || { label: k.type, badge: "bg-slate-900/10 dark:bg-white/10 text-[var(--px-text-dim)]" };
             return (
               <Link
                 key={k.id}
@@ -97,7 +97,7 @@ export function RecentWorksSection() {
                 </p>
                 <div className="flex items-center gap-3 mt-auto text-[11px] text-[var(--px-text-faint)]">
                   <span className="flex items-center gap-1">
-                    <Heart size={12} className="text-rose-400" />
+                    <Heart size={12} className="text-rose-500 dark:text-rose-400" />
                     {k.likesCount}
                   </span>
                   <span className="flex items-center gap-1">

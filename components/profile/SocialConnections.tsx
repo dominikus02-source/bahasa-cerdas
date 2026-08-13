@@ -42,7 +42,7 @@ export default function SocialConnections({
 
   const stack = (list: ConnectionPreview[]) =>
     list.length === 0 ? (
-      <span className="text-xs text-slate-900/35 dark:text-white/35">Belum ada</span>
+      <span className="text-xs text-slate-900/55 dark:text-white/35">Belum ada</span>
     ) : (
       <div className="flex items-center">
         {list.slice(0, 6).map((p, i) => (
@@ -61,12 +61,12 @@ export default function SocialConnections({
               frame={null}
               initials={(p.displayName || "?").slice(0, 1).toUpperCase()}
               gradient=""
-              className="bg-white/8 dark:bg-slate-900/8"
+              className="bg-slate-900/8 dark:bg-white/8"
             />
           </button>
         ))}
         {extraFollowers + extraFollowing > 0 && (
-          <span className="ml-1.5 text-[11px] font-semibold text-slate-900/45 dark:text-white/45 tabular-nums">
+          <span className="ml-1.5 text-[11px] font-semibold text-slate-900/60 dark:text-white/45 tabular-nums">
             +{extraFollowers + extraFollowing}
           </span>
         )}
@@ -78,7 +78,7 @@ export default function SocialConnections({
       className="rounded-2xl text-slate-900 dark:text-white ring-1 ring-slate-900/10 dark:ring-white/10 p-5 bc-card-premium"
     >
       <h3 className="inline-flex items-center gap-2 text-sm font-bold text-slate-900 dark:text-white/90 mb-4">
-        <Users size={15} className="text-violet-300" /> Komunitas
+        <Users size={15} className="text-violet-600 dark:text-violet-300" /> Komunitas
       </h3>
 
       {weeklyXp != null && (
@@ -87,9 +87,9 @@ export default function SocialConnections({
           onClick={leaderboardHref ? () => (window.location.href = leaderboardHref) : undefined}
  className="mb-4 flex w-full items-center gap-2.5 rounded-xl bg-slate-900/[0.06] dark:bg-white/[0.06] ring-1 ring-slate-900/10 dark:ring-white/10 px-3.5 py-3 text-left hover:bg-slate-900/[0.09] dark:bg-white/[0.09] transition-colors"
         >
-          <Trophy size={16} className="text-amber-300 shrink-0" />
+          <Trophy size={16} className="text-amber-600 dark:text-amber-300 shrink-0" />
           <span className="min-w-0 flex-1">
-            <span className="block text-[11px] font-semibold uppercase tracking-wider text-slate-900/45 dark:text-white/45">
+            <span className="block text-[11px] font-semibold uppercase tracking-wider text-slate-900/60 dark:text-white/45">
               XP Mingguan
             </span>
             <span className="block text-base font-black text-slate-900 dark:text-white tabular-nums">
@@ -97,21 +97,21 @@ export default function SocialConnections({
             </span>
           </span>
           {weeklyLabel && (
-            <span className="text-[10px] text-slate-900/40 dark:text-white/40 text-right leading-tight">{weeklyLabel}</span>
+            <span className="text-[10px] text-slate-900/55 dark:text-white/40 text-right leading-tight">{weeklyLabel}</span>
           )}
         </button>
       )}
 
       <div className="space-y-4">
         <div>
-          <p className="mb-1.5 text-[11px] font-semibold uppercase tracking-wider text-slate-900/45 dark:text-white/45">
+          <p className="mb-1.5 text-[11px] font-semibold uppercase tracking-wider text-slate-900/60 dark:text-white/45">
             Pengikut <span className="text-slate-900/80 dark:text-white/80">· {followerCount.toLocaleString("id-ID")}</span>
           </p>
           {stack(followers)}
         </div>
 
         <div>
-          <p className="mb-1.5 text-[11px] font-semibold uppercase tracking-wider text-slate-900/45 dark:text-white/45">
+          <p className="mb-1.5 text-[11px] font-semibold uppercase tracking-wider text-slate-900/60 dark:text-white/45">
             Mengikuti <span className="text-slate-900/80 dark:text-white/80">· {followingCount.toLocaleString("id-ID")}</span>
           </p>
           {stack(following)}
@@ -119,13 +119,13 @@ export default function SocialConnections({
       </div>
 
       {followers.length === 0 && following.length === 0 && (
-        <p className="mt-4 text-xs text-slate-900/35 dark:text-white/35 leading-relaxed">
+        <p className="mt-4 text-xs text-slate-900/55 dark:text-white/35 leading-relaxed">
           Terhubung dengan pemain lain lewat halaman karya dan papan peringkat.
         </p>
       )}
 
       {likeNote && (
-        <p className="mt-4 text-[11px] text-rose-300/90 font-semibold">{likeNote}</p>
+        <p className="mt-4 text-[11px] text-rose-600/90 dark:text-rose-300/90 font-semibold">{likeNote}</p>
       )}
     </div>
   );

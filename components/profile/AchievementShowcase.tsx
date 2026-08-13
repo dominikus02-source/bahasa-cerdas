@@ -32,7 +32,7 @@ export default function AchievementShowcase({
             key={b.id}
             href={koleksiUrl}
             title={`${b.name} — ${b.description}`}
- className="group flex flex-col items-center gap-1.5 rounded-2xl border border-white/10 bg-white/5 dark:bg-slate-900/5 p-3 transition-all hover:border-white/25 hover:bg-white/10 "
+ className="group flex flex-col items-center gap-1.5 rounded-2xl border border-slate-900/10 dark:border-white/10 bg-slate-900/5 dark:bg-white/5 p-3 transition-all hover:border-slate-900/25 dark:hover:border-white/25 hover:bg-slate-900/10 dark:hover:bg-white/10 "
           >
             <span
               className="flex h-11 w-11 items-center justify-center rounded-xl text-slate-900 dark:text-white shadow-md transition-transform group-hover:scale-110"
@@ -48,12 +48,12 @@ export default function AchievementShowcase({
       {Array.from({ length: Math.max(0, max - shown.length) }).map((_, i) => (
         <div
           key={`lock-${i}`}
-          className="flex flex-col items-center gap-1.5 rounded-2xl border border-dashed border-white/10 bg-white/5 dark:bg-slate-900/5 p-3 opacity-55"
+          className="flex flex-col items-center gap-1.5 rounded-2xl border border-dashed border-slate-900/10 dark:border-white/10 bg-slate-900/5 dark:bg-white/5 p-3 opacity-55"
         >
-          <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-slate-900/5 dark:bg-slate-900/5 text-slate-900/35 dark:text-white/35">
+          <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-slate-900/5 dark:bg-slate-900/5 text-slate-900/50 dark:text-white/50">
             <Lock size={18} />
           </span>
-          <span className="text-[11px] text-slate-900/35 dark:text-white/35">Terkunci</span>
+          <span className="text-[11px] text-slate-900/50 dark:text-white/50">Terkunci</span>
         </div>
       ))}
     </div>

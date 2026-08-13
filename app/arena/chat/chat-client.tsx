@@ -100,17 +100,15 @@ function isOnline(lastActiveAt: string | null) {
 }
 
 // APK (TWA) membedakan diri lewat cookie bc_apk (non-HttpOnly sengaja — lihat
-// middleware.ts). Client memakai ini untuk menjaga link tetap dalam scope
-// /arena/*: join kelas di APK memakai modal inline, di web menuju halaman
-// /murid/gabung-kelas. Tinggi workspace juga mengikuti chrome APK
-// (top bar + BottomNav) vs chrome Web Obrolan (top bar sendiri).
-function useIsApkClient() {
-  const [isApk, setIsApk] = useState(false)
-  useEffect(() => {
-    setIsApk(typeof document !== "undefined" && document.cookie.includes("bc_apk=1"))
-  }, [])
-  return isApk
-}
+// middleware.ts). Cookie itu dibaca SERVER-SIDE oleh isApk() (lib/apk.ts) di
+// app/arena/chat/page.tsx, lalu dikirim ke sini sebagai prop `apk` — BUKAN
+// dibaca document.cookie di useEffect seperti useIsApkClient sebelumnya.
+// Dengan prop, first paint === post-refresh: tidak ada state awal yang
+// berubah setelah efek (tinggi workspace langsung benar, tanpa flip). Klien
+// memakai prop ini untuk menjaga link tetap dalam scope /arena/*: join kelas
+// di APK memakai modal inline, di web menuju halaman /murid/gabung-kelas.
+// Tinggi workspace juga mengikuti chrome APK (top bar + BottomNav) vs chrome
+// Web Obrolan (top bar sendiri).
 
 function Avatar({
   src, name, size = "w-8 h-8", text = "text-xs", className = "",
@@ -136,9 +134,8 @@ function Avatar({
 
 // ── Main ─────────────────────────────────────────────────────────────────────
 
-export function ChatClient({ userId, groups }: { userId: string; groups: Group[] }) {
+export function ChatClient({ userId, groups, apk }: { userId: string; groups: Group[]; apk: boolean }) {
   const router = useRouter()
-  const isApk = useIsApkClient()
 
   const [selected, setSelected] = useState<Group | null>(null)
   const [convState, setConvState] = useState<ConvState>("idle")
@@ -170,10 +167,12 @@ export function ChatClient({ userId, groups }: { userId: string; groups: Group[]
 
   // Chrome-aware workspace height: WEB memakai header GLOBAL h-14 Student
   // Shell (dipersembahkan layout), APK memakai chrome penuh + BottomNav (4rem).
-  const shellHeight = isApk
+  // `apk` datang dari server (cookie bc_apk via isApk() di page) sebagai prop,
+  // jadi kelas pertama yang dirender = kelas final (tanpa flip efek).
+  const shellHeight = apk
     ? "md:h-[calc(100dvh-7rem)]"
     : "md:h-[calc(100dvh-3.5rem)]"
-  const listMinHeight = isApk
+  const listMinHeight = apk
     ? "min-h-[calc(100dvh-7rem)]"
     : "min-h-[calc(100dvh-3rem)]"
 
@@ -473,7 +472,7 @@ export function ChatClient({ userId, groups }: { userId: string; groups: Group[]
       {/* CTA Gabung Kelas — APK: modal inline (tetap dalam scope /arena);
           web: halaman kanonik /murid/gabung-kelas. */}
       <div className="p-3 border-t border-gray-100 dark:border-slate-800">
-        {isApk ? (
+        {apk ? (
           <button
             onClick={bukaJoin}
             className="w-full flex items-center justify-center gap-1.5 rounded-xl bg-gradient-to-r from-violet-600 to-purple-600 px-4 py-2.5 text-sm font-bold text-white shadow-sm transition-all hover:shadow-md hover:brightness-105 active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-500"

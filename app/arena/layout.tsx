@@ -16,11 +16,11 @@ import { BackHome } from "@/components/shared/BackHome"
 import UserAvatar from "@/components/arena/UserAvatar"
 import { NotificationBell } from "@/components/dashboard/NotificationBell"
 import { ThemeToggle } from "@/components/theme/theme-toggle"
-import { ActiveBoostBanner } from "@/components/arena/ActiveBoostBanner"
 import { ShellLayout } from "@/components/shell/ShellLayout"
 import { ShellNavList } from "@/components/shell/ShellNavList"
 import { RoleSections } from "@/components/shell/RoleSections"
 import { ShellSidebarFooter } from "@/components/shell/ShellSidebarFooter"
+import { ArenaWorkspaceContainer } from "@/components/arena/workspace-container"
 
 // ARENA FINAL CONSOLIDATION — Arena adalah produk Student Shell, BUKAN
 // aplikasi kedua: tidak ada navbar/subnav Arena sendiri di web. Navigasi
@@ -69,17 +69,17 @@ export default async function ArenaLayout({ children }: { children: React.ReactN
   // OBROLAN 4.0 — produk Student Shell, bukan halaman Arena. Obrolan memakai
   // shell + header GLOBAL yang sama (tanpa chrome/identitas produk sendiri di
   // layout); workspace chat (3-pane) merawat toolbar INTERNAL-nya sendiri di
-  // dalam konten. isChatWeb hanya mengatur container (full-width) + banner
-  // boost (tidak tampil agar workspace penuh viewport). APK tetap memakai
-  // chrome penuh + BottomNav (kompatibilitas TWA tidak berubah).
-  const isChatWeb = !apk && pathname.startsWith("/arena/chat")
-
-  // AI BC 2.1 — /arena/ai adalah workspace percakapan layar-penuh (sama
-  // seperti Obrolan): container full-width + tanpa banner boost agar
-  // h-[calc(100dvh-*)] bekerja tanpa double scroll. Definisi isChatWeb
-  // TIDAK diubah (perilaku Obrolan web/APK identik dengan sebelumnya).
-  const isAiWorkspace = pathname.startsWith("/arena/ai")
-  const isChatWorkspace = isChatWeb || isAiWorkspace
+  // dalam konten.
+  //
+  // FIX FIRST-PAINT: keputusan lebar konten (isChatWeb / isAiWorkspace —
+  // container full-width + banner boost) DIPINDAH ke
+  // components/arena/workspace-container.tsx (client, usePathname()). Header
+  // middleware `x-pathname` yang dibaca di atas kini HANYA untuk gerbang login
+  // RUTE_TANPA_GERBANG. Alasannya: bila header itu absen pada request pertama,
+  // Obrolan jatuh ke container sempit max-w-[1280px] dan terlihat seperti
+  // layout smartphone, padahal setelah refresh (header hadir) menjadi benar.
+  // usePathname() di-seed dari URL request — benar di first paint dan refresh.
+  // APK tetap memakai chrome penuh + BottomNav (kompatibilitas TWA tidak berubah).
 
   // Rank resmi diturunkan dari XP — sama dengan pola Student Shell.
   const rank = rankFromLevel(levelFromXp(user.xp || 0))
@@ -144,20 +144,14 @@ export default async function ArenaLayout({ children }: { children: React.ReactN
               <ThemeToggle />
             </div>
           </header>
-
-          {/* Banner boost tidak muncul di WEB Obrolan atau workspace AI BC —
-              keduanya workspace penuh viewport */}
-          {!isChatWeb && !isAiWorkspace && <ActiveBoostBanner />}
         </>
       }
-      mainClassName={`mx-auto px-0 ${
-        isChatWorkspace
-          ? "w-full py-0 md:px-6"
-          : "max-w-[1280px] py-0 md:py-6 md:px-6"
-      }`}
+      mainClassName="mx-auto px-0 w-full py-0"
       bottomNav={<>{apk && <BottomNav />}</>}
     >
-      <ArenaClientWrapper>{children}</ArenaClientWrapper>
+      <ArenaClientWrapper>
+        <ArenaWorkspaceContainer apk={apk}>{children}</ArenaWorkspaceContainer>
+      </ArenaClientWrapper>
     </ShellLayout>
   )
 }

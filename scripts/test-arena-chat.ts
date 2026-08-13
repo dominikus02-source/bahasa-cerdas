@@ -29,6 +29,10 @@ function main() {
 
   const page = read("app/arena/chat/page.tsx");
   const layout = read("app/arena/layout.tsx");
+  // FIX FIRST-PAINT (5.x): keputusan lebar konten (isChatWeb/isAiWorkspace +
+  // ternary container + banner boost) pindah dari layout.tsx ke client
+  // container — strings berikut dibaca dari file baru, identik verbatim.
+  const container = read("components/arena/workspace-container.tsx");
   const client = read("app/arena/chat/chat-client.tsx");
   const getRoute = read("app/api/chat/[groupId]/route.ts");
   const sendRoute = read("app/api/chat/send/route.ts");
@@ -47,14 +51,14 @@ function main() {
 
   // ── T.2 — Web Chat Tanpa Navigasi Arena (Student Shell) ──
   console.log("\n── T.2 — Web Chat: Header Global Kanonik (bukan header produk) ──");
-  test("isChatWeb = !apk && pathname.startsWith('/arena/chat') (Web saja, APK tidak)",
-    () => layout.includes("!apk && pathname.startsWith(\"/arena/chat\")"));
+  test("isChatWeb = !apk && pathname.startsWith('/arena/chat') (Web saja, APK tidak) — kini di ArenaWorkspaceContainer (usePathname, first-paint aman)",
+    () => container.includes("!apk && pathname.startsWith(\"/arena/chat\")") && container.includes("usePathname()"));
   test("web chat memakai header GLOBAL kanonik (BackHome + Bell + Theme) — TIDAK ada top bar 'Obrolan' tersendiri",
     () => layout.includes("<BackHome") && layout.includes("<NotificationBell />") && layout.includes("<ThemeToggle />") && !layout.includes("Ruang komunikasi kelas"));
   test("TIDAK ada identitas/header produk di layout untuk chat (tanpa navbar/subnav Arena, tanpa MessageCircle header)",
     () => !layout.includes("<MessageCircle") && !layout.includes("isChatWeb ? (") && !layout.includes("navItems") && !layout.includes("aria-label=\"Navigasi Arena\"") && !layout.includes("rounded-full border border-gray-200 bg-slate-50 p-1"));
-  test("ActiveBoostBanner tidak tampil di web chat ({!isChatWeb && <ActiveBoostBanner />})",
-    () => layout.includes("!isChatWeb && !isAiWorkspace && <ActiveBoostBanner />"));
+  test("ActiveBoostBanner tidak tampil di web chat ({!isChatWeb && <ActiveBoostBanner />}) — banner kini dirender di ArenaWorkspaceContainer",
+    () => container.includes("!isChatWeb && !isAiWorkspace && <ActiveBoostBanner />"));
   test("toolbar INTERNAL workspace chat tetap ada di chat-client (judul 'Obrolan' di pane class list — konten, bukan header global)",
     () => read("app/arena/chat/chat-client.tsx").includes(">Obrolan</h2>") && read("app/arena/chat/chat-client.tsx").includes("Kelas Aktif"));
   test("navbar Arena dihapus total (Misi/Liga/Badges dll. bukan item layout — chat & arena lain menuju via Student Shell)",
@@ -66,8 +70,8 @@ function main() {
     () => layout.includes("await isApk()") && layout.includes("{apk && <BottomNav />}"));
   test("auth gate RUTE_TANPA_GERBANG tetap utuh",
     () => layout.includes("redirect(RUTE_TANPA_GERBANG)") && layout.includes("RUTE_TANPA_GERBANG"));
-  test("APK memakai chrome Arena biasa (isChatWeb false saat apk) — bottom-nav tidak berubah",
-    () => client.includes("bc_apk=1") && client.includes("useIsApkClient"));
+  test("APK memakai chrome Arena biasa (isChatWeb false saat apk) — bottom-nav tidak berubah; apk kini dari server (isApk() → prop, bukan document.cookie di useEffect) agar first paint stabil",
+    () => client.includes('apk: boolean') && client.includes("bc_apk") && page.includes("await isApk()"));
 
   // ── T.4–T.5 — Kelas Aktif Saja (Server Page) ──
   console.log("\n── T.4–T.5 — Data Integrity: Hanya Kelas AKTIF ──");
@@ -199,8 +203,8 @@ function main() {
     () => client.includes("md:hidden") && client.includes('aria-label="Kembali ke daftar kelas"'));
   test("konteks drawer <1280: role=dialog w-80 max-w-[85vw] + backdrop bg-black/40",
     () => client.includes('role="dialog"') && client.includes("w-80 max-w-[85vw]") && client.includes("bg-black/40"));
-  test("shell workspace: chat FULL-WIDTH w-full (3 pane, tanpa cap 1440px) vs halaman Arena lain 1280px desktop-first (tanpa max-w-lg md:max-w-4xl legacy)",
-    () => layout.includes('pathname.startsWith("/arena/chat")') && layout.includes('? "w-full py-0 md:px-6"') && layout.includes("max-w-[1280px] py-0 md:py-6 md:px-6") && !layout.includes("max-w-lg md:max-w-4xl"));
+  test("shell workspace: chat FULL-WIDTH w-full (3 pane, tanpa cap 1440px) vs halaman Arena lain 1280px desktop-first (tanpa max-w-lg md:max-w-4xl legacy) — ternary kini di ArenaWorkspaceContainer",
+    () => container.includes('pathname.startsWith("/arena/chat")') && container.includes('? "w-full py-0 md:px-6"') && container.includes("max-w-[1280px] py-0 md:py-6 md:px-6") && !layout.includes("max-w-lg md:max-w-4xl"));
   test("tinggi shell APK-aware: APK md:h-[calc(100dvh-7rem)] vs web md:h-[calc(100dvh-3.5rem)] (top bar sendiri)",
     () => client.includes("md:h-[calc(100dvh-7rem)]") && client.includes("md:h-[calc(100dvh-3.5rem)]"));
 

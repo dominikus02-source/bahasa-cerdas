@@ -16,12 +16,12 @@ export interface GalleryKarya {
 }
 
 const TYPE_BADGE: Record<string, { label: string; badge: string }> = {
-  PUISI: { label: "Puisi", badge: "bg-rose-400/10 text-rose-300 ring-rose-300/20" },
-  CERPEN: { label: "Cerpen", badge: "bg-sky-400/10 text-sky-300 ring-sky-300/20" },
-  ARTIKEL: { label: "Artikel", badge: "bg-amber-400/10 text-amber-300 ring-amber-300/20" },
-  ANEKDOT: { label: "Anekdot", badge: "bg-orange-400/10 text-orange-300 ring-orange-300/20" },
-  PANTUN: { label: "Pantun", badge: "bg-teal-400/10 text-teal-300 ring-teal-300/20" },
-  OPINI: { label: "Opini", badge: "bg-violet-400/10 text-violet-300 ring-violet-300/20" },
+  PUISI: { label: "Puisi", badge: "bg-rose-400/10 text-rose-600 dark:text-rose-300 ring-rose-300/20" },
+  CERPEN: { label: "Cerpen", badge: "bg-sky-400/10 text-sky-600 dark:text-sky-300 ring-sky-300/20" },
+  ARTIKEL: { label: "Artikel", badge: "bg-amber-400/10 text-amber-600 dark:text-amber-300 ring-amber-300/20" },
+  ANEKDOT: { label: "Anekdot", badge: "bg-orange-400/10 text-orange-600 dark:text-orange-300 ring-orange-300/20" },
+  PANTUN: { label: "Pantun", badge: "bg-teal-400/10 text-teal-600 dark:text-teal-300 ring-teal-300/20" },
+  OPINI: { label: "Opini", badge: "bg-violet-400/10 text-violet-600 dark:text-violet-300 ring-violet-300/20" },
 };
 
 function waktuLalu(d: string) {
@@ -92,7 +92,7 @@ export default function FeaturedWorksGallery({
 
       {filtered.length === 0 ? (
         <div className="mt-5 rounded-xl border border-dashed border-slate-900/10 dark:border-white/10 px-4 py-8 text-center">
-          <p className="text-sm text-slate-900/45 dark:text-white/45">{emptyText}</p>
+          <p className="text-sm text-slate-900/60 dark:text-white/45">{emptyText}</p>
         </div>
       ) : (
         <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
@@ -101,14 +101,14 @@ export default function FeaturedWorksGallery({
             return (
               <div
                 key={k.id}
- className="group flex flex-col rounded-xl bg-slate-900/[0.05] dark:bg-white/[0.05] ring-1 ring-slate-900/10 dark:ring-white/10 p-4 transition-colors hover:bg-slate-900/[0.08] dark:bg-white/[0.08] hover:ring-violet-400/25"
+                className="group flex flex-col rounded-xl bg-slate-900/[0.05] dark:bg-white/[0.05] ring-1 ring-slate-900/10 dark:ring-white/10 p-4 transition-colors hover:bg-slate-900/[0.08] dark:hover:bg-white/[0.08] hover:ring-violet-400/25"
               >
                 <div className="flex items-center gap-2 mb-1.5">
                   <span className={`px-2 py-0.5 rounded-full text-[10px] font-semibold ring-1 ${meta.badge}`}>
                     {meta.label}
                   </span>
                   {k.isFeatured && (
-                    <span className="text-[10px] font-semibold text-amber-300 bg-amber-400/10 px-1.5 py-0.5 rounded-full ring-1 ring-amber-300/20">
+                    <span className="text-[10px] font-semibold text-amber-700 dark:text-amber-300 bg-amber-400/10 px-1.5 py-0.5 rounded-full ring-1 ring-amber-300/20">
                       Pilihan
                     </span>
                   )}
@@ -116,23 +116,23 @@ export default function FeaturedWorksGallery({
                     <button
                       onClick={() => onDelete(k.id)}
                       aria-label={`Hapus karya ${k.title}`}
-                      className="ml-auto text-slate-900/25 dark:text-white/25 hover:text-rose-400 p-1 transition-colors"
+                      className="ml-auto text-slate-900/45 dark:text-white/45 hover:text-rose-500 dark:hover:text-rose-400 p-1 transition-colors"
                     >
                       <X size={14} />
                     </button>
                   )}
                 </div>
                 <Link href={`${titleHref}/${k.id}`} className="flex-1 min-w-0">
-                  <h4 className="font-semibold text-slate-900 dark:text-white text-sm leading-snug line-clamp-1 group-hover:text-violet-200 transition-colors">
+                  <h4 className="font-semibold text-slate-900 dark:text-white text-sm leading-snug line-clamp-1 group-hover:text-violet-600 dark:group-hover:text-violet-200 transition-colors">
                     {k.title}
                   </h4>
-                  <p className="text-xs text-slate-900/45 dark:text-white/45 mt-1 line-clamp-2">
+                  <p className="text-xs text-slate-900/60 dark:text-white/45 mt-1 line-clamp-2">
                     {k.excerpt || k.content?.slice(0, 100)}
                   </p>
                 </Link>
-                <div className="flex items-center gap-3 mt-3 text-xs text-slate-900/40 dark:text-white/40">
+                <div className="flex items-center gap-3 mt-3 text-xs text-slate-900/55 dark:text-white/40">
                   <span className="flex items-center gap-1">
-                    <Heart size={11} className="text-rose-400" /> {k.likesCount || 0}
+                    <Heart size={11} className="text-rose-600 dark:text-rose-400" /> {k.likesCount || 0}
                   </span>
                   <span className="flex items-center gap-1">
                     <Eye size={11} /> {k.viewsCount || 0}

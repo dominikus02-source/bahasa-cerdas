@@ -153,17 +153,21 @@ test("workspace: tidak mengimpor modul lama", () => !workspace.includes("AiBcMod
 /* C. LAYOUT                                                           */
 /* ------------------------------------------------------------------ */
 
-console.log("\nC. Layout (app/arena/layout.tsx)");
+console.log("\nC. Layout (app/arena/layout.tsx + ArenaWorkspaceContainer)");
+// FIX FIRST-PAINT: isChatWeb/isAiWorkspace + ternary container + banner pindah
+// ke components/arena/workspace-container.tsx (client, usePathname) — strings
+// dibaca dari file baru, identik.
+const container = read("components/arena/workspace-container.tsx");
 test("layout: isChatWeb dipertahankan (chat web full-width hanya web)", () =>
-  layout.includes('!apk && pathname.startsWith("/arena/chat")'));
+  container.includes('!apk && pathname.startsWith("/arena/chat")'));
 test("layout: workspace AI dikenali via isAiWorkspace", () =>
-  layout.includes('pathname.startsWith("/arena/ai")'));
+  container.includes('pathname.startsWith("/arena/ai")'));
 test("layout: banner boost disembunyikan di workspace AI (dan chat web)", () =>
-  layout.includes("!isChatWeb && !isAiWorkspace && <ActiveBoostBanner />"));
+  container.includes("!isChatWeb && !isAiWorkspace && <ActiveBoostBanner />"));
 test("layout: container full-width memakai ternary yang sama (w-full py-0 md:px-6)", () =>
-  layout.includes('? "w-full py-0 md:px-6"') && layout.includes("max-w-[1280px] py-0 md:py-6 md:px-6"));
+  container.includes('? "w-full py-0 md:px-6"') && container.includes("max-w-[1280px] py-0 md:py-6 md:px-6"));
 test("layout: tanpa branch header isChatWeb (header global tidak berubah)", () =>
-  !layout.includes("isChatWeb ? ("));
+  !layout.includes("isChatWeb ? (") && !container.includes("isChatWeb ? ("));
 
 /* ------------------------------------------------------------------ */
 /* D. PROTECTED ZONES                                                  */

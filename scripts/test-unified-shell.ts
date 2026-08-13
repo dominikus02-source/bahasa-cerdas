@@ -72,9 +72,9 @@ function main() {
   test("apk = await isApk() (lib/apk untouched)",
     () => arenaLayout.includes("await isApk()"));
   test("obrolan = produk dalam shell yang sama (isChatWeb dipertahankan)",
-    () => arenaLayout.includes("isChatWeb"));
-  test("chat workspace 3-pane TIDAK diubah (chat-client masih utuh)",
-    () => read("app/arena/chat/chat-client.tsx").includes("ChatClient") && read("app/arena/chat/chat-client.tsx").includes("useIsApkClient"));
+    () => arenaLayout.includes("isChatWeb") && read("components/arena/workspace-container.tsx").includes("isChatWeb"));
+  test("chat workspace 3-pane TIDAK diubah (chat-client masih utuh; apk kini via prop server isApk() — first paint stabil)",
+    () => read("app/arena/chat/chat-client.tsx").includes("ChatClient") && read("app/arena/chat/chat-client.tsx").includes("apk: boolean") && read("app/arena/chat/page.tsx").includes("await isApk()"));
   test("gamut game-fullscreen CSS masih menarget main",
     () => read("app/arena/arena.css").includes(".game-fullscreen") && read("app/arena/arena.css").includes("main"));
 
@@ -176,10 +176,10 @@ function main() {
     () => guruLayout.includes("RoleSections") && read("components/shell/RoleSections.tsx").includes("getRoleNavItems") && read("components/shell/navigation-context.ts").includes("Panel Admin") && read("components/shell/navigation-context.ts").includes("Dasbor Guru"));
   test("GURU: item nav lain / GuruMobileNav utuh (12 grup tidak wajib, string menu tidak berubah)",
     () => guruNav.includes("GuruMobileNav") && guruNav.includes("Beranda"));
-  test("CHAT: arena layout chat = full-width w-full (tanpa cap 1440px)",
-    () => arenaLayout.includes('pathname.startsWith("/arena/chat")') && arenaLayout.includes('? "w-full py-0 md:px-6"'));
+  test("CHAT: arena layout chat = full-width w-full (tanpa cap 1440px) — ternary kini di ArenaWorkspaceContainer",
+    () => read("components/arena/workspace-container.tsx").includes('pathname.startsWith("/arena/chat")') && read("components/arena/workspace-container.tsx").includes('? "w-full py-0 md:px-6"'));
   test("CHAT: non-chat tetap 1280px (Arena Home desktop-first)",
-    () => arenaLayout.includes("max-w-[1280px] py-0 md:py-6 md:px-6"));
+    () => read("components/arena/workspace-container.tsx").includes("max-w-[1280px] py-0 md:py-6 md:px-6"));
   test("CHAT: TIDAK ada max-w-[1440px] tersisa di arena layout",
     () => !arenaLayout.includes("max-w-[1440px]"));
   test("CHAT: message list full-width (tanpa max-w-3xl mx-auto sempit)",
@@ -190,8 +190,8 @@ function main() {
     () => chatClient.includes("flex-1 min-w-0"));
   test("CHAT: bubble pesan tetap max-w-[85%] md:max-w-[70%] (batas per-bubble, bukan container)",
     () => chatClient.includes("max-w-[85%] md:max-w-[70%]"));
-  test("CHAT: APK behavior utuh (useIsApkClient + drawer mobile)",
-    () => chatClient.includes("useIsApkClient") && chatClient.includes("md:hidden"));
+  test("CHAT: APK behavior utuh (apk prop dari server + drawer mobile)",
+    () => chatClient.includes("bc_apk") && chatClient.includes("apk: boolean") && chatClient.includes("md:hidden"));
 
   // ── Summary ──
   console.log(`\n${"=".repeat(64)}`);

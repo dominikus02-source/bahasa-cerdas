@@ -23,7 +23,7 @@ export function AIBCHomeCard() {
             />
           </div>
           <div className="min-w-0">
-            <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-emerald-300">AI BC</p>
+            <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-emerald-600 dark:text-emerald-300">AI BC</p>
             <h2 className="text-lg md:text-xl font-extrabold text-[var(--px-text)] leading-tight">
               Teman Belajarmu
             </h2>
@@ -48,7 +48,7 @@ export function AIBCHomeCard() {
               <Link
                 key={t}
                 href="/arena/ai"
- className="text-[11px] font-medium text-[var(--px-text-dim)] hover:text-[var(--px-text)] bg-white/5 dark:bg-slate-900/5 hover:bg-white/10 border border-white/10 rounded-full px-3 py-1 transition-colors"
+ className="text-[11px] font-medium text-[var(--px-text-dim)] hover:text-[var(--px-text)] bg-slate-900/5 dark:bg-white/5 hover:bg-slate-900/10 dark:hover:bg-white/10 border border-slate-900/10 dark:border-white/10 rounded-full px-3 py-1 transition-colors"
               >
                 {t}
               </Link>

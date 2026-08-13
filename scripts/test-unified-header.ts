@@ -92,8 +92,8 @@ function main() {
   console.log("\n── 5. Header chat-spesifik global absen ──");
   test("tidak ada top bar chat tersendiri di layout (hanya header kanonik h-14 yang ada)",
     () => (arenaLayout.match(/<header /g) || []).length === 1);
-  test("chat web tetap full-width (isChatWeb dipertahankan untuk container 3-pane)",
-    () => arenaLayout.includes('pathname.startsWith("/arena/chat")') && arenaLayout.includes('? "w-full py-0 md:px-6"'));
+  test("chat web tetap full-width (isChatWeb dipertahankan untuk container 3-pane) — kini di ArenaWorkspaceContainer",
+    () => read("components/arena/workspace-container.tsx").includes('pathname.startsWith("/arena/chat")') && read("components/arena/workspace-container.tsx").includes('? "w-full py-0 md:px-6"'));
 
   // ── 6. BACKHOME DETERMINISTIK ──
   console.log("\n── 6. BackHome deterministik (tanpa router.back) ──");
@@ -144,8 +144,8 @@ function main() {
 
   // ── 11. CHAT WORKSPACE UTUH ──
   console.log("\n── 11. Chat workspace (3-pane) tidak berubah ──");
-  test("chat-client utuh (ChatClient + useIsApkClient)",
-    () => chatClient.includes("ChatClient") && chatClient.includes("useIsApkClient"));
+  test("chat-client utuh (ChatClient + apk via prop server — useIsApkClient diganti agar first paint stabil)",
+    () => chatClient.includes("ChatClient") && chatClient.includes("apk: boolean") && chatClient.includes("bc_apk"));
   test("3-pane: class list clamp + conversation flex-1 min-w-0 + bubble max-w-[85%]",
     () => chatClient.includes("md:w-[clamp(300px,25vw,360px)]") && chatClient.includes("flex-1 min-w-0") && chatClient.includes("max-w-[85%] md:max-w-[70%]"));
   test("message list full-width (tanpa max-w-3xl mx-auto sempit)",
