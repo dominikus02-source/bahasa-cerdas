@@ -182,10 +182,12 @@ function main() {
     //
     // AI BC 2.1: app/api/ai/bc/chat/route.ts DIBUKA secara eksplisit (route
     // SSE AI BC role-safe) — zona terlarang fase ini adalah API selain itu.
+    // UKBI Simulasi 2.0: app/api/kompetensi/[paketId]/route.ts DIBUKA secara
+    // eksplisit (randomization engine + listening anti-leak).
     const forbidden = diff.split("\n").filter(Boolean).filter(p =>
       (p.startsWith("prisma/") && p !== "prisma/schema.prisma") ||
       p.startsWith("lib/gamification/") || p.startsWith("lib/learning-loop/") ||
-      p.startsWith("engines/") || (p.startsWith("app/api/") && !p.startsWith("app/api/chat/") && p !== "app/api/ai/bc/chat/route.ts") || p === "lib/apk.ts" ||
+      p.startsWith("engines/") || (p.startsWith("app/api/") && !p.startsWith("app/api/chat/") && p !== "app/api/ai/bc/chat/route.ts" && p !== "app/api/kompetensi/[paketId]/route.ts") || p === "lib/apk.ts" ||
       p === "app/arena/bottom-nav.tsx"
     );
     test("diff tidak menyentuh prisma/engine/API/APK/package-lock",

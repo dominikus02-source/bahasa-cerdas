@@ -67,6 +67,7 @@
     "test:bank-soal-leakage": "npx tsx scripts/test-ukbi-tka-bank-soal-leakage.ts",
     "test:murid-quiz-leakage": "npx tsx scripts/test-murid-quiz-leakage.ts",
     "test:ukbi-tka-randomization": "npx tsx scripts/test-ukbi-tka-randomization.ts",
+    "test:ukbi-randomization-security": "npx tsx scripts/test-ukbi-randomization-security.ts",
     "audit:ukbi-tka-randomization": "npx tsx scripts/audit-ukbi-tka-randomization.ts",
     "test:ukbi-tka-session-snapshot": "npx tsx scripts/test-ukbi-tka-session-snapshot.ts",
     "audit:ukbi-tka-snapshot": "npx tsx scripts/audit-ukbi-tka-snapshot-integrity.ts",

@@ -2,7 +2,13 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 import { Prisma } from "@prisma/client";
-import { fisherYatesShuffle, shuffleOptionsForQuestion, createSessionSeed } from "@/lib/question-bank/randomization";
+import { shuffleOptionsForQuestion, createSessionSeed } from "@/lib/question-bank/randomization";
+import {
+  parseRecentUsedBatches,
+  excludeRecentForSection,
+  sampleSectionQuestions,
+  sanitizeListeningQuestions,
+} from "@/lib/question-bank/session-pool";
 import type { AttemptSnapshot, QuestionSnapshot } from "@/lib/types/snapshot";
 import { withQueryTimeout } from "@/lib/db/with-query-timeout";
 import { ok, err } from "@/lib/api/response";
@@ -51,19 +57,21 @@ function fillMissingPassages<T extends { id: string; passage?: string | null }>(
   return rows;
 }
 
-async function fetchUKBIQuestions(where: any, take?: number) {
+// Seluruh pool ELEGIBLE per seksi di-fetch (tanpa take): pemilihan akhir ke
+// blueprint count dilakukan PER SESI via sampleSectionQuestions (seeded),
+// sehingga anti-repeat (excludeRecentForSection) punya ruang rotasi. Pool
+// tetap bebas kunci jawaban & ter-cache per paket+seksi (TTL).
+async function fetchUKBIQuestions(where: any) {
   const rows = await db.uKBIQuestion.findMany({
     where,
-    ...(take ? { take, orderBy: { difficulty: "asc" as const } } : {}),
     select: UKBI_SELECT,
   });
   return fillMissingPassages(rows);
 }
 
-async function fetchTKAQuestions(where: any, take?: number) {
+async function fetchTKAQuestions(where: any) {
   const rows = await db.tKAQuestion.findMany({
     where,
-    ...(take ? { take, orderBy: { difficulty: "asc" as const } } : {}),
     select: TKA_SELECT,
   });
   return fillMissingPassages(rows);
@@ -100,31 +108,30 @@ async function fetchSectionByCriteria(
     if (section.subKompetensi) where.subKompetensi = section.subKompetensi;
   }
 
-  if (paketType.includes("SD")) where.tingkat = "SD";
-  else if (paketType.includes("SMP")) where.tingkat = "SMP";
-  else if (paketType.includes("SMA")) where.tingkat = "SMA";
-  else if (paketType.includes("GURU")) {
-    // GURU: try GURU tingkat first, then fallback
-    const guruWhere = { ...where, tingkat: "GURU" };
-    if (ukbi) {
-      const guruQuestions = await fetchUKBIQuestions(guruWhere, section.count);
-      if (guruQuestions.length > 0) return guruQuestions;
-    } else {
-      const guruQuestions = await fetchTKAQuestions(guruWhere, section.count);
-      if (guruQuestions.length > 0) return guruQuestions;
+    if (paketType.includes("SD")) where.tingkat = "SD";
+    else if (paketType.includes("SMP")) where.tingkat = "SMP";
+    else if (paketType.includes("SMA")) where.tingkat = "SMA";
+    else if (paketType.includes("GURU")) {
+      // GURU: try GURU tingkat first, then fallback
+      const guruWhere = { ...where, tingkat: "GURU" };
+      if (ukbi) {
+        const guruQuestions = await fetchUKBIQuestions(guruWhere);
+        if (guruQuestions.length > 0) return guruQuestions;
+      } else {
+        const guruQuestions = await fetchTKAQuestions(guruWhere);
+        if (guruQuestions.length > 0) return guruQuestions;
+      }
+      // Fallback: without tingkat filter
     }
-    // Fallback: without tingkat filter
-  }
 
   if (ukbi) {
-    return fetchUKBIQuestions(where, section.count);
+    return fetchUKBIQuestions(where);
   }
-  return fetchTKAQuestions(where, section.count);
+  return fetchTKAQuestions(where);
 }
 
 async function fetchSectionGeneralFallback(
   section: any,
-  paketType: string,
   ukbi: boolean
 ): Promise<any[]> {
   if (ukbi) {
@@ -132,9 +139,9 @@ async function fetchSectionGeneralFallback(
     if (section.seksi === "MENDENGARKAN") {
       baseWhere.audioUrl = { not: null };
     }
-    return fetchUKBIQuestions(baseWhere, section.count);
+    return fetchUKBIQuestions(baseWhere);
   }
-  return fetchTKAQuestions({ isActive: true }, section.count);
+  return fetchTKAQuestions({ isActive: true });
 }
 
 // Resolve the answer-free candidate pool for one section (pre-shuffle). Same
@@ -169,7 +176,9 @@ async function resolveSectionPool(
       10000,
       `Question fetch timeout (section ${sectionIndex}: by IDs)`
     );
-    return sanitizeConstructedPool(pool);
+    sanitizeConstructedPool(pool);
+    if (ukbi && section.seksi === "MENDENGARKAN") sanitizeListeningQuestions(pool);
+    return pool;
   }
   if (section.count && section.count > 0) {
     let pool = await withQueryTimeout(
@@ -180,12 +189,14 @@ async function resolveSectionPool(
     // General fallback (non-GURU only) if criteria returned nothing
     if (pool.length === 0 && !paketType.includes("GURU")) {
       pool = await withQueryTimeout(
-        fetchSectionGeneralFallback(section, paketType, ukbi),
+        fetchSectionGeneralFallback(section, ukbi),
         10000,
         `Question fetch timeout (section ${sectionIndex}: fallback)`
       );
     }
-    return sanitizeConstructedPool(pool);
+    sanitizeConstructedPool(pool);
+    if (ukbi && section.seksi === "MENDENGARKAN") sanitizeListeningQuestions(pool);
+    return pool;
   }
   return [];
 }
@@ -411,6 +422,21 @@ export async function GET(
     const sessionSeed = createSessionSeed(dbUser.id, paket.id, session.createdAt?.getTime());
     const ukbi = isUKBI(paket.type);
 
+    // ── ANTI-REPEAT ──
+    // Ambil soal yang baru saja dipakai user di sesi FINISHED (maks 3) untuk
+    // dikeluarkan dari sampling sesi ini (tiered fallback di helper). Hanya
+    // di jalur build (replay kembali lebih awal) → 1 query kecil, snapshot
+    // lama tidak pernah diubah. Sesi berjalan saat ini berstatus IN_PROGRESS
+    // sehingga tidak ikut terbaca.
+    const recentBatches = parseRecentUsedBatches(
+      await db.testSession.findMany({
+        where: { userId: dbUser.id, paketId, status: "COMPLETED" },
+        select: { questionSnapshot: true },
+        orderBy: { finishedAt: "desc" },
+        take: 3,
+      })
+    );
+
     // ── PARALLEL SECTION QUERIES ──
     // All sections fetched in parallel via Promise.all instead of sequential for loop
     const rawSectionResults = await Promise.all(
@@ -431,8 +457,18 @@ export async function GET(
         }
         let sectionQuestions: any[] = (pool || []).map((q: any) => ({ ...q }));
 
-        // Shuffle questions within section
-        sectionQuestions = fisherYatesShuffle(sectionQuestions, sessionSeed + "-sec" + i);
+        // Blueprint count untuk seksi ini (null → pakai seluruh pool).
+        const needed = section.count ? Number(section.count) : null;
+
+        // Anti-repeat: buang soal dari sesi FINISHED terbaru, dengan fallback
+        // bertingkat — tidak pernah mengecilkan sesi di bawah blueprint.
+        if (needed && needed > 0 && recentBatches.length > 0) {
+          sectionQuestions = excludeRecentForSection(sectionQuestions, recentBatches, needed);
+        }
+
+        // Per-session seeded sample → sesi berbeda = kombinasi soal berbeda
+        // (deterministik per sesi, tetap terkunci di snapshot).
+        sectionQuestions = sampleSectionQuestions(sectionQuestions, needed, sessionSeed + "-sec" + i);
 
         // Shuffle options per question
         for (const q of sectionQuestions) {

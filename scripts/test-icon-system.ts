@@ -178,6 +178,8 @@ function main() {
   // ── 10. PROTECTED ZONES (0 diff) ──
   // Pengecualian fase: AI BC 2.1 sengaja mengubah app/api/ai/bc/chat/route.ts
   // (route SSE AI BC — di luar zona terlarang fase; API lain tetap 0 diff).
+  // UKBI Simulasi 2.0 sengaja mengubah app/api/kompetensi/[paketId]/route.ts
+  // (randomization engine + listening anti-leak).
   console.log("\n── 10. Protected zones (0 diff) ──");
   try {
     const diff = execSync(
@@ -188,8 +190,9 @@ function main() {
       .split("\n")
       .filter(Boolean)
       .filter((l) => l !== "app/api/ai/bc/chat/route.ts")
+      .filter((l) => l !== "app/api/kompetensi/[paketId]/route.ts")
       .join("\n");
-    test("prisma/, app/api/, lib/gamification/, lib/learning-loop/, engines/, apk, bottom-nav 0 diff (kecuali app/api/ai/bc/chat)",
+    test("prisma/, app/api/, lib/gamification/, lib/learning-loop/, engines/, apk, bottom-nav 0 diff (kecuali app/api/ai/bc/chat & kompetensi route UKBI 2.0)",
       () => diffAllowed.length === 0);
     if (diffAllowed.length > 0) console.log(`  ⚠️  File berubah:\n${diffAllowed}`);
   } catch (e: any) {

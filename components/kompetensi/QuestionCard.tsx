@@ -87,7 +87,7 @@ export default function QuestionCard({
           {isListening && question.audioUrl && (
             <div className="mb-4">
               <p className="mb-2 rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs font-semibold text-emerald-700">
-                Simak audio berikut sebelum memilih jawaban.
+                Simak audio berikut. Dengarkan dengan saksama sebelum menjawab.
               </p>
               <ListeningAudioPlayer
                 src={question.audioUrl.includes("supabase.co") ? `/api/kompetensi/audio/${question.id}` : question.audioUrl}

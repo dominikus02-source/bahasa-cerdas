@@ -165,10 +165,13 @@ function main() {
       ).trim();
       return diff.length === 0;
     });
-  test("app/api/ SELURUHNYA 0 diff kecuali app/api/ai/bc/chat (route AI BC role-safe fase 2.1)",
+  test("app/api/ SELURUHNYA 0 diff kecuali app/api/ai/bc/chat (route AI BC role-safe fase 2.1) + app/api/kompetensi/[paketId]/route.ts (UKBI Simulasi 2.0 randomization + anti-leak)",
     () => {
       const diff = execSync(`git diff --name-only HEAD -- app/api/`, { encoding: "utf8", cwd: process.cwd() })
-        .trim().split("\n").filter(Boolean).filter((l) => l !== "app/api/ai/bc/chat/route.ts").join("\n");
+        .trim().split("\n").filter(Boolean)
+        .filter((l) => l !== "app/api/ai/bc/chat/route.ts")
+        .filter((l) => l !== "app/api/kompetensi/[paketId]/route.ts")
+        .join("\n");
       return diff.length === 0;
     });
   test("app/arena/bottom-nav.tsx 0 diff (APK bottom nav tidak disentuh)",

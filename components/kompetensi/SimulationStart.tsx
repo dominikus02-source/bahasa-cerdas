@@ -59,6 +59,9 @@ export default function SimulationStart({ paketId, title, sections, ready, onSta
           <p className="mt-1 text-sm text-slate-500">
             {hasAudio ? "Pilih cara mengerjakan simulasi ini." : "Siapkan diri Anda, lalu mulai simulasi."}
           </p>
+          <p className="mt-1.5 text-[11px] text-slate-400">
+            Setiap simulasi menggunakan kombinasi soal yang berbeda.
+          </p>
         </div>
 
         {!hasAudio ? (
