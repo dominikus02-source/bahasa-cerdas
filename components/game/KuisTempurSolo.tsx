@@ -28,6 +28,7 @@ const KT_STYLE = `
 @keyframes kt-pop{0%{transform:scale(0) rotate(-30deg)}60%{transform:scale(1.3) rotate(8deg)}100%{transform:scale(1) rotate(0)}}
 .kt-screen{animation:kt-fade .35s ease}
 .kt-pop{animation:kt-pop .5s ease}
+@media (prefers-reduced-motion: reduce){.kt-screen,.kt-pop{animation:none}}
 `
 
 // Kuis Tempur (mode solo) — bertahan di kampung kata melawan bot.
@@ -127,6 +128,15 @@ export default function KuisTempurSolo({ backHref = "/arena/game" }: { backHref?
   const [waktu, setWaktu] = useState(DETIK_SOAL)
   const [sisaWaktu, setSisaWaktu] = useState(DURASI)
   const [kalahkan, setKalahkan] = useState(0)
+  // KUIS TEMPUR 3.0 — progresi level DARI PERFORMANCE (bukan timer): tiap level
+  // punya target musuh (lawanBot(level)); tercapai → overlay LEVEL SELESAI →
+  // naik level (musuh/escalation bertambah). Timer 5 menit hanya batas sesi.
+  const [levelSelesai, setLevelSelesai] = useState(false)
+  const [sisaMusuh, setSisaMusuh] = useState(0)
+  const [kalahHp, setKalahHp] = useState(false)
+  const [waktuAkhir, setWaktuAkhir] = useState(DURASI)
+  const levelRef = useRef(1)
+  const dibunuhLevelRef = useRef(0)
 
   const cvRef = useRef<HTMLCanvasElement>(null)
   const pRef = useRef<Pemain[]>([])
@@ -144,6 +154,7 @@ export default function KuisTempurSolo({ backHref = "/arena/game" }: { backHref?
   const maxComboRef = useRef(0)
   const tembakRef = useRef(0)
   const peluruRef = useRef(0)
+  const sisaWaktuRef = useRef(DURASI)
   const feedIdRef = useRef(0)
   const kantongRef = useRef<BankQuestion[]>([])
   const aturanRef = useRef(statDasarBot(1))
@@ -157,6 +168,15 @@ export default function KuisTempurSolo({ backHref = "/arena/game" }: { backHref?
   const teratasiRef = useRef(false)
   // Untuk membedakan ketukan (menembak) dari seretan (berjalan).
   const tekanRef = useRef<{ x: number; y: number; t: number } | null>(null)
+  const naikTimerRef = useRef<number>(0)
+
+  useEffect(() => {
+    levelRef.current = level
+  }, [level])
+
+  useEffect(() => {
+    return () => { if (naikTimerRef.current) clearTimeout(naikTimerRef.current) }
+  }, [])
 
   useEffect(() => {
     setSuara(isSoundOn())
@@ -231,6 +251,8 @@ export default function KuisTempurSolo({ backHref = "/arena/game" }: { backHref?
     jalanRef.current = false
     cancelAnimationFrame(rafRef.current)
     stopBGM()
+    setWaktuAkhir(Math.max(0, DURASI - sisaWaktuRef.current))
+    if (!menang) setKalahHp(true)
     if (menang) {
       sfx.win()
       setLevel((l) => {
@@ -242,6 +264,56 @@ export default function KuisTempurSolo({ backHref = "/arena/game" }: { backHref?
     setFase("selesai")
     kirimXp(menang, peringkat)
   }, [kirimXp])
+
+  // KUIS TEMPUR 3.0 — naik level di TENGAH sesi: arena di-reset untuk level
+  // baru (lebih banyak musuh, arketipe & statistik meningkat), HP pemain diisi
+  // ke kurva level baru, timer 5 menit TETAP berjalan (level bukan dari timer).
+  const naikLevel = useCallback(() => {
+    const baru = Math.min(levelRef.current + 1, 99)
+    aturanRef.current = statDasarBot(baru)
+    statkuRef.current = kurvaPemain(baru)
+    const cv = cvRef.current
+    const W = cv?.clientWidth || window.innerWidth
+    const H = cv?.clientHeight || window.innerHeight
+    const z = zonaRef.current
+    const lawan = lawanBot(baru)
+    const botWajah = kocok(AVATAR_BOT)
+    const botNama = kocok(NAMA_BOT).slice(0, lawan)
+    const img = (src: string) => { const i = new Image(); i.src = src; return i }
+    const aku = pRef.current[0]
+    if (aku) {
+      aku.hp = statkuRef.current.hpMax
+      aku.hpMax = statkuRef.current.hpMax
+      aku.hidup = true
+      aku.kedip = 0
+    }
+    const bot = Array.from({ length: lawan }, (_, i) => {
+      const sudut = ((Math.PI * 2) / (lawan + 1)) * (i + 1) - Math.PI / 2
+      const jarak = Math.min(W, H) * 0.32
+      const x = W / 2 + Math.cos(sudut) * jarak
+      const y = H / 2 + Math.sin(sudut) * jarak
+      const stat = komposisiBot(baru, giliranBotRef.current++)
+      return {
+        nama: botNama[i], gambar: img(botWajah[i % botWajah.length]),
+        warna: WARNA_TIPE[stat.tipe],
+        x, y, tx: x, ty: y,
+        hp: stat.hpMax, hpMax: stat.hpMax,
+        hidup: true, kamu: false, kedip: 0, langkah: 0, hadap: 1, stat,
+      }
+    })
+    pRef.current = [pRef.current[0], ...bot]
+    bRef.current = []
+    peluruRef.current = 0
+    dibunuhLevelRef.current = 0
+    setPeluru(0)
+    setHp(statkuRef.current.hpMax)
+    setSisaMusuh(lawan)
+    setLevel(baru)
+    setLevelSelesai(false)
+    jalanRef.current = true
+    tulisFeed(`Level ${baru} — ${lawan} musuh baru!`)
+    sfx.levelup()
+  }, [tulisFeed])
 
   const mulai = useCallback(() => {
     const cv = cvRef.current
@@ -339,6 +411,11 @@ export default function KuisTempurSolo({ backHref = "/arena/game" }: { backHref?
     setHp(statku.hpMax); setCombo(0); setPeluru(0)
     setSisaWaktu(DURASI); setKalahkan(0)
     setFeed([]); setHasil(null); setDipilih(null)
+    sisaWaktuRef.current = DURASI
+    dibunuhLevelRef.current = 0
+    setSisaMusuh(lawan)
+    setLevelSelesai(false)
+    setKalahHp(false)
     setFase("main")
     soalBaru()
     sfx.start()
@@ -455,37 +532,6 @@ export default function KuisTempurSolo({ backHref = "/arena/game" }: { backHref?
       }
     }
 
-    // Sama seperti pemain, tapi bot yang tumbang tidak mengakhiri gim:
-    // diganti yang baru agar perang terus berlanjut sampai waktu habis.
-    const lahirBot = () => {
-      const W = cv.clientWidth, H = cv.clientHeight
-      const z = zonaRef.current
-      const n = giliranBotRef.current++
-      let x = W / 2, y = H / 2
-      // Cari tempat aman: dalam kabut, tidak menembus rintangan, tidak
-      // menimpa pemain, dan agak jauh dari tengah arena.
-      for (let c = 0; c < 40; c++) {
-        const a = Math.random() * Math.PI * 2
-        const j = z.r * (0.45 + Math.random() * 0.4)
-        const kx = z.x + Math.cos(a) * j
-        const ky = z.y + Math.sin(a) * j
-        if (kx < 24 || kx > W - 24 || ky < 56 || ky > H - 64) continue
-        if (rintRef.current.some((o) => kenaRintangan(kx, ky, o))) continue
-        const aku = pRef.current[0]
-        if (aku?.hidup && Math.hypot(kx - aku.x, ky - aku.y) < 130) continue
-        x = kx; y = ky
-        break
-      }
-      // Musuh baru lahir dengan arketipe acak sesuai ronde — bukan satu cetakan.
-      const stat = komposisiBot(level, giliranBotRef.current)
-      const img = new Image()
-      img.src = AVATAR_BOT[n % AVATAR_BOT.length]
-      pRef.current.push({
-        nama: NAMA_BOT[n % NAMA_BOT.length], gambar: img, warna: WARNA_TIPE[stat.tipe],
-        x, y, tx: x, ty: y, hp: stat.hpMax, hpMax: stat.hpMax, hidup: true, kamu: false, kedip: 0, langkah: 0, hadap: 1, stat,
-      })
-    }
-
     const bunuh = (i: number, oleh: string) => {
       const p = pRef.current[i]
       if (!p.hidup) return
@@ -497,8 +543,17 @@ export default function KuisTempurSolo({ backHref = "/arena/game" }: { backHref?
       else {
         sfx.levelup()
         dibunuhRef.current++
+        dibunuhLevelRef.current++
         setKalahkan(dibunuhRef.current)
-        lahirBot()
+        const sisa = Math.max(0, lawanBot(levelRef.current) - dibunuhLevelRef.current)
+        setSisaMusuh(sisa)
+        // KUIS TEMPUR 3.0 — target level tercapai → pause sebentar → naik level.
+        if (dibunuhLevelRef.current >= lawanBot(levelRef.current)) {
+          jalanRef.current = false
+          setLevelSelesai(true)
+          naikTimerRef.current = window.setTimeout(() => naikLevel(), 1600)
+          return
+        }
       }
     }
 
@@ -791,7 +846,7 @@ export default function KuisTempurSolo({ backHref = "/arena/game" }: { backHref?
     }
     rafRef.current = requestAnimationFrame(gelung)
     return () => cancelAnimationFrame(rafRef.current)
-  }, [fase, selesaikan, tulisFeed, level])
+  }, [fase, selesaikan, tulisFeed, level, naikLevel])
 
   const jawab = (idx: number, benar: boolean) => {
     if (kunci || teratasiRef.current || fase !== "main") return
@@ -858,6 +913,7 @@ export default function KuisTempurSolo({ backHref = "/arena/game" }: { backHref?
   // masih hidup kamu terus menghadapi bot yang berdatangan.
   useEffect(() => {
     if (fase !== "main") return
+    sisaWaktuRef.current = sisaWaktu
     if (sisaWaktu <= 0) {
       const aku = pRef.current[0]
       if (aku?.hidup) selesaikan(true, 1)
@@ -919,13 +975,13 @@ export default function KuisTempurSolo({ backHref = "/arena/game" }: { backHref?
               <img src={avatarHdr} alt="" className="h-full w-full object-cover" />
             </div>
             <h1 className="font-game-display mb-2 text-3xl font-extrabold">Kuis Tempur</h1>
-            <p className="mb-5 text-sm opacity-70">Jawab benar untuk menyerang, salah kamu yang terluka. Bot terus berdatangan — bertahan 5 menit untuk menang!</p>
+            <p className="mb-5 text-sm opacity-70">Jawab benar untuk menembak, salah kamu yang terluka. Kalahkan semua musuh untuk naik level — sejauh mana kamu bisa dalam 5 menit?</p>
 
             <div className="mb-5 space-y-1.5 rounded-xl border-2 border-amber-200 bg-amber-50 px-4 py-3 text-left text-xs font-semibold text-amber-800">
               <p><b className="text-amber-900">1.</b> Sembunyi di balik rumah atau pohon — peluru tertahan di situ.</p>
               <p><b className="text-amber-900">2.</b> Jawab benar untuk mendapat <b>peluru</b>.</p>
               <p><b className="text-amber-900">3.</b> Ketuk musuh untuk menembaknya. Seret untuk berjalan.</p>
-              <p><b className="text-amber-900">4.</b> Bertahan sampai <b>5 menit</b> habis — setiap bot yang kalah langsung diganti yang baru.</p>
+              <p><b className="text-amber-900">4.</b> Kalahkan <b>semua musuh</b> untuk naik level — musuh makin banyak dan makin kuat.</p>
               <p><b className="text-amber-900">5.</b> Jawab sebelum <b>15 detik</b> — waktu habis, soal diganti otomatis.</p>
             </div>
 
@@ -946,7 +1002,7 @@ export default function KuisTempurSolo({ backHref = "/arena/game" }: { backHref?
             </div>
 
             <div className="mb-4 flex items-center justify-center gap-3 text-xs font-bold opacity-70">
-              <span className="flex items-center gap-1"><Heart className="h-3.5 w-3.5 text-rose-500" /> Ronde {level}</span>
+              <span className="flex items-center gap-1"><Heart className="h-3.5 w-3.5 text-rose-500" /> Level {level}</span>
               <span>·</span>
               <span>⏱ 5 menit</span>
               <span>·</span>
@@ -982,16 +1038,35 @@ export default function KuisTempurSolo({ backHref = "/arena/game" }: { backHref?
               {hasil?.menang && <span className="absolute -bottom-1 -right-1 text-2xl">🏆</span>}
             </div>
             <h2 className="font-game-display mb-1 text-3xl font-extrabold">
-              {hasil?.menang ? "Juara Bertahan!" : `Peringkat #${hasil?.peringkat ?? "-"}`}
+              {hasil?.menang ? "Waktu Habis!" : "Pertempuran Selesai!"}
             </h2>
-            <p className="mb-4 text-sm font-semibold opacity-70">
-              {hasil?.menang ? `Naik ke Level ${level}` : `Level ${level} — coba lagi`}
+            <p className="mb-1 text-sm font-semibold opacity-70">
+              {hasil?.menang
+                ? "Kamu bertahan sampai akhir sesi."
+                : "HP kamu habis."}
+            </p>
+            <p className="mb-4 inline-flex items-center gap-1.5 rounded-xl bg-[#161B3A] px-3 py-1.5 text-xs font-extrabold text-amber-300 shadow-[3px_3px_0_#FBBF24]">
+              Level tertinggi: LEVEL {level}
             </p>
             {profil && (
               <p className="mb-4 flex items-center justify-center gap-1.5 text-xs font-extrabold" style={{ color: profil.warna }}>
                 <RankIcon rank={profil.rankKey} size={20} /> {profil.rank} · Lv {profil.levelXp}
               </p>
             )}
+            <div className="mb-2 grid grid-cols-2 gap-2 text-[11px] font-bold">
+              <div className="rounded-xl border-[3px] border-[#161B3A] bg-white px-2 py-1.5 shadow-[3px_3px_0_#161B3A]">
+                <span className="opacity-60">Musuh dikalahkan</span> · {kalahkan}
+              </div>
+              <div className="rounded-xl border-[3px] border-[#161B3A] bg-white px-2 py-1.5 shadow-[3px_3px_0_#161B3A]">
+                <span className="opacity-60">Waktu bertahan</span> · {Math.floor(waktuAkhir / 60)}:{String(waktuAkhir % 60).padStart(2, "0")}
+              </div>
+              <div className="rounded-xl border-[3px] border-[#161B3A] bg-white px-2 py-1.5 shadow-[3px_3px_0_#161B3A]">
+                <span className="opacity-60">Soal dijawab</span> · {benarRef.current + salahRef.current}
+              </div>
+              <div className="rounded-xl border-[3px] border-[#161B3A] bg-white px-2 py-1.5 shadow-[3px_3px_0_#161B3A]">
+                <span className="opacity-60">Akurasi</span> · {benarRef.current + salahRef.current > 0 ? Math.round((benarRef.current / (benarRef.current + salahRef.current)) * 100) : 0}%
+              </div>
+            </div>
             <div className="mb-4 grid grid-cols-3 gap-2">
               <div className="rounded-xl border-[3px] border-[#161B3A] bg-[#161B3A] px-2 py-2 text-white shadow-[3px_3px_0_#161B3A]">
                 <div className="text-[9px] font-extrabold uppercase opacity-70">Benar</div>
@@ -1027,11 +1102,11 @@ export default function KuisTempurSolo({ backHref = "/arena/game" }: { backHref?
   return (
     <div className="fixed inset-0 z-[60] overflow-y-auto bg-gradient-to-b from-[#FFF6E0] to-[#FFE2C7] text-[#161B3A]">
       <style>{KT_STYLE}</style>
-      <div className="relative mx-auto flex min-h-full max-w-2xl flex-col items-center px-4 py-3">
+      <div className="relative mx-auto flex min-h-full w-full max-w-[1280px] flex-col items-center px-4 py-3">
         {Hdr}
 
         <div className="kt-screen flex w-full flex-col items-center">
-          <div className="mb-2 grid w-full max-w-[640px] grid-cols-5 gap-2">
+          <div className="mb-2 grid w-full grid-cols-5 gap-2">
             <div className="rounded-xl border-[3px] border-[#161B3A] bg-[#161B3A] px-2 py-2 text-white shadow-[3px_3px_0_#161B3A]">
               <div className="text-[8px] font-extrabold uppercase opacity-70">Nyawa</div>
               <div className="flex items-center gap-1 text-lg font-extrabold leading-none">
@@ -1047,7 +1122,7 @@ export default function KuisTempurSolo({ backHref = "/arena/game" }: { backHref?
               <div className="text-lg font-extrabold leading-none">{combo}x</div>
             </div>
             <div className="rounded-xl border-[3px] border-[#161B3A] bg-white px-2 py-2 shadow-[3px_3px_0_#161B3A]">
-              <div className="text-[8px] font-extrabold uppercase opacity-70">Ronde</div>
+              <div className="text-[8px] font-extrabold uppercase opacity-70">Level</div>
               <div className="text-lg font-extrabold leading-none">{level}</div>
             </div>
             <div className="rounded-xl border-[3px] border-[#161B3A] bg-violet-500 px-2 py-2 text-white shadow-[3px_3px_0_#161B3A]">
@@ -1056,8 +1131,9 @@ export default function KuisTempurSolo({ backHref = "/arena/game" }: { backHref?
             </div>
           </div>
 
-          {/* Sisa waktu bertahan. Bot terus berdatangan sampai angka ini nol. */}
-          <div className="mb-2 w-full max-w-[640px]">
+          {/* Sisa waktu bertahan — batas sesi 5 menit. Level naik dari performa
+              (kalahkan semua musuh), BUKAN dari waktu. */}
+          <div className="mb-2 w-full">
             <div className={`mb-1 flex items-center justify-between text-[11px] font-extrabold ${sisaWaktu <= 60 ? "text-rose-600" : "text-[#161B3A]/70"}`}>
               <span>⏱ Bertahan</span>
               <span>{Math.floor(sisaWaktu / 60)}:{String(sisaWaktu % 60).padStart(2, "0")}</span>
@@ -1068,12 +1144,17 @@ export default function KuisTempurSolo({ backHref = "/arena/game" }: { backHref?
                 style={{ width: `${(sisaWaktu / DURASI) * 100}%` }}
               />
             </div>
+            <p className="mt-1 text-[11px] font-bold text-[#161B3A]/70">
+              {sisaMusuh > 0
+                ? `Kalahkan ${sisaMusuh} musuh lagi untuk naik ke Level ${Math.min(level + 1, 99)}!`
+                : "Semua musuh tumbang!"}
+            </p>
           </div>
 
           {/* Baris rank & koin dari data murid yang sebenarnya. Kalau belum
               termuat, tidak menampilkan angka karangan sama sekali. */}
           {profil && (
-            <div className="mb-2 flex w-full max-w-[640px] items-center justify-between text-[11px] font-extrabold">
+            <div className="mb-2 flex w-full items-center justify-between text-[11px] font-extrabold">
               <span className="flex items-center gap-1.5" style={{ color: profil.warna }}>
                 <RankIcon rank={profil.rankKey} size={16} /> {profil.rank} · Lv {profil.levelXp}
               </span>
@@ -1083,7 +1164,17 @@ export default function KuisTempurSolo({ backHref = "/arena/game" }: { backHref?
             </div>
           )}
 
-          <div className="relative w-full max-w-[480px]">
+          <div className="relative w-full">
+            {/* LEVEL COMPLETE — jeda singkat lalu naik level otomatis */}
+            {levelSelesai && (
+              <div className="kt-pop absolute inset-0 z-20 flex flex-col items-center justify-center gap-2 rounded-2xl border-4 border-[#161B3A] bg-[#161B3A]/90 p-6 text-center text-white">
+                <p className="text-3xl font-black tracking-wide text-amber-300">LEVEL {level} SELESAI!</p>
+                <p className="text-sm font-semibold text-white/85">Hebat! Musuh bertambah dan tantangan meningkat.</p>
+                <p className="mt-2 rounded-xl bg-amber-300 px-4 py-2 text-sm font-extrabold text-[#161B3A]">
+                  LANJUT KE LEVEL {Math.min(level + 1, 99)}…
+                </p>
+              </div>
+            )}
             <div className="pointer-events-none absolute right-2 top-2 z-10 flex flex-col items-end gap-1">
               {feed.map((f) => (
                 <span key={f.id} className="rounded-lg bg-[#161B3A]/90 px-2 py-1 text-[10px] font-semibold text-white">{f.teks}</span>
@@ -1092,7 +1183,7 @@ export default function KuisTempurSolo({ backHref = "/arena/game" }: { backHref?
             <canvas ref={cvRef} className="h-[60dvh] max-h-[620px] min-h-[380px] w-full touch-none rounded-2xl border-4 border-[#161B3A] shadow-[6px_6px_0_#161B3A]" />
           </div>
 
-          <div className="mt-2 w-full max-w-[640px]">
+          <div className="mt-2 w-full max-w-[900px]">
             <div className="mb-2 rounded-2xl border-4 border-[#161B3A] bg-white px-4 py-3 text-center shadow-[4px_4px_0_#161B3A]">
               <p className="text-[15px] font-bold leading-snug text-[#161B3A]">{soal?.q.soal}</p>
             </div>

@@ -154,9 +154,8 @@
     "test:reward-integrity": "tsx scripts/test-reward-integrity.ts",
     "test:no-emoji-icons": "tsx scripts/test-no-emoji-icons.ts",
     "test:avatar-unlock": "tsx scripts/test-avatar-unlock.ts",
-    "test:game-question-quality": "tsx scripts/test-game-question-quality.ts",
-    "test:game-question-shuffle": "npx tsx scripts/test-game-question-shuffle.ts",
     "test:game-question-quality": "npx tsx scripts/test-game-question-quality.ts",
+    "test:game-question-shuffle": "npx tsx scripts/test-game-question-shuffle.ts",
     "test:kuis-tempur-progression": "npx tsx scripts/test-kuis-tempur-progression.ts",
     "test:social-proof": "npx tsx scripts/test-social-proof.ts",
     "seed:gamification:dry-run": "npx tsx scripts/seed-gamification-data.ts",
@@ -213,7 +212,8 @@
     "test:ai-bc-role-safety": "npx tsx scripts/test-ai-bc-role-safety.ts",
     "test:ai-bc-arena-ux": "npx tsx scripts/test-ai-bc-arena-ux.ts",
     "test:theme-consistency": "npx tsx scripts/test-theme-consistency.ts",
-    "test:ai-bc-guru-ux": "npx tsx scripts/test-ai-bc-guru-ux.ts"
+    "test:ai-bc-guru-ux": "npx tsx scripts/test-ai-bc-guru-ux.ts",
+    "test:kuis-tempur-progression-ux": "npx tsx scripts/test-kuis-tempur-progression-ux.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.39.0",
