@@ -70,7 +70,7 @@ Status: **PASS WITH CONDITIONS**
 
 Conditions:
 1. Production real-payment verification (checklist di bawah)
-2. Duplicate orderId check (SQL di bawah)
+2. Duplicate orderId check — ✅ **SELESAI (Founder): 0 duplikat = PASS**
 3. Production environment variable verification
 
 # Pre-Commit Verification
@@ -107,6 +107,17 @@ HAVING COUNT(*) > 1
 ORDER BY jumlah DESC;
 ```
 Expected: **0 rows**. Bila ada: STOP, laporkan (jangan hapus buta) — baris, status, createdAt, dampak finansial.
+
+**HASIL (Founder, sudah dijalankan):** `Transaksi.orderId duplicate check = PASS` (0 duplikat).
+
+# Recommended Unique Constraint (P2 — siap dipakai, BELUM di-apply)
+Partial unique index idempoten (NULL-safe — hanya baris dengan orderId non-null), jangan pakai `@unique` penuh Prisma agar kolom nullable tidak mengubah perilaku:
+```sql
+CREATE UNIQUE INDEX IF NOT EXISTS "Transaksi_orderId_key"
+ON "Transaksi"("orderId")
+WHERE "orderId" IS NOT NULL;
+```
+Syarat sebelum apply: cek duplikat = 0 ✓ (sudah), deploy impact = hanya index baru (tanpa mengubah data/query), rollback = `DROP INDEX IF EXISTS "Transaksi_orderId_key";`. Diajukan sebagai rekomendasi — menunggu approval Founder untuk membuat file migration manual & apply di SQL Editor.
 
 # Remaining Risks
 1. Webhook production belum pernah diverifikasi dengan notifikasi Midtrans sungguhan (checklist di atas wajib sebelum klaim fully verified).
