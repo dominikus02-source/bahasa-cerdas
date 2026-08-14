@@ -50,16 +50,16 @@ export function LeaderboardPanel({ compact = false }: { compact?: boolean }) {
   return (
     <GlassCard className="p-4">
       <div className="mb-3 flex items-center justify-between">
-        <h3 className="flex items-center gap-2 text-base font-extrabold text-[var(--px-text)]">
-          <Trophy size={16} className="text-[var(--px-gold)]" />
+        <h3 className="flex items-center gap-2 text-base font-extrabold text-slate-900 dark:text-white">
+          <Trophy size={16} className="text-amber-600 dark:text-[var(--px-gold)]" />
           Papan Peringkat
         </h3>
-        <div className="flex items-center gap-1">
+        <div className="flex flex-wrap items-center gap-1">
           {(["WEEKLY", "SEASON", "ALL_TIME"] as Period[]).map((p) => (
             <button
               key={p}
               onClick={() => setPeriod(p)}
-              className={`rounded-full px-2.5 py-1 text-[10px] font-bold transition ${period === p ? "px-btn-gold" : "px-btn-ghost"}`}
+              className={`lb-btn rounded-full px-3 py-1.5 text-xs font-bold transition sm:text-sm ${period === p ? "lb-gold" : "lb-ghost"}`}
             >
               {PERIOD_LABELS[p]}
             </button>
@@ -67,12 +67,12 @@ export function LeaderboardPanel({ compact = false }: { compact?: boolean }) {
         </div>
       </div>
 
-      <div className="mb-3 flex gap-1">
+      <div className="mb-3 flex flex-wrap gap-1.5">
         {(["GLOBAL", "SCHOOL", "CLASS", "FRIENDS"] as Scope[]).map((s) => (
           <button
             key={s}
             onClick={() => setScope(s)}
-            className={`rounded-full px-3 py-1 text-[10px] font-bold transition ${scope === s ? "px-btn-royal" : "px-btn-ghost"}`}
+            className={`lb-btn rounded-full px-3.5 py-1.5 text-xs font-bold transition sm:text-sm ${scope === s ? "lb-royal" : "lb-ghost"}`}
           >
             {s === "GLOBAL" ? "Global" : s === "SCHOOL" ? "Sekolah" : s === "CLASS" ? "Kelas" : "Teman"}
           </button>
@@ -151,7 +151,7 @@ export function LeaderboardPanel({ compact = false }: { compact?: boolean }) {
                   Tkt {e.level}
                 </span>
               </span>
-              <span className="text-xs font-extrabold text-[var(--px-gold)]">{formatId(e.score)}</span>
+              <span className="text-xs font-extrabold text-amber-600 dark:text-[var(--px-gold)]">{formatId(e.score)}</span>
             </div>
           ))}
         </div>

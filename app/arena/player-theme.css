@@ -245,3 +245,48 @@
   --px-royal-2: #0f7bff;
   --px-mint: #34e0b8;
 }
+
+/* ---- Leaderboard filter buttons (theme-aware default + zona navy override) ----
+   /arena (app theme) memakai kelas Tailwind light/dark; di dalam zona player
+   (.px-theme) gaya lama navy dipulihkan agar konsisten. */
+.lb-btn { display: inline-flex; align-items: center; justify-content: center; line-height: 1.2; }
+.lb-ghost {
+  border: 1px solid var(--border, #e2e8f0);
+  background: rgba(255, 255, 255, 0.75);
+  color: #475569;
+}
+.dark .lb-ghost {
+  border-color: #334155;
+  background: rgba(255, 255, 255, 0.06);
+  color: #cbd5e1;
+}
+.lb-ghost:hover { background: #f1f5f9; }
+.dark .lb-ghost:hover { background: rgba(255, 255, 255, 0.12); }
+.lb-gold {
+  background: linear-gradient(120deg, #f59e0b, #fbbf24);
+  color: #451a03;
+  box-shadow: 0 6px 16px -6px rgba(245, 158, 11, 0.55);
+}
+.lb-royal {
+  background: linear-gradient(120deg, #7c3aed, #2563eb);
+  color: #ffffff;
+  box-shadow: 0 6px 16px -6px rgba(124, 58, 237, 0.55);
+}
+.lb-btn:active { transform: scale(0.97); }
+/* Zona player (navy selalu): kembalikan tampilan token zona */
+.px-theme .lb-ghost {
+  background: var(--px-glass);
+  border-color: var(--px-border);
+  color: var(--px-text);
+}
+.px-theme .lb-ghost:hover { background: var(--px-glass-strong); }
+.px-theme .lb-gold {
+  background: linear-gradient(120deg, var(--px-gold-2), var(--px-gold-3));
+  color: #1b1205;
+  box-shadow: 0 8px 20px -6px rgba(245, 166, 35, 0.5);
+}
+.px-theme .lb-royal {
+  background: linear-gradient(120deg, var(--px-royal), var(--px-royal-2));
+  color: #fff;
+  box-shadow: 0 8px 20px -6px rgba(43, 75, 255, 0.5);
+}
