@@ -96,7 +96,7 @@ export default function HeroEcosystemVisual() {
           >
 <div className="flex flex-col items-center gap-1.5 px-4 py-3 rounded-2xl bg-zinc-900 text-white shadow-2xl shadow-zinc-900/30 min-w-[7.5rem]">
               <div className="relative w-9 h-9">
-                <Image src="/BC-logo.png" alt="" fill sizes="36px" className="object-contain" />
+                <Image src="/brand/bc2026-icon.png" alt="" fill sizes="36px" className="object-contain" />
               </div>
               <span className="text-sm font-bold leading-tight text-center">
                 BahasaCerdas

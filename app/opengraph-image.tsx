@@ -85,7 +85,7 @@ export default async function OGImage() {
         }}
       >
         <img
-          src="https://www.bahasacerdas.com/BC-logo.png"
+          src="https://www.bahasacerdas.com/brand/bc2026-icon.png"
           alt=""
           width={100}
           height={100}
