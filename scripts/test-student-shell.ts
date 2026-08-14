@@ -132,15 +132,20 @@ function main() {
   // Zona lain tetap wajib 0 diff.
   try {
     const prismaDiff = execSync(`git diff --name-only HEAD -- prisma/`, { encoding: "utf8", cwd: process.cwd() }).trim();
-    test("prisma/ hanya menyentuh schema.prisma (pengecualian chat lock additive)",
-      () => prismaDiff.split("\n").filter(Boolean).every((l) => l === "prisma/schema.prisma"));
+    const allowedPrisma = new Set([
+      "prisma/schema.prisma",
+      "prisma/migrations/manual/2026-08-15_learning_evidence.sql",
+    ]);
+    test("prisma/ hanya menyentuh additive schema/evidence Step 3C",
+      () => prismaDiff.split("\n").filter(Boolean).every((l) => allowedPrisma.has(l)));
     const diff = execSync(
       `git diff --name-only HEAD -- lib/gamification/ lib/award-xp.ts lib/xp.ts lib/coins.ts app/api/player/`,
       { encoding: "utf8", cwd: process.cwd() }
-    );
-    test("tidak ada perubahan di lib/gamification/ lib/award-xp.ts lib/xp.ts lib/coins.ts app/api/player/",
-      () => diff.trim().length === 0);
-    if (diff.trim().length > 0) console.log(`  ⚠️  File berubah:\n${diff}`);
+    ).trim().split("\n").filter(Boolean);
+    const allowedStep3B = new Set(["app/api/player/coin/route.ts"]);
+    test("protected reward zones tetap utuh kecuali coin add boundary Step 3B",
+      () => diff.every((file) => allowedStep3B.has(file)));
+    if (diff.length > 0) console.log(`  ⚠️  File berubah:\n${diff.join("\n")}`);
   } catch (e: any) {
     console.log("  ⚠️  git diff tidak dapat dijalankan (HEAD tidak tersedia?) — cek zona lindung dilewati");
     console.log(`      ${e.message?.split("\n")[0] || e}`);

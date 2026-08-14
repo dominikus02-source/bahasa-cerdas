@@ -219,7 +219,9 @@
     "test:login-ux": "npx tsx scripts/test-login-ux.ts",
     "test:register-ux": "npx tsx scripts/test-register-ux.ts",
     "test:premium-production": "npx tsx scripts/test-premium-production.ts",
-    "test:my-day-home": "npx tsx scripts/test-my-day-home.ts"
+    "test:my-day-home": "npx tsx scripts/test-my-day-home.ts",
+    "test:step3b-foundation": "npx tsx scripts/test-step3b-data-foundation.ts",
+    "test:step3c-evidence": "npx tsx scripts/test-step3c-evidence-ledger.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.39.0",

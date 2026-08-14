@@ -158,24 +158,37 @@ function main() {
 
   // ── 9. ZONE TERPROTEKSI (0 diff — konsolidasi TIDAK menyentuh sama sekali) ──
   console.log("\n── 9. Protected Zones ──");
-  test("prisma/ 0 diff (konsolidasi Arena tanpa pengecualian schema)",
-    () => execSync(`git diff --name-only HEAD -- prisma/`, { encoding: "utf8", cwd: process.cwd() }).trim().length === 0);
-  test("ZERO TOUCH: lib/gamification/ lib/learning-loop/ engines/ lib/apk.ts lib/xp.ts lib/coins.ts lib/award-xp.ts 0 diff",
+  test("prisma/ hanya berubah untuk additive LearningEvidence Step 3C",
+    () => {
+      const allowed = new Set([
+        "prisma/schema.prisma",
+        "prisma/migrations/manual/2026-08-15_learning_evidence.sql",
+      ]);
+      const diff = execSync(`git diff --name-only HEAD -- prisma/`, { encoding: "utf8", cwd: process.cwd() }).trim().split("\n").filter(Boolean);
+      return diff.every((file) => allowed.has(file));
+    });
+  test("protected engines hanya berubah pada evidence helper Step 3C",
     () => {
       const diff = execSync(
         `git diff --name-only HEAD -- lib/gamification/ lib/learning-loop/ engines/ lib/apk.ts lib/xp.ts lib/coins.ts lib/award-xp.ts`,
         { encoding: "utf8", cwd: process.cwd() }
       ).trim();
-      return diff.length === 0;
+      return diff.split("\n").filter(Boolean).every((file) => file === "lib/learning-loop/evidence.ts");
     });
-  test("app/api/ SELURUHNYA 0 diff kecuali app/api/ai/bc/chat (route AI BC role-safe fase 2.1) + app/api/kompetensi/[paketId]/route.ts (UKBI Simulasi 2.0 randomization + anti-leak)",
+  test("app/api/ hanya berubah pada route yang diizinkan oleh fase security saat ini",
     () => {
+      const allowed = new Set([
+        "app/api/ai/bc/chat/route.ts",
+        "app/api/kompetensi/[paketId]/route.ts",
+        "app/api/learning-loop/activity/route.ts",
+        "app/api/player/coin/route.ts",
+        "app/api/jalur-cerdas/[unitId]/progress/route.ts",
+        "app/api/jalur-cerdas/[unitId]/submit/route.ts",
+        "app/api/murid/quiz/[id]/route.ts",
+      ]);
       const diff = execSync(`git diff --name-only HEAD -- app/api/`, { encoding: "utf8", cwd: process.cwd() })
         .trim().split("\n").filter(Boolean)
-        .filter((l) => l !== "app/api/ai/bc/chat/route.ts")
-        .filter((l) => l !== "app/api/kompetensi/[paketId]/route.ts")
-        .join("\n");
-      return diff.length === 0;
+      return diff.every((file) => allowed.has(file));
     });
   test("app/arena/bottom-nav.tsx 0 diff (APK bottom nav tidak disentuh)",
     () => execSync(`git diff --name-only HEAD -- app/arena/bottom-nav.tsx`, { encoding: "utf8", cwd: process.cwd() }).trim().length === 0);

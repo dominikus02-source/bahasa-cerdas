@@ -29,6 +29,13 @@ export async function POST(req: NextRequest) {
   const amount = Number.isFinite(body.amount) ? Math.min(MAX_COIN_PER_REQ, Math.max(1, Math.floor(body.amount ?? 0))) : 1;
   const reason = (body.reason || "SYSTEM").slice(0, 40);
 
+  // Penambahan koin adalah konsekuensi bisnis, bukan telemetry klien. Hanya
+  // tooling admin/founder yang boleh memanggil jalur add; fitur murid memakai
+  // route server-side masing-masing (quest, karya, game, dan seterusnya).
+  if (action === "add" && !user.isFounder && user.role !== "ADMIN") {
+    return NextResponse.json({ error: "Penambahan koin hanya dapat dilakukan oleh sistem" }, { status: 403 });
+  }
+
   if (action === "deduct") {
     const res = await deductCoin(user.id, amount, reason, body.reference);
     if (!res.success) {

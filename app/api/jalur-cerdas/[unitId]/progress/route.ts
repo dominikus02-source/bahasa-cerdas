@@ -7,6 +7,7 @@ import { recordActivity } from "@/lib/learning-loop/activity"
 import { detectUnitSkill } from "@/lib/learning-loop/skills"
 import { generateRecommendations } from "@/lib/learning-loop/recommend"
 import { refreshNextAction } from "@/lib/learning-loop/next-action"
+import { isJalurAnswerCorrect, scoreJalurAnswers } from "@/lib/jalur-cerdas/scoring"
 
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ unitId: string }> }) {
   try {
@@ -14,10 +15,9 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ un
     if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
     const { unitId } = await params
-    let score: number | undefined
+    let body: unknown = null
     try {
-      const body = await req.json()
-      score = body.score
+      body = await req.json()
     } catch {}
 
     const unit = await db.learningUnit.findUnique({
@@ -26,11 +26,49 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ un
         title: true,
         order: true,
         levelId: true,
+        content: true,
         coinReward: true,
         xpReward: true,
-        level: { select: { level: true } },
+        level: { select: { level: true, type: true } },
       },
     })
+
+    if (!unit) {
+      return NextResponse.json({ error: "Unit tidak ditemukan" }, { status: 404 })
+    }
+    if (unit.level.type !== "JALUR") {
+      return NextResponse.json({ error: "Unit bukan bagian dari Jalur Cerdas" }, { status: 403 })
+    }
+    if (!isRecord(body) || !isRecord(body.answers)) {
+      return NextResponse.json(
+        { error: "Jawaban per soal diperlukan untuk menghitung hasil di server", code: "ANSWERS_REQUIRED" },
+        { status: 400 }
+      )
+    }
+    const answers = body.answers
+
+    let storedQuestions: { id: string; jawaban: string | number }[] = []
+    try {
+      const parsed = JSON.parse(unit.content || "{}")
+      if (Array.isArray(parsed?.questions)) {
+        storedQuestions = parsed.questions.filter(
+          (question: unknown): question is { id: string; jawaban: string | number } =>
+            isRecord(question) &&
+            typeof question.id === "string" &&
+            (typeof question.jawaban === "string" || typeof question.jawaban === "number")
+        )
+      }
+    } catch {}
+
+    if (storedQuestions.length === 0) {
+      return NextResponse.json({ error: "Unit tidak memiliki soal yang valid" }, { status: 404 })
+    }
+
+    // Score dihitung dari jawaban + kunci yang dibaca server. Body.score
+    // sengaja tidak dipakai sebagai dasar completion atau reward.
+    const score = scoreJalurAnswers(storedQuestions, answers).score
+    const questionById = new Map(storedQuestions.map((question) => [question.id, question]))
+    const answeredQuestionIds = Object.keys(answers).filter((id) => questionById.has(id))
 
     const existing = await db.userUnitProgress.findUnique({
       where: { userId_unitId: { userId: user.id, unitId } },
@@ -40,19 +78,51 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ un
       return NextResponse.json({ progress: existing, isComplete: true, earnedXp: 0, message: "Already completed" })
     }
 
-    const isComplete = score !== undefined && score >= 70
+    const isComplete = score >= 70
+
+    if (isComplete) {
+      // Completion hanya sah bila jawaban yang dikirim juga sudah melalui
+      // endpoint submit dan memiliki evidence server-verified yang sama.
+      const evidenceRows = await db.learningEvidence.findMany({
+        where: {
+          userId: user.id,
+          source: "JALUR_CERDAS",
+          activityId: unitId,
+          questionId: { in: answeredQuestionIds },
+        },
+        select: { questionId: true, selectedAnswer: true, isCorrect: true },
+      })
+      const evidenceByQuestion = new Map(evidenceRows.map((row) => [row.questionId, row]))
+      const evidenceMatches = answeredQuestionIds.every((questionId) => {
+        const row = evidenceByQuestion.get(questionId)
+        const answer = answers[questionId]
+        const question = questionById.get(questionId)
+        return Boolean(
+          row &&
+          question &&
+          row.selectedAnswer === String(answer) &&
+          row.isCorrect === isJalurAnswerCorrect(question.jawaban, answer)
+        )
+      })
+      if (!evidenceMatches) {
+        return NextResponse.json(
+          { error: "Jawaban belum memiliki evidence server", code: "EVIDENCE_REQUIRED" },
+          { status: 409 }
+        )
+      }
+    }
 
     if (!isComplete) {
       const progress = await db.userUnitProgress.upsert({
         where: { userId_unitId: { userId: user.id, unitId } },
-        create: { userId: user.id, unitId, completed: false, score: score ?? 0, xpEarned: 0, coinEarned: 0 },
-        update: { score: score ?? 0 },
+        create: { userId: user.id, unitId, completed: false, score, xpEarned: 0, coinEarned: 0 },
+        update: { score },
       })
       return NextResponse.json({ progress, isComplete: false, earnedXp: 0 })
     }
 
-    const BASE_XP_REWARD = unit?.xpReward ?? 50
-    const COIN_REWARD = unit?.coinReward ?? 10
+    const BASE_XP_REWARD = unit.xpReward ?? 50
+    const COIN_REWARD = unit.coinReward ?? 10
     // XP Boost dari toko koin. Angka akhir juga yang dicatat di UserUnitProgress,
     // supaya rekap XP belajar tetap sama dengan XP yang masuk ke User.xp.
     // Lewat pintu tunggal: batas per submit, kuota harian, boost, jejak ledger,
@@ -62,16 +132,26 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ un
     const XP_REWARD = hasilXp.xpDiberikan
     const boosted = hasilXp.boosted
 
+    // awardXp() returns zero without `kuotaHabis` when the same reference was
+    // already processed. Do not let a concurrent/replayed request continue to
+    // the User.coins increment and overwrite the first payout.
+    if (BASE_XP_REWARD > 0 && XP_REWARD === 0 && !hasilXp.kuotaHabis) {
+      const current = await db.userUnitProgress.findUnique({
+        where: { userId_unitId: { userId: user.id, unitId } },
+      })
+      return NextResponse.json({ progress: current, isComplete: true, earnedXp: 0, message: "Already completed" })
+    }
+
     const progress = await db.userUnitProgress.upsert({
       where: { userId_unitId: { userId: user.id, unitId } },
       create: {
         userId: user.id, unitId,
-        completed: true, score: score ?? 0,
+        completed: true, score,
         xpEarned: XP_REWARD, coinEarned: COIN_REWARD,
         completedAt: new Date(),
       },
       update: {
-        completed: true, score: score ?? 0,
+        completed: true, score,
         completedAt: existing?.completedAt ?? new Date(),
         xpEarned: XP_REWARD, coinEarned: COIN_REWARD,
       },
@@ -174,4 +254,8 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ un
     console.error("Progress error:", error)
     return NextResponse.json({ error: "Internal error" }, { status: 500 })
   }
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value)
 }

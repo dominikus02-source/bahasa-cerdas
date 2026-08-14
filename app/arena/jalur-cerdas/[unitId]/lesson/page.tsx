@@ -62,6 +62,7 @@ export default function LessonPage({ params }: { params: Promise<{ unitId: strin
   const [questions, setQuestions] = useState<Question[]>([])
   const [currentIdx, setCurrentIdx] = useState(0)
   const [selectedAnswer, setSelectedAnswer] = useState<string | number | null>(null)
+  const [submittedAnswers, setSubmittedAnswers] = useState<Record<string, string | number>>({})
   const [result, setResult] = useState<QuestionResult | null>(null)
   const [correctCount, setCorrectCount] = useState(0)
   const [loading, setLoading] = useState(true)
@@ -110,6 +111,7 @@ export default function LessonPage({ params }: { params: Promise<{ unitId: strin
       })
       if (!res.ok) throw new Error("Gagal mengirim jawaban")
       const data: QuestionResult = await res.json()
+      setSubmittedAnswers((previous) => ({ ...previous, [q.id]: answer }))
       setResult(data)
       if (data.correct) setCorrectCount((c) => c + 1)
       setPhase("result")
@@ -127,18 +129,17 @@ export default function LessonPage({ params }: { params: Promise<{ unitId: strin
       setResult(null)
       setPhase("question")
     } else {
-      await saveProgress()
-      setPhase("complete")
+      const saved = await saveProgress()
+      if (saved) setPhase("complete")
     }
   }
 
-  async function saveProgress() {
-    const score = Math.round((correctCount / questions.length) * 100) || 0
+  async function saveProgress(): Promise<boolean> {
     try {
       const res = await fetch(`/api/jalur-cerdas/${unitId}/progress`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ score }),
+        body: JSON.stringify({ answers: submittedAnswers }),
       })
       if (res.ok) {
         const data = await res.json()
@@ -146,8 +147,15 @@ export default function LessonPage({ params }: { params: Promise<{ unitId: strin
         if (typeof data.nextUnitId === "string" && data.nextUnitId) {
           setNextUnitId(data.nextUnitId)
         }
+        return true
       }
-    } catch {}
+      const data = await res.json().catch(() => ({}))
+      setError(data.error || "Gagal menyimpan hasil latihan")
+      return false
+    } catch {
+      setError("Gagal menyimpan hasil latihan")
+      return false
+    }
   }
 
   if (loading) {

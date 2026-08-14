@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 import { sanitizeSoalForStudent } from "@/lib/security";
+import { LEARNING_EVIDENCE_VERSION, replaceLearningEvidenceBatch } from "@/lib/learning-loop/evidence";
 
 export async function GET(
   req: NextRequest,
@@ -294,6 +295,39 @@ export async function POST(
           }
         }
       }
+
+      // Evidence ditulis dari hasil QuizAnswer yang sudah dihitung server, bukan
+      // dari isCorrect/score yang dikirim browser. Ditulis sebelum submission
+      // menjadi SUBMITTED; bila ledger gagal, kuis tidak dinyatakan selesai.
+      const finalAnswers = await db.quizAnswer.findMany({
+        where: { submissionId: submission.id },
+        select: { quizQuestionId: true, answerIndex: true, answerText: true, isCorrect: true, pointsEarned: true },
+      });
+      const finalAnswerByQuestion = new Map(finalAnswers.map((answer) => [answer.quizQuestionId, answer]));
+      await replaceLearningEvidenceBatch(
+        submission.assignment.quiz.questions.map((question) => {
+          const answer = finalAnswerByQuestion.get(question.id);
+          const selectedAnswer = answer
+            ? answer.answerIndex !== null
+              ? String(answer.answerIndex)
+              : answer.answerText || null
+            : null;
+          return {
+            userId: dbUser.id,
+            source: "LATIHAN",
+            activityId: submission.id,
+            questionId: question.id,
+            selectedAnswer,
+            isCorrect: answer?.isCorrect ?? null,
+            score: answer?.pointsEarned ?? 0,
+            metadata: {
+              version: LEARNING_EVIDENCE_VERSION,
+              sourceType: question.sourceType,
+              sourceId: question.sourceId,
+            },
+          };
+        })
+      );
 
       const score = pointsTotal > 0 ? (pointsEarned / pointsTotal) * 100 : 0;
       const timeSpent = submission.startedAt ? Math.floor((Date.now() - submission.startedAt.getTime()) / 1000) : 0;

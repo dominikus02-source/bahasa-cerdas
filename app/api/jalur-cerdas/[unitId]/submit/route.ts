@@ -2,6 +2,8 @@ import { NextRequest, NextResponse, after } from "next/server"
 import { db } from "@/lib/db"
 import { getUser } from "@/lib/supabase/server"
 import { trackQuestProgress } from "@/lib/coins"
+import { isJalurAnswerCorrect } from "@/lib/jalur-cerdas/scoring"
+import { upsertLearningEvidence, LEARNING_EVIDENCE_VERSION } from "@/lib/learning-loop/evidence"
 
 export async function POST(req: NextRequest, { params }: { params: Promise<{ unitId: string }> }) {
   try {
@@ -38,8 +40,22 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ uni
       return NextResponse.json({ error: "Question not found" }, { status: 404 })
     }
 
-    const correct = String(answer).toLowerCase() === String(question.jawaban).toLowerCase()
+    const correct = isJalurAnswerCorrect(question.jawaban, answer)
     const correctIndex = typeof question.jawaban === "number" ? question.jawaban : null
+
+    // Evidence harus tersimpan sebelum jawaban dianggap berhasil. Kunci soal
+    // dibaca server; skill/difficulty sengaja nullable karena metadata item
+    // Jalur belum memiliki klasifikasi kanonik.
+    await upsertLearningEvidence({
+      userId: user.id,
+      source: "JALUR_CERDAS",
+      activityId: unitId,
+      questionId,
+      selectedAnswer: String(answer),
+      isCorrect: correct,
+      score: correct ? 1 : 0,
+      metadata: { version: LEARNING_EVIDENCE_VERSION, questionType: question.tipe ?? null },
+    })
 
     // Daily quest: every answered question advances the quiz mission. After the
     // response and best-effort — this is the hottest path in the lesson engine.

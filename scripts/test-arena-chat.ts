@@ -227,11 +227,11 @@ function main() {
 
   // ── T.27 — Protected Zones ──
   console.log("\n── T.27 — Protected Zones (dengan pengecualian prisma yang didokumentasikan) ──");
-  test("prisma/ berubah HANYA schema.prisma (additive: chatLocked + deletedAt/deletedBy — pengecualian §S untuk lock server-enforced)",
-    () => {
-      const diff = execSync(`git diff --name-only HEAD -- prisma/`, { encoding: "utf8", cwd: process.cwd() }).trim();
-      const lines = diff.split("\n").filter(Boolean);
-      return lines.every((l) => l === "prisma/schema.prisma");
+   test("prisma/ berubah HANYA pada additive schema/migration yang diizinkan",
+     () => {
+       const diff = execSync(`git diff --name-only HEAD -- prisma/`, { encoding: "utf8", cwd: process.cwd() }).trim();
+       const lines = diff.split("\n").filter(Boolean);
+       return lines.every((l) => l === "prisma/schema.prisma" || l === "prisma/migrations/manual/2026-08-15_learning_evidence.sql");
     });
   test("migrasi manual idempoten ada: 2026-08-12_obrolan4_chat_lock.sql (ADD COLUMN IF NOT EXISTS + index)",
     () => sql.includes("ADD COLUMN IF NOT EXISTS") && sql.includes("chatLocked") && sql.includes("deletedAt") && sql.includes("deletedBy") && sql.includes("ChatMessage_groupId_deletedAt_idx"));
@@ -239,13 +239,13 @@ function main() {
     () => /chatLocked\s+Boolean\s+@default\(false\)/.test(schema) && schema.indexOf("chatLocked") > schema.indexOf("isActive"));
   test("schema.prisma: ChatMessage.deletedAt DateTime? + deletedBy String?",
     () => /deletedAt\s+DateTime\?/.test(schema) && /deletedBy\s+String\?/.test(schema));
-  test("lib/apk.ts, lib/gamification/, lib/learning-loop/, engines/, app/api/player/, app/api/group/ 0 diff",
+  test("protected Arena zones tetap utuh kecuali evidence/coin boundary yang diizinkan",
     () => {
       const diff = execSync(
         `git diff --name-only HEAD -- lib/apk.ts lib/gamification/ lib/learning-loop/ engines/ app/api/player/ app/api/group/`,
         { encoding: "utf8", cwd: process.cwd() }
-      ).trim();
-      return diff.length === 0;
+      ).trim().split("\n").filter(Boolean);
+      return diff.every((file) => file === "app/api/player/coin/route.ts" || file === "lib/learning-loop/evidence.ts");
     });
   test("MuridMobileNav & murid layout: global nav /arena/chat tidak berubah",
     () => {

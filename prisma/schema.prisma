@@ -294,6 +294,7 @@ model User {
   learningRecommendations LearningRecommendation[]
   playerCTA               PlayerCTA?
   learningInsights        LearningInsight[]
+  learningEvidences       LearningEvidence[]
 
   // Admin quota audit logs where this user was the acting admin
   adminQuotaActions    AdminQuotaAuditLog[]   @relation("AdminActions")
@@ -2787,6 +2788,34 @@ model LearningInsight {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, dayKey])
+}
+
+/// Evidence question-level yang diverifikasi server. Ini bukan XP, mastery,
+/// atau learner state; hanya catatan apa yang dijawab dan hasil validasinya.
+model LearningEvidence {
+  id             String            @id @default(cuid())
+  userId         String
+  source         String
+  activityId     String
+  questionId     String
+  selectedAnswer String?
+  isCorrect      Boolean?
+  score          Float?
+  skill          LearningSkillType?
+  difficulty     Difficulty?
+  answeredAt     DateTime          @default(now())
+  metadata       Json?
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  /// Satu soal dalam satu aktivitas adalah satu evidence yang idempoten.
+  @@unique([userId, source, activityId, questionId])
+  @@index([userId, answeredAt])
+  @@index([userId, questionId])
+  @@index([userId, source, answeredAt])
+  @@index([userId, skill, answeredAt])
 }
 
 /// Langganan Web Push milik satu perangkat. Satu murid bisa punya beberapa:
