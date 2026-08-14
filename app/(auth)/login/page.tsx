@@ -226,8 +226,8 @@ export default function LoginPage() {
         {/* ── BRAND HERO ── */}
         <div className="order-2 lg:order-1">
           <Link href="/" className="inline-flex items-center" aria-label="Beranda BahasaCerdas">
-            <Image src={BRAND_LOGO_DARK} alt="BahasaCerdas" width={280} height={64} className="h-16 w-auto object-contain dark:hidden" />
-            <Image src={BRAND_LOGO_LIGHT} alt="BahasaCerdas" width={280} height={64} className="hidden h-16 w-auto object-contain dark:inline" />
+            <Image src={BRAND_LOGO_DARK} alt="BahasaCerdas" width={420} height={96} className="h-24 w-auto object-contain dark:hidden sm:h-28 md:h-32" />
+            <Image src={BRAND_LOGO_LIGHT} alt="BahasaCerdas" width={420} height={96} className="hidden h-24 w-auto object-contain dark:inline sm:h-28 md:h-32" />
           </Link>
 
           <h1 className="mt-6 text-4xl font-black leading-tight tracking-tight text-slate-900 dark:text-white md:text-5xl">
