@@ -181,7 +181,7 @@ export default function LeagueTabs({ weekly, daily, hallOfFame, userId, userXP, 
       <div className="flex items-center justify-center gap-4 px-4 py-4 border-t border-gray-100 dark:border-slate-800 bg-gray-50 bg-gray-50/50 dark:bg-slate-800/50">
         <span className="text-xs font-bold text-gray-600 dark:text-slate-300">Naikkan peringkatmu!</span>
         <Link href="/arena/game" className="inline-flex items-center gap-1 text-xs font-semibold text-violet-600 dark:text-violet-400 hover:text-violet-800 transition-colors">
-          <Gamepad2 className="w-3.5 h-3.5" /> Main Game
+          <Gamepad2 className="w-3.5 h-3.5" /> Main Gim
         </Link>
         <Link href="/arena/jalur-cerdas" className="inline-flex items-center gap-1 text-xs font-semibold text-violet-600 dark:text-violet-400 hover:text-violet-800 transition-colors">
           <BookOpen className="w-3.5 h-3.5" /> Latihan Jalur Cerdas

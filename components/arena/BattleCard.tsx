@@ -68,7 +68,7 @@ export default function BattleCard({ onlineCount, recentBattles, recentPlayers }
         {/* LIVE badge */}
         <div className="inline-flex items-center gap-1 bg-red-500 px-2.5 py-1 rounded-full text-[11px] font-extrabold text-white tracking-wider mb-2.5">
           <span className="w-1.5 h-1.5 bg-white dark:bg-slate-800/90 rounded-full" style={{ animation: "blink-dot 0.9s ease-in-out infinite" }} />
-          LIVE
+          LANGSUNG
         </div>
 
         {/* Title */}

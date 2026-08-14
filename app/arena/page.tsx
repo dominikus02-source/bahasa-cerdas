@@ -371,7 +371,7 @@ export default async function BerandaPage() {
                   </p>
                 ) : null}
                 <Link href="/arena/league" className="flex items-center justify-center gap-1.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 px-4 py-2.5 text-sm font-extrabold text-white shadow-sm transition-all hover:from-amber-400 hover:to-orange-400">
-                  Kejar Ranking <ChevronRight className="h-4 w-4" />
+                  Kejar Peringkat <ChevronRight className="h-4 w-4" />
                 </Link>
               </div>
             ) : (
@@ -384,14 +384,14 @@ export default async function BerandaPage() {
       </section>
 
       {/* ── 5. GAME ARENA — featured (mini) + 3 gim sekunder (light) ── */}
-      <section aria-label="Game Arena">
+      <section aria-label="Gim Arena">
         <div className="mb-4 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-indigo-100 text-indigo-600 dark:bg-indigo-500/15 dark:text-indigo-300">
               <Gamepad2 size={18} />
             </span>
             <div>
-              <h2 className="text-base font-extrabold text-gray-900 dark:text-white">Game Arena</h2>
+              <h2 className="text-base font-extrabold text-gray-900 dark:text-white">Gim Arena</h2>
               <p className="text-xs text-gray-500 dark:text-slate-400">Main cepat, kumpulkan XP.</p>
             </div>
           </div>
@@ -407,7 +407,7 @@ export default async function BerandaPage() {
                 <div className="inline-flex items-center gap-1 rounded-full bg-red-500/90 px-2 py-0.5 text-[9px] font-black uppercase tracking-widest">
                   <Swords size={10} /> Kuis Tempur
                 </div>
-                <p className="mt-2 text-sm font-extrabold">Mode battle langsung</p>
+                <p className="mt-2 text-sm font-extrabold">Mode tempur langsung</p>
                 <p className="mt-1 text-[11px] text-slate-300">Jawab cepat, kalahkan lawan. Solo vs bot tersedia.</p>
               </div>
               <span className="flex shrink-0 items-center gap-1 rounded-full bg-amber-400/90 px-2 py-1 text-[10px] font-extrabold text-amber-950">
@@ -467,7 +467,7 @@ export default async function BerandaPage() {
             <Gift size={18} />
           </span>
           <div>
-            <h2 className="text-base font-extrabold text-gray-900 dark:text-white">Reward & Pencapaian</h2>
+            <h2 className="text-base font-extrabold text-gray-900 dark:text-white">Hadiah & Pencapaian</h2>
             <p className="text-xs text-gray-500 dark:text-slate-400">Kumpulkan lencana, klaim hadiah, tukar koinmu.</p>
           </div>
         </div>
