@@ -57,7 +57,7 @@ test("7. success screen preserved (registered)", () =>
 
 console.log("\n── Brand & copy ──");
 test("8. brand registry digunakan (bukan hardcode lama)", () =>
-  page.includes('from "@/lib/brand"') && page.includes("BRAND_LOGO_DARK") &&
+  page.includes('from "@/lib/brand"') && page.includes("BRAND_ICON_DARK") &&
   !page.includes("BC-logo.png") && !page.includes("from-red-600"));
 test("9. tagline resmi dipakai", () => page.includes("BRAND_TAGLINE"));
 test("10. positioning netral guru & murid (hero sama dengan Login 3.0)", () =>
@@ -92,9 +92,10 @@ test("22. aksesibilitas: label terhubung + touch target ≥44px", () =>
   page.includes("h-12") && page.includes("focus:ring-2"));
 test("23. tanpa logo lama / maskot", () =>
   !page.includes("BC-logo.png") && !page.includes("BatikDecoration"));
-test("24b. SATU brand block di hero (tanpa icon ganda)", () => {
-  const brandHeader = page.slice(page.indexOf('aria-label="Beranda BahasaCerdas"'), page.indexOf('aria-label="Beranda BahasaCerdas"') + 400);
-  return !brandHeader.includes("BRAND_ICON") && brandHeader.includes("BRAND_LOGO_DARK") && brandHeader.includes("BRAND_LOGO_LIGHT");
+test("24b. SATU brand block di hero (ICON BC + teks BahasaCerdas + tagline)", () => {
+  const brandHeader = page.slice(page.indexOf('aria-label="Beranda BahasaCerdas"'), page.indexOf('aria-label="Beranda BahasaCerdas"') + 900);
+  return brandHeader.includes("BRAND_ICON_DARK") && brandHeader.includes("BRAND_ICON") &&
+    brandHeader.includes(">BahasaCerdas<") && brandHeader.includes("BRAND_TAGLINE");
 });
 test("24c. nuansa batik subtle ada (BatikAccent, aria-hidden)", () =>
   page.includes("BatikAccent") && read("components/decorations/BatikAccent.tsx").includes("aria-hidden=\"true\""));

@@ -5,7 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { LogIn, Eye, EyeOff, ShieldCheck, GraduationCap, BookOpen } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
-import { BRAND_LOGO_DARK, BRAND_LOGO_LIGHT, BRAND_TAGLINE } from "@/lib/brand";
+import { BRAND_ICON, BRAND_ICON_DARK, BRAND_TAGLINE } from "@/lib/brand";
 import BatikAccent from "@/components/decorations/BatikAccent";
 
 /**
@@ -225,9 +225,13 @@ export default function LoginPage() {
 <div className="relative mx-auto grid w-full max-w-6xl items-center gap-10 lg:grid-cols-2 lg:gap-14">
         {/* ── BRAND HERO ── */}
         <div className="order-2 lg:order-1">
-          <Link href="/" className="inline-flex items-center" aria-label="Beranda BahasaCerdas">
-            <Image src={BRAND_LOGO_DARK} alt="BahasaCerdas" width={420} height={96} className="h-24 w-auto object-contain dark:hidden sm:h-28 md:h-32" />
-            <Image src={BRAND_LOGO_LIGHT} alt="BahasaCerdas" width={420} height={96} className="hidden h-24 w-auto object-contain dark:inline sm:h-28 md:h-32" />
+                    <Link href="/" className="inline-flex items-center gap-4" aria-label="Beranda BahasaCerdas">
+            <Image src={BRAND_ICON_DARK} alt="Logo BahasaCerdas" width={72} height={72} className="h-16 w-16 object-contain dark:hidden md:h-20 md:w-20" />
+            <Image src={BRAND_ICON} alt="Logo BahasaCerdas" width={72} height={72} className="hidden h-16 w-16 object-contain dark:inline md:h-20 md:w-20" />
+            <span className="flex flex-col">
+              <span className="text-3xl font-black tracking-tight text-slate-900 dark:text-white md:text-4xl">BahasaCerdas</span>
+              <span className="text-sm font-medium text-slate-500 dark:text-slate-400">{BRAND_TAGLINE}</span>
+            </span>
           </Link>
 
           <h1 className="mt-6 text-4xl font-black leading-tight tracking-tight text-slate-900 dark:text-white md:text-5xl">

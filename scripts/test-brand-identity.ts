@@ -94,13 +94,13 @@ test("14. opengraph-image memakai brand baru", () =>
 
 /* ── 4. Login & shell ── */
 console.log("\n── Login, Murid, Guru, Arena, Shared ──");
-test("15. login memakai brand baru via registry (BRAND_ICON + BRAND_LOGO_DARK)", () => {
+test("15. login memakai brand baru via registry (BRAND_ICON_DARK + teks brand)", () => {
   const p = read("app/(auth)/login/page.tsx");
-  return p.includes('from "@/lib/brand"') && p.includes("BRAND_LOGO_DARK") && p.includes("BRAND_LOGO_LIGHT");
+  return p.includes('from "@/lib/brand"') && p.includes("BRAND_ICON_DARK") && p.includes(">BahasaCerdas<");
 });
 test("16. register memakai brand baru via registry", () => {
   const p = read("app/(auth)/register/page.tsx");
-  return p.includes('from "@/lib/brand"') && p.includes("BRAND_LOGO_DARK") && p.includes("BRAND_LOGO_LIGHT");
+  return p.includes('from "@/lib/brand"') && p.includes("BRAND_ICON_DARK") && p.includes(">BahasaCerdas<");
 });
 test("17. arena-login memakai brand baru", () =>
   read("app/auth/arena-login/page.tsx").includes("/brand/bc2026-icon.png"));

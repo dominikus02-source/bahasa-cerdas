@@ -44,7 +44,7 @@ console.log("── Struktur & brand ──");
 test("1. login route exists", () => page.length > 0);
 test("2. logo BC 2026 dari registry (bukan hardcode lama)", () =>
   page.includes('from "@/lib/brand"') &&
-  page.includes("BRAND_LOGO_DARK") &&
+  page.includes("BRAND_ICON_DARK") &&
   !page.includes("BC-logo.png"));
 test("3. tagline resmi dipakai", () => page.includes("BRAND_TAGLINE"));
 test("4. headline hero 'Satu Pintu, Seribu Kemampuan Berbahasa'", () =>
@@ -100,9 +100,10 @@ test("26. tidak ada referensi logo lama (BC-logo/red brand)", () =>
   !page.includes("BC-logo.png") && !page.includes("from-red-600"));
 test("27. background dekoratif ringan tanpa maskot/manusia", () =>
   page.includes("blur-3xl") && !page.includes("avatar"));
-test("28. SATU brand block di hero (tanpa icon ganda BRAND_ICON + wordmark)", () => {
-  const brandHeader = page.slice(page.indexOf('aria-label="Beranda BahasaCerdas"'), page.indexOf('aria-label="Beranda BahasaCerdas"') + 400);
-  return !brandHeader.includes("BRAND_ICON") && brandHeader.includes("BRAND_LOGO_DARK") && brandHeader.includes("BRAND_LOGO_LIGHT");
+test("28. SATU brand block di hero (ICON BC + teks BahasaCerdas + tagline)", () => {
+  const brandHeader = page.slice(page.indexOf('aria-label="Beranda BahasaCerdas"'), page.indexOf('aria-label="Beranda BahasaCerdas"') + 900);
+  return brandHeader.includes("BRAND_ICON_DARK") && brandHeader.includes("BRAND_ICON") &&
+    brandHeader.includes(">BahasaCerdas<") && brandHeader.includes("BRAND_TAGLINE");
 });
 test("29. nuansa batik subtle ada (BatikAccent, aria-hidden, opacity rendah)", () =>
   page.includes("BatikAccent") && read("components/decorations/BatikAccent.tsx").includes("aria-hidden=\"true\""));
