@@ -31,6 +31,7 @@ Randomisasi seeded + anti-repeat, snapshot terkunci, listening anti-leak kontrak
 # Files Changed
 - `app/api/payment/webhook/route.ts` (rewrite processing → claim-first transaksional)
 - `package.json` (+test:premium-production)
+- `prisma/migrations/manual/2026-08-15_transaksi_orderid_unique.sql` (partial unique index `Transaksi_orderId_key`, applied by Founder)
 - `scripts/test-premium-production.ts` (BARU — 24 asersi)
 - `docs/PHASE_2_PREMIUM_PRODUCTION_AUDIT.md` (BARU)
 - `docs/PHASE_2_STUDENT_EXPERIENCE_GAP.md` (BARU)
@@ -38,7 +39,9 @@ Randomisasi seeded + anti-repeat, snapshot terkunci, listening anti-leak kontrak
 - `docs/UKBI_TKA_PRODUCTION_CERTIFICATION.md` (BARU)
 
 # Database Changes
-TIDAK ADA (perbaikan murni application-level; unique index orderId = P2 ditunda menunggu cek duplikat produksi).
+Migration manual `2026-08-15_transaksi_orderid_unique.sql` sudah dijalankan Founder di Supabase SQL Editor. Output verifikasi:
+`CREATE UNIQUE INDEX "Transaksi_orderId_key" ON public."Transaksi" USING btree ("orderId") WHERE ("orderId" IS NOT NULL)`.
+Semua `orderId` non-null kini unik; `NULL` tetap diperbolehkan.
 
 # Tests
 | Suite | Hasil |
@@ -51,8 +54,7 @@ TIDAK ADA (perbaikan murni application-level; unique index orderId = P2 ditunda 
 
 # Remaining Risks
 1. **Webhook real belum pernah menerima notifikasi Midtrans production** (deploy → log signature mismatch ada fallback diagnosa) — 🟡 NOT BROWSER/PRODUCTION VERIFIED (sesuai aturan: tidak mengklaim verifikasi tanpa bukti).
-2. `Transaksi.orderId` belum unique (P2) — mitigasi application-level sudah menutup risiko ganda.
-3. Checkout DB timeout → transaksi tak tercatat (aman fail-closed, log-only).
+2. Checkout DB timeout → transaksi tak tercatat (aman fail-closed, log-only).
 
 # Deferred Work (Phase 2 berikutnya)
 AI Mentor baru, Adaptive Practice Engine, pemasangan Learning Loop ke beranda murid, renewal via Subscription model, premium murid UI.
@@ -60,7 +62,7 @@ AI Mentor baru, Adaptive Practice Engine, pemasangan Learning Loop ke beranda mu
 # Production Gate
 **YES WITH CONDITIONS**
 1. Uji 1 transaksi real di production (sandbox→production) dan pantau log webhook (duplicate/rejected).
-2. Cek data `Transaksi.orderId` duplikat sebelum membuat unique index (P2).
+2. `Transaksi.orderId` duplicate check = ✅ PASS; unique index sudah diterapkan.
 3. Set `MIDTRANS_SERVER_KEY` + `MIDTRANS_IS_PRODUCTION` benar di Vercel (sudah ter-set — verifikasi ulang saat deploy).
 
 ---
@@ -110,20 +112,19 @@ Expected: **0 rows**. Bila ada: STOP, laporkan (jangan hapus buta) — baris, st
 
 **HASIL (Founder, sudah dijalankan):** `Transaksi.orderId duplicate check = PASS` (0 duplikat).
 
-# Recommended Unique Constraint (P2 — siap dipakai, BELUM di-apply)
+# Unique Constraint (APPLIED)
 Partial unique index idempoten (NULL-safe — hanya baris dengan orderId non-null), jangan pakai `@unique` penuh Prisma agar kolom nullable tidak mengubah perilaku:
 ```sql
 CREATE UNIQUE INDEX IF NOT EXISTS "Transaksi_orderId_key"
 ON "Transaksi"("orderId")
 WHERE "orderId" IS NOT NULL;
 ```
-Syarat sebelum apply: cek duplikat = 0 ✓ (sudah), deploy impact = hanya index baru (tanpa mengubah data/query), rollback = `DROP INDEX IF EXISTS "Transaksi_orderId_key";`. Diajukan sebagai rekomendasi — menunggu approval Founder untuk membuat file migration manual & apply di SQL Editor.
+Status: **APPLIED** oleh Founder. Cek duplikat = 0, index aktif, dan tidak ada data yang diubah atau dihapus. Rollback manual bila diperlukan: `DROP INDEX IF EXISTS "Transaksi_orderId_key";`.
 
 # Remaining Risks
 1. Webhook production belum pernah diverifikasi dengan notifikasi Midtrans sungguhan (checklist di atas wajib sebelum klaim fully verified).
 2. `Transaksi.orderId` belum unique — mitigasi application-level sudah menutup risiko ganda; unique index tetap P2.
 
 # Deferred P2
-- Unique constraint/partial index `Transaksi.orderId` (setelah cek duplikat = 0 & Founder approval).
 - Retry penulisan Transaksi saat checkout DB timeout.
 - Renewal via model `Subscription` (belum dipakai checkout).

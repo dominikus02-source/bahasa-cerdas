@@ -19,9 +19,9 @@ Legenda: 🟢 GREEN (production-ready) · 🟡 YELLOW (perlu hardening) · 🔴 
 | 12 | Manual grant | scripts/cleanup-promo-premium.ts + SQL | dev/admin-only, ada alasan + audit | — | — | — | tidak API publik ✓ | — | — | 🟢 | — | — |
 | 13 | Subscription model | prisma/schema.prisma (Subscription) | belum dipakai checkout (Transaksi legacy) | Subscription | — | — | — | — | — | 🔵 | wire ke checkout bila renewal dibutuhkan | — |
 | 14 | Observability | webhook/log | signature mismatch detail; + fase ini: premium.activated, duplicate, unknown order | — | — | — | tanpa PII/secrets ✓ | — | — | 🟢 | — | — |
-| 15 | Transaksi.orderId unique | prisma/schema.prisma | orderId nullable TANPA unique | Transaksi | — | — | order dobel → findFirst ambigu | mitigasi claim-first | — | 🟡 | partial unique index setelah cek duplikat produksi | P2 |
+| 15 | Transaksi.orderId unique | prisma/migrations/manual/2026-08-15_transaksi_orderid_unique.sql | partial unique index `Transaksi_orderId_key` untuk orderId non-null; NULL tetap valid | Transaksi | — | — | duplicate orderId ditutup di DB ✓ | — | cek Founder: 0 duplikat + index aktif | 🟢 | — | — |
 
 ## Kesimpulan
 - 🔴→🟢 P0: idempotensi webhook (klaim atomik) — DIPERBAIKI.
-- 🟡 P2: unique index orderId (butuh cek data produksi dulu); retry penulisan Transaksi saat checkout timeout.
+- 🟡 P2: retry penulisan Transaksi saat checkout DB timeout.
 - Sisanya 🟢 — sistem premium sudah canonical & server-authoritative.
