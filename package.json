@@ -215,7 +215,9 @@
     "test:ai-bc-guru-ux": "npx tsx scripts/test-ai-bc-guru-ux.ts",
     "test:kuis-tempur-progression-ux": "npx tsx scripts/test-kuis-tempur-progression-ux.ts",
     "test:notification-system": "npx tsx scripts/test-notification-system.ts",
-    "test:brand-identity": "npx tsx scripts/test-brand-identity.ts"
+    "test:brand-identity": "npx tsx scripts/test-brand-identity.ts",
+    "test:login-ux": "npx tsx scripts/test-login-ux.ts",
+    "test:register-ux": "npx tsx scripts/test-register-ux.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.39.0",

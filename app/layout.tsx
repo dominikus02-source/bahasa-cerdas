@@ -58,7 +58,7 @@ export const metadata: Metadata = {
     googleBot: { index: true, follow: true, "max-video-preview": -1, "max-image-preview": "large", "max-snippet": -1 },
   },
   icons: {
-    icon: [{ url: "/brand/bc2026-favicon.png", sizes: "any" }, { url: "/icon-512.png", type: "image/png", sizes: "512x512" }, { url: "/icon-192.png", type: "image/png", sizes: "192x192" }],
+    icon: [{ url: "/brand/bc2026-favicon-64.png", sizes: "any" }, { url: "/icon-512.png", type: "image/png", sizes: "512x512" }, { url: "/icon-192.png", type: "image/png", sizes: "192x192" }],
     apple: { url: "/apple-touch-icon.png", sizes: "180x180" },
   },
   manifest: "/manifest.json",

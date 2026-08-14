@@ -106,7 +106,7 @@ export default function TestResultPanel({ result, paketId, backHref = "/kompetis
 
           {/* Brand row */}
           <div className="relative flex items-center justify-center gap-2">
-            <img src="/brand/bc2026-icon.png" alt="BahasaCerdas" className="h-7 w-7 sm:h-8 sm:w-8 object-contain" />
+            <img src="/brand/bc2026-icon-dark.png" alt="BahasaCerdas" className="h-7 w-7 sm:h-8 sm:w-8 object-contain" />
             <span className="text-sm sm:text-base font-extrabold tracking-wide text-white">
               Bahasa<span className="text-emerald-400">Cerdas</span>
             </span>
@@ -315,7 +315,7 @@ export default function TestResultPanel({ result, paketId, backHref = "/kompetis
         {/* Branded footer */}
         <div className="flex flex-col items-center gap-1 pt-2 pb-1">
           <div className="flex items-center gap-1.5 opacity-70">
-            <img src="/brand/bc2026-icon.png" alt="" className="h-4 w-4 object-contain" />
+            <img src="/brand/bc2026-icon-dark.png" alt="" className="h-4 w-4 object-contain" />
             <span className="text-[11px] font-bold tracking-wide text-slate-500">BahasaCerdas</span>
           </div>
           <p className="text-center text-[9px] sm:text-[10px] text-slate-400 max-w-sm leading-relaxed">

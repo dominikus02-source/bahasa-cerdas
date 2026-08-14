@@ -3,11 +3,19 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Button } from "@/components/ui/button";
-import { GraduationCap, BookOpen, ArrowRight, Sparkles, Check, Eye, EyeOff } from "lucide-react";
-import BatikDecoration from "@/components/shared/BatikDecoration";
+import { GraduationCap, BookOpen, ArrowRight, Check, Eye, EyeOff, ShieldCheck } from "lucide-react";
 import { registerUser } from "@/app/actions/register";
 import { createClient } from "@/lib/supabase/client";
+import { BRAND_ICON, BRAND_LOGO_DARK, BRAND_TAGLINE } from "@/lib/brand";
+
+/**
+ * REGISTER 3.0 — saudara kembar visual Login 3.0.
+ *
+ * Dua kolom: brand hero (logo BC 2026 + headline + value cards) di kiri,
+ * kartu pendaftaran 2 langkah di kanan (pilih peran → isi data). SELURUH
+ * logic auth (create-user, registerUser action, auto sign-in, redirect
+ * role-based, error handling, success screen) TIDAK diubah — hanya visual.
+ */
 
 export default function RegisterPage() {
   const [step, setStep] = useState(1);
@@ -94,271 +102,338 @@ export default function RegisterPage() {
 
   const roleConfig = {
     GURU: {
-      gradient: "from-emerald-500 to-emerald-600",
-      bgLight: "bg-emerald-50",
-      borderActive: "border-emerald-500",
-      textActive: "text-emerald-700",
-      bgIcon: "bg-emerald-100",
-      iconColor: "text-emerald-600",
-      accent: "ring-emerald-200",
+      borderActive: "border-emerald-500 dark:border-emerald-400",
+      bgLight: "bg-emerald-50 dark:bg-emerald-500/10",
+      textActive: "text-emerald-700 dark:text-emerald-300",
+      bgIcon: "bg-emerald-100 dark:bg-emerald-500/20",
+      iconColor: "text-emerald-600 dark:text-emerald-300",
     },
     MURID: {
-      gradient: "from-violet-500 to-purple-600",
-      bgLight: "bg-violet-50",
-      borderActive: "border-violet-500",
-      textActive: "text-violet-700",
-      bgIcon: "bg-violet-100",
-      iconColor: "text-violet-600",
-      accent: "ring-violet-200",
+      borderActive: "border-violet-500 dark:border-violet-400",
+      bgLight: "bg-violet-50 dark:bg-violet-500/10",
+      textActive: "text-violet-700 dark:text-violet-300",
+      bgIcon: "bg-violet-100 dark:bg-violet-500/20",
+      iconColor: "text-violet-600 dark:text-violet-300",
     },
   };
 
   const config = roleConfig[role];
 
+  const inputCls =
+    "w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 placeholder:text-slate-400 outline-none transition-colors focus:border-violet-500 focus:ring-2 focus:ring-violet-200 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-violet-500 dark:focus:ring-violet-500/25";
+
+  const valueCards = [
+    { icon: GraduationCap, tint: "bg-violet-50 text-violet-700 dark:bg-violet-500/10 dark:text-violet-300", title: "Untuk Guru", copy: "Mengajar, membuat materi, kelola kelas, dan pantau perkembangan siswa." },
+    { icon: BookOpen, tint: "bg-teal-50 text-teal-700 dark:bg-teal-500/10 dark:text-teal-300", title: "Untuk Murid", copy: "Belajar, berlatih, selesaikan tantangan, dan raih prestasi." },
+    { icon: ShieldCheck, tint: "bg-sky-50 text-sky-700 dark:bg-sky-500/10 dark:text-sky-300", title: "Aman & Terpercaya", copy: "Data Anda terlindungi dengan standar keamanan terbaik." },
+  ];
+
+  const roleCards = [
+    { key: "GURU" as const, icon: GraduationCap, label: "Guru", sub: "AI Rencana Pembelajaran, Bank Soal, Kuis Game" },
+    { key: "MURID" as const, icon: BookOpen, label: "Murid", sub: "Belajar, Kuis, UKBI" },
+  ];
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-red-600 via-red-700 to-blue-900 relative overflow-hidden p-4">
-      {/* Batik Pattern Decorations */}
-      <BatikDecoration />
-      
-      <div className="absolute top-0 left-0 w-1/2 h-1/2 bg-gradient-to-br from-black/10 to-transparent" />
-      <div className="absolute bottom-0 right-0 w-1/2 h-1/2 bg-gradient-to-tl from-black/10 to-transparent" />
+    <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-white via-indigo-50/60 to-violet-50 px-4 py-8 dark:from-slate-950 dark:via-[#0b1220] dark:to-[#1e1b4b]">
+      {/* Dekorasi edukatif ringan — konsisten dengan Login 3.0 */}
+      <div aria-hidden className="pointer-events-none absolute -left-24 -top-24 h-72 w-72 rounded-full bg-violet-200/40 blur-3xl dark:bg-violet-900/20" />
+      <div aria-hidden className="pointer-events-none absolute -bottom-32 -right-24 h-96 w-96 rounded-full bg-teal-100/50 blur-3xl dark:bg-teal-900/10" />
 
-      <div className="relative z-10 w-full max-w-lg">
-        <div className="bg-white/95 backdrop-blur-md rounded-3xl p-6 md:p-8 shadow-2xl border border-white/20">
-          <div className="text-center mb-6">
-            <Link href="/" className="inline-flex items-center gap-1.5 text-xs text-gray-400 hover:text-red-600 mb-4 transition-colors">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-              Beranda
-            </Link>
-            <Image src="/brand/bc2026-icon.png" alt="BahasaCerdas" width={56} height={56} className="mx-auto mb-3" />
-            <h1 className="text-2xl font-bold text-gray-900 mb-1">Daftar</h1>
-            <p className="text-sm text-gray-500">Bergabung dengan BahasaCerdas</p>
-          </div>
-          {error && (
-            <div className="mb-4 rounded-xl bg-red-50 border border-red-200 p-3 md:p-4 text-sm text-red-700">{error}</div>
-          )}
+      <div className="relative mx-auto grid w-full max-w-6xl items-start gap-10 lg:grid-cols-2 lg:gap-14">
+        {/* ── BRAND HERO (identik Login 3.0) ── */}
+        <div className="order-2 lg:order-1 lg:sticky lg:top-8">
+          <Link href="/" className="inline-flex items-center gap-2.5" aria-label="Beranda BahasaCerdas">
+            <Image src={BRAND_ICON} alt="" width={40} height={40} className="h-9 w-9 object-contain" />
+            <Image src={BRAND_LOGO_DARK} alt="BahasaCerdas" width={200} height={44} className="h-9 w-auto object-contain dark:hidden" />
+            <span className="hidden text-lg font-extrabold text-white dark:inline">BahasaCerdas</span>
+          </Link>
 
-          {step === 1 && (
-            <div className="space-y-6">
-              <div className="text-center">
-                <div className="inline-flex items-center gap-2 px-4 py-2 bg-red-50 rounded-full text-red-600 text-sm font-medium">
-                  <Sparkles className="w-4 h-4" />
-                  Pilih jenis akun kamu
-                </div>
-              </div>
-              
-              <div className="grid grid-cols-2 gap-3 md:gap-4">
-                <button
-                  type="button"
-                  onClick={() => setRole("GURU")}
-                  className={`relative flex flex-col items-center gap-3 rounded-2xl border-2 p-4 md:p-6 transition-all hover:scale-[1.02] ${
-                    role === "GURU"
-                      ? `${config.borderActive} ${config.bgLight} shadow-lg ${config.accent} ring-4`
-                      : "border-gray-200 hover:border-gray-300 bg-gray-50"
-                  }`}
-                >
-                  {role === "GURU" && (
-                    <div className="absolute top-2 right-2">
-                      <div className={`w-6 h-6 ${config.bgIcon} rounded-full flex items-center justify-center`}>
-                        <Check className={`w-4 h-4 ${config.iconColor}`} />
-                      </div>
-                    </div>
-                  )}
-                  <div className={`w-14 h-14 md:w-16 md:h-16 rounded-2xl flex items-center justify-center ${role === "GURU" ? config.bgIcon : "bg-gray-100"}`}>
-                    <GraduationCap className={`h-7 w-7 md:h-8 md:w-8 ${role === "GURU" ? config.iconColor : "text-gray-400"}`} />
-                  </div>
-                  <span className={`font-bold text-base md:text-lg ${role === "GURU" ? config.textActive : "text-gray-700"}`}>Guru</span>
-                  <span className="text-[11px] md:text-xs text-center text-gray-500">AI Rencana Pembelajaran, Bank Soal, Kuis Game</span>
-                </button>
-                
-                <button
-                  type="button"
-                  onClick={() => setRole("MURID")}
-                  className={`relative flex flex-col items-center gap-3 rounded-2xl border-2 p-4 md:p-6 transition-all hover:scale-[1.02] ${
-                    role === "MURID"
-                      ? `${config.borderActive} ${config.bgLight} shadow-lg ${config.accent} ring-4`
-                      : "border-gray-200 hover:border-gray-300 bg-gray-50"
-                  }`}
-                >
-                  {role === "MURID" && (
-                    <div className="absolute top-2 right-2">
-                      <div className={`w-6 h-6 ${config.bgIcon} rounded-full flex items-center justify-center`}>
-                        <Check className={`w-4 h-4 ${config.iconColor}`} />
-                      </div>
-                    </div>
-                  )}
-                  <div className={`w-14 h-14 md:w-16 md:h-16 rounded-2xl flex items-center justify-center ${role === "MURID" ? config.bgIcon : "bg-gray-100"}`}>
-                    <BookOpen className={`h-7 w-7 md:h-8 md:w-8 ${role === "MURID" ? config.iconColor : "text-gray-400"}`} />
-                  </div>
-                  <span className={`font-bold text-base md:text-lg ${role === "MURID" ? config.textActive : "text-gray-700"}`}>Murid</span>
-                  <span className="text-[11px] md:text-xs text-center text-gray-500">Belajar, Kuis, UKBI</span>
-                </button>
-              </div>
+          <h1 className="mt-6 text-4xl font-black leading-tight tracking-tight text-slate-900 dark:text-white md:text-5xl">
+            Satu Pintu,
+            <br />
+            <span className="bg-gradient-to-r from-violet-600 to-teal-500 bg-clip-text text-transparent dark:from-violet-400 dark:to-teal-300">Seribu</span> Kemampuan
+            <br />
+            <span className="text-slate-900 dark:text-white">Berbahasa</span>
+          </h1>
+          <p className="mt-4 max-w-md text-sm leading-relaxed text-slate-600 dark:text-slate-300">
+            Bergabung dengan ekosistem yang menghubungkan guru, murid, pembelajaran, dan komunitas Bahasa Indonesia.
+          </p>
 
-              <Button
-                onClick={() => setStep(2)}
-                className={`w-full h-12 rounded-xl font-bold text-lg shadow-lg bg-gradient-to-r ${config.gradient} hover:opacity-90 transition-opacity flex items-center justify-center gap-2`}
-              >
-                Lanjut
-                <ArrowRight className="w-5 h-5" />
-              </Button>
-            </div>
-          )}
-
-          {step === 2 && (
-            <div className="space-y-5">
-              <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full ${config.bgLight} ${config.textActive} text-xs font-medium`}>
-                {role === "GURU" ? <GraduationCap className="w-4 h-4" /> : <BookOpen className="w-4 h-4" />}
-                {role === "GURU" ? "Akun Guru" : "Akun Murid"}
-              </div>
-
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Nama Lengkap</label>
-                <input
-                  type="text"
-                  value={fullName}
-                  onChange={(e) => setFullName(e.target.value)}
-                  className="w-full rounded-xl border-2 border-gray-200 px-4 py-3 text-sm focus:border-red-500 focus:outline-none transition-colors"
-                  placeholder={role === "GURU" ? "Drs. Siti Rahayu, M.Pd." : "Ahmad Rizki"}
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Email</label>
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full rounded-xl border-2 border-gray-200 px-4 py-3 text-sm focus:border-red-500 focus:outline-none transition-colors"
-                  placeholder="siti@sekolah.sch.id"
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Password</label>
-                <div className="relative">
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="w-full rounded-xl border-2 border-gray-200 px-4 py-3 pr-12 text-sm focus:border-red-500 focus:outline-none transition-colors"
-                    placeholder="Minimal 8 karakter"
-                    minLength={8}
-                    required
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
-                    tabIndex={-1}
-                  >
-                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                  </button>
-                </div>
-              </div>
-
-              <div className="h-px bg-gray-100" />
-
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Asal Sekolah</label>
-                <input
-                  type="text"
-                  value={school}
-                  onChange={(e) => setSchool(e.target.value)}
-                  className="w-full rounded-xl border-2 border-gray-200 px-4 py-3 text-sm focus:border-red-500 focus:outline-none transition-colors"
-                  placeholder={role === "GURU" ? "SMA Negeri 1 Jakarta" : "SMP Negeri 2 Bandung"}
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
+          <div className="mt-6 hidden space-y-2.5 lg:block">
+            {valueCards.map((v) => (
+              <div key={v.title} className="flex items-start gap-3 rounded-2xl border border-slate-200/70 bg-white/70 px-4 py-3 dark:border-slate-800 dark:bg-slate-900/50">
+                <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${v.tint}`}>
+                  <v.icon size={17} />
+                </span>
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Kota/Kabupaten</label>
-                  <input
-                    type="text"
-                    value={city}
-                    onChange={(e) => setCity(e.target.value)}
-                    className="w-full rounded-xl border-2 border-gray-200 px-4 py-3 text-sm focus:border-red-500 focus:outline-none transition-colors"
-                    placeholder="Jakarta"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Provinsi</label>
-                  <input
-                    type="text"
-                    value={province}
-                    onChange={(e) => setProvince(e.target.value)}
-                    className="w-full rounded-xl border-2 border-gray-200 px-4 py-3 text-sm focus:border-red-500 focus:outline-none transition-colors"
-                    placeholder="DKI Jakarta"
-                  />
+                  <p className="text-sm font-bold text-slate-900 dark:text-slate-100">{v.title}</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">{v.copy}</p>
                 </div>
               </div>
-
-              <div className="flex gap-3 pt-2">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => setStep(1)}
-                  className="flex-1 h-12 rounded-xl font-semibold border-2"
-                >
-                  Kembali
-                </Button>
-                <Button
-                  type="submit"
-                  onClick={handleRegister}
-                  disabled={loading}
-                  className={`flex-1 h-12 rounded-xl font-bold shadow-lg bg-gradient-to-r ${config.gradient} hover:opacity-90 transition-opacity flex items-center justify-center gap-2`}
-                >
-                  {loading ? (
-                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                  ) : (
-                    <>
-                      Daftar
-                      <ArrowRight className="w-5 h-5" />
-                    </>
-                  )}
-                </Button>
-              </div>
-            </div>
-          )}
-
-          {registered && (
-            <div className="text-center space-y-4">
-              <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mx-auto">
-                <Check className="w-8 h-8 text-green-600" />
-              </div>
-              <h2 className="text-xl font-bold text-gray-900">Pendaftaran Berhasil!</h2>
-              <p className="text-sm text-gray-600">Akun <strong>{email}</strong> berhasil dibuat.</p>
-              <p className="text-xs text-gray-500">
-                {role === "MURID" ? "Kamu bisa langsung masuk ke Arena sekarang." : "Kamu bisa langsung masuk ke dasbor guru."}
-              </p>
-              <div className="pt-4">
-                <Link href={role === "MURID" ? "/auth/arena-login" : "/login"}
-                  className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-bold shadow-lg bg-gradient-to-r from-red-600 to-red-700 text-white hover:opacity-90 transition-opacity">
-                  Masuk Sekarang <ArrowRight className="w-4 h-4" />
-                </Link>
-              </div>
-            </div>
-          )}
-
-          <div className="mt-6 pt-5 border-t border-gray-100 text-center">
-            <p className="text-sm text-gray-500">
-              Sudah punya akun?{" "}
-              <Link href={role === "MURID" ? "/auth/arena-login" : "/login"} className="font-semibold text-violet-600 hover:text-violet-700 hover:underline">
-                {role === "MURID" ? "Masuk ke Arena" : "Masuk ke Dasbor Guru"}
-              </Link>
-            </p>
+            ))}
           </div>
         </div>
 
-        <p className="text-center text-white/60 text-xs mt-6">
-          BahasaCerdas — Platform edukasi Bahasa Indonesia
-        </p>
-        <p className="text-center text-white/40 text-xs mt-2">
-          Butuh bantuan? <a href="mailto:halo@bahasacerdas.com" className="hover:text-white/60">halo@bahasacerdas.com</a>
-        </p>
+        {/* ── REGISTER CARD ── */}
+        <div className="order-1 lg:order-2">
+          <div className="mx-auto w-full max-w-md rounded-3xl border border-slate-200/80 bg-white p-6 shadow-xl shadow-slate-900/5 dark:border-slate-800 dark:bg-slate-900 md:p-8">
+            <div className="mb-6 text-center">
+              <h2 className="text-2xl font-extrabold text-slate-900 dark:text-white">Mulai Perjalanan Anda</h2>
+              <p className="mt-1.5 text-sm text-slate-500 dark:text-slate-400">
+                Buat akun BahasaCerdas untuk mulai belajar atau mengajar dalam satu ekosistem.
+              </p>
+            </div>
+
+            {error && (
+              <div className="mb-4 flex items-center gap-2 rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-700 dark:border-red-900 dark:bg-red-950/40 dark:text-red-300">
+                <span className="h-2 w-2 shrink-0 rounded-full bg-red-500" />
+                {error}
+              </div>
+            )}
+
+            {registered ? (
+              <div className="space-y-4 text-center">
+                <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-emerald-100 dark:bg-emerald-500/20">
+                  <Check className="h-8 w-8 text-emerald-600 dark:text-emerald-300" />
+                </div>
+                <h3 className="text-xl font-bold text-slate-900 dark:text-white">Pendaftaran Berhasil!</h3>
+                <p className="text-sm text-slate-600 dark:text-slate-300">
+                  Akun <strong>{email}</strong> berhasil dibuat.
+                </p>
+                <p className="text-xs text-slate-500 dark:text-slate-400">
+                  {role === "MURID" ? "Kamu bisa langsung masuk ke Arena sekarang." : "Kamu bisa langsung masuk ke dasbor guru."}
+                </p>
+                <div className="pt-4">
+                  <Link
+                    href={role === "MURID" ? "/auth/arena-login" : "/login"}
+                    className="inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-violet-700 px-6 font-bold text-white shadow-lg shadow-violet-600/25 transition-all hover:from-violet-700 hover:to-violet-800 dark:from-violet-500 dark:to-violet-600 dark:hover:from-violet-600 dark:hover:to-violet-700"
+                  >
+                    Masuk Sekarang <ArrowRight className="h-4 w-4" />
+                  </Link>
+                </div>
+              </div>
+            ) : step === 1 ? (
+              <div className="space-y-6">
+                <div className="text-center">
+                  <span className="inline-flex items-center gap-2 rounded-full bg-violet-50 px-4 py-2 text-sm font-medium text-violet-700 dark:bg-violet-500/10 dark:text-violet-300">
+                    Pilih jenis akun kamu
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3 md:gap-4">
+                  {roleCards.map((r) => {
+                    const c = roleConfig[r.key];
+                    const active = role === r.key;
+                    return (
+                      <button
+                        key={r.key}
+                        type="button"
+                        onClick={() => setRole(r.key)}
+                        className={`relative flex flex-col items-center gap-3 rounded-2xl border-2 p-4 transition-all active:scale-[0.98] md:p-6 ${
+                          active
+                            ? `${c.borderActive} ${c.bgLight} shadow-lg`
+                            : "border-slate-200 bg-slate-50 hover:border-slate-300 dark:border-slate-700 dark:bg-slate-800/50 dark:hover:border-slate-600"
+                        }`}
+                      >
+                        {active && (
+                          <div className="absolute right-2 top-2">
+                            <div className={`flex h-6 w-6 items-center justify-center rounded-full ${c.bgIcon}`}>
+                              <Check className={`h-4 w-4 ${c.iconColor}`} />
+                            </div>
+                          </div>
+                        )}
+                        <div className={`flex h-14 w-14 items-center justify-center rounded-2xl md:h-16 md:w-16 ${active ? c.bgIcon : "bg-slate-100 dark:bg-slate-700/50"}`}>
+                          <r.icon className={`h-7 w-7 md:h-8 md:w-8 ${active ? c.iconColor : "text-slate-400 dark:text-slate-500"}`} />
+                        </div>
+                        <span className={`text-base font-bold md:text-lg ${active ? c.textActive : "text-slate-700 dark:text-slate-200"}`}>
+                          {r.label}
+                        </span>
+                        <span className="text-center text-[11px] text-slate-500 dark:text-slate-400 md:text-xs">{r.sub}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => setStep(2)}
+                  className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-violet-700 text-base font-bold text-white shadow-lg shadow-violet-600/25 transition-all hover:from-violet-700 hover:to-violet-800 active:scale-[0.99] dark:from-violet-500 dark:to-violet-600 dark:hover:from-violet-600 dark:hover:to-violet-700"
+                >
+                  Lanjut
+                  <ArrowRight className="h-5 w-5" />
+                </button>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                <span className={`inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-medium ${config.bgLight} ${config.textActive}`}>
+                  {role === "GURU" ? <GraduationCap className="h-4 w-4" /> : <BookOpen className="h-4 w-4" />}
+                  {role === "GURU" ? "Akun Guru" : "Akun Murid"}
+                </span>
+
+                <div>
+                  <label htmlFor="fullName" className="mb-1.5 block text-sm font-semibold text-slate-700 dark:text-slate-200">
+                    Nama Lengkap
+                  </label>
+                  <input
+                    id="fullName"
+                    type="text"
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
+                    className={inputCls}
+                    placeholder={role === "GURU" ? "Drs. Siti Rahayu, M.Pd." : "Ahmad Rizki"}
+                    autoComplete="name"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="email" className="mb-1.5 block text-sm font-semibold text-slate-700 dark:text-slate-200">
+                    Email
+                  </label>
+                  <input
+                    id="email"
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className={inputCls}
+                    placeholder="siti@sekolah.sch.id"
+                    autoComplete="email"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="password" className="mb-1.5 block text-sm font-semibold text-slate-700 dark:text-slate-200">
+                    Kata Sandi
+                  </label>
+                  <div className="relative">
+                    <input
+                      id="password"
+                      type={showPassword ? "text" : "password"}
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      className={`${inputCls} pr-11`}
+                      placeholder="Minimal 8 karakter"
+                      minLength={8}
+                      autoComplete="new-password"
+                      required
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 transition-colors hover:text-slate-600 dark:hover:text-slate-300"
+                      aria-label={showPassword ? "Sembunyikan kata sandi" : "Tampilkan kata sandi"}
+                    >
+                      {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                    </button>
+                  </div>
+                </div>
+
+                <div className="h-px bg-slate-100 dark:bg-slate-800" />
+
+                <div>
+                  <label htmlFor="school" className="mb-1.5 block text-sm font-semibold text-slate-700 dark:text-slate-200">
+                    Asal Sekolah
+                  </label>
+                  <input
+                    id="school"
+                    type="text"
+                    value={school}
+                    onChange={(e) => setSchool(e.target.value)}
+                    className={inputCls}
+                    placeholder={role === "GURU" ? "SMA Negeri 1 Jakarta" : "SMP Negeri 2 Bandung"}
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label htmlFor="city" className="mb-1.5 block text-sm font-semibold text-slate-700 dark:text-slate-200">
+                      Kota/Kabupaten
+                    </label>
+                    <input
+                      id="city"
+                      type="text"
+                      value={city}
+                      onChange={(e) => setCity(e.target.value)}
+                      className={inputCls}
+                      placeholder="Jakarta"
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="province" className="mb-1.5 block text-sm font-semibold text-slate-700 dark:text-slate-200">
+                      Provinsi
+                    </label>
+                    <input
+                      id="province"
+                      type="text"
+                      value={province}
+                      onChange={(e) => setProvince(e.target.value)}
+                      className={inputCls}
+                      placeholder="DKI Jakarta"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex gap-3 pt-2">
+                  <button
+                    type="button"
+                    onClick={() => setStep(1)}
+                    className="h-12 flex-1 rounded-xl border border-slate-200 bg-white font-semibold text-slate-700 transition-colors hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800"
+                  >
+                    Kembali
+                  </button>
+                  <button
+                    type="submit"
+                    onClick={handleRegister}
+                    disabled={loading}
+                    className="flex h-12 flex-1 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-violet-700 font-bold text-white shadow-lg shadow-violet-600/25 transition-all hover:from-violet-700 hover:to-violet-800 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-60 dark:from-violet-500 dark:to-violet-600 dark:hover:from-violet-600 dark:hover:to-violet-700"
+                  >
+                    {loading ? (
+                      <div className="h-5 w-5 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+                    ) : (
+                      <>
+                        Daftar Sekarang
+                        <ArrowRight className="h-5 w-5" />
+                      </>
+                    )}
+                  </button>
+                </div>
+              </div>
+            )}
+
+            <div className="mt-6 border-t border-slate-100 pt-5 text-center dark:border-slate-800">
+              <p className="text-sm text-slate-500 dark:text-slate-400">
+                Sudah punya akun?{" "}
+                <Link
+                  href={role === "MURID" ? "/auth/arena-login" : "/login"}
+                  className="font-semibold text-violet-600 hover:text-violet-700 hover:underline dark:text-violet-400"
+                >
+                  {role === "MURID" ? "Masuk ke Arena" : "Masuk ke Dasbor Guru"}
+                </Link>
+              </p>
+            </div>
+          </div>
+
+          {/* Mobile: value cards compact */}
+          <div className="mt-5 grid gap-2 lg:hidden">
+            {valueCards.map((v) => (
+              <div key={v.title} className="flex items-center gap-3 rounded-xl border border-slate-200/70 bg-white/70 px-3 py-2.5 dark:border-slate-800 dark:bg-slate-900/50">
+                <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${v.tint}`}>
+                  <v.icon size={15} />
+                </span>
+                <div>
+                  <p className="text-xs font-bold text-slate-900 dark:text-slate-100">{v.title}</p>
+                  <p className="text-[11px] text-slate-500 dark:text-slate-400">{v.copy}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
+
+      <p className="relative mt-8 text-center text-xs text-slate-400 dark:text-slate-600">
+        BahasaCerdas — {BRAND_TAGLINE}
+      </p>
     </div>
   );
 }

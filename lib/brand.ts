@@ -11,10 +11,11 @@
  * - BRAND_FAVICON    : mark kecil untuk browser tab
  * - BRAND_APP_ICON   : icon aplikasi (PWA/install)
  */
-export const BRAND_ICON = "/brand/bc2026-icon.png";
+export const BRAND_ICON = "/brand/bc2026-icon.png"; // square-LIGHT — latar gelap/gradient
+export const BRAND_ICON_DARK = "/brand/bc2026-icon-dark.png"; // square-DARK — latar terang
 export const BRAND_LOGO_LIGHT = "/brand/bc2026-logo-light.png";
 export const BRAND_LOGO_DARK = "/brand/bc2026-logo-dark.png";
-export const BRAND_FAVICON = "/brand/bc2026-favicon.png";
+export const BRAND_FAVICON = "/brand/bc2026-favicon-64.png";
 export const BRAND_APP_ICON = "/brand/bc2026-appicon.png";
 
 export const BRAND_NAME = "BahasaCerdas";
