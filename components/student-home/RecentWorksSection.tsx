@@ -53,8 +53,8 @@ export function RecentWorksSection() {
     <section aria-label="Karya siswa terbaru">
       <div className="flex items-end justify-between mb-4">
         <div>
-          <h2 className="text-lg font-extrabold text-[var(--px-text)] flex items-center gap-2">
-            <Sparkles size={17} className="text-[var(--px-gold)]" />
+          <h2 className="text-xl font-semibold tracking-tight text-[var(--px-text)] flex items-center gap-2">
+            <Sparkles size={17} className="text-[var(--px-gold)]" strokeWidth={1.8} />
             Karya Siswa Terbaru
           </h2>
           <p className="text-xs text-[var(--px-text-faint)]">Puisi, cerpen, artikel, dan lainnya</p>
@@ -70,26 +70,26 @@ export function RecentWorksSection() {
       </div>
 
       {karya.length === 0 ? (
-        <div className="px-card px-5 py-8 text-center">
+        <div className="section-rule border-y px-5 py-8 text-center">
           <p className="text-sm text-[var(--px-text-faint)]">Belum ada karya. Jadilah yang pertama menulis!</p>
           <Link href="/murid/karya/tulis" className="inline-block mt-3 text-xs font-bold text-[var(--px-gold)] hover:underline">
             Tulis Karya Sekarang →
           </Link>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 border-t section-rule">
           {karya.map((k) => {
             const meta = TYPE_META[k.type] || { label: k.type, badge: "bg-slate-900/10 dark:bg-white/10 text-[var(--px-text-dim)]" };
             return (
               <Link
                 key={k.id}
                 href={`/murid/karya/${k.id}`}
-                className="group px-card px-4 py-4 flex flex-col gap-2 hover:bg-slate-900/[0.08] dark:bg-white/[0.08] transition-colors"
+                className="group section-rule border-b px-2 py-4 flex flex-col gap-2 hover:bg-slate-900/[0.025] dark:hover:bg-white/[0.05] transition-colors"
               >
                 <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full self-start ${meta.badge}`}>
                   {meta.label}
                 </span>
-                <p className="text-sm font-bold text-[var(--px-text)] line-clamp-2 group-hover:text-slate-900 dark:text-white transition-colors">
+                <p className="text-sm font-medium text-[var(--px-text)] line-clamp-2 group-hover:text-[var(--px-royal)] transition-colors">
                   {k.title}
                 </p>
                 <p className="text-[11px] text-[var(--px-text-faint)] truncate">

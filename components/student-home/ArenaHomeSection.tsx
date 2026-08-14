@@ -16,21 +16,20 @@ export function ArenaHomeSection() {
   const rankTitle = profile?.profile?.rankTitle || null;
 
   return (
-    <section aria-label="Motivasi Arena" className="px-card px-5 py-5 relative overflow-hidden">
-      <div className="absolute -top-16 -right-16 w-48 h-48 rounded-full bg-[var(--px-royal)]/20 blur-3xl pointer-events-none" />
-      <div className="relative flex items-center gap-4 min-w-0">
-        <span className="shrink-0 w-11 h-11 rounded-2xl bg-gradient-to-br from-[var(--px-royal)] to-[var(--px-royal-2)] flex items-center justify-center shadow-lg shadow-[var(--px-royal)]/30">
-          <TrendingUp size={20} className="text-slate-900 dark:text-white" />
+    <section aria-label="Motivasi Arena" className="px-card px-4 py-4 relative overflow-hidden">
+      <div className="relative flex items-center gap-3 min-w-0">
+        <span className="shrink-0 w-8 h-8 rounded-full bg-[var(--px-royal)]/10 flex items-center justify-center">
+          <TrendingUp size={16} className="text-[var(--px-royal)]" strokeWidth={1.8} />
         </span>
         <div className="min-w-0 flex-1">
           <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--px-royal-2)]">Motivasi</p>
           {xpToNext !== null && rankLabel ? (
-            <p className="text-sm font-bold text-[var(--px-text)] leading-snug">
+            <p className="text-sm font-semibold text-[var(--px-text)] leading-snug">
               {xpToNext.toLocaleString("id-ID")} XP lagi menuju {rankLabel}
               {rankTitle ? <span className="text-[var(--px-text-dim)] font-semibold"> · {rankTitle}</span> : null}
             </p>
           ) : (
-            <p className="text-sm font-bold text-[var(--px-text)] leading-snug">
+            <p className="text-sm font-semibold text-[var(--px-text)] leading-snug">
               Tantang dirimu. Raih XP. Mainkan gim.
             </p>
           )}

@@ -11,29 +11,28 @@ export function RuangBelajarSection() {
           <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--px-royal-2)]">
             Ruang Belajar
           </p>
-          <h2 className="text-lg font-extrabold text-[var(--px-text)]">Ruang Belajar</h2>
+          <h2 className="text-xl font-semibold tracking-tight text-[var(--px-text)]">Ruang Belajar</h2>
           <p className="text-xs text-[var(--px-text-faint)]">Kelas, materi, dan tugasmu dalam satu tempat</p>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="group px-card px-5 py-6 relative overflow-hidden ring-1 ring-slate-900/10 dark:ring-white/10 hover:bg-slate-900/[0.08] dark:bg-white/[0.08] transition-colors flex flex-col gap-3">
-          <div className="absolute -top-14 -right-14 w-44 h-44 rounded-full bg-[var(--px-royal)]/20 blur-3xl pointer-events-none" />
-          <div className="relative flex items-center gap-4">
-            <span className="shrink-0 w-12 h-12 rounded-2xl bg-gradient-to-br from-[var(--px-royal)] to-[var(--px-royal-2)] flex items-center justify-center shadow-lg shadow-[var(--px-royal)]/30">
-              <Users size={22} className="text-white" />
+      <div className="grid grid-cols-1 md:grid-cols-2 border-t section-rule">
+        <div className="group section-rule border-b px-2 py-4 flex flex-col gap-3 hover:bg-slate-900/[0.025] dark:hover:bg-white/[0.05] transition-colors">
+          <div className="flex items-center gap-3">
+            <span className="shrink-0 w-8 h-8 rounded-full bg-[var(--px-royal)]/10 flex items-center justify-center">
+              <Users size={17} className="text-[var(--px-royal)]" strokeWidth={1.8} />
             </span>
             <div className="min-w-0">
-              <h3 className="text-base font-extrabold text-[var(--px-text)]">Kelas</h3>
+              <h3 className="text-base font-medium text-[var(--px-text)]">Kelas</h3>
               <p className="text-xs text-[var(--px-text-faint)] mt-0.5">
                 Gabung dan lanjutkan pembelajaran bersama kelasmu.
               </p>
             </div>
           </div>
-          <div className="relative mt-auto pt-1">
+          <div className="mt-auto pt-1">
             <Link
               href="/murid/gabung-kelas"
-              className="inline-flex items-center justify-center gap-1.5 text-xs font-bold text-white bg-gradient-to-r from-violet-500 to-purple-600 rounded-full px-5 py-2.5 shadow-lg shadow-violet-500/30 transition-transform group-hover:scale-[1.03]"
+              className="px-btn-ghost inline-flex items-center justify-center gap-1.5 text-xs font-semibold px-3 py-2"
               aria-label="Gabung kelas"
             >
               <School size={14} />
@@ -42,23 +41,22 @@ export function RuangBelajarSection() {
           </div>
         </div>
 
-        <div className="group px-card px-5 py-6 relative overflow-hidden ring-1 ring-slate-900/10 dark:ring-white/10 hover:bg-slate-900/[0.08] dark:bg-white/[0.08] transition-colors flex flex-col gap-3">
-          <div className="absolute -top-14 -right-14 w-44 h-44 rounded-full bg-emerald-400/15 blur-3xl pointer-events-none" />
-          <div className="relative flex items-center gap-4">
-            <span className="shrink-0 w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-400 to-teal-600 flex items-center justify-center shadow-lg shadow-emerald-500/30">
-              <BookOpen size={22} className="text-slate-900 dark:text-white" />
+        <div className="group section-rule border-b px-2 py-4 flex flex-col gap-3 hover:bg-slate-900/[0.025] dark:hover:bg-white/[0.05] transition-colors">
+          <div className="flex items-center gap-3">
+            <span className="shrink-0 w-8 h-8 rounded-full bg-emerald-500/10 flex items-center justify-center">
+              <BookOpen size={17} className="text-emerald-700 dark:text-emerald-300" strokeWidth={1.8} />
             </span>
             <div className="min-w-0">
-              <h3 className="text-base font-extrabold text-[var(--px-text)]">Materi &amp; Tugas</h3>
+              <h3 className="text-base font-medium text-[var(--px-text)]">Materi &amp; Tugas</h3>
               <p className="text-xs text-[var(--px-text-faint)] mt-0.5">
                 Lihat materi, tugas, dan aktivitas belajarmu.
               </p>
             </div>
           </div>
-          <div className="relative mt-auto pt-1 flex flex-wrap items-center gap-3">
+          <div className="mt-auto pt-1 flex flex-wrap items-center gap-3">
             <Link
               href="/murid/tugasku"
-              className="inline-flex items-center justify-center gap-1.5 text-xs font-bold text-white bg-gradient-to-r from-violet-500 to-purple-600 rounded-full px-5 py-2.5 shadow-lg shadow-violet-500/30 transition-transform group-hover:scale-[1.03]"
+              className="px-btn-ghost inline-flex items-center justify-center gap-1.5 text-xs font-semibold px-3 py-2"
               aria-label="Buka tugas"
             >
               <ClipboardList size={14} />

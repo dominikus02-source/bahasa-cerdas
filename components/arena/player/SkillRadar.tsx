@@ -75,7 +75,7 @@ export default function SkillRadar({
 
   if (loading || !skills) {
     return (
-      <div className={`animate-pulse rounded-2xl bg-slate-100 dark:bg-slate-800/70 p-4 ${className}`}>
+      <div className={`animate-pulse rounded-2xl bg-white/60 dark:bg-slate-800/70 p-5 ${className}`}>
         <div className="mb-4 h-4 w-40 rounded bg-slate-200" />
         <div className="space-y-3">
           {Array.from({ length: 5 }, (_, i) => (
@@ -93,7 +93,7 @@ export default function SkillRadar({
 
   if (list.length === 0) {
     return (
-      <div className={`rounded-2xl border border-gray-100 dark:border-slate-800 bg-white dark:bg-slate-800/90 p-5 text-center ${className}`}>
+      <div className={`px-card p-5 text-center ${className}`}>
         <BarChart3 size={28} className="mx-auto text-violet-300" />
         <p className="mt-2 text-sm font-bold text-gray-800 dark:text-slate-200">Kemampuan Bahasamu</p>
         <p className="mt-1 text-xs leading-relaxed text-gray-400">
@@ -106,12 +106,10 @@ export default function SkillRadar({
   const weakest = list.reduce((min, s) => (s.level < min.level ? s : min), list[0]);
 
   return (
-    <div className={`rounded-2xl border border-gray-100 dark:border-slate-800 bg-white dark:bg-slate-800/90 p-4 md:p-5 ${className}`}>
+    <div className={`skill-radar px-card p-5 md:p-6 ${className}`}>
       <div className="mb-4 flex items-center gap-2">
-        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 text-white">
-          <BarChart3 size={16} />
-        </div>
-        <h3 className="text-base font-bold text-gray-900 dark:text-slate-100">Kemampuan Bahasamu</h3>
+        <BarChart3 size={18} className="text-[var(--px-royal)]" strokeWidth={1.8} />
+        <h3 className="text-lg font-semibold tracking-tight text-[var(--px-text)]">Kemampuan Bahasamu</h3>
       </div>
 
       <div className="space-y-3">
@@ -132,7 +130,7 @@ export default function SkillRadar({
                   <span className={isWeakest ? "font-bold text-amber-600 dark:text-amber-400" : "font-bold text-violet-600 dark:text-violet-400"}>{s.level}</span>
                 </span>
               </div>
-              <div className="h-2 overflow-hidden rounded-full bg-gray-100 dark:bg-slate-800/80">
+              <div className="skill-progress-bar h-1.5 overflow-hidden rounded-full">
                 <div
                   className={`h-full rounded-full transition-all duration-500 ${
                     isWeakest

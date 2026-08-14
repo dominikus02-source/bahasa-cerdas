@@ -8,9 +8,7 @@ const QUICK_TOPICS = ["Arti kata", "Tata bahasa", "Sinonim", "Latihan UKBI"];
 
 export function AIBCHomeCard() {
   return (
-    <section aria-label="AI BC" className="px-card px-5 py-6 md:p-7 relative overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-br from-[var(--px-royal)]/25 via-violet-600/15 to-emerald-500/15 pointer-events-none" />
-      <div className="absolute -top-16 -right-16 w-52 h-52 rounded-full bg-emerald-400/15 blur-3xl pointer-events-none" />
+    <section aria-label="AI BC" className="ai-bc-note px-card px-5 py-5 md:p-6 relative overflow-hidden">
       <div className="relative">
         <div className="flex items-center gap-4">
           <div className="shrink-0 w-14 h-14" aria-hidden="true">
@@ -23,8 +21,8 @@ export function AIBCHomeCard() {
             />
           </div>
           <div className="min-w-0">
-            <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-emerald-600 dark:text-emerald-300">AI BC</p>
-            <h2 className="text-lg md:text-xl font-extrabold text-[var(--px-text)] leading-tight">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-emerald-700 dark:text-emerald-300">AI BC</p>
+            <h2 className="text-lg font-semibold tracking-tight text-[var(--px-text)] leading-tight">
               Teman Belajarmu
             </h2>
           </div>

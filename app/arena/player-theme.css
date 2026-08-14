@@ -211,9 +211,8 @@
    semula. Hanya menimpa variabel + background — komponen tidak berubah. */
 .px-theme-app {
   background:
-    radial-gradient(1000px 500px at 10% -10%, rgba(139, 92, 246, 0.14), transparent 60%),
-    radial-gradient(800px 400px at 100% 0%, rgba(245, 166, 35, 0.12), transparent 55%),
-    linear-gradient(180deg, #ffffff 0%, #f8fafc 45%, #f5f3ff 100%);
+    radial-gradient(900px 360px at 12% -12%, rgba(139, 92, 246, 0.07), transparent 62%),
+    linear-gradient(180deg, #fdfcfb 0%, #faf9f7 54%, #f7f5fb 100%);
   color: #1e293b;
   --px-text: #1e293b;
   --px-text-dim: #475569;
@@ -227,6 +226,109 @@
   --px-royal-2: #3b82f6;
   --px-mint: #0d9488;
 }
+
+/* ---- Student Home visual polish — calm iOS Edu surfaces ---- */
+.px-theme-app .px-card {
+  background: rgba(255, 255, 255, 0.78);
+  border-color: rgba(15, 23, 42, 0.07);
+  border-radius: 1.375rem;
+  box-shadow: 0 12px 32px -28px rgba(15, 23, 42, 0.38);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+
+.px-theme-app .px-btn-gold {
+  background: var(--px-gold-2);
+  color: #fff;
+  border-radius: 0.875rem;
+  box-shadow: 0 8px 18px -10px rgba(180, 83, 9, 0.7);
+}
+
+.px-theme-app .px-btn-ghost {
+  background: transparent;
+  border-color: rgba(15, 23, 42, 0.12);
+  color: var(--px-text-dim);
+  border-radius: 0.875rem;
+}
+
+.px-theme-app .px-btn-ghost:hover {
+  background: rgba(15, 23, 42, 0.045);
+  color: var(--px-text);
+}
+
+.px-theme-app .px-chip {
+  background: rgba(15, 23, 42, 0.035);
+  border-color: rgba(15, 23, 42, 0.07);
+  border-radius: 0.7rem;
+  font-weight: 600;
+}
+
+.px-theme-app .px-skeleton {
+  background: linear-gradient(100deg, rgba(15, 23, 42, 0.045) 40%, rgba(15, 23, 42, 0.09) 50%, rgba(15, 23, 42, 0.045) 60%);
+}
+
+.px-theme-app .my-day-hero {
+  border-left: 3px solid var(--px-gold-2);
+  box-shadow: 0 18px 38px -32px rgba(15, 23, 42, 0.55);
+}
+
+.px-theme-app .mentor-note {
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(15, 23, 42, 0.06);
+  border-radius: 1rem;
+}
+
+.px-theme-app .skill-progress-bar {
+  background: rgba(15, 23, 42, 0.075);
+}
+
+.px-theme-app .section-rule {
+  border-color: rgba(15, 23, 42, 0.08);
+}
+
+.dark .px-theme-app .px-card {
+  background: linear-gradient(160deg, var(--px-glass-strong), var(--px-glass) 55%, rgba(255, 255, 255, 0.04));
+  border-color: var(--px-border);
+  box-shadow: 0 10px 30px -24px rgba(0, 0, 0, 0.5);
+}
+
+.dark .px-theme-app .px-btn-gold {
+  background: linear-gradient(120deg, var(--px-gold-2), var(--px-gold-3));
+  color: #1b1205;
+}
+
+.dark .px-theme-app .px-btn-ghost {
+  background: transparent;
+  border-color: var(--px-border);
+  color: var(--px-text);
+}
+
+.dark .px-theme-app .px-btn-ghost:hover {
+  background: var(--px-glass-strong);
+}
+
+.dark .px-theme-app .px-chip {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: var(--px-border);
+}
+
+.dark .px-theme-app .px-skeleton {
+  background: linear-gradient(100deg, rgba(255,255,255,0.06) 40%, rgba(255,255,255,0.14) 50%, rgba(255,255,255,0.06) 60%);
+}
+
+.dark .px-theme-app .mentor-note {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: var(--px-border);
+}
+
+.dark .px-theme-app .skill-progress-bar {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.dark .px-theme-app .section-rule {
+  border-color: var(--px-border);
+}
+
 .dark .px-theme-app {
   background:
     radial-gradient(1200px 600px at 15% -10%, rgba(47, 75, 255, 0.35), transparent 60%),

@@ -54,14 +54,17 @@ export function PremiumValueCard() {
     simUsage && Number.isFinite(simUsage.limit) && simUsage.limit > 0 ? simUsage.remaining : null;
 
   return (
-    <section aria-label="Status premium" className="px-card px-5 py-5">
+    <section aria-label="Status premium" className="premium-value px-card px-5 py-4">
       {isPremium ? (
         <div className="flex items-center gap-3">
-          <span className="shrink-0 w-9 h-9 rounded-xl bg-gradient-to-br from-amber-400 to-yellow-600 flex items-center justify-center shadow-md shadow-amber-500/25">
-            <Gem size={17} className="text-white" />
+          <span className="shrink-0 w-8 h-8 rounded-full bg-amber-500/10 flex items-center justify-center">
+            <Gem size={16} className="text-amber-600 dark:text-amber-300" strokeWidth={1.8} />
           </span>
           <div className="min-w-0">
-            <p className="text-sm font-bold text-[var(--px-text)]">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-amber-600 dark:text-amber-300">
+              ✦ Premium
+            </p>
+            <p className="text-sm font-semibold text-[var(--px-text)]">
               Personalisasi Premium aktif
               {data.subscriptionStatus === "TRIALING" ? " (Masa Uji)" : ""}
             </p>
@@ -74,13 +77,16 @@ export function PremiumValueCard() {
         </div>
       ) : (
         <div className="flex items-center gap-3">
-          <span className="shrink-0 w-9 h-9 rounded-xl bg-slate-900/5 dark:bg-white/10 flex items-center justify-center">
-            <Gem size={17} className="text-[var(--px-text-faint)]" />
+          <span className="shrink-0 w-8 h-8 rounded-full bg-slate-900/5 dark:bg-white/10 flex items-center justify-center">
+            <Gem size={16} className="text-[var(--px-text-faint)]" strokeWidth={1.8} />
           </span>
-          <p className="text-xs text-[var(--px-text-dim)] leading-relaxed">
-            Analisis kemampuan yang lebih mendalam tersedia di Premium — sementara itu, teruslah belajar
-            dan profilmu tetap berkembang.
-          </p>
+          <div className="min-w-0">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[var(--px-text-faint)]">Personalisasi BC</p>
+            <p className="text-xs text-[var(--px-text-dim)] leading-relaxed">
+              Analisis kemampuan yang lebih mendalam tersedia di Premium — sementara itu, teruslah belajar
+              dan profilmu tetap berkembang.
+            </p>
+          </div>
         </div>
       )}
     </section>

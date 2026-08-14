@@ -22,10 +22,10 @@ export function SecondaryLearningInfo() {
   const materi = summary?.materi || [];
 
   return (
-    <section aria-label="Kabar kelas" className="px-card px-5 py-5">
+    <section aria-label="Kabar kelas" className="section-rule border-t pt-5">
       <div className="flex items-center gap-2 mb-4">
-        <Megaphone size={15} className="text-[var(--px-gold)]" />
-        <h2 className="text-base font-extrabold text-[var(--px-text)]">Kabar Kelas</h2>
+        <Megaphone size={16} className="text-[var(--px-text-dim)]" strokeWidth={1.8} />
+        <h2 className="text-xl font-semibold tracking-tight text-[var(--px-text)]">Kabar Kelas</h2>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
@@ -82,7 +82,7 @@ export function SecondaryLearningInfo() {
         </div>
       </div>
 
-      <div className="mt-4 pt-3 border-t border-slate-900/10 dark:border-white/10 flex items-start gap-2 text-[11px] text-[var(--px-text-faint)]">
+      <div className="mt-4 pt-3 section-rule border-t flex items-start gap-2 text-[11px] text-[var(--px-text-faint)]">
         <Bell size={13} className="shrink-0 mt-0.5" />
         <p>
           {summary && summary.totalTugas > 0

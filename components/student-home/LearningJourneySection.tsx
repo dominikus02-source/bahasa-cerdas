@@ -17,28 +17,28 @@ const ITEMS = [
     label: "Jalur Cerdas",
     desc: "Belajar kosakata, tata bahasa, dan membaca",
     icon: BookOpen,
-    accent: "text-violet-600 dark:text-violet-300 bg-violet-500/15",
+    accent: "text-[var(--px-royal)] bg-transparent",
   },
   {
     href: "/arena/game",
     label: "Latihan",
     desc: "Latihan kilat dan permainan kata",
     icon: Gamepad2,
-    accent: "text-sky-600 dark:text-sky-300 bg-sky-500/15",
+    accent: "text-[var(--px-text-dim)] bg-transparent",
   },
   {
     href: "/murid/simulasi/ukbi",
     label: "Simulasi",
     desc: "UKBI & TKA — ukur kemampuanmu",
     icon: ClipboardList,
-    accent: "text-emerald-600 dark:text-emerald-300 bg-emerald-500/15",
+    accent: "text-[var(--px-text-dim)] bg-transparent",
   },
   {
     href: "/murid/tugasku",
     label: "Tugas",
     desc: "Kumpulkan tugas dari gurumu",
     icon: Clock,
-    accent: "text-amber-600 dark:text-amber-300 bg-amber-500/15",
+    accent: "text-[var(--px-text-dim)] bg-transparent",
     dynamic: true,
   },
 ];
@@ -64,7 +64,7 @@ export function LearningJourneySection() {
     <section aria-label="Perjalanan belajar">
       <div className="flex items-end justify-between mb-4">
         <div>
-          <h2 className="text-lg font-extrabold text-[var(--px-text)]">Perjalanan Belajar</h2>
+          <h2 className="text-xl font-semibold tracking-tight text-[var(--px-text)]">Perjalanan Belajar</h2>
           <p className="text-xs text-[var(--px-text-faint)]">Lanjutkan langkah berikutnya</p>
         </div>
         {journey.length > 0 && (
@@ -74,7 +74,7 @@ export function LearningJourneySection() {
         )}
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 border-t section-rule">
         {ITEMS.map((item) => {
           const Icon = item.icon;
           const subtitle =
@@ -87,13 +87,13 @@ export function LearningJourneySection() {
             <Link
               key={item.label}
               href={item.href}
-              className="group px-card px-4 py-4 flex items-center gap-3.5 hover:bg-slate-900/[0.08] dark:bg-white/[0.08] transition-colors"
+              className="group section-rule border-b px-2 py-3.5 flex items-center gap-3 transition-colors hover:bg-slate-900/[0.035] dark:hover:bg-white/[0.05]"
             >
-              <span className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${item.accent}`}>
-                <Icon size={19} />
+              <span className={`w-8 h-8 flex items-center justify-center shrink-0 ${item.accent}`}>
+                <Icon size={18} strokeWidth={1.8} />
               </span>
               <span className="min-w-0 flex-1">
-                <span className="block text-sm font-bold text-[var(--px-text)] group-hover:text-slate-900 dark:text-white transition-colors">
+                <span className="block text-sm font-medium text-[var(--px-text)] group-hover:text-[var(--px-royal)] transition-colors">
                   {item.label}
                 </span>
                 <span className="block text-xs text-[var(--px-text-faint)] truncate">{subtitle}</span>

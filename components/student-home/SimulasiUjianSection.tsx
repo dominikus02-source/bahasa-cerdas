@@ -46,33 +46,32 @@ export function SimulasiUjianSection() {
           <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--px-royal-2)]">
             Simulasi &amp; Ujian
           </p>
-          <h2 className="text-lg font-extrabold text-[var(--px-text)]">Simulasi &amp; Ujian</h2>
+          <h2 className="text-xl font-semibold tracking-tight text-[var(--px-text)]">Simulasi &amp; Ujian</h2>
           <p className="text-xs text-[var(--px-text-faint)]">Bersiap mengukur kemampuanmu</p>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 border-t section-rule">
         {ITEMS.map((item) => {
           const Icon = item.icon;
           return (
             <div
               key={item.label}
-              className="group px-card px-5 py-5 relative overflow-hidden ring-1 ring-slate-900/10 dark:ring-white/10 hover:bg-slate-900/[0.08] dark:bg-white/[0.08] transition-colors flex flex-col gap-3"
+              className="group section-rule border-b px-2 py-4 hover:bg-slate-900/[0.025] dark:hover:bg-white/[0.05] transition-colors flex flex-col gap-2"
             >
-              <div className="absolute -top-12 -right-12 w-36 h-36 rounded-full bg-white/5 dark:bg-slate-900/5 blur-2xl pointer-events-none" />
               <span
-                className={`relative w-11 h-11 rounded-2xl bg-gradient-to-br flex items-center justify-center shadow-lg ${item.accent}`}
+                className="relative w-8 h-8 flex items-center text-[var(--px-text-dim)]"
               >
-                <Icon size={20} className="text-slate-900 dark:text-white" />
+                <Icon size={18} strokeWidth={1.8} />
               </span>
               <div className="relative">
-                <h3 className="text-sm font-extrabold text-[var(--px-text)]">{item.label}</h3>
+                <h3 className="text-sm font-medium text-[var(--px-text)]">{item.label}</h3>
                 <p className="text-xs text-[var(--px-text-faint)] mt-1 leading-relaxed">{item.desc}</p>
               </div>
               <div className="relative mt-auto pt-1">
                 <Link
                   href={item.href}
-                  className="inline-flex items-center justify-center gap-1.5 text-xs font-bold text-white bg-gradient-to-r from-violet-500 to-purple-600 rounded-full px-5 py-2.5 shadow-lg shadow-violet-500/30 transition-transform group-hover:scale-[1.03]"
+                  className="inline-flex items-center gap-1 text-xs font-semibold text-[var(--px-royal)] hover:underline"
                   aria-label={`${item.cta} ${item.label}`}
                 >
                   {item.cta}

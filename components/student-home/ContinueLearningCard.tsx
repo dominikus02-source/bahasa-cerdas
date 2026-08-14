@@ -60,7 +60,7 @@ export function ContinueLearningCard() {
 
   if (status === "loading") {
     return (
-      <div className="px-card px-5 py-6 space-y-3">
+      <div className="my-day-hero px-card px-5 py-7 md:p-8 space-y-3">
         <div className="px-skeleton rounded-lg" style={{ width: 180, height: 12 }} />
         <div className="px-skeleton rounded-lg" style={{ width: "70%", height: 22 }} />
         <div className="px-skeleton rounded-lg" style={{ width: "90%", height: 14 }} />
@@ -71,7 +71,7 @@ export function ContinueLearningCard() {
 
   if (status === "error") {
     return (
-      <section aria-label="Aksi hari ini" className="px-card px-5 py-6 text-center">
+      <section aria-label="Aksi hari ini" className="my-day-hero px-card px-5 py-7 text-center">
         <p className="text-sm font-bold text-[var(--px-text)]">Belum bisa memuat rekomendasi belajarmu.</p>
         <p className="mt-1 text-xs text-[var(--px-text-dim)]">
           Coba beberapa saat lagi — sementara itu kamu bisa langsung belajar di Jalur Cerdas.
@@ -108,16 +108,15 @@ export function ContinueLearningCard() {
     <div className="space-y-3">
       <section
         aria-label="Aksi hari ini"
-        className="px-card px-5 py-6 md:p-7 relative overflow-hidden"
+        className="my-day-hero px-card px-5 py-7 md:p-8 relative overflow-hidden"
       >
-        <div className="absolute -top-20 -right-20 w-56 h-56 rounded-full bg-[var(--px-gold)]/10 blur-3xl pointer-events-none" />
         <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--px-gold)] mb-2">
           {action ? "Aksi Hari Ini" : "Saran untukmu"}
         </p>
         <div className="relative flex flex-col md:flex-row md:items-center gap-5">
           <div className="flex-1 min-w-0">
-            <h2 className="text-xl md:text-2xl font-extrabold text-[var(--px-text)] mb-1.5 flex items-center gap-2">
-              <BookOpen size={20} className="text-[var(--px-royal-2)] shrink-0" />
+            <h2 className="text-2xl md:text-[32px] font-semibold tracking-tight text-[var(--px-text)] mb-2 flex items-center gap-2">
+              <BookOpen size={21} strokeWidth={1.8} className="text-[var(--px-royal-2)] shrink-0" />
               <span className="truncate">{display.title}</span>
             </h2>
             <p className="text-sm text-[var(--px-text-dim)] leading-relaxed">{display.description}</p>
