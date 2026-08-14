@@ -3,15 +3,12 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { BookOpen, ChevronRight, ClipboardList, Clock, Gamepad2 } from "lucide-react";
+import { useHomeData } from "./home-data";
 
 interface JourneyEntry {
   id: string;
   title: string;
   icon: string | null;
-}
-
-interface SummaryData {
-  totalTugas?: number;
 }
 
 const ITEMS = [
@@ -48,27 +45,20 @@ const ITEMS = [
 
 export function LearningJourneySection() {
   const [journey, setJourney] = useState<JourneyEntry[]>([]);
-  const [totalTugas, setTotalTugas] = useState<number | null>(null);
+  const { summary } = useHomeData();
 
   useEffect(() => {
     let alive = true;
-    Promise.all([
-      fetch("/api/player/journey?limit=3")
-        .then((r) => (r.ok ? r.json() : Promise.reject()))
-        .catch(() => ({ entries: [] })),
-      fetch("/api/murid/dashboard/summary")
-        .then((r) => (r.ok ? r.json() : Promise.reject()))
-        .catch(() => null as SummaryData | null),
-    ]).then(([j, s]) => {
-      if (!alive) return;
-      setJourney(j?.entries || []);
-      const t = (s as SummaryData | null)?.totalTugas;
-      setTotalTugas(typeof t === "number" ? t : null);
-    });
+    fetch("/api/player/journey?limit=3")
+      .then((r) => (r.ok ? r.json() : Promise.reject()))
+      .catch(() => ({ entries: [] }))
+      .then((j) => alive && setJourney(j?.entries || []));
     return () => {
       alive = false;
     };
   }, []);
+
+  const totalTugas = typeof summary?.totalTugas === "number" ? summary.totalTugas : null;
 
   return (
     <section aria-label="Perjalanan belajar">

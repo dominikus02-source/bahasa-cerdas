@@ -218,7 +218,8 @@
     "test:brand-identity": "npx tsx scripts/test-brand-identity.ts",
     "test:login-ux": "npx tsx scripts/test-login-ux.ts",
     "test:register-ux": "npx tsx scripts/test-register-ux.ts",
-    "test:premium-production": "npx tsx scripts/test-premium-production.ts"
+    "test:premium-production": "npx tsx scripts/test-premium-production.ts",
+    "test:my-day-home": "npx tsx scripts/test-my-day-home.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.39.0",

@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import "@/app/arena/player-theme.css";
+import { HomeDataProvider } from "@/components/student-home/home-data";
 import { StudentHomeHero } from "@/components/student-home/StudentHomeHero";
 import { ContinueLearningCard } from "@/components/student-home/ContinueLearningCard";
 import { AIBCHomeCard } from "@/components/student-home/AIBCHomeCard";
@@ -10,8 +11,15 @@ import { RuangBelajarSection } from "@/components/student-home/RuangBelajarSecti
 import { SimulasiUjianSection } from "@/components/student-home/SimulasiUjianSection";
 import { RecentWorksSection } from "@/components/student-home/RecentWorksSection";
 import { ArenaHomeSection } from "@/components/student-home/ArenaHomeSection";
+import { PremiumValueCard } from "@/components/student-home/PremiumValueCard";
 import { SecondaryLearningInfo } from "@/components/student-home/SecondaryLearningInfo";
+import SkillRadar from "@/components/arena/player/SkillRadar";
 
+// Hierarki My Day (learning companion):
+// 1. SAPAAN (hero) → 2. AKSI HARI INI (satu CTA dominan + mentor)
+// → 3. KEMAMPUAN + MOTIVASI (skill + arena + premium)
+// → 4. PINTAS BELAJAR (AI BC + perjalanan) → 5. RUANG BELAJAR
+// → 6. SIMULASI → 7. KARYA + KABAR KELAS
 export default function HomeFeedPage() {
   useEffect(() => {
     const detak = () => {
@@ -32,25 +40,33 @@ export default function HomeFeedPage() {
 
   return (
     <div className="px-theme px-theme-app min-h-screen">
-      <main className="mx-auto max-w-[1200px] px-4 sm:px-6 py-8 space-y-8">
-        <StudentHomeHero />
+      <main className="mx-auto max-w-[1200px] px-4 sm:px-6 py-8 space-y-6">
+        <HomeDataProvider>
+          <StudentHomeHero />
 
-        <ContinueLearningCard />
+          <ContinueLearningCard />
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
-          <AIBCHomeCard />
-          <LearningJourneySection />
-        </div>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+            <SkillRadar />
+            <div className="space-y-6">
+              <ArenaHomeSection />
+              <PremiumValueCard />
+            </div>
+          </div>
 
-        <RuangBelajarSection />
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+            <AIBCHomeCard />
+            <LearningJourneySection />
+          </div>
 
-        <SimulasiUjianSection />
+          <RuangBelajarSection />
 
-        <RecentWorksSection />
+          <SimulasiUjianSection />
 
-        <ArenaHomeSection />
+          <RecentWorksSection />
 
-        <SecondaryLearningInfo />
+          <SecondaryLearningInfo />
+        </HomeDataProvider>
       </main>
     </div>
   );

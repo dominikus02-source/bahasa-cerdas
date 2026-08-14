@@ -1,52 +1,31 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
 import { Coins, Flame, Sparkles, Zap } from "lucide-react";
-import type { PlayerProfileResponse } from "@/lib/gamification/client-types";
 import { RankChip } from "@/components/gamification/RankChip";
 import UserAvatar from "@/components/arena/UserAvatar";
 import { XpProgressBar } from "@/components/arena/player/xp-progress-bar";
-
-interface MeUser {
-  displayName?: string;
-  fullName?: string;
-  avatar?: string;
-  school?: string;
-  city?: string;
-}
+import { useHomeData } from "./home-data";
 
 export function StudentHomeHero() {
-  const [data, setData] = useState<PlayerProfileResponse | null>(null);
-  const [me, setMe] = useState<MeUser | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const { profile: data, me, profileFailed, refresh } = useHomeData();
 
-  useEffect(() => {
-    let alive = true;
-    Promise.all([
-      fetch("/api/player/profile").then((r) => (r.ok ? r.json() : Promise.reject())),
-      fetch("/api/user/me").then((r) => (r.ok ? r.json() : Promise.reject())),
-    ])
-      .then(([p, m]) => {
-        if (!alive) return;
-        setData(p);
-        setMe(m?.user || m?.data?.user || null);
-      })
-      .catch(() => alive && setError("Gagal memuat profil"));
-    return () => {
-      alive = false;
-    };
-  }, []);
-
-  if (error) {
+  if (profileFailed) {
     return (
       <div className="px-card px-5 py-5 text-center">
-        <p className="text-sm text-[var(--px-text-dim)]">{error}</p>
+        <p className="text-sm text-[var(--px-text-dim)]">Gagal memuat profilmu.</p>
+        <button
+          type="button"
+          onClick={refresh}
+          className="mt-2 text-xs font-bold text-[var(--px-gold)] hover:underline"
+        >
+          Coba Lagi
+        </button>
       </div>
     );
   }
 
-  if (!data || !data.profile) {
+  if (!data) {
     return (
       <div className="px-card px-5 py-5 space-y-3">
         <div className="flex items-center gap-4">
@@ -61,7 +40,8 @@ export function StudentHomeHero() {
     );
   }
 
-  const { profile } = data;
+  const profile = data.profile;
+
   const name = me?.displayName || me?.fullName || "Murid";
   const sub = me?.school || me?.city || "BahasaCerdas";
 
@@ -85,7 +65,7 @@ export function StudentHomeHero() {
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-2 flex-wrap">
               <h1 className="text-lg md:text-xl font-extrabold text-[var(--px-text)] truncate">{name}</h1>
-              <RankChip rank={profile.rank} size={18} showTitle={false} compact />
+              <RankChip rank={profile.rank as never} size={18} showTitle={false} compact />
             </div>
             <p className="text-xs text-[var(--px-text-dim)] truncate">{sub}</p>
             <p className="text-[11px] text-[var(--px-text-faint)] mt-0.5">Halo! Siap belajar hari ini?</p>

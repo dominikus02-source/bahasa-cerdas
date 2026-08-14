@@ -37,7 +37,7 @@ export function AIBCHomeCard() {
         <div className="mt-4 flex flex-col sm:flex-row sm:items-center gap-3">
           <Link
             href="/arena/ai"
-            className="px-btn-gold flex items-center justify-center gap-2 text-sm font-bold px-6 py-3"
+            className="px-btn-ghost flex items-center justify-center gap-2 text-sm font-semibold px-5 py-2.5"
             aria-label="Tanya AI BC"
           >
             Tanya AI BC

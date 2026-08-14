@@ -34,43 +34,40 @@ check("Import player-theme.css di halaman (bukan layout)", page.includes('import
 check("Wrapper .px-theme di root", page.includes('className="px-theme'));
 check("Container max-w-[1200px]", page.includes("max-w-[1200px]"));
 
-// 2 — Hierarki: HERO → CONTINUE → AI BC → JOURNEY → KARYA → ARENA → KABAR
+// 2 — Hierarki My Day: HERO → AKSI (+mentor) → SKILL → MOTIVASI → PREMIUM
+// → PINTAS (AI BC + JOURNEY) → RUANG → SIMULASI → KARYA → KABAR
 const required = [
   "StudentHomeHero",
   "ContinueLearningCard",
+  "SkillRadar",
+  "ArenaHomeSection",
+  "PremiumValueCard",
   "AIBCHomeCard",
   "LearningJourneySection",
+  "RuangBelajarSection",
+  "SimulasiUjianSection",
   "RecentWorksSection",
-  "ArenaHomeSection",
   "SecondaryLearningInfo",
 ];
 for (const c of required) {
   check(`Halaman merender <${c} />`, page.includes(`<${c} />`));
 }
 check("QuickActions TIDAK dirender", !page.includes("QuickActions"));
+const order = (a: string, b: string, label: string) =>
+  check(`Urutan: ${a} sebelum ${b} (${label})`, page.indexOf(`<${a} />`) < page.indexOf(`<${b} />`));
+order("StudentHomeHero", "ContinueLearningCard", "sapaan dulu");
+order("ContinueLearningCard", "SkillRadar", "aksi hari ini dominan");
+order("SkillRadar", "ArenaHomeSection", "skill sebelum motivasi");
+order("ArenaHomeSection", "PremiumValueCard", "motivasi sebelum premium");
+order("PremiumValueCard", "AIBCHomeCard", "premium sebelum pintas belajar");
+order("AIBCHomeCard", "LearningJourneySection", "AI BC sebelum journey");
+order("LearningJourneySection", "RuangBelajarSection", "pintas sebelum ruang");
+order("RuangBelajarSection", "SimulasiUjianSection", "ruang sebelum simulasi");
+order("SimulasiUjianSection", "RecentWorksSection", "simulasi sebelum karya");
+order("RecentWorksSection", "SecondaryLearningInfo", "karya sebelum kabar");
 check(
-  "Urutan: Continue sebelum AI BC",
-  page.indexOf("<ContinueLearningCard />") < page.indexOf("<AIBCHomeCard />")
-);
-check(
-  "Urutan: AI BC sebelum Journey (mobile full-width)",
-  page.indexOf("<AIBCHomeCard />") < page.indexOf("<LearningJourneySection />")
-);
-check(
-  "Urutan: Journey sebelum Recent Works",
-  page.indexOf("<LearningJourneySection />") < page.indexOf("<RecentWorksSection />")
-);
-check(
-  "Urutan: Recent Works sebelum Arena Gateway",
-  page.indexOf("<RecentWorksSection />") < page.indexOf("<ArenaHomeSection />")
-);
-check(
-  "Urutan: Arena Gateway sebelum Kabar Kelas",
-  page.indexOf("<ArenaHomeSection />") < page.indexOf("<SecondaryLearningInfo />")
-);
-check(
-  "Desktop: AI BC & Journey berbagi baris (grid lg:grid-cols-2)",
-  page.includes("grid-cols-1 lg:grid-cols-2 gap-8")
+  "Desktop: skill/motivasi & AI BC/journey berbagi baris (grid lg:grid-cols-2)",
+  page.includes("grid grid-cols-1 lg:grid-cols-2 gap-6")
 );
 
 // 3 — Heartbeat dipertahankan
@@ -96,7 +93,7 @@ check("Tidak ada Math.random() di komponen", !allComp.includes("Math.random"));
 // 5 — Arena Gateway: hanya pintu masuk, tanpa dashboard Arena
 const arena = read("components/student-home/ArenaHomeSection.tsx");
 check("Arena Gateway → /arena (Masuk Arena)", arena.includes('href="/arena"'));
-check("Arena Gateway: tidak fetch /api/player/profile", !arena.includes('"/api/player/profile"'));
+check("Arena Gateway: tidak fetch /api/player/profile sendiri (via konteks home-data)", !arena.includes('"/api/player/profile"') && arena.includes("useHomeData"));
 check("Arena Gateway: tidak fetch /api/player/quests", !arena.includes('"/api/player/quests"'));
 check("Arena Gateway: tidak fetch /api/player/badges", !arena.includes('"/api/player/badges"'));
 check("Arena Gateway: tidak fetch /api/murid/dashboard/summary", !arena.includes('"/api/murid/dashboard/summary"'));
@@ -106,14 +103,29 @@ check("Arena Gateway: tanpa tombol Kuis Tempur/Liga/Misi", !arena.includes("kuis
 // 6 — CTA hierarchy: primary "Lanjutkan", secondary AI
 const continueCard = read("components/student-home/ContinueLearningCard.tsx");
 check("Continue = satu primary CTA (tanpa ghost button)", !continueCard.includes("Jelajahi Jalur Cerdas"));
+const goldFiles = [
+  "StudentHomeHero.tsx",
+  "ContinueLearningCard.tsx",
+  "AIBCHomeCard.tsx",
+  "LearningJourneySection.tsx",
+  "ArenaHomeSection.tsx",
+  "RecentWorksSection.tsx",
+  "SecondaryLearningInfo.tsx",
+  "RuangBelajarSection.tsx",
+  "SimulasiUjianSection.tsx",
+  "PremiumValueCard.tsx",
+  "home-data.tsx",
+].filter((f) => read(`components/student-home/${f}`).includes("px-btn-gold"));
+check("Satu CTA emas: hanya ContinueLearningCard", goldFiles.length === 1 && goldFiles[0] === "ContinueLearningCard.tsx");
 const aiCard = read("components/student-home/AIBCHomeCard.tsx");
 check("AI BC → /arena/ai", aiCard.includes('href="/arena/ai"'));
 check("AI BC copy companion ('Tanya BC. Kita belajar bareng.')", aiCard.includes("Kita belajar bareng"));
 check("AI BC CTA 'Tanya AI BC →'", aiCard.includes("Tanya AI BC"));
 
 // 7 — Hero ringkas: identitas + XP singkat, tanpa dashboard statistik
+const homeData = read("components/student-home/home-data.tsx");
 const hero = read("components/student-home/StudentHomeHero.tsx");
-check("Hero pakai /api/player/profile", hero.includes('"/api/player/profile"'));
+check("Data profil dari konteks bersama home-data", homeData.includes('"/api/player/profile"') && hero.includes("useHomeData"));
 check("Hero pakai RankChip", hero.includes("RankChip"));
 check("Hero pakai XpProgressBar compact", hero.includes("compact"));
 check("Hero: tanpa kartu Pencapaian/achievement counts", !hero.includes("Pencapaian") && !hero.includes("summary.badges"));
@@ -126,10 +138,10 @@ const secondary = read("components/student-home/SecondaryLearningInfo.tsx");
 check("Secondary: tanpa murid aktif avatars", !secondary.includes("/api/siswa/aktif") && !secondary.includes("displayName.charAt"));
 check("Secondary: tanpa tombol 'Tugas Saya'", !secondary.includes("Tugas Saya"));
 check("Secondary: tanpa 'Hari ini: aktivitas' stats dobel", !allComp.includes("Hari ini:"));
-check("Secondary: pakai /api/murid/dashboard/summary", secondary.includes('"/api/murid/dashboard/summary"'));
 
 // 9 — Route canonical lain
 const journey = read("components/student-home/LearningJourneySection.tsx");
+check("Summary: SATU fetch di home-data (tanpa duplikat)", homeData.includes('"/api/murid/dashboard/summary"') && !secondary.includes('"/api/murid/dashboard/summary"') && !journey.includes('"/api/murid/dashboard/summary"'));
 check("Journey → /murid/simulasi/ukbi", journey.includes("/murid/simulasi/ukbi"));
 check("Journey → /arena/jalur-cerdas", journey.includes("/arena/jalur-cerdas"));
 check("Journey pakai /api/player/journey", journey.includes('"/api/player/journey?limit=3"'));

@@ -1,29 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
 import { Bell, Megaphone } from "lucide-react";
-
-interface PengumumanRow {
-  id: string;
-  judul: string;
-  guru: string;
-  createdAt: string;
-  link: string;
-}
-
-interface MateriRow {
-  id: string;
-  judul: string;
-  guru: string;
-  link: string;
-}
-
-interface SummaryRow {
-  pengumuman: PengumumanRow[];
-  materi: MateriRow[];
-  totalTugas: number;
-}
+import { useHomeData } from "./home-data";
 
 function waktuLalu(iso: string): string {
   const diff = Date.now() - new Date(iso).getTime();
@@ -37,18 +16,7 @@ function waktuLalu(iso: string): string {
 }
 
 export function SecondaryLearningInfo() {
-  const [summary, setSummary] = useState<SummaryRow | null>(null);
-
-  useEffect(() => {
-    let alive = true;
-    fetch("/api/murid/dashboard/summary")
-      .then((r) => (r.ok ? r.json() : Promise.reject()))
-      .catch(() => null)
-      .then((s) => alive && setSummary(s || { pengumuman: [], materi: [], totalTugas: 0 }));
-    return () => {
-      alive = false;
-    };
-  }, []);
+  const { summary } = useHomeData();
 
   const pengumuman = summary?.pengumuman || [];
   const materi = summary?.materi || [];

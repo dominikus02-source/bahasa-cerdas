@@ -34,9 +34,12 @@ export default function SkillRadar({
   const [skills, setSkills] = useState<Skill[] | null>(null);
   const [loading, setLoading] = useState(true);
   const [failed, setFailed] = useState(false);
+  const [attempt, setAttempt] = useState(0);
 
   useEffect(() => {
     let active = true;
+    setLoading(true);
+    setFailed(false);
     (async () => {
       try {
         const res = await fetch("/api/player/skills");
@@ -52,9 +55,23 @@ export default function SkillRadar({
     return () => {
       active = false;
     };
-  }, []);
+  }, [attempt]);
 
-  if (failed) return null;
+  if (failed) {
+    return (
+      <div className={`rounded-2xl border border-gray-100 dark:border-slate-800 bg-white dark:bg-slate-800/90 p-5 text-center ${className}`}>
+        <BarChart3 size={28} className="mx-auto text-violet-300" />
+        <p className="mt-2 text-sm font-bold text-gray-800 dark:text-slate-200">Belum bisa memuat kemampuanmu.</p>
+        <button
+          type="button"
+          onClick={() => setAttempt((a) => a + 1)}
+          className="mt-3 rounded-full bg-violet-600 px-4 py-2 text-xs font-bold text-white hover:bg-violet-700"
+        >
+          Coba Lagi
+        </button>
+      </div>
+    );
+  }
 
   if (loading || !skills) {
     return (

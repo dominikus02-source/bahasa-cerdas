@@ -9,7 +9,7 @@ interface SessionToday {
   coin: number;
 }
 
-interface SessionResponse {
+export interface SessionResponse {
   name: string;
   insights: string[];
   nextAction: { ctaType: string; title: string; description: string; ctaLabel: string; ctaHref: string } | null;
@@ -17,20 +17,49 @@ interface SessionResponse {
   today: SessionToday;
 }
 
+/** Bentuk minimal bila data diteruskan dari komponen induk (skills tidak dipakai kartu ini). */
+export interface MentorCardData {
+  name: string;
+  insights: string[];
+  nextAction: {
+    ctaType: string;
+    title: string;
+    description: string | null;
+    ctaLabel: string;
+    ctaHref: string;
+  } | null;
+  today: { activities: number; xp: number; coin: number };
+  skills?: { skill: string; level: number; xp: number }[];
+}
+
 /** Kartu sapaan "Mentor BC" — rekap sesi belajar hari ini + insight singkat. */
-export default function MentorCard({ className = "" }: { className?: string }) {
-  const [session, setSession] = useState<SessionResponse | null>(null);
-  const [loading, setLoading] = useState(true);
+export default function MentorCard({
+  className = "",
+  data = null,
+}: {
+  className?: string;
+  /** Bila disediakan (dari /api/player/session induk), TIDAK fetch ulang. */
+  data?: MentorCardData | null;
+}) {
+  const [session, setSession] = useState<MentorCardData | null>(data);
+  const [loading, setLoading] = useState(data === null);
   const [failed, setFailed] = useState(false);
 
   useEffect(() => {
+    if (data !== null) {
+      setSession(data);
+      setLoading(false);
+      return;
+    }
     let active = true;
+    setLoading(true);
+    setFailed(false);
     (async () => {
       try {
         const res = await fetch("/api/player/session");
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const data = (await res.json()) as SessionResponse;
-        if (active) setSession(data);
+        const payload = (await res.json()) as SessionResponse;
+        if (active) setSession(payload);
       } catch {
         if (active) setFailed(true);
       } finally {
@@ -40,13 +69,13 @@ export default function MentorCard({ className = "" }: { className?: string }) {
     return () => {
       active = false;
     };
-  }, []);
+  }, [data]);
 
-  if (failed) return null;
-
-  if (loading || !session) {
-    return <div className={`animate-pulse rounded-2xl bg-gradient-to-br from-slate-100 to-slate-200 ${className}`} />;
+  if (loading) {
+    return <div className={`animate-pulse rounded-2xl bg-gradient-to-br from-slate-100 to-slate-200 h-28 ${className}`} />;
   }
+
+  if (failed || !session) return null;
 
   const insights = (session.insights ?? []).slice(0, 4);
 
