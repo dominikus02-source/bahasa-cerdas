@@ -97,9 +97,7 @@ export default async function GuruLayout({ children }: { children: React.ReactNo
         <>
           <div className="p-5 border-b border-gray-100/50 bg-gradient-to-r from-emerald-600 to-green-600 dark:border-slate-800">
             <Link href="/guru/beranda" className="flex items-center gap-3 min-w-0">
-              <div className="w-10 h-10 rounded-xl bg-white/20 backdrop-blur flex items-center justify-center text-white font-bold text-sm border border-white/20 shadow-lg shrink-0">
-                <img src="/brand/bc2026-icon.png" alt="" className="h-5 w-5 object-contain" />
-              </div>
+              <img src="/brand/bc2026-icon.png" alt="" className="h-12 w-12 shrink-0 object-contain drop-shadow-md" />
               <div className="min-w-0">
                 <span className="shell-label font-bold text-white text-sm block truncate">BahasaCerdas</span>
                 <p className="shell-label text-[10px] text-emerald-200 block truncate">Dasbor Guru</p>
