@@ -192,160 +192,167 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ ok: true, idempotent: true, note: "already_success_ignored" });
     }
 
-    // Idempotent: if already SUCCESS and new is also SUCCESS, skip
-    if (transaksi.status === "SUCCESS" && newStatus === "SUCCESS") {
-      return NextResponse.json({ ok: true, idempotent: true });
-    }
-
-    if (transaksi.type === "PREMIUM_UPGRADE") {
-      if (activatePremium) {
-        // Determine plan details
-        const meta = (transaksi.metadata || {}) as Record<string, any>;
-        let durationDays = 30;
-        let aiCreditsMonthly = 500;
-        let planId = "GURU_PRO_MONTHLY";
-
-        if (meta.planId === "GURU_PRO_YEARLY" || meta.durationDays === 365) {
-          durationDays = 365;
-          planId = "GURU_PRO_YEARLY";
-        } else if (meta.durationDays && meta.durationDays > 30) {
-          durationDays = meta.durationDays;
-          planId = meta.planId || "GURU_PRO_YEARLY";
-        }
-
-        // Fallback: detect from amount
-        if (!meta.planId) {
-          const fallback = getPlanFromAmount(grossAmount);
-          if (fallback) {
-            durationDays = fallback.durationDays;
-            aiCreditsMonthly = fallback.aiCreditsMonthly;
-            planId = fallback.planId;
-          }
-        }
-
-        // Calculate premiumUntil: stack on existing if active
-        const user = await db.user.findUnique({
-          where: { id: transaksi.userId },
-          select: { premiumUntil: true },
+    // ── CLAIM-FIRST IDEMPOTENCY ──
+    // Webhook Midtrans bisa tiba >1× / bersamaan. Klaim status SUCCESS secara
+    // ATOMIK di dalam transaksi: hanya request yang menang (count === 1) yang
+    // memproses efek finansial & entitlement. Duplikat/concurrent → count 0 →
+    // keluar idempotent. Bila proses gagal setelah klaim, seluruh transaksi
+    // rollback (termasuk klaim) sehingga retry Midtrans memproses ulang utuh.
+    try {
+      const processed = await db.$transaction(async (tx) => {
+        const claim = await tx.transaksi.updateMany({
+          where: { id: transaksi.id, status: { not: "SUCCESS" } },
+          data: { status: "SUCCESS", midtransId: body.transaction_id },
         });
-
-        const now = new Date();
-        let premiumUntil: Date;
-
-        if (user?.premiumUntil && user.premiumUntil > now) {
-          // Extend from end of current period
-          premiumUntil = new Date(user.premiumUntil.getTime() + durationDays * 24 * 60 * 60 * 1000);
-        } else {
-          // Fresh start
-          premiumUntil = new Date(now.getTime() + durationDays * 24 * 60 * 60 * 1000);
+        if (claim.count === 0) {
+          console.log("[Webhook] duplicate — already processed", { order_id });
+          return false;
         }
 
-        await db.$transaction([
-          db.user.update({
+        if (!activatePremium) {
+          // Status non-sukses (deny/expire/cancel) — hanya klaim status final.
+          // (downgrade guard di atas menjaga SUCCESS tidak tertimpa)
+          return true;
+        }
+
+        if (transaksi.type === "PREMIUM_UPGRADE") {
+          // Determine plan details
+          const meta = (transaksi.metadata || {}) as Record<string, any>;
+          let durationDays = 30;
+          let aiCreditsMonthly = 500;
+          let planId = "GURU_PRO_MONTHLY";
+
+          if (meta.planId === "GURU_PRO_YEARLY" || meta.durationDays === 365) {
+            durationDays = 365;
+            planId = "GURU_PRO_YEARLY";
+          } else if (meta.durationDays && meta.durationDays > 30) {
+            durationDays = meta.durationDays;
+            planId = meta.planId || "GURU_PRO_YEARLY";
+          }
+
+          // Fallback: detect from amount
+          if (!meta.planId) {
+            const fallback = getPlanFromAmount(grossAmount);
+            if (fallback) {
+              durationDays = fallback.durationDays;
+              aiCreditsMonthly = fallback.aiCreditsMonthly;
+              planId = fallback.planId;
+            }
+          }
+
+          // Calculate premiumUntil: stack on existing if active — baca DI DALAM
+          // transaksi yang sama dengan klaim agar tidak double-extend saat race.
+          const user = await tx.user.findUnique({
+            where: { id: transaksi.userId },
+            select: { premiumUntil: true },
+          });
+
+          const now = new Date();
+          let premiumUntil: Date;
+
+          if (user?.premiumUntil && user.premiumUntil > now) {
+            premiumUntil = new Date(user.premiumUntil.getTime() + durationDays * 24 * 60 * 60 * 1000);
+          } else {
+            premiumUntil = new Date(now.getTime() + durationDays * 24 * 60 * 60 * 1000);
+          }
+
+          await tx.user.update({
             where: { id: transaksi.userId },
             data: { isPremium: true, premiumPlan: "PRO", premiumUntil },
-          }),
-          db.transaksi.update({
-            where: { id: transaksi.id },
-            data: { status: newStatus, midtransId: body.transaction_id },
-          }),
-          db.notifikasi.create({
+          });
+          await tx.notifikasi.create({
             data: {
               userId: transaksi.userId,
               title: "Pembayaran Berhasil!",
               body: "Akunmu telah diupgrade ke PRO. Selamat menikmati fitur premium!",
               type: "PREMIUM",
             },
-          }),
-        ]);
-
-        // Sync credit ledger (non-blocking — errors are logged, not thrown)
-        await syncPremiumCreditLedger(transaksi.userId, planId, aiCreditsMonthly);
-      } else {
-        // Non-success status, just update the transaction
-        await db.transaksi.update({
-          where: { id: transaksi.id },
-          data: { status: newStatus, midtransId: body.transaction_id },
-        });
-      }
-    }
-
-    else if (transaksi.type === "KARYA_PURCHASE") {
-      if (activatePremium) {
-        const meta = (transaksi.metadata || {}) as any;
-        const items: any[] = meta.items || [];
-        const firstItem = items[0] || {};
-
-        // Update all Pembelian for this order to PAID
-        await db.pembelian.updateMany({
-          where: { midtransOrderId: order_id },
-          data: {
-            status: "PAID",
-            midtransPaymentType: body.payment_type,
-            midtransStatus: "settlement",
-            midtransPaymentAmount: grossAmount,
-            midtransPaidAt: new Date(),
-          },
-        });
-
-        // Process each item in the order
-        for (const item of items) {
-          const { karyaId, sellerId, subtotal: itemSubtotal } = item;
-          if (!karyaId) continue;
-
-          // Baca netAmount dari sellerEarning (pre-calculated with 85/15 split)
-          // Supaya webhook tidak menghitung ulang fee dengan persentase berbeda
-          const earning = await db.sellerEarning.findFirst({
-            where: { sellerId, itemId: karyaId, status: "PENDING" },
-            orderBy: { soldAt: "desc" },
-            select: { netAmount: true },
           });
-
-          const sellerEarning = earning?.netAmount ?? Math.round(itemSubtotal * 0.85);
-
-          const karya = await db.karya.findUnique({
-            where: { id: karyaId },
-            select: { title: true, fileUrl: true },
-          });
-
-          await Promise.all([
-            db.karya.update({ where: { id: karyaId }, data: { downloads: { increment: 1 } } }),
-            db.user.update({ where: { id: sellerId }, data: { saldo: { increment: sellerEarning }, totalEarned: { increment: sellerEarning } } }),
-            db.sellerEarning.updateMany({
-              where: { sellerId, itemId: karyaId, status: "PENDING" },
-              data: { status: "COMPLETED" },
-            }),
-            db.purchaseHistory.updateMany({
-              where: { buyerId: transaksi.userId, itemId: karyaId },
-              data: { fileUrl: karya?.fileUrl || "" },
-            }),
-          ]);
+          console.log("[premium.activated]", { userId: transaksi.userId, order_id, planId, durationDays, premiumUntil: premiumUntil.toISOString() });
+          return { planId, aiCreditsMonthly };
         }
 
-        await db.transaksi.update({
-          where: { id: transaksi.id },
-          data: { status: "SUCCESS", midtransId: body.transaction_id },
-        });
+        if (transaksi.type === "KARYA_PURCHASE") {
+          const meta = (transaksi.metadata || {}) as any;
+          const items: any[] = meta.items || [];
 
-        // Send notification
-        const firstKarya = items[0] ? await db.karya.findUnique({ where: { id: items[0].karyaId }, select: { title: true } }).catch(() => null) : null;
-        const itemCount = items.length;
-        await db.notifikasi.create({
-          data: {
-            userId: transaksi.userId,
-            title: "Pembelian Berhasil! 🎉",
-            body: itemCount > 1
-              ? `${itemCount} karya berhasil dibeli. Cek di halaman pesanan untuk unduh.`
-              : `Karya "${firstKarya?.title || 'Karya'}" telah masuk ke akunmu.`,
-            type: "PURCHASE",
-          },
-        });
-      } else {
-        await db.transaksi.update({
-          where: { id: transaksi.id },
-          data: { status: newStatus, midtransId: body.transaction_id },
-        });
+          // Klaim Pembelian PAID secara atomik — jaminan efek finansial hanya
+          // SEKALI walau webhook tiba dobel/concurrent.
+          const fresh = await tx.pembelian.updateMany({
+            where: { midtransOrderId: order_id, status: { not: "PAID" } },
+            data: {
+              status: "PAID",
+              midtransPaymentType: body.payment_type,
+              midtransStatus: "settlement",
+              midtransPaymentAmount: grossAmount,
+              midtransPaidAt: new Date(),
+            },
+          });
+
+          if (fresh.count === 0) {
+            console.log("[Webhook] karya purchase duplicate", { order_id });
+            return true;
+          }
+
+          // Process each item in the order (hanya setelah klaim menang)
+          for (const item of items) {
+            const { karyaId, sellerId, subtotal: itemSubtotal } = item;
+            if (!karyaId) continue;
+
+            // Baca netAmount dari sellerEarning (pre-calculated dengan split 85/15)
+            const earning = await tx.sellerEarning.findFirst({
+              where: { sellerId, itemId: karyaId, status: "PENDING" },
+              orderBy: { soldAt: "desc" },
+              select: { netAmount: true },
+            });
+
+            const sellerEarning = earning?.netAmount ?? Math.round(itemSubtotal * 0.85);
+
+            const karya = await tx.karya.findUnique({
+              where: { id: karyaId },
+              select: { title: true, fileUrl: true },
+            });
+
+            await tx.karya.update({ where: { id: karyaId }, data: { downloads: { increment: 1 } } });
+            await tx.user.update({ where: { id: sellerId }, data: { saldo: { increment: sellerEarning }, totalEarned: { increment: sellerEarning } } });
+            await tx.sellerEarning.updateMany({
+              where: { sellerId, itemId: karyaId, status: "PENDING" },
+              data: { status: "COMPLETED" },
+            });
+            await tx.purchaseHistory.updateMany({
+              where: { buyerId: transaksi.userId, itemId: karyaId },
+              data: { fileUrl: karya?.fileUrl || "" },
+            });
+          }
+
+          // Send notification
+          const firstKarya = items[0] ? await tx.karya.findUnique({ where: { id: items[0].karyaId }, select: { title: true } }).catch(() => null) : null;
+          const itemCount = items.length;
+          await tx.notifikasi.create({
+            data: {
+              userId: transaksi.userId,
+              title: "Pembelian Berhasil! 🎉",
+              body: itemCount > 1
+                ? `${itemCount} karya berhasil dibeli. Cek di halaman pesanan untuk unduh.`
+                : `Karya "${firstKarya?.title || 'Karya'}" telah masuk ke akunmu.`,
+              type: "PURCHASE",
+            },
+          });
+          return true;
+        }
+
+        // Tipe lain — klaim status saja
+        return true;
+      });
+
+      // Ledger kredit AI (di luar transaksi klaim — best-effort, aman dobel
+      // karena syncPremiumCreditLedger idempotent: hanya menaikkan ke target).
+      if (processed && typeof processed === "object" && "planId" in processed) {
+        await syncPremiumCreditLedger(transaksi.userId, processed.planId, processed.aiCreditsMonthly);
       }
+    } catch (error) {
+      console.error("Webhook processing error:", error);
+      return NextResponse.json({ error: "Internal server error" }, { status: 500 });
     }
 
     return NextResponse.json({ ok: true });
