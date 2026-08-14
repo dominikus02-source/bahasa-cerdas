@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState, useCallback } from "react"
 import Link from "next/link"
 import { Heart, Volume2, VolumeX, Loader2, RotateCcw, ArrowLeft } from "lucide-react"
-import { QUESTION_BANK, type BankQuestion } from "@/lib/game/question-bank"
+import { QUESTION_BANK_EXPANDED, type BankQuestion } from "@/lib/game/question-bank"
 import { gambarKarakter, KARAKTER, PROFIL, type Karakter } from "@/lib/arena-junior/karakter"
 import { bacaKarakter, simpanKarakter } from "@/lib/arena-junior/karakter-simpan"
 import { sfx, startBGM, stopBGM, isSoundOn, toggleSound, haptic } from "@/lib/game/sound"
@@ -185,7 +185,7 @@ export default function KuisTempurSolo({ backHref = "/arena/game" }: { backHref?
 
   const soalBaru = useCallback(() => {
     teratasiRef.current = false
-    if (kantongRef.current.length === 0) kantongRef.current = kocok(QUESTION_BANK)
+    if (kantongRef.current.length === 0) kantongRef.current = kocok(QUESTION_BANK_EXPANDED)
     const q = kantongRef.current.pop()!
     // Dua pilihan, bukan empat. Di tengah permainan, membaca empat opsi di layar
     // ponsel memakan waktu yang seharusnya dipakai berpikir — dan menebak tetap
@@ -333,7 +333,7 @@ export default function KuisTempurSolo({ backHref = "/arena/game" }: { backHref?
     benarRef.current = 0; salahRef.current = 0; tembakRef.current = 0
     comboRef.current = 0; maxComboRef.current = 0; peluruRef.current = 0
     dibunuhRef.current = 0; giliranBotRef.current = 0
-    kantongRef.current = kocok(QUESTION_BANK)
+    kantongRef.current = kocok(QUESTION_BANK_EXPANDED)
     jalanRef.current = true
 
     setHp(statku.hpMax); setCombo(0); setPeluru(0)

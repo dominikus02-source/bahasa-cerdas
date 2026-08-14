@@ -9,7 +9,7 @@
  * /api/game/tantang (Tantang Teman).
  */
 import { db } from "@/lib/db";
-import { QUESTION_BANK } from "@/lib/game/question-bank";
+import { QUESTION_BANK_EXPANDED } from "@/lib/game/question-bank";
 
 export type HarvestQuestion = {
   id: string;
@@ -83,9 +83,12 @@ export async function harvestJalurQuestions(): Promise<HarvestQuestion[]> {
 
   const pool: HarvestQuestion[] = [];
 
-  // 1) Curated, hand-verified bank (guaranteed quality) — mid difficulty.
-  for (const b of QUESTION_BANK) {
-    pool.push({ id: `bank_${pool.length}`, soal: b.soal, opsi: b.opsi, jawaban: b.jawaban, penjelasan: b.penjelasan, lvl: 6 });
+  // 1) Curated, hand-verified bank (guaranteed quality) + ekspansi 2026.
+  // Tingkat (EASY/MEDIUM/HARD) dipetakan ke lvl ramp: 3 / 6 / 10.
+  const TINGKAT_LVL: Record<string, number> = { EASY: 3, MEDIUM: 6, HARD: 10 };
+  for (const b of QUESTION_BANK_EXPANDED) {
+    const lvl = (b as { tingkat?: string }).tingkat ? TINGKAT_LVL[(b as { tingkat?: string }).tingkat!] ?? 6 : 6;
+    pool.push({ id: `bank_${pool.length}`, soal: b.soal, opsi: b.opsi, jawaban: b.jawaban, penjelasan: b.penjelasan, lvl });
   }
 
   // 2) Real lesson questions from Jalur Cerdas, tagged with their unit level.
@@ -119,11 +122,30 @@ export async function harvestJalurQuestions(): Promise<HarvestQuestion[]> {
  * Ambil `count` soal dengan ramp kesulitan: sepertiga mudah (L1-4), sepertiga
  * menengah (L5-8), sepertiga sulit (L9-12), diurutkan naik. Subset acak per panggilan.
  */
-export function pickRampedQuestions(clean: HarvestQuestion[], count: number): HarvestQuestion[] {
+export interface PickOptions {
+  /** ID soal yang baru dimainkan — dibuang dulu (anti-repeat); fallback otomatis. */
+  recentIds?: string[];
+  /** Seed deterministik (opsional). Tanpa seed = acak seperti sebelumnya. */
+  seed?: string;
+}
+
+export function pickRampedQuestions(
+  clean: HarvestQuestion[],
+  count: number,
+  opts: PickOptions = {}
+): HarvestQuestion[] {
+  // Anti-repeat: buang soal yang baru dimainkan bila pool masih mencukupi.
+  let pool = clean;
+  if (opts.recentIds && opts.recentIds.length > 0) {
+    const recent = new Set(opts.recentIds);
+    const fresh = clean.filter((q) => !recent.has(q.id));
+    if (fresh.length >= count) pool = fresh;
+  }
+
   const bands = [
-    clean.filter((q) => q.lvl <= 4),
-    clean.filter((q) => q.lvl > 4 && q.lvl <= 8),
-    clean.filter((q) => q.lvl > 8),
+    pool.filter((q) => q.lvl <= 4),
+    pool.filter((q) => q.lvl > 4 && q.lvl <= 8),
+    pool.filter((q) => q.lvl > 8),
   ];
   const per = Math.floor(count / 3);
   const targets = [per, per, count - 2 * per];
@@ -131,7 +153,7 @@ export function pickRampedQuestions(clean: HarvestQuestion[], count: number): Ha
   bands.forEach((band, i) => picked.push(...shuffleQuestions(band).slice(0, targets[i])));
   if (picked.length < count) {
     const have = new Set(picked.map((q) => q.soal));
-    picked.push(...shuffleQuestions(clean).filter((q) => !have.has(q.soal)).slice(0, count - picked.length));
+    picked.push(...shuffleQuestions(pool).filter((q) => !have.has(q.soal)).slice(0, count - picked.length));
   }
   return picked.sort((a, b) => a.lvl - b.lvl).slice(0, count);
 }

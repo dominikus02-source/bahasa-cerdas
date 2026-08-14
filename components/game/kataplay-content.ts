@@ -230,4 +230,44 @@ export const kataPlayLevels: KataPlayLevel[] = [
       },
     ],
   },
+
+  {
+    id: 'kp_6', title: 'Eksplorasi Kata 2', description: 'Kosakata & kalimat baru — ekspansi 2026',
+    icon: 'Sparkles', levelNumber: 6,
+    lessons: [
+      {
+        id: 'kp_6_1', title: 'Kata Benda di Sekitar', description: 'Meja kursi buku tas',
+        character: 'hazel', xpReward: 30,
+        questions: [
+          q('imageChoice', 'Yang dipakai untuk menulis adalah?', 'PENSIL', ['PENSIL', 'MEJA', 'PIRING', 'SEPATU']),
+          q('wordChoice', 'Pilih kata benda!', 'BUKU', ['BUKU', 'BERLARI', 'CANTIK', 'CEPAT']),
+          q('imageChoice', 'Yang dipakai saat hujan adalah?', 'PAYUNG', ['PAYUNG', 'KIPAS', 'SENDOK', 'TOPI']),
+          q('matching', 'Cocokkan!', 'MEJA', ['MEJA', 'KUCING', 'MAKAN', 'HIJAU'], { matchLeft: 'Benda untuk menulis', matchRight: 'MEJA' }),
+          q('fillBlank', 'Lengkapi: P_LPEN', 'U', ['U', 'I', 'A', 'E'], { hint: 'pUlpen' }),
+        ],
+      },
+      {
+        id: 'kp_6_2', title: 'Kata Kerja Sehari-hari', description: 'Makan minum berlari membaca',
+        character: 'zelby', xpReward: 30,
+        questions: [
+          q('wordChoice', 'Pilih kata kerja!', 'BERLARI', ['BERLARI', 'MEJA', 'MERAH', 'BUKU']),
+          q('imageChoice', 'Kegiatan apa ini?', 'MEMBACA', ['MEMBACA', 'TIDUR', 'TERBANG', 'MENANAM']),
+          q('trueFalse', '"Minum" adalah kata kerja?', 'Benar', ['Benar', 'Salah']),
+          q('fillBlank', 'Adik sedang ___ buku', 'MEMBACA', ['MEMBACA', 'MEMASUK', 'MELOMPAT', 'MENYANYI'], { hint: 'membaCa' }),
+          q('arrangeWord', 'Susun: SISWA – MENULIS – DI PAPAN', 'SISWA MENULIS DI PAPAN', ['SISWA MENULIS DI PAPAN', 'DI PAPAN SISWA MENULIS', 'MENULIS SISWA DI PAPAN', 'SISWA DI PAPAN MENULIS'], { wordParts: ['SISWA', 'MENULIS', 'DI PAPAN'] }),
+        ],
+      },
+      {
+        id: 'kp_6_3', title: 'Kalimat Tanya', description: 'Apa siapa kapan di mana',
+        character: 'hazel', xpReward: 30,
+        questions: [
+          q('wordChoice', 'Kata tanya untuk menanyakan tempat adalah?', 'DI MANA', ['DI MANA', 'BERAPA', 'SIAPA', 'KENAPA']),
+          q('wordChoice', 'Kata tanya untuk menanyakan orang adalah?', 'SIAPA', ['SIAPA', 'KAPAN', 'APA', 'DI MANA']),
+          q('trueFalse', 'Kalimat "Apa itu?" adalah kalimat tanya?', 'Benar', ['Benar', 'Salah']),
+          q('fillBlank', '___ namamu?', 'SIAPA', ['SIAPA', 'DI MANA', 'BERAPA', 'KAPAN'], { hint: 'menanyakan nama' }),
+          q('arrangeWord', 'Susun: DI MANA – KAMU – TINGGAL', 'KAMU TINGGAL DI MANA', ['KAMU TINGGAL DI MANA', 'DI MANA TINGGAL KAMU', 'TINGGAL KAMU DI MANA', 'KAMU DI MANA TINGGAL'], { wordParts: ['KAMU', 'TINGGAL', 'DI MANA'] }),
+        ],
+      },
+    ],
+  },
 ]

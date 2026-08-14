@@ -160,3 +160,16 @@ export const QUESTION_BANK: BankQuestion[] = [
   { soal: "Kata ganti orang kedua tunggal adalah...", opsi: ["saya","dia","kami","kamu"], jawaban: 3, penjelasan: "'Kamu' adalah kata ganti orang kedua tunggal.", kategori: "Jenis Kata" },
   { soal: "Kata 'dengan' termasuk jenis kata...", opsi: ["Kata kerja","Kata depan","Kata sifat","Kata bilangan"], jawaban: 1, penjelasan: "'Dengan' adalah kata depan (preposisi).", kategori: "Jenis Kata" },
 ];
+
+
+/**
+ * Bank gabungan: kurasi inti (142) + ekspansi 2026 (90) — dipakai harvest
+ * agar solo game & duel mendapat variasi lebih banyak. Soal ekspansi punya
+ * `tingkat` (EASY/MEDIUM/HARD) yang dipetakan harvest ke lvl ramp.
+ */
+import { BANK_EKSPANSI_2026 } from "./question-bank-expansion";
+
+export const QUESTION_BANK_EXPANDED: BankQuestion[] = [
+  ...QUESTION_BANK,
+  ...BANK_EKSPANSI_2026,
+];
