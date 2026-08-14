@@ -5,7 +5,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { LogIn, Eye, EyeOff, ShieldCheck, GraduationCap, BookOpen } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
-import { BRAND_LOGO_DARK, BRAND_ICON, BRAND_TAGLINE } from "@/lib/brand";
+import { BRAND_LOGO_DARK, BRAND_LOGO_LIGHT, BRAND_TAGLINE } from "@/lib/brand";
+import BatikAccent from "@/components/decorations/BatikAccent";
 
 /**
  * LOGIN 3.0 — gerbang utama ekosistem BahasaCerdas (netral guru & murid).
@@ -203,14 +204,15 @@ export default function LoginPage() {
       {/* Dekorasi edukatif ringan — tidak mengganggu form */}
       <div aria-hidden className="pointer-events-none absolute -left-24 -top-24 h-72 w-72 rounded-full bg-violet-200/40 blur-3xl dark:bg-violet-900/20" />
       <div aria-hidden className="pointer-events-none absolute -bottom-32 -right-24 h-96 w-96 rounded-full bg-teal-100/50 blur-3xl dark:bg-teal-900/10" />
+      {/* Nuansa batik BahasaCerdas — subtle cultural accent, memudar ke kanan */}
+      <BatikAccent />
 
       <div className="relative mx-auto grid w-full max-w-6xl items-center gap-10 lg:grid-cols-2 lg:gap-14">
         {/* ── BRAND HERO ── */}
         <div className="order-2 lg:order-1">
-          <Link href="/" className="inline-flex items-center gap-2.5" aria-label="Beranda BahasaCerdas">
-            <Image src={BRAND_ICON} alt="" width={40} height={40} className="h-9 w-9 object-contain" />
-            <Image src={BRAND_LOGO_DARK} alt="BahasaCerdas" width={200} height={44} className="h-9 w-auto object-contain dark:hidden" />
-            <span className="hidden text-lg font-extrabold text-white dark:inline">BahasaCerdas</span>
+          <Link href="/" className="inline-flex items-center" aria-label="Beranda BahasaCerdas">
+            <Image src={BRAND_LOGO_DARK} alt="BahasaCerdas" width={210} height={48} className="h-10 w-auto object-contain dark:hidden" />
+            <Image src={BRAND_LOGO_LIGHT} alt="BahasaCerdas" width={210} height={48} className="hidden h-10 w-auto object-contain dark:inline" />
           </Link>
 
           <h1 className="mt-6 text-4xl font-black leading-tight tracking-tight text-slate-900 dark:text-white md:text-5xl">
