@@ -16,10 +16,10 @@ export default function BatikAccent() {
         alt=""
         fill
         sizes="1200px"
-        className="object-cover opacity-[0.05] mix-blend-multiply dark:opacity-[0.08] dark:mix-blend-screen"
+        className="object-cover opacity-[0.12] mix-blend-multiply dark:opacity-[0.16] dark:mix-blend-screen"
         style={{
-          maskImage: "linear-gradient(115deg, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.25) 55%, transparent 85%)",
-          WebkitMaskImage: "linear-gradient(115deg, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.25) 55%, transparent 85%)",
+          maskImage: "linear-gradient(115deg, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.5) 60%, transparent 95%)",
+          WebkitMaskImage: "linear-gradient(115deg, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.5) 60%, transparent 95%)",
         }}
       />
     </div>

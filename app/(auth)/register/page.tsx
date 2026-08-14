@@ -142,12 +142,27 @@ export default function RegisterPage() {
       {/* Nuansa batik BahasaCerdas — subtle cultural accent, memudar ke kanan */}
       <BatikAccent />
 
-      <div className="relative mx-auto grid w-full max-w-6xl items-start gap-10 lg:grid-cols-2 lg:gap-14">
+            {/* Tombol kembali ke Beranda */}
+      <div className="relative mx-auto mb-6 flex w-full max-w-6xl">
+        <Link
+          href="/"
+          className="inline-flex h-11 items-center gap-2 rounded-xl border border-slate-200 bg-white/70 px-4 text-sm font-semibold text-slate-600 transition-colors hover:border-violet-300 hover:bg-violet-50 hover:text-violet-700 dark:border-slate-700 dark:bg-slate-900/60 dark:text-slate-300 dark:hover:border-violet-700 dark:hover:bg-violet-500/10 dark:hover:text-violet-300"
+          aria-label="Kembali ke Beranda"
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+            <polyline points="9 22 9 12 15 12 15 22" />
+          </svg>
+          Beranda
+        </Link>
+      </div>
+
+<div className="relative mx-auto grid w-full max-w-6xl items-start gap-10 lg:grid-cols-2 lg:gap-14">
         {/* ── BRAND HERO (identik Login 3.0) ── */}
         <div className="order-2 lg:order-1 lg:sticky lg:top-8">
           <Link href="/" className="inline-flex items-center" aria-label="Beranda BahasaCerdas">
-            <Image src={BRAND_LOGO_DARK} alt="BahasaCerdas" width={210} height={48} className="h-10 w-auto object-contain dark:hidden" />
-            <Image src={BRAND_LOGO_LIGHT} alt="BahasaCerdas" width={210} height={48} className="hidden h-10 w-auto object-contain dark:inline" />
+            <Image src={BRAND_LOGO_DARK} alt="BahasaCerdas" width={280} height={64} className="h-16 w-auto object-contain dark:hidden" />
+            <Image src={BRAND_LOGO_LIGHT} alt="BahasaCerdas" width={280} height={64} className="hidden h-16 w-auto object-contain dark:inline" />
           </Link>
 
           <h1 className="mt-6 text-4xl font-black leading-tight tracking-tight text-slate-900 dark:text-white md:text-5xl">
