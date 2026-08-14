@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { setQuiet } from "@/lib/notif-quiet"
 import { Play, Pause, X, Volume2, VolumeX, Heart, Trophy, Zap, RotateCcw, Clock, Star } from "lucide-react";
 
 /* ---------- Bank Kata ---------- */
@@ -60,6 +61,13 @@ export default function ZelbyDash() {
   const zelbyImgRef = useRef<HTMLImageElement | null>(null);
   const zelbyCelebrateImgRef = useRef<HTMLImageElement | null>(null);
   const imagesLoaded = useRef(false);
+
+  // NOTIFICATION 1.0 — game quiet mode: reward global tidak menutupi gameplay;
+  // reset otomatis saat keluar game/unmount (tidak ada quiet tersisa).
+  useEffect(() => {
+    setQuiet(screen === "game")
+    return () => setQuiet(false)
+  }, [screen]);
 
   useEffect(() => { mutedRef.current = muted; }, [muted]);
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, useMemo, useRef } from "react";
+import { setQuiet } from "@/lib/notif-quiet"
 import Link from "next/link";
 import { motion, AnimatePresence, useAnimationControls } from "framer-motion";
 import {
@@ -118,6 +119,13 @@ export default function BenarSalah({ backHref = "/arena/game" }: { backHref?: st
   }, [idx, current]);
 
   /* Init */
+  // NOTIFICATION 1.0 — game quiet mode: reward global tidak menutupi gameplay;
+  // reset otomatis saat keluar game/unmount (tidak ada quiet tersisa).
+  useEffect(() => {
+    setQuiet(screen === "playing")
+    return () => setQuiet(false)
+  }, [screen]);
+
   useEffect(() => {
     setSaved(loadSaved());
     try { setSoundOn(isSoundOn()); } catch { /* abaikan */ }

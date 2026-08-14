@@ -11,6 +11,7 @@
  * dikirim ke /api/game/xp.
  */
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
+import { setQuiet } from "@/lib/notif-quiet"
 import {
   X, Play, RotateCcw, ChevronRight, Lock, Star, Trophy, Lightbulb,
   Eraser, CheckCircle2, Grid3x3, ArrowRight, ArrowDown, Clock, Coins, Zap,
@@ -243,6 +244,13 @@ export default function TekaTekiSilang() {
   const xpSentRef = useRef(false);
   const timeBudgetRef = useRef(0);
   const elapsedRef = useRef(0);
+
+  // NOTIFICATION 1.0 — game quiet mode: reward global tidak menutupi gameplay;
+  // reset otomatis saat keluar game/unmount (tidak ada quiet tersisa).
+  useEffect(() => {
+    setQuiet(screen === "game")
+    return () => setQuiet(false)
+  }, [screen]);
 
   useEffect(() => { setSaved(loadSaved()); }, []);
 

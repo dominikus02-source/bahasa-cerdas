@@ -10,6 +10,7 @@ import { sfx, startBGM, stopBGM, isSoundOn, toggleSound, haptic } from "@/lib/ga
 import { rankFromLevel, RANK_META } from "@/lib/gamification/ranks"
 import { RankIcon } from "@/components/gamification/RankIcon"
 import { levelFromXp } from "@/lib/gamification/xp-engine"
+import { setQuiet } from "@/lib/notif-quiet"
 import {
   kurvaPemain,
   lawanBot,
@@ -173,6 +174,13 @@ export default function KuisTempurSolo({ backHref = "/arena/game" }: { backHref?
   useEffect(() => {
     levelRef.current = level
   }, [level])
+
+  // NOTIFICATION 1.0 — game quiet mode: reward global TIDAK menutupi gameplay
+  // (soal/HUD/timer); reward tetap di-queue & muncul setelah sesi selesai.
+  useEffect(() => {
+    setQuiet(fase === "main")
+    return () => setQuiet(false)
+  }, [fase])
 
   useEffect(() => {
     return () => { if (naikTimerRef.current) clearTimeout(naikTimerRef.current) }

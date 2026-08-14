@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback, useEffect } from "react";
+import { setQuiet } from "@/lib/notif-quiet"
 import Link from "next/link";
 import { motion, AnimatePresence, useAnimationControls } from "framer-motion";
 import { Heart, Flame, Trophy, RotateCcw, Mountain, Check, X, Loader2, Sparkles, Zap, Volume2, VolumeX, Play, Lightbulb } from "lucide-react";
@@ -47,6 +48,11 @@ export default function MenaraCerdas({ backHref = "/arena/game" }: { backHref?: 
   const current = questions[idx];
 
   useEffect(() => () => stopBGM(), []);
+  useEffect(() => {
+    setQuiet(phase === "playing")
+    return () => setQuiet(false)
+  }, [phase])
+
   useEffect(() => { try { setSoundOn(isSoundOn()); } catch { /* abaikan */ } }, []);
 
   const start = useCallback(async () => {

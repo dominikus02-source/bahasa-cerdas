@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef, useCallback } from "react";
+import { setQuiet } from "@/lib/notif-quiet"
 import { gameSocket } from "@/lib/game/socket";
 import { motion, AnimatePresence } from "framer-motion";
 import { Zap, Flame, Trophy, Clock, Star, Crown, Swords, Heart } from "lucide-react";
@@ -68,6 +69,13 @@ export default function GamePlay({ roomCode, onFinish }: GamePlayProps) {
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
   const userId = useRef("");
+
+  // NOTIFICATION 1.0 — game quiet mode: reward global tidak menutupi gameplay;
+  // reset otomatis saat keluar game/unmount (tidak ada quiet tersisa).
+  useEffect(() => {
+    setQuiet(phase === "countdown" || phase === "question")
+    return () => setQuiet(false)
+  }, [phase]);
 
   useEffect(() => {
     const stored = localStorage.getItem("bc-user");

@@ -46,7 +46,8 @@ export function DailyQuestCard({ compact = false }: { compact?: boolean }) {
       }
       enqueuePopup({ type: "COIN", title: `+${rewardCoins} Koin`, body: "Hadiah misi harian", icon: "🪙", amount: rewardCoins });
       await load();
-      refresh();
+      // NOTIFICATION 1.0 — refresh SILENT: perbarui baseline tanpa popup diff kedua.
+      refresh(true);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Terjadi kesalahan");
     } finally {

@@ -47,7 +47,8 @@ export function AchievementGrid({ limit }: { limit?: number }) {
       if (rewardXP > 0) enqueuePopup({ type: "XP", title: `+${rewardXP} XP`, body: "Hadiah pencapaian", icon: "⚡", amount: rewardXP });
       if (rewardCoins > 0) enqueuePopup({ type: "COIN", title: `+${rewardCoins} Koin`, body: "Hadiah pencapaian", icon: "🪙", amount: rewardCoins });
       await load();
-      refresh();
+      // NOTIFICATION 1.0 — refresh SILENT: baseline diperbarui tanpa popup diff ganda.
+      refresh(true);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Terjadi kesalahan");
     } finally {

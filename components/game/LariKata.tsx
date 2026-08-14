@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
+import { setQuiet } from "@/lib/notif-quiet"
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Zap, Timer, Star, Flame, Trophy, X, RotateCcw, Sparkles,
@@ -45,6 +46,13 @@ export default function LariKataGame({ hideBackButton, backHref = "/arena/game" 
   const correctRef = useRef(0);
   const wrongRef = useRef(0);
   const maxStreakRef = useRef(0);
+  // NOTIFICATION 1.0 — game quiet mode: reward global tidak menutupi gameplay;
+  // reset otomatis saat keluar game/unmount (tidak ada quiet tersisa).
+  useEffect(() => {
+    setQuiet(screen === "playing")
+    return () => setQuiet(false)
+  }, [screen]);
+
   useEffect(() => { scoreRef.current = score; }, [score]);
   useEffect(() => { correctRef.current = correct; }, [correct]);
   useEffect(() => { wrongRef.current = wrong; }, [wrong]);

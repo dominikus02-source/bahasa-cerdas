@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect, useCallback, useRef } from "react"
+import { setQuiet } from "@/lib/notif-quiet"
 import { motion, AnimatePresence } from "framer-motion"
 import GameBackground from "@/components/game/GameBackground"
 import { sfx, haptic, startBGM, stopBGM } from "@/lib/game/sound"
@@ -113,6 +114,13 @@ type XpServerResult = {
 
 export default function KataPlayGame({ hideBackButton }: { hideBackButton?: boolean }) {
   const [phase, setPhase] = useState<Phase>("splash")
+  // NOTIFICATION 1.0 — game quiet mode: reward global tidak menutupi gameplay;
+  // reset otomatis saat keluar game/unmount (tidak ada quiet tersisa).
+  useEffect(() => {
+    setQuiet(phase === "playing")
+    return () => setQuiet(false)
+  }, [phase]);
+
   useEffect(() => { if (phase === "playing") startBGM(); else stopBGM(); return () => stopBGM() }, [phase])
   const [progress, setProgress] = useState<ProgressData>({ completedLessons: [], xp: 0 })
   const [selectedLevel, setSelectedLevel] = useState<KataPlayLevel | null>(null)

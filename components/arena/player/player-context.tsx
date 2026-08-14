@@ -3,15 +3,17 @@
 import { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import type { PlayerProfileResponse, PlayerProfileView } from "@/lib/gamification/client-types";
+import {
+  buildRewardEvents,
+  enqueueReward,
+  sortRewardQueue,
+  dequeueReward,
+  popupIdentity,
+  type RewardPopup,
+} from "./reward-queue";
+import { isQuiet } from "@/lib/notif-quiet";
 
-export interface RewardPopup {
-  id: string;
-  type: "XP" | "COIN" | "BADGE" | "ACHIEVEMENT" | "LEVEL_UP" | "RANK_UP";
-  title: string;
-  body?: string;
-  icon?: string;
-  amount?: number;
-}
+export type { RewardPopup };
 
 export interface LevelUpEvent {
   levelBefore: number;
@@ -34,18 +36,18 @@ interface PlayerContextValue {
   loading: boolean;
   error: string | null;
   lastUpdated: Date | null;
-  /** Queue reward popup. */
+  /** Queue reward popup (terurut prioritas; satu aktif). */
   popups: RewardPopup[];
   /** Level-up aktif untuk dimunculkan modal. */
   levelUp: LevelUpEvent | null;
-  /** Rank-up aktif untuk dimunculkan modal. */
+  /** Rank-up aktif untuk dimunculkan modal (SERIAL setelah level-up). */
   rankUp: RankUpEvent | null;
-  enqueuePopup: (popup: Omit<RewardPopup, "id">) => void;
+  enqueuePopup: (popup: Omit<RewardPopup, "id" | "at">) => void;
   dequeuePopup: (id: string) => void;
   dismissLevelUp: () => void;
   dismissRankUp: () => void;
-  refresh: () => Promise<void>;
-  /** Label: waktu terakhir refresh. */
+  /** refresh profil; silent=true → perbarui baseline TANPA memicu popup. */
+  refresh: (silent?: boolean) => Promise<void>;
   isStale: boolean;
 }
 
@@ -63,6 +65,11 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
   const [rankUp, setRankUp] = useState<RankUpEvent | null>(null);
   const prevProfileRef = useRef<PlayerProfileView | null>(null);
   const fetchedRef = useRef(false);
+  // NOTIFICATION 1.0 — hardening:
+  const fetchingRef = useRef(false);       // in-flight guard (polling vs focus race)
+  const pendingRankRef = useRef<RankUpEvent | null>(null); // serialisasi Level → Rank
+  const deferredRef = useRef<RewardPopup[]>([]); // reward selama game quiet mode
+  const levelUpRef = useRef(false);        // apakah modal level-up sedang aktif
 
   /** Klaim reward rank baru secara server-side (best-effort, idempotent). */
   const redeemRankRewards = useCallback(async (rank: string) => {
@@ -76,84 +83,101 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
         hasNewRewards: boolean;
       };
       if (data.hasNewRewards && data.granted.length > 0) {
-        setPopups((p) => [
-          ...p,
-          {
-            id: `rankrewards-${Date.now()}`,
+        setPopups((p) =>
+          enqueueReward(p, {
             type: "RANK_UP",
             title: `Reward Rank ${data.title}!`,
             body: data.granted.join(", "),
             icon: "🎁",
-          },
-        ]);
+          })
+        );
       }
     } catch {
       // best-effort — jangan menggagalkan UI
     }
   }, []);
 
-  const fetchProfile = useCallback(async () => {
-    try {
-      const res = await fetch("/api/player/profile", { cache: "no-store" });
-      if (!res.ok) throw new Error("Gagal memuat profil");
-      const data = (await res.json()) as PlayerProfileResponse;
-      const prev = prevProfileRef.current;
+  const fetchProfile = useCallback(
+    async (silent = false) => {
+      if (fetchingRef.current) return; // anti race polling/focus
+      fetchingRef.current = true;
+      try {
+        const res = await fetch("/api/player/profile", { cache: "no-store" });
+        if (!res.ok) throw new Error("Gagal memuat profil");
+        const data = (await res.json()) as PlayerProfileResponse;
+        const prev = prevProfileRef.current;
 
-      setProfile((current) => {
-        // Level-up detection — hanya dari perbandingan nyata.
-        if (prev && prev.level < data.profile.level) {
-          setLevelUp({
-            levelBefore: prev.level,
-            levelAfter: data.profile.level,
-            rankLabel: data.profile.rankLabel,
-            rankColor: data.profile.rankColor,
-          });
-        }
-        // Rank-up detection — bandingkan rank lintas refresh, trigger reward.
-        if (prev && prev.rank !== data.profile.rank) {
-          setRankUp({
-            rankBefore: prev.rank,
-            rankLabelBefore: prev.rankLabel,
-            rankAfter: data.profile.rank,
-            rankLabel: data.profile.rankLabel,
-            rankTitle: data.profile.rankTitle,
-            rankColor: data.profile.rankColor,
-          });
-          void redeemRankRewards(data.profile.rank);
-        }
-        // XP gain detection → popup reward.
-        if (prev && data.profile.totalXp > prev.totalXp && prev.totalXp !== 0) {
-          const gain = data.profile.totalXp - prev.totalXp;
-          setPopups((p) => [
-            ...p,
-            { id: `xp-${Date.now()}`, type: "XP", title: `+${gain} XP`, body: "XP diterima!", icon: "⚡", amount: gain },
-          ]);
-        }
-        // Coin gain detection → popup reward.
-        if (prev && data.profile.coin > prev.coin) {
-          const gain = data.profile.coin - prev.coin;
-          setPopups((p) => [
-            ...p,
-            { id: `coin-${Date.now()}`, type: "COIN", title: `+${gain} Koin`, body: "Koin bertambah!", icon: "🪙", amount: gain },
-          ]);
-        }
-        return data;
-      });
+        setProfile((current) => {
+          if (prev && !silent) {
+            // Level-up detection — hanya dari perbandingan nyata.
+            if (prev.level < data.profile.level) {
+              levelUpRef.current = true;
+              setLevelUp({
+                levelBefore: prev.level,
+                levelAfter: data.profile.level,
+                rankLabel: data.profile.rankLabel,
+                rankColor: data.profile.rankColor,
+              });
+            }
+            // Rank-up detection — SERIAL setelah level-up (P0 tidak bertabrakan).
+            if (prev.rank !== data.profile.rank) {
+              const evt: RankUpEvent = {
+                rankBefore: prev.rank,
+                rankLabelBefore: prev.rankLabel,
+                rankAfter: data.profile.rank,
+                rankLabel: data.profile.rankLabel,
+                rankTitle: data.profile.rankTitle,
+                rankColor: data.profile.rankColor,
+              };
+              if (levelUpRef.current) {
+                pendingRankRef.current = evt;
+              } else {
+                setRankUp(evt);
+                void redeemRankRewards(data.profile.rank);
+              }
+            }
 
-      prevProfileRef.current = data.profile;
-      setLastUpdated(new Date());
-      setError(null);
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "Terjadi kesalahan");
-    } finally {
-      setLoading(false);
-      fetchedRef.current = true;
-    }
-  }, [redeemRankRewards]);
+            // XP + Coin gain → SATU event reward gabungan (dedupe identity).
+            const xpGain = prev.totalXp !== 0 && data.profile.totalXp > prev.totalXp
+              ? data.profile.totalXp - prev.totalXp
+              : 0;
+            const coinGain = data.profile.coin > prev.coin ? data.profile.coin - prev.coin : 0;
+            if (xpGain > 0 || coinGain > 0) {
+              const events = buildRewardEvents(xpGain, coinGain, "Aktivitas belajarmu");
+              setPopups((p) => {
+                let next = p;
+                for (const ev of events) next = enqueueReward(next, ev);
+                return sortRewardQueue(next);
+              });
+            }
+          }
+          return data;
+        });
+
+        prevProfileRef.current = data.profile;
+        setLastUpdated(new Date());
+        setError(null);
+
+        // Flush reward yang tertahan selama game quiet mode (reward tidak hilang).
+        if (!isQuiet() && deferredRef.current.length > 0) {
+          const deferred = deferredRef.current;
+          deferredRef.current = [];
+          setPopups((p) => sortRewardQueue([...p, ...deferred]));
+        }
+      } catch (e) {
+        setError(e instanceof Error ? e.message : "Terjadi kesalahan");
+      } finally {
+        setLoading(false);
+        fetchedRef.current = true;
+        fetchingRef.current = false;
+      }
+    },
+    [redeemRankRewards]
+  );
 
   useEffect(() => {
     fetchProfile();
-    const id = setInterval(fetchProfile, POLL_INTERVAL);
+    const id = setInterval(() => fetchProfile(), POLL_INTERVAL);
     const onFocus = () => fetchProfile();
     window.addEventListener("focus", onFocus);
     return () => {
@@ -162,17 +186,38 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
     };
   }, [fetchProfile]);
 
-  const enqueuePopup = useCallback((popup: Omit<RewardPopup, "id">) => {
-    setPopups((p) => [...p, { ...popup, id: `${popup.type}-${Date.now()}-${Math.random().toString(36).slice(2, 7)}` }]);
+  const enqueuePopup = useCallback((popup: Omit<RewardPopup, "id" | "at">) => {
+    const identity = popupIdentity(popup);
+    // Game quiet mode: reward tetap di-queue, tampil setelah gameplay selesai.
+    if (isQuiet()) {
+      deferredRef.current = enqueueReward(deferredRef.current, popup);
+      return;
+    }
+    setPopups((p) => {
+      const duplicate = p.some((q) => q.id === identity && Date.now() - (q.at ?? 0) < 5000);
+      if (duplicate) return p;
+      return sortRewardQueue([...p, { ...popup, id: identity, at: Date.now() }]);
+    });
   }, []);
 
   const dequeuePopup = useCallback((id: string) => {
-    setPopups((p) => p.filter((x) => x.id !== id));
+    setPopups((p) => dequeueReward(p, id));
   }, []);
 
-  const dismissLevelUp = useCallback(() => setLevelUp(null), []);
+  const dismissLevelUp = useCallback(() => {
+    setLevelUp(null);
+    levelUpRef.current = false;
+    // Serialisasi P0: Rank-up yang tertahan muncul SETELAH level-up selesai.
+    const pending = pendingRankRef.current;
+    if (pending) {
+      pendingRankRef.current = null;
+      setRankUp(pending);
+      void redeemRankRewards(pending.rankAfter);
+    }
+  }, [redeemRankRewards]);
+
   const dismissRankUp = useCallback(() => setRankUp(null), []);
-  const refresh = useCallback(() => fetchProfile(), [fetchProfile]);
+  const refresh = useCallback((silent = false) => fetchProfile(silent), [fetchProfile]);
 
   const isStale = profile !== null && lastUpdated !== null && Date.now() - lastUpdated.getTime() > POLL_INTERVAL * 3;
 

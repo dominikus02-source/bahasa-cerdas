@@ -13,6 +13,7 @@
  * - XP dikirim ke /api/game/xp (dibatasi), progres level di localStorage
  */
 import { useState, useEffect, useRef, useCallback } from "react";
+import { setQuiet } from "@/lib/notif-quiet"
 import {
   Heart, Play, Pause, X, Volume2, VolumeX, Lock, Star, Trophy, Zap,
   RotateCcw, ChevronRight, Music4,
@@ -172,6 +173,13 @@ export default function IramaKata() {
   const engineRef = useRef<Engine | null>(null);
   const mutedRef = useRef(false);
   const xpSentRef = useRef(false);
+
+  // NOTIFICATION 1.0 — game quiet mode: reward global tidak menutupi gameplay;
+  // reset otomatis saat keluar game/unmount (tidak ada quiet tersisa).
+  useEffect(() => {
+    setQuiet(screen === "game")
+    return () => setQuiet(false)
+  }, [screen]);
 
   useEffect(() => {
     setSaved(loadSaved());

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
+import { setQuiet } from "@/lib/notif-quiet"
 import { motion, AnimatePresence } from "framer-motion";
 import {
   X, Heart, Star, Trophy, Zap, Shuffle, Check, RotateCcw, Lock,
@@ -276,6 +277,13 @@ export default function SusunKataGame({ hideBackButton, backHref = "/arena/game"
   const supabaseIdRef = useRef("");
 
   const level = LEVELS.find((l) => l.id === levelId) || LEVELS[0];
+
+  // NOTIFICATION 1.0 — game quiet mode: reward global tidak menutupi gameplay;
+  // reset otomatis saat keluar game/unmount (tidak ada quiet tersisa).
+  useEffect(() => {
+    setQuiet(screen === "playing")
+    return () => setQuiet(false)
+  }, [screen]);
 
   useEffect(() => {
     setSaved(loadSaved());
