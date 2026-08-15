@@ -9,6 +9,7 @@ import { ADAPTIVE_ALLOWED_SIZES, ADAPTIVE_MAX_CANDIDATES, ADAPTIVE_SELECTION_VER
 import { selectAdaptivePractice } from "@/lib/adaptive-practice/selector";
 import type { AdaptiveCandidate } from "@/lib/adaptive-practice/types";
 import type { DifficultyId, QuestionTypeId } from "@/lib/question-metadata/taxonomy";
+import { dayKeyWIB } from "@/lib/learning-loop/journey";
 
 type JsonRecord = Record<string, unknown>;
 
@@ -124,7 +125,12 @@ async function startSession(userId: string, size: number) {
     });
   }
 
-  const selection = selectAdaptivePractice({ states, candidates, size });
+  const selection = selectAdaptivePractice({
+    states,
+    candidates,
+    size,
+    rotationKey: `${userId}:${dayKeyWIB()}`,
+  });
   if (!selection) return fallbackResponse();
 
   const session = await db.adaptivePracticeSession.create({

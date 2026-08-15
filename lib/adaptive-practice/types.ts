@@ -30,4 +30,6 @@ export interface AdaptiveSelectorInput {
   states: LearnerSkillState[];
   candidates: AdaptiveCandidate[];
   size: number;
+  /** Seed server-side untuk rotasi no-data; bukan input skill/difficulty. */
+  rotationKey?: string;
 }

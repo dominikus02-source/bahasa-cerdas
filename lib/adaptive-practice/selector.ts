@@ -15,7 +15,14 @@ function targetDifficulty(state: LearnerSkillState | undefined): DifficultyId {
   return "MEDIUM";
 }
 
-function chooseTarget(states: AdaptiveSelectorInput["states"], candidates: AdaptiveCandidate[]): { skill: string; reasonCode: SelectionReasonCode } | null {
+function stableIndex(value: string, length: number): number {
+  let hash = 0;
+  for (const character of value) hash = ((hash << 5) - hash + character.charCodeAt(0)) | 0;
+  return Math.abs(hash) % length;
+}
+
+function chooseTarget(input: AdaptiveSelectorInput): { skill: string; reasonCode: SelectionReasonCode } | null {
+  const { states, candidates } = input;
   const availableSkills = [...new Set(candidates.map((candidate) => candidate.skill).filter(hasSkill))];
   if (availableSkills.length === 0) return null;
   const stateBySkill = new Map(states.map((state) => [state.skill, state]));
@@ -27,7 +34,12 @@ function chooseTarget(states: AdaptiveSelectorInput["states"], candidates: Adapt
       const accuracyB = b.accuracy ?? 1;
       return accuracyA - accuracyB || (a.lastPracticedAt ?? "").localeCompare(b.lastPracticedAt ?? "") || a.skill.localeCompare(b.skill);
     });
-  if (evidenced[0]) return { skill: evidenced[0].skill, reasonCode: "WEAK_SKILL" };
+  if (evidenced[0]) {
+    return {
+      skill: evidenced[0].skill,
+      reasonCode: evidenced[0].trend === "IMPROVING" ? "PROGRESSION" : "WEAK_SKILL",
+    };
+  }
 
   const withHistory = availableSkills
     .map((skill) => stateBySkill.get(skill))
@@ -35,7 +47,9 @@ function chooseTarget(states: AdaptiveSelectorInput["states"], candidates: Adapt
     .sort((a, b) => (a.lastPracticedAt ?? "").localeCompare(b.lastPracticedAt ?? "") || a.skill.localeCompare(b.skill));
   if (withHistory[0]) return { skill: withHistory[0].skill, reasonCode: "PRACTICE_GAP" };
 
-  return { skill: [...availableSkills].sort()[0], reasonCode: "NO_DATA" };
+  const sortedSkills = [...availableSkills].sort();
+  const index = input.rotationKey ? stableIndex(input.rotationKey, sortedSkills.length) : 0;
+  return { skill: sortedSkills[index], reasonCode: "NO_DATA" };
 }
 
 function difficultyScore(candidate: AdaptiveCandidate, target: DifficultyId): number {
@@ -47,8 +61,10 @@ function difficultyScore(candidate: AdaptiveCandidate, target: DifficultyId): nu
 
 function noveltyScore(candidate: AdaptiveCandidate, now: Date): number {
   const state = seenState(candidate.seenAt, now);
-  if (state === "UNSEEN") return 50;
-  if (state === "OLD") return 20;
+  // Novelty is the highest-priority factor. A recent question must not beat an
+  // unseen question merely because it happens to match the target skill.
+  if (state === "UNSEEN") return 300;
+  if (state === "OLD") return 150;
   return 0;
 }
 
@@ -80,7 +96,8 @@ function reasonText(code: SelectionReasonCode, skill: string, subskill: string |
 
 export function selectAdaptivePractice(input: AdaptiveSelectorInput, now = new Date()): AdaptiveSelection | null {
   if (input.size <= 0 || input.candidates.length === 0) return null;
-  const target = chooseTarget(input.states, input.candidates);
+  if (input.candidates.length < input.size) return null;
+  const target = chooseTarget(input);
   if (!target) return null;
   const state = input.states.find((item) => item.skill === target.skill);
   const targetDifficultyValue = targetDifficulty(state);

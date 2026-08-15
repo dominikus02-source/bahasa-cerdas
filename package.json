@@ -225,7 +225,8 @@
     "validate:question-metadata": "npx tsx scripts/validate-question-metadata.ts",
     "test:question-metadata": "npx tsx scripts/test-question-metadata.ts",
     "test:learner-state": "npx tsx scripts/test-learner-state.ts",
-    "test:adaptive-practice": "npx tsx scripts/test-adaptive-practice.ts"
+    "test:adaptive-practice": "npx tsx scripts/test-adaptive-practice.ts",
+    "test:adaptive-simulation": "npx tsx scripts/test-adaptive-simulation.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.39.0",
