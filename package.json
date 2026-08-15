@@ -227,7 +227,11 @@
     "test:learner-state": "npx tsx scripts/test-learner-state.ts",
     "test:adaptive-practice": "npx tsx scripts/test-adaptive-practice.ts",
     "test:adaptive-simulation": "npx tsx scripts/test-adaptive-simulation.ts",
-    "test:my-day-personalization": "npx tsx scripts/test-my-day-personalization.ts"
+    "test:my-day-personalization": "npx tsx scripts/test-my-day-personalization.ts",
+    "approve:metadata-manifest": "npx tsx scripts/approve-metadata-review-manifest.ts",
+    "report:metadata-manifest": "npx tsx scripts/report-metadata-review-manifest.ts",
+    "check:candidate-pool": "npx tsx scripts/check-adaptive-candidate-pool.ts",
+    "test:step3j-real-data": "npx tsx scripts/test-step3j-real-data.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.39.0",

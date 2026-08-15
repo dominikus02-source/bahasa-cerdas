@@ -1,0 +1,47 @@
+{
+  "manifestId": "review-manifest-001",
+  "version": "1.0",
+  "purpose": "Kontrolled founder review: 12 metadata BANK_SOAL yang wajib di-review manusia sebelum APPROVED. Deterministik — daftar kaku, bukan query dinamis.",
+  "rules": {
+    "maxRecords": 12,
+    "statusBefore": ["NEEDS_REVIEW"],
+    "statusAfter": "APPROVED",
+    "provenanceAfter": "HUMAN_REVIEW",
+    "requireSoalExists": true,
+    "preserveTaxonomyValidation": true,
+    "noApproveAll": true,
+    "expectationMustMatch": true
+  },
+  "coverage": {
+    "skills": ["READING", "VOCABULARY", "GRAMMAR", "LITERATURE"],
+    "difficulties": ["EASY", "MEDIUM", "HARD"],
+    "topics": ["Ide Pokok", "Simpulan", "Teks Eksposisi", "Sinonim", "Kalimat Efektif", "Ejaan", "Imbuhan", "Cerpen", "Pantun", "Majas"],
+    "subskills": [
+      "READING_IDE_POKOK",
+      "READING_INFERENSI",
+      "READING_STRUKTUR_TEKS",
+      "VOCABULARY_SINONIM_ANTONIM",
+      "GRAMMAR_KALIMAT_EFEKTIF",
+      "GRAMMAR_EJAAN",
+      "GRAMMAR_IMBUHAN",
+      "LITERATURE_UNSUR_CERITA",
+      "LITERATURE_APRESIASI_KARYA",
+      "LITERATURE_GAYA_BAHASA"
+    ],
+    "questionTypes": ["PILIHAN_GANDA", "BENAR_SALAH", "ISIAN_SINGKAT"]
+  },
+  "records": [
+    { "source": "BANK_SOAL", "questionId": "BC-IDE-POKOK-0001", "expectedSkill": "READING", "expectedDifficulty": "EASY", "expectedTopic": "Ide Pokok" },
+    { "source": "BANK_SOAL", "questionId": "BC-SIMPULAN-0013", "expectedSkill": "READING", "expectedDifficulty": "MEDIUM", "expectedTopic": "Simpulan" },
+    { "source": "BANK_SOAL", "questionId": "BC-TEKS-EKSPOSISI-0025", "expectedSkill": "READING", "expectedDifficulty": "HARD", "expectedTopic": "Teks Eksposisi" },
+    { "source": "BANK_SOAL", "questionId": "BC-SINONIM-0001", "expectedSkill": "VOCABULARY", "expectedDifficulty": "EASY", "expectedTopic": "Sinonim" },
+    { "source": "BANK_SOAL", "questionId": "BC-SINONIM-0013", "expectedSkill": "VOCABULARY", "expectedDifficulty": "MEDIUM", "expectedTopic": "Sinonim" },
+    { "source": "BANK_SOAL", "questionId": "BC-SINONIM-0025", "expectedSkill": "VOCABULARY", "expectedDifficulty": "HARD", "expectedTopic": "Sinonim" },
+    { "source": "BANK_SOAL", "questionId": "BC-KALIMAT-EFEKTIF-0001", "expectedSkill": "GRAMMAR", "expectedDifficulty": "EASY", "expectedTopic": "Kalimat Efektif" },
+    { "source": "BANK_SOAL", "questionId": "BC-EJAAN-0013", "expectedSkill": "GRAMMAR", "expectedDifficulty": "MEDIUM", "expectedTopic": "Ejaan" },
+    { "source": "BANK_SOAL", "questionId": "BC-IMBUHAN-0025", "expectedSkill": "GRAMMAR", "expectedDifficulty": "HARD", "expectedTopic": "Imbuhan" },
+    { "source": "BANK_SOAL", "questionId": "BC-CERPEN-0001", "expectedSkill": "LITERATURE", "expectedDifficulty": "EASY", "expectedTopic": "Cerpen" },
+    { "source": "BANK_SOAL", "questionId": "BC-PANTUN-0013", "expectedSkill": "LITERATURE", "expectedDifficulty": "MEDIUM", "expectedTopic": "Pantun" },
+    { "source": "BANK_SOAL", "questionId": "BC-MAJAS-0025", "expectedSkill": "LITERATURE", "expectedDifficulty": "HARD", "expectedTopic": "Majas" }
+  ]
+}
