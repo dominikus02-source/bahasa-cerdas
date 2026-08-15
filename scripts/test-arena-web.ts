@@ -163,6 +163,7 @@ function main() {
       const allowed = new Set([
         "prisma/schema.prisma",
         "prisma/migrations/manual/2026-08-15_learning_evidence.sql",
+        "prisma/migrations/manual/2026-08-15_question_metadata.sql",
       ]);
       const diff = execSync(`git diff --name-only HEAD -- prisma/`, { encoding: "utf8", cwd: process.cwd() }).trim().split("\n").filter(Boolean);
       return diff.every((file) => allowed.has(file));
@@ -185,6 +186,7 @@ function main() {
         "app/api/jalur-cerdas/[unitId]/progress/route.ts",
         "app/api/jalur-cerdas/[unitId]/submit/route.ts",
         "app/api/murid/quiz/[id]/route.ts",
+        "app/api/admin/question-metadata/route.ts",
       ]);
       const diff = execSync(`git diff --name-only HEAD -- app/api/`, { encoding: "utf8", cwd: process.cwd() })
         .trim().split("\n").filter(Boolean)

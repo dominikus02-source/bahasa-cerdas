@@ -135,6 +135,7 @@ function main() {
     const allowedPrisma = new Set([
       "prisma/schema.prisma",
       "prisma/migrations/manual/2026-08-15_learning_evidence.sql",
+      "prisma/migrations/manual/2026-08-15_question_metadata.sql",
     ]);
     test("prisma/ hanya menyentuh additive schema/evidence Step 3C",
       () => prismaDiff.split("\n").filter(Boolean).every((l) => allowedPrisma.has(l)));

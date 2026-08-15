@@ -295,6 +295,8 @@ model User {
   playerCTA               PlayerCTA?
   learningInsights        LearningInsight[]
   learningEvidences       LearningEvidence[]
+  questionMetadataCreated QuestionMetadata[]  @relation("QuestionMetadataCreatedBy")
+  questionMetadataReviewed QuestionMetadata[] @relation("QuestionMetadataReviewedBy")
 
   // Admin quota audit logs where this user was the acting admin
   adminQuotaActions    AdminQuotaAuditLog[]   @relation("AdminActions")
@@ -2816,6 +2818,39 @@ model LearningEvidence {
   @@index([userId, questionId])
   @@index([userId, source, answeredAt])
   @@index([userId, skill, answeredAt])
+}
+
+/// Metadata terkontrol untuk sumber soal non-certified. Tidak menyimpan soal
+/// atau answer key; hanya taxonomy/provenance yang bisa diaudit.
+model QuestionMetadata {
+  id              String    @id @default(cuid())
+  source          String
+  questionId      String
+  skill           String?
+  subskill        String?
+  difficulty      Difficulty?
+  level           Int?
+  topic           String?
+  questionType    String
+  cefr            String?
+  provenance      String
+  confidence      String
+  status          String    @default("DRAFT")
+  taxonomyVersion String    @default("1.0")
+  metadataVersion String    @default("1.0")
+  createdById     String?
+  reviewedById    String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  createdBy  User? @relation("QuestionMetadataCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  reviewedBy User? @relation("QuestionMetadataReviewedBy", fields: [reviewedById], references: [id], onDelete: SetNull)
+
+  @@unique([source, questionId])
+  @@index([source, status])
+  @@index([skill, subskill])
+  @@index([difficulty])
+  @@index([level])
 }
 
 /// Langganan Web Push milik satu perangkat. Satu murid bisa punya beberapa:

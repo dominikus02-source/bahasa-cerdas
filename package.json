@@ -221,7 +221,9 @@
     "test:premium-production": "npx tsx scripts/test-premium-production.ts",
     "test:my-day-home": "npx tsx scripts/test-my-day-home.ts",
     "test:step3b-foundation": "npx tsx scripts/test-step3b-data-foundation.ts",
-    "test:step3c-evidence": "npx tsx scripts/test-step3c-evidence-ledger.ts"
+    "test:step3c-evidence": "npx tsx scripts/test-step3c-evidence-ledger.ts",
+    "validate:question-metadata": "npx tsx scripts/validate-question-metadata.ts",
+    "test:question-metadata": "npx tsx scripts/test-question-metadata.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.39.0",
