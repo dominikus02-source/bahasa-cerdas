@@ -12,6 +12,7 @@ import { IconTarget } from "@/lib/icons"
 import { SwRegister } from "@/components/SwRegister"
 import { ArenaClientWrapper } from "./arena-client"
 import { BottomNav } from "./bottom-nav"
+import MuridMobileNav from "@/components/dashboard/MuridMobileNav"
 import { BackHome } from "@/components/shared/BackHome"
 import UserAvatar from "@/components/arena/UserAvatar"
 import { NotificationBell } from "@/components/dashboard/NotificationBell"
@@ -145,7 +146,17 @@ export default async function ArenaLayout({ children }: { children: React.ReactN
         </>
       }
       mainClassName="mx-auto px-0 w-full py-0"
-      bottomNav={<>{apk && <BottomNav />}</>}
+      bottomNav={
+        <>
+          {/* STEP 5.0 — MOBILE NAVIGATION CONSOLIDATION.
+              Web mobile arena memakai SATU student mobile nav yang sama dengan
+              /murid/* (komponen MuridMobileNav — no duplicate). APK memakai
+              chrome penuh + BottomNav-nya sendiri (kompatibilitas TWA tidak
+              berubah). Halaman fullscreen game/kerjakan tetap menutup nav via
+              CSS :has(.game-fullscreen)/:has(.owns-bottom-bar). */}
+          {apk ? <BottomNav /> : <MuridMobileNav fullName={user.fullName} role={user.role} isFounder={user.isFounder} />}
+        </>
+      }
     >
       <ArenaClientWrapper>
         <ArenaWorkspaceContainer apk={apk}>{children}</ArenaWorkspaceContainer>

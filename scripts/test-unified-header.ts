@@ -135,8 +135,8 @@ function main() {
 
   // ── 10. APK BOTTOMNAV UTUH ──
   console.log("\n── 10. APK BottomNav behavior tetap ──");
-  test("BottomNav hanya untuk APK ({apk && <BottomNav />})",
-    () => arenaLayout.includes("{apk && <BottomNav />}"));
+  test("STEP 5.0: APK BottomNav utuh; web mobile arena pakai MuridMobileNav",
+    () => arenaLayout.includes("{apk ? <BottomNav /> : <MuridMobileNav"));
   test("apk = await isApk() (lib/apk untouched)",
     () => arenaLayout.includes("await isApk()"));
   test("RUTE_TANPA_GERBANG /arena/login tetap (login APK bare)",

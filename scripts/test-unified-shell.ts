@@ -67,8 +67,8 @@ function main() {
     () => !arenaLayout.includes("navItems") && !arenaLayout.includes('aria-label="Navigasi Arena"'));
   test("RUTE_TANPA_GERBANG = /arena/login (heritage)", 
     () => arenaLayout.includes('RUTE_TANPA_GERBANG = "/arena/login"'));
-  test("APK: BottomNav hanya apk, BackHome hidden saat apk",
-    () => arenaLayout.includes("{apk && <BottomNav />}") && arenaLayout.includes("!apk &&"));
+  test("STEP 5.0: APK memakai BottomNav, web mobile memakai MuridMobileNav (student mobile nav), BackHome hidden saat apk",
+    () => arenaLayout.includes("{apk ? <BottomNav /> : <MuridMobileNav") && arenaLayout.includes("!apk &&"));
   test("apk = await isApk() (lib/apk untouched)",
     () => arenaLayout.includes("await isApk()"));
   test("obrolan = produk dalam shell yang sama (isChatWeb dipertahankan)",

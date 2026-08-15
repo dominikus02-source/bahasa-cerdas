@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { ShieldCheck } from "lucide-react";
 import { getUser } from "@/lib/supabase/server";
 import { AdminSidebar } from "@/components/admin/AdminSidebar";
+import AdminMobileNav from "@/components/admin/AdminMobileNav";
 import { ShellLayout } from "@/components/shell/ShellLayout";
 import { BackHome } from "@/components/shared/BackHome";
 import { ThemeToggle } from "@/components/theme/theme-toggle";
@@ -14,7 +15,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   return (
     <ShellLayout
       rootClassName="bg-slate-50 dark:bg-slate-950"
-      mainClassName="flex-1 px-6 py-6 mx-auto max-w-[1440px] w-full"
+      mainClassName="flex-1 px-4 md:px-6 py-6 pb-24 md:pb-8 mx-auto max-w-[1440px] w-full"
       sidebar={
         <>
           <AdminSidebar user={{ fullName: user.fullName, avatar: user.avatar }} />
@@ -34,6 +35,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           <ThemeToggle />
         </header>
       }
+      bottomNav={<AdminMobileNav />}
     >
       {children}
     </ShellLayout>

@@ -203,6 +203,7 @@
     "test:unified-header": "npx tsx scripts/test-unified-header.ts",
     "test:icon-system": "npx tsx scripts/test-icon-system.ts",
     "test:navigation-context": "npx tsx scripts/test-navigation-context.ts",
+    "test:mobile-navigation": "npx tsx scripts/test-mobile-navigation.ts",
     "test:ai-bc-architecture": "npx tsx scripts/test-ai-bc-architecture.ts",
     "test:ai-bc-personas": "npx tsx scripts/test-ai-bc-personas.ts",
     "test:ai-bc-context": "npx tsx scripts/test-ai-bc-context.ts",

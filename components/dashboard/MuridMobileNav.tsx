@@ -64,7 +64,7 @@ export default function MuridMobileNav({ fullName, role, isFounder }: { fullName
   return (
     <>
       {/* Bottom Nav */}
-      <nav className="md:hidden fixed bottom-0 inset-x-0 z-40 bg-white/90 backdrop-blur-xl border-t border-gray-100/80 safe-area-bottom dark:bg-slate-900/90 dark:border-slate-800">
+      <nav className="bc-mobile-nav md:hidden fixed bottom-0 inset-x-0 z-40 bg-white/90 backdrop-blur-xl border-t border-gray-100/80 safe-area-bottom dark:bg-slate-900/90 dark:border-slate-800">
         <div className="flex items-center justify-around py-2">
           {PRIMARY.map(({ href, label, icon: Icon }) => {
             const active = isActive(href);

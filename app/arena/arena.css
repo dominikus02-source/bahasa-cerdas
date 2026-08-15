@@ -84,14 +84,24 @@
   display: none;
 }
 
+/* STEP 5.0 — fullscreen game juga menyembunyikan mobile nav web (student)
+   yang kini hadir di arena web mobile. APK BottomNav sudah tercakup via
+   .safe-area-bottom di atas. */
+.arena-theme:has(.game-fullscreen) .bc-mobile-nav {
+  display: none;
+}
+
 .arena-theme:has(.game-fullscreen) {
   padding-bottom: 0 !important;
 }
 
 /* Pages with their own fixed bottom action bar (e.g. tugas/kerjakan) must
    hide the global tab bar so the two fixed-bottom elements don't stack —
-   the tab bar's higher z-index otherwise covers the page's own CTA. */
-.arena-theme:has(.owns-bottom-bar) .arena-bottom-nav {
+   the tab bar's higher z-index otherwise covers the page's own CTA.
+   STEP 5.0: rule extended ke .bc-mobile-nav (semua mobile nav panel:
+   student/guru/admin) — konsisten dengan APK BottomNav. */
+.arena-theme:has(.owns-bottom-bar) .arena-bottom-nav,
+.arena-theme:has(.owns-bottom-bar) .bc-mobile-nav {
   display: none;
 }
 

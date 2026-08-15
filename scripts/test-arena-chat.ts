@@ -66,8 +66,8 @@ function main() {
 
   // ── T.3 — APK Compat Tetap ──
   console.log("\n── T.3 — APK Compat (TWA) ──");
-  test("apk = await isApk() + BottomNav hanya untuk APK tetap ({apk && <BottomNav />})",
-    () => layout.includes("await isApk()") && layout.includes("{apk && <BottomNav />}"));
+  test("STEP 5.0: APK BottomNav utuh; web mobile arena memakai MuridMobileNav ({apk ? <BottomNav /> : <MuridMobileNav})",
+    () => layout.includes("await isApk()") && layout.includes("{apk ? <BottomNav /> : <MuridMobileNav"));
   test("auth gate RUTE_TANPA_GERBANG tetap utuh",
     () => layout.includes("redirect(RUTE_TANPA_GERBANG)") && layout.includes("RUTE_TANPA_GERBANG"));
   test("APK memakai chrome Arena biasa (isChatWeb false saat apk) — bottom-nav tidak berubah; apk kini dari server (isApk() → prop, bukan document.cookie di useEffect) agar first paint stabil",

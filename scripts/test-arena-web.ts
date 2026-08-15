@@ -62,8 +62,8 @@ function main() {
     () => layout.includes("await getUser()") && layout.includes("redirect(RUTE_TANPA_GERBANG)"));
   test("isApk() tetap dipakai untuk perilaku APK (escape hatch BackHome keluar scope)",
     () => layout.includes("await isApk()") && layout.includes("!apk &&"));
-  test("BottomNav hanya untuk APK (web tanpa bottom navigation ala APK)",
-    () => layout.includes("{apk && <BottomNav />}"));
+  test("STEP 5.0: APK memakai BottomNav, web mobile memakai student mobile nav (MuridMobileNav)",
+    () => layout.includes("{apk ? <BottomNav /> : <MuridMobileNav") && layout.includes("MuridMobileNav"));
   test("TIDAK ada tombol Dasbor/Logout di header arena (akses guru via RoleSections sidebar; logout via footer/Pemain)",
     () => !layout.includes("<LayoutDashboard") && !layout.includes("LogoutButton") && layout.includes("RoleSections"));
   test("banner boost tidak dimatikan di halaman Arena non-chat ({!isChatWeb && <ActiveBoostBanner />}) — kini dirender di ArenaWorkspaceContainer",

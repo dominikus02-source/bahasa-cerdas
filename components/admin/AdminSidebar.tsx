@@ -20,7 +20,7 @@ interface Props {
   user: { fullName: string; avatar?: string | null; id?: string };
 }
 
-const NAV = [
+export const NAV = [
   { label: "Ringkasan", href: "/admin", icon: LayoutDashboard },
   { label: "Materi Ajar", href: "/admin/materi/generate-ppt", icon: Presentation },
   { label: "Bank Soal", href: "/admin/bank-soal", icon: FileText },
