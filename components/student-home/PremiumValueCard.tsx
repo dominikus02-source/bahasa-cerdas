@@ -1,15 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { Gem } from "lucide-react";
-
-interface PremiumStatus {
-  plan?: string;
-  subscriptionStatus?: string | null;
-  usage?: Record<string, { used: number; limit: number; remaining: number }>;
-}
-
-type Status = "loading" | "error" | "ready";
+import { useHomeData } from "./home-data";
 
 /**
  * Lapisan nilai Premium yang halus — status SELALU dari server canonical
@@ -17,27 +9,9 @@ type Status = "loading" | "error" | "ready";
  * pengguna free, lencana ringkas untuk PRO/FOUNDER. Tanpa paywall CTA belajar.
  */
 export function PremiumValueCard() {
-  const [status, setStatus] = useState<Status>("loading");
-  const [data, setData] = useState<PremiumStatus | null>(null);
+  const { premium: data, premiumLoading: loading, premiumFailed: failed } = useHomeData();
 
-  useEffect(() => {
-    let alive = true;
-    fetch("/api/player/premium/status")
-      .then((r) => (r.ok ? r.json() : Promise.reject()))
-      .then((d) => {
-        if (!alive) return;
-        setData(d);
-        setStatus("ready");
-      })
-      .catch(() => {
-        if (alive) setStatus("error");
-      });
-    return () => {
-      alive = false;
-    };
-  }, []);
-
-  if (status === "loading") {
+  if (loading) {
     return (
       <div className="px-card px-5 py-5">
         <div className="px-skeleton rounded-lg" style={{ width: "70%", height: 12 }} />
@@ -46,7 +20,7 @@ export function PremiumValueCard() {
     );
   }
 
-  if (status === "error" || !data) return null;
+  if (failed || !data) return null;
 
   const isPremium = data.plan === "PRO" || data.plan === "FOUNDER";
   const simUsage = data.usage?.SIMULATION;

@@ -2,6 +2,7 @@
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import type { PlayerProfileResponse } from "@/lib/gamification/client-types";
+import type { LearnerSkillState } from "@/lib/learner-state/types";
 
 export interface MeUser {
   displayName?: string;
@@ -17,13 +18,49 @@ export interface SummaryRow {
   totalTugas: number;
 }
 
+export interface MyDayResponse {
+  mode: "PREVIEW" | "FALLBACK";
+  actionType: "ADAPTIVE_PRACTICE" | "GENERAL_LEARNING";
+  actionTitle: string;
+  ctaLabel: string;
+  targetSkill: string | null;
+  targetSubskill: string | null;
+  targetDifficulty: string | null;
+  sessionSize: number | null;
+  reasonCode: string;
+  reasonText: string;
+  estimatedMinutes: number | null;
+  confidence: "NO_DATA" | "LOW" | "MEDIUM" | "HIGH";
+  premiumDepth: "STANDARD";
+  selectionVersion: string;
+  learnerState: LearnerSkillState[];
+  mentor: {
+    name: string;
+    insights: string[];
+    today: { activities: number; xp: number; coin: number };
+  } | null;
+}
+
+export interface PremiumStatus {
+  plan?: string;
+  subscriptionStatus?: string | null;
+  usage?: Record<string, { used: number; limit: number; remaining: number }>;
+}
+
 interface HomeDataValue {
   profile: PlayerProfileResponse | null;
   me: MeUser | null;
   summary: SummaryRow | null;
+  myDay: MyDayResponse | null;
+  premium: PremiumStatus | null;
   profileFailed: boolean;
   summaryFailed: boolean;
+  myDayLoading: boolean;
+  myDayFailed: boolean;
+  premiumLoading: boolean;
+  premiumFailed: boolean;
   refresh: () => void;
+  refreshMyDay: () => void;
 }
 
 const HomeDataContext = createContext<HomeDataValue | null>(null);
@@ -37,9 +74,16 @@ export function HomeDataProvider({ children }: { children: React.ReactNode }) {
   const [profile, setProfile] = useState<PlayerProfileResponse | null>(null);
   const [me, setMe] = useState<MeUser | null>(null);
   const [summary, setSummary] = useState<SummaryRow | null>(null);
+  const [myDay, setMyDay] = useState<MyDayResponse | null>(null);
+  const [premium, setPremium] = useState<PremiumStatus | null>(null);
   const [profileFailed, setProfileFailed] = useState(false);
   const [summaryFailed, setSummaryFailed] = useState(false);
+  const [myDayLoading, setMyDayLoading] = useState(true);
+  const [myDayFailed, setMyDayFailed] = useState(false);
+  const [premiumLoading, setPremiumLoading] = useState(true);
+  const [premiumFailed, setPremiumFailed] = useState(false);
   const [attempt, setAttempt] = useState(0);
+  const [myDayAttempt, setMyDayAttempt] = useState(0);
 
   useEffect(() => {
     let alive = true;
@@ -70,11 +114,43 @@ export function HomeDataProvider({ children }: { children: React.ReactNode }) {
     };
   }, [attempt]);
 
+  useEffect(() => {
+    let alive = true;
+    setMyDayLoading(true);
+    setMyDayFailed(false);
+    setPremiumLoading(true);
+    setPremiumFailed(false);
+    Promise.allSettled([
+      fetch("/api/player/adaptive-practice?mode=preview").then((r) => (r.ok ? r.json() : Promise.reject())),
+      fetch("/api/player/premium/status").then((r) => (r.ok ? r.json() : Promise.reject())),
+    ]).then(([myDayResult, premiumResult]) => {
+      if (!alive) return;
+      if (myDayResult.status === "fulfilled") {
+        setMyDay(myDayResult.value);
+        setMyDayFailed(false);
+      } else {
+        setMyDayFailed(true);
+      }
+      setMyDayLoading(false);
+      if (premiumResult.status === "fulfilled") {
+        setPremium(premiumResult.value);
+        setPremiumFailed(false);
+      } else {
+        setPremiumFailed(true);
+      }
+      setPremiumLoading(false);
+    });
+    return () => {
+      alive = false;
+    };
+  }, [myDayAttempt]);
+
   const refresh = useCallback(() => setAttempt((a) => a + 1), []);
+  const refreshMyDay = useCallback(() => setMyDayAttempt((a) => a + 1), []);
 
   const value = useMemo(
-    () => ({ profile, me, summary, profileFailed, summaryFailed, refresh }),
-    [profile, me, summary, profileFailed, summaryFailed, refresh]
+    () => ({ profile, me, summary, myDay, premium, profileFailed, summaryFailed, myDayLoading, myDayFailed, premiumLoading, premiumFailed, refresh, refreshMyDay }),
+    [profile, me, summary, myDay, premium, profileFailed, summaryFailed, myDayLoading, myDayFailed, premiumLoading, premiumFailed, refresh, refreshMyDay]
   );
 
   return <HomeDataContext.Provider value={value}>{children}</HomeDataContext.Provider>;

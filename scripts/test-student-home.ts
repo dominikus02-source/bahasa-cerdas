@@ -50,11 +50,12 @@ const required = [
   "SecondaryLearningInfo",
 ];
 for (const c of required) {
-  check(`Halaman merender <${c} />`, page.includes(`<${c} />`));
+  check(`Halaman merender <${c} />`, c === "SkillRadar" ? page.includes("<SkillRadar skills=") : page.includes(`<${c} />`));
 }
 check("QuickActions TIDAK dirender", !page.includes("QuickActions"));
+const marker = (c: string) => (c === "SkillRadar" ? "<SkillRadar skills=" : `<${c} />`);
 const order = (a: string, b: string, label: string) =>
-  check(`Urutan: ${a} sebelum ${b} (${label})`, page.indexOf(`<${a} />`) < page.indexOf(`<${b} />`));
+  check(`Urutan: ${a} sebelum ${b} (${label})`, page.indexOf(marker(a)) < page.indexOf(marker(b)));
 order("StudentHomeHero", "ContinueLearningCard", "sapaan dulu");
 order("ContinueLearningCard", "SkillRadar", "aksi hari ini dominan");
 order("SkillRadar", "ArenaHomeSection", "skill sebelum motivasi");

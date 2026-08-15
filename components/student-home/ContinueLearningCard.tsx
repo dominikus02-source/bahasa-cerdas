@@ -1,146 +1,116 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useState } from "react";
-import { ArrowRight, BookOpen, RotateCw } from "lucide-react";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { ArrowRight, BookOpen, Loader2, RotateCw } from "lucide-react";
 import MentorCard from "@/components/arena/player/MentorCard";
+import { useHomeData } from "./home-data";
 
-interface CtaView {
-  ctaType: string;
-  title: string;
-  description: string | null;
-  ctaLabel: string;
-  ctaHref: string;
-  priority: number;
-}
-
-export interface SessionData {
-  name: string;
-  insights: string[];
-  nextAction: CtaView | null;
-  today: { activities: number; xp: number; coin: number };
-}
-
-type Status = "loading" | "error" | "ready";
-
-/**
- * Kartu aksi hari ini — SATU CTA dominan beranda.
- * Rekomendasi murni dari Learning Loop (/api/player/session).
- *
- * States:
- *  - LOADING → skeleton
- *  - ERROR   → pesan jujur + tombol Coba Lagi (TIDAK pura-pura personal)
- *  - EMPTY   → fallback bermakna ke Jalur Cerdas (murid baru)
- *  - SUCCESS → nextAction personal + insight mentor
- */
+/** Kartu Aksi Hari Ini — canonical My Day action dari adaptive preview. */
 export function ContinueLearningCard() {
-  const [session, setSession] = useState<SessionData | null>(null);
-  const [status, setStatus] = useState<Status>("loading");
-  const [attempt, setAttempt] = useState(0);
+  const router = useRouter();
+  const { myDay, myDayLoading, myDayFailed, refreshMyDay } = useHomeData();
+  const [starting, setStarting] = useState(false);
+  const [startError, setStartError] = useState<string | null>(null);
 
-  useEffect(() => {
-    let alive = true;
-    setStatus("loading");
-    fetch("/api/player/session")
-      .then((r) => (r.ok ? r.json() : Promise.reject()))
-      .then((d) => {
-        if (!alive) return;
-        setSession(d);
-        setStatus("ready");
-      })
-      .catch(() => {
-        if (alive) setStatus("error");
-      });
-    return () => {
-      alive = false;
-    };
-  }, [attempt]);
-
-  const retry = useCallback(() => setAttempt((a) => a + 1), []);
-
-  if (status === "loading") {
+  if (myDayLoading) {
     return (
       <div className="my-day-hero px-card px-5 py-7 md:p-8 space-y-3">
         <div className="px-skeleton rounded-lg" style={{ width: 180, height: 12 }} />
-        <div className="px-skeleton rounded-lg" style={{ width: "70%", height: 22 }} />
+        <div className="px-skeleton rounded-lg" style={{ width: "70%", height: 30 }} />
         <div className="px-skeleton rounded-lg" style={{ width: "90%", height: 14 }} />
         <div className="px-skeleton rounded-lg" style={{ width: 140, height: 40 }} />
       </div>
     );
   }
 
-  if (status === "error") {
+  if (myDayFailed || !myDay) {
     return (
       <section aria-label="Aksi hari ini" className="my-day-hero px-card px-5 py-7 text-center">
         <p className="text-sm font-bold text-[var(--px-text)]">Belum bisa memuat rekomendasi belajarmu.</p>
-        <p className="mt-1 text-xs text-[var(--px-text-dim)]">
-          Coba beberapa saat lagi — sementara itu kamu bisa langsung belajar di Jalur Cerdas.
-        </p>
-        <div className="mt-4 flex items-center justify-center gap-2">
-          <button
-            type="button"
-            onClick={retry}
-            className="px-btn-gold flex items-center gap-2 text-sm font-bold px-5 py-2.5"
-            aria-label="Coba muat ulang rekomendasi"
-          >
-            <RotateCw size={15} />
-            Coba Lagi
-          </button>
-          <Link href="/arena/jalur-cerdas" className="px-btn-ghost text-sm font-semibold px-5 py-2.5">
-            Ke Jalur Cerdas
-          </Link>
-        </div>
+        <p className="mt-1 text-xs text-[var(--px-text-dim)]">Coba beberapa saat lagi.</p>
+        <button
+          type="button"
+          onClick={refreshMyDay}
+          className="px-btn-gold mt-4 inline-flex items-center gap-2 text-sm font-bold px-5 py-2.5"
+        >
+          <RotateCw size={15} />
+          Coba Lagi
+        </button>
       </section>
     );
   }
 
-  const action = session?.nextAction || null;
-  const display = action || {
-    title: "Mulai latihan pertamamu",
-    description:
-      "Belajar di Jalur Cerdas langkah demi langkah — kosakata, tata bahasa, membaca, dan menulis. Latihan pertamamu akan membangun profil belajarmu.",
-    ctaLabel: "Mulai Latihan",
-    ctaHref: "/arena/jalur-cerdas",
-  };
-  const insight = session?.insights?.[0] || null;
+  const currentMyDay = myDay;
+  const isAdaptive = currentMyDay.mode === "PREVIEW" && currentMyDay.actionType === "ADAPTIVE_PRACTICE";
+  const mentorData = currentMyDay.mentor
+    ? { ...currentMyDay.mentor, nextAction: null }
+    : null;
+
+  async function startAdaptiveSession() {
+    setStarting(true);
+    setStartError(null);
+    try {
+      const response = await fetch("/api/player/adaptive-practice", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "start", size: currentMyDay.sessionSize || 5 }),
+      });
+      const data = await response.json();
+      if (!response.ok || data.mode !== "ADAPTIVE" || typeof data.sessionId !== "string") {
+        throw new Error(data.error || "Latihan personal belum tersedia");
+      }
+      router.push(`/arena/adaptive-practice/${data.sessionId}`);
+    } catch {
+      setStartError("Latihan belum bisa dimulai. Coba lagi sebentar.");
+    } finally {
+      setStarting(false);
+    }
+  }
 
   return (
     <div className="space-y-3">
-      <section
-        aria-label="Aksi hari ini"
-        className="my-day-hero px-card px-5 py-7 md:p-8 relative overflow-hidden"
-      >
+      <section aria-label="Aksi hari ini" className="my-day-hero px-card px-5 py-7 md:p-8 relative overflow-hidden">
         <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--px-gold)] mb-2">
-          {action ? "Aksi Hari Ini" : "Saran untukmu"}
+          {isAdaptive ? "Aksi Hari Ini" : "Saran untukmu"}
         </p>
         <div className="relative flex flex-col md:flex-row md:items-center gap-5">
           <div className="flex-1 min-w-0">
             <h2 className="text-2xl md:text-[32px] font-semibold tracking-tight text-[var(--px-text)] mb-2 flex items-center gap-2">
               <BookOpen size={21} strokeWidth={1.8} className="text-[var(--px-royal-2)] shrink-0" />
-              <span className="truncate">{display.title}</span>
+              <span className="truncate">{myDay.actionTitle}</span>
             </h2>
-            <p className="text-sm text-[var(--px-text-dim)] leading-relaxed">{display.description}</p>
-            {insight && (
-              <p className="mt-3 text-xs text-[var(--px-text-dim)] leading-relaxed">
-                <span className="font-semibold text-[var(--px-text)]">Mengapa ini untukmu: </span>
-                {insight}
-              </p>
-            )}
+            <p className="text-sm text-[var(--px-text-dim)] leading-relaxed">
+              {myDay.reasonText}
+              {myDay.sessionSize ? ` ${myDay.sessionSize} soal singkat.` : ""}
+            </p>
+            {startError && <p className="mt-3 text-xs font-semibold text-red-600 dark:text-red-300">{startError}</p>}
           </div>
           <div className="shrink-0">
-            <Link
-              href={display.ctaHref}
-              className="px-btn-gold flex items-center justify-center gap-2 text-sm font-bold px-6 py-3"
-              aria-label={`Mulai: ${display.title}`}
-            >
-              {display.ctaLabel}
-              <ArrowRight size={16} />
-            </Link>
+            {isAdaptive ? (
+              <button
+                type="button"
+                onClick={startAdaptiveSession}
+                disabled={starting}
+                className="px-btn-gold flex items-center justify-center gap-2 text-sm font-bold px-6 py-3 disabled:cursor-wait"
+                aria-label={`Mulai ${myDay.actionTitle}`}
+              >
+                {starting ? <Loader2 size={16} className="animate-spin" /> : null}
+                {starting ? "Menyiapkan..." : myDay.ctaLabel}
+                {!starting && <ArrowRight size={16} />}
+              </button>
+            ) : (
+              <Link href="/arena/jalur-cerdas" className="px-btn-gold flex items-center justify-center gap-2 text-sm font-bold px-6 py-3">
+                {myDay.ctaLabel}
+                <ArrowRight size={16} />
+              </Link>
+            )}
           </div>
         </div>
       </section>
 
-      {session && <MentorCard data={session} />}
+      {mentorData && <MentorCard data={mentorData} focusText={myDay.reasonText} />}
     </div>
   );
 }

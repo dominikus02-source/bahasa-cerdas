@@ -1,5 +1,5 @@
 import type { DifficultyId, QuestionTypeId } from "@/lib/question-metadata/taxonomy";
-import type { LearnerSkillState } from "@/lib/learner-state/types";
+import type { LearnerConfidence, LearnerSkillState } from "@/lib/learner-state/types";
 
 export type CandidateSeenState = "UNSEEN" | "OLD" | "RECENT";
 export type SelectionReasonCode = "NO_DATA" | "WEAK_SKILL" | "PRACTICE_GAP" | "PROGRESSION";
@@ -17,9 +17,11 @@ export interface AdaptiveCandidate {
 }
 
 export interface AdaptiveSelection {
+  actionTitle: string;
   targetSkill: string;
   targetSubskill: string | null;
   targetDifficulty: DifficultyId;
+  confidence: LearnerConfidence;
   reasonCode: SelectionReasonCode;
   reasonText: string;
   questions: AdaptiveCandidate[];

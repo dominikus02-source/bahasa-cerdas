@@ -10,6 +10,7 @@ import { selectAdaptivePractice } from "@/lib/adaptive-practice/selector";
 import type { AdaptiveCandidate } from "@/lib/adaptive-practice/types";
 import type { DifficultyId, QuestionTypeId } from "@/lib/question-metadata/taxonomy";
 import { dayKeyWIB } from "@/lib/learning-loop/journey";
+import { getSessionSummary } from "@/lib/learning-loop/session";
 
 type JsonRecord = Record<string, unknown>;
 
@@ -31,11 +32,24 @@ function isMissingAdaptiveInfra(error: unknown): boolean {
   return code === "P2021" || code === "P2022";
 }
 
-function fallbackResponse(reasonCode = "INSUFFICIENT_METADATA") {
+function fallbackResponse(reasonCode = "INSUFFICIENT_METADATA", learnerState: unknown[] = []) {
   return NextResponse.json({
     mode: "FALLBACK",
+    actionType: "GENERAL_LEARNING",
+    actionTitle: "Mulai Latihan Hari Ini",
+    ctaLabel: "Mulai Latihan",
+    targetSkill: null,
+    targetSubskill: null,
+    targetDifficulty: null,
+    sessionSize: null,
+    estimatedMinutes: null,
+    confidence: "NO_DATA",
+    premiumDepth: "STANDARD",
+    selectionVersion: ADAPTIVE_SELECTION_VERSION,
     reasonCode,
     reasonText: "Belum cukup data untuk latihan personal.",
+    learnerState,
+    mentor: null,
     fallback: {
       href: "/arena/jalur-cerdas",
       label: "Mulai latihan umum",
@@ -44,7 +58,7 @@ function fallbackResponse(reasonCode = "INSUFFICIENT_METADATA") {
   });
 }
 
-async function startSession(userId: string, size: number) {
+async function startSession(userId: string, size: number, mode: "start" | "preview" = "start", userName = "Murid") {
   const states = await getLearnerState(userId);
   const metadataRows = await db.questionMetadata.findMany({
     where: {
@@ -68,7 +82,7 @@ async function startSession(userId: string, size: number) {
       status: true,
     },
   });
-  if (metadataRows.length === 0) return fallbackResponse();
+  if (metadataRows.length === 0) return fallbackResponse("INSUFFICIENT_METADATA", states);
 
   const questionIds = metadataRows.map((row) => row.questionId);
   const questions = await db.soal.findMany({
@@ -131,7 +145,35 @@ async function startSession(userId: string, size: number) {
     size,
     rotationKey: `${userId}:${dayKeyWIB()}`,
   });
-  if (!selection) return fallbackResponse();
+  if (!selection) return fallbackResponse("INSUFFICIENT_METADATA", states);
+
+  if (mode === "preview") {
+    let mentor: { name: string; insights: string[]; today: { activities: number; xp: number; coin: number } } | null = null;
+    try {
+      const summary = await getSessionSummary(userId, userName);
+      mentor = { name: summary.name, insights: summary.insights.slice(0, 2), today: summary.today };
+    } catch {
+      mentor = null;
+    }
+    return NextResponse.json({
+      mode: "PREVIEW",
+      actionType: "ADAPTIVE_PRACTICE",
+      actionTitle: selection.actionTitle,
+      ctaLabel: "Mulai Latihan",
+      targetSkill: selection.targetSkill,
+      targetSubskill: selection.targetSubskill,
+      targetDifficulty: selection.targetDifficulty,
+      sessionSize: size,
+      estimatedMinutes: null,
+      confidence: selection.confidence,
+      premiumDepth: "STANDARD",
+      selectionVersion: selection.selectionVersion,
+      reasonCode: selection.reasonCode,
+      reasonText: selection.reasonText,
+      learnerState: states,
+      mentor,
+    });
+  }
 
   const session = await db.adaptivePracticeSession.create({
     data: {
@@ -151,6 +193,9 @@ async function startSession(userId: string, size: number) {
 
   return NextResponse.json({
     mode: "ADAPTIVE",
+    actionType: "ADAPTIVE_PRACTICE",
+    actionTitle: selection.actionTitle,
+    ctaLabel: "Mulai Latihan",
     sessionId: session.id,
     selectionVersion: selection.selectionVersion,
     targetSkill: selection.targetSkill,
@@ -158,6 +203,10 @@ async function startSession(userId: string, size: number) {
     targetDifficulty: selection.targetDifficulty,
     reasonCode: selection.reasonCode,
     reasonText: selection.reasonText,
+    sessionSize: selection.questions.length,
+    estimatedMinutes: null,
+    confidence: selection.confidence,
+    premiumDepth: "STANDARD",
     questions: selection.questions.map(({ id, text, options, questionType, topic, skill, subskill, difficulty }) => ({
       id,
       text,
@@ -168,6 +217,44 @@ async function startSession(userId: string, size: number) {
       subskill,
       difficulty,
     })),
+  });
+}
+
+async function getSessionPayload(userId: string, sessionId: string) {
+  const session = await db.adaptivePracticeSession.findFirst({ where: { id: sessionId, userId } });
+  if (!session) return NextResponse.json({ error: "Sesi tidak ditemukan" }, { status: 404 });
+  if (session.status !== "IN_PROGRESS" || session.expiresAt <= new Date()) {
+    return NextResponse.json({ error: "Sesi sudah berakhir" }, { status: 409 });
+  }
+  const questionIds = Array.isArray(session.questionIds) ? session.questionIds.filter((id): id is string => typeof id === "string") : [];
+  const metadataRows = await db.questionMetadata.findMany({
+    where: { source: session.source, status: "APPROVED", questionId: { in: questionIds } },
+    select: { questionId: true, skill: true, subskill: true, difficulty: true, topic: true, questionType: true },
+  });
+  const questions = await db.soal.findMany({
+    where: { kodeSoal: { in: questionIds } },
+    select: { kodeSoal: true, text: true, options: true, type: true },
+  });
+  const questionMap = new Map(questions.map((question) => [question.kodeSoal, question]));
+  const metadataMap = new Map(metadataRows.map((metadata) => [metadata.questionId, metadata]));
+  return NextResponse.json({
+    mode: "ADAPTIVE",
+    actionType: "ADAPTIVE_PRACTICE",
+    sessionId: session.id,
+    selectionVersion: session.selectionVersion,
+    targetSkill: session.targetSkill,
+    targetSubskill: session.targetSubskill,
+    targetDifficulty: session.targetDifficulty,
+    reasonCode: session.reasonCode,
+    reasonText: session.reasonText,
+    sessionSize: questionIds.length,
+    questions: questionIds.flatMap((id) => {
+      const question = questionMap.get(id);
+      const metadata = metadataMap.get(id);
+      return question && metadata
+        ? [{ id, text: question.text, options: question.options, questionType: metadata.questionType, topic: metadata.topic, skill: metadata.skill, subskill: metadata.subskill, difficulty: metadata.difficulty }]
+        : [];
+    }),
   });
 }
 
@@ -258,5 +345,29 @@ export async function POST(req: NextRequest) {
     }
     console.error("Adaptive practice error:", error);
     return NextResponse.json({ error: "Gagal memproses latihan personal" }, { status: 500 });
+  }
+}
+
+/** Read-only My Day preview or an owned answer-free session snapshot. */
+export async function GET(req: NextRequest) {
+  const user = await getUser();
+  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const params = new URL(req.url).searchParams;
+  const mode = params.get("mode");
+  const sessionId = params.get("sessionId");
+
+  try {
+    if (mode === "preview") return await startSession(user.id, 5, "preview", user.fullName);
+    if (sessionId) return await getSessionPayload(user.id, sessionId);
+    return NextResponse.json({ error: "mode=preview atau sessionId wajib diisi" }, { status: 400 });
+  } catch (error) {
+    if (isLearnerStateInfraUnavailable(error) || isMissingAdaptiveInfra(error)) {
+      return NextResponse.json(
+        { code: "ADAPTIVE_PRACTICE_UNAVAILABLE", error: "Data metadata/evidence belum tersedia" },
+        { status: 503 }
+      );
+    }
+    console.error("Adaptive practice GET error:", error);
+    return NextResponse.json({ error: "Gagal memuat latihan personal" }, { status: 500 });
   }
 }

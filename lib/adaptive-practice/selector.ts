@@ -1,4 +1,4 @@
-import { SKILLS, hasSkill, type DifficultyId } from "@/lib/question-metadata/taxonomy";
+import { SKILLS, SUBSKILLS, hasSkill, type DifficultyId } from "@/lib/question-metadata/taxonomy";
 import { ADAPTIVE_COOLDOWN_DAYS, ADAPTIVE_SELECTION_VERSION, DIFFICULTY_ORDER } from "./config";
 import type { AdaptiveCandidate, AdaptiveSelection, AdaptiveSelectorInput, CandidateSeenState, SelectionReasonCode } from "./types";
 import type { LearnerSkillState } from "@/lib/learner-state/types";
@@ -87,11 +87,19 @@ function candidateScore(
 
 function reasonText(code: SelectionReasonCode, skill: string, subskill: string | null): string {
   const label = SKILLS[skill as keyof typeof SKILLS] || skill;
-  const focus = subskill ? ` pada ${subskill}` : "";
+  const focus = subskill && hasSkill(skill) ? ` pada ${SUBSKILLS[skill][subskill] || subskill}` : "";
   if (code === "WEAK_SKILL") return `Dipilih untuk memperkuat ${label}${focus} berdasarkan bukti belajar yang cukup.`;
   if (code === "PRACTICE_GAP") return `Dipilih untuk melatih kembali ${label}${focus} yang sudah lama tidak dipraktikkan.`;
-  if (code === "PROGRESSION") return `Dipilih sebagai tantangan lanjutan untuk ${label}${focus}.`;
+  if (code === "PROGRESSION") return `Perkembanganmu mulai terlihat pada ${label}${focus}; latihan ini membantu melanjutkan ritmemu.`;
   return `Belum cukup data kemampuan; latihan ini menjadi langkah awal untuk membangun profil ${label}.`;
+}
+
+function actionTitle(code: SelectionReasonCode, skill: string, subskill: string | null): string {
+  if (code === "NO_DATA") return "Mulai Latihan Hari Ini";
+  if (code === "PROGRESSION") return "Lanjutkan Perkembanganmu";
+  if (code === "PRACTICE_GAP") return "Latihan Lagi";
+  const label = hasSkill(skill) && subskill ? SUBSKILLS[skill][subskill] : SKILLS[skill as keyof typeof SKILLS] || skill;
+  return `Perkuat ${label}`;
 }
 
 export function selectAdaptivePractice(input: AdaptiveSelectorInput, now = new Date()): AdaptiveSelection | null {
@@ -118,9 +126,11 @@ export function selectAdaptivePractice(input: AdaptiveSelectorInput, now = new D
 
   const reasonCode = target.reasonCode === "WEAK_SKILL" && state?.masteryState === "PROFICIENT" ? "PROGRESSION" : target.reasonCode;
   return {
+    actionTitle: actionTitle(reasonCode, target.skill, targetSubskill),
     targetSkill: target.skill,
     targetSubskill,
     targetDifficulty: targetDifficultyValue,
+    confidence: state?.confidence ?? "NO_DATA",
     reasonCode,
     reasonText: reasonText(reasonCode, target.skill, targetSubskill),
     questions: selected,

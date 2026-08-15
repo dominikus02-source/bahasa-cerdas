@@ -27,30 +27,31 @@ const skillRadar = read("components/arena/player/SkillRadar.tsx");
 const arena = read("components/student-home/ArenaHomeSection.tsx");
 const premium = read("components/student-home/PremiumValueCard.tsx");
 const homeData = read("components/student-home/home-data.tsx");
+const adaptiveApi = read("app/api/player/adaptive-practice/route.ts");
 const allStudentHome = ["StudentHomeHero", "ContinueLearningCard", "AIBCHomeCard", "LearningJourneySection", "RuangBelajarSection", "SimulasiUjianSection", "RecentWorksSection", "ArenaHomeSection", "PremiumValueCard", "SecondaryLearningInfo"]
   .map((f) => `components/student-home/${f}.tsx`).map(read).join("\n");
 
 // 1 — My Day renders
 check("1. Beranda dibungkus HomeDataProvider", page.includes("<HomeDataProvider>"));
-check("1. SkillRadar terintegrasi (ex-komponen mati)", page.includes("<SkillRadar />"));
+check("1. SkillRadar terintegrasi dari canonical My Day state", page.includes("<SkillRadar skills=") && page.includes("myDay?.learnerState"));
 check("1. PremiumValueCard terintegrasi", page.includes("<PremiumValueCard />"));
 
 // 2 — Personalized next action dari Learning Loop
-check("2. Rekomendasi dari /api/player/session (bukan engine baru)", continueCard.includes('"/api/player/session"'));
-check("2. Tidak ada rekomendasi statis di success path (fallback hanya EMPTY)", continueCard.includes('action || {'));
+check("2. Rekomendasi dari adaptive preview canonical", homeData.includes("/api/player/adaptive-practice?mode=preview") && adaptiveApi.includes("selectAdaptivePractice"));
+check("2. Primary action memakai server My Day response", continueCard.includes("myDay.actionTitle") && continueCard.includes("myDay.reasonText") && !continueCard.includes('action || {'));
 
 // 3 — Session loading
-check("3. Loading state eksplisit (skeleton)", continueCard.includes('status === "loading"') && continueCard.includes("px-skeleton"));
+check("3. Loading state eksplisit (skeleton)", continueCard.includes("myDayLoading") && continueCard.includes("px-skeleton"));
 
 // 4 — Session error + retry
 check("4. Error state jujur ('Belum bisa memuat rekomendasi')", continueCard.includes("Belum bisa memuat rekomendasi belajarmu."));
-check("4. Tombol Coba Lagi (retry)", continueCard.includes("Coba Lagi") && continueCard.includes("setAttempt"));
-check("4. Error branch TIDAK menampilkan fallback CTA personal palsu", continueCard.includes("Ke Jalur Cerdas") && !continueCard.includes("Lanjutkan Perjalananmu"));
+check("4. Tombol Coba Lagi (retry)", continueCard.includes("Coba Lagi") && continueCard.includes("refreshMyDay"));
+check("4. Error branch tidak menampilkan rekomendasi palsu", continueCard.includes("myDayFailed") && !continueCard.includes("Lanjutkan Perjalananmu"));
 
 // 5 — Empty/new student
-check("5. Empty state bermakna ('Mulai latihan pertamamu')", continueCard.includes("Mulai latihan pertamamu"));
-check("5. Empty fallback ke rute belajar nyata", continueCard.includes("/arena/jalur-cerdas"));
-check("5. Empty diberi label jujur ('Saran untukmu')", continueCard.includes("Saran untukmu"));
+check("5. Insufficient data memiliki judul jujur", adaptiveApi.includes("Mulai Latihan Hari Ini") && adaptiveApi.includes("GENERAL_LEARNING"));
+check("5. Insufficient data fallback ke rute belajar nyata", adaptiveApi.includes("/arena/jalur-cerdas"));
+check("5. Insufficient data tidak mengklaim adaptive", adaptiveApi.includes('mode: "FALLBACK"'));
 
 // 7 — One dominant CTA (gold hanya di ContinueLearningCard + MentorCard insight)
 check("7. Satu CTA emas di student-home", !["StudentHomeHero", "AIBCHomeCard", "LearningJourneySection", "RuangBelajarSection", "SimulasiUjianSection", "RecentWorksSection", "ArenaHomeSection", "PremiumValueCard", "SecondaryLearningInfo"]
@@ -59,14 +60,14 @@ check("7. AI BC CTA sekunder (ghost)", read("components/student-home/AIBCHomeCar
 check("7. Arena CTA sekunder (ghost)", arena.includes("px-btn-ghost"));
 
 // 8 — Mentor insight
-check("8. MentorCard dipakai di ContinueLearningCard", continueCard.includes("<MentorCard data={session} />"));
+check("8. MentorCard memakai konteks My Day yang sama", continueCard.includes("<MentorCard data={mentorData}") && continueCard.includes("focusText={myDay.reasonText}"));
 check("8. MentorCard menerima data → TIDAK fetch duplikat", mentorCard.includes("data?: MentorCardData | null") && mentorCard.includes("if (data !== null)"));
-check("8. Insight mentor ditampilkan sebagai 'kenapa'", continueCard.includes("Mengapa ini untukmu"));
+check("8. Mentor tidak membuat recommendation engine kedua", mentorCard.includes("focusText") && !mentorCard.includes("getNextAction"));
 
 // 9-10 — SkillRadar
-check("9. SkillRadar data nyata dari /api/player/skills", skillRadar.includes('"/api/player/skills"'));
-check("10. SkillRadar empty state ('Belum ada data kemampuan')", skillRadar.includes("Belum ada data kemampuan"));
-check("10. SkillRadar error state + retry (bukan null diam)", skillRadar.includes("Belum bisa memuat kemampuanmu.") && skillRadar.includes("Coba Lagi") && !skillRadar.includes("if (failed) return null"));
+check("9. SkillRadar menerima learner state nyata", skillRadar.includes("LearnerSkillState") && skillRadar.includes("skills?: LearnerSkillState[]"));
+check("10. SkillRadar insufficient-data state", skillRadar.includes("Mulai beberapa latihan dulu"));
+check("10. SkillRadar tidak membuat CTA rekomendasi", !skillRadar.includes("href=") && !skillRadar.includes("/api/player/next-action"));
 
 // 11 — Arena XP/rank
 check("11. Arena pakai data nyata (levelProgress.remaining)", arena.includes("levelProgress"));
@@ -78,13 +79,18 @@ check("12. Trial ditandai jujur (Masa Uji)", premium.includes("Masa Uji"));
 check("13. Free user: nilai halus tanpa paywall CTA", premium.includes("tersedia di Premium"));
 
 // 14 — Premium authorization (canonical)
-check("14. Status premium HANYA dari API canonical server", premium.includes('"/api/player/premium/status"'));
+check("14. Status premium dibagi dari home-data canonical", homeData.includes('"/api/player/premium/status"') && premium.includes("useHomeData"));
 check("14. Tidak ada premium2/isPremium2/studentPremium di student-home", !/premium2|isPremium2|studentPremium/i.test(allStudentHome));
 check("14. Tidak ada input plan/quota dari klien", !premium.includes("req.json") && !premium.includes("body"));
 
+// 15 — Adaptive session start remains server-authoritative
+check("15. CTA adaptive memulai POST session", continueCard.includes('fetch("/api/player/adaptive-practice"') && continueCard.includes('action: "start"'));
+check("15. CTA tidak mengirim skill/difficulty/question IDs", !continueCard.includes("targetSkill") && !continueCard.includes("questionIds") && !continueCard.includes("targetDifficulty"));
+
 // 15 — Dashboard summary no duplicate fetch
-check("15. /api/murid/dashboard/summary hanya di home-data", (allStudentHome.match(/api\/murid\/dashboard\/summary/g) || []).length === 0 && homeData.includes('"/api/murid/dashboard/summary"'));
-check("15. /api/player/profile hanya di home-data", (allStudentHome.match(/api\/player\/profile/g) || []).length === 0 && homeData.includes('"/api/player/profile"'));
+check("16. /api/murid/dashboard/summary hanya di home-data", (allStudentHome.match(/api\/murid\/dashboard\/summary/g) || []).length === 0 && homeData.includes('"/api/murid/dashboard/summary"'));
+check("16. My Day adaptive preview hanya di home-data", (allStudentHome.match(/api\/player\/adaptive-practice\?mode=preview/g) || []).length === 0 && homeData.includes("/api/player/adaptive-practice?mode=preview"));
+check("16. /api/player/profile hanya di home-data", (allStudentHome.match(/api\/player\/profile/g) || []).length === 0 && homeData.includes('"/api/player/profile"'));
 
 // 16 — Mobile first
 check("16. Grid mobile grid-cols-1", page.includes("grid-cols-1"));

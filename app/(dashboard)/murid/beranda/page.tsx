@@ -14,6 +14,7 @@ import { ArenaHomeSection } from "@/components/student-home/ArenaHomeSection";
 import { PremiumValueCard } from "@/components/student-home/PremiumValueCard";
 import { SecondaryLearningInfo } from "@/components/student-home/SecondaryLearningInfo";
 import SkillRadar from "@/components/arena/player/SkillRadar";
+import { useHomeData } from "@/components/student-home/home-data";
 
 // Hierarki My Day (learning companion):
 // 1. SAPAAN (hero) → 2. AKSI HARI INI (satu CTA dominan + mentor)
@@ -42,32 +43,39 @@ export default function HomeFeedPage() {
     <div className="px-theme px-theme-app min-h-screen">
       <main className="mx-auto max-w-[1200px] px-4 sm:px-6 py-8 space-y-8">
         <HomeDataProvider>
-          <StudentHomeHero />
-
-          <ContinueLearningCard />
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
-            <SkillRadar />
-            <div className="space-y-6">
-              <ArenaHomeSection />
-              <PremiumValueCard />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
-            <AIBCHomeCard />
-            <LearningJourneySection />
-          </div>
-
-          <RuangBelajarSection />
-
-          <SimulasiUjianSection />
-
-          <RecentWorksSection />
-
-          <SecondaryLearningInfo />
+          <HomeContent />
         </HomeDataProvider>
       </main>
     </div>
+  );
+}
+
+function HomeContent() {
+  const { myDay, myDayLoading, myDayFailed } = useHomeData();
+
+  return (
+    <>
+      <StudentHomeHero />
+
+      <ContinueLearningCard />
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+        <SkillRadar skills={myDay?.learnerState ?? null} loading={myDayLoading} failed={myDayFailed} />
+        <div className="space-y-6">
+          <ArenaHomeSection />
+          <PremiumValueCard />
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+        <AIBCHomeCard />
+        <LearningJourneySection />
+      </div>
+
+      <RuangBelajarSection />
+      <SimulasiUjianSection />
+      <RecentWorksSection />
+      <SecondaryLearningInfo />
+    </>
   );
 }

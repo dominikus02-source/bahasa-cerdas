@@ -21,7 +21,7 @@ export interface SessionResponse {
 export interface MentorCardData {
   name: string;
   insights: string[];
-  nextAction: {
+  nextAction?: {
     ctaType: string;
     title: string;
     description: string | null;
@@ -36,10 +36,13 @@ export interface MentorCardData {
 export default function MentorCard({
   className = "",
   data = null,
+  focusText = null,
 }: {
   className?: string;
   /** Bila disediakan (dari /api/player/session induk), TIDAK fetch ulang. */
   data?: MentorCardData | null;
+  /** Server-derived My Day context; tidak membuat rekomendasi baru. */
+  focusText?: string | null;
 }) {
   const [session, setSession] = useState<MentorCardData | null>(data);
   const [loading, setLoading] = useState(data === null);
@@ -77,7 +80,7 @@ export default function MentorCard({
 
   if (failed || !session) return null;
 
-  const insights = (session.insights ?? []).slice(0, 2);
+  const insights = focusText ? [focusText] : (session.insights ?? []).slice(0, 2);
 
   return (
     <div
